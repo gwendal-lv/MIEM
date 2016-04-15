@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="O4BfM6" name="MiamEdit" projectType="guiapp" version="1.0.0"
+              bundleIdentifier="com.yourcompany.MiamEdit" includeBinaryInAppConfig="1"
+              jucerVersion="4.2.0">
+  <MAINGROUP id="uJFjC5" name="MiamEdit">
+    <GROUP id="{7878353D-A1B6-291B-EABC-831E28CE51BB}" name="Source">
+      <GROUP id="{B91B2137-DC4A-127C-0037-DB058876BEFA}" name="Utils">
+        <FILE id="W2Dyl9" name="CartesianLine.cpp" compile="1" resource="0"
+              file="Source/CartesianLine.cpp"/>
+        <FILE id="e3AhBP" name="CartesianLine.h" compile="0" resource="0" file="Source/CartesianLine.h"/>
+        <FILE id="P4c6hc" name="Math.cpp" compile="1" resource="0" file="Source/Math.cpp"/>
+        <FILE id="QU1Pks" name="Math.h" compile="0" resource="0" file="Source/Math.h"/>
+      </GROUP>
+      <GROUP id="{8B52098D-2C2B-E3EA-7DC7-267134065ADF}" name="Presenter">
+        <GROUP id="{BCE7133F-811E-CEC3-C86B-AB0653F2550B}" name="Areas">
+          <FILE id="FWaaKr" name="EditableArea.cpp" compile="1" resource="0"
+                file="Source/EditableArea.cpp"/>
+          <FILE id="SxhCSC" name="EditableArea.h" compile="0" resource="0" file="Source/EditableArea.h"/>
+          <FILE id="r1S9va" name="EditablePolygon.cpp" compile="1" resource="0"
+                file="Source/EditablePolygon.cpp"/>
+          <FILE id="ykbaL7" name="EditablePolygon.h" compile="0" resource="0"
+                file="Source/EditablePolygon.h"/>
+          <FILE id="oIrnA1" name="InteractiveArea.cpp" compile="1" resource="0"
+                file="Source/InteractiveArea.cpp"/>
+          <FILE id="n1KyVG" name="InteractiveArea.h" compile="0" resource="0"
+                file="Source/InteractiveArea.h"/>
+          <FILE id="nYcoMd" name="InteractivePolygon.cpp" compile="1" resource="0"
+                file="Source/InteractivePolygon.cpp"/>
+          <FILE id="uTluvc" name="InteractivePolygon.h" compile="0" resource="0"
+                file="Source/InteractivePolygon.h"/>
+          <FILE id="ydau4a" name="SubTriangle.cpp" compile="1" resource="0" file="Source/SubTriangle.cpp"/>
+          <FILE id="H7rhz5" name="SubTriangle.h" compile="0" resource="0" file="Source/SubTriangle.h"/>
+        </GROUP>
+        <FILE id="rgxQ9K" name="AppMode.h" compile="0" resource="0" file="Source/AppMode.h"/>
+        <FILE id="meFyUy" name="Presenter.cpp" compile="1" resource="0" file="Source/Presenter.cpp"/>
+        <FILE id="dHZ0UK" name="Presenter.h" compile="0" resource="0" file="Source/Presenter.h"/>
+        <FILE id="sqIfeX" name="SceneEditionManager.cpp" compile="1" resource="0"
+              file="Source/SceneEditionManager.cpp"/>
+        <FILE id="kKa1F6" name="SceneEditionManager.h" compile="0" resource="0"
+              file="Source/SceneEditionManager.h"/>
+        <FILE id="PY0TYM" name="SceneEditionMode.h" compile="0" resource="0"
+              file="Source/SceneEditionMode.h"/>
+      </GROUP>
+      <GROUP id="{F6BB049F-E535-45AB-5A0C-454B64DE18EA}" name="View">
+        <GROUP id="{EC5E55BB-07A7-BF56-A7EA-A7410AC9FE64}" name="Components">
+          <FILE id="u4QsSz" name="SceneCanvasComponent.cpp" compile="1" resource="0"
+                file="Source/SceneCanvasComponent.cpp"/>
+          <FILE id="bq7YvY" name="SceneCanvasComponent.h" compile="0" resource="0"
+                file="Source/SceneCanvasComponent.h"/>
+          <FILE id="WzOuAs" name="HardwareConfigurationComponent.cpp" compile="1"
+                resource="0" file="Source/HardwareConfigurationComponent.cpp"/>
+          <FILE id="UXk0vx" name="HardwareConfigurationComponent.h" compile="0"
+                resource="0" file="Source/HardwareConfigurationComponent.h"/>
+          <FILE id="hVInaO" name="MainBackgroundComponent.cpp" compile="1" resource="0"
+                file="Source/MainBackgroundComponent.cpp"/>
+          <FILE id="MOgplf" name="MainBackgroundComponent.h" compile="0" resource="0"
+                file="Source/MainBackgroundComponent.h"/>
+          <FILE id="MSgPNe" name="SceneEditionComponent.cpp" compile="1" resource="0"
+                file="Source/SceneEditionComponent.cpp"/>
+          <FILE id="m7w8e5" name="SceneEditionComponent.h" compile="0" resource="0"
+                file="Source/SceneEditionComponent.h"/>
+          <FILE id="gMjpEM" name="SpeakersEditionComponent.cpp" compile="1" resource="0"
+                file="Source/SpeakersEditionComponent.cpp"/>
+          <FILE id="xTHH4m" name="SpeakersEditionComponent.h" compile="0" resource="0"
+                file="Source/SpeakersEditionComponent.h"/>
+          <FILE id="v95oCh" name="SpeakersGroupsEditionComponent.cpp" compile="1"
+                resource="0" file="Source/SpeakersGroupsEditionComponent.cpp"/>
+          <FILE id="OrbxdO" name="SpeakersGroupsEditionComponent.h" compile="0"
+                resource="0" file="Source/SpeakersGroupsEditionComponent.h"/>
+        </GROUP>
+        <GROUP id="{0AA05883-956B-B483-7B58-96EA4B612185}" name="Areas">
+          <FILE id="vFGsy1" name="DrawableArea.cpp" compile="1" resource="0"
+                file="Source/DrawableArea.cpp"/>
+          <FILE id="A23oXV" name="DrawableArea.h" compile="0" resource="0" file="Source/DrawableArea.h"/>
+          <FILE id="i4Mucn" name="DrawablePolygon.cpp" compile="1" resource="0"
+                file="Source/DrawablePolygon.cpp"/>
+          <FILE id="icmuap" name="DrawablePolygon.h" compile="0" resource="0"
+                file="Source/DrawablePolygon.h"/>
+        </GROUP>
+        <FILE id="bjMV46" name="ClearLabelTimer.cpp" compile="1" resource="0"
+              file="Source/ClearLabelTimer.cpp"/>
+        <FILE id="zGa65c" name="ClearLabelTimer.h" compile="0" resource="0"
+              file="Source/ClearLabelTimer.h"/>
+        <FILE id="jmYSOn" name="MainComponent.cpp" compile="1" resource="0"
+              file="Source/MainComponent.cpp"/>
+        <FILE id="ZUm39h" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+        <FILE id="FFiP3T" name="View.cpp" compile="1" resource="0" file="Source/View.cpp"/>
+        <FILE id="v6HSAO" name="View.h" compile="0" resource="0" file="Source/View.h"/>
+      </GROUP>
+      <FILE id="MLMDSl" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="default" osxArchitecture="default"
+                       isDebug="1" optimisation="1" targetName="MiamEdit"/>
+        <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="default" osxArchitecture="default"
+                       isDebug="0" optimisation="3" targetName="MiamEdit"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_video" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_video" showAllCode="1" useLocalCopy="0"/>
+  </MODULES>
+  <JUCEOPTIONS/>
+  <LIVE_SETTINGS>
+    <OSX/>
+  </LIVE_SETTINGS>
+</JUCERPROJECT>
