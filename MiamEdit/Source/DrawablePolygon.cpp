@@ -13,7 +13,7 @@ using namespace Miam;
 
 // Default constructor build a centered dark grey triangle
 DrawablePolygon::DrawablePolygon(int64_t _Id) :
-    DrawablePolygon(_Id, Point<double>(0.5,0.5), 3, 0.1, Colours::darkgrey)
+    DrawablePolygon(_Id, Point<double>(0.5f,0.5f), 3, 0.1f, Colours::darkgrey)
 {
 }
 
@@ -32,7 +32,7 @@ DrawablePolygon::DrawablePolygon(int64_t _Id, Point<double> _center, int pointsC
     float currentAngle;
     for (int i=0; i<pointsCount ; i++)
     {
-        currentAngle = 2.0*float_Pi*(double)(i)/(double)(pointsCount);
+        currentAngle = 2.0f*float_Pi*(float)(i)/(float)(pointsCount);
         contourPoints.push_back(Point<double>(center.x + radius/canvasRatio*cosf(currentAngle),
                                              center.y + radius*sinf(currentAngle)));
     }
@@ -60,7 +60,7 @@ void DrawablePolygon::createJucePolygon(int width, int height)
         contour.lineTo(contourPoints[i].toFloat());
     contour.closeSubPath();
     
-    contour.applyTransform(AffineTransform::scale(width, height));
+    contour.applyTransform(AffineTransform::scale((float)width, (float)height));
 }
 
 // Default destructor

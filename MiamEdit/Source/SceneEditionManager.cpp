@@ -37,7 +37,10 @@ SceneEditionManager::SceneEditionManager(View* _view) :
     EditablePolygon currentEditablePolygon = EditablePolygon(0);
     for (int i=0 ; i<4 ; i++)
     {
-        currentEditablePolygon = EditablePolygon(nextAreaId, Point<double>(0.2+0.13*i,0.3+0.1*i), 3+2*i, 0.15+0.04*(i+1), Colour(80*i, 0, 255), sceneEditionComponent->GetSceneCanvasComponent()->GetRatio());
+        currentEditablePolygon = EditablePolygon(nextAreaId,
+			Point<double>(0.2f+0.13f*i,0.3f+0.1f*i), 3+2*i, 0.15f+0.04f*(i+1),
+			Colour(80*(uint8)i, 0, 255),
+			sceneEditionComponent->GetSceneCanvasComponent()->GetRatio());
         addEditableArea(currentEditablePolygon);
     }
     
@@ -62,7 +65,7 @@ EditablePolygon& SceneEditionManager::GetEditablePolygon(int64_t uniqueId)
     else
         throw std::range_error("Unique ID doesn't refer to any existing editable polygon.");
 }
-int SceneEditionManager::GetDrawableAreasSize()
+size_t SceneEditionManager::GetDrawableAreasSize()
 {
     return areasOrder.size();
 }
@@ -82,7 +85,7 @@ void SceneEditionManager::addEditableArea(EditablePolygon &newPolygon, bool sele
 {
     // Internal objects modification
     polygons.push_back(newPolygon);
-    polygonsVectorIndexes.insert(std::pair<int64_t, int>(nextAreaId,polygons.size()-1));
+    polygonsVectorIndexes.insert(std::pair<int64_t, int>(nextAreaId,(int)polygons.size()-1));
     
     // Last added drawn on top
     areasOrder.push_back(nextAreaId);
@@ -157,7 +160,7 @@ void SceneEditionManager::setSelectedAreaUniqueId(int64_t newIndex)
             try {
                 GetEditablePolygon(selectedAreaUniqueId).SetActive(false);
             }
-            catch (const std::range_error& e) {}
+            catch (const std::range_error& /*e*/) {}
         }
         
         selectedAreaUniqueId = -1;
@@ -242,7 +245,7 @@ void SceneEditionManager::OnCanvasMouseDown(Point<int> clicLocation)
     }
     // While no area is selected : we look for a new one to select,
     // starting from the area on the upper layer (last draw on canvas)
-    for (int i=areasOrder.size()-1 ; (i>=0 && mode==SceneEditionMode::NoAreaSelected) ; i--)
+    for (int i=(int)areasOrder.size()-1 ; (i>=0 && mode==SceneEditionMode::NoAreaSelected) ; i--)
     {
         if (GetEditablePolygon(areasOrder[i]).hitTest(clicLocation.toDouble()))
         {
@@ -328,7 +331,7 @@ void SceneEditionManager::OnPasteArea()
 void SceneEditionManager::OnAddArea()
 {
     EditablePolygon newPolygon = EditablePolygon(nextAreaId,
-                                                 Point<double>(0.5,0.5), 4, 0.15,
+                                                 Point<double>(0.5f,0.5f), 4, 0.15f,
                                                  Colours::grey,
                                                  sceneEditionComponent->GetSceneCanvasComponent()->GetRatio());
     addEditableArea(newPolygon, true);

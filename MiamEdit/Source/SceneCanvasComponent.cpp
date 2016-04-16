@@ -64,17 +64,17 @@ void SceneCanvasComponent::resized()
 
 //
 
-void SceneCanvasComponent::mouseDown(const juce::MouseEvent &event)
+void SceneCanvasComponent::mouseDown(const juce::MouseEvent& event)
 {
     sceneEditionManager->OnCanvasMouseDown(event.getMouseDownPosition());
 }
 
-void SceneCanvasComponent::mouseDrag(const juce::MouseEvent &event)
+void SceneCanvasComponent::mouseDrag(const juce::MouseEvent& event)
 {
     sceneEditionManager->OnCanvasMouseDrag(event.getPosition());
 }
 
-void SceneCanvasComponent::mouseUp(const juce::MouseEvent &event)
+void SceneCanvasComponent::mouseUp(const juce::MouseEvent& /*event*/)
 {
     sceneEditionManager->OnCanvasMouseUp();
 }

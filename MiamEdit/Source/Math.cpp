@@ -39,9 +39,9 @@ double Math::ComputePositiveAngle(Point<double> p)
     if (p.getX() == 0.0) // To avoid using try/catch blocks
     {
         if (p.getY() > 0.0)
-            angle = M_PI / 2;
+            angle = double_Pi / 2;
         else
-            angle = -M_PI / 2;
+            angle = -double_Pi / 2;
     }
     else // Usual atan computing
     {
@@ -50,11 +50,11 @@ double Math::ComputePositiveAngle(Point<double> p)
             angle = std::atan(ratio);
         else
         {
-            angle = M_PI + std::atan(ratio);
+            angle = double_Pi + std::atan(ratio);
         }
     }
     // Recalibrating into [0;2pi[
     if (angle < 0.0)
-        angle += 2 * M_PI;
+        angle += 2 * double_Pi;
     return angle;
 }

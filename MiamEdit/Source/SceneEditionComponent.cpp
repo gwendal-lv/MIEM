@@ -19,6 +19,8 @@
 
 //[Headers] You can add your own extra header files here...
 #include "SceneEditionManager.h"
+
+#include <cmath>
 //[/Headers]
 
 #include "SceneEditionComponent.h"
@@ -447,7 +449,9 @@ void SceneEditionComponent::SetAreaColourValue(juce::Colour colour)
 }
 void SceneEditionComponent::colourSliderMoved()
 {
-    Colour newColour = Colour(sliderR->getValue(), sliderG->getValue(), sliderB->getValue());
+    Colour newColour = Colour((uint8)sliderR->getValue(),
+		(uint8)sliderG->getValue(),
+		(uint8)sliderB->getValue());
     sceneEditionManager->OnNewColour(newColour);
 }
 

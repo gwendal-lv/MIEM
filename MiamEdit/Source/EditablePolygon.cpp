@@ -50,7 +50,7 @@ void EditablePolygon::graphicalInit()
     contourColour = Colour(0xAAFFFFFF); // white, but not totally opaque
     
     editingElementsColour = Colours::white; // pure white (more visible)
-    contourPointsRadius = 1.4*contourWidth;
+    contourPointsRadius = 1.4f*contourWidth;
     manipulationPointRadius = centerContourWidth+centerCircleRadius;
 }
 void EditablePolygon::behaviorInit()
@@ -76,24 +76,23 @@ void EditablePolygon::Paint(Graphics& g)
         // Then, we draw the manipulation points
         for (int i=0 ; i<contourPointsInPixels.size() ; i++)
         {
-            g.fillEllipse(contourPointsInPixels[i].x-contourPointsRadius,
-                          contourPointsInPixels[i].y-contourPointsRadius,
-                          contourPointsRadius*2,
-                          contourPointsRadius*2);
+            g.fillEllipse((float)contourPointsInPixels[i].x-contourPointsRadius,
+							(float)contourPointsInPixels[i].y-contourPointsRadius,
+                          contourPointsRadius*2.0f,
+                          contourPointsRadius*2.0f);
         }
         
         // And finally, the manipulation (rotation & scale) controls
-        Line<float> manipulationLine = Line<float>(centerInPixels.x,
-                                                   centerInPixels.y,
-                                                   manipulationPointInPixels.x,
-                                                   manipulationPointInPixels.y);
-        float dashedLineParameters[] = {4.0, 4.0};
+        Line<float> manipulationLine = Line<float>((float)centerInPixels.x,
+			(float)centerInPixels.y,
+			(float)manipulationPointInPixels.x,
+			(float)manipulationPointInPixels.y);
+        float dashedLineParameters[] = {4.0f, 4.0f};
         g.drawDashedLine(manipulationLine, dashedLineParameters, 2, centerContourWidth);
-        g.fillEllipse(manipulationPointInPixels.x-manipulationPointRadius,
-                      manipulationPointInPixels.y-manipulationPointRadius,
-                      manipulationPointRadius*2,
-                      manipulationPointRadius*2);
-        //g.fillEllipse
+        g.fillEllipse((float)manipulationPointInPixels.x-manipulationPointRadius,
+			(float)manipulationPointInPixels.y-manipulationPointRadius,
+			(float)manipulationPointRadius*2.0f,
+			(float)manipulationPointRadius*2.0f);
     }
 }
 
@@ -115,12 +114,12 @@ void EditablePolygon::CanvasResized(int width, int height)
     // Manipulation point (+ line...)
     computeManipulationPoint();
     
-    pointDraggingRadius = 0.01 * (width+height)/2.0; // 1%
+    pointDraggingRadius = 0.01f * (width+height)/2.0f; // 1%
 }
 
 void EditablePolygon::computeManipulationPoint()
 {
-    float manipulationLineLengthLeft = 0.25*(canvasWidth+canvasHeight)/2.0,
+    float manipulationLineLengthLeft = 0.25f*(canvasWidth+canvasHeight)/2.0f,
     manipulationLineLengthRight = manipulationLineLengthLeft; //px
     /*
     float currentDistance = 0.0f;
@@ -161,11 +160,11 @@ void EditablePolygon::SetActive(bool activate)
     
     if (isActive)
     {
-        fillOpacity = 0.8;
+        fillOpacity = 0.8f;
     }
     else
     {
-        fillOpacity = 0.5;
+        fillOpacity = 0.5f;
     }
 }
 
@@ -177,7 +176,7 @@ void EditablePolygon::SetActive(bool activate)
 
 bool EditablePolygon::hitTest(const Point<double>& hitPoint)
 {
-    return (contour.contains(hitPoint.x, hitPoint.y));
+    return (contour.contains((float)hitPoint.x, (float)hitPoint.y));
 }
 
 
@@ -368,7 +367,7 @@ void EditablePolygon::Translate(const Point<double>& translation)
 
 bool EditablePolygon::tryCreatePoint(const Point<double>& hitPoint)
 {
-    double closestPointIndex = -1;
+    int closestPointIndex = -1;
     double closestDistance = canvasWidth+canvasHeight;
     // At first, we look for the closest point
     for (int i=0 ; i<contourPointsInPixels.size(); i++)
@@ -381,7 +380,7 @@ bool EditablePolygon::tryCreatePoint(const Point<double>& hitPoint)
         }
     }
     // Then, the other point is always the next
-    double otherPointIndex = Math::Modulo(closestPointIndex+1, contourPointsInPixels.size());
+    int otherPointIndex = Math::Modulo(closestPointIndex+1, (int)contourPointsInPixels.size());
     
     // Is the hitPoint to far from the two current points ?
     if ( closestDistance <= 10 * pointDraggingRadius )
@@ -445,7 +444,7 @@ bool EditablePolygon::isCenterValidWithoutContourPoint(int contourPointId)
     }
     testContour.closeSubPath();
     // Then we check wether the center is still inside or not
-    return testContour.contains(centerInPixels.getX(), centerInPixels.getY());
+    return testContour.contains((float)centerInPixels.getX(), (float)centerInPixels.getY());
 }
 
 
@@ -458,8 +457,8 @@ bool EditablePolygon::isCenterValidWithoutContourPoint(int contourPointId)
 bool EditablePolygon::isNewContourPointValid(const Point<double>& newLocation)
 {
     // Init : we save indexes of adjacent points (that will help build the borders)
-    int pointBefore = Math::Modulo(pointDragged-1, contourPointsInPixels.size());
-    int pointAfter = Math::Modulo(pointDragged+1, contourPointsInPixels.size());
+    int pointBefore = Math::Modulo(pointDragged-1, (int)contourPointsInPixels.size());
+    int pointAfter = Math::Modulo(pointDragged+1, (int)contourPointsInPixels.size());
     /* Étape 1, on construit les équations des droites suivantes :
      * - droite 1 entre le centre et le point d'avant
      * - droite 2 entre le centre et le point d'après
@@ -488,7 +487,7 @@ bool EditablePolygon::isNewCenterValid(const Point<double>& newLocation)
     for (int i=0 ; (i<contourPointsInPixels.size() && !hasCrossed) ; i++)
     {
         CartesianLine cartesianLine = CartesianLine(contourPointsInPixels[i],
-                contourPointsInPixels[Math::Modulo(i+1, contourPointsInPixels.size())]);
+                contourPointsInPixels[Math::Modulo(i+1, (int)contourPointsInPixels.size())]);
         hasCrossed = cartesianLine.PointWentThrough(centerInPixels, newLocation);
     }
     return !hasCrossed;

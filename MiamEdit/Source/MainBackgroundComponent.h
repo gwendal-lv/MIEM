@@ -55,7 +55,7 @@ public:
 
     // SETTERS and GETTERS
     void setMiamView(Miam::View* _miamView) {miamView = _miamView;}
-    
+
     // Orders from Presenter
     void DisplayInfo(const String& message);
 
@@ -71,7 +71,7 @@ private:
     //[UserVariables]   -- You can add your own custom variables in this section.
 
     Miam::View *miamView;
-    
+
     Miam::ClearLabelTimer clearLabelTimer;
 
     //[/UserVariables]

@@ -116,7 +116,7 @@ void MainContentComponent::DisplayInfo(const String& message)
 
 
 
-void MainContentComponent::paint (Graphics& g)
+void MainContentComponent::paint (Graphics& /*g*/)
 {
 }
 

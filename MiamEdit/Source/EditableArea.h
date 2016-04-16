@@ -74,7 +74,7 @@ namespace Miam
         int pointDragged;
         Point<double> lastLocation; // pixels
         
-        float minimumSizePercentage = 0.03; // % of mean of canvas width and height
+        float minimumSizePercentage = 0.03f; // % of mean of canvas width and height
         
     };
     

@@ -69,7 +69,7 @@ namespace Miam {
         // Generic objects
         //EditableArea& GetEditableArea(int64_t uniqueId);
         public :
-        int GetDrawableAreasSize();
+        size_t GetDrawableAreasSize();
         DrawableArea& GetDrawableArea(int position);
         
         

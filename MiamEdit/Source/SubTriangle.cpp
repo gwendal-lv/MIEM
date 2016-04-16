@@ -30,7 +30,7 @@ SubTriangle::SubTriangle(Point<double> _G, Point<double> _B, Point<double> _C)
     Point<double> _GC = _C - _G;
     double angle1 = Math::ComputePositiveAngle(_GB);
     double angle2 = Math::ComputePositiveAngle(_GC);
-    if (std::abs(angle1 - angle2) > M_PI) // A triangle cannot have such an angle
+    if (std::abs(angle1 - angle2) > double_Pi) // A triangle cannot have such an angle
     {
         containsAngleZero = true;
         if (angle1 > angle2) // Sorted already : B before 0rad and C after 0rad

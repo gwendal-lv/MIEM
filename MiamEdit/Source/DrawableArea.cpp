@@ -28,8 +28,8 @@ DrawableArea::DrawableArea(int64_t _Id, Point<double> _center, Colour _fillColou
     fillOpacity = 1.0;
     
     contourColour = Colours::white;
-    contourWidth = 2.0;
-    centerContourWidth = contourWidth*1.5;
+    contourWidth = 2.0f;
+    centerContourWidth = contourWidth*1.5f;
 }
 
 
@@ -38,15 +38,20 @@ DrawableArea::DrawableArea(int64_t _Id, Point<double> _center, Colour _fillColou
 void DrawableArea::Paint(Graphics& g)
 {
     g.setColour(contourColour);
-    g.drawEllipse(centerInPixels.x-centerCircleRadius, centerInPixels.y-centerCircleRadius,
-                  centerCircleRadius*2, centerCircleRadius*2, centerContourWidth);
+    g.drawEllipse((float)centerInPixels.x-centerCircleRadius,
+		(float)centerInPixels.y-centerCircleRadius,
+        centerCircleRadius*2.0f, centerCircleRadius*2.0f, centerContourWidth);
     
     String name = String("[[[undefined ") + String(Id) + String("]]]");
     
-    g.setColour(Colours::black);
-    g.drawSingleLineText(name, centerInPixels.x+1, centerInPixels.y-centerCircleRadius*2+1);
-    g.setColour(Colours::white);
-    g.drawSingleLineText(name, centerInPixels.x, centerInPixels.y-centerCircleRadius*2);
+    g.setColour(Colours::black); // black shadow
+    g.drawSingleLineText(name,
+		(int)centerInPixels.x+1,
+		(int)(centerInPixels.y-centerCircleRadius*2+1));
+    g.setColour(Colours::white); // white text
+    g.drawSingleLineText(name,
+		(int)centerInPixels.x,
+		(int)(centerInPixels.y-centerCircleRadius*2));
 }
 
 void DrawableArea::CanvasResized(int width, int height)
