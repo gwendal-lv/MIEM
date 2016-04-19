@@ -37,7 +37,7 @@ namespace Miam
         
         // Points move
         public :
-        virtual bool hitTest(const Point<double>& hitPoint) = 0;
+        virtual bool HitTest(const Point<double>& hitPoint) = 0;
         virtual bool tryBeginPointMove(const Point<double>& hitPoint) = 0;
         virtual void movePoint(const Point<double>& newLocation) = 0;
         virtual void endPointMove() = 0;

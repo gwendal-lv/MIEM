@@ -27,7 +27,7 @@ SceneEditionManager::SceneEditionManager(View* _view) :
     setMode(SceneEditionMode::Loading);
     
     // Links to the view module
-    sceneEditionComponent = view->getMainContentComponent()->getSceneEditionComponent();
+    sceneEditionComponent = view->GetMainContentComponent()->GetSceneEditionComponent();
     sceneEditionComponent->CompleteInitialization(this);
     
     
@@ -247,7 +247,7 @@ void SceneEditionManager::OnCanvasMouseDown(Point<int> clicLocation)
     // starting from the area on the upper layer (last draw on canvas)
     for (int i=(int)areasOrder.size()-1 ; (i>=0 && mode==SceneEditionMode::NoAreaSelected) ; i--)
     {
-        if (GetEditablePolygon(areasOrder[i]).hitTest(clicLocation.toDouble()))
+        if (GetEditablePolygon(areasOrder[i]).HitTest(clicLocation.toDouble()))
         {
             //std::cout << "poids d'interaction = " << GetEditablePolygon(areasOrder[i]).ComputeInteractionWeight(clicLocation.toDouble()) << std::endl;
             setSelectedAreaUniqueId(areasOrder[i]);

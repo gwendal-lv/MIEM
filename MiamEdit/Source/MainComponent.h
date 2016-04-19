@@ -58,23 +58,29 @@ public:
     //==============================================================================
     MainContentComponent();
     ~MainContentComponent();
-    
+
+	/// \brief Function called after both Miam::View and Miam::Presenter are contructed
     void CompleteInitialization(Presenter* _presenter);
 
     
 
-    void paint (Graphics&);
-    void resized();
+    void paint (Graphics&) override;
+    void resized() override;
     
     
     
     // SETTERS and GETTERS
-    void setMiamView(View* _view);
-    SceneEditionComponent* getSceneEditionComponent()
+	/// \brief Necessary for the Miam::View to reference itself, because this class is always
+	/// constructed by the MainWindow before the View module.
+    void SetMiamView(View* _view);
+	/// \brief Pointer to one of MiamEdit's main components.
+    SceneEditionComponent* GetSceneEditionComponent()
     {return sceneEditionComponent; }
     
     // To obey orders transmitted from the Presenter to the View
+	/// \brief Dispatches event re-transmitted by Miam::View::ChangeAppMode
     void ChangeAppMode(Miam::AppMode newAppMode);
+	/// \brief Dispatches event re-transmitted by Miam::View::DisplayInfo
     void DisplayInfo(const String& message);
 
 

@@ -185,7 +185,7 @@ void MainBackgroundComponent::CompleteInitialization()
 void MainBackgroundComponent::DisplayInfo(const String& message)
 {
     mainInfoLabel->setText(message, NotificationType::sendNotificationAsync);
-    clearLabelTimer.startTimer(mainInfoLabel.get()); // will clear it after a precise time
+    clearLabelTimer.StartTimer(mainInfoLabel.get()); // will clear it after a precise time
 }
 
 //[/MiscUserCode]

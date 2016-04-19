@@ -24,14 +24,16 @@ using namespace Miam;
 
 
 //==============================================================================
-/*
-*/
+/// \brief Initially empty component dedicated to the drawing of several Miam::DrawableArea
+///
+/// This component does not have any children UI controls built within the Projucer.
 class SceneCanvasComponent    : public Component
 {
 public:
     SceneCanvasComponent();
     ~SceneCanvasComponent();
     
+	/// \brief Also called from Miam::View::CompleteInitialization
     void CompleteInitialization(SceneEditionManager* _sceneEditionManager);
 
     void paint (Graphics&);

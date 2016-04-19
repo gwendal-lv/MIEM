@@ -16,6 +16,9 @@
 
 
 //==============================================================================
+
+/// \brief Class that implements the user entry point (initialization) and various OS-level
+/// event functions, and creates an instance of the MainWindow. (class created by Juce from the Projucer)
 class MiamEditApplication  : public JUCEApplication
 {
     private :
@@ -75,10 +78,8 @@ public:
     
 
     //==============================================================================
-    /*
-        This class implements the desktop window that contains an instance of
-        our MainContentComponent class.
-    */
+	/// \brief This class implements the desktop window that contains an instance of
+    /// our MainContentComponent class (created by Juce from the Projucer).
     class MainWindow    : public DocumentWindow
     {
         private :

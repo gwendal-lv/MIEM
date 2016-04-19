@@ -59,7 +59,7 @@ void MainContentComponent::CompleteInitialization(Presenter* _presenter)
         secondLevelComponents[i]->resized();
 }
 
-void MainContentComponent::setMiamView(Miam::View* _view)
+void MainContentComponent::SetMiamView(Miam::View* _view)
 {
     view = _view;
     

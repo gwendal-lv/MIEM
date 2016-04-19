@@ -20,7 +20,7 @@ View::View(MainContentComponent* _mainContentComponent)
 {
     mainContentComponent = _mainContentComponent;
     
-    mainContentComponent->setMiamView(this);
+    mainContentComponent->SetMiamView(this);
 }
 
 

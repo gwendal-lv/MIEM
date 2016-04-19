@@ -18,16 +18,20 @@
 namespace Miam
 {
     
+	/// \brief Timer dedicated to the task of clearing a juce::Label after a specified amount of time.
     class ClearLabelTimer : public Timer
     {
         
         public :
-        void startTimer(Label* _label);
+		/// \brief Starts the timer, and plans the cleaning of given label.
+        void StartTimer(Label* _label);
         void timerCallback() override;
         
         private :
         Label* label;
-        int intervalInMilliseconds = 5000;
+	public :
+		/// \brief Amount of time remaining until the specified label is cleared.
+        const int IntervalInMilliseconds = 5000;
         
     };
     

@@ -14,22 +14,22 @@
 
 namespace Miam {
     
-    // The app may be running in one of all these different modes, except "Null"
+    /// \brief Describes the current running mode of the Presenter (the MiamEdit GUI).
+	/// 
+	/// The app may be running in one of all these different modes, except "Null"
     enum class AppMode {
         
-        Null, /**< undefined state */
-        None, /**< no app mode selected (menu bar available only) */
+        Null, /**< Undefined state */
+        None, /**< No app mode selected (menu bar available only) */
         
-        Loading, /**< between modes change */
+        Loading, /**< Between modes change */
         
-        // Normal editing modes
-        EditSpeakers,
-        EditSpeakersGroups,
-        EditSpatScenes,
-        EditHardwareConfiguration,
+        EditSpeakers, /**< Normal single speakers editing mode */
+        EditSpeakersGroups, /**< Normal speakers' groups editing mode */
+        EditSpatScenes,  /**< Normal spat scene editing mode */
+        EditHardwareConfiguration,  /**< Normal hardware configuration editing mode */
         
-        // When the external Miam Spat Player is running
-        MiamSpatPlaying
+        MiamSpatPlaying /**< When the external Miam Spat Player is running */
     };
     
 }

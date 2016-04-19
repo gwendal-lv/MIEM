@@ -25,9 +25,15 @@ namespace Miam {
     
 
     
-    /*
-     *
-     */
+    /// \brief One of the three main modules of the MiamEdit program, that defines the behavior
+	/// between the user and displayed GUI elements. Miam-specific graphical objects belong to it.
+	///
+	/// Read <a href="http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93presenter">MPV scheme</a>
+	/// for a better understanding of MiamEdit functionnalities between the Model, the Presenter 
+	/// and the View : "The presenter acts upon the model and the view. It retrieves data from 
+	/// repositories (the model), and formats it for display in the view".
+	///
+	/// \remark Usual GUI controls (created from the Projucer) however belong to the View.
     class Presenter
     {
         private :

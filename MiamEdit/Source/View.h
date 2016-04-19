@@ -20,19 +20,23 @@
 
 namespace Miam {
     
-    class Presenter;
+    class Presenter; // sufficient declaration for a pointer class member
     
     
     
     
-    
+    /// \brief One of the three main modules of the MiamEdit program, that obeys orders from 
+	/// the presenter, while only managing simple display logic
+	///
+	/// Read <a href="http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93presenter">MPV scheme</a>
+	/// for a better understanding of MiamEdit functionnalities between the Model, the Presenter 
+	/// and the View : "The view is a passive interface that displays data (the model) and routes
+	/// user commands (events) to the presenter to act upon that data."
+	///
+	/// \remark Usual GUI controls (created from the Projucer) belong to this modules.
     class View {
         
-        
-        
-        
-        
-        
+        // ========== ATTRIBUTES ==========
         private :
         Presenter* presenter;
         
@@ -40,32 +44,53 @@ namespace Miam {
         MainContentComponent* mainContentComponent;
         
         
+
+
+		// ========== METHODS ==========
+
         public :
-        // Default constructor and destructor
+        /// \brief Constructor
+		///
+		/// \param _mainContentComponent Pointer to the unique MainContentComponent, which is
+		/// auto-instanciated by Juce within the MainWindow, and sent to the View module from
+		/// the MiamEditApplication.
         View(MainContentComponent* _mainContentComponent);
+		/// \brief Destructor
         ~View();
-        // called after View construction
+        /// \brief Function called after both View and Presenter are contructed
         void CompleteInitialization(Presenter* _presenter);
         
+
+		// ----- Events to the Presenter -----
         
-        // To be called from all main- and sub-components
+		/// \brief Function called from all main- and sub-components, transmits
+		/// proper events to the Presenter.
         void ButtonClicked(const String& name);
         
-        
-        // Orders from the Presenter
+
+		// ----- Events from the Presenter -----
+
+		/// \brief Obeys orders from the Presenter when the global AppMode has changed.
+		///
+		/// \param newAppMode The application mode that should be displayed as quickly as possible.
         void ChangeAppMode(AppMode newAppMode);
+		/// \brief Obeys orders from the Presenter when a informative message has to de displayed to
+		/// the user.
+		///
+		/// \param message Short sentence to be written in the upper uneditable text box.
         void DisplayInfo(const String& message);
         
         
         
-        // ===== Setters and Getters =====
+        // ----- Setters and Getters -----
+	public :
         
         // Basic
-        MainContentComponent* getMainContentComponent()
-        {return mainContentComponent;}
+		/// \brief Pointer to the unique MainContentComponent.
+        MainContentComponent* GetMainContentComponent()
+		{return mainContentComponent;}
         
         // General UI controls and displays
-        //void
 
         
     };

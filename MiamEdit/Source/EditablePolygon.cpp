@@ -174,7 +174,7 @@ void EditablePolygon::SetActive(bool activate)
 
 // ===== EDITION FUNCTIONS =====
 
-bool EditablePolygon::hitTest(const Point<double>& hitPoint)
+bool EditablePolygon::HitTest(const Point<double>& hitPoint)
 {
     return (contour.contains((float)hitPoint.x, (float)hitPoint.y));
 }
@@ -217,7 +217,7 @@ bool EditablePolygon::tryBeginPointMove(const Point<double>& hitPoint)
     // Finally, was the point inside the polygon ? (which starts a translation)
     if (!hitResult)
     {
-        if (hitTest(hitPoint))
+        if (HitTest(hitPoint))
         {
             pointDragged = EditablePolygonPointId::WholePolygon;
             lastLocation = hitPoint;

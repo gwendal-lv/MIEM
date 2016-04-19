@@ -15,10 +15,10 @@ using namespace Miam;
 
 
 
-void ClearLabelTimer::startTimer(Label* _label)
+void ClearLabelTimer::StartTimer(Label* _label)
 {
     label = _label;
-    juce::Timer::startTimer(intervalInMilliseconds);
+    juce::Timer::startTimer(IntervalInMilliseconds);
 }
 
 void ClearLabelTimer::timerCallback()

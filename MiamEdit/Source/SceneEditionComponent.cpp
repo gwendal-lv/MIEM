@@ -97,6 +97,7 @@ SceneEditionComponent::SceneEditionComponent ()
     sliderR->setRange (0, 255, 1);
     sliderR->setSliderStyle (Slider::LinearHorizontal);
     sliderR->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
+    sliderR->setColour (Slider::thumbColourId, Colour (0xffbbbbbb));
     sliderR->addListener (this);
 
     addAndMakeVisible (labelG = new Label ("new label",
@@ -111,6 +112,7 @@ SceneEditionComponent::SceneEditionComponent ()
     sliderG->setRange (0, 255, 1);
     sliderG->setSliderStyle (Slider::LinearHorizontal);
     sliderG->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
+    sliderG->setColour (Slider::thumbColourId, Colour (0xffbbbbbb));
     sliderG->addListener (this);
 
     addAndMakeVisible (labelB = new Label ("new label",
@@ -125,6 +127,7 @@ SceneEditionComponent::SceneEditionComponent ()
     sliderB->setRange (0, 255, 1);
     sliderB->setSliderStyle (Slider::LinearHorizontal);
     sliderB->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
+    sliderB->setColour (Slider::thumbColourId, Colour (0xffbbbbbb));
     sliderB->addListener (this);
 
     addAndMakeVisible (sendBackwardTextButton = new TextButton ("Send backward text button"));
@@ -510,27 +513,30 @@ BEGIN_JUCER_METADATA
          focusDiscardsChanges="0" fontname="Default font" fontsize="15"
          bold="0" italic="0" justification="33"/>
   <SLIDER name="Slider R" id="c86e71b3772d49e9" memberName="sliderR" virtualName=""
-          explicitFocusOrder="0" pos="40 144 150 24" min="0" max="255"
-          int="1" style="LinearHorizontal" textBoxPos="TextBoxLeft" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          explicitFocusOrder="0" pos="40 144 150 24" thumbcol="ffbbbbbb"
+          min="0" max="255" int="1" style="LinearHorizontal" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          needsCallback="1"/>
   <LABEL name="new label" id="d31faee34d487318" memberName="labelG" virtualName=""
          explicitFocusOrder="0" pos="16 168 24 24" edTextCol="ff000000"
          edBkgCol="0" labelText="G" editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="15"
          bold="0" italic="0" justification="33"/>
   <SLIDER name="SliderG" id="8455ecc13f47ec08" memberName="sliderG" virtualName=""
-          explicitFocusOrder="0" pos="40 168 150 24" min="0" max="255"
-          int="1" style="LinearHorizontal" textBoxPos="TextBoxLeft" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          explicitFocusOrder="0" pos="40 168 150 24" thumbcol="ffbbbbbb"
+          min="0" max="255" int="1" style="LinearHorizontal" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          needsCallback="1"/>
   <LABEL name="new label" id="ae5abc145d9184cf" memberName="labelB" virtualName=""
          explicitFocusOrder="0" pos="16 192 24 24" edTextCol="ff000000"
          edBkgCol="0" labelText="B" editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="15"
          bold="0" italic="0" justification="33"/>
   <SLIDER name="Slider B" id="15aa4b94476e3563" memberName="sliderB" virtualName=""
-          explicitFocusOrder="0" pos="40 192 150 24" min="0" max="255"
-          int="1" style="LinearHorizontal" textBoxPos="TextBoxLeft" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          explicitFocusOrder="0" pos="40 192 150 24" thumbcol="ffbbbbbb"
+          min="0" max="255" int="1" style="LinearHorizontal" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          needsCallback="1"/>
   <TEXTBUTTON name="Send backward text button" id="a356ce3575b4d98b" memberName="sendBackwardTextButton"
               virtualName="" explicitFocusOrder="0" pos="16 112 104 24" bgColOff="33000000"
               bgColOn="ffffffff" buttonText="Send backward" connectedEdges="6"
