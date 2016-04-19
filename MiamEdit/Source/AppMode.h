@@ -17,10 +17,10 @@ namespace Miam {
     // The app may be running in one of all these different modes, except "Null"
     enum class AppMode {
         
-        Null, // undefined state
-        None, // no app mode selected (menu bar available only)
+        Null, /**< undefined state */
+        None, /**< no app mode selected (menu bar available only) */
         
-        Loading, // between modes change
+        Loading, /**< between modes change */
         
         // Normal editing modes
         EditSpeakers,
