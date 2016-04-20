@@ -14,20 +14,21 @@
 
 namespace Miam {
     
-    // The modes that describes the current state of the scene manager
+    /// \brief Describes the current running mode of SceneEditionManager, which is a sub-module of
+    /// the Presenter.
     enum class SceneEditionMode {
         
         
-        Null, // undefined state
+        Null, ///< Undefined state
         
-        Loading, // when scene manager is loading something ?
+        Loading, ///< When scene manager is loading something (useless at the moment ??)
         
-        NoAreaSelected, // nothing selected, ready to process mouse input from canvas
-        PolygonSelected, // polygon selected, still ready to process mouse input from canvas
-        EditingArea, // mouse is editing the current area
+        NoAreaSelected, ///< Nothing selected, ready to process mouse input from canvas
+        PolygonSelected, ///< Polygon selected, still ready to process mouse input from canvas
+        EditingArea, ///< Mouse is editing the current area
         
-        WaitingForPointCreation, // mouse input will create a point
-        WaitingForPointDeletion // mouse input will delete a point
+        WaitingForPointCreation, ///< Next mouse input will create a point
+        WaitingForPointDeletion ///< Next mouse input will delete a point
         
     };
     

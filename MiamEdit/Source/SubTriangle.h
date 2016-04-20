@@ -19,14 +19,14 @@ namespace Miam
 {
     
     /// <summary>
-    /// Geometric structure to make the precise interaction area detection
+    /// Geometric structure to make the precise interaction quantification
     /// easier and faster.
     /// </summary><remarks><para>
     /// The triangle i is shaped by points :
     ///     - G, P(i), P(i+1) for i &lt; N-1
     ///     - G, P(N-1), P(0) for i=N-1
     /// Which will be named G, B, C (see documentation for algorithm details)
-    /// BUT POINTS ORDER IS NOT GUARANTEED
+    /// ((but points order is not guaranteed))
     ///
     /// </para><para>
     /// T is the interaction point.</para>

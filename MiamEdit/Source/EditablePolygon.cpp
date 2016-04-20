@@ -56,7 +56,7 @@ void EditablePolygon::graphicalInit()
 void EditablePolygon::behaviorInit()
 {
     SetActive(false);
-    pointDragged = EditablePolygonPointId::None;
+    pointDragged = EditableAreaPointId::None;
 }
 
 
@@ -189,7 +189,7 @@ bool EditablePolygon::tryBeginPointMove(const Point<double>& hitPoint)
     if (manipulationPointInPixels.getDistanceFrom(hitPoint)
         < (centerCircleRadius+centerContourWidth)) // same radius than the center
     {
-        pointDragged = EditablePolygonPointId::ManipulationPoint;
+        pointDragged = EditableAreaPointId::ManipulationPoint;
         hitResult = true;
     }
     
@@ -209,7 +209,7 @@ bool EditablePolygon::tryBeginPointMove(const Point<double>& hitPoint)
         if (centerInPixels.getDistanceFrom(hitPoint.toDouble())
             < (centerCircleRadius+centerContourWidth))
         {
-            pointDragged = EditablePolygonPointId::Center;
+            pointDragged = EditableAreaPointId::Center;
             hitResult = true;
         }
     }
@@ -219,7 +219,7 @@ bool EditablePolygon::tryBeginPointMove(const Point<double>& hitPoint)
     {
         if (HitTest(hitPoint))
         {
-            pointDragged = EditablePolygonPointId::WholePolygon;
+            pointDragged = EditableAreaPointId::WholeArea;
             lastLocation = hitPoint;
             hitResult = true;
         }
@@ -241,7 +241,7 @@ void EditablePolygon::movePoint(const Point<double>& newLocation)
         }
     }
     
-    else if (pointDragged == EditablePolygonPointId::ManipulationPoint)
+    else if (pointDragged == EditableAreaPointId::ManipulationPoint)
     {
         // Computation of the RotScale transformation needed to move the manipulation
         // point to this new location (RotScale relative to the center)
@@ -314,7 +314,7 @@ void EditablePolygon::movePoint(const Point<double>& newLocation)
         }
     }
     
-    else if (pointDragged == EditablePolygonPointId::Center)
+    else if (pointDragged == EditableAreaPointId::Center)
     {
         if (isNewCenterValid(newLocation))
         {
@@ -325,7 +325,7 @@ void EditablePolygon::movePoint(const Point<double>& newLocation)
         }
     }
     
-    else if (pointDragged == EditablePolygonPointId::WholePolygon)
+    else if (pointDragged == EditableAreaPointId::WholeArea)
     {
         // Déplacement itératif
         Point<double> translation = newLocation - lastLocation;
@@ -343,7 +343,7 @@ void EditablePolygon::movePoint(const Point<double>& newLocation)
 void EditablePolygon::endPointMove()
 {
     computeManipulationPoint();
-    pointDragged = EditablePolygonPointId::None;
+    pointDragged = EditableAreaPointId::None;
 }
 
 

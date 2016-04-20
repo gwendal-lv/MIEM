@@ -19,20 +19,7 @@
 
 namespace Miam {
     
-    /// \brief Contains the integer Id of a contour or a special polygon point.
-    ///
-    /// Values from 0 to +inf refer to "normal" polygon contour points, negative values refer
-    /// to "special" polygon points (the center, or editing points).
-    enum EditablePolygonPointId : int { // enum *class* brings cast (to int) issues...
-        
-        ManipulationPoint = -40, ///< Point that allows rotation and scaling of the whole area
-        Center = -30,
-        WholePolygon = -20,
-        
-        None = -10
-        
-    };
-    
+ 
     
     
     

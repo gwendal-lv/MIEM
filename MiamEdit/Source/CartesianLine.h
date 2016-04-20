@@ -19,16 +19,20 @@
 namespace Miam {
     
     
+    /// \brief 2-D line internally defined by an equation of the form a.x + b.y + c = 0
     class CartesianLine
     {
         
         private :
-        double a, b, c; // coefficient de l'équation ax + by + c = 0
+        double a, b, c; // coefficients de l'équation ax + by + c = 0
         
         
         
         public :
+        /// \brief Contruction of the line equation from 2 points belonging to it.
         CartesianLine(Point<double> point1, Point<double> point2);
+        /// \brief Tells wether a moving point has crossed this line during the given
+        /// small displacement, or not.
         bool PointWentThrough(Point<double> previousLocation, Point<double> nextLocation);
         
         

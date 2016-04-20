@@ -21,22 +21,27 @@ namespace Miam
 {
     
     
-    
+    /// \brief Miam-specific and necessary mathematical utility functions.
+    ///
+    /// Mostly contains static functions or contants definitions.
     class Math {
         
         
         public :
         
-        // Positive Modulo (for inputValue >0 or <0 but modulo>0)
+        /// \brief Computes a specific modulo operation
+        ///
+        /// \return The only modulo result in [[0 ; modulo-1]]
+        /// \param inputValue Value to apply the modulo to (may be >0 or <0)
+        /// \param modulo Modulo operator value (must be >0)
         static int Modulo(int inputValue, int modulo);
         
-        /// <summary>
-        /// Result in Radians.
+        /// \brief Computes an angle that is positive for sure
         ///
         /// Self-made function to be sure of the numerical behavior.
-        /// </summary>
-        /// <param name="v">Must be non-zero</param>
-        /// <returns></returns>
+        ///
+        /// \return Result in Radians.
+        /// \param p Any point but the origin
         static double ComputePositiveAngle(Point<double> p);
         
    };

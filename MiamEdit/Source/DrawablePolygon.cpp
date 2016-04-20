@@ -11,14 +11,12 @@
 using namespace Miam;
 
 
-// Default constructor build a centered dark grey triangle
 DrawablePolygon::DrawablePolygon(int64_t _Id) :
     DrawablePolygon(_Id, Point<double>(0.5f,0.5f), 3, 0.1f, Colours::darkgrey)
 {
 }
 
-// Construction of a regular polygon, defined by a center, a radius, a nb of pts, and
-// optionnaly the current canvas ratio (needed to draw a regular polygon)
+
 DrawablePolygon::DrawablePolygon(int64_t _Id, Point<double> _center, int pointsCount, float radius, Colour _fillColour, float _canvasRatio) :
     DrawableArea(_Id, _center, _fillColour)
 {
@@ -41,7 +39,6 @@ DrawablePolygon::DrawablePolygon(int64_t _Id, Point<double> _center, int pointsC
     createJucePolygon();
 }
 
-// Construction of any polygon defined by its center and contour points
 DrawablePolygon::DrawablePolygon(int64_t _Id, Point<double> _center, std::vector<Point<double>>& _contourPoints, Colour _fillColour) :
     DrawableArea(_Id, _center, _fillColour)
 {

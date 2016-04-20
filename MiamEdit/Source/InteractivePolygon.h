@@ -21,17 +21,21 @@
 namespace Miam
 {
     
-    
+    /// \brief A polygonal area with interactive abilities.
     class InteractivePolygon : public DrawablePolygon, public InteractiveArea
     {
         
         
         // Construction
         public :
+        /// \param _Id See DrawablePolygon::DrawablePolygon
         InteractivePolygon(int64_t _Id);
+        /// \param _Id See DrawablePolygon::DrawablePolygon
         InteractivePolygon(int64_t _Id, Point<double> _center, int pointsCount, float radius, Colour _fillColour, float _canvasRatio);
+        /// \param _Id See DrawablePolygon::DrawablePolygon
         InteractivePolygon(int64_t _Id, Point<double> _center, std::vector<Point<double>>& _contourPoints, Colour _fillColour);
         
+        // Contruction helpers
         private :
         void init();
         
@@ -48,27 +52,20 @@ namespace Miam
         
         // Updates
         protected :
-        /// <summary>
-        /// Computation of the subdivisions of the polygon.
-        /// It will be divided into triangles, each triangle being connected
-        /// to the center.
+        /// \brief Computation of the subdivisions of the polygon : it will be divided into
+        /// triangles, each triangle being connected to the center.
         ///
-        /// Computation of the angular values (from the center) taken by each
+        /// Computation of the angular values (positive, and from the center) taken by each
         /// triangle.
-        /// </summary>
         void updateSubTriangles();
         
         
         // Interactions computing
         public :
-        /// <summary>
-        /// Computes the weight of an interaction between a point (touch, mouse, ...)
-        /// and the polygon.
-        /// </summary>
-        /// <param name="T">Interaction point</param>
         double ComputeInteractionWeight(Point<double> T) override;
         
-        // Private helpers (for interaction computing)
+        
+        // ----- Private helpers (for interaction computing) -----
         private :
         /// <summary>
         /// Finds the id of the interacted sub triangle.
