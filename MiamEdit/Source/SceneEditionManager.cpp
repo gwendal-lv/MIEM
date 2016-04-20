@@ -41,7 +41,7 @@ SceneEditionManager::SceneEditionManager(View* _view) :
 			Point<double>(0.2f+0.13f*i,0.3f+0.1f*i), 3+2*i, 0.15f+0.04f*(i+1),
 			Colour(80*(uint8)i, 0, 255),
 			sceneEditionComponent->GetSceneCanvasComponent()->GetRatio());
-        addEditableArea(currentEditablePolygon);
+        addEditablePolygon(currentEditablePolygon);
     }
     
     
@@ -81,7 +81,7 @@ DrawableArea& SceneEditionManager::GetDrawableArea(int position)
 
 // ===== UTILITIES =====
 
-void SceneEditionManager::addEditableArea(EditablePolygon &newPolygon, bool selectArea)
+void SceneEditionManager::addEditablePolygon(EditablePolygon &newPolygon, bool selectArea)
 {
     // Internal objects modification
     polygons.push_back(newPolygon);
@@ -235,7 +235,7 @@ void SceneEditionManager::OnCanvasMouseDown(Point<int> clicLocation)
     if (mode == SceneEditionMode::PolygonSelected)
     {
         // did we clic next to a point, or at least inside the area ?
-        if(! GetEditablePolygon(selectedAreaUniqueId).tryBeginPointMove(clicLocation.toDouble()))
+        if(! GetEditablePolygon(selectedAreaUniqueId).TryBeginPointMove(clicLocation.toDouble()))
         {
             /* if not, we are sure that we clicked outside (checked by tryBeginPointMove)
              * => it is a DEselection (maybe selection of another just after this)
@@ -256,7 +256,7 @@ void SceneEditionManager::OnCanvasMouseDown(Point<int> clicLocation)
     // New point creation
     if (mode == SceneEditionMode::WaitingForPointCreation)
     {
-        if(! GetEditablePolygon(selectedAreaUniqueId).tryCreatePoint(clicLocation.toDouble()))
+        if(! GetEditablePolygon(selectedAreaUniqueId).TryCreatePoint(clicLocation.toDouble()))
             view->DisplayInfo("No point created : please click closer to an existing point !");
             
         // No matter wether the point was created or not
@@ -266,7 +266,7 @@ void SceneEditionManager::OnCanvasMouseDown(Point<int> clicLocation)
     else if (mode == SceneEditionMode::WaitingForPointDeletion)
     {
         String returnMsg
-        = GetEditablePolygon(selectedAreaUniqueId).tryDeletePoint(clicLocation.toDouble());
+        = GetEditablePolygon(selectedAreaUniqueId).TryDeletePoint(clicLocation.toDouble());
         if(returnMsg != "")
             view->DisplayInfo(returnMsg);
         
@@ -279,7 +279,7 @@ void SceneEditionManager::OnCanvasMouseDown(Point<int> clicLocation)
 void SceneEditionManager::OnCanvasMouseDrag(Point<int> mouseLocation)
 {
     if (selectedAreaUniqueId>=0)
-        GetEditablePolygon(selectedAreaUniqueId).movePoint(mouseLocation.toDouble());
+        GetEditablePolygon(selectedAreaUniqueId).MovePoint(mouseLocation.toDouble());
     
     
     sceneEditionComponent->repaint();
@@ -287,7 +287,7 @@ void SceneEditionManager::OnCanvasMouseDrag(Point<int> mouseLocation)
 void SceneEditionManager::OnCanvasMouseUp()
 {
     if (selectedAreaUniqueId>=0)
-        GetEditablePolygon(selectedAreaUniqueId).endPointMove();
+        GetEditablePolygon(selectedAreaUniqueId).EndPointMove();
     
     
     sceneEditionComponent->repaint();
@@ -325,7 +325,7 @@ void SceneEditionManager::OnPasteArea()
         EditablePolygon newPolygon = GetEditablePolygon(areaToCopy); // may throw exception !!!!
         newPolygon.SetId(nextAreaId);
         newPolygon.Translate(Point<double>(30,30));
-        addEditableArea(newPolygon, true);
+        addEditablePolygon(newPolygon, true);
     }
 }
 void SceneEditionManager::OnAddArea()
@@ -334,7 +334,7 @@ void SceneEditionManager::OnAddArea()
                                                  Point<double>(0.5f,0.5f), 4, 0.15f,
                                                  Colours::grey,
                                                  sceneEditionComponent->GetSceneCanvasComponent()->GetRatio());
-    addEditableArea(newPolygon, true);
+    addEditablePolygon(newPolygon, true);
 }
 void SceneEditionManager::OnDeleteArea()
 {

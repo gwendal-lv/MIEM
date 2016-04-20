@@ -56,7 +56,7 @@ void EditablePolygon::graphicalInit()
 void EditablePolygon::behaviorInit()
 {
     SetActive(false);
-    pointDragged = EditableAreaPointId::None;
+    pointDraggedId = EditableAreaPointId::None;
 }
 
 
@@ -181,7 +181,7 @@ bool EditablePolygon::HitTest(const Point<double>& hitPoint)
 
 
 
-bool EditablePolygon::tryBeginPointMove(const Point<double>& hitPoint)
+bool EditablePolygon::TryBeginPointMove(const Point<double>& hitPoint)
 {
     bool hitResult = false;
     
@@ -189,7 +189,7 @@ bool EditablePolygon::tryBeginPointMove(const Point<double>& hitPoint)
     if (manipulationPointInPixels.getDistanceFrom(hitPoint)
         < (centerCircleRadius+centerContourWidth)) // same radius than the center
     {
-        pointDragged = EditableAreaPointId::ManipulationPoint;
+        pointDraggedId = EditableAreaPointId::ManipulationPoint;
         hitResult = true;
     }
     
@@ -198,7 +198,7 @@ bool EditablePolygon::tryBeginPointMove(const Point<double>& hitPoint)
     {
         if (contourPointsInPixels[i].getDistanceFrom(hitPoint) < pointDraggingRadius)
         {
-            pointDragged = i;
+            pointDraggedId = i;
             hitResult = true;
         }
     }
@@ -209,7 +209,7 @@ bool EditablePolygon::tryBeginPointMove(const Point<double>& hitPoint)
         if (centerInPixels.getDistanceFrom(hitPoint.toDouble())
             < (centerCircleRadius+centerContourWidth))
         {
-            pointDragged = EditableAreaPointId::Center;
+            pointDraggedId = EditableAreaPointId::Center;
             hitResult = true;
         }
     }
@@ -219,7 +219,7 @@ bool EditablePolygon::tryBeginPointMove(const Point<double>& hitPoint)
     {
         if (HitTest(hitPoint))
         {
-            pointDragged = EditableAreaPointId::WholeArea;
+            pointDraggedId = EditableAreaPointId::WholeArea;
             lastLocation = hitPoint;
             hitResult = true;
         }
@@ -228,20 +228,20 @@ bool EditablePolygon::tryBeginPointMove(const Point<double>& hitPoint)
     return hitResult;
 }
 
-void EditablePolygon::movePoint(const Point<double>& newLocation)
+void EditablePolygon::MovePoint(const Point<double>& newLocation)
 {
-    if (pointDragged >= 0)
+    if (pointDraggedId >= 0)
     {
         if (isNewContourPointValid(newLocation))
         {
-            contourPointsInPixels[pointDragged] = newLocation;
-            contourPoints[pointDragged] = Point<double>(
+            contourPointsInPixels[pointDraggedId] = newLocation;
+            contourPoints[pointDraggedId] = Point<double>(
                                             newLocation.x / ((float)canvasWidth) ,
                                             newLocation.y / ((float)canvasHeight) );
         }
     }
     
-    else if (pointDragged == EditableAreaPointId::ManipulationPoint)
+    else if (pointDraggedId == EditableAreaPointId::ManipulationPoint)
     {
         // Computation of the RotScale transformation needed to move the manipulation
         // point to this new location (RotScale relative to the center)
@@ -314,7 +314,7 @@ void EditablePolygon::movePoint(const Point<double>& newLocation)
         }
     }
     
-    else if (pointDragged == EditableAreaPointId::Center)
+    else if (pointDraggedId == EditableAreaPointId::Center)
     {
         if (isNewCenterValid(newLocation))
         {
@@ -325,7 +325,7 @@ void EditablePolygon::movePoint(const Point<double>& newLocation)
         }
     }
     
-    else if (pointDragged == EditableAreaPointId::WholeArea)
+    else if (pointDraggedId == EditableAreaPointId::WholeArea)
     {
         // Déplacement itératif
         Point<double> translation = newLocation - lastLocation;
@@ -340,10 +340,10 @@ void EditablePolygon::movePoint(const Point<double>& newLocation)
 }
 
 
-void EditablePolygon::endPointMove()
+void EditablePolygon::EndPointMove()
 {
     computeManipulationPoint();
-    pointDragged = EditableAreaPointId::None;
+    pointDraggedId = EditableAreaPointId::None;
 }
 
 
@@ -365,7 +365,7 @@ void EditablePolygon::Translate(const Point<double>& translation)
 }
 
 
-bool EditablePolygon::tryCreatePoint(const Point<double>& hitPoint)
+bool EditablePolygon::TryCreatePoint(const Point<double>& hitPoint)
 {
     int closestPointIndex = -1;
     double closestDistance = canvasWidth+canvasHeight;
@@ -393,11 +393,11 @@ bool EditablePolygon::tryCreatePoint(const Point<double>& hitPoint)
     else
         return false;
 }
-String EditablePolygon::tryDeletePoint(const Point<double>& hitPoint)
+String EditablePolygon::TryDeletePoint(const Point<double>& hitPoint)
 {
     if (contourPointsInPixels.size() > 3)
     {
-        // - same code as in "tryCreatePoint" -
+        // - same code as in "TryCreatePoint" -
         int closestPointIndex = -1;
         double closestDistance = canvasWidth+canvasHeight;
         // At first, we look for the closest point
@@ -410,7 +410,7 @@ String EditablePolygon::tryDeletePoint(const Point<double>& hitPoint)
                 closestDistance = currentDistance;
             }
         }
-        // - same code as in "tryCreatePoint" -
+        // - same code as in "TryCreatePoint" -
         // Is the hitPoint to far from the closest point ?
         if ( closestDistance <= pointDraggingRadius )
         {
@@ -457,8 +457,8 @@ bool EditablePolygon::isCenterValidWithoutContourPoint(int contourPointId)
 bool EditablePolygon::isNewContourPointValid(const Point<double>& newLocation)
 {
     // Init : we save indexes of adjacent points (that will help build the borders)
-    int pointBefore = Math::Modulo(pointDragged-1, (int)contourPointsInPixels.size());
-    int pointAfter = Math::Modulo(pointDragged+1, (int)contourPointsInPixels.size());
+    int pointBefore = Math::Modulo(pointDraggedId-1, (int)contourPointsInPixels.size());
+    int pointAfter = Math::Modulo(pointDraggedId+1, (int)contourPointsInPixels.size());
     /* Étape 1, on construit les équations des droites suivantes :
      * - droite 1 entre le centre et le point d'avant
      * - droite 2 entre le centre et le point d'après
@@ -470,8 +470,8 @@ bool EditablePolygon::isNewContourPointValid(const Point<double>& newLocation)
     /* Étape 2
      * on vérifie ne pas avoir changé de côté par rapport aux 2 lignes considérées
      */
-    if ( droite1.PointWentThrough(contourPointsInPixels[pointDragged], newLocation)
-        || droite2.PointWentThrough(contourPointsInPixels[pointDragged], newLocation) )
+    if ( droite1.PointWentThrough(contourPointsInPixels[pointDraggedId], newLocation)
+        || droite2.PointWentThrough(contourPointsInPixels[pointDraggedId], newLocation) )
     {
         return false;
     }

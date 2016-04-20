@@ -29,9 +29,13 @@
 //==============================================================================
 /**
                                                                     //[Comments]
-    An auto-generated component, created by the Introjucer.
 
-    Describe your class and how it works here!
+ // \brief An important component that corresponds to an Miam::AppMode of the
+ // Miam::Presenter.
+ //
+ // An auto-generated component, created by the Projucer.
+ //
+
                                                                     //[/Comments]
 */
 class HardwareConfigurationComponent  : public Component

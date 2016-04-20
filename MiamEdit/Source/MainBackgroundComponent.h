@@ -31,13 +31,17 @@ namespace Miam { class View; } // sufficient declaration, as we just declare poi
 
 
 
+
 //==============================================================================
 /**
-                                                                    //[Comments]
-    An auto-generated component, created by the Introjucer.
+//[Comments]
 
-    Describe your class and how it works here!
-                                                                    //[/Comments]
+// \brief The background component with a few UI controls (always displayed).
+//
+// An auto-generated component, created by the Projucer.
+//
+
+//[/Comments]
 */
 class MainBackgroundComponent  : public Component,
                                  public ButtonListener

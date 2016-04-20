@@ -36,6 +36,8 @@ namespace Miam
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
+
+/// \brief Parent component of all others.
 class MainContentComponent : public Component
 {
 private:
