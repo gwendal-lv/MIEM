@@ -8,6 +8,8 @@
 
 #include "DrawablePolygon.h"
 
+#include "SceneCanvasComponent.h"
+
 using namespace Miam;
 
 
@@ -20,19 +22,25 @@ DrawablePolygon::DrawablePolygon(int64_t _Id) :
 DrawablePolygon::DrawablePolygon(int64_t _Id, Point<double> _center, int pointsCount, float radius, Colour _fillColour, float _canvasRatio) :
     DrawableArea(_Id, _center, _fillColour)
 {
-    // Ratio managing : if <1 (height > width), we just inverse it
-    float canvasRatio = _canvasRatio;
-    if (canvasRatio < 1)
-        canvasRatio = 1/canvasRatio;
-    
+    float xScale, yScale;
+    if (_canvasRatio > 1.0f) // ratio of an landscape-oriented window
+    {
+        xScale = 1.0f/_canvasRatio;
+        yScale = 1.0f;
+    }
+    else // ratio of an portrait-oriented window
+    {
+        xScale = 1.0f;
+        yScale = 1.0f*_canvasRatio;
+    }
     
     // Computation of the points
     float currentAngle;
     for (int i=0; i<pointsCount ; i++)
     {
         currentAngle = 2.0f*float_Pi*(float)(i)/(float)(pointsCount);
-        contourPoints.push_back(Point<double>(center.x + radius/canvasRatio*cosf(currentAngle),
-                                             center.y + radius*sinf(currentAngle)));
+        contourPoints.push_back(Point<double>(center.x + radius*xScale*cosf(currentAngle),
+                                             center.y + radius*yScale*sinf(currentAngle)));
     }
     
     // Definition of the Juce polygon
@@ -85,10 +93,10 @@ void DrawablePolygon::Paint(Graphics& g)
 }
 
 
-void DrawablePolygon::CanvasResized(int width, int height)
+void DrawablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 {
-    DrawableArea::CanvasResized(width, height);
+    DrawableArea::CanvasResized(_parentCanvas);
     
-    createJucePolygon(width, height);
+    createJucePolygon(parentCanvas->getWidth(), parentCanvas->getHeight());
 }
 

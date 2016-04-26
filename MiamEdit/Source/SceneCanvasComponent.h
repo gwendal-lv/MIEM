@@ -19,6 +19,10 @@
 namespace Miam
 {
     class SceneEditionManager;
+    
+
+    
+    
 }
 using namespace Miam;
 
@@ -30,7 +34,24 @@ using namespace Miam;
 class SceneCanvasComponent    : public Component
 {
 public:
-    SceneCanvasComponent();
+    
+    // = = = = = = = = = = ENUMS = = = = = = = = = =
+    
+    /// \brief IDs for describing a particular canvas, or canvases in general
+    ///
+    enum Id : int { // enum *class* brings cast issues... (wait for C++14 ?)
+        None = -1, ///< No canvas currently selected
+        
+        FixedScene = 0, ///< The fixed scene, that never changes during a spat performance
+        MainScene, ///< The main scene, that can be changed during a spatialization performance
+        SceneCanvasesCount ///< Automatically contains the amount of accessible canvases
+    };
+    
+    
+    
+    // = = = = = = = = = = METHODS = = = = = = = = = =
+    
+    SceneCanvasComponent(SceneCanvasComponent::Id _id);
     ~SceneCanvasComponent();
     
 	/// \brief Also called from Miam::View::CompleteInitialization
@@ -45,12 +66,20 @@ public:
     void mouseUp(const juce::MouseEvent &event);
     
     // Getters and Setters
-    float GetRatio() {return ((float)getWidth())/((float)getHeight());}
+    float GetRatio() {return ((float)getWidth()) / ((float)getHeight()) ; }
+    void SetIsSelectedForEditing(bool isSelected) {selectedForEditing = isSelected;}
     
     
-    // Attributes
+    // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
+    
     private :
+    // link back to parent module
     SceneEditionManager* sceneEditionManager = 0; // default c++ null pointer
+    
+    // Self ID
+    SceneCanvasComponent::Id selfId;
+    
+    bool selectedForEditing;
     
 
 private:

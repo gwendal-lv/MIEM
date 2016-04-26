@@ -42,14 +42,16 @@ void View::CompleteInitialization(Presenter* _presenter)
 void View::ButtonClicked(const String& name)
 {    
     AppMode answeredAppMode = AppMode::Null;
-    if (name == "textButtonSpeakers")
+    if (name == "Speakers text button")
         answeredAppMode = presenter->appModeChangeRequest(AppMode::EditSpeakers);
-    else if (name == "textButtonSpeakersGroups")
+    else if (name == "Speakers Groups text button")
         answeredAppMode = presenter->appModeChangeRequest(AppMode::EditSpeakersGroups);
-    else if (name == "textButtonScenes")
+    else if (name == "Scenes text button")
         answeredAppMode = presenter->appModeChangeRequest(AppMode::EditSpatScenes);
-    else if (name == "textButtonHardware")
+    else if (name == "Hardware Configuration text button")
         answeredAppMode = presenter->appModeChangeRequest(AppMode::EditHardwareConfiguration);
+    else if (name == "Start text button")
+        answeredAppMode = presenter->appModeChangeRequest(AppMode::MiamSpatPlaying);
     
     // This is a behavior : defined in presenter then....
     /*if (answeredAppMode != AppMode::Null)

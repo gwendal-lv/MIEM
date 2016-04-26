@@ -40,16 +40,17 @@ namespace Miam {
 	/// directly, and not to the Presenter.
     class SceneEditionManager {
         
+        // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
         
         // Graphical objects belong to the Presenter module, not to the View
         private :
-        
-        // internal states
-        SceneEditionMode mode;
-        
         // links back to the View module
         View* view;
         SceneEditionComponent* sceneEditionComponent;
+        
+        protected :
+        // internal states
+        SceneEditionMode mode;
         
         // Graphic objects instances
         std::vector<EditablePolygon> polygons;
@@ -60,11 +61,30 @@ namespace Miam {
         std::map< int64_t, int > polygonsVectorIndexes;
         // TODO : a map for each kind of area !! if we can't find the Id, it's wasn't a polygon (maybe an ellipse, or something else...)
         
-        // Display & editing attributes
-        std::deque<int64_t> areasOrder; // area at index zero is the first drawn (lowest layer). Size = size of drawable areas = size of editable areas
-        int64_t selectedAreaUniqueId = -1; // -1 means no area selected
-        int64_t areaToCopy = -1; // vector index of the polygon to copy (idem considered value -1)
         
+        // Display & editing attributes for Canvases
+        SceneCanvasComponent::Id selectedCanvasId;
+        
+        // Display & editing attributes for Areas
+        int64_t selectedAreaUniqueId = -1; ///< -1 means no area selected
+        int64_t areaToCopy = -1; ///< vector index of the polygon to copy (idem for value -1)
+        
+        /// \brief Indicates the drawing order of areas (contents of each std::deque
+        /// element), for a given canvas (canvas id is an position of the std::vector)
+        ///
+        /// Area at index zero is the first drawn (lowest layer). Size of a second-level
+        /// deque = size of drawable areas of the corresponding canvas = size of
+        /// editable areas of the corresponding canvas
+        std::vector<std::deque<int64_t>> areasOrder;
+        
+        /// \brief Indicates the SceneCanvasComponent::Id of the canvas on which an area
+        /// (referenced by its unique ID) is drawn.
+        std::map< int64_t, int > areaCanvasId;
+        
+        
+        
+        
+        // = = = = = = = = = = METHODS = = = = = = = = = =
         
         public :
         /// \brief Construction (the whole Presenter module is built after the View).
@@ -80,22 +100,32 @@ namespace Miam {
         //EditableArea& GetEditableArea(int64_t uniqueId);
         public :
 		/// \brief Amount of areas available for drawing.
-        size_t GetDrawableAreasSize();
+        size_t GetDrawableAreasCount(SceneCanvasComponent::Id _id);
 		/// \brief Get an area's reference for drawing.
-        DrawableArea& GetDrawableArea(int position);
+        DrawableArea& GetDrawableArea(SceneCanvasComponent::Id _id, size_t position);
         
         
         // ------ areas managing ------
         protected :
-		/// \brief Creates a polygon, adds it internally and performs all the
-		/// necessary graphic updates.
+        
+		/// \brief Creates a polygon, adds it internally to the current activated canvas,
+        /// and performs all the necessary graphic updates.
         void addEditablePolygon(EditablePolygon& newPolygon, bool selectArea = false);
 		/// \brief Deletes an area referenced by its unique ID.
         void deleteEditableArea(int64_t uniqueId);
-		/// \brief Sets a new active area, and commands all necessary graphic updates.
+        /// \brief Sets a new active area, and commands all necessary graphic updates.
         void setSelectedAreaUniqueId(int64_t newIndex);
+        /// \brief Sets the new active canvas and updates corresponding graphic objects.
+        ///
+        /// Unselected any previously selected area
+        void setSelectedCanvasId(SceneCanvasComponent::Id _id);
+        /// \brief Indicates the unique ID of an area that may be copied, if the user clicks
+        /// on paste later.
+        void setAreaToCopy(int64_t newUniqueId);
 
+        
 		// ----- Running mode -----
+        protected :
 		/// \brief Launches the necessary graphic updates, then changes the running mode.
         void setMode(SceneEditionMode newMode);
         
@@ -103,9 +133,9 @@ namespace Miam {
         // ----- Events from View -----
         public :
         
-        void OnCanvasMouseDown(Point<int> clicLocation);
-        void OnCanvasMouseDrag(Point<int> mouseLocation);
-        void OnCanvasMouseUp();
+        void OnCanvasMouseDown(SceneCanvasComponent::Id canvasId, Point<int> clicLocation);
+        void OnCanvasMouseDrag(SceneCanvasComponent::Id canvasId, Point<int> mouseLocation);
+        void OnCanvasMouseUp(SceneCanvasComponent::Id canvasId);
         
         void OnAddPoint();
         void OnDeletePoint();

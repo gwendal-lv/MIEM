@@ -73,7 +73,7 @@ namespace Miam {
         // Display functions
         public :
         virtual void Paint(Graphics& g) override;
-        virtual void CanvasResized(int width, int height) override;
+        virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
         
 
     };

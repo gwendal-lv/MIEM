@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 4.2.0
+  Created with Projucer version: 4.2.1
 
   ------------------------------------------------------------------------------
 
@@ -31,17 +31,16 @@ namespace Miam { class View; } // sufficient declaration, as we just declare poi
 
 
 
-
 //==============================================================================
 /**
-//[Comments]
+                                                                    //[Comments]
 
 // \brief The background component with a few UI controls (always displayed).
 //
 // An auto-generated component, created by the Projucer.
 //
 
-//[/Comments]
+                                                                    //[/Comments]
 */
 class MainBackgroundComponent  : public Component,
                                  public ButtonListener
@@ -81,12 +80,12 @@ private:
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<TextButton> textButtonSpeakers;
-    ScopedPointer<TextButton> textButtonSpeakersGroups;
+    ScopedPointer<TextButton> speakersTextButton;
+    ScopedPointer<TextButton> speakersGroupsTextButton;
     ScopedPointer<Label> mainInfoLabel;
-    ScopedPointer<TextButton> textButtonScenes;
-    ScopedPointer<TextButton> textButtonHardware;
-    ScopedPointer<TextButton> textButtonStartSpat;
+    ScopedPointer<TextButton> scenesTextButton;
+    ScopedPointer<TextButton> hardwareConfTextButton;
+    ScopedPointer<TextButton> startTextButton;
     ScopedPointer<Label> label;
 
 

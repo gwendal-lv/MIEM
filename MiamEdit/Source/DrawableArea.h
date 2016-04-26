@@ -13,6 +13,9 @@
 
 #include "JuceHeader.h"
 
+// Simple declaration for a pointer
+class SceneCanvasComponent;
+
 
 namespace Miam
 {
@@ -38,12 +41,12 @@ namespace Miam
         /// The whole painting job is at the moment performed by the CPU only, but should be
         /// replaced by OpenGL drawing soon.
         virtual void Paint(Graphics& g) = 0;
-        /// \brief This function should be called when canvas is resized,
-        /// or when a drawing refresh is needed.
+        /// \brief This function should be called when the area is associated to a (new) canvas,
+        /// when its canvas is resized, or when a drawing refresh is needed.
         ///
         /// It updates real-screen pixel coordinates from internally stored normalized coordinates
         /// of all points.
-        virtual void CanvasResized(int width, int height) = 0;
+        virtual void CanvasResized(SceneCanvasComponent* parentCanvas) = 0;
         
         
         // ----- Setters and Getters -----
@@ -61,6 +64,7 @@ namespace Miam
         // General data
         protected :
         uint64 Id; ///< Unique ID
+        SceneCanvasComponent* parentCanvas; ///< Parent that draws this(needed to get display properties)
         
         // Geometric data
         protected :

@@ -10,6 +10,8 @@
 
 #include "DrawableArea.h"
 
+#include "SceneCanvasComponent.h"
+
 using namespace Miam;
 
 
@@ -54,9 +56,10 @@ void DrawableArea::Paint(Graphics& g)
 		(int)(centerInPixels.y-centerCircleRadius*2));
 }
 
-void DrawableArea::CanvasResized(int width, int height)
+void DrawableArea::CanvasResized(SceneCanvasComponent* _parentCanvas)
 {
-    centerInPixels.setXY( center.x*width, center.y*height);
+    parentCanvas = _parentCanvas;
+    centerInPixels.setXY(center.x*parentCanvas->getWidth(), center.y*parentCanvas->getHeight());
 }
 
 

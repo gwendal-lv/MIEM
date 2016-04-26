@@ -100,6 +100,10 @@ void MainContentComponent::ChangeAppMode(AppMode newAppMode)
             hardwareConfigurationComponent->setVisible(true);
             break;
             
+        case AppMode::MiamSpatPlaying :
+            DisplayInfo("Can't launch the external Spat player yet!");
+            break;
+            
         default :
             break;
     }

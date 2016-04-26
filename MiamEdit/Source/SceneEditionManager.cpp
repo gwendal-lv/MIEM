@@ -28,25 +28,37 @@ SceneEditionManager::SceneEditionManager(View* _view) :
     
     // Links to the view module
     sceneEditionComponent = view->GetMainContentComponent()->GetSceneEditionComponent();
+    
+    // Canvases const count defined within the View module...
+    areasOrder.resize(SceneCanvasComponent::SceneCanvasesCount);
+    
+    // Links to the view module
     sceneEditionComponent->CompleteInitialization(this);
     
     
-    // Création des 4 polygones de test !
+    // Création des polygones de test !
     // comme on crée une nouvelle scène : on repart de zéro
+    
     nextAreaId = 0; // plus tard : valeur contenue dans le fichier de sauvegarde
+    setSelectedCanvasId(SceneCanvasComponent::FixedScene); // idem, on impose le canvas FixedCanvas pour commencer...
     EditablePolygon currentEditablePolygon = EditablePolygon(0);
     for (int i=0 ; i<4 ; i++)
     {
+        // !!!!!!! EVERYTHING TO CANVAS ZERO !!!!!!!
         currentEditablePolygon = EditablePolygon(nextAreaId,
 			Point<double>(0.2f+0.13f*i,0.3f+0.1f*i), 3+2*i, 0.15f+0.04f*(i+1),
 			Colour(80*(uint8)i, 0, 255),
-			sceneEditionComponent->GetSceneCanvasComponent()->GetRatio());
+			sceneEditionComponent->GetSceneCanvasComponent(selectedCanvasId)->GetRatio());
+        
+        
         addEditablePolygon(currentEditablePolygon);
     }
     
     
     // Finally
+    setAreaToCopy(-1);
     setSelectedAreaUniqueId(-1); // also sets the program mode
+    setSelectedCanvasId(SceneCanvasComponent::FixedScene);
 }
 
 
@@ -65,13 +77,16 @@ EditablePolygon& SceneEditionManager::GetEditablePolygon(int64_t uniqueId)
     else
         throw std::range_error("Unique ID doesn't refer to any existing editable polygon.");
 }
-size_t SceneEditionManager::GetDrawableAreasSize()
+size_t SceneEditionManager::GetDrawableAreasCount(SceneCanvasComponent::Id _id)
 {
-    return areasOrder.size();
+    if (_id >= 0)
+        return areasOrder[_id].size();
+    else
+        return 0;
 }
-DrawableArea& SceneEditionManager::GetDrawableArea(int position)
+DrawableArea& SceneEditionManager::GetDrawableArea(SceneCanvasComponent::Id _id, size_t position)
 {
-    return GetEditablePolygon(areasOrder[position]); // may throw an exception !
+    return GetEditablePolygon(areasOrder[_id][position]); // may throw an exception !
 }
 
 
@@ -83,19 +98,21 @@ DrawableArea& SceneEditionManager::GetDrawableArea(int position)
 
 void SceneEditionManager::addEditablePolygon(EditablePolygon &newPolygon, bool selectArea)
 {
-    // Internal objects modification
+    // Internal area objects modification
     polygons.push_back(newPolygon);
     polygonsVectorIndexes.insert(std::pair<int64_t, int>(nextAreaId,(int)polygons.size()-1));
     
-    // Last added drawn on top
-    areasOrder.push_back(nextAreaId);
+    
+    // Canvas drawing info
+    areaCanvasId.insert(std::pair<int64_t,int>(nextAreaId,selectedCanvasId));
+    areasOrder[selectedCanvasId].push_back(nextAreaId);// Last added drawn on top
     
     if (selectArea)
         setSelectedAreaUniqueId(nextAreaId);
     
     // Forced graphical updates
-    polygons.back().CanvasResized(sceneEditionComponent->GetSceneCanvasComponent()->getWidth(),
-                                  sceneEditionComponent->GetSceneCanvasComponent()->getHeight());
+    polygons.back().CanvasResized(
+                        sceneEditionComponent->GetSceneCanvasComponent(areaCanvasId[nextAreaId]));
     sceneEditionComponent->repaint();
     
     // We really go now for the next iteration
@@ -130,10 +147,10 @@ void SceneEditionManager::deleteEditableArea(int64_t uniqueId)
     if (somethingDeleted)
     {
         // Update of areas order
-        for (int i=0 ; i<areasOrder.size() ; i++ )
+        for (int i=0 ; i<areasOrder[selectedCanvasId].size() ; i++ )
         {
-            if (areasOrder[i] == uniqueId)
-                areasOrder.erase(areasOrder.begin() + i);
+            if (areasOrder[selectedCanvasId][i] == uniqueId)
+                areasOrder[selectedCanvasId].erase(areasOrder[selectedCanvasId].begin() + i);
         }
         // Graphic updates
         setSelectedAreaUniqueId(-1);
@@ -142,6 +159,25 @@ void SceneEditionManager::deleteEditableArea(int64_t uniqueId)
     // If nothing was deleted, there has been a problem...
     else // we throw a std::runtime_error exception
         throw std::range_error("Unique ID doesn't refer to any existing editable area.");
+}
+
+void SceneEditionManager::setSelectedCanvasId(SceneCanvasComponent::Id _id)
+{
+    // Default : unselection of all areas...
+    setSelectedAreaUniqueId(-1);
+    
+    // Graphical updates
+    for (int i=0 ; i<SceneCanvasComponent::SceneCanvasesCount ; i++)
+    {
+        if (i == _id)
+            sceneEditionComponent->GetSceneCanvasComponent(i)->SetIsSelectedForEditing(true);
+        else
+            sceneEditionComponent->GetSceneCanvasComponent(i)->SetIsSelectedForEditing(false);
+    }
+    
+    // Internal state actualisation
+    selectedCanvasId = _id;
+    setMode(SceneEditionMode::CanvasSelected);
 }
 
 void SceneEditionManager::setSelectedAreaUniqueId(int64_t newIndex)
@@ -164,7 +200,12 @@ void SceneEditionManager::setSelectedAreaUniqueId(int64_t newIndex)
         }
         
         selectedAreaUniqueId = -1;
-        setMode(SceneEditionMode::NoAreaSelected);
+        
+        if (mode == SceneEditionMode::CanvasSelected
+            || mode == SceneEditionMode::PolygonSelected)
+            setMode(SceneEditionMode::CanvasSelected);
+        else
+            setMode(SceneEditionMode::NothingSelected);
     }
     
     
@@ -179,6 +220,13 @@ void SceneEditionManager::setSelectedAreaUniqueId(int64_t newIndex)
         GetEditablePolygon(selectedAreaUniqueId).SetActive(true);
         setMode(SceneEditionMode::PolygonSelected); // TO CHANGE, NOT GENERIC
     }
+}
+
+void SceneEditionManager::setAreaToCopy(int64_t newUniqueId)
+{
+    areaToCopy = newUniqueId;
+    
+    sceneEditionComponent->SetPasteEnabled(areaToCopy >= 0);
 }
 
 
@@ -197,29 +245,44 @@ void SceneEditionManager::setMode(SceneEditionMode newMode)
             std::cout << "Presenter:: (SceneEditionManager) : mode d'édition \"Loading\" non-implémenté" << std::endl;
             break;
             
-        case SceneEditionMode::NoAreaSelected :
-            sceneEditionComponent->disablePolygonEditionControls();
+        case SceneEditionMode::NothingSelected :
+            sceneEditionComponent->SetCanvasGroupReduced(true);
+            sceneEditionComponent->SetAreaGroupReduced(true);
+            sceneEditionComponent->SetSpatGroupReduced(true);
+            sceneEditionComponent->resized(); // right menu update
+            break;
+            
+        case  SceneEditionMode::CanvasSelected :
+            sceneEditionComponent->SetCanvasGroupReduced(false);
+            sceneEditionComponent->SetAreaGroupReduced(true);
+            sceneEditionComponent->SetSpatGroupReduced(true);
+            sceneEditionComponent->resized(); // right menu update
             break;
             
         case SceneEditionMode::PolygonSelected :
-            sceneEditionComponent->enablePolygonEditionControls();
+            sceneEditionComponent->SetEnabledAllControls(true, true); // as we may come from "waiting for something creation/deletion"
+            sceneEditionComponent->SetCanvasGroupReduced(true);
+            sceneEditionComponent->SetAreaGroupReduced(false);
+            sceneEditionComponent->SetSpatGroupReduced(false);
             sceneEditionComponent->SetAreaColourValue(GetEditablePolygon(selectedAreaUniqueId).GetFillColour());
+            sceneEditionComponent->resized(); // right menu update
             break;
             
         case SceneEditionMode::EditingArea :
             break;
             
         case SceneEditionMode::WaitingForPointCreation :
-            sceneEditionComponent->disableAllButtonsBut("Add Point text button");
+            sceneEditionComponent->DisableAllButtonsBut("Add Point text button");
             break;
             
         case SceneEditionMode::WaitingForPointDeletion :
-            sceneEditionComponent->disableAllButtonsBut("Delete Point text button");
+            sceneEditionComponent->DisableAllButtonsBut("Delete Point text button");
             break;
             
         default :
             break;
     }
+    
     
     // Internal order : we finally don't even discuss it
     mode = newMode;
@@ -229,9 +292,18 @@ void SceneEditionManager::setMode(SceneEditionMode newMode)
 
 // ===== EVENTS from SCENE CANVAS =====
 
-void SceneEditionManager::OnCanvasMouseDown(Point<int> clicLocation)
+void SceneEditionManager::OnCanvasMouseDown(SceneCanvasComponent::Id canvasId, Point<int> clicLocation)
 {
-    // When an area is selected
+    /* Did we click inside the previous canvas ?
+     * If Yes, we just continue...
+     * If No, we change the canvas... And all the rest will be the same (polygon will be
+     * automatically unselected)
+     */
+    if (canvasId != selectedCanvasId)
+        setSelectedCanvasId(canvasId);
+    
+    
+    // When an area is already selected
     if (mode == SceneEditionMode::PolygonSelected)
     {
         // did we clic next to a point, or at least inside the area ?
@@ -241,16 +313,17 @@ void SceneEditionManager::OnCanvasMouseDown(Point<int> clicLocation)
              * => it is a DEselection (maybe selection of another just after this)
              */
             setSelectedAreaUniqueId(-1);
+            // We clicked inside a canvas :
         }
     }
     // While no area is selected : we look for a new one to select,
     // starting from the area on the upper layer (last draw on canvas)
-    for (int i=(int)areasOrder.size()-1 ; (i>=0 && mode==SceneEditionMode::NoAreaSelected) ; i--)
+    for (int i=(int)areasOrder[selectedCanvasId].size()-1 ; (i>=0 && mode==SceneEditionMode::CanvasSelected) ; i--)
     {
-        if (GetEditablePolygon(areasOrder[i]).HitTest(clicLocation.toDouble()))
+        if (GetEditablePolygon(areasOrder[selectedCanvasId][i]).HitTest(clicLocation.toDouble()))
         {
             //std::cout << "poids d'interaction = " << GetEditablePolygon(areasOrder[i]).ComputeInteractionWeight(clicLocation.toDouble()) << std::endl;
-            setSelectedAreaUniqueId(areasOrder[i]);
+            setSelectedAreaUniqueId(areasOrder[selectedCanvasId][i]);
         }
     }
     // New point creation
@@ -276,7 +349,7 @@ void SceneEditionManager::OnCanvasMouseDown(Point<int> clicLocation)
     // in any case (does not waste much computing time...)
     sceneEditionComponent->repaint();
 }
-void SceneEditionManager::OnCanvasMouseDrag(Point<int> mouseLocation)
+void SceneEditionManager::OnCanvasMouseDrag(SceneCanvasComponent::Id /*canvasId*/, Point<int> mouseLocation)
 {
     if (selectedAreaUniqueId>=0)
         GetEditablePolygon(selectedAreaUniqueId).MovePoint(mouseLocation.toDouble());
@@ -284,11 +357,10 @@ void SceneEditionManager::OnCanvasMouseDrag(Point<int> mouseLocation)
     
     sceneEditionComponent->repaint();
 }
-void SceneEditionManager::OnCanvasMouseUp()
+void SceneEditionManager::OnCanvasMouseUp(SceneCanvasComponent::Id /*canvasId*/)
 {
     if (selectedAreaUniqueId>=0)
         GetEditablePolygon(selectedAreaUniqueId).EndPointMove();
-    
     
     sceneEditionComponent->repaint();
 }
@@ -313,27 +385,28 @@ void SceneEditionManager::OnDeletePoint()
 }
 void SceneEditionManager::OnCopyArea()
 {
-    areaToCopy = selectedAreaUniqueId;
+    setAreaToCopy(selectedAreaUniqueId);
 }
 void SceneEditionManager::OnPasteArea()
 {
-    if (areaToCopy >= 0)
-    {
-        // WARNING :  MUST CATCH EXCEPTION IF AREA WAS DELETED !!!!!!!!!!!!
-        
-        // HERE ALSO EXCEPTIONS MAYBE
-        EditablePolygon newPolygon = GetEditablePolygon(areaToCopy); // may throw exception !!!!
-        newPolygon.SetId(nextAreaId);
-        newPolygon.Translate(Point<double>(30,30));
-        addEditablePolygon(newPolygon, true);
-    }
+    EditablePolygon newPolygon = GetEditablePolygon(areaToCopy); // exceptions shoudn't happen...
+    newPolygon.SetId(nextAreaId);
+    // !!!!!  BESOIN DE SAVOIR SI ON CHANGE DE CANVAS OU NON !!!!!
+    // Si on change, besoin d'appeler une fonction du genre :
+    // RescaleForCanvas(SceneCanvasComponent* )
+     //
+    newPolygon.Translate(Point<double>(20,20));
+    addEditablePolygon(newPolygon, true);
 }
 void SceneEditionManager::OnAddArea()
 {
+    // centered grey Hexagon !...
     EditablePolygon newPolygon = EditablePolygon(nextAreaId,
-                                                 Point<double>(0.5f,0.5f), 4, 0.15f,
-                                                 Colours::grey,
-                                                 sceneEditionComponent->GetSceneCanvasComponent()->GetRatio());
+        Point<double>(0.5f,0.5f), 6, 0.15f,
+        Colours::grey,
+        sceneEditionComponent->GetSceneCanvasComponent(selectedCanvasId)->GetRatio());
+    
+    // Actual adding of this new polygon
     addEditablePolygon(newPolygon, true);
 }
 void SceneEditionManager::OnDeleteArea()
@@ -344,94 +417,98 @@ void SceneEditionManager::OnDeleteArea()
 void SceneEditionManager::OnNewColour(Colour colour)
 {
     GetEditablePolygon(selectedAreaUniqueId).SetFillColour(colour);
-    sceneEditionComponent->GetSceneCanvasComponent()->repaint();
+    sceneEditionComponent->GetSceneCanvasComponent(areaCanvasId[selectedAreaUniqueId])->repaint();
 }
 
 void SceneEditionManager::OnSendToBack()
 {
-    if (areasOrder.size()>1) // We do something only if more than one area
+    if (areasOrder[selectedCanvasId].size()>1) // We do something only if more than one area
     {
-        if (areasOrder[0] != selectedAreaUniqueId) // and if it's not the last yet
+        if (areasOrder[selectedCanvasId][0] != selectedAreaUniqueId) // and if it's not the last yet
         {
             // selectedArea becomes the first within the areasOrder vector.
             // at first, we need to find where the area was before
             int selectedAreaOrderId = -1;
-            for (int i=0 ; i<areasOrder.size() ; i++)
+            for (int i=0 ; i<areasOrder[selectedCanvasId].size() ; i++)
             {
-                if (areasOrder[i] == selectedAreaUniqueId)
+                if (areasOrder[selectedCanvasId][i] == selectedAreaUniqueId)
                     selectedAreaOrderId = i;
             }
             // then we udpate all what's necessary and we change the value
             for (int i=selectedAreaOrderId ; i >= 1 ; i--)
-                areasOrder[i] = areasOrder[i-1];
-            areasOrder[0] = selectedAreaUniqueId;
+                areasOrder[selectedCanvasId][i] = areasOrder[selectedCanvasId][i-1];
+            areasOrder[selectedCanvasId][0] = selectedAreaUniqueId;
         }
     }
-    sceneEditionComponent->GetSceneCanvasComponent()->repaint();
+    sceneEditionComponent->
+        GetSceneCanvasComponent(areaCanvasId[selectedAreaUniqueId])->repaint();
 }
 void SceneEditionManager::OnSendBackward()
 {
-    if (areasOrder.size()>1) // We do something only if more than one area
+    if (areasOrder[selectedCanvasId].size()>1) // We do something only if more than one area
     {
-        if (areasOrder[0] != selectedAreaUniqueId) // and if it's not the last yet
+        if (areasOrder[selectedCanvasId][0] != selectedAreaUniqueId) // and if it's not the last yet
         {
             // selectedArea becomes the last within the areasOrder vector.
             // at first, we need to find where the area was before
             int selectedAreaOrderId = -1;
-            for (int i=0 ; i<areasOrder.size() ; i++)
+            for (int i=0 ; i<areasOrder[selectedCanvasId].size() ; i++)
             {
-                if (areasOrder[i] == selectedAreaUniqueId)
+                if (areasOrder[selectedCanvasId][i] == selectedAreaUniqueId)
                     selectedAreaOrderId = i;
             }
             // then we udpate all what's necessary and we change the value
-            areasOrder[selectedAreaOrderId] = areasOrder[selectedAreaOrderId-1];
-            areasOrder[selectedAreaOrderId-1] = selectedAreaUniqueId;
+            areasOrder[selectedCanvasId][selectedAreaOrderId] = areasOrder[selectedCanvasId][selectedAreaOrderId-1];
+            areasOrder[selectedCanvasId][selectedAreaOrderId-1] = selectedAreaUniqueId;
         }
     }
-    sceneEditionComponent->GetSceneCanvasComponent()->repaint();
+    sceneEditionComponent->
+        GetSceneCanvasComponent(areaCanvasId[selectedAreaUniqueId])->repaint();
 }
 void SceneEditionManager::OnBringToFront()
 {
-    if (areasOrder.size()>1) // We do something only if more than one area
+    if (areasOrder[selectedCanvasId].size()>1) // We do something only if more than one area
     {
-        if (areasOrder.back() != selectedAreaUniqueId) // and if it's not the first yet
+        if (areasOrder[selectedCanvasId].back() != selectedAreaUniqueId) // and if it's not the first yet
         {
             // selectedArea becomes the last within the areasOrder vector.
             // at first, we need to find where the area was before
             int selectedAreaOrderId = -1;
-            for (int i=0 ; i<areasOrder.size() ; i++)
+            for (int i=0 ; i<areasOrder[selectedCanvasId].size() ; i++)
             {
-                if (areasOrder[i] == selectedAreaUniqueId)
+                if (areasOrder[selectedCanvasId][i] == selectedAreaUniqueId)
                     selectedAreaOrderId = i;
             }
             // then we udpate all what's necessary and we change the value
-            for (int i=selectedAreaOrderId ; i <= areasOrder.size()-2 ; i++)
-                areasOrder[i] = areasOrder[i+1];
-            areasOrder[areasOrder.size()-1] = selectedAreaUniqueId;
+            for (int i=selectedAreaOrderId ; i <= areasOrder[selectedCanvasId].size()-2 ; i++)
+                areasOrder[selectedCanvasId][i] = areasOrder[selectedCanvasId][i+1];
+            areasOrder[selectedCanvasId][areasOrder[selectedCanvasId].size()-1] = selectedAreaUniqueId;
         }
     }
-    sceneEditionComponent->GetSceneCanvasComponent()->repaint();
+    sceneEditionComponent->
+        GetSceneCanvasComponent(areaCanvasId[selectedAreaUniqueId])->repaint();
 }
 void SceneEditionManager::OnBringForward()
 {
-    if (areasOrder.size()>1) // We do something only if more than one area
+    if (areasOrder[selectedCanvasId].size()>1) // We do something only if more than one area
     {
-        if (areasOrder.back() != selectedAreaUniqueId) // and if it's not the first yet
+        if (areasOrder[selectedCanvasId].back() != selectedAreaUniqueId) // and if it's not the first yet
         {
             // selectedArea becomes the last within the areasOrder vector.
             // at first, we need to find where the area was before
             int selectedAreaOrderId = -1;
-            for (int i=0 ; i<areasOrder.size() ; i++)
+            for (int i=0 ; i<areasOrder[selectedCanvasId].size() ; i++)
             {
-                if (areasOrder[i] == selectedAreaUniqueId)
+                if (areasOrder[selectedCanvasId][i] == selectedAreaUniqueId)
                     selectedAreaOrderId = i;
             }
             // then we udpate all what's necessary and we change the value
-            areasOrder[selectedAreaOrderId] = areasOrder[selectedAreaOrderId+1];
-            areasOrder[selectedAreaOrderId+1] = selectedAreaUniqueId;
+            areasOrder[selectedCanvasId][selectedAreaOrderId] = areasOrder[selectedCanvasId][selectedAreaOrderId+1];
+            areasOrder[selectedCanvasId][selectedAreaOrderId+1] = selectedAreaUniqueId;
         }
     }
-    sceneEditionComponent->GetSceneCanvasComponent()->repaint();
+    sceneEditionComponent->
+        GetSceneCanvasComponent(areaCanvasId[selectedAreaUniqueId])->repaint();
 }
 
 

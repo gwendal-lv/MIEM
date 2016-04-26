@@ -9,6 +9,7 @@
 */
 
 #include "InteractivePolygon.h"
+#include "SceneCanvasComponent.h"
 
 #include "Math.h"
 
@@ -45,16 +46,16 @@ void InteractivePolygon::init()
 
 
 
-void InteractivePolygon::CanvasResized(int width, int height)
+void InteractivePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 {
-    DrawablePolygon::CanvasResized(width, height);
+    DrawablePolygon::CanvasResized(_parentCanvas);
     
     
     // Pixel contour points
     contourPointsInPixels.clear();
     for(int i=0 ; i<contourPoints.size() ; i++)
-        contourPointsInPixels.push_back(Point<double>(contourPoints[i].x*width,
-                                                      contourPoints[i].y*height));
+        contourPointsInPixels.push_back(Point<double>(contourPoints[i].x*parentCanvas->getWidth(),
+                                                      contourPoints[i].y*parentCanvas->getHeight()));
     
     // Finally, we update sub triangles
     updateSubTriangles();

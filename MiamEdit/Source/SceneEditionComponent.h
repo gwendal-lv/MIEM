@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 4.2.0
+  Created with Projucer version: 4.2.1
 
   ------------------------------------------------------------------------------
 
@@ -48,11 +48,12 @@ using namespace Miam;
  // An auto-generated component, created by the Projucer.
  //
 
-                 //[/Comments]
+                                                                    //[/Comments]
 */
 class SceneEditionComponent  : public Component,
                                public ButtonListener,
-                               public SliderListener
+                               public SliderListener,
+                               public ComboBoxListener
 {
 public:
     //==============================================================================
@@ -62,31 +63,44 @@ public:
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
 
-    // Construction helps
+    // ----- Construction helpers -----
     void CompleteInitialization(SceneEditionManager* _sceneEditionManager);
 
-    // General Setters and Getters
-    SceneCanvasComponent* GetSceneCanvasComponent() {return sceneCanvasComponent;}
+    // ----- General Setters and Getters -----
+    /// \brief Get a pointer to one of the canvases.
+    SceneCanvasComponent* GetSceneCanvasComponent(int position)
+    { return sceneCanvasComponents[position]; }
 
 
     // ----- Functions that obey orders sent from the Presenter -----
     public :
-    // Buttons visibility & enablement
-    void enablePolygonEditionControls();
-    void disablePolygonEditionControls();
-    void disableAllButtonsBut(juce::String onlyActiveButtonName);
-    // Parameters setting
+    void SetEnabledAllControls(bool areEnabled, bool controlsBackUp = true);
+    // - - - - - Canvases & canvas group - - - - -
+    void SetCanvasGroupReduced(bool _isReduced);
+    // - - - - - Area group - - - - -
+    void SetAreaGroupReduced(bool _isReduced);
+    void SetEnabledAreaEditionControls(bool areEnabled);
+    void SetEnabledAreaMainControls(bool areEnabled);
+    void SetVisibleAreaEditionControls(bool areVisible);
+    void DisableAllButtonsBut(juce::String onlyActiveButtonName);
+    void SetPasteEnabled(bool _isEnabled); // button with back-up function
+    // - - - - - Spat group - - - - -
+    void SetSpatGroupReduced(bool _isReduced);
+
+
+    // ----- Other setters and getters -----
     void SetAreaColourValue(juce::Colour colour);
+
 
     // Helpers
     private :
-    void setEnabledAllControls(bool areEnabled);
-    void setVisibleSelectedAreaControls(bool areVisible);
     void setEnabledSelectedAreaControls(bool areEnabled);
+    void setVisibleSpatControls(bool areVisible);
     void colourSliderMoved();
 
-    public :
-
+    void areaGroupTranslateY(int dY);
+    void spatGroupTranslateY(int dY);
+    void componentTranslateY(Component* component, int dY);
 
 
     public :
@@ -96,19 +110,31 @@ public:
     void resized() override;
     void buttonClicked (Button* buttonThatWasClicked) override;
     void sliderValueChanged (Slider* sliderThatWasMoved) override;
+    void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
 
 
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
-    SceneCanvasComponent* sceneCanvasComponent;
+
+    std::vector<SceneCanvasComponent*> sceneCanvasComponents;
 
     SceneEditionManager* sceneEditionManager;
+
+    int canvasGroupReducedH, areaGroupReducedH, spatGroupReducedH;
+    bool isCanvasGroupReduced = false,
+            isAreaGroupReduced = false,
+            isSpatGroupReduced = false;
+
+    // When all buttons are disabled, to highlight that we can do only 1 action,
+    // we need to back up the state of some buttons
+    bool pasteTextButtonEnabledBackUp = false;
+
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<GroupComponent> groupComponent;
-    ScopedPointer<GroupComponent> groupComponent2;
+    ScopedPointer<GroupComponent> areaGroupComponent;
+    ScopedPointer<GroupComponent> spatGroupComponent;
     ScopedPointer<TextButton> addPointTextButton;
     ScopedPointer<TextButton> deletePointTextButton;
     ScopedPointer<TextButton> copyTextButton;
@@ -125,6 +151,9 @@ private:
     ScopedPointer<TextButton> bringForwardTextButton;
     ScopedPointer<TextButton> bringToFrontTextButton;
     ScopedPointer<TextButton> sendToBackTextButton;
+    ScopedPointer<GroupComponent> canvasGroupComponent;
+    ScopedPointer<ComboBox> speakersGroupComboBox;
+    ScopedPointer<Label> spatLabel;
 
 
     //==============================================================================

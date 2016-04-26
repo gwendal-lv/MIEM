@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="O4BfM6" name="MiamEdit" projectType="guiapp" version="1.0.0"
               bundleIdentifier="com.yourcompany.MiamEdit" includeBinaryInAppConfig="1"
-              jucerVersion="4.2.0">
+              jucerVersion="4.2.1">
   <MAINGROUP id="uJFjC5" name="MiamEdit">
     <GROUP id="{7878353D-A1B6-291B-EABC-831E28CE51BB}" name="Source">
       <GROUP id="{B91B2137-DC4A-127C-0037-DB058876BEFA}" name="Utils">

@@ -20,27 +20,32 @@
 
 namespace Miam
 {
-    
-    
-    /// \brief Contains the integer Id of a contour or a special area point.
-    ///
-    /// Values from 0 to +inf refer to "normal" area contour points, negative values refer
-    /// to area points associated to "special functions" (the center, or editing points).
-    enum EditableAreaPointId : int { // enum *class* brings cast (to int) issues...
-        
-        ManipulationPoint = -40, ///< Point that allows rotation and scaling of the whole area
-        Center = -30, ///< Center of interaction
-        WholeArea = -20, ///< Special point representing the whole area
-        
-        None = -10 ///< No point selected
-        
-    };
-    
-    
-    
     /// \brief Abstract class that defines an interface for all areas that can be edited
     class EditableArea
     {
+        
+        
+        
+        // = = = = = = = = = = ENUMS = = = = = = = = = =
+        protected :
+        
+        /// \brief Contains the integer Id of a contour or a special area point.
+        ///
+        /// Values from 0 to +inf refer to "normal" area contour points, negative values refer
+        /// to area points associated to "special functions" (the center, or editing points).
+        enum EditableAreaPointId : int { // enum *class* brings cast (to int) issues...
+            
+            ManipulationPoint = -40, ///< Point that allows rotation and scaling of the whole area
+            Center = -30, ///< Center of interaction
+            WholeArea = -20, ///< Special point representing the whole area
+            
+            None = -10 ///< No point selected
+            
+        };
+        
+        
+        
+        
         
         // ===== COMMON METHODS TO ALL EDITABLE AREAS =====
         
@@ -93,8 +98,6 @@ namespace Miam
         bool isActive; ///< Wether this area is marking itself as active (currently being edited) or not.
         
         // Basic drawing attributes
-		int canvasWidth; ///< Last given width of the parent SceneCanvasComponent
-		int canvasHeight; ///< Last given height of the parent SceneCanvasComponent
         
         
         // Additionnal graphical assets

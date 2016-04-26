@@ -45,7 +45,7 @@ namespace Miam
         // Display functions
         public :
         // virtual void Paint(Graphics& g) override; // Nothing to paint over a normal area !
-        virtual void CanvasResized(int width, int height) override;
+        virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
         
         
         

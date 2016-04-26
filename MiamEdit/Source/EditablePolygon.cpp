@@ -10,6 +10,8 @@
 
 #include "EditablePolygon.h"
 
+#include "SceneCanvasComponent.h"
+
 #include <cmath>
 
 #include "Math.h"
@@ -104,22 +106,19 @@ void EditablePolygon::Paint(Graphics& g)
 // =========== GRAPHICAL UPDATES ==========
 
 // Whole actualization of pixel-coordinates graphical objects
-void EditablePolygon::CanvasResized(int width, int height)
+void EditablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 {
-    InteractivePolygon::CanvasResized(width, height);
-    
-    canvasWidth = width;
-    canvasHeight = height;
+    InteractivePolygon::CanvasResized(_parentCanvas);
     
     // Manipulation point (+ line...)
     computeManipulationPoint();
     
-    pointDraggingRadius = 0.01f * (width+height)/2.0f; // 1%
+    pointDraggingRadius = 0.01f * (parentCanvas->getWidth()+parentCanvas->getHeight())/2.0f; // 1%
 }
 
 void EditablePolygon::computeManipulationPoint()
 {
-    float manipulationLineLengthLeft = 0.25f*(canvasWidth+canvasHeight)/2.0f,
+    float manipulationLineLengthLeft = 0.25f*(parentCanvas->getWidth()+parentCanvas->getHeight())/2.0f,
     manipulationLineLengthRight = manipulationLineLengthLeft; //px
     /*
     float currentDistance = 0.0f;
@@ -137,7 +136,7 @@ void EditablePolygon::computeManipulationPoint()
      */
     // We always try to put ot on the right side first
     if (centerInPixels.x + manipulationLineLengthRight + manipulationPointRadius
-        <= canvasWidth)
+        <= parentCanvas->getWidth())
         manipulationPointInPixels = Point<double>(centerInPixels.x
                                                   + manipulationLineLengthRight,
                                                   centerInPixels.y);
@@ -236,8 +235,8 @@ void EditablePolygon::MovePoint(const Point<double>& newLocation)
         {
             contourPointsInPixels[pointDraggedId] = newLocation;
             contourPoints[pointDraggedId] = Point<double>(
-                                            newLocation.x / ((float)canvasWidth) ,
-                                            newLocation.y / ((float)canvasHeight) );
+                                            newLocation.x / ((float)parentCanvas->getWidth()) ,
+                                            newLocation.y / ((float)parentCanvas->getHeight()) );
         }
     }
     
@@ -278,7 +277,8 @@ void EditablePolygon::MovePoint(const Point<double>& newLocation)
                 minDistanceFromCenter = newContourPoints[i].getDistanceFromOrigin();
             newContourPoints[i] += centerInPixels;
         }
-        if (minDistanceFromCenter >= minimumSizePercentage*(canvasWidth+canvasHeight)/2.0)
+        if (minDistanceFromCenter >=
+            minimumSizePercentage*(parentCanvas->getWidth()+parentCanvas->getHeight())/2.0)
         {
             wasSizeApplied = true;
             contourPointsInPixels = newContourPoints;
@@ -309,8 +309,8 @@ void EditablePolygon::MovePoint(const Point<double>& newLocation)
         for (int i=0; i < contourPointsInPixels.size() ; i++)
         {
             contourPoints[i] = Point<double>(
-                                contourPointsInPixels[i].x / ((double)canvasWidth) ,
-                                contourPointsInPixels[i].y / ((double)canvasHeight));
+                                contourPointsInPixels[i].x / ((double)parentCanvas->getWidth()) ,
+                                contourPointsInPixels[i].y / ((double)parentCanvas->getHeight()));
         }
     }
     
@@ -319,8 +319,8 @@ void EditablePolygon::MovePoint(const Point<double>& newLocation)
         if (isNewCenterValid(newLocation))
         {
             centerInPixels = newLocation;
-            center = Point<double>(newLocation.x / ((double)canvasWidth),
-                                   newLocation.y / ((double)canvasHeight) );
+            center = Point<double>(newLocation.x / ((double)parentCanvas->getWidth()),
+                                   newLocation.y / ((double)parentCanvas->getHeight()) );
             computeManipulationPoint();
         }
     }
@@ -336,7 +336,7 @@ void EditablePolygon::MovePoint(const Point<double>& newLocation)
     }
     
     // Graphic updates to all base attributes inherited
-    InteractivePolygon::CanvasResized(canvasWidth,canvasHeight);
+    InteractivePolygon::CanvasResized(this->parentCanvas);
 }
 
 
@@ -350,14 +350,14 @@ void EditablePolygon::EndPointMove()
 void EditablePolygon::Translate(const Point<double>& translation)
 {
     centerInPixels += translation;
-    center = Point<double>(centerInPixels.x / ((double)canvasWidth),
-                           centerInPixels.y / ((double)canvasHeight) );
+    center = Point<double>(centerInPixels.x / ((double)parentCanvas->getWidth()),
+                           centerInPixels.y / ((double)parentCanvas->getHeight()) );
     for (int i=0; i < contourPointsInPixels.size() ; i++)
     {
         contourPointsInPixels[i] += translation;
         contourPoints[i] = Point<double>(
-                                         contourPointsInPixels[i].x / ((double)canvasWidth) ,
-                                         contourPointsInPixels[i].y / ((double)canvasHeight));
+                                         contourPointsInPixels[i].x / ((double)parentCanvas->getWidth()) ,
+                                         contourPointsInPixels[i].y / ((double)parentCanvas->getHeight()));
     }
     
     // Manipulation point (+ line...)
@@ -368,7 +368,7 @@ void EditablePolygon::Translate(const Point<double>& translation)
 bool EditablePolygon::TryCreatePoint(const Point<double>& hitPoint)
 {
     int closestPointIndex = -1;
-    double closestDistance = canvasWidth+canvasHeight;
+    double closestDistance = parentCanvas->getWidth()+parentCanvas->getHeight();
     // At first, we look for the closest point
     for (int i=0 ; i<contourPointsInPixels.size(); i++)
     {
@@ -399,7 +399,7 @@ String EditablePolygon::TryDeletePoint(const Point<double>& hitPoint)
     {
         // - same code as in "TryCreatePoint" -
         int closestPointIndex = -1;
-        double closestDistance = canvasWidth+canvasHeight;
+        double closestDistance = parentCanvas->getWidth()+parentCanvas->getHeight();
         // At first, we look for the closest point
         for (int i=0 ; i<contourPointsInPixels.size(); i++)
         {
@@ -523,10 +523,11 @@ void EditablePolygon::recreateNormalizedPoints()
     contourPoints.clear();
     for (int i=0 ; i<contourPointsInPixels.size() ; i++)
     {
-        contourPoints.push_back(Point<double>(contourPointsInPixels[i].x/canvasWidth,
-                                              contourPointsInPixels[i].y/canvasHeight));
+        contourPoints.push_back(Point<double>(contourPointsInPixels[i].x/parentCanvas->getWidth(),
+                                              contourPointsInPixels[i].y/parentCanvas->getHeight()));
     }
-    center = Point<double>(centerInPixels.x/canvasWidth, centerInPixels.y/canvasHeight);
+    center = Point<double>(centerInPixels.x/parentCanvas->getWidth(),
+                           centerInPixels.y/parentCanvas->getHeight());
 }
 
 

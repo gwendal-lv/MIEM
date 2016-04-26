@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 4.2.0
+  Created with Projucer version: 4.2.1
 
   ------------------------------------------------------------------------------
 
@@ -34,14 +34,21 @@ using namespace Miam;
 SceneEditionComponent::SceneEditionComponent ()
 {
     //[Constructor_pre] You can add your own custom stuff here..
-    addAndMakeVisible(sceneCanvasComponent = new SceneCanvasComponent());
+
+    // Manual canvas add
+    for (int i=0 ; i<SceneCanvasComponent::SceneCanvasesCount ; i++)
+    {
+        sceneCanvasComponents.push_back(new SceneCanvasComponent((SceneCanvasComponent::Id)i));
+        addAndMakeVisible(sceneCanvasComponents.back());
+    }
+
     //[/Constructor_pre]
 
-    addAndMakeVisible (groupComponent = new GroupComponent ("new group",
-                                                            TRANS("Area edition")));
+    addAndMakeVisible (areaGroupComponent = new GroupComponent ("Area edition group component",
+                                                                TRANS("Area edition")));
 
-    addAndMakeVisible (groupComponent2 = new GroupComponent ("new group",
-                                                             TRANS("Spatialization effect")));
+    addAndMakeVisible (spatGroupComponent = new GroupComponent ("Spatialization group component",
+                                                                TRANS("Spatialization effect")));
 
     addAndMakeVisible (addPointTextButton = new TextButton ("Add Point text button"));
     addPointTextButton->setButtonText (TRANS("Add Point"));
@@ -158,6 +165,25 @@ SceneEditionComponent::SceneEditionComponent ()
     sendToBackTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
     sendToBackTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
 
+    addAndMakeVisible (canvasGroupComponent = new GroupComponent ("Canvas edition group component",
+                                                                  TRANS("Canvas edition")));
+
+    addAndMakeVisible (speakersGroupComboBox = new ComboBox ("Speakers group combo box"));
+    speakersGroupComboBox->setEditableText (false);
+    speakersGroupComboBox->setJustificationType (Justification::centredLeft);
+    speakersGroupComboBox->setTextWhenNothingSelected (String());
+    speakersGroupComboBox->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
+    speakersGroupComboBox->addItem (TRANS("-1 undefined"), 1);
+    speakersGroupComboBox->addListener (this);
+
+    addAndMakeVisible (spatLabel = new Label ("Spat label",
+                                              TRANS("Link to speakers group :")));
+    spatLabel->setFont (Font (15.00f, Font::plain));
+    spatLabel->setJustificationType (Justification::centredLeft);
+    spatLabel->setEditable (false, false, false);
+    spatLabel->setColour (TextEditor::textColourId, Colours::black);
+    spatLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -166,17 +192,29 @@ SceneEditionComponent::SceneEditionComponent ()
 
 
     //[Constructor] You can add your own custom stuff here..
+
+    /* Manual initial resize --- Useless !!!
+     * Because the window was far too high, to able to all menus (knowing that all menu
+     * elements will never be displayed all at the same time, that's okay)
+     */
+
+    // Then, HERE ARE PRECISED the heights of groups when they are reduced
+    canvasGroupReducedH = 0; // nothing inside
+    areaGroupReducedH = 80; // first bloc of buttons only
+    spatGroupReducedH = 0; // nothing inside
+
     //[/Constructor]
 }
 
 SceneEditionComponent::~SceneEditionComponent()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
-    delete sceneCanvasComponent;
+    for (size_t i=0 ; i < sceneCanvasComponents.size() ; i++)
+        delete sceneCanvasComponents[i];
     //[/Destructor_pre]
 
-    groupComponent = nullptr;
-    groupComponent2 = nullptr;
+    areaGroupComponent = nullptr;
+    spatGroupComponent = nullptr;
     addPointTextButton = nullptr;
     deletePointTextButton = nullptr;
     copyTextButton = nullptr;
@@ -193,6 +231,9 @@ SceneEditionComponent::~SceneEditionComponent()
     bringForwardTextButton = nullptr;
     bringToFrontTextButton = nullptr;
     sendToBackTextButton = nullptr;
+    canvasGroupComponent = nullptr;
+    speakersGroupComboBox = nullptr;
+    spatLabel = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -215,30 +256,70 @@ void SceneEditionComponent::resized()
 {
     //[UserPreResize] Add your own custom resize code here..
 
-    // Canvas bounds
-    sceneCanvasComponent->setBounds(208, 8, getWidth()-216, getHeight()-16);
+    // Canvas bounds  !!!!!!!!!!!!!!!!!!!!!!!!!!!!! À MODIFIER !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    float pourcentageLargeurMainScene = 0.7f;
+
+    sceneCanvasComponents[SceneCanvasComponent::MainScene]->setBounds(
+        208, // next to the left menu
+        8, // always the same Y coordinate
+        (getWidth() - areaGroupComponent->getWidth() - 24)*pourcentageLargeurMainScene - 8,
+        getHeight()-16); // always the same Y coordinate
+
+    sceneCanvasComponents[SceneCanvasComponent::FixedScene]->setBounds(
+         sceneCanvasComponents[SceneCanvasComponent::MainScene]->getX() // on the right of
+         + sceneCanvasComponents[SceneCanvasComponent::MainScene]->getWidth()+8, //MainScene
+         8, // always the same Y coordinate
+         (getWidth()-areaGroupComponent->getWidth()-24)*(1.0f-pourcentageLargeurMainScene)-8,
+         getHeight()-16); // always the same Y coordinate
 
     //[/UserPreResize]
 
-    groupComponent->setBounds (8, 6, 192, 258);
-    groupComponent2->setBounds (8, proportionOfHeight (0.9893f) - proportionOfHeight (0.4804f), 192, proportionOfHeight (0.4804f));
-    addPointTextButton->setBounds (16, 224, 88, 24);
-    deletePointTextButton->setBounds (104, 224, 88, 24);
-    copyTextButton->setBounds (16, 56, 88, 24);
-    pasteTextButton->setBounds (104, 56, 88, 24);
-    addAreaTextButton->setBounds (16, 32, 88, 24);
-    deleteAreaTextButton->setBounds (104, 32, 88, 24);
-    labelR->setBounds (16, 144, 24, 24);
-    sliderR->setBounds (40, 144, 150, 24);
-    labelG->setBounds (16, 168, 24, 24);
-    sliderG->setBounds (40, 168, 150, 24);
-    labelB->setBounds (16, 192, 24, 24);
-    sliderB->setBounds (40, 192, 150, 24);
-    sendBackwardTextButton->setBounds (16, 112, 104, 24);
-    bringForwardTextButton->setBounds (16, 88, 104, 24);
-    bringToFrontTextButton->setBounds (120, 88, 72, 24);
-    sendToBackTextButton->setBounds (120, 112, 72, 24);
+    areaGroupComponent->setBounds (8, 8 + 24 - -8, 192, 248);
+    spatGroupComponent->setBounds (8, (8 + 24 - -8) + 248 - -8, 192, 80);
+    addPointTextButton->setBounds (16, (8 + 24 - -8) + 216, 88, 24);
+    deletePointTextButton->setBounds (104, (8 + 24 - -8) + 216, 88, 24);
+    copyTextButton->setBounds (16, (8 + 24 - -8) + 48, 88, 24);
+    pasteTextButton->setBounds (104, (8 + 24 - -8) + 48, 88, 24);
+    addAreaTextButton->setBounds (16, (8 + 24 - -8) + 24, 88, 24);
+    deleteAreaTextButton->setBounds (104, (8 + 24 - -8) + 24, 88, 24);
+    labelR->setBounds (16, (8 + 24 - -8) + 136, 24, 24);
+    sliderR->setBounds (40, (8 + 24 - -8) + 136, 150, 24);
+    labelG->setBounds (16, (8 + 24 - -8) + 160, 24, 24);
+    sliderG->setBounds (40, (8 + 24 - -8) + 160, 150, 24);
+    labelB->setBounds (16, (8 + 24 - -8) + 184, 24, 24);
+    sliderB->setBounds (40, (8 + 24 - -8) + 184, 150, 24);
+    sendBackwardTextButton->setBounds (16, (8 + 24 - -8) + 104, 104, 24);
+    bringForwardTextButton->setBounds (16, (8 + 24 - -8) + 80, 104, 24);
+    bringToFrontTextButton->setBounds (120, (8 + 24 - -8) + 80, 72, 24);
+    sendToBackTextButton->setBounds (120, (8 + 24 - -8) + 104, 72, 24);
+    canvasGroupComponent->setBounds (8, 8, 192, 24);
+    speakersGroupComboBox->setBounds (16, ((8 + 24 - -8) + 248 - -8) + 40, 176, 24);
+    spatLabel->setBounds (16, ((8 + 24 - -8) + 248 - -8) + 16, 176, 24);
     //[UserResized] Add your own custom resize handling here..
+    // Backup of Projucer's sizes
+    int canvasGroupInitH = canvasGroupComponent->getHeight();
+    int areaGroupInitH = areaGroupComponent->getHeight();
+
+    // Variable menus' size
+    if (isAreaGroupReduced)
+        areaGroupComponent->setSize(areaGroupComponent->getWidth(), areaGroupReducedH);
+    // !! Other menus are invisible... And were set invisible when the info came !!
+
+    /* In the end, we may have to translate some groups towards the top of the component,
+     * because some groups' height may have change (depending on the running mode).
+     */
+    if (isCanvasGroupReduced)
+    {
+        int dY = canvasGroupReducedH - canvasGroupInitH - 8; // < 0
+        areaGroupTranslateY(dY);
+        spatGroupTranslateY(dY);
+    }
+    if (isAreaGroupReduced)
+    {
+        int dY = areaGroupReducedH - areaGroupInitH - 8; // < 0
+        spatGroupTranslateY(dY);
+    }
+
     //[/UserResized]
 }
 
@@ -340,6 +421,21 @@ void SceneEditionComponent::sliderValueChanged (Slider* sliderThatWasMoved)
     //[/UsersliderValueChanged_Post]
 }
 
+void SceneEditionComponent::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
+{
+    //[UsercomboBoxChanged_Pre]
+    //[/UsercomboBoxChanged_Pre]
+
+    if (comboBoxThatHasChanged == speakersGroupComboBox)
+    {
+        //[UserComboBoxCode_speakersGroupComboBox] -- add your combo box handling code here..
+        //[/UserComboBoxCode_speakersGroupComboBox]
+    }
+
+    //[UsercomboBoxChanged_Post]
+    //[/UsercomboBoxChanged_Post]
+}
+
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
@@ -348,7 +444,8 @@ void SceneEditionComponent::sliderValueChanged (Slider* sliderThatWasMoved)
 void SceneEditionComponent::CompleteInitialization(SceneEditionManager* _sceneEditionManager)
 {
     sceneEditionManager = _sceneEditionManager;
-    sceneCanvasComponent->CompleteInitialization(sceneEditionManager);
+    for (size_t i=0 ; i<sceneCanvasComponents.size() ; i++)
+        sceneCanvasComponents[i]->CompleteInitialization(sceneEditionManager);
 }
 
 
@@ -357,54 +454,45 @@ void SceneEditionComponent::CompleteInitialization(SceneEditionManager* _sceneEd
 
 
 
-// ========== SETTERS AND GETTERS ==========
+// ========== (SETTERS AND GETTERS) ORDERS FROM PRESENTER ==========
 
-
-
-
-
-// ========== ORDERS FROM PRESENTER ==========
-void SceneEditionComponent::enablePolygonEditionControls()
+// - - - - - Canvases & canvas group - - - - -
+void SceneEditionComponent::SetCanvasGroupReduced(bool _isReduced)
 {
-    addAreaTextButton->setEnabled(false);
-    deleteAreaTextButton->setEnabled(true);
-    copyTextButton->setEnabled(true);
-    pasteTextButton->setEnabled(true);
-
-    setVisibleSelectedAreaControls(true);
-    setEnabledSelectedAreaControls(true);
-}
-void SceneEditionComponent::disablePolygonEditionControls()
-{
-    addAreaTextButton->setEnabled(true);
-    deleteAreaTextButton->setEnabled(false);
-    copyTextButton->setEnabled(false);
-
-    setVisibleSelectedAreaControls(false);
-}
-/* Disables all buttons but the one that launched an action currently running
- */
-void SceneEditionComponent::disableAllButtonsBut(juce::String onlyActiveButtonName)
-{
-    setEnabledAllControls(false);
-
-    if (onlyActiveButtonName == "Add Point text button")
-        addPointTextButton->setEnabled(true);
-    else if (onlyActiveButtonName == "Delete Point text button")
-        deletePointTextButton->setEnabled(true);
+    if (_isReduced)
+        canvasGroupComponent->setVisible(false);
+    else
+        canvasGroupComponent->setVisible(true);
+    isCanvasGroupReduced = _isReduced;
 }
 
-void SceneEditionComponent::setEnabledAllControls(bool areEnabled)
+
+// - - - - - Area group - - - - -
+
+// We know that the "selection of an area" state is equal to the _idReduced....
+void SceneEditionComponent::SetAreaGroupReduced(bool _isReduced)
 {
-    // For any area
+    isAreaGroupReduced = _isReduced;
+
+    SetVisibleAreaEditionControls(!_isReduced);
+
+    // Buttons (de)activated on area (de)selection
+    deleteAreaTextButton->setEnabled(!_isReduced);
+    copyTextButton->setEnabled(!_isReduced);
+}
+void SceneEditionComponent::SetEnabledAreaEditionControls(bool areEnabled)
+{
+    SetEnabledAreaMainControls(areEnabled);
+    setEnabledSelectedAreaControls(areEnabled);
+}
+void SceneEditionComponent::SetEnabledAreaMainControls(bool areEnabled)
+{
     addAreaTextButton->setEnabled(areEnabled);
     deleteAreaTextButton->setEnabled(areEnabled);
     copyTextButton->setEnabled(areEnabled);
     pasteTextButton->setEnabled(areEnabled);
-
-    setEnabledSelectedAreaControls(areEnabled);
 }
-void SceneEditionComponent::setVisibleSelectedAreaControls(bool areVisible)
+void SceneEditionComponent::SetVisibleAreaEditionControls(bool areVisible)
 {
     // For a selected area
     bringForwardTextButton->setVisible(areVisible);
@@ -421,6 +509,40 @@ void SceneEditionComponent::setVisibleSelectedAreaControls(bool areVisible)
     // Polygon
     addPointTextButton->setVisible(areVisible);
     deletePointTextButton->setVisible(areVisible);
+}
+void SceneEditionComponent::DisableAllButtonsBut(juce::String onlyActiveButtonName)
+{
+    // Backup of some controls' state
+    pasteTextButtonEnabledBackUp = pasteTextButton->isEnabled();
+    SetEnabledAllControls(false, true);
+
+    if (onlyActiveButtonName == "Add Point text button")
+        addPointTextButton->setEnabled(true);
+    else if (onlyActiveButtonName == "Delete Point text button")
+        deletePointTextButton->setEnabled(true);
+}
+void SceneEditionComponent::SetPasteEnabled(bool _isEnabled)
+{
+    pasteTextButton->setEnabled(_isEnabled);
+}
+void SceneEditionComponent::SetEnabledAllControls(bool areEnabled, bool controlsBackUp)
+{
+    // Canvas
+
+    // Main area controls
+    addAreaTextButton->setEnabled(areEnabled);
+    deleteAreaTextButton->setEnabled(areEnabled);
+    copyTextButton->setEnabled(areEnabled);
+
+    // Special buttons with a backup of their state (may not be enabled !)
+    if (controlsBackUp)
+        pasteTextButton->setEnabled(pasteTextButtonEnabledBackUp);
+    else
+        pasteTextButton->setEnabled(areEnabled);
+
+    setEnabledSelectedAreaControls(areEnabled); // Selected Area
+
+    // Spat effect
 }
 void SceneEditionComponent::setEnabledSelectedAreaControls(bool areEnabled)
 {
@@ -440,8 +562,28 @@ void SceneEditionComponent::setEnabledSelectedAreaControls(bool areEnabled)
     addPointTextButton->setEnabled(areEnabled);
     deletePointTextButton->setEnabled(areEnabled);
 }
+void SceneEditionComponent::setVisibleSpatControls(bool areVisible)
+{
+    spatGroupComponent->setVisible(areVisible);
+    spatLabel->setVisible(areVisible);
+    speakersGroupComboBox->setVisible(areVisible);
+}
 
 
+// - - - - - Spat group - - - - -
+void SceneEditionComponent::SetSpatGroupReduced(bool _isReduced)
+{
+    if (_isReduced)
+        setVisibleSpatControls(false);
+    else
+        setVisibleSpatControls(true);
+    isSpatGroupReduced = _isReduced;
+}
+
+
+
+
+// ----- Parameters setting -----
 
 
 void SceneEditionComponent::SetAreaColourValue(juce::Colour colour)
@@ -450,6 +592,15 @@ void SceneEditionComponent::SetAreaColourValue(juce::Colour colour)
     sliderG->setValue(colour.getGreen());
     sliderB->setValue(colour.getBlue());
 }
+
+
+
+
+
+
+
+// ----- Helpers -----
+
 void SceneEditionComponent::colourSliderMoved()
 {
     Colour newColour = Colour((uint8)sliderR->getValue(),
@@ -458,6 +609,39 @@ void SceneEditionComponent::colourSliderMoved()
     sceneEditionManager->OnNewColour(newColour);
 }
 
+
+
+// ----- Geometric transformation of controls -----
+void SceneEditionComponent::areaGroupTranslateY(int dY)
+{
+    componentTranslateY(areaGroupComponent.get(), dY);
+    componentTranslateY(addPointTextButton.get(), dY);
+    componentTranslateY(deletePointTextButton.get(), dY);
+    componentTranslateY(copyTextButton.get(), dY);
+    componentTranslateY(pasteTextButton.get(), dY);
+    componentTranslateY(addAreaTextButton.get(), dY);
+    componentTranslateY(deleteAreaTextButton.get(), dY);
+    componentTranslateY(labelR.get(), dY);
+    componentTranslateY(labelG.get(), dY);
+    componentTranslateY(labelB.get(), dY);
+    componentTranslateY(sliderR.get(), dY);
+    componentTranslateY(sliderG.get(), dY);
+    componentTranslateY(sliderB.get(), dY);
+    componentTranslateY(sendBackwardTextButton.get(), dY);
+    componentTranslateY(sendToBackTextButton.get(), dY);
+    componentTranslateY(bringForwardTextButton.get(), dY);
+    componentTranslateY(bringToFrontTextButton.get(), dY);
+}
+void SceneEditionComponent::spatGroupTranslateY(int dY)
+{
+    componentTranslateY(spatGroupComponent.get(), dY);
+    componentTranslateY(spatLabel.get(), dY);
+    componentTranslateY(speakersGroupComboBox.get(), dY);
+}
+void SceneEditionComponent::componentTranslateY(Component* component, int dY)
+{
+    component->setTopLeftPosition(component->getX(), component->getY() + dY);
+}
 
 
 
@@ -478,81 +662,93 @@ BEGIN_JUCER_METADATA
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="1" initialWidth="1024" initialHeight="560">
   <BACKGROUND backgroundColour="ffd9d9d9"/>
-  <GROUPCOMPONENT name="new group" id="87d416270d41f58c" memberName="groupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="8 6 192 258" title="Area edition"/>
-  <GROUPCOMPONENT name="new group" id="90b16e3024c520fd" memberName="groupComponent2"
-                  virtualName="" explicitFocusOrder="0" pos="8 98.929%r 192 48.036%"
+  <GROUPCOMPONENT name="Area edition group component" id="87d416270d41f58c" memberName="areaGroupComponent"
+                  virtualName="" explicitFocusOrder="0" pos="8 -8R 192 248" posRelativeY="4250d5155a80be70"
+                  title="Area edition"/>
+  <GROUPCOMPONENT name="Spatialization group component" id="90b16e3024c520fd" memberName="spatGroupComponent"
+                  virtualName="" explicitFocusOrder="0" pos="8 -8R 192 80" posRelativeY="87d416270d41f58c"
                   title="Spatialization effect"/>
   <TEXTBUTTON name="Add Point text button" id="71769222a7765795" memberName="addPointTextButton"
-              virtualName="" explicitFocusOrder="0" pos="16 224 88 24" bgColOff="33000000"
-              bgColOn="ffffffff" buttonText="Add Point" connectedEdges="2"
-              needsCallback="1" radioGroupId="0"/>
+              virtualName="" explicitFocusOrder="0" pos="16 216 88 24" posRelativeY="87d416270d41f58c"
+              bgColOff="33000000" bgColOn="ffffffff" buttonText="Add Point"
+              connectedEdges="2" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Delete Point text button" id="2bdfdc3999886d02" memberName="deletePointTextButton"
-              virtualName="" explicitFocusOrder="0" pos="104 224 88 24" bgColOff="33000000"
-              bgColOn="ffffffff" buttonText="Delete Point" connectedEdges="1"
-              needsCallback="1" radioGroupId="0"/>
+              virtualName="" explicitFocusOrder="0" pos="104 216 88 24" posRelativeY="87d416270d41f58c"
+              bgColOff="33000000" bgColOn="ffffffff" buttonText="Delete Point"
+              connectedEdges="1" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Copy Text Button" id="33b309fbb149d4ee" memberName="copyTextButton"
-              virtualName="" explicitFocusOrder="0" pos="16 56 88 24" bgColOff="33000000"
-              bgColOn="ffffffff" buttonText="Copy" connectedEdges="6" needsCallback="1"
-              radioGroupId="0"/>
+              virtualName="" explicitFocusOrder="0" pos="16 48 88 24" posRelativeY="87d416270d41f58c"
+              bgColOff="33000000" bgColOn="ffffffff" buttonText="Copy" connectedEdges="6"
+              needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Delete Point" id="653c7d46ffba1120" memberName="pasteTextButton"
-              virtualName="" explicitFocusOrder="0" pos="104 56 88 24" bgColOff="33000000"
-              bgColOn="ffffffff" buttonText="Paste" connectedEdges="5" needsCallback="1"
-              radioGroupId="0"/>
+              virtualName="" explicitFocusOrder="0" pos="104 48 88 24" posRelativeY="87d416270d41f58c"
+              bgColOff="33000000" bgColOn="ffffffff" buttonText="Paste" connectedEdges="5"
+              needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Add Area text button" id="d377c545746b9e8d" memberName="addAreaTextButton"
-              virtualName="" explicitFocusOrder="0" pos="16 32 88 24" bgColOff="33000000"
-              bgColOn="ffffffff" buttonText="Add Area" connectedEdges="10"
-              needsCallback="1" radioGroupId="0"/>
+              virtualName="" explicitFocusOrder="0" pos="16 24 88 24" posRelativeY="87d416270d41f58c"
+              bgColOff="33000000" bgColOn="ffffffff" buttonText="Add Area"
+              connectedEdges="10" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Delete Point text button" id="3c0e2321516c0809" memberName="deleteAreaTextButton"
-              virtualName="" explicitFocusOrder="0" pos="104 32 88 24" bgColOff="33000000"
-              bgColOn="ffffffff" buttonText="Delete Area" connectedEdges="9"
-              needsCallback="1" radioGroupId="0"/>
+              virtualName="" explicitFocusOrder="0" pos="104 24 88 24" posRelativeY="87d416270d41f58c"
+              bgColOff="33000000" bgColOn="ffffffff" buttonText="Delete Area"
+              connectedEdges="9" needsCallback="1" radioGroupId="0"/>
   <LABEL name="new label" id="893f3de478724dd" memberName="labelR" virtualName=""
-         explicitFocusOrder="0" pos="16 144 24 24" edTextCol="ff000000"
-         edBkgCol="0" labelText="R" editableSingleClick="0" editableDoubleClick="0"
-         focusDiscardsChanges="0" fontname="Default font" fontsize="15"
-         bold="0" italic="0" justification="33"/>
+         explicitFocusOrder="0" pos="16 136 24 24" posRelativeY="87d416270d41f58c"
+         edTextCol="ff000000" edBkgCol="0" labelText="R" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
+         fontsize="15" bold="0" italic="0" justification="33"/>
   <SLIDER name="Slider R" id="c86e71b3772d49e9" memberName="sliderR" virtualName=""
-          explicitFocusOrder="0" pos="40 144 150 24" thumbcol="ffbbbbbb"
-          min="0" max="255" int="1" style="LinearHorizontal" textBoxPos="TextBoxLeft"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
-          needsCallback="1"/>
+          explicitFocusOrder="0" pos="40 136 150 24" posRelativeY="87d416270d41f58c"
+          thumbcol="ffbbbbbb" min="0" max="255" int="1" style="LinearHorizontal"
+          textBoxPos="TextBoxLeft" textBoxEditable="1" textBoxWidth="80"
+          textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <LABEL name="new label" id="d31faee34d487318" memberName="labelG" virtualName=""
-         explicitFocusOrder="0" pos="16 168 24 24" edTextCol="ff000000"
-         edBkgCol="0" labelText="G" editableSingleClick="0" editableDoubleClick="0"
-         focusDiscardsChanges="0" fontname="Default font" fontsize="15"
-         bold="0" italic="0" justification="33"/>
+         explicitFocusOrder="0" pos="16 160 24 24" posRelativeY="87d416270d41f58c"
+         edTextCol="ff000000" edBkgCol="0" labelText="G" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
+         fontsize="15" bold="0" italic="0" justification="33"/>
   <SLIDER name="SliderG" id="8455ecc13f47ec08" memberName="sliderG" virtualName=""
-          explicitFocusOrder="0" pos="40 168 150 24" thumbcol="ffbbbbbb"
-          min="0" max="255" int="1" style="LinearHorizontal" textBoxPos="TextBoxLeft"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
-          needsCallback="1"/>
+          explicitFocusOrder="0" pos="40 160 150 24" posRelativeY="87d416270d41f58c"
+          thumbcol="ffbbbbbb" min="0" max="255" int="1" style="LinearHorizontal"
+          textBoxPos="TextBoxLeft" textBoxEditable="1" textBoxWidth="80"
+          textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <LABEL name="new label" id="ae5abc145d9184cf" memberName="labelB" virtualName=""
-         explicitFocusOrder="0" pos="16 192 24 24" edTextCol="ff000000"
-         edBkgCol="0" labelText="B" editableSingleClick="0" editableDoubleClick="0"
-         focusDiscardsChanges="0" fontname="Default font" fontsize="15"
-         bold="0" italic="0" justification="33"/>
+         explicitFocusOrder="0" pos="16 184 24 24" posRelativeY="87d416270d41f58c"
+         edTextCol="ff000000" edBkgCol="0" labelText="B" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
+         fontsize="15" bold="0" italic="0" justification="33"/>
   <SLIDER name="Slider B" id="15aa4b94476e3563" memberName="sliderB" virtualName=""
-          explicitFocusOrder="0" pos="40 192 150 24" thumbcol="ffbbbbbb"
-          min="0" max="255" int="1" style="LinearHorizontal" textBoxPos="TextBoxLeft"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
-          needsCallback="1"/>
+          explicitFocusOrder="0" pos="40 184 150 24" posRelativeY="87d416270d41f58c"
+          thumbcol="ffbbbbbb" min="0" max="255" int="1" style="LinearHorizontal"
+          textBoxPos="TextBoxLeft" textBoxEditable="1" textBoxWidth="80"
+          textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <TEXTBUTTON name="Send backward text button" id="a356ce3575b4d98b" memberName="sendBackwardTextButton"
-              virtualName="" explicitFocusOrder="0" pos="16 112 104 24" bgColOff="33000000"
-              bgColOn="ffffffff" buttonText="Send backward" connectedEdges="6"
-              needsCallback="1" radioGroupId="0"/>
+              virtualName="" explicitFocusOrder="0" pos="16 104 104 24" posRelativeY="87d416270d41f58c"
+              bgColOff="33000000" bgColOn="ffffffff" buttonText="Send backward"
+              connectedEdges="6" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Bring forward text button" id="d626373b1db0a49" memberName="bringForwardTextButton"
-              virtualName="" explicitFocusOrder="0" pos="16 88 104 24" bgColOff="33000000"
-              bgColOn="ffffffff" buttonText="Bring forward" connectedEdges="10"
-              needsCallback="1" radioGroupId="0"/>
+              virtualName="" explicitFocusOrder="0" pos="16 80 104 24" posRelativeY="87d416270d41f58c"
+              bgColOff="33000000" bgColOn="ffffffff" buttonText="Bring forward"
+              connectedEdges="10" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Bring to front text button" id="43d8b27a93068fcf" memberName="bringToFrontTextButton"
-              virtualName="" explicitFocusOrder="0" pos="120 88 72 24" bgColOff="33000000"
-              bgColOn="ffffffff" buttonText="to front" connectedEdges="9" needsCallback="1"
-              radioGroupId="0"/>
+              virtualName="" explicitFocusOrder="0" pos="120 80 72 24" posRelativeY="87d416270d41f58c"
+              bgColOff="33000000" bgColOn="ffffffff" buttonText="to front"
+              connectedEdges="9" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Send to back text button" id="1fe791d6bf4489ca" memberName="sendToBackTextButton"
-              virtualName="" explicitFocusOrder="0" pos="120 112 72 24" bgColOff="33000000"
-              bgColOn="ffffffff" buttonText="to back" connectedEdges="5" needsCallback="1"
-              radioGroupId="0"/>
+              virtualName="" explicitFocusOrder="0" pos="120 104 72 24" posRelativeY="87d416270d41f58c"
+              bgColOff="33000000" bgColOn="ffffffff" buttonText="to back" connectedEdges="5"
+              needsCallback="1" radioGroupId="0"/>
+  <GROUPCOMPONENT name="Canvas edition group component" id="4250d5155a80be70" memberName="canvasGroupComponent"
+                  virtualName="" explicitFocusOrder="0" pos="8 8 192 24" title="Canvas edition"/>
+  <COMBOBOX name="Speakers group combo box" id="89ad7c0a3be5a39c" memberName="speakersGroupComboBox"
+            virtualName="" explicitFocusOrder="0" pos="16 40 176 24" posRelativeY="90b16e3024c520fd"
+            editable="0" layout="33" items="-1 undefined" textWhenNonSelected=""
+            textWhenNoItems="(no choices)"/>
+  <LABEL name="Spat label" id="b1f047be2f31dc5" memberName="spatLabel"
+         virtualName="" explicitFocusOrder="0" pos="16 16 176 24" posRelativeY="90b16e3024c520fd"
+         edTextCol="ff000000" edBkgCol="0" labelText="Link to speakers group :"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

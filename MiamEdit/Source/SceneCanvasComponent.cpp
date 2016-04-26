@@ -14,7 +14,9 @@
 #include "SceneEditionManager.h"
 
 //==============================================================================
-SceneCanvasComponent::SceneCanvasComponent()
+SceneCanvasComponent::SceneCanvasComponent(SceneCanvasComponent::Id _id) :
+    selfId(_id),
+    selectedForEditing(false)
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
@@ -45,9 +47,16 @@ void SceneCanvasComponent::paint (Graphics& g)
     // Pure black background
     g.fillAll (Colours::black);
     
+    // White interior contour 2px line to show when the canvas is active
+    if (selectedForEditing)
+    {
+        g.setColour(Colours::white);
+        g.drawRect(1, 1, getWidth()-2, getHeight()-2, 2.0);
+    }
+    
     // Areas painting
-    for (int i=0;i<sceneEditionManager->GetDrawableAreasSize();i++)
-        sceneEditionManager->GetDrawableArea(i).Paint(g);
+    for (int i=0;i<sceneEditionManager->GetDrawableAreasCount(selfId);i++)
+        sceneEditionManager->GetDrawableArea(selfId, i).Paint(g);
 }
 
 void SceneCanvasComponent::resized()
@@ -55,8 +64,8 @@ void SceneCanvasComponent::resized()
     // Actualization of all areas graphical objets, if Presenter is accessible (not at first time)
     if (sceneEditionManager != 0)
     {
-        for (int i=0;i<sceneEditionManager->GetDrawableAreasSize();i++)
-            sceneEditionManager->GetDrawableArea(i).CanvasResized(getWidth(), getHeight());
+        for (int i=0;i<sceneEditionManager->GetDrawableAreasCount(selfId);i++)
+            sceneEditionManager->GetDrawableArea(selfId, i).CanvasResized(this);
     }
 }
 
@@ -66,17 +75,17 @@ void SceneCanvasComponent::resized()
 
 void SceneCanvasComponent::mouseDown(const juce::MouseEvent& event)
 {
-    sceneEditionManager->OnCanvasMouseDown(event.getMouseDownPosition());
+    sceneEditionManager->OnCanvasMouseDown(selfId, event.getMouseDownPosition());
 }
 
 void SceneCanvasComponent::mouseDrag(const juce::MouseEvent& event)
 {
-    sceneEditionManager->OnCanvasMouseDrag(event.getPosition());
+    sceneEditionManager->OnCanvasMouseDrag(selfId, event.getPosition());
 }
 
 void SceneCanvasComponent::mouseUp(const juce::MouseEvent& /*event*/)
 {
-    sceneEditionManager->OnCanvasMouseUp();
+    sceneEditionManager->OnCanvasMouseUp(selfId);
 }
 
 

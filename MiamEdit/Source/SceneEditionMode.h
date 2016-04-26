@@ -23,7 +23,9 @@ namespace Miam {
         
         Loading, ///< When scene manager is loading something (useless at the moment ??)
         
-        NoAreaSelected, ///< Nothing selected, ready to process mouse input from canvas
+        NothingSelected, ///< No canvas or area selected ; ready to process any input
+        
+        CanvasSelected, ///< A canvas is selected (but no area) ; ready to process mouse input from canvas
         PolygonSelected, ///< Polygon selected, still ready to process mouse input from canvas
         EditingArea, ///< Mouse is editing the current area
         
