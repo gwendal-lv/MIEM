@@ -504,18 +504,9 @@ void EditablePolygon::insertPointInPixels(const Point<double>& newContourPoint, 
 void EditablePolygon::deletePoint(int position)
 {
     contourPointsInPixels.erase(contourPointsInPixels.begin()+position);
-    // barycentrum (G point) computation DELETED FOR NOW (centre doesn't move)
-    /*double xG = 0.0, yG = 0.0; // pixel coordinates
-    for (int i = 0 ; i<contourPointsInPixels.size() ; i++)
-    {
-        xG += contourPointsInPixels[i].x;
-        yG += contourPointsInPixels[i].y;
-    }
-    xG /= ((double)contourPointsInPixels.size());
-    yG /= ((double)contourPointsInPixels.size());
-    centerInPixels = Point<double>(xG, yG);*/
     
     recreateNormalizedPoints();
+	this->CanvasResized(parentCanvas);
 }
 
 void EditablePolygon::recreateNormalizedPoints()

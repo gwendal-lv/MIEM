@@ -51,7 +51,7 @@ void SceneCanvasComponent::paint (Graphics& g)
     if (selectedForEditing)
     {
         g.setColour(Colours::white);
-        g.drawRect(1, 1, getWidth()-2, getHeight()-2, 2.0);
+        g.drawRect(1, 1, getWidth()-2, getHeight()-2, 2);
     }
     
     // Areas painting
@@ -71,21 +71,25 @@ void SceneCanvasComponent::resized()
 
 
 
-//
+// FOR NOW : transmission of mouse/touch events for only ONE input source
+// Because the scene edition manager is built to react to the mouse only...
 
 void SceneCanvasComponent::mouseDown(const juce::MouseEvent& event)
 {
-    sceneEditionManager->OnCanvasMouseDown(selfId, event.getMouseDownPosition());
+	if (event.source.getIndex() == 0)
+		sceneEditionManager->OnCanvasMouseDown(selfId, event.getMouseDownPosition());
 }
 
 void SceneCanvasComponent::mouseDrag(const juce::MouseEvent& event)
 {
-    sceneEditionManager->OnCanvasMouseDrag(selfId, event.getPosition());
+	if (event.source.getIndex() == 0)
+		sceneEditionManager->OnCanvasMouseDrag(selfId, event.getPosition());
 }
 
-void SceneCanvasComponent::mouseUp(const juce::MouseEvent& /*event*/)
+void SceneCanvasComponent::mouseUp(const juce::MouseEvent& event)
 {
-    sceneEditionManager->OnCanvasMouseUp(selfId);
+	if (event.source.getIndex() == 0)
+		sceneEditionManager->OnCanvasMouseUp(selfId);
 }
 
 

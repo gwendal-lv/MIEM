@@ -262,14 +262,14 @@ void SceneEditionComponent::resized()
     sceneCanvasComponents[SceneCanvasComponent::MainScene]->setBounds(
         208, // next to the left menu
         8, // always the same Y coordinate
-        (getWidth() - areaGroupComponent->getWidth() - 24)*pourcentageLargeurMainScene - 8,
+        juce::roundFloatToInt((getWidth() - areaGroupComponent->getWidth() - 24)*pourcentageLargeurMainScene) - 8,
         getHeight()-16); // always the same Y coordinate
 
     sceneCanvasComponents[SceneCanvasComponent::FixedScene]->setBounds(
          sceneCanvasComponents[SceneCanvasComponent::MainScene]->getX() // on the right of
          + sceneCanvasComponents[SceneCanvasComponent::MainScene]->getWidth()+8, //MainScene
          8, // always the same Y coordinate
-         (getWidth()-areaGroupComponent->getWidth()-24)*(1.0f-pourcentageLargeurMainScene)-8,
+         juce::roundFloatToInt((getWidth()-areaGroupComponent->getWidth()-24)*(1.0f-pourcentageLargeurMainScene))-8,
          getHeight()-16); // always the same Y coordinate
 
     //[/UserPreResize]
