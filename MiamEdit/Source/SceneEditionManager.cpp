@@ -352,7 +352,7 @@ void SceneEditionManager::OnCanvasMouseDown(SceneCanvasComponent::Id canvasId, P
 void SceneEditionManager::OnCanvasMouseDrag(SceneCanvasComponent::Id /*canvasId*/, Point<int> mouseLocation)
 {
     if (selectedAreaUniqueId>=0)
-        GetEditablePolygon(selectedAreaUniqueId).MovePoint(mouseLocation.toDouble());
+        GetEditablePolygon(selectedAreaUniqueId).TryMovePoint(mouseLocation.toDouble());
     
     
     sceneEditionComponent->repaint();

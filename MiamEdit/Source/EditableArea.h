@@ -67,8 +67,11 @@ namespace Miam
 		/// \return Whether the hitPoint has launched a point move or not
         virtual bool TryBeginPointMove(const Point<double>& hitPoint) = 0;
 		/// \brief Actually moves the point which has been internally selected if
-		/// EditableArea::TryBeginPointMove was successful.
-        virtual void MovePoint(const Point<double>& newLocation) = 0;
+		/// EditableArea::TryBeginPointMove was successful. The move order may not be obeyed if
+        /// not validated by the area itself.
+        ///
+        /// \return Wether the point was moved or not.
+        virtual bool TryMovePoint(const Point<double>& newLocation) = 0;
 		/// \brief Stop the movement and unselects the internally selected point.
         virtual void EndPointMove() = 0;
         

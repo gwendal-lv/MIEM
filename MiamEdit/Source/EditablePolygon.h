@@ -67,7 +67,7 @@ namespace Miam {
         // Override of pure virtual functions from the abstract editable area
         bool HitTest(const Point<double>& hitPoint) override;
         bool TryBeginPointMove(const Point<double>& hitPoint) override;
-        void MovePoint(const Point<double>& newLocation) override;
+        bool TryMovePoint(const Point<double>& newLocation) override;
         void EndPointMove() override;
         void Translate(const Point<double>& translation) override;
         protected :

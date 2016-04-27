@@ -227,21 +227,30 @@ bool EditablePolygon::TryBeginPointMove(const Point<double>& hitPoint)
     return hitResult;
 }
 
-void EditablePolygon::MovePoint(const Point<double>& newLocation)
+bool EditablePolygon::TryMovePoint(const Point<double>& newLocation)
 {
+    bool pointMoved = false;
+    
+    // Simple contour point dragging
     if (pointDraggedId >= 0)
     {
-        if (isNewContourPointValid(newLocation))
+        if ( parentCanvas->getLocalBounds().contains(newLocation.toInt())
+            && isNewContourPointValid(newLocation))
         {
             contourPointsInPixels[pointDraggedId] = newLocation;
             contourPoints[pointDraggedId] = Point<double>(
                                             newLocation.x / ((float)parentCanvas->getWidth()) ,
                                             newLocation.y / ((float)parentCanvas->getHeight()) );
+            pointMoved = true;
         }
     }
     
     else if (pointDraggedId == EditableAreaPointId::ManipulationPoint)
     {
+        // Rotation will be applied anyway...
+        // Security needed for point to stay within the canvas ?
+        pointMoved = true;
+        
         // Computation of the RotScale transformation needed to move the manipulation
         // point to this new location (RotScale relative to the center)
         // ----- rotation -----
@@ -321,22 +330,34 @@ void EditablePolygon::MovePoint(const Point<double>& newLocation)
             centerInPixels = newLocation;
             center = Point<double>(newLocation.x / ((double)parentCanvas->getWidth()),
                                    newLocation.y / ((double)parentCanvas->getHeight()) );
+            
             computeManipulationPoint();
+            pointMoved = true;
         }
     }
     
+    // Déplacement itératif
     else if (pointDraggedId == EditableAreaPointId::WholeArea)
     {
-        // Déplacement itératif
+        // If translation leads to an out-of-canvas polygon, we just cancel it... No numeric issue
+        // with double-precision floating-point numbers...
+        Rectangle<double> boundingBoxContour = contour.getBounds().toDouble();
         Point<double> translation = newLocation - lastLocation;
-        Translate(translation);
-        
-        // Actualisation en prévision du prochain petit déplacement
-        lastLocation = newLocation;
+        boundingBoxContour.translate(translation.getX(), translation.getY());
+         // does new contour would be inside the canvas ?
+        if (parentCanvas->getLocalBounds().contains(boundingBoxContour.toNearestInt()))
+        {
+            Translate(translation);
+            pointMoved = true;
+            // Actualisation en prévision du prochain petit déplacement
+            lastLocation = newLocation;
+        }
     }
     
     // Graphic updates to all base attributes inherited
-    InteractivePolygon::CanvasResized(this->parentCanvas);
+    if (pointMoved)
+        InteractivePolygon::CanvasResized(this->parentCanvas);
+    return pointMoved;
 }
 
 
