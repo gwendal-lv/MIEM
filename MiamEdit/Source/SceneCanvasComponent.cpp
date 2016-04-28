@@ -30,9 +30,6 @@ SceneCanvasComponent::~SceneCanvasComponent()
 void SceneCanvasComponent::CompleteInitialization(SceneEditionManager* _sceneEditionManager)
 {
     sceneEditionManager = _sceneEditionManager;
-    
-    // to refresh all polygons
-    resized();
 }
 
 

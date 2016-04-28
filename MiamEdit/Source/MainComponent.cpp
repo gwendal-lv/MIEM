@@ -55,8 +55,6 @@ void MainContentComponent::CompleteInitialization(Presenter* _presenter)
     presenter = _presenter;
     
     mainBackgroundComponent->CompleteInitialization();
-    for (int i=0 ; i<secondLevelComponents.size() ; i++)
-        secondLevelComponents[i]->resized();
 }
 
 void MainContentComponent::SetMiamView(Miam::View* _view)
@@ -136,9 +134,9 @@ void MainContentComponent::resized()
     int yChildrenOffset = 5*8; // 5 cases depuis le haut (pour l'instant)
     for (int i=0;i<secondLevelComponents.size();i++)
     {
-        if (secondLevelComponents[i]->isVisible()) {
+        //if (secondLevelComponents[i]->isVisible()) { // EVERYTHING ACTUALIZED, VISIBLE OR NOT
             secondLevelComponents[i]->setBounds(0, yChildrenOffset, getWidth(), getHeight()-yChildrenOffset);
-        }
+        //}
     }
 }
 

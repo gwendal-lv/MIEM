@@ -43,11 +43,8 @@ public:
         
         
         // Instanciation of the 3 main parts of the application : Model, Presenter, View
-        // Accessible from anywhere, via JUCEApplication::getInstance()
         view = new Miam::View(mainWindow->getMainComponent());
-        presenter = new Miam::Presenter(view);
-        // When presenter is properly constructed, we finish View initialization
-        view->CompleteInitialization(presenter);
+        presenter = new Miam::Presenter(view); // Will reference itself to the View module
         
         
     }

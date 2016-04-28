@@ -90,6 +90,9 @@ namespace Miam {
         /// \brief Construction (the whole Presenter module is built after the View).
         SceneEditionManager(View* _view);
         
+        // For testing purposes only
+        void __AddTestPolygons();
+        
         // ---- Getters and Setters -----
         protected :
 		/// \brief Polygon referenced by its unique ID

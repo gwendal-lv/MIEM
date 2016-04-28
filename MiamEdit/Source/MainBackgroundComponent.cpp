@@ -184,9 +184,6 @@ void MainBackgroundComponent::buttonClicked (Button* buttonThatWasClicked)
 
 void MainBackgroundComponent::CompleteInitialization()
 {
-    // Scenes component should be shown on opening
-    // (default scene always loaded)
-    scenesTextButton->triggerClick();
 }
 
 void MainBackgroundComponent::DisplayInfo(const String& message)

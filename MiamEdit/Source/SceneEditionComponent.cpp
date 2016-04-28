@@ -66,7 +66,7 @@ SceneEditionComponent::SceneEditionComponent ()
 
     addAndMakeVisible (copyTextButton = new TextButton ("Copy Text Button"));
     copyTextButton->setButtonText (TRANS("Copy"));
-    copyTextButton->setConnectedEdges (Button::ConnectedOnRight | Button::ConnectedOnTop);
+    copyTextButton->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnBottom);
     copyTextButton->addListener (this);
     copyTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
     copyTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
@@ -85,9 +85,9 @@ SceneEditionComponent::SceneEditionComponent ()
     addAreaTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
     addAreaTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
 
-    addAndMakeVisible (deleteAreaTextButton = new TextButton ("Delete Point text button"));
+    addAndMakeVisible (deleteAreaTextButton = new TextButton ("Delete Area text button"));
     deleteAreaTextButton->setButtonText (TRANS("Delete Area"));
-    deleteAreaTextButton->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnBottom);
+    deleteAreaTextButton->setConnectedEdges (Button::ConnectedOnRight | Button::ConnectedOnTop);
     deleteAreaTextButton->addListener (this);
     deleteAreaTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
     deleteAreaTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
@@ -166,7 +166,7 @@ SceneEditionComponent::SceneEditionComponent ()
     sendToBackTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
 
     addAndMakeVisible (canvasGroupComponent = new GroupComponent ("Canvas edition group component",
-                                                                  TRANS("Canvas edition")));
+                                                                  TRANS("Scenes edition")));
 
     addAndMakeVisible (speakersGroupComboBox = new ComboBox ("Speakers group combo box"));
     speakersGroupComboBox->setEditableText (false);
@@ -184,11 +184,85 @@ SceneEditionComponent::SceneEditionComponent ()
     spatLabel->setColour (TextEditor::textColourId, Colours::black);
     spatLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
+    addAndMakeVisible (addSceneTextButton = new TextButton ("Add Scene text button"));
+    addSceneTextButton->setButtonText (TRANS("Add Scene"));
+    addSceneTextButton->setConnectedEdges (Button::ConnectedOnBottom);
+    addSceneTextButton->addListener (this);
+    addSceneTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
+    addSceneTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+
+    addAndMakeVisible (deleteSceneTextButton = new TextButton ("Delete Scene text button"));
+    deleteSceneTextButton->setButtonText (TRANS("Delete Scene"));
+    deleteSceneTextButton->setConnectedEdges (Button::ConnectedOnTop);
+    deleteSceneTextButton->addListener (this);
+    deleteSceneTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
+    deleteSceneTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+
+    addAndMakeVisible (sceneUpTextButton = new TextButton ("Scene Up text button"));
+    sceneUpTextButton->setButtonText (CharPointer_UTF8 ("\xe2\x86\x91 Up"));
+    sceneUpTextButton->setConnectedEdges (Button::ConnectedOnBottom);
+    sceneUpTextButton->addListener (this);
+    sceneUpTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
+    sceneUpTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+
+    addAndMakeVisible (sceneDownTextButton = new TextButton ("Scene Down text button"));
+    sceneDownTextButton->setButtonText (CharPointer_UTF8 ("\xe2\x86\x93 Down"));
+    sceneDownTextButton->setConnectedEdges (Button::ConnectedOnTop);
+    sceneDownTextButton->addListener (this);
+    sceneDownTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
+    sceneDownTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+
+    addAndMakeVisible (canvasInfoLabel = new Label ("Canvas Info label",
+                                                    TRANS("...selected canvas info...")));
+    canvasInfoLabel->setFont (Font (15.00f, Font::italic));
+    canvasInfoLabel->setJustificationType (Justification::centredLeft);
+    canvasInfoLabel->setEditable (false, false, false);
+    canvasInfoLabel->setColour (TextEditor::textColourId, Colours::black);
+    canvasInfoLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    addAndMakeVisible (sceneNameTextEditor = new TextEditor ("new text editor"));
+    sceneNameTextEditor->setMultiLine (false);
+    sceneNameTextEditor->setReturnKeyStartsNewLine (false);
+    sceneNameTextEditor->setReadOnly (false);
+    sceneNameTextEditor->setScrollbarsShown (true);
+    sceneNameTextEditor->setCaretVisible (true);
+    sceneNameTextEditor->setPopupMenuEnabled (true);
+    sceneNameTextEditor->setText (TRANS("...name of scene..."));
+
+    addAndMakeVisible (initialStateGroupComponent = new GroupComponent ("Initial state group component",
+                                                                        TRANS("Scene initial state")));
+
+    addAndMakeVisible (addExciterTextButton = new TextButton ("Add Area text button"));
+    addExciterTextButton->setButtonText (TRANS("Add Exciter"));
+    addExciterTextButton->setConnectedEdges (Button::ConnectedOnRight);
+    addExciterTextButton->addListener (this);
+    addExciterTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
+    addExciterTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+
+    addAndMakeVisible (deleteAreaTextButton2 = new TextButton ("Delete Area text button"));
+    deleteAreaTextButton2->setButtonText (TRANS("Delete"));
+    deleteAreaTextButton2->setConnectedEdges (Button::ConnectedOnLeft);
+    deleteAreaTextButton2->addListener (this);
+    deleteAreaTextButton2->setColour (TextButton::buttonColourId, Colour (0x33000000));
+    deleteAreaTextButton2->setColour (TextButton::buttonOnColourId, Colours::white);
+
+    addAndMakeVisible (editInitialStateTextButton = new TextButton ("Edit Initial State text button"));
+    editInitialStateTextButton->setButtonText (TRANS("Edit initial scene state"));
+    editInitialStateTextButton->addListener (this);
+    editInitialStateTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
+    editInitialStateTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+
+    addAndMakeVisible (endEditInitialStateTextButton = new TextButton ("End Edit Initial State text button"));
+    endEditInitialStateTextButton->setButtonText (TRANS("Go back to areas edition"));
+    endEditInitialStateTextButton->addListener (this);
+    endEditInitialStateTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
+    endEditInitialStateTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+
 
     //[UserPreSize]
     //[/UserPreSize]
 
-    setSize (1024, 560);
+    setSize (1024, 1024);
 
 
     //[Constructor] You can add your own custom stuff here..
@@ -234,6 +308,17 @@ SceneEditionComponent::~SceneEditionComponent()
     canvasGroupComponent = nullptr;
     speakersGroupComboBox = nullptr;
     spatLabel = nullptr;
+    addSceneTextButton = nullptr;
+    deleteSceneTextButton = nullptr;
+    sceneUpTextButton = nullptr;
+    sceneDownTextButton = nullptr;
+    canvasInfoLabel = nullptr;
+    sceneNameTextEditor = nullptr;
+    initialStateGroupComponent = nullptr;
+    addExciterTextButton = nullptr;
+    deleteAreaTextButton2 = nullptr;
+    editInitialStateTextButton = nullptr;
+    endEditInitialStateTextButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -274,28 +359,40 @@ void SceneEditionComponent::resized()
 
     //[/UserPreResize]
 
-    areaGroupComponent->setBounds (8, 8 + 24 - -8, 192, 248);
-    spatGroupComponent->setBounds (8, (8 + 24 - -8) + 248 - -8, 192, 80);
-    addPointTextButton->setBounds (16, (8 + 24 - -8) + 216, 88, 24);
-    deletePointTextButton->setBounds (104, (8 + 24 - -8) + 216, 88, 24);
-    copyTextButton->setBounds (16, (8 + 24 - -8) + 48, 88, 24);
-    pasteTextButton->setBounds (104, (8 + 24 - -8) + 48, 88, 24);
-    addAreaTextButton->setBounds (16, (8 + 24 - -8) + 24, 88, 24);
-    deleteAreaTextButton->setBounds (104, (8 + 24 - -8) + 24, 88, 24);
-    labelR->setBounds (16, (8 + 24 - -8) + 136, 24, 24);
-    sliderR->setBounds (40, (8 + 24 - -8) + 136, 150, 24);
-    labelG->setBounds (16, (8 + 24 - -8) + 160, 24, 24);
-    sliderG->setBounds (40, (8 + 24 - -8) + 160, 150, 24);
-    labelB->setBounds (16, (8 + 24 - -8) + 184, 24, 24);
-    sliderB->setBounds (40, (8 + 24 - -8) + 184, 150, 24);
-    sendBackwardTextButton->setBounds (16, (8 + 24 - -8) + 104, 104, 24);
-    bringForwardTextButton->setBounds (16, (8 + 24 - -8) + 80, 104, 24);
-    bringToFrontTextButton->setBounds (120, (8 + 24 - -8) + 80, 72, 24);
-    sendToBackTextButton->setBounds (120, (8 + 24 - -8) + 104, 72, 24);
-    canvasGroupComponent->setBounds (8, 8, 192, 24);
-    speakersGroupComboBox->setBounds (16, ((8 + 24 - -8) + 248 - -8) + 40, 176, 24);
-    spatLabel->setBounds (16, ((8 + 24 - -8) + 248 - -8) + 16, 176, 24);
+    areaGroupComponent->setBounds (8, 8 + 168 - -8, 192, 248);
+    spatGroupComponent->setBounds (8, (8 + 168 - -8) + 248 - -8, 192, 80);
+    addPointTextButton->setBounds (16, (8 + 168 - -8) + 216, 88, 24);
+    deletePointTextButton->setBounds (104, (8 + 168 - -8) + 216, 88, 24);
+    copyTextButton->setBounds (104, (8 + 168 - -8) + 24, 88, 24);
+    pasteTextButton->setBounds (104, (8 + 168 - -8) + 48, 88, 24);
+    addAreaTextButton->setBounds (16, (8 + 168 - -8) + 24, 88, 24);
+    deleteAreaTextButton->setBounds (16, (8 + 168 - -8) + 48, 88, 24);
+    labelR->setBounds (16, (8 + 168 - -8) + 136, 24, 24);
+    sliderR->setBounds (40, (8 + 168 - -8) + 136, 150, 24);
+    labelG->setBounds (16, (8 + 168 - -8) + 160, 24, 24);
+    sliderG->setBounds (40, (8 + 168 - -8) + 160, 150, 24);
+    labelB->setBounds (16, (8 + 168 - -8) + 184, 24, 24);
+    sliderB->setBounds (40, (8 + 168 - -8) + 184, 150, 24);
+    sendBackwardTextButton->setBounds (16, (8 + 168 - -8) + 104, 104, 24);
+    bringForwardTextButton->setBounds (16, (8 + 168 - -8) + 80, 104, 24);
+    bringToFrontTextButton->setBounds (120, (8 + 168 - -8) + 80, 72, 24);
+    sendToBackTextButton->setBounds (120, (8 + 168 - -8) + 104, 72, 24);
+    canvasGroupComponent->setBounds (8, 8, 192, 168);
+    speakersGroupComboBox->setBounds (16, ((8 + 168 - -8) + 248 - -8) + 40, 176, 24);
+    spatLabel->setBounds (16, ((8 + 168 - -8) + 248 - -8) + 16, 176, 24);
+    addSceneTextButton->setBounds (16, 8 + 48, 104, 24);
+    deleteSceneTextButton->setBounds (16, 8 + 72, 104, 24);
+    sceneUpTextButton->setBounds (128, 8 + 48, 64, 24);
+    sceneDownTextButton->setBounds (128, 8 + 72, 64, 24);
+    canvasInfoLabel->setBounds (16, 8 + 16, 176, 24);
+    sceneNameTextEditor->setBounds (16, 112, 176, 24);
+    initialStateGroupComponent->setBounds (8, ((8 + 168 - -8) + 248 - -8) + 80 - -8, 192, 88);
+    addExciterTextButton->setBounds (16, (8 + 168 - -8) + 368, 88, 24);
+    deleteAreaTextButton2->setBounds (104, (((8 + 168 - -8) + 248 - -8) + 80 - -8) + 24, 88, 24);
+    editInitialStateTextButton->setBounds (16, 8 + 136, 176, 24);
+    endEditInitialStateTextButton->setBounds (16, 8 + 576, 176, 24);
     //[UserResized] Add your own custom resize handling here..
+
     // Backup of Projucer's sizes
     int canvasGroupInitH = canvasGroupComponent->getHeight();
     int areaGroupInitH = areaGroupComponent->getHeight();
@@ -308,13 +405,24 @@ void SceneEditionComponent::resized()
     /* In the end, we may have to translate some groups towards the top of the component,
      * because some groups' height may have change (depending on the running mode).
      */
-    if (isCanvasGroupReduced)
+    if (isCanvasGroupHidden)
+    {
+        int dY = 0 - canvasGroupInitH - 8; // < 0
+        areaGroupTranslateY(dY);
+        spatGroupTranslateY(dY);
+    }
+    /*else if (isCanvasGroupReduced)
     {
         int dY = canvasGroupReducedH - canvasGroupInitH - 8; // < 0
         areaGroupTranslateY(dY);
         spatGroupTranslateY(dY);
     }
-    if (isAreaGroupReduced)
+    if (isAreaGroupHidden)
+    {
+        int dY = 0 - areaGroupInitH - 8; // < 0
+        spatGroupTranslateY(dY);
+    }
+    else*/ if (isAreaGroupReduced)
     {
         int dY = areaGroupReducedH - areaGroupInitH - 8; // < 0
         spatGroupTranslateY(dY);
@@ -388,6 +496,46 @@ void SceneEditionComponent::buttonClicked (Button* buttonThatWasClicked)
         sceneEditionManager->OnSendToBack();
         //[/UserButtonCode_sendToBackTextButton]
     }
+    else if (buttonThatWasClicked == addSceneTextButton)
+    {
+        //[UserButtonCode_addSceneTextButton] -- add your button handler code here..
+        //[/UserButtonCode_addSceneTextButton]
+    }
+    else if (buttonThatWasClicked == deleteSceneTextButton)
+    {
+        //[UserButtonCode_deleteSceneTextButton] -- add your button handler code here..
+        //[/UserButtonCode_deleteSceneTextButton]
+    }
+    else if (buttonThatWasClicked == sceneUpTextButton)
+    {
+        //[UserButtonCode_sceneUpTextButton] -- add your button handler code here..
+        //[/UserButtonCode_sceneUpTextButton]
+    }
+    else if (buttonThatWasClicked == sceneDownTextButton)
+    {
+        //[UserButtonCode_sceneDownTextButton] -- add your button handler code here..
+        //[/UserButtonCode_sceneDownTextButton]
+    }
+    else if (buttonThatWasClicked == addExciterTextButton)
+    {
+        //[UserButtonCode_addExciterTextButton] -- add your button handler code here..
+        //[/UserButtonCode_addExciterTextButton]
+    }
+    else if (buttonThatWasClicked == deleteAreaTextButton2)
+    {
+        //[UserButtonCode_deleteAreaTextButton2] -- add your button handler code here..
+        //[/UserButtonCode_deleteAreaTextButton2]
+    }
+    else if (buttonThatWasClicked == editInitialStateTextButton)
+    {
+        //[UserButtonCode_editInitialStateTextButton] -- add your button handler code here..
+        //[/UserButtonCode_editInitialStateTextButton]
+    }
+    else if (buttonThatWasClicked == endEditInitialStateTextButton)
+    {
+        //[UserButtonCode_endEditInitialStateTextButton] -- add your button handler code here..
+        //[/UserButtonCode_endEditInitialStateTextButton]
+    }
 
     //[UserbuttonClicked_Post]
     //[/UserbuttonClicked_Post]
@@ -457,13 +605,23 @@ void SceneEditionComponent::CompleteInitialization(SceneEditionManager* _sceneEd
 // ========== (SETTERS AND GETTERS) ORDERS FROM PRESENTER ==========
 
 // - - - - - Canvases & canvas group - - - - -
+void SceneEditionComponent::SetCanvasGroupHidden(bool _isHidden)
+{
+    canvasGroupComponent->setVisible(!_isHidden);
+    canvasInfoLabel->setVisible(!_isHidden);
+    addSceneTextButton->setVisible(!_isHidden);
+    deleteSceneTextButton->setVisible(!_isHidden);
+    sceneUpTextButton->setVisible(!_isHidden);
+    sceneDownTextButton->setVisible(!_isHidden);
+    sceneNameTextEditor->setVisible(!_isHidden);
+    editInitialStateTextButton->setVisible(!_isHidden);
+
+    isCanvasGroupHidden = _isHidden;
+}
 void SceneEditionComponent::SetCanvasGroupReduced(bool _isReduced)
 {
-    if (_isReduced)
-        canvasGroupComponent->setVisible(false);
-    else
-        canvasGroupComponent->setVisible(true);
-    isCanvasGroupReduced = _isReduced;
+    SetCanvasGroupHidden(_isReduced);
+    // isCanvasGroupReduced = true;
 }
 
 
@@ -571,13 +729,15 @@ void SceneEditionComponent::setVisibleSpatControls(bool areVisible)
 
 
 // - - - - - Spat group - - - - -
+void SceneEditionComponent::SetSpatGroupHidden(bool _isHidden)
+{
+    setVisibleSpatControls(!_isHidden);
+    isSpatGroupHidden = _isHidden;
+}
 void SceneEditionComponent::SetSpatGroupReduced(bool _isReduced)
 {
-    if (_isReduced)
-        setVisibleSpatControls(false);
-    else
-        setVisibleSpatControls(true);
-    isSpatGroupReduced = _isReduced;
+    SetSpatGroupHidden(_isReduced);
+    // isSpatGroupReduced = _isReduced;
 }
 
 
@@ -660,10 +820,10 @@ BEGIN_JUCER_METADATA
 <JUCER_COMPONENT documentType="Component" className="SceneEditionComponent" componentName=""
                  parentClasses="public Component" constructorParams="" variableInitialisers=""
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
-                 fixedSize="1" initialWidth="1024" initialHeight="560">
+                 fixedSize="0" initialWidth="1024" initialHeight="1024">
   <BACKGROUND backgroundColour="ffd9d9d9"/>
   <GROUPCOMPONENT name="Area edition group component" id="87d416270d41f58c" memberName="areaGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="8 -8R 192 248" posRelativeY="4250d5155a80be70"
+                  virtualName="" explicitFocusOrder="0" pos="8 -609R 192 248" posRelativeY="4250d5155a80be70"
                   title="Area edition"/>
   <GROUPCOMPONENT name="Spatialization group component" id="90b16e3024c520fd" memberName="spatGroupComponent"
                   virtualName="" explicitFocusOrder="0" pos="8 -8R 192 80" posRelativeY="87d416270d41f58c"
@@ -677,8 +837,8 @@ BEGIN_JUCER_METADATA
               bgColOff="33000000" bgColOn="ffffffff" buttonText="Delete Point"
               connectedEdges="1" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Copy Text Button" id="33b309fbb149d4ee" memberName="copyTextButton"
-              virtualName="" explicitFocusOrder="0" pos="16 48 88 24" posRelativeY="87d416270d41f58c"
-              bgColOff="33000000" bgColOn="ffffffff" buttonText="Copy" connectedEdges="6"
+              virtualName="" explicitFocusOrder="0" pos="104 24 88 24" posRelativeY="87d416270d41f58c"
+              bgColOff="33000000" bgColOn="ffffffff" buttonText="Copy" connectedEdges="9"
               needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Delete Point" id="653c7d46ffba1120" memberName="pasteTextButton"
               virtualName="" explicitFocusOrder="0" pos="104 48 88 24" posRelativeY="87d416270d41f58c"
@@ -688,10 +848,10 @@ BEGIN_JUCER_METADATA
               virtualName="" explicitFocusOrder="0" pos="16 24 88 24" posRelativeY="87d416270d41f58c"
               bgColOff="33000000" bgColOn="ffffffff" buttonText="Add Area"
               connectedEdges="10" needsCallback="1" radioGroupId="0"/>
-  <TEXTBUTTON name="Delete Point text button" id="3c0e2321516c0809" memberName="deleteAreaTextButton"
-              virtualName="" explicitFocusOrder="0" pos="104 24 88 24" posRelativeY="87d416270d41f58c"
+  <TEXTBUTTON name="Delete Area text button" id="3c0e2321516c0809" memberName="deleteAreaTextButton"
+              virtualName="" explicitFocusOrder="0" pos="16 48 88 24" posRelativeY="87d416270d41f58c"
               bgColOff="33000000" bgColOn="ffffffff" buttonText="Delete Area"
-              connectedEdges="9" needsCallback="1" radioGroupId="0"/>
+              connectedEdges="6" needsCallback="1" radioGroupId="0"/>
   <LABEL name="new label" id="893f3de478724dd" memberName="labelR" virtualName=""
          explicitFocusOrder="0" pos="16 136 24 24" posRelativeY="87d416270d41f58c"
          edTextCol="ff000000" edBkgCol="0" labelText="R" editableSingleClick="0"
@@ -739,7 +899,7 @@ BEGIN_JUCER_METADATA
               bgColOff="33000000" bgColOn="ffffffff" buttonText="to back" connectedEdges="5"
               needsCallback="1" radioGroupId="0"/>
   <GROUPCOMPONENT name="Canvas edition group component" id="4250d5155a80be70" memberName="canvasGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="8 8 192 24" title="Canvas edition"/>
+                  virtualName="" explicitFocusOrder="0" pos="8 8 192 168" title="Scenes edition"/>
   <COMBOBOX name="Speakers group combo box" id="89ad7c0a3be5a39c" memberName="speakersGroupComboBox"
             virtualName="" explicitFocusOrder="0" pos="16 40 176 24" posRelativeY="90b16e3024c520fd"
             editable="0" layout="33" items="-1 undefined" textWhenNonSelected=""
@@ -749,6 +909,51 @@ BEGIN_JUCER_METADATA
          edTextCol="ff000000" edBkgCol="0" labelText="Link to speakers group :"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
+  <TEXTBUTTON name="Add Scene text button" id="47bebc9d3a03780d" memberName="addSceneTextButton"
+              virtualName="" explicitFocusOrder="0" pos="16 48 104 24" posRelativeY="4250d5155a80be70"
+              bgColOff="33000000" bgColOn="ffffffff" buttonText="Add Scene"
+              connectedEdges="8" needsCallback="1" radioGroupId="0"/>
+  <TEXTBUTTON name="Delete Scene text button" id="5f4e8653b868a323" memberName="deleteSceneTextButton"
+              virtualName="" explicitFocusOrder="0" pos="16 72 104 24" posRelativeY="4250d5155a80be70"
+              bgColOff="33000000" bgColOn="ffffffff" buttonText="Delete Scene"
+              connectedEdges="4" needsCallback="1" radioGroupId="0"/>
+  <TEXTBUTTON name="Scene Up text button" id="43b96ebd16bb5586" memberName="sceneUpTextButton"
+              virtualName="" explicitFocusOrder="0" pos="128 48 64 24" posRelativeY="4250d5155a80be70"
+              bgColOff="33000000" bgColOn="ffffffff" buttonText="&#8593; Up"
+              connectedEdges="8" needsCallback="1" radioGroupId="0"/>
+  <TEXTBUTTON name="Scene Down text button" id="e6cf4b99a12776ee" memberName="sceneDownTextButton"
+              virtualName="" explicitFocusOrder="0" pos="128 72 64 24" posRelativeY="4250d5155a80be70"
+              bgColOff="33000000" bgColOn="ffffffff" buttonText="&#8595; Down"
+              connectedEdges="4" needsCallback="1" radioGroupId="0"/>
+  <LABEL name="Canvas Info label" id="3577c0e2ccd44371" memberName="canvasInfoLabel"
+         virtualName="" explicitFocusOrder="0" pos="16 16 176 24" posRelativeY="4250d5155a80be70"
+         edTextCol="ff000000" edBkgCol="0" labelText="...selected canvas info..."
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="15" bold="0" italic="1" justification="33"/>
+  <TEXTEDITOR name="new text editor" id="fd7eace3e677fc36" memberName="sceneNameTextEditor"
+              virtualName="" explicitFocusOrder="0" pos="16 112 176 24" initialText="...name of scene..."
+              multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"
+              caret="1" popupmenu="1"/>
+  <GROUPCOMPONENT name="Initial state group component" id="cc3bdf8d18c3f428" memberName="initialStateGroupComponent"
+                  virtualName="" explicitFocusOrder="0" pos="8 -8R 192 88" posRelativeY="90b16e3024c520fd"
+                  title="Scene initial state"/>
+  <TEXTBUTTON name="Add Area text button" id="b6820308eb03f341" memberName="addExciterTextButton"
+              virtualName="" explicitFocusOrder="0" pos="16 368 88 24" posRelativeY="87d416270d41f58c"
+              bgColOff="33000000" bgColOn="ffffffff" buttonText="Add Exciter"
+              connectedEdges="2" needsCallback="1" radioGroupId="0"/>
+  <TEXTBUTTON name="Delete Area text button" id="11692d0648a2e8a4" memberName="deleteAreaTextButton2"
+              virtualName="" explicitFocusOrder="0" pos="104 24 88 24" posRelativeY="cc3bdf8d18c3f428"
+              bgColOff="33000000" bgColOn="ffffffff" buttonText="Delete" connectedEdges="1"
+              needsCallback="1" radioGroupId="0"/>
+  <TEXTBUTTON name="Edit Initial State text button" id="d8f32d6e3ea6e87a" memberName="editInitialStateTextButton"
+              virtualName="" explicitFocusOrder="0" pos="16 136 176 24" posRelativeY="4250d5155a80be70"
+              bgColOff="33000000" bgColOn="ffffffff" buttonText="Edit initial scene state"
+              connectedEdges="0" needsCallback="1" radioGroupId="0"/>
+  <TEXTBUTTON name="End Edit Initial State text button" id="3fe924c475527418"
+              memberName="endEditInitialStateTextButton" virtualName="" explicitFocusOrder="0"
+              pos="16 576 176 24" posRelativeY="4250d5155a80be70" bgColOff="33000000"
+              bgColOn="ffffffff" buttonText="Go back to areas edition" connectedEdges="0"
+              needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

@@ -15,11 +15,10 @@
 
 #include "View.h"
 
-
-
-
-
 using namespace Miam;
+
+
+
 
 SceneEditionManager::SceneEditionManager(View* _view) :
     view(_view)
@@ -35,32 +34,27 @@ SceneEditionManager::SceneEditionManager(View* _view) :
     // Links to the view module
     sceneEditionComponent->CompleteInitialization(this);
     
-    
-    // Création des polygones de test !
-    // comme on crée une nouvelle scène : on repart de zéro
-    
+    // Finally, state of the presenter
     nextAreaId = 0; // plus tard : valeur contenue dans le fichier de sauvegarde
-    setSelectedCanvasId(SceneCanvasComponent::FixedScene); // idem, on impose le canvas FixedCanvas pour commencer...
-    EditablePolygon currentEditablePolygon = EditablePolygon(0);
-    for (int i=0 ; i<4 ; i++)
-    {
-        // !!!!!!! EVERYTHING TO CANVAS ZERO !!!!!!!
-        currentEditablePolygon = EditablePolygon(nextAreaId,
-			Point<double>(0.2f+0.13f*i,0.3f+0.1f*i), 3+2*i, 0.15f+0.04f*(i+1),
-			Colour(80*(uint8)i, 0, 255),
-			sceneEditionComponent->GetSceneCanvasComponent(selectedCanvasId)->GetRatio());
-        
-        
-        addEditablePolygon(currentEditablePolygon);
-    }
-    
-    
-    // Finally
     setAreaToCopy(-1);
     setSelectedAreaUniqueId(-1); // also sets the program mode
     setSelectedCanvasId(SceneCanvasComponent::FixedScene);
 }
 
+
+// Testing purposes only
+void SceneEditionManager::__AddTestPolygons()
+{
+    EditablePolygon currentEditablePolygon = EditablePolygon(0); // because no empty constructor...
+    for (int i=0 ; i<4 ; i++)
+    {
+        currentEditablePolygon = EditablePolygon(nextAreaId,
+                                                 Point<double>(0.2f+0.13f*i,0.3f+0.1f*i), 3+2*i, 0.15f+0.04f*(i+1),
+                                                 Colour(80*(uint8)i, 0, 255),
+                                                 sceneEditionComponent->GetSceneCanvasComponent(selectedCanvasId)->GetRatio());
+        addEditablePolygon(currentEditablePolygon);
+    }
+}
 
 
 
@@ -246,14 +240,14 @@ void SceneEditionManager::setMode(SceneEditionMode newMode)
             break;
             
         case SceneEditionMode::NothingSelected :
-            sceneEditionComponent->SetCanvasGroupReduced(true);
+            sceneEditionComponent->SetCanvasGroupHidden(true);
             sceneEditionComponent->SetAreaGroupReduced(true);
             sceneEditionComponent->SetSpatGroupReduced(true);
             sceneEditionComponent->resized(); // right menu update
             break;
             
         case  SceneEditionMode::CanvasSelected :
-            sceneEditionComponent->SetCanvasGroupReduced(false);
+            sceneEditionComponent->SetCanvasGroupHidden(false);
             sceneEditionComponent->SetAreaGroupReduced(true);
             sceneEditionComponent->SetSpatGroupReduced(true);
             sceneEditionComponent->resized(); // right menu update
@@ -261,7 +255,7 @@ void SceneEditionManager::setMode(SceneEditionMode newMode)
             
         case SceneEditionMode::PolygonSelected :
             sceneEditionComponent->SetEnabledAllControls(true, true); // as we may come from "waiting for something creation/deletion"
-            sceneEditionComponent->SetCanvasGroupReduced(true);
+            sceneEditionComponent->SetCanvasGroupHidden(true);
             sceneEditionComponent->SetAreaGroupReduced(false);
             sceneEditionComponent->SetSpatGroupReduced(false);
             sceneEditionComponent->SetAreaColourValue(GetEditablePolygon(selectedAreaUniqueId).GetFillColour());

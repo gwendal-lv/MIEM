@@ -24,8 +24,14 @@ Presenter::Presenter(View* _view) :
 
     sceneEditionManager(_view)
 {
+    // After all sub-modules are built, the presenter refers itself to the View
+    view->GetMainContentComponent()->CompleteInitialization(this);
     
-    // After all sub-modules are built...
+    
+    // HERE, WE SHOULD LOAD THE DEFAULT FILE
+    sceneEditionManager.__AddTestPolygons();
+    // App mode changer to Scenes Edition by default (should be stored within the file ?)
+    appModeChangeRequest(AppMode::EditSpatScenes);
 }
 
 

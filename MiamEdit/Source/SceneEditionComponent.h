@@ -76,8 +76,10 @@ public:
     public :
     void SetEnabledAllControls(bool areEnabled, bool controlsBackUp = true);
     // - - - - - Canvases & canvas group - - - - -
+    void SetCanvasGroupHidden(bool _isHidden);
     void SetCanvasGroupReduced(bool _isReduced);
     // - - - - - Area group - - - - -
+    void SetAreaGroupHidden(bool _isHidden);
     void SetAreaGroupReduced(bool _isReduced);
     void SetEnabledAreaEditionControls(bool areEnabled);
     void SetEnabledAreaMainControls(bool areEnabled);
@@ -85,7 +87,11 @@ public:
     void DisableAllButtonsBut(juce::String onlyActiveButtonName);
     void SetPasteEnabled(bool _isEnabled); // button with back-up function
     // - - - - - Spat group - - - - -
+    void SetSpatGroupHidden(bool _isHidden);
     void SetSpatGroupReduced(bool _isReduced);
+    // - - - - - Initial Scene State group - - - - -
+    void SetInitialStateGroupHidden(bool _isHidden);
+    void SetInitialStateGroupReduced(bool _isReduced);
 
 
     // ----- Other setters and getters -----
@@ -122,9 +128,9 @@ private:
     SceneEditionManager* sceneEditionManager;
 
     int canvasGroupReducedH, areaGroupReducedH, spatGroupReducedH;
-    bool isCanvasGroupReduced = false,
+    bool isCanvasGroupHidden = false,
             isAreaGroupReduced = false,
-            isSpatGroupReduced = false;
+            isSpatGroupHidden = false;
 
     // When all buttons are disabled, to highlight that we can do only 1 action,
     // we need to back up the state of some buttons
@@ -154,6 +160,17 @@ private:
     ScopedPointer<GroupComponent> canvasGroupComponent;
     ScopedPointer<ComboBox> speakersGroupComboBox;
     ScopedPointer<Label> spatLabel;
+    ScopedPointer<TextButton> addSceneTextButton;
+    ScopedPointer<TextButton> deleteSceneTextButton;
+    ScopedPointer<TextButton> sceneUpTextButton;
+    ScopedPointer<TextButton> sceneDownTextButton;
+    ScopedPointer<Label> canvasInfoLabel;
+    ScopedPointer<TextEditor> sceneNameTextEditor;
+    ScopedPointer<GroupComponent> initialStateGroupComponent;
+    ScopedPointer<TextButton> addExciterTextButton;
+    ScopedPointer<TextButton> deleteAreaTextButton2;
+    ScopedPointer<TextButton> editInitialStateTextButton;
+    ScopedPointer<TextButton> endEditInitialStateTextButton;
 
 
     //==============================================================================

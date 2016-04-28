@@ -239,8 +239,8 @@ bool EditablePolygon::TryMovePoint(const Point<double>& newLocation)
         {
             contourPointsInPixels[pointDraggedId] = newLocation;
             contourPoints[pointDraggedId] = Point<double>(
-                                            newLocation.x / ((float)parentCanvas->getWidth()) ,
-                                            newLocation.y / ((float)parentCanvas->getHeight()) );
+                                            newLocation.x / (double)parentCanvas->getWidth(),
+                                            newLocation.y / (double)parentCanvas->getHeight());
             pointMoved = true;
         }
     }
