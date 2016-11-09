@@ -19,7 +19,7 @@
 namespace Miam
 {
     class SceneEditionManager;
-    
+    class SceneCanvasManager;
 
     
     
@@ -35,6 +35,8 @@ class SceneCanvasComponent    : public Component
 {
 public:
     
+    
+    
     // = = = = = = = = = = ENUMS = = = = = = = = = =
     
     /// \brief IDs for describing a particular canvas, or canvases in general
@@ -42,20 +44,39 @@ public:
     enum Id : int { // enum *class* brings cast issues... (wait for C++14 ?)
         None = -1, ///< No canvas currently selected
         
-        FixedScene = 0, ///< The fixed scene, that never changes during a spat performance
-        MainScene, ///< The main scene, that can be changed during a spatialization performance
+        MainScene = 0, ///< The main canvas, that can display several different scenes a spatialization performance
+        FixedScene, ///< Displays a fixed scene, that never changes during a spat performance
         SceneCanvasesCount ///< Automatically contains the amount of accessible canvases
     };
     
     
     
+    
+    // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
+    
+    protected :
+    // links back to parent modules
+    SceneEditionManager* sceneEditionManager = 0; // default c++ null pointer
+    SceneCanvasManager* canvasManager = 0;
+    
+    // Self ID
+    SceneCanvasComponent::Id selfId;
+    
+    bool selectedForEditing;
+    
+    std::vector< std::weak_ptr<DrawableArea> > areas;
+    
+    
+    
     // = = = = = = = = = = METHODS = = = = = = = = = =
+    public :
     
     SceneCanvasComponent(SceneCanvasComponent::Id _id);
     ~SceneCanvasComponent();
     
 	/// \brief Also called from Miam::View::CompleteInitialization
     void CompleteInitialization(SceneEditionManager* _sceneEditionManager);
+    void CompleteInitialization(SceneCanvasManager* _canvasManager);
 
     void paint (Graphics&);
     void resized();
@@ -68,18 +89,6 @@ public:
     // Getters and Setters
     float GetRatio() {return ((float)getWidth()) / ((float)getHeight()) ; }
     void SetIsSelectedForEditing(bool isSelected) {selectedForEditing = isSelected;}
-    
-    
-    // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
-    
-    private :
-    // link back to parent module
-    SceneEditionManager* sceneEditionManager = 0; // default c++ null pointer
-    
-    // Self ID
-    SceneCanvasComponent::Id selfId;
-    
-    bool selectedForEditing;
     
 
 private:

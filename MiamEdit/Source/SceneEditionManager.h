@@ -12,6 +12,7 @@
 #define SCENEEDITIONMANAGER_H_INCLUDED
 
 
+#include <memory>
 #include <vector>
 #include <deque>
 #include <map>
@@ -23,6 +24,8 @@
 #include "SceneEditionComponent.h"
 #include "SceneEditionMode.h"
 
+#include "SceneCanvasManager.h"
+#include "SceneCanvasComponent.h"
 
 namespace Miam {
     
@@ -33,7 +36,7 @@ namespace Miam {
     /// \brief Sub-module belonging to the Presenter module, which handles the editing
 	/// of all of the EditableArea.
 	///
-	/// Actually owns all the EditablePolygons (and other EditableArea in the future).
+	/// Actually owns all the EditablePolygons (and any other EditableArea in the future).
 	///
 	/// References itself to the SceneEditionComponent and the several
 	/// SceneCanvasComponents, for these components to transfer events to this sub-module
@@ -53,7 +56,7 @@ namespace Miam {
         SceneEditionMode mode;
         
         // Graphic objects instances
-        std::vector<EditablePolygon> polygons;
+        std::vector< std::shared_ptr<EditablePolygon> > polygons;
         
         // Graphic objects management
         int64_t nextAreaId; // unique Id of the created (or pasted, or loaded...) area
@@ -63,11 +66,13 @@ namespace Miam {
         
         
         // Display & editing attributes for Canvases
-        SceneCanvasComponent::Id selectedCanvasId;
+        std::vector< SceneCanvasManager* > canvasManagers;
+        SceneCanvasManager* selectedCanvas = 0;
+        
         
         // Display & editing attributes for Areas
-        int64_t selectedAreaUniqueId = -1; ///< -1 means no area selected
-        int64_t areaToCopy = -1; ///< vector index of the polygon to copy (idem for value -1)
+        
+        std::shared_ptr<EditableArea> areaToCopy = nullptr; ///< vector index of the polygon to copy (idem for value -1)
         
         /// \brief Indicates the drawing order of areas (contents of each std::deque
         /// element), for a given canvas (canvas id is an position of the std::vector)
@@ -90,55 +95,50 @@ namespace Miam {
         /// \brief Construction (the whole Presenter module is built after the View).
         SceneEditionManager(View* _view);
         
-        // For testing purposes only
-        void __AddTestPolygons();
+        /// \brief Destruction and the editor and the canvases
+        ~SceneEditionManager();
         
+        // Debug purposes only
+        void __LoadDefaultTest();
+       
         // ---- Getters and Setters -----
-        protected :
-		/// \brief Polygon referenced by its unique ID
-		///
-		/// Throws an std::range_error exception if unique ID not found.
-        EditablePolygon& GetEditablePolygon(int64_t uniqueId);
-        // Generic objects
-        //EditableArea& GetEditableArea(int64_t uniqueId);
         public :
-		/// \brief Amount of areas available for drawing.
-        size_t GetDrawableAreasCount(SceneCanvasComponent::Id _id);
-		/// \brief Get an area's reference for drawing.
-        DrawableArea& GetDrawableArea(SceneCanvasComponent::Id _id, size_t position);
-        
-        
-        // ------ areas managing ------
+        /// \brief When a new area is to be created, this gets the value of the next area ID, and increments it
+        uint64_t GetNextAreaId();
         protected :
-        
-		/// \brief Creates a polygon, adds it internally to the current activated canvas,
-        /// and performs all the necessary graphic updates.
-        void addEditablePolygon(EditablePolygon& newPolygon, bool selectArea = false);
-		/// \brief Deletes an area referenced by its unique ID.
-        void deleteEditableArea(int64_t uniqueId);
-        /// \brief Sets a new active area, and commands all necessary graphic updates.
-        void setSelectedAreaUniqueId(int64_t newIndex);
-        /// \brief Sets the new active canvas and updates corresponding graphic objects.
+		/// \brief Polygon referenced by its unique ID, from any canvas (or copied/deleted)
+		///
+		/// Returns a nullptr if nothing found
+        std::shared_ptr<EditablePolygon> GetEditablePolygon(int64_t uniqueId);
+        /// \brief Generic editable area, referenced by its unique ID
         ///
-        /// Unselected any previously selected area
-        void setSelectedCanvasId(SceneCanvasComponent::Id _id);
-        /// \brief Indicates the unique ID of an area that may be copied, if the user clicks
-        /// on paste later.
-        void setAreaToCopy(int64_t newUniqueId);
-
+        /// Returns a nullptr if nothing found
+        //std::shared_ptr<EditableArea> GetEditableArea(int64_t uniqueId);
+        public :
+        /// \brief Gets the currently selected area, or nullptr if nothing selected
+        std::shared_ptr<EditableArea> GetSelectedArea();
+        
+        
+        
+        // ------ canvas managing ------
+        public :
+        /// \brief Sets the new active canvas and updates corresponding graphic objects. Called by the newly selected canvas itself.
+        ///
+        /// Tells other canvases to unselect any previously selected area
+        void SetSelectedCanvas(SceneCanvasManager*);
+        
         
 		// ----- Running mode -----
         protected :
 		/// \brief Launches the necessary graphic updates, then changes the running mode.
         void setMode(SceneEditionMode newMode);
-        
+        public :
+        /// \brief The reaction of this manager when one its canvas sub-components
+        /// changes itself its working mode
+        void CanvasModeChanged(SceneCanvasMode);
         
         // ----- Events from View -----
         public :
-        
-        void OnCanvasMouseDown(SceneCanvasComponent::Id canvasId, Point<int> clicLocation);
-        void OnCanvasMouseDrag(SceneCanvasComponent::Id canvasId, Point<int> mouseLocation);
-        void OnCanvasMouseUp(SceneCanvasComponent::Id canvasId);
         
         void OnAddPoint();
         void OnDeletePoint();

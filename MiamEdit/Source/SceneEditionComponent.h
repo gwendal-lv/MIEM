@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 4.2.1
+  Created with Projucer version: 4.2.4
 
   ------------------------------------------------------------------------------
 
@@ -73,9 +73,13 @@ public:
 
 
     // ----- Functions that obey orders sent from the Presenter -----
+
+    // - - - - - Common - - - - -
     public :
     void SetEnabledAllControls(bool areEnabled, bool controlsBackUp = true);
     // - - - - - Canvases & canvas group - - - - -
+    SceneCanvasComponent* AddCanvas(SceneCanvasComponent::Id canvasId);
+    //void DeleteCanvas(SceneCanvasComponent::Id canvasId);
     void SetCanvasGroupHidden(bool _isHidden);
     void SetCanvasGroupReduced(bool _isReduced);
     // - - - - - Area group - - - - -
@@ -106,6 +110,7 @@ public:
 
     void areaGroupTranslateY(int dY);
     void spatGroupTranslateY(int dY);
+    void initialStateGroupTranslateY(int dY);
     void componentTranslateY(Component* component, int dY);
 
 
@@ -168,7 +173,7 @@ private:
     ScopedPointer<TextEditor> sceneNameTextEditor;
     ScopedPointer<GroupComponent> initialStateGroupComponent;
     ScopedPointer<TextButton> addExciterTextButton;
-    ScopedPointer<TextButton> deleteAreaTextButton2;
+    ScopedPointer<TextButton> deleteExciterTextButton;
     ScopedPointer<TextButton> editInitialStateTextButton;
     ScopedPointer<TextButton> endEditInitialStateTextButton;
 

@@ -31,6 +31,10 @@ void SceneCanvasComponent::CompleteInitialization(SceneEditionManager* _sceneEdi
 {
     sceneEditionManager = _sceneEditionManager;
 }
+void SceneCanvasComponent::CompleteInitialization(SceneCanvasManager* _canvasManager)
+{
+    canvasManager = _canvasManager;
+}
 
 
 
@@ -52,17 +56,17 @@ void SceneCanvasComponent::paint (Graphics& g)
     }
     
     // Areas painting
-    for (int i=0;i<sceneEditionManager->GetDrawableAreasCount(selfId);i++)
-        sceneEditionManager->GetDrawableArea(selfId, i).Paint(g);
+    for (int i=0;i<canvasManager->GetDrawableAreasCount();i++)
+        canvasManager->GetDrawableArea(i)->Paint(g);
 }
 
 void SceneCanvasComponent::resized()
 {
     // Actualization of all areas graphical objets, if Presenter is accessible (not at first time)
-    if (sceneEditionManager != 0)
+    if (canvasManager != 0)
     {
-        for (int i=0;i<sceneEditionManager->GetDrawableAreasCount(selfId);i++)
-            sceneEditionManager->GetDrawableArea(selfId, i).CanvasResized(this);
+        for (int i=0;i<canvasManager->GetDrawableAreasCount();i++)
+            canvasManager->GetDrawableArea(i)->CanvasResized(this);
     }
 }
 
@@ -74,19 +78,19 @@ void SceneCanvasComponent::resized()
 void SceneCanvasComponent::mouseDown(const juce::MouseEvent& event)
 {
 	if (event.source.getIndex() == 0)
-		sceneEditionManager->OnCanvasMouseDown(selfId, event.getMouseDownPosition());
+		canvasManager->OnCanvasMouseDown(event.getMouseDownPosition());
 }
 
 void SceneCanvasComponent::mouseDrag(const juce::MouseEvent& event)
 {
 	if (event.source.getIndex() == 0)
-		sceneEditionManager->OnCanvasMouseDrag(selfId, event.getPosition());
+		canvasManager->OnCanvasMouseDrag(event.getPosition());
 }
 
 void SceneCanvasComponent::mouseUp(const juce::MouseEvent& event)
 {
 	if (event.source.getIndex() == 0)
-		sceneEditionManager->OnCanvasMouseUp(selfId);
+		canvasManager->OnCanvasMouseUp();
 }
 
 

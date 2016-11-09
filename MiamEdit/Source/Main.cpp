@@ -47,6 +47,7 @@ public:
         presenter = new Miam::Presenter(view); // Will reference itself to the View module
         
         
+        
     }
 
     void shutdown() override

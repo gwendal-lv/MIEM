@@ -11,8 +11,8 @@
 #include "InteractiveArea.h"
 
 using namespace Miam;
-
+/*
 InteractiveArea::~InteractiveArea()
 {
     
-}
+}*/

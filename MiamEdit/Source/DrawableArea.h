@@ -13,6 +13,8 @@
 
 #include "JuceHeader.h"
 
+#include "IDrawableArea.h"
+
 // Simple declaration for a pointer
 class SceneCanvasComponent;
 
@@ -21,7 +23,7 @@ namespace Miam
 {
     
     /// \brief Abstract class from which all Miam areas will be derived.
-    class DrawableArea
+    class DrawableArea : public virtual IDrawableArea
     {
         
         public :
@@ -36,18 +38,10 @@ namespace Miam
         /// \brief Virtual destructor.
         virtual ~DrawableArea() {};
         
-        /// \brief Function called by a SceneCanvasComponent to draw the Area
-        ///
-        /// The whole painting job is at the moment performed by the CPU only, but should be
-        /// replaced by OpenGL drawing soon.
-        virtual void Paint(Graphics& g) = 0;
-        /// \brief This function should be called when the area is associated to a (new) canvas,
-        /// when its canvas is resized, or when a drawing refresh is needed.
-        ///
-        /// It updates real-screen pixel coordinates from internally stored normalized coordinates
-        /// of all points.
-        virtual void CanvasResized(SceneCanvasComponent* parentCanvas) = 0;
         
+        virtual void Paint(Graphics& g);
+        virtual void CanvasResized(SceneCanvasComponent* _parentCanvas);
+
         
         // ----- Setters and Getters -----
         

@@ -72,6 +72,7 @@ public:
     
     
     // SETTERS and GETTERS
+    
 	/// \brief Necessary for the Miam::View to reference itself, because this class is always
 	/// constructed by the MainWindow before the View module.
     void SetMiamView(View* _view);

@@ -29,7 +29,9 @@ View::~View()
 {
 }
 
-// called after View construction
+// Called by the Presenter during its own construction, after the View is constructed
+// ?? Règle précise pour appeler les "compléments d'initialisation" ??
+//
 void View::CompleteInitialization(Presenter* _presenter)
 {
     presenter = _presenter;

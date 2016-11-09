@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 4.2.1
+  Created with Projucer version: 4.2.4
 
   ------------------------------------------------------------------------------
 
@@ -34,14 +34,6 @@ using namespace Miam;
 SceneEditionComponent::SceneEditionComponent ()
 {
     //[Constructor_pre] You can add your own custom stuff here..
-
-    // Manual canvas add
-    for (int i=0 ; i<SceneCanvasComponent::SceneCanvasesCount ; i++)
-    {
-        sceneCanvasComponents.push_back(new SceneCanvasComponent((SceneCanvasComponent::Id)i));
-        addAndMakeVisible(sceneCanvasComponents.back());
-    }
-
     //[/Constructor_pre]
 
     addAndMakeVisible (areaGroupComponent = new GroupComponent ("Area edition group component",
@@ -239,12 +231,12 @@ SceneEditionComponent::SceneEditionComponent ()
     addExciterTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
     addExciterTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
 
-    addAndMakeVisible (deleteAreaTextButton2 = new TextButton ("Delete Area text button"));
-    deleteAreaTextButton2->setButtonText (TRANS("Delete"));
-    deleteAreaTextButton2->setConnectedEdges (Button::ConnectedOnLeft);
-    deleteAreaTextButton2->addListener (this);
-    deleteAreaTextButton2->setColour (TextButton::buttonColourId, Colour (0x33000000));
-    deleteAreaTextButton2->setColour (TextButton::buttonOnColourId, Colours::white);
+    addAndMakeVisible (deleteExciterTextButton = new TextButton ("Delete Exciter text button"));
+    deleteExciterTextButton->setButtonText (TRANS("Delete"));
+    deleteExciterTextButton->setConnectedEdges (Button::ConnectedOnLeft);
+    deleteExciterTextButton->addListener (this);
+    deleteExciterTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
+    deleteExciterTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
 
     addAndMakeVisible (editInitialStateTextButton = new TextButton ("Edit Initial State text button"));
     editInitialStateTextButton->setButtonText (TRANS("Edit initial scene state"));
@@ -316,7 +308,7 @@ SceneEditionComponent::~SceneEditionComponent()
     sceneNameTextEditor = nullptr;
     initialStateGroupComponent = nullptr;
     addExciterTextButton = nullptr;
-    deleteAreaTextButton2 = nullptr;
+    deleteExciterTextButton = nullptr;
     editInitialStateTextButton = nullptr;
     endEditInitialStateTextButton = nullptr;
 
@@ -344,18 +336,29 @@ void SceneEditionComponent::resized()
     // Canvas bounds  !!!!!!!!!!!!!!!!!!!!!!!!!!!!! À MODIFIER !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     float pourcentageLargeurMainScene = 0.7f;
 
-    sceneCanvasComponents[SceneCanvasComponent::MainScene]->setBounds(
-        208, // next to the left menu
-        8, // always the same Y coordinate
-        juce::roundFloatToInt((getWidth() - areaGroupComponent->getWidth() - 24)*pourcentageLargeurMainScene) - 8,
-        getHeight()-16); // always the same Y coordinate
-
-    sceneCanvasComponents[SceneCanvasComponent::FixedScene]->setBounds(
-         sceneCanvasComponents[SceneCanvasComponent::MainScene]->getX() // on the right of
-         + sceneCanvasComponents[SceneCanvasComponent::MainScene]->getWidth()+8, //MainScene
-         8, // always the same Y coordinate
-         juce::roundFloatToInt((getWidth()-areaGroupComponent->getWidth()-24)*(1.0f-pourcentageLargeurMainScene))-8,
-         getHeight()-16); // always the same Y coordinate
+    // Code semi-générique, au final on sait très bien quel canvas est où
+    // Le principal (multi-scènes) est à gauche, le fixe (mono-scène) à droite
+    // La boucle for permet de faire fonctionner le truc même si on n'a pas le canvas mono-scène
+    for (int i=0 ; i<sceneCanvasComponents.size() ; i++)
+    {
+        if (i == SceneCanvasComponent::MainScene)
+        {
+            sceneCanvasComponents[i]->setBounds(
+            208, // next to the left menu
+            8, // always the same Y coordinate
+            juce::roundFloatToInt((getWidth() - areaGroupComponent->getWidth() - 24)*pourcentageLargeurMainScene) - 8,
+            getHeight()-16); // always the same Y coordinate
+        }
+        else if (i == SceneCanvasComponent::FixedScene)
+        {
+            sceneCanvasComponents[i]->setBounds(
+            sceneCanvasComponents[SceneCanvasComponent::MainScene]->getX() // on the right of
+            + sceneCanvasComponents[SceneCanvasComponent::MainScene]->getWidth()+8, //MainScene
+            8, // always the same Y coordinate
+            juce::roundFloatToInt((getWidth()-areaGroupComponent->getWidth()-24)*(1.0f-pourcentageLargeurMainScene))-8,
+            getHeight()-16); // always the same Y coordinate
+        }
+    }
 
     //[/UserPreResize]
 
@@ -387,15 +390,16 @@ void SceneEditionComponent::resized()
     canvasInfoLabel->setBounds (16, 8 + 16, 176, 24);
     sceneNameTextEditor->setBounds (16, 112, 176, 24);
     initialStateGroupComponent->setBounds (8, ((8 + 168 - -8) + 248 - -8) + 80 - -8, 192, 88);
-    addExciterTextButton->setBounds (16, (8 + 168 - -8) + 368, 88, 24);
-    deleteAreaTextButton2->setBounds (104, (((8 + 168 - -8) + 248 - -8) + 80 - -8) + 24, 88, 24);
+    addExciterTextButton->setBounds (16, (((8 + 168 - -8) + 248 - -8) + 80 - -8) + 24, 88, 24);
+    deleteExciterTextButton->setBounds (104, (((8 + 168 - -8) + 248 - -8) + 80 - -8) + 24, 88, 24);
     editInitialStateTextButton->setBounds (16, 8 + 136, 176, 24);
-    endEditInitialStateTextButton->setBounds (16, 8 + 576, 176, 24);
+    endEditInitialStateTextButton->setBounds (16, (((8 + 168 - -8) + 248 - -8) + 80 - -8) + 56, 176, 24);
     //[UserResized] Add your own custom resize handling here..
 
     // Backup of Projucer's sizes
     int canvasGroupInitH = canvasGroupComponent->getHeight();
     int areaGroupInitH = areaGroupComponent->getHeight();
+    int spatGroupInitH = spatGroupComponent->getHeight();
 
     // Variable menus' size
     if (isAreaGroupReduced)
@@ -409,23 +413,16 @@ void SceneEditionComponent::resized()
     {
         int dY = 0 - canvasGroupInitH - 8; // < 0
         areaGroupTranslateY(dY);
-        spatGroupTranslateY(dY);
     }
-    /*else if (isCanvasGroupReduced)
-    {
-        int dY = canvasGroupReducedH - canvasGroupInitH - 8; // < 0
-        areaGroupTranslateY(dY);
-        spatGroupTranslateY(dY);
-    }
-    if (isAreaGroupHidden)
-    {
-        int dY = 0 - areaGroupInitH - 8; // < 0
-        spatGroupTranslateY(dY);
-    }
-    else*/ if (isAreaGroupReduced)
+    if (isAreaGroupReduced)
     {
         int dY = areaGroupReducedH - areaGroupInitH - 8; // < 0
         spatGroupTranslateY(dY);
+    }
+    if (isSpatGroupHidden)
+    {
+        int dY = 0 - spatGroupInitH - 8; // < 0
+        initialStateGroupTranslateY(dY);
     }
 
     //[/UserResized]
@@ -521,10 +518,10 @@ void SceneEditionComponent::buttonClicked (Button* buttonThatWasClicked)
         //[UserButtonCode_addExciterTextButton] -- add your button handler code here..
         //[/UserButtonCode_addExciterTextButton]
     }
-    else if (buttonThatWasClicked == deleteAreaTextButton2)
+    else if (buttonThatWasClicked == deleteExciterTextButton)
     {
-        //[UserButtonCode_deleteAreaTextButton2] -- add your button handler code here..
-        //[/UserButtonCode_deleteAreaTextButton2]
+        //[UserButtonCode_deleteExciterTextButton] -- add your button handler code here..
+        //[/UserButtonCode_deleteExciterTextButton]
     }
     else if (buttonThatWasClicked == editInitialStateTextButton)
     {
@@ -605,6 +602,13 @@ void SceneEditionComponent::CompleteInitialization(SceneEditionManager* _sceneEd
 // ========== (SETTERS AND GETTERS) ORDERS FROM PRESENTER ==========
 
 // - - - - - Canvases & canvas group - - - - -
+SceneCanvasComponent* SceneEditionComponent::AddCanvas(SceneCanvasComponent::Id canvasId)
+{
+    sceneCanvasComponents.push_back(new SceneCanvasComponent(canvasId));
+    addAndMakeVisible(sceneCanvasComponents.back());
+    return sceneCanvasComponents.back();
+}
+
 void SceneEditionComponent::SetCanvasGroupHidden(bool _isHidden)
 {
     canvasGroupComponent->setVisible(!_isHidden);
@@ -741,6 +745,20 @@ void SceneEditionComponent::SetSpatGroupReduced(bool _isReduced)
 }
 
 
+// - - - - - Initial Scene State group - - - - -
+void SceneEditionComponent::SetInitialStateGroupHidden(bool _isHidden)
+{
+    initialStateGroupComponent->setVisible(!_isHidden);
+    addExciterTextButton->setVisible(!_isHidden);
+    deleteExciterTextButton->setVisible(!_isHidden);
+    endEditInitialStateTextButton->setVisible(!_isHidden);
+}
+void SceneEditionComponent::SetInitialStateGroupReduced(bool _isReduced)
+{
+    SetInitialStateGroupHidden(_isReduced);
+}
+
+
 
 
 // ----- Parameters setting -----
@@ -791,12 +809,23 @@ void SceneEditionComponent::areaGroupTranslateY(int dY)
     componentTranslateY(sendToBackTextButton.get(), dY);
     componentTranslateY(bringForwardTextButton.get(), dY);
     componentTranslateY(bringToFrontTextButton.get(), dY);
+
+    spatGroupTranslateY(dY);
 }
 void SceneEditionComponent::spatGroupTranslateY(int dY)
 {
     componentTranslateY(spatGroupComponent.get(), dY);
     componentTranslateY(spatLabel.get(), dY);
     componentTranslateY(speakersGroupComboBox.get(), dY);
+
+    initialStateGroupTranslateY(dY);
+}
+void SceneEditionComponent::initialStateGroupTranslateY(int dY)
+{
+    componentTranslateY(initialStateGroupComponent, dY);
+    componentTranslateY(addExciterTextButton, dY);
+    componentTranslateY(deleteExciterTextButton, dY);
+    componentTranslateY(endEditInitialStateTextButton, dY);
 }
 void SceneEditionComponent::componentTranslateY(Component* component, int dY)
 {
@@ -823,7 +852,7 @@ BEGIN_JUCER_METADATA
                  fixedSize="0" initialWidth="1024" initialHeight="1024">
   <BACKGROUND backgroundColour="ffd9d9d9"/>
   <GROUPCOMPONENT name="Area edition group component" id="87d416270d41f58c" memberName="areaGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="8 -609R 192 248" posRelativeY="4250d5155a80be70"
+                  virtualName="" explicitFocusOrder="0" pos="8 -8R 192 248" posRelativeY="4250d5155a80be70"
                   title="Area edition"/>
   <GROUPCOMPONENT name="Spatialization group component" id="90b16e3024c520fd" memberName="spatGroupComponent"
                   virtualName="" explicitFocusOrder="0" pos="8 -8R 192 80" posRelativeY="87d416270d41f58c"
@@ -938,10 +967,10 @@ BEGIN_JUCER_METADATA
                   virtualName="" explicitFocusOrder="0" pos="8 -8R 192 88" posRelativeY="90b16e3024c520fd"
                   title="Scene initial state"/>
   <TEXTBUTTON name="Add Area text button" id="b6820308eb03f341" memberName="addExciterTextButton"
-              virtualName="" explicitFocusOrder="0" pos="16 368 88 24" posRelativeY="87d416270d41f58c"
+              virtualName="" explicitFocusOrder="0" pos="16 24 88 24" posRelativeY="cc3bdf8d18c3f428"
               bgColOff="33000000" bgColOn="ffffffff" buttonText="Add Exciter"
               connectedEdges="2" needsCallback="1" radioGroupId="0"/>
-  <TEXTBUTTON name="Delete Area text button" id="11692d0648a2e8a4" memberName="deleteAreaTextButton2"
+  <TEXTBUTTON name="Delete Exciter text button" id="11692d0648a2e8a4" memberName="deleteExciterTextButton"
               virtualName="" explicitFocusOrder="0" pos="104 24 88 24" posRelativeY="cc3bdf8d18c3f428"
               bgColOff="33000000" bgColOn="ffffffff" buttonText="Delete" connectedEdges="1"
               needsCallback="1" radioGroupId="0"/>
@@ -951,7 +980,7 @@ BEGIN_JUCER_METADATA
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="End Edit Initial State text button" id="3fe924c475527418"
               memberName="endEditInitialStateTextButton" virtualName="" explicitFocusOrder="0"
-              pos="16 576 176 24" posRelativeY="4250d5155a80be70" bgColOff="33000000"
+              pos="16 56 176 24" posRelativeY="cc3bdf8d18c3f428" bgColOff="33000000"
               bgColOn="ffffffff" buttonText="Go back to areas edition" connectedEdges="0"
               needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>

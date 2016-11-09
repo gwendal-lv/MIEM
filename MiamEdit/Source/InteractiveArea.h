@@ -13,6 +13,8 @@
 
 #include "JuceHeader.h"
 
+#include "IInteractiveArea.h"
+
 
 
 namespace Miam
@@ -20,25 +22,18 @@ namespace Miam
     
     /// \brief Abstract class that defines an interface for all areas that can have an interaction
     /// with a user (via mouse, touch, MIDI events...)
-    class InteractiveArea
+    class InteractiveArea : public virtual IInteractiveArea
     {
         
         // Construction/destruction
         public :
-        virtual ~InteractiveArea();
+        //virtual ~InteractiveArea();
         
         
-        // Interactions computing
+        // Interactions computing (common implementations of the interface here)
         public :
-        /// \brief Computes a coefficient that quantifies the interaction between a
-        /// given point and this area.
-        ///
-        /// This coefficient is called the "interaction weight", and is guaranteed to be a
-        /// spatial-continuous variable.
-        ///
-        /// \param T The "hit point" at which the amount of interaction is computed.
-        /// \return The interaction weight in [0.0 ; 1.0]
-        virtual double ComputeInteractionWeight(Point<double> T) = 0;
+
+        
         
         // Common attributes
         protected :
