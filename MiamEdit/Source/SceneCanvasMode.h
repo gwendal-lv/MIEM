@@ -26,6 +26,7 @@ namespace Miam {
         Unselected, ///< Not currently selected
         
         NothingSelected, ///< No area or point selected ; ready to process any input
+        CanvasSelected, ///< Undefined mode : the canvas is selected, but something else might be selected inside
         
         AreaSelected, ///< Area selected, still ready to process mouse input from CanvasComponent
         EditingArea, ///< Mouse is editing the current area

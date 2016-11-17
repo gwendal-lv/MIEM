@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 4.2.4
+  Created with Projucer version: 4.3.0
 
   ------------------------------------------------------------------------------
 
@@ -41,6 +41,8 @@ SceneEditionComponent::SceneEditionComponent ()
 
     addAndMakeVisible (spatGroupComponent = new GroupComponent ("Spatialization group component",
                                                                 TRANS("Spatialization effect")));
+    spatGroupComponent->setColour (GroupComponent::outlineColourId, Colour (0x66000000));
+    spatGroupComponent->setColour (GroupComponent::textColourId, Colour (0x66000000));
 
     addAndMakeVisible (addPointTextButton = new TextButton ("Add Point text button"));
     addPointTextButton->setButtonText (TRANS("Add Point"));
@@ -173,6 +175,7 @@ SceneEditionComponent::SceneEditionComponent ()
     spatLabel->setFont (Font (15.00f, Font::plain));
     spatLabel->setJustificationType (Justification::centredLeft);
     spatLabel->setEditable (false, false, false);
+    spatLabel->setColour (Label::textColourId, Colour (0x66000000));
     spatLabel->setColour (TextEditor::textColourId, Colours::black);
     spatLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
@@ -223,6 +226,7 @@ SceneEditionComponent::SceneEditionComponent ()
 
     addAndMakeVisible (initialStateGroupComponent = new GroupComponent ("Initial state group component",
                                                                         TRANS("Scene initial state")));
+    initialStateGroupComponent->setColour (GroupComponent::textColourId, Colour (0x66000000));
 
     addAndMakeVisible (addExciterTextButton = new TextButton ("Add Area text button"));
     addExciterTextButton->setButtonText (TRANS("Add Exciter"));
@@ -230,6 +234,7 @@ SceneEditionComponent::SceneEditionComponent ()
     addExciterTextButton->addListener (this);
     addExciterTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
     addExciterTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+    addExciterTextButton->setColour (TextButton::textColourOffId, Colour (0x66000000));
 
     addAndMakeVisible (deleteExciterTextButton = new TextButton ("Delete Exciter text button"));
     deleteExciterTextButton->setButtonText (TRANS("Delete"));
@@ -237,18 +242,21 @@ SceneEditionComponent::SceneEditionComponent ()
     deleteExciterTextButton->addListener (this);
     deleteExciterTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
     deleteExciterTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+    deleteExciterTextButton->setColour (TextButton::textColourOffId, Colour (0x66000000));
 
     addAndMakeVisible (editInitialStateTextButton = new TextButton ("Edit Initial State text button"));
     editInitialStateTextButton->setButtonText (TRANS("Edit initial scene state"));
     editInitialStateTextButton->addListener (this);
     editInitialStateTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
     editInitialStateTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+    editInitialStateTextButton->setColour (TextButton::textColourOffId, Colour (0x66000000));
 
     addAndMakeVisible (endEditInitialStateTextButton = new TextButton ("End Edit Initial State text button"));
     endEditInitialStateTextButton->setButtonText (TRANS("Go back to areas edition"));
     endEditInitialStateTextButton->addListener (this);
     endEditInitialStateTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
     endEditInitialStateTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+    endEditInitialStateTextButton->setColour (TextButton::textColourOffId, Colour (0x66000000));
 
 
     //[UserPreSize]
@@ -275,8 +283,8 @@ SceneEditionComponent::SceneEditionComponent ()
 SceneEditionComponent::~SceneEditionComponent()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
-    for (size_t i=0 ; i < sceneCanvasComponents.size() ; i++)
-        delete sceneCanvasComponents[i];
+    for (size_t i=0 ; i < multiSceneCanvasComponents.size() ; i++)
+        delete multiSceneCanvasComponents[i];
     //[/Destructor_pre]
 
     areaGroupComponent = nullptr;
@@ -339,21 +347,21 @@ void SceneEditionComponent::resized()
     // Code semi-générique, au final on sait très bien quel canvas est où
     // Le principal (multi-scènes) est à gauche, le fixe (mono-scène) à droite
     // La boucle for permet de faire fonctionner le truc même si on n'a pas le canvas mono-scène
-    for (int i=0 ; i<sceneCanvasComponents.size() ; i++)
+    for (int i=0 ; i<multiSceneCanvasComponents.size() ; i++)
     {
-        if (i == SceneCanvasComponent::MainScene)
+        if (i == SceneCanvasComponent::Canvas1)
         {
-            sceneCanvasComponents[i]->setBounds(
+            multiSceneCanvasComponents[i]->setBounds(
             208, // next to the left menu
             8, // always the same Y coordinate
             juce::roundFloatToInt((getWidth() - areaGroupComponent->getWidth() - 24)*pourcentageLargeurMainScene) - 8,
             getHeight()-16); // always the same Y coordinate
         }
-        else if (i == SceneCanvasComponent::FixedScene)
+        else if (i == SceneCanvasComponent::Canvas2)
         {
-            sceneCanvasComponents[i]->setBounds(
-            sceneCanvasComponents[SceneCanvasComponent::MainScene]->getX() // on the right of
-            + sceneCanvasComponents[SceneCanvasComponent::MainScene]->getWidth()+8, //MainScene
+            multiSceneCanvasComponents[i]->setBounds(
+            multiSceneCanvasComponents[SceneCanvasComponent::Canvas1]->getX() // on the right of
+            + multiSceneCanvasComponents[SceneCanvasComponent::Canvas1]->getWidth()+8, //MainScene
             8, // always the same Y coordinate
             juce::roundFloatToInt((getWidth()-areaGroupComponent->getWidth()-24)*(1.0f-pourcentageLargeurMainScene))-8,
             getHeight()-16); // always the same Y coordinate
@@ -589,8 +597,8 @@ void SceneEditionComponent::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 void SceneEditionComponent::CompleteInitialization(SceneEditionManager* _sceneEditionManager)
 {
     sceneEditionManager = _sceneEditionManager;
-    for (size_t i=0 ; i<sceneCanvasComponents.size() ; i++)
-        sceneCanvasComponents[i]->CompleteInitialization(sceneEditionManager);
+    for (size_t i=0 ; i<multiSceneCanvasComponents.size() ; i++)
+        multiSceneCanvasComponents[i]->GetCanvas()->CompleteInitialization(sceneEditionManager);
 }
 
 
@@ -602,11 +610,11 @@ void SceneEditionComponent::CompleteInitialization(SceneEditionManager* _sceneEd
 // ========== (SETTERS AND GETTERS) ORDERS FROM PRESENTER ==========
 
 // - - - - - Canvases & canvas group - - - - -
-SceneCanvasComponent* SceneEditionComponent::AddCanvas(SceneCanvasComponent::Id canvasId)
+MultiSceneCanvasComponent* SceneEditionComponent::AddCanvas()
 {
-    sceneCanvasComponents.push_back(new SceneCanvasComponent(canvasId));
-    addAndMakeVisible(sceneCanvasComponents.back());
-    return sceneCanvasComponents.back();
+    multiSceneCanvasComponents.push_back(new MultiSceneCanvasComponent());
+    addAndMakeVisible(multiSceneCanvasComponents.back());
+    return multiSceneCanvasComponents.back();
 }
 
 void SceneEditionComponent::SetCanvasGroupHidden(bool _isHidden)
@@ -761,14 +769,22 @@ void SceneEditionComponent::SetInitialStateGroupReduced(bool _isReduced)
 
 
 
-// ----- Parameters setting -----
 
+// ----- Other setters and getters -----
 
+// - - - - - Colours - - - - -
 void SceneEditionComponent::SetAreaColourValue(juce::Colour colour)
 {
     sliderR->setValue(colour.getRed());
     sliderG->setValue(colour.getGreen());
     sliderB->setValue(colour.getBlue());
+}
+
+// - - - - - Text Values - - - - -
+void SceneEditionComponent::SetCanvasInfo(SceneCanvasComponent::Id _id)
+{
+    canvasInfoLabel->setText("Scenes of Canvas " + static_cast<String>(_id+1),
+                             NotificationType::dontSendNotification);
 }
 
 
@@ -856,7 +872,7 @@ BEGIN_JUCER_METADATA
                   title="Area edition"/>
   <GROUPCOMPONENT name="Spatialization group component" id="90b16e3024c520fd" memberName="spatGroupComponent"
                   virtualName="" explicitFocusOrder="0" pos="8 -8R 192 80" posRelativeY="87d416270d41f58c"
-                  title="Spatialization effect"/>
+                  outlinecol="66000000" textcol="66000000" title="Spatialization effect"/>
   <TEXTBUTTON name="Add Point text button" id="71769222a7765795" memberName="addPointTextButton"
               virtualName="" explicitFocusOrder="0" pos="16 216 88 24" posRelativeY="87d416270d41f58c"
               bgColOff="33000000" bgColOn="ffffffff" buttonText="Add Point"
@@ -935,7 +951,7 @@ BEGIN_JUCER_METADATA
             textWhenNoItems="(no choices)"/>
   <LABEL name="Spat label" id="b1f047be2f31dc5" memberName="spatLabel"
          virtualName="" explicitFocusOrder="0" pos="16 16 176 24" posRelativeY="90b16e3024c520fd"
-         edTextCol="ff000000" edBkgCol="0" labelText="Link to speakers group :"
+         textCol="66000000" edTextCol="ff000000" edBkgCol="0" labelText="Link to speakers group :"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
   <TEXTBUTTON name="Add Scene text button" id="47bebc9d3a03780d" memberName="addSceneTextButton"
@@ -965,24 +981,24 @@ BEGIN_JUCER_METADATA
               caret="1" popupmenu="1"/>
   <GROUPCOMPONENT name="Initial state group component" id="cc3bdf8d18c3f428" memberName="initialStateGroupComponent"
                   virtualName="" explicitFocusOrder="0" pos="8 -8R 192 88" posRelativeY="90b16e3024c520fd"
-                  title="Scene initial state"/>
+                  textcol="66000000" title="Scene initial state"/>
   <TEXTBUTTON name="Add Area text button" id="b6820308eb03f341" memberName="addExciterTextButton"
               virtualName="" explicitFocusOrder="0" pos="16 24 88 24" posRelativeY="cc3bdf8d18c3f428"
-              bgColOff="33000000" bgColOn="ffffffff" buttonText="Add Exciter"
+              bgColOff="33000000" bgColOn="ffffffff" textCol="66000000" buttonText="Add Exciter"
               connectedEdges="2" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Delete Exciter text button" id="11692d0648a2e8a4" memberName="deleteExciterTextButton"
               virtualName="" explicitFocusOrder="0" pos="104 24 88 24" posRelativeY="cc3bdf8d18c3f428"
-              bgColOff="33000000" bgColOn="ffffffff" buttonText="Delete" connectedEdges="1"
-              needsCallback="1" radioGroupId="0"/>
+              bgColOff="33000000" bgColOn="ffffffff" textCol="66000000" buttonText="Delete"
+              connectedEdges="1" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Edit Initial State text button" id="d8f32d6e3ea6e87a" memberName="editInitialStateTextButton"
               virtualName="" explicitFocusOrder="0" pos="16 136 176 24" posRelativeY="4250d5155a80be70"
-              bgColOff="33000000" bgColOn="ffffffff" buttonText="Edit initial scene state"
+              bgColOff="33000000" bgColOn="ffffffff" textCol="66000000" buttonText="Edit initial scene state"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="End Edit Initial State text button" id="3fe924c475527418"
               memberName="endEditInitialStateTextButton" virtualName="" explicitFocusOrder="0"
               pos="16 56 176 24" posRelativeY="cc3bdf8d18c3f428" bgColOff="33000000"
-              bgColOn="ffffffff" buttonText="Go back to areas edition" connectedEdges="0"
-              needsCallback="1" radioGroupId="0"/>
+              bgColOn="ffffffff" textCol="66000000" buttonText="Go back to areas edition"
+              connectedEdges="0" needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

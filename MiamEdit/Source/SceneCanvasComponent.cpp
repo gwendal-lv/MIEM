@@ -14,8 +14,7 @@
 #include "SceneEditionManager.h"
 
 //==============================================================================
-SceneCanvasComponent::SceneCanvasComponent(SceneCanvasComponent::Id _id) :
-    selfId(_id),
+SceneCanvasComponent::SceneCanvasComponent() :
     selectedForEditing(false)
 {
     // In your constructor, you should add any child components, and

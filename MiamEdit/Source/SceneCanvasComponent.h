@@ -36,17 +36,16 @@ class SceneCanvasComponent    : public Component
 public:
     
     
-    
     // = = = = = = = = = = ENUMS = = = = = = = = = =
     
     /// \brief IDs for describing a particular canvas, or canvases in general
     ///
     enum Id : int { // enum *class* brings cast issues... (wait for C++14 ?)
-        None = -1, ///< No canvas currently selected
+        None = -1, ///< No canvas currently selected (useless now with smart ptrs)
         
-        MainScene = 0, ///< The main canvas, that can display several different scenes a spatialization performance
-        FixedScene, ///< Displays a fixed scene, that never changes during a spat performance
-        SceneCanvasesCount ///< Automatically contains the amount of accessible canvases
+        Canvas1 = 0, ///< First canvas...
+        Canvas2, ///< Second canvas...
+        CanvasesCount ///< Automatically contains the amount of accessible canvases
     };
     
     
@@ -59,19 +58,14 @@ public:
     SceneEditionManager* sceneEditionManager = 0; // default c++ null pointer
     SceneCanvasManager* canvasManager = 0;
     
-    // Self ID
-    SceneCanvasComponent::Id selfId;
-    
     bool selectedForEditing;
-    
-    std::vector< std::weak_ptr<DrawableArea> > areas;
     
     
     
     // = = = = = = = = = = METHODS = = = = = = = = = =
     public :
     
-    SceneCanvasComponent(SceneCanvasComponent::Id _id);
+    SceneCanvasComponent();
     ~SceneCanvasComponent();
     
 	/// \brief Also called from Miam::View::CompleteInitialization

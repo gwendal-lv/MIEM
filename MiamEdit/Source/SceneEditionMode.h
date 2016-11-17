@@ -23,6 +23,7 @@ namespace Miam {
         Null, ///< Undefined state
         
         Loading, ///< When scene manager is loading something (useless at the moment ??)
+        Loaded, ///< When loading has just finished
         
         NothingSelected, ///< No canvas or area selected ; ready to process any input
         

@@ -1,18 +1,18 @@
 /*
   ==============================================================================
 
-  This is an automatically generated GUI class created by the Introjucer!
+  This is an automatically generated GUI class created by the Projucer!
 
   Be careful when adding custom code to these files, as only the code within
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Introjucer version: 3.1.0
+  Created with Projucer version: 4.3.0
 
   ------------------------------------------------------------------------------
 
-  The Introjucer is part of the JUCE library - "Jules' Utility Class Extensions"
-  Copyright 2004-13 by Raw Material Software Ltd.
+  The Projucer is part of the JUCE library - "Jules' Utility Class Extensions"
+  Copyright (c) 2015 - ROLI Ltd.
 
   ==============================================================================
 */
@@ -26,10 +26,9 @@
 
 
 
-
 //==============================================================================
 /**
-//[Comments]
+                                                                    //[Comments]
 
 // \brief An important component that corresponds to an Miam::AppMode of the
 // Miam::Presenter.
@@ -37,7 +36,7 @@
 // An auto-generated component, created by the Projucer.
 //
 
-//[/Comments]
+                                                                    //[/Comments]
 */
 class SpeakersEditionComponent  : public Component
 {
@@ -50,8 +49,8 @@ public:
     //[UserMethods]     -- You can add your own custom methods in this section.
     //[/UserMethods]
 
-    void paint (Graphics& g);
-    void resized();
+    void paint (Graphics& g) override;
+    void resized() override;
 
 
 

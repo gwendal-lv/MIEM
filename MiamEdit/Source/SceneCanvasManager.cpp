@@ -24,8 +24,11 @@ SceneCanvasManager::SceneCanvasManager(View* _view, SceneEditionManager* _sceneE
     sceneEditionComponent = _sceneEditionComponent;
     selfId = _selfId;
     
-    canvasComponent = sceneEditionComponent->AddCanvas(selfId);
-    canvasComponent->CompleteInitialization(this); // auto-reference to the managed obj.
+    canvasComponent = sceneEditionComponent->AddCanvas();
+    canvasComponent->GetCanvas()->CompleteInitialization(this); // auto-reference to the managed obj.
+    
+    // do not auto-call this here : it calls back the edition manager, which calls this canvas, which is not constructed yet...
+    //SetMode(SceneCanvasMode::Unselected);
 }
 
 
@@ -45,21 +48,25 @@ void SceneCanvasManager::SetMode(Miam::SceneCanvasMode newMode)
             if (mode != SceneCanvasMode::Unselected)
             {
                 canvasComponent->SetIsSelectedForEditing(false);
-                setSelectedArea(nullptr);
+                setSelectedArea(nullptr, false);
             }
             break;
             
         case SceneCanvasMode::NothingSelected:
-            if (mode != SceneCanvasMode::NothingSelected)
+            if (mode == SceneCanvasMode::Unselected)
+            {
                 canvasComponent->SetIsSelectedForEditing(true);
+            }
             break;
             
+            
+        // Default case : we just apply the new mode
         default:
             break;
     }
     
-    // Actual mode change after checks ; then we alert our parent manager of what just happened
     mode = newMode;
+    
     
     sceneEditionManager->CanvasModeChanged(mode);
 }
@@ -77,7 +84,7 @@ std::shared_ptr<DrawableArea> SceneCanvasManager::GetDrawableArea(int _index)
     return drawableArea;
 }
 
-void SceneCanvasManager::setSelectedArea(std::shared_ptr<EditableArea> _selectedArea)
+void SceneCanvasManager::setSelectedArea(std::shared_ptr<EditableArea> _selectedArea, bool changeMode)
 {
     // Null pointer <=> deselection command
     if (_selectedArea == nullptr)
@@ -90,7 +97,8 @@ void SceneCanvasManager::setSelectedArea(std::shared_ptr<EditableArea> _selected
         
         // In any, we actually deselect
         selectedArea = nullptr;
-        SetMode(SceneCanvasMode::NothingSelected);
+        if (changeMode)
+            SetMode(SceneCanvasMode::NothingSelected);
     }
     
     // Else : we select a new existing EditableArea
@@ -102,7 +110,8 @@ void SceneCanvasManager::setSelectedArea(std::shared_ptr<EditableArea> _selected
         
         selectedArea = _selectedArea;
         selectedArea->SetActive(true);
-        SetMode(SceneCanvasMode::AreaSelected);
+        if (changeMode)
+            SetMode(SceneCanvasMode::AreaSelected);
     }
 }
 
@@ -111,7 +120,7 @@ void SceneCanvasManager::setSelectedArea(std::shared_ptr<EditableArea> _selected
 /*
 void SceneCanvasManager::SetUnselected()
 {
-    canvasComponent->SetIsSelectedForEditing(<#bool isSelected#>)
+    canvasComponent->SetIsSelectedForEditing()
 }
 
 void SceneCanvasManager::SetSelected()
@@ -135,7 +144,7 @@ void SceneCanvasManager::__AddTestAreas()
                                                                                     sceneEditionManager->GetNextAreaId(),
                                                                                     Point<double>(0.2f+0.13f*i,0.3f+0.1f*i), 3+2*i, 0.15f+0.04f*(i+1),
                                                                                     Colour(80*(uint8)i, 0, 255),
-                                                                                    canvasComponent->GetRatio()));
+                                                                                    canvasComponent->GetCanvas()->GetRatio()));
         AddEditableArea(currentEditablePolygon);
     }
 }
@@ -151,7 +160,7 @@ void SceneCanvasManager::AddEditableArea(std::shared_ptr<EditableArea> newArea, 
     
     
     // Forced graphical updates
-    areas.back()->CanvasResized(this->canvasComponent);
+    areas.back()->CanvasResized(this->canvasComponent->GetCanvas());
     sceneEditionComponent->repaint();
     
     // We really go now for the next iteration
@@ -179,7 +188,7 @@ void SceneCanvasManager::AddDefaultArea(uint64_t _nextAreaId)
     std::shared_ptr<EditablePolygon> newPolygon(new EditablePolygon(_nextAreaId,
         Point<double>(0.5f,0.5f), 6, 0.15f,
         Colours::grey,
-        canvasComponent->GetRatio() ));
+        canvasComponent->GetCanvas()->GetRatio() ));
     
     // Actual adding of this new polygon
     AddEditableArea(newPolygon, true);
@@ -218,18 +227,17 @@ void SceneCanvasManager::SendSelectedAreaToBack()
 {
     if (selectedArea)
     {
-        uint64_t selectedAreaUniqueId = selectedArea->GetId();
         if (areas.size()>1) // We do something only if more than one area
         {
             int selectedAreaOrder = -1; // the current drawing order (not known yet)
             
             // Do something if it's not the last yet (last to be drawn)
-            if (areasOrderedForDrawing[0]->GetId() != selectedAreaUniqueId)             {
+            if (areasOrderedForDrawing[0] != selectedArea)             {
                 // selectedArea becomes the first within the areasOrder vector.
                 // at first, we need to find where the area was before
                 for (size_t i=0 ; i<areasOrderedForDrawing.size() ; i++)
                 {
-                    if (areasOrderedForDrawing[i]->GetId() == selectedAreaUniqueId)
+                    if (areasOrderedForDrawing[i] == selectedArea)
                         selectedAreaOrder = i;
                 }
                 // then we udpate all what's necessary and we change the value
@@ -250,15 +258,13 @@ void SceneCanvasManager::SendSelectedAreaBackward()
     {
         if (areasOrderedForDrawing.size()>1) // We do something only if more than one area
         {
-            uint64_t selectedAreaUniqueId = -1; // the current drawing order (not known yet)
-            
-            if (areasOrderedForDrawing[0]->GetId() != selectedAreaUniqueId) // and if it's not the last yet
+            if (areasOrderedForDrawing[0] != selectedArea) // and if it's not the last yet
             {
                 // at first, we need to find where the area was before
                 int selectedAreaOrder = -1;
                 for (int i=0 ; i<areasOrderedForDrawing.size() ; i++)
                 {
-                    if (areasOrderedForDrawing[i]->GetId() == selectedAreaUniqueId)
+                    if (areasOrderedForDrawing[i] == selectedArea)
                         selectedAreaOrder = i;
                 }
                 // then we udpate all what's necessary and we change the value
@@ -277,15 +283,13 @@ void SceneCanvasManager::SendSelectedAreaForward()
     {
         if (areasOrderedForDrawing.size()>1) // We do something only if more than one area
         {
-            uint64_t selectedAreaUniqueId = -1; // the current drawing order (not known yet)
-            
-            if (areasOrderedForDrawing.back()->GetId() != selectedAreaUniqueId) // and if it's not the first yet
+            if (areasOrderedForDrawing.back() != selectedArea) // and if it's not the first yet
             {
                 // at first, we need to find where the area was before
                 int selectedAreaOrder = -1;
                 for (int i=0 ; i<areasOrderedForDrawing.size() ; i++)
                 {
-                    if (areasOrderedForDrawing[i]->GetId() == selectedAreaUniqueId)
+                    if (areasOrderedForDrawing[i] == selectedArea)
                         selectedAreaOrder = i;
                 }
                 // then we udpate all what's necessary and we change the value
@@ -304,15 +308,14 @@ void SceneCanvasManager::SendSelectedAreaToFront()
     {
         if (areas.size()>1) // We do something only if more than one area
         {
-            uint64_t selectedAreaUniqueId = selectedArea->GetId();
-            if (areasOrderedForDrawing.back()->GetId() != selectedAreaUniqueId) // and if it's not the first yet
+            if (areasOrderedForDrawing.back() != selectedArea) // and if it's not the first yet
             {
                 // selectedArea becomes the last within the areasOrder vector.
                 // at first, we need to find where the area was before
                 int selectedAreaOrder = -1;
                 for (size_t i=0 ; i<areasOrderedForDrawing.size() ; i++)
                 {
-                    if (areasOrderedForDrawing[i]->GetId() == selectedAreaUniqueId)
+                    if (areasOrderedForDrawing[i] == selectedArea)
                         selectedAreaOrder = i;
                 }
                 // then we udpate all what's necessary and we change the value
@@ -359,7 +362,7 @@ void SceneCanvasManager::OnCanvasMouseDown(Point<int> clicLocation)
         if (areasOrderedForDrawing[i]->HitTest(clicLocation.toDouble()))
         {
             // !!!!!!!!!!!!! TEST DES POIDS D'INTERACTION !!!!!!!!!!!
-            //std::cout << "poids d'interaction = " << GetEditablePolygon(areasOrder[i]).ComputeInteractionWeight(clicLocation.toDouble()) << std::endl;
+            //std::cout << "poids d'interaction = " << areasOrderedForDrawing[i]->ComputeInteractionWeight(clicLocation.toDouble()) << std::endl;
             setSelectedArea(areasOrderedForDrawing[i]);
         }
     }
@@ -405,7 +408,9 @@ void SceneCanvasManager::OnCanvasMouseDown(Point<int> clicLocation)
 void SceneCanvasManager::OnCanvasMouseDrag(Point<int> mouseLocation)
 {
     if (selectedArea)
+    {
         selectedArea->TryMovePoint(mouseLocation.toDouble());
+    }
     
     sceneEditionComponent->repaint();
 }

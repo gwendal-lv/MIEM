@@ -19,6 +19,7 @@
 
 #include "SceneEditionComponent.h"
 #include "SceneCanvasComponent.h"
+#include "MultiSceneCanvasComponent.h"
 
 #include "EditableArea.h"
 #include "EditablePolygon.h"
@@ -50,7 +51,7 @@ namespace Miam {
         /// \brief The associated Juce canvasComponent
         ///
         /// A normal pointer that has to be properly (at some point) transmitted to the Juce API
-        SceneCanvasComponent* canvasComponent;
+        MultiSceneCanvasComponent* canvasComponent;
         
         
         
@@ -69,7 +70,7 @@ namespace Miam {
         
         
         protected :
-        SceneCanvasComponent::Id selfId; // USELESS ?
+        SceneCanvasComponent::Id selfId; ///< To be transformed to a name...
         
         // Current internal running mode
         SceneCanvasMode mode;
@@ -113,7 +114,7 @@ namespace Miam {
  
         
         protected :
-        void setSelectedArea(std::shared_ptr<EditableArea> _selectedArea);
+        void setSelectedArea(std::shared_ptr<EditableArea> _selectedArea, bool changeMode = true);
         
         
         public :

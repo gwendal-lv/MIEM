@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 4.2.4
+  Created with Projucer version: 4.3.0
 
   ------------------------------------------------------------------------------
 
@@ -26,6 +26,8 @@
 #include <vector>
 
 #include "SceneCanvasComponent.h"
+#include "MultiSceneCanvasComponent.h"
+
 #include "DrawableArea.h"
 
 namespace Miam
@@ -68,8 +70,8 @@ public:
 
     // ----- General Setters and Getters -----
     /// \brief Get a pointer to one of the canvases.
-    SceneCanvasComponent* GetSceneCanvasComponent(int position)
-    { return sceneCanvasComponents[position]; }
+    MultiSceneCanvasComponent* GetMultiSceneCanvasComponent(int position)
+    { return multiSceneCanvasComponents[position]; }
 
 
     // ----- Functions that obey orders sent from the Presenter -----
@@ -78,7 +80,7 @@ public:
     public :
     void SetEnabledAllControls(bool areEnabled, bool controlsBackUp = true);
     // - - - - - Canvases & canvas group - - - - -
-    SceneCanvasComponent* AddCanvas(SceneCanvasComponent::Id canvasId);
+    MultiSceneCanvasComponent* AddCanvas();
     //void DeleteCanvas(SceneCanvasComponent::Id canvasId);
     void SetCanvasGroupHidden(bool _isHidden);
     void SetCanvasGroupReduced(bool _isReduced);
@@ -99,7 +101,10 @@ public:
 
 
     // ----- Other setters and getters -----
+    // - - - - - Colours - - - - -
     void SetAreaColourValue(juce::Colour colour);
+    // - - - - - Text Values - - - - -
+    void SetCanvasInfo(SceneCanvasComponent::Id _id);
 
 
     // Helpers
@@ -128,7 +133,7 @@ public:
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
 
-    std::vector<SceneCanvasComponent*> sceneCanvasComponents;
+    std::vector<MultiSceneCanvasComponent*> multiSceneCanvasComponents;
 
     SceneEditionManager* sceneEditionManager;
 

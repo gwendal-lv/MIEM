@@ -29,15 +29,24 @@ SceneEditionManager::SceneEditionManager(View* _view) :
     sceneEditionComponent = view->GetMainContentComponent()->GetSceneEditionComponent();
     
     // Canvases const count defined within the View module...  NOT ANYMORE
-    canvasManagers.push_back(new SceneCanvasManager(view, this, sceneEditionComponent, SceneCanvasComponent::Id::MainScene));
-    canvasManagers.push_back(new SceneCanvasManager(view, this, sceneEditionComponent,  SceneCanvasComponent::Id::FixedScene));
+    canvasManagers.push_back(new SceneCanvasManager(view, this, sceneEditionComponent, SceneCanvasComponent::Id::Canvas1));
+    canvasManagers.push_back(new SceneCanvasManager(view, this, sceneEditionComponent,  SceneCanvasComponent::Id::Canvas2));
     
     // Links to the view module
     sceneEditionComponent->CompleteInitialization(this);
     
     // Finally, state of the presenter
+    setMode(SceneEditionMode::Loaded);
+    // And states of the canvases
+    for (size_t i=0 ; i<canvasManagers.size() ; i++)
+        canvasManagers[i]->SetMode(SceneCanvasMode::Unselected);
+    
+    
+    // SÉLECTION/CHARGEMENT D'UN TRUC PAR DÉFAUT
     nextAreaId = 0; // plus tard : valeur contenue dans le fichier de sauvegarde
     SetSelectedCanvas(canvasManagers.front());
+    
+    
 }
 
 SceneEditionManager::~SceneEditionManager()
@@ -85,14 +94,23 @@ std::shared_ptr<EditableArea> SceneEditionManager::GetSelectedArea()
 
 void SceneEditionManager::SetSelectedCanvas(SceneCanvasManager* _selectedCanvas)
 {
-    // Default : unselection of previous canvas...
-    if (selectedCanvas)
-        selectedCanvas->SetMode(SceneCanvasMode::Unselected);
     
-    selectedCanvas = _selectedCanvas;
-    selectedCanvas->SetMode(SceneCanvasMode::NothingSelected);
+    // We do something only if there has been a change
+    if (selectedCanvas != _selectedCanvas)
+    {
+        // At first : unselection of previous canvas...
+        if (selectedCanvas)
+            selectedCanvas->SetMode(SceneCanvasMode::Unselected);
     
-    setMode(SceneEditionMode::CanvasSelected);
+        selectedCanvas = _selectedCanvas;
+        selectedCanvas->SetMode(SceneCanvasMode::NothingSelected);
+    
+        setMode(SceneEditionMode::CanvasSelected);
+    }
+    else
+    {
+        // rien du tout
+    }
 }
 
 
@@ -112,6 +130,10 @@ void SceneEditionManager::setMode(SceneEditionMode newMode)
             std::cout << "Presenter:: (SceneEditionManager) : mode d'édition \"Loading\" non-implémenté" << std::endl;
             break;
             
+        case SceneEditionMode::Loaded :
+            // nothing to paste when freshly loaded
+            sceneEditionComponent->SetPasteEnabled(false);
+            
         case SceneEditionMode::NothingSelected :
             sceneEditionComponent->SetCanvasGroupHidden(true);
             sceneEditionComponent->SetAreaGroupReduced(true);
@@ -121,11 +143,16 @@ void SceneEditionManager::setMode(SceneEditionMode newMode)
             break;
             
         case  SceneEditionMode::CanvasSelected :
+            sceneEditionComponent->SetCanvasInfo(selectedCanvas->GetId());
             sceneEditionComponent->SetCanvasGroupHidden(false);
             sceneEditionComponent->SetAreaGroupReduced(true);
+            if (areaToCopy)
+                sceneEditionComponent->SetPasteEnabled(true);
             sceneEditionComponent->SetSpatGroupReduced(true);
             sceneEditionComponent->SetInitialStateGroupHidden(false);
             sceneEditionComponent->resized(); // right menu update
+            
+            view->DisplayInfo("Editing a Canvas and its Scenes");
             break;
             
         case SceneEditionMode::AreaSelected :
@@ -136,6 +163,8 @@ void SceneEditionManager::setMode(SceneEditionMode newMode)
             sceneEditionComponent->SetInitialStateGroupHidden(true);
             sceneEditionComponent->SetAreaColourValue(GetSelectedArea()->GetFillColour());
             sceneEditionComponent->resized(); // right menu update
+            
+            view->DisplayInfo("Editing an Area");
             break;
             
             /*
@@ -226,6 +255,9 @@ void SceneEditionManager::OnCopyArea()
     }
     else
         throw std::runtime_error("Cannot copy an area if no canvas is selected...");
+    
+    // Graphical Update
+    sceneEditionComponent->SetPasteEnabled(true);
 }
 void SceneEditionManager::OnPasteArea()
 {
@@ -267,6 +299,9 @@ void SceneEditionManager::OnPasteArea()
     }
     else
         throw std::runtime_error("Cannot paste an area : no canvas selected. Paste button should not be clickable at the moment.");
+    
+    // Graphical Update
+    // none
 }
 void SceneEditionManager::OnAddArea()
 {
@@ -282,6 +317,7 @@ void SceneEditionManager::OnDeleteArea()
     if (selectedCanvas)
     {
         selectedCanvas->DeleteSelectedArea();
+        sceneEditionComponent->repaint();
     }
     else
         throw std::runtime_error("No canvas selected. Delete Area button should not be clickable at the moment !");
@@ -301,24 +337,27 @@ void SceneEditionManager::OnNewColour(Colour colour)
 
 void SceneEditionManager::OnSendToBack()
 {
-    if (selectedCanvas) // We do something only if more than one area
+    if (selectedCanvas)
         selectedCanvas->SendSelectedAreaToBack();
     else throw std::runtime_error("Cannot send an area to back : no canvas selected");
 }
 
 void SceneEditionManager::OnSendBackward()
 {
-    if (selectedCanvas) // We do something only if more than one area
+    if (selectedCanvas)
         selectedCanvas->SendSelectedAreaBackward();
     else throw std::runtime_error("Cannot send an area backward : no canvas selected");
 }
 void SceneEditionManager::OnBringForward()
 {
+    if (selectedCanvas)
+        selectedCanvas->SendSelectedAreaForward();
+    else throw std::runtime_error("Cannot send an area forward : no canvas selected");
 }
 void SceneEditionManager::OnBringToFront()
 {
-    if (selectedCanvas) // We do something only if more than one area
-        selectedCanvas->SendSelectedAreaToBack();
+    if (selectedCanvas)
+        selectedCanvas->SendSelectedAreaToFront();
     else throw std::runtime_error("Cannot send an area to front : no canvas selected");
 }
 
