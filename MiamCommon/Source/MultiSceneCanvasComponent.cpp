@@ -8,7 +8,7 @@
   ==============================================================================
 */
 
-#include "../JuceLibraryCode/JuceHeader.h"
+
 #include "MultiSceneCanvasComponent.h"
 
 //==============================================================================
@@ -33,6 +33,8 @@ MultiSceneCanvasComponent::~MultiSceneCanvasComponent()
 {
     delete childrenCanvas;
 }
+
+
 
 void MultiSceneCanvasComponent::paint (Graphics& g)
 {

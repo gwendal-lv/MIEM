@@ -24,7 +24,7 @@
 #include "SceneEditionComponent.h"
 #include "SceneEditionMode.h"
 
-#include "SceneCanvasManager.h"
+#include "MultiSceneCanvasManager.h"
 #include "SceneCanvasComponent.h"
 
 namespace Miam {
@@ -66,8 +66,8 @@ namespace Miam {
         
         
         // Display & editing attributes for Canvases
-        std::vector< SceneCanvasManager* > canvasManagers;
-        SceneCanvasManager* selectedCanvas = 0;
+        std::vector< MultiSceneCanvasManager* > canvasManagers;
+        MultiSceneCanvasManager* selectedCanvas = 0;
         
         
         // Display & editing attributes for Areas
@@ -125,7 +125,7 @@ namespace Miam {
         /// \brief Sets the new active canvas and updates corresponding graphic objects. Called by the newly selected canvas itself.
         ///
         /// Tells other canvases to unselect any previously selected area
-        void SetSelectedCanvas(SceneCanvasManager*);
+        void SetSelectedCanvas(MultiSceneCanvasManager*);
         
         
 		// ----- Running mode -----

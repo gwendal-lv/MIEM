@@ -8,10 +8,9 @@
   ==============================================================================
 */
 
-#include "../JuceLibraryCode/JuceHeader.h"
 #include "SceneCanvasComponent.h"
 
-#include "SceneEditionManager.h"
+#include "IMultiSceneCanvasManager.h"
 
 //==============================================================================
 SceneCanvasComponent::SceneCanvasComponent() :
@@ -26,11 +25,7 @@ SceneCanvasComponent::~SceneCanvasComponent()
 {
 }
 
-void SceneCanvasComponent::CompleteInitialization(SceneEditionManager* _sceneEditionManager)
-{
-    sceneEditionManager = _sceneEditionManager;
-}
-void SceneCanvasComponent::CompleteInitialization(SceneCanvasManager* _canvasManager)
+void SceneCanvasComponent::CompleteInitialization(IMultiSceneCanvasManager* _canvasManager)
 {
     canvasManager = _canvasManager;
 }

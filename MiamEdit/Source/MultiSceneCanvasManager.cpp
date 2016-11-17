@@ -8,7 +8,7 @@
   ==============================================================================
 */
 
-#include "SceneCanvasManager.h"
+#include "MultiSceneCanvasManager.h"
 
 #include "SceneEditionManager.h"
 
@@ -16,7 +16,7 @@
 
 using namespace Miam;
 
-SceneCanvasManager::SceneCanvasManager(View* _view, SceneEditionManager* _sceneEditionManager, SceneEditionComponent* _sceneEditionComponent, SceneCanvasComponent::Id _selfId)
+MultiSceneCanvasManager::MultiSceneCanvasManager(View* _view, SceneEditionManager* _sceneEditionManager, SceneEditionComponent* _sceneEditionComponent, SceneCanvasComponent::Id _selfId)
 {
     view = _view;
     
@@ -32,13 +32,17 @@ SceneCanvasManager::SceneCanvasManager(View* _view, SceneEditionManager* _sceneE
 }
 
 
+MultiSceneCanvasManager::~MultiSceneCanvasManager()
+{
+    
+}
 
 
 
 
 // - - - - - - - - - - running Mode - - - - - - - - - -
 
-void SceneCanvasManager::SetMode(Miam::SceneCanvasMode newMode)
+void MultiSceneCanvasManager::SetMode(Miam::SceneCanvasMode newMode)
 {
     // We don't do a specific action on every mode change !
     // But a few require checks and action
@@ -78,13 +82,13 @@ void SceneCanvasManager::SetMode(Miam::SceneCanvasMode newMode)
 
 // - - - - - - - - - - Getters and Setters - - - - - - - - - -
 
-std::shared_ptr<DrawableArea> SceneCanvasManager::GetDrawableArea(int _index)
+std::shared_ptr<DrawableArea> MultiSceneCanvasManager::GetDrawableArea(int _index)
 {
     std::shared_ptr<DrawableArea> drawableArea = std::dynamic_pointer_cast<DrawableArea>(areasOrderedForDrawing[_index]);
     return drawableArea;
 }
 
-void SceneCanvasManager::setSelectedArea(std::shared_ptr<EditableArea> _selectedArea, bool changeMode)
+void MultiSceneCanvasManager::setSelectedArea(std::shared_ptr<EditableArea> _selectedArea, bool changeMode)
 {
     // Null pointer <=> deselection command
     if (_selectedArea == nullptr)
@@ -118,12 +122,12 @@ void SceneCanvasManager::setSelectedArea(std::shared_ptr<EditableArea> _selected
 
 // - - - - - Orders from the parent manager - - - - -
 /*
-void SceneCanvasManager::SetUnselected()
+void MultiSceneCanvasManager::SetUnselected()
 {
     canvasComponent->SetIsSelectedForEditing()
 }
 
-void SceneCanvasManager::SetSelected()
+void MultiSceneCanvasManager::SetSelected()
 {
     
 }*/
@@ -134,7 +138,7 @@ void SceneCanvasManager::SetSelected()
 
 // - - - - - - - - - - Areas Managing : Add and Delete - - - - - - - - - -
 
-void SceneCanvasManager::__AddTestAreas()
+void MultiSceneCanvasManager::__AddTestAreas()
 {
     int areasCount = 3+(rand()%3);
     for (int i=0 ; i<areasCount ; i++)
@@ -149,7 +153,7 @@ void SceneCanvasManager::__AddTestAreas()
     }
 }
 
-void SceneCanvasManager::AddEditableArea(std::shared_ptr<EditableArea> newArea, bool selectArea)
+void MultiSceneCanvasManager::AddEditableArea(std::shared_ptr<EditableArea> newArea, bool selectArea)
 {
     // Internal area objects modification
     areas.push_back(newArea);
@@ -167,7 +171,7 @@ void SceneCanvasManager::AddEditableArea(std::shared_ptr<EditableArea> newArea, 
     //nextAreaId++; // useless because a special unique ID was given to this canvas... ok?
 }
 
-bool SceneCanvasManager::DeleteSelectedArea()
+bool MultiSceneCanvasManager::DeleteSelectedArea()
 {
     if (selectedArea)
     {
@@ -182,7 +186,7 @@ bool SceneCanvasManager::DeleteSelectedArea()
         return false;
 }
 
-void SceneCanvasManager::AddDefaultArea(uint64_t _nextAreaId)
+void MultiSceneCanvasManager::AddDefaultArea(uint64_t _nextAreaId)
 {
     // centered grey Hexagon !...
     std::shared_ptr<EditablePolygon> newPolygon(new EditablePolygon(_nextAreaId,
@@ -194,7 +198,7 @@ void SceneCanvasManager::AddDefaultArea(uint64_t _nextAreaId)
     AddEditableArea(newPolygon, true);
 }
 
-void SceneCanvasManager::deleteAreaByUniqueId(uint64_t uidToDelete)
+void MultiSceneCanvasManager::deleteAreaByUniqueId(uint64_t uidToDelete)
 {
     bool areaOrderedDeleted = false, baseAreaDeleted = false;
     for (auto it = areasOrderedForDrawing.begin() ;
@@ -223,7 +227,7 @@ void SceneCanvasManager::deleteAreaByUniqueId(uint64_t uidToDelete)
 
 // - - - - - -  areas managing : Z-Order - - - - - -
 
-void SceneCanvasManager::SendSelectedAreaToBack()
+void MultiSceneCanvasManager::SendSelectedAreaToBack()
 {
     if (selectedArea)
     {
@@ -252,7 +256,7 @@ void SceneCanvasManager::SendSelectedAreaToBack()
     else throw std::runtime_error("Cannot send and area to back : no area selected");
 }
 
-void SceneCanvasManager::SendSelectedAreaBackward()
+void MultiSceneCanvasManager::SendSelectedAreaBackward()
 {
     if (selectedArea)
     {
@@ -277,7 +281,7 @@ void SceneCanvasManager::SendSelectedAreaBackward()
     else throw std::runtime_error("Cannot send and area forward : no area selected");
 }
 
-void SceneCanvasManager::SendSelectedAreaForward()
+void MultiSceneCanvasManager::SendSelectedAreaForward()
 {
     if (selectedArea)
     {
@@ -302,7 +306,7 @@ void SceneCanvasManager::SendSelectedAreaForward()
     else throw std::runtime_error("Cannot send and area forward : no area selected");
 }
 
-void SceneCanvasManager::SendSelectedAreaToFront()
+void MultiSceneCanvasManager::SendSelectedAreaToFront()
 {
     if (selectedArea)
     {
@@ -335,7 +339,7 @@ void SceneCanvasManager::SendSelectedAreaToFront()
 
 // - - - - - - - - - - Events from canvas - - - - - - - - - -
 
-void SceneCanvasManager::OnCanvasMouseDown(Point<int> clicLocation)
+void MultiSceneCanvasManager::OnCanvasMouseDown(Point<int> clicLocation)
 {
     // !!!!!!!!!!!!!! ON DOIT DIRE AU PARENT QU'ON SE SÉLECTIONNE SOI-MÊME !!!!!!!!!!!!!!
     // !!!!!!!!!!!!!! ON DOIT DIRE AU PARENT QU'ON SE SÉLECTIONNE SOI-MÊME !!!!!!!!!!!!!!
@@ -405,7 +409,7 @@ void SceneCanvasManager::OnCanvasMouseDown(Point<int> clicLocation)
     // in any case (does not waste much computing time...)
     sceneEditionComponent->repaint();
 }
-void SceneCanvasManager::OnCanvasMouseDrag(Point<int> mouseLocation)
+void MultiSceneCanvasManager::OnCanvasMouseDrag(Point<int> mouseLocation)
 {
     if (selectedArea)
     {
@@ -414,7 +418,7 @@ void SceneCanvasManager::OnCanvasMouseDrag(Point<int> mouseLocation)
     
     sceneEditionComponent->repaint();
 }
-void SceneCanvasManager::OnCanvasMouseUp()
+void MultiSceneCanvasManager::OnCanvasMouseUp()
 {
     if (selectedArea)
         selectedArea->EndPointMove();

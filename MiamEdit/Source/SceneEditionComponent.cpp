@@ -597,8 +597,6 @@ void SceneEditionComponent::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 void SceneEditionComponent::CompleteInitialization(SceneEditionManager* _sceneEditionManager)
 {
     sceneEditionManager = _sceneEditionManager;
-    for (size_t i=0 ; i<multiSceneCanvasComponents.size() ; i++)
-        multiSceneCanvasComponents[i]->GetCanvas()->CompleteInitialization(sceneEditionManager);
 }
 
 

@@ -22,6 +22,7 @@ namespace Miam
     class IInteractiveArea : public virtual IDrawableArea
     {
         
+        
         // Construction/destruction
         public :
         IInteractiveArea() {}

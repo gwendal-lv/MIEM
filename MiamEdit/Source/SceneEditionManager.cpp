@@ -29,8 +29,8 @@ SceneEditionManager::SceneEditionManager(View* _view) :
     sceneEditionComponent = view->GetMainContentComponent()->GetSceneEditionComponent();
     
     // Canvases const count defined within the View module...  NOT ANYMORE
-    canvasManagers.push_back(new SceneCanvasManager(view, this, sceneEditionComponent, SceneCanvasComponent::Id::Canvas1));
-    canvasManagers.push_back(new SceneCanvasManager(view, this, sceneEditionComponent,  SceneCanvasComponent::Id::Canvas2));
+    canvasManagers.push_back(new MultiSceneCanvasManager(view, this, sceneEditionComponent, SceneCanvasComponent::Id::Canvas1));
+    canvasManagers.push_back(new MultiSceneCanvasManager(view, this, sceneEditionComponent,  SceneCanvasComponent::Id::Canvas2));
     
     // Links to the view module
     sceneEditionComponent->CompleteInitialization(this);
@@ -92,7 +92,7 @@ std::shared_ptr<EditableArea> SceneEditionManager::GetSelectedArea()
 
 
 
-void SceneEditionManager::SetSelectedCanvas(SceneCanvasManager* _selectedCanvas)
+void SceneEditionManager::SetSelectedCanvas(MultiSceneCanvasManager* _selectedCanvas)
 {
     
     // We do something only if there has been a change

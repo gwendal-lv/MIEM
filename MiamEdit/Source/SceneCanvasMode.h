@@ -14,7 +14,7 @@
 
 namespace Miam {
     
-    /// \brief Describes the current running mode of a SceneCanvasManager, which is a
+    /// \brief Describes the current running mode of a MultiSceneCanvasManager, which is a
     /// sub-sub-module of the Miam::Presenter.
     enum class SceneCanvasMode {
         

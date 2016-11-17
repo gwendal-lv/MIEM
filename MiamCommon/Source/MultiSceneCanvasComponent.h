@@ -12,16 +12,14 @@
 #define MULTISCENECANVASCOMPONENT_H_INCLUDED
 
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "JuceHeader.h"
 
-namespace Miam
-{
-    class SceneEditionManager;
-    class SceneCanvasManager;
-}
+#include "IMultiSceneCanvasManager.h"
+#include "SceneCanvasComponent.h"
+
+
 using namespace Miam;
 
-#include "SceneCanvasComponent.h"
 
 
 
@@ -37,8 +35,7 @@ class MultiSceneCanvasComponent    : public Component
     
     protected :
     // links back to parent modules
-    SceneEditionManager* sceneEditionManager = 0; // default c++ null pointer
-    SceneCanvasManager* canvasManager = 0;
+    IMultiSceneCanvasManager* canvasManager = 0;
     
     // Children canvas
     SceneCanvasComponent* childrenCanvas;

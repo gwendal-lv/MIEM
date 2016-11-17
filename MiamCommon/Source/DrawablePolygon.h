@@ -9,9 +9,10 @@
 #ifndef DrawablePolygon_hpp
 #define DrawablePolygon_hpp
 
-#include "../JuceLibraryCode/JuceHeader.h"
 
+#include "JuceHeader.h"
 #include "DrawableArea.h"
+
 
 namespace Miam {
     

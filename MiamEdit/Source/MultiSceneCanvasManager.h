@@ -15,6 +15,8 @@
 
 #include <deque>
 
+#include "IMultiSceneCanvasManager.h"
+
 #include "SceneCanvasMode.h"
 
 #include "SceneEditionComponent.h"
@@ -28,10 +30,10 @@ namespace Miam {
     class View;
     
     
-    /// \brief The "Presenter-side" methods and attributes of a SceneCanvasComponent
+    /// \brief The "Presenter-side" methods and attributes of a MultiSceneCanvasComponent
     ///
     ///
-    class SceneCanvasManager
+    class MultiSceneCanvasManager : public IMultiSceneCanvasManager
     {
         
         
@@ -80,7 +82,9 @@ namespace Miam {
         // = = = = = = = = = = METHODS = = = = = = = = = =
         
     public:
-        SceneCanvasManager(View* _view, SceneEditionManager* _sceneEditionManager, SceneEditionComponent* _sceneEditionComponent, SceneCanvasComponent::Id _selfId);
+        MultiSceneCanvasManager(View* _view, SceneEditionManager* _sceneEditionManager, SceneEditionComponent* _sceneEditionComponent, SceneCanvasComponent::Id _selfId);
+        
+        virtual ~MultiSceneCanvasManager();
         
         
         

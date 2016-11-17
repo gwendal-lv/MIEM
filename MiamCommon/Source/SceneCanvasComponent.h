@@ -11,18 +11,14 @@
 #ifndef SCENECANVASCOMPONENT_H_INCLUDED
 #define SCENECANVASCOMPONENT_H_INCLUDED
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "JuceHeader.h"
 
 #include "DrawableArea.h"
 
 
 namespace Miam
 {
-    class SceneEditionManager;
-    class SceneCanvasManager;
-
-    
-    
+    class IMultiSceneCanvasManager;
 }
 using namespace Miam;
 
@@ -55,8 +51,7 @@ public:
     
     protected :
     // links back to parent modules
-    SceneEditionManager* sceneEditionManager = 0; // default c++ null pointer
-    SceneCanvasManager* canvasManager = 0;
+    IMultiSceneCanvasManager* canvasManager = 0;
     
     bool selectedForEditing;
     
@@ -69,8 +64,7 @@ public:
     ~SceneCanvasComponent();
     
 	/// \brief Also called from Miam::View::CompleteInitialization
-    void CompleteInitialization(SceneEditionManager* _sceneEditionManager);
-    void CompleteInitialization(SceneCanvasManager* _canvasManager);
+    void CompleteInitialization(IMultiSceneCanvasManager* _canvasManager);
 
     void paint (Graphics&);
     void resized();
