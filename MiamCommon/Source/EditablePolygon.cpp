@@ -173,10 +173,6 @@ void EditablePolygon::SetActive(bool activate)
 
 // ===== EDITION FUNCTIONS =====
 
-bool EditablePolygon::HitTest(const Point<double>& hitPoint)
-{
-    return (contour.contains((float)hitPoint.x, (float)hitPoint.y));
-}
 
 
 

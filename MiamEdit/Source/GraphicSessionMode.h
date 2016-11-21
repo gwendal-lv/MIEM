@@ -8,15 +8,15 @@
   ==============================================================================
 */
 
-#ifndef SCENEEDITIONMODE_H_INCLUDED
-#define SCENEEDITIONMODE_H_INCLUDED
+#ifndef GRAPHICSESSIONMODE_H_INCLUDED
+#define GRAPHICSESSIONMODE_H_INCLUDED
 
 
 namespace Miam {
     
-    /// \brief Describes the current running mode of SceneEditionManager, which is
+    /// \brief Describes the current running mode of GraphicSessionManager, which is
     /// a sub-module of the Presenter.
-    enum class SceneEditionMode {
+    enum class GraphicSessionMode {
         
         
         
@@ -50,4 +50,4 @@ namespace Miam {
 }
 
 
-#endif  // SCENEEDITIONMODE_H_INCLUDED
+#endif  // GRAPHICSESSIONMODE_H_INCLUDED

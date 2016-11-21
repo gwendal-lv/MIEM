@@ -22,14 +22,14 @@ Presenter::Presenter(View* _view) :
     view(_view),
     appMode(AppMode::Loading), // app is loading while the Model hasn't fully loaded yet
 
-    sceneEditionManager(_view)
+    graphicSessionManager(_view)
 {
     // After all sub-modules are built, the presenter refers itself to the View
     view->CompleteInitialization(this);
     
     
     // HERE, WE SHOULD LOAD THE DEFAULT FILE
-    sceneEditionManager.__LoadDefaultTest();
+    graphicSessionManager.__LoadDefaultTest();
     
     // App mode changer to Scenes Edition by default (should be stored within the file ?)
     appModeChangeRequest(AppMode::EditSpatScenes);

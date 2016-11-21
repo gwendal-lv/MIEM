@@ -15,7 +15,7 @@
 
 #include "AppMode.h"
 
-#include "SceneEditionManager.h"
+#include "GraphicSessionManager.h"
 
 
 
@@ -45,7 +45,7 @@ namespace Miam {
         
         
         // Sub-modules
-        SceneEditionManager sceneEditionManager;
+        GraphicSessionManager graphicSessionManager;
         
         
         public :
@@ -54,7 +54,7 @@ namespace Miam {
         
         // Getters and Setters
         AppMode getAppMode() {return appMode;};
-        SceneEditionManager* getSceneEditionManager() {return &sceneEditionManager;}
+        GraphicSessionManager* getGraphicSessionManager() {return &graphicSessionManager;}
         
         // Events from the View
         AppMode appModeChangeRequest(AppMode newAppMode);

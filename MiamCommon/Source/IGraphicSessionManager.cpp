@@ -1,28 +1,20 @@
 /*
   ==============================================================================
 
-    EditableArea.cpp
-    Created: 12 Apr 2016 4:39:52pm
+    IGraphicSessionManager.cpp
+    Created: 21 Nov 2016 12:10:44pm
     Author:  Gwendal Le Vaillant
 
   ==============================================================================
 */
 
-#include "EditableArea.h"
-
+#include "IGraphicSessionManager.h"
 
 using namespace Miam;
 
 
 
-EditableArea::EditableArea()
+IGraphicSessionManager::~IGraphicSessionManager()
 {
     
 }
-
-
-EditableArea::~EditableArea()
-{
-
-}
-

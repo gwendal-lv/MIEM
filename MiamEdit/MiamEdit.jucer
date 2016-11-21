@@ -9,18 +9,12 @@
         <FILE id="rgxQ9K" name="AppMode.h" compile="0" resource="0" file="Source/AppMode.h"/>
         <FILE id="meFyUy" name="Presenter.cpp" compile="1" resource="0" file="Source/Presenter.cpp"/>
         <FILE id="dHZ0UK" name="Presenter.h" compile="0" resource="0" file="Source/Presenter.h"/>
-        <FILE id="QaxHcU" name="MultiSceneCanvasManager.cpp" compile="1" resource="0"
-              file="Source/MultiSceneCanvasManager.cpp"/>
-        <FILE id="HFOOsJ" name="MultiSceneCanvasManager.h" compile="0" resource="0"
-              file="Source/MultiSceneCanvasManager.h"/>
-        <FILE id="LXrObT" name="SceneCanvasMode.h" compile="0" resource="0"
-              file="Source/SceneCanvasMode.h"/>
-        <FILE id="sqIfeX" name="SceneEditionManager.cpp" compile="1" resource="0"
-              file="Source/SceneEditionManager.cpp"/>
-        <FILE id="kKa1F6" name="SceneEditionManager.h" compile="0" resource="0"
-              file="Source/SceneEditionManager.h"/>
-        <FILE id="PY0TYM" name="SceneEditionMode.h" compile="0" resource="0"
-              file="Source/SceneEditionMode.h"/>
+        <FILE id="sqIfeX" name="GraphicSessionManager.cpp" compile="1" resource="0"
+              file="Source/GraphicSessionManager.cpp"/>
+        <FILE id="kKa1F6" name="GraphicSessionManager.h" compile="0" resource="0"
+              file="Source/GraphicSessionManager.h"/>
+        <FILE id="PY0TYM" name="GraphicSessionMode.h" compile="0" resource="0"
+              file="Source/GraphicSessionMode.h"/>
       </GROUP>
       <GROUP id="{F6BB049F-E535-45AB-5A0C-454B64DE18EA}" name="View">
         <GROUP id="{EC5E55BB-07A7-BF56-A7EA-A7410AC9FE64}" name="Components">
@@ -88,10 +82,29 @@
           <FILE id="ZRuNWP" name="SubTriangle.cpp" compile="1" resource="0" file="../MiamCommon/Source/SubTriangle.cpp"/>
           <FILE id="Rsgwzv" name="SubTriangle.h" compile="0" resource="0" file="../MiamCommon/Source/SubTriangle.h"/>
         </GROUP>
+        <FILE id="hWUZ4N" name="CanvasManagerMode.h" compile="0" resource="0"
+              file="../MiamCommon/Source/CanvasManagerMode.h"/>
+        <FILE id="vjqld7" name="EditableScene.cpp" compile="1" resource="0"
+              file="../MiamCommon/Source/EditableScene.cpp"/>
+        <FILE id="mc8YKm" name="EditableScene.h" compile="0" resource="0" file="../MiamCommon/Source/EditableScene.h"/>
         <FILE id="o4h3ZV" name="Exciter.cpp" compile="1" resource="0" file="../MiamCommon/Source/Exciter.cpp"/>
         <FILE id="uFYMUE" name="Exciter.h" compile="0" resource="0" file="../MiamCommon/Source/Exciter.h"/>
-        <FILE id="bTgHPD" name="IMultiSceneCanvasManager.h" compile="0" resource="0"
-              file="../MiamCommon/Source/IMultiSceneCanvasManager.h"/>
+        <FILE id="LOSifR" name="IGraphicSessionManager.cpp" compile="1" resource="0"
+              file="../MiamCommon/Source/IGraphicSessionManager.cpp"/>
+        <FILE id="Lgollh" name="IGraphicSessionManager.h" compile="0" resource="0"
+              file="../MiamCommon/Source/IGraphicSessionManager.h"/>
+        <FILE id="i50GId" name="InteractiveScene.cpp" compile="1" resource="0"
+              file="../MiamCommon/Source/InteractiveScene.cpp"/>
+        <FILE id="w93g8x" name="InteractiveScene.h" compile="0" resource="0"
+              file="../MiamCommon/Source/InteractiveScene.h"/>
+        <FILE id="knTCPR" name="MultiSceneCanvasEditor.cpp" compile="1" resource="0"
+              file="Source/MultiSceneCanvasEditor.cpp"/>
+        <FILE id="ENGKtl" name="MultiSceneCanvasEditor.h" compile="0" resource="0"
+              file="Source/MultiSceneCanvasEditor.h"/>
+        <FILE id="QaxHcU" name="MultiSceneCanvasInteractor.cpp" compile="1"
+              resource="0" file="Source/MultiSceneCanvasInteractor.cpp"/>
+        <FILE id="HFOOsJ" name="MultiSceneCanvasInteractor.h" compile="0" resource="0"
+              file="Source/MultiSceneCanvasInteractor.h"/>
       </GROUP>
       <GROUP id="{81FB02AB-9CF8-2FEF-77B6-9D5049B0BC47}" name="View">
         <GROUP id="{36323D02-59E2-4E89-249D-DCE39931C0AE}" name="Components">

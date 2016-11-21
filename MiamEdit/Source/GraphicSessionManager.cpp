@@ -1,14 +1,14 @@
 /*
   ==============================================================================
 
-    SceneEditionManager.cpp
+    GraphicSessionManager.cpp
     Created: 28 Mar 2016 5:27:18pm
     Author:  Gwendal Le Vaillant
 
   ==============================================================================
 */
 
-#include "SceneEditionManager.h"
+#include "GraphicSessionManager.h"
 
 
 // Other includes
@@ -20,26 +20,27 @@ using namespace Miam;
 
 // ========== CONSTRUCTION and DESTRUCTION ==========
 
-SceneEditionManager::SceneEditionManager(View* _view) :
+GraphicSessionManager::GraphicSessionManager(View* _view) :
     view(_view)
 {
-    setMode(SceneEditionMode::Loading);
+    setMode(GraphicSessionMode::Loading);
     
     // Links to the view module
     sceneEditionComponent = view->GetMainContentComponent()->GetSceneEditionComponent();
     
-    // Canvases const count defined within the View module...  NOT ANYMORE
-    canvasManagers.push_back(new MultiSceneCanvasManager(view, this, sceneEditionComponent, SceneCanvasComponent::Id::Canvas1));
-    canvasManagers.push_back(new MultiSceneCanvasManager(view, this, sceneEditionComponent,  SceneCanvasComponent::Id::Canvas2));
+    // Canvases const count defined here PLUS OU MOINS
+    // On doit créer les sous-objets de canevas avant de les transmettre au sous-module
+    canvasManagers.push_back(new MultiSceneCanvasEditor(this, sceneEditionComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas1));
+    canvasManagers.push_back(new MultiSceneCanvasEditor(this, sceneEditionComponent->AddCanvas(),  SceneCanvasComponent::Id::Canvas2));
     
     // Links to the view module
     sceneEditionComponent->CompleteInitialization(this);
     
     // Finally, state of the presenter
-    setMode(SceneEditionMode::Loaded);
+    setMode(GraphicSessionMode::Loaded);
     // And states of the canvases
     for (size_t i=0 ; i<canvasManagers.size() ; i++)
-        canvasManagers[i]->SetMode(SceneCanvasMode::Unselected);
+        canvasManagers[i]->SetMode(CanvasManagerMode::Unselected);
     
     
     // SÉLECTION/CHARGEMENT D'UN TRUC PAR DÉFAUT
@@ -49,7 +50,7 @@ SceneEditionManager::SceneEditionManager(View* _view) :
     
 }
 
-SceneEditionManager::~SceneEditionManager()
+GraphicSessionManager::~GraphicSessionManager()
 {
     for(int i=0 ; i<canvasManagers.size(); i++)
         delete canvasManagers[i];
@@ -57,7 +58,7 @@ SceneEditionManager::~SceneEditionManager()
 
 
 // Testing purposes only
-void SceneEditionManager::__LoadDefaultTest()
+void GraphicSessionManager::__LoadDefaultTest()
 {
     srand(2016); // GRAINE fixée ici
     
@@ -69,13 +70,13 @@ void SceneEditionManager::__LoadDefaultTest()
 
 
 // ===== SETTERS AND GETTERS =====
-uint64_t SceneEditionManager::GetNextAreaId()
+uint64_t GraphicSessionManager::GetNextAreaId()
 {
     uint64_t areaIdBackup = nextAreaId;
     nextAreaId++;
     return areaIdBackup;
 }
-std::shared_ptr<EditableArea> SceneEditionManager::GetSelectedArea()
+std::shared_ptr<IEditableArea> GraphicSessionManager::GetSelectedArea()
 {
     if (selectedCanvas)
         return selectedCanvas->GetSelectedArea();
@@ -92,7 +93,7 @@ std::shared_ptr<EditableArea> SceneEditionManager::GetSelectedArea()
 
 
 
-void SceneEditionManager::SetSelectedCanvas(MultiSceneCanvasManager* _selectedCanvas)
+void GraphicSessionManager::SetSelectedCanvas(MultiSceneCanvasInteractor* _selectedCanvas)
 {
     
     // We do something only if there has been a change
@@ -100,12 +101,17 @@ void SceneEditionManager::SetSelectedCanvas(MultiSceneCanvasManager* _selectedCa
     {
         // At first : unselection of previous canvas...
         if (selectedCanvas)
-            selectedCanvas->SetMode(SceneCanvasMode::Unselected);
+            selectedCanvas->SetMode(CanvasManagerMode::Unselected);
     
-        selectedCanvas = _selectedCanvas;
-        selectedCanvas->SetMode(SceneCanvasMode::NothingSelected);
+        
+        selectedCanvas = dynamic_cast<MultiSceneCanvasEditor*>(_selectedCanvas);
+        if (!selectedCanvas)
+            throw std::runtime_error(std::string("The canvas to be selected is only an Interactor, and not an Editor (no editing features...)"));
+        
+        
+        selectedCanvas->SetMode(CanvasManagerMode::NothingSelected);
     
-        setMode(SceneEditionMode::CanvasSelected);
+        setMode(GraphicSessionMode::CanvasSelected);
     }
     else
     {
@@ -118,23 +124,23 @@ void SceneEditionManager::SetSelectedCanvas(MultiSceneCanvasManager* _selectedCa
 /* Regroups all necessary actions on a mode change,
  * moreover : does not always necessarily allow the mode change requested !
  */
-void SceneEditionManager::setMode(SceneEditionMode newMode)
+void GraphicSessionManager::setMode(GraphicSessionMode newMode)
 {
     switch(newMode)
     {
-        case SceneEditionMode::Null :
-            std::cout << "Presenter:: (SceneEditionManager) : mode d'édition \"Null\" non-implémenté" << std::endl;
+        case GraphicSessionMode::Null :
+            std::cout << "Presenter:: (GraphicSessionManager) : mode d'édition \"Null\" non-implémenté" << std::endl;
             break;
             
-        case SceneEditionMode::Loading :
-            std::cout << "Presenter:: (SceneEditionManager) : mode d'édition \"Loading\" non-implémenté" << std::endl;
+        case GraphicSessionMode::Loading :
+            std::cout << "Presenter:: (GraphicSessionManager) : mode d'édition \"Loading\" non-implémenté" << std::endl;
             break;
             
-        case SceneEditionMode::Loaded :
+        case GraphicSessionMode::Loaded :
             // nothing to paste when freshly loaded
             sceneEditionComponent->SetPasteEnabled(false);
             
-        case SceneEditionMode::NothingSelected :
+        case GraphicSessionMode::NothingSelected :
             sceneEditionComponent->SetCanvasGroupHidden(true);
             sceneEditionComponent->SetAreaGroupReduced(true);
             sceneEditionComponent->SetSpatGroupReduced(true);
@@ -142,7 +148,7 @@ void SceneEditionManager::setMode(SceneEditionMode newMode)
             sceneEditionComponent->resized(); // right menu update
             break;
             
-        case  SceneEditionMode::CanvasSelected :
+        case  GraphicSessionMode::CanvasSelected :
             sceneEditionComponent->SetCanvasInfo(selectedCanvas->GetId());
             sceneEditionComponent->SetCanvasGroupHidden(false);
             sceneEditionComponent->SetAreaGroupReduced(true);
@@ -155,12 +161,16 @@ void SceneEditionManager::setMode(SceneEditionMode newMode)
             view->DisplayInfo("Editing a Canvas and its Scenes");
             break;
             
-        case SceneEditionMode::AreaSelected :
+        case GraphicSessionMode::AreaSelected :
             sceneEditionComponent->SetEnabledAllControls(true, true); // as we may come from "waiting for something creation/deletion"
             sceneEditionComponent->SetCanvasGroupHidden(true);
             sceneEditionComponent->SetAreaGroupReduced(false);
+            if (areaToCopy)
+                sceneEditionComponent->SetPasteEnabled(true);
             sceneEditionComponent->SetSpatGroupReduced(false);
             sceneEditionComponent->SetInitialStateGroupHidden(true);
+            if (GetSelectedArea() == nullptr)
+                throw std::runtime_error("No area selected, mode cannot be AreaSelected");
             sceneEditionComponent->SetAreaColourValue(GetSelectedArea()->GetFillColour());
             sceneEditionComponent->resized(); // right menu update
             
@@ -168,14 +178,14 @@ void SceneEditionManager::setMode(SceneEditionMode newMode)
             break;
             
             /*
-         case SceneEditionMode::EditingArea :
+         case GraphicSessionMode::EditingArea :
             break;*/
             
-        case SceneEditionMode::WaitingForPointCreation :
+        case GraphicSessionMode::WaitingForPointCreation :
             sceneEditionComponent->DisableAllButtonsBut("Add Point text button");
             break;
             
-        case SceneEditionMode::WaitingForPointDeletion :
+        case GraphicSessionMode::WaitingForPointDeletion :
             sceneEditionComponent->DisableAllButtonsBut("Delete Point text button");
             break;
             
@@ -189,21 +199,21 @@ void SceneEditionManager::setMode(SceneEditionMode newMode)
 }
 
 
-void SceneEditionManager::CanvasModeChanged(SceneCanvasMode canvasMode)
+void GraphicSessionManager::CanvasModeChanged(CanvasManagerMode canvasMode)
 {
     switch (canvasMode)
     {
-        case SceneCanvasMode::NothingSelected :
-            setMode(SceneEditionMode::CanvasSelected);
+        case CanvasManagerMode::NothingSelected :
+            setMode(GraphicSessionMode::CanvasSelected);
             break;
-        case SceneCanvasMode::AreaSelected :
-            setMode(SceneEditionMode::AreaSelected);
+        case CanvasManagerMode::AreaSelected :
+            setMode(GraphicSessionMode::AreaSelected);
             break;
-        case SceneCanvasMode::WaitingForPointCreation :
-            setMode(SceneEditionMode::WaitingForPointCreation);
+        case CanvasManagerMode::WaitingForPointCreation :
+            setMode(GraphicSessionMode::WaitingForPointCreation);
             break;
-        case SceneCanvasMode::WaitingForPointDeletion :
-            setMode(SceneEditionMode::WaitingForPointDeletion);
+        case CanvasManagerMode::WaitingForPointDeletion :
+            setMode(GraphicSessionMode::WaitingForPointDeletion);
             break;
             
         default :
@@ -213,45 +223,57 @@ void SceneEditionManager::CanvasModeChanged(SceneCanvasMode canvasMode)
 
 
 
-// ===== EVENTS =====
+// ===== EVENTS TO VIEW =====
 
-void SceneEditionManager::OnAddPoint()
+void GraphicSessionManager::DisplayInfo(String info)
+{
+    view->DisplayInfo(info);
+}
+
+
+
+
+
+
+// ===== EVENTS FROM VIEW =====
+
+void GraphicSessionManager::OnAddPoint()
 {
     // Only if the button is not clicked a second time in a row
-    if (mode != SceneEditionMode::WaitingForPointCreation)
+    if (mode != GraphicSessionMode::WaitingForPointCreation)
     {
         if (selectedCanvas != 0)
-            selectedCanvas->SetMode(SceneCanvasMode::WaitingForPointCreation);
+            selectedCanvas->SetMode(CanvasManagerMode::WaitingForPointCreation);
         else
             throw std::runtime_error("Cannot add a point to an area because no canvas is currently selected");
     }
     // Else, we cancel the point creation (an area was necessarily selected if we were to destroy something)
     else
-        selectedCanvas->SetMode(SceneCanvasMode::AreaSelected);
+        selectedCanvas->SetMode(CanvasManagerMode::AreaSelected);
 }
-void SceneEditionManager::OnDeletePoint()
+void GraphicSessionManager::OnDeletePoint()
 {
     // Only if the button is not clicked a second time in a row
-    if (mode != SceneEditionMode::WaitingForPointDeletion)
+    if (mode != GraphicSessionMode::WaitingForPointDeletion)
     {
         if (selectedCanvas != 0)
-            selectedCanvas->SetMode(SceneCanvasMode::WaitingForPointDeletion);
+            selectedCanvas->SetMode(CanvasManagerMode::WaitingForPointDeletion);
         else
             throw std::runtime_error("Cannot add a point to an area because no canvas is currently selected");
     }
     // Else, we cancel the point deletion (an area was necessarily selected if we were to destroy something)
     else
-        selectedCanvas->SetMode(SceneCanvasMode::AreaSelected);
+        selectedCanvas->SetMode(CanvasManagerMode::AreaSelected);
 }
-void SceneEditionManager::OnCopyArea()
+void GraphicSessionManager::OnCopyArea()
 {
     if(selectedCanvas)
     {
-        std::shared_ptr<EditableArea> localAreaToCopy = selectedCanvas->GetSelectedArea();
+        auto localAreaToCopy = selectedCanvas->GetSelectedArea();
         if (localAreaToCopy)
             areaToCopy = localAreaToCopy;
         else
-            throw std::runtime_error(std::string("Cannot copy an area... No area selected in SceneCanvasComponent::Id") + std::to_string(selectedCanvas->GetId())); // C++11
+            throw std::runtime_error("Cannot copy an area... No area selected in SceneCanvasComponent::Id" + std::to_string(selectedCanvas->GetId()));
     }
     else
         throw std::runtime_error("Cannot copy an area if no canvas is selected...");
@@ -259,7 +281,7 @@ void SceneEditionManager::OnCopyArea()
     // Graphical Update
     sceneEditionComponent->SetPasteEnabled(true);
 }
-void SceneEditionManager::OnPasteArea()
+void GraphicSessionManager::OnPasteArea()
 {
     if (selectedCanvas)
     {
@@ -267,7 +289,7 @@ void SceneEditionManager::OnPasteArea()
         {
             // On va forcer l'appel au constructeur de copie
             // COPIE DE POLYGONE SEULEMENT
-            std::shared_ptr<EditableArea> newArea;
+            std::shared_ptr<IEditableArea> newArea;
             
             // Casts sans doute inutiles ici....
             // Et le code serait + clair avec des méthode de ** Clonage ** à l'intérieur des classes...
@@ -276,13 +298,15 @@ void SceneEditionManager::OnPasteArea()
             if (newCastedPolygon)
             {
                 std::shared_ptr<EditablePolygon> newPolygon(new EditablePolygon(*(newCastedPolygon.get())));
-                newArea = std::static_pointer_cast<EditableArea>(newPolygon);
+                
+                // 
+                newArea = newPolygon;
             }
             // Sinon c'est l'alerte au gogole
             else
                 throw std::runtime_error("Unable to cast the currently selectedArea to a polygon, in order to duplicate then paste it. Generic code not implemented.");
             
-            // Pui : même procédure pour les cas possibles
+            // Puis : même procédure pour les cas possibles
             // Modification du polygone copié
             newArea->SetId(nextAreaId);
             
@@ -292,7 +316,11 @@ void SceneEditionManager::OnPasteArea()
             //
             // Juste translation par rapport à l'original, dans tous les cas...
             newArea->Translate(Point<double>(20,20));
-            selectedCanvas->AddEditableArea(newArea, true);
+            selectedCanvas->GetSelectedScene()->AddArea(newArea);
+            selectedCanvas->GetSelectedScene()->SetSelectedArea(newArea);
+            
+            // Graphical Update
+            selectedCanvas->CallRepaint();
         }
         else
             throw std::runtime_error("No valid area can be pasted from the clipboard.");
@@ -300,30 +328,28 @@ void SceneEditionManager::OnPasteArea()
     else
         throw std::runtime_error("Cannot paste an area : no canvas selected. Paste button should not be clickable at the moment.");
     
-    // Graphical Update
-    // none
+    
 }
-void SceneEditionManager::OnAddArea()
+void GraphicSessionManager::OnAddArea()
 {
     if (selectedCanvas)
     {
-        selectedCanvas->AddDefaultArea(GetNextAreaId());
+        selectedCanvas->GetSelectedScene()->AddDefaultArea(GetNextAreaId());
     }
     else
         throw std::runtime_error("Cannot add a new area : no canvas selected.");
 }
-void SceneEditionManager::OnDeleteArea()
+void GraphicSessionManager::OnDeleteArea()
 {
     if (selectedCanvas)
     {
         selectedCanvas->DeleteSelectedArea();
-        sceneEditionComponent->repaint();
     }
     else
         throw std::runtime_error("No canvas selected. Delete Area button should not be clickable at the moment !");
 }
 
-void SceneEditionManager::OnNewColour(Colour colour)
+void GraphicSessionManager::OnNewColour(Colour colour)
 {
     std::shared_ptr<DrawableArea> selectedArea = std::dynamic_pointer_cast<DrawableArea>(GetSelectedArea());
     if (selectedArea)
@@ -335,30 +361,31 @@ void SceneEditionManager::OnNewColour(Colour colour)
         std::runtime_error("The given colour cannot be applied : no area is selected");
 }
 
-void SceneEditionManager::OnSendToBack()
+
+void GraphicSessionManager::OnSendToBack()
 {
     if (selectedCanvas)
-        selectedCanvas->SendSelectedAreaToBack();
-    else throw std::runtime_error("Cannot send an area to back : no canvas selected");
+        selectedCanvas->OnSendToBack();
+    else throw std::runtime_error("Cannot send something to back : no canvas selected");
 }
 
-void SceneEditionManager::OnSendBackward()
+void GraphicSessionManager::OnSendBackward()
 {
     if (selectedCanvas)
-        selectedCanvas->SendSelectedAreaBackward();
-    else throw std::runtime_error("Cannot send an area backward : no canvas selected");
+        selectedCanvas->OnSendBackward();
+    else throw std::runtime_error("Cannot send something backward : no canvas selected");
 }
-void SceneEditionManager::OnBringForward()
+void GraphicSessionManager::OnBringForward()
 {
     if (selectedCanvas)
-        selectedCanvas->SendSelectedAreaForward();
-    else throw std::runtime_error("Cannot send an area forward : no canvas selected");
+        selectedCanvas->OnBringForward();
+    else throw std::runtime_error("Cannot bring something forward : no canvas selected");
 }
-void SceneEditionManager::OnBringToFront()
+void GraphicSessionManager::OnBringToFront()
 {
     if (selectedCanvas)
-        selectedCanvas->SendSelectedAreaToFront();
-    else throw std::runtime_error("Cannot send an area to front : no canvas selected");
+        selectedCanvas->OnBringToFront();
+    else throw std::runtime_error("Cannot bring something to front : no canvas selected");
 }
 
 

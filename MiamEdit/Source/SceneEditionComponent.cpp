@@ -18,7 +18,7 @@
 */
 
 //[Headers] You can add your own extra header files here...
-#include "SceneEditionManager.h"
+#include "GraphicSessionManager.h"
 
 #include <cmath>
 //[/Headers]
@@ -444,61 +444,61 @@ void SceneEditionComponent::buttonClicked (Button* buttonThatWasClicked)
     if (buttonThatWasClicked == addPointTextButton)
     {
         //[UserButtonCode_addPointTextButton] -- add your button handler code here..
-        sceneEditionManager->OnAddPoint();
+        graphicSessionManager->OnAddPoint();
         //[/UserButtonCode_addPointTextButton]
     }
     else if (buttonThatWasClicked == deletePointTextButton)
     {
         //[UserButtonCode_deletePointTextButton] -- add your button handler code here..
-        sceneEditionManager->OnDeletePoint();
+        graphicSessionManager->OnDeletePoint();
         //[/UserButtonCode_deletePointTextButton]
     }
     else if (buttonThatWasClicked == copyTextButton)
     {
         //[UserButtonCode_copyTextButton] -- add your button handler code here..
-        sceneEditionManager->OnCopyArea();
+        graphicSessionManager->OnCopyArea();
         //[/UserButtonCode_copyTextButton]
     }
     else if (buttonThatWasClicked == pasteTextButton)
     {
         //[UserButtonCode_pasteTextButton] -- add your button handler code here..
-        sceneEditionManager->OnPasteArea();
+        graphicSessionManager->OnPasteArea();
         //[/UserButtonCode_pasteTextButton]
     }
     else if (buttonThatWasClicked == addAreaTextButton)
     {
         //[UserButtonCode_addAreaTextButton] -- add your button handler code here..
-        sceneEditionManager->OnAddArea();
+        graphicSessionManager->OnAddArea();
         //[/UserButtonCode_addAreaTextButton]
     }
     else if (buttonThatWasClicked == deleteAreaTextButton)
     {
         //[UserButtonCode_deleteAreaTextButton] -- add your button handler code here..
-        sceneEditionManager->OnDeleteArea();
+        graphicSessionManager->OnDeleteArea();
         //[/UserButtonCode_deleteAreaTextButton]
     }
     else if (buttonThatWasClicked == sendBackwardTextButton)
     {
         //[UserButtonCode_sendBackwardTextButton] -- add your button handler code here..
-        sceneEditionManager->OnSendBackward();
+        graphicSessionManager->OnSendBackward();
         //[/UserButtonCode_sendBackwardTextButton]
     }
     else if (buttonThatWasClicked == bringForwardTextButton)
     {
         //[UserButtonCode_bringForwardTextButton] -- add your button handler code here..
-        sceneEditionManager->OnBringForward();
+        graphicSessionManager->OnBringForward();
         //[/UserButtonCode_bringForwardTextButton]
     }
     else if (buttonThatWasClicked == bringToFrontTextButton)
     {
         //[UserButtonCode_bringToFrontTextButton] -- add your button handler code here..
-        sceneEditionManager->OnBringToFront();
+        graphicSessionManager->OnBringToFront();
         //[/UserButtonCode_bringToFrontTextButton]
     }
     else if (buttonThatWasClicked == sendToBackTextButton)
     {
         //[UserButtonCode_sendToBackTextButton] -- add your button handler code here..
-        sceneEditionManager->OnSendToBack();
+        graphicSessionManager->OnSendToBack();
         //[/UserButtonCode_sendToBackTextButton]
     }
     else if (buttonThatWasClicked == addSceneTextButton)
@@ -594,9 +594,9 @@ void SceneEditionComponent::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 
 // CONSTRUCTION HELPERS
-void SceneEditionComponent::CompleteInitialization(SceneEditionManager* _sceneEditionManager)
+void SceneEditionComponent::CompleteInitialization(GraphicSessionManager* _graphicSessionManager)
 {
-    sceneEditionManager = _sceneEditionManager;
+    graphicSessionManager = _graphicSessionManager;
 }
 
 
@@ -798,7 +798,7 @@ void SceneEditionComponent::colourSliderMoved()
     Colour newColour = Colour((uint8)sliderR->getValue(),
 		(uint8)sliderG->getValue(),
 		(uint8)sliderB->getValue());
-    sceneEditionManager->OnNewColour(newColour);
+    graphicSessionManager->OnNewColour(newColour);
 }
 
 

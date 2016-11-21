@@ -32,7 +32,7 @@
 
 namespace Miam
 {
-    class SceneEditionManager;
+    class GraphicSessionManager;
 }
 using namespace Miam;
 
@@ -66,7 +66,7 @@ public:
     //[UserMethods]     -- You can add your own custom methods in this section.
 
     // ----- Construction helpers -----
-    void CompleteInitialization(SceneEditionManager* _sceneEditionManager);
+    void CompleteInitialization(GraphicSessionManager* _graphicSessionManager);
 
     // ----- General Setters and Getters -----
     /// \brief Get a pointer to one of the canvases.
@@ -135,7 +135,7 @@ private:
 
     std::vector<MultiSceneCanvasComponent*> multiSceneCanvasComponents;
 
-    SceneEditionManager* sceneEditionManager;
+    GraphicSessionManager* graphicSessionManager;
 
     int canvasGroupReducedH, areaGroupReducedH, spatGroupReducedH;
     bool isCanvasGroupHidden = false,

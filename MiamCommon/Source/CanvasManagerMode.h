@@ -1,27 +1,35 @@
 /*
   ==============================================================================
 
-    SceneCanvasMode.h
-    Created: 11 Oct 2016 3:18:15pm
+    CanvasManagerMode.h
+    Created: 18 Nov 2016 4:45:41pm
     Author:  Gwendal Le Vaillant
 
   ==============================================================================
 */
 
-#ifndef SCENECANVASMODE_H_INCLUDED
-#define SCENECANVASMODE_H_INCLUDED
+#ifndef CANVASMANAGERMODE_H_INCLUDED
+#define CANVASMANAGERMODE_H_INCLUDED
+
 
 
 namespace Miam {
     
-    /// \brief Describes the current running mode of a MultiSceneCanvasManager, which is a
-    /// sub-sub-module of the Miam::Presenter.
-    enum class SceneCanvasMode {
+    /// \brief Describes the current running mode of a MultiSceneCanvasInteractor, which is a
+    /// sub-sub-module a Presenter module.
+    enum class CanvasManagerMode {
         
+        
+        // - - - Common running modes - - -
         
         Null, ///< Undefined state
         
         Loading, ///< When the manager is loading something (useless at the moment ??)
+        
+        
+        
+        // - - - Modes relevant when your program is editing/playing something - - -
+        
         
         Unselected, ///< Not currently selected
         
@@ -34,9 +42,15 @@ namespace Miam {
         WaitingForPointCreation, ///< Next mouse input will create a point
         WaitingForPointDeletion ///< Next mouse input will delete a point
         
+        
+        
+        
+        //
+        
     };
     
 }
 
 
-#endif  // SCENECANVASMODE_H_INCLUDED
+
+#endif  // CANVASMANAGERMODE_H_INCLUDED

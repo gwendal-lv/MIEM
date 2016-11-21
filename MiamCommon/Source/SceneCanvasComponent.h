@@ -16,12 +16,13 @@
 #include "DrawableArea.h"
 
 
-namespace Miam
-{
-    class IMultiSceneCanvasManager;
-}
+
 using namespace Miam;
 
+namespace Miam {
+    
+    class MultiSceneCanvasInteractor;
+}
 
 //==============================================================================
 /// \brief Initially empty component dedicated to the drawing of several Miam::DrawableArea
@@ -51,7 +52,7 @@ public:
     
     protected :
     // links back to parent modules
-    IMultiSceneCanvasManager* canvasManager = 0;
+    MultiSceneCanvasInteractor* canvasManager = 0;
     
     bool selectedForEditing;
     
@@ -64,7 +65,7 @@ public:
     ~SceneCanvasComponent();
     
 	/// \brief Also called from Miam::View::CompleteInitialization
-    void CompleteInitialization(IMultiSceneCanvasManager* _canvasManager);
+    void CompleteInitialization(MultiSceneCanvasInteractor* _canvasManager);
 
     void paint (Graphics&);
     void resized();

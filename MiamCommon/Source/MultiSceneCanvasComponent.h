@@ -14,9 +14,8 @@
 
 #include "JuceHeader.h"
 
-#include "IMultiSceneCanvasManager.h"
 #include "SceneCanvasComponent.h"
-
+#include "MultiSceneCanvasInteractor.h"
 
 using namespace Miam;
 
@@ -35,7 +34,7 @@ class MultiSceneCanvasComponent    : public Component
     
     protected :
     // links back to parent modules
-    IMultiSceneCanvasManager* canvasManager = 0;
+    MultiSceneCanvasInteractor* canvasManager = 0;
     
     // Children canvas
     SceneCanvasComponent* childrenCanvas;
@@ -52,9 +51,8 @@ class MultiSceneCanvasComponent    : public Component
     SceneCanvasComponent* GetCanvas() {return childrenCanvas;}
     
     
-    // - - - - - From Present - - - - -
-    void SetIsSelectedForEditing(bool isSelected)
-    { childrenCanvas->SetIsSelectedForEditing(isSelected); }
+    // - - - - - From Presenter - - - - -
+    void SetIsSelectedForEditing(bool isSelected);
     
     
     

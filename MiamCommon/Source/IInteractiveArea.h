@@ -31,6 +31,11 @@ namespace Miam
         
         // Interactions computing
         public :
+        
+        /// \brief Collision test : tells whether the given point is inside the area
+        /// or not
+        virtual bool HitTest(const Point<double>& hitPoint) = 0;
+ 
         /// \brief Computes a coefficient that quantifies the interaction between a
         /// given point and this area.
         ///

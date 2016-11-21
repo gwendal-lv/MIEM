@@ -81,3 +81,14 @@ void MultiSceneCanvasComponent::resized()
     }
 }
 
+
+
+// = = = = = = = = = = GETTERS and SETTERS = = = = = = = = = =
+
+void MultiSceneCanvasComponent::SetIsSelectedForEditing(bool isSelected)
+{
+    childrenCanvas->SetIsSelectedForEditing(isSelected);
+}
+
+
+

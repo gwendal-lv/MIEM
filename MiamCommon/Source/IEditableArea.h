@@ -32,9 +32,7 @@ namespace Miam
         
         // ----- Points move -----
         public :
-        /// \brief Collision test : tells whether the given point is inside the area
-        /// or not
-        virtual bool HitTest(const Point<double>& hitPoint) = 0;
+        
         /// \brief Asks the area to prepare itself for moving a point
         ///
         /// \param hitPoint The user event point that may be associated to one of the

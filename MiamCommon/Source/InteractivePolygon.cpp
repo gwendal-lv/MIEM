@@ -82,6 +82,14 @@ void InteractivePolygon::updateSubTriangles()
 
 // ===== INTERACTION COMPUTING =====
 
+
+bool InteractivePolygon::HitTest(const Point<double>& hitPoint)
+{
+    return (contour.contains((float)hitPoint.x, (float)hitPoint.y));
+}
+
+
+
 double InteractivePolygon::ComputeInteractionWeight(Point<double> T)
 {
     double weight = 0.0;

@@ -13,6 +13,36 @@
 
 
 
+namespace Miam
+{
+    
+    /// \brief A graphical scene made of areas and exciters, to be drawn on a SceneCanvasComponent
+    ///
+    ///
+    class Exciter
+    {
+        
+        
+        
+        // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
+        protected :
+        double volume;
+        
+        
+        
+        // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
+        
+        
+        
+        
+        // = = = = = = = = = = METHODS = = = = = = = = = =
+        
+    };
+    
+    
+    
+}
+
 
 
 #endif  // EXCITER_H_INCLUDED

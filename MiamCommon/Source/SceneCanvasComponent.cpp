@@ -10,7 +10,7 @@
 
 #include "SceneCanvasComponent.h"
 
-#include "IMultiSceneCanvasManager.h"
+#include "MultiSceneCanvasInteractor.h"
 
 //==============================================================================
 SceneCanvasComponent::SceneCanvasComponent() :
@@ -25,7 +25,7 @@ SceneCanvasComponent::~SceneCanvasComponent()
 {
 }
 
-void SceneCanvasComponent::CompleteInitialization(IMultiSceneCanvasManager* _canvasManager)
+void SceneCanvasComponent::CompleteInitialization(MultiSceneCanvasInteractor* _canvasManager)
 {
     canvasManager = _canvasManager;
 }
@@ -72,13 +72,19 @@ void SceneCanvasComponent::resized()
 void SceneCanvasComponent::mouseDown(const juce::MouseEvent& event)
 {
 	if (event.source.getIndex() == 0)
-		canvasManager->OnCanvasMouseDown(event.getMouseDownPosition());
+    {
+        Point<int> positionCopy = event.getMouseDownPosition();
+		canvasManager->OnCanvasMouseDown(positionCopy);
+    }
 }
 
 void SceneCanvasComponent::mouseDrag(const juce::MouseEvent& event)
 {
-	if (event.source.getIndex() == 0)
-		canvasManager->OnCanvasMouseDrag(event.getPosition());
+    if (event.source.getIndex() == 0)
+    {
+        Point<int> positionCopy = event.getPosition();
+        canvasManager->OnCanvasMouseDrag(positionCopy);
+    }
 }
 
 void SceneCanvasComponent::mouseUp(const juce::MouseEvent& event)
