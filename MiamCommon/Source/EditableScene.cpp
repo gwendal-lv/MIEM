@@ -104,11 +104,11 @@ void EditableScene::DeleteSelectedArea()
 
 void EditableScene::deleteAreaByUniqueId(uint64_t uidToDelete)
 {
-    bool areaDeleted;
+    bool areaDeleted = false;
     for (auto it = areas.begin() ;
          (!areaDeleted && it!=areas.end()) ; it++)
     {
-        if ((*it)->GetId() == uidToDelete)
+        if ((uint64_t)((*it)->GetId()) == uidToDelete)
         {
             it = areas.erase(it);
             areaDeleted = true;
@@ -150,7 +150,7 @@ void EditableScene::SendSelectedAreaToBack()
                 for (size_t i=0 ; i<areas.size() ; i++)
                 {
                     if (areas[i] == selectedArea)
-                        selectedAreaOrder = i;
+                        selectedAreaOrder = (int)i;
                 }
                 // then we udpate all what's necessary and we change the value
                 // the selected area will not die because it has always the "selectedArea" shared pointer poiting to it !...
@@ -228,7 +228,7 @@ void EditableScene::BringSelectedAreaToFront()
                 for (size_t i=0 ; i<areas.size() ; i++)
                 {
                     if (areas[i] == selectedArea)
-                        selectedAreaOrder = i;
+                        selectedAreaOrder = (int)i;
                 }
                 // then we udpate all what's necessary and we change the value
                 for (int i=selectedAreaOrder ; i <= areas.size()-2 ; i++)
@@ -264,7 +264,7 @@ std::string EditableScene::OnCanvasMouseDown(Point<int>& clicLocation)
     }
     // While no area is selected : we look for a new one to select,
     // starting from the area on the upper layer (last draw on canvas)
-    for (int i=areas.size()-1 ; // int and not the *unsigned* size_t
+    for (int i=(int)(areas.size())-1 ; // int and not the *unsigned* size_t
          (i>=0 && canvasManager->GetMode()==CanvasManagerMode::NothingSelected) ;
          i--)
     {

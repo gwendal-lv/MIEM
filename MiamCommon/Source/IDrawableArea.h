@@ -8,6 +8,18 @@
   ==============================================================================
 */
 
+
+
+// = = = = = = = = = SUPPRESSION D'UN WARNING Visual Studio = = = = = = = = = = =
+// Warning dû à l'héritage virtuel... Alors que c'est prévu normalement en C++ !
+#ifdef _MSC_VER // indique que c'est une version de visual studio
+	#pragma warning( disable : 4250 )
+#endif
+// = = = = = = = = = SUPPRESSION D'UN WARNING Visual Studio = = = = = = = = = = =
+
+
+
+
 #ifndef IDRAWABLEAREA_H_INCLUDED
 #define IDRAWABLEAREA_H_INCLUDED
 

@@ -14,7 +14,7 @@
 
 #include <cmath>
 
-#include "Math.h"
+#include "MiamMath.h"
 #include "CartesianLine.h"
 
 using namespace Miam;

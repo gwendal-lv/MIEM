@@ -8,6 +8,7 @@
   ==============================================================================
 */
 
+#define _USE_MATH_DEFINES // Pour que Windows ne fasse pas chier
 #include <cmath>
 
 #include "MultiCanvasComponent.h"
@@ -47,7 +48,7 @@ MultiCanvasComponent::MultiCanvasComponent(IGraphicSessionManager* _graphicSessi
     canvasResizeBar.setHeight(10.0f); // to be updated
     Rectangle<float> diamond(10.0f, 10.0f);
     canvasResizeDiamond.addRectangle(diamond);
-    canvasResizeDiamondTransform = AffineTransform::rotation(M_PI/2.0f);
+    canvasResizeDiamondTransform = AffineTransform::rotation( float_Pi / 2.0f );
 }
 
 
@@ -76,7 +77,7 @@ void MultiCanvasComponent::resized()
     Path p; // empty path
     p.addRoundedRectangle(diamond, 3.0);
     canvasResizeDiamond = p;
-    canvasResizeDiamondTransform = AffineTransform::rotation(M_PI/4.0f, diamond.getCentreX(), diamond.getCentreY());
+    canvasResizeDiamondTransform = AffineTransform::rotation(float_Pi / 4.0f, diamond.getCentreX(), diamond.getCentreY());
     
     // Code semi-générique, au final on sait très bien quel canvas est où
     for (int i=0 ; i<multiSceneCanvasComponents.size() ; i++)

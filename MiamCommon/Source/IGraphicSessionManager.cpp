@@ -59,7 +59,7 @@ void IGraphicSessionManager::OnBackgroundMouseDrag(const MouseEvent &event)
         }
     }
 }
-void IGraphicSessionManager::OnBackgroundMouseUp(const MouseEvent &event)
+void IGraphicSessionManager::OnBackgroundMouseUp(const MouseEvent& /* event */)
 {
     mouseResizingCanvas = false;
 }

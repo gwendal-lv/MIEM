@@ -11,7 +11,7 @@
 #include "InteractivePolygon.h"
 #include "SceneCanvasComponent.h"
 
-#include "Math.h"
+#include "MiamMath.h"
 
 using namespace Miam;
 

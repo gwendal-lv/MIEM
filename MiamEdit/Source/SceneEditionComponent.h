@@ -68,7 +68,7 @@ public:
     //[UserMethods]     -- You can add your own custom methods in this section.
 
     // ----- Construction helpers -----
-    
+
     /// \brief Links this module to parent and/or managing classes
     void CompleteInitialization(GraphicSessionManager* _graphicSessionManager, MultiCanvasComponent* _multiCanvasComponent);
 
@@ -146,9 +146,9 @@ private:
 
     // À DÉGAGER, ces objets n'appartiennent au SceneEditionComponent...
     //std::vector<MultiSceneCanvasComponent*> multiSceneCanvasComponents;
-    MultiCanvasComponent* multiCanvasComponent;
+    MultiCanvasComponent* multiCanvasComponent = 0;
 
-    GraphicSessionManager* graphicSessionManager;
+    GraphicSessionManager* graphicSessionManager = 0;
 
     int canvasGroupReducedH, areaGroupReducedH, spatGroupReducedH;
     bool isCanvasGroupHidden = false,
@@ -158,9 +158,9 @@ private:
     // When all buttons are disabled, to highlight that we can do only 1 action,
     // we need to back up the state of some buttons
     bool pasteTextButtonEnabledBackUp = false;
-    
-    
-    
+
+
+
     // BECAUSE THE PROJUCER DOESN'T ALLOW A TEXTEDITOR CALLBACK LISTENER NAMING
     // et ça ressemble à une blague...
     class SceneEditionTextEditorListener : public TextEditorListener
@@ -173,7 +173,7 @@ private:
         SceneEditionComponent* parent = 0;
     };
     ScopedPointer<SceneEditionTextEditorListener> textEditorListener;
-    
+
 
     //[/UserVariables]
 

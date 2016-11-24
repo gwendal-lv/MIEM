@@ -265,7 +265,7 @@ SceneEditionComponent::SceneEditionComponent ()
 
 
     //[Constructor] You can add your own custom stuff here..
-    
+
     // Very small hack for this component to because a text editor listener
     textEditorListener = new SceneEditionTextEditorListener(this);
     sceneNameTextEditor->addListener(textEditorListener);

@@ -57,33 +57,13 @@ void MultiSceneCanvasComponent::LinkToManager(MultiSceneCanvasInteractor* _canva
 
 
 
-void MultiSceneCanvasComponent::paint (Graphics& g)
+void MultiSceneCanvasComponent::paint (Graphics& /*g*/) // unused Graphics context
 {
-    /* This demo code just fills the component's background and
-       draws some placeholder text to get you started.
-
-       You should replace everything in this method with your own
-       drawing code..
-    */
-
-    //g.fillAll (Colours::mediumpurple);   // PURPLE background
-    /*
-
-    g.setColour (Colours::grey);
-    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
-
-    g.setColour (Colours::lightblue);
-    g.setFont (14.0f);
-    g.drawText ("MultiSceneCanvasComponent", getLocalBounds(),
-                Justification::centred, true);   // draw some placeholder text
-    */
+    //g.fillAll (Colours::mediumpurple);   // PURPLE background for debug
 }
 
 void MultiSceneCanvasComponent::resized()
 {
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
-    
     // Children display canvas on the bottom
     childrenCanvas->setSize(getWidth(), getHeight() -24 -space);
     childrenCanvas->setTopLeftPosition(0, 24 +space);
@@ -101,7 +81,7 @@ void MultiSceneCanvasComponent::UpdateSceneButtons(std::vector< std::shared_ptr<
         int selectedSceneId = canvasManager->GetSelectedSceneId();
         
         // At first, we remove all buttons from the parent
-        for (size_t i = 0; i<scenes.size() ; i++)
+        for (size_t i = 0; i<sceneChoiceTextButtons.size() ; i++)
             removeChildComponent(sceneChoiceTextButtons[i]);
         sceneChoiceTextButtons.resize(0); // actual buttons deletion (scoped ptrs)
         
@@ -115,7 +95,7 @@ void MultiSceneCanvasComponent::UpdateSceneButtons(std::vector< std::shared_ptr<
                 sceneChoiceTextButtons[i]->setColour(TextButton::textColourOffId, Colours::white);
             }
             else
-                sceneChoiceTextButtons[i]->setColour(TextButton::buttonColourId, Colour (0xFFCCCCCCCC));
+                sceneChoiceTextButtons[i]->setColour(TextButton::buttonColourId, Colours::silver);
         }
         
         // Graphical updates (minimal)
@@ -134,7 +114,7 @@ void MultiSceneCanvasComponent::updateSceneButtonsBounds()
     int buttonWidth = roundFloatToInt(((float)(getWidth())-(float)(space))/(float)(sceneChoiceTextButtons.size()))-space;
     for (size_t i=0 ; i<sceneChoiceTextButtons.size() ; i++)
     {
-        sceneChoiceTextButtons[i]->setBounds(space+i*(buttonWidth+space), 0, buttonWidth, 24);
+        sceneChoiceTextButtons[i]->setBounds(space+(int)(i)*(buttonWidth+space), 0, buttonWidth, 24);
     }
 }
 
@@ -154,7 +134,7 @@ void MultiSceneCanvasComponent::buttonClicked(Button* buttonThatWasClicked)
         if (buttonThatWasClicked == sceneChoiceTextButtons[i].get())
         {
             buttonFound = true;
-            canvasManager->SelectScene(i);
+            canvasManager->SelectScene((int)i);
         }
     }
 }

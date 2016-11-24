@@ -13,7 +13,7 @@
 
 #include "SubTriangle.h"
 
-#include "Math.h"
+#include "MiamMath.h"
 
 
 using namespace Miam;
