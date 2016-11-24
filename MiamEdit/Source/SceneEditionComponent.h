@@ -24,9 +24,11 @@
 #include "JuceHeader.h"
 
 #include <vector>
+#include <memory>
 
 #include "SceneCanvasComponent.h"
 #include "MultiSceneCanvasComponent.h"
+#include "MultiCanvasComponent.h"
 
 #include "DrawableArea.h"
 
@@ -66,12 +68,17 @@ public:
     //[UserMethods]     -- You can add your own custom methods in this section.
 
     // ----- Construction helpers -----
-    void CompleteInitialization(GraphicSessionManager* _graphicSessionManager);
+    
+    /// \brief Links this module to parent and/or managing classes
+    void CompleteInitialization(GraphicSessionManager* _graphicSessionManager, MultiCanvasComponent* _multiCanvasComponent);
 
     // ----- General Setters and Getters -----
-    /// \brief Get a pointer to one of the canvases.
-    MultiSceneCanvasComponent* GetMultiSceneCanvasComponent(int position)
-    { return multiSceneCanvasComponents[position]; }
+
+
+    //MultiSceneCanvasComponent* AddCanvas();
+    //void DeleteCanvas(SceneCanvasComponent::Id canvasId);
+
+
 
 
     // ----- Functions that obey orders sent from the Presenter -----
@@ -79,9 +86,7 @@ public:
     // - - - - - Common - - - - -
     public :
     void SetEnabledAllControls(bool areEnabled, bool controlsBackUp = true);
-    // - - - - - Canvases & canvas group - - - - -
-    MultiSceneCanvasComponent* AddCanvas();
-    //void DeleteCanvas(SceneCanvasComponent::Id canvasId);
+    // - - - - - Canvases group - - - - -
     void SetCanvasGroupHidden(bool _isHidden);
     void SetCanvasGroupReduced(bool _isReduced);
     // - - - - - Area group - - - - -
@@ -104,6 +109,7 @@ public:
     // - - - - - Colours - - - - -
     void SetAreaColourValue(juce::Colour colour);
     // - - - - - Text Values - - - - -
+    void SetSceneName(std::string _name);
     void SetCanvasInfo(SceneCanvasComponent::Id _id);
 
 
@@ -120,6 +126,11 @@ public:
 
 
     public :
+    // Events actually retransmitted from the textEditorListener attribute...
+    // Because the Projucer does not allow direct inheritance of TextEditorListener
+    // interface for automatically-generated components !!...
+    void textEditorTextChanged(TextEditor& _editor);
+
     //[/UserMethods]
 
     void paint (Graphics& g) override;
@@ -133,7 +144,9 @@ public:
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
 
-    std::vector<MultiSceneCanvasComponent*> multiSceneCanvasComponents;
+    // À DÉGAGER, ces objets n'appartiennent au SceneEditionComponent...
+    //std::vector<MultiSceneCanvasComponent*> multiSceneCanvasComponents;
+    MultiCanvasComponent* multiCanvasComponent;
 
     GraphicSessionManager* graphicSessionManager;
 
@@ -145,6 +158,22 @@ private:
     // When all buttons are disabled, to highlight that we can do only 1 action,
     // we need to back up the state of some buttons
     bool pasteTextButtonEnabledBackUp = false;
+    
+    
+    
+    // BECAUSE THE PROJUCER DOESN'T ALLOW A TEXTEDITOR CALLBACK LISTENER NAMING
+    // et ça ressemble à une blague...
+    class SceneEditionTextEditorListener : public TextEditorListener
+    {
+        public :
+        SceneEditionTextEditorListener(SceneEditionComponent* _parent) {parent = _parent;}
+        void textEditorTextChanged(TextEditor& _editor) override
+        { parent->textEditorTextChanged(_editor); }
+        private :
+        SceneEditionComponent* parent = 0;
+    };
+    ScopedPointer<SceneEditionTextEditorListener> textEditorListener;
+    
 
     //[/UserVariables]
 

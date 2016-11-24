@@ -73,7 +73,8 @@ namespace Miam
         size_t GetAreasCount();
         std::shared_ptr<IDrawableArea> GetDrawableArea(size_t i);
         std::shared_ptr<IInteractiveArea> GetInteractiveArea(size_t i);
-        
+        std::string GetName() {return name;}
+        virtual void SetName(std::string _name);
         
         
         

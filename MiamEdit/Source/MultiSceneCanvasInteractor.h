@@ -54,7 +54,8 @@ namespace Miam {
         
         /// \brief The associated Juce canvas component
         ///
-        /// A normal pointer that has to be properly (at some point) transmitted to the Juce API
+        /// The pointer was actually extracted from a juce::ScopedPointer (do not
+        /// delete it from inside this class)
         MultiSceneCanvasComponent* canvasComponent;
         
         
@@ -66,11 +67,11 @@ namespace Miam {
         ///
         /// There should always be at least one scene alive, to prevent undefined
         /// behavior
-        std::shared_ptr<EditableScene> selectedScene;
+        std::shared_ptr<EditableScene> selectedScene = nullptr;
         
         
         /// \brief Pointer back to the unique edition manager (parent of this manager)
-        IGraphicSessionManager* graphicSessionManager;
+        IGraphicSessionManager* graphicSessionManager = 0;
         
         
         
@@ -125,7 +126,12 @@ namespace Miam {
         virtual size_t GetScenesCount() {return scenes.size();}
         virtual std::shared_ptr<EditableScene> GetScene(size_t i) {return scenes[i];}
         
+        /// \brief Mostly performs multiple downcasts from Miam::EditableScene
+        /// to Miam::InteractiveScene
+        virtual std::vector<std::shared_ptr<InteractiveScene>> GetInteractiveScenes();
+        
         virtual std::shared_ptr<EditableScene> GetSelectedScene() {return selectedScene;}
+        virtual int GetSelectedSceneId();
         
         
         
@@ -135,10 +141,17 @@ namespace Miam {
         
         virtual void SelectScene(int id);
         
+  
+        
+        // ------ Scenes managing : Add and Delete ------
+        virtual void AddScene(std::string name);
+        /// Returns wether the selected scene has been deleted or not (if it
+        /// was the last one)
+        virtual bool DeleteScene();
+        
         
         
         // ------ areas managing : Add and Delete ------
-        
         
         // For testing purposes only
         // ADDS AREAS ON ALL SCENES

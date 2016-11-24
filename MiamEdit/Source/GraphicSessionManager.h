@@ -54,17 +54,9 @@ namespace Miam {
         View* view;
         SceneEditionComponent* sceneEditionComponent;
         
-        protected :
         // internal states
         GraphicSessionMode mode;
         
-        
-        // Graphic objects management
-        
-
-        // Children Canvases
-        std::vector< MultiSceneCanvasEditor* > canvasManagers;
-        MultiSceneCanvasEditor* selectedCanvas = 0;
         
         
         // Display & editing attributes for Areas
@@ -107,6 +99,9 @@ namespace Miam {
         /// Tells other canvases to unselect any previously selected area
         void SetSelectedCanvas(MultiSceneCanvasInteractor*) override;
         
+        protected :
+        MultiSceneCanvasEditor* getSelectedCanvasAsEditable();
+        
         
 		// ----- Running mode -----
         protected :
@@ -117,12 +112,24 @@ namespace Miam {
         void CanvasModeChanged(CanvasManagerMode) override;
         
         
+        
+        
+        // ----- Events from the Presenter itself -----
+        virtual void OnSceneChange(std::shared_ptr<EditableScene> newSelectedScene) override;
+        
+        
+        
         // ----- Event to View -----
         void DisplayInfo(String info) override;
         
         
         // ----- Events from View -----
         public :
+        
+        void OnAddScene();
+        void OnDeleteScene();
+        void OnSceneUp();
+        void OnSceneDown();
         
         void OnAddPoint();
         void OnDeletePoint();
@@ -138,6 +145,8 @@ namespace Miam {
         void OnSendToBack();
         void OnBringForward();
         void OnBringToFront();
+        
+        void OnSceneNameChange(std::string _name);
         
     };
     

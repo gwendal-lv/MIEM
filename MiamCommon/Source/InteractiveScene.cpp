@@ -28,8 +28,6 @@ InteractiveScene::InteractiveScene(MultiSceneCanvasInteractor* _canvasManager, S
     canvasComponent = _canvasComponent;
     
     name = "Default Scene";
-    
-    
 }
 
 InteractiveScene::~InteractiveScene()
@@ -57,7 +55,12 @@ std::shared_ptr<IInteractiveArea> InteractiveScene::GetInteractiveArea(size_t i)
     return areas[i];
 }
 
-
+void InteractiveScene::SetName(std::string _name)
+{
+    name = _name;
+    
+    // graphic updates called from parent (all scenes at one...)
+}
 
 
 

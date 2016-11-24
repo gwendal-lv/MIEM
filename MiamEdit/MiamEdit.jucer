@@ -108,6 +108,10 @@
       </GROUP>
       <GROUP id="{81FB02AB-9CF8-2FEF-77B6-9D5049B0BC47}" name="View">
         <GROUP id="{36323D02-59E2-4E89-249D-DCE39931C0AE}" name="Components">
+          <FILE id="XSz62Q" name="MultiCanvasComponent.cpp" compile="1" resource="0"
+                file="../MiamCommon/Source/MultiCanvasComponent.cpp"/>
+          <FILE id="Cq1nUv" name="MultiCanvasComponent.h" compile="0" resource="0"
+                file="../MiamCommon/Source/MultiCanvasComponent.h"/>
           <FILE id="Iqu0Fm" name="MultiSceneCanvasComponent.cpp" compile="1"
                 resource="0" file="../MiamCommon/Source/MultiSceneCanvasComponent.cpp"/>
           <FILE id="BW3uQh" name="MultiSceneCanvasComponent.h" compile="0" resource="0"

@@ -24,7 +24,8 @@ namespace Miam {
         
         Null, ///< Undefined state
         
-        Loading, ///< When the manager is loading something (useless at the moment ??)
+        Loading, ///< When the manager is loading something
+        Loaded, ///< When the manager has just finished loading something
         
         
         

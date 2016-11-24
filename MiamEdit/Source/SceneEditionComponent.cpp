@@ -61,7 +61,6 @@ SceneEditionComponent::SceneEditionComponent ()
     addAndMakeVisible (copyTextButton = new TextButton ("Copy Text Button"));
     copyTextButton->setButtonText (TRANS("Copy"));
     copyTextButton->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnBottom);
-    copyTextButton->addListener (this);
     copyTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
     copyTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
 
@@ -222,7 +221,7 @@ SceneEditionComponent::SceneEditionComponent ()
     sceneNameTextEditor->setScrollbarsShown (true);
     sceneNameTextEditor->setCaretVisible (true);
     sceneNameTextEditor->setPopupMenuEnabled (true);
-    sceneNameTextEditor->setText (TRANS("...name of scene..."));
+    sceneNameTextEditor->setText (String());
 
     addAndMakeVisible (initialStateGroupComponent = new GroupComponent ("Initial state group component",
                                                                         TRANS("Scene initial state")));
@@ -266,11 +265,10 @@ SceneEditionComponent::SceneEditionComponent ()
 
 
     //[Constructor] You can add your own custom stuff here..
-
-    /* Manual initial resize --- Useless !!!
-     * Because the window was far too high, to able to all menus (knowing that all menu
-     * elements will never be displayed all at the same time, that's okay)
-     */
+    
+    // Very small hack for this component to because a text editor listener
+    textEditorListener = new SceneEditionTextEditorListener(this);
+    sceneNameTextEditor->addListener(textEditorListener);
 
     // Then, HERE ARE PRECISED the heights of groups when they are reduced
     canvasGroupReducedH = 0; // nothing inside
@@ -283,8 +281,7 @@ SceneEditionComponent::SceneEditionComponent ()
 SceneEditionComponent::~SceneEditionComponent()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
-    for (size_t i=0 ; i < multiSceneCanvasComponents.size() ; i++)
-        delete multiSceneCanvasComponents[i];
+
     //[/Destructor_pre]
 
     areaGroupComponent = nullptr;
@@ -341,31 +338,12 @@ void SceneEditionComponent::resized()
 {
     //[UserPreResize] Add your own custom resize code here..
 
-    // Canvas bounds  !!!!!!!!!!!!!!!!!!!!!!!!!!!!! À MODIFIER !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    float pourcentageLargeurMainScene = 0.7f;
-
-    // Code semi-générique, au final on sait très bien quel canvas est où
-    // Le principal (multi-scènes) est à gauche, le fixe (mono-scène) à droite
-    // La boucle for permet de faire fonctionner le truc même si on n'a pas le canvas mono-scène
-    for (int i=0 ; i<multiSceneCanvasComponents.size() ; i++)
+    if (multiCanvasComponent)
     {
-        if (i == SceneCanvasComponent::Canvas1)
-        {
-            multiSceneCanvasComponents[i]->setBounds(
-            208, // next to the left menu
-            8, // always the same Y coordinate
-            juce::roundFloatToInt((getWidth() - areaGroupComponent->getWidth() - 24)*pourcentageLargeurMainScene) - 8,
-            getHeight()-16); // always the same Y coordinate
-        }
-        else if (i == SceneCanvasComponent::Canvas2)
-        {
-            multiSceneCanvasComponents[i]->setBounds(
-            multiSceneCanvasComponents[SceneCanvasComponent::Canvas1]->getX() // on the right of
-            + multiSceneCanvasComponents[SceneCanvasComponent::Canvas1]->getWidth()+8, //MainScene
-            8, // always the same Y coordinate
-            juce::roundFloatToInt((getWidth()-areaGroupComponent->getWidth()-24)*(1.0f-pourcentageLargeurMainScene))-8,
-            getHeight()-16); // always the same Y coordinate
-        }
+        Rectangle<int> multiCanvasBounds = this->getLocalBounds();
+        multiCanvasBounds.removeFromLeft(areaGroupComponent->getWidth() + 8 + 8);
+
+        multiCanvasComponent->setBounds(multiCanvasBounds);
     }
 
     //[/UserPreResize]
@@ -453,12 +431,6 @@ void SceneEditionComponent::buttonClicked (Button* buttonThatWasClicked)
         graphicSessionManager->OnDeletePoint();
         //[/UserButtonCode_deletePointTextButton]
     }
-    else if (buttonThatWasClicked == copyTextButton)
-    {
-        //[UserButtonCode_copyTextButton] -- add your button handler code here..
-        graphicSessionManager->OnCopyArea();
-        //[/UserButtonCode_copyTextButton]
-    }
     else if (buttonThatWasClicked == pasteTextButton)
     {
         //[UserButtonCode_pasteTextButton] -- add your button handler code here..
@@ -504,21 +476,25 @@ void SceneEditionComponent::buttonClicked (Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == addSceneTextButton)
     {
         //[UserButtonCode_addSceneTextButton] -- add your button handler code here..
+        graphicSessionManager->OnAddScene();
         //[/UserButtonCode_addSceneTextButton]
     }
     else if (buttonThatWasClicked == deleteSceneTextButton)
     {
         //[UserButtonCode_deleteSceneTextButton] -- add your button handler code here..
+        graphicSessionManager->OnDeleteScene();
         //[/UserButtonCode_deleteSceneTextButton]
     }
     else if (buttonThatWasClicked == sceneUpTextButton)
     {
         //[UserButtonCode_sceneUpTextButton] -- add your button handler code here..
+        graphicSessionManager->OnSceneUp();
         //[/UserButtonCode_sceneUpTextButton]
     }
     else if (buttonThatWasClicked == sceneDownTextButton)
     {
         //[UserButtonCode_sceneDownTextButton] -- add your button handler code here..
+        graphicSessionManager->OnSceneDown();
         //[/UserButtonCode_sceneDownTextButton]
     }
     else if (buttonThatWasClicked == addExciterTextButton)
@@ -593,10 +569,23 @@ void SceneEditionComponent::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 
+
+void SceneEditionComponent::textEditorTextChanged(TextEditor& editorThatHasChanged)
+{
+    if (&editorThatHasChanged == sceneNameTextEditor.get())
+        graphicSessionManager->OnSceneNameChange(sceneNameTextEditor->getText().toStdString());
+}
+
+
+
+
 // CONSTRUCTION HELPERS
-void SceneEditionComponent::CompleteInitialization(GraphicSessionManager* _graphicSessionManager)
+void SceneEditionComponent::CompleteInitialization(GraphicSessionManager* _graphicSessionManager, MultiCanvasComponent* _multiCanvasComponent)
 {
     graphicSessionManager = _graphicSessionManager;
+
+    multiCanvasComponent = _multiCanvasComponent;
+    addAndMakeVisible(multiCanvasComponent);
 }
 
 
@@ -608,12 +597,6 @@ void SceneEditionComponent::CompleteInitialization(GraphicSessionManager* _graph
 // ========== (SETTERS AND GETTERS) ORDERS FROM PRESENTER ==========
 
 // - - - - - Canvases & canvas group - - - - -
-MultiSceneCanvasComponent* SceneEditionComponent::AddCanvas()
-{
-    multiSceneCanvasComponents.push_back(new MultiSceneCanvasComponent());
-    addAndMakeVisible(multiSceneCanvasComponents.back());
-    return multiSceneCanvasComponents.back();
-}
 
 void SceneEditionComponent::SetCanvasGroupHidden(bool _isHidden)
 {
@@ -779,6 +762,13 @@ void SceneEditionComponent::SetAreaColourValue(juce::Colour colour)
 }
 
 // - - - - - Text Values - - - - -
+
+void SceneEditionComponent::SetSceneName(std::string _name)
+{
+    // Send text without update messages sent to listeners
+    sceneNameTextEditor->setText(_name, false);
+}
+
 void SceneEditionComponent::SetCanvasInfo(SceneCanvasComponent::Id _id)
 {
     canvasInfoLabel->setText("Scenes of Canvas " + static_cast<String>(_id+1),
@@ -882,7 +872,7 @@ BEGIN_JUCER_METADATA
   <TEXTBUTTON name="Copy Text Button" id="33b309fbb149d4ee" memberName="copyTextButton"
               virtualName="" explicitFocusOrder="0" pos="104 24 88 24" posRelativeY="87d416270d41f58c"
               bgColOff="33000000" bgColOn="ffffffff" buttonText="Copy" connectedEdges="9"
-              needsCallback="1" radioGroupId="0"/>
+              needsCallback="0" radioGroupId="0"/>
   <TEXTBUTTON name="Delete Point" id="653c7d46ffba1120" memberName="pasteTextButton"
               virtualName="" explicitFocusOrder="0" pos="104 48 88 24" posRelativeY="87d416270d41f58c"
               bgColOff="33000000" bgColOn="ffffffff" buttonText="Paste" connectedEdges="5"
@@ -974,7 +964,7 @@ BEGIN_JUCER_METADATA
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15" bold="0" italic="1" justification="33"/>
   <TEXTEDITOR name="new text editor" id="fd7eace3e677fc36" memberName="sceneNameTextEditor"
-              virtualName="" explicitFocusOrder="0" pos="16 112 176 24" initialText="...name of scene..."
+              virtualName="" explicitFocusOrder="0" pos="16 112 176 24" initialText=""
               multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"
               caret="1" popupmenu="1"/>
   <GROUPCOMPONENT name="Initial state group component" id="cc3bdf8d18c3f428" memberName="initialStateGroupComponent"

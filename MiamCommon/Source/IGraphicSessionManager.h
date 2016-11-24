@@ -12,10 +12,12 @@
 #define IGRAPHICSESSIONMANAGER_H_INCLUDED
 
 
+#include <memory>
 
 #include "JuceHeader.h"
 
 #include "MultiSceneCanvasInteractor.h"
+#include "MultiCanvasComponent.h"
 
 
 
@@ -26,25 +28,58 @@ namespace Miam
     class MultiSceneCanvasInteractor;
     
     
+    /// \brief Interface for any manager of a Miam graphic session presenter
+    ///
+    /// Owns the unique MultiCanvasComponent
     class IGraphicSessionManager {
         
         
         
+        
+        // = = = = = = = = = = COMMON ATTRIBUTES = = = = = = = = = =
+        
+        protected :
+        
+        // Unique, so this is the easiest working way...
+        MultiCanvasComponent* multiCanvasComponent;
+        
+        
+        // Graphic objects management
+        
+        
+        // Children Canvases
+        std::vector< MultiSceneCanvasInteractor* > canvasManagers;
+        MultiSceneCanvasInteractor* selectedCanvas = 0;
+        
+        
+        // states backup
+        private :
+        bool mouseResizingCanvas = false;
+        
+        
+        
+        
+        
+        // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
-        
-        virtual ~IGraphicSessionManager();
-        
-        
-        
-        // - - - - - Getters and Setters - - - - -
-        
+
         /// \brief When a new area is to be created, this gets the value of the next area ID, and increments it
         virtual uint64_t GetNextAreaId() = 0;
+        
+        virtual MultiCanvasComponent* GetMultiCanvasComponent() {return  multiCanvasComponent;}
+        
+        
+        
+        // = = = = = = = = = = METHODS = = = = = = = = = =
+        public :
+        IGraphicSessionManager();
+        virtual ~IGraphicSessionManager();
         
         
         
         
         /// - - - - - Running mode - - - - -
+        public :
         
         /// \brief The reaction of this manager when one its canvas sub-components
         /// changes itself its working mode
@@ -54,7 +89,7 @@ namespace Miam
         
         
         
-        // ------ canvases managing ------
+        // - - - - - - canvases managing - - - - - -
         
         public :
         /// \brief Sets the new active canvas and updates corresponding graphic
@@ -64,11 +99,20 @@ namespace Miam
         
         
         
-        
         /// \brief Displays an informative message sent by one of the managed
         /// objects (Miam::EditableScene, Miam::MultiSceneCanvasEditor,
         /// Miam::InteractiveArea, ...)
         virtual void DisplayInfo(String info) = 0;
+        
+        
+        // ----- Events from the Presenter itself -----
+        virtual void OnSceneChange(std::shared_ptr<EditableScene> newSelectedScene) {}
+        
+        
+        // - - - - - Mouse Events - - - - -
+        virtual void OnBackgroundMouseDown(const MouseEvent &event);
+        virtual void OnBackgroundMouseDrag(const MouseEvent &event);
+        virtual void OnBackgroundMouseUp(const MouseEvent &event);
         
         
         

@@ -59,8 +59,13 @@ void SceneCanvasComponent::resized()
     // Actualization of all areas graphical objets, if Presenter is accessible (not at first time)
     if (canvasManager != 0)
     {
-        for (int i=0;i<canvasManager->GetDrawableAreasCount();i++)
-            canvasManager->GetDrawableArea(i)->CanvasResized(this);
+        // We update ALL areas, to avoid a consequent amount of calculus on
+        // scene change (which should happen as fast as possible)
+        for (size_t i=0;i<canvasManager->GetScenesCount();i++)
+        {
+            for (size_t j=0 ; j<canvasManager->GetScene(i)->GetAreasCount() ; j++)
+                canvasManager->GetScene(i)->GetDrawableArea(j)->CanvasResized(this);
+        }
     }
 }
 

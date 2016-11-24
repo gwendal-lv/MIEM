@@ -17,18 +17,6 @@ MultiSceneCanvasEditor::MultiSceneCanvasEditor(IGraphicSessionManager* _graphicS
 : MultiSceneCanvasInteractor(_graphicSessionManager, _canvasComponent, _selfId)
 {
     
-    
-    // After canvases are created : scenes creation
-    // DEFAULT SCENES, TO BE CHANGED
-    std::shared_ptr<EditableScene> newScene1(new EditableScene(this, canvasComponent->GetCanvas()));
-    scenes.push_back( newScene1 );
-    std::shared_ptr<EditableScene> newScene2(new EditableScene(this, canvasComponent->GetCanvas()));
-    scenes.push_back( newScene2 );
-    std::shared_ptr<EditableScene> newScene3(new EditableScene(this, canvasComponent->GetCanvas()));
-    scenes.push_back( newScene3 );
-    
-    SelectScene(rand()%3);
-    
 }
 
 
@@ -41,6 +29,13 @@ std::shared_ptr<IEditableArea> MultiSceneCanvasEditor::GetSelectedArea()
         return selectedScene->GetSelectedArea();
     else throw std::runtime_error("Cannot get the selected area : no scene selected on canvas" + std::to_string(selfId));
 }
+
+void MultiSceneCanvasEditor::SetSelectedSceneName(std::string _name)
+{
+    selectedScene->SetName(_name);
+    canvasComponent->UpdateSceneButtons(GetInteractiveScenes(), GetSelectedSceneId());
+}
+
 
 
 

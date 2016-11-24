@@ -54,6 +54,7 @@ namespace Miam {
         // ------ Setters and Getters ------
         
         virtual std::shared_ptr<IEditableArea> GetSelectedArea();
+        virtual void SetSelectedSceneName(std::string _name);
         
         // ------ Areas managing : Add and Delete ------
         

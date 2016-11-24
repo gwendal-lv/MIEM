@@ -47,6 +47,9 @@ public:
         presenter = new Miam::Presenter(view); // Will reference itself to the View module
         
         
+        // TAILLE INITIALE
+        // À CHANGER SELON LA PLATEFORME
+        //setSize(800, 600);
         
     }
 
@@ -98,6 +101,7 @@ public:
             
             // Et pas dans le "main component"
             setResizable(true, true);
+            setResizeLimits(600, 400, 10000, 10000);
             
             // Normalement déjà fait de base...
             setUsingNativeTitleBar(true);

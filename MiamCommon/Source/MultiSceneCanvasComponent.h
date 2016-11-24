@@ -17,6 +17,8 @@
 #include "SceneCanvasComponent.h"
 #include "MultiSceneCanvasInteractor.h"
 
+#include "InteractiveScene.h"
+
 using namespace Miam;
 
 
@@ -25,7 +27,8 @@ using namespace Miam;
 //==============================================================================
 /*
 */
-class MultiSceneCanvasComponent    : public Component
+class MultiSceneCanvasComponent    : public Component,
+                                     public ButtonListener
 {
 
     
@@ -42,6 +45,14 @@ class MultiSceneCanvasComponent    : public Component
     // Button objects
     std::vector<ScopedPointer<TextButton>> sceneChoiceTextButtons;
     
+    
+    // - - - - - Graphical CONST options - - - - -
+    
+    // Buttons on the top (to avoid bottom false manipulations.... good idea ?)
+    // Same size as in the menus, but spaces are 4 PIXELS
+    // height 24px + 4px under
+    // BUTTONS SIZE SHOULD BE DIFFERENT ON COMPUTERS AND ON TABLETS/SMARTPHONES
+    const int space = 4;
     
     
     
@@ -60,14 +71,24 @@ class MultiSceneCanvasComponent    : public Component
 public:
     MultiSceneCanvasComponent();
     ~MultiSceneCanvasComponent();
+    
+    void LinkToManager(MultiSceneCanvasInteractor* _canvasManager);
 
     void paint (Graphics&) override;
     void resized() override;
     
     // - - - - - Buttons management - - - - -
+    public :
     // Default behavior : updates all scenes (when sceneThatHasChanged = -1)
-    void UpdateSceneButtons(std::vector<std::string> Scenes, int sceneThatHasChanged = -1);
+    void UpdateSceneButtons(std::vector< std::shared_ptr<InteractiveScene> > scenes, int sceneThatHasChanged = -1);
     
+    protected : // internal helpers
+    void updateSceneButtonsBounds();
+    void addButton(std::string buttonName);
+    
+    public :
+    // the listener
+    void buttonClicked(Button* buttonThatWasClicked) override;
     
 
 private:
