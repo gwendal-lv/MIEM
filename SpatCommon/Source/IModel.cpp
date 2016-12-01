@@ -10,6 +10,7 @@
 
 #include "IModel.h"
 
+#include "SpatInterpolator.h"
 
 
 using namespace Miam;

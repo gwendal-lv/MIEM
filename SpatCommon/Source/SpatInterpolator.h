@@ -80,7 +80,7 @@ namespace Miam
 }
 
 
-#include "SpatInterpolator.tpp"
+#include "SpatInterpolator.tpp.h"
 
 
 #endif  // SPATINTERPOLATOR_H_INCLUDED

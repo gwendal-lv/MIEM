@@ -72,6 +72,6 @@ namespace Miam
 }
 
 
-#include "SpatState.tpp"
+#include "SpatState.tpp.h"
 
 #endif  // SPATSTATE_H_INCLUDED

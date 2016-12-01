@@ -12,10 +12,10 @@
 #define IMODEL_H_INCLUDED
 
 
+#include <vector>
 #include <memory>
 
 #include "SpatType.h"
-#include "SpatInterpolator.h" // not just the pointer : this is templated...
 #include "Speaker.h"
 
 
@@ -25,6 +25,8 @@ namespace Miam
     class Presenter;
     class SpatSender;
     
+    template< typename T >
+    class SpatInterpolator;
     
     
     /// \brief
