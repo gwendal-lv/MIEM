@@ -14,7 +14,7 @@
 // View
 #include "MainBackgroundComponent.h"
 #include "SpeakersEditionComponent.h"
-#include "SpeakersGroupsEditionComponent.h"
+#include "SpatStatesEditionComponent.h"
 #include "SceneEditionComponent.h"
 #include "HardwareConfigurationComponent.h"
 
@@ -47,7 +47,7 @@ private:
     
     MainBackgroundComponent* mainBackgroundComponent;
     
-    SpeakersGroupsEditionComponent* speakersGroupsEditionComponent;
+    SpatStatesEditionComponent* spatStatesEditionComponent;
     SpeakersEditionComponent* speakersEditionComponent;
     SceneEditionComponent* sceneEditionComponent;
     HardwareConfigurationComponent* hardwareConfigurationComponent;
@@ -79,6 +79,8 @@ public:
 	/// \brief Pointer to one of MiamEdit's main components.
     SceneEditionComponent* GetSceneEditionComponent()
     {return sceneEditionComponent; }
+    SpatStatesEditionComponent* GetSpatStatesEditionComponent()
+    {return spatStatesEditionComponent;}
     
     // To obey orders transmitted from the Presenter to the View
 	/// \brief Dispatches event re-transmitted by Miam::View::ChangeAppMode

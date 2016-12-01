@@ -17,11 +17,16 @@
   ==============================================================================
 */
 
-#ifndef __JUCE_HEADER_623CF4075EEA99B2__
-#define __JUCE_HEADER_623CF4075EEA99B2__
+#ifndef __JUCE_HEADER_213F09986CBED4FE__
+#define __JUCE_HEADER_213F09986CBED4FE__
 
 //[Headers]     -- You can add your own extra header files here --
 #include "JuceHeader.h"
+
+#include "SpatStatesEditionManager.h"
+class SpatStateFadersDisplayComponent;
+
+using namespace Miam;
 //[/Headers]
 
 
@@ -38,35 +43,51 @@
 
                                                                     //[/Comments]
 */
-class SpeakersGroupsEditionComponent  : public Component
+class SpatStatesEditionComponent  : public Component,
+                                    public ButtonListener,
+                                    public ComboBoxListener
 {
 public:
     //==============================================================================
-    SpeakersGroupsEditionComponent ();
-    ~SpeakersGroupsEditionComponent();
+    SpatStatesEditionComponent ();
+    ~SpatStatesEditionComponent();
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
+    void CompleteInitialization(SpatStatesEditionManager* _editionManager);
     //[/UserMethods]
 
     void paint (Graphics& g) override;
     void resized() override;
+    void buttonClicked (Button* buttonThatWasClicked) override;
+    void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
 
 
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
+    SpatStatesEditionManager* editionManager = 0;
+    
+    ScopedPointer<SpatStateFadersDisplayComponent> fadersDisplayComponent;
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<Label> label;
+    ScopedPointer<GroupComponent> spatStateGroupComponent;
+    ScopedPointer<TextButton> addSpatStateTextButton;
+    ScopedPointer<TextButton> deleteSpatStateTextButton;
+    ScopedPointer<TextButton> stateUpTextButton;
+    ScopedPointer<TextButton> stateDownTextButton;
+    ScopedPointer<Label> linksInfoLabel;
+    ScopedPointer<Label> renameLabel;
+    ScopedPointer<TextEditor> stateNameTextEditor;
+    ScopedPointer<ComboBox> spatStatesComboBox;
 
 
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SpeakersGroupsEditionComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SpatStatesEditionComponent)
 };
 
 //[EndFile] You can add extra defines here...
 //[/EndFile]
 
-#endif   // __JUCE_HEADER_623CF4075EEA99B2__
+#endif   // __JUCE_HEADER_213F09986CBED4FE__

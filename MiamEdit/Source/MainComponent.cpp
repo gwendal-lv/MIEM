@@ -20,11 +20,11 @@ MainContentComponent::MainContentComponent()
     addAndMakeVisible(mainBackgroundComponent = new MainBackgroundComponent());
     // Other display modes aren't displayed by default
     addChildComponent(speakersEditionComponent = new SpeakersEditionComponent());
-    addChildComponent(speakersGroupsEditionComponent = new SpeakersGroupsEditionComponent());
+    addChildComponent(spatStatesEditionComponent = new SpatStatesEditionComponent());
     addChildComponent(sceneEditionComponent = new SceneEditionComponent());
     addChildComponent(hardwareConfigurationComponent = new HardwareConfigurationComponent());
     secondLevelComponents.push_back(speakersEditionComponent);
-    secondLevelComponents.push_back(speakersGroupsEditionComponent);
+    secondLevelComponents.push_back(spatStatesEditionComponent);
     secondLevelComponents.push_back(sceneEditionComponent);
     secondLevelComponents.push_back(hardwareConfigurationComponent);
         
@@ -40,7 +40,7 @@ MainContentComponent::~MainContentComponent()
 {
     delete hardwareConfigurationComponent;
     delete sceneEditionComponent;
-    delete speakersGroupsEditionComponent;
+    delete spatStatesEditionComponent;
     delete speakersEditionComponent;
     
     delete mainBackgroundComponent;
@@ -88,7 +88,7 @@ void MainContentComponent::ChangeAppMode(AppMode newAppMode)
             break;
             
         case AppMode::EditSpeakersGroups :
-        speakersGroupsEditionComponent->setVisible(true);
+        spatStatesEditionComponent->setVisible(true);
             break;
         case AppMode::EditSpatScenes :
         sceneEditionComponent->setVisible(true);

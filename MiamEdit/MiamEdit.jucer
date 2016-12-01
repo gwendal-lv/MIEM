@@ -5,7 +5,16 @@
               jucerVersion="4.3.0">
   <MAINGROUP id="uJFjC5" name="MiamEdit">
     <GROUP id="{7878353D-A1B6-291B-EABC-831E28CE51BB}" name="Source">
+      <FILE id="MLMDSl" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <GROUP id="{8561608D-D4A3-5115-DAC2-8B42AE1F05FC}" name="Model">
+        <FILE id="XKeTxY" name="Model.cpp" compile="1" resource="0" file="Source/Model.cpp"/>
+        <FILE id="qnAQWL" name="Model.h" compile="0" resource="0" file="Source/Model.h"/>
+      </GROUP>
       <GROUP id="{8B52098D-2C2B-E3EA-7DC7-267134065ADF}" name="Presenter">
+        <FILE id="hVFSaL" name="SpatStatesEditionManager.cpp" compile="1" resource="0"
+              file="Source/SpatStatesEditionManager.cpp"/>
+        <FILE id="C3kuhF" name="SpatStatesEditionManager.h" compile="0" resource="0"
+              file="Source/SpatStatesEditionManager.h"/>
         <FILE id="rgxQ9K" name="AppMode.h" compile="0" resource="0" file="Source/AppMode.h"/>
         <FILE id="meFyUy" name="Presenter.cpp" compile="1" resource="0" file="Source/Presenter.cpp"/>
         <FILE id="dHZ0UK" name="Presenter.h" compile="0" resource="0" file="Source/Presenter.h"/>
@@ -18,6 +27,10 @@
       </GROUP>
       <GROUP id="{F6BB049F-E535-45AB-5A0C-454B64DE18EA}" name="View">
         <GROUP id="{EC5E55BB-07A7-BF56-A7EA-A7410AC9FE64}" name="Components">
+          <FILE id="iN2TGI" name="SpatStateFadersDisplayComponent.cpp" compile="1"
+                resource="0" file="Source/SpatStateFadersDisplayComponent.cpp"/>
+          <FILE id="VPCSMO" name="SpatStateFadersDisplayComponent.h" compile="0"
+                resource="0" file="Source/SpatStateFadersDisplayComponent.h"/>
           <FILE id="WzOuAs" name="HardwareConfigurationComponent.cpp" compile="1"
                 resource="0" file="Source/HardwareConfigurationComponent.cpp"/>
           <FILE id="UXk0vx" name="HardwareConfigurationComponent.h" compile="0"
@@ -34,10 +47,10 @@
                 file="Source/SpeakersEditionComponent.cpp"/>
           <FILE id="xTHH4m" name="SpeakersEditionComponent.h" compile="0" resource="0"
                 file="Source/SpeakersEditionComponent.h"/>
-          <FILE id="v95oCh" name="SpeakersGroupsEditionComponent.cpp" compile="1"
-                resource="0" file="Source/SpeakersGroupsEditionComponent.cpp"/>
-          <FILE id="OrbxdO" name="SpeakersGroupsEditionComponent.h" compile="0"
-                resource="0" file="Source/SpeakersGroupsEditionComponent.h"/>
+          <FILE id="v95oCh" name="SpatStatesEditionComponent.cpp" compile="1"
+                resource="0" file="Source/SpatStatesEditionComponent.cpp"/>
+          <FILE id="OrbxdO" name="SpatStatesEditionComponent.h" compile="0" resource="0"
+                file="Source/SpatStatesEditionComponent.h"/>
         </GROUP>
         <FILE id="bjMV46" name="ClearLabelTimer.cpp" compile="1" resource="0"
               file="Source/ClearLabelTimer.cpp"/>
@@ -49,9 +62,29 @@
         <FILE id="FFiP3T" name="View.cpp" compile="1" resource="0" file="Source/View.cpp"/>
         <FILE id="v6HSAO" name="View.h" compile="0" resource="0" file="Source/View.h"/>
       </GROUP>
-      <FILE id="MLMDSl" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
     </GROUP>
     <GROUP id="{593B3C8B-4E9F-6C95-BD9D-6562983482B8}" name="MiamCommonSource">
+      <GROUP id="{69F35838-D6F6-5ADE-9B31-E372F4C0078E}" name="Model">
+        <GROUP id="{C8CFED74-46E5-A2FF-9824-723DC214C250}" name="SpatStates">
+          <FILE id="dQfGvl" name="OutputVolumesState.cpp" compile="1" resource="0"
+                file="../MiamCommon/Source/OutputVolumesState.cpp"/>
+          <FILE id="QfrqFl" name="OutputVolumesState.h" compile="0" resource="0"
+                file="../MiamCommon/Source/OutputVolumesState.h"/>
+          <FILE id="b4DbdR" name="SpatState.cpp" compile="1" resource="0" file="../MiamCommon/Source/SpatState.cpp"/>
+          <FILE id="JdxGwS" name="SpatState.h" compile="0" resource="0" file="../MiamCommon/Source/SpatState.h"/>
+        </GROUP>
+        <FILE id="s2l2ee" name="IModel.cpp" compile="1" resource="0" file="../MiamCommon/Source/IModel.cpp"/>
+        <FILE id="WvFeBX" name="IModel.h" compile="0" resource="0" file="../MiamCommon/Source/IModel.h"/>
+        <FILE id="AnADic" name="SpatInterpolator.cpp" compile="1" resource="0"
+              file="../MiamCommon/Source/SpatInterpolator.cpp"/>
+        <FILE id="mBFBVo" name="SpatInterpolator.h" compile="0" resource="0"
+              file="../MiamCommon/Source/SpatInterpolator.h"/>
+        <FILE id="t070y1" name="SpatSender.cpp" compile="1" resource="0" file="../MiamCommon/Source/SpatSender.cpp"/>
+        <FILE id="bMtgDh" name="SpatSender.h" compile="0" resource="0" file="../MiamCommon/Source/SpatSender.h"/>
+        <FILE id="YnMWU7" name="SpatType.h" compile="0" resource="0" file="../MiamCommon/Source/SpatType.h"/>
+        <FILE id="p7TwdZ" name="Speaker.cpp" compile="1" resource="0" file="../MiamCommon/Source/Speaker.cpp"/>
+        <FILE id="rT4mci" name="Speaker.h" compile="0" resource="0" file="../MiamCommon/Source/Speaker.h"/>
+      </GROUP>
       <GROUP id="{B91B2137-DC4A-127C-0037-DB058876BEFA}" name="Utils">
         <FILE id="tPoEI0" name="CartesianLine.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/CartesianLine.cpp"/>
@@ -82,21 +115,23 @@
           <FILE id="ZRuNWP" name="SubTriangle.cpp" compile="1" resource="0" file="../MiamCommon/Source/SubTriangle.cpp"/>
           <FILE id="Rsgwzv" name="SubTriangle.h" compile="0" resource="0" file="../MiamCommon/Source/SubTriangle.h"/>
         </GROUP>
+        <GROUP id="{86D5D9E1-93BE-D9FA-6D5A-C4DCC032AC63}" name="Scenes">
+          <FILE id="vjqld7" name="EditableScene.cpp" compile="1" resource="0"
+                file="../MiamCommon/Source/EditableScene.cpp"/>
+          <FILE id="mc8YKm" name="EditableScene.h" compile="0" resource="0" file="../MiamCommon/Source/EditableScene.h"/>
+          <FILE id="i50GId" name="InteractiveScene.cpp" compile="1" resource="0"
+                file="../MiamCommon/Source/InteractiveScene.cpp"/>
+          <FILE id="w93g8x" name="InteractiveScene.h" compile="0" resource="0"
+                file="../MiamCommon/Source/InteractiveScene.h"/>
+        </GROUP>
         <FILE id="hWUZ4N" name="CanvasManagerMode.h" compile="0" resource="0"
               file="../MiamCommon/Source/CanvasManagerMode.h"/>
-        <FILE id="vjqld7" name="EditableScene.cpp" compile="1" resource="0"
-              file="../MiamCommon/Source/EditableScene.cpp"/>
-        <FILE id="mc8YKm" name="EditableScene.h" compile="0" resource="0" file="../MiamCommon/Source/EditableScene.h"/>
         <FILE id="o4h3ZV" name="Exciter.cpp" compile="1" resource="0" file="../MiamCommon/Source/Exciter.cpp"/>
         <FILE id="uFYMUE" name="Exciter.h" compile="0" resource="0" file="../MiamCommon/Source/Exciter.h"/>
         <FILE id="LOSifR" name="IGraphicSessionManager.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/IGraphicSessionManager.cpp"/>
         <FILE id="Lgollh" name="IGraphicSessionManager.h" compile="0" resource="0"
               file="../MiamCommon/Source/IGraphicSessionManager.h"/>
-        <FILE id="i50GId" name="InteractiveScene.cpp" compile="1" resource="0"
-              file="../MiamCommon/Source/InteractiveScene.cpp"/>
-        <FILE id="w93g8x" name="InteractiveScene.h" compile="0" resource="0"
-              file="../MiamCommon/Source/InteractiveScene.h"/>
         <FILE id="Jtp0bl" name="MultiSceneCanvasEditor.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/MultiSceneCanvasEditor.cpp"/>
         <FILE id="OogkLH" name="MultiSceneCanvasEditor.h" compile="0" resource="0"

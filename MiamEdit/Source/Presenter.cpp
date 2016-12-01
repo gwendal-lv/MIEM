@@ -10,6 +10,7 @@
 
 #include "Presenter.h"
 
+#include "Model.h"
 #include "View.h"
 
 
@@ -18,11 +19,14 @@
 using namespace Miam;
 
 
+// - - - - - Contruction and Destruction - - - - -
+
 Presenter::Presenter(View* _view) :
     view(_view),
     appMode(AppMode::Loading), // app is loading while the Model hasn't fully loaded yet
 
-    graphicSessionManager(_view)
+    graphicSessionManager(_view),
+    spatStatesEditionManager(_view)
 {
     // After all sub-modules are built, the presenter refers itself to the View
     view->CompleteInitialization(this);
@@ -32,8 +36,18 @@ Presenter::Presenter(View* _view) :
     graphicSessionManager.__LoadDefaultTest();
     
     // App mode changer to Scenes Edition by default (should be stored within the file ?)
-    appModeChangeRequest(AppMode::EditSpatScenes);
+    //appModeChangeRequest(AppMode::EditSpatScenes);
+    appModeChangeRequest(AppMode::EditSpeakersGroups);
 }
+
+void Presenter::CompleteInitialisation(Model* _model)
+{
+    // Self init
+    model = _model;
+    // Sub-modules
+    spatStatesEditionManager.CompleteInitialisation(model->GetSpatInterpolator());
+}
+
 
 
 

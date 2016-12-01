@@ -180,6 +180,7 @@ void GraphicSessionManager::setMode(GraphicSessionMode newMode)
         case  GraphicSessionMode::CanvasSelected :
             sceneEditionComponent->SetCanvasInfo(selectedCanvas->GetId());
             sceneEditionComponent->SetCanvasGroupHidden(false);
+            sceneEditionComponent->SetDeleteSceneButtonEnabled(getSelectedCanvasAsEditable()->GetScenesCount() > 1);
             sceneEditionComponent->SetAreaGroupReduced(true);
             if (areaToCopy)
                 sceneEditionComponent->SetPasteEnabled(true);
@@ -292,16 +293,17 @@ void GraphicSessionManager::OnDeleteScene()
     {
         if(! selectedCanvas->DeleteScene())
             throw std::runtime_error("Cannot delete a scene, only 1 is left (the delete scene button should not have been clicked");
+        
     }
     else throw std::runtime_error("No canvas selected : cannot add a scene (no canvas should be selected at this point");
 }
-void GraphicSessionManager::OnSceneUp()
+void GraphicSessionManager::OnSceneLeft()
 {
-    std::cout << "pas implémenté" << std::endl;
+    getSelectedCanvasAsEditable()->MoveSelectedSceneTowardsFirst();
 }
-void GraphicSessionManager::OnSceneDown()
+void GraphicSessionManager::OnSceneRight()
 {
-    std::cout << "pas implémenté" << std::endl;
+    getSelectedCanvasAsEditable()->MoveSelectedSceneTowardsLast();
 }
 
 
@@ -377,7 +379,7 @@ void GraphicSessionManager::OnPasteArea()
             
             // Puis : même procédure pour les cas possibles
             // Modification du polygone copié
-            newArea->SetId(nextAreaId);
+            newArea->SetId(GetNextAreaId());
             
             // BESOIN DE SAVOIR SI ON CHANGE DE CANVAS OU NON ?
             // Si on change, besoin d'appeler une fonction du genre :
@@ -460,7 +462,6 @@ void GraphicSessionManager::OnBringToFront()
 
 void GraphicSessionManager::OnSceneNameChange(std::string _name)
 {
-    std::cout << _name << std::endl;
     if (mode != GraphicSessionMode::Loaded && mode != GraphicSessionMode::Loading)
     {
         if (_name.length() > 0) // we do not consider empty strings

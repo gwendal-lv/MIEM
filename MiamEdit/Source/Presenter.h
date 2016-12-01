@@ -14,13 +14,15 @@
 #include <iostream>
 
 #include "AppMode.h"
+#include "SpatType.h"
 
 #include "GraphicSessionManager.h"
-
+#include "SpatStatesEditionManager.h"
 
 
 namespace Miam {
     // Simple declaration : we don't need the entire description
+    class Model;
     class View;
     
 
@@ -38,23 +40,45 @@ namespace Miam {
     {
         private :
         
+        
+        // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
+
         // Pointer to the unique View module
-        View* view;
+        View* view = 0;
+        // Pointer to the unique Model module
+        Model* model = 0;
         
         AppMode appMode;
         
         
         // Sub-modules
         GraphicSessionManager graphicSessionManager;
+        SpatStatesEditionManager spatStatesEditionManager;
         
+        
+        
+        
+        
+        // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         
         public :
-        // Only constructor
-        Presenter(View* _view);
-        
-        // Getters and Setters
         AppMode getAppMode() {return appMode;};
         GraphicSessionManager* getGraphicSessionManager() {return &graphicSessionManager;}
+        
+        
+        
+        // = = = = = = = = = = METHODS = = = = = = = = = =
+        
+        public :
+        
+        // - - - - - Contruction and Destruction - - - - -
+        // Only constructor
+        Presenter(View* _view);
+        /// \brief To be called from the Miam::Model when it is being
+        /// constructed (happens after the construction of this class)
+        ///
+        /// Finished self-contruction, and also the construction of sub-modules
+        void CompleteInitialisation(Model* _model);
         
         // Events from the View
         AppMode appModeChangeRequest(AppMode newAppMode);

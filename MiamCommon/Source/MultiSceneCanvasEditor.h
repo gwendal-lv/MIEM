@@ -56,6 +56,22 @@ namespace Miam {
         virtual std::shared_ptr<IEditableArea> GetSelectedArea();
         virtual void SetSelectedSceneName(std::string _name);
         
+        std::vector<std::shared_ptr<EditableScene>>::iterator GetSelectedSceneIt();
+        
+        
+        
+        // ------ Scenes managing ------
+        /// \brief Moves the selected scene towards the first position, if possible
+        ///
+        /// \return Wether the move was actually done or not
+        virtual bool MoveSelectedSceneTowardsFirst();
+        /// \brief Moves the selected scene towards the last position, if possible
+        ///
+        /// \return Wether the move was actually done or not
+        virtual bool MoveSelectedSceneTowardsLast();
+        
+        
+        
         // ------ Areas managing : Add and Delete ------
         
         virtual void DeleteSelectedArea();

@@ -166,6 +166,7 @@ void MultiSceneCanvasInteractor::AddScene(std::string name)
     newScene->SetName(name);
     scenes.push_back( newScene );
     SelectScene((int)(scenes.size())-1);
+    // Graphical updates
     canvasComponent->UpdateSceneButtons(GetInteractiveScenes());
 }
 bool MultiSceneCanvasInteractor::DeleteScene()
@@ -174,16 +175,25 @@ bool MultiSceneCanvasInteractor::DeleteScene()
         return false;
     else
     {
-        bool sceneRemoved = false;
-        for (auto it=scenes.begin() ; !sceneRemoved && it!=scenes.end() ; it++)
-        {
-            if ((*it) == selectedScene)
-            {
-                scenes.erase(it);
-                sceneRemoved = true;
-            }
-        }
-        return sceneRemoved;
+        // At first, we select the previous scene (or the next if it was the first...)
+        int selectedSceneId = GetSelectedSceneId();
+        if (selectedSceneId == 0)
+            SelectScene(1);
+        else
+            SelectScene(selectedSceneId-1);
+
+        // Then we remove this one
+        auto it = scenes.begin() + selectedSceneId;
+        scenes.erase(it);
+        // Graphical updates
+        canvasComponent->UpdateSceneButtons(GetInteractiveScenes());
+        canvasComponent->repaint();
+        
+        // Finally we re-select the same scene to force some updates...
+        // Optimisation could be made here
+        SelectScene(GetSelectedSceneId());
+        
+        return true;
     }
 }
 

@@ -89,6 +89,7 @@ public:
     // - - - - - Canvases group - - - - -
     void SetCanvasGroupHidden(bool _isHidden);
     void SetCanvasGroupReduced(bool _isReduced);
+    void SetDeleteSceneButtonEnabled(bool isEnabled);
     // - - - - - Area group - - - - -
     void SetAreaGroupHidden(bool _isHidden);
     void SetAreaGroupReduced(bool _isReduced);
@@ -201,15 +202,16 @@ private:
     ScopedPointer<Label> spatLabel;
     ScopedPointer<TextButton> addSceneTextButton;
     ScopedPointer<TextButton> deleteSceneTextButton;
-    ScopedPointer<TextButton> sceneUpTextButton;
-    ScopedPointer<TextButton> sceneDownTextButton;
+    ScopedPointer<TextButton> sceneLeftTextButton;
+    ScopedPointer<TextButton> sceneRightTextButton;
     ScopedPointer<Label> canvasInfoLabel;
-    ScopedPointer<TextEditor> sceneNameTextEditor;
     ScopedPointer<GroupComponent> initialStateGroupComponent;
     ScopedPointer<TextButton> addExciterTextButton;
     ScopedPointer<TextButton> deleteExciterTextButton;
     ScopedPointer<TextButton> editInitialStateTextButton;
     ScopedPointer<TextButton> endEditInitialStateTextButton;
+    ScopedPointer<Label> sceneNameLabel;
+    ScopedPointer<TextEditor> sceneNameTextEditor;
 
 
     //==============================================================================

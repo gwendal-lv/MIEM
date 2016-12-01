@@ -13,6 +13,10 @@
 
 #include "EditableScene.h"
 
+using namespace std;
+
+
+
 MultiSceneCanvasEditor::MultiSceneCanvasEditor(IGraphicSessionManager* _graphicSessionManager, MultiSceneCanvasComponent* _canvasComponent, SceneCanvasComponent::Id _selfId)
 : MultiSceneCanvasInteractor(_graphicSessionManager, _canvasComponent, _selfId)
 {
@@ -36,6 +40,51 @@ void MultiSceneCanvasEditor::SetSelectedSceneName(std::string _name)
     canvasComponent->UpdateSceneButtons(GetInteractiveScenes(), GetSelectedSceneId());
 }
 
+std::vector<std::shared_ptr<EditableScene>>::iterator MultiSceneCanvasEditor::GetSelectedSceneIt()
+{
+    auto it = std::find(scenes.begin(), scenes.end(), selectedScene);
+    if (it == scenes.end())
+        throw std::runtime_error("No selected area : cannot return an iterator to it");
+    else
+        return it;
+}
+
+
+
+// ------ Scenes managing ------
+
+bool MultiSceneCanvasEditor::MoveSelectedSceneTowardsFirst()
+{
+    // We cannot move the first scene
+    if (selectedScene == scenes.front())
+        return false;
+    else
+    {
+        // Iterators swap (this one and the one before)
+        auto selectedSceneIt = GetSelectedSceneIt();
+        std::iter_swap(selectedSceneIt, selectedSceneIt-1);
+        
+        // Updates and return
+        canvasComponent->UpdateSceneButtons(GetInteractiveScenes());
+        return true;
+    }
+}
+bool MultiSceneCanvasEditor::MoveSelectedSceneTowardsLast()
+{
+    // We cannot move the last scene
+    if (selectedScene == scenes.back())
+        return false;
+    else
+    {
+        // Iterators swap (this one and the one before)
+        auto selectedSceneIt = GetSelectedSceneIt();
+        std::iter_swap(selectedSceneIt, selectedSceneIt+1);
+        
+        // Updates and return
+        canvasComponent->UpdateSceneButtons(GetInteractiveScenes());
+        return true;
+    }
+}
 
 
 

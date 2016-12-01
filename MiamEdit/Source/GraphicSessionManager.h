@@ -128,8 +128,8 @@ namespace Miam {
         
         void OnAddScene();
         void OnDeleteScene();
-        void OnSceneUp();
-        void OnSceneDown();
+        void OnSceneLeft();
+        void OnSceneRight();
         
         void OnAddPoint();
         void OnDeletePoint();
