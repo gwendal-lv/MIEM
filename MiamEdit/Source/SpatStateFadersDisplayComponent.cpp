@@ -69,13 +69,13 @@ void SpatStateFadersDisplayComponent::paint (Graphics& g)
     
     // Text under faders
     AffineTransform transform = AffineTransform();
-    transform = transform.rotated(M_PI_2);
-    transform = transform.translated(0, sliderHeight);
+    transform = transform.rotated((float)M_PI_2);
+    transform = transform.translated(0.0f, (float)(sliderHeight));
     g.addTransform(transform);
     for (size_t i = 0 ; i<slidersLabels.size() ; i++)
     {
         AffineTransform translation;
-        translation = translation.translated(0, -sliderWidth);
+        translation = translation.translated(0.0f, (float)(-sliderWidth));
         g.addTransform(translation);
         
         slidersLabels[i]->paint(g);
@@ -90,10 +90,15 @@ void SpatStateFadersDisplayComponent::resized()
     sliderWidth = roundToInt(floorf((float)(getWidth())/(float)(sliders.size())));
     sliderHeight = roundToInt((float)(getHeight())*0.6);
     textHeight = getHeight() - sliderHeight;
-    for (size_t i = 0 ; i<sliders.size() ; i++)
+    for (int i = 0 ; i<sliders.size() ; i++)
     {
         sliders[i]->setBounds(i*sliderWidth, 0, sliderWidth, sliderHeight);
-        slidersLabels[i]->setBoundingBox(RelativeParallelogram(Rectangle<float>(sliderHeight, i*sliderWidth, textHeight, sliderWidth)));
+        slidersLabels[i]->setBoundingBox(
+			RelativeParallelogram(
+				Rectangle<float>((float)(sliderHeight), 
+								(float)(i*sliderWidth),
+								(float)(textHeight),
+								(float)(sliderWidth))));
     }
 }
 

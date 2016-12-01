@@ -72,5 +72,7 @@ namespace Miam
 }
 
 
+#include "Speaker.tpp"
+
 
 #endif  // SPEAKER_H_INCLUDED

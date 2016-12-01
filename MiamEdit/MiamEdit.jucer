@@ -66,23 +66,23 @@
     <GROUP id="{593B3C8B-4E9F-6C95-BD9D-6562983482B8}" name="MiamCommonSource">
       <GROUP id="{69F35838-D6F6-5ADE-9B31-E372F4C0078E}" name="Model">
         <GROUP id="{C8CFED74-46E5-A2FF-9824-723DC214C250}" name="SpatStates">
-          <FILE id="dQfGvl" name="OutputVolumesState.cpp" compile="1" resource="0"
-                file="../MiamCommon/Source/OutputVolumesState.cpp"/>
+          <FILE id="dQfGvl" name="OutputVolumesState.tpp" compile="0" resource="0"
+                file="../MiamCommon/Source/OutputVolumesState.tpp"/>
           <FILE id="QfrqFl" name="OutputVolumesState.h" compile="0" resource="0"
                 file="../MiamCommon/Source/OutputVolumesState.h"/>
-          <FILE id="b4DbdR" name="SpatState.cpp" compile="1" resource="0" file="../MiamCommon/Source/SpatState.cpp"/>
+          <FILE id="b4DbdR" name="SpatState.tpp" compile="0" resource="0" file="../MiamCommon/Source/SpatState.tpp"/>
           <FILE id="JdxGwS" name="SpatState.h" compile="0" resource="0" file="../MiamCommon/Source/SpatState.h"/>
         </GROUP>
         <FILE id="s2l2ee" name="IModel.cpp" compile="1" resource="0" file="../MiamCommon/Source/IModel.cpp"/>
         <FILE id="WvFeBX" name="IModel.h" compile="0" resource="0" file="../MiamCommon/Source/IModel.h"/>
-        <FILE id="AnADic" name="SpatInterpolator.cpp" compile="1" resource="0"
-              file="../MiamCommon/Source/SpatInterpolator.cpp"/>
+        <FILE id="AnADic" name="SpatInterpolator.tpp" compile="0" resource="0"
+              file="../MiamCommon/Source/SpatInterpolator.tpp"/>
         <FILE id="mBFBVo" name="SpatInterpolator.h" compile="0" resource="0"
               file="../MiamCommon/Source/SpatInterpolator.h"/>
         <FILE id="t070y1" name="SpatSender.cpp" compile="1" resource="0" file="../MiamCommon/Source/SpatSender.cpp"/>
         <FILE id="bMtgDh" name="SpatSender.h" compile="0" resource="0" file="../MiamCommon/Source/SpatSender.h"/>
         <FILE id="YnMWU7" name="SpatType.h" compile="0" resource="0" file="../MiamCommon/Source/SpatType.h"/>
-        <FILE id="p7TwdZ" name="Speaker.cpp" compile="1" resource="0" file="../MiamCommon/Source/Speaker.cpp"/>
+        <FILE id="p7TwdZ" name="Speaker.tpp" compile="0" resource="0" file="../MiamCommon/Source/Speaker.tpp"/>
         <FILE id="rT4mci" name="Speaker.h" compile="0" resource="0" file="../MiamCommon/Source/Speaker.h"/>
       </GROUP>
       <GROUP id="{B91B2137-DC4A-127C-0037-DB058876BEFA}" name="Utils">
@@ -193,7 +193,7 @@
         <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
-    <VS2015 targetFolder="Builds/VisualStudio2015">
+    <VS2015 targetFolder="Builds/VisualStudio2015" extraDefs="_USE_MATH_DEFINES">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
                        isDebug="1" optimisation="1" targetName="MiamEdit" headerPath="..\..\..\MiamCommon\Source\"/>

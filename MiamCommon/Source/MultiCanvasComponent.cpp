@@ -8,7 +8,6 @@
   ==============================================================================
 */
 
-#define _USE_MATH_DEFINES // Pour que Windows ne fasse pas chier
 #include <cmath>
 
 #include "MultiCanvasComponent.h"

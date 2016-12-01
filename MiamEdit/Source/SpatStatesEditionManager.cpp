@@ -43,7 +43,7 @@ void SpatStatesEditionManager::SelectSpatState(std::shared_ptr<SpatState<double>
 }
 
 
-double SpatStatesEditionManager::GetFadersCount()
+size_t SpatStatesEditionManager::GetFadersCount()
 {
     return selectedSpatState->GetOutputsCount();
 }

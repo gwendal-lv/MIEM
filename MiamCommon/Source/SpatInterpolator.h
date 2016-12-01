@@ -13,6 +13,7 @@
 
 #include <iostream>
 #include <vector>
+#include <memory>
 
 #include "SpatType.h"
 
@@ -75,12 +76,11 @@ namespace Miam
         
     };
     
-    // NOT NECESSARY -> to test on other compilers...
-    //extern template class Miam::SpatInterpolator<double>;
 
-    
 }
 
+
+#include "SpatInterpolator.tpp"
 
 
 #endif  // SPATINTERPOLATOR_H_INCLUDED

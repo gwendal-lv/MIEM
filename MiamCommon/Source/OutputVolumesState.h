@@ -63,4 +63,6 @@ namespace Miam
 }
 
 
+#include "OutputVolumesState.tpp"
+
 #endif  // OUTPUTVOLUMESSTATE_H_INCLUDED

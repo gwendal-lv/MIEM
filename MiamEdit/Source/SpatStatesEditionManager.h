@@ -47,7 +47,7 @@ namespace Miam
         void SelectSpatState(std::shared_ptr<SpatState<double>> _spatState);
         
         // 1 dimension speakers' volumes, faders edition
-        double GetFadersCount();
+        size_t GetFadersCount();
         std::string GetFaderName(size_t _i) {return spatInterpolator->GetOutputName(_i);}
         
     
