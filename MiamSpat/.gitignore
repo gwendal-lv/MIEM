@@ -1,8 +1,6 @@
 
 # Chaque utilisateur du dépôt devra créer ses propres projets à partir du ProJucer ! On verra bien...
 Builds
-# Inutile de garder le code de Juce dans nos répertoires git... Tant qu'on travaille toujours sur la dernière version de Juce, et que ça compile
-JuceLibraryCode
 # Et devra générer sa propre doc avec Doxygen (à modifier éventuellement par la suite)
 Documentation/html
 
