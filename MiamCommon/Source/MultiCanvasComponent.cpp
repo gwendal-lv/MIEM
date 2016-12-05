@@ -58,46 +58,64 @@ void MultiCanvasComponent::paint(Graphics& g)
     // For debug
     //g.fillAll(Colours::chartreuse);
     
-    g.setColour(Colour (0x33000000)); // comme les boutons dans l'éditeur
-    g.fillRoundedRectangle(canvasResizeBar, 3.0f);
-    g.fillPath(canvasResizeDiamond, canvasResizeDiamondTransform);
+    if (multiSceneCanvasComponents.size() == 2)
+    {
+        g.setColour(Colour (0x33000000)); // comme les boutons dans l'éditeur
+        g.fillRoundedRectangle(canvasResizeBar, 3.0f);
+        g.fillPath(canvasResizeDiamond, canvasResizeDiamondTransform);
+    }
 }
 
 
 void MultiCanvasComponent::resized()
 {
-    // D'abord on place la barre (unique pour l'instant)
-    canvasResizeBar.setHeight((float)(getHeight())/2.0f);
-    canvasResizeBar.setY(canvasResizeBar.getHeight()/2.0f);
-    canvasResizeBar.setX(normalizedBarXPos*(float)(getWidth())-canvasResizeBar.getWidth()/2.0f);
-    // Puis le diamant (double flèche...) au milieu
-    Rectangle<float> diamond(16.0f, 16.0f);
-    diamond.setCentre(canvasResizeBar.getCentre());
-    Path p; // empty path
-    p.addRoundedRectangle(diamond, 3.0);
-    canvasResizeDiamond = p;
-    canvasResizeDiamondTransform = AffineTransform::rotation(float_Pi / 4.0f, diamond.getCentreX(), diamond.getCentreY());
-    
-    // Code semi-générique, au final on sait très bien quel canvas est où
-    for (int i=0 ; i<multiSceneCanvasComponents.size() ; i++)
+    // - - - 1 canvas -> centered with margin - - -
+    if (multiSceneCanvasComponents.size() == 1)
     {
         Rectangle<int> rCanvas = getLocalBounds();
-        rCanvas.removeFromTop(8);
-        rCanvas.removeFromBottom(8);
-        if (i == SceneCanvasComponent::Canvas1)
+        rCanvas.reduce(8, 8);
+        multiSceneCanvasComponents[0]->setBounds(rCanvas);
+    }
+    
+    // - - - 2 canvases -> resizable canvases with movable vertical bar - - -
+    else if (multiSceneCanvasComponents.size() == 2)
+    {
+        // D'abord on place la barre (unique pour l'instant)
+        canvasResizeBar.setHeight((float)(getHeight())/2.0f);
+        canvasResizeBar.setY(canvasResizeBar.getHeight()/2.0f);
+        canvasResizeBar.setX(normalizedBarXPos*(float)(getWidth())-canvasResizeBar.getWidth()/2.0f);
+        // Puis le diamant (double flèche...) au milieu
+        Rectangle<float> diamond(16.0f, 16.0f);
+        diamond.setCentre(canvasResizeBar.getCentre());
+        Path p; // empty path
+        p.addRoundedRectangle(diamond, 3.0);
+        canvasResizeDiamond = p;
+        canvasResizeDiamondTransform = AffineTransform::rotation(float_Pi / 4.0f, diamond.getCentreX(), diamond.getCentreY());
+        
+        // Code de placement pour 2 canevas avec barre de déplacement
+        for (int i=0 ; i<multiSceneCanvasComponents.size() ; i++)
         {
-            rCanvas.removeFromLeft(8);
-            rCanvas.removeFromRight((getWidth()-juce::roundToInt(canvasResizeBar.getX())) +8);
-            multiSceneCanvasComponents[i]->setBounds(rCanvas);
-        }
-        else if (i == SceneCanvasComponent::Canvas2)
-        {
-            // Relative to the first canvas
-            rCanvas.removeFromRight(8);
-            rCanvas.removeFromLeft(juce::roundToInt(canvasResizeBar.getRight()) +8);
-            multiSceneCanvasComponents[i]->setBounds(rCanvas);
+            Rectangle<int> rCanvas = getLocalBounds();
+            rCanvas.removeFromTop(8);
+            rCanvas.removeFromBottom(8);
+            if (i == SceneCanvasComponent::Canvas1)
+            {
+                rCanvas.removeFromLeft(8);
+                rCanvas.removeFromRight((getWidth()-juce::roundToInt(canvasResizeBar.getX())) +8);
+                multiSceneCanvasComponents[i]->setBounds(rCanvas);
+            }
+            else if (i == SceneCanvasComponent::Canvas2)
+            {
+                // Relative to the first canvas
+                rCanvas.removeFromRight(8);
+                rCanvas.removeFromLeft(juce::roundToInt(canvasResizeBar.getRight()) +8);
+                multiSceneCanvasComponents[i]->setBounds(rCanvas);
+            }
         }
     }
+    
+    else if (multiSceneCanvasComponents.size() >=3 )
+        throw std::runtime_error("Cannot currently do anything with more than 2 canvases");
 }
 
 

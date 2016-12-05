@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="xCUiGi" name="MiamSpat" projectType="guiapp" version="1.0.0"
+              bundleIdentifier="com.yourcompany.MiamSpat" includeBinaryInAppConfig="1"
+              jucerVersion="4.3.0">
+  <MAINGROUP id="m8VZoU" name="MiamSpat">
+    <GROUP id="{D93792BB-5B8B-5A35-D554-58C4F4E4D3DA}" name="Source">
+      <FILE id="oaxiVA" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <GROUP id="{45938C39-8750-2EF2-9298-4F650688CD28}" name="Presenter">
+        <FILE id="pYokVf" name="AppMode.h" compile="0" resource="0" file="Source/AppMode.h"/>
+        <FILE id="nfUzJ2" name="GraphicSessionManager.cpp" compile="1" resource="0"
+              file="Source/GraphicSessionManager.cpp"/>
+        <FILE id="uQ1yo9" name="GraphicSessionManager.h" compile="0" resource="0"
+              file="Source/GraphicSessionManager.h"/>
+        <FILE id="iBrj0h" name="Presenter.cpp" compile="1" resource="0" file="Source/Presenter.cpp"/>
+        <FILE id="fpZaRJ" name="Presenter.h" compile="0" resource="0" file="Source/Presenter.h"/>
+      </GROUP>
+      <GROUP id="{7185BF7C-494C-765D-3B78-58581F32631D}" name="View">
+        <FILE id="TCTcR0" name="MainComponent.cpp" compile="1" resource="0"
+              file="Source/MainComponent.cpp"/>
+        <FILE id="NeblZc" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+        <FILE id="wovY1v" name="View.cpp" compile="1" resource="0" file="Source/View.cpp"/>
+        <FILE id="DzITRF" name="View.h" compile="0" resource="0" file="Source/View.h"/>
+      </GROUP>
+    </GROUP>
+    <GROUP id="{C4893356-5DEB-A030-074B-EE0422842B92}" name="SpatCommonSource">
+      <GROUP id="{69F35838-D6F6-5ADE-9B31-E372F4C0078E}" name="Model">
+        <GROUP id="{C8CFED74-46E5-A2FF-9824-723DC214C250}" name="SpatStates">
+          <FILE id="VlduMz" name="OutputVolumesState.h" compile="0" resource="0"
+                file="../SpatCommon/Source/OutputVolumesState.h"/>
+          <FILE id="o3IF1g" name="OutputVolumesState.tpp.h" compile="0" resource="0"
+                file="../SpatCommon/Source/OutputVolumesState.tpp.h"/>
+          <FILE id="VJUdzj" name="SpatState.h" compile="0" resource="0" file="../SpatCommon/Source/SpatState.h"/>
+          <FILE id="bz3VgJ" name="SpatState.tpp.h" compile="0" resource="0" file="../SpatCommon/Source/SpatState.tpp.h"/>
+        </GROUP>
+        <FILE id="azLEQu" name="IModel.cpp" compile="1" resource="0" file="../SpatCommon/Source/IModel.cpp"/>
+        <FILE id="n9PyKE" name="IModel.h" compile="0" resource="0" file="../SpatCommon/Source/IModel.h"/>
+        <FILE id="xR7ZzU" name="SpatInterpolator.h" compile="0" resource="0"
+              file="../SpatCommon/Source/SpatInterpolator.h"/>
+        <FILE id="njk7Fg" name="SpatInterpolator.tpp.h" compile="0" resource="0"
+              file="../SpatCommon/Source/SpatInterpolator.tpp.h"/>
+        <FILE id="DFPO9m" name="SpatSender.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatSender.cpp"/>
+        <FILE id="YOdNbs" name="SpatSender.h" compile="0" resource="0" file="../SpatCommon/Source/SpatSender.h"/>
+        <FILE id="ISQcqH" name="SpatType.h" compile="0" resource="0" file="../SpatCommon/Source/SpatType.h"/>
+        <FILE id="r9zTHA" name="Speaker.h" compile="0" resource="0" file="../SpatCommon/Source/Speaker.h"/>
+        <FILE id="JAUbBW" name="Speaker.tpp.h" compile="0" resource="0" file="../SpatCommon/Source/Speaker.tpp.h"/>
+      </GROUP>
+    </GROUP>
+    <GROUP id="{593B3C8B-4E9F-6C95-BD9D-6562983482B8}" name="MiamCommonSource">
+      <GROUP id="{B91B2137-DC4A-127C-0037-DB058876BEFA}" name="Utils">
+        <FILE id="tPoEI0" name="CartesianLine.cpp" compile="1" resource="0"
+              file="../MiamCommon/Source/CartesianLine.cpp"/>
+        <FILE id="eK35Tw" name="CartesianLine.h" compile="0" resource="0" file="../MiamCommon/Source/CartesianLine.h"/>
+        <FILE id="Rla6rP" name="MiamMath.cpp" compile="1" resource="0" file="../MiamCommon/Source/MiamMath.cpp"/>
+        <FILE id="WSGVmq" name="MiamMath.h" compile="0" resource="0" file="../MiamCommon/Source/MiamMath.h"/>
+      </GROUP>
+      <GROUP id="{17C21196-8065-2A28-CE70-8A30193DECF0}" name="Presenter">
+        <GROUP id="{B66FA498-AC16-0510-B897-C4A4DB5848EB}" name="Areas">
+          <FILE id="Lt60mX" name="EditableArea.cpp" compile="1" resource="0"
+                file="../MiamCommon/Source/EditableArea.cpp"/>
+          <FILE id="u2pUf3" name="EditableArea.h" compile="0" resource="0" file="../MiamCommon/Source/EditableArea.h"/>
+          <FILE id="wgUXFQ" name="EditablePolygon.cpp" compile="1" resource="0"
+                file="../MiamCommon/Source/EditablePolygon.cpp"/>
+          <FILE id="JElhH7" name="EditablePolygon.h" compile="0" resource="0"
+                file="../MiamCommon/Source/EditablePolygon.h"/>
+          <FILE id="e38tNI" name="IEditableArea.h" compile="0" resource="0" file="../MiamCommon/Source/IEditableArea.h"/>
+          <FILE id="AgdCS3" name="IInteractiveArea.h" compile="0" resource="0"
+                file="../MiamCommon/Source/IInteractiveArea.h"/>
+          <FILE id="LAIH8F" name="InteractiveArea.cpp" compile="1" resource="0"
+                file="../MiamCommon/Source/InteractiveArea.cpp"/>
+          <FILE id="meCfcv" name="InteractiveArea.h" compile="0" resource="0"
+                file="../MiamCommon/Source/InteractiveArea.h"/>
+          <FILE id="oqveHx" name="InteractivePolygon.cpp" compile="1" resource="0"
+                file="../MiamCommon/Source/InteractivePolygon.cpp"/>
+          <FILE id="PxaUtc" name="InteractivePolygon.h" compile="0" resource="0"
+                file="../MiamCommon/Source/InteractivePolygon.h"/>
+          <FILE id="ZRuNWP" name="SubTriangle.cpp" compile="1" resource="0" file="../MiamCommon/Source/SubTriangle.cpp"/>
+          <FILE id="Rsgwzv" name="SubTriangle.h" compile="0" resource="0" file="../MiamCommon/Source/SubTriangle.h"/>
+        </GROUP>
+        <GROUP id="{86D5D9E1-93BE-D9FA-6D5A-C4DCC032AC63}" name="Scenes">
+          <FILE id="vjqld7" name="EditableScene.cpp" compile="1" resource="0"
+                file="../MiamCommon/Source/EditableScene.cpp"/>
+          <FILE id="mc8YKm" name="EditableScene.h" compile="0" resource="0" file="../MiamCommon/Source/EditableScene.h"/>
+          <FILE id="i50GId" name="InteractiveScene.cpp" compile="1" resource="0"
+                file="../MiamCommon/Source/InteractiveScene.cpp"/>
+          <FILE id="w93g8x" name="InteractiveScene.h" compile="0" resource="0"
+                file="../MiamCommon/Source/InteractiveScene.h"/>
+        </GROUP>
+        <FILE id="hWUZ4N" name="CanvasManagerMode.h" compile="0" resource="0"
+              file="../MiamCommon/Source/CanvasManagerMode.h"/>
+        <FILE id="o4h3ZV" name="Exciter.cpp" compile="1" resource="0" file="../MiamCommon/Source/Exciter.cpp"/>
+        <FILE id="uFYMUE" name="Exciter.h" compile="0" resource="0" file="../MiamCommon/Source/Exciter.h"/>
+        <FILE id="LOSifR" name="IGraphicSessionManager.cpp" compile="1" resource="0"
+              file="../MiamCommon/Source/IGraphicSessionManager.cpp"/>
+        <FILE id="Lgollh" name="IGraphicSessionManager.h" compile="0" resource="0"
+              file="../MiamCommon/Source/IGraphicSessionManager.h"/>
+        <FILE id="Jtp0bl" name="MultiSceneCanvasEditor.cpp" compile="1" resource="0"
+              file="../MiamCommon/Source/MultiSceneCanvasEditor.cpp"/>
+        <FILE id="OogkLH" name="MultiSceneCanvasEditor.h" compile="0" resource="0"
+              file="../MiamCommon/Source/MultiSceneCanvasEditor.h"/>
+        <FILE id="VMQMH0" name="MultiSceneCanvasInteractor.cpp" compile="1"
+              resource="0" file="../MiamCommon/Source/MultiSceneCanvasInteractor.cpp"/>
+        <FILE id="WoZSS6" name="MultiSceneCanvasInteractor.h" compile="0" resource="0"
+              file="../MiamCommon/Source/MultiSceneCanvasInteractor.h"/>
+      </GROUP>
+      <GROUP id="{81FB02AB-9CF8-2FEF-77B6-9D5049B0BC47}" name="View">
+        <GROUP id="{36323D02-59E2-4E89-249D-DCE39931C0AE}" name="Components">
+          <FILE id="XSz62Q" name="MultiCanvasComponent.cpp" compile="1" resource="0"
+                file="../MiamCommon/Source/MultiCanvasComponent.cpp"/>
+          <FILE id="Cq1nUv" name="MultiCanvasComponent.h" compile="0" resource="0"
+                file="../MiamCommon/Source/MultiCanvasComponent.h"/>
+          <FILE id="Iqu0Fm" name="MultiSceneCanvasComponent.cpp" compile="1"
+                resource="0" file="../MiamCommon/Source/MultiSceneCanvasComponent.cpp"/>
+          <FILE id="BW3uQh" name="MultiSceneCanvasComponent.h" compile="0" resource="0"
+                file="../MiamCommon/Source/MultiSceneCanvasComponent.h"/>
+          <FILE id="M9g0pY" name="SceneCanvasComponent.cpp" compile="1" resource="0"
+                file="../MiamCommon/Source/SceneCanvasComponent.cpp"/>
+          <FILE id="CBymDY" name="SceneCanvasComponent.h" compile="0" resource="0"
+                file="../MiamCommon/Source/SceneCanvasComponent.h"/>
+        </GROUP>
+        <GROUP id="{CCAD49B8-ECEA-8895-335F-2F00FE1608E4}" name="Areas">
+          <FILE id="CGp3ln" name="DrawableArea.cpp" compile="1" resource="0"
+                file="../MiamCommon/Source/DrawableArea.cpp"/>
+          <FILE id="AEfgX2" name="DrawableArea.h" compile="0" resource="0" file="../MiamCommon/Source/DrawableArea.h"/>
+          <FILE id="SW4w4d" name="DrawablePolygon.cpp" compile="1" resource="0"
+                file="../MiamCommon/Source/DrawablePolygon.cpp"/>
+          <FILE id="AOOkAE" name="DrawablePolygon.h" compile="0" resource="0"
+                file="../MiamCommon/Source/DrawablePolygon.h"/>
+          <FILE id="vPo8Fc" name="IDrawableArea.h" compile="0" resource="0" file="../MiamCommon/Source/IDrawableArea.h"/>
+        </GROUP>
+      </GROUP>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MiamSpat"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MiamSpat"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_video" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+    <VS2015 targetFolder="Builds/VisualStudio2015">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="1" optimisation="1" targetName="MiamSpat"/>
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="0" optimisation="3" targetName="MiamSpat"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_video" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2015>
+    <ANDROIDSTUDIO targetFolder="Builds/AndroidStudio" androidSDKPath="" androidNDKPath="">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" androidArchitectures="armeabi armeabi-v7a x86" isDebug="1"
+                       optimisation="1" targetName="MiamSpat"/>
+        <CONFIGURATION name="Release" androidArchitectures="armeabi armeabi-v7a x86"
+                       isDebug="0" optimisation="3" targetName="MiamSpat"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_video" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
+      </MODULEPATHS>
+    </ANDROIDSTUDIO>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="0" useLocalCopy="0"/>
+    <MODULE id="juce_audio_devices" showAllCode="0" useLocalCopy="0"/>
+    <MODULE id="juce_audio_formats" showAllCode="0" useLocalCopy="0"/>
+    <MODULE id="juce_audio_processors" showAllCode="0" useLocalCopy="0"/>
+    <MODULE id="juce_core" showAllCode="0" useLocalCopy="0"/>
+    <MODULE id="juce_cryptography" showAllCode="0" useLocalCopy="0"/>
+    <MODULE id="juce_data_structures" showAllCode="0" useLocalCopy="0"/>
+    <MODULE id="juce_events" showAllCode="0" useLocalCopy="0"/>
+    <MODULE id="juce_graphics" showAllCode="0" useLocalCopy="0"/>
+    <MODULE id="juce_gui_basics" showAllCode="0" useLocalCopy="0"/>
+    <MODULE id="juce_gui_extra" showAllCode="0" useLocalCopy="0"/>
+    <MODULE id="juce_opengl" showAllCode="0" useLocalCopy="0"/>
+    <MODULE id="juce_video" showAllCode="0" useLocalCopy="0"/>
+  </MODULES>
+  <JUCEOPTIONS/>
+  <LIVE_SETTINGS>
+    <OSX/>
+  </LIVE_SETTINGS>
+</JUCERPROJECT>

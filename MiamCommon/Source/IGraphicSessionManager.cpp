@@ -32,6 +32,16 @@ IGraphicSessionManager::~IGraphicSessionManager()
 }
 
 
+// = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
+
+uint64_t IGraphicSessionManager::GetNextAreaId()
+{
+    uint64_t areaIdBackup = nextAreaId;
+    nextAreaId++;
+    return areaIdBackup;
+}
+
+
 
 
 // - - - - - Mouse Events - - - - -

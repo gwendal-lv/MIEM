@@ -32,7 +32,7 @@ T OutputVolumesState<T>::GetVolume(size_t i)
 template<typename T>
 void OutputVolumesState<T>::SetVolume(size_t i, T volume)
 {
-	// pour éviter le warning "formal parameters"
+	// pour Ã©viter le warning "formal parameters"
 	i = i;
 	volume = volume;
 }

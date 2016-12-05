@@ -46,6 +46,8 @@ namespace Miam
         
         // Graphic objects management
         
+        /// \brief Unique Id of the next created (or pasted, or loaded...) area
+        int64_t nextAreaId;
         
         // Children Canvases
         std::vector< MultiSceneCanvasInteractor* > canvasManagers;
@@ -64,7 +66,7 @@ namespace Miam
         public :
 
         /// \brief When a new area is to be created, this gets the value of the next area ID, and increments it
-        virtual uint64_t GetNextAreaId() = 0;
+        virtual uint64_t GetNextAreaId();
         
         virtual MultiCanvasComponent* GetMultiCanvasComponent() {return  multiCanvasComponent;}
         
