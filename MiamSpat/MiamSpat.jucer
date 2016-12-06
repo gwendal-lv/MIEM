@@ -156,9 +156,9 @@
     <VS2015 targetFolder="Builds/VisualStudio2015">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="1" optimisation="1" targetName="MiamSpat"/>
+                       isDebug="1" optimisation="1" targetName="MiamSpat" headerPath="..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"/>
         <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="0" optimisation="3" targetName="MiamSpat"/>
+                       isDebug="0" optimisation="3" targetName="MiamSpat" headerPath="..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
