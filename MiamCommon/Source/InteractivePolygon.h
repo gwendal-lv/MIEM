@@ -67,7 +67,7 @@ namespace Miam
         
         
         // ----- Private helpers (for interaction computing) -----
-        private :
+        protected :
         /// <summary>
         /// Finds the id of the interacted sub triangle.
         ///
@@ -80,9 +80,14 @@ namespace Miam
         
         
         // Attributes
-        private :
+        protected :
         std::vector<SubTriangle> subTriangles;
         
+		private :
+			void computeArea();
+			//double area;
+		public :
+			double GetArea() override;
         
     };
     

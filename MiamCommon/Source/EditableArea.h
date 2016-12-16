@@ -28,7 +28,7 @@ namespace Miam
         
         
         // = = = = = = = = = = ENUMS = = = = = = = = = =
-        protected :
+        public :
         
         /// \brief Contains the integer Id of a contour or a special area point.
         ///
@@ -54,8 +54,10 @@ namespace Miam
         public :
         EditableArea();
         virtual ~EditableArea();
-        
-        
+
+		// Getters/Setters
+	public :
+		int GetPointDraggedId() { return pointDraggedId; }
         
         // ===== COMMON ATTRIBUTES TO ALL EDITABLE AREAS =====
         protected :
@@ -85,7 +87,7 @@ namespace Miam
 		/// special), and a user event that could move this point.
         float pointDraggingRadius;
 		/// \brief ID of the only point of this area that is being moved.
-        int pointDraggedId;
+        //int pointDraggedId;
         Point<double> lastLocation; ///< Back-up for EditableArea::pointDraggedId
         
         float minimumSizePercentage = 0.03f; ///< In % of mean of canvas width and height
