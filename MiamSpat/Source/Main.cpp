@@ -41,8 +41,9 @@ public:
         // This method is where you should put your application's initialisation code..
 
         mainWindow = new MainWindow (getApplicationName());
-        mainWindow->setResizable(true, true);
-        
+
+
+
         // Instanciation of the 3 main parts of the application : Model, Presenter, View
         MainContentComponent* mainContentComponent = dynamic_cast<MainContentComponent*>(mainWindow->getChildComponent(0));
         if (mainContentComponent)
@@ -51,6 +52,7 @@ public:
             throw std::runtime_error("First child of Main Window is not a MainContentComponent...");
         presenter = new Miam::Presenter(view); // Will reference itself to the View module
         //model = new Miam::Model(presenter);// Will reference itself to the Presenter module
+
     }
 
     void shutdown() override
@@ -92,7 +94,12 @@ public:
             setUsingNativeTitleBar (true);
             setContentOwned (new MainContentComponent(), true);
 
+#if defined(__MIAMOBILE)
+            setFullScreen(true);
+#else
             centreWithSize (getWidth(), getHeight());
+            mainWindow->setResizable(true, true);
+#endif
             setVisible (true);
         }
 

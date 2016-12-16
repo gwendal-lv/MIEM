@@ -25,7 +25,7 @@ void MainContentComponent::paint (Graphics& g)
 
     g.setFont (Font (16.0f));
     g.setColour (Colours::white);
-    g.drawText ("Hello World!", getLocalBounds(), Justification::centred, true);
+    g.drawText ("Miam Spat", getLocalBounds(), Justification::centred, true);
 }
 
 void MainContentComponent::resized()

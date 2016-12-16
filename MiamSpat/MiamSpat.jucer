@@ -176,12 +176,13 @@
         <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </VS2015>
-    <ANDROIDSTUDIO targetFolder="Builds/AndroidStudio" androidSDKPath="" androidNDKPath="">
+    <ANDROIDSTUDIO targetFolder="Builds/AndroidStudio" androidSDKPath="" androidNDKPath=""
+                   extraDefs="__MIAMOBILE">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" androidArchitectures="armeabi armeabi-v7a x86" isDebug="1"
-                       optimisation="1" targetName="MiamSpat"/>
+                       optimisation="1" targetName="MiamSpat" headerPath="../../../MiamCommon/Source/&#10;../../../SpatCommon/Source/"/>
         <CONFIGURATION name="Release" androidArchitectures="armeabi armeabi-v7a x86"
-                       isDebug="0" optimisation="3" targetName="MiamSpat"/>
+                       isDebug="0" optimisation="3" targetName="MiamSpat" headerPath="../../../MiamCommon/Source/&#10;../../../SpatCommon/Source/"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../JUCE/modules"/>

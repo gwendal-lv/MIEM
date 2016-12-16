@@ -46,9 +46,9 @@ namespace Miam
         void SetName(std::string _name) {name = _name;}
         
         void GetX() {return posX;}
-        void SetX(double _X) {posX = _X;}
+        void SetX(double _posX) {posX = _posX;}
         void GetY() {return posY;}
-        void SetY(double _Y) {posY = _Y;}
+        void SetY(double _posY) {posY = _posY;}
         
         
         /*

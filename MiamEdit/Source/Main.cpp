@@ -48,7 +48,11 @@ public:
         
         
         // Instanciation of the 3 main parts of the application : Model, Presenter, View
-        view = new Miam::View(mainWindow->getMainComponent());
+        MainContentComponent* mainContentComponent = dynamic_cast<MainContentComponent*>(mainWindow->getChildComponent(0));
+        if (mainContentComponent)
+            view = new Miam::View(mainContentComponent);
+        else
+            throw std::runtime_error("First child of Main Window is not a MainContentComponent...");
         presenter = new Miam::Presenter(view); // Will reference itself to the View module
         model = new Miam::Model(presenter);// Will reference itself to the Presenter module
         
@@ -88,28 +92,26 @@ public:
     /// our MainContentComponent class (created by Juce from the Projucer).
     class MainWindow    : public DocumentWindow
     {
-        private :
-        MainContentComponent* mainComponent;
-        public :
-        MainContentComponent* getMainComponent() {return mainComponent;}
     public:
         MainWindow (String name)  : DocumentWindow (name,
                                                     Colours::lightgrey,
                                                     DocumentWindow::allButtons)
         {
             setUsingNativeTitleBar (true);
-            mainComponent = new MainContentComponent();
-            setContentOwned (mainComponent, true);
+            
+            setContentOwned (new MainContentComponent(), true);
 
-            centreWithSize (getWidth(), getHeight());
             setVisible (true);
             
+#if defined(__MIAMOBILE)
+            setFullScreen(true);
+#else
             // Et pas dans le "main component"
+            centreWithSize (getWidth(), getHeight());
             setResizable(true, true);
             setResizeLimits(600, 400, 10000, 10000);
+#endif
             
-            // Normalement déjà fait de base...
-            setUsingNativeTitleBar(true);
         }
 
         void closeButtonPressed() override

@@ -19,32 +19,32 @@
 using namespace Miam;
 
 
-SubTriangle::SubTriangle(Point<double> _G, Point<double> _B, Point<double> _C)
+SubTriangle::SubTriangle(Point<double> _pointG, Point<double> _pointB, Point<double> _pointC)
 {
     // Keep a reference to the center.
-    G = _G;
+    G = _pointG;
     
     // We don't know whether B and C are in the trigonometric order
     // or not. Inversion possible
-    Point<double> _GB = _B - _G;
-    Point<double> _GC = _C - _G;
-    double angle1 = Math::ComputePositiveAngle(_GB);
-    double angle2 = Math::ComputePositiveAngle(_GC);
+    Point<double> vectorGB = _pointB - _pointG;
+    Point<double> vectorGC = _pointC - _pointG;
+    double angle1 = Math::ComputePositiveAngle(vectorGB);
+    double angle2 = Math::ComputePositiveAngle(vectorGC);
     if (std::abs(angle1 - angle2) > double_Pi) // A triangle cannot have such an angle
     {
         containsAngleZero = true;
         if (angle1 > angle2) // Sorted already : B before 0rad and C after 0rad
         {
-            B = _B;
+            B = _pointB;
             beginAngle = angle1;
-            C = _C;
+            C = _pointC;
             endAngle = angle2;
         }
         else // Inversion
         {
-            B = _C;
+            B = _pointC;
             beginAngle = angle2;
-            C = _B;
+            C = _pointB;
             endAngle = angle1;
         }
     }
@@ -53,16 +53,16 @@ SubTriangle::SubTriangle(Point<double> _G, Point<double> _B, Point<double> _C)
         containsAngleZero = false;
         if (angle1 < angle2) // Sorted already
         {
-            B = _B;
+            B = _pointB;
             beginAngle = angle1;
-            C = _C;
+            C = _pointC;
             endAngle = angle2;
         }
         else // Inversion
         {
-            B = _C;
+            B = _pointC;
             beginAngle = angle2;
-            C = _B;
+            C = _pointB;
             endAngle = angle1;
         }
     }

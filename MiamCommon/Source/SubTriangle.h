@@ -53,7 +53,7 @@ namespace Miam
         /// <param name="_G"></param>
         /// <param name="_B"></param>
         /// <param name="_C"></param>
-        SubTriangle(Point<double> _G, Point<double> _B, Point<double> _C);
+        SubTriangle(Point<double> _pointG, Point<double> _pointB, Point<double> _pointC);
         
         
         // Interactions computing
