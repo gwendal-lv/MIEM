@@ -75,6 +75,14 @@ namespace Miam
         /// <param name="T">Interaction location</param>
         /// <returns></returns>
         double ComputeInteractionWeight(Point<double> T);
+
+		// Area computing
+		void computeSurface();
+	private:
+		double surface;
+
+	public :
+		double getSurface();
         
     };
 }

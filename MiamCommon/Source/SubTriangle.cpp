@@ -66,6 +66,7 @@ SubTriangle::SubTriangle(Point<double> _pointG, Point<double> _pointB, Point<dou
             endAngle = angle1;
         }
     }
+	computeArea();
 }
 
 
@@ -138,7 +139,22 @@ double SubTriangle::ComputeInteractionWeight(Point<double> T)
     return (1.0 - std::sqrt(T.getDistanceSquaredFrom(G) / T2.getDistanceSquaredFrom(G)));
 }
 
+void SubTriangle::computeSurface()
+{
+	double g = sqrt(pow(B.getX() - C.getX(), 2) + pow(B.getY() - C.getY(), 2));
+	double b = sqrt(pow(G.getX() - C.getX(), 2) + pow(G.getY() - C.getY(), 2));
+	double c = sqrt(pow(B.getX() - G.getX(), 2) + pow(B.getY() - G.getY(), 2));
 
+	double s = (g + b + c) / 2;
+
+	surface = sqrt(s*(s - g)*(s - b)*(s - c));
+	
+}
+
+double SubTriangle::getSurface()
+{
+	return surface;
+}
 
 
 

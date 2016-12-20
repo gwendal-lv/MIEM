@@ -46,6 +46,9 @@ namespace Miam
         /// \return The interaction weight in [0.0 ; 1.0]
         virtual double ComputeInteractionWeight(Point<double> T) = 0;
         
+		virtual double GetSurface() = 0;
+
+		
         
     };
     

@@ -65,6 +65,9 @@ namespace Miam
         /// coordinates from the current (freshly modified) points with pixel
         /// coordinates.
         virtual void recreateNormalizedPoints() = 0;
+
+		public :
+		virtual int GetPointDraggedId() = 0;
         
     };
     

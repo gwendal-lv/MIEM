@@ -40,7 +40,7 @@ namespace Miam
         
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
-        private :
+        protected : // instead of private so the classes based on this can acces this attribut
         
         /// \brief The currently selected area (may be a null pointer)
         std::shared_ptr<IEditableArea> selectedArea = nullptr;

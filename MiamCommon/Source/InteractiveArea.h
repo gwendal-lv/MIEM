@@ -39,6 +39,8 @@ namespace Miam
         protected :
         std::vector<Point<double>> contourPointsInPixels; ///< Caracteristic points (coordinates in pixels) along the contour of the area.
         
+		protected:
+			double surface;
     };
     
     
