@@ -68,9 +68,6 @@ namespace Miam
 
 		public :
 		virtual int GetPointDraggedId() = 0;
-
-		protected :
-		int pointDraggedId;
         
     };
     

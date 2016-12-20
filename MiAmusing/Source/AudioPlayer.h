@@ -12,14 +12,15 @@
 #define AUDIOPLAYER_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "SquareSignal.h"
 
-enum TransportState
+/*enum TransportState
 {
 	Stopped,
 	Starting,
 	Playing,
 	Stopping
-};
+};*/
 
 class AudioPlayer : public AudioAppComponent
 {
@@ -33,15 +34,15 @@ class AudioPlayer : public AudioAppComponent
 		void getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill) override;
 		void releaseResources() override;
 
-		void setFrequency(int ID, double frequency);
-		void setAmplitude(int ID, double amplitude);
-		void setPath(int ID, String path);
-		void setState(int ID, TransportState transportState); // gere l'etat de la source : play, start, stop
-		void setVolume(double amplitude);
-		void setReverse(bool enable);
+		void setFrequency(String sceneName, int ID, double frequency);
+		void setAmplitude(String sceneName, int ID, double amplitude);
+		void setPath(String sceneName, int ID, String path);
+		void setState(String sceneName, int ID, TransportState transportState); // gere l'etat de la source : play, start, stop
+		void setVolume(String sceneName, double amplitude);
+		void setReverse(String sceneName, int ID, bool enable);
 
 
-		int addSource(); // ajoute une nouvelle source et return l'ID de la source pour faire le lien entre la source et la forme
+		void addSource(String sceneName, int areaId, int sourceType); // ajoute une nouvelle source et return l'ID de la source pour faire le lien entre la source et la forme
 
 		ToneGeneratorAudioSource* sinus;
 };

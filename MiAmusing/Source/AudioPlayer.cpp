@@ -51,7 +51,7 @@ void AudioPlayer::releaseResources()
 		sinus->releaseResources();
 }
 
-void AudioPlayer::setFrequency(int ID, double frequency)
+void AudioPlayer::setFrequency(String sceneName, int ID, double frequency)
 {
 	DBG("setFrequency");
 	if (sinus == nullptr)
@@ -60,7 +60,7 @@ void AudioPlayer::setFrequency(int ID, double frequency)
 		sinus->setFrequency(frequency);
 }
 
-void AudioPlayer::setAmplitude(int ID, double amplitude)
+void AudioPlayer::setAmplitude(String sceneName, int ID, double amplitude)
 {
 	DBG("setAmplitude");
 	if (sinus == nullptr)
@@ -69,30 +69,30 @@ void AudioPlayer::setAmplitude(int ID, double amplitude)
 		sinus->setAmplitude(amplitude);
 }
 
-void AudioPlayer::setPath(int ID, String path)
+void AudioPlayer::setPath(String sceneName, int ID, String path)
 {
 	DBG("setPath");
 }
 
-void AudioPlayer::setState(int ID, TransportState transportState)
+void AudioPlayer::setState(String sceneName, int ID, TransportState transportState)
 {
 	DBG("setState");
 }
 
-void AudioPlayer::setVolume(double amplitude)
+void AudioPlayer::setVolume(String sceneName, double amplitude)
 {
 	DBG("setVolume");
 }
 
-void AudioPlayer::setReverse(bool enable)
+void AudioPlayer::setReverse(String sceneName, int ID, bool enable)
 {
 	DBG("setReverse");
 }
 
-int AudioPlayer::addSource()
+void AudioPlayer::addSource(String sceneName, int ID, int areaId)
 {
 	sinus = new ToneGeneratorAudioSource();
 	sinus->setAmplitude(0.0f);
 	sinus->setFrequency(440);
-	return 0;
+	
 }

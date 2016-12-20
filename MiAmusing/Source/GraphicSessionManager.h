@@ -122,8 +122,9 @@ namespace Miam {
         void DisplayInfo(String info) override;
         
 		// ----- Event to Model ----
-		void OnSurfaceChanged(double newSurface) override;
 
+		void OnSurfaceChanged(double newSurface);
+		void OnAreaCreated(String sceneName, int areaId);
     };
     
     

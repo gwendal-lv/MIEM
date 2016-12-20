@@ -187,3 +187,9 @@ void GraphicSessionManager::OnSurfaceChanged(double newSurface)
 	model->audioPlayer->setAmplitude(0, 1.25);
 }
 
+
+void GraphicSessionManager::OnAreaCreated(String sceneName, int areaId)
+{
+	model->audioPlayer->addSource(sceneName,areaId);
+}
+

@@ -59,7 +59,7 @@ void InteractivePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
     
     // Finally, we update sub triangles
     updateSubTriangles();
-	computeArea(); // mettre dans updateSubTriangle?
+	computeSurface(); // mettre dans updateSubTriangle?
 }
 
 
@@ -78,12 +78,12 @@ void InteractivePolygon::updateSubTriangles()
     }
 }
 
-void InteractivePolygon::computeArea()
+void InteractivePolygon::computeSurface()
 {
 	double S = 0;
 	for (int i = 0; i < subTriangles.size(); ++i)
-		S += subTriangles[i].area;
-	area = S;
+		S += subTriangles[i].getSurface();
+	surface = S;
 }
 
 
@@ -124,7 +124,7 @@ SubTriangle& InteractivePolygon::findSubTriangle(double angle)
     return subTriangles[i];
 }
 
-double InteractivePolygon::GetArea()
+double InteractivePolygon::GetSurface()
 {
-	return area;
+	return surface;
 }

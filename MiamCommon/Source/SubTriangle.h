@@ -77,9 +77,12 @@ namespace Miam
         double ComputeInteractionWeight(Point<double> T);
 
 		// Area computing
-		void computeArea();
+		void computeSurface();
+	private:
+		double surface;
 
-		double area;
+	public :
+		double getSurface();
         
     };
 }

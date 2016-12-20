@@ -91,6 +91,9 @@ namespace Miam
         Point<double> lastLocation; ///< Back-up for EditableArea::pointDraggedId
         
         float minimumSizePercentage = 0.03f; ///< In % of mean of canvas width and height
+
+		protected :
+			int pointDraggedId;
         
     };
     

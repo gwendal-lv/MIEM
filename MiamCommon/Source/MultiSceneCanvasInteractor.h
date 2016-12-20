@@ -168,8 +168,8 @@ namespace Miam {
         void OnCanvasMouseDrag(Point<int>& mouseLocation);
         void OnCanvasMouseUp();
         
-		public :
-			virtual void OnSurfaceChanged(double newSurface) = 0;
+		//public :
+			//virtual void OnSurfaceChanged(double newSurface) = 0;
         
         
         

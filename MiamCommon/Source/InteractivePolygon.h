@@ -84,10 +84,10 @@ namespace Miam
         std::vector<SubTriangle> subTriangles;
         
 		private :
-			void computeArea();
+			void computeSurface();
 			//double area;
 		public :
-			double GetArea() override;
+			double GetSurface() override;
         
     };
     
