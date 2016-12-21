@@ -27,7 +27,7 @@ namespace Miam
         
         // Construction/destruction
         public :
-        //virtual ~InteractiveArea();
+        virtual ~InteractiveArea();
         
         
         // Interactions computing (common implementations of the interface here)

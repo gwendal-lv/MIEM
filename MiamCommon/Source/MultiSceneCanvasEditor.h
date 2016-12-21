@@ -43,8 +43,9 @@ namespace Miam {
         
         public :
         
+        // Construction and destruction
         MultiSceneCanvasEditor(IGraphicSessionManager* _graphicSessionManager, MultiSceneCanvasComponent* _canvasComponent, SceneCanvasComponent::Id _selfId);
-        
+        virtual ~MultiSceneCanvasEditor();
         
         
         

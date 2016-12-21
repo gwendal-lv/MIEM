@@ -46,6 +46,10 @@ namespace Miam {
         void graphicalInit();
         void behaviorInit();
         
+        // Destruction
+        public :
+        virtual ~EditablePolygon() {}
+        
         
         // ----- Display functions -----
         public :

@@ -36,7 +36,7 @@ namespace Miam
         DrawableArea(int64_t _Id, Point<double> _center, Colour _fillColour);
         
         /// \brief Virtual destructor.
-        virtual ~DrawableArea() {};
+        virtual ~DrawableArea() {}
         
         
         virtual void Paint(Graphics& g);

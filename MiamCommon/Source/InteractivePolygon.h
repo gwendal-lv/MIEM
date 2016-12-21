@@ -39,7 +39,9 @@ namespace Miam
         private :
         void init();
         
-        
+        // Destruction
+        public :
+        virtual ~InteractivePolygon() {}
         
         
         // Display functions

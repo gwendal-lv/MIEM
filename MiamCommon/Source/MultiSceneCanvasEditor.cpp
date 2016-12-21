@@ -23,6 +23,10 @@ MultiSceneCanvasEditor::MultiSceneCanvasEditor(IGraphicSessionManager* _graphicS
     
 }
 
+MultiSceneCanvasEditor::~MultiSceneCanvasEditor()
+{    
+}
+
 
 
 // ------ Setters and Getters ------

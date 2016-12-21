@@ -134,6 +134,8 @@
               file="../MiamCommon/Source/IGraphicSessionManager.cpp"/>
         <FILE id="Lgollh" name="IGraphicSessionManager.h" compile="0" resource="0"
               file="../MiamCommon/Source/IGraphicSessionManager.h"/>
+        <FILE id="KYotIl" name="IPresenter.cpp" compile="1" resource="0" file="../MiamCommon/Source/IPresenter.cpp"/>
+        <FILE id="X4elLh" name="IPresenter.h" compile="0" resource="0" file="../MiamCommon/Source/IPresenter.h"/>
         <FILE id="Jtp0bl" name="MultiSceneCanvasEditor.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/MultiSceneCanvasEditor.cpp"/>
         <FILE id="OogkLH" name="MultiSceneCanvasEditor.h" compile="0" resource="0"

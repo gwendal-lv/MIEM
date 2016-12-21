@@ -1,18 +1,11 @@
 /*
   ==============================================================================
 
-    InteractiveArea.cpp
-    Created: 13 Apr 2016 3:56:27pm
+    IPresenter.cpp
+    Created: 21 Dec 2016 2:29:25pm
     Author:  Gwendal Le Vaillant
 
   ==============================================================================
 */
 
-#include "InteractiveArea.h"
-
-using namespace Miam;
-
-
-InteractiveArea::~InteractiveArea()
-{
-}
+#include "IPresenter.h"

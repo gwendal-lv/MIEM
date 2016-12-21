@@ -66,7 +66,7 @@ SubTriangle::SubTriangle(Point<double> _pointG, Point<double> _pointB, Point<dou
             endAngle = angle1;
         }
     }
-	computeArea();
+	computeSurface();
 }
 
 
