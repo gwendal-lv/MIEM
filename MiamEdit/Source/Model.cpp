@@ -29,7 +29,7 @@ using namespace Miam;
 
 // - - - - - Construction / destruction - - - - -
 Model::Model(Presenter* _presenter) :
-    IModel(_presenter)
+    SpatModel(_presenter)
 {
     spatInterpolator = new SpatInterpolator<double>(this);
     

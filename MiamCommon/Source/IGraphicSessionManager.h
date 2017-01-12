@@ -19,12 +19,14 @@
 #include "MultiSceneCanvasInteractor.h"
 #include "MultiCanvasComponent.h"
 
+#include "GraphicEvent.h"
 
 
 
 namespace Miam
 {
     // pre-declarations for pointers
+    class IPresenter;
     class MultiSceneCanvasInteractor;
     
     
@@ -38,9 +40,10 @@ namespace Miam
         
         // = = = = = = = = = = COMMON ATTRIBUTES = = = = = = = = = =
         
+        // Unique parent/children pointers, so this is the easiest working way...
+        private :
+        IPresenter* presenter; // classes that inherit should get their own *real* presenter ?
         protected :
-        
-        // Unique, so this is the easiest working way...
         MultiCanvasComponent* multiCanvasComponent;
         
         
@@ -74,7 +77,7 @@ namespace Miam
         
         // = = = = = = = = = = METHODS = = = = = = = = = =
         public :
-        IGraphicSessionManager();
+        IGraphicSessionManager(IPresenter* presenter_);
         virtual ~IGraphicSessionManager();
         
         
@@ -108,7 +111,10 @@ namespace Miam
         
         
         // ----- Events from the Presenter itself -----
-        virtual void OnSceneChange(std::shared_ptr<EditableScene> newSelectedScene) {}
+        /// \brief Receives, processes graphic events from any drawable object,
+        /// then interprets it in terms of "audio features" to be transmitted to the
+        /// Miam::Model via the Miam::Presenter
+        virtual void HandleEventSync(std::shared_ptr<GraphicEvent> event_) = 0;
         
         
         // - - - - - Mouse Events - - - - -
@@ -116,7 +122,8 @@ namespace Miam
         virtual void OnBackgroundMouseDrag(const MouseEvent &event);
         virtual void OnBackgroundMouseUp(const MouseEvent &event);
         
-		
+        
+        // - - - - - Area Events (from managed canvases) - - - - -
         
         
     };

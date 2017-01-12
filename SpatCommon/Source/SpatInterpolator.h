@@ -24,7 +24,7 @@
 
 namespace Miam
 {
-    class IModel;
+    class SpatModel;
     
     
     /// \brief Manages some Miam::SpatState children, and does the
@@ -39,7 +39,7 @@ namespace Miam
         private :
         
         // Links to parents
-        IModel* model;
+        SpatModel* model;
         
         std::vector< std::shared_ptr<SpatState<T>> > spatStates;
         
@@ -65,7 +65,7 @@ namespace Miam
         // = = = = = = = = = = METHODS = = = = = = = = = =
         public :
         
-        SpatInterpolator(IModel* _model);
+        SpatInterpolator(SpatModel* _model);
         
         void __AddDefaultStates();
         

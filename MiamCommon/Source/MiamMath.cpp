@@ -58,3 +58,4 @@ double Math::ComputePositiveAngle(Point<double> p)
         angle += 2 * double_Pi;
     return angle;
 }
+

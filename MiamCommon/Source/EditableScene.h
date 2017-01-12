@@ -15,9 +15,9 @@
 #include <vector>
 #include <string>
 
-
-
 #include "InteractiveScene.h"
+
+#include "AreaEvent.h"
 
 
 using namespace Miam;
@@ -42,6 +42,8 @@ namespace Miam
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
         protected : // instead of private so the classes based on this can acces this attribut
         
+        bool allowAreaSelection;
+        
         /// \brief The currently selected area (may be a null pointer)
         std::shared_ptr<IEditableArea> selectedArea = nullptr;
         
@@ -52,8 +54,8 @@ namespace Miam
         
         std::shared_ptr<IEditableArea> GetEditableArea(size_t i);
         
-        void SetSelectedArea(std::shared_ptr<IEditableArea> _selectedArea, bool changeMode = true);
-        std::shared_ptr<IEditableArea> GetSelectedArea() {return selectedArea;}
+        virtual void SetSelectedArea(std::shared_ptr<IEditableArea> selectedArea_, bool changeMode = true);
+        virtual std::shared_ptr<IEditableArea> GetSelectedArea() {return selectedArea;}
         
         
         
@@ -61,14 +63,15 @@ namespace Miam
         public :
         
         // - - - - - Construction and Destruction (and helpers) - - - - -
-        EditableScene(MultiSceneCanvasInteractor* _canvasManager, SceneCanvasComponent* _canvasComponent);
+        EditableScene(MultiSceneCanvasInteractor* canvasManager_, SceneCanvasComponent* canvasComponent_, bool allowAreaSelection_ = true);
+        virtual ~EditableScene();
         
         
         // - - - - - Areas Managing : Add and Delete - - - - -
         
         //void AddArea(std::shared_ptr<IEditableArea> newArea, bool selectArea = false);
         
-        void AddDefaultArea(uint64_t _nextAreaId);
+        void AddDefaultArea(uint64_t nextAreaId);
       
         void DeleteSelectedArea();
         
@@ -96,10 +99,21 @@ namespace Miam
         
         // - - - - - Canvas (mouse) events managing - - - - -
         
-        
-        virtual std::string OnCanvasMouseDown(Point<int>& clicLocation) override;
-        virtual bool OnCanvasMouseDrag(Point<int>& mouseLocation) override;
-        virtual bool OnCanvasMouseUp() override;
+        /// \brief Implements the beginning of the editing of a Miam::EditableArea,
+        /// depending on the mouse/touch/pen events given
+        ///
+        /// Two different mouse (touch) events managing possibilites :
+        ///
+        /// n°1 : editon/manipulation/play with a unique selected area only (in
+        /// the future, there may be several selected areas), with 1 touch input
+        /// source (may also be changed)
+        ///
+        /// n°2 : editon/manipulation/play with any area (they all stay in the
+        /// same state), with an arbitrary number of touch inputs
+        ///
+        virtual std::shared_ptr<GraphicEvent> OnCanvasMouseDown(const MouseEvent& mouseE) override;
+        virtual std::shared_ptr<GraphicEvent> OnCanvasMouseDrag(const MouseEvent& mouseE) override;
+        virtual std::shared_ptr<GraphicEvent> OnCanvasMouseUp(const MouseEvent& mouseE) override;
         
         
     };

@@ -16,9 +16,13 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <map>
 
 #include "JuceHeader.h"
 
+#include "GraphicEvent.h"
+
+#include "IEditableArea.h"
 
 // Pre-declarations for pointers
 class SceneCanvasComponent;
@@ -33,12 +37,29 @@ namespace Miam
     
     
     
-    /// \brief A graphical scene made of areas and exciters, to be drawn on a SceneCanvasComponent
+    /// \brief A graphical scene made of areas and exciters, to be drawn on
+    /// SceneCanvasComponent
     ///
     /// This kind of scene can be loaded (from a file for example) and destroyed,
-    /// but is not modifiable.
+    /// but is not fully editable. See Miam::EditableArea for editing features.
+    /// However, the exciters (if enabled) can be moved with mouse/touch/pen events
     class InteractiveScene
     {
+        
+        // ...Enums....
+        public :
+        /// \brief For Miam Spat research purposes
+        enum class ExcitersBehaviorType {
+            
+            NoExciters,
+            
+            AppearOnTouch,
+            
+            ManualAddAndDelete,
+            
+            ManualAddAndDelete_AutoDisappear,
+            
+        };
         
         
         
@@ -62,7 +83,11 @@ namespace Miam
         
         std::vector< std::shared_ptr<Exciter> > initialExciters;
         std::vector< std::shared_ptr<Exciter> > currentExciters;
+        ExcitersBehaviorType excitersBehavior;
         
+        
+        /// \brief Links (Locks) a multi-touch souce ID to an EditableArea
+        std::map<int, std::shared_ptr<IEditableArea>> touchSourceToEditableArea;
         
         
         
@@ -70,20 +95,30 @@ namespace Miam
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
-        size_t GetAreasCount();
-        std::shared_ptr<IDrawableArea> GetDrawableArea(size_t i);
+        
+        // areas + exciters
+        size_t GetDrawableObjectsCount();
+        std::shared_ptr<IDrawableArea> GetDrawableObject(size_t i);
+        
+        // true interactive areas only
+        size_t GetInteractiveAreasCount();
         std::shared_ptr<IInteractiveArea> GetInteractiveArea(size_t i);
+        
+        
+        /* useless normally...
+        size_t GetExcitersCount() {return currentExciters.size(); }
+        std::shared_ptr<Exciter> GetExciter(size_t i) {return currentExciters[i];}
+         */
+        
         std::string GetName() {return name;}
         virtual void SetName(std::string _name);
         
-        
-        
-        
+    
         // = = = = = = = = = = METHODS = = = = = = = = = =
         public :
         
         // - - - - - Construction and Destruction (and helpers) - - - - -
-        InteractiveScene(MultiSceneCanvasInteractor* _canvasManager, SceneCanvasComponent* _canvasComponent);
+        InteractiveScene(MultiSceneCanvasInteractor* _canvasManager, SceneCanvasComponent* _canvasComponent, ExcitersBehaviorType excitersBehavior_ = ExcitersBehaviorType::ManualAddAndDelete);
         virtual ~InteractiveScene();
         
         
@@ -99,20 +134,29 @@ namespace Miam
         
         
         // - - - - - Canvas (mouse) events managing - - - - -
+        // CES FONCTIONS IMPLÉMENTERONT LES DÉPLACEMENTS DES EXCITATEURS
+        // Elles pourront être appelées depuis la classe file EditableScene si
+        // nécessaire, si les excitateurs sont effectivement utilisés
+        //
+        // Par défaut elles sont overridées par la classe fille
         
-        /// \brief Defines the behavior of the scene when an input occurs
+        /// \brief Defines the behavior of the scene when an input occurs. Possibly begins an exciter's movement
         ///
-        /// May send an error message, or an explanation if nothing happened
+        /// Within the event,
+        /// may send an error message, or an explanation if nothing happened
         /// Empty return string means that everything went as expected
-        virtual std::string OnCanvasMouseDown(Point<int>& clicLocation) = 0;
-        /// \brief Defines the behavior of the scene when an input occurs
+        virtual std::shared_ptr<GraphicEvent> OnCanvasMouseDown(const MouseEvent& mouseE);
+        /// \brief Defines the behavior of the scene when an input occurs. Possibly moves an exciter if enabled
         ///
-        /// Returns wether something is being dragged or not
-        virtual bool OnCanvasMouseDrag(Point<int>& mouseLocation) = 0;
-        /// \brief Defines the behavior of the scene when an input occurs
+        /// Does not compute a new spatialization state : a parent will ask the
+        /// scene to do so at the right time.
         ///
-        /// Return wether something has stopped being dragged or not
-        virtual bool OnCanvasMouseUp() = 0;
+        /// \returns An event that describes what happened
+        virtual std::shared_ptr<GraphicEvent> OnCanvasMouseDrag(const MouseEvent& mouseE);
+        /// \brief Defines the behavior of the scene when an input occurs. Possibly ends an exciter move if enabled
+        ///
+        /// \returns An event that describes what happened
+        virtual std::shared_ptr<GraphicEvent> OnCanvasMouseUp(const MouseEvent& mouseE);
         
         
     };

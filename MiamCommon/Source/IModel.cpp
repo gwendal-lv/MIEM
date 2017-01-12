@@ -1,32 +1,19 @@
 /*
   ==============================================================================
 
-    EditableArea.cpp
-    Created: 12 Apr 2016 4:39:52pm
+    IModel.cpp
+    Created: 31 Dec 2016 9:25:00am
     Author:  Gwendal Le Vaillant
 
   ==============================================================================
 */
 
-#include "EditableArea.h"
-
+#include "IModel.h"
 
 using namespace Miam;
 
 
-
-EditableArea::EditableArea()
+IModel::IModel() : paramChangesToPresenter()
 {
-    enableTranslationOnly = false;
+    
 }
-
-
-EditableArea::~EditableArea()
-{
-
-}
-
-
-
-
-

@@ -1,19 +1,20 @@
 /*
   ==============================================================================
 
-    IPresenter.cpp
-    Created: 21 Dec 2016 2:29:25pm
+    AreaEvent.cpp
+    Created: 31 Dec 2016 10:55:18am
     Author:  Gwendal Le Vaillant
 
   ==============================================================================
 */
 
-#include "IPresenter.h"
-
+#include "AreaEvent.h"
 
 using namespace Miam;
 
-IPresenter::IPresenter() : paramChangesToModel()
+AreaEvent::AreaEvent(std::shared_ptr<IDrawableArea> concernedArea_, AreaEventType eventType_) :
+    eventType(eventType_),
+    concernedArea(concernedArea_)
 {
     
 }

@@ -54,6 +54,8 @@ namespace Miam
         /// \param _fillColour See DrawableArea::fillColour
         void SetFillColour(Colour newColour);
         
+        void SetNameVisible(bool isVisible) {isNameVisible = isVisible;}
+        
         
         // General data
         protected :
@@ -76,6 +78,8 @@ namespace Miam
         float centerContourWidth; ///< Width (in pixels) of the center circle drawing.
         
         int centerCircleRadius; ///< Radius (in pixels) of the center circle drawing.
+            
+        bool isNameVisible;
     };
     
 }

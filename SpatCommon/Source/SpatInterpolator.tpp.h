@@ -11,7 +11,7 @@
 
 //#include "SpatInterpolator.h"
 
-#include "IModel.h"
+#include "SpatModel.h"
 
 
 
@@ -45,7 +45,7 @@ std::string SpatInterpolator<T>::GetOutputName(size_t _i)
 
 //template SpatInterpolator<double>::SpatInterpolator(IModel* _model);
 template<typename T>
-SpatInterpolator<T>::SpatInterpolator(IModel* _model)
+SpatInterpolator<T>::SpatInterpolator(SpatModel* _model)
 {
     model = _model;
 }

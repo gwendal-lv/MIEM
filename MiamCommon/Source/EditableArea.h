@@ -54,16 +54,22 @@ namespace Miam
         public :
         EditableArea();
         virtual ~EditableArea();
-
-		// Getters/Setters
-	public :
-		int GetPointDraggedId() { return pointDraggedId; }
+        
+        // ----- Setters and Getters -----
+        public :
+        void SetActive(bool activate) override {isActive = activate;}
+        void SetEnableTranslationOnly(bool enable_) override {enableTranslationOnly = enable_;}
+        
+		int GetPointDraggedId() override { return pointDraggedId; }
+        
+        
         
         // ===== COMMON ATTRIBUTES TO ALL EDITABLE AREAS =====
         protected :
         
         // Status
-        bool isActive; ///< Wether this area is marking itself as active (currently being edited) or not.
+        bool isActive; ///< Wether this area is marking itself as actively editable
+        bool enableTranslationOnly; ///< Wether any 2D geometric transformation, or the translation only is authorized
         
         // Basic drawing attributes
         

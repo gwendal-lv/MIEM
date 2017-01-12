@@ -34,6 +34,7 @@ namespace Miam {
     
     // Simple declarations
     class View;
+    class Presenter;
     
     
     /// \brief Sub-module belonging to the Presenter module, which handles the editing
@@ -72,7 +73,7 @@ namespace Miam {
         
         public :
         /// \brief Construction (the whole Presenter module is built after the View).
-        GraphicSessionManager(View* _view);
+        GraphicSessionManager(View* _view, Presenter* presenter_);
         
         /// \brief Destruction and the editor and the canvases
         ~GraphicSessionManager();
@@ -115,8 +116,8 @@ namespace Miam {
         
         
         // ----- Events from the Presenter itself -----
-        virtual void OnSceneChange(std::shared_ptr<EditableScene> newSelectedScene) override;
         
+        virtual void HandleEventSync(std::shared_ptr<GraphicEvent> event_) override;
         
         
         // ----- Event to View -----
@@ -147,6 +148,7 @@ namespace Miam {
         void OnBringToFront();
         
         void OnSceneNameChange(std::string _name);
+        
         
     };
     

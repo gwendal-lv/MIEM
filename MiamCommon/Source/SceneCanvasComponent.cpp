@@ -49,9 +49,11 @@ void SceneCanvasComponent::paint (Graphics& g)
         g.drawRect(1, 1, getWidth()-2, getHeight()-2, 2);
     }
     
-    // Areas painting
-    for (int i=0;i<canvasManager->GetDrawableAreasCount();i++)
-        canvasManager->GetDrawableArea(i)->Paint(g);
+    // Areas painting (including exciters if existing)
+    for (int i=0;i<canvasManager->GetDrawableObjectsCount();i++)
+        canvasManager->GetDrawableObject(i)->Paint(g);
+    
+    
 }
 
 void SceneCanvasComponent::resized()
@@ -59,43 +61,31 @@ void SceneCanvasComponent::resized()
     // Actualization of all areas graphical objets, if Presenter is accessible (not at first time)
     if (canvasManager != 0)
     {
-        // We update ALL areas, to avoid a consequent amount of calculus on
+        // We update ALL areas NOW, to avoid a consequent amount of calculus on
         // scene change (which should happen as fast as possible)
         for (size_t i=0;i<canvasManager->GetScenesCount();i++)
         {
-            for (size_t j=0 ; j<canvasManager->GetScene(i)->GetAreasCount() ; j++)
-                canvasManager->GetScene(i)->GetDrawableArea(j)->CanvasResized(this);
+            for (size_t j=0 ; j<canvasManager->GetScene(i)->GetDrawableObjectsCount() ; j++)
+                canvasManager->GetScene(i)->GetDrawableObject(j)->CanvasResized(this);
         }
     }
 }
 
 
 
-// FOR NOW : transmission of mouse/touch events for only ONE input source
-// Because the scene edition manager is built to react to the mouse only...
-
 void SceneCanvasComponent::mouseDown(const juce::MouseEvent& event)
 {
-	if (event.source.getIndex() == 0)
-    {
-        Point<int> positionCopy = event.getMouseDownPosition();
-		canvasManager->OnCanvasMouseDown(positionCopy);
-    }
+    canvasManager->OnCanvasMouseDown(event);
 }
 
 void SceneCanvasComponent::mouseDrag(const juce::MouseEvent& event)
 {
-    if (event.source.getIndex() == 0)
-    {
-        Point<int> positionCopy = event.getPosition();
-        canvasManager->OnCanvasMouseDrag(positionCopy);
-    }
+    canvasManager->OnCanvasMouseDrag(event);
 }
 
 void SceneCanvasComponent::mouseUp(const juce::MouseEvent& event)
 {
-	if (event.source.getIndex() == 0)
-		canvasManager->OnCanvasMouseUp();
+    canvasManager->OnCanvasMouseUp(event);
 }
 
 

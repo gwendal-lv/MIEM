@@ -24,13 +24,14 @@
 
 #include "Juceheader.h" // for : Point<float>, uint64
 
-#include "MultiSceneCanvasEditor.h"
+#include "MultiSceneCanvasManager.h"
 #include "SceneCanvasComponent.h"
 
 namespace Miam {
     
     // Simple declarations
     class View;
+    class IPresenter;
     
     
     /// \brief Sub-module belonging to the Presenter module, which handles the editing
@@ -38,8 +39,7 @@ namespace Miam {
 	///
 	/// Actually owns all the EditablePolygons (and any other EditableArea in the future).
 	///
-	/// References itself to the SceneEditionComponent and the several
-	/// SceneCanvasComponents, for these components to transfer events to this sub-module
+	/// References itself to some components, for these components to transfer events to this sub-module
 	/// directly, and not to the Presenter.
     class GraphicSessionManager : public IGraphicSessionManager {
         
@@ -67,7 +67,7 @@ namespace Miam {
         
         public :
         /// \brief Construction (the whole Presenter module is built after the View).
-        GraphicSessionManager(View* _view);
+        GraphicSessionManager(IPresenter* presenter_, View* view_);
         
         /// \brief Destruction and the editor and the canvases
         ~GraphicSessionManager();
@@ -93,7 +93,7 @@ namespace Miam {
         void SetSelectedCanvas(MultiSceneCanvasInteractor*) override;
         
         protected :
-        MultiSceneCanvasEditor* getSelectedCanvasAsEditable();
+        MultiSceneCanvasManager* getSelectedCanvasAsManager();
         
         
 		// ----- Running mode -----
@@ -105,7 +105,7 @@ namespace Miam {
         
         
         // ----- Events from the Presenter itself -----
-        virtual void OnSceneChange(std::shared_ptr<EditableScene> newSelectedScene) override;
+        virtual void HandleEventSync(std::shared_ptr<GraphicEvent> event_) override;
         
         
         

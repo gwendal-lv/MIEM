@@ -17,12 +17,17 @@
 
 #include "EditableScene.h"
 
+#include "SceneEvent.h"
 
 
 using namespace Miam;
 
+
+
 MultiSceneCanvasInteractor::MultiSceneCanvasInteractor(IGraphicSessionManager* _graphicSessionManager, MultiSceneCanvasComponent* _canvasComponent, SceneCanvasComponent::Id _selfId)
 {
+    mode = CanvasManagerMode::Loading;
+    
     graphicSessionManager = _graphicSessionManager;
     selfId = _selfId;
     
@@ -36,6 +41,7 @@ MultiSceneCanvasInteractor::MultiSceneCanvasInteractor(IGraphicSessionManager* _
     
     // DO NOT auto-call this here : it calls back the edition manager, which calls this canvas, which is not constructed yet...
     // SetMode(CanvasManagerMode::Unselected);
+    mode = CanvasManagerMode::Unselected;
 }
 
 
@@ -61,6 +67,8 @@ void MultiSceneCanvasInteractor::SetMode(Miam::CanvasManagerMode newMode)
     switch (newMode) {
         
         case CanvasManagerMode::Unselected:
+            if (selectedScene) // on first scene adding... there would be a problem
+                GetSelectedScene()->SetSelectedArea(nullptr, false);
             if (mode != CanvasManagerMode::Unselected)
             {
                 canvasComponent->SetIsSelectedForEditing(false);
@@ -95,14 +103,14 @@ void MultiSceneCanvasInteractor::SetMode(Miam::CanvasManagerMode newMode)
 
 // - - - - - - - - - - Getters and Setters - - - - - - - - - -
 
-std::shared_ptr<IDrawableArea> MultiSceneCanvasInteractor::GetDrawableArea(int _index)
+std::shared_ptr<IDrawableArea> MultiSceneCanvasInteractor::GetDrawableObject(int index_)
 {
-    return selectedScene->GetDrawableArea(_index);
+    return selectedScene->GetDrawableObject(index_);
 }
 
-size_t MultiSceneCanvasInteractor::GetDrawableAreasCount()
+size_t MultiSceneCanvasInteractor::GetDrawableObjectsCount()
 {
-    return selectedScene->GetAreasCount();
+    return selectedScene->GetDrawableObjectsCount();
 }
 
 std::vector< std::shared_ptr<InteractiveScene> > MultiSceneCanvasInteractor::GetInteractiveScenes()
@@ -138,15 +146,16 @@ void MultiSceneCanvasInteractor::SelectScene(int id)
         SetMode(CanvasManagerMode::NothingSelected);
         // Then : we might be the new canvas !
         graphicSessionManager->SetSelectedCanvas(this);
-        // No specific other check
+        // No specific other check, we just create the informative event before changing
+        std::shared_ptr<SceneEvent> graphicE(new SceneEvent(this, selectedScene, scenes[id]));
         selectedScene = std::dynamic_pointer_cast<EditableScene>(scenes[id]);
         
         // Graphic updates
         canvasComponent->UpdateSceneButtons(GetInteractiveScenes());
         CallRepaint();
         
-        // Finally : info sent to the graphic session manager (may not b e actually used)
-        graphicSessionManager->OnSceneChange(selectedScene);
+        // Finally : info sent to the graphic session manager (may not be actually used)
+        graphicSessionManager->HandleEventSync(graphicE);
     }
     else
     {
@@ -164,6 +173,10 @@ void MultiSceneCanvasInteractor::AddScene(std::string name)
 {
     std::shared_ptr<EditableScene> newScene(new EditableScene(this, canvasComponent->GetCanvas()));
     newScene->SetName(name);
+    AddScene(newScene);
+}
+void MultiSceneCanvasInteractor::AddScene(std::shared_ptr<EditableScene> newScene)
+{
     scenes.push_back( newScene );
     SelectScene((int)(scenes.size())-1);
     // Graphical updates
@@ -234,26 +247,48 @@ void MultiSceneCanvasInteractor::__AddTestAreas()
 
 // - - - - - - - - - - Events from canvas - - - - - - - - - -
 
-void MultiSceneCanvasInteractor::OnCanvasMouseDown(Point<int>& clicLocation)
+void MultiSceneCanvasInteractor::OnCanvasMouseDown(const MouseEvent& mouseE)
 {
     // !!!!!!!!!!!!!! ON DOIT DIRE AU PARENT QU'ON SE SÉLECTIONNE SOI-MÊME !!!!!!!!!!!!!!
     graphicSessionManager->SetSelectedCanvas(this);
     
-    std::string returnMsg = selectedScene->OnCanvasMouseDown(clicLocation);
-    if (!returnMsg.empty())
-        graphicSessionManager->DisplayInfo(returnMsg);
+    std::shared_ptr<GraphicEvent> graphicE = selectedScene->OnCanvasMouseDown(mouseE);
+    if (! graphicE->GetMessage().empty())
+        graphicSessionManager->DisplayInfo(graphicE->GetMessage());
     
-    // in any case (does not waste much computing time...)
+    // If we were in a "special waiting mode" we end it after this click
+    if (mode == CanvasManagerMode::WaitingForPointCreation || mode == CanvasManagerMode::WaitingForPointDeletion)
+    {
+        // CHANGEMENT SELON L'ÉVÈNEMENT RETOURNÉ ???
+        SetMode(CanvasManagerMode::AreaSelected); // ON GARDE L'AIRE SÉLECTIONNÉE POUR L'INSTANT
+    }
+    
+    // in any case : repaint() (does not waste much computing time...)
     canvasComponent->repaint();
+    
+    // Event transmission towards the audio interpretation
+    graphicSessionManager->HandleEventSync(graphicE);
 }
-void MultiSceneCanvasInteractor::OnCanvasMouseDrag(Point<int>& mouseLocation)
+void MultiSceneCanvasInteractor::OnCanvasMouseDrag(const MouseEvent& mouseE)
 {
-    if (selectedScene->OnCanvasMouseDrag(mouseLocation))
-        canvasComponent->repaint();
+    std::shared_ptr<GraphicEvent> graphicE = selectedScene->OnCanvasMouseDrag(mouseE);
+    // If event was an AreaEvent
+    if (std::shared_ptr<AreaEvent> areaE = std::dynamic_pointer_cast<AreaEvent>(graphicE))
+    {
+        if (areaE->GetType() != AreaEventType::NothingHappened)
+            canvasComponent->repaint();
+    }
+    
+    // Event transmission towards the audio interpretation
+    graphicSessionManager->HandleEventSync(graphicE);
 }
-void MultiSceneCanvasInteractor::OnCanvasMouseUp()
+void MultiSceneCanvasInteractor::OnCanvasMouseUp(const MouseEvent& mouseE)
 {
-    if (selectedScene->OnCanvasMouseUp())
-        canvasComponent->repaint();
+    std::shared_ptr<GraphicEvent> graphicE = selectedScene->OnCanvasMouseUp(mouseE);
+    
+    canvasComponent->repaint();
+    
+    // Event transmission towards the audio interpretation
+    graphicSessionManager->HandleEventSync(graphicE);
 }
 

@@ -25,7 +25,7 @@ Presenter::Presenter(View* _view) :
     view(_view),
     appMode(AppMode::Loading), // app is loading while the Model hasn't fully loaded yet
 
-    graphicSessionManager(_view)
+    graphicSessionManager(this, _view)
 {
     // After all sub-modules are built, the presenter refers itself to the View
     view->CompleteInitialization(this);

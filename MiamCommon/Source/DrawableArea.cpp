@@ -32,6 +32,8 @@ DrawableArea::DrawableArea(int64_t _Id, Point<double> _center, Colour _fillColou
     contourColour = Colours::white;
     contourWidth = 2.0f;
     centerContourWidth = contourWidth*1.5f;
+    
+    isNameVisible = true; // par défaut
 }
 
 
@@ -46,14 +48,17 @@ void DrawableArea::Paint(Graphics& g)
     
     String name = String("[[[undefined ") + String(Id) + String("]]]");
     
-    g.setColour(Colours::black); // black shadow
-    g.drawSingleLineText(name,
-		(int)centerInPixels.x+1,
-		(int)(centerInPixels.y-centerCircleRadius*2+1));
-    g.setColour(Colours::white); // white text
-    g.drawSingleLineText(name,
-		(int)centerInPixels.x,
-		(int)(centerInPixels.y-centerCircleRadius*2));
+    if (isNameVisible)
+    {
+        g.setColour(Colours::black); // black shadow
+        g.drawSingleLineText(name,
+                             (int)centerInPixels.x+1,
+                             (int)(centerInPixels.y-centerCircleRadius*2+1));
+        g.setColour(Colours::white); // white text
+        g.drawSingleLineText(name,
+                             (int)centerInPixels.x,
+                             (int)(centerInPixels.y-centerCircleRadius*2));
+    }
 }
 
 void DrawableArea::CanvasResized(SceneCanvasComponent* _parentCanvas)

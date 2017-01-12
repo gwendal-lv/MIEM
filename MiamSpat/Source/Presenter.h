@@ -13,6 +13,8 @@
 
 #include <iostream>
 
+#include "IPresenter.h"
+
 #include "AppMode.h"
 #include "SpatType.h"
 
@@ -35,13 +37,12 @@ namespace Miam {
 	/// repositories (the model), and formats it for display in the view".
 	///
 	/// \remark Usual GUI controls (created from the Projucer) however belong to the View.
-    class Presenter
+    class Presenter : public IPresenter
     {
-        private :
-        
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
-
+        private :
+        
         // Pointer to the unique View module
         View* view = 0;
         // Pointer to the unique Model module

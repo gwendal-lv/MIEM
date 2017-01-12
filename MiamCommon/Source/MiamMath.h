@@ -29,10 +29,14 @@ namespace Miam
         
         public :
         
-        /// \brief Computes a specific modulo operation
+        /// \brief Computes a platform-independant modulo operation on
+        /// negative integers
+        ///
+        /// For negative input values (the behavior in such a case is
+        /// implementation-specific)
         ///
         /// \return The only modulo result in [[0 ; modulo-1]]
-        /// \param inputValue Value to apply the modulo to (may be >0 or <0)
+        /// \param inputValue Value to apply the modulo to (<0, may be >0)
         /// \param modulo Modulo operator value (must be >0)
         static int Modulo(int inputValue, int modulo);
         

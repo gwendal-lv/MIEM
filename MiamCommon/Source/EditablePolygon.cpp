@@ -75,26 +75,29 @@ void EditablePolygon::Paint(Graphics& g)
     {
         g.setColour(editingElementsColour);
         
-        // Then, we draw the manipulation points
-        for (int i=0 ; i<contourPointsInPixels.size() ; i++)
+        if (!enableTranslationOnly)
         {
-            g.fillEllipse((float)contourPointsInPixels[i].x-contourPointsRadius,
-							(float)contourPointsInPixels[i].y-contourPointsRadius,
-                          contourPointsRadius*2.0f,
-                          contourPointsRadius*2.0f);
+            // Then, we draw the coutour draggable points
+            for (int i=0 ; i<contourPointsInPixels.size() ; i++)
+            {
+                g.fillEllipse((float)contourPointsInPixels[i].x-contourPointsRadius,
+                              (float)contourPointsInPixels[i].y-contourPointsRadius,
+                              contourPointsRadius*2.0f,
+                              contourPointsRadius*2.0f);
+            }
+            
+            // And finally, the manipulation (rotation & scale) main control
+            Line<float> manipulationLine = Line<float>((float)centerInPixels.x,
+                                                       (float)centerInPixels.y,
+                                                       (float)manipulationPointInPixels.x,
+                                                       (float)manipulationPointInPixels.y);
+            float dashedLineParameters[] = {4.0f, 4.0f};
+            g.drawDashedLine(manipulationLine, dashedLineParameters, 2, centerContourWidth);
+            g.fillEllipse((float)manipulationPointInPixels.x-manipulationPointRadius,
+                          (float)manipulationPointInPixels.y-manipulationPointRadius,
+                          (float)manipulationPointRadius*2.0f,
+                          (float)manipulationPointRadius*2.0f);
         }
-        
-        // And finally, the manipulation (rotation & scale) controls
-        Line<float> manipulationLine = Line<float>((float)centerInPixels.x,
-			(float)centerInPixels.y,
-			(float)manipulationPointInPixels.x,
-			(float)manipulationPointInPixels.y);
-        float dashedLineParameters[] = {4.0f, 4.0f};
-        g.drawDashedLine(manipulationLine, dashedLineParameters, 2, centerContourWidth);
-        g.fillEllipse((float)manipulationPointInPixels.x-manipulationPointRadius,
-			(float)manipulationPointInPixels.y-manipulationPointRadius,
-			(float)manipulationPointRadius*2.0f,
-			(float)manipulationPointRadius*2.0f);
     }
 }
 
@@ -155,7 +158,7 @@ void EditablePolygon::computeManipulationPoint()
 // ===== SETTERS AND GETTERS =====
 void EditablePolygon::SetActive(bool activate)
 {
-    isActive = activate;
+    EditableArea::SetActive(activate);
     
     if (isActive)
     {
@@ -179,36 +182,40 @@ void EditablePolygon::SetActive(bool activate)
 bool EditablePolygon::TryBeginPointMove(const Point<double>& hitPoint)
 {
     bool hitResult = false;
-    
-    // Are we grabbing the manipulation dot ?
-    if (manipulationPointInPixels.getDistanceFrom(hitPoint)
-        < (centerCircleRadius+centerContourWidth)) // same radius than the center
+
+    // If any manipulation is authorized (not only the translation)
+    if (!enableTranslationOnly)
     {
-        pointDraggedId = EditableAreaPointId::ManipulationPoint;
-        hitResult = true;
-    }
-    
-    // Are we grabbing one of the contour points ?
-    for (int i=0; (i < contourPointsInPixels.size() && !hitResult) ; i++)
-    {
-        if (contourPointsInPixels[i].getDistanceFrom(hitPoint) < pointDraggingRadius)
+        // Are we grabbing the manipulation dot ?
+        if (manipulationPointInPixels.getDistanceFrom(hitPoint)
+            < (centerCircleRadius+centerContourWidth)) // same radius than the center
         {
-            pointDraggedId = i;
+            pointDraggedId = EditableAreaPointId::ManipulationPoint;
             hitResult = true;
         }
-    }
-    
-    // Are we grabbing the center ?
-    if (!hitResult)
-    {
-        if (centerInPixels.getDistanceFrom(hitPoint.toDouble())
-            < (centerCircleRadius+centerContourWidth))
+        
+        // Are we grabbing one of the contour points ?
+        for (int i=0; (i < contourPointsInPixels.size() && !hitResult) ; i++)
         {
-            pointDraggedId = EditableAreaPointId::Center;
-            hitResult = true;
+            if (contourPointsInPixels[i].getDistanceFrom(hitPoint) < pointDraggingRadius)
+            {
+                pointDraggedId = i;
+                hitResult = true;
+            }
+        }
+        
+        // Are we grabbing the center ?
+        if (!hitResult)
+        {
+            if (centerInPixels.getDistanceFrom(hitPoint.toDouble())
+                < (centerCircleRadius+centerContourWidth))
+            {
+                pointDraggedId = EditableAreaPointId::Center;
+                hitResult = true;
+            }
         }
     }
-    
+
     // Finally, was the point inside the polygon ? (which starts a translation)
     if (!hitResult)
     {
@@ -223,9 +230,9 @@ bool EditablePolygon::TryBeginPointMove(const Point<double>& hitPoint)
     return hitResult;
 }
 
-bool EditablePolygon::TryMovePoint(const Point<double>& newLocation)
+AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
 {
-    bool pointMoved = false;
+    AreaEventType areaEventType;
     
     // Simple contour point dragging
     if (pointDraggedId >= 0)
@@ -237,7 +244,7 @@ bool EditablePolygon::TryMovePoint(const Point<double>& newLocation)
             contourPoints[pointDraggedId] = Point<double>(
                                             newLocation.x / (double)parentCanvas->getWidth(),
                                             newLocation.y / (double)parentCanvas->getHeight());
-            pointMoved = true;
+            areaEventType = AreaEventType::ShapeChanged;
         }
     }
     
@@ -245,7 +252,7 @@ bool EditablePolygon::TryMovePoint(const Point<double>& newLocation)
     {
         // Rotation will be applied anyway...
         // Security needed for point to stay within the canvas ?
-        pointMoved = true;
+        areaEventType = AreaEventType::RotScale;
         
         // Computation of the RotScale transformation needed to move the manipulation
         // point to this new location (RotScale relative to the center)
@@ -328,7 +335,7 @@ bool EditablePolygon::TryMovePoint(const Point<double>& newLocation)
                                    newLocation.y / ((double)parentCanvas->getHeight()) );
             
             computeManipulationPoint();
-            pointMoved = true;
+            areaEventType = AreaEventType::ShapeChanged;
         }
     }
     
@@ -344,16 +351,16 @@ bool EditablePolygon::TryMovePoint(const Point<double>& newLocation)
         if (parentCanvas->getLocalBounds().contains(boundingBoxContour.toNearestInt()))
         {
             Translate(translation);
-            pointMoved = true;
+            areaEventType = AreaEventType::Translation;
             // Actualisation en prévision du prochain petit déplacement
             lastLocation = newLocation;
         }
     }
     
     // Graphic updates to all base attributes inherited
-    if (pointMoved)
+    if (areaEventType != AreaEventType::NothingHappened)
         InteractivePolygon::CanvasResized(this->parentCanvas);
-    return pointMoved;
+    return areaEventType;
 }
 
 

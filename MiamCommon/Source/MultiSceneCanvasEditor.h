@@ -24,7 +24,7 @@ namespace Miam {
     
     
     
-    /// \brief
+    /// \brief Allows the edition of the canvas itself
     class MultiSceneCanvasEditor : public MultiSceneCanvasInteractor
     {
         
@@ -62,6 +62,7 @@ namespace Miam {
         
         
         // ------ Scenes managing ------
+        
         /// \brief Moves the selected scene towards the first position, if possible
         ///
         /// \return Wether the move was actually done or not

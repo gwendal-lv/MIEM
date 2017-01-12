@@ -14,13 +14,17 @@
 // Other includes
 
 #include "View.h"
+#include "Presenter.h"
+
+#include "SceneEvent.h"
 
 using namespace Miam;
 
 
 // ========== CONSTRUCTION and DESTRUCTION ==========
 
-GraphicSessionManager::GraphicSessionManager(View* _view) :
+GraphicSessionManager::GraphicSessionManager(View* _view, Presenter* presenter_) :
+    IGraphicSessionManager(presenter_),
     view(_view)
 {
     setMode(GraphicSessionMode::Loading);
@@ -256,9 +260,21 @@ void GraphicSessionManager::CanvasModeChanged(CanvasManagerMode canvasMode)
 
 
 // ===== EVENTS FROM THE PRESENTER ITSELF =====
-void GraphicSessionManager::OnSceneChange(std::shared_ptr<EditableScene> newSelectedScene)
+
+void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_)
 {
-    sceneEditionComponent->SetSceneName(newSelectedScene->GetName());
+    
+    if (std::shared_ptr<AreaEvent> areaE = std::dynamic_pointer_cast<AreaEvent>(event_))
+    {
+        std::cout << "évènement aire graphique" << std::endl;
+    }
+    
+    else if (std::shared_ptr<SceneEvent> sceneE = std::dynamic_pointer_cast<SceneEvent>(event_))
+    {
+        std::cout << "évènement de scène" << std::endl;
+        sceneEditionComponent->SetSceneName(sceneE->GetNewScene()->GetName());
+    }
+    
 }
 
 

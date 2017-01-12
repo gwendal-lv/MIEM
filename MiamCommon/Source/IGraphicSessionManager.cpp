@@ -8,18 +8,20 @@
   ==============================================================================
 */
 
-#include "IGraphicSessionManager.h"
-
 #include <cmath>
+
+#include "IGraphicSessionManager.h"
+#include "IPresenter.h"
+
 
 using namespace Miam;
 
 
 
-IGraphicSessionManager::IGraphicSessionManager() :
+IGraphicSessionManager::IGraphicSessionManager(IPresenter* presenter_) :
     multiCanvasComponent(new MultiCanvasComponent(this)) // first init of shared_ptr
 {
-    
+    presenter = presenter_;
 }
 
 

@@ -14,7 +14,7 @@
 #include <memory>
 #include <vector>
 
-#include "IModel.h"
+#include "SpatModel.h"
 
 
 
@@ -27,7 +27,7 @@ namespace Miam
     
     
     /// \brief
-    class Model : public IModel
+    class Model : public SpatModel
     {
         
         

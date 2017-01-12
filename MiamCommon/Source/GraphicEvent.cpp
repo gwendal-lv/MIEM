@@ -1,32 +1,15 @@
 /*
   ==============================================================================
 
-    EditableArea.cpp
-    Created: 12 Apr 2016 4:39:52pm
+    GraphicEvent.cpp
+    Created: 31 Dec 2016 10:16:44am
     Author:  Gwendal Le Vaillant
 
   ==============================================================================
 */
 
-#include "EditableArea.h"
+#include "GraphicEvent.h"
 
 
 using namespace Miam;
-
-
-
-EditableArea::EditableArea()
-{
-    enableTranslationOnly = false;
-}
-
-
-EditableArea::~EditableArea()
-{
-
-}
-
-
-
-
 

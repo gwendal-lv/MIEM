@@ -2,7 +2,7 @@
   ==============================================================================
 
     Exciter.h
-    Created: 17 Nov 2016 2:03:05pm
+    Created: 11 Jan 2017 2:36:45pm
     Author:  Gwendal Le Vaillant
 
   ==============================================================================
@@ -12,36 +12,50 @@
 #define EXCITER_H_INCLUDED
 
 
+#include <vector>
+
+#include "EditablePolygon.h"
+
 
 namespace Miam
 {
     
-    /// \brief A graphical scene made of areas and exciters, to be drawn on a SceneCanvasComponent
-    ///
-    ///
-    class Exciter
+    /// \brief 
+    class Exciter : public EditablePolygon
     {
         
         
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
         protected :
+        
         double volume;
         
+        /// \brief Ids of the Mouse/touch inputs manipulating this area
+        std::vector<int> touchInputSources;
         
+        std::shared_ptr<EditablePolygon> volumeControlArea;
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
-        
+        public :
         
         
         
         // = = = = = = = = = = METHODS = = = = = = = = = =
+        public :
+        
+        /// \brief Will automatically define the shape of the exciter
+        Exciter();
+        virtual ~Exciter() {}
+        
+        
         
     };
     
     
     
 }
+
 
 
 

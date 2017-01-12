@@ -13,6 +13,7 @@
 
 #include "IInteractiveArea.h"
 
+#include "AreaEvent.h"
 
 namespace Miam
 {
@@ -44,8 +45,8 @@ namespace Miam
         /// EditableArea::TryBeginPointMove was successful. The move order may not be obeyed if
         /// not validated by the area itself.
         ///
-        /// \return Wether the point was moved or not.
-        virtual bool TryMovePoint(const Point<double>& newLocation) = 0;
+        /// \return An information of what happened to this area during this move
+        virtual AreaEventType TryMovePoint(const Point<double>& newLocation) = 0;
         /// \brief Stop the movement and unselects the internally selected point.
         virtual void EndPointMove() = 0;
         
@@ -56,8 +57,10 @@ namespace Miam
         ///
         /// \param translation Vector describing the translation (pixel coordinates).
         virtual void Translate(const Point<double>& translation) = 0;
-        /// \brief Called from the SceneEditionManager, see EditableArea::isActive
+        /// \brief See EditableArea::isActive
         virtual void SetActive(bool activate) = 0;
+        /// \brief See EditableArea::enableTranslationOnly
+        virtual void SetEnableTranslationOnly(bool enableTranslationOnly) = 0;
         
         // Various updates
         protected :

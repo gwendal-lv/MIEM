@@ -13,15 +13,20 @@
 
 // Other includes
 
+#include "IPresenter.h"
 #include "View.h"
+
+#include "AreaEvent.h"
+#include "Exciter.h"
 
 using namespace Miam;
 
 
 // ========== CONSTRUCTION and DESTRUCTION ==========
 
-GraphicSessionManager::GraphicSessionManager(View* _view) :
-    view(_view)
+GraphicSessionManager::GraphicSessionManager(IPresenter* presenter_, View* view_) :
+    IGraphicSessionManager(presenter_),
+    view(view_)
 {
 
     
@@ -31,7 +36,7 @@ GraphicSessionManager::GraphicSessionManager(View* _view) :
     // On doit créer les sous-objets graphiques de canevas (View) avant de
     // les transmettre au sous-module de gestion de canevas (Presenter) que l'on crée
     // d'ailleurs ici aussi.
-    canvasManagers.push_back(new MultiSceneCanvasEditor(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas1));
+    canvasManagers.push_back(new MultiSceneCanvasManager(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas1));
     /*
     canvasManagers.push_back(new MultiSceneCanvasEditor(this, multiCanvasComponent->AddCanvas(),  SceneCanvasComponent::Id::Canvas2));
      */
@@ -49,14 +54,14 @@ GraphicSessionManager::GraphicSessionManager(View* _view) :
     view->CompleteInitialization(this, multiCanvasComponent);
     
     
-    // And states of the canvases
+    // And states of the canvases are forced
     for (size_t i=0 ; i<canvasManagers.size() ; i++)
         canvasManagers[i]->SetMode(CanvasManagerMode::Unselected);
     
     
     // SÉLECTION/CHARGEMENT D'UN TRUC PAR DÉFAUT
     nextAreaId = 0; // plus tard : valeur contenue dans le fichier de sauvegarde
-    SetSelectedCanvas(canvasManagers.front());
+    canvasManagers.front()->SetMode(CanvasManagerMode::NothingSelected);
     
     
 }
@@ -84,7 +89,7 @@ void GraphicSessionManager::__LoadDefaultTest()
 std::shared_ptr<IEditableArea> GraphicSessionManager::GetSelectedArea()
 {
     if (selectedCanvas)
-        return getSelectedCanvasAsEditable()->GetSelectedArea();
+        return getSelectedCanvasAsManager()->GetSelectedArea();
     else
         return nullptr;
 }
@@ -132,16 +137,28 @@ void GraphicSessionManager::SetSelectedCanvas(MultiSceneCanvasInteractor* _selec
     }
 }
 
-MultiSceneCanvasEditor* GraphicSessionManager::getSelectedCanvasAsEditable()
+MultiSceneCanvasManager* GraphicSessionManager::getSelectedCanvasAsManager()
 {
-    MultiSceneCanvasEditor* canvasPtr = dynamic_cast<MultiSceneCanvasEditor*>( selectedCanvas);
+    MultiSceneCanvasManager* canvasPtr = dynamic_cast<MultiSceneCanvasManager*>( selectedCanvas);
     if (canvasPtr)
         return canvasPtr;
-    else throw std::runtime_error("Canvas cannot be casted a Miam::MultiSceneCanvasEditor");
+    else throw std::runtime_error("Canvas cannot be casted as a Miam::MultiSceneCanvasManager");
 }
 
 
-
+// ===== EVENTS FROM THE PRESENTER ITSELF =====
+void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_)
+{
+    // Event about an Area
+    if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(event_))
+    {
+        // Event about an Exciter in particular : we'll have to update the spat mix !
+        if (auto exciter = std::dynamic_pointer_cast<Exciter>(areaE->GetConcernedArea()))
+        {
+            //std::cout << "mix à mettre à jour" << std::endl;
+        }
+    }
+}
 
 
 void GraphicSessionManager::CanvasModeChanged(CanvasManagerMode canvasMode)
@@ -151,13 +168,6 @@ void GraphicSessionManager::CanvasModeChanged(CanvasManagerMode canvasMode)
 
 
 
-
-
-// ===== EVENTS FROM THE PRESENTER ITSELF =====
-void GraphicSessionManager::OnSceneChange(std::shared_ptr<EditableScene> newSelectedScene)
-{
-    // À implémenter
-}
 
 
 

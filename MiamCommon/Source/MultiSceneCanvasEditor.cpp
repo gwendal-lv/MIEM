@@ -48,7 +48,7 @@ std::vector<std::shared_ptr<EditableScene>>::iterator MultiSceneCanvasEditor::Ge
 {
     auto it = std::find(scenes.begin(), scenes.end(), selectedScene);
     if (it == scenes.end())
-        throw std::runtime_error("No selected area : cannot return an iterator to it");
+        throw std::runtime_error("No selected scene : cannot return an iterator to it");
     else
         return it;
 }

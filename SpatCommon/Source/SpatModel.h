@@ -1,19 +1,21 @@
 /*
   ==============================================================================
 
-    IModel.h
+    SpatModel.h
     Created: 28 Nov 2016 11:02:21pm
     Author:  Gwendal Le Vaillant
 
   ==============================================================================
 */
 
-#ifndef IMODEL_H_INCLUDED
-#define IMODEL_H_INCLUDED
+#ifndef SPATMODEL_H_INCLUDED
+#define SPATMODEL_H_INCLUDED
 
 
 #include <vector>
 #include <memory>
+
+#include "IModel.h"
 
 #include "SpatType.h"
 #include "Speaker.h"
@@ -30,7 +32,7 @@ namespace Miam
     
     
     /// \brief
-    class IModel
+    class SpatModel : public IModel
     {
         
         
@@ -68,8 +70,8 @@ namespace Miam
         public :
         
         // - - - - - Construction / destruction - - - - -
-        IModel(Presenter* _presenter);
-        virtual ~IModel();
+        SpatModel(Presenter* _presenter);
+        virtual ~SpatModel();
         
         // - - - - - Speakers management - - - - -
         virtual void AddSpeaker();
@@ -83,4 +85,4 @@ namespace Miam
 
 
 
-#endif  // IMODEL_H_INCLUDED
+#endif  // SPATMODEL_H_INCLUDED

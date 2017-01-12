@@ -38,7 +38,7 @@ namespace Miam {
     class EditableScene;
     
     
-    /// \brief The "Presenter-side" methods and attributes of a MultiSceneCanvasComponent
+    /// \brief Manages the interaction with some Miam::EditableScene
     ///
     ///
     class MultiSceneCanvasInteractor
@@ -115,9 +115,9 @@ namespace Miam {
         ///
         /// The first (index 0) is supposed to be drawn first (deepest layer)
         /// Called by the associated canvas component (View module)
-        std::shared_ptr<IDrawableArea> GetDrawableArea(int _index);
+        std::shared_ptr<IDrawableArea> GetDrawableObject(int index_);
         /// \brief Max argument for Miam::MultiSceneCanvasInteractor::GetDrawableArea
-        size_t GetDrawableAreasCount();
+        size_t GetDrawableObjectsCount();
         
         SceneCanvasComponent::Id GetId() {return selfId;}
         
@@ -145,6 +145,7 @@ namespace Miam {
         
         // ------ Scenes managing : Add and Delete ------
         virtual void AddScene(std::string name);
+        virtual void AddScene(std::shared_ptr<EditableScene> newScene);
         /// Returns wether the selected scene has been deleted or not (if it
         /// was the last one)
         virtual bool DeleteScene();
@@ -164,9 +165,9 @@ namespace Miam {
         
         // ---------- Events from CanvasComponent (from View) ----------
         public :
-        void OnCanvasMouseDown(Point<int>& clicLocation);
-        void OnCanvasMouseDrag(Point<int>& mouseLocation);
-        void OnCanvasMouseUp();
+        void OnCanvasMouseDown(const MouseEvent& mouseE);
+        void OnCanvasMouseDrag(const MouseEvent& mouseE);
+        void OnCanvasMouseUp(const MouseEvent& mouseE);
         
 		//public :
 			//virtual void OnSurfaceChanged(double newSurface) = 0;

@@ -98,7 +98,7 @@ public:
             setFullScreen(true);
 #else
             centreWithSize (getWidth(), getHeight());
-            mainWindow->setResizable(true, true);
+            setResizable(true, true);
 #endif
             setVisible (true);
         }
