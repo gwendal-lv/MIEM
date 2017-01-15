@@ -103,7 +103,7 @@ void MultiSceneCanvasInteractor::SetMode(Miam::CanvasManagerMode newMode)
 
 // - - - - - - - - - - Getters and Setters - - - - - - - - - -
 
-std::shared_ptr<IDrawableArea> MultiSceneCanvasInteractor::GetDrawableObject(int index_)
+std::shared_ptr<IDrawableArea> MultiSceneCanvasInteractor::GetDrawableObject(size_t index_)
 {
     return selectedScene->GetDrawableObject(index_);
 }
@@ -140,7 +140,7 @@ int MultiSceneCanvasInteractor::GetSelectedSceneId()
 
 void MultiSceneCanvasInteractor::SelectScene(int id)
 {
-    if ( 0 <= id && id < scenes.size() )
+    if ( 0 <= id && id < (int)(scenes.size()) )
     {
         // Unselection of any area first
         SetMode(CanvasManagerMode::NothingSelected);
@@ -217,7 +217,7 @@ bool MultiSceneCanvasInteractor::DeleteScene()
 
 void MultiSceneCanvasInteractor::__AddTestAreas()
 {
-    for (int i=0 ; i < scenes.size() ; i++)
+    for (size_t i=0 ; i < scenes.size() ; i++)
     {
         int areasCount = 2+(rand()%3);
         

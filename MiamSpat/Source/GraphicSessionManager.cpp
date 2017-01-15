@@ -77,7 +77,7 @@ void GraphicSessionManager::__LoadDefaultTest()
     srand(2016); // GRAINE fixée ici
     
     
-    for(int i=0 ; i<canvasManagers.size(); i++)
+    for(size_t i=0 ; i<canvasManagers.size(); i++)
         canvasManagers[i]->__AddTestAreas();
 }
 
@@ -161,7 +161,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 }
 
 
-void GraphicSessionManager::CanvasModeChanged(CanvasManagerMode canvasMode)
+void GraphicSessionManager::CanvasModeChanged(CanvasManagerMode /*canvasMode*/)
 {
     
 }

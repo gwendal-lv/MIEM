@@ -61,7 +61,7 @@ void DrawablePolygon::createJucePolygon(int width, int height)
 {
     contour.clear();
     contour.startNewSubPath(contourPoints[0].toFloat());
-    for (int i=1; i<contourPoints.size() ; i++)
+    for (size_t i=1; i<contourPoints.size() ; i++)
         contour.lineTo(contourPoints[i].toFloat());
     contour.closeSubPath();
     

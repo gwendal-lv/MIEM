@@ -69,9 +69,9 @@ namespace Miam {
 
         public :
         // Override of pure virtual functions from the abstract editable area
-        bool TryBeginPointMove(const Point<double>& hitPoint) override;
+		AreaEventType TryBeginPointMove(const Point<double>& hitPoint) override;
         AreaEventType TryMovePoint(const Point<double>& newLocation) override;
-        void EndPointMove() override;
+		AreaEventType EndPointMove() override;
         void Translate(const Point<double>& translation) override;
         protected :
         void recreateNormalizedPoints() override;
@@ -95,7 +95,7 @@ namespace Miam {
         private :
         bool isNewContourPointValid(const Point<double>& newLocation);
         bool isNewCenterValid(const Point<double>& newLocation);
-        bool isCenterValidWithoutContourPoint(int contourPointId);
+        bool isCenterValidWithoutContourPoint(size_t contourPointId);
         void insertPointInPixels(const Point<double>& newContourPoint, int position);
         void deletePoint(int position);
         

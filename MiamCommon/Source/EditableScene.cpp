@@ -189,10 +189,10 @@ void EditableScene::SendSelectedAreaBackward()
             {
                 // at first, we need to find where the area was before
                 int selectedAreaOrder = -1;
-                for (int i=0 ; i<areas.size() ; i++)
+                for (size_t i=0 ; i<areas.size() ; i++)
                 {
                     if (areas[i] == selectedArea)
-                        selectedAreaOrder = i;
+                        selectedAreaOrder = (int)i;
                 }
                 // then we udpate all what's necessary and we change the value
                 areas[selectedAreaOrder] = areas[selectedAreaOrder-1];
@@ -214,10 +214,10 @@ void EditableScene::BringSelectedAreaForward()
             {
                 // at first, we need to find where the area was before
                 int selectedAreaOrder = -1;
-                for (int i=0 ; i<areas.size() ; i++)
+                for (size_t i=0 ; i<areas.size() ; i++)
                 {
                     if (areas[i] == selectedArea)
-                        selectedAreaOrder = i;
+                        selectedAreaOrder = (int)i;
                 }
                 // then we udpate all what's necessary and we change the value
                 areas[selectedAreaOrder] = areas[selectedAreaOrder+1];
@@ -246,7 +246,7 @@ void EditableScene::BringSelectedAreaToFront()
                         selectedAreaOrder = (int)i;
                 }
                 // then we udpate all what's necessary and we change the value
-                for (int i=selectedAreaOrder ; i <= areas.size()-2 ; i++)
+                for (size_t i=selectedAreaOrder ; i <= areas.size()-2 ; i++)
                     areas[i] = areas[i+1];
                 areas.back() = selectedArea;
             }
@@ -277,14 +277,21 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent&
             if (canvasManager->GetMode() == CanvasManagerMode::AreaSelected)
             {
                 // did we clic next to a point, or at least inside the area ?
-                if(! selectedArea->TryBeginPointMove(clicLocation))
+				AreaEventType lastEventType = selectedArea->TryBeginPointMove(clicLocation);
+                if(lastEventType == AreaEventType::NothingHappened)
                 {
                     /* if not, we are sure that we clicked outside (checked by tryBeginPointMove)
                      * => it is a DEselection (maybe selection of another area, just after this)
                      */
-                    SetSelectedArea(nullptr); // will signal CanvasManager
-                    // !!!!! NO event sent to signal area selection !!!!!
-                    // The events will come later (with points moves)
+					graphicE = std::shared_ptr<GraphicEvent>(new AreaEvent(selectedArea, AreaEventType::Unselected));
+						// will signal CanvasManager
+						// = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+						// = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+						// THE DIRECT SIGNAL TO CANVAS MANAGER SHOULD STOP
+						// ONLY EVENTS SHOULD INFORM PARENT MANAGERS
+						// = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+						// = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+                    SetSelectedArea(nullptr); 
                 }
             }
             // While no area is selected : we look for a new one to select,
@@ -300,8 +307,18 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent&
                     
                     // On lance une EXCEPTION SI LE CAST n'A PAS FONCTIONNÉ
                     std::shared_ptr<EditableArea> areaToSelect = std::dynamic_pointer_cast<EditableArea>(areas[i]);
-                    if (areaToSelect)
-                        SetSelectedArea(areaToSelect);
+					if (areaToSelect)
+					{
+						// will signal CanvasManager
+						// = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+						// = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+						// THE DIRECT SIGNAL TO CANVAS MANAGER SHOULD STOP
+						// ONLY EVENTS SHOULD INFORM PARENT MANAGERS
+						// = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+						// = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+						SetSelectedArea(areaToSelect);
+						graphicE = std::shared_ptr<GraphicEvent>(new AreaEvent(areaToSelect, AreaEventType::Selected));
+					}
                     else
                         throw std::runtime_error(std::string("Cannot cast the area that should be selected to a Miam::EditableArea"));
                 }
@@ -364,14 +381,14 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent&
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         // C'est là que tu dois mettre ton code de déplacement/ajout de point, pour
-        // n'importe quelle aire (et pas seulement une aire qui soit déjà sélectionnée
+        // n'importe quelle aire
         //
-        // Tu peux t'inspirer fortement de ce qui est écrit au dessus...
-        //
-        // OU ALORS OU ALORS OU ALORS OU ALORS
-        //
-        // Tu fais un héritage de l'EditableScene, et tu override carrément les
-        // méthode de gestion des évènements souris
+        // Tu peux t'inspirer fortement du code de l' "interactive scene"
+		// OU ALORS JE LE FAIS DIRECTEMENT EN PRECISANT SI LA SCENE INTERACTIVE AGIT SUR
+		// TOUT = areas + excitateurs, OU JUSTE SUR LES AREAS
+		//
+		// Je viens de tester, ça marche en multi-touch pour mes excitateurs... Avec 1
+		// point de touch par zone par contre (sinon ça fout la merde)
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     }

@@ -115,7 +115,7 @@ namespace Miam {
         ///
         /// The first (index 0) is supposed to be drawn first (deepest layer)
         /// Called by the associated canvas component (View module)
-        std::shared_ptr<IDrawableArea> GetDrawableObject(int index_);
+        std::shared_ptr<IDrawableArea> GetDrawableObject(size_t index_);
         /// \brief Max argument for Miam::MultiSceneCanvasInteractor::GetDrawableArea
         size_t GetDrawableObjectsCount();
         

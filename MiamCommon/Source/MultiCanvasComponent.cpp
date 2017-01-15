@@ -93,7 +93,7 @@ void MultiCanvasComponent::resized()
         canvasResizeDiamondTransform = AffineTransform::rotation(float_Pi / 4.0f, diamond.getCentreX(), diamond.getCentreY());
         
         // Code de placement pour 2 canevas avec barre de déplacement
-        for (int i=0 ; i<multiSceneCanvasComponents.size() ; i++)
+        for (size_t i=0 ; i<multiSceneCanvasComponents.size() ; i++)
         {
             Rectangle<int> rCanvas = getLocalBounds();
             rCanvas.removeFromTop(8);

@@ -40,7 +40,7 @@ namespace Miam
         
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
-        protected : // instead of private so the classes based on this can acces this attribut
+        protected :
         
         bool allowAreaSelection;
         

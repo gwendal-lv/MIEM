@@ -39,16 +39,18 @@ namespace Miam
         /// \param hitPoint The user event point that may be associated to one of the
         /// polygon's points.
         ///
-        /// \return Whether the hitPoint has launched a point move or not
-        virtual bool TryBeginPointMove(const Point<double>& hitPoint) = 0;
+        /// \return An info about what just happened (for example has something begun ?)
+        virtual AreaEventType TryBeginPointMove(const Point<double>& hitPoint) = 0;
         /// \brief Actually moves the point which has been internally selected if
         /// EditableArea::TryBeginPointMove was successful. The move order may not be obeyed if
         /// not validated by the area itself.
         ///
-        /// \return An information of what happened to this area during this move
+        /// \return An information of what happened to this area during this last small move
         virtual AreaEventType TryMovePoint(const Point<double>& newLocation) = 0;
         /// \brief Stop the movement and unselects the internally selected point.
-        virtual void EndPointMove() = 0;
+		///
+		/// \return An info about what just happened (if something just stopped for example)
+        virtual AreaEventType EndPointMove() = 0;
         
         
         // ----- Operations on whole polygon -----

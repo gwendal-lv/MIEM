@@ -50,7 +50,7 @@ void SceneCanvasComponent::paint (Graphics& g)
     }
     
     // Areas painting (including exciters if existing)
-    for (int i=0;i<canvasManager->GetDrawableObjectsCount();i++)
+    for (size_t i=0;i<canvasManager->GetDrawableObjectsCount();i++)
         canvasManager->GetDrawableObject(i)->Paint(g);
     
     

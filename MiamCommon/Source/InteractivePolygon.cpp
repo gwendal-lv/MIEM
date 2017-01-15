@@ -53,7 +53,7 @@ void InteractivePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
     
     // Pixel contour points
     contourPointsInPixels.clear();
-    for(int i=0 ; i<contourPoints.size() ; i++)
+    for(size_t i=0 ; i<contourPoints.size() ; i++)
         contourPointsInPixels.push_back(Point<double>(contourPoints[i].x*parentCanvas->getWidth(),
                                                       contourPoints[i].y*parentCanvas->getHeight()));
     
@@ -72,7 +72,7 @@ void InteractivePolygon::updateSubTriangles()
     // We begin by the annoying one
     subTriangles.push_back(SubTriangle(centerInPixels, contourPointsInPixels.back(), contourPointsInPixels.front()));
     // Then add the others
-    for (int i = 0; i <contourPointsInPixels.size()-1; i++)
+    for (size_t i = 0; i <contourPointsInPixels.size()-1; i++)
     {
         subTriangles.push_back(SubTriangle(centerInPixels, contourPointsInPixels[i], contourPointsInPixels[i+1]));
     }
@@ -81,7 +81,7 @@ void InteractivePolygon::updateSubTriangles()
 void InteractivePolygon::computeSurface()
 {
 	double S = 0;
-	for (int i = 0; i < subTriangles.size(); ++i)
+	for (size_t i = 0; i < subTriangles.size(); ++i)
 		S += subTriangles[i].getSurface();
 	surface = S;
 }

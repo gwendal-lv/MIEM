@@ -38,10 +38,24 @@ public:
     //==============================================================================
     void initialise (const String& commandLine) override
     {
+		// This program may be launched from inside the MiamEdit program :
+		// it is absolutely necessary to check the command-line !
+		if (commandLine.isEmpty())
+		{
+			std::cout << "MiamSpat standalone" << std::endl;
+		}
+		else
+		{
+			// May have been lauched with the OS specifying a file for example ?
+
+			// Or just from MiamEdit, for now
+			std::cout << "MiamSpat lauched from MiamEdit" << std::endl;
+		}
+
+
         // This method is where you should put your application's initialisation code..
 
         mainWindow = new MainWindow (getApplicationName());
-
 
 
         // Instanciation of the 3 main parts of the application : Model, Presenter, View
@@ -72,7 +86,7 @@ public:
         quit();
     }
 
-    void anotherInstanceStarted (const String& commandLine) override
+    void anotherInstanceStarted (const String& /*commandLine*/) override
     {
         // When another instance of the app is launched while this one is running,
         // this method is invoked, and the commandLine parameter tells you what

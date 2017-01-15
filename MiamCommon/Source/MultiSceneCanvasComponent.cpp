@@ -88,8 +88,10 @@ void MultiSceneCanvasComponent::UpdateSceneButtons(std::vector< std::shared_ptr<
         // Then we create the new ones
         for (size_t i = 0; i<scenes.size() ; i++)
         {
+			// Actual addition
             addButton(scenes[i]->GetName());
-            if (i == selectedSceneId)
+			// Special graphic attributes for the newly selected one
+            if (i == (size_t)(selectedSceneId))
             {
                 sceneChoiceTextButtons[i]->setColour(TextButton::buttonColourId, Colours::black);
                 sceneChoiceTextButtons[i]->setColour(TextButton::textColourOffId, Colours::white);
@@ -124,6 +126,10 @@ void MultiSceneCanvasComponent::addButton(std::string buttonName)
     sceneChoiceTextButtons.push_back(new TextButton(buttonName));
     addAndMakeVisible(sceneChoiceTextButtons.back());
     sceneChoiceTextButtons.back()->addListener(this);
+
+	// Solves an issue with touch : some touch events are interpreted (win, mac)
+	// as "right clicks" and would not trigger the button...
+	sceneChoiceTextButtons.back()->setTriggeredOnMouseDown(true); 
 }
 
 void MultiSceneCanvasComponent::buttonClicked(Button* buttonThatWasClicked)

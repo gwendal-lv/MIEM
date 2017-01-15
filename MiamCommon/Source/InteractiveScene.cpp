@@ -16,6 +16,9 @@
 #include "InteractiveArea.h"
 #include "Exciter.h"
 
+#ifdef _MSC_VER
+	#include "Windows.h" // for OutputDebugString(), std cout does not work...
+#endif
 
 using namespace Miam;
 
@@ -94,6 +97,9 @@ void InteractiveScene::AddArea(std::shared_ptr<IInteractiveArea> newArea)
 
 std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseDown(const MouseEvent& mouseE)
 {
+	// default : empty AREA event (TO DO : events may happen on exciters, etc, etc, ...)
+	std::shared_ptr<GraphicEvent> graphicE(new AreaEvent(nullptr, AreaEventType::NothingHappened));
+
     switch(excitersBehavior)
     {
         case ExcitersBehaviorType::AppearOnTouch :
@@ -107,16 +113,24 @@ std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseDown(const MouseEve
             
             // In this case, exciters already exist. We try to move one that is not
             // already linked to a touch source
-            bool pointMoveBegun = false;
-            for (size_t i=0 ; (i<currentExciters.size())&&(!pointMoveBegun) ; i++)
+
+			// While no exciter is selected : we look for a new one to select,
+			// starting from the area on the upper layer (last draw on canvas)
+            auto eventType = AreaEventType::NothingHappened;
+            for (int i=(int)currentExciters.size()-1; (i>=0)&&(eventType != AreaEventType::PointDragBegins) ; i--)
             {
                 // Function will check first if the area is not already dragged
-                pointMoveBegun = currentExciters[i]->TryBeginPointMove(mouseE.position.toDouble());
-                if (pointMoveBegun)
+                eventType = currentExciters[i]->TryBeginPointMove(mouseE.position.toDouble());
+                if (eventType == AreaEventType::PointDragBegins)
                 {
                     // Indicates the the move can begin
                     touchSourceToEditableArea[mouseE.source.getIndex()] = currentExciters[i];
-                    std::cout << mouseE.source.getIndex() << std::endl;
+#ifndef _MSC_VER
+                    std::cout << mouseE.source.getIndex() << std::endl; // A DEGAGEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEER
+#else
+					OutputDebugString((std::to_string(mouseE.source.getIndex()) + "\n").c_str());
+#endif
+					graphicE = std::shared_ptr<GraphicEvent>(new AreaEvent(currentExciters[i], eventType));
                 }
             }
             break;
@@ -126,7 +140,7 @@ std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseDown(const MouseEve
             break;
     }
     
-    return std::shared_ptr<GraphicEvent>(new GraphicEvent());
+	return graphicE;
 }
 std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseDrag(const MouseEvent& mouseE)
 {

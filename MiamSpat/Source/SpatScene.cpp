@@ -18,6 +18,8 @@ Miam::EditableScene(canvasManager_, canvasComponent_, false) // no area is selec
     // TEST TEST TEST EXCITATEURS
     currentExciters.push_back(std::shared_ptr<Exciter>(new Exciter()));
     currentExciters.back()->SetActive(true);
+	currentExciters.push_back(std::shared_ptr<Exciter>(new Exciter()));
+	currentExciters.back()->SetActive(true);
     //currentExciters.back()->SetEnableTranslationOnly(true);
     /*
     currentExciters.push_back(std::shared_ptr<Exciter>(new Exciter()));

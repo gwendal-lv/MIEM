@@ -40,9 +40,9 @@ namespace Miam
     {
         protected :
         SceneEventType eventType = SceneEventType::SceneChanged;
-        MultiSceneCanvasInteractor* canvasManager;
-        std::shared_ptr<EditableScene> oldScene;
-        std::shared_ptr<EditableScene> newScene;
+        MultiSceneCanvasInteractor* canvasManager = 0;
+        std::shared_ptr<EditableScene> oldScene = nullptr;
+        std::shared_ptr<EditableScene> newScene = nullptr;
         
         public :
         SceneEventType GetType() {return eventType;}

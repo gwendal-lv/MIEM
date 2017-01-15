@@ -30,17 +30,29 @@ namespace Miam
         
         NothingHappened,
         
+
+		// Events that happen at the beginning of a material input
+		PointDragBegins,
+		AnotherMonoTouchPointDragAlreadyBegun,
+
+		// Events (flows of events) happening during a modification
         ShapeChanged, ///< editing contour points
-        
         Translation,
-        
         //Rotation,
         //Scaling, ///< "surface changed" case
-        
         RotScale, ///< the whole area is being manipulated (but not translated)
+        //TraRotScale, ///< 2D modification from 2 touch point inputs
         
-        //TraRotScale, ///< would correspond to a microsft "delta manipulation"
-        
+
+		// Events that happen at the end of a material input
+		PointDragStops,
+
+
+
+		// related to selection state
+		Selected,
+		Unselected,
+
     };
     
     

@@ -78,7 +78,7 @@ void EditablePolygon::Paint(Graphics& g)
         if (!enableTranslationOnly)
         {
             // Then, we draw the coutour draggable points
-            for (int i=0 ; i<contourPointsInPixels.size() ; i++)
+            for (size_t i=0 ; i<contourPointsInPixels.size() ; i++)
             {
                 g.fillEllipse((float)contourPointsInPixels[i].x-contourPointsRadius,
                               (float)contourPointsInPixels[i].y-contourPointsRadius,
@@ -179,9 +179,17 @@ void EditablePolygon::SetActive(bool activate)
 
 
 
-bool EditablePolygon::TryBeginPointMove(const Point<double>& hitPoint)
+AreaEventType EditablePolygon::TryBeginPointMove(const Point<double>& hitPoint)
 {
-    bool hitResult = false;
+	AreaEventType eventType = AreaEventType::NothingHappened;
+
+	// ONE TOUCH POINT IS AUTHORIZED BY AREA, AT THE MOMENT
+	// And this is decided... Here
+	if (pointDraggedId != EditableAreaPointId::None)
+	{
+		eventType = AreaEventType::AnotherMonoTouchPointDragAlreadyBegun;
+		return eventType;
+	}
 
     // If any manipulation is authorized (not only the translation)
     if (!enableTranslationOnly)
@@ -191,48 +199,48 @@ bool EditablePolygon::TryBeginPointMove(const Point<double>& hitPoint)
             < (centerCircleRadius+centerContourWidth)) // same radius than the center
         {
             pointDraggedId = EditableAreaPointId::ManipulationPoint;
-            hitResult = true;
+			eventType = AreaEventType::PointDragBegins;
         }
         
         // Are we grabbing one of the contour points ?
-        for (int i=0; (i < contourPointsInPixels.size() && !hitResult) ; i++)
+        for (size_t i=0; (i < contourPointsInPixels.size() && (eventType!=AreaEventType::PointDragBegins)) ; i++)
         {
             if (contourPointsInPixels[i].getDistanceFrom(hitPoint) < pointDraggingRadius)
             {
-                pointDraggedId = i;
-                hitResult = true;
+                pointDraggedId = (int)i;
+				eventType = AreaEventType::PointDragBegins;
             }
         }
         
         // Are we grabbing the center ?
-        if (!hitResult)
+        if (eventType != AreaEventType::PointDragBegins)
         {
             if (centerInPixels.getDistanceFrom(hitPoint.toDouble())
                 < (centerCircleRadius+centerContourWidth))
             {
                 pointDraggedId = EditableAreaPointId::Center;
-                hitResult = true;
+				eventType = AreaEventType::PointDragBegins;
             }
         }
     }
 
     // Finally, was the point inside the polygon ? (which starts a translation)
-    if (!hitResult)
+    if (eventType != AreaEventType::PointDragBegins)
     {
         if (HitTest(hitPoint))
         {
             pointDraggedId = EditableAreaPointId::WholeArea;
             lastLocation = hitPoint;
-            hitResult = true;
+			eventType = AreaEventType::PointDragBegins;
         }
     }
     
-    return hitResult;
+	return eventType;
 }
 
 AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
 {
-    AreaEventType areaEventType;
+    AreaEventType areaEventType = AreaEventType::NothingHappened;
     
     // Simple contour point dragging
     if (pointDraggedId >= 0)
@@ -280,7 +288,7 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
         double minDistanceFromCenter = 0.0;
         bool wasSizeApplied = false;
         std::vector<Point<double>> newContourPoints;
-        for (int i=0 ; i<contourPointsInPixels.size() ;i++)
+        for (size_t i=0 ; i<contourPointsInPixels.size() ;i++)
         {
             newContourPoints.push_back(contourPointsInPixels[i] - centerInPixels);
             newContourPoints[i] = Point<double>(size * newContourPoints[i].x,
@@ -297,7 +305,7 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
             manipulationPointInPixels = newLocation;
         }
         // --- rotation is always applied ---
-        for (int i=0 ; i<contourPointsInPixels.size() ;i++)
+        for (size_t i=0 ; i<contourPointsInPixels.size() ;i++)
         {
             contourPointsInPixels[i] -= centerInPixels;
             contourPointsInPixels[i] = Point<double>(cos_a*contourPointsInPixels[i].x
@@ -318,7 +326,7 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
         }
         
         // After manipulation computation : normalized coordinates update
-        for (int i=0; i < contourPointsInPixels.size() ; i++)
+        for (size_t i=0; i < contourPointsInPixels.size() ; i++)
         {
             contourPoints[i] = Point<double>(
                                 contourPointsInPixels[i].x / ((double)parentCanvas->getWidth()) ,
@@ -364,10 +372,17 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
 }
 
 
-void EditablePolygon::EndPointMove()
+AreaEventType EditablePolygon::EndPointMove()
 {
+	// Always initialized, if some more complex code is written below, later
+	AreaEventType eventType = AreaEventType::NothingHappened;
+
+	// The point drag is always stopped without any check, for now
     computeManipulationPoint();
     pointDraggedId = EditableAreaPointId::None;
+	eventType = AreaEventType::PointDragStops;
+
+	return eventType;
 }
 
 
@@ -376,7 +391,7 @@ void EditablePolygon::Translate(const Point<double>& translation)
     centerInPixels += translation;
     center = Point<double>(centerInPixels.x / ((double)parentCanvas->getWidth()),
                            centerInPixels.y / ((double)parentCanvas->getHeight()) );
-    for (int i=0; i < contourPointsInPixels.size() ; i++)
+    for (size_t i=0; i < contourPointsInPixels.size() ; i++)
     {
         contourPointsInPixels[i] += translation;
         contourPoints[i] = Point<double>(
@@ -394,12 +409,12 @@ bool EditablePolygon::TryCreatePoint(const Point<double>& hitPoint)
     int closestPointIndex = -1;
     double closestDistance = parentCanvas->getWidth()+parentCanvas->getHeight();
     // At first, we look for the closest point
-    for (int i=0 ; i<contourPointsInPixels.size(); i++)
+    for (size_t i=0 ; i<contourPointsInPixels.size(); i++)
     {
         double currentDistance = hitPoint.getDistanceFrom(contourPointsInPixels[i]);
         if (currentDistance < closestDistance)
         {
-            closestPointIndex = i;
+            closestPointIndex = (int)i;
             closestDistance = currentDistance;
         }
     }
@@ -425,12 +440,12 @@ String EditablePolygon::TryDeletePoint(const Point<double>& hitPoint)
         int closestPointIndex = -1;
         double closestDistance = parentCanvas->getWidth()+parentCanvas->getHeight();
         // At first, we look for the closest point
-        for (int i=0 ; i<contourPointsInPixels.size(); i++)
+        for (size_t i=0 ; i<contourPointsInPixels.size(); i++)
         {
             double currentDistance = hitPoint.getDistanceFrom(contourPointsInPixels[i]);
             if (currentDistance < closestDistance)
             {
-                closestPointIndex = i;
+                closestPointIndex = (int)i;
                 closestDistance = currentDistance;
             }
         }
@@ -453,7 +468,7 @@ String EditablePolygon::TryDeletePoint(const Point<double>& hitPoint)
     else
         return String("Cannot delete point (min. 3 points required)");
 }
-bool EditablePolygon::isCenterValidWithoutContourPoint(int contourPointId)
+bool EditablePolygon::isCenterValidWithoutContourPoint(size_t contourPointId)
 {
     // We add all point but the one to delete
     Path testContour;
@@ -461,7 +476,7 @@ bool EditablePolygon::isCenterValidWithoutContourPoint(int contourPointId)
         testContour.startNewSubPath(contourPointsInPixels[0].toFloat());
     else
         testContour.startNewSubPath(contourPointsInPixels[1].toFloat());
-    for (int i=1; i<contourPointsInPixels.size() ; i++)
+    for (size_t i=1; i<contourPointsInPixels.size() ; i++)
     {
         if (i != contourPointId)
             testContour.lineTo(contourPointsInPixels[i].toFloat());
@@ -508,10 +523,10 @@ bool EditablePolygon::isNewCenterValid(const Point<double>& newLocation)
 {
     // We check if the center did not cross all the lines, one-by-one
     bool hasCrossed = false;
-    for (int i=0 ; (i<contourPointsInPixels.size() && !hasCrossed) ; i++)
+    for (size_t i=0 ; (i<contourPointsInPixels.size() && !hasCrossed) ; i++)
     {
         CartesianLine cartesianLine = CartesianLine(contourPointsInPixels[i],
-                contourPointsInPixels[Math::Modulo(i+1, (int)contourPointsInPixels.size())]);
+                contourPointsInPixels[Math::Modulo((int)i+1, (int)contourPointsInPixels.size())]);
         hasCrossed = cartesianLine.PointWentThrough(centerInPixels, newLocation);
     }
     return !hasCrossed;
@@ -536,7 +551,7 @@ void EditablePolygon::deletePoint(int position)
 void EditablePolygon::recreateNormalizedPoints()
 {
     contourPoints.clear();
-    for (int i=0 ; i<contourPointsInPixels.size() ; i++)
+    for (size_t i=0 ; i<contourPointsInPixels.size() ; i++)
     {
         contourPoints.push_back(Point<double>(contourPointsInPixels[i].x/parentCanvas->getWidth(),
                                               contourPointsInPixels[i].y/parentCanvas->getHeight()));
