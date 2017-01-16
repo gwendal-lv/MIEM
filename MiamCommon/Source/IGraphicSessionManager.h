@@ -115,6 +115,8 @@ namespace Miam
         /// then interprets it in terms of "audio features" to be transmitted to the
         /// Miam::Model via the Miam::Presenter
         virtual void HandleEventSync(std::shared_ptr<GraphicEvent> event_) = 0;
+
+
         
         
         // - - - - - Mouse Events - - - - -

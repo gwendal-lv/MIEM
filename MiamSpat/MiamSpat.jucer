@@ -151,6 +151,10 @@
           <FILE id="GSKMYh" name="readerwriterqueue.h" compile="0" resource="0"
                 file="../MiamCommon/Source/readerwriterqueue/readerwriterqueue.h"/>
         </GROUP>
+        <FILE id="yL79vC" name="AsyncParamChange.cpp" compile="1" resource="0"
+              file="../MiamCommon/Source/AsyncParamChange.cpp"/>
+        <FILE id="P91Fgx" name="AsyncParamChange.h" compile="0" resource="0"
+              file="../MiamCommon/Source/AsyncParamChange.h"/>
         <FILE id="tPoEI0" name="CartesianLine.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/CartesianLine.cpp"/>
         <FILE id="eK35Tw" name="CartesianLine.h" compile="0" resource="0" file="../MiamCommon/Source/CartesianLine.h"/>

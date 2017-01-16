@@ -156,7 +156,13 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
         if (auto exciter = std::dynamic_pointer_cast<Exciter>(areaE->GetConcernedArea()))
         {
             //std::cout << "mix à mettre à jour" << std::endl;
+			//DBG("mix à mettre à jour");
+			//AsyncParamChange
         }
+		else if(auto area = std::dynamic_pointer_cast<InteractiveArea>(areaE->GetConcernedArea()))
+		{
+
+		}
     }
 }
 
