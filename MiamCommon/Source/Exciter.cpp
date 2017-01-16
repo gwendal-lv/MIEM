@@ -26,5 +26,5 @@ volume(0.0)
     SetNameVisible(false);
     
     SetActive(true);
-    SetEnableTranslationOnly(false);
+    SetEnableTranslationOnly(true);
 }
