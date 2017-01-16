@@ -60,6 +60,8 @@ void MultiSceneCanvasInteractor::CallRepaint()
 
 // - - - - - - - - - - running Mode - - - - - - - - - -
 
+// The cases below are to be FORCED by the IGraphicSessionManager !
+// Or by the canvasinteractor itself
 void MultiSceneCanvasInteractor::SetMode(Miam::CanvasManagerMode newMode)
 {
     // We don't do a specific action on every mode change !
@@ -67,17 +69,22 @@ void MultiSceneCanvasInteractor::SetMode(Miam::CanvasManagerMode newMode)
     switch (newMode) {
         
         case CanvasManagerMode::Unselected:
+            // Unselection of a selected area (1 area selected for all canvases...)
             if (selectedScene) // on first scene adding... there would be a problem
                 GetSelectedScene()->SetSelectedArea(nullptr, false);
+            // Graphical updates
             if (mode != CanvasManagerMode::Unselected)
             {
                 canvasComponent->SetIsSelectedForEditing(false);
             }
             break;
             
-        case CanvasManagerMode::NothingSelected:
-            if (selectedScene) // on first scene adding... there would be a problem
-                GetSelectedScene()->SetSelectedArea(nullptr, false);
+        case CanvasManagerMode::SceneOnlySelected:
+            
+            // à quoi servent VRAIMENT les lignes là-dessous ?
+            /*if (selectedScene) // on first scene adding... there would be a problem
+             GetSelectedScene()->SetSelectedArea(nullptr, false);*/
+            // Graphical updates
             if (mode == CanvasManagerMode::Unselected)
             {
                 canvasComponent->SetIsSelectedForEditing(true);
@@ -143,12 +150,19 @@ void MultiSceneCanvasInteractor::SelectScene(int id)
     if ( 0 <= id && id < (int)(scenes.size()) )
     {
         // Unselection of any area first
-        SetMode(CanvasManagerMode::NothingSelected);
-        // Then : we might be the new canvas !
+        //SetMode(CanvasManagerMode::NothingSelected); // Something strange here..........
+        // and Deactivation of the scene
+        if (selectedScene)
+            selectedScene->OnUnselection();
+        
+        // Then : we become the new selected canvas (if we were not before)
         graphicSessionManager->SetSelectedCanvas(this);
         // No specific other check, we just create the informative event before changing
         std::shared_ptr<SceneEvent> graphicE(new SceneEvent(this, selectedScene, scenes[id]));
         selectedScene = std::dynamic_pointer_cast<EditableScene>(scenes[id]);
+        selectedScene->OnSelection();
+        
+        SetMode(CanvasManagerMode::SceneOnlySelected);
         
         // Graphic updates
         canvasComponent->UpdateSceneButtons(GetInteractiveScenes());

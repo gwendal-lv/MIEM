@@ -97,6 +97,12 @@ namespace Miam
         void BringSelectedAreaToFront();
         
         
+        
+        // - - - - - Selection events managing (orders from parent manager) - - - - -
+        virtual void OnSelection() override;
+        virtual void OnUnselection() override;
+        
+        
         // - - - - - Canvas (mouse) events managing - - - - -
         
         /// \brief Implements the beginning of the editing of a Miam::EditableArea,
@@ -111,6 +117,17 @@ namespace Miam
         /// n°2 : editon/manipulation/play with any area (they all stay in the
         /// same state), with an arbitrary number of touch inputs
         ///
+        
+        /// --------------------------------------------------------------------
+        /// --------------------------------------------------------------------
+        /// --------------------------------------------------------------------
+        /// --------------------------------------------------------------------
+        /// --------------------------------------------------------------------
+        /// TRANSFORMER LES PROTOTYPES : ON N'AURA QUE DES AREA EVENT
+        /// --------------------------------------------------------------------
+        /// --------------------------------------------------------------------
+        /// --------------------------------------------------------------------
+        /// --------------------------------------------------------------------
         virtual std::shared_ptr<GraphicEvent> OnCanvasMouseDown(const MouseEvent& mouseE) override;
         virtual std::shared_ptr<GraphicEvent> OnCanvasMouseDrag(const MouseEvent& mouseE) override;
         virtual std::shared_ptr<GraphicEvent> OnCanvasMouseUp(const MouseEvent& mouseE) override;

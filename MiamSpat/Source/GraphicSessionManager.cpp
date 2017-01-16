@@ -61,7 +61,7 @@ GraphicSessionManager::GraphicSessionManager(IPresenter* presenter_, View* view_
     
     // SÉLECTION/CHARGEMENT D'UN TRUC PAR DÉFAUT
     nextAreaId = 0; // plus tard : valeur contenue dans le fichier de sauvegarde
-    canvasManagers.front()->SetMode(CanvasManagerMode::NothingSelected);
+    canvasManagers.front()->SetMode(CanvasManagerMode::SceneOnlySelected);
     
     
 }
@@ -125,7 +125,7 @@ void GraphicSessionManager::SetSelectedCanvas(MultiSceneCanvasInteractor* _selec
         // "interacteur" va suffire
         selectedCanvas = _selectedCanvas;
         
-        selectedCanvas->SetMode(CanvasManagerMode::NothingSelected);
+        selectedCanvas->SetMode(CanvasManagerMode::SceneOnlySelected);
     
         //setMode(GraphicSessionMode::CanvasSelected);
         

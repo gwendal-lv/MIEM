@@ -30,29 +30,45 @@ namespace Miam
         
         NothingHappened,
         
+        
+        // - - - - - Events on areas addition / deletion - - - - -
+        
+        Added, ///< Area has just been added to the scene
+        Deleted, ///< Area has just been deleted to the scene
+        
+        
 
-		// Events that happen at the beginning of a material input
-		PointDragBegins,
-		AnotherMonoTouchPointDragAlreadyBegun,
+		// - - - - - Events that happen at the beginning of a material input - - - - -
+        
+		PointDragBegins, ///< The last input was close enough to a point to begin a 2D transformation
+		AnotherMonoTouchPointDragAlreadyBegun, ///< voilà
 
-		// Events (flows of events) happening during a modification
+        
+        
+		//  - - - - - Events (flows of events) happening during a modification - - - - -
+        
         ShapeChanged, ///< editing contour points
-        Translation,
+        Translation, ///< Pure translation
         //Rotation,
         //Scaling, ///< "surface changed" case
         RotScale, ///< the whole area is being manipulated (but not translated)
         //TraRotScale, ///< 2D modification from 2 touch point inputs
         
+        
 
-		// Events that happen at the end of a material input
-		PointDragStops,
+		//  - - - - - Events that happen at the end of a material input - - - - -
+        
+		PointDragStops, ///< The input was release and is not linked to the area anymore
 
 
 
-		// related to selection state
-		Selected,
-		Unselected,
+		//  - - - - - Event related to selection state - - - - -
+        
+		Selected, ///< Area has just been selected
+		Unselected, ///< Area has just been selected
 
+        
+        
     };
     
     

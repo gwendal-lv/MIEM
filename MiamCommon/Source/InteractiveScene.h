@@ -113,6 +113,8 @@ namespace Miam
         std::string GetName() {return name;}
         virtual void SetName(std::string _name);
         
+        
+        
     
         // = = = = = = = = = = METHODS = = = = = = = = = =
         public :
@@ -131,6 +133,11 @@ namespace Miam
         virtual void AddArea(std::shared_ptr<IInteractiveArea> newArea);
         
         
+        
+        // - - - - - Selection events managing (orders from parent manager) - - - - -
+        virtual void OnSelection();
+        /// \ brief Behavior on unselection commanded from parent (area transformations are stopped, ...). Must be called by classes that inherit from this.
+        virtual void OnUnselection();
         
         
         // - - - - - Canvas (mouse) events managing - - - - -

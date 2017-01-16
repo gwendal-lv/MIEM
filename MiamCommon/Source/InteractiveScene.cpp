@@ -93,6 +93,18 @@ void InteractiveScene::AddArea(std::shared_ptr<IInteractiveArea> newArea)
 }
 
 
+// - - - - - Selection events managing (orders from parent manager) - - - - -
+void InteractiveScene::OnSelection()
+{
+}
+void InteractiveScene::OnUnselection()
+{
+    // Will filter all future undesired touch events
+    touchSourceToEditableArea.clear();
+}
+
+
+
 // - - - - - Canvas (mouse) events managing - - - - -
 
 std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseDown(const MouseEvent& mouseE)
@@ -125,11 +137,13 @@ std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseDown(const MouseEve
                 {
                     // Indicates the the move can begin
                     touchSourceToEditableArea[mouseE.source.getIndex()] = currentExciters[i];
+                    
 #ifndef _MSC_VER
-                    std::cout << mouseE.source.getIndex() << std::endl; // A DEGAGEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEER
+                    std::cout << mouseE.source.getIndex() << std::endl;
 #else
 					OutputDebugString((std::to_string(mouseE.source.getIndex()) + "\n").c_str());
 #endif
+                     
 					graphicE = std::shared_ptr<GraphicEvent>(new AreaEvent(currentExciters[i], eventType));
                 }
             }
@@ -171,6 +185,7 @@ std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseUp(const MouseEvent
         // We end the move, if the touch was actually related to an area
         {
             int touchIndex = mouseE.source.getIndex();
+            // May not always exist (suddens touch state reinit on scene change, ...)
             auto mapIt = touchSourceToEditableArea.find(touchIndex);
             if (mapIt != touchSourceToEditableArea.end())
             {

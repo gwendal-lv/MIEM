@@ -126,7 +126,7 @@ void GraphicSessionManager::SetSelectedCanvas(MultiSceneCanvasInteractor* _selec
             throw std::runtime_error(std::string("The canvas to be selected is only an Interactor, and not an Editor (no editing features...)"));
         
         
-        selectedCanvas->SetMode(CanvasManagerMode::NothingSelected);
+        selectedCanvas->SetMode(CanvasManagerMode::SceneOnlySelected);
     
         setMode(GraphicSessionMode::CanvasSelected);
     }
@@ -237,7 +237,7 @@ void GraphicSessionManager::CanvasModeChanged(CanvasManagerMode canvasMode)
 {
     switch (canvasMode)
     {
-        case CanvasManagerMode::NothingSelected :
+        case CanvasManagerMode::SceneOnlySelected :
             setMode(GraphicSessionMode::CanvasSelected);
             break;
         case CanvasManagerMode::AreaSelected :
@@ -266,12 +266,12 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
     
     if (std::shared_ptr<AreaEvent> areaE = std::dynamic_pointer_cast<AreaEvent>(event_))
     {
-        std::cout << "évènement aire graphique" << std::endl;
+        //std::cout << "évènement aire graphique" << std::endl;
     }
     
     else if (std::shared_ptr<SceneEvent> sceneE = std::dynamic_pointer_cast<SceneEvent>(event_))
     {
-        std::cout << "évènement de scène" << std::endl;
+        //std::cout << "évènement de scène" << std::endl;
         sceneEditionComponent->SetSceneName(sceneE->GetNewScene()->GetName());
     }
     
@@ -311,7 +311,7 @@ void GraphicSessionManager::OnDeleteScene()
             throw std::runtime_error("Cannot delete a scene, only 1 is left (the delete scene button should not have been clicked");
         
     }
-    else throw std::runtime_error("No canvas selected : cannot add a scene (no canvas should be selected at this point");
+    else throw std::runtime_error("No canvas selected : cannot add a scene (no canvas should be selected at this point)");
 }
 void GraphicSessionManager::OnSceneLeft()
 {

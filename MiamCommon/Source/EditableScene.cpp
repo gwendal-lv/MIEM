@@ -67,7 +67,7 @@ void EditableScene::SetSelectedArea(std::shared_ptr<IEditableArea> selectedArea_
         // In any, we actually deselect
         selectedArea = nullptr;
         if (changeMode)
-            canvasManager->SetMode(CanvasManagerMode::NothingSelected);
+            canvasManager->SetMode(CanvasManagerMode::SceneOnlySelected);
     }
     
     // Else : we select a new existing EditableArea
@@ -258,6 +258,20 @@ void EditableScene::BringSelectedAreaToFront()
 
 
 
+// - - - - - Selection events managing (orders from parent manager) - - - - -
+void EditableScene::OnSelection()
+{
+}
+void EditableScene::OnUnselection()
+{
+    // Absolutely needed
+    InteractiveScene::OnUnselection();
+    
+    // Own code
+    if (selectedArea)
+        SetSelectedArea(nullptr);
+}
+
 
 // - - - - - Canvas (mouse) events managing - - - - -
 
@@ -274,7 +288,7 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent&
         if (mouseE.source.getIndex() == 0)
         {
             // When an area is already selected
-            if (canvasManager->GetMode() == CanvasManagerMode::AreaSelected)
+            if (selectedArea)
             {
                 // did we clic next to a point, or at least inside the area ?
 				AreaEventType lastEventType = selectedArea->TryBeginPointMove(clicLocation);
@@ -297,7 +311,7 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent&
             // While no area is selected : we look for a new one to select,
             // starting from the area on the upper layer (last draw on canvas)
             for (int i=(int)(areas.size())-1 ; // int and not the *unsigned* size_t
-                 (i>=0 && canvasManager->GetMode()==CanvasManagerMode::NothingSelected) ;
+                 (i>=0 && (!selectedArea)) ;
                  i--)
             {
                 if (areas[i]->HitTest(clicLocation))

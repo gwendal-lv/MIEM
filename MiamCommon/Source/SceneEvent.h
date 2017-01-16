@@ -30,6 +30,12 @@ namespace Miam
         /// None,
         
         NothingHappened, // not used ?
+        
+        
+        Added, ///< Scene has just been added to the canvas
+        Deleted, ///< Scene has just been deleted to the canvas
+        
+        
         SceneChanged,
         
     };
