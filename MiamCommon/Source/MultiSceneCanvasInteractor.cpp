@@ -158,7 +158,8 @@ void MultiSceneCanvasInteractor::SelectScene(int id)
         // Then : we become the new selected canvas (if we were not before)
         graphicSessionManager->SetSelectedCanvas(this);
         // No specific other check, we just create the informative event before changing
-        std::shared_ptr<SceneEvent> graphicE(new SceneEvent(this, selectedScene, scenes[id]));
+		
+        std::shared_ptr<SceneEvent> graphicE(new SceneEvent(this, selectedScene, scenes[id],SceneEventType::SceneChanged));
         selectedScene = std::dynamic_pointer_cast<EditableScene>(scenes[id]);
         selectedScene->OnSelection();
         
@@ -188,16 +189,24 @@ void MultiSceneCanvasInteractor::AddScene(std::string name)
     std::shared_ptr<EditableScene> newScene(new EditableScene(this, canvasComponent->GetCanvas()));
     newScene->SetName(name);
     AddScene(newScene);
+	std::shared_ptr<SceneEvent> sceneE(new SceneEvent(this, newScene, SceneEventType::Added));
+	
+	graphicSessionManager->HandleEventSync(sceneE);
 }
 void MultiSceneCanvasInteractor::AddScene(std::shared_ptr<EditableScene> newScene)
 {
     scenes.push_back( newScene );
+	std::shared_ptr<SceneEvent> sceneE(new SceneEvent(this, newScene, SceneEventType::Added));
+	graphicSessionManager->HandleEventSync(sceneE);
+
     SelectScene((int)(scenes.size())-1);
     // Graphical updates
     canvasComponent->UpdateSceneButtons(GetInteractiveScenes());
+
 }
 bool MultiSceneCanvasInteractor::DeleteScene()
 {
+	DBG("Deleeeeete");
     if (scenes.size()<=1)
         return false;
     else
@@ -211,6 +220,9 @@ bool MultiSceneCanvasInteractor::DeleteScene()
 
         // Then we remove this one
         auto it = scenes.begin() + selectedSceneId;
+		std::shared_ptr<SceneEvent> sceneE(new SceneEvent(this, *it, SceneEventType::Deleted));
+		graphicSessionManager->HandleEventSync(sceneE);
+
         scenes.erase(it);
         // Graphical updates
         canvasComponent->UpdateSceneButtons(GetInteractiveScenes());
@@ -220,6 +232,9 @@ bool MultiSceneCanvasInteractor::DeleteScene()
         // Optimisation could be made here
         SelectScene(GetSelectedSceneId());
         
+		
+		
+
         return true;
     }
 }
@@ -250,7 +265,10 @@ void MultiSceneCanvasInteractor::__AddTestAreas()
 }
 
 
-
+void MultiSceneCanvasInteractor::SendEventSync(std::shared_ptr<GraphicEvent> graphicE)
+{
+	graphicSessionManager->HandleEventSync(graphicE);
+}
 
 
 
@@ -268,7 +286,7 @@ void MultiSceneCanvasInteractor::OnCanvasMouseDown(const MouseEvent& mouseE)
     
     std::shared_ptr<GraphicEvent> graphicE = selectedScene->OnCanvasMouseDown(mouseE);
     if (! graphicE->GetMessage().empty())
-        graphicSessionManager->DisplayInfo(graphicE->GetMessage());
+        graphicSessionManager->DisplayInfo(graphicE->GetMessage()); // TO DO : CORRIGEEEEEERRRR !!!!!
     
     // If we were in a "special waiting mode" we end it after this click
     if (mode == CanvasManagerMode::WaitingForPointCreation || mode == CanvasManagerMode::WaitingForPointDeletion)

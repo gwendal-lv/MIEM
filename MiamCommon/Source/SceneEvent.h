@@ -45,7 +45,7 @@ namespace Miam
     class SceneEvent : public GraphicEvent
     {
         protected :
-        SceneEventType eventType = SceneEventType::SceneChanged;
+		SceneEventType eventType;// = SceneEventType::SceneChanged;
         MultiSceneCanvasInteractor* canvasManager = 0;
         std::shared_ptr<EditableScene> oldScene = nullptr;
         std::shared_ptr<EditableScene> newScene = nullptr;
@@ -58,7 +58,8 @@ namespace Miam
         std::shared_ptr<EditableScene> GetNewScene() {return newScene;}
         
         // Construction and Destruction
-        SceneEvent(MultiSceneCanvasInteractor* canvasManager_, std::shared_ptr<EditableScene> oldScene_, std::shared_ptr<EditableScene> newScene_);
+		SceneEvent(MultiSceneCanvasInteractor* canvasManager_, std::shared_ptr<EditableScene> Scene_,SceneEventType eventType_);
+        SceneEvent(MultiSceneCanvasInteractor* canvasManager_, std::shared_ptr<EditableScene> oldScene_, std::shared_ptr<EditableScene> newScene_, SceneEventType eventType_);
         virtual ~SceneEvent() {}
         
     };
