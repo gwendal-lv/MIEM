@@ -120,6 +120,7 @@ void MainContentComponent::DisplayInfo(const String& message)
 
 void MainContentComponent::paint (Graphics& /*g*/)
 {
+    bool test = true;
 }
 
 void MainContentComponent::resized()

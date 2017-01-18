@@ -50,9 +50,9 @@ MultiSceneCanvasInteractor::~MultiSceneCanvasInteractor()
 }
 
 
-void MultiSceneCanvasInteractor::CallRepaint()
+void MultiSceneCanvasInteractor::CallRepaint(bool repaintSideUiElements)
 {
-    canvasComponent->repaint();
+    canvasComponent->Repaint(repaintSideUiElements);
 }
 
 

@@ -74,8 +74,16 @@ public:
     
     void LinkToManager(MultiSceneCanvasInteractor* _canvasManager);
 
+    
+    // - - - - - Painting and Resizing - - - - -
+    
     void paint (Graphics&) override;
     void resized() override;
+    /// \brief Repaints the whole component, or just the canvas
+    ///
+    /// Not a Juce function... Then starts with a capital letter
+    void Repaint(bool repaintSideUiElements);
+    
     
     // - - - - - Buttons management - - - - -
     public :

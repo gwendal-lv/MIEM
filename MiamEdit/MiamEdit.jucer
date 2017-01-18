@@ -136,6 +136,10 @@
         </GROUP>
         <FILE id="hWUZ4N" name="CanvasManagerMode.h" compile="0" resource="0"
               file="../MiamCommon/Source/CanvasManagerMode.h"/>
+        <FILE id="k6yRHD" name="FrameTriggerComponent.cpp" compile="1" resource="0"
+              file="../MiamCommon/Source/FrameTriggerComponent.cpp"/>
+        <FILE id="BjFl7t" name="FrameTriggerComponent.h" compile="0" resource="0"
+              file="../MiamCommon/Source/FrameTriggerComponent.h"/>
         <FILE id="LOSifR" name="IGraphicSessionManager.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/IGraphicSessionManager.cpp"/>
         <FILE id="Lgollh" name="IGraphicSessionManager.h" compile="0" resource="0"

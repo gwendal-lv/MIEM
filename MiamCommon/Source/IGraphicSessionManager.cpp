@@ -19,10 +19,15 @@ using namespace Miam;
 
 
 IGraphicSessionManager::IGraphicSessionManager(IPresenter* presenter_) :
-    multiCanvasComponent(new MultiCanvasComponent(this)) // first init of shared_ptr
+    multiCanvasComponent(new MultiCanvasComponent(this)), // first init of shared_ptr
+    frameTriggerComponent(new FrameTriggerComponent(this))
 {
     presenter = presenter_;
+    
+    frameTriggerComponent->setFramesPerSecond(50);
 }
+
+
 
 
 IGraphicSessionManager::~IGraphicSessionManager()
@@ -34,6 +39,9 @@ IGraphicSessionManager::~IGraphicSessionManager()
 }
 
 
+
+
+
 // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
 
 uint64_t IGraphicSessionManager::GetNextAreaId()
@@ -43,6 +51,32 @@ uint64_t IGraphicSessionManager::GetNextAreaId()
     return areaIdBackup;
 }
 
+
+// = = = = = = = = = = METHODS = = = = = = = = = =
+
+// - - - - - Painting (frame triggering) events - - - - -
+
+/// \brief Launches the computation (maybe a repaint) of a new frame. To be called
+/// back from the Miam::FrameTriggerComponent, OR from the OpenGL
+/// "clock" synced swap function (********************TO BE DEFINED******************)
+///
+/// If OpenGL does not master the repainting frequency, this launches
+/// the update and painting of a new frame.
+void IGraphicSessionManager::OnFrameTrigger()
+{
+    // We trigger repaint only if OpenGL is not the master
+    if (!IsOpenGlSwapSynced())
+    {
+        CallRepaint();
+    }
+}
+void IGraphicSessionManager::CallRepaint()
+{
+    for (size_t i = 0 ; i<canvasManagers.size() ; i++)
+    {
+        canvasManagers[i]->CallRepaint(false);
+    }
+}
 
 
 
@@ -75,3 +109,4 @@ void IGraphicSessionManager::OnBackgroundMouseUp(const MouseEvent& /* event */)
 {
     mouseResizingCanvas = false;
 }
+

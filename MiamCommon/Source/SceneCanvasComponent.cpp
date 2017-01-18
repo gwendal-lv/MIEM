@@ -18,7 +18,11 @@ SceneCanvasComponent::SceneCanvasComponent() :
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
-
+    
+    
+    openGlContext.setComponentPaintingEnabled(true); // default behavior, lower perfs
+    openGlContext.setContinuousRepainting(false);
+    // OpenGL final initialization will happen in the COmpleteInitialization method
 }
 
 SceneCanvasComponent::~SceneCanvasComponent()
@@ -28,6 +32,9 @@ SceneCanvasComponent::~SceneCanvasComponent()
 void SceneCanvasComponent::CompleteInitialization(MultiSceneCanvasInteractor* _canvasManager)
 {
     canvasManager = _canvasManager;
+    
+    // OpenGL final initialization here
+    openGlContext.attachTo(*this);
 }
 
 
@@ -37,23 +44,58 @@ void SceneCanvasComponent::CompleteInitialization(MultiSceneCanvasInteractor* _c
 
 
 
-void SceneCanvasComponent::paint (Graphics& g)
+void SceneCanvasComponent::paint (Graphics& g_)
 {
-    // Pure black background
-    g.fillAll (Colours::black);
-    
-    // White interior contour 2px line to show when the canvas is active
-    if (selectedForEditing)
+    // OpenGL rendering
+    if (enableOpenGl)
     {
-        g.setColour(Colours::white);
-        g.drawRect(1, 1, getWidth()-2, getHeight()-2, 2);
+        const float desktopScale = (float) openGlContext.getRenderingScale();
+        ScopedPointer<LowLevelGraphicsContext> glRenderer (createOpenGLGraphicsContext (openGlContext,
+                                                                                        roundToInt (desktopScale * getWidth()),
+                                                                                        roundToInt (desktopScale * getHeight())));
+        
+        
+        
+        // --------------------------------code copié-----------------------------
+        Graphics g(*glRenderer);
+        
+        // Pure black background
+        g.fillAll (Colours::black);
+        
+        // White interior contour 2px line to show when the canvas is active
+        if (selectedForEditing)
+        {
+            g.setColour(Colours::white);
+            g.drawRect(1, 1, getWidth()-2, getHeight()-2, 2);
+        }
+        
+        // Areas painting (including exciters if existing)
+        for (size_t i=0;i<canvasManager->GetDrawableObjectsCount();i++)
+            canvasManager->GetDrawableObject(i)->Paint(g);
+        // --------------------------------code copié-----------------------------
+
     }
     
-    // Areas painting (including exciters if existing)
-    for (size_t i=0;i<canvasManager->GetDrawableObjectsCount();i++)
-        canvasManager->GetDrawableObject(i)->Paint(g);
     
-    
+    // CPU rendering (Not OpenGL)
+    else
+    {
+        Graphics& g(g_);
+        // Pure black background
+        g.fillAll (Colours::black);
+        
+        // White interior contour 2px line to show when the canvas is active
+        if (selectedForEditing)
+        {
+            g.setColour(Colours::white);
+            g.drawRect(1, 1, getWidth()-2, getHeight()-2, 2);
+        }
+        
+        // Areas painting (including exciters if existing)
+        for (size_t i=0;i<canvasManager->GetDrawableObjectsCount();i++)
+            canvasManager->GetDrawableObject(i)->Paint(g);
+        
+    }
 }
 
 void SceneCanvasComponent::resized()

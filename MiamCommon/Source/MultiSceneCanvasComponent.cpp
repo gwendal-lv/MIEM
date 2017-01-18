@@ -56,6 +56,7 @@ void MultiSceneCanvasComponent::LinkToManager(MultiSceneCanvasInteractor* _canva
 
 
 
+// - - - - - - - - - - - - - - Painting and Resizing - - - - - - - - - - - - - -
 
 void MultiSceneCanvasComponent::paint (Graphics& /*g*/) // unused Graphics context
 {
@@ -72,7 +73,17 @@ void MultiSceneCanvasComponent::resized()
     updateSceneButtonsBounds();
 }
 
-// - - - - - Buttons management - - - - -
+void MultiSceneCanvasComponent::Repaint(bool repaintSideUiElements)
+{
+    if (repaintSideUiElements)
+        repaint();
+    else
+        childrenCanvas->repaint();
+}
+
+
+
+// - - - - - - - - - - - - - - - Buttons management - - - - - - - - - - - - - - -
 void MultiSceneCanvasComponent::UpdateSceneButtons(std::vector< std::shared_ptr<InteractiveScene> > scenes, int sceneThatHasChanged)
 {
     // Update of all buttons

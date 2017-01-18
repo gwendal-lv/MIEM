@@ -36,9 +36,9 @@ namespace Miam
         ///
         /// Must be always called from the same unique Miam::Presenter thread
         ///
-        /// \returns Wether a parameter change has occured since the last "gets" sequence
         bool TryGetAsyncParamChange(AsyncParamChange& param_)
         { return paramChangesToPresenter.TryDequeue(param_); }
+        
         
         
         

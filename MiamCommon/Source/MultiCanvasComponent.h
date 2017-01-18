@@ -26,7 +26,7 @@ namespace Miam {
     
     
     
-    class MultiCanvasComponent : public AnimatedAppComponent
+    class MultiCanvasComponent : public /*AnimatedApp*/Component
     {
         
         
@@ -64,7 +64,7 @@ namespace Miam {
         virtual void paint(Graphics& g) override;
         virtual void resized() override;
         
-		void update() override;
+		//void update() override;
         
         // - - - - - Mouse management - - - - -
         virtual void mouseDown (const MouseEvent &event) override;

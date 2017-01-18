@@ -57,6 +57,11 @@ public:
     bool selectedForEditing;
     
     
+    // - - - - - OpenGL - - - - -
+    bool enableOpenGl = true;
+    OpenGLContext openGlContext;
+    
+    
     
     // = = = = = = = = = = METHODS = = = = = = = = = =
     public :

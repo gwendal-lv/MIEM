@@ -49,14 +49,15 @@ MultiCanvasComponent::MultiCanvasComponent(IGraphicSessionManager* _graphicSessi
     canvasResizeDiamond.addRectangle(diamond);
     canvasResizeDiamondTransform = AffineTransform::rotation( float_Pi / 2.0f );
 
-	setFramesPerSecond(48);
+	//setFramesPerSecond(48);
 }
 
+/*
 void MultiCanvasComponent::update()
 {
 	//DBG("salut");
 }
-
+*/
 
 void MultiCanvasComponent::paint(Graphics& g)
 {

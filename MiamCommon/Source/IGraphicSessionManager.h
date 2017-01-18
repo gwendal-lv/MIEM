@@ -21,13 +21,15 @@
 
 #include "GraphicEvent.h"
 
+#include "FrameTriggerComponent.h"
 
 
 namespace Miam
 {
-    // pre-declarations for pointers
+    // pre-declarations for pointer members
     class IPresenter;
     class MultiSceneCanvasInteractor;
+    class FrameTriggerComponent;
     
     
     /// \brief Interface for any manager of a Miam graphic session presenter
@@ -56,6 +58,8 @@ namespace Miam
         std::vector< MultiSceneCanvasInteractor* > canvasManagers;
         MultiSceneCanvasInteractor* selectedCanvas = 0;
         
+        std::unique_ptr< FrameTriggerComponent > frameTriggerComponent;
+        
         
         // states backup
         private :
@@ -72,6 +76,11 @@ namespace Miam
         virtual uint64_t GetNextAreaId();
         
         virtual MultiCanvasComponent* GetMultiCanvasComponent() {return  multiCanvasComponent;}
+        
+        
+        /// \brief !!!!!!!!! À CHANGER pour l'instant toujours faux : pas d'OpenGL... !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        virtual bool IsOpenGlSwapSynced() {return false;}
+        
         
         
         
@@ -110,19 +119,42 @@ namespace Miam
         virtual void DisplayInfo(String info) = 0;
         
         
-        // ----- Events from the Presenter itself -----
+        // ----- Events from a member of the Presenter module itself -----
         /// \brief Receives, processes graphic events from any drawable object,
         /// then interprets it in terms of "audio features" to be transmitted to the
-        /// Miam::Model via the Miam::Presenter
+        /// Miam::IModel via the Miam::IPresenter
         virtual void HandleEventSync(std::shared_ptr<GraphicEvent> event_) = 0;
 
-
+        
+        
+        // - - - - - Painting (frame triggering) events - - - - -
+        
+        /// \brief If OpenGL does not master the repainting frequency, this launches
+        /// the update and painting of a new frame. To be called back from the
+        /// Miam::FrameTriggerComponent.
+        virtual void OnFrameTrigger();
+        
+        /// \brief Actually launches the repaint of the canvases
+        ///
+        /// The time source of this event may be ?????
+        virtual void CallRepaint();
         
         
         // - - - - - Mouse Events - - - - -
+        
+        /// \brief Management of the Miam::MultiCanvasComponent
+        ///
+        /// May move to a separate manager in the future
         virtual void OnBackgroundMouseDown(const MouseEvent &event);
+        /// \brief Management of the Miam::MultiCanvasComponent
+        ///
+        /// May move to a separate manager in the future
         virtual void OnBackgroundMouseDrag(const MouseEvent &event);
+        /// \brief Management of the Miam::MultiCanvasComponent
+        ///
+        /// May move to a separate manager in the future
         virtual void OnBackgroundMouseUp(const MouseEvent &event);
+        
         
         
         // - - - - - Area Events (from managed canvases) - - - - -
