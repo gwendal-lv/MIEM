@@ -99,8 +99,17 @@ void InteractiveScene::OnSelection()
 }
 void InteractiveScene::OnUnselection()
 {
-    // Will filter all future undesired touch events
-    touchSourceToEditableArea.clear();
+	// We stop all current movements
+    // and filter all future undesired touch events
+	for (auto it = touchSourceToEditableArea.begin();
+		it != touchSourceToEditableArea.end();)
+	{
+		// filtering at first, actual stop then
+		std::shared_ptr<IEditableArea> editableArea = it->second;
+		it = touchSourceToEditableArea.erase(it); // increments to next valid
+		AreaEventType eventType = editableArea->EndPointMove();
+		// EVENT TO SEND ------------------------------------------------------------
+	}
 }
 
 
@@ -174,6 +183,8 @@ std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseDrag(const MouseEve
 }
 std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseUp(const MouseEvent& mouseE)
 {
+	std::shared_ptr<GraphicEvent> graphicE(new GraphicEvent());
+
     switch(excitersBehavior)
     {
         case ExcitersBehaviorType::AppearOnTouch :
@@ -192,6 +203,9 @@ std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseUp(const MouseEvent
                 mapIt->second->EndPointMove();
                 touchSourceToEditableArea.erase(mapIt);
                 std::cout << "trouvé ! et supprimé" << std::endl;
+
+				// no event : exciter remains alive
+				//graphicE = 
             }
             break;
         }
@@ -199,7 +213,7 @@ std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseUp(const MouseEvent
         default :
             break;
     }
-    return std::shared_ptr<GraphicEvent>(new GraphicEvent());
+    return graphicE;
 }
 
 

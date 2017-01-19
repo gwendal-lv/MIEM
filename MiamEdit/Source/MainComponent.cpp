@@ -71,7 +71,7 @@ void MainContentComponent::SetMiamView(Miam::View* _view)
 void MainContentComponent::ChangeAppMode(AppMode newAppMode)
 {
     // Firstly, we hide everything
-    for (int i=0 ; i<secondLevelComponents.size() ; i++)
+    for (size_t i=0 ; i<secondLevelComponents.size() ; i++)
     {
         secondLevelComponents[i]->setVisible(false);
     }
@@ -133,7 +133,7 @@ void MainContentComponent::resized()
     mainBackgroundComponent->setBounds(getLocalBounds());
     // Other children are only resized if visible
     int yChildrenOffset = 5*8; // 5 cases depuis le haut (pour l'instant)
-    for (int i=0;i<secondLevelComponents.size();i++)
+    for (size_t i=0;i<secondLevelComponents.size();i++)
     {
         //if (secondLevelComponents[i]->isVisible()) { // EVERYTHING ACTUALIZED, VISIBLE OR NOT
             secondLevelComponents[i]->setBounds(0, yChildrenOffset, getWidth(), getHeight()-yChildrenOffset);

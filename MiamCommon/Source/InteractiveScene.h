@@ -135,6 +135,10 @@ namespace Miam
         
         
         // - - - - - Selection events managing (orders from parent manager) - - - - -
+
+		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		// !!!!!!!!!!!!!!!! renvoyer des évènements sur ce qu'il s'est passé !!!!!!!!!!
+		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         virtual void OnSelection();
         /// \ brief Behavior on unselection commanded from parent (area transformations are stopped, ...). Must be called by classes that inherit from this.
         virtual void OnUnselection();
@@ -164,8 +168,7 @@ namespace Miam
         ///
         /// \returns An event that describes what happened
         virtual std::shared_ptr<GraphicEvent> OnCanvasMouseUp(const MouseEvent& mouseE);
-        
-        
+
     };
     
     

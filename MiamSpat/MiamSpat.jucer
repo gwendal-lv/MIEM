@@ -104,6 +104,10 @@
         </GROUP>
         <FILE id="hWUZ4N" name="CanvasManagerMode.h" compile="0" resource="0"
               file="../MiamCommon/Source/CanvasManagerMode.h"/>
+        <FILE id="fug4JO" name="FrameTriggerComponent.cpp" compile="1" resource="0"
+              file="../MiamCommon/Source/FrameTriggerComponent.cpp"/>
+        <FILE id="mL2Kup" name="FrameTriggerComponent.h" compile="0" resource="0"
+              file="../MiamCommon/Source/FrameTriggerComponent.h"/>
         <FILE id="LOSifR" name="IGraphicSessionManager.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/IGraphicSessionManager.cpp"/>
         <FILE id="Lgollh" name="IGraphicSessionManager.h" compile="0" resource="0"
@@ -190,9 +194,9 @@
     </XCODE_MAC>
     <VS2015 targetFolder="Builds/VisualStudio2015">
       <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
                        isDebug="1" optimisation="1" targetName="MiamSpat" headerPath="..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"/>
-        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
                        isDebug="0" optimisation="3" targetName="MiamSpat" headerPath="..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
