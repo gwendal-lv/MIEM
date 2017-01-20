@@ -7,17 +7,25 @@
 */
 
 #include "MainComponent.h"
-#include "Model.h"
+#include "AmusingModel.h"
+
+using namespace Amusing;
+using namespace Miam;
 
 
 //==============================================================================
 MainContentComponent::MainContentComponent()
 {
+	//addAndMakeVisible(sceneEditionComponent = new SceneEditionComponent());
+	editSceneC = new editScene();
+	addAndMakeVisible(editSceneC);
     setSize (600, 400);
 }
 
 MainContentComponent::~MainContentComponent()
 {
+	//delete sceneEditionComponent;
+	delete editSceneC;
 }
 
 void MainContentComponent::paint (Graphics& g)
@@ -34,8 +42,14 @@ void MainContentComponent::resized()
     // This is called when the MainContentComponent is resized.
     // If you add any child components, this is where you should
     // update their positions.
+
     if (multiCanvasComponent)
-        multiCanvasComponent->setBounds(getLocalBounds());
+		multiCanvasComponent->setBounds(50, 0, 550, getLocalBounds().getHeight());
+	if (editSceneC)
+		editSceneC->setBounds(0, 0, 50, getLocalBounds().getHeight());
+    //    multiCanvasComponent->setBounds(getLocalBounds());
+	//sceneEditionComponent->setBounds(0, 0, 50, getLocalBounds().getHeight());
+	//multiCanvasComponent->setBounds(50, 0, 550, getLocalBounds().getHeight());
 }
 
 
@@ -54,13 +68,13 @@ void MainContentComponent::CompleteInitialization(GraphicSessionManager* _graphi
     multiCanvasComponent = _multiCanvasComponent;
     addAndMakeVisible(multiCanvasComponent);
 }
-void MainContentComponent::CompleteInitialization(Model* _model)
+void MainContentComponent::CompleteInitialization(AmusingModel* _model)
 {
 	model = _model;
-	addAndMakeVisible(model->audioPlayer);
+	//addAndMakeVisible(model->audioPlayer);
 }
 
-void MainContentComponent::SetMiamView(Miam::View* _view)
+void MainContentComponent::SetMiamView(Amusing::View* _view)
 {
     view = _view;
     

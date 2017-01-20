@@ -12,7 +12,7 @@
 #define APPMODE_H_INCLUDED
 
 
-namespace Miam {
+namespace Amusing {
     
     /// \brief Describes the current running mode of the Presenter (the MiamSpat GUI).
 	/// 

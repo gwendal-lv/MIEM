@@ -113,6 +113,9 @@ void EditableScene::DeleteSelectedArea()
     {
         deleteAreaByUniqueId(selectedArea->GetId());
         SetSelectedArea(nullptr); // actual deletion should happen here
+		std::shared_ptr<GraphicEvent> graphicE(new AreaEvent(selectedArea, AreaEventType::Deleted));
+		canvasManager->SendEventSync(graphicE);
+
     }
     else throw std::runtime_error("Impossible to delete the selected area (no area selected");
 }

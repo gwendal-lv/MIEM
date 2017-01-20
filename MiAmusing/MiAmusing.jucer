@@ -6,26 +6,50 @@
   <MAINGROUP id="Ak6ojc" name="MiAmusing">
     <GROUP id="{E74684B7-0B02-F2F7-C571-317039AB4495}" name="Source">
       <GROUP id="{8B585BA3-71E5-255C-C070-4910B268744C}" name="Model">
-        <GROUP id="{E44CA5E1-A684-13FE-D8F5-DC4B3E1F3854}" name="Sounds">
-          <FILE id="dxmkkA" name="Amusinus.cpp" compile="1" resource="0" file="Source/Amusinus.cpp"/>
-          <FILE id="KWFOLO" name="Amusinus.h" compile="0" resource="0" file="Source/Amusinus.h"/>
-          <FILE id="zi9vyU" name="Sound.cpp" compile="1" resource="0" file="Source/Sound.cpp"/>
-          <FILE id="pKGDnr" name="Sound.h" compile="0" resource="0" file="Source/Sound.h"/>
-          <FILE id="nWTFiF" name="SquareSignal.cpp" compile="1" resource="0"
-                file="Source/SquareSignal.cpp"/>
-          <FILE id="mZAQCp" name="SquareSignal.h" compile="0" resource="0" file="Source/SquareSignal.h"/>
-          <FILE id="mzO7CE" name="TriangleSignal.cpp" compile="1" resource="0"
-                file="Source/TriangleSignal.cpp"/>
-          <FILE id="d88IN2" name="TriangleSignal.h" compile="0" resource="0"
-                file="Source/TriangleSignal.h"/>
+        <GROUP id="{E44CA5E1-A684-13FE-D8F5-DC4B3E1F3854}" name="Signals">
+          <GROUP id="{65A02069-7549-345C-A5F2-1BFFC4F73B03}" name="FourierSignals">
+            <FILE id="VcNvcJ" name="FourierSignal.cpp" compile="1" resource="0"
+                  file="Source/FourierSignal.cpp"/>
+            <FILE id="Ip02Yg" name="FourierSignal.h" compile="0" resource="0" file="Source/FourierSignal.h"/>
+            <FILE id="y9vVcN" name="SinusSignal.cpp" compile="1" resource="0" file="Source/SinusSignal.cpp"/>
+            <FILE id="Mw9Q1r" name="SinusSignal.h" compile="0" resource="0" file="Source/SinusSignal.h"/>
+            <FILE id="SN5Trn" name="SquareSignal.cpp" compile="1" resource="0"
+                  file="Source/SquareSignal.cpp"/>
+            <FILE id="SNt2qG" name="SquareSignal.h" compile="0" resource="0" file="Source/SquareSignal.h"/>
+            <FILE id="VpNWOF" name="TriangleSignal.cpp" compile="1" resource="0"
+                  file="Source/TriangleSignal.cpp"/>
+            <FILE id="cFPnOt" name="TriangleSignal.h" compile="0" resource="0"
+                  file="Source/TriangleSignal.h"/>
+          </GROUP>
+          <GROUP id="{50CE76D7-7061-F979-1890-901D215006D3}" name="Oscillators">
+            <FILE id="tkDRtF" name="Modulator.cpp" compile="1" resource="0" file="Source/Modulator.cpp"/>
+            <FILE id="HuWIu9" name="Modulator.h" compile="0" resource="0" file="Source/Modulator.h"/>
+            <FILE id="RWXvHH" name="SinOsc.cpp" compile="1" resource="0" file="Source/SinOsc.cpp"/>
+            <FILE id="vaXAoS" name="SinOsc.h" compile="0" resource="0" file="Source/SinOsc.h"/>
+          </GROUP>
+          <GROUP id="{E2909203-749F-B5D1-6637-EF73C3444761}" name="Utils">
+            <FILE id="zUEQBM" name="AmusingFormatReaderSource.cpp" compile="1"
+                  resource="0" file="Source/AmusingFormatReaderSource.cpp"/>
+            <FILE id="BwO97F" name="AmusingFormatReaderSource.h" compile="0" resource="0"
+                  file="Source/AmusingFormatReaderSource.h"/>
+            <FILE id="s158Ff" name="Amusinus.cpp" compile="1" resource="0" file="Source/Amusinus.cpp"/>
+            <FILE id="Lc1vFR" name="Amusinus.h" compile="0" resource="0" file="Source/Amusinus.h"/>
+          </GROUP>
+          <FILE id="aA8HgK" name="ADSRSignal.cpp" compile="1" resource="0" file="Source/ADSRSignal.cpp"/>
+          <FILE id="a4yfTk" name="ADSRSignal.h" compile="0" resource="0" file="Source/ADSRSignal.h"/>
+          <FILE id="pP6TsS" name="AmuSignal.cpp" compile="1" resource="0" file="Source/AmuSignal.cpp"/>
+          <FILE id="WLTEow" name="AmuSignal.h" compile="0" resource="0" file="Source/AmuSignal.h"/>
+          <FILE id="dl5Hbo" name="Rythme.cpp" compile="1" resource="0" file="Source/Rythme.cpp"/>
+          <FILE id="xHHmqM" name="Rythme.h" compile="0" resource="0" file="Source/Rythme.h"/>
+          <FILE id="dLB0yG" name="Sound.cpp" compile="1" resource="0" file="Source/Sound.cpp"/>
+          <FILE id="LivYiM" name="Sound.h" compile="0" resource="0" file="Source/Sound.h"/>
         </GROUP>
-        <FILE id="pupKq1" name="AudioPlayer.cpp" compile="1" resource="0" file="Source/AudioPlayer.cpp"/>
-        <FILE id="vt2PIC" name="AudioPlayer.h" compile="0" resource="0" file="Source/AudioPlayer.h"/>
-        <FILE id="qmcRYe" name="Model.cpp" compile="1" resource="0" file="Source/Model.cpp"/>
-        <FILE id="z7HHA4" name="Model.h" compile="0" resource="0" file="Source/Model.h"/>
-        <FILE id="v5xZxd" name="MusicalScene.cpp" compile="1" resource="0"
-              file="Source/MusicalScene.cpp"/>
-        <FILE id="nTBAfw" name="MusicalScene.h" compile="0" resource="0" file="Source/MusicalScene.h"/>
+        <FILE id="wZiM4n" name="AudioManager.cpp" compile="1" resource="0"
+              file="Source/AudioManager.cpp"/>
+        <FILE id="FcBZyV" name="AudioManager.h" compile="0" resource="0" file="Source/AudioManager.h"/>
+        <FILE id="qmcRYe" name="AmusingModel.cpp" compile="1" resource="0"
+              file="Source/AmusingModel.cpp"/>
+        <FILE id="z7HHA4" name="AmusingModel.h" compile="0" resource="0" file="Source/AmusingModel.h"/>
       </GROUP>
       <GROUP id="{92B3F81C-D5E2-88E6-6EC3-B31792EEA57D}" name="Presenter">
         <GROUP id="{690FB287-1852-3C4A-91A1-F5B474582291}" name="Areas"/>
@@ -34,10 +58,10 @@
                 file="Source/AmusingScene.cpp"/>
           <FILE id="A75Z1b" name="AmusingScene.h" compile="0" resource="0" file="Source/AmusingScene.h"/>
         </GROUP>
-        <FILE id="I2CHRC" name="AmusingMultiSceneCanvasInteractor.cpp" compile="1"
-              resource="0" file="Source/AmusingMultiSceneCanvasInteractor.cpp"/>
-        <FILE id="cqTBNm" name="AmusingMultiSceneCanvasInteractor.h" compile="0"
-              resource="0" file="Source/AmusingMultiSceneCanvasInteractor.h"/>
+        <FILE id="Xnoy6P" name="MultiSceneCanvasManager.cpp" compile="1" resource="0"
+              file="Source/MultiSceneCanvasManager.cpp"/>
+        <FILE id="mj6TaF" name="MultiSceneCanvasManager.h" compile="0" resource="0"
+              file="Source/MultiSceneCanvasManager.h"/>
         <FILE id="fhxKh2" name="AppMode.h" compile="0" resource="0" file="Source/AppMode.h"/>
         <FILE id="Z0NS7i" name="GraphicSessionManager.cpp" compile="1" resource="0"
               file="Source/GraphicSessionManager.cpp"/>
@@ -47,6 +71,8 @@
         <FILE id="to3tGG" name="Presenter.h" compile="0" resource="0" file="Source/Presenter.h"/>
       </GROUP>
       <GROUP id="{6C8312F9-4A59-989E-1DC5-6EC6799A0035}" name="View">
+        <FILE id="wihbQV" name="editScene.cpp" compile="1" resource="0" file="Source/editScene.cpp"/>
+        <FILE id="yBAnTJ" name="editScene.h" compile="0" resource="0" file="Source/editScene.h"/>
         <FILE id="UU8cSP" name="MainComponent.cpp" compile="1" resource="0"
               file="Source/MainComponent.cpp"/>
         <FILE id="W5cilK" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
@@ -65,12 +91,12 @@
           <FILE id="VJUdzj" name="SpatState.h" compile="0" resource="0" file="../SpatCommon/Source/SpatState.h"/>
           <FILE id="bz3VgJ" name="SpatState.tpp.h" compile="0" resource="0" file="../SpatCommon/Source/SpatState.tpp.h"/>
         </GROUP>
-        <FILE id="azLEQu" name="IModel.cpp" compile="1" resource="0" file="../SpatCommon/Source/IModel.cpp"/>
-        <FILE id="n9PyKE" name="IModel.h" compile="0" resource="0" file="../SpatCommon/Source/IModel.h"/>
         <FILE id="xR7ZzU" name="SpatInterpolator.h" compile="0" resource="0"
               file="../SpatCommon/Source/SpatInterpolator.h"/>
         <FILE id="njk7Fg" name="SpatInterpolator.tpp.h" compile="0" resource="0"
               file="../SpatCommon/Source/SpatInterpolator.tpp.h"/>
+        <FILE id="J1ViFv" name="SpatModel.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatModel.cpp"/>
+        <FILE id="mc5PI6" name="SpatModel.h" compile="0" resource="0" file="../SpatCommon/Source/SpatModel.h"/>
         <FILE id="DFPO9m" name="SpatSender.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatSender.cpp"/>
         <FILE id="YOdNbs" name="SpatSender.h" compile="0" resource="0" file="../SpatCommon/Source/SpatSender.h"/>
         <FILE id="ISQcqH" name="SpatType.h" compile="0" resource="0" file="../SpatCommon/Source/SpatType.h"/>
@@ -79,14 +105,20 @@
       </GROUP>
     </GROUP>
     <GROUP id="{593B3C8B-4E9F-6C95-BD9D-6562983482B8}" name="MiamCommonSource">
-      <GROUP id="{B91B2137-DC4A-127C-0037-DB058876BEFA}" name="Utils">
-        <FILE id="tPoEI0" name="CartesianLine.cpp" compile="1" resource="0"
-              file="../MiamCommon/Source/CartesianLine.cpp"/>
-        <FILE id="eK35Tw" name="CartesianLine.h" compile="0" resource="0" file="../MiamCommon/Source/CartesianLine.h"/>
-        <FILE id="Rla6rP" name="MiamMath.cpp" compile="1" resource="0" file="../MiamCommon/Source/MiamMath.cpp"/>
-        <FILE id="WSGVmq" name="MiamMath.h" compile="0" resource="0" file="../MiamCommon/Source/MiamMath.h"/>
+      <GROUP id="{0479ADE3-37CD-6B82-AED4-7081C736E56C}" name="Model">
+        <FILE id="GsEH1I" name="IModel.cpp" compile="1" resource="0" file="../MiamCommon/Source/IModel.cpp"/>
+        <FILE id="NoGtM1" name="IModel.h" compile="0" resource="0" file="../MiamCommon/Source/IModel.h"/>
       </GROUP>
       <GROUP id="{17C21196-8065-2A28-CE70-8A30193DECF0}" name="Presenter">
+        <GROUP id="{56C10D2A-D21F-45CE-76A5-54034487512D}" name="Events">
+          <FILE id="NbytqS" name="AreaEvent.cpp" compile="1" resource="0" file="../MiamCommon/Source/AreaEvent.cpp"/>
+          <FILE id="OZaU4D" name="AreaEvent.h" compile="0" resource="0" file="../MiamCommon/Source/AreaEvent.h"/>
+          <FILE id="hGfG2J" name="GraphicEvent.cpp" compile="1" resource="0"
+                file="../MiamCommon/Source/GraphicEvent.cpp"/>
+          <FILE id="OhudXq" name="GraphicEvent.h" compile="0" resource="0" file="../MiamCommon/Source/GraphicEvent.h"/>
+          <FILE id="IDIerE" name="SceneEvent.cpp" compile="1" resource="0" file="../MiamCommon/Source/SceneEvent.cpp"/>
+          <FILE id="mz9IiL" name="SceneEvent.h" compile="0" resource="0" file="../MiamCommon/Source/SceneEvent.h"/>
+        </GROUP>
         <GROUP id="{B66FA498-AC16-0510-B897-C4A4DB5848EB}" name="Areas">
           <FILE id="Lt60mX" name="EditableArea.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/EditableArea.cpp"/>
@@ -95,6 +127,8 @@
                 file="../MiamCommon/Source/EditablePolygon.cpp"/>
           <FILE id="JElhH7" name="EditablePolygon.h" compile="0" resource="0"
                 file="../MiamCommon/Source/EditablePolygon.h"/>
+          <FILE id="ZwqlAH" name="Exciter.cpp" compile="1" resource="0" file="../MiamCommon/Source/Exciter.cpp"/>
+          <FILE id="TFDrFJ" name="Exciter.h" compile="0" resource="0" file="../MiamCommon/Source/Exciter.h"/>
           <FILE id="e38tNI" name="IEditableArea.h" compile="0" resource="0" file="../MiamCommon/Source/IEditableArea.h"/>
           <FILE id="AgdCS3" name="IInteractiveArea.h" compile="0" resource="0"
                 file="../MiamCommon/Source/IInteractiveArea.h"/>
@@ -120,12 +154,12 @@
         </GROUP>
         <FILE id="hWUZ4N" name="CanvasManagerMode.h" compile="0" resource="0"
               file="../MiamCommon/Source/CanvasManagerMode.h"/>
-        <FILE id="o4h3ZV" name="Exciter.cpp" compile="1" resource="0" file="../MiamCommon/Source/Exciter.cpp"/>
-        <FILE id="uFYMUE" name="Exciter.h" compile="0" resource="0" file="../MiamCommon/Source/Exciter.h"/>
         <FILE id="LOSifR" name="IGraphicSessionManager.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/IGraphicSessionManager.cpp"/>
         <FILE id="Lgollh" name="IGraphicSessionManager.h" compile="0" resource="0"
               file="../MiamCommon/Source/IGraphicSessionManager.h"/>
+        <FILE id="g1daJ4" name="IPresenter.cpp" compile="1" resource="0" file="../MiamCommon/Source/IPresenter.cpp"/>
+        <FILE id="xzOQj5" name="IPresenter.h" compile="0" resource="0" file="../MiamCommon/Source/IPresenter.h"/>
         <FILE id="Jtp0bl" name="MultiSceneCanvasEditor.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/MultiSceneCanvasEditor.cpp"/>
         <FILE id="OogkLH" name="MultiSceneCanvasEditor.h" compile="0" resource="0"
@@ -160,6 +194,21 @@
                 file="../MiamCommon/Source/DrawablePolygon.h"/>
           <FILE id="vPo8Fc" name="IDrawableArea.h" compile="0" resource="0" file="../MiamCommon/Source/IDrawableArea.h"/>
         </GROUP>
+      </GROUP>
+      <GROUP id="{B91B2137-DC4A-127C-0037-DB058876BEFA}" name="Utils">
+        <GROUP id="{F7FDC121-C73C-D763-32B0-E4A8749BE749}" name="readerwriterqueue">
+          <FILE id="oXcnF2" name="atomicops.h" compile="0" resource="0" file="../MiamCommon/Source/readerwriterqueue/atomicops.h"/>
+          <FILE id="GSKMYh" name="readerwriterqueue.h" compile="0" resource="0"
+                file="../MiamCommon/Source/readerwriterqueue/readerwriterqueue.h"/>
+        </GROUP>
+        <FILE id="tPoEI0" name="CartesianLine.cpp" compile="1" resource="0"
+              file="../MiamCommon/Source/CartesianLine.cpp"/>
+        <FILE id="eK35Tw" name="CartesianLine.h" compile="0" resource="0" file="../MiamCommon/Source/CartesianLine.h"/>
+        <FILE id="m0eWxP" name="LockFreeQueue.cpp" compile="1" resource="0"
+              file="../MiamCommon/Source/LockFreeQueue.cpp"/>
+        <FILE id="kwvDPy" name="LockFreeQueue.h" compile="0" resource="0" file="../MiamCommon/Source/LockFreeQueue.h"/>
+        <FILE id="Rla6rP" name="MiamMath.cpp" compile="1" resource="0" file="../MiamCommon/Source/MiamMath.cpp"/>
+        <FILE id="WSGVmq" name="MiamMath.h" compile="0" resource="0" file="../MiamCommon/Source/MiamMath.h"/>
       </GROUP>
     </GROUP>
   </MAINGROUP>

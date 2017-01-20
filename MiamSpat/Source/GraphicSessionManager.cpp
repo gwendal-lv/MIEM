@@ -19,6 +19,8 @@
 #include "AreaEvent.h"
 #include "Exciter.h"
 
+#include "SceneEvent.h"
+
 using namespace Miam;
 
 
@@ -156,14 +158,42 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
         if (auto exciter = std::dynamic_pointer_cast<Exciter>(areaE->GetConcernedArea()))
         {
             //std::cout << "mix à mettre à jour" << std::endl;
-			//DBG("mix à mettre à jour");
-			//AsyncParamChange
         }
-		else if(auto area = std::dynamic_pointer_cast<InteractiveArea>(areaE->GetConcernedArea()))
+		else if (auto area = std::dynamic_pointer_cast<EditableArea>(areaE->GetConcernedArea()))
 		{
-
+			switch (areaE->GetType())
+			{
+			case AreaEventType::Added :
+				DBG("Area Added");
+				break;
+			case AreaEventType::Deleted :
+				DBG("Area deleted");
+				break;
+			default:
+				break;
+			}
 		}
     }
+	else if (auto sceneE = std::dynamic_pointer_cast<SceneEvent>(event_))
+	{
+		switch (sceneE->GetType())
+		{
+		case SceneEventType::Added :
+			DBG("Scene added");
+			break;
+		case SceneEventType::Deleted :
+			DBG("Scene deleted");
+			break;
+		case SceneEventType::NothingHappened :
+			DBG("Nothing happened");
+			break;
+		case SceneEventType::SceneChanged :
+			DBG("Scene Changed");
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 

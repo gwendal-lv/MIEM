@@ -87,7 +87,8 @@ void InteractiveScene::SetName(std::string _name)
 void InteractiveScene::AddArea(std::shared_ptr<IInteractiveArea> newArea)
 {
     areas.push_back(newArea);
-    
+	std::shared_ptr<GraphicEvent> graphicE(new AreaEvent(newArea, AreaEventType::Added));
+	canvasManager->SendEventSync(graphicE);
     // Forced graphical updates
     newArea->CanvasResized(canvasComponent);
 }

@@ -27,16 +27,21 @@ class AmuSinus
 public:
 	AmuSinus(double m_amplitude, double m_frequency, double m_phase, double m_sampleRate, int m_bufferSize);
 	AmuSinus(AmuSinusParameter parameters);
+	AmuSinus(AmuSinus *toCopy);
 	~AmuSinus();
 
 	// ----- setters and getters -------
 	void setFrequency(double newFrequency);
 	void setAmplitude(double newAmplitude);
 
+	// to change the amplitude without gain ramp
+	void resetAmplitude(double newAmplitude);
+
 	//to change phase
 	void setPhase(double newPhase);
 	void resetPhase();
 	void resetPhase(double newPhase);
+	void shiftPhase(double shift);
 
 	// get output
 	double getSample();
@@ -44,6 +49,12 @@ public:
 	double getFrequency();
 	double getAmplitude();
 	double getPhase();
+	double getSampleRate();
+	int getBufferSize();
+
+	double getCurrentSample();
+	double getCurrentAngle();
+	double getCurrentAmplitude();
 
 private:
 	// parameters
@@ -67,7 +78,6 @@ private:
 	// to change amplitude
 	double targetAmplitude;
 	void updateAmplitude();
-
 
 };
 

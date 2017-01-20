@@ -1,26 +1,26 @@
 /*
   ==============================================================================
 
-    TriangleSignal.h
-    Created: 16 Dec 2016 9:51:18am
+    SinusSignal.h
+    Created: 4 Jan 2017 4:41:10pm
     Author:  ayup1
 
   ==============================================================================
 */
 
-#ifndef TRIANGLESIGNAL_H_INCLUDED
-#define TRIANGLESIGNAL_H_INCLUDED
+#ifndef SINUSSIGNAL_H_INCLUDED
+#define SINUSSIGNAL_H_INCLUDED
 
 #include "JuceHeader.h"
 #include "Amusinus.h"
 #include "FourierSignal.h"
 
 
-class TriangleSignal : public FourierSignal
+class SinusSignal : public FourierSignal
 {
 public:
-	TriangleSignal(double m_amplitude, double m_frequency, int m_numHarmonics);
-	~TriangleSignal();
+	SinusSignal(double m_amplitude, double m_frequency, int m_numHarmonics);
+	~SinusSignal();
 
 	void computeHarmonicsParameters(int samplesPerBlockExpected, double sampleRate);
 
@@ -28,4 +28,4 @@ public:
 
 
 
-#endif  // TRIANGLESIGNAL_H_INCLUDED
+#endif  // SINUSSIGNAL_H_INCLUDED

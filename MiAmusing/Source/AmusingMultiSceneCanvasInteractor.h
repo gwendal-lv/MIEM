@@ -34,7 +34,7 @@ namespace Miam
 		void __AddTestAreas();
 
 		// callback when one surface of a scene is changed
-		void OnSurfaceChanged(double newSurface) override;
+		//void OnSurfaceChanged(double newSurface) override;
 
 	};
 };

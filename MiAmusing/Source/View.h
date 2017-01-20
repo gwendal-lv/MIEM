@@ -17,11 +17,14 @@
 
 #include "DrawableArea.h"
 
-
 namespace Miam {
+	class MultiCanvasComponent;
+}
+
+namespace Amusing {
     
     class Presenter; // sufficient declaration for a pointer class member
-    class MultiCanvasComponent;
+    
     
     
     
@@ -39,7 +42,7 @@ namespace Miam {
         // ========== ATTRIBUTES ==========
         private :
         Presenter* presenter;
-		Model* model;
+		AmusingModel* model;
         
         // Owned by the MainWindow within the MiamEditApplication
         MainContentComponent* mainContentComponent;
@@ -62,7 +65,7 @@ namespace Miam {
         void CompleteInitialization(Presenter* _presenter);
         /// \brief Function called after both View and Presenter are contructed
         void CompleteInitialization(GraphicSessionManager*, MultiCanvasComponent*);
-		void CompleteInitialization(Model* _model);
+		void CompleteInitialization(AmusingModel* _model);
 
 		// ----- Events to the Presenter -----
         

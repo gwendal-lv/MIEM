@@ -18,3 +18,8 @@ IPresenter::IPresenter() : paramChangesToModel()
     
 }
 
+void IPresenter::SendParamChange(AsyncParamChange& paramChange)
+{
+	if (!paramChangesToModel.TryEnqueue(paramChange))
+		throw std::runtime_error("Lock-Free Queue Presenter->Model is full...");
+}

@@ -163,7 +163,7 @@ namespace Miam {
         // ADDS AREAS ON ALL SCENES
         void __AddTestAreas();
     
-       
+		void SendEventSync(std::shared_ptr<GraphicEvent> graphicE);
 
         
         
