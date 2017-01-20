@@ -23,12 +23,14 @@ namespace Miam
 	{
 	public :
 		AmusingScene(MultiSceneCanvasInteractor* _canvasManager, SceneCanvasComponent* _canvasComponent);
-
+		virtual ~AmusingScene();
 		// override mouse callback
-		std::string OnCanvasMouseDown(Point<int> &clicLocation) override;
-		bool OnCanvasMouseDrag(Point<int> &clicLocation) override;
-		bool OnCanvasMouseUp() override;
 		
+		/*
+		virtual std::shared_ptr<GraphicEvent> OnCanvasMouseDown(const MouseEvent& mouseE) override;
+		virtual std::shared_ptr<GraphicEvent> OnCanvasMouseDrag(const MouseEvent& mouseE) override;
+		virtual std::shared_ptr<GraphicEvent> OnCanvasMouseUp(const MouseEvent& mouseE) override;
+		*/
 		// private attribut
 		
 		//Model *model;

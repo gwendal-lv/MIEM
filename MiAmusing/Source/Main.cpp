@@ -11,7 +11,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "MainComponent.h"
 
-#include "Model.h"
+#include "AmusingModel.h"
 #include "Presenter.h"
 #include "View.h"
 
@@ -21,9 +21,9 @@ class MiamSpatApplication  : public JUCEApplication
     
     // - - - - - The 3 main modules of our app - - - - -
     private :
-    Miam::Model* model;
-    Miam::Presenter* presenter;
-    Miam::View* view;
+    Amusing::AmusingModel* model;
+	Amusing::Presenter* presenter;
+	Amusing::View* view;
     // - - - - - The 3 main modules of our app - - - - -
     
     
@@ -46,11 +46,11 @@ public:
         // Instanciation of the 3 main parts of the application : Model, Presenter, View
         MainContentComponent* mainContentComponent = dynamic_cast<MainContentComponent*>(mainWindow->getChildComponent(0));
         if (mainContentComponent)
-            view = new Miam::View(mainContentComponent);
+            view = new Amusing::View(mainContentComponent);
         else
             throw std::runtime_error("First child of Main Window is not a MainContentComponent...");
-        presenter = new Miam::Presenter(view); // Will reference itself to the View module
-        model = new Miam::Model(presenter);// Will reference itself to the Presenter module
+        presenter = new Amusing::Presenter(view); // Will reference itself to the View module
+        model = new Amusing::AmusingModel(presenter);// Will reference itself to the Presenter module
     }
 
     void shutdown() override

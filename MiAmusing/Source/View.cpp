@@ -13,6 +13,7 @@
 #include "Presenter.h"
 
 using namespace Miam;
+using namespace Amusing;
 
 
 // Default constructor
@@ -44,7 +45,7 @@ void View::CompleteInitialization(GraphicSessionManager* _graphicSessionManager,
     mainContentComponent->CompleteInitialization(_graphicSessionManager, _multiCanvasComponent);
 }
 
-void View::CompleteInitialization(Model* _model)
+void View::CompleteInitialization(AmusingModel* _model)
 {
 	model = _model;
 	mainContentComponent->CompleteInitialization(model);

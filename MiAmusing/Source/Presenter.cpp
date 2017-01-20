@@ -10,13 +10,13 @@
 
 #include "Presenter.h"
 
-//#include "Model.h"
+#include "AmusingModel.h"
 #include "View.h"
 
 
 #include "JuceHeader.h"
 
-using namespace Miam;
+using namespace Amusing;
 
 
 // - - - - - Contruction and Destruction - - - - -
@@ -25,7 +25,7 @@ Presenter::Presenter(View* _view) :
     view(_view),
     appMode(AppMode::Loading), // app is loading while the Model hasn't fully loaded yet
 
-    graphicSessionManager(_view)
+    graphicSessionManager(this, _view)
 {
     // After all sub-modules are built, the presenter refers itself to the View
     view->CompleteInitialization(this);
@@ -36,15 +36,16 @@ Presenter::Presenter(View* _view) :
     
     
     appModeChangeRequest(AppMode::None);
+	Nsources = 0;
 }
 
 
-void Presenter::CompleteInitialisation(Model* _model)
+void Presenter::CompleteInitialisation(AmusingModel* _model)
 {
     // Self init
     model = _model;
-	view->CompleteInitialization(model);
-	graphicSessionManager.CompleteInitialization(model);
+	//view->CompleteInitialization(model);
+	//graphicSessionManager.CompleteInitialization(model);
 }
 
 
@@ -68,3 +69,23 @@ AppMode Presenter::appModeChangeRequest(AppMode newAppMode)
 }
 
 
+int Presenter::getSourceID(std::shared_ptr<IEditableArea> area)
+{
+	if (areaToSource.find(area) == areaToSource.end())
+	{
+		// area has no associated source yet
+		areaToSource[area] = Nsources;
+		sourceToArea[Nsources] = area;
+		++Nsources;
+	}
+	return areaToSource[area];
+}
+
+std::shared_ptr<IEditableArea> Presenter::getAreaFromSource(int source)
+{
+	if (sourceToArea.find(source) == sourceToArea.end())
+	{
+		// source has no associated area
+	}
+	return sourceToArea[source];
+}

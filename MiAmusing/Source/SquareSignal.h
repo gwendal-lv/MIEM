@@ -13,42 +13,25 @@
 
 #include "JuceHeader.h"
 #include "Amusinus.h"
+#include "FourierSignal.h"
 
-enum TransportState
-{
-	Stopped,
-	Starting,
-	Playing,
-	Pausing,
-	Paused,
-	Stopping
-};
+
 
 
 // faire architecture des sources  : mySources(tout generic avec les etats) ---> shapeSources (generique pour triangle, square, ...)
 //                                                                           \--> soundSources (utilisation des fichiers) 
 
-class SquareSignal : public AudioSource // ajouter les etats comme dans Sound, pour pourvoir utiliser facilement les deux de la mm facon.	
+class SquareSignal : public FourierSignal // ajouter les etats comme dans Sound, pour pourvoir utiliser facilement les deux de la mm facon.	
 {
 public:
-	SquareSignal (double m_amplitude, double m_frequency, int m_numHarmonics, int ID);
+	SquareSignal (double m_amplitude, double m_frequency, int m_numHarmonics);
 	~SquareSignal ();
 
-	void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
-	void getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill) override;
-	void releaseResources() override;
+	void computeHarmonicsParameters(int samplesPerBlockExpected, double sampleRate) override;
 
-	void setFrequency(double newFrequency);
-	void setAmplitude(double newAmplitude);
-
-	void changeState(TransportState newState);
-
-	int getID();
-
-	// peut-etre prevoir un changement de phase aussi si on doit recaler les signaux
-
+/*
 private:
-	/*
+	
 	AmuSinus *S;
 	AmuSinus *S3;
 	AmuSinus *S5;
@@ -65,20 +48,15 @@ private:
 	AmuSinus *S27;
 	AmuSinus *S29;
 	AmuSinus *Sopp;
-	*/
-	int ID;
-
+	
 	AmuSinus **harmonics;
 	int *harmonicsN; // ordre des harmoniques
 	double *harmonicsA; // amplitude des harmoniques
 
-
-	double amplitude;
-	double frequency;
 	double phase;
-	int numHarmonics; // nombre d'harmoniques que l'on veut utiliser
+	int numHarmonics; // nombre d'harmoniques que l'on veut utiliser*/
 
-	TransportState state;
+
 
 };
 

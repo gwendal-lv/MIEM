@@ -19,8 +19,8 @@ AmuSinus::AmuSinus(double m_amplitude, double m_frequency, double m_phase, doubl
 	phase(m_phase), angle(m_phase),
 	sampleRate(m_sampleRate), angleDelta(0), bufferSize(m_bufferSize)
 {
-	DBG("AmuSinus Constructor");
-	DBG("frequency sinus = " + (String)frequency);
+	//DBG("AmuSinus Constructor");
+	//DBG("frequency sinus = " + (String)frequency);
 	updateAngleDelta();
 }
 
@@ -31,9 +31,18 @@ AmuSinus::AmuSinus(AmuSinusParameter parameters) :
 	updateAngleDelta();
 }
 
+AmuSinus::AmuSinus(AmuSinus *toCopy) :
+	amplitude(toCopy->getAmplitude()), targetAmplitude(toCopy->getAmplitude()),
+	frequency(toCopy->getFrequency()), targetFrequency(toCopy->getFrequency()),
+	phase(toCopy->getPhase()), angle(toCopy->getPhase()),
+	sampleRate(toCopy->getSampleRate()), angleDelta(0), bufferSize(toCopy->getBufferSize())
+{
+	updateAngleDelta();
+}
+
 AmuSinus::~AmuSinus()
 {
-	DBG("AmuSinus Destructor");
+	//DBG("AmuSinus Destructor");
 }
 
 void AmuSinus::updateAngleDelta()
@@ -78,10 +87,20 @@ double AmuSinus::getSample()
 	return sample;
 }
 
+double AmuSinus::getCurrentSample()
+{
+	return amplitude * std::sin(angle);
+}
+
 void AmuSinus::setAmplitude(double newAmplitude)
 {
 	targetAmplitude = newAmplitude;
 	updateAmplitude();
+}
+
+void AmuSinus::resetAmplitude(double newAmplitude)
+{
+	amplitude = newAmplitude;
 }
 
 void AmuSinus::updateAmplitude()
@@ -115,7 +134,33 @@ void AmuSinus::resetPhase(double newPhase)
 	phase = newPhase;
 }
 
+void AmuSinus::shiftPhase(double shift)
+{
+	angle += shift;
+	phase += shift;
+}
+
 double AmuSinus::getPhase()
 {
 	return phase;
+}
+
+double AmuSinus::getSampleRate()
+{
+	return sampleRate;
+}
+
+int AmuSinus::getBufferSize()
+{
+	return bufferSize;
+}
+
+double AmuSinus::getCurrentAmplitude()
+{
+	return amplitude;
+}
+
+double AmuSinus::getCurrentAngle()
+{
+	return angle;
 }

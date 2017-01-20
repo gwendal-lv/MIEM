@@ -11,24 +11,33 @@
 #ifndef MODEL_H_INCLUDED
 #define MODEL_H_INCLUDED
 
-#include "IModel.h"
-#include "AudioPlayer.h"
 
-namespace Miam
+
+#include "IModel.h"
+//#include "AudioPlayer.h"
+#include "AudioManager.h"
+#include "Presenter.h"
+
+
+
+
+namespace Amusing
 {
+	// Pre-declaration for pointer members
+	class AudioManager;
     
-    
-    class Model : public IModel
+    class AmusingModel : public Miam::IModel
     {
         public :
         
             // constructeur et destructeur
-            Model(Presenter* _presenter);
-            ~Model();
+			AmusingModel(Presenter* m_presenter);
+            virtual ~AmusingModel();
         
-			AudioPlayer *audioPlayer;
-            
-            
+			bool lookForParameter(Miam::AsyncParamChange &param);
+
+			AudioManager *audioManager;
+			Presenter *presenter;
         
     };
 }

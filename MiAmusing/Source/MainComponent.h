@@ -10,7 +10,7 @@
 #define MAINCOMPONENT_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-
+//#include "SceneEditionComponent.h"
 
 
 // Presenter
@@ -18,17 +18,19 @@
 #include "AppMode.h"
 
 #include "MultiCanvasComponent.h"
-#include "AudioPlayer.h"
+#include "editScene.h"
+//#include "AudioManager.h"
+//#include "AudioPlayer.h"
 
 using namespace Miam;
-namespace Miam
+namespace Amusing
 {
     class Presenter; // cross-inclusion issue
     class View; // cross-inclusion issue
+	class AmusingModel;
+	class GraphicSessionManager;
 }
-
-
-
+using namespace Amusing;
 //==============================================================================
 /*
     This component lives inside our window, and this is where you should put all
@@ -44,14 +46,16 @@ private:
     Presenter* presenter = 0;
     
     // Links to sub-modules
-    GraphicSessionManager* graphicSessionManager = 0;
+	Amusing::GraphicSessionManager* graphicSessionManager = 0;
     
     // Graphical component
     MultiCanvasComponent* multiCanvasComponent = 0; // belongs to the presenter
+	editScene* editSceneC;
+	//SceneEditionComponent* sceneEditionComponent;
     
 	// Audio component
 	//AudioPlayer* audioPlayer = 0; // belongs to the model
-	Model* model;
+	AmusingModel* model;
     
     // ============== SETTERS AND GETTERS ==============
     public :
@@ -60,7 +64,7 @@ private:
     /// \brief Function called after both View and Presenter are contructed
     void CompleteInitialization(GraphicSessionManager*, MultiCanvasComponent*);
 	/// \brief Function called after both View, Presenter and Model are constructed
-	void CompleteInitialization(Model* _model);
+	void CompleteInitialization(AmusingModel* _model);
     
     /// \brief Necessary for the Miam::View to reference itself, because this class is always
     /// constructed by the MainWindow before the View module.

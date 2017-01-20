@@ -37,6 +37,11 @@ namespace Miam
         /// \returns Wether a parameter change has occured since the last "gets" sequence
         bool TryGetAsyncParamChange(AsyncParamChange& param_)
         { return paramChangesToModel.TryDequeue(param_); }
+
+		/// \brief
+		///
+		/// The presenter may delay the actual send
+		virtual void SendParamChange(AsyncParamChange& paramChange);
         
         
         
