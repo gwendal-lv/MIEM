@@ -35,7 +35,8 @@ namespace Miam
     /// \brief Interface for any manager of a Miam graphic session presenter
     ///
     /// Owns the unique MultiCanvasComponent
-    class IGraphicSessionManager {
+    class IGraphicSessionManager// : private Timer
+    {
         
         
         
@@ -58,6 +59,8 @@ namespace Miam
         std::vector< MultiSceneCanvasInteractor* > canvasManagers;
         MultiSceneCanvasInteractor* selectedCanvas = 0;
         
+        // REMPLACER CETTE MERDE PAR UN TIMER
+        // Qui lui aussi déclenche des callbacks dans le "message thread"
         std::unique_ptr< FrameTriggerComponent > frameTriggerComponent;
         
         

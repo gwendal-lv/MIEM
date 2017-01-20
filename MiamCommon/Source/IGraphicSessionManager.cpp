@@ -65,10 +65,14 @@ uint64_t IGraphicSessionManager::GetNextAreaId()
 void IGraphicSessionManager::OnFrameTrigger()
 {
     // We trigger repaint only if OpenGL is not the master
-    if (!IsOpenGlSwapSynced())
+    
+    // GL RENDERER CAN LOCK THE MESSAGE THREAD DURING RENDERING ?????????
+    // IF GL CONTEXT IS ATTACHED TO A COMPONENT
+    
+    /*if (!IsOpenGlSwapSynced())
     {
         CallRepaint();
-    }
+    }*/
 }
 void IGraphicSessionManager::CallRepaint()
 {

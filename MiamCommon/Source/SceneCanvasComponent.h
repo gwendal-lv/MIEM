@@ -11,6 +11,8 @@
 #ifndef SCENECANVASCOMPONENT_H_INCLUDED
 #define SCENECANVASCOMPONENT_H_INCLUDED
 
+#include <chrono>
+
 #include "JuceHeader.h"
 
 #include "DrawableArea.h"
@@ -28,7 +30,8 @@ namespace Miam {
 /// \brief Initially empty component dedicated to the drawing of several Miam::DrawableArea
 ///
 /// This component does not have any children UI controls built within the Projucer.
-class SceneCanvasComponent    : public Component
+class SceneCanvasComponent    : public Component,
+                                public OpenGLRenderer
 {
 public:
     
@@ -48,6 +51,8 @@ public:
     
     
     
+    
+    
     // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
     
     protected :
@@ -58,8 +63,17 @@ public:
     
     
     // - - - - - OpenGL - - - - -
-    bool enableOpenGl = true;
+    const bool enableOpenGl = true;
     OpenGLContext openGlContext;
+    // - - - - - Time measures - - - - -
+    std::chrono::time_point<std::chrono::steady_clock> lastFrameTimePt, newFrameTimePt;
+    private :
+    // mean framerate computing
+    int lastSequenceFramesCount = 0;
+    std::chrono::time_point<std::chrono::steady_clock> lastSequenceTimePt;
+    
+    protected :
+    
     
     
     
@@ -72,13 +86,23 @@ public:
 	/// \brief Also called from Miam::View::CompleteInitialization
     void CompleteInitialization(MultiSceneCanvasInteractor* _canvasManager);
 
-    void paint (Graphics&);
-    void resized();
-  
-    // Juce Events
-    void mouseDown(const juce::MouseEvent &event);
-    void mouseDrag(const juce::MouseEvent &event);
-    void mouseUp(const juce::MouseEvent &event);
+    // - - - - - - - - Juce usual paint/resized component methods - - - - - - - - -
+    void paint (Graphics&) override;
+    void resized() override;
+    
+    // - - - - - - - - OpenGL specific - - - - - - - - -
+    virtual void newOpenGLContextCreated() override;
+    virtual void renderOpenGL() override; // ! in background-thread !
+    virtual void openGLContextClosing() override;
+    
+    // - - - - - - - - Actual painting codes - - - - - - - - -
+    protected :
+    
+    // - - - - - - - - Juce events - - - - - - - - -
+    public :
+    void mouseDown(const juce::MouseEvent &event) override;
+    void mouseDrag(const juce::MouseEvent &event) override;
+    void mouseUp(const juce::MouseEvent &event) override;
     
     // Getters and Setters
     float GetRatio() {return ((float)getWidth()) / ((float)getHeight()) ; }

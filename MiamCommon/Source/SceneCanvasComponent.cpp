@@ -21,7 +21,6 @@ SceneCanvasComponent::SceneCanvasComponent() :
     
     
     openGlContext.setComponentPaintingEnabled(true); // default behavior, lower perfs
-    openGlContext.setContinuousRepainting(false);
     // OpenGL final initialization will happen in the COmpleteInitialization method
 }
 
@@ -34,7 +33,10 @@ void SceneCanvasComponent::CompleteInitialization(MultiSceneCanvasInteractor* _c
     canvasManager = _canvasManager;
     
     // OpenGL final initialization here
+    openGlContext.setRenderer(this);
     openGlContext.attachTo(*this);
+    openGlContext.setContinuousRepainting(true);
+    openGlContext.setSwapInterval(1);
 }
 
 
@@ -43,37 +45,15 @@ void SceneCanvasComponent::CompleteInitialization(MultiSceneCanvasInteractor* _c
 
 
 
+// - - - - - - - - Juce usual paint/resized component methods - - - - - - - - -
 
 void SceneCanvasComponent::paint (Graphics& g_)
 {
     // OpenGL rendering
     if (enableOpenGl)
     {
-        const float desktopScale = (float) openGlContext.getRenderingScale();
-        ScopedPointer<LowLevelGraphicsContext> glRenderer (createOpenGLGraphicsContext (openGlContext,
-                                                                                        roundToInt (desktopScale * getWidth()),
-                                                                                        roundToInt (desktopScale * getHeight())));
-        
-        
-        
-        // --------------------------------code copié-----------------------------
-        Graphics g(*glRenderer);
-        
-        // Pure black background
-        g.fillAll (Colours::black);
-        
-        // White interior contour 2px line to show when the canvas is active
-        if (selectedForEditing)
-        {
-            g.setColour(Colours::white);
-            g.drawRect(1, 1, getWidth()-2, getHeight()-2, 2);
-        }
-        
-        // Areas painting (including exciters if existing)
-        for (size_t i=0;i<canvasManager->GetDrawableObjectsCount();i++)
-            canvasManager->GetDrawableObject(i)->Paint(g);
-        // --------------------------------code copié-----------------------------
-
+        // not in this function
+        std::cout << "Canvas paint called from parent or repaint()" << std::endl;
     }
     
     
@@ -94,9 +74,9 @@ void SceneCanvasComponent::paint (Graphics& g_)
         // Areas painting (including exciters if existing)
         for (size_t i=0;i<canvasManager->GetDrawableObjectsCount();i++)
             canvasManager->GetDrawableObject(i)->Paint(g);
-        
     }
 }
+
 
 void SceneCanvasComponent::resized()
 {
@@ -114,6 +94,51 @@ void SceneCanvasComponent::resized()
 }
 
 
+
+
+// - - - - - - - - OpenGL specific - - - - - - - - -
+void SceneCanvasComponent::newOpenGLContextCreated()
+{
+    std::cout << "SceneCanvasComponent" << " : init OpenGL" << std::endl;
+}
+void SceneCanvasComponent::renderOpenGL()
+{
+    const float desktopScale = (float) openGlContext.getRenderingScale();
+    std::cout << desktopScale << std::endl;
+    //std::cout << getDesktopScaleFactor() << std::endl;
+    ScopedPointer<LowLevelGraphicsContext> glRenderer (createOpenGLGraphicsContext (openGlContext,
+                                                                                    roundToInt (desktopScale * getWidth()),
+                                                                                    roundToInt (desktopScale * getHeight())));
+    Graphics g(*glRenderer);
+    
+    g.addTransform(AffineTransform::scale(desktopScale));
+    
+    // --------------------------------code copié-----------------------------
+    // Pure black background
+    g.fillAll (Colours::black);
+    
+    // White interior contour 2px line to show when the canvas is active
+    if (selectedForEditing)
+    {
+        g.setColour(Colours::white);
+        g.drawRect(1, 1, getWidth()-2, getHeight()-2, 2);
+    }
+    
+    // Areas painting (including exciters if existing)
+    for (size_t i=0;i<canvasManager->GetDrawableObjectsCount();i++)
+        canvasManager->GetDrawableObject(i)->Paint(g);
+    // --------------------------------code copié-----------------------------
+}
+void SceneCanvasComponent::openGLContextClosing()
+{
+    
+}
+
+
+
+
+
+// - - - - - - - - Juce events - - - - - - - - -
 
 void SceneCanvasComponent::mouseDown(const juce::MouseEvent& event)
 {
