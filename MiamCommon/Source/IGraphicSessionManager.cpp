@@ -19,12 +19,9 @@ using namespace Miam;
 
 
 IGraphicSessionManager::IGraphicSessionManager(IPresenter* presenter_) :
-    multiCanvasComponent(new MultiCanvasComponent(this)), // first init of shared_ptr
-    frameTriggerComponent(new FrameTriggerComponent(this))
+    multiCanvasComponent(new MultiCanvasComponent(this))
 {
     presenter = presenter_;
-    
-    frameTriggerComponent->setFramesPerSecond(50);
 }
 
 
@@ -33,9 +30,6 @@ IGraphicSessionManager::IGraphicSessionManager(IPresenter* presenter_) :
 IGraphicSessionManager::~IGraphicSessionManager()
 {
     delete multiCanvasComponent;
-    
-    for(size_t i=0 ; i<canvasManagers.size(); i++)
-        delete canvasManagers[i];
 }
 
 
@@ -54,34 +48,21 @@ uint64_t IGraphicSessionManager::GetNextAreaId()
 
 // = = = = = = = = = = METHODS = = = = = = = = = =
 
-// - - - - - Painting (frame triggering) events - - - - -
 
-/// \brief Launches the computation (maybe a repaint) of a new frame. To be called
-/// back from the Miam::FrameTriggerComponent, OR from the OpenGL
-/// "clock" synced swap function (********************TO BE DEFINED******************)
-///
-/// If OpenGL does not master the repainting frequency, this launches
-/// the update and painting of a new frame.
-void IGraphicSessionManager::OnFrameTrigger()
+
+
+// - - - - - - canvases managing - - - - - -
+void IGraphicSessionManager::SetSelectedCanvas(MultiSceneCanvasInteractor* canvasInteractor)
 {
-    // We trigger repaint only if OpenGL is not the master
-    
-    // GL RENDERER CAN LOCK THE MESSAGE THREAD DURING RENDERING ?????????
-    // IF GL CONTEXT IS ATTACHED TO A COMPONENT
-    
-    /*if (!IsOpenGlSwapSynced())
+    for (size_t i=0 ; i<canvasManagers.size() ; i++)
     {
-        CallRepaint();
-    }*/
-}
-void IGraphicSessionManager::CallRepaint()
-{
-    for (size_t i = 0 ; i<canvasManagers.size() ; i++)
-    {
-        canvasManagers[i]->CallRepaint(false);
+        if (canvasManagers[i].get() == canvasInteractor)
+        {
+            SetSelectedCanvas(canvasManagers[i]);
+            break;
+        }
     }
 }
-
 
 
 // - - - - - Mouse Events - - - - -

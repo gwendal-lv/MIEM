@@ -21,12 +21,13 @@
 using namespace Miam;
 
 namespace Miam {
-    // pre-declarations for pointers
+    
+    // pre-declarations for pointer members
     class IGraphicSessionManager;
     
     
     
-    class MultiCanvasComponent : public /*AnimatedApp*/Component
+    class MultiCanvasComponent : public Component
     {
         
         
@@ -63,6 +64,8 @@ namespace Miam {
         
         virtual void paint(Graphics& g) override;
         virtual void resized() override;
+        
+        void CompleteInitialization();
         
 		//void update() override;
         

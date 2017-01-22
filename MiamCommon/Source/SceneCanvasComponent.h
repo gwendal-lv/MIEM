@@ -11,6 +11,7 @@
 #ifndef SCENECANVASCOMPONENT_H_INCLUDED
 #define SCENECANVASCOMPONENT_H_INCLUDED
 
+#include <memory>
 #include <chrono>
 
 #include "JuceHeader.h"
@@ -56,20 +57,20 @@ public:
     // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
     
     protected :
-    // links back to parent modules
-    MultiSceneCanvasInteractor* canvasManager = 0;
+    /// \brief Link back to parent module. Thread-safe access to member functions
+    /// (guaranteed by std::shared_ptr)
+    std::shared_ptr<MultiSceneCanvasInteractor> canvasManager = 0;
     
     bool selectedForEditing;
     
     
     // - - - - - OpenGL - - - - -
-    const bool enableOpenGl = true;
     OpenGLContext openGlContext;
     // - - - - - Time measures - - - - -
     std::chrono::time_point<std::chrono::steady_clock> lastFrameTimePt, newFrameTimePt;
     private :
     // mean framerate computing
-    int lastSequenceFramesCount = 0;
+    int lastSequenceFramesCount;
     std::chrono::time_point<std::chrono::steady_clock> lastSequenceTimePt;
     
     protected :
@@ -84,10 +85,9 @@ public:
     ~SceneCanvasComponent();
     
 	/// \brief Also called from Miam::View::CompleteInitialization
-    void CompleteInitialization(MultiSceneCanvasInteractor* _canvasManager);
+    void CompleteInitialization(std::shared_ptr<MultiSceneCanvasInteractor> _canvasManager);
 
     // - - - - - - - - Juce usual paint/resized component methods - - - - - - - - -
-    void paint (Graphics&) override;
     void resized() override;
     
     // - - - - - - - - OpenGL specific - - - - - - - - -
@@ -106,7 +106,7 @@ public:
     
     // Getters and Setters
     float GetRatio() {return ((float)getWidth()) / ((float)getHeight()) ; }
-    void SetIsSelectedForEditing(bool isSelected) {selectedForEditing = isSelected;}
+    void SetIsSelectedForEditing(bool isSelected);
     
 
 private:

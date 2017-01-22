@@ -14,7 +14,10 @@
 
 //==============================================================================
 SceneCanvasComponent::SceneCanvasComponent() :
-    selectedForEditing(false)
+    selectedForEditing(false),
+    lastFrameTimePt(std::chrono::steady_clock::now()),
+    lastSequenceFramesCount(0),
+    lastSequenceTimePt(std::chrono::steady_clock::now())
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
@@ -28,7 +31,7 @@ SceneCanvasComponent::~SceneCanvasComponent()
 {
 }
 
-void SceneCanvasComponent::CompleteInitialization(MultiSceneCanvasInteractor* _canvasManager)
+void SceneCanvasComponent::CompleteInitialization(std::shared_ptr<MultiSceneCanvasInteractor> _canvasManager)
 {
     canvasManager = _canvasManager;
     
@@ -36,7 +39,11 @@ void SceneCanvasComponent::CompleteInitialization(MultiSceneCanvasInteractor* _c
     openGlContext.setRenderer(this);
     openGlContext.attachTo(*this);
     openGlContext.setContinuousRepainting(true);
-    openGlContext.setSwapInterval(1);
+    bool platformSupportsSyncedSwap = openGlContext.setSwapInterval(10);
+    if (platformSupportsSyncedSwap)
+        std::cout << "Platform supports synced OpenGL swaps" << std::endl;
+    else
+        std::cout << "Platform does not support synced OpenGL swaps" << std::endl;
 }
 
 
@@ -46,37 +53,6 @@ void SceneCanvasComponent::CompleteInitialization(MultiSceneCanvasInteractor* _c
 
 
 // - - - - - - - - Juce usual paint/resized component methods - - - - - - - - -
-
-void SceneCanvasComponent::paint (Graphics& g_)
-{
-    // OpenGL rendering
-    if (enableOpenGl)
-    {
-        // not in this function
-        std::cout << "Canvas paint called from parent or repaint()" << std::endl;
-    }
-    
-    
-    // CPU rendering (Not OpenGL)
-    else
-    {
-        Graphics& g(g_);
-        // Pure black background
-        g.fillAll (Colours::black);
-        
-        // White interior contour 2px line to show when the canvas is active
-        if (selectedForEditing)
-        {
-            g.setColour(Colours::white);
-            g.drawRect(1, 1, getWidth()-2, getHeight()-2, 2);
-        }
-        
-        // Areas painting (including exciters if existing)
-        for (size_t i=0;i<canvasManager->GetDrawableObjectsCount();i++)
-            canvasManager->GetDrawableObject(i)->Paint(g);
-    }
-}
-
 
 void SceneCanvasComponent::resized()
 {
@@ -104,16 +80,13 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 void SceneCanvasComponent::renderOpenGL()
 {
     const float desktopScale = (float) openGlContext.getRenderingScale();
-    std::cout << desktopScale << std::endl;
-    //std::cout << getDesktopScaleFactor() << std::endl;
-    ScopedPointer<LowLevelGraphicsContext> glRenderer (createOpenGLGraphicsContext (openGlContext,
+    std::unique_ptr<LowLevelGraphicsContext> glRenderer (createOpenGLGraphicsContext (openGlContext,
                                                                                     roundToInt (desktopScale * getWidth()),
                                                                                     roundToInt (desktopScale * getHeight())));
     Graphics g(*glRenderer);
     
     g.addTransform(AffineTransform::scale(desktopScale));
     
-    // --------------------------------code copié-----------------------------
     // Pure black background
     g.fillAll (Colours::black);
     
@@ -124,11 +97,43 @@ void SceneCanvasComponent::renderOpenGL()
         g.drawRect(1, 1, getWidth()-2, getHeight()-2, 2);
     }
     
+    // Duplication of the drawable objects for thread-safe rendering
+    canvasManager->LockAsyncDrawableObjects();
+    
+    // Not a resize but just a pre-allocation (to avoid empty shared ptrs constructing)
+    std::vector<std::shared_ptr<IDrawableArea>> duplicatedAreas;
+    duplicatedAreas.reserve(canvasManager->GetAsyncDrawableObjects().size());
+    for (size_t i = 0 ; i<canvasManager->GetAsyncDrawableObjects().size() ; i++)
+        duplicatedAreas.push_back(
+            std::shared_ptr<IDrawableArea>(
+                canvasManager->GetAsyncDrawableObjects()[i]->Clone() ) );
+    
+    canvasManager->UnlockAsyncDrawableObjects();
+    
     // Areas painting (including exciters if existing)
-    for (size_t i=0;i<canvasManager->GetDrawableObjectsCount();i++)
-        canvasManager->GetDrawableObject(i)->Paint(g);
-    // --------------------------------code copié-----------------------------
+    for (size_t i=0;i<duplicatedAreas.size();i++)
+        duplicatedAreas[i]->Paint(g);
+    
+    
+    
+    // Time measures just before swap (or the closer that we can get to the swaps)
+    auto currentTimePt = std::chrono::steady_clock::now();
+    if (selectedForEditing)
+    {
+        if (lastSequenceFramesCount >= 100)
+        {
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(currentTimePt - lastSequenceTimePt);
+            float displayFrequency = (float)lastSequenceFramesCount * 1000000.0f / (float)(duration.count());
+            std::cout << "Display frequency = " << displayFrequency << "Hz" << std::endl;
+            
+            lastSequenceTimePt = currentTimePt;
+            lastSequenceFramesCount = -1;
+        }
+    }
+    lastSequenceFramesCount++;
 }
+
+
 void SceneCanvasComponent::openGLContextClosing()
 {
     
@@ -155,4 +160,12 @@ void SceneCanvasComponent::mouseUp(const juce::MouseEvent& event)
     canvasManager->OnCanvasMouseUp(event);
 }
 
+
+
+// Getters and Setters
+
+void SceneCanvasComponent::SetIsSelectedForEditing(bool isSelected)
+{
+    selectedForEditing = isSelected;
+}
 

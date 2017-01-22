@@ -84,13 +84,17 @@ void InteractiveScene::SetName(std::string _name)
 // - - - - - Areas Managing : Add and Delete - - - - -
 
 
-void InteractiveScene::AddArea(std::shared_ptr<IInteractiveArea> newArea)
+std::shared_ptr<AreaEvent> InteractiveScene::AddArea(std::shared_ptr<IInteractiveArea> newArea)
 {
     areas.push_back(newArea);
-	std::shared_ptr<GraphicEvent> graphicE(new AreaEvent(newArea, AreaEventType::Added));
-	canvasManager->SendEventSync(graphicE);
+    
     // Forced graphical updates
     newArea->CanvasResized(canvasComponent);
+    
+    // Warning : does not contain the shared_ptr to the scene
+    return std::shared_ptr<AreaEvent>(new AreaEvent(newArea,
+                                                    AreaEventType::Added,
+                                                    areas.size()-1));
 }
 
 
@@ -110,6 +114,12 @@ void InteractiveScene::OnUnselection()
 		it = touchSourceToEditableArea.erase(it); // increments to next valid
 		AreaEventType eventType = editableArea->EndPointMove();
 		// EVENT TO SEND ------------------------------------------------------------
+        
+        // FAIRE UN PUTAIN DE VECTEUR QUI SERA COPIÉ SAUVAGEMENT PAR CONSTRUCTEUR DE
+        // COPIE DE CHAQUE ÉLÉMENT
+        //
+        // ÇA FAIT DU CALCUL MAIS ON S'EN BAT LES COUILLES, C'EST UN ÉVÈNEMENT PAS
+        // TROP FRÉQUENT
 	}
 }
 
@@ -147,13 +157,6 @@ std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseDown(const MouseEve
                 {
                     // Indicates the the move can begin
                     touchSourceToEditableArea[mouseE.source.getIndex()] = currentExciters[i];
-                    
-#ifndef _MSC_VER
-                    std::cout << mouseE.source.getIndex() << std::endl;
-#else
-					OutputDebugString((std::to_string(mouseE.source.getIndex()) + "\n").c_str());
-#endif
-                     
 					graphicE = std::shared_ptr<GraphicEvent>(new AreaEvent(currentExciters[i], eventType));
                 }
             }
@@ -203,8 +206,6 @@ std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseUp(const MouseEvent
             {
                 mapIt->second->EndPointMove();
                 touchSourceToEditableArea.erase(mapIt);
-                std::cout << "trouvé ! et supprimé" << std::endl;
-
 				// no event : exciter remains alive
 				//graphicE = 
             }

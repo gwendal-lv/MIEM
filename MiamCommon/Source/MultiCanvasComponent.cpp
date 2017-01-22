@@ -49,15 +49,7 @@ MultiCanvasComponent::MultiCanvasComponent(IGraphicSessionManager* _graphicSessi
     canvasResizeDiamond.addRectangle(diamond);
     canvasResizeDiamondTransform = AffineTransform::rotation( float_Pi / 2.0f );
 
-	//setFramesPerSecond(48);
 }
-
-/*
-void MultiCanvasComponent::update()
-{
-	//DBG("salut");
-}
-*/
 
 void MultiCanvasComponent::paint(Graphics& g)
 {
@@ -124,6 +116,14 @@ void MultiCanvasComponent::resized()
         throw std::runtime_error("Cannot currently do anything with more than 2 canvases");
 }
 
+void MultiCanvasComponent::CompleteInitialization()
+{
+    for (size_t i=0 ; i<multiSceneCanvasComponents.size() ; i++)
+    {
+        // Access to private member vector because of friendship
+        multiSceneCanvasComponents[i]->LinkToManager(graphicSessionManager->canvasManagers[i]);
+    }
+}
 
 
 // - - - - - Mouse events re-transmission to Graphic Session Manager - - - - -

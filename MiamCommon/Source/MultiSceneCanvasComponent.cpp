@@ -49,9 +49,11 @@ MultiSceneCanvasComponent::~MultiSceneCanvasComponent()
 }
 
 
-void MultiSceneCanvasComponent::LinkToManager(MultiSceneCanvasInteractor* _canvasManager)
+void MultiSceneCanvasComponent::LinkToManager(std::shared_ptr<MultiSceneCanvasInteractor> canvasManager_)
 {
-    canvasManager = _canvasManager;
+    canvasManager = canvasManager_;
+    
+    childrenCanvas->CompleteInitialization(canvasManager);
 }
 
 
@@ -71,14 +73,6 @@ void MultiSceneCanvasComponent::resized()
     
     // Buttons positionning
     updateSceneButtonsBounds();
-}
-
-void MultiSceneCanvasComponent::Repaint(bool repaintSideUiElements)
-{
-    if (repaintSideUiElements)
-        repaint();
-    else
-        childrenCanvas->repaint();
 }
 
 

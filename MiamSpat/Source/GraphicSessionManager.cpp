@@ -164,10 +164,10 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 			switch (areaE->GetType())
 			{
 			case AreaEventType::Added :
-				DBG("Area Added");
+				//DBG("Area Added");
 				break;
 			case AreaEventType::Deleted :
-				DBG("Area deleted");
+				//DBG("Area deleted");
 				break;
 			default:
 				break;
@@ -179,16 +179,16 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 		switch (sceneE->GetType())
 		{
 		case SceneEventType::Added :
-			DBG("Scene added");
+			//DBG("Scene added");
 			break;
 		case SceneEventType::Deleted :
-			DBG("Scene deleted");
+			//DBG("Scene deleted");
 			break;
 		case SceneEventType::NothingHappened :
-			DBG("Nothing happened");
+			//DBG("Nothing happened");
 			break;
 		case SceneEventType::SceneChanged :
-			DBG("Scene Changed");
+			//DBG("Scene Changed");
 			break;
 		default:
 			break;

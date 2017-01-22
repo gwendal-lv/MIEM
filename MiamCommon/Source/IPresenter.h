@@ -31,7 +31,7 @@ namespace Miam
         // = = = = = = = = = = GETTERS and SETTERS = = = = = = = = = =
         public :
         
-        /// \brief Tries a get a parameter change, that happened on the Model side,
+        /// \brief Tries a get a parameter change, that happened on the Presenter side,
         /// from the internal Miam::LockFreeQueue
         ///
         /// \returns Wether a parameter change has occured since the last "gets" sequence

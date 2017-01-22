@@ -95,6 +95,10 @@
         <GROUP id="{56C10D2A-D21F-45CE-76A5-54034487512D}" name="Events">
           <FILE id="IOqigb" name="AreaEvent.cpp" compile="1" resource="0" file="../MiamCommon/Source/AreaEvent.cpp"/>
           <FILE id="aVAfT0" name="AreaEvent.h" compile="0" resource="0" file="../MiamCommon/Source/AreaEvent.h"/>
+          <FILE id="NX0ySy" name="MultiAreaEvent.cpp" compile="1" resource="0"
+                file="../MiamCommon/Source/MultiAreaEvent.cpp"/>
+          <FILE id="oRJw3g" name="MultiAreaEvent.h" compile="0" resource="0"
+                file="../MiamCommon/Source/MultiAreaEvent.h"/>
           <FILE id="P48GDy" name="GraphicEvent.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/GraphicEvent.cpp"/>
           <FILE id="Wlybd4" name="GraphicEvent.h" compile="0" resource="0" file="../MiamCommon/Source/GraphicEvent.h"/>
@@ -136,10 +140,6 @@
         </GROUP>
         <FILE id="hWUZ4N" name="CanvasManagerMode.h" compile="0" resource="0"
               file="../MiamCommon/Source/CanvasManagerMode.h"/>
-        <FILE id="k6yRHD" name="FrameTriggerComponent.cpp" compile="1" resource="0"
-              file="../MiamCommon/Source/FrameTriggerComponent.cpp"/>
-        <FILE id="BjFl7t" name="FrameTriggerComponent.h" compile="0" resource="0"
-              file="../MiamCommon/Source/FrameTriggerComponent.h"/>
         <FILE id="LOSifR" name="IGraphicSessionManager.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/IGraphicSessionManager.cpp"/>
         <FILE id="Lgollh" name="IGraphicSessionManager.h" compile="0" resource="0"

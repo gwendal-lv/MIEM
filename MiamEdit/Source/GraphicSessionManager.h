@@ -98,10 +98,10 @@ namespace Miam {
         /// \brief Sets the new active canvas and updates corresponding graphic objects. Called by the newly selected canvas itself.
         ///
         /// Tells other canvases to unselect any previously selected area
-        void SetSelectedCanvas(MultiSceneCanvasInteractor*) override;
+        void SetSelectedCanvas(std::shared_ptr<MultiSceneCanvasInteractor>) override;
         
         protected :
-        MultiSceneCanvasEditor* getSelectedCanvasAsEditable();
+        std::shared_ptr<MultiSceneCanvasEditor> getSelectedCanvasAsEditable();
         
         
 		// ----- Running mode -----

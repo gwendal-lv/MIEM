@@ -20,7 +20,7 @@
 
 #include "JuceHeader.h"
 
-#include "GraphicEvent.h"
+#include "AreaEvent.h"
 
 #include "IEditableArea.h"
 
@@ -91,8 +91,6 @@ namespace Miam
         
         
         
-        
-        
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
         
@@ -130,7 +128,7 @@ namespace Miam
         
         
         /// \brief Adds an area without creating it before
-        virtual void AddArea(std::shared_ptr<IInteractiveArea> newArea);
+        virtual std::shared_ptr<AreaEvent> AddArea(std::shared_ptr<IInteractiveArea> newArea);
         
         
         
