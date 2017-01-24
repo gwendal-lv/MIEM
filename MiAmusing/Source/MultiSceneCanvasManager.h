@@ -13,7 +13,7 @@
 
 
 #include "MultiSceneCanvasEditor.h"
-
+#include "IGraphicSessionManager.h"
 
 namespace Amusing {
     
@@ -30,7 +30,7 @@ namespace Amusing {
         
         private :
         
-        
+		IGraphicSessionManager *graphicSessionManager;
         
         // = = = = = = = = = = GETTERS and SETTERS = = = = = = = = = =
         public :
@@ -50,6 +50,7 @@ namespace Amusing {
         
         // ------ Scenes managing : Add and Delete ------
         virtual void AddScene(std::string name) override;
+		void __AddAnimatedTestAreas();
     };
     
     

@@ -274,9 +274,6 @@ void MultiSceneCanvasInteractor::SendEventSync(std::shared_ptr<GraphicEvent> gra
 
 
 
-
-
-
 // - - - - - - - - - - Events from canvas - - - - - - - - - -
 
 void MultiSceneCanvasInteractor::OnCanvasMouseDown(const MouseEvent& mouseE)

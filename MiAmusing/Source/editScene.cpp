@@ -21,13 +21,16 @@
 //[/Headers]
 
 #include "editScene.h"
+#include "GraphicSessionManager.h"
+
+using namespace Amusing;
 
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
 //[/MiscUserDefs]
 
 //==============================================================================
-editScene::editScene ()
+EditScene::EditScene ()
 {
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
@@ -67,7 +70,7 @@ editScene::editScene ()
     //[/Constructor]
 }
 
-editScene::~editScene()
+EditScene::~EditScene()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
     //[/Destructor_pre]
@@ -85,7 +88,7 @@ editScene::~editScene()
 }
 
 //==============================================================================
-void editScene::paint (Graphics& g)
+void EditScene::paint (Graphics& g)
 {
     //[UserPrePaint] Add your own custom painting code here..
     //[/UserPrePaint]
@@ -96,7 +99,7 @@ void editScene::paint (Graphics& g)
     //[/UserPaint]
 }
 
-void editScene::resized()
+void EditScene::resized()
 {
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
@@ -111,7 +114,7 @@ void editScene::resized()
     //[/UserResized]
 }
 
-void editScene::buttonClicked (Button* buttonThatWasClicked)
+void EditScene::buttonClicked (Button* buttonThatWasClicked)
 {
     //[UserbuttonClicked_Pre]
     //[/UserbuttonClicked_Pre]
@@ -134,16 +137,19 @@ void editScene::buttonClicked (Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == addCarreButton)
     {
         //[UserButtonCode_addCarreButton] -- add your button handler code here..
+        graphicSessionManager->OnAddSquare();
         //[/UserButtonCode_addCarreButton]
     }
     else if (buttonThatWasClicked == addTriangleButton)
     {
         //[UserButtonCode_addTriangleButton] -- add your button handler code here..
+		graphicSessionManager->OnAddTriangle();
         //[/UserButtonCode_addTriangleButton]
     }
     else if (buttonThatWasClicked == addCircleButton)
     {
         //[UserButtonCode_addCircleButton] -- add your button handler code here..
+		graphicSessionManager->OnAddCircle();
         //[/UserButtonCode_addCircleButton]
     }
 
@@ -154,6 +160,16 @@ void editScene::buttonClicked (Button* buttonThatWasClicked)
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
+
+void EditScene::CompleteInitialization(GraphicSessionManager* _graphicSessionManager)//, MultiCanvasComponent* _multiCanvasComponent)
+{
+	DBG("Dans EditScene::CompleteInitialization");
+    graphicSessionManager = _graphicSessionManager;
+	DBG("Apres");
+    //multiCanvasComponent = _multiCanvasComponent;
+    //addAndMakeVisible(multiCanvasComponent);
+}
+
 //[/MiscUserCode]
 
 
@@ -166,7 +182,7 @@ void editScene::buttonClicked (Button* buttonThatWasClicked)
 
 BEGIN_JUCER_METADATA
 
-<JUCER_COMPONENT documentType="Component" className="editScene" componentName=""
+<JUCER_COMPONENT documentType="Component" className="EditScene" componentName=""
                  parentClasses="public Component" constructorParams="" variableInitialisers=""
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="0" initialWidth="600" initialHeight="400">

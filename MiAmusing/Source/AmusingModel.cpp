@@ -17,7 +17,7 @@ using namespace Amusing;
 
 AmusingModel::AmusingModel(Presenter* m_presenter) : presenter(m_presenter)
 {
-	DBG("Salut");
+	DBG("AmusingModel::AmusingModel");
 	//audioPlayer = new AudioPlayer();
 	presenter->CompleteInitialisation(this);
 	audioManager = new AudioManager(this);

@@ -17,7 +17,7 @@ using namespace Miam;
 MainContentComponent::MainContentComponent()
 {
 	//addAndMakeVisible(sceneEditionComponent = new SceneEditionComponent());
-	editSceneC = new editScene();
+	editSceneC = new EditScene();
 	addAndMakeVisible(editSceneC);
     setSize (600, 400);
 }

@@ -59,3 +59,40 @@ double Math::ComputePositiveAngle(Point<double> p)
     return angle;
 }
 
+Point<double> Math::ComputeIntersectionPoint(Point<double> A, Point<double> B, Point<double> C, Point<double> D)
+{
+	// Planar lines cartesian representations (easier to compute intersection)
+	// Line (AT) : a.x + b.y + c = 0
+	// Line (BC) : alpha.X + Beta.Y + Gamma = 0
+	double a, b, c, alpha, beta, gamma;
+	if (A.getX() == B.getX()) // polygon has a perfect vertical side
+	{
+		a = 1.0;
+		b = 0.0;
+		c = -B.getX();
+	}
+	else // we can use usual affin function formulas
+	{
+		a = -(A.getY() - B.getY()) / (A.getX() - B.getX());
+		b = 1.0;
+		c = -B.getY() + B.getX() * (A.getY() - A.getY()) / (A.getX() - B.getX());
+	}
+	if (C.getX() == D.getX()) // vertical side
+	{
+		alpha = 1.0;
+		beta = 0.0;
+		gamma = -D.getX();
+	}
+	else // affin description
+	{
+		alpha = -(D.getY() - C.getY()) / (D.getX() - C.getX());
+		beta = 1.0;
+		gamma = -C.getY() + C.getX() * (D.getY() - C.getY()) / (D.getX() - C.getX());
+	}
+
+	// Intersection computing : simple 2d matrix inversion
+	double determinant = a*beta - alpha*b; // It just can't be zero, if the center stays INSIDE the polygon
+	Point<double> I = Point<double>((-c * beta + gamma * b) / determinant,
+		(alpha * c - a * gamma) / determinant);
+	return I;
+}

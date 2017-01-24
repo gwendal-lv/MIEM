@@ -22,7 +22,7 @@ FourierSignal::~FourierSignal()
 void FourierSignal::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 {
 	//DBG("TriangleSignal::prepareToPlay");
-
+	
 	computeHarmonicsParameters(samplesPerBlockExpected,sampleRate);
 }
 
@@ -59,8 +59,10 @@ void FourierSignal::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill
 void FourierSignal::updateSample()
 {
 	sample = 0;
-	for(int j=0;j<numHarmonics;++j)
+	for (int j = 0; j < numHarmonics; ++j)
+	{
 		sample += harmonics[j]->getSample();
+	}
 }
 
 double FourierSignal::getNextSample()

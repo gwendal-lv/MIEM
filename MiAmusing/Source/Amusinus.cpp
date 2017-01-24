@@ -78,7 +78,6 @@ double AmuSinus::getSample()
 	
 	double sample = amplitude * std::sin(angle);
 
-	
 	updateAngleDelta();
 	angle += angleDelta;
 

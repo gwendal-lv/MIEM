@@ -32,7 +32,7 @@ Presenter::Presenter(View* _view) :
     view->GetMainContentComponent()->resized();
     
     // HERE, WE SHOULD LOAD THE DEFAULT FILE
-    graphicSessionManager.__LoadDefaultTest();
+    //graphicSessionManager.__LoadDefaultTest();
     
     
     appModeChangeRequest(AppMode::None);

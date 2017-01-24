@@ -12,6 +12,7 @@
 #define AMUSINGSCENE_H_INCLUDED
 
 #include "EditableScene.h"
+#include "AnimatedPolygon.h"
 
 using namespace Miam;
 
@@ -24,8 +25,12 @@ namespace Miam
 	public :
 		AmusingScene(MultiSceneCanvasInteractor* _canvasManager, SceneCanvasComponent* _canvasComponent);
 		virtual ~AmusingScene();
+
+		void AddAnimatedArea(uint64_t nextAreaId);
+		void AddNedgeArea(uint64_t nextAreaId, int N);
 		// override mouse callback
 		
+		std::shared_ptr<GraphicEvent> OnCanvasMouseDown(const MouseEvent& mouseE) override;
 		/*
 		virtual std::shared_ptr<GraphicEvent> OnCanvasMouseDown(const MouseEvent& mouseE) override;
 		virtual std::shared_ptr<GraphicEvent> OnCanvasMouseDrag(const MouseEvent& mouseE) override;

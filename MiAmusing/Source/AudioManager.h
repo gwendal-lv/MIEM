@@ -11,10 +11,13 @@
 #ifndef AUDIOMANAGER_H_INCLUDED
 #define AUDIOMANAGER_H_INCLUDED
 
+#include <thread>
+#include <vector>
+
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "AmusingModel.h"
 #include "AmuSignal.h"
-#include <vector>
+
 
 
 // Pre-declaration for pointer members
@@ -47,12 +50,21 @@ namespace Amusing {
 		void getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill) override;
 
 		void askParameter();
-
+		void chooseAudioType(int position, int type);
+		void AncienchooseAudioType(int type);
 	private:
 
+		void trackVectorHandler(bool deactivation, int type);
+
 		AmusingModel *model;
+		MixerAudioSource *mixer;
+		//std::thread activationThread;// s[2];
+
+		int currentSamplesPerBlock;
+		double currentSampleRate;
 
 		std::vector<std::shared_ptr<AmuSignal>> trackVector;
+		std::vector<bool> activeVector;
 		const int Nmax = 1024;
 		int Nsources;
 
