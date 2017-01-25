@@ -32,7 +32,7 @@ MultiSceneCanvasManager::~MultiSceneCanvasManager()
 void MultiSceneCanvasManager::AddScene(std::string name)
 {
     // We construct scene that DO NOT allow the selection of a particular area
-    std::shared_ptr<EditableScene> newScene(new SpatScene(this, canvasComponent->GetCanvas()));
+    std::shared_ptr<EditableScene> newScene(new SpatScene(selfPtr.lock(), canvasComponent->GetCanvas()));
     newScene->SetName(name);
     
     MultiSceneCanvasInteractor::AddScene(newScene);

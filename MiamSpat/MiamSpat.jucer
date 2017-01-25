@@ -6,6 +6,10 @@
   <MAINGROUP id="m8VZoU" name="MiamSpat">
     <GROUP id="{D93792BB-5B8B-5A35-D554-58C4F4E4D3DA}" name="Source">
       <FILE id="oaxiVA" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <GROUP id="{23BAC1CB-3D2E-7345-7D78-B522A9B204B9}" name="Model">
+        <FILE id="ympnMH" name="Model.cpp" compile="1" resource="0" file="Source/Model.cpp"/>
+        <FILE id="Ux9VG9" name="Model.h" compile="0" resource="0" file="Source/Model.h"/>
+      </GROUP>
       <GROUP id="{45938C39-8750-2EF2-9298-4F650688CD28}" name="Presenter">
         <GROUP id="{E07097EB-B121-B880-1313-B2ED1D4A659F}" name="Scenes">
           <FILE id="RKCVev" name="SpatScene.cpp" compile="1" resource="0" file="Source/SpatScene.cpp"/>
@@ -66,6 +70,10 @@
           <FILE id="hGfG2J" name="GraphicEvent.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/GraphicEvent.cpp"/>
           <FILE id="OhudXq" name="GraphicEvent.h" compile="0" resource="0" file="../MiamCommon/Source/GraphicEvent.h"/>
+          <FILE id="snVBkm" name="MultiAreaEvent.cpp" compile="1" resource="0"
+                file="../MiamCommon/Source/MultiAreaEvent.cpp"/>
+          <FILE id="DoVqWX" name="MultiAreaEvent.h" compile="0" resource="0"
+                file="../MiamCommon/Source/MultiAreaEvent.h"/>
           <FILE id="IDIerE" name="SceneEvent.cpp" compile="1" resource="0" file="../MiamCommon/Source/SceneEvent.cpp"/>
           <FILE id="mz9IiL" name="SceneEvent.h" compile="0" resource="0" file="../MiamCommon/Source/SceneEvent.h"/>
         </GROUP>
@@ -104,10 +112,6 @@
         </GROUP>
         <FILE id="hWUZ4N" name="CanvasManagerMode.h" compile="0" resource="0"
               file="../MiamCommon/Source/CanvasManagerMode.h"/>
-        <FILE id="fug4JO" name="FrameTriggerComponent.cpp" compile="1" resource="0"
-              file="../MiamCommon/Source/FrameTriggerComponent.cpp"/>
-        <FILE id="mL2Kup" name="FrameTriggerComponent.h" compile="0" resource="0"
-              file="../MiamCommon/Source/FrameTriggerComponent.h"/>
         <FILE id="LOSifR" name="IGraphicSessionManager.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/IGraphicSessionManager.cpp"/>
         <FILE id="Lgollh" name="IGraphicSessionManager.h" compile="0" resource="0"
@@ -162,6 +166,10 @@
         <FILE id="tPoEI0" name="CartesianLine.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/CartesianLine.cpp"/>
         <FILE id="eK35Tw" name="CartesianLine.h" compile="0" resource="0" file="../MiamCommon/Source/CartesianLine.h"/>
+        <FILE id="r8ju3i" name="FrequencyMeasurer.cpp" compile="1" resource="0"
+              file="../MiamCommon/Source/FrequencyMeasurer.cpp"/>
+        <FILE id="LUNhJD" name="FrequencyMeasurer.h" compile="0" resource="0"
+              file="../MiamCommon/Source/FrequencyMeasurer.h"/>
         <FILE id="m0eWxP" name="LockFreeQueue.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/LockFreeQueue.cpp"/>
         <FILE id="kwvDPy" name="LockFreeQueue.h" compile="0" resource="0" file="../MiamCommon/Source/LockFreeQueue.h"/>

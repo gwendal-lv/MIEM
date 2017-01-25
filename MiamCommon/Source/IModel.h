@@ -12,8 +12,11 @@
 #define IMODEL_H_INCLUDED
 
 
-#include "LockFreeQueue.h"
+#include <atomic>
+#include <thread>
 
+#include "LockFreeQueue.h"
+#include "FrequencyMeasurer.h"
 
 
 namespace Miam
@@ -25,8 +28,6 @@ namespace Miam
         private :
         
         LockFreeQueue paramChangesToPresenter;
-        
-        
         
         // = = = = = = = = = = GETTERS and SETTERS = = = = = = = = = =
         public :

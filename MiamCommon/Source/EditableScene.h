@@ -65,7 +65,7 @@ namespace Miam
         public :
         
         // - - - - - Construction and Destruction (and helpers) - - - - -
-        EditableScene(MultiSceneCanvasInteractor* canvasManager_, SceneCanvasComponent* canvasComponent_, bool allowAreaSelection_ = true);
+        EditableScene(std::shared_ptr<MultiSceneCanvasInteractor> canvasManager_, SceneCanvasComponent* canvasComponent_, bool allowAreaSelection_ = true);
         virtual ~EditableScene();
         
         

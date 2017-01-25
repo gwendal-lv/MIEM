@@ -34,6 +34,15 @@ IGraphicSessionManager::~IGraphicSessionManager()
 
 
 
+/// - - - - - Init helpers - - - - -
+void IGraphicSessionManager::completeCanvasManagersInitialization()
+{
+    for (size_t i = 0 ; i<canvasManagers.size() ; i++)
+    {
+        canvasManagers[i]->CompleteInitialization(canvasManagers[i]);
+    }
+}
+
 
 
 // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
@@ -52,18 +61,36 @@ uint64_t IGraphicSessionManager::GetNextAreaId()
 
 
 // - - - - - - canvases managing - - - - - -
-void IGraphicSessionManager::SetSelectedCanvas(MultiSceneCanvasInteractor* canvasInteractor)
+void IGraphicSessionManager::SetSelectedCanvas(std::shared_ptr<MultiSceneCanvasInteractor> selectedCanvas_)
 {
-    for (size_t i=0 ; i<canvasManagers.size() ; i++)
+    
+    // We do something only if there has been a change
+    if (selectedCanvas != selectedCanvas_)
     {
-        if (canvasManagers[i].get() == canvasInteractor)
+        // At first : unselection of previous canvas...
+        if (selectedCanvas)
         {
-            SetSelectedCanvas(canvasManagers[i]);
-            break;
+            selectedCanvas->SetMode(CanvasManagerMode::Unselected);
+            selectedCanvas->CallRepaint();
         }
+        
+        selectedCanvas = selectedCanvas_;
+        
+        selectedCanvas->SetMode(CanvasManagerMode::SceneOnlySelected);
+        
+        //setMode(GraphicSessionMode::CanvasSelected);
+        
+        multiCanvasComponent->resized();
+    }
+    else
+    {
+        // rien du tout
     }
 }
 
+// - - - - - Events from a member of the Presenter module itself - - - - -
+
+void IGraphicSessionManager::CallPresenterUpdate() {presenter->Update();}
 
 // - - - - - Mouse Events - - - - -
 void IGraphicSessionManager::OnBackgroundMouseDown(const MouseEvent &event)

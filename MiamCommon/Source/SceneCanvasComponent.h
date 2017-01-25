@@ -12,11 +12,12 @@
 #define SCENECANVASCOMPONENT_H_INCLUDED
 
 #include <memory>
-#include <chrono>
 
 #include "JuceHeader.h"
 
 #include "DrawableArea.h"
+
+#include "FrequencyMeasurer.h"
 
 
 
@@ -59,19 +60,20 @@ public:
     protected :
     /// \brief Link back to parent module. Thread-safe access to member functions
     /// (guaranteed by std::shared_ptr)
-    std::shared_ptr<MultiSceneCanvasInteractor> canvasManager = 0;
+    std::weak_ptr<MultiSceneCanvasInteractor> canvasManager;
     
     bool selectedForEditing;
     
     
     // - - - - - OpenGL - - - - -
     OpenGLContext openGlContext;
+    const int swapInterval = 1; // synced on vertical frequency
+    bool isSwapSynced;
+    
     // - - - - - Time measures - - - - -
-    std::chrono::time_point<std::chrono::steady_clock> lastFrameTimePt, newFrameTimePt;
-    private :
-    // mean framerate computing
-    int lastSequenceFramesCount;
-    std::chrono::time_point<std::chrono::steady_clock> lastSequenceTimePt;
+    const double desiredFrequency_Hz = 60.0; // actual freq will actually be greater
+    const double desiredPeriod_ms = 1000.0/desiredFrequency_Hz;
+    FrequencyMeasurer displayFrequencyMeasurer;
     
     protected :
     

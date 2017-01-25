@@ -68,7 +68,7 @@ namespace Miam
         protected :
         
         // links back to parent modules
-        MultiSceneCanvasInteractor* canvasManager = 0;
+        std::weak_ptr<MultiSceneCanvasInteractor> canvasManager;
         /// \brief The associated Juce (mono-scene) canvas component
         ///
         /// A basic pointer that has to be properly (at some point) transmitted to the Juce API
@@ -118,7 +118,7 @@ namespace Miam
         public :
         
         // - - - - - Construction and Destruction (and helpers) - - - - -
-        InteractiveScene(MultiSceneCanvasInteractor* _canvasManager, SceneCanvasComponent* _canvasComponent, ExcitersBehaviorType excitersBehavior_ = ExcitersBehaviorType::ManualAddAndDelete);
+        InteractiveScene(std::shared_ptr<MultiSceneCanvasInteractor> canvasManager_, SceneCanvasComponent* canvasComponent_, ExcitersBehaviorType excitersBehavior_ = ExcitersBehaviorType::ManualAddAndDelete);
         virtual ~InteractiveScene();
         
         

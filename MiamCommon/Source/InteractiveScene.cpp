@@ -25,15 +25,15 @@ using namespace Miam;
 
 // - - - - - Construction and Destruction (and helpers) - - - - -
 
-InteractiveScene::InteractiveScene(MultiSceneCanvasInteractor* _canvasManager, SceneCanvasComponent* _canvasComponent, ExcitersBehaviorType excitersBehavior_)
+InteractiveScene::InteractiveScene(std::shared_ptr<MultiSceneCanvasInteractor> canvasManager_, SceneCanvasComponent* canvasComponent_, ExcitersBehaviorType excitersBehavior_)
 :
+canvasManager(canvasManager_),
+canvasComponent(canvasComponent_),
 excitersBehavior(excitersBehavior_)
 {
-    canvasManager = _canvasManager;
-    canvasComponent = _canvasComponent;
-    
     name = "Default Scene";
 }
+
 
 InteractiveScene::~InteractiveScene()
 {

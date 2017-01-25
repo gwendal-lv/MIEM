@@ -37,8 +37,9 @@ GraphicSessionManager::GraphicSessionManager(View* _view, Presenter* presenter_)
     // On doit créer les sous-objets graphiques de canevas (View) avant de
     // les transmettre au sous-module de gestion de canevas (Presenter) que l'on crée
     // d'ailleurs ici aussi.
-    canvasManagers.push_back(std::shared_ptr<MultiSceneCanvasInteractor>(new MultiSceneCanvasEditor(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas1)));
+    canvasManagers.push_back(std::shared_ptr<MultiSceneCanvasInteractor>(new MultiSceneCanvasEditor(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas1)));    
     canvasManagers.push_back(std::shared_ptr<MultiSceneCanvasInteractor>(new MultiSceneCanvasEditor(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas2)));
+    completeCanvasManagersInitialization();
     
     
     // Links to the view module
@@ -142,7 +143,7 @@ std::shared_ptr<MultiSceneCanvasEditor> GraphicSessionManager::getSelectedCanvas
     std::shared_ptr<MultiSceneCanvasEditor> canvasPtr = std::dynamic_pointer_cast<MultiSceneCanvasEditor>( selectedCanvas);
     if (canvasPtr)
         return canvasPtr;
-    else throw std::runtime_error("Canvas cannot be casted a Miam::MultiSceneCanvasEditor");
+    else throw std::runtime_error("Canvas not selected, or canvas cannot be casted a Miam::MultiSceneCanvasEditor");
 }
 
 

@@ -43,7 +43,7 @@ namespace Miam {
     /// \brief Manages the interaction with some Miam::EditableScene
     ///
     ///
-    class MultiSceneCanvasInteractor
+    class MultiSceneCanvasInteractor : public AsyncUpdater
     {
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
@@ -53,6 +53,9 @@ namespace Miam {
         // Current internal running mode
         CanvasManagerMode mode;
         
+        /// \brief Self smart pointer. Intended for this class to reference itself
+        /// within the created events
+        std::weak_ptr<MultiSceneCanvasInteractor> selfPtr;
         
         /// \brief Pointer back to the unique edition manager (parent of this manager)
         IGraphicSessionManager* graphicSessionManager = 0;
@@ -104,6 +107,9 @@ namespace Miam {
         
         virtual ~MultiSceneCanvasInteractor();
         
+        /// \brief Converts the shared_ptr (owned by a Miam::IGraphicSessionManager)
+        /// into a weak_ptr for internal self-referencement
+        void CompleteInitialization(std::shared_ptr<MultiSceneCanvasInteractor>& selfSharedPtr);
         
         
         public :
@@ -113,6 +119,8 @@ namespace Miam {
         /// May only repaint the canvas (and not the Miam::MultiSceneCanvasComponent
         /// with its additionnal UI on side : buttons, etc...)
         void CallRepaint(bool repaintSideUiElements = true);
+        
+        void handleAsyncUpdate() override;
         
         
         // ----- Running Mode -----
@@ -131,18 +139,9 @@ namespace Miam {
         // ------ Setters and Getters ------
         public :
         
-        /*
-        /// \brief Gets a specific DrawableArea by index
-        ///
-        /// The first (index 0) is supposed to be drawn first (deepest layer)
-        /// Called by the associated canvas component (View module)
-        std::shared_ptr<IDrawableArea> GetDrawableObject(size_t index_);
-        /// \brief Max argument for Miam::MultiSceneCanvasInteractor::GetDrawableArea
-        size_t GetDrawableObjectsCount();
-        */
-        
         SceneCanvasComponent::Id GetId() {return selfId;}
         
+        uint64_t GetNextAreaId();
         
         // Scenes
         virtual size_t GetScenesCount() {return scenes.size();}

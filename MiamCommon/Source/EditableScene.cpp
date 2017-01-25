@@ -22,7 +22,7 @@
 
 // - - - - - Construction and Destruction (and helpers) - - - - -
 
-EditableScene::EditableScene(MultiSceneCanvasInteractor* canvasManager_, SceneCanvasComponent* canvasComponent_, bool allowAreaSelection_) :
+EditableScene::EditableScene(std::shared_ptr<MultiSceneCanvasInteractor> canvasManager_, SceneCanvasComponent* canvasComponent_, bool allowAreaSelection_) :
     InteractiveScene(canvasManager_, canvasComponent_)
 {
     allowAreaSelection = allowAreaSelection_;
@@ -74,7 +74,7 @@ std::shared_ptr<AreaEvent> EditableScene::SetSelectedArea(std::shared_ptr<IEdita
         // In any case, we actually deselect
         selectedArea = nullptr;
         if (changeMode)
-            canvasManager->SetMode(CanvasManagerMode::SceneOnlySelected);
+            canvasManager.lock()->SetMode(CanvasManagerMode::SceneOnlySelected);
     }
     
     // Else : we select a new existing EditableArea
@@ -89,7 +89,7 @@ std::shared_ptr<AreaEvent> EditableScene::SetSelectedArea(std::shared_ptr<IEdita
         selectedArea = selectedArea_;
         selectedArea->SetActive(true);
         if (changeMode)
-            canvasManager->SetMode(CanvasManagerMode::AreaSelected);
+            canvasManager.lock()->SetMode(CanvasManagerMode::AreaSelected);
         
         // Creation of the (multi) area event (main for selected, other for unselected)
         if (previouslySelectedArea)
@@ -374,7 +374,7 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent&
             }
             // New point creation POLYGONE SEULEMENT, PAS LES AUTRES FORMES !!!!!
             // Le bouton doit d'ailleurs apparaître de manière dynamique....
-            if (canvasManager->GetMode() == CanvasManagerMode::WaitingForPointCreation)
+            if (canvasManager.lock()->GetMode() == CanvasManagerMode::WaitingForPointCreation)
             {
                 // On lance une EXCEPTION SI LE CAST n'A PAS FONCTIONNÉ
                 std::shared_ptr<EditablePolygon> selectedPolygon = std::dynamic_pointer_cast<EditablePolygon>(selectedArea);
@@ -397,7 +397,7 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent&
                     throw std::runtime_error(std::string("Cannot create a point to the selected area (must be a polygon !)"));
             }
             // Existing point deletion
-            else if (canvasManager->GetMode() == CanvasManagerMode::WaitingForPointDeletion)
+            else if (canvasManager.lock()->GetMode() == CanvasManagerMode::WaitingForPointDeletion)
             {
                 // On lancera une exception si le cast n'a pas fonctionné
                 std::shared_ptr<EditablePolygon> selectedPolygon = std::dynamic_pointer_cast<EditablePolygon>(selectedArea);

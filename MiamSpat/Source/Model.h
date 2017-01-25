@@ -2,7 +2,7 @@
   ==============================================================================
 
     Model.h
-    Created: 26 Nov 2016 2:19:48pm
+    Created: 24 Jan 2017 9:09:12am
     Author:  Gwendal Le Vaillant
 
   ==============================================================================
@@ -11,43 +11,36 @@
 #ifndef MODEL_H_INCLUDED
 #define MODEL_H_INCLUDED
 
-#include <memory>
-#include <vector>
 
 #include "SpatModel.h"
 
 
-
-namespace Miam
-{
-    // pre-declarations for pointers
+namespace Miam {
+    
+    // Pre-declarations for pointer members
     class Presenter;
-    class SpatSender;
-    
-    
     
     /// \brief
     class Model : public SpatModel
     {
         
-        
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
         private :
         Presenter* presenter;
-        protected :
-        
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
-
         
         
         // = = = = = = = = = = METHODS = = = = = = = = = =
-        public :
         
-        // - - - - - Construction / destruction - - - - -
+        public :
         Model(Presenter* presenter_);
         virtual ~Model();
+        
+        private :
+        // for testing purposes
+        void __resendParamChangesToPresenter__();
         
         
         
@@ -56,12 +49,10 @@ namespace Miam
         void update() override;
         
         
+        
+        
     };
-    
 }
-
-
-
 
 
 #endif  // MODEL_H_INCLUDED

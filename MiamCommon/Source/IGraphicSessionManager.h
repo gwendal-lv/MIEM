@@ -87,9 +87,19 @@ namespace Miam
         
         // = = = = = = = = = = METHODS = = = = = = = = = =
         public :
+        
+        /// - - - - - Construction and destruction - - - - -
+        /// \brief
+        ///
+        /// Think and calling completeCanvasManagersInitialization() when the canvases
+        /// are created
         IGraphicSessionManager(IPresenter* presenter_);
         virtual ~IGraphicSessionManager();
         
+        /// - - - - - Init helpers - - - - -
+        protected :
+        /// \brief Will inform the canvasManagers of the weak_ptr to themselves
+        void completeCanvasManagersInitialization();
         
         
         
@@ -107,11 +117,13 @@ namespace Miam
         // - - - - - - canvases managing - - - - - -
         
         public :
-        /// \brief Sets the new active canvas and updates corresponding graphic
-        /// objects. Must be called by the newly selected canvas itself.
-        virtual void SetSelectedCanvas(std::shared_ptr<MultiSceneCanvasInteractor>) = 0;
+        /// \brief Sets the new active canvas and updates corresponding graphic objects. Called by the newly selected canvas itself. Can/Must be called by the newly selected canvas itself.
+        ///
+        /// Tells other canvases to unselect any previously selected area
+        virtual void SetSelectedCanvas(std::shared_ptr<MultiSceneCanvasInteractor> selectedCanvas_);
+        
         /// \brief Overload (for convenience)
-        void SetSelectedCanvas(MultiSceneCanvasInteractor* canvasInteractor);
+        //void SetSelectedCanvas(MultiSceneCanvasInteractor* canvasInteractor);
         
         
         
@@ -122,13 +134,14 @@ namespace Miam
         virtual void DisplayInfo(String info) = 0;
         
         
-        // ----- Events from a member of the Presenter module itself -----
+        // - - - - - Events from a member of the Presenter module itself - - - - -
+        
         /// \brief Receives, processes graphic events from any drawable object,
         /// then interprets it in terms of "audio features" to be transmitted to the
         /// Miam::IModel via the Miam::IPresenter
         virtual void HandleEventSync(std::shared_ptr<GraphicEvent> event_) = 0;
 
-        
+        void CallPresenterUpdate();
       
         
         // - - - - - Mouse Events - - - - -

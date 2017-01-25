@@ -10,10 +10,13 @@
 
 #include "IModel.h"
 
+#include "JuceHeader.h"
+
 using namespace Miam;
 
 
-IModel::IModel() : paramChangesToPresenter()
+IModel::IModel()
+:
+paramChangesToPresenter()
 {
-    
 }

@@ -26,7 +26,7 @@ namespace Miam
         protected :
         
         /// \brief Able to enqueue all coefficients of a 100-by-100 matrix
-        moodycamel::ReaderWriterQueue<AsyncParamChange, (1<<17)> changesQueue;
+        moodycamel::ReaderWriterQueue<AsyncParamChange, 262144> changesQueue;
         
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =

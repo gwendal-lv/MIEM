@@ -38,11 +38,19 @@ namespace Miam
         bool TryGetAsyncParamChange(AsyncParamChange& param_)
         { return paramChangesToModel.TryDequeue(param_); }
 
-		/// \brief
+		/// \brief Sends a parameter change to the Model
 		///
 		/// The presenter may delay the actual send
 		virtual void SendParamChange(AsyncParamChange& paramChange);
         
+        
+        /// \brief Called within the MessageThread by a pseudo-periodic object,
+        /// and enslaved to its frequency (for example an OpenGL renderer at ~60Hz).
+        ///
+        /// Objects are for now only some SceneCanvasComponent ; all of them may call
+        /// this asynchronously, so this may be called more often than the display
+        /// refresh rate
+        virtual void Update() = 0;
         
         
         

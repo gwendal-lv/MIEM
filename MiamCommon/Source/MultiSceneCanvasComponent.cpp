@@ -73,6 +73,10 @@ void MultiSceneCanvasComponent::resized()
     
     // Buttons positionning
     updateSceneButtonsBounds();
+    
+    // After children canvas resize, areas are up-to-date.
+    // Then, we update OpenGL copied area
+    canvasManager->OnResized();
 }
 
 

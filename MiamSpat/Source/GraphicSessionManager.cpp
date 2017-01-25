@@ -38,10 +38,14 @@ GraphicSessionManager::GraphicSessionManager(IPresenter* presenter_, View* view_
     // On doit créer les sous-objets graphiques de canevas (View) avant de
     // les transmettre au sous-module de gestion de canevas (Presenter) que l'on crée
     // d'ailleurs ici aussi.
-    canvasManagers.push_back(new MultiSceneCanvasManager(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas1));
+    canvasManagers.push_back(std::make_shared<MultiSceneCanvasManager>(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas1));
+    canvasManagers.back()->CompleteInitialization(canvasManagers.back());
     /*
     canvasManagers.push_back(new MultiSceneCanvasEditor(this, multiCanvasComponent->AddCanvas(),  SceneCanvasComponent::Id::Canvas2));
      */
+    
+    // Links to the view module
+    view->CompleteInitialization(this, multiCanvasComponent);
     
     for (size_t i=0 ; i<canvasManagers.size() ; i++)
     {
@@ -52,8 +56,6 @@ GraphicSessionManager::GraphicSessionManager(IPresenter* presenter_, View* view_
         canvasManagers[i]->AddScene("Scène jamais 2 sans 3");
     }
     
-    // Links to the view module
-    view->CompleteInitialization(this, multiCanvasComponent);
     
     
     // And states of the canvases are forced
@@ -105,43 +107,11 @@ std::shared_ptr<IEditableArea> GraphicSessionManager::GetSelectedArea()
 
 
 
-void GraphicSessionManager::SetSelectedCanvas(MultiSceneCanvasInteractor* _selectedCanvas)
-{
-    
-    // We do something only if there has been a change
-    if (selectedCanvas != _selectedCanvas)
-    {
-        // At first : unselection of previous canvas...
-        if (selectedCanvas)
-        {
-            selectedCanvas->SetMode(CanvasManagerMode::Unselected);
-            selectedCanvas->CallRepaint();
-        }
-    
-        /*
-        selectedCanvas = dynamic_cast<MultiSceneCanvasEditor*>(_selectedCanvas);
-        if (!selectedCanvas)
-            throw std::runtime_error(std::string("The canvas to be selected is only an Interactor, and not an Editor (no editing features...)"));
-        */
-        // Pas besoin du cast en canvas "éditeur", pour le Miam Spat un simple
-        // "interacteur" va suffire
-        selectedCanvas = _selectedCanvas;
-        
-        selectedCanvas->SetMode(CanvasManagerMode::SceneOnlySelected);
-    
-        //setMode(GraphicSessionMode::CanvasSelected);
-        
-        multiCanvasComponent->resized();
-    }
-    else
-    {
-        // rien du tout
-    }
-}
 
-MultiSceneCanvasManager* GraphicSessionManager::getSelectedCanvasAsManager()
+
+std::shared_ptr<MultiSceneCanvasManager> GraphicSessionManager::getSelectedCanvasAsManager()
 {
-    MultiSceneCanvasManager* canvasPtr = dynamic_cast<MultiSceneCanvasManager*>( selectedCanvas);
+    auto canvasPtr = std::dynamic_pointer_cast<MultiSceneCanvasManager>( selectedCanvas);
     if (canvasPtr)
         return canvasPtr;
     else throw std::runtime_error("Canvas cannot be casted as a Miam::MultiSceneCanvasManager");

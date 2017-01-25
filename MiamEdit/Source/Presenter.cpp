@@ -69,3 +69,12 @@ AppMode Presenter::appModeChangeRequest(AppMode newAppMode)
 }
 
 
+
+void Presenter::Update()
+{
+    // Check of Model messages !!!!!!
+}
+
+
+
+
