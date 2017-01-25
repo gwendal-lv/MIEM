@@ -12,6 +12,8 @@
 #define PRESENTER_H_INCLUDED
 
 #include <iostream>
+//#include<boost\container\map.hpp>
+#include<boost\bimap.hpp>
 #include <map>
 
 #include "IPresenter.h"
@@ -59,8 +61,10 @@ namespace Amusing {
         
         // Conversion from areas to sources
 		//Presenter myPresenter;
+		
 		std::map<std::shared_ptr<Miam::IEditableArea>, int> areaToSource; 
 		std::map<int,std::shared_ptr<Miam::IEditableArea>> sourceToArea;
+		boost::bimap<std::shared_ptr<IEditableArea>,int> areaToSourceMulti;
 		int Nsources;
 		public :
 			int getSourceID(std::shared_ptr<IEditableArea> area);

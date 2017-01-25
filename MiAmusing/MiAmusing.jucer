@@ -222,7 +222,7 @@
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
                        isDebug="1" optimisation="1" targetName="MiAmusing" libraryPath=""
-                       headerPath="..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"
+                       headerPath="..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\&#10;..\..\..\"
                        defines="BOOST_ALL_NO_LIB=1"/>
         <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
                        isDebug="0" optimisation="3" targetName="MiAmusing" libraryPath=""

@@ -71,6 +71,7 @@ AppMode Presenter::appModeChangeRequest(AppMode newAppMode)
 
 int Presenter::getSourceID(std::shared_ptr<IEditableArea> area)
 {
+	/*
 	if (areaToSource.find(area) == areaToSource.end())
 	{
 		// area has no associated source yet
@@ -79,6 +80,17 @@ int Presenter::getSourceID(std::shared_ptr<IEditableArea> area)
 		++Nsources;
 	}
 	return areaToSource[area];
+	*/
+	/*
+	if (areaToSourceMulti.left.find(area) == areaToSourceMulti.left.end())
+	{
+		//areaToSourceMulti.left[area] = Nsources;
+		//std::pair<int, std::shared_ptr<IEditableArea>> newPair(area,Nsources);
+		areaToSourceMulti.left.insert();
+		++Nsources;
+	}
+	*/
+	return areaToSourceMulti.left[area];
 }
 
 std::shared_ptr<IEditableArea> Presenter::getAreaFromSource(int source)

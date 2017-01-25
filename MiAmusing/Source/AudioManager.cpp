@@ -7,8 +7,12 @@
 
   ==============================================================================
 */
-
+//..\..\..\..\boost_1_63_0\geometry\algorithms
 #include<thread>
+#include<boost\geometry.hpp>
+#include<boost\lockfree\queue.hpp>
+
+
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "AudioManager.h"
@@ -149,6 +153,7 @@ void AudioManager::AncienchooseAudioType(int type)
 	
 	
 	mixer->addInputSource(trackVector[Nsources].get(), false);
+	trackVector[Nsources]->changeState(Starting);
 	++Nsources;
 }
 
@@ -190,7 +195,7 @@ void AudioManager::askParameter()
 			//DBG("Frequency" + (String)param.Id1 + " a " + (String)param.DoubleValue);
 			if (param.Id1 > trackVector.size() - 1 || param.Id1 > Nsources - 1)
 			{
-				DBG("Stop !!!");
+				DBG("Stop !!! : " + (String)param.Id1 + " > "+ (String)(Nsources-1)  );
 				break;
 			}
 			trackVector[param.Id1]->setFrequency(param.DoubleValue);
