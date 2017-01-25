@@ -52,7 +52,12 @@
         <FILE id="z7HHA4" name="AmusingModel.h" compile="0" resource="0" file="Source/AmusingModel.h"/>
       </GROUP>
       <GROUP id="{92B3F81C-D5E2-88E6-6EC3-B31792EEA57D}" name="Presenter">
-        <GROUP id="{690FB287-1852-3C4A-91A1-F5B474582291}" name="Areas"/>
+        <GROUP id="{690FB287-1852-3C4A-91A1-F5B474582291}" name="Areas">
+          <FILE id="r2GOwl" name="AnimatedPolygon.cpp" compile="1" resource="0"
+                file="Source/AnimatedPolygon.cpp"/>
+          <FILE id="MRW6Cl" name="AnimatedPolygon.h" compile="0" resource="0"
+                file="Source/AnimatedPolygon.h"/>
+        </GROUP>
         <GROUP id="{95DB4C60-BE55-A464-CA00-678CBCAB86CE}" name="Scenes">
           <FILE id="nhV1zs" name="AmusingScene.cpp" compile="1" resource="0"
                 file="Source/AmusingScene.cpp"/>
@@ -217,7 +222,8 @@
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
                        isDebug="1" optimisation="1" targetName="MiAmusing" libraryPath=""
-                       headerPath="..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"/>
+                       headerPath="..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\&#10;..\..\..\"
+                       defines="BOOST_ALL_NO_LIB=1"/>
         <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
                        isDebug="0" optimisation="3" targetName="MiAmusing" libraryPath=""
                        headerPath="..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"/>

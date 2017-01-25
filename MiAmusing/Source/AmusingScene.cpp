@@ -13,7 +13,10 @@
 #include "MultiSceneCanvasInteractor.h"
 
 #include "SceneCanvasComponent.h"
+#include "AnimatedPolygon.h"
 
+using namespace Miam;
+using namespace Amusing;
 
 AmusingScene::AmusingScene(MultiSceneCanvasInteractor* _canvasManager, SceneCanvasComponent* _canvasComponent) : EditableScene(_canvasManager,  _canvasComponent)
 {
@@ -22,6 +25,36 @@ AmusingScene::AmusingScene(MultiSceneCanvasInteractor* _canvasManager, SceneCanv
 
 AmusingScene::~AmusingScene()
 {
+
+}
+
+void AmusingScene::AddAnimatedArea(uint64_t nextAreaId)
+{
+	// centered grey Hexagon !...
+	std::shared_ptr<AnimatedPolygon> newPolygon(new AnimatedPolygon(nextAreaId,
+		Point<double>(0.5f, 0.5f), 6, 0.15f,
+		Colours::grey,
+		canvasComponent->GetRatio()));
+
+	// Actual adding of this new polygon
+	AddArea(newPolygon);
+}
+
+void AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N)
+{
+	// centered grey Hexagon !...
+	std::shared_ptr<AnimatedPolygon> newPolygon(new AnimatedPolygon(nextAreaId,
+		Point<double>(0.5f, 0.5f), N, 0.15f,
+		Colours::grey,
+		canvasComponent->GetRatio()));
+
+	// Actual adding of this new polygon
+	AddArea(newPolygon);
+}
+
+std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDown(const MouseEvent& mouseE)
+{
+	return EditableScene::OnCanvasMouseDown(mouseE);
 
 }
 

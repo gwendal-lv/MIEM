@@ -50,7 +50,7 @@ private:
     
     // Graphical component
     MultiCanvasComponent* multiCanvasComponent = 0; // belongs to the presenter
-	editScene* editSceneC;
+	EditScene* editSceneC;
 	//SceneEditionComponent* sceneEditionComponent;
     
 	// Audio component
@@ -70,7 +70,10 @@ private:
     /// constructed by the MainWindow before the View module.
     void SetMiamView(View* _view);
     
-    
+    EditScene* GetSceneEditionComponent()
+	{
+		return editSceneC;
+	}
     
     
     // = = = = = = = = = = METHODS (JUCE AND USER-DEFINED) = = = = = = = = = =

@@ -22,6 +22,14 @@
 
 //[Headers]     -- You can add your own extra header files here --
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "GraphicSessionManager.h"
+
+namespace Amusing
+{
+	class GraphicSessionManager;
+}
+using namespace Amusing;
+
 //[/Headers]
 
 
@@ -34,16 +42,18 @@
     Describe your class and how it works here!
                                                                     //[/Comments]
 */
-class editScene  : public Component,
+class EditScene  : public Component,
                    public ButtonListener
 {
 public:
     //==============================================================================
-    editScene ();
-    ~editScene();
+    EditScene ();
+    ~EditScene();
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
+	void CompleteInitialization(GraphicSessionManager* _graphicSessionManager);//, MultiCanvasComponent* _multiCanvasComponent);
+    
     //[/UserMethods]
 
     void paint (Graphics& g) override;
@@ -54,6 +64,7 @@ public:
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
+    GraphicSessionManager* graphicSessionManager = 0;
     //[/UserVariables]
 
     //==============================================================================
@@ -66,7 +77,7 @@ private:
 
 
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (editScene)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EditScene)
 };
 
 //[EndFile] You can add extra defines here...

@@ -38,7 +38,14 @@ public:
 
 	virtual void changeState(TransportState newState) = 0;
 
-	
+	double getFrequency()
+	{
+		return frequency;
+	}
+	double getAmplitude()
+	{
+		return amplitude;
+	}
 
 protected:
 	double amplitude;

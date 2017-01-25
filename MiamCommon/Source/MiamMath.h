@@ -48,6 +48,7 @@ namespace Miam
         /// \param p Any point but the origin
         static double ComputePositiveAngle(Point<double> p);
         
+		static Point<double> ComputeIntersectionPoint(Point<double> A, Point<double> B, Point<double> C, Point<double> D);
    };
     
     

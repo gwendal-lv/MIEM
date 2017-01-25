@@ -27,10 +27,14 @@ Author:  Gwendal Le Vaillant
 #include "MultiSceneCanvasManager.h"
 #include "SceneCanvasComponent.h"
 
+#include "editScene.h"
+
 namespace Miam
 {
 	class IPresenter;
 }
+
+class EditScene;
 
 namespace Amusing {
 
@@ -46,7 +50,16 @@ namespace Amusing {
 	///
 	/// References itself to some components, for these components to transfer events to this sub-module
 	/// directly, and not to the Presenter.
-	class GraphicSessionManager : public Miam::IGraphicSessionManager {
+	class GraphicSessionManager : public Miam::IGraphicSessionManager,
+		public Thread
+	{
+
+	public :
+		// =========================================
+		void playSound();
+		void run();
+		double vitesse;
+		// =========================================
 
 		// = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
 
@@ -54,7 +67,7 @@ namespace Amusing {
 	private:
 		// links back to the View module
 		View* view;
-
+		EditScene *editScene;
 		Presenter *myPresenter;
 
 		// Graphic Manager mode = useless for now (will rely on the managed
@@ -118,7 +131,10 @@ namespace Amusing {
 		// ----- Event to View -----
 		void DisplayInfo(String info) override;
 
-
+		void OnAddArea();
+		void OnAddSquare();
+		void OnAddTriangle();
+		void OnAddCircle();
 	};
 
 

@@ -104,6 +104,8 @@ double SubTriangle::ComputeInteractionWeight(Point<double> T)
     // Planar lines cartesian representations (easier to compute intersection)
     // Line (AT) : a.x + b.y + c = 0
     // Line (BC) : alpha.X + Beta.Y + Gamma = 0
+
+	/*
     double a, b, c, alpha, beta, gamma;
     if (B.getX() == C.getX()) // polygon has a perfect vertical side
     {
@@ -134,7 +136,8 @@ double SubTriangle::ComputeInteractionWeight(Point<double> T)
     double determinant = a*beta-alpha*b; // It just can't be zero, if the center stays INSIDE the polygon
     Point<double> T2 = Point<double>( (-c * beta + gamma * b) / determinant,
                                       (alpha * c - a * gamma) / determinant   );
-    
+    */
+	Point<double> T2 = Math::ComputeIntersectionPoint(B, C, G, T);
     // Weight computing... FINALLY, just a length ratio
     return (1.0 - std::sqrt(T.getDistanceSquaredFrom(G) / T2.getDistanceSquaredFrom(G)));
 }
