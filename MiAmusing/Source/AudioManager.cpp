@@ -30,6 +30,9 @@ AudioManager::AudioManager(AmusingModel *m_model) : model(m_model), Nsources(0),
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
 	DBG("AudioManager::AudioManager");
+
+	useADSR = 0;
+
 	trackVector.reserve(Nmax);
 	activeVector.reserve(Nmax);
 	mixer = new MixerAudioSource();
@@ -129,21 +132,36 @@ void AudioManager::chooseAudioType(int position, int type)
 	DBG("sources actives = " + (String)Nsources);
 }
 
-void AudioManager::AncienchooseAudioType(int type)
+void AudioManager::AncienchooseAudioType(int type, double duration)
 {
 	switch (type)
 	{
 	case 3:
-		trackVector.push_back(std::shared_ptr<TriangleSignal>(new TriangleSignal(0.5, 100, 15)));
-		DBG("ICI");
+		if(useADSR == 0)
+			trackVector.push_back(std::shared_ptr<TriangleSignal>(new TriangleSignal(0.5, 100, 15)));
+		else if (useADSR == 1)
+		{
+			std::shared_ptr<ADSRSignal> P(new ADSRSignal(std::shared_ptr<TriangleSignal>(new TriangleSignal(0.5, 100, 15)).get(), duration));
+			trackVector.push_back(P);
+		}
 		break;
 	case 4:
-		trackVector.push_back(std::shared_ptr<SquareSignal>(new SquareSignal(0.5, 100, 15)));
-		DBG("ICI");
+		if(useADSR == 0)
+			trackVector.push_back(std::shared_ptr<SquareSignal>(new SquareSignal(0.5, 100, 15)));
+		else if (useADSR == 1)
+		{
+			std::shared_ptr<ADSRSignal> P(new ADSRSignal(std::shared_ptr<SquareSignal>(new SquareSignal(0.5, 100, 15)).get(), duration));
+			trackVector.push_back(P);
+		}
 		break;
 	case 20:
-		trackVector.push_back(std::shared_ptr<SinusSignal>(new SinusSignal(0.5, 100, 15)));
-		DBG("ICI");
+		if(useADSR == 0)
+			trackVector.push_back(std::shared_ptr<SinusSignal>(new SinusSignal(0.5, 100, 15)));
+		else if (useADSR == 1)
+		{
+			std::shared_ptr<ADSRSignal> P(new ADSRSignal(std::shared_ptr<SinusSignal>(new SinusSignal(0.5, 100, 15)).get(), duration));
+			trackVector.push_back(P);
+		}
 		break;
 	default:
 		break;
@@ -187,9 +205,7 @@ void AudioManager::askParameter()
 			break;
 		case Miam::AsyncParamChange::ParamType::Activate :
 			//DBG("Activate");
-			//std::thread activationThread(AudioManager::trackVectorHandler, true, param.Id2);
-			//trackVectorHandler(true, param.Id2);
-			AncienchooseAudioType(param.Id2);
+			AncienchooseAudioType(param.Id2,param.DoubleValue);
 			DBG("continue");
 			
 			break;

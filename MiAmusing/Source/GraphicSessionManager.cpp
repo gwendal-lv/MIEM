@@ -179,9 +179,11 @@ MultiSceneCanvasManager* GraphicSessionManager::getSelectedCanvasAsManager()
 // ===== EVENTS FROM THE PRESENTER ITSELF =====
 void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_)
 {
+	int ADSR = 0;
 	Miam::AsyncParamChange param;
 	double S;
 	double f;
+	int speed = 10;
 	// Event about an Area
 	if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(event_))
 	{
@@ -200,7 +202,11 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				param.Id1 = myPresenter->getSourceID(area);
 				//param.Id2 = ; //  = type de la source
 				if (auto anime = std::dynamic_pointer_cast<AnimatedPolygon> (area))
+				{
 					param.Id2 = anime->GetContourSize();
+					if(ADSR == 1)
+						param.DoubleValue = anime->GetAreteLength() / speed;
+				}
 				DBG("Nbre cote = " + (String)param.Id2);
 				myPresenter->SendParamChange(param);
 				break;
@@ -218,11 +224,21 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				break;
 			case AreaEventType::ShapeChanged :
 				DBG("Shape Changed");
-				S = area->GetSurface();
-				f = 20 * pow(10,S/4000);
-				param.Type = Miam::AsyncParamChange::ParamType::Frequency;
-				param.Id1 = myPresenter->getSourceID(area);
-				param.DoubleValue = f;
+				if (ADSR == 0)
+				{
+					S = area->GetSurface();
+					f = 20 * pow(10, S / 4000);
+					param.Type = Miam::AsyncParamChange::ParamType::Frequency;
+					param.Id1 = myPresenter->getSourceID(area);
+					param.DoubleValue = f;
+				}
+				else if (ADSR == 1)
+				{
+					param.Type = Miam::AsyncParamChange::ParamType::Frequency;
+					param.Id1 = myPresenter->getSourceID(area);
+					if(auto anime = std::dynamic_pointer_cast<AnimatedPolygon> (area))
+						param.DoubleValue = anime->GetAreteLength() / speed;
+				}
 				myPresenter->SendParamChange(param);
 				break;
 			case AreaEventType::Translation :
@@ -241,18 +257,31 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				break;
 			case AreaEventType::RotScale :
 				DBG("RotScale");
-				if (auto anime = std::dynamic_pointer_cast<AnimatedPolygon> (area))
+				if (ADSR == 0)
 				{
-					//DBG("H = " + (String)anime->GetHeight());
-					S = area->GetSurface();
-					f = 20 * pow(10, S / 4000);
-					param.Type = Miam::AsyncParamChange::ParamType::Frequency;
-					param.Id1 = myPresenter->getSourceID(area);
-					param.DoubleValue = f;
-					myPresenter->SendParamChange(param);
+					if (auto anime = std::dynamic_pointer_cast<AnimatedPolygon> (area))
+					{
+						//DBG("H = " + (String)anime->GetHeight());
+						S = area->GetSurface();
+						f = 20 * pow(10, S / 4000);
+						param.Type = Miam::AsyncParamChange::ParamType::Frequency;
+						param.Id1 = myPresenter->getSourceID(area);
+						param.DoubleValue = f;
+						myPresenter->SendParamChange(param);
+					}
+					else
+						DBG("not an anime");
 				}
-				else
-					DBG("not an anime");
+				else if(ADSR == 1)
+				{
+					if (auto anime = std::dynamic_pointer_cast<AnimatedPolygon> (area))
+					{
+						param.Type = Miam::AsyncParamChange::ParamType::Frequency;
+						param.Id1 = myPresenter->getSourceID(area);
+						param.DoubleValue = anime->GetAreteLength() / speed;
+					}
+				}
+				
 				break;
 				//case AreaEventType::
 			default:
