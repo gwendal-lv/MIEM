@@ -22,6 +22,8 @@ Author:  Gwendal Le Vaillant
 
 #include "SceneEvent.h"
 
+#include "ControlEvent.h"
+
 #include "AmusingScene.h"
 #include "AnimatedPolygon.h"
 #include <cmath>
@@ -281,6 +283,26 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 			break;
 		}
 	}
+	else if(auto controlE = std::dynamic_pointer_cast<ControlEvent>(event_ ))
+	{
+		switch (controlE->GetType())
+		{
+		case ControlEventType::Play:
+			param.Type = Miam::AsyncParamChange::ParamType::Play;
+			myPresenter->SendParamChange(param);
+			break;
+		case ControlEventType::Pause:
+			param.Type = Miam::AsyncParamChange::ParamType::Pause;
+			myPresenter->SendParamChange(param);
+			break;
+		case ControlEventType::Stop:
+			param.Type = Miam::AsyncParamChange::ParamType::Stop;
+			myPresenter->SendParamChange(param);
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 
@@ -347,6 +369,4 @@ void GraphicSessionManager::OnAddCircle()
 			selectedCanvas->GetSelectedScene()->AddDefaultArea(GetNextAreaId());
 	}
 }
-
-
 

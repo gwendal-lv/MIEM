@@ -22,11 +22,13 @@
 
 //[Headers]     -- You can add your own extra header files here --
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "GraphicSessionManager.h"
+
+
 
 namespace Amusing
 {
 	class GraphicSessionManager;
+	
 }
 using namespace Amusing;
 
@@ -65,6 +67,7 @@ public:
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     GraphicSessionManager* graphicSessionManager = 0;
+	
     //[/UserVariables]
 
     //==============================================================================

@@ -11,6 +11,7 @@
 #include<thread>
 #include<boost\geometry.hpp>
 #include<boost\lockfree\queue.hpp>
+#include<boost\lockfree\spsc_queue.hpp>
 
 
 
@@ -24,7 +25,7 @@
 #include "SinusSignal.h"
 using namespace Amusing;
 //==============================================================================
-AudioManager::AudioManager(AmusingModel *m_model) : model(m_model), Nsources(0)
+AudioManager::AudioManager(AmusingModel *m_model) : model(m_model), Nsources(0), state(Stop)
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
@@ -72,6 +73,7 @@ void AudioManager::releaseResources()
 }
 void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 {
+	
 	askParameter();
 	if (Nsources > 0)
 		mixer->getNextAudioBlock(bufferToFill);
@@ -153,7 +155,7 @@ void AudioManager::AncienchooseAudioType(int type)
 	
 	
 	mixer->addInputSource(trackVector[Nsources].get(), false);
-	trackVector[Nsources]->changeState(Starting);
+	trackVector[Nsources]->changeState(Stopped);
 	++Nsources;
 }
 
@@ -216,8 +218,51 @@ void AudioManager::askParameter()
 				
 			}
 			break;
+		case Miam::AsyncParamChange::ParamType::Play:
+			DBG("Play control received");
+			changeState(Play);
+			break;
+		case Miam::AsyncParamChange::ParamType::Pause:
+			DBG("Pause control received");
+			break;
+		case Miam::AsyncParamChange::ParamType::Stop:
+			DBG("Stop control received");
+			changeState(Stop);
+			break;
 		default:
 			break;
 		}
 	}
+}
+
+void AudioManager::changeState(AudioManagerState newState)
+{
+	if (newState != state)
+	{
+		state = newState;
+		switch (state)
+		{
+		case Amusing::Play:
+			playAllSources();
+			break;
+		case Amusing::Pause:
+			break;
+		case Amusing::Stop:
+			stopAllSources();
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+void AudioManager::playAllSources()
+{
+	for (int i = 0; i < Nsources; ++i)
+		trackVector[i]->changeState(TransportState::Starting);
+}
+void AudioManager::stopAllSources()
+{
+	for (int i = 0; i < Nsources; ++i)
+		trackVector[i]->changeState(TransportState::Stopping);
 }

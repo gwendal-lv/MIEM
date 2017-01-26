@@ -81,16 +81,16 @@ int Presenter::getSourceID(std::shared_ptr<IEditableArea> area)
 	}
 	return areaToSource[area];
 	*/
-	/*
+	
 	if (areaToSourceMulti.left.find(area) == areaToSourceMulti.left.end())
 	{
 		//areaToSourceMulti.left[area] = Nsources;
-		//std::pair<int, std::shared_ptr<IEditableArea>> newPair(area,Nsources);
-		areaToSourceMulti.left.insert();
+		std::pair<std::shared_ptr<IEditableArea>, int> newPair(area, Nsources);
+		areaToSourceMulti.left.insert(newPair);
 		++Nsources;
 	}
-	*/
-	return areaToSourceMulti.left[area];
+	
+	return areaToSourceMulti.left.at(area);
 }
 
 std::shared_ptr<IEditableArea> Presenter::getAreaFromSource(int source)
@@ -101,3 +101,4 @@ std::shared_ptr<IEditableArea> Presenter::getAreaFromSource(int source)
 	}
 	return sourceToArea[source];
 }
+
