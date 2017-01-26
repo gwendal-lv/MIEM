@@ -26,6 +26,10 @@ namespace Miam
         enum ParamType {
             
             None,
+
+			Play,
+			Pause,
+			Stop,
             
             Activate,
             Volume,

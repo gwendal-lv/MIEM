@@ -17,18 +17,22 @@
 
 namespace Miam
 {
+	
     
     class GraphicEvent {
-        
+
+		
+
         protected :
         /// \brief Message that can contain anything...
         std::string message;
+		
         
         public :
         virtual void SetMessage(std::string message_) {message = message_;}
         virtual std::string GetMessage() {return message;}
         
-        GraphicEvent() {}
+		GraphicEvent(){}
         virtual ~GraphicEvent() {}
         
     };

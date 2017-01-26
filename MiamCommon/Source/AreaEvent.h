@@ -75,8 +75,10 @@ namespace Miam
     
     class AreaEvent : public GraphicEvent
     {
+		private :
+		AreaEventType eventType = AreaEventType::NothingHappened;
+
         protected :
-        AreaEventType eventType = AreaEventType::NothingHappened;
         std::shared_ptr<IDrawableArea> concernedArea;
         
         public :

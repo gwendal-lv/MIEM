@@ -55,10 +55,15 @@ namespace Amusing {
 	private:
 
 		void trackVectorHandler(bool deactivation, int type);
+		void changeState(AudioManagerState nexState);
+		void playAllSources();
+		void stopAllSources();
 
 		AmusingModel *model;
 		MixerAudioSource *mixer;
 		//std::thread activationThread;// s[2];
+
+		AudioManagerState state;
 
 		int currentSamplesPerBlock;
 		double currentSampleRate;

@@ -22,6 +22,7 @@
 
 #include "editScene.h"
 #include "GraphicSessionManager.h"
+#include "ControlEvent.h"
 
 using namespace Amusing;
 
@@ -118,20 +119,23 @@ void EditScene::buttonClicked (Button* buttonThatWasClicked)
 {
     //[UserbuttonClicked_Pre]
     //[/UserbuttonClicked_Pre]
-
     if (buttonThatWasClicked == playButton)
     {
         //[UserButtonCode_playButton] -- add your button handler code here..
+		
+		graphicSessionManager->HandleEventSync(std::shared_ptr<ControlEvent>(new ControlEvent(ControlEventType::Play)));
         //[/UserButtonCode_playButton]
     }
     else if (buttonThatWasClicked == pauseButton)
     {
         //[UserButtonCode_pauseButton] -- add your button handler code here..
+		graphicSessionManager->HandleEventSync(std::shared_ptr<ControlEvent>(new ControlEvent(ControlEventType::Pause)));
         //[/UserButtonCode_pauseButton]
     }
     else if (buttonThatWasClicked == stopButton)
     {
         //[UserButtonCode_stopButton] -- add your button handler code here..
+		graphicSessionManager->HandleEventSync(std::shared_ptr<ControlEvent>(new ControlEvent(ControlEventType::Stop)));
         //[/UserButtonCode_stopButton]
     }
     else if (buttonThatWasClicked == addCarreButton)

@@ -94,6 +94,9 @@ namespace Amusing {
         // Events from the View
         AppMode appModeChangeRequest(AppMode newAppMode);
         
+		// Events from the view (from the editScene)
+		
+		
     };
     
     
