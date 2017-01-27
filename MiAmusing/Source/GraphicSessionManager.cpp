@@ -179,7 +179,10 @@ MultiSceneCanvasManager* GraphicSessionManager::getSelectedCanvasAsManager()
 // ===== EVENTS FROM THE PRESENTER ITSELF =====
 void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_)
 {
-	int ADSR = 0;
+	////////////////////
+	int ADSR = 1; //////
+	///////////////////
+
 	Miam::AsyncParamChange param;
 	double S;
 	double f;
@@ -209,6 +212,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				}
 				DBG("Nbre cote = " + (String)param.Id2);
 				myPresenter->SendParamChange(param);
+				DBG("Send");
 				break;
 			case AreaEventType::Deleted:
 				param.Type = Miam::AsyncParamChange::ParamType::Volume;

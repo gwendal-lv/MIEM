@@ -10,6 +10,9 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "ADSRSignal.h"
+#include "TriangleSignal.h"
+#include "SquareSignal.h"
+#include "SinusSignal.h"
 
 //==============================================================================
 ADSRSignal::ADSRSignal(FourierSignal *m_signal) : 
@@ -32,19 +35,51 @@ ADSRSignal::ADSRSignal(FourierSignal *m_signal, bool m_stopSustain) :
 ADSRSignal::ADSRSignal(FourierSignal *m_signal, double duration) :
 	AmuSignal(m_signal->getAmplitude(), m_signal->getFrequency()), signal(m_signal), ADSR_state(Attack), position(0), currentGain(0), // initialisatio
 	attackT(0.1), attackLvl(0.5), decay(0.1), sustainLvl(0.2), release(0.5),  // parametres de l'ADSR
-	stopSustain(false)
+	stopSustain(true)
 {
 	// duree de la note specifiee
+	DBG("duree = " + (String)duration);
 	sustainT = duration - (attackT + decay + release);
+	loop = true;
+}
+
+ADSRSignal::ADSRSignal(int type, double duration) :
+	AmuSignal(0.5, 100), ADSR_state(Attack), position(0), currentGain(0), // initialisatio
+	attackT(10*0.008), attackLvl(0.5), decay(0.024), sustainLvl(0.2), release(2*0.024),  // parametres de l'ADSR
+	stopSustain(true)
+{
+	erase = true;
+	switch (type)
+	{
+	case 3 :
+		signal = new TriangleSignal(0.5, 100, 15);
+		break;
+	case 4 :
+		signal = new SquareSignal(0.5, 100, 15);
+		break;
+	case 20 :
+		signal = new SinusSignal(0.5, 100, 15);
+		break;
+	default:
+		break;
+	}
+
+	// duree de la note specifiee
+	DBG("duree = " + (String)duration);
+	sustainT = duration - (attackT + decay + release);
+	loop = true;
 }
 
 ADSRSignal::~ADSRSignal()
 {
+	DBG("destructor");
+	if (erase && signal != nullptr)
+		delete signal;
 }
 
 void ADSRSignal::changeState(ADSR_State newState)
 {
-	
+	DBG("changesState : " + (String)state + " -> " + (String)newState + " et  position = " + (String)position);
 	if (ADSR_state != newState)
 	{
 		DBG("state : " + (String)newState);
@@ -90,6 +125,7 @@ void ADSRSignal::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 	endSustainP = endDecayP + round(sustainT * sampleRate);
 	endReleaseP = endSustainP + round(release  * sampleRate);
 	DBG((String)endAttackP + " "+ (String)endDecayP + " " + (String)endSustainP + " " + (String)endReleaseP);
+	DBG("note dure : " + (String)(endReleaseP/sampleRate));
 }
 
 void ADSRSignal::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
@@ -98,7 +134,7 @@ void ADSRSignal::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 	{
 		float* const buffer0 = bufferToFill.buffer->getWritePointer(0, bufferToFill.startSample);
 		float* const buffer1 = bufferToFill.buffer->getWritePointer(1, bufferToFill.startSample);
-
+		//DBG((String)position);
 
 		for (int i = 0; i < bufferToFill.numSamples; ++i)
 		{
@@ -107,27 +143,32 @@ void ADSRSignal::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 			//DBG("sample = "+ (String)sample);
 
 
+			//DBG((String)ADSR_state);
 				// ce qui se passe si on est entre deux "deadlines" : switch(state)
-			switch (state)
+			switch (ADSR_state)
 			{
 			case Attack:
+				//DBG("A");
 				currentGain += (attackLvl - 0) / (endAttackP - 0); // fixee avec les parametres ADSR
 				if (position == endAttackP)
 				{
-
+					DBG("D");
 					changeState(Decay);
 				}
 				break;
 			case Decay:
+				//DBG("D");
 				//numSampleDecay = i - startSampleDecay;
 				currentGain += (sustainLvl - attackLvl) / (endDecayP - endAttackP);
 				//endDecayGain = currentGain;
 				if (position == endDecayP)
 				{
+					DBG("S");
 					changeState(Sustain);
 				}
 				break;
 			case Sustain:
+				//DBG("S");
 				//numSampleSustain = i - startSampleSustain;
 				currentGain = sustainLvl;
 				//endSustainGain = currentGain;
@@ -136,6 +177,7 @@ void ADSRSignal::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 					//startSustainGain = currentGain;
 					if (stopSustain)
 					{
+						DBG("R");
 						changeState(Release);
 					}
 					else
@@ -145,6 +187,7 @@ void ADSRSignal::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 				}
 				break;
 			case Release:
+				//DBG((String)position);
 				//numSampleRelease = i - startSampleRelease;
 				currentGain += (0 - sustainLvl) / (endReleaseP - endSustainP);
 				//endReleaseGain = currentGain;
@@ -152,11 +195,18 @@ void ADSRSignal::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 				{
 					//startReleaseGain = currentGain;
 					//endReleaseGain = 0;
-					changeState(Silence);
+					if (loop)
+					{
+						position = 0;
+						changeState(Attack);
+					}
+					else
+						changeState(Silence);
 				}
 				break;
 			case Silence:
 			default:
+				//DBG("Default!!!")
 				currentGain = 0;
 
 				break;
@@ -183,6 +233,7 @@ void ADSRSignal::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 
 void ADSRSignal::releaseResources()
 {
+	DBG("releaseResources");
 	//signal->releaseResources();
 }
 

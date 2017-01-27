@@ -31,7 +31,10 @@ AudioManager::AudioManager(AmusingModel *m_model) : model(m_model), Nsources(0),
     // initialise any special settings that your component needs.
 	DBG("AudioManager::AudioManager");
 
-	useADSR = 0;
+
+	/////////////////////
+	useADSR = 1;////////
+	////////////////////
 
 	trackVector.reserve(Nmax);
 	activeVector.reserve(Nmax);
@@ -134,6 +137,7 @@ void AudioManager::chooseAudioType(int position, int type)
 
 void AudioManager::AncienchooseAudioType(int type, double duration)
 {
+	DBG("AncienChooseAudioType");
 	switch (type)
 	{
 	case 3:
@@ -141,8 +145,9 @@ void AudioManager::AncienchooseAudioType(int type, double duration)
 			trackVector.push_back(std::shared_ptr<TriangleSignal>(new TriangleSignal(0.5, 100, 15)));
 		else if (useADSR == 1)
 		{
-			std::shared_ptr<ADSRSignal> P(new ADSRSignal(std::shared_ptr<TriangleSignal>(new TriangleSignal(0.5, 100, 15)).get(), duration));
-			trackVector.push_back(P);
+			//std::shared_ptr<ADSRSignal> P(new ADSRSignal(std::shared_ptr<TriangleSignal>(new TriangleSignal(0.5, 100, 15)).get(), duration));
+			//trackVector.push_back(P);
+			trackVector.push_back(std::shared_ptr<ADSRSignal>(new ADSRSignal(3, duration)));
 		}
 		break;
 	case 4:
@@ -150,8 +155,14 @@ void AudioManager::AncienchooseAudioType(int type, double duration)
 			trackVector.push_back(std::shared_ptr<SquareSignal>(new SquareSignal(0.5, 100, 15)));
 		else if (useADSR == 1)
 		{
-			std::shared_ptr<ADSRSignal> P(new ADSRSignal(std::shared_ptr<SquareSignal>(new SquareSignal(0.5, 100, 15)).get(), duration));
-			trackVector.push_back(P);
+			DBG("avant alloc");
+			//std::shared_ptr<ADSRSignal> P(new ADSRSignal(std::shared_ptr<SquareSignal>(new SquareSignal(0.5, 100, 15)).get(), duration));
+			//P->isEmpty();
+			trackVector.push_back(std::shared_ptr<ADSRSignal>(new ADSRSignal(4, duration)));
+			DBG("apres alloc");
+			//trackVector.push_back(P);
+			
+			DBG("apres push");
 		}
 		break;
 	case 20:
@@ -159,8 +170,8 @@ void AudioManager::AncienchooseAudioType(int type, double duration)
 			trackVector.push_back(std::shared_ptr<SinusSignal>(new SinusSignal(0.5, 100, 15)));
 		else if (useADSR == 1)
 		{
-			std::shared_ptr<ADSRSignal> P(new ADSRSignal(std::shared_ptr<SinusSignal>(new SinusSignal(0.5, 100, 15)).get(), duration));
-			trackVector.push_back(P);
+			//std::shared_ptr<ADSRSignal> P(new ADSRSignal(std::shared_ptr<SinusSignal>(new SinusSignal(0.5, 100, 15)).get(), duration));
+			trackVector.push_back(std::shared_ptr<ADSRSignal>( new ADSRSignal(20,duration)));
 		}
 		break;
 	default:
@@ -169,6 +180,10 @@ void AudioManager::AncienchooseAudioType(int type, double duration)
 	//trackVector.end()->get()->prepareToPlay(currentSamplesPerBlock, currentSampleRate);
 	DBG("LA");
 	
+	
+	if (auto ad = std::dynamic_pointer_cast<ADSRSignal> (trackVector[Nsources]))
+		ad->isEmpty();
+
 	trackVector[Nsources]->prepareToPlay(currentSamplesPerBlock, currentSampleRate);
 	
 	
@@ -204,7 +219,7 @@ void AudioManager::askParameter()
 			//DBG("None");
 			break;
 		case Miam::AsyncParamChange::ParamType::Activate :
-			//DBG("Activate");
+			DBG("Activate");
 			AncienchooseAudioType(param.Id2,param.DoubleValue);
 			DBG("continue");
 			

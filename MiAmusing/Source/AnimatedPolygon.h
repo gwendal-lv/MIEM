@@ -46,7 +46,9 @@ namespace Amusing
 
 		double GetAreteLength()
 		{
-			return contourPointsInPixels[0].getDistanceFrom(contourPointsInPixels[1]);
+			DBG("GetAreteL");
+			//DBG((String)contourPoints.size());
+			return contourPoints[0].getDistanceFrom(contourPoints[1])*100;
 		}
 
 		void Paint(Graphics& g);

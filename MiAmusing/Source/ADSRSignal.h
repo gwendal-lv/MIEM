@@ -32,6 +32,7 @@ public:
     ADSRSignal(FourierSignal *m_signal);
 	ADSRSignal(FourierSignal *m_signal, bool m_stopSustain);
 	ADSRSignal(FourierSignal *m_signal, double m_duration);
+	ADSRSignal(int type, double duration);
     ~ADSRSignal();
 
 	void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
@@ -49,6 +50,14 @@ public:
 
 	int getLength();
 
+	void isEmpty()
+	{
+		if (signal == nullptr)
+			DBG("signal == nullptr");
+		else
+			DBG("signal != nullptr");
+	}
+
 private:
 	FourierSignal *signal;
 	void changeState(ADSR_State newState);
@@ -58,6 +67,8 @@ private:
 	int position;
 	double currentGain;
 	bool stopSustain; // indique si tient la note le temps prevu ou si on la maintient jusque nouvel ordre, stopSustain = true : arrete apres le temps prevu
+	bool loop;
+	bool erase;
 
 	// parameter of ADSR envelop
 	double attackT;
