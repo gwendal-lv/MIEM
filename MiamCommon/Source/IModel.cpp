@@ -16,7 +16,22 @@ using namespace Miam;
 
 
 IModel::IModel()
-:
-paramChangesToPresenter()
 {
+}
+
+
+
+void IModel::SendParamChange(AsyncParamChange& paramChange)
+{
+    if (!paramChangesToPresenter.push(paramChange))
+        throw std::runtime_error("Lock-Free Queue Model-Presenter : cannot push an element...");
+}
+
+
+
+
+
+bool IModel::TryGetAsyncParamChange(AsyncParamChange& param_)
+{
+    return paramChangesToPresenter.pop(param_);
 }

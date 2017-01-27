@@ -44,6 +44,14 @@ void Model::update()
         if (updateThreadMeasurer.IsFreshAverageAvailable())
             DBG(updateThreadMeasurer.GetInfo());
         
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
+        
+        /*
+        AsyncParamChange lastParamChange;
+        while (presenter->TryGetAsyncParamChange(lastParamChange))
+        {
+            
+        }
+        */
     }
 }

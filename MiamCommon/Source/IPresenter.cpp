@@ -20,10 +20,16 @@ IPresenter::IPresenter() : paramChangesToModel()
 
 void IPresenter::SendParamChange(AsyncParamChange& paramChange)
 {
-	if (!paramChangesToModel.TryEnqueue(paramChange))
-		throw std::runtime_error("Lock-Free Queue Presenter->Model is full...");
-    
-    AsyncParamChange dummyParam;
-    TryGetAsyncParamChange(dummyParam);
+	if (!paramChangesToModel.push(paramChange))
+		throw std::runtime_error("Lock-Free Queue Presenter->Model : cannot push an element...");
+}
+
+
+
+
+
+bool IPresenter::TryGetAsyncParamChange(AsyncParamChange& param_)
+{
+    return paramChangesToModel.pop(param_);
 }
 

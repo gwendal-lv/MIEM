@@ -14,6 +14,8 @@
 
 #include <vector>
 #include <memory>
+#include <thread>
+#include <atomic>
 
 #include "IModel.h"
 

@@ -49,11 +49,15 @@ void Presenter::CompleteInitialisation(Model* _model)
 static int updatesCount = 0;
 void Presenter::Update()
 {
-    updatesCount++;
     auto param = AsyncParamChange();
-    SendParamChange(param);
+    for (int i=0 ; i<100 ; i++)
+    {
+        updatesCount++;
+        param.IntegerValue = updatesCount;
+        SendParamChange(param);
+    }
     
-    //std::cout << updatesCount << std::endl;
+    DBG(std::to_string(param.IntegerValue));
 }
 
 
