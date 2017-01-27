@@ -74,15 +74,20 @@ ADSRSignal::~ADSRSignal()
 {
 	DBG("destructor");
 	if (erase && signal != nullptr)
+	{
+		DBG("avant delete");
 		delete signal;
+		DBG("apres delete");
+	}
+	DBG("fin destructor");
 }
 
 void ADSRSignal::changeState(ADSR_State newState)
 {
-	DBG("changesState : " + (String)state + " -> " + (String)newState + " et  position = " + (String)position);
+	//DBG("changesState : " + (String)state + " -> " + (String)newState + " et  position = " + (String)position);
 	if (ADSR_state != newState)
 	{
-		DBG("state : " + (String)newState);
+		//DBG("state : " + (String)newState);
 		ADSR_state = newState;
 		switch (ADSR_state)
 		{
@@ -290,10 +295,18 @@ void ADSRSignal::setDuration(double newDuration)
 {
 	if ((attackT + decay + sustainT + release) != newDuration)
 	{
+
+		sustainT = newDuration - (attackT + decay + release);
+
+		int oldReleaseP = endReleaseP;
+
 		endAttackP = round(attackT  * currentSampleRate);
 		endDecayP = endAttackP + round(decay    * currentSampleRate);
 		endSustainP = endDecayP + round(sustainT * currentSampleRate);
 		endReleaseP = endSustainP + round(release  * currentSampleRate);
+
+		position = roundToInt( (double)position * (double)endReleaseP / (double)oldReleaseP);
+
 		DBG((String)endAttackP + " " + (String)endDecayP + " " + (String)endSustainP + " " + (String)endReleaseP);
 	}
 }

@@ -260,7 +260,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				//area-> get center height --> volume
 				break;
 			case AreaEventType::RotScale :
-				DBG("RotScale");
+				//DBG("RotScale");
 				if (ADSR == 0)
 				{
 					if (auto anime = std::dynamic_pointer_cast<AnimatedPolygon> (area))
@@ -280,9 +280,11 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				{
 					if (auto anime = std::dynamic_pointer_cast<AnimatedPolygon> (area))
 					{
-						param.Type = Miam::AsyncParamChange::ParamType::Frequency;
+						DBG("envoi duration");
+						param.Type = Miam::AsyncParamChange::ParamType::Duration;
 						param.Id1 = myPresenter->getSourceID(area);
 						param.DoubleValue = anime->GetAreteLength() / speed;
+						myPresenter->SendParamChange(param);
 					}
 				}
 				

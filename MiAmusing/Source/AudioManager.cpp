@@ -44,7 +44,9 @@ AudioManager::AudioManager(AmusingModel *m_model) : model(m_model), Nsources(0),
 
 AudioManager::~AudioManager()
 {
+	DBG("audioManager destructor");
 	shutdownAudio();
+	DBG("audioManager destructor fin");
 }
 
 void AudioManager::paint (Graphics& g)
@@ -74,8 +76,9 @@ void AudioManager::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 }
 void AudioManager::releaseResources()
 {
-
+	DBG("AudioManager::releaseResources");
 	delete mixer;
+	DBG("AudioManager::releaseResources fin");
 }
 void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 {
@@ -207,12 +210,13 @@ void AudioManager::trackVectorHandler(bool activation,int type)
 
 void AudioManager::askParameter()
 {
+	bool ddd = false;
 	//DBG("Dans askparam");
 	Miam::AsyncParamChange param;
 	if (model->lookForParameter(param))
 	{
 		//DBG("receive parameter");
-		//DBG("param type receive = " + (String)param.Type);
+		DBG("param type receive = " + (String)param.Type);
 		switch (param.Type)
 		{
 		case Miam::AsyncParamChange::ParamType::None :
@@ -249,6 +253,14 @@ void AudioManager::askParameter()
 				
 			}
 			break;
+		case Miam::AsyncParamChange::ParamType::Duration:
+			//if (auto ad = std::dynamic_pointer_cast<ADSRSignal>(trackVector[param.Id1])
+			//{
+				//ad->setDuration(param.DoubleValue);
+			//}
+			DBG("Duration received");
+			ddd = true;
+			break;
 		case Miam::AsyncParamChange::ParamType::Play:
 			DBG("Play control received");
 			changeState(Play);
@@ -263,6 +275,16 @@ void AudioManager::askParameter()
 		default:
 			break;
 		}
+	}
+	else
+	{
+		//DBG("No param");
+	}
+
+	if (ddd == true)
+	{
+		if (auto ad = std::dynamic_pointer_cast<ADSRSignal>(trackVector[param.Id1]))
+			ad->setDuration(param.DoubleValue);
 	}
 }
 
