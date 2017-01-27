@@ -280,7 +280,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				{
 					if (auto anime = std::dynamic_pointer_cast<AnimatedPolygon> (area))
 					{
-						DBG("envoi duration");
+						//DBG("envoi duration");
 						param.Type = Miam::AsyncParamChange::ParamType::Duration;
 						param.Id1 = myPresenter->getSourceID(area);
 						param.DoubleValue = anime->GetAreteLength() / speed;

@@ -298,15 +298,20 @@ void ADSRSignal::setDuration(double newDuration)
 
 		sustainT = newDuration - (attackT + decay + release);
 
-		int oldReleaseP = endReleaseP;
+		int oldEndReleaseP = endReleaseP;
+		int oldEndSustainP = endSustainP;
 
-		endAttackP = round(attackT  * currentSampleRate);
-		endDecayP = endAttackP + round(decay    * currentSampleRate);
+		
 		endSustainP = endDecayP + round(sustainT * currentSampleRate);
 		endReleaseP = endSustainP + round(release  * currentSampleRate);
 
-		position = roundToInt( (double)position * (double)endReleaseP / (double)oldReleaseP);
+		if (endDecayP < position && position < oldEndSustainP)
+			position = endDecayP + roundToInt((position - endDecayP) * (endSustainP - endDecayP) / (oldEndSustainP - endDecayP));
+		else if (oldEndSustainP < position && position < oldEndReleaseP)
+			position = endSustainP + (position - oldEndSustainP);
+		
+		//position = roundToInt( (double)position * (double)endReleaseP / (double)oldReleaseP);
 
-		DBG((String)endAttackP + " " + (String)endDecayP + " " + (String)endSustainP + " " + (String)endReleaseP);
+		//DBG((String)endAttackP + " " + (String)endDecayP + " " + (String)endSustainP + " " + (String)endReleaseP);
 	}
 }

@@ -216,7 +216,7 @@ void AudioManager::askParameter()
 	if (model->lookForParameter(param))
 	{
 		//DBG("receive parameter");
-		DBG("param type receive = " + (String)param.Type);
+		//DBG("param type receive = " + (String)param.Type);
 		switch (param.Type)
 		{
 		case Miam::AsyncParamChange::ParamType::None :
@@ -243,7 +243,7 @@ void AudioManager::askParameter()
 				--Nsources;
 			else
 			{
-				//DBG("Volume" + (String)param.Id1 + " a " + (String)param.DoubleValue);
+				DBG("Volume" + (String)param.Id1 + " a " + (String)param.DoubleValue);
 				if (param.Id1 > trackVector.size()-1)
 				{
 					DBG("Stop !!!");
@@ -258,7 +258,7 @@ void AudioManager::askParameter()
 			//{
 				//ad->setDuration(param.DoubleValue);
 			//}
-			DBG("Duration received");
+			//DBG("Duration received");
 			ddd = true;
 			break;
 		case Miam::AsyncParamChange::ParamType::Play:
