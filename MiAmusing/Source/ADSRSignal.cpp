@@ -200,13 +200,16 @@ void ADSRSignal::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 				{
 					//startReleaseGain = currentGain;
 					//endReleaseGain = 0;
-					if (loop)
+					if (loop && state != Stopping)
 					{
 						position = 0;
 						changeState(Attack);
 					}
 					else
+					{
 						changeState(Silence);
+						changeState(Stopped);
+					}
 				}
 				break;
 			case Silence:
