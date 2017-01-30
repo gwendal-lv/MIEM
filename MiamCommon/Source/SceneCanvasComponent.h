@@ -11,9 +11,13 @@
 #ifndef SCENECANVASCOMPONENT_H_INCLUDED
 #define SCENECANVASCOMPONENT_H_INCLUDED
 
+#include <memory>
+
 #include "JuceHeader.h"
 
 #include "DrawableArea.h"
+
+#include "FrequencyMeasurer.h"
 
 
 
@@ -28,7 +32,8 @@ namespace Miam {
 /// \brief Initially empty component dedicated to the drawing of several Miam::DrawableArea
 ///
 /// This component does not have any children UI controls built within the Projucer.
-class SceneCanvasComponent    : public Component
+class SceneCanvasComponent    : public Component,
+                                public OpenGLRenderer
 {
 public:
     
@@ -48,13 +53,30 @@ public:
     
     
     
+    
+    
     // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
     
     protected :
-    // links back to parent modules
-    MultiSceneCanvasInteractor* canvasManager = 0;
+    /// \brief Link back to parent module. Thread-safe access to member functions
+    /// (guaranteed by std::shared_ptr)
+    std::weak_ptr<MultiSceneCanvasInteractor> canvasManager;
     
     bool selectedForEditing;
+    
+    
+    // - - - - - OpenGL - - - - -
+    OpenGLContext openGlContext;
+    const int swapInterval = 1; // synced on vertical frequency
+    bool isSwapSynced;
+    
+    // - - - - - Time measures - - - - -
+    const double desiredFrequency_Hz = 60.0; // actual freq will actually be greater
+    const double desiredPeriod_ms = 1000.0/desiredFrequency_Hz;
+    FrequencyMeasurer displayFrequencyMeasurer;
+    
+    protected :
+    
     
     
     
@@ -65,19 +87,28 @@ public:
     ~SceneCanvasComponent();
     
 	/// \brief Also called from Miam::View::CompleteInitialization
-    void CompleteInitialization(MultiSceneCanvasInteractor* _canvasManager);
+    void CompleteInitialization(std::shared_ptr<MultiSceneCanvasInteractor> _canvasManager);
 
-    void paint (Graphics&);
-    void resized();
-  
-    // Juce Events
-    void mouseDown(const juce::MouseEvent &event);
-    void mouseDrag(const juce::MouseEvent &event);
-    void mouseUp(const juce::MouseEvent &event);
+    // - - - - - - - - Juce usual paint/resized component methods - - - - - - - - -
+    void resized() override;
+    
+    // - - - - - - - - OpenGL specific - - - - - - - - -
+    virtual void newOpenGLContextCreated() override;
+    virtual void renderOpenGL() override; // ! in background-thread !
+    virtual void openGLContextClosing() override;
+    
+    // - - - - - - - - Actual painting codes - - - - - - - - -
+    protected :
+    
+    // - - - - - - - - Juce events - - - - - - - - -
+    public :
+    void mouseDown(const juce::MouseEvent &event) override;
+    void mouseDrag(const juce::MouseEvent &event) override;
+    void mouseUp(const juce::MouseEvent &event) override;
     
     // Getters and Setters
     float GetRatio() {return ((float)getWidth()) / ((float)getHeight()) ; }
-    void SetIsSelectedForEditing(bool isSelected) {selectedForEditing = isSelected;}
+    void SetIsSelectedForEditing(bool isSelected);
     
 
 private:

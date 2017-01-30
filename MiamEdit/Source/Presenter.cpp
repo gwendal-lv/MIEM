@@ -36,8 +36,8 @@ Presenter::Presenter(View* _view) :
     graphicSessionManager.__LoadDefaultTest();
     
     // App mode changer to Scenes Edition by default (should be stored within the file ?)
-    //appModeChangeRequest(AppMode::EditSpatScenes);
-    appModeChangeRequest(AppMode::EditSpeakersGroups);
+    appModeChangeRequest(AppMode::EditSpatScenes);
+    //appModeChangeRequest(AppMode::EditSpeakersGroups);
 }
 
 void Presenter::CompleteInitialisation(Model* _model)
@@ -67,5 +67,14 @@ AppMode Presenter::appModeChangeRequest(AppMode newAppMode)
     // Actual new mode
     return appMode;
 }
+
+
+
+void Presenter::Update()
+{
+    // Check of Model messages !!!!!!
+}
+
+
 
 

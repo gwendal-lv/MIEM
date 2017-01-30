@@ -11,7 +11,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "MainComponent.h"
 
-//#include "Model.h"
+#include "Model.h"
 #include "Presenter.h"
 #include "View.h"
 
@@ -42,14 +42,14 @@ public:
 		// it is absolutely necessary to check the command-line !
 		if (commandLine.isEmpty())
 		{
-			std::cout << "MiamSpat standalone" << std::endl;
+            DBG("MiamSpat standalone");
 		}
 		else
 		{
 			// May have been lauched with the OS specifying a file for example ?
 
 			// Or just from MiamEdit, for now
-			std::cout << "MiamSpat lauched from MiamEdit" << std::endl;
+            DBG("MiamSpat lauched with options : \"" << commandLine << "\"");
 		}
 
 
@@ -65,7 +65,7 @@ public:
         else
             throw std::runtime_error("First child of Main Window is not a MainContentComponent...");
         presenter = new Miam::Presenter(view); // Will reference itself to the View module
-        //model = new Miam::Model(presenter);// Will reference itself to the Presenter module
+        model = new Miam::Model(presenter);// Will reference itself to the Presenter module
 
     }
 

@@ -85,6 +85,12 @@ namespace Miam {
         // Events from the View
         AppMode appModeChangeRequest(AppMode newAppMode);
         
+        
+        
+        void Update() override;
+        
+        
+        
     };
     
     

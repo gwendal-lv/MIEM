@@ -44,10 +44,14 @@ namespace Miam
         // = = = = = = = = = = METHODS = = = = = = = = = =
         public :
         
+        // - - - - - Construction/Destruction + polymorphic cloning - - - - -
+        
         /// \brief Will automatically define the shape of the exciter
-        Exciter();
+        Exciter(uint64_t uniqueId);
+        
         virtual ~Exciter() {}
         
+        virtual IDrawableArea* Clone() const override {return new Exciter(*this);}
         
         
     };

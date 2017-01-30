@@ -74,8 +74,12 @@ namespace Miam {
         
         
         
-        // ------ Areas managing : Add and Delete ------
+        // ------ Areas direct managing : Add and Delete ------
+        // Possible because there should always be at least one selected scene
         
+        virtual void AddArea(std::shared_ptr<IEditableArea> newArea);
+        virtual void AddDefaultArea(uint64_t nextAreaId);
+        virtual void SetSelectedArea(std::shared_ptr<IEditableArea> newSelectedArea);
         virtual void DeleteSelectedArea();
         
         

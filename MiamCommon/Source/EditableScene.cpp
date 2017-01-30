@@ -17,11 +17,12 @@
 
 #include "SceneCanvasComponent.h"
 
+#include "MultiAreaEvent.h"
 
 
 // - - - - - Construction and Destruction (and helpers) - - - - -
 
-EditableScene::EditableScene(MultiSceneCanvasInteractor* canvasManager_, SceneCanvasComponent* canvasComponent_, bool allowAreaSelection_) :
+EditableScene::EditableScene(std::shared_ptr<MultiSceneCanvasInteractor> canvasManager_, SceneCanvasComponent* canvasComponent_, bool allowAreaSelection_) :
     InteractiveScene(canvasManager_, canvasComponent_)
 {
     allowAreaSelection = allowAreaSelection_;
@@ -44,15 +45,18 @@ std::shared_ptr<IEditableArea> EditableScene::GetEditableArea(size_t i)
 
 
 
-void EditableScene::SetSelectedArea(std::shared_ptr<IEditableArea> selectedArea_, bool changeMode)
+std::shared_ptr<AreaEvent> EditableScene::SetSelectedArea(std::shared_ptr<IEditableArea> selectedArea_, bool changeMode)
 {
+    // Default empty area event
+    std::shared_ptr<AreaEvent> areaE(new AreaEvent());
+    
     // Exception throw if the command is not "unselect selected area"
     if (!allowAreaSelection)
     {
         if (selectedArea_ != nullptr)
             throw std::runtime_error("Area selection is not allowed with this EditableScene");
         else
-            return;
+            return areaE;
     }
     
     // Null pointer <=> deselection command
@@ -62,12 +66,15 @@ void EditableScene::SetSelectedArea(std::shared_ptr<IEditableArea> selectedArea_
         if (selectedArea)
         {
             selectedArea->SetActive(false);
+            // Area event concerning 1 area only
+            areaE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, AreaEventType::Unselected));
         }
+        // If nothing was selected : event stays empty
         
-        // In any, we actually deselect
+        // In any case, we actually deselect
         selectedArea = nullptr;
         if (changeMode)
-            canvasManager->SetMode(CanvasManagerMode::SceneOnlySelected);
+            canvasManager.lock()->SetMode(CanvasManagerMode::SceneOnlySelected);
     }
     
     // Else : we select a new existing EditableArea
@@ -77,14 +84,39 @@ void EditableScene::SetSelectedArea(std::shared_ptr<IEditableArea> selectedArea_
         if (selectedArea)
             selectedArea->SetActive(false);
         
+        // Actual change
+        auto previouslySelectedArea = selectedArea;
         selectedArea = selectedArea_;
         selectedArea->SetActive(true);
         if (changeMode)
-            canvasManager->SetMode(CanvasManagerMode::AreaSelected);
+            canvasManager.lock()->SetMode(CanvasManagerMode::AreaSelected);
         
+        // Creation of the (multi) area event (main for selected, other for unselected)
+        if (previouslySelectedArea)
+        {
+            auto multiAreaE = std::make_shared<MultiAreaEvent>(selectedArea, AreaEventType::Selected);
+            multiAreaE->AddAreaEvent(std::make_shared<AreaEvent>(previouslySelectedArea, AreaEventType::Unselected));
+            areaE = multiAreaE;
+        }
+        else
+            areaE = std::make_shared<AreaEvent>(selectedArea, AreaEventType::Selected);
     }
+    
+    return areaE;
 }
 
+int EditableScene::GetSelectedAreaSceneId()
+{
+    int areaSceneId = -1; // indicates "not found"
+    for (int i = 0;
+         i < (int)(areas.size()) && areaSceneId == -1 ;
+         i++)
+    {
+        if (selectedArea->GetId() == areas[i]->GetId())
+            areaSceneId = i;
+    }
+    return areaSceneId;
+}
 
 
 
@@ -95,7 +127,7 @@ void EditableScene::SetSelectedArea(std::shared_ptr<IEditableArea> selectedArea_
 
 
 
-void EditableScene::AddDefaultArea(uint64_t nextAreaId)
+std::shared_ptr<AreaEvent> EditableScene::AddDefaultArea(uint64_t nextAreaId)
 {
     // centered grey Hexagon !...
     std::shared_ptr<EditablePolygon> newPolygon(new EditablePolygon(nextAreaId,
@@ -104,34 +136,38 @@ void EditableScene::AddDefaultArea(uint64_t nextAreaId)
                                                                     canvasComponent->GetRatio() ));
     
     // Actual adding of this new polygon
-    AddArea(newPolygon);
+    return AddArea(newPolygon);
 }
 
-void EditableScene::DeleteSelectedArea()
+std::shared_ptr<AreaEvent> EditableScene::DeleteSelectedArea()
 {
     if (selectedArea)
     {
-        deleteAreaByUniqueId(selectedArea->GetId());
-        SetSelectedArea(nullptr); // actual deletion should happen here
-		std::shared_ptr<GraphicEvent> graphicE(new AreaEvent(selectedArea, AreaEventType::Deleted));
-		canvasManager->SendEventSync(graphicE);
-
+        auto selectedAreaBackup = selectedArea;
+        SetSelectedArea(nullptr);
+        return deleteAreaByUniqueId(selectedAreaBackup->GetId());
     }
     else throw std::runtime_error("Impossible to delete the selected area (no area selected");
 }
 
-void EditableScene::deleteAreaByUniqueId(uint64_t uidToDelete)
+std::shared_ptr<AreaEvent> EditableScene::deleteAreaByUniqueId(uint64_t uidToDelete)
 {
-    bool areaDeleted = false;
-    for (auto it = areas.begin() ;
-         (!areaDeleted && it!=areas.end()) ; it++)
+    std::shared_ptr<AreaEvent> areaE(new AreaEvent());
+    
+    for (size_t i = 0 ;
+         (areaE->GetType()==AreaEventType::NothingHappened) && (i<areas.size()) ;
+         i++)
     {
-        if ((uint64_t)((*it)->GetId()) == uidToDelete)
+        if ((uint64_t)(areas[i]->GetId()) == uidToDelete)
         {
-            it = areas.erase(it);
-            areaDeleted = true;
+            // Will also update the type of the event (to go out of the loop)
+            areaE = std::shared_ptr<AreaEvent>(new AreaEvent(areas[i], AreaEventType::Deleted, i));
+            // Actual deletion, iterator-based
+            areas.erase(areas.begin() + i);
         }
     }
+    
+    return areaE;
 }
 
 
@@ -144,6 +180,7 @@ void EditableScene::ChangeSelectedAreaColour(Colour& colour)
     if (selectedArea)
     {
         selectedArea->SetFillColour(colour);
+        DBG("!!!!!!!!! Area modified without sending an Event !!!!!!!!!");
         canvasComponent->repaint();
     }
     else
@@ -177,6 +214,7 @@ void EditableScene::SendSelectedAreaToBack()
                 areas[0] = selectedArea;
             }
         }
+        DBG("!!!!!!!!! Area modified without sending an Event !!!!!!!!!");
         canvasComponent->repaint();
     }
     else throw std::runtime_error("Cannot send and area to back : no area selected");
@@ -202,6 +240,7 @@ void EditableScene::SendSelectedAreaBackward()
                 areas[selectedAreaOrder-1] = selectedArea;
             }
         }
+        DBG("!!!!!!!!! Area modified without sending an Event !!!!!!!!!");
         canvasComponent->repaint();
     }
     else throw std::runtime_error("Cannot send and area forward : no area selected");
@@ -227,6 +266,7 @@ void EditableScene::BringSelectedAreaForward()
                 areas[selectedAreaOrder+1] = selectedArea;
             }
         }
+        DBG("!!!!!!!!! Area modified without sending an Event !!!!!!!!!");
         canvasComponent->repaint();
     }
     else throw std::runtime_error("Cannot send and area forward : no area selected");
@@ -253,6 +293,7 @@ void EditableScene::BringSelectedAreaToFront()
                     areas[i] = areas[i+1];
                 areas.back() = selectedArea;
             }
+            DBG("!!!!!!!!! Area modified without sending an Event !!!!!!!!!");
             canvasComponent->repaint();
         }
     }
@@ -281,7 +322,7 @@ void EditableScene::OnUnselection()
 std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent& mouseE)
 {
     // default : empty AREA event (TO DO : events may happen on exciters, etc, etc, ...)
-    std::shared_ptr<GraphicEvent> graphicE(new AreaEvent(nullptr, AreaEventType::NothingHappened));
+    std::shared_ptr<GraphicEvent> graphicE(new GraphicEvent());
     // float position (more accurate) converted to double
     Point<double> clicLocation = mouseE.position.toDouble();
  
@@ -300,15 +341,7 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent&
                     /* if not, we are sure that we clicked outside (checked by tryBeginPointMove)
                      * => it is a DEselection (maybe selection of another area, just after this)
                      */
-					graphicE = std::shared_ptr<GraphicEvent>(new AreaEvent(selectedArea, AreaEventType::Unselected));
-						// will signal CanvasManager
-						// = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
-						// = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
-						// THE DIRECT SIGNAL TO CANVAS MANAGER SHOULD STOP
-						// ONLY EVENTS SHOULD INFORM PARENT MANAGERS
-						// = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
-						// = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
-                    SetSelectedArea(nullptr); 
+                    graphicE = SetSelectedArea(nullptr);
                 }
             }
             // While no area is selected : we look for a new one to select,
@@ -326,23 +359,22 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent&
                     std::shared_ptr<EditableArea> areaToSelect = std::dynamic_pointer_cast<EditableArea>(areas[i]);
 					if (areaToSelect)
 					{
-						// will signal CanvasManager
-						// = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
-						// = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
-						// THE DIRECT SIGNAL TO CANVAS MANAGER SHOULD STOP
-						// ONLY EVENTS SHOULD INFORM PARENT MANAGERS
-						// = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
-						// = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
-						SetSelectedArea(areaToSelect);
-						graphicE = std::shared_ptr<GraphicEvent>(new AreaEvent(areaToSelect, AreaEventType::Selected));
-					}
+                        // Ici il faut regarder si on avait déjà un évènement
+                        // parce que ça devient un évènement combiné sélection/déselection
+						auto lastAreaE = SetSelectedArea(areaToSelect);
+                        if (auto castTry = std::dynamic_pointer_cast<AreaEvent>(graphicE))
+                        {
+                            std::shared_ptr<MultiAreaEvent> multiAreaE = std::make_shared<MultiAreaEvent>(areaToSelect, AreaEventType::Selected);
+                            multiAreaE->AddAreaEvent(lastAreaE);
+                        }
+                    }
                     else
                         throw std::runtime_error(std::string("Cannot cast the area that should be selected to a Miam::EditableArea"));
                 }
             }
             // New point creation POLYGONE SEULEMENT, PAS LES AUTRES FORMES !!!!!
             // Le bouton doit d'ailleurs apparaître de manière dynamique....
-            if (canvasManager->GetMode() == CanvasManagerMode::WaitingForPointCreation)
+            if (canvasManager.lock()->GetMode() == CanvasManagerMode::WaitingForPointCreation)
             {
                 // On lance une EXCEPTION SI LE CAST n'A PAS FONCTIONNÉ
                 std::shared_ptr<EditablePolygon> selectedPolygon = std::dynamic_pointer_cast<EditablePolygon>(selectedArea);
@@ -365,7 +397,7 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent&
                     throw std::runtime_error(std::string("Cannot create a point to the selected area (must be a polygon !)"));
             }
             // Existing point deletion
-            else if (canvasManager->GetMode() == CanvasManagerMode::WaitingForPointDeletion)
+            else if (canvasManager.lock()->GetMode() == CanvasManagerMode::WaitingForPointDeletion)
             {
                 // On lancera une exception si le cast n'a pas fonctionné
                 std::shared_ptr<EditablePolygon> selectedPolygon = std::dynamic_pointer_cast<EditablePolygon>(selectedArea);

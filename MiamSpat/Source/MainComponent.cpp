@@ -52,6 +52,8 @@ void MainContentComponent::CompleteInitialization(GraphicSessionManager* _graphi
     // Add of the canvas to this component's children directly (for now ?)
     multiCanvasComponent = _multiCanvasComponent;
     addAndMakeVisible(multiCanvasComponent);
+    
+    multiCanvasComponent->CompleteInitialization();
 }
 
 void MainContentComponent::SetMiamView(Miam::View* _view)

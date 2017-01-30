@@ -20,7 +20,7 @@
 
 #include "JuceHeader.h"
 
-#include "GraphicEvent.h"
+#include "AreaEvent.h"
 
 #include "IEditableArea.h"
 
@@ -68,7 +68,7 @@ namespace Miam
         protected :
         
         // links back to parent modules
-        MultiSceneCanvasInteractor* canvasManager = 0;
+        std::weak_ptr<MultiSceneCanvasInteractor> canvasManager;
         /// \brief The associated Juce (mono-scene) canvas component
         ///
         /// A basic pointer that has to be properly (at some point) transmitted to the Juce API
@@ -88,8 +88,6 @@ namespace Miam
         
         /// \brief Links (Locks) a multi-touch souce ID to an EditableArea
         std::map<int, std::shared_ptr<IEditableArea>> touchSourceToEditableArea;
-        
-        
         
         
         
@@ -120,7 +118,7 @@ namespace Miam
         public :
         
         // - - - - - Construction and Destruction (and helpers) - - - - -
-        InteractiveScene(MultiSceneCanvasInteractor* _canvasManager, SceneCanvasComponent* _canvasComponent, ExcitersBehaviorType excitersBehavior_ = ExcitersBehaviorType::ManualAddAndDelete);
+        InteractiveScene(std::shared_ptr<MultiSceneCanvasInteractor> canvasManager_, SceneCanvasComponent* canvasComponent_, ExcitersBehaviorType excitersBehavior_ = ExcitersBehaviorType::ManualAddAndDelete);
         virtual ~InteractiveScene();
         
         
@@ -130,11 +128,15 @@ namespace Miam
         
         
         /// \brief Adds an area without creating it before
-        virtual void AddArea(std::shared_ptr<IInteractiveArea> newArea);
+        virtual std::shared_ptr<AreaEvent> AddArea(std::shared_ptr<IInteractiveArea> newArea);
         
         
         
         // - - - - - Selection events managing (orders from parent manager) - - - - -
+
+		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		// !!!!!!!!!!!!!!!! renvoyer des évènements sur ce qu'il s'est passé !!!!!!!!!!
+		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         virtual void OnSelection();
         /// \ brief Behavior on unselection commanded from parent (area transformations are stopped, ...). Must be called by classes that inherit from this.
         virtual void OnUnselection();
@@ -164,8 +166,7 @@ namespace Miam
         ///
         /// \returns An event that describes what happened
         virtual std::shared_ptr<GraphicEvent> OnCanvasMouseUp(const MouseEvent& mouseE);
-        
-        
+
     };
     
     

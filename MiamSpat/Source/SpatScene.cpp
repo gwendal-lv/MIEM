@@ -11,29 +11,20 @@
 #include "SpatScene.h"
 #include "Exciter.h"
 
-SpatScene::SpatScene(MultiSceneCanvasInteractor* canvasManager_, SceneCanvasComponent* canvasComponent_)
+SpatScene::SpatScene(std::shared_ptr<MultiSceneCanvasInteractor> canvasManager_, SceneCanvasComponent* canvasComponent_)
 :
 Miam::EditableScene(canvasManager_, canvasComponent_, false) // no area is selectable
 {
     // TEST TEST TEST EXCITATEURS
-    currentExciters.push_back(std::shared_ptr<Exciter>(new Exciter()));
+    currentExciters.push_back(std::shared_ptr<Exciter>(new Exciter(-1)));
     currentExciters.back()->SetActive(true);
-	currentExciters.push_back(std::shared_ptr<Exciter>(new Exciter()));
+	currentExciters.push_back(std::shared_ptr<Exciter>(new Exciter(-1)));
 	currentExciters.back()->SetActive(true);
-    //currentExciters.back()->SetEnableTranslationOnly(true);
-    /*
-    currentExciters.push_back(std::shared_ptr<Exciter>(new Exciter()));
-    currentExciters.back()->SetActive(true);
-    currentExciters.back()->SetEnableTranslationOnly(true);
-    currentExciters.push_back(std::shared_ptr<Exciter>(new Exciter()));
-    currentExciters.back()->SetActive(true);
-    currentExciters.back()->SetEnableTranslationOnly(true);*/
 }
 
 
 SpatScene::~SpatScene()
 {
-    
 }
 
 

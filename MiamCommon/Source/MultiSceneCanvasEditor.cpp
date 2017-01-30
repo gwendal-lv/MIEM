@@ -93,13 +93,28 @@ bool MultiSceneCanvasEditor::MoveSelectedSceneTowardsLast()
 
 
 // ------ Areas managing : Add and Delete ------
+void MultiSceneCanvasEditor::AddArea(std::shared_ptr<IEditableArea> newArea)
+{
+    handleAndSendAreaEventSync(selectedScene->AddArea(newArea));
+}
+void MultiSceneCanvasEditor::AddDefaultArea(uint64_t nextAreaId)
+{
+    handleAndSendAreaEventSync(selectedScene->AddDefaultArea(nextAreaId));
+}
+void MultiSceneCanvasEditor::SetSelectedArea(std::shared_ptr<IEditableArea> newSelectedArea)
+{
+    selectedScene->SetSelectedArea(newSelectedArea);
+    // we don't look to what's been selected... total refresh instead
+    // (optimization to be made here !!)
+    recreateAllAsyncDrawableObjects();
+}
 void MultiSceneCanvasEditor::DeleteSelectedArea()
 {
     if (selectedScene)
-        selectedScene->DeleteSelectedArea();
+        handleAndSendAreaEventSync(selectedScene->DeleteSelectedArea());
     else throw std::runtime_error("Cannot get the selected area : no scene selected on canvas" + std::to_string(selfId));
     
-    canvasComponent->repaint();
+    //canvasComponent->repaint(); // useless with OpenGL
 }
 
 
@@ -124,7 +139,10 @@ void MultiSceneCanvasEditor::OnSendToBack()
     {
         auto editableScene = std::dynamic_pointer_cast<EditableScene>(selectedScene);
         if (editableScene)
+        {
             editableScene->SendSelectedAreaToBack();
+            recreateAllAsyncDrawableObjects();
+        }
         else throw std::runtime_error("Cannot send an area to back : current selected scene is not a Miam::EditableScene");
     }
     else throw std::runtime_error("Cannot send an area to back : no scene selected");
@@ -136,7 +154,10 @@ void MultiSceneCanvasEditor::OnSendBackward()
     {
         auto editableScene = std::dynamic_pointer_cast<EditableScene>(selectedScene);
         if (editableScene)
+        {
             editableScene->SendSelectedAreaBackward();
+            recreateAllAsyncDrawableObjects();
+        }
         else throw std::runtime_error("Cannot send an area backward : current selected scene is not a Miam::EditableScene");
     }
     else throw std::runtime_error("Cannot send an area backward : no scene selected");
@@ -147,7 +168,10 @@ void MultiSceneCanvasEditor::OnBringForward()
     {
         auto editableScene = std::dynamic_pointer_cast<EditableScene>(selectedScene);
         if (editableScene)
+        {
             editableScene->BringSelectedAreaForward();
+            recreateAllAsyncDrawableObjects();
+        }
         else throw std::runtime_error("Cannot bring an area forward : current selected scene is not a Miam::EditableScene");
     }
     else throw std::runtime_error("Cannot bring an area forward : no scene selected");
@@ -158,8 +182,12 @@ void MultiSceneCanvasEditor::OnBringToFront()
     {
         auto editableScene = std::dynamic_pointer_cast<EditableScene>(selectedScene);
         if (editableScene)
+        {
             editableScene->BringSelectedAreaToFront();
+            recreateAllAsyncDrawableObjects();
+        }
         else throw std::runtime_error("Cannot bring an area to front : current selected scene is not a Miam::EditableScene");
     }
     else throw std::runtime_error("Cannot bring an area to front : no scene selected");
 }
+

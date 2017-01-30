@@ -12,8 +12,12 @@
 #define IMODEL_H_INCLUDED
 
 
-#include "LockFreeQueue.h"
 
+#include "AsyncParamChange.h"
+#include "boost/lockfree/spsc_queue.hpp"
+
+
+#include "FrequencyMeasurer.h"
 
 
 namespace Miam
@@ -24,21 +28,30 @@ namespace Miam
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
         private :
         
-        LockFreeQueue paramChangesToPresenter;
-        
-        
+        /// \brief
+        ///
+        /// 100-by-100 matrix can be entirely stored within the queue without it being
+        /// full.
+        boost::lockfree::spsc_queue<AsyncParamChange, boost::lockfree::capacity<(1<<17)>> paramChangesToPresenter;
         
         // = = = = = = = = = = GETTERS and SETTERS = = = = = = = = = =
         public :
         
         /// \brief Tries a get a parameter change, that happened on the Model side,
-        /// from the internal Miam::LockFreeQueue.
+        /// from the internal lock-free queue.
         ///
-        /// Must be always called from the same unique Miam::Presenter thread
+        /// Must be always called from the same unique Miam::Presenter thread (called
+        /// back for the MessageManager Juce thread).
         ///
-        /// \returns Wether a parameter change has occured since the last "gets" sequence
-        bool TryGetAsyncParamChange(AsyncParamChange& param_)
-        { return paramChangesToPresenter.TryDequeue(param_); }
+        /// \return Wether there was a param change to pop or not
+        bool TryGetAsyncParamChange(AsyncParamChange& param_);
+        
+        
+        /// \brief Sends a parameter change to the Presenter
+        ///
+        /// Exception thrown if lock-free queue is full (no dynamic memory allocation)
+        void SendParamChange(AsyncParamChange& paramChange);
+        
         
         
         

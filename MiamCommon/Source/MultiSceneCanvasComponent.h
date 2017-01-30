@@ -37,10 +37,10 @@ class MultiSceneCanvasComponent    : public Component,
     
     protected :
     // links back to parent modules
-    MultiSceneCanvasInteractor* canvasManager = 0;
+    std::shared_ptr<MultiSceneCanvasInteractor> canvasManager;
     
     // Children canvas
-    SceneCanvasComponent* childrenCanvas;
+    SceneCanvasComponent* childrenCanvas = 0;
     
     // Button objects
     std::vector<ScopedPointer<TextButton>> sceneChoiceTextButtons;
@@ -72,10 +72,14 @@ public:
     MultiSceneCanvasComponent();
     ~MultiSceneCanvasComponent();
     
-    void LinkToManager(MultiSceneCanvasInteractor* _canvasManager);
+    void LinkToManager(std::shared_ptr<MultiSceneCanvasInteractor> canvasManager_);
 
+    
+    // - - - - - Painting and Resizing - - - - -
+    
     void paint (Graphics&) override;
     void resized() override;
+    
     
     // - - - - - Buttons management - - - - -
     public :

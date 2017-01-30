@@ -8,9 +8,15 @@
   ==============================================================================
 */
 
+#include <cmath>
+
+#include "JuceHeader.h"
+
 #include "SpatModel.h"
 
 #include "SpatInterpolator.h"
+
+#include "IPresenter.h"
 
 
 using namespace Miam;
@@ -18,16 +24,33 @@ using namespace Miam;
 // = = = = = = = = = = METHODS = = = = = = = = = =
 
 // - - - - - Construction / destruction - - - - -
-SpatModel::SpatModel(Presenter* _presenter) :
-    spatType(SpatType::None)
+SpatModel::SpatModel(IPresenter* presenter_, double updateFrequency_Hz)
+:
+presenter(presenter_),
+updateThreadF_Hz(updateFrequency_Hz),
+updateThreadT_us((int)std::round(1000000.0/updateFrequency_Hz)),
+continueUpdate(false),
+updateThreadMeasurer("Model updater"),
+spatType(SpatType::None)
 {
-    presenter = _presenter;
+    // Test of lockfreeness
+    if (continueUpdate.is_lock_free())
+        DBG("Atomic bool is lock free on this platform");
+    else
+        throw std::runtime_error("Atomic bool is not lock free on this platform");
     
+    // Launch of thread, at the specified frequency
+    continueUpdate = true;
+    // Using a c++11 lambda function for class member calling
+    updateThread = std::thread( [this] {this->update();} );
 }
 
 
 SpatModel::~SpatModel()
 {
+    // Joining of threads
+    continueUpdate = false;
+    updateThread.join();
 }
 
 
@@ -39,8 +62,8 @@ void SpatModel::AddSpeaker()
     speakers.push_back(newSpeaker);
     spatInterpolator->AddSpeaker();
 }
-void SpatModel::RemoveSpeaker(size_t _id)
+void SpatModel::RemoveSpeaker(size_t id_)
 {
-    spatInterpolator->RemoveSpeaker(_id);
-    speakers.erase(speakers.begin()+_id);
+    spatInterpolator->RemoveSpeaker(id_);
+    speakers.erase(speakers.begin()+id_);
 }

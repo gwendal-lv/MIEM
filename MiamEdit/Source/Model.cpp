@@ -28,8 +28,10 @@ using namespace Miam;
 // = = = = = = = = = = METHODS = = = = = = = = = =
 
 // - - - - - Construction / destruction - - - - -
-Model::Model(Presenter* _presenter) :
-    SpatModel(_presenter)
+Model::Model(Presenter* presenter_)
+:
+    SpatModel(presenter_),
+presenter(presenter_)
 {
     spatInterpolator = new SpatInterpolator<double>(this);
     
@@ -53,3 +55,19 @@ Model::~Model()
 {
     delete spatInterpolator;
 }
+
+
+
+// - - - - - Periodic updates - - - - -
+
+void Model::update()
+{
+    while(continueUpdate)
+    {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::cout << "update ma gueule !" << std::endl;
+    }
+}
+
+
+

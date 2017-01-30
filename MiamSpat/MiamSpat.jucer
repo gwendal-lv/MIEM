@@ -2,10 +2,14 @@
 
 <JUCERPROJECT id="xCUiGi" name="MiamSpat" projectType="guiapp" version="1.0.0"
               bundleIdentifier="com.yourcompany.MiamSpat" includeBinaryInAppConfig="1"
-              jucerVersion="4.3.0">
+              jucerVersion="4.3.1">
   <MAINGROUP id="m8VZoU" name="MiamSpat">
     <GROUP id="{D93792BB-5B8B-5A35-D554-58C4F4E4D3DA}" name="Source">
       <FILE id="oaxiVA" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <GROUP id="{23BAC1CB-3D2E-7345-7D78-B522A9B204B9}" name="Model">
+        <FILE id="ympnMH" name="Model.cpp" compile="1" resource="0" file="Source/Model.cpp"/>
+        <FILE id="Ux9VG9" name="Model.h" compile="0" resource="0" file="Source/Model.h"/>
+      </GROUP>
       <GROUP id="{45938C39-8750-2EF2-9298-4F650688CD28}" name="Presenter">
         <GROUP id="{E07097EB-B121-B880-1313-B2ED1D4A659F}" name="Scenes">
           <FILE id="RKCVev" name="SpatScene.cpp" compile="1" resource="0" file="Source/SpatScene.cpp"/>
@@ -66,6 +70,10 @@
           <FILE id="hGfG2J" name="GraphicEvent.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/GraphicEvent.cpp"/>
           <FILE id="OhudXq" name="GraphicEvent.h" compile="0" resource="0" file="../MiamCommon/Source/GraphicEvent.h"/>
+          <FILE id="snVBkm" name="MultiAreaEvent.cpp" compile="1" resource="0"
+                file="../MiamCommon/Source/MultiAreaEvent.cpp"/>
+          <FILE id="DoVqWX" name="MultiAreaEvent.h" compile="0" resource="0"
+                file="../MiamCommon/Source/MultiAreaEvent.h"/>
           <FILE id="IDIerE" name="SceneEvent.cpp" compile="1" resource="0" file="../MiamCommon/Source/SceneEvent.cpp"/>
           <FILE id="mz9IiL" name="SceneEvent.h" compile="0" resource="0" file="../MiamCommon/Source/SceneEvent.h"/>
         </GROUP>
@@ -146,17 +154,17 @@
         </GROUP>
       </GROUP>
       <GROUP id="{B91B2137-DC4A-127C-0037-DB058876BEFA}" name="Utils">
-        <GROUP id="{F7FDC121-C73C-D763-32B0-E4A8749BE749}" name="readerwriterqueue">
-          <FILE id="oXcnF2" name="atomicops.h" compile="0" resource="0" file="../MiamCommon/Source/readerwriterqueue/atomicops.h"/>
-          <FILE id="GSKMYh" name="readerwriterqueue.h" compile="0" resource="0"
-                file="../MiamCommon/Source/readerwriterqueue/readerwriterqueue.h"/>
-        </GROUP>
+        <FILE id="yL79vC" name="AsyncParamChange.cpp" compile="1" resource="0"
+              file="../MiamCommon/Source/AsyncParamChange.cpp"/>
+        <FILE id="P91Fgx" name="AsyncParamChange.h" compile="0" resource="0"
+              file="../MiamCommon/Source/AsyncParamChange.h"/>
         <FILE id="tPoEI0" name="CartesianLine.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/CartesianLine.cpp"/>
         <FILE id="eK35Tw" name="CartesianLine.h" compile="0" resource="0" file="../MiamCommon/Source/CartesianLine.h"/>
-        <FILE id="m0eWxP" name="LockFreeQueue.cpp" compile="1" resource="0"
-              file="../MiamCommon/Source/LockFreeQueue.cpp"/>
-        <FILE id="kwvDPy" name="LockFreeQueue.h" compile="0" resource="0" file="../MiamCommon/Source/LockFreeQueue.h"/>
+        <FILE id="r8ju3i" name="FrequencyMeasurer.cpp" compile="1" resource="0"
+              file="../MiamCommon/Source/FrequencyMeasurer.cpp"/>
+        <FILE id="LUNhJD" name="FrequencyMeasurer.h" compile="0" resource="0"
+              file="../MiamCommon/Source/FrequencyMeasurer.h"/>
         <FILE id="Rla6rP" name="MiamMath.cpp" compile="1" resource="0" file="../MiamCommon/Source/MiamMath.cpp"/>
         <FILE id="WSGVmq" name="MiamMath.h" compile="0" resource="0" file="../MiamCommon/Source/MiamMath.h"/>
       </GROUP>
@@ -165,8 +173,10 @@
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX">
       <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MiamSpat"/>
-        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MiamSpat"/>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MiamSpat"
+                       headerPath="../../../"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MiamSpat"
+                       headerPath="../../../"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
@@ -186,9 +196,9 @@
     </XCODE_MAC>
     <VS2015 targetFolder="Builds/VisualStudio2015">
       <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
                        isDebug="1" optimisation="1" targetName="MiamSpat" headerPath="..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"/>
-        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
                        isDebug="0" optimisation="3" targetName="MiamSpat" headerPath="..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
@@ -211,9 +221,9 @@
                    extraDefs="__MIAMOBILE">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" androidArchitectures="armeabi armeabi-v7a x86" isDebug="1"
-                       optimisation="1" targetName="MiamSpat" headerPath="../../../MiamCommon/Source/&#10;../../../SpatCommon/Source/"/>
+                       optimisation="1" targetName="MiamSpat" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../SpatCommon/Source/"/>
         <CONFIGURATION name="Release" androidArchitectures="armeabi armeabi-v7a x86"
-                       isDebug="0" optimisation="3" targetName="MiamSpat" headerPath="../../../MiamCommon/Source/&#10;../../../SpatCommon/Source/"/>
+                       isDebug="0" optimisation="3" targetName="MiamSpat" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../SpatCommon/Source/"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../JUCE/modules"/>

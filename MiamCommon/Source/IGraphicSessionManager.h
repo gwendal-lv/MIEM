@@ -25,7 +25,7 @@
 
 namespace Miam
 {
-    // pre-declarations for pointers
+    // pre-declarations for pointer members
     class IPresenter;
     class MultiSceneCanvasInteractor;
     
@@ -33,12 +33,21 @@ namespace Miam
     /// \brief Interface for any manager of a Miam graphic session presenter
     ///
     /// Owns the unique MultiCanvasComponent
-    class IGraphicSessionManager {
-        
+    class IGraphicSessionManager// : private Timer
+    {
+        // At init, for the component to get the canvas managers while keeping them
+        // private
+        friend MultiCanvasComponent;
         
         
         
         // = = = = = = = = = = COMMON ATTRIBUTES = = = = = = = = = =
+        
+        protected :
+        // Children canvas managers (Declared at first, to be destroyed at last)
+        std::vector< std::shared_ptr<MultiSceneCanvasInteractor> > canvasManagers;
+        std::shared_ptr<MultiSceneCanvasInteractor> selectedCanvas = 0;
+  
         
         // Unique parent/children pointers, so this is the easiest working way...
         private :
@@ -51,10 +60,6 @@ namespace Miam
         
         /// \brief Unique Id of the next created (or pasted, or loaded...) area
         int64_t nextAreaId;
-        
-        // Children Canvases
-        std::vector< MultiSceneCanvasInteractor* > canvasManagers;
-        MultiSceneCanvasInteractor* selectedCanvas = 0;
         
         
         // states backup
@@ -74,12 +79,27 @@ namespace Miam
         virtual MultiCanvasComponent* GetMultiCanvasComponent() {return  multiCanvasComponent;}
         
         
+        /// \brief !!!!!!!!! À CHANGER pour l'instant toujours faux : pas d'OpenGL... !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        virtual bool IsOpenGlSwapSynced() {return false;}
+        
+        
+        
         
         // = = = = = = = = = = METHODS = = = = = = = = = =
         public :
+        
+        /// - - - - - Construction and destruction - - - - -
+        /// \brief
+        ///
+        /// Think and calling completeCanvasManagersInitialization() when the canvases
+        /// are created
         IGraphicSessionManager(IPresenter* presenter_);
         virtual ~IGraphicSessionManager();
         
+        /// - - - - - Init helpers - - - - -
+        protected :
+        /// \brief Will inform the canvasManagers of the weak_ptr to themselves
+        void completeCanvasManagersInitialization();
         
         
         
@@ -97,9 +117,13 @@ namespace Miam
         // - - - - - - canvases managing - - - - - -
         
         public :
-        /// \brief Sets the new active canvas and updates corresponding graphic
-        /// objects. Must be called by the newly selected canvas itself.
-        virtual void SetSelectedCanvas(MultiSceneCanvasInteractor*) = 0;
+        /// \brief Sets the new active canvas and updates corresponding graphic objects. Called by the newly selected canvas itself. Can/Must be called by the newly selected canvas itself.
+        ///
+        /// Tells other canvases to unselect any previously selected area
+        virtual void SetSelectedCanvas(std::shared_ptr<MultiSceneCanvasInteractor> selectedCanvas_);
+        
+        /// \brief Overload (for convenience)
+        //void SetSelectedCanvas(MultiSceneCanvasInteractor* canvasInteractor);
         
         
         
@@ -110,17 +134,31 @@ namespace Miam
         virtual void DisplayInfo(String info) = 0;
         
         
-        // ----- Events from the Presenter itself -----
+        // - - - - - Events from a member of the Presenter module itself - - - - -
+        
         /// \brief Receives, processes graphic events from any drawable object,
         /// then interprets it in terms of "audio features" to be transmitted to the
-        /// Miam::Model via the Miam::Presenter
+        /// Miam::IModel via the Miam::IPresenter
         virtual void HandleEventSync(std::shared_ptr<GraphicEvent> event_) = 0;
-        
+
+        void CallPresenterUpdate();
+      
         
         // - - - - - Mouse Events - - - - -
+        
+        /// \brief Management of the Miam::MultiCanvasComponent
+        ///
+        /// May move to a separate manager in the future
         virtual void OnBackgroundMouseDown(const MouseEvent &event);
+        /// \brief Management of the Miam::MultiCanvasComponent
+        ///
+        /// May move to a separate manager in the future
         virtual void OnBackgroundMouseDrag(const MouseEvent &event);
+        /// \brief Management of the Miam::MultiCanvasComponent
+        ///
+        /// May move to a separate manager in the future
         virtual void OnBackgroundMouseUp(const MouseEvent &event);
+        
         
         
         // - - - - - Area Events (from managed canvases) - - - - -

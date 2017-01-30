@@ -26,7 +26,7 @@ namespace Miam
     {
         
         
-        // Construction
+        // - - - - - Construction/Destruction + polymorphic cloning - - - - -
         public :
         /// \param _Id See DrawablePolygon::DrawablePolygon
         InteractivePolygon(int64_t _Id);
@@ -35,14 +35,15 @@ namespace Miam
         /// \param _Id See DrawablePolygon::DrawablePolygon
         InteractivePolygon(int64_t _Id, Point<double> _center, std::vector<Point<double>>& _contourPoints, Colour _fillColour);
         
+        virtual ~InteractivePolygon() {}
+        
+        virtual IDrawableArea* Clone() const override {return new InteractivePolygon(*this);}
+        
+        
         // Contruction helpers
         private :
         void init();
-        
-        // Destruction
-        public :
-        virtual ~InteractivePolygon() {}
-        
+ 
         
         // Display functions
         public :

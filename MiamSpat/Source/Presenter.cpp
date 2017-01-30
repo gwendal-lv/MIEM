@@ -10,7 +10,7 @@
 
 #include "Presenter.h"
 
-//#include "Model.h"
+#include "Model.h"
 #include "View.h"
 
 
@@ -43,10 +43,22 @@ void Presenter::CompleteInitialisation(Model* _model)
 {
     // Self init
     model = _model;
+    
 }
 
-
-
+static int updatesCount = 0;
+void Presenter::Update()
+{
+    auto param = AsyncParamChange();
+    for (int i=0 ; i<100 ; i++)
+    {
+        updatesCount++;
+        param.IntegerValue = updatesCount;
+        SendParamChange(param);
+    }
+    
+    DBG(std::to_string(param.IntegerValue));
+}
 
 
 AppMode Presenter::appModeChangeRequest(AppMode newAppMode)

@@ -20,8 +20,12 @@
 #include "IDrawableArea.h"
 
 
+
+
 namespace Miam
 {
+    // Pre-declarations for pointer members
+    class InteractiveScene;
     
     
     enum class AreaEventType {
@@ -75,17 +79,65 @@ namespace Miam
     
     class AreaEvent : public GraphicEvent
     {
-		private :
-		AreaEventType eventType = AreaEventType::NothingHappened;
-
         protected :
+        AreaEventType eventType = AreaEventType::NothingHappened;
+        
         std::shared_ptr<IDrawableArea> concernedArea;
+        //std::shared_ptr<IDrawableArea> secondConcernedArea;
+        
+        /// \brief If exists, the scene to which the area belongs.
+        ///
+        /// nullptr if not related to a scene in particular
+        std::shared_ptr<InteractiveScene> concernedScene;
+        /// \brief If applicable, the id of the concerned drawable object, within
+        /// the scene it belongs to
+        ///
+        /// Allows faster "back-search" of the area within the scene
+        int areaIdInScene;
+        
+        
         
         public :
         AreaEventType GetType() {return eventType;}
         std::shared_ptr<IDrawableArea> GetConcernedArea() {return concernedArea;}
+        //std::shared_ptr<IDrawableArea> GetSecondConcernedArea() {return secondConcernedArea;}
+        std::shared_ptr<InteractiveScene> GetConcernedScene() {return concernedScene;}
+        int GetAreaIdInScene() {return areaIdInScene;}
         
-        AreaEvent(std::shared_ptr<IDrawableArea> concernedArea_, AreaEventType eventType_);
+        /// \brief To call after the construction, in case the event is created by
+        /// the scene itself (then, the scene does not know the shared_ptr to itself)
+        void SetConcernedScene(std::shared_ptr<InteractiveScene> concernedScene_)
+        { concernedScene = concernedScene_; }
+        
+        
+        
+        /// \brief Default constructor : indicates that nothing happens
+        AreaEvent();
+        
+        /// \brief Contructs an event about an area that may be linked to a scene
+        ///
+        /// If the "concerned scene" is nullptr, the area is linked to... something
+        /// else ?
+        AreaEvent(std::shared_ptr<IDrawableArea> concernedArea_,
+                  AreaEventType eventType_,
+                  int areaIdInScene_ = -1,
+                  std::shared_ptr<InteractiveScene> concernedScene_ = nullptr);
+        
+        
+        /*
+        // 2 areas constructor
+        
+        /// \brief Contructs an event about an area that may be linked to a scene
+        ///
+        /// If the "concerned scene" is nullptr, the area is linked to... something
+        /// else ?
+        AreaEvent(std::shared_ptr<IDrawableArea> concernedArea_,
+                  std::shared_ptr<IDrawableArea> secondConcernedArea_,
+                  AreaEventType eventType_,
+                  int areaIdInScene_ = -1,
+                  std::shared_ptr<InteractiveScene> concernedScene_ = nullptr);
+        */
+        
         virtual ~AreaEvent() {}
         
     };

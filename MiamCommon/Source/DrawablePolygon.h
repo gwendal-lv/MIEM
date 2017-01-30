@@ -34,9 +34,8 @@ namespace Miam {
         
         // ========== METHODS ==========
         
-        // Construction
+        // - - - - - Construction/Destruction + polymorphic cloning - - - - -
         public :
-        
         /// \brief Default constructor that builds a centered dark grey triangle
         ///
         /// \param See DrawableArea::id
@@ -59,6 +58,8 @@ namespace Miam {
         /// \param _contourPoints See DrawablePolygon::contourPoints
         /// \param _fillColour See DrawableArea::fillColour
         DrawablePolygon(int64_t _Id, Point<double> _center, std::vector<Point<double>>& _contourPoints, Colour _fillColour);
+        
+        virtual IDrawableArea* Clone() const override {return new DrawablePolygon(*this);}
         
         // (re)Construction helpers
         private :

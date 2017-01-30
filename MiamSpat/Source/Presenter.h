@@ -79,6 +79,10 @@ namespace Miam {
         /// Finished self-contruction, and also the construction of sub-modules
         void CompleteInitialisation(Model* _model);
         
+        
+        virtual void Update() override;
+        
+        
         // Events from the View
         AppMode appModeChangeRequest(AppMode newAppMode);
         

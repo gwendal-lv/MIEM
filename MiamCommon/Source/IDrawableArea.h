@@ -11,7 +11,7 @@
 
 
 // = = = = = = = = = SUPPRESSION D'UN WARNING Visual Studio = = = = = = = = = = =
-// Warning dû à l'héritage virtuel... Alors que c'est prévu normalement en C++ !
+// Warning dû à l'héritage virtuel... Alors que c'est prévu normalement en C++11 !
 #ifdef _MSC_VER // indique que c'est une version de visual studio
 	#pragma warning( disable : 4250 )
 #endif
@@ -40,9 +40,14 @@ namespace Miam
     {
         public :
         
-        
+        // - - - - - Construction/Destruction + polymorphic cloning - - - - -
         IDrawableArea(){}
         virtual ~IDrawableArea() {}
+        /// \brief To be overriden within any concrete area that inherits from this.
+        virtual IDrawableArea* Clone() const = 0;
+        
+        
+        
         
         /// \brief Function called by a SceneCanvasComponent to draw the Area
         ///

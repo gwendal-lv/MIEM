@@ -49,13 +49,16 @@ MultiSceneCanvasComponent::~MultiSceneCanvasComponent()
 }
 
 
-void MultiSceneCanvasComponent::LinkToManager(MultiSceneCanvasInteractor* _canvasManager)
+void MultiSceneCanvasComponent::LinkToManager(std::shared_ptr<MultiSceneCanvasInteractor> canvasManager_)
 {
-    canvasManager = _canvasManager;
+    canvasManager = canvasManager_;
+    
+    childrenCanvas->CompleteInitialization(canvasManager);
 }
 
 
 
+// - - - - - - - - - - - - - - Painting and Resizing - - - - - - - - - - - - - -
 
 void MultiSceneCanvasComponent::paint (Graphics& /*g*/) // unused Graphics context
 {
@@ -70,9 +73,15 @@ void MultiSceneCanvasComponent::resized()
     
     // Buttons positionning
     updateSceneButtonsBounds();
+    
+    // After children canvas resize, areas are up-to-date.
+    // Then, we update OpenGL copied area
+    canvasManager->OnResized();
 }
 
-// - - - - - Buttons management - - - - -
+
+
+// - - - - - - - - - - - - - - - Buttons management - - - - - - - - - - - - - - -
 void MultiSceneCanvasComponent::UpdateSceneButtons(std::vector< std::shared_ptr<InteractiveScene> > scenes, int sceneThatHasChanged)
 {
     // Update of all buttons

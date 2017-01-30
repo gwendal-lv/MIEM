@@ -19,19 +19,30 @@ using namespace Miam;
 
 
 IGraphicSessionManager::IGraphicSessionManager(IPresenter* presenter_) :
-    multiCanvasComponent(new MultiCanvasComponent(this)) // first init of shared_ptr
+    multiCanvasComponent(new MultiCanvasComponent(this))
 {
     presenter = presenter_;
 }
 
 
+
+
 IGraphicSessionManager::~IGraphicSessionManager()
 {
     delete multiCanvasComponent;
-    
-    for(size_t i=0 ; i<canvasManagers.size(); i++)
-        delete canvasManagers[i];
 }
+
+
+
+/// - - - - - Init helpers - - - - -
+void IGraphicSessionManager::completeCanvasManagersInitialization()
+{
+    for (size_t i = 0 ; i<canvasManagers.size() ; i++)
+    {
+        canvasManagers[i]->CompleteInitialization(canvasManagers[i]);
+    }
+}
+
 
 
 // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
@@ -44,7 +55,42 @@ uint64_t IGraphicSessionManager::GetNextAreaId()
 }
 
 
+// = = = = = = = = = = METHODS = = = = = = = = = =
 
+
+
+
+// - - - - - - canvases managing - - - - - -
+void IGraphicSessionManager::SetSelectedCanvas(std::shared_ptr<MultiSceneCanvasInteractor> selectedCanvas_)
+{
+    
+    // We do something only if there has been a change
+    if (selectedCanvas != selectedCanvas_)
+    {
+        // At first : unselection of previous canvas...
+        if (selectedCanvas)
+        {
+            selectedCanvas->SetMode(CanvasManagerMode::Unselected);
+            selectedCanvas->CallRepaint();
+        }
+        
+        selectedCanvas = selectedCanvas_;
+        
+        selectedCanvas->SetMode(CanvasManagerMode::SceneOnlySelected);
+        
+        //setMode(GraphicSessionMode::CanvasSelected);
+        
+        multiCanvasComponent->resized();
+    }
+    else
+    {
+        // rien du tout
+    }
+}
+
+// - - - - - Events from a member of the Presenter module itself - - - - -
+
+void IGraphicSessionManager::CallPresenterUpdate() {presenter->Update();}
 
 // - - - - - Mouse Events - - - - -
 void IGraphicSessionManager::OnBackgroundMouseDown(const MouseEvent &event)
@@ -75,3 +121,4 @@ void IGraphicSessionManager::OnBackgroundMouseUp(const MouseEvent& /* event */)
 {
     mouseResizingCanvas = false;
 }
+

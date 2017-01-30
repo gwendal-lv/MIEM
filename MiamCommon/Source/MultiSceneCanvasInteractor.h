@@ -16,6 +16,8 @@
 
 #include <deque>
 
+#include <mutex>
+
 
 #include "SceneCanvasComponent.h"
 
@@ -41,7 +43,7 @@ namespace Miam {
     /// \brief Manages the interaction with some Miam::EditableScene
     ///
     ///
-    class MultiSceneCanvasInteractor
+    class MultiSceneCanvasInteractor : public AsyncUpdater
     {
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
@@ -51,7 +53,13 @@ namespace Miam {
         // Current internal running mode
         CanvasManagerMode mode;
         
+        /// \brief Self smart pointer. Intended for this class to reference itself
+        /// within the created events
+        std::weak_ptr<MultiSceneCanvasInteractor> selfPtr;
         
+        /// \brief Pointer back to the unique edition manager (parent of this manager)
+        IGraphicSessionManager* graphicSessionManager = 0;
+
         /// \brief The associated Juce canvas component
         ///
         /// The pointer was actually extracted from a juce::ScopedPointer (do not
@@ -70,8 +78,19 @@ namespace Miam {
         std::shared_ptr<EditableScene> selectedScene = nullptr;
         
         
-        /// \brief Pointer back to the unique edition manager (parent of this manager)
-        IGraphicSessionManager* graphicSessionManager = 0;
+        
+        // - - - - - Thread-safe attributes (OpenGL async drawing) - - - - -
+        
+        std::mutex asyncDrawableObjectsMutex;
+        // Synchronized with the UNIQUE selected scene's drawable objects
+        std::vector<std::shared_ptr<IDrawableArea>> asyncDrawableObjects;
+        
+        /// \brief Maps an original area to its asynchronously drawn copy. Accessed
+        /// from the main "presenter (juce) message thread" only.
+        ///
+        /// Not always protected by mutex locks ! As its elements are shared pointers,
+        /// which allows MT-safe access
+        std::map<std::shared_ptr<IDrawableArea>, std::vector<std::shared_ptr<IDrawableArea>>::iterator> originalToAsyncObject;
         
         
         
@@ -88,12 +107,20 @@ namespace Miam {
         
         virtual ~MultiSceneCanvasInteractor();
         
+        /// \brief Converts the shared_ptr (owned by a Miam::IGraphicSessionManager)
+        /// into a weak_ptr for internal self-referencement
+        void CompleteInitialization(std::shared_ptr<MultiSceneCanvasInteractor>& selfSharedPtr);
         
         
         public :
-        void CallRepaint();
+        /// \biref Updates data, refreshes then actually paints what's necessary
+        /// (and asked to repaint).
+        ///
+        /// May only repaint the canvas (and not the Miam::MultiSceneCanvasComponent
+        /// with its additionnal UI on side : buttons, etc...)
+        void CallRepaint(bool repaintSideUiElements = true);
         
-        
+        void handleAsyncUpdate() override;
         
         
         // ----- Running Mode -----
@@ -111,16 +138,10 @@ namespace Miam {
         
         // ------ Setters and Getters ------
         public :
-        /// \brief Gets a specific DrawableArea by index
-        ///
-        /// The first (index 0) is supposed to be drawn first (deepest layer)
-        /// Called by the associated canvas component (View module)
-        std::shared_ptr<IDrawableArea> GetDrawableObject(size_t index_);
-        /// \brief Max argument for Miam::MultiSceneCanvasInteractor::GetDrawableArea
-        size_t GetDrawableObjectsCount();
         
         SceneCanvasComponent::Id GetId() {return selfId;}
         
+        uint64_t GetNextAreaId();
         
         // Scenes
         virtual size_t GetScenesCount() {return scenes.size();}
@@ -130,15 +151,48 @@ namespace Miam {
         /// to Miam::InteractiveScene
         virtual std::vector<std::shared_ptr<InteractiveScene>> GetInteractiveScenes();
         
-        virtual std::shared_ptr<EditableScene> GetSelectedScene() {return selectedScene;}
+        // for this remain master of the modifications applied to it
+        //virtual std::shared_ptr<EditableScene> GetSelectedScene() {return selectedScene;}
+        
+        // à DÉGAGER SI LA MAP DE EDITABLEAREA VERS SON INDICE MARCHE BIEN
         virtual int GetSelectedSceneId();
         
         
         
         
+        // - - - - - Internal events management - - - - -
+        
+        protected :
+        /// \brief
+        ///
+        /// Copy-constructor of the event called : else, there would be cast
+        /// issues
+        void handleAndSendEventSync(std::shared_ptr<GraphicEvent> graphicE);
+        // for optimization purposes
+        void handleAndSendAreaEventSync(std::shared_ptr<AreaEvent> areaE);
+        
+        
+        
+        // - - - - - Thread-safe methods (for OpenGL async drawing) - - - - -
+        
+        protected : // internal routines
+        void recreateAllAsyncDrawableObjects(bool recreateMap = true);
+        void addAsyncDrawableObject(int insertionIdInScene, std::shared_ptr<IDrawableArea> originalAreaToAdd);
+        void updateAsyncDrawableObject(std::shared_ptr<IDrawableArea> originalAreaToUpdate);
+        void deleteAsyncDrawableObject(int idInScene, std::shared_ptr<IDrawableArea> originalAreaToDelete);
+
+        public : // external interfacing
+        // 3 following functions, to be used very carefully from the OpenGL renderer !
+        void LockAsyncDrawableObjects() { asyncDrawableObjectsMutex.lock(); }
+        std::vector<std::shared_ptr<IDrawableArea>>& GetAsyncDrawableObjects()
+        { return asyncDrawableObjects; }
+        void UnlockAsyncDrawableObjects() { asyncDrawableObjectsMutex.unlock(); }
+        
+        
+        
         
         // - - - - - Selection management (scenes only) - - - - -
-        
+        public :
         virtual void SelectScene(int id);
         
   
@@ -147,32 +201,27 @@ namespace Miam {
         virtual void AddScene(std::string name);
         virtual void AddScene(std::shared_ptr<EditableScene> newScene);
         /// Returns wether the selected scene has been deleted or not (if it
-        /// was the last one)
+        /// was the last one).
         virtual bool DeleteScene();
         
         
         
         // ------ areas managing : Add and Delete ------
-        
+        public :
         // For testing purposes only
         // ADDS AREAS ON ALL SCENES
         void __AddTestAreas();
-    
-		void SendEventSync(std::shared_ptr<GraphicEvent> graphicE);
+        
+        protected :
+        // does what it says, and sends an event also
+        void addAreaToScene(std::shared_ptr<EditableScene> scene_, std::shared_ptr<IInteractiveArea> area_);
 
-        
-        
-        
         // ---------- Events from CanvasComponent (from View) ----------
         public :
         void OnCanvasMouseDown(const MouseEvent& mouseE);
         void OnCanvasMouseDrag(const MouseEvent& mouseE);
         void OnCanvasMouseUp(const MouseEvent& mouseE);
-        
-		//public :
-			//virtual void OnSurfaceChanged(double newSurface) = 0;
-        
-        
+        void OnResized();
         
     };
     

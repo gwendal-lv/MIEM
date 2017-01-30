@@ -14,6 +14,8 @@
 
 #include <vector>
 #include <memory>
+#include <thread>
+#include <atomic>
 
 #include "IModel.h"
 
@@ -24,7 +26,7 @@
 namespace Miam
 {
     // pre-declarations for pointers
-    class Presenter;
+    class IPresenter;
     class SpatSender;
     
     template< typename T >
@@ -37,10 +39,23 @@ namespace Miam
         
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
-        protected :
         
-        // Link to presenter module
-        Presenter* presenter = 0;
+        
+        private :
+        // Link to presenter module, children classes will have their own ptr
+        IPresenter* presenter = 0;
+        
+        
+        protected :
+        /// \brief Model update thread running at an almost constant frequency
+        std::thread updateThread;
+        double updateThreadF_Hz;
+        int updateThreadT_us;
+        std::atomic<bool> continueUpdate;
+        /// \brief Time measuring helper for thread frequency stabilisation
+        FrequencyMeasurer updateThreadMeasurer;
+        
+        
         
         // The model itself manages the speakers, for now
         // May be changed... But it remains important low-level data
@@ -64,18 +79,23 @@ namespace Miam
         SpatInterpolator<double>* GetSpatInterpolator() {return spatInterpolator;}
         
         size_t GetOutputsCount() {return speakers.size();}
-        std::string GetOutputName(size_t _i) {return speakers[_i]->GetName();}
+        std::string GetOutputName(size_t i_) {return speakers[i_]->GetName();}
         
         // = = = = = = = = = = METHODS = = = = = = = = = =
         public :
         
         // - - - - - Construction / destruction - - - - -
-        SpatModel(Presenter* _presenter);
+        SpatModel(IPresenter* presenter_, double updateFrequency_Hz = 500.0);
         virtual ~SpatModel();
         
         // - - - - - Speakers management - - - - -
         virtual void AddSpeaker();
-        virtual void RemoveSpeaker(size_t _id);
+        virtual void RemoveSpeaker(size_t id_);
+        
+        
+        // - - - - - Periodic updates - - - - -
+        protected :
+        virtual void update() = 0;
         
         
     };

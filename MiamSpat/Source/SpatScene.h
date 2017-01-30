@@ -33,7 +33,7 @@ namespace Miam {
         // = = = = = = = = = = METHODS = = = = = = = = = =
         
         public :
-        SpatScene(MultiSceneCanvasInteractor* canvasManager_, SceneCanvasComponent* canvasComponent_);
+        SpatScene(std::shared_ptr<MultiSceneCanvasInteractor> canvasManager_, SceneCanvasComponent* canvasComponent_);
         virtual ~SpatScene();
         
         

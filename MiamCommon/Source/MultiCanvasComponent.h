@@ -21,7 +21,8 @@
 using namespace Miam;
 
 namespace Miam {
-    // pre-declarations for pointers
+    
+    // pre-declarations for pointer members
     class IGraphicSessionManager;
     
     
@@ -44,8 +45,6 @@ namespace Miam {
         Path canvasResizeDiamond;
         AffineTransform canvasResizeDiamondTransform;
         
-        
-        
         // = = = = = = = = = = GETTERS and SETTERS = = = = = = = = = =
         public :
         
@@ -66,6 +65,9 @@ namespace Miam {
         virtual void paint(Graphics& g) override;
         virtual void resized() override;
         
+        void CompleteInitialization();
+        
+		//void update() override;
         
         // - - - - - Mouse management - - - - -
         virtual void mouseDown (const MouseEvent &event) override;

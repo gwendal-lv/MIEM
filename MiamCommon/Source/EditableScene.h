@@ -54,29 +54,33 @@ namespace Miam
         
         std::shared_ptr<IEditableArea> GetEditableArea(size_t i);
         
-        virtual void SetSelectedArea(std::shared_ptr<IEditableArea> selectedArea_, bool changeMode = true);
-        virtual std::shared_ptr<IEditableArea> GetSelectedArea() {return selectedArea;}
+        virtual std::shared_ptr<AreaEvent> SetSelectedArea(std::shared_ptr<IEditableArea> selectedArea_, bool changeMode = true);
+        std::shared_ptr<IEditableArea> GetSelectedArea() {return selectedArea;}
         
+        /// \brief The actual ID is there is a selected area, or -1 if there isn't.
+        virtual int GetSelectedAreaSceneId();
         
         
         // = = = = = = = = = = METHODS = = = = = = = = = =
         public :
         
         // - - - - - Construction and Destruction (and helpers) - - - - -
-        EditableScene(MultiSceneCanvasInteractor* canvasManager_, SceneCanvasComponent* canvasComponent_, bool allowAreaSelection_ = true);
+        EditableScene(std::shared_ptr<MultiSceneCanvasInteractor> canvasManager_, SceneCanvasComponent* canvasComponent_, bool allowAreaSelection_ = true);
         virtual ~EditableScene();
         
         
         // - - - - - Areas Managing : Add and Delete - - - - -
-        
-        //void AddArea(std::shared_ptr<IEditableArea> newArea, bool selectArea = false);
-        
-        void AddDefaultArea(uint64_t nextAreaId);
+                
+        std::shared_ptr<AreaEvent> AddDefaultArea(uint64_t nextAreaId);
       
-        void DeleteSelectedArea();
+        /// \brief Deletes the selected area, and always returns its ID within the
+        /// created AreaEvent
+        ///
+        /// Throws an exception if nothing is selected
+        std::shared_ptr<AreaEvent> DeleteSelectedArea();
         
         protected :
-        void deleteAreaByUniqueId(uint64_t uidToDelete);
+        std::shared_ptr<AreaEvent> deleteAreaByUniqueId(uint64_t uidToDelete);
 
         
         // ------ areas managing : graphical attributes ------

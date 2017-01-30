@@ -18,6 +18,7 @@
 #include "EditableScene.h"
 
 #include "SceneEvent.h"
+#include "MultiAreaEvent.h"
 
 
 using namespace Miam;
@@ -34,8 +35,13 @@ MultiSceneCanvasInteractor::MultiSceneCanvasInteractor(IGraphicSessionManager* _
     // CANVAS DOIT DEJA ETRE CRÉÉ BORDEL DE MERDE
     // LE TOUT EST GÉRÉ PAR LE PARENT
     canvasComponent = _canvasComponent;
-    canvasComponent->LinkToManager(this);
-    canvasComponent->GetCanvas()->CompleteInitialization(this); // auto-reference to the managed obj.
+    
+    /* This class cannot reference itself to the component now (because it is referenced by a
+     * shared_ptr
+     */
+    //canvasComponent->LinkToManager(this);
+    
+    //canvasComponent->GetCanvas()->CompleteInitialization(this); // auto-reference to the managed obj.
 
     
     
@@ -49,13 +55,24 @@ MultiSceneCanvasInteractor::~MultiSceneCanvasInteractor()
 {
 }
 
+void MultiSceneCanvasInteractor::CompleteInitialization(std::shared_ptr<MultiSceneCanvasInteractor>& selfSharedPtr)
+{
+    selfPtr = selfSharedPtr;
+}
 
-void MultiSceneCanvasInteractor::CallRepaint()
+
+
+
+void MultiSceneCanvasInteractor::CallRepaint(bool repaintSideUiElements)
 {
     canvasComponent->repaint();
 }
 
 
+void MultiSceneCanvasInteractor::handleAsyncUpdate()
+{
+    graphicSessionManager->CallPresenterUpdate();
+}
 
 
 // - - - - - - - - - - running Mode - - - - - - - - - -
@@ -71,7 +88,10 @@ void MultiSceneCanvasInteractor::SetMode(Miam::CanvasManagerMode newMode)
         case CanvasManagerMode::Unselected:
             // Unselection of a selected area (1 area selected for all canvases...)
             if (selectedScene) // on first scene adding... there would be a problem
-                GetSelectedScene()->SetSelectedArea(nullptr, false);
+            {
+                auto areaE = selectedScene->SetSelectedArea(nullptr, false);
+                handleAndSendAreaEventSync(areaE);
+            }
             // Graphical updates
             if (mode != CanvasManagerMode::Unselected)
             {
@@ -110,14 +130,9 @@ void MultiSceneCanvasInteractor::SetMode(Miam::CanvasManagerMode newMode)
 
 // - - - - - - - - - - Getters and Setters - - - - - - - - - -
 
-std::shared_ptr<IDrawableArea> MultiSceneCanvasInteractor::GetDrawableObject(size_t index_)
+uint64_t MultiSceneCanvasInteractor::GetNextAreaId()
 {
-    return selectedScene->GetDrawableObject(index_);
-}
-
-size_t MultiSceneCanvasInteractor::GetDrawableObjectsCount()
-{
-    return selectedScene->GetDrawableObjectsCount();
+    return graphicSessionManager->GetNextAreaId();
 }
 
 std::vector< std::shared_ptr<InteractiveScene> > MultiSceneCanvasInteractor::GetInteractiveScenes()
@@ -142,6 +157,158 @@ int MultiSceneCanvasInteractor::GetSelectedSceneId()
 
 
 
+// - - - - - Internal events management - - - - -
+
+void MultiSceneCanvasInteractor::handleAndSendEventSync(std::shared_ptr<GraphicEvent> graphicE)
+{
+    // - - - At first : dispatching if necessary - - -
+    // Event about an Area
+    if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(graphicE))
+    {
+        handleAndSendAreaEventSync(areaE);
+    }
+    
+    // - - - Generic event (no dispathing done) - - -
+    else
+    {
+        // - Internal update of the necessary thread-safe drawable objects -
+        // (for OpenGL rendering on background thread)
+        
+        // Event about a Scene : we may recreate all multi-threaded data
+        if (auto sceneE = std::dynamic_pointer_cast<SceneEvent>(graphicE))
+        {
+            if (sceneE->GetType() == SceneEventType::SceneChanged)
+                recreateAllAsyncDrawableObjects();
+        }
+        
+        // -  Transmission of the event to the parent graphic session manager -
+        graphicSessionManager->HandleEventSync(graphicE);
+    }
+}
+void MultiSceneCanvasInteractor::handleAndSendAreaEventSync(std::shared_ptr<AreaEvent> areaE)
+{
+    // - - - Internal update of the necessary thread-safe drawable objects - - -
+    // (for OpenGL rendering on background thread)
+    switch(areaE->GetType())
+    {
+        case AreaEventType::Added :
+            // Internally checks the given idInScene
+            addAsyncDrawableObject(areaE->GetAreaIdInScene(), areaE->GetConcernedArea());
+            break;
+            
+        case AreaEventType::Deleted :
+            if (areaE->GetAreaIdInScene() < 0)
+                throw std::runtime_error("A deletion Miam::AreaEvent must always contain the id of the object to delete.");
+            else
+                deleteAsyncDrawableObject(areaE->GetAreaIdInScene(), areaE->GetConcernedArea());
+            break;
+            
+        default : // Any movement : update of the concerned area (if any)
+            if (areaE->GetConcernedArea())
+            {
+                updateAsyncDrawableObject(areaE->GetConcernedArea());
+                if (auto multiAreaE = std::dynamic_pointer_cast<MultiAreaEvent>(areaE))
+                {
+                    for (int i=0 ; i<multiAreaE->GetOtherEventsCount() ; i++)
+                    {
+                        updateAsyncDrawableObject(multiAreaE->GetOtherEvent(i)->GetConcernedArea());
+                    }
+                }
+            }
+            break;
+    }
+    
+    // - - - Transmission of the event to the parent graphic session manager - - -
+    graphicSessionManager->HandleEventSync(areaE);
+}
+
+
+
+
+// - - - - - Thread-safe methods (for OpenGL async drawing) - - - - -
+// internal routines
+
+void MultiSceneCanvasInteractor::recreateAllAsyncDrawableObjects(bool recreateMap)
+{
+    // Cloning of all drawable areas (memory allocations) happen before locking
+    // the mutex
+    std::vector<std::shared_ptr<IDrawableArea>> syncAllocatedAreaCopies;
+    syncAllocatedAreaCopies.reserve(selectedScene->GetDrawableObjectsCount());
+    for (size_t i=0 ; i<selectedScene->GetDrawableObjectsCount() ; i++)
+    {
+        syncAllocatedAreaCopies.push_back(std::shared_ptr<IDrawableArea>(selectedScene->GetDrawableObject(i)->Clone()));
+    }
+    
+    // Actual assignation (OpenGL renderers get now the freshest data)
+    asyncDrawableObjectsMutex.lock();
+    
+    if (recreateMap)
+        originalToAsyncObject.clear();
+    asyncDrawableObjects.clear();
+    asyncDrawableObjects.reserve(selectedScene->GetDrawableObjectsCount());
+    for (size_t i=0 ; i<selectedScene->GetDrawableObjectsCount() ; i++)
+    {
+        asyncDrawableObjects.push_back(syncAllocatedAreaCopies[i]);
+        if (recreateMap)
+            originalToAsyncObject[selectedScene->GetDrawableObject(i)] = asyncDrawableObjects.begin() + i;
+    }
+    
+    asyncDrawableObjectsMutex.unlock();
+}
+void MultiSceneCanvasInteractor::addAsyncDrawableObject(int insertionIdInScene, std::shared_ptr<IDrawableArea> originalAreaToAdd)
+{
+    /* Memory allocation done outside of the lock (may change almost nothing... and
+     * cost 2 memory allocation of std::shared_ptr ? To be tested for optimization...
+     */
+    std::shared_ptr<IDrawableArea> areaCopy(originalAreaToAdd->Clone());
+    
+    // Actual addition then
+    asyncDrawableObjectsMutex.lock();
+    if (insertionIdInScene == asyncDrawableObjects.size())
+    {
+        asyncDrawableObjects.push_back(areaCopy);
+        originalToAsyncObject[originalAreaToAdd] = std::prev(asyncDrawableObjects.end());
+        asyncDrawableObjectsMutex.unlock();
+    }
+    else if (insertionIdInScene < asyncDrawableObjects.size())
+    {
+        auto it = asyncDrawableObjects.insert(asyncDrawableObjects.begin()+insertionIdInScene, areaCopy);
+        originalToAsyncObject[originalAreaToAdd] = it; // insertion in map here
+        asyncDrawableObjectsMutex.unlock();
+    }
+    else
+    {
+        // unlock before the exception, in case it is catched and the program continues
+        asyncDrawableObjectsMutex.unlock();
+        throw std::runtime_error("Id of new area to draw asynchronously is not coherent");
+    }
+}
+void MultiSceneCanvasInteractor::updateAsyncDrawableObject(std::shared_ptr<IDrawableArea> originalAreaToUpdate)
+{
+    // Done outside a mutex lock, as it can take some time...
+    auto asyncObjectIt = originalToAsyncObject[originalAreaToUpdate];
+    std::shared_ptr<IDrawableArea> newAsyncObjectSharedPtr = std::shared_ptr<IDrawableArea>(originalAreaToUpdate->Clone());
+    
+    // Locked change within the MT-unsafe std::vector
+    asyncDrawableObjectsMutex.lock();
+    *asyncObjectIt = newAsyncObjectSharedPtr;
+    asyncDrawableObjectsMutex.unlock();
+}
+void MultiSceneCanvasInteractor::deleteAsyncDrawableObject(int idInScene, std::shared_ptr<IDrawableArea> originalAreaToDelete)
+{
+    // At first : deletion of the pointer from the map
+    auto it = originalToAsyncObject.find(originalAreaToDelete);
+    originalToAsyncObject.erase(it);
+    
+    // Then, actual deletion of the area
+    asyncDrawableObjectsMutex.lock();
+    asyncDrawableObjects.erase(asyncDrawableObjects.begin()+idInScene);
+    asyncDrawableObjectsMutex.unlock();
+}
+
+
+
+
 // - - - - - Selection management (areas and scenes) - - - - -
 
 
@@ -156,10 +323,10 @@ void MultiSceneCanvasInteractor::SelectScene(int id)
             selectedScene->OnUnselection();
         
         // Then : we become the new selected canvas (if we were not before)
-        graphicSessionManager->SetSelectedCanvas(this);
+        graphicSessionManager->SetSelectedCanvas(selfPtr.lock());
         // No specific other check, we just create the informative event before changing
 		
-        std::shared_ptr<SceneEvent> graphicE(new SceneEvent(this, selectedScene, scenes[id],SceneEventType::SceneChanged));
+        std::shared_ptr<SceneEvent> graphicE(new SceneEvent(selfPtr.lock(), selectedScene, scenes[id],SceneEventType::SceneChanged));
         selectedScene = std::dynamic_pointer_cast<EditableScene>(scenes[id]);
         selectedScene->OnSelection();
         
@@ -167,10 +334,10 @@ void MultiSceneCanvasInteractor::SelectScene(int id)
         
         // Graphic updates
         canvasComponent->UpdateSceneButtons(GetInteractiveScenes());
-        CallRepaint();
+        //CallRepaint(); // not anymore with OpenGL ?? or YES because buttons shoudl be redrawn ?
         
-        // Finally : info sent to the graphic session manager (may not be actually used)
-        graphicSessionManager->HandleEventSync(graphicE);
+        // Finally : info sent to this itself, and the graphic session manager
+        handleAndSendEventSync(graphicE);
     }
     else
     {
@@ -186,27 +353,28 @@ void MultiSceneCanvasInteractor::SelectScene(int id)
 
 void MultiSceneCanvasInteractor::AddScene(std::string name)
 {
-    std::shared_ptr<EditableScene> newScene(new EditableScene(this, canvasComponent->GetCanvas()));
+    std::shared_ptr<EditableScene> newScene(new EditableScene(selfPtr.lock(), canvasComponent->GetCanvas()));
     newScene->SetName(name);
     AddScene(newScene);
-	std::shared_ptr<SceneEvent> sceneE(new SceneEvent(this, newScene, SceneEventType::Added));
+	std::shared_ptr<SceneEvent> sceneE(new SceneEvent(selfPtr.lock(), newScene, SceneEventType::Added));
 	
-	graphicSessionManager->HandleEventSync(sceneE);
+	handleAndSendEventSync(sceneE);
 }
 void MultiSceneCanvasInteractor::AddScene(std::shared_ptr<EditableScene> newScene)
 {
     scenes.push_back( newScene );
-	std::shared_ptr<SceneEvent> sceneE(new SceneEvent(this, newScene, SceneEventType::Added));
-	graphicSessionManager->HandleEventSync(sceneE);
+	std::shared_ptr<SceneEvent> sceneE(new SceneEvent(selfPtr.lock(), newScene, SceneEventType::Added));
 
     SelectScene((int)(scenes.size())-1);
     // Graphical updates
     canvasComponent->UpdateSceneButtons(GetInteractiveScenes());
+    
+    handleAndSendEventSync(sceneE);
 
 }
 bool MultiSceneCanvasInteractor::DeleteScene()
 {
-	DBG("Deleeeeete");
+	DBG("Deleeeeete scene");
     if (scenes.size()<=1)
         return false;
     else
@@ -220,8 +388,8 @@ bool MultiSceneCanvasInteractor::DeleteScene()
 
         // Then we remove this one
         auto it = scenes.begin() + selectedSceneId;
-		std::shared_ptr<SceneEvent> sceneE(new SceneEvent(this, *it, SceneEventType::Deleted));
-		graphicSessionManager->HandleEventSync(sceneE);
+		std::shared_ptr<SceneEvent> sceneE(new SceneEvent(selfPtr.lock(), *it, SceneEventType::Deleted));
+		handleAndSendEventSync(sceneE);
 
         scenes.erase(it);
         // Graphical updates
@@ -248,9 +416,9 @@ void MultiSceneCanvasInteractor::__AddTestAreas()
 {
     for (size_t i=0 ; i < scenes.size() ; i++)
     {
+        SelectScene(i);
         int areasCount = 2+(rand()%3);
         
-        auto editableScene = std::dynamic_pointer_cast<EditableScene>(scenes[i]);
         for (int j=0 ; j<areasCount ; j++)
         {
             // Only polygons added for now
@@ -259,15 +427,17 @@ void MultiSceneCanvasInteractor::__AddTestAreas()
                                                                                         Point<double>(0.2f+0.13f*j,0.3f+0.1f*j), 3+2*j, 0.15f+0.04f*(j+1),
                                                                                         Colour(80*(uint8)j, 0, 255),
                                                                                         canvasComponent->GetCanvas()->GetRatio()));
-            editableScene->AddArea(currentEditablePolygon);
+            // On each
+            addAreaToScene(selectedScene, currentEditablePolygon);
         }
     }
 }
 
-
-void MultiSceneCanvasInteractor::SendEventSync(std::shared_ptr<GraphicEvent> graphicE)
+void MultiSceneCanvasInteractor::addAreaToScene(std::shared_ptr<EditableScene> scene_, std::shared_ptr<IInteractiveArea> area_)
 {
-	graphicSessionManager->HandleEventSync(graphicE);
+    auto areaE = scene_->AddArea(area_);
+    areaE->SetConcernedScene(scene_);
+    handleAndSendAreaEventSync(areaE);
 }
 
 
@@ -279,7 +449,7 @@ void MultiSceneCanvasInteractor::SendEventSync(std::shared_ptr<GraphicEvent> gra
 void MultiSceneCanvasInteractor::OnCanvasMouseDown(const MouseEvent& mouseE)
 {
     // !!!!!!!!!!!!!! ON DOIT DIRE AU PARENT QU'ON SE SÉLECTIONNE SOI-MÊME !!!!!!!!!!!!!!
-    graphicSessionManager->SetSelectedCanvas(this);
+    graphicSessionManager->SetSelectedCanvas(selfPtr.lock());
     
     std::shared_ptr<GraphicEvent> graphicE = selectedScene->OnCanvasMouseDown(mouseE);
     if (! graphicE->GetMessage().empty())
@@ -293,31 +463,31 @@ void MultiSceneCanvasInteractor::OnCanvasMouseDown(const MouseEvent& mouseE)
     }
     
     // in any case : repaint() (does not waste much computing time...)
-    canvasComponent->repaint();
+    //canvasComponent->repaint(); // useless with OpenGL
     
     // Event transmission towards the audio interpretation
-    graphicSessionManager->HandleEventSync(graphicE);
+    handleAndSendEventSync(graphicE);
 }
 void MultiSceneCanvasInteractor::OnCanvasMouseDrag(const MouseEvent& mouseE)
 {
     std::shared_ptr<GraphicEvent> graphicE = selectedScene->OnCanvasMouseDrag(mouseE);
-    // If event was an AreaEvent
-    if (std::shared_ptr<AreaEvent> areaE = std::dynamic_pointer_cast<AreaEvent>(graphicE))
-    {
-        if (areaE->GetType() != AreaEventType::NothingHappened)
-            canvasComponent->repaint();
-    }
     
     // Event transmission towards the audio interpretation
-    graphicSessionManager->HandleEventSync(graphicE);
+    handleAndSendEventSync(graphicE);
 }
 void MultiSceneCanvasInteractor::OnCanvasMouseUp(const MouseEvent& mouseE)
 {
     std::shared_ptr<GraphicEvent> graphicE = selectedScene->OnCanvasMouseUp(mouseE);
     
-    canvasComponent->repaint();
+    // canvasComponent->repaint(); // useless with OpenGL
     
     // Event transmission towards the audio interpretation
-    graphicSessionManager->HandleEventSync(graphicE);
+    handleAndSendEventSync(graphicE);
+}
+
+void MultiSceneCanvasInteractor::OnResized()
+{
+    // Update without map re-creation
+    recreateAllAsyncDrawableObjects(false);
 }
 
