@@ -35,7 +35,7 @@ namespace Miam
         std::chrono::microseconds lastFrameDuration;
         
         // We'll wait a few frames before actually starting measuring
-        bool beginMeasuring;
+        bool beginStatistics;
         
         
         // min/max values

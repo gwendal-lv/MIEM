@@ -76,6 +76,9 @@ void SceneCanvasComponent::resized()
 void SceneCanvasComponent::newOpenGLContextCreated()
 {
     DBG("SceneCanvasComponent : init OpenGL");
+
+	// Will init the counter
+	//displayFrequencyMeasurer.OnNewFrame();
 }
 void SceneCanvasComponent::renderOpenGL()
 {
