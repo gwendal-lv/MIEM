@@ -44,6 +44,13 @@ namespace Amusing
 			return centerInPixels.getY();
 		}
 
+		double GetAreteLength()
+		{
+			//DBG("GetAreteL");
+			//DBG((String)contourPoints.size());
+			return contourPoints[0].getDistanceFrom(contourPoints[1])*100;
+		}
+
 		void Paint(Graphics& g);
 		
 		void timerCallback();

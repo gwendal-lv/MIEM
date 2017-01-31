@@ -65,11 +65,16 @@ GraphicSessionManager::GraphicSessionManager(Presenter* presenter_, View* view_)
 	// On doit créer les sous-objets graphiques de canevas (View) avant de
 	// les transmettre au sous-module de gestion de canevas (Presenter) que l'on crée
 	// d'ailleurs ici aussi.
-	canvasManagers.push_back(new MultiSceneCanvasManager(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas1));
+	canvasManagers.push_back(std::make_shared<MultiSceneCanvasManager>(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas1));
+	multiCanvasComponent->CompleteInitialization();
+	DBG("pushed");
+	canvasManagers.back()->CompleteInitialization(canvasManagers.back());
+	DBG("initialized");
+	
 	/*
 	canvasManagers.push_back(new MultiSceneCanvasEditor(this, multiCanvasComponent->AddCanvas(),  SceneCanvasComponent::Id::Canvas2));
 	*/
-
+	//canvasManagers.back()
 	for (size_t i = 0; i<canvasManagers.size(); i++)
 	{
 		// After canvases are created : scenes creation
@@ -78,20 +83,20 @@ GraphicSessionManager::GraphicSessionManager(Presenter* presenter_, View* view_)
 		canvasManagers[i]->AddScene("Scène 2 oh ouuiiii");
 		canvasManagers[i]->AddScene("Scène jamais 2 sans 3");
 	}
-
+	DBG("Scene added");
 	// Links to the view module
 	view->CompleteInitialization(this, multiCanvasComponent);
 	editScene->CompleteInitialization(this);// , multiCanvasComponent);
-
+	DBG("view + edit scene initialized");
 	// And states of the canvases are forced
 	for (size_t i = 0; i<canvasManagers.size(); i++)
 		canvasManagers[i]->SetMode(CanvasManagerMode::Unselected);
-
+	DBG("mode set");
 
 	// SÉLECTION/CHARGEMENT D'UN TRUC PAR DÉFAUT
 	nextAreaId = 0; // plus tard : valeur contenue dans le fichier de sauvegarde
 	canvasManagers.front()->SetMode(CanvasManagerMode::SceneOnlySelected);
-
+	DBG("front mode selected");
 
 }
 
@@ -132,56 +137,36 @@ std::shared_ptr<IEditableArea> GraphicSessionManager::GetSelectedArea()
 
 
 
-void GraphicSessionManager::SetSelectedCanvas(MultiSceneCanvasInteractor* _selectedCanvas)
+
+std::shared_ptr<MultiSceneCanvasManager> GraphicSessionManager::getSelectedCanvasAsManager()
 {
-
-	// We do something only if there has been a change
-	if (selectedCanvas != _selectedCanvas)
-	{
-		// At first : unselection of previous canvas...
-		if (selectedCanvas)
-		{
-			selectedCanvas->SetMode(CanvasManagerMode::Unselected);
-			selectedCanvas->CallRepaint();
-		}
-
-		/*
-		selectedCanvas = dynamic_cast<MultiSceneCanvasEditor*>(_selectedCanvas);
-		if (!selectedCanvas)
-		throw std::runtime_error(std::string("The canvas to be selected is only an Interactor, and not an Editor (no editing features...)"));
-		*/
-		// Pas besoin du cast en canvas "éditeur", pour le Miam Spat un simple
-		// "interacteur" va suffire
-		selectedCanvas = _selectedCanvas;
-
-		selectedCanvas->SetMode(CanvasManagerMode::SceneOnlySelected);
-
-		//setMode(GraphicSessionMode::CanvasSelected);
-
-		multiCanvasComponent->resized();
-	}
-	else
-	{
-		// rien du tout
-	}
-}
-
-MultiSceneCanvasManager* GraphicSessionManager::getSelectedCanvasAsManager()
-{
-	MultiSceneCanvasManager* canvasPtr = dynamic_cast<MultiSceneCanvasManager*>(selectedCanvas);
+	std::shared_ptr<MultiSceneCanvasManager> canvasPtr = std::dynamic_pointer_cast<MultiSceneCanvasManager>(selectedCanvas);
 	if (canvasPtr)
 		return canvasPtr;
 	else throw std::runtime_error("Canvas cannot be casted as a Miam::MultiSceneCanvasManager");
 }
 
 
+std::shared_ptr<MultiSceneCanvasEditor> GraphicSessionManager::getSelectedCanvasAsEditable()
+{
+	std::shared_ptr<MultiSceneCanvasEditor> canvasPtr = std::dynamic_pointer_cast<MultiSceneCanvasEditor>(selectedCanvas);
+	if (canvasPtr)
+		return canvasPtr;
+	else throw std::runtime_error("Canvas not selected, or canvas cannot be casted a Miam::MultiSceneCanvasEditor");
+}
+
 
 // ===== EVENTS FROM THE PRESENTER ITSELF =====
 void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_)
 {
+	////////////////////
+	int ADSR = 1; //////
+	///////////////////
+
 	Miam::AsyncParamChange param;
 	double S;
 	double f;
+	int speed = 10;
 	// Event about an Area
 	if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(event_))
 	{
@@ -200,9 +185,14 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				param.Id1 = myPresenter->getSourceID(area);
 				//param.Id2 = ; //  = type de la source
 				if (auto anime = std::dynamic_pointer_cast<AnimatedPolygon> (area))
+				{
 					param.Id2 = anime->GetContourSize();
+					if(ADSR == 1)
+						param.DoubleValue = anime->GetAreteLength() / speed;
+				}
 				DBG("Nbre cote = " + (String)param.Id2);
 				myPresenter->SendParamChange(param);
+				DBG("Send");
 				break;
 			case AreaEventType::Deleted:
 				param.Type = Miam::AsyncParamChange::ParamType::Volume;
@@ -218,11 +208,21 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				break;
 			case AreaEventType::ShapeChanged :
 				DBG("Shape Changed");
-				S = area->GetSurface();
-				f = 20 * pow(10,S/4000);
-				param.Type = Miam::AsyncParamChange::ParamType::Frequency;
-				param.Id1 = myPresenter->getSourceID(area);
-				param.DoubleValue = f;
+				if (ADSR == 0)
+				{
+					S = area->GetSurface();
+					f = 20 * pow(10, S / 4000);
+					param.Type = Miam::AsyncParamChange::ParamType::Frequency;
+					param.Id1 = myPresenter->getSourceID(area);
+					param.DoubleValue = f;
+				}
+				else if (ADSR == 1)
+				{
+					param.Type = Miam::AsyncParamChange::ParamType::Frequency;
+					param.Id1 = myPresenter->getSourceID(area);
+					if(auto anime = std::dynamic_pointer_cast<AnimatedPolygon> (area))
+						param.DoubleValue = anime->GetAreteLength() / speed;
+				}
 				myPresenter->SendParamChange(param);
 				break;
 			case AreaEventType::Translation :
@@ -240,19 +240,34 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				//area-> get center height --> volume
 				break;
 			case AreaEventType::RotScale :
-				DBG("RotScale");
-				if (auto anime = std::dynamic_pointer_cast<AnimatedPolygon> (area))
+				//DBG("RotScale");
+				if (ADSR == 0)
 				{
-					//DBG("H = " + (String)anime->GetHeight());
-					S = area->GetSurface();
-					f = 20 * pow(10, S / 4000);
-					param.Type = Miam::AsyncParamChange::ParamType::Frequency;
-					param.Id1 = myPresenter->getSourceID(area);
-					param.DoubleValue = f;
-					myPresenter->SendParamChange(param);
+					if (auto anime = std::dynamic_pointer_cast<AnimatedPolygon> (area))
+					{
+						//DBG("H = " + (String)anime->GetHeight());
+						S = area->GetSurface();
+						f = 20 * pow(10, S / 4000);
+						param.Type = Miam::AsyncParamChange::ParamType::Frequency;
+						param.Id1 = myPresenter->getSourceID(area);
+						param.DoubleValue = f;
+						myPresenter->SendParamChange(param);
+					}
+					else
+						DBG("not an anime");
 				}
-				else
-					DBG("not an anime");
+				else if(ADSR == 1)
+				{
+					if (auto anime = std::dynamic_pointer_cast<AnimatedPolygon> (area))
+					{
+						//DBG("envoi duration");
+						param.Type = Miam::AsyncParamChange::ParamType::Duration;
+						param.Id1 = myPresenter->getSourceID(area);
+						param.DoubleValue = anime->GetAreteLength() / speed;
+						myPresenter->SendParamChange(param);
+					}
+				}
+				
 				break;
 				//case AreaEventType::
 			default:
@@ -318,7 +333,6 @@ void GraphicSessionManager::CanvasModeChanged(CanvasManagerMode /*canvasMode*/)
 
 
 
-
 // ===== EVENTS TO VIEW =====
 
 void GraphicSessionManager::DisplayInfo(String info)
@@ -330,10 +344,10 @@ void GraphicSessionManager::OnAddArea()
 {
 	if (selectedCanvas)
 	{
-		if (auto canvas = std::dynamic_pointer_cast<AmusingScene>(selectedCanvas->GetSelectedScene()))
+		if (auto canvas = std::dynamic_pointer_cast<AmusingScene>(getSelectedCanvasAsEditable()))
 			canvas->AddAnimatedArea(GetNextAreaId());
 		else
-			selectedCanvas->GetSelectedScene()->AddDefaultArea(GetNextAreaId());
+			getSelectedCanvasAsEditable()->AddDefaultArea(GetNextAreaId());
 	}
 }
 
@@ -341,10 +355,10 @@ void GraphicSessionManager::OnAddSquare()
 {
 	if (selectedCanvas)
 	{
-		if (auto canvas = std::dynamic_pointer_cast<AmusingScene>(selectedCanvas->GetSelectedScene()))
+		if (auto canvas = std::dynamic_pointer_cast<AmusingScene>(getSelectedCanvasAsEditable()))
 			canvas->AddNedgeArea(GetNextAreaId(),4);
 		else
-			selectedCanvas->GetSelectedScene()->AddDefaultArea(GetNextAreaId());
+			getSelectedCanvasAsEditable()->AddDefaultArea(GetNextAreaId());
 	}
 }
 
@@ -352,10 +366,10 @@ void GraphicSessionManager::OnAddTriangle()
 {
 	if (selectedCanvas)
 	{
-		if (auto canvas = std::dynamic_pointer_cast<AmusingScene>(selectedCanvas->GetSelectedScene()))
+		if (auto canvas = std::dynamic_pointer_cast<AmusingScene>(getSelectedCanvasAsEditable()))
 			canvas->AddNedgeArea(GetNextAreaId(), 3);
 		else
-			selectedCanvas->GetSelectedScene()->AddDefaultArea(GetNextAreaId());
+			getSelectedCanvasAsEditable()->AddDefaultArea(GetNextAreaId());
 	}
 }
 
@@ -363,10 +377,10 @@ void GraphicSessionManager::OnAddCircle()
 {
 	if (selectedCanvas)
 	{
-		if (auto canvas = std::dynamic_pointer_cast<AmusingScene>(selectedCanvas->GetSelectedScene()))
+		if (auto canvas = std::dynamic_pointer_cast<AmusingScene>(getSelectedCanvasAsEditable()))
 			canvas->AddNedgeArea(GetNextAreaId(), 20);
 		else
-			selectedCanvas->GetSelectedScene()->AddDefaultArea(GetNextAreaId());
+			getSelectedCanvasAsEditable()->AddDefaultArea(GetNextAreaId());
 	}
 }
 

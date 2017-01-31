@@ -34,6 +34,8 @@ namespace Miam
             Activate,
             Volume,
             Frequency,
+
+			Duration,
         };
         
         ParamType Type = ParamType::None;

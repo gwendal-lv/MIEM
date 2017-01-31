@@ -51,7 +51,7 @@ namespace Amusing {
 
 		void askParameter();
 		void chooseAudioType(int position, int type);
-		void AncienchooseAudioType(int type);
+		void AncienchooseAudioType(int type,double duration);
 	private:
 
 		void trackVectorHandler(bool deactivation, int type);
@@ -67,6 +67,8 @@ namespace Amusing {
 
 		int currentSamplesPerBlock;
 		double currentSampleRate;
+
+		int useADSR;
 
 		std::vector<std::shared_ptr<AmuSignal>> trackVector;
 		std::vector<bool> activeVector;

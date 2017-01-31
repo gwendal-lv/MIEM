@@ -23,7 +23,7 @@ namespace Miam
 	class AmusingScene : public EditableScene
 	{
 	public :
-		AmusingScene(MultiSceneCanvasInteractor* _canvasManager, SceneCanvasComponent* _canvasComponent);
+		AmusingScene(std::shared_ptr<MultiSceneCanvasInteractor> _canvasManager, SceneCanvasComponent* _canvasComponent);
 		virtual ~AmusingScene();
 
 		void AddAnimatedArea(uint64_t nextAreaId);
