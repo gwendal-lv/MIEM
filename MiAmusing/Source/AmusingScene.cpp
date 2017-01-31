@@ -18,7 +18,8 @@
 using namespace Miam;
 using namespace Amusing;
 
-AmusingScene::AmusingScene(MultiSceneCanvasInteractor* _canvasManager, SceneCanvasComponent* _canvasComponent) : EditableScene(_canvasManager,  _canvasComponent)
+AmusingScene::AmusingScene(std::shared_ptr<MultiSceneCanvasInteractor> _canvasManager, SceneCanvasComponent* _canvasComponent)
+	: EditableScene(_canvasManager,  _canvasComponent,true)
 {
 
 }

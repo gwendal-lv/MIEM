@@ -24,8 +24,8 @@
 #include "GraphicSessionManager.h"
 #include "ControlEvent.h"
 
-using namespace Amusing;
 
+using namespace Amusing;
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
 //[/MiscUserDefs]
@@ -119,10 +119,11 @@ void EditScene::buttonClicked (Button* buttonThatWasClicked)
 {
     //[UserbuttonClicked_Pre]
     //[/UserbuttonClicked_Pre]
+
     if (buttonThatWasClicked == playButton)
     {
         //[UserButtonCode_playButton] -- add your button handler code here..
-		
+
 		graphicSessionManager->HandleEventSync(std::shared_ptr<ControlEvent>(new ControlEvent(ControlEventType::Play)));
         //[/UserButtonCode_playButton]
     }

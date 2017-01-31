@@ -17,8 +17,8 @@
   ==============================================================================
 */
 
-#ifndef __JUCE_HEADER_B6F0B542616105F0__
-#define __JUCE_HEADER_B6F0B542616105F0__
+#ifndef __JUCE_HEADER_3B6C74FB80B21A50__
+#define __JUCE_HEADER_3B6C74FB80B21A50__
 
 //[Headers]     -- You can add your own extra header files here --
 #include "../JuceLibraryCode/JuceHeader.h"
@@ -28,7 +28,7 @@
 namespace Amusing
 {
 	class GraphicSessionManager;
-	
+
 }
 using namespace Amusing;
 
@@ -55,7 +55,7 @@ public:
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
 	void CompleteInitialization(GraphicSessionManager* _graphicSessionManager);//, MultiCanvasComponent* _multiCanvasComponent);
-    
+
     //[/UserMethods]
 
     void paint (Graphics& g) override;
@@ -67,7 +67,8 @@ public:
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     GraphicSessionManager* graphicSessionManager = 0;
-	
+	//MultiCanvasComponent* multiCanvasComponent = 0;
+
     //[/UserVariables]
 
     //==============================================================================
@@ -86,4 +87,4 @@ private:
 //[EndFile] You can add extra defines here...
 //[/EndFile]
 
-#endif   // __JUCE_HEADER_B6F0B542616105F0__
+#endif   // __JUCE_HEADER_3B6C74FB80B21A50__

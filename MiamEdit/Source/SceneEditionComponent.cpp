@@ -603,7 +603,7 @@ void SceneEditionComponent::CompleteInitialization(GraphicSessionManager* _graph
 
     multiCanvasComponent = _multiCanvasComponent;
     addAndMakeVisible(multiCanvasComponent);
-    
+
     multiCanvasComponent->CompleteInitialization();
 }
 

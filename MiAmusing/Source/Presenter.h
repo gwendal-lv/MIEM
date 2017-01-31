@@ -90,6 +90,8 @@ namespace Amusing {
         ///
         /// Finished self-contruction, and also the construction of sub-modules
         void CompleteInitialisation(AmusingModel* _model);
+
+		virtual void Update() override;
         
         // Events from the View
         AppMode appModeChangeRequest(AppMode newAppMode);
