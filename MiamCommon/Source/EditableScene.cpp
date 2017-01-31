@@ -161,7 +161,7 @@ std::shared_ptr<AreaEvent> EditableScene::deleteAreaByUniqueId(uint64_t uidToDel
         if ((uint64_t)(areas[i]->GetId()) == uidToDelete)
         {
             // Will also update the type of the event (to go out of the loop)
-            areaE = std::shared_ptr<AreaEvent>(new AreaEvent(areas[i], AreaEventType::Deleted, i));
+            areaE = std::shared_ptr<AreaEvent>(new AreaEvent(areas[i], AreaEventType::Deleted, (int)i));
             // Actual deletion, iterator-based
             areas.erase(areas.begin() + i);
         }

@@ -136,7 +136,7 @@ void SceneCanvasComponent::renderOpenGL()
     double underTime = desiredPeriod_ms - displayFrequencyMeasurer.GetLastDuration_ms();
     if (underTime > 0.0)
     {
-        Thread::sleep(std::floor(underTime));
+        Thread::sleep((int)std::floor(underTime));
     }
 }
 

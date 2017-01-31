@@ -115,10 +115,7 @@ namespace Miam {
         public :
         /// \biref Updates data, refreshes then actually paints what's necessary
         /// (and asked to repaint).
-        ///
-        /// May only repaint the canvas (and not the Miam::MultiSceneCanvasComponent
-        /// with its additionnal UI on side : buttons, etc...)
-        void CallRepaint(bool repaintSideUiElements = true);
+        void CallRepaint();
         
         void handleAsyncUpdate() override;
         

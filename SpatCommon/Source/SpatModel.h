@@ -95,6 +95,14 @@ namespace Miam
         
         // - - - - - Periodic updates - - - - -
         protected :
+			/// \brief HUGE warning : VS2015 does not properly runs polymorphism
+		/// if the thread that calls this function is created from this 
+		/// class' contructor. The "this" pointer is not considered as a real
+		/// type and an abstract method is called -> bizarre undefined random
+		/// behavior then...
+		///
+		/// Marked as private for now to avoid that bug
+	private:
         virtual void update() = 0;
         
         

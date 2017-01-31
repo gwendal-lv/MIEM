@@ -39,18 +39,18 @@ spatType(SpatType::None)
     else
         throw std::runtime_error("Atomic bool is not lock free on this platform");
     
+
+
     // Launch of thread, at the specified frequency
-    continueUpdate = true;
+    //continueUpdate = true;
     // Using a c++11 lambda function for class member calling
-    updateThread = std::thread( [this] {this->update();} );
+	// Gros problème de polymorphisme non-fonctionnel sous VS2015 (voir header pour détails)
+    //updateThread = std::thread( [this] {this->update();} );
 }
 
 
 SpatModel::~SpatModel()
 {
-    // Joining of threads
-    continueUpdate = false;
-    updateThread.join();
 }
 
 

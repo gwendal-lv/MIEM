@@ -94,7 +94,7 @@ std::shared_ptr<AreaEvent> InteractiveScene::AddArea(std::shared_ptr<IInteractiv
     // Warning : does not contain the shared_ptr to the scene
     return std::shared_ptr<AreaEvent>(new AreaEvent(newArea,
                                                     AreaEventType::Added,
-                                                    areas.size()-1));
+                                                    (int)areas.size()-1));
 }
 
 

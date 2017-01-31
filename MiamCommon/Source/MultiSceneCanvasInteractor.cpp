@@ -63,7 +63,7 @@ void MultiSceneCanvasInteractor::CompleteInitialization(std::shared_ptr<MultiSce
 
 
 
-void MultiSceneCanvasInteractor::CallRepaint(bool repaintSideUiElements)
+void MultiSceneCanvasInteractor::CallRepaint()
 {
     canvasComponent->repaint();
 }
@@ -416,7 +416,7 @@ void MultiSceneCanvasInteractor::__AddTestAreas()
 {
     for (size_t i=0 ; i < scenes.size() ; i++)
     {
-        SelectScene(i);
+        SelectScene((int)i);
         int areasCount = 2+(rand()%3);
         
         for (int j=0 ; j<areasCount ; j++)

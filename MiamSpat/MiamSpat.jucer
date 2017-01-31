@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="xCUiGi" name="MiamSpat" projectType="guiapp" version="1.0.0"
               bundleIdentifier="com.yourcompany.MiamSpat" includeBinaryInAppConfig="1"
-              jucerVersion="4.3.0">
+              jucerVersion="4.3.1">
   <MAINGROUP id="m8VZoU" name="MiamSpat">
     <GROUP id="{D93792BB-5B8B-5A35-D554-58C4F4E4D3DA}" name="Source">
       <FILE id="oaxiVA" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>

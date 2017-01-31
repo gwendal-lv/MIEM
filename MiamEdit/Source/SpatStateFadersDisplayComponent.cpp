@@ -92,7 +92,7 @@ void SpatStateFadersDisplayComponent::resized()
     textHeight = getHeight() - sliderHeight;
     for (size_t i = 0 ; i<sliders.size() ; i++)
     {
-        sliders[i]->setBounds(i*sliderWidth, 0, sliderWidth, sliderHeight);
+        sliders[i]->setBounds((int)i*sliderWidth, 0, sliderWidth, sliderHeight);
         slidersLabels[i]->setBoundingBox(
 			RelativeParallelogram(
 				Rectangle<float>((float)(sliderHeight), 

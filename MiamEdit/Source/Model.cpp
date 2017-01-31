@@ -48,11 +48,22 @@ presenter(presenter_)
     
     // Auto-referenciation to other modules
     presenter->CompleteInitialisation(this);
+
+
+	// Launch of thread, at the specified frequency
+	continueUpdate = true;
+	// Using a c++11 lambda function for class member calling
+	updateThread = std::thread( [this] {this->update();} );
 }
 
 
 Model::~Model()
 {
+	// Joining of threads
+	continueUpdate = false;
+	updateThread.join();
+
+
     delete spatInterpolator;
 }
 
@@ -65,7 +76,7 @@ void Model::update()
     while(continueUpdate)
     {
         std::this_thread::sleep_for(std::chrono::seconds(1));
-        std::cout << "update ma gueule !" << std::endl;
+		DBG("update Modèle !");
     }
 }
 

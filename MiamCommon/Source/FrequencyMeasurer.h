@@ -54,14 +54,14 @@ namespace Miam
         // = = = = = = = = = = Getters and Setters = = = = = = = = = =
         public :
         
-        double GetAverageFrequency_Hz() {return averageFrequency;}
-        double GetLastFrequency_Hz();
+        double GetAverageFrequency_Hz() const {return averageFrequency;}
+        double GetLastFrequency_Hz() const;
         
-        double GetLastDuration_ms();
+        double GetLastDuration_ms() const;
         
-        int GetLastDuration_us() {return lastFrameDuration.count(); }
-        int GetMinDuration_us() {return minDuration_us.count();}
-        int GetMaxDuration_us() {return maxDuration_us.count();}
+        long GetLastDuration_us() const {return (long)lastFrameDuration.count(); }
+        long GetMinDuration_us() const {return (long)minDuration_us.count();}
+		long GetMaxDuration_us() const {return (long)maxDuration_us.count();}
         
         // = = = = = = = = = = METHODS = = = = = = = = = =
         public :
@@ -76,7 +76,7 @@ namespace Miam
         std::string GetInfo(bool displayMinMax = true);
         /// \brief True if a new frequency average has been computed, but the
         /// GetInfo() method wans't called yet
-        bool IsFreshAverageAvailable() {return isFreshAverageAvailable;}
+        bool IsFreshAverageAvailable() const {return isFreshAverageAvailable;}
         
         
         protected :

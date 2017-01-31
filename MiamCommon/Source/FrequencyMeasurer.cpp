@@ -44,12 +44,12 @@ void FrequencyMeasurer::init()
 
 // = = = = = = = = = = Getters and Setters = = = = = = = = = =
 
-double FrequencyMeasurer::GetLastFrequency_Hz()
+double FrequencyMeasurer::GetLastFrequency_Hz() const
 {
     return 1000.0/GetLastDuration_ms();
 }
 
-double FrequencyMeasurer::GetLastDuration_ms()
+double FrequencyMeasurer::GetLastDuration_ms() const
 {
     return (double)(lastFrameDuration.count())/1000.0;
 }
@@ -104,20 +104,23 @@ std::string FrequencyMeasurer::GetInfo(bool displayMinMax)
         result += numberStream.str();
         result += "Hz ";
     }
-    {
-        result += "Tmin=";
-        std::stringstream numberStream;
-        numberStream << std::fixed << std::setprecision(digits) << ((double)(minDuration_us.count())/1000.0);
-        result += numberStream.str();
-        result += "ms ";
-    }
-    {
-        result += "Tmax=";
-        std::stringstream numberStream;
-        numberStream << std::fixed << std::setprecision(digits) << ((double)(maxDuration_us.count())/1000.0);
-        result += numberStream.str();
-        result += "ms";
-    }
+	if (displayMinMax)
+	{
+		{
+			result += "Tmin=";
+			std::stringstream numberStream;
+			numberStream << std::fixed << std::setprecision(digits) << ((double)(minDuration_us.count()) / 1000.0);
+			result += numberStream.str();
+			result += "ms ";
+		}
+		{
+			result += "Tmax=";
+			std::stringstream numberStream;
+			numberStream << std::fixed << std::setprecision(digits) << ((double)(maxDuration_us.count()) / 1000.0);
+			result += numberStream.str();
+			result += "ms";
+		}
+	}
     
     isFreshAverageAvailable = false;
     
