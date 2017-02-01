@@ -47,6 +47,8 @@ public:
 		return amplitude;
 	}
 
+	bool isStopped();
+
 protected:
 	double amplitude;
 	double frequency;

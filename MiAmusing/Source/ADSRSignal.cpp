@@ -43,10 +43,10 @@ ADSRSignal::ADSRSignal(FourierSignal *m_signal, double duration) :
 	loop = true;
 }
 
-ADSRSignal::ADSRSignal(int type, double duration) :
+ADSRSignal::ADSRSignal(int type, double duration, bool m_loop) :
 	AmuSignal(0.5, 100), ADSR_state(Attack), position(0), currentGain(0), // initialisatio
 	attackT(10*0.008), attackLvl(0.5), decay(0.024), sustainLvl(0.2), release(2*0.024),  // parametres de l'ADSR
-	stopSustain(true)
+	stopSustain(true), loop(m_loop)
 {
 	erase = true;
 	switch (type)
@@ -67,7 +67,7 @@ ADSRSignal::ADSRSignal(int type, double duration) :
 	// duree de la note specifiee
 	DBG("duree = " + (String)duration);
 	sustainT = duration - (attackT + decay + release);
-	loop = true;
+	
 }
 
 ADSRSignal::~ADSRSignal()
@@ -271,7 +271,7 @@ void ADSRSignal::changeState(TransportState newState)
 		switch (newState)
 		{
 		case Stopped:  // remise a zero
-
+			DBG("state = stopped");
 			position = 0;
 			break;
 		case Starting:
@@ -318,3 +318,17 @@ void ADSRSignal::setDuration(double newDuration)
 		//DBG((String)endAttackP + " " + (String)endDecayP + " " + (String)endSustainP + " " + (String)endReleaseP);
 	}
 }
+
+void ADSRSignal::isEmpty()
+{
+	if (signal == nullptr)
+		DBG("signal == nullptr");
+	else
+		DBG("signal != nullptr");
+}
+
+bool ADSRSignal::isLooping()
+{
+	return loop;
+}
+

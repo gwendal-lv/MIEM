@@ -36,6 +36,7 @@ void MultiSceneCanvasManager::AddScene(std::string name)
 {
     // We construct scene that DO NOT allow the selection of a particular area
     //std::shared_ptr<EditableScene> newScene(new AmusingScene(this, canvasComponent->GetCanvas()));
+	DBG("passe dans le bon");
 	std::shared_ptr<AmusingScene> newScene(new AmusingScene(selfPtr.lock(), canvasComponent->GetCanvas()));
     newScene->SetName(name);
     
@@ -61,4 +62,10 @@ void MultiSceneCanvasManager::__AddAnimatedTestAreas()
 			editableScene->AddArea(currentEditablePolygon);
 		}
 	}
+}
+
+void MultiSceneCanvasManager::AddNedgeArea(uint64_t nextAreaId, int N)
+{
+	if(auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+		handleAndSendAreaEventSync(amusingScene->AddNedgeArea(nextAreaId,N));
 }

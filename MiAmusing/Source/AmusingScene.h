@@ -27,7 +27,7 @@ namespace Miam
 		virtual ~AmusingScene();
 
 		void AddAnimatedArea(uint64_t nextAreaId);
-		void AddNedgeArea(uint64_t nextAreaId, int N);
+		std::shared_ptr<AreaEvent> AddNedgeArea(uint64_t nextAreaId, int N);
 		// override mouse callback
 		
 		std::shared_ptr<GraphicEvent> OnCanvasMouseDown(const MouseEvent& mouseE) override;

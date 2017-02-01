@@ -32,7 +32,7 @@ public:
     ADSRSignal(FourierSignal *m_signal);
 	ADSRSignal(FourierSignal *m_signal, bool m_stopSustain);
 	ADSRSignal(FourierSignal *m_signal, double m_duration);
-	ADSRSignal(int type, double duration);
+	ADSRSignal(int type, double duration, bool m_loop);
     ~ADSRSignal();
 
 	void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
@@ -50,13 +50,9 @@ public:
 
 	int getLength();
 
-	void isEmpty()
-	{
-		if (signal == nullptr)
-			DBG("signal == nullptr");
-		else
-			DBG("signal != nullptr");
-	}
+	void isEmpty();
+	
+	bool isLooping();
 
 private:
 	FourierSignal *signal;

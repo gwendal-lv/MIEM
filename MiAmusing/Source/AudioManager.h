@@ -59,6 +59,9 @@ namespace Amusing {
 		void playAllSources();
 		void stopAllSources();
 
+		void verifyAllSource();
+		void HandleEvent();
+
 		AmusingModel *model;
 		MixerAudioSource *mixer;
 		//std::thread activationThread;// s[2];

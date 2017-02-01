@@ -51,6 +51,7 @@ namespace Amusing {
         // ------ Scenes managing : Add and Delete ------
         virtual void AddScene(std::string name) override;
 		void __AddAnimatedTestAreas();
+		void AddNedgeArea(uint64_t nextAreaId, int N);
     };
     
     

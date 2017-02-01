@@ -85,9 +85,12 @@ void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 	
 	askParameter();
 	if (Nsources > 0)
+	{
+		verifyAllSource();
 		mixer->getNextAudioBlock(bufferToFill);
+	}
 		//trackVector[0]->getNextAudioBlock(bufferToFill);
-	
+	//HandleEvent();
 		
 	//bufferToFill.clearActiveBufferRegion();
 }
@@ -144,16 +147,18 @@ void AudioManager::AncienchooseAudioType(int type, double duration)
 	switch (type)
 	{
 	case 3:
+		DBG("Triangle");
 		if(useADSR == 0)
 			trackVector.push_back(std::shared_ptr<TriangleSignal>(new TriangleSignal(0.5, 100, 15)));
 		else if (useADSR == 1)
 		{
 			//std::shared_ptr<ADSRSignal> P(new ADSRSignal(std::shared_ptr<TriangleSignal>(new TriangleSignal(0.5, 100, 15)).get(), duration));
 			//trackVector.push_back(P);
-			trackVector.push_back(std::shared_ptr<ADSRSignal>(new ADSRSignal(3, duration)));
+			trackVector.push_back(std::shared_ptr<ADSRSignal>(new ADSRSignal(3, duration,false)));
 		}
 		break;
 	case 4:
+		DBG("Carre");
 		if(useADSR == 0)
 			trackVector.push_back(std::shared_ptr<SquareSignal>(new SquareSignal(0.5, 100, 15)));
 		else if (useADSR == 1)
@@ -161,7 +166,7 @@ void AudioManager::AncienchooseAudioType(int type, double duration)
 			DBG("avant alloc");
 			//std::shared_ptr<ADSRSignal> P(new ADSRSignal(std::shared_ptr<SquareSignal>(new SquareSignal(0.5, 100, 15)).get(), duration));
 			//P->isEmpty();
-			trackVector.push_back(std::shared_ptr<ADSRSignal>(new ADSRSignal(4, duration)));
+			trackVector.push_back(std::shared_ptr<ADSRSignal>(new ADSRSignal(4, duration,false)));
 			DBG("apres alloc");
 			//trackVector.push_back(P);
 			
@@ -169,28 +174,30 @@ void AudioManager::AncienchooseAudioType(int type, double duration)
 		}
 		break;
 	case 20:
+		DBG("Cercle");
 		if(useADSR == 0)
 			trackVector.push_back(std::shared_ptr<SinusSignal>(new SinusSignal(0.5, 100, 15)));
 		else if (useADSR == 1)
 		{
 			//std::shared_ptr<ADSRSignal> P(new ADSRSignal(std::shared_ptr<SinusSignal>(new SinusSignal(0.5, 100, 15)).get(), duration));
-			trackVector.push_back(std::shared_ptr<ADSRSignal>( new ADSRSignal(20,duration)));
+			trackVector.push_back(std::shared_ptr<ADSRSignal>( new ADSRSignal(20,duration,false)));
 		}
 		break;
 	default:
 		break;
 	}
 	//trackVector.end()->get()->prepareToPlay(currentSamplesPerBlock, currentSampleRate);
-	DBG("LA");
+	DBG("LA : " +(String)Nsources);
 	
 	
 	if (auto ad = std::dynamic_pointer_cast<ADSRSignal> (trackVector[Nsources]))
 		ad->isEmpty();
-
+	//DBG("apres cast");
 	trackVector[Nsources]->prepareToPlay(currentSamplesPerBlock, currentSampleRate);
-	
+	//DBG("apres prepare to play");
 	
 	mixer->addInputSource(trackVector[Nsources].get(), false);
+	//DBG("apres add to mixer");
 	trackVector[Nsources]->changeState(Stopped);
 	++Nsources;
 }
@@ -216,16 +223,16 @@ void AudioManager::askParameter()
 	if (model->lookForParameter(param))
 	{
 		//DBG("receive parameter");
-		//DBG("param type receive = " + (String)param.Type);
+		DBG("param type receive = " + (String)param.Type + " " + (String)param.Id2);
 		switch (param.Type)
 		{
 		case Miam::AsyncParamChange::ParamType::None :
 			//DBG("None");
 			break;
 		case Miam::AsyncParamChange::ParamType::Activate :
-			DBG("Activate");
+			//DBG("Activate");
 			AncienchooseAudioType(param.Id2,param.DoubleValue);
-			DBG("continue");
+			//DBG("continue");
 			
 			break;
 		case Miam::AsyncParamChange::ParamType::Frequency :
@@ -236,17 +243,17 @@ void AudioManager::askParameter()
 				break;
 			}
 			trackVector[param.Id1]->setFrequency(param.DoubleValue);
-			DBG("Source " + (String)param.Id1 + " f = " + (String)trackVector[param.Id1]->getFrequency() + " v = " + (String)trackVector[param.Id1]->getAmplitude());
+			//DBG("Source " + (String)param.Id1 + " f = " + (String)trackVector[param.Id1]->getFrequency() + " v = " + (String)trackVector[param.Id1]->getAmplitude());
 			break;
 		case Miam::AsyncParamChange::ParamType::Volume :
 			if (param.DoubleValue == 0)
 				--Nsources;
 			else
 			{
-				DBG("Volume" + (String)param.Id1 + " a " + (String)param.DoubleValue);
+				//DBG("Volume" + (String)param.Id1 + " a " + (String)param.DoubleValue);
 				if (param.Id1 > trackVector.size()-1)
 				{
-					DBG("Stop !!!");
+					//DBG("Stop !!!");
 					break;
 				}
 				trackVector[param.Id1]->setAmplitude(param.DoubleValue);
@@ -309,6 +316,18 @@ void AudioManager::changeState(AudioManagerState newState)
 	}
 }
 
+void AudioManager::verifyAllSource()
+{
+	for (int i = 0; i < Nsources; ++i)
+		if (trackVector[i]->isStopped())
+		{
+			Miam::AsyncParamChange param;
+			param.Type = Miam::AsyncParamChange::ParamType::Activate;
+			model->SendParamChange(param);
+			trackVector[i]->changeState(Starting);
+		}
+}
+
 void AudioManager::playAllSources()
 {
 	for (int i = 0; i < Nsources; ++i)
@@ -318,4 +337,12 @@ void AudioManager::stopAllSources()
 {
 	for (int i = 0; i < Nsources; ++i)
 		trackVector[i]->changeState(TransportState::Stopping);
+}
+
+void AudioManager::HandleEvent()
+{
+	//DBG("handleEvent");
+	Miam::AsyncParamChange param;
+	param.Type = Miam::AsyncParamChange::ParamType::Activate;
+	model->SendParamChange(param);
 }

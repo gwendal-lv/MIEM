@@ -105,6 +105,7 @@ std::shared_ptr<IEditableArea> Presenter::getAreaFromSource(int source)
 static int updatesCount = 0;
 void Presenter::Update()
 {
+	/*
 	auto param = AsyncParamChange();
 	for (int i = 0; i<100; i++)
 	{
@@ -112,7 +113,24 @@ void Presenter::Update()
 		param.IntegerValue = updatesCount;
 		SendParamChange(param);
 	}
-
+	DBG("la dedans");
 	DBG(std::to_string(param.IntegerValue));
+	*/
+	//DBG("La");
+	AsyncParamChange param;
+	if (model->TryGetAsyncParamChange(param))
+	{
+		switch (param.Type)
+		{
+		case AsyncParamChange::ParamType::Activate :
+			DBG("Next edge");
+			break;
+		case AsyncParamChange::ParamType::Duration :
+			DBG("new duration");
+			break;
+		default:
+			break;
+		}
+	}
 }
 

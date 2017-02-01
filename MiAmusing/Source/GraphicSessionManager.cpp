@@ -83,7 +83,7 @@ GraphicSessionManager::GraphicSessionManager(Presenter* presenter_, View* view_)
 		canvasManagers[i]->AddScene("Scène 2 oh ouuiiii");
 		canvasManagers[i]->AddScene("Scène jamais 2 sans 3");
 	}
-	DBG("Scene added");
+	
 	// Links to the view module
 	view->CompleteInitialization(this, multiCanvasComponent);
 	editScene->CompleteInitialization(this);// , multiCanvasComponent);
@@ -187,6 +187,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				if (auto anime = std::dynamic_pointer_cast<AnimatedPolygon> (area))
 				{
 					param.Id2 = anime->GetContourSize();
+					DBG("contour size = " + (String)param.Id2);
 					if(ADSR == 1)
 						param.DoubleValue = anime->GetAreteLength() / speed;
 				}
@@ -355,10 +356,7 @@ void GraphicSessionManager::OnAddSquare()
 {
 	if (selectedCanvas)
 	{
-		if (auto canvas = std::dynamic_pointer_cast<AmusingScene>(getSelectedCanvasAsEditable()))
-			canvas->AddNedgeArea(GetNextAreaId(),4);
-		else
-			getSelectedCanvasAsEditable()->AddDefaultArea(GetNextAreaId());
+		getSelectedCanvasAsManager()->AddNedgeArea(GetNextAreaId(), 4);
 	}
 }
 
@@ -366,10 +364,7 @@ void GraphicSessionManager::OnAddTriangle()
 {
 	if (selectedCanvas)
 	{
-		if (auto canvas = std::dynamic_pointer_cast<AmusingScene>(getSelectedCanvasAsEditable()))
-			canvas->AddNedgeArea(GetNextAreaId(), 3);
-		else
-			getSelectedCanvasAsEditable()->AddDefaultArea(GetNextAreaId());
+		getSelectedCanvasAsManager()->AddNedgeArea(GetNextAreaId(), 3);
 	}
 }
 
@@ -377,10 +372,7 @@ void GraphicSessionManager::OnAddCircle()
 {
 	if (selectedCanvas)
 	{
-		if (auto canvas = std::dynamic_pointer_cast<AmusingScene>(getSelectedCanvasAsEditable()))
-			canvas->AddNedgeArea(GetNextAreaId(), 20);
-		else
-			getSelectedCanvasAsEditable()->AddDefaultArea(GetNextAreaId());
+		getSelectedCanvasAsManager()->AddNedgeArea(GetNextAreaId(), 20);
 	}
 }
 

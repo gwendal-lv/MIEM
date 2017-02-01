@@ -41,16 +41,17 @@ void AmusingScene::AddAnimatedArea(uint64_t nextAreaId)
 	AddArea(newPolygon);
 }
 
-void AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N)
+std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N)
 {
 	// centered grey Hexagon !...
+	DBG("creation du polygon a N cotes");
 	std::shared_ptr<AnimatedPolygon> newPolygon(new AnimatedPolygon(nextAreaId,
 		Point<double>(0.5f, 0.5f), N, 0.15f,
 		Colours::grey,
 		canvasComponent->GetRatio()));
-
+	DBG("a la creation : size = "+ (String)newPolygon->GetContourSize());
 	// Actual adding of this new polygon
-	AddArea(newPolygon);
+	return AddArea(newPolygon);
 }
 
 std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDown(const MouseEvent& mouseE)

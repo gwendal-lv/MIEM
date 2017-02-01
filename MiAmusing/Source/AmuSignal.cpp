@@ -19,3 +19,11 @@ AmuSignal::~AmuSignal()
 {
 }
 
+bool AmuSignal::isStopped()
+{
+	if (state == Stopped)
+		return true;
+	else
+		return false;
+}
+
