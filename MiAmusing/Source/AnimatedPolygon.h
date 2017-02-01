@@ -16,8 +16,7 @@
 
 namespace Amusing
 {
-	class AnimatedPolygon : public Miam::EditablePolygon,
-		public Timer
+	class AnimatedPolygon : public Miam::EditablePolygon
 		                    //public AnimatedAppComponent
 	{
 	public :
@@ -51,9 +50,13 @@ namespace Amusing
 			return contourPoints[0].getDistanceFrom(contourPoints[1])*100;
 		}
 
+
+		int currentSommet;
+		double GetNextAreaLength();
+
 		void Paint(Graphics& g);
 		
-		void timerCallback();
+		
 		//void update();
 
 	private :

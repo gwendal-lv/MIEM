@@ -82,17 +82,19 @@ void AudioManager::releaseResources()
 }
 void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 {
-	
 	askParameter();
-	if (Nsources > 0)
+	if (state != Stop)
 	{
-		verifyAllSource();
-		mixer->getNextAudioBlock(bufferToFill);
-	}
+		if (Nsources > 0)
+		{
+			verifyAllSource();
+			mixer->getNextAudioBlock(bufferToFill);
+		}
 		//trackVector[0]->getNextAudioBlock(bufferToFill);
 	//HandleEvent();
-		
-	//bufferToFill.clearActiveBufferRegion();
+	}
+	else
+		bufferToFill.clearActiveBufferRegion();
 }
 
 void AudioManager::chooseAudioType(int position, int type)
@@ -242,7 +244,7 @@ void AudioManager::askParameter()
 				DBG("Stop !!! : " + (String)param.Id1 + " > "+ (String)(Nsources-1)  );
 				break;
 			}
-			trackVector[param.Id1]->setFrequency(param.DoubleValue);
+			//trackVector[param.Id1]->setFrequency(param.DoubleValue);
 			//DBG("Source " + (String)param.Id1 + " f = " + (String)trackVector[param.Id1]->getFrequency() + " v = " + (String)trackVector[param.Id1]->getAmplitude());
 			break;
 		case Miam::AsyncParamChange::ParamType::Volume :
@@ -291,7 +293,13 @@ void AudioManager::askParameter()
 	if (ddd == true)
 	{
 		if (auto ad = std::dynamic_pointer_cast<ADSRSignal>(trackVector[param.Id1]))
+		{
+			DBG("ddd == true");
 			ad->setDuration(param.DoubleValue);
+			if (ad->isStopped())
+				ad->changeState(Starting);
+		}
+		
 	}
 }
 
@@ -323,8 +331,9 @@ void AudioManager::verifyAllSource()
 		{
 			Miam::AsyncParamChange param;
 			param.Type = Miam::AsyncParamChange::ParamType::Activate;
+			param.Id1 = i;
 			model->SendParamChange(param);
-			trackVector[i]->changeState(Starting);
+			//trackVector[i]->changeState(Starting);
 		}
 }
 

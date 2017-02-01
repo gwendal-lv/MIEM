@@ -19,8 +19,8 @@ AnimatedPolygon::AnimatedPolygon(int64_t _Id) : EditablePolygon(_Id)
 	point.setX(contourPointsInPixels[0].getX());
 	point.setY(contourPointsInPixels[0].getY());
 	fromPt = 0;
-	//setFramesPerSecond(24);
-	startTimer(500);
+	
+	currentSommet = 0;
 	
 }
 
@@ -28,8 +28,8 @@ AnimatedPolygon::AnimatedPolygon(int64_t _Id, Point<double> _center, int pointsC
 	Colour _fillColour, float _canvasRatio) :
 	EditablePolygon(_Id, _center, pointsCount, radius, _fillColour, _canvasRatio)
 {
-	//setFramesPerSecond(24);
-	startTimer(500);
+	currentSommet = 0;
+	
 }
 
 AnimatedPolygon::AnimatedPolygon(int64_t _Id,
@@ -39,8 +39,9 @@ AnimatedPolygon::AnimatedPolygon(int64_t _Id,
 	point.setX(contourPointsInPixels[0].getX());
 	point.setY(contourPointsInPixels[0].getY());
 	fromPt = 0;
-	//setFramesPerSecond(24);
-	startTimer(500);
+	
+	currentSommet = 0;
+	
 }
 
 
@@ -70,15 +71,18 @@ void AnimatedPolygon::Paint(Graphics& g)
 	
 }
 
-/*void AnimatedPolygon::update()
+double AnimatedPolygon::GetNextAreaLength()
 {
-	repaint();
-	//if(isActive)
-	DBG("salut");
-}*/
+	double distance = 0;
+	if((currentSommet+1)>=contourPoints.size())
+		distance = contourPoints[currentSommet].getDistanceFrom(contourPoints[0]) * 100;
+	else
+		distance = contourPoints[currentSommet].getDistanceFrom(contourPoints[currentSommet+1]) * 100;
 
-void AnimatedPolygon::timerCallback()
-{
-	//Point<double> diff = contourPoints[fromPt + 1] - contourPoints[fromPt];
+	currentSommet = (currentSommet + 1) % contourPoints.size();
+
+	return distance;
 }
+
+
 

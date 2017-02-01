@@ -16,6 +16,8 @@
 
 #include "JuceHeader.h"
 
+#include "AnimatedPolygon.h"
+
 using namespace Amusing;
 
 
@@ -95,15 +97,22 @@ int Presenter::getSourceID(std::shared_ptr<IEditableArea> area)
 
 std::shared_ptr<IEditableArea> Presenter::getAreaFromSource(int source)
 {
+	/*
 	if (sourceToArea.find(source) == sourceToArea.end())
 	{
 		// source has no associated area
 	}
 	return sourceToArea[source];
+	*/
+	if (areaToSourceMulti.right.find(source) == areaToSourceMulti.right.end())
+	{
+		DBG("problemes");
+	}
+	return areaToSourceMulti.right.at(source);
 }
 
 static int updatesCount = 0;
-void Presenter::Update()
+void Presenter::Update() // remettre l'interieur dans graphsessionmanager
 {
 	/*
 	auto param = AsyncParamChange();
@@ -117,13 +126,24 @@ void Presenter::Update()
 	DBG(std::to_string(param.IntegerValue));
 	*/
 	//DBG("La");
-	AsyncParamChange param;
+	AsyncParamChange param, param2;
+	std::shared_ptr<IEditableArea> area;
 	if (model->TryGetAsyncParamChange(param))
 	{
 		switch (param.Type)
 		{
 		case AsyncParamChange::ParamType::Activate :
-			DBG("Next edge");
+			//DBG("Next edge");
+			area = getAreaFromSource(param.Id1);
+			if (auto anime = std::dynamic_pointer_cast<AnimatedPolygon>(area))
+			{
+				DBG("nouvelle arete = " + (String)anime->GetNextAreaLength());
+				// separer la partie envoie dans le handleeventsync?
+				param2.Type = AsyncParamChange::ParamType::Duration;
+				param2.Id1 = param.Id1;
+				param2.DoubleValue = anime->GetNextAreaLength() / 10;
+				SendParamChange(param2);
+			}
 			break;
 		case AsyncParamChange::ParamType::Duration :
 			DBG("new duration");

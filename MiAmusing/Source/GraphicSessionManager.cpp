@@ -221,8 +221,10 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				{
 					param.Type = Miam::AsyncParamChange::ParamType::Frequency;
 					param.Id1 = myPresenter->getSourceID(area);
-					if(auto anime = std::dynamic_pointer_cast<AnimatedPolygon> (area))
+					if (auto anime = std::dynamic_pointer_cast<AnimatedPolygon> (area))
+					{
 						param.DoubleValue = anime->GetAreteLength() / speed;
+					}
 				}
 				myPresenter->SendParamChange(param);
 				break;
