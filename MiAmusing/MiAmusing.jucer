@@ -57,6 +57,18 @@
                 file="Source/AnimatedPolygon.cpp"/>
           <FILE id="MRW6Cl" name="AnimatedPolygon.h" compile="0" resource="0"
                 file="Source/AnimatedPolygon.h"/>
+          <FILE id="mTp53G" name="DrawableEllipse.cpp" compile="1" resource="0"
+                file="Source/DrawableEllipse.cpp"/>
+          <FILE id="b93ebP" name="DrawableEllipse.h" compile="0" resource="0"
+                file="Source/DrawableEllipse.h"/>
+          <FILE id="vTDGEt" name="EditableEllipse.cpp" compile="1" resource="0"
+                file="Source/EditableEllipse.cpp"/>
+          <FILE id="Nxbppz" name="EditableEllipse.h" compile="0" resource="0"
+                file="Source/EditableEllipse.h"/>
+          <FILE id="niCuAo" name="InteractiveEllipse.cpp" compile="1" resource="0"
+                file="Source/InteractiveEllipse.cpp"/>
+          <FILE id="tbNmdM" name="InteractiveEllipse.h" compile="0" resource="0"
+                file="Source/InteractiveEllipse.h"/>
         </GROUP>
         <GROUP id="{95DB4C60-BE55-A464-CA00-678CBCAB86CE}" name="Scenes">
           <FILE id="nhV1zs" name="AmusingScene.cpp" compile="1" resource="0"

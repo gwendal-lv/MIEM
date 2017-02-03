@@ -14,6 +14,7 @@
 
 #include "SceneCanvasComponent.h"
 #include "AnimatedPolygon.h"
+#include "EditableEllipse.h"
 
 using namespace Miam;
 using namespace Amusing;
@@ -56,8 +57,22 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 
 std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDown(const MouseEvent& mouseE)
 {
-	return EditableScene::OnCanvasMouseDown(mouseE);
+	if(allowAreaSelection)
+		return EditableScene::OnCanvasMouseDown(mouseE);
+	else
+	{
+		std::shared_ptr<GraphicEvent> graphicE(new GraphicEvent());
 
+	}
+
+}
+
+std::shared_ptr<AreaEvent> AmusingScene::AddTrueCircle(uint64_t nextAreaId)
+{
+	DBG("Creation du cercle");
+	std::shared_ptr<EditableEllipse> newCircle(new EditableEllipse(nextAreaId,
+		Point<double>(0.5f, 0.5f), 0.1f, 0.1f, Colours::grey, canvasComponent->GetRatio()));
+	return AddArea(newCircle);
 }
 
 /*

@@ -69,3 +69,9 @@ void MultiSceneCanvasManager::AddNedgeArea(uint64_t nextAreaId, int N)
 	if(auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
 		handleAndSendAreaEventSync(amusingScene->AddNedgeArea(nextAreaId,N));
 }
+
+void MultiSceneCanvasManager::AddTrueCircle(uint64_t nextAreaId)
+{
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+		handleAndSendAreaEventSync(amusingScene->AddTrueCircle(nextAreaId));
+}

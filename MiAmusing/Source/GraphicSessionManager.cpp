@@ -26,6 +26,7 @@ Author:  Gwendal Le Vaillant
 
 #include "AmusingScene.h"
 #include "AnimatedPolygon.h"
+#include "EditableEllipse.h"
 #include <cmath>
 
 using namespace Amusing;
@@ -190,6 +191,12 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					DBG("contour size = " + (String)param.Id2);
 					if(ADSR == 1)
 						param.DoubleValue = anime->GetAreteLength() / speed;
+				}
+				if (auto circle = std::dynamic_pointer_cast<EditableEllipse>(area))
+				{
+					param.Id2 = 20;
+					if (ADSR == 1)
+						param.DoubleValue = 20;
 				}
 				DBG("Nbre cote = " + (String)param.Id2);
 				myPresenter->SendParamChange(param);
@@ -378,3 +385,8 @@ void GraphicSessionManager::OnAddCircle()
 	}
 }
 
+void GraphicSessionManager::OnAddTrueCircle()
+{
+	if (selectedCanvas)
+		getSelectedCanvasAsManager()->AddTrueCircle(GetNextAreaId());
+}

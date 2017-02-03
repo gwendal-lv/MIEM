@@ -52,6 +52,7 @@ namespace Amusing {
         virtual void AddScene(std::string name) override;
 		void __AddAnimatedTestAreas();
 		void AddNedgeArea(uint64_t nextAreaId, int N);
+		void AddTrueCircle(uint64_t nextAreaId);
     };
     
     

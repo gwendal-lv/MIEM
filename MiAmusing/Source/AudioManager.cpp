@@ -244,7 +244,7 @@ void AudioManager::askParameter()
 				DBG("Stop !!! : " + (String)param.Id1 + " > "+ (String)(Nsources-1)  );
 				break;
 			}
-			//trackVector[param.Id1]->setFrequency(param.DoubleValue);
+			//trackVector[param.Id1]->setFrequency(param.DoubleValue); // enlever pour adsr, remettre pour normaux
 			//DBG("Source " + (String)param.Id1 + " f = " + (String)trackVector[param.Id1]->getFrequency() + " v = " + (String)trackVector[param.Id1]->getAmplitude());
 			break;
 		case Miam::AsyncParamChange::ParamType::Volume :

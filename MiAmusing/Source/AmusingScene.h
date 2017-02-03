@@ -31,6 +31,7 @@ namespace Miam
 		// override mouse callback
 		
 		std::shared_ptr<GraphicEvent> OnCanvasMouseDown(const MouseEvent& mouseE) override;
+		std::shared_ptr<AreaEvent> AddTrueCircle(uint64_t nextAreaId);
 		/*
 		virtual std::shared_ptr<GraphicEvent> OnCanvasMouseDown(const MouseEvent& mouseE) override;
 		virtual std::shared_ptr<GraphicEvent> OnCanvasMouseDrag(const MouseEvent& mouseE) override;

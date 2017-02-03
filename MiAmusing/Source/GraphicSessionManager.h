@@ -138,6 +138,7 @@ namespace Amusing {
 		void OnAddSquare();
 		void OnAddTriangle();
 		void OnAddCircle();
+		void OnAddTrueCircle();
 
 		void OnPlayClicked();
 		void OnPauseClicked();

@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 4.3.0
+  Created with Projucer version: 4.3.1
 
   ------------------------------------------------------------------------------
 
@@ -18,14 +18,12 @@
 */
 
 //[Headers] You can add your own extra header files here...
+#include "GraphicSessionManager.h"
+#include "ControlEvent.h"
+using namespace Amusing;
 //[/Headers]
 
 #include "editScene.h"
-#include "GraphicSessionManager.h"
-#include "ControlEvent.h"
-
-
-using namespace Amusing;
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
 //[/MiscUserDefs]
@@ -60,6 +58,10 @@ EditScene::EditScene ()
     addCircleButton->setButtonText (TRANS("Circle"));
     addCircleButton->addListener (this);
 
+    addAndMakeVisible (addTrueCircleButton = new TextButton ("new button"));
+    addTrueCircleButton->setButtonText (TRANS("TrueCircle"));
+    addTrueCircleButton->addListener (this);
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -82,6 +84,7 @@ EditScene::~EditScene()
     addCarreButton = nullptr;
     addTriangleButton = nullptr;
     addCircleButton = nullptr;
+    addTrueCircleButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -111,6 +114,7 @@ void EditScene::resized()
     addCarreButton->setBounds (8, 152, 50, 24);
     addTriangleButton->setBounds (8, 176, 50, 24);
     addCircleButton->setBounds (8, 200, 50, 24);
+    addTrueCircleButton->setBounds (8, 224, 50, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -156,6 +160,12 @@ void EditScene::buttonClicked (Button* buttonThatWasClicked)
         //[UserButtonCode_addCircleButton] -- add your button handler code here..
 		graphicSessionManager->OnAddCircle();
         //[/UserButtonCode_addCircleButton]
+    }
+    else if (buttonThatWasClicked == addTrueCircleButton)
+    {
+        //[UserButtonCode_addTrueCircleButton] -- add your button handler code here..
+		graphicSessionManager->OnAddTrueCircle();
+        //[/UserButtonCode_addTrueCircleButton]
     }
 
     //[UserbuttonClicked_Post]
@@ -209,6 +219,9 @@ BEGIN_JUCER_METADATA
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="new button" id="ac7fa5edde0667dc" memberName="addCircleButton"
               virtualName="" explicitFocusOrder="0" pos="8 200 50 24" buttonText="Circle"
+              connectedEdges="0" needsCallback="1" radioGroupId="0"/>
+  <TEXTBUTTON name="new button" id="9ac75bac4695259b" memberName="addTrueCircleButton"
+              virtualName="" explicitFocusOrder="0" pos="8 224 50 24" buttonText="TrueCircle"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>
 
