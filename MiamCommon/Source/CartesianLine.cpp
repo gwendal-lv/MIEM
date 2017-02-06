@@ -32,6 +32,8 @@ CartesianLine::CartesianLine(Point<double> point1, Point<double> point2)
         a = (point1.y - point2.y) / (point2.x - point1.x);
         c = - 0.5 * (a * (point2.x+point1.x) + point2.y + point1.y);
     }
+
+	//DBG((String)a + "x+" + (String)b + "y" +(String)c + " = 0");
 }
 
 
