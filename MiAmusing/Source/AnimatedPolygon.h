@@ -16,6 +16,8 @@
 
 namespace Amusing
 {
+	class Follower;
+
 	class AnimatedPolygon : public Miam::EditablePolygon
 		                    //public AnimatedAppComponent
 	{
@@ -50,16 +52,24 @@ namespace Amusing
 			return contourPoints[0].getDistanceFrom(contourPoints[1])*100;
 		}
 
+		Point<double> getPente(int P)
+		{
+			return (contourPointsInPixels[P + 1] - contourPointsInPixels[P]);
+		}
+
 
 		int currentSommet;
 		double GetNextAreaLength();
 
 		void Paint(Graphics& g);
 		
-		
+		void associateFollower(std::shared_ptr<Follower> newFollower);
+		std::shared_ptr<Follower> GetFollower();
+
 		//void update();
 
 	private :
+		std::shared_ptr<Follower> follower; // a remplacer par un vector<Follower>
 		double speed;
 		int fromPt;
 		Point<int> point;

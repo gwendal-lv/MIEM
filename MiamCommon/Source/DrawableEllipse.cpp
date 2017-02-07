@@ -12,7 +12,7 @@
 #include "SceneCanvasComponent.h"
 
 using namespace Miam;
-using namespace Amusing;
+
 
 DrawableEllipse::DrawableEllipse(int64_t _Id) :
 	DrawableEllipse(_Id, Point<double>(0.5f, 0.5f),0.2f,0.2f,Colours::darkgrey)

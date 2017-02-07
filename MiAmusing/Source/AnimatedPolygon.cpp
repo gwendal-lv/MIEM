@@ -84,5 +84,12 @@ double AnimatedPolygon::GetNextAreaLength()
 	return distance;
 }
 
+void AnimatedPolygon::associateFollower(std::shared_ptr<Follower> newFollower)
+{
+	follower = newFollower;
+}
 
-
+std::shared_ptr<Follower> AnimatedPolygon::GetFollower()
+{
+	return follower;
+}

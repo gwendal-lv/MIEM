@@ -36,6 +36,8 @@ namespace Miam
             Frequency,
 
 			Duration,
+			Position,
+			Source,
         };
         
         ParamType Type = ParamType::None;

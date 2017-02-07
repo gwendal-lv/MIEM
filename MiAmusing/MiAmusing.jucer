@@ -57,18 +57,6 @@
                 file="Source/AnimatedPolygon.cpp"/>
           <FILE id="MRW6Cl" name="AnimatedPolygon.h" compile="0" resource="0"
                 file="Source/AnimatedPolygon.h"/>
-          <FILE id="mTp53G" name="DrawableEllipse.cpp" compile="1" resource="0"
-                file="Source/DrawableEllipse.cpp"/>
-          <FILE id="b93ebP" name="DrawableEllipse.h" compile="0" resource="0"
-                file="Source/DrawableEllipse.h"/>
-          <FILE id="vTDGEt" name="EditableEllipse.cpp" compile="1" resource="0"
-                file="Source/EditableEllipse.cpp"/>
-          <FILE id="Nxbppz" name="EditableEllipse.h" compile="0" resource="0"
-                file="Source/EditableEllipse.h"/>
-          <FILE id="niCuAo" name="InteractiveEllipse.cpp" compile="1" resource="0"
-                file="Source/InteractiveEllipse.cpp"/>
-          <FILE id="tbNmdM" name="InteractiveEllipse.h" compile="0" resource="0"
-                file="Source/InteractiveEllipse.h"/>
         </GROUP>
         <GROUP id="{95DB4C60-BE55-A464-CA00-678CBCAB86CE}" name="Scenes">
           <FILE id="nhV1zs" name="AmusingScene.cpp" compile="1" resource="0"
@@ -90,6 +78,8 @@
       <GROUP id="{6C8312F9-4A59-989E-1DC5-6EC6799A0035}" name="View">
         <FILE id="wihbQV" name="editScene.cpp" compile="1" resource="0" file="Source/editScene.cpp"/>
         <FILE id="yBAnTJ" name="editScene.h" compile="0" resource="0" file="Source/editScene.h"/>
+        <FILE id="uj6fbl" name="Follower.cpp" compile="1" resource="0" file="Source/Follower.cpp"/>
+        <FILE id="PM4Za2" name="Follower.h" compile="0" resource="0" file="Source/Follower.h"/>
         <FILE id="UU8cSP" name="MainComponent.cpp" compile="1" resource="0"
               file="Source/MainComponent.cpp"/>
         <FILE id="W5cilK" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
@@ -144,9 +134,17 @@
           <FILE id="ekYbjp" name="SceneEvent.h" compile="0" resource="0" file="../MiamCommon/Source/SceneEvent.h"/>
         </GROUP>
         <GROUP id="{B66FA498-AC16-0510-B897-C4A4DB5848EB}" name="Areas">
+          <FILE id="fmUdnp" name="DrawableEllipse.cpp" compile="1" resource="0"
+                file="../MiamCommon/Source/DrawableEllipse.cpp"/>
+          <FILE id="jHXumZ" name="DrawableEllipse.h" compile="0" resource="0"
+                file="../MiamCommon/Source/DrawableEllipse.h"/>
           <FILE id="Lt60mX" name="EditableArea.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/EditableArea.cpp"/>
           <FILE id="u2pUf3" name="EditableArea.h" compile="0" resource="0" file="../MiamCommon/Source/EditableArea.h"/>
+          <FILE id="xRXeya" name="EditableEllipse.cpp" compile="1" resource="0"
+                file="../MiamCommon/Source/EditableEllipse.cpp"/>
+          <FILE id="QUn9ua" name="EditableEllipse.h" compile="0" resource="0"
+                file="../MiamCommon/Source/EditableEllipse.h"/>
           <FILE id="wgUXFQ" name="EditablePolygon.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/EditablePolygon.cpp"/>
           <FILE id="JElhH7" name="EditablePolygon.h" compile="0" resource="0"
@@ -160,6 +158,10 @@
                 file="../MiamCommon/Source/InteractiveArea.cpp"/>
           <FILE id="meCfcv" name="InteractiveArea.h" compile="0" resource="0"
                 file="../MiamCommon/Source/InteractiveArea.h"/>
+          <FILE id="UZxEuy" name="InteractiveEllipse.cpp" compile="1" resource="0"
+                file="../MiamCommon/Source/InteractiveEllipse.cpp"/>
+          <FILE id="HOgBrP" name="InteractiveEllipse.h" compile="0" resource="0"
+                file="../MiamCommon/Source/InteractiveEllipse.h"/>
           <FILE id="oqveHx" name="InteractivePolygon.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/InteractivePolygon.cpp"/>
           <FILE id="PxaUtc" name="InteractivePolygon.h" compile="0" resource="0"

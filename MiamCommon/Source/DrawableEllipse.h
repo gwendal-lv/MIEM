@@ -14,7 +14,7 @@
 #include "JuceHeader.h"
 #include "DrawableArea.h"
 
-namespace Amusing
+namespace Miam
 {
 	class DrawableEllipse : public Miam::DrawableArea
 	{

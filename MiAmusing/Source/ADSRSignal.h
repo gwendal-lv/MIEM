@@ -54,6 +54,8 @@ public:
 	
 	bool isLooping();
 
+	int getPosition();
+
 private:
 	FourierSignal *signal;
 	void changeState(ADSR_State newState);

@@ -15,6 +15,7 @@
 #include "SceneCanvasComponent.h"
 #include "AnimatedPolygon.h"
 #include "EditableEllipse.h"
+#include "Follower.h"
 
 using namespace Miam;
 using namespace Amusing;
@@ -73,6 +74,17 @@ std::shared_ptr<AreaEvent> AmusingScene::AddTrueCircle(uint64_t nextAreaId)
 	std::shared_ptr<EditableEllipse> newCircle(new EditableEllipse(nextAreaId,
 		Point<double>(0.5f, 0.5f), 0.1f, 0.1f, Colours::grey, canvasComponent->GetRatio()));
 	return AddArea(newCircle);
+}
+
+std::shared_ptr<AreaEvent> AmusingScene::AddFollower(uint64_t nextAreaId)
+{
+	std::shared_ptr<Follower> newFollower(new Follower(nextAreaId, Point<double>(0.5f, 0.5f), 0.1f,Colours::grey,canvasComponent->GetRatio(),shared_from_this()));
+	return AddArea(newFollower);
+}
+
+std::shared_ptr<AnimatedPolygon> AmusingScene::getFirstArea()
+{
+	return std::dynamic_pointer_cast<AnimatedPolygon>(areas[0]);
 }
 
 /*

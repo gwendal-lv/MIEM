@@ -9,6 +9,7 @@
 */
 //..\..\..\..\boost_1_63_0\geometry\algorithms
 #include<thread>
+#include<cmath>
 #include<boost\geometry.hpp>
 #include<boost\lockfree\queue.hpp>
 #include<boost\lockfree\spsc_queue.hpp>
@@ -36,6 +37,8 @@ AudioManager::AudioManager(AmusingModel *m_model) : model(m_model), Nsources(0),
 	useADSR = 1;////////
 	////////////////////
 
+	count = 0;
+
 	trackVector.reserve(Nmax);
 	activeVector.reserve(Nmax);
 	mixer = new MixerAudioSource();
@@ -47,6 +50,10 @@ AudioManager::~AudioManager()
 	DBG("audioManager destructor");
 	shutdownAudio();
 	DBG("audioManager destructor fin");
+
+	DBG("AudioManager::releaseResources");
+	delete mixer;
+	DBG("AudioManager::releaseResources fin");
 }
 
 void AudioManager::paint (Graphics& g)
@@ -73,12 +80,16 @@ void AudioManager::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 	DBG("AudioManager::prepareToPlay");
 	currentSamplesPerBlock = samplesPerBlockExpected;
 	currentSampleRate = sampleRate;
+	div = ((sampleRate / (double)samplesPerBlockExpected))/50;
+	DBG((String)sampleRate);
+	DBG((String)samplesPerBlockExpected);
+	DBG("div = " + (String)div);
 }
 void AudioManager::releaseResources()
 {
-	DBG("AudioManager::releaseResources");
-	delete mixer;
-	DBG("AudioManager::releaseResources fin");
+	
+
+	
 }
 void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 {
@@ -95,6 +106,27 @@ void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 	}
 	else
 		bufferToFill.clearActiveBufferRegion();
+
+	if (fmod(count, div) == 0)
+		sendPosition();
+	++count;
+}
+
+void AudioManager::sendPosition()
+{
+	AsyncParamChange param;
+	for (int i = 0; i < Nsources; ++i)
+	{
+		param.Type = AsyncParamChange::ParamType::Position;
+		if (trackVector[i]->isPlaying())
+			if (auto currentADSR = std::dynamic_pointer_cast<ADSRSignal>(trackVector[i]))
+			{
+				param.Id1 = i;
+				param.DoubleValue = (double)currentADSR->getPosition() / (double)currentADSR->getLength();
+				model->SendParamChange(param);
+			}
+	}
+		
 }
 
 void AudioManager::chooseAudioType(int position, int type)
@@ -225,7 +257,7 @@ void AudioManager::askParameter()
 	if (model->lookForParameter(param))
 	{
 		//DBG("receive parameter");
-		DBG("param type receive = " + (String)param.Type + " " + (String)param.Id2);
+		//DBG("param type receive = " + (String)param.Type + " " + (String)param.Id2);
 		switch (param.Type)
 		{
 		case Miam::AsyncParamChange::ParamType::None :
@@ -281,6 +313,10 @@ void AudioManager::askParameter()
 			DBG("Stop control received");
 			changeState(Stop);
 			break;
+		case Miam::AsyncParamChange::ParamType::Source:
+			sourceControled.push_back(param.Id2);
+			trackVector[param.Id2]->changeState(TransportState::Starting);
+			break;
 		default:
 			break;
 		}
@@ -311,7 +347,7 @@ void AudioManager::changeState(AudioManagerState newState)
 		switch (state)
 		{
 		case Amusing::Play:
-			playAllSources();
+			//playAllSources();
 			break;
 		case Amusing::Pause:
 			break;
@@ -340,8 +376,15 @@ void AudioManager::verifyAllSource()
 void AudioManager::playAllSources()
 {
 	for (int i = 0; i < Nsources; ++i)
+		trackVector[sourceControled[i]]->changeState(TransportState::Starting);
+}
+
+void AudioManager::playAllControledSources()
+{
+	for (int i = 0; i < sourceControled.size(); ++i)
 		trackVector[i]->changeState(TransportState::Starting);
 }
+
 void AudioManager::stopAllSources()
 {
 	for (int i = 0; i < Nsources; ++i)

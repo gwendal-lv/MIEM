@@ -49,6 +49,8 @@ public:
 
 	bool isStopped();
 
+	bool isPlaying();
+
 protected:
 	double amplitude;
 	double frequency;

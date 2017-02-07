@@ -16,7 +16,7 @@
 #include "InteractiveEllipse.h"
 #include "EditableArea.h"
 
-namespace Amusing
+namespace Miam
 {
 	class EditableEllipse : public InteractiveEllipse, public Miam::EditableArea
 	{
@@ -24,7 +24,7 @@ namespace Amusing
 			EditableEllipse(int64_t _Id);
 			EditableEllipse(int64_t _Id, Point<double> _center, double _a, double _b, Colour _fillColour, float _canvasRatio);
 
-			virtual ~EditableEllipse() {}
+			virtual ~EditableEllipse() {/* DBG("ellipse deleted"); */}
 
 			virtual IDrawableArea* Clone() const override { return new EditableEllipse(*this); }
 

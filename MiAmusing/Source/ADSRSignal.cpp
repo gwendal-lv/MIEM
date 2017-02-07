@@ -157,7 +157,7 @@ void ADSRSignal::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 				currentGain += (attackLvl - 0) / (endAttackP - 0); // fixee avec les parametres ADSR
 				if (position == endAttackP)
 				{
-					DBG("D");
+					//DBG("D");
 					changeState(Decay);
 				}
 				break;
@@ -168,7 +168,7 @@ void ADSRSignal::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 				//endDecayGain = currentGain;
 				if (position == endDecayP)
 				{
-					DBG("S");
+					//DBG("S");
 					changeState(Sustain);
 				}
 				break;
@@ -182,7 +182,7 @@ void ADSRSignal::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 					//startSustainGain = currentGain;
 					if (stopSustain)
 					{
-						DBG("R");
+						//DBG("R");
 						changeState(Release);
 					}
 					else
@@ -332,3 +332,7 @@ bool ADSRSignal::isLooping()
 	return loop;
 }
 
+int ADSRSignal::getPosition()
+{
+	return position;
+}

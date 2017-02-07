@@ -16,9 +16,9 @@
 
 #define PI 3.14159265359
 
-namespace Amusing
+namespace Miam
 {
-	class InteractiveEllipse : public DrawableEllipse, public Miam::InteractiveArea
+	class InteractiveEllipse : public DrawableEllipse, public InteractiveArea
 	{
 		public :
 			InteractiveEllipse(int64_t _Id);

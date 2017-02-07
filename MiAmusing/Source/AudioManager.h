@@ -59,6 +59,8 @@ namespace Amusing {
 		void playAllSources();
 		void stopAllSources();
 
+		void sendPosition();
+
 		void verifyAllSource();
 		void HandleEvent();
 
@@ -68,10 +70,15 @@ namespace Amusing {
 
 		AudioManagerState state;
 
+		std::vector<int> sourceControled;
+		void playAllControledSources();
+
 		int currentSamplesPerBlock;
 		double currentSampleRate;
 
 		int useADSR;
+		int count;
+		double div;
 
 		std::vector<std::shared_ptr<AmuSignal>> trackVector;
 		std::vector<bool> activeVector;

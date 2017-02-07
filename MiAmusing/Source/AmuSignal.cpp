@@ -19,6 +19,15 @@ AmuSignal::~AmuSignal()
 {
 }
 
+bool AmuSignal::isPlaying()
+{
+	if (state != Stopped && state != Paused)
+	{
+		return true;
+	}
+	return false;
+}
+
 bool AmuSignal::isStopped()
 {
 	if (state == Stopped)

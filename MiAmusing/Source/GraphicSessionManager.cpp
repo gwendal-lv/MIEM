@@ -27,34 +27,20 @@ Author:  Gwendal Le Vaillant
 #include "AmusingScene.h"
 #include "AnimatedPolygon.h"
 #include "EditableEllipse.h"
+#include "Follower.h"
 #include <cmath>
 
 using namespace Amusing;
 using namespace Miam;
 
 
-void GraphicSessionManager::run()
-{
-	// need getPoint
-	// si play -> verifier si le sommet suivant est inclu dans un autre polygon
-	// si oui -> calculer l'intersection, ce sera le prochain "sommet"
-	//           le prochain son sera associe au polygone rencontre
-	
-	//auto currentArea = std::dynamic_pointer_cast<EditablePolygon>( GetSelectedArea());
-	//currentArea->
-	// wait()
-}
 
-void GraphicSessionManager::playSound()
-{
-	//startThread();
-}
 
 
 // ========== CONSTRUCTION and DESTRUCTION ==========
 
 GraphicSessionManager::GraphicSessionManager(Presenter* presenter_, View* view_) ://IPresenter* presenter_, View* view_) :
-	IGraphicSessionManager(presenter_), Thread("collision thread"),
+	IGraphicSessionManager(presenter_),
 	view(view_),
 	myPresenter(presenter_)
 {
@@ -103,6 +89,7 @@ GraphicSessionManager::GraphicSessionManager(Presenter* presenter_, View* view_)
 
 GraphicSessionManager::~GraphicSessionManager()
 {
+	DBG("GraphicSessionManager destructor");
 }
 
 
@@ -198,7 +185,13 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					if (ADSR == 1)
 						param.DoubleValue = 20;
 				}
-				DBG("Nbre cote = " + (String)param.Id2);
+				if (auto follower = std::dynamic_pointer_cast<Follower>(area))
+				{
+					param.Id1 = myPresenter->getCtrlSourceId(follower);
+					param.Id2 = myPresenter->getSourceID((follower->getCurrentPolygon()));
+					param.Type = Miam::AsyncParamChange::ParamType::Source;
+				}
+				
 				myPresenter->SendParamChange(param);
 				DBG("Send");
 				break;
@@ -313,6 +306,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 		switch (controlE->GetType())
 		{
 		case ControlEventType::Play:
+			OnAddFollower();
 			param.Type = Miam::AsyncParamChange::ParamType::Play;
 			myPresenter->SendParamChange(param);
 			break;
@@ -389,4 +383,10 @@ void GraphicSessionManager::OnAddTrueCircle()
 {
 	if (selectedCanvas)
 		getSelectedCanvasAsManager()->AddTrueCircle(GetNextAreaId());
+}
+
+void GraphicSessionManager::OnAddFollower()
+{
+	if (selectedCanvas)
+		getSelectedCanvasAsManager()->AddFollower(GetNextAreaId());
 }

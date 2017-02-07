@@ -8,6 +8,9 @@
   ==============================================================================
 */
 
+
+
+
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "MainComponent.h"
 
@@ -56,11 +59,17 @@ public:
     void shutdown() override
     {
         // Add your application's shutdown code here..
-		delete model;
-        delete presenter;
-        delete view;
 
+		DBG("####### main destructor #########");
+
+		delete model;
+		DBG("------- model deleted --------");
+        delete presenter;
+		DBG("------- presenter deleted --------");
+        delete view;
+		DBG("------- view deleted --------");
         mainWindow = nullptr; // (deletes our window)
+		DBG("------- mainWindow null --------");
     }
 
     //==============================================================================

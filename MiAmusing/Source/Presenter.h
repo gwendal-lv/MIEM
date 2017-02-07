@@ -29,7 +29,7 @@ namespace Amusing {
     // Simple declaration : we don't need the entire description
     class AmusingModel;
     class View;
-    
+	class Follower;
 
     
     /// \brief One of the three main modules of the MiamSpat program, that defines the behavior
@@ -65,10 +65,15 @@ namespace Amusing {
 		std::map<std::shared_ptr<Miam::IEditableArea>, int> areaToSource; 
 		std::map<int,std::shared_ptr<Miam::IEditableArea>> sourceToArea;
 		boost::bimap<std::shared_ptr<IEditableArea>,int> areaToSourceMulti;
-		int Nsources;
+		int Nsources, Nfollower;
+
+		boost::bimap < std::shared_ptr<Follower>, int> followerToCtrlSource;
+
 		public :
 			int getSourceID(std::shared_ptr<IEditableArea> area);
 			std::shared_ptr<IEditableArea> getAreaFromSource(int source);
+			int getCtrlSourceId(std::shared_ptr<Follower> follower);
+			std::shared_ptr<Follower> getFollowerFromCtrl(int ctrlId);
 
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         

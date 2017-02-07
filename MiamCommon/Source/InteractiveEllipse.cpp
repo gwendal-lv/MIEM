@@ -12,7 +12,7 @@
 #include "SceneCanvasComponent.h"
 
 using namespace Miam;
-using namespace Amusing;
+
 
 InteractiveEllipse::InteractiveEllipse(int64_t _Id) 
 	: DrawableEllipse(_Id)

@@ -53,6 +53,7 @@ namespace Amusing {
 		void __AddAnimatedTestAreas();
 		void AddNedgeArea(uint64_t nextAreaId, int N);
 		void AddTrueCircle(uint64_t nextAreaId);
+		void AddFollower(uint64_t nextAreaId);
     };
     
     

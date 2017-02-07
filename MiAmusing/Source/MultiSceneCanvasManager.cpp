@@ -75,3 +75,9 @@ void MultiSceneCanvasManager::AddTrueCircle(uint64_t nextAreaId)
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
 		handleAndSendAreaEventSync(amusingScene->AddTrueCircle(nextAreaId));
 }
+
+void MultiSceneCanvasManager::AddFollower(uint64_t nextAreaId)
+{
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+		handleAndSendAreaEventSync(amusingScene->AddFollower(nextAreaId));
+}

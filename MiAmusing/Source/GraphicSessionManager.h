@@ -50,14 +50,12 @@ namespace Amusing {
 	///
 	/// References itself to some components, for these components to transfer events to this sub-module
 	/// directly, and not to the Presenter.
-	class GraphicSessionManager : public Miam::IGraphicSessionManager,
-		public Thread
+	class GraphicSessionManager : public Miam::IGraphicSessionManager
 	{
 
 	public :
 		// =========================================
-		void playSound();
-		void run();
+		
 		double vitesse;
 		// =========================================
 
@@ -139,6 +137,7 @@ namespace Amusing {
 		void OnAddTriangle();
 		void OnAddCircle();
 		void OnAddTrueCircle();
+		void OnAddFollower();
 
 		void OnPlayClicked();
 		void OnPauseClicked();

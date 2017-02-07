@@ -16,7 +16,7 @@
 #include "MiamMath.h"
 #include "CartesianLine.h"
 
-using namespace Amusing;
+
 using namespace Miam;
 
 EditableEllipse::EditableEllipse(int64_t _Id) :

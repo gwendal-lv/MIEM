@@ -17,6 +17,7 @@
 #include "JuceHeader.h"
 
 #include "AnimatedPolygon.h"
+#include "Follower.h"
 
 using namespace Amusing;
 
@@ -95,6 +96,17 @@ int Presenter::getSourceID(std::shared_ptr<IEditableArea> area)
 	return areaToSourceMulti.left.at(area);
 }
 
+int Presenter::getCtrlSourceId(std::shared_ptr<Follower> follower)
+{
+	if (followerToCtrlSource.left.find(follower) == followerToCtrlSource.left.end())
+	{
+		std::pair<std::shared_ptr<Follower>, int> newPair(follower, Nfollower);
+		followerToCtrlSource.left.insert(newPair);
+		++Nfollower;
+	}
+	return followerToCtrlSource.left.at(follower);
+}
+
 std::shared_ptr<IEditableArea> Presenter::getAreaFromSource(int source)
 {
 	/*
@@ -109,6 +121,13 @@ std::shared_ptr<IEditableArea> Presenter::getAreaFromSource(int source)
 		DBG("problemes");
 	}
 	return areaToSourceMulti.right.at(source);
+}
+
+std::shared_ptr<Follower> Presenter::getFollowerFromCtrl(int ctrlId)
+{
+	if (followerToCtrlSource.right.find(ctrlId) == followerToCtrlSource.right.end())
+		DBG("pas de follower associe");
+	return followerToCtrlSource.right.at(ctrlId);
 }
 
 static int updatesCount = 0;
@@ -148,6 +167,16 @@ void Presenter::Update() // remettre l'interieur dans graphsessionmanager
 		case AsyncParamChange::ParamType::Duration :
 			DBG("new duration");
 			break;
+		case AsyncParamChange::ParamType::Position :
+			DBG("position = " + (String)param.DoubleValue +" Id "+ (String)param.Id1);
+			area = getAreaFromSource(param.Id1);
+			DBG("bl");
+			if (auto anime = std::dynamic_pointer_cast<AnimatedPolygon>(area))
+			{
+				anime->GetFollower()->setPosition(param.DoubleValue);
+			}
+			break;
+
 		default:
 			break;
 		}
