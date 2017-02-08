@@ -34,15 +34,6 @@ IGraphicSessionManager::~IGraphicSessionManager()
 
 
 
-/// - - - - - Init helpers - - - - -
-void IGraphicSessionManager::completeCanvasManagersInitialization()
-{
-    for (size_t i = 0 ; i<canvasManagers.size() ; i++)
-    {
-        canvasManagers[i]->CompleteInitialization(canvasManagers[i]);
-    }
-}
-
 
 
 // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =

@@ -44,7 +44,7 @@ spatType(SpatType::None)
     // Launch of thread, at the specified frequency
     //continueUpdate = true;
     // Using a c++11 lambda function for class member calling
-	// Gros problème de polymorphisme non-fonctionnel sous VS2015 (voir header pour détails)
+	// Gros problÃ¨me de polymorphisme non-fonctionnel sous VS2015 (voir header pour dÃ©tails)
     //updateThread = std::thread( [this] {this->update();} );
 }
 

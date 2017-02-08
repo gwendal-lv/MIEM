@@ -22,20 +22,17 @@ using namespace Miam;
 EditableEllipse::EditableEllipse(int64_t _Id) :
 	InteractiveEllipse(_Id)
 {
-	DBG("EditableEllipse contructor");
 	init();
 }
 
 EditableEllipse::EditableEllipse(int64_t _Id, Point<double> _center, double _a, double _b, Colour _fillColour, float _canvasRatio) :
 	InteractiveEllipse(_Id,_center,_a,_b,_fillColour,_canvasRatio)
 {
-	DBG("EditableEllipse contructor");
 	init();
 }
 
 void EditableEllipse::init()
 {
-	DBG("EditableEllipse::init");
 	graphicalInit();
 	behaviorInit();
 }
@@ -308,7 +305,7 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 		}
 	}
 
-	// Déplacement itératif
+	// DÃ©placement itÃ©ratif
 	else if (pointDraggedId == EditableAreaPointId::WholeArea)
 	{
 		// If translation leads to an out-of-canvas polygon, we just cancel it... No numeric issue
@@ -321,7 +318,7 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 		{
 			Translate(translation);
 			areaEventType = AreaEventType::Translation;
-			// Actualisation en prévision du prochain petit déplacement
+			// Actualisation en prÃ©vision du prochain petit dÃ©placement
 			lastLocation = newLocation;
 		}
 	}
@@ -375,16 +372,16 @@ bool EditableEllipse::isNewContourPointValid(const Point<double>& newLocation)
 	int pointBefore = Math::Modulo(pointDraggedId - 1, (int)contourPointsInPixels.size());
 	int pointAfter = Math::Modulo(pointDraggedId + 1, (int)contourPointsInPixels.size());
 	
-	/* Étape 1, on construit les équations des droites suivantes :
+	/* Ã‰tape 1, on construit les Ã©quations des droites suivantes :
 	* - droite 1 entre le centre et le point d'avant
-	* - droite 2 entre le centre et le point d'après
+	* - droite 2 entre le centre et le point d'aprÃ¨s
 	*/
 	CartesianLine droite1 = CartesianLine(centerInPixels,
 		contourPointsInPixels[pointBefore]);
 	CartesianLine droite2 = CartesianLine(centerInPixels,
 		contourPointsInPixels[pointAfter]);
-	/* Étape 2
-	* on vérifie ne pas avoir changé de côté par rapport aux 2 lignes considérées
+	/* Ã‰tape 2
+	* on vÃ©rifie ne pas avoir changÃ© de cÃ´tÃ© par rapport aux 2 lignes considÃ©rÃ©es
 	*/
 	
 	if (droite1.PointWentThrough(contourPointsInPixels[pointDraggedId], newLocation)

@@ -30,6 +30,8 @@ GraphicSessionManager::GraphicSessionManager(IPresenter* presenter_, View* view_
     IGraphicSessionManager(presenter_),
     view(view_)
 {
+    // SÉLECTION/CHARGEMENT D'UN TRUC PAR DÉFAUT
+    nextAreaId = 0; // plus tard : valeur contenue dans le fichier de sauvegarde
 
     
     // ICI ON CHARGE DES TRUCS
@@ -39,10 +41,6 @@ GraphicSessionManager::GraphicSessionManager(IPresenter* presenter_, View* view_
     // les transmettre au sous-module de gestion de canevas (Presenter) que l'on crée
     // d'ailleurs ici aussi.
     canvasManagers.push_back(std::make_shared<MultiSceneCanvasManager>(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas1));
-    canvasManagers.back()->CompleteInitialization(canvasManagers.back());
-    /*
-    canvasManagers.push_back(new MultiSceneCanvasEditor(this, multiCanvasComponent->AddCanvas(),  SceneCanvasComponent::Id::Canvas2));
-     */
     
     // Links to the view module
     view->CompleteInitialization(this, multiCanvasComponent);
@@ -64,7 +62,6 @@ GraphicSessionManager::GraphicSessionManager(IPresenter* presenter_, View* view_
     
     
     // SÉLECTION/CHARGEMENT D'UN TRUC PAR DÉFAUT
-    nextAreaId = 0; // plus tard : valeur contenue dans le fichier de sauvegarde
     canvasManagers.front()->SetMode(CanvasManagerMode::SceneOnlySelected);
     
     

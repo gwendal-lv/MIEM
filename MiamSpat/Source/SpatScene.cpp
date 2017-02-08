@@ -15,12 +15,6 @@ SpatScene::SpatScene(std::shared_ptr<MultiSceneCanvasInteractor> canvasManager_,
 :
 Miam::EditableScene(canvasManager_, canvasComponent_, false) // no area is selectable
 {
-    // TEST TEST TEST EXCITATEURS
-	// Problème des IDs à résoudre
-    currentExciters.push_back(std::shared_ptr<Exciter>(new Exciter(-1)));
-    currentExciters.back()->SetActive(true);
-	currentExciters.push_back(std::shared_ptr<Exciter>(new Exciter(-1)));
-	currentExciters.back()->SetActive(true);
 }
 
 

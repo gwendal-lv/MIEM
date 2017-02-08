@@ -96,10 +96,6 @@ namespace Miam
         IGraphicSessionManager(IPresenter* presenter_);
         virtual ~IGraphicSessionManager();
         
-        /// - - - - - Init helpers - - - - -
-        protected :
-        /// \brief Will inform the canvasManagers of the weak_ptr to themselves
-        void completeCanvasManagersInitialization();
         
         
         

@@ -21,7 +21,6 @@ MultiSceneCanvasManager::MultiSceneCanvasManager(IGraphicSessionManager* graphic
 :
 MultiSceneCanvasEditor(graphicSessionManager_, canvasComponent_, selfId_)
 {
-    
 }
 
 MultiSceneCanvasManager::~MultiSceneCanvasManager()
@@ -32,8 +31,25 @@ MultiSceneCanvasManager::~MultiSceneCanvasManager()
 void MultiSceneCanvasManager::AddScene(std::string name)
 {
     // We construct scene that DO NOT allow the selection of a particular area
-    std::shared_ptr<EditableScene> newScene(new SpatScene(selfPtr.lock(), canvasComponent->GetCanvas()));
+    std::shared_ptr<EditableScene> newScene = std::make_shared<SpatScene>(shared_from_this(), canvasComponent->GetCanvas());
     newScene->SetName(name);
     
     MultiSceneCanvasInteractor::AddScene(newScene);
+    
+    
+    // TEST DES EXCITATEURS
+    // TEST DES EXCITATEURS
+    // TEST DES EXCITATEURS
+    // TEST DES EXCITATEURS
+    // TEST DES EXCITATEURS
+    // TEST DES EXCITATEURS
+    // TEST DES EXCITATEURS
+    // TEST DES EXCITATEURS
+    // TEST DES EXCITATEURS
+    auto newExciter = std::make_shared<Exciter>(GetNextAreaId());
+    handleAndSendAreaEventSync(newScene->AddExciter(newExciter));
+    /*
+    newExciter = std::make_shared<Exciter>(GetNextAreaId());
+    handleAndSendAreaEventSync(newScene->AddExciter(newExciter));
+     */
 }

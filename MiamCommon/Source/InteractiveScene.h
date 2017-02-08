@@ -23,13 +23,15 @@
 #include "AreaEvent.h"
 
 #include "IEditableArea.h"
+#include "Exciter.h"
+
 
 // Pre-declarations for pointers
 class SceneCanvasComponent;
 
 namespace Miam
 {
-    // Pre-declarations for pointers
+    // Pre-declarations for pointer members
     class Exciter;
     class IDrawableArea;
     class IInteractiveArea;
@@ -43,7 +45,7 @@ namespace Miam
     /// This kind of scene can be loaded (from a file for example) and destroyed,
     /// but is not fully editable. See Miam::EditableArea for editing features.
     /// However, the exciters (if enabled) can be moved with mouse/touch/pen events
-    class InteractiveScene
+    class InteractiveScene : public std::enable_shared_from_this<InteractiveScene>
     {
         
         // ...Enums....
@@ -130,6 +132,11 @@ namespace Miam
         /// \brief Adds an area without creating it before
         virtual std::shared_ptr<AreaEvent> AddArea(std::shared_ptr<IInteractiveArea> newArea);
         
+        /// \brief Adds an exciter without creating it before
+        virtual std::shared_ptr<AreaEvent> AddExciter(std::shared_ptr<Exciter> newExciter);
+        
+        
+        
         
         
         // - - - - - Selection events managing (orders from parent manager) - - - - -
@@ -138,8 +145,12 @@ namespace Miam
 		// !!!!!!!!!!!!!!!! renvoyer des évènements sur ce qu'il s'est passé !!!!!!!!!!
 		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         virtual void OnSelection();
-        /// \ brief Behavior on unselection commanded from parent (area transformations are stopped, ...). Must be called by classes that inherit from this.
-        virtual void OnUnselection();
+        /// \ brief Behavior on unselection commanded from parent (area
+        /// transformations are stopped, ...). Must be called by classes that
+        /// inherit from this.
+        ///
+        /// \return A list of all the events that just happened
+        virtual std::vector<std::shared_ptr<GraphicEvent>> OnUnselection();
         
         
         // - - - - - Canvas (mouse) events managing - - - - -

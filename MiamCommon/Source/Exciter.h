@@ -15,13 +15,14 @@
 #include <vector>
 
 #include "EditablePolygon.h"
+#include "EditableEllipse.h"
 
 
 namespace Miam
 {
     
     /// \brief 
-    class Exciter : public EditablePolygon
+    class Exciter : public EditableEllipse
     {
         
         

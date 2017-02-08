@@ -108,10 +108,12 @@ void SceneCanvasComponent::renderOpenGL()
     // Not a resize but just a pre-allocation (to avoid empty shared ptrs constructing)
     std::vector<std::shared_ptr<IDrawableArea>> duplicatedAreas;
     duplicatedAreas.reserve(manager->GetAsyncDrawableObjects().size());
-    for (size_t i = 0 ; i<manager->GetAsyncDrawableObjects().size() ; i++)
-        duplicatedAreas.push_back(
-            std::shared_ptr<IDrawableArea>(
-                manager->GetAsyncDrawableObjects()[i]->Clone() ) );
+    for (auto it = manager->GetAsyncDrawableObjects().begin() ;
+         it != manager->GetAsyncDrawableObjects().end() ;
+         ++it)
+    {
+        duplicatedAreas.push_back(std::shared_ptr<IDrawableArea>( (*it)->Clone() ) );
+    }
     
     manager->UnlockAsyncDrawableObjects();
     

@@ -13,6 +13,7 @@
 
 #include <memory>
 #include <vector>
+#include <list>
 
 #include <deque>
 
@@ -43,7 +44,9 @@ namespace Miam {
     /// \brief Manages the interaction with some Miam::EditableScene
     ///
     ///
-    class MultiSceneCanvasInteractor : public AsyncUpdater
+    class MultiSceneCanvasInteractor :
+        public AsyncUpdater,
+        public std::enable_shared_from_this<MultiSceneCanvasInteractor>
     {
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
@@ -52,10 +55,6 @@ namespace Miam {
         
         // Current internal running mode
         CanvasManagerMode mode;
-        
-        /// \brief Self smart pointer. Intended for this class to reference itself
-        /// within the created events
-        std::weak_ptr<MultiSceneCanvasInteractor> selfPtr;
         
         /// \brief Pointer back to the unique edition manager (parent of this manager)
         IGraphicSessionManager* graphicSessionManager = 0;
@@ -83,14 +82,20 @@ namespace Miam {
         
         std::mutex asyncDrawableObjectsMutex;
         // Synchronized with the UNIQUE selected scene's drawable objects
-        std::vector<std::shared_ptr<IDrawableArea>> asyncDrawableObjects;
+        std::list<std::shared_ptr<IDrawableArea>> asyncDrawableObjects;
         
         /// \brief Maps an original area to its asynchronously drawn copy. Accessed
         /// from the main "presenter (juce) message thread" only.
         ///
         /// Not always protected by mutex locks ! As its elements are shared pointers,
         /// which allows MT-safe access
-        std::map<std::shared_ptr<IDrawableArea>, std::vector<std::shared_ptr<IDrawableArea>>::iterator> originalToAsyncObject;
+        ///
+        /// The iterator of a list are not invalidated (unless elements are deleted),
+        /// so we can use them while is does not modify anything about the whole
+        /// container.
+        /// Source : http://en.cppreference.com/w/cpp/container#Thread_safety
+        ///
+        std::map<std::shared_ptr<IDrawableArea>, std::list<std::shared_ptr<IDrawableArea>>::iterator> originalToAsyncObject;
         
         
         
@@ -107,21 +112,19 @@ namespace Miam {
         
         virtual ~MultiSceneCanvasInteractor();
         
-        /// \brief Converts the shared_ptr (owned by a Miam::IGraphicSessionManager)
-        /// into a weak_ptr for internal self-referencement
-        void CompleteInitialization(std::shared_ptr<MultiSceneCanvasInteractor>& selfSharedPtr);
-        
         
         public :
         /// \biref Updates data, refreshes then actually paints what's necessary
         /// (and asked to repaint).
         void CallRepaint();
         
+        
+        protected :
         void handleAsyncUpdate() override;
         
         
         // ----- Running Mode -----
-        
+        public :
         /// \brief Default acceptation of mode change (to be overriden)
         ///
         /// Tries to set the next running mode, then tells the
@@ -173,7 +176,7 @@ namespace Miam {
         // - - - - - Thread-safe methods (for OpenGL async drawing) - - - - -
         
         protected : // internal routines
-        void recreateAllAsyncDrawableObjects(bool recreateMap = true);
+        void recreateAllAsyncDrawableObjects();
         void addAsyncDrawableObject(int insertionIdInScene, std::shared_ptr<IDrawableArea> originalAreaToAdd);
         void updateAsyncDrawableObject(std::shared_ptr<IDrawableArea> originalAreaToUpdate);
         void deleteAsyncDrawableObject(int idInScene, std::shared_ptr<IDrawableArea> originalAreaToDelete);
@@ -181,7 +184,7 @@ namespace Miam {
         public : // external interfacing
         // 3 following functions, to be used very carefully from the OpenGL renderer !
         void LockAsyncDrawableObjects() { asyncDrawableObjectsMutex.lock(); }
-        std::vector<std::shared_ptr<IDrawableArea>>& GetAsyncDrawableObjects()
+        std::list<std::shared_ptr<IDrawableArea>>& GetAsyncDrawableObjects()
         { return asyncDrawableObjects; }
         void UnlockAsyncDrawableObjects() { asyncDrawableObjectsMutex.unlock(); }
         

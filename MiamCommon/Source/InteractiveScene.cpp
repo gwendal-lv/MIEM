@@ -91,10 +91,20 @@ std::shared_ptr<AreaEvent> InteractiveScene::AddArea(std::shared_ptr<IInteractiv
     // Forced graphical updates
     newArea->CanvasResized(canvasComponent);
     
-    // Warning : does not contain the shared_ptr to the scene
-    return std::shared_ptr<AreaEvent>(new AreaEvent(newArea,
-                                                    AreaEventType::Added,
-                                                    (int)areas.size()-1));
+    return std::make_shared<AreaEvent>(newArea, AreaEventType::Added, (int)areas.size()-1, shared_from_this());
+}
+
+std::shared_ptr<AreaEvent> InteractiveScene::AddExciter(std::shared_ptr<Exciter> newExciter)
+{
+    currentExciters.push_back(newExciter);
+    
+    // Forced graphical updates
+    newExciter->CanvasResized(canvasComponent);
+    
+    
+    // WARNING
+    // The id is the ID relative to all drawable objects....
+    return std::make_shared<AreaEvent>(newExciter, AreaEventType::Added, (int)areas.size()+currentExciters.size()-1, shared_from_this());
 }
 
 
@@ -102,25 +112,27 @@ std::shared_ptr<AreaEvent> InteractiveScene::AddArea(std::shared_ptr<IInteractiv
 void InteractiveScene::OnSelection()
 {
 }
-void InteractiveScene::OnUnselection()
+std::vector<std::shared_ptr<GraphicEvent>> InteractiveScene::OnUnselection()
 {
+    std::vector<std::shared_ptr<GraphicEvent>> areaEvents;
+    
 	// We stop all current movements
     // and filter all future undesired touch events
 	for (auto it = touchSourceToEditableArea.begin();
 		it != touchSourceToEditableArea.end();)
 	{
-		// filtering at first, actual stop then
-		std::shared_ptr<IEditableArea> editableArea = it->second;
-		it = touchSourceToEditableArea.erase(it); // increments to next valid
+		// filtering at first,
+        std::shared_ptr<IEditableArea> editableArea = it->second;
+        it = touchSourceToEditableArea.erase(it); // increments to next valid
+        // Actual stop after
 		AreaEventType eventType = editableArea->EndPointMove();
-		// EVENT TO SEND ------------------------------------------------------------
         
-        // FAIRE UN PUTAIN DE VECTEUR QUI SERA COPIÉ SAUVAGEMENT PAR CONSTRUCTEUR DE
-        // COPIE DE CHAQUE ÉLÉMENT
-        //
-        // ÇA FAIT DU CALCUL MAIS ON S'EN BAT LES COUILLES, C'EST UN ÉVÈNEMENT PAS
-        // TROP FRÉQUENT
+        // Storage of event in vector (for events back sending)
+        auto areaE = std::make_shared<AreaEvent>(editableArea, eventType);
+        areaEvents.push_back(areaE);
 	}
+    
+    return areaEvents;
 }
 
 
@@ -130,7 +142,7 @@ void InteractiveScene::OnUnselection()
 std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseDown(const MouseEvent& mouseE)
 {
 	// default : empty AREA event (TO DO : events may happen on exciters, etc, etc, ...)
-	std::shared_ptr<GraphicEvent> graphicE(new AreaEvent(nullptr, AreaEventType::NothingHappened));
+    auto graphicE = std::make_shared<AreaEvent>(nullptr, AreaEventType::NothingHappened);
 
     switch(excitersBehavior)
     {
@@ -157,7 +169,7 @@ std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseDown(const MouseEve
                 {
                     // Indicates the the move can begin
                     touchSourceToEditableArea[mouseE.source.getIndex()] = currentExciters[i];
-					graphicE = std::shared_ptr<GraphicEvent>(new AreaEvent(currentExciters[i], eventType));
+					graphicE = std::make_shared<AreaEvent>(currentExciters[i], eventType);
                 }
             }
             break;
@@ -172,7 +184,7 @@ std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseDown(const MouseEve
 std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseDrag(const MouseEvent& mouseE)
 {
     // Default empty event...
-    std::shared_ptr<GraphicEvent> graphicE(new GraphicEvent());
+    auto graphicE = std::make_shared<GraphicEvent>();
     
     int touchIndex = mouseE.source.getIndex();
     auto mapIt = touchSourceToEditableArea.find(touchIndex);
@@ -180,7 +192,7 @@ std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseDrag(const MouseEve
     if (mapIt != touchSourceToEditableArea.end())
     {
         AreaEventType eventType = mapIt->second->TryMovePoint(mouseE.position.toDouble());
-        graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(mapIt->second, eventType));
+        graphicE = std::make_shared<AreaEvent>(mapIt->second, eventType);
     }
     
     return graphicE;

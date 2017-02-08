@@ -83,14 +83,15 @@ namespace Miam
         AreaEventType eventType = AreaEventType::NothingHappened;
         
         std::shared_ptr<IDrawableArea> concernedArea;
-        //std::shared_ptr<IDrawableArea> secondConcernedArea;
         
         /// \brief If exists, the scene to which the area belongs.
         ///
         /// nullptr if not related to a scene in particular
         std::shared_ptr<InteractiveScene> concernedScene;
+        
         /// \brief If applicable, the id of the concerned drawable object, within
-        /// the scene it belongs to
+        /// the scene it belongs to. It is the "drawable id", an id that is valid for
+        /// any exciter or "classic" area, be careful !
         ///
         /// Allows faster "back-search" of the area within the scene
         int areaIdInScene;
@@ -100,7 +101,6 @@ namespace Miam
         public :
         AreaEventType GetType() {return eventType;}
         std::shared_ptr<IDrawableArea> GetConcernedArea() {return concernedArea;}
-        //std::shared_ptr<IDrawableArea> GetSecondConcernedArea() {return secondConcernedArea;}
         std::shared_ptr<InteractiveScene> GetConcernedScene() {return concernedScene;}
         int GetAreaIdInScene() {return areaIdInScene;}
         
@@ -124,19 +124,6 @@ namespace Miam
                   std::shared_ptr<InteractiveScene> concernedScene_ = nullptr);
         
         
-        /*
-        // 2 areas constructor
-        
-        /// \brief Contructs an event about an area that may be linked to a scene
-        ///
-        /// If the "concerned scene" is nullptr, the area is linked to... something
-        /// else ?
-        AreaEvent(std::shared_ptr<IDrawableArea> concernedArea_,
-                  std::shared_ptr<IDrawableArea> secondConcernedArea_,
-                  AreaEventType eventType_,
-                  int areaIdInScene_ = -1,
-                  std::shared_ptr<InteractiveScene> concernedScene_ = nullptr);
-        */
         
         virtual ~AreaEvent() {}
         

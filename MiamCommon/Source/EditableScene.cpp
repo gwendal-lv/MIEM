@@ -306,14 +306,17 @@ void EditableScene::BringSelectedAreaToFront()
 void EditableScene::OnSelection()
 {
 }
-void EditableScene::OnUnselection()
+
+std::vector<std::shared_ptr<GraphicEvent>> EditableScene::OnUnselection()
 {
-    // Absolutely needed
-    InteractiveScene::OnUnselection();
+    // Absolutely needed (vector copy contructor won't be much time-consuming)
+    auto returnedVector = InteractiveScene::OnUnselection();
     
-    // Own code
+    // Own code for Editable features (and possible event getting)
     if (selectedArea)
-        SetSelectedArea(nullptr);
+        returnedVector.push_back(SetSelectedArea(nullptr));
+    
+    return returnedVector;
 }
 
 
@@ -322,7 +325,7 @@ void EditableScene::OnUnselection()
 std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent& mouseE)
 {
     // default : empty AREA event (TO DO : events may happen on exciters, etc, etc, ...)
-    std::shared_ptr<GraphicEvent> graphicE(new GraphicEvent());
+    auto graphicE = std::make_shared<GraphicEvent>();
     // float position (more accurate) converted to double
     Point<double> clicLocation = mouseE.position.toDouble();
  

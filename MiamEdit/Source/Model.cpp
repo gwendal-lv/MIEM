@@ -76,7 +76,7 @@ void Model::update()
     while(continueUpdate)
     {
         std::this_thread::sleep_for(std::chrono::seconds(1));
-		DBG("update Modèle !");
+		DBG("update ModÃ¨le !");
     }
 }
 

@@ -95,6 +95,9 @@
         <GROUP id="{56C10D2A-D21F-45CE-76A5-54034487512D}" name="Events">
           <FILE id="IOqigb" name="AreaEvent.cpp" compile="1" resource="0" file="../MiamCommon/Source/AreaEvent.cpp"/>
           <FILE id="aVAfT0" name="AreaEvent.h" compile="0" resource="0" file="../MiamCommon/Source/AreaEvent.h"/>
+          <FILE id="Q2qftv" name="ControlEvent.cpp" compile="1" resource="0"
+                file="../MiamCommon/Source/ControlEvent.cpp"/>
+          <FILE id="wPnZ0p" name="ControlEvent.h" compile="0" resource="0" file="../MiamCommon/Source/ControlEvent.h"/>
           <FILE id="NX0ySy" name="MultiAreaEvent.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/MultiAreaEvent.cpp"/>
           <FILE id="oRJw3g" name="MultiAreaEvent.h" compile="0" resource="0"
@@ -109,6 +112,10 @@
           <FILE id="Lt60mX" name="EditableArea.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/EditableArea.cpp"/>
           <FILE id="u2pUf3" name="EditableArea.h" compile="0" resource="0" file="../MiamCommon/Source/EditableArea.h"/>
+          <FILE id="eCJIOT" name="EditableEllipse.cpp" compile="1" resource="0"
+                file="../MiamCommon/Source/EditableEllipse.cpp"/>
+          <FILE id="jJyzQI" name="EditableEllipse.h" compile="0" resource="0"
+                file="../MiamCommon/Source/EditableEllipse.h"/>
           <FILE id="wgUXFQ" name="EditablePolygon.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/EditablePolygon.cpp"/>
           <FILE id="JElhH7" name="EditablePolygon.h" compile="0" resource="0"
@@ -122,6 +129,10 @@
                 file="../MiamCommon/Source/InteractiveArea.cpp"/>
           <FILE id="meCfcv" name="InteractiveArea.h" compile="0" resource="0"
                 file="../MiamCommon/Source/InteractiveArea.h"/>
+          <FILE id="ELULBi" name="InteractiveEllipse.cpp" compile="1" resource="0"
+                file="../MiamCommon/Source/InteractiveEllipse.cpp"/>
+          <FILE id="o1IUT1" name="InteractiveEllipse.h" compile="0" resource="0"
+                file="../MiamCommon/Source/InteractiveEllipse.h"/>
           <FILE id="oqveHx" name="InteractivePolygon.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/InteractivePolygon.cpp"/>
           <FILE id="PxaUtc" name="InteractivePolygon.h" compile="0" resource="0"
@@ -174,6 +185,10 @@
           <FILE id="CGp3ln" name="DrawableArea.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/DrawableArea.cpp"/>
           <FILE id="AEfgX2" name="DrawableArea.h" compile="0" resource="0" file="../MiamCommon/Source/DrawableArea.h"/>
+          <FILE id="So1nG4" name="DrawableEllipse.cpp" compile="1" resource="0"
+                file="../MiamCommon/Source/DrawableEllipse.cpp"/>
+          <FILE id="zj9DE4" name="DrawableEllipse.h" compile="0" resource="0"
+                file="../MiamCommon/Source/DrawableEllipse.h"/>
           <FILE id="SW4w4d" name="DrawablePolygon.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/DrawablePolygon.cpp"/>
           <FILE id="AOOkAE" name="DrawablePolygon.h" compile="0" resource="0"
