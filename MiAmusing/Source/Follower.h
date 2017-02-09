@@ -33,11 +33,13 @@ namespace Amusing
 			virtual ~Follower();
 			virtual IDrawableArea* Clone() const override { return new Follower(*this); }
 
-			std::shared_ptr<Miam::MultiAreaEvent> setPosition(double m_position);
+			std::shared_ptr<Miam::AreaEvent> setPosition(double m_position);
 			std::shared_ptr<AnimatedPolygon> getCurrentPolygon();
 		private :
 
+			bool first;
 			void initArea();
+			void setCenter(Point<double> newCenter);
 
 			std::shared_ptr<Miam::AmusingScene> masterScene;
 			std::shared_ptr<AnimatedPolygon> masterArea;

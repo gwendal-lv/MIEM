@@ -54,9 +54,11 @@ namespace Amusing
 
 		Point<double> getPente(int P)
 		{
-			return (contourPointsInPixels[P + 1] - contourPointsInPixels[P]);
+			int after = (P + 1) % (contourPoints.size());
+			return (contourPointsInPixels[after] - contourPointsInPixels[P]);
 		}
 
+		Point<double> initiateFollower();
 
 		int currentSommet;
 		double GetNextAreaLength();

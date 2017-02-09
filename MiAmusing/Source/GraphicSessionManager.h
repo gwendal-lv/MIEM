@@ -138,6 +138,7 @@ namespace Amusing {
 		void OnAddCircle();
 		void OnAddTrueCircle();
 		void OnAddFollower();
+		void OnFollowerTranslation(std::shared_ptr<GraphicEvent> graphicE);
 
 		void OnPlayClicked();
 		void OnPauseClicked();
