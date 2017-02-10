@@ -16,6 +16,8 @@
 
 #include "AnimatedPolygon.h"
 
+#include "GraphicEvent.h"
+#include "MultiAreaEvent.h"
 
 using namespace Amusing;
 
@@ -80,4 +82,13 @@ void MultiSceneCanvasManager::AddFollower(uint64_t nextAreaId)
 {
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
 		handleAndSendAreaEventSync(amusingScene->AddFollower(nextAreaId));
+}
+
+void MultiSceneCanvasManager::OnFollowerTranslation(std::shared_ptr<GraphicEvent> graphicE)
+{
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+	{
+		if(auto areaE = std::dynamic_pointer_cast<AreaEvent> (graphicE))
+			handleAndSendAreaEventSync(areaE);
+	}
 }

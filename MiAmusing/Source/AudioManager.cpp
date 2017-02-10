@@ -395,6 +395,7 @@ void AudioManager::HandleEvent()
 {
 	//DBG("handleEvent");
 	Miam::AsyncParamChange param;
+	param.Id1 = 0;
 	param.Type = Miam::AsyncParamChange::ParamType::Activate;
 	model->SendParamChange(param);
 }

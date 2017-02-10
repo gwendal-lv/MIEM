@@ -24,6 +24,8 @@ Author:  Gwendal Le Vaillant
 
 #include "ControlEvent.h"
 
+#include "MultiAreaEvent.h"
+
 #include "AmusingScene.h"
 #include "AnimatedPolygon.h"
 #include "EditableEllipse.h"
@@ -158,6 +160,13 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 	// Event about an Area
 	if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(event_))
 	{
+		if (auto multiE = std::dynamic_pointer_cast<MultiAreaEvent>(event_))
+		{
+			DBG("multiareaevent");
+			//getSelectedCanvasAsEditable()->CallRepaint
+			//getSelectedCanvasAsManager()->handleUpdateNowIfNeeded
+		}
+
 		// Event about an Exciter in particular : we'll have to update the spat mix !
 		if (auto exciter = std::dynamic_pointer_cast<Exciter>(areaE->GetConcernedArea()))
 		{
@@ -239,7 +248,9 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					myPresenter->SendParamChange(param);
 				}
 				else
-					DBG("not an anime");
+				{
+					//DBG("not an anime");
+				}
 				//area-> get center height --> volume
 				break;
 			case AreaEventType::RotScale :
@@ -353,6 +364,12 @@ void GraphicSessionManager::OnAddArea()
 		else
 			getSelectedCanvasAsEditable()->AddDefaultArea(GetNextAreaId());
 	}
+}
+
+void GraphicSessionManager::OnFollowerTranslation(std::shared_ptr<GraphicEvent> graphicE)
+{
+	if (selectedCanvas)
+		getSelectedCanvasAsManager()->OnFollowerTranslation(graphicE);
 }
 
 void GraphicSessionManager::OnAddSquare()

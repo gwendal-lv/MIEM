@@ -18,6 +18,9 @@
 
 #include "AnimatedPolygon.h"
 #include "Follower.h"
+#include "GraphicEvent.h"
+#include "MultiAreaEvent.h"
+
 
 using namespace Amusing;
 
@@ -40,6 +43,7 @@ Presenter::Presenter(View* _view) :
     
     appModeChangeRequest(AppMode::None);
 	Nsources = 0;
+	Nfollower = 0;
 }
 
 
@@ -100,6 +104,7 @@ int Presenter::getCtrlSourceId(std::shared_ptr<Follower> follower)
 {
 	if (followerToCtrlSource.left.find(follower) == followerToCtrlSource.left.end())
 	{
+		DBG("ajoute : " + (String)Nfollower);
 		std::pair<std::shared_ptr<Follower>, int> newPair(follower, Nfollower);
 		followerToCtrlSource.left.insert(newPair);
 		++Nfollower;
@@ -126,7 +131,10 @@ std::shared_ptr<IEditableArea> Presenter::getAreaFromSource(int source)
 std::shared_ptr<Follower> Presenter::getFollowerFromCtrl(int ctrlId)
 {
 	if (followerToCtrlSource.right.find(ctrlId) == followerToCtrlSource.right.end())
+	{
 		DBG("pas de follower associe");
+		return nullptr;
+	}
 	return followerToCtrlSource.right.at(ctrlId);
 }
 
@@ -147,6 +155,9 @@ void Presenter::Update() // remettre l'interieur dans graphsessionmanager
 	//DBG("La");
 	AsyncParamChange param, param2;
 	std::shared_ptr<IEditableArea> area;
+	std::shared_ptr<Follower> currentFollower;
+	std::shared_ptr<GraphicEvent> graphicE;
+	
 	if (model->TryGetAsyncParamChange(param))
 	{
 		switch (param.Type)
@@ -168,13 +179,20 @@ void Presenter::Update() // remettre l'interieur dans graphsessionmanager
 			DBG("new duration");
 			break;
 		case AsyncParamChange::ParamType::Position :
-			DBG("position = " + (String)param.DoubleValue +" Id "+ (String)param.Id1);
-			area = getAreaFromSource(param.Id1);
-			DBG("bl");
-			if (auto anime = std::dynamic_pointer_cast<AnimatedPolygon>(area))
-			{
-				anime->GetFollower()->setPosition(param.DoubleValue);
-			}
+			
+			//DBG("position = " + (String)param.DoubleValue +" Id "+ (String)param.Id1);
+			//area = getAreaFromSource(param.Id1);
+			//DBG("bl");
+			//if (auto anime = std::dynamic_pointer_cast<AnimatedPolygon>(area))
+			//{
+				//anime->GetFollower()->setPosition(param.DoubleValue);
+			//}
+			//DBG("Id du follower = " + (String)param.Id1);
+			currentFollower = getFollowerFromCtrl(param.Id1);
+			//currentFollower->setPosition(param.DoubleValue);
+			//graphicE = currentFollower->setPosition(param.DoubleValue);
+			//graphicSessionManager.HandleEventSync(currentFollower->setPosition(param.DoubleValue));
+			graphicSessionManager.OnFollowerTranslation(currentFollower->setPosition(param.DoubleValue));
 			break;
 
 		default:

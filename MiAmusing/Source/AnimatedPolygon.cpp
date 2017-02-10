@@ -1,4 +1,4 @@
-/*
+﻿/*
   ==============================================================================
 
     AnimatedPolygon.cpp
@@ -92,4 +92,9 @@ void AnimatedPolygon::associateFollower(std::shared_ptr<Follower> newFollower)
 std::shared_ptr<Follower> AnimatedPolygon::GetFollower()
 {
 	return follower;
+}
+
+Point<double> AnimatedPolygon::initiateFollower()
+{
+	return contourPoints[0];
 }
