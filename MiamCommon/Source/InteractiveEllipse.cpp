@@ -62,3 +62,4 @@ double InteractiveEllipse::ComputeInteractionWeight(Point<double> T)
 	// calculer l'interaction
 	return 0.0;
 }
+

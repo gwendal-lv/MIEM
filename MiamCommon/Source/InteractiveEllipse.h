@@ -49,3 +49,4 @@ namespace Miam
 
 
 #endif  // INTERACTIVEELLIPSE_H_INCLUDED
+
