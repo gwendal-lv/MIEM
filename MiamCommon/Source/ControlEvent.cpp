@@ -18,4 +18,9 @@ ControlEvent::ControlEvent(ControlEventType _eventType) : eventType(_eventType)
 
 ControlEvent::~ControlEvent()
 {
+    // trélélé
 }
+
+// caractère(s) de fin de ligne rajoutés
+
+
