@@ -42,7 +42,7 @@ namespace Amusing
 
 		int GetHeight()
 		{
-			return centerInPixels.getY();
+			return (int)centerInPixels.getY();
 		}
 
 		double GetAreteLength()
@@ -58,6 +58,8 @@ namespace Amusing
 			return (contourPointsInPixels[after] - contourPointsInPixels[P]);
 		}
 
+		Point<double> getCenter();
+
 		Point<double> initiateFollower();
 
 		int currentSommet;
@@ -68,13 +70,27 @@ namespace Amusing
 		void associateFollower(std::shared_ptr<Follower> newFollower);
 		std::shared_ptr<Follower> GetFollower();
 
+		Point<double> initializePolygone(Point<double> currentCenter);
+		Point<double> getPosition(double positionPC);
+		
+
+
 		//void update();
 
 	private :
+		
 		std::shared_ptr<Follower> follower; // a remplacer par un vector<Follower>
 		double speed;
 		int fromPt;
 		Point<int> point;
+
+		bool first;
+		double oldPositionPC;
+		int currentPoint;
+		Point<double> oldCenter;
+		Point<double> oldCenterInPixels;
+
+		Point<double> initT;
 	};
 }
 

@@ -57,7 +57,7 @@ GraphicSessionManager::GraphicSessionManager(Presenter* presenter_, View* view_)
 	canvasManagers.push_back(std::make_shared<MultiSceneCanvasManager>(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas1));
 	multiCanvasComponent->CompleteInitialization();
 	DBG("pushed");
-	canvasManagers.back()->CompleteInitialization(canvasManagers.back());
+//	canvasManagers.back()->CompleteInitialization(canvasManagers.back());
 	DBG("initialized");
 	
 	/*
@@ -68,9 +68,9 @@ GraphicSessionManager::GraphicSessionManager(Presenter* presenter_, View* view_)
 	{
 		// After canvases are created : scenes creation
 		// DEFAULT SCENES, TO BE CHANGED
-		canvasManagers[i]->AddScene("Scène 1, pour le plaisir");
-		canvasManagers[i]->AddScene("Scène 2 oh ouuiiii");
-		canvasManagers[i]->AddScene("Scène jamais 2 sans 3");
+		canvasManagers[i]->AddScene("Scène 1");
+		canvasManagers[i]->AddScene("Scène 2");
+		canvasManagers[i]->AddScene("Scène 3");
 	}
 	
 	// Links to the view module

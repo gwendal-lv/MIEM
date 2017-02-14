@@ -312,6 +312,7 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 		// with double-precision floating-point numbers...
 		Rectangle<double> boundingBoxContour = contour.getBounds().toDouble();
 		Point<double> translation = newLocation - lastLocation;
+		
 		boundingBoxContour.translate(translation.getX(), translation.getY());
 		// does new contour would be inside the canvas ?
 		if (parentCanvas->getLocalBounds().contains(boundingBoxContour.toNearestInt()))
@@ -359,6 +360,16 @@ void EditableEllipse::Translate(const Point<double>& translation)
 	// Manipulation point (+ line...)
 	computeManipulationPoint();
 }
+
+void EditableEllipse::setCenterPosition(Point<double> newCenter) // pixels
+{
+	
+	Point<double> translation = newCenter - centerInPixels; // pixels
+	Translate(translation);
+	
+}
+
+
 
 
 

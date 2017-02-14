@@ -26,8 +26,8 @@ namespace Miam
 	
 	class MultiSceneCanvasInteractor;
 
-	class AmusingScene : public EditableScene,
-		public std::enable_shared_from_this<AmusingScene> 
+	class AmusingScene : public EditableScene/*,
+		public std::enable_shared_from_this<AmusingScene> */
 	{
 	public :
 		AmusingScene(std::shared_ptr<MultiSceneCanvasInteractor> _canvasManager, SceneCanvasComponent* _canvasComponent);

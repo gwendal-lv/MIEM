@@ -39,7 +39,7 @@ void MultiSceneCanvasManager::AddScene(std::string name)
     // We construct scene that DO NOT allow the selection of a particular area
     //std::shared_ptr<EditableScene> newScene(new AmusingScene(this, canvasComponent->GetCanvas()));
 	DBG("passe dans le bon");
-	std::shared_ptr<AmusingScene> newScene(new AmusingScene(selfPtr.lock(), canvasComponent->GetCanvas()));
+	std::shared_ptr<AmusingScene> newScene(new AmusingScene(shared_from_this(), canvasComponent->GetCanvas()));
     newScene->SetName(name);
     
     MultiSceneCanvasInteractor::AddScene(newScene);

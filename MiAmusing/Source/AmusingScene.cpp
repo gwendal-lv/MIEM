@@ -17,6 +17,8 @@
 #include "EditableEllipse.h"
 #include "Follower.h"
 
+#include "InteractiveScene.h"
+
 using namespace Miam;
 using namespace Amusing;
 

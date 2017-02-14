@@ -9,11 +9,12 @@
 */
 
 #include "AnimatedPolygon.h"
+#include "SceneCanvasComponent.h"
 
 using namespace Amusing;
 using namespace Miam;
 
-AnimatedPolygon::AnimatedPolygon(int64_t _Id) : EditablePolygon(_Id)
+AnimatedPolygon::AnimatedPolygon(int64_t _Id) : EditablePolygon(_Id), first(true)
 {
 	speed = 5; // 5 pixels/sec
 	point.setX(contourPointsInPixels[0].getX());
@@ -98,3 +99,50 @@ Point<double> AnimatedPolygon::initiateFollower()
 {
 	return contourPoints[0];
 }
+
+Point<double> AnimatedPolygon::getCenter()
+{
+	return centerInPixels;
+}
+
+
+Point<double> AnimatedPolygon::initializePolygone(Point<double> currentCenter)
+{
+	currentPoint = 0;
+	oldPositionPC = -1; // initialise en negatif pour etre sur qu'on ne passe pas un segment
+
+	Point<double> initialTranslation;
+	oldCenter = currentCenter;
+
+	initialTranslation = contourPoints[0] - currentCenter ;
+	oldCenter = center;
+
+	oldCenterInPixels = centerInPixels;
+
+	initT.setXY(initialTranslation.getX()*parentCanvas->getWidth(), initialTranslation.getY()*parentCanvas->getHeight());
+
+	return initialTranslation;
+}
+
+Point<double> AnimatedPolygon::getPosition(double positionPC)
+{
+	
+
+	if (oldPositionPC > positionPC) // on a recommence le son
+	{
+		oldPositionPC = 0;
+		currentPoint = (currentPoint + 1) % GetContourSize();
+		DBG("on a recommence ######### : " + (String)currentPoint);
+	}
+	else
+		oldPositionPC = positionPC;
+	//DBG("P = " + (String)currentPoint);
+	//DBG("[currentPoint] = " + (String)contourPointsInPixels[currentPoint].getX() + " " + (String)contourPointsInPixels[currentPoint].getY());
+	Point<double> newPosition = contourPointsInPixels[currentPoint] + (positionPC ) * (getPente(currentPoint));
+	//DBG("[newPosition] = " + (String)newPosition.getX() + " " + (String)newPosition.getY());
+	//newPosition += contourPointsInPixels[currentPoint].;
+	
+	
+	return newPosition;
+}
+
