@@ -188,6 +188,13 @@ void MultiSceneCanvasInteractor::handleAndSendEventSync(std::shared_ptr<GraphicE
                     break;
             }
         }
+		else
+		{
+			if (graphicE->GetMessage()=="mouseDown")
+			{
+				//DBG("mouseDown");
+			}
+		}
         
         // -  Transmission of the event to the parent graphic session manager -
         graphicSessionManager->HandleEventSync(graphicE);
@@ -468,9 +475,13 @@ void MultiSceneCanvasInteractor::OnCanvasMouseDown(const MouseEvent& mouseE)
     graphicSessionManager->SetSelectedCanvas(shared_from_this());
     
     std::shared_ptr<GraphicEvent> graphicE = selectedScene->OnCanvasMouseDown(mouseE);
-    if (! graphicE->GetMessage().empty())
-        graphicSessionManager->DisplayInfo(graphicE->GetMessage()); // TO DO : CORRIGEEEEEERRRR !!!!!
-    
+	if (!graphicE->GetMessage().empty())
+		graphicSessionManager->DisplayInfo(graphicE->GetMessage()); // TO DO : CORRIGEEEEEERRRR !!!!!
+	else
+	{
+		DBG("rien");
+		graphicE->SetMessage("mouseDown");
+	}
     // If we were in a "special waiting mode" we end it after this click
     if (mode == CanvasManagerMode::WaitingForPointCreation || mode == CanvasManagerMode::WaitingForPointDeletion)
     {

@@ -32,6 +32,7 @@ AudioManager::AudioManager(AmusingModel *m_model) : model(m_model), Nsources(0),
     // initialise any special settings that your component needs.
 	DBG("AudioManager::AudioManager");
 
+	beginTest = false;
 
 	/////////////////////
 	useADSR = 1;////////
@@ -43,6 +44,8 @@ AudioManager::AudioManager(AmusingModel *m_model) : model(m_model), Nsources(0),
 	activeVector.reserve(Nmax);
 	mixer = new MixerAudioSource();
 	setAudioChannels(0, 2);
+
+	
 }
 
 AudioManager::~AudioManager()
@@ -84,11 +87,16 @@ void AudioManager::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 	DBG((String)sampleRate);
 	DBG((String)samplesPerBlockExpected);
 	DBG("div = " + (String)div);
+
+
+	ondeCarre = new SquareSignal2(3520, 0.5, 2);
+	ondeCarre->prepareToPlay(samplesPerBlockExpected, sampleRate);
 }
 void AudioManager::releaseResources()
 {
 	
-
+	ondeCarre->releaseResources();
+	delete ondeCarre;
 	
 }
 void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
@@ -105,7 +113,16 @@ void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 	//HandleEvent();
 	}
 	else
-		bufferToFill.clearActiveBufferRegion();
+	{
+		if (beginTest)
+		{
+			//DBG("beginTest == true");
+			ondeCarre->getNextAudioBlock(bufferToFill);
+			//DBG((String)bufferToFill.buffer->getMagnitude(bufferToFill.startSample,bufferToFill.numSamples));
+		}
+		else
+			bufferToFill.clearActiveBufferRegion();
+	}
 
 	if (fmod(count, div) == 0)
 		sendPosition();
@@ -265,7 +282,10 @@ void AudioManager::askParameter()
 			break;
 		case Miam::AsyncParamChange::ParamType::Activate :
 			//DBG("Activate");
-			AncienchooseAudioType(param.Id2,param.DoubleValue);
+			if (param.Id1 == 555)
+				beginTest = true;
+			else
+				AncienchooseAudioType(param.Id2,param.DoubleValue);
 			//DBG("continue");
 			
 			break;

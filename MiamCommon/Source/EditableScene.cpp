@@ -332,11 +332,13 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent&
     // If an area can be selected
     if (allowAreaSelection)
     {
+		DBG("mousedown ici !!!");
         if (mouseE.source.getIndex() == 0)
         {
             // When an area is already selected
             if (selectedArea)
             {
+				DBG("probleme1 !!!");
                 // did we clic next to a point, or at least inside the area ?
 				AreaEventType lastEventType = selectedArea->TryBeginPointMove(clicLocation);
                 if(lastEventType == AreaEventType::NothingHappened)
@@ -355,6 +357,7 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent&
             {
                 if (areas[i]->HitTest(clicLocation))
                 {
+					DBG("probleme2 !!!");
                     // !!!!!!!!!!!!! TEST DES POIDS D'INTERACTION !!!!!!!!!!!
                     //std::cout << "poids d'interaction = " << areasOrderedForDrawing[i]->ComputeInteractionWeight(clicLocation.toDouble()) << std::endl;
                     
@@ -379,6 +382,7 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent&
             // Le bouton doit d'ailleurs apparaître de manière dynamique....
             if (canvasManager.lock()->GetMode() == CanvasManagerMode::WaitingForPointCreation)
             {
+				DBG("probleme3 !!!");
                 // On lance une EXCEPTION SI LE CAST n'A PAS FONCTIONNÉ
                 std::shared_ptr<EditablePolygon> selectedPolygon = std::dynamic_pointer_cast<EditablePolygon>(selectedArea);
                 if (selectedPolygon)
@@ -402,6 +406,7 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent&
             // Existing point deletion
             else if (canvasManager.lock()->GetMode() == CanvasManagerMode::WaitingForPointDeletion)
             {
+				DBG("probleme4 !!!");
                 // On lancera une exception si le cast n'a pas fonctionné
                 std::shared_ptr<EditablePolygon> selectedPolygon = std::dynamic_pointer_cast<EditablePolygon>(selectedArea);
                 if (selectedPolygon)
@@ -420,6 +425,7 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent&
                 else
                     throw std::runtime_error(std::string("Cannot create a point to the selected area (must be a polygon !)"));
             }
+			//DBG("Break ! ");
         }
     }
     
@@ -443,8 +449,12 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent&
 		// point de touch par zone par contre (sinon ça fout la merde)
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		DBG("Down");
+		//graphicE->SetMessage("down");
     }
     
+
+
     return graphicE;
 }
 

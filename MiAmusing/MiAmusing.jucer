@@ -34,6 +34,11 @@
                   file="Source/AmusingFormatReaderSource.h"/>
             <FILE id="s158Ff" name="Amusinus.cpp" compile="1" resource="0" file="Source/Amusinus.cpp"/>
             <FILE id="Lc1vFR" name="Amusinus.h" compile="0" resource="0" file="Source/Amusinus.h"/>
+            <FILE id="VKy1WJ" name="Amusquare.cpp" compile="1" resource="0" file="Source/Amusquare.cpp"/>
+            <FILE id="Z5xQzb" name="Amusquare.h" compile="0" resource="0" file="Source/Amusquare.h"/>
+            <FILE id="yk7UNq" name="SquareSignal2.cpp" compile="1" resource="0"
+                  file="Source/SquareSignal2.cpp"/>
+            <FILE id="Vv2auL" name="SquareSignal2.h" compile="0" resource="0" file="Source/SquareSignal2.h"/>
           </GROUP>
           <FILE id="aA8HgK" name="ADSRSignal.cpp" compile="1" resource="0" file="Source/ADSRSignal.cpp"/>
           <FILE id="a4yfTk" name="ADSRSignal.h" compile="0" resource="0" file="Source/ADSRSignal.h"/>

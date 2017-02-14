@@ -333,6 +333,16 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 			break;
 		}
 	}
+	else
+	{
+		if (event_->GetMessage() == "mouseDown")
+		{
+			DBG("mouseDown");
+			param.Type = Miam::AsyncParamChange::ParamType::Activate;
+			param.Id1 = 555;
+			myPresenter->SendParamChange(param);
+		}
+	}
 }
 
 

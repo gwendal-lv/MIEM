@@ -17,6 +17,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "AmusingModel.h"
 #include "AmuSignal.h"
+#include "SquareSignal2.h"
 
 
 
@@ -53,7 +54,7 @@ namespace Amusing {
 		void chooseAudioType(int position, int type);
 		void AncienchooseAudioType(int type,double duration);
 	private:
-
+		SquareSignal2 *ondeCarre;
 		void trackVectorHandler(bool deactivation, int type);
 		void changeState(AudioManagerState nexState);
 		void playAllSources();
@@ -66,6 +67,7 @@ namespace Amusing {
 
 		AmusingModel *model;
 		MixerAudioSource *mixer;
+
 		//std::thread activationThread;// s[2];
 
 		AudioManagerState state;
@@ -84,6 +86,8 @@ namespace Amusing {
 		std::vector<bool> activeVector;
 		const int Nmax = 1024;
 		int Nsources;
+
+		bool beginTest;
 
 	};
 }

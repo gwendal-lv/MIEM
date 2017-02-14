@@ -114,7 +114,13 @@ std::shared_ptr<Miam::AreaEvent> Follower::setPosition(double m_position)
 	//masterArea->getPosition(m_position);
 	//setCenterPosition(Point<double>(320.4, 178));
 
-	setCenterPosition(masterArea->getPosition(m_position));
+	Point<double> newPosition = masterArea->getPosition(m_position);
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(masterScene))
+	{
+		//if (amusingScene->hitPolygon(newPosition) != nullptr)
+			//DBG("!!!!!!!!!!!!! collision !!!!!!!!!");
+	}
+	setCenterPosition(newPosition);
 	
 	
 

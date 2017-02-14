@@ -89,6 +89,15 @@ std::shared_ptr<AnimatedPolygon> AmusingScene::getFirstArea()
 	return std::dynamic_pointer_cast<AnimatedPolygon>(areas[0]);
 }
 
+std::shared_ptr<Amusing::AnimatedPolygon> AmusingScene::hitPolygon(Point<double> hitPoint)
+{
+	for (int i = 0; i < areas.size(); ++i)
+	{
+		if(areas[i]->HitTest(hitPoint))
+			return std::dynamic_pointer_cast<AnimatedPolygon>(areas[i]);
+	}
+	return nullptr;
+}
 /*
 bool AmusingScene::OnCanvasMouseDrag(Point<int> &mouseLocation)
 {

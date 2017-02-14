@@ -43,6 +43,8 @@ namespace Miam
 
 		std::shared_ptr<Amusing::AnimatedPolygon> getFirstArea();
 
+		std::shared_ptr<Amusing::AnimatedPolygon> hitPolygon(Point<double> hitPoint);
+
 		/*
 		virtual std::shared_ptr<GraphicEvent> OnCanvasMouseDown(const MouseEvent& mouseE) override;
 		virtual std::shared_ptr<GraphicEvent> OnCanvasMouseDrag(const MouseEvent& mouseE) override;
