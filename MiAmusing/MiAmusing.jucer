@@ -93,29 +93,6 @@
       </GROUP>
     </GROUP>
     <FILE id="v8jCgE" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
-    <GROUP id="{C4893356-5DEB-A030-074B-EE0422842B92}" name="SpatCommonSource">
-      <GROUP id="{69F35838-D6F6-5ADE-9B31-E372F4C0078E}" name="Model">
-        <GROUP id="{C8CFED74-46E5-A2FF-9824-723DC214C250}" name="SpatStates">
-          <FILE id="VlduMz" name="OutputVolumesState.h" compile="0" resource="0"
-                file="../SpatCommon/Source/OutputVolumesState.h"/>
-          <FILE id="o3IF1g" name="OutputVolumesState.tpp.h" compile="0" resource="0"
-                file="../SpatCommon/Source/OutputVolumesState.tpp.h"/>
-          <FILE id="VJUdzj" name="SpatState.h" compile="0" resource="0" file="../SpatCommon/Source/SpatState.h"/>
-          <FILE id="bz3VgJ" name="SpatState.tpp.h" compile="0" resource="0" file="../SpatCommon/Source/SpatState.tpp.h"/>
-        </GROUP>
-        <FILE id="azLEQu" name="SpatModel.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatModel.cpp"/>
-        <FILE id="n9PyKE" name="SpatModel.h" compile="0" resource="0" file="../SpatCommon/Source/SpatModel.h"/>
-        <FILE id="xR7ZzU" name="SpatInterpolator.h" compile="0" resource="0"
-              file="../SpatCommon/Source/SpatInterpolator.h"/>
-        <FILE id="njk7Fg" name="SpatInterpolator.tpp.h" compile="0" resource="0"
-              file="../SpatCommon/Source/SpatInterpolator.tpp.h"/>
-        <FILE id="DFPO9m" name="SpatSender.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatSender.cpp"/>
-        <FILE id="YOdNbs" name="SpatSender.h" compile="0" resource="0" file="../SpatCommon/Source/SpatSender.h"/>
-        <FILE id="ISQcqH" name="SpatType.h" compile="0" resource="0" file="../SpatCommon/Source/SpatType.h"/>
-        <FILE id="r9zTHA" name="Speaker.h" compile="0" resource="0" file="../SpatCommon/Source/Speaker.h"/>
-        <FILE id="JAUbBW" name="Speaker.tpp.h" compile="0" resource="0" file="../SpatCommon/Source/Speaker.tpp.h"/>
-      </GROUP>
-    </GROUP>
     <GROUP id="{593B3C8B-4E9F-6C95-BD9D-6562983482B8}" name="MiamCommonSource">
       <GROUP id="{0479ADE3-37CD-6B82-AED4-7081C736E56C}" name="Model">
         <FILE id="LDc2TJ" name="IModel.cpp" compile="1" resource="0" file="../MiamCommon/Source/IModel.cpp"/>
@@ -273,6 +250,57 @@
         <MODULEPATH id="juce_audio_utils" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </VS2015>
+    <XCODE_MAC targetFolder="Builds/MacOSX">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MiAmusing"
+                       headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../SpatCommon/Source/"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MiAmusing"
+                       headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../SpatCommon/Source/"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_video" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+    <ANDROIDSTUDIO targetFolder="Builds/AndroidStudio" androidSDKPath="" androidNDKPath=""
+                   extraDefs="__MIAMOBILE" androidMinimumSDK="21">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" androidArchitectures="armeabi armeabi-v7a x86" isDebug="1"
+                       optimisation="1" targetName="MiAmusing" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../SpatCommon/Source/"
+                       defines=""/>
+        <CONFIGURATION name="Release" androidArchitectures="armeabi armeabi-v7a x86"
+                       isDebug="0" optimisation="3" targetName="MiAmusing" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../SpatCommon/Source/"
+                       defines=""/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_video" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../JUCE/modules"/>
+      </MODULEPATHS>
+    </ANDROIDSTUDIO>
   </EXPORTFORMATS>
   <MODULES>
     <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0"/>

@@ -11,6 +11,8 @@
 #ifndef SQUARESIGNAL2_H_INCLUDED
 #define SQUARESIGNAL2_H_INCLUDED
 
+#include <atomic>
+
 #include "../JuceLibraryCode/JuceHeader.h"
 
 //==============================================================================
@@ -26,12 +28,15 @@ public:
 	void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
 	void getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill) override;
 	void releaseResources() override;
+    
+    /// \brief Reinit (thread-safe with the atomic int)
+    void Replay() {pos = 0;}
 
 private:
 	double amplitude, frequency;
 	int time2play;
 	int N;
-	int pos;
+    std::atomic<int> pos;
 	AmuSquare *amusquare;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SquareSignal2)
 };

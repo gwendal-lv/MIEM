@@ -48,8 +48,8 @@ void MultiSceneCanvasManager::AddScene(std::string name)
     // TEST DES EXCITATEURS
     auto newExciter = std::make_shared<Exciter>(GetNextAreaId());
     handleAndSendAreaEventSync(newScene->AddExciter(newExciter));
-    /*
+
     newExciter = std::make_shared<Exciter>(GetNextAreaId());
     handleAndSendAreaEventSync(newScene->AddExciter(newExciter));
-     */
+
 }

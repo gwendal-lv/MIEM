@@ -10,9 +10,9 @@
 //..\..\..\..\boost_1_63_0\geometry\algorithms
 #include<thread>
 #include<cmath>
-#include<boost\geometry.hpp>
-#include<boost\lockfree\queue.hpp>
-#include<boost\lockfree\spsc_queue.hpp>
+#include<boost/geometry.hpp>
+#include<boost/lockfree/queue.hpp>
+#include<boost/lockfree/spsc_queue.hpp>
 
 
 
@@ -283,7 +283,10 @@ void AudioManager::askParameter()
 		case Miam::AsyncParamChange::ParamType::Activate :
 			//DBG("Activate");
 			if (param.Id1 == 555)
+            {
+                ondeCarre->Replay();
 				beginTest = true;
+            }
 			else
 				AncienchooseAudioType(param.Id2,param.DoubleValue);
 			//DBG("continue");

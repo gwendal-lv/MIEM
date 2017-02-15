@@ -8,6 +8,8 @@
   ==============================================================================
 */
 
+#include <cmath>
+
 #include "Rythme.h"
 
 Rythme::Rythme(Component* m_mother, int m_bpm, int duration) : 
@@ -176,7 +178,7 @@ void Rythme::startRecord()
 
 		currentOn.on = false;
 		currentOn.duration = 0;
-		buffer = new int[maxT * (Ttimer / 1000) * sampleRate];
+		buffer = new int[(size_t) round(maxT * (Ttimer / 1000) * sampleRate)];
 	}
 
 	record = true;

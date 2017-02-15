@@ -90,6 +90,7 @@ public:
     void CompleteInitialization(std::shared_ptr<MultiSceneCanvasInteractor> _canvasManager);
 
     // - - - - - - - - Juce usual paint/resized component methods - - - - - - - - -
+    void paint(Graphics&) override;
     void resized() override;
     
     // - - - - - - - - OpenGL specific - - - - - - - - -

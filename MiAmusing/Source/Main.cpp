@@ -44,7 +44,9 @@ public:
         // This method is where you should put your application's initialisation code..
 
         mainWindow = new MainWindow (getApplicationName());
+#ifndef __MIAMOBILE
         mainWindow->setResizable(true, true);
+#endif
         
         // Instanciation of the 3 main parts of the application : Model, Presenter, View
         MainContentComponent* mainContentComponent = dynamic_cast<MainContentComponent*>(mainWindow->getChildComponent(0));
@@ -102,7 +104,12 @@ public:
             setUsingNativeTitleBar (true);
             setContentOwned (new MainContentComponent(), true);
 
+#if defined(__MIAMOBILE)
+            setFullScreen(true);
+#else
             centreWithSize (getWidth(), getHeight());
+            setResizable(true, true);
+#endif
             setVisible (true);
         }
 

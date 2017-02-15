@@ -22,7 +22,7 @@ SceneCanvasComponent::SceneCanvasComponent() :
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
     
-    openGlContext.setComponentPaintingEnabled(true); // default behavior, lower perfs
+    openGlContext.setComponentPaintingEnabled(false); // paint will throw an exception now
     // OpenGL final initialization will happen in the COmpleteInitialization method
     
 }
@@ -53,6 +53,10 @@ void SceneCanvasComponent::CompleteInitialization(std::shared_ptr<MultiSceneCanv
 
 
 // - - - - - - - - Juce usual paint/resized component methods - - - - - - - - -
+void SceneCanvasComponent::paint(Graphics&)
+{
+    throw std::runtime_error("Plus de repaint() maintenant !");
+}
 
 void SceneCanvasComponent::resized()
 {
