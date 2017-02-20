@@ -26,11 +26,8 @@ namespace Miam
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
         private :
         
-        /// \brief
-        ///
-        /// 100-by-100 matrix can be entirely stored within the queue without it being
-        /// full.
-        boost::lockfree::spsc_queue<AsyncParamChange, boost::lockfree::capacity<(1<<17)>> paramChangesToModel;
+        /// \brief 1 Mo lock-free queue
+        boost::lockfree::spsc_queue<AsyncParamChange, boost::lockfree::capacity<(1<<20)>> paramChangesToModel;
         
         
         // = = = = = = = = = = GETTERS and SETTERS = = = = = = = = = =

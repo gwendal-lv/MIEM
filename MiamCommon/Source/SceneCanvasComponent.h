@@ -92,7 +92,21 @@ public:
     // - - - - - - - - Juce usual paint/resized component methods - - - - - - - - -
     void paint(Graphics&) override;
     void resized() override;
+    ///////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////
+    juce::Colour backColour = juce::Colours::black;
+    void __Blink()
+    {
+        if (backColour == Colours::white)
+            backColour = Colours::black;
+        else if (backColour == Colours::black)
+            backColour = Colours::white;
+        else
+            std::runtime_error("Alerte au gogole");
+    }
     
+    ///////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////
     // - - - - - - - - OpenGL specific - - - - - - - - -
     virtual void newOpenGLContextCreated() override;
     virtual void renderOpenGL() override; // ! in background-thread !

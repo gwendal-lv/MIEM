@@ -271,7 +271,7 @@ void AudioManager::askParameter()
 	bool ddd = false;
 	//DBG("Dans askparam");
 	Miam::AsyncParamChange param;
-	if (model->lookForParameter(param))
+	while (model->lookForParameter(param))
 	{
 		//DBG("receive parameter");
 		//DBG("param type receive = " + (String)param.Type + " " + (String)param.Id2);
@@ -284,8 +284,25 @@ void AudioManager::askParameter()
 			//DBG("Activate");
 			if (param.Id1 == 555)
             {
+                //////////////////////////////////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////////////////////////////////
+                
+                // Retour direct à l'envoyeur
+                model->SendParamChange(param);
+                
+#ifdef VERSION_TEST_1_MILLION
+                if (param.Id2 == 999999)
+                {
+#endif
                 ondeCarre->Replay();
 				beginTest = true;
+#ifdef VERSION_TEST_1_MILLION
+                }
+#endif
+                //////////////////////////////////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////////////////////////////////
             }
 			else
 				AncienchooseAudioType(param.Id2,param.DoubleValue);
@@ -344,10 +361,12 @@ void AudioManager::askParameter()
 			break;
 		}
 	}
+    /*
 	else
 	{
 		//DBG("No param");
 	}
+    */
 
 	if (ddd == true)
 	{

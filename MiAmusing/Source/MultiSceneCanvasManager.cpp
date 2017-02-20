@@ -26,7 +26,6 @@ MultiSceneCanvasManager::MultiSceneCanvasManager(IGraphicSessionManager* graphic
 MultiSceneCanvasEditor(graphicSessionManager_, canvasComponent_, selfId_),
 graphicSessionManager(graphicSessionManager_)
 {
-    
 }
 
 MultiSceneCanvasManager::~MultiSceneCanvasManager()

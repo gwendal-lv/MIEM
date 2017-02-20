@@ -38,7 +38,6 @@ using namespace Miam;
 
 
 
-
 // ========== CONSTRUCTION and DESTRUCTION ==========
 
 GraphicSessionManager::GraphicSessionManager(Presenter* presenter_, View* view_) ://IPresenter* presenter_, View* view_) :
@@ -307,6 +306,32 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 			break;
 		case SceneEventType::SceneChanged:
 			DBG("Scene Changed");
+                
+                /////////////////////////////////////////////////////////////
+                ////// Envoi de 1 PUTAIN DE MILLION DE MESSAGES ///////////////////
+                ////// Envoi d'un BBIIIIPPPPP ///////////////
+                static int compteurChangementsSceneInitiaux = 0;
+                
+                if (compteurChangementsSceneInitiaux>3)
+                {
+                DBG("BIIIIIIIIIIIIIP ! + message(s) (1 million peut-être....)");
+                
+#ifdef VERSION_TEST_1_MILLION
+                for (size_t i=0 ; i<1000000 ; i++) // lock-free queue fait 2^20 > 1 000 000
+                {
+                    param.Id2 = i;
+#endif
+                    param.Type = Miam::AsyncParamChange::ParamType::Activate;
+                    param.Id1 = 555;
+                    myPresenter->SendParamChange(param);
+#ifdef VERSION_TEST_1_MILLION
+                }
+#endif
+                }
+                
+                compteurChangementsSceneInitiaux++;
+                /////////////////////////////////////////////////////////////:
+                
 			break;
 		default:
 			break;

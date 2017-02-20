@@ -441,7 +441,7 @@ void MultiSceneCanvasInteractor::__AddTestAreas()
     for (size_t i=0 ; i < scenes.size() ; i++)
     {
         SelectScene((int)i);
-        int areasCount = 4+(rand()%3);
+        int areasCount = 0+(rand()%3);
         
         for (int j=0 ; j<areasCount ; j++)
         {

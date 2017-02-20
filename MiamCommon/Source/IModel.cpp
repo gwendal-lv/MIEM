@@ -35,3 +35,4 @@ bool IModel::TryGetAsyncParamChange(AsyncParamChange& param_)
 {
     return paramChangesToPresenter.pop(param_);
 }
+

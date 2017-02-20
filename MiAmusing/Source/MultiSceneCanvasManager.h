@@ -48,6 +48,12 @@ namespace Amusing {
         MultiSceneCanvasManager(IGraphicSessionManager* graphicSessionManager_, MultiSceneCanvasComponent* canvasComponent_, SceneCanvasComponent::Id selfId_);
         virtual ~MultiSceneCanvasManager();
         
+        ///////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
+        void __Blink() {canvasComponent->__Blink();}
+        
+        ///////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
         // ------ Scenes managing : Add and Delete ------
         virtual void AddScene(std::string name) override;
 		void __AddAnimatedTestAreas();

@@ -141,6 +141,7 @@ std::shared_ptr<Follower> Presenter::getFollowerFromCtrl(int ctrlId)
 static int updatesCount = 0;
 void Presenter::Update() // remettre l'interieur dans graphsessionmanager
 {
+    std::cout << "Update presenter" << std::endl;
 	/*
 	auto param = AsyncParamChange();
 	for (int i = 0; i<100; i++)
@@ -158,11 +159,42 @@ void Presenter::Update() // remettre l'interieur dans graphsessionmanager
 	std::shared_ptr<Follower> currentFollower;
 	std::shared_ptr<GraphicEvent> graphicE;
 	
-	if (model->TryGetAsyncParamChange(param))
+	while (model->TryGetAsyncParamChange(param))
 	{
 		switch (param.Type)
 		{
 		case AsyncParamChange::ParamType::Activate :
+                
+                
+            //////////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////////
+                
+            if (param.Id1 == 555)
+            {
+                
+#ifdef VERSION_TEST_1_MILLION
+                if (param.Id2 == 999999)
+                {
+                    std::cout << "Accusé de réception des 1 000 000 de valeurs via le Modèle" << std::endl;
+#endif
+                
+                    std::cout << "Blink" << std::endl;
+                    graphicSessionManager.__Blink();
+                
+#ifdef VERSION_TEST_1_MILLION
+                }
+#endif
+                
+            }
+            else {
+                
+            //////////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////////
+                
 			//DBG("Next edge");
 			area = getAreaFromSource(param.Id1);
 			if (auto anime = std::dynamic_pointer_cast<AnimatedPolygon>(area))
@@ -174,6 +206,7 @@ void Presenter::Update() // remettre l'interieur dans graphsessionmanager
 				param2.DoubleValue = anime->GetNextAreaLength() / 10;
 				SendParamChange(param2);
 			}
+}
 			break;
 		case AsyncParamChange::ParamType::Duration :
 			DBG("new duration");
