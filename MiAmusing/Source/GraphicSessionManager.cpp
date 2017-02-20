@@ -290,6 +290,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 	}
 	else if (auto sceneE = std::dynamic_pointer_cast<SceneEvent>(event_))
 	{
+		static int compteurChangementsSceneInitiaux = 0;
 		
 		switch (sceneE->GetType())
 		{
@@ -310,7 +311,6 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
                 /////////////////////////////////////////////////////////////
                 ////// Envoi de 1 PUTAIN DE MILLION DE MESSAGES ///////////////////
                 ////// Envoi d'un BBIIIIPPPPP ///////////////
-                static int compteurChangementsSceneInitiaux = 0;
                 
                 if (compteurChangementsSceneInitiaux>3)
                 {
