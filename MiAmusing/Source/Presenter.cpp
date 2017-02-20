@@ -179,11 +179,19 @@ void Presenter::Update() // remettre l'interieur dans graphsessionmanager
                 {
                     std::cout << "Accusé de réception des 1 000 000 de valeurs via le Modèle" << std::endl;
 #endif
+#ifdef VERSION_TEST_1_MILLIER
+                    if (param.Id2 == 999)
+                    {
+                        std::cout << "Accusé de réception des 1 000 valeurs via le Modèle" << std::endl;
+#endif
                 
                     std::cout << "Blink" << std::endl;
                     graphicSessionManager.__Blink();
                 
 #ifdef VERSION_TEST_1_MILLION
+                }
+#endif
+#ifdef VERSION_TEST_1_MILLIER
                 }
 #endif
                 

@@ -321,10 +321,18 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
                 {
                     param.Id2 = i;
 #endif
+#ifdef VERSION_TEST_1_MILLIER
+                    for (size_t i=0 ; i<1000 ; i++) // lock-free queue fait 2^20 > 1 000 000
+                    {
+                        param.Id2 = i;
+#endif
                     param.Type = Miam::AsyncParamChange::ParamType::Activate;
                     param.Id1 = 555;
                     myPresenter->SendParamChange(param);
 #ifdef VERSION_TEST_1_MILLION
+                }
+#endif
+#ifdef VERSION_TEST_1_MILLIER
                 }
 #endif
                 }

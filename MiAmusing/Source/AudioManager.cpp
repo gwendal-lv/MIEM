@@ -290,7 +290,10 @@ void AudioManager::askParameter()
                 
                 // Retour direct à l'envoyeur
                 model->SendParamChange(param);
-                
+#ifdef VERSION_TEST_1_MILLIER
+                if (param.Id2 == 999)
+                {
+#endif
 #ifdef VERSION_TEST_1_MILLION
                 if (param.Id2 == 999999)
                 {
@@ -299,6 +302,9 @@ void AudioManager::askParameter()
 				beginTest = true;
 #ifdef VERSION_TEST_1_MILLION
                 }
+#endif
+#ifdef VERSION_TEST_1_MILLIER
+            }
 #endif
                 //////////////////////////////////////////////////////////////////////////////////
                 //////////////////////////////////////////////////////////////////////////////////
