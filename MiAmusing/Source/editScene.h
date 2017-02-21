@@ -79,6 +79,7 @@ private:
     ScopedPointer<TextButton> addTriangleButton;
     ScopedPointer<TextButton> addCircleButton;
     ScopedPointer<TextButton> addTrueCircleButton;
+    ScopedPointer<TextButton> deviceOptionButton;
 
 
     //==============================================================================

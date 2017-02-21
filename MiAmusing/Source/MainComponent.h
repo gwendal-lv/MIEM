@@ -74,6 +74,8 @@ private:
 	{
 		return editSceneC;
 	}
+
+	void ShowDeviceOptionsDialog(AudioDeviceManager& deviceManager);
     
     
     // = = = = = = = = = = METHODS (JUCE AND USER-DEFINED) = = = = = = = = = =

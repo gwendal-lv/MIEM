@@ -37,14 +37,16 @@ namespace Amusing {
 //==============================================================================
 /*
 */
-	class AudioManager : public AudioAppComponent
+	class AudioManager : public AudioSource,
+		                 public AudioSourcePlayer,
+		                 public AudioDeviceManager//AudioAppComponent
 	{
 	public:
 		AudioManager(AmusingModel *m_mode);
 		~AudioManager();
 
-		void paint(Graphics&) override;
-		void resized() override;
+		//void paint(Graphics&) override;
+		//void resized() override;
 
 		void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
 		void releaseResources() override;
@@ -53,6 +55,9 @@ namespace Amusing {
 		void askParameter();
 		void chooseAudioType(int position, int type);
 		void AncienchooseAudioType(int type,double duration);
+
+		AudioDeviceManager& getAudioDeviceManager();
+
 	private:
 		SquareSignal2 *ondeCarre;
 		void trackVectorHandler(bool deactivation, int type);
@@ -88,6 +93,9 @@ namespace Amusing {
 		int Nsources;
 
 		bool beginTest;
+
+		//std::shared_ptr<AudioDeviceManager> audioDeviceManager;
+		//AudioSourcePlayer audioSourcePlayer;
 
 	};
 }

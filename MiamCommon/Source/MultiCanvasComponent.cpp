@@ -155,3 +155,53 @@ MultiSceneCanvasComponent* MultiCanvasComponent::AddCanvas()
 
 
 
+void MultiCanvasComponent::ShowDeviceOptionsDialog(AudioDeviceManager& deviceManager)
+{
+	/*
+	DialogWindow::LaunchOptions options;
+	
+	ScopedPointer<AudioDeviceSelectorComponent> audioSetupComp;
+	audioSetupComp = new AudioDeviceSelectorComponent(deviceManager,
+		0, 256, 0, 256, true, true, true, false);
+	//audioSetupComp->setColour(0,Colours::white);
+	options.content.setOwned(audioSetupComp);
+	options.content->setSize(getWidth(), getHeight());
+	options.content->setVisible(true);
+	options.dialogTitle = "Dialog Window";
+	options.dialogBackgroundColour = Colour(0xff0e345a);
+	*/
+	/*
+	String m;
+	m << "Dialog Windows can be used to quickly show a component, usually blocking mouse input to other windows." << newLine
+		<< newLine
+		<< "They can also be quickly closed with the escape key, try it now.";
+
+	Label* label = new Label();
+	label->setText(m, dontSendNotification);
+	label->setColour(Label::textColourId, Colours::whitesmoke);
+	options.dialogBackgroundColour = Colour(0xff0e345a);
+	options.content.setOwned(label);
+	Rectangle<int> area(0, 0, 300, 200);
+	options.content->setSize(area.getWidth(), area.getHeight());
+	*/
+	/*
+	dialogWindow = options.launchAsync();
+
+	if (dialogWindow != nullptr)
+		dialogWindow->centreWithSize(getWidth(), getHeight());
+		*/
+	DialogWindow::LaunchOptions options;
+	audioSetupComp = new AudioDeviceSelectorComponent(deviceManager,
+		0, 256, 0, 256, true, true, true, false);
+
+	options.content.setOwned(audioSetupComp);
+	Rectangle<int> area(0, 0, getWidth(), getHeight());
+	options.content->setSize(area.getWidth(), area.getHeight());
+
+
+	options.dialogTitle = "Dialog Window";
+	dialogWindow = options.launchAsync();
+
+	if (dialogWindow != nullptr)
+		dialogWindow->centreWithSize(getWidth(), getHeight());
+}

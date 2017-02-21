@@ -78,8 +78,9 @@ namespace Miam {
         // - - - - - Canvases : Add and Delete - - - - -
         virtual MultiSceneCanvasComponent* AddCanvas();
         
-        
-        
+		void ShowDeviceOptionsDialog(AudioDeviceManager& deviceManager);
+		ScopedPointer<AudioDeviceSelectorComponent> audioSetupComp;
+		SafePointer<DialogWindow> dialogWindow;
     };
     
     

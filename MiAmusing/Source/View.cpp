@@ -85,5 +85,25 @@ void View::DisplayInfo(const String& message)
     throw std::runtime_error("Unimplemented behavior on info display request");
 }
 
+void View::ShowDeviceOptionsDialog(AudioDeviceManager& deviceManager)
+{
+
+	mainContentComponent->ShowDeviceOptionsDialog(deviceManager);
+	/*
+	Rectangle<int> r = mainContentComponent->getBounds();
+	DialogWindow::LaunchOptions options;
+	ScopedPointer<AudioDeviceSelectorComponent> audioSetupComp;
+	audioSetupComp = new AudioDeviceSelectorComponent(deviceManager,
+		0, 256, 0, 256, true, true, true, false);
+	options.content.setOwned(audioSetupComp);
+	options.content->setSize(r.getWidth(), r.getHeight());
+	options.dialogTitle = "Dialog Window";
+	options.dialogBackgroundColour = Colour(0xff0e345a);
+	dialogWindow = options.launchAsync();
+
+	if (dialogWindow != nullptr)
+		dialogWindow->centreWithSize(r.getWidth(), r.getHeight());
+	*/
+}
 
 

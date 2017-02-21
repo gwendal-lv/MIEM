@@ -148,6 +148,8 @@ namespace Amusing {
 		void OnPauseClicked();
 		void OnStopClicked();
 
+		void OnDeviceOptionsClicked();
+		
 	};
 
 

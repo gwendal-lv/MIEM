@@ -43,15 +43,21 @@ AudioManager::AudioManager(AmusingModel *m_model) : model(m_model), Nsources(0),
 	trackVector.reserve(Nmax);
 	activeVector.reserve(Nmax);
 	mixer = new MixerAudioSource();
-	setAudioChannels(0, 2);
-
 	
+	//setAudioChannels(0, 2);
+	//audioDeviceManager = std::shared_ptr<AudioDeviceManager>(new AudioDeviceManager());
+	initialise(0, 2,nullptr,true);
+	addAudioCallback(this);
+	setSource(this);
 }
 
 AudioManager::~AudioManager()
 {
 	DBG("audioManager destructor");
-	shutdownAudio();
+	//shutdownAudio();
+	setSource(nullptr);
+	removeAudioCallback(this);
+	closeAudioDevice();
 	DBG("audioManager destructor fin");
 
 	DBG("AudioManager::releaseResources");
@@ -59,24 +65,21 @@ AudioManager::~AudioManager()
 	DBG("AudioManager::releaseResources fin");
 }
 
+/*
 void AudioManager::paint (Graphics& g)
 {
-    /* This demo code just fills the component's background and
-       draws some placeholder text to get you started.
-
-       You should replace everything in this method with your own
-       drawing code..
-    */
-
+   
    
 }
-
+*/
+/*
 void AudioManager::resized()
 {
     // This method is where you should set the bounds of any child
     // components that your component contains..
 
 }
+*/
 
 void AudioManager::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 {
@@ -446,4 +449,9 @@ void AudioManager::HandleEvent()
 	param.Id1 = 0;
 	param.Type = Miam::AsyncParamChange::ParamType::Activate;
 	model->SendParamChange(param);
+}
+
+AudioDeviceManager& AudioManager::getAudioDeviceManager()
+{
+	return *this;
 }

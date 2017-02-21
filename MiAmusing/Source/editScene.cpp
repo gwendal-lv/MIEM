@@ -63,6 +63,10 @@ EditScene::EditScene ()
     addTrueCircleButton->setButtonText (TRANS("TrueCircle"));
     addTrueCircleButton->addListener (this);
 
+    addAndMakeVisible (deviceOptionButton = new TextButton ("new button"));
+    deviceOptionButton->setButtonText (TRANS("Options"));
+    deviceOptionButton->addListener (this);
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -86,6 +90,7 @@ EditScene::~EditScene()
     addTriangleButton = nullptr;
     addCircleButton = nullptr;
     addTrueCircleButton = nullptr;
+    deviceOptionButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -116,6 +121,7 @@ void EditScene::resized()
     addTriangleButton->setBounds (8, 176, 50, 24);
     addCircleButton->setBounds (8, 200, 50, 24);
     addTrueCircleButton->setBounds (8, 224, 50, 24);
+    deviceOptionButton->setBounds (8, 40, 50, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -167,6 +173,12 @@ void EditScene::buttonClicked (Button* buttonThatWasClicked)
         //[UserButtonCode_addTrueCircleButton] -- add your button handler code here..
 		graphicSessionManager->OnAddTrueCircle();
         //[/UserButtonCode_addTrueCircleButton]
+    }
+    else if (buttonThatWasClicked == deviceOptionButton)
+    {
+        //[UserButtonCode_deviceOptionButton] -- add your button handler code here..
+		graphicSessionManager->OnDeviceOptionsClicked();
+        //[/UserButtonCode_deviceOptionButton]
     }
 
     //[UserbuttonClicked_Post]
@@ -223,6 +235,9 @@ BEGIN_JUCER_METADATA
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="new button" id="9ac75bac4695259b" memberName="addTrueCircleButton"
               virtualName="" explicitFocusOrder="0" pos="8 224 50 24" buttonText="TrueCircle"
+              connectedEdges="0" needsCallback="1" radioGroupId="0"/>
+  <TEXTBUTTON name="new button" id="3c19a30b4f7eb6a6" memberName="deviceOptionButton"
+              virtualName="" explicitFocusOrder="0" pos="8 40 50 24" buttonText="Options"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>
 

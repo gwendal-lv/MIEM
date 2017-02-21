@@ -97,6 +97,8 @@ namespace Amusing {
         void CompleteInitialisation(AmusingModel* _model);
 
 		virtual void Update() override;
+
+		AudioDeviceManager& getAudioDeviceManager();
         
         // Events from the View
         AppMode appModeChangeRequest(AppMode newAppMode);

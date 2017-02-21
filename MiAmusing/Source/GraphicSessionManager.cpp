@@ -450,3 +450,9 @@ void GraphicSessionManager::OnAddFollower()
 	if (selectedCanvas)
 		getSelectedCanvasAsManager()->AddFollower(GetNextAreaId());
 }
+
+void GraphicSessionManager::OnDeviceOptionsClicked()
+{
+	view->ShowDeviceOptionsDialog(myPresenter->getAudioDeviceManager());
+	
+}
