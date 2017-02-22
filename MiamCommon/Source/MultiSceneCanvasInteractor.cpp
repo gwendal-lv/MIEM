@@ -369,7 +369,7 @@ void MultiSceneCanvasInteractor::SelectScene(int id)
     }
     else
     {
-        std::string errorMsg = "Scene id " + std::to_string(id) + " does not exist inside multi-scene canvas " + std::to_string(selfId);
+        std::string errorMsg = "Scene id " + juce::String(id).toStdString() + " does not exist inside multi-scene canvas " + juce::String(selfId).toStdString();
         throw std::runtime_error(errorMsg);
     }
 }
@@ -390,6 +390,7 @@ void MultiSceneCanvasInteractor::AddScene(std::shared_ptr<EditableScene> newScen
     scenes.push_back( newScene );
     auto sceneE = std::make_shared<SceneEvent>(shared_from_this(), newScene, SceneEventType::Added);
     handleAndSendEventSync(sceneE);
+
 
     SelectScene((int)(scenes.size())-1);
     

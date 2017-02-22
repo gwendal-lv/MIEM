@@ -275,7 +275,7 @@
       </MODULEPATHS>
     </XCODE_MAC>
     <ANDROIDSTUDIO targetFolder="Builds/AndroidStudio" androidSDKPath="" androidNDKPath=""
-                   extraDefs="__MIAMOBILE" androidMinimumSDK="21">
+                   extraDefs="__MIAMOBILE" androidMinimumSDK="23" gradleToolchain="gcc">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" androidArchitectures="armeabi armeabi-v7a x86" isDebug="1"
                        optimisation="1" targetName="MiAmusing" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../SpatCommon/Source/"
