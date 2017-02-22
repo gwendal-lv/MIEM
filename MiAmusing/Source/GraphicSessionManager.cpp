@@ -145,6 +145,7 @@ std::shared_ptr<MultiSceneCanvasEditor> GraphicSessionManager::getSelectedCanvas
 }
 
 
+static int compteurChangementsSceneInitiaux = 0;
 // ===== EVENTS FROM THE PRESENTER ITSELF =====
 void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_)
 {
@@ -290,7 +291,6 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 	}
 	else if (auto sceneE = std::dynamic_pointer_cast<SceneEvent>(event_))
 	{
-		static int compteurChangementsSceneInitiaux = 0;
 		
 		switch (sceneE->GetType())
 		{
@@ -312,7 +312,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
                 ////// Envoi de 1 PUTAIN DE MILLION DE MESSAGES ///////////////////
                 ////// Envoi d'un BBIIIIPPPPP ///////////////
                 
-                if (compteurChangementsSceneInitiaux>3)
+                if (compteurChangementsSceneInitiaux>2)
                 {
                 DBG("BIIIIIIIIIIIIIP ! + message(s) (1 million peut-être....)");
                 
