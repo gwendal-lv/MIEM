@@ -28,7 +28,7 @@ SquareSignal2::~SquareSignal2()
 void SquareSignal2::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 {
 	amusquare = new AmuSquare(frequency, amplitude, sampleRate, samplesPerBlockExpected);
-	N = round((double)time2play * sampleRate);
+	N = round((double)time2play * sampleRate / 1000.0); //time2Play en millisecondes
 	DBG("N  = " + (String)N);
 }
 

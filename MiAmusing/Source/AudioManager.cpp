@@ -92,7 +92,7 @@ void AudioManager::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 	DBG("div = " + (String)div);
 
 
-	ondeCarre = new SquareSignal2(3520, 0.5, 2);
+	ondeCarre = new SquareSignal2(3520, 0.5, 500);
 	ondeCarre->prepareToPlay(samplesPerBlockExpected, sampleRate);
 }
 void AudioManager::releaseResources()
