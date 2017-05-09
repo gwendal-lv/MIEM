@@ -22,7 +22,7 @@
 //[/Headers]
 
 #include "OscMatrixComponent.h"
-
+#include "MatrixComponent.H"
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
 using namespace Miam;
@@ -129,6 +129,24 @@ void OscMatrixComponent::resized()
 void OscMatrixComponent::OnSliderValueChanged(int row, int col, double value)
 {
     presenter->OnSliderValueChanged(row, col, value);
+}
+void OscMatrixComponent::SetSliderValue(int row, int col, double value)
+{
+    slidersMatrix->GetMatrixComponent()->SetSliderValue(row, col, value);
+}
+void OscMatrixComponent::SetUdpPortAndMessage(int udpPort, bool isConnected)
+{
+    udpPortTextEditor->setText(std::to_string(udpPort), NotificationType::sendNotification);
+    if (isConnected)
+    {
+        udpStatusLabel->setText("Connected.", NotificationType::dontSendNotification);
+        udpStatusLabel->setColour(Label::ColourIds::textColourId, Colours::black);
+    }
+    else
+    {
+        udpStatusLabel->setText("Not connected!", NotificationType::dontSendNotification);
+        udpStatusLabel->setColour(Label::ColourIds::textColourId, Colours::darkred);
+    }
 }
 //[/MiscUserCode]
 

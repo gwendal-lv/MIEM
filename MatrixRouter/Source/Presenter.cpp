@@ -13,6 +13,8 @@
 #include "Presenter.h"
 
 #include "PluginProcessor.h" // class MatrixRouterAudioProcessor
+#include "NetworkModel.h"
+
 #include "OscMatrixComponent.h"
 
 #include "MatrixSlider.h" // min and max volumes
@@ -23,9 +25,9 @@ using namespace Miam;
 
 
 // =================== Construction & destruction ===================
-Presenter::Presenter(MatrixRouterAudioProcessor& _model)
+Presenter::Presenter(MatrixRouterAudioProcessor& _model, NetworkModel& _networkModel)
     :
-    model(_model)
+    model(_model), networkModel(_networkModel)
 {
     oscMatrixComponent = new OscMatrixComponent(this);
 }
@@ -44,14 +46,17 @@ void Presenter::UpdateFromView(MatrixRouterAudioProcessorEditor* view)
 {
     // Have new messages arrived ?
     AsyncParamChange newParamChange;
+    double sliderValue_dB;
     while( model.TryGetAsyncParamChange(newParamChange) )
     {
         switch (newParamChange.Type)
         {
             case AsyncParamChange::InputsAndOutputsCount :
-                std::cout << "=====================" << std::endl;
-                std::cout << newParamChange.Id1 << "in " << newParamChange.Id2 << "out" << std::endl;
-                std::cout << "=====================" << std::endl;
+                break;
+                
+            case AsyncParamChange::Volume :
+                sliderValue_dB = 20*log(newParamChange.DoubleValue);
+                oscMatrixComponent->SetSliderValue(newParamChange.Id1, newParamChange.Id2, sliderValue_dB);
                 break;
                 
             default :
@@ -85,5 +90,14 @@ void Presenter::OnSliderValueChanged(int row, int col, double value)
     // Enqueuing
     SendParamChange(paramChange);
 }
+
+
+// =================== Synchronous callbacks from Model ===================
+void Presenter::OnNewUdpPort(int udpPort, bool isConnected)
+{
+    oscMatrixComponent->SetUdpPortAndMessage(udpPort, isConnected);
+}
+
+
 
 

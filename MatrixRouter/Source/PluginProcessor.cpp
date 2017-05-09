@@ -14,7 +14,10 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+#include "NetworkModel.h"
+
 #include "Presenter.h"
+
 
 using namespace Miam;
 
@@ -36,8 +39,6 @@ MatrixRouterAudioProcessor::MatrixRouterAudioProcessor()
 #endif
     currentInputBuffer(1, Miam_MaxBufferSize)
 {
-    presenter = new Presenter(*this);
-    
     // Init of the routing matrix
     for (int i=0 ; i<JucePlugin_MaxNumInputChannels ; i++)
     {
@@ -48,11 +49,23 @@ MatrixRouterAudioProcessor::MatrixRouterAudioProcessor()
             newMatrixCoeff[i][j] = false;
         }
     }
+    
+    // Modules init afterwards self-init
+    networkModel = new NetworkModel(*this);
+    presenter = new Presenter(*this, *networkModel);
+    
+    // Creation of automatizable audio parameters for DAW communication
+    addParameter(udpPortAudioParam = new AudioParameterInt("udpPort",
+                                                           "UDP port for OSC",
+                                                           -1,     // min
+                                                           32768,  // max
+                                                           7654)); // default
 }
 
 MatrixRouterAudioProcessor::~MatrixRouterAudioProcessor()
 {
     delete presenter;
+    delete networkModel;
 }
 
 //==============================================================================
@@ -256,23 +269,39 @@ void MatrixRouterAudioProcessor::processorAsyncUpdate()
     
     // - - - - - At first, info from the Presenter - - - - -
     while (presenter->TryGetAsyncParamChange(paramChange))
-    {
-        switch (paramChange.Type)
-        {
-            case AsyncParamChange::Volume : // Matrix coefficient
-                routingMatrix[paramChange.Id1][paramChange.Id2] = (float)paramChange.DoubleValue;
-                std::cout << paramChange.Id1 << " " << paramChange.Id2 << " " << paramChange.DoubleValue << std::endl;
-                newMatrixCoeff[paramChange.Id1][paramChange.Id2] = true;
-                break;
-                
-            default :
-                break;
-        }
-    }
+        processParamChange(paramChange);
     
     // - - - - - Then, info from the network module of the model - - - - -
     // Such data will erase anything from the presenter, and the presenter will
     // even be lock-freely informed of the freshest data available
+    while (networkModel->TryGetAsyncParamChange(paramChange))
+        processParamChange(paramChange, true);
+}
+void MatrixRouterAudioProcessor::processParamChange(AsyncParamChange& paramChange, bool notifyPresenter)
+{
+    switch (paramChange.Type)
+    {
+        // Matrix coefficient
+        case AsyncParamChange::Volume :
+            // Security : any unadapted data makes the whole param change corrupted
+            if (0 <= paramChange.Id1
+                && paramChange.Id1 < JucePlugin_MaxNumInputChannels
+                && 0 <= paramChange.Id2
+                && paramChange.Id2 < JucePlugin_MaxNumOutputChannels
+                && 0.0 <= paramChange.DoubleValue
+                && paramChange.DoubleValue <= 2.0) // +6dB
+            {
+                routingMatrix[paramChange.Id1][paramChange.Id2] = (float)paramChange.DoubleValue;
+                newMatrixCoeff[paramChange.Id1][paramChange.Id2] = true;
+            }
+            break;
+            
+        default :
+            break;
+    }
+    
+    if (notifyPresenter)
+        TrySendParamChange(paramChange);
 }
 //==============================================================================
 //==============================================================================
@@ -296,15 +325,26 @@ AudioProcessorEditor* MatrixRouterAudioProcessor::createEditor()
 //==============================================================================
 void MatrixRouterAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
-    // You should use this method to store your parameters in the memory block.
-    // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
+    // Data backup towards the DAW
+    MemoryOutputStream (destData, true).writeInt(*udpPortAudioParam);
 }
 
 void MatrixRouterAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
+    // Data retrieval from the DAW
+    *udpPortAudioParam = MemoryInputStream (data, static_cast<size_t> (sizeInBytes), false).readInt();
+    
+    // Updates then
+    bool isUdpConnected = networkModel->SetUdpPort(*udpPortAudioParam);
+    presenter->OnNewUdpPort(*udpPortAudioParam, isUdpConnected);
+    
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //  + MISE À JOUR MATRICE VIA UNE LOCK FREE QUEUE INTERNE MA GUEULE
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 }
 
 //==============================================================================

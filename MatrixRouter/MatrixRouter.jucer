@@ -5,7 +5,7 @@
               buildVST="1" buildVST3="0" buildAU="1" buildAUv3="0" buildRTAS="0"
               buildAAX="0" pluginName="MiamMatrixRouter" pluginDesc="OSC controllable matrix router, for Miam Spat"
               pluginManufacturer="IRISIB/LARAS" pluginManufacturerCode="Manu"
-              pluginCode="Eo3z" pluginChannelConfigs="{64,64} " pluginIsSynth="0"
+              pluginCode="Eo3z" pluginChannelConfigs="{2,2} " pluginIsSynth="0"
               pluginWantsMidiIn="0" pluginProducesMidiOut="0" pluginIsMidiEffectPlugin="0"
               pluginEditorRequiresKeys="0" pluginAUExportPrefix="MatrixRouterAU"
               pluginRTASCategory="" aaxIdentifier="com.yourcompany.MatrixRouter"
@@ -28,6 +28,9 @@
         <FILE id="CQqYd4" name="Presenter.h" compile="0" resource="0" file="Source/Presenter.h"/>
       </GROUP>
       <GROUP id="{0ED79599-C00F-00E8-80B1-210744F00E09}" name="Model">
+        <FILE id="eHIS36" name="NetworkModel.cpp" compile="1" resource="0"
+              file="Source/NetworkModel.cpp"/>
+        <FILE id="Spzxt0" name="NetworkModel.h" compile="0" resource="0" file="Source/NetworkModel.h"/>
         <FILE id="mQOtF5" name="PluginProcessor.cpp" compile="1" resource="0"
               file="Source/PluginProcessor.cpp"/>
         <FILE id="SMXCE8" name="PluginProcessor.h" compile="0" resource="0"
@@ -222,7 +225,6 @@
         <MODULEPATH id="juce_data_structures" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_gui_basics" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_cryptography" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_video" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_opengl" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_basics" path="../../JUCE/modules"/>
@@ -230,6 +232,8 @@
         <MODULEPATH id="juce_audio_formats" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_plugin_client" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
     <VS2015 targetFolder="Builds/VisualStudio2015">
@@ -246,7 +250,6 @@
         <MODULEPATH id="juce_data_structures" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_gui_basics" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_cryptography" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_video" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_opengl" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_basics" path="../../JUCE/modules"/>
@@ -254,6 +257,8 @@
         <MODULEPATH id="juce_audio_formats" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_plugin_client" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </VS2015>
   </EXPORTFORMATS>
@@ -271,6 +276,7 @@
     <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0"/>
     <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0"/>
     <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_osc" showAllCode="1" useLocalCopy="0"/>
     <MODULE id="juce_video" showAllCode="1" useLocalCopy="0"/>
   </MODULES>
   <JUCEOPTIONS JUCE_QUICKTIME="disabled"/>

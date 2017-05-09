@@ -24,6 +24,7 @@ namespace Miam {
     
     // Forward declarations
     class MatrixRouterAudioProcessor;
+    class NetworkModel;
     class MatrixRouterAudioProcessorEditor;
     class OscMatrixComponent;
     
@@ -39,6 +40,7 @@ namespace Miam {
         // - - - - - links to other modules - - - - -
         private :
         MatrixRouterAudioProcessor& model;
+        NetworkModel& networkModel;
         
         // - - - - - graphical objects - - - - -
         /// \brief Kept within the presenter, sent to the ProcessorEditor (=View)
@@ -53,7 +55,7 @@ namespace Miam {
         
         // - - - - - Construction & destruction - - - - -
         public :
-        Presenter(MatrixRouterAudioProcessor& _model);
+        Presenter(MatrixRouterAudioProcessor& _model, NetworkModel& _networkModel);
         ~Presenter();
         
         // - - - - - Setters and Getters - - - - -
@@ -75,6 +77,9 @@ namespace Miam {
         void OnSliderValueChanged(int row, int col, double value);
         
         
+        // - - - - - Synchronous callbacks from Model - - - - -
+        // Bien vérifier à un moment que tout ça passe bien sur le thread UI dans Juce !
+        void OnNewUdpPort(int udpPort, bool isConnected);
     };
     
 }

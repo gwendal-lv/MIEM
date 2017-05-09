@@ -22,7 +22,8 @@
 
 namespace Miam {
     
-    // Pre-declarations for pointer members
+    // Forward declarations
+    class NetworkModel;
     class Presenter;
     
     
@@ -36,6 +37,7 @@ namespace Miam {
         // ================== ATTRIBUTES ===================
     private:
         // - - - - - Links to other modules - - - - -
+        NetworkModel* networkModel;
         Presenter* presenter;
         
         // - - - - - Various buffers - - - - -
@@ -59,6 +61,10 @@ namespace Miam {
         float oldRoutingMatrix[JucePlugin_MaxNumInputChannels][JucePlugin_MaxNumInputChannels];
         /// \brief Indicates wether the concerned matrix coeff has just been updated
         bool newMatrixCoeff[JucePlugin_MaxNumInputChannels][JucePlugin_MaxNumInputChannels];
+        
+        
+        // - - - - - Audio parameters for Automation - - - - -
+        AudioParameterInt* udpPortAudioParam;
         
         // - - - - - Auxiliary attributes - - - - -
         // To detect and send changes to the Presenter
@@ -87,6 +93,7 @@ namespace Miam {
         /// \brief Gets all available Miam::AsyncParamChange data structures and
         /// interprets in terms of audio processor coefficients
         void processorAsyncUpdate();
+        void processParamChange(AsyncParamChange& paramChange, bool notifyPresenter=false);
     public :
         
         

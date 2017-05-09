@@ -74,6 +74,8 @@ public:
     /// \brief Callback from the MatrixComponent
     void OnSliderValueChanged(int row, int col, double value)
     {listener->OnSliderValueChanged(row, col, value);}
+    
+    MatrixComponent* GetMatrixComponent();
     //[/UserMethods]
 
     void paint (Graphics& g) override;

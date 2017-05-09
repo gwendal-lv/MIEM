@@ -55,6 +55,7 @@
 #define JUCE_MODULE_AVAILABLE_juce_gui_basics               1
 #define JUCE_MODULE_AVAILABLE_juce_gui_extra                1
 #define JUCE_MODULE_AVAILABLE_juce_opengl                   1
+#define JUCE_MODULE_AVAILABLE_juce_osc                      1
 #define JUCE_MODULE_AVAILABLE_juce_video                    1
 
 //==============================================================================
@@ -393,11 +394,11 @@
  #define JucePlugin_IAAName                "IRISIB/LARAS: MiamMatrixRouter"
 #endif
 #ifndef  JucePlugin_MaxNumInputChannels
- #define JucePlugin_MaxNumInputChannels    64
+ #define JucePlugin_MaxNumInputChannels    2
 #endif
 #ifndef  JucePlugin_MaxNumOutputChannels
- #define JucePlugin_MaxNumOutputChannels   64
+ #define JucePlugin_MaxNumOutputChannels   2
 #endif
 #ifndef  JucePlugin_PreferredChannelConfigurations
- #define JucePlugin_PreferredChannelConfigurations  {64,64} 
+ #define JucePlugin_PreferredChannelConfigurations  {2,2} 
 #endif

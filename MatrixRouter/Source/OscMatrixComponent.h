@@ -53,6 +53,8 @@ public:
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
     void OnSliderValueChanged(int row, int col, double value) override;
+    void SetSliderValue(int row, int col, double value);
+    void SetUdpPortAndMessage(int udpPort, bool isConnected);
     //[/UserMethods]
 
     void paint (Graphics& g) override;

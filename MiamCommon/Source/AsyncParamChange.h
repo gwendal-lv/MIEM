@@ -11,6 +11,8 @@
 #ifndef ASYNCPARAMCHANGE_H_INCLUDED
 #define ASYNCPARAMCHANGE_H_INCLUDED
 
+#include <string>
+
 
 namespace Miam
 {
@@ -51,6 +53,31 @@ namespace Miam
         double DoubleValue = 0.0;
         int IntegerValue = 0;
         
+        
+        std::string ToString()
+        {
+            std::string returnString = "ParamChange : ";
+            
+            switch(Type)
+            {
+                case None: returnString = "None"; break;
+                case Volume : returnString = "Volume"; break;
+                    
+                default :
+                    returnString = std::to_string((int)Type);
+            }
+            
+            returnString += " Id1=";
+            returnString += std::to_string(Id1);
+            returnString += " Id2=";
+            returnString += std::to_string(Id2);
+            returnString += " DoubleValue=";
+            returnString += std::to_string(DoubleValue);
+            returnString += " IntegerValue=";
+            returnString += std::to_string(IntegerValue);
+            
+            return returnString;
+        }
         
         
     };

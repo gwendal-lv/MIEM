@@ -236,6 +236,11 @@ void LabelledMatrixComponent::OnViewportVisibleAreaChanged()
     repositionLabels();
 }
 
+MatrixComponent* LabelledMatrixComponent::GetMatrixComponent()
+{
+    return matrixViewport->GetMatrixComponent();
+}
+
 //[/MiscUserCode]
 
 

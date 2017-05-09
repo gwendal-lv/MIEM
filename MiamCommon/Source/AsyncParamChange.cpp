@@ -9,3 +9,5 @@
 */
 
 #include "AsyncParamChange.h"
+
+using namespace Miam;

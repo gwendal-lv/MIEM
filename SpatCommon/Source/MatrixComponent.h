@@ -67,6 +67,20 @@ namespace Miam
         }
         
         
+        // - - - - - Setters and Getters - - - - -
+        void SetSliderValue(int row, int col, double newValue)
+        {
+            MatrixSlider* slider = sliders[row*maxColsCount + col].get();
+            // To prevent direct backwards retransmission
+            slider->removeListener(this);
+            slider->setValue(newValue);
+            slider->addListener(this);
+            
+            // Graphical update
+            setSliderColourFromVolume(slider);
+        }
+        
+        
         // - - - - - Juce graphics - - - - -
         
         void paint (Graphics& g) override
