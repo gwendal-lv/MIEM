@@ -18,6 +18,7 @@
 
 #include "SceneCanvasComponent.h"
 #include "InteractiveScene.h"
+#include "MiamMath.h"
 
 
 using namespace Amusing;
@@ -34,8 +35,8 @@ Follower::Follower(int64_t _Id, Point<double> _center, double _r, Colour _fillCo
 	initTranslation = masterArea->initializePolygone(center);
 	position = masterArea->initiateFollower();
 	
-	DBG("trX = " + (String)initTranslation.getX());
-	DBG("trY = " + (String)initTranslation.getY());
+	//DBG("trX = " + (String)initTranslation.getX());
+	//DBG("trY = " + (String)initTranslation.getY());
 	first = true;
 	//Translate(translation);
 	
@@ -114,7 +115,20 @@ std::shared_ptr<Miam::AreaEvent> Follower::setPosition(double m_position)
 	//masterArea->getPosition(m_position);
 	//setCenterPosition(Point<double>(320.4, 178));
 
-	setCenterPosition(masterArea->getPosition(m_position));
+	Point<double> newPosition = masterArea->getPosition(m_position);
+	/*
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(masterScene))
+	{
+		Point<double> interPoint = amusingScene->hitPolygon(newPosition, masterArea, masterArea->getCurrentPoint(), masterArea->getAfterPoint());
+		if (  interPoint != Point<double>(0,0))
+		{
+			DBG("!!!!!!!!!!!!! collision en " + (String)interPoint.getX() + " " + (String)interPoint.getY() +"!!!!!!!!!");
+			
+			
+			
+		}
+	}*/
+	setCenterPosition(newPosition);
 	
 	
 
@@ -127,9 +141,14 @@ std::shared_ptr<Miam::AreaEvent> Follower::setPosition(double m_position)
 void Follower::initArea()
 {
 	if (auto masterSceneAmusing = std::dynamic_pointer_cast<AmusingScene>(masterScene))
-		masterArea = masterSceneAmusing->getFirstArea();
+	{
+		//masterArea = masterSceneAmusing->getFirstArea();
+		masterArea = masterSceneAmusing->getNextArea();
+	}
 	else
 		DBG("pas amusing scene");
+	if (masterArea == nullptr)
+		DBG("NULLPTR");
 }
 
 void Follower::setCenter(Point<double> newCenter)
@@ -161,4 +180,10 @@ void Follower::setGC(Point<double> newGC)
 		Translate(translation);
 		GC = newGC;
 	}
+}
+
+bool Follower::isLinkTo(std::shared_ptr<AnimatedPolygon> polygon)
+{
+	if (masterArea == polygon)
+		return true;
 }

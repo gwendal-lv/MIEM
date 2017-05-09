@@ -30,11 +30,12 @@ namespace Amusing
 	{
 		public :
 			Follower(int64_t _Id, Point<double> _center, double _r, Colour _fillColour, float _canvasRatio, std::shared_ptr<Miam::InteractiveScene> m_masterScene);
-			virtual ~Follower();
+			~Follower();
 			virtual IDrawableArea* Clone() const override { return new Follower(*this); }
 
 			std::shared_ptr<Miam::AreaEvent> setPosition(double m_position);
 			std::shared_ptr<AnimatedPolygon> getCurrentPolygon();
+			bool isLinkTo(std::shared_ptr<AnimatedPolygon> polygon);
 		private :
 
 			

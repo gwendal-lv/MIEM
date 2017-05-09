@@ -62,8 +62,8 @@ namespace Amusing {
         // Conversion from areas to sources
 		//Presenter myPresenter;
 		
-		std::map<std::shared_ptr<Miam::IEditableArea>, int> areaToSource; 
-		std::map<int,std::shared_ptr<Miam::IEditableArea>> sourceToArea;
+		//std::map<std::shared_ptr<Miam::IEditableArea>, int> areaToSource; 
+		//std::map<int,std::shared_ptr<Miam::IEditableArea>> sourceToArea;
 		boost::bimap<std::shared_ptr<IEditableArea>,int> areaToSourceMulti;
 		int Nsources, Nfollower;
 

@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 4.3.1
+  Created with Projucer version: 5.0.1
 
   ------------------------------------------------------------------------------
 
@@ -63,6 +63,14 @@ EditScene::EditScene ()
     addTrueCircleButton->setButtonText (TRANS("TrueCircle"));
     addTrueCircleButton->addListener (this);
 
+    addAndMakeVisible (deleteButton = new TextButton ("new button"));
+    deleteButton->setButtonText (TRANS("Delete"));
+    deleteButton->addListener (this);
+
+    addAndMakeVisible (completeButton = new TextButton ("new button"));
+    completeButton->setButtonText (TRANS("Complete"));
+    completeButton->addListener (this);
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -86,6 +94,8 @@ EditScene::~EditScene()
     addTriangleButton = nullptr;
     addCircleButton = nullptr;
     addTrueCircleButton = nullptr;
+    deleteButton = nullptr;
+    completeButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -116,6 +126,8 @@ void EditScene::resized()
     addTriangleButton->setBounds (8, 176, 50, 24);
     addCircleButton->setBounds (8, 200, 50, 24);
     addTrueCircleButton->setBounds (8, 224, 50, 24);
+    deleteButton->setBounds (8, 248, 50, 24);
+    completeButton->setBounds (8, 280, 50, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -167,6 +179,19 @@ void EditScene::buttonClicked (Button* buttonThatWasClicked)
         //[UserButtonCode_addTrueCircleButton] -- add your button handler code here..
 		graphicSessionManager->OnAddTrueCircle();
         //[/UserButtonCode_addTrueCircleButton]
+    }
+    else if (buttonThatWasClicked == deleteButton)
+    {
+        //[UserButtonCode_deleteButton] -- add your button handler code here..
+		//setMouseCursor(MouseCursor::StandardCursorType::CrosshairCursor);
+		graphicSessionManager->OnDelete();
+        //[/UserButtonCode_deleteButton]
+    }
+    else if (buttonThatWasClicked == completeButton)
+    {
+        //[UserButtonCode_completeButton] -- add your button handler code here..
+		graphicSessionManager->OnAddComplete();
+        //[/UserButtonCode_completeButton]
     }
 
     //[UserbuttonClicked_Post]
@@ -223,6 +248,12 @@ BEGIN_JUCER_METADATA
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="new button" id="9ac75bac4695259b" memberName="addTrueCircleButton"
               virtualName="" explicitFocusOrder="0" pos="8 224 50 24" buttonText="TrueCircle"
+              connectedEdges="0" needsCallback="1" radioGroupId="0"/>
+  <TEXTBUTTON name="new button" id="bbaaf855224933f0" memberName="deleteButton"
+              virtualName="" explicitFocusOrder="0" pos="8 248 50 24" buttonText="Delete"
+              connectedEdges="0" needsCallback="1" radioGroupId="0"/>
+  <TEXTBUTTON name="new button" id="3ae91a7e9eec6859" memberName="completeButton"
+              virtualName="" explicitFocusOrder="0" pos="8 280 50 24" buttonText="Complete"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>
 

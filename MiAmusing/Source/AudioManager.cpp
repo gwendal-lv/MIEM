@@ -36,6 +36,7 @@ AudioManager::AudioManager(AmusingModel *m_model) : model(m_model), Nsources(0),
 	/////////////////////
 	useADSR = 1;////////
 	////////////////////
+	testPos = 0;
 
 	count = 0;
 
@@ -110,10 +111,27 @@ void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 	if (fmod(count, div) == 0)
 		sendPosition();
 	++count;
+	bool testComplete = true;
+	if (testComplete)
+	{
+		if (state == Play)
+		{
+			//DBG("testPos = " + (String)(testPos*1000));
+			testPos = (testPos + 0.001);
+			if (testPos > 1)
+				testPos = 0;
+			AsyncParamChange param;
+			param.Type = AsyncParamChange::ParamType::Position;
+			param.Id1 = 0;
+			param.DoubleValue = testPos;
+			model->SendParamChange(param);
+		}
+	}
 }
 
 void AudioManager::sendPosition()
 {
+	/*
 	AsyncParamChange param;
 	for (int i = 0; i < Nsources; ++i)
 	{
@@ -126,7 +144,21 @@ void AudioManager::sendPosition()
 				model->SendParamChange(param);
 			}
 	}
-		
+	*/
+	AsyncParamChange param;
+	for (int i = 0; i < Nsources; ++i)
+	{
+		if (i > 1) // pour le moment, pour pas envoyer a un Follower inexistant et verifier qu'on detecte bien la collision
+			break;
+		param.Type = AsyncParamChange::ParamType::Position;
+		if (trackVector[i]->isPlaying())
+			if (auto currentADSR = std::dynamic_pointer_cast<ADSRSignal>(trackVector[i]))
+			{
+				param.Id1 = i;
+				param.DoubleValue = (double)currentADSR->getPosition() / (double)currentADSR->getLength();
+				model->SendParamChange(param);
+			}
+	}
 }
 
 void AudioManager::chooseAudioType(int position, int type)
@@ -311,7 +343,10 @@ void AudioManager::askParameter()
 			break;
 		case Miam::AsyncParamChange::ParamType::Stop:
 			DBG("Stop control received");
-			changeState(Stop);
+			if (param.Id1 == 255)
+				changeState(Stop);
+			else
+				trackVector[param.Id1]->changeState(TransportState::Stopped);
 			break;
 		case Miam::AsyncParamChange::ParamType::Source:
 			sourceControled.push_back(param.Id2);

@@ -30,6 +30,7 @@ Author:  Gwendal Le Vaillant
 #include "AnimatedPolygon.h"
 #include "EditableEllipse.h"
 #include "Follower.h"
+#include "CompletePolygon.h"
 #include <cmath>
 
 using namespace Amusing;
@@ -44,7 +45,8 @@ using namespace Miam;
 GraphicSessionManager::GraphicSessionManager(Presenter* presenter_, View* view_) ://IPresenter* presenter_, View* view_) :
 	IGraphicSessionManager(presenter_),
 	view(view_),
-	myPresenter(presenter_)
+	myPresenter(presenter_),
+	deleting(false)
 {
 
 	editScene = view->GetMainContentComponent()->GetSceneEditionComponent();
@@ -68,9 +70,9 @@ GraphicSessionManager::GraphicSessionManager(Presenter* presenter_, View* view_)
 	{
 		// After canvases are created : scenes creation
 		// DEFAULT SCENES, TO BE CHANGED
-		canvasManagers[i]->AddScene("Scène 1");
-		canvasManagers[i]->AddScene("Scène 2");
-		canvasManagers[i]->AddScene("Scène 3");
+		canvasManagers[i]->AddScene("Scene 1");
+		canvasManagers[i]->AddScene("Scene 2");
+		canvasManagers[i]->AddScene("Scene 3");
 	}
 	
 	// Links to the view module
@@ -158,6 +160,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 	double f;
 	int speed = 10;
 	// Event about an Area
+	
 	if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(event_))
 	{
 		if (auto multiE = std::dynamic_pointer_cast<MultiAreaEvent>(event_))
@@ -200,15 +203,37 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					param.Id2 = myPresenter->getSourceID((follower->getCurrentPolygon()));
 					param.Type = Miam::AsyncParamChange::ParamType::Source;
 				}
+				if (auto complete = std::dynamic_pointer_cast<CompletePolygon>(area))
+				{
+					param.Id1 = 0;
+					param.DoubleValue = 8;
+					//param.Type = Miam::AsyncParamChange::ParamType::Source;
+				}
 				
-				myPresenter->SendParamChange(param);
+				//myPresenter->SendParamChange(param);
 				DBG("Send");
 				break;
 			case AreaEventType::Deleted:
+				
 				param.Type = Miam::AsyncParamChange::ParamType::Volume;
 				param.DoubleValue = 0;
 				myPresenter->SendParamChange(param);
-				DBG("Area deleted");
+				if (auto anime = std::dynamic_pointer_cast<AnimatedPolygon> (area))
+				{
+					DBG("Area deleted");
+					if (deleting)
+					{
+						DBG("deleter les followers mtn");
+						getSelectedCanvasAsManager()->deleteUnusedFollowers();
+					}
+					
+				}
+				else if (auto follower = std::dynamic_pointer_cast<Follower>(area))
+				{
+					DBG("follower a deleter !");
+					param.Type = Miam::AsyncParamChange::ParamType::Stop;
+					param.Id1 = myPresenter->getCtrlSourceId(follower);
+				}
 				break;
 			case AreaEventType::PointDragBegins :
 				DBG("PointDragBegins");
@@ -314,10 +339,12 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 	}
 	else if(auto controlE = std::dynamic_pointer_cast<ControlEvent>(event_ ))
 	{
+		bool testCompletePolygon = true;
 		switch (controlE->GetType())
 		{
 		case ControlEventType::Play:
-			OnAddFollower();
+			if (testCompletePolygon == false)
+				OnAddFollower();
 			param.Type = Miam::AsyncParamChange::ParamType::Play;
 			myPresenter->SendParamChange(param);
 			break;
@@ -327,6 +354,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 			break;
 		case ControlEventType::Stop:
 			param.Type = Miam::AsyncParamChange::ParamType::Stop;
+			param.Id1 = 255;
 			myPresenter->SendParamChange(param);
 			break;
 		default:
@@ -372,6 +400,12 @@ void GraphicSessionManager::OnFollowerTranslation(std::shared_ptr<GraphicEvent> 
 		getSelectedCanvasAsManager()->OnFollowerTranslation(graphicE);
 }
 
+void GraphicSessionManager::OnAudioPosition(double position)
+{
+	if (selectedCanvas)
+		getSelectedCanvasAsManager()->OnAudioPosition(position);
+}
+
 void GraphicSessionManager::OnAddSquare()
 {
 	if (selectedCanvas)
@@ -405,5 +439,28 @@ void GraphicSessionManager::OnAddTrueCircle()
 void GraphicSessionManager::OnAddFollower()
 {
 	if (selectedCanvas)
-		getSelectedCanvasAsManager()->AddFollower(GetNextAreaId());
+	{
+		int N = getSelectedCanvasAsManager()->getNumberArea();
+		for (int i = 0; i < N; ++i)
+		{
+			getSelectedCanvasAsManager()->AddFollower(GetNextAreaId());
+		}
+	}
+}
+
+void GraphicSessionManager::OnDelete()
+{
+	if (selectedCanvas)
+	{
+		getSelectedCanvasAsManager()->OnDelete();
+		deleting = true;
+	}
+}
+
+void GraphicSessionManager::OnAddComplete()
+{
+	if (selectedCanvas)
+	{
+		getSelectedCanvasAsManager()->AddCompleteArea();
+	}
 }

@@ -85,6 +85,7 @@ namespace Amusing {
 		const int Nmax = 1024;
 		int Nsources;
 
+		double testPos;
 	};
 }
 

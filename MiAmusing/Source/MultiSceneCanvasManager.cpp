@@ -15,9 +15,11 @@
 #include "AmusingScene.h"
 
 #include "AnimatedPolygon.h"
+#include "CompletePolygon.h"
 
 #include "GraphicEvent.h"
 #include "MultiAreaEvent.h"
+#include <thread>
 
 using namespace Amusing;
 
@@ -84,6 +86,12 @@ void MultiSceneCanvasManager::AddFollower(uint64_t nextAreaId)
 		handleAndSendAreaEventSync(amusingScene->AddFollower(nextAreaId));
 }
 
+void MultiSceneCanvasManager::AddCompleteArea()
+{
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+		handleAndSendAreaEventSync(amusingScene->AddCompleteArea(12));
+}
+
 void MultiSceneCanvasManager::OnFollowerTranslation(std::shared_ptr<GraphicEvent> graphicE)
 {
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
@@ -91,4 +99,89 @@ void MultiSceneCanvasManager::OnFollowerTranslation(std::shared_ptr<GraphicEvent
 		if(auto areaE = std::dynamic_pointer_cast<AreaEvent> (graphicE))
 			handleAndSendAreaEventSync(areaE);
 	}
+}
+
+void MultiSceneCanvasManager::OnAudioPosition(double position)
+{
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+	{
+		// faire la translation du curseur de la forme
+		//DBG("position = " + (String)position);
+		amusingScene->getFirstCompleteArea()->setReadingPosition(position);
+	}
+}
+
+int MultiSceneCanvasManager::getNumberArea()
+{
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+		return amusingScene->getNumberArea();
+	else
+		return 0;
+}
+
+void MultiSceneCanvasManager::OnDelete()
+{
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+	{
+		handleAndSendAreaEventSync(amusingScene->OnDelete());
+	}
+	
+}
+
+void MultiSceneCanvasManager::handleAndSendAreaEventSync(std::shared_ptr<AreaEvent> areaE)
+{
+	DBG("MultiSceneCanvasManager::handleAndSendAreaEventSync : " + (String)((int)areaE->GetType()));
+	if (areaE->GetType() == AreaEventType::Deleted)
+	{
+		DBG("need to delete");
+		if (auto area = std::dynamic_pointer_cast<AnimatedPolygon> (areaE->GetConcernedArea()))
+		{
+
+			if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+				while (true)
+				{
+					if (auto followerToDelete = amusingScene->getFollowers(area))
+					{
+						DBG("followerToDelete");
+						deleteAsyncDrawableObject(followerToDelete->GetId(), followerToDelete);
+					}
+					else
+						break;
+				}
+		}
+	}
+	MultiSceneCanvasEditor::handleAndSendAreaEventSync(areaE);
+}
+
+void MultiSceneCanvasManager::deleteUnusedFollowers()
+{
+	DBG("a supprimer");
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+	{
+		while (true)
+		{
+			if (auto followerToDelete = amusingScene->getFollowers(nullptr))
+			{
+				DBG("followerToDelete");
+				std::shared_ptr<AreaEvent> areaE(new AreaEvent(followerToDelete, AreaEventType::Deleted));
+				graphicSessionManager->HandleEventSync(areaE);
+				deleteAsyncDrawableObject(followerToDelete->GetId(), followerToDelete);
+				// envoyer a l'audio que la source est plus la + retirer de la liste des followers?
+			}
+			else
+				break;
+		}
+	}
+}
+
+void MultiSceneCanvasManager::deleteAsyncDrawableObject(int idInScene, std::shared_ptr<IDrawableArea> originalAreaToDelete)
+{
+	DBG("MultiSceneCanvasManager::deleteAsyncDrawableObject");
+	MultiSceneCanvasInteractor::deleteAsyncDrawableObject(idInScene, originalAreaToDelete);
+}
+
+void MultiSceneCanvasManager::OnCanvasMouseDown(const MouseEvent& mouseE)
+{
+	DBG("passe par MultiSceneCanvasManager::OnCanvasMouseDown");
+	MultiSceneCanvasEditor::OnCanvasMouseDown(mouseE);
 }

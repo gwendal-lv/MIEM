@@ -2,7 +2,8 @@
 
 <JUCERPROJECT id="MkqyzI" name="MiAmusing" projectType="guiapp" version="1.0.0"
               bundleIdentifier="com.yourcompany.MiAmusing" includeBinaryInAppConfig="1"
-              jucerVersion="4.3.1">
+              jucerVersion="5.0.1" displaySplashScreen="1" reportAppUsage="1"
+              splashScreenColour="Dark">
   <MAINGROUP id="Ak6ojc" name="MiAmusing">
     <GROUP id="{E74684B7-0B02-F2F7-C571-317039AB4495}" name="Source">
       <GROUP id="{8B585BA3-71E5-255C-C070-4910B268744C}" name="Model">
@@ -11,6 +12,8 @@
             <FILE id="VcNvcJ" name="FourierSignal.cpp" compile="1" resource="0"
                   file="Source/FourierSignal.cpp"/>
             <FILE id="Ip02Yg" name="FourierSignal.h" compile="0" resource="0" file="Source/FourierSignal.h"/>
+            <FILE id="seKUAt" name="SawSignal.cpp" compile="1" resource="0" file="Source/SawSignal.cpp"/>
+            <FILE id="vBtrGh" name="SawSignal.h" compile="0" resource="0" file="Source/SawSignal.h"/>
             <FILE id="y9vVcN" name="SinusSignal.cpp" compile="1" resource="0" file="Source/SinusSignal.cpp"/>
             <FILE id="Mw9Q1r" name="SinusSignal.h" compile="0" resource="0" file="Source/SinusSignal.h"/>
             <FILE id="SN5Trn" name="SquareSignal.cpp" compile="1" resource="0"
@@ -57,6 +60,10 @@
                 file="Source/AnimatedPolygon.cpp"/>
           <FILE id="MRW6Cl" name="AnimatedPolygon.h" compile="0" resource="0"
                 file="Source/AnimatedPolygon.h"/>
+          <FILE id="aIERwf" name="CompletePolygon.cpp" compile="1" resource="0"
+                file="Source/CompletePolygon.cpp"/>
+          <FILE id="cOpwTH" name="CompletePolygon.h" compile="0" resource="0"
+                file="Source/CompletePolygon.h"/>
         </GROUP>
         <GROUP id="{95DB4C60-BE55-A464-CA00-678CBCAB86CE}" name="Scenes">
           <FILE id="nhV1zs" name="AmusingScene.cpp" compile="1" resource="0"
@@ -88,29 +95,6 @@
       </GROUP>
     </GROUP>
     <FILE id="v8jCgE" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
-    <GROUP id="{C4893356-5DEB-A030-074B-EE0422842B92}" name="SpatCommonSource">
-      <GROUP id="{69F35838-D6F6-5ADE-9B31-E372F4C0078E}" name="Model">
-        <GROUP id="{C8CFED74-46E5-A2FF-9824-723DC214C250}" name="SpatStates">
-          <FILE id="VlduMz" name="OutputVolumesState.h" compile="0" resource="0"
-                file="../SpatCommon/Source/OutputVolumesState.h"/>
-          <FILE id="o3IF1g" name="OutputVolumesState.tpp.h" compile="0" resource="0"
-                file="../SpatCommon/Source/OutputVolumesState.tpp.h"/>
-          <FILE id="VJUdzj" name="SpatState.h" compile="0" resource="0" file="../SpatCommon/Source/SpatState.h"/>
-          <FILE id="bz3VgJ" name="SpatState.tpp.h" compile="0" resource="0" file="../SpatCommon/Source/SpatState.tpp.h"/>
-        </GROUP>
-        <FILE id="azLEQu" name="SpatModel.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatModel.cpp"/>
-        <FILE id="n9PyKE" name="SpatModel.h" compile="0" resource="0" file="../SpatCommon/Source/SpatModel.h"/>
-        <FILE id="xR7ZzU" name="SpatInterpolator.h" compile="0" resource="0"
-              file="../SpatCommon/Source/SpatInterpolator.h"/>
-        <FILE id="njk7Fg" name="SpatInterpolator.tpp.h" compile="0" resource="0"
-              file="../SpatCommon/Source/SpatInterpolator.tpp.h"/>
-        <FILE id="DFPO9m" name="SpatSender.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatSender.cpp"/>
-        <FILE id="YOdNbs" name="SpatSender.h" compile="0" resource="0" file="../SpatCommon/Source/SpatSender.h"/>
-        <FILE id="ISQcqH" name="SpatType.h" compile="0" resource="0" file="../SpatCommon/Source/SpatType.h"/>
-        <FILE id="r9zTHA" name="Speaker.h" compile="0" resource="0" file="../SpatCommon/Source/Speaker.h"/>
-        <FILE id="JAUbBW" name="Speaker.tpp.h" compile="0" resource="0" file="../SpatCommon/Source/Speaker.tpp.h"/>
-      </GROUP>
-    </GROUP>
     <GROUP id="{593B3C8B-4E9F-6C95-BD9D-6562983482B8}" name="MiamCommonSource">
       <GROUP id="{0479ADE3-37CD-6B82-AED4-7081C736E56C}" name="Model">
         <FILE id="LDc2TJ" name="IModel.cpp" compile="1" resource="0" file="../MiamCommon/Source/IModel.cpp"/>
@@ -241,7 +225,8 @@
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
-    <VS2015 targetFolder="Builds/VisualStudio2015" externalLibraries="">
+    <VS2015 targetFolder="Builds/VisualStudio2015" externalLibraries="" vst3Folder=""
+            rtasFolder="" aaxFolder="">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
                        isDebug="1" optimisation="1" targetName="MiAmusing" libraryPath=""

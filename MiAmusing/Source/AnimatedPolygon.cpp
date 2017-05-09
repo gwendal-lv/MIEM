@@ -20,7 +20,7 @@ AnimatedPolygon::AnimatedPolygon(int64_t _Id) : EditablePolygon(_Id), first(true
 	point.setX(contourPointsInPixels[0].getX());
 	point.setY(contourPointsInPixels[0].getY());
 	fromPt = 0;
-	
+	SetNameVisible(false);
 	currentSommet = 0;
 	
 }
@@ -30,7 +30,7 @@ AnimatedPolygon::AnimatedPolygon(int64_t _Id, Point<double> _center, int pointsC
 	EditablePolygon(_Id, _center, pointsCount, radius, _fillColour, _canvasRatio)
 {
 	currentSommet = 0;
-	
+	SetNameVisible(false);
 }
 
 AnimatedPolygon::AnimatedPolygon(int64_t _Id,
@@ -42,7 +42,7 @@ AnimatedPolygon::AnimatedPolygon(int64_t _Id,
 	fromPt = 0;
 	
 	currentSommet = 0;
-	
+	SetNameVisible(false);
 }
 
 
@@ -84,16 +84,17 @@ double AnimatedPolygon::GetNextAreaLength()
 
 	return distance;
 }
-
+/*
 void AnimatedPolygon::associateFollower(std::shared_ptr<Follower> newFollower)
 {
 	follower = newFollower;
 }
-
+*/
+/*
 std::shared_ptr<Follower> AnimatedPolygon::GetFollower()
 {
 	return follower;
-}
+}*/
 
 Point<double> AnimatedPolygon::initiateFollower()
 {

@@ -67,8 +67,8 @@ namespace Amusing
 
 		void Paint(Graphics& g);
 		
-		void associateFollower(std::shared_ptr<Follower> newFollower);
-		std::shared_ptr<Follower> GetFollower();
+		//void associateFollower(std::shared_ptr<Follower> newFollower);
+		//std::shared_ptr<Follower> GetFollower();
 
 		Point<double> initializePolygone(Point<double> currentCenter);
 		Point<double> getPosition(double positionPC);
@@ -79,7 +79,7 @@ namespace Amusing
 
 	private :
 		
-		std::shared_ptr<Follower> follower; // a remplacer par un vector<Follower>
+		//std::shared_ptr<Follower> follower; // a remplacer par un vector<Follower>
 		double speed;
 		int fromPt;
 		Point<int> point;
