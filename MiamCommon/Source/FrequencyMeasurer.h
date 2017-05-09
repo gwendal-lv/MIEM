@@ -59,6 +59,8 @@ namespace Miam
         
         double GetLastDuration_ms() const;
         
+        long GetElapsedTimeSinceLastNewFrame_us() const;
+        
         long GetLastDuration_us() const {return (long)lastFrameDuration.count(); }
         long GetMinDuration_us() const {return (long)minDuration_us.count();}
 		long GetMaxDuration_us() const {return (long)maxDuration_us.count();}

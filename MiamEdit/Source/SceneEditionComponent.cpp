@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 4.3.0
+  Created with Projucer version: 5.0.0
 
   ------------------------------------------------------------------------------
 
@@ -38,11 +38,13 @@ SceneEditionComponent::SceneEditionComponent ()
 
     addAndMakeVisible (areaGroupComponent = new GroupComponent ("Area edition group component",
                                                                 TRANS("Area edition")));
+    areaGroupComponent->setColour (GroupComponent::outlineColourId, Colour (0xff454545));
+    areaGroupComponent->setColour (GroupComponent::textColourId, Colours::black);
 
     addAndMakeVisible (spatGroupComponent = new GroupComponent ("Spatialization group component",
                                                                 TRANS("Spatialization effect")));
-    spatGroupComponent->setColour (GroupComponent::outlineColourId, Colour (0x66000000));
-    spatGroupComponent->setColour (GroupComponent::textColourId, Colour (0x66000000));
+    spatGroupComponent->setColour (GroupComponent::outlineColourId, Colour (0xff454545));
+    spatGroupComponent->setColour (GroupComponent::textColourId, Colours::black);
 
     addAndMakeVisible (addPointTextButton = new TextButton ("Add Point text button"));
     addPointTextButton->setButtonText (TRANS("Add Point"));
@@ -50,6 +52,7 @@ SceneEditionComponent::SceneEditionComponent ()
     addPointTextButton->addListener (this);
     addPointTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
     addPointTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+    addPointTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
     addAndMakeVisible (deletePointTextButton = new TextButton ("Delete Point text button"));
     deletePointTextButton->setButtonText (TRANS("Delete Point"));
@@ -57,6 +60,7 @@ SceneEditionComponent::SceneEditionComponent ()
     deletePointTextButton->addListener (this);
     deletePointTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
     deletePointTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+    deletePointTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
     addAndMakeVisible (copyTextButton = new TextButton ("Copy Text Button"));
     copyTextButton->setButtonText (TRANS("Copy"));
@@ -64,6 +68,7 @@ SceneEditionComponent::SceneEditionComponent ()
     copyTextButton->addListener (this);
     copyTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
     copyTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+    copyTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
     addAndMakeVisible (pasteTextButton = new TextButton ("Delete Point"));
     pasteTextButton->setButtonText (TRANS("Paste"));
@@ -71,6 +76,7 @@ SceneEditionComponent::SceneEditionComponent ()
     pasteTextButton->addListener (this);
     pasteTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
     pasteTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+    pasteTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
     addAndMakeVisible (addAreaTextButton = new TextButton ("Add Area text button"));
     addAreaTextButton->setButtonText (TRANS("Add Area"));
@@ -78,6 +84,7 @@ SceneEditionComponent::SceneEditionComponent ()
     addAreaTextButton->addListener (this);
     addAreaTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
     addAreaTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+    addAreaTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
     addAndMakeVisible (deleteAreaTextButton = new TextButton ("Delete Area text button"));
     deleteAreaTextButton->setButtonText (TRANS("Delete Area"));
@@ -85,12 +92,14 @@ SceneEditionComponent::SceneEditionComponent ()
     deleteAreaTextButton->addListener (this);
     deleteAreaTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
     deleteAreaTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+    deleteAreaTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
     addAndMakeVisible (labelR = new Label ("new label",
                                            TRANS("R")));
-    labelR->setFont (Font (15.00f, Font::plain));
+    labelR->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     labelR->setJustificationType (Justification::centredLeft);
     labelR->setEditable (false, false, false);
+    labelR->setColour (Label::textColourId, Colours::black);
     labelR->setColour (TextEditor::textColourId, Colours::black);
     labelR->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
@@ -98,14 +107,16 @@ SceneEditionComponent::SceneEditionComponent ()
     sliderR->setRange (0, 255, 1);
     sliderR->setSliderStyle (Slider::LinearHorizontal);
     sliderR->setTextBoxStyle (Slider::TextBoxLeft, false, 40, 20);
-    sliderR->setColour (Slider::thumbColourId, Colour (0xffbbbbbb));
+    sliderR->setColour (Slider::thumbColourId, Colour (0xa0ff0000));
+    sliderR->setColour (Slider::textBoxTextColourId, Colours::black);
     sliderR->addListener (this);
 
     addAndMakeVisible (labelG = new Label ("new label",
                                            TRANS("G")));
-    labelG->setFont (Font (15.00f, Font::plain));
+    labelG->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     labelG->setJustificationType (Justification::centredLeft);
     labelG->setEditable (false, false, false);
+    labelG->setColour (Label::textColourId, Colours::black);
     labelG->setColour (TextEditor::textColourId, Colours::black);
     labelG->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
@@ -113,14 +124,16 @@ SceneEditionComponent::SceneEditionComponent ()
     sliderG->setRange (0, 255, 1);
     sliderG->setSliderStyle (Slider::LinearHorizontal);
     sliderG->setTextBoxStyle (Slider::TextBoxLeft, false, 40, 20);
-    sliderG->setColour (Slider::thumbColourId, Colour (0xffbbbbbb));
+    sliderG->setColour (Slider::thumbColourId, Colour (0xa000ff00));
+    sliderG->setColour (Slider::textBoxTextColourId, Colours::black);
     sliderG->addListener (this);
 
     addAndMakeVisible (labelB = new Label ("new label",
                                            TRANS("B")));
-    labelB->setFont (Font (15.00f, Font::plain));
+    labelB->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     labelB->setJustificationType (Justification::centredLeft);
     labelB->setEditable (false, false, false);
+    labelB->setColour (Label::textColourId, Colours::black);
     labelB->setColour (TextEditor::textColourId, Colours::black);
     labelB->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
@@ -128,7 +141,8 @@ SceneEditionComponent::SceneEditionComponent ()
     sliderB->setRange (0, 255, 1);
     sliderB->setSliderStyle (Slider::LinearHorizontal);
     sliderB->setTextBoxStyle (Slider::TextBoxLeft, false, 40, 20);
-    sliderB->setColour (Slider::thumbColourId, Colour (0xffbbbbbb));
+    sliderB->setColour (Slider::thumbColourId, Colour (0xa00000ff));
+    sliderB->setColour (Slider::textBoxTextColourId, Colours::black);
     sliderB->addListener (this);
 
     addAndMakeVisible (sendBackwardTextButton = new TextButton ("Send backward text button"));
@@ -137,6 +151,7 @@ SceneEditionComponent::SceneEditionComponent ()
     sendBackwardTextButton->addListener (this);
     sendBackwardTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
     sendBackwardTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+    sendBackwardTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
     addAndMakeVisible (bringForwardTextButton = new TextButton ("Bring forward text button"));
     bringForwardTextButton->setButtonText (TRANS("Bring forward"));
@@ -144,6 +159,7 @@ SceneEditionComponent::SceneEditionComponent ()
     bringForwardTextButton->addListener (this);
     bringForwardTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
     bringForwardTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+    bringForwardTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
     addAndMakeVisible (bringToFrontTextButton = new TextButton ("Bring to front text button"));
     bringToFrontTextButton->setButtonText (TRANS("to front"));
@@ -151,6 +167,7 @@ SceneEditionComponent::SceneEditionComponent ()
     bringToFrontTextButton->addListener (this);
     bringToFrontTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
     bringToFrontTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+    bringToFrontTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
     addAndMakeVisible (sendToBackTextButton = new TextButton ("Send to back text button"));
     sendToBackTextButton->setButtonText (TRANS("to back"));
@@ -158,9 +175,12 @@ SceneEditionComponent::SceneEditionComponent ()
     sendToBackTextButton->addListener (this);
     sendToBackTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
     sendToBackTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+    sendToBackTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
     addAndMakeVisible (canvasGroupComponent = new GroupComponent ("Canvas edition group component",
                                                                   TRANS("Scene edition")));
+    canvasGroupComponent->setColour (GroupComponent::outlineColourId, Colour (0xff454545));
+    canvasGroupComponent->setColour (GroupComponent::textColourId, Colours::black);
 
     addAndMakeVisible (speakersGroupComboBox = new ComboBox ("Speakers group combo box"));
     speakersGroupComboBox->setEditableText (false);
@@ -172,7 +192,7 @@ SceneEditionComponent::SceneEditionComponent ()
 
     addAndMakeVisible (spatLabel = new Label ("Spat label",
                                               TRANS("Link to speakers group :")));
-    spatLabel->setFont (Font (15.00f, Font::plain));
+    spatLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     spatLabel->setJustificationType (Justification::centredLeft);
     spatLabel->setEditable (false, false, false);
     spatLabel->setColour (Label::textColourId, Colour (0x66000000));
@@ -184,7 +204,8 @@ SceneEditionComponent::SceneEditionComponent ()
     addSceneTextButton->setConnectedEdges (Button::ConnectedOnRight);
     addSceneTextButton->addListener (this);
     addSceneTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
-    addSceneTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+    addSceneTextButton->setColour (TextButton::buttonOnColourId, Colours::black);
+    addSceneTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
     addAndMakeVisible (deleteSceneTextButton = new TextButton ("Delete Scene text button"));
     deleteSceneTextButton->setButtonText (TRANS("Delete Scene"));
@@ -192,6 +213,7 @@ SceneEditionComponent::SceneEditionComponent ()
     deleteSceneTextButton->addListener (this);
     deleteSceneTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
     deleteSceneTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+    deleteSceneTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
     addAndMakeVisible (sceneLeftTextButton = new TextButton ("Scene Left text button"));
     sceneLeftTextButton->setButtonText (TRANS("Move left"));
@@ -199,6 +221,7 @@ SceneEditionComponent::SceneEditionComponent ()
     sceneLeftTextButton->addListener (this);
     sceneLeftTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
     sceneLeftTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+    sceneLeftTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
     addAndMakeVisible (sceneRightTextButton = new TextButton ("Scene Right text button"));
     sceneRightTextButton->setButtonText (TRANS("Move right"));
@@ -206,18 +229,21 @@ SceneEditionComponent::SceneEditionComponent ()
     sceneRightTextButton->addListener (this);
     sceneRightTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
     sceneRightTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+    sceneRightTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
     addAndMakeVisible (canvasInfoLabel = new Label ("Canvas Info label",
                                                     TRANS("...selected canvas info...")));
     canvasInfoLabel->setFont (Font (15.00f, Font::italic));
     canvasInfoLabel->setJustificationType (Justification::centred);
     canvasInfoLabel->setEditable (false, false, false);
+    canvasInfoLabel->setColour (Label::textColourId, Colours::black);
     canvasInfoLabel->setColour (TextEditor::textColourId, Colours::black);
     canvasInfoLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
     addAndMakeVisible (initialStateGroupComponent = new GroupComponent ("Initial state group component",
                                                                         TRANS("Scene initial state")));
-    initialStateGroupComponent->setColour (GroupComponent::textColourId, Colour (0x66000000));
+    initialStateGroupComponent->setColour (GroupComponent::outlineColourId, Colour (0xff454545));
+    initialStateGroupComponent->setColour (GroupComponent::textColourId, Colours::black);
 
     addAndMakeVisible (addExciterTextButton = new TextButton ("Add Area text button"));
     addExciterTextButton->setButtonText (TRANS("Add Exciter"));
@@ -251,9 +277,10 @@ SceneEditionComponent::SceneEditionComponent ()
 
     addAndMakeVisible (sceneNameLabel = new Label ("Scene Name Label",
                                                    TRANS("Name:")));
-    sceneNameLabel->setFont (Font (15.00f, Font::plain));
+    sceneNameLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     sceneNameLabel->setJustificationType (Justification::centredLeft);
     sceneNameLabel->setEditable (false, false, false);
+    sceneNameLabel->setColour (Label::textColourId, Colours::black);
     sceneNameLabel->setColour (TextEditor::textColourId, Colours::black);
     sceneNameLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
@@ -881,82 +908,86 @@ BEGIN_JUCER_METADATA
   <BACKGROUND backgroundColour="ffd9d9d9"/>
   <GROUPCOMPONENT name="Area edition group component" id="87d416270d41f58c" memberName="areaGroupComponent"
                   virtualName="" explicitFocusOrder="0" pos="8 -8R 192 240" posRelativeY="4250d5155a80be70"
-                  title="Area edition"/>
+                  outlinecol="ff454545" textcol="ff000000" title="Area edition"/>
   <GROUPCOMPONENT name="Spatialization group component" id="90b16e3024c520fd" memberName="spatGroupComponent"
                   virtualName="" explicitFocusOrder="0" pos="8 -8R 192 80" posRelativeY="87d416270d41f58c"
-                  outlinecol="66000000" textcol="66000000" title="Spatialization effect"/>
+                  outlinecol="ff454545" textcol="ff000000" title="Spatialization effect"/>
   <TEXTBUTTON name="Add Point text button" id="71769222a7765795" memberName="addPointTextButton"
               virtualName="" explicitFocusOrder="0" pos="16 208 88 24" posRelativeY="87d416270d41f58c"
-              bgColOff="33000000" bgColOn="ffffffff" buttonText="Add Point"
+              bgColOff="33000000" bgColOn="ffffffff" textCol="ff000000" buttonText="Add Point"
               connectedEdges="2" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Delete Point text button" id="2bdfdc3999886d02" memberName="deletePointTextButton"
               virtualName="" explicitFocusOrder="0" pos="104 208 88 24" posRelativeY="87d416270d41f58c"
-              bgColOff="33000000" bgColOn="ffffffff" buttonText="Delete Point"
+              bgColOff="33000000" bgColOn="ffffffff" textCol="ff000000" buttonText="Delete Point"
               connectedEdges="1" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Copy Text Button" id="33b309fbb149d4ee" memberName="copyTextButton"
               virtualName="" explicitFocusOrder="0" pos="16 48 88 24" posRelativeY="87d416270d41f58c"
-              bgColOff="33000000" bgColOn="ffffffff" buttonText="Copy" connectedEdges="6"
-              needsCallback="1" radioGroupId="0"/>
+              bgColOff="33000000" bgColOn="ffffffff" textCol="ff000000" buttonText="Copy"
+              connectedEdges="6" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Delete Point" id="653c7d46ffba1120" memberName="pasteTextButton"
               virtualName="" explicitFocusOrder="0" pos="104 48 88 24" posRelativeY="87d416270d41f58c"
-              bgColOff="33000000" bgColOn="ffffffff" buttonText="Paste" connectedEdges="5"
-              needsCallback="1" radioGroupId="0"/>
+              bgColOff="33000000" bgColOn="ffffffff" textCol="ff000000" buttonText="Paste"
+              connectedEdges="5" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Add Area text button" id="d377c545746b9e8d" memberName="addAreaTextButton"
               virtualName="" explicitFocusOrder="0" pos="16 24 88 24" posRelativeY="87d416270d41f58c"
-              bgColOff="33000000" bgColOn="ffffffff" buttonText="Add Area"
+              bgColOff="33000000" bgColOn="ffffffff" textCol="ff000000" buttonText="Add Area"
               connectedEdges="10" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Delete Area text button" id="3c0e2321516c0809" memberName="deleteAreaTextButton"
               virtualName="" explicitFocusOrder="0" pos="104 24 88 24" posRelativeY="87d416270d41f58c"
-              bgColOff="33000000" bgColOn="ffffffff" buttonText="Delete Area"
+              bgColOff="33000000" bgColOn="ffffffff" textCol="ff000000" buttonText="Delete Area"
               connectedEdges="9" needsCallback="1" radioGroupId="0"/>
   <LABEL name="new label" id="893f3de478724dd" memberName="labelR" virtualName=""
          explicitFocusOrder="0" pos="14 132 24 24" posRelativeY="87d416270d41f58c"
-         edTextCol="ff000000" edBkgCol="0" labelText="R" editableSingleClick="0"
-         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
-         fontsize="15" bold="0" italic="0" justification="33"/>
+         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="R"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
+         justification="33"/>
   <SLIDER name="Slider R" id="c86e71b3772d49e9" memberName="sliderR" virtualName=""
           explicitFocusOrder="0" pos="32 136 158 16" posRelativeY="87d416270d41f58c"
-          thumbcol="ffbbbbbb" min="0" max="255" int="1" style="LinearHorizontal"
-          textBoxPos="TextBoxLeft" textBoxEditable="1" textBoxWidth="40"
-          textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          thumbcol="a0ff0000" textboxtext="ff000000" min="0" max="255"
+          int="1" style="LinearHorizontal" textBoxPos="TextBoxLeft" textBoxEditable="1"
+          textBoxWidth="40" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <LABEL name="new label" id="d31faee34d487318" memberName="labelG" virtualName=""
          explicitFocusOrder="0" pos="14 156 24 24" posRelativeY="87d416270d41f58c"
-         edTextCol="ff000000" edBkgCol="0" labelText="G" editableSingleClick="0"
-         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
-         fontsize="15" bold="0" italic="0" justification="33"/>
+         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="G"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
+         justification="33"/>
   <SLIDER name="SliderG" id="8455ecc13f47ec08" memberName="sliderG" virtualName=""
           explicitFocusOrder="0" pos="32 160 158 16" posRelativeY="87d416270d41f58c"
-          thumbcol="ffbbbbbb" min="0" max="255" int="1" style="LinearHorizontal"
-          textBoxPos="TextBoxLeft" textBoxEditable="1" textBoxWidth="40"
-          textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          thumbcol="a000ff00" textboxtext="ff000000" min="0" max="255"
+          int="1" style="LinearHorizontal" textBoxPos="TextBoxLeft" textBoxEditable="1"
+          textBoxWidth="40" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <LABEL name="new label" id="ae5abc145d9184cf" memberName="labelB" virtualName=""
          explicitFocusOrder="0" pos="15 180 24 24" posRelativeY="87d416270d41f58c"
-         edTextCol="ff000000" edBkgCol="0" labelText="B" editableSingleClick="0"
-         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
-         fontsize="15" bold="0" italic="0" justification="33"/>
+         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="B"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
+         justification="33"/>
   <SLIDER name="Slider B" id="15aa4b94476e3563" memberName="sliderB" virtualName=""
           explicitFocusOrder="0" pos="32 184 158 16" posRelativeY="87d416270d41f58c"
-          thumbcol="ffbbbbbb" min="0" max="255" int="1" style="LinearHorizontal"
-          textBoxPos="TextBoxLeft" textBoxEditable="1" textBoxWidth="40"
-          textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          thumbcol="a00000ff" textboxtext="ff000000" min="0" max="255"
+          int="1" style="LinearHorizontal" textBoxPos="TextBoxLeft" textBoxEditable="1"
+          textBoxWidth="40" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <TEXTBUTTON name="Send backward text button" id="a356ce3575b4d98b" memberName="sendBackwardTextButton"
               virtualName="" explicitFocusOrder="0" pos="16 104 104 24" posRelativeY="87d416270d41f58c"
-              bgColOff="33000000" bgColOn="ffffffff" buttonText="Send backward"
+              bgColOff="33000000" bgColOn="ffffffff" textCol="ff000000" buttonText="Send backward"
               connectedEdges="6" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Bring forward text button" id="d626373b1db0a49" memberName="bringForwardTextButton"
               virtualName="" explicitFocusOrder="0" pos="16 80 104 24" posRelativeY="87d416270d41f58c"
-              bgColOff="33000000" bgColOn="ffffffff" buttonText="Bring forward"
+              bgColOff="33000000" bgColOn="ffffffff" textCol="ff000000" buttonText="Bring forward"
               connectedEdges="10" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Bring to front text button" id="43d8b27a93068fcf" memberName="bringToFrontTextButton"
               virtualName="" explicitFocusOrder="0" pos="120 80 72 24" posRelativeY="87d416270d41f58c"
-              bgColOff="33000000" bgColOn="ffffffff" buttonText="to front"
+              bgColOff="33000000" bgColOn="ffffffff" textCol="ff000000" buttonText="to front"
               connectedEdges="9" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Send to back text button" id="1fe791d6bf4489ca" memberName="sendToBackTextButton"
               virtualName="" explicitFocusOrder="0" pos="120 104 72 24" posRelativeY="87d416270d41f58c"
-              bgColOff="33000000" bgColOn="ffffffff" buttonText="to back" connectedEdges="5"
-              needsCallback="1" radioGroupId="0"/>
+              bgColOff="33000000" bgColOn="ffffffff" textCol="ff000000" buttonText="to back"
+              connectedEdges="5" needsCallback="1" radioGroupId="0"/>
   <GROUPCOMPONENT name="Canvas edition group component" id="4250d5155a80be70" memberName="canvasGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="8 8 192 168" title="Scene edition"/>
+                  virtualName="" explicitFocusOrder="0" pos="8 8 192 168" outlinecol="ff454545"
+                  textcol="ff000000" title="Scene edition"/>
   <COMBOBOX name="Speakers group combo box" id="89ad7c0a3be5a39c" memberName="speakersGroupComboBox"
             virtualName="" explicitFocusOrder="0" pos="16 40 176 24" posRelativeY="90b16e3024c520fd"
             editable="0" layout="33" items="-1 undefined" textWhenNonSelected=""
@@ -965,31 +996,33 @@ BEGIN_JUCER_METADATA
          virtualName="" explicitFocusOrder="0" pos="16 16 176 24" posRelativeY="90b16e3024c520fd"
          textCol="66000000" edTextCol="ff000000" edBkgCol="0" labelText="Link to speakers group :"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
+         fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
+         justification="33"/>
   <TEXTBUTTON name="Add Scene text button" id="47bebc9d3a03780d" memberName="addSceneTextButton"
               virtualName="" explicitFocusOrder="0" pos="16 24 88 24" posRelativeY="4250d5155a80be70"
-              bgColOff="33000000" bgColOn="ffffffff" buttonText="Add Scene"
+              bgColOff="33000000" bgColOn="ff000000" textCol="ff000000" buttonText="Add Scene"
               connectedEdges="2" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Delete Scene text button" id="5f4e8653b868a323" memberName="deleteSceneTextButton"
               virtualName="" explicitFocusOrder="0" pos="104 24 88 24" posRelativeY="4250d5155a80be70"
-              bgColOff="33000000" bgColOn="ffffffff" buttonText="Delete Scene"
+              bgColOff="33000000" bgColOn="ffffffff" textCol="ff000000" buttonText="Delete Scene"
               connectedEdges="1" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Scene Left text button" id="43b96ebd16bb5586" memberName="sceneLeftTextButton"
               virtualName="" explicitFocusOrder="0" pos="16 72 88 24" posRelativeY="4250d5155a80be70"
-              bgColOff="33000000" bgColOn="ffffffff" buttonText="Move left"
+              bgColOff="33000000" bgColOn="ffffffff" textCol="ff000000" buttonText="Move left"
               connectedEdges="2" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Scene Right text button" id="e6cf4b99a12776ee" memberName="sceneRightTextButton"
               virtualName="" explicitFocusOrder="0" pos="104 72 88 24" posRelativeY="4250d5155a80be70"
-              bgColOff="33000000" bgColOn="ffffffff" buttonText="Move right"
+              bgColOff="33000000" bgColOn="ffffffff" textCol="ff000000" buttonText="Move right"
               connectedEdges="1" needsCallback="1" radioGroupId="0"/>
   <LABEL name="Canvas Info label" id="3577c0e2ccd44371" memberName="canvasInfoLabel"
          virtualName="" explicitFocusOrder="0" pos="16 48 176 24" posRelativeY="4250d5155a80be70"
-         edTextCol="ff000000" edBkgCol="0" labelText="...selected canvas info..."
+         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="...selected canvas info..."
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15" bold="0" italic="1" justification="36"/>
+         fontname="Default font" fontsize="15" kerning="0" bold="0" italic="1"
+         justification="36" typefaceStyle="Italic"/>
   <GROUPCOMPONENT name="Initial state group component" id="cc3bdf8d18c3f428" memberName="initialStateGroupComponent"
                   virtualName="" explicitFocusOrder="0" pos="8 -8R 192 88" posRelativeY="90b16e3024c520fd"
-                  textcol="66000000" title="Scene initial state"/>
+                  outlinecol="ff454545" textcol="ff000000" title="Scene initial state"/>
   <TEXTBUTTON name="Add Area text button" id="b6820308eb03f341" memberName="addExciterTextButton"
               virtualName="" explicitFocusOrder="0" pos="16 24 88 24" posRelativeY="cc3bdf8d18c3f428"
               bgColOff="33000000" bgColOn="ffffffff" textCol="66000000" buttonText="Add Exciter"
@@ -1009,9 +1042,10 @@ BEGIN_JUCER_METADATA
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <LABEL name="Scene Name Label" id="fbdd06d6ea5f9471" memberName="sceneNameLabel"
          virtualName="" explicitFocusOrder="0" pos="15 103 56 24" posRelativeY="4250d5155a80be70"
-         edTextCol="ff000000" edBkgCol="0" labelText="Name:" editableSingleClick="0"
-         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
-         fontsize="15" bold="0" italic="0" justification="33"/>
+         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Name:"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
+         justification="33"/>
   <TEXTEDITOR name="new text editor" id="fd7eace3e677fc36" memberName="sceneNameTextEditor"
               virtualName="" explicitFocusOrder="0" pos="64 112 128 24" initialText=""
               multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"

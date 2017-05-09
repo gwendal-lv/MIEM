@@ -2,7 +2,8 @@
 
 <JUCERPROJECT id="O4BfM6" name="MiamEdit" projectType="guiapp" version="1.0.0"
               bundleIdentifier="com.yourcompany.MiamEdit" includeBinaryInAppConfig="1"
-              jucerVersion="4.3.1">
+              jucerVersion="5.0.1" displaySplashScreen="1" reportAppUsage="1"
+              splashScreenColour="Dark">
   <MAINGROUP id="uJFjC5" name="MiamEdit">
     <GROUP id="{7878353D-A1B6-291B-EABC-831E28CE51BB}" name="Source">
       <FILE id="MLMDSl" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
@@ -212,6 +213,10 @@
               file="../MiamCommon/Source/FrequencyMeasurer.h"/>
         <FILE id="Rla6rP" name="MiamMath.cpp" compile="1" resource="0" file="../MiamCommon/Source/MiamMath.cpp"/>
         <FILE id="WSGVmq" name="MiamMath.h" compile="0" resource="0" file="../MiamCommon/Source/MiamMath.h"/>
+        <FILE id="bHy1uW" name="PeriodicUpdateThread.cpp" compile="1" resource="0"
+              file="../MiamCommon/Source/PeriodicUpdateThread.cpp"/>
+        <FILE id="kKs1q1" name="PeriodicUpdateThread.h" compile="0" resource="0"
+              file="../MiamCommon/Source/PeriodicUpdateThread.h"/>
       </GROUP>
     </GROUP>
   </MAINGROUP>

@@ -49,6 +49,14 @@ double FrequencyMeasurer::GetLastFrequency_Hz() const
     return 1000.0/GetLastDuration_ms();
 }
 
+long FrequencyMeasurer::GetElapsedTimeSinceLastNewFrame_us() const
+{
+    auto currentTimePt = MeasureClock::now();
+    std::chrono::microseconds elapsedTimeSinceLastNewFrame = std::chrono::duration_cast<std::chrono::microseconds>(currentTimePt - lastFrameTimePt);
+    
+    return (long)elapsedTimeSinceLastNewFrame.count();
+}
+
 double FrequencyMeasurer::GetLastDuration_ms() const
 {
     return (double)(lastFrameDuration.count())/1000.0;

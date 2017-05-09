@@ -18,6 +18,7 @@
 #include <atomic>
 
 #include "IModel.h"
+#include "PeriodicUpdateThread.h"
 
 #include "SpatType.h"
 #include "Speaker.h"
@@ -34,7 +35,7 @@ namespace Miam
     
     
     /// \brief
-    class SpatModel : public IModel
+    class SpatModel : public IModel, protected PeriodicUpdateThread
     {
         
         
@@ -47,16 +48,6 @@ namespace Miam
         
         
         protected :
-        /// \brief Model update thread running at an almost constant frequency
-        std::thread updateThread;
-        double updateThreadF_Hz;
-        int updateThreadT_us;
-        std::atomic<bool> continueUpdate;
-        /// \brief Time measuring helper for thread frequency stabilisation
-        FrequencyMeasurer updateThreadMeasurer;
-        
-        
-        
         // The model itself manages the speakers, for now
         // May be changed... But it remains important low-level data
         std::vector< std::shared_ptr<Speaker<double>> > speakers;

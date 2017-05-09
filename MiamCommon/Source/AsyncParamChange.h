@@ -16,7 +16,7 @@ namespace Miam
 {
     /// \brief A simple structure employed to send messages between the
     /// Miam::Presenter and the Miam::Model (in one way or another) via
-    /// a Miam::LockFreeQueue
+    /// a boost lock-free queue
     struct AsyncParamChange
     {
         public :
@@ -38,6 +38,10 @@ namespace Miam
 			Duration,
 			Position,
 			Source,
+            
+            InputsCount,
+            OutputsCount,
+            InputsAndOutputsCount,
         };
         
         ParamType Type = ParamType::None;

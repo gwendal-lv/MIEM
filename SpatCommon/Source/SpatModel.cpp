@@ -26,26 +26,14 @@ using namespace Miam;
 // - - - - - Construction / destruction - - - - -
 SpatModel::SpatModel(IPresenter* presenter_, double updateFrequency_Hz)
 :
+PeriodicUpdateThread("SpatModel updater"), // base class
+
 presenter(presenter_),
-updateThreadF_Hz(updateFrequency_Hz),
-updateThreadT_us((int)std::round(1000000.0/updateFrequency_Hz)),
-continueUpdate(false),
-updateThreadMeasurer("Model updater"),
 spatType(SpatType::None)
 {
-    // Test of lockfreeness
-    if (continueUpdate.is_lock_free())
-        DBG("Atomic bool is lock free on this platform");
-    else
-        throw std::runtime_error("Atomic bool is not lock free on this platform");
-    
-
-
-    // Launch of thread, at the specified frequency
-    //continueUpdate = true;
-    // Using a c++11 lambda function for class member calling
-	// Gros problème de polymorphisme non-fonctionnel sous VS2015 (voir header pour détails)
-    //updateThread = std::thread( [this] {this->update();} );
+    updateThreadF_Hz = updateFrequency_Hz;
+    updateThreadT_us = (int)std::round(1000000.0/updateFrequency_Hz);
+    continueUpdate = false;
 }
 
 
