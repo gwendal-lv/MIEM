@@ -57,11 +57,15 @@ namespace Miam {
         
         // - - - - - Setters and Getters - - - - -
         
+        /// Called from ??? At the moment, should be called from the Juce UI thread
+        /// only... We'll see if we observe strange MT conflicts
+        ///
         /// \return Wether the connection could be established or not
-        bool SetUdpPort(int _udpPort);
+        bool SetUdpPort(int _udpPort, bool notifyModel=false);
         
         // - - - - - Asynchronous OSC processing - - - - -
         private :
+        // Called from the network thread
         virtual void oscMessageReceived(const OSCMessage& message) override;
         
         

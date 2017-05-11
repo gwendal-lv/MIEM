@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <FILTERGRAPH>
-  <FILTER uid="1" x="0.10037776578521316606" y="0.066666666666666665741"
-          uiLastX_Generic="315" uiLastY_Generic="311" uiopen_Generic="0">
+  <FILTER uid="1" x="0.11548839719373987789" y="0.099487179487179486226"
+          uiLastX_Generic="905" uiLastY_Generic="461" uiopen_Generic="0"
+          uiLastX_="161" uiLastY_="158" uiopen_="0">
     <PLUGIN name="Audio Input" descriptiveName="" format="Internal" category="I/O devices"
             manufacturer="ROLI Ltd." version="1.0" file="" uid="246006c0"
             isInstrument="0" fileTime="0" infoUpdateTime="0" numInputs="0"
-            numOutputs="2" isShell="0"/>
+            numOutputs="4" isShell="0"/>
     <STATE>0.</STATE>
     <LAYOUT>
       <INPUTS>
         <BUS index="0" layout="disabled"/>
       </INPUTS>
       <OUTPUTS>
-        <BUS index="0" layout="L R"/>
+        <BUS index="0" layout="L R C Lfe Ls Rs"/>
       </OUTPUTS>
     </LAYOUT>
   </FILTER>
@@ -35,36 +36,33 @@
   <FILTER uid="3" x="0.18888289260658391866" y="0.92146118721461178769">
     <PLUGIN name="Audio Output" descriptiveName="" format="Internal" category="I/O devices"
             manufacturer="ROLI Ltd." version="1.0" file="" uid="724248cb"
-            isInstrument="0" fileTime="0" infoUpdateTime="0" numInputs="2"
+            isInstrument="0" fileTime="0" infoUpdateTime="0" numInputs="6"
             numOutputs="0" isShell="0"/>
     <STATE>0.</STATE>
     <LAYOUT>
       <INPUTS>
-        <BUS index="0" layout="L R"/>
+        <BUS index="0" layout="L R Ls Rs"/>
       </INPUTS>
       <OUTPUTS>
         <BUS index="0" layout="disabled"/>
       </OUTPUTS>
     </LAYOUT>
   </FILTER>
-  <FILTER uid="4" x="0.40420939017808960037" y="0.5005128205128205332"
-          uiLastX_Normal="433" uiLastY_Normal="328" uiopen_Normal="0">
+  <FILTER uid="4" x="0.17107393416082028459" y="0.3907692307692307021">
     <PLUGIN name="MiamMatrixRouter" format="AudioUnit" category="Effect"
-            manufacturer="IRISIB/LARAS" version="1.0.0" file="AudioUnit:Effects/aufx,Eo3z,Manu"
-            uid="697b3b77" isInstrument="0" fileTime="0" infoUpdateTime="15beeccca95"
-            numInputs="64" numOutputs="64" isShell="0"/>
-    <STATE>240.hAGaoMGcv.C1AHv.DTfAGfPBJrvDTTgEWvUag4VclE1XzUmbkIGUjEFcgwUYrUVak4Fcs3VXsU1UyUmXzkGbkckckI2bo8laTQWdvU1WP7fZ0MVYPwVcmklaSQWXzUFUtEVakIQSg4VcOAAE..............P.d4xAh6ya1HhzLzfCQDULQISzO.QTvTURtAWczE8CRX0S0QGb0QmDE81L5AA.RDVclgGQl2A..fUUtQWZzwVYjgPFlrBN.gTSeQVZ.V3gIxniTdomiVppuB.......DP..........fA....................t</STATE>
+            manufacturer="G. Le Vaillant" version="1.0.0" file="AudioUnit:Effects/aufx,Eo3z,Manu"
+            uid="697b3b77" isInstrument="0" fileTime="0" infoUpdateTime="15bf94cc2e0"
+            numInputs="2" numOutputs="2" isShell="0"/>
+    <STATE>218.hAGaoMGcv.C1AHv.DTfAGfPBJrvDTTgEWvUag4VclE1XzUmbkIGUjEFcgwUYrUVak4Fcs3VXsU1UyUmXzkGbkckckI2bo8laTQWdvU1WP7fZ0MVYPwVcmklaSQWXzUFUtEVakIQSg4Vc.IMCM3PDQESTxD8CPDELUkjavUGcQ+fDV8TczAWczIQQuMidP.fDgUmY3Qj4c...XUkazkFcrUFYHjgIqfCPH0zWjklZuE2b1gmeAhXiORYl........AD..........X....................HJ</STATE>
     <LAYOUT>
       <INPUTS>
-        <BUS index="0" layout="7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70"/>
+        <BUS index="0" layout="L R"/>
       </INPUTS>
       <OUTPUTS>
-        <BUS index="0" layout="7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70"/>
+        <BUS index="0" layout="L R"/>
       </OUTPUTS>
     </LAYOUT>
   </FILTER>
   <CONNECTION srcFilter="1" srcChannel="0" dstFilter="4" dstChannel="0"/>
   <CONNECTION srcFilter="1" srcChannel="1" dstFilter="4" dstChannel="1"/>
-  <CONNECTION srcFilter="4" srcChannel="0" dstFilter="3" dstChannel="0"/>
-  <CONNECTION srcFilter="4" srcChannel="1" dstFilter="3" dstChannel="1"/>
 </FILTERGRAPH>

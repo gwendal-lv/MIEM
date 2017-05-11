@@ -289,13 +289,13 @@
  #define JucePlugin_Desc                   "OSC controllable matrix router, for Miam Spat"
 #endif
 #ifndef  JucePlugin_Manufacturer
- #define JucePlugin_Manufacturer           "IRISIB/LARAS"
+ #define JucePlugin_Manufacturer           "G. Le Vaillant"
 #endif
 #ifndef  JucePlugin_ManufacturerWebsite
- #define JucePlugin_ManufacturerWebsite    ""
+ #define JucePlugin_ManufacturerWebsite    "http://www.laras.be"
 #endif
 #ifndef  JucePlugin_ManufacturerEmail
- #define JucePlugin_ManufacturerEmail      ""
+ #define JucePlugin_ManufacturerEmail      "gwendal.le-vaillant@grenoble-inp.org"
 #endif
 #ifndef  JucePlugin_ManufacturerCode
  #define JucePlugin_ManufacturerCode       0x4d616e75 // 'Manu'
@@ -349,7 +349,7 @@
  #define JucePlugin_AUManufacturerCode     JucePlugin_ManufacturerCode
 #endif
 #ifndef  JucePlugin_CFBundleIdentifier
- #define JucePlugin_CFBundleIdentifier     com.irisib.MiamMatrixRouter
+ #define JucePlugin_CFBundleIdentifier     com.glv.MiamMatrixRouter
 #endif
 #ifndef  JucePlugin_RTASCategory
  #define JucePlugin_RTASCategory           ePlugInCategory_None
@@ -391,14 +391,14 @@
  #define JucePlugin_IAASubType             JucePlugin_PluginCode
 #endif
 #ifndef  JucePlugin_IAAName
- #define JucePlugin_IAAName                "IRISIB/LARAS: MiamMatrixRouter"
+ #define JucePlugin_IAAName                "G. Le Vaillant: MiamMatrixRouter"
 #endif
 #ifndef  JucePlugin_MaxNumInputChannels
- #define JucePlugin_MaxNumInputChannels    2
+ #define JucePlugin_MaxNumInputChannels    4
 #endif
 #ifndef  JucePlugin_MaxNumOutputChannels
- #define JucePlugin_MaxNumOutputChannels   2
+ #define JucePlugin_MaxNumOutputChannels   4
 #endif
 #ifndef  JucePlugin_PreferredChannelConfigurations
- #define JucePlugin_PreferredChannelConfigurations  {2,2} 
+ #define JucePlugin_PreferredChannelConfigurations  {2,2},{4,4}
 #endif

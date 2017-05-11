@@ -39,6 +39,7 @@ namespace Miam
         // Graphics
         const unsigned int maxRowsCount;
         const unsigned int maxColsCount;
+        
         int n; // Number of actually displayed rows
         int m; // Number of actually displayed columns
         
@@ -56,8 +57,9 @@ namespace Miam
         grandParent(_grandParent),
         maxRowsCount(_maxRowsCount), maxColsCount(_maxColsCount)
         {
-            n = maxRowsCount;
-            m = maxColsCount;
+            // Initial values (to be changed after construction)
+            n = 0;
+            m = 0;
             
             ReconstructGuiObjects();
         }
@@ -77,7 +79,60 @@ namespace Miam
             slider->addListener(this);
             
             // Graphical update
-            setSliderColourFromVolume(slider);
+            slider->SetPropertiesFromVolume();
+        }
+        void SetActiveSliders(int inputsCount, int outputsCount)
+        {
+            std::cout << "n = " << n << " - m = " << m << std::endl;
+            std::cout << "in = " << inputsCount << " - out = " << outputsCount << std::endl;
+            // Rows updating
+            if (n != inputsCount)
+            {
+                // For all existing cols, we do something
+                for (int j=0 ; j<m ; j++)
+                {
+                    if (inputsCount > n) // Increase of the rows count
+                    {
+                        for (int i=n ; i<inputsCount ; i++)
+                            sliders[j + i*maxRowsCount]->SetIsActive(true);
+                    }
+                    else // Decrease of the rows count
+                    {
+                        for (int i=n-1 ; i>=inputsCount ; i--)
+                            sliders[j + i*maxRowsCount]->SetIsActive(false);
+                    }
+                }
+                n = inputsCount;
+            }
+                
+            // Cols updating, based on the current up-to-date rows number
+            if (m != outputsCount)
+            {
+                // For all existing rows, we do something
+                for (int i=0 ; i<n ; i++)
+                {
+                    if (outputsCount > m) // Increase of the cols count
+                    {
+                        for (int j=m ; j<outputsCount ; j++)
+                            sliders[j + i*maxRowsCount]->SetIsActive(true);
+                    }
+                    else // Decrease of the cols count
+                    {
+                        for (int j=m-1 ; j>=outputsCount ; j--)
+                            sliders[j + i*maxRowsCount]->SetIsActive(false);
+                    }
+                }
+                m = outputsCount;
+            }
+            
+            // Repaint at the very end
+            repaint();
+        }
+        void SetSlidersTextBoxesAreEditable(bool shouldBeEditable)
+        {
+            for (int i=0 ; i<maxRowsCount ; i++)
+                for (int j=0 ; j<maxColsCount ; j++)
+                    sliders[i*maxRowsCount + j]->setTextBoxIsEditable(shouldBeEditable);
         }
         
         
@@ -101,19 +156,19 @@ namespace Miam
         
         void resized() override
         {
-            setSize(m*itemW, n*itemH);
+            setSize(maxRowsCount*itemW, maxColsCount*itemH);
         }
         
         void RepositionGuiObjects()
         {
             // Actual positionning
             // i repesents a *graphical* row (= matrix row in this case...)
-            for (int i=0 ; i<n ; i++)
+            for (int i=0 ; i<maxRowsCount ; i++)
             {
                 // j repesents a *graphical* column (= matrix col now...)
-                for (int j=0 ; j<m ; j++)
+                for (int j=0 ; j<maxColsCount ; j++)
                 {
-                    int idx = i*n + j; // graphically one col further than the matrix
+                    int idx = i*maxRowsCount + j; // graphically one col further than the matrix
                     sliders[idx]->setBounds((int)round(j*itemW), (int)round(i*itemH), (int)round(itemW), (int)round(itemH));
                 }
             }
@@ -126,23 +181,26 @@ namespace Miam
             
             // Pre-allocations for vector of scoped pointers
             sliders.clear();
-            sliders.resize(n*m);
+            sliders.resize(maxRowsCount*maxColsCount);
             
             // Actual creation of sliders and labels
-            for (int i=0 ; i<n ; i++)
+            for (int i=0 ; i<maxRowsCount ; i++)
             {
-                for (int j=0 ; j<m ; j++)
+                for (int j=0 ; j<maxColsCount ; j++)
                 {
                     // Slider (i,j)
-                    int idx = i*n+j;
+                    int idx = i*maxRowsCount+j;
                     sliders[idx] = new MatrixSlider();
                     sliders[idx]->setName("Slider ID=" + std::to_string(idx) + " : row=" + std::to_string(i) + " col=" + std::to_string(j));
                     sliders[idx]->setComponentID(std::to_string(idx));
                     initAndAddSlider(sliders[idx]);
                     
-                    setSliderColourFromVolume(sliders[idx]);
+                    sliders[idx]->SetPropertiesFromVolume();
                 }
             }
+            
+            // Active sliders
+            SetActiveSliders(n, m);
             
             // Graphical placement
             RepositionGuiObjects();
@@ -155,20 +213,6 @@ namespace Miam
         {
             addAndMakeVisible(slider);
             slider->addListener(this);
-        }
-        void setSliderColourFromVolume(MatrixSlider* slider)
-        {
-            // Graphical update depending on new value
-            if (slider->getValue() < MatrixSlider::GetMinVolume()+0.5)
-            {
-                slider->SetBackgroundColour(Colours::white);
-            }
-            else
-            {
-                float hue = (slider->getValue()-MatrixSlider::GetMinVolume()) / (MatrixSlider::GetMaxVolume()-MatrixSlider::GetMinVolume());
-                hue = (1.0-hue)*0.5 + 0.1;
-                slider->SetBackgroundColour(Colour(hue, 1.0, 0.5, (uint8)0xff));
-            }
         }
         
         
@@ -194,7 +238,7 @@ namespace Miam
                 grandParent->OnSliderValueChanged(sliderRow, sliderCol, slider->getValue());
                 
                 // Graphical update depending on new value
-                setSliderColourFromVolume(slider);
+                slider->SetPropertiesFromVolume();
             }
         }
         

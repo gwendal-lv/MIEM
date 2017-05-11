@@ -58,6 +58,10 @@ namespace Miam {
         Presenter(MatrixRouterAudioProcessor& _model, NetworkModel& _networkModel);
         ~Presenter();
         
+        // Callback from the Model, after the constructor of the plugin editor
+        void OnPluginEditorCreated(MatrixRouterAudioProcessorEditor* view);
+
+        
         // - - - - - Setters and Getters - - - - -
         OscMatrixComponent* GetOscMatrixComponent() {return oscMatrixComponent;}
         
@@ -75,7 +79,7 @@ namespace Miam {
         /// \brief Translates the data into a Miam::AsyncParamChange, then sends the data
         /// to the Model.
         void OnSliderValueChanged(int row, int col, double value);
-        
+        void OnUdpPortChanged(int udpPort);
         
         // - - - - - Synchronous callbacks from Model - - - - -
         // Bien vérifier à un moment que tout ça passe bien sur le thread UI dans Juce !

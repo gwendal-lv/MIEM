@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="Eo3Z3f" name="MatrixRouter" projectType="audioplug" version="1.0.0"
-              bundleIdentifier="com.irisib.MiamMatrixRouter" includeBinaryInAppConfig="1"
+              bundleIdentifier="com.glv.MiamMatrixRouter" includeBinaryInAppConfig="1"
               buildVST="1" buildVST3="0" buildAU="1" buildAUv3="0" buildRTAS="0"
               buildAAX="0" pluginName="MiamMatrixRouter" pluginDesc="OSC controllable matrix router, for Miam Spat"
-              pluginManufacturer="IRISIB/LARAS" pluginManufacturerCode="Manu"
-              pluginCode="Eo3z" pluginChannelConfigs="{2,2} " pluginIsSynth="0"
+              pluginManufacturer="G. Le Vaillant" pluginManufacturerCode="Manu"
+              pluginCode="Eo3z" pluginChannelConfigs="{2,2},{4,4}" pluginIsSynth="0"
               pluginWantsMidiIn="0" pluginProducesMidiOut="0" pluginIsMidiEffectPlugin="0"
               pluginEditorRequiresKeys="0" pluginAUExportPrefix="MatrixRouterAU"
               pluginRTASCategory="" aaxIdentifier="com.yourcompany.MatrixRouter"
               pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="5.0.1"
               defines="" displaySplashScreen="1" reportAppUsage="1" splashScreenColour="Dark"
-              buildStandalone="0" enableIAA="0">
+              buildStandalone="0" enableIAA="0" companyName="LARAS (IRISIB)"
+              companyWebsite="http://www.laras.be" companyEmail="gwendal.le-vaillant@grenoble-inp.org">
   <MAINGROUP id="uSK6Ed" name="MatrixRouter">
     <GROUP id="{7E647B1E-1C9F-BD65-5FF1-5839B4766A43}" name="Source">
       <GROUP id="{E44EFD07-3B55-8033-8C2F-DBABCD5578FE}" name="View">
@@ -184,6 +185,9 @@
         </GROUP>
       </GROUP>
       <GROUP id="{B91B2137-DC4A-127C-0037-DB058876BEFA}" name="Utils">
+        <GROUP id="{5315337B-6E49-3E8D-A9F7-3A94BE3F4AA8}" name="Audio">
+          <FILE id="suhcBm" name="AudioDefines.h" compile="0" resource="0" file="../MiamCommon/Source/AudioDefines.h"/>
+        </GROUP>
         <GROUP id="{22E0B59F-81F6-AAC5-A6F4-3B584D7BBEA6}" name="AsyncParamChanges">
           <FILE id="ttwn7e" name="AsyncParamChange.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/AsyncParamChange.cpp"/>
@@ -214,7 +218,8 @@
     <XCODE_MAC targetFolder="Builds/MacOSX">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MatrixRouter"
-                       headerPath="../../../&#10;../../MiamCommon/Source/&#10;../../SpatCommon/Source/"/>
+                       headerPath="../../../&#10;../../MiamCommon/Source/&#10;../../SpatCommon/Source/"
+                       defines="__MIAM_DEBUG"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MatrixRouter"
                        headerPath="../../../&#10;../../MiamCommon/Source/&#10;../../SpatCommon/Source/"/>
       </CONFIGURATIONS>

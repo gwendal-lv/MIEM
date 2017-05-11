@@ -32,7 +32,7 @@ NetworkModel::~NetworkModel()
 }
 
 // =================== Setters and Getters ===================
-bool NetworkModel::SetUdpPort(int _udpPort)
+bool NetworkModel::SetUdpPort(int _udpPort, bool notifyModel)
 {
     removeListener(this);
     
@@ -44,7 +44,18 @@ bool NetworkModel::SetUdpPort(int _udpPort)
     }
     else
     {
+        // Listener NOT AS A SHARED_PTR.... Hope this is OK.....
+        // Juce documentation and forum do not give enough info...
         addListener(this);
+        
+        if (notifyModel)
+        {
+            AsyncParamChange udpChangeNotification;
+            udpChangeNotification.Type = AsyncParamChange::UdpPort;
+            udpChangeNotification.IntegerValue = _udpPort;
+            SendParamChange(udpChangeNotification);
+        }
+        
         return true;
     }
 }

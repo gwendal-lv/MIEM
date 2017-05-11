@@ -20,10 +20,15 @@
 #pragma once
 
 //[Headers]     -- You can add your own extra header files here --
+
 #include "../JuceLibraryCode/JuceHeader.h"
+
+#include "AudioDefines.h"
 
 #include "ISlidersMatrixListener.h"
 #include "SpatCommon/Source/LabelledMatrixComponent.h"
+
+
 
 namespace Miam {
 
@@ -43,7 +48,9 @@ namespace Miam {
                                                                     //[/Comments]
 */
 class OscMatrixComponent  : public Component,
-                            public ISlidersMatrixListener
+                            public ISlidersMatrixListener,
+                            public TextEditor::Listener,
+                            public ButtonListener
 {
 public:
     //==============================================================================
@@ -52,13 +59,24 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
+
+    void textEditorReturnKeyPressed(TextEditor& textEditor) override;
+
     void OnSliderValueChanged(int row, int col, double value) override;
     void SetSliderValue(int row, int col, double value);
     void SetUdpPortAndMessage(int udpPort, bool isConnected);
+    void SetActiveSliders(int inputsCount, int outputsCount);
+
+#ifdef __MIAM_DEBUG
+    void __DisplayDebugMsg(std::string msg)
+    {udpStatusLabel->setText(msg, NotificationType::dontSendNotification);}
+#endif
+
     //[/UserMethods]
 
     void paint (Graphics& g) override;
     void resized() override;
+    void buttonClicked (Button* buttonThatWasClicked) override;
 
 
 
@@ -73,6 +91,8 @@ private:
     ScopedPointer<Label> udpPortLabel;
     ScopedPointer<Label> udpStatusLabel;
     ScopedPointer<Miam::LabelledMatrixComponent> slidersMatrix;
+    ScopedPointer<GroupComponent> preferencesComponent;
+    ScopedPointer<ToggleButton> keyboardButton;
 
 
     //==============================================================================

@@ -44,6 +44,12 @@ namespace Miam
             InputsCount,
             OutputsCount,
             InputsAndOutputsCount,
+            
+            Update,
+            UpdateDisplay,
+            
+            UdpPort,
+            TcpPort,
         };
         
         ParamType Type = ParamType::None;

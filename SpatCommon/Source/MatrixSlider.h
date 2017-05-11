@@ -19,6 +19,12 @@
 
 #include <cmath>
 
+#include "AudioDefines.h"
+
+// We'll authorize the slider to get a bit lower than the Miam_MinVolume_dB
+// (but the values will not actually be processed by the model)
+#define MiamRouter_LowVolumeThreshold_dB        (0.1)
+
 
 namespace Miam
 {
@@ -37,11 +43,14 @@ namespace Miam
         // (on macOS at least, not tested on other platforms)
         Colour backgroundColour;
         
+        /// \brief Wether the slider is currently employed within the model
+        /// for matrix routing, or juste stored just in case
+        bool isActive;
         
         
         public :
         
-        MatrixSlider(int _nbOfDigits = 3)
+        MatrixSlider(int _nbOfDigits = 3, bool _authorizeDoubleClickEditing=false)
             :
             numberOfDigits(_nbOfDigits)
         {
@@ -69,9 +78,14 @@ namespace Miam
             */
             
             
-            setRange(GetMinVolume(), GetMaxVolume());
-            setValue(GetMinVolume());
-            //slider->setDoubleClickReturnValue(true, getMinVolume());
+            setRange(GetMinVolume_dB(), GetMaxVolume_dB());
+            setValue(GetMinVolume_dB());
+            
+            setTextBoxIsEditable(_authorizeDoubleClickEditing);
+            setDoubleClickReturnValue(!_authorizeDoubleClickEditing, 0.0); // 0dB
+            
+            // deactivated by default
+            SetIsActive(false);
         }
         
         void SetBackgroundColour(Colour _backgroundColour)
@@ -79,12 +93,25 @@ namespace Miam
             backgroundColour = _backgroundColour;
         }
         
+        void SetIsActive(bool _isActive)
+        {
+            isActive = _isActive;
+            if (isActive)
+                setColour(Slider::textBoxTextColourId, Colours::white);
+            else
+                setColour(Slider::textBoxTextColourId, Colours::lightgrey);
+            
+            // Graphical update
+            SetPropertiesFromVolume();
+        }
+        bool GetIsActive() {return isActive;}
+        
         
         void paint(Graphics& g) override
         {
             g.fillAll(backgroundColour);
         }
-        
+
         
         
         
@@ -97,8 +124,10 @@ namespace Miam
             if (valueAbs < 1.0)
                 nbFiguresBeforeComa = 1; // on compte le zéro pour l'affichage
             else
-                nbFiguresBeforeComa = (int)std::ceil(std::log10(valueAbs));
-            
+                // the + 0.00001 is here to compensate for log10(10^x) < x
+                // due to numeric approximations (for double on macOS, intel proc...)
+                nbFiguresBeforeComa = (int)std::ceil(std::log10(valueAbs + 0.00001));
+                
             std::stringstream numberStream;
             numberStream << std::fixed << std::setprecision(numberOfDigits-nbFiguresBeforeComa) << value;
             std::string result = numberStream.str();
@@ -111,10 +140,66 @@ namespace Miam
             
             
             
-            // - - - - - Volume management functions - - - - -
+            // - - - - - Volume-related functions - - - - -
+            void SetPropertiesFromVolume()
+            {
+                // Graphical update depending on new value
+                
+                // If value is a bit lower than the minimum : special pure white box
+                if (getValue() < GetMinVolume_dB() + MiamRouter_LowVolumeThreshold_dB)
+                {
+                    // And depending on the active or not state
+                    if (isActive)
+                        SetBackgroundColour(Colours::white);
+                    else
+                        SetBackgroundColour(Colours::lightgrey);
+                }
+                
+                // Displayable value
+                else
+                {
+                    float hue = (getValue()-GetMinVolume_dB()) / (GetMaxVolume_dB()-GetMinVolume_dB());
+                    hue = (1.0-hue)*0.5 + 0.1;
+                    uint8 alpha;
+                    if (GetIsActive())
+                        alpha = 0xff;
+                    else
+                        alpha = 0x77;
+                    
+                    
+                    SetBackgroundColour(Colour(hue, 1.0, 0.7, alpha));
+                }
+                
+                // In any case : possible value on next double click event
+                if (! isTextBoxEditable()) // textbox is read-only
+                {
+                    // We'll go to 0dB if lower than the median volume
+                    if (getValue() < GetMiddleVolume_dB())
+                    {
+                        setDoubleClickReturnValue(true, 0.0);
+                    }
+                    // Else, we'll go to the minimum (undisplayed) volume
+                    else
+                    {
+                        setDoubleClickReturnValue(true, GetMinVolume_dB());
+                    }
+                }
+            }
+            
             public :
-            static double GetMaxVolume() {return 6.0;}
-            static double GetMinVolume() {return -60.0;}
+            static double GetMaxVolume_dB()
+            {
+                return Miam_MaxVolume_dB;
+            }
+            static double GetMinVolume_dB()
+            {
+                // we autorize the slider to get a bit lower than
+                return Miam_MinVolume_dB - MiamRouter_LowVolumeThreshold_dB;
+            }
+            static double GetMiddleVolume_dB()
+            {
+                return (0.0 + Miam_MinVolume_dB)/2.0;
+            }
             
         
     };

@@ -37,6 +37,21 @@ Presenter::~Presenter()
 }
 
 
+void Presenter::OnPluginEditorCreated(MatrixRouterAudioProcessorEditor* view)
+{
+    // Update request, row by row, every 5ms
+    AsyncParamChange updateRequest;
+    updateRequest.Type = AsyncParamChange::UpdateDisplay;
+    for (int i=-1 ; i<JucePlugin_MaxNumInputChannels ; i++)
+    {
+        // CONVENTION : Id1 represents the row to update
+        // EXCEPTION : -1 represents any other info about the matrix (in/out count, ...)
+        updateRequest.Id1 = i;
+        SendParamChange(updateRequest);
+        // Not to charge too much the audio processor
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    }
+}
 
 
 
@@ -52,10 +67,11 @@ void Presenter::UpdateFromView(MatrixRouterAudioProcessorEditor* view)
         switch (newParamChange.Type)
         {
             case AsyncParamChange::InputsAndOutputsCount :
+                oscMatrixComponent->SetActiveSliders(newParamChange.Id1, newParamChange.Id2);
                 break;
                 
             case AsyncParamChange::Volume :
-                sliderValue_dB = 20*log(newParamChange.DoubleValue);
+                sliderValue_dB = Decibels::gainToDecibels(newParamChange.DoubleValue);
                 oscMatrixComponent->SetSliderValue(newParamChange.Id1, newParamChange.Id2, sliderValue_dB);
                 break;
                 
@@ -82,17 +98,24 @@ void Presenter::OnSliderValueChanged(int row, int col, double value)
     paramChange.Id2 = col;
     
     // We keep values over min+0.5dB only
-    if (value < (MatrixSlider::GetMinVolume() + 0.5))
+    if (value < (MatrixSlider::GetMinVolume_dB() + 0.5))
         paramChange.DoubleValue = 0.0;
     else
-        paramChange.DoubleValue = std::pow(10.0, value/20.0);
+        paramChange.DoubleValue = Decibels::decibelsToGain((double)value);
         
     // Enqueuing
     SendParamChange(paramChange);
 }
+void Presenter::OnUdpPortChanged(int udpPort)
+{
+    // At this point : called from the Juce UI thread (so : OK), notifyModel=true
+    bool isUdpConnected = model.GetNetworkModel()->SetUdpPort(udpPort, true);
+    // Self-update
+    this->OnNewUdpPort(udpPort, isUdpConnected);
+}
 
 
-// =================== Synchronous callbacks from Model ===================
+// =================== (possibly) Synchronous callbacks from Model ===================
 void Presenter::OnNewUdpPort(int udpPort, bool isConnected)
 {
     oscMatrixComponent->SetUdpPortAndMessage(udpPort, isConnected);

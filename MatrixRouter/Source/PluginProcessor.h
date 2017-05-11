@@ -11,11 +11,15 @@
 #ifndef PLUGINPROCESSOR_H_INCLUDED
 #define PLUGINPROCESSOR_H_INCLUDED
 
-#define Miam_MaxBufferSize          16384
-#define Miam_MinVolume              0.0001 // -80dB
-#define Miam_TransitionFrequency    1000   // Hz
+#include <memory>
 
 #include "../JuceLibraryCode/JuceHeader.h"
+
+
+#define MiamRouter_MaxBufferSize          16384
+#define MiamRouter_TransitionFrequency    1000   // Hz
+
+#include "AudioDefines.h"
 
 #include "IModel.h"
 
@@ -37,7 +41,9 @@ namespace Miam {
         // ================== ATTRIBUTES ===================
     private:
         // - - - - - Links to other modules - - - - -
-        NetworkModel* networkModel;
+        /// Called from both the UI thread for save/load phases and UPD changes
+        /// And the audio thread (lock-free message requested by the audio thread)
+        std::shared_ptr<NetworkModel> networkModel;
         Presenter* presenter;
         
         // - - - - - Various buffers - - - - -
@@ -47,7 +53,7 @@ namespace Miam {
         ///
         /// Optimization possible within the prepareToPlay function
         /// -> 1Mo buffer = we don't care on a decent system playing 64 channels
-        float inputAudioData[JucePlugin_MaxNumInputChannels][Miam_MaxBufferSize];
+        float inputAudioData[JucePlugin_MaxNumInputChannels][MiamRouter_MaxBufferSize];
         /// \brief Buffer of an input only, intended to be modified
         AudioBuffer<float> currentInputBuffer;
         
@@ -88,13 +94,20 @@ namespace Miam {
 #endif
         
         // - - - - - Functions executed on the audio thread - - - - -
+    public :
         void processBlock (AudioSampleBuffer&, MidiBuffer&) override;
     private :
         /// \brief Gets all available Miam::AsyncParamChange data structures and
         /// interprets in terms of audio processor coefficients
         void processorAsyncUpdate();
         void processParamChange(AsyncParamChange& paramChange, bool notifyPresenter=false);
+        /// \brief Auxiliary function
+        void sendInputsOutputsCount();
     public :
+        
+        // - - - - - MIAM setters and getters - - - - -
+    public :
+        std::shared_ptr<NetworkModel> GetNetworkModel() {return networkModel;}
         
         
         //==============================================================================
