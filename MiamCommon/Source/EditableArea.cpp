@@ -15,7 +15,7 @@ using namespace Miam;
 
 
 
-EditableArea::EditableArea()
+EditableArea::EditableArea() : bmanipulationPointInPixels(0,0)
 {
     enableTranslationOnly = false;
 }

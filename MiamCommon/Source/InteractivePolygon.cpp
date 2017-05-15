@@ -30,7 +30,7 @@ DrawablePolygon(_Id, _center, pointsCount, radius, _fillColour, _canvasRatio)
     init();
 }
 
-InteractivePolygon::InteractivePolygon(int64_t _Id, Point<double> _center, std::vector<Point<double>>& _contourPoints, Colour _fillColour) :
+InteractivePolygon::InteractivePolygon(int64_t _Id, bpt _center, bpolygon& _contourPoints, Colour _fillColour) :
 DrawablePolygon(_Id, _center, _contourPoints, _fillColour)
 {
     init();
@@ -52,10 +52,13 @@ void InteractivePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
     
     
     // Pixel contour points
-    contourPointsInPixels.clear();
-    for(size_t i=0 ; i<contourPoints.size() ; i++)
-        contourPointsInPixels.push_back(Point<double>(contourPoints[i].x*parentCanvas->getWidth(),
-                                                      contourPoints[i].y*parentCanvas->getHeight()));
+    //contourPointsInPixels.clear();
+    //for(size_t i=0 ; i<bcontourPoints.outer().size() ; i++)
+    //    contourPointsInPixels.push_back(Point<double>(contourPoints[i].x*parentCanvas->getWidth(),
+    //                                                  contourPoints[i].y*parentCanvas->getHeight()));
+	bcontourPointsInPixels.clear();
+	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scale(parentCanvas->getWidth(), parentCanvas->getHeight());
+	boost::geometry::transform(bcontourPoints, bcontourPointsInPixels, scale);
     
     // Finally, we update sub triangles
     updateSubTriangles();
@@ -69,6 +72,7 @@ void InteractivePolygon::updateSubTriangles()
 {
     // Reinitializes the whole list
     subTriangles.clear();
+	/*
     // We begin by the annoying one
     subTriangles.push_back(SubTriangle(centerInPixels, contourPointsInPixels.back(), contourPointsInPixels.front()));
     // Then add the others
@@ -76,6 +80,14 @@ void InteractivePolygon::updateSubTriangles()
     {
         subTriangles.push_back(SubTriangle(centerInPixels, contourPointsInPixels[i], contourPointsInPixels[i+1]));
     }
+	*/
+	// We begin by the annoying one
+	subTriangles.push_back(SubTriangle(bcenterInPixels, bcontourPointsInPixels.outer().back(), bcontourPointsInPixels.outer().front()));
+	// Then add the others
+	for (size_t i = 0; i <bcontourPointsInPixels.outer().size() - 1; i++)
+	{
+		subTriangles.push_back(SubTriangle(bcenterInPixels, bcontourPointsInPixels.outer().at(i), bcontourPointsInPixels.outer().at(i+1)));
+	}
 }
 
 void InteractivePolygon::computeSurface()

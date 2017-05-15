@@ -24,7 +24,7 @@
 using namespace Amusing;
 using namespace Miam;
 
-Follower::Follower(int64_t _Id, Point<double> _center, double _r, Colour _fillColour, float _canvasRatio, std::shared_ptr<InteractiveScene> m_masterScene)
+Follower::Follower(int64_t _Id, bpt _center, double _r, Colour _fillColour, float _canvasRatio, std::shared_ptr<InteractiveScene> m_masterScene)
 	: EditableEllipse(_Id,_center,_r,_r,_fillColour,_canvasRatio),
 	masterScene(m_masterScene),
 	positionPC(0), currentPoint(0)
@@ -162,7 +162,7 @@ void Follower::setCenter(Point<double> newCenter)
 	translation.setXY(translation.getX() * (double)parentCanvas->getWidth(),translation.getY() * (double)parentCanvas->getHeight());
 	DBG("[translation] = " + (String)translation.getX() + " " + (String)translation.getY());
 	Translate(translation);
-	DBG("[0] = " + (String)contourPoints[0].getX() + " " + (String)contourPoints[0].getY());
+	//DBG("[0] = " + (String)contourPoints[0].getX() + " " + (String)contourPoints[0].getY());
 	CanvasResized(this->parentCanvas);
 	
 }

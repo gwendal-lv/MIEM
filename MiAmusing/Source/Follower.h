@@ -29,7 +29,7 @@ namespace Amusing
 		public std::enable_shared_from_this<Follower>
 	{
 		public :
-			Follower(int64_t _Id, Point<double> _center, double _r, Colour _fillColour, float _canvasRatio, std::shared_ptr<Miam::InteractiveScene> m_masterScene);
+			Follower(int64_t _Id, bpt _center, double _r, Colour _fillColour, float _canvasRatio, std::shared_ptr<Miam::InteractiveScene> m_masterScene);
 			~Follower();
 			virtual IDrawableArea* Clone() const override { return new Follower(*this); }
 

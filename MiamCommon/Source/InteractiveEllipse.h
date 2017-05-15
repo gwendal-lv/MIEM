@@ -22,7 +22,7 @@ namespace Miam
 	{
 		public :
 			InteractiveEllipse(int64_t _Id);
-			InteractiveEllipse(int64_t _Id, Point<double> _center, double _a, double _b, Colour _fillColour, float _canvasRatio);
+			InteractiveEllipse(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio);
 
 			virtual ~InteractiveEllipse() {}
 			virtual IDrawableArea* Clone() const override { return new InteractiveEllipse(*this); }

@@ -21,6 +21,13 @@
 #include "InteractiveScene.h"
 #include "SceneEvent.h"
 
+#include "boost\geometry.hpp"
+#include "boost\geometry\geometries\geometries.hpp"
+#include "boost\geometry\geometries\polygon.hpp"
+
+typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> bpt;
+typedef boost::geometry::model::polygon<bpt> bpolygon;
+
 using namespace Miam;
 using namespace Amusing;
 
@@ -116,13 +123,13 @@ std::shared_ptr<AreaEvent> AmusingScene::AddTrueCircle(uint64_t nextAreaId)
 {
 	DBG("Creation du cercle");
 	std::shared_ptr<EditableEllipse> newCircle(new EditableEllipse(nextAreaId,
-		Point<double>(0.5f, 0.5f), 0.1f, 0.1f, Colours::grey, canvasComponent->GetRatio()));
+		bpt(0.5f, 0.5f), 0.1f, 0.1f, Colours::grey, canvasComponent->GetRatio()));
 	return AddArea(newCircle);
 }
 
 std::shared_ptr<AreaEvent> AmusingScene::AddFollower(uint64_t nextAreaId)
 {
-	std::shared_ptr<Follower> newFollower(new Follower(nextAreaId, Point<double>(0.5f, 0.5f), 0.1f, Colours::grey, canvasComponent->GetRatio(), shared_from_this()));
+	std::shared_ptr<Follower> newFollower(new Follower(nextAreaId, bpt(0.5f, 0.5f), 0.1f, Colours::grey, canvasComponent->GetRatio(), shared_from_this()));
 	followers.push_back(newFollower);
 
 	// Forced graphical updates

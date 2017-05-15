@@ -33,7 +33,7 @@ namespace Amusing
 			Point<double> _center, int pointsCount, float radius,
 			Colour _fillColour, float _canvasRatio = 1.47);
 		CompletePolygon(int64_t _Id,
-			Point<double> _center, std::vector<Point<double>>& _contourPoints,
+			bpt _center, bpolygon& _contourPoints,
 			Colour _fillColour);
 
 		~CompletePolygon();
@@ -51,7 +51,7 @@ namespace Amusing
 
 		// attributes linked to the Cursor
 		bool showCursor;
-		Point<double> cursorCenter;
+		bpt cursorCenter;
 		double perimeter;
 		std::vector<double> percentages; // percentages corresponding to each points
 		std::shared_ptr<Miam::EditableEllipse> cursor;

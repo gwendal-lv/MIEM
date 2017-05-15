@@ -13,7 +13,11 @@
 
 #include "JuceHeader.h"
 
+#include "boost\geometry.hpp"
+#include "boost\geometry\geometries\geometries.hpp"
+#include "boost\geometry\geometries\polygon.hpp"
 
+typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> bpt;
 
 namespace Miam
 {
@@ -37,6 +41,7 @@ namespace Miam
         // Attributes
         protected :
         Point<double> G, B, C; // B at beginAngle and C at endAngle
+		bpt bG, bB, bC;
         double beginAngle, endAngle;
         
         private :
@@ -54,6 +59,8 @@ namespace Miam
         /// <param name="_B"></param>
         /// <param name="_C"></param>
         SubTriangle(Point<double> _pointG, Point<double> _pointB, Point<double> _pointC);
+
+		SubTriangle(bpt _pointG, bpt _pointB, bpt _pointC);
         
         
         // Interactions computing
@@ -75,6 +82,7 @@ namespace Miam
         /// <param name="T">Interaction location</param>
         /// <returns></returns>
         double ComputeInteractionWeight(Point<double> T);
+		double ComputeInteractionWeight(bpt T);
 
 		// Area computing
 		void computeSurface();

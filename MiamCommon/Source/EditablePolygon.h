@@ -36,7 +36,7 @@ namespace Miam {
 			Colour _fillColour, float _canvasRatio = 1.47); // ratio 800/544 px
 		/// \param _Id See DrawablePolygon::DrawablePolygon
         EditablePolygon(int64_t _Id,
-			Point<double> _center, std::vector<Point<double>>& _contourPoints,
+			bpt _center, bpolygon& _contourPoints,
 			Colour _fillColour);
         
         virtual IDrawableArea* Clone() const override {return new EditablePolygon(*this);}
@@ -97,7 +97,7 @@ namespace Miam {
         bool isNewContourPointValid(const Point<double>& newLocation);
         bool isNewCenterValid(const Point<double>& newLocation);
         bool isCenterValidWithoutContourPoint(size_t contourPointId);
-        void insertPointInPixels(const Point<double>& newContourPoint, int position);
+        void insertPointInPixels(const bpt& newContourPoint, int position);
         void deletePoint(int position);
         
         

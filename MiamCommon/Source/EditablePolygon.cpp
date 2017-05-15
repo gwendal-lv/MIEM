@@ -34,7 +34,7 @@ EditablePolygon::EditablePolygon(int64_t _Id, Point<double> _center, int pointsC
     init();
 }
 
-EditablePolygon::EditablePolygon(int64_t _Id, Point<double> _center, std::vector<Point<double>>& _contourPoints, Colour _fillColour) :
+EditablePolygon::EditablePolygon(int64_t _Id, bpt _center, bpolygon& _contourPoints, Colour _fillColour) :
     InteractivePolygon(_Id, _center, _contourPoints, _fillColour)
 {
     init();
@@ -78,23 +78,23 @@ void EditablePolygon::Paint(Graphics& g)
         if (!enableTranslationOnly)
         {
             // Then, we draw the coutour draggable points
-            for (size_t i=0 ; i<contourPointsInPixels.size() ; i++)
+            for (size_t i=0 ; i<bcontourPointsInPixels.outer().size() ; i++)
             {
-                g.fillEllipse((float)contourPointsInPixels[i].x-contourPointsRadius,
-                              (float)contourPointsInPixels[i].y-contourPointsRadius,
+                g.fillEllipse((float)bcontourPointsInPixels.outer().at(i).get<0>()-contourPointsRadius,
+							  (float)bcontourPointsInPixels.outer().at(i).get<1>() -contourPointsRadius,
                               contourPointsRadius*2.0f,
                               contourPointsRadius*2.0f);
             }
             
             // And finally, the manipulation (rotation & scale) main control
-            Line<float> manipulationLine = Line<float>((float)centerInPixels.x,
-                                                       (float)centerInPixels.y,
-                                                       (float)manipulationPointInPixels.x,
-                                                       (float)manipulationPointInPixels.y);
+            Line<float> manipulationLine = Line<float>((float)bcenterInPixels.get<0>(),
+                                                       (float)bcenterInPixels.get<1>(),
+                                                       (float)bmanipulationPointInPixels.get<0>(),
+                                                       (float)bmanipulationPointInPixels.get<1>());
             float dashedLineParameters[] = {4.0f, 4.0f};
             g.drawDashedLine(manipulationLine, dashedLineParameters, 2, centerContourWidth);
-            g.fillEllipse((float)manipulationPointInPixels.x-manipulationPointRadius,
-                          (float)manipulationPointInPixels.y-manipulationPointRadius,
+            g.fillEllipse((float)bmanipulationPointInPixels.get<0>() -manipulationPointRadius,
+                          (float)bmanipulationPointInPixels.get<1>() -manipulationPointRadius,
                           (float)manipulationPointRadius*2.0f,
                           (float)manipulationPointRadius*2.0f);
         }
@@ -138,15 +138,15 @@ void EditablePolygon::computeManipulationPoint()
     manipulationLineLengthLeft *= -1.3; // negative length coefficient
      */
     // We always try to put ot on the right side first
-    if (centerInPixels.x + manipulationLineLengthRight + manipulationPointRadius
+    if (bcenterInPixels.get<0>() + manipulationLineLengthRight + manipulationPointRadius
         <= parentCanvas->getWidth())
-        manipulationPointInPixels = Point<double>(centerInPixels.x
+        bmanipulationPointInPixels = bpt(bcenterInPixels.get<0>()
                                                   + manipulationLineLengthRight,
-                                                  centerInPixels.y);
+                                                  bcenterInPixels.get<1>());
     else
-        manipulationPointInPixels = Point<double>(centerInPixels.x
+        bmanipulationPointInPixels = bpt(bcenterInPixels.get<0>()
                                                   - manipulationLineLengthLeft,
-                                                  centerInPixels.y);
+                                                  bcenterInPixels.get<1>());
 }
 
 
@@ -195,7 +195,7 @@ AreaEventType EditablePolygon::TryBeginPointMove(const Point<double>& hitPoint)
     if (!enableTranslationOnly)
     {
         // Are we grabbing the manipulation dot ?
-        if (manipulationPointInPixels.getDistanceFrom(hitPoint)
+        if (boost::geometry::distance(bmanipulationPointInPixels, bpt(hitPoint.x, hitPoint.y))
             < (centerCircleRadius+centerContourWidth)) // same radius than the center
         {
             pointDraggedId = EditableAreaPointId::ManipulationPoint;
@@ -203,9 +203,9 @@ AreaEventType EditablePolygon::TryBeginPointMove(const Point<double>& hitPoint)
         }
         
         // Are we grabbing one of the contour points ?
-        for (size_t i=0; (i < contourPointsInPixels.size() && (eventType!=AreaEventType::PointDragBegins)) ; i++)
+        for (size_t i=0; (i < bcontourPointsInPixels.outer().size() && (eventType!=AreaEventType::PointDragBegins)) ; i++)
         {
-            if (contourPointsInPixels[i].getDistanceFrom(hitPoint) < pointDraggingRadius)
+            if (boost::geometry::distance(bcontourPointsInPixels.outer().at(i), bpt(hitPoint.x, hitPoint.y)) < pointDraggingRadius)
             {
                 pointDraggedId = (int)i;
 				eventType = AreaEventType::PointDragBegins;
@@ -215,7 +215,8 @@ AreaEventType EditablePolygon::TryBeginPointMove(const Point<double>& hitPoint)
         // Are we grabbing the center ?
         if (eventType != AreaEventType::PointDragBegins)
         {
-            if (centerInPixels.getDistanceFrom(hitPoint.toDouble())
+			
+            if (boost::geometry::distance(bcenterInPixels, bpt(hitPoint.x, hitPoint.y))
                 < (centerCircleRadius+centerContourWidth))
             {
                 pointDraggedId = EditableAreaPointId::Center;
@@ -240,6 +241,7 @@ AreaEventType EditablePolygon::TryBeginPointMove(const Point<double>& hitPoint)
 
 AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
 {
+	bpt bnewLocation(newLocation.x, newLocation.y);
     AreaEventType areaEventType = AreaEventType::NothingHappened;
     
     // Simple contour point dragging
@@ -248,10 +250,14 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
         if ( parentCanvas->getLocalBounds().contains(newLocation.toInt())
             && isNewContourPointValid(newLocation))
         {
-            contourPointsInPixels[pointDraggedId] = newLocation;
-            contourPoints[pointDraggedId] = Point<double>(
-                                            newLocation.x / (double)parentCanvas->getWidth(),
-                                            newLocation.y / (double)parentCanvas->getHeight());
+            //contourPointsInPixels[pointDraggedId] = newLocation;
+            //contourPoints[pointDraggedId] = Point<double>(
+            //                                newLocation.x / (double)parentCanvas->getWidth(),
+            //                                newLocation.y / (double)parentCanvas->getHeight());
+			bcontourPointsInPixels.outer().at(pointDraggedId) = bpt(newLocation.x, newLocation.y);
+			bcontourPoints.outer().at(pointDraggedId) = bpt(newLocation.x / (double)parentCanvas->getWidth(),
+															newLocation.y / (double)parentCanvas->getHeight());
+
             areaEventType = AreaEventType::ShapeChanged;
         }
     }
@@ -272,65 +278,94 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
          * cos(a) = cos(a2 - a1) = cos(a2)cos(a1) + sin(a2)sin(a1)
          * sin(a) = sin(a2 - a1) = sin(a2)cos(a1) - cos(a2)sin(a1)
          */
-        double r1 = centerInPixels.getDistanceFrom(manipulationPointInPixels);
-        double r2 = centerInPixels.getDistanceFrom(newLocation);
-        double x1 = manipulationPointInPixels.x - centerInPixels.x;
-        double x2 = newLocation.x - centerInPixels.x;
-        double y1 = manipulationPointInPixels.y - centerInPixels.y;
-        double y2 = newLocation.y - centerInPixels.y;
-        double cos_a = (x2*x1 + y2*y1)/(r1*r2);
+		double r1 = boost::geometry::distance(bcenterInPixels, bmanipulationPointInPixels);//centerInPixels.getDistanceFrom(manipulationPointInPixels);
+        double r2 = boost::geometry::distance(bcenterInPixels, bnewLocation);//centerInPixels.getDistanceFrom(newLocation);
+        double x1 = bmanipulationPointInPixels.get<0>() - bcenterInPixels.get<0>();//manipulationPointInPixels.x - centerInPixels.x;
+        double x2 = bnewLocation.get<0>() - bcenterInPixels.get<0>();//newLocation.x - centerInPixels.x;
+        double y1 = bmanipulationPointInPixels.get<1>() - bcenterInPixels.get<1>();
+        double y2 = bnewLocation.get<1>() - bcenterInPixels.get<1>();
+		double cos_a = (x2*x1 + y2*y1)/(r1*r2);
         double sin_a = (y2*x1 - x2*y1)/(r1*r2);
         // ----- size -----
-        double size = r2 / r1;
+		double size = r2 / r1;
         
         // === Application of this transformation to the whole polygon ===
         // --- size if polygon is still big enough only ---
         double minDistanceFromCenter = 0.0;
         bool wasSizeApplied = false;
-        std::vector<Point<double>> newContourPoints;
-        for (size_t i=0 ; i<contourPointsInPixels.size() ;i++)
+		bpolygon bnewContourPoints;//std::vector<Point<double>> newContourPoints;
+        for (size_t i=0 ; i<bcontourPointsInPixels.outer().size() ;i++)
         {
-            newContourPoints.push_back(contourPointsInPixels[i] - centerInPixels);
-            newContourPoints[i] = Point<double>(size * newContourPoints[i].x,
-                                                size * newContourPoints[i].y);
-            if (newContourPoints[i].getDistanceFromOrigin() > minDistanceFromCenter)
-                minDistanceFromCenter = newContourPoints[i].getDistanceFromOrigin();
-            newContourPoints[i] += centerInPixels;
+			
+			std::vector<bpt> result;
+			DBG("bcontourPointsInPixels : (" + (String)bcontourPointsInPixels.outer().at(i).get<0>() +" , " + (String)bcontourPointsInPixels.outer().at(i).get<1>() +")");
+			DBG("bcenterInPixels : (" + (String)bcenterInPixels .get<0>()+" , " + (String)bcenterInPixels.get<1>() +")");
+			boost::geometry::difference(bcontourPointsInPixels.outer().at(i), bcenterInPixels, result);
+			//result.push_back(bpt(bcontourPointsInPixels.outer().at(i).get<0>() - bcenterInPixels.get<0>(), bcontourPointsInPixels.outer().at(i).get<1>() - bcenterInPixels.get<1>()));
+			//DBG("result : (" + (String)result.front().get<0>()+" , " + (String)result.front().get<1>() +")");
+			//result.push_back(bpt(bcontourPointsInPixels.outer().at(i).get<0>() - bcenterInPixels.get<0>(), bcontourPointsInPixels.outer().at(i).get<1>() - bcenterInPixels.get<1>()));
+            //bnewContourPoints.outer().push_back(result.front() );
+
+			bnewContourPoints.outer().push_back(bpt(bcontourPointsInPixels.outer().at(i).get<0>() - bcenterInPixels.get<0>(),
+				bcontourPointsInPixels.outer().at(i).get<1>() - bcenterInPixels.get<1>()));
+
+            bnewContourPoints.outer().at(i) =bpt(size * bnewContourPoints.outer().at(i).get<0>(),
+                                                size * bnewContourPoints.outer().at(i).get<1>());
+            if (boost::geometry::distance(bnewContourPoints.outer().at(i), bpt(0,0)) > minDistanceFromCenter)
+                minDistanceFromCenter = boost::geometry::distance(bnewContourPoints.outer().at(i), bpt(0, 0));
+
+			//boost::geometry::strategy::transform::translate_transformer<double, 2, 2> tr(bcenterInPixels.get<0>(), bcenterInPixels.get<1>());
+			//boost::geometry::transform(bnewContourPoints.outer().at(i), bnewContourPoints.outer().at(i), tr);
+			bnewContourPoints.outer().at(i).set<0>(bnewContourPoints.outer().at(i).get<0>() + bcenterInPixels.get<0>());
+			bnewContourPoints.outer().at(i).set<1>(bnewContourPoints.outer().at(i).get<1>() + bcenterInPixels.get<1>());
         }
+
+		//boost::geometry::strategy::transform::translate_transformer<double, 2, 2> tr(bcenterInPixels.get<0>(), bcenterInPixels.get<1>());
+		//boost::geometry::transform(bnewContourPoints, bnewContourPoints, tr);
+
         if (minDistanceFromCenter >=
             minimumSizePercentage*(parentCanvas->getWidth()+parentCanvas->getHeight())/2.0)
         {
             wasSizeApplied = true;
-            contourPointsInPixels = newContourPoints;
-            manipulationPointInPixels = newLocation;
+            bcontourPointsInPixels = bnewContourPoints;
+            bmanipulationPointInPixels = bnewLocation;
         }
         // --- rotation is always applied ---
-        for (size_t i=0 ; i<contourPointsInPixels.size() ;i++)
+        for (size_t i=0 ; i<bcontourPointsInPixels.outer().size() ;i++)
         {
-            contourPointsInPixels[i] -= centerInPixels;
-            contourPointsInPixels[i] = Point<double>(cos_a*contourPointsInPixels[i].x
-                                                     -sin_a*contourPointsInPixels[i].y,
-                                                     sin_a*contourPointsInPixels[i].x
-                                                     +cos_a*contourPointsInPixels[i].y);
-            contourPointsInPixels[i] += centerInPixels;
+			bcontourPointsInPixels.outer().at(i).set<0>(bcontourPointsInPixels.outer().at(i).get<0>() - bcenterInPixels.get<0>());
+			bcontourPointsInPixels.outer().at(i).set<1>(bcontourPointsInPixels.outer().at(i).get<1>() - bcenterInPixels.get<1>());
+			bcontourPointsInPixels.outer().at(i) = bpt(cos_a*bcontourPointsInPixels.outer().at(i).get<0>()
+                                                     -sin_a*bcontourPointsInPixels.outer().at(i).get<1>(),
+                                                     sin_a*bcontourPointsInPixels.outer().at(i).get<0>()
+                                                     +cos_a*bcontourPointsInPixels.outer().at(i).get<1>());
+			//boost::geometry::strategy::transform::translate_transformer<double, 2, 2> tr(bcenterInPixels.get<0>(), bcenterInPixels.get<1>());
+			//boost::geometry::transform(bcontourPoints.outer().at(i), bcontourPoints.outer().at(i), tr);
+			bcontourPointsInPixels.outer().at(i).set<0>(bcontourPointsInPixels.outer().at(i).get<0>() + bcenterInPixels.get<0>());
+			bcontourPointsInPixels.outer().at(i).set<1>(bcontourPointsInPixels.outer().at(i).get<1>() + bcenterInPixels.get<1>());
         }
         if (!wasSizeApplied)
         {
             // If size wasn't applied, we need to rotate the manipulation point
             manipulationPointInPixels -= centerInPixels;
-            manipulationPointInPixels = Point<double>(cos_a*manipulationPointInPixels.x
-                                                     -sin_a*manipulationPointInPixels.y,
-                                                     sin_a*manipulationPointInPixels.x
-                                                      +cos_a*manipulationPointInPixels.y);
-            manipulationPointInPixels += centerInPixels;
+			bmanipulationPointInPixels.set<0>(bmanipulationPointInPixels.get<0>() - bcenterInPixels.get<0>());
+			bmanipulationPointInPixels.set<1>(bmanipulationPointInPixels.get<1>() - bcenterInPixels.get<1>());
+            bmanipulationPointInPixels = bpt(cos_a*bmanipulationPointInPixels.get<0>()
+                                                     -sin_a*bmanipulationPointInPixels.get<1>(),
+                                                     sin_a*bmanipulationPointInPixels.get<0>()
+                                                      +cos_a*bmanipulationPointInPixels.get<1>());
+			bmanipulationPointInPixels.set<0>(bmanipulationPointInPixels.get<0>() + bcenterInPixels.get<0>());
+			bmanipulationPointInPixels.set<1>(bmanipulationPointInPixels.get<1>() + bcenterInPixels.get<1>());
         }
         
         // After manipulation computation : normalized coordinates update
-        for (size_t i=0; i < contourPointsInPixels.size() ; i++)
+        for (size_t i=0; i < bcontourPointsInPixels.outer().size() ; i++)
         {
-            contourPoints[i] = Point<double>(
-                                contourPointsInPixels[i].x / ((double)parentCanvas->getWidth()) ,
-                                contourPointsInPixels[i].y / ((double)parentCanvas->getHeight()));
+            //contourPoints[i] = Point<double>(
+            //                    contourPointsInPixels[i].x / ((double)parentCanvas->getWidth()) ,
+            //                    contourPointsInPixels[i].y / ((double)parentCanvas->getHeight()));
+			bcontourPoints.outer().at(i) = bpt(bcontourPointsInPixels.outer().at(i).get<0>() / ((double)parentCanvas->getWidth()),
+											   bcontourPointsInPixels.outer().at(i).get<1>() / ((double)parentCanvas->getHeight()));
         }
     }
     
@@ -339,8 +374,12 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
         if (isNewCenterValid(newLocation))
         {
             centerInPixels = newLocation;
+			bcenterInPixels = bnewLocation;
             center = Point<double>(newLocation.x / ((double)parentCanvas->getWidth()),
                                    newLocation.y / ((double)parentCanvas->getHeight()) );
+
+			bcenter = bpt(bnewLocation.get<0>() / ((double)parentCanvas->getWidth()),
+						  bnewLocation.get<1>() / ((double)parentCanvas->getHeight()));
             
             computeManipulationPoint();
             areaEventType = AreaEventType::ShapeChanged;
@@ -386,17 +425,20 @@ AreaEventType EditablePolygon::EndPointMove()
 }
 
 
-void EditablePolygon::Translate(const Point<double>& translation)
+void EditablePolygon::Translate(const Point<double>& translation) // remplacer par la translation de boost
 {
-    centerInPixels += translation;
-    center = Point<double>(centerInPixels.x / ((double)parentCanvas->getWidth()),
-                           centerInPixels.y / ((double)parentCanvas->getHeight()) );
-    for (size_t i=0; i < contourPointsInPixels.size() ; i++)
+	bcenterInPixels.set<0>(bcenterInPixels.get<0>() + translation.x);
+	bcenterInPixels.set<1>(bcenterInPixels.get<1>() + translation.y);
+    bcenter = bpt(bcenterInPixels.get<0>() / ((double)parentCanvas->getWidth()),
+                           bcenterInPixels.get<1>() / ((double)parentCanvas->getHeight()) );
+    for (size_t i=0; i < bcontourPointsInPixels.outer().size() ; i++)
     {
-        contourPointsInPixels[i] += translation;
-        contourPoints[i] = Point<double>(
-                                         contourPointsInPixels[i].x / ((double)parentCanvas->getWidth()) ,
-                                         contourPointsInPixels[i].y / ((double)parentCanvas->getHeight()));
+        //contourPointsInPixels[i] += translation;
+		bcontourPointsInPixels.outer().at(i).set<0>(bcontourPointsInPixels.outer().at(i).get<0>() + translation.x);
+		bcontourPointsInPixels.outer().at(i).set<1>(bcontourPointsInPixels.outer().at(i).get<1>() + translation.y);
+        bcontourPoints.outer().at(i) = bpt(
+											bcontourPointsInPixels.outer().at(i).get<0>() / ((double)parentCanvas->getWidth()) ,
+											bcontourPointsInPixels.outer().at(i).get<1>() / ((double)parentCanvas->getHeight()));
     }
     
     // Manipulation point (+ line...)
@@ -409,9 +451,9 @@ bool EditablePolygon::TryCreatePoint(const Point<double>& hitPoint)
     int closestPointIndex = -1;
     double closestDistance = parentCanvas->getWidth()+parentCanvas->getHeight();
     // At first, we look for the closest point
-    for (size_t i=0 ; i<contourPointsInPixels.size(); i++)
+    for (size_t i=0 ; i<bcontourPointsInPixels.outer().size(); i++)
     {
-        double currentDistance = hitPoint.getDistanceFrom(contourPointsInPixels[i]);
+		double currentDistance = boost::geometry::distance(bcontourPointsInPixels.outer().at(i),bpt(hitPoint.x,hitPoint.y));//hitPoint.getDistanceFrom(contourPointsInPixels[i]);
         if (currentDistance < closestDistance)
         {
             closestPointIndex = (int)i;
@@ -419,12 +461,12 @@ bool EditablePolygon::TryCreatePoint(const Point<double>& hitPoint)
         }
     }
     // Then, the other point is always the next
-    int otherPointIndex = Math::Modulo(closestPointIndex+1, (int)contourPointsInPixels.size());
+    int otherPointIndex = Math::Modulo(closestPointIndex+1, (int)bcontourPointsInPixels.outer().size());
     
     // Is the hitPoint to far from the two current points ?
     if ( closestDistance <= 10 * pointDraggingRadius )
     {
-        Point<double> newPoint = Point<double>((contourPointsInPixels[closestPointIndex].x+contourPointsInPixels[otherPointIndex].x)/2.0,(contourPointsInPixels[closestPointIndex].y+contourPointsInPixels[otherPointIndex].y)/2.0);
+        bpt newPoint = bpt((bcontourPointsInPixels.outer().at(closestPointIndex).get<0>()+bcontourPointsInPixels.outer().at(otherPointIndex).get<0>())/2.0,(bcontourPointsInPixels.outer().at(closestPointIndex).get<1>()+bcontourPointsInPixels.outer().at(otherPointIndex).get<1>())/2.0);
         
         insertPointInPixels(newPoint, otherPointIndex);
         return true;
@@ -434,15 +476,15 @@ bool EditablePolygon::TryCreatePoint(const Point<double>& hitPoint)
 }
 String EditablePolygon::TryDeletePoint(const Point<double>& hitPoint)
 {
-    if (contourPointsInPixels.size() > 3)
+    if (bcontourPointsInPixels.outer().size() > 3)
     {
         // - same code as in "TryCreatePoint" -
         int closestPointIndex = -1;
         double closestDistance = parentCanvas->getWidth()+parentCanvas->getHeight();
         // At first, we look for the closest point
-        for (size_t i=0 ; i<contourPointsInPixels.size(); i++)
+        for (size_t i=0 ; i<bcontourPointsInPixels.outer().size(); i++)
         {
-            double currentDistance = hitPoint.getDistanceFrom(contourPointsInPixels[i]);
+            double currentDistance = boost::geometry::distance(bcontourPointsInPixels.outer().at(i),bpt(hitPoint.x,hitPoint.y));
             if (currentDistance < closestDistance)
             {
                 closestPointIndex = (int)i;
@@ -472,18 +514,18 @@ bool EditablePolygon::isCenterValidWithoutContourPoint(size_t contourPointId)
 {
     // We add all point but the one to delete
     Path testContour;
-    if (contourPointId>0)
-        testContour.startNewSubPath(contourPointsInPixels[0].toFloat());
+	if (contourPointId > 0)
+		testContour.startNewSubPath(juce::Point<float>((float)bcontourPointsInPixels.outer().at(0).get<0>(), (float)bcontourPointsInPixels.outer().at(0).get<1>()));
     else
-        testContour.startNewSubPath(contourPointsInPixels[1].toFloat());
-    for (size_t i=1; i<contourPointsInPixels.size() ; i++)
+        testContour.startNewSubPath((float)bcontourPointsInPixels.outer().at(1).get<0>(), (float)bcontourPointsInPixels.outer().at(1).get<1>());
+    for (size_t i=1; i<bcontourPointsInPixels.outer().size() ; i++)
     {
         if (i != contourPointId)
-            testContour.lineTo(contourPointsInPixels[i].toFloat());
+            testContour.lineTo((float)bcontourPointsInPixels.outer().at(i).get<0>(),(float) bcontourPointsInPixels.outer().at(i).get<1>());
     }
     testContour.closeSubPath();
     // Then we check wether the center is still inside or not
-    return testContour.contains((float)centerInPixels.getX(), (float)centerInPixels.getY());
+    return testContour.contains((float)bcenterInPixels.get<0>(), (float)bcenterInPixels.get<1>());
 }
 
 
@@ -496,21 +538,21 @@ bool EditablePolygon::isCenterValidWithoutContourPoint(size_t contourPointId)
 bool EditablePolygon::isNewContourPointValid(const Point<double>& newLocation)
 {
     // Init : we save indexes of adjacent points (that will help build the borders)
-    int pointBefore = Math::Modulo(pointDraggedId-1, (int)contourPointsInPixels.size());
-    int pointAfter = Math::Modulo(pointDraggedId+1, (int)contourPointsInPixels.size());
+    int pointBefore = Math::Modulo(pointDraggedId-1, (int)bcontourPointsInPixels.outer().size());
+    int pointAfter = Math::Modulo(pointDraggedId+1, (int)bcontourPointsInPixels.outer().size());
     /* Étape 1, on construit les équations des droites suivantes :
      * - droite 1 entre le centre et le point d'avant
      * - droite 2 entre le centre et le point d'après
      */
-    CartesianLine droite1 = CartesianLine(centerInPixels,
-                                          contourPointsInPixels[pointBefore]);
-    CartesianLine droite2 = CartesianLine(centerInPixels,
-                                          contourPointsInPixels[pointAfter]);
+    CartesianLine droite1 = CartesianLine(bcenterInPixels,
+                                          bcontourPointsInPixels.outer().at(pointBefore));
+    CartesianLine droite2 = CartesianLine(bcenterInPixels,
+                                          bcontourPointsInPixels.outer().at(pointAfter));
     /* Étape 2
      * on vérifie ne pas avoir changé de côté par rapport aux 2 lignes considérées
      */
-    if ( droite1.PointWentThrough(contourPointsInPixels[pointDraggedId], newLocation)
-        || droite2.PointWentThrough(contourPointsInPixels[pointDraggedId], newLocation) )
+    if ( droite1.PointWentThrough(bcontourPointsInPixels.outer().at(pointDraggedId), bpt(newLocation.x, newLocation.y))
+        || droite2.PointWentThrough(bcontourPointsInPixels.outer().at(pointDraggedId), bpt(newLocation.x, newLocation.y)))
     {
         return false;
     }
@@ -523,26 +565,26 @@ bool EditablePolygon::isNewCenterValid(const Point<double>& newLocation)
 {
     // We check if the center did not cross all the lines, one-by-one
     bool hasCrossed = false;
-    for (size_t i=0 ; (i<contourPointsInPixels.size() && !hasCrossed) ; i++)
+    for (size_t i=0 ; (i<bcontourPointsInPixels.outer().size() && !hasCrossed) ; i++)
     {
-        CartesianLine cartesianLine = CartesianLine(contourPointsInPixels[i],
-                contourPointsInPixels[Math::Modulo((int)i+1, (int)contourPointsInPixels.size())]);
-        hasCrossed = cartesianLine.PointWentThrough(centerInPixels, newLocation);
+        CartesianLine cartesianLine = CartesianLine(bcontourPointsInPixels.outer().at(i),
+                bcontourPointsInPixels.outer().at(Math::Modulo((int)i+1, (int)bcontourPointsInPixels.outer().size())));
+        hasCrossed = cartesianLine.PointWentThrough(bcenterInPixels, bpt(newLocation.x, newLocation.y));
     }
     return !hasCrossed;
 }
 
 
-void EditablePolygon::insertPointInPixels(const Point<double>& newContourPoint, int position)
+void EditablePolygon::insertPointInPixels(const bpt& newContourPoint, int position)
 {
-    contourPointsInPixels.insert(contourPointsInPixels.begin()+position,
+    bcontourPointsInPixels.outer().insert(bcontourPointsInPixels.outer().begin()+position,
                                  newContourPoint);
     
     recreateNormalizedPoints();
 }
 void EditablePolygon::deletePoint(int position)
 {
-    contourPointsInPixels.erase(contourPointsInPixels.begin()+position);
+	bcontourPointsInPixels.outer().erase(bcontourPointsInPixels.outer().begin() + position);
     
     recreateNormalizedPoints();
 	this->CanvasResized(parentCanvas);
@@ -550,14 +592,16 @@ void EditablePolygon::deletePoint(int position)
 
 void EditablePolygon::recreateNormalizedPoints()
 {
-    contourPoints.clear();
-    for (size_t i=0 ; i<contourPointsInPixels.size() ; i++)
+	bcontourPoints.clear();
+    for (size_t i=0 ; i<bcontourPointsInPixels.outer().size() ; i++)
     {
-        contourPoints.push_back(Point<double>(contourPointsInPixels[i].x/parentCanvas->getWidth(),
-                                              contourPointsInPixels[i].y/parentCanvas->getHeight()));
+        bcontourPoints.outer().push_back(bpt(bcontourPointsInPixels.outer().at(i).get<0>()/parentCanvas->getWidth(),
+                                              bcontourPointsInPixels.outer().at(i).get<1>() /parentCanvas->getHeight()));
     }
-    center = Point<double>(centerInPixels.x/parentCanvas->getWidth(),
-                           centerInPixels.y/parentCanvas->getHeight());
+	//bcontourPoints.outer().push_back(bpt(bcontourPointsInPixels.outer().at(0).get<0>() / parentCanvas->getWidth(),
+	//	bcontourPointsInPixels.outer().at(0).get<1>() / parentCanvas->getHeight()));
+    bcenter = bpt(bcenterInPixels.get<0>()/parentCanvas->getWidth(),
+                           bcenterInPixels.get<1>()/parentCanvas->getHeight());
 }
 
 

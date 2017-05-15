@@ -14,6 +14,14 @@
 #include "EditablePolygon.h"
 #include "JuceHeader.h"
 
+#include "boost\geometry.hpp"
+#include "boost\geometry\geometries\geometries.hpp"
+#include "boost\geometry\geometries\polygon.hpp"
+
+typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> bpt;
+typedef boost::geometry::model::polygon<bpt> bpolygon;
+
+
 namespace Amusing
 {
 	class Follower;
@@ -27,7 +35,7 @@ namespace Amusing
 			Point<double> _center, int pointsCount, float radius,
 			Colour _fillColour, float _canvasRatio = 1.47);
 		AnimatedPolygon(int64_t _Id,
-			Point<double> _center, std::vector<Point<double>>& _contourPoints,
+			bpt _center, bpolygon& _contourPoints,
 			Colour _fillColour);
 
 		~AnimatedPolygon();
@@ -35,9 +43,9 @@ namespace Amusing
 		int GetContourSize()
 		{
 			//DBG((String)contourPointsInPixels.size());
-			DBG((String)contourPoints.size());
+			//DBG((String)contourPoints.size());
 			//DBG((String)contour);
-			return contourPoints.size();
+			return bcontourPoints.outer().size();
 		}
 
 		int GetHeight()
@@ -49,13 +57,15 @@ namespace Amusing
 		{
 			//DBG("GetAreteL");
 			//DBG((String)contourPoints.size());
-			return contourPoints[0].getDistanceFrom(contourPoints[1])*100;
+			return 100 * boost::geometry::distance(bcontourPoints.outer().at(0), bcontourPoints.outer().at(1));//contourPoints[0].getDistanceFrom(contourPoints[1])*100;
 		}
 
 		Point<double> getPente(int P)
 		{
-			int after = (P + 1) % (contourPoints.size());
-			return (contourPointsInPixels[after] - contourPointsInPixels[P]);
+			int after = (P + 1) % (bcontourPoints.outer().size());
+			std::vector<bpt> out;
+			boost::geometry::difference(bcontourPointsInPixels.outer().at(after), bcontourPointsInPixels.outer().at(P), out);
+			return juce::Point<double>(out.front().get<0>(), out.front().get<1>());
 		}
 
 		Point<double> getCenter();

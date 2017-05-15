@@ -39,20 +39,32 @@ DrawablePolygon::DrawablePolygon(int64_t _Id, Point<double> _center, int pointsC
     for (int i=0; i<pointsCount ; i++)
     {
         currentAngle = 2.0f*float_Pi*(float)(i)/(float)(pointsCount);
-        contourPoints.push_back(Point<double>(center.x + radius*xScale*cosf(currentAngle),
-                                             center.y + radius*yScale*sinf(currentAngle)));
+        //contourPoints.push_back(Point<double>(center.x + radius*xScale*cosf(currentAngle),
+         //                                    center.y + radius*yScale*sinf(currentAngle)));
+		bcontourPoints.outer().push_back(bpt(center.x + radius*xScale*cosf(currentAngle),
+			center.y + radius*yScale*sinf(currentAngle)));
     }
+	bcontourPoints.outer().push_back(bpt(center.x + radius*xScale, center.y)); // to close the boost polygon
     
     // Definition of the Juce polygon
     createJucePolygon();
 }
 
+
+/*
 DrawablePolygon::DrawablePolygon(int64_t _Id, Point<double> _center, std::vector<Point<double>>& _contourPoints, Colour _fillColour) :
     DrawableArea(_Id, _center, _fillColour)
 {
     contourPoints = _contourPoints; // reminder : makes a elmt-by-elmt copy
-    
     createJucePolygon();
+}*/
+
+DrawablePolygon::DrawablePolygon(int64_t _Id, bpt _center, bpolygon& _bcontourPoints, Colour _fillColour) :
+	DrawableArea(_Id, _center, _fillColour)
+{
+	bcontourPoints = _bcontourPoints; // reminder : makes a elmt-by-elmt copy
+
+	createJucePolygon();
 }
 
 
@@ -60,10 +72,16 @@ DrawablePolygon::DrawablePolygon(int64_t _Id, Point<double> _center, std::vector
 void DrawablePolygon::createJucePolygon(int width, int height)
 {
     contour.clear();
+	/*
     contour.startNewSubPath(contourPoints[0].toFloat());
     for (size_t i=1; i<contourPoints.size() ; i++)
         contour.lineTo(contourPoints[i].toFloat());
     contour.closeSubPath();
+	*/
+	contour.startNewSubPath(bcontourPoints.outer().at(0).get<0>(), bcontourPoints.outer().at(0).get<1>());
+	for (size_t i = 1; i<bcontourPoints.outer().size(); i++)
+		contour.lineTo(bcontourPoints.outer().at(i).get<0>(), bcontourPoints.outer().at(i).get<1>());
+	contour.closeSubPath();
     
     contour.applyTransform(AffineTransform::scale((float)width, (float)height));
 }

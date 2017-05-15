@@ -18,11 +18,11 @@ CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
 {
 	showCursor = true;
 	pc = 0;
-	cursorCenter = contourPoints[0];
+	cursorCenter = bcontourPoints.outer().at(0);
 	cursor = std::shared_ptr<EditableEllipse>(new EditableEllipse(0, cursorCenter, 0.1f, 0.1f, Colours::grey, 1.47));
 	cursor->SetNameVisible(false);
 	//percentages.reserve(contourPoints.size());
-	for (int i = 0; i < contourPoints.size(); ++i)
+	for (int i = 0; i < bcontourPoints.outer().size(); ++i)
 		percentages.push_back(0);
 	DBG("percentages.size() : " + (String)percentages.size());
 	SetNameVisible(false);
@@ -36,27 +36,27 @@ CompletePolygon::CompletePolygon(int64_t _Id, Point<double> _center, int pointsC
 {
 	showCursor = true;
 	pc = 0;
-	cursorCenter = contourPoints[0];
+	cursorCenter = bcontourPoints.outer().at(0);
 	cursor = std::shared_ptr<EditableEllipse>(new EditableEllipse(0, cursorCenter, 0.1f, 0.1f, Colours::grey, _canvasRatio));
 	cursor->SetNameVisible(false);
-	for (int i = 0; i < contourPoints.size(); ++i)
+	for (int i = 0; i < bcontourPoints.outer().size(); ++i)
 		percentages.push_back(0);
-	percentages.reserve(contourPoints.size());
+	percentages.reserve(bcontourPoints.outer().size());
 	SetNameVisible(false);
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id,
-	Point<double> _center, std::vector<Point<double>>& _contourPoints, Colour _fillColour) :
+	bpt _center, bpolygon& _contourPoints, Colour _fillColour) :
 	EditablePolygon(_Id, _center, _contourPoints, _fillColour)
 {
 	showCursor = true;
 	pc = 0;
-	cursorCenter = contourPoints[0];
+	cursorCenter = bcontourPoints.outer().at(0);
 	cursor = std::shared_ptr<EditableEllipse>(new EditableEllipse(0, cursorCenter, 0.1f, 0.1f, Colours::grey, 1.47));
 	cursor->SetNameVisible(false);
-	for (int i = 0; i < contourPoints.size(); ++i)
+	for (int i = 0; i < bcontourPoints.outer().size(); ++i)
 		percentages.push_back(0);
-	percentages.reserve(contourPoints.size());
+	percentages.reserve(bcontourPoints.outer().size());
 	SetNameVisible(false);
 }
 
@@ -82,8 +82,8 @@ void CompletePolygon::Paint(Graphics& g)
 	//DBG((String)contourPointsInPixels[1].getAngleToPoint(contourPointsInPixels[0]));
 	//diff.setX(contourPointsInPixels[fromPt].getX() - contourPointsInPixels[fromPt + 1].getX());
 	//g.fillEllipse(point.getX(), point.getY(), 20, 20);
-	g.fillEllipse(contourPointsInPixels[0].getX() - contourPointsRadius,
-		contourPointsInPixels[0].getY() - contourPointsRadius, 20, 20);
+	//g.fillEllipse(contourPointsInPixels[0].getX() - contourPointsRadius,
+	//	contourPointsInPixels[0].getY() - contourPointsRadius, 20, 20);
 	cursor->Paint(g);
 }
 
@@ -91,19 +91,21 @@ void CompletePolygon::lengthToPercent()
 {
 	//calcul du perimetre
 	perimeter = 0;
-	for (int i = 0; i < contourPoints.size() - 1; ++i)
+	/*for (int i = 0; i < bcontourPoints.outer().size()) - 1; ++i)
 	{
 		
 		perimeter += contourPoints[i + 1].getDistanceFrom(contourPoints[i]);
 		percentages[i + 1] = perimeter;
 	}
-	perimeter += contourPoints[contourPoints.size() - 1].getDistanceFrom(contourPoints[0]);
+	perimeter += contourPoints[contourPoints.size() - 1].getDistanceFrom(contourPoints[0]);*/
+	perimeter = boost::geometry::perimeter(bcontourPoints);
 
 	//calcul des poucentages correspondant à chaque point
 	//DBG("-----------------");
-	for (int i = 0; i < percentages.size(); ++i)
+	percentages[0] = 0;
+	for (int i = 1; i < bcontourPoints.outer().size(); ++i)
 	{
-		percentages[i] = percentages[i] / perimeter;
+		percentages[i] = percentages[i-1] + (boost::geometry::distance(bcontourPoints.outer().at(i),bcontourPoints.outer().at(i-1)))/ perimeter;
 		//DBG((String)percentages[i]);
 	}
 	//DBG("-----------------");
@@ -111,6 +113,7 @@ void CompletePolygon::lengthToPercent()
 
 void CompletePolygon::setReadingPosition(double p)
 {
+	//DBG("tailles setReadingPosition : bcontourPointsInPixels " + (String)bcontourPointsInPixels.outer().size());
 	pc = p;
 	lengthToPercent();
 	//determiner entre quels points va se trouver le curseur
@@ -124,7 +127,7 @@ void CompletePolygon::setReadingPosition(double p)
 		{
 			prev = i-1;
 			suiv = i;
-			//DBG("!!! " + (String)p + " > " + (String)percentages[i]);
+			//DBG("!!! " + (String)p + " < " + (String)percentages[i]);
 			//DBG("stop");
 			break;
 		}
@@ -132,27 +135,41 @@ void CompletePolygon::setReadingPosition(double p)
 		{
 			prev = i;
 			suiv = (i + 1) % percentages.size();
-			//DBG((String)p + " < " + (String)percentages[i]);
+			//DBG((String)p + " > " + (String)percentages[i]);
 		}
 	}
 
 	//DBG("prev = " + (String)prev);
 	//DBG("suiv = " + (String)suiv);
 	//calculer la position du curseur entre ces points
-	Point<double> P;
-	if(suiv != 0)
-		P = contourPoints[prev] + ((p - percentages[prev]) / (percentages[suiv] - percentages[prev])) * (contourPoints[suiv] - contourPoints[prev]);
+	bpt P;
+	if (suiv != 0)
+	{
+		P.set<0>( bcontourPoints.outer().at(prev).get<0>() + ((p - percentages[prev]) / (percentages[suiv] - percentages[prev])) * (bcontourPoints.outer().at(suiv).get<0>() - bcontourPoints.outer().at(prev).get<0>()) );
+		P.set<1>(bcontourPoints.outer().at(prev).get<1>() + ((p - percentages[prev]) / (percentages[suiv] - percentages[prev])) * (bcontourPoints.outer().at(suiv).get<1>() - bcontourPoints.outer().at(prev).get<1>()));
+	}
 	else
-		P = contourPoints[prev] + ((p - percentages[prev]) / (1 - percentages[prev])) * (contourPoints[suiv] - contourPoints[prev]);
+	{
+		P.set<0>( bcontourPoints.outer().at(prev).get<0>() + ((p - percentages[prev]) / (1 - percentages[prev])) * (bcontourPoints.outer().at(suiv).get<0>() - bcontourPoints.outer().at(prev).get<0>()));
+		P.set<1>(bcontourPoints.outer().at(prev).get<1>() + ((p - percentages[prev]) / (1 - percentages[prev])) * (bcontourPoints.outer().at(suiv).get<1>() - bcontourPoints.outer().at(prev).get<1>()));
+	}
 
 	//placer le curseur à ce point
-	Point<double> translation = (P - cursorCenter);
-	translation.setXY(translation.getX() * (double)parentCanvas->getWidth(), translation.getY() * (double)parentCanvas->getHeight());
-	//DBG("cursorCenter = " + (String)cursorCenter.x + " " + (String)cursorCenter.y);
-	//DBG("P = " + (String)P.x + " " + (String)P.y);
-	//DBG("translation = " + (String)translation.x + " " + (String)translation.y);
-	cursor->Translate(translation);
-	cursorCenter = P;
+	bpt translation(P.get<0>()-cursorCenter.get<0>(), P.get<1>() - cursorCenter.get<1>());
+	//boost::geometry::difference (P , cursorCenter, translation);
+	DBG("cursorCenter = " + (String)cursorCenter.get<0>() + " " + (String)cursorCenter.get<1>());
+	DBG("P = " + (String)P.get<0>() + " " + (String)P.get<1>());
+	//if (translation.size() > 0)
+	//{
+		DBG("translation = " + (String)translation.get<0>() + " " + (String)translation.get<1>());
+		translation.set<0>(translation.get<0>() * (double)parentCanvas->getWidth());
+		translation.set<1>(translation.get<1>() * (double)parentCanvas->getHeight());
+
+		
+		DBG("translation in pixels = " + (String)translation.get<0>() + " " + (String)translation.get<1>());
+		cursor->Translate(juce::Point<double>(translation.get<0>(), translation.get<1>()));
+		cursorCenter = P;
+	//}
 	//redessiner
 	cursor->CanvasResized(this->parentCanvas);
 	
@@ -160,6 +177,7 @@ void CompletePolygon::setReadingPosition(double p)
 
 void CompletePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 {
+	DBG("tailles setReadingPosition : bcontourPointsInPixels " + (String)bcontourPointsInPixels.outer().size());
 	InteractivePolygon::CanvasResized(_parentCanvas);
 	//cursor->CanvasResized(_parentCanvas);
 	//lengthToPercent();

@@ -12,8 +12,12 @@
 #define DRAWABLEAREA_H_INCLUDED
 
 #include "JuceHeader.h"
-
+#include "boost\geometry.hpp"
+#include "boost\geometry\geometries\geometries.hpp"
+#include "boost\geometry\geometries\polygon.hpp"
 #include "IDrawableArea.h"
+
+typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> bpt;
 
 // Simple declaration for a pointer
 class SceneCanvasComponent;
@@ -34,6 +38,8 @@ namespace Miam
         /// \param _center Normalized center coordinates (x, y in [0.0,1.0])
         /// \param _fillColour Solid colour for filling the area (opacity should be 0xFF)
         DrawableArea(int64_t _Id, Point<double> _center, Colour _fillColour);
+
+		DrawableArea(int64_t _Id, bpt _center, Colour _fillColour);
         
         /// \brief Virtual destructor.
         virtual ~DrawableArea() {}
@@ -66,6 +72,9 @@ namespace Miam
         protected :
         Point<double> center; ///< Normalized center coordinates (x, y in [0.0,1.0])
         Point<double> centerInPixels; ///< Center coordinates in pixels (relative to a canvas)
+
+		bpt bcenter;
+		bpt bcenterInPixels;
         
         
         // Display data

@@ -15,12 +15,12 @@ using namespace Miam;
 
 
 DrawableEllipse::DrawableEllipse(int64_t _Id) :
-	DrawableEllipse(_Id, Point<double>(0.5f, 0.5f),0.2f,0.2f,Colours::darkgrey)
+	DrawableEllipse(_Id, bpt(0.5f, 0.5f),0.2f,0.2f,Colours::darkgrey)
 {
 
 }
 
-DrawableEllipse::DrawableEllipse(int64_t _Id, Point<double> _center, double _a, double _b, Colour _fillColour, float _canvasRatio) :
+DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio) :
 	DrawableArea(_Id,_center,_fillColour), a(_a), b(_b)
 {
 	//float xScale, yScale;
@@ -35,12 +35,12 @@ DrawableEllipse::DrawableEllipse(int64_t _Id, Point<double> _center, double _a, 
 		yScale = 1.0f*_canvasRatio;
 	}
 
-	contourPoints.push_back(Point<double>(center.x                 , center.y - (b / 2)*yScale));
-	contourPoints.push_back(Point<double>(center.x + (a / 2)*xScale, center.y                 ));
-	contourPoints.push_back(Point<double>(center.x                 , center.y + (b / 2)*yScale));
-	contourPoints.push_back(Point<double>(center.x - (a / 2)*xScale, center.y                 ));
+	contourPoints.outer().push_back(bpt(bcenter.get<0>()                 , bcenter.get<1>() - (b / 2)*yScale));
+	contourPoints.outer().push_back(bpt(bcenter.get<0>() + (a / 2)*xScale, bcenter.get<1>()));
+	contourPoints.outer().push_back(bpt(bcenter.get<0>(), bcenter.get<1>() + (b / 2)*yScale));
+	contourPoints.outer().push_back(bpt(bcenter.get<0>() - (a / 2)*xScale, bcenter.get<1>()));
 	
-	
+	contourPoints.outer().push_back(bpt(bcenter.get<0>(), bcenter.get<1>() - (b / 2)*yScale)); // to close 
 	
 	
 	createJucePolygon();
@@ -50,7 +50,7 @@ void DrawableEllipse::createJucePolygon(int width, int height)
 {
 	contour.clear();
 
-	contour.addEllipse(center.x -(a*xScale/2), center.y-(b*yScale/2), a*xScale, b*yScale);
+	contour.addEllipse(bcenter.get<0>() -(a*xScale/2), bcenter.get<1>() -(b*yScale/2), a*xScale, b*yScale);
 
 	contour.applyTransform(AffineTransform::scale((float)width, (float)height));
 }

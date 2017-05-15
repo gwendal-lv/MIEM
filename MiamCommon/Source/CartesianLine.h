@@ -14,6 +14,13 @@
 
 #include "JuceHeader.h"
 
+#include "boost\geometry.hpp"
+#include "boost\geometry\geometries\geometries.hpp"
+#include "boost\geometry\geometries\polygon.hpp"
+#include "DrawableArea.h"
+
+typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> bpt;
+typedef boost::geometry::model::polygon<bpt> bpolygon;
 
 
 namespace Miam {
@@ -30,10 +37,10 @@ namespace Miam {
         
         public :
         /// \brief Contruction of the line equation from 2 points belonging to it.
-        CartesianLine(Point<double> point1, Point<double> point2);
+        CartesianLine(bpt point1, bpt point2);
         /// \brief Tells wether a moving point has crossed this line during the given
         /// small displacement, or not.
-        bool PointWentThrough(Point<double> previousLocation, Point<double> nextLocation);
+        bool PointWentThrough(bpt previousLocation, bpt nextLocation);
         
         
     };

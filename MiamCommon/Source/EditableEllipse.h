@@ -22,7 +22,7 @@ namespace Miam
 	{
 		public :
 			EditableEllipse(int64_t _Id);
-			EditableEllipse(int64_t _Id, Point<double> _center, double _a, double _b, Colour _fillColour, float _canvasRatio);
+			EditableEllipse(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio);
 
 			virtual ~EditableEllipse() {/* DBG("ellipse deleted"); */}
 

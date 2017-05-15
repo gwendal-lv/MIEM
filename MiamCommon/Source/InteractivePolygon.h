@@ -33,7 +33,9 @@ namespace Miam
         /// \param _Id See DrawablePolygon::DrawablePolygon
         InteractivePolygon(int64_t _Id, Point<double> _center, int pointsCount, float radius, Colour _fillColour, float _canvasRatio);
         /// \param _Id See DrawablePolygon::DrawablePolygon
-        InteractivePolygon(int64_t _Id, Point<double> _center, std::vector<Point<double>>& _contourPoints, Colour _fillColour);
+        //InteractivePolygon(int64_t _Id, Point<double> _center, std::vector<Point<double>>& _contourPoints, Colour _fillColour);
+
+		InteractivePolygon(int64_t _Id, bpt _center, bpolygon& _contourPoints, Colour _fillColour);
         
         virtual ~InteractivePolygon() {}
         
