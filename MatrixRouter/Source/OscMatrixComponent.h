@@ -50,7 +50,8 @@ namespace Miam {
 class OscMatrixComponent  : public Component,
                             public ISlidersMatrixListener,
                             public TextEditor::Listener,
-                            public ButtonListener
+                            public ButtonListener,
+                            public SliderListener
 {
 public:
     //==============================================================================
@@ -77,6 +78,7 @@ public:
     void paint (Graphics& g) override;
     void resized() override;
     void buttonClicked (Button* buttonThatWasClicked) override;
+    void sliderValueChanged (Slider* sliderThatWasMoved) override;
 
 
 
@@ -86,13 +88,17 @@ private:
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<GroupComponent> oscGroupComponent;
+    ScopedPointer<GroupComponent> matrixGroupComponent;
+    ScopedPointer<GroupComponent> preferencesGroupComponent;
     ScopedPointer<TextEditor> udpPortTextEditor;
     ScopedPointer<Label> udpPortLabel;
     ScopedPointer<Label> udpStatusLabel;
-    ScopedPointer<Miam::LabelledMatrixComponent> slidersMatrix;
-    ScopedPointer<GroupComponent> preferencesComponent;
+    ScopedPointer<GroupComponent> audioConfigComponent;
     ScopedPointer<ToggleButton> keyboardButton;
+    ScopedPointer<Miam::LabelledMatrixComponent> slidersMatrix;
+    ScopedPointer<Slider> attackSlider;
+    ScopedPointer<Label> attackLabel;
+    ScopedPointer<Label> attackUnitLabel;
 
 
     //==============================================================================

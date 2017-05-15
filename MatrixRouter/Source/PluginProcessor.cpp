@@ -46,11 +46,11 @@ MatrixRouterAudioProcessor::MatrixRouterAudioProcessor()
                                               32768,  // max
                                               7654);  // default
     addParameter(udpPortAudioParam); // will auto-delete
-    rampDuration_ms = new AudioParameterInt("rampDuration_ms",
-                                              "Length of transitions (ms)",
-                                              0,     // min
-                                              1000,  // max
-                                              50);  // default
+    rampDuration_ms = new AudioParameterFloat("rampDuration_ms",
+                                              "Attack time (ms)",
+                                              0.1,     // min (defined in projucer)
+                                              100.0,  // max (defined in projucer)
+                                              40.0);  // default
     addParameter(rampDuration_ms); // will auto-delete
     
     // Init of the routing matrix + associated DAW parameters
@@ -78,18 +78,10 @@ MatrixRouterAudioProcessor::MatrixRouterAudioProcessor()
             addParameter(dawRoutingMatrix[idx(i,j)]);
             // They will be initialized within the setStateInformation(...) function
             
-            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            // Simple types TO BE INITIALIZED LATER TOO
-            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            remainingRampSamples[i][j] = 0;
+            // Following matrix data to be initialized later too
             routingMatrix[i][j] = 0.0f;
             oldRoutingMatrix[i][j] = 0.0f;
-            remainingRampSamples[i][j] = 0;
         }
     }
     
@@ -241,6 +233,8 @@ void MatrixRouterAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBu
     // 2nd update: changes from the DAW itself (automation...) (lowest overall priority)
     // Might be erased from the Presenter or the Network module ; the Presenter is then
     // notified only if it hasn't caused itself a change for the concerned coefficient
+    //
+    // AND : if no change from the DAW but from somewhere else, we retransmit automation
     for (int i = 0; i < totalNumInputChannels; i++)
     {
         for (int j=0 ; j<totalNumOutputChannels ; j++)
@@ -406,6 +400,15 @@ void MatrixRouterAudioProcessor::processParamChange(AsyncParamChange& paramChang
         case AsyncParamChange::UdpPort :
             *udpPortAudioParam = paramChange.IntegerValue; // and not Id1 or Id2
             break;
+        
+        // Duration to be identified by Id
+        case AsyncParamChange::Duration :
+            if (paramChange.Id1 == 0) // Attack time
+            {
+                *rampDuration_ms = (float)paramChange.DoubleValue;
+                recomputeParameters(getSampleRate());
+            }
+            break;
             
         default :
             break;
@@ -449,24 +452,48 @@ void MatrixRouterAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
     // Data backup towards the DAW
     MemoryOutputStream (destData, true).writeInt(*udpPortAudioParam);
+    MemoryOutputStream (destData, true).writeFloat(*rampDuration_ms);
+    // We write the actual most recent routing data
+    for (int i=0 ; i<JucePlugin_MaxNumInputChannels ; i++)
+        for (int j=0 ; j<JucePlugin_MaxNumOutputChannels ; j++)
+            MemoryOutputStream (destData, true).writeFloat(routingMatrix[i][j]);
 }
 
 void MatrixRouterAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // Data retrieval from the DAW
     *udpPortAudioParam = MemoryInputStream (data, static_cast<size_t> (sizeInBytes), false).readInt();
-    
+    *rampDuration_ms = MemoryInputStream (data, static_cast<size_t> (sizeInBytes), false).readFloat();
+    // Mise à jour des coefficient directement, en synchrone
+    AsyncParamChange coeffUpdate; // pour info presenter
+    coeffUpdate.Type = AsyncParamChange::Volume;
+    for (int i=0 ; i<JucePlugin_MaxNumInputChannels ; i++)
+    {
+        coeffUpdate.Id1 = i;
+        for (int j=0 ; j<JucePlugin_MaxNumOutputChannels ; j++)
+        {
+            routingMatrix[i][j] = MemoryInputStream (data, static_cast<size_t> (sizeInBytes), false).readFloat();
+            oldRoutingMatrix[i][j] = routingMatrix[i][j];
+            // We do not update the automation here... GOOD IDEA ???
+            
+            // However, we do update the Presenter from the new data
+            coeffUpdate.Id2 = j;
+            coeffUpdate.DoubleValue = (double)routingMatrix[i][j];
+            TrySendParamChange(coeffUpdate);
+        }
+    }
+
     // Updates then
     bool isUdpConnected = networkModel->SetUdpPort(*udpPortAudioParam);
     presenter->OnNewUdpPort(*udpPortAudioParam, isUdpConnected);
-    
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    //  + MISE À JOUR MATRICE VIA UNE LOCK FREE QUEUE INTERNE MA GUEULE
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    recomputeParameters(getSampleRate());
+    //==============================================================================
+    //==============================================================================
+    //==============================================================================
+    // ENVOYER L'ATTAQUE AU PRESENTER
+    //==============================================================================
+    //==============================================================================
+    //==============================================================================
 }
 
 //==============================================================================

@@ -113,6 +113,16 @@ void Presenter::OnUdpPortChanged(int udpPort)
     // Self-update
     this->OnNewUdpPort(udpPort, isUdpConnected);
 }
+void Presenter::OnAttackDurationChanged(double attackDuration)
+{
+    AsyncParamChange paramChange;
+    paramChange.Type = AsyncParamChange::Duration;
+    paramChange.Id1 = 0; // ZERO means "attack duration"
+    paramChange.DoubleValue = attackDuration;
+    
+    // Enqueuing
+    SendParamChange(paramChange);
+}
 
 
 // =================== (possibly) Synchronous callbacks from Model ===================

@@ -80,6 +80,7 @@ namespace Miam {
         /// to the Model.
         void OnSliderValueChanged(int row, int col, double value);
         void OnUdpPortChanged(int udpPort);
+        void OnAttackDurationChanged(double attackDuration);
         
         // - - - - - Synchronous callbacks from Model - - - - -
         // Bien vérifier à un moment que tout ça passe bien sur le thread UI dans Juce !

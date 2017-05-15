@@ -70,15 +70,10 @@ namespace Miam {
         ///
         /// 0 means that : routingMatrix[i][j] == oldRoutingMatrix[i][j]
         int remainingRampSamples[JucePlugin_MaxNumInputChannels][JucePlugin_MaxNumInputChannels];
-        /// \brief Number of samples that corresponds to the
-        /// MiamRouter_TransitionDuration_s define
-        ///
-        /// -----------------------------------
-        /// MUST BECOME A PARAMETER controllable easily FROM THE GUI
-        /// -----------------------------------
+        /// \brief Number of samples that corresponds to the following double variable
         int initialRampSamples;
-        // idem
-        AudioParameterInt* rampDuration_ms;
+        /// \brief Corresponds to the "attack time" within the View module
+        AudioParameterFloat* rampDuration_ms;
         
         
         // - - - - - Audio parameters for Automation - - - - -
