@@ -39,35 +39,70 @@ MatrixRouterAudioProcessor::MatrixRouterAudioProcessor()
 #endif
     currentInputBuffer(1, MiamRouter_MaxBufferSize)
 {
-    // Init of the routing matrix
-    for (int i=0 ; i<JucePlugin_MaxNumInputChannels ; i++)
-    {
-        for (int j=0 ; j<JucePlugin_MaxNumInputChannels ; j++)
-        {
-            routingMatrix[i][j] = 0.0f;
-            oldRoutingMatrix[i][j] = 0.0f;
-            newMatrixCoeff[i][j] = false;
-        }
-    }
-    
-    // Modules init afterwards self-init
-    networkModel = std::make_shared<NetworkModel>(*this);
-    presenter = new Presenter(*this, *networkModel); // à l'ancienne
-    
     // Creation of automatizable audio parameters for DAW communication
     udpPortAudioParam = new AudioParameterInt("udpPort",
                                               "UDP port for OSC",
                                               -1,     // min
                                               32768,  // max
                                               7654);  // default
-     addParameter(udpPortAudioParam); // will auto-delete
+    addParameter(udpPortAudioParam); // will auto-delete
+    rampDuration_ms = new AudioParameterInt("rampDuration_ms",
+                                              "Length of transitions (ms)",
+                                              0,     // min
+                                              1000,  // max
+                                              50);  // default
+    addParameter(rampDuration_ms); // will auto-delete
+    
+    // Init of the routing matrix + associated DAW parameters
+    for (int i=0 ; i<JucePlugin_MaxNumInputChannels ; i++)
+    {
+        for (int j=0 ; j<JucePlugin_MaxNumInputChannels ; j++)
+        {
+            // Audio DAW parameter (nommage marche pour des coeffs de moins de 100)
+            // name formatting
+            std::string shortName, longName;
+            if (i<10) // 1 digit : a zero will be added first
+                shortName += "0";
+            shortName += std::to_string(i);
+            shortName += "_";
+            if (j<10) // 1 digit : a zero will be added first
+                shortName += "0";
+            shortName += std::to_string(j);
+            longName = "Matrix coeff. " + shortName;
+            
+            dawRoutingMatrix[idx(i,j)] = new AudioParameterFloat(shortName.c_str(),
+                                                              longName,
+                                                              0.0, // not Miam_MinVolume
+                                                              Miam_MaxVolume, // 6dB
+                                                              0.0);
+            addParameter(dawRoutingMatrix[idx(i,j)]);
+            // They will be initialized within the setStateInformation(...) function
+            
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            // Simple types TO BE INITIALIZED LATER TOO
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            routingMatrix[i][j] = 0.0f;
+            oldRoutingMatrix[i][j] = 0.0f;
+            remainingRampSamples[i][j] = 0;
+        }
+    }
+    
+    // Modules init after self-init
+    networkModel = std::make_shared<NetworkModel>(*this);
+    presenter = new Presenter(*this, *networkModel); // à l'ancienne
 }
 
 MatrixRouterAudioProcessor::~MatrixRouterAudioProcessor()
 {
     // Modules deletion
     delete presenter;
-    // network is a shared...
+    // network is a shared pointer...
 }
 
 //==============================================================================
@@ -129,6 +164,10 @@ void MatrixRouterAudioProcessor::prepareToPlay (double sampleRate, int samplesPe
     // Buffer size check (should be very useless)
     if (samplesPerBlock > MiamRouter_MaxBufferSize)
         throw std::runtime_error("Current buffer size is too big for the MiamMatrixRouter plug-in. Please redure buffer size to " + std::to_string(MiamRouter_MaxBufferSize) + " samples or less.");
+    
+    // ! samplePerBlocks is the expected maximum block size
+    // BUT sample rate will remain constant
+    recomputeParameters(sampleRate);
 }
 
 void MatrixRouterAudioProcessor::releaseResources()
@@ -136,6 +175,12 @@ void MatrixRouterAudioProcessor::releaseResources()
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
 }
+
+void MatrixRouterAudioProcessor::recomputeParameters(double sampleRate)
+{
+    initialRampSamples = (int) std::round((double)(*rampDuration_ms)*sampleRate/1000.0);
+}
+
 
 #ifndef JucePlugin_PreferredChannelConfigurations
 bool MatrixRouterAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
@@ -184,8 +229,56 @@ void MatrixRouterAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBu
         sendInputsOutputsCount();
     }
     
-    // New info may have arrived
-    processorAsyncUpdate();
+    // - - - - - Routing data updates - - - - -
+    AsyncParamChange paramChange;
+    
+    
+    // 1st update : info from the Presenter (medium overall priority)
+    // Changes won't be erased by step 2 (data from DAW)
+    while (presenter->TryGetAsyncParamChange(paramChange))
+        processParamChange(paramChange); // without notification
+    
+    // 2nd update: changes from the DAW itself (automation...) (lowest overall priority)
+    // Might be erased from the Presenter or the Network module ; the Presenter is then
+    // notified only if it hasn't caused itself a change for the concerned coefficient
+    for (int i = 0; i < totalNumInputChannels; i++)
+    {
+        for (int j=0 ; j<totalNumOutputChannels ; j++)
+        {
+            // If there was a significant change only
+            if ( std::abs((float)( *dawRoutingMatrix[idx(i,j)] - routingMatrix[i][j] ))
+                > Miam_MinVolume)
+            {
+                // If anyone else hasn't made any i,j change yet, the DAW could take
+                // control of the matrix coefficient
+                if (remainingRampSamples[i][j] == 0)
+                {
+                    // Creation of the async param change to be processed
+                    paramChange.Type = AsyncParamChange::Volume;
+                    paramChange.Id1 = i;
+                    paramChange.Id2 = j;
+                    paramChange.DoubleValue = (double)*dawRoutingMatrix[idx(i,j)];
+                    // Actual Synchronous processing with Presenter notification
+                    processParamChange(paramChange);
+                    TrySendParamChange(paramChange);
+                }
+                // Else, we update DAW's data with the freshest data available
+                else
+                    *dawRoutingMatrix[idx(i,j)] = routingMatrix[i][j];
+            }
+        }
+    }
+    
+    // 3rd update : info from the network module of the model (hi/mid overall priority)
+    // Such data will erase anything from the presenter on this execution of the audio
+    // thread, and the presenter will
+    // even be lock-freely informed of the freshest data available.
+    // BUT during next frame, the Presenter will be able to erase the data
+    while (networkModel->TryGetAsyncParamChange(paramChange))
+    {
+        processParamChange(paramChange);
+        TrySendParamChange(paramChange);
+    }
     
     // Backup of all of the original input audio data, into a local static buffer
     for (int i=0 ; i<totalNumInputChannels ; i++)
@@ -195,7 +288,7 @@ void MatrixRouterAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBu
     // Then : clear of all output buffers
     buffer.clear();
     
-    // Matrix routing, sum input by input at the level
+    // - - - - - Matrix routing, sum input by input at the level - - - - -
     for (int i = 0; i < totalNumInputChannels; i++)
     {
         bool currentInputBufferModified = true; // new input iteration
@@ -203,9 +296,9 @@ void MatrixRouterAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBu
         // Cumulative sum (mixing/routing) for an output
         for (int j=0 ; j<totalNumOutputChannels ; j++)
         {
-            // If the input has to be routed to the output
-            if (routingMatrix[i][j] > (float)Miam_MinVolume
-                || newMatrixCoeff[i][j])
+            // If the input has to be routed to the output :
+            if (routingMatrix[i][j] > (float)Miam_MinVolume // non-negligible volume
+                || remainingRampSamples[i][j] > 0) // or volume ramp currently applied
             {
                 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                 // - - - - - beginning of the actual routing matrix code - - - - -
@@ -219,32 +312,40 @@ void MatrixRouterAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBu
                     currentInputBufferModified = false;
                 }
                 
-                // Ramp to be applied, then actual addition
-                if (newMatrixCoeff[i][j] && false)
+                // Ramp being applied, then actual addition
+                if (remainingRampSamples[i][j] > 0)
                 {
-                    // Gain ramp parameters computing
-                    double absVolumeDelta = std::abs((double)(routingMatrix[i][j] - oldRoutingMatrix[i][j]));
-                    int rampNumSamples = (int) std::round(getSampleRate()*absVolumeDelta/(2.0*M_PI*MiamRouter_TransitionFrequency));
-                    
                     // Gain ramp computing
-                    if (rampNumSamples < nSamples) // If ramp is short enough, but not
+                    if (remainingRampSamples[i][j] < nSamples) // if ramp ends here
                     {
-                        currentInputBuffer.applyGainRamp(0, 0, rampNumSamples, oldRoutingMatrix[i][j], routingMatrix[i][j]);
-                        currentInputBuffer.applyGain(0, rampNumSamples, nSamples-rampNumSamples, routingMatrix[i][j]);
+                        // RAMP (input buf modifier)
+                        currentInputBuffer.applyGainRamp(0, 0, remainingRampSamples[i][j], oldRoutingMatrix[i][j], routingMatrix[i][j]);
+                        currentInputBuffer.applyGain(0, remainingRampSamples[i][j], nSamples-remainingRampSamples[i][j], routingMatrix[i][j]);
+                        currentInputBufferModified = true;
+                        // MIXING then
+                        buffer.addFrom(j, 0, currentInputBuffer, 0, 0, nSamples);
+                        // This signifies the end of the coeff change
+                        remainingRampSamples[i][j] = 0;
+                        oldRoutingMatrix[i][j] = routingMatrix[i][j];
                     }
                     else // Else, ramp on the whole buffer
-                        currentInputBuffer.applyGainRamp(0, 0, nSamples, oldRoutingMatrix[i][j], routingMatrix[i][j]);
-                    // Temporary buffer necessarily modified at this point
-                    currentInputBufferModified = true;
+                    {
+                        float tempRampVolume = oldRoutingMatrix[i][j]
+                        + ((double)(nSamples-1.0)/(double)(remainingRampSamples[i][j]))
+                                 * (routingMatrix[i][j] - oldRoutingMatrix[i][j]);
+                        // Direct RAMP + MIXING
+                        buffer.addFromWithRamp(j, 0, inputAudioData[i], nSamples, oldRoutingMatrix[i][j], tempRampVolume);
+                        // For next buffer's first sample (so: it's not tempRampVolume)
+                        oldRoutingMatrix[i][j] = oldRoutingMatrix[i][j]
+                        + ((double)(nSamples)/(double)(remainingRampSamples[i][j]))
+                        * (routingMatrix[i][j] - oldRoutingMatrix[i][j]);;
+                        // Ramp params for next buffer
+                        remainingRampSamples[i][j] -= nSamples;
+                    }
                     
-                    // Mixing
-                    buffer.addFrom(j, 0, currentInputBuffer, 0, 0, nSamples);
-                    
-                    // New becomes the old
-                    oldRoutingMatrix[i][j] = routingMatrix[i][j];
-                    newMatrixCoeff[i][j] = false;
                 }
-                // Simple gain only : direct Multiply and Add betwen audio buffers
+                // Classical MIXING :
+                // Simple gain only, direct Multiply and Add betwen audio buffers
                 else
                 {
                     // Parameters : int destChannel, int destStartSample, const AudioBuffer &source, int sourceChannel, int sourceStartSample, int numSamples, float gainToApplyToSource = 1.0f
@@ -258,21 +359,7 @@ void MatrixRouterAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBu
         }
     }
 }
-void MatrixRouterAudioProcessor::processorAsyncUpdate()
-{
-    AsyncParamChange paramChange;
-    
-    // - - - - - At first, info from the Presenter - - - - -
-    while (presenter->TryGetAsyncParamChange(paramChange))
-        processParamChange(paramChange);
-    
-    // - - - - - Then, info from the network module of the model - - - - -
-    // Such data will erase anything from the presenter, and the presenter will
-    // even be lock-freely informed of the freshest data available
-    while (networkModel->TryGetAsyncParamChange(paramChange))
-        processParamChange(paramChange, true);
-}
-void MatrixRouterAudioProcessor::processParamChange(AsyncParamChange& paramChange, bool notifyPresenter)
+void MatrixRouterAudioProcessor::processParamChange(AsyncParamChange& paramChange)
 {
     // For response to requests
     AsyncParamChange responseParam;
@@ -288,10 +375,10 @@ void MatrixRouterAudioProcessor::processParamChange(AsyncParamChange& paramChang
                 && 0 <= paramChange.Id2
                 && paramChange.Id2 < JucePlugin_MaxNumOutputChannels
                 && 0.0 <= paramChange.DoubleValue
-                && paramChange.DoubleValue <= 2.0) // +6dB
+                && paramChange.DoubleValue <= Miam_MaxVolume) // +6dB
             {
                 routingMatrix[paramChange.Id1][paramChange.Id2] = (float)paramChange.DoubleValue;
-                newMatrixCoeff[paramChange.Id1][paramChange.Id2] = true;
+                remainingRampSamples[paramChange.Id1][paramChange.Id2] = initialRampSamples;
             }
             break;
             
@@ -309,8 +396,8 @@ void MatrixRouterAudioProcessor::processParamChange(AsyncParamChange& paramChang
                 for (int j=0 ; j<JucePlugin_MaxNumOutputChannels ; j++)
                 {
                     responseParam.Id2 = j;
-                    responseParam.DoubleValue = (double)routingMatrix[paramChange.Id1][j];
-                    SendParamChange(responseParam);
+                    responseParam.DoubleValue = (double)(routingMatrix[paramChange.Id1][j]);
+                    SendParamChange(responseParam); // and not Try, because the update was just asked for -> is it OK ?
                 }
             }
             break;
@@ -323,9 +410,6 @@ void MatrixRouterAudioProcessor::processParamChange(AsyncParamChange& paramChang
         default :
             break;
     }
-    
-    if (notifyPresenter)
-        TrySendParamChange(paramChange);
 }
 void MatrixRouterAudioProcessor::sendInputsOutputsCount()
 {
@@ -333,7 +417,7 @@ void MatrixRouterAudioProcessor::sendInputsOutputsCount()
     msgToPresenter.Type = AsyncParamChange::ParamType::InputsAndOutputsCount;
     msgToPresenter.Id1 = lastInputsCount;
     msgToPresenter.Id2 = lastOutputsCount;
-    SendParamChange(msgToPresenter);
+    TrySendParamChange(msgToPresenter); // View may not exist (Presenter not updated)
     
 }
 //==============================================================================

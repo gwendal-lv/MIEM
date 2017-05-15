@@ -11,13 +11,13 @@
 #ifndef PLUGINPROCESSOR_H_INCLUDED
 #define PLUGINPROCESSOR_H_INCLUDED
 
+
 #include <memory>
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
 
-#define MiamRouter_MaxBufferSize          16384
-#define MiamRouter_TransitionFrequency    1000   // Hz
+#define MiamRouter_MaxBufferSize            16384
 
 #include "AudioDefines.h"
 
@@ -65,12 +65,29 @@ namespace Miam {
         /// \brief Contains the matrix coefficients before the update (i.e.
         /// the values to begin with when computing the volume ramps)
         float oldRoutingMatrix[JucePlugin_MaxNumInputChannels][JucePlugin_MaxNumInputChannels];
-        /// \brief Indicates wether the concerned matrix coeff has just been updated
-        bool newMatrixCoeff[JucePlugin_MaxNumInputChannels][JucePlugin_MaxNumInputChannels];
+        /// \brief Indicates the remaining duration (in samples) of the volume gain ramp
+        /// applied to a coefficient of the matrix
+        ///
+        /// 0 means that : routingMatrix[i][j] == oldRoutingMatrix[i][j]
+        int remainingRampSamples[JucePlugin_MaxNumInputChannels][JucePlugin_MaxNumInputChannels];
+        /// \brief Number of samples that corresponds to the
+        /// MiamRouter_TransitionDuration_s define
+        ///
+        /// -----------------------------------
+        /// MUST BECOME A PARAMETER controllable easily FROM THE GUI
+        /// -----------------------------------
+        int initialRampSamples;
+        // idem
+        AudioParameterInt* rampDuration_ms;
         
         
         // - - - - - Audio parameters for Automation - - - - -
         AudioParameterInt* udpPortAudioParam;
+        /// \brief Automatizable data shared with the data
+        ///
+        /// Also the data that can be saved and loaded to and from the DAW.
+        /// Can be updated at any time by the DAW without notification...
+        AudioParameterFloat* dawRoutingMatrix[JucePlugin_MaxNumInputChannels*JucePlugin_MaxNumInputChannels];
         
         // - - - - - Auxiliary attributes - - - - -
         // To detect and send changes to the Presenter
@@ -88,6 +105,10 @@ namespace Miam {
         //==============================================================================
         void prepareToPlay (double sampleRate, int samplesPerBlock) override;
         void releaseResources() override;
+        // - - - - - Auxiliary function on "prepare to play" - - - - -
+    private :
+        void recomputeParameters(double sampleRate);
+    public :
         
 #ifndef JucePlugin_PreferredChannelConfigurations
         bool isBusesLayoutSupported (const BusesLayout& layouts) const override;
@@ -97,12 +118,10 @@ namespace Miam {
     public :
         void processBlock (AudioSampleBuffer&, MidiBuffer&) override;
     private :
-        /// \brief Gets all available Miam::AsyncParamChange data structures and
-        /// interprets in terms of audio processor coefficients
-        void processorAsyncUpdate();
-        void processParamChange(AsyncParamChange& paramChange, bool notifyPresenter=false);
-        /// \brief Auxiliary function
+        void processParamChange(AsyncParamChange& paramChange);
+        /// \brief Auxiliary functions
         void sendInputsOutputsCount();
+        size_t idx(size_t i, size_t j) {return i*JucePlugin_MaxNumInputChannels+j;}
     public :
         
         // - - - - - MIAM setters and getters - - - - -
