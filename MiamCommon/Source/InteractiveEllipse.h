@@ -35,8 +35,8 @@ namespace Miam
 
 			// Interactions computing
 		public:
-			virtual bool HitTest(const Point<double>& hitPoint) override;
-			double ComputeInteractionWeight(Point<double> T) override;
+			virtual bool HitTest(double x, double y) override;
+			double ComputeInteractionWeight(bpt T) override;
 
 		private :
 			void computeSurface();

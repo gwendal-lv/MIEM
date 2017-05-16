@@ -51,6 +51,7 @@ namespace Miam
 		std::shared_ptr<Amusing::AnimatedPolygon> getFirstArea();
 		std::shared_ptr<Amusing::AnimatedPolygon> getNextArea();
 		std::shared_ptr<Amusing::CompletePolygon> getFirstCompleteArea();
+		std::shared_ptr<Miam::MultiAreaEvent> SetAllAudioPositions(double position);
 
 		//std::shared_ptr<Amusing::AnimatedPolygon> hitPolygon(Point<double> hitPoint, std::shared_ptr<Amusing::AnimatedPolygon> polygon);
 		Point<double> hitPolygon(Point<double> hitPoint, std::shared_ptr<Amusing::AnimatedPolygon> polygon, Point<double> P, Point<double> Q);

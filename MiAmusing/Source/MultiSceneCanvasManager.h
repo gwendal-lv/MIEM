@@ -58,6 +58,7 @@ namespace Amusing {
 		void OnDelete();
 		void OnFollowerTranslation(std::shared_ptr<GraphicEvent> graphicE);
 		void OnAudioPosition(double position);
+		void SetAllAudioPositions(double position);
 		int getNumberArea();
 		void handleAndSendAreaEventSync(std::shared_ptr<AreaEvent> areaE);
 

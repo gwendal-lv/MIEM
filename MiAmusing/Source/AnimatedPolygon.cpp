@@ -17,15 +17,15 @@ using namespace Miam;
 AnimatedPolygon::AnimatedPolygon(int64_t _Id) : EditablePolygon(_Id), first(true)
 {
 	speed = 5; // 5 pixels/sec
-	point.setX(bcontourPointsInPixels.outer().at(0).get<0>());
-	point.setY(bcontourPointsInPixels.outer().at(0).get<1>());
+	point.setX((int)bcontourPointsInPixels.outer().at(0).get<0>());
+	point.setY((int)bcontourPointsInPixels.outer().at(0).get<1>());
 	fromPt = 0;
 	SetNameVisible(false);
 	currentSommet = 0;
 	
 }
 
-AnimatedPolygon::AnimatedPolygon(int64_t _Id, Point<double> _center, int pointsCount, float radius,
+AnimatedPolygon::AnimatedPolygon(int64_t _Id, bpt _center, int pointsCount, float radius,
 	Colour _fillColour, float _canvasRatio) :
 	EditablePolygon(_Id, _center, pointsCount, radius, _fillColour, _canvasRatio)
 {
@@ -37,8 +37,8 @@ AnimatedPolygon::AnimatedPolygon(int64_t _Id,
 	bpt _center, bpolygon& _contourPoints, Colour _fillColour) :
 	EditablePolygon(_Id, _center, _contourPoints, _fillColour)
 {
-	point.setX(bcontourPointsInPixels.outer().at(0).get<0>());
-	point.setY(bcontourPointsInPixels.outer().at(0).get<1>());
+	point.setX((int)bcontourPointsInPixels.outer().at(0).get<0>());
+	point.setY((int)bcontourPointsInPixels.outer().at(0).get<1>());
 	fromPt = 0;
 	
 	currentSommet = 0;
@@ -67,15 +67,15 @@ void AnimatedPolygon::Paint(Graphics& g)
 	//DBG((String)contourPointsInPixels[1].getAngleToPoint(contourPointsInPixels[0]));
 	//diff.setX(contourPointsInPixels[fromPt].getX() - contourPointsInPixels[fromPt + 1].getX());
 	//g.fillEllipse(point.getX(), point.getY(), 20, 20);
-	g.fillEllipse(bcontourPointsInPixels.outer().at(0).get<0>() - contourPointsRadius,
-		          bcontourPointsInPixels.outer().at(0).get<1>() - contourPointsRadius, 20, 20);
+	g.fillEllipse((float)bcontourPointsInPixels.outer().at(0).get<0>() - contourPointsRadius,
+		          (float)bcontourPointsInPixels.outer().at(0).get<1>() - contourPointsRadius, 20.0f, 20.0f);
 	
 }
 
 double AnimatedPolygon::GetNextAreaLength()
 {
 	double distance = 0;
-	if ((currentSommet + 1) >= bcontourPoints.outer().size())
+	if ((currentSommet + 1) >= (int)bcontourPoints.outer().size())
 		distance = 100 * boost::geometry::distance(bcontourPoints.outer().at(currentSommet), bcontourPoints.outer().at(0));//contourPoints[currentSommet].getDistanceFrom(contourPoints[0]) * 100;
 	else
 		distance = 100 * boost::geometry::distance(bcontourPoints.outer().at(currentSommet), bcontourPoints.outer().at(currentSommet + 1));
@@ -101,31 +101,31 @@ Point<double> AnimatedPolygon::initiateFollower()
 	return juce::Point<double>( bcontourPoints.outer().at(0).get<0>(),bcontourPoints.outer().at(0).get<1>());
 }
 
-Point<double> AnimatedPolygon::getCenter()
+bpt AnimatedPolygon::getCenter()
 {
-	return centerInPixels;
+	return bcenterInPixels;
 }
 
 
-Point<double> AnimatedPolygon::initializePolygone(Point<double> currentCenter)
+bpt AnimatedPolygon::initializePolygone(bpt currentCenter)
 {
 	currentPoint = 0;
 	oldPositionPC = -1; // initialise en negatif pour etre sur qu'on ne passe pas un segment
 
-	Point<double> initialTranslation;
+	bpt initialTranslation;
 	oldCenter = currentCenter;
 
-	initialTranslation = juce::Point<double>(bcontourPoints.outer().at(0).get<0>(), bcontourPoints.outer().at(0).get<1>()) - currentCenter ;
-	oldCenter = center;
+	initialTranslation = bpt(0, 0); //bpt(bcontourPoints.outer().at(0).get<0>(), bcontourPoints.outer().at(0).get<1>()) - currentCenter;
+	oldCenter = bcenter;
 
-	oldCenterInPixels = centerInPixels;
+	oldCenterInPixels = bcenterInPixels;
 
-	initT.setXY(initialTranslation.getX()*parentCanvas->getWidth(), initialTranslation.getY()*parentCanvas->getHeight());
+	//initT.setXY(initialTranslation.getX()*parentCanvas->getWidth(), initialTranslation.getY()*parentCanvas->getHeight());
 
 	return initialTranslation;
 }
 
-Point<double> AnimatedPolygon::getPosition(double positionPC)
+bpt AnimatedPolygon::getPosition(double positionPC)
 {
 	
 
@@ -139,7 +139,7 @@ Point<double> AnimatedPolygon::getPosition(double positionPC)
 		oldPositionPC = positionPC;
 	//DBG("P = " + (String)currentPoint);
 	//DBG("[currentPoint] = " + (String)contourPointsInPixels[currentPoint].getX() + " " + (String)contourPointsInPixels[currentPoint].getY());
-	Point<double> newPosition =juce::Point<double>( bcontourPointsInPixels.outer().at(currentPoint).get<0>() + (positionPC ) * (getPente(currentPoint).x),
+	bpt newPosition( bcontourPointsInPixels.outer().at(currentPoint).get<0>() + (positionPC ) * (getPente(currentPoint).x),
 		bcontourPointsInPixels.outer().at(currentPoint).get<1>() + (positionPC) * (getPente(currentPoint).y));
 	//DBG("[newPosition] = " + (String)newPosition.getX() + " " + (String)newPosition.getY());
 	//newPosition += contourPointsInPixels[currentPoint].;

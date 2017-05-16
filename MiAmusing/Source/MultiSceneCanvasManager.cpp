@@ -60,7 +60,7 @@ void MultiSceneCanvasManager::__AddAnimatedTestAreas()
 			// Only polygons added for now
 			std::shared_ptr<AnimatedPolygon> currentEditablePolygon(new AnimatedPolygon(
 				graphicSessionManager->GetNextAreaId(),
-				Point<double>(0.2f + 0.13f*j, 0.3f + 0.1f*j), 3 + 2 * j, 0.15f + 0.04f*(j + 1),
+				bpt(0.2f + 0.13f*j, 0.3f + 0.1f*j), 3 + 2 * j, 0.15f + 0.04f*(j + 1),
 				Colour(80 * (uint8)j, 0, 255),
 				canvasComponent->GetCanvas()->GetRatio()));
 			editableScene->AddArea(currentEditablePolygon);
@@ -108,6 +108,18 @@ void MultiSceneCanvasManager::OnAudioPosition(double position)
 		// faire la translation du curseur de la forme
 		//DBG("position = " + (String)position);
 		amusingScene->getFirstCompleteArea()->setReadingPosition(position);
+		std::shared_ptr<AreaEvent> areaE(new AreaEvent(amusingScene->getFirstCompleteArea(), AreaEventType::NothingHappened,
+			amusingScene->getFirstCompleteArea()->GetId()));
+		handleAndSendAreaEventSync(areaE);
+	}
+}
+
+void MultiSceneCanvasManager::SetAllAudioPositions(double position)
+{
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+	{
+		
+		handleAndSendAreaEventSync(amusingScene->SetAllAudioPositions(position));
 	}
 }
 
@@ -143,7 +155,7 @@ void MultiSceneCanvasManager::handleAndSendAreaEventSync(std::shared_ptr<AreaEve
 					if (auto followerToDelete = amusingScene->getFollowers(area))
 					{
 						DBG("followerToDelete");
-						deleteAsyncDrawableObject(followerToDelete->GetId(), followerToDelete);
+						deleteAsyncDrawableObject((int)followerToDelete->GetId(), followerToDelete);
 					}
 					else
 						break;
@@ -165,7 +177,7 @@ void MultiSceneCanvasManager::deleteUnusedFollowers()
 				DBG("followerToDelete");
 				std::shared_ptr<AreaEvent> areaE(new AreaEvent(followerToDelete, AreaEventType::Deleted));
 				graphicSessionManager->HandleEventSync(areaE);
-				deleteAsyncDrawableObject(followerToDelete->GetId(), followerToDelete);
+				deleteAsyncDrawableObject((int)followerToDelete->GetId(), followerToDelete);
 				// envoyer a l'audio que la source est plus la + retirer de la liste des followers?
 			}
 			else

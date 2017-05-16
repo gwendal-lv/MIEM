@@ -30,13 +30,15 @@ namespace Amusing
 	public:
 		CompletePolygon(int64_t _Id);
 		CompletePolygon(int64_t _Id,
-			Point<double> _center, int pointsCount, float radius,
+			bpt _center, int pointsCount, float radius,
 			Colour _fillColour, float _canvasRatio = 1.47);
 		CompletePolygon(int64_t _Id,
 			bpt _center, bpolygon& _contourPoints,
 			Colour _fillColour);
 
 		~CompletePolygon();
+
+		virtual IDrawableArea* Clone() const override { return new CompletePolygon(*this); }
 
 		void setReadingPosition(double p); // set the position in percent of the cursor on the path
 
@@ -46,7 +48,8 @@ namespace Amusing
 
 		void lengthToPercent();
 		AreaEventType TryMovePoint(const Point<double>& newLocation);
-		virtual IDrawableArea* Clone() const override { return new CompletePolygon(*this); }
+		void setCursorVisible(bool isVisible);
+		
 	private:
 
 		// attributes linked to the Cursor

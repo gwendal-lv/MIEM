@@ -32,7 +32,7 @@ namespace Amusing
 	public :
 		AnimatedPolygon(int64_t _Id);
 		AnimatedPolygon(int64_t _Id,
-			Point<double> _center, int pointsCount, float radius,
+			bpt _center, int pointsCount, float radius,
 			Colour _fillColour, float _canvasRatio = 1.47);
 		AnimatedPolygon(int64_t _Id,
 			bpt _center, bpolygon& _contourPoints,
@@ -50,7 +50,7 @@ namespace Amusing
 
 		int GetHeight()
 		{
-			return (int)centerInPixels.getY();
+			return (int)bcenterInPixels.get<1>();
 		}
 
 		double GetAreteLength()
@@ -68,7 +68,7 @@ namespace Amusing
 			return juce::Point<double>(out.front().get<0>(), out.front().get<1>());
 		}
 
-		Point<double> getCenter();
+		bpt getCenter();
 
 		Point<double> initiateFollower();
 
@@ -80,8 +80,8 @@ namespace Amusing
 		//void associateFollower(std::shared_ptr<Follower> newFollower);
 		//std::shared_ptr<Follower> GetFollower();
 
-		Point<double> initializePolygone(Point<double> currentCenter);
-		Point<double> getPosition(double positionPC);
+		bpt initializePolygone(bpt currentCenter);
+		bpt getPosition(double positionPC);
 		
 
 
@@ -97,8 +97,8 @@ namespace Amusing
 		bool first;
 		double oldPositionPC;
 		int currentPoint;
-		Point<double> oldCenter;
-		Point<double> oldCenterInPixels;
+		bpt oldCenter;
+		bpt oldCenterInPixels;
 
 		Point<double> initT;
 	};

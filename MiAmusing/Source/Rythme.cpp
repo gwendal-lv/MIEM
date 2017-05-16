@@ -15,7 +15,7 @@ Rythme::Rythme(Component* m_mother, int m_bpm, int duration) :
 	record(false), t(0), buffer(nullptr), position(0)
 {
 	Ttimer = 30; // dependra de BPM 
-	maxT =  round(((double)duration)/((double)Ttimer));
+	maxT =  (int)round(((double)duration)/((double)Ttimer));
 	currentOn.on = false;
 	currentOn.duration = 0;
 	//buffer = new int[maxT * sampleRate];
@@ -23,13 +23,13 @@ Rythme::Rythme(Component* m_mother, int m_bpm, int duration) :
 
 void Rythme::setSampleRate(double m_sampleRate)
 {
-	if (~record)
+	if (!record)
 	{
 		sampleRate = m_sampleRate;
 		if (buffer != nullptr)
 			delete[] buffer;
 
-		L = round(maxT * ((double)Ttimer / 1000) * sampleRate);
+		L = (int)round(maxT * ((double)Ttimer / 1000) * sampleRate);
 		buffer = new int[L];
 	}
 }
@@ -98,7 +98,7 @@ void Rythme::fillBuffer()
 	int *bufTest;
 	bufTest = new int[L];
 	int k = 0;
-	for (int i = 0; i < rythme.size(); ++i)
+	for (int i = 0; i < (int)rythme.size(); ++i)
 	{
 		R += (String)rythme[i].duration;
 		R += " ";
@@ -106,7 +106,7 @@ void Rythme::fillBuffer()
 		S += " ";
 		DBG((String)rythme[i].on);
 		double tms = rythme[i].duration * Ttimer; // duree de la note en ms
-		long int N = round( (tms /1000) * sampleRate); // nbr d'ech pour avoir la bonne duree
+		long int N = (long int)round( (tms /1000) * sampleRate); // nbr d'ech pour avoir la bonne duree
 
 		DBG((String)Ttimer);
 		DBG((String)rythme[i].duration);
@@ -176,7 +176,7 @@ void Rythme::startRecord()
 
 		currentOn.on = false;
 		currentOn.duration = 0;
-		buffer = new int[maxT * (Ttimer / 1000) * sampleRate];
+		buffer = new int[(int)(maxT * (Ttimer / 1000) * sampleRate)];
 	}
 
 	record = true;
@@ -215,13 +215,15 @@ int Rythme::getNextSample()
 			DBG("MAINTENANT !!!");
 
 		++position;
-		return sample;	
+		return sample;
 	}
+	else
+		return 0;
 }
 
 void Rythme::setBPM(int newBPM)
 {
-	if (~record)
+	if (!record)
 	{
 		bpm = newBPM;
 		Ttimer = 300;
@@ -230,7 +232,7 @@ void Rythme::setBPM(int newBPM)
 
 void Rythme::setMaxT(int newDuration)
 {
-	if (~record)
+	if (!record)
 	{
 		maxT = newDuration;
 	}

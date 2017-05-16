@@ -50,7 +50,7 @@ namespace Miam
 			Miam::AreaEventType TryMovePoint(const Point<double>& newLocation) override;
 			Miam::AreaEventType EndPointMove() override;
 			void Translate(const Point<double>& translation) override;
-			void setCenterPosition(Point<double> newCenter);
+			void setCenterPosition(bpt newCenter);
 			
 
 		protected:

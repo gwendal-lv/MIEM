@@ -21,7 +21,6 @@ struct On
 };
 
 class Rythme : public Component, // voir s'il y a une classe pour recuperer des notes midi, ...
-	public MouseListener,
 	public Timer//,
 			  // public Thread // plutot un timer?
 {

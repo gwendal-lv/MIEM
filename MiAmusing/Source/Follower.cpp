@@ -32,7 +32,7 @@ Follower::Follower(int64_t _Id, bpt _center, double _r, Colour _fillColour, floa
 	//first = true;
 	initArea();
 	SetNameVisible(false);
-	initTranslation = masterArea->initializePolygone(center);
+	initTranslation = bpt(0, 0);// masterArea->initializePolygone(bcenter);
 	position = masterArea->initiateFollower();
 	
 	//DBG("trX = " + (String)initTranslation.getX());
@@ -115,7 +115,7 @@ std::shared_ptr<Miam::AreaEvent> Follower::setPosition(double m_position)
 	//masterArea->getPosition(m_position);
 	//setCenterPosition(Point<double>(320.4, 178));
 
-	Point<double> newPosition = masterArea->getPosition(m_position);
+	bpt newPosition = masterArea->getPosition(m_position);
 	/*
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(masterScene))
 	{
@@ -151,16 +151,16 @@ void Follower::initArea()
 		DBG("NULLPTR");
 }
 
-void Follower::setCenter(Point<double> newCenter)
+void Follower::setCenter(bpt newCenter)
 {
-	DBG("[newCenter] = " + (String)newCenter.getX() + " " + (String)newCenter.getY());
-	DBG("[center] = " + (String)center.getX() + " " + (String)center.getY());
-	DBG("[centerInPixels] = " + (String)centerInPixels.getX() + " " + (String)centerInPixels.getY());
+	//DBG("[newCenter] = " + (String)newCenter.getX() + " " + (String)newCenter.getY());
+	//DBG("[center] = " + (String)center.getX() + " " + (String)center.getY());
+	//DBG("[centerInPixels] = " + (String)centerInPixels.getX() + " " + (String)centerInPixels.getY());
 
+	juce::Point<double> translation((newCenter.get<0>() - bcenter.get<0>()) * (double)parentCanvas->getWidth(),
+					(newCenter.get<1>() - bcenter.get<1>()) * (double)parentCanvas->getHeight());
 	
-	Point<double> translation = (newCenter - center);
-	translation.setXY(translation.getX() * (double)parentCanvas->getWidth(),translation.getY() * (double)parentCanvas->getHeight());
-	DBG("[translation] = " + (String)translation.getX() + " " + (String)translation.getY());
+	//DBG("[translation] = " + (String)translation.getX() + " " + (String)translation.getY());
 	Translate(translation);
 	//DBG("[0] = " + (String)contourPoints[0].getX() + " " + (String)contourPoints[0].getY());
 	CanvasResized(this->parentCanvas);
@@ -186,4 +186,6 @@ bool Follower::isLinkTo(std::shared_ptr<AnimatedPolygon> polygon)
 {
 	if (masterArea == polygon)
 		return true;
+	else
+		return false;
 }

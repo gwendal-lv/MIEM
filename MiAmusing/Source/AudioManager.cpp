@@ -127,7 +127,9 @@ void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 			model->SendParamChange(param);
 		}
 	}
+	
 }
+
 
 void AudioManager::sendPosition()
 {
@@ -164,7 +166,7 @@ void AudioManager::sendPosition()
 void AudioManager::chooseAudioType(int position, int type)
 {
 	DBG("BORDEEL : " + (String)type);
-	if (position = 1025)
+	if (position == 1025)
 	{
 		switch (type)
 		{
@@ -303,7 +305,7 @@ void AudioManager::askParameter()
 			break;
 		case Miam::AsyncParamChange::ParamType::Frequency :
 			//DBG("Frequency" + (String)param.Id1 + " a " + (String)param.DoubleValue);
-			if (param.Id1 > trackVector.size() - 1 || param.Id1 > Nsources - 1)
+			if (param.Id1 > (int)trackVector.size() - 1 || param.Id1 > Nsources - 1)
 			{
 				DBG("Stop !!! : " + (String)param.Id1 + " > "+ (String)(Nsources-1)  );
 				break;
@@ -317,7 +319,7 @@ void AudioManager::askParameter()
 			else
 			{
 				//DBG("Volume" + (String)param.Id1 + " a " + (String)param.DoubleValue);
-				if (param.Id1 > trackVector.size()-1)
+				if (param.Id1 > (int)trackVector.size()-1)
 				{
 					//DBG("Stop !!!");
 					break;
@@ -416,7 +418,7 @@ void AudioManager::playAllSources()
 
 void AudioManager::playAllControledSources()
 {
-	for (int i = 0; i < sourceControled.size(); ++i)
+	for (int i = 0; i < (int)sourceControled.size(); ++i)
 		trackVector[i]->changeState(TransportState::Starting);
 }
 

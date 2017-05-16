@@ -200,8 +200,9 @@ void Presenter::Update() // remettre l'interieur dans graphsessionmanager
 			else
 			{
 				//DBG("recu : " + (String)(1000 * param.DoubleValue));
-				DBG("param received");
-				graphicSessionManager.OnAudioPosition(param.DoubleValue);
+				//DBG("param received");
+				//graphicSessionManager.OnAudioPosition(param.DoubleValue);
+				graphicSessionManager.SetAllAudioPositions(param.DoubleValue);
 			}
 				
 			break;

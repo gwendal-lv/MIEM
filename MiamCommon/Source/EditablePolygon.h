@@ -32,7 +32,7 @@ namespace Miam {
         EditablePolygon(int64_t _Id);
 		/// \param _Id See DrawablePolygon::DrawablePolygon
         EditablePolygon(int64_t _Id,
-			Point<double> _center, int pointsCount, float radius,
+			bpt _center, int pointsCount, float radius,
 			Colour _fillColour, float _canvasRatio = 1.47); // ratio 800/544 px
 		/// \param _Id See DrawablePolygon::DrawablePolygon
         EditablePolygon(int64_t _Id,

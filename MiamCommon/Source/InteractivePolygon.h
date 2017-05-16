@@ -31,7 +31,7 @@ namespace Miam
         /// \param _Id See DrawablePolygon::DrawablePolygon
         InteractivePolygon(int64_t _Id);
         /// \param _Id See DrawablePolygon::DrawablePolygon
-        InteractivePolygon(int64_t _Id, Point<double> _center, int pointsCount, float radius, Colour _fillColour, float _canvasRatio);
+        InteractivePolygon(int64_t _Id, bpt _center, int pointsCount, float radius, Colour _fillColour, float _canvasRatio);
         /// \param _Id See DrawablePolygon::DrawablePolygon
         //InteractivePolygon(int64_t _Id, Point<double> _center, std::vector<Point<double>>& _contourPoints, Colour _fillColour);
 
@@ -67,8 +67,8 @@ namespace Miam
         
         // Interactions computing
         public :
-        virtual bool HitTest(const Point<double>& hitPoint) override;
-        double ComputeInteractionWeight(Point<double> T) override;
+        virtual bool HitTest(double x, double y) override;
+        double ComputeInteractionWeight(bpt T) override;
         
         
         // ----- Private helpers (for interaction computing) -----

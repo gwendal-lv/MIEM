@@ -179,7 +179,7 @@ AreaEventType EditableEllipse::TryBeginPointMove(const Point<double>& hitPoint)
 		// Are we grabbing the center ?
 		if (eventType != AreaEventType::PointDragBegins)
 		{
-			if (centerInPixels.getDistanceFrom(hitPoint.toDouble())
+			if (boost::geometry::distance(bcenterInPixels, bpt(hitPoint.x, hitPoint.y))
 				< (centerCircleRadius + centerContourWidth))
 			{
 				pointDraggedId = EditableAreaPointId::Center;
@@ -191,7 +191,7 @@ AreaEventType EditableEllipse::TryBeginPointMove(const Point<double>& hitPoint)
 	// Finally, was the point inside the polygon ? (which starts a translation)
 	if (eventType != AreaEventType::PointDragBegins)
 	{
-		if (HitTest(hitPoint))
+		if (HitTest(hitPoint.x,hitPoint.y))
 		{
 			pointDraggedId = EditableAreaPointId::WholeArea;
 			lastLocation = hitPoint;
@@ -220,7 +220,7 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 			{
 			case 1 : // (Cx +a/2, Cy     )
 			case 3 : // (Cx -a/2, Cy     )
-				sa = (newLocation - centerInPixels).getX();
+				sa = bnewLocation.get<0>() - bcenterInPixels.get<0>();
 				a = 2 * abs(sa) / (double)parentCanvas->getWidth();
 
 				contourPoints.outer().at(1) = bpt(bcenter.get<0>() + (a / 2)*xScale, bcenter.get<1>());
@@ -231,7 +231,7 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 				break;
 			case 0 : // (Cx     , Cy +b/2)
 			case 2 : // (Cx     , Cy -b/2)
-				sb = (newLocation - centerInPixels).getY();
+				sb = bnewLocation.get<1>() - bcenterInPixels.get<1>();
 				b = 2 * abs(sb) / (double)parentCanvas->getHeight();
 
 				contourPoints.outer().at(0).set<1>(bcenter.get<1>() - (b / 2)*yScale);
@@ -260,7 +260,7 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 		// --- size if polygon is still big enough only ---
 		double minDistanceFromCenter = 0.0;
 		bool wasSizeApplied = false;
-		bpolygon bnewContourPoints;//std::vector<Point<double>> newContourPoints;
+		bpolygon bnewContourPoints;
 		for (size_t i = 0; i<bcontourPointsInPixels.outer().size(); i++)
 		{
 			std::vector<bpt> result;
@@ -297,11 +297,7 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 	{
 		if (isNewCenterValid(newLocation))
 		{
-			centerInPixels = newLocation;
 			bcenterInPixels = bnewLocation;
-			center = Point<double>(newLocation.x / ((double)parentCanvas->getWidth()),
-				newLocation.y / ((double)parentCanvas->getHeight()));
-
 			bcenter = bpt(bnewLocation.get<0>() / ((double)parentCanvas->getWidth()),
 				bnewLocation.get<1>() / ((double)parentCanvas->getHeight()));
 
@@ -357,7 +353,7 @@ AreaEventType EditableEllipse::EndPointMove()
 
 void EditableEllipse::Translate(const Point<double>& translation)
 {
-	DBG("tailles Translate : " + (String)contourPoints.outer().size() + " " + bcontourPointsInPixels.outer().size());
+	//DBG("tailles Translate : " + (String)contourPoints.outer().size() + " " + bcontourPointsInPixels.outer().size());
 	bcenterInPixels.set<0>(bcenterInPixels.get<0>() + translation.x);
 	bcenterInPixels.set<1>(bcenterInPixels.get<1>() + translation.y);
 	bcenter = bpt(bcenterInPixels.get<0>() / ((double)parentCanvas->getWidth()),
@@ -376,10 +372,10 @@ void EditableEllipse::Translate(const Point<double>& translation)
 	computeManipulationPoint();
 }
 
-void EditableEllipse::setCenterPosition(Point<double> newCenter) // pixels
+void EditableEllipse::setCenterPosition(bpt newCenter) // pixels
 {
 	
-	Point<double> translation = newCenter - centerInPixels; // pixels
+	Point<double> translation(newCenter.get<0>() - bcenterInPixels.get<0>(), newCenter.get<0>() - bcenterInPixels.get<0>()); // pixels
 	Translate(translation);
 	
 }

@@ -40,7 +40,7 @@ namespace Amusing
 
 			
 			void initArea();
-			void setCenter(Point<double> newCenter);
+			void setCenter(bpt newCenter);
 			void setGC(Point<double> m_GC);
 
 			std::shared_ptr<Miam::InteractiveScene> masterScene;
@@ -51,7 +51,7 @@ namespace Amusing
 			Point<double> position;
 
 			bool first;
-			Point<double> initTranslation;
+			bpt initTranslation;
 	};
 }
 

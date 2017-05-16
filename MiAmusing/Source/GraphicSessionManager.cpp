@@ -406,6 +406,12 @@ void GraphicSessionManager::OnAudioPosition(double position)
 		getSelectedCanvasAsManager()->OnAudioPosition(position);
 }
 
+void GraphicSessionManager::SetAllAudioPositions(double position)
+{
+	if (selectedCanvas)
+		getSelectedCanvasAsManager()->SetAllAudioPositions(position);
+}
+
 void GraphicSessionManager::OnAddSquare()
 {
 	if (selectedCanvas)

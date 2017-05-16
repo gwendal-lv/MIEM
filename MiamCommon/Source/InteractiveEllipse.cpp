@@ -56,12 +56,12 @@ void InteractiveEllipse::computeSurface()
 	surface = a * b * PI;
 }
 
-bool InteractiveEllipse::HitTest(const Point<double>& hitPoint)
+bool InteractiveEllipse::HitTest(double x, double y)
 {
-	return (contour.contains((float)hitPoint.x, (float)hitPoint.y));
+	return (contour.contains((float)x, (float)y));
 }
 
-double InteractiveEllipse::ComputeInteractionWeight(Point<double> T)
+double InteractiveEllipse::ComputeInteractionWeight(bpt T)
 {
 	// calculer l'interaction
 	return 0.0;

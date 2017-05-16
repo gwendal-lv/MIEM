@@ -147,7 +147,7 @@ void Sound::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 			bufferToFill.buffer->reverse(bufferToFill.startSample, bufferToFill.numSamples);
 			//currentPosition = (int64)(transportSource->getCurrentPosition() * currentSampleRate);
 			//nextPosition = transportSource->getNextReadPosition();
-			int a = 5;
+			
 		}
 		else
 		{
@@ -158,11 +158,11 @@ void Sound::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 		if (amplitude != targetAmplitude) // update amplitude
 		{
 			bufferToFill.buffer->applyGainRamp(bufferToFill.startSample, bufferToFill.startSample + bufferToFill.numSamples,
-				amplitude, targetAmplitude);
+				(float)amplitude, (float)targetAmplitude);
 			amplitude = targetAmplitude;
 		}
 		else
-			bufferToFill.buffer->applyGain(amplitude);
+			bufferToFill.buffer->applyGain((float)amplitude);
 
 		
 			

@@ -17,26 +17,6 @@ using namespace Miam;
 
 // Common graphics managing code for all possible areas...
 
-
-DrawableArea::DrawableArea(int64_t _Id, Point<double> _center, Colour _fillColour)
-{
-    Id = _Id;
-    
-    center = _center;
-	bcenter = bpt(_center.x, _center.y);
-    
-    centerCircleRadius = 5;
-    
-    fillColour = _fillColour;
-    fillOpacity = 1.0;
-    
-    contourColour = Colours::white;
-    contourWidth = 2.0f;
-    centerContourWidth = contourWidth*1.5f;
-    
-    isNameVisible = true; // par défaut
-}
-
 DrawableArea::DrawableArea(int64_t _Id, bpt _center, Colour _fillColour)
 {
 	Id = _Id;
@@ -81,7 +61,6 @@ void DrawableArea::Paint(Graphics& g)
 void DrawableArea::CanvasResized(SceneCanvasComponent* _parentCanvas)
 {
     parentCanvas = _parentCanvas;
-    centerInPixels.setXY(center.x*parentCanvas->getWidth(), center.y*parentCanvas->getHeight());
 	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scale(parentCanvas->getWidth(), parentCanvas->getHeight());
 	boost::geometry::transform(bcenter, bcenterInPixels, scale);
 }

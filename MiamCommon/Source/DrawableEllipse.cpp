@@ -50,7 +50,7 @@ void DrawableEllipse::createJucePolygon(int width, int height)
 {
 	contour.clear();
 
-	contour.addEllipse(bcenter.get<0>() -(a*xScale/2), bcenter.get<1>() -(b*yScale/2), a*xScale, b*yScale);
+	contour.addEllipse((float)bcenter.get<0>() -((float)a*xScale/2), (float)bcenter.get<1>() -((float)b*yScale/2), (float)a*xScale, (float)b*yScale);
 
 	contour.applyTransform(AffineTransform::scale((float)width, (float)height));
 }

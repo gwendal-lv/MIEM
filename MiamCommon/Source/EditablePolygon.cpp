@@ -28,7 +28,7 @@ EditablePolygon::EditablePolygon(int64_t _Id) :
     init();
 }
 
-EditablePolygon::EditablePolygon(int64_t _Id, Point<double> _center, int pointsCount, float radius, Colour _fillColour, float _canvasRatio) :
+EditablePolygon::EditablePolygon(int64_t _Id, bpt _center, int pointsCount, float radius, Colour _fillColour, float _canvasRatio) :
     InteractivePolygon(_Id, _center, pointsCount, radius, _fillColour, _canvasRatio)
 {
     init();
@@ -228,7 +228,7 @@ AreaEventType EditablePolygon::TryBeginPointMove(const Point<double>& hitPoint)
     // Finally, was the point inside the polygon ? (which starts a translation)
     if (eventType != AreaEventType::PointDragBegins)
     {
-        if (HitTest(hitPoint))
+        if (HitTest(hitPoint.x,hitPoint.y))
         {
             pointDraggedId = EditableAreaPointId::WholeArea;
             lastLocation = hitPoint;
@@ -284,6 +284,9 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
         double x2 = bnewLocation.get<0>() - bcenterInPixels.get<0>();//newLocation.x - centerInPixels.x;
         double y1 = bmanipulationPointInPixels.get<1>() - bcenterInPixels.get<1>();
         double y2 = bnewLocation.get<1>() - bcenterInPixels.get<1>();
+
+		//boost::geometry::detail::azimuth()
+
 		double cos_a = (x2*x1 + y2*y1)/(r1*r2);
         double sin_a = (y2*x1 - x2*y1)/(r1*r2);
         // ----- size -----
@@ -296,16 +299,6 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
 		bpolygon bnewContourPoints;//std::vector<Point<double>> newContourPoints;
         for (size_t i=0 ; i<bcontourPointsInPixels.outer().size() ;i++)
         {
-			
-			std::vector<bpt> result;
-			DBG("bcontourPointsInPixels : (" + (String)bcontourPointsInPixels.outer().at(i).get<0>() +" , " + (String)bcontourPointsInPixels.outer().at(i).get<1>() +")");
-			DBG("bcenterInPixels : (" + (String)bcenterInPixels .get<0>()+" , " + (String)bcenterInPixels.get<1>() +")");
-			boost::geometry::difference(bcontourPointsInPixels.outer().at(i), bcenterInPixels, result);
-			//result.push_back(bpt(bcontourPointsInPixels.outer().at(i).get<0>() - bcenterInPixels.get<0>(), bcontourPointsInPixels.outer().at(i).get<1>() - bcenterInPixels.get<1>()));
-			//DBG("result : (" + (String)result.front().get<0>()+" , " + (String)result.front().get<1>() +")");
-			//result.push_back(bpt(bcontourPointsInPixels.outer().at(i).get<0>() - bcenterInPixels.get<0>(), bcontourPointsInPixels.outer().at(i).get<1>() - bcenterInPixels.get<1>()));
-            //bnewContourPoints.outer().push_back(result.front() );
-
 			bnewContourPoints.outer().push_back(bpt(bcontourPointsInPixels.outer().at(i).get<0>() - bcenterInPixels.get<0>(),
 				bcontourPointsInPixels.outer().at(i).get<1>() - bcenterInPixels.get<1>()));
 
@@ -314,14 +307,9 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
             if (boost::geometry::distance(bnewContourPoints.outer().at(i), bpt(0,0)) > minDistanceFromCenter)
                 minDistanceFromCenter = boost::geometry::distance(bnewContourPoints.outer().at(i), bpt(0, 0));
 
-			//boost::geometry::strategy::transform::translate_transformer<double, 2, 2> tr(bcenterInPixels.get<0>(), bcenterInPixels.get<1>());
-			//boost::geometry::transform(bnewContourPoints.outer().at(i), bnewContourPoints.outer().at(i), tr);
 			bnewContourPoints.outer().at(i).set<0>(bnewContourPoints.outer().at(i).get<0>() + bcenterInPixels.get<0>());
 			bnewContourPoints.outer().at(i).set<1>(bnewContourPoints.outer().at(i).get<1>() + bcenterInPixels.get<1>());
         }
-
-		//boost::geometry::strategy::transform::translate_transformer<double, 2, 2> tr(bcenterInPixels.get<0>(), bcenterInPixels.get<1>());
-		//boost::geometry::transform(bnewContourPoints, bnewContourPoints, tr);
 
         if (minDistanceFromCenter >=
             minimumSizePercentage*(parentCanvas->getWidth()+parentCanvas->getHeight())/2.0)
@@ -347,7 +335,7 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
         if (!wasSizeApplied)
         {
             // If size wasn't applied, we need to rotate the manipulation point
-            manipulationPointInPixels -= centerInPixels;
+            //manipulationPointInPixels -= centerInPixels;
 			bmanipulationPointInPixels.set<0>(bmanipulationPointInPixels.get<0>() - bcenterInPixels.get<0>());
 			bmanipulationPointInPixels.set<1>(bmanipulationPointInPixels.get<1>() - bcenterInPixels.get<1>());
             bmanipulationPointInPixels = bpt(cos_a*bmanipulationPointInPixels.get<0>()
@@ -373,10 +361,10 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
     {
         if (isNewCenterValid(newLocation))
         {
-            centerInPixels = newLocation;
+            //centerInPixels = newLocation;
 			bcenterInPixels = bnewLocation;
-            center = Point<double>(newLocation.x / ((double)parentCanvas->getWidth()),
-                                   newLocation.y / ((double)parentCanvas->getHeight()) );
+            //center = Point<double>(newLocation.x / ((double)parentCanvas->getWidth()),
+             //                      newLocation.y / ((double)parentCanvas->getHeight()) );
 
 			bcenter = bpt(bnewLocation.get<0>() / ((double)parentCanvas->getWidth()),
 						  bnewLocation.get<1>() / ((double)parentCanvas->getHeight()));
