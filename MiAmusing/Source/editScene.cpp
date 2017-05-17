@@ -71,6 +71,10 @@ EditScene::EditScene ()
     completeButton->setButtonText (TRANS("Complete"));
     completeButton->addListener (this);
 
+    addAndMakeVisible (optionButton = new TextButton ("new button"));
+    optionButton->setButtonText (TRANS("Options"));
+    optionButton->addListener (this);
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -96,6 +100,7 @@ EditScene::~EditScene()
     addTrueCircleButton = nullptr;
     deleteButton = nullptr;
     completeButton = nullptr;
+    optionButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -128,6 +133,7 @@ void EditScene::resized()
     addTrueCircleButton->setBounds (8, 224, 50, 24);
     deleteButton->setBounds (8, 248, 50, 24);
     completeButton->setBounds (8, 280, 50, 24);
+    optionButton->setBounds (8, 40, 50, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -193,6 +199,12 @@ void EditScene::buttonClicked (Button* buttonThatWasClicked)
 		graphicSessionManager->OnAddComplete();
         //[/UserButtonCode_completeButton]
     }
+    else if (buttonThatWasClicked == optionButton)
+    {
+        //[UserButtonCode_optionButton] -- add your button handler code here..
+		graphicSessionManager->OnDeviceOptionsClicked();
+        //[/UserButtonCode_optionButton]
+    }
 
     //[UserbuttonClicked_Post]
     //[/UserbuttonClicked_Post]
@@ -254,6 +266,9 @@ BEGIN_JUCER_METADATA
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="new button" id="3ae91a7e9eec6859" memberName="completeButton"
               virtualName="" explicitFocusOrder="0" pos="8 280 50 24" buttonText="Complete"
+              connectedEdges="0" needsCallback="1" radioGroupId="0"/>
+  <TEXTBUTTON name="new button" id="753688072def86b" memberName="optionButton"
+              virtualName="" explicitFocusOrder="0" pos="8 40 50 24" buttonText="Options"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>
 

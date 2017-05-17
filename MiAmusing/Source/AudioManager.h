@@ -18,7 +18,7 @@
 #include "AmusingModel.h"
 #include "AmuSignal.h"
 
-
+#include "Metronome.h"
 
 // Pre-declaration for pointer members
 namespace Amusing {
@@ -36,14 +36,16 @@ namespace Amusing {
 //==============================================================================
 /*
 */
-	class AudioManager : public AudioAppComponent
+	class AudioManager : public AudioSource,
+						 public AudioSourcePlayer,
+						 public AudioDeviceManager
 	{
 	public:
 		AudioManager(AmusingModel *m_mode);
 		~AudioManager();
 
-		void paint(Graphics&) override;
-		void resized() override;
+		//void paint(Graphics&) override;
+		//void resized() override;
 
 		void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
 		void releaseResources() override;
@@ -52,6 +54,9 @@ namespace Amusing {
 		void askParameter();
 		void chooseAudioType(int position, int type);
 		void AncienchooseAudioType(int type,double duration);
+
+		AudioDeviceManager& getAudioDeviceManager();
+
 	private:
 
 		void trackVectorHandler(bool deactivation, int type);
@@ -86,6 +91,10 @@ namespace Amusing {
 		int Nsources;
 
 		double testPos;
+
+		Metronome metronome;
+		MidiBuffer midiBuffer;
+		ScopedPointer<MidiOutput> midiOuput;
 	};
 }
 

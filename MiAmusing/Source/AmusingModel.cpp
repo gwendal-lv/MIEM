@@ -34,3 +34,10 @@ bool AmusingModel::lookForParameter(Miam::AsyncParamChange &param)
 {
 	return presenter->TryGetAsyncParamChange(param);
 }
+
+AudioDeviceManager& AmusingModel::getAudioDeviceManager()
+{
+	if (audioManager == nullptr)
+		DBG("No audioManager");
+	return audioManager->getAudioDeviceManager();
+}

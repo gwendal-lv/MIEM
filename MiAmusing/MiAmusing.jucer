@@ -7,6 +7,8 @@
   <MAINGROUP id="Ak6ojc" name="MiAmusing">
     <GROUP id="{E74684B7-0B02-F2F7-C571-317039AB4495}" name="Source">
       <GROUP id="{8B585BA3-71E5-255C-C070-4910B268744C}" name="Model">
+        <FILE id="ig63jS" name="Metronome.cpp" compile="1" resource="0" file="Source/Metronome.cpp"/>
+        <FILE id="mE4MPS" name="Metronome.h" compile="0" resource="0" file="Source/Metronome.h"/>
         <GROUP id="{E44CA5E1-A684-13FE-D8F5-DC4B3E1F3854}" name="Signals">
           <GROUP id="{65A02069-7549-345C-A5F2-1BFFC4F73B03}" name="FourierSignals">
             <FILE id="VcNvcJ" name="FourierSignal.cpp" compile="1" resource="0"

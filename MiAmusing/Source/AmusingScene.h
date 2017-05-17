@@ -64,6 +64,8 @@ namespace Miam
 
 		//Model *model;
 
+		double testDephasage;
+
 		int getNumberArea();
 		std::shared_ptr<AreaEvent> OnDelete();
 		bool deleting;

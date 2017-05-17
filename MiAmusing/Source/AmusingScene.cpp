@@ -76,9 +76,36 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 		bpt(0.5f, 0.5f), N, 0.15f,
 		Colours::grey,
 		canvasComponent->GetRatio()));
+	if (areas.size() > 0)
+	{
+		for (int i = 0; i<(int)areas.size(); ++i)
+		{
+			if (auto hitP = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
+			{
+				std::vector<bpt> inter = newPolygon->intersection(hitP->getPolygon());
+				//testDephasage = areas[i] // utiliser des box pr verifi a quel segment ca appartient et deduire le dephasage :)
+				testDephasage = hitP->getPercentage(inter[0]);
+				DBG("intersection #0 : " + (String)inter[0].get<0>() + " " + (String)inter[0].get<1>() + " = " + (String)testDephasage);
+				// creer nouvelle forme pour chaque intersection
+				DBG((String)inter.size() + " intersections");
+				for (int j = 0; j < (int)inter.size(); ++j)
+				{
+					//DBG("intersection #" + (String)j + " : " + (String)boost::geometry::area(inter.at(j)));
+					/*
+					for (int k = 0; k < (int)inter.at(j).outer().size(); ++k)
+					{
+
+					}
+					*/
+				}
+			}
+		}
+	}
+	std::shared_ptr<AreaEvent> areaE = AddArea(newPolygon);
+
 	//DBG("a la creation : size = " + (String)newPolygon->GetContourSize());
 	// Actual adding of this new polygon
-	return AddArea(newPolygon);
+	return areaE;
 }
 
 std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDown(const MouseEvent& mouseE)

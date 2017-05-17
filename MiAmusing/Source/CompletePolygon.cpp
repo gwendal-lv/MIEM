@@ -11,6 +11,8 @@
 #include "CompletePolygon.h"
 #include "SceneCanvasComponent.h"
 
+#include "MiamMath.h"
+
 using namespace Amusing;
 using namespace Miam;
 
@@ -26,7 +28,7 @@ CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
 		percentages.push_back(0);
 	SetNameVisible(false);
 	
-
+	updateSubTriangles();
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, float radius,
@@ -42,6 +44,7 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 		percentages.push_back(0);
 	percentages.reserve(bcontourPoints.outer().size());
 	SetNameVisible(false);
+	//updateSubTriangles();
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id,
@@ -57,6 +60,7 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 		percentages.push_back(0);
 	percentages.reserve(bcontourPoints.outer().size());
 	SetNameVisible(false);
+	updateSubTriangles();
 }
 
 
@@ -85,7 +89,7 @@ void CompletePolygon::Paint(Graphics& g)
 	//g.fillEllipse(contourPointsInPixels[0].getX() - contourPointsRadius,
 	//	contourPointsInPixels[0].getY() - contourPointsRadius, 20, 20);
 
-	DBG("showCursorPaint = " + (String)showCursor);
+	//DBG("showCursorPaint = " + (String)showCursor);
 	if (showCursor)
 	{
 		//DBG("paint cursor");
@@ -213,4 +217,58 @@ void CompletePolygon::setCursorVisible(bool isVisible)
 	CanvasResized(this->parentCanvas);
 	DBG("showCursor = " + (String)showCursor);
 	//setReadingPosition(0);
+}
+
+bpolygon CompletePolygon::getPolygon()
+{
+	return bcontourPoints;
+}
+
+std::vector<bpt> CompletePolygon::intersection(bpolygon hitPolygon)
+{
+	std::vector<bpt> inter;
+	boost::geometry::intersection(bcontourPoints, hitPolygon, inter);
+	DBG("------ A ------");
+	for (int i = 0; i < (int)bcontourPoints.outer().size(); ++i)
+		DBG((String)bcontourPoints.outer().at(i).get<0>() + "  " + (String)bcontourPoints.outer().at(i).get<1>());
+	DBG("------ B ------");
+	for (int i = 0; i < (int)hitPolygon.outer().size(); ++i)
+		DBG((String)hitPolygon.outer().at(i).get<0>() + "  " + (String)hitPolygon.outer().at(i).get<1>());
+	DBG("------ I ------");
+	for (int j = 0; j < (int)inter.size(); ++j)
+	{
+		DBG("..." + (String)j + "...");
+		//for (int i = 0; i < (int)inter.size(); ++i)
+		int i = j;
+			DBG((String)inter.at(i).get<0>() + " " + (String)inter.at(i).get<1>());
+		//for (int i = 0; i < (int)inter.at(j).outer().size(); ++i)
+		//	DBG((String)inter.at(j).outer().at(i).get<0>() + "  " + (String)inter.at(j).outer().at(i).get<1>());
+	}
+	return inter;
+}
+
+double CompletePolygon::getPercentage(bpt hitPoint)
+{
+	/*
+	bpt GT(hitPoint.get<0>() - bcenter.get<0>(), hitPoint.get<1>() - bcenter.get<1>());
+	double angle = Miam::Math::ComputePositiveAngle(GT);
+	int i = 0;
+	while (!subTriangles[i].ContainsAngle(angle))
+		i++;
+
+	int prev = 0;
+	int suiv = 0;
+	if (i == 0)
+	{
+		prev = bcontourPoints.outer().size() - 1;
+		suiv = 0;
+	}
+	else
+	{
+		prev = i - 1;
+		suiv = i;
+	}
+	return percentages[prev] + (boost::geometry::distance(hitPoint, bcontourPoints.outer().at(i - 1))) / perimeter;
+	*/
+	return 0.0;
 }

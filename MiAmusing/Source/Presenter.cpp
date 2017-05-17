@@ -213,3 +213,7 @@ void Presenter::Update() // remettre l'interieur dans graphsessionmanager
 	}
 }
 
+AudioDeviceManager& Presenter::getAudioDeviceManager()
+{
+	return model->getAudioDeviceManager();
+}

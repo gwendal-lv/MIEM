@@ -49,7 +49,9 @@ namespace Amusing
 		void lengthToPercent();
 		AreaEventType TryMovePoint(const Point<double>& newLocation);
 		void setCursorVisible(bool isVisible);
-		
+		bpolygon getPolygon();
+		std::vector<bpt> intersection(bpolygon hitPolygon);
+		double getPercentage(bpt hitPoint);
 	private:
 
 		// attributes linked to the Cursor

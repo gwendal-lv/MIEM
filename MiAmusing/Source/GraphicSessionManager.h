@@ -149,6 +149,8 @@ namespace Amusing {
 		void OnPauseClicked();
 		void OnStopClicked();
 
+		void OnDeviceOptionsClicked();
+
 	private :
 		bool deleting;
 

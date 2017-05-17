@@ -470,3 +470,8 @@ void GraphicSessionManager::OnAddComplete()
 		getSelectedCanvasAsManager()->AddCompleteArea();
 	}
 }
+
+void GraphicSessionManager::OnDeviceOptionsClicked()
+{
+	view->ShowDeviceOptionsDialog(myPresenter->getAudioDeviceManager());
+}

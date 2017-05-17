@@ -36,6 +36,8 @@ namespace Amusing
         
 			bool lookForParameter(Miam::AsyncParamChange &param);
 
+			AudioDeviceManager& getAudioDeviceManager();
+
 			AudioManager *audioManager;
 			Presenter *presenter;
         
