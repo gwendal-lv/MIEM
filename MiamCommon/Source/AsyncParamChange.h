@@ -58,6 +58,7 @@ namespace Miam
         
         double DoubleValue = 0.0;
         int IntegerValue = 0;
+        float FloatValue = 0.0f;
         
         
         std::string ToString()

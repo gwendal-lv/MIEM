@@ -394,11 +394,11 @@
  #define JucePlugin_IAAName                "G. Le Vaillant: MiamMatrixRouter"
 #endif
 #ifndef  JucePlugin_MaxNumInputChannels
- #define JucePlugin_MaxNumInputChannels    4
+ #define JucePlugin_MaxNumInputChannels    8
 #endif
 #ifndef  JucePlugin_MaxNumOutputChannels
- #define JucePlugin_MaxNumOutputChannels   4
+ #define JucePlugin_MaxNumOutputChannels   8
 #endif
 #ifndef  JucePlugin_PreferredChannelConfigurations
- #define JucePlugin_PreferredChannelConfigurations  {2,2},{4,4}
+ #define JucePlugin_PreferredChannelConfigurations  {2,2},{4,4},{8,8}
 #endif

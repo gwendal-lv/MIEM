@@ -71,7 +71,7 @@ void Presenter::UpdateFromView(MatrixRouterAudioProcessorEditor* view)
                 break;
                 
             case AsyncParamChange::Volume :
-                sliderValue_dB = Decibels::gainToDecibels(newParamChange.DoubleValue);
+                sliderValue_dB = Decibels::gainToDecibels(newParamChange.FloatValue);
                 oscMatrixComponent->SetSliderValue(newParamChange.Id1, newParamChange.Id2, sliderValue_dB);
                 break;
                 
@@ -99,9 +99,9 @@ void Presenter::OnSliderValueChanged(int row, int col, double value)
     
     // We keep values over min+0.5dB only
     if (value < (MatrixSlider::GetMinVolume_dB() + 0.5))
-        paramChange.DoubleValue = 0.0;
+        paramChange.FloatValue = 0.0f;
     else
-        paramChange.DoubleValue = Decibels::decibelsToGain((double)value);
+        paramChange.FloatValue = (float)Decibels::decibelsToGain(value);
         
     // Enqueuing
     SendParamChange(paramChange);

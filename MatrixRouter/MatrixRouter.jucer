@@ -5,7 +5,7 @@
               buildVST="1" buildVST3="0" buildAU="1" buildAUv3="0" buildRTAS="0"
               buildAAX="0" pluginName="MiamMatrixRouter" pluginDesc="OSC controllable matrix router, for Miam Spat"
               pluginManufacturer="G. Le Vaillant" pluginManufacturerCode="Manu"
-              pluginCode="Eo3z" pluginChannelConfigs="{2,2},{4,4}" pluginIsSynth="0"
+              pluginCode="Eo3z" pluginChannelConfigs="{2,2},{4,4},{8,8}" pluginIsSynth="0"
               pluginWantsMidiIn="0" pluginProducesMidiOut="0" pluginIsMidiEffectPlugin="0"
               pluginEditorRequiresKeys="0" pluginAUExportPrefix="MatrixRouterAU"
               pluginRTASCategory="" aaxIdentifier="com.yourcompany.MatrixRouter"
@@ -29,6 +29,7 @@
         <FILE id="CQqYd4" name="Presenter.h" compile="0" resource="0" file="Source/Presenter.h"/>
       </GROUP>
       <GROUP id="{0ED79599-C00F-00E8-80B1-210744F00E09}" name="Model">
+        <FILE id="EOCM0u" name="ModelDefines.h" compile="0" resource="0" file="Source/ModelDefines.h"/>
         <FILE id="eHIS36" name="NetworkModel.cpp" compile="1" resource="0"
               file="Source/NetworkModel.cpp"/>
         <FILE id="Spzxt0" name="NetworkModel.h" compile="0" resource="0" file="Source/NetworkModel.h"/>
@@ -218,7 +219,7 @@
     <XCODE_MAC targetFolder="Builds/MacOSX">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MatrixRouter"
-                       headerPath="../../../&#10;../../MiamCommon/Source/&#10;../../SpatCommon/Source/"
+                       headerPath="../../../&#10;../../MiamCommon/Source/&#10;../../SpatCommon/Source/&#10;"
                        defines="__MIAM_DEBUG"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MatrixRouter"
                        headerPath="../../../&#10;../../MiamCommon/Source/&#10;../../SpatCommon/Source/"/>

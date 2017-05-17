@@ -16,10 +16,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-
-#define MiamRouter_MaxBufferSize            16384
-
-#include "AudioDefines.h"
+#include "ModelDefines.h"
 
 #include "IModel.h"
 
@@ -65,12 +62,18 @@ namespace Miam {
         /// \brief Contains the matrix coefficients before the update (i.e.
         /// the values to begin with when computing the volume ramps)
         float oldRoutingMatrix[JucePlugin_MaxNumInputChannels][JucePlugin_MaxNumInputChannels];
+        /// \brief Keeps track of the origin of all current coefficients of the
+        /// routingMatrix
+        DataOrigin matrixOrigin[JucePlugin_MaxNumInputChannels][JucePlugin_MaxNumInputChannels];
         /// \brief Indicates the remaining duration (in samples) of the volume gain ramp
         /// applied to a coefficient of the matrix
         ///
         /// 0 means that : routingMatrix[i][j] == oldRoutingMatrix[i][j]
         int remainingRampSamples[JucePlugin_MaxNumInputChannels][JucePlugin_MaxNumInputChannels];
         /// \brief Number of samples that corresponds to the following double variable
+        ///
+        /// Must be >= 1 to avoid bugs :
+        /// if == 0, unable to detect if a volume ramp is happening or not
         int initialRampSamples;
         /// \brief Corresponds to the "attack time" within the View module
         AudioParameterFloat* rampDuration_ms;
@@ -83,11 +86,21 @@ namespace Miam {
         /// Also the data that can be saved and loaded to and from the DAW.
         /// Can be updated at any time by the DAW without notification...
         AudioParameterFloat* dawRoutingMatrix[JucePlugin_MaxNumInputChannels*JucePlugin_MaxNumInputChannels];
+        /// \brief Backup of the entire matrix from the DAW side....
+        ///
+        /// Copie entière nécessaire à chaque nouveau buffer audio traité : le DAW
+        /// ne notifie pas le plug-in des changements
+        /// Peut-être qu'en développant en VST / AU natif par OS on pourrait avoir des
+        /// notifications...
+        float dawMatrixBackup[JucePlugin_MaxNumInputChannels][JucePlugin_MaxNumInputChannels];
         
         // - - - - - Auxiliary attributes - - - - -
         // To detect and send changes to the Presenter
         int lastInputsCount = -1;
         int lastOutputsCount = -1;
+#ifdef __MIAM_DEBUG
+        OSCSender oscLocalhostDebugger;
+#endif
         
         
         // ================== METHODS ===================
@@ -113,7 +126,7 @@ namespace Miam {
     public :
         void processBlock (AudioSampleBuffer&, MidiBuffer&) override;
     private :
-        void processParamChange(AsyncParamChange& paramChange);
+        void processParamChange(AsyncParamChange& paramChange, DataOrigin origin);
         /// \brief Auxiliary functions
         void sendInputsOutputsCount();
         size_t idx(size_t i, size_t j) {return i*JucePlugin_MaxNumInputChannels+j;}

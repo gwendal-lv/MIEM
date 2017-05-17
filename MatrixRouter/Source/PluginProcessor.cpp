@@ -49,8 +49,8 @@ MatrixRouterAudioProcessor::MatrixRouterAudioProcessor()
     rampDuration_ms = new AudioParameterFloat("rampDuration_ms",
                                               "Attack time (ms)",
                                               0.1,     // min (defined in projucer)
-                                              100.0,  // max (defined in projucer)
-                                              40.0);  // default
+                                              100.0,   // max (defined in projucer)
+                                              40.0);   // default
     addParameter(rampDuration_ms); // will auto-delete
     
     // Init of the routing matrix + associated DAW parameters
@@ -81,13 +81,22 @@ MatrixRouterAudioProcessor::MatrixRouterAudioProcessor()
             remainingRampSamples[i][j] = 0;
             // Following matrix data to be initialized later too
             routingMatrix[i][j] = 0.0f;
+            matrixOrigin[i][j] = DataOrigin::PluginProcessorModel;
             oldRoutingMatrix[i][j] = 0.0f;
+            
+            // Data that is Not initialized later
+            dawMatrixBackup[i][j] = 0.0f;
         }
     }
     
     // Modules init after self-init
     networkModel = std::make_shared<NetworkModel>(*this);
     presenter = new Presenter(*this, *networkModel); // à l'ancienne
+    
+#ifdef __MIAM_DEBUG
+    if (! oscLocalhostDebugger.connect ("127.0.0.1", 9001))
+        throw std::runtime_error ("Error: could not connect to UDP port 9001.");
+#endif
 }
 
 MatrixRouterAudioProcessor::~MatrixRouterAudioProcessor()
@@ -170,7 +179,10 @@ void MatrixRouterAudioProcessor::releaseResources()
 
 void MatrixRouterAudioProcessor::recomputeParameters(double sampleRate)
 {
+    // must be >= 1
     initialRampSamples = (int) std::round((double)(*rampDuration_ms)*sampleRate/1000.0);
+    if (initialRampSamples == 0)
+        initialRampSamples = 1;
 }
 
 
@@ -225,54 +237,73 @@ void MatrixRouterAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBu
     AsyncParamChange paramChange;
     
     
-    // 1st update : info from the Presenter (medium overall priority)
-    // Changes won't be erased by step 2 (data from DAW)
-    while (presenter->TryGetAsyncParamChange(paramChange))
-        processParamChange(paramChange); // without notification
     
-    // 2nd update: changes from the DAW itself (automation...) (lowest overall priority)
-    // Might be erased from the Presenter or the Network module ; the Presenter is then
-    // notified only if it hasn't caused itself a change for the concerned coefficient
-    //
-    // AND : if no change from the DAW but from somewhere else, we retransmit automation
+    // 1st update : info from the Presenter
+    while (presenter->TryGetAsyncParamChange(paramChange))
+        processParamChange(paramChange, DataOrigin::Presenter); // without notification
+     
+    
+    // 3rd update: detection of changes on the DAW side (automation...) with lowest priority
     for (int i = 0; i < totalNumInputChannels; i++)
     {
-        for (int j=0 ; j<totalNumOutputChannels ; j++)
+        for (int j=0 ; j < totalNumOutputChannels ; j++)
         {
-            // If there was a significant change only
-            if ( std::abs((float)( *dawRoutingMatrix[idx(i,j)] - routingMatrix[i][j] ))
-                > Miam_MinVolume)
+            // At first : Scrutation for a change on the DAW side (since last buffer)
+            // ONLY if the plug-in did not already received a command (OSC or GUI)
+            // (else, the check wouldn't be necessary because the data will be
+            // overriden at next "if" statement)
+            if (remainingRampSamples[i][j] != initialRampSamples) // no command just before
             {
-                // If anyone else hasn't made any i,j change yet, the DAW could take
-                // control of the matrix coefficient
-                if (remainingRampSamples[i][j] == 0)
+                // exact comparisons !
+                // Sinon, grosse propagation des erreurs -> bug de détection de chgmt
+                if ( *dawRoutingMatrix[idx(i,j)] != dawMatrixBackup[i][j] )
                 {
+                    // The DAW then takes control of the internal matrix :
                     // Creation of the async param change to be processed
                     paramChange.Type = AsyncParamChange::Volume;
                     paramChange.Id1 = i;
                     paramChange.Id2 = j;
-                    paramChange.DoubleValue = (double)*dawRoutingMatrix[idx(i,j)];
+                    paramChange.FloatValue = *dawRoutingMatrix[idx(i,j)];
                     // Actual Synchronous processing with Presenter notification
-                    processParamChange(paramChange);
-                    TrySendParamChange(paramChange);
+                    // Updates the internal routing matrix
+                    processParamChange(paramChange, DataOrigin::Daw);
                 }
-                // Else, we update DAW's data with the freshest data available
-                else
-                    *dawRoutingMatrix[idx(i,j)] = routingMatrix[i][j];
             }
+            
+             
+            // Scrutation for a difference between the internal matrix, and
+            // the DAW matrix (after checking for the automation "self-change")
+            // The plug-in may become automation "master" here
+            //
+            // Scrutation qui doit être faite à chaque boucle (aucun moyen d'y échapper)
+            //
+            // Exact comparison too (data perfectly equal if coming from the same source)
+            /*
+            if ( *dawRoutingMatrix[idx(i,j)] != routingMatrix[i][j] )
+            {
+                oscLocalhostDebugger.send ("/updateToDaw",
+                                           (float)*dawRoutingMatrix[idx(i,j)],
+                                           (float) routingMatrix[i][j]);
+                
+                *dawRoutingMatrix[idx(i,j)] = routingMatrix[i][j];
+            }
+            */
+            
+            // Finally, backup of the whole matrix
+            dawMatrixBackup[i][j] = *dawRoutingMatrix[idx(i,j)];
         }
     }
     
-    // 3rd update : info from the network module of the model (hi/mid overall priority)
-    // Such data will erase anything from the presenter on this execution of the audio
+    
+    // 3rd update : info from the network module of the model
+    // Such data will erase anything from others on this execution of the audio
     // thread, and the presenter will
-    // even be lock-freely informed of the freshest data available.
-    // BUT during next frame, the Presenter will be able to erase the data
+    // be lock-freely informed of the freshest data available.
+    // BUT during next frame, the Presenter and the DAW will be able to erase the data
+    /*
     while (networkModel->TryGetAsyncParamChange(paramChange))
-    {
-        processParamChange(paramChange);
-        TrySendParamChange(paramChange);
-    }
+        processParamChange(paramChange, DataOrigin::NetworkModel);
+    */
     
     // Backup of all of the original input audio data, into a local static buffer
     for (int i=0 ; i<totalNumInputChannels ; i++)
@@ -325,13 +356,13 @@ void MatrixRouterAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBu
                     else // Else, ramp on the whole buffer
                     {
                         float tempRampVolume = oldRoutingMatrix[i][j]
-                        + ((double)(nSamples-1.0)/(double)(remainingRampSamples[i][j]))
+                        + ((float)(nSamples-1.0)/(float)(remainingRampSamples[i][j]))
                                  * (routingMatrix[i][j] - oldRoutingMatrix[i][j]);
                         // Direct RAMP + MIXING
                         buffer.addFromWithRamp(j, 0, inputAudioData[i], nSamples, oldRoutingMatrix[i][j], tempRampVolume);
                         // For next buffer's first sample (so: it's not tempRampVolume)
                         oldRoutingMatrix[i][j] = oldRoutingMatrix[i][j]
-                        + ((double)(nSamples)/(double)(remainingRampSamples[i][j]))
+                        + ((float)(nSamples)/(float)(remainingRampSamples[i][j]))
                         * (routingMatrix[i][j] - oldRoutingMatrix[i][j]);;
                         // Ramp params for next buffer
                         remainingRampSamples[i][j] -= nSamples;
@@ -353,7 +384,7 @@ void MatrixRouterAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBu
         }
     }
 }
-void MatrixRouterAudioProcessor::processParamChange(AsyncParamChange& paramChange)
+void MatrixRouterAudioProcessor::processParamChange(AsyncParamChange& paramChange, DataOrigin origin)
 {
     // For response to requests
     AsyncParamChange responseParam;
@@ -368,11 +399,28 @@ void MatrixRouterAudioProcessor::processParamChange(AsyncParamChange& paramChang
                 && paramChange.Id1 < JucePlugin_MaxNumInputChannels
                 && 0 <= paramChange.Id2
                 && paramChange.Id2 < JucePlugin_MaxNumOutputChannels
-                && 0.0 <= paramChange.DoubleValue
-                && paramChange.DoubleValue <= Miam_MaxVolume) // +6dB
+                && 0.0f <= paramChange.FloatValue
+                && paramChange.FloatValue <= Miam_MaxVolume) // +6dB
             {
-                routingMatrix[paramChange.Id1][paramChange.Id2] = (float)paramChange.DoubleValue;
+                routingMatrix[paramChange.Id1][paramChange.Id2] = paramChange.FloatValue;
                 remainingRampSamples[paramChange.Id1][paramChange.Id2] = initialRampSamples;
+                // We suppose here that the priorities by ORIGIN were respected
+                // BEFORE calling this function
+                matrixOrigin[paramChange.Id1][paramChange.Id2] = origin;
+                
+                // Change notifications
+                if (origin != DataOrigin::Presenter) // to Presenter
+                    TrySendParamChange(paramChange);
+                if (origin != DataOrigin::Daw) // to DAW
+                {
+                    *dawRoutingMatrix[idx(paramChange.Id1,paramChange.Id2)]
+                    = routingMatrix[paramChange.Id1][paramChange.Id2];
+                    /*
+                    oscLocalhostDebugger.send ("/updateToDaw",
+                                               (float)*dawRoutingMatrix[idx(paramChange.Id1,paramChange.Id2)],
+                                               (float) routingMatrix[paramChange.Id1][paramChange.Id2]);
+                     */
+                }
             }
             break;
             
@@ -390,7 +438,7 @@ void MatrixRouterAudioProcessor::processParamChange(AsyncParamChange& paramChang
                 for (int j=0 ; j<JucePlugin_MaxNumOutputChannels ; j++)
                 {
                     responseParam.Id2 = j;
-                    responseParam.DoubleValue = (double)(routingMatrix[paramChange.Id1][j]);
+                    responseParam.FloatValue = routingMatrix[paramChange.Id1][j];
                     SendParamChange(responseParam); // and not Try, because the update was just asked for -> is it OK ?
                 }
             }
@@ -478,7 +526,7 @@ void MatrixRouterAudioProcessor::setStateInformation (const void* data, int size
             
             // However, we do update the Presenter from the new data
             coeffUpdate.Id2 = j;
-            coeffUpdate.DoubleValue = (double)routingMatrix[i][j];
+            coeffUpdate.FloatValue = routingMatrix[i][j];
             TrySendParamChange(coeffUpdate);
         }
     }

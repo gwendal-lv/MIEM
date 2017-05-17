@@ -74,9 +74,7 @@ namespace Miam
         {
             MatrixSlider* slider = sliders[row*maxColsCount + col].get();
             // To prevent direct backwards retransmission
-            slider->removeListener(this);
-            slider->setValue(newValue);
-            slider->addListener(this);
+            slider->setValue(newValue, NotificationType::dontSendNotification);
             
             // Graphical update
             slider->SetPropertiesFromVolume();
