@@ -77,7 +77,8 @@ namespace Miam {
         int initialRampSamples;
         /// \brief Corresponds to the "attack time" within the View module
         AudioParameterFloat* rampDuration_ms;
-        
+        /// \brief To detect changes on the DAW side... (méthode archaïque)
+        float rampDurationBackup_ms;
         
         // - - - - - Audio parameters for Automation - - - - -
         AudioParameterInt* udpPortAudioParam;
@@ -129,6 +130,8 @@ namespace Miam {
         void processParamChange(AsyncParamChange& paramChange, DataOrigin origin);
         /// \brief Auxiliary functions
         void sendInputsOutputsCount();
+        void sendRampDuration();
+        
         size_t idx(size_t i, size_t j) {return i*JucePlugin_MaxNumInputChannels+j;}
     public :
         

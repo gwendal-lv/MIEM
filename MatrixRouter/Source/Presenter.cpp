@@ -70,6 +70,11 @@ void Presenter::UpdateFromView(MatrixRouterAudioProcessorEditor* view)
                 oscMatrixComponent->SetActiveSliders(newParamChange.Id1, newParamChange.Id2);
                 break;
                 
+            case AsyncParamChange::Duration :
+                if (newParamChange.Id1 == 0) // Attack time
+                    oscMatrixComponent->SetAttackSliderValue(newParamChange.DoubleValue);
+                break;
+                
             case AsyncParamChange::Volume :
                 sliderValue_dB = Decibels::gainToDecibels(newParamChange.FloatValue);
                 oscMatrixComponent->SetSliderValue(newParamChange.Id1, newParamChange.Id2, sliderValue_dB);

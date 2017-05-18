@@ -52,6 +52,7 @@ MatrixRouterAudioProcessor::MatrixRouterAudioProcessor()
                                               100.0,   // max (defined in projucer)
                                               40.0);   // default
     addParameter(rampDuration_ms); // will auto-delete
+    rampDurationBackup_ms = 0.0f; // initialized after construction
     
     // Init of the routing matrix + associated DAW parameters
     for (int i=0 ; i<JucePlugin_MaxNumInputChannels ; i++)
@@ -221,6 +222,9 @@ void MatrixRouterAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBu
     const int totalNumOutputChannels = getTotalNumOutputChannels();
     const int nSamples = buffer.getNumSamples();
     
+    
+    // - - - - - Audio parameters updates - - - - -
+
     // Send of inputs and outputs number, if it has just changed
     if (totalNumInputChannels != lastInputsCount
         || totalNumOutputChannels != lastOutputsCount)
@@ -233,17 +237,34 @@ void MatrixRouterAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBu
         sendInputsOutputsCount();
     }
     
+    // Plug-in automatizable parameters
+    if (*rampDuration_ms != rampDurationBackup_ms)
+    {
+        // Update
+        recomputeParameters(getSampleRate());
+        rampDurationBackup_ms = *rampDuration_ms;
+        // Notif to presenter
+        sendRampDuration();
+    }
+    
     // - - - - - Routing data updates - - - - -
+    
     AsyncParamChange paramChange;
     
-    
-    
-    // 1st update : info from the Presenter
+    // 1st matrix update : info from the Presenter
     while (presenter->TryGetAsyncParamChange(paramChange))
         processParamChange(paramChange, DataOrigin::Presenter); // without notification
-     
     
-    // 3rd update: detection of changes on the DAW side (automation...) with lowest priority
+    // 2nd matrix update : info from the network module of the model
+    // Such data will erase anything from others on this execution of the audio
+    // thread, and the presenter will
+    // be lock-freely informed of the freshest data available.
+    // BUT during next frame, the Presenter and the DAW will be able to erase the data
+    while (networkModel->TryGetAsyncParamChange(paramChange))
+        processParamChange(paramChange, DataOrigin::NetworkModel);
+    
+    // 3rd matrix update: detection of changes on the DAW side (automation...) with
+    // lowest priority
     for (int i = 0; i < totalNumInputChannels; i++)
     {
         for (int j=0 ; j < totalNumOutputChannels ; j++)
@@ -270,40 +291,14 @@ void MatrixRouterAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBu
                 }
             }
             
-             
-            // Scrutation for a difference between the internal matrix, and
-            // the DAW matrix (after checking for the automation "self-change")
-            // The plug-in may become automation "master" here
-            //
-            // Scrutation qui doit être faite à chaque boucle (aucun moyen d'y échapper)
-            //
-            // Exact comparison too (data perfectly equal if coming from the same source)
-            /*
-            if ( *dawRoutingMatrix[idx(i,j)] != routingMatrix[i][j] )
-            {
-                oscLocalhostDebugger.send ("/updateToDaw",
-                                           (float)*dawRoutingMatrix[idx(i,j)],
-                                           (float) routingMatrix[i][j]);
-                
-                *dawRoutingMatrix[idx(i,j)] = routingMatrix[i][j];
-            }
-            */
-            
             // Finally, backup of the whole matrix
             dawMatrixBackup[i][j] = *dawRoutingMatrix[idx(i,j)];
         }
     }
     
     
-    // 3rd update : info from the network module of the model
-    // Such data will erase anything from others on this execution of the audio
-    // thread, and the presenter will
-    // be lock-freely informed of the freshest data available.
-    // BUT during next frame, the Presenter and the DAW will be able to erase the data
-    /*
-    while (networkModel->TryGetAsyncParamChange(paramChange))
-        processParamChange(paramChange, DataOrigin::NetworkModel);
-    */
+    
+    // - - - - - Matrix routing, sum input by input at the level - - - - -
     
     // Backup of all of the original input audio data, into a local static buffer
     for (int i=0 ; i<totalNumInputChannels ; i++)
@@ -313,7 +308,6 @@ void MatrixRouterAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBu
     // Then : clear of all output buffers
     buffer.clear();
     
-    // - - - - - Matrix routing, sum input by input at the level - - - - -
     for (int i = 0; i < totalNumInputChannels; i++)
     {
         bool currentInputBufferModified = true; // new input iteration
@@ -414,12 +408,7 @@ void MatrixRouterAudioProcessor::processParamChange(AsyncParamChange& paramChang
                 if (origin != DataOrigin::Daw) // to DAW
                 {
                     *dawRoutingMatrix[idx(paramChange.Id1,paramChange.Id2)]
-                    = routingMatrix[paramChange.Id1][paramChange.Id2];
-                    /*
-                    oscLocalhostDebugger.send ("/updateToDaw",
-                                               (float)*dawRoutingMatrix[idx(paramChange.Id1,paramChange.Id2)],
-                                               (float) routingMatrix[paramChange.Id1][paramChange.Id2]);
-                     */
+                        = routingMatrix[paramChange.Id1][paramChange.Id2];
                 }
             }
             break;
@@ -428,7 +417,10 @@ void MatrixRouterAudioProcessor::processParamChange(AsyncParamChange& paramChang
         case AsyncParamChange::UpdateDisplay :
             // If it's a request for general parameters
             if (paramChange.Id1 == -1)
+            {
                 sendInputsOutputsCount();
+                sendRampDuration();
+            }
             // Else, it can be a request for a specific row
             else if (0 <= paramChange.Id1 && paramChange.Id1 < JucePlugin_MaxNumInputChannels)
             {
@@ -454,6 +446,7 @@ void MatrixRouterAudioProcessor::processParamChange(AsyncParamChange& paramChang
             if (paramChange.Id1 == 0) // Attack time
             {
                 *rampDuration_ms = (float)paramChange.DoubleValue;
+                rampDurationBackup_ms = *rampDuration_ms; // to prevent update loops
                 recomputeParameters(getSampleRate());
             }
             break;
@@ -469,7 +462,14 @@ void MatrixRouterAudioProcessor::sendInputsOutputsCount()
     msgToPresenter.Id1 = lastInputsCount;
     msgToPresenter.Id2 = lastOutputsCount;
     TrySendParamChange(msgToPresenter); // View may not exist (Presenter not updated)
-    
+}
+void MatrixRouterAudioProcessor::sendRampDuration()
+{
+    AsyncParamChange attackTimeChange;
+    attackTimeChange.Type = AsyncParamChange::Duration;
+    attackTimeChange.Id1 = 0;
+    attackTimeChange.DoubleValue = (double) *rampDuration_ms;
+    TrySendParamChange(attackTimeChange);
 }
 //==============================================================================
 //==============================================================================
@@ -507,12 +507,25 @@ void MatrixRouterAudioProcessor::getStateInformation (MemoryBlock& destData)
             MemoryOutputStream (destData, true).writeFloat(routingMatrix[i][j]);
 }
 
+// Data retrieval from the DAW
 void MatrixRouterAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-    // Data retrieval from the DAW
+    
+    // filter Parameters at first
+    // Updates directly after
+    AsyncParamChange paramChange;
     *udpPortAudioParam = MemoryInputStream (data, static_cast<size_t> (sizeInBytes), false).readInt();
+    bool isUdpConnected = networkModel->SetUdpPort(*udpPortAudioParam);
+    presenter->OnNewUdpPort(*udpPortAudioParam, isUdpConnected);
+    
     *rampDuration_ms = MemoryInputStream (data, static_cast<size_t> (sizeInBytes), false).readFloat();
-    // Mise à jour des coefficient directement, en synchrone
+    paramChange.Type = AsyncParamChange::Duration;
+    paramChange.Id1 = 0; // means attack time
+    paramChange.DoubleValue = (double) *rampDuration_ms;
+    
+    recomputeParameters(getSampleRate());
+    
+    // Mise à jour des coefficient directement
     AsyncParamChange coeffUpdate; // pour info presenter
     coeffUpdate.Type = AsyncParamChange::Volume;
     for (int i=0 ; i<JucePlugin_MaxNumInputChannels ; i++)
@@ -520,9 +533,9 @@ void MatrixRouterAudioProcessor::setStateInformation (const void* data, int size
         coeffUpdate.Id1 = i;
         for (int j=0 ; j<JucePlugin_MaxNumOutputChannels ; j++)
         {
-            routingMatrix[i][j] = MemoryInputStream (data, static_cast<size_t> (sizeInBytes), false).readFloat();
+            routingMatrix[i][j] = MemoryInputStream (data, static_cast<size_t> (sizeInBytes), false).readFloat(); // == automation data
             oldRoutingMatrix[i][j] = routingMatrix[i][j];
-            // We do not update the automation here... GOOD IDEA ???
+            dawMatrixBackup[i][j] = routingMatrix[i][j];
             
             // However, we do update the Presenter from the new data
             coeffUpdate.Id2 = j;
@@ -530,18 +543,6 @@ void MatrixRouterAudioProcessor::setStateInformation (const void* data, int size
             TrySendParamChange(coeffUpdate);
         }
     }
-
-    // Updates then
-    bool isUdpConnected = networkModel->SetUdpPort(*udpPortAudioParam);
-    presenter->OnNewUdpPort(*udpPortAudioParam, isUdpConnected);
-    recomputeParameters(getSampleRate());
-    //==============================================================================
-    //==============================================================================
-    //==============================================================================
-    // ENVOYER L'ATTAQUE AU PRESENTER
-    //==============================================================================
-    //==============================================================================
-    //==============================================================================
 }
 
 //==============================================================================

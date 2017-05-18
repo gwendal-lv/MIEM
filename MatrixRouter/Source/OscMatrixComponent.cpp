@@ -251,6 +251,10 @@ void OscMatrixComponent::SetSliderValue(int row, int col, double value)
 {
     slidersMatrix->GetMatrixComponent()->SetSliderValue(row, col, value);
 }
+void OscMatrixComponent::SetAttackSliderValue(double value)
+{
+    attackSlider->setValue(value, NotificationType::dontSendNotification);
+}
 void OscMatrixComponent::SetUdpPortAndMessage(int udpPort, bool isConnected)
 {
     udpPortTextEditor->setText(std::to_string(udpPort), NotificationType::sendNotification);
@@ -269,7 +273,7 @@ void OscMatrixComponent::SetActiveSliders(int inputsCount, int outputsCount)
 {
     slidersMatrix->GetMatrixComponent()->SetActiveSliders(inputsCount, outputsCount);
 #ifdef __MIAM_DEBUG
-    __DisplayDebugMsg("in=" + std::to_string(inputsCount) + " out=" + std::to_string(outputsCount));
+  r  //__DisplayDebugMsg("in=" + std::to_string(inputsCount) + " out=" + std::to_string(outputsCount));
 #endif
 }
 //[/MiscUserCode]

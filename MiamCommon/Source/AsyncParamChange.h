@@ -23,6 +23,8 @@ namespace Miam
     {
         public :
         
+        AsyncParamChange() {Reset();}
+        
         
         
         enum ParamType {
@@ -54,12 +56,23 @@ namespace Miam
         
         ParamType Type = ParamType::None;
         
-        int Id1 = 0, Id2 = 0;
+        int Id1, Id2;
         
-        double DoubleValue = 0.0;
-        int IntegerValue = 0;
-        float FloatValue = 0.0f;
+        double DoubleValue;
+        int IntegerValue;
+        float FloatValue;
         
+        void Reset()
+        {
+            Type = ParamType::None;
+            
+            Id1 = 0;
+            Id2 = 0;
+            
+            DoubleValue = 0.0;
+            IntegerValue = 0;
+            FloatValue = 0.0f;
+        }
         
         std::string ToString()
         {

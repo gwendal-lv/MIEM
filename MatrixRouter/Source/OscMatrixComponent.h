@@ -65,6 +65,7 @@ public:
 
     void OnSliderValueChanged(int row, int col, double value) override;
     void SetSliderValue(int row, int col, double value);
+    void SetAttackSliderValue(double value);
     void SetUdpPortAndMessage(int udpPort, bool isConnected);
     void SetActiveSliders(int inputsCount, int outputsCount);
 
