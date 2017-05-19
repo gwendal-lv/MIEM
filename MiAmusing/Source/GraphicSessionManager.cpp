@@ -247,22 +247,21 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				break;
 			case AreaEventType::ShapeChanged :
 				DBG("Shape Changed");
-				if (ADSR == 0)
+				if (auto complete = std::dynamic_pointer_cast<CompletePolygon>(area))
 				{
-					S = area->GetSurface();
-					f = 20 * pow(10, S / 4000);
-					param.Type = Miam::AsyncParamChange::ParamType::Frequency;
 					param.Id1 = myPresenter->getSourceID(area);
-					param.DoubleValue = f;
-				}
-				else if (ADSR == 1)
-				{
-					param.Type = Miam::AsyncParamChange::ParamType::Frequency;
-					param.Id1 = myPresenter->getSourceID(area);
-					if (auto anime = std::dynamic_pointer_cast<AnimatedPolygon> (area))
+					param.Type = Miam::AsyncParamChange::ParamType::Source;
+					i = 0;
+					DBG("before while");
+					while (complete->getAllPercentages(i, param.DoubleValue))
 					{
-						param.DoubleValue = anime->GetAreteLength() / speed;
+						DBG("cote to send : " + (String)i);
+						param.Id2 = i;
+						myPresenter->SendParamChange(param);
+						++i;
 					}
+					//}
+					DBG("finish");
 				}
 				myPresenter->SendParamChange(param);
 				break;

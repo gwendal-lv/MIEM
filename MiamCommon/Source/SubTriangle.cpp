@@ -95,12 +95,12 @@ SubTriangle::SubTriangle(bpt _pointG, bpt _pointB, bpt _pointC)
 	// or not. Inversion possible
 	//bpt vectorGB, vectorGC;
 	//std::list<bpolygon> vectorGB, vectorGC;
-	std::vector<bpt> vectorGB, vectorGC;
-	boost::geometry::difference(_pointB, _pointG, vectorGB);
-	boost::geometry::difference(_pointC, _pointG, vectorGC);
+	bpt vectorGB(_pointB.get<0>() - _pointG.get<0>(), _pointB.get<1>() - _pointG.get<1>());
+	bpt vectorGC(_pointC.get<0>() - _pointG.get<0>(), _pointC.get<1>() - _pointG.get<1>());
+	
 
-	double angle1 = Math::ComputePositiveAngle(vectorGB.front());
-	double angle2 = Math::ComputePositiveAngle(vectorGC.front());
+	double angle1 = Math::ComputePositiveAngle(vectorGB);
+	double angle2 = Math::ComputePositiveAngle(vectorGC);
 	if (std::abs(angle1 - angle2) > double_Pi) // A triangle cannot have such an angle
 	{
 		containsAngleZero = true;

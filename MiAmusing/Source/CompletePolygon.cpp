@@ -29,6 +29,7 @@ CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
 	SetNameVisible(false);
 	
 	updateSubTriangles();
+	DBG("blbl");
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, float radius,
@@ -197,7 +198,7 @@ void CompletePolygon::setReadingPosition(double p)
 void CompletePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 {
 	//DBG("tailles setReadingPosition : bcontourPointsInPixels " + (String)bcontourPointsInPixels.outer().size());
-	InteractivePolygon::CanvasResized(_parentCanvas);
+	EditablePolygon::CanvasResized(_parentCanvas);
 	//cursor->CanvasResized(_parentCanvas);
 	//lengthToPercent();
 	if(showCursor)
@@ -255,7 +256,7 @@ std::vector<bpt> CompletePolygon::intersection(bpolygon hitPolygon)
 
 double CompletePolygon::getPercentage(bpt hitPoint)
 {
-	/*
+	
 	bpt GT(hitPoint.get<0>() - bcenter.get<0>(), hitPoint.get<1>() - bcenter.get<1>());
 	double angle = Miam::Math::ComputePositiveAngle(GT);
 	int i = 0;
@@ -275,8 +276,8 @@ double CompletePolygon::getPercentage(bpt hitPoint)
 		suiv = i;
 	}
 	return percentages[prev] + (boost::geometry::distance(hitPoint, bcontourPoints.outer().at(i - 1))) / perimeter;
-	*/
-	return 0.0;
+	
+	//return 0.0;
 }
 
 bool CompletePolygon::getAllPercentages(int idx, double &value)
