@@ -58,9 +58,17 @@ AudioManager::~AudioManager()
 	closeAudioDevice();
 	DBG("audioManager destructor fin");
 
-	DBG("AudioManager::releaseResources");
+	//DBG("AudioManager::releaseResources");
 	delete mixer;
-	DBG("AudioManager::releaseResources fin");
+	//DBG("AudioManager::releaseResources fin");
+	if (midiOuput == nullptr)
+	{
+		DBG("midiOuput == nullptr !!!!!!!!!!!");
+	}
+	else
+		DBG("still exist");
+
+	//delete midiOuput;
 }
 /*
 void AudioManager::paint (Graphics& g)
@@ -90,97 +98,98 @@ void AudioManager::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 	DBG("div = " + (String)div);
 	metronome.setAudioParameter(samplesPerBlockExpected, sampleRate);
 	
-	
+	periode = metronome.timeToSample(4000);
+	position = 0;
 
 	AudioDeviceSetup currentAudioSetup;
 	this->getAudioDeviceSetup(currentAudioSetup);
 
 	DBG("default midi output : " + (String)this->getDefaultMidiOutputName());
 	midiOuput = this->getDefaultMidiOutput();
+	
+	std::vector<double> test;
+	DBG("size de test : " + (String)test.size());
+	midiSender = std::shared_ptr<BaseMidiSender>(new BaseMidiSender(this,periode));
+	if (midiOuput != nullptr)
+	{
+		midiSender->setMidiTime(0, roundToInt(0 * periode / 8));
+		midiSender->setMidiTime(1, roundToInt(2 * periode / 8));
+		midiSender->setMidiTime(2, roundToInt(4 * periode / 8));
+		midiSender->setMidiTime(3, roundToInt(6 * periode / 8));
+	}
+	
 }
 void AudioManager::releaseResources()
 {
-	
-
-	
+	DBG("AudioManager::releaseResources");
+	if (midiOuput == nullptr)
+	{
+		DBG("midiOuput == nullptr !!!!!!!!!!!");
+	}
+	else
+	{
+		//MidiOutput::
+		delete midiOuput;
+	}
 }
 void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 {
-	metronome.update();
-	MidiMessage msg = MidiMessage::noteOn(10, 36, (uint8)100);
-	MidiMessage msg2 = MidiMessage::noteOff(10, 36);
+	sendPosition();
+	float* const buffer0 = bufferToFill.buffer->getWritePointer(0, bufferToFill.startSample);
+	float* const buffer1 = bufferToFill.buffer->getWritePointer(1, bufferToFill.startSample);
+	for (int i = 0; i < bufferToFill.numSamples; ++i)
+	{
+		
+		if (midiOuput != nullptr)
+		{
+			midiSender->process(position);
+			
+		}
+		++position;
+		if (position == periode)
+		{
+			//DBG("TOC");
+			position = 0;
+		}
+	}
+	bufferToFill.clearActiveBufferRegion();
+	//metronome.update();
+	//midiBuffer.addEvent(metronome.getNextMidiMsg(), 4);
+}
+
+void AudioManager::sendMidiMessage(MidiMessage msg)
+{
 	if (midiOuput != nullptr)
 	{
 		midiOuput->sendMessageNow(msg);
-		//midiOuput->sendMessageNow(msg2);
 	}
-	//midiBuffer.addEvent(metronome.getNextMidiMsg(), 4);
-	askParameter();
-	if (state != Stop)
-	{
-		if (Nsources > 0)
-		{
-			verifyAllSource();
-			mixer->getNextAudioBlock(bufferToFill);
-		}
-		//trackVector[0]->getNextAudioBlock(bufferToFill);
-	//HandleEvent();
-	}
-	else
-		bufferToFill.clearActiveBufferRegion();
-
-	if (fmod(count, div) == 0)
-		sendPosition();
-	++count;
-	bool testComplete = true;
-	if (testComplete)
-	{
-		if (state == Play)
-		{
-			//DBG("testPos = " + (String)(testPos*1000));
-			testPos = (testPos + 0.001);
-			if (testPos > 1)
-				testPos = 0;
-			AsyncParamChange param;
-			param.Type = AsyncParamChange::ParamType::Position;
-			param.Id1 = 0;
-			param.DoubleValue = testPos;
-			model->SendParamChange(param);
-		}
-	}
-	
 }
-
 
 void AudioManager::sendPosition()
 {
-	/*
+	
 	AsyncParamChange param;
-	for (int i = 0; i < Nsources; ++i)
+	param.Type = AsyncParamChange::ParamType::Position;
+	param.Id1 = 0;
+	param.DoubleValue = (double)position / (double)periode; //+ 1.0/8.0;
+	model->SendParamChange(param);
+	
+}
+
+void AudioManager::getParameters()
+{
+	Miam::AsyncParamChange param;
+	while (model->lookForParameter(param))
 	{
-		param.Type = AsyncParamChange::ParamType::Position;
-		if (trackVector[i]->isPlaying())
-			if (auto currentADSR = std::dynamic_pointer_cast<ADSRSignal>(trackVector[i]))
-			{
-				param.Id1 = i;
-				param.DoubleValue = (double)currentADSR->getPosition() / (double)currentADSR->getLength();
-				model->SendParamChange(param);
-			}
-	}
-	*/
-	AsyncParamChange param;
-	for (int i = 0; i < Nsources; ++i)
-	{
-		if (i > 1) // pour le moment, pour pas envoyer a un Follower inexistant et verifier qu'on detecte bien la collision
+		switch (param.Type)
+		{
+		case Miam::AsyncParamChange::ParamType::Activate :
 			break;
-		param.Type = AsyncParamChange::ParamType::Position;
-		if (trackVector[i]->isPlaying())
-			if (auto currentADSR = std::dynamic_pointer_cast<ADSRSignal>(trackVector[i]))
-			{
-				param.Id1 = i;
-				param.DoubleValue = (double)currentADSR->getPosition() / (double)currentADSR->getLength();
-				model->SendParamChange(param);
-			}
+		case Miam::AsyncParamChange::ParamType::Source :
+			break;
+		default:
+			break;
+		}
 	}
 }
 

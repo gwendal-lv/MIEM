@@ -142,7 +142,7 @@ void MultiSceneCanvasManager::OnDelete()
 
 void MultiSceneCanvasManager::handleAndSendAreaEventSync(std::shared_ptr<AreaEvent> areaE)
 {
-	DBG("MultiSceneCanvasManager::handleAndSendAreaEventSync : " + (String)((int)areaE->GetType()));
+	//DBG("MultiSceneCanvasManager::handleAndSendAreaEventSync : " + (String)((int)areaE->GetType()));
 	if (areaE->GetType() == AreaEventType::Deleted)
 	{
 		DBG("need to delete");

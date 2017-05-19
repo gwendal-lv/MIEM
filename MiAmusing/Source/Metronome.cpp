@@ -22,6 +22,8 @@ Metronome::~Metronome()
 
 void Metronome::update()
 {
+
+	/////
 	if (samplePeriod != 0)
 	{
 		++samplesTime;//samplesTime += samplesPerBlock;
@@ -35,9 +37,9 @@ void Metronome::update()
 	}
 }
 
-int Metronome::getSamplesToNextBit()
+int Metronome::getSamplesToNextBeat()
 {
-	return samplePeriod - samplesTime%samplePeriod;
+	return samplePeriod - samplesTime%samplePeriod; // modulo pas performant
 }
 
 void Metronome::setAudioParameter(int m_samplesPerBlock, double m_sampleRate)
@@ -64,4 +66,9 @@ MidiMessage Metronome::getNextMidiMsg()
 	}
 	else
 		return MidiMessage();
+}
+
+int Metronome::timeToSample(double ms)
+{
+	return round(ms * sampleRate / 1000);
 }

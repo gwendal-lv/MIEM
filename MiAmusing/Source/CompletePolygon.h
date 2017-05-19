@@ -52,6 +52,8 @@ namespace Amusing
 		bpolygon getPolygon();
 		std::vector<bpt> intersection(bpolygon hitPolygon);
 		double getPercentage(bpt hitPoint);
+		bool getAllPercentages(int idx, double &value);
+
 	private:
 
 		// attributes linked to the Cursor

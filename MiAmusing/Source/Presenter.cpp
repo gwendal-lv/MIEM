@@ -153,57 +153,27 @@ void Presenter::Update() // remettre l'interieur dans graphsessionmanager
 	DBG(std::to_string(param.IntegerValue));
 	*/
 	//DBG("La");
-	AsyncParamChange param, param2;
-	std::shared_ptr<IEditableArea> area;
-	std::shared_ptr<Follower> currentFollower;
+	AsyncParamChange param;
+	
 	std::shared_ptr<GraphicEvent> graphicE;
-	bool testCompletePoly = true;
-	if (model->TryGetAsyncParamChange(param))
+	
+	while (model->TryGetAsyncParamChange(param))
 	{
 		switch (param.Type)
 		{
 		case AsyncParamChange::ParamType::Activate :
-			//DBG("Next edge");
-			area = getAreaFromSource(param.Id1);
-			if (auto anime = std::dynamic_pointer_cast<AnimatedPolygon>(area))
-			{
-				DBG("nouvelle arete = " + (String)anime->GetNextAreaLength());
-				// separer la partie envoie dans le handleeventsync?
-				param2.Type = AsyncParamChange::ParamType::Duration;
-				param2.Id1 = param.Id1;
-				param2.DoubleValue = anime->GetNextAreaLength() / 10;
-				SendParamChange(param2);
-			}
 			break;
 		case AsyncParamChange::ParamType::Duration :
 			DBG("new duration");
 			break;
 		case AsyncParamChange::ParamType::Position :
 			
-			if (testCompletePoly == false)
-			{
-				//DBG("position = " + (String)param.DoubleValue +" Id "+ (String)param.Id1);
-				//area = getAreaFromSource(param.Id1);
-				//DBG("bl");
-				//if (auto anime = std::dynamic_pointer_cast<AnimatedPolygon>(area))
-				//{
-					//anime->GetFollower()->setPosition(param.DoubleValue);
-				//}
-				//DBG("Id du follower = " + (String)param.Id1);
-				currentFollower = getFollowerFromCtrl(param.Id1);
-				//currentFollower->setPosition(param.DoubleValue);
-				//graphicE = currentFollower->setPosition(param.DoubleValue);
-				//graphicSessionManager.HandleEventSync(currentFollower->setPosition(param.DoubleValue));
-
-				graphicSessionManager.OnFollowerTranslation(currentFollower->setPosition(param.DoubleValue));
-			}
-			else
-			{
+			
 				//DBG("recu : " + (String)(1000 * param.DoubleValue));
 				//DBG("param received");
 				//graphicSessionManager.OnAudioPosition(param.DoubleValue);
 				graphicSessionManager.SetAllAudioPositions(param.DoubleValue);
-			}
+			
 				
 			break;
 

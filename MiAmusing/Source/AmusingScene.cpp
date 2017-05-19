@@ -206,6 +206,9 @@ std::shared_ptr<MultiAreaEvent> AmusingScene::SetAllAudioPositions(double positi
 			
 		}
 	}
+	//DBG("areaType = " + (String)((int)areaE->GetType()));
+	if (areaE == nullptr)
+		areaE = std::shared_ptr<MultiAreaEvent>(new MultiAreaEvent(nullptr,Miam::AreaEventType::NothingHappened));
 	return areaE;
 }
 

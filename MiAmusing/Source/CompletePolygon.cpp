@@ -44,6 +44,7 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 		percentages.push_back(0);
 	percentages.reserve(bcontourPoints.outer().size());
 	SetNameVisible(false);
+	
 	//updateSubTriangles();
 }
 
@@ -60,6 +61,7 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 		percentages.push_back(0);
 	percentages.reserve(bcontourPoints.outer().size());
 	SetNameVisible(false);
+	
 	updateSubTriangles();
 }
 
@@ -123,6 +125,10 @@ void CompletePolygon::lengthToPercent()
 
 void CompletePolygon::setReadingPosition(double p)
 {
+	//DBG("position : " + (String)p);
+	if (p >= 1)
+		p -= 1;
+	//DBG("position after: " + (String)p);
 	if (showCursor)
 	{
 		//DBG("tailles setReadingPosition : bcontourPointsInPixels " + (String)bcontourPointsInPixels.outer().size());
@@ -215,7 +221,7 @@ void CompletePolygon::setCursorVisible(bool isVisible)
 	showCursor = isVisible;
 	
 	CanvasResized(this->parentCanvas);
-	DBG("showCursor = " + (String)showCursor);
+	//DBG("showCursor = " + (String)showCursor);
 	//setReadingPosition(0);
 }
 
@@ -271,4 +277,15 @@ double CompletePolygon::getPercentage(bpt hitPoint)
 	return percentages[prev] + (boost::geometry::distance(hitPoint, bcontourPoints.outer().at(i - 1))) / perimeter;
 	*/
 	return 0.0;
+}
+
+bool CompletePolygon::getAllPercentages(int idx, double &value)
+{
+	if (idx < percentages.size())
+	{
+		value = percentages[idx];
+		return true;
+	}
+	else
+		return false;
 }

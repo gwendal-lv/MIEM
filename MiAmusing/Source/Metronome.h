@@ -25,8 +25,8 @@ public:
 	double getNextSample();
 	MidiMessage getNextMidiMsg();
 
-	int getSamplesToNextBit();
-	
+	int getSamplesToNextBeat();
+	int timeToSample(double ms);
 
 private:
 	int BPM;

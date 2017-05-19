@@ -14,11 +14,13 @@
 #include <thread>
 #include <vector>
 
-#include "../JuceLibraryCode/JuceHeader.h"
+//#include "../JuceLibraryCode/JuceHeader.h"
+#include "JuceHeader.h"
 #include "AmusingModel.h"
 #include "AmuSignal.h"
 
 #include "Metronome.h"
+#include "BaseMidiSender.h"
 
 // Pre-declaration for pointer members
 namespace Amusing {
@@ -57,6 +59,8 @@ namespace Amusing {
 
 		AudioDeviceManager& getAudioDeviceManager();
 
+		void sendMidiMessage(MidiMessage midiMsg);
+
 	private:
 
 		void trackVectorHandler(bool deactivation, int type);
@@ -92,9 +96,15 @@ namespace Amusing {
 
 		double testPos;
 
+		int periode;
+		int position;
 		Metronome metronome;
+		std::shared_ptr<BaseMidiSender> midiSender;
 		MidiBuffer midiBuffer;
-		ScopedPointer<MidiOutput> midiOuput;
+		MidiOutput *midiOuput;
+		void getParameters(); // for MIDI
+		//ScopedPointer<MidiOutput> midiOuput;
+		//std::shared_ptr<MidiOutput> midiOuput;
 	};
 }
 

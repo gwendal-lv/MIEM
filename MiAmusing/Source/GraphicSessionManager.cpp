@@ -151,6 +151,7 @@ std::shared_ptr<MultiSceneCanvasEditor> GraphicSessionManager::getSelectedCanvas
 // ===== EVENTS FROM THE PRESENTER ITSELF =====
 void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_)
 {
+	int i;
 	////////////////////
 	int ADSR = 1; //////
 	///////////////////
@@ -165,7 +166,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 	{
 		if (auto multiE = std::dynamic_pointer_cast<MultiAreaEvent>(event_))
 		{
-			DBG("multiareaevent");
+			//DBG("multiareaevent");
 			//getSelectedCanvasAsEditable()->CallRepaint
 			//getSelectedCanvasAsManager()->handleUpdateNowIfNeeded
 		}
@@ -181,33 +182,29 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 			{
 			case AreaEventType::Added:
 				DBG("Area Added");
-				param.Type = Miam::AsyncParamChange::ParamType::Activate;
-				param.Id1 = myPresenter->getSourceID(area);
-				//param.Id2 = ; //  = type de la source
-				if (auto anime = std::dynamic_pointer_cast<AnimatedPolygon> (area))
-				{
-					param.Id2 = anime->GetContourSize();
-					DBG("contour size = " + (String)param.Id2);
-					if(ADSR == 1)
-						param.DoubleValue = anime->GetAreteLength() / speed;
-				}
+				//param.Type = Miam::AsyncParamChange::ParamType::Activate;
+				
+				
 				if (auto circle = std::dynamic_pointer_cast<EditableEllipse>(area))
 				{
 					param.Id2 = 20;
 					if (ADSR == 1)
 						param.DoubleValue = 20;
 				}
-				if (auto follower = std::dynamic_pointer_cast<Follower>(area))
-				{
-					param.Id1 = myPresenter->getCtrlSourceId(follower);
-					param.Id2 = myPresenter->getSourceID((follower->getCurrentPolygon()));
-					param.Type = Miam::AsyncParamChange::ParamType::Source;
-				}
+				
 				if (auto complete = std::dynamic_pointer_cast<CompletePolygon>(area))
 				{
-					param.Id1 = 0;
-					param.DoubleValue = 8;
-					//param.Type = Miam::AsyncParamChange::ParamType::Source;
+					param.Id1 = myPresenter->getSourceID(area);
+					param.Type = Miam::AsyncParamChange::ParamType::Activate;
+					myPresenter->SendParamChange(param);
+					param.Type = Miam::AsyncParamChange::ParamType::Source;
+					i = 0;
+					while (complete->getAllPercentages(i, param.DoubleValue));
+					{
+						param.Id2 = i;
+						myPresenter->SendParamChange(param);
+						++i;
+					}
 				}
 				
 				//myPresenter->SendParamChange(param);
