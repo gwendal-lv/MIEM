@@ -16,21 +16,23 @@
 using namespace Amusing;
 using namespace std;
 
-BaseMidiSender::BaseMidiSender(AudioManager* m_audioManager, int m_period)
+BaseMidiSender::BaseMidiSender(int m_period)
 {
-	audioManager = m_audioManager;
 	period = m_period;
 
 	wasUnder = true;
 	noteOffSent = true;
 	noteNumber = 36;
-	duration = 1000;
-	//midiTimes.push_back(0);
-	DBG("blbbl");
+	duration = 1000;	
 }
 
 BaseMidiSender::~BaseMidiSender()
 {
+}
+
+void BaseMidiSender::setAudioManager(AudioManager* m_audioManager)
+{
+	audioManager = m_audioManager;
 }
 
 void BaseMidiSender::setMidiTime(int idx, int newTime)
@@ -140,7 +142,7 @@ void BaseMidiSender::process(int time)
 	{
 		if (time == midiTimes[i])
 		{
-			DBG("On : " + (String)i);
+			//DBG("On : " + (String)i);
 			MidiMessage midiMsg = MidiMessage::noteOn(10, noteNumber, (uint8)100);
 			audioManager->sendMidiMessage(midiMsg);
 			return;

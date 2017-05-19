@@ -98,7 +98,7 @@ void AudioManager::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 	DBG("div = " + (String)div);
 	metronome.setAudioParameter(samplesPerBlockExpected, sampleRate);
 	
-	periode = metronome.timeToSample(4000);
+	periode = metronome.timeToSample(1000);
 	position = 0;
 
 	AudioDeviceSetup currentAudioSetup;
@@ -107,16 +107,16 @@ void AudioManager::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 	DBG("default midi output : " + (String)this->getDefaultMidiOutputName());
 	midiOuput = this->getDefaultMidiOutput();
 	
-	std::vector<double> test;
-	DBG("size de test : " + (String)test.size());
-	midiSender = std::shared_ptr<BaseMidiSender>(new BaseMidiSender(this,periode));
+	
+	/*midiSender = std::shared_ptr<BaseMidiSender>(new BaseMidiSender(periode));
 	if (midiOuput != nullptr)
 	{
+		midiSender->setAudioManager(this);
 		midiSender->setMidiTime(0, roundToInt(0 * periode / 8));
 		midiSender->setMidiTime(1, roundToInt(2 * periode / 8));
 		midiSender->setMidiTime(2, roundToInt(4 * periode / 8));
 		midiSender->setMidiTime(3, roundToInt(6 * periode / 8));
-	}
+	}*/
 	
 }
 void AudioManager::releaseResources()
@@ -134,6 +134,7 @@ void AudioManager::releaseResources()
 }
 void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 {
+	getParameters();
 	sendPosition();
 	float* const buffer0 = bufferToFill.buffer->getWritePointer(0, bufferToFill.startSample);
 	float* const buffer1 = bufferToFill.buffer->getWritePointer(1, bufferToFill.startSample);
@@ -142,8 +143,9 @@ void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 		
 		if (midiOuput != nullptr)
 		{
-			midiSender->process(position);
-			
+			//midiSender->process(position);
+			for (int j = 0; j < midiSenderVector.size(); ++j)
+				midiSenderVector[j]->process(position);
 		}
 		++position;
 		if (position == periode)
@@ -184,8 +186,13 @@ void AudioManager::getParameters()
 		switch (param.Type)
 		{
 		case Miam::AsyncParamChange::ParamType::Activate :
+			DBG("source : " + (String)param.Id1);
+			midiSenderVector.push_back(std::shared_ptr<BaseMidiSender>(new BaseMidiSender(periode)));
+			midiSenderVector[midiSenderVector.size() - 1]->setAudioManager(this);
 			break;
 		case Miam::AsyncParamChange::ParamType::Source :
+			DBG("src : " + (String)param.Id1 + " cote : " + (String)param.Id2 + " = " + (String)param.DoubleValue);
+			midiSenderVector[param.Id1]->setMidiTime(param.Id2, roundToInt(param.DoubleValue * (double)periode));
 			break;
 		default:
 			break;

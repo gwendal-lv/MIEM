@@ -100,6 +100,7 @@ namespace Amusing {
 		int position;
 		Metronome metronome;
 		std::shared_ptr<BaseMidiSender> midiSender;
+		std::vector<std::shared_ptr<BaseMidiSender>> midiSenderVector;
 		MidiBuffer midiBuffer;
 		MidiOutput *midiOuput;
 		void getParameters(); // for MIDI

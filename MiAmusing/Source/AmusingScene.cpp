@@ -84,12 +84,12 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 			{
 				std::vector<bpt> inter = newPolygon->intersection(hitP->getPolygon());
 				//testDephasage = areas[i] // utiliser des box pr verifi a quel segment ca appartient et deduire le dephasage :)
-				testDephasage = hitP->getPercentage(inter[0]);
-				DBG("intersection #0 : " + (String)inter[0].get<0>() + " " + (String)inter[0].get<1>() + " = " + (String)testDephasage);
+				//testDephasage = hitP->getPercentage(inter[0]);
+				//DBG("intersection #0 : " + (String)inter[0].get<0>() + " " + (String)inter[0].get<1>() + " = " + (String)testDephasage);
 				// creer nouvelle forme pour chaque intersection
-				DBG((String)inter.size() + " intersections");
-				for (int j = 0; j < (int)inter.size(); ++j)
-				{
+				//DBG((String)inter.size() + " intersections");
+				//for (int j = 0; j < (int)inter.size(); ++j)
+				//{
 					//DBG("intersection #" + (String)j + " : " + (String)boost::geometry::area(inter.at(j)));
 					/*
 					for (int k = 0; k < (int)inter.at(j).outer().size(); ++k)
@@ -97,7 +97,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 
 					}
 					*/
-				}
+				//}
 			}
 		}
 	}
@@ -202,8 +202,9 @@ std::shared_ptr<MultiAreaEvent> AmusingScene::SetAllAudioPositions(double positi
 				areaE = std::shared_ptr<Miam::MultiAreaEvent>(new Miam::MultiAreaEvent(areas[i], Miam::AreaEventType::NothingHappened, areas[i]->GetId()));
 				first = false;
 			}
+			completeA->setCursorVisible(true);
 			completeA->setReadingPosition(position);
-			
+			areaE->AddAreaEvent(std::shared_ptr<AreaEvent>(new AreaEvent(areas[i], Miam::AreaEventType::NothingHappened)));
 		}
 	}
 	//DBG("areaType = " + (String)((int)areaE->GetType()));

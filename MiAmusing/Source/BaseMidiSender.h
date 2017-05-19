@@ -20,9 +20,10 @@ namespace Amusing
 class BaseMidiSender
 {
 public:
-	BaseMidiSender(Amusing::AudioManager* m_audioManager, int m_period);
+	BaseMidiSender(int m_period);
 	~BaseMidiSender();
 
+	void setAudioManager(Amusing::AudioManager* m_audioManager);
 	void setMidiTime(int idx, int newTime);
 
 	void process(int time);

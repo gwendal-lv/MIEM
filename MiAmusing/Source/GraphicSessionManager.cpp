@@ -152,6 +152,7 @@ std::shared_ptr<MultiSceneCanvasEditor> GraphicSessionManager::getSelectedCanvas
 void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_)
 {
 	int i;
+	bool ok = true;
 	////////////////////
 	int ADSR = 1; //////
 	///////////////////
@@ -194,17 +195,23 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				
 				if (auto complete = std::dynamic_pointer_cast<CompletePolygon>(area))
 				{
+					DBG("Complete Area");
 					param.Id1 = myPresenter->getSourceID(area);
 					param.Type = Miam::AsyncParamChange::ParamType::Activate;
 					myPresenter->SendParamChange(param);
+					DBG("param sent");
 					param.Type = Miam::AsyncParamChange::ParamType::Source;
 					i = 0;
-					while (complete->getAllPercentages(i, param.DoubleValue));
+					DBG("before while");
+					while(complete->getAllPercentages(i, param.DoubleValue))
 					{
+						DBG("cote to send : " + (String)i);
 						param.Id2 = i;
 						myPresenter->SendParamChange(param);
 						++i;
 					}
+					//}
+					DBG("finish");
 				}
 				
 				//myPresenter->SendParamChange(param);
