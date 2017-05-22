@@ -107,7 +107,7 @@ namespace Amusing {
 		void threadFunc();
 		std::thread T;
 		bool runThread;
-		int allocationFunc;
+		int midiSenderSize;
 		//ScopedPointer<MidiOutput> midiOuput;
 		//std::shared_ptr<MidiOutput> midiOuput;
 	};

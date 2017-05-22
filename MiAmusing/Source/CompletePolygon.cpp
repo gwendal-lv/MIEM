@@ -235,10 +235,11 @@ std::vector<bpt> CompletePolygon::intersection(bpolygon hitPolygon)
 {
 	std::vector<bpt> inter;
 	boost::geometry::intersection(bcontourPoints, hitPolygon, inter);
-	DBG("------ A ------");
-	for (int i = 0; i < (int)bcontourPoints.outer().size(); ++i)
-		DBG((String)bcontourPoints.outer().at(i).get<0>() + "  " + (String)bcontourPoints.outer().at(i).get<1>());
-	DBG("------ B ------");
+	//DBG("------ A ------");
+	//for (int i = 0; i < (int)bcontourPoints.outer().size(); ++i)
+	//	DBG((String)bcontourPoints.outer().at(i).get<0>() + "  " + (String)bcontourPoints.outer().at(i).get<1>());
+	//DBG("------ B ------");
+	/*
 	for (int i = 0; i < (int)hitPolygon.outer().size(); ++i)
 		DBG((String)hitPolygon.outer().at(i).get<0>() + "  " + (String)hitPolygon.outer().at(i).get<1>());
 	DBG("------ I ------");
@@ -251,6 +252,7 @@ std::vector<bpt> CompletePolygon::intersection(bpolygon hitPolygon)
 		//for (int i = 0; i < (int)inter.at(j).outer().size(); ++i)
 		//	DBG((String)inter.at(j).outer().at(i).get<0>() + "  " + (String)inter.at(j).outer().at(i).get<1>());
 	}
+	*/
 	return inter;
 }
 

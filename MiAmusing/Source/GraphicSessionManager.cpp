@@ -200,19 +200,19 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					param.Type = Miam::AsyncParamChange::ParamType::Activate;
 					param.Id2 = 1;
 					myPresenter->SendParamChange(param);
-					DBG("param sent");
+					DBG("GSM : construct a new audio polygon, please. Id : " + (String)param.Id1);
 					param.Type = Miam::AsyncParamChange::ParamType::Source;
 					i = 0;
-					DBG("before while");
 					while(complete->getAllPercentages(i, param.DoubleValue))
 					{
-						DBG("cote to send : " + (String)i);
+						DBG("GSM : the side " + (String)i + "is = " +(String)param.DoubleValue);
 						param.Id2 = i;
 						myPresenter->SendParamChange(param);
 						++i;
 					}
-					//}
-					DBG("finish");
+					param.Id2 = 1000; // indiquera que l'on a envoye la position de tous les points
+					DBG("GSM : the polygon : " + (String)param.Id1 + " is finished");
+					myPresenter->SendParamChange(param);
 				}
 				
 				//myPresenter->SendParamChange(param);
@@ -247,6 +247,8 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 						myPresenter->SendParamChange(param);
 						++i;
 					}
+					param.Id2 = 1000; // indiquera que l'on a envoye la position de tous les points
+					myPresenter->SendParamChange(param);
 					//}
 					DBG("finish");
 				}

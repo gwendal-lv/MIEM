@@ -49,6 +49,9 @@ AudioManager::AudioManager(AmusingModel *m_model) : model(m_model), Nsources(0),
 	setSource(this);
 	runThread = true;
 	T = std::thread(&AudioManager::threadFunc, this);
+	midiSenderSize = 0;
+	midiSenderVector.reserve(128);
+	midiSenderVector = std::vector<std::shared_ptr<BaseMidiSender>>(128, std::shared_ptr<BaseMidiSender>(new BaseMidiSender));
 }
 
 AudioManager::~AudioManager()
@@ -102,7 +105,7 @@ void AudioManager::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 	DBG("div = " + (String)div);
 	metronome.setAudioParameter(samplesPerBlockExpected, sampleRate);
 	
-	periode = metronome.timeToSample(1000);
+	periode = metronome.timeToSample(4000);
 	position = 0;
 
 	AudioDeviceSetup currentAudioSetup;
@@ -142,7 +145,7 @@ void AudioManager::releaseResources()
 }
 void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 {
-	//getParameters();
+	getParameters();
 	sendPosition();
 	float* const buffer0 = bufferToFill.buffer->getWritePointer(0, bufferToFill.startSample);
 	float* const buffer1 = bufferToFill.buffer->getWritePointer(1, bufferToFill.startSample);
@@ -152,8 +155,16 @@ void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 		if (midiOuput != nullptr)
 		{
 			//midiSender->process(position);
-			for (int j = 0; j < midiSenderVector.size(); ++j)
-				midiSenderVector[j]->process(position);
+			for (int j = 0; j < midiSenderSize; j++)
+			{
+				
+				//DBG("process : " + (String)j);
+				if (midiSenderVector.empty())
+					DBG("empty");
+				else
+					if(midiSenderVector.at(j)!=nullptr)
+						midiSenderVector.at(j)->process(position);
+			}
 		}
 		++position;
 		if (position == periode)
@@ -198,18 +209,32 @@ void AudioManager::getParameters()
 			switch (param.Id2)
 			{
 			case 0 :
-				midiSenderVector.erase(midiSenderVector.begin() + param.Id1);
+				--midiSenderSize;
+				//midiSenderVector.erase(midiSenderVector.begin() + param.Id1);
 				break;
 			default:
-				midiSenderVector.push_back(std::shared_ptr<BaseMidiSender>(new BaseMidiSender(periode)));
-				midiSenderVector[midiSenderVector.size() - 1]->setAudioManager(this);
+				DBG("AM : I construct a new polygon with ID : " + (String)param.Id1);
+				midiSenderVector[param.Id1] = std::shared_ptr<BaseMidiSender>(new BaseMidiSender());
+				midiSenderVector[param.Id1]->setPeriod(periode);
+				midiSenderVector[param.Id1]->setAudioManager(this);
+				++midiSenderSize;
 				break;
 			}
 			
 			break;
 		case Miam::AsyncParamChange::ParamType::Source :
-			DBG("src : " + (String)param.Id1 + " cote : " + (String)param.Id2 + " = " + (String)param.DoubleValue);
-			midiSenderVector[param.Id1]->setMidiTime(param.Id2, roundToInt(param.DoubleValue * (double)periode));
+			//DBG("src : " + (String)param.Id1 + " cote : " + (String)param.Id2 + " = " + (String)param.DoubleValue);
+			if (param.Id2 == 1000)
+			{
+				DBG("AM : I received all the sides of the polygon : " + (String)param.Id1);
+				//++midiSenderSize;
+				DBG("AM : Size of the vector is now : " + (String)midiSenderSize);
+			}
+			else
+			{
+				DBG("AM : the side " + (String)param.Id2 + " is = " + (String)param.DoubleValue);
+				midiSenderVector[param.Id1]->setMidiTime(param.Id2, roundToInt(param.DoubleValue * (double)periode));
+			}
 			break;
 		default:
 			break;
@@ -219,6 +244,7 @@ void AudioManager::getParameters()
 
 void AudioManager::threadFunc()
 {
+	runThread = false;
 	while (runThread)
 	{ /*
 		switch (allocationFunc)

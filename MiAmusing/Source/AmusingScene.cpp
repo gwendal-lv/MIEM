@@ -71,7 +71,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddCompleteArea(uint64_t nextAreaId)
 std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N)
 {
 	// centered grey Hexagon !...
-	DBG("creation du polygon a N cotes");
+	//DBG("creation du polygon a N cotes");
 	std::shared_ptr<CompletePolygon> newPolygon(new CompletePolygon(nextAreaId,
 		bpt(0.5f, 0.5f), N, 0.15f,
 		Colours::grey,
@@ -206,7 +206,7 @@ std::shared_ptr<Amusing::CompletePolygon> AmusingScene::getFirstCompleteArea()
 
 std::shared_ptr<MultiAreaEvent> AmusingScene::SetAllAudioPositions(double position)
 {
-	DBG("areas.size()" + (String)areas.size());
+	//DBG("areas.size()" + (String)areas.size());
 	std::shared_ptr<Miam::MultiAreaEvent> areaE;
 	bool first = true;
 	for (int i = 0; i < areas.size(); ++i)

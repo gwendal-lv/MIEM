@@ -16,14 +16,17 @@
 using namespace Amusing;
 using namespace std;
 
-BaseMidiSender::BaseMidiSender(int m_period)
+BaseMidiSender::BaseMidiSender()
 {
-	period = m_period;
+	maxSize = 128;
+	midiTimes = std::vector<double>(128, 0);
+	midiOffTimes = std::vector<double>(128, 0);
+	midiTimesSize = 0;
+	midiOfftimesSize = 0;
 
-	wasUnder = true;
 	noteOffSent = true;
-	noteNumber = 36;
-	duration = 1000;	
+	noteNumber = 60;
+	duration = 10000;	
 }
 
 BaseMidiSender::~BaseMidiSender()
@@ -35,129 +38,87 @@ void BaseMidiSender::setAudioManager(AudioManager* m_audioManager)
 	audioManager = m_audioManager;
 }
 
+void BaseMidiSender::setPeriod(int m_period)
+{
+	period = m_period;
+}
+
 void BaseMidiSender::setMidiTime(int idx, int newTime)
 {
-	//midiTimes.
-	//DBG("test size = " + (String)test.size());
-	//DBG("idx = " + (String)idx);
-	//DBG("size = " + (String)midiTimes.size());
+	/*
 	DBG("----before------");
-	for (int i = 0; i < midiTimes.size(); ++i)
+	int S = (midiTimes.size() > midiOffTimes.size()) ? midiTimes.size() : midiOffTimes.size();
+	for (int i = 0; i < S; ++i)
 	{
-		DBG((String)midiTimes[i] + " " + (String)midiOffTimes[i]);
+		if (i >= midiTimes.size())
+			DBG("        " + (String)midiOffTimes[i]);
+		else if (i >= midiOffTimes.size())
+			DBG((String)midiTimes[i]);
+		else
+			DBG((String)midiTimes[i] + " " + (String)midiOffTimes[i]);
 	}
 	DBG("----------");
-	if (idx < midiTimes.size())
+	*/
+
+	if (idx < maxSize)
 	{
 		midiTimes[idx] = newTime;
 		if(newTime+duration>period) // verif si on depasse pas le temps de la periode !
 			midiOffTimes[idx] = newTime + duration - period;
 		else
 			midiOffTimes[idx] = newTime + duration;
+		++midiTimesSize;
+		++midiOfftimesSize;
 	}
 	else
 	{
-		for (int i = 0; i < idx - midiTimes.size(); ++i)
+		for (int i = 0; i < idx - maxSize - 1 ; ++i)
 		{
-			midiTimes.push_back(0);
-			midiOffTimes.push_back(0);
+			midiTimes[maxSize + i] = 0;
+			midiOffTimes[maxSize + i] = 0;
+			++midiTimesSize;
+			++midiOfftimesSize;
 		}
-		midiTimes.push_back(newTime);
-		midiOffTimes.push_back(newTime + duration);
+		midiTimes[idx] = newTime;
 		if (newTime + duration>period) // verif si on depasse pas le temps de la periode !
-			midiOffTimes.push_back(newTime + duration - period);
+			midiOffTimes[idx] = (newTime + duration - period);
 		else
-			midiOffTimes.push_back(newTime + duration);
+			midiOffTimes[idx] = (newTime + duration);
+		++midiTimesSize;
+		++midiOfftimesSize;
 	}
-
-	DBG("----after------");
-	for (int i = 0; i < midiTimes.size();++i)
-	{
-		DBG((String)midiTimes[i] + " " + (String)midiOffTimes[i]);
-	}
-	DBG("----------");
+	
+	
 }
 
 void BaseMidiSender::process(int time)
 {
-	//DBG("processing : " + (String)time);
-	/*
-	for (int i = 0; i < midiTimes.size() -1; ++i)
-	{
-		if (time >= midiTimes[i] && time < midiTimes[i+1])
-		{
-			if (wasUnder) // was the previous time under the interval [midiTime[i];midiTime[i+1][
-			{
-				// send MIDI
-				DBG("midi sent : " + (String)i + " at position : " + (String)time);
-				MidiMessage midiMsgOn = MidiMessage::noteOn(10, noteNumber, (uint8)100);
-				
-				audioManager->sendMidiMessage(midiMsgOn);
-				
-				wasUnder = false;// the position is then under the midiTime[i+1]
-				noteOffSent = false; // the note off needs to be sent
-				return; // unnecessary to go futher
-			}
-			else // we were already in this segment --> verify if it's time to send the note off
-			{
-				if (time > midiOffTimes[i] && noteOffSent == false) // if note off time and not sent yet ->send
-				{
-					MidiMessage midiMsgOff = MidiMessage::noteOff(10, noteNumber);
-					audioManager->sendMidiMessage(midiMsgOff);
-					noteOffSent = true; // the note off msg has been sent
-					
-				}
-				return;
-			}
-		}
-		else
-		{
-			wasUnder = true; // because of the break, we will never test the segments above the actual position
-							// so if we're not in the tested segment, we are necesseraly under the correct segment
-		}
-	}
-	if (time > midiTimes[midiTimes.size()-1])
-	{
-		if (wasUnder)
-		{
-			//DBG("midi sent : " + (String)(midiTimes.size() - 1));
-			MidiMessage midiMsg = MidiMessage::noteOn(10, noteNumber, (uint8)100);
-			audioManager->sendMidiMessage(midiMsg);
-			wasUnder = false;// the position is then under the midiTime[i+1]
-		}
-		else
-		{
-			if (time > midiOffTimes[midiTimes.size() - 1] && noteOffSent == false) // if note off time and not sent yet ->send
-			{
-				MidiMessage midiMsgOff = MidiMessage::noteOff(10, noteNumber);
-				audioManager->sendMidiMessage(midiMsgOff);
-				noteOffSent = true; // the note off msg has been sent
-			}
-		}
-	}
-	else
-		wasUnder = true;
-		*/
-	for (int i = 0; i < midiTimes.size(); ++i)
+	//int b = midiTimesSize;
+	//DBG("midiTimes.size() = " + (String)midiTimesSize);
+	//DBG("midiOffTimes.size() = " + (String)midiOfftimesSize);
+	//DBG("time = " + (String)time);
+
+	for (int i = 0; i < midiTimesSize; i++)
 	{
 		if (time == midiTimes[i])
 		{
 			//DBG("On : " + (String)i);
-			MidiMessage midiMsg = MidiMessage::noteOn(10, noteNumber, (uint8)100);
+			MidiMessage midiMsg = MidiMessage::noteOn(1, noteNumber, (uint8)100);
 			audioManager->sendMidiMessage(midiMsg);
 			return;
 		}
 			
 	}
-	for (int i = 0; i < midiOffTimes.size(); ++i)
+	for (int i = 0; i < midiOfftimesSize; i++)
 	{
 		if (time == midiOffTimes[i])
 		{
 			//DBG("Off : " + (String)i);
-			MidiMessage midiMsgOff = MidiMessage::noteOff(10, noteNumber);
+			MidiMessage midiMsgOff = MidiMessage::noteOff(1, noteNumber);
 			audioManager->sendMidiMessage(midiMsgOff);
 			return;
 		}
 
 	}
+	
 }

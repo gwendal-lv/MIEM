@@ -20,10 +20,11 @@ namespace Amusing
 class BaseMidiSender
 {
 public:
-	BaseMidiSender(int m_period);
+	BaseMidiSender();
 	~BaseMidiSender();
 
 	void setAudioManager(Amusing::AudioManager* m_audioManager);
+	void setPeriod(int m_period);
 	void setMidiTime(int idx, int newTime);
 
 	void process(int time);
@@ -31,7 +32,9 @@ public:
 private:
 	std::vector<double> midiTimes; // times to send MIDI
 	std::vector<double> midiOffTimes;
-	bool wasUnder;
+	int midiTimesSize;
+	int midiOfftimesSize;
+	int maxSize;
 	bool noteOffSent;
 
 	// parameter of the notes to send
