@@ -198,6 +198,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					DBG("Complete Area");
 					param.Id1 = myPresenter->getSourceID(area);
 					param.Type = Miam::AsyncParamChange::ParamType::Activate;
+					param.Id2 = 1;
 					myPresenter->SendParamChange(param);
 					DBG("param sent");
 					param.Type = Miam::AsyncParamChange::ParamType::Source;
@@ -219,25 +220,11 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				break;
 			case AreaEventType::Deleted:
 				
-				param.Type = Miam::AsyncParamChange::ParamType::Volume;
-				param.DoubleValue = 0;
+				param.Type = Miam::AsyncParamChange::ParamType::Activate;
+				param.Id1 = 0;
+				param.Id2 = 0;
 				myPresenter->SendParamChange(param);
-				if (auto anime = std::dynamic_pointer_cast<AnimatedPolygon> (area))
-				{
-					DBG("Area deleted");
-					if (deleting)
-					{
-						DBG("deleter les followers mtn");
-						getSelectedCanvasAsManager()->deleteUnusedFollowers();
-					}
-					
-				}
-				else if (auto follower = std::dynamic_pointer_cast<Follower>(area))
-				{
-					DBG("follower a deleter !");
-					param.Type = Miam::AsyncParamChange::ParamType::Stop;
-					param.Id1 = myPresenter->getCtrlSourceId(follower);
-				}
+				
 				break;
 			case AreaEventType::PointDragBegins :
 				DBG("PointDragBegins");

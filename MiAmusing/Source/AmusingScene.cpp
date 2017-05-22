@@ -84,8 +84,9 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 			{
 				std::vector<bpt> inter = newPolygon->intersection(hitP->getPolygon());
 				//testDephasage = areas[i] // utiliser des box pr verifi a quel segment ca appartient et deduire le dephasage :)
-				testDephasage = hitP->getPercentage(inter[0]);
-				DBG("intersection #0 : " + (String)inter[0].get<0>() + " " + (String)inter[0].get<1>() + " = " + (String)testDephasage);
+				if (inter.size() > 0)
+					testDephasage = hitP->getPercentage(inter[0]);
+				//DBG("intersection #0 : " + (String)inter[0].get<0>() + " " + (String)inter[0].get<1>() + " = " + (String)testDephasage);
 				// creer nouvelle forme pour chaque intersection
 				//DBG((String)inter.size() + " intersections");
 				//for (int j = 0; j < (int)inter.size(); ++j)
@@ -110,6 +111,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 
 std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDown(const MouseEvent& mouseE)
 {
+	/*
 	if (deleting)
 	{
 		DBG("AmusingScene::OnCanvasMouseDown -> deleting");
@@ -132,10 +134,24 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDown(const MouseEvent& 
 				return deleteEvent;
 			}
 		}
-	}
+	}*/
 
 	if (allowAreaSelection)
-		return EditableScene::OnCanvasMouseDown(mouseE);
+	{
+		//deleting = false;
+		if (deleting)
+		{
+			std::shared_ptr<GraphicEvent> graphicE = EditableScene::OnCanvasMouseDown(mouseE);
+			if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(graphicE))
+			{
+				return deleteAreaByUniqueId(areaE->GetAreaIdInScene());
+			}
+		}
+		else
+		{
+			return EditableScene::OnCanvasMouseDown(mouseE);
+		}
+	}
 	else
 	{
 		
@@ -190,6 +206,7 @@ std::shared_ptr<Amusing::CompletePolygon> AmusingScene::getFirstCompleteArea()
 
 std::shared_ptr<MultiAreaEvent> AmusingScene::SetAllAudioPositions(double position)
 {
+	DBG("areas.size()" + (String)areas.size());
 	std::shared_ptr<Miam::MultiAreaEvent> areaE;
 	bool first = true;
 	for (int i = 0; i < areas.size(); ++i)

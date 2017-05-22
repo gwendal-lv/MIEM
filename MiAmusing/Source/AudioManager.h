@@ -104,6 +104,10 @@ namespace Amusing {
 		MidiBuffer midiBuffer;
 		MidiOutput *midiOuput;
 		void getParameters(); // for MIDI
+		void threadFunc();
+		std::thread T;
+		bool runThread;
+		int allocationFunc;
 		//ScopedPointer<MidiOutput> midiOuput;
 		//std::shared_ptr<MidiOutput> midiOuput;
 	};

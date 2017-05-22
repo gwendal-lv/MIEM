@@ -283,7 +283,7 @@ double CompletePolygon::getPercentage(bpt hitPoint)
 bool CompletePolygon::getAllPercentages(int idx, double &value)
 {
 	lengthToPercent();
-	DBG("percentage size : " + (String)percentages.size());
+	//DBG("percentage size : " + (String)percentages.size());
 	if (idx < percentages.size())
 	{
 		value = percentages[idx];

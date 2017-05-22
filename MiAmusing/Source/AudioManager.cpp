@@ -47,19 +47,23 @@ AudioManager::AudioManager(AmusingModel *m_model) : model(m_model), Nsources(0),
 	initialise(0, 2, nullptr, true);
 	addAudioCallback(this);
 	setSource(this);
+	runThread = true;
+	T = std::thread(&AudioManager::threadFunc, this);
 }
 
 AudioManager::~AudioManager()
 {
 	DBG("audioManager destructor");
 	//shutdownAudio();
+	runThread = false;
+	T.join();
 	setSource(nullptr);
 	removeAudioCallback(this);
 	closeAudioDevice();
 	DBG("audioManager destructor fin");
 
 	//DBG("AudioManager::releaseResources");
-	delete mixer;
+	//delete mixer;
 	//DBG("AudioManager::releaseResources fin");
 	if (midiOuput == nullptr)
 	{
@@ -129,12 +133,16 @@ void AudioManager::releaseResources()
 	else
 	{
 		//MidiOutput::
-		delete midiOuput;
+		//delete midiOuput;
+		if (midiOuput == nullptr)
+			DBG("bien detruit ! ");
+		else
+			DBG("pas detruit");
 	}
 }
 void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 {
-	getParameters();
+	//getParameters();
 	sendPosition();
 	float* const buffer0 = bufferToFill.buffer->getWritePointer(0, bufferToFill.startSample);
 	float* const buffer1 = bufferToFill.buffer->getWritePointer(1, bufferToFill.startSample);
@@ -187,8 +195,17 @@ void AudioManager::getParameters()
 		{
 		case Miam::AsyncParamChange::ParamType::Activate :
 			DBG("source : " + (String)param.Id1);
-			midiSenderVector.push_back(std::shared_ptr<BaseMidiSender>(new BaseMidiSender(periode)));
-			midiSenderVector[midiSenderVector.size() - 1]->setAudioManager(this);
+			switch (param.Id2)
+			{
+			case 0 :
+				midiSenderVector.erase(midiSenderVector.begin() + param.Id1);
+				break;
+			default:
+				midiSenderVector.push_back(std::shared_ptr<BaseMidiSender>(new BaseMidiSender(periode)));
+				midiSenderVector[midiSenderVector.size() - 1]->setAudioManager(this);
+				break;
+			}
+			
 			break;
 		case Miam::AsyncParamChange::ParamType::Source :
 			DBG("src : " + (String)param.Id1 + " cote : " + (String)param.Id2 + " = " + (String)param.DoubleValue);
@@ -198,6 +215,27 @@ void AudioManager::getParameters()
 			break;
 		}
 	}
+}
+
+void AudioManager::threadFunc()
+{
+	while (runThread)
+	{ /*
+		switch (allocationFunc)
+		{
+		case 0 : // erase midiSender
+			break;
+		case 1 : // allocate a new midiSender
+			break;
+		case 2 : // add/set a time in the midiSender
+			break;
+		default:
+			break;
+		}
+		*/
+		getParameters();
+	}
+	DBG("exit thread");
 }
 
 void AudioManager::chooseAudioType(int position, int type)

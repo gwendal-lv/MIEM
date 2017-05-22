@@ -161,6 +161,11 @@ void MultiSceneCanvasManager::handleAndSendAreaEventSync(std::shared_ptr<AreaEve
 						break;
 				}
 		}
+		else
+		{
+			DBG("area to delete : " + (String)((int)areaE->GetAreaIdInScene()) );
+			deleteAsyncDrawableObject(areaE->GetAreaIdInScene(), areaE->GetConcernedArea());
+		}
 	}
 	MultiSceneCanvasEditor::handleAndSendAreaEventSync(areaE);
 }
