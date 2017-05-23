@@ -65,6 +65,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddCompleteArea(uint64_t nextAreaId)
 		Colours::grey,
 		canvasComponent->GetRatio()));
 	// Actual adding of this new polygon
+	newPolygon->setCursorVisible(true, canvasComponent);
 	return AddArea(newPolygon);
 }
 

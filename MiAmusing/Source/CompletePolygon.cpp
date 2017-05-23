@@ -111,17 +111,14 @@ void CompletePolygon::lengthToPercent()
 		percentages[i + 1] = perimeter;
 	}
 	perimeter += contourPoints[contourPoints.size() - 1].getDistanceFrom(contourPoints[0]);*/
-	perimeter = boost::geometry::perimeter(bcontourPoints);
+	perimeter = boost::geometry::perimeter(bcontourPointsInPixels);
 
 	//calcul des poucentages correspondant à chaque point
-	//DBG("-----------------");
 	percentages[0] = 0;
 	for (int i = 1; i < (int)bcontourPoints.outer().size(); ++i)
 	{
-		percentages[i] = percentages[i-1] + (boost::geometry::distance(bcontourPoints.outer().at(i),bcontourPoints.outer().at(i-1)))/ perimeter;
-		//DBG((String)percentages[i]);
+		percentages[i] = percentages[i-1] + (boost::geometry::distance(bcontourPointsInPixels.outer().at(i),bcontourPointsInPixels.outer().at(i-1)))/ perimeter;
 	}
-	//DBG("-----------------");
 }
 
 void CompletePolygon::setReadingPosition(double p)
