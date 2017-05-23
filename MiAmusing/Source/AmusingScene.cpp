@@ -102,6 +102,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 			}
 		}
 	}
+	newPolygon->setCursorVisible(true, canvasComponent);
 	std::shared_ptr<AreaEvent> areaE = AddArea(newPolygon);
 
 	//DBG("a la creation : size = " + (String)newPolygon->GetContourSize());
@@ -215,11 +216,11 @@ std::shared_ptr<MultiAreaEvent> AmusingScene::SetAllAudioPositions(double positi
 		{
 			if (first == true)
 			{
-				completeA->setCursorVisible(true);
+				//completeA->setCursorVisible(true);
 				areaE = std::shared_ptr<Miam::MultiAreaEvent>(new Miam::MultiAreaEvent(areas[i], Miam::AreaEventType::NothingHappened, areas[i]->GetId()));
 				first = false;
 			}
-			completeA->setCursorVisible(true);
+			//completeA->setCursorVisible(true);
 			completeA->setReadingPosition(position);
 			areaE->AddAreaEvent(std::shared_ptr<AreaEvent>(new AreaEvent(areas[i], Miam::AreaEventType::NothingHappened)));
 		}

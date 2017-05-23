@@ -62,33 +62,33 @@ void BaseMidiSender::setMidiTime(int idx, int newTime)
 
 	if (idx < maxSize)
 	{
-		midiTimes[idx] = newTime;
-		if(newTime+duration>period) // verif si on depasse pas le temps de la periode !
-			midiOffTimes[idx] = newTime + duration - period;
-		else
-			midiOffTimes[idx] = newTime + duration;
-		++midiTimesSize;
-		++midiOfftimesSize;
-	}
-	else
-	{
-		for (int i = 0; i < idx - maxSize - 1 ; ++i)
+		if (idx < midiTimesSize)
 		{
-			midiTimes[maxSize + i] = 0;
-			midiOffTimes[maxSize + i] = 0;
+			midiTimes[idx] = newTime;
+			if (newTime + duration > period) // verif si on depasse pas le temps de la periode !
+				midiOffTimes[idx] = newTime + duration - period;
+			else
+				midiOffTimes[idx] = newTime + duration;
+		}
+		else
+		{
+			for (int i = 0; i < idx - midiTimesSize - 1; ++i)
+			{
+				midiTimes[maxSize + i] = 0;
+				midiOffTimes[maxSize + i] = 0;
+				++midiTimesSize;
+				++midiOfftimesSize;
+			}
+			midiTimes[idx] = newTime;
+			if (newTime + duration > period) // verif si on depasse pas le temps de la periode !
+				midiOffTimes[idx] = (newTime + duration - period);
+			else
+				midiOffTimes[idx] = (newTime + duration);
 			++midiTimesSize;
 			++midiOfftimesSize;
 		}
-		midiTimes[idx] = newTime;
-		if (newTime + duration>period) // verif si on depasse pas le temps de la periode !
-			midiOffTimes[idx] = (newTime + duration - period);
-		else
-			midiOffTimes[idx] = (newTime + duration);
-		++midiTimesSize;
-		++midiOfftimesSize;
+		//DBG("BMS : number of corners is now : " + (String)midiTimesSize);
 	}
-	
-	
 }
 
 void BaseMidiSender::process(int time)

@@ -175,17 +175,12 @@ void CompletePolygon::setReadingPosition(double p)
 
 		//placer le curseur à ce point
 		bpt translation(P.get<0>() - cursorCenter.get<0>(), P.get<1>() - cursorCenter.get<1>());
-		//boost::geometry::difference (P , cursorCenter, translation);
-		//DBG("cursorCenter = " + (String)cursorCenter.get<0>() + " " + (String)cursorCenter.get<1>());
-		//DBG("P = " + (String)P.get<0>() + " " + (String)P.get<1>());
-		//if (translation.size() > 0)
-		//{
-			//DBG("translation = " + (String)translation.get<0>() + " " + (String)translation.get<1>());
+		
 		translation.set<0>(translation.get<0>() * (double)parentCanvas->getWidth());
 		translation.set<1>(translation.get<1>() * (double)parentCanvas->getHeight());
 
 
-		//DBG("translation in pixels = " + (String)translation.get<0>() + " " + (String)translation.get<1>());
+		
 		cursor->Translate(juce::Point<double>(translation.get<0>(), translation.get<1>()));
 		cursorCenter = P;
 		//}
@@ -199,6 +194,8 @@ void CompletePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 {
 	//DBG("tailles setReadingPosition : bcontourPointsInPixels " + (String)bcontourPointsInPixels.outer().size());
 	EditablePolygon::CanvasResized(_parentCanvas);
+	//InteractivePolygon::CanvasResized(_parentCanvas);
+	
 	//cursor->CanvasResized(_parentCanvas);
 	//lengthToPercent();
 	if(showCursor)
@@ -212,16 +209,17 @@ void CompletePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 AreaEventType CompletePolygon::TryMovePoint(const Point<double>& newLocation)
 {
 	AreaEventType areaEventType = EditablePolygon::TryMovePoint(newLocation);
-	CanvasResized(this->parentCanvas);
+	//CanvasResized(this->parentCanvas);
 	return areaEventType;
 }
 
-void CompletePolygon::setCursorVisible(bool isVisible)
+void CompletePolygon::setCursorVisible(bool isVisible, SceneCanvasComponent* _parentCanvas)
 {
-	//cursor->CanvasResized(this->parentCanvas);
+	cursor->CanvasResized(_parentCanvas);
 	showCursor = isVisible;
 	
-	CanvasResized(this->parentCanvas);
+	//CanvasResized(this->parentCanvas);
+
 	//DBG("showCursor = " + (String)showCursor);
 	//setReadingPosition(0);
 }
