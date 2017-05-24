@@ -107,6 +107,7 @@ namespace Amusing {
 		MidiOutput *midiOuput;
 		//ScopedPointer<MidiOutput> midiOuput;
 		//std::shared_ptr<MidiOutput> midiOuput;
+		void getAudioThreadMsg();
 		void getParameters(); // for MIDI
 		void threadFunc();
 		std::thread T;
@@ -118,15 +119,23 @@ namespace Amusing {
 		// timeLinesToAudio is the lockfree queue used to send to the audio a pointer to the TimeLines objects
 		// timeLinesCopy belong to the audio thread and is the copy of the real TimeLinesObject used by the object
 		// 
-		// when we receive the order to create a new TimeLine, the thread create it,
+		// the audioThread keep checking for new parameter/msg sent by the presenter,
+		// if the parameter needs an allocation, a msg is sent to a separate thread.
+		// when it receives the order to create a new TimeLine, the thread creates it,
 		// when it's done, a pointer on this object is sent to the audio thread 
 		// thus the audioThread knows only the ready objects.
+		//
+		// when the audioThread receives order to delete a TimeLine, it relay the msg to the separate thread
+		// the audioThread continue by setting his pointer to the object to null
+		// while the allocation thread delete the object
+
 		static const int maxSize = 1024;
 		TimeLine* timeLines[maxSize];
 		boost::lockfree::spsc_queue<TimeLine*, boost::lockfree::capacity<(1 << 17)>> timeLinesToAudio;
 		TimeLine* timeLinesKnown[maxSize];
 		void getNewTimeLines();
-		boost::lockfree::spsc_queue<Miam::AsyncParamChange, boost::lockfree::capacity<(1 << 17)>> paramToAudio;
+		boost::lockfree::spsc_queue<Miam::AsyncParamChange, boost::lockfree::capacity<(1 << 17)>> paramToAllocationThread;
+		
 	};
 }
 

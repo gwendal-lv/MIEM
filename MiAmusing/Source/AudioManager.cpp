@@ -151,7 +151,7 @@ void AudioManager::releaseResources()
 }
 void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 {
-	//getParameters();
+	getParameters();
 	getNewTimeLines();
 	sendPosition();
 	for (int i = 0; i < bufferToFill.numSamples; ++i)
@@ -215,6 +215,37 @@ void AudioManager::getParameters()
 	{
 		switch (param.Type)
 		{
+		case Miam::AsyncParamChange::ParamType::Activate:
+			DBG("source : " + (String)param.Id1);
+			switch (param.Id2)
+			{
+			case 0:
+				paramToAllocationThread.push(param);
+				break;
+			default:
+				timeLinesKnown[param.Id1] = 0;
+				paramToAllocationThread.push(param);
+				break;
+			}
+
+			break;
+		case Miam::AsyncParamChange::ParamType::Source:
+			if (timeLines[param.Id1] != 0)
+				timeLines[param.Id1]->setMidiTime(param.Id2, roundToInt(param.DoubleValue * (double)periode));
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+void AudioManager::getAudioThreadMsg()
+{
+	Miam::AsyncParamChange param;
+	while (model->lookForParameter(param))
+	{
+		switch (param.Type)
+		{
 		case Miam::AsyncParamChange::ParamType::Activate :
 			DBG("source : " + (String)param.Id1);
 			switch (param.Id2)
@@ -261,7 +292,7 @@ void AudioManager::threadFunc()
 {
 	while (runThread)
 	{ 
-		getParameters();
+		getAudioThreadMsg();
 	}
 	DBG("delete all the timeLines");
 	for (int i = 0; i < maxSize; ++i)
