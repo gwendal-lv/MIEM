@@ -16,11 +16,10 @@
 using namespace Amusing;
 using namespace std;
 
-BaseMidiSender::BaseMidiSender()
+TimeLine::TimeLine()
 {
-	maxSize = 128;
-	midiTimes = std::vector<double>(128, 0);
-	midiOffTimes = std::vector<double>(128, 0);
+	//midiTimes = std::vector<double>(128, 0);
+	//midiOffTimes = std::vector<double>(128, 0);
 	midiTimesSize = 0;
 	midiOfftimesSize = 0;
 
@@ -29,21 +28,21 @@ BaseMidiSender::BaseMidiSender()
 	duration = 10000;	
 }
 
-BaseMidiSender::~BaseMidiSender()
+TimeLine::~TimeLine()
 {
 }
 
-void BaseMidiSender::setAudioManager(AudioManager* m_audioManager)
+void TimeLine::setAudioManager(AudioManager* m_audioManager)
 {
 	audioManager = m_audioManager;
 }
 
-void BaseMidiSender::setPeriod(int m_period)
+void TimeLine::setPeriod(int m_period)
 {
 	period = m_period;
 }
 
-void BaseMidiSender::setMidiTime(int idx, int newTime)
+void TimeLine::setMidiTime(int idx, int newTime)
 {
 	/*
 	DBG("----before------");
@@ -91,13 +90,23 @@ void BaseMidiSender::setMidiTime(int idx, int newTime)
 	}
 }
 
-void BaseMidiSender::process(int time)
+void TimeLine::setId(int m_Id)
+{
+	Id = m_Id;
+}
+
+int TimeLine::getId()
+{
+	return Id;
+}
+
+void TimeLine::process(int time)
 {
 	//int b = midiTimesSize;
 	//DBG("midiTimes.size() = " + (String)midiTimesSize);
 	//DBG("midiOffTimes.size() = " + (String)midiOfftimesSize);
 	//DBG("time = " + (String)time);
-
+	//DBG("midiTimesSize : " + (String)midiTimesSize);
 	for (int i = 0; i < midiTimesSize; i++)
 	{
 		if (time == midiTimes[i])

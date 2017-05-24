@@ -51,7 +51,13 @@ AudioManager::AudioManager(AmusingModel *m_model) : model(m_model), Nsources(0),
 	T = std::thread(&AudioManager::threadFunc, this);
 	midiSenderSize = 0;
 	midiSenderVector.reserve(128);
-	midiSenderVector = std::vector<std::shared_ptr<BaseMidiSender>>(128, std::shared_ptr<BaseMidiSender>(new BaseMidiSender));
+	midiSenderVector = std::vector<std::shared_ptr<TimeLine>>(128, std::shared_ptr<TimeLine>(new TimeLine));
+
+	for (int i = 0; i < maxSize; i++)
+	{
+		timeLines[i] = 0;
+		timeLinesKnown[i] = 0;
+	}
 }
 
 AudioManager::~AudioManager()
@@ -115,7 +121,7 @@ void AudioManager::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 	midiOuput = this->getDefaultMidiOutput();
 	
 	
-	/*midiSender = std::shared_ptr<BaseMidiSender>(new BaseMidiSender(periode));
+	/*midiSender = std::shared_ptr<TimeLine>(new TimeLine(periode));
 	if (midiOuput != nullptr)
 	{
 		midiSender->setAudioManager(this);
@@ -145,25 +151,21 @@ void AudioManager::releaseResources()
 }
 void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 {
-	getParameters();
+	//getParameters();
+	getNewTimeLines();
 	sendPosition();
-	float* const buffer0 = bufferToFill.buffer->getWritePointer(0, bufferToFill.startSample);
-	float* const buffer1 = bufferToFill.buffer->getWritePointer(1, bufferToFill.startSample);
 	for (int i = 0; i < bufferToFill.numSamples; ++i)
 	{
 		
 		if (midiOuput != nullptr)
 		{
 			//midiSender->process(position);
-			for (int j = 0; j < midiSenderSize; j++)
+			for (int j = 0; j < maxSize; j++)
 			{
+				if (timeLinesKnown[j] != 0)
+					timeLinesKnown[j]->process(position);
 				
-				//DBG("process : " + (String)j);
-				if (midiSenderVector.empty())
-					DBG("empty");
-				else
-					if(midiSenderVector.at(j)!=nullptr)
-						midiSenderVector.at(j)->process(position);
+				
 			}
 		}
 		++position;
@@ -176,6 +178,15 @@ void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 	bufferToFill.clearActiveBufferRegion();
 	//metronome.update();
 	//midiBuffer.addEvent(metronome.getNextMidiMsg(), 4);
+}
+
+void AudioManager::getNewTimeLines()
+{
+	TimeLine* ptr;
+	while (timeLinesToAudio.pop(ptr))
+	{
+		timeLinesKnown[ptr->getId()] = ptr;
+	}
 }
 
 void AudioManager::sendMidiMessage(MidiMessage msg)
@@ -214,10 +225,13 @@ void AudioManager::getParameters()
 				break;
 			default:
 				DBG("AM : I construct a new polygon with ID : " + (String)param.Id1);
-				midiSenderVector[param.Id1] = std::shared_ptr<BaseMidiSender>(new BaseMidiSender());
-				midiSenderVector[param.Id1]->setPeriod(periode);
-				midiSenderVector[param.Id1]->setAudioManager(this);
+				//midiSenderVector[param.Id1] = std::shared_ptr<TimeLine>(new TimeLine());
+				timeLines[param.Id1] = new TimeLine();
+				timeLines[param.Id1]->setPeriod(periode);
+				timeLines[param.Id1]->setAudioManager(this);
+				timeLines[param.Id1]->setId(param.Id1);
 				++midiSenderSize;
+				timeLinesToAudio.push(timeLines[param.Id1]);
 				break;
 			}
 			
@@ -233,7 +247,8 @@ void AudioManager::getParameters()
 			else
 			{
 				DBG("AM : the side " + (String)param.Id2 + " is = " + (String)param.DoubleValue);
-				midiSenderVector[param.Id1]->setMidiTime(param.Id2, roundToInt(param.DoubleValue * (double)periode));
+				if(timeLines[param.Id1]!=0)
+					timeLines[param.Id1]->setMidiTime(param.Id2, roundToInt(param.DoubleValue * (double)periode));
 			}
 			break;
 		default:
@@ -244,23 +259,17 @@ void AudioManager::getParameters()
 
 void AudioManager::threadFunc()
 {
-	runThread = false;
 	while (runThread)
-	{ /*
-		switch (allocationFunc)
-		{
-		case 0 : // erase midiSender
-			break;
-		case 1 : // allocate a new midiSender
-			break;
-		case 2 : // add/set a time in the midiSender
-			break;
-		default:
-			break;
-		}
-		*/
+	{ 
 		getParameters();
 	}
+	DBG("delete all the timeLines");
+	for (int i = 0; i < maxSize; ++i)
+	{
+		if (timeLines[i] != nullptr)
+			delete timeLines[i];
+	}
+	
 	DBG("exit thread");
 }
 

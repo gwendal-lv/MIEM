@@ -22,6 +22,8 @@
 #include "Metronome.h"
 #include "BaseMidiSender.h"
 
+#include "AsyncParamChange.h"
+
 // Pre-declaration for pointer members
 namespace Amusing {
 
@@ -99,17 +101,32 @@ namespace Amusing {
 		int periode;
 		int position;
 		Metronome metronome;
-		std::shared_ptr<BaseMidiSender> midiSender;
-		std::vector<std::shared_ptr<BaseMidiSender>> midiSenderVector;
+		std::shared_ptr<TimeLine> midiSender;
+		std::vector<std::shared_ptr<TimeLine>> midiSenderVector;
 		MidiBuffer midiBuffer;
 		MidiOutput *midiOuput;
+		//ScopedPointer<MidiOutput> midiOuput;
+		//std::shared_ptr<MidiOutput> midiOuput;
 		void getParameters(); // for MIDI
 		void threadFunc();
 		std::thread T;
 		bool runThread;
 		int midiSenderSize;
-		//ScopedPointer<MidiOutput> midiOuput;
-		//std::shared_ptr<MidiOutput> midiOuput;
+
+		/////////////
+		// timeLines is the array of the timeLines, the allocation is manage by the thread
+		// timeLinesToAudio is the lockfree queue used to send to the audio a pointer to the TimeLines objects
+		// timeLinesCopy belong to the audio thread and is the copy of the real TimeLinesObject used by the object
+		// 
+		// when we receive the order to create a new TimeLine, the thread create it,
+		// when it's done, a pointer on this object is sent to the audio thread 
+		// thus the audioThread knows only the ready objects.
+		static const int maxSize = 1024;
+		TimeLine* timeLines[maxSize];
+		boost::lockfree::spsc_queue<TimeLine*, boost::lockfree::capacity<(1 << 17)>> timeLinesToAudio;
+		TimeLine* timeLinesKnown[maxSize];
+		void getNewTimeLines();
+		boost::lockfree::spsc_queue<Miam::AsyncParamChange, boost::lockfree::capacity<(1 << 17)>> paramToAudio;
 	};
 }
 

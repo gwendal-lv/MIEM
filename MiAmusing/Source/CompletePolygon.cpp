@@ -29,7 +29,6 @@ CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
 	SetNameVisible(false);
 	
 	updateSubTriangles();
-	DBG("blbl");
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, float radius,
@@ -201,6 +200,7 @@ void CompletePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 	//cursor->CanvasResized(_parentCanvas);
 	//DBG("cursorCenter : " + (String)(cursorCenter.x) + " " + (String)(cursorCenter.y));
 	//DBG("CompletePolygon::CanvasResized");
+	pointDraggingRadius = 0.05f * (parentCanvas->getWidth() + parentCanvas->getHeight()) / 2.0f; // 5% => mieux pour le touch
 }
 
 AreaEventType CompletePolygon::TryMovePoint(const Point<double>& newLocation)

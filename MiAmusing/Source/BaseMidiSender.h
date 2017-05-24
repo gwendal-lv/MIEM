@@ -17,25 +17,30 @@ namespace Amusing
 	class AudioManager;
 }
 
-class BaseMidiSender
+class TimeLine
 {
 public:
-	BaseMidiSender();
-	~BaseMidiSender();
+	TimeLine();
+	~TimeLine();
 
 	void setAudioManager(Amusing::AudioManager* m_audioManager);
 	void setPeriod(int m_period);
 	void setMidiTime(int idx, int newTime);
+	void setId(int m_Id);
+	int getId();
 
 	void process(int time);
 
 private:
-	std::vector<double> midiTimes; // times to send MIDI
-	std::vector<double> midiOffTimes;
+	static const int maxSize = 128;
+	double midiTimes[maxSize]; // times to send MIDI
+	double midiOffTimes[maxSize];
 	int midiTimesSize;
 	int midiOfftimesSize;
-	int maxSize;
+	
 	bool noteOffSent;
+
+	int Id; // to ùake link between the timeLine and the graphic object that it represents
 
 	// parameter of the notes to send
 	int noteNumber;
