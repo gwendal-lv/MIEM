@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.0.0
+  Created with Projucer version: 5.0.1
 
   ------------------------------------------------------------------------------
 
@@ -23,9 +23,15 @@
 #include "JuceHeader.h"
 
 // #include "View.h" // génère un pb d'includes croisés
-namespace Miam { class View; } // sufficient declaration, as we just declare pointers
 
 #include "ClearLabelTimer.h"
+
+
+namespace Miam {
+
+    // forward declarations
+    class View;
+
 //[/Headers]
 
 
@@ -80,7 +86,7 @@ private:
 
     //==============================================================================
     ScopedPointer<TextButton> speakersTextButton;
-    ScopedPointer<TextButton> speakersGroupsTextButton;
+    ScopedPointer<TextButton> spatStatesTextButtn;
     ScopedPointer<Label> mainInfoLabel;
     ScopedPointer<TextButton> scenesTextButton;
     ScopedPointer<TextButton> hardwareConfTextButton;
@@ -93,4 +99,6 @@ private:
 };
 
 //[EndFile] You can add extra defines here...
+
+} // namespace Miam
 //[/EndFile]

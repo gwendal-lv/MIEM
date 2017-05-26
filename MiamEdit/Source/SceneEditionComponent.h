@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.0.0
+  Created with Projucer version: 5.0.1
 
   ------------------------------------------------------------------------------
 
@@ -33,9 +33,8 @@
 
 namespace Miam
 {
+    // forward declarations
     class GraphicSessionManager;
-}
-using namespace Miam;
 
 //[/Headers]
 
@@ -218,4 +217,5 @@ private:
 };
 
 //[EndFile] You can add extra defines here...
+}    // namespace Miam
 //[/EndFile]

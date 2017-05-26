@@ -20,6 +20,8 @@
 
 #include "LabelledMatrixComponent.h"
 
+#include "SpatModel.h" // sparse miam spatialization matrix
+
 namespace Miam
 {
     
@@ -37,8 +39,8 @@ namespace Miam
         std::vector<ScopedPointer<MatrixSlider>> sliders;
         
         // Graphics
-        const unsigned int maxRowsCount;
-        const unsigned int maxColsCount;
+        const size_t maxRowsCount;
+        const size_t maxColsCount;
         
         int n; // Number of actually displayed rows
         int m; // Number of actually displayed columns
@@ -68,11 +70,15 @@ namespace Miam
         {
         }
         
+        // Auxiliary functions
+        private :
+        inline size_t idx(size_t i, size_t j) { return i*maxColsCount+j; }
+        public:
         
         // - - - - - Setters and Getters - - - - -
         void SetSliderValue(int row, int col, double newValue)
         {
-            MatrixSlider* slider = sliders[row*maxColsCount + col].get();
+            MatrixSlider* slider = sliders[idx(row,col)].get();
             // To prevent direct backwards retransmission
             slider->setValue(newValue, NotificationType::dontSendNotification);
             
@@ -81,8 +87,6 @@ namespace Miam
         }
         void SetActiveSliders(int inputsCount, int outputsCount)
         {
-            std::cout << "n = " << n << " - m = " << m << std::endl;
-            std::cout << "in = " << inputsCount << " - out = " << outputsCount << std::endl;
             // Rows updating
             if (n != inputsCount)
             {
@@ -92,12 +96,12 @@ namespace Miam
                     if (inputsCount > n) // Increase of the rows count
                     {
                         for (int i=n ; i<inputsCount ; i++)
-                            sliders[j + i*maxRowsCount]->SetIsActive(true);
+                            sliders[idx(i,j)]->SetIsActive(true);
                     }
                     else // Decrease of the rows count
                     {
                         for (int i=n-1 ; i>=inputsCount ; i--)
-                            sliders[j + i*maxRowsCount]->SetIsActive(false);
+                            sliders[idx(i,j)]->SetIsActive(false);
                     }
                 }
                 n = inputsCount;
@@ -112,12 +116,12 @@ namespace Miam
                     if (outputsCount > m) // Increase of the cols count
                     {
                         for (int j=m ; j<outputsCount ; j++)
-                            sliders[j + i*maxRowsCount]->SetIsActive(true);
+                            sliders[idx(i,j)]->SetIsActive(true);
                     }
                     else // Decrease of the cols count
                     {
                         for (int j=m-1 ; j>=outputsCount ; j--)
-                            sliders[j + i*maxRowsCount]->SetIsActive(false);
+                            sliders[idx(i,j)]->SetIsActive(false);
                     }
                 }
                 m = outputsCount;
@@ -130,9 +134,53 @@ namespace Miam
         {
             for (int i=0 ; i<maxRowsCount ; i++)
                 for (int j=0 ; j<maxColsCount ; j++)
-                    sliders[i*maxRowsCount + j]->setTextBoxIsEditable(shouldBeEditable);
+                    sliders[idx(i,j)]->setTextBoxIsEditable(shouldBeEditable);
         }
         
+        /// \brief Builds and constructs the corresponding Miam::SpatMatrix
+        std::shared_ptr<SpatMatrix> GetSpatMatrix()
+        {
+            // VLA (Variable Length Array) is not OK with the sparse matrix ctor
+            double* rawDenseMatrix;
+            rawDenseMatrix = new double[maxRowsCount*maxColsCount];
+            for (int i=0 ; i<maxRowsCount ; i++)
+            {
+                for (int j=0 ; j<maxColsCount ; j++)
+                {
+                    // If non-zero only
+                    if (sliders[idx(i,j)]->getValue() > sliders[idx(i,j)]->GetMinVolume_dB() + MiamRouter_LowVolumeThreshold_dB)
+                    {
+                        double linearValue = Decibels::decibelsToGain(sliders[idx(i,j)]->getValue());
+                        rawDenseMatrix[idx(i,j)] = linearValue;
+                    }
+                    else
+                        rawDenseMatrix[idx(i,j)] = 0.0;
+                }
+            }
+            // construction optimisée
+            std::shared_ptr<SpatMatrix> returnPtr = std::make_shared<SpatMatrix>(rawDenseMatrix);
+            delete rawDenseMatrix;
+            return returnPtr;
+        }
+        
+        /// \brief Updates its internal sliders from the given Miam::SpatMatrix
+        void SetSpatMatrix(std::shared_ptr<SpatMatrix> spatMatrix)
+        {
+            // Reset to an undisplayed value in dB
+            for (size_t i=0 ; i<maxRowsCount ; i++)
+                for (size_t j=0 ; j<maxColsCount ; j++)
+                    SetSliderValue(i,j,Miam_MinVolume_dB-MiamRouter_LowVolumeThreshold_dB);
+            
+            // Update of non-zero sliders only (input is a sparse matrix)
+            for( spatMatrix->ResetIterator() ;
+                spatMatrix->GetIterator() < spatMatrix->GetEndIterator();
+                spatMatrix->IncIterator() )
+            {
+                SpatMatrix::Index2d current2dCoord = spatMatrix->GetIterator2dCoord();
+                double sliderValue = Decibels::gainToDecibels(spatMatrix->GetIteratorValue());
+                SetSliderValue(current2dCoord.i, current2dCoord.j, sliderValue);
+            }
+        }
         
         // - - - - - Juce graphics - - - - -
         
@@ -187,13 +235,12 @@ namespace Miam
                 for (int j=0 ; j<maxColsCount ; j++)
                 {
                     // Slider (i,j)
-                    int idx = i*maxRowsCount+j;
-                    sliders[idx] = new MatrixSlider();
-                    sliders[idx]->setName("Slider ID=" + std::to_string(idx) + " : row=" + std::to_string(i) + " col=" + std::to_string(j));
-                    sliders[idx]->setComponentID(std::to_string(idx));
-                    initAndAddSlider(sliders[idx]);
+                    sliders[idx(i,j)] = new MatrixSlider();
+                    sliders[idx(i,j)]->setName("Slider ID=" + std::to_string(idx(i,j)) + " : row=" + std::to_string(i) + " col=" + std::to_string(j));
+                    sliders[idx(i,j)]->setComponentID(std::to_string(idx(i,j)));
+                    initAndAddSlider(sliders[idx(i,j)]);
                     
-                    sliders[idx]->SetPropertiesFromVolume();
+                    sliders[idx(i,j)]->SetPropertiesFromVolume();
                 }
             }
             

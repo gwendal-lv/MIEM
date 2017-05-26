@@ -22,7 +22,7 @@
 
 #include "EditablePolygon.h"
 
-#include "Juceheader.h" // for : Point<float>, uint64
+#include "JuceHeader.h" // for : Point<float>, uint64
 
 #include "SceneEditionComponent.h"
 #include "GraphicSessionMode.h"

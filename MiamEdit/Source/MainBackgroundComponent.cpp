@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.0.0
+  Created with Projucer version: 5.0.1
 
   ------------------------------------------------------------------------------
 
@@ -25,6 +25,7 @@
 
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
+using namespace Miam;
 //[/MiscUserDefs]
 
 //==============================================================================
@@ -41,13 +42,13 @@ MainBackgroundComponent::MainBackgroundComponent ()
     speakersTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     speakersTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    addAndMakeVisible (speakersGroupsTextButton = new TextButton ("Speakers Groups text button"));
-    speakersGroupsTextButton->setButtonText (TRANS("Speakers Groups"));
-    speakersGroupsTextButton->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnRight);
-    speakersGroupsTextButton->addListener (this);
-    speakersGroupsTextButton->setColour (TextButton::buttonColourId, Colour (0x55ffffff));
-    speakersGroupsTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
-    speakersGroupsTextButton->setColour (TextButton::textColourOffId, Colours::black);
+    addAndMakeVisible (spatStatesTextButtn = new TextButton ("Spatialization States text button"));
+    spatStatesTextButtn->setButtonText (TRANS("Routing Matrices"));
+    spatStatesTextButtn->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnRight);
+    spatStatesTextButtn->addListener (this);
+    spatStatesTextButtn->setColour (TextButton::buttonColourId, Colour (0x55ffffff));
+    spatStatesTextButtn->setColour (TextButton::buttonOnColourId, Colours::white);
+    spatStatesTextButtn->setColour (TextButton::textColourOffId, Colours::black);
 
     addAndMakeVisible (mainInfoLabel = new Label ("Main info label",
                                                   TRANS("...")));
@@ -109,7 +110,7 @@ MainBackgroundComponent::~MainBackgroundComponent()
     //[/Destructor_pre]
 
     speakersTextButton = nullptr;
-    speakersGroupsTextButton = nullptr;
+    spatStatesTextButtn = nullptr;
     mainInfoLabel = nullptr;
     scenesTextButton = nullptr;
     hardwareConfTextButton = nullptr;
@@ -139,7 +140,7 @@ void MainBackgroundComponent::resized()
     //[/UserPreResize]
 
     speakersTextButton->setBounds (8, 8, 120, 24);
-    speakersGroupsTextButton->setBounds (128, 8, 120, 24);
+    spatStatesTextButtn->setBounds (128, 8, 120, 24);
     mainInfoLabel->setBounds (getWidth() - 8 - (getWidth() - 720), 8, getWidth() - 720, 24);
     scenesTextButton->setBounds (248, 8, 120, 24);
     hardwareConfTextButton->setBounds (376, 8, 176, 24);
@@ -163,10 +164,10 @@ void MainBackgroundComponent::buttonClicked (Button* buttonThatWasClicked)
         //[UserButtonCode_speakersTextButton] -- add your button handler code here..
         //[/UserButtonCode_speakersTextButton]
     }
-    else if (buttonThatWasClicked == speakersGroupsTextButton)
+    else if (buttonThatWasClicked == spatStatesTextButtn)
     {
-        //[UserButtonCode_speakersGroupsTextButton] -- add your button handler code here..
-        //[/UserButtonCode_speakersGroupsTextButton]
+        //[UserButtonCode_spatStatesTextButtn] -- add your button handler code here..
+        //[/UserButtonCode_spatStatesTextButtn]
     }
     else if (buttonThatWasClicked == scenesTextButton)
     {
@@ -218,10 +219,11 @@ BEGIN_JUCER_METADATA
               virtualName="" explicitFocusOrder="0" pos="8 8 120 24" bgColOff="55ffffff"
               bgColOn="ffffffff" textCol="ff000000" buttonText="Speakers" connectedEdges="2"
               needsCallback="1" radioGroupId="0"/>
-  <TEXTBUTTON name="Speakers Groups text button" id="8bdb167a1cca5b0b" memberName="speakersGroupsTextButton"
-              virtualName="" explicitFocusOrder="0" pos="128 8 120 24" bgColOff="55ffffff"
-              bgColOn="ffffffff" textCol="ff000000" buttonText="Speakers Groups"
-              connectedEdges="3" needsCallback="1" radioGroupId="0"/>
+  <TEXTBUTTON name="Spatialization States text button" id="8bdb167a1cca5b0b"
+              memberName="spatStatesTextButtn" virtualName="" explicitFocusOrder="0"
+              pos="128 8 120 24" bgColOff="55ffffff" bgColOn="ffffffff" textCol="ff000000"
+              buttonText="Routing Matrices" connectedEdges="3" needsCallback="1"
+              radioGroupId="0"/>
   <LABEL name="Main info label" id="d52b689341b86690" memberName="mainInfoLabel"
          virtualName="" explicitFocusOrder="0" pos="8Rr 8 720M 24" bkgCol="56ffffff"
          outlineCol="84000000" edTextCol="ff000000" edBkgCol="0" labelText="..."

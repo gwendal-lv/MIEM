@@ -12,6 +12,10 @@
         <FILE id="qnAQWL" name="Model.h" compile="0" resource="0" file="Source/Model.h"/>
       </GROUP>
       <GROUP id="{8B52098D-2C2B-E3EA-7DC7-267134065ADF}" name="Presenter">
+        <FILE id="bwIxlA" name="SettingsManager.cpp" compile="1" resource="0"
+              file="Source/SettingsManager.cpp"/>
+        <FILE id="PyJSoy" name="SettingsManager.h" compile="0" resource="0"
+              file="Source/SettingsManager.h"/>
         <FILE id="hVFSaL" name="SpatStatesEditionManager.cpp" compile="1" resource="0"
               file="Source/SpatStatesEditionManager.cpp"/>
         <FILE id="C3kuhF" name="SpatStatesEditionManager.h" compile="0" resource="0"
@@ -67,17 +71,17 @@
     <GROUP id="{C4893356-5DEB-A030-074B-EE0422842B92}" name="SpatCommonSource">
       <GROUP id="{69F35838-D6F6-5ADE-9B31-E372F4C0078E}" name="Model">
         <GROUP id="{C8CFED74-46E5-A2FF-9824-723DC214C250}" name="SpatStates">
-          <FILE id="VlduMz" name="OutputVolumesState.h" compile="0" resource="0"
-                file="../SpatCommon/Source/OutputVolumesState.h"/>
+          <FILE id="EfBVcH" name="MatrixState.hpp" compile="0" resource="0" file="../SpatCommon/Source/MatrixState.hpp"/>
+          <FILE id="VlduMz" name="OutputVolumesState.hpp" compile="0" resource="0"
+                file="../SpatCommon/Source/OutputVolumesState.hpp"/>
           <FILE id="o3IF1g" name="OutputVolumesState.tpp.h" compile="0" resource="0"
                 file="../SpatCommon/Source/OutputVolumesState.tpp.h"/>
-          <FILE id="VJUdzj" name="SpatState.h" compile="0" resource="0" file="../SpatCommon/Source/SpatState.h"/>
-          <FILE id="bz3VgJ" name="SpatState.tpp.h" compile="0" resource="0" file="../SpatCommon/Source/SpatState.tpp.h"/>
+          <FILE id="VJUdzj" name="SpatState.hpp" compile="0" resource="0" file="../SpatCommon/Source/SpatState.hpp"/>
         </GROUP>
         <FILE id="azLEQu" name="SpatModel.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatModel.cpp"/>
         <FILE id="n9PyKE" name="SpatModel.h" compile="0" resource="0" file="../SpatCommon/Source/SpatModel.h"/>
-        <FILE id="xR7ZzU" name="SpatInterpolator.h" compile="0" resource="0"
-              file="../SpatCommon/Source/SpatInterpolator.h"/>
+        <FILE id="xR7ZzU" name="SpatInterpolator.hpp" compile="0" resource="0"
+              file="../SpatCommon/Source/SpatInterpolator.hpp"/>
         <FILE id="njk7Fg" name="SpatInterpolator.tpp.h" compile="0" resource="0"
               file="../SpatCommon/Source/SpatInterpolator.tpp.h"/>
         <FILE id="DFPO9m" name="SpatSender.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatSender.cpp"/>
@@ -85,6 +89,22 @@
         <FILE id="ISQcqH" name="SpatType.h" compile="0" resource="0" file="../SpatCommon/Source/SpatType.h"/>
         <FILE id="r9zTHA" name="Speaker.h" compile="0" resource="0" file="../SpatCommon/Source/Speaker.h"/>
         <FILE id="JAUbBW" name="Speaker.tpp.h" compile="0" resource="0" file="../SpatCommon/Source/Speaker.tpp.h"/>
+      </GROUP>
+      <GROUP id="{DCC9EBC6-B3B5-6597-7D50-FBAB32A4E73B}" name="View">
+        <FILE id="db1pb5" name="ISlidersMatrixListener.h" compile="0" resource="0"
+              file="../SpatCommon/Source/ISlidersMatrixListener.h"/>
+        <FILE id="AH63we" name="LabelledMatrixComponent.cpp" compile="1" resource="0"
+              file="../SpatCommon/Source/LabelledMatrixComponent.cpp"/>
+        <FILE id="IXyNk9" name="LabelledMatrixComponent.h" compile="0" resource="0"
+              file="../SpatCommon/Source/LabelledMatrixComponent.h"/>
+        <FILE id="v6IvfH" name="MatrixComponent.h" compile="0" resource="0"
+              file="../SpatCommon/Source/MatrixComponent.h"/>
+        <FILE id="Ec8PSJ" name="MatrixSlider.h" compile="0" resource="0" file="../SpatCommon/Source/MatrixSlider.h"/>
+        <FILE id="T6O3os" name="MatrixViewport.h" compile="0" resource="0"
+              file="../SpatCommon/Source/MatrixViewport.h"/>
+      </GROUP>
+      <GROUP id="{074EE7F9-67BB-F0C2-EAAF-33449FC42B60}" name="Utils">
+        <FILE id="mVbott" name="SpatMatrix.hpp" compile="0" resource="0" file="../SpatCommon/Source/SpatMatrix.hpp"/>
       </GROUP>
     </GROUP>
     <GROUP id="{593B3C8B-4E9F-6C95-BD9D-6562983482B8}" name="MiamCommonSource">
@@ -198,6 +218,11 @@
         </GROUP>
       </GROUP>
       <GROUP id="{B91B2137-DC4A-127C-0037-DB058876BEFA}" name="Utils">
+        <FILE id="cEVkJR" name="SparseMatrix.hpp" compile="0" resource="0"
+              file="../MiamCommon/Source/SparseMatrix.hpp"/>
+        <GROUP id="{5315337B-6E49-3E8D-A9F7-3A94BE3F4AA8}" name="Audio">
+          <FILE id="suhcBm" name="AudioDefines.h" compile="0" resource="0" file="../MiamCommon/Source/AudioDefines.h"/>
+        </GROUP>
         <GROUP id="{22E0B59F-81F6-AAC5-A6F4-3B584D7BBEA6}" name="AsyncParamChanges">
           <FILE id="ttwn7e" name="AsyncParamChange.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/AsyncParamChange.cpp"/>
@@ -224,9 +249,10 @@
     <XCODE_MAC targetFolder="Builds/MacOSX">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="default" osxArchitecture="default"
-                       isDebug="1" optimisation="1" targetName="MiamEdit" headerPath="../../../&#10;../../MiamCommon/Source/"/>
+                       isDebug="1" optimisation="1" targetName="MiamEdit" headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../MiamCommon/Source/"/>
         <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="default" osxArchitecture="default"
-                       isDebug="0" optimisation="3" targetName="MiamEdit" headerPath="../../../&#10;../../MiamCommon/Source/"/>
+                       isDebug="0" optimisation="3" targetName="MiamEdit" headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../MiamCommon/Source/"
+                       defines="BOOST_UBLAS_NDEBUG&#10;NDEBUG"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
@@ -249,7 +275,8 @@
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
                        isDebug="1" optimisation="1" targetName="MiamEdit" headerPath="..\..\..\&#10;..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"/>
         <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
-                       isDebug="0" optimisation="3" targetName="MiamEdit" headerPath="..\..\..\&#10;..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"/>
+                       isDebug="0" optimisation="3" targetName="MiamEdit" headerPath="..\..\..\&#10;..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"
+                       defines="BOOST_UBLAS_NDEBUG&#10;NDEBUG"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_video" path="../../JUCE/modules"/>
@@ -273,7 +300,7 @@
         <CONFIGURATION name="Debug" androidArchitectures="armeabi armeabi-v7a x86" isDebug="1"
                        optimisation="1" targetName="MiamEdit"/>
         <CONFIGURATION name="Release" androidArchitectures="armeabi armeabi-v7a x86"
-                       isDebug="0" optimisation="3" targetName="MiamEdit"/>
+                       isDebug="0" optimisation="3" targetName="MiamEdit" defines="BOOST_UBLAS_NDEBUG&#10;NDEBUG"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_video" path="../../JUCE/modules"/>

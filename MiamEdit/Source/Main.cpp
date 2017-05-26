@@ -65,6 +65,7 @@ public:
     void shutdown() override
     {
         // Add your application's shutdown code here..
+        delete model;
         delete presenter;
         delete view;
 

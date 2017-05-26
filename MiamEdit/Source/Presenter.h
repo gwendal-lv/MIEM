@@ -20,6 +20,7 @@
 
 #include "GraphicSessionManager.h"
 #include "SpatStatesEditionManager.h"
+#include "SettingsManager.h"
 
 
 namespace Miam {
@@ -56,7 +57,7 @@ namespace Miam {
         // Sub-modules
         GraphicSessionManager graphicSessionManager;
         SpatStatesEditionManager spatStatesEditionManager;
-        
+        SettingsManager settingsManager;
         
         
         
@@ -64,8 +65,11 @@ namespace Miam {
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         
         public :
+        
         AppMode getAppMode() {return appMode;};
+        
         GraphicSessionManager* getGraphicSessionManager() {return &graphicSessionManager;}
+        SettingsManager* GetSettingsManager() {return &settingsManager;}
         
         
         

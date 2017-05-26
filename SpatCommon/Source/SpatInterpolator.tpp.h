@@ -30,12 +30,32 @@ SpatType SpatInterpolator<T>::GetSpatType()
     return model->GetSpatType();
 }
 
-
 //template std::string SpatInterpolator<double>::GetOutputName(size_t);
 template<typename T>
 std::string SpatInterpolator<T>::GetOutputName(size_t _i)
 {
     return model->GetOutputName(_i);
+}
+
+template<typename T>
+void SpatInterpolator<T>::SetInputOuputChannelsCount(int _inputsCount, int _outputsCount)
+{
+    // At first : update of internal data
+    inputsCount = _inputsCount;
+    outputsCount = _outputsCount;
+    
+    // Config transmission to the individual states
+    for (size_t i=0 ; i<spatStates.size() ; i++)
+    {
+        // Dynamic cast of the state to a MatrixState only for now
+        if (std::shared_ptr<MatrixState<T>> matrixState = std::dynamic_pointer_cast<MatrixState<T>>(spatStates[i]))
+        {
+            matrixState->SetInputOuputChannelsCount(inputsCount,outputsCount);
+        }
+        // Else : behavior not implemented
+        else
+            throw std::runtime_error("in/out channels count modification is not implemented yet for this spatialization state");
+    }
 }
 
 
@@ -58,8 +78,8 @@ void SpatInterpolator<T>::__AddDefaultStates()
 {
     for (size_t i = 0 ; i<3 ; i++)
     {
-        std::shared_ptr<SpatState<T>> newState(new OutputVolumesState<T>(model->GetOutputsCount()));
-        newState->SetName("Effet de spat " + std::to_string(i+1));
+        std::shared_ptr<MatrixState<T>> newState = std::make_shared<MatrixState<T>>();
+        newState->SetName("Matrice " + std::to_string(i+1));
         spatStates.push_back(newState);
     }
 }

@@ -87,7 +87,7 @@ void MainContentComponent::ChangeAppMode(AppMode newAppMode)
             speakersEditionComponent->setVisible(true);
             break;
             
-        case AppMode::EditSpeakersGroups :
+        case AppMode::EditSpatStates :
         spatStatesEditionComponent->setVisible(true);
             break;
         case AppMode::EditSpatScenes :

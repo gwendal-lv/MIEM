@@ -11,19 +11,19 @@
 #ifndef SPATSTATESEDITIONMANAGER_H_INCLUDED
 #define SPATSTATESEDITIONMANAGER_H_INCLUDED
 
-#include "SpatInterpolator.h"
+#include "SpatInterpolator.hpp"
 
-// pre-declarations for components' pointers
-class SpatStatesEditionComponent;
 
 namespace Miam
 {
-    // pre-declarations for pointers
+    // forward declarations
     class View;
+    class SpatStatesEditionComponent;
     /*class SpatInterpolator<double>;*/ // from Model
     
     
-    /// \brief
+    /// \brief Manages the behavior (Presenter functionnalities) of a
+    /// Miam::SpatStatesEditionComponent
     class SpatStatesEditionManager
     {
         
@@ -44,7 +44,9 @@ namespace Miam
         public :
         
         SpatType GetSpatType() {return spatInterpolator->GetSpatType();}
-        void SelectSpatState(std::shared_ptr<SpatState<double>> _spatState);
+    private :
+        void selectSpatState(std::shared_ptr<SpatState<double>> _spatState);
+    public :
         
         // 1 dimension speakers' volumes, faders edition
         size_t GetFadersCount();
@@ -56,9 +58,30 @@ namespace Miam
         
         
         // - - - - - Construction / destruction - - - - -
+        
         SpatStatesEditionManager(View* _view);
         void CompleteInitialisation(SpatInterpolator<double>* _spatInterpolator);
         
+        
+        // - - - - - Events from Presenter - - - - -
+        void OnLeaveSpatStatesEdition();
+        
+        // - - - - - Events from View - - - - -
+        
+        /// \brief Called with the next index to select, and directly with the current
+        /// matrix (that must be saved to the state to be unselected)
+        void OnSpatStateSelectedById(std::shared_ptr<SpatMatrix> currentMatrix, int _spatStateId);
+        /// \brief Called when the displayed text of the combo box has been edited
+        void OnRenameState(std::string newName, int stateIndex);
+        
+        
+        // - - - - - Graphical helpers - - - - -
+        
+        void updateView();
+        
+        
+        // - - - - - Internal helpers - - - - -
+        void sendDataToModel(std::shared_ptr<SpatMatrix> currentMatrix);
     };
     
 }

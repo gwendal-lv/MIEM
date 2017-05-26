@@ -44,7 +44,7 @@ presenter(presenter_)
     
     spatInterpolator->__AddDefaultStates();
     // PAS LE CHOIX POUR L'INSTANT
-    spatType = SpatType::Volumes1d;
+    spatType = SpatType::RoutingMatrix;
     
     // Auto-referenciation to other modules
     presenter->CompleteInitialisation(this);
@@ -76,7 +76,7 @@ void Model::update()
     while(continueUpdate)
     {
         std::this_thread::sleep_for(std::chrono::seconds(1));
-		DBG("update Modèle !");
+		//DBG("update Modèle !");
     }
 }
 

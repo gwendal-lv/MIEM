@@ -25,7 +25,7 @@ namespace Miam {
         Loading, /**< Between modes change */
         
         EditSpeakers, /**< Normal single speakers editing mode */
-        EditSpeakersGroups, /**< Normal speakers' groups editing mode */
+        EditSpatStates, /**< Normal spatialization state editing mode (routing matrix only at the moment) */
         EditSpatScenes,  /**< Normal spat scene editing mode */
         EditHardwareConfiguration,  /**< Normal hardware configuration editing mode */
         

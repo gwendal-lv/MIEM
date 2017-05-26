@@ -14,7 +14,7 @@
 
 #include "SpatModel.h"
 
-#include "SpatInterpolator.h"
+#include "SpatInterpolator.hpp"
 
 #include "IPresenter.h"
 

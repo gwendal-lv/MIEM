@@ -14,12 +14,18 @@
 
 #include <string>
 #include <vector>
+#include <memory>
+
+#include "IInteractiveArea.h"
+
+#include "SparseMatrix.hpp"
+#include "AudioDefines.h"
 
 
 namespace Miam
 {
-    
-    
+    // Forward declarations
+    class IInteractiveArea;
     
     
     /// \brief An abstract class that represents a state of the
@@ -32,15 +38,27 @@ namespace Miam
     /// The number of channels might not be exactly the same as
     /// the parent Miam::SpatInterpolator (and this has to be
     /// properly managed)
+    ///
+    /// !!! Attention aux fonctions membres virtuelles qui ne peuvent alors
+    /// pas être template !!! -> encore vrai sur tous les compilateurs ?
     template<typename T>
     class SpatState
     {
         
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
-        private :
+        protected :
         
+        // Own attributes
         std::string name;
+        
+        
+        
+        /// \brief List of areas that represent this spatialization state
+        ///
+        /// Not the most optimal STL container (research is not optimized)
+        std::vector< std::shared_ptr<IInteractiveArea> > linkedAreas;
+        
         
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
@@ -48,10 +66,11 @@ namespace Miam
         
         virtual std::string GetName() {return name;}
         virtual void SetName(std::string _name) {name = _name;}
-        virtual T GetVolume(size_t i) = 0;
-        virtual void SetVolume(size_t i, T volume) = 0;
         
         virtual size_t GetOutputsCount() = 0;
+        
+        virtual size_t GetLinkedAreasCount() {return linkedAreas.size();}
+        virtual std::shared_ptr<IInteractiveArea> GetLinkedArea(size_t i) {return linkedAreas[i];}
         
         
         // = = = = = = = = = = METHODS = = = = = = = = = =
@@ -59,7 +78,16 @@ namespace Miam
         
         
         // - - - - - Construction / destruction - - - - -
-        virtual ~SpatState() {}
+        // TODO
+        // MUST UNLINK FROM AREA (if remaining...)
+        // TODO
+        // MUST UNLINK FROM AREA (if remaining...)
+        // TODO
+        // MUST UNLINK FROM AREA (if remaining...)
+        // TODO
+        // MUST UNLINK FROM AREA (if remaining...)
+        virtual ~SpatState()
+        {}
         
         
         // - - - - - Output channels (speakers) : add, delete, swap, ... - - - - -
@@ -71,7 +99,5 @@ namespace Miam
     
 }
 
-
-#include "SpatState.tpp.h"
 
 #endif  // SPATSTATE_H_INCLUDED

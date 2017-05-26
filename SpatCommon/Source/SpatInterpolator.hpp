@@ -17,9 +17,11 @@
 
 #include "SpatType.h"
 
-#include "SpatState.h"
-#include "OutputVolumesState.h"
+#include "SpatState.hpp"
 
+
+#include "OutputVolumesState.hpp"
+#include "MatrixState.hpp"
 
 
 namespace Miam
@@ -49,18 +51,30 @@ namespace Miam
         //OutputVolumesState speakersBalanceVolumes;
         
         
+        //
+        int inputsCount = 0;
+        int outputsCount = 0;
+        
         
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
+        
+        int GetInputsCount() {return inputsCount;}
+        int GetOutputsCount() {return outputsCount;}
         
         SpatType GetSpatType();
         
         size_t GetSpatStatesCount() {return spatStates.size();}
         std::shared_ptr<SpatState<T>> GetSpatState(size_t i) {return spatStates[i];}
         
+        /// \brief Unoptimized access : copy-constructs a whole vector of shared pointers
+        std::vector< std::shared_ptr<SpatState<T>> > GetSpatStates() {return spatStates;}
+        
         std::string GetOutputName(size_t _i);
         
+        /// \brief Inputs and Outputs config (applies changes to all states)
+        void SetInputOuputChannelsCount(int _inputsCount, int _outputsCount);
         
         // = = = = = = = = = = METHODS = = = = = = = = = =
         public :

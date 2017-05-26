@@ -20,8 +20,8 @@ namespace Miam
         
         None, ///< Spatialisation method not chosen yet
         
-        Volumes1d, ///< Classical, like if we had fader on an analog mixing console
-        Matrix ///< Available on hardware such as RME cards with TotalMix
+        Volumes1d, ///< Classical acousmatic spat, like if we had faders on an analog mixing console
+        RoutingMatrix, ///< Available with the MIAM ROUTER daw plugin, or on hardware such as RME cards with TotalMix
         
     };
     

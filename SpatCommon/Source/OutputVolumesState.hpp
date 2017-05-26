@@ -13,7 +13,7 @@
 
 
 
-#include "SpatState.h"
+#include "SpatState.hpp"
 
 
 namespace Miam
@@ -38,8 +38,8 @@ namespace Miam
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
         
-        virtual T GetVolume(size_t i) override;
-        virtual void SetVolume(size_t i, T volume) override;
+        virtual T GetVolume(size_t i);
+        virtual void SetVolume(size_t i, T volume);
         
         virtual size_t GetOutputsCount() override;
         

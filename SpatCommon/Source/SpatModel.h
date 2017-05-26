@@ -23,6 +23,9 @@
 #include "SpatType.h"
 #include "Speaker.h"
 
+#include "SpatMatrix.hpp"
+#include "AudioDefines.h"
+
 
 namespace Miam
 {
@@ -32,6 +35,9 @@ namespace Miam
     
     template< typename T >
     class SpatInterpolator;
+    
+    
+    
     
     
     /// \brief

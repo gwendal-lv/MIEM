@@ -46,8 +46,8 @@ void View::ButtonClicked(const String& name)
     AppMode answeredAppMode = AppMode::Null;
     if (name == "Speakers text button")
         answeredAppMode = presenter->appModeChangeRequest(AppMode::EditSpeakers);
-    else if (name == "Speakers Groups text button")
-        answeredAppMode = presenter->appModeChangeRequest(AppMode::EditSpeakersGroups);
+    else if (name == "Spatialization States text button")
+        answeredAppMode = presenter->appModeChangeRequest(AppMode::EditSpatStates);
     else if (name == "Scenes text button")
         answeredAppMode = presenter->appModeChangeRequest(AppMode::EditSpatScenes);
     else if (name == "Hardware Configuration text button")

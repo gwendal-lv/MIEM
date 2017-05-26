@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 4.3.0
+  Created with Projucer version: 5.0.1
 
   ------------------------------------------------------------------------------
 
@@ -17,11 +17,16 @@
   ==============================================================================
 */
 
-#ifndef __JUCE_HEADER_BB30C32AD47A131A__
-#define __JUCE_HEADER_BB30C32AD47A131A__
+#pragma once
 
 //[Headers]     -- You can add your own extra header files here --
 #include "JuceHeader.h"
+
+namespace Miam {
+
+    // Forward declarations
+    class SettingsManager;
+
 //[/Headers]
 
 
@@ -38,7 +43,9 @@
 
                                                                     //[/Comments]
 */
-class HardwareConfigurationComponent  : public Component
+class HardwareConfigurationComponent  : public Component,
+                                        public SliderListener,
+                                        public ButtonListener
 {
 public:
     //==============================================================================
@@ -47,19 +54,30 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
+    void CompleteInitialization(SettingsManager* _settingsManager);
     //[/UserMethods]
 
     void paint (Graphics& g) override;
     void resized() override;
+    void sliderValueChanged (Slider* sliderThatWasMoved) override;
+    void buttonClicked (Button* buttonThatWasClicked) override;
 
 
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
+    SettingsManager* settingsManager = 0;
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<Label> label;
+    ScopedPointer<Slider> inputsCountSlider;
+    ScopedPointer<Slider> outputsCountSlider;
+    ScopedPointer<Label> inputsCountLabel;
+    ScopedPointer<Label> outputsCountLabel;
+    ScopedPointer<ToggleButton> oscPluginToggleButton;
+    ScopedPointer<Label> udpPortLabel;
+    ScopedPointer<TextEditor> udpPortTextEditor;
+    ScopedPointer<ToggleButton> keyboardButton;
 
 
     //==============================================================================
@@ -67,6 +85,6 @@ private:
 };
 
 //[EndFile] You can add extra defines here...
-//[/EndFile]
 
-#endif   // __JUCE_HEADER_BB30C32AD47A131A__
+} // namespace Miam
+//[/EndFile]

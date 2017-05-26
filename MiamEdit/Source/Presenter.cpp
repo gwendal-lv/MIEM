@@ -26,7 +26,8 @@ Presenter::Presenter(View* _view) :
     appMode(AppMode::Loading), // app is loading while the Model hasn't fully loaded yet
 
     graphicSessionManager(_view, this),
-    spatStatesEditionManager(_view)
+    spatStatesEditionManager(_view),
+    settingsManager(_view, this)
 {
     // After all sub-modules are built, the presenter refers itself to the View
     view->CompleteInitialization(this);
@@ -46,6 +47,7 @@ void Presenter::CompleteInitialisation(Model* _model)
     model = _model;
     // Sub-modules
     spatStatesEditionManager.CompleteInitialisation(model->GetSpatInterpolator());
+    settingsManager.CompleteInitialisation(model);
 }
 
 
@@ -59,6 +61,13 @@ AppMode Presenter::appModeChangeRequest(AppMode newAppMode)
     {
         view->ChangeAppMode(AppMode::Loading);
         
+        // Treatment when necessary
+        
+        // If leaving the matrices editing : we should save data before changing mode
+        if (appMode == AppMode::EditSpatStates)
+            spatStatesEditionManager.OnLeaveSpatStatesEdition();
+        
+        // Internal update
         appMode = newAppMode;
         view->ChangeAppMode(appMode);
     }
