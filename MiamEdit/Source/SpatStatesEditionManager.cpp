@@ -25,7 +25,7 @@ SpatStatesEditionManager::SpatStatesEditionManager(View* _view)
     editionComponent->CompleteInitialization(this);
 }
 
-void SpatStatesEditionManager::CompleteInitialisation(SpatInterpolator<double>* _spatInterpolator)
+void SpatStatesEditionManager::CompleteInitialisation(std::shared_ptr<SpatInterpolator<double>> _spatInterpolator)
 {
     spatInterpolator = _spatInterpolator;
     
@@ -97,7 +97,7 @@ void SpatStatesEditionManager::selectSpatState(std::shared_ptr<SpatState<double>
     else // if no state selected
         infoText = "-";
     // Update command
-    editionComponent->UpdateForSelectedState(infoText, matrixToSend);
+    editionComponent->SelectAndUpdateState(selectedSpatState->GetIndex(), infoText, matrixToSend);
 }
 
 
@@ -130,5 +130,12 @@ void SpatStatesEditionManager::sendDataToModel(std::shared_ptr<SpatMatrix> curre
         else
             throw std::logic_error("State is not a Matrix (behavior not implemented");
     }
+}
+
+
+// = = = = = = = = = = SETTINGS MANAGEMENT = = = = = = = = = =
+void SpatStatesEditionManager::AllowKeyboardEdition(bool allow)
+{
+    editionComponent->AllowKeyboardEdition(allow);
 }
 

@@ -86,7 +86,7 @@ namespace Miam
         // ------ areas managing : graphical attributes ------
         public :
         
-        void ChangeSelectedAreaColour(Colour& colour);
+        std::shared_ptr<AreaEvent> ChangeSelectedAreaColour(Colour& colour);
         
         void AddPoint();
         void DeletePoint();

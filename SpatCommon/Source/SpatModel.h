@@ -21,6 +21,7 @@
 #include "PeriodicUpdateThread.h"
 
 #include "SpatType.h"
+#include "SpatInterpolator.hpp"
 #include "Speaker.h"
 
 #include "SpatMatrix.hpp"
@@ -32,9 +33,6 @@ namespace Miam
     // pre-declarations for pointers
     class IPresenter;
     class SpatSender;
-    
-    template< typename T >
-    class SpatInterpolator;
     
     
     
@@ -59,10 +57,7 @@ namespace Miam
         std::vector< std::shared_ptr<Speaker<double>> > speakers;
         
         // Spatialisation computer, that owns the spat states
-        SpatInterpolator<double>* spatInterpolator = 0;
-        
-        // Internal descriptor
-        SpatType spatType;
+        std::shared_ptr<SpatInterpolator<double>> spatInterpolator;
         
         // Communication
         std::vector< std::shared_ptr<SpatSender> > spatSenders;
@@ -72,11 +67,16 @@ namespace Miam
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
         
-        SpatType GetSpatType() {return spatType;}
-        SpatInterpolator<double>* GetSpatInterpolator() {return spatInterpolator;}
+        SpatType GetSpatType() {return spatInterpolator->GetSpatType();}
+        std::shared_ptr<SpatInterpolator<double>> GetSpatInterpolator() {return spatInterpolator;}
         
+        /// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        /// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        /// plus valable..... le spat interpolator doit tout contrôler
+        /// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        /// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         size_t GetOutputsCount() {return speakers.size();}
-        std::string GetOutputName(size_t i_) {return speakers[i_]->GetName();}
+        //std::string GetOutputName(size_t i_) {return speakers[i_]->GetName();}
         
         // = = = = = = = = = = METHODS = = = = = = = = = =
         public :

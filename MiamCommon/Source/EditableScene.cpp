@@ -175,16 +175,15 @@ std::shared_ptr<AreaEvent> EditableScene::deleteAreaByUniqueId(uint64_t uidToDel
 
 // ------ areas managing : graphical attributes ------
 
-void EditableScene::ChangeSelectedAreaColour(Colour& colour)
+std::shared_ptr<AreaEvent> EditableScene::ChangeSelectedAreaColour(Colour& colour)
 {
     if (selectedArea)
     {
         selectedArea->SetFillColour(colour);
-        DBG("!!!!!!!!! Area modified without sending an Event !!!!!!!!!");
-        canvasComponent->repaint();
+        return std::make_shared<AreaEvent>(selectedArea, AreaEventType::ColorChanged);
     }
     else
-        std::runtime_error("The given colour cannot be applied : no area is selected");
+        throw std::runtime_error("The given colour cannot be applied : no area is selected");
 }
 
 

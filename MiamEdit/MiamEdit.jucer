@@ -12,6 +12,15 @@
         <FILE id="qnAQWL" name="Model.h" compile="0" resource="0" file="Source/Model.h"/>
       </GROUP>
       <GROUP id="{8B52098D-2C2B-E3EA-7DC7-267134065ADF}" name="Presenter">
+        <FILE id="rgxQ9K" name="AppMode.h" compile="0" resource="0" file="Source/AppMode.h"/>
+        <FILE id="sqIfeX" name="GraphicSessionManager.cpp" compile="1" resource="0"
+              file="Source/GraphicSessionManager.cpp"/>
+        <FILE id="kKa1F6" name="GraphicSessionManager.h" compile="0" resource="0"
+              file="Source/GraphicSessionManager.h"/>
+        <FILE id="PY0TYM" name="GraphicSessionMode.h" compile="0" resource="0"
+              file="Source/GraphicSessionMode.h"/>
+        <FILE id="meFyUy" name="Presenter.cpp" compile="1" resource="0" file="Source/Presenter.cpp"/>
+        <FILE id="dHZ0UK" name="Presenter.h" compile="0" resource="0" file="Source/Presenter.h"/>
         <FILE id="bwIxlA" name="SettingsManager.cpp" compile="1" resource="0"
               file="Source/SettingsManager.cpp"/>
         <FILE id="PyJSoy" name="SettingsManager.h" compile="0" resource="0"
@@ -20,22 +29,9 @@
               file="Source/SpatStatesEditionManager.cpp"/>
         <FILE id="C3kuhF" name="SpatStatesEditionManager.h" compile="0" resource="0"
               file="Source/SpatStatesEditionManager.h"/>
-        <FILE id="rgxQ9K" name="AppMode.h" compile="0" resource="0" file="Source/AppMode.h"/>
-        <FILE id="meFyUy" name="Presenter.cpp" compile="1" resource="0" file="Source/Presenter.cpp"/>
-        <FILE id="dHZ0UK" name="Presenter.h" compile="0" resource="0" file="Source/Presenter.h"/>
-        <FILE id="sqIfeX" name="GraphicSessionManager.cpp" compile="1" resource="0"
-              file="Source/GraphicSessionManager.cpp"/>
-        <FILE id="kKa1F6" name="GraphicSessionManager.h" compile="0" resource="0"
-              file="Source/GraphicSessionManager.h"/>
-        <FILE id="PY0TYM" name="GraphicSessionMode.h" compile="0" resource="0"
-              file="Source/GraphicSessionMode.h"/>
       </GROUP>
       <GROUP id="{F6BB049F-E535-45AB-5A0C-454B64DE18EA}" name="View">
         <GROUP id="{EC5E55BB-07A7-BF56-A7EA-A7410AC9FE64}" name="Components">
-          <FILE id="iN2TGI" name="SpatStateFadersDisplayComponent.cpp" compile="1"
-                resource="0" file="Source/SpatStateFadersDisplayComponent.cpp"/>
-          <FILE id="VPCSMO" name="SpatStateFadersDisplayComponent.h" compile="0"
-                resource="0" file="Source/SpatStateFadersDisplayComponent.h"/>
           <FILE id="WzOuAs" name="HardwareConfigurationComponent.cpp" compile="1"
                 resource="0" file="Source/HardwareConfigurationComponent.cpp"/>
           <FILE id="UXk0vx" name="HardwareConfigurationComponent.h" compile="0"
@@ -48,14 +44,18 @@
                 file="Source/SceneEditionComponent.cpp"/>
           <FILE id="m7w8e5" name="SceneEditionComponent.h" compile="0" resource="0"
                 file="Source/SceneEditionComponent.h"/>
-          <FILE id="gMjpEM" name="SpeakersEditionComponent.cpp" compile="1" resource="0"
-                file="Source/SpeakersEditionComponent.cpp"/>
-          <FILE id="xTHH4m" name="SpeakersEditionComponent.h" compile="0" resource="0"
-                file="Source/SpeakersEditionComponent.h"/>
+          <FILE id="iN2TGI" name="SpatStateFadersDisplayComponent.cpp" compile="1"
+                resource="0" file="Source/SpatStateFadersDisplayComponent.cpp"/>
+          <FILE id="VPCSMO" name="SpatStateFadersDisplayComponent.h" compile="0"
+                resource="0" file="Source/SpatStateFadersDisplayComponent.h"/>
           <FILE id="v95oCh" name="SpatStatesEditionComponent.cpp" compile="1"
                 resource="0" file="Source/SpatStatesEditionComponent.cpp"/>
           <FILE id="OrbxdO" name="SpatStatesEditionComponent.h" compile="0" resource="0"
                 file="Source/SpatStatesEditionComponent.h"/>
+          <FILE id="gMjpEM" name="SpeakersEditionComponent.cpp" compile="1" resource="0"
+                file="Source/SpeakersEditionComponent.cpp"/>
+          <FILE id="xTHH4m" name="SpeakersEditionComponent.h" compile="0" resource="0"
+                file="Source/SpeakersEditionComponent.h"/>
         </GROUP>
         <FILE id="bjMV46" name="ClearLabelTimer.cpp" compile="1" resource="0"
               file="Source/ClearLabelTimer.cpp"/>
@@ -78,17 +78,23 @@
                 file="../SpatCommon/Source/OutputVolumesState.tpp.h"/>
           <FILE id="VJUdzj" name="SpatState.hpp" compile="0" resource="0" file="../SpatCommon/Source/SpatState.hpp"/>
         </GROUP>
-        <FILE id="azLEQu" name="SpatModel.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatModel.cpp"/>
-        <FILE id="n9PyKE" name="SpatModel.h" compile="0" resource="0" file="../SpatCommon/Source/SpatModel.h"/>
         <FILE id="xR7ZzU" name="SpatInterpolator.hpp" compile="0" resource="0"
               file="../SpatCommon/Source/SpatInterpolator.hpp"/>
-        <FILE id="njk7Fg" name="SpatInterpolator.tpp.h" compile="0" resource="0"
-              file="../SpatCommon/Source/SpatInterpolator.tpp.h"/>
+        <FILE id="azLEQu" name="SpatModel.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatModel.cpp"/>
+        <FILE id="n9PyKE" name="SpatModel.h" compile="0" resource="0" file="../SpatCommon/Source/SpatModel.h"/>
         <FILE id="DFPO9m" name="SpatSender.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatSender.cpp"/>
         <FILE id="YOdNbs" name="SpatSender.h" compile="0" resource="0" file="../SpatCommon/Source/SpatSender.h"/>
         <FILE id="ISQcqH" name="SpatType.h" compile="0" resource="0" file="../SpatCommon/Source/SpatType.h"/>
         <FILE id="r9zTHA" name="Speaker.h" compile="0" resource="0" file="../SpatCommon/Source/Speaker.h"/>
         <FILE id="JAUbBW" name="Speaker.tpp.h" compile="0" resource="0" file="../SpatCommon/Source/Speaker.tpp.h"/>
+      </GROUP>
+      <GROUP id="{E4F9C14C-128F-4855-B761-3D7F2B473A15}" name="Presenter">
+        <FILE id="VVyjWB" name="SpatArea.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatArea.cpp"/>
+        <FILE id="J6QHjo" name="SpatArea.h" compile="0" resource="0" file="../SpatCommon/Source/SpatArea.h"/>
+        <FILE id="mFlpy0" name="SpatEllipse.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatEllipse.cpp"/>
+        <FILE id="JC2slY" name="SpatEllipse.h" compile="0" resource="0" file="../SpatCommon/Source/SpatEllipse.h"/>
+        <FILE id="RbKrb4" name="SpatPolygon.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatPolygon.cpp"/>
+        <FILE id="CWxYwo" name="SpatPolygon.h" compile="0" resource="0" file="../SpatCommon/Source/SpatPolygon.h"/>
       </GROUP>
       <GROUP id="{DCC9EBC6-B3B5-6597-7D50-FBAB32A4E73B}" name="View">
         <FILE id="db1pb5" name="ISlidersMatrixListener.h" compile="0" resource="0"
@@ -119,13 +125,13 @@
           <FILE id="Q2qftv" name="ControlEvent.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/ControlEvent.cpp"/>
           <FILE id="wPnZ0p" name="ControlEvent.h" compile="0" resource="0" file="../MiamCommon/Source/ControlEvent.h"/>
+          <FILE id="P48GDy" name="GraphicEvent.cpp" compile="1" resource="0"
+                file="../MiamCommon/Source/GraphicEvent.cpp"/>
+          <FILE id="Wlybd4" name="GraphicEvent.h" compile="0" resource="0" file="../MiamCommon/Source/GraphicEvent.h"/>
           <FILE id="NX0ySy" name="MultiAreaEvent.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/MultiAreaEvent.cpp"/>
           <FILE id="oRJw3g" name="MultiAreaEvent.h" compile="0" resource="0"
                 file="../MiamCommon/Source/MultiAreaEvent.h"/>
-          <FILE id="P48GDy" name="GraphicEvent.cpp" compile="1" resource="0"
-                file="../MiamCommon/Source/GraphicEvent.cpp"/>
-          <FILE id="Wlybd4" name="GraphicEvent.h" compile="0" resource="0" file="../MiamCommon/Source/GraphicEvent.h"/>
           <FILE id="RAwQe6" name="SceneEvent.cpp" compile="1" resource="0" file="../MiamCommon/Source/SceneEvent.cpp"/>
           <FILE id="ekYbjp" name="SceneEvent.h" compile="0" resource="0" file="../MiamCommon/Source/SceneEvent.h"/>
         </GROUP>

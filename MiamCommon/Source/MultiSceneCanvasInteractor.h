@@ -207,10 +207,6 @@ namespace Miam {
         
         
         // ------ areas managing : Add and Delete ------
-        public :
-        // For testing purposes only
-        // ADDS AREAS ON ALL SCENES
-        void __AddTestAreas();
         
         protected :
         // does what it says, and sends an event also

@@ -31,6 +31,8 @@
 
 #include "DrawableArea.h"
 
+#include "SpatState.hpp"
+
 namespace Miam
 {
     // forward declarations
@@ -53,6 +55,7 @@ namespace Miam
                                                                     //[/Comments]
 */
 class SceneEditionComponent  : public Component,
+                               public TextEditorListener,
                                public ButtonListener,
                                public SliderListener,
                                public ComboBoxListener
@@ -99,6 +102,8 @@ public:
     // - - - - - Spat group - - - - -
     void SetSpatGroupHidden(bool _isHidden);
     void SetSpatGroupReduced(bool _isReduced);
+    void UpdateStatesList(std::vector< std::shared_ptr<SpatState<double>> > &newSpatStates);
+    void SelectSpatState(int index, NotificationType notificationType = NotificationType::dontSendNotification);
     // - - - - - Initial Scene State group - - - - -
     void SetInitialStateGroupHidden(bool _isHidden);
     void SetInitialStateGroupReduced(bool _isReduced);
@@ -125,10 +130,9 @@ public:
 
 
     public :
-    // Events actually retransmitted from the textEditorListener attribute...
-    // Because the Projucer does not allow direct inheritance of TextEditorListener
-    // interface for automatically-generated components !!...
-    void textEditorTextChanged(TextEditor& _editor);
+    virtual void textEditorTextChanged(TextEditor& _editor) override;
+
+
 
     //[/UserMethods]
 
@@ -159,21 +163,6 @@ private:
     bool pasteTextButtonEnabledBackUp = false;
 
 
-
-    // BECAUSE THE PROJUCER DOESN'T ALLOW A TEXTEDITOR CALLBACK LISTENER NAMING
-    // et ça ressemble à une blague...
-    class SceneEditionTextEditorListener : public TextEditorListener
-    {
-        public :
-        SceneEditionTextEditorListener(SceneEditionComponent* _parent) {parent = _parent;}
-        void textEditorTextChanged(TextEditor& _editor) override
-        { parent->textEditorTextChanged(_editor); }
-        private :
-        SceneEditionComponent* parent = 0;
-    };
-    ScopedPointer<SceneEditionTextEditorListener> textEditorListener;
-
-
     //[/UserVariables]
 
     //==============================================================================
@@ -196,7 +185,7 @@ private:
     ScopedPointer<TextButton> bringToFrontTextButton;
     ScopedPointer<TextButton> sendToBackTextButton;
     ScopedPointer<GroupComponent> canvasGroupComponent;
-    ScopedPointer<ComboBox> speakersGroupComboBox;
+    ScopedPointer<ComboBox> spatStatesComboBox;
     ScopedPointer<Label> spatLabel;
     ScopedPointer<TextButton> addSceneTextButton;
     ScopedPointer<TextButton> deleteSceneTextButton;

@@ -28,8 +28,7 @@ SpatModel::SpatModel(IPresenter* presenter_, double updateFrequency_Hz)
 :
 PeriodicUpdateThread("SpatModel updater"), // base class
 
-presenter(presenter_),
-spatType(SpatType::None)
+presenter(presenter_)
 {
     updateThreadF_Hz = updateFrequency_Hz;
     updateThreadT_us = (int)std::round(1000000.0/updateFrequency_Hz);
@@ -48,10 +47,12 @@ void SpatModel::AddSpeaker()
 {
     std::shared_ptr<Speaker<double>> newSpeaker(new Speaker<double>());
     speakers.push_back(newSpeaker);
-    spatInterpolator->AddSpeaker();
+    std::logic_error("not fully implemented");
+    //spatInterpolator->AddSpeaker();
 }
 void SpatModel::RemoveSpeaker(size_t id_)
 {
-    spatInterpolator->RemoveSpeaker(id_);
+    std::logic_error("not fully implemented");
+    //spatInterpolator->RemoveSpeaker(id_);
     speakers.erase(speakers.begin()+id_);
 }

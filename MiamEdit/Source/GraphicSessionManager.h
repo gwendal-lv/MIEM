@@ -30,12 +30,13 @@
 #include "MultiSceneCanvasEditor.h"
 #include "SceneCanvasComponent.h"
 
+#include "SpatInterpolator.hpp"
+
 namespace Miam {
     
     // Simple declarations
     class View;
     class Presenter;
-    
     
     /// \brief Sub-module belonging to the Presenter module, which handles the editing
 	/// of all of the EditableArea.
@@ -49,11 +50,14 @@ namespace Miam {
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
         
-        // Graphical objects belong to the Presenter module, not to the View
         private :
+        
         // links back to the View module
         View* view;
         SceneEditionComponent* sceneEditionComponent;
+        
+        // For communication with Model
+        std::shared_ptr<SpatInterpolator<double>> spatInterpolator;
         
         // internal states
         GraphicSessionMode mode;
@@ -75,8 +79,12 @@ namespace Miam {
         /// \brief Construction (the whole Presenter module is built after the View).
         GraphicSessionManager(View* _view, Presenter* presenter_);
         
+        /// \Brief to be called after Model construction (which occurs
+        /// after Presenter construction)
+        void CompleteInitialisation(std::shared_ptr<SpatInterpolator<double>> _spatInterpolator);
+        
         /// \brief Destruction and the editor and the canvases
-        ~GraphicSessionManager();
+        virtual ~GraphicSessionManager();
         
         // Debug purposes only
         void __LoadDefaultTest();
@@ -89,7 +97,9 @@ namespace Miam {
         
         
         /// \brief Gets the currently selected area, or nullptr if nothing selected
-        std::shared_ptr<IEditableArea> GetSelectedArea();
+        ///
+        /// Throws an exception is the area cannot be casted to Miam::ISpatArea
+        std::shared_ptr<SpatArea> GetSelectedArea();
         
         
         
@@ -116,6 +126,8 @@ namespace Miam {
         
         
         // ----- Events from the Presenter itself -----
+        /// \brief Updates the data that may have been modified during AppMode
+        void OnEnterSpatScenesEdition();
         
         virtual void HandleEventSync(std::shared_ptr<GraphicEvent> event_) override;
         
@@ -124,30 +136,38 @@ namespace Miam {
         void DisplayInfo(String info) override;
         
         
-        // ----- Events from View -----
+        // ----- Events from View, transmitted to the selected Canvas Manager -----
         public :
         
         void OnAddScene();
         void OnDeleteScene();
         void OnSceneLeft();
         void OnSceneRight();
+        void OnSceneNameChange(std::string _name);
         
         void OnAddPoint();
         void OnDeletePoint();
         
-        void OnCopyArea();
-        void OnPasteArea();
         void OnAddArea();
         void OnDeleteArea();
-        
-        void OnNewColour(Colour colour);
         
         void OnSendBackward();
         void OnSendToBack();
         void OnBringForward();
         void OnBringToFront();
         
-        void OnSceneNameChange(std::string _name);
+        void OnNewColour(Colour colour);
+        
+        
+        // ----- Events from View, internally processed -----
+        // Events treated by this class, and not by the selected CanvasManager
+        // because it is specifically related to spatialization
+        public :
+        
+        void OnCopyArea();
+        void OnPasteArea();
+        
+        void OnSpatStateChanged(int spatStateIdx);
         
         
     };

@@ -32,13 +32,6 @@ Presenter::Presenter(View* _view) :
     // After all sub-modules are built, the presenter refers itself to the View
     view->CompleteInitialization(this);
     
-    
-    // HERE, WE SHOULD LOAD THE DEFAULT FILE
-    graphicSessionManager.__LoadDefaultTest();
-    
-    // App mode changer to Scenes Edition by default (should be stored within the file ?)
-    appModeChangeRequest(AppMode::EditSpatScenes);
-    //appModeChangeRequest(AppMode::EditSpeakersGroups);
 }
 
 void Presenter::CompleteInitialisation(Model* _model)
@@ -47,7 +40,15 @@ void Presenter::CompleteInitialisation(Model* _model)
     model = _model;
     // Sub-modules
     spatStatesEditionManager.CompleteInitialisation(model->GetSpatInterpolator());
+    graphicSessionManager.CompleteInitialisation(model->GetSpatInterpolator());
     settingsManager.CompleteInitialisation(model);
+    
+    // Actual mode change here
+    // App mode changer to Scenes Edition by default (should be stored within the file ?)
+    appModeChangeRequest(AppMode::EditSpatScenes);
+    
+    // HERE, WE SHOULD LOAD THE DEFAULT FILE
+    graphicSessionManager.__LoadDefaultTest();
 }
 
 
@@ -61,15 +62,33 @@ AppMode Presenter::appModeChangeRequest(AppMode newAppMode)
     {
         view->ChangeAppMode(AppMode::Loading);
         
-        // Treatment when necessary
+        // - - - - - PRE-CHANGE PROCESSING - - - - -
+        switch(appMode)
+        {
+            case AppMode::EditSpatStates :
+                // If leaving the matrices editing : data save before changing mode
+                spatStatesEditionManager.OnLeaveSpatStatesEdition();
+                break;
+                
+            default :
+                break;
+        }
         
-        // If leaving the matrices editing : we should save data before changing mode
-        if (appMode == AppMode::EditSpatStates)
-            spatStatesEditionManager.OnLeaveSpatStatesEdition();
-        
-        // Internal update
+        // Internal+graphical update
         appMode = newAppMode;
         view->ChangeAppMode(appMode);
+        
+        // - - - - - POST-CHANGE PROCESSING - - - - -
+        switch(appMode)
+        {
+            case AppMode::EditSpatScenes :
+                // At leats : reloading of maybe changed data from other mode
+                graphicSessionManager.OnEnterSpatScenesEdition();
+                break;
+                
+            default :
+                break;
+        }
     }
     
     

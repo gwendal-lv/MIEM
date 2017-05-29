@@ -18,6 +18,8 @@
 
 #include "SceneEvent.h"
 
+#include "SpatPolygon.h"
+
 using namespace Miam;
 
 
@@ -69,6 +71,11 @@ GraphicSessionManager::GraphicSessionManager(View* _view, Presenter* presenter_)
     SetSelectedCanvas(canvasManagers.front());
 }
 
+void GraphicSessionManager::CompleteInitialisation(std::shared_ptr<SpatInterpolator<double>> _spatInterpolator)
+{
+    spatInterpolator = _spatInterpolator;
+}
+
 GraphicSessionManager::~GraphicSessionManager()
 {
 }
@@ -80,7 +87,28 @@ void GraphicSessionManager::__LoadDefaultTest()
     srand(2016); // GRAINE fixée ici
     
     for(size_t i=0 ; i<canvasManagers.size(); i++)
-        canvasManagers[i]->__AddTestAreas();
+    {
+        for (size_t j=0 ; j < canvasManagers[i]->GetScenesCount() ; j++)
+        {
+            canvasManagers[i]->SelectScene((int)j);
+            
+            int areasCount = 3+(rand()%3);
+            for (int k=0 ; k<areasCount ; k++)
+            {
+                // Only polygons added for now
+                auto currentEditablePolygon =
+                std::make_shared<SpatPolygon>(
+                            GetNextAreaId(),
+                   Point<double>(0.2f+0.13f*k,0.3f+0.1f*k), 3+2*k, 0.15f+0.04f*(k+1),
+                             Colour(80*(uint8)k, 0, 255));
+                // On each canvas
+                if (auto editableCanvas = std::dynamic_pointer_cast<MultiSceneCanvasEditor>(canvasManagers[i]))
+                    editableCanvas->AddArea(currentEditablePolygon);
+                else
+                    throw std::runtime_error("Canvas not editable.");
+            }
+        }
+    }
 }
 
 
@@ -93,10 +121,15 @@ uint64_t GraphicSessionManager::GetNextAreaId()
     nextAreaId++;
     return areaIdBackup;
 }
-std::shared_ptr<IEditableArea> GraphicSessionManager::GetSelectedArea()
+std::shared_ptr<SpatArea> GraphicSessionManager::GetSelectedArea()
 {
     if (selectedCanvas)
-        return getSelectedCanvasAsEditable()->GetSelectedArea();
+    {
+        if (auto spatArea = std::dynamic_pointer_cast<SpatArea>(getSelectedCanvasAsEditable()->GetSelectedArea()))
+            return spatArea;
+        else
+            throw std::runtime_error("Currently selected area cannot be casted to Miam::ISpatArea");
+    }
     else
         return nullptr;
 }
@@ -198,15 +231,17 @@ void GraphicSessionManager::setMode(GraphicSessionMode newMode)
             break;
             
         case GraphicSessionMode::AreaSelected :
+            if (GetSelectedArea() == nullptr)
+                throw std::runtime_error("No area selected, mode cannot be AreaSelected");
+            
             sceneEditionComponent->SetEnabledAllControls(true, true); // as we may come from "waiting for something creation/deletion"
             sceneEditionComponent->SetCanvasGroupHidden(true);
             sceneEditionComponent->SetAreaGroupReduced(false);
             if (areaToCopy)
                 sceneEditionComponent->SetPasteEnabled(true);
             sceneEditionComponent->SetSpatGroupReduced(false);
+            sceneEditionComponent->SelectSpatState(GetSelectedArea()->GetSpatStateIndex());
             sceneEditionComponent->SetInitialStateGroupHidden(true);
-            if (GetSelectedArea() == nullptr)
-                throw std::runtime_error("No area selected, mode cannot be AreaSelected");
             sceneEditionComponent->SetAreaColourValue(GetSelectedArea()->GetFillColour());
             sceneEditionComponent->resized(); // right menu update
             
@@ -263,6 +298,16 @@ void GraphicSessionManager::CanvasModeChanged(CanvasManagerMode canvasMode)
 
 // ===== EVENTS FROM THE PRESENTER ITSELF =====
 
+void GraphicSessionManager::OnEnterSpatScenesEdition()
+{
+    auto tempStates = spatInterpolator->GetSpatStates();
+    sceneEditionComponent->UpdateStatesList(tempStates);
+    
+    // Forced update of canvases
+    for (size_t i=0 ; i<canvasManagers.size() ; i++)
+        canvasManagers[i]->OnResized();
+}
+
 void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_)
 {
     
@@ -294,8 +339,7 @@ void GraphicSessionManager::DisplayInfo(String info)
 
 
 
-// ===== EVENTS FROM VIEW =====
-
+// = = = = = = = = = = Events from View, transmitted the a canvas  = = = = = = = = = =
 
 void GraphicSessionManager::OnAddScene()
 {
@@ -320,6 +364,14 @@ void GraphicSessionManager::OnSceneLeft()
 void GraphicSessionManager::OnSceneRight()
 {
     getSelectedCanvasAsEditable()->MoveSelectedSceneTowardsLast();
+}
+void GraphicSessionManager::OnSceneNameChange(std::string _name)
+{
+    if (mode != GraphicSessionMode::Loaded && mode != GraphicSessionMode::Loading)
+    {
+        if (_name.length() > 0) // we do not consider empty strings
+            getSelectedCanvasAsEditable()->SetSelectedSceneName(_name);
+    }
 }
 
 
@@ -352,71 +404,6 @@ void GraphicSessionManager::OnDeletePoint()
     else
         selectedCanvas->SetMode(CanvasManagerMode::AreaSelected);
 }
-void GraphicSessionManager::OnCopyArea()
-{
-    if(selectedCanvas)
-    {
-        auto localAreaToCopy = getSelectedCanvasAsEditable()->GetSelectedArea();
-        if (localAreaToCopy)
-            areaToCopy = localAreaToCopy;
-        else
-            throw std::runtime_error("Cannot copy an area... No area selected in SceneCanvasComponent::Id" + std::to_string(selectedCanvas->GetId()));
-    }
-    else
-        throw std::runtime_error("Cannot copy an area if no canvas is selected...");
-    
-    // Graphical Update
-    sceneEditionComponent->SetPasteEnabled(true);
-}
-void GraphicSessionManager::OnPasteArea()
-{
-    if (selectedCanvas)
-    {
-        if (areaToCopy)
-        {
-            // On va forcer l'appel au constructeur de copie
-            // COPIE DE POLYGONE SEULEMENT
-            std::shared_ptr<IEditableArea> newArea;
-            
-            // Casts sans doute inutiles ici....
-            // Et le code serait + clair avec des méthode de ** Clonage ** à l'intérieur des classes...
-            std::shared_ptr<EditablePolygon> newCastedPolygon = std::dynamic_pointer_cast<EditablePolygon>(areaToCopy);
-            // Si le cast vers Polygone a bien fonctionné
-            if (newCastedPolygon)
-            {
-                std::shared_ptr<EditablePolygon> newPolygon(new EditablePolygon(*(newCastedPolygon.get())));
-                
-                // 
-                newArea = newPolygon;
-            }
-            // Sinon c'est l'alerte au gogole
-            else
-                throw std::runtime_error("Unable to cast the currently selectedArea to a polygon, in order to duplicate then paste it. Generic code not implemented.");
-            
-            // Puis : même procédure pour les cas possibles
-            // Modification du polygone copié
-            newArea->SetId(GetNextAreaId());
-            
-            // BESOIN DE SAVOIR SI ON CHANGE DE CANVAS OU NON ?
-            // Si on change, besoin d'appeler une fonction du genre :
-            // RescaleForCanvas(SceneCanvasComponent* )
-            //
-            // Juste translation par rapport à l'original, dans tous les cas...
-            newArea->Translate(Point<double>(20,20));
-            getSelectedCanvasAsEditable()->AddArea(newArea);
-            getSelectedCanvasAsEditable()->SetSelectedArea(newArea);
-            
-            // Graphical Update
-            selectedCanvas->CallRepaint();
-        }
-        else
-            throw std::runtime_error("No valid area can be pasted from the clipboard.");
-    }
-    else
-        throw std::runtime_error("Cannot paste an area : no canvas selected. Paste button should not be clickable at the moment.");
-    
-    
-}
 void GraphicSessionManager::OnAddArea()
 {
     if (selectedCanvas)
@@ -439,14 +426,9 @@ void GraphicSessionManager::OnDeleteArea()
 
 void GraphicSessionManager::OnNewColour(Colour colour)
 {
-    std::shared_ptr<DrawableArea> selectedArea = std::dynamic_pointer_cast<DrawableArea>(GetSelectedArea());
-    if (selectedArea)
-    {
-        selectedArea->SetFillColour(colour);
-        selectedCanvas->CallRepaint();
-    }
-    else
-        std::runtime_error("The given colour cannot be applied : no area is selected");
+    if (selectedCanvas)
+        getSelectedCanvasAsEditable()->OnNewColour(colour);
+    else throw std::runtime_error("Cannot set a new colour : no canvas selected");
 }
 
 
@@ -476,12 +458,75 @@ void GraphicSessionManager::OnBringToFront()
     else throw std::runtime_error("Cannot bring something to front : no canvas selected");
 }
 
-void GraphicSessionManager::OnSceneNameChange(std::string _name)
+
+
+// = = = = = = = = = = Events from View, internally processed  = = = = = = = = = =
+
+void GraphicSessionManager::OnCopyArea()
 {
-    if (mode != GraphicSessionMode::Loaded && mode != GraphicSessionMode::Loading)
+    if(selectedCanvas)
     {
-        if (_name.length() > 0) // we do not consider empty strings
-            getSelectedCanvasAsEditable()->SetSelectedSceneName(_name);
+        auto localAreaToCopy = getSelectedCanvasAsEditable()->GetSelectedArea();
+        if (localAreaToCopy)
+            areaToCopy = localAreaToCopy;
+        else
+            throw std::runtime_error("Cannot copy an area... No area selected in SceneCanvasComponent::Id" + std::to_string(selectedCanvas->GetId()));
+    }
+    else
+        throw std::runtime_error("Cannot copy an area if no canvas is selected...");
+    
+    // Graphical Update
+    sceneEditionComponent->SetPasteEnabled(true);
+}
+void GraphicSessionManager::OnPasteArea()
+{
+    if (selectedCanvas)
+    {
+        if (areaToCopy)
+        {
+            // On va forcer l'appel au constructeur de copie
+            std::shared_ptr<IDrawableArea> newDrawbleArea(areaToCopy->Clone());
+            std::shared_ptr<IEditableArea> newArea;
+            // If cast does not work...
+            if (!(newArea = std::dynamic_pointer_cast<IEditableArea>(newDrawbleArea)))
+                throw std::runtime_error("Area to copy canot be casted to an editable type");
+            
+            // Puis : même procédure pour les cas possibles
+            // Modification du polygone copié
+            newArea->SetId(GetNextAreaId());
+            
+            // BESOIN DE SAVOIR SI ON CHANGE DE CANVAS OU NON ?
+            // Si on change, besoin d'appeler une fonction du genre :
+            // RescaleForCanvas(SceneCanvasComponent* )
+            //
+            // Juste translation par rapport à l'original, dans tous les cas...
+            newArea->Translate(Point<double>(20,20));
+            getSelectedCanvasAsEditable()->AddArea(newArea);
+            getSelectedCanvasAsEditable()->SetSelectedArea(newArea);
+            
+            // Graphical Update
+            selectedCanvas->CallRepaint();
+        }
+        else
+            throw std::runtime_error("No valid area can be pasted from the clipboard.");
+    }
+    else
+        throw std::runtime_error("Cannot paste an area : no canvas selected. Paste button should not be clickable at the moment.");
+    
+    
+}
+
+void GraphicSessionManager::OnSpatStateChanged(int spatStateIdx)
+{
+    // We just don't process the "void" combo box callback for now
+    if (spatStateIdx < 0)
+        return;
+    if (auto selectedArea = GetSelectedArea())
+    {
+        // No check on index (view data is supposed to be up-to-date)
+        selectedArea->LinkToSpatState(spatInterpolator->GetSpatState((size_t)spatStateIdx));
+        // Forced unoptimized update of everything
+        getSelectedCanvasAsEditable()->OnResized();
     }
 }
 

@@ -49,3 +49,7 @@ void SettingsManager::OnInOutChannelsCountChanged(int inputsCount, int outputsCo
     view->GetMainContentComponent()->GetSpatStatesEditionComponent()->SetInsOutsCount(model->GetSpatInterpolator()->GetInputsCount(),
          model->GetSpatInterpolator()->GetOutputsCount());
 }
+void SettingsManager::OnAllowKeyboardEdition(bool allow)
+{
+    presenter->GetSpatStatesManager()->AllowKeyboardEdition(allow);
+}

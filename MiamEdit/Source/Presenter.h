@@ -70,6 +70,7 @@ namespace Miam {
         
         GraphicSessionManager* getGraphicSessionManager() {return &graphicSessionManager;}
         SettingsManager* GetSettingsManager() {return &settingsManager;}
+        SpatStatesEditionManager* GetSpatStatesManager() {return &spatStatesEditionManager;}
         
         
         

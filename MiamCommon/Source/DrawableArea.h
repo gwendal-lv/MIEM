@@ -39,20 +39,23 @@ namespace Miam
         virtual ~DrawableArea() {}
         
         
-        virtual void Paint(Graphics& g);
-        virtual void CanvasResized(SceneCanvasComponent* _parentCanvas);
+        virtual void Paint(Graphics& g) override;
+        virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
 
         
         // ----- Setters and Getters -----
         
         /// \returns Unique ID of the area
-        int64_t GetId() {return Id;}
+        virtual int64_t GetId() override {return Id;}
         /// \param _Id Unique ID of the area
-        void SetId(int64_t _Id) {Id = _Id;}
+        virtual void SetId(int64_t _Id) override {Id = _Id;}
         /// \returns See DrawableArea::fillColour
-        Colour GetFillColour() {return fillColour;}
+        virtual Colour GetFillColour() override {return fillColour;}
         /// \param _fillColour See DrawableArea::fillColour
-        void SetFillColour(Colour newColour);
+        virtual void SetFillColour(Colour newColour) override;
+        
+        /// \brief Sets the name that could be displayed on screen next to the center
+        virtual void SetName(String newName) override;
         
         void SetNameVisible(bool isVisible) {isNameVisible = isVisible;}
         
@@ -78,7 +81,8 @@ namespace Miam
         float centerContourWidth; ///< Width (in pixels) of the center circle drawing.
         
         int centerCircleRadius; ///< Radius (in pixels) of the center circle drawing.
-            
+        
+        String name;
         bool isNameVisible;
     };
     

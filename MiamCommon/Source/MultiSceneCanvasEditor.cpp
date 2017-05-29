@@ -127,7 +127,10 @@ void MultiSceneCanvasEditor::OnNewColour(Colour colour)
     {
         auto editableScene = std::dynamic_pointer_cast<EditableScene>(selectedScene);
         if (editableScene)
-            editableScene->ChangeSelectedAreaColour(colour);
+        {
+            auto areaE = editableScene->ChangeSelectedAreaColour(colour);
+            handleAndSendAreaEventSync(areaE);
+        }
         else throw std::runtime_error("Cannot change colour : current selected scene is not a Miam::EditableScene");
     }
     else throw std::runtime_error("The given colour cannot be applied : no scene is selected");

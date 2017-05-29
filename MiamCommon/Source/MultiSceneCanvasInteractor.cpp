@@ -429,27 +429,6 @@ bool MultiSceneCanvasInteractor::DeleteScene()
 
 // - - - - - - - - - - Areas Managing : Add and Delete - - - - - - - - - -
 
-void MultiSceneCanvasInteractor::__AddTestAreas()
-{
-    for (size_t i=0 ; i < scenes.size() ; i++)
-    {
-        SelectScene((int)i);
-        int areasCount = 4+(rand()%3);
-        
-        for (int j=0 ; j<areasCount ; j++)
-        {
-            // Only polygons added for now
-            auto currentEditablePolygon = std::make_shared<EditablePolygon>(
-                                                                                GetNextAreaId(),
-                                                                                        Point<double>(0.2f+0.13f*j,0.3f+0.1f*j), 3+2*j, 0.15f+0.04f*(j+1),
-                                                                                        Colour(80*(uint8)j, 0, 255),
-                                                                                        canvasComponent->GetCanvas()->GetRatio());
-            // On each
-            addAreaToScene(selectedScene, currentEditablePolygon);
-        }
-    }
-}
-
 void MultiSceneCanvasInteractor::addAreaToScene(std::shared_ptr<EditableScene> scene_, std::shared_ptr<IInteractiveArea> area_)
 {
     auto areaE = scene_->AddArea(area_);

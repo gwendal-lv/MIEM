@@ -16,16 +16,15 @@
 #include <vector>
 #include <memory>
 
-#include "IInteractiveArea.h"
-
 #include "SparseMatrix.hpp"
 #include "AudioDefines.h"
 
+#include "SpatArea.h"
 
 namespace Miam
 {
     // Forward declarations
-    class IInteractiveArea;
+    class SpatArea;
     
     
     /// \brief An abstract class that represents a state of the
@@ -51,44 +50,81 @@ namespace Miam
         
         // Own attributes
         std::string name;
-        
+        // For convenience and optimizations...
+        int index;
         
         
         /// \brief List of areas that represent this spatialization state
         ///
         /// Not the most optimal STL container (research is not optimized)
-        std::vector< std::shared_ptr<IInteractiveArea> > linkedAreas;
+        std::vector< std::weak_ptr<SpatArea> > linkedAreas;
         
         
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
         
-        virtual std::string GetName() {return name;}
-        virtual void SetName(std::string _name) {name = _name;}
+        /// \returns A string containing the Id (counting from 1) and the name
+        /// concatenated
+        virtual std::string GetName(bool withId = true)
+        {
+            std::string indexString;
+            if (withId)
+                indexString += std::to_string(index+1) + ". ";
+            return indexString + name;
+        }
+        virtual void SetName(std::string _name)
+        {
+            name = _name;
+            for (auto it = linkedAreas.begin() ; it!=linkedAreas.end() ; it++)
+                (*it).lock()->OnSpatStateNameChanged();
+        }
+        
+        void SetIndex(int newIndex) {index = newIndex;}
+        int GetIndex() {return index;}
         
         virtual size_t GetOutputsCount() = 0;
         
         virtual size_t GetLinkedAreasCount() {return linkedAreas.size();}
-        virtual std::shared_ptr<IInteractiveArea> GetLinkedArea(size_t i) {return linkedAreas[i];}
+        virtual std::shared_ptr<SpatArea> GetLinkedArea(size_t i)
+        {
+            if(auto area = linkedAreas[i].lock())
+                return area;
+            else
+                throw std::runtime_error("Spat state is linked to a non-existant area");
+        }
         
         
         // = = = = = = = = = = METHODS = = = = = = = = = =
         public :
+        SpatState() : index(-1) {}
         
         
         // - - - - - Construction / destruction - - - - -
-        // TODO
-        // MUST UNLINK FROM AREA (if remaining...)
-        // TODO
-        // MUST UNLINK FROM AREA (if remaining...)
-        // TODO
-        // MUST UNLINK FROM AREA (if remaining...)
-        // TODO
-        // MUST UNLINK FROM AREA (if remaining...)
         virtual ~SpatState()
-        {}
+        {
+            // does not need to unlink from area : the link is a weak_ptr
+        }
+
         
+        // - - - - - Linking to spat areas - - - - -
+        void LinkToArea(std::shared_ptr<SpatArea> spatArea)
+        {
+            // no check for double addition (but it's weak ptrs...)
+            linkedAreas.push_back(spatArea);
+        }
+        void UnlinkToArea(std::shared_ptr<SpatArea> spatArea)
+        {
+            for (auto it = linkedAreas.begin() ; it!=linkedAreas.end() ; it++)
+            {
+                auto curAreaPtr = (*it).lock();
+                if (curAreaPtr == spatArea)
+                {
+                    linkedAreas.erase(it);
+                    break;
+                }
+            }
+        }
         
         // - - - - - Output channels (speakers) : add, delete, swap, ... - - - - -
         virtual void AddOutput() = 0;

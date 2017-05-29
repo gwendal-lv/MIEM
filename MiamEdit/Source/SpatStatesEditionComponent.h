@@ -73,8 +73,8 @@ public:
     void UpdateStatesList(std::vector< std::shared_ptr<SpatState<double>> > &newSpatStates);
 
     // When a new state is selected (from the Presenter or from an internal event)
-    void UpdateForSelectedState(std::string infoText, std::shared_ptr<SpatMatrix> newSpatMatrix);
-    
+    void SelectAndUpdateState(int stateIndex, std::string infoText, std::shared_ptr<SpatMatrix> newSpatMatrix);
+
     /// \brief Whole update of the matrix : all coefficients, and active sliders
     private :
     void updateMatrix();
@@ -82,6 +82,8 @@ public:
     public :
     void SetInsOutsCount(int _inputsCount, int _outputsCount);
     std::shared_ptr<SpatMatrix> GetDisplayedSpatMatrix();
+
+    void AllowKeyboardEdition(bool allow);
 
     //[/UserMethods]
 
@@ -97,7 +99,7 @@ private:
     SpatStatesEditionManager* editionManager = 0;
 
     int previousStateIndex = -1; // nothing selected in Juce convention
-    
+
     // For backing up the data (duplicated data from Model)
     int inputsCount = 0;
     int outputsCount = 0;

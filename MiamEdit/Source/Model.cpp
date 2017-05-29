@@ -33,7 +33,9 @@ Model::Model(Presenter* presenter_)
     SpatModel(presenter_),
 presenter(presenter_)
 {
-    spatInterpolator = new SpatInterpolator<double>(this);
+    // Choice of interpolation type
+    spatInterpolator = std::make_shared<SpatInterpolator<double>>(SpatType::RoutingMatrix);
+    spatInterpolator->__AddDefaultStates();
     
     // OCTOPHONIE POUR L'INSTANT
     for (size_t i = 0; i<8 ; i++)
@@ -42,9 +44,6 @@ presenter(presenter_)
         speakers.back()->SetName("Octophonie " + std::to_string(i+1));
     }
     
-    spatInterpolator->__AddDefaultStates();
-    // PAS LE CHOIX POUR L'INSTANT
-    spatType = SpatType::RoutingMatrix;
     
     // Auto-referenciation to other modules
     presenter->CompleteInitialisation(this);
@@ -62,9 +61,6 @@ Model::~Model()
 	// Joining of threads
 	continueUpdate = false;
 	updateThread.join();
-
-
-    delete spatInterpolator;
 }
 
 

@@ -63,7 +63,7 @@ namespace Miam {
         
         // - - - - - Callbacks from View - - - - -
         void OnInOutChannelsCountChanged(int inputsCount, int outputsCount);
-        
+        void OnAllowKeyboardEdition(bool allow);
         
         
     };

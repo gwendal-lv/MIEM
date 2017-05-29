@@ -44,6 +44,7 @@ namespace Miam {
                                                                     //[/Comments]
 */
 class HardwareConfigurationComponent  : public Component,
+                                        public TextEditorListener,
                                         public SliderListener,
                                         public ButtonListener
 {
@@ -55,6 +56,11 @@ public:
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
     void CompleteInitialization(SettingsManager* _settingsManager);
+
+    int GetUdpPort();
+    void SetUdpPort(int udpPort);
+
+    virtual void textEditorTextChanged(TextEditor& editorThatHasChanged) override;
     //[/UserMethods]
 
     void paint (Graphics& g) override;

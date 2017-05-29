@@ -49,7 +49,8 @@ namespace Miam
 
         
         
-		//  - - - - - Events (flows of events) happening during a modification - - - - -
+		//  - - - - - Events (flows of events) happening during
+        //                              a geometrical modification - - - - -
         
         ShapeChanged, ///< editing contour points
         Translation, ///< Pure translation
@@ -71,6 +72,11 @@ namespace Miam
 		Selected, ///< Area has just been selected
 		Unselected, ///< Area has just been selected
 
+        
+        
+        
+        //  - - - - - Event related to the appearance - - - - -
+        ColorChanged, ///< The contour and/or background color of the area has just changed
         
         
     };

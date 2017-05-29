@@ -46,8 +46,6 @@ void DrawableArea::Paint(Graphics& g)
 		(float)centerInPixels.y-centerCircleRadius,
         centerCircleRadius*2.0f, centerCircleRadius*2.0f, centerContourWidth);
     
-    String name = String("[[[undefined ") + String(Id) + String("]]]");
-    
     if (isNameVisible)
     {
         g.setColour(Colours::black); // black shadow
@@ -73,5 +71,10 @@ void DrawableArea::SetFillColour(Colour newColour)
 {
     fillColour = newColour;
 }
+void DrawableArea::SetName(String newName)
+{
+    name = newName;
+}
+
 
 

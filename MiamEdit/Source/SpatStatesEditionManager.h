@@ -12,7 +12,7 @@
 #define SPATSTATESEDITIONMANAGER_H_INCLUDED
 
 #include "SpatInterpolator.hpp"
-
+#include "SpatMatrix.hpp"
 
 namespace Miam
 {
@@ -34,7 +34,7 @@ namespace Miam
         // Links to other modules
         View* view;
         SpatStatesEditionComponent* editionComponent;
-        SpatInterpolator<double>* spatInterpolator; // from Model
+        std::shared_ptr<SpatInterpolator<double>> spatInterpolator; // from Model
         
         // Selected spat state
         std::shared_ptr<SpatState<double>> selectedSpatState = nullptr;
@@ -50,7 +50,10 @@ namespace Miam
         
         // 1 dimension speakers' volumes, faders edition
         size_t GetFadersCount();
-        std::string GetFaderName(size_t _i) {return spatInterpolator->GetOutputName(_i);}
+        std::string GetFaderName(size_t _i) {
+            throw std::logic_error("Plus utilisé dans la version avec matrices");
+         //   return spatInterpolator->GetOutputName(_i);
+        }
         
     
         // = = = = = = = = = = METHODS = = = = = = = = = =
@@ -60,7 +63,7 @@ namespace Miam
         // - - - - - Construction / destruction - - - - -
         
         SpatStatesEditionManager(View* _view);
-        void CompleteInitialisation(SpatInterpolator<double>* _spatInterpolator);
+        void CompleteInitialisation(std::shared_ptr<SpatInterpolator<double>> _spatInterpolator);
         
         
         // - - - - - Events from Presenter - - - - -
@@ -82,6 +85,10 @@ namespace Miam
         
         // - - - - - Internal helpers - - - - -
         void sendDataToModel(std::shared_ptr<SpatMatrix> currentMatrix);
+        
+        // - - - - - Settings Management - - - - -
+        void AllowKeyboardEdition(bool allow);
+
     };
     
 }

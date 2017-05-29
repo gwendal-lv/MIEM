@@ -104,9 +104,12 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
     // Sliders max values from defines
     inputsCountSlider->setRange (1, Miam_MaxNumInputs, 1);
     outputsCountSlider->setRange (1, Miam_MaxNumOutputs, 1);
-    
+
     // OSC plugin control is the only choice for now (defaultly activated)
     oscPluginToggleButton->setEnabled(false);
+
+    // listeners
+    udpPortTextEditor->addListener(this);
 
     //[/UserPreSize]
 
@@ -200,6 +203,7 @@ void HardwareConfigurationComponent::buttonClicked (Button* buttonThatWasClicked
     else if (buttonThatWasClicked == keyboardButton)
     {
         //[UserButtonCode_keyboardButton] -- add your button handler code here..
+        settingsManager->OnAllowKeyboardEdition(keyboardButton->getToggleState());
         //[/UserButtonCode_keyboardButton]
     }
 
@@ -214,6 +218,39 @@ void HardwareConfigurationComponent::CompleteInitialization(SettingsManager* _se
 {
     settingsManager = _settingsManager;
 }
+
+int HardwareConfigurationComponent::GetUdpPort()
+{
+    try {
+        return std::stoi(udpPortLabel->getText().toStdString());
+    } catch (std::exception) {
+        return -1;
+    }
+}
+void HardwareConfigurationComponent::SetUdpPort(int udpPort)
+{
+    udpPortLabel->setText(std::to_string(udpPort), NotificationType::dontSendNotification);
+}
+
+void HardwareConfigurationComponent::textEditorTextChanged(TextEditor& editorThatHasChanged)
+{
+    if (&editorThatHasChanged == udpPortTextEditor.get())
+    {
+        bool enteredValueIsCorrect = true;
+        int parsedValue;
+        // Value stays visible only if correct
+        try {
+            parsedValue = std::stoi(udpPortTextEditor->getText().toStdString());
+        } catch (std::exception) {
+            enteredValueIsCorrect = false;
+        }
+        if (parsedValue <= 0 || 65535 < parsedValue)
+            enteredValueIsCorrect = false;
+        if ( ! enteredValueIsCorrect)
+            udpPortTextEditor->setText("", NotificationType::dontSendNotification);
+        // We don't send it... for now
+    }
+}
 //[/MiscUserCode]
 
 
@@ -227,9 +264,10 @@ void HardwareConfigurationComponent::CompleteInitialization(SettingsManager* _se
 BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="HardwareConfigurationComponent"
-                 componentName="" parentClasses="public Component" constructorParams=""
-                 variableInitialisers="" snapPixels="8" snapActive="1" snapShown="1"
-                 overlayOpacity="0.330" fixedSize="0" initialWidth="1024" initialHeight="600">
+                 componentName="" parentClasses="public Component, public TextEditorListener"
+                 constructorParams="" variableInitialisers="" snapPixels="8" snapActive="1"
+                 snapShown="1" overlayOpacity="0.330" fixedSize="0" initialWidth="1024"
+                 initialHeight="600">
   <BACKGROUND backgroundColour="ffafafaf"/>
   <SLIDER name="Inputs Count slider" id="77ed5b9e29dce02e" memberName="inputsCountSlider"
           virtualName="" explicitFocusOrder="0" pos="8C 16 150 24" textboxtext="ff000000"

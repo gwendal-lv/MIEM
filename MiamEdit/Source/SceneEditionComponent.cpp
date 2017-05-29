@@ -182,20 +182,20 @@ SceneEditionComponent::SceneEditionComponent ()
     canvasGroupComponent->setColour (GroupComponent::outlineColourId, Colour (0xff454545));
     canvasGroupComponent->setColour (GroupComponent::textColourId, Colours::black);
 
-    addAndMakeVisible (speakersGroupComboBox = new ComboBox ("Speakers group combo box"));
-    speakersGroupComboBox->setEditableText (false);
-    speakersGroupComboBox->setJustificationType (Justification::centredLeft);
-    speakersGroupComboBox->setTextWhenNothingSelected (String());
-    speakersGroupComboBox->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
-    speakersGroupComboBox->addItem (TRANS("-1 undefined"), 1);
-    speakersGroupComboBox->addListener (this);
+    addAndMakeVisible (spatStatesComboBox = new ComboBox ("Spat States combo box"));
+    spatStatesComboBox->setEditableText (false);
+    spatStatesComboBox->setJustificationType (Justification::centredLeft);
+    spatStatesComboBox->setTextWhenNothingSelected (String());
+    spatStatesComboBox->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
+    spatStatesComboBox->addItem (TRANS("-1 undefined"), 1);
+    spatStatesComboBox->addListener (this);
 
     addAndMakeVisible (spatLabel = new Label ("Spat label",
-                                              TRANS("Link to speakers group :")));
+                                              TRANS("Link to spat state:")));
     spatLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     spatLabel->setJustificationType (Justification::centredLeft);
     spatLabel->setEditable (false, false, false);
-    spatLabel->setColour (Label::textColourId, Colour (0x66000000));
+    spatLabel->setColour (Label::textColourId, Colours::black);
     spatLabel->setColour (TextEditor::textColourId, Colours::black);
     spatLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
@@ -284,7 +284,7 @@ SceneEditionComponent::SceneEditionComponent ()
     sceneNameLabel->setColour (TextEditor::textColourId, Colours::black);
     sceneNameLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    addAndMakeVisible (sceneNameTextEditor = new TextEditor ("new text editor"));
+    addAndMakeVisible (sceneNameTextEditor = new TextEditor ("Scene Name text editor"));
     sceneNameTextEditor->setMultiLine (false);
     sceneNameTextEditor->setReturnKeyStartsNewLine (false);
     sceneNameTextEditor->setReadOnly (false);
@@ -303,8 +303,7 @@ SceneEditionComponent::SceneEditionComponent ()
     //[Constructor] You can add your own custom stuff here..
 
     // Very small hack for this component to because a text editor listener
-    textEditorListener = new SceneEditionTextEditorListener(this);
-    sceneNameTextEditor->addListener(textEditorListener);
+    sceneNameTextEditor->addListener(this);
 
     // Then, HERE ARE PRECISED the heights of groups when they are reduced
     canvasGroupReducedH = 0; // nothing inside
@@ -339,7 +338,7 @@ SceneEditionComponent::~SceneEditionComponent()
     bringToFrontTextButton = nullptr;
     sendToBackTextButton = nullptr;
     canvasGroupComponent = nullptr;
-    speakersGroupComboBox = nullptr;
+    spatStatesComboBox = nullptr;
     spatLabel = nullptr;
     addSceneTextButton = nullptr;
     deleteSceneTextButton = nullptr;
@@ -404,7 +403,7 @@ void SceneEditionComponent::resized()
     bringToFrontTextButton->setBounds (120, (8 + 168 - -8) + 80, 72, 24);
     sendToBackTextButton->setBounds (120, (8 + 168 - -8) + 104, 72, 24);
     canvasGroupComponent->setBounds (8, 8, 192, 168);
-    speakersGroupComboBox->setBounds (16, ((8 + 168 - -8) + 240 - -8) + 40, 176, 24);
+    spatStatesComboBox->setBounds (16, ((8 + 168 - -8) + 240 - -8) + 40, 176, 24);
     spatLabel->setBounds (16, ((8 + 168 - -8) + 240 - -8) + 16, 176, 24);
     addSceneTextButton->setBounds (16, 8 + 24, 88, 24);
     deleteSceneTextButton->setBounds (104, 8 + 24, 88, 24);
@@ -599,10 +598,11 @@ void SceneEditionComponent::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
     //[UsercomboBoxChanged_Pre]
     //[/UsercomboBoxChanged_Pre]
 
-    if (comboBoxThatHasChanged == speakersGroupComboBox)
+    if (comboBoxThatHasChanged == spatStatesComboBox)
     {
-        //[UserComboBoxCode_speakersGroupComboBox] -- add your combo box handling code here..
-        //[/UserComboBoxCode_speakersGroupComboBox]
+        //[UserComboBoxCode_spatStatesComboBox] -- add your combo box handling code here..
+        graphicSessionManager->OnSpatStateChanged(spatStatesComboBox->getSelectedItemIndex());
+        //[/UserComboBoxCode_spatStatesComboBox]
     }
 
     //[UsercomboBoxChanged_Post]
@@ -768,7 +768,7 @@ void SceneEditionComponent::setVisibleSpatControls(bool areVisible)
 {
     spatGroupComponent->setVisible(areVisible);
     spatLabel->setVisible(areVisible);
-    speakersGroupComboBox->setVisible(areVisible);
+    spatStatesComboBox->setVisible(areVisible);
 }
 
 
@@ -782,6 +782,19 @@ void SceneEditionComponent::SetSpatGroupReduced(bool _isReduced)
 {
     SetSpatGroupHidden(_isReduced);
     // isSpatGroupReduced = _isReduced;
+}
+void SceneEditionComponent::UpdateStatesList(std::vector< std::shared_ptr<SpatState<double>> > &newSpatStates)
+{
+    // Empties the combo box at first
+    spatStatesComboBox->clear();
+
+    // Addition of items==names one by one
+    for (size_t i=0 ; i<newSpatStates.size() ; i++)
+        spatStatesComboBox->addItem(newSpatStates[i]->GetName(), i+1); // Id==Idx+1
+}
+void SceneEditionComponent::SelectSpatState(int index, NotificationType notificationType)
+{
+    spatStatesComboBox->setSelectedItemIndex(index, notificationType);
 }
 
 
@@ -871,7 +884,7 @@ void SceneEditionComponent::spatGroupTranslateY(int dY)
 {
     componentTranslateY(spatGroupComponent.get(), dY);
     componentTranslateY(spatLabel.get(), dY);
-    componentTranslateY(speakersGroupComboBox.get(), dY);
+    componentTranslateY(spatStatesComboBox.get(), dY);
 
     initialStateGroupTranslateY(dY);
 }
@@ -902,12 +915,12 @@ void SceneEditionComponent::componentTranslateY(Component* component, int dY)
 BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="SceneEditionComponent" componentName=""
-                 parentClasses="public Component" constructorParams="" variableInitialisers=""
-                 snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
-                 fixedSize="0" initialWidth="1024" initialHeight="1024">
+                 parentClasses="public Component, public TextEditorListener" constructorParams=""
+                 variableInitialisers="" snapPixels="8" snapActive="1" snapShown="1"
+                 overlayOpacity="0.330" fixedSize="0" initialWidth="1024" initialHeight="1024">
   <BACKGROUND backgroundColour="ffd9d9d9"/>
   <GROUPCOMPONENT name="Area edition group component" id="87d416270d41f58c" memberName="areaGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="8 -8R 192 240" posRelativeY="4250d5155a80be70"
+                  virtualName="" explicitFocusOrder="0" pos="8 -889R 192 240" posRelativeY="4250d5155a80be70"
                   outlinecol="ff454545" textcol="ff000000" title="Area edition"/>
   <GROUPCOMPONENT name="Spatialization group component" id="90b16e3024c520fd" memberName="spatGroupComponent"
                   virtualName="" explicitFocusOrder="0" pos="8 -8R 192 80" posRelativeY="87d416270d41f58c"
@@ -988,13 +1001,13 @@ BEGIN_JUCER_METADATA
   <GROUPCOMPONENT name="Canvas edition group component" id="4250d5155a80be70" memberName="canvasGroupComponent"
                   virtualName="" explicitFocusOrder="0" pos="8 8 192 168" outlinecol="ff454545"
                   textcol="ff000000" title="Scene edition"/>
-  <COMBOBOX name="Speakers group combo box" id="89ad7c0a3be5a39c" memberName="speakersGroupComboBox"
+  <COMBOBOX name="Spat States combo box" id="89ad7c0a3be5a39c" memberName="spatStatesComboBox"
             virtualName="" explicitFocusOrder="0" pos="16 40 176 24" posRelativeY="90b16e3024c520fd"
             editable="0" layout="33" items="-1 undefined" textWhenNonSelected=""
             textWhenNoItems="(no choices)"/>
   <LABEL name="Spat label" id="b1f047be2f31dc5" memberName="spatLabel"
          virtualName="" explicitFocusOrder="0" pos="16 16 176 24" posRelativeY="90b16e3024c520fd"
-         textCol="66000000" edTextCol="ff000000" edBkgCol="0" labelText="Link to speakers group :"
+         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Link to spat state:"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
          justification="33"/>
@@ -1046,7 +1059,7 @@ BEGIN_JUCER_METADATA
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
          justification="33"/>
-  <TEXTEDITOR name="new text editor" id="fd7eace3e677fc36" memberName="sceneNameTextEditor"
+  <TEXTEDITOR name="Scene Name text editor" id="fd7eace3e677fc36" memberName="sceneNameTextEditor"
               virtualName="" explicitFocusOrder="0" pos="64 112 128 24" initialText=""
               multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"
               caret="1" popupmenu="1"/>

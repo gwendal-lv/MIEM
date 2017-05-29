@@ -18,6 +18,8 @@
 */
 
 //[Headers] You can add your own extra header files here...
+#include <regex> // c++11
+
 #include "SpatStateFadersDisplayComponent.h"
 #include "AudioDefines.h"
 
@@ -220,13 +222,23 @@ void SpatStatesEditionComponent::comboBoxChanged (ComboBox* comboBoxThatHasChang
     if (comboBoxThatHasChanged == spatStatesComboBox)
     {
         //[UserComboBoxCode_spatStatesComboBox] -- add your combo box handling code here..
-
         // Change might happen when editing the text has just finished ("new" item)
         if (spatStatesComboBox->getSelectedItemIndex() == -1)
         {
             // If a state was selected before...
             if (previousStateIndex >= 0)
-                editionManager->OnRenameState(spatStatesComboBox->getText().toStdString(), previousStateIndex);
+            {
+                // Using a regex, we remove the number (if existing)
+                // from the state's name
+                std::string nameToProcess = spatStatesComboBox->getText().toStdString();
+                std::regex deleteIndexAndDotRegex("[0-9]{1,}\\. "); // and the space
+                std::string processedString
+                = std::regex_replace(nameToProcess,
+                                     deleteIndexAndDotRegex,
+                                     ""); // replacement with an empty string...
+                // Actual renaming
+                editionManager->OnRenameState(processedString, previousStateIndex);
+            }
             else
                 spatStatesComboBox->setSelectedItemIndex(-1); // nothing with notif
         }
@@ -235,7 +247,7 @@ void SpatStatesEditionComponent::comboBoxChanged (ComboBox* comboBoxThatHasChang
         {
             editionManager->OnSpatStateSelectedById(GetDisplayedSpatMatrix(), spatStatesComboBox->getSelectedItemIndex());
         }
-        
+
         //[/UserComboBoxCode_spatStatesComboBox]
     }
 
@@ -262,11 +274,11 @@ void SpatStatesEditionComponent::UpdateStatesList(std::vector< std::shared_ptr<S
     // Normally : no item selected at this point
     //editionManager->OnSpatStateSelectedById(spatStatesComboBox->getSelectedItemIndex());
 }
-void SpatStatesEditionComponent::UpdateForSelectedState(std::string infoText, std::shared_ptr<SpatMatrix> newSpatMatrix)
+void SpatStatesEditionComponent::SelectAndUpdateState(int stateIndex, std::string infoText, std::shared_ptr<SpatMatrix> newSpatMatrix)
 {
     // We keep here this copy of the model internal matrix
     spatMatrix = newSpatMatrix;
-    
+
     // Buttons state (activated or not)
     bool isAnyStateSelected = spatStatesComboBox->getSelectedItemIndex() != -1;
     stateUpTextButton->setEnabled(isAnyStateSelected);
@@ -276,6 +288,7 @@ void SpatStatesEditionComponent::UpdateForSelectedState(std::string infoText, st
     linksInfoLabel->setText(infoText, NotificationType::dontSendNotification);
 
     // Internal updates
+    spatStatesComboBox->setSelectedItemIndex(stateIndex, NotificationType::dontSendNotification);
     previousStateIndex = spatStatesComboBox->getSelectedItemIndex();
     updateMatrix();
 }
@@ -283,7 +296,7 @@ void SpatStatesEditionComponent::updateMatrix()
 {
     // matrix data sent from the most recent that this class got from model
     labelledMatrixComponent->GetMatrixComponent()->SetSpatMatrix(spatMatrix);
-    
+
     // Graphical attributes
     // if a valid state is selected
     if (spatStatesComboBox->getSelectedItemIndex() >= 0)
@@ -297,13 +310,17 @@ void SpatStatesEditionComponent::SetInsOutsCount(int _inputsCount, int _outputsC
     // Backup
     inputsCount = _inputsCount;
     outputsCount = _outputsCount;
-    
+
     // Applying of changes
     updateMatrix();
 }
 std::shared_ptr<SpatMatrix> SpatStatesEditionComponent::GetDisplayedSpatMatrix()
 {
     return labelledMatrixComponent->GetMatrixComponent()->GetSpatMatrix();
+}
+void SpatStatesEditionComponent::AllowKeyboardEdition(bool allow)
+{
+    labelledMatrixComponent->GetMatrixComponent()->SetSlidersTextBoxesAreEditable(allow);
 }
 //[/MiscUserCode]
 
