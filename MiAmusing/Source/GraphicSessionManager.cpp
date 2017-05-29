@@ -121,7 +121,14 @@ std::shared_ptr<IEditableArea> GraphicSessionManager::GetSelectedArea()
 }
 
 
-
+void GraphicSessionManager::SetAllChannels()
+{
+	for (int i = 0; i < canvasManagers.size(); i++)
+	{
+		std::shared_ptr<MultiSceneCanvasManager> canvasPtr = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManagers[i]);
+		canvasPtr->SetAllChannels();
+	}
+}
 
 
 
@@ -198,21 +205,23 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					DBG("Complete Area");
 					param.Id1 = myPresenter->getSourceID(area);
 					param.Type = Miam::AsyncParamChange::ParamType::Activate;
-					param.Id2 = 1;
-					myPresenter->SendParamChange(param);
-					DBG("GSM : construct a new audio polygon, please. Id : " + (String)param.Id1);
+					param.Id2 = 1; // 1 pour activer la source, 0 pour la supprimer
+					if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(areaE->GetConcernedScene()))
+					{
+						param.IntegerValue = myPresenter->getChannel(amusingScene);
+					}
+					myPresenter->SendParamChange(param); // envoie l'ordre de creer/ detruire une source audio
+					//DBG("GSM : construct a new audio polygon, please. Id : " + (String)param.Id1);
 					param.Type = Miam::AsyncParamChange::ParamType::Source;
 					i = 0;
-					while(complete->getAllPercentages(i, param.DoubleValue))
+					while(complete->getAllPercentages(i, param.DoubleValue)) // envoie l'info de chaque cotés au model
 					{
-						DBG("GSM : the side " + (String)i + "is = " +(String)param.DoubleValue);
+						//DBG("GSM : the side " + (String)i + "is = " +(String)param.DoubleValue);
 						param.Id2 = i;
 						myPresenter->SendParamChange(param);
 						++i;
 					}
-					param.Id2 = 1000; // indiquera que l'on a envoye la position de tous les points
-					DBG("GSM : the polygon : " + (String)param.Id1 + " is finished");
-					myPresenter->SendParamChange(param);
+					
 				}
 				
 				//myPresenter->SendParamChange(param);
@@ -237,12 +246,22 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				if (auto complete = std::dynamic_pointer_cast<CompletePolygon>(area))
 				{
 					param.Id1 = myPresenter->getSourceID(area);
+					param.Type = Miam::AsyncParamChange::ParamType::Activate;
+					param.Id2 = 1; // 1 pour activer la source, 0 pour la supprimer
+					if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(areaE->GetConcernedScene()))
+					{
+						DBG("channel I send : " + (String)myPresenter->getChannel(amusingScene));
+						param.IntegerValue = myPresenter->getChannel(amusingScene);
+					}
+					myPresenter->SendParamChange(param); // envoie l'ordre de creer/ detruire une source audio
+
+					
 					param.Type = Miam::AsyncParamChange::ParamType::Source;
 					i = 0;
-					DBG("before while");
+					//DBG("before while");
 					while (complete->getAllPercentages(i, param.DoubleValue))
 					{
-						DBG("cote to send : " + (String)i);
+						//DBG("cote to send : " + (String)i);
 						param.Id2 = i;
 						myPresenter->SendParamChange(param);
 						++i;
@@ -250,54 +269,17 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					param.Id2 = 1000; // indiquera que l'on a envoye la position de tous les points
 					myPresenter->SendParamChange(param);
 					//}
-					DBG("finish");
+					//DBG("finish");
 				}
 				myPresenter->SendParamChange(param);
 				break;
 			case AreaEventType::Translation :
 				//DBG("Translation");
-				if (auto anime = std::dynamic_pointer_cast<AnimatedPolygon> (area))
-				{
-					//DBG("H = " + (String)anime->GetHeight());
-					param.Type = Miam::AsyncParamChange::ParamType::Volume;
-					param.Id1 = myPresenter->getSourceID(area);
-					param.DoubleValue = 1.5 * (301 - anime->GetHeight()) / (301 - 68);
-					myPresenter->SendParamChange(param);
-				}
-				else
-				{
-					//DBG("not an anime");
-				}
+				
 				//area-> get center height --> volume
 				break;
 			case AreaEventType::RotScale :
 				//DBG("RotScale");
-				if (ADSR == 0)
-				{
-					if (auto anime = std::dynamic_pointer_cast<AnimatedPolygon> (area))
-					{
-						//DBG("H = " + (String)anime->GetHeight());
-						S = area->GetSurface();
-						f = 20 * pow(10, S / 4000);
-						param.Type = Miam::AsyncParamChange::ParamType::Frequency;
-						param.Id1 = myPresenter->getSourceID(area);
-						param.DoubleValue = f;
-						myPresenter->SendParamChange(param);
-					}
-					else
-						DBG("not an anime");
-				}
-				else if(ADSR == 1)
-				{
-					if (auto anime = std::dynamic_pointer_cast<AnimatedPolygon> (area))
-					{
-						//DBG("envoi duration");
-						param.Type = Miam::AsyncParamChange::ParamType::Duration;
-						param.Id1 = myPresenter->getSourceID(area);
-						param.DoubleValue = anime->GetAreteLength() / speed;
-						myPresenter->SendParamChange(param);
-					}
-				}
 				
 				break;
 				//case AreaEventType::
@@ -308,22 +290,29 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 	}
 	else if (auto sceneE = std::dynamic_pointer_cast<SceneEvent>(event_))
 	{
-		
+		DBG("scene event type = " + (String)(int)sceneE->GetType());
 		switch (sceneE->GetType())
 		{
 		case SceneEventType::Added:
-			DBG("Scene added");
+			DBG("Scene added = " + sceneE->GetNewScene()->GetName());
 			//DBG((String)param.Type)
+			
+			
 			
 			break;
 		case SceneEventType::Deleted:
 			DBG("Scene deleted");
 			break;
 		case SceneEventType::NothingHappened:
-			DBG("Nothing happened");
+			DBG("Nothing happened to scene");
+			if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(sceneE->GetNewScene()))
+			{
+				//myPresenter->setChannel(amusingScene, 1);
+			}
 			break;
 		case SceneEventType::SceneChanged:
 			DBG("Scene Changed");
+			
 			break;
 		default:
 			break;
@@ -337,14 +326,18 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 		case ControlEventType::Play:
 			if (testCompletePolygon == false)
 				OnAddFollower();
+			DBG("play clicked");
 			param.Type = Miam::AsyncParamChange::ParamType::Play;
+			param.IntegerValue = myPresenter->getTempo();
 			myPresenter->SendParamChange(param);
 			break;
 		case ControlEventType::Pause:
+			DBG("pause clicked");
 			param.Type = Miam::AsyncParamChange::ParamType::Pause;
 			myPresenter->SendParamChange(param);
 			break;
 		case ControlEventType::Stop:
+			DBG("stop clicked");
 			param.Type = Miam::AsyncParamChange::ParamType::Stop;
 			param.Id1 = 255;
 			myPresenter->SendParamChange(param);
@@ -466,4 +459,23 @@ void GraphicSessionManager::OnAddComplete()
 void GraphicSessionManager::OnDeviceOptionsClicked()
 {
 	view->ShowDeviceOptionsDialog(myPresenter->getAudioDeviceManager());
+}
+
+void GraphicSessionManager::SetMidiChannel(int ch)
+{
+	if (selectedCanvas)
+	{
+		if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(getSelectedCanvasAsManager()->GetSelectedScene()))
+		{
+			DBG("channel to send : " + (String)ch);
+			myPresenter->setChannel(amusingScene, ch);
+			getSelectedCanvasAsManager()->resendToModel();
+		}
+	}
+}
+
+void GraphicSessionManager::OnTempoChanged(int newTempo) // voir si laisser comme ca, pcq pas d'interpretation necessaire pour le tempo
+{
+	myPresenter->setTempo(newTempo);
+	HandleEventSync(std::shared_ptr<ControlEvent>(new ControlEvent(ControlEventType::Play)));
 }

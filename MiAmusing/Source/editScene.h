@@ -44,7 +44,9 @@ using namespace Amusing;
                                                                     //[/Comments]
 */
 class EditScene  : public Component,
-                   public ButtonListener
+                   public ButtonListener,
+                   public ComboBoxListener,
+                   public SliderListener
 {
 public:
     //==============================================================================
@@ -60,6 +62,8 @@ public:
     void paint (Graphics& g) override;
     void resized() override;
     void buttonClicked (Button* buttonThatWasClicked) override;
+    void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
+    void sliderValueChanged (Slider* sliderThatWasMoved) override;
 
 
 
@@ -81,6 +85,8 @@ private:
     ScopedPointer<TextButton> deleteButton;
     ScopedPointer<TextButton> completeButton;
     ScopedPointer<TextButton> optionButton;
+    ScopedPointer<ComboBox> comboBoxMidi;
+    ScopedPointer<Slider> timeSlider;
 
 
     //==============================================================================

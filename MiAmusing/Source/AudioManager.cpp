@@ -153,28 +153,41 @@ void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 {
 	getParameters();
 	getNewTimeLines();
-	sendPosition();
-	for (int i = 0; i < bufferToFill.numSamples; ++i)
+	switch (state)
 	{
-		
-		if (midiOuput != nullptr)
+	case Amusing::Play:
+		sendPosition();
+		for (int i = 0; i < bufferToFill.numSamples; ++i)
 		{
-			//midiSender->process(position);
-			for (int j = 0; j < maxSize; j++)
+
+			if (midiOuput != nullptr)
 			{
-				if (timeLinesKnown[j] != 0)
-					timeLinesKnown[j]->process(position);
-				
-				
+				//midiSender->process(position);
+				for (int j = 0; j < maxSize; j++)
+				{
+					if (timeLinesKnown[j] != 0)
+						timeLinesKnown[j]->process(position);
+
+
+				}
+			}
+			++position;
+			if (position == periode)
+			{
+				//DBG("TOC");
+				position = 0;
 			}
 		}
-		++position;
-		if (position == periode)
-		{
-			//DBG("TOC");
-			position = 0;
-		}
+		break;
+	case Amusing::Pause:
+		break;
+	case Amusing::Stop:
+		position = 0;
+		break;
+	default:
+		break;
 	}
+	
 	bufferToFill.clearActiveBufferRegion();
 	//metronome.update();
 	//midiBuffer.addEvent(metronome.getNextMidiMsg(), 4);
@@ -210,9 +223,11 @@ void AudioManager::sendPosition()
 
 void AudioManager::getParameters()
 {
+	//DBG("getParameters");
 	Miam::AsyncParamChange param;
 	while (model->lookForParameter(param))
 	{
+		//DBG("paramType = " + (String)((int)param.Type));
 		switch (param.Type)
 		{
 		case Miam::AsyncParamChange::ParamType::Activate:
@@ -223,15 +238,32 @@ void AudioManager::getParameters()
 				paramToAllocationThread.push(param);
 				break;
 			default:
-				timeLinesKnown[param.Id1] = 0;
-				paramToAllocationThread.push(param);
+				timeLinesKnown[param.Id1] = 0; // so we won't access to the element anymore, we forget it
+				paramToAllocationThread.push(param); // we ask to the allocation thread to delete it
 				break;
 			}
 
 			break;
 		case Miam::AsyncParamChange::ParamType::Source:
-			if (timeLines[param.Id1] != 0)
-				timeLines[param.Id1]->setMidiTime(param.Id2, roundToInt(param.DoubleValue * (double)periode));
+			//DBG("AM : the side " + (String)param.Id2 + " is = " + (String)param.DoubleValue);
+			if (timeLines[param.Id1] != 0) // si != 0 : il existe et on peut le modifier
+				timeLines[param.Id1]->setMidiTime(param.Id2, roundToInt(param.DoubleValue * (double)periode), 60);
+			else // si == 0, on ne sait pas s'il n'existe pas ou si le thread est encore en train de le creer -> envoyer au thread pour verifier et faire le necessaire
+				paramToAllocationThread.push(param);
+			break;
+		case Miam::AsyncParamChange::ParamType::Play :
+			DBG("state = Play;");
+			state = Play;
+			param.IntegerValue = metronome.timeToSample(param.IntegerValue);
+			paramToAllocationThread.push(param);
+			break;
+		case Miam::AsyncParamChange::ParamType::Pause :
+			DBG("state = Pause;");
+			state = Pause;
+			break;
+		case Miam::AsyncParamChange::ParamType::Stop :
+			DBG("state = Stop;");
+			state = Stop;
 			break;
 		default:
 			break;
@@ -242,7 +274,7 @@ void AudioManager::getParameters()
 void AudioManager::getAudioThreadMsg()
 {
 	Miam::AsyncParamChange param;
-	while (model->lookForParameter(param))
+	while (paramToAllocationThread.pop(param))
 	{
 		switch (param.Type)
 		{
@@ -257,9 +289,12 @@ void AudioManager::getAudioThreadMsg()
 			default:
 				DBG("AM : I construct a new polygon with ID : " + (String)param.Id1);
 				//midiSenderVector[param.Id1] = std::shared_ptr<TimeLine>(new TimeLine());
-				timeLines[param.Id1] = new TimeLine();
+				if(timeLines[param.Id1] == 0)
+					timeLines[param.Id1] = new TimeLine();
 				timeLines[param.Id1]->setPeriod(periode);
 				timeLines[param.Id1]->setAudioManager(this);
+				DBG("midiChannel : " + (String)param.IntegerValue);
+				timeLines[param.Id1]->setMidiChannel(param.IntegerValue);
 				timeLines[param.Id1]->setId(param.Id1);
 				++midiSenderSize;
 				timeLinesToAudio.push(timeLines[param.Id1]);
@@ -267,20 +302,20 @@ void AudioManager::getAudioThreadMsg()
 			}
 			
 			break;
-		case Miam::AsyncParamChange::ParamType::Source :
-			//DBG("src : " + (String)param.Id1 + " cote : " + (String)param.Id2 + " = " + (String)param.DoubleValue);
-			if (param.Id2 == 1000)
+		case Miam::AsyncParamChange::ParamType::Source:
+			//DBG("AM : the side " + (String)param.Id2 + " is = " + (String)param.DoubleValue);
+			
+			if (timeLines[param.Id1] != 0)
+				timeLines[param.Id1]->setMidiTime(param.Id2, roundToInt(param.DoubleValue * (double)periode), 60);
+			break;
+		case Miam::AsyncParamChange::ParamType::Play :
+			for (int i = 0; i < maxSize; ++i)
 			{
-				DBG("AM : I received all the sides of the polygon : " + (String)param.Id1);
-				//++midiSenderSize;
-				DBG("AM : Size of the vector is now : " + (String)midiSenderSize);
+				if (timeLines[i] != 0)
+					timeLines[i]->setPeriod(param.IntegerValue);
 			}
-			else
-			{
-				DBG("AM : the side " + (String)param.Id2 + " is = " + (String)param.DoubleValue);
-				if(timeLines[param.Id1]!=0)
-					timeLines[param.Id1]->setMidiTime(param.Id2, roundToInt(param.DoubleValue * (double)periode));
-			}
+			position = round((double)position * (double)param.IntegerValue / (double)periode);
+			periode = param.IntegerValue;
 			break;
 		default:
 			break;

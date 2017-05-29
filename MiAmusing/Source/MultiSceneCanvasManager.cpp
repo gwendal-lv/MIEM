@@ -17,6 +17,7 @@
 #include "AnimatedPolygon.h"
 #include "CompletePolygon.h"
 
+#include "SceneEvent.h"
 #include "GraphicEvent.h"
 #include "MultiAreaEvent.h"
 #include <thread>
@@ -90,6 +91,16 @@ void MultiSceneCanvasManager::AddCompleteArea()
 {
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
 		handleAndSendAreaEventSync(amusingScene->AddCompleteArea(12));
+}
+
+std::shared_ptr<EditableScene> MultiSceneCanvasManager::GetSelectedScene()
+{
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+	{
+		return selectedScene;
+	}
+	else
+		return nullptr;
 }
 
 void MultiSceneCanvasManager::OnFollowerTranslation(std::shared_ptr<GraphicEvent> graphicE)
@@ -201,4 +212,23 @@ void MultiSceneCanvasManager::OnCanvasMouseDown(const MouseEvent& mouseE)
 {
 	DBG("passe par MultiSceneCanvasManager::OnCanvasMouseDown");
 	MultiSceneCanvasEditor::OnCanvasMouseDown(mouseE);
+}
+
+void MultiSceneCanvasManager::SetAllChannels()
+{
+	for (int j = 0; j < scenes.size(); ++j)
+	{
+		DBG("send new event");
+		std::shared_ptr<SceneEvent> sceneE(new SceneEvent(shared_from_this(), scenes[j], SceneEventType::NothingHappened));
+		handleAndSendEventSync(sceneE);
+	}
+}
+
+void MultiSceneCanvasManager::resendToModel()
+{
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+	{
+		for (int i = 0; i < amusingScene->getNumberArea(); i++)
+			handleAndSendEventSync(amusingScene->resendArea(i));
+	}
 }

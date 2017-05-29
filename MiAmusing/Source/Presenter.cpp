@@ -28,11 +28,12 @@ using namespace Amusing;
 // - - - - - Contruction and Destruction - - - - -
 
 Presenter::Presenter(View* _view) :
-    view(_view),
+    view(_view), test(),
     appMode(AppMode::Loading), // app is loading while the Model hasn't fully loaded yet
 
     graphicSessionManager(this, _view)
 {
+	test.insert(std::pair<int, double>(2, 5.5));
     // After all sub-modules are built, the presenter refers itself to the View
     view->CompleteInitialization(this);
     view->GetMainContentComponent()->resized();
@@ -44,6 +45,13 @@ Presenter::Presenter(View* _view) :
     appModeChangeRequest(AppMode::None);
 	Nsources = 0;
 	Nfollower = 0;
+	tempo = 4;
+	SetAllChannels();
+}
+
+void Presenter::SetAllChannels()
+{
+	graphicSessionManager.SetAllChannels();
 }
 
 
@@ -75,6 +83,30 @@ AppMode Presenter::appModeChangeRequest(AppMode newAppMode)
     return appMode;
 }
 
+void Presenter::setTempo(int newTempo)
+{
+	tempo = newTempo;
+}
+
+int Presenter::getTempo()
+{
+	return tempo;
+}
+
+void Presenter::setChannel(std::shared_ptr<EditableScene> scene,int channel)
+{
+	DBG("size of the map = " + (String)sceneToChannel.size());
+	sceneToChannel[scene] = channel;
+	//test[5] = 2;
+	//test.insert(std::pair<int, double>(3, 5.8));
+}
+
+int Presenter::getChannel(std::shared_ptr<EditableScene> scene)
+{
+	if (sceneToChannel.find(scene) == sceneToChannel.end())
+		sceneToChannel[scene] = 1;
+	return sceneToChannel[scene];
+}
 
 int Presenter::getSourceID(std::shared_ptr<IEditableArea> area)
 {

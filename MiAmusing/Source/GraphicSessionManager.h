@@ -148,12 +148,14 @@ namespace Amusing {
 		void OnPlayClicked();
 		void OnPauseClicked();
 		void OnStopClicked();
+		void OnTempoChanged(int newTempo);
 
 		void OnDeviceOptionsClicked();
-
+		void SetAllChannels(); // bouger d'endroit dans le constructeur pour la comprehension (pas view event)
+		void SetMidiChannel(int ch);
 	private :
 		bool deleting;
-
+		int tempo;
 	};
 
 

@@ -42,6 +42,7 @@ namespace Miam
 		// override mouse callback
 
 		std::shared_ptr<GraphicEvent> OnCanvasMouseDown(const MouseEvent& mouseE) override;
+		std::shared_ptr<GraphicEvent> OnCanvasMouseDrag(const MouseEvent& mouseE) override;
 		std::shared_ptr<AreaEvent> AddTrueCircle(uint64_t nextAreaId);
 		std::shared_ptr<AreaEvent> AddFollower(uint64_t nextAreaId);
 		std::shared_ptr<AreaEvent> AddCompleteArea(uint64_t);
@@ -71,6 +72,7 @@ namespace Miam
 		bool deleting;
 		std::shared_ptr<AreaEvent> deleteEvent;
 		std::shared_ptr<Amusing::Follower> getFollowers(std::shared_ptr<Amusing::AnimatedPolygon> masterArea);
+		std::shared_ptr<AreaEvent> resendArea(int idx);
 	};
 
 

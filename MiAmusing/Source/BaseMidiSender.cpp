@@ -18,13 +18,11 @@ using namespace std;
 
 TimeLine::TimeLine()
 {
-	//midiTimes = std::vector<double>(128, 0);
-	//midiOffTimes = std::vector<double>(128, 0);
 	midiTimesSize = 0;
 	midiOfftimesSize = 0;
 
 	noteOffSent = true;
-	noteNumber = 60;
+	channel = 1;
 	duration = 10000;	
 }
 
@@ -39,10 +37,19 @@ void TimeLine::setAudioManager(AudioManager* m_audioManager)
 
 void TimeLine::setPeriod(int m_period)
 {
-	period = m_period;
+	if (m_period != period)
+	{
+		
+		for (int i = 0; i < midiTimesSize; i++)
+		{
+			midiTimes[i] = round((double)midiTimes[i] * (double)m_period / (double)period);
+			midiOffTimes[i] = round((double)midiOffTimes[i] * (double)m_period / (double)period);
+		}
+		period = m_period;
+	}
 }
 
-void TimeLine::setMidiTime(int idx, int newTime)
+void TimeLine::setMidiTime(int idx, int newTime, int m_noteNumber)
 {
 	/*
 	DBG("----before------");
@@ -68,13 +75,15 @@ void TimeLine::setMidiTime(int idx, int newTime)
 				midiOffTimes[idx] = newTime + duration - period;
 			else
 				midiOffTimes[idx] = newTime + duration;
+			notes[idx] = m_noteNumber;
 		}
 		else
 		{
 			for (int i = 0; i < idx - midiTimesSize - 1; ++i)
 			{
-				midiTimes[maxSize + i] = 0;
-				midiOffTimes[maxSize + i] = 0;
+				midiTimes[midiTimesSize + i] = 0;
+				midiOffTimes[midiTimesSize + i] = 0;
+				notes[midiTimesSize + i] = 0;
 				++midiTimesSize;
 				++midiOfftimesSize;
 			}
@@ -83,11 +92,17 @@ void TimeLine::setMidiTime(int idx, int newTime)
 				midiOffTimes[idx] = (newTime + duration - period);
 			else
 				midiOffTimes[idx] = (newTime + duration);
+			notes[idx] = m_noteNumber;
 			++midiTimesSize;
 			++midiOfftimesSize;
 		}
 		//DBG("BMS : number of corners is now : " + (String)midiTimesSize);
 	}
+}
+
+void TimeLine::setMidiChannel(int m_chan)
+{
+	channel = m_chan;
 }
 
 void TimeLine::setId(int m_Id)
@@ -112,7 +127,8 @@ void TimeLine::process(int time)
 		if (time == midiTimes[i])
 		{
 			//DBG("On : " + (String)i);
-			MidiMessage midiMsg = MidiMessage::noteOn(1, noteNumber, (uint8)100);
+			DBG("canal note : " + (String)channel);
+			MidiMessage midiMsg = MidiMessage::noteOn(channel, notes[i], (uint8)100);
 			audioManager->sendMidiMessage(midiMsg);
 			return;
 		}
@@ -123,7 +139,7 @@ void TimeLine::process(int time)
 		if (time == midiOffTimes[i])
 		{
 			//DBG("Off : " + (String)i);
-			MidiMessage midiMsgOff = MidiMessage::noteOff(1, noteNumber);
+			MidiMessage midiMsgOff = MidiMessage::noteOff(channel, notes[i]);
 			audioManager->sendMidiMessage(midiMsgOff);
 			return;
 		}

@@ -25,7 +25,8 @@ public:
 
 	void setAudioManager(Amusing::AudioManager* m_audioManager);
 	void setPeriod(int m_period);
-	void setMidiTime(int idx, int newTime);
+	void setMidiTime(int idx, int newTime, int m_noteNumber);
+	void setMidiChannel(int m_chan);
 	void setId(int m_Id);
 	int getId();
 
@@ -33,17 +34,18 @@ public:
 
 private:
 	static const int maxSize = 128;
-	double midiTimes[maxSize]; // times to send MIDI
-	double midiOffTimes[maxSize];
+	double midiTimes[maxSize]; // times to send MIDI note On
+	double midiOffTimes[maxSize]; // times to send MIDI note Off
+	int notes[maxSize];
 	int midiTimesSize;
 	int midiOfftimesSize;
 	
 	bool noteOffSent;
 
-	int Id; // to ùake link between the timeLine and the graphic object that it represents
+	int Id; // to make link between the timeLine and the graphic object that it represents
 
 	// parameter of the notes to send
-	int noteNumber;
+	int channel;
 	int velocity;
 	int duration;
 	int period; // period, to be sure we don't set a noteOff signal after the end of the period...

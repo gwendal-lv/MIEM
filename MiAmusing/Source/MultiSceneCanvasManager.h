@@ -66,6 +66,10 @@ namespace Amusing {
 		void deleteUnusedFollowers();
 		void deleteAsyncDrawableObject(int idInScene, std::shared_ptr<IDrawableArea> originalAreaToDelete);
 		void OnCanvasMouseDown(const MouseEvent& mouseE);
+
+		void SetAllChannels();
+		std::shared_ptr<EditableScene> GetSelectedScene();
+		void resendToModel();
     };
     
     

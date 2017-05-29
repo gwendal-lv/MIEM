@@ -165,6 +165,20 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDown(const MouseEvent& 
 
 }
 
+std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDrag(const MouseEvent& mouseE)
+{
+	std::shared_ptr<GraphicEvent> graphicE(new GraphicEvent()); // default empty event
+																// float position (more accurate) converted to double
+	Point<double> mouseLocation = mouseE.position.toDouble();
+
+	graphicE = EditableScene::OnCanvasMouseDrag(mouseE);
+	
+	if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(graphicE))
+		return std::shared_ptr<AreaEvent>(new AreaEvent(areaE->GetConcernedArea(),areaE->GetType(),areaE->GetAreaIdInScene(),shared_from_this()));
+	else
+		return graphicE;
+}
+
 std::shared_ptr<AreaEvent> AmusingScene::AddTrueCircle(uint64_t nextAreaId)
 {
 	DBG("Creation du cercle");
@@ -337,4 +351,9 @@ std::shared_ptr<AreaEvent> AmusingScene::OnDelete()
 		// faire un wait pour pas rester bloquer la et voir le click
 	//}
 	return deleteEvent;
+}
+
+std::shared_ptr<AreaEvent> AmusingScene::resendArea(int idx)
+{
+	return std::shared_ptr<AreaEvent>(new AreaEvent(areas[idx], AreaEventType::ShapeChanged,idx, shared_from_this()));
 }
