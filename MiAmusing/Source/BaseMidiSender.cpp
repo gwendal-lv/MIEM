@@ -127,7 +127,6 @@ void TimeLine::process(int time)
 		if (time == midiTimes[i])
 		{
 			//DBG("On : " + (String)i);
-			DBG("canal note : " + (String)channel);
 			MidiMessage midiMsg = MidiMessage::noteOn(channel, notes[i], (uint8)100);
 			audioManager->sendMidiMessage(midiMsg);
 			return;

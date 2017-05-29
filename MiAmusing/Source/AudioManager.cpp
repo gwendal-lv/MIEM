@@ -284,6 +284,8 @@ void AudioManager::getAudioThreadMsg()
 			{
 			case 0 :
 				--midiSenderSize;
+				delete timeLines[param.Id1];
+				timeLines[param.Id1] = 0;
 				//midiSenderVector.erase(midiSenderVector.begin() + param.Id1);
 				break;
 			default:

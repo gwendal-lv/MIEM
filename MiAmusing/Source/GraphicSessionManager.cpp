@@ -228,9 +228,8 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				DBG("Send");
 				break;
 			case AreaEventType::Deleted:
-				
 				param.Type = Miam::AsyncParamChange::ParamType::Activate;
-				param.Id1 = 0;
+				param.Id1 = myPresenter->getSourceID(area);
 				param.Id2 = 0;
 				myPresenter->SendParamChange(param);
 				

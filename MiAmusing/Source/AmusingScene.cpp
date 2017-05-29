@@ -141,13 +141,14 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDown(const MouseEvent& 
 	if (allowAreaSelection)
 	{
 		//deleting = false;
+
 		if (deleting)
 		{
 			std::shared_ptr<GraphicEvent> graphicE = EditableScene::OnCanvasMouseDown(mouseE);
-			if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(graphicE))
-			{
-				return deleteAreaByUniqueId(areaE->GetAreaIdInScene());
-			}
+			canvasComponent->setMouseCursor(MouseCursor::StandardCursorType::NormalCursor);
+			deleting = false;
+			return DeleteSelectedArea();
+			
 		}
 		else
 		{
