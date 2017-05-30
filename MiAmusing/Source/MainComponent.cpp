@@ -8,6 +8,7 @@
 
 #include "MainComponent.h"
 #include "AmusingModel.h"
+#include "MultiCanvasComponentAmusing.h"
 
 using namespace Amusing;
 using namespace Miam;
@@ -60,13 +61,13 @@ void MainContentComponent::CompleteInitialization(Presenter* _presenter)
 {
     presenter = _presenter;
 }
-void MainContentComponent::CompleteInitialization(GraphicSessionManager* _graphicSessionManager, MultiCanvasComponent* _multiCanvasComponent)
+void MainContentComponent::CompleteInitialization(GraphicSessionManager* _graphicSessionManager, MultiCanvasComponentAmusing* _multiCanvasComponent)
 {
     graphicSessionManager = _graphicSessionManager;
     
     // Add of the canvas to this component's children directly (for now ?)
     multiCanvasComponent = _multiCanvasComponent;
-    addAndMakeVisible(multiCanvasComponent);
+    addAndMakeVisible((MultiCanvasComponent*)multiCanvasComponent);
 }
 void MainContentComponent::CompleteInitialization(AmusingModel* _model)
 {

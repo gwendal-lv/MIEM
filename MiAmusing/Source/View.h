@@ -17,6 +17,8 @@
 
 #include "DrawableArea.h"
 
+class MultiCanvasComponentAmusing;
+
 namespace Miam {
 	class MultiCanvasComponent;
 }
@@ -64,7 +66,7 @@ namespace Amusing {
         /// \brief Function called after both View and Presenter are contructed
         void CompleteInitialization(Presenter* _presenter);
         /// \brief Function called after both View and Presenter are contructed
-        void CompleteInitialization(GraphicSessionManager*, MultiCanvasComponent*);
+        void CompleteInitialization(GraphicSessionManager*, MultiCanvasComponentAmusing*);
 		void CompleteInitialization(AmusingModel* _model);
 
 		// ----- Events to the Presenter -----

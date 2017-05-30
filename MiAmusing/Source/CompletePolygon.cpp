@@ -300,8 +300,8 @@ bool CompletePolygon::getAllPercentages(int idx, double &value)
 
 void CompletePolygon::CreateBullsEye()
 {
-	bullsEye = new EditableEllipse*[N];
-	for (int i = 0; i < N; ++i)
+	bullsEye = new EditableEllipse*[Nradius];
+	for (int i = 0; i < Nradius; ++i)
 	{
 		bullsEye[i] = new EditableEllipse(0, center, 0.15f, 0.15f, Colours::grey, 1.47f);
 	}

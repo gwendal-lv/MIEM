@@ -36,12 +36,14 @@ namespace Miam
 
 class EditScene;
 
+class MultiCanvasComponentAmusing;
+
 namespace Amusing {
 
 	// Simple declarations
 	class View;
 	class Presenter;
-
+	
 
 	/// \brief Sub-module belonging to the Presenter module, which handles the editing
 	/// of all of the EditableArea.
@@ -67,7 +69,8 @@ namespace Amusing {
 		View* view;
 		EditScene *editScene;
 		Presenter *myPresenter;
-
+		MultiCanvasComponentAmusing *myMultiCanvasComponent;
+		
 		// Graphic Manager mode = useless for now (will rely on the managed
 		// canvases modes)
 		//GraphicSessionMode mode;
