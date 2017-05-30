@@ -19,7 +19,7 @@ EditableEllipse(_Id)
     init();
 }
 
-SpatEllipse::SpatEllipse(int64_t _Id, Point<double> _center, double _a, double _b, Colour _fillColour, float _canvasRatio) :
+SpatEllipse::SpatEllipse(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio) :
 EditableEllipse(_Id,_center,_a,_b,_fillColour,_canvasRatio)
 {
     init();

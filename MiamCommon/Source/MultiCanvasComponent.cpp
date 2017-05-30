@@ -154,18 +154,3 @@ MultiSceneCanvasComponent* MultiCanvasComponent::AddCanvas()
 
 
 
-
-void MultiCanvasComponent::ShowDeviceOptionsDialog(AudioDeviceManager& deviceManager)
-{
-	DialogWindow::LaunchOptions options;
-	audioSetupComp = new AudioDeviceSelectorComponent(deviceManager,
-		0, 256, 0, 256, true, true, true, false);
-	options.content.setOwned(audioSetupComp);
-	Rectangle<int> area(0, 0, getWidth(), getHeight());
-	options.content->setSize(area.getWidth(), area.getHeight());
-	options.dialogTitle = "Dialog Window";
-	dialogWindow = options.launchAsync();
-
-	if (dialogWindow != nullptr)
-		dialogWindow->centreWithSize(getWidth(), getHeight());
-}

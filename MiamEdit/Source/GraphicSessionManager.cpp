@@ -99,7 +99,7 @@ void GraphicSessionManager::__LoadDefaultTest()
                 auto currentEditablePolygon =
                 std::make_shared<SpatPolygon>(
                             GetNextAreaId(),
-                   Point<double>(0.2f+0.13f*k,0.3f+0.1f*k), 3+2*k, 0.15f+0.04f*(k+1),
+                   bpt(0.2f+0.13f*k,0.3f+0.1f*k), 3+2*k, 0.15f+0.04f*(k+1),
                              Colour(80*(uint8)k, 0, 255));
                 // On each canvas
                 if (auto editableCanvas = std::dynamic_pointer_cast<MultiSceneCanvasEditor>(canvasManagers[i]))

@@ -21,14 +21,14 @@ SpatArea()
     init();
 }
 
-SpatPolygon::SpatPolygon(int64_t _Id, Point<double> _center, int pointsCount, float radius, Colour _fillColour, float _canvasRatio) :
+SpatPolygon::SpatPolygon(int64_t _Id, bpt _center, int pointsCount, float radius, Colour _fillColour, float _canvasRatio) :
 EditablePolygon(_Id, _center, pointsCount, radius, _fillColour, _canvasRatio),
 SpatArea()
 {
     init();
 }
 
-SpatPolygon::SpatPolygon(int64_t _Id, Point<double> _center, std::vector<Point<double>>& _contourPoints, Colour _fillColour) :
+SpatPolygon::SpatPolygon(int64_t _Id, bpt _center, bpolygon& _contourPoints, Colour _fillColour) :
 EditablePolygon(_Id, _center, _contourPoints, _fillColour),
 SpatArea()
 {

@@ -14,9 +14,9 @@
 
 #include <vector>
 
-#include "boost\geometry.hpp"
-#include "boost\geometry\geometries\geometries.hpp"
-#include "boost\geometry\geometries\polygon.hpp"
+#include "boost/geometry.hpp"
+#include "boost/geometry/geometries/geometries.hpp"
+#include "boost/geometry/geometries/polygon.hpp"
 
 #include "JuceHeader.h"
 

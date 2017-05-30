@@ -37,7 +37,7 @@ namespace Miam
         // - - - - - Construction/Destruction + polymorphic cloning - - - - -
         
         SpatEllipse(int64_t _Id);
-        SpatEllipse(int64_t _Id, Point<double> _center, double _a, double _b, Colour _fillColour, float _canvasRatio);
+        SpatEllipse(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio);
         
         protected :
         void init();
