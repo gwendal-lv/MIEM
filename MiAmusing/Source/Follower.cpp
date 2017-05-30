@@ -157,8 +157,8 @@ void Follower::setCenter(bpt newCenter)
 	//DBG("[center] = " + (String)center.getX() + " " + (String)center.getY());
 	//DBG("[centerInPixels] = " + (String)centerInPixels.getX() + " " + (String)centerInPixels.getY());
 
-	juce::Point<double> translation((newCenter.get<0>() - bcenter.get<0>()) * (double)parentCanvas->getWidth(),
-					(newCenter.get<1>() - bcenter.get<1>()) * (double)parentCanvas->getHeight());
+	juce::Point<double> translation((newCenter.get<0>() - center.get<0>()) * (double)parentCanvas->getWidth(),
+					(newCenter.get<1>() - center.get<1>()) * (double)parentCanvas->getHeight());
 	
 	//DBG("[translation] = " + (String)translation.getX() + " " + (String)translation.getY());
 	Translate(translation);

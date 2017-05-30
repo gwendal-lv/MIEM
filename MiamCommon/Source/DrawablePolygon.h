@@ -31,10 +31,9 @@ namespace Miam {
         // ========== ATTRIBUTES ==========
         protected :
         // Geometric data
-        //std::vector<Point<double>> contourPoints; ///< Normalized contour points coordinates (x,y in [0.0;1.0])
+		bpolygon contourPoints; ///< Normalized contour points coordinates (x,y in [0.0;1.0])
         Path contour; ///< Closed contour path (coordinates in pixels, relative to its canvas)
         
-		bpolygon bcontourPoints;
         
         
         // ========== METHODS ==========

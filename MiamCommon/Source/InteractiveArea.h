@@ -43,8 +43,8 @@ namespace Miam
         
         // Common attributes
         protected :
-        //std::vector<Point<double>> contourPointsInPixels; ///< Caracteristic points (coordinates in pixels) along the contour of the area.
-		bpolygon bcontourPointsInPixels;
+		bpolygon contourPointsInPixels; ///< Caracteristic points (coordinates in pixels) along the contour of the area.
+		
         
 		protected:
 			double surface;

@@ -58,7 +58,6 @@ void EditableEllipse::behaviorInit()
 void EditableEllipse::Paint(Graphics& g)
 {
 	// At first, we draw the normal surface
-	//DBG("EditableEllipse::paint");
 	DrawableEllipse::Paint(g);
 
 	
@@ -71,17 +70,17 @@ void EditableEllipse::Paint(Graphics& g)
 		{
 			
 			// Then, we draw the coutour draggable points
-			for (size_t i = 0; i<bcontourPointsInPixels.outer().size(); i++)
+			for (size_t i = 0; i<contourPointsInPixels.outer().size(); i++)
 			{
-				g.fillEllipse((float)bcontourPointsInPixels.outer().at(i).get<0>() - contourPointsRadius,
-					(float)bcontourPointsInPixels.outer().at(i).get<1>() - contourPointsRadius,
+				g.fillEllipse((float)contourPointsInPixels.outer().at(i).get<0>() - contourPointsRadius,
+					(float)contourPointsInPixels.outer().at(i).get<1>() - contourPointsRadius,
 					contourPointsRadius*2.0f,
 					contourPointsRadius*2.0f);
 			}
 
 			// And finally, the manipulation (rotation & scale) main control
-			Line<float> manipulationLine = Line<float>((float)bcenterInPixels.get<0>(),
-													   (float)bcenterInPixels.get<1>(),
+			Line<float> manipulationLine = Line<float>((float)centerInPixels.get<0>(),
+													   (float)centerInPixels.get<1>(),
 													   (float)bmanipulationPointInPixels.get<0>(),
 													   (float)bmanipulationPointInPixels.get<1>());
 			float dashedLineParameters[] = { 4.0f, 4.0f };
@@ -116,15 +115,15 @@ void EditableEllipse::computeManipulationPoint()
 {
 	float manipulationLineLengthLeft = 0.25f*(parentCanvas->getWidth() + parentCanvas->getHeight()) / 2.0f,
 		manipulationLineLengthRight = manipulationLineLengthLeft; //px
-	if (bcenterInPixels.get<0>() + manipulationLineLengthRight + manipulationPointRadius
+	if (centerInPixels.get<0>() + manipulationLineLengthRight + manipulationPointRadius
 		<= parentCanvas->getWidth())
-		bmanipulationPointInPixels = bpt(bcenterInPixels.get<0>()
+		bmanipulationPointInPixels = bpt(centerInPixels.get<0>()
 			+ manipulationLineLengthRight,
-			bcenterInPixels.get<1>());
+			centerInPixels.get<1>());
 	else
-		bmanipulationPointInPixels = bpt(bcenterInPixels.get<0>()
+		bmanipulationPointInPixels = bpt(centerInPixels.get<0>()
 			- manipulationLineLengthLeft,
-			bcenterInPixels.get<1>());
+			centerInPixels.get<1>());
 }
 
 // ===== SETTERS AND GETTERS =====
@@ -165,12 +164,11 @@ AreaEventType EditableEllipse::TryBeginPointMove(const Point<double>& hitPoint)
 		}
 		
 		// Are we grabbing one of the contour points ?
-		for (size_t i = 0; (i < bcontourPointsInPixels.outer().size() && (eventType != AreaEventType::PointDragBegins)); i++)
+		for (size_t i = 0; (i < contourPointsInPixels.outer().size() && (eventType != AreaEventType::PointDragBegins)); i++)
 		{
 			
-			if (boost::geometry::distance(bcontourPointsInPixels.outer().at(i), bpt(hitPoint.x, hitPoint.y)) < pointDraggingRadius)
+			if (boost::geometry::distance(contourPointsInPixels.outer().at(i), bpt(hitPoint.x, hitPoint.y)) < pointDraggingRadius)
 			{
-				DBG("point dragged = " + (String)i);
 				pointDraggedId = (int)i;
 				eventType = AreaEventType::PointDragBegins;
 			}
@@ -179,7 +177,7 @@ AreaEventType EditableEllipse::TryBeginPointMove(const Point<double>& hitPoint)
 		// Are we grabbing the center ?
 		if (eventType != AreaEventType::PointDragBegins)
 		{
-			if (boost::geometry::distance(bcenterInPixels, bpt(hitPoint.x, hitPoint.y))
+			if (boost::geometry::distance(centerInPixels, bpt(hitPoint.x, hitPoint.y))
 				< (centerCircleRadius + centerContourWidth))
 			{
 				pointDraggedId = EditableAreaPointId::Center;
@@ -220,24 +218,24 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 			{
 			case 1 : // (Cx +a/2, Cy     )
 			case 3 : // (Cx -a/2, Cy     )
-				sa = bnewLocation.get<0>() - bcenterInPixels.get<0>();
+				sa = bnewLocation.get<0>() - centerInPixels.get<0>();
 				a = 2 * abs(sa) / (double)parentCanvas->getWidth();
 
-				contourPoints.outer().at(1) = bpt(bcenter.get<0>() + (a / 2)*xScale, bcenter.get<1>());
-				contourPoints.outer().at(3) = bpt(bcenter.get<0>() - (a / 2)*xScale, bcenter.get<1>());
-				bcontourPointsInPixels.outer().at(1).set<0>(contourPoints.outer().at(1).get<0>()*(double)parentCanvas->getWidth());
-				bcontourPointsInPixels.outer().at(3).set<0>(contourPoints.outer().at(3).get<0>()*(double)parentCanvas->getWidth());
+				contourPoints.outer().at(1) = bpt(center.get<0>() + (a / 2)*xScale, center.get<1>());
+				contourPoints.outer().at(3) = bpt(center.get<0>() - (a / 2)*xScale, center.get<1>());
+				contourPointsInPixels.outer().at(1).set<0>(contourPoints.outer().at(1).get<0>()*(double)parentCanvas->getWidth());
+				contourPointsInPixels.outer().at(3).set<0>(contourPoints.outer().at(3).get<0>()*(double)parentCanvas->getWidth());
 
 				break;
 			case 0 : // (Cx     , Cy +b/2)
 			case 2 : // (Cx     , Cy -b/2)
-				sb = bnewLocation.get<1>() - bcenterInPixels.get<1>();
+				sb = bnewLocation.get<1>() - centerInPixels.get<1>();
 				b = 2 * abs(sb) / (double)parentCanvas->getHeight();
 
-				contourPoints.outer().at(0).set<1>(bcenter.get<1>() - (b / 2)*yScale);
-				contourPoints.outer().at(2).set<1>(bcenter.get<1>() + (b / 2)*yScale);
-				bcontourPointsInPixels.outer().at(0).set<1>(contourPoints.outer().at(0).get<1>()*(double)parentCanvas->getHeight());
-				bcontourPointsInPixels.outer().at(2).set<1>(contourPoints.outer().at(2).get<1>()*(double)parentCanvas->getHeight());
+				contourPoints.outer().at(0).set<1>(center.get<1>() - (b / 2)*yScale);
+				contourPoints.outer().at(2).set<1>(center.get<1>() + (b / 2)*yScale);
+				contourPointsInPixels.outer().at(0).set<1>(contourPoints.outer().at(0).get<1>()*(double)parentCanvas->getHeight());
+				contourPointsInPixels.outer().at(2).set<1>(contourPoints.outer().at(2).get<1>()*(double)parentCanvas->getHeight());
 				break;
 			default:
 				break;
@@ -252,8 +250,8 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 		// Security needed for point to stay within the canvas ?
 		areaEventType = AreaEventType::RotScale;
 
-		double r1 = boost::geometry::distance(bcenterInPixels, bmanipulationPointInPixels);
-		double r2 = boost::geometry::distance(bcenterInPixels, bnewLocation);
+		double r1 = boost::geometry::distance(centerInPixels, bmanipulationPointInPixels);
+		double r2 = boost::geometry::distance(centerInPixels, bnewLocation);
 		// ----- size -----
 		double size = r2 / r1;
 
@@ -261,17 +259,17 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 		double minDistanceFromCenter = 0.0;
 		bool wasSizeApplied = false;
 		bpolygon bnewContourPoints;
-		for (size_t i = 0; i<bcontourPointsInPixels.outer().size(); i++)
+		for (size_t i = 0; i<contourPointsInPixels.outer().size(); i++)
 		{
 			std::vector<bpt> result;
-			boost::geometry::difference(bcontourPointsInPixels.outer().at(i), bcenterInPixels, result);
+			boost::geometry::difference(contourPointsInPixels.outer().at(i), centerInPixels, result);
 			bnewContourPoints.outer().push_back(result.front());
 			bnewContourPoints.outer().at(i) = bpt(size * bnewContourPoints.outer().at(i).get<0>(),
 				size * bnewContourPoints.outer().at(i).get<1>());
 			if (boost::geometry::distance(bnewContourPoints.outer().at(i), bpt(0, 0)) > minDistanceFromCenter)
 				minDistanceFromCenter = boost::geometry::distance(bnewContourPoints.outer().at(i), bpt(0, 0));
 
-			boost::geometry::strategy::transform::translate_transformer<double, 2, 2> tr(bcenterInPixels.get<0>(), bcenterInPixels.get<1>());
+			boost::geometry::strategy::transform::translate_transformer<double, 2, 2> tr(centerInPixels.get<0>(), centerInPixels.get<1>());
 			boost::geometry::transform(bnewContourPoints.outer().at(i), bnewContourPoints.outer().at(i), tr);
 
 		}
@@ -279,17 +277,17 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 			minimumSizePercentage*(parentCanvas->getWidth() + parentCanvas->getHeight()) / 2.0)
 		{
 			wasSizeApplied = true;
-			bcontourPointsInPixels = bnewContourPoints;
+			contourPointsInPixels = bnewContourPoints;
 			bmanipulationPointInPixels = bnewLocation;
 			a *= size;
 			b *= size;
 		}
 		// After manipulation computation : normalized coordinates update
-		for (size_t i = 0; i < bcontourPointsInPixels.outer().size(); i++)
+		for (size_t i = 0; i < contourPointsInPixels.outer().size(); i++)
 		{
 			contourPoints.outer().at(i) = bpt(
-				bcontourPointsInPixels.outer().at(i).get<0>() / ((double)parentCanvas->getWidth()),
-				bcontourPointsInPixels.outer().at(i).get<1>() / ((double)parentCanvas->getHeight()));
+				contourPointsInPixels.outer().at(i).get<0>() / ((double)parentCanvas->getWidth()),
+				contourPointsInPixels.outer().at(i).get<1>() / ((double)parentCanvas->getHeight()));
 		}
 	}
 
@@ -297,14 +295,14 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 	{
 		if (isNewCenterValid(newLocation))
 		{
-			bcenterInPixels = bnewLocation;
-			bcenter = bpt(bnewLocation.get<0>() / ((double)parentCanvas->getWidth()),
+			centerInPixels = bnewLocation;
+			center = bpt(bnewLocation.get<0>() / ((double)parentCanvas->getWidth()),
 				bnewLocation.get<1>() / ((double)parentCanvas->getHeight()));
 
-			contourPoints.outer().at(0) = bpt(bcenter.get<0>(), bcenter.get<1>() - (b / 2)*yScale);
-			contourPoints.outer().at(1) = bpt(bcenter.get<0>() + (a / 2)*xScale, bcenter.get<1>());
-			contourPoints.outer().at(2) = bpt(bcenter.get<0>(), bcenter.get<1>() + (b / 2)*yScale);
-			contourPoints.outer().at(3) = bpt(bcenter.get<0>() - (a / 2)*xScale, bcenter.get<1>());
+			contourPoints.outer().at(0) = bpt(center.get<0>(), center.get<1>() - (b / 2)*yScale);
+			contourPoints.outer().at(1) = bpt(center.get<0>() + (a / 2)*xScale, center.get<1>());
+			contourPoints.outer().at(2) = bpt(center.get<0>(), center.get<1>() + (b / 2)*yScale);
+			contourPoints.outer().at(3) = bpt(center.get<0>() - (a / 2)*xScale, center.get<1>());
 
 
 			computeManipulationPoint();
@@ -353,19 +351,17 @@ AreaEventType EditableEllipse::EndPointMove()
 
 void EditableEllipse::Translate(const Point<double>& translation)
 {
-	//DBG("tailles Translate : " + (String)contourPoints.outer().size() + " " + bcontourPointsInPixels.outer().size());
-	bcenterInPixels.set<0>(bcenterInPixels.get<0>() + translation.x);
-	bcenterInPixels.set<1>(bcenterInPixels.get<1>() + translation.y);
-	bcenter = bpt(bcenterInPixels.get<0>() / ((double)parentCanvas->getWidth()),
-		bcenterInPixels.get<1>() / ((double)parentCanvas->getHeight()));
-	for (size_t i = 0; i < bcontourPointsInPixels.outer().size(); i++)
+	centerInPixels.set<0>(centerInPixels.get<0>() + translation.x);
+	centerInPixels.set<1>(centerInPixels.get<1>() + translation.y);
+	center = bpt(centerInPixels.get<0>() / ((double)parentCanvas->getWidth()),
+		centerInPixels.get<1>() / ((double)parentCanvas->getHeight()));
+	for (size_t i = 0; i < contourPointsInPixels.outer().size(); i++)
 	{
-		//contourPointsInPixels[i] += translation;
-		bcontourPointsInPixels.outer().at(i).set<0>(bcontourPointsInPixels.outer().at(i).get<0>() + translation.x);
-		bcontourPointsInPixels.outer().at(i).set<1>(bcontourPointsInPixels.outer().at(i).get<1>() + translation.y);
+		contourPointsInPixels.outer().at(i).set<0>(contourPointsInPixels.outer().at(i).get<0>() + translation.x);
+		contourPointsInPixels.outer().at(i).set<1>(contourPointsInPixels.outer().at(i).get<1>() + translation.y);
 		contourPoints.outer().at(i) = bpt(
-			bcontourPointsInPixels.outer().at(i).get<0>() / ((double)parentCanvas->getWidth()),
-			bcontourPointsInPixels.outer().at(i).get<1>() / ((double)parentCanvas->getHeight()));
+			contourPointsInPixels.outer().at(i).get<0>() / ((double)parentCanvas->getWidth()),
+			contourPointsInPixels.outer().at(i).get<1>() / ((double)parentCanvas->getHeight()));
 	}
 
 	// Manipulation point (+ line...)
@@ -375,7 +371,7 @@ void EditableEllipse::Translate(const Point<double>& translation)
 void EditableEllipse::setCenterPosition(bpt newCenter) // pixels
 {
 	
-	Point<double> translation(newCenter.get<0>() - bcenterInPixels.get<0>(), newCenter.get<0>() - bcenterInPixels.get<0>()); // pixels
+	Point<double> translation(newCenter.get<0>() - centerInPixels.get<0>(), newCenter.get<0>() - centerInPixels.get<0>()); // pixels
 	Translate(translation);
 	
 }
@@ -391,23 +387,23 @@ bool EditableEllipse::isNewContourPointValid(const Point<double>& newLocation)
 {
 	
 	// Init : we save indexes of adjacent points (that will help build the borders)
-	int pointBefore = Math::Modulo(pointDraggedId - 1, (int)bcontourPointsInPixels.outer().size());
-	int pointAfter = Math::Modulo(pointDraggedId + 1, (int)bcontourPointsInPixels.outer().size());
+	int pointBefore = Math::Modulo(pointDraggedId - 1, (int)contourPointsInPixels.outer().size());
+	int pointAfter = Math::Modulo(pointDraggedId + 1, (int)contourPointsInPixels.outer().size());
 	
 	/* Étape 1, on construit les équations des droites suivantes :
 	* - droite 1 entre le centre et le point d'avant
 	* - droite 2 entre le centre et le point d'après
 	*/
-	CartesianLine droite1 = CartesianLine(bcenterInPixels,
-		bcontourPointsInPixels.outer().at(pointBefore));
-	CartesianLine droite2 = CartesianLine(bcenterInPixels,
-		bcontourPointsInPixels.outer().at(pointAfter));
+	CartesianLine droite1 = CartesianLine(centerInPixels,
+		contourPointsInPixels.outer().at(pointBefore));
+	CartesianLine droite2 = CartesianLine(centerInPixels,
+		contourPointsInPixels.outer().at(pointAfter));
 	/* Étape 2
 	* on vérifie ne pas avoir changé de côté par rapport aux 2 lignes considérées
 	*/
 	
-	if (droite1.PointWentThrough(bcontourPointsInPixels.outer().at(pointDraggedId), bpt(newLocation.x,newLocation.y))
-		|| droite2.PointWentThrough(bcontourPointsInPixels.outer().at(pointDraggedId), bpt(newLocation.x,newLocation.y)))
+	if (droite1.PointWentThrough(contourPointsInPixels.outer().at(pointDraggedId), bpt(newLocation.x,newLocation.y))
+		|| droite2.PointWentThrough(contourPointsInPixels.outer().at(pointDraggedId), bpt(newLocation.x,newLocation.y)))
 	{
 		return false;
 	}
@@ -419,11 +415,11 @@ bool EditableEllipse::isNewCenterValid(const Point<double>& newLocation)
 {
 	// We check if the center did not cross all the lines, one-by-one
 	bool hasCrossed = false;
-	for (size_t i = 0; (i<bcontourPointsInPixels.outer().size() && !hasCrossed); i++)
+	for (size_t i = 0; (i<contourPointsInPixels.outer().size() && !hasCrossed); i++)
 	{
-		CartesianLine cartesianLine = CartesianLine(bcontourPointsInPixels.outer().at(i),
-			bcontourPointsInPixels.outer().at(Math::Modulo((int)i + 1, (int)bcontourPointsInPixels.outer().size())));
-		hasCrossed = cartesianLine.PointWentThrough(bcenterInPixels, bpt(newLocation.x,newLocation.y));
+		CartesianLine cartesianLine = CartesianLine(contourPointsInPixels.outer().at(i),
+			contourPointsInPixels.outer().at(Math::Modulo((int)i + 1, (int)contourPointsInPixels.outer().size())));
+		hasCrossed = cartesianLine.PointWentThrough(centerInPixels, bpt(newLocation.x,newLocation.y));
 	}
 	return !hasCrossed;
 }
@@ -431,11 +427,11 @@ bool EditableEllipse::isNewCenterValid(const Point<double>& newLocation)
 void EditableEllipse::recreateNormalizedPoints()
 {
 	contourPoints.clear();
-	for (size_t i = 0; i<bcontourPointsInPixels.outer().size(); i++)
+	for (size_t i = 0; i<contourPointsInPixels.outer().size(); i++)
 	{
-		contourPoints.outer().push_back(bpt(bcontourPointsInPixels.outer().at(i).get<0>() / parentCanvas->getWidth(),
-			bcontourPointsInPixels.outer().at(i).get<1>() / parentCanvas->getHeight()));
+		contourPoints.outer().push_back(bpt(contourPointsInPixels.outer().at(i).get<0>() / parentCanvas->getWidth(),
+			contourPointsInPixels.outer().at(i).get<1>() / parentCanvas->getHeight()));
 	}
-	bcenter = bpt(bcenterInPixels.get<0>() / parentCanvas->getWidth(),
-		bcenterInPixels.get<1>() / parentCanvas->getHeight());
+	center = bpt(centerInPixels.get<0>() / parentCanvas->getWidth(),
+		centerInPixels.get<1>() / parentCanvas->getHeight());
 }

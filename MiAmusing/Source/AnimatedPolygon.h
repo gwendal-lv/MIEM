@@ -45,26 +45,26 @@ namespace Amusing
 			//DBG((String)contourPointsInPixels.size());
 			//DBG((String)contourPoints.size());
 			//DBG((String)contour);
-			return bcontourPoints.outer().size();
+			return contourPoints.outer().size();
 		}
 
 		int GetHeight()
 		{
-			return (int)bcenterInPixels.get<1>();
+			return (int)centerInPixels.get<1>();
 		}
 
 		double GetAreteLength()
 		{
 			//DBG("GetAreteL");
 			//DBG((String)contourPoints.size());
-			return 100 * boost::geometry::distance(bcontourPoints.outer().at(0), bcontourPoints.outer().at(1));//contourPoints[0].getDistanceFrom(contourPoints[1])*100;
+			return 100 * boost::geometry::distance(contourPoints.outer().at(0), contourPoints.outer().at(1));//contourPoints[0].getDistanceFrom(contourPoints[1])*100;
 		}
 
 		Point<double> getPente(int P)
 		{
-			int after = (P + 1) % (bcontourPoints.outer().size());
+			int after = (P + 1) % (contourPoints.outer().size());
 			std::vector<bpt> out;
-			boost::geometry::difference(bcontourPointsInPixels.outer().at(after), bcontourPointsInPixels.outer().at(P), out);
+			boost::geometry::difference(contourPointsInPixels.outer().at(after), contourPointsInPixels.outer().at(P), out);
 			return juce::Point<double>(out.front().get<0>(), out.front().get<1>());
 		}
 

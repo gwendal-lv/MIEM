@@ -69,8 +69,8 @@ namespace Miam
         
         // Geometric data
         protected :
-		bpt bcenter; ///< Normalized center coordinates (x, y in [0.0,1.0])
-		bpt bcenterInPixels; ///< Center coordinates in pixels (relative to a canvas)
+		bpt center; ///< Normalized center coordinates (x, y in [0.0,1.0])
+		bpt centerInPixels; ///< Center coordinates in pixels (relative to a canvas)
         
         
         // Display data

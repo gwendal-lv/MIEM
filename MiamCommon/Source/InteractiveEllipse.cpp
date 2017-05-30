@@ -39,9 +39,9 @@ void InteractiveEllipse::CanvasResized(SceneCanvasComponent* _parentCanvas)
 
 	int L1 = contourPoints.outer().size();
 	// Pixel contour points
-	bcontourPointsInPixels.clear();
+	contourPointsInPixels.clear();
 	for (size_t i = 0; i<contourPoints.outer().size(); i++)
-		bcontourPointsInPixels.outer().push_back(bpt(contourPoints.outer().at(i).get<0>()*parentCanvas->getWidth(), 
+		contourPointsInPixels.outer().push_back(bpt(contourPoints.outer().at(i).get<0>()*parentCanvas->getWidth(), 
 			contourPoints.outer().at(i).get<1>()*parentCanvas->getHeight()));
 	int L2 = contourPoints.outer().size();
 	if (L1 != L2)

@@ -52,9 +52,9 @@ void InteractivePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
     
     
     // Pixel contour points
-	bcontourPointsInPixels.clear();
+	contourPointsInPixels.clear();
 	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scale(parentCanvas->getWidth(), parentCanvas->getHeight());
-	boost::geometry::transform(bcontourPoints, bcontourPointsInPixels, scale);
+	boost::geometry::transform(contourPoints, contourPointsInPixels, scale);
     
     // Finally, we update sub triangles
     updateSubTriangles();
@@ -70,11 +70,11 @@ void InteractivePolygon::updateSubTriangles()
     subTriangles.clear();
 	
 	// We begin by the annoying one
-	subTriangles.push_back(SubTriangle(bcenterInPixels, bcontourPointsInPixels.outer().back(), bcontourPointsInPixels.outer().front()));
+	subTriangles.push_back(SubTriangle(centerInPixels, contourPointsInPixels.outer().back(), contourPointsInPixels.outer().front()));
 	// Then add the others
-	for (size_t i = 0; i <bcontourPointsInPixels.outer().size() - 1; i++)
+	for (size_t i = 0; i <contourPointsInPixels.outer().size() - 1; i++)
 	{
-		subTriangles.push_back(SubTriangle(bcenterInPixels, bcontourPointsInPixels.outer().at(i), bcontourPointsInPixels.outer().at(i+1)));
+		subTriangles.push_back(SubTriangle(centerInPixels, contourPointsInPixels.outer().at(i), contourPointsInPixels.outer().at(i+1)));
 	}
 }
 
@@ -100,10 +100,10 @@ bool InteractivePolygon::HitTest(double x, double y)
 double InteractivePolygon::ComputeInteractionWeight(bpt T)
 {
     double weight = 0.0;
-    bpt GT(T.get<0>() - bcenterInPixels.get<0>(), T.get<1>() - bcenterInPixels.get<1>());
+    bpt GT(T.get<0>() - centerInPixels.get<0>(), T.get<1>() - centerInPixels.get<1>());
     
     // if at center (at 0.5²pixel²) (to prevent 0/0 operations)
-    if (boost::geometry::distance(bpt(0,0),GT)<0.25)//GT.getDistanceSquaredFromOrigin() < 0.25)
+    if (boost::geometry::distance(bpt(0,0),GT)<0.25)
         weight = 1.0;
     // else, we can compute an angle using atan and the 4 quadrants
     else

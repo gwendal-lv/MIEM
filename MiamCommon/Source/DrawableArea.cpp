@@ -21,7 +21,7 @@ DrawableArea::DrawableArea(int64_t _Id, bpt _center, Colour _fillColour)
 {
 	Id = _Id;
 
-	bcenter = _center;
+	center = _center;
 
 	centerCircleRadius = 5;
 
@@ -39,8 +39,8 @@ DrawableArea::DrawableArea(int64_t _Id, bpt _center, Colour _fillColour)
 void DrawableArea::Paint(Graphics& g)
 {
     g.setColour(contourColour);
-    g.drawEllipse((float)bcenterInPixels.get<0>()-centerCircleRadius,
-		(float)bcenterInPixels.get<1>()-centerCircleRadius,
+    g.drawEllipse((float)centerInPixels.get<0>()-centerCircleRadius,
+		(float)centerInPixels.get<1>()-centerCircleRadius,
         centerCircleRadius*2.0f, centerCircleRadius*2.0f, centerContourWidth);
     
     String name = String("[[[undefined ") + String(Id) + String("]]]");
@@ -49,12 +49,12 @@ void DrawableArea::Paint(Graphics& g)
     {
         g.setColour(Colours::black); // black shadow
         g.drawSingleLineText(name,
-                             (int)bcenterInPixels.get<0>()+1,
-                             (int)(bcenterInPixels.get<1>()-centerCircleRadius*2+1));
+                             (int)centerInPixels.get<0>()+1,
+                             (int)(centerInPixels.get<1>()-centerCircleRadius*2+1));
         g.setColour(Colours::white); // white text
         g.drawSingleLineText(name,
-                             (int)bcenterInPixels.get<0>(),
-                             (int)(bcenterInPixels.get<1>() -centerCircleRadius*2));
+                             (int)centerInPixels.get<0>(),
+                             (int)(centerInPixels.get<1>() -centerCircleRadius*2));
     }
 }
 
@@ -62,7 +62,7 @@ void DrawableArea::CanvasResized(SceneCanvasComponent* _parentCanvas)
 {
     parentCanvas = _parentCanvas;
 	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scale(parentCanvas->getWidth(), parentCanvas->getHeight());
-	boost::geometry::transform(bcenter, bcenterInPixels, scale);
+	boost::geometry::transform(center, centerInPixels, scale);
 }
 
 

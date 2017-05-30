@@ -39,11 +39,11 @@ DrawablePolygon::DrawablePolygon(int64_t _Id, bpt _center, int pointsCount, floa
     for (int i=0; i<pointsCount ; i++)
     {
         currentAngle = 2.0f*float_Pi*(float)(i)/(float)(pointsCount);
-		bcontourPoints.outer().push_back(bpt(bcenter.get<0>() + radius*xScale*cosf(currentAngle),
-			bcenter.get<1>() + radius*yScale*sinf(currentAngle)));
+		contourPoints.outer().push_back(bpt(center.get<0>() + radius*xScale*cosf(currentAngle),
+			center.get<1>() + radius*yScale*sinf(currentAngle)));
     }
 	 // to close the boost polygon
-	bcontourPoints.outer().push_back(bpt(bcenter.get<0>() + radius*xScale, bcenter.get<1>()));
+	contourPoints.outer().push_back(bpt(center.get<0>() + radius*xScale, center.get<1>()));
 
     // Definition of the Juce polygon
     createJucePolygon();
@@ -53,7 +53,7 @@ DrawablePolygon::DrawablePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 DrawablePolygon::DrawablePolygon(int64_t _Id, bpt _center, bpolygon& _bcontourPoints, Colour _fillColour) :
 	DrawableArea(_Id, _center, _fillColour)
 {
-	bcontourPoints = _bcontourPoints; // reminder : makes a elmt-by-elmt copy
+	contourPoints = _bcontourPoints; // reminder : makes a elmt-by-elmt copy
 
 	createJucePolygon();
 }
@@ -63,9 +63,9 @@ DrawablePolygon::DrawablePolygon(int64_t _Id, bpt _center, bpolygon& _bcontourPo
 void DrawablePolygon::createJucePolygon(int width, int height)
 {
     contour.clear();
-	contour.startNewSubPath((float)bcontourPoints.outer().at(0).get<0>(), (float)bcontourPoints.outer().at(0).get<1>());
-	for (size_t i = 1; i<bcontourPoints.outer().size(); i++)
-		contour.lineTo((float)bcontourPoints.outer().at(i).get<0>(), (float)bcontourPoints.outer().at(i).get<1>());
+	contour.startNewSubPath((float)contourPoints.outer().at(0).get<0>(), (float)contourPoints.outer().at(0).get<1>());
+	for (size_t i = 1; i<contourPoints.outer().size(); i++)
+		contour.lineTo((float)contourPoints.outer().at(i).get<0>(), (float)contourPoints.outer().at(i).get<1>());
 	contour.closeSubPath();
     
     contour.applyTransform(AffineTransform::scale((float)width, (float)height));

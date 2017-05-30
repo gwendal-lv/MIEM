@@ -20,11 +20,11 @@ CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
 {
 	showCursor = false;
 	pc = 0;
-	cursorCenter = bcontourPoints.outer().at(0);
+	cursorCenter = contourPoints.outer().at(0);
 	cursor = std::shared_ptr<EditableEllipse>(new EditableEllipse(0, cursorCenter, 0.1f, 0.1f, Colours::grey, 1.47f));
 	cursor->SetNameVisible(false);
 	//percentages.reserve(contourPoints.size());
-	for (int i = 0; i < (int)bcontourPoints.outer().size(); ++i)
+	for (int i = 0; i < (int)contourPoints.outer().size(); ++i)
 		percentages.push_back(0);
 	SetNameVisible(false);
 	
@@ -37,12 +37,12 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 {
 	showCursor = false;
 	pc = 0;
-	cursorCenter = bcontourPoints.outer().at(0);
+	cursorCenter = contourPoints.outer().at(0);
 	cursor = std::shared_ptr<EditableEllipse>(new EditableEllipse(0, cursorCenter, 0.1f, 0.1f, Colours::grey, _canvasRatio));
 	cursor->SetNameVisible(false);
-	for (int i = 0; i < (int)bcontourPoints.outer().size(); ++i)
+	for (int i = 0; i < (int)contourPoints.outer().size(); ++i)
 		percentages.push_back(0);
-	percentages.reserve(bcontourPoints.outer().size());
+	percentages.reserve(contourPoints.outer().size());
 	SetNameVisible(false);
 	
 	//updateSubTriangles();
@@ -54,12 +54,12 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 {
 	showCursor = false;
 	pc = 0;
-	cursorCenter = bcontourPoints.outer().at(0);
+	cursorCenter = contourPoints.outer().at(0);
 	cursor = std::shared_ptr<EditableEllipse>(new EditableEllipse(0, cursorCenter, 0.1f, 0.1f, Colours::grey, 1.47f));
 	cursor->SetNameVisible(false);
-	for (int i = 0; i < (int)bcontourPoints.outer().size(); ++i)
+	for (int i = 0; i < (int)contourPoints.outer().size(); ++i)
 		percentages.push_back(0);
-	percentages.reserve(bcontourPoints.outer().size());
+	percentages.reserve(contourPoints.outer().size());
 	SetNameVisible(false);
 	
 	updateSubTriangles();
@@ -110,13 +110,13 @@ void CompletePolygon::lengthToPercent()
 		percentages[i + 1] = perimeter;
 	}
 	perimeter += contourPoints[contourPoints.size() - 1].getDistanceFrom(contourPoints[0]);*/
-	perimeter = boost::geometry::perimeter(bcontourPointsInPixels);
+	perimeter = boost::geometry::perimeter(contourPointsInPixels);
 
 	//calcul des poucentages correspondant à chaque point
 	percentages[0] = 0;
-	for (int i = 1; i < (int)bcontourPoints.outer().size(); ++i)
+	for (int i = 1; i < (int)contourPoints.outer().size(); ++i)
 	{
-		percentages[i] = percentages[i-1] + (boost::geometry::distance(bcontourPointsInPixels.outer().at(i),bcontourPointsInPixels.outer().at(i-1)))/ perimeter;
+		percentages[i] = percentages[i-1] + (boost::geometry::distance(contourPointsInPixels.outer().at(i),contourPointsInPixels.outer().at(i-1)))/ perimeter;
 	}
 }
 
@@ -160,13 +160,13 @@ void CompletePolygon::setReadingPosition(double p)
 		bpt P;
 		if (suiv != 0)
 		{
-			P.set<0>(bcontourPoints.outer().at(prev).get<0>() + ((p - percentages[prev]) / (percentages[suiv] - percentages[prev])) * (bcontourPoints.outer().at(suiv).get<0>() - bcontourPoints.outer().at(prev).get<0>()));
-			P.set<1>(bcontourPoints.outer().at(prev).get<1>() + ((p - percentages[prev]) / (percentages[suiv] - percentages[prev])) * (bcontourPoints.outer().at(suiv).get<1>() - bcontourPoints.outer().at(prev).get<1>()));
+			P.set<0>(contourPoints.outer().at(prev).get<0>() + ((p - percentages[prev]) / (percentages[suiv] - percentages[prev])) * (contourPoints.outer().at(suiv).get<0>() - contourPoints.outer().at(prev).get<0>()));
+			P.set<1>(contourPoints.outer().at(prev).get<1>() + ((p - percentages[prev]) / (percentages[suiv] - percentages[prev])) * (contourPoints.outer().at(suiv).get<1>() - contourPoints.outer().at(prev).get<1>()));
 		}
 		else
 		{
-			P.set<0>(bcontourPoints.outer().at(prev).get<0>() + ((p - percentages[prev]) / (1 - percentages[prev])) * (bcontourPoints.outer().at(suiv).get<0>() - bcontourPoints.outer().at(prev).get<0>()));
-			P.set<1>(bcontourPoints.outer().at(prev).get<1>() + ((p - percentages[prev]) / (1 - percentages[prev])) * (bcontourPoints.outer().at(suiv).get<1>() - bcontourPoints.outer().at(prev).get<1>()));
+			P.set<0>(contourPoints.outer().at(prev).get<0>() + ((p - percentages[prev]) / (1 - percentages[prev])) * (contourPoints.outer().at(suiv).get<0>() - contourPoints.outer().at(prev).get<0>()));
+			P.set<1>(contourPoints.outer().at(prev).get<1>() + ((p - percentages[prev]) / (1 - percentages[prev])) * (contourPoints.outer().at(suiv).get<1>() - contourPoints.outer().at(prev).get<1>()));
 		}
 
 		//placer le curseur à ce point
@@ -223,13 +223,13 @@ void CompletePolygon::setCursorVisible(bool isVisible, SceneCanvasComponent* _pa
 
 bpolygon CompletePolygon::getPolygon()
 {
-	return bcontourPoints;
+	return contourPoints;
 }
 
 std::vector<bpt> CompletePolygon::intersection(bpolygon hitPolygon)
 {
 	std::vector<bpt> inter;
-	boost::geometry::intersection(bcontourPoints, hitPolygon, inter);
+	boost::geometry::intersection(contourPoints, hitPolygon, inter);
 	//DBG("------ A ------");
 	//for (int i = 0; i < (int)bcontourPoints.outer().size(); ++i)
 	//	DBG((String)bcontourPoints.outer().at(i).get<0>() + "  " + (String)bcontourPoints.outer().at(i).get<1>());
@@ -254,7 +254,7 @@ std::vector<bpt> CompletePolygon::intersection(bpolygon hitPolygon)
 double CompletePolygon::getPercentage(bpt hitPoint)
 {
 	
-	bpt GT(hitPoint.get<0>() - bcenter.get<0>(), hitPoint.get<1>() - bcenter.get<1>());
+	bpt GT(hitPoint.get<0>() - center.get<0>(), hitPoint.get<1>() - center.get<1>());
 	double angle = Miam::Math::ComputePositiveAngle(GT);
 	int i = 0;
 	while (!subTriangles[i].ContainsAngle(angle))
@@ -264,7 +264,7 @@ double CompletePolygon::getPercentage(bpt hitPoint)
 	int suiv = 0;
 	if (i == 0)
 	{
-		prev = bcontourPoints.outer().size() - 1;
+		prev = contourPoints.outer().size() - 1;
 		suiv = 0;
 	}
 	else
@@ -272,7 +272,7 @@ double CompletePolygon::getPercentage(bpt hitPoint)
 		prev = i - 1;
 		suiv = i;
 	}
-	return percentages[prev] + (boost::geometry::distance(hitPoint, bcontourPoints.outer().at(i - 1))) / perimeter;
+	return percentages[prev] + (boost::geometry::distance(hitPoint, contourPoints.outer().at(i - 1))) / perimeter;
 	
 	//return 0.0;
 }

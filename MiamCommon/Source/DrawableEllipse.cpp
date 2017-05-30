@@ -35,12 +35,12 @@ DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b,
 		yScale = 1.0f*_canvasRatio;
 	}
 
-	contourPoints.outer().push_back(bpt(bcenter.get<0>()                 , bcenter.get<1>() - (b / 2)*yScale));
-	contourPoints.outer().push_back(bpt(bcenter.get<0>() + (a / 2)*xScale, bcenter.get<1>()));
-	contourPoints.outer().push_back(bpt(bcenter.get<0>(), bcenter.get<1>() + (b / 2)*yScale));
-	contourPoints.outer().push_back(bpt(bcenter.get<0>() - (a / 2)*xScale, bcenter.get<1>()));
+	contourPoints.outer().push_back(bpt(center.get<0>()                 , center.get<1>() - (b / 2)*yScale));
+	contourPoints.outer().push_back(bpt(center.get<0>() + (a / 2)*xScale, center.get<1>()));
+	contourPoints.outer().push_back(bpt(center.get<0>(), center.get<1>() + (b / 2)*yScale));
+	contourPoints.outer().push_back(bpt(center.get<0>() - (a / 2)*xScale, center.get<1>()));
 	
-	contourPoints.outer().push_back(bpt(bcenter.get<0>(), bcenter.get<1>() - (b / 2)*yScale)); // to close 
+	contourPoints.outer().push_back(bpt(center.get<0>(), center.get<1>() - (b / 2)*yScale)); // to close 
 	
 	
 	createJucePolygon();
@@ -50,7 +50,7 @@ void DrawableEllipse::createJucePolygon(int width, int height)
 {
 	contour.clear();
 
-	contour.addEllipse((float)bcenter.get<0>() -((float)a*xScale/2), (float)bcenter.get<1>() -((float)b*yScale/2), (float)a*xScale, (float)b*yScale);
+	contour.addEllipse((float)center.get<0>() -((float)a*xScale/2), (float)center.get<1>() -((float)b*yScale/2), (float)a*xScale, (float)b*yScale);
 
 	contour.applyTransform(AffineTransform::scale((float)width, (float)height));
 }
@@ -62,7 +62,6 @@ DrawableEllipse::~DrawableEllipse()
 // Called by the parent component (which is a canvas)
 void DrawableEllipse::Paint(Graphics& g)
 {
-	//DBG("DrawableEllipse::paint");
 	g.setColour(fillColour);
 	g.setOpacity(fillOpacity);
 	g.fillPath(contour);

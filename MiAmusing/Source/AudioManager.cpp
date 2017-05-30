@@ -72,7 +72,7 @@ AudioManager::~AudioManager()
 	DBG("audioManager destructor fin");
 
 	//DBG("AudioManager::releaseResources");
-	//delete mixer;
+	delete mixer;
 	//DBG("AudioManager::releaseResources fin");
 	if (midiOuput == nullptr)
 	{
