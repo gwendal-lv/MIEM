@@ -100,11 +100,11 @@ GraphicSessionManager::~GraphicSessionManager()
 // Testing purposes only
 void GraphicSessionManager::__LoadDefaultTest()
 {
-	srand(2016); // GRAINE fixée ici
+	//srand(2016); // GRAINE fixée ici
 
 
-	for (size_t i = 0; i<canvasManagers.size(); i++)
-		canvasManagers[i]->__AddTestAreas();
+	//for (size_t i = 0; i<canvasManagers.size(); i++)
+	//	canvasManagers[i]->__AddTestAreas();
 }
 
 
