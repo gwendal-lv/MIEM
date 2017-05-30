@@ -97,7 +97,8 @@ void SpatStatesEditionManager::selectSpatState(std::shared_ptr<SpatState<double>
     else // if no state selected
         infoText = "-";
     // Update command
-    editionComponent->SelectAndUpdateState(selectedSpatState->GetIndex(), infoText, matrixToSend);
+    if (selectedSpatState)
+        editionComponent->SelectAndUpdateState(selectedSpatState->GetIndex(), infoText, matrixToSend);
 }
 
 
