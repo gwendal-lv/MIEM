@@ -40,6 +40,14 @@
       </GROUP>
     </GROUP>
     <GROUP id="{C4893356-5DEB-A030-074B-EE0422842B92}" name="SpatCommonSource">
+      <GROUP id="{C17FEF1E-10B0-5811-F422-6C0377DB68EB}" name="Presenter">
+        <FILE id="Ki6TDF" name="SpatArea.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatArea.cpp"/>
+        <FILE id="FS86Jb" name="SpatArea.h" compile="0" resource="0" file="../SpatCommon/Source/SpatArea.h"/>
+        <FILE id="ucmZ6n" name="SpatEllipse.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatEllipse.cpp"/>
+        <FILE id="Lwt8Bj" name="SpatEllipse.h" compile="0" resource="0" file="../SpatCommon/Source/SpatEllipse.h"/>
+        <FILE id="niaXW8" name="SpatPolygon.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatPolygon.cpp"/>
+        <FILE id="bMz2xV" name="SpatPolygon.h" compile="0" resource="0" file="../SpatCommon/Source/SpatPolygon.h"/>
+      </GROUP>
       <GROUP id="{52B41AAC-7F96-5E89-C85E-34DD82B7EC9D}" name="View">
         <FILE id="Ey3tth" name="ISlidersMatrixListener.h" compile="0" resource="0"
               file="../SpatCommon/Source/ISlidersMatrixListener.h"/>
@@ -55,19 +63,18 @@
       </GROUP>
       <GROUP id="{69F35838-D6F6-5ADE-9B31-E372F4C0078E}" name="Model">
         <GROUP id="{C8CFED74-46E5-A2FF-9824-723DC214C250}" name="SpatStates">
-          <FILE id="VlduMz" name="OutputVolumesState.h" compile="0" resource="0"
-                file="../SpatCommon/Source/OutputVolumesState.h"/>
-          <FILE id="o3IF1g" name="OutputVolumesState.tpp.h" compile="0" resource="0"
+          <FILE id="WcoRns" name="SpatMatrix.hpp" compile="0" resource="0" file="../SpatCommon/Source/SpatMatrix.hpp"/>
+          <FILE id="tOtOas" name="OutputVolumesState.hpp" compile="0" resource="0"
+                file="../SpatCommon/Source/OutputVolumesState.hpp"/>
+          <FILE id="yadc4C" name="OutputVolumesState.tpp.h" compile="0" resource="0"
                 file="../SpatCommon/Source/OutputVolumesState.tpp.h"/>
-          <FILE id="VJUdzj" name="SpatState.h" compile="0" resource="0" file="../SpatCommon/Source/SpatState.h"/>
-          <FILE id="bz3VgJ" name="SpatState.tpp.h" compile="0" resource="0" file="../SpatCommon/Source/SpatState.tpp.h"/>
+          <FILE id="MTjayE" name="MatrixState.hpp" compile="0" resource="0" file="../SpatCommon/Source/MatrixState.hpp"/>
+          <FILE id="Rqowkj" name="SpatState.hpp" compile="0" resource="0" file="../SpatCommon/Source/SpatState.hpp"/>
         </GROUP>
+        <FILE id="m6IFGZ" name="SpatInterpolator.hpp" compile="0" resource="0"
+              file="../SpatCommon/Source/SpatInterpolator.hpp"/>
         <FILE id="azLEQu" name="SpatModel.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatModel.cpp"/>
         <FILE id="n9PyKE" name="SpatModel.h" compile="0" resource="0" file="../SpatCommon/Source/SpatModel.h"/>
-        <FILE id="xR7ZzU" name="SpatInterpolator.h" compile="0" resource="0"
-              file="../SpatCommon/Source/SpatInterpolator.h"/>
-        <FILE id="njk7Fg" name="SpatInterpolator.tpp.h" compile="0" resource="0"
-              file="../SpatCommon/Source/SpatInterpolator.tpp.h"/>
         <FILE id="DFPO9m" name="SpatSender.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatSender.cpp"/>
         <FILE id="YOdNbs" name="SpatSender.h" compile="0" resource="0" file="../SpatCommon/Source/SpatSender.h"/>
         <FILE id="ISQcqH" name="SpatType.h" compile="0" resource="0" file="../SpatCommon/Source/SpatType.h"/>
@@ -212,6 +219,8 @@
               file="../MiamCommon/Source/PeriodicUpdateThread.cpp"/>
         <FILE id="bavByD" name="PeriodicUpdateThread.h" compile="0" resource="0"
               file="../MiamCommon/Source/PeriodicUpdateThread.h"/>
+        <FILE id="hyDwyB" name="SparseMatrix.hpp" compile="0" resource="0"
+              file="../MiamCommon/Source/SparseMatrix.hpp"/>
       </GROUP>
     </GROUP>
   </MAINGROUP>
@@ -219,10 +228,10 @@
     <XCODE_MAC targetFolder="Builds/MacOSX">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MatrixRouter"
-                       headerPath="../../../&#10;../../MiamCommon/Source/&#10;../../SpatCommon/Source/&#10;"
+                       headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../MiamCommon/Source/"
                        defines="__MIAM_DEBUG"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MatrixRouter"
-                       headerPath="../../../&#10;../../MiamCommon/Source/&#10;../../SpatCommon/Source/"/>
+                       headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../MiamCommon/Source/"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../JUCE/modules"/>

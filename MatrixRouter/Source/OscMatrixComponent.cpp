@@ -273,7 +273,7 @@ void OscMatrixComponent::SetActiveSliders(int inputsCount, int outputsCount)
 {
     slidersMatrix->GetMatrixComponent()->SetActiveSliders(inputsCount, outputsCount);
 #ifdef __MIAM_DEBUG
-  r  //__DisplayDebugMsg("in=" + std::to_string(inputsCount) + " out=" + std::to_string(outputsCount));
+    //__DisplayDebugMsg("in=" + std::to_string(inputsCount) + " out=" + std::to_string(outputsCount));
 #endif
 }
 //[/MiscUserCode]
