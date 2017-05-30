@@ -102,6 +102,10 @@
     </GROUP>
     <FILE id="v8jCgE" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
     <GROUP id="{593B3C8B-4E9F-6C95-BD9D-6562983482B8}" name="MiamCommonSource">
+      <FILE id="ibEfgJ" name="LockFreeParamChangeSender.cpp" compile="1"
+            resource="0" file="../MiamCommon/Source/LockFreeParamChangeSender.cpp"/>
+      <FILE id="GluTRy" name="LockFreeParamChangeSender.h" compile="0" resource="0"
+            file="../MiamCommon/Source/LockFreeParamChangeSender.h"/>
       <GROUP id="{0479ADE3-37CD-6B82-AED4-7081C736E56C}" name="Model">
         <FILE id="LDc2TJ" name="IModel.cpp" compile="1" resource="0" file="../MiamCommon/Source/IModel.cpp"/>
         <FILE id="Yy9Xdd" name="IModel.h" compile="0" resource="0" file="../MiamCommon/Source/IModel.h"/>
