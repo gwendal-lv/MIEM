@@ -63,6 +63,17 @@ namespace Amusing
 		std::vector<double> percentages; // percentages corresponding to each points
 		std::shared_ptr<Miam::EditableEllipse> cursor;
 
+		// attributes linked to the bull's eye surrounding the area
+		bool showBullsEye;
+		int interval;
+		int startRadius;
+		int Nradius;
+		EditableEllipse** bullsEye;
+		void CreateBullsEye();
+		void DeleteBullsEye();
+		void PaintBullsEye(Graphics& g);
+		void CanvasResizedBullsEye(SceneCanvasComponent* _parentCanvas);
+
 		double pc; // si ca foire quand on bouge la forme en mm temps que le curseur doit tourner -> garder en memoire le poucentage ou se trouve le curseur et rappeler setreadingposition avec ce pourcentage pour le remettre au nouvel endroit.
 	};
 }

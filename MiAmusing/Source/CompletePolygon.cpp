@@ -28,6 +28,7 @@ CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
 		percentages.push_back(0);
 	SetNameVisible(false);
 	
+	showBullsEye = false;
 	updateSubTriangles();
 }
 
@@ -45,6 +46,9 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 	percentages.reserve(contourPoints.outer().size());
 	SetNameVisible(false);
 	
+	showBullsEye = true;
+	int Nradius = 1;
+	int startRadius = radius;
 	//updateSubTriangles();
 }
 
@@ -96,6 +100,10 @@ void CompletePolygon::Paint(Graphics& g)
 	{
 		//DBG("paint cursor");
 		cursor->Paint(g);
+	}
+	if (showBullsEye)
+	{
+		
 	}
 }
 
@@ -288,4 +296,29 @@ bool CompletePolygon::getAllPercentages(int idx, double &value)
 	}
 	else
 		return false;
+}
+
+void CompletePolygon::CreateBullsEye()
+{
+	bullsEye = new EditableEllipse*[N];
+	for (int i = 0; i < N; ++i)
+	{
+		bullsEye[i] = new EditableEllipse(0, center, 0.15f, 0.15f, Colours::grey, 1.47f);
+	}
+}
+
+void CompletePolygon::DeleteBullsEye()
+{
+
+}
+
+void CompletePolygon::PaintBullsEye(Graphics& g)
+{
+	//for(int i=0;i<Nradius;i++)
+
+}
+
+void CompletePolygon::CanvasResizedBullsEye(SceneCanvasComponent* _parentCanvas)
+{
+
 }
