@@ -24,13 +24,13 @@ DrawablePolygon(_Id)
     init();
 }
 
-InteractivePolygon::InteractivePolygon(int64_t _Id, Point<double> _center, int pointsCount, float radius, Colour _fillColour, float _canvasRatio) :
+InteractivePolygon::InteractivePolygon(int64_t _Id, bpt _center, int pointsCount, float radius, Colour _fillColour, float _canvasRatio) :
 DrawablePolygon(_Id, _center, pointsCount, radius, _fillColour, _canvasRatio)
 {
     init();
 }
 
-InteractivePolygon::InteractivePolygon(int64_t _Id, Point<double> _center, std::vector<Point<double>>& _contourPoints, Colour _fillColour) :
+InteractivePolygon::InteractivePolygon(int64_t _Id, bpt _center, bpolygon& _contourPoints, Colour _fillColour) :
 DrawablePolygon(_Id, _center, _contourPoints, _fillColour)
 {
     init();
@@ -52,10 +52,9 @@ void InteractivePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
     
     
     // Pixel contour points
-    contourPointsInPixels.clear();
-    for(size_t i=0 ; i<contourPoints.size() ; i++)
-        contourPointsInPixels.push_back(Point<double>(contourPoints[i].x*parentCanvas->getWidth(),
-                                                      contourPoints[i].y*parentCanvas->getHeight()));
+	contourPointsInPixels.clear();
+	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scale(parentCanvas->getWidth(), parentCanvas->getHeight());
+	boost::geometry::transform(contourPoints, contourPointsInPixels, scale);
     
     // Finally, we update sub triangles
     updateSubTriangles();
@@ -69,13 +68,14 @@ void InteractivePolygon::updateSubTriangles()
 {
     // Reinitializes the whole list
     subTriangles.clear();
-    // We begin by the annoying one
-    subTriangles.push_back(SubTriangle(centerInPixels, contourPointsInPixels.back(), contourPointsInPixels.front()));
-    // Then add the others
-    for (size_t i = 0; i <contourPointsInPixels.size()-1; i++)
-    {
-        subTriangles.push_back(SubTriangle(centerInPixels, contourPointsInPixels[i], contourPointsInPixels[i+1]));
-    }
+	
+	// We begin by the annoying one
+	subTriangles.push_back(SubTriangle(centerInPixels, contourPointsInPixels.outer().back(), contourPointsInPixels.outer().front()));
+	// Then add the others
+	for (size_t i = 0; i <contourPointsInPixels.outer().size() - 1; i++)
+	{
+		subTriangles.push_back(SubTriangle(centerInPixels, contourPointsInPixels.outer().at(i), contourPointsInPixels.outer().at(i+1)));
+	}
 }
 
 void InteractivePolygon::computeSurface()
@@ -90,20 +90,20 @@ void InteractivePolygon::computeSurface()
 // ===== INTERACTION COMPUTING =====
 
 
-bool InteractivePolygon::HitTest(const Point<double>& hitPoint)
+bool InteractivePolygon::HitTest(double x, double y)
 {
-    return (contour.contains((float)hitPoint.x, (float)hitPoint.y));
+    return (contour.contains((float)x, (float)y));
 }
 
 
 
-double InteractivePolygon::ComputeInteractionWeight(Point<double> T)
+double InteractivePolygon::ComputeInteractionWeight(bpt T)
 {
     double weight = 0.0;
-    Point<double> GT = (T - centerInPixels);
+    bpt GT(T.get<0>() - centerInPixels.get<0>(), T.get<1>() - centerInPixels.get<1>());
     
     // if at center (at 0.5²pixel²) (to prevent 0/0 operations)
-    if (GT.getDistanceSquaredFromOrigin() < 0.25)
+    if (boost::geometry::distance(bpt(0,0),GT)<0.25)
         weight = 1.0;
     // else, we can compute an angle using atan and the 4 quadrants
     else

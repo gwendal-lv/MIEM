@@ -29,22 +29,29 @@ namespace Amusing
 		public std::enable_shared_from_this<Follower>
 	{
 		public :
-			Follower(int64_t _Id, Point<double> _center, double _r, Colour _fillColour, float _canvasRatio, std::shared_ptr<Miam::AmusingScene> m_masterScene);
-			virtual ~Follower();
+			Follower(int64_t _Id, bpt _center, double _r, Colour _fillColour, float _canvasRatio, std::shared_ptr<Miam::InteractiveScene> m_masterScene);
+			~Follower();
 			virtual IDrawableArea* Clone() const override { return new Follower(*this); }
 
 			std::shared_ptr<Miam::AreaEvent> setPosition(double m_position);
 			std::shared_ptr<AnimatedPolygon> getCurrentPolygon();
+			bool isLinkTo(std::shared_ptr<AnimatedPolygon> polygon);
 		private :
 
-			bool first;
+			
 			void initArea();
-			void setCenter(Point<double> newCenter);
+			void setCenter(bpt newCenter);
+			void setGC(Point<double> m_GC);
 
-			std::shared_ptr<Miam::AmusingScene> masterScene;
+			std::shared_ptr<Miam::InteractiveScene> masterScene;
 			std::shared_ptr<AnimatedPolygon> masterArea;
 			double positionPC; // position in procent
 			int currentPoint;
+			Point<double> GC;
+			Point<double> position;
+
+			bool first;
+			bpt initTranslation;
 	};
 }
 

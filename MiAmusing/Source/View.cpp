@@ -85,5 +85,8 @@ void View::DisplayInfo(const String& message)
     throw std::runtime_error("Unimplemented behavior on info display request");
 }
 
-
+void View::ShowDeviceOptionsDialog(AudioDeviceManager& deviceManager)
+{
+	mainContentComponent->ShowDeviceOptionsDialog(deviceManager);
+}
 

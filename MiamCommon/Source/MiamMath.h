@@ -13,6 +13,11 @@
 
 #include "JuceHeader.h"
 
+#include "boost\geometry.hpp"
+#include "boost\geometry\geometries\geometries.hpp"
+#include "boost\geometry\geometries\polygon.hpp"
+
+typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> bpt;
 
 //#define M_PI 3.14159265358979323846264338327 // not defined in VS 2015 community !
 
@@ -47,8 +52,12 @@ namespace Miam
         /// \return Result in Radians.
         /// \param p Any point but the origin
         static double ComputePositiveAngle(Point<double> p);
+
+		static double ComputePositiveAngle(bpt p);
         
 		static Point<double> ComputeIntersectionPoint(Point<double> A, Point<double> B, Point<double> C, Point<double> D);
+
+		static bpt ComputeIntersectionPoint(bpt A, bpt B, bpt C, bpt D);
    };
     
     

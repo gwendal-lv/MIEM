@@ -151,7 +151,7 @@ double AmuSinus::getSampleRate()
 
 int AmuSinus::getBufferSize()
 {
-	return bufferSize;
+	return (int)bufferSize;
 }
 
 double AmuSinus::getCurrentAmplitude()

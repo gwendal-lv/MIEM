@@ -131,7 +131,7 @@ std::shared_ptr<AreaEvent> EditableScene::AddDefaultArea(uint64_t nextAreaId)
 {
     // centered grey Hexagon !...
     std::shared_ptr<EditablePolygon> newPolygon(new EditablePolygon(nextAreaId,
-                                                                    Point<double>(0.5f,0.5f), 6, 0.15f,
+                                                                    bpt(0.5f,0.5f), 6, 0.15f,
                                                                     Colours::grey,
                                                                     canvasComponent->GetRatio() ));
     
@@ -352,7 +352,7 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent&
                  (i>=0 && (!selectedArea)) ;
                  i--)
             {
-                if (areas[i]->HitTest(clicLocation))
+                if (areas[i]->HitTest(clicLocation.x,clicLocation.y))
                 {
                     // !!!!!!!!!!!!! TEST DES POIDS D'INTERACTION !!!!!!!!!!!
                     //std::cout << "poids d'interaction = " << areasOrderedForDrawing[i]->ComputeInteractionWeight(clicLocation.toDouble()) << std::endl;

@@ -15,6 +15,12 @@
 
 #include "IInteractiveArea.h"
 
+#include "boost\geometry.hpp"
+#include "boost\geometry\geometries\geometries.hpp"
+#include "boost\geometry\geometries\polygon.hpp"
+
+typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> bpt;
+typedef boost::geometry::model::polygon<bpt> bpolygon;
 
 
 namespace Miam
@@ -37,7 +43,8 @@ namespace Miam
         
         // Common attributes
         protected :
-        std::vector<Point<double>> contourPointsInPixels; ///< Caracteristic points (coordinates in pixels) along the contour of the area.
+		bpolygon contourPointsInPixels; ///< Caracteristic points (coordinates in pixels) along the contour of the area.
+		
         
 		protected:
 			double surface;

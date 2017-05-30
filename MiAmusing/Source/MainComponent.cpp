@@ -80,3 +80,7 @@ void MainContentComponent::SetMiamView(Amusing::View* _view)
     
 }
 
+void MainContentComponent::ShowDeviceOptionsDialog(AudioDeviceManager& deviceManager)
+{
+	multiCanvasComponent->ShowDeviceOptionsDialog(deviceManager);
+}

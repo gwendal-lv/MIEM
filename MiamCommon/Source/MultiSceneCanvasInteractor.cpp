@@ -217,7 +217,7 @@ void MultiSceneCanvasInteractor::handleAndSendAreaEventSync(std::shared_ptr<Area
                 updateAsyncDrawableObject(areaE->GetConcernedArea());
                 if (auto multiAreaE = std::dynamic_pointer_cast<MultiAreaEvent>(areaE))
                 {
-                    for (int i=0 ; i<multiAreaE->GetOtherEventsCount() ; i++)
+                    for (int i=0 ; i<(int)multiAreaE->GetOtherEventsCount() ; i++)
                     {
                         updateAsyncDrawableObject(multiAreaE->GetOtherEvent(i)->GetConcernedArea());
                     }
@@ -269,13 +269,13 @@ void MultiSceneCanvasInteractor::addAsyncDrawableObject(int insertionIdInScene, 
     
     // Actual addition then
     asyncDrawableObjectsMutex.lock();
-    if (insertionIdInScene == asyncDrawableObjects.size())
+    if (insertionIdInScene == (int)asyncDrawableObjects.size())
     {
         asyncDrawableObjects.push_back(areaCopy);
         originalToAsyncObject[originalAreaToAdd] = std::prev(asyncDrawableObjects.end());
         asyncDrawableObjectsMutex.unlock();
     }
-    else if (insertionIdInScene < asyncDrawableObjects.size())
+    else if (insertionIdInScene < (int)asyncDrawableObjects.size())
     {
         auto oldAsyncObjectIt = asyncDrawableObjects.begin();
         std::advance(oldAsyncObjectIt, insertionIdInScene);

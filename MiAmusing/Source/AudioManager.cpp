@@ -36,44 +36,69 @@ AudioManager::AudioManager(AmusingModel *m_model) : model(m_model), Nsources(0),
 	/////////////////////
 	useADSR = 1;////////
 	////////////////////
+	testPos = 0;
 
 	count = 0;
 
 	trackVector.reserve(Nmax);
 	activeVector.reserve(Nmax);
 	mixer = new MixerAudioSource();
-	setAudioChannels(0, 2);
+	//setAudioChannels(0, 2);
+	initialise(0, 2, nullptr, true);
+	addAudioCallback(this);
+	setSource(this);
+	runThread = true;
+	T = std::thread(&AudioManager::threadFunc, this);
+	midiSenderSize = 0;
+	midiSenderVector.reserve(128);
+	midiSenderVector = std::vector<std::shared_ptr<TimeLine>>(128, std::shared_ptr<TimeLine>(new TimeLine));
+
+	for (int i = 0; i < maxSize; i++)
+	{
+		timeLines[i] = 0;
+		timeLinesKnown[i] = 0;
+	}
 }
 
 AudioManager::~AudioManager()
 {
 	DBG("audioManager destructor");
-	shutdownAudio();
+	//shutdownAudio();
+	runThread = false;
+	T.join();
+	setSource(nullptr);
+	removeAudioCallback(this);
+	closeAudioDevice();
 	DBG("audioManager destructor fin");
 
-	DBG("AudioManager::releaseResources");
+	//DBG("AudioManager::releaseResources");
 	delete mixer;
-	DBG("AudioManager::releaseResources fin");
-}
+	//DBG("AudioManager::releaseResources fin");
+	if (midiOuput == nullptr)
+	{
+		DBG("midiOuput == nullptr !!!!!!!!!!!");
+	}
+	else
+		DBG("still exist");
 
+	//delete midiOuput;
+}
+/*
 void AudioManager::paint (Graphics& g)
 {
-    /* This demo code just fills the component's background and
-       draws some placeholder text to get you started.
 
-       You should replace everything in this method with your own
-       drawing code..
-    */
 
    
 }
-
+*/
+/*
 void AudioManager::resized()
 {
     // This method is where you should set the bounds of any child
     // components that your component contains..
 
 }
+*/
 
 void AudioManager::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 {
@@ -84,55 +109,242 @@ void AudioManager::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 	DBG((String)sampleRate);
 	DBG((String)samplesPerBlockExpected);
 	DBG("div = " + (String)div);
+	metronome.setAudioParameter(samplesPerBlockExpected, sampleRate);
+	
+	periode = metronome.timeToSample(4000);
+	position = 0;
+
+	AudioDeviceSetup currentAudioSetup;
+	this->getAudioDeviceSetup(currentAudioSetup);
+
+	DBG("default midi output : " + (String)this->getDefaultMidiOutputName());
+	midiOuput = this->getDefaultMidiOutput();
+	
+	
+	/*midiSender = std::shared_ptr<TimeLine>(new TimeLine(periode));
+	if (midiOuput != nullptr)
+	{
+		midiSender->setAudioManager(this);
+		midiSender->setMidiTime(0, roundToInt(0 * periode / 8));
+		midiSender->setMidiTime(1, roundToInt(2 * periode / 8));
+		midiSender->setMidiTime(2, roundToInt(4 * periode / 8));
+		midiSender->setMidiTime(3, roundToInt(6 * periode / 8));
+	}*/
+	
 }
 void AudioManager::releaseResources()
 {
-	
-
-	
+	DBG("AudioManager::releaseResources");
+	if (midiOuput == nullptr)
+	{
+		DBG("midiOuput == nullptr !!!!!!!!!!!");
+	}
+	else
+	{
+		//MidiOutput::
+		//delete midiOuput;
+		if (midiOuput == nullptr)
+			DBG("bien detruit ! ");
+		else
+			DBG("pas detruit");
+	}
 }
 void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 {
-	askParameter();
-	if (state != Stop)
+	getParameters();
+	getNewTimeLines();
+	switch (state)
 	{
-		if (Nsources > 0)
-		{
-			verifyAllSource();
-			mixer->getNextAudioBlock(bufferToFill);
-		}
-		//trackVector[0]->getNextAudioBlock(bufferToFill);
-	//HandleEvent();
-	}
-	else
-		bufferToFill.clearActiveBufferRegion();
-
-	if (fmod(count, div) == 0)
+	case Amusing::Play:
 		sendPosition();
-	++count;
+		for (int i = 0; i < bufferToFill.numSamples; ++i)
+		{
+
+			if (midiOuput != nullptr)
+			{
+				//midiSender->process(position);
+				for (int j = 0; j < maxSize; j++)
+				{
+					if (timeLinesKnown[j] != 0)
+						timeLinesKnown[j]->process(position);
+
+
+				}
+			}
+			++position;
+			if (position == periode)
+			{
+				//DBG("TOC");
+				position = 0;
+			}
+		}
+		break;
+	case Amusing::Pause:
+		break;
+	case Amusing::Stop:
+		position = 0;
+		break;
+	default:
+		break;
+	}
+	
+	bufferToFill.clearActiveBufferRegion();
+	//metronome.update();
+	//midiBuffer.addEvent(metronome.getNextMidiMsg(), 4);
+}
+
+void AudioManager::getNewTimeLines()
+{
+	TimeLine* ptr;
+	while (timeLinesToAudio.pop(ptr))
+	{
+		timeLinesKnown[ptr->getId()] = ptr;
+	}
+}
+
+void AudioManager::sendMidiMessage(MidiMessage msg)
+{
+	if (midiOuput != nullptr)
+	{
+		midiOuput->sendMessageNow(msg);
+	}
 }
 
 void AudioManager::sendPosition()
 {
+	
 	AsyncParamChange param;
-	for (int i = 0; i < Nsources; ++i)
+	param.Type = AsyncParamChange::ParamType::Position;
+	param.Id1 = 0;
+	param.DoubleValue = (double)position / (double)periode; //+ 1.0/8.0;
+	model->SendParamChange(param);
+	
+}
+
+void AudioManager::getParameters()
+{
+	//DBG("getParameters");
+	Miam::AsyncParamChange param;
+	while (model->lookForParameter(param))
 	{
-		param.Type = AsyncParamChange::ParamType::Position;
-		if (trackVector[i]->isPlaying())
-			if (auto currentADSR = std::dynamic_pointer_cast<ADSRSignal>(trackVector[i]))
+		//DBG("paramType = " + (String)((int)param.Type));
+		switch (param.Type)
+		{
+		case Miam::AsyncParamChange::ParamType::Activate:
+			DBG("source : " + (String)param.Id1);
+			switch (param.Id2)
 			{
-				param.Id1 = i;
-				param.DoubleValue = (double)currentADSR->getPosition() / (double)currentADSR->getLength();
-				model->SendParamChange(param);
+			case 0:
+				paramToAllocationThread.push(param);
+				break;
+			default:
+				timeLinesKnown[param.Id1] = 0; // so we won't access to the element anymore, we forget it
+				paramToAllocationThread.push(param); // we ask to the allocation thread to delete it
+				break;
 			}
+
+			break;
+		case Miam::AsyncParamChange::ParamType::Source:
+			//DBG("AM : the side " + (String)param.Id2 + " is = " + (String)param.DoubleValue);
+			if (timeLines[param.Id1] != 0) // si != 0 : il existe et on peut le modifier
+				timeLines[param.Id1]->setMidiTime(param.Id2, roundToInt(param.DoubleValue * (double)periode), 60);
+			else // si == 0, on ne sait pas s'il n'existe pas ou si le thread est encore en train de le creer -> envoyer au thread pour verifier et faire le necessaire
+				paramToAllocationThread.push(param);
+			break;
+		case Miam::AsyncParamChange::ParamType::Play :
+			DBG("state = Play;");
+			state = Play;
+			param.IntegerValue = metronome.timeToSample(param.IntegerValue);
+			paramToAllocationThread.push(param);
+			break;
+		case Miam::AsyncParamChange::ParamType::Pause :
+			DBG("state = Pause;");
+			state = Pause;
+			break;
+		case Miam::AsyncParamChange::ParamType::Stop :
+			DBG("state = Stop;");
+			state = Stop;
+			break;
+		default:
+			break;
+		}
 	}
-		
+}
+
+void AudioManager::getAudioThreadMsg()
+{
+	Miam::AsyncParamChange param;
+	while (paramToAllocationThread.pop(param))
+	{
+		switch (param.Type)
+		{
+		case Miam::AsyncParamChange::ParamType::Activate :
+			DBG("source : " + (String)param.Id1);
+			switch (param.Id2)
+			{
+			case 0 :
+				--midiSenderSize;
+				delete timeLines[param.Id1];
+				timeLines[param.Id1] = 0;
+				//midiSenderVector.erase(midiSenderVector.begin() + param.Id1);
+				break;
+			default:
+				DBG("AM : I construct a new polygon with ID : " + (String)param.Id1);
+				//midiSenderVector[param.Id1] = std::shared_ptr<TimeLine>(new TimeLine());
+				if(timeLines[param.Id1] == 0)
+					timeLines[param.Id1] = new TimeLine();
+				timeLines[param.Id1]->setPeriod(periode);
+				timeLines[param.Id1]->setAudioManager(this);
+				DBG("midiChannel : " + (String)param.IntegerValue);
+				timeLines[param.Id1]->setMidiChannel(param.IntegerValue);
+				timeLines[param.Id1]->setId(param.Id1);
+				++midiSenderSize;
+				timeLinesToAudio.push(timeLines[param.Id1]);
+				break;
+			}
+			
+			break;
+		case Miam::AsyncParamChange::ParamType::Source:
+			//DBG("AM : the side " + (String)param.Id2 + " is = " + (String)param.DoubleValue);
+			
+			if (timeLines[param.Id1] != 0)
+				timeLines[param.Id1]->setMidiTime(param.Id2, roundToInt(param.DoubleValue * (double)periode), 60);
+			break;
+		case Miam::AsyncParamChange::ParamType::Play :
+			for (int i = 0; i < maxSize; ++i)
+			{
+				if (timeLines[i] != 0)
+					timeLines[i]->setPeriod(param.IntegerValue);
+			}
+			position = round((double)position * (double)param.IntegerValue / (double)periode);
+			periode = param.IntegerValue;
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+void AudioManager::threadFunc()
+{
+	while (runThread)
+	{ 
+		getAudioThreadMsg();
+	}
+	DBG("delete all the timeLines");
+	for (int i = 0; i < maxSize; ++i)
+	{
+		if (timeLines[i] != nullptr)
+			delete timeLines[i];
+	}
+	
+	DBG("exit thread");
 }
 
 void AudioManager::chooseAudioType(int position, int type)
 {
 	DBG("BORDEEL : " + (String)type);
-	if (position = 1025)
+	if (position == 1025)
 	{
 		switch (type)
 		{
@@ -271,7 +483,7 @@ void AudioManager::askParameter()
 			break;
 		case Miam::AsyncParamChange::ParamType::Frequency :
 			//DBG("Frequency" + (String)param.Id1 + " a " + (String)param.DoubleValue);
-			if (param.Id1 > trackVector.size() - 1 || param.Id1 > Nsources - 1)
+			if (param.Id1 > (int)trackVector.size() - 1 || param.Id1 > Nsources - 1)
 			{
 				DBG("Stop !!! : " + (String)param.Id1 + " > "+ (String)(Nsources-1)  );
 				break;
@@ -285,7 +497,7 @@ void AudioManager::askParameter()
 			else
 			{
 				//DBG("Volume" + (String)param.Id1 + " a " + (String)param.DoubleValue);
-				if (param.Id1 > trackVector.size()-1)
+				if (param.Id1 > (int)trackVector.size()-1)
 				{
 					//DBG("Stop !!!");
 					break;
@@ -311,7 +523,10 @@ void AudioManager::askParameter()
 			break;
 		case Miam::AsyncParamChange::ParamType::Stop:
 			DBG("Stop control received");
-			changeState(Stop);
+			if (param.Id1 == 255)
+				changeState(Stop);
+			else
+				trackVector[param.Id1]->changeState(TransportState::Stopped);
 			break;
 		case Miam::AsyncParamChange::ParamType::Source:
 			sourceControled.push_back(param.Id2);
@@ -381,7 +596,7 @@ void AudioManager::playAllSources()
 
 void AudioManager::playAllControledSources()
 {
-	for (int i = 0; i < sourceControled.size(); ++i)
+	for (int i = 0; i < (int)sourceControled.size(); ++i)
 		trackVector[i]->changeState(TransportState::Starting);
 }
 
@@ -398,4 +613,9 @@ void AudioManager::HandleEvent()
 	param.Id1 = 0;
 	param.Type = Miam::AsyncParamChange::ParamType::Activate;
 	model->SendParamChange(param);
+}
+
+AudioDeviceManager& AudioManager::getAudioDeviceManager()
+{
+	return *this;
 }

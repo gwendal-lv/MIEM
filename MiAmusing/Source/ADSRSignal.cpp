@@ -125,10 +125,10 @@ void ADSRSignal::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 	currentSampleRate = sampleRate;
 	signal->prepareToPlay(samplesPerBlockExpected, sampleRate);
 	signal->resetPhase(0);
-	endAttackP  = round(attackT  * sampleRate);
-	endDecayP   = endAttackP + round(decay    * sampleRate);
-	endSustainP = endDecayP + round(sustainT * sampleRate);
-	endReleaseP = endSustainP + round(release  * sampleRate);
+	endAttackP  = (int)round(attackT  * sampleRate);
+	endDecayP   = (int)(endAttackP + round(decay    * sampleRate));
+	endSustainP = (int)(endDecayP + round(sustainT * sampleRate));
+	endReleaseP = (int)(endSustainP + round(release  * sampleRate));
 	DBG((String)endAttackP + " "+ (String)endDecayP + " " + (String)endSustainP + " " + (String)endReleaseP);
 	DBG("note dure : " + (String)(endReleaseP/sampleRate));
 }
@@ -220,8 +220,8 @@ void ADSRSignal::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 				break;
 			}
 
-			buffer0[i] = currentGain * sample;
-			buffer1[i] = currentGain * sample;
+			buffer0[i] = (float)(currentGain * sample);
+			buffer1[i] = (float)(currentGain * sample);
 
 			++position;
 		}
@@ -233,7 +233,7 @@ void ADSRSignal::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 
 	if (state == Pausing) // on recupère ce qui devait etre joue et on diminue le volume, puis passe a l'etat paused
 	{
-		bufferToFill.buffer->applyGainRamp(bufferToFill.startSample, bufferToFill.numSamples, currentGain, 0);
+		bufferToFill.buffer->applyGainRamp(bufferToFill.startSample, bufferToFill.numSamples, (float)currentGain, 0.0f);
 		changeState(Paused);
 	}
 
@@ -305,8 +305,8 @@ void ADSRSignal::setDuration(double newDuration)
 		int oldEndSustainP = endSustainP;
 
 		
-		endSustainP = endDecayP + round(sustainT * currentSampleRate);
-		endReleaseP = endSustainP + round(release  * currentSampleRate);
+		endSustainP = (int)(endDecayP + round(sustainT * currentSampleRate));
+		endReleaseP = (int)(endSustainP + round(release  * currentSampleRate));
 
 		if (endDecayP < position && position < oldEndSustainP)
 			position = endDecayP + roundToInt((position - endDecayP) * (endSustainP - endDecayP) / (oldEndSustainP - endDecayP));

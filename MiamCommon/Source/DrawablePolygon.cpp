@@ -14,12 +14,12 @@ using namespace Miam;
 
 
 DrawablePolygon::DrawablePolygon(int64_t _Id) :
-    DrawablePolygon(_Id, Point<double>(0.5f,0.5f), 3, 0.1f, Colours::darkgrey)
+    DrawablePolygon(_Id, bpt(0.5f,0.5f), 3, 0.1f, Colours::darkgrey)
 {
 }
 
 
-DrawablePolygon::DrawablePolygon(int64_t _Id, Point<double> _center, int pointsCount, float radius, Colour _fillColour, float _canvasRatio) :
+DrawablePolygon::DrawablePolygon(int64_t _Id, bpt _center, int pointsCount, float radius, Colour _fillColour, float _canvasRatio) :
     DrawableArea(_Id, _center, _fillColour)
 {
     float xScale, yScale;
@@ -39,20 +39,23 @@ DrawablePolygon::DrawablePolygon(int64_t _Id, Point<double> _center, int pointsC
     for (int i=0; i<pointsCount ; i++)
     {
         currentAngle = 2.0f*float_Pi*(float)(i)/(float)(pointsCount);
-        contourPoints.push_back(Point<double>(center.x + radius*xScale*cosf(currentAngle),
-                                             center.y + radius*yScale*sinf(currentAngle)));
+		contourPoints.outer().push_back(bpt(center.get<0>() + radius*xScale*cosf(currentAngle),
+			center.get<1>() + radius*yScale*sinf(currentAngle)));
     }
-    
+	 // to close the boost polygon
+	contourPoints.outer().push_back(bpt(center.get<0>() + radius*xScale, center.get<1>()));
+
     // Definition of the Juce polygon
     createJucePolygon();
 }
 
-DrawablePolygon::DrawablePolygon(int64_t _Id, Point<double> _center, std::vector<Point<double>>& _contourPoints, Colour _fillColour) :
-    DrawableArea(_Id, _center, _fillColour)
+
+DrawablePolygon::DrawablePolygon(int64_t _Id, bpt _center, bpolygon& _bcontourPoints, Colour _fillColour) :
+	DrawableArea(_Id, _center, _fillColour)
 {
-    contourPoints = _contourPoints; // reminder : makes a elmt-by-elmt copy
-    
-    createJucePolygon();
+	contourPoints = _bcontourPoints; // reminder : makes a elmt-by-elmt copy
+
+	createJucePolygon();
 }
 
 
@@ -60,10 +63,10 @@ DrawablePolygon::DrawablePolygon(int64_t _Id, Point<double> _center, std::vector
 void DrawablePolygon::createJucePolygon(int width, int height)
 {
     contour.clear();
-    contour.startNewSubPath(contourPoints[0].toFloat());
-    for (size_t i=1; i<contourPoints.size() ; i++)
-        contour.lineTo(contourPoints[i].toFloat());
-    contour.closeSubPath();
+	contour.startNewSubPath((float)contourPoints.outer().at(0).get<0>(), (float)contourPoints.outer().at(0).get<1>());
+	for (size_t i = 1; i<contourPoints.outer().size(); i++)
+		contour.lineTo((float)contourPoints.outer().at(i).get<0>(), (float)contourPoints.outer().at(i).get<1>());
+	contour.closeSubPath();
     
     contour.applyTransform(AffineTransform::scale((float)width, (float)height));
 }

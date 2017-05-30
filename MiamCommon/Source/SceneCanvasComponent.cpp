@@ -123,7 +123,8 @@ void SceneCanvasComponent::renderOpenGL()
     
     
     // Call to a general Graphic update on the whole Presenter module
-    manager->triggerAsyncUpdate();
+	if ( ! manager->isUpdatePending() )
+		manager->triggerAsyncUpdate();
     
     // Time measures just before swap (or the closer that we can get to the swaps)
     displayFrequencyMeasurer.OnNewFrame();

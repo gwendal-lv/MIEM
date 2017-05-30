@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 4.3.1
+  Created with Projucer version: 5.0.1
 
   ------------------------------------------------------------------------------
 
@@ -17,8 +17,7 @@
   ==============================================================================
 */
 
-#ifndef __JUCE_HEADER_3B6C74FB80B21A50__
-#define __JUCE_HEADER_3B6C74FB80B21A50__
+#pragma once
 
 //[Headers]     -- You can add your own extra header files here --
 #include "../JuceLibraryCode/JuceHeader.h"
@@ -45,7 +44,9 @@ using namespace Amusing;
                                                                     //[/Comments]
 */
 class EditScene  : public Component,
-                   public ButtonListener
+                   public ButtonListener,
+                   public ComboBoxListener,
+                   public SliderListener
 {
 public:
     //==============================================================================
@@ -61,6 +62,8 @@ public:
     void paint (Graphics& g) override;
     void resized() override;
     void buttonClicked (Button* buttonThatWasClicked) override;
+    void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
+    void sliderValueChanged (Slider* sliderThatWasMoved) override;
 
 
 
@@ -79,6 +82,11 @@ private:
     ScopedPointer<TextButton> addTriangleButton;
     ScopedPointer<TextButton> addCircleButton;
     ScopedPointer<TextButton> addTrueCircleButton;
+    ScopedPointer<TextButton> deleteButton;
+    ScopedPointer<TextButton> completeButton;
+    ScopedPointer<TextButton> optionButton;
+    ScopedPointer<ComboBox> comboBoxMidi;
+    ScopedPointer<Slider> timeSlider;
 
 
     //==============================================================================
@@ -87,5 +95,3 @@ private:
 
 //[EndFile] You can add extra defines here...
 //[/EndFile]
-
-#endif   // __JUCE_HEADER_3B6C74FB80B21A50__

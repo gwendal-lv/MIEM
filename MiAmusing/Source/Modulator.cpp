@@ -81,7 +81,7 @@ void Modulator::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 		{
 			
 			buffer0[i] += (float)(carrier->getHarmonic(j)->getAmplitude() * std::sin(carrier->getHarmonic(j)->getCurrentAngle() +  modTot));
-			buffer1[i] = modTot; // pour vérifier la modulation
+			buffer1[i] = (float)modTot; // pour vérifier la modulation
 		}
 		
 	}

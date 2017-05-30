@@ -14,10 +14,15 @@
 
 #include <vector>
 
+#include "boost\geometry.hpp"
+#include "boost\geometry\geometries\geometries.hpp"
+#include "boost\geometry\geometries\polygon.hpp"
+
 #include "JuceHeader.h"
 
 #include "IEditableArea.h"
 
+typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> bpt;
 
 namespace Miam
 {
@@ -79,6 +84,7 @@ namespace Miam
 		/// \brief Special point, only visible when area is active, which allows the 
 		/// user to scale and rotate the whole area.
         Point<double> manipulationPointInPixels;
+		bpt bmanipulationPointInPixels;
 		///< For all editing graphical elements drawn on top of a basic DrawableArea
         Colour editingElementsColour;
         

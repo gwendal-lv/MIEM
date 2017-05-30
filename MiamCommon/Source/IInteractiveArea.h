@@ -14,6 +14,13 @@
 
 #include "IDrawableArea.h"
 
+#include "boost\geometry.hpp"
+#include "boost\geometry\geometries\geometries.hpp"
+#include "boost\geometry\geometries\polygon.hpp"
+
+typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> bpt;
+typedef boost::geometry::model::polygon<bpt> bpolygon;
+
 namespace Miam
 {
     
@@ -34,7 +41,7 @@ namespace Miam
         
         /// \brief Collision test : tells whether the given point is inside the area
         /// or not
-        virtual bool HitTest(const Point<double>& hitPoint) = 0;
+        virtual bool HitTest(double x, double y) = 0;
  
         /// \brief Computes a coefficient that quantifies the interaction between a
         /// given point and this area.
@@ -44,7 +51,7 @@ namespace Miam
         ///
         /// \param T The "hit point" at which the amount of interaction is computed.
         /// \return The interaction weight in [0.0 ; 1.0]
-        virtual double ComputeInteractionWeight(Point<double> T) = 0;
+        virtual double ComputeInteractionWeight(bpt T) = 0;
         
 		virtual double GetSurface() = 0;
 

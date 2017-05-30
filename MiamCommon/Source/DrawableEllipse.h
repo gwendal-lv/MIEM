@@ -14,17 +14,24 @@
 #include "JuceHeader.h"
 #include "DrawableArea.h"
 
+#include "boost\geometry.hpp"
+#include "boost\geometry\geometries\geometries.hpp"
+#include "boost\geometry\geometries\polygon.hpp"
+
+typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> bpt;
+typedef boost::geometry::model::polygon<bpt> bpolygon;
+
 namespace Miam
 {
 	class DrawableEllipse : public Miam::DrawableArea
 	{
 		protected :
-			std::vector<Point<double>> contourPoints;
+			bpolygon contourPoints;
 			Path contour;
 
 		public :
 			DrawableEllipse(int64_t _Id);
-			DrawableEllipse(int64_t _Id, Point<double> _center, double _a, double _b, Colour _fillColour, float _canvasRatio = 1.77777777f);
+			DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio = 1.77777777f);
 			virtual IDrawableArea* Clone() const override { return new DrawableEllipse(*this); }
 
 		private:

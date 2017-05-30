@@ -11,8 +11,13 @@
 
 
 #include "JuceHeader.h"
+#include "boost\geometry.hpp"
+#include "boost\geometry\geometries\geometries.hpp"
+#include "boost\geometry\geometries\polygon.hpp"
 #include "DrawableArea.h"
 
+typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> bpt;
+typedef boost::geometry::model::polygon<bpt> bpolygon;
 
 namespace Miam {
     
@@ -26,9 +31,8 @@ namespace Miam {
         // ========== ATTRIBUTES ==========
         protected :
         // Geometric data
-        std::vector<Point<double>> contourPoints; ///< Normalized contour points coordinates (x,y in [0.0;1.0])
+		bpolygon contourPoints; ///< Normalized contour points coordinates (x,y in [0.0;1.0])
         Path contour; ///< Closed contour path (coordinates in pixels, relative to its canvas)
-        
         
         
         
@@ -49,7 +53,7 @@ namespace Miam {
         /// \param _fillColour See DrawableArea::fillColour
         /// \param _canvasRatio Current canvas ratio, optionnal but needed to draw a
         /// regular-looking polygon (16/9 by default)
-        DrawablePolygon(int64_t _Id, Point<double> _center, int pointsCount, float radius, Colour _fillColour, float _canvasRatio = 1.77777777f);
+        DrawablePolygon(int64_t _Id, bpt _center, int pointsCount, float radius, Colour _fillColour, float _canvasRatio = 1.77777777f);
         /// \brief Construction of a polygon defined
         /// Construction of any polygon defined by its center and contour points
         ///
@@ -57,7 +61,7 @@ namespace Miam {
         /// \param _center See DrawableArea::center
         /// \param _contourPoints See DrawablePolygon::contourPoints
         /// \param _fillColour See DrawableArea::fillColour
-        DrawablePolygon(int64_t _Id, Point<double> _center, std::vector<Point<double>>& _contourPoints, Colour _fillColour);
+		DrawablePolygon(int64_t _Id, bpt _center, bpolygon& _bcontourPoints, Colour _fillColour);
         
         virtual IDrawableArea* Clone() const override {return new DrawablePolygon(*this);}
         

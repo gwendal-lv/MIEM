@@ -138,12 +138,24 @@ namespace Amusing {
 		void OnAddCircle();
 		void OnAddTrueCircle();
 		void OnAddFollower();
+		void OnAddComplete();
+		void OnDelete();
+
 		void OnFollowerTranslation(std::shared_ptr<GraphicEvent> graphicE);
+		void OnAudioPosition(double position);
+		void SetAllAudioPositions(double position);
 
 		void OnPlayClicked();
 		void OnPauseClicked();
 		void OnStopClicked();
+		void OnTempoChanged(int newTempo);
 
+		void OnDeviceOptionsClicked();
+		void SetAllChannels(); // bouger d'endroit dans le constructeur pour la comprehension (pas view event)
+		void SetMidiChannel(int ch);
+	private :
+		bool deleting;
+		int tempo;
 	};
 
 

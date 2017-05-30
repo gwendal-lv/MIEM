@@ -54,7 +54,22 @@ namespace Amusing {
 		void AddNedgeArea(uint64_t nextAreaId, int N);
 		void AddTrueCircle(uint64_t nextAreaId);
 		void AddFollower(uint64_t nextAreaId);
+		void AddCompleteArea();
+		void OnDelete();
 		void OnFollowerTranslation(std::shared_ptr<GraphicEvent> graphicE);
+		void OnAudioPosition(double position);
+		void SetAllAudioPositions(double position);
+		int getNumberArea();
+		void handleAndSendAreaEventSync(std::shared_ptr<AreaEvent> areaE);
+
+
+		void deleteUnusedFollowers();
+		void deleteAsyncDrawableObject(int idInScene, std::shared_ptr<IDrawableArea> originalAreaToDelete);
+		void OnCanvasMouseDown(const MouseEvent& mouseE);
+
+		void SetAllChannels();
+		std::shared_ptr<EditableScene> GetSelectedScene();
+		void resendToModel();
     };
     
     

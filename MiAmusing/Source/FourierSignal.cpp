@@ -41,12 +41,12 @@ void FourierSignal::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill
 
 		if (state == Starting)
 		{
-			bufferToFill.buffer->applyGainRamp(0, bufferToFill.numSamples, 0, amplitude);
+			bufferToFill.buffer->applyGainRamp(0, bufferToFill.numSamples, 0, (float)amplitude);
 			changeState(Playing);
 		}
 		else if (state == Stopping)
 		{
-			bufferToFill.buffer->applyGainRamp(0, bufferToFill.numSamples, amplitude, 0);
+			bufferToFill.buffer->applyGainRamp(0, bufferToFill.numSamples, (float)amplitude, 0.0f);
 			changeState(Stopped);
 		}
 	}

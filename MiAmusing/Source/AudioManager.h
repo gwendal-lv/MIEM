@@ -14,11 +14,15 @@
 #include <thread>
 #include <vector>
 
-#include "../JuceLibraryCode/JuceHeader.h"
+//#include "../JuceLibraryCode/JuceHeader.h"
+#include "JuceHeader.h"
 #include "AmusingModel.h"
 #include "AmuSignal.h"
 
+#include "Metronome.h"
+#include "BaseMidiSender.h"
 
+#include "AsyncParamChange.h"
 
 // Pre-declaration for pointer members
 namespace Amusing {
@@ -36,14 +40,16 @@ namespace Amusing {
 //==============================================================================
 /*
 */
-	class AudioManager : public AudioAppComponent
+	class AudioManager : public AudioSource,
+						 public AudioSourcePlayer,
+						 public AudioDeviceManager
 	{
 	public:
 		AudioManager(AmusingModel *m_mode);
 		~AudioManager();
 
-		void paint(Graphics&) override;
-		void resized() override;
+		//void paint(Graphics&) override;
+		//void resized() override;
 
 		void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
 		void releaseResources() override;
@@ -52,6 +58,11 @@ namespace Amusing {
 		void askParameter();
 		void chooseAudioType(int position, int type);
 		void AncienchooseAudioType(int type,double duration);
+
+		AudioDeviceManager& getAudioDeviceManager();
+
+		void sendMidiMessage(MidiMessage midiMsg);
+
 	private:
 
 		void trackVectorHandler(bool deactivation, int type);
@@ -85,6 +96,46 @@ namespace Amusing {
 		const int Nmax = 1024;
 		int Nsources;
 
+		double testPos;
+
+		int periode;
+		int position;
+		Metronome metronome;
+		std::shared_ptr<TimeLine> midiSender;
+		std::vector<std::shared_ptr<TimeLine>> midiSenderVector;
+		MidiBuffer midiBuffer;
+		MidiOutput *midiOuput;
+		//ScopedPointer<MidiOutput> midiOuput;
+		//std::shared_ptr<MidiOutput> midiOuput;
+		void getAudioThreadMsg();
+		void getParameters(); // for MIDI
+		void threadFunc();
+		std::thread T;
+		bool runThread;
+		int midiSenderSize;
+
+		/////////////
+		// timeLines is the array of the timeLines, the allocation is manage by the thread
+		// timeLinesToAudio is the lockfree queue used to send to the audio a pointer to the TimeLines objects
+		// timeLinesCopy belong to the audio thread and is the copy of the real TimeLinesObject used by the object
+		// 
+		// the audioThread keep checking for new parameter/msg sent by the presenter,
+		// if the parameter needs an allocation, a msg is sent to a separate thread.
+		// when it receives the order to create a new TimeLine, the thread creates it,
+		// when it's done, a pointer on this object is sent to the audio thread 
+		// thus the audioThread knows only the ready objects.
+		//
+		// when the audioThread receives order to delete a TimeLine, it relay the msg to the separate thread
+		// the audioThread continue by setting his pointer to the object to null
+		// while the allocation thread delete the object
+
+		static const int maxSize = 1024;
+		TimeLine* timeLines[maxSize];
+		boost::lockfree::spsc_queue<TimeLine*, boost::lockfree::capacity<(1 << 17)>> timeLinesToAudio;
+		TimeLine* timeLinesKnown[maxSize];
+		void getNewTimeLines();
+		boost::lockfree::spsc_queue<Miam::AsyncParamChange, boost::lockfree::capacity<(1 << 17)>> paramToAllocationThread;
+		
 	};
 }
 

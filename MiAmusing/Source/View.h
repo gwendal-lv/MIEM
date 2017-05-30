@@ -97,7 +97,7 @@ namespace Amusing {
 		{return mainContentComponent;}
         
         // General UI controls and displays
-
+		void ShowDeviceOptionsDialog(AudioDeviceManager& deviceManager);
         
     };
     

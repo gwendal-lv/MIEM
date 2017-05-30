@@ -52,7 +52,8 @@ namespace Amusing {
         View* view = 0;
         // Pointer to the unique Model module
         AmusingModel* model = 0;
-        
+		int tempo;
+
         AppMode appMode;
         
         
@@ -62,19 +63,25 @@ namespace Amusing {
         // Conversion from areas to sources
 		//Presenter myPresenter;
 		
-		std::map<std::shared_ptr<Miam::IEditableArea>, int> areaToSource; 
-		std::map<int,std::shared_ptr<Miam::IEditableArea>> sourceToArea;
+
 		boost::bimap<std::shared_ptr<IEditableArea>,int> areaToSourceMulti;
+		std::map<std::shared_ptr<EditableScene>, int> sceneToChannel;
 		int Nsources, Nfollower;
+		void SetAllChannels();
 
 		boost::bimap < std::shared_ptr<Follower>, int> followerToCtrlSource;
+		std::map<int, double> test;
 
 		public :
+			void setChannel(std::shared_ptr<EditableScene> scene,int channel);
+			int getChannel(std::shared_ptr<EditableScene> scene);
 			int getSourceID(std::shared_ptr<IEditableArea> area);
 			std::shared_ptr<IEditableArea> getAreaFromSource(int source);
 			int getCtrlSourceId(std::shared_ptr<Follower> follower);
 			std::shared_ptr<Follower> getFollowerFromCtrl(int ctrlId);
 
+			int getTempo();
+			void setTempo(int newTempo);
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         
         public :
@@ -98,6 +105,8 @@ namespace Amusing {
 
 		virtual void Update() override;
         
+		AudioDeviceManager& getAudioDeviceManager();
+
         // Events from the View
         AppMode appModeChangeRequest(AppMode newAppMode);
         
