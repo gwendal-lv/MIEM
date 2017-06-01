@@ -133,7 +133,7 @@ void Presenter::OnAttackDurationChanged(double attackDuration)
 {
     AsyncParamChange paramChange;
     paramChange.Type = AsyncParamChange::Duration;
-    paramChange.Id1 = 0; // ZERO means "attack duration"
+    paramChange.Id1 = DurationId::AttackTime;
     paramChange.DoubleValue = attackDuration;
     
     // Enqueuing

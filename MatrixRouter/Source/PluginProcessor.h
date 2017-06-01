@@ -77,6 +77,7 @@ namespace Miam {
         int initialRampSamples;
         /// \brief Corresponds to the "attack time" within the View module
         AudioParameterFloat* rampDuration_ms;
+        /// \brief Same as rampDuration_ms but from the DAW
         /// \brief To detect changes on the DAW side... (méthode archaïque)
         float rampDurationBackup_ms;
         
