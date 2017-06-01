@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.0.1
+  Created with Projucer version: 5.0.2
 
   ------------------------------------------------------------------------------
 
@@ -157,7 +157,7 @@ void OscMatrixComponent::paint (Graphics& g)
     //[UserPrePaint] Add your own custom painting code here..
     //[/UserPrePaint]
 
-    g.fillAll (Colours::silver);
+    g.fillAll (Colour (0xffa0a0a0));
 
     //[UserPaint] Add your own custom painting code here..
     //[/UserPaint]
@@ -293,7 +293,7 @@ BEGIN_JUCER_METADATA
                  constructorParams="Presenter* _presenter" variableInitialisers=""
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="0" initialWidth="400" initialHeight="300">
-  <BACKGROUND backgroundColour="ffc0c0c0"/>
+  <BACKGROUND backgroundColour="ffa0a0a0"/>
   <GROUPCOMPONENT name="Matrix Group Component" id="19b69873bd3945f7" memberName="matrixGroupComponent"
                   virtualName="" explicitFocusOrder="0" pos="0 0R 0M 72M" posRelativeY="bb46950e139db507"
                   outlinecol="ff454545" textcol="ff000000" title="Routing matrix"/>

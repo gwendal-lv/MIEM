@@ -5,11 +5,11 @@
               buildVST="1" buildVST3="0" buildAU="1" buildAUv3="0" buildRTAS="0"
               buildAAX="0" pluginName="MiamMatrixRouter" pluginDesc="OSC controllable matrix router, for Miam Spat"
               pluginManufacturer="G. Le Vaillant" pluginManufacturerCode="Manu"
-              pluginCode="Eo3z" pluginChannelConfigs="{64,64}" pluginIsSynth="0"
+              pluginCode="Eo3z" pluginChannelConfigs="{8,8},{64,64}" pluginIsSynth="0"
               pluginWantsMidiIn="0" pluginProducesMidiOut="0" pluginIsMidiEffectPlugin="0"
               pluginEditorRequiresKeys="0" pluginAUExportPrefix="MatrixRouterAU"
               pluginRTASCategory="" aaxIdentifier="com.yourcompany.MatrixRouter"
-              pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="5.0.1"
+              pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="5.0.2"
               defines="" displaySplashScreen="1" reportAppUsage="1" splashScreenColour="Dark"
               buildStandalone="0" enableIAA="0" companyName="LARAS (IRISIB)"
               companyWebsite="http://www.laras.be" companyEmail="gwendal.le-vaillant@grenoble-inp.org">

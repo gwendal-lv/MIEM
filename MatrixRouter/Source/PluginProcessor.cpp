@@ -86,7 +86,7 @@ MatrixRouterAudioProcessor::MatrixRouterAudioProcessor()
             oldRoutingMatrix[i][j] = 0.0f;
             
             // Data that is Not initialized later
-            dawMatrixBackup[i][j] = 0.0f;
+            //dawMatrixBackup[i][j] = 0.0f;
         }
     }
     
@@ -212,12 +212,16 @@ bool MatrixRouterAudioProcessor::isBusesLayoutSupported (const BusesLayout& layo
 #endif
 
 
-
+bool testDone = false;
 //==============================================================================
 // =================== Functions executed on the audio thread ===================
 //==============================================================================
 void MatrixRouterAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
+    if (!testDone)
+        oscLocalhostDebugger.send("/miam/debug/processBlock0", (Float32)0.0);
+    testDone = true;
+    
     const int totalNumInputChannels  = getTotalNumInputChannels();
     const int totalNumOutputChannels = getTotalNumOutputChannels();
     const int nSamples = buffer.getNumSamples();
@@ -533,7 +537,15 @@ void MatrixRouterAudioProcessor::setStateInformation (const void* data, int size
         coeffUpdate.Id1 = i;
         for (int j=0 ; j<JucePlugin_MaxNumOutputChannels ; j++)
         {
-            routingMatrix[i][j] = MemoryInputStream (data, static_cast<size_t> (sizeInBytes), false).readFloat(); // == automation data
+            *dawRoutingMatrix[idx(i, j)] = MemoryInputStream (data, static_cast<size_t> (sizeInBytes), false).readFloat(); // != automation data at this point !!
+            routingMatrix[i][j] = *dawRoutingMatrix[idx(i, j)];
+            matrixOrigin[i][j] = DataOrigin::Daw;
+            remainingRampSamples[i][j] = 0;
+            
+            // TESTER ICI SI ON A DEJA UNE DIFFERENCE
+            if (routingMatrix[i][j] != *dawRoutingMatrix[idx(i, j)])
+                oscLocalhostDebugger.send("/miam/debug/paramDifferent", (int32_t)i, (int32_t)j);
+            
             oldRoutingMatrix[i][j] = routingMatrix[i][j];
             dawMatrixBackup[i][j] = routingMatrix[i][j];
             
@@ -543,6 +555,8 @@ void MatrixRouterAudioProcessor::setStateInformation (const void* data, int size
             TrySendParamChange(coeffUpdate);
         }
     }
+    
+    oscLocalhostDebugger.send("/miam/debug/setStateInfoFinished", (Float32)0.0);
 }
 
 //==============================================================================
