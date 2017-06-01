@@ -102,6 +102,10 @@ namespace Miam {
         int lastOutputsCount = -1;
 #ifdef __MIAM_DEBUG
         OSCSender oscLocalhostDebugger;
+        public :
+        void SendOscDebugPoint(int ptNum)
+        { oscLocalhostDebugger.send("/miamDebugPoint", (int32_t)ptNum); }
+        private :
 #endif
         
         

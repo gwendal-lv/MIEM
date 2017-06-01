@@ -45,6 +45,8 @@ MatrixRouterAudioProcessor::MatrixRouterAudioProcessor()
                                               100.0,   // max (defined in projucer)
                                               MiamRouter_DefaultAttackTime_ms);
     addParameter(rampDuration_ms); // will auto-delete
+    
+    // çA C'EST BIZARRE ???
     *rampDuration_ms = MiamRouter_DefaultAttackTime_ms;
     rampDurationBackup_ms = MiamRouter_DefaultAttackTime_ms; // initialized after construction
     sendRampDuration(); // update enqueued
@@ -511,9 +513,14 @@ AudioProcessorEditor* MatrixRouterAudioProcessor::createEditor()
 
 //==============================================================================
 void MatrixRouterAudioProcessor::getStateInformation (MemoryBlock& destData)
-{
+{ /*
     // Data backup towards the DAW
-    MemoryOutputStream (destData, true).writeInt(networkModel->GetUdpPort());
+    int udpPort = networkModel->GetUdpPort();
+    MemoryOutputStream (destData, true).writeInt(udpPort);
+    
+////////////////////
+    oscLocalhostDebugger.send("/udp_sauvegarde", (Float32)udpPort);
+////////////////////
     MemoryOutputStream (destData, true).writeFloat(*rampDuration_ms);
     
     
@@ -525,11 +532,15 @@ oscLocalhostDebugger.send("/rampe_sauvegardee_ms", (Float32)*rampDuration_ms, (F
     for (int i=0 ; i<JucePlugin_MaxNumInputChannels ; i++)
         for (int j=0 ; j<JucePlugin_MaxNumOutputChannels ; j++)
             MemoryOutputStream (destData, true).writeFloat(routingMatrix[i][j]);
+    
+////////////////////
+    oscLocalhostDebugger.send("/mat_sauvegardee_0_0", (Float32)routingMatrix[0][0]);
+//////////////////// */
 }
 
 // Data retrieval from the DAW
 void MatrixRouterAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
-{
+{/*
     AsyncParamChange paramChange;
     
     // filter Parameters at first
@@ -541,6 +552,10 @@ void MatrixRouterAudioProcessor::setStateInformation (const void* data, int size
     paramChange.IntegerValue = udpPort;
     SendParamChange(paramChange); // throws exception if full
     
+////////////////////
+    oscLocalhostDebugger.send("/udp_charge", (Float32)udpPort);
+////////////////////
+    
     *rampDuration_ms = MemoryInputStream (data, static_cast<size_t> (sizeInBytes), false).readFloat();
     rampDurationBackup_ms = *rampDuration_ms;
     paramChange.Type = AsyncParamChange::Duration;
@@ -550,7 +565,7 @@ void MatrixRouterAudioProcessor::setStateInformation (const void* data, int size
     recomputeParameters(getSampleRate());
 
 ////////////////////
-oscLocalhostDebugger.send("/rampe_chargee_ms", (Float32)*rampDuration_ms, (Float32)rampDurationBackup_ms);
+//oscLocalhostDebugger.send("/rampe_chargee_ms", (Float32)*rampDuration_ms, (Float32)rampDurationBackup_ms);
 ////////////////////
     
     // Mise à jour des coefficients directement (après pour ne pas risquer de bourrer la
@@ -576,6 +591,10 @@ oscLocalhostDebugger.send("/rampe_chargee_ms", (Float32)*rampDuration_ms, (Float
             TrySendParamChange(coeffUpdate); // no exception thrown
         }
     }
+    
+////////////////////
+    //oscLocalhostDebugger.send("/mat_chargee_0_0", (Float32)routingMatrix[0][0]);
+//////////////////// */
 }
 
 //==============================================================================

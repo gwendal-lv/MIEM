@@ -124,13 +124,15 @@ void Presenter::OnSliderValueChanged(int row, int col, double value)
 }
 void Presenter::OnUdpPortChanged(int udpPort)
 {
-    // At this point : called from the Juce UI thread (so : OK), notifyModel=true
-    bool isUdpConnected = networkModel.SetUdpPort(udpPort, true);
+    // At this point : called from the Juce UI thread (so : OK), notifyModel=false
+    bool isUdpConnected = networkModel.SetUdpPort(udpPort, false);
+    model.SendOscDebugPoint(0);
     // Self-update
     this->OnNewUdpPort(udpPort, isUdpConnected);
 }
 void Presenter::OnAttackDurationChanged(double attackDuration)
 {
+    model.SendOscDebugPoint(1);
     AsyncParamChange paramChange;
     paramChange.Type = AsyncParamChange::Duration;
     paramChange.Id1 = DurationId::AttackTime;
