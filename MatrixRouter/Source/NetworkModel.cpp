@@ -20,9 +20,10 @@ using namespace Miam;
 
 
 // =================== Construction & destruction ===================
-NetworkModel::NetworkModel(MatrixRouterAudioProcessor& _model)
+NetworkModel::NetworkModel(MatrixRouterAudioProcessor& _model, std::string _oscAddress)
 :
-model(_model)
+model(_model),
+oscAddress(_oscAddress)
 {
 }
 
@@ -36,10 +37,12 @@ bool NetworkModel::SetUdpPort(int _udpPort, bool notifyModel)
 {
     removeListener(this);
     
+    udpPort = _udpPort;
+    
     disconnect();
-    if (! connect (_udpPort))
+    if (! connect (udpPort))
     {
-        std::cout << "Error: could not connect to UDP port " << _udpPort << std::endl;
+        std::cout << "Error: could not connect to UDP port " << udpPort << std::endl;
         return false;
     }
     else
@@ -52,7 +55,7 @@ bool NetworkModel::SetUdpPort(int _udpPort, bool notifyModel)
         {
             AsyncParamChange udpChangeNotification;
             udpChangeNotification.Type = AsyncParamChange::UdpPort;
-            udpChangeNotification.IntegerValue = _udpPort;
+            udpChangeNotification.IntegerValue = udpPort;
             SendParamChange(udpChangeNotification);
         }
         
@@ -60,11 +63,10 @@ bool NetworkModel::SetUdpPort(int _udpPort, bool notifyModel)
     }
 }
 
-
 // =================== Asynchronous OSC processing ===================
 void NetworkModel::oscMessageReceived(const OSCMessage& message)
 {
-    if (message.getAddressPattern().matches("/miam/matrix"))
+    if (message.getAddressPattern().matches(oscAddress.c_str()))
     {
         if (message.size() == 3
             && message[0].isInt32() && message[1].isInt32()
@@ -75,9 +77,28 @@ void NetworkModel::oscMessageReceived(const OSCMessage& message)
             
             paramChange.Id1 = message[0].getInt32();
             paramChange.Id2 = message[1].getInt32();
-            paramChange.DoubleValue = (double) message[2].getFloat32();
+            paramChange.FloatValue = message[2].getFloat32();
             
             SendParamChange(paramChange);
         }
+    }
+    else if (message.getAddressPattern().matches((oscAddress+"/reset").c_str()))
+    {
+        // CODE DE RESET A IMPLEMENTEEEEEEEEER
+        // CODE DE RESET A IMPLEMENTEEEEEEEEER
+        // CODE DE RESET A IMPLEMENTEEEEEEEEER
+        // CODE DE RESET A IMPLEMENTEEEEEEEEER
+        // CODE DE RESET A IMPLEMENTEEEEEEEEER
+        // CODE DE RESET A IMPLEMENTEEEEEEEEER
+        // CODE DE RESET A IMPLEMENTEEEEEEEEER
+        // CODE DE RESET A IMPLEMENTEEEEEEEEER
+        // CODE DE RESET A IMPLEMENTEEEEEEEEER
+        // CODE DE RESET A IMPLEMENTEEEEEEEEER
+        // CODE DE RESET A IMPLEMENTEEEEEEEEER
+        // CODE DE RESET A IMPLEMENTEEEEEEEEER
+        // CODE DE RESET A IMPLEMENTEEEEEEEEER
+        // CODE DE RESET A IMPLEMENTEEEEEEEEER
+        // CODE DE RESET A IMPLEMENTEEEEEEEEER
+        // CODE DE RESET A IMPLEMENTEEEEEEEEER
     }
 }

@@ -20,6 +20,7 @@
 //[Headers] You can add your own extra header files here...
 #include "Presenter.h"
 #include "MatrixComponent.h"
+
 //[/Headers]
 
 #include "OscMatrixComponent.h"
@@ -126,7 +127,7 @@ OscMatrixComponent::OscMatrixComponent (Presenter* _presenter)
 
 
     //[Constructor] You can add your own custom stuff here..
-    
+
     //Initially disabled (will be re-enabled on timeout from Model)
     //setEnabled(false);
 
@@ -161,7 +162,7 @@ void OscMatrixComponent::paint (Graphics& g)
     //[UserPrePaint] Add your own custom painting code here..
     //[/UserPrePaint]
 
-    g.fillAll (Colour (0xffa0a0a0));
+    g.fillAll (Colour (0xff909090));
 
     //[UserPaint] Add your own custom painting code here..
     //[/UserPaint]
@@ -176,7 +177,7 @@ void OscMatrixComponent::resized()
     preferencesGroupComponent->setBounds (256, 0, getWidth() - 256, roundFloatToInt (72 * 1.0000f));
     udpPortTextEditor->setBounds ((256 + 8) + 184 - -8, 16, 64, 24);
     udpPortLabel->setBounds (256 + 8, 16, 184, 24);
-    udpStatusLabel->setBounds (((256 + 8) + 184 - -8) + 64 - -8, 16, (getWidth() - 256) - 160, 24);
+    udpStatusLabel->setBounds (((256 + 8) + 184 - -8) + 64 - -8, 16, (getWidth() - 256) - 280, 24);
     audioConfigComponent->setBounds (0, 0, 248, 72);
     keyboardButton->setBounds (256 + 8, 40, (getWidth() - 256) - 24, 24);
     slidersMatrix->setBounds (0 + 8, (0 + 72) + 16, (getWidth() - 0) - 16, (getHeight() - 72) - 24);
@@ -259,12 +260,12 @@ void OscMatrixComponent::SetAttackSliderValue(double value)
 {
     attackSlider->setValue(value, NotificationType::dontSendNotification);
 }
-void OscMatrixComponent::SetUdpPortAndMessage(int udpPort, bool isConnected)
+void OscMatrixComponent::SetUdpPortAndMessage(int udpPort, bool isConnected, std::string& oscAddress)
 {
     udpPortTextEditor->setText(std::to_string(udpPort), NotificationType::sendNotification);
     if (isConnected)
     {
-        udpStatusLabel->setText("Connected on port " + std::to_string(udpPort) + ".", NotificationType::dontSendNotification);
+        udpStatusLabel->setText("Listening to " + oscAddress + " OSC messages on port " + std::to_string(udpPort) + ".", NotificationType::dontSendNotification);
         udpStatusLabel->setColour(Label::ColourIds::textColourId, Colours::black);
     }
     else
@@ -297,7 +298,7 @@ BEGIN_JUCER_METADATA
                  constructorParams="Presenter* _presenter" variableInitialisers=""
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="0" initialWidth="400" initialHeight="300">
-  <BACKGROUND backgroundColour="ffa0a0a0"/>
+  <BACKGROUND backgroundColour="ff909090"/>
   <GROUPCOMPONENT name="Matrix Group Component" id="19b69873bd3945f7" memberName="matrixGroupComponent"
                   virtualName="" explicitFocusOrder="0" pos="0 0R 0M 72M" posRelativeY="bb46950e139db507"
                   outlinecol="ff454545" textcol="ff000000" title="Routing matrix"/>
@@ -315,7 +316,7 @@ BEGIN_JUCER_METADATA
          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
          justification="33"/>
   <LABEL name="UPD Status Label" id="3fd4c40c4d48dfec" memberName="udpStatusLabel"
-         virtualName="" explicitFocusOrder="0" pos="-8R 16 160M 24" posRelativeX="e4ef4437203ce19e"
+         virtualName="" explicitFocusOrder="0" pos="-8R 16 280M 24" posRelativeX="e4ef4437203ce19e"
          posRelativeW="dfbb24a51fa3d6c0" textCol="ff000000" edTextCol="ff000000"
          edBkgCol="0" labelText="Status : ..." editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"

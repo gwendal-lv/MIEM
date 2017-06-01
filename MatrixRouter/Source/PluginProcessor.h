@@ -81,7 +81,7 @@ namespace Miam {
         float rampDurationBackup_ms;
         
         // - - - - - Audio parameters for Automation - - - - -
-        AudioParameterInt* udpPortAudioParam;
+        
         /// \brief Automatizable data shared with the data
         ///
         /// Also the data that can be saved and loaded to and from the DAW.

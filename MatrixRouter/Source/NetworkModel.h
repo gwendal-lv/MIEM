@@ -45,13 +45,14 @@ namespace Miam {
         // - - - - - Network settings - - - - -
         // May suffer from concurrent accesses
         // .... sauf si Juce gère bien les appels du DAW
-        //int udpPort = -1;
+        int udpPort = -1;
+        std::string oscAddress;
         
         // ================== METHODS ===================
         
         // - - - - - Construction & destruction - - - - -
         public :
-        NetworkModel(MatrixRouterAudioProcessor& _model);
+        NetworkModel(MatrixRouterAudioProcessor& _model, std::string _oscAddress = "/miam/matrix");
         ~NetworkModel();
         
         
@@ -62,6 +63,11 @@ namespace Miam {
         ///
         /// \return Wether the connection could be established or not
         bool SetUdpPort(int _udpPort, bool notifyModel=false);
+        
+        int GetUdpPort() {return udpPort;}
+        
+        /// \Brief Not thread-safe at the moment !
+        std::string GetOscAddress() {return oscAddress;}
         
         // - - - - - Asynchronous OSC processing - - - - -
         private :

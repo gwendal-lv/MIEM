@@ -29,7 +29,7 @@ MatrixRouterAudioProcessorEditor::MatrixRouterAudioProcessorEditor (MatrixRouter
     
     setResizable(true, true); // inutile ??
     setResizeLimits(800, 600, 100000, 100000);
-    setSize (800, 600);
+    setSize (900, 600);
     
     // Timer launched at the very end
     // View will notify itself at each timer callback to the presenter

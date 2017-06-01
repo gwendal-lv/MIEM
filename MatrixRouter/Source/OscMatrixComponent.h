@@ -66,7 +66,7 @@ public:
     void OnSliderValueChanged(int row, int col, double value) override;
     void SetSliderValue(int row, int col, double value);
     void SetAttackSliderValue(double value);
-    void SetUdpPortAndMessage(int udpPort, bool isConnected);
+    void SetUdpPortAndMessage(int udpPort, bool isConnected, std::string& oscAddress);
     void SetActiveSliders(int inputsCount, int outputsCount);
 
 #ifdef __MIAM_DEBUG

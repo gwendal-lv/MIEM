@@ -29,7 +29,8 @@ using namespace Miam;
 // =================== Construction & destruction ===================
 Presenter::Presenter(MatrixRouterAudioProcessor& _model, NetworkModel& _networkModel)
     :
-    model(_model), networkModel(_networkModel)
+    model(_model), networkModel(_networkModel),
+oscAddressCopy(networkModel.GetOscAddress()) // thread-safe at this point
 {
     oscMatrixComponent = new OscMatrixComponent(this);
 }
@@ -124,7 +125,7 @@ void Presenter::OnSliderValueChanged(int row, int col, double value)
 void Presenter::OnUdpPortChanged(int udpPort)
 {
     // At this point : called from the Juce UI thread (so : OK), notifyModel=true
-    bool isUdpConnected = model.GetNetworkModel()->SetUdpPort(udpPort, true);
+    bool isUdpConnected = networkModel.SetUdpPort(udpPort, true);
     // Self-update
     this->OnNewUdpPort(udpPort, isUdpConnected);
 }
@@ -143,7 +144,7 @@ void Presenter::OnAttackDurationChanged(double attackDuration)
 // =================== (possibly) Synchronous callbacks from Model ===================
 void Presenter::OnNewUdpPort(int udpPort, bool isConnected)
 {
-    oscMatrixComponent->SetUdpPortAndMessage(udpPort, isConnected);
+    oscMatrixComponent->SetUdpPortAndMessage(udpPort, isConnected, oscAddressCopy);
 }
 
 

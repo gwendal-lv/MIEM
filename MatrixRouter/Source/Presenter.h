@@ -47,6 +47,8 @@ namespace Miam {
         /// when necessary (when recreated by the user) for the View to become its parent
         ScopedPointer<OscMatrixComponent> oscMatrixComponent;
         
+        std::string oscAddressCopy;
+        
         // - - - - - time management - - - - -
         const double updateFrequency_Hz = 15.0;
         const long updatePeriod_us = 66667; // rien de bien diabolique, correspond à 15Hz
