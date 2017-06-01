@@ -126,6 +126,10 @@ OscMatrixComponent::OscMatrixComponent (Presenter* _presenter)
 
 
     //[Constructor] You can add your own custom stuff here..
+    
+    //Initially disabled (will be re-enabled on timeout from Model)
+    //setEnabled(false);
+
     //[/Constructor]
 }
 

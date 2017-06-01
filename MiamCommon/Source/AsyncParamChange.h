@@ -13,6 +13,8 @@
 
 #include <string>
 
+#include "ParametersIds.h"
+
 
 namespace Miam
 {

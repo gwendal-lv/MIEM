@@ -82,11 +82,11 @@ MatrixRouterAudioProcessor::MatrixRouterAudioProcessor()
             remainingRampSamples[i][j] = 0;
             // Following matrix data to be initialized later too
             routingMatrix[i][j] = 0.0f;
-            matrixOrigin[i][j] = DataOrigin::PluginProcessorModel;
+            matrixOrigin[i][j] = DataOrigin::InitialValue;
             oldRoutingMatrix[i][j] = 0.0f;
             
-            // Data that is Not initialized later
-            //dawMatrixBackup[i][j] = 0.0f;
+            // Data that is Not initialized by force (but naturally within the processing)
+            dawMatrixBackup[i][j] = 0.0f;
         }
     }
     
@@ -212,15 +212,13 @@ bool MatrixRouterAudioProcessor::isBusesLayoutSupported (const BusesLayout& layo
 #endif
 
 
-bool testDone = false;
+
 //==============================================================================
 // =================== Functions executed on the audio thread ===================
 //==============================================================================
 void MatrixRouterAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
-    if (!testDone)
-        oscLocalhostDebugger.send("/miam/debug/processBlock0", (Float32)0.0);
-    testDone = true;
+        //oscLocalhostDebugger.send("/miam/debug/processBlock0", (Float32)0.0);
     
     const int totalNumInputChannels  = getTotalNumInputChannels();
     const int totalNumOutputChannels = getTotalNumOutputChannels();
@@ -273,6 +271,7 @@ void MatrixRouterAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBu
     {
         for (int j=0 ; j < totalNumOutputChannels ; j++)
         {
+            bool changeJustHappened = false;
             // At first : Scrutation for a change on the DAW side (since last buffer)
             // ONLY if the plug-in did not already received a command (OSC or GUI)
             // (else, the check wouldn't be necessary because the data will be
@@ -283,6 +282,8 @@ void MatrixRouterAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBu
                 // Sinon, grosse propagation des erreurs -> bug de détection de chgmt
                 if ( *dawRoutingMatrix[idx(i,j)] != dawMatrixBackup[i][j] )
                 {
+                    oscLocalhostDebugger.send("/cgmtParamDaw", (int32_t)i, (int32_t)j, (Float32)*dawRoutingMatrix[idx(i,j)], (Float32)dawMatrixBackup[i][j]);
+                    
                     // The DAW then takes control of the internal matrix :
                     // Creation of the async param change to be processed
                     paramChange.Type = AsyncParamChange::Volume;
@@ -292,11 +293,16 @@ void MatrixRouterAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBu
                     // Actual Synchronous processing with Presenter notification
                     // Updates the internal routing matrix
                     processParamChange(paramChange, DataOrigin::Daw);
+                    changeJustHappened = true;
                 }
             }
             
             // Finally, backup of the whole matrix
+            if (i == 0 && j == 0 && changeJustHappened)
+                oscLocalhostDebugger.send("/AvantBackupDaw", (int32_t)i, (int32_t)j, (Float32)*dawRoutingMatrix[idx(i,j)], (Float32)dawMatrixBackup[i][j]);
             dawMatrixBackup[i][j] = *dawRoutingMatrix[idx(i,j)];
+            if (i == 0 && j == 0 && changeJustHappened)
+            oscLocalhostDebugger.send("/ApresBackupDaw", (int32_t)i, (int32_t)j, (Float32)*dawRoutingMatrix[idx(i,j)], (Float32)dawMatrixBackup[i][j]);
         }
     }
     
@@ -382,6 +388,7 @@ void MatrixRouterAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBu
         }
     }
 }
+int32_t updatesPasDuDawCompteur = 0;
 void MatrixRouterAudioProcessor::processParamChange(AsyncParamChange& paramChange, DataOrigin origin)
 {
     // For response to requests
@@ -401,16 +408,36 @@ void MatrixRouterAudioProcessor::processParamChange(AsyncParamChange& paramChang
                 && paramChange.FloatValue <= Miam_MaxVolume) // +6dB
             {
                 routingMatrix[paramChange.Id1][paramChange.Id2] = paramChange.FloatValue;
-                remainingRampSamples[paramChange.Id1][paramChange.Id2] = initialRampSamples;
+                // no ramp on init values
+                if (origin != DataOrigin::InitialValue)
+                    remainingRampSamples[paramChange.Id1][paramChange.Id2] = initialRampSamples;
+                else
+                    remainingRampSamples[paramChange.Id1][paramChange.Id2] = 0;
                 // We suppose here that the priorities by ORIGIN were respected
                 // BEFORE calling this function
                 matrixOrigin[paramChange.Id1][paramChange.Id2] = origin;
+
+                /*
+                if (origin == DataOrigin::Daw)
+                {
+                    oscLocalhostDebugger.send("/cgmtParamDaw", (int32_t)paramChange.Id1, (int32_t)paramChange.Id2, (Float32)*dawRoutingMatrix[idx(paramChange.Id1, paramChange.Id2)], (Float32)dawMatrixBackup[paramChange.Id1][paramChange.Id2]);
+                }
+                */
+
                 
                 // Change notifications
-                if (origin != DataOrigin::Presenter) // to Presenter
+                // To Presenter (if it didn't send it itself)
+                if (origin != DataOrigin::Presenter)
                     TrySendParamChange(paramChange);
-                if (origin != DataOrigin::Daw) // to DAW
+                // To DAW (if it didn't send it itself, AND if it's not the init phase)
+                if (origin != DataOrigin::Daw)
                 {
+                    if (origin == DataOrigin::Presenter)
+                    {
+                    updatesPasDuDawCompteur++;
+                    oscLocalhostDebugger.send("/updatePresenter", updatesPasDuDawCompteur);
+                    }
+                    
                     *dawRoutingMatrix[idx(paramChange.Id1,paramChange.Id2)]
                         = routingMatrix[paramChange.Id1][paramChange.Id2];
                 }
@@ -420,7 +447,7 @@ void MatrixRouterAudioProcessor::processParamChange(AsyncParamChange& paramChang
         // Update request from the Presenter
         case AsyncParamChange::UpdateDisplay :
             // If it's a request for general parameters
-            if (paramChange.Id1 == -1)
+            if (paramChange.Id1 == UpdateDisplayId::GeneralParameters)
             {
                 sendInputsOutputsCount();
                 sendRampDuration();
@@ -447,7 +474,7 @@ void MatrixRouterAudioProcessor::processParamChange(AsyncParamChange& paramChang
         
         // Duration to be identified by Id
         case AsyncParamChange::Duration :
-            if (paramChange.Id1 == 0) // Attack time
+            if (paramChange.Id1 == DurationId::AttackTime)
             {
                 *rampDuration_ms = (float)paramChange.DoubleValue;
                 rampDurationBackup_ms = *rampDuration_ms; // to prevent update loops
@@ -471,7 +498,7 @@ void MatrixRouterAudioProcessor::sendRampDuration()
 {
     AsyncParamChange attackTimeChange;
     attackTimeChange.Type = AsyncParamChange::Duration;
-    attackTimeChange.Id1 = 0;
+    attackTimeChange.Id1 = DurationId::AttackTime;
     attackTimeChange.DoubleValue = (double) *rampDuration_ms;
     TrySendParamChange(attackTimeChange);
 }
@@ -505,10 +532,12 @@ void MatrixRouterAudioProcessor::getStateInformation (MemoryBlock& destData)
     // Data backup towards the DAW
     MemoryOutputStream (destData, true).writeInt(*udpPortAudioParam);
     MemoryOutputStream (destData, true).writeFloat(*rampDuration_ms);
+    
     // We write the actual most recent routing data
     for (int i=0 ; i<JucePlugin_MaxNumInputChannels ; i++)
         for (int j=0 ; j<JucePlugin_MaxNumOutputChannels ; j++)
             MemoryOutputStream (destData, true).writeFloat(routingMatrix[i][j]);
+     
 }
 
 // Data retrieval from the DAW
@@ -529,7 +558,8 @@ void MatrixRouterAudioProcessor::setStateInformation (const void* data, int size
     
     recomputeParameters(getSampleRate());
     
-    // Mise à jour des coefficient directement
+    // Mise à jour des coefficients directement
+    
     AsyncParamChange coeffUpdate; // pour info presenter
     coeffUpdate.Type = AsyncParamChange::Volume;
     for (int i=0 ; i<JucePlugin_MaxNumInputChannels ; i++)
@@ -537,14 +567,10 @@ void MatrixRouterAudioProcessor::setStateInformation (const void* data, int size
         coeffUpdate.Id1 = i;
         for (int j=0 ; j<JucePlugin_MaxNumOutputChannels ; j++)
         {
-            *dawRoutingMatrix[idx(i, j)] = MemoryInputStream (data, static_cast<size_t> (sizeInBytes), false).readFloat(); // != automation data at this point !!
-            routingMatrix[i][j] = *dawRoutingMatrix[idx(i, j)];
+            routingMatrix[i][j] = MemoryInputStream (data, static_cast<size_t> (sizeInBytes), false).readFloat(); // = automation data at this point
+            //*dawRoutingMatrix[idx(i, j)] = MemoryInputStream (data, static_cast<size_t> (sizeInBytes), false).readFloat(); // != automation data at this point !!
             matrixOrigin[i][j] = DataOrigin::Daw;
             remainingRampSamples[i][j] = 0;
-            
-            // TESTER ICI SI ON A DEJA UNE DIFFERENCE
-            if (routingMatrix[i][j] != *dawRoutingMatrix[idx(i, j)])
-                oscLocalhostDebugger.send("/miam/debug/paramDifferent", (int32_t)i, (int32_t)j);
             
             oldRoutingMatrix[i][j] = routingMatrix[i][j];
             dawMatrixBackup[i][j] = routingMatrix[i][j];
@@ -557,6 +583,10 @@ void MatrixRouterAudioProcessor::setStateInformation (const void* data, int size
     }
     
     oscLocalhostDebugger.send("/miam/debug/setStateInfoFinished", (Float32)0.0);
+    // Now, the Presenter can start sending slider's values
+    paramChange.Type = AsyncParamChange::Activate;
+    paramChange.Id1 = ActivateId::PresenterToModelParametersTransmission;
+    SendParamChange(paramChange); // exception thrown if full (can't notify presenter to start....)
 }
 
 //==============================================================================

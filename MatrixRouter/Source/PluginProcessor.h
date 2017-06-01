@@ -127,7 +127,12 @@ namespace Miam {
     public :
         void processBlock (AudioSampleBuffer&, MidiBuffer&) override;
     private :
+        
+        /// \brief Processes (or not, depending on the origin and priority) a param
+        /// change coming from the specified source, and computes and launches a volume
+        /// ramp is the param change concerns the matrix.
         void processParamChange(AsyncParamChange& paramChange, DataOrigin origin);
+        
         /// \brief Auxiliary functions
         void sendInputsOutputsCount();
         void sendRampDuration();

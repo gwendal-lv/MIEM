@@ -50,6 +50,7 @@ namespace Miam {
         // - - - - - time management - - - - -
         const double updateFrequency_Hz = 15.0;
         const long updatePeriod_us = 66667; // rien de bien diabolique, correspond à 15Hz
+        bool isModelReadyToReceive = false; // To force waiting until the DAW has loaded
         
         // ================== METHODS ===================
         

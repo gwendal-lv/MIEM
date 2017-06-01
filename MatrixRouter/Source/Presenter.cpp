@@ -19,6 +19,8 @@
 
 #include "MatrixSlider.h" // min and max volumes
 
+#include "ModelDefines.h" // Enums for lock-free communication
+
 using namespace Miam;
 
 
@@ -66,12 +68,17 @@ void Presenter::UpdateFromView(MatrixRouterAudioProcessorEditor* view)
     {
         switch (newParamChange.Type)
         {
+            case AsyncParamChange::Activate :
+                if (newParamChange.Id1 == ActivateId::PresenterToModelParametersTransmission)
+                    isModelReadyToReceive = true;
+                break;
+                
             case AsyncParamChange::InputsAndOutputsCount :
                 oscMatrixComponent->SetActiveSliders(newParamChange.Id1, newParamChange.Id2);
                 break;
                 
             case AsyncParamChange::Duration :
-                if (newParamChange.Id1 == 0) // Attack time
+                if (newParamChange.Id1 == DurationId::AttackTime) // Attack time
                     oscMatrixComponent->SetAttackSliderValue(newParamChange.DoubleValue);
                 break;
                 
@@ -97,19 +104,22 @@ void Presenter::Update()
 
 void Presenter::OnSliderValueChanged(int row, int col, double value)
 {
-    AsyncParamChange paramChange;
-    paramChange.Type = AsyncParamChange::Volume;
-    paramChange.Id1 = row;
-    paramChange.Id2 = col;
-    
-    // We keep values over min+0.5dB only
-    if (value < (MatrixSlider::GetMinVolume_dB() + 0.5))
-        paramChange.FloatValue = 0.0f;
-    else
-        paramChange.FloatValue = (float)Decibels::decibelsToGain(value);
+    if (isModelReadyToReceive)
+    {
+        AsyncParamChange paramChange;
+        paramChange.Type = AsyncParamChange::Volume;
+        paramChange.Id1 = row;
+        paramChange.Id2 = col;
         
-    // Enqueuing
-    SendParamChange(paramChange);
+        // We keep values over min+0.5dB only
+        if (value < (MatrixSlider::GetMinVolume_dB() + 0.5))
+            paramChange.FloatValue = 0.0f;
+        else
+            paramChange.FloatValue = (float)Decibels::decibelsToGain(value);
+        
+        // Enqueuing
+        SendParamChange(paramChange);
+    }
 }
 void Presenter::OnUdpPortChanged(int udpPort)
 {

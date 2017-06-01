@@ -18,16 +18,26 @@
 #define MiamRouter_MaxBufferSize            16384
 
 
-
 namespace Miam
 {
     enum class DataOrigin
     {
-        PluginProcessorModel,
+        InitialValue,
+        //PluginProcessorModel,
+        
         NetworkModel,
         
         Presenter,
         
         Daw,
+        DawInit,
     };
+    
+    
+    // - - - - - - - - - - - - - - - - - - - - -
+    // - - - - - - - - - - - - - - - - - - - - -
+    // Async Param Changes types specification for the miam matrix router only
+
+    // - - - - - - - - - - - - - - - - - - - - -
+    // - - - - - - - - - - - - - - - - - - - - -
 }
