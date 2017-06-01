@@ -15,6 +15,7 @@
 #include "PeriodicUpdateThread.h"
 
 #include <cmath>
+#include <memory>
 
 #include "JuceHeader.h"
 
@@ -40,7 +41,7 @@ namespace Miam {
         // - - - - - links to other modules - - - - -
         private :
         MatrixRouterAudioProcessor& model;
-        NetworkModel& networkModel;
+        std::shared_ptr<NetworkModel> networkModel;
         
         // - - - - - graphical objects - - - - -
         /// \brief Kept within the presenter, sent to the ProcessorEditor (=View)
@@ -58,7 +59,7 @@ namespace Miam {
         
         // - - - - - Construction & destruction - - - - -
         public :
-        Presenter(MatrixRouterAudioProcessor& _model, NetworkModel& _networkModel);
+        Presenter(MatrixRouterAudioProcessor& _model, std::shared_ptr<NetworkModel> _networkModel);
         ~Presenter();
         
         // Callback from the Model, after the constructor of the plugin editor

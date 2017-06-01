@@ -89,7 +89,7 @@ MatrixRouterAudioProcessor::MatrixRouterAudioProcessor()
     
     // Modules construction after self-init
     networkModel = std::make_shared<NetworkModel>(*this);
-    presenter = new Presenter(*this, *networkModel); // à l'ancienne
+    presenter = new Presenter(*this, networkModel); // à l'ancienne
     
 #ifdef __MIAM_DEBUG
     if (! oscLocalhostDebugger.connect ("127.0.0.1", 9001))
