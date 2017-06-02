@@ -97,7 +97,7 @@ void Presenter::UpdateFromView(MatrixRouterAudioProcessorEditor* view)
                 
             case AsyncParamChange::Duration :
                 if (newParamChange.Id1 == DurationId::AttackTime) // Attack time
-                    oscMatrixComponent->SetAttackSliderValue(newParamChange.DoubleValue);
+                    oscMatrixComponent->SetAttackSliderValue( (double) newParamChange.IntegerValue);
                 break;
                 
             case AsyncParamChange::Volume :
@@ -148,7 +148,7 @@ void Presenter::OnAttackDurationChanged(double attackDuration)
     AsyncParamChange paramChange;
     paramChange.Type = AsyncParamChange::Duration;
     paramChange.Id1 = DurationId::AttackTime;
-    paramChange.DoubleValue = attackDuration;
+    paramChange.IntegerValue = (int) std::round(attackDuration);
     
     // Enqueuing
     TrySendParamChange(paramChange);

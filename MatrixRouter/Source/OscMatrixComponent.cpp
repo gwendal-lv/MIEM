@@ -88,7 +88,7 @@ OscMatrixComponent::OscMatrixComponent (Presenter* _presenter)
     slidersMatrix->setName ("Labelled Matrix of Sliders");
 
     addAndMakeVisible (attackSlider = new Slider ("Attack Slider"));
-    attackSlider->setRange (0.1, 100, 0.1);
+    attackSlider->setRange (1, 100, 1);
     attackSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     attackSlider->setTextBoxStyle (Slider::TextBoxRight, false, 60, 20);
     attackSlider->setColour (Slider::textBoxTextColourId, Colours::black);
@@ -336,10 +336,9 @@ BEGIN_JUCER_METADATA
                     params="this, JucePlugin_MaxNumInputChannels, JucePlugin_MaxNumOutputChannels"/>
   <SLIDER name="Attack Slider" id="b96b5d59dd56bbaa" memberName="attackSlider"
           virtualName="" explicitFocusOrder="0" pos="16R 16 108 48" posRelativeX="19707b3f29742e60"
-          textboxtext="ff000000" min="0.10000000000000000555" max="100"
-          int="0.10000000000000000555" style="RotaryVerticalDrag" textBoxPos="TextBoxRight"
-          textBoxEditable="1" textBoxWidth="60" textBoxHeight="20" skewFactor="1"
-          needsCallback="1"/>
+          textboxtext="ff000000" min="1" max="100" int="1" style="RotaryVerticalDrag"
+          textBoxPos="TextBoxRight" textBoxEditable="1" textBoxWidth="60"
+          textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <LABEL name="Attack Label" id="19707b3f29742e60" memberName="attackLabel"
          virtualName="" explicitFocusOrder="0" pos="8 28 56 24" posRelativeX="bb46950e139db507"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Attack"
