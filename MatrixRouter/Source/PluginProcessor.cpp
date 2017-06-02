@@ -390,7 +390,6 @@ void MatrixRouterAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBu
         }
     }
 }
-int32_t updatesPasDuDawCompteur = 0;
 void MatrixRouterAudioProcessor::processParamChange(AsyncParamChange& paramChange, DataOrigin origin)
 {
     // For response to requests
@@ -587,9 +586,14 @@ oscLocalhostDebugger.send("/rampe_chargee", (int32_t)rampDuration_ms, (int32_t)*
         for (int j=0 ; j<JucePlugin_MaxNumOutputChannels ; j++)
         {
             routingMatrix[i][j] = memoryInputStream.readFloat(); // = automation data at this point ??
+             // happened maybe because of the issue of reading int value as if they
+            // were float values (only reading buffer start)
             if (std::isnan(routingMatrix[i][j]))
                 routingMatrix[i][j] = MiamRouter_DefaultVolume;
-            // *dawRoutingMatrix[idx(i, j)] = MemoryInputStream (data, static_cast<size_t> (sizeInBytes), false).readFloat(); // != automation data at this point !!
+            // Perfect equality testing
+            if (*dawRoutingMatrix[idx(i, j)] != routingMatrix[i][j])
+                *dawRoutingMatrix[idx(i, j)] = routingMatrix[i][j];
+            
             matrixOrigin[i][j] = DataOrigin::Daw;
             remainingRampSamples[i][j] = 0;
             
