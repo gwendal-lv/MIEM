@@ -65,6 +65,9 @@ namespace Miam {
         // Callback from the Model, after the constructor of the plugin editor
         void OnPluginEditorCreated(MatrixRouterAudioProcessorEditor* view);
 
+        // - - - - - Lock-free Communication - - - - -
+        virtual void SendParamChange(AsyncParamChange& paramChange) override;
+        virtual bool TrySendParamChange(AsyncParamChange& paramChange) override;
         
         // - - - - - Setters and Getters - - - - -
         OscMatrixComponent* GetOscMatrixComponent() {return oscMatrixComponent;}

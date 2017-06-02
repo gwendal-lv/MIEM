@@ -17,7 +17,8 @@
 
 #define MiamRouter_MaxBufferSize            16384
 
-#define MiamRouter_DefaultAttackTime_ms     (10.0f)
+#define MiamRouter_DefaultAttackTime_ms     (5.0f)
+#define MiamRouter_DefaultVolume            (0.0f)
 
 
 namespace Miam

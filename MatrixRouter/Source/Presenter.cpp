@@ -58,6 +58,23 @@ void Presenter::OnPluginEditorCreated(MatrixRouterAudioProcessorEditor* view)
 
 
 
+// =================== Lock-free communication ===================
+void Presenter::SendParamChange(AsyncParamChange& paramChange)
+{
+    //if (isModelReadyToReceive)
+        LockFreeParamChangeSender::SendParamChange(paramChange);
+    //else
+        //throw std::runtime_error("Cannot send the parameter (model is not ready)");
+}
+bool Presenter::TrySendParamChange(AsyncParamChange& paramChange)
+{
+    if (isModelReadyToReceive)
+        return LockFreeParamChangeSender::TrySendParamChange(paramChange);
+    else
+        return false;
+}
+
+
 // =================== Periodic Update ===================
 
 void Presenter::UpdateFromView(MatrixRouterAudioProcessorEditor* view)
@@ -105,42 +122,36 @@ void Presenter::Update()
 
 void Presenter::OnSliderValueChanged(int row, int col, double value)
 {
-    model.SendOscDebugPoint(2);
-    if (isModelReadyToReceive)
-    {
-        AsyncParamChange paramChange;
-        paramChange.Type = AsyncParamChange::Volume;
-        paramChange.Id1 = row;
-        paramChange.Id2 = col;
-        
-        // We keep values over min+0.5dB only
-        if (value < (MatrixSlider::GetMinVolume_dB() + 0.5))
-            paramChange.FloatValue = 0.0f;
-        else
-            paramChange.FloatValue = (float)Decibels::decibelsToGain(value);
-        
-        // Enqueuing
-        SendParamChange(paramChange);
-    }
+    AsyncParamChange paramChange;
+    paramChange.Type = AsyncParamChange::Volume;
+    paramChange.Id1 = row;
+    paramChange.Id2 = col;
+    
+    // We keep values over min+0.5dB only
+    if (value < (MatrixSlider::GetMinVolume_dB() + 0.5))
+        paramChange.FloatValue = 0.0f;
+    else
+        paramChange.FloatValue = (float)Decibels::decibelsToGain(value);
+    
+    // Enqueuing
+    TrySendParamChange(paramChange);
 }
 void Presenter::OnUdpPortChanged(int udpPort)
 {
     // At this point : called from the Juce UI thread (so : OK), notifyModel=false
     bool isUdpConnected = networkModel->SetUdpPort(udpPort, false);
-    model.SendOscDebugPoint(0);
     // Self-update
     this->OnNewUdpPort(udpPort, isUdpConnected);
 }
 void Presenter::OnAttackDurationChanged(double attackDuration)
 {
-    model.SendOscDebugPoint(1);
     AsyncParamChange paramChange;
     paramChange.Type = AsyncParamChange::Duration;
     paramChange.Id1 = DurationId::AttackTime;
     paramChange.DoubleValue = attackDuration;
     
     // Enqueuing
-    SendParamChange(paramChange);
+    TrySendParamChange(paramChange);
 }
 
 

@@ -75,11 +75,8 @@ namespace Miam {
         /// Must be >= 1 to avoid bugs :
         /// if == 0, unable to detect if a volume ramp is happening or not
         int initialRampSamples;
-        /// \brief Corresponds to the "attack time" within the View module
-        AudioParameterFloat* rampDuration_ms;
-        /// \brief Same as rampDuration_ms but from the DAW
-        /// \brief To detect changes on the DAW side... (méthode archaïque)
-        float rampDurationBackup_ms;
+        /// \brief Attack/Release time for any volume transition
+        float rampDuration_ms;
         
         // - - - - - Audio parameters for Automation - - - - -
         
@@ -95,6 +92,12 @@ namespace Miam {
         /// Peut-être qu'en développant en VST / AU natif par OS on pourrait avoir des
         /// notifications...
         float dawMatrixBackup[JucePlugin_MaxNumInputChannels][JucePlugin_MaxNumInputChannels];
+        
+        /// \brief Corresponds to the "attack time" within the View module
+        AudioParameterFloat* dawRampDuration_ms;
+        /// \brief Same as rampDuration_ms but from the DAW
+        /// \brief To detect changes on the DAW side... (méthode archaïque)
+        float dawRampDurationBackup_ms;
         
         // - - - - - Auxiliary attributes - - - - -
         // To detect and send changes to the Presenter
@@ -170,6 +173,10 @@ namespace Miam {
         
         //==============================================================================
         void getStateInformation (MemoryBlock& destData) override;
+        /// \Brief Called from the DAW, it forces the state of the plugin.
+        ///
+        /// The DAW (Reaper/AU) sometimes loads nan values -> check for this, if nan
+        /// values are given by the DAW -> default values loaded.
         void setStateInformation (const void* data, int sizeInBytes) override;
         
         
