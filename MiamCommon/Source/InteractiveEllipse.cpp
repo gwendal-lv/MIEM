@@ -37,15 +37,12 @@ void InteractiveEllipse::CanvasResized(SceneCanvasComponent* _parentCanvas)
 {
 	DrawableEllipse::CanvasResized(_parentCanvas);
 
-	int L1 = contourPoints.outer().size();
+	
 	// Pixel contour points
 	contourPointsInPixels.clear();
-	for (size_t i = 0; i<contourPoints.outer().size(); i++)
-		contourPointsInPixels.outer().push_back(bpt(contourPoints.outer().at(i).get<0>()*parentCanvas->getWidth(), 
-			contourPoints.outer().at(i).get<1>()*parentCanvas->getHeight()));
-	int L2 = contourPoints.outer().size();
-	if (L1 != L2)
-		DBG("STOOOOOOOOOOOOOOOOOOOOOOOOOP");
+	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scaler(parentCanvas->getWidth(), parentCanvas->getHeight());
+	boost::geometry::transform(contourPoints, contourPointsInPixels, scaler);
+
 	// Finally, we update sub triangles
 	
 	computeSurface(); // mettre dans updateSubTriangle?
