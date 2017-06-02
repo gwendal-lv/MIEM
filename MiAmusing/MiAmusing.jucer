@@ -96,6 +96,10 @@
         <FILE id="UU8cSP" name="MainComponent.cpp" compile="1" resource="0"
               file="Source/MainComponent.cpp"/>
         <FILE id="W5cilK" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+        <FILE id="DDewx3" name="MultiCanvasComponentAmusing.cpp" compile="1"
+              resource="0" file="Source/MultiCanvasComponentAmusing.cpp"/>
+        <FILE id="a1eNGz" name="MultiCanvasComponentAmusing.h" compile="0"
+              resource="0" file="Source/MultiCanvasComponentAmusing.h"/>
         <FILE id="GceKis" name="View.cpp" compile="1" resource="0" file="Source/View.cpp"/>
         <FILE id="AJOEwp" name="View.h" compile="0" resource="0" file="Source/View.h"/>
       </GROUP>

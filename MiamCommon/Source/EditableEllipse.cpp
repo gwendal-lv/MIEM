@@ -12,6 +12,8 @@
 #include "SceneCanvasComponent.h"
 
 #include <cmath>
+#include "boost\geometry.hpp"
+#include "boost\geometry\strategies\strategy_transform.hpp"
 
 #include "MiamMath.h"
 #include "CartesianLine.h"
@@ -254,41 +256,8 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 		double r2 = boost::geometry::distance(centerInPixels, bnewLocation);
 		// ----- size -----
 		double size = r2 / r1;
-
-		// --- size if polygon is still big enough only ---
-		double minDistanceFromCenter = 0.0;
-		bool wasSizeApplied = false;
-		bpolygon bnewContourPoints;
-		for (size_t i = 0; i<contourPointsInPixels.outer().size(); i++)
-		{
-			std::vector<bpt> result;
-			boost::geometry::difference(contourPointsInPixels.outer().at(i), centerInPixels, result);
-			bnewContourPoints.outer().push_back(result.front());
-			bnewContourPoints.outer().at(i) = bpt(size * bnewContourPoints.outer().at(i).get<0>(),
-				size * bnewContourPoints.outer().at(i).get<1>());
-			if (boost::geometry::distance(bnewContourPoints.outer().at(i), bpt(0, 0)) > minDistanceFromCenter)
-				minDistanceFromCenter = boost::geometry::distance(bnewContourPoints.outer().at(i), bpt(0, 0));
-
-			boost::geometry::strategy::transform::translate_transformer<double, 2, 2> tr(centerInPixels.get<0>(), centerInPixels.get<1>());
-			boost::geometry::transform(bnewContourPoints.outer().at(i), bnewContourPoints.outer().at(i), tr);
-
-		}
-		if (minDistanceFromCenter >=
-			minimumSizePercentage*(parentCanvas->getWidth() + parentCanvas->getHeight()) / 2.0)
-		{
-			wasSizeApplied = true;
-			contourPointsInPixels = bnewContourPoints;
-			bmanipulationPointInPixels = bnewLocation;
-			a *= size;
-			b *= size;
-		}
-		// After manipulation computation : normalized coordinates update
-		for (size_t i = 0; i < contourPointsInPixels.outer().size(); i++)
-		{
-			contourPoints.outer().at(i) = bpt(
-				contourPointsInPixels.outer().at(i).get<0>() / ((double)parentCanvas->getWidth()),
-				contourPointsInPixels.outer().at(i).get<1>() / ((double)parentCanvas->getHeight()));
-		}
+		SizeChanged(size);
+		
 	}
 
 	else if (pointDraggedId == EditableAreaPointId::Center)
@@ -349,20 +318,85 @@ AreaEventType EditableEllipse::EndPointMove()
 	return eventType;
 }
 
-void EditableEllipse::Translate(const Point<double>& translation)
+void EditableEllipse::SizeChanged(double size)
 {
-	centerInPixels.set<0>(centerInPixels.get<0>() + translation.x);
-	centerInPixels.set<1>(centerInPixels.get<1>() + translation.y);
-	center = bpt(centerInPixels.get<0>() / ((double)parentCanvas->getWidth()),
-		centerInPixels.get<1>() / ((double)parentCanvas->getHeight()));
+	//// --- size if polygon is still big enough only ---
+	double minDistanceFromCenter = 0.0;
+	bool wasSizeApplied = false;
+	bpolygon bnewContourPoints;
+
+	for (size_t i = 0; i<contourPointsInPixels.outer().size(); i++)
+	{
+		/*std::vector<bpt> result;
+		boost::geometry::difference(contourPointsInPixels.outer().at(i), centerInPixels, result);
+		bnewContourPoints.outer().push_back(result.front());*/
+
+		
+
+		bnewContourPoints.outer().push_back(bpt(contourPointsInPixels.outer().at(i).get<0>() - centerInPixels.get<0>(),
+			contourPointsInPixels.outer().at(i).get<1>() - centerInPixels.get<1>()));
+
+
+		bnewContourPoints.outer().at(i) = bpt(size * bnewContourPoints.outer().at(i).get<0>(),
+			size * bnewContourPoints.outer().at(i).get<1>());
+		/*if (boost::geometry::distance(bnewContourPoints.outer().at(i), bpt(0, 0)) > minDistanceFromCenter)
+			minDistanceFromCenter = boost::geometry::distance(bnewContourPoints.outer().at(i), bpt(0, 0));
+
+		boost::geometry::strategy::transform::translate_transformer<double, 2, 2> tr(centerInPixels.get<0>(), centerInPixels.get<1>());
+		boost::geometry::transform(bnewContourPoints.outer().at(i), bnewContourPoints.outer().at(i), tr);*/
+		if (boost::geometry::distance(bnewContourPoints.outer().at(i), bpt(0, 0)) > minDistanceFromCenter)
+			minDistanceFromCenter = boost::geometry::distance(bnewContourPoints.outer().at(i), bpt(0, 0));
+
+		bnewContourPoints.outer().at(i).set<0>(bnewContourPoints.outer().at(i).get<0>() + centerInPixels.get<0>());
+		bnewContourPoints.outer().at(i).set<1>(bnewContourPoints.outer().at(i).get<1>() + centerInPixels.get<1>());
+
+	}
+	
+	if (minDistanceFromCenter >=
+		minimumSizePercentage*(parentCanvas->getWidth() + parentCanvas->getHeight()) / 2.0)
+	{
+		wasSizeApplied = true;
+		contourPointsInPixels.clear(); // test;
+		contourPointsInPixels = bnewContourPoints;
+		bmanipulationPointInPixels.set<0>(centerInPixels.get<0>() + manipulationPointRadius*size); //= bnewLocation;
+		a *= size;
+		b *= size;
+	}
+
+
+	// After manipulation computation : normalized coordinates update
 	for (size_t i = 0; i < contourPointsInPixels.outer().size(); i++)
 	{
-		contourPointsInPixels.outer().at(i).set<0>(contourPointsInPixels.outer().at(i).get<0>() + translation.x);
-		contourPointsInPixels.outer().at(i).set<1>(contourPointsInPixels.outer().at(i).get<1>() + translation.y);
 		contourPoints.outer().at(i) = bpt(
 			contourPointsInPixels.outer().at(i).get<0>() / ((double)parentCanvas->getWidth()),
 			contourPointsInPixels.outer().at(i).get<1>() / ((double)parentCanvas->getHeight()));
 	}
+}
+
+void EditableEllipse::Translate(const Point<double>& translation)
+{
+	
+	
+
+	//// Manipulation point (+ line...)
+	//computeManipulationPoint();
+	bpt newCenterInPixels;
+	bpolygon newContourPointsInPixels;
+	newContourPointsInPixels.clear();
+	boost::geometry::strategy::transform::translate_transformer<double, 2, 2> btranslation(translation.x, translation.y);
+	boost::geometry::transform(centerInPixels, newCenterInPixels,btranslation);
+	boost::geometry::transform(contourPointsInPixels, newContourPointsInPixels,btranslation);
+
+	bpt newCenter;
+	bpolygon newContourPoints;
+	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> bscale(1.0 / (double)parentCanvas->getWidth(), 1.0 / (double)parentCanvas->getHeight());
+	boost::geometry::transform(newCenterInPixels, newCenter, bscale);
+	boost::geometry::transform(newContourPointsInPixels, newContourPoints, bscale);
+
+	centerInPixels = newCenterInPixels;
+	contourPointsInPixels = newContourPointsInPixels;
+	center = newCenter;
+	contourPoints = newContourPoints;
 
 	// Manipulation point (+ line...)
 	computeManipulationPoint();

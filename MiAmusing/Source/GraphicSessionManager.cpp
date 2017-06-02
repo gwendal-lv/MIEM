@@ -33,6 +33,8 @@ Author:  Gwendal Le Vaillant
 #include "CompletePolygon.h"
 #include <cmath>
 
+#include "MultiCanvasComponentAmusing.h"
+
 using namespace Amusing;
 using namespace Miam;
 
@@ -46,6 +48,7 @@ GraphicSessionManager::GraphicSessionManager(Presenter* presenter_, View* view_)
 	IGraphicSessionManager(presenter_),
 	view(view_),
 	myPresenter(presenter_),
+	myMultiCanvasComponent(new MultiCanvasComponentAmusing(this)),
 	deleting(false)
 {
 
@@ -56,8 +59,8 @@ GraphicSessionManager::GraphicSessionManager(Presenter* presenter_, View* view_)
 	// On doit créer les sous-objets graphiques de canevas (View) avant de
 	// les transmettre au sous-module de gestion de canevas (Presenter) que l'on crée
 	// d'ailleurs ici aussi.
-	canvasManagers.push_back(std::make_shared<MultiSceneCanvasManager>(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas1));
-	multiCanvasComponent->CompleteInitialization();
+	canvasManagers.push_back(std::make_shared<MultiSceneCanvasManager>(this, myMultiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas1));
+	myMultiCanvasComponent->CompleteInitialization();
 	DBG("pushed");
 //	canvasManagers.back()->CompleteInitialization(canvasManagers.back());
 	DBG("initialized");
@@ -76,7 +79,7 @@ GraphicSessionManager::GraphicSessionManager(Presenter* presenter_, View* view_)
 	}
 	
 	// Links to the view module
-	view->CompleteInitialization(this, multiCanvasComponent);
+	view->CompleteInitialization(this, myMultiCanvasComponent);
 	editScene->CompleteInitialization(this);// , multiCanvasComponent);
 	DBG("view + edit scene initialized");
 	// And states of the canvases are forced

@@ -40,7 +40,7 @@ void View::CompleteInitialization(Presenter* _presenter)
     
     mainContentComponent->CompleteInitialization(presenter);
 }
-void View::CompleteInitialization(GraphicSessionManager* _graphicSessionManager, MultiCanvasComponent* _multiCanvasComponent)
+void View::CompleteInitialization(GraphicSessionManager* _graphicSessionManager, MultiCanvasComponentAmusing* _multiCanvasComponent)
 {
     mainContentComponent->CompleteInitialization(_graphicSessionManager, _multiCanvasComponent);
 }

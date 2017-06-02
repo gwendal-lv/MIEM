@@ -28,7 +28,10 @@ CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
 		percentages.push_back(0);
 	SetNameVisible(false);
 	
-	showBullsEye = false;
+	useBullsEye = true;
+	showBullsEye = true;
+	if (useBullsEye)
+		CreateBullsEye();
 	updateSubTriangles();
 }
 
@@ -46,10 +49,12 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 	percentages.reserve(contourPoints.outer().size());
 	SetNameVisible(false);
 	
+	useBullsEye = true;
 	showBullsEye = true;
-	int Nradius = 1;
-	int startRadius = radius;
-	//updateSubTriangles();
+	startRadius = radius;
+	interval = 0.05;
+	if (useBullsEye)
+		CreateBullsEye();
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id,
@@ -66,6 +71,14 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	percentages.reserve(contourPoints.outer().size());
 	SetNameVisible(false);
 	
+
+	startRadius = 0.30;
+	interval = 0.05;
+	useBullsEye = true;
+	showBullsEye = true;
+	if (useBullsEye)
+		CreateBullsEye();
+
 	updateSubTriangles();
 }
 
@@ -73,7 +86,7 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 
 CompletePolygon::~CompletePolygon()
 {
-
+	
 }
 
 void CompletePolygon::Paint(Graphics& g)
@@ -101,9 +114,10 @@ void CompletePolygon::Paint(Graphics& g)
 		//DBG("paint cursor");
 		cursor->Paint(g);
 	}
-	if (showBullsEye)
+	if (isActive && showBullsEye)
 	{
-		
+		CanvasResizedBullsEye(parentCanvas);
+		PaintBullsEye(g);
 	}
 }
 
@@ -204,6 +218,9 @@ void CompletePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 	//lengthToPercent();
 	if(showCursor)
 		cursor->CanvasResized(_parentCanvas);
+	DBG("isActive : " + (String)isActive);
+	if (isActive && showBullsEye)
+		CanvasResizedBullsEye(_parentCanvas);
 	setReadingPosition(pc);
 	//cursor->CanvasResized(_parentCanvas);
 	//DBG("cursorCenter : " + (String)(cursorCenter.x) + " " + (String)(cursorCenter.y));
@@ -211,11 +228,106 @@ void CompletePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 	pointDraggingRadius = 0.05f * (parentCanvas->getWidth() + parentCanvas->getHeight()) / 2.0f; // 5% => mieux pour le touch
 }
 
+AreaEventType CompletePolygon::TryBeginPointMove(const Point<double>& newLocation)
+{
+	AreaEventType areaEventType = EditablePolygon::TryBeginPointMove(newLocation);
+	for (int i = 0; i < Nradius; ++i)
+		bullsEye[i]->TryBeginPointMove(newLocation);
+	return areaEventType;
+}
+
 AreaEventType CompletePolygon::TryMovePoint(const Point<double>& newLocation)
 {
+	bpt bnewLocation(newLocation.x, newLocation.y);
+	double r1 = boost::geometry::distance(centerInPixels, bmanipulationPointInPixels);
+	double r2 = boost::geometry::distance(centerInPixels, bnewLocation);
+	double s1 = boost::geometry::distance(center, bpt(bmanipulationPointInPixels.get<0>() / parentCanvas->getWidth(), bmanipulationPointInPixels.get<1>() / parentCanvas->getHeight()));
+	double s2 = boost::geometry::distance(center, bpt(newLocation.x / parentCanvas->getWidth(), newLocation.y / parentCanvas->getHeight()));
+	double size = r2 / r1;
 	AreaEventType areaEventType = EditablePolygon::TryMovePoint(newLocation);
+
+
+	if (!boost::geometry::equals(center, bullsEyeCenter)) // at the creation, they're equal
+	{
+		bpt translation(center.get<0>() - bullsEyeCenter.get<0>(), center.get<1>() - bullsEyeCenter.get<1>());
+		
+		translation.set<0>(translation.get<0>() * (double)parentCanvas->getWidth());
+		translation.set<1>(translation.get<1>() * (double)parentCanvas->getHeight());
+		for (int i = 0; i < Nradius; ++i)
+		{
+			bullsEye[i]->Translate(juce::Point<double>(translation.get<0>(), translation.get<1>()));
+		}
+		bullsEyeCenter = center;
+	}
+
+	if (areaEventType == AreaEventType::RotScale)
+	{
+		startRadius *= size;
+		for (int i = 0; i < Nradius; ++i)
+		{
+			double newRadius = startRadius + i* interval;
+			double resize = newRadius / radius[i];
+			//bullsEye[i]->Translate(juce::Point<double>(-center.get<0>(),-center.get<1>()));
+			bullsEye[i]->SizeChanged(size);
+			//bullsEye[i]->Translate(juce::Point<double>(center.get<0>(), center.get<1>()));
+			
+			radius[i] = newRadius; //startRadius + i*interval;
+		}
+	}
 	//CanvasResized(this->parentCanvas);
 	return areaEventType;
+}
+
+AreaEventType CompletePolygon::EndPointMove()
+{
+	DBG("EndPointMove");
+
+	if (useBullsEye)
+	{
+
+		if (pointDraggedId >= 0)
+		{
+			int nearest = 0;
+
+			double dist = 1000000;
+			double r = boost::geometry::distance(contourPoints.outer().at(pointDraggedId), center);
+			DBG("r = " + (String)r);
+			for (int i = 0; i < Nradius; ++i)
+			{
+				DBG("radius = " + (String)((i + 1)*0.15f));
+				if (abs(radius[i] - r) < dist)
+				{
+					
+					DBG((String)abs((i + 1)*0.15f - r) + " < " + (String)dist);
+					dist = abs((i + 1)*0.15f/2 - r);
+					
+					nearest = i;
+				}
+				else
+					DBG((String)abs((i + 1)*0.15f - r) + " > " + (String)dist);
+			}
+			DBG("choice = " + (String)nearest);
+			DBG("---contourPointsInPixels.outer().at(pointDraggedId) = (" + (String)contourPointsInPixels.outer().at(pointDraggedId).get<0>() + " , " + (String)contourPointsInPixels.outer().at(pointDraggedId).get<1>() + ")");
+			DBG("---centerInPixels = (" + (String)centerInPixels.get<0>() + " , " + (String)centerInPixels.get<1>() + ")");
+			contourPoints.outer().at(pointDraggedId).set<0>(
+				((contourPoints.outer().at(pointDraggedId).get<0>() - center.get<0>()) * radius[nearest] / r) + center.get<0>()
+				);
+			contourPoints.outer().at(pointDraggedId).set<1>(
+				((contourPoints.outer().at(pointDraggedId).get<1>() - center.get<1>()) * radius[nearest] / r) + center.get<1>()
+				);
+			DBG("---contourPointsInPixels.outer().at(pointDraggedId) = (" + (String)contourPointsInPixels.outer().at(pointDraggedId).get<0>() + " , " + (String)contourPointsInPixels.outer().at(pointDraggedId).get<1>() + ")");
+
+			contourPointsInPixels.outer().at(pointDraggedId) = bpt(
+				contourPoints.outer().at(pointDraggedId).get<0>() * (double)parentCanvas->getWidth(),
+				contourPoints.outer().at(pointDraggedId).get<1>() * (double)parentCanvas->getHeight());
+		}
+		CanvasResized(parentCanvas);
+	}
+
+
+	AreaEventType eventType =  EditablePolygon::EndPointMove();
+	
+	return eventType;
 }
 
 void CompletePolygon::setCursorVisible(bool isVisible, SceneCanvasComponent* _parentCanvas)
@@ -300,25 +412,53 @@ bool CompletePolygon::getAllPercentages(int idx, double &value)
 
 void CompletePolygon::CreateBullsEye()
 {
-	bullsEye = new EditableEllipse*[N];
-	for (int i = 0; i < N; ++i)
+	bullsEyeCenter = center;
+	for (int i = 0; i < Nradius; ++i)
 	{
-		bullsEye[i] = new EditableEllipse(0, center, 0.15f, 0.15f, Colours::grey, 1.47f);
+		radius[i] = startRadius + i*interval;//(i + 1)*0.15f / 2;
+		bullsEye[i] = std::shared_ptr<EditableEllipse>(new EditableEllipse(0, center, 2*radius[i], 2*radius[i], Colours::grey, 1.47f));
 	}
-}
-
-void CompletePolygon::DeleteBullsEye()
-{
-
+	
 }
 
 void CompletePolygon::PaintBullsEye(Graphics& g)
 {
-	//for(int i=0;i<Nradius;i++)
-
+	for (int i = 0; i < Nradius; ++i)
+		bullsEye[i]->Paint(g);
 }
 
 void CompletePolygon::CanvasResizedBullsEye(SceneCanvasComponent* _parentCanvas)
 {
+	//if (!boost::geometry::equals(center,bullsEyeCenter)) // at the creation, they're equal
+	//{
+	//	bpt translation(center.get<0>() - bullsEyeCenter.get<0>(), center.get<1>() - bullsEyeCenter.get<1>());
+	//	DBG("center = (" + (String)center.get<0>() + " , " + (String)center.get<1>() + ")");
+	//	DBG("centerInPixels = (" + (String)centerInPixels.get<0>() + " , " + (String)centerInPixels.get<1>() + ")");
+	//	DBG("bullsEyeCenter = (" + (String)bullsEyeCenter.get<0>() + " , " + (String)bullsEyeCenter.get<1>() + ")");
+	//	DBG("translation = (" + (String)translation.get<0>() + " , " + (String)translation.get<1>() + ")");
+	//	translation.set<0>(translation.get<0>() * (double)parentCanvas->getWidth());
+	//	translation.set<1>(translation.get<1>() * (double)parentCanvas->getHeight());
+	//	//DBG("parentSize = (" + (String)parentCanvas->getWidth() + " , " + (String)parentCanvas->getHeight() + ")");
+	//	//DBG("translation resized = (" + (String)translation.get<0>() +" , " + (String)translation.get<1>() +")");
+	//	for (int i = 0; i < Nradius; ++i)
+	//	{
+	//		bullsEye[i]->Translate(juce::Point<double>(translation.get<0>(), translation.get<1>()));
+	//	}
+	//	bullsEyeCenter = center;
+	//	DBG(" verif center = (" + (String)center.get<0>() + " , " + (String)center.get<1>() + ")");
+	//	DBG(" verifcenterInPixels = (" + (String)centerInPixels.get<0>() + " , " + (String)centerInPixels.get<1>() + ")");
+	//	DBG(" verifbullsEyeCenter = (" + (String)bullsEyeCenter.get<0>() + " , " + (String)bullsEyeCenter.get<1>() + ")");
+	//	
+	//}
 
+	for (int i = 0; i < Nradius; ++i)
+	{
+		bullsEye[i]->CanvasResized(_parentCanvas);
+	}
+
+	
 }
+
+
+
+
