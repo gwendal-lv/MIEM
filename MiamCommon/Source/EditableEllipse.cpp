@@ -12,8 +12,8 @@
 #include "SceneCanvasComponent.h"
 
 #include <cmath>
-#include "boost\geometry.hpp"
-#include "boost\geometry\strategies\strategy_transform.hpp"
+#include "boost/geometry.hpp"
+#include "boost/geometry/strategies/strategy_transform.hpp"
 
 #include "MiamMath.h"
 #include "CartesianLine.h"
