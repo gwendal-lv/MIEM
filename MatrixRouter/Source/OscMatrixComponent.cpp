@@ -252,6 +252,10 @@ void OscMatrixComponent::OnSliderValueChanged(int row, int col, double value)
 {
     presenter->OnSliderValueChanged(row, col, value);
 }
+void OscMatrixComponent::OnMatrixZeroed()
+{
+    presenter->OnMatrixZeroed();
+}
 void OscMatrixComponent::SetSliderValue(int row, int col, double value)
 {
     slidersMatrix->GetMatrixComponent()->SetSliderValue(row, col, value);

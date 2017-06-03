@@ -64,6 +64,8 @@ public:
     void textEditorReturnKeyPressed(TextEditor& textEditor) override;
 
     void OnSliderValueChanged(int row, int col, double value) override;
+    void OnMatrixZeroed() override;
+    
     void SetSliderValue(int row, int col, double value);
     void SetAttackSliderValue(double value);
     void SetUdpPortAndMessage(int udpPort, bool isConnected, std::string& oscAddress);

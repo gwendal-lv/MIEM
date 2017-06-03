@@ -295,7 +295,10 @@ void SpatStatesEditionComponent::SelectAndUpdateState(int stateIndex, std::strin
 void SpatStatesEditionComponent::updateMatrix()
 {
     // matrix data sent from the most recent that this class got from model
-    labelledMatrixComponent->GetMatrixComponent()->SetSpatMatrix(spatMatrix);
+    if (spatMatrix) // may not exist if no state is selected
+        labelledMatrixComponent->GetMatrixComponent()->SetSpatMatrix(spatMatrix);
+    else // forced null matrix update
+        labelledMatrixComponent->GetMatrixComponent()->SetSpatMatrix(std::make_shared<SpatMatrix>());
 
     // Graphical attributes
     // if a valid state is selected

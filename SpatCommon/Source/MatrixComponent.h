@@ -76,11 +76,11 @@ namespace Miam
         public:
         
         // - - - - - Setters and Getters - - - - -
-        void SetSliderValue(int row, int col, double newValue)
+        void SetSliderValue(int row, int col, double newValue, NotificationType juceNotification = NotificationType::dontSendNotification)
         {
             MatrixSlider* slider = sliders[idx(row,col)].get();
             // To prevent direct backwards retransmission
-            slider->setValue(newValue, NotificationType::dontSendNotification);
+            slider->setValue(newValue, juceNotification);
             
             // Graphical update
             slider->SetPropertiesFromVolume();

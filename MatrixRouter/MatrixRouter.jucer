@@ -33,6 +33,7 @@
         <FILE id="eHIS36" name="NetworkModel.cpp" compile="1" resource="0"
               file="Source/NetworkModel.cpp"/>
         <FILE id="Spzxt0" name="NetworkModel.h" compile="0" resource="0" file="Source/NetworkModel.h"/>
+        <FILE id="vSM7te" name="OscDebugger.h" compile="0" resource="0" file="Source/OscDebugger.h"/>
         <FILE id="mQOtF5" name="PluginProcessor.cpp" compile="1" resource="0"
               file="Source/PluginProcessor.cpp"/>
         <FILE id="SMXCE8" name="PluginProcessor.h" compile="0" resource="0"

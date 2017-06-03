@@ -86,6 +86,7 @@ namespace Miam {
         /// \brief Translates the data into a Miam::AsyncParamChange, then sends the data
         /// to the Model.
         void OnSliderValueChanged(int row, int col, double value);
+        void OnMatrixZeroed();
         void OnUdpPortChanged(int udpPort);
         void OnAttackDurationChanged(double attackDuration);
         

@@ -42,7 +42,7 @@ MatrixRouterAudioProcessor::MatrixRouterAudioProcessor()
     rampDuration_ms = MiamRouter_DefaultAttackTime_ms;
     
     dawRampDuration_ms = new AudioParameterInt("rampDuration_ms",
-                                              "Attack time (ms)",
+                                              "Attack/Release time",
                                               1,     // min (defined in projucer)
                                               100,   // max (defined in projucer)
                                               MiamRouter_DefaultAttackTime_ms);
@@ -58,15 +58,15 @@ MatrixRouterAudioProcessor::MatrixRouterAudioProcessor()
         {
             // Audio DAW parameter (nommage marche pour des coeffs de moins de 100)
             // name formatting
-            std::string shortName, longName;
-            if (i<10) // 1 digit : a zero will be added first
-                shortName += "0";
-            shortName += std::to_string(i);
-            shortName += "_";
-            if (j<10) // 1 digit : a zero will be added first
-                shortName += "0";
-            shortName += std::to_string(j);
-            longName = "Matrix coeff. " + shortName;
+            std::string shortName = std::to_string(i) + "_" + std::to_string(j);
+            std::string longName = "in ";
+            if (i<9) // 1 digit : a zero will be added first
+                longName += "0";
+            longName += std::to_string(i+1);
+            longName += " to out ";
+            if (j<9) // 1 digit : a zero will be added first
+                longName += "0";
+            longName += std::to_string(j+1);
             
             dawRoutingMatrix[idx(i,j)] = new AudioParameterFloat(shortName.c_str(),
                                                               longName,
@@ -90,11 +90,6 @@ MatrixRouterAudioProcessor::MatrixRouterAudioProcessor()
     // Modules construction after self-init
     networkModel = std::make_shared<NetworkModel>(*this);
     presenter = new Presenter(*this, networkModel); // à l'ancienne
-    
-#ifdef __MIAM_DEBUG
-    if (! oscLocalhostDebugger.connect ("127.0.0.1", 9001))
-        throw std::runtime_error ("Error: could not connect to UDP port 9001.");
-#endif
     
     // Now, the Presenter can start sending slider's values
     AsyncParamChange paramChange;
@@ -245,9 +240,6 @@ void MatrixRouterAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBu
     // - - - - - Plug-in automatizable parameters - - - - -
     if (*dawRampDuration_ms != dawRampDurationBackup_ms)
     {
-////////////////////
-        oscLocalhostDebugger.send("/nouvelle_rampe", (int32_t)*dawRampDuration_ms, (int32_t)dawRampDurationBackup_ms);
-////////////////////
         // Update (simple pure erase of any other data)
         rampDuration_ms = *dawRampDuration_ms;
         dawRampDurationBackup_ms = rampDuration_ms;
@@ -398,6 +390,21 @@ void MatrixRouterAudioProcessor::processParamChange(AsyncParamChange& paramChang
     // Main switch
     switch (paramChange.Type)
     {
+        // Matrix reseting to zero (pas super optimisé, mais au moins ça marche...)
+        case AsyncParamChange::Reinitialize :
+            responseParam.Type = AsyncParamChange::Volume;
+            for (int i=0 ; i<JucePlugin_MaxNumInputChannels ; i++)
+            {
+                responseParam.Id1 = i;
+                for (int j=0 ; j<JucePlugin_MaxNumOutputChannels ; j++)
+                {
+                    responseParam.Id2 = j;
+                    responseParam.FloatValue = 0.0f;
+                    processParamChange(responseParam, origin);
+                }
+            }
+            break;
+            
         // Matrix coefficient
         case AsyncParamChange::Volume :
             // Security : any unadapted data makes the whole param change corrupted
@@ -423,12 +430,21 @@ void MatrixRouterAudioProcessor::processParamChange(AsyncParamChange& paramChang
                 // To Presenter (if it didn't send it itself)
                 if (origin != DataOrigin::Presenter)
                     TrySendParamChange(paramChange);
-                // To DAW (if it didn't send it itself, AND if it's not the init phase)
+                // To DAW (if it didn't send it itself)
                 if (origin != DataOrigin::Daw)
                 {
+                    // Automation change : in TOUCH mode, Reaper does not apply it
+                    // the first time.... BEGIN/END GESTURES needed maybe ?
                     *dawRoutingMatrix[idx(paramChange.Id1,paramChange.Id2)]
                         = routingMatrix[paramChange.Id1][paramChange.Id2];
+                    dawMatrixBackup[paramChange.Id1][paramChange.Id2]
+                    = routingMatrix[paramChange.Id1][paramChange.Id2];
                 }
+////////////////////
+#ifdef __MIAM_DEBUG
+                //oscLocalhostDebugger.SendParamChange(paramChange, origin);
+#endif
+////////////////////
             }
             break;
             
@@ -468,9 +484,6 @@ void MatrixRouterAudioProcessor::processParamChange(AsyncParamChange& paramChang
                 *dawRampDuration_ms = rampDuration_ms;
                 dawRampDurationBackup_ms = rampDuration_ms; // to prevent update loops
                 recomputeParameters(getSampleRate());
-                ////////////////////
-                oscLocalhostDebugger.send("/rampe_Presenter", (int32_t)rampDuration_ms);
-                ////////////////////
             }
             break;
             
@@ -528,13 +541,6 @@ void MatrixRouterAudioProcessor::getStateInformation (MemoryBlock& destData)
     memoryOutputStream.writeInt(udpPort);
     memoryOutputStream.writeInt(rampDuration_ms);
     
-////////////////////
-    oscLocalhostDebugger.send("/udp_sauvegarde", (int32_t)udpPort);
-////////////////////
-////////////////////
-oscLocalhostDebugger.send("/rampe_sauvegardee", (int32_t)rampDuration_ms, (int32_t)*dawRampDuration_ms, (int32_t)dawRampDurationBackup_ms);
-////////////////////
-    
     // We write the actual most recent routing data
     for (int i=0 ; i<JucePlugin_MaxNumInputChannels ; i++)
         for (int j=0 ; j<JucePlugin_MaxNumOutputChannels ; j++)
@@ -556,13 +562,6 @@ void MatrixRouterAudioProcessor::setStateInformation (const void* data, int size
     paramChange.IntegerValue = udpPort;
     SendParamChange(paramChange); // throws exception if full
     
-////////////////////
-    oscLocalhostDebugger.send("/udp_charge", (int32_t)udpPort);
-////////////////////
-    
-////////////////////
-    oscLocalhostDebugger.send("/rampe_avant_charge", (int32_t)rampDuration_ms, (int32_t)*dawRampDuration_ms, (int32_t)dawRampDurationBackup_ms);
-////////////////////
     rampDuration_ms = memoryInputStream.readInt();
     if (std::isnan(rampDuration_ms) ) // necessary check !!
         rampDuration_ms = MiamRouter_DefaultAttackTime_ms;
@@ -571,10 +570,6 @@ void MatrixRouterAudioProcessor::setStateInformation (const void* data, int size
     // dawRampDurationBackup_ms = rampDuration_ms; // to force updates
     sendRampDuration(); // throws exception if full
     recomputeParameters(getSampleRate());
-
-////////////////////
-oscLocalhostDebugger.send("/rampe_chargee", (int32_t)rampDuration_ms, (int32_t)*dawRampDuration_ms, (int32_t)dawRampDurationBackup_ms);
-////////////////////
     
     // Mise à jour des coefficients directement (après pour ne pas risquer de bourrer la
     // lock-free queue
@@ -585,7 +580,7 @@ oscLocalhostDebugger.send("/rampe_chargee", (int32_t)rampDuration_ms, (int32_t)*
         coeffUpdate.Id1 = i;
         for (int j=0 ; j<JucePlugin_MaxNumOutputChannels ; j++)
         {
-            routingMatrix[i][j] = memoryInputStream.readFloat(); // = automation data at this point ??
+            routingMatrix[i][j] = memoryInputStream.readFloat(); // != automation data at this point, on some DAWs
              // happened maybe because of the issue of reading int value as if they
             // were float values (only reading buffer start)
             if (std::isnan(routingMatrix[i][j]))

@@ -22,6 +22,7 @@ namespace Miam
     {
         public :
         virtual void OnSliderValueChanged(int row, int col, double value) = 0;
+        virtual void OnMatrixZeroed() = 0;
         
         virtual ~ISlidersMatrixListener() {}
     };

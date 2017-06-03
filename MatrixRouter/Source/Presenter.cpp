@@ -136,6 +136,13 @@ void Presenter::OnSliderValueChanged(int row, int col, double value)
     // Enqueuing
     TrySendParamChange(paramChange);
 }
+void Presenter::OnMatrixZeroed()
+{
+    AsyncParamChange paramChange;
+    paramChange.Type = AsyncParamChange::Reinitialize;
+    // Enqueuing
+    TrySendParamChange(paramChange);
+}
 void Presenter::OnUdpPortChanged(int udpPort)
 {
     // At this point : called from the Juce UI thread (so : OK), notifyModel=false

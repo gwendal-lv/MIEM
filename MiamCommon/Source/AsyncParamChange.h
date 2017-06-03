@@ -32,6 +32,8 @@ namespace Miam
         enum ParamType {
             
             None,
+            
+            Reinitialize,
 
 			Play,
 			Pause,

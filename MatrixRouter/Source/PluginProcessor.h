@@ -20,6 +20,8 @@
 
 #include "IModel.h"
 
+#include "OscDebugger.h"
+
 
 namespace Miam {
     
@@ -36,6 +38,11 @@ namespace Miam {
     {
         
         // ================== ATTRIBUTES ===================
+#ifdef __MIAM_DEBUG
+        OscDebugger oscLocalhostDebugger;
+#endif
+        
+        
     private:
         // - - - - - Links to other modules - - - - -
         /// Called from both the UI thread for save/load phases and UPD changes
@@ -103,13 +110,6 @@ namespace Miam {
         // To detect and send changes to the Presenter
         int lastInputsCount = -1;
         int lastOutputsCount = -1;
-#ifdef __MIAM_DEBUG
-        OSCSender oscLocalhostDebugger;
-        public :
-        void SendOscDebugPoint(int ptNum)
-        { oscLocalhostDebugger.send("/miamDebugPoint", (int32_t)ptNum); }
-        private :
-#endif
         
         
         // ================== METHODS ===================
