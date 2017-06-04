@@ -33,6 +33,7 @@ Presenter::Presenter(MatrixRouterAudioProcessor& _model, std::shared_ptr<Network
 oscAddressCopy(networkModel->GetOscAddress()) // thread-safe at this point
 {
     oscMatrixComponent = new OscMatrixComponent(this);
+    oscMatrixComponent->SetNetworkHelpContent(networkModel->GetOscCommandsHelp());
 }
 
 Presenter::~Presenter()

@@ -77,6 +77,11 @@ namespace Miam
         /// \brief Called when the displayed text of the combo box has been edited
         void OnRenameState(std::string newName, int stateIndex);
         
+        void OnAddState();
+        void OnDeleteSelectedState();
+        void OnMoveSelectedStateUp();
+        void OnMoveSelectedStateDown();
+        
         
         // - - - - - Graphical helpers - - - - -
         

@@ -192,21 +192,25 @@ void SpatStatesEditionComponent::buttonClicked (Button* buttonThatWasClicked)
     if (buttonThatWasClicked == addSpatStateTextButton)
     {
         //[UserButtonCode_addSpatStateTextButton] -- add your button handler code here..
+        editionManager->OnAddState();
         //[/UserButtonCode_addSpatStateTextButton]
     }
     else if (buttonThatWasClicked == deleteSpatStateTextButton)
     {
         //[UserButtonCode_deleteSpatStateTextButton] -- add your button handler code here..
+        editionManager->OnDeleteSelectedState();
         //[/UserButtonCode_deleteSpatStateTextButton]
     }
     else if (buttonThatWasClicked == stateUpTextButton)
     {
         //[UserButtonCode_stateUpTextButton] -- add your button handler code here..
+        editionManager->OnMoveSelectedStateUp();
         //[/UserButtonCode_stateUpTextButton]
     }
     else if (buttonThatWasClicked == stateDownTextButton)
     {
         //[UserButtonCode_stateDownTextButton] -- add your button handler code here..
+        editionManager->OnMoveSelectedStateDown();
         //[/UserButtonCode_stateDownTextButton]
     }
 
@@ -278,19 +282,21 @@ void SpatStatesEditionComponent::SelectAndUpdateState(int stateIndex, std::strin
 {
     // We keep here this copy of the model internal matrix
     spatMatrix = newSpatMatrix;
-
-    // Buttons state (activated or not)
-    bool isAnyStateSelected = spatStatesComboBox->getSelectedItemIndex() != -1;
-    stateUpTextButton->setEnabled(isAnyStateSelected);
-    stateDownTextButton->setEnabled(isAnyStateSelected);
+    
+    // Internal updates
+    spatStatesComboBox->setSelectedItemIndex(stateIndex, NotificationType::dontSendNotification);
+    previousStateIndex = spatStatesComboBox->getSelectedItemIndex();
 
     // Text elements
     linksInfoLabel->setText(infoText, NotificationType::dontSendNotification);
 
-    // Internal updates
-    spatStatesComboBox->setSelectedItemIndex(stateIndex, NotificationType::dontSendNotification);
-    previousStateIndex = spatStatesComboBox->getSelectedItemIndex();
+    // Last updates
     updateMatrix();
+    // Buttons state (activated or not)
+    bool isAnyStateSelected = spatStatesComboBox->getSelectedItemIndex() != -1;
+    deleteSpatStateTextButton->setEnabled(isAnyStateSelected);
+    stateUpTextButton->setEnabled(isAnyStateSelected);
+    stateDownTextButton->setEnabled(isAnyStateSelected);
 }
 void SpatStatesEditionComponent::updateMatrix()
 {

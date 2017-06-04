@@ -11,7 +11,7 @@
               pluginRTASCategory="" aaxIdentifier="com.yourcompany.MatrixRouter"
               pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="5.0.2"
               defines="" displaySplashScreen="1" reportAppUsage="1" splashScreenColour="Dark"
-              buildStandalone="0" enableIAA="0" companyName="LARAS (IRISIB)"
+              buildStandalone="1" enableIAA="0" companyName="LARAS (IRISIB)"
               companyWebsite="http://www.laras.be" companyEmail="gwendal.le-vaillant@grenoble-inp.org">
   <MAINGROUP id="uSK6Ed" name="MatrixRouter">
     <GROUP id="{7E647B1E-1C9F-BD65-5FF1-5839B4766A43}" name="Source">
@@ -249,6 +249,7 @@
         <MODULEPATH id="juce_audio_plugin_client" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_osc" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_cryptography" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
     <VS2015 targetFolder="Builds/VisualStudio2015">
@@ -274,6 +275,7 @@
         <MODULEPATH id="juce_audio_plugin_client" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_osc" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_cryptography" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </VS2015>
   </EXPORTFORMATS>
@@ -283,6 +285,7 @@
     <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0"/>
     <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"/>
     <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0"/>
     <MODULE id="juce_core" showAllCode="1" useLocalCopy="0"/>
     <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0"/>
     <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0"/>

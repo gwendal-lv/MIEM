@@ -30,11 +30,46 @@ void SpatStatesEditionManager::CompleteInitialisation(std::shared_ptr<SpatInterp
     spatInterpolator = _spatInterpolator;
     
     // Update of the list on the GUI side
+    selectSpatState(nullptr);
     updateView();
 }
 
 
 // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
+void SpatStatesEditionManager::selectSpatState(std::shared_ptr<SpatState<double>> _spatState)
+{
+    // Internal update at first
+    selectedSpatState = _spatState;
+    
+    // Graphical updates : info label (links count)
+    std::string infoText;
+    std::shared_ptr<SpatMatrix> matrixToSend = std::make_shared<SpatMatrix>(); // initially full of zeros
+    int stateIndexToSend = -1;
+    if (selectedSpatState)
+    {
+        infoText = "Linked to "
+        + std::to_string(selectedSpatState->GetLinkedAreasCount())
+        + " area" + (selectedSpatState->GetLinkedAreasCount()>1 ? "s" : "");
+        stateIndexToSend = selectedSpatState->GetIndex();
+        
+        // At last : routing matrix (only choice available for now...)
+        if (std::shared_ptr<MatrixState<double>> matrixState = std::dynamic_pointer_cast<MatrixState<double>>(selectedSpatState) )
+            matrixToSend = matrixState->GetMatrix();
+        // else if the cast did not work
+        else
+            throw std::runtime_error("Spat state is not a Matrix state");
+    }
+    else // if no state selected
+        infoText = "-";
+    // Update command
+    editionComponent->SelectAndUpdateState(stateIndexToSend, infoText, matrixToSend);
+}
+
+
+size_t SpatStatesEditionManager::GetFadersCount()
+{
+    return selectedSpatState->GetOutputsCount();
+}
 
 
 // = = = = = = = = = = EVENTS from PRESENTER = = = = = = = = = =
@@ -73,38 +108,23 @@ void SpatStatesEditionManager::OnRenameState(std::string newName, int stateIndex
     updateView();
     selectSpatState(spatInterpolator->GetSpatState(stateIndex));
 }
-void SpatStatesEditionManager::selectSpatState(std::shared_ptr<SpatState<double>> _spatState)
+
+
+void SpatStatesEditionManager::OnAddState()
 {
-    // Internal update at first
-    selectedSpatState = _spatState;
     
-    // Graphical updates : info label (links count)
-    std::string infoText;
-    std::shared_ptr<SpatMatrix> matrixToSend = std::make_shared<SpatMatrix>(); // initially full of zeros
-    if (selectedSpatState)
-    {
-        infoText = "Linked to "
-        + std::to_string(selectedSpatState->GetLinkedAreasCount())
-        + " area" + (selectedSpatState->GetLinkedAreasCount()>1 ? "s" : "");
-        
-        // At last : routing matrix (only choice available for now...)
-        if (std::shared_ptr<MatrixState<double>> matrixState = std::dynamic_pointer_cast<MatrixState<double>>(selectedSpatState) )
-            matrixToSend = matrixState->GetMatrix();
-        // else if the cast did not work
-        else
-            throw std::runtime_error("Spat state is not a Matrix state");
-    }
-    else // if no state selected
-        infoText = "-";
-    // Update command
-    if (selectedSpatState)
-        editionComponent->SelectAndUpdateState(selectedSpatState->GetIndex(), infoText, matrixToSend);
 }
-
-
-size_t SpatStatesEditionManager::GetFadersCount()
+void SpatStatesEditionManager::OnDeleteSelectedState()
 {
-    return selectedSpatState->GetOutputsCount();
+    
+}
+void SpatStatesEditionManager::OnMoveSelectedStateUp()
+{
+    
+}
+void SpatStatesEditionManager::OnMoveSelectedStateDown()
+{
+    
 }
 
 

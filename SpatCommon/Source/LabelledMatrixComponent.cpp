@@ -167,7 +167,11 @@ void LabelledMatrixComponent::mouseMove (const MouseEvent& e)
 void LabelledMatrixComponent::mouseDown (const MouseEvent& e)
 {
     //[UserCode_mouseDown] -- Add your code here...
-    if (e.mods.isRightButtonDown())
+    
+    // Pop-up menu appears on Right-click anywhere,
+    // Or it may appear on a click on the inputs/outputs label (not editable)
+    if (e.mods.isRightButtonDown()
+        || inputsOutputsLabel->contains(e.getEventRelativeTo(inputsOutputsLabel).getPosition()))
         createAndManagePopupMenu();
     //[/UserCode_mouseDown]
 }
@@ -260,6 +264,10 @@ void LabelledMatrixComponent::setMatrixToZero()
 }
 void LabelledMatrixComponent::setMatrixToIdentity()
 {
+    // At first : zeroing (supposed to be optimized)
+    setMatrixToZero();
+    
+    // Then, actual setting to identity
     unsigned int smallestDimension = std::min(maxRowsCount, maxColsCount);
     for (int i=0 ; i<smallestDimension ; i++)
         // each one will notify (not optimized but that's OK)

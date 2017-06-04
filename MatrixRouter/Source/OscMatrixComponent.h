@@ -65,7 +65,7 @@ public:
 
     void OnSliderValueChanged(int row, int col, double value) override;
     void OnMatrixZeroed() override;
-    
+
     void SetSliderValue(int row, int col, double value);
     void SetAttackSliderValue(double value);
     void SetUdpPortAndMessage(int udpPort, bool isConnected, std::string& oscAddress);
@@ -76,6 +76,11 @@ public:
     {udpStatusLabel->setText(msg, NotificationType::dontSendNotification);}
 #endif
 
+    private :
+    PopupMenu createHelpPopup();
+
+    public :
+    void SetNetworkHelpContent(std::vector<std::string> _helpContent) {networkHelpContent = _helpContent;}
     //[/UserMethods]
 
     void paint (Graphics& g) override;
@@ -88,6 +93,8 @@ public:
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     Presenter* presenter;
+
+    std::vector<std::string> networkHelpContent;
     //[/UserVariables]
 
     //==============================================================================
@@ -102,6 +109,7 @@ private:
     ScopedPointer<Slider> attackSlider;
     ScopedPointer<Label> attackLabel;
     ScopedPointer<Label> attackUnitLabel;
+    ScopedPointer<TextButton> helpTextButton;
 
 
     //==============================================================================

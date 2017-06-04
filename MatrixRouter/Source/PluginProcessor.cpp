@@ -434,9 +434,9 @@ void MatrixRouterAudioProcessor::processParamChange(AsyncParamChange& paramChang
                 if (origin != DataOrigin::Daw)
                 {
                     // Automation change : in TOUCH mode, Reaper does not apply it
-                    // the first time.... BEGIN/END GESTURES needed maybe ?
+                    // the first time....
                     *dawRoutingMatrix[idx(paramChange.Id1,paramChange.Id2)]
-                        = routingMatrix[paramChange.Id1][paramChange.Id2];
+                    = routingMatrix[paramChange.Id1][paramChange.Id2];
                     dawMatrixBackup[paramChange.Id1][paramChange.Id2]
                     = routingMatrix[paramChange.Id1][paramChange.Id2];
                 }

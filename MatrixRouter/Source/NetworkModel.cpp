@@ -20,10 +20,11 @@ using namespace Miam;
 
 
 // =================== Construction & destruction ===================
-NetworkModel::NetworkModel(MatrixRouterAudioProcessor& _model, std::string _oscAddress)
+NetworkModel::NetworkModel(MatrixRouterAudioProcessor& _model, std::string _oscAddress, std::string _oscZeroMatrixSuffix)
 :
 model(_model),
-oscAddress(_oscAddress)
+oscAddress(_oscAddress),
+oscZeroMatrixSuffix(_oscZeroMatrixSuffix)
 {
 }
 
@@ -68,17 +69,33 @@ bool NetworkModel::SetUdpPort(int _udpPort, bool notifyModel)
         return true;
     }
 }
+std::vector<std::string> NetworkModel::GetOscCommandsHelp()
+{
+    std::vector<std::string> returnStrings;
+    std::string int32str = " (32 bits integer) ";
+    std::string float32str = " (32 bits float) ";
+    
+    returnStrings.push_back("OSC commands available:");
+    returnStrings.push_back("---> '" + GetOscAddress() + " [input] [output] [volume]' sets one coefficient of the matrix");
+    returnStrings.push_back("[input]" + int32str + "index (starting from 0) of the input channel to be routed to [output]");
+    returnStrings.push_back("[output]" + int32str + "index (starting from 0) of the output channel");
+    returnStrings.push_back("[volume]" + float32str + "linear routing volume within [ 0.0 ; 2.0 ]");
+    returnStrings.push_back("---> '" + GetOscZeroMatrixAddress() + "' sets all coefficients of the matrix to zero");
+    return returnStrings;
+}
 
 // =================== Asynchronous OSC processing ===================
 void NetworkModel::oscMessageReceived(const OSCMessage& message)
 {
+    AsyncParamChange paramChange;
+    
+    // Unique coefficient (identified by row and col)
     if (message.getAddressPattern().matches(oscAddress.c_str()))
     {
         if (message.size() == 3
             && message[0].isInt32() && message[1].isInt32()
             && message[2].isFloat32())
         {
-            AsyncParamChange paramChange;
             paramChange.Type = AsyncParamChange::Volume; // parce qu'on a que ça....
             
             paramChange.Id1 = message[0].getInt32();
@@ -88,23 +105,10 @@ void NetworkModel::oscMessageReceived(const OSCMessage& message)
             SendParamChange(paramChange);
         }
     }
-    else if (message.getAddressPattern().matches((oscAddress+"/reset").c_str()))
+    // Zeroing of the whole matrix
+    else if (message.getAddressPattern().matches(GetOscZeroMatrixAddress().c_str()))
     {
-        // CODE DE RESET A IMPLEMENTEEEEEEEEER
-        // CODE DE RESET A IMPLEMENTEEEEEEEEER
-        // CODE DE RESET A IMPLEMENTEEEEEEEEER
-        // CODE DE RESET A IMPLEMENTEEEEEEEEER
-        // CODE DE RESET A IMPLEMENTEEEEEEEEER
-        // CODE DE RESET A IMPLEMENTEEEEEEEEER
-        // CODE DE RESET A IMPLEMENTEEEEEEEEER
-        // CODE DE RESET A IMPLEMENTEEEEEEEEER
-        // CODE DE RESET A IMPLEMENTEEEEEEEEER
-        // CODE DE RESET A IMPLEMENTEEEEEEEEER
-        // CODE DE RESET A IMPLEMENTEEEEEEEEER
-        // CODE DE RESET A IMPLEMENTEEEEEEEEER
-        // CODE DE RESET A IMPLEMENTEEEEEEEEER
-        // CODE DE RESET A IMPLEMENTEEEEEEEEER
-        // CODE DE RESET A IMPLEMENTEEEEEEEEER
-        // CODE DE RESET A IMPLEMENTEEEEEEEEER
+        paramChange.Type = AsyncParamChange::Reinitialize;
+        SendParamChange(paramChange);
     }
 }

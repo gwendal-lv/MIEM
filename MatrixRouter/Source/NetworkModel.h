@@ -10,6 +10,9 @@
 
 #pragma once
 
+#include <vector>
+#include <string>
+
 #include "JuceHeader.h"
 
 #include "LockFreeParamChangeSender.h"
@@ -47,12 +50,13 @@ namespace Miam {
         // .... sauf si Juce gère bien les appels du DAW
         int udpPort = -1;
         std::string oscAddress;
+        std::string oscZeroMatrixSuffix;
         
         // ================== METHODS ===================
         
         // - - - - - Construction & destruction - - - - -
         public :
-        NetworkModel(MatrixRouterAudioProcessor& _model, std::string _oscAddress = "/miam/matrix");
+        NetworkModel(MatrixRouterAudioProcessor& _model, std::string _oscAddress = "/miam/matrix", std::string _oscZeroMatrixSuffix = "/set_to_zero");
         ~NetworkModel();
         
         
@@ -68,6 +72,8 @@ namespace Miam {
         
         /// \Brief Not thread-safe at the moment !
         std::string GetOscAddress() {return oscAddress;}
+        std::string GetOscZeroMatrixAddress() {return oscAddress + oscZeroMatrixSuffix;}
+        std::vector<std::string> GetOscCommandsHelp();
         
         // - - - - - Asynchronous OSC processing - - - - -
         private :
