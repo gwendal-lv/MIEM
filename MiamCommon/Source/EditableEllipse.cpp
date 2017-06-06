@@ -199,12 +199,14 @@ AreaEventType EditableEllipse::TryBeginPointMove(const Point<double>& hitPoint)
 			eventType = AreaEventType::PointDragBegins;
 		}
 	}
+
 	return eventType;
 	
 }
 
 AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 {
+
 	bpt bnewLocation(newLocation.x, newLocation.y);
 	AreaEventType areaEventType = AreaEventType::NothingHappened;
 
@@ -371,6 +373,7 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 		DBG("3 : " + (String)contourPointsInPixels.outer().at(3).get<0>() + " " + (String)contourPointsInPixels.outer().at(3).get<1>());
 	}
 
+
 	return areaEventType;
 }
 
@@ -389,6 +392,7 @@ AreaEventType EditableEllipse::EndPointMove()
 
 bool EditableEllipse::SizeChanged(double size)
 {
+
 	bool returnValue = false;
 	//// --- size if polygon is still big enough only ---
 	double minDistanceFromCenter = 0.0;

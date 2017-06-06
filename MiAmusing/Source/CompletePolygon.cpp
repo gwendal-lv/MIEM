@@ -232,7 +232,7 @@ AreaEventType CompletePolygon::TryBeginPointMove(const Point<double>& newLocatio
 {
 	AreaEventType areaEventType = EditablePolygon::TryBeginPointMove(newLocation);
 	for (int i = 0; i < Nradius; ++i)
-		bullsEye[i]->TryBeginPointMove(newLocation);
+		bullsEye[i].TryBeginPointMove(newLocation);
 	return areaEventType;
 }
 
@@ -253,10 +253,13 @@ AreaEventType CompletePolygon::TryMovePoint(const Point<double>& newLocation)
 		
 		translation.set<0>(translation.get<0>() * (double)parentCanvas->getWidth());
 		translation.set<1>(translation.get<1>() * (double)parentCanvas->getHeight());
+		
+
 		for (int i = 0; i < Nradius; ++i)
 		{
-			bullsEye[i]->Translate(juce::Point<double>(translation.get<0>(), translation.get<1>()));
+			bullsEye[i].Translate(juce::Point<double>(translation.get<0>(), translation.get<1>()));
 		}
+
 		bullsEyeCenter = center;
 	}
 
@@ -268,10 +271,11 @@ AreaEventType CompletePolygon::TryMovePoint(const Point<double>& newLocation)
 			double newRadius = startRadius + i* interval;
 			double resize = newRadius / radius[i];
 			//bullsEye[i]->Translate(juce::Point<double>(-center.get<0>(),-center.get<1>()));
-			bullsEye[i]->SizeChanged(size);
+			if(bullsEye[i].SizeChanged(resize))
+				radius[i] = newRadius; //startRadius + i*interval;
 			//bullsEye[i]->Translate(juce::Point<double>(center.get<0>(), center.get<1>()));
 			
-			radius[i] = newRadius; //startRadius + i*interval;
+			
 		}
 	}
 	//CanvasResized(this->parentCanvas);
@@ -416,7 +420,7 @@ void CompletePolygon::CreateBullsEye()
 	for (int i = 0; i < Nradius; ++i)
 	{
 		radius[i] = startRadius + i*interval;//(i + 1)*0.15f / 2;
-		bullsEye[i] = std::shared_ptr<EditableEllipse>(new EditableEllipse(0, center, 2*radius[i], 2*radius[i], Colours::grey, 1.47f));
+		bullsEye.push_back( EditableEllipse(0, center, 2*radius[i], 2*radius[i], Colours::grey, 1.47f));
 	}
 	
 }
@@ -424,7 +428,7 @@ void CompletePolygon::CreateBullsEye()
 void CompletePolygon::PaintBullsEye(Graphics& g)
 {
 	for (int i = 0; i < Nradius; ++i)
-		bullsEye[i]->Paint(g);
+		bullsEye[i].Paint(g);
 }
 
 void CompletePolygon::CanvasResizedBullsEye(SceneCanvasComponent* _parentCanvas)
@@ -453,7 +457,7 @@ void CompletePolygon::CanvasResizedBullsEye(SceneCanvasComponent* _parentCanvas)
 
 	for (int i = 0; i < Nradius; ++i)
 	{
-		bullsEye[i]->CanvasResized(_parentCanvas);
+		bullsEye[i].CanvasResized(_parentCanvas);
 	}
 
 	

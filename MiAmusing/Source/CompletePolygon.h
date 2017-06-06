@@ -72,7 +72,7 @@ namespace Amusing
 		double interval;
 		double startRadius;
 		static const int Nradius = 3;
-		std::shared_ptr<EditableEllipse> bullsEye[Nradius];
+		std::vector<EditableEllipse> bullsEye;
 		double radius[Nradius];
 		void CreateBullsEye();
 		void PaintBullsEye(Graphics& g);
