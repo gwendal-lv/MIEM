@@ -23,12 +23,16 @@
 //#include "AudioPlayer.h"
 
 using namespace Miam;
+
+class MultiCanvasComponentAmusing;
+
 namespace Amusing
 {
     class Presenter; // cross-inclusion issue
     class View; // cross-inclusion issue
 	class AmusingModel;
 	class GraphicSessionManager;
+	
 }
 using namespace Amusing;
 //==============================================================================
@@ -49,7 +53,7 @@ private:
 	Amusing::GraphicSessionManager* graphicSessionManager = 0;
     
     // Graphical component
-    MultiCanvasComponent* multiCanvasComponent = 0; // belongs to the presenter
+    MultiCanvasComponentAmusing* multiCanvasComponent = 0; // belongs to the presenter
 	EditScene* editSceneC;
 	//SceneEditionComponent* sceneEditionComponent;
     
@@ -62,7 +66,7 @@ private:
     /// \brief Function called after both Miam::View and Miam::Presenter are contructed
     void CompleteInitialization(Presenter* _presenter);
     /// \brief Function called after both View and Presenter are contructed
-    void CompleteInitialization(GraphicSessionManager*, MultiCanvasComponent*);
+    void CompleteInitialization(GraphicSessionManager*, MultiCanvasComponentAmusing*);
 	/// \brief Function called after both View, Presenter and Model are constructed
 	void CompleteInitialization(AmusingModel* _model);
     

@@ -35,14 +35,12 @@ DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b,
 		yScale = 1.0f*_canvasRatio;
 	}
 
-	contourPoints.outer().push_back(bpt(center.get<0>()                 , center.get<1>() - (b / 2)*yScale));
-	contourPoints.outer().push_back(bpt(center.get<0>() + (a / 2)*xScale, center.get<1>()));
-	contourPoints.outer().push_back(bpt(center.get<0>(), center.get<1>() + (b / 2)*yScale));
-	contourPoints.outer().push_back(bpt(center.get<0>() - (a / 2)*xScale, center.get<1>()));
-	
-	contourPoints.outer().push_back(bpt(center.get<0>(), center.get<1>() - (b / 2)*yScale)); // to close 
-	
-	
+	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() - (b / 2)*yScale));
+	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>() + (a / 2)*xScale, center.get<1>()));
+	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() + (b / 2)*yScale));
+	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>() - (a / 2)*xScale, center.get<1>()));
+	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() - (b / 2)*yScale));
+
 	createJucePolygon();
 }
 

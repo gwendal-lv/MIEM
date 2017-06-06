@@ -52,6 +52,7 @@ namespace Miam
 			void Translate(const Point<double>& translation) override;
 			void setCenterPosition(bpt newCenter);
 			
+			bool SizeChanged(double sizeFactor);
 
 		protected:
 			void recreateNormalizedPoints() override;

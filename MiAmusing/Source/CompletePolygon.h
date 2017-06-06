@@ -47,7 +47,9 @@ namespace Amusing
 		void Paint(Graphics& g);
 
 		void lengthToPercent();
+		AreaEventType TryBeginPointMove(const Point<double>& newLocation);
 		AreaEventType TryMovePoint(const Point<double>& newLocation);
+		AreaEventType EndPointMove();
 		void setCursorVisible(bool isVisible, SceneCanvasComponent* _parentCanvas);
 		bpolygon getPolygon();
 		std::vector<bpt> intersection(bpolygon hitPolygon);
@@ -64,15 +66,18 @@ namespace Amusing
 		std::shared_ptr<Miam::EditableEllipse> cursor;
 
 		// attributes linked to the bull's eye surrounding the area
+		bool useBullsEye;
 		bool showBullsEye;
-		int interval;
-		int startRadius;
-		int Nradius;
-		EditableEllipse** bullsEye;
+		bpt bullsEyeCenter;
+		double interval;
+		double startRadius;
+		static const int Nradius = 7;
+		std::vector<EditableEllipse> bullsEye;
+		double radius[Nradius];
 		void CreateBullsEye();
-		void DeleteBullsEye();
 		void PaintBullsEye(Graphics& g);
 		void CanvasResizedBullsEye(SceneCanvasComponent* _parentCanvas);
+		
 
 		double pc; // si ca foire quand on bouge la forme en mm temps que le curseur doit tourner -> garder en memoire le poucentage ou se trouve le curseur et rappeler setreadingposition avec ce pourcentage pour le remettre au nouvel endroit.
 	};

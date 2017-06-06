@@ -184,7 +184,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddTrueCircle(uint64_t nextAreaId)
 {
 	DBG("Creation du cercle");
 	std::shared_ptr<EditableEllipse> newCircle(new EditableEllipse(nextAreaId,
-		bpt(0.5f, 0.5f), 0.1f, 0.1f, Colours::grey, canvasComponent->GetRatio()));
+		bpt(0.5f, 0.5f), 0.2f, 0.2f, Colours::grey, canvasComponent->GetRatio()));
 	return AddArea(newCircle);
 }
 

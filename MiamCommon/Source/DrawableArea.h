@@ -58,6 +58,8 @@ namespace Miam
         virtual Colour GetFillColour() override {return fillColour;}
         /// \param _fillColour See DrawableArea::fillColour
         virtual void SetFillColour(Colour newColour) override;
+		/// \param _fillOpacity See DrawableArea::fillOpacity
+		virtual void SetAlpha(float newAlpha) override;
         
         /// \brief Sets the name that could be displayed on screen next to the center
         virtual void SetName(String newName) override;
