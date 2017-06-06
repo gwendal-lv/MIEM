@@ -71,7 +71,7 @@ namespace Amusing
 		bpt bullsEyeCenter;
 		double interval;
 		double startRadius;
-		static const int Nradius = 3;
+		static const int Nradius = 7;
 		std::vector<EditableEllipse> bullsEye;
 		double radius[Nradius];
 		void CreateBullsEye();

@@ -74,5 +74,8 @@ void DrawableArea::SetName(String newName)
     name = newName;
 }
 
-
+void DrawableArea::SetAlpha(float newAlpha)
+{
+	fillOpacity = newAlpha;
+}
 

@@ -218,7 +218,6 @@ void CompletePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 	//lengthToPercent();
 	if(showCursor)
 		cursor->CanvasResized(_parentCanvas);
-	DBG("isActive : " + (String)isActive);
 	if (isActive && showBullsEye)
 		CanvasResizedBullsEye(_parentCanvas);
 	setReadingPosition(pc);
@@ -238,14 +237,10 @@ AreaEventType CompletePolygon::TryBeginPointMove(const Point<double>& newLocatio
 
 AreaEventType CompletePolygon::TryMovePoint(const Point<double>& newLocation)
 {
-	bpt bnewLocation(newLocation.x, newLocation.y);
 	double r1 = boost::geometry::distance(centerInPixels, bmanipulationPointInPixels);
-	double r2 = boost::geometry::distance(centerInPixels, bnewLocation);
-	double s1 = boost::geometry::distance(center, bpt(bmanipulationPointInPixels.get<0>() / parentCanvas->getWidth(), bmanipulationPointInPixels.get<1>() / parentCanvas->getHeight()));
-	double s2 = boost::geometry::distance(center, bpt(newLocation.x / parentCanvas->getWidth(), newLocation.y / parentCanvas->getHeight()));
-	double size = r2 / r1;
 	AreaEventType areaEventType = EditablePolygon::TryMovePoint(newLocation);
-
+	double r2 = boost::geometry::distance(centerInPixels, bmanipulationPointInPixels);
+	double size = r2 / r1;
 
 	if (!boost::geometry::equals(center, bullsEyeCenter)) // at the creation, they're equal
 	{
@@ -256,26 +251,24 @@ AreaEventType CompletePolygon::TryMovePoint(const Point<double>& newLocation)
 		
 
 		for (int i = 0; i < Nradius; ++i)
-		{
 			bullsEye[i].Translate(juce::Point<double>(translation.get<0>(), translation.get<1>()));
-		}
-
+		
 		bullsEyeCenter = center;
 	}
 
 	if (areaEventType == AreaEventType::RotScale)
 	{
-		startRadius *= size;
+		double newStartRadius = startRadius * size;
 		for (int i = 0; i < Nradius; ++i)
 		{
-			double newRadius = startRadius + i* interval;
+
+			double newRadius = newStartRadius + i* interval;
 			double resize = newRadius / radius[i];
-			//bullsEye[i]->Translate(juce::Point<double>(-center.get<0>(),-center.get<1>()));
-			if(bullsEye[i].SizeChanged(resize))
+			if (bullsEye[i].SizeChanged(resize))
+			{
+				startRadius = newStartRadius;
 				radius[i] = newRadius; //startRadius + i*interval;
-			//bullsEye[i]->Translate(juce::Point<double>(center.get<0>(), center.get<1>()));
-			
-			
+			}
 		}
 	}
 	//CanvasResized(this->parentCanvas);
@@ -421,6 +414,7 @@ void CompletePolygon::CreateBullsEye()
 	{
 		radius[i] = startRadius + i*interval;//(i + 1)*0.15f / 2;
 		bullsEye.push_back( EditableEllipse(0, center, 2*radius[i], 2*radius[i], Colours::grey, 1.47f));
+		bullsEye.back().SetAlpha(0.0);
 	}
 	
 }

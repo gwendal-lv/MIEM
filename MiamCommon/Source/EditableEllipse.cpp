@@ -175,7 +175,6 @@ AreaEventType EditableEllipse::TryBeginPointMove(const Point<double>& hitPoint)
 				eventType = AreaEventType::PointDragBegins;
 			}
 		}
-		DBG("point " + (String)pointDraggedId + " is dragged");
 
 		// Are we grabbing the center ?
 		if (eventType != AreaEventType::PointDragBegins)
@@ -463,7 +462,6 @@ bool EditableEllipse::SizeChanged(double size)
 	if (minDistanceFromCenter >=
 		minimumSizePercentage*(parentCanvas->getWidth() + parentCanvas->getHeight()) / 2.0)
 	{
-		DBG("resize effective");
 		wasSizeApplied = true;
 		contourPointsInPixels.clear(); // test;
 		contourPointsInPixels = testBoost;//bnewContourPoints;
