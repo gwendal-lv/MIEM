@@ -8,6 +8,8 @@
   ==============================================================================
 */
 
+#include <sstream> // std::ostringstream
+
 #include "SpatStatesEditionManager.h"
 
 #include "View.h"
@@ -83,6 +85,13 @@ void SpatStatesEditionManager::OnLeaveSpatStatesEdition()
     sendDataToModel(editionComponent->GetDisplayedSpatMatrix());
     // Update now to the editionComponent
     selectSpatState(selectedSpatState);
+    
+    // Auto-save to XML
+    std::ostringstream oss;
+    auto ptree = spatInterpolator->GetSpatStatesTree();
+    bptree::write_xml(oss, *ptree);
+    std::cout << "--------------------" << std::endl;
+    std::cout << oss.str() << std::endl;
 }
 
 

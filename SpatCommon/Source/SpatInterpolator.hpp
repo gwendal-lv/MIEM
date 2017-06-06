@@ -23,6 +23,9 @@
 #include "OutputVolumesState.hpp"
 #include "MatrixState.hpp"
 
+#include "boost/property_tree/ptree.hpp"
+#include "boost/property_tree/xml_parser.hpp"
+namespace bptree = boost::property_tree;
 
 namespace Miam
 {
@@ -154,6 +157,13 @@ namespace Miam
             spatStates[index2]->SetIndex(index2);
         }
         
+        // - - - - - Property tree (for XML) import/export - - - - -
+        std::shared_ptr<bptree::ptree> GetSpatStatesTree()
+        {
+            auto ptree = std::make_shared<bptree::ptree>();
+            //ptree.
+            return ptree;
+        }
     };
     
 
