@@ -67,6 +67,10 @@ namespace Miam
         
         
         // - - - - - Events from Presenter - - - - -
+        /// \brief Actualization of everything that might have been modified from
+        /// other app modes.
+        void OnEnterSpatStatesEdition();
+        /// \brief Data saving before entering another mode.
         void OnLeaveSpatStatesEdition();
         
         // - - - - - Events from View - - - - -

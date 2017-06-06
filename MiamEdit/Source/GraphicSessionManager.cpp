@@ -186,14 +186,24 @@ std::shared_ptr<MultiSceneCanvasEditor> GraphicSessionManager::getSelectedCanvas
  */
 void GraphicSessionManager::setMode(GraphicSessionMode newMode)
 {
-    // bypass of everything if the session is still loading
-    if (mode == GraphicSessionMode::Loading)
+    // OLD mode managing
+    switch (mode)
     {
-        if (newMode != GraphicSessionMode::Loaded)
-            return;
+        case GraphicSessionMode::Null :
+            break; // direct break, we don't do anything for now
+            
+        case GraphicSessionMode::Loading :
+            // bypass of everything if the session is still loading
+            if (newMode != GraphicSessionMode::Loaded)
+                return;
+            break;
+            
+        default:
+            // Closing of anything pop-up-like displayed on a mode change
+            sceneEditionComponent->CloseTemporaryDisplayedObjects();
     }
-
     
+    // NEW mode managing
     switch(newMode)
     {
         case GraphicSessionMode::Null :

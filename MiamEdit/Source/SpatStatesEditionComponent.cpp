@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.0.1
+  Created with Projucer version: 5.0.2
 
   ------------------------------------------------------------------------------
 
@@ -282,7 +282,7 @@ void SpatStatesEditionComponent::SelectAndUpdateState(int stateIndex, std::strin
 {
     // We keep here this copy of the model internal matrix
     spatMatrix = newSpatMatrix;
-    
+
     // Internal updates
     spatStatesComboBox->setSelectedItemIndex(stateIndex, NotificationType::dontSendNotification);
     previousStateIndex = spatStatesComboBox->getSelectedItemIndex();
@@ -292,11 +292,21 @@ void SpatStatesEditionComponent::SelectAndUpdateState(int stateIndex, std::strin
 
     // Last updates
     updateMatrix();
-    // Buttons state (activated or not)
+    // Buttons enabled state (should be PRESENTER code normally....)
     bool isAnyStateSelected = spatStatesComboBox->getSelectedItemIndex() != -1;
     deleteSpatStateTextButton->setEnabled(isAnyStateSelected);
     stateUpTextButton->setEnabled(isAnyStateSelected);
     stateDownTextButton->setEnabled(isAnyStateSelected);
+    stateUpTextButton->setEnabled(isAnyStateSelected);
+    stateDownTextButton->setEnabled(isAnyStateSelected);
+    if (isAnyStateSelected) // up/down may be deactivated depending on state's count
+    {
+        if (spatStatesComboBox->getSelectedItemIndex() == 0)
+            stateUpTextButton->setEnabled(false);
+        else if (spatStatesComboBox->getSelectedItemIndex()
+                 == spatStatesComboBox->getNumItems()-1)
+            stateDownTextButton->setEnabled(false);
+    }
 }
 void SpatStatesEditionComponent::updateMatrix()
 {

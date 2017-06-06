@@ -103,19 +103,48 @@ namespace Miam
         spatType(_spatType)
         {}
         
+        
+        
+        // - - - - - States management  - - - - -
+        /// \brief Adds a pre-allocated and configured state at the end of
+        /// the current state's list.
+        void AddState(std::shared_ptr<SpatState<T>> newState)
+        {
+            newState->SetIndex(spatStates.size()); // is automatically the last
+            spatStates.push_back(newState);
+        }
+        /// \brief Adds a default empty zero-matrix state.
+        ///
+        /// \returns A pointer to the newly created state
+        std::shared_ptr<SpatState<T>> AddDefaultState()
+        {
+            auto emptyState = std::make_shared<MatrixState<T>>(); // default ctor
+            AddState(emptyState);
+            return emptyState;
+        }
+        /// \brief For debug/testing purposes
         void __AddDefaultStates()
         {
             for (size_t i = 0 ; i<3 ; i++)
             {
                 std::shared_ptr<MatrixState<T>> newState = std::make_shared<MatrixState<T>>();
-                newState->SetIndex((int)i);
                 newState->SetName("Matrice " + std::to_string(i+1));
-                spatStates.push_back(newState);
+                AddState(newState);
             }
         }
-        
-        
-        // - - - - - States management  - - - - -
+        /// \brief Searches for the selected state (by index) then delete it.
+        ///
+        /// Triggers all necessary updates.
+        void DeleteState(std::shared_ptr<SpatState<T>> stateToDelete)
+        {
+            auto statesIt = spatStates.begin();
+            std::advance(statesIt, stateToDelete->GetIndex());
+            // returns an iterator the the next element (may be .end())
+            auto nextAfterErased = spatStates.erase(statesIt);
+            // Indexes actualisation for remaining states after the one erased
+            for (auto it=nextAfterErased ; it!=spatStates.end() ; it++)
+                (*it)->SetIndex((*it)->GetIndex()-1); // minus 1 for everyone
+        }
         void SwapStatesByIndex(size_t index1, size_t index2)
         {
             auto backUpPtr = spatStates[index1];

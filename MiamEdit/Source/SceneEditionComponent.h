@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.0.1
+  Created with Projucer version: 5.0.2
 
   ------------------------------------------------------------------------------
 
@@ -87,6 +87,8 @@ public:
     // - - - - - Common - - - - -
     public :
     void SetEnabledAllControls(bool areEnabled, bool controlsBackUp = true);
+    void CloseTemporaryDisplayedObjects();
+    
     // - - - - - Canvases group - - - - -
     void SetCanvasGroupHidden(bool _isHidden);
     void SetCanvasGroupReduced(bool _isReduced);

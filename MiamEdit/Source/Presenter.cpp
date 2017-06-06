@@ -81,6 +81,11 @@ AppMode Presenter::appModeChangeRequest(AppMode newAppMode)
         // - - - - - POST-CHANGE PROCESSING - - - - -
         switch(appMode)
         {
+            case AppMode::EditSpatStates :
+                // At leats : reloading of maybe changed data from other mode
+                spatStatesEditionManager.OnEnterSpatStatesEdition();
+                break;
+                
             case AppMode::EditSpatScenes :
                 // At leats : reloading of maybe changed data from other mode
                 graphicSessionManager.OnEnterSpatScenesEdition();

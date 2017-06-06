@@ -73,7 +73,11 @@ size_t SpatStatesEditionManager::GetFadersCount()
 
 
 // = = = = = = = = = = EVENTS from PRESENTER = = = = = = = = = =
-
+void SpatStatesEditionManager::OnEnterSpatStatesEdition()
+{
+    // Forces graphical updates
+    selectSpatState(selectedSpatState);
+}
 void SpatStatesEditionManager::OnLeaveSpatStatesEdition()
 {
     sendDataToModel(editionComponent->GetDisplayedSpatMatrix());
@@ -112,19 +116,61 @@ void SpatStatesEditionManager::OnRenameState(std::string newName, int stateIndex
 
 void SpatStatesEditionManager::OnAddState()
 {
-    
+    auto newState = spatInterpolator->AddDefaultState();
+    updateView();
+    selectSpatState(newState);
 }
 void SpatStatesEditionManager::OnDeleteSelectedState()
 {
+    if (selectedSpatState)
+    {
+        // Model command transmission at first
+        size_t spatStateIndexBackup = (size_t)selectedSpatState->GetIndex();
+        spatInterpolator->DeleteState(selectedSpatState);
+        // Display updates
+        updateView();
+        if (spatStateIndexBackup == 0)
+        {
+            // if it was the last one, nothing selected
+            if (spatInterpolator->GetSpatStatesCount() == 0)
+                selectSpatState(nullptr);
+            else // else, the next one is selected
+                selectSpatState(spatInterpolator->GetSpatState(spatStateIndexBackup));
+        }
+        else // selection of the previous
+            selectSpatState(spatInterpolator->GetSpatState(spatStateIndexBackup-1));
+    }
+    else
+        throw std::logic_error("Cannot delete state: no state is currently selected.");
     
 }
 void SpatStatesEditionManager::OnMoveSelectedStateUp()
 {
-    
+    if (selectedSpatState
+        && spatInterpolator->GetSpatStatesCount() >= 2
+        && selectedSpatState->GetIndex() > 0)
+    {
+        spatInterpolator->SwapStatesByIndex(selectedSpatState->GetIndex(), selectedSpatState->GetIndex()-1);
+        // Updates
+        updateView();
+        selectSpatState(selectedSpatState); // re-selection
+    }
+    else
+        throw std::logic_error("Cannot move spat state towards the first position.");
 }
 void SpatStatesEditionManager::OnMoveSelectedStateDown()
 {
-    
+    if (selectedSpatState
+        && spatInterpolator->GetSpatStatesCount() >= 2
+        && selectedSpatState->GetIndex() < spatInterpolator->GetSpatStatesCount()-1)
+    {
+        spatInterpolator->SwapStatesByIndex(selectedSpatState->GetIndex(), selectedSpatState->GetIndex()+1);
+        // Updates
+        updateView();
+        selectSpatState(selectedSpatState); // re-selection
+    }
+    else
+        throw std::logic_error("Cannot move spat state towards the last position.");
 }
 
 

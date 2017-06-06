@@ -35,6 +35,8 @@ namespace Miam
         // = = = = = = = = = = METHODS = = = = = = = = = =
         public :
         
+        virtual ~LockFreeParamChangeSender() {}
+        
         /// \brief Tries a get a parameter change, that happened on this side
         ///
         /// Must be always called from the same unique thread

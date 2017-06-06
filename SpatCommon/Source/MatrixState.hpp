@@ -44,8 +44,11 @@ namespace Miam
         
         
         // - - - - - Construction / destruction - - - - -
+        
+        /// \brief Builds a state based on a zero Miam::SparseMatrix
         MatrixState()
         {
+            this->SetName("Matrix-based spatialization state");
         }
         virtual ~MatrixState() {}
         

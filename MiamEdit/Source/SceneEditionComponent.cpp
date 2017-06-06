@@ -642,6 +642,32 @@ void SceneEditionComponent::CompleteInitialization(GraphicSessionManager* _graph
 
 // ========== (SETTERS AND GETTERS) ORDERS FROM PRESENTER ==========
 
+// - - - - - Common to all UI elements - - - - -
+
+void SceneEditionComponent::SetEnabledAllControls(bool areEnabled, bool controlsBackUp)
+{
+    // Canvas (nothing yet : controls are visible or not, but always enabled)
+    
+    // Main area controls
+    addAreaTextButton->setEnabled(areEnabled);
+    deleteAreaTextButton->setEnabled(areEnabled);
+    copyTextButton->setEnabled(areEnabled);
+    
+    // Special buttons with a backup of their state (may not be enabled !)
+    if (controlsBackUp)
+        pasteTextButton->setEnabled(pasteTextButtonEnabledBackUp);
+    else
+        pasteTextButton->setEnabled(areEnabled);
+    
+    setEnabledSelectedAreaControls(areEnabled); // Selected Area
+    
+    // Spat effect
+}
+void SceneEditionComponent::CloseTemporaryDisplayedObjects()
+{
+    spatStatesComboBox->hidePopup();
+}
+
 // - - - - - Canvases & canvas group - - - - -
 
 void SceneEditionComponent::SetCanvasGroupHidden(bool _isHidden)
@@ -727,25 +753,6 @@ void SceneEditionComponent::SetPasteEnabled(bool _isEnabled)
 {
     pasteTextButton->setEnabled(_isEnabled);
 }
-void SceneEditionComponent::SetEnabledAllControls(bool areEnabled, bool controlsBackUp)
-{
-    // Canvas
-
-    // Main area controls
-    addAreaTextButton->setEnabled(areEnabled);
-    deleteAreaTextButton->setEnabled(areEnabled);
-    copyTextButton->setEnabled(areEnabled);
-
-    // Special buttons with a backup of their state (may not be enabled !)
-    if (controlsBackUp)
-        pasteTextButton->setEnabled(pasteTextButtonEnabledBackUp);
-    else
-        pasteTextButton->setEnabled(areEnabled);
-
-    setEnabledSelectedAreaControls(areEnabled); // Selected Area
-
-    // Spat effect
-}
 void SceneEditionComponent::setEnabledSelectedAreaControls(bool areEnabled)
 {
     // For a selected area
@@ -767,6 +774,9 @@ void SceneEditionComponent::setEnabledSelectedAreaControls(bool areEnabled)
 void SceneEditionComponent::setVisibleSpatControls(bool areVisible)
 {
     spatGroupComponent->setVisible(areVisible);
+    if (spatStatesComboBox->isPopupActive())
+        spatStatesComboBox->hidePopup();
+    spatStatesComboBox->setVisible(areVisible);
     spatLabel->setVisible(areVisible);
     spatStatesComboBox->setVisible(areVisible);
 }
@@ -920,7 +930,7 @@ BEGIN_JUCER_METADATA
                  overlayOpacity="0.330" fixedSize="0" initialWidth="1024" initialHeight="1024">
   <BACKGROUND backgroundColour="ffd9d9d9"/>
   <GROUPCOMPONENT name="Area edition group component" id="87d416270d41f58c" memberName="areaGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="8 -889R 192 240" posRelativeY="4250d5155a80be70"
+                  virtualName="" explicitFocusOrder="0" pos="8 -8R 192 240" posRelativeY="4250d5155a80be70"
                   outlinecol="ff454545" textcol="ff000000" title="Area edition"/>
   <GROUPCOMPONENT name="Spatialization group component" id="90b16e3024c520fd" memberName="spatGroupComponent"
                   virtualName="" explicitFocusOrder="0" pos="8 -8R 192 80" posRelativeY="87d416270d41f58c"

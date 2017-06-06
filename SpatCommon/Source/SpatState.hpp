@@ -66,7 +66,7 @@ namespace Miam
         
         /// \returns A string containing the Id (counting from 1) and the name
         /// concatenated
-        virtual std::string GetName(bool withId = true)
+        virtual std::string GetName(bool withId = true) const
         {
             std::string indexString;
             if (withId)
@@ -81,7 +81,7 @@ namespace Miam
         }
         
         void SetIndex(int newIndex) {index = newIndex;}
-        int GetIndex() {return index;}
+        int GetIndex() const {return index;}
         
         virtual size_t GetOutputsCount() = 0;
         

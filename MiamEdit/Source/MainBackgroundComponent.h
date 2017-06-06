@@ -92,6 +92,7 @@ private:
     ScopedPointer<TextButton> hardwareConfTextButton;
     ScopedPointer<TextButton> startTextButton;
     ScopedPointer<Label> label;
+    ScopedPointer<TextButton> fileTextButton;
 
 
     //==============================================================================

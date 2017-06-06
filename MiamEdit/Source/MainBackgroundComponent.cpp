@@ -69,14 +69,14 @@ MainBackgroundComponent::MainBackgroundComponent ()
     scenesTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
     addAndMakeVisible (hardwareConfTextButton = new TextButton ("Hardware Configuration text button"));
-    hardwareConfTextButton->setButtonText (TRANS("Hardware Configuration"));
+    hardwareConfTextButton->setButtonText (TRANS("Configuration"));
     hardwareConfTextButton->addListener (this);
     hardwareConfTextButton->setColour (TextButton::buttonColourId, Colour (0x55ffffff));
     hardwareConfTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     hardwareConfTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
     addAndMakeVisible (startTextButton = new TextButton ("Start text button"));
-    startTextButton->setButtonText (TRANS("Start"));
+    startTextButton->setButtonText (TRANS("Start MiamSpat"));
     startTextButton->setColour (TextButton::buttonColourId, Colour (0xa0ffffff));
     startTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     startTextButton->setColour (TextButton::textColourOffId, Colours::black);
@@ -89,6 +89,13 @@ MainBackgroundComponent::MainBackgroundComponent ()
     label->setColour (TextEditor::textColourId, Colours::black);
     label->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
+    addAndMakeVisible (fileTextButton = new TextButton ("File text button"));
+    fileTextButton->setButtonText (TRANS("File"));
+    fileTextButton->addListener (this);
+    fileTextButton->setColour (TextButton::buttonColourId, Colour (0x55ffffff));
+    fileTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+    fileTextButton->setColour (TextButton::textColourOffId, Colours::black);
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -98,8 +105,9 @@ MainBackgroundComponent::MainBackgroundComponent ()
 
     //[Constructor] You can add your own custom stuff here..
 
-    // !!! By default, "start" button deactivated !!!
-    //startTextButton->setEnabled(false);
+    // Buttons still deactivated for now
+    startTextButton->setEnabled(false);
+    speakersTextButton->setEnabled(false);
 
     //[/Constructor]
 }
@@ -116,6 +124,7 @@ MainBackgroundComponent::~MainBackgroundComponent()
     hardwareConfTextButton = nullptr;
     startTextButton = nullptr;
     label = nullptr;
+    fileTextButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -139,13 +148,14 @@ void MainBackgroundComponent::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    speakersTextButton->setBounds (8, 8, 120, 24);
-    spatStatesTextButtn->setBounds (128, 8, 120, 24);
-    mainInfoLabel->setBounds (getWidth() - 8 - (getWidth() - 720), 8, getWidth() - 720, 24);
-    scenesTextButton->setBounds (248, 8, 120, 24);
-    hardwareConfTextButton->setBounds (376, 8, 176, 24);
-    startTextButton->setBounds (584, 8, 96, 24);
+    speakersTextButton->setBounds (8 + 64 - -8, 8, 104, 24);
+    spatStatesTextButtn->setBounds ((8 + 64 - -8) + 104, 8, 104, 24);
+    mainInfoLabel->setBounds (getWidth() - 8 - (getWidth() - 640), 8, getWidth() - 640, 24);
+    scenesTextButton->setBounds (((8 + 64 - -8) + 104) + 104, 8, 104, 24);
+    hardwareConfTextButton->setBounds (((8 + 64 - -8) + 104) + 104 - -112, 8, 96, 24);
+    startTextButton->setBounds ((((8 + 64 - -8) + 104) + 104 - -112) + 96 - -16, 8, 104, 24);
     label->setBounds (proportionOfWidth (0.5000f) - (150 / 2), proportionOfHeight (0.5000f) - (24 / 2), 150, 24);
+    fileTextButton->setBounds (8, 8, 64, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -178,6 +188,11 @@ void MainBackgroundComponent::buttonClicked (Button* buttonThatWasClicked)
     {
         //[UserButtonCode_hardwareConfTextButton] -- add your button handler code here..
         //[/UserButtonCode_hardwareConfTextButton]
+    }
+    else if (buttonThatWasClicked == fileTextButton)
+    {
+        //[UserButtonCode_fileTextButton] -- add your button handler code here..
+        //[/UserButtonCode_fileTextButton]
     }
 
     //[UserbuttonClicked_Post]
@@ -216,38 +231,42 @@ BEGIN_JUCER_METADATA
                  overlayOpacity="0.330" fixedSize="1" initialWidth="1024" initialHeight="600">
   <BACKGROUND backgroundColour="ff707070"/>
   <TEXTBUTTON name="Speakers text button" id="2752e5f61c280c43" memberName="speakersTextButton"
-              virtualName="" explicitFocusOrder="0" pos="8 8 120 24" bgColOff="55ffffff"
-              bgColOn="ffffffff" textCol="ff000000" buttonText="Speakers" connectedEdges="2"
-              needsCallback="1" radioGroupId="0"/>
+              virtualName="" explicitFocusOrder="0" pos="-8R 8 104 24" posRelativeX="dcc32a783566df37"
+              bgColOff="55ffffff" bgColOn="ffffffff" textCol="ff000000" buttonText="Speakers"
+              connectedEdges="2" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Spatialization States text button" id="8bdb167a1cca5b0b"
               memberName="spatStatesTextButtn" virtualName="" explicitFocusOrder="0"
-              pos="128 8 120 24" bgColOff="55ffffff" bgColOn="ffffffff" textCol="ff000000"
-              buttonText="Routing Matrices" connectedEdges="3" needsCallback="1"
-              radioGroupId="0"/>
+              pos="0R 8 104 24" posRelativeX="2752e5f61c280c43" bgColOff="55ffffff"
+              bgColOn="ffffffff" textCol="ff000000" buttonText="Routing Matrices"
+              connectedEdges="3" needsCallback="1" radioGroupId="0"/>
   <LABEL name="Main info label" id="d52b689341b86690" memberName="mainInfoLabel"
-         virtualName="" explicitFocusOrder="0" pos="8Rr 8 720M 24" bkgCol="56ffffff"
+         virtualName="" explicitFocusOrder="0" pos="8Rr 8 640M 24" bkgCol="56ffffff"
          outlineCol="84000000" edTextCol="ff000000" edBkgCol="0" labelText="..."
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
          justification="34"/>
   <TEXTBUTTON name="Scenes text button" id="9994cb0e99bfd3ca" memberName="scenesTextButton"
-              virtualName="" explicitFocusOrder="0" pos="248 8 120 24" bgColOff="55ffffff"
-              bgColOn="ffffffff" textCol="ff000000" buttonText="Spat Scenes"
+              virtualName="" explicitFocusOrder="0" pos="0R 8 104 24" posRelativeX="8bdb167a1cca5b0b"
+              bgColOff="55ffffff" bgColOn="ffffffff" textCol="ff000000" buttonText="Spat Scenes"
               connectedEdges="1" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Hardware Configuration text button" id="1dad683cba944341"
               memberName="hardwareConfTextButton" virtualName="" explicitFocusOrder="0"
-              pos="376 8 176 24" bgColOff="55ffffff" bgColOn="ffffffff" textCol="ff000000"
-              buttonText="Hardware Configuration" connectedEdges="0" needsCallback="1"
-              radioGroupId="0"/>
+              pos="-112R 8 96 24" posRelativeX="8bdb167a1cca5b0b" bgColOff="55ffffff"
+              bgColOn="ffffffff" textCol="ff000000" buttonText="Configuration"
+              connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Start text button" id="cecb4b1d1a8f7c2d" memberName="startTextButton"
-              virtualName="" explicitFocusOrder="0" pos="584 8 96 24" bgColOff="a0ffffff"
-              bgColOn="ffffffff" textCol="ff000000" buttonText="Start" connectedEdges="0"
-              needsCallback="0" radioGroupId="0"/>
+              virtualName="" explicitFocusOrder="0" pos="-16R 8 104 24" posRelativeX="1dad683cba944341"
+              bgColOff="a0ffffff" bgColOn="ffffffff" textCol="ff000000" buttonText="Start MiamSpat"
+              connectedEdges="0" needsCallback="0" radioGroupId="0"/>
   <LABEL name="new label" id="f13afc15bc19a998" memberName="label" virtualName=""
          explicitFocusOrder="0" pos="50%c 50%c 150 24" edTextCol="ff000000"
          edBkgCol="0" labelText="Loading..." editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="15"
          kerning="0" bold="0" italic="1" justification="36" typefaceStyle="Italic"/>
+  <TEXTBUTTON name="File text button" id="dcc32a783566df37" memberName="fileTextButton"
+              virtualName="" explicitFocusOrder="0" pos="8 8 64 24" bgColOff="55ffffff"
+              bgColOn="ffffffff" textCol="ff000000" buttonText="File" connectedEdges="0"
+              needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA
