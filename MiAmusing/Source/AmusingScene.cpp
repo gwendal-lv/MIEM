@@ -370,7 +370,6 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseUp(const MouseEvent& mo
 		{
 			if (selectedArea)
 			{
-				DBG("HERE");
 				AreaEventType areaEventType = selectedArea->EndPointMove();
 				graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, areaEventType,selectedArea->GetId(),shared_from_this()));
 			}

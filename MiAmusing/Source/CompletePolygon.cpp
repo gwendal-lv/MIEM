@@ -522,7 +522,7 @@ double CompletePolygon::getPercentage(bpt hitPoint)
 		prev = i - 1;
 		suiv = i;
 	}
-	return percentages[prev] + (boost::geometry::distance(hitPoint, contourPoints.outer().at(i - 1))) / perimeter;
+	return percentages[prev] + (boost::geometry::distance(hitPoint, contourPoints.outer().at(prev))) / perimeter;
 	
 	//return 0.0;
 }

@@ -55,12 +55,8 @@ EditScene::EditScene ()
     addTriangleButton->setButtonText (TRANS("Triangle"));
     addTriangleButton->addListener (this);
 
-    addAndMakeVisible (addCircleButton = new TextButton ("new button"));
-    addCircleButton->setButtonText (TRANS("Circle"));
-    addCircleButton->addListener (this);
-
     addAndMakeVisible (addTrueCircleButton = new TextButton ("new button"));
-    addTrueCircleButton->setButtonText (TRANS("TrueCircle"));
+    addTrueCircleButton->setButtonText (TRANS("Circle"));
     addTrueCircleButton->addListener (this);
 
     addAndMakeVisible (deleteButton = new TextButton ("new button"));
@@ -68,7 +64,7 @@ EditScene::EditScene ()
     deleteButton->addListener (this);
 
     addAndMakeVisible (completeButton = new TextButton ("new button"));
-    completeButton->setButtonText (TRANS("Complete"));
+    completeButton->setButtonText (TRANS("Hexagone"));
     completeButton->addListener (this);
 
     addAndMakeVisible (optionButton = new TextButton ("new button"));
@@ -114,7 +110,6 @@ EditScene::~EditScene()
     stopButton = nullptr;
     addCarreButton = nullptr;
     addTriangleButton = nullptr;
-    addCircleButton = nullptr;
     addTrueCircleButton = nullptr;
     deleteButton = nullptr;
     completeButton = nullptr;
@@ -149,10 +144,9 @@ void EditScene::resized()
     stopButton->setBounds (8, 112, 50, 24);
     addCarreButton->setBounds (8, 152, 50, 24);
     addTriangleButton->setBounds (8, 176, 50, 24);
-    addCircleButton->setBounds (8, 200, 50, 24);
-    addTrueCircleButton->setBounds (8, 224, 50, 24);
-    deleteButton->setBounds (8, 248, 50, 24);
-    completeButton->setBounds (8, 280, 50, 24);
+    addTrueCircleButton->setBounds (8, 200, 50, 24);
+    deleteButton->setBounds (8, 268, 50, 24);
+    completeButton->setBounds (8, 224, 50, 24);
     optionButton->setBounds (8, 40, 50, 24);
     comboBoxMidi->setBounds (4, 318, 60, 24);
     timeSlider->setBounds (4, 352, 45, 40);
@@ -195,12 +189,6 @@ void EditScene::buttonClicked (Button* buttonThatWasClicked)
         //[UserButtonCode_addTriangleButton] -- add your button handler code here..
 		graphicSessionManager->OnAddTriangle();
         //[/UserButtonCode_addTriangleButton]
-    }
-    else if (buttonThatWasClicked == addCircleButton)
-    {
-        //[UserButtonCode_addCircleButton] -- add your button handler code here..
-		graphicSessionManager->OnAddCircle();
-        //[/UserButtonCode_addCircleButton]
     }
     else if (buttonThatWasClicked == addTrueCircleButton)
     {
@@ -310,17 +298,14 @@ BEGIN_JUCER_METADATA
   <TEXTBUTTON name="new button" id="50fbe27b27abfd3" memberName="addTriangleButton"
               virtualName="" explicitFocusOrder="0" pos="8 176 50 24" buttonText="Triangle"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
-  <TEXTBUTTON name="new button" id="ac7fa5edde0667dc" memberName="addCircleButton"
+  <TEXTBUTTON name="new button" id="9ac75bac4695259b" memberName="addTrueCircleButton"
               virtualName="" explicitFocusOrder="0" pos="8 200 50 24" buttonText="Circle"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
-  <TEXTBUTTON name="new button" id="9ac75bac4695259b" memberName="addTrueCircleButton"
-              virtualName="" explicitFocusOrder="0" pos="8 224 50 24" buttonText="TrueCircle"
-              connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="new button" id="bbaaf855224933f0" memberName="deleteButton"
-              virtualName="" explicitFocusOrder="0" pos="8 248 50 24" buttonText="Delete"
+              virtualName="" explicitFocusOrder="0" pos="8 268 50 24" buttonText="Delete"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="new button" id="3ae91a7e9eec6859" memberName="completeButton"
-              virtualName="" explicitFocusOrder="0" pos="8 280 50 24" buttonText="Complete"
+              virtualName="" explicitFocusOrder="0" pos="8 224 50 24" buttonText="Hexagone"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="new button" id="753688072def86b" memberName="optionButton"
               virtualName="" explicitFocusOrder="0" pos="8 40 50 24" buttonText="Options"

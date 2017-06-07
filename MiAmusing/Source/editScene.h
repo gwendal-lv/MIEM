@@ -80,7 +80,6 @@ private:
     ScopedPointer<TextButton> stopButton;
     ScopedPointer<TextButton> addCarreButton;
     ScopedPointer<TextButton> addTriangleButton;
-    ScopedPointer<TextButton> addCircleButton;
     ScopedPointer<TextButton> addTrueCircleButton;
     ScopedPointer<TextButton> deleteButton;
     ScopedPointer<TextButton> completeButton;
