@@ -358,3 +358,24 @@ std::shared_ptr<AreaEvent> AmusingScene::resendArea(int idx)
 {
 	return std::shared_ptr<AreaEvent>(new AreaEvent(areas[idx], AreaEventType::ShapeChanged,idx, shared_from_this()));
 }
+
+std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseUp(const MouseEvent& mouseE)
+{
+	std::shared_ptr<GraphicEvent> graphicE(new GraphicEvent()); // default empty event
+	Point<float> clicLocation = mouseE.position; // float position (more accurate)
+
+	if (allowAreaSelection)
+	{
+		if (mouseE.source.getIndex() == 0)
+		{
+			if (selectedArea)
+			{
+				DBG("HERE");
+				AreaEventType areaEventType = selectedArea->EndPointMove();
+				graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, areaEventType,selectedArea->GetId(),shared_from_this()));
+			}
+		}
+	}
+
+	return graphicE;
+}

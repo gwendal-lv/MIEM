@@ -12,6 +12,10 @@
 #include "SceneCanvasComponent.h"
 
 #include "MiamMath.h"
+#include <cmath>
+
+#include "boost\geometry.hpp"
+#include "boost\geometry\algorithms\transform.hpp"
 
 using namespace Amusing;
 using namespace Miam;
@@ -31,7 +35,13 @@ CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
 	useBullsEye = true;
 	showBullsEye = true;
 	if (useBullsEye)
+	{
 		CreateBullsEye();
+		for (int i = 0; i < contourPoints.outer().size(); i++)
+		{
+			OnCircles.push_back(1);
+		}
+	}
 	updateSubTriangles();
 }
 
@@ -54,7 +64,13 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 	startRadius = radius;
 	interval = 0.05;
 	if (useBullsEye)
+	{
 		CreateBullsEye();
+		for (int i = 0; i < contourPoints.outer().size(); i++)
+		{
+			OnCircles.push_back(0);
+		}
+	}
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id,
@@ -77,7 +93,13 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	useBullsEye = true;
 	showBullsEye = true;
 	if (useBullsEye)
+	{
 		CreateBullsEye();
+		for (int i = 0; i < contourPoints.outer().size(); i++)
+		{
+			OnCircles.push_back(0);
+		}
+	}
 
 	updateSubTriangles();
 }
@@ -237,6 +259,9 @@ AreaEventType CompletePolygon::TryBeginPointMove(const Point<double>& newLocatio
 
 AreaEventType CompletePolygon::TryMovePoint(const Point<double>& newLocation)
 {
+	DBG((String)newLocation.x + "   " + (String)newLocation.y);
+	DBG("radius 0  = " + (String)radius[0]);
+	DBG("radius 1  = " + (String)radius[1]);
 	double r1 = boost::geometry::distance(centerInPixels, bmanipulationPointInPixels);
 	AreaEventType areaEventType = EditablePolygon::TryMovePoint(newLocation);
 	double r2 = boost::geometry::distance(centerInPixels, bmanipulationPointInPixels);
@@ -285,44 +310,152 @@ AreaEventType CompletePolygon::EndPointMove()
 		if (pointDraggedId >= 0)
 		{
 			int nearest = 0;
-
-			double dist = 1000000;
-			double r = boost::geometry::distance(contourPoints.outer().at(pointDraggedId), center);
-			DBG("r = " + (String)r);
+			double epsilon = 1000000;
+			double Di = boost::geometry::distance(contourPoints.outer().at(pointDraggedId), center);
+			double Df;
 			for (int i = 0; i < Nradius; ++i)
 			{
-				DBG("radius = " + (String)((i + 1)*0.15f));
-				if (abs(radius[i] - r) < dist)
+				if (epsilon > abs(radius[i] - Di))
 				{
-					
-					DBG((String)abs((i + 1)*0.15f - r) + " < " + (String)dist);
-					dist = abs((i + 1)*0.15f/2 - r);
-					
+					epsilon = abs(radius[i] - Di);
+					Df = radius[i];
 					nearest = i;
 				}
-				else
-					DBG((String)abs((i + 1)*0.15f - r) + " > " + (String)dist);
 			}
-			DBG("choice = " + (String)nearest);
-			DBG("---contourPointsInPixels.outer().at(pointDraggedId) = (" + (String)contourPointsInPixels.outer().at(pointDraggedId).get<0>() + " , " + (String)contourPointsInPixels.outer().at(pointDraggedId).get<1>() + ")");
-			DBG("---centerInPixels = (" + (String)centerInPixels.get<0>() + " , " + (String)centerInPixels.get<1>() + ")");
-			contourPoints.outer().at(pointDraggedId).set<0>(
-				((contourPoints.outer().at(pointDraggedId).get<0>() - center.get<0>()) * radius[nearest] / r) + center.get<0>()
-				);
-			contourPoints.outer().at(pointDraggedId).set<1>(
-				((contourPoints.outer().at(pointDraggedId).get<1>() - center.get<1>()) * radius[nearest] / r) + center.get<1>()
-				);
-			DBG("---contourPointsInPixels.outer().at(pointDraggedId) = (" + (String)contourPointsInPixels.outer().at(pointDraggedId).get<0>() + " , " + (String)contourPointsInPixels.outer().at(pointDraggedId).get<1>() + ")");
 
-			contourPointsInPixels.outer().at(pointDraggedId) = bpt(
-				contourPoints.outer().at(pointDraggedId).get<0>() * (double)parentCanvas->getWidth(),
-				contourPoints.outer().at(pointDraggedId).get<1>() * (double)parentCanvas->getHeight());
+			int methodToUse = 4; // 0 : contourPoints, 1 : InPixels (Equation param), InPixels (resize) 
+
+			if (methodToUse == 0)
+			{
+				double resize = Df / Di;
+
+				bpt newContourPoint(contourPoints.outer().at(pointDraggedId));
+				boost::geometry::subtract_point(newContourPoint, center);
+				boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scaler(resize);
+				boost::geometry::transform(newContourPoint, contourPoints.outer().at(pointDraggedId), scaler);
+				boost::geometry::add_point(contourPoints.outer().at(pointDraggedId), center);
+
+				contourPointsInPixels.outer().at(pointDraggedId) = bpt(
+					contourPoints.outer().at(pointDraggedId).get<0>() * (double)parentCanvas->getWidth(),
+					contourPoints.outer().at(pointDraggedId).get<1>() * (double)parentCanvas->getHeight());
+			}
+			else if (methodToUse == 1)
+			{
+				double cosa = (contourPointsInPixels.outer().at(pointDraggedId).get<0>() - centerInPixels.get<0>()) / boost::geometry::distance(contourPointsInPixels.outer().at(pointDraggedId), centerInPixels);
+				double sina = (contourPointsInPixels.outer().at(pointDraggedId).get<1>() - centerInPixels.get<1>()) / boost::geometry::distance(contourPointsInPixels.outer().at(pointDraggedId), centerInPixels);
+				contourPointsInPixels.outer().at(pointDraggedId) = bpt(centerInPixels.get<0>() + radius[nearest] * cosa * (double)parentCanvas->getWidth(),
+					centerInPixels.get<1>() + radius[nearest] * sina * (double)parentCanvas->getHeight());
+				bpt sol1(center.get<0>() + radius[nearest] * cosa,
+					center.get<1>() + radius[nearest] * sina);
+				
+				double cosa2 = (contourPoints.outer().at(pointDraggedId).get<0>() - center.get<1>()) / boost::geometry::distance(contourPoints.outer().at(pointDraggedId), center);
+				double sina2 = (contourPoints.outer().at(pointDraggedId).get<1>() - center.get<0>()) / boost::geometry::distance(contourPoints.outer().at(pointDraggedId), center);
+				bpt sol2(center.get<0>() + radius[nearest] * cosa2,
+					center.get<1>() + radius[nearest] * sina2);
+			
+				contourPoints.outer().at(pointDraggedId) =sol1;
+
+			}
+			else if (methodToUse == 2)
+			{
+				
+				
+				
+				boost::geometry::model::point<long double, 3, boost::geometry::cs::cartesian> testXYZ(1, 5);
+				boost::geometry::model::point<double, 3, boost::geometry::cs::spherical<boost::geometry::degree>> testR1;
+				boost::geometry::model::point<long double, 3, boost::geometry::cs::spherical<boost::geometry::radian> > R2;
+				boost::geometry::transform(testXYZ, testR1);
+				boost::geometry::transform(testXYZ, R2);
+				
+				//transform(contourPointsInPixels.outer().at(pointDraggedId), P);
+
+				double cosa = (contourPointsInPixels.outer().at(pointDraggedId).get<0>() - centerInPixels.get<0>()) / boost::geometry::distance(contourPointsInPixels.outer().at(pointDraggedId), centerInPixels);
+				double sina = (contourPointsInPixels.outer().at(pointDraggedId).get<1>() - centerInPixels.get<1>()) / boost::geometry::distance(contourPointsInPixels.outer().at(pointDraggedId), centerInPixels);
+				
+				bpt sol1(center.get<0>() + radius[nearest] * cosa,
+					center.get<1>() + radius[nearest] * sina);
+
+				double cosa2 = (contourPoints.outer().at(pointDraggedId).get<0>() - center.get<1>()) / boost::geometry::distance(contourPoints.outer().at(pointDraggedId), center);
+				double sina2 = (contourPoints.outer().at(pointDraggedId).get<1>() - center.get<0>()) / boost::geometry::distance(contourPoints.outer().at(pointDraggedId), center);
+				bpt sol2(center.get<0>() + radius[nearest] * cosa2,
+					center.get<1>() + radius[nearest] * sina2);
+				contourPointsInPixels.outer().at(pointDraggedId) = bpt(sol2.get<0>() * (double)parentCanvas->getWidth(), sol2.get<1>() * (double)parentCanvas->getHeight());
+				contourPoints.outer().at(pointDraggedId) = sol2;
+
+			}
+			else if (methodToUse == 3)
+			{
+				boost::geometry::subtract_point(contourPoints.outer().at(pointDraggedId), center);
+				boost::geometry::model::point<long double, 3, boost::geometry::cs::cartesian> pt3D(contourPoints.outer().at(pointDraggedId).get<0>(), contourPoints.outer().at(pointDraggedId).get<1>());
+				boost::geometry::model::point<double, 3, boost::geometry::cs::spherical<boost::geometry::radian>> ptRad;
+				boost::geometry::transform(pt3D, ptRad);
+				ptRad.set<2>(radius[nearest]);
+				boost::geometry::transform(ptRad, pt3D);
+				contourPoints.outer().at(pointDraggedId) = bpt(pt3D.get<0>(), pt3D.get<1>());
+				boost::geometry::add_point(contourPoints.outer().at(pointDraggedId), center);
+				/*contourPointsInPixels.outer().at(pointDraggedId) = bpt(
+					contourPoints.outer().at(pointDraggedId).get<0>() * parentCanvas->getWidth(),
+					contourPoints.outer().at(pointDraggedId).get<1>() * parentCanvas->getHeight()
+				);*/
+			}
+			else if (methodToUse == 4)
+			{
+				boost::geometry::subtract_point(contourPointsInPixels.outer().at(pointDraggedId), centerInPixels);
+				boost::geometry::model::point<long double, 3, boost::geometry::cs::cartesian> pt3D(contourPointsInPixels.outer().at(pointDraggedId).get<0>(), contourPointsInPixels.outer().at(pointDraggedId).get<1>());
+				boost::geometry::model::point<double, 3, boost::geometry::cs::spherical<boost::geometry::radian>> ptRad;
+				boost::geometry::transform(pt3D, ptRad);
+				double angle = ptRad.get<0>();//M_PI;//M_PI/2;//ptRad.get<0>(); // --> cos = 1, sin = 0, contourPointsInPixels.outer().at(pointDraggedId) = bpt(centerInPixels.get<0>() + radius[i] * parent.getWidth(), 0)
+
+				double R = bullsEye[nearest].getRadius();//radius[nearest];
+				contourPointsInPixels.outer().at(pointDraggedId) = bpt(centerInPixels.get<0>() + R * std::cos(angle) * (double)parentCanvas->getWidth() ,
+					centerInPixels.get<1>() + R * std::sin(angle) * (double)parentCanvas->getHeight());
+				contourPoints.outer().at(pointDraggedId) = bpt(
+					contourPointsInPixels.outer().at(pointDraggedId).get<0>() / parentCanvas->getWidth(),
+					contourPointsInPixels.outer().at(pointDraggedId).get<1>() / parentCanvas->getHeight()
+				);
+
+				DBG("difference = " + (String)boost::geometry::distance(contourPointsInPixels.outer().at(pointDraggedId), contourPointsInPixels.outer().at(2))); // = 53,4 = 267*0.2 -> -cos(angle)* R *Width
+			}
+			else if (methodToUse == 5)
+			{
+				double r1 = boost::geometry::distance(centerInPixels, contourPointsInPixels.outer().at(pointDraggedId));
+				bpt t = contourPointsInPixels.outer().at(pointDraggedId);
+				boost::geometry::subtract_point(t, centerInPixels);
+				double angle = Math::ComputePositiveAngle(t);
+				contourPointsInPixels.outer().at(pointDraggedId) = bpt(centerInPixels.get<0>() + std::cos(angle) * radius[nearest] * parentCanvas->getWidth(),
+					centerInPixels.get<0>() + std::sin(angle) * radius[nearest] * parentCanvas->getHeight());
+				boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scaler(1 / ((double)parentCanvas->getWidth()), 1 / ((double)parentCanvas->getHeight()));
+				boost::geometry::transform(contourPointsInPixels.outer().at(pointDraggedId), contourPoints.outer().at(pointDraggedId), scaler);
+				/*double r2 = radius[nearest];
+				double size = r2 / r1;
+				boost::geometry::strategy::transform::translate_transformer<double, 2, 2> trans(-centerInPixels.get<0>(), -centerInPixels.get<1>());
+				boost::geometry::strategy::transform::translate_transformer<double, 2, 2> invtrans(centerInPixels.get<0>(), centerInPixels.get<1>());
+				boost::geometry::strategy::transform::scale_transformer<double, 2, 2> resizer(size, size);
+
+				bpt testBoost, testBoost2;
+				boost::geometry::transform(contourPointsInPixels.outer().at(pointDraggedId), testBoost, trans);
+				boost::geometry::transform(testBoost, testBoost2, resizer);
+				boost::geometry::transform(testBoost2, testBoost, invtrans);
+				contourPointsInPixels.outer().at(pointDraggedId) = testBoost;
+
+				boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scaler(1 / ((double)parentCanvas->getWidth()), 1 / ((double)parentCanvas->getHeight()));
+				boost::geometry::transform(contourPointsInPixels.outer().at(pointDraggedId), contourPoints.outer().at(pointDraggedId), scaler);
+*/
+			}
+
+			if (pointDraggedId == 0) // first point = last point
+			{
+				contourPointsInPixels.outer().at(contourPointsInPixels.outer().size() - 1) = contourPointsInPixels.outer().at(0);
+				contourPoints.outer().at(contourPoints.outer().size() - 1) = contourPoints.outer().at(0);
+			}
+			OnCircles.at(pointDraggedId) = nearest + 1; // +1 pcq notes midi commencent a 1;
 		}
 		CanvasResized(parentCanvas);
 	}
 
 
 	AreaEventType eventType =  EditablePolygon::EndPointMove();
+	DBG("EndPointMove : " + (String)(int)eventType);
 	
 	return eventType;
 }
@@ -401,6 +534,17 @@ bool CompletePolygon::getAllPercentages(int idx, double &value)
 	if (idx < percentages.size())
 	{
 		value = percentages[idx];
+		return true;
+	}
+	else
+		return false;
+}
+
+bool CompletePolygon::getAllDistanceFromCenter(int idx, int &value)
+{
+	if (idx < OnCircles.size())
+	{
+		value = OnCircles[idx];
 		return true;
 	}
 	else

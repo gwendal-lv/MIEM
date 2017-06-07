@@ -188,7 +188,8 @@ void Presenter::Update() // remettre l'interieur dans graphsessionmanager
 	AsyncParamChange param;
 	
 	std::shared_ptr<GraphicEvent> graphicE;
-	
+
+	double lastPosition = 0;
 	while (model->TryGetAsyncParamChange(param))
 	{
 		switch (param.Type)
@@ -204,8 +205,8 @@ void Presenter::Update() // remettre l'interieur dans graphsessionmanager
 				//DBG("recu : " + (String)(1000 * param.DoubleValue));
 				//DBG("param received");
 				//graphicSessionManager.OnAudioPosition(param.DoubleValue);
-				graphicSessionManager.SetAllAudioPositions(param.DoubleValue);
-			
+				//graphicSessionManager.SetAllAudioPositions(param.DoubleValue);
+			lastPosition = param.DoubleValue;
 				
 			break;
 
@@ -213,6 +214,7 @@ void Presenter::Update() // remettre l'interieur dans graphsessionmanager
 			break;
 		}
 	}
+	graphicSessionManager.SetAllAudioPositions(param.DoubleValue);
 }
 
 AudioDeviceManager& Presenter::getAudioDeviceManager()

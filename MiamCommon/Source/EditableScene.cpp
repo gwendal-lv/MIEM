@@ -482,7 +482,8 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseUp(const MouseEvent& m
         {
             if (selectedArea)
             {
-                selectedArea->EndPointMove();
+				AreaEventType areaEventType = selectedArea->EndPointMove();
+				graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, areaEventType));
             }
         }
     }

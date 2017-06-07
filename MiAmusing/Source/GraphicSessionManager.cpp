@@ -242,6 +242,41 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				break;
 			case AreaEventType::PointDragStops :
 				DBG("PointDragStops");
+				if (auto complete = std::dynamic_pointer_cast<CompletePolygon>(area))
+				{
+					param.Id1 = myPresenter->getSourceID(area);
+					param.Type = Miam::AsyncParamChange::ParamType::Activate;
+					param.Id2 = 1; // 1 pour activer la source, 0 pour la supprimer
+					if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(areaE->GetConcernedScene()))
+					{
+						DBG("channel I send : " + (String)myPresenter->getChannel(amusingScene));
+						param.IntegerValue = myPresenter->getChannel(amusingScene);
+					}
+					else
+						param.IntegerValue = 1;
+					myPresenter->SendParamChange(param); // envoie l'ordre de creer/ detruire une source audio
+
+
+					param.Type = Miam::AsyncParamChange::ParamType::Source;
+					i = 0;
+					//DBG("before while");
+					while (complete->getAllPercentages(i, param.DoubleValue) && complete->getAllDistanceFromCenter(i, param.IntegerValue))
+					{
+						param.IntegerValue += 59;
+						DBG("noteToSend = " + (String)param.IntegerValue);
+						param.Id2 = i;
+						myPresenter->SendParamChange(param);
+						++i;
+					}
+					i = 0;
+
+
+					//param.Id2 = 1000; // indiquera que l'on a envoye la position de tous les points
+					//myPresenter->SendParamChange(param);
+					//}
+					//DBG("finish");
+				}
+				myPresenter->SendParamChange(param);
 				break;
 			case AreaEventType::ShapeChanged :
 				DBG("Shape Changed");
@@ -284,6 +319,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				//DBG("RotScale");
 				
 				break;
+			
 				//case AreaEventType::
 			default:
 				break;

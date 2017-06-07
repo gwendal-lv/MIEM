@@ -19,7 +19,7 @@
 
 typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> bpt;
 
-//#define M_PI 3.14159265358979323846264338327 // not defined in VS 2015 community !
+#define M_PI 3.14159265358979323846264338327 // not defined in VS 2015 community !
 
 
 namespace Miam

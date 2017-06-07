@@ -29,7 +29,11 @@
 // Simple declaration for a pointer
 class SceneCanvasComponent;
 
+#include "boost/geometry.hpp"
+#include "boost/geometry/geometries/geometries.hpp"
+#include "boost/geometry/geometries/polygon.hpp"
 
+typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> bpt;
 
 namespace Miam
 {

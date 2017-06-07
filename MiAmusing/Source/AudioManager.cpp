@@ -247,7 +247,7 @@ void AudioManager::getParameters()
 		case Miam::AsyncParamChange::ParamType::Source:
 			//DBG("AM : the side " + (String)param.Id2 + " is = " + (String)param.DoubleValue);
 			if (timeLines[param.Id1] != 0) // si != 0 : il existe et on peut le modifier
-				timeLines[param.Id1]->setMidiTime(param.Id2, roundToInt(param.DoubleValue * (double)periode), 60);
+				timeLines[param.Id1]->setMidiTime(param.Id2, roundToInt(param.DoubleValue * (double)periode), param.IntegerValue);
 			else // si == 0, on ne sait pas s'il n'existe pas ou si le thread est encore en train de le creer -> envoyer au thread pour verifier et faire le necessaire
 				paramToAllocationThread.push(param);
 			break;

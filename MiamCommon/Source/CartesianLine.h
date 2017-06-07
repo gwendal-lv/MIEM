@@ -19,7 +19,7 @@
 #include "boost/geometry/geometries/polygon.hpp"
 #include "DrawableArea.h"
 
-typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> bpt;
+//typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> bpt;
 typedef boost::geometry::model::polygon<bpt> bpolygon;
 
 

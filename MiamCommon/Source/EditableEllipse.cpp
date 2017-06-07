@@ -301,10 +301,7 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 		double r2 = boost::geometry::distance(centerInPixels, bnewLocation);
 		// ----- size -----
 		double size = r2 / r1;
-		if (size > 2)
-			DBG("size : " + (String)size + ", r1 =  " +(String)r1 + " r2 = " + (String)r2);
-		else
-			DBG("size : " + (String)size);
+		
 		if (SizeChanged(size))
 		{
 			bmanipulationPointInPixels.set<0>(bnewLocation.get<0>());
@@ -575,4 +572,9 @@ void EditableEllipse::recreateNormalizedPoints()
 	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scaler(1.0 / (double)parentCanvas->getWidth(), 1.0 / (double)parentCanvas->getHeight());
 	boost::geometry::transform(contourPointsInPixels, contourPoints,scaler);
 	boost::geometry::transform(centerInPixels, center, scaler);
+}
+
+double EditableEllipse::getRadius()
+{
+	return boost::geometry::distance(center, contourPoints.outer().at(0));
 }

@@ -55,6 +55,7 @@ namespace Amusing
 		std::vector<bpt> intersection(bpolygon hitPolygon);
 		double getPercentage(bpt hitPoint);
 		bool getAllPercentages(int idx, double &value);
+		bool getAllDistanceFromCenter(int idx, int &value);
 
 	private:
 
@@ -71,13 +72,13 @@ namespace Amusing
 		bpt bullsEyeCenter;
 		double interval;
 		double startRadius;
-		static const int Nradius = 7;
+		static const int Nradius = 5;
 		std::vector<EditableEllipse> bullsEye;
 		double radius[Nradius];
 		void CreateBullsEye();
 		void PaintBullsEye(Graphics& g);
 		void CanvasResizedBullsEye(SceneCanvasComponent* _parentCanvas);
-		
+		std::vector<int> OnCircles;
 
 		double pc; // si ca foire quand on bouge la forme en mm temps que le curseur doit tourner -> garder en memoire le poucentage ou se trouve le curseur et rappeler setreadingposition avec ce pourcentage pour le remettre au nouvel endroit.
 	};
