@@ -71,7 +71,7 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 		CreateBullsEye();
 		for (int i = 0; i < contourPoints.outer().size(); i++)
 		{
-			OnCircles.push_back(0);
+			OnCircles.push_back(1);
 		}
 	}
 }
@@ -103,7 +103,7 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 		CreateBullsEye();
 		for (int i = 0; i < contourPoints.outer().size(); i++)
 		{
-			OnCircles.push_back(0);
+			OnCircles.push_back(1);
 		}
 	}
 
@@ -340,8 +340,12 @@ AreaEventType CompletePolygon::EndPointMove()
 					epsilon = abs(bullsEye[i].getRadius() - Di);
 					Df = radius[i];
 					nearest = i;
+					//circlesToShow[i] = true;
 				}
+				
 			}
+			
+			circlesToShow[nearest] = true;
 
 			
 			boost::geometry::subtract_point(contourPointsInPixels.outer().at(pointDraggedId), centerInPixels);
@@ -368,6 +372,7 @@ AreaEventType CompletePolygon::EndPointMove()
 				contourPoints.outer().at(contourPoints.outer().size() - 1) = contourPoints.outer().at(0);
 			}
 			OnCircles.at(pointDraggedId) = nearest + 1; // +1 pcq notes midi commencent a 1;
+			
 		}
 		CanvasResized(parentCanvas);
 	}
@@ -480,13 +485,20 @@ void CompletePolygon::CreateBullsEye()
 		bullsEye.push_back( EditableEllipse(0, center, 2*radius[i], 2*radius[i], Colours::grey, 1.47f));
 		bullsEye.back().SetAlpha(0.0);
 	}
-	
+	circlesToShow[0] = true;
+	for (int i = 1; i < Nradius; ++i)
+	{
+		circlesToShow[i] = false;
+	}
 }
 
 void CompletePolygon::PaintBullsEye(Graphics& g)
 {
-	for (int i = 0; i < Nradius; ++i)
-		bullsEye[i].Paint(g);
+	for (int i = 0; i < OnCircles.size(); ++i)
+	{
+		bullsEye[OnCircles[i]-1].Paint(g);
+			//bullsEye[i].Paint(g);
+	}
 }
 
 void CompletePolygon::CanvasResizedBullsEye(SceneCanvasComponent* _parentCanvas)

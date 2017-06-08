@@ -77,10 +77,12 @@ namespace Amusing
 		static const int Nradius = 7;
 		std::vector<EditableEllipse> bullsEye;
 		double radius[Nradius];
+		bool circlesToShow[Nradius];
 		void CreateBullsEye();
 		void PaintBullsEye(Graphics& g);
 		void CanvasResizedBullsEye(SceneCanvasComponent* _parentCanvas);
 		std::vector<int> OnCircles;
+		
 
 		double pc; // si ca foire quand on bouge la forme en mm temps que le curseur doit tourner -> garder en memoire le poucentage ou se trouve le curseur et rappeler setreadingposition avec ce pourcentage pour le remettre au nouvel endroit.
 	};
