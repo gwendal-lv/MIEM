@@ -47,6 +47,7 @@ namespace Amusing
 		void Paint(Graphics& g);
 
 		void lengthToPercent();
+		void angleToPercent();
 		AreaEventType TryBeginPointMove(const Point<double>& newLocation);
 		AreaEventType TryMovePoint(const Point<double>& newLocation);
 		AreaEventType EndPointMove();
@@ -64,6 +65,7 @@ namespace Amusing
 		bpt cursorCenter;
 		double perimeter;
 		std::vector<double> percentages; // percentages corresponding to each points
+		std::vector<double> anglesPercentages;
 		std::shared_ptr<Miam::EditableEllipse> cursor;
 
 		// attributes linked to the bull's eye surrounding the area

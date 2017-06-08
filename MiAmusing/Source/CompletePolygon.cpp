@@ -55,7 +55,10 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 	cursor = std::shared_ptr<EditableEllipse>(new EditableEllipse(0, cursorCenter, 0.1f, 0.1f, Colours::grey, _canvasRatio));
 	cursor->SetNameVisible(false);
 	for (int i = 0; i < (int)contourPoints.outer().size(); ++i)
+	{
 		percentages.push_back(0);
+		anglesPercentages.push_back(0);
+	}
 	percentages.reserve(contourPoints.outer().size());
 	SetNameVisible(false);
 	
@@ -83,7 +86,10 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	cursor = std::shared_ptr<EditableEllipse>(new EditableEllipse(0, cursorCenter, 0.1f, 0.1f, Colours::grey, 1.47f));
 	cursor->SetNameVisible(false);
 	for (int i = 0; i < (int)contourPoints.outer().size(); ++i)
+	{
 		percentages.push_back(0);
+		anglesPercentages.push_back(0);
+	}
 	percentages.reserve(contourPoints.outer().size());
 	SetNameVisible(false);
 	
@@ -161,6 +167,20 @@ void CompletePolygon::lengthToPercent()
 	for (int i = 1; i < (int)contourPoints.outer().size(); ++i)
 	{
 		percentages[i] = percentages[i-1] + (boost::geometry::distance(contourPointsInPixels.outer().at(i),contourPointsInPixels.outer().at(i-1)))/ perimeter;
+	}
+}
+
+void CompletePolygon::angleToPercent()
+{
+	for (int i = 0; i < (int)contourPointsInPixels.outer().size(); ++i)
+	{
+		boost::geometry::model::point<long double, 3, boost::geometry::cs::cartesian> pt3D(contourPointsInPixels.outer().at(i).get<0>()-centerInPixels.get<0>(), contourPointsInPixels.outer().at(i).get<1>() - centerInPixels.get<1>());
+		boost::geometry::model::point<double, 3, boost::geometry::cs::spherical<boost::geometry::radian>> ptRad;
+		boost::geometry::transform(pt3D, ptRad);
+		if(ptRad.get<0>() >= 0)
+			anglesPercentages[i] = ptRad.get<0>() / (2 * M_PI);
+		else
+			anglesPercentages[i] = 1 + (ptRad.get<0>() / (2 * M_PI));
 	}
 }
 
@@ -429,10 +449,11 @@ double CompletePolygon::getPercentage(bpt hitPoint)
 bool CompletePolygon::getAllPercentages(int idx, double &value)
 {
 	lengthToPercent();
+	angleToPercent();
 	//DBG("percentage size : " + (String)percentages.size());
 	if (idx < percentages.size())
 	{
-		value = percentages[idx];
+		value = anglesPercentages[idx];
 		return true;
 	}
 	else
