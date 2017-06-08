@@ -308,7 +308,7 @@ void AudioManager::getAudioThreadMsg()
 			//DBG("AM : the side " + (String)param.Id2 + " is = " + (String)param.DoubleValue);
 			
 			if (timeLines[param.Id1] != 0)
-				timeLines[param.Id1]->setMidiTime(param.Id2, roundToInt(param.DoubleValue * (double)periode), 60);
+				timeLines[param.Id1]->setMidiTime(param.Id2, roundToInt(param.DoubleValue * (double)periode), param.IntegerValue);
 			break;
 		case Miam::AsyncParamChange::ParamType::Play :
 			for (int i = 0; i < maxSize; ++i)

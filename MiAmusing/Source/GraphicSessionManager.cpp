@@ -217,13 +217,22 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					//DBG("GSM : construct a new audio polygon, please. Id : " + (String)param.Id1);
 					param.Type = Miam::AsyncParamChange::ParamType::Source;
 					i = 0;
-					while(complete->getAllPercentages(i, param.DoubleValue)) // envoie l'info de chaque cotés au model
+					//while(complete->getAllPercentages(i, param.DoubleValue)) // envoie l'info de chaque cotés au model
+					//{
+					//	//DBG("GSM : the side " + (String)i + "is = " +(String)param.DoubleValue);
+					//	param.Id2 = i;
+					//	myPresenter->SendParamChange(param);
+					//	++i;
+					//}
+					while (complete->getAllPercentages(i, param.DoubleValue) && complete->getAllDistanceFromCenter(i, param.IntegerValue))
 					{
-						//DBG("GSM : the side " + (String)i + "is = " +(String)param.DoubleValue);
+						param.IntegerValue += 59;
+						DBG("noteToSend = " + (String)param.IntegerValue);
 						param.Id2 = i;
 						myPresenter->SendParamChange(param);
 						++i;
 					}
+					i = 0;
 					
 				}
 				
