@@ -406,9 +406,11 @@ AreaEventType CompletePolygon::EndPointMove()
 				boost::geometry::transform(pt3D, ptRad);
 				double angle = ptRad.get<0>();//M_PI;//M_PI/2;//ptRad.get<0>(); // --> cos = 1, sin = 0, contourPointsInPixels.outer().at(pointDraggedId) = bpt(centerInPixels.get<0>() + radius[i] * parent.getWidth(), 0)
 
-				double R = bullsEye[nearest].getRadius();//radius[nearest];
-				contourPointsInPixels.outer().at(pointDraggedId) = bpt(centerInPixels.get<0>() + R * std::cos(angle) * (double)parentCanvas->getWidth() ,
-					centerInPixels.get<1>() + R * std::sin(angle) * (double)parentCanvas->getHeight());
+				double testR = bullsEye[nearest].getRadius();
+
+				double R = bullsEye[nearest].getRadius();//54;//bullsEye[nearest].getRadius();//radius[nearest];
+				contourPointsInPixels.outer().at(pointDraggedId) = bpt(centerInPixels.get<0>() + R * std::cos(angle),
+					centerInPixels.get<1>() + R * std::sin(angle));
 				contourPoints.outer().at(pointDraggedId) = bpt(
 					contourPointsInPixels.outer().at(pointDraggedId).get<0>() / parentCanvas->getWidth(),
 					contourPointsInPixels.outer().at(pointDraggedId).get<1>() / parentCanvas->getHeight()

@@ -576,5 +576,5 @@ void EditableEllipse::recreateNormalizedPoints()
 
 double EditableEllipse::getRadius()
 {
-	return boost::geometry::distance(center, contourPoints.outer().at(0));
+	return boost::geometry::distance(centerInPixels, contourPointsInPixels.outer().at(0));
 }
