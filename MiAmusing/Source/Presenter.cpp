@@ -189,7 +189,7 @@ void Presenter::Update() // remettre l'interieur dans graphsessionmanager
 	
 	std::shared_ptr<GraphicEvent> graphicE;
 
-	double lastPosition = 0;
+	
 	while (model->TryGetAsyncParamChange(param))
 	{
 		switch (param.Type)

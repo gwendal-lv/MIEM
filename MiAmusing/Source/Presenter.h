@@ -112,7 +112,8 @@ namespace Amusing {
         
 		// Events from the view (from the editScene)
 		
-		
+	private :
+		double lastPosition;
     };
     
     
