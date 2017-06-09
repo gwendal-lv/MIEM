@@ -400,7 +400,7 @@ bpolygon CompletePolygon::getPolygon()
 	return contourPoints;
 }
 
-std::vector<bpt> CompletePolygon::intersection(bpolygon hitPolygon)
+bpt CompletePolygon::intersection(bpolygon hitPolygon)
 {
 	std::vector<bpt> inter;
 	boost::geometry::intersection(contourPoints, hitPolygon, inter);
@@ -422,7 +422,32 @@ std::vector<bpt> CompletePolygon::intersection(bpolygon hitPolygon)
 		//	DBG((String)inter.at(j).outer().at(i).get<0>() + "  " + (String)inter.at(j).outer().at(i).get<1>());
 	}
 	*/
-	return inter;
+	/*std::vector< boost::geometry::model::point<double, 3, boost::geometry::cs::spherical<boost::geometry::radian>> > interRad;
+	for (int i = 0; i < inter.size(); i++)
+	{
+		boost::geometry::model::point<long double, 3, boost::geometry::cs::cartesian> pt3D(inter[i].get<0>(), inter[i].get<1>());
+		boost::geometry::model::point<double, 3, boost::geometry::cs::spherical<boost::geometry::radian>> ptRad;
+		boost::geometry::transform(pt3D, ptRad);
+		interRad.push_back(ptRad);
+	}
+
+	std::vector< boost::geometry::model::point<double, 3, boost::geometry::cs::spherical<boost::geometry::radian>> > compa;
+	boost::geometry::intersection(contourPoints, hitPolygon, compa);*/
+	int idx=0;
+	double minAngle = 2 * M_PI;
+	for (int i = 0; i < inter.size(); i++)
+	{
+		bpt currentPt = inter[i];
+		boost::geometry::subtract_point(currentPt, center);
+		double angle = Math::ComputePositiveAngle(currentPt);
+		if (angle < minAngle)
+		{
+			minAngle = angle;
+			idx = i;
+		}
+	}
+
+	return inter[idx];
 }
 
 double CompletePolygon::getPercentage(bpt hitPoint)

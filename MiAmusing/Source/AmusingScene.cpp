@@ -83,10 +83,9 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 		{
 			if (auto hitP = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
 			{
-				std::vector<bpt> inter = newPolygon->intersection(hitP->getPolygon());
+				bpt firstI = newPolygon->intersection(hitP->getPolygon());
 				//testDephasage = areas[i] // utiliser des box pr verifi a quel segment ca appartient et deduire le dephasage :)
-				if (inter.size() > 0)
-					testDephasage = hitP->getPercentage(inter[0]);
+				
 				//DBG("intersection #0 : " + (String)inter[0].get<0>() + " " + (String)inter[0].get<1>() + " = " + (String)testDephasage);
 				// creer nouvelle forme pour chaque intersection
 				//DBG((String)inter.size() + " intersections");

@@ -53,7 +53,7 @@ namespace Amusing
 		AreaEventType EndPointMove();
 		void setCursorVisible(bool isVisible, SceneCanvasComponent* _parentCanvas);
 		bpolygon getPolygon();
-		std::vector<bpt> intersection(bpolygon hitPolygon);
+		bpt intersection(bpolygon hitPolygon);
 		double getPercentage(bpt hitPoint);
 		bool getAllPercentages(int idx, double &value);
 		bool getAllDistanceFromCenter(int idx, int &value);
