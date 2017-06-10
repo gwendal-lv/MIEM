@@ -89,13 +89,15 @@ namespace Miam
         
         // - - - - - Graphical helpers - - - - -
         
-        void updateView();
+        void UpdateView();
         
         
         // - - - - - Internal helpers - - - - -
+        private :
         void sendDataToModel(std::shared_ptr<SpatMatrix> currentMatrix);
         
         // - - - - - Settings Management - - - - -
+        public :
         void AllowKeyboardEdition(bool allow);
 
     };

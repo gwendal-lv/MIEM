@@ -148,12 +148,12 @@ void MainBackgroundComponent::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    speakersTextButton->setBounds (8 + 64 - -8, 8, 104, 24);
-    spatStatesTextButtn->setBounds ((8 + 64 - -8) + 104, 8, 104, 24);
-    mainInfoLabel->setBounds (getWidth() - 8 - (getWidth() - 640), 8, getWidth() - 640, 24);
-    scenesTextButton->setBounds (((8 + 64 - -8) + 104) + 104, 8, 104, 24);
-    hardwareConfTextButton->setBounds (((8 + 64 - -8) + 104) + 104 - -112, 8, 96, 24);
-    startTextButton->setBounds ((((8 + 64 - -8) + 104) + 104 - -112) + 96 - -16, 8, 104, 24);
+    speakersTextButton->setBounds (8 + 64 - -8, 8, 112, 24);
+    spatStatesTextButtn->setBounds ((8 + 64 - -8) + 112, 8, 112, 24);
+    mainInfoLabel->setBounds (getWidth() - 8 - (getWidth() - 680), 8, getWidth() - 680, 24);
+    scenesTextButton->setBounds (((8 + 64 - -8) + 112) + 112, 8, 112, 24);
+    hardwareConfTextButton->setBounds (((8 + 64 - -8) + 112) + 112 - -120, 8, 112, 24);
+    startTextButton->setBounds ((((8 + 64 - -8) + 112) + 112 - -120) + 112 - -16, 8, 104, 24);
     label->setBounds (proportionOfWidth (0.5000f) - (150 / 2), proportionOfHeight (0.5000f) - (24 / 2), 150, 24);
     fileTextButton->setBounds (8, 8, 64, 24);
     //[UserResized] Add your own custom resize handling here..
@@ -231,27 +231,27 @@ BEGIN_JUCER_METADATA
                  overlayOpacity="0.330" fixedSize="1" initialWidth="1024" initialHeight="600">
   <BACKGROUND backgroundColour="ff707070"/>
   <TEXTBUTTON name="Speakers text button" id="2752e5f61c280c43" memberName="speakersTextButton"
-              virtualName="" explicitFocusOrder="0" pos="-8R 8 104 24" posRelativeX="dcc32a783566df37"
+              virtualName="" explicitFocusOrder="0" pos="-8R 8 112 24" posRelativeX="dcc32a783566df37"
               bgColOff="55ffffff" bgColOn="ffffffff" textCol="ff000000" buttonText="Speakers"
               connectedEdges="2" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Spatialization States text button" id="8bdb167a1cca5b0b"
               memberName="spatStatesTextButtn" virtualName="" explicitFocusOrder="0"
-              pos="0R 8 104 24" posRelativeX="2752e5f61c280c43" bgColOff="55ffffff"
+              pos="0R 8 112 24" posRelativeX="2752e5f61c280c43" bgColOff="55ffffff"
               bgColOn="ffffffff" textCol="ff000000" buttonText="Routing Matrices"
               connectedEdges="3" needsCallback="1" radioGroupId="0"/>
   <LABEL name="Main info label" id="d52b689341b86690" memberName="mainInfoLabel"
-         virtualName="" explicitFocusOrder="0" pos="8Rr 8 640M 24" bkgCol="56ffffff"
+         virtualName="" explicitFocusOrder="0" pos="8Rr 8 680M 24" bkgCol="56ffffff"
          outlineCol="84000000" edTextCol="ff000000" edBkgCol="0" labelText="..."
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
          justification="34"/>
   <TEXTBUTTON name="Scenes text button" id="9994cb0e99bfd3ca" memberName="scenesTextButton"
-              virtualName="" explicitFocusOrder="0" pos="0R 8 104 24" posRelativeX="8bdb167a1cca5b0b"
+              virtualName="" explicitFocusOrder="0" pos="0R 8 112 24" posRelativeX="8bdb167a1cca5b0b"
               bgColOff="55ffffff" bgColOn="ffffffff" textCol="ff000000" buttonText="Spat Scenes"
               connectedEdges="1" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Hardware Configuration text button" id="1dad683cba944341"
               memberName="hardwareConfTextButton" virtualName="" explicitFocusOrder="0"
-              pos="-112R 8 96 24" posRelativeX="8bdb167a1cca5b0b" bgColOff="55ffffff"
+              pos="-120R 8 112 24" posRelativeX="8bdb167a1cca5b0b" bgColOff="55ffffff"
               bgColOn="ffffffff" textCol="ff000000" buttonText="Configuration"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Start text button" id="cecb4b1d1a8f7c2d" memberName="startTextButton"

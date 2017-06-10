@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<miam>
+<spat>
+    <states>
+		<state>
+			<name>Matrice chargée 1</name>
+			<matrix>
+				<coeff row="0" col="0" value="1"/>
+			</matrix>
+		</state>
+		<state>
+			<name>Matrice chargée 2</name>
+			<matrix>
+				<coeff row="0" col="0" value="1"/>
+				<coeff row="1" col="1" value="0.5"/>
+			</matrix>
+		</state>
+		<state>
+			<name>Matrice chargée 3</name>
+			<matrix>
+				<coeff row="0" col="0" value="1.999"/>
+				<coeff row="1" col="1" value="1"/>
+				<coeff row="2" col="2" value="1"/>
+			</matrix>
+		</state>
+    </states>
+</spat>
+</miam>

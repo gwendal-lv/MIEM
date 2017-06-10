@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.0.1
+  Created with Projucer version: 5.0.2
 
   ------------------------------------------------------------------------------
 
@@ -647,20 +647,20 @@ void SceneEditionComponent::CompleteInitialization(GraphicSessionManager* _graph
 void SceneEditionComponent::SetEnabledAllControls(bool areEnabled, bool controlsBackUp)
 {
     // Canvas (nothing yet : controls are visible or not, but always enabled)
-    
+
     // Main area controls
     addAreaTextButton->setEnabled(areEnabled);
     deleteAreaTextButton->setEnabled(areEnabled);
     copyTextButton->setEnabled(areEnabled);
-    
+
     // Special buttons with a backup of their state (may not be enabled !)
     if (controlsBackUp)
         pasteTextButton->setEnabled(pasteTextButtonEnabledBackUp);
     else
         pasteTextButton->setEnabled(areEnabled);
-    
+
     setEnabledSelectedAreaControls(areEnabled); // Selected Area
-    
+
     // Spat effect
 }
 void SceneEditionComponent::CloseTemporaryDisplayedObjects()

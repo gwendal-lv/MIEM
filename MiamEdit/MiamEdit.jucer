@@ -95,6 +95,9 @@
         <FILE id="JC2slY" name="SpatEllipse.h" compile="0" resource="0" file="../SpatCommon/Source/SpatEllipse.h"/>
         <FILE id="RbKrb4" name="SpatPolygon.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatPolygon.cpp"/>
         <FILE id="CWxYwo" name="SpatPolygon.h" compile="0" resource="0" file="../SpatCommon/Source/SpatPolygon.h"/>
+        <FILE id="t9TDiE" name="SpatPresenter.cpp" compile="1" resource="0"
+              file="../SpatCommon/Source/SpatPresenter.cpp"/>
+        <FILE id="Rwzbxl" name="SpatPresenter.h" compile="0" resource="0" file="../SpatCommon/Source/SpatPresenter.h"/>
       </GROUP>
       <GROUP id="{DCC9EBC6-B3B5-6597-7D50-FBAB32A4E73B}" name="View">
         <FILE id="db1pb5" name="ISlidersMatrixListener.h" compile="0" resource="0"
@@ -224,6 +227,8 @@
         </GROUP>
       </GROUP>
       <GROUP id="{B91B2137-DC4A-127C-0037-DB058876BEFA}" name="Utils">
+        <FILE id="gJleTH" name="MiamExceptions.h" compile="0" resource="0"
+              file="../MiamCommon/Source/MiamExceptions.h"/>
         <FILE id="cEVkJR" name="SparseMatrix.hpp" compile="0" resource="0"
               file="../MiamCommon/Source/SparseMatrix.hpp"/>
         <GROUP id="{5315337B-6E49-3E8D-A9F7-3A94BE3F4AA8}" name="Audio">

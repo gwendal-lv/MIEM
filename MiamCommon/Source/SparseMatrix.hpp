@@ -13,6 +13,12 @@
 #include <iostream>
 #include <cmath> // std::abs : available for ints, floats, complexes, ....
 
+#include "MiamExceptions.h"
+
+#include "boost/property_tree/ptree.hpp"
+#include "boost/property_tree/xml_parser.hpp"
+namespace bptree = boost::property_tree;
+
 
 namespace Miam
 {
@@ -213,6 +219,58 @@ namespace Miam
         inline size_t GetEndIterator() const {return (size_t)indexOfLastNonZeroIndex+1;}
         
         
+        
+        // = = = = = = = = Property tree (for XML) import/export = = = = = = = = =
+        std::shared_ptr<bptree::ptree> GetTree()
+        {
+            auto pTree = std::make_shared<bptree::ptree>();
+            // This sub-tree does not know its own "master name tag" = <matrix>
+            for (ResetIterator() ; GetIterator() != GetEndIterator() ; IncIterator())
+            {
+                bptree::ptree currentCoeffTree;
+                Index2d index2d = GetIterator2dCoord();
+                currentCoeffTree.put("<xmlattr>.row", index2d.i);
+                currentCoeffTree.put("<xmlattr>.col", index2d.j);
+                currentCoeffTree.put("<xmlattr>.value", GetIteratorValue());
+                pTree->add_child("coeff", currentCoeffTree);
+            }
+            return pTree;
+        }
+        /// \brief Reinits, then loads the matrix from the given property tree
+        void SetFromTree(bptree::ptree & matrixTree)
+        {
+            try {
+                // get_child get as 1st parameter the address of the
+                // *parents* of the children
+                // So we'll get ALL children, and we'll test one-by-one if they
+                // actually are <coeff> children
+                for(bptree::ptree::value_type &matChildTree : matrixTree.get_child(""))
+                {
+                    if (matChildTree.first == "coeff")
+                    {
+                        // Properties reading from tree, and checking
+                        auto coeffTree = matChildTree.second;
+                        size_t row = coeffTree.get<size_t>("<xmlattr>.row");
+                        if (row >= N)
+                            throw XmlReadException("matrix.coeff.<xmlattr>.row must be < " + std::to_string(N));
+                        size_t col = coeffTree.get<size_t>("<xmlattr>.col");
+                        if (col >= M)
+                            throw XmlReadException("matrix.coeff<xmlattr>.col must be < " + std::to_string(M));
+                        T value = coeffTree.get<T>("<xmlattr>.value");
+                        if (value < zeroThreshold) // value too small : not loaded
+                            continue;
+                        // Actual data insertion in matrix
+                        Set(row, col, value);
+                    }
+                }
+            }
+            catch (bptree::ptree_bad_data &e) { // Parse error: we actually treat it
+                XmlReadException::FromBptree("matrix.coeff, attribute (row|col|value)", e);
+            }
+            catch (bptree::ptree_bad_path &e) {
+                XmlReadException::FromBptree("matrix.coeff, attribute (row|col|value)", e);
+            }
+        }
     };
     
     

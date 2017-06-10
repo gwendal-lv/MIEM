@@ -341,7 +341,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 
 void GraphicSessionManager::DisplayInfo(String info)
 {
-    view->DisplayInfo(info);
+    view->DisplayInfo(info.toStdString());
 }
 
 
@@ -418,7 +418,15 @@ void GraphicSessionManager::OnAddArea()
 {
     if (selectedCanvas)
     {
-        getSelectedCanvasAsEditable()->AddDefaultArea(GetNextAreaId());
+        // Cannot call this generic function :
+        //getSelectedCanvasAsEditable()->AddDefaultArea(GetNextAreaId());
+        // we need to build a SpatArea...
+        
+        // Comment récupérer le ratio actuel de canevas ?
+        float ratio = selectedCanvas->GetMultiSceneCanvasComponent()->GetCanvas()->GetRatio();
+        
+        auto spatPolygon = std::make_shared<SpatPolygon>(GetNextAreaId(), bpt::point(0.5, 0.5), 8, 0.15, Colours::grey, ratio);
+        getSelectedCanvasAsEditable()->AddArea(spatPolygon);
         selectedCanvas->CallRepaint();
     }
     else

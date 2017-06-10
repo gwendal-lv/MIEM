@@ -33,7 +33,7 @@ void SpatStatesEditionManager::CompleteInitialisation(std::shared_ptr<SpatInterp
     
     // Update of the list on the GUI side
     selectSpatState(nullptr);
-    updateView();
+    UpdateView();
 }
 
 
@@ -87,11 +87,12 @@ void SpatStatesEditionManager::OnLeaveSpatStatesEdition()
     selectSpatState(selectedSpatState);
     
     // Auto-save to XML
-    std::ostringstream oss;
-    auto ptree = spatInterpolator->GetSpatStatesTree();
-    bptree::write_xml(oss, *ptree);
-    std::cout << "--------------------" << std::endl;
-    std::cout << oss.str() << std::endl;
+    auto spatStatesTree = spatInterpolator->GetSpatStatesTree();
+    auto spatTree = std::make_shared<bptree::ptree>();
+    spatTree->add_child("spat", *spatStatesTree);
+    bptree::xml_writer_settings<std::string> xmlSettings(' ', 4);
+    bptree::write_xml("/Users/Gwendal/test.miam", *spatTree,
+                      std::locale(), xmlSettings);
 }
 
 
@@ -118,7 +119,7 @@ void SpatStatesEditionManager::OnRenameState(std::string newName, int stateIndex
     spatInterpolator->GetSpatState(stateIndex)->SetName(newName);
     
     // Total list update + Selection of the state that has just been renamed
-    updateView();
+    UpdateView();
     selectSpatState(spatInterpolator->GetSpatState(stateIndex));
 }
 
@@ -126,7 +127,7 @@ void SpatStatesEditionManager::OnRenameState(std::string newName, int stateIndex
 void SpatStatesEditionManager::OnAddState()
 {
     auto newState = spatInterpolator->AddDefaultState();
-    updateView();
+    UpdateView();
     selectSpatState(newState);
 }
 void SpatStatesEditionManager::OnDeleteSelectedState()
@@ -137,7 +138,7 @@ void SpatStatesEditionManager::OnDeleteSelectedState()
         size_t spatStateIndexBackup = (size_t)selectedSpatState->GetIndex();
         spatInterpolator->DeleteState(selectedSpatState);
         // Display updates
-        updateView();
+        UpdateView();
         if (spatStateIndexBackup == 0)
         {
             // if it was the last one, nothing selected
@@ -161,7 +162,7 @@ void SpatStatesEditionManager::OnMoveSelectedStateUp()
     {
         spatInterpolator->SwapStatesByIndex(selectedSpatState->GetIndex(), selectedSpatState->GetIndex()-1);
         // Updates
-        updateView();
+        UpdateView();
         selectSpatState(selectedSpatState); // re-selection
     }
     else
@@ -175,7 +176,7 @@ void SpatStatesEditionManager::OnMoveSelectedStateDown()
     {
         spatInterpolator->SwapStatesByIndex(selectedSpatState->GetIndex(), selectedSpatState->GetIndex()+1);
         // Updates
-        updateView();
+        UpdateView();
         selectSpatState(selectedSpatState); // re-selection
     }
     else
@@ -186,7 +187,7 @@ void SpatStatesEditionManager::OnMoveSelectedStateDown()
 
 // = = = = = = = = = = GRAPHICAL HELPERS = = = = = = = = = =
 
-void SpatStatesEditionManager::updateView()
+void SpatStatesEditionManager::UpdateView()
 {
     // GUI update (copy of whole vector)
     std::vector<std::shared_ptr<SpatState<double>>> newSpatStates = spatInterpolator->GetSpatStates();

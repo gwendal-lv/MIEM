@@ -11,7 +11,7 @@
 #ifndef SPATSTATE_H_INCLUDED
 #define SPATSTATE_H_INCLUDED
 
-
+#include <iostream>
 #include <string>
 #include <vector>
 #include <memory>
@@ -20,6 +20,10 @@
 #include "AudioDefines.h"
 
 #include "SpatArea.h"
+
+#include "boost/property_tree/ptree.hpp"
+#include "boost/property_tree/xml_parser.hpp"
+namespace bptree = boost::property_tree;
 
 namespace Miam
 {
@@ -50,6 +54,7 @@ namespace Miam
         
         // Own attributes
         std::string name;
+        
         // For convenience and optimizations...
         int index;
         
@@ -104,6 +109,15 @@ namespace Miam
         virtual ~SpatState()
         {
             // does not need to unlink from area : the link is a weak_ptr
+            // But still needs to unregister from linked areas
+            // But still needs to unregister from linked areas
+            // But still needs to unregister from linked areas
+            // But still needs to unregister from linked areas
+            // But still needs to unregister from linked areas
+            // But still needs to unregister from linked areas
+            // But still needs to unregister from linked areas
+            // But still needs to unregister from linked areas
+            // But still needs to unregister from linked areas
         }
 
         
@@ -130,6 +144,24 @@ namespace Miam
         virtual void AddOutput() = 0;
         virtual void DeleteOutput(size_t i) = 0;
         virtual void SwapOutputs(size_t i, size_t j) = 0;
+        
+        // - - - - - Property tree (for XML) import/export - - - - -
+        virtual std::shared_ptr<bptree::ptree> GetTree()
+        {
+            auto pTree = std::make_shared<bptree::ptree>();
+            // This sub-tree does not know its own "master name tag" = <state>
+            pTree->put("name", GetName(false));
+            return pTree;
+        }
+        /// \brief Receives all the children nodes and contents inside a <state> tag,
+        /// but not the <state> and </state> tags themselves.
+        virtual void SetFromTree(bptree::ptree & stateTree)
+        {
+            // Common attributes = name only, for now
+            // With default value to avoid try/catch block
+            // And automatic data type identifying (= default value type)
+            SetName( stateTree.get("name", std::string("unnamed")) );
+        }
         
     };
     

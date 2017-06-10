@@ -18,10 +18,8 @@
 #include "SpatType.h"
 
 #include "SpatState.hpp"
-
-
-#include "OutputVolumesState.hpp"
 #include "MatrixState.hpp"
+#include "MiamExceptions.h"
 
 #include "boost/property_tree/ptree.hpp"
 #include "boost/property_tree/xml_parser.hpp"
@@ -157,12 +155,44 @@ namespace Miam
             spatStates[index2]->SetIndex(index2);
         }
         
-        // - - - - - Property tree (for XML) import/export - - - - -
+        // = = = = = = = = Property tree (for XML) import/export = = = = = = = =
         std::shared_ptr<bptree::ptree> GetSpatStatesTree()
         {
-            auto ptree = std::make_shared<bptree::ptree>();
-            //ptree.
-            return ptree;
+            auto pTree = std::make_shared<bptree::ptree>();
+            // This sub-tree does not know its own "master name tag" = <spat>,
+            // but only knows its children
+            for (size_t i=0 ; i<spatStates.size() ; i++)
+                // Children sub-trees written within a <state> tag
+                pTree->add_child("state", *(spatStates[i]->GetTree()));
+            return pTree;
+        }
+        void SetSpatStatesFromTree(bptree::ptree & spatStatesTree)
+        {
+            // At first : reinit
+            spatStates.clear();
+            
+            // State tree est une sorte d'itérateur
+            // Attribut ".first" contient le contenu du tag XML concerné
+            // Attribut ".second" contient le ptree = les enfants du tag XML concerné
+            for(auto &stateTree : spatStatesTree.get_child("states"))
+            {
+                try {
+                    // DEVRAIT DÉPENDRE DU TYPE DE SPAT
+                    // DEVRAIT DÉPENDRE DU TYPE DE SPAT
+                    // DEVRAIT DÉPENDRE DU TYPE DE SPAT
+                    // DEVRAIT DÉPENDRE DU TYPE DE SPAT
+                    // DEVRAIT DÉPENDRE DU TYPE DE SPAT
+                    auto lastMatrix = std::make_shared<MatrixState<T>>();
+                    /// À optimiser (refait l'initialisation de la construction
+                    /// de la SparseMatrix interne...)
+                    lastMatrix->SetFromTree(stateTree.second);
+                    // At the very end (no xml loading exceptions thrown)
+                    AddState(lastMatrix);
+                }
+                catch (XmlReadException& e) {
+                    throw XmlReadException("node <states>: ", e);
+                }
+            }
         }
     };
     

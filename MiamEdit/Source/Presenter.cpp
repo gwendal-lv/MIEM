@@ -13,8 +13,13 @@
 #include "Model.h"
 #include "View.h"
 
-
 #include "JuceHeader.h"
+
+#include <sstream>
+
+#include "boost/property_tree/ptree.hpp"
+#include "boost/property_tree/xml_parser.hpp"
+namespace bptree = boost::property_tree;
 
 using namespace Miam;
 
@@ -38,6 +43,7 @@ void Presenter::CompleteInitialisation(Model* _model)
 {
     // Self init
     model = _model;
+    SpatPresenter::CompleteInitialisation(_model);
     // Sub-modules
     spatStatesEditionManager.CompleteInitialisation(model->GetSpatInterpolator());
     graphicSessionManager.CompleteInitialisation(model->GetSpatInterpolator());
@@ -47,8 +53,21 @@ void Presenter::CompleteInitialisation(Model* _model)
     // App mode changer to Scenes Edition by default (should be stored within the file ?)
     appModeChangeRequest(AppMode::EditSpatScenes);
     
-    // HERE, WE SHOULD LOAD THE DEFAULT FILE
-    graphicSessionManager.__LoadDefaultTest();
+    // Loading of the first XML session file (default if nothing else provided)
+    std::string firstFileName = "../../../../../SpatCommon/Sessions/Default.miam";
+    try {
+        LoadSession(firstFileName);
+    }
+    catch (XmlReadException& e)
+    {
+        // Also display in a new window
+        view->DisplayInfo(std::string("[Reading XML] ") + e.what(), true);
+        std::cout << std::string("[Reading XML] ") << e.what() << std::endl;
+    }
+    // Updates (graphical mostly) just after
+    spatStatesEditionManager.UpdateView();
+    
+    //graphicSessionManager.__LoadDefaultTest();
 }
 
 

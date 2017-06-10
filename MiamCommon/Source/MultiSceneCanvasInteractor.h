@@ -141,6 +141,8 @@ namespace Miam {
         
         SceneCanvasComponent::Id GetId() {return selfId;}
         
+        MultiSceneCanvasComponent* GetMultiSceneCanvasComponent()
+        { return canvasComponent; }
         uint64_t GetNextAreaId();
         
         // Scenes
