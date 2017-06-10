@@ -40,7 +40,7 @@ Presenter::Presenter(View* _view) :
     
     // HERE, WE SHOULD LOAD THE DEFAULT FILE
     //graphicSessionManager.__LoadDefaultTest();
-    
+	lastPosition = 0;
     
     appModeChangeRequest(AppMode::None);
 	Nsources = 0;
@@ -214,7 +214,7 @@ void Presenter::Update() // remettre l'interieur dans graphsessionmanager
 			break;
 		}
 	}
-	graphicSessionManager.SetAllAudioPositions(param.DoubleValue);
+	graphicSessionManager.SetAllAudioPositions(lastPosition);
 }
 
 AudioDeviceManager& Presenter::getAudioDeviceManager()

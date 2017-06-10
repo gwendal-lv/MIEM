@@ -400,55 +400,107 @@ bpolygon CompletePolygon::getPolygon()
 	return contourPoints;
 }
 
-bpt CompletePolygon::intersection(bpolygon hitPolygon)
+bool CompletePolygon::intersection(bpolygon hitPolygon, bpt &I)
 {
 	std::vector<bpt> inter;
 	boost::geometry::intersection(contourPoints, hitPolygon, inter);
-	//DBG("------ A ------");
-	//for (int i = 0; i < (int)bcontourPoints.outer().size(); ++i)
-	//	DBG((String)bcontourPoints.outer().at(i).get<0>() + "  " + (String)bcontourPoints.outer().at(i).get<1>());
-	//DBG("------ B ------");
-	/*
-	for (int i = 0; i < (int)hitPolygon.outer().size(); ++i)
-		DBG((String)hitPolygon.outer().at(i).get<0>() + "  " + (String)hitPolygon.outer().at(i).get<1>());
-	DBG("------ I ------");
-	for (int j = 0; j < (int)inter.size(); ++j)
-	{
-		DBG("..." + (String)j + "...");
-		//for (int i = 0; i < (int)inter.size(); ++i)
-		int i = j;
-			DBG((String)inter.at(i).get<0>() + " " + (String)inter.at(i).get<1>());
-		//for (int i = 0; i < (int)inter.at(j).outer().size(); ++i)
-		//	DBG((String)inter.at(j).outer().at(i).get<0>() + "  " + (String)inter.at(j).outer().at(i).get<1>());
-	}
-	*/
-	/*std::vector< boost::geometry::model::point<double, 3, boost::geometry::cs::spherical<boost::geometry::radian>> > interRad;
-	for (int i = 0; i < inter.size(); i++)
-	{
-		boost::geometry::model::point<long double, 3, boost::geometry::cs::cartesian> pt3D(inter[i].get<0>(), inter[i].get<1>());
-		boost::geometry::model::point<double, 3, boost::geometry::cs::spherical<boost::geometry::radian>> ptRad;
-		boost::geometry::transform(pt3D, ptRad);
-		interRad.push_back(ptRad);
-	}
 
-	std::vector< boost::geometry::model::point<double, 3, boost::geometry::cs::spherical<boost::geometry::radian>> > compa;
-	boost::geometry::intersection(contourPoints, hitPolygon, compa);*/
-	int idx=0;
-	double minAngle = 2 * M_PI;
-	for (int i = 0; i < inter.size(); i++)
+	bpolygon test;
+	for(int i = 0; i<inter.size();i++)
+		boost::geometry::append(test,inter[i]);
+	
+	double areaTest = abs(boost::geometry::area(test));
+	double hitArea = abs(boost::geometry::area(hitPolygon));
+	double area = abs(boost::geometry::area(contourPoints));
+	if (areaTest >= 0.75 * hitArea || areaTest >= 0.75 * area)
+		DBG("need To fusion !");
+
+	if (inter.size() > 0)
 	{
-		bpt currentPt = inter[i];
-		boost::geometry::subtract_point(currentPt, center);
-		double angle = Math::ComputePositiveAngle(currentPt);
-		if (angle < minAngle)
+		int idx = 0;
+		double minAngle = 2 * M_PI;
+		for (int i = 0; i < inter.size(); i++)
 		{
-			minAngle = angle;
-			idx = i;
+			bpt currentPt = inter[i];
+			boost::geometry::subtract_point(currentPt, center);
+			double angle = Math::ComputePositiveAngle(currentPt);
+			if (angle < minAngle)
+			{
+				minAngle = angle;
+				idx = i;
+			}
 		}
+
+		I = inter[idx];
+		return true;
+	}
+	else
+		return false;
+}
+
+std::shared_ptr<CompletePolygon> CompletePolygon::fusion(std::shared_ptr<CompletePolygon> polyToFusion)
+{
+	// structure to be able to sort the percentages and the circles the same way
+	struct Helper
+	{
+		double pc;
+		int circ;
+		Helper(double a, int b) : pc(a), circ(b) {};
+		bool operator< (Helper b) { return (this->pc < b.pc); }
+	};
+
+	// get all the coordinates of the points (percentages and circles) of the current polygon
+	std::vector<Helper> test;
+	for (int j = 0; j < anglesPercentages.size(); ++j)
+		test.push_back(Helper(anglesPercentages[j], OnCircles[j]));
+
+	// add all the coordinates of the other polygon to the vector of coordinates
+	int i = 0;
+	double value;
+	int distance;
+	while (polyToFusion->getAllPercentages(i, value) && polyToFusion->getAllDistanceFromCenter(i,distance))
+	{
+		test.push_back(Helper(value, distance));
+		++i;
 	}
 
-	return inter[idx];
+	// sort to have all the points in clockwise order
+	std::sort(test.begin(), test.end());
+
+	// get the XY(pixels) coordinates from the previously sorted coordinates
+	bpolygon newContourPointsInPixels;
+	for (int j = 0; j < test.size(); j++)
+	{
+		double R = bullsEye[test[j].circ].getRadius();
+		double angle = test[j].pc * 2 * M_PI;
+		bpt newPoint(R * std::cos(angle), R * std::sin(angle));
+		boost::geometry::add_point(newPoint, centerInPixels);
+		boost::geometry::append(newContourPointsInPixels.outer(),newPoint);
+	}
+
+	// get normalized coordinates
+	bpolygon newContourPoints;
+	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> rescaler(1 / parentCanvas->getWidth(), 1 / parentCanvas->getHeight());
+	boost::geometry::transform(newContourPointsInPixels, newContourPoints, rescaler);
+	
+	// create polygon
+	return std::shared_ptr<CompletePolygon>(new CompletePolygon(Id,center,newContourPoints,fillColour));
+
 }
+
+bool CompletePolygon::getUnion(bpolygon hitPolygon, bpolygon &output)
+{
+	std::vector<bpolygon> result;
+	boost::geometry::union_(contourPoints, hitPolygon, result);
+	if (result.size() == 1)
+	{
+		output = result[1];
+	}
+	else if (result.size() == 0)
+		return false;
+	return true;
+}
+
 
 double CompletePolygon::getPercentage(bpt hitPoint)
 {

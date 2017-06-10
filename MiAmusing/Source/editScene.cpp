@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.0.1
+  Created with Projucer version: 5.0.2
 
   ------------------------------------------------------------------------------
 
@@ -128,7 +128,7 @@ void EditScene::paint (Graphics& g)
     //[UserPrePaint] Add your own custom painting code here..
     //[/UserPrePaint]
 
-    g.fillAll (Colours::white);
+    g.fillAll (Colour (0xff323e44));
 
     //[UserPaint] Add your own custom painting code here..
     //[/UserPaint]
@@ -282,7 +282,7 @@ BEGIN_JUCER_METADATA
                  parentClasses="public Component" constructorParams="" variableInitialisers=""
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="0" initialWidth="600" initialHeight="400">
-  <BACKGROUND backgroundColour="ffffffff"/>
+  <BACKGROUND backgroundColour="ff323e44"/>
   <TEXTBUTTON name="new button" id="98a87a5f1f2e9c34" memberName="playButton"
               virtualName="" explicitFocusOrder="0" pos="8 64 50 24" buttonText="Play"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>

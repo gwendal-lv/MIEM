@@ -83,7 +83,11 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 		{
 			if (auto hitP = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
 			{
-				bpt firstI = newPolygon->intersection(hitP->getPolygon());
+				bpt firstI;
+				if (newPolygon->intersection(hitP->getPolygon(),firstI))
+					DBG("intersection in :  " + (String)firstI.get<0>() + " " + (String)firstI.get<1>());
+				else
+					DBG("pas d'intersection");
 				//testDephasage = areas[i] // utiliser des box pr verifi a quel segment ca appartient et deduire le dephasage :)
 				
 				//DBG("intersection #0 : " + (String)inter[0].get<0>() + " " + (String)inter[0].get<1>() + " = " + (String)testDephasage);
@@ -174,7 +178,41 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDrag(const MouseEvent& 
 	graphicE = EditableScene::OnCanvasMouseDrag(mouseE);
 	
 	if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(graphicE))
-		return std::shared_ptr<AreaEvent>(new AreaEvent(areaE->GetConcernedArea(),areaE->GetType(),areaE->GetAreaIdInScene(),shared_from_this()));
+	{
+		if (auto draggedArea = std::dynamic_pointer_cast<CompletePolygon>(areaE->GetConcernedArea()))
+		{
+			for (int i = 0; i < (int)areas.size(); ++i)
+			{
+				if (areaE->GetConcernedArea() != areas[i])
+				{
+					if (auto hitP = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
+					{
+						bpt firstI;
+						if (draggedArea->intersection(hitP->getPolygon(), firstI))
+							DBG("intersection in :  " + (String)firstI.get<0>() + " " + (String)firstI.get<1>());
+						else
+							DBG("pas d'intersection");
+						//testDephasage = areas[i] // utiliser des box pr verifi a quel segment ca appartient et deduire le dephasage :)
+
+						//DBG("intersection #0 : " + (String)inter[0].get<0>() + " " + (String)inter[0].get<1>() + " = " + (String)testDephasage);
+						// creer nouvelle forme pour chaque intersection
+						//DBG((String)inter.size() + " intersections");
+						//for (int j = 0; j < (int)inter.size(); ++j)
+						//{
+						//DBG("intersection #" + (String)j + " : " + (String)boost::geometry::area(inter.at(j)));
+						/*
+						for (int k = 0; k < (int)inter.at(j).outer().size(); ++k)
+						{
+
+						}
+						*/
+						//}
+					}
+				}
+			}
+		}
+		return std::shared_ptr<AreaEvent>(new AreaEvent(areaE->GetConcernedArea(), areaE->GetType(), areaE->GetAreaIdInScene(), shared_from_this()));
+	}
 	else
 		return graphicE;
 }
