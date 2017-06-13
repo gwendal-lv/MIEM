@@ -39,7 +39,7 @@ CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
 		CreateBullsEye();
 		for (int i = 0; i < contourPoints.outer().size(); i++)
 		{
-			OnCircles.push_back(1);
+			OnCircles.push_back(0);
 		}
 	}
 	updateSubTriangles();
@@ -71,7 +71,7 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 		CreateBullsEye();
 		for (int i = 0; i < contourPoints.outer().size(); i++)
 		{
-			OnCircles.push_back(1);
+			OnCircles.push_back(0);
 		}
 	}
 }
@@ -103,7 +103,7 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 		CreateBullsEye();
 		for (int i = 0; i < contourPoints.outer().size(); i++)
 		{
-			OnCircles.push_back(1);
+			OnCircles.push_back(0);
 		}
 	}
 
@@ -174,71 +174,132 @@ void CompletePolygon::angleToPercent()
 			anglesPercentages[i] = ptRad.get<0>() / (2 * M_PI);
 		else
 			anglesPercentages[i] = 1 + (ptRad.get<0>() / (2 * M_PI));
+		if (i == (int)contourPointsInPixels.outer().size() - 1)
+			anglesPercentages[i] = 1;
 	}
 }
 
 void CompletePolygon::setReadingPosition(double p)
 {
-	//DBG("position : " + (String)p);
+	DBG("position : " + (String)p);
 	if (p >= 1)
 		p -= 1;
 	//DBG("position after: " + (String)p);
 	if (showCursor)
 	{
-		//DBG("tailles setReadingPosition : bcontourPointsInPixels " + (String)bcontourPointsInPixels.outer().size());
-		pc = p;
-		lengthToPercent();
-		//determiner entre quels points va se trouver le curseur
-		int prev = 0;
-		int suiv = 0;
-		//DBG("percentages.size()" + (String)(percentages.size()));
-		for (int i = 0; i < (int)percentages.size(); ++i)
+		if (useBullsEye)
 		{
-			//DBG((String)i);
-			if (p < percentages[i])
+			pc = p;
+			// conversion percent to radian
+			angleToPercent();
+			double angle = p * 2 * M_PI;
+
+			//determiner entre quels points va se trouver le curseur
+			int prev = 0;
+			int suiv = 0;
+			for (int i = 0; i < (int)anglesPercentages.size(); ++i)
 			{
-				prev = i - 1;
-				suiv = i;
-				//DBG("!!! " + (String)p + " < " + (String)percentages[i]);
-				//DBG("stop");
-				break;
+				//DBG((String)i);
+				if (p < anglesPercentages[i])
+				{
+					prev = i - 1;
+					suiv = i;
+					//DBG("!!! " + (String)p + " < " + (String)percentages[i]);
+					//DBG("stop");
+					break;
+				}
+				else
+				{
+					prev = i;
+					suiv = (i + 1) % percentages.size();
+					//DBG((String)p + " > " + (String)percentages[i]);
+				}
+			}
+			DBG((String)prev + " " + (String)suiv);
+			bpt P;
+			if (suiv != 0)
+			{
+				P.set<0>(contourPoints.outer().at(prev).get<0>() + ((p - anglesPercentages[prev]) / (anglesPercentages[suiv] - anglesPercentages[prev])) * (contourPoints.outer().at(suiv).get<0>() - contourPoints.outer().at(prev).get<0>()));
+				P.set<1>(contourPoints.outer().at(prev).get<1>() + ((p - anglesPercentages[prev]) / (anglesPercentages[suiv] - anglesPercentages[prev])) * (contourPoints.outer().at(suiv).get<1>() - contourPoints.outer().at(prev).get<1>()));
 			}
 			else
 			{
-				prev = i;
-				suiv = (i + 1) % percentages.size();
-				//DBG((String)p + " > " + (String)percentages[i]);
+				P.set<0>(contourPoints.outer().at(prev).get<0>() + ((p - anglesPercentages[prev]) / (1 - anglesPercentages[prev])) * (contourPoints.outer().at(suiv).get<0>() - contourPoints.outer().at(prev).get<0>()));
+				P.set<1>(contourPoints.outer().at(prev).get<1>() + ((p - anglesPercentages[prev]) / (1 - anglesPercentages[prev])) * (contourPoints.outer().at(suiv).get<1>() - contourPoints.outer().at(prev).get<1>()));
 			}
-		}
 
-		//DBG("prev = " + (String)prev);
-		//DBG("suiv = " + (String)suiv);
-		//calculer la position du curseur entre ces points
-		bpt P;
-		if (suiv != 0)
-		{
-			P.set<0>(contourPoints.outer().at(prev).get<0>() + ((p - percentages[prev]) / (percentages[suiv] - percentages[prev])) * (contourPoints.outer().at(suiv).get<0>() - contourPoints.outer().at(prev).get<0>()));
-			P.set<1>(contourPoints.outer().at(prev).get<1>() + ((p - percentages[prev]) / (percentages[suiv] - percentages[prev])) * (contourPoints.outer().at(suiv).get<1>() - contourPoints.outer().at(prev).get<1>()));
+			//placer le curseur à ce point
+			bpt translation(P.get<0>() - cursorCenter.get<0>(), P.get<1>() - cursorCenter.get<1>());
+
+			translation.set<0>(translation.get<0>() * (double)parentCanvas->getWidth());
+			translation.set<1>(translation.get<1>() * (double)parentCanvas->getHeight());
+
+
+
+			cursor->Translate(juce::Point<double>(translation.get<0>(), translation.get<1>()));
+			cursorCenter = P;
+			//}
+			//redessiner
+			cursor->CanvasResized(this->parentCanvas);
+
 		}
 		else
 		{
-			P.set<0>(contourPoints.outer().at(prev).get<0>() + ((p - percentages[prev]) / (1 - percentages[prev])) * (contourPoints.outer().at(suiv).get<0>() - contourPoints.outer().at(prev).get<0>()));
-			P.set<1>(contourPoints.outer().at(prev).get<1>() + ((p - percentages[prev]) / (1 - percentages[prev])) * (contourPoints.outer().at(suiv).get<1>() - contourPoints.outer().at(prev).get<1>()));
+			//DBG("tailles setReadingPosition : bcontourPointsInPixels " + (String)bcontourPointsInPixels.outer().size());
+			pc = p;
+			lengthToPercent();
+			//determiner entre quels points va se trouver le curseur
+			int prev = 0;
+			int suiv = 0;
+			//DBG("percentages.size()" + (String)(percentages.size()));
+			for (int i = 0; i < (int)percentages.size(); ++i)
+			{
+				//DBG((String)i);
+				if (p < percentages[i])
+				{
+					prev = i - 1;
+					suiv = i;
+					//DBG("!!! " + (String)p + " < " + (String)percentages[i]);
+					//DBG("stop");
+					break;
+				}
+				else
+				{
+					prev = i;
+					suiv = (i + 1) % percentages.size();
+					//DBG((String)p + " > " + (String)percentages[i]);
+				}
+			}
+
+			//DBG("prev = " + (String)prev);
+			//DBG("suiv = " + (String)suiv);
+			//calculer la position du curseur entre ces points
+			bpt P;
+			if (suiv != 0)
+			{
+				P.set<0>(contourPoints.outer().at(prev).get<0>() + ((p - percentages[prev]) / (percentages[suiv] - percentages[prev])) * (contourPoints.outer().at(suiv).get<0>() - contourPoints.outer().at(prev).get<0>()));
+				P.set<1>(contourPoints.outer().at(prev).get<1>() + ((p - percentages[prev]) / (percentages[suiv] - percentages[prev])) * (contourPoints.outer().at(suiv).get<1>() - contourPoints.outer().at(prev).get<1>()));
+			}
+			else
+			{
+				P.set<0>(contourPoints.outer().at(prev).get<0>() + ((p - percentages[prev]) / (1 - percentages[prev])) * (contourPoints.outer().at(suiv).get<0>() - contourPoints.outer().at(prev).get<0>()));
+				P.set<1>(contourPoints.outer().at(prev).get<1>() + ((p - percentages[prev]) / (1 - percentages[prev])) * (contourPoints.outer().at(suiv).get<1>() - contourPoints.outer().at(prev).get<1>()));
+			}
+
+			//placer le curseur à ce point
+			bpt translation(P.get<0>() - cursorCenter.get<0>(), P.get<1>() - cursorCenter.get<1>());
+
+			translation.set<0>(translation.get<0>() * (double)parentCanvas->getWidth());
+			translation.set<1>(translation.get<1>() * (double)parentCanvas->getHeight());
+
+
+
+			cursor->Translate(juce::Point<double>(translation.get<0>(), translation.get<1>()));
+			cursorCenter = P;
+			//}
+			//redessiner
+			cursor->CanvasResized(this->parentCanvas);
 		}
-
-		//placer le curseur à ce point
-		bpt translation(P.get<0>() - cursorCenter.get<0>(), P.get<1>() - cursorCenter.get<1>());
-		
-		translation.set<0>(translation.get<0>() * (double)parentCanvas->getWidth());
-		translation.set<1>(translation.get<1>() * (double)parentCanvas->getHeight());
-
-
-		
-		cursor->Translate(juce::Point<double>(translation.get<0>(), translation.get<1>()));
-		cursorCenter = P;
-		//}
-		//redessiner
-		cursor->CanvasResized(this->parentCanvas);
 	}
 	
 }
@@ -364,7 +425,7 @@ AreaEventType CompletePolygon::EndPointMove()
 				contourPointsInPixels.outer().at(contourPointsInPixels.outer().size() - 1) = contourPointsInPixels.outer().at(0);
 				contourPoints.outer().at(contourPoints.outer().size() - 1) = contourPoints.outer().at(0);
 			}
-			OnCircles.at(pointDraggedId) = nearest + 1; // +1 pcq notes midi commencent a 1;
+			OnCircles.at(pointDraggedId) = nearest; // +1 pcq notes midi commencent a 1;
 			
 		}
 		CanvasResized(parentCanvas);
@@ -584,7 +645,7 @@ void CompletePolygon::PaintBullsEye(Graphics& g)
 {
 	for (int i = 0; i < OnCircles.size(); ++i)
 	{
-		bullsEye[OnCircles[i]-1].Paint(g);
+		bullsEye[OnCircles[i]].Paint(g);
 			//bullsEye[i].Paint(g);
 	}
 }

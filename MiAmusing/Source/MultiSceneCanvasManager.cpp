@@ -153,14 +153,13 @@ void MultiSceneCanvasManager::OnDelete()
 
 void MultiSceneCanvasManager::handleAndSendAreaEventSync(std::shared_ptr<AreaEvent> areaE)
 {
-	DBG("MULTISCENECANVAS MANAGER :: HANDLEANDSENDAREAEVENTSYNC");
-	//DBG("MultiSceneCanvasManager::handleAndSendAreaEventSync : " + (String)((int)areaE->GetType()));
+	
 	if (auto multiE = std::dynamic_pointer_cast<MultiAreaEvent>(areaE))
 	{
-		DBG("other event : " + (String)multiE->GetOtherEventsCount());
+		
 		for (int i = 0; i < multiE->GetOtherEventsCount(); i++)
 		{
-			DBG("--- event : " + (String)i + " type : " + (String)int(multiE->GetOtherEvent(i)->GetType()));
+			
 			MultiSceneCanvasEditor::handleAndSendAreaEventSync(multiE->GetOtherEvent(i));
 		}
 	}
@@ -168,7 +167,7 @@ void MultiSceneCanvasManager::handleAndSendAreaEventSync(std::shared_ptr<AreaEve
 	{
 		if (areaE->GetType() == AreaEventType::Deleted) // verifier si ca sert encore a qqch
 		{
-			DBG("need to delete");
+			
 			if (auto area = std::dynamic_pointer_cast<AnimatedPolygon> (areaE->GetConcernedArea()))
 			{
 
@@ -192,7 +191,7 @@ void MultiSceneCanvasManager::handleAndSendAreaEventSync(std::shared_ptr<AreaEve
 		}
 		MultiSceneCanvasEditor::handleAndSendAreaEventSync(areaE);
 	}
-	DBG("MultiSceneCanvasManager::handleAndSendAreaEventSync : originalToAsyncObject size "+ (String)originalToAsyncObject.size());
+	
 }
 
 void MultiSceneCanvasManager::deleteUnusedFollowers()
@@ -218,7 +217,7 @@ void MultiSceneCanvasManager::deleteUnusedFollowers()
 
 void MultiSceneCanvasManager::deleteAsyncDrawableObject(int idInScene, std::shared_ptr<IDrawableArea> originalAreaToDelete)
 {
-	DBG("MultiSceneCanvasManager::deleteAsyncDrawableObject");
+
 	MultiSceneCanvasInteractor::deleteAsyncDrawableObject(idInScene, originalAreaToDelete);
 }
 

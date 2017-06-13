@@ -347,7 +347,7 @@ std::shared_ptr<Amusing::CompletePolygon> AmusingScene::getFirstCompleteArea()
 
 std::shared_ptr<MultiAreaEvent> AmusingScene::SetAllAudioPositions(double position)
 {
-	DBG("areas.size()" + (String)areas.size());
+	
 	std::shared_ptr<Miam::MultiAreaEvent> areaE;
 	bool first = true;
 	for (int i = 0; i < areas.size(); ++i)
