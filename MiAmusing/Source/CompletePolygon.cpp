@@ -94,7 +94,7 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	SetNameVisible(false);
 	
 
-	startRadius = 0.30;
+	startRadius = 0.15;
 	interval = 0.05;
 	useBullsEye = true;
 	showBullsEye = true;
@@ -107,7 +107,7 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 		}
 	}
 
-	updateSubTriangles();
+	//updateSubTriangles();
 }
 
 
@@ -153,13 +153,6 @@ void CompletePolygon::lengthToPercent()
 {
 	//calcul du perimetre
 	perimeter = 0;
-	/*for (int i = 0; i < bcontourPoints.outer().size()) - 1; ++i)
-	{
-		
-		perimeter += contourPoints[i + 1].getDistanceFrom(contourPoints[i]);
-		percentages[i + 1] = perimeter;
-	}
-	perimeter += contourPoints[contourPoints.size() - 1].getDistanceFrom(contourPoints[0]);*/
 	perimeter = boost::geometry::perimeter(contourPointsInPixels);
 
 	//calcul des poucentages correspondant à chaque point
@@ -400,24 +393,35 @@ bpolygon CompletePolygon::getPolygon()
 	return contourPoints;
 }
 
-bool CompletePolygon::intersection(bpolygon hitPolygon, bpt &I)
+std::shared_ptr<AreaEvent> CompletePolygon::intersection(std::shared_ptr<CompletePolygon> hitPolygon, int Id)
 {
+	// compute the intersection
 	std::vector<bpt> inter;
-	boost::geometry::intersection(contourPoints, hitPolygon, inter);
+	boost::geometry::intersection(contourPoints, hitPolygon->getPolygon(), inter);
 
+	// create a polygon with the intersection's points
 	bpolygon test;
 	for(int i = 0; i<inter.size();i++)
 		boost::geometry::append(test,inter[i]);
 	
+	// compute the area of the 2 polygons and the intersection
 	double areaTest = abs(boost::geometry::area(test));
-	double hitArea = abs(boost::geometry::area(hitPolygon));
+	double hitArea = abs(boost::geometry::area(hitPolygon->getPolygon()));
 	double area = abs(boost::geometry::area(contourPoints));
-	if (areaTest >= 0.75 * hitArea || areaTest >= 0.75 * area)
-		DBG("need To fusion !");
 
-	if (inter.size() > 0)
+
+	std::shared_ptr<CompletePolygon> completeP;
+	std::shared_ptr<AreaEvent> areaE;
+	if (areaTest >= 0.75 * hitArea || areaTest >= 0.75 * area || inter.size() > 2)
 	{
-		int idx = 0;
+		DBG("need To fusion !");
+		completeP = fusion(hitPolygon, Id);
+		areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeP, AreaEventType::Added));
+	}
+	else if(inter.size() > 0)
+	{
+		DBG("no need to fusion");
+		/*int idx = 0;
 		double minAngle = 2 * M_PI;
 		for (int i = 0; i < inter.size(); i++)
 		{
@@ -429,16 +433,19 @@ bool CompletePolygon::intersection(bpolygon hitPolygon, bpt &I)
 				minAngle = angle;
 				idx = i;
 			}
-		}
+		}*/
 
-		I = inter[idx];
-		return true;
+		// sort the intersection's point clockwise, so we'll know which point will be met first
+		std::sort(test.outer().begin(), test.outer().end(), [](bpt a, bpt b) {return Math::ComputePositiveAngle(a) < Math::ComputePositiveAngle(b); });
+		if (test.outer().size() == 0)
+			DBG("stop");
+		completeP = std::shared_ptr<CompletePolygon>(new CompletePolygon(0, center, test, fillColour));
+		areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeP, AreaEventType::NothingHappened));
 	}
-	else
-		return false;
+	return areaE;
 }
 
-std::shared_ptr<CompletePolygon> CompletePolygon::fusion(std::shared_ptr<CompletePolygon> polyToFusion)
+std::shared_ptr<CompletePolygon> CompletePolygon::fusion(std::shared_ptr<CompletePolygon> polyToFusion, int Id)
 {
 	// structure to be able to sort the percentages and the circles the same way
 	struct Helper
@@ -450,8 +457,9 @@ std::shared_ptr<CompletePolygon> CompletePolygon::fusion(std::shared_ptr<Complet
 	};
 
 	// get all the coordinates of the points (percentages and circles) of the current polygon
+	angleToPercent();
 	std::vector<Helper> test;
-	for (int j = 0; j < anglesPercentages.size(); ++j)
+	for (int j = 0; j < anglesPercentages.size()-1; ++j) // stop at size-1 because we don't need the closure point
 		test.push_back(Helper(anglesPercentages[j], OnCircles[j]));
 
 	// add all the coordinates of the other polygon to the vector of coordinates
@@ -463,6 +471,7 @@ std::shared_ptr<CompletePolygon> CompletePolygon::fusion(std::shared_ptr<Complet
 		test.push_back(Helper(value, distance));
 		++i;
 	}
+	test.pop_back(); // delete last element = closure element
 
 	// sort to have all the points in clockwise order
 	std::sort(test.begin(), test.end());
@@ -477,10 +486,11 @@ std::shared_ptr<CompletePolygon> CompletePolygon::fusion(std::shared_ptr<Complet
 		boost::geometry::add_point(newPoint, centerInPixels);
 		boost::geometry::append(newContourPointsInPixels.outer(),newPoint);
 	}
+	boost::geometry::append(newContourPointsInPixels.outer(), newContourPointsInPixels.outer().at(0));
 
 	// get normalized coordinates
 	bpolygon newContourPoints;
-	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> rescaler(1 / parentCanvas->getWidth(), 1 / parentCanvas->getHeight());
+	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> rescaler(1.0 / (double)parentCanvas->getWidth(), 1.0 / (double)parentCanvas->getHeight());
 	boost::geometry::transform(newContourPointsInPixels, newContourPoints, rescaler);
 	
 	// create polygon

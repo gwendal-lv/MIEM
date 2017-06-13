@@ -77,32 +77,36 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 		bpt(0.5f, 0.5f), N, 0.15f,
 		Colours::grey,
 		canvasComponent->GetRatio()));
+	newPolygon->SetActive(true);
+	newPolygon->CanvasResized(canvasComponent);
 	if (areas.size() > 0)
 	{
 		for (int i = 0; i<(int)areas.size(); ++i)
 		{
 			if (auto hitP = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
 			{
-				bpt firstI;
-				if (newPolygon->intersection(hitP->getPolygon(),firstI))
-					DBG("intersection in :  " + (String)firstI.get<0>() + " " + (String)firstI.get<1>());
-				else
-					DBG("pas d'intersection");
-				//testDephasage = areas[i] // utiliser des box pr verifi a quel segment ca appartient et deduire le dephasage :)
-				
-				//DBG("intersection #0 : " + (String)inter[0].get<0>() + " " + (String)inter[0].get<1>() + " = " + (String)testDephasage);
-				// creer nouvelle forme pour chaque intersection
-				//DBG((String)inter.size() + " intersections");
-				//for (int j = 0; j < (int)inter.size(); ++j)
-				//{
-					//DBG("intersection #" + (String)j + " : " + (String)boost::geometry::area(inter.at(j)));
-					/*
-					for (int k = 0; k < (int)inter.at(j).outer().size(); ++k)
+				if (auto singleAreaE = std::shared_ptr<AreaEvent>(newPolygon->intersection(hitP,nextAreaId)))
+				{
+					std::shared_ptr<AreaEvent> deleteE1;
+					std::shared_ptr<MultiAreaEvent> multiE;
+					switch (singleAreaE->GetType())
 					{
-
+					case AreaEventType::Added:
+						// Fusion : need to add this area and to delete the 2 others (in fact just the first one, newPolygon had been created but not added so the smart pointer will do it for us
+						multiE = std::shared_ptr<MultiAreaEvent>(new MultiAreaEvent());
+						multiE->AddAreaEvent(AddArea(std::dynamic_pointer_cast<CompletePolygon>(singleAreaE->GetConcernedArea())));
+						deleteE1 = deleteAreaByUniqueId(hitP->GetId());
+						multiE->AddAreaEvent(deleteE1);
+						return multiE;
+						break;
+					case AreaEventType::NothingHappened:
+						// Intersection
+					default:
+						// wrong
+						break;
 					}
-					*/
-				//}
+				}
+
 			}
 		}
 	}
@@ -187,26 +191,22 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDrag(const MouseEvent& 
 				{
 					if (auto hitP = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
 					{
-						bpt firstI;
-						if (draggedArea->intersection(hitP->getPolygon(), firstI))
-							DBG("intersection in :  " + (String)firstI.get<0>() + " " + (String)firstI.get<1>());
-						else
-							DBG("pas d'intersection");
-						//testDephasage = areas[i] // utiliser des box pr verifi a quel segment ca appartient et deduire le dephasage :)
-
-						//DBG("intersection #0 : " + (String)inter[0].get<0>() + " " + (String)inter[0].get<1>() + " = " + (String)testDephasage);
-						// creer nouvelle forme pour chaque intersection
-						//DBG((String)inter.size() + " intersections");
-						//for (int j = 0; j < (int)inter.size(); ++j)
-						//{
-						//DBG("intersection #" + (String)j + " : " + (String)boost::geometry::area(inter.at(j)));
-						/*
-						for (int k = 0; k < (int)inter.at(j).outer().size(); ++k)
+						if (auto areaE = std::shared_ptr<AreaEvent>(draggedArea->intersection(hitP,0)))
 						{
+							switch (areaE->GetType())
+							{
+							case AreaEventType::Added :
+								// Fusion : need to add this area and to delete the 2 others
 
+								break;
+							case AreaEventType::NothingHappened :
+								// Intersection
+							default:
+								// wrong
+								break;
+							}
 						}
-						*/
-						//}
+												
 					}
 				}
 			}

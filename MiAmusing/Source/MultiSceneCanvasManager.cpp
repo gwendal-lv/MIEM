@@ -154,31 +154,41 @@ void MultiSceneCanvasManager::OnDelete()
 void MultiSceneCanvasManager::handleAndSendAreaEventSync(std::shared_ptr<AreaEvent> areaE)
 {
 	//DBG("MultiSceneCanvasManager::handleAndSendAreaEventSync : " + (String)((int)areaE->GetType()));
-	if (areaE->GetType() == AreaEventType::Deleted)
+	if (auto multiE = std::dynamic_pointer_cast<MultiAreaEvent>(areaE))
 	{
-		DBG("need to delete");
-		if (auto area = std::dynamic_pointer_cast<AnimatedPolygon> (areaE->GetConcernedArea()))
+		for (int i = 0; i < multiE->GetOtherEventsCount(); i++)
 		{
-
-			if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
-				while (true)
-				{
-					if (auto followerToDelete = amusingScene->getFollowers(area))
-					{
-						DBG("followerToDelete");
-						deleteAsyncDrawableObject((int)followerToDelete->GetId(), followerToDelete);
-					}
-					else
-						break;
-				}
-		}
-		else
-		{
-			DBG("area to delete : " + (String)((int)areaE->GetAreaIdInScene()) );
-			deleteAsyncDrawableObject(areaE->GetAreaIdInScene(), areaE->GetConcernedArea());
+			MultiSceneCanvasEditor::handleAndSendAreaEventSync(multiE->GetOtherEvent(i));
 		}
 	}
-	MultiSceneCanvasEditor::handleAndSendAreaEventSync(areaE);
+	else
+	{
+		if (areaE->GetType() == AreaEventType::Deleted) // verifier si ca sert encore a qqch
+		{
+			DBG("need to delete");
+			if (auto area = std::dynamic_pointer_cast<AnimatedPolygon> (areaE->GetConcernedArea()))
+			{
+
+				if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+					while (true)
+					{
+						if (auto followerToDelete = amusingScene->getFollowers(area))
+						{
+							DBG("followerToDelete");
+							deleteAsyncDrawableObject((int)followerToDelete->GetId(), followerToDelete);
+						}
+						else
+							break;
+					}
+			}
+			else
+			{
+				DBG("area to delete : " + (String)((int)areaE->GetAreaIdInScene()));
+				deleteAsyncDrawableObject(areaE->GetAreaIdInScene(), areaE->GetConcernedArea());
+			}
+		}
+		MultiSceneCanvasEditor::handleAndSendAreaEventSync(areaE);
+	}
 }
 
 void MultiSceneCanvasManager::deleteUnusedFollowers()
