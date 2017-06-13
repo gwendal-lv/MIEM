@@ -153,11 +153,14 @@ void MultiSceneCanvasManager::OnDelete()
 
 void MultiSceneCanvasManager::handleAndSendAreaEventSync(std::shared_ptr<AreaEvent> areaE)
 {
+	DBG("MULTISCENECANVAS MANAGER :: HANDLEANDSENDAREAEVENTSYNC");
 	//DBG("MultiSceneCanvasManager::handleAndSendAreaEventSync : " + (String)((int)areaE->GetType()));
 	if (auto multiE = std::dynamic_pointer_cast<MultiAreaEvent>(areaE))
 	{
+		DBG("other event : " + (String)multiE->GetOtherEventsCount());
 		for (int i = 0; i < multiE->GetOtherEventsCount(); i++)
 		{
+			DBG("--- event : " + (String)i + " type : " + (String)int(multiE->GetOtherEvent(i)->GetType()));
 			MultiSceneCanvasEditor::handleAndSendAreaEventSync(multiE->GetOtherEvent(i));
 		}
 	}
@@ -184,11 +187,12 @@ void MultiSceneCanvasManager::handleAndSendAreaEventSync(std::shared_ptr<AreaEve
 			else
 			{
 				DBG("area to delete : " + (String)((int)areaE->GetAreaIdInScene()));
-				deleteAsyncDrawableObject(areaE->GetAreaIdInScene(), areaE->GetConcernedArea());
+				//deleteAsyncDrawableObject(areaE->GetAreaIdInScene(), areaE->GetConcernedArea());
 			}
 		}
 		MultiSceneCanvasEditor::handleAndSendAreaEventSync(areaE);
 	}
+	DBG("MultiSceneCanvasManager::handleAndSendAreaEventSync : originalToAsyncObject size "+ (String)originalToAsyncObject.size());
 }
 
 void MultiSceneCanvasManager::deleteUnusedFollowers()
@@ -223,6 +227,20 @@ void MultiSceneCanvasManager::OnCanvasMouseDown(const MouseEvent& mouseE)
 	DBG("passe par MultiSceneCanvasManager::OnCanvasMouseDown");
 	MultiSceneCanvasEditor::OnCanvasMouseDown(mouseE);
 }
+
+void MultiSceneCanvasManager::OnCanvasMouseUp(const MouseEvent& mouseE)
+{
+	DBG("passe par MultiSceneCanvasManager::OnCanvasMouseUp");
+	MultiSceneCanvasEditor::OnCanvasMouseUp(mouseE);
+}
+
+void MultiSceneCanvasManager::OnFusion(std::shared_ptr<AreaEvent> areaE)
+{
+	handleAndSendAreaEventSync(areaE);
+	graphicSessionManager->HandleEventSync(areaE);
+}
+
+
 
 void MultiSceneCanvasManager::SetAllChannels()
 {

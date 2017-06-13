@@ -80,7 +80,7 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	bpt _center, bpolygon& _contourPoints, Colour _fillColour) :
 	EditablePolygon(_Id, _center, _contourPoints, _fillColour)
 {
-	showCursor = false;
+	showCursor = true;
 	pc = 0;
 	cursorCenter = contourPoints.outer().at(0);
 	cursor = std::shared_ptr<EditableEllipse>(new EditableEllipse(0, cursorCenter, 0.1f, 0.1f, Colours::grey, 1.47f));
@@ -253,8 +253,8 @@ void CompletePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 	//lengthToPercent();
 	if(showCursor)
 		cursor->CanvasResized(_parentCanvas);
-	if (isActive && showBullsEye)
-		CanvasResizedBullsEye(_parentCanvas);
+	//if (isActive)
+	CanvasResizedBullsEye(_parentCanvas);
 	setReadingPosition(pc);
 	//cursor->CanvasResized(_parentCanvas);
 	//DBG("cursorCenter : " + (String)(cursorCenter.x) + " " + (String)(cursorCenter.y));
@@ -416,6 +416,7 @@ std::shared_ptr<AreaEvent> CompletePolygon::intersection(std::shared_ptr<Complet
 	{
 		DBG("need To fusion !");
 		completeP = fusion(hitPolygon, Id);
+		DBG("fusionned");
 		areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeP, AreaEventType::Added));
 	}
 	else if(inter.size() > 0)

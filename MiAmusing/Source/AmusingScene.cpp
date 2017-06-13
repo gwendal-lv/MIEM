@@ -10,6 +10,7 @@
 
 #include "AmusingScene.h"
 
+#include "MultiSceneCanvasManager.h"
 #include "MultiSceneCanvasInteractor.h"
 
 #include "SceneCanvasComponent.h"
@@ -77,7 +78,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 		bpt(0.5f, 0.5f), N, 0.15f,
 		Colours::grey,
 		canvasComponent->GetRatio()));
-	newPolygon->SetActive(true);
+	newPolygon->SetActive(false);
 	newPolygon->CanvasResized(canvasComponent);
 	if (areas.size() > 0)
 	{
@@ -92,6 +93,8 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 					switch (singleAreaE->GetType())
 					{
 					case AreaEventType::Added:
+						DBG("hitP->GetId()" + (String)hitP->GetId());
+						DBG("nextAreaId" + (String)nextAreaId);
 						// Fusion : need to add this area and to delete the 2 others (in fact just the first one, newPolygon had been created but not added so the smart pointer will do it for us
 						multiE = std::shared_ptr<MultiAreaEvent>(new MultiAreaEvent());
 						multiE->AddAreaEvent(AddArea(std::dynamic_pointer_cast<CompletePolygon>(singleAreaE->GetConcernedArea())));
@@ -191,13 +194,14 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDrag(const MouseEvent& 
 				{
 					if (auto hitP = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
 					{
-						if (auto areaE = std::shared_ptr<AreaEvent>(draggedArea->intersection(hitP,0)))
+						if (auto singleAreaE = std::shared_ptr<AreaEvent>(draggedArea->intersection(hitP,2)))
 						{
-							switch (areaE->GetType())
+							std::shared_ptr<AreaEvent> deleteE1;
+							std::shared_ptr<MultiAreaEvent> multiE;
+							switch (singleAreaE->GetType())
 							{
 							case AreaEventType::Added :
-								// Fusion : need to add this area and to delete the 2 others
-
+								// for the moment just do nothing, fusion only on mousedragstop (mouseUp)
 								break;
 							case AreaEventType::NothingHappened :
 								// Intersection
@@ -215,6 +219,89 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDrag(const MouseEvent& 
 	}
 	else
 		return graphicE;
+}
+
+std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseUp(const MouseEvent& mouseE)
+{
+	std::shared_ptr<GraphicEvent> graphicE(new GraphicEvent()); // default empty event
+	Point<float> clicLocation = mouseE.position; // float position (more accurate)
+
+	if (allowAreaSelection)
+	{
+		if (mouseE.source.getIndex() == 0)
+		{
+			if (selectedArea)
+			{
+				AreaEventType areaEventType = selectedArea->EndPointMove();
+				graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, areaEventType, selectedArea->GetId(), shared_from_this()));
+			}
+		}
+	}
+
+	if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(graphicE))
+	{
+		if (auto draggedArea = std::dynamic_pointer_cast<CompletePolygon>(areaE->GetConcernedArea()))
+		{
+			for (int i = 0; i < (int)areas.size(); ++i)
+			{
+				if (areaE->GetConcernedArea() != areas[i])
+				{
+					if (auto hitP = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
+					{
+						if (auto singleAreaE = std::shared_ptr<AreaEvent>(draggedArea->intersection(hitP, 2)))
+						{
+							std::shared_ptr<AreaEvent> deleteE1;
+							std::shared_ptr<AreaEvent> deleteE2;
+							std::shared_ptr<MultiAreaEvent> multiE;
+							auto selectedAreaBackup = selectedArea;
+							switch (singleAreaE->GetType())
+							{
+							case AreaEventType::Added:
+								// Fusion : need to add this area and to delete the 2 others
+								DBG("hitP->GetId()" + (String)hitP->GetId());
+								DBG("draggedArea->GetId()" + (String)draggedArea->GetId());
+								//multiE = std::shared_ptr<MultiAreaEvent>(new MultiAreaEvent());
+								//multiE->AddAreaEvent(AddArea(std::dynamic_pointer_cast<CompletePolygon>(singleAreaE->GetConcernedArea())));
+								
+								if (selectedArea)
+								{
+									//auto selectedAreaBackup = selectedArea;
+									SetSelectedArea(nullptr);
+								}
+								deleteE1 = deleteAreaByUniqueId(hitP->GetId());
+								deleteE2 = deleteAreaByUniqueId(draggedArea->GetId());
+								//multiE->AddAreaEvent(deleteE1);
+								//multiE->AddAreaEvent(deleteE2);
+
+								// j'ai l'impression que ça reste extra laid, il y a déjà les fonctions toutes faites pour add et delete, 
+								// mais il faut les refaire juste pour pvr appeler le graphicSessionManager à chaque fois :/
+								if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
+								{
+									manager->OnFusion(deleteE1);
+									manager->OnFusion(deleteE2);
+									manager->OnFusion(AddArea(std::dynamic_pointer_cast<CompletePolygon>(singleAreaE->GetConcernedArea())));
+									
+								}
+								//canvasManager.lock()->handleAsyncUpdate 
+								DBG("ici");
+								return multiE;
+							case AreaEventType::NothingHappened:
+								// Intersection
+								break;
+							default:
+								// wrong
+								break;
+							}
+						}
+
+					}
+				}
+			}
+		}
+		return std::shared_ptr<AreaEvent>(new AreaEvent(areaE->GetConcernedArea(), areaE->GetType(), areaE->GetAreaIdInScene(), shared_from_this()));
+	}
+
+	return graphicE;
 }
 
 std::shared_ptr<AreaEvent> AmusingScene::AddTrueCircle(uint64_t nextAreaId)
@@ -260,19 +347,20 @@ std::shared_ptr<Amusing::CompletePolygon> AmusingScene::getFirstCompleteArea()
 
 std::shared_ptr<MultiAreaEvent> AmusingScene::SetAllAudioPositions(double position)
 {
-	//DBG("areas.size()" + (String)areas.size());
+	DBG("areas.size()" + (String)areas.size());
 	std::shared_ptr<Miam::MultiAreaEvent> areaE;
 	bool first = true;
 	for (int i = 0; i < areas.size(); ++i)
 	{
+		areaE = std::shared_ptr<Miam::MultiAreaEvent>(new Miam::MultiAreaEvent());
 		if (auto completeA = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
 		{
-			if (first == true)
-			{
-				//completeA->setCursorVisible(true);
-				areaE = std::shared_ptr<Miam::MultiAreaEvent>(new Miam::MultiAreaEvent(areas[i], Miam::AreaEventType::NothingHappened, areas[i]->GetId()));
-				first = false;
-			}
+			//if (first == true)
+			//{
+			//	//completeA->setCursorVisible(true);
+			//	areaE = std::shared_ptr<Miam::MultiAreaEvent>(new Miam::MultiAreaEvent(areas[i], Miam::AreaEventType::NothingHappened, areas[i]->GetId()));
+			//	first = false;
+			//}
 			//completeA->setCursorVisible(true);
 			completeA->setReadingPosition(position);
 			areaE->AddAreaEvent(std::shared_ptr<AreaEvent>(new AreaEvent(areas[i], Miam::AreaEventType::NothingHappened)));
@@ -307,72 +395,6 @@ Point<double> AmusingScene::hitPolygon(Point<double> hitPoint, std::shared_ptr<A
 	return Point<double>(0, 0);
 }
 
-/*
-std::shared_ptr<Amusing::AnimatedPolygon> AmusingScene::hitPolygon(Point<double> hitPoint, std::shared_ptr<Amusing::AnimatedPolygon> polygon)
-{
-for (int i = 0; i < areas.size(); ++i)
-{
-if(areas[i]->HitTest(hitPoint) && areas[i] != polygon)
-return std::dynamic_pointer_cast<AnimatedPolygon>(areas[i]);
-}
-return nullptr;
-}
-*/
-/*
-bool AmusingScene::OnCanvasMouseDrag(Point<int> &mouseLocation)
-{
-//DBG("OnCanvasMouseDrag");
-if (selectedArea)
-{
-DBG("AmusingScene::OnCanvasMouseDrag");
-selectedArea->TryMovePoint(mouseLocation.toDouble());
-canvasComponent->repaint();
-DBG((String)selectedArea->GetPointDraggedId());
-switch (selectedArea->GetPointDraggedId())
-{
-case -10:
-DBG("No point selected");
-break;
-case -20:
-DBG("Whole area");
-break;
-case -30 :
-DBG("Center");
-break;
-case -40 :
-DBG("Manipulation Point");
-break;
-default:
-DBG("appler OnSurfaceChanged de GraphicSessionManager");
-canvasManager->OnSurfaceChanged(selectedArea->GetArea());
-
-break;
-}
-//if (selectedArea->GetPointDraggedId() == -40)
-//{
-//DBG("appler OnSurfaceChanged de GraphicSessionManager");
-/canvasManager->OnSurfaceChanged(selectedArea->GetArea());
-//}
-
-
-//canvasManager->On
-return true;
-}
-else
-return false;
-}
-
-bool AmusingScene::OnCanvasMouseUp()
-{
-//DBG("OnCanvasMouseUp");
-if (selectedArea)
-{
-selectedArea->EndPointMove();
-return true;
-}
-else
-return false;
-}*/
 
 int AmusingScene::getNumberArea()
 {
@@ -396,22 +418,3 @@ std::shared_ptr<AreaEvent> AmusingScene::resendArea(int idx)
 	return std::shared_ptr<AreaEvent>(new AreaEvent(areas[idx], AreaEventType::ShapeChanged,idx, shared_from_this()));
 }
 
-std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseUp(const MouseEvent& mouseE)
-{
-	std::shared_ptr<GraphicEvent> graphicE(new GraphicEvent()); // default empty event
-	Point<float> clicLocation = mouseE.position; // float position (more accurate)
-
-	if (allowAreaSelection)
-	{
-		if (mouseE.source.getIndex() == 0)
-		{
-			if (selectedArea)
-			{
-				AreaEventType areaEventType = selectedArea->EndPointMove();
-				graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, areaEventType,selectedArea->GetId(),shared_from_this()));
-			}
-		}
-	}
-
-	return graphicE;
-}
