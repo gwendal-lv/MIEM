@@ -70,8 +70,9 @@ namespace Miam
         /// \brief Actualization of everything that might have been modified from
         /// other app modes.
         void OnEnterSpatStatesEdition();
-        /// \brief Data saving before entering another mode.
-        void OnLeaveSpatStatesEdition();
+        /// \brief Data saving (and returning by pointer) before entering
+        /// another mode.
+        std::shared_ptr<bptree::ptree> OnLeaveSpatStatesEdition();
         
         // - - - - - Events from View - - - - -
         

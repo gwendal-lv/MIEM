@@ -43,15 +43,12 @@ void Presenter::CompleteInitialisation(Model* _model)
 {
     // Self init
     model = _model;
-    SpatPresenter::CompleteInitialisation(_model);
+    SpatPresenter::CompleteInitialisation(&graphicSessionManager, _model);
     // Sub-modules
     spatStatesEditionManager.CompleteInitialisation(model->GetSpatInterpolator());
     graphicSessionManager.CompleteInitialisation(model->GetSpatInterpolator());
     settingsManager.CompleteInitialisation(model);
     
-    // Actual mode change here
-    // App mode changer to Scenes Edition by default (should be stored within the file ?)
-    appModeChangeRequest(AppMode::EditSpatScenes);
     
     // Loading of the first XML session file (default if nothing else provided)
     std::string firstFileName = "../../../../../SpatCommon/Sessions/Default.miam";
@@ -62,12 +59,13 @@ void Presenter::CompleteInitialisation(Model* _model)
     {
         // Also display in a new window
         view->DisplayInfo(std::string("[Reading XML] ") + e.what(), true);
-        std::cout << std::string("[Reading XML] ") << e.what() << std::endl;
     }
     // Updates (graphical mostly) just after
     spatStatesEditionManager.UpdateView();
     
-    //graphicSessionManager.__LoadDefaultTest();
+    // Actual mode change here
+    // App mode changer to Scenes Edition by default (should be stored within the file ?)
+    appModeChangeRequest(AppMode::EditSpatScenes);
 }
 
 
@@ -82,11 +80,19 @@ AppMode Presenter::appModeChangeRequest(AppMode newAppMode)
         view->ChangeAppMode(AppMode::Loading);
         
         // - - - - - PRE-CHANGE PROCESSING - - - - -
+        std::shared_ptr<bptree::ptree> dataTree;
         switch(appMode)
         {
             case AppMode::EditSpatStates :
                 // If leaving the matrices editing : data save before changing mode
-                spatStatesEditionManager.OnLeaveSpatStatesEdition();
+                dataTree = spatStatesEditionManager.OnLeaveSpatStatesEdition();
+                updateSpatStatesTree(dataTree);
+                break;
+                
+            case AppMode::EditSpatScenes :
+                // If leaving the matrices editing : data save before changing mode
+                dataTree = graphicSessionManager.OnLeaveSpatScenesEdition();
+                updateSpatScenesTree(dataTree);
                 break;
                 
             default :

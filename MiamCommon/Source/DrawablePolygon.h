@@ -40,6 +40,9 @@ namespace Miam {
         
         // - - - - - Construction/Destruction + polymorphic cloning - - - - -
         public :
+        
+        DrawablePolygon(bptree::ptree & areaTree);
+        
         /// \brief Default constructor that builds a centered dark grey triangle
         ///
         /// \param See DrawableArea::id
@@ -74,13 +77,15 @@ namespace Miam {
         virtual ~DrawablePolygon();
         
         
-        
-        
-        // Display functions
+        //  - - - - - Display functions - - - - -
         public :
         virtual void Paint(Graphics& g) override;
         virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
         
+        
+        // - - - - - XML import/export - - - - -
+        virtual std::string GetTypeAsString() const override {return "DrawablePolygon";}
+        virtual std::shared_ptr<bptree::ptree> GetTree() override;
 
     };
 }

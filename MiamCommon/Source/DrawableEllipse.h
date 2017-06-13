@@ -40,7 +40,10 @@ namespace Miam
 	public:
 		/// \brief Destructor.
 		virtual ~DrawableEllipse();
-
+        
+        // - - - - - XML import/export - - - - -
+        // RAJOUTÉ PAR GWENDAL POUR QUE ÇA COMPILE, À MODIFIER SANS DOUTE
+        virtual std::string GetTypeAsString() const override {return "Ellipse";};
 
 
 

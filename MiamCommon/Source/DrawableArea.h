@@ -27,21 +27,30 @@ namespace Miam
 {
     
     /// \brief Abstract class from which all Miam areas will be derived.
+    ///
+    /// Common graphics managing features for all possible areas.
     class DrawableArea : public virtual IDrawableArea
     {
         
         public :
         
-        /// \brief Minimal constructor
+        /// \Brief Contruction from the unique ID, center, and fill colour that must
+        /// be found in the given <area> sub-tree inner content.
+        DrawableArea(bptree::ptree& areaTree);
+        
+        /// \brief Minimal constructor when building a new area
         ///
         /// \param _Id Unique ID of the area
         /// \param _center Normalized center coordinates (x, y in [0.0,1.0])
         /// \param _fillColour Solid colour for filling the area (opacity should be 0xFF)
-
 		DrawableArea(int64_t _Id, bpt _center, Colour _fillColour);
         
         /// \brief Virtual destructor.
         virtual ~DrawableArea() {}
+        
+        private :
+        void init();
+        public :
         
         
         virtual void Paint(Graphics& g) override;
@@ -65,6 +74,13 @@ namespace Miam
         virtual void SetName(String newName) override;
         
         void SetNameVisible(bool isVisible) {isNameVisible = isVisible;}
+        
+        
+        // - - - - - XML import/export - - - - -
+        virtual std::shared_ptr<bptree::ptree> GetTree() override;
+        
+        
+        
         
         
         // General data

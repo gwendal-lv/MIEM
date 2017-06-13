@@ -490,3 +490,23 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseUp(const MouseEvent& m
     return graphicE;
 }
 
+
+
+// = = = = = = = = = = XML import/export = = = = = = = = = =
+std::shared_ptr<bptree::ptree> EditableScene::GetTree()
+{
+    auto sceneTree = std::make_shared<bptree::ptree>();
+    sceneTree->put("name", name);
+    bptree::ptree areasTree;
+    for (size_t i=0; i < areas.size() ; i++)
+    {
+        auto areaTree = areas[i]->GetTree();
+        areaTree->put("<xmlattr>.index", i);
+        areasTree.add_child("area", *areaTree);
+    }
+    sceneTree->add_child("areas", areasTree);
+    return sceneTree;
+}
+
+
+

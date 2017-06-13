@@ -18,6 +18,13 @@ using namespace Miam;
 
 // ===== CONSTRUCTORS & DESTRUCTORS =====
 
+InteractivePolygon::InteractivePolygon(bptree::ptree & areaTree)
+:
+DrawablePolygon(areaTree)
+{
+    init();
+}
+
 InteractivePolygon::InteractivePolygon(int64_t _Id) :
 DrawablePolygon(_Id)
 {

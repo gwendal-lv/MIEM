@@ -19,6 +19,7 @@
 #include "SceneEvent.h"
 
 #include "SpatPolygon.h"
+#include "XmlUtils.h"
 
 using namespace Miam;
 
@@ -26,7 +27,7 @@ using namespace Miam;
 // ========== CONSTRUCTION and DESTRUCTION ==========
 
 GraphicSessionManager::GraphicSessionManager(View* _view, Presenter* presenter_) :
-    IGraphicSessionManager(presenter_),
+    GraphicSpatSessionManager(presenter_),
     view(_view)
 {
     setMode(GraphicSessionMode::Loading);
@@ -38,27 +39,21 @@ GraphicSessionManager::GraphicSessionManager(View* _view, Presenter* presenter_)
     // Links to the view module
     sceneEditionComponent = view->GetMainContentComponent()->GetSceneEditionComponent();
     
-    // ICI ON CHARGE DES TRUCS
-    // Canvases const count defined here PLUS OU MOINS
+    // NOMBRE DE CANEVAS EST DÉFINI ICI, 2 en l'occurence pour le Miam Edit (idem Miam Spat)
     // On doit créer les sous-objets graphiques de canevas (View) avant de
     // les transmettre au sous-module de gestion de canevas (Presenter) que l'on crée
     // d'ailleurs ici aussi.
     canvasManagers.push_back(std::shared_ptr<MultiSceneCanvasInteractor>(new MultiSceneCanvasEditor(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas1)));    
     canvasManagers.push_back(std::shared_ptr<MultiSceneCanvasInteractor>(new MultiSceneCanvasEditor(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas2)));
     
-    
     // Links to the view module
     sceneEditionComponent->CompleteInitialization(this, multiCanvasComponent);
 
     for (size_t i=0 ; i<canvasManagers.size() ; i++)
     {
-        // After canvases are created : scenes creation
-        // DEFAULT SCENES, TO BE CHANGED
-        canvasManagers[i]->AddScene("Scène 1 quoi");
-        canvasManagers[i]->AddScene("Scène 2 quoi");
-        canvasManagers[i]->AddScene("Scène 3 quoi");
+        // After canvases are created : creation of 1 empty scene (to avoid bugs...)
+        canvasManagers[i]->AddScene("[scène vide]");
     }
-    
     
     // Finally, state of the presenter
     setMode(GraphicSessionMode::Loaded);
@@ -69,16 +64,10 @@ GraphicSessionManager::GraphicSessionManager(View* _view, Presenter* presenter_)
     
     // SÉLECTION/CHARGEMENT D'UN TRUC PAR DÉFAUT
     SetSelectedCanvas(canvasManagers.front());
+     
 }
 
-void GraphicSessionManager::CompleteInitialisation(std::shared_ptr<SpatInterpolator<double>> _spatInterpolator)
-{
-    spatInterpolator = _spatInterpolator;
-}
-
-GraphicSessionManager::~GraphicSessionManager()
-{
-}
+GraphicSessionManager::~GraphicSessionManager() {}
 
 
 // Testing purposes only
@@ -316,6 +305,14 @@ void GraphicSessionManager::OnEnterSpatScenesEdition()
     // Forced update of canvases
     for (size_t i=0 ; i<canvasManagers.size() ; i++)
         canvasManagers[i]->OnResized();
+    // To update menus related to the selected area
+    if (auto selectedArea = getSelectedCanvasAsEditable()->GetSelectedArea())
+        getSelectedCanvasAsEditable()->SetSelectedArea(selectedArea);
+}
+std::shared_ptr<bptree::ptree> GraphicSessionManager::OnLeaveSpatScenesEdition()
+{
+    // Save to XML (Presenter does it)
+    return GetCanvasesTree();
 }
 
 void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_)
@@ -414,18 +411,19 @@ void GraphicSessionManager::OnDeletePoint()
     else
         selectedCanvas->SetMode(CanvasManagerMode::AreaSelected);
 }
-void GraphicSessionManager::OnAddArea()
+void GraphicSessionManager::OnAddArea(int areaType)
 {
     if (selectedCanvas)
     {
-        // Cannot call this generic function :
-        //getSelectedCanvasAsEditable()->AddDefaultArea(GetNextAreaId());
-        // we need to build a SpatArea...
-        
-        // Comment récupérer le ratio actuel de canevas ?
+        // Information needed
         float ratio = selectedCanvas->GetMultiSceneCanvasComponent()->GetCanvas()->GetRatio();
-        
-        auto spatPolygon = std::make_shared<SpatPolygon>(GetNextAreaId(), bpt::point(0.5, 0.5), 8, 0.15, Colours::grey, ratio);
+        int polygonPointsCount;
+        if (areaType >= AreaDefaultType::Polygon)
+            polygonPointsCount = areaType;
+        else
+            throw std::logic_error("Cannot add something else than polygons at the moment");
+        // Actual addition here
+        auto spatPolygon = std::make_shared<SpatPolygon>(GetNextAreaId(), bpt::point(0.5, 0.5), polygonPointsCount, 0.15, Colours::grey, ratio);
         getSelectedCanvasAsEditable()->AddArea(spatPolygon);
         selectedCanvas->CallRepaint();
     }
@@ -547,4 +545,7 @@ void GraphicSessionManager::OnSpatStateChanged(int spatStateIdx)
         getSelectedCanvasAsEditable()->OnResized();
     }
 }
+
+
+
 

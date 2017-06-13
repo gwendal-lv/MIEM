@@ -12,8 +12,15 @@
 
 #include <iostream>
 #include <string>
+#include <memory>
 
 #include "IPresenter.h"
+
+#include "IGraphicSessionManager.h"
+
+#include "boost/property_tree/ptree.hpp"
+#include "boost/property_tree/xml_parser.hpp"
+namespace bptree = boost::property_tree;
 
 
 namespace Miam {
@@ -28,20 +35,31 @@ namespace Miam {
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
         
         private :
-        // Pointer to the unique Model module
+        // Private links to abtractions of sub-modules
         SpatModel* model = 0;
+        IGraphicSessionManager* graphicSessionManager = 0;
         
-        
+        // - - - - - Back-ups of other spatialization data trees - - - - -
+        std::shared_ptr<bptree::ptree> lastSpatStatesTree;
+        std::shared_ptr<bptree::ptree> lastSpatScenesTree;
+        std::string lastFilename;
         
         // = = = = = = = = = = METHODS = = = = = = = = = =
         
         public :
         // - - - - - Construction and Destruction (and init) - - - - -
-        void CompleteInitialisation(SpatModel* _model);
+        SpatPresenter();
+        virtual ~SpatPresenter() {}
+        void CompleteInitialisation(IGraphicSessionManager* _graphicSessionManager, SpatModel* _model);
         
-        // - - - - - XML loading - - - - -
+        // - - - - - XML import/export - - - - -
         virtual void LoadSession(std::string filename);
-        
+        /// \Brief Saves the current session to the given file name, or to the last
+        /// used file name is file name is empty.
+        virtual void SaveSession(std::string filename = "");
+        protected :
+        virtual void updateSpatStatesTree(std::shared_ptr<bptree::ptree> newTree);
+        virtual void updateSpatScenesTree(std::shared_ptr<bptree::ptree> newTree);
     };
     
     

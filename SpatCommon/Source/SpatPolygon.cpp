@@ -14,6 +14,13 @@ using namespace Miam;
 
 // ========== CONSTRUCTION ==========
 
+SpatPolygon::SpatPolygon(bptree::ptree & areaTree)
+:
+EditablePolygon(areaTree) //, SpatArea(areaTree)
+{
+    init();
+}
+
 SpatPolygon::SpatPolygon(int64_t _Id) :
 EditablePolygon(_Id),
 SpatArea()
@@ -38,4 +45,14 @@ SpatArea()
 void SpatPolygon::init()
 {
     SpatArea::OnVirtualBaseClassesContructed();
+}
+
+
+
+// = = = = = = = = = = XML import/export = = = = = = = = = =
+std::shared_ptr<bptree::ptree> SpatPolygon::GetTree()
+{
+    auto inheritedTree = EditablePolygon::GetTree();
+    inheritedTree->add_child("spatstate", *getSpatStateTree());
+    return inheritedTree;
 }

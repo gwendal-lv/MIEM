@@ -21,6 +21,8 @@
 #include "GraphicSessionManager.h"
 
 #include <cmath>
+
+#include "IDrawableArea.h" // areas default types defines
 //[/Headers]
 
 #include "SceneEditionComponent.h"
@@ -483,7 +485,22 @@ void SceneEditionComponent::buttonClicked (Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == addAreaTextButton)
     {
         //[UserButtonCode_addAreaTextButton] -- add your button handler code here..
-        graphicSessionManager->OnAddArea();
+        // Pop-up menu to get the kind of area to add
+        PopupMenu menu;
+        menu.addItem (AreaDefaultType::Ellipse, "Ellipse", false); // disabled
+        menu.addSeparator();
+        menu.addItem(AreaDefaultType::Polygon, "Triangle");
+        menu.addItem(AreaDefaultType::Polygon+1, "Square");
+        menu.addItem(AreaDefaultType::Polygon+2, "Pentagon");
+        menu.addItem(AreaDefaultType::Polygon+3, "Hexagon");
+        menu.addItem(AreaDefaultType::Polygon+4, "Heptagon");
+        menu.addItem(AreaDefaultType::Polygon+5, "Octogon");
+        const int userChoice = menu.show();
+        if (userChoice != 0) // (0 : case "user didn't chose something")
+        {
+            // Actual addition then
+            graphicSessionManager->OnAddArea(userChoice);
+        }
         //[/UserButtonCode_addAreaTextButton]
     }
     else if (buttonThatWasClicked == deleteAreaTextButton)

@@ -11,6 +11,7 @@
 
 #include "MultiSceneCanvasComponent.h"
 
+#include "MultiSceneCanvasInteractor.h"
 
 
 

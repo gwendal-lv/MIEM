@@ -15,14 +15,17 @@
 #include "JuceHeader.h"
 
 #include "SceneCanvasComponent.h"
-#include "MultiSceneCanvasInteractor.h"
 
 #include "InteractiveScene.h"
 
 using namespace Miam;
 
 
-
+namespace Miam
+{
+    // forward declarations
+    class MultiSceneCanvasInteractor;
+}
 
 //==============================================================================
 /*

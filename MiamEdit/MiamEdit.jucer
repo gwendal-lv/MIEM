@@ -89,6 +89,10 @@
         <FILE id="JAUbBW" name="Speaker.tpp.h" compile="0" resource="0" file="../SpatCommon/Source/Speaker.tpp.h"/>
       </GROUP>
       <GROUP id="{E4F9C14C-128F-4855-B761-3D7F2B473A15}" name="Presenter">
+        <FILE id="pFXZPP" name="GraphicSpatSessionManager.cpp" compile="1"
+              resource="0" file="../SpatCommon/Source/GraphicSpatSessionManager.cpp"/>
+        <FILE id="HezEeo" name="GraphicSpatSessionManager.h" compile="0" resource="0"
+              file="../SpatCommon/Source/GraphicSpatSessionManager.h"/>
         <FILE id="VVyjWB" name="SpatArea.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatArea.cpp"/>
         <FILE id="J6QHjo" name="SpatArea.h" compile="0" resource="0" file="../SpatCommon/Source/SpatArea.h"/>
         <FILE id="mFlpy0" name="SpatEllipse.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatEllipse.cpp"/>
@@ -227,13 +231,6 @@
         </GROUP>
       </GROUP>
       <GROUP id="{B91B2137-DC4A-127C-0037-DB058876BEFA}" name="Utils">
-        <FILE id="gJleTH" name="MiamExceptions.h" compile="0" resource="0"
-              file="../MiamCommon/Source/MiamExceptions.h"/>
-        <FILE id="cEVkJR" name="SparseMatrix.hpp" compile="0" resource="0"
-              file="../MiamCommon/Source/SparseMatrix.hpp"/>
-        <GROUP id="{5315337B-6E49-3E8D-A9F7-3A94BE3F4AA8}" name="Audio">
-          <FILE id="suhcBm" name="AudioDefines.h" compile="0" resource="0" file="../MiamCommon/Source/AudioDefines.h"/>
-        </GROUP>
         <GROUP id="{22E0B59F-81F6-AAC5-A6F4-3B584D7BBEA6}" name="AsyncParamChanges">
           <FILE id="ik81Hn" name="AsyncParamChange.h" compile="0" resource="0"
                 file="../MiamCommon/Source/AsyncParamChange.h"/>
@@ -243,6 +240,9 @@
                 file="../MiamCommon/Source/LockFreeParamChangeSender.h"/>
           <FILE id="g38vVM" name="ParametersIds.h" compile="0" resource="0" file="../MiamCommon/Source/ParametersIds.h"/>
         </GROUP>
+        <GROUP id="{5315337B-6E49-3E8D-A9F7-3A94BE3F4AA8}" name="Audio">
+          <FILE id="suhcBm" name="AudioDefines.h" compile="0" resource="0" file="../MiamCommon/Source/AudioDefines.h"/>
+        </GROUP>
         <FILE id="tPoEI0" name="CartesianLine.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/CartesianLine.cpp"/>
         <FILE id="eK35Tw" name="CartesianLine.h" compile="0" resource="0" file="../MiamCommon/Source/CartesianLine.h"/>
@@ -250,12 +250,18 @@
               file="../MiamCommon/Source/FrequencyMeasurer.cpp"/>
         <FILE id="iQfIMF" name="FrequencyMeasurer.h" compile="0" resource="0"
               file="../MiamCommon/Source/FrequencyMeasurer.h"/>
+        <FILE id="gJleTH" name="MiamExceptions.h" compile="0" resource="0"
+              file="../MiamCommon/Source/MiamExceptions.h"/>
         <FILE id="Rla6rP" name="MiamMath.cpp" compile="1" resource="0" file="../MiamCommon/Source/MiamMath.cpp"/>
         <FILE id="WSGVmq" name="MiamMath.h" compile="0" resource="0" file="../MiamCommon/Source/MiamMath.h"/>
         <FILE id="bHy1uW" name="PeriodicUpdateThread.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/PeriodicUpdateThread.cpp"/>
         <FILE id="kKs1q1" name="PeriodicUpdateThread.h" compile="0" resource="0"
               file="../MiamCommon/Source/PeriodicUpdateThread.h"/>
+        <FILE id="cEVkJR" name="SparseMatrix.hpp" compile="0" resource="0"
+              file="../MiamCommon/Source/SparseMatrix.hpp"/>
+        <FILE id="MzfIK4" name="XmlUtils.cpp" compile="1" resource="0" file="../MiamCommon/Source/XmlUtils.cpp"/>
+        <FILE id="hMBcir" name="XmlUtils.h" compile="0" resource="0" file="../MiamCommon/Source/XmlUtils.h"/>
       </GROUP>
     </GROUP>
   </MAINGROUP>

@@ -13,6 +13,15 @@
 using namespace Miam;
 
 
+// = = = = = = Construction/Destruction (no polymorphic cloning) = = = = = =
+/*
+SpatArea::SpatArea(bptree::ptree& areaTree)
+{
+    // We can't do anything really in here...
+    // The link to a spat state must be done externally...
+}
+*/
+
 
 // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
 
@@ -63,3 +72,18 @@ void SpatArea::OnSpatStateNameChanged()
 {
     SetName(linkedSpatState->GetName(false));
 }
+
+
+// = = = = = = = = = = XML import/export = = = = = = = = = =
+std::shared_ptr<bptree::ptree> SpatArea::getSpatStateTree()
+{
+    auto spatTree = std::make_shared<bptree::ptree>();
+    if (linkedSpatState)
+        spatTree->put("<xmlattr>.index", linkedSpatState->GetIndex());
+    else
+        spatTree->put("<xmlattr>.index", -1);
+    return spatTree;
+}
+
+
+

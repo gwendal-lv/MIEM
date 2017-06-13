@@ -83,7 +83,9 @@ void IGraphicSessionManager::SetSelectedCanvas(std::shared_ptr<MultiSceneCanvasI
 
 void IGraphicSessionManager::CallPresenterUpdate() {presenter->Update();}
 
-// - - - - - Mouse Events - - - - -
+
+// = = = = = = = = = = Mouse Events = = = = = = = = = =
+
 void IGraphicSessionManager::OnBackgroundMouseDown(const MouseEvent &event)
 {
     if (event.source.getIndex() == 0) // mouse or first touch only
@@ -112,4 +114,42 @@ void IGraphicSessionManager::OnBackgroundMouseUp(const MouseEvent& /* event */)
 {
     mouseResizingCanvas = false;
 }
+
+
+
+// = = = = = = = = = = XML import/export = = = = = = = = = =
+std::shared_ptr<bptree::ptree> IGraphicSessionManager::GetCanvasesTree()
+{
+    bptree::ptree canvasesInnerTree;
+    for (auto &canvasInteractor : canvasManagers)
+        canvasesInnerTree.add_child("canvas", *(canvasInteractor->GetTree()));
+    auto canvasesTree = std::make_shared<bptree::ptree>();
+    // Proper return, all <canvas> tags within a <canvases> tag
+    canvasesTree->add_child("canvases", canvasesInnerTree);
+    return canvasesTree;
+}
+
+
+std::vector< std::shared_ptr<bptree::ptree> >
+IGraphicSessionManager::ExtractCanvasesSubTrees(bptree::ptree& canvasesTree)
+{
+    std::vector< std::shared_ptr<bptree::ptree> > canvasTrees;
+    size_t canvasesCount = 0;
+    for (auto& canvasChild : canvasesTree.get_child("canvases"))
+    {
+        if (canvasChild.first != "canvas")
+            throw XmlReadException("<canvases> children can be <canvas> tags only.");
+        // Si on a bien le bon noeud, on continue :
+        canvasTrees.push_back(std::make_shared<bptree::ptree>());
+        // nul en terme d'optimisation mais au moins ça marche........
+        canvasTrees.back()->add_child("canvas", canvasChild.second);
+        //write_xml(std::cout, canvasTrees.back()->get_child("canvas.scenes"));
+        // For post-checkings
+        canvasesCount++;
+    }
+    if (canvasesCount != canvasManagers.size())
+        throw XmlReadException(std::to_string(canvasesCount) + " <canvas> elements found, but exactly " + std::to_string(canvasManagers.size()) + " are required");
+    return canvasTrees;
+}
+
 

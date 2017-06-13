@@ -28,6 +28,9 @@ namespace Miam {
     {
         // - - - - - Construction/Destruction + polymorphic cloning - - - - -
         public :
+        
+        EditablePolygon(bptree::ptree& areaTree);
+        
 		/// \param _Id See DrawablePolygon::DrawablePolygon
         EditablePolygon(int64_t _Id);
 		/// \param _Id See DrawablePolygon::DrawablePolygon

@@ -18,7 +18,7 @@
 #include <map>
 #include <string>
 
-#include "IGraphicSessionManager.h"
+#include "GraphicSpatSessionManager.h"
 
 #include "EditablePolygon.h"
 
@@ -46,7 +46,7 @@ namespace Miam {
 	/// References itself to the SceneEditionComponent and the several
 	/// SceneCanvasComponents, for these components to transfer events to this sub-module
 	/// directly, and not to the Presenter.
-    class GraphicSessionManager : public IGraphicSessionManager {
+    class GraphicSessionManager : public GraphicSpatSessionManager {
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
         
@@ -55,9 +55,6 @@ namespace Miam {
         // links back to the View module
         View* view;
         SceneEditionComponent* sceneEditionComponent;
-        
-        // For communication with Model
-        std::shared_ptr<SpatInterpolator<double>> spatInterpolator;
         
         // internal states
         GraphicSessionMode mode;
@@ -78,10 +75,6 @@ namespace Miam {
         public :
         /// \brief Construction (the whole Presenter module is built after the View).
         GraphicSessionManager(View* _view, Presenter* presenter_);
-        
-        /// \Brief to be called after Model construction (which occurs
-        /// after Presenter construction)
-        void CompleteInitialisation(std::shared_ptr<SpatInterpolator<double>> _spatInterpolator);
         
         /// \brief Destruction and the editor and the canvases
         virtual ~GraphicSessionManager();
@@ -128,12 +121,13 @@ namespace Miam {
         // ----- Events from the Presenter itself -----
         /// \brief Updates the data that may have been modified during AppMode
         void OnEnterSpatScenesEdition();
+        std::shared_ptr<bptree::ptree> OnLeaveSpatScenesEdition();
         
         virtual void HandleEventSync(std::shared_ptr<GraphicEvent> event_) override;
         
         
         // ----- Event to View -----
-        void DisplayInfo(String info) override;
+        virtual void DisplayInfo(String info) override;
         
         
         // ----- Events from View, transmitted to the selected Canvas Manager -----
@@ -148,7 +142,7 @@ namespace Miam {
         void OnAddPoint();
         void OnDeletePoint();
         
-        void OnAddArea();
+        void OnAddArea(int areaType = AreaDefaultType::Polygon+1); // default = square
         void OnDeleteArea();
         
         void OnSendBackward();

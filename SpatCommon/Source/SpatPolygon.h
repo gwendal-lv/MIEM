@@ -36,6 +36,8 @@ namespace Miam
         
         // - - - - - Construction/Destruction + polymorphic cloning - - - - -
         
+        SpatPolygon(bptree::ptree & areaTree);
+        
         /// \param _Id See EditablePolygon::EditablePolygon
         SpatPolygon(int64_t _Id);
         /// \param _Id See EditablePolygon::EditablePolygon
@@ -55,6 +57,11 @@ namespace Miam
         
         virtual IDrawableArea* Clone() const override {return new SpatPolygon(*this);}
         
+        
+        
+        // - - - - - XML import/export - - - - -
+        virtual std::string GetTypeAsString() const override {return "SpatPolygon";}
+        virtual std::shared_ptr<bptree::ptree> GetTree() override;
         
         
     };

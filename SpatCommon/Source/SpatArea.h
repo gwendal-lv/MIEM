@@ -50,6 +50,7 @@ namespace Miam
         public :
         
         // - - - - - Construction/Destruction (no polymorphic cloning) - - - - -
+        //SpatArea(bptree::ptree& areaTree);
         
         /// \brief Virtual-inherited class (this one for example) are
         /// constructed first... So we cannot call
@@ -70,6 +71,11 @@ namespace Miam
         void LinkToSpatState(std::shared_ptr< SpatState<double> > spatState);
         
         void OnSpatStateNameChanged();
+        
+        
+        // - - - - - XML import/export - - - - -
+        protected :
+        std::shared_ptr<bptree::ptree> getSpatStateTree();
         
     };
     

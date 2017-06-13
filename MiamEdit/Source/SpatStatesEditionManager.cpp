@@ -80,19 +80,14 @@ void SpatStatesEditionManager::OnEnterSpatStatesEdition()
     // Forces graphical updates
     selectSpatState(selectedSpatState);
 }
-void SpatStatesEditionManager::OnLeaveSpatStatesEdition()
+std::shared_ptr<bptree::ptree> SpatStatesEditionManager::OnLeaveSpatStatesEdition()
 {
     sendDataToModel(editionComponent->GetDisplayedSpatMatrix());
     // Update now to the editionComponent
     selectSpatState(selectedSpatState);
     
-    // Auto-save to XML
-    auto spatStatesTree = spatInterpolator->GetSpatStatesTree();
-    auto spatTree = std::make_shared<bptree::ptree>();
-    spatTree->add_child("spat", *spatStatesTree);
-    bptree::xml_writer_settings<std::string> xmlSettings(' ', 4);
-    bptree::write_xml("/Users/Gwendal/test.miam", *spatTree,
-                      std::locale(), xmlSettings);
+    // Save to XML (Presenter does it)
+    return spatInterpolator->GetSpatStatesTree();
 }
 
 

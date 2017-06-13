@@ -156,16 +156,25 @@ namespace Miam
         }
         
         // = = = = = = = = Property tree (for XML) import/export = = = = = = = =
+        /// \brief Returns the property tree describing the spat states' data
+        ///
+        /// This sub-tree does not know its own "master name tag" = <spat>,
+        /// but only knows its <states> tag and its <state> children
         std::shared_ptr<bptree::ptree> GetSpatStatesTree()
         {
-            auto pTree = std::make_shared<bptree::ptree>();
-            // This sub-tree does not know its own "master name tag" = <spat>,
-            // but only knows its children
+            bptree::ptree statesInnerTree;
             for (size_t i=0 ; i<spatStates.size() ; i++)
+            {
                 // Children sub-trees written within a <state> tag
-                pTree->add_child("state", *(spatStates[i]->GetTree()));
-            return pTree;
+                auto stateTree = spatStates[i]->GetTree();
+                stateTree->put("<xmlattr>.index", i);
+                statesInnerTree.add_child("state", *stateTree);
+            }
+            auto statesTree = std::make_shared<bptree::ptree>();
+            statesTree->add_child("states", statesInnerTree);
+            return statesTree;
         }
+        /// \brief Exact inverse process of GetSpatStatesTree()
         void SetSpatStatesFromTree(bptree::ptree & spatStatesTree)
         {
             // At first : reinit
@@ -177,11 +186,11 @@ namespace Miam
             for(auto &stateTree : spatStatesTree.get_child("states"))
             {
                 try {
-                    // DEVRAIT DÉPENDRE DU TYPE DE SPAT
-                    // DEVRAIT DÉPENDRE DU TYPE DE SPAT
-                    // DEVRAIT DÉPENDRE DU TYPE DE SPAT
-                    // DEVRAIT DÉPENDRE DU TYPE DE SPAT
-                    // DEVRAIT DÉPENDRE DU TYPE DE SPAT
+                     // DEVRAIT DÉPENDRE DU TYPE DE SPAT
+                     // DEVRAIT DÉPENDRE DU TYPE DE SPAT
+                     // DEVRAIT DÉPENDRE DU TYPE DE SPAT
+                     // DEVRAIT DÉPENDRE DU TYPE DE SPAT
+                     // DEVRAIT DÉPENDRE DU TYPE DE SPAT
                     auto lastMatrix = std::make_shared<MatrixState<T>>();
                     /// À optimiser (refait l'initialisation de la construction
                     /// de la SparseMatrix interne...)

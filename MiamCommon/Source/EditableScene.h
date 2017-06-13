@@ -20,6 +20,7 @@
 #include "AreaEvent.h"
 
 
+
 using namespace Miam;
 
 
@@ -135,7 +136,10 @@ namespace Miam
         virtual std::shared_ptr<GraphicEvent> OnCanvasMouseDown(const MouseEvent& mouseE) override;
         virtual std::shared_ptr<GraphicEvent> OnCanvasMouseDrag(const MouseEvent& mouseE) override;
         virtual std::shared_ptr<GraphicEvent> OnCanvasMouseUp(const MouseEvent& mouseE) override;
+
         
+        // - - - - - XML import/export - - - - -
+        std::shared_ptr<bptree::ptree> GetTree();
         
     };
     

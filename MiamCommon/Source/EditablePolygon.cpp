@@ -22,6 +22,13 @@ using namespace Miam;
 
 // ========== CONSTRUCTION ==========
 
+EditablePolygon::EditablePolygon(bptree::ptree& areaTree)
+:
+InteractivePolygon(areaTree)
+{
+    init();
+}
+
 EditablePolygon::EditablePolygon(int64_t _Id) :
     InteractivePolygon(_Id)
 {

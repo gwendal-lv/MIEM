@@ -10,8 +10,37 @@
 
 #include "SceneCanvasComponent.h"
 
+#include "XmlUtils.h"
+
 using namespace Miam;
 
+DrawablePolygon::DrawablePolygon(bptree::ptree & areaTree)
+:
+DrawableArea(areaTree)
+{
+    // Vérification préliminaire de présence des points du polygone
+    size_t pointsCount = XmlUtils::CheckIndexes(areaTree, "geometry", "point");
+    // Pré-chargement de chaque point de contour de <geometry>
+    std::vector< bpt > polygonPoints;
+    polygonPoints.resize(pointsCount);
+    for (auto& point : areaTree.get_child("geometry"))
+    {
+        auto index = point.second.get<size_t>("<xmlattr>.index");
+        try {
+            polygonPoints[index].set<0>( point.second.get<double>("<xmlattr>.x") );
+            polygonPoints[index].set<1>( point.second.get<double>("<xmlattr>.y") );
+        }
+        catch (bptree::ptree_error &e) {
+            throw XmlReadException("Point " + std::to_string(index) + ": ", e);
+        }
+    }
+    // Ajout des points 1 par 1 dans le bon ordre
+    for (auto& point : polygonPoints)
+        contourPoints.outer().push_back(point);
+    contourPoints.outer().push_back(polygonPoints[0]);// contour closing
+    // Actualisation graphique
+    createJucePolygon();
+}
 
 DrawablePolygon::DrawablePolygon(int64_t _Id) :
     DrawablePolygon(_Id, bpt(0.5f,0.5f), 3, 0.1f, Colours::darkgrey)
@@ -53,7 +82,7 @@ DrawablePolygon::DrawablePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 DrawablePolygon::DrawablePolygon(int64_t _Id, bpt _center, bpolygon& _bcontourPoints, Colour _fillColour) :
 	DrawableArea(_Id, _center, _fillColour)
 {
-	contourPoints = _bcontourPoints; // reminder : makes a elmt-by-elmt copy
+	contourPoints = _bcontourPoints;
 
 	createJucePolygon();
 }
@@ -102,4 +131,26 @@ void DrawablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
     
     createJucePolygon(parentCanvas->getWidth(), parentCanvas->getHeight());
 }
+
+
+// = = = = = = = = = = XML import/export = = = = = = = = = =
+std::shared_ptr<bptree::ptree> DrawablePolygon::GetTree()
+{
+    auto inheritedTree = DrawableArea::GetTree();
+    bptree::ptree geomeTree; // LOL.
+    // Lecture du polygone boost
+    std::vector<bpt> const& points = contourPoints.outer(); // ring
+    for (size_t i=0 ; i<points.size()-1 ; i++) // so we don't read the last point
+    {
+        bptree::ptree pointTree;
+        pointTree.put("<xmlattr>.index", i);
+        pointTree.put("<xmlattr>.x", points[i].get<0>());
+        pointTree.put("<xmlattr>.y", points[i].get<1>());
+        geomeTree.add_child("point", pointTree);
+    }
+    inheritedTree->put_child("geometry", geomeTree);
+    return inheritedTree;
+}
+
+    
 
