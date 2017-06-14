@@ -35,6 +35,11 @@ namespace Amusing
 		CompletePolygon(int64_t _Id,
 			bpt _center, bpolygon& _contourPoints,
 			Colour _fillColour);
+		
+		CompletePolygon(int64_t _Id,
+			bpt _center, bpolygon& _contourPoints,
+			std::vector<int> circles, std::vector<double> percent,
+			Colour _fillColour);
 
 		~CompletePolygon();
 

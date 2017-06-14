@@ -68,6 +68,7 @@ void TimeLine::setMidiTime(int idx, int newTime, int m_noteNumber)
 
 	if (idx < maxSize)
 	{
+		DBG("<");
 		if (idx < midiTimesSize)
 		{
 			midiTimes[idx] = newTime;
@@ -79,6 +80,7 @@ void TimeLine::setMidiTime(int idx, int newTime, int m_noteNumber)
 		}
 		else
 		{
+			DBG(">");
 			for (int i = 0; i < idx - midiTimesSize - 1; ++i)
 			{
 				midiTimes[midiTimesSize + i] = 0;
@@ -96,6 +98,7 @@ void TimeLine::setMidiTime(int idx, int newTime, int m_noteNumber)
 			++midiTimesSize;
 			++midiOfftimesSize;
 		}
+		DBG("create note : " + (String)notes[idx]);
 		//DBG("BMS : number of corners is now : " + (String)midiTimesSize);
 	}
 }
@@ -126,7 +129,7 @@ void TimeLine::process(int time)
 	{
 		if (time == midiTimes[i])
 		{
-			//DBG("On : " + (String)i);
+			//DBG("Play note : " + (String)notes[i]);
 			MidiMessage midiMsg = MidiMessage::noteOn(channel, notes[i], (uint8)100);
 			audioManager->sendMidiMessage(midiMsg);
 			return;

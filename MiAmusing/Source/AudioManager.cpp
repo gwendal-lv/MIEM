@@ -231,7 +231,7 @@ void AudioManager::getParameters()
 		switch (param.Type)
 		{
 		case Miam::AsyncParamChange::ParamType::Activate:
-			DBG("source : " + (String)param.Id1);
+			DBG("activate source : " + (String)param.Id1);
 			switch (param.Id2)
 			{
 			case 0:
@@ -288,7 +288,7 @@ void AudioManager::getAudioThreadMsg()
 				timeLines[param.Id1] = 0;
 				//midiSenderVector.erase(midiSenderVector.begin() + param.Id1);
 				break;
-			default:
+			case 1 :
 				DBG("AM : I construct a new polygon with ID : " + (String)param.Id1);
 				//midiSenderVector[param.Id1] = std::shared_ptr<TimeLine>(new TimeLine());
 				if(timeLines[param.Id1] == 0)
@@ -301,12 +301,14 @@ void AudioManager::getAudioThreadMsg()
 				++midiSenderSize;
 				timeLinesToAudio.push(timeLines[param.Id1]);
 				break;
+			default :
+				DBG("IMPOSSIBLE");
 			}
 			
 			break;
 		case Miam::AsyncParamChange::ParamType::Source:
 			//DBG("AM : the side " + (String)param.Id2 + " is = " + (String)param.DoubleValue);
-			
+			DBG("new note received : " + (String)param.IntegerValue);
 			if (timeLines[param.Id1] != 0)
 				timeLines[param.Id1]->setMidiTime(param.Id2, roundToInt(param.DoubleValue * (double)periode), param.IntegerValue);
 			break;

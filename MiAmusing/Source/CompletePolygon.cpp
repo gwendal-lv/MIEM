@@ -13,6 +13,8 @@
 
 #include "MiamMath.h"
 #include <cmath>
+#include <algorithm>
+
 
 #include "boost\geometry.hpp"
 #include "boost\geometry\algorithms\transform.hpp"
@@ -110,6 +112,16 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	//updateSubTriangles();
 }
 
+CompletePolygon::CompletePolygon(int64_t _Id,
+	bpt _center, bpolygon& _contourPoints,
+	std::vector<int> circles, std::vector<double> percent,
+	Colour _fillColour) : 
+	CompletePolygon(_Id, _center, _contourPoints, _fillColour)
+{
+	OnCircles = circles;
+	anglesPercentages = percent;
+}
+
 
 
 CompletePolygon::~CompletePolygon()
@@ -174,14 +186,17 @@ void CompletePolygon::angleToPercent()
 			anglesPercentages[i] = ptRad.get<0>() / (2 * M_PI);
 		else
 			anglesPercentages[i] = 1 + (ptRad.get<0>() / (2 * M_PI));
+		while (anglesPercentages[i] < anglesPercentages[0])
+			anglesPercentages[i] += 1;
+
 		if (i == (int)contourPointsInPixels.outer().size() - 1)
-			anglesPercentages[i] = 1;
+			anglesPercentages[i] = 1 + anglesPercentages[0];
 	}
 }
 
 void CompletePolygon::setReadingPosition(double p)
 {
-	DBG("position : " + (String)p);
+	//DBG("position : " + (String)p);
 	if (p >= 1)
 		p -= 1;
 	//DBG("position after: " + (String)p);
@@ -202,20 +217,30 @@ void CompletePolygon::setReadingPosition(double p)
 				//DBG((String)i);
 				if (p < anglesPercentages[i])
 				{
-					prev = i - 1;
-					suiv = i;
+					if (i == 0)
+					{
+						//prev = anglesPercentages.size() - 2; // -2 pour ne pas prendre le point de fermeture
+						//suiv = anglesPercentages.size() - 1; // point de fermeture, idem premier point
+						p = 1 + p;
+					}
+					else
+					{
+						prev = i - 1;
+						suiv = i;
+						break;
+					}
 					//DBG("!!! " + (String)p + " < " + (String)percentages[i]);
 					//DBG("stop");
-					break;
+					
 				}
 				else
 				{
 					prev = i;
-					suiv = (i + 1) % percentages.size();
+					suiv = (i + 1) % anglesPercentages.size();
 					//DBG((String)p + " > " + (String)percentages[i]);
 				}
 			}
-			DBG((String)prev + " " + (String)suiv);
+			//DBG((String)prev + " " + (String)suiv);
 			bpt P;
 			if (suiv != 0)
 			{
@@ -333,9 +358,9 @@ AreaEventType CompletePolygon::TryBeginPointMove(const Point<double>& newLocatio
 
 AreaEventType CompletePolygon::TryMovePoint(const Point<double>& newLocation)
 {
-	DBG((String)newLocation.x + "   " + (String)newLocation.y);
-	DBG("radius 0  = " + (String)radius[0]);
-	DBG("radius 1  = " + (String)radius[1]);
+	//DBG((String)newLocation.x + "   " + (String)newLocation.y);
+	//DBG("radius 0  = " + (String)radius[0]);
+	//DBG("radius 1  = " + (String)radius[1]);
 	double r1 = boost::geometry::distance(centerInPixels, bmanipulationPointInPixels);
 	AreaEventType areaEventType = EditablePolygon::TryMovePoint(newLocation);
 	double r2 = boost::geometry::distance(centerInPixels, bmanipulationPointInPixels);
@@ -516,13 +541,19 @@ std::shared_ptr<CompletePolygon> CompletePolygon::fusion(std::shared_ptr<Complet
 		int circ;
 		Helper(double a, int b) : pc(a), circ(b) {};
 		bool operator< (Helper b) { return (this->pc < b.pc); }
+		Helper() : pc(0), circ(0) {};
 	};
 
 	// get all the coordinates of the points (percentages and circles) of the current polygon
 	angleToPercent();
 	std::vector<Helper> test;
-	for (int j = 0; j < anglesPercentages.size()-1; ++j) // stop at size-1 because we don't need the closure point
+	for (int j = 0; j < anglesPercentages.size() - 1; ++j) // stop at size-1 because we don't need the closure point
+	{
+		double value = anglesPercentages[j];
+		if (value > 1)
+			value -= 1;
 		test.push_back(Helper(anglesPercentages[j], OnCircles[j]));
+	}
 
 	// add all the coordinates of the other polygon to the vector of coordinates
 	int i = 0;
@@ -538,8 +569,16 @@ std::shared_ptr<CompletePolygon> CompletePolygon::fusion(std::shared_ptr<Complet
 	// sort to have all the points in clockwise order
 	std::sort(test.begin(), test.end());
 
+	// delete duplicates
+	std::vector<Helper>::iterator it;
+	it = std::unique(test.begin(), test.end(), [](Helper a, Helper b) {return ((a.circ == b.circ) && (a.pc == b.pc)); });
+	test.resize(std::distance(test.begin(), it));
+
 	// get the XY(pixels) coordinates from the previously sorted coordinates
+	// + separate percentages and circles in different vectors
 	bpolygon newContourPointsInPixels;
+	std::vector<int> newCircles;
+	std::vector<double> newAnglesPercentages;
 	for (int j = 0; j < test.size(); j++)
 	{
 		double R = bullsEye[test[j].circ].getRadius();
@@ -547,6 +586,8 @@ std::shared_ptr<CompletePolygon> CompletePolygon::fusion(std::shared_ptr<Complet
 		bpt newPoint(R * std::cos(angle), R * std::sin(angle));
 		boost::geometry::add_point(newPoint, centerInPixels);
 		boost::geometry::append(newContourPointsInPixels.outer(),newPoint);
+		newCircles.push_back(test[j].circ);
+		newAnglesPercentages.push_back(test[j].pc);
 	}
 	boost::geometry::append(newContourPointsInPixels.outer(), newContourPointsInPixels.outer().at(0));
 
@@ -555,6 +596,10 @@ std::shared_ptr<CompletePolygon> CompletePolygon::fusion(std::shared_ptr<Complet
 	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> rescaler(1.0 / (double)parentCanvas->getWidth(), 1.0 / (double)parentCanvas->getHeight());
 	boost::geometry::transform(newContourPointsInPixels, newContourPoints, rescaler);
 	
+	DBG("new size : " + (String)int(newContourPoints.outer().size()));
+	for (int k = 0; k < test.size(); k++)
+		DBG((String)test[k].circ + "   " + (String)test[k].pc);
+
 	// create polygon
 	return std::shared_ptr<CompletePolygon>(new CompletePolygon(Id,center,newContourPoints,fillColour));
 
@@ -608,6 +653,9 @@ bool CompletePolygon::getAllPercentages(int idx, double &value)
 	if (idx < percentages.size())
 	{
 		value = anglesPercentages[idx];
+		while (value > 1)
+			value -= 1; // the angle percentage can be negative to guarantee the cursor deplacement, but the audio needs [o;1[
+		
 		return true;
 	}
 	else
