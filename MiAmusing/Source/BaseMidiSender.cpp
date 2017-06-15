@@ -68,7 +68,7 @@ void TimeLine::setMidiTime(int idx, int newTime, int m_noteNumber)
 
 	if (idx < maxSize)
 	{
-		DBG("<");
+		//DBG("<");
 		if (idx < midiTimesSize)
 		{
 			midiTimes[idx] = newTime;
@@ -80,7 +80,7 @@ void TimeLine::setMidiTime(int idx, int newTime, int m_noteNumber)
 		}
 		else
 		{
-			DBG(">");
+			//DBG(">");
 			for (int i = 0; i < idx - midiTimesSize - 1; ++i)
 			{
 				midiTimes[midiTimesSize + i] = 0;
@@ -98,7 +98,7 @@ void TimeLine::setMidiTime(int idx, int newTime, int m_noteNumber)
 			++midiTimesSize;
 			++midiOfftimesSize;
 		}
-		DBG("create note : " + (String)notes[idx]);
+		//DBG("create note : " + (String)notes[idx]);
 		//DBG("BMS : number of corners is now : " + (String)midiTimesSize);
 	}
 }

@@ -248,7 +248,7 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseUp(const MouseEvent& mo
 				{
 					if (auto hitP = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
 					{
-						if (auto singleAreaE = std::shared_ptr<AreaEvent>(draggedArea->intersection(hitP, 2)))
+						if (auto singleAreaE = std::shared_ptr<AreaEvent>(draggedArea->intersection(hitP, draggedArea->GetId())))
 						{
 							std::shared_ptr<AreaEvent> deleteE1;
 							std::shared_ptr<AreaEvent> deleteE2;

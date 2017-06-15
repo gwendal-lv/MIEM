@@ -15,6 +15,9 @@
 #include <cmath>
 #include <algorithm>
 
+#include <string>
+#include <sstream>
+
 
 #include "boost\geometry.hpp"
 #include "boost\geometry\algorithms\transform.hpp"
@@ -24,6 +27,13 @@ using namespace Miam;
 
 CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
 {
+
+	std::string s;
+	std::ostringstream ost;
+	ost << this;
+	s = ost.str();
+	DBG("Constructor : " + s);
+
 	showCursor = false;
 	pc = 0;
 	cursorCenter = contourPoints.outer().at(0);
@@ -51,6 +61,12 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 	Colour _fillColour, float _canvasRatio) :
 	EditablePolygon(_Id, _center, pointsCount, radius, _fillColour, _canvasRatio)
 {
+	std::string s;
+	std::ostringstream ost;
+	ost << this;
+	s = ost.str();
+	DBG("Constructor : " + s);
+
 	showCursor = false;
 	pc = 0;
 	cursorCenter = contourPoints.outer().at(0);
@@ -82,6 +98,12 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	bpt _center, bpolygon& _contourPoints, Colour _fillColour) :
 	EditablePolygon(_Id, _center, _contourPoints, _fillColour)
 {
+	std::string s;
+	std::ostringstream ost;
+	ost << this;
+	s = ost.str();
+	DBG("Constructor : " + s);
+
 	showCursor = true;
 	pc = 0;
 	cursorCenter = contourPoints.outer().at(0);
@@ -118,6 +140,12 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	Colour _fillColour) : 
 	CompletePolygon(_Id, _center, _contourPoints, _fillColour)
 {
+	std::string s;
+	std::ostringstream ost;
+	ost << this;
+	s = ost.str();
+	DBG("Constructor : " + s);
+
 	OnCircles = circles;
 	anglesPercentages = percent;
 }
@@ -131,6 +159,8 @@ CompletePolygon::~CompletePolygon()
 
 void CompletePolygon::Paint(Graphics& g)
 {
+
+
 	//DBG("CompletePolygon::Paint");
 	EditablePolygon::Paint(g);
 	g.setColour(Colours::white);
@@ -559,16 +589,19 @@ std::shared_ptr<CompletePolygon> CompletePolygon::fusion(std::shared_ptr<Complet
 	int i = 0;
 	double value;
 	int distance;
-	while (polyToFusion->getAllPercentages(i, value) && polyToFusion->getAllDistanceFromCenter(i,distance))
+	while (polyToFusion->getAllPercentages(i, value) && polyToFusion->getAllDistanceFromCenter(i, distance))
 	{
 		test.push_back(Helper(value, distance));
 		++i;
 	}
-	test.pop_back(); // delete last element = closure element
+	test.pop_back(); // delete last element = closure element of the second polygon
 
 	// sort to have all the points in clockwise order
 	std::sort(test.begin(), test.end());
 
+	// close the polygon
+	test.push_back(Helper(test[0].pc+1,test[0].circ));
+	
 	// delete duplicates
 	std::vector<Helper>::iterator it;
 	it = std::unique(test.begin(), test.end(), [](Helper a, Helper b) {return ((a.circ == b.circ) && (a.pc == b.pc)); });
@@ -589,7 +622,7 @@ std::shared_ptr<CompletePolygon> CompletePolygon::fusion(std::shared_ptr<Complet
 		newCircles.push_back(test[j].circ);
 		newAnglesPercentages.push_back(test[j].pc);
 	}
-	boost::geometry::append(newContourPointsInPixels.outer(), newContourPointsInPixels.outer().at(0));
+	//boost::geometry::append(newContourPointsInPixels.outer(), newContourPointsInPixels.outer().at(0));
 
 	// get normalized coordinates
 	bpolygon newContourPoints;
@@ -601,7 +634,7 @@ std::shared_ptr<CompletePolygon> CompletePolygon::fusion(std::shared_ptr<Complet
 		DBG((String)test[k].circ + "   " + (String)test[k].pc);
 
 	// create polygon
-	return std::shared_ptr<CompletePolygon>(new CompletePolygon(Id,center,newContourPoints,fillColour));
+	return std::shared_ptr<CompletePolygon>(new CompletePolygon(Id,center,newContourPoints,newCircles,newAnglesPercentages,fillColour));
 
 }
 
