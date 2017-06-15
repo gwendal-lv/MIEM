@@ -220,7 +220,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					while (complete->getAllPercentages(i, param.DoubleValue) && complete->getAllDistanceFromCenter(i, param.IntegerValue))
 					{
 						param.IntegerValue += 60;
-						DBG("noteToSend = " + (String)param.IntegerValue);
+						//DBG("noteToSend = " + (String)param.IntegerValue);
 						param.Id2 = i;
 						myPresenter->SendParamChange(param);
 						++i;
@@ -265,7 +265,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					while (complete->getAllPercentages(i, param.DoubleValue) && complete->getAllDistanceFromCenter(i, param.IntegerValue))
 					{
 						param.IntegerValue += 60;
-						DBG("noteToSend = " + (String)param.IntegerValue);
+						//DBG("noteToSend = " + (String)param.IntegerValue);
 						param.Id2 = i;
 						myPresenter->SendParamChange(param);
 						++i;
@@ -302,7 +302,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					{
 						//DBG("cote to send : " + (String)i);
 						param.IntegerValue += 60;
-						DBG("noteToSend = " + (String)param.IntegerValue);
+						//DBG("noteToSend = " + (String)param.IntegerValue);
 						param.Id2 = i;
 						myPresenter->SendParamChange(param);
 						++i;

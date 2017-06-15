@@ -231,15 +231,20 @@ void AudioManager::getParameters()
 		switch (param.Type)
 		{
 		case Miam::AsyncParamChange::ParamType::Activate:
-			DBG("activate source : " + (String)param.Id1);
+			
 			switch (param.Id2)
 			{
-			case 0:
+			case 1:
+				DBG("activate source    : " + (String)param.Id1);
 				paramToAllocationThread.push(param);
 				break;
-			default:
+			case 0:
+				DBG("desactivate source : " + (String)param.Id1);
 				timeLinesKnown[param.Id1] = 0; // so we won't access to the element anymore, we forget it
 				paramToAllocationThread.push(param); // we ask to the allocation thread to delete it
+				break;
+			default :
+				DBG("IMPOSSIBLE : 1 to activate, 0 to desactivate");
 				break;
 			}
 
