@@ -48,6 +48,13 @@ namespace Miam
         /// \brief The currently selected area (may be a null pointer)
         std::shared_ptr<IEditableArea> selectedArea = nullptr;
         
+        // After a special action on "mouse down" event, we may want sometimes
+        // to forget all events following this "mouse down" event, until the next
+        // "mouse up" event.
+        //
+        // Example : after addition or deletion, nothing moves on drag anymore.
+        bool bypassMouseEventsUntilMouseUp = false;
+        
         
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
