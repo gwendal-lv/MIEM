@@ -555,9 +555,12 @@ bool EditablePolygon::isNewCenterValid(const Point<double>& newLocation)
     bool hasCrossed = false;
     for (size_t i=0 ; (i<contourPointsInPixels.outer().size() && !hasCrossed) ; i++)
     {
-        CartesianLine cartesianLine = CartesianLine(contourPointsInPixels.outer().at(i),
-                contourPointsInPixels.outer().at(Math::Modulo((int)i+1, (int)contourPointsInPixels.outer().size())));
-        hasCrossed = cartesianLine.PointWentThrough(centerInPixels, bpt(newLocation.x, newLocation.y));
+        CartesianLine cartesianLine =
+            CartesianLine(contourPointsInPixels.outer().at(i),
+            contourPointsInPixels.outer().at(Math::Modulo((int)i+1,                                                             (int)contourPointsInPixels.outer().size())));
+        
+        hasCrossed = cartesianLine.PointWentThrough(centerInPixels,
+                                                    bpt(newLocation.x, newLocation.y));
     }
     return !hasCrossed;
 }
@@ -565,14 +568,36 @@ bool EditablePolygon::isNewCenterValid(const Point<double>& newLocation)
 
 void EditablePolygon::insertPointInPixels(const bpt& newContourPoint, int position)
 {
-    contourPointsInPixels.outer().insert(contourPointsInPixels.outer().begin()+position,
-                                 newContourPoint);
+    // Attention : comportement spécial à l'insertion du point en 0 (fermeture poly)
+    if (position > 0)
+        contourPointsInPixels.outer().insert(contourPointsInPixels.outer().begin()
+                                             +position,
+                                             newContourPoint);
+    else if (position == 0)
+    {
+        contourPointsInPixels.outer().insert(contourPointsInPixels.outer().begin(),
+                                             newContourPoint);
+        contourPointsInPixels.outer().back() = contourPointsInPixels.outer().front();
+    }
     
     recreateNormalizedPoints();
 }
 void EditablePolygon::deletePoint(int position)
 {
-	contourPointsInPixels.outer().erase(contourPointsInPixels.outer().begin() + position);
+    if (position > 0)
+        contourPointsInPixels.outer().erase(contourPointsInPixels.outer().begin()
+                                            + position);
+    // Attention : si on supprime le point 0, il pas mal changer le
+    // polygone boost, le rendre fermé, etc.
+    // On considère que c'est le point d'après qui devient le point de fermeture
+    else if (position == 0)
+    {
+        contourPointsInPixels.outer().erase(contourPointsInPixels.outer().begin());
+        auto& closingPoint = contourPointsInPixels.outer().back();
+        auto& firstPoint = contourPointsInPixels.outer().at(1);
+        closingPoint = firstPoint;
+    }
+        
     
     recreateNormalizedPoints();
 	this->CanvasResized(parentCanvas);
