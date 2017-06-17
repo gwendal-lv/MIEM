@@ -156,6 +156,23 @@ namespace Miam
         }
         
         // = = = = = = = = Property tree (for XML) import/export = = = = = = = =
+        /// \brief Formats configuration data managed by the interpolator
+        /// in a property tree.
+        ///
+        /// May also someday return the name of ins/outs, ....
+        std::shared_ptr<bptree::ptree> GetConfigurationTree()
+        {
+            auto confTree = std::make_shared<bptree::ptree>();
+            confTree->put("inputs.<xmlattr>.count", inputsCount);
+            confTree->put("outputs.<xmlattr>.count", outputsCount);
+            return confTree;
+        }
+        void SetConfigurationFromTree(bptree::ptree& tree)
+        {
+            inputsCount = tree.get<int>("inputs.<xmlattr>.count");
+            outputsCount = tree.get<int>("outputs.<xmlattr>.count");
+        }
+
         /// \brief Returns the property tree describing the spat states' data
         ///
         /// This sub-tree does not know its own "master name tag" = <spat>,

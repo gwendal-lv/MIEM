@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <miam>
+    <settings>
+        <model>
+            <inputs count="12"/>
+            <outputs count="8"/>
+            <senders>
+                <sender type="MiamOsc">
+                    <ip>127.0.0.1</ip>
+                    <udp>
+                        <port>10009</port>
+                    </udp>
+                </sender>
+            </senders>
+        </model>
+        <presenter>
+            <keyboardedition>false</keyboardedition>
+        </presenter>
+    </settings>
     <spat>
         <states>
             <state index="0">

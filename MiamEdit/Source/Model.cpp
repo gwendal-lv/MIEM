@@ -16,7 +16,6 @@
 #include "Presenter.h"
 
 
-#include "SpatSender.h"
 
 
 using namespace Miam;

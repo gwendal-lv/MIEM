@@ -22,6 +22,8 @@
 
 #include "SettingsManager.h"
 #include "AudioDefines.h"
+
+#include "XmlUtils.h"
 //[/Headers]
 
 #include "HardwareConfigurationComponent.h"
@@ -70,13 +72,12 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
     outputsCountLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
     addAndMakeVisible (oscPluginToggleButton = new ToggleButton ("OSC Plugin toggle button"));
-    oscPluginToggleButton->setButtonText (TRANS("Send OSC to Miam Matrix Router plug-in"));
-    oscPluginToggleButton->addListener (this);
+    oscPluginToggleButton->setButtonText (TRANS("Send OSC to Miam Matrix Router remote plug-in"));
     oscPluginToggleButton->setToggleState (true, dontSendNotification);
     oscPluginToggleButton->setColour (ToggleButton::textColourId, Colours::black);
 
     addAndMakeVisible (udpPortLabel = new Label ("UPD Port Label",
-                                                 TRANS("Remote plug-in listening on UDP port:")));
+                                                 TRANS("Plug-in listening on UDP port:")));
     udpPortLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     udpPortLabel->setJustificationType (Justification::centredRight);
     udpPortLabel->setEditable (false, false, false);
@@ -91,12 +92,30 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
     udpPortTextEditor->setScrollbarsShown (true);
     udpPortTextEditor->setCaretVisible (true);
     udpPortTextEditor->setPopupMenuEnabled (true);
-    udpPortTextEditor->setText (TRANS("-1"));
+    udpPortTextEditor->setText (TRANS("8001"));
 
-    addAndMakeVisible (keyboardButton = new ToggleButton ("keyboard button"));
-    keyboardButton->setButtonText (TRANS("Edit routing matrices from keyboard"));
-    keyboardButton->addListener (this);
-    keyboardButton->setColour (ToggleButton::textColourId, Colours::black);
+    addAndMakeVisible (keyboardToggleButton = new ToggleButton ("Keyboard toggle button"));
+    keyboardToggleButton->setButtonText (TRANS("Edit routing matrices from keyboard"));
+    keyboardToggleButton->addListener (this);
+    keyboardToggleButton->setColour (ToggleButton::textColourId, Colours::black);
+
+    addAndMakeVisible (ipAddressLabel = new Label ("Ip Address Label",
+                                                   TRANS("Plug-in host IP address:")));
+    ipAddressLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    ipAddressLabel->setJustificationType (Justification::centredRight);
+    ipAddressLabel->setEditable (false, false, false);
+    ipAddressLabel->setColour (Label::textColourId, Colours::black);
+    ipAddressLabel->setColour (TextEditor::textColourId, Colours::black);
+    ipAddressLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    addAndMakeVisible (ipAddressTextEditor = new TextEditor ("IP Address Text Editor"));
+    ipAddressTextEditor->setMultiLine (false);
+    ipAddressTextEditor->setReturnKeyStartsNewLine (false);
+    ipAddressTextEditor->setReadOnly (false);
+    ipAddressTextEditor->setScrollbarsShown (true);
+    ipAddressTextEditor->setCaretVisible (true);
+    ipAddressTextEditor->setPopupMenuEnabled (true);
+    ipAddressTextEditor->setText (TRANS("127.0.0.1"));
 
 
     //[UserPreSize]
@@ -110,6 +129,7 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
 
     // listeners
     udpPortTextEditor->addListener(this);
+    ipAddressTextEditor->addListener(this);
 
     //[/UserPreSize]
 
@@ -132,7 +152,9 @@ HardwareConfigurationComponent::~HardwareConfigurationComponent()
     oscPluginToggleButton = nullptr;
     udpPortLabel = nullptr;
     udpPortTextEditor = nullptr;
-    keyboardButton = nullptr;
+    keyboardToggleButton = nullptr;
+    ipAddressLabel = nullptr;
+    ipAddressTextEditor = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -161,9 +183,11 @@ void HardwareConfigurationComponent::resized()
     inputsCountLabel->setBounds ((getWidth() / 2) - 208, 16 + 0, 208, 24);
     outputsCountLabel->setBounds ((getWidth() / 2) - 208, 48 + 0, 208, 24);
     oscPluginToggleButton->setBounds ((getWidth() / 2) - (400 / 2), 96, 400, 24);
-    udpPortLabel->setBounds ((getWidth() / 2) - 336, 120 + 0, 336, 24);
-    udpPortTextEditor->setBounds ((getWidth() / 2) + 8, 120, 64, 24);
-    keyboardButton->setBounds ((getWidth() / 2) - (400 / 2), getHeight() - 48, 400, 24);
+    udpPortLabel->setBounds ((getWidth() / 2) - 336, 160 + 0, 336, 24);
+    udpPortTextEditor->setBounds ((getWidth() / 2) + 8, 160, 64, 24);
+    keyboardToggleButton->setBounds ((getWidth() / 2) - (400 / 2), getHeight() - 48, 400, 24);
+    ipAddressLabel->setBounds ((getWidth() / 2) - 336, 128 + 0, 336, 24);
+    ipAddressTextEditor->setBounds ((getWidth() / 2) + 8, 128, 120, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -195,16 +219,10 @@ void HardwareConfigurationComponent::buttonClicked (Button* buttonThatWasClicked
     //[UserbuttonClicked_Pre]
     //[/UserbuttonClicked_Pre]
 
-    if (buttonThatWasClicked == oscPluginToggleButton)
+    if (buttonThatWasClicked == keyboardToggleButton)
     {
-        //[UserButtonCode_oscPluginToggleButton] -- add your button handler code here..
-        //[/UserButtonCode_oscPluginToggleButton]
-    }
-    else if (buttonThatWasClicked == keyboardButton)
-    {
-        //[UserButtonCode_keyboardButton] -- add your button handler code here..
-        settingsManager->OnAllowKeyboardEdition(keyboardButton->getToggleState());
-        //[/UserButtonCode_keyboardButton]
+        //[UserButtonCode_keyboardToggleButton] -- add your button handler code here..
+        //[/UserButtonCode_keyboardToggleButton]
     }
 
     //[UserbuttonClicked_Post]
@@ -214,27 +232,19 @@ void HardwareConfigurationComponent::buttonClicked (Button* buttonThatWasClicked
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
-void HardwareConfigurationComponent::CompleteInitialization(SettingsManager* _settingsManager)
-{
-    settingsManager = _settingsManager;
-}
 
-int HardwareConfigurationComponent::GetUdpPort()
+void HardwareConfigurationComponent::textEditorReturnKeyPressed(TextEditor& editorThatHasChanged)
 {
-    try {
-        return std::stoi(udpPortLabel->getText().toStdString());
-    } catch (std::exception) {
-        return -1;
+    if (&editorThatHasChanged == ipAddressTextEditor.get())
+    {
+        // Value stays visible only if correct
+        std::string ipAddress = ipAddressTextEditor->getText().toStdString();
+        if ( ! XmlUtils::IsIpv4AddressValid(ipAddress))
+            ipAddressTextEditor->setText("", NotificationType::dontSendNotification);
+        else
+            settingsManager->OnIpAddressChanged(ipAddress);
     }
-}
-void HardwareConfigurationComponent::SetUdpPort(int udpPort)
-{
-    udpPortLabel->setText(std::to_string(udpPort), NotificationType::dontSendNotification);
-}
-
-void HardwareConfigurationComponent::textEditorTextChanged(TextEditor& editorThatHasChanged)
-{
-    if (&editorThatHasChanged == udpPortTextEditor.get())
+    else if (&editorThatHasChanged == udpPortTextEditor.get())
     {
         bool enteredValueIsCorrect = true;
         int parsedValue;
@@ -248,7 +258,8 @@ void HardwareConfigurationComponent::textEditorTextChanged(TextEditor& editorTha
             enteredValueIsCorrect = false;
         if ( ! enteredValueIsCorrect)
             udpPortTextEditor->setText("", NotificationType::dontSendNotification);
-        // We don't send it... for now
+        else
+            settingsManager->OnUdpPortChanged(parsedValue);
     }
 }
 //[/MiscUserCode]
@@ -293,23 +304,32 @@ BEGIN_JUCER_METADATA
          justification="34"/>
   <TOGGLEBUTTON name="OSC Plugin toggle button" id="74b5dae6c2ea74a2" memberName="oscPluginToggleButton"
                 virtualName="" explicitFocusOrder="0" pos="0Cc 96 400 24" txtcol="ff000000"
-                buttonText="Send OSC to Miam Matrix Router plug-in" connectedEdges="0"
-                needsCallback="1" radioGroupId="0" state="1"/>
+                buttonText="Send OSC to Miam Matrix Router remote plug-in" connectedEdges="0"
+                needsCallback="0" radioGroupId="0" state="1"/>
   <LABEL name="UPD Port Label" id="8d369e08975b779c" memberName="udpPortLabel"
          virtualName="" explicitFocusOrder="0" pos="0Cr 0 336 24" posRelativeX="dfbb24a51fa3d6c0"
          posRelativeY="e4ef4437203ce19e" textCol="ff000000" edTextCol="ff000000"
-         edBkgCol="0" labelText="Remote plug-in listening on UDP port:"
-         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
-         justification="34"/>
+         edBkgCol="0" labelText="Plug-in listening on UDP port:" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
+         fontsize="15" kerning="0" bold="0" italic="0" justification="34"/>
   <TEXTEDITOR name="UDP Port Text Editor" id="e4ef4437203ce19e" memberName="udpPortTextEditor"
-              virtualName="" explicitFocusOrder="0" pos="8C 120 64 24" initialText="-1"
+              virtualName="" explicitFocusOrder="0" pos="8C 160 64 24" initialText="8001"
               multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"
               caret="1" popupmenu="1"/>
-  <TOGGLEBUTTON name="keyboard button" id="8c809b7ecaa8a037" memberName="keyboardButton"
+  <TOGGLEBUTTON name="Keyboard toggle button" id="8c809b7ecaa8a037" memberName="keyboardToggleButton"
                 virtualName="" explicitFocusOrder="0" pos="0Cc 48R 400 24" posRelativeX="dfbb24a51fa3d6c0"
                 posRelativeW="dfbb24a51fa3d6c0" txtcol="ff000000" buttonText="Edit routing matrices from keyboard"
                 connectedEdges="0" needsCallback="1" radioGroupId="0" state="0"/>
+  <LABEL name="Ip Address Label" id="2066f0f6ef12dcf0" memberName="ipAddressLabel"
+         virtualName="" explicitFocusOrder="0" pos="0Cr 0 336 24" posRelativeX="dfbb24a51fa3d6c0"
+         posRelativeY="6997b5b4dc28675a" textCol="ff000000" edTextCol="ff000000"
+         edBkgCol="0" labelText="Plug-in host IP address:" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
+         fontsize="15" kerning="0" bold="0" italic="0" justification="34"/>
+  <TEXTEDITOR name="IP Address Text Editor" id="6997b5b4dc28675a" memberName="ipAddressTextEditor"
+              virtualName="" explicitFocusOrder="0" pos="8C 128 120 24" initialText="127.0.0.1"
+              multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"
+              caret="1" popupmenu="1"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

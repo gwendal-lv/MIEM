@@ -22,6 +22,10 @@
 #include "SpatStatesEditionManager.h"
 #include "SettingsManager.h"
 
+#include "boost/property_tree/ptree.hpp"
+#include "boost/property_tree/xml_parser.hpp"
+namespace bptree = boost::property_tree;
+
 
 namespace Miam {
     // Simple declaration : we don't need the entire description
@@ -94,6 +98,14 @@ namespace Miam {
         
         void Update() override;
         
+        
+        // - - - - -  XML import/export - - - - -
+        virtual void LoadSession(std::string filename) override;
+        virtual void SaveSession(std::string filename = "") override;
+        
+        virtual std::shared_ptr<bptree::ptree> GetConfigurationTree() override;
+        virtual void SetConfigurationFromTree(bptree::ptree&) override;
+
         
         
     };

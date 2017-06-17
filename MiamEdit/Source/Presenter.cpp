@@ -17,9 +17,6 @@
 
 #include <sstream>
 
-#include "boost/property_tree/ptree.hpp"
-#include "boost/property_tree/xml_parser.hpp"
-namespace bptree = boost::property_tree;
 
 using namespace Miam;
 
@@ -52,20 +49,7 @@ void Presenter::CompleteInitialisation(Model* _model)
     
     // Loading of the first XML session file (default if nothing else provided)
     std::string firstFileName = "../../../../../SpatCommon/Sessions/Default.miam";
-    try {
-        LoadSession(firstFileName);
-    }
-    catch (XmlReadException& e)
-    {
-        // Also display in a new window
-        view->DisplayInfo(std::string("[Reading XML] ") + e.what(), true);
-    }
-    // Updates (graphical mostly) just after
-    spatStatesEditionManager.UpdateView();
     
-    // Actual mode change here
-    // App mode changer to Scenes Edition by default (should be stored within the file ?)
-    appModeChangeRequest(AppMode::EditSpatScenes);
 }
 
 
@@ -132,6 +116,45 @@ void Presenter::Update()
 {
     // Check of Model messages !!!!!!
 }
+
+
+
+// = = = = = = = = = = XML import/export  = = = = = = = = = =
+void Presenter::LoadSession(std::string filename)
+{
+    try {
+        SpatPresenter::LoadSession(filename);
+    }
+    catch (XmlReadException& e)
+    {
+        // Also display in a new window
+        view->DisplayInfo(std::string("[Reading XML] ") + e.what(), true);
+    }
+    // Updates (graphical mostly) just after
+    spatStatesEditionManager.UpdateView();
+    
+    // Actual mode change here
+    // App mode changer to Scenes Edition by default (should be stored within the file ?)
+    appModeChangeRequest(AppMode::EditSpatScenes);
+}
+void Presenter::SaveSession(std::string filename)
+{
+    try { SpatPresenter::SaveSession(filename); }
+    catch (XmlWriteException& e) {
+        view->DisplayInfo(e.what());
+    }
+}
+
+std::shared_ptr<bptree::ptree> Presenter::GetConfigurationTree()
+{
+    return settingsManager.GetTree();
+}
+void Presenter::SetConfigurationFromTree(bptree::ptree& tree)
+{
+    settingsManager.SetFromTree(tree);
+}
+
+
 
 
 

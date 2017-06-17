@@ -26,6 +26,7 @@ void GraphicSpatSessionManager::CompleteInitialisation(std::shared_ptr<SpatInter
 
 
 // = = = = = = = = = = XML import/export = = = = = = = = = =
+
 void GraphicSpatSessionManager::SetFromTree(bptree::ptree& graphicSessionTree)
 {
     auto canvasTrees = IGraphicSessionManager::ExtractCanvasesSubTrees(graphicSessionTree);

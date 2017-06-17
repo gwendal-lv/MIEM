@@ -192,6 +192,7 @@ void MainBackgroundComponent::buttonClicked (Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == fileTextButton)
     {
         //[UserButtonCode_fileTextButton] -- add your button handler code here..
+        fileMenu->ShowMenuAndSendUserAnswer();
         //[/UserButtonCode_fileTextButton]
     }
 
@@ -203,8 +204,9 @@ void MainBackgroundComponent::buttonClicked (Button* buttonThatWasClicked)
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 
-void MainBackgroundComponent::CompleteInitialization()
+void MainBackgroundComponent::CompleteInitialization(Presenter* _presenter)
 {
+    fileMenu.reset( new FileMenu(_presenter) );
 }
 
 void MainBackgroundComponent::DisplayInfo(const String& message)

@@ -52,11 +52,22 @@ namespace Miam {
         virtual ~SpatPresenter() {}
         void CompleteInitialisation(IGraphicSessionManager* _graphicSessionManager, SpatModel* _model);
         
-        // - - - - - XML import/export - - - - -
+        
+        
+        // - - - - - Self XML import/export - - - - -
+        
+        virtual std::shared_ptr<bptree::ptree> GetConfigurationTree()
+        {return std::make_shared<bptree::ptree>(); } // empty tree....
+        virtual void SetConfigurationFromTree(bptree::ptree&) = 0;
+        
+        
+        // - - - - - XML import/export general management - - - - -
+        
         virtual void LoadSession(std::string filename);
         /// \Brief Saves the current session to the given file name, or to the last
         /// used file name is file name is empty.
         virtual void SaveSession(std::string filename = "");
+        
         protected :
         virtual void updateSpatStatesTree(std::shared_ptr<bptree::ptree> newTree);
         virtual void updateSpatScenesTree(std::shared_ptr<bptree::ptree> newTree);

@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <string>
+
 #include "MiamExceptions.h"
 
 namespace Miam
@@ -27,6 +29,11 @@ namespace Miam
         ///
         /// \return The number of elements (== max index + 1)
         static size_t CheckIndexes(const bptree::ptree& tree, const std::string& parentPath, const std::string& childrenPath, const std::string& indexPath = "<xmlattr>.index");
+        
+        static bool IsIpv4AddressValid(const std::string& ipAddressToCheck);
+        private :
+        static bool isBetween_0_255(std::string str);
+        public :
         
     };
 }

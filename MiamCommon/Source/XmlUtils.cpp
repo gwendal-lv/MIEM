@@ -10,6 +10,9 @@
 
 #include "XmlUtils.h"
 
+#include <vector>
+#include <regex>
+
 using namespace Miam;
 
 size_t XmlUtils::CheckIndexes(const bptree::ptree& tree, const std::string& parentPath, const std::string& childrenPath, const std::string& indexPath)
@@ -39,5 +42,55 @@ size_t XmlUtils::CheckIndexes(const bptree::ptree& tree, const std::string& pare
     }
     
     return indexesCounts.size();
+}
+
+
+bool XmlUtils::IsIpv4AddressValid(const std::string& ipAddressToCheck)
+{
+    bool isIpValid = true;
+    // Regex pour retrouver les composantes de l'adresse IP,
+    // qu'on vérifiera 1 par 1 juste après
+    std::regex get2IpComponentsRegex("(.*?)\\.(.*?)");
+    std::smatch matchResults;
+    std::string remainingIpToCheck = ipAddressToCheck;
+    int ipComponentsCount = 0;
+    // While we find ip components (sub strings)
+    while ( std::regex_search(remainingIpToCheck, matchResults, get2IpComponentsRegex)
+        && isIpValid
+        && ipComponentsCount < 4)
+    {
+        // Check for validity
+        isIpValid = isBetween_0_255( *( ++(matchResults.begin()) ) );
+        // Next step
+        if (isIpValid)
+        {
+            ipComponentsCount++;
+            remainingIpToCheck = matchResults.suffix();
+        }
+    }
+    // Test of remaining string (last component, alone)
+    isIpValid = isBetween_0_255(remainingIpToCheck);
+    if (isIpValid)
+        ipComponentsCount++;
+    // Ip components counting
+    if (ipComponentsCount != 4)
+        isIpValid = false;
+    
+    return isIpValid;
+}
+bool XmlUtils::isBetween_0_255(std::string str)
+{
+    bool isBetween = true;
+    int ipComponent = -1;
+    try {
+        ipComponent = std::stoi(str);
+    }
+    catch (std::exception) {isBetween = false;}
+    
+    // Numeric values check
+    if (ipComponent < 0 || 256 <= ipComponent)
+        isBetween = false;
+    
+    return isBetween;
 }
 

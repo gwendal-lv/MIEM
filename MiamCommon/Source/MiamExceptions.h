@@ -36,7 +36,8 @@ namespace Miam
         {}
         
         /// \brief Contructor thats creates a new exception, which "what" message
-        /// is the addition of a given text and the text of an already existing exception
+        /// is the addition of a given text and the text of an already existing
+        /// exception
         XmlReadException(std::string textErrorToAddFirst, std::runtime_error& originalError)
         :
         std::runtime_error(textErrorToAddFirst + originalError.what())
@@ -56,6 +57,30 @@ namespace Miam
                 return XmlReadException();
         }
         
+    };
+    
+    
+    class XmlWriteException : public std::runtime_error
+    {
+        public :
+        
+        XmlWriteException()
+        :
+        std::runtime_error(std::string("XML write error"))
+        {}
+        
+        XmlWriteException(std::string errorString)
+        :
+        std::runtime_error(errorString)
+        {}
+        
+        /// \brief Contructor thats creates a new exception, which "what" message
+        /// is the addition of a given text and the text of an already existing
+        /// exception
+        XmlWriteException(std::string textErrorToAddFirst, std::runtime_error& originalError)
+        :
+        std::runtime_error(textErrorToAddFirst + originalError.what())
+        {}
     };
     
 }

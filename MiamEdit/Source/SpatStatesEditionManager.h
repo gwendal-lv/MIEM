@@ -100,7 +100,7 @@ namespace Miam
         // - - - - - Settings Management - - - - -
         public :
         void AllowKeyboardEdition(bool allow);
-
+        
     };
     
 }

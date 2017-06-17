@@ -200,7 +200,7 @@ void SpatStatesEditionManager::sendDataToModel(std::shared_ptr<SpatMatrix> curre
         if (std::shared_ptr<MatrixState<double>> matrixState = std::dynamic_pointer_cast<MatrixState<double>>(selectedSpatState) )
             matrixState->SetMatrix(currentMatrix);
         else
-            throw std::logic_error("State is not a Matrix (behavior not implemented");
+            throw std::logic_error("State is not a Matrix (behavior not implemented)");
     }
 }
 
@@ -210,4 +210,5 @@ void SpatStatesEditionManager::AllowKeyboardEdition(bool allow)
 {
     editionComponent->AllowKeyboardEdition(allow);
 }
+
 

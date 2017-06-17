@@ -547,5 +547,3 @@ void GraphicSessionManager::OnSpatStateChanged(int spatStateIdx)
 }
 
 
-
-
