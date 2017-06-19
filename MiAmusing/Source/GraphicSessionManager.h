@@ -159,6 +159,7 @@ namespace Amusing {
 	private :
 		bool deleting;
 		int tempo;
+		int circleToNote(int numCirc);
 	};
 
 

@@ -157,6 +157,12 @@ std::shared_ptr<MultiSceneCanvasEditor> GraphicSessionManager::getSelectedCanvas
 	else throw std::runtime_error("Canvas not selected, or canvas cannot be casted a Miam::MultiSceneCanvasEditor");
 }
 
+int GraphicSessionManager::circleToNote(int numCirc)
+{
+	//int gamme[7] = { 60, 62, 64, 65, 67, 69, 71 }; // juste
+	int gamme[7] = { 36, 38, 39, 41, 43, 45, 46 }; // 2 bemols
+	return gamme[numCirc];
+}
 
 // ===== EVENTS FROM THE PRESENTER ITSELF =====
 void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_)
@@ -219,7 +225,8 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					i = 0;
 					while (complete->getAllPercentages(i, param.DoubleValue) && complete->getAllDistanceFromCenter(i, param.IntegerValue))
 					{
-						param.IntegerValue += 60;
+						//param.IntegerValue = 60 + 2* (param.IntegerValue);
+						param.IntegerValue = circleToNote(param.IntegerValue);
 						//DBG("noteToSend = " + (String)param.IntegerValue);
 						param.Id2 = i;
 						myPresenter->SendParamChange(param);
@@ -264,7 +271,8 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					//DBG("before while");
 					while (complete->getAllPercentages(i, param.DoubleValue) && complete->getAllDistanceFromCenter(i, param.IntegerValue))
 					{
-						param.IntegerValue += 60;
+						//param.IntegerValue = 60 + (2*param.IntegerValue);
+						param.IntegerValue = circleToNote(param.IntegerValue);
 						//DBG("noteToSend = " + (String)param.IntegerValue);
 						param.Id2 = i;
 						myPresenter->SendParamChange(param);
@@ -301,7 +309,8 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					while (complete->getAllPercentages(i, param.DoubleValue) && complete->getAllDistanceFromCenter(i, param.IntegerValue))
 					{
 						//DBG("cote to send : " + (String)i);
-						param.IntegerValue += 60;
+						//param.IntegerValue = 60 + (2*param.IntegerValue);
+						param.IntegerValue = circleToNote(param.IntegerValue);
 						//DBG("noteToSend = " + (String)param.IntegerValue);
 						param.Id2 = i;
 						myPresenter->SendParamChange(param);

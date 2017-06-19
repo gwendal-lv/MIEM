@@ -80,39 +80,46 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 		canvasComponent->GetRatio()));
 	newPolygon->SetActive(false);
 	newPolygon->CanvasResized(canvasComponent);
-	if (areas.size() > 0)
-	{
-		for (int i = 0; i<(int)areas.size(); ++i)
-		{
-			if (auto hitP = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
-			{
-				if (auto singleAreaE = std::shared_ptr<AreaEvent>(newPolygon->intersection(hitP,nextAreaId)))
-				{
-					std::shared_ptr<AreaEvent> deleteE1;
-					std::shared_ptr<MultiAreaEvent> multiE;
-					switch (singleAreaE->GetType())
-					{
-					case AreaEventType::Added:
-						DBG("hitP->GetId()" + (String)hitP->GetId());
-						DBG("nextAreaId" + (String)nextAreaId);
-						// Fusion : need to add this area and to delete the 2 others (in fact just the first one, newPolygon had been created but not added so the smart pointer will do it for us
-						multiE = std::shared_ptr<MultiAreaEvent>(new MultiAreaEvent());
-						multiE->AddAreaEvent(AddArea(std::dynamic_pointer_cast<CompletePolygon>(singleAreaE->GetConcernedArea())));
-						deleteE1 = deleteAreaByUniqueId(hitP->GetId());
-						multiE->AddAreaEvent(deleteE1);
-						return multiE;
-						break;
-					case AreaEventType::NothingHappened:
-						// Intersection
-					default:
-						// wrong
-						break;
-					}
-				}
+	//if (areas.size() > 0)
+	//{
+	//	for (int i = 0; i<(int)areas.size(); ++i)
+	//	{
+	//		if (auto hitP = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
+	//		{
+	//			if (auto singleAreaE = std::shared_ptr<AreaEvent>(newPolygon->intersection(hitP,nextAreaId)))
+	//			{
+	//				std::shared_ptr<AreaEvent> deleteE1;
+	//				//std::shared_ptr<MultiAreaEvent> multiE;
+	//				switch (singleAreaE->GetType())
+	//				{
+	//				case AreaEventType::Added:
+	//					DBG("hitP->GetId()" + (String)hitP->GetId());
+	//					DBG("nextAreaId" + (String)nextAreaId);
+	//					// Fusion : need to add this area and to delete the 2 others (in fact just the first one, newPolygon had been created but not added so the smart pointer will do it for us
+	//					//multiE = std::shared_ptr<MultiAreaEvent>(new MultiAreaEvent());
+	//					//multiE->AddAreaEvent(AddArea(std::dynamic_pointer_cast<CompletePolygon>(singleAreaE->GetConcernedArea())));
+	//					deleteE1 = deleteAreaByUniqueId(hitP->GetId());
+	//					//multiE->AddAreaEvent(deleteE1);
+	//					if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
+	//					{
+	//						manager->OnFusion(deleteE1);
+	//						//manager->OnFusion(deleteE2);
+	//						return(AddArea(std::dynamic_pointer_cast<CompletePolygon>(singleAreaE->GetConcernedArea())));
 
-			}
-		}
-	}
+	//					}
+	//					//return multiE;
+	//					break;
+	//				case AreaEventType::NothingHappened:
+	//					// Intersection
+	//				default:
+	//					// wrong
+	//					break;
+	//				}
+	//			}
+
+	//		}
+	//	}
+	//}
 	newPolygon->setCursorVisible(true, canvasComponent);
 	std::shared_ptr<AreaEvent> areaE = AddArea(newPolygon);
 
@@ -194,22 +201,22 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDrag(const MouseEvent& 
 				{
 					if (auto hitP = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
 					{
-						if (auto singleAreaE = std::shared_ptr<AreaEvent>(draggedArea->intersection(hitP,2)))
-						{
-							std::shared_ptr<AreaEvent> deleteE1;
-							std::shared_ptr<MultiAreaEvent> multiE;
-							switch (singleAreaE->GetType())
-							{
-							case AreaEventType::Added :
-								// for the moment just do nothing, fusion only on mousedragstop (mouseUp)
-								break;
-							case AreaEventType::NothingHappened :
-								// Intersection
-							default:
-								// wrong
-								break;
-							}
-						}
+						//if (auto singleAreaE = std::shared_ptr<AreaEvent>(draggedArea->intersection(hitP,2)))
+						//{
+						//	std::shared_ptr<AreaEvent> deleteE1;
+						//	//std::shared_ptr<MultiAreaEvent> multiE;
+						//	switch (singleAreaE->GetType())
+						//	{
+						//	case AreaEventType::Added :
+						//		// for the moment just do nothing, fusion only on mousedragstop (mouseUp)
+						//		break;
+						//	case AreaEventType::NothingHappened :
+						//		// Intersection
+						//	default:
+						//		// wrong
+						//		break;
+						//	}
+						//}
 												
 					}
 				}
@@ -250,9 +257,26 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseUp(const MouseEvent& mo
 					{
 						if (auto singleAreaE = std::shared_ptr<AreaEvent>(draggedArea->intersection(hitP, draggedArea->GetId())))
 						{
+							if (auto multiE = std::dynamic_pointer_cast<MultiAreaEvent>(singleAreaE))
+							{
+								if (multiE->GetOtherEventsCount() > 0)
+								{
+									if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
+									{
+										for (int j = 0; j < multiE->GetOtherEventsCount() - 1; j++)
+										{
+											manager->OnFusion(AddArea(std::dynamic_pointer_cast<CompletePolygon>(multiE->GetOtherEvent(j)->GetConcernedArea())));
+										}
+
+										return AddArea(std::dynamic_pointer_cast<CompletePolygon>(multiE->GetOtherEvent(multiE->GetOtherEventsCount() - 1)->GetConcernedArea()));
+
+									}
+								}
+
+							}
 							std::shared_ptr<AreaEvent> deleteE1;
 							std::shared_ptr<AreaEvent> deleteE2;
-							std::shared_ptr<MultiAreaEvent> multiE;
+							//std::shared_ptr<MultiAreaEvent> multiE;
 							auto selectedAreaBackup = selectedArea;
 							switch (singleAreaE->GetType())
 							{
@@ -279,12 +303,13 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseUp(const MouseEvent& mo
 								{
 									manager->OnFusion(deleteE1);
 									manager->OnFusion(deleteE2);
-									manager->OnFusion(AddArea(std::dynamic_pointer_cast<CompletePolygon>(singleAreaE->GetConcernedArea())));
+									return(AddArea(std::dynamic_pointer_cast<CompletePolygon>(singleAreaE->GetConcernedArea())));
 									
 								}
 								//canvasManager.lock()->handleAsyncUpdate 
 								DBG("ici");
-								return multiE;
+								//return multiE;
+								//return std::shared_ptr<AreaEvent>(new AreaEvent());
 							case AreaEventType::NothingHappened:
 								// Intersection
 								break;

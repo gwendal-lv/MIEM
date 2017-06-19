@@ -15,8 +15,11 @@
 #include <cmath>
 #include <algorithm>
 
+#include <list>
 #include <string>
 #include <sstream>
+
+#include "MultiAreaEvent.h"
 
 
 #include "boost\geometry.hpp"
@@ -28,11 +31,11 @@ using namespace Miam;
 CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
 {
 
-	std::string s;
+	/*std::string s;
 	std::ostringstream ost;
 	ost << this;
 	s = ost.str();
-	DBG("Constructor : " + s);
+	DBG("Constructor : " + s);*/
 
 	showCursor = false;
 	pc = 0;
@@ -61,11 +64,11 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 	Colour _fillColour, float _canvasRatio) :
 	EditablePolygon(_Id, _center, pointsCount, radius, _fillColour, _canvasRatio)
 {
-	std::string s;
+	/*std::string s;
 	std::ostringstream ost;
 	ost << this;
 	s = ost.str();
-	DBG("Constructor : " + s);
+	DBG("Constructor : " + s);*/
 
 	showCursor = false;
 	pc = 0;
@@ -98,11 +101,11 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	bpt _center, bpolygon& _contourPoints, Colour _fillColour) :
 	EditablePolygon(_Id, _center, _contourPoints, _fillColour)
 {
-	std::string s;
+	/*std::string s;
 	std::ostringstream ost;
 	ost << this;
 	s = ost.str();
-	DBG("Constructor : " + s);
+	DBG("Constructor : " + s);*/
 
 	showCursor = true;
 	pc = 0;
@@ -140,11 +143,11 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	Colour _fillColour) : 
 	CompletePolygon(_Id, _center, _contourPoints, _fillColour)
 {
-	std::string s;
+	/*std::string s;
 	std::ostringstream ost;
 	ost << this;
 	s = ost.str();
-	DBG("Constructor : " + s);
+	DBG("Constructor : " + s);*/
 
 	OnCircles = circles;
 	anglesPercentages = percent;
@@ -511,53 +514,75 @@ bpolygon CompletePolygon::getPolygon()
 
 std::shared_ptr<AreaEvent> CompletePolygon::intersection(std::shared_ptr<CompletePolygon> hitPolygon, int Id)
 {
-	// compute the intersection
-	std::vector<bpt> inter;
-	boost::geometry::intersection(contourPoints, hitPolygon->getPolygon(), inter);
+	
 
-	// create a polygon with the intersection's points
-	bpolygon test;
-	for(int i = 0; i<inter.size();i++)
-		boost::geometry::append(test,inter[i]);
+	// compute the intersection
+	bpolygon poly1, poly2;
+	poly1 = contourPoints;
+	poly2 = hitPolygon->getPolygon();
+	boost::geometry::correct(poly1);
+	boost::geometry::correct(poly2);
+	std::deque<bpolygon> inter;
+	boost::geometry::intersection(poly1, poly2, inter);
+
 	
 	// compute the area of the 2 polygons and the intersection
-	double areaTest = abs(boost::geometry::area(test));
-	double hitArea = abs(boost::geometry::area(hitPolygon->getPolygon()));
-	double area = abs(boost::geometry::area(contourPoints));
+	double area = abs(boost::geometry::area(poly1));
+	double hitArea = abs(boost::geometry::area(poly2));
+
+	double areaInter = 0;
+	for(int i = 0; i<inter.size();i++)
+		areaInter += abs(boost::geometry::area(inter[0]));
 
 
+	//DBG((String)areaTest + " >= " + (String)double(0.75 * hitArea) + " ou " + (String)double(0.75 * area));
 	std::shared_ptr<CompletePolygon> completeP;
 	std::shared_ptr<AreaEvent> areaE;
-	if (areaTest >= 0.75 * hitArea || areaTest >= 0.75 * area || inter.size() > 2)
+	if (areaInter >= 0.75 * hitArea || areaInter >= 0.75 * area)
 	{
-		DBG("need To fusion !");
+		DBG("need To fusion ! : " + (String)areaInter + " >= " + (String)double(0.75 * hitArea) + " ou " + (String)double(0.75 * area));
 		completeP = fusion(hitPolygon, Id);
 		DBG("fusionned");
 		areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeP, AreaEventType::Added));
 	}
 	else if(inter.size() > 0)
 	{
-		DBG("no need to fusion");
-		/*int idx = 0;
-		double minAngle = 2 * M_PI;
+		DBG("number of polygon by intersection : " + (String)inter.size());
+		std::shared_ptr<MultiAreaEvent> multiE(new MultiAreaEvent());
 		for (int i = 0; i < inter.size(); i++)
 		{
-			bpt currentPt = inter[i];
-			boost::geometry::subtract_point(currentPt, center);
-			double angle = Math::ComputePositiveAngle(currentPt);
-			if (angle < minAngle)
-			{
-				minAngle = angle;
-				idx = i;
-			}
-		}*/
+			//if (boost::geometry::area(inter[i]) > minimumSizePercentage)//*(parentCanvas->getWidth() + parentCanvas->getHeight()) / 2.0)
+			//{
+				// compute the center coordinate
+			bpt interCenter;
+			boost::geometry::reverse(inter[i]);
+			boost::geometry::centroid(inter[i], interCenter);
 
-		// sort the intersection's point clockwise, so we'll know which point will be met first
-		std::sort(test.outer().begin(), test.outer().end(), [](bpt a, bpt b) {return Math::ComputePositiveAngle(a) < Math::ComputePositiveAngle(b); });
-		if (test.outer().size() == 0)
-			DBG("stop");
-		completeP = std::shared_ptr<CompletePolygon>(new CompletePolygon(0, center, test, fillColour));
-		areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeP, AreaEventType::NothingHappened));
+			// compute the notes // verifier ordre des points si le son est bizarre
+			std::vector<int> newCircles;
+			std::vector<double> newAnglesPercentages;
+			for (int j = 0; j < inter[i].outer().size(); j++)
+			{
+				newCircles.push_back(0);
+				bpt centeredPt(inter[i].outer().at(j));
+				boost::geometry::subtract_point(centeredPt, interCenter);
+				newAnglesPercentages.push_back(Math::ComputePositiveAngle(centeredPt)/ (2* M_PI));
+				while (j > 0 && newAnglesPercentages[j] < newAnglesPercentages[j - 1])
+					newAnglesPercentages[j] += 1;
+			}
+
+			// create the polygon and the event
+			completeP = std::shared_ptr<CompletePolygon>(new CompletePolygon(i, interCenter, inter[i], newCircles, newAnglesPercentages, juce::Colours::red));
+
+			// intersection's polygon must not be clickable and won't show the circles
+			completeP->SetActive(false);
+
+			// add the cration of the polygon in the MultiAreaEvent
+			multiE->AddAreaEvent(std::shared_ptr<AreaEvent>(new AreaEvent(completeP, AreaEventType::NothingHappened)));
+			//}
+		}
+		return multiE;
+		//areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeP, AreaEventType::NothingHappened));
 	}
 	return areaE;
 }
@@ -629,9 +654,9 @@ std::shared_ptr<CompletePolygon> CompletePolygon::fusion(std::shared_ptr<Complet
 	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> rescaler(1.0 / (double)parentCanvas->getWidth(), 1.0 / (double)parentCanvas->getHeight());
 	boost::geometry::transform(newContourPointsInPixels, newContourPoints, rescaler);
 	
-	DBG("new size : " + (String)int(newContourPoints.outer().size()));
+	/*DBG("new size : " + (String)int(newContourPoints.outer().size()));
 	for (int k = 0; k < test.size(); k++)
-		DBG((String)test[k].circ + "   " + (String)test[k].pc);
+		DBG((String)test[k].circ + "   " + (String)test[k].pc);*/
 
 	// create polygon
 	return std::shared_ptr<CompletePolygon>(new CompletePolygon(Id,center,newContourPoints,newCircles,newAnglesPercentages,fillColour));
