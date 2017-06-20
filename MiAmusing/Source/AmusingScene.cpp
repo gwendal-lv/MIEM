@@ -1,4 +1,4 @@
-/*
+ï»¿/*
   ==============================================================================
 
     AmusingScene.cpp
@@ -228,6 +228,80 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDrag(const MouseEvent& 
 		return graphicE;
 }
 
+std::shared_ptr<AreaEvent> AmusingScene::AddIntersectionArea(std::shared_ptr<CompletePolygon> newIntersection)
+{
+	currentIntersectionsAreas.push_back(newIntersection);
+
+	// Forced graphical updates
+	newIntersection->CanvasResized(canvasComponent);
+
+	// WARNING
+	// The id is the ID relative to all drawable objects....
+	return std::make_shared<AreaEvent>(newIntersection, AreaEventType::Added, (int)areas.size() + currentIntersectionsAreas.size() - 1, shared_from_this());
+}
+
+void AmusingScene::AddAllIntersections(std::shared_ptr<MultiAreaEvent> multiE)
+{
+	if (multiE->GetOtherEventsCount() > 0)
+	{
+		if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
+		{
+			for (int j = 0; j < multiE->GetOtherEventsCount(); j++)
+			{
+				manager->OnFusion(AddIntersectionArea(std::dynamic_pointer_cast<CompletePolygon>(multiE->GetOtherEvent(j)->GetConcernedArea())));
+			}
+		}
+	}
+}
+
+void AmusingScene::ApplyFusion(std::shared_ptr<Amusing::CompletePolygon> currentPolygon, std::shared_ptr<Amusing::CompletePolygon> hitPolygon,std::shared_ptr<AreaEvent> singleAreaE)
+{
+	std::shared_ptr<AreaEvent> deleteE1;
+	std::shared_ptr<AreaEvent> deleteE2;
+	//std::shared_ptr<MultiAreaEvent> multiE;
+	auto selectedAreaBackup = selectedArea;
+	switch (singleAreaE->GetType())
+	{
+	case AreaEventType::Added:
+		// Fusion : need to add this area and to delete the 2 others
+		DBG("hitP->GetId()" + (String)hitPolygon->GetId());
+		DBG("draggedArea->GetId()" + (String)currentPolygon->GetId());
+		//multiE = std::shared_ptr<MultiAreaEvent>(new MultiAreaEvent());
+		//multiE->AddAreaEvent(AddArea(std::dynamic_pointer_cast<CompletePolygon>(singleAreaE->GetConcernedArea())));
+
+		if (selectedArea)
+		{
+			//auto selectedAreaBackup = selectedArea;
+			SetSelectedArea(nullptr);
+		}
+		deleteE1 = deleteAreaByUniqueId(hitPolygon->GetId());
+		deleteE2 = deleteAreaByUniqueId(currentPolygon->GetId());
+		//multiE->AddAreaEvent(deleteE1);
+		//multiE->AddAreaEvent(deleteE2);
+
+		// j'ai l'impression que ï¿½a reste extra laid, il y a dï¿½jï¿½ les fonctions toutes faites pour add et delete, 
+		// mais il faut les refaire juste pour pvr appeler le graphicSessionManager ï¿½ chaque fois :/
+		if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
+		{
+			manager->OnFusion(deleteE1);
+			manager->OnFusion(deleteE2);
+			manager->OnFusion(AddArea(std::dynamic_pointer_cast<CompletePolygon>(singleAreaE->GetConcernedArea())));
+			//return  std::shared_ptr<AreaEvent>(new AreaEvent());
+
+		}
+		//canvasManager.lock()->handleAsyncUpdate 
+		DBG("ici");
+		//return multiE;
+		//return std::shared_ptr<AreaEvent>(new AreaEvent());
+	case AreaEventType::NothingHappened:
+		// Intersection
+		break;
+	default:
+		// wrong
+		break;
+	}
+}
+
 std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseUp(const MouseEvent& mouseE)
 {
 	std::shared_ptr<GraphicEvent> graphicE(new GraphicEvent()); // default empty event
@@ -255,69 +329,34 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseUp(const MouseEvent& mo
 				{
 					if (auto hitP = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
 					{
+
+
+
 						if (auto singleAreaE = std::shared_ptr<AreaEvent>(draggedArea->intersection(hitP, draggedArea->GetId())))
 						{
 							if (auto multiE = std::dynamic_pointer_cast<MultiAreaEvent>(singleAreaE))
 							{
-								if (multiE->GetOtherEventsCount() > 0)
-								{
-									if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
-									{
-										for (int j = 0; j < multiE->GetOtherEventsCount() - 1; j++)
-										{
-											manager->OnFusion(AddArea(std::dynamic_pointer_cast<CompletePolygon>(multiE->GetOtherEvent(j)->GetConcernedArea())));
-										}
-
-										return AddArea(std::dynamic_pointer_cast<CompletePolygon>(multiE->GetOtherEvent(multiE->GetOtherEventsCount() - 1)->GetConcernedArea()));
-
-									}
-								}
-
-							}
-							std::shared_ptr<AreaEvent> deleteE1;
-							std::shared_ptr<AreaEvent> deleteE2;
-							//std::shared_ptr<MultiAreaEvent> multiE;
-							auto selectedAreaBackup = selectedArea;
-							switch (singleAreaE->GetType())
-							{
-							case AreaEventType::Added:
-								// Fusion : need to add this area and to delete the 2 others
-								DBG("hitP->GetId()" + (String)hitP->GetId());
-								DBG("draggedArea->GetId()" + (String)draggedArea->GetId());
-								//multiE = std::shared_ptr<MultiAreaEvent>(new MultiAreaEvent());
-								//multiE->AddAreaEvent(AddArea(std::dynamic_pointer_cast<CompletePolygon>(singleAreaE->GetConcernedArea())));
 								
-								if (selectedArea)
-								{
-									//auto selectedAreaBackup = selectedArea;
-									SetSelectedArea(nullptr);
-								}
-								deleteE1 = deleteAreaByUniqueId(hitP->GetId());
-								deleteE2 = deleteAreaByUniqueId(draggedArea->GetId());
-								//multiE->AddAreaEvent(deleteE1);
-								//multiE->AddAreaEvent(deleteE2);
+								AddAllIntersections(multiE);
+								return std::shared_ptr<AreaEvent>(new AreaEvent());
 
-								// j'ai l'impression que ça reste extra laid, il y a déjà les fonctions toutes faites pour add et delete, 
-								// mais il faut les refaire juste pour pvr appeler le graphicSessionManager à chaque fois :/
-								if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
-								{
-									manager->OnFusion(deleteE1);
-									manager->OnFusion(deleteE2);
-									return(AddArea(std::dynamic_pointer_cast<CompletePolygon>(singleAreaE->GetConcernedArea())));
-									
-								}
-								//canvasManager.lock()->handleAsyncUpdate 
-								DBG("ici");
-								//return multiE;
-								//return std::shared_ptr<AreaEvent>(new AreaEvent());
-							case AreaEventType::NothingHappened:
-								// Intersection
-								break;
-							default:
-								// wrong
-								break;
 							}
+							else
+							{
+								ApplyFusion(draggedArea, hitP, singleAreaE);
+								return std::shared_ptr<AreaEvent>(new AreaEvent());
+							}
+							
 						}
+
+
+
+
+
+						//return IntersectionOrFusion(draggedArea, hitP);
+
+
+
 
 					}
 				}

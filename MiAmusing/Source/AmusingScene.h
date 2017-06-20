@@ -74,6 +74,12 @@ namespace Miam
 		std::shared_ptr<AreaEvent> deleteEvent;
 		std::shared_ptr<Amusing::Follower> getFollowers(std::shared_ptr<Amusing::AnimatedPolygon> masterArea);
 		std::shared_ptr<AreaEvent> resendArea(int idx);
+
+		std::vector< std::shared_ptr<Amusing::CompletePolygon> > currentIntersectionsAreas;
+		std::shared_ptr<AreaEvent> AddIntersectionArea(std::shared_ptr<Amusing::CompletePolygon> newIntersection);
+		std::map<std::pair<std::shared_ptr<IEditableArea>, std::shared_ptr<IEditableArea>>, std::vector<std::shared_ptr<IEditableArea>>> parentTochildArea;
+		void AddAllIntersections(std::shared_ptr<MultiAreaEvent> multiE);
+		void ApplyFusion(std::shared_ptr<Amusing::CompletePolygon> currentPolygon, std::shared_ptr<Amusing::CompletePolygon> hitPolygon, std::shared_ptr<AreaEvent> singleE);
 	};
 
 
