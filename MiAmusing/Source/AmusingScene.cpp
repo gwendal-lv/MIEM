@@ -151,11 +151,13 @@ void AmusingScene::DeleteIntersections(std::shared_ptr<Amusing::CompletePolygon>
 				if (it != parentTochildArea.end())
 				{
 					// need to delete the intersections of the parent with the polygon
-					for (int i = 0; i < it->second.size(); i++)
+					DBG("suppression des " + (String)it->second.size() + " intersections liees");
+					int vecSize = it->second.size();
+					for (int j = vecSize -1; j >= 0; j--)
 					{
-						auto intersectionBackUp = it->second.at(i);
-						it->second.erase(it->second.begin() + i);
-						manager->OnFusion(std::shared_ptr<AreaEvent>(new AreaEvent(intersectionBackUp, AreaEventType::Deleted, (int)areas.size() + i, shared_from_this())));
+						auto intersectionBackUp = it->second.at(j);
+						it->second.erase(it->second.begin() + j);
+						manager->OnFusion(std::shared_ptr<AreaEvent>(new AreaEvent(intersectionBackUp, AreaEventType::Deleted, (int)areas.size() + j, shared_from_this())));
 					}
 
 					// then we erase the all line
