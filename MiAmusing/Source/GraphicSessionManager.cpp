@@ -289,7 +289,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				myPresenter->SendParamChange(param);
 				break;
 			case AreaEventType::ShapeChanged :
-				DBG("Shape Changed");
+				//DBG("Shape Changed");
 				if (auto complete = std::dynamic_pointer_cast<CompletePolygon>(area))
 				{
 					//param.Id1 = myPresenter->getSourceID(area);

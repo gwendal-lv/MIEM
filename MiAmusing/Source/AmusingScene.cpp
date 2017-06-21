@@ -282,8 +282,38 @@ void AmusingScene::AddAllIntersections(std::shared_ptr<Amusing::CompletePolygon>
 				for (int i = 0; i < intersectionStillExist.size(); i++)
 				{
 					if (intersectionStillExist[i] == false)
-						it->second.erase(it->second.begin()+i);
+					{
+						auto intersectionBackUp = it->second.at(i);
+						it->second.erase(it->second.begin() + i);
+						manager->OnFusion(std::shared_ptr<AreaEvent>(new AreaEvent(intersectionBackUp, AreaEventType::Deleted, (int)areas.size() + i, shared_from_this())));
+					}
+						
 				}
+			}
+
+		}
+	}
+	else
+	{
+		if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
+		{
+			// seek for the vector of intersection of the two polygons through the map
+			std::map<std::pair<std::shared_ptr<CompletePolygon>, std::shared_ptr<CompletePolygon>>, std::vector<std::shared_ptr<CompletePolygon>>>::iterator it;
+			it = parentTochildArea.find(std::pair<std::shared_ptr<CompletePolygon>, std::shared_ptr<CompletePolygon>>(parent1, parent2));
+			if (it != parentTochildArea.end())
+			{
+				// previously there was intersections but they don't exist anymore
+				// first we delete all the intersections and send the info to the manager
+				for (int i = 0; i < it->second.size(); i++)
+				{
+					auto intersectionBackUp = it->second.at(i);
+					it->second.erase(it->second.begin() + i);
+					manager->OnFusion(std::shared_ptr<AreaEvent>(new AreaEvent(intersectionBackUp, AreaEventType::Deleted, (int)areas.size() + i, shared_from_this())));
+				}
+
+				// then we erase the all line
+				parentTochildArea.erase(it);
+
 			}
 
 		}

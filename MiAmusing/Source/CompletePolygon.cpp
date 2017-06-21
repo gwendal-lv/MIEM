@@ -603,7 +603,7 @@ std::shared_ptr<AreaEvent> CompletePolygon::intersection(std::shared_ptr<Complet
 		//DBG("fusionned");
 		areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeP, AreaEventType::Added));
 	}
-	else if(inter.size() > 0)
+	else if(inter.size() >= 0)
 	{
 		//DBG("number of polygon by intersection : " + (String)inter.size());
 		std::shared_ptr<MultiAreaEvent> multiE(new MultiAreaEvent());
