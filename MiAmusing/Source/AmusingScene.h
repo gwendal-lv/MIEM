@@ -83,6 +83,8 @@ namespace Miam
 		bool lookForAreasInteractions(std::shared_ptr<Amusing::CompletePolygon> currentPolygon);
 		void AddAllIntersections(std::shared_ptr<Amusing::CompletePolygon> parent1, std::shared_ptr<Amusing::CompletePolygon> parent2, std::shared_ptr<MultiAreaEvent> multiE);
 		void ApplyFusion(std::shared_ptr<Amusing::CompletePolygon> currentPolygon, std::shared_ptr<Amusing::CompletePolygon> hitPolygon, std::shared_ptr<AreaEvent> singleE);
+		void DeleteIntersections(std::shared_ptr<Amusing::CompletePolygon> parent);
+		std::shared_ptr<AreaEvent> DeleteSelectedArea();
 	};
 
 

@@ -128,6 +128,62 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 	return areaE;
 }
 
+void AmusingScene::DeleteIntersections(std::shared_ptr<Amusing::CompletePolygon> parent)
+{
+	bool order = true;
+	for (int i = 0; i < areas.size(); i++)
+	{
+		if (auto parent2 = std::dynamic_pointer_cast<CompletePolygon> (areas[i]))
+		{
+			if (parent == parent2)
+				order = false;
+
+			
+			
+			if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
+			{
+				// seek for the vector of intersection of the two polygons through the map
+				std::map<std::pair<std::shared_ptr<CompletePolygon>, std::shared_ptr<CompletePolygon>>, std::vector<std::shared_ptr<CompletePolygon>>>::iterator it;
+				if(order)
+					it = parentTochildArea.find(std::pair<std::shared_ptr<CompletePolygon>, std::shared_ptr<CompletePolygon>>(parent, parent2));
+				else
+					it = parentTochildArea.find(std::pair<std::shared_ptr<CompletePolygon>, std::shared_ptr<CompletePolygon>>(parent2, parent));
+				if (it != parentTochildArea.end())
+				{
+					// need to delete the intersections of the parent with the polygon
+					for (int i = 0; i < it->second.size(); i++)
+					{
+						auto intersectionBackUp = it->second.at(i);
+						it->second.erase(it->second.begin() + i);
+						manager->OnFusion(std::shared_ptr<AreaEvent>(new AreaEvent(intersectionBackUp, AreaEventType::Deleted, (int)areas.size() + i, shared_from_this())));
+					}
+
+					// then we erase the all line
+					parentTochildArea.erase(it);
+				}
+				
+			}
+			
+		}
+	}
+}
+
+
+std::shared_ptr<AreaEvent> AmusingScene::DeleteSelectedArea()
+{
+	if (selectedArea)
+	{
+		auto selectedAreaBackup = selectedArea;
+		if (auto selectedCompleteArea = std::dynamic_pointer_cast<CompletePolygon>(selectedArea))
+			DeleteIntersections(selectedCompleteArea);
+
+		SetSelectedArea(nullptr);
+		
+		return deleteAreaByUniqueId(selectedAreaBackup->GetId());
+	}
+	else throw std::runtime_error("Impossible to delete the selected area (no area selected");
+}
+
 std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDown(const MouseEvent& mouseE)
 {
 	if (allowAreaSelection)
