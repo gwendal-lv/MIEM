@@ -76,9 +76,12 @@ namespace Miam
 		std::shared_ptr<AreaEvent> resendArea(int idx);
 
 		std::vector< std::shared_ptr<Amusing::CompletePolygon> > currentIntersectionsAreas;
-		std::shared_ptr<AreaEvent> AddIntersectionArea(std::shared_ptr<Amusing::CompletePolygon> newIntersection);
-		std::map<std::pair<std::shared_ptr<IEditableArea>, std::shared_ptr<IEditableArea>>, std::vector<std::shared_ptr<IEditableArea>>> parentTochildArea;
-		void AddAllIntersections(std::shared_ptr<MultiAreaEvent> multiE);
+		std::shared_ptr<AreaEvent> AddIntersectionArea(std::shared_ptr<Amusing::CompletePolygon> parent1, std::shared_ptr<Amusing::CompletePolygon> parent2, std::shared_ptr<Amusing::CompletePolygon> newIntersection);
+
+		// map with 2 entry = the parents polygons, and 1 output = the vector of overlap area between the two parent polygon
+		std::map<std::pair<std::shared_ptr<Amusing::CompletePolygon>, std::shared_ptr<Amusing::CompletePolygon>>, std::vector<std::shared_ptr<Amusing::CompletePolygon>>> parentTochildArea;
+		bool lookForAreasInteractions(std::shared_ptr<Amusing::CompletePolygon> currentPolygon);
+		void AddAllIntersections(std::shared_ptr<Amusing::CompletePolygon> parent1, std::shared_ptr<Amusing::CompletePolygon> parent2, std::shared_ptr<MultiAreaEvent> multiE);
 		void ApplyFusion(std::shared_ptr<Amusing::CompletePolygon> currentPolygon, std::shared_ptr<Amusing::CompletePolygon> hitPolygon, std::shared_ptr<AreaEvent> singleE);
 	};
 

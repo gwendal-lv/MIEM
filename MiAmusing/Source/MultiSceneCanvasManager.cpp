@@ -50,7 +50,7 @@ void MultiSceneCanvasManager::AddScene(std::string name)
 
 void MultiSceneCanvasManager::__AddAnimatedTestAreas()
 {
-	DBG("ICI");
+	DBG("__AddAnimatedtestAreas");
 	for (size_t i = 0; i < scenes.size(); i++)
 	{
 		int areasCount = 2 + (rand() % 3);

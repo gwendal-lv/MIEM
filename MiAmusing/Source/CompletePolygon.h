@@ -45,6 +45,8 @@ namespace Amusing
 
 		virtual IDrawableArea* Clone() const override { return new CompletePolygon(*this); }
 
+		void Copy(std::shared_ptr<CompletePolygon> polygonToCopy);
+
 		void setReadingPosition(double p); // set the position in percent of the cursor on the path
 
 		

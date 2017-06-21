@@ -141,7 +141,7 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	bpt _center, bpolygon& _contourPoints,
 	std::vector<int> circles, std::vector<double> percent,
 	Colour _fillColour) : 
-	CompletePolygon(_Id, _center, _contourPoints, _fillColour)
+	EditablePolygon(_Id, _center, _contourPoints, _fillColour)
 {
 	/*std::string s;
 	std::ostringstream ost;
@@ -149,14 +149,72 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	s = ost.str();
 	DBG("Constructor : " + s);*/
 
+	showCursor = true;
+	pc = 0;
+	cursorCenter = contourPoints.outer().at(0);
+	cursor = std::shared_ptr<EditableEllipse>(new EditableEllipse(0, cursorCenter, 0.1f, 0.1f, Colours::grey, 1.47f));
+	cursor->SetNameVisible(false);
+
+	/*for (int i = 0; i < (int)contourPoints.outer().size(); ++i)
+	{
+		percentages.push_back(0);
+		anglesPercentages.push_back(0);
+	}
+	percentages.reserve(contourPoints.outer().size());*/
+	interval = 0.05;
+
 	OnCircles = circles;
 	anglesPercentages = percent;
+	SetNameVisible(false);
+
+	bpt A = contourPoints.outer().at(0);
+	float xScale = 1.0f / 1.47f;
+	
+	double midRadius = (A.get<0>() - center.get<0>()) / (xScale * cos(anglesPercentages[0] * 2 * M_PI));
+	startRadius = midRadius - OnCircles[0] * interval;
+	
+	//startRadius = 0.15;
+	
+	useBullsEye = true;
+	showBullsEye = true;
+	if (useBullsEye)
+	{
+		CreateBullsEye();
+		
+	}
+
+	
+
+	// ajouter le calcul du rayon des cercles : on connait les coordonnees des points et a quels cercles ils appartienne -> possible de retrouver le rayon et le centre ! 
 }
 
 
 
 CompletePolygon::~CompletePolygon()
 {
+	
+}
+
+void CompletePolygon::Copy(std::shared_ptr<CompletePolygon> polygonToCopy)
+{
+	contourPoints.clear();
+	contourPoints = polygonToCopy->getPolygon();
+	
+	OnCircles.clear();
+	anglesPercentages.clear();
+	int i = 0;
+	int value = 0;
+	double newPercentage = 0.0;
+	while (polygonToCopy->getAllDistanceFromCenter(i, value) && polygonToCopy->getAllPercentages(i,newPercentage))
+	{
+		OnCircles.push_back(value);
+		anglesPercentages.push_back(newPercentage);
+		i++;
+	}
+
+	// voir s'il faut recalculer le centre
+	CanvasResized(parentCanvas);
+
 	
 }
 
@@ -540,14 +598,14 @@ std::shared_ptr<AreaEvent> CompletePolygon::intersection(std::shared_ptr<Complet
 	std::shared_ptr<AreaEvent> areaE;
 	if (areaInter >= 0.75 * hitArea || areaInter >= 0.75 * area)
 	{
-		DBG("need To fusion ! : " + (String)areaInter + " >= " + (String)double(0.75 * hitArea) + " ou " + (String)double(0.75 * area));
+		//DBG("need To fusion ! : " + (String)areaInter + " >= " + (String)double(0.75 * hitArea) + " ou " + (String)double(0.75 * area));
 		completeP = fusion(hitPolygon, Id);
-		DBG("fusionned");
+		//DBG("fusionned");
 		areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeP, AreaEventType::Added));
 	}
 	else if(inter.size() > 0)
 	{
-		DBG("number of polygon by intersection : " + (String)inter.size());
+		//DBG("number of polygon by intersection : " + (String)inter.size());
 		std::shared_ptr<MultiAreaEvent> multiE(new MultiAreaEvent());
 		for (int i = 0; i < inter.size(); i++)
 		{
@@ -705,19 +763,34 @@ double CompletePolygon::getPercentage(bpt hitPoint)
 
 bool CompletePolygon::getAllPercentages(int idx, double &value)
 {
-	lengthToPercent();
-	angleToPercent();
-	//DBG("percentage size : " + (String)percentages.size());
-	if (idx < percentages.size())
+	if (useBullsEye)
 	{
-		value = anglesPercentages[idx];
-		while (value > 1)
-			value -= 1; // the angle percentage can be negative to guarantee the cursor deplacement, but the audio needs [o;1[
-		
-		return true;
+		angleToPercent();
+		//DBG("percentage size : " + (String)percentages.size());
+		if (idx < anglesPercentages.size())
+		{
+			value = anglesPercentages[idx];
+			while (value > 1)
+				value -= 1; // the angle percentage can be negative to guarantee the cursor deplacement, but the audio needs [o;1[
+
+			return true;
+		}
+		else
+			return false;
 	}
 	else
-		return false;
+	{
+		lengthToPercent();
+		//DBG("percentage size : " + (String)percentages.size());
+		if (idx < percentages.size())
+		{
+			value = percentages[idx];
+			
+			return true;
+		}
+		else
+			return false;
+	}
 }
 
 bool CompletePolygon::getAllDistanceFromCenter(int idx, int &value)
