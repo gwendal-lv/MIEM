@@ -331,6 +331,8 @@ void AmusingScene::AddAllIntersections(std::shared_ptr<Amusing::CompletePolygon>
 					{
 						DBG("new intersection to add");
 						// the two areas are too different -> add the new area
+						auto CA = std::dynamic_pointer_cast<CompletePolygon>(multiE->GetOtherEvent(i)->GetConcernedArea());
+						CA->setCursorVisible(false,canvasComponent);
 						it->second.push_back(std::dynamic_pointer_cast<CompletePolygon>(multiE->GetOtherEvent(i)->GetConcernedArea()));
 						manager->OnFusion(AddIntersectionArea(parent1, parent2, std::dynamic_pointer_cast<CompletePolygon>(multiE->GetOtherEvent(i)->GetConcernedArea())));
 
@@ -567,11 +569,11 @@ std::shared_ptr<MultiAreaEvent> AmusingScene::SetAllAudioPositions(double positi
 			//areaE->AddAreaEvent(std::shared_ptr<AreaEvent>(new AreaEvent(areas[i], Miam::AreaEventType::NothingHappened)));
 		}
 	}
-	for (int j = 0; j < currentIntersectionsAreas.size(); j++)
+	/*for (int j = 0; j < currentIntersectionsAreas.size(); j++)
 	{
 		currentIntersectionsAreas[j]->setReadingPosition(position);
 		areaE->AddAreaEvent(std::shared_ptr<AreaEvent>(new AreaEvent(currentIntersectionsAreas[j], Miam::AreaEventType::NothingHappened)));
-	}
+	}*/
 	//DBG("areaType = " + (String)((int)areaE->GetType()));
 	if (areaE == nullptr)
 		areaE = std::shared_ptr<MultiAreaEvent>(new MultiAreaEvent(nullptr,Miam::AreaEventType::NothingHappened));
