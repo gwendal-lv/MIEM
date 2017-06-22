@@ -198,7 +198,8 @@ void AudioManager::getNewTimeLines()
 	TimeLine* ptr;
 	while (timeLinesToAudio.pop(ptr))
 	{
-		timeLinesKnown[ptr->getId()] = ptr;
+		if(ptr != 0)
+			timeLinesKnown[ptr->getId()] = ptr;
 	}
 }
 
@@ -235,11 +236,11 @@ void AudioManager::getParameters()
 			switch (param.Id2)
 			{
 			case 1:
-				DBG("activate source    : " + (String)param.Id1);
+				
 				paramToAllocationThread.push(param);
 				break;
 			case 0:
-				DBG("desactivate source : " + (String)param.Id1);
+				
 				timeLinesKnown[param.Id1] = 0; // so we won't access to the element anymore, we forget it
 				paramToAllocationThread.push(param); // we ask to the allocation thread to delete it
 				break;
@@ -288,14 +289,17 @@ void AudioManager::getAudioThreadMsg()
 			switch (param.Id2)
 			{
 			case 0 :
+				DBG("desactivate source : " + (String)param.Id1);
 				--midiSenderSize;
 				delete timeLines[param.Id1];
 				timeLines[param.Id1] = 0;
+				DBG("source : " + (String)param.Id1 + "deleted");
 				//midiSenderVector.erase(midiSenderVector.begin() + param.Id1);
 				break;
 			case 1 :
 				//DBG("AM : I construct a new polygon with ID : " + (String)param.Id1);
 				//midiSenderVector[param.Id1] = std::shared_ptr<TimeLine>(new TimeLine());
+				DBG("activate source    : " + (String)param.Id1);
 				if(timeLines[param.Id1] == 0)
 					timeLines[param.Id1] = new TimeLine();
 				timeLines[param.Id1]->setPeriod(periode);

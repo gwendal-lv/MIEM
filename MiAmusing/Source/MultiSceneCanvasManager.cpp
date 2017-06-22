@@ -236,7 +236,7 @@ void MultiSceneCanvasManager::OnCanvasMouseUp(const MouseEvent& mouseE)
 void MultiSceneCanvasManager::OnFusion(std::shared_ptr<AreaEvent> areaE)
 {
 	handleAndSendAreaEventSync(areaE);
-	graphicSessionManager->HandleEventSync(areaE);
+	//graphicSessionManager->HandleEventSync(areaE);
 }
 
 

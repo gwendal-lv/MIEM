@@ -492,7 +492,7 @@ AreaEventType CompletePolygon::TryMovePoint(const Point<double>& newLocation)
 
 AreaEventType CompletePolygon::EndPointMove()
 {
-	DBG("EndPointMove");
+
 
 	if (useBullsEye)
 	{
@@ -532,7 +532,7 @@ AreaEventType CompletePolygon::EndPointMove()
 					contourPointsInPixels.outer().at(pointDraggedId).get<1>() / parentCanvas->getHeight()
 			);
 
-				DBG("difference = " + (String)boost::geometry::distance(contourPointsInPixels.outer().at(pointDraggedId), contourPointsInPixels.outer().at(2))); // = 53,4 = 267*0.2 -> -cos(angle)* R *Width
+				//DBG("difference = " + (String)boost::geometry::distance(contourPointsInPixels.outer().at(pointDraggedId), contourPointsInPixels.outer().at(2))); // = 53,4 = 267*0.2 -> -cos(angle)* R *Width
 			
 			
 
@@ -549,7 +549,7 @@ AreaEventType CompletePolygon::EndPointMove()
 
 
 	AreaEventType eventType =  EditablePolygon::EndPointMove();
-	DBG("EndPointMove : " + (String)(int)eventType);
+	
 	
 	return eventType;
 }
@@ -570,7 +570,7 @@ bpolygon CompletePolygon::getPolygon()
 	return contourPoints;
 }
 
-std::shared_ptr<AreaEvent> CompletePolygon::intersection(std::shared_ptr<CompletePolygon> hitPolygon, int Id)
+std::shared_ptr<AreaEvent> CompletePolygon::intersection(std::shared_ptr<CompletePolygon> hitPolygon, int Id, int N)
 {
 	
 
@@ -630,7 +630,7 @@ std::shared_ptr<AreaEvent> CompletePolygon::intersection(std::shared_ptr<Complet
 			}
 
 			// create the polygon and the event
-			completeP = std::shared_ptr<CompletePolygon>(new CompletePolygon(i, interCenter, inter[i], newCircles, newAnglesPercentages, juce::Colours::red));
+			completeP = std::shared_ptr<CompletePolygon>(new CompletePolygon(N + i, interCenter, inter[i], newCircles, newAnglesPercentages, juce::Colours::red));
 
 			// intersection's polygon must not be clickable and won't show the circles
 			completeP->SetActive(false);

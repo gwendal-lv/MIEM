@@ -211,7 +211,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				
 				if (auto complete = std::dynamic_pointer_cast<CompletePolygon>(area))
 				{
-					DBG("Complete Area");
+					//DBG("Complete Area");
 					param.Id1 = myPresenter->getSourceID(area);
 					param.Type = Miam::AsyncParamChange::ParamType::Activate;
 					param.Id2 = 1; // 1 pour activer la source, 0 pour la supprimer
@@ -250,7 +250,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				DBG("PointDragBegins");
 				break;
 			case AreaEventType::PointDragStops :
-				DBG("PointDragStops");
+				//DBG("PointDragStops");
 				if (auto complete = std::dynamic_pointer_cast<CompletePolygon>(area))
 				{
 					//param.Id1 = myPresenter->getSourceID(area);

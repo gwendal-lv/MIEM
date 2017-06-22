@@ -261,7 +261,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddIntersectionArea(std::shared_ptr<Amu
 
 	// WARNING
 	// The id is the ID relative to all drawable objects....
-	return std::make_shared<AreaEvent>(newIntersection, AreaEventType::Added, (int)areas.size() + currentIntersectionsAreas.size() - 1, shared_from_this());
+	return std::make_shared<AreaEvent>(newIntersection, AreaEventType::Added, newIntersection->GetId(), shared_from_this());
 }
 
 void AmusingScene::AddAllIntersections(std::shared_ptr<Amusing::CompletePolygon> parent1, std::shared_ptr<Amusing::CompletePolygon> parent2, std::shared_ptr<MultiAreaEvent> multiE)
@@ -444,7 +444,7 @@ bool AmusingScene::lookForAreasInteractions(std::shared_ptr<CompletePolygon> cur
 				
 
 				// compute intersections or the fusion
-				if (auto singleAreaE = std::shared_ptr<AreaEvent>(currentPolygon->intersection(hitP, currentPolygon->GetId())))
+				if (auto singleAreaE = std::shared_ptr<AreaEvent>(currentPolygon->intersection(hitP, currentPolygon->GetId(), (int)areas.size())))
 				{
 					if (auto multiE = std::dynamic_pointer_cast<MultiAreaEvent>(singleAreaE))
 					{

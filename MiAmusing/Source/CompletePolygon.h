@@ -61,7 +61,7 @@ namespace Amusing
 		void setCursorVisible(bool isVisible, SceneCanvasComponent* _parentCanvas);
 		bpolygon getPolygon();
 		std::shared_ptr<CompletePolygon> fusion(std::shared_ptr<CompletePolygon> polyToFusion, int Id);
-		std::shared_ptr<AreaEvent> intersection(std::shared_ptr<CompletePolygon> hitPolygon, int Id);
+		std::shared_ptr<AreaEvent> intersection(std::shared_ptr<CompletePolygon> hitPolygon, int Id, int N);
 		bool getUnion(bpolygon hitPolygon, bpolygon &output);
 		double getPercentage(bpt hitPoint);
 		bool getAllPercentages(int idx, double &value);
