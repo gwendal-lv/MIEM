@@ -398,6 +398,8 @@ void AmusingScene::ApplyFusion(std::shared_ptr<Amusing::CompletePolygon> current
 			//auto selectedAreaBackup = selectedArea;
 			SetSelectedArea(nullptr);
 		}
+		DeleteIntersections(hitPolygon);
+		DeleteIntersections(currentPolygon);
 		deleteE1 = deleteAreaByUniqueId(hitPolygon->GetId());
 		deleteE2 = deleteAreaByUniqueId(currentPolygon->GetId());
 		//multiE->AddAreaEvent(deleteE1);
@@ -547,10 +549,11 @@ std::shared_ptr<MultiAreaEvent> AmusingScene::SetAllAudioPositions(double positi
 {
 	
 	std::shared_ptr<Miam::MultiAreaEvent> areaE;
+	areaE = std::shared_ptr<Miam::MultiAreaEvent>(new Miam::MultiAreaEvent());
 	bool first = true;
 	for (int i = 0; i < areas.size(); ++i)
 	{
-		areaE = std::shared_ptr<Miam::MultiAreaEvent>(new Miam::MultiAreaEvent());
+		//areaE = std::shared_ptr<Miam::MultiAreaEvent>(new Miam::MultiAreaEvent());
 		if (auto completeA = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
 		{
 			//if (first == true)
@@ -561,8 +564,13 @@ std::shared_ptr<MultiAreaEvent> AmusingScene::SetAllAudioPositions(double positi
 			//}
 			//completeA->setCursorVisible(true);
 			completeA->setReadingPosition(position);
-			areaE->AddAreaEvent(std::shared_ptr<AreaEvent>(new AreaEvent(areas[i], Miam::AreaEventType::NothingHappened)));
+			//areaE->AddAreaEvent(std::shared_ptr<AreaEvent>(new AreaEvent(areas[i], Miam::AreaEventType::NothingHappened)));
 		}
+	}
+	for (int j = 0; j < currentIntersectionsAreas.size(); j++)
+	{
+		currentIntersectionsAreas[j]->setReadingPosition(position);
+		areaE->AddAreaEvent(std::shared_ptr<AreaEvent>(new AreaEvent(currentIntersectionsAreas[j], Miam::AreaEventType::NothingHappened)));
 	}
 	//DBG("areaType = " + (String)((int)areaE->GetType()));
 	if (areaE == nullptr)
