@@ -17,12 +17,13 @@ using namespace Miam;
 DrawableEllipse::DrawableEllipse(int64_t _Id) :
 	DrawableEllipse(_Id, bpt(0.5f, 0.5f),0.2f,0.2f,Colours::darkgrey)
 {
-
+	rotationAngle = 0;
 }
 
 DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio) :
 	DrawableArea(_Id,_center,_fillColour), a(_a), b(_b)
 {
+	rotationAngle = 0;
 	//float xScale, yScale;
 	if (_canvasRatio > 1.0f) // ratio of an landscape-oriented window
 	{
@@ -50,7 +51,11 @@ void DrawableEllipse::createJucePolygon(int width, int height)
 
 	contour.addEllipse((float)center.get<0>() -((float)a*xScale/2), (float)center.get<1>() -((float)b*yScale/2), (float)a*xScale, (float)b*yScale);
 
+	//contour.applyTransform(AffineTransform::rotation(rotationAngle,(float)center.get<0>(),(float)center.get<1>()));
+
 	contour.applyTransform(AffineTransform::scale((float)width, (float)height));
+
+	contour.applyTransform(AffineTransform::rotation(rotationAngle, (float)center.get<0>() * (float)width, (float)center.get<1>() * (float)height));
 }
 
 DrawableEllipse::~DrawableEllipse()

@@ -289,24 +289,65 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 	else if (pointDraggedId == EditableAreaPointId::ManipulationPoint)
 	{
 		DBG("manipulation point dragged");
-		DBG("0 : " + (String)contourPointsInPixels.outer().at(0).get<0>() + " " + (String)contourPointsInPixels.outer().at(0).get<1>());
+		/*DBG("0 : " + (String)contourPointsInPixels.outer().at(0).get<0>() + " " + (String)contourPointsInPixels.outer().at(0).get<1>());
 		DBG("1 : " + (String)contourPointsInPixels.outer().at(1).get<0>() + " " + (String)contourPointsInPixels.outer().at(1).get<1>());
 		DBG("2 : " + (String)contourPointsInPixels.outer().at(2).get<0>() + " " + (String)contourPointsInPixels.outer().at(2).get<1>());
-		DBG("3 : " + (String)contourPointsInPixels.outer().at(3).get<0>() + " " + (String)contourPointsInPixels.outer().at(3).get<1>());
+		DBG("3 : " + (String)contourPointsInPixels.outer().at(3).get<0>() + " " + (String)contourPointsInPixels.outer().at(3).get<1>());*/
 		// Just resize
 		// Security needed for point to stay within the canvas ?
 		areaEventType = AreaEventType::RotScale;
 
 		double r1 = boost::geometry::distance(centerInPixels, bmanipulationPointInPixels);
 		double r2 = boost::geometry::distance(centerInPixels, bnewLocation);
+
+		double x1 = bmanipulationPointInPixels.get<0>() - centerInPixels.get<0>();
+		double x2 = bnewLocation.get<0>() - centerInPixels.get<0>();
+		double y1 = bmanipulationPointInPixels.get<1>() - centerInPixels.get<1>();
+		double y2 = bnewLocation.get<1>() - centerInPixels.get<1>();
+
+		//DBG("rotationAngle = " + (String)rotationAngle);
+
+		double cos_a = (x2*x1 + y2*y1) / (r1*r2);
+		double sin_a = (y2*x1 - x2*y1) / (r1*r2);
+		bpt testPt(bnewLocation);
+		boost::geometry::subtract_point(testPt, centerInPixels);
+		double radAngle = Math::ComputePositiveAngle(testPt);//atan(sin_a / cos_a);//Math::ComputePositiveAngle(bnewLocation);//atan(sin_a / cos_a);
 		// ----- size -----
 		double size = r2 / r1;
 		
+		bool wasSizeApplied(false);
 		if (SizeChanged(size))
 		{
 			bmanipulationPointInPixels.set<0>(bnewLocation.get<0>());
 			bmanipulationPointInPixels.set<1>(bnewLocation.get<1>());
+			wasSizeApplied = true;
 		}
+		// always apply the rotation
+		//double radAngle = Math::ComputePositiveAngle(bnewLocation);//atan(sin_a / cos_a);
+		
+		Rotate(-radAngle + rotationAngle);
+		rotationAngle = radAngle;
+		
+		if (!wasSizeApplied)
+		{
+			bpt newManipulationPoint;
+
+			boost::geometry::strategy::transform::translate_transformer<double, 2, 2> trans(-centerInPixels.get<0>(), -centerInPixels.get<1>());
+			boost::geometry::strategy::transform::translate_transformer<double, 2, 2> invtrans(centerInPixels.get<0>(), centerInPixels.get<1>());
+			boost::geometry::strategy::transform::rotate_transformer<boost::geometry::radian, double, 2, 2> rot(radAngle - rotationAngle);
+
+
+			boost::geometry::transform(bmanipulationPointInPixels, newManipulationPoint, trans);
+			boost::geometry::transform(newManipulationPoint, bmanipulationPointInPixels, rot);
+			boost::geometry::transform(bmanipulationPointInPixels, newManipulationPoint, invtrans);
+
+			bmanipulationPointInPixels = newManipulationPoint;
+		}
+		// After manipulation computation : normalized coordinates update
+		contourPoints.clear();
+		boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scaler(1 / ((double)parentCanvas->getWidth()), 1 / ((double)parentCanvas->getHeight()));
+		boost::geometry::transform(contourPointsInPixels, contourPoints, scaler);
+
 	}
 
 	else if (pointDraggedId == EditableAreaPointId::Center)
@@ -363,11 +404,12 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 	if (areaEventType != AreaEventType::NothingHappened)
 	{
 		InteractiveEllipse::CanvasResized(this->parentCanvas);
-		DBG("0 : " + (String)contourPointsInPixels.outer().at(0).get<0>() + " " + (String)contourPointsInPixels.outer().at(0).get<1>());
+		/*DBG("0 : " + (String)contourPointsInPixels.outer().at(0).get<0>() + " " + (String)contourPointsInPixels.outer().at(0).get<1>());
 		DBG("1 : " + (String)contourPointsInPixels.outer().at(1).get<0>() + " " + (String)contourPointsInPixels.outer().at(1).get<1>());
 		DBG("2 : " + (String)contourPointsInPixels.outer().at(2).get<0>() + " " + (String)contourPointsInPixels.outer().at(2).get<1>());
-		DBG("3 : " + (String)contourPointsInPixels.outer().at(3).get<0>() + " " + (String)contourPointsInPixels.outer().at(3).get<1>());
+		DBG("3 : " + (String)contourPointsInPixels.outer().at(3).get<0>() + " " + (String)contourPointsInPixels.outer().at(3).get<1>());*/
 	}
+
 
 
 	return areaEventType;
@@ -470,11 +512,26 @@ bool EditableEllipse::SizeChanged(double size)
 		b *= size;
 	}
 
-	// After manipulation computation : normalized coordinates update
-	contourPoints.clear();
-	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scaler(1/ ((double)parentCanvas->getWidth()), 1/ ((double)parentCanvas->getHeight()));
-	boost::geometry::transform(contourPointsInPixels, contourPoints, scaler);
+	
 	return returnValue;
+}
+
+void EditableEllipse::Rotate(double Radian)
+{
+	bpolygon newPolygon;
+
+	boost::geometry::strategy::transform::translate_transformer<double, 2, 2> trans(-centerInPixels.get<0>(), -centerInPixels.get<1>());
+	boost::geometry::strategy::transform::translate_transformer<double, 2, 2> invtrans(centerInPixels.get<0>(), centerInPixels.get<1>());
+	boost::geometry::strategy::transform::rotate_transformer<boost::geometry::radian, double, 2, 2> rot(Radian);
+
+
+	boost::geometry::transform(contourPointsInPixels, newPolygon, trans);
+	boost::geometry::transform(newPolygon, contourPointsInPixels, rot);
+	boost::geometry::transform(contourPointsInPixels, newPolygon, invtrans);
+
+	contourPointsInPixels.clear();
+	contourPointsInPixels = newPolygon;
+
 }
 
 void EditableEllipse::Translate(const Point<double>& translation)

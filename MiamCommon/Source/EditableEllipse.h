@@ -54,6 +54,7 @@ namespace Miam
 			void setCenterPosition(bpt newCenter);
 			
 			bool SizeChanged(double sizeFactor);
+			void Rotate(double Radian);
 
 		protected:
 			void recreateNormalizedPoints() override;

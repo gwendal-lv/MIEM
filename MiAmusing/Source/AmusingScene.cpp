@@ -228,12 +228,14 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDrag(const MouseEvent& 
 	{
 		if (auto draggedArea = std::dynamic_pointer_cast<CompletePolygon>(areaE->GetConcernedArea()))
 		{
-			
+
 			if (lookForAreasInteractions(draggedArea))
 				return graphicE;
 			else
 				return std::shared_ptr<AreaEvent>(new AreaEvent());
 		}
+		else
+			return graphicE;
 	}
 	else
 		return graphicE;
