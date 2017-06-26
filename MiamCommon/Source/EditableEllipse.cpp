@@ -218,68 +218,55 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 			&& isNewContourPointValid(newLocation))
 		{
 			DBG("(a,b) = (" + (String)a + " , " + (String)b + ")");
-			/*DBG("centerInPixels" + (String)centerInPixels.get<0>() + " " + (String)centerInPixels.get<1>());
-			DBG("center" + (String)center.get<0>() + " " + (String)center.get<1>());*/
-			DBG("0 : " + (String)contourPointsInPixels.outer().at(0).get<0>() + " " + (String)contourPointsInPixels.outer().at(0).get<1>());
-			DBG("1 : " + (String)contourPointsInPixels.outer().at(1).get<0>() + " " + (String)contourPointsInPixels.outer().at(1).get<1>());
-			DBG("2 : " + (String)contourPointsInPixels.outer().at(2).get<0>() + " " + (String)contourPointsInPixels.outer().at(2).get<1>());
-			DBG("3 : " + (String)contourPointsInPixels.outer().at(3).get<0>() + " " + (String)contourPointsInPixels.outer().at(3).get<1>());
-			double sa,sb;
+
+			// need to bring back contourPointInPixels centered to (0,0) and with rotation = 0
+			bpt normalizeNewLocation;
+			bpolygon newPolygonInPixels;
+			boost::geometry::strategy::transform::translate_transformer<double, 2, 2> invTrPixels(-centerInPixels.get<0>(),-centerInPixels.get<1>());
+			boost::geometry::strategy::transform::translate_transformer<double, 2, 2> TrPixels(centerInPixels.get<0>(), centerInPixels.get<1>());
+			boost::geometry::strategy::transform::rotate_transformer<boost::geometry::radian, double, 2, 2> invRot(-rotationAngle);
+			boost::geometry::strategy::transform::rotate_transformer<boost::geometry::radian, double, 2, 2> Rot(rotationAngle);
+			/*boost::geometry::strategy::transform::scale_transformer<double, 2, 2> invScale(1.0 / (double)parentCanvas->getWidth(), 1.0 / (double)parentCanvas->getHeight());
+			boost::geometry::strategy::transform::scale_transformer<double, 2, 2> Scale((double)parentCanvas->getWidth(), (double)parentCanvas->getHeight());*/
+
+			boost::geometry::transform(contourPointsInPixels, newPolygonInPixels, invTrPixels);
+			boost::geometry::transform(bnewLocation, normalizeNewLocation, invTrPixels);
+			boost::geometry::transform(newPolygonInPixels, contourPointsInPixels, Rot);
+			boost::geometry::transform(normalizeNewLocation, bnewLocation, Rot);
+
 			double resizeX, resizeY;
 			switch (pointDraggedId)
 			{
-			case 1 : // (Cx +a/2, Cy     )
-			case 3 : // (Cx -a/2, Cy     )
-				sa = bnewLocation.get<0>() - centerInPixels.get<0>();
-				resizeX = (2*abs(sa)/ (double)parentCanvas->getWidth()) / a;
+			case 1 :
+			case 3 :
+				resizeX = bnewLocation.get<0>() / contourPointsInPixels.outer().at(pointDraggedId).get<0>();
 				resizeY = 1;
-				
-				
-				a = 2 * abs(sa) / (double)parentCanvas->getWidth();
-				
-				/*contourPoints.outer().at(1) = bpt(center.get<0>() + (a / 2)*xScale, center.get<1>());
-				contourPoints.outer().at(3) = bpt(center.get<0>() - (a / 2)*xScale, center.get<1>());*/
-
-				
-				
-
-				/*contourPointsInPixels.outer().at(1).set<0>(contourPoints.outer().at(1).get<0>()*(double)parentCanvas->getWidth());
-				contourPointsInPixels.outer().at(3).set<0>(contourPoints.outer().at(3).get<0>()*(double)parentCanvas->getWidth());*/
-
-				
-
+				a = 2 * abs(bnewLocation.get<0>()) / ((double)parentCanvas->getWidth() * xScale);
 				break;
-			case 0 : // (Cx     , Cy +b/2)
-			case 2 : // (Cx     , Cy -b/2)
-				sb = bnewLocation.get<1>() - centerInPixels.get<1>();
+			case 0 :
+			case 2 :
 				resizeX = 1;
-				resizeY = (2*abs(sb)/ (double)parentCanvas->getHeight()) / b;
-				
-				b = 2 * abs(sb) / (double)parentCanvas->getHeight();
-
-
-				/*contourPoints.outer().at(0).set<1>(center.get<1>() - (b / 2)*yScale);
-				contourPoints.outer().at(2).set<1>(center.get<1>() + (b / 2)*yScale);
-				contourPointsInPixels.outer().at(0).set<1>(contourPoints.outer().at(0).get<1>()*(double)parentCanvas->getHeight());
-				contourPointsInPixels.outer().at(2).set<1>(contourPoints.outer().at(2).get<1>()*(double)parentCanvas->getHeight());*/
+				resizeY = bnewLocation.get<1>() / contourPointsInPixels.outer().at(pointDraggedId).get<1>();
+				b = 2 * abs(bnewLocation.get<1>()) / ((double)parentCanvas->getHeight() * yScale);
 				break;
 			default:
 				break;
 			}
-			DBG("new (a,b) = (" + (String)a + " , " + (String)b + ")");
-			
-			bpolygon newContourPoints;
-			boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scaler(resizeX,resizeY);
-			boost::geometry::strategy::transform::translate_transformer<double, 2, 2> trans(-(double)center.get<0>(), -(double)center.get<1>());
-			boost::geometry::strategy::transform::translate_transformer<double, 2, 2> invtrans((double)center.get<0>(), (double)center.get<1>());
-			boost::geometry::transform(contourPoints, newContourPoints, trans);
-			contourPoints.clear();
-			boost::geometry::transform(newContourPoints, contourPoints, scaler);
-			newContourPoints.clear();
-			boost::geometry::transform(contourPoints, newContourPoints, invtrans);
-			contourPoints.clear();
-			contourPoints = newContourPoints;
+
+			boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scaler(resizeX, resizeY);
+			boost::geometry::transform(contourPointsInPixels, newPolygonInPixels, scaler);
+
+			boost::geometry::transform(newPolygonInPixels, contourPointsInPixels, invRot);
+			boost::geometry::transform(contourPointsInPixels, newPolygonInPixels, TrPixels);
 			contourPointsInPixels.clear();
+			contourPointsInPixels = newPolygonInPixels;
+
+			contourPoints.clear();
+			boost::geometry::strategy::transform::scale_transformer<double, 2, 2> rescaler(1 / ((double)parentCanvas->getWidth()), 1 / ((double)parentCanvas->getHeight()));
+			boost::geometry::transform(contourPointsInPixels, contourPoints, rescaler);
+
+			
+			
 
 			
 			areaEventType = AreaEventType::ShapeChanged;
