@@ -100,7 +100,9 @@ namespace Amusing {
         
         // General UI controls and displays
 		void ShowDeviceOptionsDialog(AudioDeviceManager& deviceManager);
-        
+		void removeDeviceManagerFromOptionWindow();
+
+		//void setDeviceSelectorComponent(AudioDeviceManager* deviceManager);
     };
     
     

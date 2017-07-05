@@ -97,6 +97,7 @@ GraphicSessionManager::GraphicSessionManager(Presenter* presenter_, View* view_)
 GraphicSessionManager::~GraphicSessionManager()
 {
 	DBG("GraphicSessionManager destructor");
+	delete myMultiCanvasComponent;
 }
 
 

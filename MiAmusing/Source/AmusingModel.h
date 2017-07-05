@@ -38,9 +38,10 @@ namespace Amusing
 
 			AudioDeviceManager& getAudioDeviceManager();
 
-			AudioManager *audioManager;
+			ScopedPointer<AudioManager> audioManager;//AudioManager *audioManager;
 			Presenter *presenter;
-        
+
+			void removeDeviceManagerFromOptionWindow();
     };
 }
 

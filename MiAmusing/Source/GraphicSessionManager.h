@@ -77,7 +77,7 @@ namespace Amusing {
 
 		// Display & editing attributes for Areas
 
-		std::shared_ptr<IEditableArea> areaToCopy = nullptr; ///< vector index of
+		//std::shared_ptr<IEditableArea> areaToCopy = nullptr; ///< vector index of
 
 
 

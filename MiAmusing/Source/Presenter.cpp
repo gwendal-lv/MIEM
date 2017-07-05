@@ -59,7 +59,7 @@ void Presenter::CompleteInitialisation(AmusingModel* _model)
 {
     // Self init
     model = _model;
-	//view->CompleteInitialization(model);
+	view->CompleteInitialization(model);
 	//graphicSessionManager.CompleteInitialization(model);
 }
 
@@ -221,3 +221,13 @@ AudioDeviceManager& Presenter::getAudioDeviceManager()
 {
 	return model->getAudioDeviceManager();
 }
+
+void Presenter::removeDeviceManagerFromOptionWindow()
+{
+	view->removeDeviceManagerFromOptionWindow();
+}
+
+//void Presenter::setAudioDeviceManager(AudioDeviceManager* deviceManager)
+//{
+//	view->setDeviceSelectorComponent(deviceManager);
+//}

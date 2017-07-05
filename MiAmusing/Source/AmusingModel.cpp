@@ -19,15 +19,17 @@ AmusingModel::AmusingModel(Presenter* m_presenter) : presenter(m_presenter)
 {
 	DBG("AmusingModel::AmusingModel");
 	//audioPlayer = new AudioPlayer();
-	presenter->CompleteInitialisation(this);
+	
 	audioManager = new AudioManager(this);
+	presenter->CompleteInitialisation(this);
+	//presenter->setAudioDeviceManager(audioManager);
 }
 
 AmusingModel::~AmusingModel()
 {
-	//DBG("Model destructor");
-	//delete audioPlayer;
-	delete audioManager;
+	
+	//delete audioManager;
+	audioManager = nullptr;
 }
 
 bool AmusingModel::lookForParameter(Miam::AsyncParamChange &param)
@@ -40,4 +42,9 @@ AudioDeviceManager& AmusingModel::getAudioDeviceManager()
 	if (audioManager == nullptr)
 		DBG("No audioManager");
 	return audioManager->getAudioDeviceManager();
+}
+
+void AmusingModel::removeDeviceManagerFromOptionWindow()
+{
+	presenter->removeDeviceManagerFromOptionWindow();
 }

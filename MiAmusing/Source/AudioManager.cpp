@@ -81,6 +81,8 @@ AudioManager::~AudioManager()
 	else
 		DBG("still exist");
 
+	
+	model->removeDeviceManagerFromOptionWindow();
 	//delete midiOuput;
 }
 /*

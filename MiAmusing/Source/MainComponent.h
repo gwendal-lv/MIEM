@@ -32,7 +32,7 @@ namespace Amusing
     class View; // cross-inclusion issue
 	class AmusingModel;
 	class GraphicSessionManager;
-	
+	class OptionWindow;
 }
 using namespace Amusing;
 //==============================================================================
@@ -54,7 +54,7 @@ private:
     
     // Graphical component
     MultiCanvasComponentAmusing* multiCanvasComponent = 0; // belongs to the presenter
-	EditScene* editSceneC;
+	ScopedPointer<	EditScene> editSceneC;
 	//SceneEditionComponent* sceneEditionComponent;
     
 	// Audio component
@@ -80,6 +80,9 @@ private:
 	}
     
 	void ShowDeviceOptionsDialog(AudioDeviceManager& deviceManager);
+	void CloseOptionWindow();
+	void removeDeviceManagerFromOptionWindow();
+	//void CreateDeviceSelector(AudioDeviceManager* deviceManager);
     
     // = = = = = = = = = = METHODS (JUCE AND USER-DEFINED) = = = = = = = = = =
 public:
@@ -91,6 +94,8 @@ public:
     void resized() override;
 
 private:
+	//SafePointer<AudioDeviceSelectorComponent> audioSetupComp;
+	ScopedPointer<OptionWindow> optionWindow;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 };

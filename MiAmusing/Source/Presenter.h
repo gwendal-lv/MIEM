@@ -82,6 +82,7 @@ namespace Amusing {
 
 			int getTempo();
 			void setTempo(int newTempo);
+			void setAudioDeviceManager(AudioDeviceManager* deviceManager);
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         
         public :
@@ -106,6 +107,7 @@ namespace Amusing {
 		virtual void Update() override;
         
 		AudioDeviceManager& getAudioDeviceManager();
+		void removeDeviceManagerFromOptionWindow();
 
         // Events from the View
         AppMode appModeChangeRequest(AppMode newAppMode);

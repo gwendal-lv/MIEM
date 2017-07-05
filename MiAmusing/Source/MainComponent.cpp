@@ -9,7 +9,7 @@
 #include "MainComponent.h"
 #include "AmusingModel.h"
 #include "MultiCanvasComponentAmusing.h"
-
+#include "OptionWindow.h"
 using namespace Amusing;
 using namespace Miam;
 
@@ -25,8 +25,9 @@ MainContentComponent::MainContentComponent()
 
 MainContentComponent::~MainContentComponent()
 {
+	DBG("MainContentComponent destructor");
 	//delete sceneEditionComponent;
-	delete editSceneC;
+	//delete editSceneC;
 }
 
 void MainContentComponent::paint (Graphics& g)
@@ -44,8 +45,12 @@ void MainContentComponent::resized()
     // If you add any child components, this is where you should
     // update their positions.
 
-    if (multiCanvasComponent)
+	DBG("MainContentComponent::resized()");
+
+	if (multiCanvasComponent)
+	{
 		multiCanvasComponent->setBounds(50, 0, 550, getLocalBounds().getHeight());
+	}
 	if (editSceneC)
 		editSceneC->setBounds(0, 0, 50, getLocalBounds().getHeight());
     //    multiCanvasComponent->setBounds(getLocalBounds());
@@ -72,6 +77,11 @@ void MainContentComponent::CompleteInitialization(GraphicSessionManager* _graphi
 void MainContentComponent::CompleteInitialization(AmusingModel* _model)
 {
 	model = _model;
+
+	/*audioSetupComp = new AudioDeviceSelectorComponent(model->getAudioDeviceManager(),
+		0, 256, 0, 256, true, true, true, false);*/
+	optionWindow = new OptionWindow(this);
+	optionWindow->CompleteInitialization(model->getAudioDeviceManager());
 	//addAndMakeVisible(model->audioPlayer);
 }
 
@@ -83,5 +93,26 @@ void MainContentComponent::SetMiamView(Amusing::View* _view)
 
 void MainContentComponent::ShowDeviceOptionsDialog(AudioDeviceManager& deviceManager)
 {
-	multiCanvasComponent->ShowDeviceOptionsDialog(deviceManager);
+	addAndMakeVisible(optionWindow);//addAndMakeVisible(audioSetupComp);
+	multiCanvasComponent->setVisible(false);
+	optionWindow->setBounds(50, 0, 550, getLocalBounds().getHeight());//audioSetupComp->setBounds(50, 0, 550, getLocalBounds().getHeight());
+	optionWindow->setVisible(true);//audioSetupComp->setVisible(true);
+	//multiCanvasComponent->ShowDeviceOptionsDialog(deviceManager);
 }
+
+void MainContentComponent::CloseOptionWindow()
+{
+	multiCanvasComponent->setVisible(true);
+	optionWindow->setVisible(false);
+}
+
+void MainContentComponent::removeDeviceManagerFromOptionWindow()
+{
+
+	optionWindow->removeDeviceManager();
+}
+
+//void MainContentComponent::CreateDeviceSelector(AudioDeviceManager* deviceManager)
+//{
+//	multiCanvasComponent->CreateDeviceSelector(deviceManager);
+//}

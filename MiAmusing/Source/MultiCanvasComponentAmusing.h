@@ -25,11 +25,15 @@ public:
 	~MultiCanvasComponentAmusing();
 
 	void ShowDeviceOptionsDialog(AudioDeviceManager& deviceManager);
-	
+	/*void CreateDeviceSelector(AudioDeviceManager* deviceManager);*/
+
+	void resized() override;
 
 
 private:
-	ScopedPointer<AudioDeviceSelectorComponent> audioSetupComp;
+	SafePointer<AudioDeviceSelectorComponent> audioSetupComp;
 	SafePointer<DialogWindow> dialogWindow;
+	DialogWindow::LaunchOptions options;
+	bool show;
 };
 

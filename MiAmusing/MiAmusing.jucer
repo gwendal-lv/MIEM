@@ -100,6 +100,9 @@
               resource="0" file="Source/MultiCanvasComponentAmusing.cpp"/>
         <FILE id="a1eNGz" name="MultiCanvasComponentAmusing.h" compile="0"
               resource="0" file="Source/MultiCanvasComponentAmusing.h"/>
+        <FILE id="zj4ZTk" name="OptionWindow.cpp" compile="1" resource="0"
+              file="Source/OptionWindow.cpp"/>
+        <FILE id="Hck3e6" name="OptionWindow.h" compile="0" resource="0" file="Source/OptionWindow.h"/>
         <FILE id="GceKis" name="View.cpp" compile="1" resource="0" file="Source/View.cpp"/>
         <FILE id="AJOEwp" name="View.h" compile="0" resource="0" file="Source/View.h"/>
       </GROUP>
