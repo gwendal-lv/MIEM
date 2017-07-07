@@ -43,9 +43,10 @@ AudioManager::AudioManager(AmusingModel *m_model) : model(m_model), Nsources(0),
 	trackVector.reserve(Nmax);
 	activeVector.reserve(Nmax);
 	mixer = new MixerAudioSource();
-	//setAudioChannels(0, 2);
-	initialise(0, 2, nullptr, true);
-	addAudioCallback(this);
+	
+
+	//initialise(0, 2, nullptr, true);
+	//addAudioCallback(this);
 	setSource(this);
 	runThread = true;
 	T = std::thread(&AudioManager::threadFunc, this);
@@ -67,8 +68,8 @@ AudioManager::~AudioManager()
 	runThread = false;
 	T.join();
 	setSource(nullptr);
-	removeAudioCallback(this);
-	closeAudioDevice();
+	/*removeAudioCallback(this);
+	closeAudioDevice();*/
 	DBG("audioManager destructor fin");
 
 	//DBG("AudioManager::releaseResources");
@@ -116,12 +117,13 @@ void AudioManager::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 	periode = metronome.timeToSample(4000);
 	position = 0;
 
-	AudioDeviceSetup currentAudioSetup;
+	/*AudioDeviceSetup currentAudioSetup;
 	this->getAudioDeviceSetup(currentAudioSetup);
 
 	DBG("default midi output : " + (String)this->getDefaultMidiOutputName());
-	midiOuput = this->getDefaultMidiOutput();
-	
+	midiOuput = this->getDefaultMidiOutput();*/
+
+	midiOuput = model->getMidiOutput();
 	
 	/*midiSender = std::shared_ptr<TimeLine>(new TimeLine(periode));
 	if (midiOuput != nullptr)
@@ -628,7 +630,7 @@ void AudioManager::HandleEvent()
 	model->SendParamChange(param);
 }
 
-AudioDeviceManager& AudioManager::getAudioDeviceManager()
-{
-	return *this;
-}
+//AudioDeviceManager& AudioManager::getAudioDeviceManager()
+//{
+//	return *this;
+//}

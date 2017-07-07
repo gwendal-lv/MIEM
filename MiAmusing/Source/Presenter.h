@@ -106,7 +106,7 @@ namespace Amusing {
 
 		virtual void Update() override;
         
-		AudioDeviceManager& getAudioDeviceManager();
+		/*AudioDeviceManager* getAudioDeviceManager();*/
 		void removeDeviceManagerFromOptionWindow();
 
         // Events from the View

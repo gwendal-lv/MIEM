@@ -15,12 +15,12 @@ class MainContentComponent;
 namespace Amusing
 {
 	class OptionWindow : public Component,
-		public ButtonListener
+		public ButtonListener, public ChangeListener
 	{
 	public:
 		OptionWindow(MainContentComponent* _mainComponent);
 		~OptionWindow();
-		void CompleteInitialization(AudioDeviceManager& deviceManager);
+		void CompleteInitialization(std::shared_ptr<AudioDeviceManager> deviceManager);
 		void removeDeviceManager();
 
 		void paint(Graphics& g);
@@ -28,9 +28,24 @@ namespace Amusing
 
 		void buttonClicked(Button * button) override;
 
+		void changeListenerCallback(ChangeBroadcaster*) override;
+
 	private:
 		TextButton* OKbutton;
-		SafePointer<AudioDeviceSelectorComponent> audioSetupComp;
+		ScopedPointer<AudioDeviceSelectorComponent> audioSetupComp;
 		MainContentComponent* mainComponent;
+		std::shared_ptr<AudioDeviceManager> deviceManager;
+
+		static String getListOfActiveBits(const BitArray& b)
+		{
+			StringArray bits;
+
+			for (int i = 0; i <= b.getHighestBit(); ++i)
+				if (b[i])
+					bits.add(String(i));
+
+			return bits.joinIntoString(", ");
+		}
+
 	};
 }

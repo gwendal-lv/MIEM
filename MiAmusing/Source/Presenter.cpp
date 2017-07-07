@@ -217,10 +217,10 @@ void Presenter::Update() // remettre l'interieur dans graphsessionmanager
 	graphicSessionManager.SetAllAudioPositions(lastPosition);
 }
 
-AudioDeviceManager& Presenter::getAudioDeviceManager()
-{
-	return model->getAudioDeviceManager();
-}
+//AudioDeviceManager* Presenter::getAudioDeviceManager()
+//{
+//	return model->sharedAudioDeviceManager;//getAudioDeviceManager();
+//}
 
 void Presenter::removeDeviceManagerFromOptionWindow()
 {

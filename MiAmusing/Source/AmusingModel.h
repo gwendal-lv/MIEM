@@ -19,7 +19,7 @@
 #include "Presenter.h"
 
 
-
+#include<memory>
 
 namespace Amusing
 {
@@ -36,12 +36,16 @@ namespace Amusing
         
 			bool lookForParameter(Miam::AsyncParamChange &param);
 
-			AudioDeviceManager& getAudioDeviceManager();
+			//AudioDeviceManager& getAudioDeviceManager();
 
 			ScopedPointer<AudioManager> audioManager;//AudioManager *audioManager;
 			Presenter *presenter;
 
 			void removeDeviceManagerFromOptionWindow();
+			std::shared_ptr<AudioDeviceManager> sharedAudioDeviceManager;
+			//ScopedPointer<AudioDeviceManager> sharedAudioDeviceManager;
+			
+			MidiOutput* getMidiOutput();
     };
 }
 

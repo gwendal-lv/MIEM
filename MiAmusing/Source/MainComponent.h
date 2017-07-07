@@ -79,7 +79,7 @@ private:
 		return editSceneC;
 	}
     
-	void ShowDeviceOptionsDialog(AudioDeviceManager& deviceManager);
+	void ShowDeviceOptionsDialog();
 	void CloseOptionWindow();
 	void removeDeviceManagerFromOptionWindow();
 	//void CreateDeviceSelector(AudioDeviceManager* deviceManager);

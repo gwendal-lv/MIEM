@@ -81,7 +81,7 @@ void MainContentComponent::CompleteInitialization(AmusingModel* _model)
 	/*audioSetupComp = new AudioDeviceSelectorComponent(model->getAudioDeviceManager(),
 		0, 256, 0, 256, true, true, true, false);*/
 	optionWindow = new OptionWindow(this);
-	optionWindow->CompleteInitialization(model->getAudioDeviceManager());
+	optionWindow->CompleteInitialization(model->sharedAudioDeviceManager);//getAudioDeviceManager());
 	//addAndMakeVisible(model->audioPlayer);
 }
 
@@ -91,7 +91,7 @@ void MainContentComponent::SetMiamView(Amusing::View* _view)
     
 }
 
-void MainContentComponent::ShowDeviceOptionsDialog(AudioDeviceManager& deviceManager)
+void MainContentComponent::ShowDeviceOptionsDialog()
 {
 	addAndMakeVisible(optionWindow);//addAndMakeVisible(audioSetupComp);
 	multiCanvasComponent->setVisible(false);

@@ -511,7 +511,7 @@ void GraphicSessionManager::OnAddComplete()
 
 void GraphicSessionManager::OnDeviceOptionsClicked()
 {
-	view->ShowDeviceOptionsDialog(myPresenter->getAudioDeviceManager());
+	view->ShowDeviceOptionsDialog();
 }
 
 void GraphicSessionManager::SetMidiChannel(int ch)
