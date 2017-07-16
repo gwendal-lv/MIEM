@@ -259,3 +259,4 @@ void MultiSceneCanvasManager::resendToModel()
 			handleAndSendEventSync(amusingScene->resendArea(i));
 	}
 }
+

@@ -27,6 +27,8 @@
 #include "boost\geometry\geometries\geometries.hpp"
 #include "boost\geometry\geometries\polygon.hpp"
 
+#include "AmusingSceneComponent.h"
+
 typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> bpt;
 typedef boost::geometry::model::polygon<bpt> bpolygon;
 
@@ -228,6 +230,13 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDrag(const MouseEvent& 
 	{
 		if (auto draggedArea = std::dynamic_pointer_cast<CompletePolygon>(areaE->GetConcernedArea()))
 		{
+			if (areaE->GetType() == AreaEventType::Translation)
+			{
+				if (auto sceneComponent = (AmusingSceneComponent*)canvasComponent)
+				{
+					sceneComponent->SetAreaOptionsCenter(draggedArea->getCenter());
+				}
+			}
 
 			if (lookForAreasInteractions(draggedArea))
 				return graphicE;
@@ -628,3 +637,19 @@ std::shared_ptr<AreaEvent> AmusingScene::resendArea(int idx)
 	return std::shared_ptr<AreaEvent>(new AreaEvent(areas[idx], AreaEventType::ShapeChanged,idx, shared_from_this()));
 }
 
+std::shared_ptr<AreaEvent> AmusingScene::SetSelectedArea(std::shared_ptr<IEditableArea> selectedArea_, bool changeMode)
+{
+	DBG("AmusingScene::SetSelectedArea");
+	std::shared_ptr<AreaEvent> areaE =  EditableScene::SetSelectedArea(selectedArea_, changeMode);
+	if (auto sceneComponent = (AmusingSceneComponent*)canvasComponent)
+	{
+		if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(selectedArea_))
+		{
+			sceneComponent->SetAreaOptionsCenter(completeArea->getCenter());
+			sceneComponent->SetAreaOptionsVisible(true);
+		}
+		else
+			sceneComponent->SetAreaOptionsVisible(false);
+	}
+	return areaE;
+}

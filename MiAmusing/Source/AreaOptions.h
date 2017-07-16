@@ -22,15 +22,7 @@
 //[Headers]     -- You can add your own extra header files here --
 #include "../JuceLibraryCode/JuceHeader.h"
 
-
-
-namespace Amusing
-{
-	class GraphicSessionManager;
-
-}
-using namespace Amusing;
-
+class AmusingSceneComponent;
 //[/Headers]
 
 
@@ -43,53 +35,41 @@ using namespace Amusing;
     Describe your class and how it works here!
                                                                     //[/Comments]
 */
-class EditScene  : public Component,
-                   public ButtonListener,
-                   public ComboBoxListener,
-                   public SliderListener
+class AreaOptions  : public Component,
+                     public SliderListener
 {
 public:
     //==============================================================================
-    EditScene ();
-    ~EditScene();
+    AreaOptions ();
+    ~AreaOptions();
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-	void CompleteInitialization(GraphicSessionManager* _graphicSessionManager);//, MultiCanvasComponent* _multiCanvasComponent);
-
+	void CompleteInitialization(AmusingSceneComponent* m_amusingSceneComponent);
     //[/UserMethods]
 
     void paint (Graphics& g) override;
     void resized() override;
-    void buttonClicked (Button* buttonThatWasClicked) override;
-    void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
     void sliderValueChanged (Slider* sliderThatWasMoved) override;
+    void mouseDown (const MouseEvent& e) override;
+    void mouseDrag (const MouseEvent& e) override;
+    void mouseUp (const MouseEvent& e) override;
 
 
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
-    GraphicSessionManager* graphicSessionManager = 0;
-	//MultiCanvasComponent* multiCanvasComponent = 0;
-
+	AmusingSceneComponent* amusingSceneComponent;
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<TextButton> playButton;
-    ScopedPointer<TextButton> pauseButton;
-    ScopedPointer<TextButton> stopButton;
-    ScopedPointer<TextButton> addCarreButton;
-    ScopedPointer<TextButton> addTriangleButton;
-    ScopedPointer<TextButton> addTrueCircleButton;
-    ScopedPointer<TextButton> deleteButton;
-    ScopedPointer<TextButton> completeButton;
-    ScopedPointer<TextButton> optionButton;
-    ScopedPointer<ComboBox> comboBoxMidi;
-    ScopedPointer<Slider> timeSlider;
+    ScopedPointer<Slider> baseNote;
+    ScopedPointer<Slider> velocity;
+    ScopedPointer<Label> velocityLabel;
 
 
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EditScene)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AreaOptions)
 };
 
 //[EndFile] You can add extra defines here...

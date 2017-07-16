@@ -187,6 +187,8 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 			//DBG("multiareaevent");
 			//getSelectedCanvasAsEditable()->CallRepaint
 			//getSelectedCanvasAsManager()->handleUpdateNowIfNeeded
+			if (multiE->GetType() == AreaEventType::Selected)
+				DBG("deselection + selection");
 		}
 
 		// Event about an Exciter in particular : we'll have to update the spat mix !
@@ -334,7 +336,9 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				//DBG("RotScale");
 				
 				break;
-			
+			case AreaEventType::Selected :
+				DBG("selection");
+				break;
 				//case AreaEventType::
 			default:
 				break;
@@ -402,9 +406,36 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 }
 
 
-void GraphicSessionManager::CanvasModeChanged(CanvasManagerMode /*canvasMode*/)
+void GraphicSessionManager::CanvasModeChanged(CanvasManagerMode canvasMode)
 {
-
+	switch (canvasMode)
+	{
+	case Miam::CanvasManagerMode::Null:
+		break;
+	case Miam::CanvasManagerMode::Loading:
+		break;
+	case Miam::CanvasManagerMode::Loaded:
+		break;
+	case Miam::CanvasManagerMode::Unselected:
+		DBG("area unselected");
+		break;
+	case Miam::CanvasManagerMode::SceneOnlySelected:
+		DBG("scene selected");
+		break;
+	case Miam::CanvasManagerMode::CanvasSelected:
+		break;
+	case Miam::CanvasManagerMode::AreaSelected:
+		DBG("area selected");
+		break;
+	case Miam::CanvasManagerMode::EditingArea:
+		break;
+	case Miam::CanvasManagerMode::WaitingForPointCreation:
+		break;
+	case Miam::CanvasManagerMode::WaitingForPointDeletion:
+		break;
+	default:
+		break;
+	}
 }
 
 

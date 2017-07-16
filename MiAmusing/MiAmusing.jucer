@@ -89,6 +89,12 @@
         <FILE id="to3tGG" name="Presenter.h" compile="0" resource="0" file="Source/Presenter.h"/>
       </GROUP>
       <GROUP id="{6C8312F9-4A59-989E-1DC5-6EC6799A0035}" name="View">
+        <FILE id="fvDGnO" name="AmusingSceneComponent.cpp" compile="1" resource="0"
+              file="Source/AmusingSceneComponent.cpp"/>
+        <FILE id="HqoQys" name="AmusingSceneComponent.h" compile="0" resource="0"
+              file="Source/AmusingSceneComponent.h"/>
+        <FILE id="zL9zBL" name="AreaOptions.cpp" compile="1" resource="0" file="Source/AreaOptions.cpp"/>
+        <FILE id="HIcl1x" name="AreaOptions.h" compile="0" resource="0" file="Source/AreaOptions.h"/>
         <FILE id="wihbQV" name="editScene.cpp" compile="1" resource="0" file="Source/editScene.cpp"/>
         <FILE id="yBAnTJ" name="editScene.h" compile="0" resource="0" file="Source/editScene.h"/>
         <FILE id="uj6fbl" name="Follower.cpp" compile="1" resource="0" file="Source/Follower.cpp"/>
@@ -100,6 +106,10 @@
               resource="0" file="Source/MultiCanvasComponentAmusing.cpp"/>
         <FILE id="a1eNGz" name="MultiCanvasComponentAmusing.h" compile="0"
               resource="0" file="Source/MultiCanvasComponentAmusing.h"/>
+        <FILE id="GE7I1N" name="MultiSceneCanvasComponentAmusing.cpp" compile="1"
+              resource="0" file="Source/MultiSceneCanvasComponentAmusing.cpp"/>
+        <FILE id="salJhk" name="MultiSceneCanvasComponentAmusing.h" compile="0"
+              resource="0" file="Source/MultiSceneCanvasComponentAmusing.h"/>
         <FILE id="zj4ZTk" name="OptionWindow.cpp" compile="1" resource="0"
               file="Source/OptionWindow.cpp"/>
         <FILE id="Hck3e6" name="OptionWindow.h" compile="0" resource="0" file="Source/OptionWindow.h"/>

@@ -861,6 +861,9 @@ void CompletePolygon::CanvasResizedBullsEye(SceneCanvasComponent* _parentCanvas)
 	
 }
 
-
+bpt CompletePolygon::getCenter()
+{
+	return centerInPixels;
+}
 
 

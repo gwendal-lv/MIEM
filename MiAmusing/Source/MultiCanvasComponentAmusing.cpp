@@ -11,6 +11,7 @@
 #include "MultiCanvasComponentAmusing.h"
 #include "IGraphicSessionManager.h"
 #include "JuceHeader.h"
+#include "MultiSceneCanvasComponentAmusing.h"
 
 MultiCanvasComponentAmusing::MultiCanvasComponentAmusing(IGraphicSessionManager* _graphicSessionManager) :
 	MultiCanvasComponent(_graphicSessionManager)
@@ -59,4 +60,12 @@ void MultiCanvasComponentAmusing::resized()
 		addAndMakeVisible(audioSetupComp);
 		audioSetupComp->setAlwaysOnTop(true);//toFront(true);
 	}
+}
+
+// - - - - - Canvases & canvas group - - - - -
+MultiSceneCanvasComponent* MultiCanvasComponentAmusing::AddCanvas()
+{
+	multiSceneCanvasComponents.push_back(new MultiSceneCanvasComponentAmusing()); //new MultiSceneCanvasComponentAmusing()
+	addAndMakeVisible(multiSceneCanvasComponents.back());
+	return multiSceneCanvasComponents.back();
 }

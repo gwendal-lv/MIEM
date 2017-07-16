@@ -67,6 +67,7 @@ namespace Amusing
 		bool getAllPercentages(int idx, double &value);
 		bool getAllDistanceFromCenter(int idx, int &value);
 
+		bpt getCenter();
 	private:
 
 		// attributes linked to the Cursor

@@ -29,6 +29,7 @@ public:
 
 	void resized() override;
 
+	MultiSceneCanvasComponent* AddCanvas() override;
 
 private:
 	SafePointer<AudioDeviceSelectorComponent> audioSetupComp;
