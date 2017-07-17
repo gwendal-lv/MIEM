@@ -49,6 +49,7 @@ private:
 	int velocity;
 	int duration;
 	int period; // period, to be sure we don't set a noteOff signal after the end of the period...
+	int lastNote; // last note played -> we have to send the noteOff msg when the object is deleted
 
 	// reference to the audioManager to send the MIDI
 	Amusing::AudioManager* audioManager;

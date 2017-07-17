@@ -402,6 +402,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 			DBG("play clicked");
 			param.Type = Miam::AsyncParamChange::ParamType::Play;
 			param.IntegerValue = myPresenter->getTempo();
+			param.FloatValue = myPresenter->getMasterVolume();
 			myPresenter->SendParamChange(param);
 			break;
 		case ControlEventType::Pause:
@@ -577,5 +578,11 @@ void GraphicSessionManager::SetMidiChannel(int ch)
 void GraphicSessionManager::OnTempoChanged(int newTempo) // voir si laisser comme ca, pcq pas d'interpretation necessaire pour le tempo
 {
 	myPresenter->setTempo(newTempo);
+	HandleEventSync(std::shared_ptr<ControlEvent>(new ControlEvent(ControlEventType::Play)));
+}
+
+void GraphicSessionManager::OnMasterVolumeChanged(float newVolume)
+{
+	myPresenter->setMasterVolume(newVolume);
 	HandleEventSync(std::shared_ptr<ControlEvent>(new ControlEvent(ControlEventType::Play)));
 }

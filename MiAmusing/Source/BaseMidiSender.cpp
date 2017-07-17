@@ -23,11 +23,15 @@ TimeLine::TimeLine()
 
 	noteOffSent = true;
 	channel = 1;
-	duration = 10000;	
+	duration = 10000;
+
+	lastNote = 0;
 }
 
 TimeLine::~TimeLine()
 {
+	MidiMessage midiMsgOff = MidiMessage::noteOff(channel, lastNote);
+	//audioManager->sendMidiMessage(midiMsgOff);
 }
 
 void TimeLine::setAudioManager(AudioManager* m_audioManager)
@@ -51,21 +55,7 @@ void TimeLine::setPeriod(int m_period)
 
 void TimeLine::setMidiTime(int idx, int newTime, int m_noteNumber)
 {
-	/*
-	DBG("----before------");
-	int S = (midiTimes.size() > midiOffTimes.size()) ? midiTimes.size() : midiOffTimes.size();
-	for (int i = 0; i < S; ++i)
-	{
-		if (i >= midiTimes.size())
-			DBG("        " + (String)midiOffTimes[i]);
-		else if (i >= midiOffTimes.size())
-			DBG((String)midiTimes[i]);
-		else
-			DBG((String)midiTimes[i] + " " + (String)midiOffTimes[i]);
-	}
-	DBG("----------");
-	*/
-
+	
 	if (idx < maxSize)
 	{
 		//DBG("<");
@@ -132,6 +122,7 @@ void TimeLine::process(int time)
 			//DBG("Play note : " + (String)notes[i]);
 			MidiMessage midiMsg = MidiMessage::noteOn(channel, notes[i], (uint8)100);
 			audioManager->sendMidiMessage(midiMsg);
+			lastNote = notes[i];
 			return;
 		}
 			

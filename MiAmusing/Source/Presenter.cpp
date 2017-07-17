@@ -46,6 +46,7 @@ Presenter::Presenter(View* _view) :
 	Nsources = 0;
 	Nfollower = 0;
 	tempo = 4;
+	masterVolume = 0.5f;
 	SetAllChannels();
 }
 
@@ -91,6 +92,16 @@ void Presenter::setTempo(int newTempo)
 int Presenter::getTempo()
 {
 	return tempo;
+}
+
+void Presenter::setMasterVolume(float newVolume)
+{
+	masterVolume = newVolume;
+}
+
+float Presenter::getMasterVolume()
+{
+	return masterVolume;
 }
 
 void Presenter::setChannel(std::shared_ptr<EditableScene> scene,int channel)

@@ -53,6 +53,7 @@ namespace Amusing {
         // Pointer to the unique Model module
         AmusingModel* model = 0;
 		int tempo;
+		float masterVolume;
 
         AppMode appMode;
         
@@ -82,6 +83,8 @@ namespace Amusing {
 
 			int getTempo();
 			void setTempo(int newTempo);
+			float getMasterVolume();
+			void setMasterVolume(float newVolume);
 			void setAudioDeviceManager(AudioDeviceManager* deviceManager);
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         

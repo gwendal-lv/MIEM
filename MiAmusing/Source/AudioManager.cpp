@@ -267,6 +267,9 @@ void AudioManager::getParameters()
 		case Miam::AsyncParamChange::ParamType::Play :
 			DBG("state = Play;");
 			state = Play;
+			DBG("send masterVolume midi : " + (String)roundToInt(param.FloatValue*127.0f));
+			sendMidiMessage(juce::MidiMessage::controllerEvent(1,7,roundToInt(param.FloatValue*127.0f)));//juce::MidiMessage::masterVolume(param.FloatValue));
+			//sendMidiMessage(juce::MidiMessage::masterVolume(param.FloatValue));
 			param.IntegerValue = metronome.timeToSample(param.IntegerValue);
 			paramToAllocationThread.push(param);
 			break;

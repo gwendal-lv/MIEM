@@ -86,6 +86,7 @@ private:
     ScopedPointer<TextButton> optionButton;
     ScopedPointer<ComboBox> comboBoxMidi;
     ScopedPointer<Slider> timeSlider;
+    ScopedPointer<Slider> volumeSlider;
 
 
     //==============================================================================

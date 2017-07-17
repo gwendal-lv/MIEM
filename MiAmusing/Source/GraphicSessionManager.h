@@ -152,6 +152,7 @@ namespace Amusing {
 		void OnPauseClicked();
 		void OnStopClicked();
 		void OnTempoChanged(int newTempo);
+		void OnMasterVolumeChanged(float newVolume);
 
 		void OnDeviceOptionsClicked();
 		void SetAllChannels(); // bouger d'endroit dans le constructeur pour la comprehension (pas view event)
