@@ -73,6 +73,8 @@ namespace Amusing {
 		void SetAllChannels();
 		std::shared_ptr<EditableScene> GetSelectedScene();
 		void resendToModel();
+
+		void ChangeBaseNote(double newBaseNote);
     };
     
     

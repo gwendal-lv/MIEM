@@ -63,6 +63,9 @@ AudioManager::AudioManager(AmusingModel *m_model) : model(m_model), Nsources(0),
 
 AudioManager::~AudioManager()
 {
+	if(midiOuput != 0)
+		for(int i=1; i< 17; i++)
+			midiOuput->sendMessageNow(MidiMessage::allNotesOff(i));
 	DBG("audioManager destructor");
 	//shutdownAudio();
 	runThread = false;
@@ -309,7 +312,9 @@ void AudioManager::getAudioThreadMsg()
 				timeLines[param.Id1]->setPeriod(periode);
 				timeLines[param.Id1]->setAudioManager(this);
 				//DBG("midiChannel : " + (String)param.IntegerValue);
-				timeLines[param.Id1]->setMidiChannel(param.IntegerValue);
+				if(param.IntegerValue != 0)
+					timeLines[param.Id1]->setMidiChannel(param.IntegerValue);
+				
 				timeLines[param.Id1]->setId(param.Id1);
 				++midiSenderSize;
 				timeLinesToAudio.push(timeLines[param.Id1]);

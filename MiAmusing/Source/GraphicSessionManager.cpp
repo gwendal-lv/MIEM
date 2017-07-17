@@ -222,6 +222,8 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					{
 						param.IntegerValue = myPresenter->getChannel(amusingScene);
 					}
+					else
+						param.IntegerValue = 0;
 					myPresenter->SendParamChange(param); // envoie l'ordre de creer/ detruire une source audio
 					//DBG("GSM : construct a new audio polygon, please. Id : " + (String)param.Id1);
 					param.Type = Miam::AsyncParamChange::ParamType::Source;
@@ -306,6 +308,20 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					//myPresenter->SendParamChange(param); // envoie l'ordre de creer/ detruire une source audio
 
 					param.Id1 = myPresenter->getSourceID(area);
+					param.Type = Miam::AsyncParamChange::ParamType::Activate;
+					param.Id2 = 1; // 1 pour activer la source, 0 pour la supprimer
+					if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(areaE->GetConcernedScene()))
+					{
+						param.IntegerValue = myPresenter->getChannel(amusingScene);
+					}
+					else
+						param.IntegerValue = 0;
+					myPresenter->SendParamChange(param);
+
+
+
+
+					//param.Id1 = myPresenter->getSourceID(area);
 					param.Type = Miam::AsyncParamChange::ParamType::Source;
 					i = 0;
 					//DBG("before while");

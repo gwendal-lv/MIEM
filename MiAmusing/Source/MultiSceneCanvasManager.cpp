@@ -260,3 +260,7 @@ void MultiSceneCanvasManager::resendToModel()
 	}
 }
 
+void MultiSceneCanvasManager::ChangeBaseNote(double newBaseNote)
+{
+	DBG("new base = " + (String)newBaseNote);
+}

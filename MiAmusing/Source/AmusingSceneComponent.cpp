@@ -10,6 +10,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "AmusingSceneComponent.h"
+#include "MultiSceneCanvasManager.h"
 
 #include <memory>
 
@@ -62,6 +63,15 @@ void AmusingSceneComponent::OnVelocityChanged(double newVelocity)
 void AmusingSceneComponent::OnBaseNoteChanged(double newBaseNote)
 {
 	DBG("newBaseNote = " + (String)newBaseNote);
+	//canvasManager.lock()->
+	//if(auto canvasManagerAsManager = std::dynamic_pointer_cast)
+	if (auto manager = canvasManager.lock())
+	{
+		if (auto managerAsManager = std::dynamic_pointer_cast<Amusing::MultiSceneCanvasManager>(manager))
+		{
+			managerAsManager->ChangeBaseNote(newBaseNote);
+		}
+	}
 }
 
 void AmusingSceneComponent::SetAreaOptionsCenter(bpt center)
