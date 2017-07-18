@@ -117,7 +117,7 @@ void AudioManager::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 	DBG("div = " + (String)div);
 	metronome.setAudioParameter(samplesPerBlockExpected, sampleRate);
 	
-	periode = metronome.timeToSample(4000);
+	periode = metronome.BPMtoPeriodInSample(50);//timeToSample(4000);
 	position = 0;
 
 	/*AudioDeviceSetup currentAudioSetup;
@@ -270,7 +270,7 @@ void AudioManager::getParameters()
 			DBG("send masterVolume midi : " + (String)roundToInt(param.FloatValue*127.0f));
 			sendMidiMessage(juce::MidiMessage::controllerEvent(1,7,roundToInt(param.FloatValue*127.0f)));//juce::MidiMessage::masterVolume(param.FloatValue));
 			//sendMidiMessage(juce::MidiMessage::masterVolume(param.FloatValue));
-			param.IntegerValue = metronome.timeToSample(param.IntegerValue);
+			param.IntegerValue = metronome.BPMtoPeriodInSample(param.IntegerValue);//timeToSample(param.IntegerValue);
 			paramToAllocationThread.push(param);
 			break;
 		case Miam::AsyncParamChange::ParamType::Pause :

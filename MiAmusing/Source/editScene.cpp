@@ -79,7 +79,7 @@ EditScene::EditScene ()
     comboBoxMidi->addListener (this);
 
     addAndMakeVisible (timeSlider = new Slider ("new slider"));
-    timeSlider->setRange (1, 10, 1);
+    timeSlider->setRange (50, 200, 1);
     timeSlider->setSliderStyle (Slider::IncDecButtons);
     timeSlider->setTextBoxStyle (Slider::TextBoxAbove, false, 80, 20);
     timeSlider->setColour (Slider::textBoxTextColourId, Colours::white);
@@ -253,7 +253,7 @@ void EditScene::sliderValueChanged (Slider* sliderThatWasMoved)
     if (sliderThatWasMoved == timeSlider)
     {
         //[UserSliderCode_timeSlider] -- add your slider handling code here..
-		graphicSessionManager->OnTempoChanged(timeSlider->getValue()*1000);
+		graphicSessionManager->OnTempoChanged(timeSlider->getValue());//*1000);
         //[/UserSliderCode_timeSlider]
     }
     else if (sliderThatWasMoved == volumeSlider)
@@ -330,7 +330,7 @@ BEGIN_JUCER_METADATA
             layout="33" items="" textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <SLIDER name="new slider" id="31e65db12379ed8f" memberName="timeSlider"
           virtualName="" explicitFocusOrder="0" pos="4 352 45 40" textboxtext="ffffffff"
-          textboxbkgd="152f3c" min="1" max="10" int="1" style="IncDecButtons"
+          textboxbkgd="152f3c" min="50" max="200" int="1" style="IncDecButtons"
           textBoxPos="TextBoxAbove" textBoxEditable="1" textBoxWidth="80"
           textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <SLIDER name="new slider" id="8da9b88bff0269e8" memberName="volumeSlider"

@@ -45,7 +45,7 @@ Presenter::Presenter(View* _view) :
     appModeChangeRequest(AppMode::None);
 	Nsources = 0;
 	Nfollower = 0;
-	tempo = 4;
+	tempo = 50;
 	masterVolume = 0.5f;
 	SetAllChannels();
 }

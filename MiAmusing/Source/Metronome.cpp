@@ -72,3 +72,8 @@ int Metronome::timeToSample(double ms)
 {
 	return round(ms * sampleRate / 1000);
 }
+
+int Metronome::BPMtoPeriodInSample(int m_bpm)
+{
+	return round(sampleRate * 60.0 * 4.0 / (double)m_bpm);
+}
