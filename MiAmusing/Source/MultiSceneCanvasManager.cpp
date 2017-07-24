@@ -20,6 +20,7 @@
 #include "SceneEvent.h"
 #include "GraphicEvent.h"
 #include "MultiAreaEvent.h"
+#include "GraphicSessionManager.h"
 #include <thread>
 
 using namespace Amusing;
@@ -131,6 +132,15 @@ void MultiSceneCanvasManager::SetAllAudioPositions(double position)
 	{
 		
 		handleAndSendAreaEventSync(amusingScene->SetAllAudioPositions(position));
+	}
+}
+
+void MultiSceneCanvasManager::SetAudioPositions(std::shared_ptr<IEditableArea> area, double position)
+{
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+	{
+		if(auto completeA = std::dynamic_pointer_cast<CompletePolygon>(area))
+			handleAndSendAreaEventSync(completeA->setReadingPosition(position));
 	}
 }
 
@@ -263,4 +273,32 @@ void MultiSceneCanvasManager::resendToModel()
 void MultiSceneCanvasManager::ChangeBaseNote(double newBaseNote)
 {
 	DBG("new base = " + (String)newBaseNote);
+	
+}
+
+void MultiSceneCanvasManager::ChangeSpeed(double newSpeed)
+{
+	DBG("new speed = " + (String)newSpeed);
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+	{
+		if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)
+		{
+			myGraphicSessionManager->setSpeedArea(amusingScene->GetSelectedArea(), newSpeed);
+		}
+		//graphicSessionManager->setSpeedArea(amusingScene->GetSelectedArea(), newSpeed);
+		handleAndSendAreaEventSync(amusingScene->SetSelectedAreaCursor(newSpeed));
+	}
+}
+
+double MultiSceneCanvasManager::getSpeed(std::shared_ptr<IEditableArea> area)
+{
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+	{
+		if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)
+		{
+			return myGraphicSessionManager->getSpeed(amusingScene->GetSelectedArea());
+		}
+	}
+	else
+		return 1.0f;
 }

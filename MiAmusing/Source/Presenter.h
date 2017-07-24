@@ -64,7 +64,7 @@ namespace Amusing {
         // Conversion from areas to sources
 		//Presenter myPresenter;
 		
-
+		std::map<std::shared_ptr<IEditableArea>, double> areaToSpeed;
 		boost::bimap<std::shared_ptr<IEditableArea>,int> areaToSourceMulti;
 		std::map<std::shared_ptr<EditableScene>, int> sceneToChannel;
 		int Nsources, Nfollower;
@@ -78,6 +78,8 @@ namespace Amusing {
 			int getChannel(std::shared_ptr<EditableScene> scene);
 			int getSourceID(std::shared_ptr<IEditableArea> area);
 			std::shared_ptr<IEditableArea> getAreaFromSource(int source);
+			void setSpeedArea(std::shared_ptr<IEditableArea> scene, double speed);
+			double getSpeedArea(std::shared_ptr<IEditableArea> area);
 			int getCtrlSourceId(std::shared_ptr<Follower> follower);
 			std::shared_ptr<Follower> getFollowerFromCtrl(int ctrlId);
 
@@ -118,7 +120,8 @@ namespace Amusing {
 		// Events from the view (from the editScene)
 		
 	private :
-		double lastPosition;
+		//double lastPosition;
+		std::map<int,double> lastPositions;
     };
     
     

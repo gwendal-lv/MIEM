@@ -30,11 +30,12 @@ public:
 	void renderOpenGL() override; // ! in background-thread !
 	AreaOptions areaOptions;
 
-	void OnVelocityChanged(double newVelocity);
+	void OnSpeedChanged(double newVelocity);
 	void OnBaseNoteChanged(double newBaseNote);
 
 	void SetAreaOptionsCenter(bpt center);
 	void SetAreaOptionsVisible(bool show);
+	void SetAreaOptionsVisible(bool show, double speed);
 
 	/*void mouseDown(const juce::MouseEvent &event) override;
 	void mouseDrag(const juce::MouseEvent &event) override;

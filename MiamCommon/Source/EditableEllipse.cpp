@@ -303,7 +303,7 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 		double size = r2 / r1;
 		
 		bool wasSizeApplied(false);
-		if (SizeChanged(size))
+		if (SizeChanged(size,true))
 		{
 			bmanipulationPointInPixels.set<0>(bnewLocation.get<0>());
 			bmanipulationPointInPixels.set<1>(bnewLocation.get<1>());
@@ -415,7 +415,7 @@ AreaEventType EditableEllipse::EndPointMove()
 	return eventType;
 }
 
-bool EditableEllipse::SizeChanged(double size)
+bool EditableEllipse::SizeChanged(double size, bool minSize)
 {
 
 	bool returnValue = false;
@@ -431,49 +431,6 @@ bool EditableEllipse::SizeChanged(double size)
 	boost::geometry::transform(testBoost, testBoost2, resizer);
 	boost::geometry::transform(testBoost2, testBoost, invtrans);
 
-	//bpt newManipulationPt, newManipulationPt2;
-	//boost::geometry::transform(bmanipulationPointInPixels, newManipulationPt, trans);
-	//boost::geometry::transform(newManipulationPt, newManipulationPt2, resizer);
-	//boost::geometry::transform(newManipulationPt2, newManipulationPt, invtrans);
-
-	// si 
-	//for (size_t i = 0; i<contourPointsInPixels.outer().size(); i++)
-	//{
-	//	/*std::vector<bpt> result;
-	//	boost::geometry::difference(contourPointsInPixels.outer().at(i), centerInPixels, result);
-	//	bnewContourPoints.outer().push_back(result.front());*/
-
-	//	
-
-	//	bnewContourPoints.outer().push_back(bpt(contourPointsInPixels.outer().at(i).get<0>() - centerInPixels.get<0>(),
-	//		contourPointsInPixels.outer().at(i).get<1>() - centerInPixels.get<1>()));
-
-
-	//	bnewContourPoints.outer().at(i) = bpt(size * bnewContourPoints.outer().at(i).get<0>(),
-	//		size * bnewContourPoints.outer().at(i).get<1>());
-	//	/*if (boost::geometry::distance(bnewContourPoints.outer().at(i), bpt(0, 0)) > minDistanceFromCenter)
-	//		minDistanceFromCenter = boost::geometry::distance(bnewContourPoints.outer().at(i), bpt(0, 0));
-
-	//	boost::geometry::strategy::transform::translate_transformer<double, 2, 2> tr(centerInPixels.get<0>(), centerInPixels.get<1>());
-	//	boost::geometry::transform(bnewContourPoints.outer().at(i), bnewContourPoints.outer().at(i), tr);*/
-	//	if (boost::geometry::distance(bnewContourPoints.outer().at(i), bpt(0, 0)) > minDistanceFromCenter)
-	//		minDistanceFromCenter = boost::geometry::distance(bnewContourPoints.outer().at(i), bpt(0, 0));
-
-	//	bnewContourPoints.outer().at(i).set<0>(bnewContourPoints.outer().at(i).get<0>() + centerInPixels.get<0>());
-	//	bnewContourPoints.outer().at(i).set<1>(bnewContourPoints.outer().at(i).get<1>() + centerInPixels.get<1>());
-
-	//}
-	/*boost::geometry::detail::distance::point_to_polygon<bpt, bpolygon, boost::geometry::closure<, boost::geometry::strategy::distance::pythagoras<>>::apply(centerInPixels, testBoost, boost::geometry::strategy::distance::pythagoras<>());
-	DBG("autre test : " + (String)boost::geometry::distance(testBoost.outer(),centerInPixels));
-	DBG("test = " + (String)boost::geometry::comparable_distance(testBoost, centerInPixels, boost::geometry::strategy::distance::pythagoras<double>()));
-	DBG("maxToCenterTest = " + (String)boost::geometry::distance(testBoost, centerInPixels));
-	DBG("maxToCenter = " + (String)boost::geometry::distance(centerInPixels, testBoost));
-	double test = boost::geometry::comparable_distance(testBoost, centerInPixels, boost::geometry::strategy::distance::pythagoras<double>());
-	double maxToCenterTest = boost::geometry::distance(testBoost, centerInPixels);*/
-	
-	/*double maxToCenter = boost::geometry::distance(centerInPixels,testBoost);
-	if (maxToCenter > minDistanceFromCenter)
-		minDistanceFromCenter = maxToCenter;*/
 
 	for (size_t i = 0; i < testBoost.outer().size(); i++)
 	{
@@ -485,8 +442,8 @@ bool EditableEllipse::SizeChanged(double size)
 	//std::vector<bpolygon> comparaison;
 	//boost::geometry::difference(bnewContourPoints, testBoost, comparaison);
 	
-	if (minDistanceFromCenter >=
-		minimumSizePercentage*(parentCanvas->getWidth() + parentCanvas->getHeight()) / 2.0)
+	if ( (!minSize) || ( minDistanceFromCenter >=
+		minimumSizePercentage*(parentCanvas->getWidth() + parentCanvas->getHeight()) / 2.0))
 	{
 		wasSizeApplied = true;
 		contourPointsInPixels.clear(); // test;

@@ -53,7 +53,7 @@ namespace Miam
 			void Translate(const Point<double>& translation) override;
 			void setCenterPosition(bpt newCenter);
 			
-			bool SizeChanged(double sizeFactor);
+			bool SizeChanged(double sizeFactor, bool minSize);
 			void Rotate(double Radian);
 
 		protected:

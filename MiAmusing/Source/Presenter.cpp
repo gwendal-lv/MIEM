@@ -40,7 +40,7 @@ Presenter::Presenter(View* _view) :
     
     // HERE, WE SHOULD LOAD THE DEFAULT FILE
     //graphicSessionManager.__LoadDefaultTest();
-	lastPosition = 0;
+	//lastPosition = 0;
     
     appModeChangeRequest(AppMode::None);
 	Nsources = 0;
@@ -48,6 +48,8 @@ Presenter::Presenter(View* _view) :
 	tempo = 50;
 	masterVolume = 0.5f;
 	SetAllChannels();
+
+	
 }
 
 void Presenter::SetAllChannels()
@@ -104,6 +106,18 @@ float Presenter::getMasterVolume()
 	return masterVolume;
 }
 
+void Presenter::setSpeedArea(std::shared_ptr<IEditableArea> area, double speed)
+{
+	areaToSpeed[area] = speed;
+}
+
+double Presenter::getSpeedArea(std::shared_ptr<IEditableArea> area)
+{
+	if (areaToSpeed.find(area) == areaToSpeed.end())
+		areaToSpeed[area] = 1;
+	return areaToSpeed[area];
+}
+
 void Presenter::setChannel(std::shared_ptr<EditableScene> scene,int channel)
 {
 	DBG("size of the map = " + (String)sceneToChannel.size());
@@ -137,6 +151,7 @@ int Presenter::getSourceID(std::shared_ptr<IEditableArea> area)
 		//areaToSourceMulti.left[area] = Nsources;
 		std::pair<std::shared_ptr<IEditableArea>, int> newPair(area, Nsources);
 		areaToSourceMulti.left.insert(newPair);
+		lastPositions.insert(std::pair<int, double>(Nsources, 0)); // add a new elt so we could retain the last cursor's position of the area
 		++Nsources;
 	}
 	
@@ -217,7 +232,7 @@ void Presenter::Update() // remettre l'interieur dans graphsessionmanager
 				//DBG("param received");
 				//graphicSessionManager.OnAudioPosition(param.DoubleValue);
 				//graphicSessionManager.SetAllAudioPositions(param.DoubleValue);
-			lastPosition = param.DoubleValue;
+			lastPositions.at(param.Id1) = param.DoubleValue;
 				
 			break;
 
@@ -225,7 +240,13 @@ void Presenter::Update() // remettre l'interieur dans graphsessionmanager
 			break;
 		}
 	}
-	graphicSessionManager.SetAllAudioPositions(lastPosition);
+
+	for (std::map<int, double>::iterator it = lastPositions.begin(); it != lastPositions.end(); ++it)
+	{
+		//graphicSessionManager.SetAllAudioPositions(0);
+		graphicSessionManager.SetAudioPositions(getAreaFromSource(it->first), it->second);
+	}
+	//graphicSessionManager.SetAllAudioPositions(lastPosition);
 }
 
 //AudioDeviceManager* Presenter::getAudioDeviceManager()

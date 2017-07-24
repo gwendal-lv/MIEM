@@ -214,7 +214,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				
 				if (auto complete = std::dynamic_pointer_cast<CompletePolygon>(area))
 				{
-					//DBG("Complete Area");
+					DBG("Complete Area");
 					param.Id1 = myPresenter->getSourceID(area);
 					param.Type = Miam::AsyncParamChange::ParamType::Activate;
 					param.Id2 = 1; // 1 pour activer la source, 0 pour la supprimer
@@ -224,6 +224,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					}
 					else
 						param.IntegerValue = 0;
+					param.FloatValue = 1; // set initial speed to 1;
 					myPresenter->SendParamChange(param); // envoie l'ordre de creer/ detruire une source audio
 					//DBG("GSM : construct a new audio polygon, please. Id : " + (String)param.Id1);
 					param.Type = Miam::AsyncParamChange::ParamType::Source;
@@ -255,7 +256,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				DBG("PointDragBegins");
 				break;
 			case AreaEventType::PointDragStops :
-				//DBG("PointDragStops");
+				DBG("PointDragStops");
 				if (auto complete = std::dynamic_pointer_cast<CompletePolygon>(area))
 				{
 					//param.Id1 = myPresenter->getSourceID(area);
@@ -294,7 +295,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				myPresenter->SendParamChange(param);
 				break;
 			case AreaEventType::ShapeChanged :
-				//DBG("Shape Changed");
+				DBG("Shape Changed");
 				if (auto complete = std::dynamic_pointer_cast<CompletePolygon>(area))
 				{
 					//param.Id1 = myPresenter->getSourceID(area);
@@ -316,6 +317,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					}
 					else
 						param.IntegerValue = 0;
+					param.FloatValue = (float)(myPresenter->getSpeedArea(complete));
 					myPresenter->SendParamChange(param);
 
 
@@ -327,6 +329,8 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					//DBG("before while");
 					while (complete->getAllPercentages(i, param.DoubleValue) && complete->getAllDistanceFromCenter(i, param.IntegerValue))
 					{
+						if (param.DoubleValue == 0 && i != 0)
+							DBG("aaaaaaarg");
 						//DBG("cote to send : " + (String)i);
 						//param.IntegerValue = 60 + (2*param.IntegerValue);
 						param.IntegerValue = circleToNote(param.IntegerValue);
@@ -498,6 +502,12 @@ void GraphicSessionManager::SetAllAudioPositions(double position)
 		getSelectedCanvasAsManager()->SetAllAudioPositions(position);
 }
 
+void GraphicSessionManager::SetAudioPositions(std::shared_ptr<IEditableArea> area, double position)
+{
+	if (selectedCanvas)
+		getSelectedCanvasAsManager()->SetAudioPositions(area, position);
+}
+
 void GraphicSessionManager::OnAddSquare()
 {
 	if (selectedCanvas)
@@ -573,6 +583,16 @@ void GraphicSessionManager::SetMidiChannel(int ch)
 			getSelectedCanvasAsManager()->resendToModel();
 		}
 	}
+}
+
+void GraphicSessionManager::setSpeedArea(std::shared_ptr<IEditableArea> area, double speed)
+{
+	myPresenter->setSpeedArea(area,speed);
+}
+
+double GraphicSessionManager::getSpeed(std::shared_ptr<IEditableArea> area)
+{
+	return myPresenter->getSpeedArea(area);
 }
 
 void GraphicSessionManager::OnTempoChanged(int newTempo) // voir si laisser comme ca, pcq pas d'interpretation necessaire pour le tempo

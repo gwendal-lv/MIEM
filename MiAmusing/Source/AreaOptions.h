@@ -46,6 +46,7 @@ public:
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
 	void CompleteInitialization(AmusingSceneComponent* m_amusingSceneComponent);
+	void setSpeedSliderValue(double speed);
     //[/UserMethods]
 
     void paint (Graphics& g) override;

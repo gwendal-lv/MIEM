@@ -40,7 +40,9 @@ CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
 	showCursor = false;
 	pc = 0;
 	cursorCenter = contourPoints.outer().at(0);
-	cursor = std::shared_ptr<EditableEllipse>(new EditableEllipse(0, cursorCenter, 0.1f, 0.1f, Colours::grey, 1.47f));
+	initCursorSize = 0.1f;
+	cursorSize = initCursorSize;
+	cursor = std::shared_ptr<EditableEllipse>(new EditableEllipse(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f));
 	cursor->SetNameVisible(false);
 	//percentages.reserve(contourPoints.size());
 	for (int i = 0; i < (int)contourPoints.outer().size(); ++i)
@@ -73,7 +75,9 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 	showCursor = false;
 	pc = 0;
 	cursorCenter = contourPoints.outer().at(0);
-	cursor = std::shared_ptr<EditableEllipse>(new EditableEllipse(0, cursorCenter, 0.1f, 0.1f, Colours::grey, _canvasRatio));
+	initCursorSize = 0.1f;
+	cursorSize = initCursorSize;
+	cursor = std::shared_ptr<EditableEllipse>(new EditableEllipse(0, cursorCenter, cursorSize, cursorSize, Colours::grey, _canvasRatio));
 	cursor->SetNameVisible(false);
 	for (int i = 0; i < (int)contourPoints.outer().size(); ++i)
 	{
@@ -110,7 +114,9 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	showCursor = true;
 	pc = 0;
 	cursorCenter = contourPoints.outer().at(0);
-	cursor = std::shared_ptr<EditableEllipse>(new EditableEllipse(0, cursorCenter, 0.1f, 0.1f, Colours::grey, 1.47f));
+	initCursorSize = 0.1f;
+	cursorSize = initCursorSize;
+	cursor = std::shared_ptr<EditableEllipse>(new EditableEllipse(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f));
 	cursor->SetNameVisible(false);
 	for (int i = 0; i < (int)contourPoints.outer().size(); ++i)
 	{
@@ -152,7 +158,9 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	showCursor = true;
 	pc = 0;
 	cursorCenter = contourPoints.outer().at(0);
-	cursor = std::shared_ptr<EditableEllipse>(new EditableEllipse(0, cursorCenter, 0.1f, 0.1f, Colours::grey, 1.47f));
+	initCursorSize = 0.1f;
+	cursorSize = initCursorSize;
+	cursor = std::shared_ptr<EditableEllipse>(new EditableEllipse(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f));
 	cursor->SetNameVisible(false);
 
 	/*for (int i = 0; i < (int)contourPoints.outer().size(); ++i)
@@ -285,7 +293,7 @@ void CompletePolygon::angleToPercent()
 	}
 }
 
-void CompletePolygon::setReadingPosition(double p)
+std::shared_ptr<AreaEvent> CompletePolygon::setReadingPosition(double p)
 {
 	//DBG("position : " + (String)p);
 	if (p >= 1)
@@ -417,7 +425,7 @@ void CompletePolygon::setReadingPosition(double p)
 			cursor->CanvasResized(this->parentCanvas);
 		}
 	}
-	
+	return std::shared_ptr<AreaEvent>(new AreaEvent());
 }
 
 void CompletePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
@@ -479,7 +487,7 @@ AreaEventType CompletePolygon::TryMovePoint(const Point<double>& newLocation)
 
 			double newRadius = newStartRadius + i* interval;
 			double resize = newRadius / radius[i];
-			if (bullsEye[i].SizeChanged(resize))
+			if (bullsEye[i].SizeChanged(resize,false))
 			{
 				startRadius = newStartRadius;
 				radius[i] = newRadius; //startRadius + i*interval;
@@ -866,4 +874,21 @@ bpt CompletePolygon::getCenter()
 	return centerInPixels;
 }
 
-
+void CompletePolygon::setCursorSize(double newSize)
+{
+	if (newSize == 0)
+	{
+		setCursorVisible(false,parentCanvas);
+	}
+	else
+	{
+		if (showCursor == false)
+			setCursorVisible(true,parentCanvas);
+		double newCursorSize = (double)initCursorSize / newSize;
+		double resize = newCursorSize / cursorSize;
+		if (cursor->SizeChanged(resize, false))
+		{
+			cursorSize = newCursorSize;
+		}
+	}
+}

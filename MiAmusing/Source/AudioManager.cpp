@@ -63,16 +63,15 @@ AudioManager::AudioManager(AmusingModel *m_model) : model(m_model), Nsources(0),
 
 AudioManager::~AudioManager()
 {
-	if(midiOuput != 0)
+	if(midiOuput != nullptr)
 		for(int i=1; i< 17; i++)
 			midiOuput->sendMessageNow(MidiMessage::allNotesOff(i));
 	DBG("audioManager destructor");
-	//shutdownAudio();
+	
 	runThread = false;
 	T.join();
 	setSource(nullptr);
-	/*removeAudioCallback(this);
-	closeAudioDevice();*/
+	
 	DBG("audioManager destructor fin");
 
 	//DBG("AudioManager::releaseResources");
@@ -142,6 +141,16 @@ void AudioManager::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 void AudioManager::releaseResources()
 {
 	DBG("AudioManager::releaseResources");
+	for (int j = 0; j < maxSize; j++)
+	{
+		if (timeLinesKnown[j] != 0)
+			timeLinesKnown[j] = 0;
+
+	}
+
+	/*runThread = false;
+	T.join();*/
+	
 	if (midiOuput == nullptr)
 	{
 		DBG("midiOuput == nullptr !!!!!!!!!!!");
@@ -158,6 +167,7 @@ void AudioManager::releaseResources()
 }
 void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 {
+	//DBG(String(position));
 	getParameters();
 	getNewTimeLines();
 	switch (state)
@@ -223,9 +233,22 @@ void AudioManager::sendPosition()
 	
 	AsyncParamChange param;
 	param.Type = AsyncParamChange::ParamType::Position;
-	param.Id1 = 0;
-	param.DoubleValue = (double)position / (double)periode; //+ 1.0/8.0;
-	model->SendParamChange(param);
+	
+
+	
+
+	for (int j = 0; j < maxSize; j++)
+	{
+		if (timeLinesKnown[j] != 0)
+		{
+			param.Id1 = j;
+			param.DoubleValue = timeLinesKnown[j]->getRelativePosition();
+			model->SendParamChange(param);
+		}
+	}
+	//param.Id1 = 0;
+	//param.DoubleValue = (double)position / (double)periode; //+ 1.0/8.0;
+	//model->SendParamChange(param);
 	
 }
 
@@ -312,12 +335,18 @@ void AudioManager::getAudioThreadMsg()
 				DBG("activate source    : " + (String)param.Id1);
 				if(timeLines[param.Id1] == 0)
 					timeLines[param.Id1] = new TimeLine();
+
 				timeLines[param.Id1]->setPeriod(periode);
+				if (param.FloatValue != 0)
+					timeLines[param.Id1]->setSpeed(param.FloatValue);
+				else
+					timeLines[param.Id1]->playNoteContinuously();
+
 				timeLines[param.Id1]->setAudioManager(this);
 				//DBG("midiChannel : " + (String)param.IntegerValue);
 				if(param.IntegerValue != 0)
 					timeLines[param.Id1]->setMidiChannel(param.IntegerValue);
-				
+				//timeLines[param.Id1]->setSpeed(param.FloatValue);
 				timeLines[param.Id1]->setId(param.Id1);
 				++midiSenderSize;
 				timeLinesToAudio.push(timeLines[param.Id1]);

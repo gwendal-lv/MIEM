@@ -55,9 +55,16 @@ void AmusingSceneComponent::renderOpenGL()
 //	DBG("AmusingSceneComponent::mouseUp");
 //}
 
-void AmusingSceneComponent::OnVelocityChanged(double newVelocity)
+void AmusingSceneComponent::OnSpeedChanged(double newSpeed)
 {
-	DBG("newVelocity = " + (String)newVelocity);
+	DBG("newSpeed = " + (String)newSpeed);
+	if (auto manager = canvasManager.lock())
+	{
+		if (auto managerAsManager = std::dynamic_pointer_cast<Amusing::MultiSceneCanvasManager>(manager))
+		{
+			managerAsManager->ChangeSpeed(newSpeed);
+		}
+	}
 }
 
 void AmusingSceneComponent::OnBaseNoteChanged(double newBaseNote)
@@ -82,8 +89,22 @@ void AmusingSceneComponent::SetAreaOptionsCenter(bpt center)
 
 void AmusingSceneComponent::SetAreaOptionsVisible(bool show)
 {
-	if(show)
+	if (show)
+	{
+
 		areaOptions.setVisible(true);
+	}
+	else
+		areaOptions.setVisible(false);
+}
+
+void AmusingSceneComponent::SetAreaOptionsVisible(bool show,double speed)
+{
+	if (show)
+	{
+		areaOptions.setSpeedSliderValue(speed);
+		areaOptions.setVisible(true);
+	}
 	else
 		areaOptions.setVisible(false);
 }

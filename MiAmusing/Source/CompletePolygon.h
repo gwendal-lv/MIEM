@@ -47,7 +47,7 @@ namespace Amusing
 
 		void Copy(std::shared_ptr<CompletePolygon> polygonToCopy);
 
-		void setReadingPosition(double p); // set the position in percent of the cursor on the path
+		std::shared_ptr<AreaEvent> setReadingPosition(double p); // set the position in percent of the cursor on the path
 
 		
 		void CanvasResized(SceneCanvasComponent* _parentCanvas);
@@ -68,6 +68,7 @@ namespace Amusing
 		bool getAllDistanceFromCenter(int idx, int &value);
 
 		bpt getCenter();
+		void setCursorSize(double newSize);
 	private:
 
 		// attributes linked to the Cursor
@@ -77,6 +78,8 @@ namespace Amusing
 		std::vector<double> percentages; // percentages corresponding to each points
 		std::vector<double> anglesPercentages;
 		std::shared_ptr<Miam::EditableEllipse> cursor;
+		float initCursorSize;
+		float cursorSize;
 
 		// attributes linked to the bull's eye surrounding the area
 		bool useBullsEye;
