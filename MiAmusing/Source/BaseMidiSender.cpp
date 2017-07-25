@@ -37,7 +37,7 @@ TimeLine::TimeLine()
 
 TimeLine::~TimeLine()
 {
-	if (!continuous)
+	/*if (!continuous)
 	{
 		MidiMessage midiMsgOff = MidiMessage::noteOff(channel, lastNote);
 		audioManager->sendMidiMessage(midiMsgOff);
@@ -50,7 +50,7 @@ TimeLine::~TimeLine()
 			audioManager->sendMidiMessage(midiMsg);
 			lastNote = notes[i];
 		}
-	}
+	}*/
 
 	//audioManager->sendMidiMessage(midiMsgOff);
 }

@@ -25,6 +25,7 @@
 
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
+
 //[/MiscUserDefs]
 
 //==============================================================================
@@ -64,7 +65,9 @@ AreaOptions::AreaOptions ()
 
 
     //[Constructor] You can add your own custom stuff here..
-
+	velocity->setSkewFactor(1);
+	customLook.setScaleMarking(velocity->getMinimum(), velocity->getMaximum(),velocity->getSkewFactor());
+	velocity->setLookAndFeel(&customLook);
     //[/Constructor]
 }
 
@@ -119,8 +122,17 @@ void AreaOptions::sliderValueChanged (Slider* sliderThatWasMoved)
     else if (sliderThatWasMoved == velocity)
     {
         //[UserSliderCode_velocity] -- add your slider handling code here..
-		DBG("ici");
-		amusingSceneComponent->OnSpeedChanged(velocity->getValue());
+		
+		double value = velocity->getValue();
+		DBG("speed = " + (String)value);
+		double valueInt = round(value);
+		double tol = 0.2;
+		if (abs(value - valueInt) < tol)
+		{
+			value = valueInt;
+			velocity->setValue(value);
+		}
+		amusingSceneComponent->OnSpeedChanged(value);
         //[/UserSliderCode_velocity]
     }
 

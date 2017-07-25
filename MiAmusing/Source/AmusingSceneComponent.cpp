@@ -57,7 +57,7 @@ void AmusingSceneComponent::renderOpenGL()
 
 void AmusingSceneComponent::OnSpeedChanged(double newSpeed)
 {
-	DBG("newSpeed = " + (String)newSpeed);
+	//DBG("newSpeed = " + (String)newSpeed);
 	if (auto manager = canvasManager.lock())
 	{
 		if (auto managerAsManager = std::dynamic_pointer_cast<Amusing::MultiSceneCanvasManager>(manager))

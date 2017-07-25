@@ -278,7 +278,7 @@ void MultiSceneCanvasManager::ChangeBaseNote(double newBaseNote)
 
 void MultiSceneCanvasManager::ChangeSpeed(double newSpeed)
 {
-	DBG("new speed = " + (String)newSpeed);
+	//DBG("new speed = " + (String)newSpeed);
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
 	{
 		if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)
