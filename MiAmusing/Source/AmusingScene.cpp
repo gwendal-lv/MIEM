@@ -646,12 +646,13 @@ std::shared_ptr<AreaEvent> AmusingScene::SetSelectedArea(std::shared_ptr<IEditab
 		if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(selectedArea_))
 		{
 			sceneComponent->SetAreaOptionsCenter(completeArea->getCenter());
-			double currentSpeed;
+			double currentSpeed, currentVelocity;
 			if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
 			{
 				currentSpeed = manager->getSpeed(completeArea);
+				currentVelocity = manager->getVelocity(completeArea);
 			}
-			sceneComponent->SetAreaOptionsVisible(true,currentSpeed);
+			sceneComponent->SetAreaOptionsVisible(true,currentSpeed, currentVelocity);
 		}
 		else
 			sceneComponent->SetAreaOptionsVisible(false);
@@ -666,6 +667,17 @@ std::shared_ptr<AreaEvent> AmusingScene::SetSelectedAreaCursor(double newSize)
 	{
 		completeArea->setCursorSize(newSize);
 		areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeArea,AreaEventType::ShapeChanged,completeArea->GetId(),shared_from_this()));
+	}
+	return areaE;
+}
+
+std::shared_ptr<AreaEvent> AmusingScene::SetSelectedAreaOpacity(double newOpacity)
+{
+	std::shared_ptr<AreaEvent> areaE(new AreaEvent());
+	if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(selectedArea))
+	{
+		completeArea->SetAlpha(newOpacity);
+		areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::ShapeChanged, completeArea->GetId(), shared_from_this()));
 	}
 	return areaE;
 }

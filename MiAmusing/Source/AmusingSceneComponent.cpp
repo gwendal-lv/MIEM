@@ -67,6 +67,17 @@ void AmusingSceneComponent::OnSpeedChanged(double newSpeed)
 	}
 }
 
+void AmusingSceneComponent::OnVelocityChanged(double newVelocity)
+{
+	if (auto manager = canvasManager.lock())
+	{
+		if (auto managerAsManager = std::dynamic_pointer_cast<Amusing::MultiSceneCanvasManager>(manager))
+		{
+			managerAsManager->ChangeVelocity(newVelocity);
+		}
+	}
+}
+
 void AmusingSceneComponent::OnBaseNoteChanged(double newBaseNote)
 {
 	DBG("newBaseNote = " + (String)newBaseNote);
@@ -98,11 +109,12 @@ void AmusingSceneComponent::SetAreaOptionsVisible(bool show)
 		areaOptions.setVisible(false);
 }
 
-void AmusingSceneComponent::SetAreaOptionsVisible(bool show,double speed)
+void AmusingSceneComponent::SetAreaOptionsVisible(bool show,double speed, double velocity)
 {
 	if (show)
 	{
 		areaOptions.setSpeedSliderValue(speed);
+		areaOptions.setVelocitySliderValue(velocity);
 		areaOptions.setVisible(true);
 	}
 	else

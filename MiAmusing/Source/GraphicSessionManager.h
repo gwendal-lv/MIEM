@@ -161,6 +161,8 @@ namespace Amusing {
 
 		void setSpeedArea(std::shared_ptr<IEditableArea> area, double speed);
 		double getSpeed(std::shared_ptr<IEditableArea> area);
+		void setVelocityArea(std::shared_ptr<IEditableArea> area, double velocity);
+		double getVelocity(std::shared_ptr<IEditableArea> area);
 	private :
 		bool deleting;
 		int tempo;

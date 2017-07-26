@@ -41,33 +41,40 @@ AreaOptions::AreaOptions ()
     baseNote->setColour (Slider::textBoxTextColourId, Colours::white);
     baseNote->addListener (this);
 
-    addAndMakeVisible (velocity = new Slider ("new slider"));
-    velocity->setRange (0, 10, 0);
-    velocity->setSliderStyle (Slider::LinearHorizontal);
-    velocity->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
-    velocity->setColour (Slider::textBoxTextColourId, Colours::black);
-    velocity->addListener (this);
+    addAndMakeVisible (speed = new Slider ("new slider"));
+    speed->setRange (0, 10, 0);
+    speed->setSliderStyle (Slider::LinearHorizontal);
+    speed->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
+    speed->setColour (Slider::backgroundColourId, Colour (0x00263238));
+    speed->setColour (Slider::textBoxTextColourId, Colours::black);
+    speed->addListener (this);
 
-    addAndMakeVisible (velocityLabel = new Label ("new label",
-                                                  TRANS("speed")));
-    velocityLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
-    velocityLabel->setJustificationType (Justification::centredLeft);
-    velocityLabel->setEditable (false, false, false);
-    velocityLabel->setColour (TextEditor::textColourId, Colours::black);
-    velocityLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+    addAndMakeVisible (speedLabel = new Label ("new label",
+                                               TRANS("speed")));
+    speedLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    speedLabel->setJustificationType (Justification::centredLeft);
+    speedLabel->setEditable (false, false, false);
+    speedLabel->setColour (TextEditor::textColourId, Colours::black);
+    speedLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    addAndMakeVisible (velocitySlider = new Slider ("new slider"));
+    velocitySlider->setRange (0, 127, 0);
+    velocitySlider->setSliderStyle (Slider::Rotary);
+    velocitySlider->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    velocitySlider->addListener (this);
 
 
     //[UserPreSize]
-	velocity->setValue(1);
+	speed->setValue(1);
     //[/UserPreSize]
 
     setSize (200, 200);
 
 
     //[Constructor] You can add your own custom stuff here..
-	velocity->setSkewFactor(1);
-	customLook.setScaleMarking(velocity->getMinimum(), velocity->getMaximum(),velocity->getSkewFactor());
-	velocity->setLookAndFeel(&customLook);
+	speed->setSkewFactor(1);
+	customLook.setScaleMarking(speed->getMinimum(), speed->getMaximum(),speed->getSkewFactor());
+	speed->setLookAndFeel(&customLook);
     //[/Constructor]
 }
 
@@ -77,8 +84,9 @@ AreaOptions::~AreaOptions()
     //[/Destructor_pre]
 
     baseNote = nullptr;
-    velocity = nullptr;
-    velocityLabel = nullptr;
+    speed = nullptr;
+    speedLabel = nullptr;
+    velocitySlider = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -101,8 +109,9 @@ void AreaOptions::resized()
     //[/UserPreResize]
 
     baseNote->setBounds (6, 4, 31, 176);
-    velocity->setBounds (46, 156, 160, 24);
-    velocityLabel->setBounds (206, 156, 50, 24);
+    speed->setBounds (46, 164, 160, 24);
+    speedLabel->setBounds (206, 164, 50, 24);
+    velocitySlider->setBounds (223, 19, 71, 56);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -115,25 +124,32 @@ void AreaOptions::sliderValueChanged (Slider* sliderThatWasMoved)
     if (sliderThatWasMoved == baseNote)
     {
         //[UserSliderCode_baseNote] -- add your slider handling code here..
-		DBG("ici");
+		//DBG("ici");
 		amusingSceneComponent->OnBaseNoteChanged(baseNote->getValue());
         //[/UserSliderCode_baseNote]
     }
-    else if (sliderThatWasMoved == velocity)
+    else if (sliderThatWasMoved == speed)
     {
-        //[UserSliderCode_velocity] -- add your slider handling code here..
-		
-		double value = velocity->getValue();
+        //[UserSliderCode_speed] -- add your slider handling code here..
+		double value = speed->getValue();
 		DBG("speed = " + (String)value);
 		double valueInt = round(value);
 		double tol = 0.2;
 		if (abs(value - valueInt) < tol)
 		{
 			value = valueInt;
-			velocity->setValue(value);
+			speed->setValue(value);
 		}
 		amusingSceneComponent->OnSpeedChanged(value);
-        //[/UserSliderCode_velocity]
+
+
+        //[/UserSliderCode_speed]
+    }
+    else if (sliderThatWasMoved == velocitySlider)
+    {
+        //[UserSliderCode_velocitySlider] -- add your slider handling code here..
+		amusingSceneComponent->OnVelocityChanged(velocitySlider->getValue());
+        //[/UserSliderCode_velocitySlider]
     }
 
     //[UsersliderValueChanged_Post]
@@ -170,9 +186,14 @@ void AreaOptions::CompleteInitialization(AmusingSceneComponent* m_amusingSceneCo
 	amusingSceneComponent = m_amusingSceneComponent;
 }
 
-void AreaOptions::setSpeedSliderValue(double speed)
+void AreaOptions::setSpeedSliderValue(double _speed)
 {
-	velocity->setValue(speed);
+	speed->setValue(_speed);
+}
+
+void AreaOptions::setVelocitySliderValue(double _velocity)
+{
+	velocitySlider->setValue(_velocity);
 }
 //[/MiscUserCode]
 
@@ -201,16 +222,20 @@ BEGIN_JUCER_METADATA
           min="0" max="10" int="0" style="LinearVertical" textBoxPos="TextBoxBelow"
           textBoxEditable="1" textBoxWidth="24" textBoxHeight="20" skewFactor="1"
           needsCallback="1"/>
-  <SLIDER name="new slider" id="a3ec7f9759661bec" memberName="velocity"
-          virtualName="" explicitFocusOrder="0" pos="46 156 160 24" textboxtext="ff000000"
+  <SLIDER name="new slider" id="a3ec7f9759661bec" memberName="speed" virtualName=""
+          explicitFocusOrder="0" pos="46 164 160 24" bkgcol="263238" textboxtext="ff000000"
           min="0" max="10" int="0" style="LinearHorizontal" textBoxPos="NoTextBox"
           textBoxEditable="0" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
           needsCallback="1"/>
-  <LABEL name="new label" id="6adeb9d99d4ed76a" memberName="velocityLabel"
-         virtualName="" explicitFocusOrder="0" pos="206 156 50 24" edTextCol="ff000000"
+  <LABEL name="new label" id="6adeb9d99d4ed76a" memberName="speedLabel"
+         virtualName="" explicitFocusOrder="0" pos="206 164 50 24" edTextCol="ff000000"
          edBkgCol="0" labelText="speed" editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="15"
          kerning="0" bold="0" italic="0" justification="33"/>
+  <SLIDER name="new slider" id="50d98b58b91eff3b" memberName="velocitySlider"
+          virtualName="" explicitFocusOrder="0" pos="223 19 71 56" min="0"
+          max="127" int="0" style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

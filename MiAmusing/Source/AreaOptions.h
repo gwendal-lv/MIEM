@@ -233,7 +233,7 @@ class CustomLookAndFeel : public LookAndFeel_V4
 			int minInt = (int)ceil(minValue);
 			int maxInt = (int)floor(maxValue);
 			int N = maxInt - minInt; // number of marks to draw
-			
+
 			for (int i = minInt; i <= maxInt; i++)
 			{
 				int posX = roundToInt((double)width * pow((((double)i - minValue)   / (maxValue - minValue)),skewFactor));
@@ -241,8 +241,8 @@ class CustomLookAndFeel : public LookAndFeel_V4
 
 			}
 		}
-			
-		
+
+
 	}
 	public :
 	void setScaleMarking(double _minValue, double _maxValue, double _skewFactor)
@@ -313,6 +313,7 @@ public:
     //[UserMethods]     -- You can add your own custom methods in this section.
 	void CompleteInitialization(AmusingSceneComponent* m_amusingSceneComponent);
 	void setSpeedSliderValue(double speed);
+	void setVelocitySliderValue(double _velocity);
     //[/UserMethods]
 
     void paint (Graphics& g) override;
@@ -332,8 +333,9 @@ private:
 
     //==============================================================================
     ScopedPointer<Slider> baseNote;
-    ScopedPointer<Slider> velocity;
-    ScopedPointer<Label> velocityLabel;
+    ScopedPointer<Slider> speed;
+    ScopedPointer<Label> speedLabel;
+    ScopedPointer<Slider> velocitySlider;
 
 
     //==============================================================================

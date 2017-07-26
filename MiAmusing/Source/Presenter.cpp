@@ -118,6 +118,18 @@ double Presenter::getSpeedArea(std::shared_ptr<IEditableArea> area)
 	return areaToSpeed[area];
 }
 
+void Presenter::setVelocityArea(std::shared_ptr<IEditableArea> area, double velocity)
+{
+	areaToVelocity[area] = velocity;
+}
+
+double Presenter::getVelocityArea(std::shared_ptr<IEditableArea> area)
+{
+	if (areaToVelocity.find(area) == areaToVelocity.end())
+		areaToVelocity[area] = 64;
+	return areaToVelocity[area];
+}
+
 void Presenter::setChannel(std::shared_ptr<EditableScene> scene,int channel)
 {
 	DBG("size of the map = " + (String)sceneToChannel.size());

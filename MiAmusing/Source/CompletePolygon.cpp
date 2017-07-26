@@ -892,3 +892,8 @@ void CompletePolygon::setCursorSize(double newSize)
 		}
 	}
 }
+
+void CompletePolygon::SetActive(bool activate)
+{
+	EditableArea::SetActive(activate);
+}

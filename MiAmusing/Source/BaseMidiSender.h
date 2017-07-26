@@ -26,7 +26,7 @@ public:
 	void setAudioManager(Amusing::AudioManager* m_audioManager);
 	void setPeriod(int m_period);
 	void setSpeed(float newSpeed);
-	void setMidiTime(int idx, int newTime, int m_noteNumber);
+	void setMidiTime(int idx, int newTime, int m_noteNumber, float m_velocity);
 	void setMidiChannel(int m_chan);
 	void setId(int m_Id);
 	int getId();
@@ -43,6 +43,7 @@ private:
 	int notes[maxSize];
 	int midiTimesSize;
 	int midiOfftimesSize;
+	int velocity[maxSize];
 	
 	int lastNotePosition;
 	int t0;
@@ -53,7 +54,6 @@ private:
 	// parameter of the notes to send
 	int channel;
 	float speed;
-	int velocity;
 	int duration;
 	int period; // period, to be sure we don't set a noteOff signal after the end of the period...
 	int currentPeriod; // period taking speed into accound

@@ -47,6 +47,8 @@ namespace Amusing
 
 		void Copy(std::shared_ptr<CompletePolygon> polygonToCopy);
 
+		void SetActive(bool activate);
+
 		std::shared_ptr<AreaEvent> setReadingPosition(double p); // set the position in percent of the cursor on the path
 
 		

@@ -75,7 +75,7 @@ void TimeLine::setPeriod(int m_period)
 	}
 }
 
-void TimeLine::setMidiTime(int idx, int newTime, int m_noteNumber)
+void TimeLine::setMidiTime(int idx, int newTime, int m_noteNumber,float m_velocity)
 {
 	newTime = round((double)newTime * (double)currentPeriod / (double)period);
 	if (idx < maxSize)
@@ -89,6 +89,7 @@ void TimeLine::setMidiTime(int idx, int newTime, int m_noteNumber)
 			else
 				midiOffTimes[idx] = newTime + duration;
 			notes[idx] = m_noteNumber;
+			velocity[idx] = (int)m_velocity;
 		}
 		else
 		{
@@ -98,6 +99,7 @@ void TimeLine::setMidiTime(int idx, int newTime, int m_noteNumber)
 				midiTimes[midiTimesSize + i] = 0;
 				midiOffTimes[midiTimesSize + i] = 0;
 				notes[midiTimesSize + i] = 0;
+				velocity[midiTimesSize + i] = 0;
 				++midiTimesSize;
 				++midiOfftimesSize;
 			}
@@ -107,6 +109,7 @@ void TimeLine::setMidiTime(int idx, int newTime, int m_noteNumber)
 			else
 				midiOffTimes[idx] = (newTime + duration);
 			notes[idx] = m_noteNumber;
+			velocity[idx] = (int)m_velocity;
 			++midiTimesSize;
 			++midiOfftimesSize;
 		}
@@ -173,7 +176,7 @@ void TimeLine::process(int time)
 			if (time == midiTimes[i])
 			{
 				//DBG("Play note : " + (String)notes[i]);
-				MidiMessage midiMsg = MidiMessage::noteOn(channel, notes[i], (uint8)100);
+				MidiMessage midiMsg = MidiMessage::noteOn(channel, notes[i], (uint8)velocity[i]);
 				audioManager->sendMidiMessage(midiMsg);
 				lastNote = notes[i];
 				//DBG("position = " + (String)(time ));

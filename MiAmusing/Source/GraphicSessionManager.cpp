@@ -235,6 +235,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 						param.IntegerValue = circleToNote(param.IntegerValue);
 						//DBG("noteToSend = " + (String)param.IntegerValue);
 						param.Id2 = i;
+						param.FloatValue = (float)myPresenter->getVelocityArea(complete);
 						myPresenter->SendParamChange(param);
 						++i;
 					}
@@ -281,6 +282,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 						param.IntegerValue = circleToNote(param.IntegerValue);
 						//DBG("noteToSend = " + (String)param.IntegerValue);
 						param.Id2 = i;
+						param.FloatValue = (float)myPresenter->getVelocityArea(complete);
 						myPresenter->SendParamChange(param);
 						++i;
 					}
@@ -336,6 +338,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 						param.IntegerValue = circleToNote(param.IntegerValue);
 						//DBG("noteToSend = " + (String)param.IntegerValue);
 						param.Id2 = i;
+						param.FloatValue = (float)myPresenter->getVelocityArea(complete);
 						myPresenter->SendParamChange(param);
 						++i;
 					}
@@ -590,9 +593,19 @@ void GraphicSessionManager::setSpeedArea(std::shared_ptr<IEditableArea> area, do
 	myPresenter->setSpeedArea(area,speed);
 }
 
+void GraphicSessionManager::setVelocityArea(std::shared_ptr<IEditableArea> area, double speed)
+{
+	myPresenter->setVelocityArea(area, speed);
+}
+
 double GraphicSessionManager::getSpeed(std::shared_ptr<IEditableArea> area)
 {
 	return myPresenter->getSpeedArea(area);
+}
+
+double GraphicSessionManager::getVelocity(std::shared_ptr<IEditableArea> area)
+{
+	return myPresenter->getVelocityArea(area);
 }
 
 void GraphicSessionManager::OnTempoChanged(int newTempo) // voir si laisser comme ca, pcq pas d'interpretation necessaire pour le tempo
