@@ -219,7 +219,7 @@ void CompletePolygon::Copy(std::shared_ptr<CompletePolygon> polygonToCopy)
 		anglesPercentages.push_back(newPercentage);
 		i++;
 	}
-
+	boost::geometry::centroid(contourPoints,center);
 	// voir s'il faut recalculer le centre
 	CanvasResized(parentCanvas);
 

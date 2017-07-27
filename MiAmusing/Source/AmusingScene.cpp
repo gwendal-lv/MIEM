@@ -159,7 +159,7 @@ void AmusingScene::DeleteIntersections(std::shared_ptr<Amusing::CompletePolygon>
 					{
 						auto intersectionBackUp = it->second.at(j);
 						it->second.erase(it->second.begin() + j);
-						manager->OnFusion(std::shared_ptr<AreaEvent>(new AreaEvent(intersectionBackUp, AreaEventType::Deleted, (int)areas.size() + j, shared_from_this())));
+						manager->OnInteraction(std::shared_ptr<AreaEvent>(new AreaEvent(intersectionBackUp, AreaEventType::Deleted, (int)areas.size() + j, shared_from_this())));
 					}
 
 					// then we erase the all line
@@ -291,9 +291,9 @@ void AmusingScene::AddAllIntersections(std::shared_ptr<Amusing::CompletePolygon>
 				std::vector<std::shared_ptr<CompletePolygon>> vec;
 				for (int j = 0; j < multiE->GetOtherEventsCount(); j++)
 				{
-					// add a size condition
+					//TO DO : add a size condition
 					vec.push_back(std::dynamic_pointer_cast<CompletePolygon>(multiE->GetOtherEvent(j)->GetConcernedArea()));
-					manager->OnFusion(AddIntersectionArea(parent1, parent2, std::dynamic_pointer_cast<CompletePolygon>(multiE->GetOtherEvent(j)->GetConcernedArea())));
+					manager->OnInteraction(AddIntersectionArea(parent1, parent2, std::dynamic_pointer_cast<CompletePolygon>(multiE->GetOtherEvent(j)->GetConcernedArea())));
 				}
 				parentTochildArea.insert(std::pair<std::pair<std::shared_ptr<CompletePolygon>, std::shared_ptr<CompletePolygon>>, std::vector<std::shared_ptr<CompletePolygon>>>(std::pair<std::shared_ptr<CompletePolygon>, std::shared_ptr<CompletePolygon>>(parent1, parent2), vec));
 			}
@@ -328,7 +328,7 @@ void AmusingScene::AddAllIntersections(std::shared_ptr<Amusing::CompletePolygon>
 						{
 							// similar enough -> need to modify the already existing intersection
 							it->second.at(j)->Copy(std::dynamic_pointer_cast<CompletePolygon>(multiE->GetOtherEvent(i)->GetConcernedArea()));
-							manager->OnFusion(std::shared_ptr<AreaEvent>(new AreaEvent(it->second.at(j), AreaEventType::ShapeChanged, (int)areas.size() + j, shared_from_this())));
+							manager->OnInteraction(std::shared_ptr<AreaEvent>(new AreaEvent(it->second.at(j), AreaEventType::ShapeChanged, (int)areas.size() + j, shared_from_this())));
 
 							// we don't need to add the intersection, and because we modify an existing intersection, this intersection still exists
 							intersectionStillExist.at(j) = true;
@@ -345,7 +345,7 @@ void AmusingScene::AddAllIntersections(std::shared_ptr<Amusing::CompletePolygon>
 						auto CA = std::dynamic_pointer_cast<CompletePolygon>(multiE->GetOtherEvent(i)->GetConcernedArea());
 						CA->setCursorVisible(false,canvasComponent);
 						it->second.push_back(std::dynamic_pointer_cast<CompletePolygon>(multiE->GetOtherEvent(i)->GetConcernedArea()));
-						manager->OnFusion(AddIntersectionArea(parent1, parent2, std::dynamic_pointer_cast<CompletePolygon>(multiE->GetOtherEvent(i)->GetConcernedArea())));
+						manager->OnInteraction(AddIntersectionArea(parent1, parent2, std::dynamic_pointer_cast<CompletePolygon>(multiE->GetOtherEvent(i)->GetConcernedArea())));
 
 					}
 				}
@@ -356,7 +356,7 @@ void AmusingScene::AddAllIntersections(std::shared_ptr<Amusing::CompletePolygon>
 					{
 						auto intersectionBackUp = it->second.at(i);
 						it->second.erase(it->second.begin() + i);
-						manager->OnFusion(std::shared_ptr<AreaEvent>(new AreaEvent(intersectionBackUp, AreaEventType::Deleted, (int)areas.size() + i, shared_from_this())));
+						manager->OnInteraction(std::shared_ptr<AreaEvent>(new AreaEvent(intersectionBackUp, AreaEventType::Deleted, (int)areas.size() + i, shared_from_this())));
 					}
 						
 				}
@@ -379,7 +379,7 @@ void AmusingScene::AddAllIntersections(std::shared_ptr<Amusing::CompletePolygon>
 				{
 					auto intersectionBackUp = it->second.at(i);
 					it->second.erase(it->second.begin() + i);
-					manager->OnFusion(std::shared_ptr<AreaEvent>(new AreaEvent(intersectionBackUp, AreaEventType::Deleted, (int)areas.size() + i, shared_from_this())));
+					manager->OnInteraction(std::shared_ptr<AreaEvent>(new AreaEvent(intersectionBackUp, AreaEventType::Deleted, (int)areas.size() + i, shared_from_this())));
 				}
 
 				// then we erase the all line
@@ -422,9 +422,9 @@ void AmusingScene::ApplyFusion(std::shared_ptr<Amusing::CompletePolygon> current
 		// mais il faut les refaire juste pour pvr appeler le graphicSessionManager � chaque fois :/
 		if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
 		{
-			manager->OnFusion(deleteE1);
-			manager->OnFusion(deleteE2);
-			manager->OnFusion(AddArea(std::dynamic_pointer_cast<CompletePolygon>(singleAreaE->GetConcernedArea())));
+			manager->OnInteraction(deleteE1);
+			manager->OnInteraction(deleteE2);
+			manager->OnInteraction(AddArea(std::dynamic_pointer_cast<CompletePolygon>(singleAreaE->GetConcernedArea())));
 			//return  std::shared_ptr<AreaEvent>(new AreaEvent());
 
 		}

@@ -73,7 +73,7 @@ namespace Amusing {
 		void OnCanvasMouseUp(const MouseEvent& mouseE);
 		void OnCanvasMouseDown(const MouseEvent& mouseE);
 
-		void OnFusion(std::shared_ptr<AreaEvent> areaE);
+		void OnInteraction(std::shared_ptr<AreaEvent> areaE);
 
 		void SetAllChannels();
 		std::shared_ptr<EditableScene> GetSelectedScene();
