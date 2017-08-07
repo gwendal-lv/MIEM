@@ -30,11 +30,14 @@ public:
 	void setMidiChannel(int m_chan);
 	void setId(int m_Id);
 	int getId();
+	float getSpeed();
+	int getPeriod();
 
 	void process(int time);
 	void playNoteContinuously();
 
 	double getRelativePosition();
+	void alignWith(TimeLine *ref, double phase);
 
 private:
 	static const int maxSize = 128;
@@ -44,6 +47,7 @@ private:
 	int midiTimesSize;
 	int midiOfftimesSize;
 	int velocity[maxSize];
+	int offset;
 	
 	int lastNotePosition;
 	int t0;
@@ -59,6 +63,8 @@ private:
 	int currentPeriod; // period taking speed into accound
 	int lastNote; // last note played -> we have to send the noteOff msg when the object is deleted
 	bool continuous; // if true, we send the noteOn for all the notes
+
+	void applyOffSet(int offset);
 
 	// reference to the audioManager to send the MIDI
 	Amusing::AudioManager* audioManager;

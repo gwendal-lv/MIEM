@@ -298,6 +298,8 @@ std::shared_ptr<AreaEvent> CompletePolygon::setReadingPosition(double p)
 	//DBG("position : " + (String)p);
 	if (p >= 1)
 		p -= 1;
+	if (p < 0)
+		p += 1;
 	//DBG("position after: " + (String)p);
 	if (showCursor)
 	{
@@ -764,7 +766,12 @@ double CompletePolygon::getPercentage(bpt hitPoint)
 		prev = i - 1;
 		suiv = i;
 	}
-	return percentages[prev] + (boost::geometry::distance(hitPoint, contourPoints.outer().at(prev))) / perimeter;
+
+	double ans = angle / (2 * M_PI);
+	while (ans < anglesPercentages[prev])
+		ans += 1;
+
+	return ans;
 	
 	//return 0.0;
 }

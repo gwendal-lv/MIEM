@@ -304,6 +304,13 @@ void AudioManager::getParameters()
 			DBG("state = Stop;");
 			state = Stop;
 			break;
+		case Miam::AsyncParamChange::Update :
+			DBG("Updtae received");
+			if(timeLinesKnown[param.Id1] != 0 && timeLinesKnown[param.Id2]!=0)
+				timeLinesKnown[param.Id2]->alignWith(timeLinesKnown[param.Id1],param.DoubleValue);
+			else
+				paramToAllocationThread.push(param);
+			break;
 		default:
 			break;
 		}
@@ -370,6 +377,18 @@ void AudioManager::getAudioThreadMsg()
 			}
 			position = round((double)position * (double)param.IntegerValue / (double)periode);
 			periode = param.IntegerValue;
+			break;
+		case Miam::AsyncParamChange::Update:
+			DBG("Updtae received");
+			if (timeLines[param.Id1] != 0 && timeLines[param.Id2] != 0)
+				timeLines[param.Id2]->alignWith(timeLines[param.Id1], param.DoubleValue);
+			else if(timeLines[param.Id1] != 0 && timeLines[param.Id2] == 0)
+			{
+				//paramToAllocationThread.push(param);
+				timeLines[param.Id1] = new TimeLine();
+				timeLines[param.Id1]->setPeriod(periode);
+				timeLines[param.Id2]->alignWith(timeLines[param.Id1], param.DoubleValue);
+			}
 			break;
 		default:
 			break;

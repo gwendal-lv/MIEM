@@ -240,6 +240,61 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 						++i;
 					}
 					i = 0;
+
+					if (areaE->GetMessage() == "intersection")
+					{
+						// envoie d'un message update pour dire d'aligner 2 timeLines, Id1 = référence, Id2 = timeLines à alignée
+						// DoubleValue = déphasage (car ils auront tous la même période, sinon il faudra envoyer les 2 pourcentages correspondant au mm point séparément)
+
+						param.Type = AsyncParamChange::ParamType::Update;
+						//param.Id2 = myPresenter->getSourceID(complete);
+						std::shared_ptr<IEditableArea> parent1;
+						std::shared_ptr<IEditableArea> parent2;
+						if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(areaE->GetConcernedScene()))
+						{
+							if (amusingScene->getParents(complete, parent1, parent2))
+							{
+								param.Id1 = myPresenter->getSourceID(parent1);
+
+								std::vector<bpt> interPts;
+								if (auto P1 = std::dynamic_pointer_cast<CompletePolygon>(parent1))
+								{
+									if (auto P2 = std::dynamic_pointer_cast<CompletePolygon>(parent2))
+									{
+										// calcul des points de percés
+										bpolygon poly1 = P1->getPolygon();
+										bpolygon poly2 = P2->getPolygon();
+										boost::geometry::correct(poly1);
+										boost::geometry::correct(poly2);
+										boost::geometry::intersection(poly1, poly2, interPts);
+
+										DBG("interPts");
+										//for (int j = 0; j < interPts.size(); j++)
+										//{
+										int j = 0;
+											DBG((String)interPts[j].get<0>() + " " + (String)interPts[j].get<1>());
+											double ref = P1->getPercentage(interPts[j]); // point|_parent1
+											double interPhi = complete->getPercentage(interPts[j]); // point|_intersection
+											double hitPhi = P2->getPercentage(interPts[j]); // point|_parent2
+
+											interPhi -= ref; // "dephasage" entre pourcentage dy parent1 (référence) et de l'intersection (interPhi)
+											hitPhi -= ref; // "dephasage" entre pourcentage dy parent1 (référence) et de la forme collisionnée (parent2)
+
+											param.Id2 = myPresenter->getSourceID(complete);
+											param.DoubleValue = interPhi;
+											myPresenter->SendParamChange(param);
+
+
+											param.Id2 = myPresenter->getSourceID(parent2);
+											param.DoubleValue = hitPhi;
+											myPresenter->SendParamChange(param);
+										//}
+									}
+								}
+
+							}
+						}
+					}
 					
 				}
 				
@@ -322,9 +377,62 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					param.FloatValue = (float)(myPresenter->getSpeedArea(complete));
 					myPresenter->SendParamChange(param);
 
+					if (areaE->GetMessage() == "intersection")
+					{
+						// envoie d'un message update pour dire d'aligner 2 timeLines, Id1 = référence, Id2 = timeLines à alignée
+						// DoubleValue = déphasage (car ils auront tous la même période, sinon il faudra envoyer les 2 pourcentages correspondant au mm point séparément)
+
+						param.Type = AsyncParamChange::ParamType::Update;
+						//param.Id2 = myPresenter->getSourceID(complete);
+						std::shared_ptr<IEditableArea> parent1;
+						std::shared_ptr<IEditableArea> parent2;
+						if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(areaE->GetConcernedScene()))
+						{
+							if (amusingScene->getParents(complete, parent1, parent2))
+							{
+								param.Id1 = myPresenter->getSourceID(parent1);
+
+								std::vector<bpt> interPts;
+								if (auto P1 = std::dynamic_pointer_cast<CompletePolygon>(parent1))
+								{
+									if (auto P2 = std::dynamic_pointer_cast<CompletePolygon>(parent2))
+									{
+										// calcul des points de percés
+										bpolygon poly1 = P1->getPolygon();
+										bpolygon poly2 = P2->getPolygon();
+										boost::geometry::correct(poly1);
+										boost::geometry::correct(poly2);
+										boost::geometry::intersection(poly1, poly2, interPts);
+
+										DBG("interPts");
+										//for (int j = 0; j < interPts.size(); j++)
+										//{
+										int j = 0;
+										DBG((String)interPts[j].get<0>() + " " + (String)interPts[j].get<1>());
+										double ref = P1->getPercentage(interPts[j]); // point|_parent1
+										double interPhi = complete->getPercentage(interPts[j]); // point|_intersection
+										double hitPhi = P2->getPercentage(interPts[j]); // point|_parent2
+
+										interPhi -= ref; // "dephasage" entre pourcentage dy parent1 (référence) et de l'intersection (interPhi)
+										hitPhi -= ref; // "dephasage" entre pourcentage dy parent1 (référence) et de la forme collisionnée (parent2)
+
+										param.Id2 = myPresenter->getSourceID(complete);
+										param.DoubleValue = interPhi;
+										myPresenter->SendParamChange(param);
 
 
+										param.Id2 = myPresenter->getSourceID(parent2);
+										param.DoubleValue = hitPhi;
+										myPresenter->SendParamChange(param);
+										//}
+									}
+								}
 
+							}
+						}
+					}
+
+					param.Id1 = myPresenter->getSourceID(area);
 					//param.Id1 = myPresenter->getSourceID(area);
 					param.Type = Miam::AsyncParamChange::ParamType::Source;
 					i = 0;

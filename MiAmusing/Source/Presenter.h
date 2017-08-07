@@ -63,7 +63,7 @@ namespace Amusing {
         
         // Conversion from areas to sources
 		//Presenter myPresenter;
-		
+		std::map<std::shared_ptr<IEditableArea>, double> phase;
 		std::map<std::shared_ptr<IEditableArea>, double> areaToSpeed;
 		std::map<std::shared_ptr<IEditableArea>, double> areaToVelocity;
 		boost::bimap<std::shared_ptr<IEditableArea>,int> areaToSourceMulti;

@@ -33,6 +33,8 @@ TimeLine::TimeLine()
 	t0 = 0;
 	position = 0;
 
+	offset = 0;
+
 }
 
 TimeLine::~TimeLine()
@@ -77,7 +79,7 @@ void TimeLine::setPeriod(int m_period)
 
 void TimeLine::setMidiTime(int idx, int newTime, int m_noteNumber,float m_velocity)
 {
-	newTime = round((double)newTime * (double)currentPeriod / (double)period);
+	newTime = offset + round((double)newTime * (double)currentPeriod / (double)period);
 	if (idx < maxSize)
 	{
 		//DBG("<");
@@ -201,7 +203,7 @@ void TimeLine::process(int time)
 
 double TimeLine::getRelativePosition()
 {
-	return (double)position/(double)currentPeriod;
+	return ((double)offset + (double)position)/(double)currentPeriod;
 }
 
 void TimeLine::playNoteContinuously()
@@ -213,4 +215,56 @@ void TimeLine::playNoteContinuously()
 			audioManager->sendMidiMessage(midiMsg);
 			lastNote = notes[i];			
 	}
+}
+
+void TimeLine::alignWith(TimeLine *ref, double phase)
+{
+	// to align this timeLine with the reference timeLine, first we need to have the same period, then we'll apply the phase
+	
+	// to have the same period, we can use setPeriod or setSpeed
+	// since changing the speed would need to resend the information of the new speed to the presenter, we'll first try by changing the period
+	DBG((String)(ref->getPeriod()) + " " + (String)period);
+	DBG((String)(ref->getSpeed()) + " " + (String)speed);
+	if (period != ref->getPeriod())
+		setPeriod(ref->getPeriod());
+	if (speed != ref->getSpeed())
+		setSpeed(ref->getSpeed());
+
+	// now that we have the same period, we apply the phase
+	int newOffset = round(phase * (double)period);
+	applyOffSet(newOffset);
+	offset = newOffset;
+}
+
+void TimeLine::applyOffSet(int offset)
+{
+	for (int i = 0; i < midiTimesSize; i++)
+	{
+		midiTimes[i] += offset;
+		midiOffTimes[i] += offset;
+		if (offset > 0)
+		{
+			while (midiTimes[i] > period)
+				midiTimes[i] -= period;
+			while (midiOffTimes[i] > period)
+				midiOffTimes[i] -= period;
+		}
+		else
+		{
+			while (midiTimes[i] < 0)
+				midiTimes[i] += period;
+			while (midiOffTimes[i] < period)
+				midiOffTimes[i] += period;
+		}
+	}
+}
+
+float TimeLine::getSpeed()
+{
+	return speed;
+}
+
+int TimeLine::getPeriod()
+{
+	return period;
 }
