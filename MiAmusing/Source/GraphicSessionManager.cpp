@@ -277,8 +277,17 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 											double interPhi = complete->getPercentage(interPts[j]); // point|_intersection
 											double hitPhi = P2->getPercentage(interPts[j]); // point|_parent2
 
-											interPhi -= ref; // "dephasage" entre pourcentage dy parent1 (référence) et de l'intersection (interPhi)
-											hitPhi -= ref; // "dephasage" entre pourcentage dy parent1 (référence) et de la forme collisionnée (parent2)
+											//if (ref > interPhi)
+											//	interPhi -= ref; // "dephasage" entre pourcentage dy parent1 (référence) et de l'intersection (interPhi)
+											//else
+											//	interPhi -= (ref + 1);
+
+											//if (ref > hitPhi)
+											//	hitPhi -= ref; // "dephasage" entre pourcentage dy parent1 (référence) et de la forme collisionnée (parent2)
+											//else
+											//	hitPhi -= (ref + 1);
+											interPhi = ref - interPhi;
+											hitPhi = ref - hitPhi;
 
 											param.Id2 = myPresenter->getSourceID(complete);
 											param.DoubleValue = interPhi;
@@ -413,8 +422,17 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 										double interPhi = complete->getPercentage(interPts[j]); // point|_intersection
 										double hitPhi = P2->getPercentage(interPts[j]); // point|_parent2
 
-										interPhi -= ref; // "dephasage" entre pourcentage dy parent1 (référence) et de l'intersection (interPhi)
-										hitPhi -= ref; // "dephasage" entre pourcentage dy parent1 (référence) et de la forme collisionnée (parent2)
+										//if (ref > interPhi)
+										//	interPhi -= ref; // "dephasage" entre pourcentage dy parent1 (référence) et de l'intersection (interPhi)
+										//else
+										//	interPhi -= (ref + 1);
+
+										//if (ref > hitPhi)
+										//	hitPhi -= ref; // "dephasage" entre pourcentage dy parent1 (référence) et de la forme collisionnée (parent2)
+										//else
+										//	hitPhi -= (ref + 1);
+										interPhi = ref - interPhi;
+										hitPhi = ref - hitPhi;
 
 										param.Id2 = myPresenter->getSourceID(complete);
 										param.DoubleValue = interPhi;

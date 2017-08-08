@@ -66,6 +66,8 @@ private:
 
 	void applyOffSet(int offset);
 
+	void testMidi();
+
 	// reference to the audioManager to send the MIDI
 	Amusing::AudioManager* audioManager;
 };

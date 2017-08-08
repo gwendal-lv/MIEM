@@ -75,11 +75,14 @@ void TimeLine::setPeriod(int m_period)
 		period = m_period;
 		currentPeriod = period / speed;
 	}
+	testMidi();
 }
 
 void TimeLine::setMidiTime(int idx, int newTime, int m_noteNumber,float m_velocity)
 {
 	newTime = offset + round((double)newTime * (double)currentPeriod / (double)period);
+	while (newTime > currentPeriod)
+		newTime -= currentPeriod;
 	if (idx < maxSize)
 	{
 		//DBG("<");
@@ -118,6 +121,7 @@ void TimeLine::setMidiTime(int idx, int newTime, int m_noteNumber,float m_veloci
 		//DBG("create note : " + (String)notes[idx]);
 		//DBG("BMS : number of corners is now : " + (String)midiTimesSize);
 	}
+	testMidi();
 }
 
 void TimeLine::setMidiChannel(int m_chan)
@@ -141,7 +145,7 @@ void TimeLine::setSpeed(float newSpeed)
 		speed = newSpeed;
 		
 	}
-	
+	testMidi();
 }
 
 void TimeLine::setId(int m_Id)
@@ -161,6 +165,7 @@ void TimeLine::process(int time)
 	//DBG("midiOffTimes.size() = " + (String)midiOfftimesSize);
 	//DBG("time = " + (String)time);
 	//DBG("midiTimesSize : " + (String)midiTimesSize);
+	//time -= offset;
 	if (!continuous)
 	{
 		int oldTime = time;
@@ -175,6 +180,8 @@ void TimeLine::process(int time)
 
 		for (int i = 0; i < midiTimesSize; i++)
 		{
+			if (midiTimes[i] > period)
+				DBG("connard");
 			if (time == midiTimes[i])
 			{
 				//DBG("Play note : " + (String)notes[i]);
@@ -231,9 +238,20 @@ void TimeLine::alignWith(TimeLine *ref, double phase)
 		setSpeed(ref->getSpeed());
 
 	// now that we have the same period, we apply the phase
-	int newOffset = round(phase * (double)period);
-	applyOffSet(newOffset);
-	offset = newOffset;
+	int newOffset =  round(phase * (double)period);
+	if (newOffset < 0)
+		while (newOffset < 0)
+			newOffset += currentPeriod;
+	else if (newOffset > period)
+		while (newOffset > period)
+			newOffset -= currentPeriod;
+
+	if (newOffset != offset)
+	{
+		applyOffSet(newOffset - offset);
+		offset = newOffset;
+	}
+	testMidi();
 }
 
 void TimeLine::applyOffSet(int offset)
@@ -257,6 +275,8 @@ void TimeLine::applyOffSet(int offset)
 				midiOffTimes[i] += period;
 		}
 	}
+
+	
 }
 
 float TimeLine::getSpeed()
@@ -267,4 +287,13 @@ float TimeLine::getSpeed()
 int TimeLine::getPeriod()
 {
 	return period;
+}
+
+void TimeLine::testMidi()
+{
+	for (int i = 0; i < midiTimesSize; i++)
+	{
+		if (midiTimes[i] > currentPeriod)
+			DBG("connard");
+	}
 }
