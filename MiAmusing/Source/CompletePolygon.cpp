@@ -342,6 +342,9 @@ std::shared_ptr<AreaEvent> CompletePolygon::setReadingPosition(double p)
 				}
 			}
 			//DBG((String)prev + " " + (String)suiv);
+
+			
+			// calcul du point où se trouve le curseur par interpolation linéaire
 			bpt P;
 			if (suiv != 0)
 			{
@@ -364,7 +367,23 @@ std::shared_ptr<AreaEvent> CompletePolygon::setReadingPosition(double p)
 
 			cursor->Translate(juce::Point<double>(translation.get<0>(), translation.get<1>()));
 			cursorCenter = P;
-			//}
+			
+			// si on est assez proche du prochain, on augmente la couleur vers le rouge,
+			// si on est assez proche du précédent, on diminue la couleur
+			double distPr = boost::geometry::distance(P, contourPoints.outer().at(prev));
+			double distSui = boost::geometry::distance(P, contourPoints.outer().at(suiv));
+			if (distPr < 0.05)
+			{
+				cursor->SetAlpha(1 - distPr * 10);
+				//DBG((String)(1 - distPr * 10));
+			}
+			else if (distSui < 0.05)
+			{
+				cursor->SetAlpha(1 - distSui * 10);
+				//DBG((String)(0.5 + distSui * 10));
+			}
+			else
+				cursor->SetAlpha(0.5);
 			//redessiner
 			cursor->CanvasResized(this->parentCanvas);
 
@@ -747,6 +766,11 @@ bool CompletePolygon::getUnion(bpolygon hitPolygon, bpolygon &output)
 
 double CompletePolygon::getPercentage(bpt hitPoint)
 {
+	for (int i = 0; i < contourPoints.outer().size(); i++)
+	{
+		if (boost::geometry::equals(hitPoint, contourPoints.outer().at(i)))
+			return anglesPercentages[i];
+	}
 	
 	bpt GT(hitPoint.get<0>() - center.get<0>(), hitPoint.get<1>() - center.get<1>());
 	double angle = Miam::Math::ComputePositiveAngle(GT);

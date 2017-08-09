@@ -80,7 +80,7 @@ void TimeLine::setPeriod(int m_period)
 
 void TimeLine::setMidiTime(int idx, int newTime, int m_noteNumber,float m_velocity)
 {
-	newTime = offset + round((double)newTime * (double)currentPeriod / (double)period);
+	newTime =  round((double)newTime * (double)currentPeriod / (double)period);
 	while (newTime > currentPeriod)
 		newTime -= currentPeriod;
 	if (idx < maxSize)
@@ -168,22 +168,27 @@ void TimeLine::process(int time)
 	//time -= offset;
 	if (!continuous)
 	{
+		time += offset;
 		int oldTime = time;
 		time += t0;
+		//time += offset;
 		while (time >= currentPeriod)
 			time -= currentPeriod;
 		if (oldTime == period - 1)
 			t0 = time + 1;
+		//time += offset;
 		position = time;
 		/*if (time == 0)
 			t0 = 1;*/
 
 		for (int i = 0; i < midiTimesSize; i++)
 		{
-			if (midiTimes[i] > period)
-				DBG("connard");
+			//if (midiTimes[i] > period)
+			//	DBG("connard");
 			if (time == midiTimes[i])
 			{
+				if((uint8)velocity[i] != 0)
+					DBG("t : " + (String)midiTimes[i]);
 				//DBG("Play note : " + (String)notes[i]);
 				MidiMessage midiMsg = MidiMessage::noteOn(channel, notes[i], (uint8)velocity[i]);
 				audioManager->sendMidiMessage(midiMsg);
@@ -210,7 +215,7 @@ void TimeLine::process(int time)
 
 double TimeLine::getRelativePosition()
 {
-	return ((double)offset + (double)position)/(double)currentPeriod;
+	return ( (double)position)/(double)currentPeriod;
 }
 
 void TimeLine::playNoteContinuously()
@@ -237,6 +242,8 @@ void TimeLine::alignWith(TimeLine *ref, double phase)
 	if (speed != ref->getSpeed())
 		setSpeed(ref->getSpeed());
 
+	phase = 1 - phase;
+
 	// now that we have the same period, we apply the phase
 	int newOffset =  round(phase * (double)period);
 	if (newOffset < 0)
@@ -248,7 +255,7 @@ void TimeLine::alignWith(TimeLine *ref, double phase)
 
 	if (newOffset != offset)
 	{
-		applyOffSet(newOffset - offset);
+		//applyOffSet(newOffset - offset);
 		offset = newOffset;
 	}
 	testMidi();
@@ -291,9 +298,9 @@ int TimeLine::getPeriod()
 
 void TimeLine::testMidi()
 {
-	for (int i = 0; i < midiTimesSize; i++)
+	/*for (int i = 0; i < midiTimesSize; i++)
 	{
 		if (midiTimes[i] > currentPeriod)
 			DBG("connard");
-	}
+	}*/
 }

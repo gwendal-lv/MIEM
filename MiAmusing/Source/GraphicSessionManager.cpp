@@ -268,26 +268,19 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 										boost::geometry::correct(poly2);
 										boost::geometry::intersection(poly1, poly2, interPts);
 
-										DBG("interPts");
-										//for (int j = 0; j < interPts.size(); j++)
-										//{
+										
 										int j = 0;
 											DBG((String)interPts[j].get<0>() + " " + (String)interPts[j].get<1>());
 											double ref = P1->getPercentage(interPts[j]); // point|_parent1
 											double interPhi = complete->getPercentage(interPts[j]); // point|_intersection
 											double hitPhi = P2->getPercentage(interPts[j]); // point|_parent2
 
-											//if (ref > interPhi)
-											//	interPhi -= ref; // "dephasage" entre pourcentage dy parent1 (référence) et de l'intersection (interPhi)
-											//else
-											//	interPhi -= (ref + 1);
 
-											//if (ref > hitPhi)
-											//	hitPhi -= ref; // "dephasage" entre pourcentage dy parent1 (référence) et de la forme collisionnée (parent2)
-											//else
-											//	hitPhi -= (ref + 1);
 											interPhi = ref - interPhi;
 											hitPhi = ref - hitPhi;
+
+											DBG("interPhi : " + (String)interPhi);
+											DBG("hitPhi" + (String)hitPhi);
 
 											param.Id2 = myPresenter->getSourceID(complete);
 											param.DoubleValue = interPhi;
@@ -297,7 +290,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 											param.Id2 = myPresenter->getSourceID(parent2);
 											param.DoubleValue = hitPhi;
 											myPresenter->SendParamChange(param);
-										//}
+
 									}
 								}
 
@@ -431,8 +424,16 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 										//	hitPhi -= ref; // "dephasage" entre pourcentage dy parent1 (référence) et de la forme collisionnée (parent2)
 										//else
 										//	hitPhi -= (ref + 1);
+										while (interPhi > 1)
+											interPhi -= 1;
+										while (hitPhi > 1)
+											hitPhi -= 1;
+										
 										interPhi = ref - interPhi;
 										hitPhi = ref - hitPhi;
+
+										DBG("interPhi : " + (String)interPhi);
+										DBG("hitPhi" + (String)hitPhi);
 
 										param.Id2 = myPresenter->getSourceID(complete);
 										param.DoubleValue = interPhi;
