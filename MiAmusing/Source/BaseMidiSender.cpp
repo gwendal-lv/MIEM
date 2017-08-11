@@ -34,7 +34,7 @@ TimeLine::TimeLine()
 	position = 0;
 
 	offset = 0;
-
+	padding = 0;
 }
 
 TimeLine::~TimeLine()
@@ -172,9 +172,9 @@ void TimeLine::process(int time)
 		int oldTime = time;
 		time += t0;
 		//time += offset;
-		while (time >= currentPeriod)
-			time -= currentPeriod;
-		if (oldTime == period - 1)
+		while (time >= currentPeriod + padding)
+			time -= (currentPeriod + padding);
+		if (oldTime == period + padding - 1)
 			t0 = time + 1;
 		//time += offset;
 		position = time;
@@ -215,7 +215,9 @@ void TimeLine::process(int time)
 
 double TimeLine::getRelativePosition()
 {
-	return ( (double)position)/(double)currentPeriod;
+	if (((double)position) / (double)(offset + currentPeriod + padding)>1)
+		DBG("position > 1");
+	return ( (double)position)/(double)(offset + currentPeriod+padding);
 }
 
 void TimeLine::playNoteContinuously()
@@ -248,10 +250,10 @@ void TimeLine::alignWith(TimeLine *ref, double phase)
 	int newOffset =  round(phase * (double)period);
 	if (newOffset < 0)
 		while (newOffset < 0)
-			newOffset += currentPeriod;
-	else if (newOffset > period)
-		while (newOffset > period)
-			newOffset -= currentPeriod;
+			newOffset += (currentPeriod+padding);
+	else if (newOffset > period + padding)
+		while (newOffset > period + padding)
+			newOffset -= currentPeriod + padding;
 
 	if (newOffset != offset)
 	{
@@ -261,29 +263,46 @@ void TimeLine::alignWith(TimeLine *ref, double phase)
 	testMidi();
 }
 
-void TimeLine::applyOffSet(int offset)
+void TimeLine::resize(TimeLine *ref, double IP, double factor)
 {
-	for (int i = 0; i < midiTimesSize; i++)
-	{
-		midiTimes[i] += offset;
-		midiOffTimes[i] += offset;
-		if (offset > 0)
-		{
-			while (midiTimes[i] > period)
-				midiTimes[i] -= period;
-			while (midiOffTimes[i] > period)
-				midiOffTimes[i] -= period;
-		}
-		else
-		{
-			while (midiTimes[i] < 0)
-				midiTimes[i] += period;
-			while (midiOffTimes[i] < period)
-				midiOffTimes[i] += period;
-		}
-	}
+	// apply a resize factor while an invariable point (IP) keeps its position
+	// !!! the two intersections points of the two timeLines need to be align before !!!
 
-	
+	if (factor > 0.1)
+	{
+		// first we compute the position of the IP in the reference timeLines
+		int IPref = round(IP * (double)ref->getPeriod() / (double)ref->getSpeed());
+
+		// as the two timeLines are "align", we know the IP position in the current timeLine :
+		int IPcurrent = offset - (ref->getPeriod() - IPref);//IPref + offset;//- offset;
+		while (IPcurrent > currentPeriod)
+			IPcurrent -= currentPeriod;
+
+		// we need to compute have this position in percent so we could compute its new position after the resize
+		double ip = (double)IPcurrent / (double)currentPeriod;
+
+		// apply the real resize
+		int newPeriod = round(factor * ((double)ref->getPeriod() / (double)ref->getSpeed()));
+		setPeriod(newPeriod);
+
+		// compute the new position of the IP
+		double newIP = ip * newPeriod;
+
+		// add the difference of the new IP and the old IP positions to the offset
+		offset += IPcurrent - newIP;
+		while (offset > ((double)ref->getPeriod() / (double)ref->getSpeed()))
+			offset -= ((double)ref->getPeriod() / (double)ref->getSpeed());
+
+		// the last step is to assure that current timeLine won't repeat until the next collision, 
+		// so we have to set the period to the same as the reference without altering the notes position
+		//period = ref->getPeriod();
+
+		// probleme au prochain coup, quand on fera le calcul du facteur, on ne fera pas le bon resize pcq on a plus la vraie periode...
+		// ou bien j'essaie un truc "padding" comme le offset mais à la fin ! 
+		padding = ref->getPeriod() - (offset + newPeriod);
+		if (padding < 0)
+			DBG("padding negatif");
+	}
 }
 
 float TimeLine::getSpeed()

@@ -270,12 +270,17 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 
 										
 										int j = 0;
-											DBG((String)interPts[j].get<0>() + " " + (String)interPts[j].get<1>());
+											//DBG((String)interPts[j].get<0>() + " " + (String)interPts[j].get<1>());
 											double ref = P1->getPercentage(interPts[j]); // point|_parent1
+											double ref2 = P1->getPercentage(interPts[1]);
 											double interPhi = complete->getPercentage(interPts[j]); // point|_intersection
+											double interPhi2 = complete->getPercentage(interPts[1]);
 											double hitPhi = P2->getPercentage(interPts[j]); // point|_parent2
+											double hitPhi2 = P2->getPercentage(interPts[1]);
+											double DXref = P1->getPercentage(interPts[1]) > P1->getPercentage(interPts[0]) ? P1->getPercentage(interPts[1]) - P1->getPercentage(interPts[0]) : (P1->getPercentage(interPts[1])+1) - P1->getPercentage(interPts[0]);
+											double DX;
 
-
+											
 											interPhi = ref - interPhi;
 											hitPhi = ref - hitPhi;
 
@@ -283,12 +288,30 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 											DBG("hitPhi" + (String)hitPhi);
 
 											param.Id2 = myPresenter->getSourceID(complete);
+
+											// to align the two timeLines
+											param.IntegerValue = 0;
 											param.DoubleValue = interPhi;
 											myPresenter->SendParamChange(param);
 
+											// to apply the resize
+											param.IntegerValue = 1;
+											param.DoubleValue = complete->getPercentage(interPts[0]); // invariable point
+											DX = complete->getPercentage(interPts[1]) > complete->getPercentage(interPts[0]) ? complete->getPercentage(interPts[1]) - complete->getPercentage(interPts[0]) : (complete->getPercentage(interPts[1]) + 1) - complete->getPercentage(interPts[0]);
+											param.FloatValue = (float)(DXref / DX);
+											myPresenter->SendParamChange(param);
 
+											// to align the two timeLines
+											param.IntegerValue = 0;
 											param.Id2 = myPresenter->getSourceID(parent2);
 											param.DoubleValue = hitPhi;
+											myPresenter->SendParamChange(param);
+
+											// to apply the resize
+											param.IntegerValue = 1;
+											param.DoubleValue = P2->getPercentage(interPts[0]); // invariable point
+											DX = P2->getPercentage(interPts[1]) > P2->getPercentage(interPts[0]) ? P2->getPercentage(interPts[1]) - P2->getPercentage(interPts[0]) : (P2->getPercentage(interPts[1]) + 1) - P2->getPercentage(interPts[0]);
+											param.FloatValue = (float)(DXref / DX);
 											myPresenter->SendParamChange(param);
 
 									}
@@ -406,24 +429,21 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 										boost::geometry::correct(poly2);
 										boost::geometry::intersection(poly1, poly2, interPts);
 
-										DBG("interPts");
+										
 										//for (int j = 0; j < interPts.size(); j++)
 										//{
 										int j = 0;
 										DBG((String)interPts[j].get<0>() + " " + (String)interPts[j].get<1>());
 										double ref = P1->getPercentage(interPts[j]); // point|_parent1
+										double ref2 = P1->getPercentage(interPts[1]);
 										double interPhi = complete->getPercentage(interPts[j]); // point|_intersection
+										double interPhi2 =  complete->getPercentage(interPts[1]);
 										double hitPhi = P2->getPercentage(interPts[j]); // point|_parent2
+										double hitPhi2 = P2->getPercentage(interPts[1]);
+										double DXref = P1->getPercentage(interPts[1]) > P1->getPercentage(interPts[0]) ? P1->getPercentage(interPts[1]) - P1->getPercentage(interPts[0]) : (P1->getPercentage(interPts[1]) + 1) - P1->getPercentage(interPts[0]);
+										double DX;
 
-										//if (ref > interPhi)
-										//	interPhi -= ref; // "dephasage" entre pourcentage dy parent1 (référence) et de l'intersection (interPhi)
-										//else
-										//	interPhi -= (ref + 1);
-
-										//if (ref > hitPhi)
-										//	hitPhi -= ref; // "dephasage" entre pourcentage dy parent1 (référence) et de la forme collisionnée (parent2)
-										//else
-										//	hitPhi -= (ref + 1);
+										
 										while (interPhi > 1)
 											interPhi -= 1;
 										while (hitPhi > 1)
@@ -436,12 +456,30 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 										DBG("hitPhi" + (String)hitPhi);
 
 										param.Id2 = myPresenter->getSourceID(complete);
+										// to align the two timeLines
+										param.IntegerValue = 0;
 										param.DoubleValue = interPhi;
 										myPresenter->SendParamChange(param);
 
+										// to apply the resize
+										param.IntegerValue = 1;
+										param.DoubleValue = complete->getPercentage(interPts[0]); // invariable point
+										DX = complete->getPercentage(interPts[1]) > complete->getPercentage(interPts[0]) ? complete->getPercentage(interPts[1]) - complete->getPercentage(interPts[0]) : (complete->getPercentage(interPts[1]) + 1) - complete->getPercentage(interPts[0]);
+										param.FloatValue = (float)(DXref / DX);
+										myPresenter->SendParamChange(param);
 
+
+										// to align the two timeLines
 										param.Id2 = myPresenter->getSourceID(parent2);
+										param.IntegerValue = 0;
 										param.DoubleValue = hitPhi;
+										myPresenter->SendParamChange(param);
+
+										// to apply the resize
+										param.IntegerValue = 1;
+										param.DoubleValue = P2->getPercentage(interPts[0]); // invariable point
+										DX = P2->getPercentage(interPts[1]) > P2->getPercentage(interPts[0]) ? P2->getPercentage(interPts[1]) - P2->getPercentage(interPts[0]) : (P2->getPercentage(interPts[1]) + 1) - P2->getPercentage(interPts[0]);
+										param.FloatValue = (float)(DXref / DX);
 										myPresenter->SendParamChange(param);
 										//}
 									}

@@ -38,6 +38,7 @@ public:
 
 	double getRelativePosition();
 	void alignWith(TimeLine *ref, double phase);
+	void resize(TimeLine *ref, double PI, double factor);
 
 private:
 	static const int maxSize = 128;
@@ -48,6 +49,7 @@ private:
 	int midiOfftimesSize;
 	int velocity[maxSize];
 	int offset;
+	int padding;
 	
 	int lastNotePosition;
 	int t0;
@@ -64,7 +66,6 @@ private:
 	int lastNote; // last note played -> we have to send the noteOff msg when the object is deleted
 	bool continuous; // if true, we send the noteOn for all the notes
 
-	void applyOffSet(int offset);
 
 	void testMidi();
 

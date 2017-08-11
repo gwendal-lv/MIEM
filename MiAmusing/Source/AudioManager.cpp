@@ -306,10 +306,20 @@ void AudioManager::getParameters()
 			break;
 		case Miam::AsyncParamChange::Update :
 			DBG("Updtae received");
-			if(timeLinesKnown[param.Id1] != 0 && timeLinesKnown[param.Id2]!=0)
-				timeLinesKnown[param.Id2]->alignWith(timeLinesKnown[param.Id1],param.DoubleValue);
-			else
-				paramToAllocationThread.push(param);
+			if (param.IntegerValue == 0)
+			{
+				if (timeLinesKnown[param.Id1] != 0 && timeLinesKnown[param.Id2] != 0)
+					timeLinesKnown[param.Id2]->alignWith(timeLinesKnown[param.Id1], param.DoubleValue);
+				else
+					paramToAllocationThread.push(param);
+			}
+			else if (param.IntegerValue == 1)
+			{
+				if (timeLinesKnown[param.Id1] != 0 && timeLinesKnown[param.Id2] != 0)
+					timeLinesKnown[param.Id2]->resize(timeLinesKnown[param.Id1], param.DoubleValue, (double)param.FloatValue);
+				else
+					paramToAllocationThread.push(param);
+			}
 			break;
 		default:
 			break;
@@ -380,14 +390,23 @@ void AudioManager::getAudioThreadMsg()
 			break;
 		case Miam::AsyncParamChange::Update:
 			DBG("Updtae received");
-			if (timeLines[param.Id1] != 0 && timeLines[param.Id2] != 0)
-				timeLines[param.Id2]->alignWith(timeLines[param.Id1], param.DoubleValue);
-			else if(timeLines[param.Id1] != 0 && timeLines[param.Id2] == 0)
+			if (param.IntegerValue == 0)
 			{
-				//paramToAllocationThread.push(param);
-				timeLines[param.Id1] = new TimeLine();
-				timeLines[param.Id1]->setPeriod(periode);
-				timeLines[param.Id2]->alignWith(timeLines[param.Id1], param.DoubleValue);
+				if (timeLines[param.Id1] != 0 && timeLines[param.Id2] != 0)
+					timeLines[param.Id2]->alignWith(timeLines[param.Id1], param.DoubleValue);
+				else if (timeLines[param.Id1] != 0 && timeLines[param.Id2] == 0)
+				{
+					//paramToAllocationThread.push(param);
+					timeLines[param.Id1] = new TimeLine();
+					timeLines[param.Id1]->setPeriod(periode);
+					timeLines[param.Id2]->alignWith(timeLines[param.Id1], param.DoubleValue);
+				}
+			}
+			else if (param.IntegerValue == 1)
+			{
+				if (timeLines[param.Id1] != 0 && timeLines[param.Id2] != 0)
+					timeLines[param.Id2]->resize(timeLines[param.Id1], param.DoubleValue, (double)param.FloatValue);
+				
 			}
 			break;
 		default:
