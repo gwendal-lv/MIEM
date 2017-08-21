@@ -650,7 +650,24 @@ std::shared_ptr<AreaEvent> CompletePolygon::intersection(std::shared_ptr<Complet
 			std::vector<double> newAnglesPercentages;
 			for (int j = 0; j < inter[i].outer().size(); j++)
 			{
-				newCircles.push_back(0);
+				//newCircles.push_back(0);
+
+				if (boost::geometry::within(inter[i].outer().at(j), poly1))
+					newCircles.push_back(OnCircles[0]);
+				else if (boost::geometry::within(inter[i].outer().at(j), poly2))
+				{
+					int val;
+					hitPolygon->getAllDistanceFromCenter(0, val);
+					newCircles.push_back(val);
+				}
+				else
+				{
+					int val;
+					hitPolygon->getAllDistanceFromCenter(0, val);
+					newCircles.push_back(val + OnCircles[0]);
+				}
+
+
 				bpt centeredPt(inter[i].outer().at(j));
 				boost::geometry::subtract_point(centeredPt, interCenter);
 				newAnglesPercentages.push_back(Math::ComputePositiveAngle(centeredPt)/ (2* M_PI));
