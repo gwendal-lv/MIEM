@@ -42,7 +42,7 @@ CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
 	cursorCenter = contourPoints.outer().at(0);
 	initCursorSize = 0.1f;
 	cursorSize = initCursorSize;
-	cursor = std::shared_ptr<EditableEllipse>(new EditableEllipse(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f));
+	cursor = std::shared_ptr<Cursor>(new Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f));
 	cursor->SetNameVisible(false);
 	//percentages.reserve(contourPoints.size());
 	for (int i = 0; i < (int)contourPoints.outer().size(); ++i)
@@ -77,7 +77,7 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 	cursorCenter = contourPoints.outer().at(0);
 	initCursorSize = 0.1f;
 	cursorSize = initCursorSize;
-	cursor = std::shared_ptr<EditableEllipse>(new EditableEllipse(0, cursorCenter, cursorSize, cursorSize, Colours::grey, _canvasRatio));
+	cursor = std::shared_ptr<Cursor>(new Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, _canvasRatio));
 	cursor->SetNameVisible(false);
 	for (int i = 0; i < (int)contourPoints.outer().size(); ++i)
 	{
@@ -116,7 +116,7 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	cursorCenter = contourPoints.outer().at(0);
 	initCursorSize = 0.1f;
 	cursorSize = initCursorSize;
-	cursor = std::shared_ptr<EditableEllipse>(new EditableEllipse(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f));
+	cursor = std::shared_ptr<Cursor>(new Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f));
 	cursor->SetNameVisible(false);
 	for (int i = 0; i < (int)contourPoints.outer().size(); ++i)
 	{
@@ -160,7 +160,7 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	cursorCenter = contourPoints.outer().at(0);
 	initCursorSize = 0.1f;
 	cursorSize = initCursorSize;
-	cursor = std::shared_ptr<EditableEllipse>(new EditableEllipse(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f));
+	cursor = std::shared_ptr<Cursor>(new Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f));
 	cursor->SetNameVisible(false);
 
 	/*for (int i = 0; i < (int)contourPoints.outer().size(); ++i)

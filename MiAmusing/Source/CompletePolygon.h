@@ -13,6 +13,7 @@
 
 #include "EditablePolygon.h"
 #include "EditableEllipse.h"
+#include "Cursors.h"
 #include "JuceHeader.h"
 #include "SceneCanvasComponent.h"
 //namespace Miam
@@ -79,7 +80,8 @@ namespace Amusing
 		double perimeter;
 		std::vector<double> percentages; // percentages corresponding to each points
 		std::vector<double> anglesPercentages;
-		std::shared_ptr<Miam::EditableEllipse> cursor;
+		std::shared_ptr<Cursor> cursor;//std::shared_ptr<Miam::EditableEllipse> cursor;
+		
 		float initCursorSize;
 		float cursorSize;
 
