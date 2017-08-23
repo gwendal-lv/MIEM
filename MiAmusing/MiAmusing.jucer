@@ -7,6 +7,8 @@
   <MAINGROUP id="Ak6ojc" name="MiAmusing">
     <GROUP id="{E74684B7-0B02-F2F7-C571-317039AB4495}" name="Source">
       <GROUP id="{8B585BA3-71E5-255C-C070-4910B268744C}" name="Model">
+        <FILE id="tsro0s" name="ReadingHead.cpp" compile="1" resource="0" file="Source/ReadingHead.cpp"/>
+        <FILE id="sh1gU7" name="ReadingHead.h" compile="0" resource="0" file="Source/ReadingHead.h"/>
         <FILE id="EqpVAZ" name="BaseMidiSender.cpp" compile="1" resource="0"
               file="Source/BaseMidiSender.cpp"/>
         <FILE id="ZqoBzB" name="BaseMidiSender.h" compile="0" resource="0"

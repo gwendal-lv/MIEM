@@ -12,6 +12,7 @@
 
 #include<vector>
 //#include "AudioManager.h"
+#include "../JuceLibraryCode/JuceHeader.h"
 namespace Amusing
 {
 	class AudioManager;
@@ -33,6 +34,8 @@ public:
 	float getSpeed();
 	int getPeriod();
 
+	bool isNoteOnTime(int m_position, int i, bool &end, int &channel, int &note, uint8 &m_velocity);
+	bool isNoteOffTime(int m_position, int i, bool &end, int &channel, int &note);
 	void process(int time);
 	void playNoteContinuously();
 

@@ -158,6 +158,66 @@ int TimeLine::getId()
 	return Id;
 }
 
+bool TimeLine::isNoteOnTime(int m_position, int i, bool &m_end, int &m_channel, int &m_note, uint8 &m_velocity)
+{
+
+	if (i < midiTimesSize)
+	{
+		m_end = false; // on a pas encore atteint la fin de la liste de notes (au cas où il y en a plusieurs à jouer au même moment)
+		if (m_position == midiTimes[i])
+		{
+			if (velocity[i] != 0)
+			{
+				m_channel = channel;
+				m_note = notes[i];
+				m_velocity = (uint8)velocity[i];
+				return true;
+			}
+			else // si velocité == 0, pas besoin d'envoyer de note vu qu'on l'entend pas...
+				return false;
+
+
+		}
+		else
+			return false;
+
+	}
+	else
+	{
+		m_end = true;
+		return false;
+	}
+	
+}
+
+bool TimeLine::isNoteOffTime(int m_position, int i, bool &m_end, int &m_channel, int &m_note)
+{
+	if (i < midiOfftimesSize)
+	{
+		m_end = false;
+		if (m_position == midiOffTimes[i])
+		{
+
+			if (velocity[i] != 0)
+			{
+				m_channel = channel;
+				m_note = notes[i];
+				return true;
+			}
+			else // si velocité == 0, pas besoin d'envoyer de note vu qu'on l'entend pas...
+				return false;
+		}
+		else
+			return false;
+
+	}
+	else
+	{
+		m_end = true;
+		return false;
+	}
+}
+
 void TimeLine::process(int time)
 {
 	//int b = midiTimesSize;
@@ -181,35 +241,37 @@ void TimeLine::process(int time)
 		/*if (time == 0)
 			t0 = 1;*/
 
-		for (int i = 0; i < midiTimesSize; i++)
+		
+		
+		bool m_On;
+		int m_channel, m_note;
+		uint8 m_velocity;
+
+		bool m_end = false;
+		int i = 0;
+		while (m_end == false)
 		{
-			//if (midiTimes[i] > period)
-			//	DBG("connard");
-			if (time == midiTimes[i])
+			if (isNoteOnTime(time, i, m_end, m_channel, m_note, m_velocity))
 			{
-				if((uint8)velocity[i] != 0)
-					DBG("t : " + (String)midiTimes[i]);
-				//DBG("Play note : " + (String)notes[i]);
-				MidiMessage midiMsg = MidiMessage::noteOn(channel, notes[i], (uint8)velocity[i]);
+				MidiMessage midiMsg = MidiMessage::noteOn(m_channel, m_note, m_velocity);
 				audioManager->sendMidiMessage(midiMsg);
-				lastNote = notes[i];
-				//DBG("position = " + (String)(time ));
-				lastNotePosition = time;
-				return;
 			}
-
+			i++;
 		}
-		for (int i = 0; i < midiOfftimesSize; i++)
+
+		m_end = false;
+		i = 0;
+		while (m_end == false)
 		{
-			if (time == midiOffTimes[i])
+			if (isNoteOffTime(time, i, m_end, m_channel, m_note))
 			{
-				//DBG("Off : " + (String)i);
-				MidiMessage midiMsgOff = MidiMessage::noteOff(channel, notes[i]);
+				MidiMessage midiMsgOff = MidiMessage::noteOff(m_channel, m_note);
 				audioManager->sendMidiMessage(midiMsgOff);
-				return;
 			}
-
+			i++;
 		}
+
+		
 	}
 }
 
