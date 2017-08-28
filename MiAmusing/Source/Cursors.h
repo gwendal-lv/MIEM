@@ -25,10 +25,11 @@ public:
 	double getPosition();
 	void LinkTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon);
 	bool isLinkedTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon);
+	void setReadingPosition(double p);
 
 private:
 	double speed;
 	double position;
-	std::shared_ptr<Miam::EditablePolygon> associate;
+	std::shared_ptr<Miam::EditablePolygon> associate; // area that enforce the speed/give center position
 };
 

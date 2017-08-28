@@ -147,7 +147,7 @@ namespace Amusing {
 		void OnFollowerTranslation(std::shared_ptr<GraphicEvent> graphicE);
 		void OnAudioPosition(double position);
 		void SetAllAudioPositions(double position);
-		void SetAudioPositions(std::shared_ptr<IEditableArea> area, double position);
+		void SetAudioPositions(std::shared_ptr<Cursor> area, double position);
 
 		void OnPlayClicked();
 		void OnPauseClicked();

@@ -11,27 +11,37 @@
 #include "ReadingHead.h"
 #include "AudioManager.h"
 
-ReadingHead::ReadingHead() : speed(1.0)
+PlayHead::PlayHead() : speed(1.0), position(0)
 {
 
 }
 
-ReadingHead::~ReadingHead()
+PlayHead::~PlayHead()
 {
 }
 
-void ReadingHead::setAudioManager(AudioManager* m_audioManager)
+void PlayHead::setId(int _id)
+{
+	Id = _id;
+}
+
+int PlayHead::getId()
+{
+	return Id;
+}
+
+void PlayHead::setAudioManager(AudioManager* m_audioManager)
 {
 	audioManager = m_audioManager;
 }
 
-void ReadingHead::LinkTo(std::shared_ptr<TimeLine> m_timeLine)
+void PlayHead::LinkTo(TimeLine* m_timeLine)
 {
 	timeLine = m_timeLine;
 	currentPeriod = m_timeLine->getPeriod() / speed;
 }
 
-void ReadingHead::setSpeed(double m_speed)
+void PlayHead::setSpeed(double m_speed)
 {
 	if (speed != m_speed)
 	{
@@ -42,19 +52,72 @@ void ReadingHead::setSpeed(double m_speed)
 }
 
 
-void ReadingHead::setReadingPotition(double p)
+void PlayHead::setReadingPotition(double p)
 {
-	position = round((double)currentPeriod * p);
+	position = (double)currentPeriod * p;
 }
 
-int ReadingHead::getReadingPosition()
+double PlayHead::getReadingPosition()
 {
-	return position;
+	return position/ (double)currentPeriod;
 }
 
-void ReadingHead::process()
+void PlayHead::process()
 {
-	position++;
-	while (position >= currentPeriod)
-		position -= currentPeriod;
+	
+	if (position >= timeLine->getPeriod())
+		position = 0;
+
+	int sub, up; // interval to test for midi event
+
+	// check if speed is an integer
+	double r = speed - ceil(speed);
+	if (r != 0) // not an integer -> find sub and up integer
+	{
+		sub = ceil(position);
+		up = ceil(position + speed);
+	}
+	else
+	{
+		sub = (int)position;
+		up =(int)position + (int)speed;
+	}
+
+	for (int i = sub; i < up; i++)
+	{
+		testPosition(i);
+	}
+
+	position += speed;
+}
+
+void PlayHead::testPosition(int P)
+{
+	bool m_On;
+	int m_channel, m_note;
+	uint8 m_velocity;
+
+	bool m_end = false;
+	int i = 0;
+	while (m_end == false)
+	{
+		if (timeLine->isNoteOnTime(P, i, m_end, m_channel, m_note, m_velocity))
+		{
+			MidiMessage midiMsg = MidiMessage::noteOn(m_channel, m_note, m_velocity);
+			audioManager->sendMidiMessage(midiMsg);
+		}
+		i++;
+	}
+
+	m_end = false;
+	i = 0;
+	while (m_end == false)
+	{
+		if (timeLine->isNoteOffTime(P, i, m_end, m_channel, m_note))
+		{
+			MidiMessage midiMsgOff = MidiMessage::noteOff(m_channel, m_note);
+			audioManager->sendMidiMessage(midiMsgOff);
+		}
+		i++;
+	}
 }

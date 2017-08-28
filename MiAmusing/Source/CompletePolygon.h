@@ -50,7 +50,7 @@ namespace Amusing
 
 		void SetActive(bool activate);
 
-		std::shared_ptr<AreaEvent> setReadingPosition(double p); // set the position in percent of the cursor on the path
+		
 
 		
 		void CanvasResized(SceneCanvasComponent* _parentCanvas);
@@ -72,15 +72,25 @@ namespace Amusing
 
 		bpt getCenter();
 		void setCursorSize(double newSize);
+		bpt computeCursorCenter(double p);
+		float computeCursorAlpha(double p, bpt _center);
+
+		/*void AddCursor();
+		void AddCursor(float _canvasRatio);
+		void AddCursor(float _canvasRatio, double p);*/
+		void linkTo(std::shared_ptr<Cursor> cursor);
+		//void getCursorsCount();
+		
 	private:
 
 		// attributes linked to the Cursor
 		bool showCursor;
-		bpt cursorCenter;
+		
 		double perimeter;
 		std::vector<double> percentages; // percentages corresponding to each points
 		std::vector<double> anglesPercentages;
-		std::shared_ptr<Cursor> cursor;//std::shared_ptr<Miam::EditableEllipse> cursor;
+		//std::shared_ptr<Cursor> cursor;//std::shared_ptr<Miam::EditableEllipse> cursor;
+		std::vector<std::shared_ptr<Cursor>> cursors;
 		
 		float initCursorSize;
 		float cursorSize;

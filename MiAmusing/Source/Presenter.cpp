@@ -44,6 +44,7 @@ Presenter::Presenter(View* _view) :
     
     appModeChangeRequest(AppMode::None);
 	Nsources = 0;
+	Ncursors = 0;
 	Nfollower = 0;
 	tempo = 50;
 	masterVolume = 0.5f;
@@ -145,18 +146,8 @@ int Presenter::getChannel(std::shared_ptr<EditableScene> scene)
 	return sceneToChannel[scene];
 }
 
-int Presenter::getSourceID(std::shared_ptr<IEditableArea> area)
+int Presenter::getTimeLineID(std::shared_ptr<IEditableArea> area)
 {
-	/*
-	if (areaToSource.find(area) == areaToSource.end())
-	{
-		// area has no associated source yet
-		areaToSource[area] = Nsources;
-		sourceToArea[Nsources] = area;
-		++Nsources;
-	}
-	return areaToSource[area];
-	*/
 	
 	if (areaToSourceMulti.left.find(area) == areaToSourceMulti.left.end())
 	{
@@ -170,6 +161,19 @@ int Presenter::getSourceID(std::shared_ptr<IEditableArea> area)
 	return areaToSourceMulti.left.at(area);
 }
 
+int Presenter::getReadingHeadID(std::shared_ptr<Cursor> cursor)
+{
+	if (cursorToReadingHead.left.find(cursor) == cursorToReadingHead.left.end())
+	{
+		std::pair<std::shared_ptr<Cursor>, int> newPair(cursor, Ncursors);
+		cursorToReadingHead.left.insert(newPair);
+		++Ncursors;
+	}
+	return cursorToReadingHead.left.at(cursor);
+}
+
+
+
 int Presenter::getCtrlSourceId(std::shared_ptr<Follower> follower)
 {
 	if (followerToCtrlSource.left.find(follower) == followerToCtrlSource.left.end())
@@ -180,6 +184,15 @@ int Presenter::getCtrlSourceId(std::shared_ptr<Follower> follower)
 		++Nfollower;
 	}
 	return followerToCtrlSource.left.at(follower);
+}
+
+std::shared_ptr<Cursor> Presenter::getCursor(int m_Id)
+{
+	if (cursorToReadingHead.right.find(m_Id) == cursorToReadingHead.right.end())
+	{
+		DBG("no cursor associated to this playing head");
+	}
+	return cursorToReadingHead.right.at(m_Id);
 }
 
 std::shared_ptr<IEditableArea> Presenter::getAreaFromSource(int source)
@@ -193,7 +206,7 @@ std::shared_ptr<IEditableArea> Presenter::getAreaFromSource(int source)
 	*/
 	if (areaToSourceMulti.right.find(source) == areaToSourceMulti.right.end())
 	{
-		DBG("problemes");
+		DBG("no area associated to this time line");
 	}
 	return areaToSourceMulti.right.at(source);
 }
@@ -256,7 +269,7 @@ void Presenter::Update() // remettre l'interieur dans graphsessionmanager
 	for (std::map<int, double>::iterator it = lastPositions.begin(); it != lastPositions.end(); ++it)
 	{
 		//graphicSessionManager.SetAllAudioPositions(0);
-		graphicSessionManager.SetAudioPositions(getAreaFromSource(it->first), it->second);
+		graphicSessionManager.SetAudioPositions(getCursor(it->first), it->second);
 	}
 	//graphicSessionManager.SetAllAudioPositions(lastPosition);
 }

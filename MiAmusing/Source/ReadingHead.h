@@ -12,17 +12,19 @@
 
 #include<memory>
 #include "BaseMidiSender.h"
-class ReadingHead
+class PlayHead
 {
 public:
-	ReadingHead();
-	~ReadingHead();
+	PlayHead();
+	~PlayHead();
 
 	void setAudioManager(Amusing::AudioManager* m_audioManager);
-	void LinkTo(std::shared_ptr<TimeLine> timeLine);
+	void LinkTo(TimeLine* _timeLine);
 	void setSpeed(double m_speed);
 	void setReadingPotition(double p);
-	int getReadingPosition();
+	double getReadingPosition();
+	void setId(int _id);
+	int getId();
 	
 
 	void process(); 
@@ -30,12 +32,15 @@ public:
 
 private:
 	// members of ReadingHead
+	int Id;
 	double speed;
 	int currentPeriod; // period taking speed into accound
-	int position;
+	double position;
+
+	void testPosition(int P); // look in the associate timeLine if there is a MIDI msg to send
 
 	// references to other objects
-	std::shared_ptr<TimeLine> timeLine; // reference to the associated timeLine
+	TimeLine* timeLine; // reference to the associated timeLine
 	Amusing::AudioManager* audioManager;// reference to the audioManager to send the MIDI
 };
 

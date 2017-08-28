@@ -15,7 +15,7 @@
 #include "MultiSceneCanvasEditor.h"
 #include "IGraphicSessionManager.h"
 
-
+class Cursor;
 
 namespace Amusing {
 
@@ -63,7 +63,7 @@ namespace Amusing {
 		void OnFollowerTranslation(std::shared_ptr<GraphicEvent> graphicE);
 		void OnAudioPosition(double position);
 		void SetAllAudioPositions(double position);
-		void SetAudioPositions(std::shared_ptr<IEditableArea> area, double position);
+		void SetAudioPositions(std::shared_ptr<Cursor> area, double position);
 		int getNumberArea();
 		void handleAndSendAreaEventSync(std::shared_ptr<AreaEvent> areaE);
 

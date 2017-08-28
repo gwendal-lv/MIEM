@@ -21,6 +21,7 @@
 
 #include "Metronome.h"
 #include "BaseMidiSender.h"
+#include "ReadingHead.h"
 
 #include "AsyncParamChange.h"
 
@@ -136,6 +137,10 @@ namespace Amusing {
 		void getNewTimeLines();
 		boost::lockfree::spsc_queue<Miam::AsyncParamChange, boost::lockfree::capacity<(1 << 17)>> paramToAllocationThread;
 		
+		PlayHead* playHeads[maxSize];
+		boost::lockfree::spsc_queue<PlayHead*, boost::lockfree::capacity<(1 << 17)>> playHeadsToAudio;
+		PlayHead* playHeadsKnown[maxSize];
+		void getNewPlayHeads();
 	};
 }
 

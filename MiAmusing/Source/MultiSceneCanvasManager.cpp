@@ -72,8 +72,13 @@ void MultiSceneCanvasManager::__AddAnimatedTestAreas()
 
 void MultiSceneCanvasManager::AddNedgeArea(uint64_t nextAreaId, int N)
 {
-	if(auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
-		handleAndSendAreaEventSync(amusingScene->AddNedgeArea(nextAreaId,N));
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+	{
+		std::shared_ptr<AreaEvent> areaE = amusingScene->AddNedgeArea(nextAreaId, N);
+		handleAndSendAreaEventSync(areaE);
+		handleAndSendAreaEventSync(amusingScene->AddCursor(areaE->GetConcernedArea()));
+	}
+
 }
 
 void MultiSceneCanvasManager::AddTrueCircle(uint64_t nextAreaId)
@@ -119,7 +124,7 @@ void MultiSceneCanvasManager::OnAudioPosition(double position)
 	{
 		// faire la translation du curseur de la forme
 		//DBG("position = " + (String)position);
-		amusingScene->getFirstCompleteArea()->setReadingPosition(position);
+		//amusingScene->getFirstCompleteArea()->setReadingPosition(position);
 		std::shared_ptr<AreaEvent> areaE(new AreaEvent(amusingScene->getFirstCompleteArea(), AreaEventType::NothingHappened,
 			amusingScene->getFirstCompleteArea()->GetId()));
 		handleAndSendAreaEventSync(areaE);
@@ -135,12 +140,15 @@ void MultiSceneCanvasManager::SetAllAudioPositions(double position)
 	}
 }
 
-void MultiSceneCanvasManager::SetAudioPositions(std::shared_ptr<IEditableArea> area, double position)
+void MultiSceneCanvasManager::SetAudioPositions(std::shared_ptr<Cursor> area, double position)
 {
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
 	{
-		if(auto completeA = std::dynamic_pointer_cast<CompletePolygon>(area))
-			handleAndSendAreaEventSync(completeA->setReadingPosition(position));
+		area->setReadingPosition(position);
+		std::shared_ptr<AreaEvent> areaE(new AreaEvent(area, AreaEventType::NothingHappened));
+		handleAndSendAreaEventSync(areaE);
+		/*if(auto completeA = std::dynamic_pointer_cast<CompletePolygon>(area))
+			handleAndSendAreaEventSync(completeA->setReadingPosition(position));*/
 	}
 }
 

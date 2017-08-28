@@ -23,13 +23,14 @@
 #include "GraphicSessionManager.h"
 
 
-
+class Cursor;
 
 namespace Amusing {
     // Simple declaration : we don't need the entire description
     class AmusingModel;
     class View;
 	class Follower;
+	
 
     
     /// \brief One of the three main modules of the MiamSpat program, that defines the behavior
@@ -67,8 +68,9 @@ namespace Amusing {
 		std::map<std::shared_ptr<IEditableArea>, double> areaToSpeed;
 		std::map<std::shared_ptr<IEditableArea>, double> areaToVelocity;
 		boost::bimap<std::shared_ptr<IEditableArea>,int> areaToSourceMulti;
+		boost::bimap<std::shared_ptr<Cursor>, int> cursorToReadingHead;
 		std::map<std::shared_ptr<EditableScene>, int> sceneToChannel;
-		int Nsources, Nfollower;
+		int Nsources, Nfollower, Ncursors;
 		void SetAllChannels();
 
 		boost::bimap < std::shared_ptr<Follower>, int> followerToCtrlSource;
@@ -77,7 +79,9 @@ namespace Amusing {
 		public :
 			void setChannel(std::shared_ptr<EditableScene> scene,int channel);
 			int getChannel(std::shared_ptr<EditableScene> scene);
-			int getSourceID(std::shared_ptr<IEditableArea> area);
+			int getReadingHeadID(std::shared_ptr<Cursor> cursor);
+			int getTimeLineID(std::shared_ptr<IEditableArea> area);
+			std::shared_ptr<Cursor> getCursor(int m_Id);
 			std::shared_ptr<IEditableArea> getAreaFromSource(int source);
 			void setSpeedArea(std::shared_ptr<IEditableArea> scene, double speed);
 			double getSpeedArea(std::shared_ptr<IEditableArea> area);

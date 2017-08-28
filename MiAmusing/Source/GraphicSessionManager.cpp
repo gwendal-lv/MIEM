@@ -215,9 +215,10 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				if (auto complete = std::dynamic_pointer_cast<CompletePolygon>(area))
 				{
 					DBG("Complete Area");
-					param.Id1 = myPresenter->getSourceID(area);
+					param.Id1 = myPresenter->getTimeLineID(area);
+					param.Id2 = 1024;
 					param.Type = Miam::AsyncParamChange::ParamType::Activate;
-					param.Id2 = 1; // 1 pour activer la source, 0 pour la supprimer
+					param.IntegerValue = 1; // 1 pour activer la source, 0 pour la supprimer
 					if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(areaE->GetConcernedScene()))
 					{
 						param.IntegerValue = myPresenter->getChannel(amusingScene);
@@ -254,7 +255,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 						{
 							if (amusingScene->getParents(complete, parent1, parent2))
 							{
-								param.Id1 = myPresenter->getSourceID(parent1);
+								param.Id1 = myPresenter->getTimeLineID(parent1);
 
 								std::vector<bpt> interPts;
 								if (auto P1 = std::dynamic_pointer_cast<CompletePolygon>(parent1))
@@ -282,12 +283,12 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 											DBG("interPhi : " + (String)interPhi);
 											DBG("hitPhi" + (String)hitPhi);
 
-											param.Id2 = myPresenter->getSourceID(complete);
+											param.Id2 = myPresenter->getTimeLineID(complete);
 											param.DoubleValue = interPhi;
 											myPresenter->SendParamChange(param);
 
 
-											param.Id2 = myPresenter->getSourceID(parent2);
+											param.Id2 = myPresenter->getTimeLineID(parent2);
 											param.DoubleValue = hitPhi;
 											myPresenter->SendParamChange(param);
 
@@ -300,12 +301,30 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					
 				}
 				
+				if (auto cursorArea = std::dynamic_pointer_cast<Cursor>(area))
+				{
+					DBG("Cursor");
+					param.Type = Miam::AsyncParamChange::ParamType::Activate;
+					//param.Id1 = 1024;
+					if (auto amusingS = std::dynamic_pointer_cast<AmusingScene>(areaE->GetConcernedScene()))
+					{
+						if (auto associateArea = amusingS->getAssociateArea(cursorArea))
+						{
+							if (auto associatePolygon = std::dynamic_pointer_cast<CompletePolygon>(associateArea))
+								param.Id1 = myPresenter->getTimeLineID(associatePolygon);
+						}
+					}
+					param.Id2 = myPresenter->getReadingHeadID(cursorArea);
+					param.IntegerValue = 1;
+					param.DoubleValue = cursorArea->getSpeed();
+					myPresenter->SendParamChange(param);
+				}
 				//myPresenter->SendParamChange(param);
 				DBG("Send");
 				break;
 			case AreaEventType::Deleted:
 				param.Type = Miam::AsyncParamChange::ParamType::Activate;
-				param.Id1 = myPresenter->getSourceID(area);
+				param.Id1 = myPresenter->getTimeLineID(area);
 				param.Id2 = 0;
 				myPresenter->SendParamChange(param);
 				
@@ -329,7 +348,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					//	param.IntegerValue = 1;
 					//myPresenter->SendParamChange(param); // envoie l'ordre de creer/ detruire une source audio
 
-					param.Id1 = myPresenter->getSourceID(area);
+					param.Id1 = myPresenter->getTimeLineID(area);
 					param.Type = Miam::AsyncParamChange::ParamType::Source;
 					i = 0;
 					//DBG("before while");
@@ -367,7 +386,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					//}
 					//myPresenter->SendParamChange(param); // envoie l'ordre de creer/ detruire une source audio
 
-					param.Id1 = myPresenter->getSourceID(area);
+					param.Id1 = myPresenter->getTimeLineID(area);
 					param.Type = Miam::AsyncParamChange::ParamType::Activate;
 					param.Id2 = 1; // 1 pour activer la source, 0 pour la supprimer
 					if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(areaE->GetConcernedScene()))
@@ -392,7 +411,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 						{
 							if (amusingScene->getParents(complete, parent1, parent2))
 							{
-								param.Id1 = myPresenter->getSourceID(parent1);
+								param.Id1 = myPresenter->getTimeLineID(parent1);
 
 								std::vector<bpt> interPts;
 								if (auto P1 = std::dynamic_pointer_cast<CompletePolygon>(parent1))
@@ -435,12 +454,12 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 										DBG("interPhi : " + (String)interPhi);
 										DBG("hitPhi" + (String)hitPhi);
 
-										param.Id2 = myPresenter->getSourceID(complete);
+										param.Id2 = myPresenter->getTimeLineID(complete);
 										param.DoubleValue = interPhi;
 										myPresenter->SendParamChange(param);
 
 
-										param.Id2 = myPresenter->getSourceID(parent2);
+										param.Id2 = myPresenter->getTimeLineID(parent2);
 										param.DoubleValue = hitPhi;
 										myPresenter->SendParamChange(param);
 										//}
@@ -451,7 +470,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 						}
 					}
 
-					param.Id1 = myPresenter->getSourceID(area);
+					param.Id1 = myPresenter->getTimeLineID(area);
 					//param.Id1 = myPresenter->getSourceID(area);
 					param.Type = Miam::AsyncParamChange::ParamType::Source;
 					i = 0;
@@ -632,7 +651,7 @@ void GraphicSessionManager::SetAllAudioPositions(double position)
 		getSelectedCanvasAsManager()->SetAllAudioPositions(position);
 }
 
-void GraphicSessionManager::SetAudioPositions(std::shared_ptr<IEditableArea> area, double position)
+void GraphicSessionManager::SetAudioPositions(std::shared_ptr<Cursor> area, double position)
 {
 	if (selectedCanvas)
 		getSelectedCanvasAsManager()->SetAudioPositions(area, position);

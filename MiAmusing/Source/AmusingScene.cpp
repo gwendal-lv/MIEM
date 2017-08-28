@@ -18,6 +18,7 @@
 #include "EditableEllipse.h"
 #include "Follower.h"
 #include "CompletePolygon.h"
+#include "Cursors.h"
 
 #include "InteractiveScene.h"
 #include "SceneEvent.h"
@@ -248,6 +249,60 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDrag(const MouseEvent& 
 	}
 	else
 		return graphicE;
+}
+
+void AmusingScene::AddCursor()
+{
+	// creation du curseur
+	bpt cursorCenter(0.0, 0.0);
+	float cursorSize = 0.1f;
+	std::shared_ptr<Cursor> newCursor(new Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f));
+
+	//ajouter le nouveau curseur à la liste de curseurs
+	cursors.push_back(newCursor);
+
+	// il faut l'associer à une aire : chercher l'aire concernée ou la passer en paramètre
+	// - dire à l'aire qu'elle est associée à une forme (voir si toujours nécessaire)
+	// - garder une trace pour pvr les gérer dans une map<cursor,aire> ou <aire,cursor>
+
+}
+
+std::shared_ptr<AreaEvent> AmusingScene::AddCursor(std::shared_ptr<IDrawableArea> area)
+{
+	// creation du curseur
+	bpt cursorCenter;
+	if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(area))
+		cursorCenter = completeArea->computeCursorCenter(0);
+	else
+		cursorCenter = bpt(0, 0);
+	float cursorSize = 0.1f;
+	std::shared_ptr<Cursor> newCursor(new Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f));
+
+	//ajouter le nouveau curseur à la liste de curseurs
+	cursors.push_back(newCursor);
+
+	// il faut l'associer à une aire : chercher l'aire concernée ou la passer en paramètre
+	// - dire à l'aire qu'elle est associée à une forme (voir si toujours nécessaire -> oui car c'est l'aire qui lui fournit sa vitesse...)
+	if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(area))// association à l'aire donnant sa vitesse
+	{
+		completeArea->linkTo(newCursor);
+		newCursor->LinkTo(completeArea);
+	}
+	// - garder une trace pour pvr les gérer dans une map<cursor,aire> ou <aire,cursor>
+	associateArea[newCursor] = area; // association à l'aire qui déterminera sa position et donc le son produit
+
+	newCursor->CanvasResized(canvasComponent);//trouver le nouveau centre
+
+	std::shared_ptr<AreaEvent> areaE(new AreaEvent(newCursor, AreaEventType::Added, newCursor->GetId(), shared_from_this()));
+	return areaE;
+}
+
+std::shared_ptr<IDrawableArea> AmusingScene::getAssociateArea(std::shared_ptr<Cursor> cursor)
+{
+	if (associateArea.find(cursor) != associateArea.end())
+		return associateArea[cursor];
+	else
+		return nullptr;
 }
 
 std::shared_ptr<AreaEvent> AmusingScene::AddIntersectionArea(std::shared_ptr<Amusing::CompletePolygon> parent1, std::shared_ptr<Amusing::CompletePolygon> parent2, std::shared_ptr<CompletePolygon> newIntersection)
@@ -607,7 +662,7 @@ std::shared_ptr<MultiAreaEvent> AmusingScene::SetAllAudioPositions(double positi
 			//	first = false;
 			//}
 			//completeA->setCursorVisible(true);
-			completeA->setReadingPosition(position);
+			//completeA->setReadingPosition(position);
 			//areaE->AddAreaEvent(std::shared_ptr<AreaEvent>(new AreaEvent(areas[i], Miam::AreaEventType::NothingHappened)));
 		}
 	}

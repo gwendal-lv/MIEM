@@ -58,6 +58,8 @@ AudioManager::AudioManager(AmusingModel *m_model) : model(m_model), Nsources(0),
 	{
 		timeLines[i] = 0;
 		timeLinesKnown[i] = 0;
+		playHeads[i] = 0;
+		playHeadsKnown[i] = 0;
 	}
 }
 
@@ -170,6 +172,7 @@ void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 	//DBG(String(position));
 	getParameters();
 	getNewTimeLines();
+	getNewPlayHeads();
 	switch (state)
 	{
 	case Amusing::Play:
@@ -182,8 +185,8 @@ void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 				//midiSender->process(position);
 				for (int j = 0; j < maxSize; j++)
 				{
-					if (timeLinesKnown[j] != 0)
-						timeLinesKnown[j]->process(position);
+					if (playHeadsKnown[j] != 0)
+						playHeadsKnown[j]->process();
 
 
 				}
@@ -220,6 +223,16 @@ void AudioManager::getNewTimeLines()
 	}
 }
 
+void AudioManager::getNewPlayHeads()
+{
+	PlayHead* ptr;
+	while (playHeadsToAudio.pop(ptr))
+	{
+		if (ptr != 0)
+			playHeadsKnown[ptr->getId()] = ptr;
+	}
+}
+
 void AudioManager::sendMidiMessage(MidiMessage msg)
 {
 	if (midiOuput != nullptr)
@@ -239,10 +252,10 @@ void AudioManager::sendPosition()
 
 	for (int j = 0; j < maxSize; j++)
 	{
-		if (timeLinesKnown[j] != 0)
+		if (playHeadsKnown[j] != 0)
 		{
 			param.Id1 = j;
-			param.DoubleValue = timeLinesKnown[j]->getRelativePosition();
+			param.DoubleValue = playHeadsKnown[j]->getReadingPosition();
 			model->SendParamChange(param);
 		}
 	}
@@ -262,28 +275,64 @@ void AudioManager::getParameters()
 		switch (param.Type)
 		{
 		case Miam::AsyncParamChange::ParamType::Activate:
-			
-			switch (param.Id2)
+			if (param.Id2 == 1024) // crée ou supprime une timeLine
 			{
-			case 1:
-				
-				paramToAllocationThread.push(param);
-				break;
-			case 0:
-				
-				timeLinesKnown[param.Id1] = 0; // so we won't access to the element anymore, we forget it
-				paramToAllocationThread.push(param); // we ask to the allocation thread to delete it
-				break;
-			default :
-				DBG("IMPOSSIBLE : 1 to activate, 0 to desactivate");
-				break;
-			}
+				switch (param.IntegerValue)
+				{
+				case 1:
 
+					paramToAllocationThread.push(param);
+					break;
+				case 0:
+
+					timeLinesKnown[param.Id1] = 0; // so we won't access to the element anymore, we forget it
+					paramToAllocationThread.push(param); // we ask to the allocation thread to delete it
+					break;
+				default:
+					DBG("IMPOSSIBLE : 1 to activate, 0 to desactivate");
+					break;
+				}
+			}
+			else if (param.Id1 == 1024) // crée ou supprime une tête de lectire
+			{
+				switch (param.IntegerValue)
+				{
+				case 1: // création
+					if (playHeadsKnown[param.Id2] == 0)
+						paramToAllocationThread.push(param);
+					else
+						playHeadsKnown[param.Id2]->setSpeed(param.DoubleValue);
+					break;
+				case 0: // suppression
+					playHeadsKnown[param.Id2] = 0;
+					paramToAllocationThread.push(param);
+					break;
+				default:
+					break;
+				}
+			}
+			else // (crée et) associe une tête de lecture à une timeLine 
+			{
+				if (timeLinesKnown[param.Id1] != 0) // pour s'assurer que la timeLines à associer existe
+				{
+					if (playHeadsKnown[param.Id2] == 0) // la tête de lecture n'existe pas encore -> demander création + association
+					{
+						paramToAllocationThread.push(param);
+					}
+					else // faire juste l'association car la tête de lectire existe déjà
+					{
+						playHeadsKnown[param.Id2]->LinkTo(timeLinesKnown[param.Id1]);
+						playHeadsKnown[param.Id2]->setSpeed(param.DoubleValue);
+					}
+				}
+				else
+					paramToAllocationThread.push(param);
+			}
 			break;
 		case Miam::AsyncParamChange::ParamType::Source:
 			//DBG("AM : the side " + (String)param.Id2 + " is = " + (String)param.DoubleValue);
-			if (timeLines[param.Id1] != 0) // si != 0 : il existe et on peut le modifier
-				timeLines[param.Id1]->setMidiTime(param.Id2, roundToInt(param.DoubleValue * (double)periode), param.IntegerValue,param.FloatValue);
+			if (timeLinesKnown[param.Id1] != 0) // si != 0 : il existe et on peut le modifier
+				timeLinesKnown[param.Id1]->setMidiTime(param.Id2, roundToInt(param.DoubleValue * (double)periode), param.IntegerValue,param.FloatValue);
 			else // si == 0, on ne sait pas s'il n'existe pas ou si le thread est encore en train de le creer -> envoyer au thread pour verifier et faire le necessaire
 				paramToAllocationThread.push(param);
 			break;
@@ -326,42 +375,73 @@ void AudioManager::getAudioThreadMsg()
 		{
 		case Miam::AsyncParamChange::ParamType::Activate :
 			//DBG("source : " + (String)param.Id1);
-			switch (param.Id2)
+			if (param.Id2 == 1024)
 			{
-			case 0 :
-				DBG("desactivate source : " + (String)param.Id1);
-				--midiSenderSize;
-				delete timeLines[param.Id1];
-				timeLines[param.Id1] = 0;
-				DBG("source : " + (String)param.Id1 + "deleted");
-				//midiSenderVector.erase(midiSenderVector.begin() + param.Id1);
-				break;
-			case 1 :
-				//DBG("AM : I construct a new polygon with ID : " + (String)param.Id1);
-				//midiSenderVector[param.Id1] = std::shared_ptr<TimeLine>(new TimeLine());
-				DBG("activate source    : " + (String)param.Id1);
-				if(timeLines[param.Id1] == 0)
-					timeLines[param.Id1] = new TimeLine();
+				switch (param.IntegerValue)
+				{
+				case 0:
+					DBG("desactivate source : " + (String)param.Id1);
+					--midiSenderSize;
+					delete timeLines[param.Id1];
+					timeLines[param.Id1] = 0;
+					DBG("source : " + (String)param.Id1 + "deleted");
+					//midiSenderVector.erase(midiSenderVector.begin() + param.Id1);
+					break;
+				case 1:
+					//DBG("AM : I construct a new polygon with ID : " + (String)param.Id1);
+					//midiSenderVector[param.Id1] = std::shared_ptr<TimeLine>(new TimeLine());
+					DBG("activate source    : " + (String)param.Id1);
+					if (timeLines[param.Id1] == 0)
+						timeLines[param.Id1] = new TimeLine();
 
-				timeLines[param.Id1]->setPeriod(periode);
-				if (param.FloatValue != 0)
-					timeLines[param.Id1]->setSpeed(param.FloatValue);
-				else
-					timeLines[param.Id1]->playNoteContinuously();
+					timeLines[param.Id1]->setPeriod(periode);
+					if (param.FloatValue != 0)
+						timeLines[param.Id1]->setSpeed(param.FloatValue);
+					else
+						timeLines[param.Id1]->playNoteContinuously();
 
-				timeLines[param.Id1]->setAudioManager(this);
-				//DBG("midiChannel : " + (String)param.IntegerValue);
-				if(param.IntegerValue != 0)
-					timeLines[param.Id1]->setMidiChannel(param.IntegerValue);
-				//timeLines[param.Id1]->setSpeed(param.FloatValue);
-				timeLines[param.Id1]->setId(param.Id1);
-				++midiSenderSize;
-				timeLinesToAudio.push(timeLines[param.Id1]);
-				break;
-			default :
-				DBG("IMPOSSIBLE");
+					timeLines[param.Id1]->setAudioManager(this);
+					//DBG("midiChannel : " + (String)param.IntegerValue);
+					if (param.IntegerValue != 0)
+						timeLines[param.Id1]->setMidiChannel(param.IntegerValue);
+					//timeLines[param.Id1]->setSpeed(param.FloatValue);
+					timeLines[param.Id1]->setId(param.Id1);
+					++midiSenderSize;
+					timeLinesToAudio.push(timeLines[param.Id1]);
+					break;
+				default:
+					DBG("IMPOSSIBLE");
+				}
 			}
-			
+			else if (param.Id1 == 1024)
+			{
+				switch (param.IntegerValue)
+				{
+				case 0:
+					delete playHeads[param.Id2];
+					playHeads[param.Id2] = 0;
+					break;
+				case 1:
+					if (playHeads[param.Id2] == 0)
+						playHeads[param.Id2] = new PlayHead();
+					playHeads[param.Id2]->setId(param.Id2);
+					playHeads[param.Id2]->setSpeed(param.DoubleValue);
+					playHeads[param.Id2]->setAudioManager(this);
+					playHeadsToAudio.push(playHeads[param.Id2]);
+					break;
+				default:
+					break;
+				}
+			}
+			else
+			{
+				playHeads[param.Id2] = new PlayHead(); // first create the PlayHead
+				playHeads[param.Id2]->setId(param.Id2);
+				playHeads[param.Id2]->LinkTo(timeLines[param.Id1]);
+				playHeads[param.Id2]->setSpeed(param.DoubleValue);
+				playHeads[param.Id2]->setAudioManager(this);
+				playHeadsToAudio.push(playHeads[param.Id2]);
+			}
 			break;
 		case Miam::AsyncParamChange::ParamType::Source:
 			//DBG("AM : the side " + (String)param.Id2 + " is = " + (String)param.DoubleValue);

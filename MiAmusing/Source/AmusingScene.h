@@ -14,7 +14,7 @@
 #include "EditableScene.h"
 #include "AnimatedPolygon.h"
 #include "Follower.h"
-
+#include "Cursors.h"
 
 using namespace Miam;
 
@@ -86,6 +86,12 @@ namespace Miam
 		void ApplyFusion(std::shared_ptr<Amusing::CompletePolygon> currentPolygon, std::shared_ptr<Amusing::CompletePolygon> hitPolygon, std::shared_ptr<AreaEvent> singleE);
 		void DeleteIntersections(std::shared_ptr<Amusing::CompletePolygon> parent);
 		std::shared_ptr<AreaEvent> DeleteSelectedArea();
+
+		void AddCursor();
+		std::shared_ptr<AreaEvent> AddCursor(std::shared_ptr<IDrawableArea> area);
+		std::map<std::shared_ptr<Cursor>, std::shared_ptr<IDrawableArea>> associateArea;
+		std::vector<std::shared_ptr<Cursor>> cursors;
+		std::shared_ptr<IDrawableArea> getAssociateArea(std::shared_ptr<Cursor> cursor);
 
 		std::shared_ptr<AreaEvent> SetSelectedArea(std::shared_ptr<IEditableArea> selectedArea_, bool changeMode = true) override;
 		std::shared_ptr<AreaEvent> SetSelectedAreaCursor(double newSize);

@@ -39,11 +39,8 @@ CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
 
 	showCursor = false;
 	pc = 0;
-	cursorCenter = contourPoints.outer().at(0);
-	initCursorSize = 0.1f;
-	cursorSize = initCursorSize;
-	cursor = std::shared_ptr<Cursor>(new Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f));
-	cursor->SetNameVisible(false);
+	
+	//AddCursor();
 	//percentages.reserve(contourPoints.size());
 	for (int i = 0; i < (int)contourPoints.outer().size(); ++i)
 		percentages.push_back(0);
@@ -74,11 +71,8 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 
 	showCursor = false;
 	pc = 0;
-	cursorCenter = contourPoints.outer().at(0);
-	initCursorSize = 0.1f;
-	cursorSize = initCursorSize;
-	cursor = std::shared_ptr<Cursor>(new Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, _canvasRatio));
-	cursor->SetNameVisible(false);
+	
+	//AddCursor(_canvasRatio);
 	for (int i = 0; i < (int)contourPoints.outer().size(); ++i)
 	{
 		percentages.push_back(0);
@@ -113,11 +107,8 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 
 	showCursor = true;
 	pc = 0;
-	cursorCenter = contourPoints.outer().at(0);
-	initCursorSize = 0.1f;
-	cursorSize = initCursorSize;
-	cursor = std::shared_ptr<Cursor>(new Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f));
-	cursor->SetNameVisible(false);
+	
+	//AddCursor();
 	for (int i = 0; i < (int)contourPoints.outer().size(); ++i)
 	{
 		percentages.push_back(0);
@@ -157,11 +148,8 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 
 	showCursor = true;
 	pc = 0;
-	cursorCenter = contourPoints.outer().at(0);
-	initCursorSize = 0.1f;
-	cursorSize = initCursorSize;
-	cursor = std::shared_ptr<Cursor>(new Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f));
-	cursor->SetNameVisible(false);
+	
+	//AddCursor();
 
 	/*for (int i = 0; i < (int)contourPoints.outer().size(); ++i)
 	{
@@ -226,6 +214,35 @@ void CompletePolygon::Copy(std::shared_ptr<CompletePolygon> polygonToCopy)
 	
 }
 
+//void CompletePolygon::AddCursor()
+//{
+//	cursorCenter = contourPoints.outer().at(0);
+//	initCursorSize = 0.1f;
+//	cursorSize = initCursorSize;
+//	cursor = std::shared_ptr<Cursor>(new Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f));
+//	cursor->SetNameVisible(false);
+//}
+//
+//void CompletePolygon::AddCursor(float _canvasRatio)
+//{
+//	cursorCenter = contourPoints.outer().at(0);
+//	initCursorSize = 0.1f;
+//	cursorSize = initCursorSize;
+//	cursor = std::shared_ptr<Cursor>(new Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, _canvasRatio));
+//	cursor->SetNameVisible(false);
+//}
+//
+//void CompletePolygon::AddCursor(float _canvasRation, double p)
+//{
+//
+//}
+
+void CompletePolygon::linkTo(std::shared_ptr<Cursor> cursor)
+{
+	cursors.push_back(cursor);
+	cursor->setSpeed(1);
+}
+
 void CompletePolygon::Paint(Graphics& g)
 {
 
@@ -251,7 +268,8 @@ void CompletePolygon::Paint(Graphics& g)
 	if (showCursor)
 	{
 		//DBG("paint cursor");
-		cursor->Paint(g);
+		for(int i=0;i<cursors.size();i++)
+		cursors[i]->Paint(g);
 	}
 	if (isActive && showBullsEye)
 	{
@@ -293,16 +311,12 @@ void CompletePolygon::angleToPercent()
 	}
 }
 
-std::shared_ptr<AreaEvent> CompletePolygon::setReadingPosition(double p)
+bpt CompletePolygon::computeCursorCenter(double p)
 {
-	//DBG("position : " + (String)p);
-	if (p >= 1)
-		p -= 1;
-	if (p < 0)
-		p += 1;
-	//DBG("position after: " + (String)p);
 	if (showCursor)
 	{
+		int prev = 0;
+		int suiv = 0;
 		if (useBullsEye)
 		{
 			pc = p;
@@ -311,8 +325,7 @@ std::shared_ptr<AreaEvent> CompletePolygon::setReadingPosition(double p)
 			double angle = p * 2 * M_PI;
 
 			//determiner entre quels points va se trouver le curseur
-			int prev = 0;
-			int suiv = 0;
+			
 			for (int i = 0; i < (int)anglesPercentages.size(); ++i)
 			{
 				//DBG((String)i);
@@ -343,7 +356,7 @@ std::shared_ptr<AreaEvent> CompletePolygon::setReadingPosition(double p)
 			}
 			//DBG((String)prev + " " + (String)suiv);
 
-			
+
 			// calcul du point où se trouve le curseur par interpolation linéaire
 			bpt P;
 			if (suiv != 0)
@@ -353,39 +366,19 @@ std::shared_ptr<AreaEvent> CompletePolygon::setReadingPosition(double p)
 			}
 			else
 			{
-				P.set<0>(contourPoints.outer().at(prev).get<0>() + ((p - anglesPercentages[prev]) / (1 - anglesPercentages[prev])) * (contourPoints.outer().at(suiv).get<0>() - contourPoints.outer().at(prev).get<0>()));
-				P.set<1>(contourPoints.outer().at(prev).get<1>() + ((p - anglesPercentages[prev]) / (1 - anglesPercentages[prev])) * (contourPoints.outer().at(suiv).get<1>() - contourPoints.outer().at(prev).get<1>()));
+				if (anglesPercentages[prev] == 1)
+				{
+					P.set<0>(contourPoints.outer().at(prev).get<0>());
+					P.set<1>(contourPoints.outer().at(prev).get<1>());
+				}
+				else
+				{
+					P.set<0>(contourPoints.outer().at(prev).get<0>() + ((p - anglesPercentages[prev]) / (1 - anglesPercentages[prev])) * (contourPoints.outer().at(suiv).get<0>() - contourPoints.outer().at(prev).get<0>()));
+					P.set<1>(contourPoints.outer().at(prev).get<1>() + ((p - anglesPercentages[prev]) / (1 - anglesPercentages[prev])) * (contourPoints.outer().at(suiv).get<1>() - contourPoints.outer().at(prev).get<1>()));
+				}
 			}
 
-			//placer le curseur à ce point
-			bpt translation(P.get<0>() - cursorCenter.get<0>(), P.get<1>() - cursorCenter.get<1>());
-
-			translation.set<0>(translation.get<0>() * (double)parentCanvas->getWidth());
-			translation.set<1>(translation.get<1>() * (double)parentCanvas->getHeight());
-
-
-
-			cursor->Translate(juce::Point<double>(translation.get<0>(), translation.get<1>()));
-			cursorCenter = P;
-			
-			// si on est assez proche du prochain, on augmente la couleur vers le rouge,
-			// si on est assez proche du précédent, on diminue la couleur
-			double distPr = boost::geometry::distance(P, contourPoints.outer().at(prev));
-			double distSui = boost::geometry::distance(P, contourPoints.outer().at(suiv));
-			if (distPr < 0.05)
-			{
-				cursor->SetAlpha(1 - distPr * 10);
-				//DBG((String)(1 - distPr * 10));
-			}
-			else if (distSui < 0.05)
-			{
-				cursor->SetAlpha(1 - distSui * 10);
-				//DBG((String)(0.5 + distSui * 10));
-			}
-			else
-				cursor->SetAlpha(0.5);
-			//redessiner
-			cursor->CanvasResized(this->parentCanvas);
+			return P;
 
 		}
 		else
@@ -393,9 +386,7 @@ std::shared_ptr<AreaEvent> CompletePolygon::setReadingPosition(double p)
 			//DBG("tailles setReadingPosition : bcontourPointsInPixels " + (String)bcontourPointsInPixels.outer().size());
 			pc = p;
 			lengthToPercent();
-			//determiner entre quels points va se trouver le curseur
-			int prev = 0;
-			int suiv = 0;
+
 			//DBG("percentages.size()" + (String)(percentages.size()));
 			for (int i = 0; i < (int)percentages.size(); ++i)
 			{
@@ -431,23 +422,81 @@ std::shared_ptr<AreaEvent> CompletePolygon::setReadingPosition(double p)
 				P.set<1>(contourPoints.outer().at(prev).get<1>() + ((p - percentages[prev]) / (1 - percentages[prev])) * (contourPoints.outer().at(suiv).get<1>() - contourPoints.outer().at(prev).get<1>()));
 			}
 
-			//placer le curseur à ce point
-			bpt translation(P.get<0>() - cursorCenter.get<0>(), P.get<1>() - cursorCenter.get<1>());
-
-			translation.set<0>(translation.get<0>() * (double)parentCanvas->getWidth());
-			translation.set<1>(translation.get<1>() * (double)parentCanvas->getHeight());
+			
 
 
+			return P;
+			
+		}
 
-			cursor->Translate(juce::Point<double>(translation.get<0>(), translation.get<1>()));
-			cursorCenter = P;
-			//}
-			//redessiner
-			cursor->CanvasResized(this->parentCanvas);
+		return bpt(0, 0);
+	
+	}
+	return bpt(0, 0);
+}
+
+float CompletePolygon::computeCursorAlpha(double p, bpt _center)
+{
+	// conversion percent to radian
+	angleToPercent();
+	double angle = p * 2 * M_PI;
+
+	//determiner entre quels points va se trouver le curseur
+	int prev = 0;
+	int suiv = 0;
+	for (int i = 0; i < (int)anglesPercentages.size(); ++i)
+	{
+		//DBG((String)i);
+		if (p < anglesPercentages[i])
+		{
+			if (i == 0)
+			{
+				//prev = anglesPercentages.size() - 2; // -2 pour ne pas prendre le point de fermeture
+				//suiv = anglesPercentages.size() - 1; // point de fermeture, idem premier point
+				p = 1 + p;
+			}
+			else
+			{
+				prev = i - 1;
+				suiv = i;
+				break;
+			}
+			//DBG("!!! " + (String)p + " < " + (String)percentages[i]);
+			//DBG("stop");
+
+		}
+		else
+		{
+			prev = i;
+			suiv = (i + 1) % anglesPercentages.size();
+			//DBG((String)p + " > " + (String)percentages[i]);
 		}
 	}
-	return std::shared_ptr<AreaEvent>(new AreaEvent());
+
+	double distPr = boost::geometry::distance(_center, contourPoints.outer().at(prev));
+	double distSui = boost::geometry::distance(_center, contourPoints.outer().at(suiv));
+	double D = 0.05;
+	double H = 0.5;
+	if (distPr < 0.05 )
+	{
+		if (1 - distPr * (1-H)/D < 0)
+			DBG("negatif");
+		return 1 - distPr * (1 - H) / D;//cursor->SetAlpha(1 - distPr * 10);
+		//DBG((String)(1 - distPr * 10));
+	}
+	else if (distSui < 0.05)
+	{
+		if (1 - distSui * (1 - H) / D < 0)
+			DBG("negatif");
+		return 1 - distSui * (1 - H) / D;
+	}
+	else
+		return 0.5f;
+	
+
 }
+
+
 
 void CompletePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 {
@@ -457,11 +506,15 @@ void CompletePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 	
 	//cursor->CanvasResized(_parentCanvas);
 	//lengthToPercent();
-	if(showCursor)
-		cursor->CanvasResized(_parentCanvas);
+	if (showCursor)
+	{
+		for(int i=0;i<cursors.size();i++)
+			cursors[i]->CanvasResized(_parentCanvas);
+	}
+		
 	//if (isActive)
 	CanvasResizedBullsEye(_parentCanvas);
-	setReadingPosition(pc);
+	//setReadingPosition(pc);
 	//cursor->CanvasResized(_parentCanvas);
 	//DBG("cursorCenter : " + (String)(cursorCenter.x) + " " + (String)(cursorCenter.y));
 	//DBG("CompletePolygon::CanvasResized");
@@ -585,7 +638,8 @@ AreaEventType CompletePolygon::EndPointMove()
 
 void CompletePolygon::setCursorVisible(bool isVisible, SceneCanvasComponent* _parentCanvas)
 {
-	cursor->CanvasResized(_parentCanvas);
+	for(int i=0;i<cursors.size();i++)
+		cursors[i]->CanvasResized(_parentCanvas);
 	showCursor = isVisible;
 	
 	//CanvasResized(this->parentCanvas);
@@ -934,9 +988,12 @@ void CompletePolygon::setCursorSize(double newSize)
 			setCursorVisible(true,parentCanvas);
 		double newCursorSize = (double)initCursorSize / newSize;
 		double resize = newCursorSize / cursorSize;
-		if (cursor->SizeChanged(resize, false))
+		for (int i = 0; i < cursors.size(); i++)
 		{
-			cursorSize = newCursorSize;
+			if (cursors[i]->SizeChanged(resize, false))
+			{
+				cursorSize = newCursorSize;
+			}
 		}
 	}
 }
