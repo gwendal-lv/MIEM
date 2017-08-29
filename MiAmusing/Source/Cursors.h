@@ -11,13 +11,17 @@
 #pragma once
 
 #include "EditableEllipse.h"
+#include "Exciter.h"
 #include "EditablePolygon.h"
 
-class Cursor : public Miam::EditableEllipse
+class Cursor : public Miam::Exciter//EditableEllipse//Exciter//EditableEllipse
 {
 public:
+	Cursor(int64_t _Id);
 	Cursor(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio);
 	~Cursor();
+
+	virtual IDrawableArea* Clone() const override { return new Cursor(*this); }
 
 	void setSpeed(double m_speed);
 	void setPosition(double m_position);
@@ -28,6 +32,7 @@ public:
 	void setReadingPosition(double p);
 
 private:
+	JUCE_LEAK_DETECTOR(Cursor)
 	double speed;
 	double position;
 	std::shared_ptr<Miam::EditablePolygon> associate; // area that enforce the speed/give center position

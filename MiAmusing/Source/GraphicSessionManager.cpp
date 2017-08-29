@@ -192,10 +192,10 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 		}
 
 		// Event about an Exciter in particular : we'll have to update the spat mix !
-		if (auto exciter = std::dynamic_pointer_cast<Exciter>(areaE->GetConcernedArea()))
-		{
-			//std::cout << "mix à mettre à jour" << std::endl;
-		}
+		//if (auto exciter = std::dynamic_pointer_cast<Exciter>(areaE->GetConcernedArea()))
+		//{
+		//	//std::cout << "mix à mettre à jour" << std::endl;
+		//}
 		else if (auto area = std::dynamic_pointer_cast<EditableArea>(areaE->GetConcernedArea()))
 		{
 			switch (areaE->GetType())

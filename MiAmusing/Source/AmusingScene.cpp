@@ -47,7 +47,7 @@ AmusingScene::AmusingScene(std::shared_ptr<MultiSceneCanvasInteractor> _canvasMa
 
 AmusingScene::~AmusingScene()
 {
-
+	DBG("areas size" + (String)areas.size());
 }
 
 void AmusingScene::AddAnimatedArea(uint64_t nextAreaId)
@@ -256,7 +256,7 @@ void AmusingScene::AddCursor()
 	// creation du curseur
 	bpt cursorCenter(0.0, 0.0);
 	float cursorSize = 0.1f;
-	std::shared_ptr<Cursor> newCursor(new Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f));
+	std::shared_ptr<Cursor> newCursor(new Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f)); //Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f)); //Cursor(0));//Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f));
 
 	//ajouter le nouveau curseur à la liste de curseurs
 	cursors.push_back(newCursor);
@@ -276,7 +276,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddCursor(std::shared_ptr<IDrawableArea
 	else
 		cursorCenter = bpt(0, 0);
 	float cursorSize = 0.1f;
-	std::shared_ptr<Cursor> newCursor(new Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f));
+	std::shared_ptr<Cursor> newCursor(new Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f)); //Cursor(0));//Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f));
 
 	//ajouter le nouveau curseur à la liste de curseurs
 	cursors.push_back(newCursor);
@@ -293,7 +293,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddCursor(std::shared_ptr<IDrawableArea
 
 	newCursor->CanvasResized(canvasComponent);//trouver le nouveau centre
 
-	std::shared_ptr<AreaEvent> areaE(new AreaEvent(newCursor, AreaEventType::Added, newCursor->GetId(), shared_from_this()));
+	std::shared_ptr<AreaEvent> areaE(new AreaEvent(newCursor, AreaEventType::Added, (int)areas.size() + cursors.size() -1, shared_from_this()));
 	return areaE;
 }
 

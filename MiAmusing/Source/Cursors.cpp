@@ -16,11 +16,60 @@
 using namespace Miam;
 using namespace Amusing;
 
-Cursor::Cursor(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio) :
-	EditableEllipse(_Id, _center, _a,  _b, _fillColour, _canvasRatio)
+Cursor::Cursor(int64_t _Id) : Exciter(_Id)
 {
+	
 	speed = 1;
 }
+
+Cursor::Cursor(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio) :
+	Exciter(_Id)//EditableEllipse(_Id, _center, _a,  _b, _fillColour, _canvasRatio)
+{
+	a = _a;
+	b = _b;
+	
+	speed = 1;
+
+	if (_canvasRatio > 1.0f) // ratio of an landscape-oriented window
+	{
+		xScale = 1.0f / _canvasRatio;
+		yScale = 1.0f;
+	}
+	else // ratio of an portrait-oriented window
+	{
+		xScale = 1.0f;
+		yScale = 1.0f*_canvasRatio;
+	}
+	contourPoints.clear();
+	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() - (b / 2)*yScale));
+	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>() + (a / 2)*xScale, center.get<1>()));
+	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() + (b / 2)*yScale));
+	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>() - (a / 2)*xScale, center.get<1>()));
+	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() - (b / 2)*yScale));
+}
+
+//Cursor::Cursor(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio) :
+//	Exciter(_Id)//EditableEllipse(_Id, _center, _a,  _b, _fillColour, _canvasRatio)
+//{
+//	a = _a;
+//	b = _b;
+//	fillColour = _fillColour;
+//	if (_canvasRatio > 1.0f) // ratio of an landscape-oriented window
+//	{
+//		xScale = 1.0f / _canvasRatio;
+//		yScale = 1.0f;
+//	}
+//	else // ratio of an portrait-oriented window
+//	{
+//		xScale = 1.0f;
+//		yScale = 1.0f*_canvasRatio;
+//	}
+//	center = _center;
+//
+//
+//
+//	speed = 1;
+//}
 
 Cursor::~Cursor()
 {

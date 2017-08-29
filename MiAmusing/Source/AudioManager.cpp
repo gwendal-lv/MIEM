@@ -488,7 +488,12 @@ void AudioManager::threadFunc()
 		if (timeLines[i] != nullptr)
 			delete timeLines[i];
 	}
-	
+	DBG("delete all the playheads");
+	for (int i = 0; i < maxSize; ++i)
+	{
+		if (playHeads[i] != nullptr)
+			delete playHeads[i];
+	}
 	DBG("exit thread");
 }
 

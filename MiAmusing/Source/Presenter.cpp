@@ -191,6 +191,7 @@ std::shared_ptr<Cursor> Presenter::getCursor(int m_Id)
 	if (cursorToReadingHead.right.find(m_Id) == cursorToReadingHead.right.end())
 	{
 		DBG("no cursor associated to this playing head");
+		return nullptr;
 	}
 	return cursorToReadingHead.right.at(m_Id);
 }

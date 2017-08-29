@@ -82,7 +82,7 @@ namespace Amusing
 		//void getCursorsCount();
 		
 	private:
-
+		JUCE_LEAK_DETECTOR(CompletePolygon)
 		// attributes linked to the Cursor
 		bool showCursor;
 		
