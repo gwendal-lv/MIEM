@@ -259,6 +259,8 @@ void AudioManager::sendPosition()
 			model->SendParamChange(param);
 		}
 	}
+	if (param.Id1 != 0)
+		DBG("2eme tete de lecture");
 	//param.Id1 = 0;
 	//param.DoubleValue = (double)position / (double)periode; //+ 1.0/8.0;
 	//model->SendParamChange(param);
@@ -339,19 +341,22 @@ void AudioManager::getParameters()
 		case Miam::AsyncParamChange::ParamType::Play :
 			DBG("state = Play;");
 			state = Play;
-			DBG("send masterVolume midi : " + (String)roundToInt(param.FloatValue*127.0f));
-			sendMidiMessage(juce::MidiMessage::controllerEvent(1,7,roundToInt(param.FloatValue*127.0f)));//juce::MidiMessage::masterVolume(param.FloatValue));
+			//DBG("send masterVolume midi : " + (String)roundToInt(param.FloatValue*127.0f));
+			//sendMidiMessage(juce::MidiMessage::controllerEvent(1,7,roundToInt(param.FloatValue*127.0f)));//juce::MidiMessage::masterVolume(param.FloatValue));
 			//sendMidiMessage(juce::MidiMessage::masterVolume(param.FloatValue));
-			param.IntegerValue = metronome.BPMtoPeriodInSample(param.IntegerValue);//timeToSample(param.IntegerValue);
-			paramToAllocationThread.push(param);
+			//param.IntegerValue = metronome.BPMtoPeriodInSample(param.IntegerValue);//timeToSample(param.IntegerValue);
+			//paramToAllocationThread.push(param);
+			playHeadsKnown[param.Id1]->setSpeed(param.DoubleValue);
 			break;
 		case Miam::AsyncParamChange::ParamType::Pause :
 			DBG("state = Pause;");
 			state = Pause;
+			paramToAllocationThread.push(param);
 			break;
 		case Miam::AsyncParamChange::ParamType::Stop :
 			DBG("state = Stop;");
 			state = Stop;
+			paramToAllocationThread.push(param);
 			break;
 		case Miam::AsyncParamChange::Update :
 			DBG("Updtae received");
@@ -359,6 +364,14 @@ void AudioManager::getParameters()
 				timeLinesKnown[param.Id2]->alignWith(timeLinesKnown[param.Id1],param.DoubleValue);
 			else
 				paramToAllocationThread.push(param);
+			break;
+		case Miam::AsyncParamChange::Duration :
+			state = Play;
+			sendMidiMessage(juce::MidiMessage::controllerEvent(1, 7, roundToInt(param.FloatValue*127.0f)));
+			//juce::MidiMessage::masterVolume(param.FloatValue));
+			sendMidiMessage(juce::MidiMessage::masterVolume(param.FloatValue));
+			param.IntegerValue = metronome.BPMtoPeriodInSample(param.IntegerValue);//timeToSample(param.IntegerValue);
+			paramToAllocationThread.push(param);
 			break;
 		default:
 			break;
@@ -450,13 +463,7 @@ void AudioManager::getAudioThreadMsg()
 				timeLines[param.Id1]->setMidiTime(param.Id2, roundToInt(param.DoubleValue * (double)periode), param.IntegerValue,param.FloatValue);
 			break;
 		case Miam::AsyncParamChange::ParamType::Play :
-			for (int i = 0; i < maxSize; ++i)
-			{
-				if (timeLines[i] != 0)
-					timeLines[i]->setPeriod(param.IntegerValue);
-			}
-			position = round((double)position * (double)param.IntegerValue / (double)periode);
-			periode = param.IntegerValue;
+			
 			break;
 		case Miam::AsyncParamChange::Update:
 			DBG("Updtae received");
@@ -470,7 +477,36 @@ void AudioManager::getAudioThreadMsg()
 				timeLines[param.Id2]->alignWith(timeLines[param.Id1], param.DoubleValue);
 			}
 			break;
+		case Miam::AsyncParamChange::Duration:
+			for (int i = 0; i < maxSize; ++i)
+			{
+				if (timeLines[i] != 0)
+					timeLines[i]->setPeriod(param.IntegerValue);
+			}
+			for (int i = 0; i < maxSize; ++i)
+			{
+				if (playHeads[i] != 0)
+					playHeads[i]->setState(PlayHeadState::Play);
+			}
+			position = round((double)position * (double)param.IntegerValue / (double)periode);
+			periode = param.IntegerValue;
+			break;
+		case Miam::AsyncParamChange::Pause:
+			for (int i = 0; i < maxSize; ++i)
+			{
+				if (playHeads[i] != 0)
+					playHeads[i]->setState(PlayHeadState::Pause);
+			}
+			break;
+		case Miam::AsyncParamChange::Stop:
+			for (int i = 0; i < maxSize; ++i)
+			{
+				if (playHeads[i] != 0)
+					playHeads[i]->setState(PlayHeadState::Stop);
+			}
+			break;
 		default:
+
 			break;
 		}
 	}

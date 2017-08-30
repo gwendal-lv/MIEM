@@ -289,12 +289,19 @@ void MultiSceneCanvasManager::ChangeSpeed(double newSpeed)
 	//DBG("new speed = " + (String)newSpeed);
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
 	{
-		if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)
+		/*if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)
 		{
 			myGraphicSessionManager->setSpeedArea(amusingScene->GetSelectedArea(), newSpeed);
-		}
+		}*/
 		//graphicSessionManager->setSpeedArea(amusingScene->GetSelectedArea(), newSpeed);
-		handleAndSendAreaEventSync(amusingScene->SetSelectedAreaCursor(newSpeed));
+		//handleAndSendAreaEventSync(amusingScene->SetSelectedAreaCursor(newSpeed));
+		if (auto selectedC = std::dynamic_pointer_cast<CompletePolygon>(amusingScene->GetSelectedArea()))
+		{
+			for (int i = 0; i < selectedC->getCursorsCount(); i++)
+			{
+				handleAndSendAreaEventSync(amusingScene->SetSelectedAreaCursor(i, newSpeed));
+			}
+		}
 	}
 }
 

@@ -35,6 +35,8 @@ private:
 	JUCE_LEAK_DETECTOR(Cursor)
 	double speed;
 	double position;
+	double initCursorSize;
+	double cursorSize;
 	std::shared_ptr<Miam::EditablePolygon> associate; // area that enforce the speed/give center position
 };
 

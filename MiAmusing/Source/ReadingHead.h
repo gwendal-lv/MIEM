@@ -12,6 +12,14 @@
 
 #include<memory>
 #include "BaseMidiSender.h"
+
+enum PlayHeadState
+{
+	Play,
+	Pause,
+	Stop
+};
+
 class PlayHead
 {
 public:
@@ -25,6 +33,8 @@ public:
 	double getReadingPosition();
 	void setId(int _id);
 	int getId();
+	void setState(PlayHeadState m_state);
+
 	
 
 	void process(); 
@@ -36,6 +46,7 @@ private:
 	double speed;
 	int currentPeriod; // period taking speed into accound
 	double position;
+	PlayHeadState state;
 
 	void testPosition(int P); // look in the associate timeLine if there is a MIDI msg to send
 

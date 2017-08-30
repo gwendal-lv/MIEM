@@ -27,6 +27,8 @@ Cursor::Cursor(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColou
 {
 	a = _a;
 	b = _b;
+	initCursorSize = a;
+	cursorSize = initCursorSize;
 	
 	speed = 1;
 
@@ -78,6 +80,10 @@ Cursor::~Cursor()
 void Cursor::setSpeed(double m_speed)
 {
 	speed = m_speed;
+	double newCursorSize = (double)initCursorSize / m_speed;
+	double resize = newCursorSize / cursorSize;
+	if(SizeChanged(resize,false))
+		cursorSize = newCursorSize;
 }
 
 void Cursor::setPosition(double m_position)

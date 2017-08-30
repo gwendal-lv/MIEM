@@ -11,7 +11,7 @@
 #include "ReadingHead.h"
 #include "AudioManager.h"
 
-PlayHead::PlayHead() : speed(1.0), position(0)
+PlayHead::PlayHead() : speed(1.0), position(0), state(PlayHeadState::Stop)
 {
 
 }
@@ -59,36 +59,67 @@ void PlayHead::setReadingPotition(double p)
 
 double PlayHead::getReadingPosition()
 {
-	return position/ (double)currentPeriod;
+	return position / (double)timeLine->getPeriod();//(double)currentPeriod;
+}
+
+void PlayHead::setState(PlayHeadState m_state)
+{
+	state = m_state;
+	switch (m_state)
+	{
+	case PlayHeadState::Play:
+		break;
+	case PlayHeadState::Pause:
+		break;
+	case PlayHeadState::Stop:
+		position = 0;
+		break;
+	default:
+		break;
+	}
 }
 
 void PlayHead::process()
 {
+	double r = 0;
+	switch (state)
+	{
+	case PlayHeadState::Play:
+		if (position >= timeLine->getPeriod())
+			position = 0;
+
+		int sub, up; // interval to test for midi event
+
+					 // check if speed is an integer
+		r = speed - ceil(speed);
+		if (r != 0) // not an integer -> find sub and up integer
+		{
+			sub = ceil(position);
+			up = ceil(position + speed);
+		}
+		else
+		{
+			sub = (int)position;
+			up = (int)position + (int)speed;
+		}
+
+		for (int i = sub; i < up; i++)
+		{
+			testPosition(i);
+		}
+
+		position += speed;
+		break;
+	case PlayHeadState::Pause:
+		break;
+	case PlayHeadState::Stop:
+
+		break;
+	default:
+		break;
+	}
 	
-	if (position >= timeLine->getPeriod())
-		position = 0;
-
-	int sub, up; // interval to test for midi event
-
-	// check if speed is an integer
-	double r = speed - ceil(speed);
-	if (r != 0) // not an integer -> find sub and up integer
-	{
-		sub = ceil(position);
-		up = ceil(position + speed);
-	}
-	else
-	{
-		sub = (int)position;
-		up =(int)position + (int)speed;
-	}
-
-	for (int i = sub; i < up; i++)
-	{
-		testPosition(i);
-	}
-
-	position += speed;
+	
 }
 
 void PlayHead::testPosition(int P)
@@ -103,6 +134,7 @@ void PlayHead::testPosition(int P)
 	{
 		if (timeLine->isNoteOnTime(P, i, m_end, m_channel, m_note, m_velocity))
 		{
+			//DBG((String)i + " : " + (String)position + " " + (String)(P / (double)timeLine->getPeriod()));
 			MidiMessage midiMsg = MidiMessage::noteOn(m_channel, m_note, m_velocity);
 			audioManager->sendMidiMessage(midiMsg);
 		}

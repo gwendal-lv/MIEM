@@ -259,7 +259,7 @@ void AmusingScene::AddCursor()
 	std::shared_ptr<Cursor> newCursor(new Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f)); //Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f)); //Cursor(0));//Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f));
 
 	//ajouter le nouveau curseur à la liste de curseurs
-	cursors.push_back(newCursor);
+	//cursors.push_back(newCursor);
 
 	// il faut l'associer à une aire : chercher l'aire concernée ou la passer en paramètre
 	// - dire à l'aire qu'elle est associée à une forme (voir si toujours nécessaire)
@@ -279,7 +279,8 @@ std::shared_ptr<AreaEvent> AmusingScene::AddCursor(std::shared_ptr<IDrawableArea
 	std::shared_ptr<Cursor> newCursor(new Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f)); //Cursor(0));//Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f));
 
 	//ajouter le nouveau curseur à la liste de curseurs
-	cursors.push_back(newCursor);
+	//cursors.push_back(newCursor);
+	std::shared_ptr<AreaEvent> areaE = AddExciter(newCursor);
 
 	// il faut l'associer à une aire : chercher l'aire concernée ou la passer en paramètre
 	// - dire à l'aire qu'elle est associée à une forme (voir si toujours nécessaire -> oui car c'est l'aire qui lui fournit sa vitesse...)
@@ -293,7 +294,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddCursor(std::shared_ptr<IDrawableArea
 
 	newCursor->CanvasResized(canvasComponent);//trouver le nouveau centre
 
-	std::shared_ptr<AreaEvent> areaE(new AreaEvent(newCursor, AreaEventType::Added, (int)areas.size() + cursors.size() -1, shared_from_this()));
+	//std::shared_ptr<AreaEvent> areaE(new AreaEvent(newCursor, AreaEventType::Added, (int)areas.size() + cursors.size() -1, shared_from_this()));
 	return areaE;
 }
 
@@ -746,13 +747,13 @@ std::shared_ptr<AreaEvent> AmusingScene::SetSelectedArea(std::shared_ptr<IEditab
 	return areaE;
 }
 
-std::shared_ptr<AreaEvent> AmusingScene::SetSelectedAreaCursor(double newSize)
+std::shared_ptr<AreaEvent> AmusingScene::SetSelectedAreaCursor(int idx, double newSize)
 {
 	std::shared_ptr<AreaEvent> areaE(new AreaEvent());
 	if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(selectedArea))
 	{
-		completeArea->setCursorSize(newSize);
-		areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeArea,AreaEventType::ShapeChanged,completeArea->GetId(),shared_from_this()));
+		completeArea->setCursorsSpeed(idx, newSize);
+		areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeArea->getCursor(idx),AreaEventType::ShapeChanged,completeArea->GetId(),shared_from_this()));
 	}
 	return areaE;
 }

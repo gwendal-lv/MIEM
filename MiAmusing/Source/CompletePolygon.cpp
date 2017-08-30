@@ -188,7 +188,7 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 
 CompletePolygon::~CompletePolygon()
 {
-	DBG("CompletePolygon destructor");
+	//DBG("CompletePolygon destructor");
 }
 
 void CompletePolygon::Copy(std::shared_ptr<CompletePolygon> polygonToCopy)
@@ -241,6 +241,16 @@ void CompletePolygon::linkTo(std::shared_ptr<Cursor> cursor)
 {
 	cursors.push_back(cursor);
 	cursor->setSpeed(1);
+}
+
+int CompletePolygon::getCursorsCount()
+{
+	return (int)cursors.size();
+}
+
+std::shared_ptr<Cursor> CompletePolygon::getCursor(int idx)
+{
+	return cursors[idx];
 }
 
 void CompletePolygon::Paint(Graphics& g)
@@ -313,6 +323,9 @@ void CompletePolygon::angleToPercent()
 
 bpt CompletePolygon::computeCursorCenter(double p)
 {
+	while (p > 1)
+		p -= 1;
+	
 	if (showCursor)
 	{
 		int prev = 0;
@@ -976,7 +989,7 @@ bpt CompletePolygon::getCenter()
 	return centerInPixels;
 }
 
-void CompletePolygon::setCursorSize(double newSize)
+void CompletePolygon::setCursorsSpeed(int idx, double newSize)
 {
 	if (newSize == 0)
 	{
@@ -986,15 +999,8 @@ void CompletePolygon::setCursorSize(double newSize)
 	{
 		if (showCursor == false)
 			setCursorVisible(true,parentCanvas);
-		double newCursorSize = (double)initCursorSize / newSize;
-		double resize = newCursorSize / cursorSize;
-		for (int i = 0; i < cursors.size(); i++)
-		{
-			if (cursors[i]->SizeChanged(resize, false))
-			{
-				cursorSize = newCursorSize;
-			}
-		}
+		cursors[idx]->setSpeed(newSize);
+		
 	}
 }
 

@@ -71,7 +71,7 @@ namespace Amusing
 		bool getAllDistanceFromCenter(int idx, int &value);
 
 		bpt getCenter();
-		void setCursorSize(double newSize);
+		void setCursorsSpeed(int idx, double newSize);
 		bpt computeCursorCenter(double p);
 		float computeCursorAlpha(double p, bpt _center);
 
@@ -79,6 +79,8 @@ namespace Amusing
 		void AddCursor(float _canvasRatio);
 		void AddCursor(float _canvasRatio, double p);*/
 		void linkTo(std::shared_ptr<Cursor> cursor);
+		int getCursorsCount();
+		std::shared_ptr<Cursor> getCursor(int idx);
 		//void getCursorsCount();
 		
 	private:
