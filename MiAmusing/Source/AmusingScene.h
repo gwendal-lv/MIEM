@@ -86,6 +86,7 @@ namespace Miam
 		void ApplyFusion(std::shared_ptr<Amusing::CompletePolygon> currentPolygon, std::shared_ptr<Amusing::CompletePolygon> hitPolygon, std::shared_ptr<AreaEvent> singleE);
 		void DeleteIntersections(std::shared_ptr<Amusing::CompletePolygon> parent);
 		std::shared_ptr<AreaEvent> DeleteSelectedArea();
+		std::shared_ptr<AreaEvent> DeleteCursor(std::shared_ptr<Cursor> cursorToDelete);
 
 		void AddCursor();
 		std::shared_ptr<AreaEvent> AddCursor(std::shared_ptr<IDrawableArea> area);

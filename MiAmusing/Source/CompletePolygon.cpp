@@ -189,6 +189,7 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 CompletePolygon::~CompletePolygon()
 {
 	//DBG("CompletePolygon destructor");
+	cursors.clear();
 }
 
 void CompletePolygon::Copy(std::shared_ptr<CompletePolygon> polygonToCopy)

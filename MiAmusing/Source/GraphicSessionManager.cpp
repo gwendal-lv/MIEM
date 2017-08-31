@@ -323,10 +323,25 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				DBG("Send");
 				break;
 			case AreaEventType::Deleted:
-				param.Type = Miam::AsyncParamChange::ParamType::Activate;
-				param.Id1 = myPresenter->getTimeLineID(area);
-				param.Id2 = 0;
-				myPresenter->SendParamChange(param);
+				if (auto cursorArea = std::dynamic_pointer_cast<Cursor>(area))
+				{
+					param.Type = Miam::AsyncParamChange::ParamType::Activate;
+					param.Id1 = 1024;
+					param.Id2 = myPresenter->getReadingHeadID(cursorArea);
+
+					param.IntegerValue = 0;
+					myPresenter->deleteReadingHeadRef(cursorArea);
+					myPresenter->SendParamChange(param);
+				}
+				else if(auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(area))
+				{
+					param.Type = Miam::AsyncParamChange::ParamType::Activate;
+					param.Id1 = myPresenter->getTimeLineID(area);
+					param.Id2 = 1024;
+					param.IntegerValue = 0;
+					myPresenter->SendParamChange(param);
+				}
+				
 				
 				break;
 			case AreaEventType::PointDragBegins :

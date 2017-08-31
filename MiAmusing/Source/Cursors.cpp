@@ -109,12 +109,12 @@ void Cursor::LinkTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon)
 bool Cursor::isLinkedTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon)
 {
 	if (m_Polygon == associate)
-		return false;
-	else
 		return true;
+	else
+		return false;
 }
 
-void Cursor::setReadingPosition(double p)
+bool Cursor::setReadingPosition(double p)
 {
 	if (auto complete = std::dynamic_pointer_cast<CompletePolygon>(associate))
 	{
@@ -132,5 +132,7 @@ void Cursor::setReadingPosition(double p)
 			DBG("alpha négatif");
 		SetAlpha(newAlpha);
 		CanvasResized(parentCanvas);
+		return true;
 	}
+	return false;
 }

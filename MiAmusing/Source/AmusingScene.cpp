@@ -180,13 +180,30 @@ std::shared_ptr<AreaEvent> AmusingScene::DeleteSelectedArea()
 	{
 		auto selectedAreaBackup = selectedArea;
 		if (auto selectedCompleteArea = std::dynamic_pointer_cast<CompletePolygon>(selectedArea))
+		{
 			DeleteIntersections(selectedCompleteArea);
+			for (int i = 0; i < currentExciters.size(); i++)
+				if (auto currentCursor = std::dynamic_pointer_cast<Cursor>(currentExciters[i]))
+					if (currentCursor->isLinkedTo(selectedCompleteArea))
+					{
+						currentCursor->LinkTo(nullptr);
+						if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
+							manager->OnInteraction(std::shared_ptr<AreaEvent>(new AreaEvent(currentCursor,AreaEventType::Deleted,(int)areas.size()+i,shared_from_this())));
+						associateArea.erase(currentCursor);
+						
+					}
+		}
 
 		SetSelectedArea(nullptr);
 		
 		return deleteAreaByUniqueId(selectedAreaBackup->GetId());
 	}
 	else throw std::runtime_error("Impossible to delete the selected area (no area selected");
+}
+
+std::shared_ptr<AreaEvent> AmusingScene::DeleteCursor(std::shared_ptr<Cursor> cursorToDelete)
+{
+	return std::shared_ptr<AreaEvent>(new AreaEvent());
 }
 
 std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDown(const MouseEvent& mouseE)

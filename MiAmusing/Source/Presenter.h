@@ -81,6 +81,7 @@ namespace Amusing {
 			int getChannel(std::shared_ptr<EditableScene> scene);
 			int getReadingHeadID(std::shared_ptr<Cursor> cursor);
 			int getTimeLineID(std::shared_ptr<IEditableArea> area);
+			void deleteReadingHeadRef(std::shared_ptr<Cursor> cursor);
 			std::shared_ptr<Cursor> getCursor(int m_Id);
 			std::shared_ptr<IEditableArea> getAreaFromSource(int source);
 			void setSpeedArea(std::shared_ptr<IEditableArea> scene, double speed);
@@ -129,6 +130,7 @@ namespace Amusing {
 	private :
 		//double lastPosition;
 		std::map<int,double> lastPositions;
+		std::map<int, bool> positionChanged;
     };
     
     

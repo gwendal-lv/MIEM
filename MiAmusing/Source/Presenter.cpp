@@ -154,7 +154,7 @@ int Presenter::getTimeLineID(std::shared_ptr<IEditableArea> area)
 		//areaToSourceMulti.left[area] = Nsources;
 		std::pair<std::shared_ptr<IEditableArea>, int> newPair(area, Nsources);
 		areaToSourceMulti.left.insert(newPair);
-		lastPositions.insert(std::pair<int, double>(Nsources, 0)); // add a new elt so we could retain the last cursor's position of the area
+		//lastPositions.insert(std::pair<int, double>(Nsources, 0)); // add a new elt so we could retain the last cursor's position of the area
 		++Nsources;
 	}
 	
@@ -167,12 +167,21 @@ int Presenter::getReadingHeadID(std::shared_ptr<Cursor> cursor)
 	{
 		std::pair<std::shared_ptr<Cursor>, int> newPair(cursor, Ncursors);
 		cursorToReadingHead.left.insert(newPair);
+		lastPositions.insert(std::pair<int, double>(Ncursors, 0));
 		++Ncursors;
 	}
 	return cursorToReadingHead.left.at(cursor);
 }
 
-
+void Presenter::deleteReadingHeadRef(std::shared_ptr<Cursor> cursor)
+{
+	if (cursorToReadingHead.left.find(cursor) != cursorToReadingHead.left.end())
+	{
+		lastPositions.erase(cursorToReadingHead.left.at(cursor));
+		//cursorToReadingHead.erase(cursor);
+		cursorToReadingHead.left.erase(cursor);
+	}
+}
 
 int Presenter::getCtrlSourceId(std::shared_ptr<Follower> follower)
 {
@@ -258,7 +267,9 @@ void Presenter::Update() // remettre l'interieur dans graphsessionmanager
 				//DBG("param received");
 				//graphicSessionManager.OnAudioPosition(param.DoubleValue);
 				//graphicSessionManager.SetAllAudioPositions(param.DoubleValue);
-			lastPositions.at(param.Id1) = param.DoubleValue;
+
+			if(lastPositions.find(param.Id1)!=lastPositions.end())
+				lastPositions.at(param.Id1) = param.DoubleValue;
 				
 			break;
 

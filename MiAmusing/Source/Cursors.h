@@ -29,7 +29,7 @@ public:
 	double getPosition();
 	void LinkTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon);
 	bool isLinkedTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon);
-	void setReadingPosition(double p);
+	bool setReadingPosition(double p);
 
 private:
 	JUCE_LEAK_DETECTOR(Cursor)

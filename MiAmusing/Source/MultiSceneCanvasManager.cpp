@@ -144,9 +144,11 @@ void MultiSceneCanvasManager::SetAudioPositions(std::shared_ptr<Cursor> area, do
 {
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
 	{
-		area->setReadingPosition(position);
-		std::shared_ptr<AreaEvent> areaE(new AreaEvent(area, AreaEventType::NothingHappened));
-		handleAndSendAreaEventSync(areaE);
+		if (area->setReadingPosition(position))
+		{
+			std::shared_ptr<AreaEvent> areaE(new AreaEvent(area, AreaEventType::NothingHappened));
+			handleAndSendAreaEventSync(areaE);
+		}
 		/*if(auto completeA = std::dynamic_pointer_cast<CompletePolygon>(area))
 			handleAndSendAreaEventSync(completeA->setReadingPosition(position));*/
 	}
@@ -186,26 +188,26 @@ void MultiSceneCanvasManager::handleAndSendAreaEventSync(std::shared_ptr<AreaEve
 		if (areaE->GetType() == AreaEventType::Deleted) // verifier si ca sert encore a qqch
 		{
 			
-			if (auto area = std::dynamic_pointer_cast<AnimatedPolygon> (areaE->GetConcernedArea()))
-			{
+			//if (auto area = std::dynamic_pointer_cast<AnimatedPolygon> (areaE->GetConcernedArea()))
+			//{
 
-				if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
-					while (true)
-					{
-						if (auto followerToDelete = amusingScene->getFollowers(area))
-						{
-							DBG("followerToDelete");
-							deleteAsyncDrawableObject((int)followerToDelete->GetId(), followerToDelete);
-						}
-						else
-							break;
-					}
-			}
-			else
-			{
-				DBG("area to delete : " + (String)((int)areaE->GetAreaIdInScene()));
-				//deleteAsyncDrawableObject(areaE->GetAreaIdInScene(), areaE->GetConcernedArea());
-			}
+			//	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+			//		while (true)
+			//		{
+			//			if (auto followerToDelete = amusingScene->getFollowers(area))
+			//			{
+			//				DBG("followerToDelete");
+			//				deleteAsyncDrawableObject((int)followerToDelete->GetId(), followerToDelete);
+			//			}
+			//			else
+			//				break;
+			//		}
+			//}
+			//else
+			//{
+			//	DBG("area to delete : " + (String)((int)areaE->GetAreaIdInScene()));
+			//	//deleteAsyncDrawableObject(areaE->GetAreaIdInScene(), areaE->GetConcernedArea());
+			//}
 		}
 		MultiSceneCanvasEditor::handleAndSendAreaEventSync(areaE);
 	}
