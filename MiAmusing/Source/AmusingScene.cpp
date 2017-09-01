@@ -795,3 +795,11 @@ std::shared_ptr<AreaEvent> AmusingScene::SetSelectedAreaOpacity(double newOpacit
 	}
 	return areaE;
 }
+
+bool AmusingScene::isDrew(std::shared_ptr<Cursor> cursor)
+{
+	for (int i = 0; i < currentExciters.size(); ++i)
+		if (currentExciters[i] == cursor)
+			return true;
+	return false;
+}

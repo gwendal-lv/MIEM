@@ -97,6 +97,7 @@ namespace Miam
 		std::shared_ptr<AreaEvent> SetSelectedArea(std::shared_ptr<IEditableArea> selectedArea_, bool changeMode = true) override;
 		std::shared_ptr<AreaEvent> SetSelectedAreaCursor(int idx, double newSize);
 		std::shared_ptr<AreaEvent> SetSelectedAreaOpacity(double newOpacity);
+		bool isDrew(std::shared_ptr<Cursor> cursor);
 	};
 
 

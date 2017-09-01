@@ -144,7 +144,7 @@ void MultiSceneCanvasManager::SetAudioPositions(std::shared_ptr<Cursor> area, do
 {
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
 	{
-		if (area->setReadingPosition(position))
+		if (amusingScene->isDrew(area) && area->setReadingPosition(position))
 		{
 			std::shared_ptr<AreaEvent> areaE(new AreaEvent(area, AreaEventType::NothingHappened));
 			handleAndSendAreaEventSync(areaE);
