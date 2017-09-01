@@ -28,6 +28,8 @@
 #include "boost\geometry\geometries\geometries.hpp"
 #include "boost\geometry\geometries\polygon.hpp"
 
+#include <vector>
+
 #include "AmusingSceneComponent.h"
 
 typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> bpt;
@@ -48,6 +50,11 @@ AmusingScene::AmusingScene(std::shared_ptr<MultiSceneCanvasInteractor> _canvasMa
 AmusingScene::~AmusingScene()
 {
 	DBG("areas size" + (String)areas.size());
+	//DBG("associate size " + (String)associateArea.size());
+	for(int i = 0; i< currentExciters.size();i++)
+		if (auto currentCursor = std::dynamic_pointer_cast<Cursor>(currentExciters[i]))
+			if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
+				manager->OnInteraction(std::shared_ptr<AreaEvent>(new AreaEvent(currentCursor, AreaEventType::Deleted, (int)areas.size() + i, shared_from_this())));
 }
 
 void AmusingScene::AddAnimatedArea(uint64_t nextAreaId)
@@ -179,6 +186,7 @@ std::shared_ptr<AreaEvent> AmusingScene::DeleteSelectedArea()
 	if (selectedArea)
 	{
 		auto selectedAreaBackup = selectedArea;
+		std::vector<int> cursorToDeleteID;
 		if (auto selectedCompleteArea = std::dynamic_pointer_cast<CompletePolygon>(selectedArea))
 		{
 			DeleteIntersections(selectedCompleteArea);
@@ -190,8 +198,10 @@ std::shared_ptr<AreaEvent> AmusingScene::DeleteSelectedArea()
 						if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
 							manager->OnInteraction(std::shared_ptr<AreaEvent>(new AreaEvent(currentCursor,AreaEventType::Deleted,(int)areas.size()+i,shared_from_this())));
 						associateArea.erase(currentCursor);
-						
+						cursorToDeleteID.push_back(i);
 					}
+			for (int i = 0; i < cursorToDeleteID.size(); i++)
+				currentExciters.erase(currentExciters.begin() + cursorToDeleteID[i]);
 		}
 
 		SetSelectedArea(nullptr);
