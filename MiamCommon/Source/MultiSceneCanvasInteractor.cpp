@@ -205,10 +205,8 @@ void MultiSceneCanvasInteractor::handleAndSendAreaEventSync(std::shared_ptr<Area
             break;
             
         case AreaEventType::Deleted :
-            if (areaE->GetAreaIdInScene() < 0)
-                throw std::runtime_error("A deletion Miam::AreaEvent must always contain the id of the object to delete.");
-            else
-                deleteAsyncDrawableObject(areaE->GetAreaIdInScene(), areaE->GetConcernedArea());
+            // The object's index is not needed anymore for deletion
+            deleteAsyncDrawableObject(/*areaE->GetAreaIdInScene(), */areaE->GetConcernedArea());
             break;
             
         default : // Any movement : update of the concerned area (if any)
@@ -309,7 +307,7 @@ void MultiSceneCanvasInteractor::updateAsyncDrawableObject(std::shared_ptr<IDraw
     *asyncObjectIt = newAsyncObjectSharedPtr;
     asyncDrawableObjectsMutex.unlock();
 }
-void MultiSceneCanvasInteractor::deleteAsyncDrawableObject(int idInScene, std::shared_ptr<IDrawableArea> originalAreaToDelete)
+void MultiSceneCanvasInteractor::deleteAsyncDrawableObject(std::shared_ptr<IDrawableArea> originalAreaToDelete)
 {
     // At first : deletion of the pointer from the map
     auto mapIt = originalToAsyncObject.find(originalAreaToDelete);

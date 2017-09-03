@@ -165,7 +165,7 @@ std::shared_ptr<MultiSceneCanvasEditor> GraphicSessionManager::getSelectedCanvas
     std::shared_ptr<MultiSceneCanvasEditor> canvasPtr = std::dynamic_pointer_cast<MultiSceneCanvasEditor>( selectedCanvas);
     if (canvasPtr)
         return canvasPtr;
-    else throw std::runtime_error("Canvas not selected, or canvas cannot be casted a Miam::MultiSceneCanvasEditor");
+    else throw std::runtime_error("Canvas not selected, or canvas cannot be casted as a Miam::MultiSceneCanvasEditor");
 }
 
 
@@ -189,6 +189,7 @@ void GraphicSessionManager::setMode(GraphicSessionMode newMode)
             
         default:
             // Closing of anything pop-up-like displayed on a mode change
+            // Pour éviter le problème d'assertion de Juce, qui ne ferme pas les popups comme il faut avec les menus déroulants... Tjs bugué sous Juce 5.0.2
             sceneEditionComponent->CloseTemporaryDisplayedObjects();
     }
     
@@ -219,14 +220,25 @@ void GraphicSessionManager::setMode(GraphicSessionMode newMode)
             sceneEditionComponent->SetCanvasInfo(selectedCanvas->GetId());
             sceneEditionComponent->SetCanvasGroupHidden(false);
             sceneEditionComponent->SetDeleteSceneButtonEnabled(getSelectedCanvasAsEditable()->GetScenesCount() > 1);
+            sceneEditionComponent->SetAreaGroupHidden(false);
             sceneEditionComponent->SetAreaGroupReduced(true);
             if (areaToCopy)
                 sceneEditionComponent->SetPasteEnabled(true);
             sceneEditionComponent->SetSpatGroupReduced(true);
             sceneEditionComponent->SetInitialStateGroupHidden(false);
+            sceneEditionComponent->SetInitialStateGroupReduced(true);
             sceneEditionComponent->resized(); // right menu update
             
             view->DisplayInfo("Editing a Canvas and its Scenes");
+            break;
+            
+        case GraphicSessionMode::ExcitersEditionMode :
+            sceneEditionComponent->SetCanvasGroupHidden(true);
+            sceneEditionComponent->SetAreaGroupHidden(true);
+            sceneEditionComponent->SetSpatGroupReduced(true);
+            sceneEditionComponent->SetInitialStateGroupHidden(false);
+            sceneEditionComponent->SetInitialStateGroupReduced(false);
+            sceneEditionComponent->resized(); // right menu update
             break;
             
         case GraphicSessionMode::AreaSelected :
@@ -235,6 +247,7 @@ void GraphicSessionManager::setMode(GraphicSessionMode newMode)
             
             sceneEditionComponent->SetEnabledAllControls(true, true); // as we may come from "waiting for something creation/deletion"
             sceneEditionComponent->SetCanvasGroupHidden(true);
+            sceneEditionComponent->SetAreaGroupHidden(false);
             sceneEditionComponent->SetAreaGroupReduced(false);
             if (areaToCopy)
                 sceneEditionComponent->SetPasteEnabled(true);
@@ -473,6 +486,18 @@ void GraphicSessionManager::OnBringToFront()
         getSelectedCanvasAsEditable()->OnBringToFront();
     else throw std::runtime_error("Cannot bring something to front : no canvas selected");
 }
+void GraphicSessionManager::OnAddExciter()
+{
+    if (selectedCanvas)
+        getSelectedCanvasAsEditable()->OnAddExciter();
+    else throw std::runtime_error("Cannot send 'add exciter' command to a canvas (none selected)");
+}
+void GraphicSessionManager::OnDeleteExciter()
+{
+    if (selectedCanvas)
+        getSelectedCanvasAsEditable()->OnDeleteExciter();
+    else throw std::runtime_error("Cannot send 'delete exciter' command to a canvas (none selected)");
+}
 
 
 
@@ -544,6 +569,16 @@ void GraphicSessionManager::OnSpatStateChanged(int spatStateIdx)
         // Forced unoptimized update of everything
         getSelectedCanvasAsEditable()->OnResized();
     }
+}
+
+
+void GraphicSessionManager::OnEnterExcitersEdition()
+{
+    setMode(GraphicSessionMode::ExcitersEditionMode);
+}
+void GraphicSessionManager::OnQuitExcitersEdition()
+{
+    setMode(GraphicSessionMode::CanvasSelected);
 }
 
 

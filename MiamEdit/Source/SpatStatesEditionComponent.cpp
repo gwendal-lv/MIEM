@@ -146,7 +146,7 @@ void SpatStatesEditionComponent::paint (Graphics& g)
 
     //[/UserPrePaint]
 
-    g.fillAll (Colour (0xffd9d9d9));
+    g.fillAll (Colour (0xffbfbfbf));
 
     //[UserPaint] Add your own custom painting code here..
 
@@ -358,7 +358,7 @@ BEGIN_JUCER_METADATA
                  constructorParams="" variableInitialisers="" snapPixels="8" snapActive="1"
                  snapShown="1" overlayOpacity="0.330" fixedSize="1" initialWidth="1024"
                  initialHeight="600">
-  <BACKGROUND backgroundColour="ffd9d9d9"/>
+  <BACKGROUND backgroundColour="ffbfbfbf"/>
   <GROUPCOMPONENT name="State Editor group component" id="1b9d22beb5fc6bfd" memberName="stateEditorGroupComponent"
                   virtualName="" explicitFocusOrder="0" pos="0 60 0M 60M" outlinecol="ff454545"
                   textcol="ff000000" title="Routing matrix for selected state"/>

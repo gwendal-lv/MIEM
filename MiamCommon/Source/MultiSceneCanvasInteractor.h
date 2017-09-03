@@ -186,7 +186,7 @@ namespace Miam {
         void recreateAllAsyncDrawableObjects();
         void addAsyncDrawableObject(int insertionIdInScene, std::shared_ptr<IDrawableArea> originalAreaToAdd);
         void updateAsyncDrawableObject(std::shared_ptr<IDrawableArea> originalAreaToUpdate);
-        void deleteAsyncDrawableObject(int idInScene, std::shared_ptr<IDrawableArea> originalAreaToDelete);
+        void deleteAsyncDrawableObject(std::shared_ptr<IDrawableArea> originalAreaToDelete);
 
         public : // external interfacing
         // 3 following functions, to be used very carefully from the OpenGL renderer !

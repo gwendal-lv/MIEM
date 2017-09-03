@@ -108,20 +108,12 @@ namespace Miam
         // - - - - - Construction / destruction - - - - -
         virtual ~SpatState()
         {
-            // does not need to unlink from area : the link is a weak_ptr
-            // But still needs to unregister from linked areas
-            // But still needs to unregister from linked areas
-            // But still needs to unregister from linked areas
-            // But still needs to unregister from linked areas
-            // But still needs to unregister from linked areas
-            // But still needs to unregister from linked areas
-            // But still needs to unregister from linked areas
-            // But still needs to unregister from linked areas
-            // But still needs to unregister from linked areas
+            // Called when this spat state is unregistered from all areas that
+            // kept a shared_ptr to this
         }
 
         
-        // - - - - - Linking to spat areas - - - - -
+        // - - - - - Internal linking to spat areas - - - - -
         void LinkToArea(std::shared_ptr<SpatArea> spatArea)
         {
             // no check for double addition (but it's weak ptrs...)
@@ -139,6 +131,20 @@ namespace Miam
                 }
             }
         }
+        
+        // - - - - - External linking to spat areas - - - - -
+        void UnregisterFromAreas()
+        {
+            // does not need to internally unlink from area : the link is a weak_ptr
+            // But still needs to unregister from linked areas
+            for (size_t i=0 ; i < linkedAreas.size() ; i++)
+            {
+                auto areaPtr = linkedAreas[i].lock();
+                if (areaPtr)
+                    areaPtr->LinkToSpatState(nullptr);
+            }
+        }
+        
         
         // - - - - - Output channels (speakers) : add, delete, swap, ... - - - - -
         virtual void AddOutput() = 0;

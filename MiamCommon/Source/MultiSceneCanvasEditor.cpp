@@ -193,4 +193,21 @@ void MultiSceneCanvasEditor::OnBringToFront()
     }
     else throw std::runtime_error("Cannot bring an area to front : no scene selected");
 }
+void MultiSceneCanvasEditor::OnAddExciter()
+{
+    if (selectedScene)
+    {
+        selectedScene->AddDefaultExciter();
+        recreateAllAsyncDrawableObjects();
+    }
+    else throw std::runtime_error("Cannot add an exciter : no scene selected");
+}
+void MultiSceneCanvasEditor::OnDeleteExciter()
+{
+    if (selectedScene)
+    {
+        recreateAllAsyncDrawableObjects();
+    }
+    else throw std::runtime_error("Cannot delete an exciter : no scene selected");
+}
 

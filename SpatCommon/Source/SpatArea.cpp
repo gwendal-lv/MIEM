@@ -49,7 +49,8 @@ void SpatArea::setDefaultSpatName()
 }
 void SpatArea::LinkToSpatState(std::shared_ptr< SpatState<double> > spatState)
 {
-    if (linkedSpatState != spatState)
+    if ( ( (linkedSpatState) || (spatState) ) // Pour ne pas comparer 2 ptrs sur NULL
+        && linkedSpatState != spatState)
     {
         // De-registering if necessary
         if (linkedSpatState)

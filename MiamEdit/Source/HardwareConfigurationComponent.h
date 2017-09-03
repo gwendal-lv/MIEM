@@ -55,9 +55,9 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-    
+
     friend class SettingsManager;
-    
+
     virtual void textEditorReturnKeyPressed(TextEditor& editorThatHasChanged) override;
     //[/UserMethods]
 

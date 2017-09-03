@@ -16,6 +16,8 @@
 #include "InteractiveArea.h"
 #include "Exciter.h"
 
+#include "MultiAreaEvent.h"
+
 #ifdef _MSC_VER
 	#include "Windows.h" // for OutputDebugString(), std cout does not work...
 #endif
@@ -32,6 +34,19 @@ canvasComponent(canvasComponent_),
 excitersBehavior(excitersBehavior_)
 {
     name = "Default Scene";
+    
+    // DEBUG/test
+    // DEBUG/test
+    // DEBUG/test
+    // DEBUG/test
+    // DEBUG/test
+    
+    
+    // DEBUG/test
+    // DEBUG/test
+    // DEBUG/test
+    // DEBUG/test
+    // DEBUG/test
 }
 
 
@@ -58,6 +73,8 @@ std::shared_ptr<IDrawableArea> InteractiveScene::GetDrawableObject(size_t i)
     else
         return currentExciters[i-areas.size()];
 }
+
+
 size_t InteractiveScene::GetInteractiveAreasCount()
 {
     return areas.size();
@@ -94,6 +111,20 @@ std::shared_ptr<AreaEvent> InteractiveScene::AddArea(std::shared_ptr<IInteractiv
     return std::make_shared<AreaEvent>(newArea, AreaEventType::Added, (int)areas.size()-1, shared_from_this());
 }
 
+
+
+// - - - - - Exciters Managing - - - - -
+
+std::shared_ptr<AreaEvent> InteractiveScene::AddDefaultExciter()
+{
+    auto canvasManagerLocked = canvasManager.lock();
+    if (! canvasManagerLocked)
+        throw std::logic_error("Cannot add a new current exciter : cannot get a Unique ID from the canvas manager (not linked to this)");
+        
+    auto exciter = std::make_shared<Exciter>(canvasManagerLocked->GetNextAreaId());
+        
+    return AddExciter(exciter);
+}
 std::shared_ptr<AreaEvent> InteractiveScene::AddExciter(std::shared_ptr<Exciter> newExciter)
 {
     currentExciters.push_back(newExciter);
@@ -104,7 +135,75 @@ std::shared_ptr<AreaEvent> InteractiveScene::AddExciter(std::shared_ptr<Exciter>
     
     // WARNING
     // The id is the ID relative to all drawable objects....
-    return std::make_shared<AreaEvent>(newExciter, AreaEventType::Added, (int)areas.size()+currentExciters.size()-1, shared_from_this());
+    return std::make_shared<AreaEvent>(newExciter, AreaEventType::Added, (int) getExciterDrawingIndex(currentExciters.size()-1), shared_from_this());
+}
+
+std::shared_ptr<AreaEvent> InteractiveScene::DeleteCurrentExciterByIndex(size_t excitersVectorIndex)
+{
+    auto deletedExciter = currentExciters[excitersVectorIndex];
+    currentExciters.erase(currentExciters.begin() + excitersVectorIndex);
+    return std::make_shared<AreaEvent>(deletedExciter, AreaEventType::Deleted);
+}
+
+std::shared_ptr<MultiAreaEvent> InteractiveScene::ResetCurrentExcitersToInitialExciters()
+{
+    auto multiAreaE = std::make_shared<MultiAreaEvent>();
+    // Création des évènement de suppression des excitateurs courants
+    // qui vont être supprimés
+    if (currentExciters.size() >= 1)
+    {
+        // First exciter : creation of the multiareaE (and of the main areaE)
+        auto firstAreaDeletedE = DeleteCurrentExciterByIndex(0);
+        multiAreaE = std::make_shared<MultiAreaEvent>( firstAreaDeletedE.get() );
+        
+        // Autres excitateurs à supprimer
+        for (size_t i = 1 ; i<currentExciters.size() ; i++)
+            multiAreaE->AddAreaEvent(DeleteCurrentExciterByIndex(i));
+    }
+    
+    // Duplication des excitateurs initiaux
+    for (size_t i = 0 ; i<initialExciters.size() ; i++)
+    {
+        Exciter* clonedExciterPtr = dynamic_cast<Exciter*> (currentExciters[i]->Clone());
+        if (! clonedExciterPtr)
+            throw std::logic_error("Cloned exciter cannot be dynamically casted to a Miam::Exciter...");
+        
+        auto exciter = std::shared_ptr<Exciter>(clonedExciterPtr);
+        
+        // Ajout propre du nouvel élément
+        auto areaAddedE = AddExciter(exciter);
+        
+        // Puis gestion de l'évènement
+        // Comportement spécial pour le premier... On doit être sûr d'avoir bien déjà
+        // bourré un event principal (fait à la construction) dans le multiareaE.
+        // À partir de i==1 il n'y a plus de doute, l'event principal est déjà créé
+        if (i==0 && multiAreaE->GetType()==AreaEventType::NothingHappened)
+            multiAreaE = std::make_shared<MultiAreaEvent>( areaAddedE.get() );
+        else
+            multiAreaE->AddAreaEvent(areaAddedE);
+    }
+    
+    return multiAreaE;
+}
+
+void InteractiveScene::SaveCurrentExcitersToInitialExciters()
+{
+    // On veut créer une sauvegarde à un instant figé dans le temps
+    // donc on fait une copie des excitateurs, et pas seulement
+    // des pointeurs sur les excitateurs
+    initialExciters.clear();
+    for (size_t i = 0 ; i<currentExciters.size() ; i++)
+    {
+        Exciter* clonedExciterPtr = dynamic_cast<Exciter*> (currentExciters[i]->Clone());
+        if (! clonedExciterPtr)
+            throw std::logic_error("Cloned exciter cannot be dynamically casted to a Miam::Exciter...");
+        
+        auto exciter = std::shared_ptr<Exciter>(clonedExciterPtr);
+        initialExciters.push_back( exciter );
+    }
+    
+    // Aucun évènement renvoyé
+
 }
 
 

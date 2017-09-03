@@ -125,11 +125,13 @@ namespace Miam
         /// n°1 : editon/manipulation/play with a unique selected area only (in
         /// the future, there may be several selected areas), with 1 touch input
         /// source (may also be changed)
+        /// -> édition avec 1 entrée, 1 (ou plusieurs à l'avenir) aires contrôlées
         ///
         /// n°2 : editon/manipulation/play with any area (they all stay in the
         /// same state), with an arbitrary number of touch inputs
+        /// -> édition multi-entrées, multi-aires
         ///
-        
+        ///
         /// --------------------------------------------------------------------
         /// --------------------------------------------------------------------
         /// --------------------------------------------------------------------

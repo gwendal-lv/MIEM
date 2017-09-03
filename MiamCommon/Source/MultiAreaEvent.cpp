@@ -33,6 +33,13 @@ AreaEvent(concernedArea_, eventType_, areaIdInScene_, concernedScene_)
     
 }
 
+MultiAreaEvent::MultiAreaEvent( AreaEvent *e )
+:
+AreaEvent( e )
+{
+    
+}
+
 
 void MultiAreaEvent::AddAreaEvent(std::shared_ptr<AreaEvent> areaE)
 {

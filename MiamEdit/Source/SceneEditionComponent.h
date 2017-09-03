@@ -121,6 +121,7 @@ public:
 
     // Helpers
     private :
+    void setVisibleAllAreaControls(bool areVisible);
     void setEnabledSelectedAreaControls(bool areEnabled);
     void setVisibleSpatControls(bool areVisible);
     void colourSliderMoved();
@@ -155,10 +156,16 @@ private:
 
     GraphicSessionManager* graphicSessionManager = 0;
 
-    int canvasGroupReducedH, areaGroupReducedH, spatGroupReducedH;
+    int canvasGroupReducedH,
+        areaGroupReducedH,
+        spatGroupReducedH,
+        initialStateGroupReducedH ;
     bool isCanvasGroupHidden = false,
-            isAreaGroupReduced = false,
-            isSpatGroupHidden = false;
+        isAreaGroupReduced = false,
+        isAreaGroupHidden = false,
+        isSpatGroupHidden = false,
+        isInitialStateGroupReduced = false,
+        isInitialStateGroupHidden = false;
 
     // When all buttons are disabled, to highlight that we can do only 1 action,
     // we need to back up the state of some buttons
@@ -198,9 +205,9 @@ private:
     ScopedPointer<TextButton> addExciterTextButton;
     ScopedPointer<TextButton> deleteExciterTextButton;
     ScopedPointer<TextButton> editInitialStateTextButton;
-    ScopedPointer<TextButton> endEditInitialStateTextButton;
     ScopedPointer<Label> sceneNameLabel;
     ScopedPointer<TextEditor> sceneNameTextEditor;
+    ScopedPointer<ToggleButton> excitersEditionButton;
 
 
     //==============================================================================

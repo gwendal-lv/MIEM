@@ -93,6 +93,10 @@ namespace Miam {
         virtual void OnBringForward();
         virtual void OnBringToFront();
         
+        /// \brief Adds a default initial exciter to the selected scene
+        void OnAddExciter();
+        /// \brief Tries to delete an initial exciter from the selected scene
+        void OnDeleteExciter();
         
         
     };

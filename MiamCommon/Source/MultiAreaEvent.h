@@ -32,7 +32,6 @@ namespace Miam
         
         public :
         
-        /// \brief Will transform it to a shared_ptr (will be automtically freed)
         void AddAreaEvent(std::shared_ptr<AreaEvent> areaE);
         
         size_t GetOtherEventsCount() {return otherEvents.size();}
@@ -46,7 +45,9 @@ namespace Miam
                   AreaEventType eventType_,
                   int areaIdInScene_ = -1,
                   std::shared_ptr<InteractiveScene> concernedScene_ = nullptr);
-        
+        /// \brief Crée simplement l'évènement principal de cette classe, en le construisant par copie de
+        /// l'évènement fourni en paramètre.
+        MultiAreaEvent( AreaEvent *e );
         
         virtual ~MultiAreaEvent() {}
         

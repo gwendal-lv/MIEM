@@ -29,12 +29,14 @@ namespace Miam {
         
         CanvasSelected, ///< A canvas is selected (but no area) ; ready to process mouse input from canvas
         
+        ExcitersEditionMode, ///< On est en mode d'édition des excitateurs, mais aucun excitateurs n'est sélectionné pour l'instant
         
-        
-        // - - - - - Info coming from the canvas (still interesting for the edition
-        // manager to know) - - - - -
+        // - - - - - Info coming from the canvas - - - - -
+        // - - - - -(still interesting for the edition  manager to know) - - - - -
     
         AreaSelected, ///< Area selected, still ready to process mouse input from CanvasComponent
+        
+        ExciterSelected, ///< Un unique excitateur est sélectionné. Mode qui suit le mode ExcitersEditionMode, qui peut être suivi de ce même mode si l'on désélectionne l'excitateur considéré.
         
         /* Useless state for now ? We should maybe hide all buttons... If a stupid
          * multitouch user clicks a button while editing an area with another hand

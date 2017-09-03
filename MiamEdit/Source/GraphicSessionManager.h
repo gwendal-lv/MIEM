@@ -152,6 +152,8 @@ namespace Miam {
         
         void OnNewColour(Colour colour);
         
+        void OnAddExciter();
+        void OnDeleteExciter();
         
         // ----- Events from View, internally processed -----
         // Events treated by this class, and not by the selected CanvasManager
@@ -162,6 +164,9 @@ namespace Miam {
         void OnPasteArea();
         
         void OnSpatStateChanged(int spatStateIdx);
+        
+        void OnEnterExcitersEdition();
+        void OnQuitExcitersEdition();
         
         
         

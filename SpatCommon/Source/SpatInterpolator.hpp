@@ -140,7 +140,9 @@ namespace Miam
         {
             auto statesIt = spatStates.begin();
             std::advance(statesIt, stateToDelete->GetIndex());
+            // Actual unregistering and erase
             // returns an iterator the the next element (may be .end())
+            (*statesIt)->UnregisterFromAreas();
             auto nextAfterErased = spatStates.erase(statesIt);
             // Indexes actualisation for remaining states after the one erased
             for (auto it=nextAfterErased ; it!=spatStates.end() ; it++)

@@ -37,8 +37,8 @@ namespace Miam
         
         // - - - - - Events on areas addition / deletion - - - - -
         
-        Added, ///< Area has just been added to the scene
-        Deleted, ///< Area has just been deleted to the scene
+        Added, ///< Area has just been added to the scene. The "index in scene" must be provided for such events !!!
+        Deleted, ///< Area has just been deleted to the scene. The "index in scene" must NOT be provided.
         
         
 
@@ -129,7 +129,8 @@ namespace Miam
                   int areaIdInScene_ = -1,
                   std::shared_ptr<InteractiveScene> concernedScene_ = nullptr);
         
-        
+        // Copy-constructor
+        AreaEvent( AreaEvent *e );
         
         virtual ~AreaEvent() {}
         

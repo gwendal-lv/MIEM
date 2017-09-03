@@ -48,8 +48,13 @@ void Presenter::CompleteInitialisation(Model* _model)
     
     
     // Loading of the first XML session file (default if nothing else provided)
-    std::string firstFileName = "../../../../../SpatCommon/Sessions/Default.miam";
+    //std::string firstFileName = "../../../../../SpatCommon/Sessions/Default.miam";
     
+    
+    // Après initialisation : on montre des objets graphiques
+    // On genère une requête interne puis on notifie View
+    appModeChangeRequest(AppMode::EditSpatScenes);
+    view->ChangeAppMode(AppMode::EditSpatScenes);
 }
 
 
