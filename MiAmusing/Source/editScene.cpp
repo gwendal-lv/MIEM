@@ -281,6 +281,11 @@ void EditScene::CompleteInitialization(GraphicSessionManager* _graphicSessionMan
     //addAndMakeVisible(multiCanvasComponent);
 }
 
+void EditScene::setMidiChannel(int chan)
+{
+	comboBoxMidi->setSelectedId(chan);
+}
+
 //[/MiscUserCode]
 
 

@@ -569,6 +569,9 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 			if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(sceneE->GetNewScene()))
 			{
 				
+				if(amusingScene->GetDrawableObjectsCount() > 0)
+					editScene->setMidiChannel(myPresenter->getChannel(sceneE->GetNewScene()));
+					
 				for (int i = 0; i < amusingScene->GetDrawableObjectsCount(); i++)
 				{
 					if (auto area = amusingScene->GetDrawableObject(i))//myPresenter->getSceneArea(amusingScene, i))

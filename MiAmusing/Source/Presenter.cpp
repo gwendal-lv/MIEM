@@ -142,7 +142,7 @@ void Presenter::setChannel(std::shared_ptr<EditableScene> scene,int channel)
 
 int Presenter::getChannel(std::shared_ptr<EditableScene> scene)
 {
-	if (sceneToChannel.find(scene) == sceneToChannel.end())
+	if (sceneToChannel.empty() || sceneToChannel.find(scene) == sceneToChannel.end())
 		sceneToChannel[scene] = 1;
 	return sceneToChannel[scene];
 }

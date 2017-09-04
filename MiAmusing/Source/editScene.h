@@ -56,7 +56,7 @@ public:
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
 	void CompleteInitialization(GraphicSessionManager* _graphicSessionManager);//, MultiCanvasComponent* _multiCanvasComponent);
-
+	void setMidiChannel(int chan);
     //[/UserMethods]
 
     void paint (Graphics& g) override;
