@@ -566,7 +566,25 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 			break;
 		case SceneEventType::SceneChanged:
 			DBG("Scene Changed");
-			
+			if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(sceneE->GetNewScene()))
+			{
+				
+				for (int i = 0; i < amusingScene->GetDrawableObjectsCount(); i++)
+				{
+					if (auto area = amusingScene->GetDrawableObject(i))//myPresenter->getSceneArea(amusingScene, i))
+					{
+						if (auto areaC = std::dynamic_pointer_cast<CompletePolygon>(area))
+						{
+							param.Type = AsyncParamChange::ParamType::UdpPort;
+							param.Id1 = myPresenter->getTimeLineID(areaC);
+							param.IntegerValue = myPresenter->getChannel(sceneE->GetNewScene());
+							myPresenter->SendParamChange(param);
+						}
+						
+					}
+				}
+
+			}
 			break;
 		default:
 			break;
@@ -757,7 +775,8 @@ void GraphicSessionManager::SetMidiChannel(int ch)
 		{
 			DBG("channel to send : " + (String)ch);
 			myPresenter->setChannel(amusingScene, ch);
-			getSelectedCanvasAsManager()->resendToModel();
+			//getSelectedCanvasAsManager()->resendToModel();
+			HandleEventSync(std::shared_ptr<SceneEvent>(new SceneEvent(getSelectedCanvasAsManager(), amusingScene, SceneEventType::SceneChanged)));
 		}
 	}
 }

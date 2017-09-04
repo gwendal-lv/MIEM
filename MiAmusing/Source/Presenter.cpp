@@ -137,6 +137,7 @@ void Presenter::setChannel(std::shared_ptr<EditableScene> scene,int channel)
 	sceneToChannel[scene] = channel;
 	//test[5] = 2;
 	//test.insert(std::pair<int, double>(3, 5.8));
+	//graphicSessionManager.HandleEventSync(std::shared_ptr<SceneEven)
 }
 
 int Presenter::getChannel(std::shared_ptr<EditableScene> scene)

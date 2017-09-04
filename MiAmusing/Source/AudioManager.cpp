@@ -373,6 +373,12 @@ void AudioManager::getParameters()
 			param.IntegerValue = metronome.BPMtoPeriodInSample(param.IntegerValue);//timeToSample(param.IntegerValue);
 			paramToAllocationThread.push(param);
 			break;
+		case Miam::AsyncParamChange::UdpPort:
+			if (timeLinesKnown[param.Id1] != 0)
+				timeLinesKnown[param.Id1]->setMidiChannel(param.IntegerValue);
+			else
+				paramToAllocationThread.push(param);
+			break;
 		default:
 			break;
 		}
@@ -504,6 +510,10 @@ void AudioManager::getAudioThreadMsg()
 				if (playHeads[i] != 0)
 					playHeads[i]->setState(PlayHeadState::Stop);
 			}
+			break;
+		case Miam::AsyncParamChange::UdpPort:
+			if (timeLines[param.Id1] != 0)
+				timeLines[param.Id1]->setMidiChannel(param.IntegerValue);
 			break;
 		default:
 
