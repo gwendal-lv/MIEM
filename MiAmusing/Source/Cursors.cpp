@@ -96,15 +96,27 @@ double Cursor::getSpeed()
 	return speed;
 }
 
-double Cursor::getPosition()
+bpt Cursor::getPosition()
 {
-	return position;
+	return center;//position;
 }
 
-void Cursor::LinkTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon)
+double Cursor::getPositionInAssociateArea()
+{
+	if (auto associateC = std::dynamic_pointer_cast<CompletePolygon>(associate))
+	{
+		return associateC->getPercentage(center);
+	}
+	else
+		return 0.0;
+}
+
+void Cursor::LinkTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon) // link the cursor to the form that compute its center position
 {
 	associate = m_Polygon;
 }
+
+
 
 bool Cursor::isLinkedTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon)
 {
@@ -112,6 +124,11 @@ bool Cursor::isLinkedTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon)
 		return true;
 	else
 		return false;
+}
+
+std::shared_ptr<Miam::EditablePolygon> Cursor::getAssociateArea()
+{
+	return associate;
 }
 
 bool Cursor::setReadingPosition(double p)

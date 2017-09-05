@@ -360,8 +360,12 @@ void AudioManager::getParameters()
 			break;
 		case Miam::AsyncParamChange::Update :
 			DBG("Updtae received");
-			if(timeLinesKnown[param.Id1] != 0 && timeLinesKnown[param.Id2]!=0)
-				timeLinesKnown[param.Id2]->alignWith(timeLinesKnown[param.Id1],param.DoubleValue);
+			if (playHeadsKnown[param.Id2] != 0 && timeLinesKnown[param.Id1] != 0)
+			{
+				playHeadsKnown[param.Id2]->LinkTo(timeLinesKnown[param.Id1]);
+				playHeadsKnown[param.Id2]->setSpeed(param.DoubleValue);
+				playHeadsKnown[param.Id2]->setReadingPosition(param.FloatValue);
+			}
 			else
 				paramToAllocationThread.push(param);
 			break;
@@ -473,14 +477,11 @@ void AudioManager::getAudioThreadMsg()
 			break;
 		case Miam::AsyncParamChange::Update:
 			DBG("Updtae received");
-			if (timeLines[param.Id1] != 0 && timeLines[param.Id2] != 0)
-				timeLines[param.Id2]->alignWith(timeLines[param.Id1], param.DoubleValue);
-			else if(timeLines[param.Id1] != 0 && timeLines[param.Id2] == 0)
+			if (playHeads[param.Id2] != 0 && timeLines[param.Id1] != 0)
 			{
-				//paramToAllocationThread.push(param);
-				timeLines[param.Id1] = new TimeLine();
-				timeLines[param.Id1]->setPeriod(periode);
-				timeLines[param.Id2]->alignWith(timeLines[param.Id1], param.DoubleValue);
+				playHeads[param.Id2]->LinkTo(timeLines[param.Id1]);
+				playHeads[param.Id2]->setSpeed(param.DoubleValue);
+				playHeads[param.Id2]->setReadingPosition(param.FloatValue);
 			}
 			break;
 		case Miam::AsyncParamChange::Duration:

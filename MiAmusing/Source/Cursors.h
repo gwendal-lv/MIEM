@@ -26,9 +26,11 @@ public:
 	void setSpeed(double m_speed);
 	void setPosition(double m_position);
 	double getSpeed();
-	double getPosition();
+	bpt getPosition();
+	double getPositionInAssociateArea();
 	void LinkTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon);
 	bool isLinkedTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon);
+	std::shared_ptr<Miam::EditablePolygon> getAssociateArea();
 	bool setReadingPosition(double p);
 
 private:
@@ -37,6 +39,6 @@ private:
 	double position;
 	double initCursorSize;
 	double cursorSize;
-	std::shared_ptr<Miam::EditablePolygon> associate; // area that enforce the speed/give center position
+	std::shared_ptr<Miam::EditablePolygon> associate; // aire que l'on parcourt
 };
 

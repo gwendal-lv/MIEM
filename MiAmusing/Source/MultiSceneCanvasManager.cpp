@@ -140,14 +140,28 @@ void MultiSceneCanvasManager::SetAllAudioPositions(double position)
 	}
 }
 
-void MultiSceneCanvasManager::SetAudioPositions(std::shared_ptr<Cursor> area, double position)
+void MultiSceneCanvasManager::SetAudioPositions(std::shared_ptr<Cursor> cursor, double position)
 {
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
 	{
-		if (amusingScene->isDrew(area) && area->setReadingPosition(position))
+		if (amusingScene->isDrew(cursor) && cursor->setReadingPosition(position))
 		{
-			std::shared_ptr<AreaEvent> areaE(new AreaEvent(area, AreaEventType::NothingHappened));
-			handleAndSendAreaEventSync(areaE);
+			if (auto eventA = amusingScene->checkCursorPosition(cursor)) // regarder si collision avec une autre aire
+			{
+				// envoyer les evts de collision (Update pour lier le RH à la TL correspondante)
+				if (auto completeP = std::dynamic_pointer_cast<CompletePolygon>(eventA->GetConcernedArea()))
+				{
+					cursor->LinkTo(completeP);
+					handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(cursor,eventA->GetType(),cursor->GetId(),eventA->GetConcernedScene())));
+				}
+				else
+					handleAndSendAreaEventSync(eventA);
+			}
+			else
+			{
+				std::shared_ptr<AreaEvent> areaE(new AreaEvent(cursor, AreaEventType::NothingHappened));
+				handleAndSendAreaEventSync(areaE);
+			}
 		}
 		/*if(auto completeA = std::dynamic_pointer_cast<CompletePolygon>(area))
 			handleAndSendAreaEventSync(completeA->setReadingPosition(position));*/

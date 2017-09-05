@@ -52,7 +52,7 @@ void PlayHead::setSpeed(double m_speed)
 }
 
 
-void PlayHead::setReadingPotition(double p)
+void PlayHead::setReadingPosition(double p)
 {
 	position = (double)currentPeriod * p;
 }

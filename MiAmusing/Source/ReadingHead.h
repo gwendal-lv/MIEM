@@ -29,7 +29,7 @@ public:
 	void setAudioManager(Amusing::AudioManager* m_audioManager);
 	void LinkTo(TimeLine* _timeLine);
 	void setSpeed(double m_speed);
-	void setReadingPotition(double p);
+	void setReadingPosition(double p);
 	double getReadingPosition();
 	void setId(int _id);
 	int getId();

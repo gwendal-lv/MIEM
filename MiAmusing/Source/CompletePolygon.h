@@ -81,6 +81,7 @@ namespace Amusing
 		void linkTo(std::shared_ptr<Cursor> cursor);
 		int getCursorsCount();
 		std::shared_ptr<Cursor> getCursor(int idx);
+		bool contains(bpt point);
 		//void getCursorsCount();
 		
 	private:

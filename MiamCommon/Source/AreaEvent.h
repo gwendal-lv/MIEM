@@ -77,7 +77,8 @@ namespace Miam
         
         //  - - - - - Event related to the appearance - - - - -
         ColorChanged, ///< The contour and/or background color of the area has just changed
-        
+		
+        CursorChanged,
         
     };
     

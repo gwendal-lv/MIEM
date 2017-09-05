@@ -1011,3 +1011,8 @@ void CompletePolygon::SetActive(bool activate)
 {
 	EditableArea::SetActive(activate);
 }
+
+bool CompletePolygon::contains(bpt point)
+{
+	return boost::geometry::within(point, contourPoints);
+}
