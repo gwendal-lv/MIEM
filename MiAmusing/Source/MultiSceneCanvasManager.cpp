@@ -22,6 +22,7 @@
 #include "MultiAreaEvent.h"
 #include "GraphicSessionManager.h"
 #include <thread>
+#include "boost\geometry.hpp"
 
 using namespace Amusing;
 
@@ -144,14 +145,24 @@ void MultiSceneCanvasManager::SetAudioPositions(std::shared_ptr<Cursor> cursor, 
 {
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
 	{
-		if (amusingScene->isDrew(cursor) && cursor->setReadingPosition(position))
+		//bpt oldPosition = cursor->getPosition();//InPixels();
+		if (amusingScene->isDrew(cursor) && cursor->setReadingPosition(position)) // vérifie si le curseur est dessiné et le met à jour (seulement si la condition "dessiné" est déjà vérifiée)
 		{
 			if (auto eventA = amusingScene->checkCursorPosition(cursor)) // regarder si collision avec une autre aire
 			{
 				// envoyer les evts de collision (Update pour lier le RH à la TL correspondante)
 				if (auto completeP = std::dynamic_pointer_cast<CompletePolygon>(eventA->GetConcernedArea()))
 				{
+					
+					//std::vector<bpt> inter;
+					//boost::geometry::model::segment<bpt> segB = completeP->getSegment(oldPosition);//InPixels(oldPosition);
+					//boost::geometry::model::segment<bpt> segA(oldPosition, cursor->getPosition());//InPixels());
+					//boost::geometry::intersection(segA, segB, inter);
+					//if (inter.size() == 1)
+					//	cursor->setCenterPosition(inter[0]);//cursor->setCenterPosition(inter[0]);
+					//double old = cursor->getPositionInAssociateArea();
 					cursor->LinkTo(completeP);
+					//DBG("change d'aire : old "+ (String)old +" new "+ (String)cursor->getPositionInAssociateArea());
 					handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(cursor,eventA->GetType(),cursor->GetId(),eventA->GetConcernedScene())));
 				}
 				else

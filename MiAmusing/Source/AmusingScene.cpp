@@ -266,10 +266,10 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDrag(const MouseEvent& 
 				}
 			}
 
-			if (lookForAreasInteractions(draggedArea))
+			//if (lookForAreasInteractions(draggedArea))
 				return graphicE;
-			else
-				return std::shared_ptr<AreaEvent>(new AreaEvent());
+			//else
+				//return std::shared_ptr<AreaEvent>(new AreaEvent());
 		}
 		else
 			return graphicE;
@@ -625,10 +625,10 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseUp(const MouseEvent& mo
 	{
 		if (auto draggedArea = std::dynamic_pointer_cast<CompletePolygon>(areaE->GetConcernedArea()))
 		{
-			if (lookForAreasInteractions(draggedArea))
+			//if (lookForAreasInteractions(draggedArea))
 				return graphicE;//std::shared_ptr<AreaEvent>(new AreaEvent());
-			else
-				return std::shared_ptr<AreaEvent>(new AreaEvent());
+			//else
+				//return std::shared_ptr<AreaEvent>(new AreaEvent());
 
 		}
 		return graphicE;//std::shared_ptr<AreaEvent>(new AreaEvent(areaE->GetConcernedArea(), areaE->GetType(), areaE->GetAreaIdInScene(), shared_from_this()));
@@ -815,8 +815,8 @@ std::shared_ptr<AreaEvent> AmusingScene::checkCursorPosition(std::shared_ptr<Cur
 	for (int i = 0; i < (int)areas.size(); i++)
 	{
 		if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
-			if (completeArea->contains(cursor->getPosition()) && !cursor->isLinkedTo(completeArea))// si la position du curseur est dans une autre aire ->
-				return std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::CursorChanged, completeArea->GetId(), shared_from_this()));
+			if (completeArea->contains(cursor->getPosition()) && !cursor->isLinkedTo(completeArea) && cursor->CanLinkTo(completeArea))// si la position du curseur est dans une autre aire ->
+				return std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::CursorChanged, (int)completeArea->GetId(), shared_from_this()));
 	}
 	return nullptr;
 }

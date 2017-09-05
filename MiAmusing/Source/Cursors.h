@@ -27,9 +27,11 @@ public:
 	void setPosition(double m_position);
 	double getSpeed();
 	bpt getPosition();
+	bpt getPositionInPixels();
 	double getPositionInAssociateArea();
 	void LinkTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon);
 	bool isLinkedTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon);
+	bool CanLinkTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon);
 	std::shared_ptr<Miam::EditablePolygon> getAssociateArea();
 	bool setReadingPosition(double p);
 
@@ -40,5 +42,6 @@ private:
 	double initCursorSize;
 	double cursorSize;
 	std::shared_ptr<Miam::EditablePolygon> associate; // aire que l'on parcourt
+	std::map<std::shared_ptr<Miam::EditablePolygon>,std::pair<bpt, double>> oldAssociates; // retient les aires par lesquels ont est déjà passé
 };
 

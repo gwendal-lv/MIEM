@@ -62,6 +62,14 @@ double PlayHead::getReadingPosition()
 	return position / (double)timeLine->getPeriod();//(double)currentPeriod;
 }
 
+int PlayHead::getTimeLineId()
+{
+	if (timeLine != 0)
+		return timeLine->getId();
+	else
+		return 0;
+}
+
 void PlayHead::setState(PlayHeadState m_state)
 {
 	state = m_state;

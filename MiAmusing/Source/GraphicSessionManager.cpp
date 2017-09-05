@@ -127,7 +127,7 @@ std::shared_ptr<IEditableArea> GraphicSessionManager::GetSelectedArea()
 
 void GraphicSessionManager::SetAllChannels()
 {
-	for (int i = 0; i < canvasManagers.size(); i++)
+	for (int i = 0; i < (int)canvasManagers.size(); i++)
 	{
 		std::shared_ptr<MultiSceneCanvasManager> canvasPtr = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManagers[i]);
 		canvasPtr->SetAllChannels();
@@ -168,16 +168,16 @@ int GraphicSessionManager::circleToNote(int numCirc)
 // ===== EVENTS FROM THE PRESENTER ITSELF =====
 void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_)
 {
-	int i = 0;
-	bool ok = true;
+	
+	
 	////////////////////
 	int ADSR = 1; //////
 	///////////////////
 
 	Miam::AsyncParamChange param;
-	double S;
-	double f;
-	int speed = 10;
+	
+	
+	
 	// Event about an Area
 	
 	if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(event_))
@@ -198,6 +198,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 		//}
 		else if (auto area = std::dynamic_pointer_cast<EditableArea>(areaE->GetConcernedArea()))
 		{
+			int i;
 			switch (areaE->GetType())
 			{
 			case AreaEventType::NothingHappened:
@@ -419,7 +420,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					param.Id1 = myPresenter->getTimeLineID(cursor->getAssociateArea());
 					param.Id2 = myPresenter->getReadingHeadID(cursor);
 					param.DoubleValue = cursor->getSpeed();
-					param.FloatValue = cursor->getPositionInAssociateArea();
+					param.FloatValue = (float)cursor->getPositionInAssociateArea();
 					myPresenter->SendParamChange(param);
 				}
 				break;
@@ -458,7 +459,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				if(amusingScene->GetDrawableObjectsCount() > 0)
 					editScene->setMidiChannel(myPresenter->getChannel(sceneE->GetNewScene()));
 					
-				for (int i = 0; i < amusingScene->GetDrawableObjectsCount(); i++)
+				for (int i = 0; i < (int)amusingScene->GetDrawableObjectsCount(); i++)
 				{
 					if (auto area = amusingScene->GetDrawableObject(i))//myPresenter->getSceneArea(amusingScene, i))
 					{

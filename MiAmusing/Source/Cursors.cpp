@@ -101,6 +101,11 @@ bpt Cursor::getPosition()
 	return center;//position;
 }
 
+bpt Cursor::getPositionInPixels()
+{
+	return bpt(center.get<0>() * parentCanvas->getWidth(), center.get<1>() * parentCanvas->getHeight());//centerInPixels;//position;
+}
+
 double Cursor::getPositionInAssociateArea()
 {
 	if (auto associateC = std::dynamic_pointer_cast<CompletePolygon>(associate))
@@ -113,10 +118,28 @@ double Cursor::getPositionInAssociateArea()
 
 void Cursor::LinkTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon) // link the cursor to the form that compute its center position
 {
-	associate = m_Polygon;
+	if (associate != m_Polygon)
+	{
+		if(associate == nullptr)
+			associate = m_Polygon;
+		else if (associate != nullptr && (oldAssociates.find(m_Polygon) == oldAssociates.end() || oldAssociates[m_Polygon].second > 0.05))
+		{
+			oldAssociates[associate].first = center;
+			oldAssociates[associate].second = 0;
+			associate = m_Polygon;
+		}
+	}
 }
 
-
+bool Cursor::CanLinkTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon)
+{
+	if (oldAssociates.find(m_Polygon) == oldAssociates.end() || oldAssociates[m_Polygon].second > 0.05)
+	{
+		return true;
+	}
+	else
+		return false;
+}
 
 bool Cursor::isLinkedTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon)
 {
@@ -137,6 +160,33 @@ bool Cursor::setReadingPosition(double p)
 	{
 		bpt P = complete->computeCursorCenter(p); // nouveau centre
 		
+		// mise à jour de la liste des anciens associé (distance et vérification si on peut les supprimer)
+		std::vector<int> positionToDelete;
+		//std::map<std::shared_ptr<EditablePolygon>, std::pair<bpt, double>>::iterator it;
+		auto it = oldAssociates.begin();
+		while (it != oldAssociates.end())
+		{
+			it->second.second = boost::geometry::distance(P, it->second.first);
+			if (it->second.second > 0.05)
+			{
+				it = oldAssociates.erase(it);
+			}
+			else
+				it++;
+		}
+		//for (auto it = oldAssociates.begin(); it != oldAssociates.end(); it++)
+		//{
+		//	it->second.second = boost::geometry::distance(P, it->second.first);
+		//	
+		//	if (it->second.second > 0.05)
+		//	{
+		//		//std::map<std::shared_ptr<EditablePolygon>, std::pair<bpt, double>>::iterator newIt = it;
+		//		it = oldAssociates.erase(it);
+		//		//it = newIt;
+		//	}
+		//}
+
+
 		//placer le curseur à ce point
 		bpt translation(P.get<0>() - center.get<0>(), P.get<1>() - center.get<1>());
 		translation.set<0>(translation.get<0>() * (double)parentCanvas->getWidth());

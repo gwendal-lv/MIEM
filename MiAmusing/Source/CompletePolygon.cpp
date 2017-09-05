@@ -324,6 +324,84 @@ void CompletePolygon::angleToPercent()
 	}
 }
 
+boost::geometry::model::segment<bpt> CompletePolygon::getSegment(bpt hitPoint) // rien en pixels
+{
+	// d'abord verifier si le point fait partie des points du contour
+	int prev = 0;
+	int suiv = 0;
+	for (int i = 0; i < contourPoints.outer().size(); i++)
+	{
+		if (boost::geometry::equals(hitPoint, contourPoints.outer().at(i)))
+		{
+			prev = i;
+			suiv = i + 1;
+			if (suiv == contourPoints.outer().size())
+				suiv = 1; // pas 0 car le point 0 et le dernier point sont les mêmes
+			return boost::geometry::model::segment<bpt>(contourPoints.outer().at(prev), contourPoints.outer().at(suiv));
+		}
+	}
+
+	// s'il ne fait pas partie des points du contour, chercher quand quel subTriangle se trouve le point
+	bpt GT(hitPoint.get<0>() - center.get<0>(), hitPoint.get<1>() - center.get<1>());
+	double angle = Miam::Math::ComputePositiveAngle(GT);
+	int i = 0;
+	while (!subTriangles[i].ContainsAngle(angle))
+		i++;
+
+	
+	if (i == 0)
+	{
+		prev = contourPoints.outer().size() - 1;
+		suiv = 0;
+	}
+	else
+	{
+		prev = i - 1;
+		suiv = i;
+	}
+
+	return boost::geometry::model::segment<bpt>(contourPoints.outer().at(prev), contourPoints.outer().at(suiv));
+}
+
+boost::geometry::model::segment<bpt> CompletePolygon::getSegmentInPixels(bpt hitPointInPixels) // tout en pixels
+{
+	// d'abord verifier si le point fait partie des points du contour
+	int prev = 0;
+	int suiv = 0;
+	for (int i = 0; i < contourPointsInPixels.outer().size(); i++)
+	{
+		if (boost::geometry::equals(hitPointInPixels, contourPointsInPixels.outer().at(i)))
+		{
+			prev = i;
+			suiv = i + 1;
+			if (suiv == contourPointsInPixels.outer().size())
+				suiv = 1; // pas 0 car le point 0 et le dernier point sont les mêmes
+			return boost::geometry::model::segment<bpt>(contourPointsInPixels.outer().at(prev), contourPointsInPixels.outer().at(suiv));
+		}
+	}
+
+	// s'il ne fait pas partie des points du contour, chercher quand quel subTriangle se trouve le point
+	bpt GT(hitPointInPixels.get<0>() - centerInPixels.get<0>(), hitPointInPixels.get<1>() - centerInPixels.get<1>());
+	double angle = Miam::Math::ComputePositiveAngle(GT);
+	int i = 0;
+	while (!subTriangles[i].ContainsAngle(angle))
+		i++;
+
+
+	if (i == 0)
+	{
+		prev = contourPointsInPixels.outer().size() - 1;
+		suiv = 0;
+	}
+	else
+	{
+		prev = i - 1;
+		suiv = i;
+	}
+
+	return boost::geometry::model::segment<bpt>(contourPointsInPixels.outer().at(prev), contourPointsInPixels.outer().at(suiv));
+}
+
 bpt CompletePolygon::computeCursorCenter(double p)
 {
 	while (p > 1)

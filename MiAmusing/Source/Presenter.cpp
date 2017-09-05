@@ -20,6 +20,7 @@
 #include "Follower.h"
 #include "GraphicEvent.h"
 #include "MultiAreaEvent.h"
+#include "Cursors.h"
 
 
 using namespace Amusing;
@@ -269,9 +270,11 @@ void Presenter::Update() // remettre l'interieur dans graphsessionmanager
 				//graphicSessionManager.OnAudioPosition(param.DoubleValue);
 				//graphicSessionManager.SetAllAudioPositions(param.DoubleValue);
 
-			if(lastPositions.find(param.Id1)!=lastPositions.end())
-				lastPositions.at(param.Id1) = param.DoubleValue;
-				
+			if (lastPositions.find(param.Id1) != lastPositions.end())
+			{
+				if(getTimeLineID(getCursor(param.Id1)->getAssociateArea()) == param.Id2)
+					lastPositions.at(param.Id1) = param.DoubleValue;
+			}
 			break;
 
 		default:
@@ -283,6 +286,7 @@ void Presenter::Update() // remettre l'interieur dans graphsessionmanager
 	{
 		//graphicSessionManager.SetAllAudioPositions(0);
 		graphicSessionManager.SetAudioPositions(getCursor(it->first), it->second);
+		DBG((String)it->second);
 	}
 	//graphicSessionManager.SetAllAudioPositions(lastPosition);
 }

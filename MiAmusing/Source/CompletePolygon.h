@@ -74,6 +74,8 @@ namespace Amusing
 		void setCursorsSpeed(int idx, double newSize);
 		bpt computeCursorCenter(double p);
 		float computeCursorAlpha(double p, bpt _center);
+		boost::geometry::model::segment<bpt> getSegment(bpt hitPoint);
+		boost::geometry::model::segment<bpt> getSegmentInPixels(bpt hitPointInPixels);
 
 		/*void AddCursor();
 		void AddCursor(float _canvasRatio);

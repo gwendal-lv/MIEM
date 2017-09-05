@@ -255,6 +255,7 @@ void AudioManager::sendPosition()
 		if (playHeadsKnown[j] != 0)
 		{
 			param.Id1 = j;
+			param.Id2 = playHeadsKnown[j]->getTimeLineId();
 			param.DoubleValue = playHeadsKnown[j]->getReadingPosition();
 			model->SendParamChange(param);
 		}
@@ -359,7 +360,7 @@ void AudioManager::getParameters()
 			paramToAllocationThread.push(param);
 			break;
 		case Miam::AsyncParamChange::Update :
-			DBG("Updtae received");
+			//DBG("Update received");
 			if (playHeadsKnown[param.Id2] != 0 && timeLinesKnown[param.Id1] != 0)
 			{
 				playHeadsKnown[param.Id2]->LinkTo(timeLinesKnown[param.Id1]);

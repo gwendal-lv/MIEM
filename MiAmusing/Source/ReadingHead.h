@@ -31,6 +31,7 @@ public:
 	void setSpeed(double m_speed);
 	void setReadingPosition(double p);
 	double getReadingPosition();
+	int getTimeLineId();
 	void setId(int _id);
 	int getId();
 	void setState(PlayHeadState m_state);
