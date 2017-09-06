@@ -203,3 +203,9 @@ bool Cursor::setReadingPosition(double p)
 	}
 	return false;
 }
+
+void Cursor::setCenterPositionNormalize(bpt newCenter)
+{
+	Point<double> translation(newCenter.get<0>()*parentCanvas->getWidth() - centerInPixels.get<0>(), newCenter.get<1>()*parentCanvas->getHeight() - centerInPixels.get<1>()); // pixels
+	Translate(translation);
+}

@@ -145,7 +145,7 @@ void MultiSceneCanvasManager::SetAudioPositions(std::shared_ptr<Cursor> cursor, 
 {
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
 	{
-		//bpt oldPosition = cursor->getPosition();//InPixels();
+		bpt oldPosition = cursor->getPosition();//InPixels();
 		if (amusingScene->isDrew(cursor) && cursor->setReadingPosition(position)) // vérifie si le curseur est dessiné et le met à jour (seulement si la condition "dessiné" est déjà vérifiée)
 		{
 			if (auto eventA = amusingScene->checkCursorPosition(cursor)) // regarder si collision avec une autre aire
@@ -154,12 +154,14 @@ void MultiSceneCanvasManager::SetAudioPositions(std::shared_ptr<Cursor> cursor, 
 				if (auto completeP = std::dynamic_pointer_cast<CompletePolygon>(eventA->GetConcernedArea()))
 				{
 					
-					//std::vector<bpt> inter;
-					//boost::geometry::model::segment<bpt> segB = completeP->getSegment(oldPosition);//InPixels(oldPosition);
-					//boost::geometry::model::segment<bpt> segA(oldPosition, cursor->getPosition());//InPixels());
-					//boost::geometry::intersection(segA, segB, inter);
-					//if (inter.size() == 1)
-					//	cursor->setCenterPosition(inter[0]);//cursor->setCenterPosition(inter[0]);
+					std::vector<bpt> inter;
+					boost::geometry::model::segment<bpt> segB = completeP->getSegment(oldPosition);//InPixels(oldPosition);
+					boost::geometry::model::segment<bpt> segA(oldPosition, cursor->getPosition());//InPixels());
+					boost::geometry::intersection(segA, segB, inter);
+					if (inter.size() == 1)
+					{
+						cursor->setCenterPositionNormalize(inter[0]);//cursor->setCenterPosition(inter[0]);
+					}
 					//double old = cursor->getPositionInAssociateArea();
 					DBG("change d'aire");
 					cursor->LinkTo(completeP);

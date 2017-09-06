@@ -34,6 +34,7 @@ public:
 	bool CanLinkTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon);
 	std::shared_ptr<Miam::EditablePolygon> getAssociateArea();
 	bool setReadingPosition(double p);
+	void setCenterPositionNormalize(bpt newCenter);
 
 private:
 	JUCE_LEAK_DETECTOR(Cursor)
