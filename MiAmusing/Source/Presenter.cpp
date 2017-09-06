@@ -286,7 +286,7 @@ void Presenter::Update() // remettre l'interieur dans graphsessionmanager
 	{
 		//graphicSessionManager.SetAllAudioPositions(0);
 		graphicSessionManager.SetAudioPositions(getCursor(it->first), it->second);
-		DBG((String)it->second);
+		//DBG((String)it->second);
 	}
 	//graphicSessionManager.SetAllAudioPositions(lastPosition);
 }

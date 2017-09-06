@@ -161,6 +161,7 @@ void MultiSceneCanvasManager::SetAudioPositions(std::shared_ptr<Cursor> cursor, 
 					//if (inter.size() == 1)
 					//	cursor->setCenterPosition(inter[0]);//cursor->setCenterPosition(inter[0]);
 					//double old = cursor->getPositionInAssociateArea();
+					DBG("change d'aire");
 					cursor->LinkTo(completeP);
 					//DBG("change d'aire : old "+ (String)old +" new "+ (String)cursor->getPositionInAssociateArea());
 					handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(cursor,eventA->GetType(),cursor->GetId(),eventA->GetConcernedScene())));

@@ -312,20 +312,20 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					//	param.IntegerValue = 1;
 					//myPresenter->SendParamChange(param); // envoie l'ordre de creer/ detruire une source audio
 
-					//param.Id1 = myPresenter->getTimeLineID(area);
-					//param.Type = Miam::AsyncParamChange::ParamType::Source;
-					//i = 0;
+					param.Id1 = myPresenter->getTimeLineID(area);
+					param.Type = Miam::AsyncParamChange::ParamType::Source;
+					i = 0;
 					////DBG("before while");
-					//while (complete->getAllPercentages(i, param.DoubleValue) && complete->getAllDistanceFromCenter(i, param.IntegerValue))
-					//{
-					//	//param.IntegerValue = 60 + (2*param.IntegerValue);
-					//	param.IntegerValue = circleToNote(param.IntegerValue);
-					//	//DBG("noteToSend = " + (String)param.IntegerValue);
-					//	param.Id2 = i;
-					//	param.FloatValue = (float)myPresenter->getVelocityArea(complete);
-					//	myPresenter->SendParamChange(param);
-					//	++i;
-					//}
+					while (complete->getAllPercentages(i, param.DoubleValue) && complete->getAllDistanceFromCenter(i, param.IntegerValue))
+					{
+						//param.IntegerValue = 60 + (2*param.IntegerValue);
+						param.IntegerValue = circleToNote(param.IntegerValue);
+						//DBG("noteToSend = " + (String)param.IntegerValue);
+						param.Id2 = i;
+						param.FloatValue = (float)myPresenter->getVelocityArea(complete);
+						myPresenter->SendParamChange(param);
+						++i;
+					}
 					//i = 0;
 
 
