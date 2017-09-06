@@ -717,7 +717,9 @@ AreaEventType CompletePolygon::EndPointMove()
 				contourPointsInPixels.outer().at(contourPointsInPixels.outer().size() - 1) = contourPointsInPixels.outer().at(0);
 				contourPoints.outer().at(contourPoints.outer().size() - 1) = contourPoints.outer().at(0);
 			}
-			OnCircles.at(pointDraggedId) = nearest; // +1 pcq notes midi commencent a 1;
+			OnCircles.at(pointDraggedId) = nearest;
+			if (pointDraggedId == 0)
+				OnCircles.at(OnCircles.size() - 1) = nearest;
 			
 		}
 		CanvasResized(parentCanvas);
