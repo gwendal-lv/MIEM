@@ -569,16 +569,16 @@ float CompletePolygon::computeCursorAlpha(double p, bpt _center)
 
 	double distPr = boost::geometry::distance(_center, contourPoints.outer().at(prev));
 	double distSui = boost::geometry::distance(_center, contourPoints.outer().at(suiv));
-	double D = 0.05;
-	double H = 0.5;
-	if (distPr < 0.05 )
+	double D = 0.02; // distance à laquelle on commence à augmenter/diminuer l'opacité
+	double H = 0.5;  // opacité lorsqu'on est pas assez proche d"un sommet
+	if (distPr < D )
 	{
 		if (1 - distPr * (1-H)/D < 0)
 			DBG("negatif");
 		return 1 - distPr * (1 - H) / D;//cursor->SetAlpha(1 - distPr * 10);
 		//DBG((String)(1 - distPr * 10));
 	}
-	else if (distSui < 0.05)
+	else if (distSui < D)
 	{
 		if (1 - distSui * (1 - H) / D < 0)
 			DBG("negatif");

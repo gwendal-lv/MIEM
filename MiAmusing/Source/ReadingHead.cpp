@@ -54,7 +54,7 @@ void PlayHead::setSpeed(double m_speed)
 
 void PlayHead::setReadingPosition(double p)
 {
-	position = (double)currentPeriod * p;
+	position = (double)timeLine->getPeriod() * p;//(double)currentPeriod * p;
 }
 
 double PlayHead::getReadingPosition()
