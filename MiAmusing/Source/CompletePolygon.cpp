@@ -1262,3 +1262,9 @@ bool CompletePolygon::contains(bpt point)
 {
 	return boost::geometry::within(point, contourPoints);
 }
+
+void CompletePolygon::deleteAllCursors()
+{
+	cursors.clear();
+		
+}

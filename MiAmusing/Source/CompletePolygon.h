@@ -86,6 +86,7 @@ namespace Amusing
 		int getCursorsCount();
 		std::shared_ptr<Cursor> getCursor(int idx);
 		bool contains(bpt point);
+		void deleteAllCursors();
 		//void getCursorsCount();
 		
 	private:

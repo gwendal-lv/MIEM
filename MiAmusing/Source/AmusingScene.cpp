@@ -55,6 +55,9 @@ AmusingScene::~AmusingScene()
 		if (auto currentCursor = std::dynamic_pointer_cast<Cursor>(currentExciters[i]))
 			if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
 				manager->OnInteraction(std::shared_ptr<AreaEvent>(new AreaEvent(currentCursor, AreaEventType::Deleted, (int)areas.size() + i, shared_from_this())));
+	for (int i = 0; i < areas.size(); i++)
+		if (auto currentArea = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
+			currentArea->deleteAllCursors();
 }
 
 void AmusingScene::AddAnimatedArea(uint64_t nextAreaId)
@@ -202,6 +205,7 @@ std::shared_ptr<AreaEvent> AmusingScene::DeleteSelectedArea()
 					}
 			for (int i = 0; i < cursorToDeleteID.size(); i++)
 				currentExciters.erase(currentExciters.begin() + cursorToDeleteID[i]);
+			selectedCompleteArea->deleteAllCursors();
 		}
 
 		SetSelectedArea(nullptr);
