@@ -364,8 +364,9 @@ void AudioManager::getParameters()
 			if (playHeadsKnown[param.Id2] != 0 && timeLinesKnown[param.Id1] != 0)
 			{
 				playHeadsKnown[param.Id2]->LinkTo(timeLinesKnown[param.Id1]);
-				playHeadsKnown[param.Id2]->setSpeed(param.DoubleValue);
-				playHeadsKnown[param.Id2]->setReadingPosition(param.FloatValue);
+				playHeadsKnown[param.Id2]->setSpeed(param.FloatValue);//param.DoubleValue);
+				playHeadsKnown[param.Id2]->setReadingPosition(param.DoubleValue);//param.FloatValue);
+				//playHeadsKnown[param.Id2]->setState(PlayHeadState::Pause);
 			}
 			else
 				paramToAllocationThread.push(param);
@@ -481,8 +482,9 @@ void AudioManager::getAudioThreadMsg()
 			if (playHeads[param.Id2] != 0 && timeLines[param.Id1] != 0)
 			{
 				playHeads[param.Id2]->LinkTo(timeLines[param.Id1]);
-				playHeads[param.Id2]->setSpeed(param.DoubleValue);
-				playHeads[param.Id2]->setReadingPosition(param.FloatValue);
+				playHeads[param.Id2]->setSpeed(param.FloatValue);//param.DoubleValue);
+				playHeads[param.Id2]->setReadingPosition(param.DoubleValue);//param.FloatValue);
+				//playHeadsKnown[param.Id2]->setState(PlayHeadState::Pause);
 			}
 			break;
 		case Miam::AsyncParamChange::Duration:

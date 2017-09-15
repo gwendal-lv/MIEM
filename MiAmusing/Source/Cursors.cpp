@@ -110,7 +110,7 @@ double Cursor::getPositionInAssociateArea()
 {
 	if (auto associateC = std::dynamic_pointer_cast<CompletePolygon>(associate))
 	{
-		return associateC->getPercentage(center);
+		return associateC->getLinearPercentage(center);
 	}
 	else
 		return 0.0;
@@ -158,7 +158,7 @@ bool Cursor::setReadingPosition(double p)
 {
 	if (auto complete = std::dynamic_pointer_cast<CompletePolygon>(associate))
 	{
-		bpt P = complete->computeCursorCenter(p); // nouveau centre
+		bpt P = complete->computeLinearCursorCenter(p); // nouveau centre
 		
 		// mise à jour de la liste des anciens associé (distance et vérification si on peut les supprimer)
 		std::vector<int> positionToDelete;
@@ -199,6 +199,7 @@ bool Cursor::setReadingPosition(double p)
 			DBG("alpha négatif");
 		SetAlpha(newAlpha);
 		CanvasResized(parentCanvas);
+		//DBG((String)center.get<0>() + " " + (String)center.get<1>() + "setReadingPosition");
 		return true;
 	}
 	return false;
@@ -208,4 +209,5 @@ void Cursor::setCenterPositionNormalize(bpt newCenter)
 {
 	Point<double> translation(newCenter.get<0>()*parentCanvas->getWidth() - centerInPixels.get<0>(), newCenter.get<1>()*parentCanvas->getHeight() - centerInPixels.get<1>()); // pixels
 	Translate(translation);
+	//DBG((String)center.get<0>() + " " + (String)center.get<1>() + "setCenterPositionNormal");
 }

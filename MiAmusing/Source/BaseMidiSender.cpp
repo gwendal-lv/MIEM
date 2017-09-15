@@ -80,7 +80,7 @@ void TimeLine::setPeriod(int m_period)
 
 void TimeLine::setMidiTime(int idx, int newTime, int m_noteNumber,float m_velocity)
 {
-	newTime =  round((double)newTime * (double)currentPeriod / (double)period);
+	newTime =  (int)round((double)newTime * (double)currentPeriod / (double)period);
 	while (newTime > currentPeriod)
 		newTime -= currentPeriod;
 	if (idx < maxSize)

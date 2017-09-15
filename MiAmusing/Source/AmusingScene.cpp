@@ -301,7 +301,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddCursor(std::shared_ptr<IDrawableArea
 		// creation du curseur
 		bpt cursorCenter;
 		if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(area))
-			cursorCenter = completeArea->computeCursorCenter(0);
+			cursorCenter = completeArea->computeLinearCursorCenter(0);
 		else
 			cursorCenter = bpt(0, 0);
 		float cursorSize = 0.1f;

@@ -54,6 +54,8 @@ void PlayHead::setSpeed(double m_speed)
 
 void PlayHead::setReadingPosition(double p)
 {
+	if (p > 1)
+		position -= 1;
 	position = (double)timeLine->getPeriod() * p;//(double)currentPeriod * p;
 }
 

@@ -16,6 +16,7 @@
 #include <algorithm>
 
 #include <list>
+#include <vector>
 #include <string>
 #include <sstream>
 
@@ -402,7 +403,8 @@ boost::geometry::model::segment<bpt> CompletePolygon::getSegmentInPixels(bpt hit
 	return boost::geometry::model::segment<bpt>(contourPointsInPixels.outer().at(prev), contourPointsInPixels.outer().at(suiv));
 }
 
-bpt CompletePolygon::computeCursorCenter(double p)
+
+bpt CompletePolygon::computeLinearCursorCenter(double p)
 {
 	while (p > 1)
 		p -= 1;
@@ -449,7 +451,8 @@ bpt CompletePolygon::computeCursorCenter(double p)
 				}
 			}
 			//DBG((String)prev + " " + (String)suiv);
-
+			if (suiv == 0)
+				suiv += 1;
 
 			// calcul du point où se trouve le curseur par interpolation linéaire
 			bpt P;
@@ -471,7 +474,135 @@ bpt CompletePolygon::computeCursorCenter(double p)
 					P.set<1>(contourPoints.outer().at(prev).get<1>() + ((p - anglesPercentages[prev]) / (1 - anglesPercentages[prev])) * (contourPoints.outer().at(suiv).get<1>() - contourPoints.outer().at(prev).get<1>()));
 				}
 			}
+			//if (!boost::geometry::within(P, boost::geometry::model::segment<bpt>(contourPoints.outer().at(prev), contourPoints.outer().at(suiv))))
+			//	DBG("outside the segment !");
+			return P;
 
+		}
+		else
+		{
+			int prev = 0;
+			int suiv = 0;
+			//DBG("tailles setReadingPosition : bcontourPointsInPixels " + (String)bcontourPointsInPixels.outer().size());
+			pc = p;
+			lengthToPercent();
+
+			//DBG("percentages.size()" + (String)(percentages.size()));
+			for (int i = 0; i < (int)percentages.size(); ++i)
+			{
+				//DBG((String)i);
+				if (p < percentages[i])
+				{
+					prev = i - 1;
+					suiv = i;
+					//DBG("!!! " + (String)p + " < " + (String)percentages[i]);
+					//DBG("stop");
+					break;
+				}
+				else
+				{
+					prev = i;
+					suiv = (i + 1) % percentages.size();
+					//DBG((String)p + " > " + (String)percentages[i]);
+				}
+			}
+
+			//DBG("prev = " + (String)prev);
+			//DBG("suiv = " + (String)suiv);
+			//calculer la position du curseur entre ces points
+			bpt P;
+			if (suiv != 0)
+			{
+				P.set<0>(contourPoints.outer().at(prev).get<0>() + ((p - percentages[prev]) / (percentages[suiv] - percentages[prev])) * (contourPoints.outer().at(suiv).get<0>() - contourPoints.outer().at(prev).get<0>()));
+				P.set<1>(contourPoints.outer().at(prev).get<1>() + ((p - percentages[prev]) / (percentages[suiv] - percentages[prev])) * (contourPoints.outer().at(suiv).get<1>() - contourPoints.outer().at(prev).get<1>()));
+			}
+			else
+			{
+				P.set<0>(contourPoints.outer().at(prev).get<0>() + ((p - percentages[prev]) / (1 - percentages[prev])) * (contourPoints.outer().at(suiv).get<0>() - contourPoints.outer().at(prev).get<0>()));
+				P.set<1>(contourPoints.outer().at(prev).get<1>() + ((p - percentages[prev]) / (1 - percentages[prev])) * (contourPoints.outer().at(suiv).get<1>() - contourPoints.outer().at(prev).get<1>()));
+			}
+
+
+
+
+			return P;
+
+		}
+
+		return bpt(0, 0);
+
+	}
+	return bpt(0, 0);
+}
+
+bpt CompletePolygon::computeAngularCursorCenter(double p)
+{
+	while (p > 1)
+		p -= 1;
+
+	if (showCursor)
+	{
+		int prev = 0;
+		int suiv = 0;
+		if (useBullsEye)
+		{
+			pc = p;
+			// conversion percent to radian
+			angleToPercent();
+			double angle = p * 2 * M_PI;
+
+			//determiner entre quels points va se trouver le curseur
+
+			for (int i = 0; i < (int)anglesPercentages.size(); ++i)
+			{
+				//DBG((String)i);
+				if (p < anglesPercentages[i])
+				{
+					if (i == 0)
+					{
+						//prev = anglesPercentages.size() - 2; // -2 pour ne pas prendre le point de fermeture
+						//suiv = anglesPercentages.size() - 1; // point de fermeture, idem premier point
+						p = 1 + p;
+					}
+					else
+					{
+						prev = i - 1;
+						suiv = i;
+						break;
+					}
+					//DBG("!!! " + (String)p + " < " + (String)percentages[i]);
+					//DBG("stop");
+
+				}
+				else
+				{
+					prev = i;
+					suiv = (i + 1) % anglesPercentages.size();
+					//DBG((String)p + " > " + (String)percentages[i]);
+				}
+			}
+			//DBG((String)prev + " " + (String)suiv);
+			if (suiv == 0)
+				suiv += 1;
+
+			// calcul du point où se trouve le curseur par interpolation linéaire
+			bpt P;
+			bpt extr;
+			//if( (0 <= p && p<0.25 ) || (0.75 <= p && p<1))
+			extr = bpt(center.get<0>() + 100 * cos(2 * M_PI*p), center.get<1>() + 100 * sin(2 * M_PI*p));
+			//else
+			//extr = bpt(center.get<0>() + 1, center.get<1>() - tan(2 * M_PI*p));
+			boost::geometry::model::segment<bpt> seg(center, extr);
+			boost::geometry::model::linestring<bpt> line;//(center, extr);
+			boost::geometry::append(line, center);
+			boost::geometry::append(line, extr);
+			std::vector<bpt> newP;
+			boost::geometry::intersection(line, getPolygon(), newP);
+			if (newP.size() == 1)
+				P = newP[0];
+			
+			//if (!boost::geometry::within(P, boost::geometry::model::segment<bpt>(contourPoints.outer().at(prev), contourPoints.outer().at(suiv))))
+			//	DBG("outside the segment !");
 			return P;
 
 		}
@@ -516,15 +647,15 @@ bpt CompletePolygon::computeCursorCenter(double p)
 				P.set<1>(contourPoints.outer().at(prev).get<1>() + ((p - percentages[prev]) / (1 - percentages[prev])) * (contourPoints.outer().at(suiv).get<1>() - contourPoints.outer().at(prev).get<1>()));
 			}
 
-			
+
 
 
 			return P;
-			
+
 		}
 
 		return bpt(0, 0);
-	
+
 	}
 	return bpt(0, 0);
 }
@@ -931,7 +1062,7 @@ bool CompletePolygon::getUnion(bpolygon hitPolygon, bpolygon &output)
 }
 
 
-double CompletePolygon::getPercentage(bpt hitPoint)
+double CompletePolygon::getAngularPercentage(bpt hitPoint)
 {
 	for (int i = 0; i < contourPoints.outer().size(); i++)
 	{
@@ -965,6 +1096,41 @@ double CompletePolygon::getPercentage(bpt hitPoint)
 	return ans;
 	
 	//return 0.0;
+}
+
+double CompletePolygon::getLinearPercentage(bpt hitPoint)
+{
+	for (int i = 0; i < contourPoints.outer().size(); i++)
+	{
+		if (boost::geometry::equals(hitPoint, contourPoints.outer().at(i)))
+			return anglesPercentages[i];
+	}
+
+	bpt GT(hitPoint.get<0>() - center.get<0>(), hitPoint.get<1>() - center.get<1>());
+	double angle = Miam::Math::ComputePositiveAngle(GT);
+	int i = 0;
+	while (!subTriangles[i].ContainsAngle(angle))
+		i++;
+
+	int prev = 0;
+	int suiv = 0;
+	if (i == 0)
+	{
+		prev = contourPoints.outer().size() - 1;
+		suiv = 0;
+	}
+	else
+	{
+		prev = i - 1;
+		suiv = i;
+	}
+	
+	double ans = 0;
+	if (abs(contourPoints.outer().at(suiv).get<0>() - contourPoints.outer().at(prev).get<0>()) < 0.01)
+		ans = anglesPercentages[prev] + ((anglesPercentages[suiv] - anglesPercentages[prev]) / (contourPoints.outer().at(suiv).get<0>() - contourPoints.outer().at(prev).get<0>()))* (hitPoint.get<0>() - contourPoints.outer().at(prev).get<0>());
+	else
+		ans = anglesPercentages[prev] + ((anglesPercentages[suiv] - anglesPercentages[prev]) / (contourPoints.outer().at(suiv).get<1>() - contourPoints.outer().at(prev).get<1>()))* (hitPoint.get<1>() - contourPoints.outer().at(prev).get<1>());
+	return ans;
 }
 
 bool CompletePolygon::getAllPercentages(int idx, double &value)

@@ -338,7 +338,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				//myPresenter->SendParamChange(param);
 				break;
 			case AreaEventType::ShapeChanged :
-				
+				DBG("shapeChanged");
 				if (auto cursor = std::dynamic_pointer_cast<Cursor>(area))
 				{
 					DBG("Cursor's shape changed");
@@ -407,7 +407,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				//area-> get center height --> volume
 				break;
 			case AreaEventType::RotScale :
-				//DBG("RotScale");
+				DBG("RotScale");
 				
 				break;
 			case AreaEventType::Selected :
@@ -420,8 +420,9 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					param.Type = AsyncParamChange::Update;
 					param.Id1 = myPresenter->getTimeLineID(cursor->getAssociateArea());
 					param.Id2 = myPresenter->getReadingHeadID(cursor);
-					param.DoubleValue = cursor->getSpeed();
-					param.FloatValue = (float)cursor->getPositionInAssociateArea();
+					param.DoubleValue = cursor->getPositionInAssociateArea(); //cursor->getSpeed();
+					param.FloatValue = (float)cursor->getSpeed();//cursor->getPositionInAssociateArea();
+					DBG("phi : " + (String)param.FloatValue);
 					myPresenter->SendParamChange(param);
 				}
 				break;

@@ -66,13 +66,15 @@ namespace Amusing
 		std::shared_ptr<CompletePolygon> fusion(std::shared_ptr<CompletePolygon> polyToFusion, int Id);
 		std::shared_ptr<AreaEvent> intersection(std::shared_ptr<CompletePolygon> hitPolygon, int Id, int N);
 		bool getUnion(bpolygon hitPolygon, bpolygon &output);
-		double getPercentage(bpt hitPoint);
+		double getAngularPercentage(bpt hitPoint);
+		double getLinearPercentage(bpt hitPoint);
 		bool getAllPercentages(int idx, double &value);
 		bool getAllDistanceFromCenter(int idx, int &value);
 
 		bpt getCenter();
 		void setCursorsSpeed(int idx, double newSize);
-		bpt computeCursorCenter(double p);
+		bpt computeLinearCursorCenter(double p);
+		bpt computeAngularCursorCenter(double p);
 		float computeCursorAlpha(double p, bpt _center);
 		boost::geometry::model::segment<bpt> getSegment(bpt hitPoint);
 		boost::geometry::model::segment<bpt> getSegmentInPixels(bpt hitPointInPixels);

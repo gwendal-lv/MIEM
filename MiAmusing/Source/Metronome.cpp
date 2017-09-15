@@ -47,7 +47,7 @@ void Metronome::setAudioParameter(int m_samplesPerBlock, double m_sampleRate)
 	samplesPerBlock = m_samplesPerBlock;
 	sampleRate = m_sampleRate;
 
-	samplePeriod = round((60.0 * sampleRate) / (double)BPM);
+	samplePeriod = (int)round((60.0 * sampleRate) / (double)BPM);
 }
 
 double Metronome::getNextSample()
@@ -70,10 +70,10 @@ MidiMessage Metronome::getNextMidiMsg()
 
 int Metronome::timeToSample(double ms)
 {
-	return round(ms * sampleRate / 1000);
+	return (int)round(ms * sampleRate / 1000);
 }
 
 int Metronome::BPMtoPeriodInSample(int m_bpm)
 {
-	return round(sampleRate * 60.0 * 4.0 / (double)m_bpm);
+	return (int)round(sampleRate * 60.0 * 4.0 / (double)m_bpm);
 }
