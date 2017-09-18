@@ -1126,7 +1126,7 @@ double CompletePolygon::getLinearPercentage(bpt hitPoint)
 	}
 	
 	double ans = 0;
-	if (abs(contourPoints.outer().at(suiv).get<0>() - contourPoints.outer().at(prev).get<0>()) < 0.01)
+	if (abs(contourPoints.outer().at(suiv).get<0>() - contourPoints.outer().at(prev).get<0>()) > abs(contourPoints.outer().at(suiv).get<1>() - contourPoints.outer().at(prev).get<1>()))
 		ans = anglesPercentages[prev] + ((anglesPercentages[suiv] - anglesPercentages[prev]) / (contourPoints.outer().at(suiv).get<0>() - contourPoints.outer().at(prev).get<0>()))* (hitPoint.get<0>() - contourPoints.outer().at(prev).get<0>());
 	else
 		ans = anglesPercentages[prev] + ((anglesPercentages[suiv] - anglesPercentages[prev]) / (contourPoints.outer().at(suiv).get<1>() - contourPoints.outer().at(prev).get<1>()))* (hitPoint.get<1>() - contourPoints.outer().at(prev).get<1>());
