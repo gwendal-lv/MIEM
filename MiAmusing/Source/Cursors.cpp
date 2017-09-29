@@ -125,7 +125,7 @@ void Cursor::LinkTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon) // link th
 		else if (associate != nullptr && (oldAssociates.find(m_Polygon) == oldAssociates.end() || oldAssociates[m_Polygon].second > 0.05))
 		{
 			oldAssociates[associate].first = center;
-			oldAssociates[associate].second = 0;
+			oldAssociates[associate].second = 0; // distance parcourue depuis que le curseur n'est plus lié à cette aire (= oldAssociate)
 			associate = m_Polygon;
 		}
 	}
@@ -139,6 +139,11 @@ bool Cursor::CanLinkTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon)
 	}
 	else
 		return false;
+}
+
+void Cursor::Inhibit(std::shared_ptr<Miam::EditablePolygon> m_Polygon) // inhibit an area so the cursor won't go immediately on it
+{
+	oldAssociates[m_Polygon] = std::pair<bpt, double>(center, 0);
 }
 
 bool Cursor::isLinkedTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon)

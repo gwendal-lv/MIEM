@@ -32,6 +32,7 @@ public:
 	void LinkTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon);
 	bool isLinkedTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon);
 	bool CanLinkTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon);
+	void Inhibit(std::shared_ptr<Miam::EditablePolygon> m_Polygon);
 	std::shared_ptr<Miam::EditablePolygon> getAssociateArea();
 	bool setReadingPosition(double p);
 	void setCenterPositionNormalize(bpt newCenter);

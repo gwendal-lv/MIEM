@@ -158,13 +158,33 @@ void MultiSceneCanvasManager::SetAudioPositions(std::shared_ptr<Cursor> cursor, 
 					boost::geometry::model::segment<bpt> segB = completeP->getSegment(oldPosition);//InPixels(oldPosition);
 					boost::geometry::model::segment<bpt> segA(oldPosition, cursor->getPosition());//InPixels());
 					boost::geometry::intersection(segA, segB, inter);
+					DBG("interSize = " + inter.size());
 					if (inter.size() == 1)
 					{
 						cursor->setCenterPositionNormalize(inter[0]);//cursor->setCenterPosition(inter[0]);
 					}
+					else if(inter.size()==0)
+					{
+						inter.push_back(cursor->getPosition());
+					}
 					//double old = cursor->getPositionInAssociateArea();
 					DBG("change d'aire");
-					cursor->LinkTo(completeP);
+					if (auto associate = std::dynamic_pointer_cast<CompletePolygon>(cursor->getAssociateArea()))
+					{
+						/*if (auto concernedIntersection = amusingScene->getConcernedIntersection(completeP, associate, inter[0]))
+						{
+							cursor->Inhibit(completeP);
+							cursor->LinkTo(concernedIntersection);
+						}
+						else
+						{*/
+							cursor->LinkTo(completeP);
+						//}
+					}
+					else
+					{
+						cursor->LinkTo(completeP);
+					}
 					//DBG("change d'aire : old "+ (String)old +" new "+ (String)cursor->getPositionInAssociateArea());
 					handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(cursor,eventA->GetType(),cursor->GetId(),eventA->GetConcernedScene())));
 				}
