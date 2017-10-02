@@ -19,17 +19,22 @@
 
 #include <mutex>
 
-
 #include "SceneCanvasComponent.h"
+#include "MultiSceneCanvasComponent.h" // forward-declare not enough (template fcts)
 
 #include "EditableScene.h"
 
 #include "CanvasManagerMode.h"
 
-
-
 #include "EditableArea.h"
 #include "EditablePolygon.h"
+
+#include "MiamExceptions.h"
+#include "XmlUtils.h"
+
+#include "boost/property_tree/ptree.hpp"
+#include "boost/property_tree/xml_parser.hpp"
+namespace bptree = boost::property_tree;
 
 
 class MultiSceneCanvasComponent;
@@ -141,6 +146,8 @@ namespace Miam {
         
         SceneCanvasComponent::Id GetId() {return selfId;}
         
+        MultiSceneCanvasComponent* GetMultiSceneCanvasComponent()
+        { return canvasComponent; }
         uint64_t GetNextAreaId();
         
         // Scenes
@@ -168,8 +175,16 @@ namespace Miam {
         /// Copy-constructor of the event called : else, there would be cast
         /// issues
         void handleAndSendEventSync(std::shared_ptr<GraphicEvent> graphicE);
-        // for optimization purposes
-        void handleAndSendAreaEventSync(std::shared_ptr<AreaEvent> areaE);
+        /// \brief Can be called alone, or from the MultiArea version of this function
+        /// (for optimization purposes).
+        ///
+        /// Should notify the Graphic Session Manager only when directly called.
+        void handleAndSendAreaEventSync(std::shared_ptr<AreaEvent> areaE, bool notifyGraphicSessionManager = true);
+        /// \brief Splits a multi-area event into the sub area events. The main event is also turned into
+        /// a single area event.
+        ///
+        /// Might be called from the AreaEvent-typed function
+        void handleAndSendMultiAreaEventSync(std::shared_ptr<MultiAreaEvent> multiAreaE);
         
         
         
@@ -179,7 +194,7 @@ namespace Miam {
         void recreateAllAsyncDrawableObjects();
         void addAsyncDrawableObject(int insertionIdInScene, std::shared_ptr<IDrawableArea> originalAreaToAdd);
         void updateAsyncDrawableObject(std::shared_ptr<IDrawableArea> originalAreaToUpdate);
-        void deleteAsyncDrawableObject(int idInScene, std::shared_ptr<IDrawableArea> originalAreaToDelete);
+        void deleteAsyncDrawableObject(std::shared_ptr<IDrawableArea> originalAreaToDelete);
 
         public : // external interfacing
         // 3 following functions, to be used very carefully from the OpenGL renderer !
@@ -198,19 +213,44 @@ namespace Miam {
   
         
         // ------ Scenes managing : Add and Delete ------
+        /// \brief Adds a Miam::EditableScene
         virtual void AddScene(std::string name);
+        /// \brief Adds a Miam::EditableScene
         virtual void AddScene(std::shared_ptr<EditableScene> newScene);
-        /// Returns wether the selected scene has been deleted or not (if it
+        /// \Returns wether the selected scene has been deleted or not (if it
         /// was the last one).
         virtual bool DeleteScene();
+        protected :
+        /// \brief Deletes a scene without doing any checks.
+        /// Be careful not to force-delete the selected scene !!
+        ///
+        /// Sends an event about the deletion.
+        virtual void forceDeleteScene(int sceneIndexToDelete);
+        public :
         
         
         
         // ------ areas managing : Add and Delete ------
         
         protected :
-        // does what it says, and sends an event also
+        /// \brief Does what it says, and sends an event also
         void addAreaToScene(std::shared_ptr<EditableScene> scene_, std::shared_ptr<IInteractiveArea> area_);
+        public :
+        /// \brief Does what it says, and sends an event also
+        ///
+        /// The event would not be treated if the addition was ordered directly to the
+        /// concerned scene
+        void AddAreaToScene(size_t sceneIndex, std::shared_ptr<IInteractiveArea> area_);
+        
+        
+        // ---------- Exciters management ----------
+    
+        /// \brief Adds a default initial exciter to the selected scene
+        void OnAddExciter();
+        /// \brief Tries to delete an initial exciter from the selected scene
+        void OnDeleteExciter();
+        
+        
 
         // ---------- Events from CanvasComponent (from View) ----------
         public :
@@ -219,6 +259,70 @@ namespace Miam {
         void OnCanvasMouseUp(const MouseEvent& mouseE);
         void OnResized();
         
+        
+        
+        // - - - - - XML import/export - - - - -
+        public :
+        virtual std::shared_ptr<bptree::ptree> GetTree();
+        /// \brief Charge les scènes depuis un arbre XML (arbre partant du tag
+        /// <canvas>), mais pas leur contenu
+        ///
+        /// \param Le template T sert à préciser le type de scène qui sera
+        /// créé : soit du EditableScene (parce que les InteractiveScene
+        /// ne sont utilisées toutes seules nulle part), soit n'importe quelle
+        /// classe enfant qui en a hérité (AmusingScene, ou autre...)
+        ///
+        /// \return A vector of sub-trees, each sub-tree being the content
+        /// of a given scene (including the <scene> tag)
+        template<class T>
+        std::vector< std::shared_ptr<bptree::ptree> >
+        SetScenesFromTree(bptree::ptree& canvasTree)
+        {
+            size_t indexesCount = XmlUtils::CheckIndexes(canvasTree.get_child("canvas"),
+                                               "scenes", "scene");
+            
+            // Reinit if no exception thrown at this point
+            while (scenes.size() > 0)
+                forceDeleteScene(scenes.size()-1);
+            std::vector< std::shared_ptr<T> > scenesToAdd;
+            std::vector< std::shared_ptr<bptree::ptree> > sceneTrees; // return values
+            scenesToAdd.resize(indexesCount);
+            sceneTrees.resize(indexesCount);
+            
+            // Pre-loading of new scenes (and sub-trees to return) from tree
+            bool sceneFound = false;
+            for (auto& sceneChild : canvasTree.get_child("canvas.scenes"))
+            {
+                // XML reading, and data prepared to be sent back to the
+                // IGraphicSessionManager
+                sceneFound = true;
+                auto index = sceneChild.second.get<size_t>("<xmlattr>.index");
+                // Creation of the scene (addition later)
+                scenesToAdd[index] = std::make_shared<T>(shared_from_this(), canvasComponent->GetCanvas());
+                scenesToAdd[index]->SetName(sceneChild.second.get("name", "Unnamed scene"));
+                // And ordered creation of the sub-tree
+                sceneTrees[index] = std::make_shared<bptree::ptree>();
+                sceneTrees[index]->add_child("scene", sceneChild.second);
+            }
+            // Actual ordered insertion within the canvas manager
+            for (size_t i=0 ; i<scenesToAdd.size() ; i++)
+                AddScene(scenesToAdd[i]); // T must be EditableScene or children
+            
+            // If no scene found in file.... We'll be nice and add an empty one
+            if (!sceneFound)
+            {
+                auto scene = std::make_shared<T>(shared_from_this(), canvasComponent->GetCanvas());
+                scene->SetName("[Scène vide]");
+                AddScene( scene ); // EditableScene or children
+            }
+            
+            // Graphical updates before returning
+            canvasComponent->UpdateSceneButtons(GetInteractiveScenes());
+            
+            
+            
+            return sceneTrees;
+        }
     };
     
 }

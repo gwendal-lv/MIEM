@@ -11,8 +11,9 @@
 #ifndef IGRAPHICSESSIONMANAGER_H_INCLUDED
 #define IGRAPHICSESSIONMANAGER_H_INCLUDED
 
-
+#include <vector>
 #include <memory>
+#include <string>
 
 #include "JuceHeader.h"
 
@@ -21,6 +22,11 @@
 
 #include "GraphicEvent.h"
 
+#include "MiamExceptions.h"
+
+#include "boost/property_tree/ptree.hpp"
+#include "boost/property_tree/xml_parser.hpp"
+namespace bptree = boost::property_tree;
 
 
 namespace Miam
@@ -89,10 +95,11 @@ namespace Miam
         public :
         
         /// - - - - - Construction and destruction - - - - -
-        /// \brief
+        /// \brief Initializes pointers to other modules.
         ///
-        /// Think and calling completeCanvasManagersInitialization() when the canvases
-        /// are created
+        /// ATTENTION pour l'instant, le nombre de canevas doit être défini dans le
+        /// constructeur de la classe réelle qui hérite de celle-ci
+        /// Puis au chargement XML, le nombre de canevas chargés devra correspondre...
         IGraphicSessionManager(IPresenter* presenter_);
         virtual ~IGraphicSessionManager();
         
@@ -160,6 +167,20 @@ namespace Miam
         // - - - - - Area Events (from managed canvases) - - - - -
         
         
+        // - - - - - XML import/export - - - - -
+        public :
+        virtual std::shared_ptr<bptree::ptree> GetCanvasesTree();
+        virtual void SetFromTree(bptree::ptree& graphicSessionTree) = 0;
+        /// \brief Récupère les sous-arbres (les scènes) des canevas ; chaque sous-
+        /// arbre du vecteur commence par un noeud <canvas>.
+        ///
+        /// Les canevas sont créés dans le constructeur de l'implémentation réelle
+        /// de cette interface IGraphicSessionManager, et leur taille est fixée à la
+        /// création.
+        /// Donc on ne créé pas les canevas ici... Par contre on vérifie (exception
+        /// lancée sinon) que le nombre est cohérent dans le fichier XML.
+        std::vector< std::shared_ptr<bptree::ptree> >
+        ExtractCanvasesSubTrees(bptree::ptree& canvasesTree);
     };
     
 }

@@ -13,6 +13,8 @@
 
 #include <string>
 
+#include "ParametersIds.h"
+
 
 namespace Miam
 {
@@ -30,6 +32,8 @@ namespace Miam
         enum ParamType {
             
             None,
+            
+            Reinitialize,
 
 			Play,
 			Pause,

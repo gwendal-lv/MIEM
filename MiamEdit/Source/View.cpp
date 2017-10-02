@@ -8,6 +8,9 @@
   ==============================================================================
 */
 
+#include <string>
+#include <regex>
+
 #include "View.h"
 
 #include "Presenter.h"
@@ -66,7 +69,55 @@ void View::ChangeAppMode(AppMode newAppMode)
 {
     mainContentComponent->ChangeAppMode(newAppMode);
 }
-void View::DisplayInfo(const String& message)
+void View::DisplayInfo(const std::string& message, bool alsoDisplayInNewWindow)
 {
     mainContentComponent->DisplayInfo(message);
+#ifndef __MIAMOBILE
+    if (alsoDisplayInNewWindow)
+        displayInfoInNewWindow(message);
+#endif
+}
+void View::displayInfoInNewWindow(const std::string& message)
+{
+    // Code pompé à mort depuis la démo Juce
+    DialogWindow::LaunchOptions options;
+    Label* label = new Label();
+    label->setText (message, dontSendNotification);
+    label->setColour (Label::textColourId, Colours::white);
+    options.content.setOwned (label);
+    
+    int width = 400;
+    int height = 320;
+    options.content->setSize (width - 100, height - 50);
+    
+    // Regex pour retrouver le titre entre crochets
+    // parenthèses pour récupérer le contenu uniquement
+    // + signifie "au moins 1", * signifie "au moins 0"
+    // double \\ parce que \ est aussi un caractère spécial pour le c++
+    // ? -> "non-greedy" ou "lazy" -> s'arrêtera dès le premier ] rencontré
+    // (on met le ? juste après le + parce que le caractère "lazy" s'applique au
+    // contenu matché : on est le plus feignant possible sur la sortie)
+    std::regex betweenBracketsRegex("\\[(.*?)\\]");
+    std::smatch matchResults;
+    std::string windowTitle = "Information";
+    // If something is found
+    if (std::regex_search(message, matchResults, betweenBracketsRegex))
+    {
+        windowTitle += ": ";
+        // We get only the second match results (matchResults is an iterator)
+        // First result seem to be the entire string concerned about the regex
+        // (not the inner [] selected text)
+        windowTitle += *( ++ (matchResults.begin() ) );
+    }
+    
+    options.dialogTitle                   = windowTitle.c_str();
+    options.dialogBackgroundColour        = Colour (0xff4a4a4a);
+    options.escapeKeyTriggersCloseButton  = true;
+    options.useNativeTitleBar             = true;
+    options.resizable                     = true;
+    
+    auto dialogWindow = options.launchAsync();
+    
+    if (dialogWindow != nullptr)
+        dialogWindow->centreWithSize (width, height);
 }

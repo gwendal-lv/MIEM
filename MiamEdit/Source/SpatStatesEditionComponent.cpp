@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.0.1
+  Created with Projucer version: 5.0.2
 
   ------------------------------------------------------------------------------
 
@@ -146,7 +146,7 @@ void SpatStatesEditionComponent::paint (Graphics& g)
 
     //[/UserPrePaint]
 
-    g.fillAll (Colour (0xffd9d9d9));
+    g.fillAll (Colour (0xffbfbfbf));
 
     //[UserPaint] Add your own custom painting code here..
 
@@ -192,21 +192,25 @@ void SpatStatesEditionComponent::buttonClicked (Button* buttonThatWasClicked)
     if (buttonThatWasClicked == addSpatStateTextButton)
     {
         //[UserButtonCode_addSpatStateTextButton] -- add your button handler code here..
+        editionManager->OnAddState();
         //[/UserButtonCode_addSpatStateTextButton]
     }
     else if (buttonThatWasClicked == deleteSpatStateTextButton)
     {
         //[UserButtonCode_deleteSpatStateTextButton] -- add your button handler code here..
+        editionManager->OnDeleteSelectedState();
         //[/UserButtonCode_deleteSpatStateTextButton]
     }
     else if (buttonThatWasClicked == stateUpTextButton)
     {
         //[UserButtonCode_stateUpTextButton] -- add your button handler code here..
+        editionManager->OnMoveSelectedStateUp();
         //[/UserButtonCode_stateUpTextButton]
     }
     else if (buttonThatWasClicked == stateDownTextButton)
     {
         //[UserButtonCode_stateDownTextButton] -- add your button handler code here..
+        editionManager->OnMoveSelectedStateDown();
         //[/UserButtonCode_stateDownTextButton]
     }
 
@@ -279,23 +283,38 @@ void SpatStatesEditionComponent::SelectAndUpdateState(int stateIndex, std::strin
     // We keep here this copy of the model internal matrix
     spatMatrix = newSpatMatrix;
 
-    // Buttons state (activated or not)
-    bool isAnyStateSelected = spatStatesComboBox->getSelectedItemIndex() != -1;
-    stateUpTextButton->setEnabled(isAnyStateSelected);
-    stateDownTextButton->setEnabled(isAnyStateSelected);
+    // Internal updates
+    spatStatesComboBox->setSelectedItemIndex(stateIndex, NotificationType::dontSendNotification);
+    previousStateIndex = spatStatesComboBox->getSelectedItemIndex();
 
     // Text elements
     linksInfoLabel->setText(infoText, NotificationType::dontSendNotification);
 
-    // Internal updates
-    spatStatesComboBox->setSelectedItemIndex(stateIndex, NotificationType::dontSendNotification);
-    previousStateIndex = spatStatesComboBox->getSelectedItemIndex();
+    // Last updates
     updateMatrix();
+    // Buttons enabled state (should be PRESENTER code normally....)
+    bool isAnyStateSelected = spatStatesComboBox->getSelectedItemIndex() != -1;
+    deleteSpatStateTextButton->setEnabled(isAnyStateSelected);
+    stateUpTextButton->setEnabled(isAnyStateSelected);
+    stateDownTextButton->setEnabled(isAnyStateSelected);
+    stateUpTextButton->setEnabled(isAnyStateSelected);
+    stateDownTextButton->setEnabled(isAnyStateSelected);
+    if (isAnyStateSelected) // up/down may be deactivated depending on state's count
+    {
+        if (spatStatesComboBox->getSelectedItemIndex() == 0)
+            stateUpTextButton->setEnabled(false);
+        else if (spatStatesComboBox->getSelectedItemIndex()
+                 == spatStatesComboBox->getNumItems()-1)
+            stateDownTextButton->setEnabled(false);
+    }
 }
 void SpatStatesEditionComponent::updateMatrix()
 {
     // matrix data sent from the most recent that this class got from model
-    labelledMatrixComponent->GetMatrixComponent()->SetSpatMatrix(spatMatrix);
+    if (spatMatrix) // may not exist if no state is selected
+        labelledMatrixComponent->GetMatrixComponent()->SetSpatMatrix(spatMatrix);
+    else // forced null matrix update
+        labelledMatrixComponent->GetMatrixComponent()->SetSpatMatrix(std::make_shared<SpatMatrix>());
 
     // Graphical attributes
     // if a valid state is selected
@@ -339,7 +358,7 @@ BEGIN_JUCER_METADATA
                  constructorParams="" variableInitialisers="" snapPixels="8" snapActive="1"
                  snapShown="1" overlayOpacity="0.330" fixedSize="1" initialWidth="1024"
                  initialHeight="600">
-  <BACKGROUND backgroundColour="ffd9d9d9"/>
+  <BACKGROUND backgroundColour="ffbfbfbf"/>
   <GROUPCOMPONENT name="State Editor group component" id="1b9d22beb5fc6bfd" memberName="stateEditorGroupComponent"
                   virtualName="" explicitFocusOrder="0" pos="0 60 0M 60M" outlinecol="ff454545"
                   textcol="ff000000" title="Routing matrix for selected state"/>

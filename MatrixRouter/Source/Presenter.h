@@ -15,6 +15,7 @@
 #include "PeriodicUpdateThread.h"
 
 #include <cmath>
+#include <memory>
 
 #include "JuceHeader.h"
 
@@ -40,27 +41,33 @@ namespace Miam {
         // - - - - - links to other modules - - - - -
         private :
         MatrixRouterAudioProcessor& model;
-        NetworkModel& networkModel;
+        std::shared_ptr<NetworkModel> networkModel;
         
         // - - - - - graphical objects - - - - -
         /// \brief Kept within the presenter, sent to the ProcessorEditor (=View)
         /// when necessary (when recreated by the user) for the View to become its parent
         ScopedPointer<OscMatrixComponent> oscMatrixComponent;
         
+        std::string oscAddressCopy;
+        
         // - - - - - time management - - - - -
         const double updateFrequency_Hz = 15.0;
         const long updatePeriod_us = 66667; // rien de bien diabolique, correspond à 15Hz
+        bool isModelReadyToReceive = false; // But model can force "false"
         
         // ================== METHODS ===================
         
         // - - - - - Construction & destruction - - - - -
         public :
-        Presenter(MatrixRouterAudioProcessor& _model, NetworkModel& _networkModel);
+        Presenter(MatrixRouterAudioProcessor& _model, std::shared_ptr<NetworkModel> _networkModel);
         ~Presenter();
         
         // Callback from the Model, after the constructor of the plugin editor
         void OnPluginEditorCreated(MatrixRouterAudioProcessorEditor* view);
 
+        // - - - - - Lock-free Communication - - - - -
+        virtual void SendParamChange(AsyncParamChange& paramChange) override;
+        virtual bool TrySendParamChange(AsyncParamChange& paramChange) override;
         
         // - - - - - Setters and Getters - - - - -
         OscMatrixComponent* GetOscMatrixComponent() {return oscMatrixComponent;}
@@ -79,6 +86,7 @@ namespace Miam {
         /// \brief Translates the data into a Miam::AsyncParamChange, then sends the data
         /// to the Model.
         void OnSliderValueChanged(int row, int col, double value);
+        void OnMatrixZeroed();
         void OnUdpPortChanged(int udpPort);
         void OnAttackDurationChanged(double attackDuration);
         

@@ -333,19 +333,29 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent&
     {
         if (mouseE.source.getIndex() == 0)
         {
-            // When an area is already selected
+            // - - - - - When an area is already selected - - - - -
+            // - - - - - Check for UNselection - - - - -
             if (selectedArea)
             {
                 // did we clic next to a point, or at least inside the area ?
-				AreaEventType lastEventType = selectedArea->TryBeginPointMove(clicLocation);
-                if(lastEventType == AreaEventType::NothingHappened)
+				AreaEventType lastEventType = selectedArea->TryBeginPointMove(clicLocation); // !! starts a point dragging !
+                if (lastEventType == AreaEventType::NothingHappened)
                 {
                     /* if not, we are sure that we clicked outside (checked by tryBeginPointMove)
                      * => it is a DEselection (maybe selection of another area, just after this)
                      */
                     graphicE = SetSelectedArea(nullptr);
                 }
+                else // special points which are not point dragging
+                {
+                    // we must stop the dragging that was not actually wanted
+                    if ( canvasManager.lock()->GetMode() == CanvasManagerMode::WaitingForPointCreation
+                        || canvasManager.lock()->GetMode() == CanvasManagerMode::WaitingForPointDeletion )
+                        selectedArea->EndPointMove();
+                }
             }
+            
+            // - - - - - Then, check for Selection - - - - -
             // While no area is selected : we look for a new one to select,
             // starting from the area on the upper layer (last draw on canvas)
             for (int i=(int)(areas.size())-1 ; // int and not the *unsigned* size_t
@@ -374,6 +384,9 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent&
                         throw std::runtime_error(std::string("Cannot cast the area that should be selected to a Miam::EditableArea"));
                 }
             }
+            
+            // - - - - - Special behaviors depending on canvas state - - - - -
+            
             // New point creation POLYGONE SEULEMENT, PAS LES AUTRES FORMES !!!!!
             // Le bouton doit d'ailleurs apparaître de manière dynamique....
             if (canvasManager.lock()->GetMode() == CanvasManagerMode::WaitingForPointCreation)
@@ -382,6 +395,7 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent&
                 std::shared_ptr<EditablePolygon> selectedPolygon = std::dynamic_pointer_cast<EditablePolygon>(selectedArea);
                 if (selectedPolygon)
                 {
+                    bypassMouseEventsUntilMouseUp = true; // if successful or not
                     if(! selectedPolygon->TryCreatePoint(clicLocation))
                     {
                         // Here : the point wasn't created
@@ -406,9 +420,12 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent&
                 if (selectedPolygon)
                 {
                     std::string returnMsg = (selectedPolygon->TryDeletePoint(clicLocation)).toStdString();
+                    bypassMouseEventsUntilMouseUp = true; // if successful or not
                     // no issue
                     if (returnMsg.empty())
+                    {
                         graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, AreaEventType::ShapeChanged));
+                    }
                     // error message contains something
                     else
                     {
@@ -458,7 +475,7 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDrag(const MouseEvent&
     {
         if (mouseE.source.getIndex() == 0)
         {
-            if (selectedArea)
+            if (selectedArea && !bypassMouseEventsUntilMouseUp)
             {
                 // The area will create the event type itself, then we build the AreaEvent
                 AreaEventType areaEventType = selectedArea->TryMovePoint(mouseLocation);
@@ -480,14 +497,37 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseUp(const MouseEvent& m
     {
         if (mouseE.source.getIndex() == 0)
         {
+            bypassMouseEventsUntilMouseUp = false;
             if (selectedArea)
             {
-				AreaEventType areaEventType = selectedArea->EndPointMove();
-				graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, areaEventType));
+                graphicE = std::make_shared<AreaEvent>(selectedArea,
+                                                       selectedArea->EndPointMove(),
+                                                       GetSelectedAreaSceneId(),
+                                                       shared_from_this());
             }
         }
     }
     
     return graphicE;
 }
+
+
+
+// = = = = = = = = = = XML import/export = = = = = = = = = =
+std::shared_ptr<bptree::ptree> EditableScene::GetTree()
+{
+    auto sceneTree = std::make_shared<bptree::ptree>();
+    sceneTree->put("name", name);
+    bptree::ptree areasTree;
+    for (size_t i=0; i < areas.size() ; i++)
+    {
+        auto areaTree = areas[i]->GetTree();
+        areaTree->put("<xmlattr>.index", i);
+        areasTree.add_child("area", *areaTree);
+    }
+    sceneTree->add_child("areas", areasTree);
+    return sceneTree;
+}
+
+
 

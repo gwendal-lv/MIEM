@@ -19,6 +19,7 @@
 #include "SceneEvent.h"
 
 #include "SpatPolygon.h"
+#include "XmlUtils.h"
 
 using namespace Miam;
 
@@ -26,7 +27,7 @@ using namespace Miam;
 // ========== CONSTRUCTION and DESTRUCTION ==========
 
 GraphicSessionManager::GraphicSessionManager(View* _view, Presenter* presenter_) :
-    IGraphicSessionManager(presenter_),
+    GraphicSpatSessionManager(presenter_),
     view(_view)
 {
     setMode(GraphicSessionMode::Loading);
@@ -38,27 +39,21 @@ GraphicSessionManager::GraphicSessionManager(View* _view, Presenter* presenter_)
     // Links to the view module
     sceneEditionComponent = view->GetMainContentComponent()->GetSceneEditionComponent();
     
-    // ICI ON CHARGE DES TRUCS
-    // Canvases const count defined here PLUS OU MOINS
+    // NOMBRE DE CANEVAS EST DÉFINI ICI, 2 en l'occurence pour le Miam Edit (idem Miam Spat)
     // On doit créer les sous-objets graphiques de canevas (View) avant de
     // les transmettre au sous-module de gestion de canevas (Presenter) que l'on crée
     // d'ailleurs ici aussi.
     canvasManagers.push_back(std::shared_ptr<MultiSceneCanvasInteractor>(new MultiSceneCanvasEditor(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas1)));    
     canvasManagers.push_back(std::shared_ptr<MultiSceneCanvasInteractor>(new MultiSceneCanvasEditor(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas2)));
     
-    
     // Links to the view module
     sceneEditionComponent->CompleteInitialization(this, multiCanvasComponent);
 
     for (size_t i=0 ; i<canvasManagers.size() ; i++)
     {
-        // After canvases are created : scenes creation
-        // DEFAULT SCENES, TO BE CHANGED
-        canvasManagers[i]->AddScene("Scène 1 quoi");
-        canvasManagers[i]->AddScene("Scène 2 quoi");
-        canvasManagers[i]->AddScene("Scène 3 quoi");
+        // After canvases are created : creation of 1 empty scene (to avoid bugs...)
+        canvasManagers[i]->AddScene("[scène vide]");
     }
-    
     
     // Finally, state of the presenter
     setMode(GraphicSessionMode::Loaded);
@@ -69,16 +64,10 @@ GraphicSessionManager::GraphicSessionManager(View* _view, Presenter* presenter_)
     
     // SÉLECTION/CHARGEMENT D'UN TRUC PAR DÉFAUT
     SetSelectedCanvas(canvasManagers.front());
+     
 }
 
-void GraphicSessionManager::CompleteInitialisation(std::shared_ptr<SpatInterpolator<double>> _spatInterpolator)
-{
-    spatInterpolator = _spatInterpolator;
-}
-
-GraphicSessionManager::~GraphicSessionManager()
-{
-}
+GraphicSessionManager::~GraphicSessionManager() {}
 
 
 // Testing purposes only
@@ -176,7 +165,7 @@ std::shared_ptr<MultiSceneCanvasEditor> GraphicSessionManager::getSelectedCanvas
     std::shared_ptr<MultiSceneCanvasEditor> canvasPtr = std::dynamic_pointer_cast<MultiSceneCanvasEditor>( selectedCanvas);
     if (canvasPtr)
         return canvasPtr;
-    else throw std::runtime_error("Canvas not selected, or canvas cannot be casted a Miam::MultiSceneCanvasEditor");
+    else throw std::runtime_error("Canvas not selected, or canvas cannot be casted as a Miam::MultiSceneCanvasEditor");
 }
 
 
@@ -186,14 +175,25 @@ std::shared_ptr<MultiSceneCanvasEditor> GraphicSessionManager::getSelectedCanvas
  */
 void GraphicSessionManager::setMode(GraphicSessionMode newMode)
 {
-    // bypass of everything if the session is still loading
-    if (mode == GraphicSessionMode::Loading)
+    // OLD mode managing
+    switch (mode)
     {
-        if (newMode != GraphicSessionMode::Loaded)
-            return;
+        case GraphicSessionMode::Null :
+            break; // direct break, we don't do anything for now
+            
+        case GraphicSessionMode::Loading :
+            // bypass of everything if the session is still loading
+            if (newMode != GraphicSessionMode::Loaded)
+                return;
+            break;
+            
+        default:
+            // Closing of anything pop-up-like displayed on a mode change
+            // Pour éviter le problème d'assertion de Juce, qui ne ferme pas les popups comme il faut avec les menus déroulants... Tjs bugué sous Juce 5.0.2
+            sceneEditionComponent->CloseTemporaryDisplayedObjects();
     }
-
     
+    // NEW mode managing
     switch(newMode)
     {
         case GraphicSessionMode::Null :
@@ -220,11 +220,13 @@ void GraphicSessionManager::setMode(GraphicSessionMode newMode)
             sceneEditionComponent->SetCanvasInfo(selectedCanvas->GetId());
             sceneEditionComponent->SetCanvasGroupHidden(false);
             sceneEditionComponent->SetDeleteSceneButtonEnabled(getSelectedCanvasAsEditable()->GetScenesCount() > 1);
+            sceneEditionComponent->SetAreaGroupHidden(false);
             sceneEditionComponent->SetAreaGroupReduced(true);
             if (areaToCopy)
                 sceneEditionComponent->SetPasteEnabled(true);
             sceneEditionComponent->SetSpatGroupReduced(true);
             sceneEditionComponent->SetInitialStateGroupHidden(false);
+            sceneEditionComponent->SetInitialStateGroupReduced(true);
             sceneEditionComponent->resized(); // right menu update
             
             view->DisplayInfo("Editing a Canvas and its Scenes");
@@ -236,6 +238,7 @@ void GraphicSessionManager::setMode(GraphicSessionMode newMode)
             
             sceneEditionComponent->SetEnabledAllControls(true, true); // as we may come from "waiting for something creation/deletion"
             sceneEditionComponent->SetCanvasGroupHidden(true);
+            sceneEditionComponent->SetAreaGroupHidden(false);
             sceneEditionComponent->SetAreaGroupReduced(false);
             if (areaToCopy)
                 sceneEditionComponent->SetPasteEnabled(true);
@@ -251,6 +254,21 @@ void GraphicSessionManager::setMode(GraphicSessionMode newMode)
             /*
          case GraphicSessionMode::EditingArea :
             break;*/
+            
+            
+        case GraphicSessionMode::ExcitersEdition :
+            sceneEditionComponent->SetCanvasGroupHidden(true);
+            sceneEditionComponent->SetAreaGroupHidden(true);
+            sceneEditionComponent->SetSpatGroupReduced(true);
+            sceneEditionComponent->SetInitialStateGroupHidden(false);
+            sceneEditionComponent->SetInitialStateGroupReduced(false);
+            sceneEditionComponent->SetDeleteExciterButtonEnabled(false);
+            sceneEditionComponent->resized(); // right menu update
+            break;
+        case GraphicSessionMode::ExciterSelected :
+            sceneEditionComponent->SetDeleteExciterButtonEnabled(true);
+            break;
+            
             
         case GraphicSessionMode::WaitingForPointCreation :
             sceneEditionComponent->DisableAllButtonsBut("Add Point text button");
@@ -277,9 +295,20 @@ void GraphicSessionManager::CanvasModeChanged(CanvasManagerMode canvasMode)
         case CanvasManagerMode::SceneOnlySelected :
             setMode(GraphicSessionMode::CanvasSelected);
             break;
+            
         case CanvasManagerMode::AreaSelected :
             setMode(GraphicSessionMode::AreaSelected);
             break;
+            
+            
+        case CanvasManagerMode::ExcitersEdition :
+            setMode(GraphicSessionMode::ExcitersEdition);
+            break;
+        case CanvasManagerMode::ExciterSelected :
+            setMode(GraphicSessionMode::ExciterSelected);
+            break;
+            
+            
         case CanvasManagerMode::WaitingForPointCreation :
             setMode(GraphicSessionMode::WaitingForPointCreation);
             break;
@@ -306,6 +335,14 @@ void GraphicSessionManager::OnEnterSpatScenesEdition()
     // Forced update of canvases
     for (size_t i=0 ; i<canvasManagers.size() ; i++)
         canvasManagers[i]->OnResized();
+    // To update menus related to the selected area
+    if (auto selectedArea = getSelectedCanvasAsEditable()->GetSelectedArea())
+        getSelectedCanvasAsEditable()->SetSelectedArea(selectedArea);
+}
+std::shared_ptr<bptree::ptree> GraphicSessionManager::OnLeaveSpatScenesEdition()
+{
+    // Save to XML (Presenter does it)
+    return GetCanvasesTree();
 }
 
 void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_)
@@ -331,7 +368,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 
 void GraphicSessionManager::DisplayInfo(String info)
 {
-    view->DisplayInfo(info);
+    view->DisplayInfo(info.toStdString());
 }
 
 
@@ -404,11 +441,20 @@ void GraphicSessionManager::OnDeletePoint()
     else
         selectedCanvas->SetMode(CanvasManagerMode::AreaSelected);
 }
-void GraphicSessionManager::OnAddArea()
+void GraphicSessionManager::OnAddArea(int areaType)
 {
     if (selectedCanvas)
     {
-        getSelectedCanvasAsEditable()->AddDefaultArea(GetNextAreaId());
+        // Information needed
+        float ratio = selectedCanvas->GetMultiSceneCanvasComponent()->GetCanvas()->GetRatio();
+        int polygonPointsCount;
+        if (areaType >= AreaDefaultType::Polygon)
+            polygonPointsCount = areaType;
+        else
+            throw std::logic_error("Cannot add something else than polygons at the moment");
+        // Actual addition here
+        auto spatPolygon = std::make_shared<SpatPolygon>(GetNextAreaId(), bpt::point(0.5, 0.5), polygonPointsCount, 0.15, Colours::grey, ratio);
+        getSelectedCanvasAsEditable()->AddArea(spatPolygon);
         selectedCanvas->CallRepaint();
     }
     else
@@ -456,6 +502,18 @@ void GraphicSessionManager::OnBringToFront()
     if (selectedCanvas)
         getSelectedCanvasAsEditable()->OnBringToFront();
     else throw std::runtime_error("Cannot bring something to front : no canvas selected");
+}
+void GraphicSessionManager::OnAddExciter()
+{
+    if (selectedCanvas)
+        getSelectedCanvasAsEditable()->OnAddExciter();
+    else throw std::runtime_error("Cannot send 'add exciter' command to a canvas (none selected)");
+}
+void GraphicSessionManager::OnDeleteExciter()
+{
+    if (selectedCanvas)
+        getSelectedCanvasAsEditable()->OnDeleteExciter();
+    else throw std::runtime_error("Cannot send 'delete exciter' command to a canvas (none selected)");
 }
 
 
@@ -511,9 +569,7 @@ void GraphicSessionManager::OnPasteArea()
             throw std::runtime_error("No valid area can be pasted from the clipboard.");
     }
     else
-        throw std::runtime_error("Cannot paste an area : no canvas selected. Paste button should not be clickable at the moment.");
-    
-    
+        throw std::logic_error("Cannot paste an area : no canvas selected. Paste button should not be clickable at the moment.");
 }
 
 void GraphicSessionManager::OnSpatStateChanged(int spatStateIdx)
@@ -529,4 +585,21 @@ void GraphicSessionManager::OnSpatStateChanged(int spatStateIdx)
         getSelectedCanvasAsEditable()->OnResized();
     }
 }
+
+
+void GraphicSessionManager::OnEnterExcitersEdition()
+{
+    if (selectedCanvas)
+        selectedCanvas->SetMode(CanvasManagerMode::ExcitersEdition);
+    else
+        throw std::logic_error("Cannot switch to 'Exciters Edition mode' because no canvas is currently selected");
+}
+void GraphicSessionManager::OnQuitExcitersEdition()
+{
+    if (selectedCanvas)
+        selectedCanvas->SetMode(CanvasManagerMode::SceneOnlySelected);
+    else
+        throw std::logic_error("Cannot quit 'Exciters Edition mode' because no canvas is currently selected");
+}
+
 

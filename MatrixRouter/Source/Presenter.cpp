@@ -19,17 +19,21 @@
 
 #include "MatrixSlider.h" // min and max volumes
 
+#include "ModelDefines.h" // Enums for lock-free communication
+
 using namespace Miam;
 
 
 
 
 // =================== Construction & destruction ===================
-Presenter::Presenter(MatrixRouterAudioProcessor& _model, NetworkModel& _networkModel)
+Presenter::Presenter(MatrixRouterAudioProcessor& _model, std::shared_ptr<NetworkModel> _networkModel)
     :
-    model(_model), networkModel(_networkModel)
+    model(_model), networkModel(_networkModel),
+oscAddressCopy(networkModel->GetOscAddress()) // thread-safe at this point
 {
     oscMatrixComponent = new OscMatrixComponent(this);
+    oscMatrixComponent->SetNetworkHelpContent(networkModel->GetOscCommandsHelp());
 }
 
 Presenter::~Presenter()
@@ -55,6 +59,23 @@ void Presenter::OnPluginEditorCreated(MatrixRouterAudioProcessorEditor* view)
 
 
 
+// =================== Lock-free communication ===================
+void Presenter::SendParamChange(AsyncParamChange& paramChange)
+{
+    //if (isModelReadyToReceive)
+        LockFreeParamChangeSender::SendParamChange(paramChange);
+    //else
+        //throw std::runtime_error("Cannot send the parameter (model is not ready)");
+}
+bool Presenter::TrySendParamChange(AsyncParamChange& paramChange)
+{
+    if (isModelReadyToReceive)
+        return LockFreeParamChangeSender::TrySendParamChange(paramChange);
+    else
+        return false;
+}
+
+
 // =================== Periodic Update ===================
 
 void Presenter::UpdateFromView(MatrixRouterAudioProcessorEditor* view)
@@ -66,13 +87,18 @@ void Presenter::UpdateFromView(MatrixRouterAudioProcessorEditor* view)
     {
         switch (newParamChange.Type)
         {
+            case AsyncParamChange::Activate :
+                if (newParamChange.Id1 == ActivateId::PresenterToModelParametersTransmission)
+                    isModelReadyToReceive = true;
+                break;
+                
             case AsyncParamChange::InputsAndOutputsCount :
                 oscMatrixComponent->SetActiveSliders(newParamChange.Id1, newParamChange.Id2);
                 break;
                 
             case AsyncParamChange::Duration :
-                if (newParamChange.Id1 == 0) // Attack time
-                    oscMatrixComponent->SetAttackSliderValue(newParamChange.DoubleValue);
+                if (newParamChange.Id1 == DurationId::AttackTime) // Attack time
+                    oscMatrixComponent->SetAttackSliderValue( (double) newParamChange.IntegerValue);
                 break;
                 
             case AsyncParamChange::Volume :
@@ -107,14 +133,21 @@ void Presenter::OnSliderValueChanged(int row, int col, double value)
         paramChange.FloatValue = 0.0f;
     else
         paramChange.FloatValue = (float)Decibels::decibelsToGain(value);
-        
+    
     // Enqueuing
-    SendParamChange(paramChange);
+    TrySendParamChange(paramChange);
+}
+void Presenter::OnMatrixZeroed()
+{
+    AsyncParamChange paramChange;
+    paramChange.Type = AsyncParamChange::Reinitialize;
+    // Enqueuing
+    TrySendParamChange(paramChange);
 }
 void Presenter::OnUdpPortChanged(int udpPort)
 {
-    // At this point : called from the Juce UI thread (so : OK), notifyModel=true
-    bool isUdpConnected = model.GetNetworkModel()->SetUdpPort(udpPort, true);
+    // At this point : called from the Juce UI thread (so : OK), notifyModel=false
+    bool isUdpConnected = networkModel->SetUdpPort(udpPort, false);
     // Self-update
     this->OnNewUdpPort(udpPort, isUdpConnected);
 }
@@ -122,18 +155,18 @@ void Presenter::OnAttackDurationChanged(double attackDuration)
 {
     AsyncParamChange paramChange;
     paramChange.Type = AsyncParamChange::Duration;
-    paramChange.Id1 = 0; // ZERO means "attack duration"
-    paramChange.DoubleValue = attackDuration;
+    paramChange.Id1 = DurationId::AttackTime;
+    paramChange.IntegerValue = (int) std::round(attackDuration);
     
     // Enqueuing
-    SendParamChange(paramChange);
+    TrySendParamChange(paramChange);
 }
 
 
 // =================== (possibly) Synchronous callbacks from Model ===================
 void Presenter::OnNewUdpPort(int udpPort, bool isConnected)
 {
-    oscMatrixComponent->SetUdpPortAndMessage(udpPort, isConnected);
+    oscMatrixComponent->SetUdpPortAndMessage(udpPort, isConnected, oscAddressCopy);
 }
 
 

@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.0.1
+  Created with Projucer version: 5.0.2
 
   ------------------------------------------------------------------------------
 
@@ -21,6 +21,8 @@
 #include "GraphicSessionManager.h"
 
 #include <cmath>
+
+#include "IDrawableArea.h" // areas default types defines
 //[/Headers]
 
 #include "SceneEditionComponent.h"
@@ -251,7 +253,7 @@ SceneEditionComponent::SceneEditionComponent ()
     addExciterTextButton->addListener (this);
     addExciterTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
     addExciterTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
-    addExciterTextButton->setColour (TextButton::textColourOffId, Colour (0x66000000));
+    addExciterTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
     addAndMakeVisible (deleteExciterTextButton = new TextButton ("Delete Exciter text button"));
     deleteExciterTextButton->setButtonText (TRANS("Delete"));
@@ -259,7 +261,7 @@ SceneEditionComponent::SceneEditionComponent ()
     deleteExciterTextButton->addListener (this);
     deleteExciterTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
     deleteExciterTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
-    deleteExciterTextButton->setColour (TextButton::textColourOffId, Colour (0x66000000));
+    deleteExciterTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
     addAndMakeVisible (editInitialStateTextButton = new TextButton ("Edit Initial State text button"));
     editInitialStateTextButton->setButtonText (TRANS("Edit initial scene state"));
@@ -267,13 +269,6 @@ SceneEditionComponent::SceneEditionComponent ()
     editInitialStateTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
     editInitialStateTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     editInitialStateTextButton->setColour (TextButton::textColourOffId, Colour (0x66000000));
-
-    addAndMakeVisible (endEditInitialStateTextButton = new TextButton ("End Edit Initial State text button"));
-    endEditInitialStateTextButton->setButtonText (TRANS("Go back to areas edition"));
-    endEditInitialStateTextButton->addListener (this);
-    endEditInitialStateTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
-    endEditInitialStateTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
-    endEditInitialStateTextButton->setColour (TextButton::textColourOffId, Colour (0x66000000));
 
     addAndMakeVisible (sceneNameLabel = new Label ("Scene Name Label",
                                                    TRANS("Name:")));
@@ -293,6 +288,11 @@ SceneEditionComponent::SceneEditionComponent ()
     sceneNameTextEditor->setPopupMenuEnabled (true);
     sceneNameTextEditor->setText (String());
 
+    addAndMakeVisible (excitersEditionButton = new ToggleButton ("Exciters Edition button"));
+    excitersEditionButton->setButtonText (TRANS("Exciters edition mode"));
+    excitersEditionButton->addListener (this);
+    excitersEditionButton->setColour (ToggleButton::textColourId, Colours::black);
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -309,6 +309,7 @@ SceneEditionComponent::SceneEditionComponent ()
     canvasGroupReducedH = 0; // nothing inside
     areaGroupReducedH = 80; // first bloc of buttons only
     spatGroupReducedH = 0; // nothing inside
+    initialStateGroupReducedH = 48; // toggle button only
 
     //[/Constructor]
 }
@@ -349,9 +350,9 @@ SceneEditionComponent::~SceneEditionComponent()
     addExciterTextButton = nullptr;
     deleteExciterTextButton = nullptr;
     editInitialStateTextButton = nullptr;
-    endEditInitialStateTextButton = nullptr;
     sceneNameLabel = nullptr;
     sceneNameTextEditor = nullptr;
+    excitersEditionButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -364,7 +365,7 @@ void SceneEditionComponent::paint (Graphics& g)
     //[UserPrePaint] Add your own custom painting code here..
     //[/UserPrePaint]
 
-    g.fillAll (Colour (0xffd9d9d9));
+    g.fillAll (Colour (0xffbfbfbf));
 
     //[UserPaint] Add your own custom painting code here..
     //[/UserPaint]
@@ -410,23 +411,28 @@ void SceneEditionComponent::resized()
     sceneLeftTextButton->setBounds (16, 8 + 72, 88, 24);
     sceneRightTextButton->setBounds (104, 8 + 72, 88, 24);
     canvasInfoLabel->setBounds (16, 8 + 48, 176, 24);
-    initialStateGroupComponent->setBounds (8, ((8 + 168 - -8) + 240 - -8) + 80 - -8, 192, 88);
-    addExciterTextButton->setBounds (16, (((8 + 168 - -8) + 240 - -8) + 80 - -8) + 24, 88, 24);
-    deleteExciterTextButton->setBounds (104, (((8 + 168 - -8) + 240 - -8) + 80 - -8) + 24, 88, 24);
+    initialStateGroupComponent->setBounds (8, ((8 + 168 - -8) + 240 - -8) + 80 - -8, 192, 80);
+    addExciterTextButton->setBounds (16, (((8 + 168 - -8) + 240 - -8) + 80 - -8) + 48, 88, 24);
+    deleteExciterTextButton->setBounds (104, (((8 + 168 - -8) + 240 - -8) + 80 - -8) + 48, 88, 24);
     editInitialStateTextButton->setBounds (16, 8 + 136, 176, 24);
-    endEditInitialStateTextButton->setBounds (16, (((8 + 168 - -8) + 240 - -8) + 80 - -8) + 56, 176, 24);
     sceneNameLabel->setBounds (15, 8 + 103, 56, 24);
     sceneNameTextEditor->setBounds (64, 112, 128, 24);
+    excitersEditionButton->setBounds (16, (((8 + 168 - -8) + 240 - -8) + 80 - -8) + 16, 176, 24);
     //[UserResized] Add your own custom resize handling here..
 
     // Backup of Projucer's sizes
     int canvasGroupInitH = canvasGroupComponent->getHeight();
     int areaGroupInitH = areaGroupComponent->getHeight();
     int spatGroupInitH = spatGroupComponent->getHeight();
+    //int initialStateGroupInitH = initialStateGroupComponent->getHeight();
 
     // Variable menus' size
     if (isAreaGroupReduced)
         areaGroupComponent->setSize(areaGroupComponent->getWidth(), areaGroupReducedH);
+    // -
+    if (isInitialStateGroupReduced)
+        initialStateGroupComponent->setSize(initialStateGroupComponent->getWidth(), initialStateGroupReducedH);
+    // -
     // !! Other menus are invisible... And were set invisible when the info came !!
 
     /* In the end, we may have to translate some groups towards the top of the component,
@@ -437,11 +443,18 @@ void SceneEditionComponent::resized()
         int dY = 0 - canvasGroupInitH - 8; // < 0
         areaGroupTranslateY(dY);
     }
-    if (isAreaGroupReduced)
+    // -
+    if (isAreaGroupHidden)
+    {
+        int dY = 0 - areaGroupInitH - 8 -8; // < 0
+        spatGroupTranslateY(dY);
+    }
+    else if (isAreaGroupReduced)
     {
         int dY = areaGroupReducedH - areaGroupInitH - 8; // < 0
         spatGroupTranslateY(dY);
     }
+    // -
     if (isSpatGroupHidden)
     {
         int dY = 0 - spatGroupInitH /*- 8*/; // < 0
@@ -483,7 +496,22 @@ void SceneEditionComponent::buttonClicked (Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == addAreaTextButton)
     {
         //[UserButtonCode_addAreaTextButton] -- add your button handler code here..
-        graphicSessionManager->OnAddArea();
+        // Pop-up menu to get the kind of area to add
+        PopupMenu menu;
+        menu.addItem (AreaDefaultType::Ellipse, "Ellipse", false); // disabled
+        menu.addSeparator();
+        menu.addItem(AreaDefaultType::Polygon, "Triangle");
+        menu.addItem(AreaDefaultType::Polygon+1, "Square");
+        menu.addItem(AreaDefaultType::Polygon+2, "Pentagon");
+        menu.addItem(AreaDefaultType::Polygon+3, "Hexagon");
+        menu.addItem(AreaDefaultType::Polygon+4, "Heptagon");
+        menu.addItem(AreaDefaultType::Polygon+5, "Octogon");
+        const int userChoice = menu.show();
+        if (userChoice != 0) // (0 : case "user didn't chose something")
+        {
+            // Actual addition then
+            graphicSessionManager->OnAddArea(userChoice);
+        }
         //[/UserButtonCode_addAreaTextButton]
     }
     else if (buttonThatWasClicked == deleteAreaTextButton)
@@ -543,22 +571,44 @@ void SceneEditionComponent::buttonClicked (Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == addExciterTextButton)
     {
         //[UserButtonCode_addExciterTextButton] -- add your button handler code here..
+        graphicSessionManager->OnAddExciter();
         //[/UserButtonCode_addExciterTextButton]
     }
     else if (buttonThatWasClicked == deleteExciterTextButton)
     {
         //[UserButtonCode_deleteExciterTextButton] -- add your button handler code here..
+        graphicSessionManager->OnDeleteExciter();
         //[/UserButtonCode_deleteExciterTextButton]
     }
     else if (buttonThatWasClicked == editInitialStateTextButton)
     {
         //[UserButtonCode_editInitialStateTextButton] -- add your button handler code here..
+        // À DÉGAGER
+        // À DÉGAGER
+        // À DÉGAGER
+        // À DÉGAGER
+        // À DÉGAGER
+        // À DÉGAGER
+        // À DÉGAGER
+        // À DÉGAGER
+        // À DÉGAGER
+        // À DÉGAGER
+        // À DÉGAGER
+        // À DÉGAGER
+        // À DÉGAGER
+        // À DÉGAGER
+        // À DÉGAGER
+        // À DÉGAGER
         //[/UserButtonCode_editInitialStateTextButton]
     }
-    else if (buttonThatWasClicked == endEditInitialStateTextButton)
+    else if (buttonThatWasClicked == excitersEditionButton)
     {
-        //[UserButtonCode_endEditInitialStateTextButton] -- add your button handler code here..
-        //[/UserButtonCode_endEditInitialStateTextButton]
+        //[UserButtonCode_excitersEditionButton] -- add your button handler code here..
+        if( excitersEditionButton->getToggleState() )
+            graphicSessionManager->OnEnterExcitersEdition();
+        else
+            graphicSessionManager->OnQuitExcitersEdition();
+        //[/UserButtonCode_excitersEditionButton]
     }
 
     //[UserbuttonClicked_Post]
@@ -642,6 +692,32 @@ void SceneEditionComponent::CompleteInitialization(GraphicSessionManager* _graph
 
 // ========== (SETTERS AND GETTERS) ORDERS FROM PRESENTER ==========
 
+// - - - - - Common to all UI elements - - - - -
+
+void SceneEditionComponent::SetEnabledAllControls(bool areEnabled, bool controlsBackUp)
+{
+    // Canvas (nothing yet : controls are visible or not, but always enabled)
+
+    // Main area controls
+    addAreaTextButton->setEnabled(areEnabled);
+    deleteAreaTextButton->setEnabled(areEnabled);
+    copyTextButton->setEnabled(areEnabled);
+
+    // Special buttons with a backup of their state (may not be enabled !)
+    if (controlsBackUp)
+        pasteTextButton->setEnabled(pasteTextButtonEnabledBackUp);
+    else
+        pasteTextButton->setEnabled(areEnabled);
+
+    setEnabledSelectedAreaControls(areEnabled); // Selected Area
+
+    // Spat effect
+}
+void SceneEditionComponent::CloseTemporaryDisplayedObjects()
+{
+    spatStatesComboBox->hidePopup();
+}
+
 // - - - - - Canvases & canvas group - - - - -
 
 void SceneEditionComponent::SetCanvasGroupHidden(bool _isHidden)
@@ -671,14 +747,20 @@ void SceneEditionComponent::SetDeleteSceneButtonEnabled(bool isEnabled)
 
 // - - - - - Area group - - - - -
 
-// We know that the "selection of an area" state is equal to the _idReduced....
+void SceneEditionComponent::SetAreaGroupHidden(bool _isHidden)
+{
+    isAreaGroupHidden = _isHidden;
+
+    setVisibleAllAreaControls(!_isHidden);
+}
 void SceneEditionComponent::SetAreaGroupReduced(bool _isReduced)
 {
     isAreaGroupReduced = _isReduced;
 
     SetVisibleAreaEditionControls(!_isReduced);
 
-    // Buttons (de)activated on area (de)selection
+    // We know that the "selection of an area" state is equal to the _isReduced....
+    // -> Buttons (de)activated on area (de)selection
     deleteAreaTextButton->setEnabled(!_isReduced);
     copyTextButton->setEnabled(!_isReduced);
 }
@@ -727,25 +809,6 @@ void SceneEditionComponent::SetPasteEnabled(bool _isEnabled)
 {
     pasteTextButton->setEnabled(_isEnabled);
 }
-void SceneEditionComponent::SetEnabledAllControls(bool areEnabled, bool controlsBackUp)
-{
-    // Canvas
-
-    // Main area controls
-    addAreaTextButton->setEnabled(areEnabled);
-    deleteAreaTextButton->setEnabled(areEnabled);
-    copyTextButton->setEnabled(areEnabled);
-
-    // Special buttons with a backup of their state (may not be enabled !)
-    if (controlsBackUp)
-        pasteTextButton->setEnabled(pasteTextButtonEnabledBackUp);
-    else
-        pasteTextButton->setEnabled(areEnabled);
-
-    setEnabledSelectedAreaControls(areEnabled); // Selected Area
-
-    // Spat effect
-}
 void SceneEditionComponent::setEnabledSelectedAreaControls(bool areEnabled)
 {
     // For a selected area
@@ -767,6 +830,9 @@ void SceneEditionComponent::setEnabledSelectedAreaControls(bool areEnabled)
 void SceneEditionComponent::setVisibleSpatControls(bool areVisible)
 {
     spatGroupComponent->setVisible(areVisible);
+    if (spatStatesComboBox->isPopupActive())
+        spatStatesComboBox->hidePopup();
+    spatStatesComboBox->setVisible(areVisible);
     spatLabel->setVisible(areVisible);
     spatStatesComboBox->setVisible(areVisible);
 }
@@ -801,14 +867,28 @@ void SceneEditionComponent::SelectSpatState(int index, NotificationType notifica
 // - - - - - Initial Scene State group - - - - -
 void SceneEditionComponent::SetInitialStateGroupHidden(bool _isHidden)
 {
+    isInitialStateGroupHidden = _isHidden;
+
     initialStateGroupComponent->setVisible(!_isHidden);
     addExciterTextButton->setVisible(!_isHidden);
     deleteExciterTextButton->setVisible(!_isHidden);
-    endEditInitialStateTextButton->setVisible(!_isHidden);
+    excitersEditionButton->setVisible(!_isHidden);
 }
 void SceneEditionComponent::SetInitialStateGroupReduced(bool _isReduced)
 {
-    SetInitialStateGroupHidden(_isReduced);
+    isInitialStateGroupReduced = _isReduced;
+
+    addExciterTextButton->setVisible(!_isReduced);
+    deleteExciterTextButton->setVisible(!_isReduced);
+    
+    // si on est réduit, on décoche le mode correspondant...
+    if (_isReduced)
+        excitersEditionButton->setToggleState(false, NotificationType::dontSendNotification);
+}
+
+void SceneEditionComponent::SetDeleteExciterButtonEnabled(bool _isEnabled)
+{
+    deleteExciterTextButton->setEnabled(_isEnabled);
 }
 
 
@@ -847,6 +927,18 @@ void SceneEditionComponent::SetCanvasInfo(SceneCanvasComponent::Id _id)
 
 // ----- Helpers -----
 
+void SceneEditionComponent::setVisibleAllAreaControls(bool areVisible)
+{
+    // ré-emploi de fonctions déjà écrites
+    SetVisibleAreaEditionControls(areVisible);
+
+    // autres boutons à cacher : le quatuor add/delete/copy/paste
+    addAreaTextButton->setVisible(areVisible);
+    deleteAreaTextButton->setVisible(areVisible);
+    copyTextButton->setVisible(areVisible);
+    pasteTextButton->setVisible(areVisible);
+    areaGroupComponent->setVisible(areVisible);
+}
 void SceneEditionComponent::colourSliderMoved()
 {
     Colour newColour = Colour((uint8)sliderR->getValue(),
@@ -893,7 +985,7 @@ void SceneEditionComponent::initialStateGroupTranslateY(int dY)
     componentTranslateY(initialStateGroupComponent, dY);
     componentTranslateY(addExciterTextButton, dY);
     componentTranslateY(deleteExciterTextButton, dY);
-    componentTranslateY(endEditInitialStateTextButton, dY);
+    componentTranslateY(excitersEditionButton, dY);
 }
 void SceneEditionComponent::componentTranslateY(Component* component, int dY)
 {
@@ -918,9 +1010,9 @@ BEGIN_JUCER_METADATA
                  parentClasses="public Component, public TextEditorListener" constructorParams=""
                  variableInitialisers="" snapPixels="8" snapActive="1" snapShown="1"
                  overlayOpacity="0.330" fixedSize="0" initialWidth="1024" initialHeight="1024">
-  <BACKGROUND backgroundColour="ffd9d9d9"/>
+  <BACKGROUND backgroundColour="ffbfbfbf"/>
   <GROUPCOMPONENT name="Area edition group component" id="87d416270d41f58c" memberName="areaGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="8 -889R 192 240" posRelativeY="4250d5155a80be70"
+                  virtualName="" explicitFocusOrder="0" pos="8 -8R 192 240" posRelativeY="4250d5155a80be70"
                   outlinecol="ff454545" textcol="ff000000" title="Area edition"/>
   <GROUPCOMPONENT name="Spatialization group component" id="90b16e3024c520fd" memberName="spatGroupComponent"
                   virtualName="" explicitFocusOrder="0" pos="8 -8R 192 80" posRelativeY="87d416270d41f58c"
@@ -1034,24 +1126,19 @@ BEGIN_JUCER_METADATA
          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="1"
          justification="36" typefaceStyle="Italic"/>
   <GROUPCOMPONENT name="Initial state group component" id="cc3bdf8d18c3f428" memberName="initialStateGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="8 -8R 192 88" posRelativeY="90b16e3024c520fd"
+                  virtualName="" explicitFocusOrder="0" pos="8 -8R 192 80" posRelativeY="90b16e3024c520fd"
                   outlinecol="ff454545" textcol="ff000000" title="Scene initial state"/>
   <TEXTBUTTON name="Add Area text button" id="b6820308eb03f341" memberName="addExciterTextButton"
-              virtualName="" explicitFocusOrder="0" pos="16 24 88 24" posRelativeY="cc3bdf8d18c3f428"
-              bgColOff="33000000" bgColOn="ffffffff" textCol="66000000" buttonText="Add Exciter"
+              virtualName="" explicitFocusOrder="0" pos="16 48 88 24" posRelativeY="cc3bdf8d18c3f428"
+              bgColOff="33000000" bgColOn="ffffffff" textCol="ff000000" buttonText="Add Exciter"
               connectedEdges="2" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Delete Exciter text button" id="11692d0648a2e8a4" memberName="deleteExciterTextButton"
-              virtualName="" explicitFocusOrder="0" pos="104 24 88 24" posRelativeY="cc3bdf8d18c3f428"
-              bgColOff="33000000" bgColOn="ffffffff" textCol="66000000" buttonText="Delete"
+              virtualName="" explicitFocusOrder="0" pos="104 48 88 24" posRelativeY="cc3bdf8d18c3f428"
+              bgColOff="33000000" bgColOn="ffffffff" textCol="ff000000" buttonText="Delete"
               connectedEdges="1" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Edit Initial State text button" id="d8f32d6e3ea6e87a" memberName="editInitialStateTextButton"
               virtualName="" explicitFocusOrder="0" pos="16 136 176 24" posRelativeY="4250d5155a80be70"
               bgColOff="33000000" bgColOn="ffffffff" textCol="66000000" buttonText="Edit initial scene state"
-              connectedEdges="0" needsCallback="1" radioGroupId="0"/>
-  <TEXTBUTTON name="End Edit Initial State text button" id="3fe924c475527418"
-              memberName="endEditInitialStateTextButton" virtualName="" explicitFocusOrder="0"
-              pos="16 56 176 24" posRelativeY="cc3bdf8d18c3f428" bgColOff="33000000"
-              bgColOn="ffffffff" textCol="66000000" buttonText="Go back to areas edition"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <LABEL name="Scene Name Label" id="fbdd06d6ea5f9471" memberName="sceneNameLabel"
          virtualName="" explicitFocusOrder="0" pos="15 103 56 24" posRelativeY="4250d5155a80be70"
@@ -1063,6 +1150,10 @@ BEGIN_JUCER_METADATA
               virtualName="" explicitFocusOrder="0" pos="64 112 128 24" initialText=""
               multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"
               caret="1" popupmenu="1"/>
+  <TOGGLEBUTTON name="Exciters Edition button" id="854f1e6b59cc6866" memberName="excitersEditionButton"
+                virtualName="" explicitFocusOrder="0" pos="16 16 176 24" posRelativeY="cc3bdf8d18c3f428"
+                txtcol="ff000000" buttonText="Exciters edition mode" connectedEdges="0"
+                needsCallback="1" radioGroupId="0" state="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

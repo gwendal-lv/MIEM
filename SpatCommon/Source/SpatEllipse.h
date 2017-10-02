@@ -49,6 +49,10 @@ namespace Miam
         
         
         
+        
+        // - - - - - XML import/export - - - - -
+        virtual std::string GetTypeAsString() const override {return "SpatEllipse";}
+        
     };
     
     

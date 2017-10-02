@@ -22,7 +22,6 @@ namespace Miam
 {
     // pre-declarations for pointers
     class Presenter;
-    class SpatSender;
     
     
     

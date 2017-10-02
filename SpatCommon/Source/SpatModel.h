@@ -22,6 +22,7 @@
 
 #include "SpatType.h"
 #include "SpatInterpolator.hpp"
+#include "MiamOscSender.hpp"
 #include "Speaker.h"
 
 #include "SpatMatrix.hpp"
@@ -32,7 +33,6 @@ namespace Miam
 {
     // pre-declarations for pointers
     class IPresenter;
-    class SpatSender;
     
     
     
@@ -56,11 +56,11 @@ namespace Miam
         // May be changed... But it remains important low-level data
         std::vector< std::shared_ptr<Speaker<double>> > speakers;
         
-        // Spatialisation computer, that owns the spat states
+        // Spatialisation computer/interpolator, that owns the spat states
         std::shared_ptr<SpatInterpolator<double>> spatInterpolator;
         
         // Communication
-        std::vector< std::shared_ptr<SpatSender> > spatSenders;
+        std::vector< std::shared_ptr<SpatSender<double>> > spatSenders;
         
         
         
@@ -69,6 +69,9 @@ namespace Miam
         
         SpatType GetSpatType() {return spatInterpolator->GetSpatType();}
         std::shared_ptr<SpatInterpolator<double>> GetSpatInterpolator() {return spatInterpolator;}
+        /// \brief Only 1 spat sender (index 0) available at the moment.
+        std::shared_ptr<SpatSender<double>> GetSpatSender(size_t index)
+        { return spatSenders[0]; };
         
         /// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         /// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -102,6 +105,12 @@ namespace Miam
 	private:
         virtual void update() = 0;
         
+        
+        // - - - - - Property tree (for XML) import/export - - - - -
+        public :
+        /// \brief Returns the property tree describing all model settings data
+        std::shared_ptr<bptree::ptree> GetConfigurationTree();
+        void SetConfigurationFromTree(bptree::ptree& tree);
         
     };
     

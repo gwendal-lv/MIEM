@@ -15,6 +15,8 @@
 #include "SpatState.hpp"
 #include "AudioDefines.h"
 
+#include "MiamExceptions.h"
+
 namespace Miam
 {
     
@@ -44,8 +46,11 @@ namespace Miam
         
         
         // - - - - - Construction / destruction - - - - -
+        
+        /// \brief Builds a state based on a zero Miam::SparseMatrix
         MatrixState()
         {
+            this->SetName("Matrix-based spatialization state");
         }
         virtual ~MatrixState() {}
         
@@ -80,6 +85,33 @@ namespace Miam
         {
             matrix = *(newMatrix.get());
         }
+        
+        
+        // - - - - - Property tree (for XML) import/export - - - - -
+        virtual std::shared_ptr<bptree::ptree> GetTree() override
+        {
+            auto pTree = this->SpatState<T>::GetTree();
+            pTree->put_child("matrix", *(matrix.GetTree()));
+            return pTree;
+        }
+        
+        virtual void SetFromTree(bptree::ptree & stateTree) override
+        {
+            // At first, common properties for all spat states
+            this->SpatState<T>::SetFromTree(stateTree);
+            
+            // Then, matrix attributes. SparseMatrix will
+            // reinit at first (which may not be optimal when called just
+            // after construction... But the compiler could see it)
+            try {
+                auto matrixTree = stateTree.get_child("matrix");
+                matrix.SetFromTree(matrixTree);
+            }
+            catch (bptree::ptree_bad_path& e) {
+                throw XmlReadException::FromBptree("state", e);
+            }
+        }
+        
     };
     
 }

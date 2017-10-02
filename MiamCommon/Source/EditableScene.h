@@ -20,6 +20,7 @@
 #include "AreaEvent.h"
 
 
+
 using namespace Miam;
 
 
@@ -46,6 +47,13 @@ namespace Miam
         
         /// \brief The currently selected area (may be a null pointer)
         std::shared_ptr<IEditableArea> selectedArea = nullptr;
+        
+        // After a special action on "mouse down" event, we may want sometimes
+        // to forget all events following this "mouse down" event, until the next
+        // "mouse up" event.
+        //
+        // Example : after addition or deletion, nothing moves on drag anymore.
+        bool bypassMouseEventsUntilMouseUp = false;
         
         
         
@@ -117,11 +125,13 @@ namespace Miam
         /// n°1 : editon/manipulation/play with a unique selected area only (in
         /// the future, there may be several selected areas), with 1 touch input
         /// source (may also be changed)
+        /// -> édition avec 1 entrée, 1 (ou plusieurs à l'avenir) aires contrôlées
         ///
         /// n°2 : editon/manipulation/play with any area (they all stay in the
         /// same state), with an arbitrary number of touch inputs
+        /// -> édition multi-entrées, multi-aires
         ///
-        
+        ///
         /// --------------------------------------------------------------------
         /// --------------------------------------------------------------------
         /// --------------------------------------------------------------------
@@ -135,7 +145,10 @@ namespace Miam
         virtual std::shared_ptr<GraphicEvent> OnCanvasMouseDown(const MouseEvent& mouseE) override;
         virtual std::shared_ptr<GraphicEvent> OnCanvasMouseDrag(const MouseEvent& mouseE) override;
         virtual std::shared_ptr<GraphicEvent> OnCanvasMouseUp(const MouseEvent& mouseE) override;
+
         
+        // - - - - - XML import/export - - - - -
+        std::shared_ptr<bptree::ptree> GetTree();
         
     };
     

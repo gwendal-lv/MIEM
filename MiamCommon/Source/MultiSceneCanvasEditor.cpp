@@ -194,3 +194,4 @@ void MultiSceneCanvasEditor::OnBringToFront()
     else throw std::runtime_error("Cannot bring an area to front : no scene selected");
 }
 
+

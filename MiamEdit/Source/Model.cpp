@@ -16,7 +16,6 @@
 #include "Presenter.h"
 
 
-#include "SpatSender.h"
 
 
 using namespace Miam;
@@ -35,7 +34,6 @@ presenter(presenter_)
 {
     // Choice of interpolation type
     spatInterpolator = std::make_shared<SpatInterpolator<double>>(SpatType::RoutingMatrix);
-    spatInterpolator->__AddDefaultStates();
     
     // OCTOPHONIE POUR L'INSTANT
     for (size_t i = 0; i<8 ; i++)

@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.0.1
+  Created with Projucer version: 5.0.2
 
   ------------------------------------------------------------------------------
 
@@ -66,6 +66,10 @@ public:
     void repositionLabels();
     void highlightLabel(Label* label);
     void unhighlightLabel(Label* label);
+    
+    void createAndManagePopupMenu();
+    void setMatrixToZero();
+    void setMatrixToIdentity();
 
     public :
 
@@ -76,11 +80,13 @@ public:
     {listener->OnSliderValueChanged(row, col, value);}
 
     MatrixComponent* GetMatrixComponent();
+    
     //[/UserMethods]
 
     void paint (Graphics& g) override;
     void resized() override;
     void mouseMove (const MouseEvent& e) override;
+    void mouseDown (const MouseEvent& e) override;
 
 
 

@@ -35,6 +35,8 @@ namespace Miam
         // = = = = = = = = = = METHODS = = = = = = = = = =
         public :
         
+        virtual ~LockFreeParamChangeSender() {}
+        
         /// \brief Tries a get a parameter change, that happened on this side
         ///
         /// Must be always called from the same unique thread
@@ -71,7 +73,7 @@ namespace Miam
         /// function)
         ///
         /// Exception thrown if lock-free queue is full (no dynamic memory allocation)
-        void SendParamChange(AsyncParamChange& paramChange);
+        virtual void SendParamChange(AsyncParamChange& paramChange);
         
         
         /// \brief Tries to enqueue a parameter change
@@ -81,7 +83,7 @@ namespace Miam
         /// function)
         ///
         /// \return Wether the queue was full or not (parameter change enqueued or not)
-        bool TrySendParamChange(AsyncParamChange& paramChange);
+        virtual bool TrySendParamChange(AsyncParamChange& paramChange);
         
         
         

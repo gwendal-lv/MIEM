@@ -5,13 +5,13 @@
               buildVST="1" buildVST3="0" buildAU="1" buildAUv3="0" buildRTAS="0"
               buildAAX="0" pluginName="MiamMatrixRouter" pluginDesc="OSC controllable matrix router, for Miam Spat"
               pluginManufacturer="G. Le Vaillant" pluginManufacturerCode="Manu"
-              pluginCode="Eo3z" pluginChannelConfigs="{64,64}" pluginIsSynth="0"
+              pluginCode="Eo3z" pluginChannelConfigs="{8,8}" pluginIsSynth="0"
               pluginWantsMidiIn="0" pluginProducesMidiOut="0" pluginIsMidiEffectPlugin="0"
               pluginEditorRequiresKeys="0" pluginAUExportPrefix="MatrixRouterAU"
               pluginRTASCategory="" aaxIdentifier="com.yourcompany.MatrixRouter"
-              pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="5.0.1"
+              pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="5.0.2"
               defines="" displaySplashScreen="1" reportAppUsage="1" splashScreenColour="Dark"
-              buildStandalone="0" enableIAA="0" companyName="LARAS (IRISIB)"
+              buildStandalone="1" enableIAA="0" companyName="LARAS (IRISIB)"
               companyWebsite="http://www.laras.be" companyEmail="gwendal.le-vaillant@grenoble-inp.org">
   <MAINGROUP id="uSK6Ed" name="MatrixRouter">
     <GROUP id="{7E647B1E-1C9F-BD65-5FF1-5839B4766A43}" name="Source">
@@ -33,6 +33,7 @@
         <FILE id="eHIS36" name="NetworkModel.cpp" compile="1" resource="0"
               file="Source/NetworkModel.cpp"/>
         <FILE id="Spzxt0" name="NetworkModel.h" compile="0" resource="0" file="Source/NetworkModel.h"/>
+        <FILE id="vSM7te" name="OscDebugger.h" compile="0" resource="0" file="Source/OscDebugger.h"/>
         <FILE id="mQOtF5" name="PluginProcessor.cpp" compile="1" resource="0"
               file="Source/PluginProcessor.cpp"/>
         <FILE id="SMXCE8" name="PluginProcessor.h" compile="0" resource="0"
@@ -40,6 +41,14 @@
       </GROUP>
     </GROUP>
     <GROUP id="{C4893356-5DEB-A030-074B-EE0422842B92}" name="SpatCommonSource">
+      <GROUP id="{C17FEF1E-10B0-5811-F422-6C0377DB68EB}" name="Presenter">
+        <FILE id="Ki6TDF" name="SpatArea.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatArea.cpp"/>
+        <FILE id="FS86Jb" name="SpatArea.h" compile="0" resource="0" file="../SpatCommon/Source/SpatArea.h"/>
+        <FILE id="ucmZ6n" name="SpatEllipse.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatEllipse.cpp"/>
+        <FILE id="Lwt8Bj" name="SpatEllipse.h" compile="0" resource="0" file="../SpatCommon/Source/SpatEllipse.h"/>
+        <FILE id="niaXW8" name="SpatPolygon.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatPolygon.cpp"/>
+        <FILE id="bMz2xV" name="SpatPolygon.h" compile="0" resource="0" file="../SpatCommon/Source/SpatPolygon.h"/>
+      </GROUP>
       <GROUP id="{52B41AAC-7F96-5E89-C85E-34DD82B7EC9D}" name="View">
         <FILE id="Ey3tth" name="ISlidersMatrixListener.h" compile="0" resource="0"
               file="../SpatCommon/Source/ISlidersMatrixListener.h"/>
@@ -55,19 +64,18 @@
       </GROUP>
       <GROUP id="{69F35838-D6F6-5ADE-9B31-E372F4C0078E}" name="Model">
         <GROUP id="{C8CFED74-46E5-A2FF-9824-723DC214C250}" name="SpatStates">
-          <FILE id="VlduMz" name="OutputVolumesState.h" compile="0" resource="0"
-                file="../SpatCommon/Source/OutputVolumesState.h"/>
-          <FILE id="o3IF1g" name="OutputVolumesState.tpp.h" compile="0" resource="0"
+          <FILE id="WcoRns" name="SpatMatrix.hpp" compile="0" resource="0" file="../SpatCommon/Source/SpatMatrix.hpp"/>
+          <FILE id="tOtOas" name="OutputVolumesState.hpp" compile="0" resource="0"
+                file="../SpatCommon/Source/OutputVolumesState.hpp"/>
+          <FILE id="yadc4C" name="OutputVolumesState.tpp.h" compile="0" resource="0"
                 file="../SpatCommon/Source/OutputVolumesState.tpp.h"/>
-          <FILE id="VJUdzj" name="SpatState.h" compile="0" resource="0" file="../SpatCommon/Source/SpatState.h"/>
-          <FILE id="bz3VgJ" name="SpatState.tpp.h" compile="0" resource="0" file="../SpatCommon/Source/SpatState.tpp.h"/>
+          <FILE id="MTjayE" name="MatrixState.hpp" compile="0" resource="0" file="../SpatCommon/Source/MatrixState.hpp"/>
+          <FILE id="Rqowkj" name="SpatState.hpp" compile="0" resource="0" file="../SpatCommon/Source/SpatState.hpp"/>
         </GROUP>
+        <FILE id="m6IFGZ" name="SpatInterpolator.hpp" compile="0" resource="0"
+              file="../SpatCommon/Source/SpatInterpolator.hpp"/>
         <FILE id="azLEQu" name="SpatModel.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatModel.cpp"/>
         <FILE id="n9PyKE" name="SpatModel.h" compile="0" resource="0" file="../SpatCommon/Source/SpatModel.h"/>
-        <FILE id="xR7ZzU" name="SpatInterpolator.h" compile="0" resource="0"
-              file="../SpatCommon/Source/SpatInterpolator.h"/>
-        <FILE id="njk7Fg" name="SpatInterpolator.tpp.h" compile="0" resource="0"
-              file="../SpatCommon/Source/SpatInterpolator.tpp.h"/>
         <FILE id="DFPO9m" name="SpatSender.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatSender.cpp"/>
         <FILE id="YOdNbs" name="SpatSender.h" compile="0" resource="0" file="../SpatCommon/Source/SpatSender.h"/>
         <FILE id="ISQcqH" name="SpatType.h" compile="0" resource="0" file="../SpatCommon/Source/SpatType.h"/>
@@ -190,14 +198,13 @@
           <FILE id="suhcBm" name="AudioDefines.h" compile="0" resource="0" file="../MiamCommon/Source/AudioDefines.h"/>
         </GROUP>
         <GROUP id="{22E0B59F-81F6-AAC5-A6F4-3B584D7BBEA6}" name="AsyncParamChanges">
-          <FILE id="ttwn7e" name="AsyncParamChange.cpp" compile="1" resource="0"
-                file="../MiamCommon/Source/AsyncParamChange.cpp"/>
           <FILE id="ik81Hn" name="AsyncParamChange.h" compile="0" resource="0"
                 file="../MiamCommon/Source/AsyncParamChange.h"/>
           <FILE id="s60DM7" name="LockFreeParamChangeSender.cpp" compile="1"
                 resource="0" file="../MiamCommon/Source/LockFreeParamChangeSender.cpp"/>
           <FILE id="nz89eG" name="LockFreeParamChangeSender.h" compile="0" resource="0"
                 file="../MiamCommon/Source/LockFreeParamChangeSender.h"/>
+          <FILE id="aeEG6R" name="ParametersIds.h" compile="0" resource="0" file="../MiamCommon/Source/ParametersIds.h"/>
         </GROUP>
         <FILE id="tPoEI0" name="CartesianLine.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/CartesianLine.cpp"/>
@@ -212,6 +219,8 @@
               file="../MiamCommon/Source/PeriodicUpdateThread.cpp"/>
         <FILE id="bavByD" name="PeriodicUpdateThread.h" compile="0" resource="0"
               file="../MiamCommon/Source/PeriodicUpdateThread.h"/>
+        <FILE id="hyDwyB" name="SparseMatrix.hpp" compile="0" resource="0"
+              file="../MiamCommon/Source/SparseMatrix.hpp"/>
       </GROUP>
     </GROUP>
   </MAINGROUP>
@@ -219,10 +228,10 @@
     <XCODE_MAC targetFolder="Builds/MacOSX">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MatrixRouter"
-                       headerPath="../../../&#10;../../MiamCommon/Source/&#10;../../SpatCommon/Source/&#10;"
+                       headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../MiamCommon/Source/"
                        defines="__MIAM_DEBUG"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MatrixRouter"
-                       headerPath="../../../&#10;../../MiamCommon/Source/&#10;../../SpatCommon/Source/"/>
+                       headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../MiamCommon/Source/"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
@@ -240,6 +249,7 @@
         <MODULEPATH id="juce_audio_plugin_client" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_osc" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_cryptography" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
     <VS2015 targetFolder="Builds/VisualStudio2015">
@@ -265,6 +275,7 @@
         <MODULEPATH id="juce_audio_plugin_client" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_osc" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_cryptography" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </VS2015>
   </EXPORTFORMATS>
@@ -274,6 +285,7 @@
     <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0"/>
     <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"/>
     <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0"/>
     <MODULE id="juce_core" showAllCode="1" useLocalCopy="0"/>
     <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0"/>
     <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0"/>

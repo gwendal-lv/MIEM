@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.0.1
+  Created with Projucer version: 5.0.2
 
   ------------------------------------------------------------------------------
 
@@ -87,6 +87,8 @@ public:
     // - - - - - Common - - - - -
     public :
     void SetEnabledAllControls(bool areEnabled, bool controlsBackUp = true);
+    void CloseTemporaryDisplayedObjects();
+
     // - - - - - Canvases group - - - - -
     void SetCanvasGroupHidden(bool _isHidden);
     void SetCanvasGroupReduced(bool _isReduced);
@@ -107,6 +109,7 @@ public:
     // - - - - - Initial Scene State group - - - - -
     void SetInitialStateGroupHidden(bool _isHidden);
     void SetInitialStateGroupReduced(bool _isReduced);
+    void SetDeleteExciterButtonEnabled(bool _isEnabled);
 
 
     // ----- Other setters and getters -----
@@ -119,6 +122,7 @@ public:
 
     // Helpers
     private :
+    void setVisibleAllAreaControls(bool areVisible);
     void setEnabledSelectedAreaControls(bool areEnabled);
     void setVisibleSpatControls(bool areVisible);
     void colourSliderMoved();
@@ -153,10 +157,16 @@ private:
 
     GraphicSessionManager* graphicSessionManager = 0;
 
-    int canvasGroupReducedH, areaGroupReducedH, spatGroupReducedH;
+    int canvasGroupReducedH,
+        areaGroupReducedH,
+        spatGroupReducedH,
+        initialStateGroupReducedH ;
     bool isCanvasGroupHidden = false,
-            isAreaGroupReduced = false,
-            isSpatGroupHidden = false;
+        isAreaGroupReduced = false,
+        isAreaGroupHidden = false,
+        isSpatGroupHidden = false,
+        isInitialStateGroupReduced = false,
+        isInitialStateGroupHidden = false;
 
     // When all buttons are disabled, to highlight that we can do only 1 action,
     // we need to back up the state of some buttons
@@ -196,9 +206,9 @@ private:
     ScopedPointer<TextButton> addExciterTextButton;
     ScopedPointer<TextButton> deleteExciterTextButton;
     ScopedPointer<TextButton> editInitialStateTextButton;
-    ScopedPointer<TextButton> endEditInitialStateTextButton;
     ScopedPointer<Label> sceneNameLabel;
     ScopedPointer<TextEditor> sceneNameTextEditor;
+    ScopedPointer<ToggleButton> excitersEditionButton;
 
 
     //==============================================================================

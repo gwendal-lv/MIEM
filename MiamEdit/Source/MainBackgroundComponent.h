@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.0.1
+  Created with Projucer version: 5.0.2
 
   ------------------------------------------------------------------------------
 
@@ -24,6 +24,7 @@
 
 // #include "View.h" // génère un pb d'includes croisés
 
+#include "FileMenu.h"
 #include "ClearLabelTimer.h"
 
 
@@ -31,6 +32,7 @@ namespace Miam {
 
     // forward declarations
     class View;
+    class Presenter;
 
 //[/Headers]
 
@@ -58,7 +60,7 @@ public:
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
 
-    void CompleteInitialization(/*Presenter* _presenter*/);
+    void CompleteInitialization(Presenter* _presenter);
 
 
     // SETTERS and GETTERS
@@ -78,7 +80,8 @@ public:
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
 
-    Miam::View *miamView;
+    View *miamView;
+    std::unique_ptr<FileMenu> fileMenu;
 
     Miam::ClearLabelTimer clearLabelTimer;
 
@@ -92,6 +95,7 @@ private:
     ScopedPointer<TextButton> hardwareConfTextButton;
     ScopedPointer<TextButton> startTextButton;
     ScopedPointer<Label> label;
+    ScopedPointer<TextButton> fileTextButton;
 
 
     //==============================================================================

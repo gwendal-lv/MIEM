@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.0.1
+  Created with Projucer version: 5.0.2
 
   ------------------------------------------------------------------------------
 
@@ -19,9 +19,10 @@
 
 //[Headers] You can add your own extra header files here...
 
-// included here for cross-project usage
+// not in the header, for cross-project usage
 #include "JuceHeader.h"
 
+#include <algorithm>
 //[/Headers]
 
 #include "LabelledMatrixComponent.h"
@@ -163,6 +164,18 @@ void LabelledMatrixComponent::mouseMove (const MouseEvent& e)
     //[/UserCode_mouseMove]
 }
 
+void LabelledMatrixComponent::mouseDown (const MouseEvent& e)
+{
+    //[UserCode_mouseDown] -- Add your code here...
+    
+    // Pop-up menu appears on Right-click anywhere,
+    // Or it may appear on a click on the inputs/outputs label (not editable)
+    if (e.mods.isRightButtonDown()
+        || inputsOutputsLabel->contains(e.getEventRelativeTo(inputsOutputsLabel).getPosition()))
+        createAndManagePopupMenu();
+    //[/UserCode_mouseDown]
+}
+
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
@@ -230,6 +243,36 @@ void LabelledMatrixComponent::unhighlightLabel(Label* label)
     label->setColour(Label::textColourId, Colours::black);
     label->setColour(Label::backgroundColourId, Colours::transparentWhite);
 }
+void LabelledMatrixComponent::createAndManagePopupMenu()
+{
+    PopupMenu menu;
+    menu.addItem (1, "Reset to Zero matrix");
+    menu.addItem (2, "Set to Identity matrix");
+    const int userChoice = menu.show();
+    if (userChoice == 0) // user dismissed the menu without picking anything
+    {}
+    else if (userChoice == 1)
+        setMatrixToZero();
+    else if (userChoice == 2)
+        setMatrixToIdentity();
+}
+void LabelledMatrixComponent::setMatrixToZero()
+{
+    // Without notification
+    GetMatrixComponent()->SetSpatMatrix(std::make_shared<SpatMatrix>());
+    listener->OnMatrixZeroed(); // special unique notification to the listener
+}
+void LabelledMatrixComponent::setMatrixToIdentity()
+{
+    // At first : zeroing (supposed to be optimized)
+    setMatrixToZero();
+    
+    // Then, actual setting to identity
+    unsigned int smallestDimension = std::min(maxRowsCount, maxColsCount);
+    for (int i=0 ; i<smallestDimension ; i++)
+        // each one will notify (not optimized but that's OK)
+        GetMatrixComponent()->SetSliderValue(i, i, 0.0, NotificationType::sendNotification);
+}
 
 void LabelledMatrixComponent::OnViewportVisibleAreaChanged()
 {
@@ -259,6 +302,7 @@ BEGIN_JUCER_METADATA
                  overlayOpacity="0.330" fixedSize="0" initialWidth="600" initialHeight="400">
   <METHODS>
     <METHOD name="mouseMove (const MouseEvent&amp; e)"/>
+    <METHOD name="mouseDown (const MouseEvent&amp; e)"/>
   </METHODS>
   <BACKGROUND backgroundColour="ffc0c0c0"/>
   <GENERICCOMPONENT name="Matrix Viewport" id="371018f99bc87dd2" memberName="matrixViewport"

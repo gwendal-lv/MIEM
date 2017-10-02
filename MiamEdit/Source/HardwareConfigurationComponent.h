@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.0.1
+  Created with Projucer version: 5.0.2
 
   ------------------------------------------------------------------------------
 
@@ -55,12 +55,10 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-    void CompleteInitialization(SettingsManager* _settingsManager);
 
-    int GetUdpPort();
-    void SetUdpPort(int udpPort);
+    friend class SettingsManager;
 
-    virtual void textEditorTextChanged(TextEditor& editorThatHasChanged) override;
+    virtual void textEditorReturnKeyPressed(TextEditor& editorThatHasChanged) override;
     //[/UserMethods]
 
     void paint (Graphics& g) override;
@@ -83,7 +81,9 @@ private:
     ScopedPointer<ToggleButton> oscPluginToggleButton;
     ScopedPointer<Label> udpPortLabel;
     ScopedPointer<TextEditor> udpPortTextEditor;
-    ScopedPointer<ToggleButton> keyboardButton;
+    ScopedPointer<ToggleButton> keyboardToggleButton;
+    ScopedPointer<Label> ipAddressLabel;
+    ScopedPointer<TextEditor> ipAddressTextEditor;
 
 
     //==============================================================================

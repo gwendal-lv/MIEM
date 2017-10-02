@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.0.1
+  Created with Projucer version: 5.0.2
 
   ------------------------------------------------------------------------------
 
@@ -20,6 +20,7 @@
 //[Headers] You can add your own extra header files here...
 #include "Presenter.h"
 #include "MatrixComponent.h"
+
 //[/Headers]
 
 #include "OscMatrixComponent.h"
@@ -87,7 +88,7 @@ OscMatrixComponent::OscMatrixComponent (Presenter* _presenter)
     slidersMatrix->setName ("Labelled Matrix of Sliders");
 
     addAndMakeVisible (attackSlider = new Slider ("Attack Slider"));
-    attackSlider->setRange (0.1, 100, 0.1);
+    attackSlider->setRange (1, 100, 1);
     attackSlider->setSliderStyle (Slider::RotaryVerticalDrag);
     attackSlider->setTextBoxStyle (Slider::TextBoxRight, false, 60, 20);
     attackSlider->setColour (Slider::textBoxTextColourId, Colours::black);
@@ -111,6 +112,12 @@ OscMatrixComponent::OscMatrixComponent (Presenter* _presenter)
     attackUnitLabel->setColour (TextEditor::textColourId, Colours::black);
     attackUnitLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
+    addAndMakeVisible (helpTextButton = new TextButton ("Help button"));
+    helpTextButton->setButtonText (TRANS("?"));
+    helpTextButton->addListener (this);
+    helpTextButton->setColour (TextButton::buttonColourId, Colour (0x3e000000));
+    helpTextButton->setColour (TextButton::textColourOffId, Colours::black);
+
 
     //[UserPreSize]
 
@@ -126,6 +133,10 @@ OscMatrixComponent::OscMatrixComponent (Presenter* _presenter)
 
 
     //[Constructor] You can add your own custom stuff here..
+
+    //Initially disabled (will be re-enabled on timeout from Model)
+    //setEnabled(false);
+
     //[/Constructor]
 }
 
@@ -145,6 +156,7 @@ OscMatrixComponent::~OscMatrixComponent()
     attackSlider = nullptr;
     attackLabel = nullptr;
     attackUnitLabel = nullptr;
+    helpTextButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -157,7 +169,7 @@ void OscMatrixComponent::paint (Graphics& g)
     //[UserPrePaint] Add your own custom painting code here..
     //[/UserPrePaint]
 
-    g.fillAll (Colours::silver);
+    g.fillAll (Colour (0xff909090));
 
     //[UserPaint] Add your own custom painting code here..
     //[/UserPaint]
@@ -169,16 +181,17 @@ void OscMatrixComponent::resized()
     //[/UserPreResize]
 
     matrixGroupComponent->setBounds (0, 0 + 72, getWidth() - 0, getHeight() - 72);
-    preferencesGroupComponent->setBounds (256, 0, getWidth() - 256, roundFloatToInt (72 * 1.0000f));
+    preferencesGroupComponent->setBounds (256, 0, getWidth() - 291, roundFloatToInt (72 * 1.0000f));
     udpPortTextEditor->setBounds ((256 + 8) + 184 - -8, 16, 64, 24);
     udpPortLabel->setBounds (256 + 8, 16, 184, 24);
-    udpStatusLabel->setBounds (((256 + 8) + 184 - -8) + 64 - -8, 16, (getWidth() - 256) - 160, 24);
+    udpStatusLabel->setBounds (((256 + 8) + 184 - -8) + 64 - -8, 16, (getWidth() - 291) - 280, 24);
     audioConfigComponent->setBounds (0, 0, 248, 72);
-    keyboardButton->setBounds (256 + 8, 40, (getWidth() - 256) - 24, 24);
+    keyboardButton->setBounds (256 + 8, 40, (getWidth() - 291) - 24, 24);
     slidersMatrix->setBounds (0 + 8, (0 + 72) + 16, (getWidth() - 0) - 16, (getHeight() - 72) - 24);
     attackSlider->setBounds ((0 + 8) + 56 - 16, 16, 108, 48);
     attackLabel->setBounds (0 + 8, 28, 56, 24);
     attackUnitLabel->setBounds (((0 + 8) + 56 - 16) + 108, 28, 88, 24);
+    helpTextButton->setBounds (getWidth() - 4 - 24, 8, 24, 60);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -193,6 +206,13 @@ void OscMatrixComponent::buttonClicked (Button* buttonThatWasClicked)
         //[UserButtonCode_keyboardButton] -- add your button handler code here..
         slidersMatrix->GetMatrixComponent()->SetSlidersTextBoxesAreEditable(keyboardButton->getToggleState());
         //[/UserButtonCode_keyboardButton]
+    }
+    else if (buttonThatWasClicked == helpTextButton)
+    {
+        //[UserButtonCode_helpTextButton] -- add your button handler code here..
+        PopupMenu menu = createHelpPopup();
+        menu.show();
+        //[/UserButtonCode_helpTextButton]
     }
 
     //[UserbuttonClicked_Post]
@@ -247,6 +267,10 @@ void OscMatrixComponent::OnSliderValueChanged(int row, int col, double value)
 {
     presenter->OnSliderValueChanged(row, col, value);
 }
+void OscMatrixComponent::OnMatrixZeroed()
+{
+    presenter->OnMatrixZeroed();
+}
 void OscMatrixComponent::SetSliderValue(int row, int col, double value)
 {
     slidersMatrix->GetMatrixComponent()->SetSliderValue(row, col, value);
@@ -255,12 +279,12 @@ void OscMatrixComponent::SetAttackSliderValue(double value)
 {
     attackSlider->setValue(value, NotificationType::dontSendNotification);
 }
-void OscMatrixComponent::SetUdpPortAndMessage(int udpPort, bool isConnected)
+void OscMatrixComponent::SetUdpPortAndMessage(int udpPort, bool isConnected, std::string& oscAddress)
 {
     udpPortTextEditor->setText(std::to_string(udpPort), NotificationType::sendNotification);
     if (isConnected)
     {
-        udpStatusLabel->setText("Connected on port " + std::to_string(udpPort) + ".", NotificationType::dontSendNotification);
+        udpStatusLabel->setText("Listening to " + oscAddress + " messages on port " + std::to_string(udpPort) + ".", NotificationType::dontSendNotification);
         udpStatusLabel->setColour(Label::ColourIds::textColourId, Colours::black);
     }
     else
@@ -272,9 +296,21 @@ void OscMatrixComponent::SetUdpPortAndMessage(int udpPort, bool isConnected)
 void OscMatrixComponent::SetActiveSliders(int inputsCount, int outputsCount)
 {
     slidersMatrix->GetMatrixComponent()->SetActiveSliders(inputsCount, outputsCount);
-#ifdef __MIAM_DEBUG
-  r  //__DisplayDebugMsg("in=" + std::to_string(inputsCount) + " out=" + std::to_string(outputsCount));
-#endif
+}
+PopupMenu OscMatrixComponent::createHelpPopup()
+{
+    PopupMenu menu;
+    int lastItemId = 0;
+    // Direct interaction at first
+    menu.addItem (++lastItemId, "Right-click on matrix to show reset options.", false);
+    // OSC commands available then
+    menu.addSeparator();
+    for (size_t i=0 ; i<networkHelpContent.size() ; i++)
+        menu.addItem (++lastItemId, networkHelpContent[i].c_str(), false);
+    // Automation advice
+    menu.addSeparator();
+    menu.addItem(++lastItemId, "We recommand to use only simple 'read' or 'write' automation modes.", false);
+    return menu;
 }
 //[/MiscUserCode]
 
@@ -293,12 +329,12 @@ BEGIN_JUCER_METADATA
                  constructorParams="Presenter* _presenter" variableInitialisers=""
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="0" initialWidth="400" initialHeight="300">
-  <BACKGROUND backgroundColour="ffc0c0c0"/>
+  <BACKGROUND backgroundColour="ff909090"/>
   <GROUPCOMPONENT name="Matrix Group Component" id="19b69873bd3945f7" memberName="matrixGroupComponent"
                   virtualName="" explicitFocusOrder="0" pos="0 0R 0M 72M" posRelativeY="bb46950e139db507"
                   outlinecol="ff454545" textcol="ff000000" title="Routing matrix"/>
   <GROUPCOMPONENT name="Preferences Group Component" id="dfbb24a51fa3d6c0" memberName="preferencesGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="256 0 256M 100%" posRelativeH="bb46950e139db507"
+                  virtualName="" explicitFocusOrder="0" pos="256 0 291M 100%" posRelativeH="bb46950e139db507"
                   outlinecol="ff454545" textcol="ff000000" title="Preferences"/>
   <TEXTEDITOR name="UDP Port Text Editor" id="e4ef4437203ce19e" memberName="udpPortTextEditor"
               virtualName="" explicitFocusOrder="0" pos="-8R 16 64 24" posRelativeX="8d369e08975b779c"
@@ -311,7 +347,7 @@ BEGIN_JUCER_METADATA
          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
          justification="33"/>
   <LABEL name="UPD Status Label" id="3fd4c40c4d48dfec" memberName="udpStatusLabel"
-         virtualName="" explicitFocusOrder="0" pos="-8R 16 160M 24" posRelativeX="e4ef4437203ce19e"
+         virtualName="" explicitFocusOrder="0" pos="-8R 16 280M 24" posRelativeX="e4ef4437203ce19e"
          posRelativeW="dfbb24a51fa3d6c0" textCol="ff000000" edTextCol="ff000000"
          edBkgCol="0" labelText="Status : ..." editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
@@ -331,10 +367,9 @@ BEGIN_JUCER_METADATA
                     params="this, JucePlugin_MaxNumInputChannels, JucePlugin_MaxNumOutputChannels"/>
   <SLIDER name="Attack Slider" id="b96b5d59dd56bbaa" memberName="attackSlider"
           virtualName="" explicitFocusOrder="0" pos="16R 16 108 48" posRelativeX="19707b3f29742e60"
-          textboxtext="ff000000" min="0.10000000000000000555" max="100"
-          int="0.10000000000000000555" style="RotaryVerticalDrag" textBoxPos="TextBoxRight"
-          textBoxEditable="1" textBoxWidth="60" textBoxHeight="20" skewFactor="1"
-          needsCallback="1"/>
+          textboxtext="ff000000" min="1" max="100" int="1" style="RotaryVerticalDrag"
+          textBoxPos="TextBoxRight" textBoxEditable="1" textBoxWidth="60"
+          textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <LABEL name="Attack Label" id="19707b3f29742e60" memberName="attackLabel"
          virtualName="" explicitFocusOrder="0" pos="8 28 56 24" posRelativeX="bb46950e139db507"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Attack"
@@ -347,6 +382,11 @@ BEGIN_JUCER_METADATA
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
          justification="33"/>
+  <TEXTBUTTON name="Help button" id="99be38dc78387f16" memberName="helpTextButton"
+              virtualName="" explicitFocusOrder="0" pos="4Rr 8 24 60" posRelativeX="922404df7bcd082e"
+              posRelativeY="922404df7bcd082e" posRelativeW="922404df7bcd082e"
+              posRelativeH="922404df7bcd082e" bgColOff="3e000000" textCol="ff000000"
+              buttonText="?" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

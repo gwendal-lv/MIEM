@@ -61,6 +61,9 @@ namespace Miam
         virtual void Translate(const Point<double>& translation) = 0;
         /// \brief See EditableArea::isActive
         virtual void SetActive(bool activate) = 0;
+        /// \brief Change une caractéristique graphique de l'aire, qui permet de mieux
+        /// la repérer parmi les autres
+        virtual void Highlight(bool isHighligthed) = 0;
         /// \brief See EditableArea::enableTranslationOnly
         virtual void SetEnableTranslationOnly(bool enableTranslationOnly) = 0;
         

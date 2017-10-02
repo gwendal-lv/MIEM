@@ -41,3 +41,13 @@ concernedArea(concernedArea_),
     
 }
 
+AreaEvent::AreaEvent( AreaEvent *e )
+:
+eventType(e->GetType()),
+concernedArea(e->GetConcernedArea()),
+concernedScene(e->GetConcernedScene()),
+areaIdInScene(e->GetAreaIdInScene())
+{
+    
+}
+

@@ -67,7 +67,12 @@ namespace Miam
         
         
         // - - - - - Events from Presenter - - - - -
-        void OnLeaveSpatStatesEdition();
+        /// \brief Actualization of everything that might have been modified from
+        /// other app modes.
+        void OnEnterSpatStatesEdition();
+        /// \brief Data saving (and returning by pointer) before entering
+        /// another mode.
+        std::shared_ptr<bptree::ptree> OnLeaveSpatStatesEdition();
         
         // - - - - - Events from View - - - - -
         
@@ -77,18 +82,25 @@ namespace Miam
         /// \brief Called when the displayed text of the combo box has been edited
         void OnRenameState(std::string newName, int stateIndex);
         
+        void OnAddState();
+        void OnDeleteSelectedState();
+        void OnMoveSelectedStateUp();
+        void OnMoveSelectedStateDown();
+        
         
         // - - - - - Graphical helpers - - - - -
         
-        void updateView();
+        void UpdateView();
         
         
         // - - - - - Internal helpers - - - - -
+        private :
         void sendDataToModel(std::shared_ptr<SpatMatrix> currentMatrix);
         
         // - - - - - Settings Management - - - - -
+        public :
         void AllowKeyboardEdition(bool allow);
-
+        
     };
     
 }

@@ -15,25 +15,40 @@
 using namespace Miam;
 
 
-// Common graphics managing code for all possible areas...
+DrawableArea::DrawableArea(bptree::ptree& areaTree)
+{
+    Id = areaTree.get<int64_t>("<xmlattr>.id");
+    center.set<0>( areaTree.get<double>("center.<xmlattr>.x") );
+    center.set<1>( areaTree.get<double>("center.<xmlattr>.y") );
+    std::string colourString = areaTree.get<std::string>("colour", std::string("ffaaaaaa"));
+    fillColour = Colour::fromString( colourString.c_str() );
+    
+    init();
+}
 
 DrawableArea::DrawableArea(int64_t _Id, bpt _center, Colour _fillColour)
 {
 	Id = _Id;
-
 	center = _center;
-
-	centerCircleRadius = 5;
-
-	fillColour = _fillColour;
-	fillOpacity = 1.0;
-
-	contourColour = Colours::white;
-	contourWidth = 2.0f;
-	centerContourWidth = contourWidth*1.5f;
-
-	isNameVisible = true; // par défaut
+    fillColour = _fillColour;
+    
+    init();
 }
+
+void DrawableArea::init()
+{
+    centerCircleRadius = 5;
+    
+    fillOpacity = 1.0;
+    
+    contourColour = Colours::white;
+    contourWidth = 2.0f;
+    centerContourWidth = contourWidth*1.5f;
+    
+    isNameVisible = true; // par défaut
+}
+
+
 
 
 void DrawableArea::Paint(Graphics& g)
@@ -43,8 +58,10 @@ void DrawableArea::Paint(Graphics& g)
 		(float)centerInPixels.get<1>()-centerCircleRadius,
         centerCircleRadius*2.0f, centerCircleRadius*2.0f, centerContourWidth);
     
-    if (isNameVisible)
+    // DEBUG pb MT getGlyphPosition
+    if (isNameVisible && false)
     {
+        
         g.setColour(Colours::black); // black shadow
         g.drawSingleLineText(name,
                              (int)centerInPixels.get<0>()+1,
@@ -78,4 +95,19 @@ void DrawableArea::SetAlpha(float newAlpha)
 {
 	fillOpacity = newAlpha;
 }
+
+
+// = = = = = = = = = = XML import/export = = = = = = = = = =
+std::shared_ptr<bptree::ptree> DrawableArea::GetTree()
+{
+    auto drawableAreaTree = std::make_shared<bptree::ptree>();
+    drawableAreaTree->put("<xmlattr>.id", Id);
+    drawableAreaTree->put("<xmlattr>.type", GetTypeAsString());
+    drawableAreaTree->put("center.<xmlattr>.x", center.get<0>());
+    drawableAreaTree->put("center.<xmlattr>.y", center.get<1>());
+    drawableAreaTree->put("colour", fillColour.toString());
+    return drawableAreaTree;
+}
+
+
 

@@ -34,13 +34,16 @@ namespace Miam {
         
         
         Unselected, ///< Not currently selected
+        CanvasSelected, ///< Not a fully-defined mode : the canvas is selected, but something else (we don't know) might be selected inside
         
         SceneOnlySelected, ///< No area or point selected ; the selected scene (there is always at least 1 scene on a canvas) is ready to process any input
         
-        CanvasSelected, ///< Not fully mode : the canvas is selected, but something else (we don't) might be selected inside
+        ExcitersEdition, ///< Toutes les aires graphiques ne peuvent pas être modifiées, seuls les excitateurs peuvent interagir avec l'utilisateur tactile/souris. Dans ce mode, aucun excitateur n'est encore sélectionné.
+        ExciterSelected, ///< Un unique excitateur est sélectionné. Mode qui suit le mode ExcitersEditionMode, qui peut être suivi de ce même mode si l'on désélectionne l'excitateur considéré.
         
         AreaSelected, ///< Area selected, still ready to process mouse input from CanvasComponent
-        EditingArea, ///< Mouse is editing the current area
+        
+        EditingArea, ///< Mouse is editing the current area (qui peut être un excitateur)
         
         WaitingForPointCreation, ///< Next mouse input will create a point
         WaitingForPointDeletion ///< Next mouse input will delete a point

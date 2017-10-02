@@ -13,7 +13,7 @@
 
 #include <iostream>
 
-#include "IPresenter.h"
+#include "SpatPresenter.h"
 
 #include "AppMode.h"
 #include "SpatType.h"
@@ -21,6 +21,10 @@
 #include "GraphicSessionManager.h"
 #include "SpatStatesEditionManager.h"
 #include "SettingsManager.h"
+
+#include "boost/property_tree/ptree.hpp"
+#include "boost/property_tree/xml_parser.hpp"
+namespace bptree = boost::property_tree;
 
 
 namespace Miam {
@@ -39,7 +43,7 @@ namespace Miam {
 	/// repositories (the model), and formats it for display in the view".
 	///
 	/// \remark Usual GUI controls (created from the Projucer) however belong to the View.
-    class Presenter : public IPresenter
+    class Presenter : public SpatPresenter
     {
         private :
         
@@ -94,6 +98,14 @@ namespace Miam {
         
         void Update() override;
         
+        
+        // - - - - -  XML import/export - - - - -
+        virtual void LoadSession(std::string filename) override;
+        virtual void SaveSession(std::string filename = "") override;
+        
+        virtual std::shared_ptr<bptree::ptree> GetConfigurationTree() override;
+        virtual void SetConfigurationFromTree(bptree::ptree&) override;
+
         
         
     };

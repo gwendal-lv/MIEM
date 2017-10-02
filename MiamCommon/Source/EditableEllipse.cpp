@@ -212,61 +212,78 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 	// Simple contour point dragging
 	if (pointDraggedId >= 0)
 	{
+        /*
 		DBG("contour dragging");
-		DBG("isNewContourPointValid = " + (String)isNewContourPointValid(newLocation));
+        DBG(String("isNewContourPointValid = ") + ( isNewContourPointValid(newLocation)==true ? "oui" : "non" ));
+        */
 		if (parentCanvas->getLocalBounds().contains(newLocation.toInt())
 			&& isNewContourPointValid(newLocation))
 		{
+            /*
 			DBG("(a,b) = (" + (String)a + " , " + (String)b + ")");
-
-			// need to bring back contourPointInPixels centered to (0,0) and with rotation = 0
-			bpt normalizeNewLocation;
-			bpolygon newPolygonInPixels;
-			boost::geometry::strategy::transform::translate_transformer<double, 2, 2> invTrPixels(-centerInPixels.get<0>(),-centerInPixels.get<1>());
-			boost::geometry::strategy::transform::translate_transformer<double, 2, 2> TrPixels(centerInPixels.get<0>(), centerInPixels.get<1>());
-			boost::geometry::strategy::transform::rotate_transformer<boost::geometry::radian, double, 2, 2> invRot(-rotationAngle);
-			boost::geometry::strategy::transform::rotate_transformer<boost::geometry::radian, double, 2, 2> Rot(rotationAngle);
-			/*boost::geometry::strategy::transform::scale_transformer<double, 2, 2> invScale(1.0 / (double)parentCanvas->getWidth(), 1.0 / (double)parentCanvas->getHeight());
-			boost::geometry::strategy::transform::scale_transformer<double, 2, 2> Scale((double)parentCanvas->getWidth(), (double)parentCanvas->getHeight());*/
-
-			boost::geometry::transform(contourPointsInPixels, newPolygonInPixels, invTrPixels);
-			boost::geometry::transform(bnewLocation, normalizeNewLocation, invTrPixels);
-			boost::geometry::transform(newPolygonInPixels, contourPointsInPixels, Rot);
-			boost::geometry::transform(normalizeNewLocation, bnewLocation, Rot);
-
+			DBG("centerInPixels" + (String)centerInPixels.get<0>() + " " + (String)centerInPixels.get<1>());
+			DBG("center" + (String)center.get<0>() + " " + (String)center.get<1>());
+			DBG("0 : " + (String)contourPointsInPixels.outer().at(0).get<0>() + " " + (String)contourPointsInPixels.outer().at(0).get<1>());
+			DBG("1 : " + (String)contourPointsInPixels.outer().at(1).get<0>() + " " + (String)contourPointsInPixels.outer().at(1).get<1>());
+			DBG("2 : " + (String)contourPointsInPixels.outer().at(2).get<0>() + " " + (String)contourPointsInPixels.outer().at(2).get<1>());
+			DBG("3 : " + (String)contourPointsInPixels.outer().at(3).get<0>() + " " + (String)contourPointsInPixels.outer().at(3).get<1>());
+            */
+			double sa,sb;
 			double resizeX, resizeY;
 			switch (pointDraggedId)
 			{
-			case 1 :
-			case 3 :
-				resizeX = bnewLocation.get<0>() / contourPointsInPixels.outer().at(pointDraggedId).get<0>();
+			case 1 : // (Cx +a/2, Cy     )
+			case 3 : // (Cx -a/2, Cy     )
+				sa = bnewLocation.get<0>() - centerInPixels.get<0>();
+				resizeX = (2*abs(sa)/ (double)parentCanvas->getWidth()) / a;
 				resizeY = 1;
-				a = 2 * abs(bnewLocation.get<0>()) / ((double)parentCanvas->getWidth() * xScale);
+				
+				
+				a = 2 * abs(sa) / (double)parentCanvas->getWidth();
+				
+				/*contourPoints.outer().at(1) = bpt(center.get<0>() + (a / 2)*xScale, center.get<1>());
+				contourPoints.outer().at(3) = bpt(center.get<0>() - (a / 2)*xScale, center.get<1>());*/
+
+				
+				
+
+				/*contourPointsInPixels.outer().at(1).set<0>(contourPoints.outer().at(1).get<0>()*(double)parentCanvas->getWidth());
+				contourPointsInPixels.outer().at(3).set<0>(contourPoints.outer().at(3).get<0>()*(double)parentCanvas->getWidth());*/
+
+				
+
 				break;
-			case 0 :
-			case 2 :
+			case 0 : // (Cx     , Cy +b/2)
+			case 2 : // (Cx     , Cy -b/2)
+				sb = bnewLocation.get<1>() - centerInPixels.get<1>();
 				resizeX = 1;
-				resizeY = bnewLocation.get<1>() / contourPointsInPixels.outer().at(pointDraggedId).get<1>();
-				b = 2 * abs(bnewLocation.get<1>()) / ((double)parentCanvas->getHeight() * yScale);
+				resizeY = (2*abs(sb)/ (double)parentCanvas->getHeight()) / b;
+				
+				b = 2 * abs(sb) / (double)parentCanvas->getHeight();
+
+
+				/*contourPoints.outer().at(0).set<1>(center.get<1>() - (b / 2)*yScale);
+				contourPoints.outer().at(2).set<1>(center.get<1>() + (b / 2)*yScale);
+				contourPointsInPixels.outer().at(0).set<1>(contourPoints.outer().at(0).get<1>()*(double)parentCanvas->getHeight());
+				contourPointsInPixels.outer().at(2).set<1>(contourPoints.outer().at(2).get<1>()*(double)parentCanvas->getHeight());*/
 				break;
 			default:
 				break;
 			}
-
-			boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scaler(resizeX, resizeY);
-			boost::geometry::transform(contourPointsInPixels, newPolygonInPixels, scaler);
-
-			boost::geometry::transform(newPolygonInPixels, contourPointsInPixels, invRot);
-			boost::geometry::transform(contourPointsInPixels, newPolygonInPixels, TrPixels);
-			contourPointsInPixels.clear();
-			contourPointsInPixels = newPolygonInPixels;
-
+			DBG("new (a,b) = (" + (String)a + " , " + (String)b + ")");
+			
+			bpolygon newContourPoints;
+			boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scaler(resizeX,resizeY);
+			boost::geometry::strategy::transform::translate_transformer<double, 2, 2> trans(-(double)center.get<0>(), -(double)center.get<1>());
+			boost::geometry::strategy::transform::translate_transformer<double, 2, 2> invtrans((double)center.get<0>(), (double)center.get<1>());
+			boost::geometry::transform(contourPoints, newContourPoints, trans);
 			contourPoints.clear();
-			boost::geometry::strategy::transform::scale_transformer<double, 2, 2> rescaler(1 / ((double)parentCanvas->getWidth()), 1 / ((double)parentCanvas->getHeight()));
-			boost::geometry::transform(contourPointsInPixels, contourPoints, rescaler);
-
-			
-			
+			boost::geometry::transform(newContourPoints, contourPoints, scaler);
+			newContourPoints.clear();
+			boost::geometry::transform(contourPoints, newContourPoints, invtrans);
+			contourPoints.clear();
+			contourPoints = newContourPoints;
+			contourPointsInPixels.clear();
 
 			
 			areaEventType = AreaEventType::ShapeChanged;
@@ -275,66 +292,32 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 	}
 	else if (pointDraggedId == EditableAreaPointId::ManipulationPoint)
 	{
+        /*
 		DBG("manipulation point dragged");
-		/*DBG("0 : " + (String)contourPointsInPixels.outer().at(0).get<0>() + " " + (String)contourPointsInPixels.outer().at(0).get<1>());
+		DBG("0 : " + (String)contourPointsInPixels.outer().at(0).get<0>() + " " + (String)contourPointsInPixels.outer().at(0).get<1>());
 		DBG("1 : " + (String)contourPointsInPixels.outer().at(1).get<0>() + " " + (String)contourPointsInPixels.outer().at(1).get<1>());
 		DBG("2 : " + (String)contourPointsInPixels.outer().at(2).get<0>() + " " + (String)contourPointsInPixels.outer().at(2).get<1>());
-		DBG("3 : " + (String)contourPointsInPixels.outer().at(3).get<0>() + " " + (String)contourPointsInPixels.outer().at(3).get<1>());*/
+		DBG("3 : " + (String)contourPointsInPixels.outer().at(3).get<0>() + " " + (String)contourPointsInPixels.outer().at(3).get<1>());
+         */
 		// Just resize
 		// Security needed for point to stay within the canvas ?
 		areaEventType = AreaEventType::RotScale;
 
 		double r1 = boost::geometry::distance(centerInPixels, bmanipulationPointInPixels);
 		double r2 = boost::geometry::distance(centerInPixels, bnewLocation);
-
-		double x1 = bmanipulationPointInPixels.get<0>() - centerInPixels.get<0>();
-		double x2 = bnewLocation.get<0>() - centerInPixels.get<0>();
-		double y1 = bmanipulationPointInPixels.get<1>() - centerInPixels.get<1>();
-		double y2 = bnewLocation.get<1>() - centerInPixels.get<1>();
-
-		//DBG("rotationAngle = " + (String)rotationAngle);
-
-		double cos_a = (x2*x1 + y2*y1) / (r1*r2);
-		double sin_a = (y2*x1 - x2*y1) / (r1*r2);
-		bpt testPt(bnewLocation);
-		boost::geometry::subtract_point(testPt, centerInPixels);
-		double radAngle = Math::ComputePositiveAngle(testPt);//atan(sin_a / cos_a);//Math::ComputePositiveAngle(bnewLocation);//atan(sin_a / cos_a);
 		// ----- size -----
 		double size = r2 / r1;
-		
-		bool wasSizeApplied(false);
-		if (SizeChanged(size,true))
+        /*
+		if (size > 2)
+			DBG("size : " + (String)size + ", r1 =  " +(String)r1 + " r2 = " + (String)r2);
+		else
+			DBG("size : " + (String)size);
+        */
+		if (SizeChanged(size))
 		{
 			bmanipulationPointInPixels.set<0>(bnewLocation.get<0>());
 			bmanipulationPointInPixels.set<1>(bnewLocation.get<1>());
-			wasSizeApplied = true;
 		}
-		// always apply the rotation
-		//double radAngle = Math::ComputePositiveAngle(bnewLocation);//atan(sin_a / cos_a);
-		
-		Rotate(-radAngle + rotationAngle);
-		rotationAngle = radAngle;
-		
-		if (!wasSizeApplied)
-		{
-			bpt newManipulationPoint;
-
-			boost::geometry::strategy::transform::translate_transformer<double, 2, 2> trans(-centerInPixels.get<0>(), -centerInPixels.get<1>());
-			boost::geometry::strategy::transform::translate_transformer<double, 2, 2> invtrans(centerInPixels.get<0>(), centerInPixels.get<1>());
-			boost::geometry::strategy::transform::rotate_transformer<boost::geometry::radian, double, 2, 2> rot(radAngle - rotationAngle);
-
-
-			boost::geometry::transform(bmanipulationPointInPixels, newManipulationPoint, trans);
-			boost::geometry::transform(newManipulationPoint, bmanipulationPointInPixels, rot);
-			boost::geometry::transform(bmanipulationPointInPixels, newManipulationPoint, invtrans);
-
-			bmanipulationPointInPixels = newManipulationPoint;
-		}
-		// After manipulation computation : normalized coordinates update
-		contourPoints.clear();
-		boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scaler(1 / ((double)parentCanvas->getWidth()), 1 / ((double)parentCanvas->getHeight()));
-		boost::geometry::transform(contourPointsInPixels, contourPoints, scaler);
-
 	}
 
 	else if (pointDraggedId == EditableAreaPointId::Center)
@@ -391,12 +374,13 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 	if (areaEventType != AreaEventType::NothingHappened)
 	{
 		InteractiveEllipse::CanvasResized(this->parentCanvas);
-		/*DBG("0 : " + (String)contourPointsInPixels.outer().at(0).get<0>() + " " + (String)contourPointsInPixels.outer().at(0).get<1>());
+        /*
+		DBG("0 : " + (String)contourPointsInPixels.outer().at(0).get<0>() + " " + (String)contourPointsInPixels.outer().at(0).get<1>());
 		DBG("1 : " + (String)contourPointsInPixels.outer().at(1).get<0>() + " " + (String)contourPointsInPixels.outer().at(1).get<1>());
 		DBG("2 : " + (String)contourPointsInPixels.outer().at(2).get<0>() + " " + (String)contourPointsInPixels.outer().at(2).get<1>());
-		DBG("3 : " + (String)contourPointsInPixels.outer().at(3).get<0>() + " " + (String)contourPointsInPixels.outer().at(3).get<1>());*/
+		DBG("3 : " + (String)contourPointsInPixels.outer().at(3).get<0>() + " " + (String)contourPointsInPixels.outer().at(3).get<1>());
+         */
 	}
-
 
 
 	return areaEventType;
@@ -415,7 +399,7 @@ AreaEventType EditableEllipse::EndPointMove()
 	return eventType;
 }
 
-bool EditableEllipse::SizeChanged(double size, bool minSize)
+bool EditableEllipse::SizeChanged(double size)
 {
 
 	bool returnValue = false;
@@ -431,6 +415,49 @@ bool EditableEllipse::SizeChanged(double size, bool minSize)
 	boost::geometry::transform(testBoost, testBoost2, resizer);
 	boost::geometry::transform(testBoost2, testBoost, invtrans);
 
+	//bpt newManipulationPt, newManipulationPt2;
+	//boost::geometry::transform(bmanipulationPointInPixels, newManipulationPt, trans);
+	//boost::geometry::transform(newManipulationPt, newManipulationPt2, resizer);
+	//boost::geometry::transform(newManipulationPt2, newManipulationPt, invtrans);
+
+	// si 
+	//for (size_t i = 0; i<contourPointsInPixels.outer().size(); i++)
+	//{
+	//	/*std::vector<bpt> result;
+	//	boost::geometry::difference(contourPointsInPixels.outer().at(i), centerInPixels, result);
+	//	bnewContourPoints.outer().push_back(result.front());*/
+
+	//	
+
+	//	bnewContourPoints.outer().push_back(bpt(contourPointsInPixels.outer().at(i).get<0>() - centerInPixels.get<0>(),
+	//		contourPointsInPixels.outer().at(i).get<1>() - centerInPixels.get<1>()));
+
+
+	//	bnewContourPoints.outer().at(i) = bpt(size * bnewContourPoints.outer().at(i).get<0>(),
+	//		size * bnewContourPoints.outer().at(i).get<1>());
+	//	/*if (boost::geometry::distance(bnewContourPoints.outer().at(i), bpt(0, 0)) > minDistanceFromCenter)
+	//		minDistanceFromCenter = boost::geometry::distance(bnewContourPoints.outer().at(i), bpt(0, 0));
+
+	//	boost::geometry::strategy::transform::translate_transformer<double, 2, 2> tr(centerInPixels.get<0>(), centerInPixels.get<1>());
+	//	boost::geometry::transform(bnewContourPoints.outer().at(i), bnewContourPoints.outer().at(i), tr);*/
+	//	if (boost::geometry::distance(bnewContourPoints.outer().at(i), bpt(0, 0)) > minDistanceFromCenter)
+	//		minDistanceFromCenter = boost::geometry::distance(bnewContourPoints.outer().at(i), bpt(0, 0));
+
+	//	bnewContourPoints.outer().at(i).set<0>(bnewContourPoints.outer().at(i).get<0>() + centerInPixels.get<0>());
+	//	bnewContourPoints.outer().at(i).set<1>(bnewContourPoints.outer().at(i).get<1>() + centerInPixels.get<1>());
+
+	//}
+	/*boost::geometry::detail::distance::point_to_polygon<bpt, bpolygon, boost::geometry::closure<, boost::geometry::strategy::distance::pythagoras<>>::apply(centerInPixels, testBoost, boost::geometry::strategy::distance::pythagoras<>());
+	DBG("autre test : " + (String)boost::geometry::distance(testBoost.outer(),centerInPixels));
+	DBG("test = " + (String)boost::geometry::comparable_distance(testBoost, centerInPixels, boost::geometry::strategy::distance::pythagoras<double>()));
+	DBG("maxToCenterTest = " + (String)boost::geometry::distance(testBoost, centerInPixels));
+	DBG("maxToCenter = " + (String)boost::geometry::distance(centerInPixels, testBoost));
+	double test = boost::geometry::comparable_distance(testBoost, centerInPixels, boost::geometry::strategy::distance::pythagoras<double>());
+	double maxToCenterTest = boost::geometry::distance(testBoost, centerInPixels);*/
+	
+	/*double maxToCenter = boost::geometry::distance(centerInPixels,testBoost);
+	if (maxToCenter > minDistanceFromCenter)
+		minDistanceFromCenter = maxToCenter;*/
 
 	for (size_t i = 0; i < testBoost.outer().size(); i++)
 	{
@@ -442,8 +469,8 @@ bool EditableEllipse::SizeChanged(double size, bool minSize)
 	//std::vector<bpolygon> comparaison;
 	//boost::geometry::difference(bnewContourPoints, testBoost, comparaison);
 	
-	if ( (!minSize) || ( minDistanceFromCenter >=
-		minimumSizePercentage*(parentCanvas->getWidth() + parentCanvas->getHeight()) / 2.0))
+	if (minDistanceFromCenter >=
+		minimumSizePercentage*(parentCanvas->getWidth() + parentCanvas->getHeight()) / 2.0)
 	{
 		wasSizeApplied = true;
 		contourPointsInPixels.clear(); // test;
@@ -456,26 +483,11 @@ bool EditableEllipse::SizeChanged(double size, bool minSize)
 		b *= size;
 	}
 
-	
+	// After manipulation computation : normalized coordinates update
+	contourPoints.clear();
+	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scaler(1/ ((double)parentCanvas->getWidth()), 1/ ((double)parentCanvas->getHeight()));
+	boost::geometry::transform(contourPointsInPixels, contourPoints, scaler);
 	return returnValue;
-}
-
-void EditableEllipse::Rotate(double Radian)
-{
-	bpolygon newPolygon;
-
-	boost::geometry::strategy::transform::translate_transformer<double, 2, 2> trans(-centerInPixels.get<0>(), -centerInPixels.get<1>());
-	boost::geometry::strategy::transform::translate_transformer<double, 2, 2> invtrans(centerInPixels.get<0>(), centerInPixels.get<1>());
-	boost::geometry::strategy::transform::rotate_transformer<boost::geometry::radian, double, 2, 2> rot(Radian);
-
-
-	boost::geometry::transform(contourPointsInPixels, newPolygon, trans);
-	boost::geometry::transform(newPolygon, contourPointsInPixels, rot);
-	boost::geometry::transform(contourPointsInPixels, newPolygon, invtrans);
-
-	contourPointsInPixels.clear();
-	contourPointsInPixels = newPolygon;
-
 }
 
 void EditableEllipse::Translate(const Point<double>& translation)
@@ -573,9 +585,4 @@ void EditableEllipse::recreateNormalizedPoints()
 	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scaler(1.0 / (double)parentCanvas->getWidth(), 1.0 / (double)parentCanvas->getHeight());
 	boost::geometry::transform(contourPointsInPixels, contourPoints,scaler);
 	boost::geometry::transform(centerInPixels, center, scaler);
-}
-
-double EditableEllipse::getRadius()
-{
-	return boost::geometry::distance(centerInPixels, contourPointsInPixels.outer().at(0));
 }

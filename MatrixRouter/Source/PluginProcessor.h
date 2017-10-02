@@ -20,6 +20,8 @@
 
 #include "IModel.h"
 
+#include "OscDebugger.h"
+
 
 namespace Miam {
     
@@ -36,6 +38,11 @@ namespace Miam {
     {
         
         // ================== ATTRIBUTES ===================
+#ifdef __MIAM_DEBUG
+        OscDebugger oscLocalhostDebugger;
+#endif
+        
+        
     private:
         // - - - - - Links to other modules - - - - -
         /// Called from both the UI thread for save/load phases and UPD changes
@@ -75,13 +82,11 @@ namespace Miam {
         /// Must be >= 1 to avoid bugs :
         /// if == 0, unable to detect if a volume ramp is happening or not
         int initialRampSamples;
-        /// \brief Corresponds to the "attack time" within the View module
-        AudioParameterFloat* rampDuration_ms;
-        /// \brief To detect changes on the DAW side... (méthode archaïque)
-        float rampDurationBackup_ms;
+        /// \brief Attack/Release time for any volume transition
+        int rampDuration_ms;
         
         // - - - - - Audio parameters for Automation - - - - -
-        AudioParameterInt* udpPortAudioParam;
+        
         /// \brief Automatizable data shared with the data
         ///
         /// Also the data that can be saved and loaded to and from the DAW.
@@ -95,13 +100,16 @@ namespace Miam {
         /// notifications...
         float dawMatrixBackup[JucePlugin_MaxNumInputChannels][JucePlugin_MaxNumInputChannels];
         
+        /// \brief Corresponds to the "attack time" within the View module
+        AudioParameterInt* dawRampDuration_ms;
+        /// \brief Same as rampDuration_ms but from the DAW
+        /// \brief To detect changes on the DAW side... (méthode archaïque)
+        int dawRampDurationBackup_ms;
+        
         // - - - - - Auxiliary attributes - - - - -
         // To detect and send changes to the Presenter
         int lastInputsCount = -1;
         int lastOutputsCount = -1;
-#ifdef __MIAM_DEBUG
-        OSCSender oscLocalhostDebugger;
-#endif
         
         
         // ================== METHODS ===================
@@ -127,7 +135,12 @@ namespace Miam {
     public :
         void processBlock (AudioSampleBuffer&, MidiBuffer&) override;
     private :
+        
+        /// \brief Processes (or not, depending on the origin and priority) a param
+        /// change coming from the specified source, and computes and launches a volume
+        /// ramp is the param change concerns the matrix.
         void processParamChange(AsyncParamChange& paramChange, DataOrigin origin);
+        
         /// \brief Auxiliary functions
         void sendInputsOutputsCount();
         void sendRampDuration();
@@ -160,6 +173,10 @@ namespace Miam {
         
         //==============================================================================
         void getStateInformation (MemoryBlock& destData) override;
+        /// \Brief Called from the DAW, it forces the state of the plugin.
+        ///
+        /// The DAW (Reaper/AU) sometimes loads nan values -> check for this, if nan
+        /// values are given by the DAW -> default values loaded.
         void setStateInformation (const void* data, int sizeInBytes) override;
         
         

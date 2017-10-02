@@ -11,7 +11,7 @@
 #ifndef SPATSTATE_H_INCLUDED
 #define SPATSTATE_H_INCLUDED
 
-
+#include <iostream>
 #include <string>
 #include <vector>
 #include <memory>
@@ -20,6 +20,10 @@
 #include "AudioDefines.h"
 
 #include "SpatArea.h"
+
+#include "boost/property_tree/ptree.hpp"
+#include "boost/property_tree/xml_parser.hpp"
+namespace bptree = boost::property_tree;
 
 namespace Miam
 {
@@ -50,6 +54,7 @@ namespace Miam
         
         // Own attributes
         std::string name;
+        
         // For convenience and optimizations...
         int index;
         
@@ -66,7 +71,7 @@ namespace Miam
         
         /// \returns A string containing the Id (counting from 1) and the name
         /// concatenated
-        virtual std::string GetName(bool withId = true)
+        virtual std::string GetName(bool withId = true) const
         {
             std::string indexString;
             if (withId)
@@ -81,7 +86,7 @@ namespace Miam
         }
         
         void SetIndex(int newIndex) {index = newIndex;}
-        int GetIndex() {return index;}
+        int GetIndex() const {return index;}
         
         virtual size_t GetOutputsCount() = 0;
         
@@ -103,11 +108,12 @@ namespace Miam
         // - - - - - Construction / destruction - - - - -
         virtual ~SpatState()
         {
-            // does not need to unlink from area : the link is a weak_ptr
+            // Called when this spat state is unregistered from all areas that
+            // kept a shared_ptr to this
         }
 
         
-        // - - - - - Linking to spat areas - - - - -
+        // - - - - - Internal linking to spat areas - - - - -
         void LinkToArea(std::shared_ptr<SpatArea> spatArea)
         {
             // no check for double addition (but it's weak ptrs...)
@@ -126,10 +132,42 @@ namespace Miam
             }
         }
         
+        // - - - - - External linking to spat areas - - - - -
+        void UnregisterFromAreas()
+        {
+            // does not need to internally unlink from area : the link is a weak_ptr
+            // But still needs to unregister from linked areas
+            for (size_t i=0 ; i < linkedAreas.size() ; i++)
+            {
+                auto areaPtr = linkedAreas[i].lock();
+                if (areaPtr)
+                    areaPtr->LinkToSpatState(nullptr);
+            }
+        }
+        
+        
         // - - - - - Output channels (speakers) : add, delete, swap, ... - - - - -
         virtual void AddOutput() = 0;
         virtual void DeleteOutput(size_t i) = 0;
         virtual void SwapOutputs(size_t i, size_t j) = 0;
+        
+        // - - - - - Property tree (for XML) import/export - - - - -
+        virtual std::shared_ptr<bptree::ptree> GetTree()
+        {
+            auto pTree = std::make_shared<bptree::ptree>();
+            // This sub-tree does not know its own "master name tag" = <state>
+            pTree->put("name", GetName(false));
+            return pTree;
+        }
+        /// \brief Receives all the children nodes and contents inside a <state> tag,
+        /// but not the <state> and </state> tags themselves.
+        virtual void SetFromTree(bptree::ptree & stateTree)
+        {
+            // Common attributes = name only, for now
+            // With default value to avoid try/catch block
+            // And automatic data type identifying (= default value type)
+            SetName( stateTree.get("name", std::string("unnamed")) );
+        }
         
     };
     

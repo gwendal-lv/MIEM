@@ -54,7 +54,7 @@ void MainContentComponent::CompleteInitialization(Presenter* _presenter)
 {
     presenter = _presenter;
     
-    mainBackgroundComponent->CompleteInitialization();
+    mainBackgroundComponent->CompleteInitialization(presenter);
 }
 
 void MainContentComponent::SetMiamView(Miam::View* _view)
@@ -88,10 +88,10 @@ void MainContentComponent::ChangeAppMode(AppMode newAppMode)
             break;
             
         case AppMode::EditSpatStates :
-        spatStatesEditionComponent->setVisible(true);
+            spatStatesEditionComponent->setVisible(true);
             break;
         case AppMode::EditSpatScenes :
-        sceneEditionComponent->setVisible(true);
+            sceneEditionComponent->setVisible(true);
             break;
         
         case AppMode::EditHardwareConfiguration :
@@ -120,7 +120,6 @@ void MainContentComponent::DisplayInfo(const String& message)
 
 void MainContentComponent::paint (Graphics& /*g*/)
 {
-    bool test = true;
 }
 
 void MainContentComponent::resized()

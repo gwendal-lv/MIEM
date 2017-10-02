@@ -77,9 +77,15 @@ namespace Miam {
 		/// \brief Obeys orders from the Presenter when a informative message has to de displayed to
 		/// the user.
 		///
-		/// \param message Short sentence to be written in the upper uneditable text box.
-        void DisplayInfo(const String& message);
-        
+		/// \param message Short sentence to be written in the upper uneditable
+        /// text box, and maybe in a dialog pop-up like window.
+        void DisplayInfo(const std::string& message, bool alsoDisplayInNewWindow = false);
+        private :
+        /// \brief Crée une nouvelle fenêtre sobre et affiche le message centré.
+        ///
+        /// Si le début du message est entre crochets, il va devenir le titre de la
+        /// fenêtre.
+        void displayInfoInNewWindow(const std::string& message);
         
         
         // ----- Setters and Getters -----

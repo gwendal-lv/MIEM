@@ -20,7 +20,7 @@
 
 #include "JuceHeader.h"
 
-#include "AreaEvent.h"
+#include "MultiAreaEvent.h"
 
 #include "IEditableArea.h"
 #include "Exciter.h"
@@ -85,10 +85,23 @@ namespace Miam
         
         std::vector< std::shared_ptr<Exciter> > initialExciters;
         std::vector< std::shared_ptr<Exciter> > currentExciters;
+        
+        /// \brief On aura parfois besoin d'un excitateur particulier sélectionné :
+        /// - pour savoir lequel supprimer en particulier (quand on supprime par clic
+        /// sur un bouton)
+        /// - pour savoir lequel faire sauter par double-clic
+        /// - pour d'autres trucs...
+        ///
+        /// dans tous les cas ça peut juste ne pas être utilisé
+        std::shared_ptr<Exciter> selectedExciter;
+        
         ExcitersBehaviorType excitersBehavior;
         
         
         /// \brief Links (Locks) a multi-touch souce ID to an EditableArea
+        ///
+        /// L'aire concernée peut être soit une aire générique éditable, soit
+        /// un excitateur, soit....
         std::map<int, std::shared_ptr<IEditableArea>> touchSourceToEditableArea;
         
         
@@ -96,15 +109,38 @@ namespace Miam
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
         
-        // areas + exciters
+        // - - - - - Pour interfaçage avec classes de dessin OpenGL - - - - -
+        
+        /// \brief Aires + excitateurs
         size_t GetDrawableObjectsCount();
+        
+        /// \brief Les aires sont envoyées en premier, les excitateurs derrière
+        ///
+        /// Les excitateurs n'ont donc ici pas leur index dans le tableau
+        /// d'excitateurs, mais leur index par rapport à toutes les aires dessinables
+        /// dans la scène
         std::shared_ptr<IDrawableArea> GetDrawableObject(size_t i);
         
-        // true interactive areas only
+        protected :
+        /// \brief Calcule l'index d'un excitateur parmi toutes les aires graphiques
+        /// dessinables en openGL.
+        virtual size_t getExciterDrawingIndex(size_t exciterVectorIndex)
+        { return areas.size() + exciterVectorIndex; }
+        
+        public :
+        
+        
+        // - - - - - Vraies aires interactives - - - - -
+        
         size_t GetInteractiveAreasCount();
         std::shared_ptr<IInteractiveArea> GetInteractiveArea(size_t i);
         
+        public :
+        std::shared_ptr<Exciter> GetSelectedExciter() const {return selectedExciter;}
+        protected :
+        std::shared_ptr<MultiAreaEvent> setSelectedExciter(std::shared_ptr<Exciter> exciterToSelect);
         
+        public :
         /* useless normally...
         size_t GetExcitersCount() {return currentExciters.size(); }
         std::shared_ptr<Exciter> GetExciter(size_t i) {return currentExciters[i];}
@@ -132,11 +168,30 @@ namespace Miam
         /// \brief Adds an area without creating it before
         virtual std::shared_ptr<AreaEvent> AddArea(std::shared_ptr<IInteractiveArea> newArea);
         
+        
+        // - - - - - Exciters Managing - - - - -
+        
+        
+        /// \brief Adds a default exciter
+        virtual std::shared_ptr<AreaEvent> AddDefaultExciter();
         /// \brief Adds an exciter without creating it before
         virtual std::shared_ptr<AreaEvent> AddExciter(std::shared_ptr<Exciter> newExciter);
+        /// \brief Deletes a current ("active") exciter by reference.
+        ///
+        /// Modifie les indexes des excitateurs courants plus loin dans le tableau.
+        virtual std::shared_ptr<AreaEvent> DeleteCurrentExciterByIndex(size_t excitersVectorIndex);
+        /// \brief Supprime l'excitateur actuellement sélectionné (si existe)
+        ///
+        /// Fonctionne par recherche inverse dans le tableau d'excitateurs... Pas
+        /// optimisé.
+        std::shared_ptr<AreaEvent> DeleteSelectedExciter();
         
-        
-        
+        /// \brief Replace le jeu d'excitateurs dans son état d'origine.
+        virtual std::shared_ptr<MultiAreaEvent> ResetCurrentExcitersToInitialExciters();
+        /// \brief Pendant l'édition, on pourra sauvegarder les excitateurs.
+        ///
+        /// En mode de jeu classique, cette fonctionnalité ne servira normalement pas.
+        virtual void SaveCurrentExcitersToInitialExciters();
         
         
         // - - - - - Selection events managing (orders from parent manager) - - - - -
@@ -177,6 +232,10 @@ namespace Miam
         ///
         /// \returns An event that describes what happened
         virtual std::shared_ptr<GraphicEvent> OnCanvasMouseUp(const MouseEvent& mouseE);
+        
+        /// \brief Called when the scene's mode changes (from exciters transformation
+        /// to something else...). because : The scene does not know its own mode !
+        virtual std::vector<std::shared_ptr<GraphicEvent>> StopCurrentTransformations();
 
     };
     

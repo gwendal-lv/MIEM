@@ -28,6 +28,9 @@ namespace Miam
         
         // - - - - - Construction/Destruction + polymorphic cloning - - - - -
         public :
+        
+        InteractivePolygon(bptree::ptree & areaTree);
+        
         /// \param _Id See DrawablePolygon::DrawablePolygon
         InteractivePolygon(int64_t _Id);
         /// \param _Id See DrawablePolygon::DrawablePolygon

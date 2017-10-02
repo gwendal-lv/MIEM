@@ -8,6 +8,8 @@
   ==============================================================================
 */
 
+#include <sstream> // std::ostringstream
+
 #include "SpatStatesEditionManager.h"
 
 #include "View.h"
@@ -30,20 +32,62 @@ void SpatStatesEditionManager::CompleteInitialisation(std::shared_ptr<SpatInterp
     spatInterpolator = _spatInterpolator;
     
     // Update of the list on the GUI side
-    updateView();
+    selectSpatState(nullptr);
+    UpdateView();
 }
 
 
 // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
+void SpatStatesEditionManager::selectSpatState(std::shared_ptr<SpatState<double>> _spatState)
+{
+    // Internal update at first
+    selectedSpatState = _spatState;
+    
+    // Graphical updates : info label (links count)
+    std::string infoText;
+    std::shared_ptr<SpatMatrix> matrixToSend = std::make_shared<SpatMatrix>(); // initially full of zeros
+    int stateIndexToSend = -1;
+    if (selectedSpatState)
+    {
+        infoText = "Linked to "
+        + std::to_string(selectedSpatState->GetLinkedAreasCount())
+        + " area" + (selectedSpatState->GetLinkedAreasCount()>1 ? "s" : "");
+        stateIndexToSend = selectedSpatState->GetIndex();
+        
+        // At last : routing matrix (only choice available for now...)
+        if (std::shared_ptr<MatrixState<double>> matrixState = std::dynamic_pointer_cast<MatrixState<double>>(selectedSpatState) )
+            matrixToSend = matrixState->GetMatrix();
+        // else if the cast did not work
+        else
+            throw std::runtime_error("Spat state is not a Matrix state");
+    }
+    else // if no state selected
+        infoText = "-";
+    // Update command
+    editionComponent->SelectAndUpdateState(stateIndexToSend, infoText, matrixToSend);
+}
+
+
+size_t SpatStatesEditionManager::GetFadersCount()
+{
+    return selectedSpatState->GetOutputsCount();
+}
 
 
 // = = = = = = = = = = EVENTS from PRESENTER = = = = = = = = = =
-
-void SpatStatesEditionManager::OnLeaveSpatStatesEdition()
+void SpatStatesEditionManager::OnEnterSpatStatesEdition()
+{
+    // Forces graphical updates
+    selectSpatState(selectedSpatState);
+}
+std::shared_ptr<bptree::ptree> SpatStatesEditionManager::OnLeaveSpatStatesEdition()
 {
     sendDataToModel(editionComponent->GetDisplayedSpatMatrix());
     // Update now to the editionComponent
     selectSpatState(selectedSpatState);
+    
+    // Save to XML (Presenter does it)
+    return spatInterpolator->GetSpatStatesTree();
 }
 
 
@@ -70,48 +114,75 @@ void SpatStatesEditionManager::OnRenameState(std::string newName, int stateIndex
     spatInterpolator->GetSpatState(stateIndex)->SetName(newName);
     
     // Total list update + Selection of the state that has just been renamed
-    updateView();
+    UpdateView();
     selectSpatState(spatInterpolator->GetSpatState(stateIndex));
 }
-void SpatStatesEditionManager::selectSpatState(std::shared_ptr<SpatState<double>> _spatState)
+
+
+void SpatStatesEditionManager::OnAddState()
 {
-    // Internal update at first
-    selectedSpatState = _spatState;
-    
-    // Graphical updates : info label (links count)
-    std::string infoText;
-    std::shared_ptr<SpatMatrix> matrixToSend = std::make_shared<SpatMatrix>(); // initially full of zeros
+    auto newState = spatInterpolator->AddDefaultState();
+    UpdateView();
+    selectSpatState(newState);
+}
+void SpatStatesEditionManager::OnDeleteSelectedState()
+{
     if (selectedSpatState)
     {
-        infoText = "Linked to "
-        + std::to_string(selectedSpatState->GetLinkedAreasCount())
-        + " area" + (selectedSpatState->GetLinkedAreasCount()>1 ? "s" : "");
-        
-        // At last : routing matrix (only choice available for now...)
-        if (std::shared_ptr<MatrixState<double>> matrixState = std::dynamic_pointer_cast<MatrixState<double>>(selectedSpatState) )
-            matrixToSend = matrixState->GetMatrix();
-        // else if the cast did not work
-        else
-            throw std::runtime_error("Spat state is not a Matrix state");
+        // Model command transmission at first
+        size_t spatStateIndexBackup = (size_t)selectedSpatState->GetIndex();
+        spatInterpolator->DeleteState(selectedSpatState);
+        // Display updates
+        UpdateView();
+        if (spatStateIndexBackup == 0)
+        {
+            // if it was the last one, nothing selected
+            if (spatInterpolator->GetSpatStatesCount() == 0)
+                selectSpatState(nullptr);
+            else // else, the next one is selected
+                selectSpatState(spatInterpolator->GetSpatState(spatStateIndexBackup));
+        }
+        else // selection of the previous
+            selectSpatState(spatInterpolator->GetSpatState(spatStateIndexBackup-1));
     }
-    else // if no state selected
-        infoText = "-";
-    // Update command
-    if (selectedSpatState)
-        editionComponent->SelectAndUpdateState(selectedSpatState->GetIndex(), infoText, matrixToSend);
+    else
+        throw std::logic_error("Cannot delete state: no state is currently selected.");
+    
 }
-
-
-size_t SpatStatesEditionManager::GetFadersCount()
+void SpatStatesEditionManager::OnMoveSelectedStateUp()
 {
-    return selectedSpatState->GetOutputsCount();
+    if (selectedSpatState
+        && spatInterpolator->GetSpatStatesCount() >= 2
+        && selectedSpatState->GetIndex() > 0)
+    {
+        spatInterpolator->SwapStatesByIndex(selectedSpatState->GetIndex(), selectedSpatState->GetIndex()-1);
+        // Updates
+        UpdateView();
+        selectSpatState(selectedSpatState); // re-selection
+    }
+    else
+        throw std::logic_error("Cannot move spat state towards the first position.");
+}
+void SpatStatesEditionManager::OnMoveSelectedStateDown()
+{
+    if (selectedSpatState
+        && spatInterpolator->GetSpatStatesCount() >= 2
+        && selectedSpatState->GetIndex() < spatInterpolator->GetSpatStatesCount()-1)
+    {
+        spatInterpolator->SwapStatesByIndex(selectedSpatState->GetIndex(), selectedSpatState->GetIndex()+1);
+        // Updates
+        UpdateView();
+        selectSpatState(selectedSpatState); // re-selection
+    }
+    else
+        throw std::logic_error("Cannot move spat state towards the last position.");
 }
 
 
 
 // = = = = = = = = = = GRAPHICAL HELPERS = = = = = = = = = =
 
-void SpatStatesEditionManager::updateView()
+void SpatStatesEditionManager::UpdateView()
 {
     // GUI update (copy of whole vector)
     std::vector<std::shared_ptr<SpatState<double>>> newSpatStates = spatInterpolator->GetSpatStates();
@@ -129,7 +200,7 @@ void SpatStatesEditionManager::sendDataToModel(std::shared_ptr<SpatMatrix> curre
         if (std::shared_ptr<MatrixState<double>> matrixState = std::dynamic_pointer_cast<MatrixState<double>>(selectedSpatState) )
             matrixState->SetMatrix(currentMatrix);
         else
-            throw std::logic_error("State is not a Matrix (behavior not implemented");
+            throw std::logic_error("State is not a Matrix (behavior not implemented)");
     }
 }
 
@@ -139,4 +210,5 @@ void SpatStatesEditionManager::AllowKeyboardEdition(bool allow)
 {
     editionComponent->AllowKeyboardEdition(allow);
 }
+
 

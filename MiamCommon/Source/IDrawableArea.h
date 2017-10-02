@@ -25,6 +25,10 @@
 
 #include "JuceHeader.h"
 
+#include "boost/property_tree/ptree.hpp"
+#include "boost/property_tree/xml_parser.hpp"
+namespace bptree = boost::property_tree;
+
 
 // Simple declaration for a pointer
 class SceneCanvasComponent;
@@ -37,6 +41,24 @@ typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian>
 
 namespace Miam
 {
+    /// /brief For menus creation by IDs, etc
+    struct AreaDefaultType
+    {
+        
+        enum : int
+        {
+            // Corresponds the return value of a Juce popup menu,
+            // when nothing was selected
+            None = 0,
+            
+            Ellipse,
+            
+            // Number of sides minimum = 3
+            Polygon = 3,
+            // Such that Polygon+1 is a square
+            // Polygon+2 is a pentagon, etc...
+        };
+    };
     
     
     /// \brief Interface of the Miam::DrawableArea (which is an abtract object)
@@ -77,6 +99,12 @@ namespace Miam
         /// \brief Sets the name that could be displayed on screen next to the center
         virtual void SetName(String newName) = 0;
         
+        
+        
+        // - - - - - XML import/export - - - - -
+        virtual std::string GetTypeAsString() const = 0;
+        virtual std::shared_ptr<bptree::ptree> GetTree() = 0;
+        // XML import is made directly from the constructor
         
     };
     
