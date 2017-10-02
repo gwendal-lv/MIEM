@@ -109,6 +109,7 @@ public:
     // - - - - - Initial Scene State group - - - - -
     void SetInitialStateGroupHidden(bool _isHidden);
     void SetInitialStateGroupReduced(bool _isReduced);
+    void SetDeleteExciterButtonEnabled(bool _isEnabled);
 
 
     // ----- Other setters and getters -----

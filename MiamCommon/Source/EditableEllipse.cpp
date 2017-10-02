@@ -212,18 +212,22 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 	// Simple contour point dragging
 	if (pointDraggedId >= 0)
 	{
+        /*
 		DBG("contour dragging");
-		DBG("isNewContourPointValid = " + (String)isNewContourPointValid(newLocation));
+        DBG(String("isNewContourPointValid = ") + ( isNewContourPointValid(newLocation)==true ? "oui" : "non" ));
+        */
 		if (parentCanvas->getLocalBounds().contains(newLocation.toInt())
 			&& isNewContourPointValid(newLocation))
 		{
+            /*
 			DBG("(a,b) = (" + (String)a + " , " + (String)b + ")");
-			/*DBG("centerInPixels" + (String)centerInPixels.get<0>() + " " + (String)centerInPixels.get<1>());
-			DBG("center" + (String)center.get<0>() + " " + (String)center.get<1>());*/
+			DBG("centerInPixels" + (String)centerInPixels.get<0>() + " " + (String)centerInPixels.get<1>());
+			DBG("center" + (String)center.get<0>() + " " + (String)center.get<1>());
 			DBG("0 : " + (String)contourPointsInPixels.outer().at(0).get<0>() + " " + (String)contourPointsInPixels.outer().at(0).get<1>());
 			DBG("1 : " + (String)contourPointsInPixels.outer().at(1).get<0>() + " " + (String)contourPointsInPixels.outer().at(1).get<1>());
 			DBG("2 : " + (String)contourPointsInPixels.outer().at(2).get<0>() + " " + (String)contourPointsInPixels.outer().at(2).get<1>());
 			DBG("3 : " + (String)contourPointsInPixels.outer().at(3).get<0>() + " " + (String)contourPointsInPixels.outer().at(3).get<1>());
+            */
 			double sa,sb;
 			double resizeX, resizeY;
 			switch (pointDraggedId)
@@ -288,11 +292,13 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 	}
 	else if (pointDraggedId == EditableAreaPointId::ManipulationPoint)
 	{
+        /*
 		DBG("manipulation point dragged");
 		DBG("0 : " + (String)contourPointsInPixels.outer().at(0).get<0>() + " " + (String)contourPointsInPixels.outer().at(0).get<1>());
 		DBG("1 : " + (String)contourPointsInPixels.outer().at(1).get<0>() + " " + (String)contourPointsInPixels.outer().at(1).get<1>());
 		DBG("2 : " + (String)contourPointsInPixels.outer().at(2).get<0>() + " " + (String)contourPointsInPixels.outer().at(2).get<1>());
 		DBG("3 : " + (String)contourPointsInPixels.outer().at(3).get<0>() + " " + (String)contourPointsInPixels.outer().at(3).get<1>());
+         */
 		// Just resize
 		// Security needed for point to stay within the canvas ?
 		areaEventType = AreaEventType::RotScale;
@@ -301,10 +307,12 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 		double r2 = boost::geometry::distance(centerInPixels, bnewLocation);
 		// ----- size -----
 		double size = r2 / r1;
+        /*
 		if (size > 2)
 			DBG("size : " + (String)size + ", r1 =  " +(String)r1 + " r2 = " + (String)r2);
 		else
 			DBG("size : " + (String)size);
+        */
 		if (SizeChanged(size))
 		{
 			bmanipulationPointInPixels.set<0>(bnewLocation.get<0>());
@@ -366,10 +374,12 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 	if (areaEventType != AreaEventType::NothingHappened)
 	{
 		InteractiveEllipse::CanvasResized(this->parentCanvas);
+        /*
 		DBG("0 : " + (String)contourPointsInPixels.outer().at(0).get<0>() + " " + (String)contourPointsInPixels.outer().at(0).get<1>());
 		DBG("1 : " + (String)contourPointsInPixels.outer().at(1).get<0>() + " " + (String)contourPointsInPixels.outer().at(1).get<1>());
 		DBG("2 : " + (String)contourPointsInPixels.outer().at(2).get<0>() + " " + (String)contourPointsInPixels.outer().at(2).get<1>());
 		DBG("3 : " + (String)contourPointsInPixels.outer().at(3).get<0>() + " " + (String)contourPointsInPixels.outer().at(3).get<1>());
+         */
 	}
 
 

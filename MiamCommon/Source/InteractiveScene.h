@@ -99,6 +99,9 @@ namespace Miam
         
         
         /// \brief Links (Locks) a multi-touch souce ID to an EditableArea
+        ///
+        /// L'aire concernée peut être soit une aire générique éditable, soit
+        /// un excitateur, soit....
         std::map<int, std::shared_ptr<IEditableArea>> touchSourceToEditableArea;
         
         
@@ -132,7 +135,12 @@ namespace Miam
         size_t GetInteractiveAreasCount();
         std::shared_ptr<IInteractiveArea> GetInteractiveArea(size_t i);
         
+        public :
+        std::shared_ptr<Exciter> GetSelectedExciter() const {return selectedExciter;}
+        protected :
+        std::shared_ptr<MultiAreaEvent> setSelectedExciter(std::shared_ptr<Exciter> exciterToSelect);
         
+        public :
         /* useless normally...
         size_t GetExcitersCount() {return currentExciters.size(); }
         std::shared_ptr<Exciter> GetExciter(size_t i) {return currentExciters[i];}
@@ -172,6 +180,11 @@ namespace Miam
         ///
         /// Modifie les indexes des excitateurs courants plus loin dans le tableau.
         virtual std::shared_ptr<AreaEvent> DeleteCurrentExciterByIndex(size_t excitersVectorIndex);
+        /// \brief Supprime l'excitateur actuellement sélectionné (si existe)
+        ///
+        /// Fonctionne par recherche inverse dans le tableau d'excitateurs... Pas
+        /// optimisé.
+        std::shared_ptr<AreaEvent> DeleteSelectedExciter();
         
         /// \brief Replace le jeu d'excitateurs dans son état d'origine.
         virtual std::shared_ptr<MultiAreaEvent> ResetCurrentExcitersToInitialExciters();
@@ -219,6 +232,10 @@ namespace Miam
         ///
         /// \returns An event that describes what happened
         virtual std::shared_ptr<GraphicEvent> OnCanvasMouseUp(const MouseEvent& mouseE);
+        
+        /// \brief Called when the scene's mode changes (from exciters transformation
+        /// to something else...). because : The scene does not know its own mode !
+        virtual std::vector<std::shared_ptr<GraphicEvent>> StopCurrentTransformations();
 
     };
     

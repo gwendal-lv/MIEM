@@ -110,6 +110,9 @@ namespace Miam {
 		// ----- Running mode -----
         protected :
 		/// \brief Launches the necessary graphic updates, then changes the running mode.
+        ///
+        /// Cette fonction est parfois appelée de manière indirecte : en appelant
+        /// SetMode(...) du canevas sélectionné, qui retransmet son mode à lui
         void setMode(GraphicSessionMode newMode);
         public :
         

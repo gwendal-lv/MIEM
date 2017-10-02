@@ -175,8 +175,16 @@ namespace Miam {
         /// Copy-constructor of the event called : else, there would be cast
         /// issues
         void handleAndSendEventSync(std::shared_ptr<GraphicEvent> graphicE);
-        // for optimization purposes
-        void handleAndSendAreaEventSync(std::shared_ptr<AreaEvent> areaE);
+        /// \brief Can be called alone, or from the MultiArea version of this function
+        /// (for optimization purposes).
+        ///
+        /// Should notify the Graphic Session Manager only when directly called.
+        void handleAndSendAreaEventSync(std::shared_ptr<AreaEvent> areaE, bool notifyGraphicSessionManager = true);
+        /// \brief Splits a multi-area event into the sub area events. The main event is also turned into
+        /// a single area event.
+        ///
+        /// Might be called from the AreaEvent-typed function
+        void handleAndSendMultiAreaEventSync(std::shared_ptr<MultiAreaEvent> multiAreaE);
         
         
         
@@ -233,6 +241,16 @@ namespace Miam {
         /// The event would not be treated if the addition was ordered directly to the
         /// concerned scene
         void AddAreaToScene(size_t sceneIndex, std::shared_ptr<IInteractiveArea> area_);
+        
+        
+        // ---------- Exciters management ----------
+    
+        /// \brief Adds a default initial exciter to the selected scene
+        void OnAddExciter();
+        /// \brief Tries to delete an initial exciter from the selected scene
+        void OnDeleteExciter();
+        
+        
 
         // ---------- Events from CanvasComponent (from View) ----------
         public :
@@ -240,6 +258,7 @@ namespace Miam {
         void OnCanvasMouseDrag(const MouseEvent& mouseE);
         void OnCanvasMouseUp(const MouseEvent& mouseE);
         void OnResized();
+        
         
         
         // - - - - - XML import/export - - - - -
@@ -299,6 +318,8 @@ namespace Miam {
             
             // Graphical updates before returning
             canvasComponent->UpdateSceneButtons(GetInteractiveScenes());
+            
+            
             
             return sceneTrees;
         }

@@ -29,7 +29,7 @@ namespace Miam {
         
         CanvasSelected, ///< A canvas is selected (but no area) ; ready to process mouse input from canvas
         
-        ExcitersEditionMode, ///< On est en mode d'édition des excitateurs, mais aucun excitateurs n'est sélectionné pour l'instant
+        ExcitersEdition, ///< On est en mode d'édition des excitateurs, mais aucun excitateurs n'est sélectionné pour l'instant
         
         // - - - - - Info coming from the canvas - - - - -
         // - - - - -(still interesting for the edition  manager to know) - - - - -

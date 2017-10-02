@@ -880,6 +880,15 @@ void SceneEditionComponent::SetInitialStateGroupReduced(bool _isReduced)
 
     addExciterTextButton->setVisible(!_isReduced);
     deleteExciterTextButton->setVisible(!_isReduced);
+    
+    // si on est réduit, on décoche le mode correspondant...
+    if (_isReduced)
+        excitersEditionButton->setToggleState(false, NotificationType::dontSendNotification);
+}
+
+void SceneEditionComponent::SetDeleteExciterButtonEnabled(bool _isEnabled)
+{
+    deleteExciterTextButton->setEnabled(_isEnabled);
 }
 
 

@@ -58,8 +58,10 @@ void DrawableArea::Paint(Graphics& g)
 		(float)centerInPixels.get<1>()-centerCircleRadius,
         centerCircleRadius*2.0f, centerCircleRadius*2.0f, centerContourWidth);
     
-    if (isNameVisible)
+    // DEBUG pb MT getGlyphPosition
+    if (isNameVisible && false)
     {
+        
         g.setColour(Colours::black); // black shadow
         g.drawSingleLineText(name,
                              (int)centerInPixels.get<0>()+1,

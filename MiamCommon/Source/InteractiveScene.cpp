@@ -84,6 +84,36 @@ std::shared_ptr<IInteractiveArea> InteractiveScene::GetInteractiveArea(size_t i)
     return areas[i];
 }
 
+std::shared_ptr<MultiAreaEvent> InteractiveScene::setSelectedExciter(std::shared_ptr<Exciter> exciterToSelect)
+{
+    auto areaE = std::make_shared<MultiAreaEvent>();
+    // Désélection si nécessaire
+    if (selectedExciter)
+    {
+        areaE = std::make_shared<MultiAreaEvent>(selectedExciter, AreaEventType::Unselected);
+        selectedExciter->Highlight(false);
+        selectedExciter = nullptr;
+    }
+    // Sélection du nouvel excitateur
+    if (exciterToSelect)
+    {
+        selectedExciter = exciterToSelect;
+        selectedExciter->Highlight(true);
+        // Si rien ne s'est encore passé : on re-crée un event simple
+        if (areaE->GetType() == AreaEventType::NothingHappened)
+            areaE = std::make_shared<MultiAreaEvent>(selectedExciter, AreaEventType::Selected);
+        // Sinon, on crée un nouveau multi area event
+        else
+        {
+            auto multiAreaE_temp = std::make_shared<MultiAreaEvent>(selectedExciter, AreaEventType::Selected);
+            multiAreaE_temp->AddAreaEvent(areaE); // areaE en tant que AreaEvent simple : uniquement partie principale sera traitée par la suite
+            areaE = multiAreaE_temp; // échange, les shared_ptr gardent les 2 events proprement
+        }
+    }
+    
+    return areaE;
+}
+
 void InteractiveScene::SetName(std::string _name)
 {
     name = _name;
@@ -127,15 +157,22 @@ std::shared_ptr<AreaEvent> InteractiveScene::AddDefaultExciter()
 }
 std::shared_ptr<AreaEvent> InteractiveScene::AddExciter(std::shared_ptr<Exciter> newExciter)
 {
+    // Configuration particulière des excitateurs
+    newExciter->Highlight(false);
+    
     currentExciters.push_back(newExciter);
     
     // Forced graphical updates
     newExciter->CanvasResized(canvasComponent);
     
-    
     // WARNING
-    // The id is the ID relative to all drawable objects....
-    return std::make_shared<AreaEvent>(newExciter, AreaEventType::Added, (int) getExciterDrawingIndex(currentExciters.size()-1), shared_from_this());
+    // The vector index is the one relative to all drawable objects....
+    auto multiAreaE = std::make_shared<MultiAreaEvent>(newExciter, AreaEventType::Added, (int) getExciterDrawingIndex(currentExciters.size()-1), shared_from_this());
+    
+    // !!! Sélection forcée !!!
+    multiAreaE->AddAreaEvent( setSelectedExciter(newExciter) );
+    
+    return multiAreaE;
 }
 
 std::shared_ptr<AreaEvent> InteractiveScene::DeleteCurrentExciterByIndex(size_t excitersVectorIndex)
@@ -143,6 +180,23 @@ std::shared_ptr<AreaEvent> InteractiveScene::DeleteCurrentExciterByIndex(size_t 
     auto deletedExciter = currentExciters[excitersVectorIndex];
     currentExciters.erase(currentExciters.begin() + excitersVectorIndex);
     return std::make_shared<AreaEvent>(deletedExciter, AreaEventType::Deleted);
+}
+std::shared_ptr<AreaEvent> InteractiveScene::DeleteSelectedExciter()
+{
+    auto areaE = std::make_shared<AreaEvent>();
+    
+    // Recherche inverse de l'index, et dé-sélection et suppression directement
+    for (size_t i=0 ; i<currentExciters.size() && selectedExciter ; i++)
+    {
+        if (currentExciters[i] == selectedExciter)
+        {
+            std::shared_ptr<MultiAreaEvent> multiAreaE_temp = setSelectedExciter(nullptr);
+            multiAreaE_temp->AddAreaEvent( DeleteCurrentExciterByIndex(i) );
+            areaE = multiAreaE_temp;
+        }
+    }
+            
+    return areaE;
 }
 
 std::shared_ptr<MultiAreaEvent> InteractiveScene::ResetCurrentExcitersToInitialExciters()
@@ -213,25 +267,7 @@ void InteractiveScene::OnSelection()
 }
 std::vector<std::shared_ptr<GraphicEvent>> InteractiveScene::OnUnselection()
 {
-    std::vector<std::shared_ptr<GraphicEvent>> areaEvents;
-    
-	// We stop all current movements
-    // and filter all future undesired touch events
-	for (auto it = touchSourceToEditableArea.begin();
-		it != touchSourceToEditableArea.end();)
-	{
-		// filtering at first,
-        std::shared_ptr<IEditableArea> editableArea = it->second;
-        it = touchSourceToEditableArea.erase(it); // increments to next valid
-        // Actual stop after
-		AreaEventType eventType = editableArea->EndPointMove();
-        
-        // Storage of event in vector (for events back sending)
-        auto areaE = std::make_shared<AreaEvent>(editableArea, eventType);
-        areaEvents.push_back(areaE);
-	}
-    
-    return areaEvents;
+    return StopCurrentTransformations();
 }
 
 
@@ -240,8 +276,8 @@ std::vector<std::shared_ptr<GraphicEvent>> InteractiveScene::OnUnselection()
 
 std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseDown(const MouseEvent& mouseE)
 {
-	// default : empty AREA event (TO DO : events may happen on exciters, etc, etc, ...)
-    auto graphicE = std::make_shared<AreaEvent>(nullptr, AreaEventType::NothingHappened);
+	// default : empty AREA event
+    auto graphicE = std::make_shared<AreaEvent>();
 
     switch(excitersBehavior)
     {
@@ -269,8 +305,18 @@ std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseDown(const MouseEve
                     // Indicates the the move can begin
                     touchSourceToEditableArea[mouseE.source.getIndex()] = currentExciters[i];
 					graphicE = std::make_shared<AreaEvent>(currentExciters[i], eventType);
+                    
+                    // Le dernier excitateur choisi devient l'excitateur sélectionné !
+                    auto multiAreaE_temp = setSelectedExciter(currentExciters[i]);
+                    multiAreaE_temp->AddAreaEvent(graphicE);
+                    graphicE = multiAreaE_temp;
                 }
             }
+            
+            // Si rien n'a été sélectionné à cet endroit : dé-sélecion de l'excitateur
+            if (eventType == AreaEventType::NothingHappened)
+                graphicE = setSelectedExciter(nullptr);
+            
             break;
         }
             
@@ -327,6 +373,29 @@ std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseUp(const MouseEvent
             break;
     }
     return graphicE;
+}
+
+std::vector<std::shared_ptr<GraphicEvent>> InteractiveScene::StopCurrentTransformations()
+{
+    std::vector<std::shared_ptr<GraphicEvent>> areaEvents;
+    
+    // We stop all current movements
+    // and filter all future undesired touch events
+    for (auto it = touchSourceToEditableArea.begin();
+         it != touchSourceToEditableArea.end();)
+    {
+        // filtering at first,
+        std::shared_ptr<IEditableArea> editableArea = it->second;
+        it = touchSourceToEditableArea.erase(it); // increments to next valid
+        // Actual stop after
+        AreaEventType eventType = editableArea->EndPointMove();
+        
+        // Storage of event in vector (for events back sending)
+        auto areaE = std::make_shared<AreaEvent>(editableArea, eventType);
+        areaEvents.push_back(areaE);
+    }
+    
+    return areaEvents;
 }
 
 

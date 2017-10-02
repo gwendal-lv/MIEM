@@ -232,15 +232,6 @@ void GraphicSessionManager::setMode(GraphicSessionMode newMode)
             view->DisplayInfo("Editing a Canvas and its Scenes");
             break;
             
-        case GraphicSessionMode::ExcitersEditionMode :
-            sceneEditionComponent->SetCanvasGroupHidden(true);
-            sceneEditionComponent->SetAreaGroupHidden(true);
-            sceneEditionComponent->SetSpatGroupReduced(true);
-            sceneEditionComponent->SetInitialStateGroupHidden(false);
-            sceneEditionComponent->SetInitialStateGroupReduced(false);
-            sceneEditionComponent->resized(); // right menu update
-            break;
-            
         case GraphicSessionMode::AreaSelected :
             if (GetSelectedArea() == nullptr)
                 throw std::runtime_error("No area selected, mode cannot be AreaSelected");
@@ -263,6 +254,21 @@ void GraphicSessionManager::setMode(GraphicSessionMode newMode)
             /*
          case GraphicSessionMode::EditingArea :
             break;*/
+            
+            
+        case GraphicSessionMode::ExcitersEdition :
+            sceneEditionComponent->SetCanvasGroupHidden(true);
+            sceneEditionComponent->SetAreaGroupHidden(true);
+            sceneEditionComponent->SetSpatGroupReduced(true);
+            sceneEditionComponent->SetInitialStateGroupHidden(false);
+            sceneEditionComponent->SetInitialStateGroupReduced(false);
+            sceneEditionComponent->SetDeleteExciterButtonEnabled(false);
+            sceneEditionComponent->resized(); // right menu update
+            break;
+        case GraphicSessionMode::ExciterSelected :
+            sceneEditionComponent->SetDeleteExciterButtonEnabled(true);
+            break;
+            
             
         case GraphicSessionMode::WaitingForPointCreation :
             sceneEditionComponent->DisableAllButtonsBut("Add Point text button");
@@ -289,9 +295,20 @@ void GraphicSessionManager::CanvasModeChanged(CanvasManagerMode canvasMode)
         case CanvasManagerMode::SceneOnlySelected :
             setMode(GraphicSessionMode::CanvasSelected);
             break;
+            
         case CanvasManagerMode::AreaSelected :
             setMode(GraphicSessionMode::AreaSelected);
             break;
+            
+            
+        case CanvasManagerMode::ExcitersEdition :
+            setMode(GraphicSessionMode::ExcitersEdition);
+            break;
+        case CanvasManagerMode::ExciterSelected :
+            setMode(GraphicSessionMode::ExciterSelected);
+            break;
+            
+            
         case CanvasManagerMode::WaitingForPointCreation :
             setMode(GraphicSessionMode::WaitingForPointCreation);
             break;
@@ -552,9 +569,7 @@ void GraphicSessionManager::OnPasteArea()
             throw std::runtime_error("No valid area can be pasted from the clipboard.");
     }
     else
-        throw std::runtime_error("Cannot paste an area : no canvas selected. Paste button should not be clickable at the moment.");
-    
-    
+        throw std::logic_error("Cannot paste an area : no canvas selected. Paste button should not be clickable at the moment.");
 }
 
 void GraphicSessionManager::OnSpatStateChanged(int spatStateIdx)
@@ -574,11 +589,17 @@ void GraphicSessionManager::OnSpatStateChanged(int spatStateIdx)
 
 void GraphicSessionManager::OnEnterExcitersEdition()
 {
-    setMode(GraphicSessionMode::ExcitersEditionMode);
+    if (selectedCanvas)
+        selectedCanvas->SetMode(CanvasManagerMode::ExcitersEdition);
+    else
+        throw std::logic_error("Cannot switch to 'Exciters Edition mode' because no canvas is currently selected");
 }
 void GraphicSessionManager::OnQuitExcitersEdition()
 {
-    setMode(GraphicSessionMode::CanvasSelected);
+    if (selectedCanvas)
+        selectedCanvas->SetMode(CanvasManagerMode::SceneOnlySelected);
+    else
+        throw std::logic_error("Cannot quit 'Exciters Edition mode' because no canvas is currently selected");
 }
 
 
