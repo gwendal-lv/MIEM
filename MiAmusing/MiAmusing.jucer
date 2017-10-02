@@ -106,6 +106,10 @@
         <FILE id="UU8cSP" name="MainComponent.cpp" compile="1" resource="0"
               file="Source/MainComponent.cpp"/>
         <FILE id="W5cilK" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+        <FILE id="isFsvY" name="MouseSimulator.cpp" compile="1" resource="0"
+              file="Source/MouseSimulator.cpp"/>
+        <FILE id="maf3RZ" name="MouseSimulator.h" compile="0" resource="0"
+              file="Source/MouseSimulator.h"/>
         <FILE id="DDewx3" name="MultiCanvasComponentAmusing.cpp" compile="1"
               resource="0" file="Source/MultiCanvasComponentAmusing.cpp"/>
         <FILE id="a1eNGz" name="MultiCanvasComponentAmusing.h" compile="0"
