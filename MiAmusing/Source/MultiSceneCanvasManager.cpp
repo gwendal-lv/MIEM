@@ -219,44 +219,34 @@ void MultiSceneCanvasManager::OnDelete()
 	
 }
 
+void MultiSceneCanvasManager::handleAndSendMultiAreaEventSync(std::shared_ptr<MultiAreaEvent> multiAreaE)
+{
+	// Cast de l'évènement principal vers la classe mère
+	auto mainAreaE = std::make_shared<AreaEvent>(multiAreaE.get());
+	MultiSceneCanvasInteractor::handleAndSendAreaEventSync(mainAreaE, true); // pas de notif
+
+												  // Dispatching des sous-évènements
+	for (size_t i = 0; i<multiAreaE->GetOtherEventsCount(); i++)
+	{
+		MultiSceneCanvasInteractor::handleAndSendAreaEventSync(multiAreaE->GetOtherEvent(i), true); // pas de notif
+	}
+
+	// Ensuite on envoie le gros multiarea event au GraphicSessionManager en 1 paquet
+	// (plutôt que chacun des petits séparément, pour lesquels la notification a été supprimée)
+	graphicSessionManager->HandleEventSync(multiAreaE);
+}
+
 void MultiSceneCanvasManager::handleAndSendAreaEventSync(std::shared_ptr<AreaEvent> areaE)
 {
 	
 	if (auto multiE = std::dynamic_pointer_cast<MultiAreaEvent>(areaE))
 	{
+		handleAndSendMultiAreaEventSync(multiE);
 		
-		for (int i = 0; i < multiE->GetOtherEventsCount(); i++)
-		{
-			
-			MultiSceneCanvasEditor::handleAndSendAreaEventSync(multiE->GetOtherEvent(i));
-		}
 	}
 	else
 	{
-		if (areaE->GetType() == AreaEventType::Deleted) // verifier si ca sert encore a qqch
-		{
-			
-			//if (auto area = std::dynamic_pointer_cast<AnimatedPolygon> (areaE->GetConcernedArea()))
-			//{
-
-			//	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
-			//		while (true)
-			//		{
-			//			if (auto followerToDelete = amusingScene->getFollowers(area))
-			//			{
-			//				DBG("followerToDelete");
-			//				deleteAsyncDrawableObject((int)followerToDelete->GetId(), followerToDelete);
-			//			}
-			//			else
-			//				break;
-			//		}
-			//}
-			//else
-			//{
-			//	DBG("area to delete : " + (String)((int)areaE->GetAreaIdInScene()));
-			//	//deleteAsyncDrawableObject(areaE->GetAreaIdInScene(), areaE->GetConcernedArea());
-			//}
-		}
+		
 		MultiSceneCanvasEditor::handleAndSendAreaEventSync(areaE);
 	}
 	
@@ -286,7 +276,7 @@ void MultiSceneCanvasManager::deleteUnusedFollowers()
 void MultiSceneCanvasManager::deleteAsyncDrawableObject(int idInScene, std::shared_ptr<IDrawableArea> originalAreaToDelete)
 {
 
-	MultiSceneCanvasInteractor::deleteAsyncDrawableObject(idInScene, originalAreaToDelete);
+	MultiSceneCanvasInteractor::deleteAsyncDrawableObject(originalAreaToDelete);
 }
 
 void MultiSceneCanvasManager::OnCanvasMouseDown(const MouseEvent& mouseE)

@@ -59,6 +59,7 @@ namespace Amusing {
 		// =========================================
 		
 		double vitesse;
+		void SetFromTree(bptree::ptree& graphicSessionTree) override;
 		// =========================================
 
 		// = = = = = = = = = = ATTRIBUTES = = = = = = = = = =

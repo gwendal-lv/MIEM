@@ -66,6 +66,7 @@ namespace Amusing {
 		void SetAudioPositions(std::shared_ptr<Cursor> area, double position);
 		int getNumberArea();
 		void handleAndSendAreaEventSync(std::shared_ptr<AreaEvent> areaE);
+		void handleAndSendMultiAreaEventSync(std::shared_ptr<MultiAreaEvent> multiAreaE);
 
 
 		void deleteUnusedFollowers();

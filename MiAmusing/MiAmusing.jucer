@@ -123,6 +123,8 @@
     </GROUP>
     <FILE id="v8jCgE" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
     <GROUP id="{593B3C8B-4E9F-6C95-BD9D-6562983482B8}" name="MiamCommonSource">
+      <FILE id="Pu0wVR" name="XmlUtils.cpp" compile="1" resource="0" file="../MiamCommon/Source/XmlUtils.cpp"/>
+      <FILE id="lnMHPu" name="XmlUtils.h" compile="0" resource="0" file="../MiamCommon/Source/XmlUtils.h"/>
       <FILE id="ibEfgJ" name="LockFreeParamChangeSender.cpp" compile="1"
             resource="0" file="../MiamCommon/Source/LockFreeParamChangeSender.cpp"/>
       <FILE id="GluTRy" name="LockFreeParamChangeSender.h" compile="0" resource="0"
@@ -238,8 +240,6 @@
       </GROUP>
       <GROUP id="{B91B2137-DC4A-127C-0037-DB058876BEFA}" name="Utils">
         <GROUP id="{22E0B59F-81F6-AAC5-A6F4-3B584D7BBEA6}" name="AsyncParamChanges">
-          <FILE id="ttwn7e" name="AsyncParamChange.cpp" compile="1" resource="0"
-                file="../MiamCommon/Source/AsyncParamChange.cpp"/>
           <FILE id="ik81Hn" name="AsyncParamChange.h" compile="0" resource="0"
                 file="../MiamCommon/Source/AsyncParamChange.h"/>
         </GROUP>
