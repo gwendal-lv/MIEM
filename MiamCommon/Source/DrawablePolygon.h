@@ -16,8 +16,6 @@
 #include "boost/geometry/geometries/polygon.hpp"
 #include "DrawableArea.h"
 
-//typedef boost::geometry::model::point<double, 3, boost::geometry::cs::cartesian> bpt;
-typedef boost::geometry::model::polygon<bpt> bpolygon;
 
 namespace Miam {
     
