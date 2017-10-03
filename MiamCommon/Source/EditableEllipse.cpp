@@ -25,6 +25,14 @@ EditableEllipse::EditableEllipse(int64_t _Id) :
 	InteractiveEllipse(_Id)
 {
 	init();
+	isRound = false;
+}
+
+EditableEllipse::EditableEllipse(int64_t _Id, bpt _center, double _r, Colour _fillColour, float _canvasRatio) :
+	InteractiveEllipse(_Id, _center, _r, _r, _fillColour, _canvasRatio)
+{
+	init();
+	isRound = true;
 }
 
 
@@ -32,6 +40,7 @@ EditableEllipse::EditableEllipse(int64_t _Id, bpt _center, double _a, double _b,
 	InteractiveEllipse(_Id, _center, _a, _b, _fillColour, _canvasRatio)
 {
 	init();
+	isRound = false;
 }
 
 void EditableEllipse::init()
@@ -143,6 +152,11 @@ void EditableEllipse::SetActive(bool activate)
 	}
 }
 
+void Miam::EditableEllipse::SetRound(bool _isround)
+{
+	isRound = _isround;
+}
+
 AreaEventType EditableEllipse::TryBeginPointMove(const Point<double>& hitPoint)
 {
 	
@@ -237,14 +251,19 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 			case 1:
 			case 3:
 				resizeX = bnewLocation.get<0>() / contourPointsInPixels.outer().at(pointDraggedId).get<0>();
-				resizeY = 1;
+				resizeY = isRound? resizeX : 1;
 				a = 2 * abs(bnewLocation.get<0>()) / ((double)parentCanvas->getWidth() * xScale);
+				if(isRound)
+					b = 2 * abs(bnewLocation.get<0>()) / ((double)parentCanvas->getHeight() * yScale);
 				break;
 			case 0:
 			case 2:
-				resizeX = 1;
+				
 				resizeY = bnewLocation.get<1>() / contourPointsInPixels.outer().at(pointDraggedId).get<1>();
+				resizeX = isRound? resizeY : 1;
 				b = 2 * abs(bnewLocation.get<1>()) / ((double)parentCanvas->getHeight() * yScale);
+				if(isRound)
+					a = 2 * abs(bnewLocation.get<1>()) / ((double)parentCanvas->getWidth() * xScale);
 				break;
 			default:
 				break;
@@ -322,6 +341,10 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 
 			bmanipulationPointInPixels = newManipulationPoint;
 		}
+
+		contourPoints.clear();
+		boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scaler(1 / ((double)parentCanvas->getWidth()), 1 / ((double)parentCanvas->getHeight()));
+		boost::geometry::transform(contourPointsInPixels, contourPoints, scaler);
 	}
 	else if (pointDraggedId == EditableAreaPointId::Center)
 	{
