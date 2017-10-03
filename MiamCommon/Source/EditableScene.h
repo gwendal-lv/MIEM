@@ -147,9 +147,6 @@ namespace Miam
         virtual std::shared_ptr<GraphicEvent> OnCanvasMouseUp(const MouseEvent& mouseE) override;
 
         
-        // - - - - - XML import/export - - - - -
-        std::shared_ptr<bptree::ptree> GetTree();
-        
     };
     
     

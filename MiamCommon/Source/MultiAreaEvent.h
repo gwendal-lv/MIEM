@@ -38,13 +38,19 @@ namespace Miam
         std::shared_ptr<AreaEvent> GetOtherEvent(size_t i) {return otherEvents[i];}
         
         
-        // Same constructors
+        // Same constructors as the single-area version
         
         MultiAreaEvent();
+        
+        MultiAreaEvent(std::shared_ptr<IDrawableArea> concernedArea_,
+                       AreaEventType eventType_,
+                       std::shared_ptr<InteractiveScene> concernedScene_);
+        
         MultiAreaEvent(std::shared_ptr<IDrawableArea> concernedArea_,
                   AreaEventType eventType_,
                   int areaIdInScene_ = -1,
                   std::shared_ptr<InteractiveScene> concernedScene_ = nullptr);
+        
         /// \brief Crée simplement l'évènement principal de cette classe, en le construisant par copie de
         /// l'évènement fourni en paramètre.
         MultiAreaEvent( AreaEvent *e );

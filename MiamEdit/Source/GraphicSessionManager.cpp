@@ -71,6 +71,7 @@ GraphicSessionManager::~GraphicSessionManager() {}
 
 
 // Testing purposes only
+/*
 void GraphicSessionManager::__LoadDefaultTest()
 {
     srand(2016); // GRAINE fixée ici
@@ -99,6 +100,7 @@ void GraphicSessionManager::__LoadDefaultTest()
         }
     }
 }
+*/
 
 
 
@@ -289,7 +291,7 @@ void GraphicSessionManager::setMode(GraphicSessionMode newMode)
 
 
 void GraphicSessionManager::CanvasModeChanged(CanvasManagerMode canvasMode)
-{
+{    
     switch (canvasMode)
     {
         case CanvasManagerMode::SceneOnlySelected :

@@ -8,6 +8,8 @@
   ==============================================================================
 */
 
+#include <cmath>
+
 #include "DrawableArea.h"
 
 #include "SceneCanvasComponent.h"
@@ -38,8 +40,10 @@ DrawableArea::DrawableArea(int64_t _Id, bpt _center, Colour _fillColour)
 void DrawableArea::init()
 {
     centerCircleRadius = 5;
+    displayCenter = true;
     
     fillOpacity = 1.0;
+    enableLowOpacityMode = false;
     
     contourColour = Colours::white;
     contourWidth = 2.0f;
@@ -53,15 +57,27 @@ void DrawableArea::init()
 
 void DrawableArea::Paint(Graphics& g)
 {
-    g.setColour(contourColour);
-    g.drawEllipse((float)centerInPixels.get<0>()-centerCircleRadius,
-		(float)centerInPixels.get<1>()-centerCircleRadius,
-        centerCircleRadius*2.0f, centerCircleRadius*2.0f, centerContourWidth);
+    // Dessin du centre (couleur du contour) si nécessaire
+    if (displayCenter)
+    {
+        Colour actualContourColour = (enableLowOpacityMode) ?
+        Colour(contourColour.getRed(), contourColour.getGreen(), contourColour.getBlue(),
+               getLowFillOpacity() )
+        : contourColour;
+        g.setColour(actualContourColour);
+        g.drawEllipse((float)centerInPixels.get<0>()-centerCircleRadius,
+                      (float)centerInPixels.get<1>()-centerCircleRadius,
+                      centerCircleRadius*2.0f, centerCircleRadius*2.0f, centerContourWidth);
+    }
     
+    // Dessin du texte :
+    // DEBUG pb MT getGlyphPosition
+    // DEBUG pb MT getGlyphPosition
+    // DEBUG pb MT getGlyphPosition
+    // DEBUG pb MT getGlyphPosition
     // DEBUG pb MT getGlyphPosition
     if (isNameVisible && false)
     {
-        
         g.setColour(Colours::black); // black shadow
         g.drawSingleLineText(name,
                              (int)centerInPixels.get<0>()+1,
@@ -71,6 +87,12 @@ void DrawableArea::Paint(Graphics& g)
                              (int)centerInPixels.get<0>(),
                              (int)(centerInPixels.get<1>() -centerCircleRadius*2));
     }
+    // DEBUG pb MT getGlyphPosition
+    // DEBUG pb MT getGlyphPosition
+    // DEBUG pb MT getGlyphPosition
+    // DEBUG pb MT getGlyphPosition
+    // DEBUG pb MT getGlyphPosition
+    // DEBUG pb MT getGlyphPosition
 }
 
 void DrawableArea::CanvasResized(SceneCanvasComponent* _parentCanvas)
@@ -96,6 +118,10 @@ void DrawableArea::SetAlpha(float newAlpha)
 	fillOpacity = newAlpha;
 }
 
+void DrawableArea::EnableLowOpacityMode(bool enable)
+{
+    enableLowOpacityMode = enable;
+}
 
 // = = = = = = = = = = XML import/export = = = = = = = = = =
 std::shared_ptr<bptree::ptree> DrawableArea::GetTree()

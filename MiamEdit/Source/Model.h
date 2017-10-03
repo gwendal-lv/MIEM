@@ -45,7 +45,7 @@ namespace Miam
         public :
         
         // - - - - - Construction / destruction - - - - -
-        Model(Presenter* presenter_);
+        Model(Presenter* presenter_, std::string commandLine);
         virtual ~Model();
         
         

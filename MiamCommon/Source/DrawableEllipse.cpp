@@ -61,10 +61,11 @@ DrawableEllipse::~DrawableEllipse()
 void DrawableEllipse::Paint(Graphics& g)
 {
 	g.setColour(fillColour);
-	g.setOpacity(fillOpacity);
+    g.setOpacity(enableLowOpacityMode ? getLowFillOpacity() : fillOpacity);
 	g.fillPath(contour);
 
 	g.setColour(contourColour);
+    g.setOpacity(enableLowOpacityMode ? getLowFillOpacity() : fillOpacity);
 	g.strokePath(contour, PathStrokeType(contourWidth));
 
 	// Parent's drawings on top of these ones

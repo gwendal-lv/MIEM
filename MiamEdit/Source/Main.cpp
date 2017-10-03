@@ -41,7 +41,7 @@ public:
     bool moreThanOneInstanceAllowed() override       { return true; }
 
     //==============================================================================
-    void initialise (const String& /*commandLine*/) override
+    void initialise (const String& commandLine) override
     {
         // [This method is where you should put your application's initialisation code..]
         mainWindow = new MainWindow (getApplicationName());
@@ -54,7 +54,7 @@ public:
         else
             throw std::runtime_error("First child of Main Window is not a MainContentComponent...");
         presenter = new Miam::Presenter(view); // Will reference itself to the View module
-        model = new Miam::Model(presenter);// Will reference itself to the Presenter module
+        model = new Miam::Model(presenter, commandLine.toStdString());// Will reference itself to the Presenter module
         
         // TAILLE INITIALE
         // À CHANGER SELON LA PLATEFORME

@@ -194,15 +194,29 @@ namespace Miam
             return statesTree;
         }
         /// \brief Exact inverse process of GetSpatStatesTree()
+        ///
+        /// If an empty ptree is given : just triggers a reset of the module.
         void SetSpatStatesFromTree(bptree::ptree & spatStatesTree)
         {
             // At first : reinit
             spatStates.clear();
+            // If it is an empty tree : it was a command for a reinit...
+            if (spatStatesTree.empty())
+                return;
+            
+            // Récupération du noeud qui contiendra tous les états séparément
+            bptree::ptree statesNode;
+            try {
+                statesNode = spatStatesTree.get_child("states");
+            }
+            catch (bptree::ptree_error& e) {
+                throw XmlReadException(std::string("Inside <spat> node : ") + e.what());
+            }
             
             // State tree est une sorte d'itérateur
             // Attribut ".first" contient le contenu du tag XML concerné
             // Attribut ".second" contient le ptree = les enfants du tag XML concerné
-            for(auto &stateTree : spatStatesTree.get_child("states"))
+            for(auto &stateTree : statesNode)
             {
                 try {
                      // DEVRAIT DÉPENDRE DU TYPE DE SPAT

@@ -133,9 +133,16 @@ std::shared_ptr<bptree::ptree> IGraphicSessionManager::GetCanvasesTree()
 std::vector< std::shared_ptr<bptree::ptree> >
 IGraphicSessionManager::ExtractCanvasesSubTrees(bptree::ptree& canvasesTree)
 {
+    bptree::ptree canvasesNode;
+    try {
+        canvasesNode = canvasesTree.get_child("canvases");
+    }
+    catch (bptree::ptree_error& e) {
+        throw XmlReadException("Inside <graphicsession> node : ", e);
+    }
     std::vector< std::shared_ptr<bptree::ptree> > canvasTrees;
     size_t canvasesCount = 0;
-    for (auto& canvasChild : canvasesTree.get_child("canvases"))
+    for (auto& canvasChild : canvasesNode)
     {
         if (canvasChild.first != "canvas")
             throw XmlReadException("<canvases> children can be <canvas> tags only.");

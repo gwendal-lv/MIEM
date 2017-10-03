@@ -41,6 +41,19 @@ concernedArea(concernedArea_),
     
 }
 
+// Constructor without the index of the scene
+AreaEvent::AreaEvent(std::shared_ptr<IDrawableArea> concernedArea_,
+                     AreaEventType eventType_,
+                     std::shared_ptr<InteractiveScene> concernedScene_)
+:
+eventType(eventType_),
+concernedArea(concernedArea_),
+concernedScene(concernedScene_),
+areaIdInScene(-1)
+{
+    
+}
+
 AreaEvent::AreaEvent( AreaEvent *e )
 :
 eventType(e->GetType()),

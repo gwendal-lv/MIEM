@@ -48,8 +48,11 @@ namespace Miam {
         virtual ~MultiSceneCanvasEditor();
         
         
-        
         // ----- Running Mode -----
+        public :
+        /// \brief Implements special behaviors reserved to editing phases
+        virtual void SetMode(CanvasManagerMode _mode) override;
+        
         
         
         // ------ Setters and Getters ------

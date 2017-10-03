@@ -115,6 +115,15 @@ void MultiSceneCanvasInteractor::SetMode(Miam::CanvasManagerMode newMode)
             {
                 canvasComponent->SetIsSelectedForEditing(true);
             }
+            
+            // Mise en quasi-transparence des excitateurs seulement
+            if (selectedScene) // sinon pb à l'initialisation
+            {
+                selectedScene->EnableExcitersLowOpacity(true);
+                selectedScene->EnableAreasLowOpacity(false);
+                // Pas d'évènements renvoyés : on update le tout
+                recreateAllAsyncDrawableObjects();
+            }
             break;
             
         // Quand on passe en mode excitateurs (on y passe forcément avant
@@ -123,6 +132,12 @@ void MultiSceneCanvasInteractor::SetMode(Miam::CanvasManagerMode newMode)
         case CanvasManagerMode::ExcitersEdition :
             if (mode != CanvasManagerMode::ExciterSelected)
                 selectedScene->StopCurrentTransformations();
+            
+            // Mise en quasi-transparence des aires graphiques à exciter seulement
+            selectedScene->EnableExcitersLowOpacity(false);
+            selectedScene->EnableAreasLowOpacity(true);
+            // Pas d'évènements renvoyés : on update le tout
+            recreateAllAsyncDrawableObjects();
             break;
             
         // Default case : we just apply the new mode
@@ -231,20 +246,33 @@ void MultiSceneCanvasInteractor::handleAndSendAreaEventSync(std::shared_ptr<Area
         switch(areaE->GetType())
         {
             case AreaEventType::Added :
-                // Internally checks the given idInScene
-                addAsyncDrawableObject(areaE->GetAreaIdInScene(), areaE->GetConcernedArea());
+                // ATTENTION : ici, on traite le côté graphique de l'évènement.
+                // On ne traite donc rien si l'aire ajoutée ne provient pas de la scène sélectionnée !
+                if (selectedScene && selectedScene == areaE->GetConcernedScene())
+                {
+                    // Internally checks the given idInScene
+                    addAsyncDrawableObject(areaE->GetAreaIdInScene(), areaE->GetConcernedArea());
+                }
                 break;
                 
             case AreaEventType::Deleted :
-                // The object's index is not needed anymore for deletion
-                deleteAsyncDrawableObject(/*areaE->GetAreaIdInScene(), */
-                                          areaE->GetConcernedArea());
+                // Idem que l'ajout :
+                if (selectedScene && selectedScene == areaE->GetConcernedScene())
+                {
+                    // The object's index is not needed anymore for deletion
+                    deleteAsyncDrawableObject(/*areaE->GetAreaIdInScene(), */
+                                              areaE->GetConcernedArea());
+                }
                 break;
                 
             default : // Any movement : update of the concerned area (if any)
-                if (areaE->GetConcernedArea())
+                // Idem que l'ajout :
+                if (selectedScene && selectedScene == areaE->GetConcernedScene())
                 {
-                    updateAsyncDrawableObject(areaE->GetConcernedArea());
+                    if (areaE->GetConcernedArea())
+                    {
+                        updateAsyncDrawableObject(areaE->GetConcernedArea());
+                    }
                 }
                 break;
         }
@@ -475,6 +503,7 @@ void MultiSceneCanvasInteractor::forceDeleteScene(int sceneIndexToDelete)
 void MultiSceneCanvasInteractor::addAreaToScene(std::shared_ptr<EditableScene> scene_, std::shared_ptr<IInteractiveArea> area_)
 {
     auto areaE = scene_->AddArea(area_);
+    // Attention ici : on ne transmet l'évènement que si la scène est la scène sélectionnée...
     handleAndSendAreaEventSync(areaE);
 }
 void MultiSceneCanvasInteractor::AddAreaToScene(size_t sceneIndex, std::shared_ptr<IInteractiveArea> area_)

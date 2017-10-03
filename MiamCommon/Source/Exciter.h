@@ -13,6 +13,7 @@
 
 
 #include <vector>
+#include <string>
 
 #include "EditablePolygon.h"
 #include "EditableEllipse.h"
@@ -39,7 +40,7 @@ namespace Miam
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
-        
+        virtual std::string GetTypeAsString() const override {return "Exciter";}
         
         
         // = = = = = = = = = = METHODS = = = = = = = = = =
@@ -49,9 +50,7 @@ namespace Miam
         
         /// \brief Will automatically define the shape of the exciter
         Exciter(uint64_t uniqueId);
-        
         virtual ~Exciter() {}
-        
         virtual IDrawableArea* Clone() const override {return new Exciter(*this);}
         
         

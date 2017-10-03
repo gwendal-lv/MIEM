@@ -91,6 +91,7 @@ namespace Miam
         virtual Colour GetFillColour() = 0;
         virtual void SetFillColour(Colour newColour) = 0;
 		virtual void SetAlpha(float newAlpha) = 0;
+        virtual void EnableLowOpacityMode(bool enable) = 0;
         
         /// \brief Sets the name that could be displayed on screen next to the center
         virtual void SetName(String newName) = 0;

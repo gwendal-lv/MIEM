@@ -17,6 +17,8 @@ Exciter::Exciter(uint64_t uniqueId)
 EditableEllipse(uniqueId),
 volume(0.0)
 {
+    // Centre (voir DrawableArea)
+    displayCenter = false;
     
     // Plain white colour inside
     fillOpacity = 1.0f;

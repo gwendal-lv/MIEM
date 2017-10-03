@@ -80,7 +80,7 @@ namespace Miam {
         virtual ~GraphicSessionManager();
         
         // Debug purposes only
-        void __LoadDefaultTest();
+        // void __LoadDefaultTest();
        
         
         

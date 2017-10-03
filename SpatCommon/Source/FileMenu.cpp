@@ -17,8 +17,8 @@ using namespace Miam;
 FileMenu::FileMenu(SpatPresenter* _spatPresenter) : presenter(_spatPresenter)
 {
     menu.addItem(Choices::Load, "Load");
-    menu.addItem(Choices::Save, "Save", false); // disabled for now...
-    menu.addItem(Choices::Save, "SaveAs", false); // disabled for now...
+    menu.addItem(Choices::Save, "Save"); // disabled for now...
+    menu.addItem(Choices::SaveAs, "Save As"); // disabled for now...
 }
 
 
@@ -52,16 +52,26 @@ void FileMenu::onLoad()
                             File::getSpecialLocation(File::SpecialLocationType::userMusicDirectory),
                             "*.miam",
                             true);
-    fileChooser.browseForFileToOpen();
-    File resultFile = fileChooser.getResult();
-    presenter->LoadSession(resultFile.getFullPathName().toStdString());
+    if ( fileChooser.browseForFileToOpen() )
+    {
+        File resultFile = fileChooser.getResult();
+        presenter->LoadSession(resultFile.getFullPathName().toStdString());
+    }
 }
 void FileMenu::onSave()
 {
-    
+    presenter->SaveSession();
 }
 void FileMenu::onSaveAs()
 {
-    
+    FileChooser fileChooser("Chargement d'un fichier",
+                            File::getSpecialLocation(File::SpecialLocationType::userMusicDirectory),
+                            "*.miam",
+                            true);
+    if ( fileChooser.browseForFileToSave(true) )
+    {
+        File resultFile = fileChooser.getResult();
+        presenter->SaveSession(resultFile.getFullPathName().toStdString());
+    }
 }
 

@@ -129,6 +129,15 @@ namespace Miam
                   int areaIdInScene_ = -1,
                   std::shared_ptr<InteractiveScene> concernedScene_ = nullptr);
         
+        /// \brief Constructs an Area Event that contains all necessary info but the index
+        /// of the area within its scene.
+        ///
+        /// Index missing, possibly because : the index often needs a reverse search to be found.
+        /// This reverse search is avoided as often as possible.
+        AreaEvent(std::shared_ptr<IDrawableArea> concernedArea_,
+                  AreaEventType eventType_,
+                  std::shared_ptr<InteractiveScene> concernedScene_);
+        
         // Copy-constructor
         AreaEvent( AreaEvent *e );
         

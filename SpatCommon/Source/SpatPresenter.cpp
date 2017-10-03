@@ -18,7 +18,6 @@ SpatPresenter::SpatPresenter()
 {
     lastSpatStatesTree = std::make_shared<bptree::ptree>();
     lastSpatScenesTree = std::make_shared<bptree::ptree>();
-    //lastFilename = "/Users/Gwendal/test.miam";
 }
 
 void SpatPresenter::CompleteInitialisation(IGraphicSessionManager* _graphicSessionManager, SpatModel* _model)
@@ -45,19 +44,56 @@ void SpatPresenter::LoadSession(std::string filename)
     catch(bptree::ptree_error &e) {
         throw XmlReadException("Cannot load session: ", e);
     }
+    
+    // S'il n'y a pas eu d'erreur de lecture : le nom/chemin de session est celui de celle
+    // qui vient d'être chargée
+    lastFilename = filename;
+    
     // Envoi de chaque grande partie à la sous-partie de spat concernée
-    model->GetSpatInterpolator()->SetSpatStatesFromTree(spatTree);
-    graphicSessionManager->SetFromTree(graphicSessionTree);
-    model->SetConfigurationFromTree(settingsTree.get_child("model"));
-    this->SetConfigurationFromTree(settingsTree);
+    // Si n'importe laquelle échoue : on annule tout....
+    try {
+        model->GetSpatInterpolator()->SetSpatStatesFromTree(spatTree);
+        graphicSessionManager->SetFromTree(graphicSessionTree);
+        model->SetConfigurationFromTree(settingsTree.get_child("model"));
+        this->SetConfigurationFromTree(settingsTree);
+    }
+    catch (XmlReadException& e)
+    {
+        // Remise à zéro de tous les modules, commandée par arbre vide
+        bptree::ptree emptyTree = bptree::ptree();
+        model->GetSpatInterpolator()->SetSpatStatesFromTree(emptyTree);
+        graphicSessionManager->SetFromTree(emptyTree);
+        
+        // Pour l'instant : on laisse la configuration dans son état précédent....
+        // Pas de réinitialisation
+        
+        // Renvoi pour affichage graphique
+        throw e;
+    }
 }
 void SpatPresenter::SaveSession(std::string _filename)
 {
-    // Checks about the filename
+    // Checks about the filename :
+    // If not empty, the argument passed becomes the actual filename
     if (! _filename.empty() )
         lastFilename = _filename;
+    // Else, we continue only if a filename is currently in use
     else if (lastFilename.empty())
-        throw XmlWriteException("No filename currently in use : please use 'Save As' before calling any direct 'Save'");
+    {
+        FileChooser fileChooser("Chargement d'un fichier",
+                                File::getSpecialLocation(File::SpecialLocationType::userMusicDirectory),
+                                "*.miam",
+                                true);
+        if ( fileChooser.browseForFileToSave(true) )
+        {
+            File resultFile = fileChooser.getResult();
+            lastFilename = resultFile.getFullPathName().toStdString();
+        }
+        // Sinon, si l'utilisateur ne choisit rien : on quitte juste la fonction via une exception
+        // (dont le contenu sera affiché par le presenter réel, s'il peut)
+        else
+            throw XmlWriteException("File not saved");
+    }
     
     // Whole properties tree reconstruction
     bptree::ptree miamChildrenTree;

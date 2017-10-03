@@ -17,6 +17,10 @@
 
 #include <sstream>
 
+// Aucune de ces bilbiothèques ne convient... Retour aux regex c++11...
+//#include "boost/program_options.hpp"
+// #include "cxxopts.hpp" // https://github.com/jarro2783/cxxopts // de la vraie saloperie aussi !
+#include <regex>
 
 using namespace Miam;
 
@@ -36,7 +40,7 @@ Presenter::Presenter(View* _view) :
     
 }
 
-void Presenter::CompleteInitialisation(Model* _model)
+void Presenter::CompleteInitialisation(Model* _model, std::string& commandLine)
 {
     // Self init
     model = _model;
@@ -46,15 +50,53 @@ void Presenter::CompleteInitialisation(Model* _model)
     graphicSessionManager.CompleteInitialisation(model->GetSpatInterpolator());
     settingsManager.CompleteInitialisation(model);
     
-    
-    // Loading of the first XML session file (default if nothing else provided)
-    //std::string firstFileName = "../../../../../SpatCommon/Sessions/Default.miam";
-    
-    
     // Après initialisation : on montre des objets graphiques
     // On genère une requête interne puis on notifie View
     appModeChangeRequest(AppMode::EditSpatScenes);
     view->ChangeAppMode(AppMode::EditSpatScenes);
+    
+    // Copie pour permettre le chargement automatique de la session de test
+    std::string commandLineToParse = commandLine;
+#ifdef __MIAM_DEBUG
+    //commandLineToParse += " -session \"/Users/Gwendal/Music/Spat sessions/Session de débug.miam\" ";
+    commandLineToParse += " -session \"/Users/Gwendal/Music/Spat sessions/Test.miam\" ";
+#endif
+    
+    std::string commandLineFileName;
+    // Regex qui permet de récupérer le nom de fichier
+    std::regex word_regex( "(\"[^\"]+\"|[^\\s\"]+)" );
+    auto words_begin =
+    std::sregex_iterator(commandLineToParse.begin(), commandLineToParse.end(), word_regex);
+    auto words_end = std::sregex_iterator();
+    bool nextWordIsSession = false;
+    bool sessionPathFound = false;
+    for (std::sregex_iterator i = words_begin; i != words_end && !sessionPathFound; ++i)
+    {
+        std::smatch match = *i;
+        std::string match_str = match.str();
+        if (match_str == "-session")
+        {
+            nextWordIsSession = true;
+        }
+        else if(nextWordIsSession)
+        {
+            commandLineFileName = match_str;
+            sessionPathFound = true;
+        }
+    }
+    // Suppression des guillemets si nécessaire
+    auto firstCharIter = commandLineFileName.begin();
+    if ( *firstCharIter == '\"')
+        commandLineFileName.erase(firstCharIter);
+    auto lastActualCharIter = std::prev(commandLineFileName.end());
+    if ( *lastActualCharIter == '\"' )
+        commandLineFileName.erase(lastActualCharIter);
+    
+    // Chargement, ou sauvegarde forcée selon le paramètre passé !
+    if (commandLineFileName.empty())
+        SaveSession(); // Va demander un chemin de fichier pour la sauvegarde automatique ensuite
+    else
+        LoadSession(commandLineFileName);
 }
 
 

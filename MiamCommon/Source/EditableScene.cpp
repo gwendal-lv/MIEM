@@ -67,7 +67,7 @@ std::shared_ptr<AreaEvent> EditableScene::SetSelectedArea(std::shared_ptr<IEdita
         {
             selectedArea->SetActive(false);
             // Area event concerning 1 area only
-            areaE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, AreaEventType::Unselected));
+            areaE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, AreaEventType::Unselected, shared_from_this()));
         }
         // If nothing was selected : event stays empty
         
@@ -94,12 +94,12 @@ std::shared_ptr<AreaEvent> EditableScene::SetSelectedArea(std::shared_ptr<IEdita
         // Creation of the (multi) area event (main for selected, other for unselected)
         if (previouslySelectedArea)
         {
-            auto multiAreaE = std::make_shared<MultiAreaEvent>(selectedArea, AreaEventType::Selected);
-            multiAreaE->AddAreaEvent(std::make_shared<AreaEvent>(previouslySelectedArea, AreaEventType::Unselected));
+            auto multiAreaE = std::make_shared<MultiAreaEvent>(selectedArea, AreaEventType::Selected, shared_from_this());
+            multiAreaE->AddAreaEvent(std::make_shared<AreaEvent>(previouslySelectedArea, AreaEventType::Unselected, shared_from_this()));
             areaE = multiAreaE;
         }
         else
-            areaE = std::make_shared<AreaEvent>(selectedArea, AreaEventType::Selected);
+            areaE = std::make_shared<AreaEvent>(selectedArea, AreaEventType::Selected, shared_from_this());
     }
     
     return areaE;
@@ -161,7 +161,7 @@ std::shared_ptr<AreaEvent> EditableScene::deleteAreaByUniqueId(uint64_t uidToDel
         if ((uint64_t)(areas[i]->GetId()) == uidToDelete)
         {
             // Will also update the type of the event (to go out of the loop)
-            areaE = std::shared_ptr<AreaEvent>(new AreaEvent(areas[i], AreaEventType::Deleted, (int)i));
+            areaE = std::shared_ptr<AreaEvent>(new AreaEvent(areas[i], AreaEventType::Deleted, (int)i, shared_from_this()));
             // Actual deletion, iterator-based
             areas.erase(areas.begin() + i);
         }
@@ -180,7 +180,7 @@ std::shared_ptr<AreaEvent> EditableScene::ChangeSelectedAreaColour(Colour& colou
     if (selectedArea)
     {
         selectedArea->SetFillColour(colour);
-        return std::make_shared<AreaEvent>(selectedArea, AreaEventType::ColorChanged);
+        return std::make_shared<AreaEvent>(selectedArea, AreaEventType::ColorChanged, shared_from_this());
     }
     else
         throw std::runtime_error("The given colour cannot be applied : no area is selected");
@@ -376,7 +376,7 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent&
 						auto lastAreaE = SetSelectedArea(areaToSelect);
                         if (auto castTry = std::dynamic_pointer_cast<AreaEvent>(graphicE))
                         {
-                            std::shared_ptr<MultiAreaEvent> multiAreaE = std::make_shared<MultiAreaEvent>(areaToSelect, AreaEventType::Selected);
+                            std::shared_ptr<MultiAreaEvent> multiAreaE = std::make_shared<MultiAreaEvent>(areaToSelect, AreaEventType::Selected, shared_from_this());
                             multiAreaE->AddAreaEvent(lastAreaE);
                         }
                     }
@@ -400,13 +400,13 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent&
                     {
                         // Here : the point wasn't created
                         std::string returnMsg = "No point created : please click closer to an existing point !";
-                        graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, AreaEventType::NothingHappened));
+                        graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, AreaEventType::NothingHappened, shared_from_this()));
                         graphicE->SetMessage(returnMsg);
                     }
                     else
                     {
                         // Event : shape has changed due to point creation
-                        graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, AreaEventType::ShapeChanged));
+                        graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, AreaEventType::ShapeChanged, shared_from_this()));
                     }
                 }
                 else
@@ -424,12 +424,12 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent&
                     // no issue
                     if (returnMsg.empty())
                     {
-                        graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, AreaEventType::ShapeChanged));
+                        graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, AreaEventType::ShapeChanged, shared_from_this()));
                     }
                     // error message contains something
                     else
                     {
-                        graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, AreaEventType::NothingHappened));
+                        graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, AreaEventType::NothingHappened, shared_from_this()));
                         graphicE->SetMessage(returnMsg);
                     }
                 }
@@ -479,7 +479,7 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDrag(const MouseEvent&
             {
                 // The area will create the event type itself, then we build the AreaEvent
                 AreaEventType areaEventType = selectedArea->TryMovePoint(mouseLocation);
-                graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, areaEventType));
+                graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, areaEventType, shared_from_this()));
             }
         }
     }
@@ -511,23 +511,6 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseUp(const MouseEvent& m
     return graphicE;
 }
 
-
-
-// = = = = = = = = = = XML import/export = = = = = = = = = =
-std::shared_ptr<bptree::ptree> EditableScene::GetTree()
-{
-    auto sceneTree = std::make_shared<bptree::ptree>();
-    sceneTree->put("name", name);
-    bptree::ptree areasTree;
-    for (size_t i=0; i < areas.size() ; i++)
-    {
-        auto areaTree = areas[i]->GetTree();
-        areaTree->put("<xmlattr>.index", i);
-        areasTree.add_child("area", *areaTree);
-    }
-    sceneTree->add_child("areas", areasTree);
-    return sceneTree;
-}
 
 
 

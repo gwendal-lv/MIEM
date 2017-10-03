@@ -89,7 +89,7 @@ namespace Miam {
         /// constructed (happens after the construction of this class)
         ///
         /// Finished self-contruction, and also the construction of sub-modules
-        void CompleteInitialisation(Model* _model);
+        void CompleteInitialisation(Model* _model, std::string& commandLine);
         
         // Events from the View
         AppMode appModeChangeRequest(AppMode newAppMode);

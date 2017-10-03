@@ -158,7 +158,7 @@ namespace Miam {
         /// to Miam::InteractiveScene
         virtual std::vector<std::shared_ptr<InteractiveScene>> GetInteractiveScenes();
         
-        // for this remain master of the modifications applied to it
+        // for this to remain master of the modifications applied to it
         //virtual std::shared_ptr<EditableScene> GetSelectedScene() {return selectedScene;}
         
         // à DÉGAGER SI LA MAP DE EDITABLEAREA VERS SON INDICE MARCHE BIEN
@@ -264,8 +264,10 @@ namespace Miam {
         // - - - - - XML import/export - - - - -
         public :
         virtual std::shared_ptr<bptree::ptree> GetTree();
-        /// \brief Charge les scènes depuis un arbre XML (arbre partant du tag
-        /// <canvas>), mais pas leur contenu
+        /// \brief Charge les scènes, vides, depuis un arbre XML (arbre partant du tag
+        /// <canvas>). Ne charge pas leur contenu : les aires graphiques concrètes (classes dérivées
+        /// de IDrawableArea) seront créées dans
+        /// le GraphicSessionManager réel de l'appli.
         ///
         /// \param Le template T sert à préciser le type de scène qui sera
         /// créé : soit du EditableScene (parce que les InteractiveScene
@@ -278,35 +280,48 @@ namespace Miam {
         std::vector< std::shared_ptr<bptree::ptree> >
         SetScenesFromTree(bptree::ptree& canvasTree)
         {
-            size_t indexesCount = XmlUtils::CheckIndexes(canvasTree.get_child("canvas"),
-                                               "scenes", "scene");
-            
-            // Reinit if no exception thrown at this point
+            std::vector< std::shared_ptr<bptree::ptree> > sceneTrees; // return values
+
+            // Reinit dans tous les cas
             while (scenes.size() > 0)
                 forceDeleteScene(scenes.size()-1);
-            std::vector< std::shared_ptr<T> > scenesToAdd;
-            std::vector< std::shared_ptr<bptree::ptree> > sceneTrees; // return values
-            scenesToAdd.resize(indexesCount);
-            sceneTrees.resize(indexesCount);
             
-            // Pre-loading of new scenes (and sub-trees to return) from tree
+            // Et si l'arbre fourni était vide, c'était une simple commande de réinitialisation
+            // Donc on n'exécute le code d'ajout que s'il contient des trucs
             bool sceneFound = false;
-            for (auto& sceneChild : canvasTree.get_child("canvas.scenes"))
+            if ( ! canvasTree.empty() )
             {
-                // XML reading, and data prepared to be sent back to the
-                // IGraphicSessionManager
-                sceneFound = true;
-                auto index = sceneChild.second.get<size_t>("<xmlattr>.index");
-                // Creation of the scene (addition later)
-                scenesToAdd[index] = std::make_shared<T>(shared_from_this(), canvasComponent->GetCanvas());
-                scenesToAdd[index]->SetName(sceneChild.second.get("name", "Unnamed scene"));
-                // And ordered creation of the sub-tree
-                sceneTrees[index] = std::make_shared<bptree::ptree>();
-                sceneTrees[index]->add_child("scene", sceneChild.second);
+                size_t indexesCount = XmlUtils::CheckIndexes(canvasTree.get_child("canvas"),
+                                                             "scenes", "scene");
+                
+                std::vector< std::shared_ptr<T> > scenesToAdd;
+                scenesToAdd.resize(indexesCount);
+                sceneTrees.resize(indexesCount);
+                
+                // Pre-loading of new scenes (and sub-trees to return) from tree
+                for (auto& sceneChild : canvasTree.get_child("canvas.scenes"))
+                {
+                    // XML reading, and data prepared to be sent back to the
+                    // IGraphicSessionManager
+                    sceneFound = true;
+                    auto index = sceneChild.second.get<size_t>("<xmlattr>.index");
+                    // Creation of the scene (addition later)
+                    scenesToAdd[index] = std::make_shared<T>(shared_from_this(), canvasComponent->GetCanvas());
+                    scenesToAdd[index]->SetName(sceneChild.second.get("name", "Unnamed scene"));
+                    // And ordered creation of the sub-tree
+                    /* C'est normal que l'on n'ajoute pas les aires ici directement !!
+                     On ne connaît pas, à cet endroit, le type effectif des classes à charger (classes
+                     d'aires graphiques filles dépendant de l'appli finale...)
+                     On garde simplement les sous-arbres pour le graphic session manager fasse la
+                     création effective des classes enfant.
+                     */
+                    sceneTrees[index] = std::make_shared<bptree::ptree>();
+                    sceneTrees[index]->add_child("scene", sceneChild.second);
+                }
+                // Actual ordered insertion within the canvas manager
+                for (size_t i=0 ; i<scenesToAdd.size() ; i++)
+                    AddScene(scenesToAdd[i]); // T must be EditableScene or children
             }
-            // Actual ordered insertion within the canvas manager
-            for (size_t i=0 ; i<scenesToAdd.size() ; i++)
-                AddScene(scenesToAdd[i]); // T must be EditableScene or children
             
             // If no scene found in file.... We'll be nice and add an empty one
             if (!sceneFound)
@@ -318,7 +333,6 @@ namespace Miam {
             
             // Graphical updates before returning
             canvasComponent->UpdateSceneButtons(GetInteractiveScenes());
-            
             
             
             return sceneTrees;

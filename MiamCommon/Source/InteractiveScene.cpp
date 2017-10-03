@@ -90,7 +90,7 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::setSelectedExciter(std::shared
     // Désélection si nécessaire
     if (selectedExciter)
     {
-        areaE = std::make_shared<MultiAreaEvent>(selectedExciter, AreaEventType::Unselected);
+        areaE = std::make_shared<MultiAreaEvent>(selectedExciter, AreaEventType::Unselected, shared_from_this());
         selectedExciter->Highlight(false);
         selectedExciter = nullptr;
     }
@@ -101,11 +101,11 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::setSelectedExciter(std::shared
         selectedExciter->Highlight(true);
         // Si rien ne s'est encore passé : on re-crée un event simple
         if (areaE->GetType() == AreaEventType::NothingHappened)
-            areaE = std::make_shared<MultiAreaEvent>(selectedExciter, AreaEventType::Selected);
+            areaE = std::make_shared<MultiAreaEvent>(selectedExciter, AreaEventType::Selected, shared_from_this());
         // Sinon, on crée un nouveau multi area event
         else
         {
-            auto multiAreaE_temp = std::make_shared<MultiAreaEvent>(selectedExciter, AreaEventType::Selected);
+            auto multiAreaE_temp = std::make_shared<MultiAreaEvent>(selectedExciter, AreaEventType::Selected, shared_from_this());
             multiAreaE_temp->AddAreaEvent(areaE); // areaE en tant que AreaEvent simple : uniquement partie principale sera traitée par la suite
             areaE = multiAreaE_temp; // échange, les shared_ptr gardent les 2 events proprement
         }
@@ -119,6 +119,17 @@ void InteractiveScene::SetName(std::string _name)
     name = _name;
     
     // graphic updates called from parent (all scenes at the same time...)
+}
+
+void InteractiveScene::EnableExcitersLowOpacity(bool enable)
+{
+    for (size_t i=0 ; i < currentExciters.size() ; i++)
+        currentExciters[i]->EnableLowOpacityMode(enable);
+}
+void InteractiveScene::EnableAreasLowOpacity(bool enable)
+{
+    for (size_t i=0 ; i < areas.size() ; i++)
+        areas[i]->EnableLowOpacityMode(enable);
 }
 
 
@@ -179,7 +190,7 @@ std::shared_ptr<AreaEvent> InteractiveScene::DeleteCurrentExciterByIndex(size_t 
 {
     auto deletedExciter = currentExciters[excitersVectorIndex];
     currentExciters.erase(currentExciters.begin() + excitersVectorIndex);
-    return std::make_shared<AreaEvent>(deletedExciter, AreaEventType::Deleted);
+    return std::make_shared<AreaEvent>(deletedExciter, AreaEventType::Deleted, shared_from_this());
 }
 std::shared_ptr<AreaEvent> InteractiveScene::DeleteSelectedExciter()
 {
@@ -304,7 +315,7 @@ std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseDown(const MouseEve
                 {
                     // Indicates the the move can begin
                     touchSourceToEditableArea[mouseE.source.getIndex()] = currentExciters[i];
-					graphicE = std::make_shared<AreaEvent>(currentExciters[i], eventType);
+					graphicE = std::make_shared<AreaEvent>(currentExciters[i], eventType, shared_from_this());
                     
                     // Le dernier excitateur choisi devient l'excitateur sélectionné !
                     auto multiAreaE_temp = setSelectedExciter(currentExciters[i]);
@@ -337,7 +348,7 @@ std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseDrag(const MouseEve
     if (mapIt != touchSourceToEditableArea.end())
     {
         AreaEventType eventType = mapIt->second->TryMovePoint(mouseE.position.toDouble());
-        graphicE = std::make_shared<AreaEvent>(mapIt->second, eventType);
+        graphicE = std::make_shared<AreaEvent>(mapIt->second, eventType, shared_from_this());
     }
     
     return graphicE;
@@ -391,11 +402,39 @@ std::vector<std::shared_ptr<GraphicEvent>> InteractiveScene::StopCurrentTransfor
         AreaEventType eventType = editableArea->EndPointMove();
         
         // Storage of event in vector (for events back sending)
-        auto areaE = std::make_shared<AreaEvent>(editableArea, eventType);
+        auto areaE = std::make_shared<AreaEvent>(editableArea, eventType, shared_from_this());
         areaEvents.push_back(areaE);
     }
     
     return areaEvents;
+}
+
+
+
+// = = = = = = = = = = XML import/export = = = = = = = = = =
+std::shared_ptr<bptree::ptree> InteractiveScene::GetTree()
+{
+    auto sceneTree = std::make_shared<bptree::ptree>();
+    sceneTree->put("name", name);
+    bptree::ptree areasTree;
+    
+    // Ajout des aires interactives
+    for (size_t i=0; i < areas.size() ; i++)
+    {
+        auto areaTree = areas[i]->GetTree();
+        areaTree->put("<xmlattr>.index", i);
+        areasTree.add_child("area", *areaTree);
+    }
+    // Ajout des excitateur : on prend les initiaux, pas les actifs ! Choix discutable...
+    for (size_t i=0; i < initialExciters.size() ; i++)
+    {
+        auto areaTree = initialExciters[i]->GetTree();
+        areaTree->put("<xmlattr>.index", getExciterDrawingIndex(i));
+        areasTree.add_child("area", *areaTree);
+    }
+    
+    sceneTree->add_child("areas", areasTree);
+    return sceneTree;
 }
 
 

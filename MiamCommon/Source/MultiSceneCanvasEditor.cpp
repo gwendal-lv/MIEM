@@ -29,6 +29,33 @@ MultiSceneCanvasEditor::~MultiSceneCanvasEditor()
 
 
 
+// ----- Running Mode -----
+void MultiSceneCanvasEditor::SetMode(CanvasManagerMode _mode)
+{
+    // Traitements selon l'ancien mode
+    switch (mode) {
+            
+        // On enregistre les excitateurs automatiquement, à chaque fois que l'on quitte
+        // leur mode d'édition
+        case CanvasManagerMode::ExciterSelected:
+        case CanvasManagerMode::ExcitersEdition:
+            if (_mode != CanvasManagerMode::ExciterSelected
+                && _mode != CanvasManagerMode::ExcitersEdition)
+            {
+                selectedScene->SaveCurrentExcitersToInitialExciters();
+            }
+            break;
+            
+        default:
+            break;
+    }
+    
+    // À la fin : on rappelle la fonction mère qui fait quand même la + grosse partie
+    // du job
+    MultiSceneCanvasInteractor::SetMode(_mode);
+}
+
+
 // ------ Setters and Getters ------
 
 std::shared_ptr<IEditableArea> MultiSceneCanvasEditor::GetSelectedArea()

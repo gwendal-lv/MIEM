@@ -149,8 +149,9 @@ namespace Miam
         std::string GetName() {return name;}
         virtual void SetName(std::string _name);
         
-        
-        
+        // Modes de basse opacité pour des groupes entiers d'objets graphiques
+        void EnableExcitersLowOpacity(bool enable);
+        void EnableAreasLowOpacity(bool enable);
     
         // = = = = = = = = = = METHODS = = = = = = = = = =
         public :
@@ -237,6 +238,13 @@ namespace Miam
         /// to something else...). because : The scene does not know its own mode !
         virtual std::vector<std::shared_ptr<GraphicEvent>> StopCurrentTransformations();
 
+        
+        // - - - - - XML import/export - - - - -
+        std::shared_ptr<bptree::ptree> GetTree();
+        // Pas de SetFromTree :
+        // les aires graphiques concrètes ne peuvent être instanciées
+        // que depuis une classe concrète spécifique de l'application finale.
+        
     };
     
     
