@@ -21,6 +21,7 @@
 
 #include "Metronome.h"
 #include "BaseMidiSender.h"
+#include "ReadingHead.h"
 
 #include "AsyncParamChange.h"
 
@@ -41,8 +42,8 @@ namespace Amusing {
 /*
 */
 	class AudioManager : public AudioSource,
-						 public AudioSourcePlayer,
-						 public AudioDeviceManager
+						 public AudioSourcePlayer/*,
+						 public AudioDeviceManager*/
 	{
 	public:
 		AudioManager(AmusingModel *m_mode);
@@ -59,7 +60,7 @@ namespace Amusing {
 		void chooseAudioType(int position, int type);
 		void AncienchooseAudioType(int type,double duration);
 
-		AudioDeviceManager& getAudioDeviceManager();
+		//AudioDeviceManager& getAudioDeviceManager();
 
 		void sendMidiMessage(MidiMessage midiMsg);
 
@@ -136,6 +137,10 @@ namespace Amusing {
 		void getNewTimeLines();
 		boost::lockfree::spsc_queue<Miam::AsyncParamChange, boost::lockfree::capacity<(1 << 17)>> paramToAllocationThread;
 		
+		PlayHead* playHeads[maxSize];
+		boost::lockfree::spsc_queue<PlayHead*, boost::lockfree::capacity<(1 << 17)>> playHeadsToAudio;
+		PlayHead* playHeadsKnown[maxSize];
+		void getNewPlayHeads();
 	};
 }
 

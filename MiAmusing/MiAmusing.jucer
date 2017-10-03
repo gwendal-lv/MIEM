@@ -2,11 +2,13 @@
 
 <JUCERPROJECT id="MkqyzI" name="MiAmusing" projectType="guiapp" version="1.0.0"
               bundleIdentifier="com.yourcompany.MiAmusing" includeBinaryInAppConfig="1"
-              jucerVersion="5.0.1" displaySplashScreen="1" reportAppUsage="1"
-              splashScreenColour="Dark">
+              jucerVersion="5.1.1" displaySplashScreen="1" reportAppUsage="1"
+              splashScreenColour="Dark" cppLanguageStandard="11">
   <MAINGROUP id="Ak6ojc" name="MiAmusing">
     <GROUP id="{E74684B7-0B02-F2F7-C571-317039AB4495}" name="Source">
       <GROUP id="{8B585BA3-71E5-255C-C070-4910B268744C}" name="Model">
+        <FILE id="tsro0s" name="ReadingHead.cpp" compile="1" resource="0" file="Source/ReadingHead.cpp"/>
+        <FILE id="sh1gU7" name="ReadingHead.h" compile="0" resource="0" file="Source/ReadingHead.h"/>
         <FILE id="EqpVAZ" name="BaseMidiSender.cpp" compile="1" resource="0"
               file="Source/BaseMidiSender.cpp"/>
         <FILE id="ZqoBzB" name="BaseMidiSender.h" compile="0" resource="0"
@@ -70,6 +72,8 @@
                 file="Source/CompletePolygon.cpp"/>
           <FILE id="cOpwTH" name="CompletePolygon.h" compile="0" resource="0"
                 file="Source/CompletePolygon.h"/>
+          <FILE id="Ggnxda" name="Cursors.cpp" compile="1" resource="0" file="Source/Cursors.cpp"/>
+          <FILE id="kuwEwY" name="Cursors.h" compile="0" resource="0" file="Source/Cursors.h"/>
         </GROUP>
         <GROUP id="{95DB4C60-BE55-A464-CA00-678CBCAB86CE}" name="Scenes">
           <FILE id="nhV1zs" name="AmusingScene.cpp" compile="1" resource="0"
@@ -89,6 +93,12 @@
         <FILE id="to3tGG" name="Presenter.h" compile="0" resource="0" file="Source/Presenter.h"/>
       </GROUP>
       <GROUP id="{6C8312F9-4A59-989E-1DC5-6EC6799A0035}" name="View">
+        <FILE id="fvDGnO" name="AmusingSceneComponent.cpp" compile="1" resource="0"
+              file="Source/AmusingSceneComponent.cpp"/>
+        <FILE id="HqoQys" name="AmusingSceneComponent.h" compile="0" resource="0"
+              file="Source/AmusingSceneComponent.h"/>
+        <FILE id="zL9zBL" name="AreaOptions.cpp" compile="1" resource="0" file="Source/AreaOptions.cpp"/>
+        <FILE id="HIcl1x" name="AreaOptions.h" compile="0" resource="0" file="Source/AreaOptions.h"/>
         <FILE id="wihbQV" name="editScene.cpp" compile="1" resource="0" file="Source/editScene.cpp"/>
         <FILE id="yBAnTJ" name="editScene.h" compile="0" resource="0" file="Source/editScene.h"/>
         <FILE id="uj6fbl" name="Follower.cpp" compile="1" resource="0" file="Source/Follower.cpp"/>
@@ -100,12 +110,21 @@
               resource="0" file="Source/MultiCanvasComponentAmusing.cpp"/>
         <FILE id="a1eNGz" name="MultiCanvasComponentAmusing.h" compile="0"
               resource="0" file="Source/MultiCanvasComponentAmusing.h"/>
+        <FILE id="GE7I1N" name="MultiSceneCanvasComponentAmusing.cpp" compile="1"
+              resource="0" file="Source/MultiSceneCanvasComponentAmusing.cpp"/>
+        <FILE id="salJhk" name="MultiSceneCanvasComponentAmusing.h" compile="0"
+              resource="0" file="Source/MultiSceneCanvasComponentAmusing.h"/>
+        <FILE id="zj4ZTk" name="OptionWindow.cpp" compile="1" resource="0"
+              file="Source/OptionWindow.cpp"/>
+        <FILE id="Hck3e6" name="OptionWindow.h" compile="0" resource="0" file="Source/OptionWindow.h"/>
         <FILE id="GceKis" name="View.cpp" compile="1" resource="0" file="Source/View.cpp"/>
         <FILE id="AJOEwp" name="View.h" compile="0" resource="0" file="Source/View.h"/>
       </GROUP>
     </GROUP>
     <FILE id="v8jCgE" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
     <GROUP id="{593B3C8B-4E9F-6C95-BD9D-6562983482B8}" name="MiamCommonSource">
+      <FILE id="Pu0wVR" name="XmlUtils.cpp" compile="1" resource="0" file="../MiamCommon/Source/XmlUtils.cpp"/>
+      <FILE id="lnMHPu" name="XmlUtils.h" compile="0" resource="0" file="../MiamCommon/Source/XmlUtils.h"/>
       <FILE id="ibEfgJ" name="LockFreeParamChangeSender.cpp" compile="1"
             resource="0" file="../MiamCommon/Source/LockFreeParamChangeSender.cpp"/>
       <FILE id="GluTRy" name="LockFreeParamChangeSender.h" compile="0" resource="0"
@@ -221,8 +240,6 @@
       </GROUP>
       <GROUP id="{B91B2137-DC4A-127C-0037-DB058876BEFA}" name="Utils">
         <GROUP id="{22E0B59F-81F6-AAC5-A6F4-3B584D7BBEA6}" name="AsyncParamChanges">
-          <FILE id="ttwn7e" name="AsyncParamChange.cpp" compile="1" resource="0"
-                file="../MiamCommon/Source/AsyncParamChange.cpp"/>
           <FILE id="ik81Hn" name="AsyncParamChange.h" compile="0" resource="0"
                 file="../MiamCommon/Source/AsyncParamChange.h"/>
         </GROUP>
@@ -251,20 +268,20 @@
                        headerPath="..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\&#10;..\..\..\"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_events" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_graphics" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_data_structures" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_cryptography" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_video" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_opengl" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_basics" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_devices" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_utils" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="..\..\JUCE5.1\modules"/>
+        <MODULEPATH id="juce_events" path="..\..\JUCE5.1\modules"/>
+        <MODULEPATH id="juce_graphics" path="..\..\JUCE5.1\modules"/>
+        <MODULEPATH id="juce_data_structures" path="..\..\JUCE5.1\modules"/>
+        <MODULEPATH id="juce_gui_basics" path="..\..\JUCE5.1\modules"/>
+        <MODULEPATH id="juce_gui_extra" path="..\..\JUCE5.1\modules"/>
+        <MODULEPATH id="juce_cryptography" path="..\..\JUCE5.1\modules"/>
+        <MODULEPATH id="juce_video" path="..\..\JUCE5.1\modules"/>
+        <MODULEPATH id="juce_opengl" path="..\..\JUCE5.1\modules"/>
+        <MODULEPATH id="juce_audio_basics" path="..\..\JUCE5.1\modules"/>
+        <MODULEPATH id="juce_audio_devices" path="..\..\JUCE5.1\modules"/>
+        <MODULEPATH id="juce_audio_formats" path="..\..\JUCE5.1\modules"/>
+        <MODULEPATH id="juce_audio_processors" path="..\..\JUCE5.1\modules"/>
+        <MODULEPATH id="juce_audio_utils" path="..\..\JUCE5.1\modules"/>
       </MODULEPATHS>
     </VS2015>
   </EXPORTFORMATS>

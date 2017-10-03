@@ -14,7 +14,7 @@
 #include "EditableScene.h"
 #include "AnimatedPolygon.h"
 #include "Follower.h"
-
+#include "Cursors.h"
 
 using namespace Miam;
 
@@ -43,6 +43,7 @@ namespace Miam
 
 		std::shared_ptr<GraphicEvent> OnCanvasMouseDown(const MouseEvent& mouseE) override;
 		std::shared_ptr<GraphicEvent> OnCanvasMouseDrag(const MouseEvent& mouseE) override;
+		std::shared_ptr<GraphicEvent> OnCanvasMouseUp(const MouseEvent& mouseE) override;
 		std::shared_ptr<AreaEvent> AddTrueCircle(uint64_t nextAreaId);
 		std::shared_ptr<AreaEvent> AddFollower(uint64_t nextAreaId);
 		std::shared_ptr<AreaEvent> AddCompleteArea(uint64_t);
@@ -73,6 +74,33 @@ namespace Miam
 		std::shared_ptr<AreaEvent> deleteEvent;
 		std::shared_ptr<Amusing::Follower> getFollowers(std::shared_ptr<Amusing::AnimatedPolygon> masterArea);
 		std::shared_ptr<AreaEvent> resendArea(int idx);
+
+		std::vector< std::shared_ptr<Amusing::CompletePolygon> > currentIntersectionsAreas;
+		std::shared_ptr<AreaEvent> AddIntersectionArea(std::shared_ptr<Amusing::CompletePolygon> parent1, std::shared_ptr<Amusing::CompletePolygon> parent2, std::shared_ptr<Amusing::CompletePolygon> newIntersection);
+
+		// map with 2 entry = the parents polygons, and 1 output = the vector of overlap area between the two parent polygon
+		std::map<std::pair<std::shared_ptr<Amusing::CompletePolygon>, std::shared_ptr<Amusing::CompletePolygon>>, std::vector<std::shared_ptr<Amusing::CompletePolygon>>> parentTochildArea;
+		bool getParents(std::shared_ptr<IEditableArea> child, std::shared_ptr<IEditableArea> &parent1, std::shared_ptr<IEditableArea> &parent2);
+		std::shared_ptr<Amusing::CompletePolygon> getConcernedIntersection(std::shared_ptr<Amusing::CompletePolygon> parent1, std::shared_ptr<Amusing::CompletePolygon> parent2, bpt hitPoint);
+		bool lookForAreasInteractions(std::shared_ptr<Amusing::CompletePolygon> currentPolygon);
+		void AddAllIntersections(std::shared_ptr<Amusing::CompletePolygon> parent1, std::shared_ptr<Amusing::CompletePolygon> parent2, std::shared_ptr<MultiAreaEvent> multiE);
+		void ApplyFusion(std::shared_ptr<Amusing::CompletePolygon> currentPolygon, std::shared_ptr<Amusing::CompletePolygon> hitPolygon, std::shared_ptr<AreaEvent> singleE);
+		void DeleteIntersections(std::shared_ptr<Amusing::CompletePolygon> parent);
+		std::shared_ptr<AreaEvent> DeleteSelectedArea();
+		std::shared_ptr<AreaEvent> DeleteCursor(std::shared_ptr<Cursor> cursorToDelete);
+
+		bool alreadyCursorInScene;
+		void AddCursor();
+		std::shared_ptr<AreaEvent> AddCursor(std::shared_ptr<IDrawableArea> area);
+		//std::map<std::shared_ptr<Cursor>, std::shared_ptr<IDrawableArea>> associateArea;
+		
+		//std::shared_ptr<IDrawableArea> getAssociateArea(std::shared_ptr<Cursor> cursor);
+
+		std::shared_ptr<AreaEvent> SetSelectedArea(std::shared_ptr<IEditableArea> selectedArea_, bool changeMode = true) override;
+		std::shared_ptr<AreaEvent> SetSelectedAreaCursor(int idx, double newSize);
+		std::shared_ptr<AreaEvent> SetSelectedAreaOpacity(double newOpacity);
+		bool isDrew(std::shared_ptr<Cursor> cursor);
+		std::shared_ptr<AreaEvent> checkCursorPosition(std::shared_ptr<Cursor> cursor);
 	};
 
 

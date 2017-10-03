@@ -14,7 +14,7 @@
 #include "DrawableEllipse.h"
 #include "InteractiveArea.h"
 
-#define PI 3.14159265359
+
 
 namespace Miam
 {
@@ -41,7 +41,8 @@ namespace Miam
 		private :
 			void computeSurface();
 		public :
-			double GetSurface() { return surface; }
+			double GetSurface() override
+			{ return surface; }
 
 	
 	};

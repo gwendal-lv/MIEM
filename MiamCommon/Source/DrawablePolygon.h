@@ -16,7 +16,7 @@
 #include "boost/geometry/geometries/polygon.hpp"
 #include "DrawableArea.h"
 
-typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> bpt;
+//typedef boost::geometry::model::point<double, 3, boost::geometry::cs::cartesian> bpt;
 typedef boost::geometry::model::polygon<bpt> bpolygon;
 
 namespace Miam {
@@ -71,6 +71,11 @@ namespace Miam {
         // (re)Construction helpers
         private :
         void createJucePolygon(int width = 160, int height = 90);
+
+		void recreateContourPoints(int width, int height);
+
+		protected :
+		float xScale, yScale;
         
         public :
         /// \brief Destructor.

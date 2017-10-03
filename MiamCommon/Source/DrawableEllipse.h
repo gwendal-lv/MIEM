@@ -18,7 +18,7 @@
 #include "boost/geometry/geometries/geometries.hpp"
 #include "boost/geometry/geometries/polygon.hpp"
 
-typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> bpt;
+//typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> bpt;
 typedef boost::geometry::model::polygon<bpt> bpolygon;
 
 namespace Miam
@@ -51,9 +51,13 @@ namespace Miam
 	public:
 		virtual void Paint(Graphics& g) override;
 		virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
+	
+	private:
+		void recreateContourPoints();
 
 		protected:
 			double a, b; // grand axe et petit axe
+			double rotationAngle; // angle d'inclinaison de l'ellipse
 			float xScale, yScale;
 	};
 }

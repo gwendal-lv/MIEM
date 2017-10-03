@@ -37,8 +37,10 @@ namespace Miam {
         // Link back to manager module
         IGraphicSessionManager* graphicSessionManager;
         
+		protected :
         std::vector<ScopedPointer<MultiSceneCanvasComponent>> multiSceneCanvasComponents;
         
+		private :
         // Only one because we know that there is only 2 canvases available...
         float normalizedBarXPos = 0.61803398875f; // inverse du nombre d'or...trololo 
         Rectangle<float> canvasResizeBar;

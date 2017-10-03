@@ -27,6 +27,7 @@ public:
 
 	int getSamplesToNextBeat();
 	int timeToSample(double ms);
+	int BPMtoPeriodInSample(int m_bpm);
 
 private:
 	int BPM;

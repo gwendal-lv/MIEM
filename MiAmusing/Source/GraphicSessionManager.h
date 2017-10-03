@@ -59,6 +59,7 @@ namespace Amusing {
 		// =========================================
 		
 		double vitesse;
+		void SetFromTree(bptree::ptree& graphicSessionTree) override;
 		// =========================================
 
 		// = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
@@ -77,7 +78,7 @@ namespace Amusing {
 
 		// Display & editing attributes for Areas
 
-		std::shared_ptr<IEditableArea> areaToCopy = nullptr; ///< vector index of
+		//std::shared_ptr<IEditableArea> areaToCopy = nullptr; ///< vector index of
 
 
 
@@ -147,18 +148,26 @@ namespace Amusing {
 		void OnFollowerTranslation(std::shared_ptr<GraphicEvent> graphicE);
 		void OnAudioPosition(double position);
 		void SetAllAudioPositions(double position);
+		void SetAudioPositions(std::shared_ptr<Cursor> area, double position);
 
 		void OnPlayClicked();
 		void OnPauseClicked();
 		void OnStopClicked();
 		void OnTempoChanged(int newTempo);
+		void OnMasterVolumeChanged(float newVolume);
 
 		void OnDeviceOptionsClicked();
 		void SetAllChannels(); // bouger d'endroit dans le constructeur pour la comprehension (pas view event)
 		void SetMidiChannel(int ch);
+
+		void setSpeedArea(std::shared_ptr<IEditableArea> area, double speed);
+		double getSpeed(std::shared_ptr<IEditableArea> area);
+		void setVelocityArea(std::shared_ptr<IEditableArea> area, double velocity);
+		double getVelocity(std::shared_ptr<IEditableArea> area);
 	private :
 		bool deleting;
 		int tempo;
+		int circleToNote(int numCirc);
 	};
 
 

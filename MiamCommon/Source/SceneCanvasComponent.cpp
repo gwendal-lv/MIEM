@@ -82,6 +82,7 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 }
 void SceneCanvasComponent::renderOpenGL()
 {
+	//DBG("render : " + getName());
     auto manager = canvasManager.lock();
     
     const float desktopScale = (float) openGlContext.getRenderingScale();

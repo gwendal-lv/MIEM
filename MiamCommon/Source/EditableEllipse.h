@@ -22,6 +22,7 @@ namespace Miam
 	{
 		public :
 			EditableEllipse(int64_t _Id);
+			EditableEllipse(int64_t _Id, bpt _center, double _r, Colour _fillColour, float _canvasRatio);
 			EditableEllipse(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio);
 
 			virtual ~EditableEllipse() {/* DBG("ellipse deleted"); */}
@@ -43,6 +44,8 @@ namespace Miam
 			// ----- Setters and Getters -----
 		public:
 			void SetActive(bool activate) override;
+			void SetIsRound(bool _isround);
+			double getRadius();
 
 		public :
 			
@@ -52,7 +55,8 @@ namespace Miam
 			void Translate(const Point<double>& translation) override;
 			void setCenterPosition(bpt newCenter);
 			
-			bool SizeChanged(double sizeFactor);
+			bool SizeChanged(double sizeFactor, bool minSize);
+			void Rotate(double Radian);
 
 		protected:
 			void recreateNormalizedPoints() override;
@@ -60,6 +64,7 @@ namespace Miam
 		private:
 			bool isNewContourPointValid(const Point<double>& newLocation);
 			bool isNewCenterValid(const Point<double>& newLocation);
+			bool isRound;
 	};
 }
 

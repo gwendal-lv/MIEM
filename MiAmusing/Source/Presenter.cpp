@@ -20,6 +20,7 @@
 #include "Follower.h"
 #include "GraphicEvent.h"
 #include "MultiAreaEvent.h"
+#include "Cursors.h"
 
 
 using namespace Amusing;
@@ -40,13 +41,17 @@ Presenter::Presenter(View* _view) :
     
     // HERE, WE SHOULD LOAD THE DEFAULT FILE
     //graphicSessionManager.__LoadDefaultTest();
-    
+	//lastPosition = 0;
     
     appModeChangeRequest(AppMode::None);
 	Nsources = 0;
+	Ncursors = 0;
 	Nfollower = 0;
-	tempo = 4;
+	tempo = 50;
+	masterVolume = 0.5f;
 	SetAllChannels();
+
+	
 }
 
 void Presenter::SetAllChannels()
@@ -59,7 +64,7 @@ void Presenter::CompleteInitialisation(AmusingModel* _model)
 {
     // Self init
     model = _model;
-	//view->CompleteInitialization(model);
+	view->CompleteInitialization(model);
 	//graphicSessionManager.CompleteInitialization(model);
 }
 
@@ -93,43 +98,91 @@ int Presenter::getTempo()
 	return tempo;
 }
 
+void Presenter::setMasterVolume(float newVolume)
+{
+	masterVolume = newVolume;
+}
+
+float Presenter::getMasterVolume()
+{
+	return masterVolume;
+}
+
+void Presenter::setSpeedArea(std::shared_ptr<IEditableArea> area, double speed)
+{
+	areaToSpeed[area] = speed;
+}
+
+double Presenter::getSpeedArea(std::shared_ptr<IEditableArea> area)
+{
+	if (areaToSpeed.find(area) == areaToSpeed.end())
+		areaToSpeed[area] = 1;
+	return areaToSpeed[area];
+}
+
+void Presenter::setVelocityArea(std::shared_ptr<IEditableArea> area, double velocity)
+{
+	areaToVelocity[area] = velocity;
+}
+
+double Presenter::getVelocityArea(std::shared_ptr<IEditableArea> area)
+{
+	if (areaToVelocity.find(area) == areaToVelocity.end())
+		areaToVelocity[area] = 64;
+	return areaToVelocity[area];
+}
+
 void Presenter::setChannel(std::shared_ptr<EditableScene> scene,int channel)
 {
 	DBG("size of the map = " + (String)sceneToChannel.size());
 	sceneToChannel[scene] = channel;
 	//test[5] = 2;
 	//test.insert(std::pair<int, double>(3, 5.8));
+	//graphicSessionManager.HandleEventSync(std::shared_ptr<SceneEven)
 }
 
 int Presenter::getChannel(std::shared_ptr<EditableScene> scene)
 {
-	if (sceneToChannel.find(scene) == sceneToChannel.end())
+	if (sceneToChannel.empty() || sceneToChannel.find(scene) == sceneToChannel.end())
 		sceneToChannel[scene] = 1;
 	return sceneToChannel[scene];
 }
 
-int Presenter::getSourceID(std::shared_ptr<IEditableArea> area)
+int Presenter::getTimeLineID(std::shared_ptr<IEditableArea> area)
 {
-	/*
-	if (areaToSource.find(area) == areaToSource.end())
-	{
-		// area has no associated source yet
-		areaToSource[area] = Nsources;
-		sourceToArea[Nsources] = area;
-		++Nsources;
-	}
-	return areaToSource[area];
-	*/
 	
 	if (areaToSourceMulti.left.find(area) == areaToSourceMulti.left.end())
 	{
 		//areaToSourceMulti.left[area] = Nsources;
 		std::pair<std::shared_ptr<IEditableArea>, int> newPair(area, Nsources);
 		areaToSourceMulti.left.insert(newPair);
+		//lastPositions.insert(std::pair<int, double>(Nsources, 0)); // add a new elt so we could retain the last cursor's position of the area
 		++Nsources;
 	}
 	
 	return areaToSourceMulti.left.at(area);
+}
+
+int Presenter::getReadingHeadID(std::shared_ptr<Cursor> cursor)
+{
+	if (cursorToReadingHead.left.find(cursor) == cursorToReadingHead.left.end())
+	{
+		std::pair<std::shared_ptr<Cursor>, int> newPair(cursor, Ncursors);
+		cursorToReadingHead.left.insert(newPair);
+		lastPositions.insert(std::pair<int, double>(Ncursors, 0));
+		++Ncursors;
+	}
+	return cursorToReadingHead.left.at(cursor);
+}
+
+void Presenter::deleteReadingHeadRef(std::shared_ptr<Cursor> cursor)
+{
+	if (cursorToReadingHead.left.find(cursor) != cursorToReadingHead.left.end())
+	{
+		lastPositions.erase(cursorToReadingHead.left.at(cursor));
+		//cursorToReadingHead.erase(cursor);
+		cursorToReadingHead.left.erase(cursor);
+	}
 }
 
 int Presenter::getCtrlSourceId(std::shared_ptr<Follower> follower)
@@ -144,6 +197,16 @@ int Presenter::getCtrlSourceId(std::shared_ptr<Follower> follower)
 	return followerToCtrlSource.left.at(follower);
 }
 
+std::shared_ptr<Cursor> Presenter::getCursor(int m_Id)
+{
+	if (cursorToReadingHead.right.find(m_Id) == cursorToReadingHead.right.end())
+	{
+		DBG("no cursor associated to this playing head");
+		return nullptr;
+	}
+	return cursorToReadingHead.right.at(m_Id);
+}
+
 std::shared_ptr<IEditableArea> Presenter::getAreaFromSource(int source)
 {
 	/*
@@ -155,7 +218,7 @@ std::shared_ptr<IEditableArea> Presenter::getAreaFromSource(int source)
 	*/
 	if (areaToSourceMulti.right.find(source) == areaToSourceMulti.right.end())
 	{
-		DBG("problemes");
+		DBG("no area associated to this time line");
 	}
 	return areaToSourceMulti.right.at(source);
 }
@@ -188,6 +251,7 @@ void Presenter::Update() // remettre l'interieur dans graphsessionmanager
 	AsyncParamChange param;
 	
 	std::shared_ptr<GraphicEvent> graphicE;
+
 	
 	while (model->TryGetAsyncParamChange(param))
 	{
@@ -204,18 +268,40 @@ void Presenter::Update() // remettre l'interieur dans graphsessionmanager
 				//DBG("recu : " + (String)(1000 * param.DoubleValue));
 				//DBG("param received");
 				//graphicSessionManager.OnAudioPosition(param.DoubleValue);
-				graphicSessionManager.SetAllAudioPositions(param.DoubleValue);
-			
-				
+				//graphicSessionManager.SetAllAudioPositions(param.DoubleValue);
+
+			if (lastPositions.find(param.Id1) != lastPositions.end())
+			{
+				if(getTimeLineID(getCursor(param.Id1)->getAssociateArea()) == param.Id2)
+					lastPositions.at(param.Id1) = param.DoubleValue;
+			}
 			break;
 
 		default:
 			break;
 		}
 	}
+
+	for (std::map<int, double>::iterator it = lastPositions.begin(); it != lastPositions.end(); ++it)
+	{
+		//graphicSessionManager.SetAllAudioPositions(0);
+		graphicSessionManager.SetAudioPositions(getCursor(it->first), it->second);
+		//DBG((String)getTimeLineID(getCursor(it->first)->getAssociateArea()) + " " + (String)it->second);
+	}
+	//graphicSessionManager.SetAllAudioPositions(lastPosition);
 }
 
-AudioDeviceManager& Presenter::getAudioDeviceManager()
+//AudioDeviceManager* Presenter::getAudioDeviceManager()
+//{
+//	return model->sharedAudioDeviceManager;//getAudioDeviceManager();
+//}
+
+void Presenter::removeDeviceManagerFromOptionWindow()
 {
-	return model->getAudioDeviceManager();
+	view->removeDeviceManagerFromOptionWindow();
 }
+
+//void Presenter::setAudioDeviceManager(AudioDeviceManager* deviceManager)
+//{
+//	view->setDeviceSelectorComponent(deviceManager);
+//}

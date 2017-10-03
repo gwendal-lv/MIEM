@@ -13,6 +13,7 @@
 
 #include "EditablePolygon.h"
 #include "EditableEllipse.h"
+#include "Cursors.h"
 #include "JuceHeader.h"
 #include "SceneCanvasComponent.h"
 //namespace Miam
@@ -35,35 +36,72 @@ namespace Amusing
 		CompletePolygon(int64_t _Id,
 			bpt _center, bpolygon& _contourPoints,
 			Colour _fillColour);
+		
+		CompletePolygon(int64_t _Id,
+			bpt _center, bpolygon& _contourPoints,
+			std::vector<int> circles, std::vector<double> percent,
+			Colour _fillColour);
 
 		~CompletePolygon();
 
 		virtual IDrawableArea* Clone() const override { return new CompletePolygon(*this); }
 
-		void setReadingPosition(double p); // set the position in percent of the cursor on the path
+		void Copy(std::shared_ptr<CompletePolygon> polygonToCopy);
+
+		void SetActive(bool activate);
+
+		
 
 		
 		void CanvasResized(SceneCanvasComponent* _parentCanvas);
 		void Paint(Graphics& g);
 
 		void lengthToPercent();
+		void angleToPercent();
 		AreaEventType TryBeginPointMove(const Point<double>& newLocation);
 		AreaEventType TryMovePoint(const Point<double>& newLocation);
 		AreaEventType EndPointMove();
 		void setCursorVisible(bool isVisible, SceneCanvasComponent* _parentCanvas);
 		bpolygon getPolygon();
-		std::vector<bpt> intersection(bpolygon hitPolygon);
-		double getPercentage(bpt hitPoint);
+		std::shared_ptr<CompletePolygon> fusion(std::shared_ptr<CompletePolygon> polyToFusion, int Id);
+		std::shared_ptr<AreaEvent> intersection(std::shared_ptr<CompletePolygon> hitPolygon, int Id, int N);
+		bool getUnion(bpolygon hitPolygon, bpolygon &output);
+		double getAngularPercentage(bpt hitPoint);
+		double getLinearPercentage(bpt hitPoint);
 		bool getAllPercentages(int idx, double &value);
+		bool getAllDistanceFromCenter(int idx, int &value);
 
+		bpt getCenter();
+		void setCursorsSpeed(int idx, double newSize);
+		bpt computeLinearCursorCenter(double p);
+		bpt computeAngularCursorCenter(double p);
+		float computeCursorAlpha(double p, bpt _center);
+		boost::geometry::model::segment<bpt> getSegment(bpt hitPoint);
+		boost::geometry::model::segment<bpt> getSegmentInPixels(bpt hitPointInPixels);
+
+		/*void AddCursor();
+		void AddCursor(float _canvasRatio);
+		void AddCursor(float _canvasRatio, double p);*/
+		void linkTo(std::shared_ptr<Cursor> cursor);
+		int getCursorsCount();
+		std::shared_ptr<Cursor> getCursor(int idx);
+		bool contains(bpt point);
+		void deleteAllCursors();
+		//void getCursorsCount();
+		
 	private:
-
+		JUCE_LEAK_DETECTOR(CompletePolygon)
 		// attributes linked to the Cursor
 		bool showCursor;
-		bpt cursorCenter;
+		
 		double perimeter;
 		std::vector<double> percentages; // percentages corresponding to each points
-		std::shared_ptr<Miam::EditableEllipse> cursor;
+		std::vector<double> anglesPercentages;
+		//std::shared_ptr<Cursor> cursor;//std::shared_ptr<Miam::EditableEllipse> cursor;
+		std::vector<std::shared_ptr<Cursor>> cursors;
+		
+		float initCursorSize;
+		float cursorSize;
 
 		// attributes linked to the bull's eye surrounding the area
 		bool useBullsEye;
@@ -74,9 +112,11 @@ namespace Amusing
 		static const int Nradius = 7;
 		std::vector<EditableEllipse> bullsEye;
 		double radius[Nradius];
+		bool circlesToShow[Nradius];
 		void CreateBullsEye();
 		void PaintBullsEye(Graphics& g);
 		void CanvasResizedBullsEye(SceneCanvasComponent* _parentCanvas);
+		std::vector<int> OnCircles;
 		
 
 		double pc; // si ca foire quand on bouge la forme en mm temps que le curseur doit tourner -> garder en memoire le poucentage ou se trouve le curseur et rappeler setreadingposition avec ce pourcentage pour le remettre au nouvel endroit.

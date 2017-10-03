@@ -23,13 +23,14 @@
 #include "GraphicSessionManager.h"
 
 
-
+class Cursor;
 
 namespace Amusing {
     // Simple declaration : we don't need the entire description
     class AmusingModel;
     class View;
 	class Follower;
+	
 
     
     /// \brief One of the three main modules of the MiamSpat program, that defines the behavior
@@ -53,6 +54,7 @@ namespace Amusing {
         // Pointer to the unique Model module
         AmusingModel* model = 0;
 		int tempo;
+		float masterVolume;
 
         AppMode appMode;
         
@@ -62,11 +64,13 @@ namespace Amusing {
         
         // Conversion from areas to sources
 		//Presenter myPresenter;
-		
-
+		std::map<std::shared_ptr<IEditableArea>, double> phase;
+		std::map<std::shared_ptr<IEditableArea>, double> areaToSpeed;
+		std::map<std::shared_ptr<IEditableArea>, double> areaToVelocity;
 		boost::bimap<std::shared_ptr<IEditableArea>,int> areaToSourceMulti;
+		boost::bimap<std::shared_ptr<Cursor>, int> cursorToReadingHead;
 		std::map<std::shared_ptr<EditableScene>, int> sceneToChannel;
-		int Nsources, Nfollower;
+		int Nsources, Nfollower, Ncursors;
 		void SetAllChannels();
 
 		boost::bimap < std::shared_ptr<Follower>, int> followerToCtrlSource;
@@ -75,13 +79,23 @@ namespace Amusing {
 		public :
 			void setChannel(std::shared_ptr<EditableScene> scene,int channel);
 			int getChannel(std::shared_ptr<EditableScene> scene);
-			int getSourceID(std::shared_ptr<IEditableArea> area);
+			int getReadingHeadID(std::shared_ptr<Cursor> cursor);
+			int getTimeLineID(std::shared_ptr<IEditableArea> area);
+			void deleteReadingHeadRef(std::shared_ptr<Cursor> cursor);
+			std::shared_ptr<Cursor> getCursor(int m_Id);
 			std::shared_ptr<IEditableArea> getAreaFromSource(int source);
+			void setSpeedArea(std::shared_ptr<IEditableArea> scene, double speed);
+			double getSpeedArea(std::shared_ptr<IEditableArea> area);
+			void setVelocityArea(std::shared_ptr<IEditableArea> scene, double velocity);
+			double getVelocityArea(std::shared_ptr<IEditableArea> area);
 			int getCtrlSourceId(std::shared_ptr<Follower> follower);
 			std::shared_ptr<Follower> getFollowerFromCtrl(int ctrlId);
 
 			int getTempo();
 			void setTempo(int newTempo);
+			float getMasterVolume();
+			void setMasterVolume(float newVolume);
+			void setAudioDeviceManager(AudioDeviceManager* deviceManager);
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         
         public :
@@ -105,14 +119,18 @@ namespace Amusing {
 
 		virtual void Update() override;
         
-		AudioDeviceManager& getAudioDeviceManager();
+		/*AudioDeviceManager* getAudioDeviceManager();*/
+		void removeDeviceManagerFromOptionWindow();
 
         // Events from the View
         AppMode appModeChangeRequest(AppMode newAppMode);
         
 		// Events from the view (from the editScene)
 		
-		
+	private :
+		//double lastPosition;
+		std::map<int,double> lastPositions;
+		std::map<int, bool> positionChanged;
     };
     
     

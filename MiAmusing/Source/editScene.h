@@ -56,7 +56,7 @@ public:
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
 	void CompleteInitialization(GraphicSessionManager* _graphicSessionManager);//, MultiCanvasComponent* _multiCanvasComponent);
-
+	void setMidiChannel(int chan);
     //[/UserMethods]
 
     void paint (Graphics& g) override;
@@ -80,13 +80,13 @@ private:
     ScopedPointer<TextButton> stopButton;
     ScopedPointer<TextButton> addCarreButton;
     ScopedPointer<TextButton> addTriangleButton;
-    ScopedPointer<TextButton> addCircleButton;
     ScopedPointer<TextButton> addTrueCircleButton;
     ScopedPointer<TextButton> deleteButton;
     ScopedPointer<TextButton> completeButton;
     ScopedPointer<TextButton> optionButton;
     ScopedPointer<ComboBox> comboBoxMidi;
     ScopedPointer<Slider> timeSlider;
+    ScopedPointer<Slider> volumeSlider;
 
 
     //==============================================================================

@@ -20,7 +20,9 @@
 #include "SceneEvent.h"
 #include "GraphicEvent.h"
 #include "MultiAreaEvent.h"
+#include "GraphicSessionManager.h"
 #include <thread>
+#include "boost\geometry.hpp"
 
 using namespace Amusing;
 
@@ -50,7 +52,7 @@ void MultiSceneCanvasManager::AddScene(std::string name)
 
 void MultiSceneCanvasManager::__AddAnimatedTestAreas()
 {
-	DBG("ICI");
+	DBG("__AddAnimatedtestAreas");
 	for (size_t i = 0; i < scenes.size(); i++)
 	{
 		int areasCount = 2 + (rand() % 3);
@@ -71,8 +73,13 @@ void MultiSceneCanvasManager::__AddAnimatedTestAreas()
 
 void MultiSceneCanvasManager::AddNedgeArea(uint64_t nextAreaId, int N)
 {
-	if(auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
-		handleAndSendAreaEventSync(amusingScene->AddNedgeArea(nextAreaId,N));
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+	{
+		std::shared_ptr<AreaEvent> areaE = amusingScene->AddNedgeArea(nextAreaId, N);
+		handleAndSendAreaEventSync(areaE);
+		handleAndSendAreaEventSync(amusingScene->AddCursor(areaE->GetConcernedArea()));
+	}
+
 }
 
 void MultiSceneCanvasManager::AddTrueCircle(uint64_t nextAreaId)
@@ -118,7 +125,7 @@ void MultiSceneCanvasManager::OnAudioPosition(double position)
 	{
 		// faire la translation du curseur de la forme
 		//DBG("position = " + (String)position);
-		amusingScene->getFirstCompleteArea()->setReadingPosition(position);
+		//amusingScene->getFirstCompleteArea()->setReadingPosition(position);
 		std::shared_ptr<AreaEvent> areaE(new AreaEvent(amusingScene->getFirstCompleteArea(), AreaEventType::NothingHappened,
 			amusingScene->getFirstCompleteArea()->GetId()));
 		handleAndSendAreaEventSync(areaE);
@@ -131,6 +138,67 @@ void MultiSceneCanvasManager::SetAllAudioPositions(double position)
 	{
 		
 		handleAndSendAreaEventSync(amusingScene->SetAllAudioPositions(position));
+	}
+}
+
+void MultiSceneCanvasManager::SetAudioPositions(std::shared_ptr<Cursor> cursor, double position)
+{
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+	{
+		bpt oldPosition = cursor->getPosition();//InPixels();
+		if (amusingScene->isDrew(cursor) && cursor->setReadingPosition(position)) // vérifie si le curseur est dessiné et le met à jour (seulement si la condition "dessiné" est déjà vérifiée)
+		{
+			if (auto eventA = amusingScene->checkCursorPosition(cursor)) // regarder si collision avec une autre aire
+			{
+				// envoyer les evts de collision (Update pour lier le RH à la TL correspondante)
+				if (auto completeP = std::dynamic_pointer_cast<CompletePolygon>(eventA->GetConcernedArea()))
+				{
+					
+					std::vector<bpt> inter;
+					boost::geometry::model::segment<bpt> segB = completeP->getSegment(oldPosition);//InPixels(oldPosition);
+					boost::geometry::model::segment<bpt> segA(oldPosition, cursor->getPosition());//InPixels());
+					boost::geometry::intersection(segA, segB, inter);
+					DBG("interSize = " + inter.size());
+					if (inter.size() == 1)
+					{
+						cursor->setCenterPositionNormalize(inter[0]);//cursor->setCenterPosition(inter[0]);
+					}
+					else if(inter.size()==0)
+					{
+						inter.push_back(cursor->getPosition());
+					}
+					//double old = cursor->getPositionInAssociateArea();
+					DBG("change d'aire");
+					if (auto associate = std::dynamic_pointer_cast<CompletePolygon>(cursor->getAssociateArea()))
+					{
+						/*if (auto concernedIntersection = amusingScene->getConcernedIntersection(completeP, associate, inter[0]))
+						{
+							cursor->Inhibit(completeP);
+							cursor->LinkTo(concernedIntersection);
+						}
+						else
+						{*/
+							cursor->LinkTo(completeP);
+						//}
+					}
+					else
+					{
+						cursor->LinkTo(completeP);
+					}
+					//DBG("change d'aire : old "+ (String)old +" new "+ (String)cursor->getPositionInAssociateArea());
+					handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(cursor,eventA->GetType(),cursor->GetId(),eventA->GetConcernedScene())));
+				}
+				else
+					handleAndSendAreaEventSync(eventA);
+			}
+			else
+			{
+				std::shared_ptr<AreaEvent> areaE(new AreaEvent(cursor, AreaEventType::NothingHappened));
+				handleAndSendAreaEventSync(areaE);
+			}
+		}
+		/*if(auto completeA = std::dynamic_pointer_cast<CompletePolygon>(area))
+			handleAndSendAreaEventSync(completeA->setReadingPosition(position));*/
 	}
 }
 
@@ -151,34 +219,37 @@ void MultiSceneCanvasManager::OnDelete()
 	
 }
 
+void MultiSceneCanvasManager::handleAndSendMultiAreaEventSync(std::shared_ptr<MultiAreaEvent> multiAreaE)
+{
+	// Cast de l'évènement principal vers la classe mère
+	auto mainAreaE = std::make_shared<AreaEvent>(multiAreaE.get());
+	MultiSceneCanvasInteractor::handleAndSendAreaEventSync(mainAreaE, true); // pas de notif
+
+												  // Dispatching des sous-évènements
+	for (size_t i = 0; i<multiAreaE->GetOtherEventsCount(); i++)
+	{
+		MultiSceneCanvasInteractor::handleAndSendAreaEventSync(multiAreaE->GetOtherEvent(i), true); // pas de notif
+	}
+
+	// Ensuite on envoie le gros multiarea event au GraphicSessionManager en 1 paquet
+	// (plutôt que chacun des petits séparément, pour lesquels la notification a été supprimée)
+	graphicSessionManager->HandleEventSync(multiAreaE);
+}
+
 void MultiSceneCanvasManager::handleAndSendAreaEventSync(std::shared_ptr<AreaEvent> areaE)
 {
-	//DBG("MultiSceneCanvasManager::handleAndSendAreaEventSync : " + (String)((int)areaE->GetType()));
-	if (areaE->GetType() == AreaEventType::Deleted)
+	
+	if (auto multiE = std::dynamic_pointer_cast<MultiAreaEvent>(areaE))
 	{
-		DBG("need to delete");
-		if (auto area = std::dynamic_pointer_cast<AnimatedPolygon> (areaE->GetConcernedArea()))
-		{
-
-			if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
-				while (true)
-				{
-					if (auto followerToDelete = amusingScene->getFollowers(area))
-					{
-						DBG("followerToDelete");
-						deleteAsyncDrawableObject((int)followerToDelete->GetId(), followerToDelete);
-					}
-					else
-						break;
-				}
-		}
-		else
-		{
-			DBG("area to delete : " + (String)((int)areaE->GetAreaIdInScene()) );
-			deleteAsyncDrawableObject(areaE->GetAreaIdInScene(), areaE->GetConcernedArea());
-		}
+		handleAndSendMultiAreaEventSync(multiE);
+		
 	}
-	MultiSceneCanvasEditor::handleAndSendAreaEventSync(areaE);
+	else
+	{
+		
+		MultiSceneCanvasEditor::handleAndSendAreaEventSync(areaE);
+	}
+	
 }
 
 void MultiSceneCanvasManager::deleteUnusedFollowers()
@@ -204,8 +275,8 @@ void MultiSceneCanvasManager::deleteUnusedFollowers()
 
 void MultiSceneCanvasManager::deleteAsyncDrawableObject(int idInScene, std::shared_ptr<IDrawableArea> originalAreaToDelete)
 {
-	DBG("MultiSceneCanvasManager::deleteAsyncDrawableObject");
-	MultiSceneCanvasInteractor::deleteAsyncDrawableObject(idInScene, originalAreaToDelete);
+
+	MultiSceneCanvasInteractor::deleteAsyncDrawableObject(originalAreaToDelete);
 }
 
 void MultiSceneCanvasManager::OnCanvasMouseDown(const MouseEvent& mouseE)
@@ -213,6 +284,20 @@ void MultiSceneCanvasManager::OnCanvasMouseDown(const MouseEvent& mouseE)
 	DBG("passe par MultiSceneCanvasManager::OnCanvasMouseDown");
 	MultiSceneCanvasEditor::OnCanvasMouseDown(mouseE);
 }
+
+void MultiSceneCanvasManager::OnCanvasMouseUp(const MouseEvent& mouseE)
+{
+	DBG("passe par MultiSceneCanvasManager::OnCanvasMouseUp");
+	MultiSceneCanvasEditor::OnCanvasMouseUp(mouseE);
+}
+
+void MultiSceneCanvasManager::OnInteraction(std::shared_ptr<AreaEvent> areaE)
+{
+	handleAndSendAreaEventSync(areaE);
+	//graphicSessionManager->HandleEventSync(areaE);
+}
+
+
 
 void MultiSceneCanvasManager::SetAllChannels()
 {
@@ -231,4 +316,71 @@ void MultiSceneCanvasManager::resendToModel()
 		for (int i = 0; i < amusingScene->getNumberArea(); i++)
 			handleAndSendEventSync(amusingScene->resendArea(i));
 	}
+}
+
+void MultiSceneCanvasManager::ChangeBaseNote(double newBaseNote)
+{
+	DBG("new base = " + (String)newBaseNote);
+	
+}
+
+void MultiSceneCanvasManager::ChangeSpeed(double newSpeed)
+{
+	//DBG("new speed = " + (String)newSpeed);
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+	{
+		/*if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)
+		{
+			myGraphicSessionManager->setSpeedArea(amusingScene->GetSelectedArea(), newSpeed);
+		}*/
+		//graphicSessionManager->setSpeedArea(amusingScene->GetSelectedArea(), newSpeed);
+		//handleAndSendAreaEventSync(amusingScene->SetSelectedAreaCursor(newSpeed));
+		if (auto selectedC = std::dynamic_pointer_cast<CompletePolygon>(amusingScene->GetSelectedArea()))
+		{
+			for (int i = 0; i < selectedC->getCursorsCount(); i++)
+			{
+				handleAndSendAreaEventSync(amusingScene->SetSelectedAreaCursor(i, newSpeed));
+			}
+		}
+	}
+}
+
+double MultiSceneCanvasManager::getSpeed(std::shared_ptr<IEditableArea> area)
+{
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+	{
+		if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)
+		{
+			return myGraphicSessionManager->getSpeed(amusingScene->GetSelectedArea());
+		}
+	}
+	else
+		return 1.0f;
+}
+
+void MultiSceneCanvasManager::ChangeVelocity(double newVelocity)
+{
+	//DBG("new speed = " + (String)newSpeed);
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+	{
+		if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)
+		{
+			myGraphicSessionManager->setVelocityArea(amusingScene->GetSelectedArea(), newVelocity);
+		}
+		//graphicSessionManager->setSpeedArea(amusingScene->GetSelectedArea(), newSpeed);
+		handleAndSendAreaEventSync(amusingScene->SetSelectedAreaOpacity(newVelocity/127.0));
+	}
+}
+
+double MultiSceneCanvasManager::getVelocity(std::shared_ptr<IEditableArea> area)
+{
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+	{
+		if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)
+		{
+			return myGraphicSessionManager->getVelocity(amusingScene->GetSelectedArea());
+		}
+	}
+	else
+		return 64.0;
 }

@@ -19,15 +19,22 @@ AmusingModel::AmusingModel(Presenter* m_presenter) : presenter(m_presenter)
 {
 	DBG("AmusingModel::AmusingModel");
 	//audioPlayer = new AudioPlayer();
-	presenter->CompleteInitialisation(this);
+	
 	audioManager = new AudioManager(this);
+	sharedAudioDeviceManager = std::shared_ptr<AudioDeviceManager>(new AudioDeviceManager());
+	sharedAudioDeviceManager->initialise(0, 2, nullptr, true);
+	sharedAudioDeviceManager->addAudioCallback(audioManager);
+	presenter->CompleteInitialisation(this);
+	//presenter->setAudioDeviceManager(audioManager);
 }
 
 AmusingModel::~AmusingModel()
 {
-	//DBG("Model destructor");
-	//delete audioPlayer;
-	delete audioManager;
+	sharedAudioDeviceManager->removeAudioCallback(audioManager);
+	sharedAudioDeviceManager->closeAudioDevice();
+	//delete audioManager;
+	
+	audioManager = nullptr;
 }
 
 bool AmusingModel::lookForParameter(Miam::AsyncParamChange &param)
@@ -35,9 +42,19 @@ bool AmusingModel::lookForParameter(Miam::AsyncParamChange &param)
 	return presenter->TryGetAsyncParamChange(param);
 }
 
-AudioDeviceManager& AmusingModel::getAudioDeviceManager()
+//AudioDeviceManager& AmusingModel::getAudioDeviceManager()
+//{
+//	if (audioManager == nullptr)
+//		DBG("No audioManager");
+//	return audioManager->getAudioDeviceManager();
+//}
+
+void AmusingModel::removeDeviceManagerFromOptionWindow()
 {
-	if (audioManager == nullptr)
-		DBG("No audioManager");
-	return audioManager->getAudioDeviceManager();
+	presenter->removeDeviceManagerFromOptionWindow();
+}
+
+MidiOutput* AmusingModel::getMidiOutput()
+{
+	return sharedAudioDeviceManager->getDefaultMidiOutput();
 }

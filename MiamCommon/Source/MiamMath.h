@@ -11,6 +11,11 @@
 #ifndef MIAMMATH_H_INCLUDED
 #define MIAMMATH_H_INCLUDED
 
+#ifdef _MSC_VER
+#define _USE_MATH_DEFINES // for C++  
+#include <math.h>
+#endif
+
 #include "JuceHeader.h"
 
 #include "boost/geometry.hpp"

@@ -67,6 +67,7 @@ void MultiCanvasComponent::paint(Graphics& g)
 
 void MultiCanvasComponent::resized()
 {
+	DBG("resized MultiCanvasComponent");
     // - - - 1 canvas -> centered with margin - - -
     if (multiSceneCanvasComponents.size() == 1)
     {

@@ -10,7 +10,7 @@
 
 #include "InteractiveEllipse.h"
 #include "SceneCanvasComponent.h"
-
+#include "MiamMath.h"
 using namespace Miam;
 
 
@@ -50,7 +50,7 @@ void InteractiveEllipse::CanvasResized(SceneCanvasComponent* _parentCanvas)
 
 void InteractiveEllipse::computeSurface()
 {
-	surface = a * b * PI;
+	surface = a * b * M_PI;
 }
 
 bool InteractiveEllipse::HitTest(double x, double y)
