@@ -80,7 +80,10 @@ void DrawableArea::CanvasResized(SceneCanvasComponent* _parentCanvas)
 	boost::geometry::transform(center, centerInPixels, scale);
 }
 
-
+void DrawableArea::KeepRatio(bool _keepRatio)
+{
+	keepRatio = _keepRatio;
+}
 
 void DrawableArea::SetFillColour(Colour newColour)
 {

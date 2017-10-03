@@ -71,6 +71,11 @@ namespace Miam {
         // (re)Construction helpers
         private :
         void createJucePolygon(int width = 160, int height = 90);
+
+		void recreateContourPoints(int width, int height);
+
+		protected :
+		float xScale, yScale;
         
         public :
         /// \brief Destructor.

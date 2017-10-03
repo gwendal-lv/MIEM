@@ -74,7 +74,8 @@ namespace Miam
         virtual void SetName(String newName) override;
         
         void SetNameVisible(bool isVisible) {isNameVisible = isVisible;}
-        
+
+		void KeepRatio(bool _keepRatio);
         
         // - - - - - XML import/export - - - - -
         virtual std::shared_ptr<bptree::ptree> GetTree() override;
@@ -107,6 +108,8 @@ namespace Miam
         
         String name;
         bool isNameVisible;
+
+		bool keepRatio;
     };
     
 }
