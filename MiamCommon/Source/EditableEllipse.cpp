@@ -152,7 +152,7 @@ void EditableEllipse::SetActive(bool activate)
 	}
 }
 
-void Miam::EditableEllipse::SetRound(bool _isround)
+void Miam::EditableEllipse::SetIsRound(bool _isround)
 {
 	isRound = _isround;
 }

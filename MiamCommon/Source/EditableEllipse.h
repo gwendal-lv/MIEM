@@ -44,7 +44,7 @@ namespace Miam
 			// ----- Setters and Getters -----
 		public:
 			void SetActive(bool activate) override;
-			void SetRound(bool _isround);
+			void SetIsRound(bool _isround);
 			double getRadius();
 
 		public :
