@@ -884,7 +884,7 @@ std::shared_ptr<AreaEvent> AmusingScene::checkCursorPosition(std::shared_ptr<Cur
 	{
 		if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
 			if (completeArea->contains(cursor->getPosition()) && !cursor->isLinkedTo(completeArea) && cursor->CanLinkTo(completeArea))// si la position du curseur est dans une autre aire ->
-				return std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::CursorChanged, (int)completeArea->GetId(), shared_from_this()));
+				return std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::ParentChanged, (int)completeArea->GetId(), shared_from_this()));
 	}
 	return nullptr;
 }

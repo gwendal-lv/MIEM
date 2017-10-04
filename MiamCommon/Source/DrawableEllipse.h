@@ -53,7 +53,7 @@ namespace Miam
 		virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
 	
 	private:
-		void recreateContourPoints();
+		void recreateContourPoints(int width, int height);
 
 		protected:
 			double a, b; // grand axe et petit axe

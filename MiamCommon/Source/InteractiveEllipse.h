@@ -44,6 +44,11 @@ namespace Miam
 			double GetSurface() override
 			{ return surface; }
 
+		protected :
+			bool isRound;
+		public :
+			void SetIsRound(bool _isround);
+
 	
 	};
 }

@@ -51,8 +51,7 @@ DrawablePolygon::DrawablePolygon(int64_t _Id) :
 DrawablePolygon::DrawablePolygon(int64_t _Id, bpt _center, int pointsCount, float radius, Colour _fillColour, float _canvasRatio) :
     DrawableArea(_Id, _center, _fillColour)
 {
-    //float xScale, yScale;
-    float xScale, yScale;
+
     if (_canvasRatio > 1.0f) // ratio of an landscape-oriented window
     {
         xScale = 1.0f/_canvasRatio;

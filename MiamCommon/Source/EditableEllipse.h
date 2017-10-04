@@ -44,7 +44,6 @@ namespace Miam
 			// ----- Setters and Getters -----
 		public:
 			void SetActive(bool activate) override;
-			void SetIsRound(bool _isround);
 			double getRadius();
 
 		public :
@@ -64,7 +63,6 @@ namespace Miam
 		private:
 			bool isNewContourPointValid(const Point<double>& newLocation);
 			bool isNewCenterValid(const Point<double>& newLocation);
-			bool isRound;
 	};
 }
 
