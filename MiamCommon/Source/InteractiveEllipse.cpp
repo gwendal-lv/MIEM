@@ -64,3 +64,7 @@ double InteractiveEllipse::ComputeInteractionWeight(bpt T)
 	return 0.0;
 }
 
+void InteractiveEllipse::SetIsRound(bool _isround)
+{
+	isRound = _isround;
+}

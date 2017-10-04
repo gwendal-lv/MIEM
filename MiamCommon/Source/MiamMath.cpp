@@ -11,15 +11,12 @@
 #include <cmath>
 #include <deque>
 
-#include "boost/geometry.hpp"
-#include "boost/geometry/geometries/geometries.hpp"
-#include "boost/geometry/geometries/polygon.hpp"
+
 #include "boost/geometry/algorithms/intersection.hpp"
 
 #include "MiamMath.h"
 
-typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> bpt;
-typedef boost::geometry::model::polygon<bpt> bpolygon;
+
 using namespace Miam;
 
 

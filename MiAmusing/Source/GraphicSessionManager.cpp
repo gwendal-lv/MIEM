@@ -417,7 +417,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				DBG("selection");
 				break;
 				//case AreaEventType::
-			case AreaEventType::CursorChanged:
+			case AreaEventType::ParentChanged:
 				if (auto cursor = std::dynamic_pointer_cast<Cursor>(area))
 				{
 					param.Type = AsyncParamChange::Update;

@@ -22,7 +22,7 @@
 #include "MultiAreaEvent.h"
 #include "GraphicSessionManager.h"
 #include <thread>
-#include "boost\geometry.hpp"
+
 
 using namespace Amusing;
 

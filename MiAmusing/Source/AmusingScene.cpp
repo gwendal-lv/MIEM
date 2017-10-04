@@ -24,16 +24,13 @@
 #include "SceneEvent.h"
 #include "MultiAreaEvent.h"
 
-#include "boost\geometry.hpp"
-#include "boost\geometry\geometries\geometries.hpp"
-#include "boost\geometry\geometries\polygon.hpp"
+
 
 #include <vector>
 
 #include "AmusingSceneComponent.h"
 
-typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> bpt;
-typedef boost::geometry::model::polygon<bpt> bpolygon;
+
 
 using namespace Miam;
 using namespace Amusing;
@@ -287,7 +284,7 @@ void AmusingScene::AddCursor()
 	// creation du curseur
 	bpt cursorCenter(0.0, 0.0);
 	float cursorSize = 0.1f;
-	std::shared_ptr<Cursor> newCursor(new Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f)); //Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f)); //Cursor(0));//Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f));
+	std::shared_ptr<Cursor> newCursor(new Cursor(0, cursorCenter, cursorSize, Colours::grey, 1.47f)); //Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f)); //Cursor(0));//Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f));
 
 	//ajouter le nouveau curseur à la liste de curseurs
 	//cursors.push_back(newCursor);
@@ -309,7 +306,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddCursor(std::shared_ptr<IDrawableArea
 		else
 			cursorCenter = bpt(0, 0);
 		float cursorSize = 0.1f;
-		std::shared_ptr<Cursor> newCursor(new Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f)); //Cursor(0));//Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f));
+		std::shared_ptr<Cursor> newCursor(new Cursor(0, cursorCenter, cursorSize, Colours::grey, canvasComponent->GetRatio())); //Cursor(0));//Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f));
 
 		//ajouter le nouveau curseur à la liste de curseurs
 		//cursors.push_back(newCursor);
@@ -884,7 +881,7 @@ std::shared_ptr<AreaEvent> AmusingScene::checkCursorPosition(std::shared_ptr<Cur
 	{
 		if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
 			if (completeArea->contains(cursor->getPosition()) && !cursor->isLinkedTo(completeArea) && cursor->CanLinkTo(completeArea))// si la position du curseur est dans une autre aire ->
-				return std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::CursorChanged, (int)completeArea->GetId(), shared_from_this()));
+				return std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::ParentChanged, (int)completeArea->GetId(), shared_from_this()));
 	}
 	return nullptr;
 }

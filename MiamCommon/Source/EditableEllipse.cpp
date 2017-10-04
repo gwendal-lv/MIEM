@@ -25,14 +25,14 @@ EditableEllipse::EditableEllipse(int64_t _Id) :
 	InteractiveEllipse(_Id)
 {
 	init();
-	isRound = false;
+	SetIsRound(false);
 }
 
 EditableEllipse::EditableEllipse(int64_t _Id, bpt _center, double _r, Colour _fillColour, float _canvasRatio) :
 	InteractiveEllipse(_Id, _center, _r, _r, _fillColour, _canvasRatio)
 {
 	init();
-	isRound = true;
+	SetIsRound(true);
 }
 
 
@@ -40,7 +40,7 @@ EditableEllipse::EditableEllipse(int64_t _Id, bpt _center, double _a, double _b,
 	InteractiveEllipse(_Id, _center, _a, _b, _fillColour, _canvasRatio)
 {
 	init();
-	isRound = false;
+	SetIsRound(false);
 }
 
 void EditableEllipse::init()
@@ -152,10 +152,7 @@ void EditableEllipse::SetActive(bool activate)
 	}
 }
 
-void Miam::EditableEllipse::SetIsRound(bool _isround)
-{
-	isRound = _isround;
-}
+
 
 AreaEventType EditableEllipse::TryBeginPointMove(const Point<double>& hitPoint)
 {

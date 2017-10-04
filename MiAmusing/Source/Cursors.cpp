@@ -22,11 +22,12 @@ Cursor::Cursor(int64_t _Id) : Exciter(_Id)
 	speed = 1;
 }
 
-Cursor::Cursor(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio) :
+Cursor::Cursor(int64_t _Id, bpt _center, double _r, Colour _fillColour, float _canvasRatio) :
 	Exciter(_Id)//EditableEllipse(_Id, _center, _a,  _b, _fillColour, _canvasRatio)
 {
-	a = _a;
-	b = _b;
+	a = _r;
+	b = _r;
+	SetIsRound(true);
 	initCursorSize = a;
 	cursorSize = initCursorSize;
 	

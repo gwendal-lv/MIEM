@@ -59,7 +59,7 @@ namespace Miam
         RotScale, ///< the whole area is being manipulated (but not translated)
         //TraRotScale, ///< 2D modification from 2 touch point inputs
         
-        
+		ParentChanged,
 
 		//  - - - - - Events that happen at the end of a material input - - - - -
         

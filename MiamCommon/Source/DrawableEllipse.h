@@ -43,6 +43,7 @@ namespace Miam
         
         // - - - - - XML import/export - - - - -
         /// \brief Returns "Ellipse" even if it is actually a circle.
+
         virtual std::string GetTypeAsString() const override {return "Ellipse";};
         virtual std::shared_ptr<bptree::ptree> GetTree() override;
 
@@ -53,7 +54,7 @@ namespace Miam
 		virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
 	
 	private:
-		void recreateContourPoints();
+		void recreateContourPoints(int width, int height);
 
 		protected:
 			double a, b; // grand axe et petit axe
