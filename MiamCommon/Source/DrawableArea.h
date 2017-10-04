@@ -12,13 +12,9 @@
 #define DRAWABLEAREA_H_INCLUDED
 
 #include "JuceHeader.h"
-#include "boost/geometry.hpp"
-#include "boost/geometry/geometries/geometries.hpp"
-#include "boost/geometry/geometries/polygon.hpp"
+
 #include "IDrawableArea.h"
 
-typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> bpt;
-//typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> bpt;
 
 // Simple declaration for a pointer
 class SceneCanvasComponent;

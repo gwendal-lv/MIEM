@@ -18,7 +18,7 @@ class Cursor : public Miam::Exciter//EditableEllipse//Exciter//EditableEllipse
 {
 public:
 	Cursor(int64_t _Id);
-	Cursor(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio);
+	Cursor(int64_t _Id, bpt _center, double _r, Colour _fillColour, float _canvasRatio);
 	~Cursor();
 
 	virtual IDrawableArea* Clone() const override { return new Cursor(*this); }

@@ -14,15 +14,12 @@
 
 #include <vector>
 
-#include "boost/geometry.hpp"
-#include "boost/geometry/geometries/geometries.hpp"
-#include "boost/geometry/geometries/polygon.hpp"
+
 
 #include "JuceHeader.h"
 
 #include "IEditableArea.h"
 
-typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> bpt;
 
 namespace Miam
 {
