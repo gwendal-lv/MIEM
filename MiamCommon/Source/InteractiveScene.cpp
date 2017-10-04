@@ -162,7 +162,7 @@ std::shared_ptr<AreaEvent> InteractiveScene::AddDefaultExciter()
     if (! canvasManagerLocked)
         throw std::logic_error("Cannot add a new current exciter : cannot get a Unique ID from the canvas manager (not linked to this)");
         
-    auto exciter = std::make_shared<Exciter>(canvasManagerLocked->GetNextAreaId());
+    auto exciter = std::make_shared<Exciter>(canvasManagerLocked->GetNextAreaId(), canvasManagerLocked->GetCommonTimePoint());
         
     return AddExciter(exciter);
 }

@@ -45,6 +45,11 @@ uint64_t IGraphicSessionManager::GetNextAreaId()
     return areaIdBackup;
 }
 
+std::chrono::time_point<std::chrono::steady_clock> IGraphicSessionManager::GetCommonTimePoint() const
+{
+    return presenter->GetCommonTimePoint();
+}
+
 
 // = = = = = = = = = = METHODS = = = = = = = = = =
 

@@ -12,6 +12,8 @@
 #define IPRESENTER_H_INCLUDED
 
 
+#include <chrono>
+
 #include "LockFreeParamChangeSender.h"
 
 
@@ -26,6 +28,18 @@ namespace Miam
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
         private :
 
+        
+        // - - - - - Time management - - - - -
+        protected :
+        /// \brief Common reference shared with the Miam::IModel (model must
+        /// retrieve it later)
+        std::chrono::time_point<std::chrono::steady_clock> constructionTimePt;
+        
+        
+        // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
+        public :
+        std::chrono::time_point<std::chrono::steady_clock> GetCommonTimePoint() const
+        { return constructionTimePt; }
         
         
         

@@ -111,7 +111,7 @@ namespace Miam
         /// the current state's list.
         void AddState(std::shared_ptr<SpatState<T>> newState)
         {
-            newState->SetIndex(spatStates.size()); // is automatically the last
+            newState->SetIndex((int)spatStates.size()); // is automatically the last
             spatStates.push_back(newState);
         }
         /// \brief Adds a default empty zero-matrix state.
@@ -152,9 +152,9 @@ namespace Miam
         {
             auto backUpPtr = spatStates[index1];
             spatStates[index1] = spatStates[index2];
-            spatStates[index1]->SetIndex(index1);
+            spatStates[index1]->SetIndex((int)index1);
             spatStates[index2] = backUpPtr;
-            spatStates[index2]->SetIndex(index2);
+            spatStates[index2]->SetIndex((int)index2);
         }
         
         // = = = = = = = = Property tree (for XML) import/export = = = = = = = =

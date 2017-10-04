@@ -16,6 +16,8 @@
 using namespace Miam;
 
 IPresenter::IPresenter()
+:
+constructionTimePt( std::chrono::steady_clock::now() )
 {
     std::cout << "AsyncParamChange size = " << sizeof(AsyncParamChange) << "bytes" << std::endl;
 }

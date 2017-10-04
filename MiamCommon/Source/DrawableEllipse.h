@@ -42,9 +42,9 @@ namespace Miam
 		virtual ~DrawableEllipse();
         
         // - - - - - XML import/export - - - - -
-        // RAJOUTÉ PAR GWENDAL POUR QUE ÇA COMPILE, À MODIFIER SANS DOUTE
+        /// \brief Returns "Ellipse" even if it is actually a circle.
         virtual std::string GetTypeAsString() const override {return "Ellipse";};
-
+        virtual std::shared_ptr<bptree::ptree> GetTree() override;
 
 
 		// Display functions

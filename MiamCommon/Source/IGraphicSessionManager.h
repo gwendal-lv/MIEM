@@ -84,6 +84,7 @@ namespace Miam
         
         virtual MultiCanvasComponent* GetMultiCanvasComponent() {return  multiCanvasComponent;}
         
+        std::chrono::time_point<std::chrono::steady_clock> GetCommonTimePoint() const;
         
         /// \brief !!!!!!!!! À CHANGER pour l'instant toujours faux : pas d'OpenGL... !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         virtual bool IsOpenGlSwapSynced() {return false;}

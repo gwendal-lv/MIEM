@@ -141,3 +141,30 @@ void DrawableEllipse::recreateContourPoints()
 	boost::geometry::transform(newContourPoints, contourPoints, Rot);
 
 }
+
+
+
+
+// = = = = = = = = = = XML import/export = = = = = = = = = =
+std::shared_ptr<bptree::ptree> DrawableEllipse::GetTree()
+{
+    auto inheritedTree = DrawableArea::GetTree();
+    bptree::ptree geomeTree; // LOL.
+    // Écriture des paramètres séparément
+    /*
+    std::vector<bpt> const& points = contourPoints.outer(); // ring
+    for (size_t i=0 ; i<points.size()-1 ; i++) // so we don't read the last point
+    {
+        bptree::ptree pointTree;
+        pointTree.put("<xmlattr>.index", i);
+        pointTree.put("<xmlattr>.x", points[i].get<0>());
+        pointTree.put("<xmlattr>.y", points[i].get<1>());
+        geomeTree.add_child("point", pointTree);
+    }
+    inheritedTree->put_child("geometry", geomeTree);
+     */
+    return inheritedTree;
+}
+
+
+

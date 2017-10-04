@@ -16,6 +16,7 @@
 #include <memory>
 #include <thread>
 #include <atomic>
+#include <chrono>
 
 #include "IModel.h"
 #include "PeriodicUpdateThread.h"
@@ -32,7 +33,7 @@
 namespace Miam
 {
     // pre-declarations for pointers
-    class IPresenter;
+    class SpatPresenter;
     
     
     
@@ -48,7 +49,7 @@ namespace Miam
         
         private :
         // Link to presenter module, children classes will have their own ptr
-        IPresenter* presenter = 0;
+        SpatPresenter* presenter = 0;
         
         
         protected :
@@ -62,6 +63,8 @@ namespace Miam
         // Communication
         std::vector< std::shared_ptr<SpatSender<double>> > spatSenders;
         
+        // Time Management
+        std::chrono::time_point<std::chrono::steady_clock> commonStartTimePt;
         
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
@@ -85,7 +88,7 @@ namespace Miam
         public :
         
         // - - - - - Construction / destruction - - - - -
-        SpatModel(IPresenter* presenter_, double updateFrequency_Hz = 500.0);
+        SpatModel(SpatPresenter* presenter_, double updateFrequency_Hz = 500.0);
         virtual ~SpatModel();
         
         // - - - - - Speakers management - - - - -

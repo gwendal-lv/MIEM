@@ -15,7 +15,7 @@
 #include "SpatModel.h"
 #include "MiamOscSender.hpp"
 
-#include "IPresenter.h"
+#include "SpatPresenter.h"
 
 
 using namespace Miam;
@@ -23,11 +23,12 @@ using namespace Miam;
 // = = = = = = = = = = METHODS = = = = = = = = = =
 
 // - - - - - Construction / destruction - - - - -
-SpatModel::SpatModel(IPresenter* presenter_, double updateFrequency_Hz)
+SpatModel::SpatModel(SpatPresenter* presenter_, double updateFrequency_Hz)
 :
 PeriodicUpdateThread("SpatModel updater"), // base class
 
-presenter(presenter_)
+presenter(presenter_),
+commonStartTimePt( presenter->GetCommonTimePoint() )
 {
     updateThreadF_Hz = updateFrequency_Hz;
     updateThreadT_us = (int)std::round(1000000.0/updateFrequency_Hz);

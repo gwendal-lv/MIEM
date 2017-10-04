@@ -164,6 +164,8 @@ namespace Miam {
         // à DÉGAGER SI LA MAP DE EDITABLEAREA VERS SON INDICE MARCHE BIEN
         virtual int GetSelectedSceneId();
         
+        std::chrono::time_point<std::chrono::steady_clock> GetCommonTimePoint() const;
+        
         
         
         
@@ -225,7 +227,7 @@ namespace Miam {
         /// Be careful not to force-delete the selected scene !!
         ///
         /// Sends an event about the deletion.
-        virtual void forceDeleteScene(int sceneIndexToDelete);
+        virtual void forceDeleteScene(size_t sceneIndexToDelete);
         public :
         
         

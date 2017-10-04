@@ -183,6 +183,11 @@ int MultiSceneCanvasInteractor::GetSelectedSceneId()
     return -1;
 }
 
+std::chrono::time_point<std::chrono::steady_clock> MultiSceneCanvasInteractor::GetCommonTimePoint() const
+{
+    return graphicSessionManager->GetCommonTimePoint();
+}
+
 
 
 // - - - - - Internal events management - - - - -
@@ -487,7 +492,7 @@ bool MultiSceneCanvasInteractor::DeleteScene()
         return true;
     }
 }
-void MultiSceneCanvasInteractor::forceDeleteScene(int sceneIndexToDelete)
+void MultiSceneCanvasInteractor::forceDeleteScene(size_t sceneIndexToDelete)
 {
     auto it = scenes.begin() + sceneIndexToDelete;
     std::shared_ptr<SceneEvent> sceneE(new SceneEvent(shared_from_this(), *it, SceneEventType::Deleted));
