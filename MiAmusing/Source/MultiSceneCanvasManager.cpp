@@ -71,6 +71,24 @@ void MultiSceneCanvasManager::__AddAnimatedTestAreas()
 	}
 }
 
+void MultiSceneCanvasManager::__AddAreasForTest()
+{
+	auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(scenes[2]);
+	std::shared_ptr<CompletePolygon> currentCompletePolygon(new CompletePolygon(graphicSessionManager->GetNextAreaId(), bpt(0.5, 0.5), 3,0.15f, Colours::aquamarine, 1.47f));
+	currentCompletePolygon->SetActive(false);
+	currentCompletePolygon->CanvasResized(canvasComponent->GetCanvas());
+	currentCompletePolygon->setCursorVisible(true, canvasComponent->GetCanvas());
+	handleAndSendAreaEventSync(amusingScene->AddArea(currentCompletePolygon));
+	//handleAndSendAreaEventSync(amusingScene->AddCursor(currentCompletePolygon));
+
+	//std::shared_ptr<CompletePolygon> currentCompletePolygon2(new CompletePolygon(graphicSessionManager->GetNextAreaId(), bpt(0.2, 0.2), 4, Colours::aquamarine));
+	//currentCompletePolygon2->SetActive(false);
+	//currentCompletePolygon2->CanvasResized(canvasComponent);
+	//currentCompletePolygon2->setCursorVisible(true, canvasComponent);
+	//handleAndSendAreaEventSync(amusingScene->AddArea(currentCompletePolygon2));
+	//handleAndSendAreaEventSync(amusingScene->AddCursor(currentCompletePolygon2));
+}
+
 void MultiSceneCanvasManager::AddNedgeArea(uint64_t nextAreaId, int N)
 {
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))

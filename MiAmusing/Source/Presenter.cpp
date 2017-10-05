@@ -151,7 +151,7 @@ int Presenter::getChannel(std::shared_ptr<EditableScene> scene)
 int Presenter::getTimeLineID(std::shared_ptr<IEditableArea> area)
 {
 	
-	if (areaToSourceMulti.left.find(area) == areaToSourceMulti.left.end())
+	if (areaToSourceMulti.empty() || areaToSourceMulti.left.find(area) == areaToSourceMulti.left.end())
 	{
 		//areaToSourceMulti.left[area] = Nsources;
 		std::pair<std::shared_ptr<IEditableArea>, int> newPair(area, Nsources);

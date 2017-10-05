@@ -61,9 +61,7 @@ GraphicSessionManager::GraphicSessionManager(Presenter* presenter_, View* view_)
 	// d'ailleurs ici aussi.
 	canvasManagers.push_back(std::make_shared<MultiSceneCanvasManager>(this, myMultiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas1));
 	myMultiCanvasComponent->CompleteInitialization();
-	DBG("pushed");
-//	canvasManagers.back()->CompleteInitialization(canvasManagers.back());
-	DBG("initialized");
+	
 	
 	/*
 	canvasManagers.push_back(new MultiSceneCanvasEditor(this, multiCanvasComponent->AddCanvas(),  SceneCanvasComponent::Id::Canvas2));
@@ -132,6 +130,9 @@ void GraphicSessionManager::SetAllChannels()
 		std::shared_ptr<MultiSceneCanvasManager> canvasPtr = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManagers[i]);
 		canvasPtr->SetAllChannels();
 	}
+	
+	if (auto myCanvasManager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManagers[0]))
+		myCanvasManager->__AddAreasForTest();
 }
 
 
