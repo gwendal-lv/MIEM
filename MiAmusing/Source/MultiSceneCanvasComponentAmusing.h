@@ -13,7 +13,7 @@
 #include "JuceHeader.h"
 
 #include "MultiSceneCanvasComponent.h"
-
+#include "MouseSimulator.h"
 
 class MultiSceneCanvasComponentAmusing : public MultiSceneCanvasComponent
 {
@@ -23,7 +23,12 @@ public:
 
 	void resized() override;
 
+	void LinkToManager(std::shared_ptr<MultiSceneCanvasInteractor> canvasManager_);
+
+	void LinkToMouseSimulator();
+
 private:
 	//AreaOptions areaOptions;
+	std::shared_ptr<MouseSimulator> mouseSimulator;
 };
 

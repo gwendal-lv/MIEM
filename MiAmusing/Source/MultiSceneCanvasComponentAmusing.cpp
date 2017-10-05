@@ -40,3 +40,13 @@ void MultiSceneCanvasComponentAmusing::resized()
 	MultiSceneCanvasComponent::resized();
 	//areaOptions.setBounds(0, 0, getWidth(), getHeight());
 }
+
+void MultiSceneCanvasComponentAmusing::LinkToManager(std::shared_ptr<MultiSceneCanvasInteractor> canvasManager_)
+{
+	MultiSceneCanvasComponent::LinkToManager(canvasManager_);
+}
+
+void MultiSceneCanvasComponentAmusing::LinkToMouseSimulator()
+{
+	mouseSimulator = std::shared_ptr<MouseSimulator>( new MouseSimulator(childrenCanvas, canvasManager));
+}

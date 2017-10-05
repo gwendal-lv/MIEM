@@ -31,6 +31,8 @@ public:
 
 	MultiSceneCanvasComponent* AddCanvas() override;
 
+	void CompleteInitialization();
+
 private:
 	SafePointer<AudioDeviceSelectorComponent> audioSetupComp;
 	SafePointer<DialogWindow> dialogWindow;

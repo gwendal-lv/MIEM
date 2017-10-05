@@ -69,3 +69,12 @@ MultiSceneCanvasComponent* MultiCanvasComponentAmusing::AddCanvas()
 	addAndMakeVisible(multiSceneCanvasComponents.back());
 	return multiSceneCanvasComponents.back();
 }
+
+
+void MultiCanvasComponentAmusing::CompleteInitialization()
+{
+	MultiCanvasComponent::CompleteInitialization();
+	
+	((MultiSceneCanvasComponentAmusing*)multiSceneCanvasComponents.back().get())->LinkToMouseSimulator();
+	
+}

@@ -19,13 +19,15 @@ class juce::MouseInputSourceInternal;
 
 using namespace Amusing;
 
-MouseSimulator::MouseSimulator(SceneCanvasComponent *m_sceneComponent, std::weak_ptr<MultiSceneCanvasInteractor> canvasManager)
+MouseSimulator::MouseSimulator(SceneCanvasComponent *m_sceneComponent, std::weak_ptr<MultiSceneCanvasInteractor> canvasManager) :
+	sceneComponent(m_sceneComponent), canvasInteractor(canvasManager)
 {
 	/// write the events to execute here
-
+	addClick(Point<float>(267.0, 178.0), 1000);
 	/// end of the events
 
 	// start of the thead
+	Tposition = (int64)0;
 	runThread = true;
 	T = std::thread(&MouseSimulator::executeEvents, this);
 }
@@ -34,6 +36,12 @@ MouseSimulator::~MouseSimulator()
 {
 	runThread = false;
 	T.join();
+}
+
+void MouseSimulator::addClick(Point<float> location, int eventTime)
+{
+	addMouseDown(location, eventTime);
+	addMouseUp(location, eventTime + 10,0,false);
 }
 
 void MouseSimulator::addTranslation(int areaId, bpt translation, int eventTime, float speed)
@@ -79,32 +87,110 @@ void MouseSimulator::addRotation(int areaId, float rotation, int eventTime, floa
 	}
 }
 
-void MouseSimulator::addMouseDown(Point<float> position, int eventTime)
+void MouseSimulator::addMouseDown(Point<float> position, int _eventTime)
 {
 	juce::Time t();
 	
 	
+	juce::ModifierKeys modifier(juce::ModifierKeys::Flags::leftButtonModifier);
+	int numOfClicks = 1;
+	juce::Time eventTime((int64)_eventTime);
+	bool wasDragged = false;
+
 	auto mainSource = Desktop::getInstance().getMainMouseSource();
 	const juce::MouseEvent me(mainSource
-		, Point<float>(0,0), juce::ModifierKeys::Flags::noModifiers, MouseInputSource::invalidPressure,
+		, position, modifier, MouseInputSource::invalidPressure,
 		MouseInputSource::invalidOrientation, MouseInputSource::invalidRotation,
 		MouseInputSource::invalidTiltX, MouseInputSource::invalidTiltY,
-		this, this, juce::Time((int64)eventTime), Point<float>(0, 0), juce::Time((int64)eventTime), 0,false);
+		this, this, eventTime, position, eventTime, numOfClicks,wasDragged);
 	
 	
 	events.push_back(me);
+	types.push_back(isMouseDown);
 }
 
-void MouseSimulator::addMouseUp(Point<float> position, int eventTime, float incD, bool)
+void MouseSimulator::addMouseUp(Point<float> position, int _eventTime, float incD, bool random)
 {
+	auto mainSource = Desktop::getInstance().getMainMouseSource();
+	bool wasDragged = false;
 	// add a mouseUp event and search for the previous mouseDown to create some mouseDrag event between
+	
+	MouseEvent prevEvt(events.back());
+	
+	if (types.back() == isMouseDown && (prevEvt.position != position))
+	{
+		// previous was mouseDown -> need to create some MouseDrag between the two event
+		wasDragged = true;
+		juce::ModifierKeys modifier(juce::ModifierKeys::Flags::leftButtonModifier);
+		int numOfClicks = 0;
+		float distance = position.getDistanceFrom(prevEvt.position);
+		
+		int numOfDragEvents = roundToInt(distance / incD);
+		Point<float> inc = (position - prevEvt.position) / (float)numOfDragEvents;
+		int64 incT = round(prevEvt.eventTime.toMilliseconds() / (int64)numOfDragEvents);
+		for (int i = 0; i < numOfDragEvents-1; ++i)
+		{
+			Point<float> dragPosition = (inc * (float)(i + 1));
+			dragPosition.addXY(prevEvt.position.x, prevEvt.position.y);
+			Time dragTime = prevEvt.eventTime;
+			dragTime += RelativeTime((double)((i+1)*(int)incT));
+
+			const juce::MouseEvent me(mainSource
+				, dragPosition, modifier, MouseInputSource::invalidPressure,
+				MouseInputSource::invalidOrientation, MouseInputSource::invalidRotation,
+				MouseInputSource::invalidTiltX, MouseInputSource::invalidTiltY,
+				this, this, dragTime, dragPosition, dragTime, numOfClicks, wasDragged);
+			events.push_back(me);
+			types.push_back(isMouseDrag);
+		}
+	}
+	// then create the mouseUp
+	juce::ModifierKeys modifier(juce::ModifierKeys::Flags::noModifiers);
+	int numOfClicks = 0;
+	Time upTime((int64)_eventTime);
+
+	const juce::MouseEvent me(mainSource
+		, position, modifier, MouseInputSource::invalidPressure,
+		MouseInputSource::invalidOrientation, MouseInputSource::invalidRotation,
+		MouseInputSource::invalidTiltX, MouseInputSource::invalidTiltY,
+		this, this, upTime, position, upTime, numOfClicks, wasDragged);
+
+	events.push_back(me);
+	types.push_back(isMouseUp);
 }
 
 void MouseSimulator::executeEvents()
 {
+	DBG("begin thread");
 	while (runThread)
 	{
-
-		std::this_thread::sleep_for(std::chrono::milliseconds(100)); // period of the timer = 100ms
+		DBG((String)Tposition);
+		if(!events.empty())
+		{
+			MouseEvent evt(events.front());
+			if (Time(Tposition) == evt.eventTime)
+			{
+				const MessageManagerLock mmLock;
+				switch (types.front())
+				{
+				case isMouseDown:
+					sceneComponent->mouseDown(events.front());
+					break;
+				case isMouseDrag:
+					sceneComponent->mouseDrag(events.front());
+					break;
+				case isMouseUp:
+					sceneComponent->mouseUp(events.front());
+					break;
+				default:
+					break;
+				}
+				events.pop_front();
+				types.pop_front();
+			}
+		}
+		Tposition += (int64)10;
+		std::this_thread::sleep_for(std::chrono::milliseconds(10)); // period of the timer = 100ms
 	}
+	DBG("End thread");
 }
