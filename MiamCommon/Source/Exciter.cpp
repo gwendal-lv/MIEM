@@ -16,25 +16,46 @@ using namespace Miam;
 
 // = = = = = = = = = = Construction/Destruction + polymorphic cloning = = = = = = = = = =
 
-Exciter::Exciter(uint64_t uniqueId,
-                 std::chrono::time_point<clock> commonStartTimePoint_)
+Exciter::Exciter(bptree::ptree & areaTree, std::chrono::time_point<clock> commonStartTimePoint_)
 :
-EditableEllipse(uniqueId),
-volume(0.0),
-startTimePt( clock::now() ),
-commonStartTimePt(commonStartTimePoint_),
-isAnimationSynchronized(true)
+EditableEllipse(areaTree),
+
+commonStartTimePt(commonStartTimePoint_)
+{
+    init();
+    
+    // Paramètres facultatifs
+    try {
+        isAnimationSynchronized = areaTree.get<bool>("is_animation_sync");
+    }
+    catch (bptree::ptree_error&) { }
+    
+}
+
+Exciter::Exciter(uint64_t uniqueId, std::chrono::time_point<clock> commonStartTimePoint_)
+:
+// Taille = 5% du canevas (de la + petite taille). Ratio inconnu, 1 par défaut...
+EditableEllipse(uniqueId, bpt(0.5, 0.5), 0.05, Colours::lightgrey, 1.0f),
+
+commonStartTimePt(commonStartTimePoint_)
+{
+    init();
+}
+
+void Exciter::init()
 {
     // Centre (voir DrawableArea)
     displayCenter = false;
-    
-    // Plain white colour inside
-    fillOpacity = 1.0f;
     
     SetNameVisible(false);
     
     SetActive(true);
     SetEnableTranslationOnly(true);
+    
+    // Clignotement
+    volume = 0.0;
+    startTimePt = clock::now();
+    isAnimationSynchronized = true;
 }
 
 
@@ -51,7 +72,7 @@ void Exciter::SetIsAnimationSynchronized(bool isSynchronized_)
 // = = = = = = = = = = Display = = = = = = = = = =
 void Exciter::Paint(Graphics& g)
 {
-    std::chrono::duration<double> duration;
+    std::chrono::duration<double> duration; // par défaut, en secondes
     if (isAnimationSynchronized)
         duration = clock::now() - commonStartTimePt;
     else
@@ -66,3 +87,17 @@ void Exciter::Paint(Graphics& g)
     // Parent painting
     EditableEllipse::Paint(g);
 }
+
+
+
+// = = = = = = = = = = XML import/export = = = = = = = = = =
+std::shared_ptr<bptree::ptree> Exciter::GetTree()
+{
+    auto inheritedTree = EditableEllipse::GetTree();
+    
+    inheritedTree->put("is_animation_sync", isAnimationSynchronized);
+    
+    return inheritedTree;
+}
+
+

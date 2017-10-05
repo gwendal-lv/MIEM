@@ -21,6 +21,13 @@
 
 using namespace Miam;
 
+EditableEllipse::EditableEllipse(bptree::ptree & areaTree)
+:
+InteractiveEllipse(areaTree)
+{
+    init();
+}
+
 EditableEllipse::EditableEllipse(int64_t _Id) :
 	InteractiveEllipse(_Id)
 {

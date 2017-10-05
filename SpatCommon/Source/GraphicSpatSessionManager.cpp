@@ -29,7 +29,11 @@ void GraphicSpatSessionManager::CompleteInitialisation(std::shared_ptr<SpatInter
 
 void GraphicSpatSessionManager::SetFromTree(bptree::ptree& graphicSessionTree)
 {
+    // Variables qui servent tout au long de cet algorithme de chargement
     bool forceReinit = false;
+    int64_t biggestAreaUid = -1;
+    
+    // Si la commande de réinit était clairement passée à cette fonction :
     if (graphicSessionTree.empty())
         forceReinit = true;
     
@@ -77,7 +81,7 @@ void GraphicSpatSessionManager::SetFromTree(bptree::ptree& graphicSessionTree)
                     throw XmlReadException(canvasAndSceneString, e);
                 }
                 // Pré-chargement des aires
-                std::vector<std::shared_ptr<SpatArea>> areas;
+                std::vector<std::shared_ptr<InteractiveArea>> areas; // y compris les excitateurs
                 std::vector< std::shared_ptr<bptree::ptree> > spatStateTrees;
                 areas.resize(areasCount);
                 spatStateTrees.resize(areasCount);
@@ -86,6 +90,7 @@ void GraphicSpatSessionManager::SetFromTree(bptree::ptree& graphicSessionTree)
                     try {
                         auto index = area.second.get<size_t>("<xmlattr>.index");
                         auto type = area.second.get<std::string>("<xmlattr>.type");
+                        // Spat Polygones
                         if (type == "SpatPolygon")
                         {
                             try {
@@ -99,8 +104,23 @@ void GraphicSpatSessionManager::SetFromTree(bptree::ptree& graphicSessionTree)
                                 throw XmlReadException(canvasAndSceneString + e.what());
                             }
                         }
+                        // Excitateurs
+                        else if (type == "Exciter")
+                        {
+                            try {
+                                areas[index] = std::make_shared<Exciter>(area.second, GetCommonTimePoint());
+                            }
+                            catch (XmlReadException &e) {
+                                throw XmlReadException(canvasAndSceneString + e.what());
+                            }
+                        }
+                        // Le reste : on ne prend pas...
                         else
-                            throw XmlReadException(canvasAndSceneString + "only SpatPolygon objects can be loaded at the moment.");
+                            throw XmlReadException(canvasAndSceneString + "only SpatPolygon and Exciters objects can be loaded at the moment.");
+                        
+                        // Recherche de l'UID le plus grand utilisé jusqu'ici
+                        if ( areas[index]->GetId() > biggestAreaUid )
+                            biggestAreaUid = areas[index]->GetId();
                     }
                     catch (bptree::ptree_error &e) {
                         throw XmlReadException(canvasAndSceneString, e);
@@ -109,12 +129,27 @@ void GraphicSpatSessionManager::SetFromTree(bptree::ptree& graphicSessionTree)
                 // Finalement, ajout effectif des aires dans le bon ordre
                 for (size_t k=0 ; k<areas.size() ; k++)
                 {
+                    // Fonction commune à toutes les aires
                     canvasManagers[i]->AddAreaToScene(j, areas[k]);
-                    LoadSpatAreaLinks(areas[k], spatStateTrees[k]);
+                    
+                    // Spat areas seulement
+                    if (auto spatArea = std::dynamic_pointer_cast<SpatArea>(areas[k]))
+                        LoadSpatAreaLinks(spatArea, spatStateTrees[k]);
                 }
+                
+                // Actualisations finales pour la scène en cours (après la 2nde passe)
+                // ... néant ... on accède le moins possible à des scènes sans passer
+                // par le canevas maître
             }
-        }
-    }
+            
+            // Actualisations finales pour le canevas en cours
+            canvasManagers[i]->OnXmlLoadFinished();
+            
+        } // fin de condition : si pas de réinitialisation forcée
+    } // fin de la boucle : pour chaque canevas
+    
+    // Finalement, on remet les bonnes valeurs pour les compteurs
+    nextAreaId = biggestAreaUid + 1; // On passe à l'UID suivant
 }
 void GraphicSpatSessionManager::LoadSpatAreaLinks(std::shared_ptr<SpatArea> area, std::shared_ptr<bptree::ptree> spatStateTree)
 {

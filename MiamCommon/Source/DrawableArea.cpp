@@ -19,13 +19,20 @@ using namespace Miam;
 
 DrawableArea::DrawableArea(bptree::ptree& areaTree)
 {
+    init();
+    
+    // Données obligatoires
     Id = areaTree.get<int64_t>("<xmlattr>.id");
     center.set<0>( areaTree.get<double>("center.<xmlattr>.x") );
     center.set<1>( areaTree.get<double>("center.<xmlattr>.y") );
     std::string colourString = areaTree.get<std::string>("colour", std::string("ffaaaaaa"));
     fillColour = Colour::fromString( colourString.c_str() );
     
-    init();
+    // Données facultatives
+    try {
+        keepRatio = areaTree.get<bool>("keep_ratio");
+    }
+    catch (bptree::ptree_error&) {}
 }
 
 DrawableArea::DrawableArea(int64_t _Id, bpt _center, Colour _fillColour)
@@ -50,6 +57,8 @@ void DrawableArea::init()
     centerContourWidth = contourWidth*1.5f;
     
     isNameVisible = true; // par défaut
+    
+    keepRatio = false;
 }
 
 
@@ -135,6 +144,7 @@ std::shared_ptr<bptree::ptree> DrawableArea::GetTree()
     drawableAreaTree->put("center.<xmlattr>.x", center.get<0>());
     drawableAreaTree->put("center.<xmlattr>.y", center.get<1>());
     drawableAreaTree->put("colour", fillColour.toString());
+    drawableAreaTree->put("keep_ratio", keepRatio);
     return drawableAreaTree;
 }
 

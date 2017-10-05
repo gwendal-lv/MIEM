@@ -33,8 +33,6 @@ GraphicSessionManager::GraphicSessionManager(View* _view, Presenter* presenter_)
     setMode(GraphicSessionMode::Loading);
     
     
-    // SÉLECTION/CHARGEMENT D'UN TRUC PAR DÉFAUT
-    nextAreaId = 0; // plus tard : valeur contenue dans le fichier de sauvegarde
     
     // Links to the view module
     sceneEditionComponent = view->GetMainContentComponent()->GetSceneEditionComponent();
@@ -68,40 +66,6 @@ GraphicSessionManager::GraphicSessionManager(View* _view, Presenter* presenter_)
 }
 
 GraphicSessionManager::~GraphicSessionManager() {}
-
-
-// Testing purposes only
-/*
-void GraphicSessionManager::__LoadDefaultTest()
-{
-    srand(2016); // GRAINE fixée ici
-    
-    for(size_t i=0 ; i<canvasManagers.size(); i++)
-    {
-        for (size_t j=0 ; j < canvasManagers[i]->GetScenesCount() ; j++)
-        {
-            canvasManagers[i]->SelectScene((int)j);
-            
-            int areasCount = 3+(rand()%3);
-            for (int k=0 ; k<areasCount ; k++)
-            {
-                // Only polygons added for now
-                auto currentEditablePolygon =
-                std::make_shared<SpatPolygon>(
-                            GetNextAreaId(),
-                   bpt(0.2f+0.13f*k,0.3f+0.1f*k), 3+2*k, 0.15f+0.04f*(k+1),
-                             Colour(80*(uint8)k, 0, 255));
-                // On each canvas
-                if (auto editableCanvas = std::dynamic_pointer_cast<MultiSceneCanvasEditor>(canvasManagers[i]))
-                    editableCanvas->AddArea(currentEditablePolygon);
-                else
-                    throw std::runtime_error("Canvas not editable.");
-            }
-        }
-    }
-}
-*/
-
 
 
 
@@ -151,8 +115,9 @@ void GraphicSessionManager::SetSelectedCanvas(std::shared_ptr<MultiSceneCanvasIn
         selectedCanvas = _selectedCanvas;
         getSelectedCanvasAsEditable(); // just for the internal test of "editability"
         
-        
-        selectedCanvas->SetMode(CanvasManagerMode::SceneOnlySelected);
+        // To force updates
+        selectedCanvas->SelectScene(selectedCanvas->GetSelectedSceneId());
+        //selectedCanvas->SetMode(CanvasManagerMode::SceneOnlySelected);
     
         setMode(GraphicSessionMode::CanvasSelected);
     }
@@ -191,7 +156,7 @@ void GraphicSessionManager::setMode(GraphicSessionMode newMode)
             
         default:
             // Closing of anything pop-up-like displayed on a mode change
-            // Pour éviter le problème d'assertion de Juce, qui ne ferme pas les popups comme il faut avec les menus déroulants... Tjs bugué sous Juce 5.0.2
+            // Pour éviter le problème d'assertion de Juce, qui ne ferme pas les popups comme il faut avec les menus déroulants... Tjs bugué sous Juce 5.1.2
             sceneEditionComponent->CloseTemporaryDisplayedObjects();
     }
     

@@ -238,10 +238,10 @@ namespace Miam {
         /// \brief Does what it says, and sends an event also
         void addAreaToScene(std::shared_ptr<EditableScene> scene_, std::shared_ptr<IInteractiveArea> area_);
         public :
-        /// \brief Does what it says, and sends an event also
+        /// \brief Adds an area (which can also be an exciter) to a scene referenced
+        /// by its index.
         ///
-        /// The event would not be treated if the addition was ordered directly to the
-        /// concerned scene
+        /// Function that is mostly intended to be used when loading a new session.
         void AddAreaToScene(size_t sceneIndex, std::shared_ptr<IInteractiveArea> area_);
         
         
@@ -265,6 +265,11 @@ namespace Miam {
         
         // - - - - - XML import/export - - - - -
         public :
+        
+        /// \brief Implements final actions after the Miam::IGraphicSessionManager
+        /// has finished to call loading functions of this instance.
+        virtual void OnXmlLoadFinished();
+        
         virtual std::shared_ptr<bptree::ptree> GetTree();
         /// \brief Charge les scènes, vides, depuis un arbre XML (arbre partant du tag
         /// <canvas>). Ne charge pas leur contenu : les aires graphiques concrètes (classes dérivées

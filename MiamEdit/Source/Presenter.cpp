@@ -111,23 +111,30 @@ AppMode Presenter::appModeChangeRequest(AppMode newAppMode)
         view->ChangeAppMode(AppMode::Loading);
         
         // - - - - - PRE-CHANGE PROCESSING - - - - -
-        std::shared_ptr<bptree::ptree> dataTree;
-        switch(appMode)
+        // Si on passe à "Loading", on ne fait pas de traitement...
+        // Ça sera fait au prochain changement de mode de toute manière !
+        // Sinon -> gros crashes avec les sauvegardes de données dans des modules
+        // pas encore existants (ou pas finis)
+        if (newAppMode != AppMode::Loading)
         {
-            case AppMode::EditSpatStates :
-                // If leaving the matrices editing : data save before changing mode
-                dataTree = spatStatesEditionManager.OnLeaveSpatStatesEdition();
-                updateSpatStatesTree(dataTree);
-                break;
-                
-            case AppMode::EditSpatScenes :
-                // If leaving the matrices editing : data save before changing mode
-                dataTree = graphicSessionManager.OnLeaveSpatScenesEdition();
-                updateSpatScenesTree(dataTree);
-                break;
-                
-            default :
-                break;
+            std::shared_ptr<bptree::ptree> dataTree;
+            switch(appMode)
+            {
+                case AppMode::EditSpatStates :
+                    // If leaving the matrices editing : data save before changing mode
+                    dataTree = spatStatesEditionManager.OnLeaveSpatStatesEdition();
+                    updateSpatStatesTree(dataTree);
+                    break;
+                    
+                case AppMode::EditSpatScenes :
+                    // If leaving the matrices editing : data save before changing mode
+                    dataTree = graphicSessionManager.OnLeaveSpatScenesEdition();
+                    updateSpatScenesTree(dataTree);
+                    break;
+                    
+                default :
+                    break;
+            }
         }
         
         // Internal+graphical update
@@ -169,6 +176,11 @@ void Presenter::Update()
 // = = = = = = = = = = XML import/export  = = = = = = = = = =
 void Presenter::LoadSession(std::string filename)
 {
+    // Pas tant pour l'affichage graphique....
+    // Que pour que le changement de mode vers les spat scenes à la fin
+    // déclenche de vraies actualisations
+    appModeChangeRequest(AppMode::Loading);
+    
     try {
         SpatPresenter::LoadSession(filename);
     }
@@ -184,9 +196,19 @@ void Presenter::LoadSession(std::string filename)
     // App mode changer to Scenes Edition by default (should be stored within the file ?)
     appModeChangeRequest(AppMode::EditSpatScenes);
 }
-void Presenter::SaveSession(std::string filename)
+void Presenter::SaveSession(std::string filename, bool forceDataRefresh)
 {
-    try { SpatPresenter::SaveSession(filename); }
+    // Mise à jour d'abord (par des moyens spécifiques au miam edit)
+    if (forceDataRefresh)
+    {
+        auto dataTree = spatStatesEditionManager.OnLeaveSpatStatesEdition();
+        updateSpatStatesTree(dataTree);
+        dataTree = graphicSessionManager.OnLeaveSpatScenesEdition();
+        updateSpatScenesTree(dataTree);
+    }
+    
+    // Puis sauvegarde effective vers XML
+    try { SpatPresenter::SaveSession(filename, forceDataRefresh); }
     catch (XmlWriteException& e) {
         view->DisplayInfo(e.what());
     }

@@ -93,10 +93,15 @@ void MultiSceneCanvasInteractor::SetMode(Miam::CanvasManagerMode newMode)
         
         case CanvasManagerMode::Unselected:
             // Unselection of a selected area (1 area selected for all canvases...)
+            // And everything becomes dark, for another canvas to become
             if (selectedScene) // on first scene adding... there would be a problem
             {
                 auto areaE = selectedScene->SetSelectedArea(nullptr, false);
-                handleAndSendAreaEventSync(areaE);
+                selectedScene->EnableExcitersLowOpacity(true);
+                selectedScene->EnableAreasLowOpacity(true);
+                // Pas d'évènements renvoyés pour les opacités : on update le tout
+                recreateAllAsyncDrawableObjects();
+                //handleAndSendAreaEventSync(areaE);
             }
             // Graphical updates
             if (mode != CanvasManagerMode::Unselected)
@@ -421,7 +426,7 @@ void MultiSceneCanvasInteractor::SelectScene(int id)
         // No specific other check, we just create the informative event before changing
 		
         graphicE = std::make_shared<SceneEvent>(shared_from_this(), selectedScene, scenes[id],SceneEventType::SceneChanged);
-        selectedScene = std::dynamic_pointer_cast<EditableScene>(scenes[id]);
+        selectedScene = scenes[id];
         selectedScene->OnSelection();
         
         SetMode(CanvasManagerMode::SceneOnlySelected);
@@ -507,8 +512,14 @@ void MultiSceneCanvasInteractor::forceDeleteScene(size_t sceneIndexToDelete)
 
 void MultiSceneCanvasInteractor::addAreaToScene(std::shared_ptr<EditableScene> scene_, std::shared_ptr<IInteractiveArea> area_)
 {
-    auto areaE = scene_->AddArea(area_);
-    // Attention ici : on ne transmet l'évènement que si la scène est la scène sélectionnée...
+    std::shared_ptr<AreaEvent> areaE;
+    
+    if (auto exciter = std::dynamic_pointer_cast<Exciter>(area_))
+        areaE = scene_->AddExciter(exciter, false); // sans sélection
+    else
+        areaE = scene_->AddArea(area_);
+    
+    // Attention ici : on ne traite graphiquement l'évènement que si la scène est la scène sélectionnée...
     handleAndSendAreaEventSync(areaE);
 }
 void MultiSceneCanvasInteractor::AddAreaToScene(size_t sceneIndex, std::shared_ptr<IInteractiveArea> area_)
@@ -660,6 +671,19 @@ void MultiSceneCanvasInteractor::OnResized()
 
 
 // = = = = = = = = = = XML import/export = = = = = = = = = =
+void MultiSceneCanvasInteractor::OnXmlLoadFinished()
+{
+    // Sauvegarde des excitateurs courants ajoutés, pour TOUTES les scènes
+    for (size_t i =0 ; i<scenes.size() ; i++)
+    {
+        scenes[i]->SaveCurrentExcitersToInitialExciters();
+    }
+    
+    // Le canevas se sélectionne lui-même (un peu comme
+    // s'il y avait eu un clic de souris)
+    SelectScene(0);
+}
+
 std::shared_ptr<bptree::ptree> MultiSceneCanvasInteractor::GetTree()
 {
     bptree::ptree scenesInnerTree;
@@ -669,6 +693,9 @@ std::shared_ptr<bptree::ptree> MultiSceneCanvasInteractor::GetTree()
     // Scenes writing
     for (size_t i=0 ; i<scenes.size() ; i++)
     {
+        // On sauvegarde les excitateurs courants dans les initiaux,
+        scenes[i]->SaveCurrentExcitersToInitialExciters();
+        // Avant de chopper les initiaux :
         // Getting of the scene tree, then actual addition to the canvas tree
         auto sceneTree = scenes[i]->GetTree();
         sceneTree->put("<xmlattr>.index", i);

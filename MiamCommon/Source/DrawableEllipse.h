@@ -30,6 +30,7 @@ namespace Miam
 			Path contour;
 
 		public :
+            DrawableEllipse(bptree::ptree & areaTree);
 			DrawableEllipse(int64_t _Id);
 			DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio = 1.77777777f);
 			virtual IDrawableArea* Clone() const override { return new DrawableEllipse(*this); }
@@ -41,9 +42,9 @@ namespace Miam
 		/// \brief Destructor.
 		virtual ~DrawableEllipse();
         
+        
         // - - - - - XML import/export - - - - -
-        /// \brief Returns "Ellipse" even if it is actually a circle.
-
+        /// \returns "Ellipse" even if it is actually a circle.
         virtual std::string GetTypeAsString() const override {return "Ellipse";};
         virtual std::shared_ptr<bptree::ptree> GetTree() override;
 

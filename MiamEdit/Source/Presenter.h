@@ -101,7 +101,7 @@ namespace Miam {
         
         // - - - - -  XML import/export - - - - -
         virtual void LoadSession(std::string filename) override;
-        virtual void SaveSession(std::string filename = "") override;
+        virtual void SaveSession(std::string filename = "", bool forceDataRefresh = false) override;
         
         virtual std::shared_ptr<bptree::ptree> GetConfigurationTree() override;
         virtual void SetConfigurationFromTree(bptree::ptree&) override;

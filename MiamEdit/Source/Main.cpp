@@ -65,6 +65,11 @@ public:
     void shutdown() override
     {
         // Add your application's shutdown code here..
+        
+        // Sauvegarde avec de quitter
+        presenter->SaveSession("", true); // current filename, forced data refresh
+        
+        // Destruction des modules
         delete model;
         delete presenter;
         delete view;

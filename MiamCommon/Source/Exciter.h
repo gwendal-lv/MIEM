@@ -35,7 +35,8 @@ namespace Miam
         /// \brief Ids of the Mouse/touch inputs manipulating this area
         std::vector<int> touchInputSources;
         
-        std::shared_ptr<EditablePolygon> volumeControlArea;
+        // Pointeur car doit être connu des CanvasManagers....
+        std::shared_ptr<EditableEllipse> volumeControlArea;
         
         // Display attributes
         
@@ -66,18 +67,25 @@ namespace Miam
         
         // - - - - - Construction/Destruction + polymorphic cloning - - - - -
         
+        Exciter(bptree::ptree & areaTree, std::chrono::time_point<clock> commonStartTimePoint_);
         /// \brief Will automatically define the shape of the exciter
-        Exciter(uint64_t uniqueId,
-                std::chrono::time_point<std::chrono::steady_clock> commonStartTimePoint_);
+        Exciter(uint64_t uniqueId, std::chrono::time_point<clock> commonStartTimePoint_);
         virtual ~Exciter() {}
         virtual IDrawableArea* Clone() const override {return new Exciter(*this);}
         
+        // - - - - - Ction helpers - - - - -
+        private :
+        void init();
         
         // - - - - - Display - - - - -
+        public :
         /// \brief Paints specific elements over the elements painted
         /// by the EditableEllipse::Paint() method
         virtual void Paint(Graphics& g) override;
 
+        
+        // - - - - - XML import/export - - - - -
+        virtual std::shared_ptr<bptree::ptree> GetTree() override;
         
     };
     

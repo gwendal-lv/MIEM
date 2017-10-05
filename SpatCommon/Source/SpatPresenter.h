@@ -66,7 +66,7 @@ namespace Miam {
         virtual void LoadSession(std::string filename);
         /// \Brief Saves the current session to the given file name, or to the last
         /// used file name is file name is empty.
-        virtual void SaveSession(std::string filename = "");
+        virtual void SaveSession(std::string filename = "", bool forceDataRefresh = false);
         
         protected :
         virtual void updateSpatStatesTree(std::shared_ptr<bptree::ptree> newTree);

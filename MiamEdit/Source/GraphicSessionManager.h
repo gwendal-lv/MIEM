@@ -79,10 +79,6 @@ namespace Miam {
         /// \brief Destruction and the editor and the canvases
         virtual ~GraphicSessionManager();
         
-        // Debug purposes only
-        // void __LoadDefaultTest();
-       
-        
         
         // ---- Getters and Setters -----
         public :

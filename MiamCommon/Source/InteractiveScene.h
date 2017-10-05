@@ -176,7 +176,7 @@ namespace Miam
         /// \brief Adds a default exciter
         virtual std::shared_ptr<AreaEvent> AddDefaultExciter();
         /// \brief Adds an exciter without creating it before
-        virtual std::shared_ptr<AreaEvent> AddExciter(std::shared_ptr<Exciter> newExciter);
+        virtual std::shared_ptr<AreaEvent> AddExciter(std::shared_ptr<Exciter> newExciter, bool forceSelect = true);
         /// \brief Deletes a current ("active") exciter by reference.
         ///
         /// Modifie les indexes des excitateurs courants plus loin dans le tableau.
@@ -240,6 +240,8 @@ namespace Miam
 
         
         // - - - - - XML import/export - - - - -
+        /// \brief Exports the current areas of course, and the initial exciters saved
+        /// (does not export the current active exciters)
         std::shared_ptr<bptree::ptree> GetTree();
         // Pas de SetFromTree :
         // les aires graphiques concrètes ne peuvent être instanciées

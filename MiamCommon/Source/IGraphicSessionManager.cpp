@@ -18,10 +18,15 @@ using namespace Miam;
 
 
 
-IGraphicSessionManager::IGraphicSessionManager(IPresenter* presenter_) :
-    multiCanvasComponent(new MultiCanvasComponent(this))
+IGraphicSessionManager::IGraphicSessionManager(IPresenter* presenter_)
+:
+presenter(presenter_),
+multiCanvasComponent(new MultiCanvasComponent(this)),
+
+// À mettre à jour après le chargement d'un nouveau fichier
+nextAreaId(0) // plus tard : valeur contenue dans le fichier de sauvegarde
+
 {
-    presenter = presenter_;
 }
 
 

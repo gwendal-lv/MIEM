@@ -8,22 +8,51 @@
   ==============================================================================
 */
 
+
+#include <cmath>
+
 #include "DrawableEllipse.h"
 #include "SceneCanvasComponent.h"
 
+#include "XmlUtils.h"
+
+
 using namespace Miam;
 
+DrawableEllipse::DrawableEllipse(bptree::ptree & areaTree)
+:
+DrawableArea(areaTree)
+{
+    // Chargement des quelques données spécifiques à l'ellipse
+    try {
+        a = areaTree.get<double>("geometry.axes.<xmlattr>.a");
+        b = areaTree.get<double>("geometry.axes.<xmlattr>.b");
+    }
+    catch (bptree::ptree_error &e) {
+        throw XmlReadException("DrawableEllipse construction : axes lengths a and/or b cannot be read : ", e);
+    }
+    try {
+        rotationAngle = areaTree.get<double>("geometry.rotation");
+    }
+    catch (bptree::ptree_error&) {
+        // Node non-obligatoire -> Valeur par défaut
+        rotationAngle = 0.0;
+    }
+    
+    // Actualisation graphique
+    createJucePolygon();
+}
 
 DrawableEllipse::DrawableEllipse(int64_t _Id) :
 	DrawableEllipse(_Id, bpt(0.5f, 0.5f),0.2f,0.2f,Colours::darkgrey)
 {
-	rotationAngle = 0;
+	rotationAngle = 0.0;
 }
 
 DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio) :
 	DrawableArea(_Id,_center,_fillColour), a(_a), b(_b)
 {
-	rotationAngle = 0;
+	rotationAngle = 0.0;
 	//float xScale, yScale;
 	if (_canvasRatio > 1.0f) // ratio of an landscape-oriented window
 	{
@@ -120,3 +149,28 @@ void DrawableEllipse::recreateContourPoints(int width, int height)
 	xScale = newXScale;
 	yScale = newYScale;
 }
+
+
+
+// = = = = = = = = = = XML import/export = = = = = = = = = =
+std::shared_ptr<bptree::ptree> DrawableEllipse::GetTree()
+{
+    auto inheritedTree = DrawableArea::GetTree();
+    bptree::ptree geomeTree; // LOL.
+    bptree::ptree axesTree;
+    bptree::ptree rotationTree;
+    
+    // Écriture des paramètres (non-négligeables seulement)
+    axesTree.put("<xmlattr>.a", a);
+    axesTree.put("<xmlattr>.b", b);
+    geomeTree.add_child("axes", axesTree);
+    if ( std::abs(rotationAngle) > 0.000001 )
+        geomeTree.put("rotation", rotationAngle);
+
+    // Renvoi de l'arbre complété par cette classe dérivée
+    inheritedTree->put_child("geometry", geomeTree);
+    return inheritedTree;
+}
+
+
+

@@ -13,6 +13,19 @@
 #include "MiamMath.h"
 using namespace Miam;
 
+InteractiveEllipse::InteractiveEllipse(bptree::ptree & areaTree)
+:
+DrawableEllipse(areaTree)
+{
+    // Valeurs par défaut
+    init();
+    
+    // Données facultatives (qui ont une valeur par défaut)
+    try {
+        isRound = areaTree.get<bool>("is_round");
+    }
+    catch (bptree::ptree_error&) {}
+}
 
 InteractiveEllipse::InteractiveEllipse(int64_t _Id) 
 	: DrawableEllipse(_Id)
@@ -31,6 +44,8 @@ InteractiveEllipse::InteractiveEllipse(int64_t _Id, bpt _center, double _a, doub
 void InteractiveEllipse::init()
 {
 	// foyer, points touchables, ..
+    //...
+    isRound = false;
 }
 
 void InteractiveEllipse::CanvasResized(SceneCanvasComponent* _parentCanvas)
@@ -67,4 +82,18 @@ double InteractiveEllipse::ComputeInteractionWeight(bpt T)
 void InteractiveEllipse::SetIsRound(bool _isround)
 {
 	isRound = _isround;
+    if (isRound)
+        KeepRatio(true); // forcé
+}
+
+
+// = = = = = = = = = = XML import/export = = = = = = = = = =
+std::shared_ptr<bptree::ptree> InteractiveEllipse::GetTree()
+{
+    auto inheritedTree = DrawableEllipse::GetTree();
+    
+    inheritedTree->put("is_round", isRound);
+    
+    // Renvoi de l'arbre complété par cette classe dérivée
+    return inheritedTree;
 }

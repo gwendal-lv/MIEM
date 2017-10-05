@@ -21,8 +21,10 @@ namespace Miam
 	class InteractiveEllipse : public DrawableEllipse, public InteractiveArea
 	{
 		public :
-			InteractiveEllipse(int64_t _Id);
-			InteractiveEllipse(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio);
+        
+        InteractiveEllipse(bptree::ptree & areaTree);
+        InteractiveEllipse(int64_t _Id);
+        InteractiveEllipse(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio);
 
 			virtual ~InteractiveEllipse() {}
 			virtual IDrawableArea* Clone() const override { return new InteractiveEllipse(*this); }
@@ -33,6 +35,13 @@ namespace Miam
 		public :
 			virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
 
+        
+        // - - - - - XML import/export - - - - -
+        virtual std::string GetTypeAsString() const override {return "InteractiveEllipse";};
+        virtual std::shared_ptr<bptree::ptree> GetTree() override;
+        
+        
+        
 			// Interactions computing
 		public:
 			virtual bool HitTest(double x, double y) override;

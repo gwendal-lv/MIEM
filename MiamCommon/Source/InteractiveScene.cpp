@@ -166,7 +166,7 @@ std::shared_ptr<AreaEvent> InteractiveScene::AddDefaultExciter()
         
     return AddExciter(exciter);
 }
-std::shared_ptr<AreaEvent> InteractiveScene::AddExciter(std::shared_ptr<Exciter> newExciter)
+std::shared_ptr<AreaEvent> InteractiveScene::AddExciter(std::shared_ptr<Exciter> newExciter, bool forceSelect)
 {
     // Configuration particulière des excitateurs
     newExciter->Highlight(false);
@@ -180,8 +180,10 @@ std::shared_ptr<AreaEvent> InteractiveScene::AddExciter(std::shared_ptr<Exciter>
     // The vector index is the one relative to all drawable objects....
     auto multiAreaE = std::make_shared<MultiAreaEvent>(newExciter, AreaEventType::Added, (int) getExciterDrawingIndex(currentExciters.size()-1), shared_from_this());
     
-    // !!! Sélection forcée !!!
-    multiAreaE->AddAreaEvent( setSelectedExciter(newExciter) );
+    // !!! Sélection forcée, si demandée seulement
+    // Demandée automatiquement via paramètre par défaut
+    if (forceSelect)
+        multiAreaE->AddAreaEvent( setSelectedExciter(newExciter) );
     
     return multiAreaE;
 }

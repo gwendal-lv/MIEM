@@ -169,7 +169,8 @@ namespace Miam
             // Reset to an undisplayed value in dB
             for (size_t i=0 ; i<maxRowsCount ; i++)
                 for (size_t j=0 ; j<maxColsCount ; j++)
-                    SetSliderValue(i,j,Miam_MinVolume_dB-MiamRouter_LowVolumeThreshold_dB);
+                    SetSliderValue((int)i, (int)j,
+                                   Miam_MinVolume_dB-MiamRouter_LowVolumeThreshold_dB);
             
             // Update of non-zero sliders only (input is a sparse matrix)
             for( spatMatrix->ResetIterator() ;
@@ -178,7 +179,8 @@ namespace Miam
             {
                 SpatMatrix::Index2d current2dCoord = spatMatrix->GetIterator2dCoord();
                 double sliderValue = Decibels::gainToDecibels(spatMatrix->GetIteratorValue());
-                SetSliderValue(current2dCoord.i, current2dCoord.j, sliderValue);
+                SetSliderValue((int)current2dCoord.i, (int)current2dCoord.j,
+                               sliderValue);
             }
         }
         

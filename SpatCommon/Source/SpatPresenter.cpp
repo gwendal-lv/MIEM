@@ -71,7 +71,7 @@ void SpatPresenter::LoadSession(std::string filename)
         throw e;
     }
 }
-void SpatPresenter::SaveSession(std::string _filename)
+void SpatPresenter::SaveSession(std::string _filename, bool /*forceDataRefresh*/)
 {
     // Checks about the filename :
     // If not empty, the argument passed becomes the actual filename
@@ -102,9 +102,10 @@ void SpatPresenter::SaveSession(std::string _filename)
     settingsTree.add_child("model", *(model->GetConfigurationTree()) );
     settingsTree.add_child("presenter", *(this->GetConfigurationTree()) );
     miamChildrenTree.add_child("settings", settingsTree);
-    // Et c'est seulement ensuite que l'on sauvegarde effectivement les données
+    // Puis on sauvegarde les données des modules
     miamChildrenTree.add_child("spat", *lastSpatStatesTree);
     miamChildrenTree.add_child("graphicsession", *lastSpatScenesTree);
+    
     auto wholeMiamTree = std::make_shared<bptree::ptree>();
     wholeMiamTree->add_child("miam", miamChildrenTree);
     
