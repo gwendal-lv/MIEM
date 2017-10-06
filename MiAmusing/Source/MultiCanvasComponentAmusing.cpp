@@ -75,6 +75,10 @@ void MultiCanvasComponentAmusing::CompleteInitialization()
 {
 	MultiCanvasComponent::CompleteInitialization();
 	
-	((MultiSceneCanvasComponentAmusing*)multiSceneCanvasComponents.back().get())->LinkToMouseSimulator();
 	
+}
+
+void MultiCanvasComponentAmusing::MouseSimulatorInit()
+{
+	((MultiSceneCanvasComponentAmusing*)multiSceneCanvasComponents.back().get())->LinkToMouseSimulator();
 }

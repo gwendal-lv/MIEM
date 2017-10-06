@@ -133,6 +133,7 @@ void GraphicSessionManager::SetAllChannels()
 	
 	if (auto myCanvasManager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManagers[0]))
 		myCanvasManager->__AddAreasForTest();
+	myMultiCanvasComponent->MouseSimulatorInit();
 }
 
 

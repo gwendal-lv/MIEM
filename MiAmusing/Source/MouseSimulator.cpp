@@ -24,6 +24,7 @@ MouseSimulator::MouseSimulator(SceneCanvasComponent *m_sceneComponent, std::weak
 {
 	/// write the events to execute here
 	addClick(Point<float>(267.0, 178.0), 1000);
+	addTranslation(0, bpt(-0.1,-0.1), 1200,1.0); // speed = 1screen/s
 	/// end of the events
 
 	// start of the thead
@@ -56,18 +57,22 @@ void MouseSimulator::addTranslation(int areaId, bpt translation, int eventTime, 
 				//completePolygon->getPolygon() from polygon and center -> choose a point to click down and the point to click up
 				bpolygon poly = completePolygon->getPolygon();
 				bpt center = completePolygon->getCenter();
+				boost::geometry::divide_point(center, bpt((double)sceneComponent->getWidth(), (double)sceneComponent->getHeight()));
 
 				// mouse down point : middle of the segment center-poly[1]
 				bpt midPt = poly.outer().at(1);
 				boost::geometry::subtract_point(midPt, center);
 				boost::geometry::divide_value(midPt, 2.0);
 				boost::geometry::add_point(midPt, center);
-				addMouseDown(Point<float>((double)midPt.get<0>(),(double)midPt.get<1>()),eventTime);
+				addMouseDown(Point<float>((double)midPt.get<0>() * sceneComponent->getWidth(),(double)midPt.get<1>()* sceneComponent->getHeight()),eventTime);
 
 				// mouse up point : mouse down + translation
-				int upTime = eventTime + round( boost::geometry::length(translation) / speed);
+				
+				
+				int incT = round(boost::geometry::distance(translation, bpt(0, 0)) / (speed /1000));
+				int upTime = eventTime + incT;
 				boost::geometry::add_point(midPt, translation);
-				addMouseUp(Point<float>((double)midPt.get<0>(), (double)midPt.get<1>()), upTime, 0.001, false);
+				addMouseUp(Point<float>((double)midPt.get<0>()* sceneComponent->getWidth(), (double)midPt.get<1>() * sceneComponent->getHeight()), upTime, 2, false);
 			}
 		}
 	}
@@ -127,13 +132,16 @@ void MouseSimulator::addMouseUp(Point<float> position, int _eventTime, float inc
 		
 		int numOfDragEvents = roundToInt(distance / incD);
 		Point<float> inc = (position - prevEvt.position) / (float)numOfDragEvents;
-		int64 incT = round(prevEvt.eventTime.toMilliseconds() / (int64)numOfDragEvents);
+		
+		int64 incT = round( ((int64)_eventTime - prevEvt.eventTime.toMilliseconds()) / (int64)numOfDragEvents);
 		for (int i = 0; i < numOfDragEvents-1; ++i)
 		{
 			Point<float> dragPosition = (inc * (float)(i + 1));
 			dragPosition.addXY(prevEvt.position.x, prevEvt.position.y);
-			Time dragTime = prevEvt.eventTime;
-			dragTime += RelativeTime((double)((i+1)*(int)incT));
+			int64 t = prevEvt.eventTime.toMilliseconds();
+			t += int64(i + 1)*incT;
+			Time dragTime(t);
+			
 
 			const juce::MouseEvent me(mainSource
 				, dragPosition, modifier, MouseInputSource::invalidPressure,
@@ -167,30 +175,36 @@ void MouseSimulator::executeEvents()
 		DBG((String)Tposition);
 		if(!events.empty())
 		{
-			MouseEvent evt(events.front());
-			if (Time(Tposition) == evt.eventTime)
+			
+			for (int i = (int)Tposition; i < (int)(Tposition + 10); i++)
 			{
-				const MessageManagerLock mmLock;
-				switch (types.front())
+				if (events.empty())
+					break;
+				MouseEvent evt(events.front());
+				if (Time(i) == evt.eventTime)
 				{
-				case isMouseDown:
-					sceneComponent->mouseDown(events.front());
-					break;
-				case isMouseDrag:
-					sceneComponent->mouseDrag(events.front());
-					break;
-				case isMouseUp:
-					sceneComponent->mouseUp(events.front());
-					break;
-				default:
-					break;
+					const MessageManagerLock mmLock;
+					switch (types.front())
+					{
+					case isMouseDown:
+						sceneComponent->mouseDown(events.front());
+						break;
+					case isMouseDrag:
+						sceneComponent->mouseDrag(events.front());
+						break;
+					case isMouseUp:
+						sceneComponent->mouseUp(events.front());
+						break;
+					default:
+						break;
+					}
+					events.pop_front();
+					types.pop_front();
 				}
-				events.pop_front();
-				types.pop_front();
 			}
 		}
 		Tposition += (int64)10;
-		std::this_thread::sleep_for(std::chrono::milliseconds(10)); // period of the timer = 100ms
+		std::this_thread::sleep_for(std::chrono::milliseconds(3)); // period of the timer = 100ms
 	}
 	DBG("End thread");
 }
