@@ -69,7 +69,7 @@ void MouseSimulator::addTranslation(int areaId, bpt translation, int eventTime, 
 				// mouse up point : mouse down + translation
 				
 				
-				int incT = round(boost::geometry::distance(translation, bpt(0, 0)) / (speed /1000));
+				int incT = round(boost::geometry::distance(translation, bpt(0, 0)) / (speed /1000.0f));
 				int upTime = eventTime + incT;
 				boost::geometry::add_point(midPt, translation);
 				addMouseUp(Point<float>((double)midPt.get<0>()* sceneComponent->getWidth(), (double)midPt.get<1>() * sceneComponent->getHeight()), upTime, 2, false);
@@ -87,6 +87,28 @@ void MouseSimulator::addRotation(int areaId, float rotation, int eventTime, floa
 			if (auto completePolygon = std::dynamic_pointer_cast<CompletePolygon>(amusingScene->GetEditableArea(areaId)))
 			{
 				// transform the Rotation in mouseDown and mouseUp
+
+				//mouseDown point = manipulation point
+				Point<float> manipulationPt = completePolygon->getManipulationPoint();
+				addMouseDown(manipulationPt, eventTime);
+
+				// mouseUp point = manipulation point rotated by the angle
+				bpt center = completePolygon->getCenter();
+				bpt bmanipulationPt(manipulationPt.getX(), manipulationPt.getY());
+				boost::geometry::subtract_point(bmanipulationPt, center);
+				bpt rotatedManipulationPt;
+				boost::geometry::strategy::transform::rotate_transformer<boost::geometry::radian, double, 2, 2> Rot(rotation);
+				boost::geometry::transform(bmanipulationPt, rotatedManipulationPt, Rot);
+				boost::geometry::add_point(rotatedManipulationPt, center);
+
+				Point<float> pivot(center.get<0>(), center.get<1>());
+				Point<float> position(rotatedManipulationPt.get<0>(), rotatedManipulationPt.get<1>());
+
+				boost::geometry::divide_point(center, bpt((double)sceneComponent->getWidth(), (double)sceneComponent->getHeight()));
+				double arc = rotation * boost::geometry::distance(bmanipulationPt, center); // pas en pixel car vitesse en ecran/seconde
+				int incT = round(arc / (speed / 1000.0f));
+				int upTime = eventTime + incT;
+				addMouseUpRotate(position, pivot, upTime, 2, false);
 			}
 		}
 	}
@@ -165,6 +187,11 @@ void MouseSimulator::addMouseUp(Point<float> position, int _eventTime, float inc
 
 	events.push_back(me);
 	types.push_back(isMouseUp);
+}
+
+void MouseSimulator::addMouseUpRotate(Point<float> position, Point<float> pivot, int _eventTime, float incD, bool random)
+{
+
 }
 
 void MouseSimulator::executeEvents()

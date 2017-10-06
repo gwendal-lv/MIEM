@@ -1268,3 +1268,8 @@ void CompletePolygon::deleteAllCursors()
 	cursors.clear();
 		
 }
+
+Point<float> Amusing::CompletePolygon::getManipulationPoint()
+{
+	return Point<float>(manipulationPointInPixels.getX(),manipulationPointInPixels.getY());
+}

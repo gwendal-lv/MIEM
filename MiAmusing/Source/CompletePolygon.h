@@ -88,6 +88,8 @@ namespace Amusing
 		bool contains(bpt point);
 		void deleteAllCursors();
 		//void getCursorsCount();
+
+		Point<float> getManipulationPoint(); // pour les tests
 		
 	private:
 		JUCE_LEAK_DETECTOR(CompletePolygon)

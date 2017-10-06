@@ -36,6 +36,7 @@ public:
 
 	void addMouseDown(Point<float> position, int eventTime); // add a mouseDown event
 	void addMouseUp(Point<float> position, int eventTime, float incD, bool random); // add a mouseUp event and search for the previous mouseDown to create some mouseDrag event between
+	void addMouseUpRotate(Point<float> position, Point<float> pivot, int _eventTime, float incD, bool random); // idem as addMouseUp, but with circular trajectory for the dragPoints
 
 private:
 	void executeEvents();
