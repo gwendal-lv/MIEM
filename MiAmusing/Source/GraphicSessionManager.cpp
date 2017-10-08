@@ -111,7 +111,7 @@ void GraphicSessionManager::__LoadDefaultTest()
 	//	canvasManagers[i]->__AddTestAreas();
 }
 
-void GraphicSessionManager::SetFromTree(bptree::ptree& graphicSessionTree)
+void GraphicSessionManager::SetFromTree(bptree::ptree& /*graphicSessionTree*/)
 {
 
 }

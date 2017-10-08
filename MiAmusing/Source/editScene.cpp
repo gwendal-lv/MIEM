@@ -253,14 +253,14 @@ void EditScene::sliderValueChanged (Slider* sliderThatWasMoved)
     if (sliderThatWasMoved == timeSlider)
     {
         //[UserSliderCode_timeSlider] -- add your slider handling code here..
-		graphicSessionManager->OnTempoChanged(timeSlider->getValue());//*1000);
+		graphicSessionManager->OnTempoChanged((int)timeSlider->getValue());//*1000);
         //[/UserSliderCode_timeSlider]
     }
     else if (sliderThatWasMoved == volumeSlider)
     {
         //[UserSliderCode_volumeSlider] -- add your slider handling code here..
 		DBG("volumeSlider : " + (String)volumeSlider->getValue());
-		graphicSessionManager->OnMasterVolumeChanged(volumeSlider->getValue());
+		graphicSessionManager->OnMasterVolumeChanged((float)volumeSlider->getValue());
         //[/UserSliderCode_volumeSlider]
     }
 

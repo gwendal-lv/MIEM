@@ -56,9 +56,7 @@ namespace Amusing {
 		void releaseResources() override;
 		void getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill) override;
 
-		void askParameter();
-		void chooseAudioType(int position, int type);
-		void AncienchooseAudioType(int type,double duration);
+		
 
 		//AudioDeviceManager& getAudioDeviceManager();
 
@@ -66,14 +64,11 @@ namespace Amusing {
 
 	private:
 
-		void trackVectorHandler(bool deactivation, int type);
-		void changeState(AudioManagerState nexState);
-		void playAllSources();
-		void stopAllSources();
+		
 
 		void sendPosition();
 
-		void verifyAllSource();
+		
 		void HandleEvent();
 
 		AmusingModel *model;
@@ -83,7 +78,7 @@ namespace Amusing {
 		AudioManagerState state;
 
 		std::vector<int> sourceControled;
-		void playAllControledSources();
+		
 
 		int currentSamplesPerBlock;
 		double currentSampleRate;
@@ -92,7 +87,7 @@ namespace Amusing {
 		int count;
 		double div;
 
-		std::vector<std::shared_ptr<AmuSignal>> trackVector;
+		
 		std::vector<bool> activeVector;
 		const int Nmax = 1024;
 		int Nsources;

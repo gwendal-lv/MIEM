@@ -119,7 +119,7 @@ void MultiSceneCanvasManager::OnFollowerTranslation(std::shared_ptr<GraphicEvent
 	}
 }
 
-void MultiSceneCanvasManager::OnAudioPosition(double position)
+void MultiSceneCanvasManager::OnAudioPosition(double /*position*/)
 {
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
 	{
@@ -264,7 +264,7 @@ void MultiSceneCanvasManager::deleteUnusedFollowers()
 				DBG("followerToDelete");
 				std::shared_ptr<AreaEvent> areaE(new AreaEvent(followerToDelete, AreaEventType::Deleted));
 				graphicSessionManager->HandleEventSync(areaE);
-				deleteAsyncDrawableObject((int)followerToDelete->GetId(), followerToDelete);
+				deleteAsyncDrawableObject(followerToDelete);
 				// envoyer a l'audio que la source est plus la + retirer de la liste des followers?
 			}
 			else
@@ -273,7 +273,7 @@ void MultiSceneCanvasManager::deleteUnusedFollowers()
 	}
 }
 
-void MultiSceneCanvasManager::deleteAsyncDrawableObject(int idInScene, std::shared_ptr<IDrawableArea> originalAreaToDelete)
+void MultiSceneCanvasManager::deleteAsyncDrawableObject(std::shared_ptr<IDrawableArea> originalAreaToDelete)
 {
 
 	MultiSceneCanvasInteractor::deleteAsyncDrawableObject(originalAreaToDelete);
@@ -301,7 +301,7 @@ void MultiSceneCanvasManager::OnInteraction(std::shared_ptr<AreaEvent> areaE)
 
 void MultiSceneCanvasManager::SetAllChannels()
 {
-	for (int j = 0; j < scenes.size(); ++j)
+	for (int j = 0; j < (int)scenes.size(); ++j)
 	{
 		DBG("send new event");
 		std::shared_ptr<SceneEvent> sceneE(new SceneEvent(shared_from_this(), scenes[j], SceneEventType::NothingHappened));
@@ -353,6 +353,8 @@ double MultiSceneCanvasManager::getSpeed(std::shared_ptr<IEditableArea> area)
 		{
 			return myGraphicSessionManager->getSpeed(amusingScene->GetSelectedArea());
 		}
+		else
+			return 1.0f;
 	}
 	else
 		return 1.0f;
@@ -380,6 +382,8 @@ double MultiSceneCanvasManager::getVelocity(std::shared_ptr<IEditableArea> area)
 		{
 			return myGraphicSessionManager->getVelocity(amusingScene->GetSelectedArea());
 		}
+		else
+			return 64.0;
 	}
 	else
 		return 64.0;

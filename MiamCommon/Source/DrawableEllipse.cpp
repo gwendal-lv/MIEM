@@ -88,7 +88,7 @@ void DrawableEllipse::createJucePolygon(int width, int height)
 
 	contour.applyTransform(AffineTransform::scale((float)width, (float)height));
 
-	contour.applyTransform(AffineTransform::rotation(rotationAngle, (float)center.get<0>() * (float)width, (float)center.get<1>() * (float)height));
+	contour.applyTransform(AffineTransform::rotation((float)rotationAngle, (float)center.get<0>() * (float)width, (float)center.get<1>() * (float)height));
 }
 
 DrawableEllipse::~DrawableEllipse()
@@ -140,7 +140,7 @@ void DrawableEllipse::recreateContourPoints(int width, int height)
 	bpolygon newContourPoints;
 	boost::geometry::transform(contourPoints, newContourPoints, invTr);
 
-	for (int i = 0; i < newContourPoints.outer().size(); ++i)
+	for (int i = 0; i < (int)newContourPoints.outer().size(); ++i)
 		boost::geometry::multiply_point(newContourPoints.outer().at(i), bpt(newXScale / xScale, newYScale / yScale));
 
 	contourPoints.clear();

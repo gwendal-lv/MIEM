@@ -42,7 +42,7 @@ void OptionWindow::removeDeviceManager()
 	audioSetupComp->deviceManager.removeAllChangeListeners();
 }
 
-void OptionWindow::paint(Graphics& g)
+void OptionWindow::paint(Graphics& /*g*/)
 {
 	
 }

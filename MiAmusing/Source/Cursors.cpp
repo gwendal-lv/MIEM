@@ -21,7 +21,7 @@ Cursor::Cursor(int64_t _Id) : Exciter(_Id, std::chrono::time_point<clock>())
 	speed = 1;
 }
 
-Cursor::Cursor(int64_t _Id, bpt _center, double _r, Colour _fillColour, float _canvasRatio) :
+Cursor::Cursor(int64_t _Id, bpt /*_center*/, double _r, Colour _fillColour, float _canvasRatio) :
 	Exciter(_Id, std::chrono::time_point<clock>())//EditableEllipse(_Id, _center, _a,  _b, _fillColour, _canvasRatio)
 {
 	a = _r;

@@ -44,7 +44,7 @@ int64 AmusingFormatReaderSource::getNextReadPosition() const
 		: nextPlayPos;
 }
 
-void AmusingFormatReaderSource::prepareToPlay(int samplesPerBlockExpected, double sampleRate) {}
+void AmusingFormatReaderSource::prepareToPlay(int /*samplesPerBlockExpected*/, double /*sampleRate*/) {}
 void AmusingFormatReaderSource::releaseResources() {}
 
 void AmusingFormatReaderSource::getNextAudioBlock(const AudioSourceChannelInfo& info)

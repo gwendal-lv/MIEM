@@ -73,7 +73,7 @@ bool InteractiveEllipse::HitTest(double x, double y)
 	return (contour.contains((float)x, (float)y));
 }
 
-double InteractiveEllipse::ComputeInteractionWeight(bpt T)
+double InteractiveEllipse::ComputeInteractionWeight(bpt /*T*/)
 {
 	// calculer l'interaction
 	return 0.0;

@@ -51,7 +51,7 @@ void View::CompleteInitialization(AmusingModel* _model)
 	mainContentComponent->CompleteInitialization(model);
 }
 
-void View::ButtonClicked(const String& name)
+void View::ButtonClicked(const String& /*name*/)
 {
     throw std::runtime_error("Unimplemented behavior on button click");
     /*
@@ -75,12 +75,12 @@ void View::ButtonClicked(const String& name)
 
 
 
-void View::ChangeAppMode(AppMode newAppMode)
+void View::ChangeAppMode(AppMode /*newAppMode*/)
 {
     std::cerr << "Changement de mode à implémenter" << std::endl;
     //throw std::runtime_error("Unimplemented behavior on app mode change");
 }
-void View::DisplayInfo(const String& message)
+void View::DisplayInfo(const String& /*message*/)
 {
     throw std::runtime_error("Unimplemented behavior on info display request");
 }
