@@ -23,6 +23,19 @@ enum MouseEventType
 	isMouseUp,
 };
 
+struct MovedArea
+{
+	/*
+	class used to retain the result of each oparation on an area
+	because the computation of the click order is made offline
+	*/
+	bpt center; //normalized
+	bpt manipulationPointInPixels; // pixels
+	bpolygon contourPointsInPixels; //normalized
+
+
+};
+
 class MouseSimulator : public Component
 {
 public:
@@ -36,7 +49,7 @@ public:
 
 	void addMouseDown(Point<float> position, int eventTime); // add a mouseDown event
 	void addMouseUp(Point<float> position, int eventTime, float incD, bool random); // add a mouseUp event and search for the previous mouseDown to create some mouseDrag event between
-	void addMouseUpRotate(Point<float> position, Point<float> pivot, int _eventTime, float incD, bool random); // idem as addMouseUp, but with circular trajectory for the dragPoints
+	void addMouseUpRotate(Point<float> position, Point<float> pivot, float rotation, int _eventTime, float incD, bool random); // idem as addMouseUp, but with circular trajectory for the dragPoints
 
 private:
 	void executeEvents();
@@ -44,6 +57,8 @@ private:
 	bool runThread;
 	int64 Tposition;
 
+	void lookForArea(int areaId);
+	std::map<int, MovedArea> storedArea;
 	std::list<MouseEvent> events;
 	std::list<MouseEventType> types;
 
