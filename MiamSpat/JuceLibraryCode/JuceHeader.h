@@ -10,8 +10,7 @@
 
 */
 
-#ifndef __APPHEADERFILE_XCUIGI__
-#define __APPHEADERFILE_XCUIGI__
+#pragma once
 
 #include "AppConfig.h"
 
@@ -44,5 +43,3 @@ namespace ProjectInfo
     const int          versionNumber  = 0x10000;
 }
 #endif
-
-#endif   // __APPHEADERFILE_XCUIGI__
