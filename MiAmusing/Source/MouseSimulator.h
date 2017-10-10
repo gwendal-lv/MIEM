@@ -40,6 +40,7 @@ class MouseSimulator : public Component
 {
 public:
 	MouseSimulator(SceneCanvasComponent *m_sceneComponent, std::weak_ptr<MultiSceneCanvasInteractor> canvasManager);
+	MouseSimulator(SceneCanvasComponent * m_sceneComponent, std::weak_ptr<MultiSceneCanvasInteractor> canvasManager, StringArray opt);
 	~MouseSimulator();
 
 	void addClick(Point<float> location, int eventTime);

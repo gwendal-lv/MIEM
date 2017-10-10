@@ -10,6 +10,7 @@
 
 #include "MultiSceneCanvasComponentAmusing.h"
 #include "AmusingSceneComponent.h"
+#include "MultiSceneCanvasManager.h"
 
 MultiSceneCanvasComponentAmusing::MultiSceneCanvasComponentAmusing()
 {
@@ -49,4 +50,15 @@ void MultiSceneCanvasComponentAmusing::LinkToManager(std::shared_ptr<MultiSceneC
 void MultiSceneCanvasComponentAmusing::LinkToMouseSimulator()
 {
 	mouseSimulator = std::shared_ptr<MouseSimulator>( new MouseSimulator(childrenCanvas, canvasManager));
+}
+
+void MultiSceneCanvasComponentAmusing::LinkToMouseSimulator(StringArray opt)
+{
+	mouseSimulator = std::shared_ptr<MouseSimulator>(new MouseSimulator(childrenCanvas, canvasManager, opt));
+}
+
+void MultiSceneCanvasComponentAmusing::TryToClose()
+{
+	if (auto canvasManagerAsManager = std::dynamic_pointer_cast<Amusing::MultiSceneCanvasManager>(canvasManager))
+		canvasManagerAsManager->TryToClose();
 }

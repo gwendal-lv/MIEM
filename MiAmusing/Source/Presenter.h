@@ -73,6 +73,8 @@ namespace Amusing {
 		int Nsources, Nfollower, Ncursors;
 		void SetAllChannels();
 
+		void SetAllChannels(StringArray opt);
+
 		boost::bimap < std::shared_ptr<Follower>, int> followerToCtrlSource;
 		std::map<int, double> test;
 
@@ -111,6 +113,7 @@ namespace Amusing {
         // - - - - - Contruction and Destruction - - - - -
         // Only constructor
         Presenter(View* _view);
+		Presenter(View * _view, StringArray opt);
         /// \brief To be called from the Miam::Model when it is being
         /// constructed (happens after the construction of this class)
         ///

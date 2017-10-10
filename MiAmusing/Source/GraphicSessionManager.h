@@ -157,6 +157,8 @@ namespace Amusing {
 
 		void OnDeviceOptionsClicked();
 		void SetAllChannels(); // bouger d'endroit dans le constructeur pour la comprehension (pas view event)
+		void SetAllChannels(StringArray opt);
+		void TryToClose();
 		void SetMidiChannel(int ch);
 
 		void setSpeedArea(std::shared_ptr<IEditableArea> area, double speed);

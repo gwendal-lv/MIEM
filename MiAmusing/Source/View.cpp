@@ -20,7 +20,7 @@ using namespace Amusing;
 View::View(MainContentComponent* _mainContentComponent)
 {
     mainContentComponent = _mainContentComponent;
-    
+	
     
     mainContentComponent->SetMiamView(this);
 }
@@ -93,6 +93,12 @@ void View::ShowDeviceOptionsDialog()
 void View::removeDeviceManagerFromOptionWindow()
 {
 	mainContentComponent->removeDeviceManagerFromOptionWindow();
+}
+
+void View::TryToClose()
+{
+	if (DocumentWindow* window = (DocumentWindow*)mainContentComponent->getParentComponent())
+		window->closeButtonPressed();//userTriedToCloseWindow()
 }
 
 

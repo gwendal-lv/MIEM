@@ -27,6 +27,10 @@ public:
 
 	void LinkToMouseSimulator();
 
+	void LinkToMouseSimulator(StringArray opt);
+
+	void TryToClose();
+
 private:
 	//AreaOptions areaOptions;
 	std::shared_ptr<MouseSimulator> mouseSimulator;

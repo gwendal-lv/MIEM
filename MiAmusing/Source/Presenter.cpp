@@ -54,9 +54,40 @@ Presenter::Presenter(View* _view) :
 	
 }
 
+Presenter::Presenter(View* _view, StringArray opt) :
+	view(_view), test(),
+	appMode(AppMode::Loading), // app is loading while the Model hasn't fully loaded yet
+
+	graphicSessionManager(this, _view)
+{
+	test.insert(std::pair<int, double>(2, 5.5));
+	// After all sub-modules are built, the presenter refers itself to the View
+	view->CompleteInitialization(this);
+	view->GetMainContentComponent()->resized();
+
+	// HERE, WE SHOULD LOAD THE DEFAULT FILE
+	//graphicSessionManager.__LoadDefaultTest();
+	//lastPosition = 0;
+
+	appModeChangeRequest(AppMode::None);
+	Nsources = 0;
+	Ncursors = 0;
+	Nfollower = 0;
+	tempo = 50;
+	masterVolume = 0.5f;
+	SetAllChannels(opt);
+
+
+}
+
 void Presenter::SetAllChannels()
 {
 	graphicSessionManager.SetAllChannels();
+}
+
+void Presenter::SetAllChannels(StringArray opt)
+{
+	graphicSessionManager.SetAllChannels(opt);
 }
 
 

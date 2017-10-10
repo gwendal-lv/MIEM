@@ -11,6 +11,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "AmusingSceneComponent.h"
 #include "MultiSceneCanvasManager.h"
+#include "MultiSceneCanvasComponentAmusing.h"
 
 #include <memory>
 
@@ -119,4 +120,10 @@ void AmusingSceneComponent::SetAreaOptionsVisible(bool show,double speed, double
 	}
 	else
 		areaOptions.setVisible(false);
+}
+
+void AmusingSceneComponent::TryToClose()
+{
+	if (MultiSceneCanvasComponentAmusing* multiSceneCanvasComponent = (MultiSceneCanvasComponentAmusing*)getParentComponent())
+		multiSceneCanvasComponent->TryToClose();
 }

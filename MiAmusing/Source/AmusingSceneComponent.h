@@ -38,6 +38,8 @@ public:
 	void SetAreaOptionsVisible(bool show);
 	void SetAreaOptionsVisible(bool show, double speed, double velocity);
 
+	void TryToClose();
+
 	/*void mouseDown(const juce::MouseEvent &event) override;
 	void mouseDrag(const juce::MouseEvent &event) override;
 	void mouseUp(const juce::MouseEvent &event) override;*/

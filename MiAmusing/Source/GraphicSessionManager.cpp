@@ -136,7 +136,23 @@ void GraphicSessionManager::SetAllChannels()
 	myMultiCanvasComponent->MouseSimulatorInit();
 }
 
+void GraphicSessionManager::SetAllChannels(StringArray opt)
+{
+	for (int i = 0; i < (int)canvasManagers.size(); i++)
+	{
+		std::shared_ptr<MultiSceneCanvasManager> canvasPtr = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManagers[i]);
+		canvasPtr->SetAllChannels();
+	}
 
+	if (auto myCanvasManager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManagers[0]))
+		myCanvasManager->__AddAreasForTest();
+	myMultiCanvasComponent->MouseSimulatorInit(opt);
+}
+
+void GraphicSessionManager::TryToClose()
+{
+	view->TryToClose();
+}
 
 // ===== UTILITIES =====
 

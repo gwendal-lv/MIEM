@@ -35,6 +35,9 @@ public:
 
 	void MouseSimulatorInit();
 
+	void MouseSimulatorInit(StringArray opt);
+
+
 private:
 	SafePointer<AudioDeviceSelectorComponent> audioSetupComp;
 	SafePointer<DialogWindow> dialogWindow;

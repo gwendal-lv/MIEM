@@ -102,6 +102,8 @@ namespace Amusing {
 		void ShowDeviceOptionsDialog();
 		void removeDeviceManagerFromOptionWindow();
 
+		void TryToClose();
+
 		//void setDeviceSelectorComponent(AudioDeviceManager* deviceManager);
     };
     

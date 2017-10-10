@@ -11,10 +11,12 @@
 #include "MouseSimulator.h"
 #include <memory>
 #include <chrono>
+#include "AmusingSceneComponent.h"
 #include "AmusingScene.h"
 #include "CompletePolygon.h"
 #include "juce_gui_basics\juce_gui_basics.h"
 
+#include <iostream>
 class juce::MouseInputSourceInternal;
 
 using namespace Amusing;
@@ -34,13 +36,62 @@ MouseSimulator::MouseSimulator(SceneCanvasComponent *m_sceneComponent, std::weak
 	addTranslation(0, bpt(0.1, 0.1), 8500, 0.5);
 	addRotation(0, -3.14f / 2.0f, 9500, 1.0);
 
+	addClick(Point<float>(0.3f * (float)sceneComponent->getWidth(), 0.3f * (float)sceneComponent->getHeight()), 13000);
+	addTranslation(1, bpt(0.1, 0.1), 14500, 0.5);
 
 	/// end of the events
 
-	// start of the thead
+	// start of the thread
 	Tposition = (int64)0;
 	runThread = true;
 	T = std::thread(&MouseSimulator::executeEvents, this);
+}
+
+MouseSimulator::MouseSimulator(SceneCanvasComponent *m_sceneComponent, std::weak_ptr<MultiSceneCanvasInteractor> canvasManager, StringArray opt) :
+	sceneComponent(m_sceneComponent), canvasInteractor(canvasManager)
+{
+	/// write the events to execute here
+	addClick(Point<float>(267.0, 178.0), 1000);
+	//addTranslation(0, bpt(-0.1,-0.1), 1200,0.5); // speed = 1screen/s
+
+	DBG("opt size = " + (String)opt.size());
+	std::cout << "number of opt : " << (String)opt.size() << std::endl;
+	std::cerr << "number of opt : " << (String)opt.size() << std::endl;
+
+	String operationType = opt[0];
+	double amplitude = opt[1].getDoubleValue();
+	
+
+	if (operationType == "T")
+	{
+		double amplitude2 = opt[2].getDoubleValue();
+		double speed = opt[3].getDoubleValue();
+		std::cout << "Translation of " << (String)amplitude << " at " << (String)speed << std::endl;
+		addTranslation(0,bpt(amplitude,amplitude2), 1500, (float)speed);
+	}
+	else if (operationType == "R")
+	{
+		double speed = opt[2].getDoubleValue();
+		std::cout << "Rotation of " << (String)amplitude << " at " << (String)speed << std::endl;
+		addRotation(0, (float)amplitude, 1500, (float)speed);
+	}
+	else if (operationType == "S")
+	{
+		double speed = opt[2].getDoubleValue();
+		std::cout << "Resize of " << (String)amplitude << " at " << (String)speed << std::endl;
+		addResize(0, amplitude, 1500, (float)speed);
+	}
+
+
+	/// end of the events
+
+	// start of the thread
+	Tposition = (int64)0;
+	runThread = true;
+	T = std::thread(&MouseSimulator::executeEvents, this);
+
+	
+	
 }
 
 MouseSimulator::~MouseSimulator()
@@ -358,14 +409,14 @@ void MouseSimulator::addMouseUpRotate(Point<float> position, Point<float> pivot,
 
 void MouseSimulator::executeEvents()
 {
+	int intT = 3;
 	DBG("begin thread");
 	while (runThread)
 	{
-		DBG((String)Tposition);
 		if(!events.empty())
 		{
 			
-			for (int i = (int)Tposition; i < (int)(Tposition + 10); i++)
+			for (int i = (int)Tposition; i < (int)(Tposition + intT); i++)
 			{
 				if (events.empty())
 					break;
@@ -392,8 +443,18 @@ void MouseSimulator::executeEvents()
 				}
 			}
 		}
-		Tposition += (int64)10;
-		std::this_thread::sleep_for(std::chrono::milliseconds(3)); // period of the timer = 100ms
+		else
+		{
+			runThread = false;
+		}
+		Tposition += (int64)intT;
+		std::this_thread::sleep_for(std::chrono::milliseconds(intT)); // period of the timer = 100ms
+	}
+
+	/// end of the thread : close application
+	if (AmusingSceneComponent* amusingSceneComponent = (AmusingSceneComponent*)sceneComponent)
+	{
+		amusingSceneComponent->TryToClose();
 	}
 	DBG("End thread");
 }
