@@ -26,11 +26,15 @@ MouseSimulator::MouseSimulator(SceneCanvasComponent *m_sceneComponent, std::weak
 	addClick(Point<float>(267.0, 178.0), 1000);
 	//addTranslation(0, bpt(-0.1,-0.1), 1200,0.5); // speed = 1screen/s
 	
+	addResize(0, 2.0f, 1200, 1.0);
+	addResize(0, 1.0f / 2.0f, 2000, 0.5);
 
-	addRotation(0, 3.14f/2.0f, 1200, 1.0);
-	addTranslation(0, bpt(-0.1, -0.1), 2500, 0.5);
-	addTranslation(0, bpt(0.1, 0.1), 3500, 0.5);
-	addRotation(0, -3.14f / 2.0f, 4500, 1.0);
+	addRotation(0, 3.14f/2.0f, 3200, 1.0);
+	addTranslation(0, bpt(-0.1, -0.1), 6500, 0.5);
+	addTranslation(0, bpt(0.1, 0.1), 8500, 0.5);
+	addRotation(0, -3.14f / 2.0f, 9500, 1.0);
+
+
 	/// end of the events
 
 	// start of the thead
@@ -49,6 +53,81 @@ void MouseSimulator::addClick(Point<float> location, int eventTime)
 {
 	addMouseDown(location, eventTime);
 	addMouseUp(location, eventTime + 10,0,false);
+}
+
+void MouseSimulator::addResize(int areaId, float factor, int eventTime, float speed)
+{
+	lookForArea(areaId);
+	bpolygon poly = storedArea.at(areaId).contourPointsInPixels;
+	bpt center = storedArea.at(areaId).center;
+	bpt bmanipulationPointInPixels = storedArea.at(areaId).manipulationPointInPixels;
+
+	// transform the Rotation in mouseDown and mouseUp
+
+	//mouseDown point = manipulation point
+	Point<float> manipulationPt(bmanipulationPointInPixels.get<0>(), bmanipulationPointInPixels.get<1>());
+	addMouseDown(manipulationPt, eventTime);
+
+	// mouseUp point = manipulation point translated
+	Point<float> upPoint = manipulationPt;
+	bpt C(center.get<0>() * (double)sceneComponent->getWidth(), center.get<1>() * (double)sceneComponent->getHeight());
+	upPoint.addXY((float)-C.get<0>(), (float)-C.get<1>());
+	upPoint.setX(factor * upPoint.x);
+	upPoint.addXY((float)C.get<0>(), (float)C.get<1>());
+	Point<float> upPointNormalized(upPoint.x / (float)sceneComponent->getWidth(), upPoint.y / (float)sceneComponent->getHeight());
+	Point<float> manipulationPtNormalized(storedArea.at(areaId).manipulationPointInPixels.get<0>() / (float)sceneComponent->getWidth(), storedArea.at(areaId).manipulationPointInPixels.get<1>() / (float)sceneComponent->getHeight());
+	int incT = round(upPointNormalized.getDistanceFrom(manipulationPtNormalized) / (speed / 1000.0f));
+	int upTime = eventTime + incT;
+
+	addMouseUp(upPoint, upTime, 2, false);
+
+
+	///update the contourPoints
+	bool returnValue = false;
+	//// --- size if polygon is still big enough only ---
+	double minDistanceFromCenter = 0.0;
+	bool wasSizeApplied = false;
+	bpolygon testBoost2, testBoost;
+	boost::geometry::strategy::transform::translate_transformer<double, 2, 2> trans(-C.get<0>(), -C.get<1>());
+	boost::geometry::strategy::transform::translate_transformer<double, 2, 2> invtrans(C.get<0>(), C.get<1>());
+	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> resizer(factor, factor);
+	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scaleToPixel(sceneComponent->getWidth(), sceneComponent->getHeight());
+	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scaleToNorm(1.0 / (double)sceneComponent->getWidth(), 1.0 / (double)sceneComponent->getHeight());
+	
+
+	bpolygon contourPointsInPixels;
+	boost::geometry::transform(storedArea.at(areaId).contourPointsInPixels, contourPointsInPixels, scaleToPixel);
+	boost::geometry::transform(contourPointsInPixels, testBoost, trans);
+	boost::geometry::transform(testBoost, testBoost2, resizer);
+	boost::geometry::transform(testBoost2, testBoost, invtrans);
+	
+
+
+	for (size_t i = 0; i < testBoost.outer().size(); i++)
+	{
+		//if (testBoost.outer().at(i).get<0>() < 0 || testBoost.outer().at(i).get<1>() < 0)
+		//	DBG("probleme");
+		if (boost::geometry::distance(testBoost.outer().at(i), C) > minDistanceFromCenter)
+			minDistanceFromCenter = boost::geometry::distance(testBoost.outer().at(i), C);
+	}
+	//std::vector<bpolygon> comparaison;
+	//boost::geometry::difference(bnewContourPoints, testBoost, comparaison);
+	float minimumSizePercentage = 0.03f;
+	bool minSize = true;
+	if ((!minSize) || (minDistanceFromCenter >=
+		minimumSizePercentage*(sceneComponent->getWidth() + sceneComponent->getHeight()) / 2.0))
+	{
+		wasSizeApplied = true;
+		contourPointsInPixels.clear(); // test;
+		contourPointsInPixels = testBoost;//bnewContourPoints;
+										  //bmanipulationPointInPixels.set<0>(centerInPixels.get<0>() + manipulationPointRadius*size); //= bnewLocation;
+										  //bmanipulationPointInPixels.set<1>(centerInPixels.get<1>() + manipulationPointRadius*size);
+										  //bmanipulationPointInPixels = newManipulationPt;
+		returnValue = true;
+		
+	}
+	storedArea.at(areaId).contourPointsInPixels.clear();
+	boost::geometry::transform(contourPointsInPixels, storedArea.at(areaId).contourPointsInPixels, scaleToNorm);
 }
 
 void MouseSimulator::addTranslation(int areaId, bpt translation, int eventTime, float speed)
@@ -91,6 +170,8 @@ void MouseSimulator::addTranslation(int areaId, bpt translation, int eventTime, 
 	
 }
 
+
+
 void MouseSimulator::addRotation(int areaId, float rotation, int eventTime, float speed)
 {
 	lookForArea(areaId);
@@ -99,8 +180,6 @@ void MouseSimulator::addRotation(int areaId, float rotation, int eventTime, floa
 	bpt bmanipulationPointInPixels = storedArea.at(areaId).manipulationPointInPixels;
 
 	// transform the Rotation in mouseDown and mouseUp
-
-				
 
 	//mouseDown point = manipulation point
 	Point<float> manipulationPt(bmanipulationPointInPixels.get<0>(),bmanipulationPointInPixels.get<1>());
@@ -140,15 +219,9 @@ void MouseSimulator::addRotation(int areaId, float rotation, int eventTime, floa
 	boost::geometry::transform(newContour, storedArea.at(areaId).contourPointsInPixels, scaleToNorm);
 	boost::geometry::transform(storedArea.at(areaId).contourPointsInPixels, newContour, invtr);
 
-	//boost::geometry::strategy::transform::translate_transformer<double, 2, 2> trPix(-storedArea.at(areaId).center.get<0>() * sceneComponent->getWidth(), -storedArea.at(areaId).center.get<1>() * sceneComponent->getHeight()); // normalized
-	//boost::geometry::strategy::transform::translate_transformer<double, 2, 2> invtrPix(storedArea.at(areaId).center.get<0>(), storedArea.at(areaId).center.get<1>());
-	//boost::geometry::transform(storedArea.at(areaId).manipulationPointInPixels, newManipulationPt, trPix);
-	//boost::geometry::transform(newManipulationPt, storedArea.at(areaId).manipulationPointInPixels, rot);
-	//boost::geometry::transform(storedArea.at(areaId).manipulationPointInPixels, newManipulationPt, invtrPix);
-
 	storedArea.at(areaId).contourPointsInPixels.clear();
 	storedArea.at(areaId).contourPointsInPixels = newContour;
-	//storedArea.at(areaId).manipulationPointInPixels = newManipulationPt;
+
 }
 
 void MouseSimulator::addMouseDown(Point<float> position, int _eventTime)

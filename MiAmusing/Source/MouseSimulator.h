@@ -44,6 +44,7 @@ public:
 
 	void addClick(Point<float> location, int eventTime);
 
+	void addResize(int areaId, float factor, int eventTime, float speed); // translate the resize in mouseDown and mouseUp events then add it to the events vector
 	void addTranslation(int areaId, bpt translation, int eventTime, float speed); // translate the translation in mouseDown and mouseUp events then add it to the events vector
 	void addRotation(int areaId, float rotation, int eventTime, float speed); // translate the rotation in mouseDown and mouseUp events then add it to the events vector
 
