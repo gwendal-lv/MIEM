@@ -40,6 +40,8 @@ namespace Miam {
         private :
         Presenter* presenter;
         
+        // The first created window
+        DocumentWindow* mainWindow;
         // Owned by the MainWindow within the MiamEditApplication
         MainContentComponent* mainContentComponent;
         
@@ -54,7 +56,7 @@ namespace Miam {
 		/// \param _mainContentComponent Pointer to the unique MainContentComponent, which is
 		/// auto-instanciated by Juce within the MainWindow, and sent to the View module from
 		/// the MiamEditApplication.
-        View(MainContentComponent* _mainContentComponent);
+        View(DocumentWindow* mainWindow_, MainContentComponent* _mainContentComponent);
 		/// \brief Destructor
         ~View();
         /// \brief Function called after both View and Presenter are contructed
@@ -82,6 +84,7 @@ namespace Miam {
 		/// \param message Short sentence to be written in the upper uneditable text box.
         void DisplayInfo(const String& message);
         
+        void SetTitle(std::string title);
         
         
         // ----- Setters and Getters -----

@@ -19,19 +19,14 @@ using namespace Miam;
 Model::Model(Presenter* presenter_)
 :
 SpatModel(presenter_, 500.0),
-presenter(presenter_) // own private downcaster pointer
+presenter(presenter_) // own private downcasted pointer
 {
-    
+    // Fin d'Initialisation des autres modules
+    presenter->CompleteInitialisation(this);
 }
 
 Model::~Model()
 {
-}
-
-
-void Model::__resendParamChangesToPresenter__()
-{
-    
 }
 
 

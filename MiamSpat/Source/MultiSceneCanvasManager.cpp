@@ -19,7 +19,7 @@ using namespace Miam;
 
 MultiSceneCanvasManager::MultiSceneCanvasManager(IGraphicSessionManager* graphicSessionManager_, MultiSceneCanvasComponent* canvasComponent_, SceneCanvasComponent::Id selfId_)
 :
-MultiSceneCanvasEditor(graphicSessionManager_, canvasComponent_, selfId_)
+MultiSceneCanvasInteractor(graphicSessionManager_, canvasComponent_, selfId_)
 {
 }
 

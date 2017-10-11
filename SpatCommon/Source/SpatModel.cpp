@@ -30,6 +30,10 @@ PeriodicUpdateThread("SpatModel updater"), // base class
 presenter(presenter_),
 commonStartTimePt( presenter->GetCommonTimePoint() )
 {
+    // Choice of interpolation type
+    spatInterpolator = std::make_shared<SpatInterpolator<double>>(SpatType::RoutingMatrix);
+    
+    // Définition de la fréquence de fonctionnement
     updateThreadF_Hz = updateFrequency_Hz;
     updateThreadT_us = (int)std::round(1000000.0/updateFrequency_Hz);
     continueUpdate = false;

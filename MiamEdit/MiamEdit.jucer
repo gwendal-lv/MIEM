@@ -265,6 +265,8 @@
               file="../MiamCommon/Source/PeriodicUpdateThread.h"/>
         <FILE id="cEVkJR" name="SparseMatrix.hpp" compile="0" resource="0"
               file="../MiamCommon/Source/SparseMatrix.hpp"/>
+        <FILE id="scXt3K" name="TextUtils.cpp" compile="1" resource="0" file="../MiamCommon/Source/TextUtils.cpp"/>
+        <FILE id="GeVkT8" name="TextUtils.h" compile="0" resource="0" file="../MiamCommon/Source/TextUtils.h"/>
         <FILE id="MzfIK4" name="XmlUtils.cpp" compile="1" resource="0" file="../MiamCommon/Source/XmlUtils.cpp"/>
         <FILE id="hMBcir" name="XmlUtils.h" compile="0" resource="0" file="../MiamCommon/Source/XmlUtils.h"/>
       </GROUP>

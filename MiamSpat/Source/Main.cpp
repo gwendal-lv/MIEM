@@ -15,6 +15,8 @@
 #include "Presenter.h"
 #include "View.h"
 
+#include "MiamExceptions.h"
+
 //==============================================================================
 class MiamSpatApplication  : public JUCEApplication
 {
@@ -38,20 +40,6 @@ public:
     //==============================================================================
     void initialise (const String& commandLine) override
     {
-		// This program may be launched from inside the MiamEdit program :
-		// it is absolutely necessary to check the command-line !
-		if (commandLine.isEmpty())
-		{
-            DBG("MiamSpat standalone");
-		}
-		else
-		{
-			// May have been lauched with the OS specifying a file for example ?
-
-			// Or just from MiamEdit, for now
-            DBG("MiamSpat lauched with options : \"" << commandLine << "\"");
-		}
-
 
         // This method is where you should put your application's initialisation code..
 
@@ -61,12 +49,20 @@ public:
         // Instanciation of the 3 main parts of the application : Model, Presenter, View
         MainContentComponent* mainContentComponent = dynamic_cast<MainContentComponent*>(mainWindow->getChildComponent(0));
         if (mainContentComponent)
-            view = new Miam::View(mainContentComponent);
+            view = new Miam::View(mainWindow, mainContentComponent);
         else
             throw std::runtime_error("First child of Main Window is not a MainContentComponent...");
         presenter = new Miam::Presenter(view); // Will reference itself to the View module
         model = new Miam::Model(presenter);// Will reference itself to the Presenter module
-
+        
+        // Chargement de la 1ière session
+        try {
+            presenter->LoadFirstSession(commandLine.toStdString());
+        }
+        catch (Miam::ForceQuitException& )
+        {
+            quit();
+        }
     }
 
     void shutdown() override

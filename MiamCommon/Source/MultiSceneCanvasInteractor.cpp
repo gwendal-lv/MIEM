@@ -86,11 +86,27 @@ void MultiSceneCanvasInteractor::SetMode(Miam::CanvasManagerMode newMode)
     {
         selectedScene->StopCurrentTransformations();
     }
+    // Si l'on jouait avec les excitateurs : on court-circuite carrément le mode !
+    // On va rester dans ce mode de jeu à tout jamais...
+    if (mode == CanvasManagerMode::PlayingWithExciters)
+        return;
     
     // We don't do a specific action on every mode change !
     // But a few require checks and action
     switch (newMode) {
+            
+            
+        case CanvasManagerMode::PlayingWithExciters:
+            // Tout est visible, en opacité max
+            selectedScene->EnableExcitersLowOpacity(false);
+            selectedScene->EnableAreasLowOpacity(false);
+            // Le canevas n'apparaît pas comme particulièrement sélectionné
+            canvasComponent->SetIsSelectedForEditing(false);
+            // Pas d'évènements renvoyés : on update le tout
+            recreateAllAsyncDrawableObjects();
+            break;
         
+            
         case CanvasManagerMode::Unselected:
             // Unselection of a selected area (1 area selected for all canvases...)
             // And everything becomes dark, for another canvas to become
@@ -585,14 +601,17 @@ void MultiSceneCanvasInteractor::OnCanvasMouseDown(const MouseEvent& mouseE)
             break;
             
         // Cas où l'on utilise seulement les fonctionnalités "Interactive"
-        // de la scène (les excitateurs, en gros)
+        // de la scène (les excitateurs, en gros), avec ou sans sélection
+        case CanvasManagerMode::PlayingWithExciters :
+            graphicE = selectedScene->InteractiveScene::OnCanvasMouseDown(mouseE);
+            // et pas de changement de mode, contrairement au 2 suivants
+            break;
         case CanvasManagerMode::ExcitersEdition :
             graphicE = selectedScene->InteractiveScene::OnCanvasMouseDown(mouseE);
             // Après coup, on analyse l'état de sélection d'un excitateur
             if (selectedScene->GetSelectedExciter())
                 SetMode(CanvasManagerMode::ExciterSelected);
             break;
-            
         case CanvasManagerMode::ExciterSelected :
             graphicE = selectedScene->InteractiveScene::OnCanvasMouseDown(mouseE);
             // Après coup, on analyse l'état de sélection d'un excitateur
@@ -628,6 +647,7 @@ void MultiSceneCanvasInteractor::OnCanvasMouseDrag(const MouseEvent& mouseE)
     {
         // Cas où l'on utilise seulement les fonctionnalités "Interactive"
             // de la scène (les excitateurs, en gros)
+        case CanvasManagerMode::PlayingWithExciters :
         case CanvasManagerMode::ExcitersEdition :
         case CanvasManagerMode::ExciterSelected :
             graphicE = selectedScene->InteractiveScene::OnCanvasMouseDrag(mouseE);
@@ -650,6 +670,7 @@ void MultiSceneCanvasInteractor::OnCanvasMouseUp(const MouseEvent& mouseE)
     {
             // Cas où l'on utilise seulement les fonctionnalités "Interactive"
             // de la scène (les excitateurs, en gros)
+        case CanvasManagerMode::PlayingWithExciters :
         case CanvasManagerMode::ExcitersEdition :
         case CanvasManagerMode::ExciterSelected :
             graphicE = selectedScene->InteractiveScene::OnCanvasMouseUp(mouseE);

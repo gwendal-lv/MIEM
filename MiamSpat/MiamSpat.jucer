@@ -233,6 +233,8 @@
               file="../MiamCommon/Source/PeriodicUpdateThread.h"/>
         <FILE id="cEVkJR" name="SparseMatrix.hpp" compile="0" resource="0"
               file="../MiamCommon/Source/SparseMatrix.hpp"/>
+        <FILE id="g4sp6a" name="TextUtils.cpp" compile="1" resource="0" file="../MiamCommon/Source/TextUtils.cpp"/>
+        <FILE id="rbmyw3" name="TextUtils.h" compile="0" resource="0" file="../MiamCommon/Source/TextUtils.h"/>
         <FILE id="MzfIK4" name="XmlUtils.cpp" compile="1" resource="0" file="../MiamCommon/Source/XmlUtils.cpp"/>
         <FILE id="hMBcir" name="XmlUtils.h" compile="0" resource="0" file="../MiamCommon/Source/XmlUtils.h"/>
       </GROUP>
@@ -242,7 +244,8 @@
     <XCODE_MAC targetFolder="Builds/MacOSX">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MiamSpat"
-                       headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../MiamCommon/Source/"/>
+                       headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../MiamCommon/Source/"
+                       defines="__MIAM_DEBUG"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MiamSpat"
                        headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../MiamCommon/Source/"/>
       </CONFIGURATIONS>
@@ -266,7 +269,8 @@
     <VS2015 targetFolder="Builds/VisualStudio2015">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
-                       isDebug="1" optimisation="1" targetName="MiamSpat" headerPath="..\..\..\&#10;..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"/>
+                       isDebug="1" optimisation="1" targetName="MiamSpat" headerPath="..\..\..\&#10;..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"
+                       defines="__MIAM_DEBUG"/>
         <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
                        isDebug="0" optimisation="3" targetName="MiamSpat" headerPath="..\..\..\&#10;..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"/>
       </CONFIGURATIONS>
@@ -291,7 +295,8 @@
                    extraDefs="__MIAMOBILE" androidMinimumSDK="21">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" androidArchitectures="armeabi armeabi-v7a x86" isDebug="1"
-                       optimisation="1" targetName="MiamSpat" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../SpatCommon/Source/"/>
+                       optimisation="1" targetName="MiamSpat" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../SpatCommon/Source/"
+                       defines="__MIAM_DEBUG"/>
         <CONFIGURATION name="Release" androidArchitectures="armeabi armeabi-v7a x86"
                        isDebug="0" optimisation="3" targetName="MiamSpat" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../SpatCommon/Source/"/>
       </CONFIGURATIONS>

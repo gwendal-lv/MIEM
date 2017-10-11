@@ -12,7 +12,7 @@
 #define MULTISCENECANVASMANAGER_H_INCLUDED
 
 
-#include "MultiSceneCanvasEditor.h"
+#include "MultiSceneCanvasInteractor.h"
 
 
 namespace Miam {
@@ -22,7 +22,7 @@ namespace Miam {
     
     
     /// \brief
-    class MultiSceneCanvasManager : public MultiSceneCanvasEditor {
+    class MultiSceneCanvasManager : public MultiSceneCanvasInteractor {
         
         
         

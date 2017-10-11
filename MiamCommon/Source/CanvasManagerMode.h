@@ -30,8 +30,13 @@ namespace Miam {
         
         
         
-        // - - - Modes relevant when your program is editing/playing something - - -
+        // - - - Modes relevant when your program is PLAYING something - - -
+        PlayingWithExciters,
         
+        
+        
+        
+        // - - - Modes relevant when your program is EDITING something - - -
         
         Unselected, ///< Not currently selected
         CanvasSelected, ///< Not a fully-defined mode : the canvas is selected, but something else (we don't know) might be selected inside
@@ -46,12 +51,10 @@ namespace Miam {
         EditingArea, ///< Mouse is editing the current area (qui peut être un excitateur)
         
         WaitingForPointCreation, ///< Next mouse input will create a point
-        WaitingForPointDeletion ///< Next mouse input will delete a point
+        WaitingForPointDeletion, ///< Next mouse input will delete a point
         
         
         
-        
-        //
         
     };
     

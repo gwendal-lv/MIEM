@@ -9,6 +9,8 @@
 */
 
 #include "GraphicSpatSessionManager.h"
+
+#include "SpatPresenter.h"
 #include "SpatPolygon.h"
 
 #include "XmlUtils.h"

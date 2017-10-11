@@ -38,10 +38,6 @@ namespace Miam {
         Model(Presenter* presenter_);
         virtual ~Model();
         
-        private :
-        // for testing purposes
-        void __resendParamChangesToPresenter__();
-        
         
         
         // - - - - - Periodic updates - - - - -

@@ -13,6 +13,8 @@
 #include "Model.h"
 #include "View.h"
 
+#include "TextUtils.h"
+
 #include "JuceHeader.h"
 
 #include <sstream>
@@ -45,9 +47,8 @@ void Presenter::CompleteInitialisation(Model* _model, std::string& commandLine)
     // Self init
     model = _model;
     SpatPresenter::CompleteInitialisation(&graphicSessionManager, _model);
-    // Sub-modules
+    // Sub-modules (graphic session manager : init from SpatPresenter)
     spatStatesEditionManager.CompleteInitialisation(model->GetSpatInterpolator());
-    graphicSessionManager.CompleteInitialisation(model->GetSpatInterpolator());
     settingsManager.CompleteInitialisation(model);
     
     // Après initialisation : on montre des objets graphiques
@@ -55,42 +56,16 @@ void Presenter::CompleteInitialisation(Model* _model, std::string& commandLine)
     appModeChangeRequest(AppMode::EditSpatScenes);
     view->ChangeAppMode(AppMode::EditSpatScenes);
     
-    // Copie pour permettre le chargement automatique de la session de test
+    // Copie du paramètre d'entrée,
+    // pour permettre le chargement automatique de la session de test....
     std::string commandLineToParse = commandLine;
 #ifdef __MIAM_DEBUG
     //commandLineToParse += " -session \"/Users/Gwendal/Music/Spat sessions/Session de débug.miam\" ";
     commandLineToParse += " -session \"/Users/Gwendal/Music/Spat sessions/Test.miam\" ";
 #endif
     
-    std::string commandLineFileName;
-    // Regex qui permet de récupérer le nom de fichier
-    std::regex word_regex( "(\"[^\"]+\"|[^\\s\"]+)" );
-    auto words_begin =
-    std::sregex_iterator(commandLineToParse.begin(), commandLineToParse.end(), word_regex);
-    auto words_end = std::sregex_iterator();
-    bool nextWordIsSession = false;
-    bool sessionPathFound = false;
-    for (std::sregex_iterator i = words_begin; i != words_end && !sessionPathFound; ++i)
-    {
-        std::smatch match = *i;
-        std::string match_str = match.str();
-        if (match_str == "-session")
-        {
-            nextWordIsSession = true;
-        }
-        else if(nextWordIsSession)
-        {
-            commandLineFileName = match_str;
-            sessionPathFound = true;
-        }
-    }
-    // Suppression des guillemets si nécessaire
-    auto firstCharIter = commandLineFileName.begin();
-    if ( *firstCharIter == '\"')
-        commandLineFileName.erase(firstCharIter);
-    auto lastActualCharIter = std::prev(commandLineFileName.end());
-    if ( *lastActualCharIter == '\"' )
-        commandLineFileName.erase(lastActualCharIter);
+    // Récupération du nom de fichier à charger
+    std::string commandLineFileName = TextUtils::FindFilenameInCommandLineArguments(commandLineToParse);
     
     // Chargement, ou sauvegarde forcée selon le paramètre passé !
     if (commandLineFileName.empty())

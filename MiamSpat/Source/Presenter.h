@@ -78,7 +78,7 @@ namespace Miam {
         ///
         /// Finished self-contruction, and also the construction of sub-modules
         void CompleteInitialisation(Model* _model);
-        
+        void LoadFirstSession(std::string commandLine);
         
         virtual void Update() override;
         

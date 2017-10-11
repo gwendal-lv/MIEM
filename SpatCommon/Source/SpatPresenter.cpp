@@ -10,6 +10,7 @@
 
 #include "SpatPresenter.h"
 
+#include "GraphicSpatSessionManager.h"
 
 #include "SpatModel.h"
 
@@ -20,10 +21,14 @@ SpatPresenter::SpatPresenter()
     lastSpatScenesTree = std::make_shared<bptree::ptree>();
 }
 
-void SpatPresenter::CompleteInitialisation(IGraphicSessionManager* _graphicSessionManager, SpatModel* _model)
+void SpatPresenter::CompleteInitialisation(GraphicSpatSessionManager* _graphicSessionManager, SpatModel* _model)
 {
+    // Attributs privés
     graphicSessionManager = _graphicSessionManager;
     model = _model;
+    
+    // Init des sous-modules
+    graphicSessionManager->CompleteInitialisation(model->GetSpatInterpolator());
 }
 
 

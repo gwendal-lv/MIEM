@@ -35,13 +35,9 @@ GraphicSessionManager::GraphicSessionManager(Presenter* presenter_, View* view_)
     nextAreaId = 0; // plus tard : valeur contenue dans le fichier de sauvegarde
 
     
-    // ICI ON CHARGE DES TRUCS
-    // Canvases const count defined here
-    // 1 SEUL CANVAS PAR EXEMPLE
-    // On doit créer les sous-objets graphiques de canevas (View) avant de
-    // les transmettre au sous-module de gestion de canevas (Presenter) que l'on crée
-    // d'ailleurs ici aussi.
+    // DEFINITION DU NOMBRE DE CANEVAS
     canvasManagers.push_back(std::make_shared<MultiSceneCanvasManager>(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas1));
+    canvasManagers.push_back(std::make_shared<MultiSceneCanvasManager>(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas2));
     
     // Links to the view module
     view->CompleteInitialization(this, multiCanvasComponent);
@@ -57,11 +53,7 @@ GraphicSessionManager::GraphicSessionManager(Presenter* presenter_, View* view_)
     
     // And states of the canvases are forced
     for (size_t i=0 ; i<canvasManagers.size() ; i++)
-        canvasManagers[i]->SetMode(CanvasManagerMode::Unselected);
-    
-    
-    // SÉLECTION/CHARGEMENT D'UN TRUC PAR DÉFAUT
-    canvasManagers.front()->SetMode(CanvasManagerMode::SceneOnlySelected);
+        canvasManagers[i]->SetMode(CanvasManagerMode::PlayingWithExciters);
     
     
 }
@@ -76,15 +68,6 @@ GraphicSessionManager::~GraphicSessionManager()
 
 
 // ===== SETTERS AND GETTERS =====
-
-std::shared_ptr<IEditableArea> GraphicSessionManager::GetSelectedArea()
-{
-    if (selectedCanvas)
-        return getSelectedCanvasAsManager()->GetSelectedArea();
-    else
-        return nullptr;
-}
-
 
 
 

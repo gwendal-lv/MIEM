@@ -16,7 +16,6 @@
 
 #include "IPresenter.h"
 
-#include "IGraphicSessionManager.h"
 
 #include "boost/property_tree/ptree.hpp"
 #include "boost/property_tree/xml_parser.hpp"
@@ -26,6 +25,7 @@ namespace bptree = boost::property_tree;
 namespace Miam {
     
     class SpatModel;
+    class GraphicSpatSessionManager;
     
     /// \brief
     class SpatPresenter : public IPresenter
@@ -37,7 +37,7 @@ namespace Miam {
         private :
         // Private links to abtractions of sub-modules
         SpatModel* model = 0;
-        IGraphicSessionManager* graphicSessionManager = 0;
+        GraphicSpatSessionManager* graphicSessionManager = 0;
         
         // - - - - - Back-ups of other spatialization data trees - - - - -
         std::shared_ptr<bptree::ptree> lastSpatStatesTree;
@@ -50,7 +50,7 @@ namespace Miam {
         // - - - - - Construction and Destruction (and init) - - - - -
         SpatPresenter();
         virtual ~SpatPresenter() {}
-        void CompleteInitialisation(IGraphicSessionManager* _graphicSessionManager, SpatModel* _model);
+        void CompleteInitialisation(GraphicSpatSessionManager* _graphicSessionManager, SpatModel* _model);
         
         
         
