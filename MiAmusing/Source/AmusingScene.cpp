@@ -29,6 +29,7 @@
 #include "boost\geometry\geometries\polygon.hpp"
 
 #include <vector>
+#include <fstream>
 
 #include "AmusingSceneComponent.h"
 
@@ -426,6 +427,18 @@ void AmusingScene::AddAllIntersections(std::shared_ptr<Amusing::CompletePolygon>
 						double ratio = newArea / oldArea;
 						if (ratio> (1/10) && ratio < 10)
 						{
+							
+							std::cout << "Try to open to move : " << outputFileName << std::endl;
+							std::ofstream ofs;
+							ofs.open(outputFileName.toStdString(), std::ofstream::out | std::ofstream::app);
+							if (ofs.is_open())
+							{
+								std::cout << "Opening succeed : " << outputFileName << std::endl;
+								ofs << "intersection moved" << std::endl;
+								ofs.close();
+							}
+
+
 							// similar enough -> need to modify the already existing intersection
 							it->second.at(j)->Copy(std::dynamic_pointer_cast<CompletePolygon>(multiE->GetOtherEvent(i)->GetConcernedArea()));
 							std::shared_ptr<AreaEvent> areaEvent(new AreaEvent(it->second.at(j), AreaEventType::ShapeChanged, (int)areas.size() + j, shared_from_this()));
@@ -443,6 +456,15 @@ void AmusingScene::AddAllIntersections(std::shared_ptr<Amusing::CompletePolygon>
 					if (needToAdd == true)
 					{
 						DBG("new intersection to add");
+						std::cout << "Try to open to add intersectiob: " << outputFileName << std::endl;
+						std::ofstream ofs;
+						ofs.open(outputFileName.toStdString(), std::ofstream::out | std::ofstream::app);
+						if (ofs.is_open())
+						{
+							std::cout << "Opening succeed : " << outputFileName << std::endl;
+							ofs << "new intersection to add" << std::endl;
+							ofs.close();
+						}
 						// the two areas are too different -> add the new area
 						auto CA = std::dynamic_pointer_cast<CompletePolygon>(multiE->GetOtherEvent(i)->GetConcernedArea());
 						CA->setCursorVisible(false,canvasComponent);
@@ -886,4 +908,25 @@ std::shared_ptr<AreaEvent> AmusingScene::checkCursorPosition(std::shared_ptr<Cur
 				return std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::CursorChanged, (int)completeArea->GetId(), shared_from_this()));
 	}
 	return nullptr;
+}
+
+void AmusingScene::setOutputFileName(String m_outputFileName)
+{
+	outputFileName = m_outputFileName;
+
+	std::cout << "Try to open : " << outputFileName << std::endl;
+	std::ofstream ofs;
+	ofs.open(outputFileName.toStdString(), std::ofstream::out | std::ofstream::ate);
+	if (ofs.is_open())
+	{
+		std::cout << "Opening succeed" << std::endl;
+		ofs << "test d'enregistrement du fichier" << std::endl;
+		ofs.close();
+
+		std::ifstream ifs;
+		ifs.open(outputFileName.toStdString());
+		
+	}
+	else
+		std::cout << "Opening failed" << std::endl;
 }

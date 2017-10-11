@@ -132,7 +132,7 @@ void GraphicSessionManager::SetAllChannels()
 	}
 	
 	if (auto myCanvasManager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManagers[0]))
-		myCanvasManager->__AddAreasForTest();
+		myCanvasManager->__AddAreasForTest(String("situationTest.txt"));
 	myMultiCanvasComponent->MouseSimulatorInit();
 }
 
@@ -145,7 +145,7 @@ void GraphicSessionManager::SetAllChannels(StringArray opt)
 	}
 
 	if (auto myCanvasManager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManagers[0]))
-		myCanvasManager->__AddAreasForTest();
+		myCanvasManager->__AddAreasForTest(opt[0]);
 	myMultiCanvasComponent->MouseSimulatorInit(opt);
 }
 
@@ -315,7 +315,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				DBG("PointDragBegins");
 				break;
 			case AreaEventType::PointDragStops :
-				DBG("PointDragStops");
+				//DBG("PointDragStops");
 				if (auto complete = std::dynamic_pointer_cast<CompletePolygon>(area))
 				{
 					param.Type = AsyncParamChange::ParamType::None;
@@ -356,7 +356,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				//myPresenter->SendParamChange(param);
 				break;
 			case AreaEventType::ShapeChanged :
-				DBG("shapeChanged");
+				//DBG("shapeChanged");
 				if (auto cursor = std::dynamic_pointer_cast<Cursor>(area))
 				{
 					DBG("Cursor's shape changed");
@@ -376,7 +376,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					//	param.IntegerValue = myPresenter->getChannel(amusingScene);
 					//}
 					//myPresenter->SendParamChange(param); // envoie l'ordre de creer/ detruire une source audio
-					DBG("Polygon's shape changed");
+					//DBG("Polygon's shape changed");
 
 					//param.Id1 = myPresenter->getTimeLineID(area);
 					//param.Type = Miam::AsyncParamChange::ParamType::Activate;
@@ -425,7 +425,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				//area-> get center height --> volume
 				break;
 			case AreaEventType::RotScale :
-				DBG("RotScale");
+				//DBG("RotScale");
 				
 				break;
 			case AreaEventType::Selected :

@@ -28,7 +28,7 @@ MouseSimulator::MouseSimulator(SceneCanvasComponent *m_sceneComponent, std::weak
 	addClick(Point<float>(267.0, 178.0), 1000);
 	//addTranslation(0, bpt(-0.1,-0.1), 1200,0.5); // speed = 1screen/s
 	
-	addResize(0, 2.0f, 1200, 1.0);
+	/*addResize(0, 2.0f, 1200, 1.0);
 	addResize(0, 1.0f / 2.0f, 2000, 0.5);
 
 	addRotation(0, 3.14f/2.0f, 3200, 1.0);
@@ -37,7 +37,9 @@ MouseSimulator::MouseSimulator(SceneCanvasComponent *m_sceneComponent, std::weak
 	addRotation(0, -3.14f / 2.0f, 9500, 1.0);
 
 	addClick(Point<float>(0.3f * (float)sceneComponent->getWidth(), 0.3f * (float)sceneComponent->getHeight()), 13000);
-	addTranslation(1, bpt(0.1, 0.1), 14500, 0.5);
+	addTranslation(1, bpt(0.1, 0.1), 14500, 0.5);*/
+
+	addRotation(0, 6.28f, 1500, 25.0f);
 
 	/// end of the events
 
@@ -58,26 +60,26 @@ MouseSimulator::MouseSimulator(SceneCanvasComponent *m_sceneComponent, std::weak
 	std::cout << "number of opt : " << (String)opt.size() << std::endl;
 	std::cerr << "number of opt : " << (String)opt.size() << std::endl;
 
-	String operationType = opt[0];
-	double amplitude = opt[1].getDoubleValue();
+	String operationType = opt[1];
+	double amplitude = opt[2].getDoubleValue();
 	
 
 	if (operationType == "T")
 	{
-		double amplitude2 = opt[2].getDoubleValue();
-		double speed = opt[3].getDoubleValue();
+		double amplitude2 = opt[3].getDoubleValue();
+		double speed = opt[4].getDoubleValue();
 		std::cout << "Translation of " << (String)amplitude << " at " << (String)speed << std::endl;
 		addTranslation(0,bpt(amplitude,amplitude2), 1500, (float)speed);
 	}
 	else if (operationType == "R")
 	{
-		double speed = opt[2].getDoubleValue();
+		double speed = opt[3].getDoubleValue();
 		std::cout << "Rotation of " << (String)amplitude << " at " << (String)speed << std::endl;
 		addRotation(0, (float)amplitude, 1500, (float)speed);
 	}
 	else if (operationType == "S")
 	{
-		double speed = opt[2].getDoubleValue();
+		double speed = opt[3].getDoubleValue();
 		std::cout << "Resize of " << (String)amplitude << " at " << (String)speed << std::endl;
 		addResize(0, amplitude, 1500, (float)speed);
 	}
@@ -373,6 +375,12 @@ void MouseSimulator::addMouseUpRotate(Point<float> position, Point<float> pivot,
 		Point<float> inc = (prevEvt.position - pivot);
 
 		int64 incT = round(((int64)_eventTime - prevEvt.eventTime.toMilliseconds()) / (int64)numOfDragEvents);
+		if (incT <= int64(0))
+		{
+			incT = 1;
+			numOfDragEvents = (int64)_eventTime - prevEvt.eventTime.toMilliseconds();
+		}
+
 		for (int i = 0; i < numOfDragEvents - 1; ++i)
 		{
 			Point<float> dragPosition = inc;

@@ -54,7 +54,10 @@ public:
             throw std::runtime_error("First child of Main Window is not a MainContentComponent...");
 		std::cout << "number of opt : " << (String)getCommandLineParameterArray().size() << std::endl;
 		std::cerr << "number of opt : " << (String)getCommandLineParameterArray().size() << std::endl;
-        presenter = new Amusing::Presenter(view,getCommandLineParameterArray()); // Will reference itself to the View module
+		if(getCommandLineParameterArray().size()>0)
+			presenter = new Amusing::Presenter(view, getCommandLineParameterArray()); // Will reference itself to the View module
+		else
+			presenter = new Amusing::Presenter(view);
         model = new Amusing::AmusingModel(presenter);// Will reference itself to the Presenter module
     }
 
