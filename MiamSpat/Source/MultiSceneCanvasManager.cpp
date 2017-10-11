@@ -35,21 +35,4 @@ void MultiSceneCanvasManager::AddScene(std::string name)
     newScene->SetName(name);
     
     MultiSceneCanvasInteractor::AddScene(newScene);
-    
-    
-    // TEST DES EXCITATEURS
-    // TEST DES EXCITATEURS
-    // TEST DES EXCITATEURS
-    // TEST DES EXCITATEURS
-    // TEST DES EXCITATEURS
-    // TEST DES EXCITATEURS
-    // TEST DES EXCITATEURS
-    // TEST DES EXCITATEURS
-    // TEST DES EXCITATEURS
-    auto newExciter = std::make_shared<Exciter>(GetNextAreaId());
-    handleAndSendAreaEventSync(newScene->AddExciter(newExciter));
-    /*
-    newExciter = std::make_shared<Exciter>(GetNextAreaId());
-    handleAndSendAreaEventSync(newScene->AddExciter(newExciter));
-     */
 }

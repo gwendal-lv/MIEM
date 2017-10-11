@@ -18,11 +18,11 @@
 #include <map>
 #include <string>
 
-#include "IGraphicSessionManager.h"
+#include "GraphicSpatSessionManager.h"
 
 #include "EditablePolygon.h"
 
-#include "Juceheader.h" // for : Point<float>, uint64
+#include "JuceHeader.h" // for : Point<float>, uint64
 
 #include "MultiSceneCanvasManager.h"
 #include "SceneCanvasComponent.h"
@@ -31,7 +31,7 @@ namespace Miam {
     
     // Simple declarations
     class View;
-    class IPresenter;
+    class Presenter;
     
     
     /// \brief Sub-module belonging to the Presenter module, which handles the editing
@@ -41,12 +41,15 @@ namespace Miam {
 	///
 	/// References itself to some components, for these components to transfer events to this sub-module
 	/// directly, and not to the Presenter.
-    class GraphicSessionManager : public IGraphicSessionManager {
+    class GraphicSessionManager : public GraphicSpatSessionManager {
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
         
         // Graphical objects belong to the Presenter module, not to the View
         private :
+        
+        Presenter* presenter;
+        
         // links back to the View module
         View* view;
         
@@ -67,14 +70,11 @@ namespace Miam {
         
         public :
         /// \brief Construction (the whole Presenter module is built after the View).
-        GraphicSessionManager(IPresenter* presenter_, View* view_);
+        GraphicSessionManager(Presenter* presenter_, View* view_);
         
         /// \brief Destruction and the editor and the canvases
         ~GraphicSessionManager();
         
-        // Debug purposes only
-        void __LoadDefaultTest();
-       
         
         
         // ---- Getters and Setters -----
@@ -108,7 +108,7 @@ namespace Miam {
         
         // ----- Event to View -----
         void DisplayInfo(String info) override;
-        
+
 
     };
     

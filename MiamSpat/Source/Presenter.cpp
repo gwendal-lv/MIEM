@@ -23,16 +23,13 @@ using namespace Miam;
 
 Presenter::Presenter(View* _view) :
     view(_view),
-    appMode(AppMode::Loading), // app is loading while the Model hasn't fully loaded yet
+    appMode(AppMode::Null),
 
     graphicSessionManager(this, _view)
 {
     // After all sub-modules are built, the presenter refers itself to the View
     view->CompleteInitialization(this);
     view->GetMainContentComponent()->resized();
-    
-    // HERE, WE SHOULD LOAD THE DEFAULT FILE
-    graphicSessionManager.__LoadDefaultTest();
     
     
     appModeChangeRequest(AppMode::None);
@@ -67,6 +64,28 @@ AppMode Presenter::appModeChangeRequest(AppMode newAppMode)
     
     // Actual new mode
     return appMode;
+}
+
+
+// = = = = = XML loading only = = = = =
+void Presenter::SetConfigurationFromTree(bptree::ptree&)
+{
+    // TODO : récupérer info OSC, nombre de canaux, etc... ET LES AFFICHER
+    // TODO : récupérer info OSC, nombre de canaux, etc... ET LES AFFICHER
+    // TODO : récupérer info OSC, nombre de canaux, etc... ET LES AFFICHER
+    // TODO : récupérer info OSC, nombre de canaux, etc... ET LES AFFICHER
+    // TODO : récupérer info OSC, nombre de canaux, etc... ET LES AFFICHER
+    DBG("Aucune info de configuration affichée pour le moment !");
+    // TODO : récupérer info OSC, nombre de canaux, etc... ET LES AFFICHER
+    // TODO : récupérer info OSC, nombre de canaux, etc... ET LES AFFICHER
+    // TODO : récupérer info OSC, nombre de canaux, etc... ET LES AFFICHER
+    // TODO : récupérer info OSC, nombre de canaux, etc... ET LES AFFICHER
+    // TODO : récupérer info OSC, nombre de canaux, etc... ET LES AFFICHER
+    // TODO : récupérer info OSC, nombre de canaux, etc... ET LES AFFICHER
+    // TODO : récupérer info OSC, nombre de canaux, etc... ET LES AFFICHER
+    // TODO : récupérer info OSC, nombre de canaux, etc... ET LES AFFICHER
+    // TODO : récupérer info OSC, nombre de canaux, etc... ET LES AFFICHER
+    // TODO : récupérer info OSC, nombre de canaux, etc... ET LES AFFICHER
 }
 
 

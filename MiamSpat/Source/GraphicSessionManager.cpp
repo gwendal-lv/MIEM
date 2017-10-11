@@ -13,7 +13,7 @@
 
 // Other includes
 
-#include "IPresenter.h"
+#include "Presenter.h"
 #include "View.h"
 
 #include "AreaEvent.h"
@@ -26,8 +26,9 @@ using namespace Miam;
 
 // ========== CONSTRUCTION and DESTRUCTION ==========
 
-GraphicSessionManager::GraphicSessionManager(IPresenter* presenter_, View* view_) :
-    IGraphicSessionManager(presenter_),
+GraphicSessionManager::GraphicSessionManager(Presenter* presenter_, View* view_) :
+    GraphicSpatSessionManager(presenter_),
+    presenter(presenter_),
     view(view_)
 {
     // SÉLECTION/CHARGEMENT D'UN TRUC PAR DÉFAUT
@@ -50,8 +51,6 @@ GraphicSessionManager::GraphicSessionManager(IPresenter* presenter_, View* view_
         // After canvases are created : scenes creation
         // DEFAULT SCENES, TO BE CHANGED
         canvasManagers[i]->AddScene("Scène 1, pour le plaisir");
-        canvasManagers[i]->AddScene("Scène 2 oh ouuiiii");
-        canvasManagers[i]->AddScene("Scène jamais 2 sans 3");
     }
     
     
@@ -72,15 +71,6 @@ GraphicSessionManager::~GraphicSessionManager()
 }
 
 
-// Testing purposes only
-void GraphicSessionManager::__LoadDefaultTest()
-{
-    srand(2016); // GRAINE fixée ici
-    
-    
-    for(size_t i=0 ; i<canvasManagers.size(); i++)
-        canvasManagers[i]->__AddTestAreas();
-}
 
 
 
@@ -173,16 +163,13 @@ void GraphicSessionManager::CanvasModeChanged(CanvasManagerMode /*canvasMode*/)
 
 
 
-
-
-
-
 // ===== EVENTS TO VIEW =====
 
 void GraphicSessionManager::DisplayInfo(String info)
 {
     view->DisplayInfo(info);
 }
+
 
 
 

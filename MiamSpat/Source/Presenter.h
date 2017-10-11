@@ -13,7 +13,7 @@
 
 #include <iostream>
 
-#include "IPresenter.h"
+#include "SpatPresenter.h"
 
 #include "AppMode.h"
 #include "SpatType.h"
@@ -37,7 +37,7 @@ namespace Miam {
 	/// repositories (the model), and formats it for display in the view".
 	///
 	/// \remark Usual GUI controls (created from the Projucer) however belong to the View.
-    class Presenter : public IPresenter
+    class Presenter : public SpatPresenter
     {
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
@@ -85,6 +85,10 @@ namespace Miam {
         
         // Events from the View
         AppMode appModeChangeRequest(AppMode newAppMode);
+        
+        // = = = = = XML loading only = = = = =
+        virtual void SetConfigurationFromTree(bptree::ptree&) override;
+
         
     };
     
