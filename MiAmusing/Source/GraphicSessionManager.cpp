@@ -132,7 +132,7 @@ void GraphicSessionManager::SetAllChannels()
 	}
 	
 	if (auto myCanvasManager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManagers[0]))
-		myCanvasManager->__AddAreasForTest(String("situationTest.txt"));
+		myCanvasManager->__AddAreasForTest(String("situationTest.txt"),10.0);
 	myMultiCanvasComponent->MouseSimulatorInit();
 }
 
@@ -145,7 +145,7 @@ void GraphicSessionManager::SetAllChannels(StringArray opt)
 	}
 
 	if (auto myCanvasManager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManagers[0]))
-		myCanvasManager->__AddAreasForTest(opt[0]);
+		myCanvasManager->__AddAreasForTest(opt[0],opt[1].getDoubleValue());
 	myMultiCanvasComponent->MouseSimulatorInit(opt);
 }
 

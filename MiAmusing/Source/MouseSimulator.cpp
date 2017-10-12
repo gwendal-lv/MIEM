@@ -25,7 +25,8 @@ MouseSimulator::MouseSimulator(SceneCanvasComponent *m_sceneComponent, std::weak
 	sceneComponent(m_sceneComponent), canvasInteractor(canvasManager)
 {
 	/// write the events to execute here
-	addClick(Point<float>(267.0, 178.0), 1000);
+	//addClick(Point<float>(267.0, 178.0), 1000);
+	addSelectArea(0,1000);
 	//addTranslation(0, bpt(-0.1,-0.1), 1200,0.5); // speed = 1screen/s
 	
 	/*addResize(0, 2.0f, 1200, 1.0);
@@ -39,7 +40,8 @@ MouseSimulator::MouseSimulator(SceneCanvasComponent *m_sceneComponent, std::weak
 	addClick(Point<float>(0.3f * (float)sceneComponent->getWidth(), 0.3f * (float)sceneComponent->getHeight()), 13000);
 	addTranslation(1, bpt(0.1, 0.1), 14500, 0.5);*/
 
-	addRotation(0, 6.28f, 1500, 25.0f);
+	//addRotation(0, 6.28f, 1500, 25.0f);
+	addTranslation(0, bpt(-1.0, 0), 1500, 10);
 
 	/// end of the events
 
@@ -53,33 +55,34 @@ MouseSimulator::MouseSimulator(SceneCanvasComponent *m_sceneComponent, std::weak
 	sceneComponent(m_sceneComponent), canvasInteractor(canvasManager)
 {
 	/// write the events to execute here
-	addClick(Point<float>(267.0, 178.0), 1000);
+	addSelectArea(0, 1000);
+	//addClick(Point<float>(267.0, 178.0), 1000);
 	//addTranslation(0, bpt(-0.1,-0.1), 1200,0.5); // speed = 1screen/s
 
 	DBG("opt size = " + (String)opt.size());
 	std::cout << "number of opt : " << (String)opt.size() << std::endl;
 	std::cerr << "number of opt : " << (String)opt.size() << std::endl;
 
-	String operationType = opt[1];
-	double amplitude = opt[2].getDoubleValue();
+	String operationType = opt[2];
+	double amplitude = opt[3].getDoubleValue();
 	
 
 	if (operationType == "T")
 	{
-		double amplitude2 = opt[3].getDoubleValue();
-		double speed = opt[4].getDoubleValue();
+		double amplitude2 = opt[4].getDoubleValue();
+		double speed = opt[5].getDoubleValue();
 		std::cout << "Translation of " << (String)amplitude << " at " << (String)speed << std::endl;
 		addTranslation(0,bpt(amplitude,amplitude2), 1500, (float)speed);
 	}
 	else if (operationType == "R")
 	{
-		double speed = opt[3].getDoubleValue();
+		double speed = opt[4].getDoubleValue();
 		std::cout << "Rotation of " << (String)amplitude << " at " << (String)speed << std::endl;
 		addRotation(0, (float)amplitude, 1500, (float)speed);
 	}
 	else if (operationType == "S")
 	{
-		double speed = opt[3].getDoubleValue();
+		double speed = opt[4].getDoubleValue();
 		std::cout << "Resize of " << (String)amplitude << " at " << (String)speed << std::endl;
 		addResize(0, amplitude, 1500, (float)speed);
 	}
@@ -106,6 +109,25 @@ void MouseSimulator::addClick(Point<float> location, int eventTime)
 {
 	addMouseDown(location, eventTime);
 	addMouseUp(location, eventTime + 10,0,false);
+}
+
+void MouseSimulator::addSelectArea(int areaId, int eventTime)
+{
+	lookForArea(areaId);
+
+	// transform the Translation in mouseDown and mouseUp
+	//completePolygon->getPolygon() from polygon and center -> choose a point to click down and the point to click up
+	bpolygon poly = storedArea.at(areaId).contourPointsInPixels;
+	bpt center = storedArea.at(areaId).center;
+
+
+	// mouse down point : middle of the segment center-poly[1]
+	bpt midPt = poly.outer().at(1);
+	boost::geometry::subtract_point(midPt, center);
+	boost::geometry::divide_value(midPt, 2.0);
+	boost::geometry::add_point(midPt, center);
+
+	addClick(Point<float>(midPt.get<0>() * (double)sceneComponent->getWidth(), midPt.get<1>() * (double)sceneComponent->getHeight()), eventTime);
 }
 
 void MouseSimulator::addResize(int areaId, float factor, int eventTime, float speed)
@@ -319,6 +341,11 @@ void MouseSimulator::addMouseUp(Point<float> position, int _eventTime, float inc
 		Point<float> inc = (position - prevEvt.position) / (float)numOfDragEvents;
 		
 		int64 incT = round( ((int64)_eventTime - prevEvt.eventTime.toMilliseconds()) / (int64)numOfDragEvents);
+		if (incT <= int64(0))
+		{
+			incT = 1;
+			numOfDragEvents = (int64)_eventTime - prevEvt.eventTime.toMilliseconds();
+		}
 		for (int i = 0; i < numOfDragEvents-1; ++i)
 		{
 			Point<float> dragPosition = (inc * (float)(i + 1));

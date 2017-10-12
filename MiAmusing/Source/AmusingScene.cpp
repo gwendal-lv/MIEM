@@ -425,18 +425,18 @@ void AmusingScene::AddAllIntersections(std::shared_ptr<Amusing::CompletePolygon>
 						
 						double oldArea = boost::geometry::area(oldIntersection);
 						double ratio = newArea / oldArea;
-						if (ratio> (1/10) && ratio < 10)
+						if (ratio> (1.0/ intersectionRatio) && ratio < intersectionRatio)
 						{
 							
-							std::cout << "Try to open to move : " << outputFileName << std::endl;
-							std::ofstream ofs;
-							ofs.open(outputFileName.toStdString(), std::ofstream::out | std::ofstream::app);
-							if (ofs.is_open())
-							{
-								std::cout << "Opening succeed : " << outputFileName << std::endl;
-								ofs << "intersection moved" << std::endl;
-								ofs.close();
-							}
+							//std::cout << "Try to open to move : " << outputFileName << std::endl;
+							//std::ofstream ofs;
+							//ofs.open(outputFileName.toStdString(), std::ofstream::out | std::ofstream::app);
+							//if (ofs.is_open())
+							//{
+							//	std::cout << "Opening succeed : " << outputFileName << std::endl;
+							//	ofs << "intersection moved" << std::endl;
+							//	ofs.close();
+							//}
 
 
 							// similar enough -> need to modify the already existing intersection
@@ -929,4 +929,9 @@ void AmusingScene::setOutputFileName(String m_outputFileName)
 	}
 	else
 		std::cout << "Opening failed" << std::endl;
+}
+
+void AmusingScene::setRatioForIntersection(double m_ratio)
+{
+	intersectionRatio = m_ratio;
 }

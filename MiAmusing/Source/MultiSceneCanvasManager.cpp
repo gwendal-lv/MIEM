@@ -89,19 +89,20 @@ void MultiSceneCanvasManager::__AddAreasForTest()
 	//handleAndSendAreaEventSync(amusingScene->AddCursor(currentCompletePolygon2));
 }
 
-void MultiSceneCanvasManager::__AddAreasForTest(String outputFileName)
+void MultiSceneCanvasManager::__AddAreasForTest(String outputFileName, double m_ratio)
 {
 	auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(scenes[2]);
 	amusingScene->setOutputFileName(outputFileName);
+	amusingScene->setRatioForIntersection(m_ratio);
 
-	std::shared_ptr<CompletePolygon> currentCompletePolygon(new CompletePolygon(graphicSessionManager->GetNextAreaId(), bpt(0.5, 0.5), 3, 0.15f, Colours::aquamarine, 1.47f));
+	std::shared_ptr<CompletePolygon> currentCompletePolygon(new CompletePolygon(graphicSessionManager->GetNextAreaId(), bpt(0.85, 0.5), 3, 0.15f, Colours::aquamarine, 1.47f));
 	currentCompletePolygon->SetActive(false);
 	currentCompletePolygon->CanvasResized(canvasComponent->GetCanvas());
 	currentCompletePolygon->setCursorVisible(true, canvasComponent->GetCanvas());
 	handleAndSendAreaEventSync(amusingScene->AddArea(currentCompletePolygon));
 	//handleAndSendAreaEventSync(amusingScene->AddCursor(currentCompletePolygon));
 
-	std::shared_ptr<CompletePolygon> currentCompletePolygon2(new CompletePolygon(graphicSessionManager->GetNextAreaId(), bpt(0.4, 0.4), 4, 0.15f, Colours::aquamarine, 1.47f));
+	std::shared_ptr<CompletePolygon> currentCompletePolygon2(new CompletePolygon(graphicSessionManager->GetNextAreaId(), bpt(0.5, 0.5), 4, 0.15f, Colours::aquamarine, 1.47f));
 	currentCompletePolygon2->SetActive(false);
 	currentCompletePolygon2->CanvasResized(canvasComponent->GetCanvas());
 	currentCompletePolygon2->setCursorVisible(true, canvasComponent->GetCanvas());

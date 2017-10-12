@@ -103,7 +103,10 @@ namespace Miam
 		std::shared_ptr<AreaEvent> checkCursorPosition(std::shared_ptr<Cursor> cursor);
 		void setOutputFileName(String m_outputFileName);
 
+		void setRatioForIntersection(double m_ratio);
+
 		String outputFileName;
+		double intersectionRatio;
 	};
 
 
