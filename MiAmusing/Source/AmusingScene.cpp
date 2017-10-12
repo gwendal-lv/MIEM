@@ -456,12 +456,12 @@ void AmusingScene::AddAllIntersections(std::shared_ptr<Amusing::CompletePolygon>
 					if (needToAdd == true)
 					{
 						DBG("new intersection to add");
-						std::cout << "Try to open to add intersectiob: " << outputFileName << std::endl;
+						//std::cout << "Try to open to add intersectiob: " << outputFileName << std::endl;
 						std::ofstream ofs;
 						ofs.open(outputFileName.toStdString(), std::ofstream::out | std::ofstream::app);
 						if (ofs.is_open())
 						{
-							std::cout << "Opening succeed : " << outputFileName << std::endl;
+							//std::cout << "Opening succeed : " << outputFileName << std::endl;
 							ofs << "new intersection to add" << std::endl;
 							ofs.close();
 						}
