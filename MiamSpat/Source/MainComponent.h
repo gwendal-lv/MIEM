@@ -17,13 +17,14 @@
 #include "Presenter.h"
 #include "AppMode.h"
 
-#include "MultiCanvasComponent.h"
+#include "BackgroundComponent.h"
 
 using namespace Miam;
 namespace Miam
 {
     class Presenter; // cross-inclusion issue
     class View; // cross-inclusion issue
+    class MultiCanvasComponent;
 }
 
 
@@ -46,7 +47,8 @@ private:
     GraphicSessionManager* graphicSessionManager = 0;
     
     // Graphical component
-    MultiCanvasComponent* multiCanvasComponent = 0; // belongs to the presenter
+    ScopedPointer<BackgroundComponent> backgroundComponent;
+    //MultiCanvasComponent* multiCanvasComponent = 0; // belongs to the presenter
     
     
     // ============== SETTERS AND GETTERS ==============

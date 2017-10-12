@@ -8,11 +8,16 @@
 
 #include "MainComponent.h"
 
+//#include "MultiCanvasComponent.h"
 
 //==============================================================================
 MainContentComponent::MainContentComponent()
 {
+    // Ajout des composants enfant
+    addAndMakeVisible(backgroundComponent = new BackgroundComponent());
+    
     setSize (600, 400);
+    
 }
 
 MainContentComponent::~MainContentComponent()
@@ -30,11 +35,8 @@ void MainContentComponent::paint (Graphics& g)
 
 void MainContentComponent::resized()
 {
-    // This is called when the MainContentComponent is resized.
-    // If you add any child components, this is where you should
-    // update their positions.
-    if (multiCanvasComponent)
-        multiCanvasComponent->setBounds(getLocalBounds());
+    backgroundComponent->setBounds(getLocalBounds());
+    backgroundComponent->resized(); //  forcé....
 }
 
 
@@ -45,15 +47,11 @@ void MainContentComponent::CompleteInitialization(Presenter* _presenter)
 {
     presenter = _presenter;
 }
-void MainContentComponent::CompleteInitialization(GraphicSessionManager* _graphicSessionManager, MultiCanvasComponent* _multiCanvasComponent)
+void MainContentComponent::CompleteInitialization(GraphicSessionManager* _graphicSessionManager, MultiCanvasComponent* multiCanvasComponent_)
 {
     graphicSessionManager = _graphicSessionManager;
     
-    // Add of the canvas to this component's children directly (for now ?)
-    multiCanvasComponent = _multiCanvasComponent;
-    addAndMakeVisible(multiCanvasComponent);
-    
-    multiCanvasComponent->CompleteInitialization();
+    backgroundComponent->CompleteInitialization(presenter, multiCanvasComponent_);
 }
 
 void MainContentComponent::SetMiamView(Miam::View* _view)

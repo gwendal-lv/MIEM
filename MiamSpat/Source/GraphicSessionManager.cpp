@@ -56,6 +56,9 @@ GraphicSessionManager::GraphicSessionManager(Presenter* presenter_, View* view_)
         canvasManagers[i]->SetMode(CanvasManagerMode::PlayingWithExciters);
     
     
+    // Resize forcé (pour ne pas avoir de trucs de taille zéro
+    view->GetMainContentComponent()->resized();
+    
 }
 
 GraphicSessionManager::~GraphicSessionManager()

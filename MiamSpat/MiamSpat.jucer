@@ -29,6 +29,10 @@
         <FILE id="fpZaRJ" name="Presenter.h" compile="0" resource="0" file="Source/Presenter.h"/>
       </GROUP>
       <GROUP id="{7185BF7C-494C-765D-3B78-58581F32631D}" name="View">
+        <FILE id="SFIecL" name="BackgroundComponent.cpp" compile="1" resource="0"
+              file="Source/BackgroundComponent.cpp"/>
+        <FILE id="cp8fFT" name="BackgroundComponent.h" compile="0" resource="0"
+              file="Source/BackgroundComponent.h"/>
         <FILE id="TCTcR0" name="MainComponent.cpp" compile="1" resource="0"
               file="Source/MainComponent.cpp"/>
         <FILE id="NeblZc" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>

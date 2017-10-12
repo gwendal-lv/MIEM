@@ -31,7 +31,7 @@ Presenter::Presenter(View* _view) :
 {
     // After all sub-modules are built, the presenter refers itself to the View
     view->CompleteInitialization(this);
-    view->GetMainContentComponent()->resized();
+    //view->GetMainContentComponent()->resized();
     
     
     appModeChangeRequest(AppMode::None);
@@ -43,6 +43,8 @@ void Presenter::CompleteInitialisation(Model* _model)
     // - - - Init des attributs privés puis du parent - - -
     model = _model;
     SpatPresenter::CompleteInitialisation(&graphicSessionManager, model);
+    
+    view->GetMainContentComponent()->resized();
 }
 
 void Presenter::LoadFirstSession(std::string commandLine)
