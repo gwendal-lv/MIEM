@@ -298,7 +298,7 @@ void CompletePolygon::lengthToPercent()
 	perimeter = 0;
 	perimeter = boost::geometry::perimeter(contourPointsInPixels);
 
-	//calcul des poucentages correspondant à chaque point
+	//calcul des poucentages correspondant ï¿½ chaque point
 	percentages[0] = 0;
 	for (int i = 1; i < (int)contourPoints.outer().size(); ++i)
 	{
@@ -337,7 +337,7 @@ boost::geometry::model::segment<bpt> CompletePolygon::getSegment(bpt hitPoint) /
 			prev = i;
 			suiv = i + 1;
 			if (suiv == (int)contourPoints.outer().size())
-				suiv = 1; // pas 0 car le point 0 et le dernier point sont les mêmes
+				suiv = 1; // pas 0 car le point 0 et le dernier point sont les mï¿½mes
 			return boost::geometry::model::segment<bpt>(contourPoints.outer().at(prev), contourPoints.outer().at(suiv));
 		}
 	}
@@ -376,7 +376,7 @@ boost::geometry::model::segment<bpt> CompletePolygon::getSegmentInPixels(bpt hit
 			prev = i;
 			suiv = i + 1;
 			if (suiv == (int)contourPointsInPixels.outer().size())
-				suiv = 1; // pas 0 car le point 0 et le dernier point sont les mêmes
+				suiv = 1; // pas 0 car le point 0 et le dernier point sont les mï¿½mes
 			return boost::geometry::model::segment<bpt>(contourPointsInPixels.outer().at(prev), contourPointsInPixels.outer().at(suiv));
 		}
 	}
@@ -453,7 +453,7 @@ bpt CompletePolygon::computeLinearCursorCenter(double p)
 			if (suiv == 0)
 				suiv += 1;
 
-			// calcul du point où se trouve le curseur par interpolation linéaire
+			// calcul du point oï¿½ se trouve le curseur par interpolation linï¿½aire
 			bpt P;
 			if (suiv != 0)
 			{
@@ -583,7 +583,7 @@ bpt CompletePolygon::computeAngularCursorCenter(double p)
 			if (suiv == 0)
 				suiv += 1;
 
-			// calcul du point où se trouve le curseur par interpolation linéaire
+			// calcul du point oï¿½ se trouve le curseur par interpolation linï¿½aire
 			bpt P(0,0);
 			bpt extr;
 			//if( (0 <= p && p<0.25 ) || (0.75 <= p && p<1))
@@ -697,8 +697,8 @@ float CompletePolygon::computeCursorAlpha(double p, bpt _center)
 
 	double distPr = boost::geometry::distance(_center, contourPoints.outer().at(prev));
 	double distSui = boost::geometry::distance(_center, contourPoints.outer().at(suiv));
-	double D = 0.02; // distance à laquelle on commence à augmenter/diminuer l'opacité
-	double H = 0.5;  // opacité lorsqu'on est pas assez proche d"un sommet
+	double D = 0.02; // distance ï¿½ laquelle on commence ï¿½ augmenter/diminuer l'opacitï¿½
+	double H = 0.5;  // opacitï¿½ lorsqu'on est pas assez proche d"un sommet
 	if (distPr < D )
 	{
 		if (1 - distPr * (1-H)/D < 0)
@@ -978,7 +978,7 @@ std::shared_ptr<CompletePolygon> CompletePolygon::fusion(std::shared_ptr<Complet
 		double pc;
 		int circ;
 		Helper(double a, int b) : pc(a), circ(b) {};
-		bool operator< (Helper b) { return (this->pc < b.pc); }
+		//bool operator< (const Helper& b) { return (this->pc < b.pc); }
 		Helper() : pc(0), circ(0) {};
 	};
 
@@ -1005,7 +1005,7 @@ std::shared_ptr<CompletePolygon> CompletePolygon::fusion(std::shared_ptr<Complet
 	test.pop_back(); // delete last element = closure element of the second polygon
 
 	// sort to have all the points in clockwise order
-	std::sort(test.begin(), test.end());
+	std::sort(test.begin(), test.end(),[](Helper a, Helper b) {return (a.pc < b.pc); });
 
 	// close the polygon
 	test.push_back(Helper(test[0].pc+1,test[0].circ));

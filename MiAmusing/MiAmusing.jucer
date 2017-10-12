@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="MkqyzI" name="MiAmusing" projectType="guiapp" version="1.0.0"
               bundleIdentifier="com.yourcompany.MiAmusing" includeBinaryInAppConfig="1"
-              jucerVersion="5.1.1" displaySplashScreen="1" reportAppUsage="1"
+              jucerVersion="5.1.2" displaySplashScreen="1" reportAppUsage="1"
               splashScreenColour="Dark" cppLanguageStandard="11">
   <MAINGROUP id="Ak6ojc" name="MiAmusing">
     <GROUP id="{E74684B7-0B02-F2F7-C571-317039AB4495}" name="Source">
@@ -244,6 +244,32 @@
         <MODULEPATH id="juce_audio_utils" path="..\..\JUCE\modules"/>
       </MODULEPATHS>
     </VS2015>
+    <ANDROIDSTUDIO targetFolder="Builds/Android" androidSDKPath="" androidNDKPath=""
+                   gradleVersion="3.3" gradleToolchain="clang">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" androidArchitectures="armeabi x86" isDebug="1" optimisation="1"
+                       targetName="MiAmusing" headerPath="..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\&#10;..\..\..\"
+                       defines="BOOST_ALL_NO_LIB=1"/>
+        <CONFIGURATION name="Release" androidArchitectures="" isDebug="0" optimisation="3"
+                       targetName="MiAmusing" headerPath="..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\&#10;..\..\..\"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_video" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_opengl" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_gui_extra" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_gui_basics" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_graphics" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_events" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_data_structures" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_cryptography" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_core" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_utils" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_processors" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_formats" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_devices" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_basics" path="..\..\JUCE\modules"/>
+      </MODULEPATHS>
+    </ANDROIDSTUDIO>
   </EXPORTFORMATS>
   <MODULES>
     <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0"/>
