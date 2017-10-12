@@ -46,12 +46,13 @@ void MainContentComponent::resized()
 void MainContentComponent::CompleteInitialization(Presenter* _presenter)
 {
     presenter = _presenter;
+    backgroundComponent->CompleteInitialization(presenter);
 }
 void MainContentComponent::CompleteInitialization(GraphicSessionManager* _graphicSessionManager, MultiCanvasComponent* multiCanvasComponent_)
 {
     graphicSessionManager = _graphicSessionManager;
     
-    backgroundComponent->CompleteInitialization(presenter, multiCanvasComponent_);
+    backgroundComponent->CompleteInitialization(multiCanvasComponent_);
 }
 
 void MainContentComponent::SetMiamView(Miam::View* _view)

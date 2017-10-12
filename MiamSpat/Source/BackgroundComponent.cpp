@@ -19,6 +19,7 @@
 
 //[Headers] You can add your own extra header files here...
 #include "Presenter.h"
+#include "TouchMainMenu.h"
 //[/Headers]
 
 #include "BackgroundComponent.h"
@@ -113,6 +114,7 @@ void BackgroundComponent::buttonClicked (Button* buttonThatWasClicked)
     if (buttonThatWasClicked == imageButton)
     {
         //[UserButtonCode_imageButton] -- add your button handler code here..
+        touchMainMenu->ShowMenuAndSendUserAnswer();
         //[/UserButtonCode_imageButton]
     }
 
@@ -123,11 +125,13 @@ void BackgroundComponent::buttonClicked (Button* buttonThatWasClicked)
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
-
-void BackgroundComponent::CompleteInitialization(Presenter* presenter_, MultiCanvasComponent* multiCanvasComponent_)
+void BackgroundComponent::CompleteInitialization(Presenter* presenter_)
 {
     presenter = presenter_;
-
+    touchMainMenu = new TouchMainMenu(presenter);
+}
+void BackgroundComponent::CompleteInitialization(MultiCanvasComponent* multiCanvasComponent_)
+{
     multiCanvasComponent = multiCanvasComponent_;
     addAndMakeVisible(multiCanvasComponent);
 

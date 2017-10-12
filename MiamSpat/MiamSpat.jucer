@@ -36,6 +36,9 @@
         <FILE id="TCTcR0" name="MainComponent.cpp" compile="1" resource="0"
               file="Source/MainComponent.cpp"/>
         <FILE id="NeblZc" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+        <FILE id="REKLzn" name="TouchMainMenu.cpp" compile="1" resource="0"
+              file="Source/TouchMainMenu.cpp"/>
+        <FILE id="NSAmpK" name="TouchMainMenu.h" compile="0" resource="0" file="Source/TouchMainMenu.h"/>
         <FILE id="wovY1v" name="View.cpp" compile="1" resource="0" file="Source/View.cpp"/>
         <FILE id="DzITRF" name="View.h" compile="0" resource="0" file="Source/View.h"/>
       </GROUP>

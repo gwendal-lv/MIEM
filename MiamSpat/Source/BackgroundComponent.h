@@ -26,7 +26,10 @@
 namespace Miam
 {
     class Presenter;
+    class TouchMainMenu;
 }
+
+
 //[/Headers]
 
 
@@ -51,7 +54,8 @@ public:
     //[UserMethods]     -- You can add your own custom methods in this section.
 
     /// \brief Function called after both View and Presenter are contructed
-    void CompleteInitialization(Presenter*, MultiCanvasComponent*);
+    void CompleteInitialization(Presenter*);
+    void CompleteInitialization(MultiCanvasComponent*);
 
     //[/UserMethods]
 
@@ -78,6 +82,8 @@ private:
 
     /// \brief Owned by the Presenter
     MultiCanvasComponent* multiCanvasComponent;
+    
+    ScopedPointer<TouchMainMenu> touchMainMenu;
 
     //[/UserVariables]
 
