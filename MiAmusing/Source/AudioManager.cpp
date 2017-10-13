@@ -33,16 +33,12 @@ AudioManager::AudioManager(AmusingModel *m_model) : model(m_model), Nsources(0),
 	DBG("AudioManager::AudioManager");
 
 
-	/////////////////////
-	useADSR = 1;////////
-	////////////////////
-	testPos = 0;
+	
 
-	count = 0;
 
 	
-	activeVector.reserve(Nmax);
-	mixer = new MixerAudioSource();
+	
+	
 	
 
 	//initialise(0, 2, nullptr, true);
@@ -50,9 +46,8 @@ AudioManager::AudioManager(AmusingModel *m_model) : model(m_model), Nsources(0),
 	setSource(this);
 	runThread = true;
 	T = std::thread(&AudioManager::threadFunc, this);
-	midiSenderSize = 0;
-	midiSenderVector.reserve(128);
-	midiSenderVector = std::vector<std::shared_ptr<TimeLine>>(128, std::shared_ptr<TimeLine>(new TimeLine));
+
+	
 
 	for (int i = 0; i < maxSize; i++)
 	{
@@ -76,9 +71,7 @@ AudioManager::~AudioManager()
 	
 	DBG("audioManager destructor fin");
 
-	//DBG("AudioManager::releaseResources");
-	delete mixer;
-	//DBG("AudioManager::releaseResources fin");
+	
 	if (midiOuput == nullptr)
 	{
 		DBG("midiOuput == nullptr !!!!!!!!!!!");
@@ -90,40 +83,21 @@ AudioManager::~AudioManager()
 	model->removeDeviceManagerFromOptionWindow();
 	//delete midiOuput;
 }
-/*
-void AudioManager::paint (Graphics& g)
-{
 
-
-   
-}
-*/
-/*
-void AudioManager::resized()
-{
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
-
-}
-*/
 
 void AudioManager::prepareToPlay(int samplesPerBlockExpected, double _sampleRate)
 {
 	DBG("AudioManager::prepareToPlay");
 	currentSamplesPerBlock = samplesPerBlockExpected;
 	currentSampleRate = _sampleRate;
-	div = ((_sampleRate / (double)samplesPerBlockExpected))/50;
+	
 	
 	metronome.setAudioParameter(samplesPerBlockExpected, _sampleRate);
 	
 	periode = metronome.BPMtoPeriodInSample(50);//timeToSample(4000);
 	position = 0;
 
-	/*AudioDeviceSetup currentAudioSetup;
-	this->getAudioDeviceSetup(currentAudioSetup);
-
-	DBG("default midi output : " + (String)this->getDefaultMidiOutputName());
-	midiOuput = this->getDefaultMidiOutput();*/
+	
 
 	midiOuput = model->getMidiOutput();
 	
@@ -149,8 +123,7 @@ void AudioManager::releaseResources()
 	}
 	else
 	{
-		//MidiOutput::
-		//delete midiOuput;
+		
 		if (midiOuput == nullptr)
 			DBG("bien detruit ! ");
 		else
@@ -396,15 +369,15 @@ void AudioManager::getAudioThreadMsg()
 				{
 				case 0:
 					DBG("desactivate source : " + (String)param.Id1);
-					--midiSenderSize;
+					
 					delete timeLines[param.Id1];
 					timeLines[param.Id1] = 0;
 					DBG("source : " + (String)param.Id1 + "deleted");
-					//midiSenderVector.erase(midiSenderVector.begin() + param.Id1);
+					
 					break;
 				case 1:
 					//DBG("AM : I construct a new polygon with ID : " + (String)param.Id1);
-					//midiSenderVector[param.Id1] = std::shared_ptr<TimeLine>(new TimeLine());
+					
 					DBG("activate source    : " + (String)param.Id1);
 					if (timeLines[param.Id1] == 0)
 						timeLines[param.Id1] = new TimeLine();
@@ -421,7 +394,7 @@ void AudioManager::getAudioThreadMsg()
 						timeLines[param.Id1]->setMidiChannel(param.IntegerValue);
 					//timeLines[param.Id1]->setSpeed(param.FloatValue);
 					timeLines[param.Id1]->setId(param.Id1);
-					++midiSenderSize;
+					
 					timeLinesToAudio.push(timeLines[param.Id1]);
 					break;
 				default:
@@ -536,24 +509,3 @@ void AudioManager::threadFunc()
 	}
 	DBG("exit thread");
 }
-
-
-
-
-
-
-
-
-void AudioManager::HandleEvent()
-{
-	//DBG("handleEvent");
-	Miam::AsyncParamChange param;
-	param.Id1 = 0;
-	param.Type = Miam::AsyncParamChange::ParamType::Activate;
-	model->SendParamChange(param);
-}
-
-//AudioDeviceManager& AudioManager::getAudioDeviceManager()
-//{
-//	return *this;
-//}

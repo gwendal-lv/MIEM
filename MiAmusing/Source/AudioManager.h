@@ -42,73 +42,48 @@ namespace Amusing {
 /*
 */
 	class AudioManager : public AudioSource,
-						 public AudioSourcePlayer/*,
-						 public AudioDeviceManager*/
+						 public AudioSourcePlayer
 	{
 	public:
 		AudioManager(AmusingModel *m_mode);
 		~AudioManager();
-
-		//void paint(Graphics&) override;
-		//void resized() override;
-
+		
 		void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
 		void releaseResources() override;
 		void getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill) override;
 
-		
-
-		//AudioDeviceManager& getAudioDeviceManager();
-
-		void sendMidiMessage(MidiMessage midiMsg);
+		void sendMidiMessage(MidiMessage midiMsg); // send Midi message to external synth
 
 	private:
 
+		AmusingModel *model; // reference to the parent
+
+		void sendPosition(); // send the readingHeads position (in percent) to the presenter (via model)
+
+		AudioManagerState state; // Play, Pause, ...
 		
-
-		void sendPosition();
-
-		
-		void HandleEvent();
-
-		AmusingModel *model;
-		MixerAudioSource *mixer;
-		//std::thread activationThread;// s[2];
-
-		AudioManagerState state;
-
-		std::vector<int> sourceControled;
-		
-
+		// audio thread caracteristics
 		int currentSamplesPerBlock;
 		double currentSampleRate;
 
-		int useADSR;
-		int count;
-		double div;
-
-		
-		std::vector<bool> activeVector;
 		const int Nmax = 1024;
 		int Nsources;
 
-		double testPos;
+
 
 		int periode;
 		int position;
 		Metronome metronome;
-		std::shared_ptr<TimeLine> midiSender;
-		std::vector<std::shared_ptr<TimeLine>> midiSenderVector;
+		
 		MidiBuffer midiBuffer;
 		MidiOutput *midiOuput;
-		//ScopedPointer<MidiOutput> midiOuput;
-		//std::shared_ptr<MidiOutput> midiOuput;
-		void getAudioThreadMsg();
-		void getParameters(); // for MIDI
-		void threadFunc();
-		std::thread T;
-		bool runThread;
-		int midiSenderSize;
+		
+		void getParameters(); // function of the audio thread to handle parameters from the Presenter
+
+		std::thread T; // allocation thread
+		void threadFunc(); // function of the allocation thread
+		bool runThread;	
+		void getAudioThreadMsg(); // function of the allocation thread to handle parameters from the audio thread
 
 		/////////////
 		// timeLines is the array of the timeLines, the allocation is manage by the thread

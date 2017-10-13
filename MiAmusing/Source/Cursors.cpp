@@ -21,9 +21,11 @@ Cursor::Cursor(int64_t _Id) : Exciter(_Id, std::chrono::time_point<clock>())
 	speed = 1;
 }
 
-Cursor::Cursor(int64_t _Id, bpt /*_center*/, double _r, Colour _fillColour, float _canvasRatio) :
+Cursor::Cursor(int64_t _Id, bpt _center, double _r, Colour _fillColour, float _canvasRatio) :
 	Exciter(_Id, std::chrono::time_point<clock>())//EditableEllipse(_Id, _center, _a,  _b, _fillColour, _canvasRatio)
 {
+	center = _center;
+	fillColour = _fillColour;
 	a = _r;
 	b = _r;
 	SetIsRound(true);
@@ -48,6 +50,8 @@ Cursor::Cursor(int64_t _Id, bpt /*_center*/, double _r, Colour _fillColour, floa
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() + (b / 2)*yScale));
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>() - (a / 2)*xScale, center.get<1>()));
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() - (b / 2)*yScale));
+
+	SetIsAnimationSynchronized(false);
 }
 
 //Cursor::Cursor(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio) :
