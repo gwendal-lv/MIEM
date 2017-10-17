@@ -91,7 +91,6 @@ namespace Miam
             // Chargement des pptés spécifiques au messages miam osc
             udpPort = tree.get<int>("udp.port", udpPort); // no exception
             ipv4 = tree.get<std::string>("ip", ipv4); // no exception
-
         }
         
     };

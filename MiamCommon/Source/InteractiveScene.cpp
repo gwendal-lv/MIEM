@@ -349,8 +349,28 @@ std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseDrag(const MouseEve
     // If the touch is related to an area being moved
     if (mapIt != touchSourceToEditableArea.end())
     {
-        AreaEventType eventType = mapIt->second->TryMovePoint(mouseE.position.toDouble());
-        graphicE = std::make_shared<AreaEvent>(mapIt->second, eventType, shared_from_this());
+        auto exciter = std::dynamic_pointer_cast<Exciter>(mapIt->second);
+        if (! exciter)
+            throw std::logic_error("An interactive scene can handle Miam::Exciters only");
+        
+        // Création de l'évènement de l'excitateur seul, pour renvoi (dans un multi event, dans le doute)
+        AreaEventType eventType = exciter->TryMovePoint(mouseE.position.toDouble());
+        auto multiAreaE = std::make_shared<MultiAreaEvent>(exciter, eventType, shared_from_this());
+        
+        // Modification possible des interactions : recherche obligatoire dans toutes les aires graphiques !
+        for (size_t i = 0 ; i < areas.size() ; i++)
+        {
+            // Si qqchose a changé, on renvoit l'info
+            auto areaE = areas[i]->UpdateInteraction(exciter);
+            if ( areaE->GetType() == AreaEventType::ExcitementAmountChanged )
+            {
+                DBG("nouveau poids d'interaction = " + std::to_string(areas[i]->GetTotalExcitementAmount()));
+                areaE->SetConcernedScene(shared_from_this()); // pas précisé dans l'aire, qui ne connaît pas son parent.
+                multiAreaE->AddAreaEvent( areaE );
+            }
+        }
+        
+        graphicE = multiAreaE;
     }
     
     return graphicE;

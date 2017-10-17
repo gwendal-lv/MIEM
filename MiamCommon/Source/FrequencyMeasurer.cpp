@@ -75,7 +75,7 @@ void FrequencyMeasurer::OnNewFrame()
 	// (not counting Average/Min/Max yet)
 	if (!beginStatistics)
 	{
-		if (lastSequenceFramesCount>50)
+		if (lastSequenceFramesCount>averagingFramesCount)
 			beginStatistics = true;
 	}
 	// Normal case, computing statistic values

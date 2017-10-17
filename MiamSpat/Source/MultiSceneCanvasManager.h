@@ -42,14 +42,30 @@ namespace Miam {
         
         public :
         
-        // ------ Construction and Destruction ------
+        // - - - - - - Construction and Destruction - - - - - -
         
         // same args as MultiSceneCanvasEditor
         MultiSceneCanvasManager(IGraphicSessionManager* graphicSessionManager_, MultiSceneCanvasComponent* canvasComponent_, SceneCanvasComponent::Id selfId_);
         virtual ~MultiSceneCanvasManager();
         
-        // ------ Scenes managing : Add and Delete ------
+        // - - - - - - Scenes managing : Add and Delete - - - - - -
         virtual void AddScene(std::string name) override;
+        
+        
+        
+        // - - - - - - Gestion des évènements des scènes - - - - - -
+        protected :
+
+        /// \brief Après avoir retransmis la commande à la classe parente, sélectionnera les évènements
+        /// concernant les aires intéressantes,
+        /// puis crée et envoie un évènement
+        /// directement au GraphicSessionManager concernant les seules aires
+        /// dont le degré d'excitation aura changé
+        ///
+        /// Le graphicsessionmanager traduit et envoie au presenter ce qu'il faut
+        virtual void processSingleAreaEventSync(std::shared_ptr<AreaEvent>& areaE) override;
+        
+
     };
     
     

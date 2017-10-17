@@ -267,41 +267,7 @@ void MultiSceneCanvasInteractor::handleAndSendAreaEventSync(std::shared_ptr<Area
     // On ne traite que si c'est un pur évènement simple
     else
     {
-        // - - - Internal update of the necessary thread-safe drawable objects - - -
-        // (for OpenGL rendering on background thread)
-        switch(areaE->GetType())
-        {
-            case AreaEventType::Added :
-                // ATTENTION : ici, on traite le côté graphique de l'évènement.
-                // On ne traite donc rien si l'aire ajoutée ne provient pas de la scène sélectionnée !
-                if (selectedScene && selectedScene == areaE->GetConcernedScene())
-                {
-                    // Internally checks the given idInScene
-                    addAsyncDrawableObject(areaE->GetAreaIdInScene(), areaE->GetConcernedArea());
-                }
-                break;
-                
-            case AreaEventType::Deleted :
-                // Idem que l'ajout :
-                if (selectedScene && selectedScene == areaE->GetConcernedScene())
-                {
-                    // The object's index is not needed anymore for deletion
-                    deleteAsyncDrawableObject(/*areaE->GetAreaIdInScene(), */
-                                              areaE->GetConcernedArea());
-                }
-                break;
-                
-            default : // Any movement : update of the concerned area (if any)
-                // Idem que l'ajout :
-                if (selectedScene && selectedScene == areaE->GetConcernedScene())
-                {
-                    if (areaE->GetConcernedArea())
-                    {
-                        updateAsyncDrawableObject(areaE->GetConcernedArea());
-                    }
-                }
-                break;
-        }
+        processSingleAreaEventSync(areaE);
         
         // - - - Transmission of the event to the parent graphic session manager - - -
         if (notifyGraphicSessionManager)
@@ -324,6 +290,45 @@ void MultiSceneCanvasInteractor::handleAndSendMultiAreaEventSync(std::shared_ptr
     // Ensuite on envoie le gros multiarea event au GraphicSessionManager en 1 paquet
     // (plutôt que chacun des petits séparément, pour lesquels la notification a été supprimée)
     graphicSessionManager->HandleEventSync(multiAreaE);
+}
+
+void MultiSceneCanvasInteractor::processSingleAreaEventSync(std::shared_ptr<AreaEvent>& areaE)
+{
+    // - - - Internal update of the necessary thread-safe drawable objects - - -
+    // (for OpenGL rendering on background thread)
+    switch(areaE->GetType())
+    {
+        case AreaEventType::Added :
+            // ATTENTION : ici, on traite le côté graphique de l'évènement.
+            // On ne traite donc rien si l'aire ajoutée ne provient pas de la scène sélectionnée !
+            if (selectedScene && selectedScene == areaE->GetConcernedScene())
+            {
+                // Internally checks the given idInScene
+                addAsyncDrawableObject(areaE->GetAreaIdInScene(), areaE->GetConcernedArea());
+            }
+            break;
+            
+        case AreaEventType::Deleted :
+            // Idem que l'ajout :
+            if (selectedScene && selectedScene == areaE->GetConcernedScene())
+            {
+                // The object's index is not needed anymore for deletion
+                deleteAsyncDrawableObject(/*areaE->GetAreaIdInScene(), */
+                                          areaE->GetConcernedArea());
+            }
+            break;
+            
+        default : // Any movement : update of the concerned area (if any)
+            // Idem que l'ajout :
+            if (selectedScene && selectedScene == areaE->GetConcernedScene())
+            {
+                if (areaE->GetConcernedArea())
+                {
+                    updateAsyncDrawableObject(areaE->GetConcernedArea());
+                }
+            }
+            break;
+    }
 }
 
 

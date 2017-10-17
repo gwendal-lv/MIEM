@@ -126,25 +126,58 @@ AppMode Presenter::appModeChangeRequest(AppMode newAppMode)
 }
 
 
+void Presenter::OnNewConnectionStatus(bool isConnectionEstablished, std::shared_ptr<bptree::ptree> connectionParametersTree)
+{
+    // On ne doit pas avoir d'exception ici.... Mais bon dans le doute on checke quand même
+    int udpPort = -1;
+    std::string ipv4 = "";
+    try {
+        udpPort = connectionParametersTree->get<int>("udp.port");
+        ipv4 = connectionParametersTree->get<std::string>("ip");
+    }
+    catch (bptree::ptree_error&) { }
+    
+    // - - - écriture de la chaîne à afficher - - -
+    std::string displayString;
+    // Si pas de connection
+    if (!isConnectionEstablished)
+    {
+        // et si pb de paramètres
+        if (udpPort == -1 || ipv4.empty())
+        {
+            displayString = "[error] Cannot send spatialization data (no valid connection parameters found).";
+        }
+        // Sinon on affiche les paramètres qui ont échoué
+        else
+        {
+            displayString = "[error] Cannot send OSC to " + ipv4 + " on UDP port " + std::to_string(udpPort) + ".";
+        }
+    }
+    // Si connection OK
+    else
+    {
+        // mais si pb de paramètres
+        if (udpPort == -1 || ipv4.empty())
+        {
+            displayString = "Connected, sending spatialization data (no valid connection parameters found).";
+        }
+        // Sinon tout est bon pour affichage
+        else
+        {
+            displayString = "Connected, sending OSC to " + ipv4 + " on UDP port " + std::to_string(udpPort) + ".";
+        }
+    }
+    
+    view->DisplayInfo(displayString);
+    
+    
+}
+
+
 // = = = = = XML loading only = = = = =
 void Presenter::SetConfigurationFromTree(bptree::ptree&)
 {
-    // TODO : récupérer info OSC, nombre de canaux, etc... ET LES AFFICHER
-    // TODO : récupérer info OSC, nombre de canaux, etc... ET LES AFFICHER
-    // TODO : récupérer info OSC, nombre de canaux, etc... ET LES AFFICHER
-    // TODO : récupérer info OSC, nombre de canaux, etc... ET LES AFFICHER
-    // TODO : récupérer info OSC, nombre de canaux, etc... ET LES AFFICHER
-    DBG("Aucune info de configuration affichée pour le moment !");
-    // TODO : récupérer info OSC, nombre de canaux, etc... ET LES AFFICHER
-    // TODO : récupérer info OSC, nombre de canaux, etc... ET LES AFFICHER
-    // TODO : récupérer info OSC, nombre de canaux, etc... ET LES AFFICHER
-    // TODO : récupérer info OSC, nombre de canaux, etc... ET LES AFFICHER
-    // TODO : récupérer info OSC, nombre de canaux, etc... ET LES AFFICHER
-    // TODO : récupérer info OSC, nombre de canaux, etc... ET LES AFFICHER
-    // TODO : récupérer info OSC, nombre de canaux, etc... ET LES AFFICHER
-    // TODO : récupérer info OSC, nombre de canaux, etc... ET LES AFFICHER
-    // TODO : récupérer info OSC, nombre de canaux, etc... ET LES AFFICHER
-    // TODO : récupérer info OSC, nombre de canaux, etc... ET LES AFFICHER
+    // Rien d'affiché : on attend le retour effectif des infos depuis le Modèle
 }
 
 

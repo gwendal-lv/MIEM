@@ -44,6 +44,7 @@ SpatArea()
 
 void SpatPolygon::init()
 {
+    SetActive(true);
     SpatArea::OnVirtualBaseClassesContructed();
 }
 

@@ -89,6 +89,37 @@ void Exciter::Paint(Graphics& g)
 }
 
 
+// = = = = = = = = = = Interactions = = = = = = = = = =
+
+void Exciter::OnAreaExcitedByThis(std::shared_ptr<IInteractiveArea> areaExcitedByThis)
+{
+    // On fait la recherche par sécurité...
+    if ( findAreaInteracting(areaExcitedByThis) == areasInteractingWith.end() )
+        areasInteractingWith.push_back(areaExcitedByThis);
+    else
+        DBG("Double notification d'excitation d'une aire par cet excitateur");
+}
+void Exciter::OnAreaNotExcitedByThis(std::shared_ptr<IInteractiveArea> areaExcitedByThis)
+{
+    // On fait la recherche, et on vérifie le résultat par sécurité...
+    auto it = findAreaInteracting(areaExcitedByThis);
+    if ( it != areasInteractingWith.end() )
+        areasInteractingWith.erase(it);
+    else
+        DBG("Double notification de fin d'excitation d'une aire par cet excitateur");
+}
+
+std::vector< std::weak_ptr<IInteractiveArea> >::iterator Exciter::findAreaInteracting(std::shared_ptr<IInteractiveArea> areaToFind)
+{
+    // naive research
+    for (auto it = areasInteractingWith.begin() ; it != areasInteractingWith.end() ; ++it )
+        if ( (*it).lock() == areaToFind )
+            return it;
+    // if nothing found :
+    return areasInteractingWith.end();
+}
+
+
 
 // = = = = = = = = = = XML import/export = = = = = = = = = =
 std::shared_ptr<bptree::ptree> Exciter::GetTree()

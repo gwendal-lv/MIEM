@@ -10,17 +10,16 @@
 
 #include "SpatArea.h"
 
+#include "Exciter.h"
+
 using namespace Miam;
 
 
 // = = = = = = Construction/Destruction (no polymorphic cloning) = = = = = =
-/*
-SpatArea::SpatArea(bptree::ptree& areaTree)
+SpatArea::SpatArea()
 {
-    // We can't do anything really in here...
-    // The link to a spat state must be done externally...
 }
-*/
+
 
 
 // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
@@ -54,7 +53,7 @@ void SpatArea::LinkToSpatState(std::shared_ptr< SpatState<double> > spatState)
     {
         // De-registering if necessary
         if (linkedSpatState)
-            linkedSpatState->UnlinkToArea(shared_from_this());
+            linkedSpatState->UnlinkToArea(getCastedSharedFromThis());
         
         // Internal updates
         linkedSpatState = spatState;
@@ -63,7 +62,7 @@ void SpatArea::LinkToSpatState(std::shared_ptr< SpatState<double> > spatState)
             SetName(linkedSpatState->GetName(false));
         
             // Registering if necessary
-            linkedSpatState->LinkToArea(shared_from_this());
+            linkedSpatState->LinkToArea(getCastedSharedFromThis());
         }
         else
             setDefaultSpatName();

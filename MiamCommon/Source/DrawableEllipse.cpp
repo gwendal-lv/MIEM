@@ -115,6 +115,12 @@ void DrawableEllipse::CanvasResized(SceneCanvasComponent* _parentCanvas)
 	DrawableArea::CanvasResized(_parentCanvas);
 
 	createJucePolygon(parentCanvas->getWidth(), parentCanvas->getHeight());
+        
+    // Pixel contour points
+    contourPointsInPixels.clear();
+    boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scaler(parentCanvas->getWidth(), parentCanvas->getHeight());
+    boost::geometry::transform(contourPoints, contourPointsInPixels, scaler);
+
 }
 
 void DrawableEllipse::recreateContourPoints(int width, int height)

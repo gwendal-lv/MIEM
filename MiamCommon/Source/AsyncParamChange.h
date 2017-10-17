@@ -28,7 +28,11 @@ namespace Miam
         AsyncParamChange() {Reset();}
         
         
-        
+        /// \brief The following parameter types are quite generic,
+        /// and they can be detailed using the IDs from ParametersIds.h
+        ///
+        /// The IDs from ParametersIds.h can be stored within the
+        /// Id1, Id2 integer atributes.
         enum ParamType {
             
             None,

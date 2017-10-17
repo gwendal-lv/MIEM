@@ -62,7 +62,7 @@ private:
     /// constructed by the MainWindow before the View module.
     void SetMiamView(View* _view);
     
-    
+    BackgroundComponent* GetBackgroundComponent() const {return backgroundComponent.get(); }
     
     
     // = = = = = = = = = = METHODS (JUCE AND USER-DEFINED) = = = = = = = = = =

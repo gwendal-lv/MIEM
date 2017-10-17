@@ -13,7 +13,6 @@
 
 #include "IInteractiveArea.h"
 
-#include "AreaEvent.h"
 
 namespace Miam
 {

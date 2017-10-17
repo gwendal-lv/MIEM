@@ -60,6 +60,7 @@ namespace Miam
 
 		static double ComputePositiveAngle(bpt p);
         
+        /// \brief Computes the intersection point between the lines AB and CD.
 		static Point<double> ComputeIntersectionPoint(Point<double> A, Point<double> B, Point<double> C, Point<double> D);
 
 		static bpt ComputeIntersectionPoint(bpt A, bpt B, bpt C, bpt D);

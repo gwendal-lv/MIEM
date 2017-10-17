@@ -93,6 +93,7 @@ namespace Miam
 		bpt center; ///< Normalized center coordinates (x, y in [0.0,1.0])
 		bpt centerInPixels; ///< Center coordinates in pixels (relative to a canvas)
         bool displayCenter;
+        bpolygon contourPointsInPixels; ///< Caracteristic points (coordinates in pixels) along the contour of the area (not necessarily drawn)
         
         // Display data
         protected :
@@ -102,7 +103,7 @@ namespace Miam
         
         /// \brief The lowest opacity of a displayed area
         static const uint8 lowFillOpacityUint8 = 40;
-        float getLowFillOpacity() const { return (float)(lowFillOpacityUint8) / 255.0f; }
+        virtual float getLowFillOpacity() const override { return (float)(lowFillOpacityUint8) / 255.0f; }
         
         Colour contourColour; ///< Solid color of of the external shape of the 2D area.
         float contourWidth; ///< Width (in pixels) of of the external shape of the 2D area.

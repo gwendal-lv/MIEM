@@ -57,6 +57,8 @@ public:
     void CompleteInitialization(Presenter*);
     void CompleteInitialization(MultiCanvasComponent*);
 
+    void DisplayInfo(const String& stringToDisplay);
+
     //[/UserMethods]
 
     void paint (Graphics& g) override;
@@ -82,13 +84,13 @@ private:
 
     /// \brief Owned by the Presenter
     MultiCanvasComponent* multiCanvasComponent;
-    
+
     ScopedPointer<TouchMainMenu> touchMainMenu;
 
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<Label> label;
+    ScopedPointer<Label> mainInfoLabel;
     ScopedPointer<ImageButton> imageButton;
 
 

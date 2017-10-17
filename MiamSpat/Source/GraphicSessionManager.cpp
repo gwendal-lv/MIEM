@@ -45,8 +45,8 @@ GraphicSessionManager::GraphicSessionManager(Presenter* presenter_, View* view_)
     for (size_t i=0 ; i<canvasManagers.size() ; i++)
     {
         // After canvases are created : scenes creation
-        // DEFAULT SCENES, TO BE CHANGED
-        canvasManagers[i]->AddScene("Scène 1, pour le plaisir");
+        // Juste 1 scène pour ne pas avoir ne pointeur sur NULL
+        canvasManagers[i]->AddScene("[Scène vide]");
     }
     
     
@@ -100,8 +100,19 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
         // Event about an Exciter in particular : we'll have to update the spat mix !
         if (auto exciter = std::dynamic_pointer_cast<Exciter>(areaE->GetConcernedArea()))
         {
-            //std::cout << "mix à mettre à jour" << std::endl;
+            switch (areaE->GetType())
+            {
+                case AreaEventType::Added :
+                case AreaEventType::Deleted :
+                case AreaEventType::Translation :
+                    
+                    break;
+                    
+                default:
+                    break;
+            }
         }
+        /*
 		else if (auto area = std::dynamic_pointer_cast<EditableArea>(areaE->GetConcernedArea()))
 		{
 			switch (areaE->GetType())
@@ -116,6 +127,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				break;
 			}
 		}
+         */
     }
 	else if (auto sceneE = std::dynamic_pointer_cast<SceneEvent>(event_))
 	{
@@ -155,6 +167,18 @@ void GraphicSessionManager::DisplayInfo(String info)
 {
     view->DisplayInfo(info);
 }
+
+
+
+// = = = = = = = = = = XML import/export = = = = = = = = = =
+
+void GraphicSessionManager::SetFromTree(bptree::ptree& graphicSessionTree)
+{
+    GraphicSpatSessionManager::SetFromTree(graphicSessionTree);
+    
+    // Plus aucun traitement supplémentaire, pour l'instant...
+}
+
 
 
 

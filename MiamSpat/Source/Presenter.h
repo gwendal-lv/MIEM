@@ -86,6 +86,11 @@ namespace Miam {
         // Events from the View
         AppMode appModeChangeRequest(AppMode newAppMode);
         
+        // Event from the Model
+        /// \brief Processes the data then displays it. An empty tree means
+        /// that the connection failed.
+        void OnNewConnectionStatus(bool isConnectionEstablished, std::shared_ptr<bptree::ptree> connectionParametersTree);
+        
         // = = = = = XML loading only = = = = =
         virtual void SetConfigurationFromTree(bptree::ptree&) override;
 

@@ -78,7 +78,7 @@ void View::ChangeAppMode(AppMode newAppMode)
 }
 void View::DisplayInfo(const String& message)
 {
-    throw std::runtime_error("Unimplemented behavior on info display request (info = " + message.toStdString());
+    mainContentComponent->GetBackgroundComponent()->DisplayInfo(message);
 }
 
 void View::SetTitle(std::string title)

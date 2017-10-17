@@ -27,8 +27,13 @@ namespace Miam {
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
         private :
         Presenter* presenter;
+        std::shared_ptr<MiamOscSender<double>> miamOscSender;
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
+        public :
+        protected :
+        std::shared_ptr<MiamOscSender<double>>& getMainSpatSender()
+        { return miamOscSender; };
         public :
         
         
@@ -45,6 +50,9 @@ namespace Miam {
         void update() override;
         
         
+        // - - - - - Property tree (for XML) import/export - - - - -
+        public :
+        virtual void SetConfigurationFromTree(bptree::ptree& tree) override;
         
         
     };

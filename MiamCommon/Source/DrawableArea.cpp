@@ -85,7 +85,7 @@ void DrawableArea::Paint(Graphics& g)
     // DEBUG pb MT getGlyphPosition
     // DEBUG pb MT getGlyphPosition
     // DEBUG pb MT getGlyphPosition
-    if (isNameVisible && false)
+    if (isNameVisible && /* DISABLES CODE */ (false))
     {
         g.setColour(Colours::black); // black shadow
         g.drawSingleLineText(name,
@@ -96,6 +96,8 @@ void DrawableArea::Paint(Graphics& g)
                              (int)centerInPixels.get<0>(),
                              (int)(centerInPixels.get<1>() -centerCircleRadius*2));
     }
+    
+    
     // DEBUG pb MT getGlyphPosition
     // DEBUG pb MT getGlyphPosition
     // DEBUG pb MT getGlyphPosition

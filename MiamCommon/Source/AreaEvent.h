@@ -79,6 +79,11 @@ namespace Miam
         ColorChanged, ///< The contour and/or background color of the area has just changed
         
         
+        
+        //  - - - - - Event related to interactions quantification - - - - -
+        ExcitementAmountChanged, ///< The total amount of excitation on this area has changed
+        
+        
     };
     
     

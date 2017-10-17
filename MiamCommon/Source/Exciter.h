@@ -48,13 +48,21 @@ namespace Miam
         double const deltaBrightnessAmplitude = 0.3;
         double const deltaBrightnessOffset = 0.7;
         
+        // Lien avec des aires graphiques
+        // Le + optimisé serait une liste, mais vu le nombre d'éléments stockés (10aine au grand max)
+        // on s'en fout complètement...
+        std::vector< std::weak_ptr<IInteractiveArea> > areasInteractingWith;
+        
         // Pour synchronisation du clignotement de tous les excitateurs ensemble.
         private :
         bool isAnimationSynchronized;
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
-        virtual std::string GetTypeAsString() const override {return "Exciter";}
+        virtual std::string GetTypeAsString() const override { return "Exciter"; }
+        
+        // Pour calcul d'interaction externe
+        bpt GetCenterInPixels() const {return centerInPixels;}
         
         /// \brief Sets whether this exciter is animated the same as the others exciters that
         /// have this option activated.
@@ -83,8 +91,19 @@ namespace Miam
         /// by the EditableEllipse::Paint() method
         virtual void Paint(Graphics& g) override;
 
+        // - - - - - Interactions - - - - -
+        /// \brief Peut être appelé par une aire excitée par cette instance.
+        void OnAreaExcitedByThis(std::shared_ptr<IInteractiveArea> areaExcitedByThis);
+        /// \brief Peut être appelé par une aire qui n'est plus excitée par cette instance.
+        void OnAreaNotExcitedByThis(std::shared_ptr<IInteractiveArea> areaExcitedByThis);
+        
+        private :
+        /// \brief Recherche d'un shared_ptr parmi un tableau de weak_ptr.
+        /// L'itérateur retourné peut pointer sur .end()
+        std::vector< std::weak_ptr<IInteractiveArea> >::iterator findAreaInteracting(std::shared_ptr<IInteractiveArea> areaToFind);
         
         // - - - - - XML import/export - - - - -
+        public :
         virtual std::shared_ptr<bptree::ptree> GetTree() override;
         
     };

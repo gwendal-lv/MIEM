@@ -102,6 +102,17 @@ namespace Miam {
         
         
         // ----- Events from the Presenter itself -----
+        /// \brief Selects all event that might have an effect on the global spatialization
+        /// state, translates it into data that the Model understands, then sends it
+        /// to the Model via the Presenter lock-free queue.
+        ///
+        /// Seule info importante à transmettre :
+        /// - changement d'excitation d'une aire graphique
+        ///   (qu'on transmet le + vite possible !!)
+        ///   -> cette info sera dans un event spécial déjà traîté dans un CanvasInteractor
+        ///
+        /// Infos dont on se fout :
+        /// - toute info géométrique sur une aire...
         virtual void HandleEventSync(std::shared_ptr<GraphicEvent> event_) override;
         
         
@@ -109,6 +120,9 @@ namespace Miam {
         // ----- Event to View -----
         void DisplayInfo(String info) override;
 
+        
+        // - - - - - XML import/export - - - - -
+        virtual void SetFromTree(bptree::ptree& graphicSessionTree) override;
 
     };
     

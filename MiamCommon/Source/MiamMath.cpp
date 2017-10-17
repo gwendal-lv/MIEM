@@ -94,26 +94,26 @@ double Math::ComputePositiveAngle(bpt p)
 Point<double> Math::ComputeIntersectionPoint(Point<double> A, Point<double> B, Point<double> C, Point<double> D)
 {
 	// Planar lines cartesian representations (easier to compute intersection)
-	// Line (AT) : a.x + b.y + c = 0
-	// Line (BC) : alpha.X + Beta.Y + Gamma = 0
+	// Line (AB) : a.x + b.y + c = 0
+	// Line (CD) : alpha.X + Beta.Y + Gamma = 0
 	double a, b, c, alpha, beta, gamma;
 	if (A.getX() == B.getX()) // polygon has a perfect vertical side
 	{
 		a = 1.0;
 		b = 0.0;
-		c = -B.getX();
+		c = -A.getX();
 	}
 	else // we can use usual affin function formulas
 	{
-		a = -(A.getY() - B.getY()) / (A.getX() - B.getX());
+		a = -(B.getY() - A.getY()) / (B.getX() - A.getX());
 		b = 1.0;
-		c = -B.getY() + B.getX() * (A.getY() - A.getY()) / (A.getX() - B.getX());
+		c = -A.getY() + A.getX() * (B.getY() - A.getY()) / (B.getX() - A.getX());
 	}
 	if (C.getX() == D.getX()) // vertical side
 	{
 		alpha = 1.0;
 		beta = 0.0;
-		gamma = -D.getX();
+		gamma = -C.getX();
 	}
 	else // affin description
 	{
@@ -131,6 +131,7 @@ Point<double> Math::ComputeIntersectionPoint(Point<double> A, Point<double> B, P
 
 bpt Math::ComputeIntersectionPoint(bpt A, bpt B, bpt C, bpt D)
 {
+    throw std::runtime_error("Fonction bugguée, à re-transcrire devient la version avec points Juce (qui est maintenant corrigée depuis le 17/10/2017). Contient aussi du code inutile juste là-dessous.... -> ???");
 	boost::geometry::model::segment<bpt> L1(A,B), L2(C,D);
 	std::deque<bpt> J;//bpt J;
 	boost::geometry::intersection(L1, L2, J);

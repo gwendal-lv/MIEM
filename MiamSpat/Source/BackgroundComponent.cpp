@@ -35,14 +35,14 @@ BackgroundComponent::BackgroundComponent ()
     multiCanvasComponent = nullptr; // n'arrivera que + tard dans le code...
     //[/Constructor_pre]
 
-    addAndMakeVisible (label = new Label ("new label",
-                                          TRANS("Texte de texte qqqqq !")));
-    label->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
-    label->setJustificationType (Justification::centredTop);
-    label->setEditable (false, false, false);
-    label->setColour (Label::textColourId, Colour (0xff909090));
-    label->setColour (TextEditor::textColourId, Colours::black);
-    label->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+    addAndMakeVisible (mainInfoLabel = new Label ("Main Info label",
+                                                  TRANS("MIAM Spat")));
+    mainInfoLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    mainInfoLabel->setJustificationType (Justification::centredTop);
+    mainInfoLabel->setEditable (false, false, false);
+    mainInfoLabel->setColour (Label::textColourId, Colour (0xff909090));
+    mainInfoLabel->setColour (TextEditor::textColourId, Colours::black);
+    mainInfoLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
     addAndMakeVisible (imageButton = new ImageButton ("new button"));
     imageButton->addListener (this);
@@ -67,7 +67,7 @@ BackgroundComponent::~BackgroundComponent()
     //[Destructor_pre]. You can add your own custom destruction code here..
     //[/Destructor_pre]
 
-    label = nullptr;
+    mainInfoLabel = nullptr;
     imageButton = nullptr;
 
 
@@ -92,14 +92,14 @@ void BackgroundComponent::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    label->setBounds (8, getHeight() - 20, getWidth() - 54, 20);
+    mainInfoLabel->setBounds (8, getHeight() - 20, getWidth() - 54, 20);
     imageButton->setBounds (getWidth() - 28, getHeight() - 28, 28, 28);
     //[UserResized] Add your own custom resize handling here..
     if (multiCanvasComponent)
     {
         // Attention : remove from machin retourne le petit morceau découpé seulement !
         auto canvasesRectangle = getLocalBounds();
-        canvasesRectangle.removeFromBottom(label->getHeight());
+        canvasesRectangle.removeFromBottom(mainInfoLabel->getHeight());
         // Application : on laisse la place pour la barre de titre
         multiCanvasComponent->setBounds(canvasesRectangle);
     }
@@ -137,7 +137,10 @@ void BackgroundComponent::CompleteInitialization(MultiCanvasComponent* multiCanv
 
     multiCanvasComponent->CompleteInitialization();
 }
-
+void BackgroundComponent::DisplayInfo(const String& stringToDisplay)
+{
+    mainInfoLabel->setText(stringToDisplay, NotificationType::sendNotification);
+}
 //[/MiscUserCode]
 
 
@@ -155,12 +158,11 @@ BEGIN_JUCER_METADATA
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="0" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="ff303030"/>
-  <LABEL name="new label" id="346700aa23dd510d" memberName="label" virtualName=""
-         explicitFocusOrder="0" pos="8 0Rr 54M 20" textCol="ff909090"
-         edTextCol="ff000000" edBkgCol="0" labelText="Texte de texte qqqqq !"
-         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
-         justification="12"/>
+  <LABEL name="Main Info label" id="346700aa23dd510d" memberName="mainInfoLabel"
+         virtualName="" explicitFocusOrder="0" pos="8 0Rr 54M 20" textCol="ff909090"
+         edTextCol="ff000000" edBkgCol="0" labelText="MIAM Spat" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
+         fontsize="15" kerning="0" bold="0" italic="0" justification="12"/>
   <IMAGEBUTTON name="new button" id="83c438e933714a80" memberName="imageButton"
                virtualName="" explicitFocusOrder="0" pos="0Rr 0Rr 28 28" buttonText="new button"
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"

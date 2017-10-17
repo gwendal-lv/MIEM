@@ -101,7 +101,9 @@ namespace Miam
         
         /// \brief Sets the name that could be displayed on screen next to the center
         virtual void SetName(String newName) = 0;
-        
+        protected :
+        virtual float getLowFillOpacity() const = 0;
+        public :
         
         
         // - - - - - XML import/export - - - - -

@@ -81,7 +81,8 @@ void IGraphicSessionManager::SetSelectedCanvas(std::shared_ptr<MultiSceneCanvasI
         
         //setMode(GraphicSessionMode::CanvasSelected);
         
-        multiCanvasComponent->resized();
+        // Ligne ci-dessous pose un soucis de re-dessin à chaque clic sur un excitateur...
+        //multiCanvasComponent->resized();
     }
     else
     {

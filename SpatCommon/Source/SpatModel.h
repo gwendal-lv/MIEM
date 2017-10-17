@@ -113,7 +113,7 @@ namespace Miam
         public :
         /// \brief Returns the property tree describing all model settings data
         std::shared_ptr<bptree::ptree> GetConfigurationTree();
-        void SetConfigurationFromTree(bptree::ptree& tree);
+        virtual void SetConfigurationFromTree(bptree::ptree& tree);
         
     };
     
