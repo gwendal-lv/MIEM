@@ -253,7 +253,7 @@
       </MODULEPATHS>
     </VS2015>
     <ANDROIDSTUDIO targetFolder="Builds/Android" androidSDKPath="" androidNDKPath=""
-                   gradleVersion="3.3" gradleToolchain="clang">
+                   gradleVersion="3.3" gradleToolchain="clang" extraDefs="__AMUSINGMOBILE">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" androidArchitectures="armeabi x86" isDebug="1" optimisation="1"
                        targetName="MiAmusing" headerPath="..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\&#10;..\..\..\"
