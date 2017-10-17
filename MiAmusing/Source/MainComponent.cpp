@@ -49,7 +49,7 @@ void MainContentComponent::resized()
 
 	if (multiCanvasComponent)
 	{
-		multiCanvasComponent->setBounds(50, 0, 550, getLocalBounds().getHeight());
+		multiCanvasComponent->setBounds(50, 0, getLocalBounds().getWidth()-50, getLocalBounds().getHeight());
 	}
 	if (editSceneC)
 		editSceneC->setBounds(0, 0, 50, getLocalBounds().getHeight());

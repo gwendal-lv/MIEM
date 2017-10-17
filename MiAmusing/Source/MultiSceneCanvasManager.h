@@ -85,6 +85,7 @@ namespace Amusing {
 		double getSpeed(std::shared_ptr<IEditableArea> area);
 		void ChangeVelocity(double newVelocity);
 		double getVelocity(std::shared_ptr<IEditableArea> area);
+		void SetMode(Miam::CanvasManagerMode newMode);
     };
     
     

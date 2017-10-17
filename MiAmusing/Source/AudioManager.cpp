@@ -19,30 +19,18 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "AudioManager.h"
 #include "AsyncParamChange.h"
-#include "ADSRSignal.h"
-#include "AmuSignal.h"
-#include "SquareSignal.h"
-#include "TriangleSignal.h"
-#include "SinusSignal.h"
+
+
 using namespace Amusing;
 //==============================================================================
-AudioManager::AudioManager(AmusingModel *m_model) : model(m_model), Nsources(0), state(Stop)
+AudioManager::AudioManager(AmusingModel *m_model) : model(m_model), state(Stop), playInternalSynth(false), timeStamp(0)
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
 	DBG("AudioManager::AudioManager");
 
+	model->sharedAudioDeviceManager->addAudioCallback(&recorder);
 
-	
-
-
-	
-	
-	
-	
-
-	//initialise(0, 2, nullptr, true);
-	//addAudioCallback(this);
 	setSource(this);
 	runThread = true;
 	T = std::thread(&AudioManager::threadFunc, this);
@@ -79,7 +67,7 @@ AudioManager::~AudioManager()
 	else
 		DBG("still exist");
 
-	
+	model->sharedAudioDeviceManager->removeAudioCallback(&recorder);
 	model->removeDeviceManagerFromOptionWindow();
 	//delete midiOuput;
 }
@@ -90,6 +78,10 @@ void AudioManager::prepareToPlay(int samplesPerBlockExpected, double _sampleRate
 	DBG("AudioManager::prepareToPlay");
 	currentSamplesPerBlock = samplesPerBlockExpected;
 	currentSampleRate = _sampleRate;
+
+	midiCollector.reset(_sampleRate);
+	synth.setCurrentPlaybackSampleRate(_sampleRate);
+	synth.addVoice(new SamplerVoice);
 	
 	
 	metronome.setAudioParameter(samplesPerBlockExpected, _sampleRate);
@@ -100,19 +92,20 @@ void AudioManager::prepareToPlay(int samplesPerBlockExpected, double _sampleRate
 	
 
 	midiOuput = model->getMidiOutput();
-	
+	if (midiOuput == nullptr)
+		setUsingSampledSound();
 	
 	
 }
 void AudioManager::releaseResources()
 {
 	DBG("AudioManager::releaseResources");
-	for (int j = 0; j < maxSize; j++)
+	/*for (int j = 0; j < maxSize; j++)
 	{
 		if (timeLinesKnown[j] != 0)
 			timeLinesKnown[j] = 0;
 
-	}
+	}*/
 
 	/*runThread = false;
 	T.join();*/
@@ -132,7 +125,9 @@ void AudioManager::releaseResources()
 }
 void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 {
-	//DBG(String(position));
+	bufferToFill.clearActiveBufferRegion(); // buffer is the same for input and output -> need to clear the buffer before creating the output.
+											// otherwise, the input will be added to the output
+
 	getParameters();
 	getNewTimeLines();
 	getNewPlayHeads();
@@ -142,9 +137,9 @@ void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 		sendPosition();
 		for (int i = 0; i < bufferToFill.numSamples; ++i)
 		{
-
-			if (midiOuput != nullptr)
-			{
+			timeStamp++;
+			//if (midiOuput != nullptr)
+			//{
 				//midiSender->process(position);
 				for (int j = 0; j < maxSize; j++)
 				{
@@ -153,7 +148,7 @@ void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 
 
 				}
-			}
+			//}
 			++position;
 			if (position == periode)
 			{
@@ -171,7 +166,14 @@ void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 		break;
 	}
 	
-	bufferToFill.clearActiveBufferRegion();
+	if (playInternalSynth)
+	{
+		MidiBuffer incomingMidi;
+		midiCollector.removeNextBlockOfMessages(incomingMidi, bufferToFill.numSamples); // recupere les messages MIDI à envoyer du midiCollector dans incomingMidi
+		synth.renderNextBlock(*bufferToFill.buffer, incomingMidi, 0, bufferToFill.numSamples); // le synthe interne transforme ces messages MIDI en samples
+	}
+	else
+		bufferToFill.clearActiveBufferRegion();
 	//metronome.update();
 	//midiBuffer.addEvent(metronome.getNextMidiMsg(), 4);
 }
@@ -198,9 +200,21 @@ void AudioManager::getNewPlayHeads()
 
 void AudioManager::sendMidiMessage(MidiMessage msg)
 {
-	if (midiOuput != nullptr)
+	if (playInternalSynth)
 	{
-		midiOuput->sendMessageNow(msg);
+		double s = (double)timeStamp / currentSampleRate;
+		if(s== 0.0)
+			s = (double)(timeStamp+1) / currentSampleRate;
+		//double ms = s * 1000;
+		msg.setTimeStamp(s);
+		midiCollector.addMessageToQueue(msg);
+	}
+	else
+	{
+		if (midiOuput != nullptr)
+		{
+			midiOuput->sendMessageNow(msg);
+		}
 	}
 }
 
@@ -229,6 +243,50 @@ void AudioManager::sendPosition()
 	//param.DoubleValue = (double)position / (double)periode; //+ 1.0/8.0;
 	//model->SendParamChange(param);
 	
+}
+
+void Amusing::AudioManager::startRecording()
+{
+	if (recorder.isRecording())
+	{
+		DBG("already recording");
+		std::cout << "already recording" << std::endl;
+	}
+	else
+	{
+		playInternalSynth = false;
+		const File file(File::getSpecialLocation(File::userDocumentsDirectory)
+			.getNonexistentChildFile("Juce Test Recording 0", ".wav"));
+		recorder.startRecording(file);
+	}
+}
+
+void Amusing::AudioManager::setUsingSampledSound()
+{
+	WavAudioFormat wavFormat;
+	audioFormatManager.registerBasicFormats();
+	//const File file("C:\\Users\\ayup1\\Documents\\Juce Test Recording 0.wav"); // Downloads\\Bass-Drum-1.wav");
+	//ScopedPointer<AudioFormatReader> audioReader = audioFormatManager.createReaderFor(file);
+
+	ScopedPointer<AudioFormatReader> audioReader(wavFormat.createReaderFor(new MemoryInputStream(BinaryData::cello_wav,
+	BinaryData::cello_wavSize,
+	false),
+	true));
+
+	BigInteger allNotes;
+	allNotes.setRange(0, 128, true);
+
+	synth.clearSounds();
+	synth.addSound(new SamplerSound("demo sound",
+		*audioReader,
+		allNotes,
+		74,   // root midi note
+		0.1,  // attack time
+		0.1,  // release time
+		10.0  // maximum sample length
+	));
+
+	playInternalSynth = true;
 }
 
 void AudioManager::getParameters()
@@ -506,6 +564,12 @@ void AudioManager::threadFunc()
 	{
 		if (playHeads[i] != nullptr)
 			delete playHeads[i];
+	}
+	for (int j = 0; j < maxSize; j++)
+	{
+		if (timeLinesKnown[j] != 0)
+			timeLinesKnown[j] = 0;
+
 	}
 	DBG("exit thread");
 }

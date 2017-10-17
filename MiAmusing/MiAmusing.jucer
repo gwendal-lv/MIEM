@@ -7,6 +7,9 @@
   <MAINGROUP id="Ak6ojc" name="MiAmusing">
     <GROUP id="{E74684B7-0B02-F2F7-C571-317039AB4495}" name="Source">
       <GROUP id="{8B585BA3-71E5-255C-C070-4910B268744C}" name="Model">
+        <FILE id="urht6A" name="AudioRecorder.cpp" compile="1" resource="0"
+              file="Source/AudioRecorder.cpp"/>
+        <FILE id="NUdghm" name="AudioRecorder.h" compile="0" resource="0" file="Source/AudioRecorder.h"/>
         <FILE id="tsro0s" name="ReadingHead.cpp" compile="1" resource="0" file="Source/ReadingHead.cpp"/>
         <FILE id="sh1gU7" name="ReadingHead.h" compile="0" resource="0" file="Source/ReadingHead.h"/>
         <FILE id="EqpVAZ" name="BaseMidiSender.cpp" compile="1" resource="0"
@@ -59,6 +62,10 @@
               file="Source/AmusingSceneComponent.h"/>
         <FILE id="zL9zBL" name="AreaOptions.cpp" compile="1" resource="0" file="Source/AreaOptions.cpp"/>
         <FILE id="HIcl1x" name="AreaOptions.h" compile="0" resource="0" file="Source/AreaOptions.h"/>
+        <FILE id="luxgya" name="AudioDeviceAndMidiOutputSelectorComponent.cpp"
+              compile="1" resource="0" file="Source/AudioDeviceAndMidiOutputSelectorComponent.cpp"/>
+        <FILE id="Xq7fsV" name="AudioDeviceAndMidiOutputSelectorComponent.h"
+              compile="0" resource="0" file="Source/AudioDeviceAndMidiOutputSelectorComponent.h"/>
         <FILE id="wihbQV" name="editScene.cpp" compile="1" resource="0" file="Source/editScene.cpp"/>
         <FILE id="yBAnTJ" name="editScene.h" compile="0" resource="0" file="Source/editScene.h"/>
         <FILE id="uj6fbl" name="Follower.cpp" compile="1" resource="0" file="Source/Follower.cpp"/>
@@ -80,6 +87,7 @@
         <FILE id="GceKis" name="View.cpp" compile="1" resource="0" file="Source/View.cpp"/>
         <FILE id="AJOEwp" name="View.h" compile="0" resource="0" file="Source/View.h"/>
       </GROUP>
+      <FILE id="GOduOp" name="cello.wav" compile="0" resource="1" file="Source/cello.wav"/>
     </GROUP>
     <FILE id="v8jCgE" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
     <GROUP id="{593B3C8B-4E9F-6C95-BD9D-6562983482B8}" name="MiamCommonSource">

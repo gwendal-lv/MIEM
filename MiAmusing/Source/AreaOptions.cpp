@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.1.1
+  Created with Projucer version: 5.1.2
 
   ------------------------------------------------------------------------------
 
@@ -94,7 +94,7 @@ AreaOptions::~AreaOptions()
 }
 
 //==============================================================================
-void AreaOptions::paint (Graphics& /*g*/)
+void AreaOptions::paint (Graphics& g)
 {
     //[UserPrePaint] Add your own custom painting code here..
     //[/UserPrePaint]

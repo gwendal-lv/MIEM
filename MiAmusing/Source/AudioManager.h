@@ -24,6 +24,7 @@
 #include "ReadingHead.h"
 
 #include "AsyncParamChange.h"
+#include "AudioRecorder.h"
 
 // Pre-declaration for pointer members
 namespace Amusing {
@@ -62,14 +63,20 @@ namespace Amusing {
 
 		AudioManagerState state; // Play, Pause, ...
 		
-		// audio thread caracteristics
+		// audio thread parameters
 		int currentSamplesPerBlock;
 		double currentSampleRate;
 
-		const int Nmax = 1024;
-		int Nsources;
+		// internal synth + recorder to record own sound
+		Synthesiser synth;
+		AudioRecorder recorder;
+		MidiMessageCollector midiCollector; // midi message to send to the internal synth
+		AudioFormatManager audioFormatManager; // so we can read some audio format
 
-
+		bool playInternalSynth;
+		void startRecording();
+		void setUsingSampledSound();
+		int timeStamp;
 
 		int periode;
 		int position;

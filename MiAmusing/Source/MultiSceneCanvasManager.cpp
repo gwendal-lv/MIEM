@@ -388,3 +388,92 @@ double MultiSceneCanvasManager::getVelocity(std::shared_ptr<IEditableArea> area)
 	else
 		return 64.0;
 }
+
+// - - - - - - - - - - running Mode - - - - - - - - - -
+
+// The cases below are to be FORCED by the IGraphicSessionManager !
+// Or by the canvasinteractor itself
+void MultiSceneCanvasManager::SetMode(Miam::CanvasManagerMode newMode)
+{
+	/* Comportement assez asymétrique concernant les excitateurs.
+	* Si on sort d'un mode excitateur, on arrête toutes les transfos (et on vérifie
+	* ça hors du switch juste en-dessous, à la dégueu quoi (à améliorer))
+	* Si on entre dans le mode excitateur : c'est géré dans le switch proprement
+	*/
+	if (
+		(mode == CanvasManagerMode::ExcitersEdition || mode == CanvasManagerMode::ExciterSelected)
+		&&
+		(mode != CanvasManagerMode::ExcitersEdition && mode != CanvasManagerMode::ExciterSelected)
+		)
+	{
+		selectedScene->StopCurrentTransformations();
+	}
+
+	// We don't do a specific action on every mode change !
+	// But a few require checks and action
+	switch (newMode) {
+
+	case CanvasManagerMode::Unselected:
+		// Unselection of a selected area (1 area selected for all canvases...)
+		// And everything becomes dark, for another canvas to become
+		if (selectedScene) // on first scene adding... there would be a problem
+		{
+			auto areaE = selectedScene->SetSelectedArea(nullptr, false);
+			selectedScene->EnableExcitersLowOpacity(true);
+			selectedScene->EnableAreasLowOpacity(true);
+			// Pas d'évènements renvoyés pour les opacités : on update le tout
+			recreateAllAsyncDrawableObjects();
+			//handleAndSendAreaEventSync(areaE);
+		}
+		// Graphical updates
+		if (mode != CanvasManagerMode::Unselected)
+		{
+			canvasComponent->SetIsSelectedForEditing(false);
+		}
+		break;
+
+	case CanvasManagerMode::SceneOnlySelected:
+
+		// à quoi servent VRAIMENT les lignes là-dessous ?
+		/*if (selectedScene) // on first scene adding... there would be a problem
+		GetSelectedScene()->SetSelectedArea(nullptr, false);*/
+		// Graphical updates
+		if (mode == CanvasManagerMode::Unselected)
+		{
+			canvasComponent->SetIsSelectedForEditing(true);
+		}
+
+		// Mise en quasi-transparence des excitateurs seulement
+		if (selectedScene) // sinon pb à l'initialisation
+		{
+			
+			selectedScene->EnableAreasLowOpacity(false);
+			// Pas d'évènements renvoyés : on update le tout
+			recreateAllAsyncDrawableObjects();
+		}
+		break;
+
+		// Quand on passe en mode excitateurs (on y passe forcément avant
+		// d'en sélectionner un...), on arrête les transfos en cours
+		// !! On doit vérifier qu'on était pas déjà en mode excitateurs !
+	case CanvasManagerMode::ExcitersEdition:
+		if (mode != CanvasManagerMode::ExciterSelected)
+			selectedScene->StopCurrentTransformations();
+
+		// Mise en quasi-transparence des aires graphiques à exciter seulement
+		selectedScene->EnableExcitersLowOpacity(false);
+		selectedScene->EnableAreasLowOpacity(true);
+		// Pas d'évènements renvoyés : on update le tout
+		recreateAllAsyncDrawableObjects();
+		break;
+
+		// Default case : we just apply the new mode
+	default:
+		break;
+	}
+
+	mode = newMode;
+
+
+	graphicSessionManager->CanvasModeChanged(mode);
+}

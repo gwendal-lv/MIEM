@@ -311,7 +311,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddCursor(std::shared_ptr<IDrawableArea
 
 		//ajouter le nouveau curseur à la liste de curseurs
 		//cursors.push_back(newCursor);
-		std::shared_ptr<AreaEvent> areaE = AddExciter(newCursor);
+		std::shared_ptr<AreaEvent> areaE = AddExciter(newCursor,false);
 
 		// il faut l'associer à une aire : chercher l'aire concernée ou la passer en paramètre
 		// - dire à l'aire qu'elle est associée à une forme (voir si toujours nécessaire -> oui car c'est l'aire qui lui fournit sa vitesse...)

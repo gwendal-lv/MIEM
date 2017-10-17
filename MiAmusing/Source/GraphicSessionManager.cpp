@@ -165,7 +165,8 @@ int GraphicSessionManager::circleToNote(int numCirc)
 {
 	//int gamme[7] = { 60, 62, 64, 65, 67, 69, 71 }; // juste
 	//int gamme[7] = { 36, 38, 39, 41, 43, 45, 46 }; // 2 bemols
-	int gamme[7] = { 48, 50, 52, 53, 55, 57, 59 };
+	//int gamme[7] = { 48, 50, 52, 53, 55, 57, 59 };
+	int gamme[7] = { 100, 100, 100, 100, 100, 100, 100 };
 	return gamme[numCirc];
 }
 

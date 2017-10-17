@@ -37,6 +37,8 @@ public:
 	bool setReadingPosition(double p);
 	void setCenterPositionNormalize(bpt newCenter);
 
+	void Paint(Graphics & g) override;
+
 private:
 	JUCE_LEAK_DETECTOR(Cursor)
 	double speed;

@@ -220,3 +220,9 @@ void Cursor::setCenterPositionNormalize(bpt newCenter)
 	Translate(translation);
 	//DBG((String)center.get<0>() + " " + (String)center.get<1>() + "setCenterPositionNormal");
 }
+
+void Cursor::Paint(Graphics& g)
+{
+	DBG("paintOpacity : " + (String)fillOpacity);
+	EditableEllipse::Paint(g);
+}
