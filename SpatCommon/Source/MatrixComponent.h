@@ -204,7 +204,7 @@ namespace Miam
         
         void resized() override
         {
-            setSize(maxRowsCount*itemW, maxColsCount*itemH);
+            setSize((int)maxRowsCount*itemW, (int)maxColsCount*itemH);
         }
         
         void RepositionGuiObjects()
@@ -216,7 +216,7 @@ namespace Miam
                 // j repesents a *graphical* column (= matrix col now...)
                 for (int j=0 ; j<maxColsCount ; j++)
                 {
-                    int idx = i*maxRowsCount + j; // graphically one col further than the matrix
+                    int idx = i*(int)maxRowsCount + j; // graphically one col further than the matrix
                     sliders[idx]->setBounds((int)round(j*itemW), (int)round(i*itemH), (int)round(itemW), (int)round(itemH));
                 }
             }

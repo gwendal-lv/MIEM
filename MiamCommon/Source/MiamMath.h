@@ -12,7 +12,9 @@
 #define MIAMMATH_H_INCLUDED
 
 #ifdef _MSC_VER
-#define _USE_MATH_DEFINES // for C++  
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES // for C++
+#endif
 #include <math.h>
 #endif
 

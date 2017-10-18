@@ -28,7 +28,8 @@ using namespace Miam;
 
 GraphicSessionManager::GraphicSessionManager(View* _view, Presenter* presenter_) :
     GraphicSpatSessionManager(presenter_),
-    view(_view)
+    view(_view),
+	mode(GraphicSessionMode::Null)
 {
     setMode(GraphicSessionMode::Loading);
     

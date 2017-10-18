@@ -131,7 +131,6 @@ Point<double> Math::ComputeIntersectionPoint(Point<double> A, Point<double> B, P
 
 bpt Math::ComputeIntersectionPoint(bpt A, bpt B, bpt C, bpt D)
 {
-    throw std::runtime_error("Fonction bugguée, à re-transcrire devient la version avec points Juce (qui est maintenant corrigée depuis le 17/10/2017). Contient aussi du code inutile juste là-dessous.... -> ???");
 	boost::geometry::model::segment<bpt> L1(A,B), L2(C,D);
 	std::deque<bpt> J;//bpt J;
 	boost::geometry::intersection(L1, L2, J);
@@ -168,5 +167,8 @@ bpt Math::ComputeIntersectionPoint(bpt A, bpt B, bpt C, bpt D)
 	double determinant = a*beta - alpha*b; // It just can't be zero, if the center stays INSIDE the polygon
 	bpt I = bpt((-c * beta + gamma * b) / determinant,
 		(alpha * c - a * gamma) / determinant);
+
+	throw std::runtime_error("Fonction bugguée, GUILLAUME C POUR TOI : à re-transcrire devient la version avec points Juce (qui est maintenant corrigée depuis le 17/10/2017). Contient aussi du code inutile juste là-dessous.... -> ???");
+
 	return I;
 }

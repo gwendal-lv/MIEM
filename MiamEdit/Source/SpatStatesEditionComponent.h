@@ -64,7 +64,7 @@ public:
     /// \brief Empty function : we'll deal with this editor with full
     /// up-to-date matrices only (to prevent any error with notifying
     /// and being notified of modifications...)
-    void OnSliderValueChanged(int row, int col, double value) override {}
+    void OnSliderValueChanged(int /*row*/, int /*col*/, double /*value*/) override {}
     // same thing (empty function, we save entire matrices only)
     void OnMatrixZeroed() override {}
 

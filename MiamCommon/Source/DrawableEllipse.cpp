@@ -88,7 +88,7 @@ void DrawableEllipse::createJucePolygon(int width, int height)
 
 	contour.applyTransform(AffineTransform::scale((float)width, (float)height));
 
-	contour.applyTransform(AffineTransform::rotation(rotationAngle, (float)center.get<0>() * (float)width, (float)center.get<1>() * (float)height));
+	contour.applyTransform(AffineTransform::rotation((float)rotationAngle, (float)center.get<0>() * (float)width, (float)center.get<1>() * (float)height));
 }
 
 DrawableEllipse::~DrawableEllipse()

@@ -274,7 +274,7 @@ void SpatStatesEditionComponent::UpdateStatesList(std::vector< std::shared_ptr<S
 
     // Addition of items==names one by one
     for (size_t i=0 ; i<newSpatStates.size() ; i++)
-        spatStatesComboBox->addItem(newSpatStates[i]->GetName(), i+1); // Id == Index+1
+        spatStatesComboBox->addItem(newSpatStates[i]->GetName(), (int)i+1); // Id == Index+1
     // Normally : no item selected at this point
     //editionManager->OnSpatStateSelectedById(spatStatesComboBox->getSelectedItemIndex());
 }

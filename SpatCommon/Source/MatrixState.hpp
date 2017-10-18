@@ -59,9 +59,9 @@ namespace Miam
         
         void AddOutput() override
         {throw std::logic_error("not implemented");}
-        void DeleteOutput(size_t i) override
+        void DeleteOutput(size_t /*i*/) override
         {throw std::logic_error("not implemented");}
-        void SwapOutputs(size_t i, size_t j) override
+        void SwapOutputs(size_t /*i*/, size_t /*j*/) override
         {throw std::logic_error("not implemented");}
         
         // - - - - - Input channels : add, delete, swap, ... - - - - -

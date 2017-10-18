@@ -70,7 +70,7 @@ namespace Miam
         
         
         // - - - - - Communication commands - - - - -
-        virtual void SendState(SpatState<T>& spatState) override
+        virtual void SendState(SpatState<T>& /*spatState*/) override
         {
             std::cout << "devrait envoyer un état de spat en OSC" << std::endl;
         }

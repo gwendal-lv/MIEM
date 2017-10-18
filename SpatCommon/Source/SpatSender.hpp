@@ -76,7 +76,7 @@ namespace Miam
             configurationTree->put("<xmlattr>.type", GetTypeAsString());
             return configurationTree;
         }
-        virtual void SetConfigurationFromTree(bptree::ptree& tree)
+        virtual void SetConfigurationFromTree(bptree::ptree& /*tree*/)
         {}
     };
     
