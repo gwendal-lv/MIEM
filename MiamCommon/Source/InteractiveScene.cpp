@@ -277,6 +277,12 @@ void InteractiveScene::SaveCurrentExcitersToInitialExciters()
 // - - - - - Selection events managing (orders from parent manager) - - - - -
 void InteractiveScene::OnSelection()
 {
+    // Seulement en mode de jeu : on actualise l'influence des excitateurs
+    if (canvasManager.lock()->GetMode() == CanvasManagerMode::PlayingWithExciters)
+    {
+        for (size_t i=0 ; i<currentExciters.size() ; i++)
+            testAreasInteractionsWithExciter(currentExciters[i]);
+    }
 }
 std::vector<std::shared_ptr<GraphicEvent>> InteractiveScene::OnUnselection()
 {
@@ -355,21 +361,12 @@ std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseDrag(const MouseEve
         
         // Création de l'évènement de l'excitateur seul, pour renvoi (dans un multi event, dans le doute)
         AreaEventType eventType = exciter->TryMovePoint(mouseE.position.toDouble());
-        auto multiAreaE = std::make_shared<MultiAreaEvent>(exciter, eventType, shared_from_this());
+        auto simpleAreaE = std::make_shared<AreaEvent>(exciter, eventType, shared_from_this());
         
-        // Modification possible des interactions : recherche obligatoire dans toutes les aires graphiques !
-        for (size_t i = 0 ; i < areas.size() ; i++)
-        {
-            // Si qqchose a changé, on renvoit l'info
-            auto areaE = areas[i]->UpdateInteraction(exciter);
-            if ( areaE->GetType() == AreaEventType::ExcitementAmountChanged )
-            {
-                DBG("nouveau poids d'interaction = " + std::to_string(areas[i]->GetTotalExcitementAmount()));
-                areaE->SetConcernedScene(shared_from_this()); // pas précisé dans l'aire, qui ne connaît pas son parent.
-                multiAreaE->AddAreaEvent( areaE );
-            }
-        }
-        
+        // Test sur toutes les aires
+        auto multiAreaE = testAreasInteractionsWithExciter(exciter);
+        multiAreaE->AddAreaEvent(simpleAreaE); // excitateur lui-même
+
         graphicE = multiAreaE;
     }
     
@@ -429,6 +426,33 @@ std::vector<std::shared_ptr<GraphicEvent>> InteractiveScene::StopCurrentTransfor
     }
     
     return areaEvents;
+}
+
+
+
+
+// = = = = = = = = = = Quantification, gestion des interactions = = = = = = = = = =
+
+std::shared_ptr<MultiAreaEvent> InteractiveScene::testAreasInteractionsWithExciter(std::shared_ptr<Exciter>& exciter)
+{
+    auto multiAreaE = std::make_shared<MultiAreaEvent>(); // event de base restera "NothingHappened"...
+    
+    // PASSE 1
+    for (size_t i = 0 ; i < areas.size() ; i++)
+    {
+        // Si qqchose a changé, on renvoit l'info
+        auto areaE = areas[i]->UpdateInteraction(exciter);
+        if ( areaE->GetType() == AreaEventType::ExcitementAmountChanged )
+        {
+            std::cout << areas[i]->GetTotalInteractionWeight() << std::endl;
+            areaE->SetConcernedScene(shared_from_this()); // pas précisé dans l'aire, qui ne connaît pas son parent.
+            multiAreaE->AddAreaEvent( areaE );
+        }
+    }
+    // PASSE 2 (à l'intérieur de l'excitateur, car il enregistre les modifs !)
+    exciter->NotifyNewExcitationToAreas();
+    
+    return multiAreaE;
 }
 
 

@@ -129,7 +129,6 @@ SubTriangle& InteractivePolygon::findSubTriangle(double angle)
     int i = 0;
     while (!subTriangles[i].ContainsAngle(angle))
         i++;
-    std::cout << i << std::endl;
     
     return subTriangles[i];
 }

@@ -239,7 +239,17 @@ namespace Miam
         virtual std::vector<std::shared_ptr<GraphicEvent>> StopCurrentTransformations();
 
         
+        // - - - - - Quantification, gestion des interactions - - - - -
+        private :
+        /// \brief Modification possible des interactions :
+        /// recherche obligatoire dans toutes les aires graphiques !
+        /// En 2 passes : d'abord on checke toutes les modifs (qui renvoient des events) puis on recalcule
+        /// les excitations en fonction du tout (car les excitateurs ont besoin que tout soit à jour)
+        std::shared_ptr<MultiAreaEvent> testAreasInteractionsWithExciter(std::shared_ptr<Exciter>& exciter);
+        
+        
         // - - - - - XML import/export - - - - -
+        public :
         /// \brief Exports the current areas of course, and the initial exciters saved
         /// (does not export the current active exciters)
         std::shared_ptr<bptree::ptree> GetTree();

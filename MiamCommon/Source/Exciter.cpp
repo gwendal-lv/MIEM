@@ -10,7 +10,11 @@
 
 #include "Exciter.h"
 
+#include "MultiAreaEvent.h"
+
 #include <cmath>
+#include <algorithm>
+#include <numeric> // std::accumulate
 
 using namespace Miam;
 
@@ -93,47 +97,41 @@ void Exciter::Paint(Graphics& g)
 
 // = = = = = = = = = = Interactions = = = = = = = = = =
 
-void Exciter::OnAreaExcitedByThis(std::shared_ptr<IInteractiveArea> areaExcitedByThis, double excitementAmount)
+void Exciter::OnAreaExcitedByThis(std::shared_ptr<IInteractiveArea> areaExcitedByThis, double interactionWeight)
 {
+    size_t areaIndex = findAreaInteractingIndex(areaExcitedByThis);
     // Si l'aire n'existait pas, on l'ajoute
-	if (findAreaInteracting(areaExcitedByThis) == areasInteractingWith.end())
+	if (areaIndex == areasInteractingWith.size())
 	{
 		areasInteractingWith.push_back(areaExcitedByThis);
-		// A FINIR
-		// A FINIR
-		// A FINIR
-		// A FINIR
+        areaInteractionWeights.push_back(0.0); // calcul juste après
+        areaExcitationAmounts.push_back(0.0); // calcul juste après
 	}
-	else
-	{
-
-		// A FINIR
-		// A FINIR
-		// A FINIR
-		// A FINIR
-	}
-	// Et dans tous les cas, on update le coefficient
-		// A FINIR
-		// A FINIR
-		// A FINIR
-		// A FINIR
+    // Mise à jour dans tous les cas
+    areaInteractionWeights[areaIndex] = interactionWeight;
+    // Pas de mise à jour des excitations : cela dépend des modifs apportées à TOUTES les aires,
+    // on attend l'ordre de notification (par la scène mère, ou autre...)
 }
 void Exciter::OnAreaNotExcitedByThis(std::shared_ptr<IInteractiveArea> areaExcitedByThis)
 {
     // On fait la recherche, et on vérifie le résultat par sécurité...
-    auto it = findAreaInteracting(areaExcitedByThis);
-    if ( it != areasInteractingWith.end() )
-		// A FINIR
-		// A FINIR
-		// A FINIR
-        areasInteractingWith.erase(it);
-	// A FINIR
-		// A FINIR
-		// A FINIR
-		// A FINIR
-		// A FINIR
-		// A FINIR
-		// A FINIR
+    size_t areaIndex = findAreaInteractingIndex(areaExcitedByThis);
+    if ( areaIndex < areasInteractingWith.size() )
+    {
+        // D'abord on impose une mise à jour côté aire graphique
+        areasInteractingWith[areaIndex].lock()->OnNewExcitementAmount(getCastedSharedFromThis(), 0.0);
+        
+        // Puis : Suppression effective
+        auto areaIt = areasInteractingWith.begin();
+        std::advance(areaIt, areaIndex);
+        areasInteractingWith.erase(areaIt);
+        auto interactionIt = areaInteractionWeights.begin();
+        std::advance(interactionIt, areaIndex);
+        areaInteractionWeights.erase(interactionIt);
+        auto excitementIt = areaExcitationAmounts.begin();
+        std::advance(excitementIt, areaIndex);
+        areaExcitationAmounts.erase(excitementIt);
+    }
     else
         DBG("Double notification de fin d'excitation d'une aire par cet excitateur");
 }
@@ -147,7 +145,49 @@ std::vector< std::weak_ptr<IInteractiveArea> >::iterator Exciter::findAreaIntera
     // if nothing found :
     return areasInteractingWith.end();
 }
+size_t Exciter::findAreaInteractingIndex(std::shared_ptr<IInteractiveArea> areaToFind)
+{
+    // naive research
+    size_t i = 0;
+    for (i = 0 ; i < areasInteractingWith.size() ; i++ )
+        if ( areasInteractingWith[i].lock() == areaToFind )
+            return i;
+    // if nothing found :
+    return i;
+}
+void Exciter::updateExcitationAmounts()
+{
+    // Total : accumulation type is defined by the type of the last input parameter
+    double totalInteractionWeight
+    = std::accumulate(areaInteractionWeights.begin(), areaInteractionWeights.end(), 0.0);
+    // On normalise le tout, en vérifiant les cas bizarres limites... Pour être sûr même si des erreurs
+    // numériques sont là...
+    
+    // Si on a un poids total non-valide : répartition uniforme sur toutes les aires
+    if (totalInteractionWeight <= 0.0)
+    {
+        double uniformWeight = 1.0 / (double)(areaExcitationAmounts.size());
+        for (size_t i=0 ; i<areaExcitationAmounts.size() ; i++)
+            areaExcitationAmounts[i] = uniformWeight;
+    }
+    // Si le poids total est OK : on normalise simplement les poids pour calculer les excitations
+    else
+    {
+        for (size_t i=0 ; i<areaExcitationAmounts.size() ; i++)
+            areaExcitationAmounts[i] = areaInteractionWeights[i] / totalInteractionWeight;
+    }
+}
 
+void Exciter::NotifyNewExcitationToAreas()
+{
+    // Préparatifs internes
+    updateExcitationAmounts();
+    //auto multiAreaE = std::make_shared<MultiAreaEvent>(); // le premier event va rester Nothing....
+    
+    // Notifications à toutes les aires
+    for (size_t i = 0; i<areasInteractingWith.size() ; i++)
+        areasInteractingWith[i].lock()->OnNewExcitementAmount(getCastedSharedFromThis(), areaExcitationAmounts[i]);
+}
 
 
 // = = = = = = = = = = XML import/export = = = = = = = = = =

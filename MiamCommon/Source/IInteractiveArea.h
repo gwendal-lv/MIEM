@@ -59,16 +59,13 @@ namespace Miam
         
         // - - - - - Interaction avec Excitateurs, spécifiquement - - - - -
         
-        /// \brief Internally updates the interaction weight with a given exciter.
-        ///
-        /// \returns Wether the interaction between this area and an exciter has changed, or not.
+
         virtual std::shared_ptr<AreaEvent> UpdateInteraction(std::shared_ptr<Exciter>& exciter) = 0;
         
-        /// \brief Retourne la somme (sans saturation) de l'excitation cumulée
-        /// de tous les excitateurs interagissant actuellement avec la forme.
-        virtual double GetTotalExcitementAmount() const = 0;
+        virtual double GetTotalExcitationAmount() const = 0;
+        virtual double GetTotalInteractionWeight() const = 0;
         
-        
+        virtual void OnNewExcitementAmount(const std::shared_ptr<Exciter>& sender, double excitementAmount) = 0;
 
 		
         

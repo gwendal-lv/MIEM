@@ -304,6 +304,7 @@ void EditableScene::BringSelectedAreaToFront()
 // - - - - - Selection events managing (orders from parent manager) - - - - -
 void EditableScene::OnSelection()
 {
+    InteractiveScene::OnSelection();
 }
 
 std::vector<std::shared_ptr<GraphicEvent>> EditableScene::OnUnselection()
