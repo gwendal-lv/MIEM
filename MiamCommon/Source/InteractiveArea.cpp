@@ -55,7 +55,7 @@ std::shared_ptr<AreaEvent> InteractiveArea::UpdateInteraction(std::shared_ptr<Ex
         excitersInteractingWithThis.push_back(exciter);
         excitersWeights.push_back(ComputeInteractionWeight(exciter->GetCenterInPixels()));
         // notif à l'excitateur
-        exciter->OnAreaExcitedByThis(shared_from_this());
+        exciter->OnAreaExcitedByThis(shared_from_this(), excitersWeights.back());
     }
     // on le supprime s'il existait mais que le test de collision est revenu négatif
     else if (exciterLocalIndex >= 0 && !hitTestResult)

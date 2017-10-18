@@ -33,10 +33,9 @@ namespace Miam
         double volume;
         
         /// \brief Ids of the Mouse/touch inputs manipulating this area
-        std::vector<int> touchInputSources;
+        //std::vector<int> touchInputSources;
         
-        // Pointeur car doit être connu des CanvasManagers....
-        std::shared_ptr<EditableEllipse> volumeControlArea;
+        //std::shared_ptr<EditableEllipse> volumeControlArea;
         
         // Display attributes
         
@@ -52,6 +51,8 @@ namespace Miam
         // Le + optimisé serait une liste, mais vu le nombre d'éléments stockés (10aine au grand max)
         // on s'en fout complètement...
         std::vector< std::weak_ptr<IInteractiveArea> > areasInteractingWith;
+		/// \brief Le poids d'interaction d'une aire vis-à-vis de cet excitateur en particulier
+		std::vector< double > areaExcitementAmount;
         
         // Pour synchronisation du clignotement de tous les excitateurs ensemble.
         private :
@@ -63,6 +64,8 @@ namespace Miam
         
         // Pour calcul d'interaction externe
         bpt GetCenterInPixels() const {return centerInPixels;}
+
+		double GetVolume() { return volume; }
         
         /// \brief Sets whether this exciter is animated the same as the others exciters that
         /// have this option activated.
@@ -93,8 +96,13 @@ namespace Miam
 
         // - - - - - Interactions - - - - -
         /// \brief Peut être appelé par une aire excitée par cette instance.
-        void OnAreaExcitedByThis(std::shared_ptr<IInteractiveArea> areaExcitedByThis);
+		///
+		/// Peut être appelé plusieurs (voire de nombreuses) fois par la même aire
+        void OnAreaExcitedByThis(std::shared_ptr<IInteractiveArea> areaExcitedByThis, double excitementAmount);
         /// \brief Peut être appelé par une aire qui n'est plus excitée par cette instance.
+		///
+		/// Normalement appelée une seule fois par aire enregistrée auprès de cet excitateur
+		/// (plusieurs notifications tolérées).
         void OnAreaNotExcitedByThis(std::shared_ptr<IInteractiveArea> areaExcitedByThis);
         
         private :

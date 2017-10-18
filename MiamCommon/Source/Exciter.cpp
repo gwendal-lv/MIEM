@@ -44,6 +44,9 @@ commonStartTimePt(commonStartTimePoint_)
 
 void Exciter::init()
 {
+	// Par défaut : volume de 1 ! Volume manuel pas encore implémenté... Peut-être jamais d'ailleurs...
+	volume = 1.0;
+
     // Centre (voir DrawableArea)
     displayCenter = false;
     
@@ -53,7 +56,6 @@ void Exciter::init()
     SetEnableTranslationOnly(true);
     
     // Clignotement
-    volume = 0.0;
     startTimePt = clock::now();
     isAnimationSynchronized = true;
 }
@@ -91,20 +93,47 @@ void Exciter::Paint(Graphics& g)
 
 // = = = = = = = = = = Interactions = = = = = = = = = =
 
-void Exciter::OnAreaExcitedByThis(std::shared_ptr<IInteractiveArea> areaExcitedByThis)
+void Exciter::OnAreaExcitedByThis(std::shared_ptr<IInteractiveArea> areaExcitedByThis, double excitementAmount)
 {
-    // On fait la recherche par sécurité...
-    if ( findAreaInteracting(areaExcitedByThis) == areasInteractingWith.end() )
-        areasInteractingWith.push_back(areaExcitedByThis);
-    else
-        DBG("Double notification d'excitation d'une aire par cet excitateur");
+    // Si l'aire n'existait pas, on l'ajoute
+	if (findAreaInteracting(areaExcitedByThis) == areasInteractingWith.end())
+	{
+		areasInteractingWith.push_back(areaExcitedByThis);
+		// A FINIR
+		// A FINIR
+		// A FINIR
+		// A FINIR
+	}
+	else
+	{
+
+		// A FINIR
+		// A FINIR
+		// A FINIR
+		// A FINIR
+	}
+	// Et dans tous les cas, on update le coefficient
+		// A FINIR
+		// A FINIR
+		// A FINIR
+		// A FINIR
 }
 void Exciter::OnAreaNotExcitedByThis(std::shared_ptr<IInteractiveArea> areaExcitedByThis)
 {
     // On fait la recherche, et on vérifie le résultat par sécurité...
     auto it = findAreaInteracting(areaExcitedByThis);
     if ( it != areasInteractingWith.end() )
+		// A FINIR
+		// A FINIR
+		// A FINIR
         areasInteractingWith.erase(it);
+	// A FINIR
+		// A FINIR
+		// A FINIR
+		// A FINIR
+		// A FINIR
+		// A FINIR
+		// A FINIR
     else
         DBG("Double notification de fin d'excitation d'une aire par cet excitateur");
 }
