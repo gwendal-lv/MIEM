@@ -167,8 +167,11 @@ void PlayHead::testPosition(int P)
 	{
 		for (int j = 0; j < chordSize; j++)
 		{
-			MidiMessage midiMsg = MidiMessage::noteOn(m_channel, chordToPlay[j], m_velocity);
-			audioManager->sendMidiMessage(midiMsg);
+			if (chordToPlay[j] > 0)
+			{
+				MidiMessage midiMsg = MidiMessage::noteOn(m_channel, chordToPlay[j], m_velocity);
+				audioManager->sendMidiMessage(midiMsg);
+			}
 		}
 	}
 
@@ -176,8 +179,11 @@ void PlayHead::testPosition(int P)
 	{
 		for (int j = 0; j < chordSize; j++)
 		{
-			MidiMessage midiMsgOff = MidiMessage::noteOff(m_channel, chordToPlay[j]);
-			audioManager->sendMidiMessage(midiMsgOff);
+			if (chordToPlay[j] > 0)
+			{
+				MidiMessage midiMsgOff = MidiMessage::noteOff(m_channel, chordToPlay[j]);
+				audioManager->sendMidiMessage(midiMsgOff);
+			}
 		}
 	}
 

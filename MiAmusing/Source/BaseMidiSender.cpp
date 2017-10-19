@@ -23,7 +23,7 @@ TimeLine::TimeLine()
 
 	
 	channel = 1;
-	duration = 2 * 10000;
+	duration = 3 * 10000;
 
 	speed = 1.0f;
 	continuous = false;
@@ -487,14 +487,14 @@ void TimeLine::createChord(ChordType m_chordType, int m_chordTime, int baseNote1
 		break;
 	}
 	chordTimesOn[chordSize] = m_chordTime;
-	chordTimesOn[chordSize+1] = m_chordTime;
-	chordTimesOn[chordSize+2] = m_chordTime;
+	chordTimesOn[chordSize+1] = m_chordTime + 1;
+	chordTimesOn[chordSize+2] = m_chordTime + 2;
 	chordNotesOn[chordSize] = baseNote1;
 	chordNotesOn[chordSize + 1] = baseNote2;
 	chordNotesOn[chordSize + 2] = baseNote3;
 	chordTimesOff[chordSize] = (m_chordTime + duration)%currentPeriod;
-	chordTimesOff[chordSize + 1] = (m_chordTime + duration)%currentPeriod;
-	chordTimesOff[chordSize + 2] = (m_chordTime + duration)%currentPeriod;
+	chordTimesOff[chordSize + 1] = (m_chordTime + 1 + duration)%currentPeriod;
+	chordTimesOff[chordSize + 2] = (m_chordTime + 2 + duration)%currentPeriod;
 	chordNotesOff[chordSize] = baseNote1;
 	chordNotesOff[chordSize + 1] = baseNote2;
 	chordNotesOff[chordSize + 2] = baseNote3;

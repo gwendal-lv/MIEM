@@ -82,7 +82,8 @@ void AudioManager::prepareToPlay(int samplesPerBlockExpected, double _sampleRate
 	midiCollector.reset(_sampleRate);
 	synth.setCurrentPlaybackSampleRate(_sampleRate);
 	synth.addVoice(new SamplerVoice);
-	
+	synth.addVoice(new SamplerVoice);
+	synth.addVoice(new SamplerVoice);
 	
 	metronome.setAudioParameter(samplesPerBlockExpected, _sampleRate);
 	
