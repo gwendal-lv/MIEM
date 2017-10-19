@@ -223,6 +223,5 @@ void Cursor::setCenterPositionNormalize(bpt newCenter)
 
 void Cursor::Paint(Graphics& g)
 {
-	DBG("paintOpacity : " + (String)fillOpacity);
 	EditableEllipse::Paint(g);
 }

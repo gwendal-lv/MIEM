@@ -18,6 +18,14 @@ namespace Amusing
 	class AudioManager;
 }
 
+enum ChordType
+{
+	MajorThird,
+	MinorThird,
+	AugmentedQuart,
+	PerfectChord,
+};
+
 class TimeLine
 {
 public:
@@ -30,17 +38,25 @@ public:
 	void setMidiTime(int idx, int newTime, int m_noteNumber, float m_velocity);
 	void setMidiChannel(int m_chan);
 	void setId(int m_Id);
+	void setAllVelocities(float m_velocity);
 	int getId();
 	float getSpeed();
 	int getPeriod();
 
 	bool isNoteOnTime(int m_position, int i, bool &end, int &channel, int &note, uint8 &m_velocity);
 	bool isNoteOffTime(int m_position, int i, bool &end, int &channel, int &note);
+	bool isChordOnTime(int m_position, int & m_channel, int *m_chordToPlay, uint8 & m_velocity);
+	bool isChordOffTime(int m_position, int & m_channel, int m_chordToPlay[]);
 	void process(int time);
 	void playNoteContinuously();
 
 	double getRelativePosition();
 	void alignWith(TimeLine *ref, double phase);
+
+	void addChord(TimeLine* otherTimeLine, int chordTime);
+	bool isNoteAvailable(ChordType m_chordType, int baseNote1, int &otherChordNote);
+	void createChord(ChordType m_chordType, int m_chordTime, int baseNote1, int baseNote2);
+	void resetAllChords();
 
 private:
 	static const int maxSize = 128;
@@ -51,6 +67,12 @@ private:
 	int midiOfftimesSize;
 	int velocity[maxSize];
 	int offset;
+
+	double chordTimesOn[maxSize];
+	double chordTimesOff[maxSize];
+	int chordNotesOn[maxSize];
+	int chordNotesOff[maxSize];
+	int chordSize;
 	
 	int lastNotePosition;
 	int t0;

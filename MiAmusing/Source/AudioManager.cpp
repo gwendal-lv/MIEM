@@ -237,8 +237,7 @@ void AudioManager::sendPosition()
 			model->SendParamChange(param);
 		}
 	}
-	if (param.Id1 != 0)
-		DBG("2eme tete de lecture");
+
 	//param.Id1 = 0;
 	//param.DoubleValue = (double)position / (double)periode; //+ 1.0/8.0;
 	//model->SendParamChange(param);
@@ -363,11 +362,6 @@ void AudioManager::getParameters()
 		case Miam::AsyncParamChange::ParamType::Play :
 			DBG("state = Play;");
 			state = Play;
-			//DBG("send masterVolume midi : " + (String)roundToInt(param.FloatValue*127.0f));
-			//sendMidiMessage(juce::MidiMessage::controllerEvent(1,7,roundToInt(param.FloatValue*127.0f)));//juce::MidiMessage::masterVolume(param.FloatValue));
-			//sendMidiMessage(juce::MidiMessage::masterVolume(param.FloatValue));
-			//param.IntegerValue = metronome.BPMtoPeriodInSample(param.IntegerValue);//timeToSample(param.IntegerValue);
-			//paramToAllocationThread.push(param);
 			playHeadsKnown[param.Id1]->setSpeed(param.DoubleValue);
 			break;
 		case Miam::AsyncParamChange::ParamType::Pause :
@@ -403,6 +397,23 @@ void AudioManager::getParameters()
 		case Miam::AsyncParamChange::UdpPort:
 			if (timeLinesKnown[param.Id1] != 0)
 				timeLinesKnown[param.Id1]->setMidiChannel(param.IntegerValue);
+			else
+				paramToAllocationThread.push(param);
+			break;
+		case Miam::AsyncParamChange::Volume :
+			if (timeLinesKnown[param.Id1] != 0) // si != 0 : il existe et on peut le modifier
+				timeLinesKnown[param.Id1]->setAllVelocities(param.FloatValue);
+			else // si == 0, on ne sait pas s'il n'existe pas ou si le thread est encore en train de le creer -> envoyer au thread pour verifier et faire le necessaire
+				paramToAllocationThread.push(param);
+			break;
+		case Miam::AsyncParamChange::Position :
+			if (timeLinesKnown[param.Id1] != 0 && timeLinesKnown[param.Id2] != 0)
+			{
+				if (param.Id1 == param.Id2)
+					timeLinesKnown[param.Id1]->resetAllChords();
+				else
+					timeLinesKnown[param.Id1]->addChord(timeLinesKnown[param.Id2], roundToInt(param.DoubleValue * (double)periode));
+			}
 			else
 				paramToAllocationThread.push(param);
 			break;
@@ -540,6 +551,18 @@ void AudioManager::getAudioThreadMsg()
 			if (timeLines[param.Id1] != 0)
 				timeLines[param.Id1]->setMidiChannel(param.IntegerValue);
 			break;
+		case Miam::AsyncParamChange::Volume:
+			if (timeLines[param.Id1] != 0) // si != 0 : il existe et on peut le modifier
+				timeLines[param.Id1]->setAllVelocities(param.FloatValue);
+
+		case Miam::AsyncParamChange::Position:
+			if (timeLines[param.Id1] != 0 && timeLines[param.Id2] != 0)
+			{
+				if (param.Id1 == param.Id2)
+					timeLines[param.Id1]->resetAllChords();
+				else
+					timeLines[param.Id1]->addChord(timeLines[param.Id2], roundToInt(param.DoubleValue * (double)periode));
+			}
 		default:
 
 			break;

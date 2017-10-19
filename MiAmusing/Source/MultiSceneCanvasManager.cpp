@@ -146,56 +146,14 @@ void MultiSceneCanvasManager::SetAudioPositions(std::shared_ptr<Cursor> cursor, 
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
 	{
 		bpt oldPosition = cursor->getPosition();//InPixels();
+		int hitAreaId = 0;
 		if (amusingScene->isDrew(cursor) && cursor->setReadingPosition(position)) // vérifie si le curseur est dessiné et le met à jour (seulement si la condition "dessiné" est déjà vérifiée)
 		{
-			if (auto eventA = amusingScene->checkCursorPosition(cursor)) // regarder si collision avec une autre aire
-			{
-				// envoyer les evts de collision (Update pour lier le RH à la TL correspondante)
-				if (auto completeP = std::dynamic_pointer_cast<CompletePolygon>(eventA->GetConcernedArea()))
-				{
-					
-					std::vector<bpt> inter;
-					boost::geometry::model::segment<bpt> segB = completeP->getSegment(oldPosition);//InPixels(oldPosition);
-					boost::geometry::model::segment<bpt> segA(oldPosition, cursor->getPosition());//InPixels());
-					boost::geometry::intersection(segA, segB, inter);
-					DBG("interSize = " + inter.size());
-					if (inter.size() == 1)
-					{
-						cursor->setCenterPositionNormalize(inter[0]);//cursor->setCenterPosition(inter[0]);
-					}
-					else if(inter.size()==0)
-					{
-						inter.push_back(cursor->getPosition());
-					}
-					//double old = cursor->getPositionInAssociateArea();
-					DBG("change d'aire");
-					if (auto associate = std::dynamic_pointer_cast<CompletePolygon>(cursor->getAssociateArea()))
-					{
-						/*if (auto concernedIntersection = amusingScene->getConcernedIntersection(completeP, associate, inter[0]))
-						{
-							cursor->Inhibit(completeP);
-							cursor->LinkTo(concernedIntersection);
-						}
-						else
-						{*/
-							cursor->LinkTo(completeP);
-						//}
-					}
-					else
-					{
-						cursor->LinkTo(completeP);
-					}
-					//DBG("change d'aire : old "+ (String)old +" new "+ (String)cursor->getPositionInAssociateArea());
-					handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(cursor,eventA->GetType(),cursor->GetId(),eventA->GetConcernedScene())));
-				}
-				else
-					handleAndSendAreaEventSync(eventA);
-			}
-			else
-			{
+
+			
 				std::shared_ptr<AreaEvent> areaE(new AreaEvent(cursor, AreaEventType::NothingHappened, selectedScene));
 				handleAndSendAreaEventSync(areaE);
-			}
+			
 		}
 		/*if(auto completeA = std::dynamic_pointer_cast<CompletePolygon>(area))
 			handleAndSendAreaEventSync(completeA->setReadingPosition(position));*/
@@ -309,14 +267,7 @@ void MultiSceneCanvasManager::SetAllChannels()
 	}
 }
 
-void MultiSceneCanvasManager::resendToModel()
-{
-	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
-	{
-		for (int i = 0; i < amusingScene->getNumberArea(); i++)
-			handleAndSendEventSync(amusingScene->resendArea(i));
-	}
-}
+
 
 void MultiSceneCanvasManager::ChangeBaseNote(double newBaseNote)
 {

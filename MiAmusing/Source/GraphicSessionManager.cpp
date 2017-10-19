@@ -166,7 +166,8 @@ int GraphicSessionManager::circleToNote(int numCirc)
 	//int gamme[7] = { 60, 62, 64, 65, 67, 69, 71 }; // juste
 	//int gamme[7] = { 36, 38, 39, 41, 43, 45, 46 }; // 2 bemols
 	//int gamme[7] = { 48, 50, 52, 53, 55, 57, 59 };
-	int gamme[7] = { 100, 100, 100, 100, 100, 100, 100 };
+	int gamme[7] = { 72, 74, 76, 77, 79, 81, 83 };
+	//int gamme[7] = { 100, 100, 100, 100, 100, 100, 100 };
 	return gamme[numCirc];
 }
 
@@ -353,57 +354,46 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				}
 				if (auto complete = std::dynamic_pointer_cast<CompletePolygon>(area))
 				{
-					//param.Id1 = myPresenter->getSourceID(area);
-					//param.Type = Miam::AsyncParamChange::ParamType::Activate;
-					//param.Id2 = 1; // 1 pour activer la source, 0 pour la supprimer
-					//if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(areaE->GetConcernedScene()))
-					//{
-					//	DBG("channel I send : " + (String)myPresenter->getChannel(amusingScene));
-					//	param.IntegerValue = myPresenter->getChannel(amusingScene);
-					//}
-					//myPresenter->SendParamChange(param); // envoie l'ordre de creer/ detruire une source audio
-					DBG("Polygon's shape changed");
-
-					//param.Id1 = myPresenter->getTimeLineID(area);
-					//param.Type = Miam::AsyncParamChange::ParamType::Activate;
-					//param.Id2 = 1024;
-					//param.IntegerValue = 1; // 1 pour activer la source, 0 pour la supprimer
-					//if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(areaE->GetConcernedScene()))
-					//{
-					//	param.IntegerValue = myPresenter->getChannel(amusingScene);
-					//}
-					//else
-					//	param.IntegerValue = 0;
-					//param.FloatValue = (float)(myPresenter->getSpeedArea(complete));
-					//myPresenter->SendParamChange(param);
-
 					
+					// envoie des infos sur les notes à jouer
 
 					param.Id1 = myPresenter->getTimeLineID(area);
-					//param.Id1 = myPresenter->getSourceID(area);
 					param.Type = Miam::AsyncParamChange::ParamType::Source;
 					i = 0;
-					//DBG("before while");
 					while (complete->getAllPercentages(i, param.DoubleValue) && complete->getAllDistanceFromCenter(i, param.IntegerValue))
 					{
 						if (param.DoubleValue == 0 && i != 0)
 							DBG("aaaaaaarg");
-						//DBG("cote to send : " + (String)i);
-						//param.IntegerValue = 60 + (2*param.IntegerValue);
+						
 						param.IntegerValue = circleToNote(param.IntegerValue);
-						//DBG("noteToSend = " + (String)param.IntegerValue);
+						
 						param.Id2 = i;
 						param.FloatValue = (float)myPresenter->getVelocityArea(complete);
 						myPresenter->SendParamChange(param);
 						++i;
 					}
 					i = 0;
-					//param.Id2 = 1000; // indiquera que l'on a envoye la position de tous les points
-					//myPresenter->SendParamChange(param);
-					//}
-					//DBG("finish");
+
+					// envoie des infos sur les accords
+					param.Type = Miam::AsyncParamChange::ParamType::Position;
+					std::shared_ptr<CompletePolygon> chordArea;
+					double pC = 0;
+					param.Id2 = param.Id1;
+					myPresenter->SendParamChange(param);
+
+					while(complete->getChordParameters(i,chordArea,pC))
+					{
+						if (chordArea == complete)
+							DBG("pas possible");
+						param.Id2 = myPresenter->getTimeLineID(chordArea);
+						param.DoubleValue = pC;
+						myPresenter->SendParamChange(param);
+						i++;
+					}
+					i = 0;
+					
 				}
-				myPresenter->SendParamChange(param);
+				
 				break;
 			case AreaEventType::Translation :
 				//DBG("Translation");
@@ -427,6 +417,16 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					param.DoubleValue = cursor->getPositionInAssociateArea(); //cursor->getSpeed();
 					param.FloatValue = (float)cursor->getSpeed();//cursor->getPositionInAssociateArea();
 					DBG("phi : " + (String)param.FloatValue);
+					myPresenter->SendParamChange(param);
+				}
+				break;
+			case AreaEventType::ColorChanged :
+				if (auto complete = std::dynamic_pointer_cast<CompletePolygon>(area))
+				{
+					param.Id1 = myPresenter->getTimeLineID(area);
+					param.Type = Miam::AsyncParamChange::ParamType::Volume;
+					param.Id2 = 0;
+					param.FloatValue = (float)myPresenter->getVelocityArea(complete);
 					myPresenter->SendParamChange(param);
 				}
 				break;

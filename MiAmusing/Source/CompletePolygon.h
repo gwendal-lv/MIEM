@@ -88,6 +88,10 @@ namespace Amusing
 		bool contains(bpt point);
 		void deleteAllCursors();
 		//void getCursorsCount();
+		void addChordPoints(double chordsAnglePercentage, std::shared_ptr<CompletePolygon> areaForChord);
+		void setChordFlag(bpt chordPt, bool isTrue, std::shared_ptr<CompletePolygon> areaForChord);
+		void resetChords();
+		bool getChordParameters(int idx, std::shared_ptr<CompletePolygon> &chordArea, double &pC);
 		
 	private:
 		JUCE_LEAK_DETECTOR(CompletePolygon)
@@ -118,6 +122,12 @@ namespace Amusing
 		void CanvasResizedBullsEye(SceneCanvasComponent* _parentCanvas);
 		std::vector<int> OnCircles;
 		
+		// flags and invisible points for chords
+		std::vector<bool> chordFlag;
+		std::vector<std::shared_ptr<CompletePolygon>> chordAreaForFlag;
+		std::vector<std::shared_ptr<CompletePolygon>>  chordAreaForPercentage;
+		std::vector<double> chordsAnglePercentage; // no need of chordsOnCircle, the audio manager will compute the chords
+
 
 		double pc; // si ca foire quand on bouge la forme en mm temps que le curseur doit tourner -> garder en memoire le poucentage ou se trouve le curseur et rappeler setreadingposition avec ce pourcentage pour le remettre au nouvel endroit.
 	};

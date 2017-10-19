@@ -162,4 +162,23 @@ void PlayHead::testPosition(int P)
 		}
 		i++;
 	}
+
+	if (timeLine->isChordOnTime(P, m_channel, chordToPlay, m_velocity))
+	{
+		for (int j = 0; j < chordSize; j++)
+		{
+			MidiMessage midiMsg = MidiMessage::noteOn(m_channel, chordToPlay[j], m_velocity);
+			audioManager->sendMidiMessage(midiMsg);
+		}
+	}
+
+	if (timeLine->isChordOffTime(P, m_channel, chordToPlay))
+	{
+		for (int j = 0; j < chordSize; j++)
+		{
+			MidiMessage midiMsgOff = MidiMessage::noteOff(m_channel, chordToPlay[j]);
+			audioManager->sendMidiMessage(midiMsgOff);
+		}
+	}
+
 }

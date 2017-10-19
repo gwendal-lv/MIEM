@@ -51,6 +51,9 @@ private:
 
 	void testPosition(int P); // look in the associate timeLine if there is a MIDI msg to send
 
+	static const int chordSize = 3;
+	int chordToPlay[chordSize];
+
 	// references to other objects
 	TimeLine* timeLine; // reference to the associated timeLine
 	Amusing::AudioManager* audioManager;// reference to the audioManager to send the MIDI

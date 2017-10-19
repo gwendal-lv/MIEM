@@ -23,7 +23,7 @@ TimeLine::TimeLine()
 
 	
 	channel = 1;
-	duration = 10000;
+	duration = 2 * 10000;
 
 	speed = 1.0f;
 	continuous = false;
@@ -35,6 +35,7 @@ TimeLine::TimeLine()
 
 	offset = 0;
 
+	chordSize = 0;
 }
 
 TimeLine::~TimeLine()
@@ -153,6 +154,14 @@ void TimeLine::setId(int m_Id)
 	Id = m_Id;
 }
 
+void TimeLine::setAllVelocities(float m_velocity)
+{
+	for (int i = 0; i < midiTimesSize; ++i)
+	{
+		velocity[i] = m_velocity;
+	}
+}
+
 int TimeLine::getId()
 {
 	return Id;
@@ -216,6 +225,49 @@ bool TimeLine::isNoteOffTime(int m_position, int i, bool &m_end, int &m_channel,
 		m_end = true;
 		return false;
 	}
+}
+
+bool TimeLine::isChordOnTime(int m_position, int &m_channel, int *m_chordToPlay, uint8 &m_velocity)
+{
+	int num = 0;
+	for (int i = 0; i < chordSize; ++i)
+	{
+		if (chordTimesOn[i] == m_position)
+		{
+			m_chordToPlay[num] = chordNotesOn[i];
+			num++;
+		}
+	}
+
+	if (num != 0)
+	{
+		m_channel = channel;
+		m_velocity = velocity[0];
+		return true;
+	}
+	else
+		return false;
+}
+
+bool TimeLine::isChordOffTime(int m_position, int &m_channel, int m_chordToPlay[])
+{
+	int num = 0;
+	for (int i = 0; i < chordSize; ++i)
+	{
+		if (chordTimesOff[i] == m_position)
+		{
+			m_chordToPlay[num] = chordNotesOff[i];
+			num++;
+		}
+	}
+
+	if (num != 0)
+	{
+		m_channel = channel;
+		return true;
+	}
+	else
+		return false;
 }
 
 void TimeLine::process(int time)
@@ -320,6 +372,149 @@ void TimeLine::alignWith(TimeLine *ref, double phase)
 		offset = newOffset;
 	}
 	testMidi();
+}
+
+void TimeLine::addChord(TimeLine * otherTimeLine, int chordTime)
+{
+	int currentNote = 0;
+
+	// recherche si on jouait déjà une note à l'instant chordTime
+	for (int i = 0; i < midiTimesSize; i++)
+	{
+		if (midiTimes[i] == chordTime)
+		{
+			currentNote = notes[i];
+			break;
+		}
+	}
+	
+	if (currentNote != 0)// si une note était jouée à cette instant elle devient une des notes de l'accord
+	{
+		int otherChordNote;
+		if (otherTimeLine->isNoteAvailable(ChordType::MajorThird, currentNote, otherChordNote))
+			createChord(ChordType::MajorThird, chordTime, currentNote, otherChordNote);
+		else if(otherTimeLine->isNoteAvailable(ChordType::MinorThird, currentNote, otherChordNote))
+			createChord(ChordType::MinorThird, chordTime, currentNote, otherChordNote);
+		else if (otherTimeLine->isNoteAvailable(ChordType::MinorThird, currentNote, otherChordNote))
+			createChord(ChordType::AugmentedQuart, chordTime, currentNote, otherChordNote);
+
+	} 
+	else // sinon on sélectionnera une des autres notes comme base
+	{
+
+	}
+}
+
+bool TimeLine::isNoteAvailable(ChordType m_chordType, int baseNote1, int &otherChordNote)
+{
+	int difference = 13; // impossible
+	int baseNote2 = 0;
+	switch (m_chordType)
+	{
+	case MajorThird:
+		for (int i = 0; i < midiTimesSize; i++)
+		{
+			difference = abs(notes[i] - baseNote1);
+			if (difference > 11)
+			{
+				// baseNote2 = octaveNotes1 + position note dans son octave
+				baseNote2 = (baseNote1 / 12) + notes[i] % 12;
+				difference = abs(notes[i] - baseNote1);
+			}
+			else
+				baseNote2 = notes[i];
+
+			if (difference != 1 || difference != 2 || difference != 6 || difference != 10 || difference != 11)
+			{
+				otherChordNote = baseNote2;
+				return true;
+			}
+			else
+				return false;
+		}
+		break;
+	case MinorThird:
+		break;
+	case AugmentedQuart:
+		break;
+	case PerfectChord:
+		break;
+	default:
+		break;
+	}
+	return false;
+}
+
+void TimeLine::createChord(ChordType m_chordType, int m_chordTime, int baseNote1, int baseNote2)
+{
+	int difference = 13;
+	int baseNote3 = 0;
+	switch (m_chordType)
+	{
+	case MajorThird:
+		difference = abs(baseNote2 - baseNote1);
+		switch (difference)
+		{
+		case 3 :
+			baseNote3 = baseNote1 < baseNote2 ? baseNote1 - 4 : baseNote2 - 4;
+			break;
+		case 4 :
+			baseNote3 = baseNote1 < baseNote2 ? baseNote1 + 7 : baseNote2 + 7;
+			break;
+		case 5 :
+			baseNote3 = baseNote1 < baseNote2 ? baseNote1 -3 : baseNote2 -3;
+			break;
+		case 7 :
+			baseNote3 = baseNote1 > baseNote2 ? baseNote1 - 3 : baseNote2 - 3;
+			break;
+		case 8 :
+			baseNote3 = baseNote1 > baseNote2 ? baseNote1 - 5 : baseNote2 - 5;
+			break;
+		case 9 :
+			baseNote3 = baseNote1 > baseNote2 ? baseNote1 - 4 : baseNote2 - 4;
+			break;
+		default:
+			break;
+		}
+		break;
+	case MinorThird:
+		break;
+	case AugmentedQuart:
+		break;
+	case PerfectChord:
+		break;
+	default:
+		break;
+	}
+	chordTimesOn[chordSize] = m_chordTime;
+	chordTimesOn[chordSize+1] = m_chordTime;
+	chordTimesOn[chordSize+2] = m_chordTime;
+	chordNotesOn[chordSize] = baseNote1;
+	chordNotesOn[chordSize + 1] = baseNote2;
+	chordNotesOn[chordSize + 2] = baseNote3;
+	chordTimesOff[chordSize] = (m_chordTime + duration)%currentPeriod;
+	chordTimesOff[chordSize + 1] = (m_chordTime + duration)%currentPeriod;
+	chordTimesOff[chordSize + 2] = (m_chordTime + duration)%currentPeriod;
+	chordNotesOff[chordSize] = baseNote1;
+	chordNotesOff[chordSize + 1] = baseNote2;
+	chordNotesOff[chordSize + 2] = baseNote3;
+	chordSize += 3;
+}
+
+void TimeLine::resetAllChords()
+{
+	for (int i = 0; i < chordSize; ++i)
+	{
+		chordTimesOn[i] = 0;
+		
+		chordNotesOn[i] = 0;
+		
+		chordTimesOff[i] = 0;
+		
+		chordNotesOff[i] = 0;
+				
+	}
+	chordSize = 0;
 }
 
 void TimeLine::applyOffSet(int _offset)

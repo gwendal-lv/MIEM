@@ -94,6 +94,8 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 			OnCircles.push_back(0);
 		}
 	}
+	chordFlag = std::vector<bool>(pointsCount, false);
+	chordAreaForFlag = std::vector<std::shared_ptr<CompletePolygon>>(pointsCount, nullptr);
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id,
@@ -133,6 +135,7 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	}
 
 	//updateSubTriangles();
+	
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id,
@@ -180,7 +183,6 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 		
 	}
 
-	
 
 	// ajouter le calcul du rayon des cercles : on connait les coordonnees des points et a quels cercles ils appartienne -> possible de retrouver le rayon et le centre ! 
 }
@@ -1265,4 +1267,74 @@ void CompletePolygon::deleteAllCursors()
 {
 	cursors.clear();
 		
+}
+
+void Amusing::CompletePolygon::addChordPoints(double m_anglepercentage, std::shared_ptr<CompletePolygon> areaForChord)
+{
+	chordsAnglePercentage.push_back(m_anglepercentage);
+	chordAreaForPercentage.push_back(areaForChord);
+}
+
+void Amusing::CompletePolygon::setChordFlag(bpt chordPt, bool isTrue, std::shared_ptr<CompletePolygon> areaForChord)
+{
+	for (int i = 0; i < (int)contourPoints.outer().size(); ++i)
+	{
+		if (boost::geometry::equals(chordPt, contourPoints.outer().at(i)))
+		{
+			chordFlag.at(i) = isTrue;
+			chordAreaForFlag.at(i) = areaForChord;
+			break;
+		}
+	}
+}
+
+void Amusing::CompletePolygon::resetChords()
+{
+	chordFlag = std::vector<bool>(contourPoints.outer().size(), false);
+	chordAreaForFlag = std::vector<std::shared_ptr<CompletePolygon>>(contourPoints.outer().size(), nullptr);
+	chordAreaForPercentage.clear();
+	chordsAnglePercentage.clear();
+}
+
+bool Amusing::CompletePolygon::getChordParameters(int idx, std::shared_ptr<CompletePolygon>& chordArea, double &m_pC)
+{
+	if (idx < chordAreaForPercentage.size())
+	{
+		m_pC = chordsAnglePercentage[idx];
+		chordArea = chordAreaForPercentage[idx];
+		return true;
+	}
+	else
+	{
+		idx -= chordAreaForPercentage.size();
+		int N = 0;
+		for (int i = 0; i < chordAreaForFlag.size(); ++i)
+			if (chordAreaForFlag[i] != nullptr)
+				N++;
+		if (idx < N)
+		{
+			// idx = indice en terme d'elt non nuls !
+			int count = 0;
+			int realIdx = 0;
+			for (int j = 0; j < chordAreaForFlag.size(); ++j)
+			{
+				if (chordAreaForFlag[j] != nullptr)
+				{
+					count++;
+					if (count == idx + 1)
+					{
+						realIdx = j;
+						break;
+					}
+				}
+			}
+			m_pC = anglesPercentages[realIdx];
+			chordArea = chordAreaForFlag[realIdx];
+			return true;
+		}
+		else
+			return false;
+
+	}
+	return false;
 }
