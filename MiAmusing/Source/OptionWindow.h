@@ -10,6 +10,7 @@
 
 #pragma once
 #include "JuceHeader.h"
+#include "AudioDeviceAndMidiOutputSelectorComponent.h"
 class MainContentComponent;
 
 namespace Amusing
@@ -32,7 +33,7 @@ namespace Amusing
 
 	private:
 		TextButton* OKbutton;
-		ScopedPointer<AudioDeviceSelectorComponent> audioSetupComp;
+		ScopedPointer<AudioDeviceAndMidiOutputSelectorComponent> audioSetupComp;
 		MainContentComponent* mainComponent;
 		std::shared_ptr<AudioDeviceManager> deviceManager;
 

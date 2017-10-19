@@ -41,7 +41,7 @@ void OptionWindow::CompleteInitialization(std::shared_ptr<AudioDeviceManager> m_
 
 void OptionWindow::removeDeviceManager()
 {
-	audioSetupComp->deviceManager.removeAllChangeListeners();
+	audioSetupComp->removeAllChangeListener();
 }
 
 void OptionWindow::paint(Graphics& /*g*/)
@@ -68,7 +68,7 @@ void OptionWindow::buttonClicked(Button * button)
 
 void OptionWindow::changeListenerCallback(ChangeBroadcaster*)
 {
-	AudioIODevice* device = audioSetupComp->deviceManager.getCurrentAudioDevice();
+	/*AudioIODevice* device = audioSetupComp->deviceManager.getCurrentAudioDevice();
 	DBG("Current audio device: " + device->getName().quoted());
 	DBG("Sample rate: " + String(device->getCurrentSampleRate()) + " Hz");
 	DBG("Block size: " + String(device->getCurrentBufferSizeSamples()) + " samples");
@@ -78,5 +78,5 @@ void OptionWindow::changeListenerCallback(ChangeBroadcaster*)
 	DBG("Input channel names: " + device->getInputChannelNames().joinIntoString(", "));
 	DBG("Active input channels: " + getListOfActiveBits(device->getActiveInputChannels()));
 	DBG("Output channel names: " + device->getOutputChannelNames().joinIntoString(", "));
-	DBG("Active output channels: " + getListOfActiveBits(device->getActiveOutputChannels()));
+	DBG("Active output channels: " + getListOfActiveBits(device->getActiveOutputChannels()));*/
 }

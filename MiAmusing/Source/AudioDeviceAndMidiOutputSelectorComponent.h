@@ -12,8 +12,7 @@
 
 #include "JuceHeader.h"
 
-class AudioDeviceAndMidiOutputSelectorComponent : public AudioDeviceSelectorComponent,
-												  public ButtonListener
+class AudioDeviceAndMidiOutputSelectorComponent : public Component, public ButtonListener
 {
 public:
 	/* This component is an an AudioDeviceSelectorComponent with the possibility to 
@@ -42,6 +41,9 @@ public:
 	void setMidiOutputSelectorIsVisible(bool isVisible);
 	void resized();
 	void setItemHeight(int newItemHeight);
+
+	void removeAllChangeListener();
+
 private:
 	int itemHeight;
 	int midiOutputSelectorId;
@@ -50,13 +52,13 @@ private:
 	//ScopedPointer<ComboBox> deviceTypeDropDown;
 	//ScopedPointer<Label> deviceTypeDropDownLabel;
 	//ScopedPointer<Component> audioDeviceSettingsComp;
-
+	AudioDeviceSelectorComponent* audioDeviceSelectorComponent;
 	//ScopedPointer<MidiInputSelectorComponentListBox> midiInputsList;
 	//ScopedPointer<ComboBox> midiOutputSelector;
 	//ScopedPointer<Label> midiInputsLabel, midiOutputLabel;
 	//ScopedPointer<TextButton> bluetoothButton;
 	
 
-	void buttonStateChanged(Button*);
-	void buttonClicked(Button*);
+	void buttonStateChanged(Button*) override;
+	void buttonClicked(Button*) override;
 };
