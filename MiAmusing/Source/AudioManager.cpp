@@ -95,8 +95,11 @@ void AudioManager::prepareToPlay(int samplesPerBlockExpected, double _sampleRate
 	midiOuput = model->getMidiOutput();
 	if (midiOuput == nullptr)
 		setUsingSampledSound();
-	
-	
+	else
+	{
+		playInternalSynth = false;
+		audioFormatManager.clearFormats();
+	}
 }
 void AudioManager::releaseResources()
 {

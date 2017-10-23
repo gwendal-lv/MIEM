@@ -29,7 +29,7 @@ public:
 	bpt getPosition();
 	bpt getPositionInPixels();
 	double getPositionInAssociateArea();
-	void LinkTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon);
+	void LinkTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon, bool rememberPreviousAssociate);
 	bool isLinkedTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon);
 	bool CanLinkTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon);
 	void Inhibit(std::shared_ptr<Miam::EditablePolygon> m_Polygon);

@@ -191,7 +191,7 @@ std::shared_ptr<AreaEvent> AmusingScene::DeleteSelectedArea()
 		if (auto selectedCompleteArea = std::dynamic_pointer_cast<CompletePolygon>(selectedArea))
 		{
 			DeleteIntersections(selectedCompleteArea);
-			for (int i = 0; i < (int)currentExciters.size(); i++)
+			/*for (int i = 0; i < (int)currentExciters.size(); i++)
 				if (auto currentCursor = std::dynamic_pointer_cast<Cursor>(currentExciters[i]))
 					if (currentCursor->isLinkedTo(selectedCompleteArea))
 					{
@@ -202,7 +202,24 @@ std::shared_ptr<AreaEvent> AmusingScene::DeleteSelectedArea()
 						cursorToDeleteID.push_back(i);
 					}
 			for (int i = 0; i < (int)cursorToDeleteID.size(); i++)
-				currentExciters.erase(currentExciters.begin() + cursorToDeleteID[i]);
+				currentExciters.erase(currentExciters.begin() + cursorToDeleteID[i]);*/
+			int currentIdx = 0;
+			while (currentIdx != (int)currentExciters.size())
+			{
+				for (int i = currentIdx; i < (int)currentExciters.size(); i++)
+				{
+					if (auto currentCursor = std::dynamic_pointer_cast<Cursor>(currentExciters[i]))
+						if (currentCursor->isLinkedTo(selectedCompleteArea))
+						{
+							currentCursor->LinkTo(nullptr,false);
+							if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
+								manager->OnInteraction(std::shared_ptr<AreaEvent>(new AreaEvent(currentCursor, AreaEventType::Deleted, (int)areas.size() + i, shared_from_this())));
+							currentIdx = i;
+							currentExciters.erase(currentExciters.begin() + i);
+						}
+
+				}
+			}
 			selectedCompleteArea->deleteAllCursors();
 		}
 
@@ -318,7 +335,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddCursor(std::shared_ptr<IDrawableArea
 		if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(area))// association à l'aire donnant sa vitesse
 		{
 			completeArea->linkTo(newCursor);
-			newCursor->LinkTo(completeArea);
+			newCursor->LinkTo(completeArea,false);
 		}
 		// - garder une trace pour pvr les gérer dans une map<cursor,aire> ou <aire,cursor>
 		//associateArea[newCursor] = area; // association à l'aire qui déterminera sa position et donc le son produit
@@ -349,6 +366,7 @@ void AmusingScene::addChords(std::shared_ptr<Amusing::CompletePolygon> parent1, 
 		{
 			if (auto inter = std::dynamic_pointer_cast<CompletePolygon>(multiE->GetOtherEvent(j)->GetConcernedArea()))
 			{
+				inter->CanvasResized(canvasComponent);
 				bpolygon interP = inter->getPolygon();
 				bpolygon correctP1 = parent1->getPolygon();
 				boost::geometry::correct(correctP1);
@@ -549,24 +567,55 @@ void AmusingScene::ApplyFusion(std::shared_ptr<Amusing::CompletePolygon> current
 		if (selectedArea)
 		{
 			//auto selectedAreaBackup = selectedArea;
-			SetSelectedArea(nullptr);
+			SetSelectedArea(nullptr,false);
 		}
-		DeleteIntersections(hitPolygon);
-		DeleteIntersections(currentPolygon);
-		hitPolygon->deleteAllCursors();
-		deleteE1 = deleteAreaByUniqueId(hitPolygon->GetId());
-		currentPolygon->deleteAllCursors();
-		deleteE2 = deleteAreaByUniqueId(currentPolygon->GetId());
-		//multiE->AddAreaEvent(deleteE1);
-		//multiE->AddAreaEvent(deleteE2);
 
 		// j'ai l'impression que �a reste extra laid, il y a d�j� les fonctions toutes faites pour add et delete, 
 		// mais il faut les refaire juste pour pvr appeler le graphicSessionManager � chaque fois :/
 		if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
 		{
+			
+			if (auto complete = std::dynamic_pointer_cast<CompletePolygon>(singleAreaE->GetConcernedArea()))
+			{
+				complete->CanvasResized(canvasComponent);
+				for (int i = 0; i < currentPolygon->getCursorsCount(); ++i)
+				{
+					currentPolygon->getCursor(i)->LinkTo(complete,false);
+					complete->linkTo(currentPolygon->getCursor(i));
+				}
+				for (int i = 0; i < hitPolygon->getCursorsCount(); ++i)
+				{
+					hitPolygon->getCursor(i)->LinkTo(complete,false);
+					complete->linkTo(hitPolygon->getCursor(i));
+				}
+			}
+
+			DeleteIntersections(hitPolygon);
+			DeleteIntersections(currentPolygon);
+			hitPolygon->deleteAllCursors();
+			deleteE1 = deleteAreaByUniqueId(hitPolygon->GetId());
+			currentPolygon->deleteAllCursors();
+			deleteE2 = deleteAreaByUniqueId(currentPolygon->GetId());
+			//multiE->AddAreaEvent(deleteE1);
+			//multiE->AddAreaEvent(deleteE2);
+					
+
+			
+
 			manager->OnInteraction(deleteE1);
 			manager->OnInteraction(deleteE2);
 			manager->OnInteraction(AddArea(std::dynamic_pointer_cast<CompletePolygon>(singleAreaE->GetConcernedArea())));
+
+			if (auto complete = std::dynamic_pointer_cast<CompletePolygon>(singleAreaE->GetConcernedArea()))
+			{
+				complete->CanvasResized(canvasComponent);
+				for (int i = 0; i < complete->getCursorsCount(); ++i)
+				{
+					
+					manager->OnInteraction(std::shared_ptr<AreaEvent>(new AreaEvent(complete->getCursor(i), AreaEventType::ParentChanged, shared_from_this())));
+				}
+				
+			}
 			//return  std::shared_ptr<AreaEvent>(new AreaEvent());
 
 		}

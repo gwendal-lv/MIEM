@@ -24,8 +24,8 @@ namespace Amusing
 		void CompleteInitialization(std::shared_ptr<AudioDeviceManager> deviceManager);
 		void removeDeviceManager();
 
-		void paint(Graphics& g);
-		void resized();
+		void paint(Graphics& g) override;
+		void resized() override;
 
 		void buttonClicked(Button * button) override;
 

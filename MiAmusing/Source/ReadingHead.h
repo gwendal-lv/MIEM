@@ -57,5 +57,7 @@ private:
 	// references to other objects
 	TimeLine* timeLine; // reference to the associated timeLine
 	Amusing::AudioManager* audioManager;// reference to the audioManager to send the MIDI
+
+	JUCE_LEAK_DETECTOR(PlayHead);
 };
 

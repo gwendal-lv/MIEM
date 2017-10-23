@@ -95,5 +95,6 @@ private:
 
 	// reference to the audioManager to send the MIDI
 	Amusing::AudioManager* audioManager;
+	JUCE_LEAK_DETECTOR(TimeLine);
 };
 

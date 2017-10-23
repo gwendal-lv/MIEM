@@ -1269,13 +1269,13 @@ void CompletePolygon::deleteAllCursors()
 		
 }
 
-void Amusing::CompletePolygon::addChordPoints(double m_anglepercentage, std::shared_ptr<CompletePolygon> areaForChord)
+void CompletePolygon::addChordPoints(double m_anglepercentage, std::shared_ptr<CompletePolygon> areaForChord)
 {
 	chordsAnglePercentage.push_back(m_anglepercentage);
 	chordAreaForPercentage.push_back(areaForChord);
 }
 
-void Amusing::CompletePolygon::setChordFlag(bpt chordPt, bool isTrue, std::shared_ptr<CompletePolygon> areaForChord)
+void CompletePolygon::setChordFlag(bpt chordPt, bool isTrue, std::shared_ptr<CompletePolygon> areaForChord)
 {
 	for (int i = 0; i < (int)contourPoints.outer().size(); ++i)
 	{
@@ -1288,7 +1288,7 @@ void Amusing::CompletePolygon::setChordFlag(bpt chordPt, bool isTrue, std::share
 	}
 }
 
-void Amusing::CompletePolygon::resetChords()
+void CompletePolygon::resetChords()
 {
 	chordFlag = std::vector<bool>(contourPoints.outer().size(), false);
 	chordAreaForFlag = std::vector<std::shared_ptr<CompletePolygon>>(contourPoints.outer().size(), nullptr);
@@ -1296,7 +1296,7 @@ void Amusing::CompletePolygon::resetChords()
 	chordsAnglePercentage.clear();
 }
 
-bool Amusing::CompletePolygon::getChordParameters(int idx, std::shared_ptr<CompletePolygon>& chordArea, double &m_pC)
+bool CompletePolygon::getChordParameters(int idx, std::shared_ptr<CompletePolygon>& chordArea, double &m_pC)
 {
 	if (idx < chordAreaForPercentage.size())
 	{

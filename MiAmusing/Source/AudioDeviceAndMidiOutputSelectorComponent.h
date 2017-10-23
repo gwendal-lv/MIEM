@@ -39,7 +39,7 @@ public:
 	~AudioDeviceAndMidiOutputSelectorComponent();
 
 	void setMidiOutputSelectorIsVisible(bool isVisible);
-	void resized();
+	void resized() override;
 	void setItemHeight(int newItemHeight);
 
 	void removeAllChangeListener();

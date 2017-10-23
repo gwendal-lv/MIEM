@@ -120,16 +120,20 @@ double Cursor::getPositionInAssociateArea()
 		return 0.0;
 }
 
-void Cursor::LinkTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon) // link the cursor to the form that compute its center position
+void Cursor::LinkTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon, bool rememberPreviousAssociate) // link the cursor to the form that compute its center position
 {
 	if (associate != m_Polygon)
 	{
 		if(associate == nullptr)
 			associate = m_Polygon;
-		else if (associate != nullptr && (oldAssociates.find(m_Polygon) == oldAssociates.end() || oldAssociates[m_Polygon].second > 0.05))
+		else if (rememberPreviousAssociate &&  associate != nullptr && (oldAssociates.find(m_Polygon) == oldAssociates.end() || oldAssociates[m_Polygon].second > 0.05))
 		{
 			oldAssociates[associate].first = center;
 			oldAssociates[associate].second = 0; // distance parcourue depuis que le curseur n'est plus lié à cette aire (= oldAssociate)
+			associate = m_Polygon;
+		}
+		else
+		{
 			associate = m_Polygon;
 		}
 	}
