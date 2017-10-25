@@ -109,12 +109,13 @@ void AmusingSceneComponent::SetAreaOptionsVisible(bool show)
 		areaOptions.setVisible(false);
 }
 
-void AmusingSceneComponent::SetAreaOptionsVisible(bool show,double speed, double velocity)
+void AmusingSceneComponent::SetAreaOptionsVisible(bool show,double speed, double velocity, int currentOctave)
 {
 	if (show)
 	{
 		areaOptions.setSpeedSliderValue(speed);
 		areaOptions.setVelocitySliderValue(velocity);
+		areaOptions.setOctaveSlider(currentOctave);
 		areaOptions.setVisible(true);
 	}
 	else

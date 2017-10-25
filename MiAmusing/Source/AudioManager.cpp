@@ -185,6 +185,7 @@ void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 void AudioManager::getNewTimeLines()
 {
 	TimeLine* ptr;
+	ptr = nullptr;
 	while (timeLinesToAudio.pop(ptr))
 	{
 		if(ptr != 0)
@@ -195,6 +196,7 @@ void AudioManager::getNewTimeLines()
 void AudioManager::getNewPlayHeads()
 {
 	PlayHead* ptr;
+	ptr = nullptr;
 	while (playHeadsToAudio.pop(ptr))
 	{
 		if (ptr != 0)
@@ -442,9 +444,11 @@ void AudioManager::getAudioThreadMsg()
 				{
 				case 0:
 					DBG("desactivate source : " + (String)param.Id1);
-					
-					delete timeLines[param.Id1];
-					timeLines[param.Id1] = 0;
+					if (timeLines[param.Id1] != 0)
+					{
+						delete timeLines[param.Id1];
+						timeLines[param.Id1] = 0;
+					}
 					DBG("source : " + (String)param.Id1 + "deleted");
 					
 					break;
@@ -454,6 +458,8 @@ void AudioManager::getAudioThreadMsg()
 					DBG("activate source    : " + (String)param.Id1);
 					if (timeLines[param.Id1] == 0)
 						timeLines[param.Id1] = new TimeLine();
+					else
+						DBG("impossible");
 
 					timeLines[param.Id1]->setPeriod(periode);
 					if (param.FloatValue != 0)

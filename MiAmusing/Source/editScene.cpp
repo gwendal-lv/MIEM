@@ -214,7 +214,7 @@ void EditScene::buttonClicked (Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == completeButton)
     {
         //[UserButtonCode_completeButton] -- add your button handler code here..
-		graphicSessionManager->OnAddComplete();
+		graphicSessionManager->OnAddHexa();//OnAddComplete();
         //[/UserButtonCode_completeButton]
     }
     else if (buttonThatWasClicked == optionButton)

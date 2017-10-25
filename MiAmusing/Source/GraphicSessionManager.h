@@ -139,6 +139,7 @@ namespace Amusing {
 		void OnAddArea();
 		void OnAddSquare();
 		void OnAddTriangle();
+		void OnAddHexa();
 		void OnAddCircle();
 		void OnAddTrueCircle();
 		void OnAddFollower();
@@ -163,7 +164,9 @@ namespace Amusing {
 		void setSpeedArea(std::shared_ptr<IEditableArea> area, double speed);
 		double getSpeed(std::shared_ptr<IEditableArea> area);
 		void setVelocityArea(std::shared_ptr<IEditableArea> area, double velocity);
+		void setOctave(std::shared_ptr<IEditableArea> area, int newOctave);
 		double getVelocity(std::shared_ptr<IEditableArea> area);
+		int getOctave(std::shared_ptr<IEditableArea> area);
 	private :
 		bool deleting;
 		int tempo;

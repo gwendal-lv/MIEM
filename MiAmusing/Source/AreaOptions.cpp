@@ -191,6 +191,11 @@ void AreaOptions::setSpeedSliderValue(double _speed)
 	speed->setValue(_speed);
 }
 
+void AreaOptions::setOctaveSlider(int currentOctave)
+{
+	baseNote->setValue(currentOctave);
+}
+
 void AreaOptions::setVelocitySliderValue(double _velocity)
 {
 	velocitySlider->setValue(_velocity);

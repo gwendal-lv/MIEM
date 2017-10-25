@@ -272,7 +272,15 @@ void MultiSceneCanvasManager::SetAllChannels()
 void MultiSceneCanvasManager::ChangeBaseNote(double newBaseNote)
 {
 	DBG("new base = " + (String)newBaseNote);
-	
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+	{
+		if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)
+		{
+			myGraphicSessionManager->setOctave(amusingScene->GetSelectedArea(), newBaseNote);
+		}
+		//graphicSessionManager->setSpeedArea(amusingScene->GetSelectedArea(), newSpeed);
+		handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(amusingScene->GetSelectedArea(),AreaEventType::ShapeChanged,amusingScene)));//amusingScene->SetSelectedAreaOpacity(newVelocity / 127.0));
+	}
 }
 
 void MultiSceneCanvasManager::ChangeSpeed(double newSpeed)
@@ -280,10 +288,10 @@ void MultiSceneCanvasManager::ChangeSpeed(double newSpeed)
 	//DBG("new speed = " + (String)newSpeed);
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
 	{
-		/*if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)
+		if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)
 		{
 			myGraphicSessionManager->setSpeedArea(amusingScene->GetSelectedArea(), newSpeed);
-		}*/
+		}
 		//graphicSessionManager->setSpeedArea(amusingScene->GetSelectedArea(), newSpeed);
 		//handleAndSendAreaEventSync(amusingScene->SetSelectedAreaCursor(newSpeed));
 		if (auto selectedC = std::dynamic_pointer_cast<CompletePolygon>(amusingScene->GetSelectedArea()))
@@ -335,6 +343,21 @@ double MultiSceneCanvasManager::getVelocity(std::shared_ptr<IEditableArea> area)
 		}
 		else
 			return 64.0;
+	}
+	else
+		return 64.0;
+}
+
+double MultiSceneCanvasManager::getOctave(std::shared_ptr<IEditableArea> area)
+{
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+	{
+		if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)
+		{
+			return myGraphicSessionManager->getOctave(amusingScene->GetSelectedArea());
+		}
+		else
+			return 0.0;
 	}
 	else
 		return 64.0;
@@ -400,7 +423,7 @@ void MultiSceneCanvasManager::SetMode(Miam::CanvasManagerMode newMode)
 			
 			selectedScene->EnableAreasLowOpacity(false);
 			// Pas d'évènements renvoyés : on update le tout
-			recreateAllAsyncDrawableObjects();
+			//recreateAllAsyncDrawableObjects();
 		}
 		break;
 

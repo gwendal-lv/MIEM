@@ -225,33 +225,36 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				if (auto complete = std::dynamic_pointer_cast<CompletePolygon>(area))
 				{
 					DBG("Complete Area");
-					param.Id1 = myPresenter->getTimeLineID(area);
-					param.Id2 = 1024;
-					param.Type = Miam::AsyncParamChange::ParamType::Activate;
-					param.IntegerValue = 1; // 1 pour activer la source, 0 pour la supprimer
-					if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(areaE->GetConcernedScene()))
+					if (areaE->GetMessage() != "intersection")
 					{
-						param.IntegerValue = myPresenter->getChannel(amusingScene);
+						param.Id1 = myPresenter->getTimeLineID(area);
+						myPresenter->addOctave(complete);
+						param.Id2 = 1024;
+						param.Type = Miam::AsyncParamChange::ParamType::Activate;
+						param.IntegerValue = 1; // 1 pour activer la source, 0 pour la supprimer
+						if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(areaE->GetConcernedScene()))
+						{
+							param.IntegerValue = myPresenter->getChannel(amusingScene);
+						}
+						else
+							param.IntegerValue = 0;
+						param.FloatValue = 1; // set initial speed to 1;
+						myPresenter->SendParamChange(param); // envoie l'ordre de creer/ detruire une source audio
+						//DBG("GSM : construct a new audio polygon, please. Id : " + (String)param.Id1);
+						param.Type = Miam::AsyncParamChange::ParamType::Source;
+						i = 0;
+						while (complete->getAllPercentages(i, param.DoubleValue) && complete->getAllDistanceFromCenter(i, param.IntegerValue))
+						{
+							//param.IntegerValue = 60 + 2* (param.IntegerValue);
+							param.IntegerValue = myPresenter->getNote(complete, param.IntegerValue); //circleToNote(param.IntegerValue);
+							//DBG("noteToSend = " + (String)param.IntegerValue);
+							param.Id2 = i;
+							param.FloatValue = (float)myPresenter->getVelocityArea(complete);
+							myPresenter->SendParamChange(param);
+							++i;
+						}
+						i = 0;
 					}
-					else
-						param.IntegerValue = 0;
-					param.FloatValue = 1; // set initial speed to 1;
-					myPresenter->SendParamChange(param); // envoie l'ordre de creer/ detruire une source audio
-					//DBG("GSM : construct a new audio polygon, please. Id : " + (String)param.Id1);
-					param.Type = Miam::AsyncParamChange::ParamType::Source;
-					i = 0;
-					while (complete->getAllPercentages(i, param.DoubleValue) && complete->getAllDistanceFromCenter(i, param.IntegerValue))
-					{
-						//param.IntegerValue = 60 + 2* (param.IntegerValue);
-						param.IntegerValue = circleToNote(param.IntegerValue);
-						//DBG("noteToSend = " + (String)param.IntegerValue);
-						param.Id2 = i;
-						param.FloatValue = (float)myPresenter->getVelocityArea(complete);
-						myPresenter->SendParamChange(param);
-						++i;
-					}
-					i = 0;
-
 				
 				}
 				
@@ -289,11 +292,14 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				}
 				else if(auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(area))
 				{
-					param.Type = Miam::AsyncParamChange::ParamType::Activate;
-					param.Id1 = myPresenter->getTimeLineID(area);
-					param.Id2 = 1024;
-					param.IntegerValue = 0;
-					myPresenter->SendParamChange(param);
+					if (areaE->GetMessage() != "intersection")
+					{
+						param.Type = Miam::AsyncParamChange::ParamType::Activate;
+						param.Id1 = myPresenter->getTimeLineID(area);
+						param.Id2 = 1024;
+						param.IntegerValue = 0;
+						myPresenter->SendParamChange(param);
+					}
 				}
 				
 				
@@ -325,7 +331,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					while (complete->getAllPercentages(i, param.DoubleValue) && complete->getAllDistanceFromCenter(i, param.IntegerValue))
 					{
 						//param.IntegerValue = 60 + (2*param.IntegerValue);
-						param.IntegerValue = circleToNote(param.IntegerValue);
+						param.IntegerValue = myPresenter->getNote(complete, param.IntegerValue);
 						//DBG("noteToSend = " + (String)param.IntegerValue);
 						param.Id2 = i;
 						param.FloatValue = (float)myPresenter->getVelocityArea(complete);
@@ -365,7 +371,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 						if (param.DoubleValue == 0 && i != 0)
 							DBG("aaaaaaarg");
 						
-						param.IntegerValue = circleToNote(param.IntegerValue);
+						param.IntegerValue = myPresenter->getNote(complete, param.IntegerValue);
 						
 						param.Id2 = i;
 						param.FloatValue = (float)myPresenter->getVelocityArea(complete);
@@ -615,6 +621,14 @@ void GraphicSessionManager::OnAddTriangle()
 	}
 }
 
+void GraphicSessionManager::OnAddHexa()
+{
+	if (selectedCanvas)
+	{
+		getSelectedCanvasAsManager()->AddNedgeArea(GetNextAreaId(), 6);
+	}
+}
+
 void GraphicSessionManager::OnAddCircle()
 {
 	if (selectedCanvas)
@@ -687,6 +701,11 @@ void GraphicSessionManager::setVelocityArea(std::shared_ptr<IEditableArea> area,
 	myPresenter->setVelocityArea(area, speed);
 }
 
+void GraphicSessionManager::setOctave(std::shared_ptr<IEditableArea> area, int newOctave)
+{
+	myPresenter->setOctave(area, newOctave);
+}
+
 double GraphicSessionManager::getSpeed(std::shared_ptr<IEditableArea> area)
 {
 	return myPresenter->getSpeedArea(area);
@@ -695,6 +714,11 @@ double GraphicSessionManager::getSpeed(std::shared_ptr<IEditableArea> area)
 double GraphicSessionManager::getVelocity(std::shared_ptr<IEditableArea> area)
 {
 	return myPresenter->getVelocityArea(area);
+}
+
+int GraphicSessionManager::getOctave(std::shared_ptr<IEditableArea> area)
+{
+	return myPresenter->getOctave(area);
 }
 
 void GraphicSessionManager::OnTempoChanged(int newTempo) // voir si laisser comme ca, pcq pas d'interpretation necessaire pour le tempo

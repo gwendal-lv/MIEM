@@ -426,24 +426,37 @@ void AmusingScene::AddAllIntersections(std::shared_ptr<Amusing::CompletePolygon>
 			// seek for the vector of intersection of the two polygons through the map
 			std::map<std::pair<std::shared_ptr<CompletePolygon>, std::shared_ptr<CompletePolygon>>, std::vector<std::shared_ptr<CompletePolygon>>>::iterator it;
 			it = parentTochildArea.find(std::pair<std::shared_ptr<CompletePolygon>, std::shared_ptr<CompletePolygon>>(parent1, parent2));
-			if (it == parentTochildArea.end())
+			//if (it == parentTochildArea.end())
+			//{
+			if (it != parentTochildArea.end())
 			{
+				while((int)it->second.size() != 0)
+				{
+					int i = 0;
+					auto intersectionBackUp = it->second.at(i);
+					it->second.erase(it->second.begin() + i);
+					manager->OnInteraction(std::shared_ptr<AreaEvent>(new AreaEvent(intersectionBackUp, AreaEventType::Deleted, (int)areas.size() + i, shared_from_this())));
+					
+
+				}
+			}
 				// If there are no intersections yet, add a new vector containing the intersections to the map
 				// then add all the intersections to the list of intersections
-				std::vector<std::shared_ptr<CompletePolygon>> vec;
-				parentTochildArea.insert(std::pair<std::pair<std::shared_ptr<CompletePolygon>, std::shared_ptr<CompletePolygon>>, std::vector<std::shared_ptr<CompletePolygon>>>(std::pair<std::shared_ptr<CompletePolygon>, std::shared_ptr<CompletePolygon>>(parent1, parent2), vec));
-				std::map<std::pair<std::shared_ptr<CompletePolygon>, std::shared_ptr<CompletePolygon>>, std::vector<std::shared_ptr<CompletePolygon>>>::iterator newIt;
-				newIt = parentTochildArea.find(std::pair<std::shared_ptr<CompletePolygon>, std::shared_ptr<CompletePolygon>>(parent1, parent2));
-				for (int j = 0; j < (int)multiE->GetOtherEventsCount(); j++)
-				{
-					//TO DO : add a size condition
-					//vec.push_back(std::dynamic_pointer_cast<CompletePolygon>(multiE->GetOtherEvent(j)->GetConcernedArea()));
-					newIt->second.push_back(std::dynamic_pointer_cast<CompletePolygon>(multiE->GetOtherEvent(j)->GetConcernedArea()));
-					manager->OnInteraction(AddIntersectionArea(parent1, parent2, std::dynamic_pointer_cast<CompletePolygon>(multiE->GetOtherEvent(j)->GetConcernedArea())));
-					//manager->OnInteraction(AddCursor(std::dynamic_pointer_cast<CompletePolygon>(multiE->GetOtherEvent(j)->GetConcernedArea())));
-				}
-				//parentTochildArea.insert(std::pair<std::pair<std::shared_ptr<CompletePolygon>, std::shared_ptr<CompletePolygon>>, std::vector<std::shared_ptr<CompletePolygon>>>(std::pair<std::shared_ptr<CompletePolygon>, std::shared_ptr<CompletePolygon>>(parent1, parent2), vec));
+			std::vector<std::shared_ptr<CompletePolygon>> vec;
+			parentTochildArea.insert(std::pair<std::pair<std::shared_ptr<CompletePolygon>, std::shared_ptr<CompletePolygon>>, std::vector<std::shared_ptr<CompletePolygon>>>(std::pair<std::shared_ptr<CompletePolygon>, std::shared_ptr<CompletePolygon>>(parent1, parent2), vec));
+			std::map<std::pair<std::shared_ptr<CompletePolygon>, std::shared_ptr<CompletePolygon>>, std::vector<std::shared_ptr<CompletePolygon>>>::iterator newIt;
+			newIt = parentTochildArea.find(std::pair<std::shared_ptr<CompletePolygon>, std::shared_ptr<CompletePolygon>>(parent1, parent2));
+			for (int j = 0; j < (int)multiE->GetOtherEventsCount(); j++)
+			{
+				//TO DO : add a size condition
+				//vec.push_back(std::dynamic_pointer_cast<CompletePolygon>(multiE->GetOtherEvent(j)->GetConcernedArea()));
+				newIt->second.push_back(std::dynamic_pointer_cast<CompletePolygon>(multiE->GetOtherEvent(j)->GetConcernedArea()));
+				manager->OnInteraction(AddIntersectionArea(parent1, parent2, std::dynamic_pointer_cast<CompletePolygon>(multiE->GetOtherEvent(j)->GetConcernedArea())));
+				//manager->OnInteraction(AddCursor(std::dynamic_pointer_cast<CompletePolygon>(multiE->GetOtherEvent(j)->GetConcernedArea())));
 			}
+				//parentTochildArea.insert(std::pair<std::pair<std::shared_ptr<CompletePolygon>, std::shared_ptr<CompletePolygon>>, std::vector<std::shared_ptr<CompletePolygon>>>(std::pair<std::shared_ptr<CompletePolygon>, std::shared_ptr<CompletePolygon>>(parent1, parent2), vec));
+			//}
+			/*
 			else
 			{
 				// If there are already intersections between those polygon -> verify if it's just a modification of an existing intersections, or a new one
@@ -510,7 +523,7 @@ void AmusingScene::AddAllIntersections(std::shared_ptr<Amusing::CompletePolygon>
 						
 				}
 			}
-
+			*/
 			/// chords part
 			// update the polygons with the points for the chords
 			parent1->resetChords();
@@ -904,12 +917,15 @@ std::shared_ptr<AreaEvent> AmusingScene::SetSelectedArea(std::shared_ptr<IEditab
 		{
 			sceneComponent->SetAreaOptionsCenter(completeArea->getCenter());
 			double currentSpeed(0), currentVelocity(0);
+			int currentOctave(0);
 			if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
 			{
 				currentSpeed = manager->getSpeed(completeArea);
 				currentVelocity = manager->getVelocity(completeArea);
+				currentOctave = manager->getOctave(completeArea);
+				DBG("speed to show = " + (String)currentSpeed);
 			}
-			sceneComponent->SetAreaOptionsVisible(true,currentSpeed, currentVelocity);
+			sceneComponent->SetAreaOptionsVisible(true,currentSpeed, currentVelocity, currentOctave);
 		}
 		else
 			sceneComponent->SetAreaOptionsVisible(false);
@@ -960,3 +976,36 @@ std::shared_ptr<AreaEvent> AmusingScene::checkCursorPosition(std::shared_ptr<Cur
 	}
 	return nullptr;
 }
+
+//size_t AmusingScene::GetDrawableObjectsCount()
+//{
+//	int numInter = 0;
+//	for (int i = 0; i < areas.size(); i++)
+//	{
+//		if (auto parent1 = std::dynamic_pointer_cast<CompletePolygon> (areas[i]))
+//		{
+//			for (int j = i + 1; j < areas.size(); j++)
+//			{
+//				if (auto parent2 = std::dynamic_pointer_cast<CompletePolygon>(areas[j]))
+//				{
+//					if (parentTochildArea.find(std::pair<std::shared_ptr<CompletePolygon>, std::shared_ptr<CompletePolygon>>(parent1, parent2)) != parentTochildArea.end())
+//					{
+//						numInter += parentTochildArea.at(std::pair<std::shared_ptr<CompletePolygon>, std::shared_ptr<CompletePolygon>>(parent1, parent2)).size();
+//					}
+//				}
+//			}
+//		}
+//	}
+//	return areas.size() + currentExciters.size() + numInter;
+//}
+//std::shared_ptr<IDrawableArea> AmusingScene::GetDrawableObject(size_t i)
+//{
+//	if (i < areas.size())
+//		return areas[i];
+//	else if (i < areas.size() + currentExciters.size())
+//		return currentExciters[i - areas.size()];
+//	else
+//	{
+//		return parentTochildArea.begin()->
+//	}
+//}

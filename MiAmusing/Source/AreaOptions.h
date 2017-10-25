@@ -212,6 +212,7 @@ public:
     //[UserMethods]     -- You can add your own custom methods in this section.
 	void CompleteInitialization(AmusingSceneComponent* m_amusingSceneComponent);
 	void setSpeedSliderValue(double speed);
+	void setOctaveSlider(int currentOctave);
 	void setVelocitySliderValue(double _velocity);
     //[/UserMethods]
 

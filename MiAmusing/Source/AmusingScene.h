@@ -101,6 +101,8 @@ namespace Miam
 		std::shared_ptr<AreaEvent> SetSelectedAreaOpacity(double newOpacity);
 		bool isDrew(std::shared_ptr<Cursor> cursor);
 		std::shared_ptr<AreaEvent> checkCursorPosition(std::shared_ptr<Cursor> cursor, int &areaId);
+		//size_t GetDrawableObjectsCount();
+		//std::shared_ptr<IDrawableArea> GetDrawableObject(size_t i);
 	};
 
 

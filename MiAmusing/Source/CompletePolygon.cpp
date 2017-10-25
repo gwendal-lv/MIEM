@@ -748,6 +748,11 @@ void CompletePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 AreaEventType CompletePolygon::TryBeginPointMove(const Point<double>& newLocation)
 {
 	AreaEventType areaEventType = EditablePolygon::TryBeginPointMove(newLocation);
+	if (pointDraggedId == EditableAreaPointId::Center)
+	{
+		pointDraggedId = EditableAreaPointId::WholeArea;
+		lastLocation = newLocation;
+	}
 	for (int i = 0; i < Nradius; ++i)
 		bullsEye[i].TryBeginPointMove(newLocation);
 	return areaEventType;
