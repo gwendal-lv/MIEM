@@ -53,3 +53,8 @@ void MultiAreaEvent::AddAreaEvent(std::shared_ptr<AreaEvent> areaE)
     otherEvents.push_back(areaE);
 }
 
+void MultiAreaEvent::AddAreaEvent(AreaEvent* areaE)
+{
+    otherEvents.push_back(std::shared_ptr<AreaEvent>(areaE));
+}
+

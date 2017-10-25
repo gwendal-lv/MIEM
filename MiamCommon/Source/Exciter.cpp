@@ -56,7 +56,8 @@ void Exciter::init()
     
     SetNameVisible(false);
     
-    SetActive(true);
+    SetActive(false);
+    SetOpacityMode(OpacityMode::Mid);
     SetEnableTranslationOnly(true);
     
     // Clignotement

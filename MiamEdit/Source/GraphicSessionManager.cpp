@@ -51,14 +51,17 @@ GraphicSessionManager::GraphicSessionManager(View* _view, Presenter* presenter_)
     for (size_t i=0 ; i<canvasManagers.size() ; i++)
     {
         // After canvases are created : creation of 1 empty scene (to avoid bugs...)
-        canvasManagers[i]->AddScene("[scène vide]");
+        // On sélectionne directement cette scène
+        canvasManagers[i]->AddScene("[scène vide]", true);
     }
     
     // Finally, state of the presenter
     setMode(GraphicSessionMode::Loaded);
     // And states of the canvases
     for (size_t i=0 ; i<canvasManagers.size() ; i++)
+    {
         canvasManagers[i]->SetMode(CanvasManagerMode::Unselected);
+    }
     
     
     // SÉLECTION/CHARGEMENT D'UN TRUC PAR DÉFAUT
@@ -116,9 +119,9 @@ void GraphicSessionManager::SetSelectedCanvas(std::shared_ptr<MultiSceneCanvasIn
         selectedCanvas = _selectedCanvas;
         getSelectedCanvasAsEditable(); // just for the internal test of "editability"
         
-        // To force updates
-        selectedCanvas->SelectScene(selectedCanvas->GetSelectedSceneId());
-        //selectedCanvas->SetMode(CanvasManagerMode::SceneOnlySelected);
+        // To force updates (PLUS MAINTENANT !!!!)
+        //selectedCanvas->SelectScene(selectedCanvas->GetSelectedSceneId());
+        selectedCanvas->SetMode(CanvasManagerMode::SceneOnlySelected);
     
         setMode(GraphicSessionMode::CanvasSelected);
     }

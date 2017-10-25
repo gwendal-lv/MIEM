@@ -115,9 +115,13 @@ namespace Miam {
         /// - toute info géométrique sur une aire...
         virtual void HandleEventSync(std::shared_ptr<GraphicEvent> event_) override;
         
+        private :
+        void handleSingleAreaEventSync(std::shared_ptr<AreaEvent>& event_);
+        
         
         
         // ----- Event to View -----
+        public :
         void DisplayInfo(String info) override;
 
         

@@ -150,8 +150,8 @@ namespace Miam
         virtual void SetName(std::string _name);
         
         // Modes de basse opacité pour des groupes entiers d'objets graphiques
-        void EnableExcitersLowOpacity(bool enable);
-        void EnableAreasLowOpacity(bool enable);
+        void SetExcitersOpacityMode(OpacityMode opacityMode);
+        void SetAreasOpacityMode(OpacityMode opacityMode);
     
         // = = = = = = = = = = METHODS = = = = = = = = = =
         public :
@@ -192,15 +192,15 @@ namespace Miam
         /// \brief Pendant l'édition, on pourra sauvegarder les excitateurs.
         ///
         /// En mode de jeu classique, cette fonctionnalité ne servira normalement pas.
-        virtual void SaveCurrentExcitersToInitialExciters();
+        virtual void SaveCurrentExcitersToInitialExciters(bool deleteCurrentExciters = false);
         
         
         // - - - - - Selection events managing (orders from parent manager) - - - - -
 
-		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		// !!!!!!!!!!!!!!!! renvoyer des évènements sur ce qu'il s'est passé !!!!!!!!!!
-		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        virtual void OnSelection();
+		/// \brief Might update exciters interaction, send events about the new state, ....
+        ///
+        /// Pas encore définitif (va évoluer dans les prochaines versions)
+        virtual std::shared_ptr<MultiAreaEvent> OnSelection();
         /// \ brief Behavior on unselection commanded from parent (area
         /// transformations are stopped, ...). Must be called by classes that
         /// inherit from this.
@@ -246,7 +246,13 @@ namespace Miam
         /// En 2 passes : d'abord on checke toutes les modifs (qui renvoient des events) puis on recalcule
         /// les excitations en fonction du tout (car les excitateurs ont besoin que tout soit à jour)
         std::shared_ptr<MultiAreaEvent> testAreasInteractionsWithExciter(std::shared_ptr<Exciter>& exciter);
-        
+        public :
+        /// \brief Re-quantifie les interactions entre excitateurs et aires graphiques de manière
+        /// forcée, renvoie les évènements associés.
+        ///
+        /// Utile par exemple quand les aires graphiques ont été modifées dans un éditeur sans renvoyer
+        /// proprement tous les évènements associés.
+        std::shared_ptr<MultiAreaEvent> RecomputeAreaExciterInteractions();
         
         // - - - - - XML import/export - - - - -
         public :

@@ -111,7 +111,7 @@ namespace Miam
         
         
         // - - - - - Selection events managing (orders from parent manager) - - - - -
-        virtual void OnSelection() override;
+        virtual std::shared_ptr<MultiAreaEvent> OnSelection() override;
         virtual std::vector<std::shared_ptr<GraphicEvent>> OnUnselection() override;
         
         

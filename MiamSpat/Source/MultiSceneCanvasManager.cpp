@@ -28,13 +28,13 @@ MultiSceneCanvasManager::~MultiSceneCanvasManager()
     
 }
 
-void MultiSceneCanvasManager::AddScene(std::string name)
+void MultiSceneCanvasManager::AddScene(std::string name, bool selectNewScene)
 {
     // We construct a scene that DOES NOT allow the selection of a particular area
     std::shared_ptr<EditableScene> newScene = std::make_shared<SpatScene>(shared_from_this(), canvasComponent->GetCanvas());
     newScene->SetName(name);
     
-    MultiSceneCanvasInteractor::AddScene(newScene);
+    MultiSceneCanvasInteractor::AddScene(newScene, selectNewScene);
 }
 
 

@@ -66,8 +66,10 @@ namespace Miam
         virtual void SetFillColour(Colour newColour) override;
 		/// \param _fillOpacity See DrawableArea::fillOpacity
 		virtual void SetAlpha(float newAlpha) override;
+        virtual float GetAlpha() const override;
+
         
-        virtual void EnableLowOpacityMode(bool enable) override;
+        virtual void SetOpacityMode(OpacityMode opacityMode_) override;
         
         /// \brief Sets the name that could be displayed on screen next to the center
         virtual void SetName(String newName) override;
@@ -99,7 +101,7 @@ namespace Miam
         protected :
         Colour fillColour; ///< Solid colour for filling the area (opacity should be 0xFF)
         float fillOpacity; ///< Opacity applied to the solid fill colour (in [0.0,1.0])
-        bool enableLowOpacityMode;
+        OpacityMode opacityMode;
         
         /// \brief The lowest opacity of a displayed area
         static const uint8 lowFillOpacityUint8 = 40;

@@ -43,6 +43,17 @@ class SceneCanvasComponent;
 
 namespace Miam
 {
+    // Mise ici parce que les aires seulement sont concernées par l'opacité...
+    enum class OpacityMode {
+        Independent,
+        DependingOnExcitement,
+        
+        Low, ///< Lowest possible opacity for an area
+        Mid, ///< Medium opacity
+        High ///< High opacity, but not totally opaque
+    };
+    
+    
     /// /brief For menus creation by IDs, etc
     struct AreaDefaultType
     {
@@ -97,7 +108,8 @@ namespace Miam
         virtual Colour GetFillColour() = 0;
         virtual void SetFillColour(Colour newColour) = 0;
 		virtual void SetAlpha(float newAlpha) = 0;
-        virtual void EnableLowOpacityMode(bool enable) = 0;
+        virtual float GetAlpha() const = 0;
+        virtual void SetOpacityMode(OpacityMode enable) = 0;
         
         /// \brief Sets the name that could be displayed on screen next to the center
         virtual void SetName(String newName) = 0;

@@ -16,7 +16,7 @@
 #include "Presenter.h"
 #include "View.h"
 
-#include "AreaEvent.h"
+#include "MultiAreaEvent.h"
 #include "Exciter.h"
 
 #include "SceneEvent.h"
@@ -32,7 +32,7 @@ GraphicSessionManager::GraphicSessionManager(Presenter* presenter_, View* view_)
     view(view_)
 {
     // SÉLECTION/CHARGEMENT D'UN TRUC PAR DÉFAUT
-    nextAreaId = 0; // plus tard : valeur contenue dans le fichier de sauvegarde
+    nextAreaId = 0; // plus tard : valeur chargée depuis dans le fichier de sauvegarde
 
     
     // DEFINITION DU NOMBRE DE CANEVAS
@@ -46,7 +46,7 @@ GraphicSessionManager::GraphicSessionManager(Presenter* presenter_, View* view_)
     {
         // After canvases are created : scenes creation
         // Juste 1 scène pour ne pas avoir ne pointeur sur NULL
-        canvasManagers[i]->AddScene("[Scène vide]");
+        canvasManagers[i]->AddScene("[Scène vide]", true);
     }
     
     
@@ -94,40 +94,20 @@ std::shared_ptr<MultiSceneCanvasManager> GraphicSessionManager::getSelectedCanva
 // ===== EVENTS FROM THE PRESENTER ITSELF =====
 void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_)
 {
-    // Event about an Area
-    if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(event_))
+    // Events about several areas at once
+    if (auto multiAreaE = std::dynamic_pointer_cast<MultiAreaEvent>(event_))
     {
-        // Event about an Exciter in particular : we'll have to update the spat mix !
-        if (auto exciter = std::dynamic_pointer_cast<Exciter>(areaE->GetConcernedArea()))
-        {
-            switch (areaE->GetType())
-            {
-                case AreaEventType::Added :
-                case AreaEventType::Deleted :
-                case AreaEventType::Translation :
-                    
-                    break;
-                    
-                default:
-                    break;
-            }
-        }
-        /*
-		else if (auto area = std::dynamic_pointer_cast<EditableArea>(areaE->GetConcernedArea()))
-		{
-			switch (areaE->GetType())
-			{
-			case AreaEventType::Added :
-				//DBG("Area Added");
-				break;
-			case AreaEventType::Deleted :
-				//DBG("Area deleted");
-				break;
-			default:
-				break;
-			}
-		}
-         */
+        // Constructeur de Copie vers un nouvel évènement simple
+        auto singleMainAreaE = std::make_shared<AreaEvent>( multiAreaE.get() );
+        handleSingleAreaEventSync(singleMainAreaE);
+        // Pour les autres : on envoie juste les pointeurs
+        for (size_t i = 0 ; i < multiAreaE->GetOtherEventsCount() ; i++)
+            handleSingleAreaEventSync(multiAreaE->GetOtherEvent(i));
+    }
+    // Event about a SINGLE Area
+    else if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(event_))
+    {
+        handleSingleAreaEventSync(areaE);
     }
 	else if (auto sceneE = std::dynamic_pointer_cast<SceneEvent>(event_))
 	{
@@ -150,6 +130,41 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 		}
 	}
 }
+void GraphicSessionManager::handleSingleAreaEventSync(std::shared_ptr<AreaEvent>& areaE)
+{
+    // Event about an Exciter in particular : we'll have to update the spat mix !
+    if (auto exciter = std::dynamic_pointer_cast<Exciter>(areaE->GetConcernedArea()))
+    {
+        switch (areaE->GetType())
+        {
+            case AreaEventType::Added :
+            case AreaEventType::Deleted :
+            case AreaEventType::Translation :
+                
+                break;
+                
+            default:
+                break;
+        }
+    }
+    /*
+     else if (auto area = std::dynamic_pointer_cast<EditableArea>(areaE->GetConcernedArea()))
+     {
+     switch (areaE->GetType())
+     {
+     case AreaEventType::Added :
+     //DBG("Area Added");
+     break;
+     case AreaEventType::Deleted :
+     //DBG("Area deleted");
+     break;
+     default:
+     break;
+     }
+     }
+     */
+}
+
 
 
 void GraphicSessionManager::CanvasModeChanged(CanvasManagerMode /*canvasMode*/)

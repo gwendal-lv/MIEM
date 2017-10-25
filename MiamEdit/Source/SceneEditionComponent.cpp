@@ -856,7 +856,7 @@ void SceneEditionComponent::UpdateStatesList(std::vector< std::shared_ptr<SpatSt
 
     // Addition of items==names one by one
     for (size_t i=0 ; i<newSpatStates.size() ; i++)
-        spatStatesComboBox->addItem(newSpatStates[i]->GetName(), i+1); // Id==Idx+1
+        spatStatesComboBox->addItem(newSpatStates[i]->GetName(), (int)i+1); // Id==Idx+1
 }
 void SceneEditionComponent::SelectSpatState(int index, NotificationType notificationType)
 {

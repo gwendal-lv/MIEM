@@ -22,7 +22,7 @@ namespace Miam {
         
         // - - - Common running modes - - -
         
-        Null, ///< Undefined state
+        Null = 0, ///< Undefined state
         
         Loading, ///< When the manager is loading something
         Loaded, ///< When the manager has just finished loading something

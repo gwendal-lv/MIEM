@@ -59,9 +59,7 @@ namespace Miam
         
         // ----- Setters and Getters -----
         public :
-        void SetActive(bool activate) override {isActive = activate;}
-        
-        void Highlight(bool isHighligthed) override { SetActive(isHighligthed); }
+        void SetActive(bool activate) override;
         
         void SetEnableTranslationOnly(bool enable_) override {enableTranslationOnly = enable_;}
         

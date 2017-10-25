@@ -49,7 +49,7 @@ namespace Miam {
         virtual ~MultiSceneCanvasManager();
         
         // - - - - - - Scenes managing : Add and Delete - - - - - -
-        virtual void AddScene(std::string name) override;
+        virtual void AddScene(std::string name, bool selectNewScene = false) override;
         
         
         

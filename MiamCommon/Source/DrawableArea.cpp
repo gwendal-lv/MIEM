@@ -50,7 +50,7 @@ void DrawableArea::init()
     displayCenter = true;
     
     fillOpacity = 1.0;
-    enableLowOpacityMode = false;
+    opacityMode = OpacityMode::Independent;
     
     contourColour = Colours::white;
     contourWidth = 2.0f;
@@ -69,10 +69,7 @@ void DrawableArea::Paint(Graphics& g)
     // Dessin du centre (couleur du contour) si nécessaire
     if (displayCenter)
     {
-        Colour actualContourColour = (enableLowOpacityMode) ?
-        Colour(contourColour.getRed(), contourColour.getGreen(), contourColour.getBlue(),
-               getLowFillOpacity() )
-        : contourColour;
+        Colour actualContourColour = Colour(contourColour.getRed(), contourColour.getGreen(), contourColour.getBlue(), GetAlpha() );        
         g.setColour(actualContourColour);
         g.drawEllipse((float)centerInPixels.get<0>()-centerCircleRadius,
                       (float)centerInPixels.get<1>()-centerCircleRadius,
@@ -131,10 +128,36 @@ void DrawableArea::SetAlpha(float newAlpha)
 {
 	fillOpacity = newAlpha;
 }
-
-void DrawableArea::EnableLowOpacityMode(bool enable)
+float DrawableArea::GetAlpha() const
 {
-    enableLowOpacityMode = enable;
+    switch (opacityMode)
+    {
+        case OpacityMode::Low :
+            return getLowFillOpacity();
+            break;
+            
+        case OpacityMode::Mid :
+            return 0.5f;
+            break;
+            
+        case OpacityMode::High :
+            return 0.8f;
+            break;
+            
+        case OpacityMode::Independent :
+        case OpacityMode::DependingOnExcitement :
+            return fillOpacity;
+            break;
+            
+        default :
+            return 1.0;
+            break;
+    }
+}
+
+void DrawableArea::SetOpacityMode(OpacityMode opacityMode_)
+{
+    opacityMode = opacityMode_;
 }
 
 // = = = = = = = = = = XML import/export = = = = = = = = = =

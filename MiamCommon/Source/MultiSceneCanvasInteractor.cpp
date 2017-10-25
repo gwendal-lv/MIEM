@@ -93,16 +93,20 @@ void MultiSceneCanvasInteractor::SetMode(Miam::CanvasManagerMode newMode)
     
     // We don't do a specific action on every mode change !
     // But a few require checks and action
+    if (selfId == SceneCanvasComponent::Id::Canvas1)
+        std::cout << "mode = " << (int)newMode << std::endl;
+    
     switch (newMode) {
-            
             
         case CanvasManagerMode::PlayingWithExciters:
             // Tout est visible, en opacité max
-            selectedScene->EnableExcitersLowOpacity(false);
-            selectedScene->EnableAreasLowOpacity(false);
+            selectedScene->SetExcitersOpacityMode(OpacityMode::Independent);
+            selectedScene->SetAreasOpacityMode(OpacityMode::DependingOnExcitement);
             // Le canevas n'apparaît pas comme particulièrement sélectionné
             canvasComponent->SetIsSelectedForEditing(false);
             // Pas d'évènements renvoyés : on update le tout
+            
+            // EST CE QUE ÇA FOUTRAIT PAS LA MERDE ÇA
             recreateAllAsyncDrawableObjects();
             break;
         
@@ -113,8 +117,8 @@ void MultiSceneCanvasInteractor::SetMode(Miam::CanvasManagerMode newMode)
             if (selectedScene) // on first scene adding... there would be a problem
             {
                 auto areaE = selectedScene->SetSelectedArea(nullptr, false);
-                selectedScene->EnableExcitersLowOpacity(true);
-                selectedScene->EnableAreasLowOpacity(true);
+                selectedScene->SetExcitersOpacityMode(OpacityMode::Low);
+                selectedScene->SetAreasOpacityMode(OpacityMode::Low);
                 // Pas d'évènements renvoyés pour les opacités : on update le tout
                 recreateAllAsyncDrawableObjects();
                 //handleAndSendAreaEventSync(areaE);
@@ -140,8 +144,8 @@ void MultiSceneCanvasInteractor::SetMode(Miam::CanvasManagerMode newMode)
             // Mise en quasi-transparence des excitateurs seulement
             if (selectedScene) // sinon pb à l'initialisation
             {
-                selectedScene->EnableExcitersLowOpacity(true);
-                selectedScene->EnableAreasLowOpacity(false);
+                selectedScene->SetExcitersOpacityMode(OpacityMode::Low);
+                selectedScene->SetAreasOpacityMode(OpacityMode::Mid);
                 // Pas d'évènements renvoyés : on update le tout
                 recreateAllAsyncDrawableObjects();
             }
@@ -155,9 +159,10 @@ void MultiSceneCanvasInteractor::SetMode(Miam::CanvasManagerMode newMode)
                 selectedScene->StopCurrentTransformations();
             
             // Mise en quasi-transparence des aires graphiques à exciter seulement
-            selectedScene->EnableExcitersLowOpacity(false);
-            selectedScene->EnableAreasLowOpacity(true);
+            selectedScene->SetExcitersOpacityMode(OpacityMode::Mid);
+            selectedScene->SetAreasOpacityMode(OpacityMode::DependingOnExcitement);
             // Pas d'évènements renvoyés : on update le tout
+            selectedScene->RecomputeAreaExciterInteractions(); // évènements créés mais on s'en fout...
             recreateAllAsyncDrawableObjects();
             break;
             
@@ -235,7 +240,12 @@ void MultiSceneCanvasInteractor::handleAndSendEventSync(std::shared_ptr<GraphicE
             {
                     // Scene Change : we update all objects
                 case SceneEventType::SceneChanged :
+                    
+                    // ÇA aussi ça promet de foutre la merde....
+                    // ça rajoute des éléments qui pourrait être ré-ajoutés par la suite
                     recreateAllAsyncDrawableObjects();
+                    // -> on ne fait pas pour l'instant la suppresion/ajout des anciennes
+                    // nouvelles aires par des éléments séparés, mais ça pourrait venir
                     break;
                     
                 // We break if nothing happened (empty event)
@@ -310,17 +320,17 @@ void MultiSceneCanvasInteractor::processSingleAreaEventSync(std::shared_ptr<Area
             
         case AreaEventType::Deleted :
             // Idem que l'ajout :
-            if (selectedScene && selectedScene == areaE->GetConcernedScene())
+            if (selectedScene && (selectedScene == areaE->GetConcernedScene()))
             {
-                // The object's index is not needed anymore for deletion
-                deleteAsyncDrawableObject(/*areaE->GetAreaIdInScene(), */
-                                          areaE->GetConcernedArea());
+                std::shared_ptr<IDrawableArea> areaToDelete;
+                areaToDelete = areaE->GetConcernedArea();
+                deleteAsyncDrawableObject(areaToDelete);
             }
             break;
             
         default : // Any movement : update of the concerned area (if any)
             // Idem que l'ajout :
-            if (selectedScene && selectedScene == areaE->GetConcernedScene())
+            if (selectedScene && (selectedScene == areaE->GetConcernedScene()))
             {
                 if (areaE->GetConcernedArea())
                 {
@@ -353,6 +363,7 @@ void MultiSceneCanvasInteractor::recreateAllAsyncDrawableObjects()
     
     originalToAsyncObject.clear();
     asyncDrawableObjects.clear();
+    
     for (size_t i=0 ; i<selectedScene->GetDrawableObjectsCount() ; i++)
     {
         asyncDrawableObjects.push_back(syncAllocatedAreaCopies[i]);
@@ -367,7 +378,7 @@ void MultiSceneCanvasInteractor::addAsyncDrawableObject(int insertionIdInScene, 
      * cost 2 memory allocation of std::shared_ptr ? To be tested for optimization...
      */
     std::shared_ptr<IDrawableArea> areaCopy = std::shared_ptr<IDrawableArea>(originalAreaToAdd->Clone());
-    
+
     // Actual addition then
     asyncDrawableObjectsMutex.lock();
     if (insertionIdInScene == (int)asyncDrawableObjects.size())
@@ -431,14 +442,22 @@ void MultiSceneCanvasInteractor::deleteAsyncDrawableObject(std::shared_ptr<IDraw
 
 void MultiSceneCanvasInteractor::SelectScene(int id)
 {
-    std::shared_ptr<SceneEvent> graphicE;
-    // For storing possible events that may happen on unselection
+    std::shared_ptr<SceneEvent> sceneChangedE;
+    // For storing possible events that may happen on (un)selection
     std::vector<std::shared_ptr<GraphicEvent>> unselectionEvents;
+    std::shared_ptr<MultiAreaEvent> selectionEvents ;
     // Unselection of any area first
     //SetMode(CanvasManagerMode::NothingSelected); // Something strange here..........
     // and Deactivation of the scene
     if (selectedScene)
         unselectionEvents = selectedScene->OnUnselection();
+    
+    // Envoi direct des évènements
+    // !!! ne pas traiter graphiquement !
+    for (size_t i=0 ; i<unselectionEvents.size() ; i++)
+    {
+        graphicSessionManager->HandleEventSync(unselectionEvents[i]);
+    }
     
     if ( 0 <= id && id < (int)(scenes.size()) )
     {
@@ -446,15 +465,16 @@ void MultiSceneCanvasInteractor::SelectScene(int id)
         graphicSessionManager->SetSelectedCanvas(shared_from_this());
         // No specific other check, we just create the informative event before changing
 		
-        graphicE = std::make_shared<SceneEvent>(shared_from_this(), selectedScene, scenes[id],SceneEventType::SceneChanged);
+        sceneChangedE = std::make_shared<SceneEvent>(shared_from_this(), selectedScene, scenes[id],SceneEventType::SceneChanged);
         selectedScene = scenes[id];
-        selectedScene->OnSelection();
+        selectionEvents = selectedScene->OnSelection();
         
         SetMode(CanvasManagerMode::SceneOnlySelected);
         
         // Graphic updates
         canvasComponent->UpdateSceneButtons(GetInteractiveScenes());
         
+        handleAndSendEventSync(sceneChangedE);
     }
     else if (id != -1) // -1 is "tolerated"....
     {
@@ -462,11 +482,18 @@ void MultiSceneCanvasInteractor::SelectScene(int id)
         throw std::runtime_error(errorMsg);
     }
     
-    // Unselection events transmission here, at the end
-    for (size_t i=0 ; i<unselectionEvents.size() ; i++)
-        handleAndSendEventSync(unselectionEvents[i]);
-    // Finally : info sent to this itself, and the graphic session manager
-    handleAndSendEventSync(graphicE);
+    
+    // Selection events may be transmitted at the end
+    if (selectionEvents)
+    {
+        // Sans passer par la case graphique
+        graphicSessionManager->HandleEventSync(selectionEvents);
+    }
+    
+    // Update graphique forcé ici (on n'a pas transmis les évènement pour traitement OpenGL,
+    // seulement au graphic session manager pour traduction vers ailleurs !)
+    recreateAllAsyncDrawableObjects();
+    
 }
 
 
@@ -474,21 +501,23 @@ void MultiSceneCanvasInteractor::SelectScene(int id)
 
 
 
-void MultiSceneCanvasInteractor::AddScene(std::string name)
+void MultiSceneCanvasInteractor::AddScene(std::string name, bool selectNewScene)
 {
     auto newScene = std::make_shared<EditableScene>(shared_from_this(), canvasComponent->GetCanvas());
     newScene->SetName(name);
-    AddScene(newScene);
+    AddScene(newScene, selectNewScene);
 }
-void MultiSceneCanvasInteractor::AddScene(std::shared_ptr<EditableScene> newScene)
+void MultiSceneCanvasInteractor::AddScene(std::shared_ptr<EditableScene> newScene, bool selectNewScene)
 {
     scenes.push_back( newScene );
     auto sceneE = std::make_shared<SceneEvent>(shared_from_this(), newScene, SceneEventType::Added);
-    handleAndSendEventSync(sceneE);
 
-    SelectScene((int)(scenes.size())-1);
+    // pas de sélection automatique.... pose des problèmes au lancement
+    if (selectNewScene)
+        SelectScene((int)(scenes.size())-1);
     
-    // Graphical updates
+    // Graphical & other updates (que l'on sélectionne ou non)
+    handleAndSendEventSync(sceneE);
     canvasComponent->UpdateSceneButtons(GetInteractiveScenes());
 }
 bool MultiSceneCanvasInteractor::DeleteScene()
@@ -702,7 +731,9 @@ void MultiSceneCanvasInteractor::OnXmlLoadFinished()
     // Sauvegarde des excitateurs courants ajoutés, pour TOUTES les scènes
     for (size_t i =0 ; i<scenes.size() ; i++)
     {
-        scenes[i]->SaveCurrentExcitersToInitialExciters();
+        // true  = On supprime bien les excitateurs courants !!! Sinon on a des objets
+        // pas référencés dans le thread OpenGL
+        scenes[i]->SaveCurrentExcitersToInitialExciters(true);
     }
     
     // Le canevas se sélectionne lui-même (un peu comme

@@ -148,15 +148,6 @@ void EditableEllipse::computeManipulationPoint()
 void EditableEllipse::SetActive(bool activate)
 {
 	EditableArea::SetActive(activate);
-
-	if (isActive)
-	{
-		fillOpacity = 0.8f;
-	}
-	else
-	{
-		fillOpacity = 0.5f;
-	}
 }
 
 

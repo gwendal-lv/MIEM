@@ -218,9 +218,9 @@ namespace Miam {
         
         // ------ Scenes managing : Add and Delete ------
         /// \brief Adds a Miam::EditableScene
-        virtual void AddScene(std::string name);
+        virtual void AddScene(std::string name, bool selectNewScene = false);
         /// \brief Adds a Miam::EditableScene
-        virtual void AddScene(std::shared_ptr<EditableScene> newScene);
+        virtual void AddScene(std::shared_ptr<EditableScene> newScene, bool selectNewScene = false);
         /// \Returns wether the selected scene has been deleted or not (if it
         /// was the last one).
         virtual bool DeleteScene();

@@ -302,9 +302,9 @@ void EditableScene::BringSelectedAreaToFront()
 
 
 // - - - - - Selection events managing (orders from parent manager) - - - - -
-void EditableScene::OnSelection()
+std::shared_ptr<MultiAreaEvent> EditableScene::OnSelection()
 {
-    InteractiveScene::OnSelection();
+    return InteractiveScene::OnSelection();
 }
 
 std::vector<std::shared_ptr<GraphicEvent>> EditableScene::OnUnselection()
@@ -321,7 +321,6 @@ std::vector<std::shared_ptr<GraphicEvent>> EditableScene::OnUnselection()
 
 
 // - - - - - Canvas (mouse) events managing - - - - -
-
 std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent& mouseE)
 {
     // default : empty AREA event (TO DO : events may happen on exciters, etc, etc, ...)
