@@ -228,8 +228,8 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					if (areaE->GetMessage() != "intersection")
 					{
 						param.Id1 = myPresenter->getTimeLineID(area);
-						if (param.Id1 > 10)
-							DBG("trop grand pour mon nombre d'aire");
+						//if (param.Id1 > 10)
+						//	DBG("trop grand pour mon nombre d'aire");
 						myPresenter->addOctave(complete);
 						param.Id2 = 1024;
 						param.Type = Miam::AsyncParamChange::ParamType::Activate;
@@ -298,8 +298,8 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					{
 						param.Type = Miam::AsyncParamChange::ParamType::Activate;
 						param.Id1 = myPresenter->getTimeLineID(area);
-						if (param.Id1 > 10)
-							DBG("trop grand pour mon nombre d'aire");
+						//if (param.Id1 > 10)
+						//	DBG("trop grand pour mon nombre d'aire");
 						param.Id2 = 1024;
 						param.IntegerValue = 0;
 						myPresenter->SendParamChange(param);
