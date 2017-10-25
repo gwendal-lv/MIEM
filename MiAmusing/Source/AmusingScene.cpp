@@ -174,11 +174,20 @@ void AmusingScene::DeleteIntersections(std::shared_ptr<Amusing::CompletePolygon>
 					// then we erase the all line
 					parentTochildArea.erase(it);
 				}
+
+				parent->resetChords();
+				parent2->resetChords();
+				
+				// to send those update to the model
+				manager->OnInteraction(std::shared_ptr<AreaEvent>(new AreaEvent(parent, AreaEventType::ShapeChanged, shared_from_this())));
+				manager->OnInteraction(std::shared_ptr<AreaEvent>(new AreaEvent(parent2, AreaEventType::ShapeChanged, shared_from_this())));
 				
 			}
 			
 		}
 	}
+
+	
 }
 
 

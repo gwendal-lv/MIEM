@@ -56,6 +56,7 @@ public:
 	void addChord(TimeLine* otherTimeLine, int chordTime);
 	bool isNoteAvailable(ChordType m_chordType, int baseNote1, int &otherChordNote);
 	void createChord(ChordType m_chordType, int m_chordTime, int baseNote1, int baseNote2);
+	void createPerfectChord(int chordTime, int currentNote);
 	void resetAllChords();
 
 private:

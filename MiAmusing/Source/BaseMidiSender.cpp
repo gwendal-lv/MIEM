@@ -393,16 +393,41 @@ void TimeLine::addChord(TimeLine * otherTimeLine, int chordTime)
 		int otherChordNote;
 		if (otherTimeLine->isNoteAvailable(ChordType::MajorThird, currentNote, otherChordNote))
 			createChord(ChordType::MajorThird, chordTime, currentNote, otherChordNote);
-		else if(otherTimeLine->isNoteAvailable(ChordType::MinorThird, currentNote, otherChordNote))
+		else if (otherTimeLine->isNoteAvailable(ChordType::MinorThird, currentNote, otherChordNote))
 			createChord(ChordType::MinorThird, chordTime, currentNote, otherChordNote);
 		else if (otherTimeLine->isNoteAvailable(ChordType::MinorThird, currentNote, otherChordNote))
 			createChord(ChordType::AugmentedQuart, chordTime, currentNote, otherChordNote);
+		else
+			createPerfectChord(chordTime, currentNote);
 
 	} 
 	else // sinon on sélectionnera une des autres notes comme base
 	{
-
+		/*for (int j = 0; j < midiTimesSize; j++)
+		{
+			currentNote = notes[j];
+			int otherChordNote;
+			if (otherTimeLine->isNoteAvailable(ChordType::MajorThird, currentNote, otherChordNote))
+			{
+				createChord(ChordType::MajorThird, chordTime, currentNote, otherChordNote);
+				break;
+			}
+			else if (otherTimeLine->isNoteAvailable(ChordType::MinorThird, currentNote, otherChordNote))
+			{
+				createChord(ChordType::MinorThird, chordTime, currentNote, otherChordNote);
+				break;
+			}
+			else if (otherTimeLine->isNoteAvailable(ChordType::MinorThird, currentNote, otherChordNote))
+			{
+				createChord(ChordType::AugmentedQuart, chordTime, currentNote, otherChordNote);
+				break;
+			}
+			else
+				currentNote = 0;
+		}*/
 	}
+	//if(currentNote == 0) // aucune note n'était jouée et aucun accord trouvé entre les 2 aires --> accord parfait avec juste la note comme base
+
 }
 
 bool TimeLine::isNoteAvailable(ChordType m_chordType, int baseNote1, int &otherChordNote)
@@ -434,6 +459,7 @@ bool TimeLine::isNoteAvailable(ChordType m_chordType, int baseNote1, int &otherC
 		}
 		break;
 	case MinorThird:
+
 		break;
 	case AugmentedQuart:
 		break;
@@ -473,6 +499,9 @@ void TimeLine::createChord(ChordType m_chordType, int m_chordTime, int baseNote1
 		case 9 :
 			baseNote3 = baseNote1 > baseNote2 ? baseNote1 - 4 : baseNote2 - 4;
 			break;
+		case 0 :
+			baseNote2 = baseNote1 + 4;
+			baseNote3 = baseNote1 + 7;
 		default:
 			break;
 		}
@@ -495,6 +524,25 @@ void TimeLine::createChord(ChordType m_chordType, int m_chordTime, int baseNote1
 	chordTimesOff[chordSize] = (m_chordTime + duration)%currentPeriod;
 	chordTimesOff[chordSize + 1] = (m_chordTime + 1 + duration)%currentPeriod;
 	chordTimesOff[chordSize + 2] = (m_chordTime + 2 + duration)%currentPeriod;
+	chordNotesOff[chordSize] = baseNote1;
+	chordNotesOff[chordSize + 1] = baseNote2;
+	chordNotesOff[chordSize + 2] = baseNote3;
+	chordSize += 3;
+}
+
+void TimeLine::createPerfectChord(int m_chordTime, int baseNote1)
+{
+	int baseNote2 = baseNote1 + 4;
+	int baseNote3 = baseNote1 + 7;
+	chordTimesOn[chordSize] = m_chordTime;
+	chordTimesOn[chordSize + 1] = m_chordTime + 1;
+	chordTimesOn[chordSize + 2] = m_chordTime + 2;
+	chordNotesOn[chordSize] = baseNote1;
+	chordNotesOn[chordSize + 1] = baseNote2;
+	chordNotesOn[chordSize + 2] = baseNote3;
+	chordTimesOff[chordSize] = (m_chordTime + duration) % currentPeriod;
+	chordTimesOff[chordSize + 1] = (m_chordTime + 1 + duration) % currentPeriod;
+	chordTimesOff[chordSize + 2] = (m_chordTime + 2 + duration) % currentPeriod;
 	chordNotesOff[chordSize] = baseNote1;
 	chordNotesOff[chordSize + 1] = baseNote2;
 	chordNotesOff[chordSize + 2] = baseNote3;
