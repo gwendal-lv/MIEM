@@ -973,6 +973,11 @@ std::shared_ptr<AreaEvent> CompletePolygon::intersection(std::shared_ptr<Complet
 		return multiE;
 		//areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeP, AreaEventType::NothingHappened));
 	}
+	else
+	{
+		std::shared_ptr<MultiAreaEvent> multiE(new MultiAreaEvent());
+		return multiE;
+	}
 	return areaE;
 }
 
