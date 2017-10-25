@@ -435,7 +435,9 @@ void AmusingScene::AddAllIntersections(std::shared_ptr<Amusing::CompletePolygon>
 					int i = 0;
 					auto intersectionBackUp = it->second.at(i);
 					it->second.erase(it->second.begin() + i);
-					manager->OnInteraction(std::shared_ptr<AreaEvent>(new AreaEvent(intersectionBackUp, AreaEventType::Deleted, (int)areas.size() + i, shared_from_this())));
+					auto areaE = std::shared_ptr<AreaEvent>(new AreaEvent(intersectionBackUp, AreaEventType::Deleted, (int)areas.size() + i, shared_from_this()));
+					areaE->SetMessage("intersection");
+					manager->OnInteraction(areaE);
 					
 
 				}
@@ -550,7 +552,9 @@ void AmusingScene::AddAllIntersections(std::shared_ptr<Amusing::CompletePolygon>
 				{
 					auto intersectionBackUp = it->second.at(i);
 					it->second.erase(it->second.begin() + i);
-					manager->OnInteraction(std::shared_ptr<AreaEvent>(new AreaEvent(intersectionBackUp, AreaEventType::Deleted, (int)areas.size() + i, shared_from_this())));
+					auto areaE = std::shared_ptr<AreaEvent>(new AreaEvent(intersectionBackUp, AreaEventType::Deleted, (int)areas.size() + i, shared_from_this()));
+					areaE->SetMessage("intersection");
+					manager->OnInteraction(areaE);
 				}
 
 				// then we erase the all line
