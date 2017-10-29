@@ -29,6 +29,8 @@ SceneCanvasComponent::SceneCanvasComponent() :
 
 SceneCanvasComponent::~SceneCanvasComponent()
 {
+    openGlContext.detach();
+    DBG("SceneCanvasComponent : destruction arrive à son terme");
 }
 
 void SceneCanvasComponent::CompleteInitialization(std::shared_ptr<MultiSceneCanvasInteractor> _canvasManager)
@@ -85,13 +87,13 @@ void SceneCanvasComponent::renderOpenGL()
 	//DBG("render : " + getName());
     auto manager = canvasManager.lock();
     
-    const float desktopScale = (float) openGlContext.getRenderingScale();
+    const double desktopScale = openGlContext.getRenderingScale();
     std::unique_ptr<LowLevelGraphicsContext> glRenderer (createOpenGLGraphicsContext (openGlContext,
                                                                                     roundToInt (desktopScale * getWidth()),
                                                                                     roundToInt (desktopScale * getHeight())));
     Graphics g(*glRenderer);
     
-    g.addTransform(AffineTransform::scale(desktopScale));
+    g.addTransform(AffineTransform::scale((float) desktopScale));
     
     // Pure black background
     g.fillAll (Colours::black);
@@ -118,20 +120,20 @@ void SceneCanvasComponent::renderOpenGL()
         duplicatedAreas.resize(manager->GetAsyncDrawableObjects().size());
     }
     // Vérification simple de chaque aire 1 par 1
-    size_t i = 0;
+    size_t itIndex = 0;
     for (auto it = manager->GetAsyncDrawableObjects().begin() ;
          it != manager->GetAsyncDrawableObjects().end() ;
          ++it)
     {
         // S'il y a eu un changement : on re-crée un pointeur déjà, puis
         // on fait effectivement la copie d'un nouvel objet
-        if (canvasAreasPointersCopies[i] != (*it))
+        if (canvasAreasPointersCopies[itIndex] != (*it))
         {
-            canvasAreasPointersCopies[i] = (*it);
-            duplicatedAreas[i].reset( (*it)->Clone() ); // pas d'allocation d'un nouveau ptr
+            canvasAreasPointersCopies[itIndex] = (*it);
+            duplicatedAreas[itIndex].reset( (*it)->Clone() ); // pas d'allocation d'un nouveau ptr
         }
         // Double compteur
-        i++;
+        itIndex++;
     }
     
     manager->UnlockAsyncDrawableObjects();
@@ -140,7 +142,12 @@ void SceneCanvasComponent::renderOpenGL()
     // - - - - - Areas painting (including exciters if existing) - - - - -
     // Sans bloquer, du coup, les autres threads (pour réactivité max...)
     for (size_t i=0;i<duplicatedAreas.size();i++)
+    {
+        // Peut mettre à jour des images et autres (si l'échelle a changé)
+        duplicatedAreas[i]->SetRenderingScale(desktopScale);
+        // Dessin effectif
         duplicatedAreas[i]->Paint(g);
+    }
     
     
     // Call to a general Graphic update on the whole Presenter module
@@ -167,7 +174,7 @@ void SceneCanvasComponent::renderOpenGL()
 
 void SceneCanvasComponent::openGLContextClosing()
 {
-    
+    DBG("SceneCanvasComponent : closing OpenGL Context");
 }
 
 

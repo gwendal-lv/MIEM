@@ -32,8 +32,9 @@ namespace Miam {
 /// \brief Initially empty component dedicated to the drawing of several Miam::DrawableArea
 ///
 /// This component does not have any children UI controls built within the Projucer.
-class SceneCanvasComponent    : public Component,
-                                public OpenGLRenderer
+class SceneCanvasComponent    : public OpenGLRenderer,
+                                public Component
+
 {
 public:
     

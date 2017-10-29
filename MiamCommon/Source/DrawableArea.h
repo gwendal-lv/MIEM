@@ -45,6 +45,13 @@ namespace Miam
         
         // Display data
         protected :
+        
+        double renderingScale;
+        /// \brief Pour tout ce qui est en cache, on fait de base du rendu
+        /// en taille x2. Ensuite, si besoin, on fait un resize au moment du rendu final OpenGL
+        /// (c'est Juce qui se débrouille avec...)
+        const double baseRenderingScale = 2.0;
+        
         Colour fillColour; ///< Solid colour for filling the area (opacity should be 0xFF)
         float fillOpacity; ///< Opacity applied to the solid fill colour (in [0.0,1.0])
         OpacityMode opacityMode;
@@ -61,13 +68,15 @@ namespace Miam
         
         String name;
         bool isNameVisible;
+        Image nameImage;
+        static const int nameWidth = 120; // pixels
+        static const int nameHeight = 30; // pixels
         
         bool keepRatio;
         
         
         // - - - - - - TEST OPENGL MULTITHREADÉ - - - - - -
         // - - - - - - TEST OPENGL MULTITHREADÉ - - - - - -
-        Image nameImage;
         // - - - - - - TEST OPENGL MULTITHREADÉ - - - - - -
         // - - - - - - TEST OPENGL MULTITHREADÉ - - - - - -
         
@@ -97,7 +106,8 @@ namespace Miam
         
         void KeepRatio(bool _keepRatio);
         
-        
+        /// \brief Pour régler les problèmes d'écrans type "rétina"
+        virtual void SetRenderingScale(double renderingScale_) override;
         
         
         
@@ -122,6 +132,8 @@ namespace Miam
         
         private :
         void init();
+        void resetImage();
+        void renderCachedNameImage();
         public :
         
         
