@@ -2,8 +2,8 @@
 
 <JUCERPROJECT id="O4BfM6" name="MiamEdit" projectType="guiapp" version="1.0.0"
               bundleIdentifier="com.yourcompany.MiamEdit" includeBinaryInAppConfig="1"
-              jucerVersion="5.1.2" displaySplashScreen="1" reportAppUsage="1"
-              splashScreenColour="Dark" cppLanguageStandard="11">
+              jucerVersion="5.2.0" displaySplashScreen="1" reportAppUsage="1"
+              splashScreenColour="Dark" cppLanguageStandard="11" companyCopyright="">
   <MAINGROUP id="uJFjC5" name="MiamEdit">
     <GROUP id="{7878353D-A1B6-291B-EABC-831E28CE51BB}" name="Source">
       <FILE id="MLMDSl" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
@@ -277,10 +277,10 @@
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="default" osxArchitecture="default"
                        isDebug="1" optimisation="1" targetName="MiamEdit" headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../MiamCommon/Source/"
-                       defines="__MIAM_DEBUG"/>
+                       defines="__MIAM_DEBUG" enablePluginBinaryCopyStep="1"/>
         <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="default" osxArchitecture="default"
                        isDebug="0" optimisation="3" targetName="MiamEdit" headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../MiamCommon/Source/"
-                       defines="BOOST_UBLAS_NDEBUG&#10;NDEBUG"/>
+                       defines="BOOST_UBLAS_NDEBUG&#10;NDEBUG" enablePluginBinaryCopyStep="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
@@ -303,10 +303,12 @@
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
                        isDebug="1" optimisation="1" targetName="MiamEdit" headerPath="..\..\..\&#10;..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"
-                       defines="__MIAM_DEBUG"/>
+                       defines="__MIAM_DEBUG" debugInformationFormat="ProgramDatabase"
+                       enablePluginBinaryCopyStep="0"/>
         <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
                        isDebug="0" optimisation="3" targetName="MiamEdit" headerPath="..\..\..\&#10;..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"
-                       defines="BOOST_UBLAS_NDEBUG&#10;NDEBUG"/>
+                       defines="BOOST_UBLAS_NDEBUG&#10;NDEBUG" debugInformationFormat="ProgramDatabase"
+                       enablePluginBinaryCopyStep="0" linkTimeOptimisation="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_video" path="../../JUCE/modules"/>

@@ -103,9 +103,9 @@ namespace Miam
         
         // ----- Setters and Getters -----
         
-        virtual int64_t GetId() = 0;
+        virtual int64_t GetId() const = 0;
         virtual void SetId(int64_t _Id) = 0;
-        virtual Colour GetFillColour() = 0;
+        virtual Colour GetFillColour() const = 0;
         virtual void SetFillColour(Colour newColour) = 0;
 		virtual void SetAlpha(float newAlpha) = 0;
         virtual float GetAlpha() const = 0;

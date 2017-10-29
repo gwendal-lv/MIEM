@@ -44,6 +44,10 @@ DrawableArea::DrawableArea(int64_t _Id, bpt _center, Colour _fillColour)
     init();
 }
 
+DrawableArea::~DrawableArea()
+{
+}
+
 void DrawableArea::init()
 {
     centerCircleRadius = 5;
@@ -59,6 +63,24 @@ void DrawableArea::init()
     isNameVisible = true; // par défaut
     
     keepRatio = false;
+    
+    
+    // - - - - - - TEST OPENGL MULTITHREADÉ - - - - - -
+    // - - - - - - TEST OPENGL MULTITHREADÉ - - - - - -
+    
+    // Construction de l'image (fond transparent à l'avenir)
+    // On en recréée un 2è, qu'on assigne à la 1ière...
+    // Pour éviter de nombreux problèmes (écrire un constructeur de copie
+    // de DrawableArea par exemple....)
+    Image nameImageToAssign = Image(Image::ARGB, 100, 30, true);
+    nameImage = nameImageToAssign;
+    nameImage.duplicateIfShared();
+    // Contexte graphique permettant de faire du dessin dans l'image
+    Graphics g(nameImage);
+    g.fillAll(Colours::pink);
+    
+    // - - - - - - TEST OPENGL MULTITHREADÉ - - - - - -
+    // - - - - - - TEST OPENGL MULTITHREADÉ - - - - - -
 }
 
 
@@ -82,8 +104,9 @@ void DrawableArea::Paint(Graphics& g)
     // DEBUG pb MT getGlyphPosition
     // DEBUG pb MT getGlyphPosition
     // DEBUG pb MT getGlyphPosition
-    if (isNameVisible && /* DISABLES CODE */ (false))
+    if (isNameVisible)
     {
+        /*
         g.setColour(Colours::black); // black shadow
         g.drawSingleLineText(name,
                              (int)centerInPixels.get<0>()+1,
@@ -92,6 +115,9 @@ void DrawableArea::Paint(Graphics& g)
         g.drawSingleLineText(name,
                              (int)centerInPixels.get<0>(),
                              (int)(centerInPixels.get<1>() -centerCircleRadius*2));
+         */
+        
+        g.drawImageAt(nameImage, centerInPixels.get<0>(), centerInPixels.get<1>(), false);
     }
     
     

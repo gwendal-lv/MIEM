@@ -70,6 +70,17 @@ public:
     const int swapInterval = 1; // synced on vertical frequency
     bool isSwapSynced;
     
+    // Les pointeurs sur les 2è copies des objets du canvas interactor
+    // (pour savoir lesquels avaient changé) -> ATTENTION tout l'algorithme thread-safe
+    // ici fonctionne tant que le CanvasInteractor construit bien un nouvel objet à chaque fois
+    // que l'objet de base est modifié.
+    // On stocke ça dans un simple vecteur (alors que les objets de la seconde
+    // copie sont dans une liste)
+    std::vector<std::shared_ptr<IDrawableArea>> canvasAreasPointersCopies;
+    // La 3è copie des objets (celle pour faire le rendu à tout moment),
+    // qui sera éventuellement actualisée lorsque nécessaire
+    std::vector<std::shared_ptr<IDrawableArea>> duplicatedAreas;
+    
     // - - - - - Time measures - - - - -
     const double desiredFrequency_Hz = 60.0; // actual freq will actually be greater
     const double desiredPeriod_ms = 1000.0/desiredFrequency_Hz;

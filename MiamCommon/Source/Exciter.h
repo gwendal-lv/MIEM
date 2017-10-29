@@ -97,7 +97,7 @@ namespace Miam
         Exciter(bptree::ptree & areaTree, std::chrono::time_point<clock> commonStartTimePoint_);
         /// \brief Will automatically define the shape of the exciter
         Exciter(uint64_t uniqueId, std::chrono::time_point<clock> commonStartTimePoint_);
-        virtual ~Exciter() {}
+        virtual ~Exciter();
         virtual IDrawableArea* Clone() const override {return new Exciter(*this);}
         
         // - - - - - Ction helpers - - - - -

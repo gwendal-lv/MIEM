@@ -455,7 +455,6 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::testAreasInteractionsWithExcit
         auto areaE = areas[i]->UpdateInteraction(exciter);
         if ( areaE->GetType() == AreaEventType::ExcitementAmountChanged )
         {
-            std::cout << areas[i]->GetTotalInteractionWeight() << std::endl;
             areaE->SetConcernedScene(shared_from_this()); // pas précisé dans l'aire, qui ne connaît pas son parent.
             multiAreaE->AddAreaEvent( areaE );
         }

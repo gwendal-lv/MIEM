@@ -103,22 +103,42 @@ void SceneCanvasComponent::renderOpenGL()
         g.drawRect(1, 1, getWidth()-2, getHeight()-2, 2);
     }
     
-    // Duplication of the drawable objects for thread-safe rendering
+    
+    // - - - - - THIRD Duplication of the drawable objects for thread-safe rendering, - - - - -
+    // Lorsque nécessaire seulement !
     manager->LockAsyncDrawableObjects();
     
-    // Not a resize but just a pre-allocation (to avoid empty shared ptrs constructing)
-    std::vector<std::shared_ptr<IDrawableArea>> duplicatedAreas;
-    duplicatedAreas.reserve(manager->GetAsyncDrawableObjects().size());
+    bool areasCountChanged = (manager->GetAsyncDrawableObjects().size() != duplicatedAreas.size());
+    // POUR L'INSTANT ALGO BÊTE
+    // on resize le vecteur : la construction des shared n'est pas grave, leur bloc de contrôle reste
+    // en mémoire finalement (on utilisera reset() )
+    if (areasCountChanged)
+    {
+        canvasAreasPointersCopies.resize(manager->GetAsyncDrawableObjects().size());
+        duplicatedAreas.resize(manager->GetAsyncDrawableObjects().size());
+    }
+    // Vérification simple de chaque aire 1 par 1
+    size_t i = 0;
     for (auto it = manager->GetAsyncDrawableObjects().begin() ;
          it != manager->GetAsyncDrawableObjects().end() ;
          ++it)
     {
-        duplicatedAreas.push_back(std::shared_ptr<IDrawableArea>( (*it)->Clone() ) );
+        // S'il y a eu un changement : on re-crée un pointeur déjà, puis
+        // on fait effectivement la copie d'un nouvel objet
+        if (canvasAreasPointersCopies[i] != (*it))
+        {
+            canvasAreasPointersCopies[i] = (*it);
+            duplicatedAreas[i].reset( (*it)->Clone() ); // pas d'allocation d'un nouveau ptr
+        }
+        // Double compteur
+        i++;
     }
     
     manager->UnlockAsyncDrawableObjects();
     
-    // Areas painting (including exciters if existing)
+    
+    // - - - - - Areas painting (including exciters if existing) - - - - -
+    // Sans bloquer, du coup, les autres threads (pour réactivité max...)
     for (size_t i=0;i<duplicatedAreas.size();i++)
         duplicatedAreas[i]->Paint(g);
     

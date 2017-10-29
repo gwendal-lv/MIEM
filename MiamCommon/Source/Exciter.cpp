@@ -46,6 +46,11 @@ commonStartTimePt(commonStartTimePoint_)
     init();
 }
 
+Exciter::~Exciter()
+{
+}
+
+
 void Exciter::init()
 {
 	// Par défaut : volume de 1 ! Volume manuel pas encore implémenté... Peut-être jamais d'ailleurs...

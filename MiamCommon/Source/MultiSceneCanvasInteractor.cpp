@@ -93,9 +93,6 @@ void MultiSceneCanvasInteractor::SetMode(Miam::CanvasManagerMode newMode)
     
     // We don't do a specific action on every mode change !
     // But a few require checks and action
-    if (selfId == SceneCanvasComponent::Id::Canvas1)
-        std::cout << "mode = " << (int)newMode << std::endl;
-    
     switch (newMode) {
             
         case CanvasManagerMode::PlayingWithExciters:

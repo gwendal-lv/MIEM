@@ -62,9 +62,6 @@ namespace Miam {
         
         
         // Display & editing attributes for Areas
-        
-        /// \brief Unique Id of the next created (or pasted, or loaded...) area
-        int64_t nextAreaId;
         std::shared_ptr<IEditableArea> areaToCopy = nullptr; ///< vector index of
         
         

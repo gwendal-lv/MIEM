@@ -29,61 +29,7 @@ namespace Miam
     class DrawableArea : public virtual IDrawableArea
     {
         
-        public :
-        
-        /// \Brief Contruction from the unique ID, center, and fill colour that must
-        /// be found in the given <area> sub-tree inner content.
-        DrawableArea(bptree::ptree& areaTree);
-        
-        /// \brief Minimal constructor when building a new area
-        ///
-        /// \param _Id Unique ID of the area
-        /// \param _center Normalized center coordinates (x, y in [0.0,1.0])
-        /// \param _fillColour Solid colour for filling the area (opacity should be 0xFF)
-		DrawableArea(int64_t _Id, bpt _center, Colour _fillColour);
-        
-        /// \brief Virtual destructor.
-        virtual ~DrawableArea() {}
-        
-        private :
-        void init();
-        public :
-        
-        
-        virtual void Paint(Graphics& g) override;
-        virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
-
-        
-        // ----- Setters and Getters -----
-        
-        /// \returns Unique ID of the area
-        virtual int64_t GetId() override {return Id;}
-        /// \param _Id Unique ID of the area
-        virtual void SetId(int64_t _Id) override {Id = _Id;}
-        /// \returns See DrawableArea::fillColour
-        virtual Colour GetFillColour() override {return fillColour;}
-        /// \param _fillColour See DrawableArea::fillColour
-        virtual void SetFillColour(Colour newColour) override;
-		/// \param _fillOpacity See DrawableArea::fillOpacity
-		virtual void SetAlpha(float newAlpha) override;
-        virtual float GetAlpha() const override;
-
-        
-        virtual void SetOpacityMode(OpacityMode opacityMode_) override;
-        
-        /// \brief Sets the name that could be displayed on screen next to the center
-        virtual void SetName(String newName) override;
-        
-        void SetNameVisible(bool isVisible) {isNameVisible = isVisible;}
-
-		void KeepRatio(bool _keepRatio);
-        
-        // - - - - - XML import/export - - - - -
-        virtual std::shared_ptr<bptree::ptree> GetTree() override;
-        
-        
-        
-        
+        // =============== ATTRIBUTS ===============
         
         // General data
         protected :
@@ -92,8 +38,8 @@ namespace Miam
         
         // Geometric data
         protected :
-		bpt center; ///< Normalized center coordinates (x, y in [0.0,1.0])
-		bpt centerInPixels; ///< Center coordinates in pixels (relative to a canvas)
+        bpt center; ///< Normalized center coordinates (x, y in [0.0,1.0])
+        bpt centerInPixels; ///< Center coordinates in pixels (relative to a canvas)
         bool displayCenter;
         bpolygon contourPointsInPixels; ///< Caracteristic points (coordinates in pixels) along the contour of the area (not necessarily drawn)
         
@@ -115,8 +61,77 @@ namespace Miam
         
         String name;
         bool isNameVisible;
+        
+        bool keepRatio;
+        
+        
+        // - - - - - - TEST OPENGL MULTITHREADÉ - - - - - -
+        // - - - - - - TEST OPENGL MULTITHREADÉ - - - - - -
+        Image nameImage;
+        // - - - - - - TEST OPENGL MULTITHREADÉ - - - - - -
+        // - - - - - - TEST OPENGL MULTITHREADÉ - - - - - -
+        
+        
+        
+        // =============== SETTERS & GETTERS ===============
+        public :
+        /// \returns Unique ID of the area
+        virtual int64_t GetId() const override {return Id;}
+        /// \param _Id Unique ID of the area
+        virtual void SetId(int64_t _Id) override {Id = _Id;}
+        /// \returns See DrawableArea::fillColour
+        virtual Colour GetFillColour() const override {return fillColour;}
+        /// \param _fillColour See DrawableArea::fillColour
+        virtual void SetFillColour(Colour newColour) override;
+        /// \param _fillOpacity See DrawableArea::fillOpacity
+        virtual void SetAlpha(float newAlpha) override;
+        virtual float GetAlpha() const override;
+        
+        
+        virtual void SetOpacityMode(OpacityMode opacityMode_) override;
+        
+        /// \brief Sets the name that could be displayed on screen next to the center
+        virtual void SetName(String newName) override;
+        
+        void SetNameVisible(bool isVisible) {isNameVisible = isVisible;}
+        
+        void KeepRatio(bool _keepRatio);
+        
+        
+        
+        
+        
+        // =============== MÉTHODES ===============
 
-		bool keepRatio;
+        
+        public :
+        
+        /// \Brief Contruction from the unique ID, center, and fill colour that must
+        /// be found in the given <area> sub-tree inner content.
+        DrawableArea(bptree::ptree& areaTree);
+        
+        /// \brief Minimal constructor when building a new area
+        ///
+        /// \param _Id Unique ID of the area
+        /// \param _center Normalized center coordinates (x, y in [0.0,1.0])
+        /// \param _fillColour Solid colour for filling the area (opacity should be 0xFF)
+		DrawableArea(int64_t _Id, bpt _center, Colour _fillColour);
+        
+        /// \brief Virtual destructor.
+        virtual ~DrawableArea();
+        
+        private :
+        void init();
+        public :
+        
+        
+        virtual void Paint(Graphics& g) override;
+        virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
+
+        // - - - - - XML import/export - - - - -
+        virtual std::shared_ptr<bptree::ptree> GetTree() override;
+        
+        
     };
     
 }
