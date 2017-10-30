@@ -30,7 +30,7 @@ AreaEvent(concernedArea_, eventType_, concernedScene_)
     
 }
 
-MultiAreaEvent::MultiAreaEvent(std::shared_ptr<IDrawableArea> concernedArea_,
+MultiAreaEvent::MultiAreaEvent(std::shared_ptr<DrawableArea> concernedArea_,
                AreaEventType eventType_,
                int areaIdInScene_,
                std::shared_ptr<InteractiveScene> concernedScene_)

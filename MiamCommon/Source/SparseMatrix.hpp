@@ -24,7 +24,7 @@ namespace Miam
 {
     
     /// \brief Sparse matrix optimized for computation efficiency, and
-    /// not for memory efficiency. Everything is statically allocated on the stack
+    /// not for memory efficiency. Everything is allocated during construction.
     ///
     /// T is a type that std::abs can process
     /// matrix of N rows, and M columns
@@ -109,7 +109,7 @@ namespace Miam
         }
         inline size_t idx(size_t i, size_t j) const { return i*M+j; }
         inline bool isNegligible(T value) const
-        {return ! (std::abs(value) >= (T)zeroThreshold) ; }
+        { return ! (std::abs(value) >= (T)zeroThreshold) ; }
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
@@ -125,6 +125,7 @@ namespace Miam
         /// k is a global matrix index within [0 ; N*M-1]
         /// Not used for now, as a class can access private members of other instances
         //inline T operator() (size_t k) { return matrix[k]; }
+        
         /// \brief Operator "Get" overloaded (! "Set" not overloaded !)
         ///
         /// i,j are the row and col indexes

@@ -53,9 +53,6 @@ Exciter::~Exciter()
 
 void Exciter::init()
 {
-	// Par défaut : volume de 1 ! Volume manuel pas encore implémenté... Peut-être jamais d'ailleurs...
-	volume = 1.0;
-
     // Centre (voir DrawableArea)
     displayCenter = false;
     
@@ -68,10 +65,22 @@ void Exciter::init()
     // Clignotement
     startTimePt = clock::now();
     isAnimationSynchronized = true;
+    
+    
+    // Par défaut : volume de 1
+    SetVolume(1.0);
 }
 
 
 // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
+
+void Exciter::SetVolume(double volume_)
+{
+    volume = volume_;
+    
+    // Pour l'instant rien, mais à l'avenir ça devra afficher graphiquement le résultat
+}
+
 void Exciter::SetIsAnimationSynchronized(bool isSynchronized_)
 {
     // On suppose que le point de départ commun a bien été initialisé auparavant...
@@ -163,6 +172,8 @@ size_t Exciter::findAreaInteractingIndex(std::shared_ptr<IInteractiveArea> areaT
 }
 void Exciter::updateExcitationAmounts()
 {
+    // On applique le volume le + tard possible (on fait tout par rapport à 1, puis on diminue ensuite...)
+    
     // Total : accumulation type is defined by the type of the last input parameter
     double totalInteractionWeight
     = std::accumulate(areaInteractionWeights.begin(), areaInteractionWeights.end(), 0.0);
@@ -174,13 +185,14 @@ void Exciter::updateExcitationAmounts()
     {
         double uniformWeight = 1.0 / (double)(areaExcitationAmounts.size());
         for (size_t i=0 ; i<areaExcitationAmounts.size() ; i++)
-            areaExcitationAmounts[i] = uniformWeight;
+            areaExcitationAmounts[i] = volume * uniformWeight;
     }
     // Si le poids total est OK : on normalise simplement les poids pour calculer les excitations
     else
     {
         for (size_t i=0 ; i<areaExcitationAmounts.size() ; i++)
-            areaExcitationAmounts[i] = areaInteractionWeights[i] / totalInteractionWeight;
+            areaExcitationAmounts[i] = volume * areaInteractionWeights[i]
+                                        / totalInteractionWeight;
     }
 }
 

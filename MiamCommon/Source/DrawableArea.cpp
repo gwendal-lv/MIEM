@@ -98,6 +98,7 @@ void DrawableArea::renderCachedNameImage()
     auto textBounds = nameImage.getBounds();
     int shadowOffsetXY = 1 * (int) std::round(baseRenderingScale); // pixels
     // black shadow
+    g.setFont(nameImage.getHeight() - shadowOffsetXY);
     g.setColour(Colours::black);
     textBounds.setPosition(shadowOffsetXY, shadowOffsetXY);
     textBounds.removeFromBottom(shadowOffsetXY);
@@ -124,12 +125,47 @@ void DrawableArea::Paint(Graphics& g)
     }
     
     // Dessin du texte :
+    // à cet instant, le composant qui rend du OpenGL a déjà appliqué une transformation affine.
+    // On sauvegarde l'état graphique, on inverse la transfo affine, puis on rend les images
+    // comme il faut -> NON l'état ne prend pas en compte les tranformations affines....
     if (isNameVisible)
     {
-        g.drawImageAt(nameImage,
-                      (int)centerInPixels.get<0>() + centerCircleRadius + 2,
-                      (int)centerInPixels.get<1>() + 2,
+        // Dans tous les cas, on inverse l'échelle appliquée avant,
+        g.addTransform(AffineTransform::scale(1.0f/(float)renderingScale,
+                                              1.0f/(float)renderingScale));
+        
+        // Si on est proche de l'échelle de base : on ne fait rien
+        // Par contre, si on est loin de l'échelle de base, on doit faire du redimensionnement
+        bool mustScaleImages = ( std::abs(renderingScale-baseRenderingScale) > 0.1 );
+        Image* scaledNameImage = nullptr;
+        Image juceCreatedScaledNameImage;
+        if (mustScaleImages)
+        {
+            // Tout ça sans utiliser de code de dessin de texte ! Car c'est ça qui ne passe pas
+            // en multi-threadé....
+            int newWidth = (int) std::round((double)nameWidth*renderingScale);
+            int newHeight = (int) std::round((double)nameHeight*renderingScale);
+            juceCreatedScaledNameImage = nameImage.rescaled(newWidth, newHeight);
+            scaledNameImage = &juceCreatedScaledNameImage;
+        }
+        else
+            scaledNameImage = &nameImage;
+        
+        // Ensuite, le placement doit se faire en mettant soi-même à l'échelle...
+        g.saveState();
+        float alpha = GetAlpha();
+        alpha = alpha + (1.0f - alpha)*0.3f; // légèrement plus opaque
+        Colour actualContourColour = Colour(contourColour.getRed(), contourColour.getGreen(), contourColour.getBlue(), alpha );
+        g.setColour(actualContourColour);
+        g.drawImageAt(*scaledNameImage,
+                      (int)((centerInPixels.get<0>() + (double)centerCircleRadius + 2.0)*renderingScale),
+                      (int)((centerInPixels.get<1>() + 2.0)*renderingScale),
                       false); // don't fill alpha channel with current brush
+        g.restoreState();
+        
+        // Et on la remet après.... c'est dégueu mais avec Juce on n'a pas mieux.
+        g.addTransform(AffineTransform::scale((float)renderingScale,
+                                              (float)renderingScale));
     }
 }
 
@@ -157,9 +193,10 @@ void DrawableArea::SetFillColour(Colour newColour)
 void DrawableArea::SetName(String newName)
 {
     if (name != newName)
+    {
+        name = newName;
         renderCachedNameImage(); // au ratio de base (précisé en attribut constant dans la classe)
-    
-    name = newName;
+    }
 }
 
 void DrawableArea::SetAlpha(float newAlpha)
@@ -184,6 +221,7 @@ float DrawableArea::GetAlpha() const
             
         case OpacityMode::Independent :
         case OpacityMode::DependingOnExcitement :
+            //std::cout << fillOpacity << std::endl;
             return fillOpacity;
             break;
             

@@ -70,16 +70,9 @@ namespace Miam
         bool isNameVisible;
         Image nameImage;
         static const int nameWidth = 120; // pixels
-        static const int nameHeight = 30; // pixels
+        static const int nameHeight = 15; // pixels
         
         bool keepRatio;
-        
-        
-        // - - - - - - TEST OPENGL MULTITHREADÉ - - - - - -
-        // - - - - - - TEST OPENGL MULTITHREADÉ - - - - - -
-        // - - - - - - TEST OPENGL MULTITHREADÉ - - - - - -
-        // - - - - - - TEST OPENGL MULTITHREADÉ - - - - - -
-        
         
         
         // =============== SETTERS & GETTERS ===============
@@ -98,6 +91,7 @@ namespace Miam
         
         
         virtual void SetOpacityMode(OpacityMode opacityMode_) override;
+        virtual OpacityMode GetOpacityMode() const override {return opacityMode;}
         
         /// \brief Sets the name that could be displayed on screen next to the center
         virtual void SetName(String newName) override;

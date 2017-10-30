@@ -91,7 +91,8 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::setSelectedExciter(std::shared
     if (selectedExciter)
     {
         areaE = std::make_shared<MultiAreaEvent>(selectedExciter, AreaEventType::Unselected, shared_from_this());
-        selectedExciter->SetOpacityMode(OpacityMode::Mid);
+        // On ne change l'opacité que s'il n'était pas libre
+        selectedExciter->SetOpacityMode(OpacityMode::Independent);
         selectedExciter = nullptr;
     }
     // Sélection du nouvel excitateur
@@ -231,6 +232,7 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::ResetCurrentExcitersToInitialE
     // Duplication des excitateurs initiaux
     for (size_t i = 0 ; i<initialExciters.size() ; i++)
     {
+        // Et donc : le volume est cloné lui aussi
         Exciter* clonedExciterPtr = dynamic_cast<Exciter*> (initialExciters[i]->Clone());
         if ( ! clonedExciterPtr )
             throw std::logic_error("Cloned exciter cannot be dynamically casted to a Miam::Exciter...");
@@ -274,9 +276,12 @@ void InteractiveScene::SaveCurrentExcitersToInitialExciters(bool deleteCurrentEx
 
 
 // - - - - - Selection events managing (orders from parent manager) - - - - -
-std::shared_ptr<MultiAreaEvent> InteractiveScene::OnSelection()
+std::shared_ptr<MultiAreaEvent> InteractiveScene::OnSelection(bool resetExciters)
 {
-    std::shared_ptr<MultiAreaEvent> multiAreaE = ResetCurrentExcitersToInitialExciters();
+    auto multiAreaE = std::make_shared<MultiAreaEvent>();
+    
+    if (resetExciters)
+        multiAreaE = ResetCurrentExcitersToInitialExciters();
 
     // Seulement en mode de jeu : on actualise l'influence des excitateurs
     if (canvasManager.lock()->GetMode() == CanvasManagerMode::PlayingWithExciters)
@@ -290,14 +295,40 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::OnSelection()
         // à l'avenir : transitions douces par Timers !!
         
         // Pour l'instant tout dans une fonction bête et méchant, séparée
+        // On remplace bien sauvagement les évènements créés précédemmet !
+        // L'idée c'est qu'on oublie les events graphiques à la transition entre scènes...
         multiAreaE = RecomputeAreaExciterInteractions();
     }
     
     return multiAreaE;
 }
-std::vector<std::shared_ptr<GraphicEvent>> InteractiveScene::OnUnselection()
+std::shared_ptr<MultiAreaEvent> InteractiveScene::OnUnselection(bool shutExcitersDown)
 {
-    return StopCurrentTransformations();
+    // D'abord on arrête les manipulations graphiques
+    auto multiAreaE = StopCurrentTransformations();
+    
+    // Puis on éteint les excitateurs
+    // Puis on éteint les excitateurs
+    // Puis on éteint les excitateurs
+    // Puis on éteint les excitateurs
+    // Puis on éteint les excitateurs
+    // Puis on éteint les excitateurs (EXCITATION AVEC VOLUME)
+    if (shutExcitersDown)
+    {
+        for (size_t i=0 ; i<currentExciters.size() ; i++)
+            currentExciters[i]->SetVolume(0.0);
+        multiAreaE->AddAreaEvent(RecomputeAreaExciterInteractions());
+    }
+    
+    // à l'avenir : transitions douces par Timers !!
+    // à l'avenir : transitions douces par Timers !!
+    // à l'avenir : transitions douces par Timers !!
+    // à l'avenir : transitions douces par Timers !!
+    // à l'avenir : transitions douces par Timers !!
+    // à l'avenir : transitions douces par Timers !!
+    // à l'avenir : transitions douces par Timers !!
+    
+    return multiAreaE;
 }
 
 
@@ -416,9 +447,9 @@ std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseUp(const MouseEvent
     return graphicE;
 }
 
-std::vector<std::shared_ptr<GraphicEvent>> InteractiveScene::StopCurrentTransformations()
+std::shared_ptr<MultiAreaEvent> InteractiveScene::StopCurrentTransformations()
 {
-    std::vector<std::shared_ptr<GraphicEvent>> areaEvents;
+    auto multiAreaE = std::make_shared<MultiAreaEvent>();
     
     // We stop all current movements
     // and filter all future undesired touch events
@@ -432,11 +463,10 @@ std::vector<std::shared_ptr<GraphicEvent>> InteractiveScene::StopCurrentTransfor
         AreaEventType eventType = editableArea->EndPointMove();
         
         // Storage of event in vector (for events back sending)
-        auto areaE = std::make_shared<AreaEvent>(editableArea, eventType, shared_from_this());
-        areaEvents.push_back(areaE);
+        multiAreaE->AddAreaEvent(new AreaEvent(editableArea, eventType, shared_from_this()));
     }
     
-    return areaEvents;
+    return multiAreaE;
 }
 
 

@@ -30,11 +30,7 @@ GraphicSessionManager::GraphicSessionManager(Presenter* presenter_, View* view_)
     GraphicSpatSessionManager(presenter_),
     presenter(presenter_),
     view(view_)
-{
-    // SÉLECTION/CHARGEMENT D'UN TRUC PAR DÉFAUT
-    nextAreaId = 0; // plus tard : valeur chargée depuis dans le fichier de sauvegarde
-
-    
+{    
     // DEFINITION DU NOMBRE DE CANEVAS
     canvasManagers.push_back(std::make_shared<MultiSceneCanvasManager>(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas1));
     canvasManagers.push_back(std::make_shared<MultiSceneCanvasManager>(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas2));
@@ -94,46 +90,83 @@ std::shared_ptr<MultiSceneCanvasManager> GraphicSessionManager::getSelectedCanva
 // ===== EVENTS FROM THE PRESENTER ITSELF =====
 void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_)
 {
+    // Event about one area, or several areas at once
+    if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(event_))
+    {
+        handleAreaEventSync(areaE);
+    }
+    
+    // Scene information
+    /*
+	else if (auto sceneE = std::dynamic_pointer_cast<SceneEvent>(event_))
+    {
+        switch (sceneE->GetType())
+        {
+            case SceneEventType::Added :
+                //DBG("Scene added");
+                break;
+            case SceneEventType::Deleted :
+                //DBG("Scene deleted");
+                break;
+            case SceneEventType::NothingHappened :
+                //DBG("Nothing happened");
+                break;
+            case SceneEventType::SceneChanged :
+                //DBG("Scene Changed");
+                break;
+            default:
+                break;
+		}
+	}
+     */
+}
+void GraphicSessionManager::handleAreaEventSync(const std::shared_ptr<AreaEvent>& areaE)
+{
     // Events about several areas at once
-    if (auto multiAreaE = std::dynamic_pointer_cast<MultiAreaEvent>(event_))
+    if (auto multiAreaE = std::dynamic_pointer_cast<MultiAreaEvent>(areaE))
     {
         // Constructeur de Copie vers un nouvel évènement simple
         auto singleMainAreaE = std::make_shared<AreaEvent>( multiAreaE.get() );
-        handleSingleAreaEventSync(singleMainAreaE);
-        // Pour les autres : on envoie juste les pointeurs
+        handleSingleAreaEventSync(singleMainAreaE); // on est sûr que c'est un évnmt simple
+        // Pour les autres : il faut faire un appel récursif à cette fonction au cas où l'on
+        // a des MultiEvent imbriqués (cas très courant)
         for (size_t i = 0 ; i < multiAreaE->GetOtherEventsCount() ; i++)
-            handleSingleAreaEventSync(multiAreaE->GetOtherEvent(i));
+            handleAreaEventSync(multiAreaE->GetOtherEvent(i));
     }
     // Event about a SINGLE Area
-    else if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(event_))
+    else
     {
         handleSingleAreaEventSync(areaE);
     }
-	else if (auto sceneE = std::dynamic_pointer_cast<SceneEvent>(event_))
-	{
-		switch (sceneE->GetType())
-		{
-		case SceneEventType::Added :
-			//DBG("Scene added");
-			break;
-		case SceneEventType::Deleted :
-			//DBG("Scene deleted");
-			break;
-		case SceneEventType::NothingHappened :
-			//DBG("Nothing happened");
-			break;
-		case SceneEventType::SceneChanged :
-			//DBG("Scene Changed");
-			break;
-		default:
-			break;
-		}
-	}
 }
-void GraphicSessionManager::handleSingleAreaEventSync(std::shared_ptr<AreaEvent>& areaE)
+void GraphicSessionManager::handleSingleAreaEventSync(const std::shared_ptr<AreaEvent>& areaE)
 {
-    // Event about an Exciter in particular : we'll have to update the spat mix !
-    if (auto exciter = std::dynamic_pointer_cast<Exciter>(areaE->GetConcernedArea()))
+    // Event about an Area in particular : we may have to update the spat mix !
+    if (auto area = std::dynamic_pointer_cast<SpatArea>(areaE->GetConcernedArea()))
+    {
+        AsyncParamChange paramChange;
+        
+        switch (areaE->GetType())
+        {
+            case AreaEventType::Added :
+                //DBG("Area Added");
+                break;
+            case AreaEventType::Deleted :
+                //DBG("Area deleted");
+                break;
+                
+            case AreaEventType::ExcitementAmountChanged :
+                paramChange.Type = AsyncParamChange::ParamType::Excitement;
+                paramChange.Id1 = area->GetSpatStateIndex();
+                paramChange.DoubleValue = area->GetTotalExcitementAmount();
+                presenter->SendParamChange(paramChange);
+            default:
+                break;
+        }
+    }
+    // Event about an Exciter in particular : ici on ne fait rien....
+    /*
+    else if (auto exciter = std::dynamic_pointer_cast<Exciter>(areaE->GetConcernedArea()))
     {
         switch (areaE->GetType())
         {
@@ -147,21 +180,6 @@ void GraphicSessionManager::handleSingleAreaEventSync(std::shared_ptr<AreaEvent>
                 break;
         }
     }
-    /*
-     else if (auto area = std::dynamic_pointer_cast<EditableArea>(areaE->GetConcernedArea()))
-     {
-     switch (areaE->GetType())
-     {
-     case AreaEventType::Added :
-     //DBG("Area Added");
-     break;
-     case AreaEventType::Deleted :
-     //DBG("Area deleted");
-     break;
-     default:
-     break;
-     }
-     }
      */
 }
 

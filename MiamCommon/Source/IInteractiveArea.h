@@ -62,7 +62,7 @@ namespace Miam
 
         virtual std::shared_ptr<AreaEvent> UpdateInteraction(std::shared_ptr<Exciter>& exciter) = 0;
         
-        virtual double GetTotalExcitationAmount() const = 0;
+        virtual double GetTotalExcitementAmount() const = 0;
         virtual double GetTotalInteractionWeight() const = 0;
         
         virtual void OnNewExcitementAmount(const std::shared_ptr<Exciter>& sender, double excitementAmount) = 0;

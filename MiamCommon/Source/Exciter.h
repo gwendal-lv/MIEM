@@ -77,7 +77,8 @@ namespace Miam
         // Pour calcul d'interaction externe
         bpt GetCenterInPixels() const {return centerInPixels;}
 
-		double GetVolume() { return volume; }
+        void SetVolume(double volume_);
+		double GetVolume() const { return volume; }
         
         /// \brief Sets whether this exciter is animated the same as the others exciters that
         /// have this option activated.

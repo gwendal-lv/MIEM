@@ -88,7 +88,7 @@ void MultiSceneCanvasInteractor::SetMode(Miam::CanvasManagerMode newMode)
     }
     // Si l'on jouait avec les excitateurs : on court-circuite carrément le mode !
     // On va rester dans ce mode de jeu à tout jamais...
-    if (mode == CanvasManagerMode::PlayingWithExciters)
+    if (mode == CanvasManagerMode::PlayingWithExciters && newMode != CanvasManagerMode::PlayingWithExciters)
         return;
     
     // We don't do a specific action on every mode change !
@@ -169,7 +169,6 @@ void MultiSceneCanvasInteractor::SetMode(Miam::CanvasManagerMode newMode)
     }
     
     mode = newMode;
-    
     
     graphicSessionManager->CanvasModeChanged(mode);
 }
@@ -263,7 +262,7 @@ void MultiSceneCanvasInteractor::handleAndSendEventSync(std::shared_ptr<GraphicE
     }
 }
 
-void MultiSceneCanvasInteractor::handleAndSendAreaEventSync(std::shared_ptr<AreaEvent> areaE, bool notifyGraphicSessionManager)
+void MultiSceneCanvasInteractor::handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>& areaE, bool notifyGraphicSessionManager)
 {
     // Re-dispatching if necessary
     if (auto multiAreaE = std::dynamic_pointer_cast<MultiAreaEvent>(areaE))
@@ -282,7 +281,7 @@ void MultiSceneCanvasInteractor::handleAndSendAreaEventSync(std::shared_ptr<Area
     }
 }
 
-void MultiSceneCanvasInteractor::handleAndSendMultiAreaEventSync(std::shared_ptr<MultiAreaEvent> multiAreaE)
+void MultiSceneCanvasInteractor::handleAndSendMultiAreaEventSync(std::shared_ptr<MultiAreaEvent>& multiAreaE)
 {
     // Cast de l'évènement principal vers la classe mère
     auto mainAreaE = std::make_shared<AreaEvent>( multiAreaE.get() );
@@ -441,20 +440,19 @@ void MultiSceneCanvasInteractor::SelectScene(int id)
 {
     std::shared_ptr<SceneEvent> sceneChangedE;
     // For storing possible events that may happen on (un)selection
-    std::vector<std::shared_ptr<GraphicEvent>> unselectionEvents;
-    std::shared_ptr<MultiAreaEvent> selectionEvents ;
+    std::shared_ptr<MultiAreaEvent> selectionEvents, unselectionEvents;
     // Unselection of any area first
     //SetMode(CanvasManagerMode::NothingSelected); // Something strange here..........
     // and Deactivation of the scene
     if (selectedScene)
-        unselectionEvents = selectedScene->OnUnselection();
-    
-    // Envoi direct des évènements
-    // !!! ne pas traiter graphiquement !
-    for (size_t i=0 ; i<unselectionEvents.size() ; i++)
     {
-        graphicSessionManager->HandleEventSync(unselectionEvents[i]);
+        // Dé-sélection effective un peu plus loin dans le code
+        unselectionEvents = selectedScene->OnUnselection();
+        // Envoi direct des évènements
+        // !!! ne pas traiter graphiquement !!! pas besoin, on redessine TOUT après....
+        graphicSessionManager->HandleEventSync(unselectionEvents);
     }
+    
     
     if ( 0 <= id && id < (int)(scenes.size()) )
     {
@@ -466,7 +464,12 @@ void MultiSceneCanvasInteractor::SelectScene(int id)
         selectedScene = scenes[id];
         selectionEvents = selectedScene->OnSelection();
         
-        SetMode(CanvasManagerMode::SceneOnlySelected);
+        // Si on est en mode de jeu : on y reste définitivement... (et on update des trucs)
+        // Sinon OK on repasse en mode scène seule choisie !
+        if (mode != CanvasManagerMode::PlayingWithExciters)
+            SetMode(CanvasManagerMode::SceneOnlySelected);
+        else
+            SetMode(CanvasManagerMode::PlayingWithExciters);
         
         // Graphic updates
         canvasComponent->UpdateSceneButtons(GetInteractiveScenes());

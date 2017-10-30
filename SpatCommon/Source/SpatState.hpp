@@ -64,6 +64,8 @@ namespace Miam
         /// Not the most optimal STL container (research is not optimized)
         std::vector< std::weak_ptr<SpatArea> > linkedAreas;
         
+        /// Copie Thread-safe d'une donnée qu'on pourrait retrouver depuis les linkedAreas...
+        double excitement;
         
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
@@ -144,6 +146,11 @@ namespace Miam
                     areaPtr->LinkToSpatState(nullptr);
             }
         }
+        
+        
+        // - - - - - Interpolation computation - - - - -
+        virtual void OnNewExcitementAmount(double newExcitement) {excitement = newExcitement;}
+        
         
         
         // - - - - - Output channels (speakers) : add, delete, swap, ... - - - - -

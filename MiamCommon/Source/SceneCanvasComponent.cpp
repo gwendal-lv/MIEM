@@ -156,13 +156,13 @@ void SceneCanvasComponent::renderOpenGL()
     
     // Time measures just before swap (or the closer that we can get to the swaps)
     displayFrequencyMeasurer.OnNewFrame();
+    /*
     if (selectedForEditing)
     {
         if (displayFrequencyMeasurer.IsFreshAverageAvailable())
-        {
-            //DBG(displayFrequencyMeasurer.GetInfo());
-        }
+            DBG(displayFrequencyMeasurer.GetInfo());
     }
+     */
     // Forced sleep if drawing is too fast
     double underTime = desiredPeriod_ms - displayFrequencyMeasurer.GetLastDuration_ms();
     if (underTime > 0.0)
@@ -174,6 +174,7 @@ void SceneCanvasComponent::renderOpenGL()
 
 void SceneCanvasComponent::openGLContextClosing()
 {
+    // Méthode même pas appelée dans Android... D'après la doc Juce au 30 octobre 2017
     DBG("SceneCanvasComponent : closing OpenGL Context");
 }
 

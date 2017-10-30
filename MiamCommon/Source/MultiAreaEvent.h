@@ -47,7 +47,7 @@ namespace Miam
                        AreaEventType eventType_,
                        std::shared_ptr<InteractiveScene> concernedScene_);
         
-        MultiAreaEvent(std::shared_ptr<IDrawableArea> concernedArea_,
+        MultiAreaEvent(std::shared_ptr<DrawableArea> concernedArea_,
                   AreaEventType eventType_,
                   int areaIdInScene_ = -1,
                   std::shared_ptr<InteractiveScene> concernedScene_ = nullptr);

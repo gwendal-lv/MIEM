@@ -51,13 +51,13 @@ void Model::update()
         
         if (updateThreadMeasurer.IsFreshAverageAvailable())
             DBG(updateThreadMeasurer.GetInfo());
-        /*
+        
         AsyncParamChange lastParamChange;
         while (presenter->TryGetAsyncParamChange(lastParamChange))
         {
-            
+            spatInterpolator->OnNewExcitementAmount(lastParamChange.Id1, lastParamChange.DoubleValue);
         }
-        */
+        
         
         // Sleep forcé uniquement si on est assez loin de la période souhaitée
         // On prend 1 ms de marge pour la réaction de l'OS en sortie de sleep (TOTALEMENT ARBITRAIRE !)

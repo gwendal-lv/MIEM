@@ -2,8 +2,8 @@
 
 <JUCERPROJECT id="xCUiGi" name="MiamSpat" projectType="guiapp" version="1.0.0"
               bundleIdentifier="com.yourcompany.MiamSpat" includeBinaryInAppConfig="1"
-              jucerVersion="5.1.2" displaySplashScreen="1" reportAppUsage="1"
-              splashScreenColour="Dark" cppLanguageStandard="11">
+              jucerVersion="5.2.0" displaySplashScreen="1" reportAppUsage="1"
+              splashScreenColour="Dark" cppLanguageStandard="11" companyCopyright="">
   <MAINGROUP id="m8VZoU" name="MiamSpat">
     <GROUP id="{D93792BB-5B8B-5A35-D554-58C4F4E4D3DA}" name="Source">
       <FILE id="oaxiVA" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
@@ -252,9 +252,10 @@
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MiamSpat"
                        headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../MiamCommon/Source/"
-                       defines="__MIAM_DEBUG"/>
+                       defines="__MIAM_DEBUG" enablePluginBinaryCopyStep="1"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MiamSpat"
-                       headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../MiamCommon/Source/"/>
+                       headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../MiamCommon/Source/"
+                       enablePluginBinaryCopyStep="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
@@ -277,9 +278,12 @@
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
                        isDebug="1" optimisation="1" targetName="MiamSpat" headerPath="..\..\..\&#10;..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"
-                       defines="__MIAM_DEBUG"/>
+                       defines="__MIAM_DEBUG" debugInformationFormat="ProgramDatabase"
+                       enablePluginBinaryCopyStep="0"/>
         <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
-                       isDebug="0" optimisation="3" targetName="MiamSpat" headerPath="..\..\..\&#10;..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"/>
+                       isDebug="0" optimisation="3" targetName="MiamSpat" headerPath="..\..\..\&#10;..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"
+                       debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
+                       linkTimeOptimisation="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../JUCE/modules"/>

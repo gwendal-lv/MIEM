@@ -31,14 +31,14 @@ namespace Miam {
         
         
         // - - - Modes relevant when your program is PLAYING something - - -
-        PlayingWithExciters,
+        PlayingWithExciters = 10,
         
         
         
         
         // - - - Modes relevant when your program is EDITING something - - -
         
-        Unselected, ///< Not currently selected
+        Unselected = 20, ///< Not currently selected
         CanvasSelected, ///< Not a fully-defined mode : the canvas is selected, but something else (we don't know) might be selected inside
         
         SceneOnlySelected, ///< No area or point selected ; the selected scene (there is always at least 1 scene on a canvas) is ready to process any input

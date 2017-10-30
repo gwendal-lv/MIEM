@@ -182,12 +182,12 @@ namespace Miam {
         ///
         /// Should notify the Graphic Session Manager only when directly called (not when called from
         /// the multi-area event version).
-        void handleAndSendAreaEventSync(std::shared_ptr<AreaEvent> areaE, bool notifyGraphicSessionManager = true);
+        void handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>& areaE, bool notifyGraphicSessionManager = true);
         /// \brief Splits a multi-area event into the sub area events. The main event is also turned into
         /// a single area event.
         ///
         /// Might be called from the AreaEvent-typed function
-        void handleAndSendMultiAreaEventSync(std::shared_ptr<MultiAreaEvent> multiAreaE);
+        void handleAndSendMultiAreaEventSync(std::shared_ptr<MultiAreaEvent>& multiAreaE);
         
         // Peut être override par les classes dérivées
         virtual void processSingleAreaEventSync(std::shared_ptr<AreaEvent>& areaE);

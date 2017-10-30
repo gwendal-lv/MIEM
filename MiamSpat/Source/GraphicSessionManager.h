@@ -109,14 +109,17 @@ namespace Miam {
         /// Seule info importante à transmettre :
         /// - changement d'excitation d'une aire graphique
         ///   (qu'on transmet le + vite possible !!)
-        ///   -> cette info sera dans un event spécial déjà traîté dans un CanvasInteractor
+        ///   -> cette info sera dans un event spécial déjà traité dans un CanvasInteractor
         ///
         /// Infos dont on se fout :
         /// - toute info géométrique sur une aire...
         virtual void HandleEventSync(std::shared_ptr<GraphicEvent> event_) override;
         
         private :
-        void handleSingleAreaEventSync(std::shared_ptr<AreaEvent>& event_);
+        // On ne sait pas si c'est un simple ou multi
+        void handleAreaEventSync(const std::shared_ptr<AreaEvent>& areaE);
+        // Là ça doit absolument être un simple
+        void handleSingleAreaEventSync(const std::shared_ptr<AreaEvent>& areaE);
         
         
         

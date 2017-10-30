@@ -302,21 +302,21 @@ void EditableScene::BringSelectedAreaToFront()
 
 
 // - - - - - Selection events managing (orders from parent manager) - - - - -
-std::shared_ptr<MultiAreaEvent> EditableScene::OnSelection()
+std::shared_ptr<MultiAreaEvent> EditableScene::OnSelection(bool resetExciters)
 {
-    return InteractiveScene::OnSelection();
+    return InteractiveScene::OnSelection(resetExciters);
 }
 
-std::vector<std::shared_ptr<GraphicEvent>> EditableScene::OnUnselection()
+std::shared_ptr<MultiAreaEvent> EditableScene::OnUnselection(bool shutExcitersDown)
 {
     // Absolutely needed (vector copy contructor won't be much time-consuming)
-    auto returnedVector = InteractiveScene::OnUnselection();
+    auto multiAreaE = InteractiveScene::OnUnselection(shutExcitersDown);
     
     // Own code for Editable features (and possible event getting)
     if (selectedArea)
-        returnedVector.push_back(SetSelectedArea(nullptr));
+        multiAreaE->AddAreaEvent(SetSelectedArea(nullptr));
     
-    return returnedVector;
+    return multiAreaE;
 }
 
 

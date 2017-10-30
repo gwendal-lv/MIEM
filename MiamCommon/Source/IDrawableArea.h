@@ -110,6 +110,7 @@ namespace Miam
 		virtual void SetAlpha(float newAlpha) = 0;
         virtual float GetAlpha() const = 0;
         virtual void SetOpacityMode(OpacityMode enable) = 0;
+        virtual OpacityMode GetOpacityMode() const = 0;
         virtual void SetRenderingScale(double renderingScale_) = 0;
         
         /// \brief Sets the name that could be displayed on screen next to the center

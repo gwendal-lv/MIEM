@@ -44,6 +44,11 @@ namespace Miam
         const SpatType spatType;
         std::vector< std::shared_ptr<SpatState<T>> > spatStates;
         
+        std::shared_ptr<MatrixState<T>> currentMatrixInterpolatedState;
+        
+        /// \brief Le nombre d'états mis à jour durant cette phase de mise à jour du Modèle
+        int updatedStatesCount = 0;
+        
         // may not be used... The balanced should be done on the DAW, or
         // on totalmix (or any software like that, that focuses on hardware
         // control)
@@ -79,6 +84,7 @@ namespace Miam
             outputsCount = _outputsCount;
             
             // Config transmission to the individual states
+            currentMatrixInterpolatedState->SetInputOuputChannelsCount(inputsCount,outputsCount);
             for (size_t i=0 ; i<spatStates.size() ; i++)
             {
                 // Dynamic cast of the state to a MatrixState only for now
@@ -156,6 +162,38 @@ namespace Miam
             spatStates[index2] = backUpPtr;
             spatStates[index2]->SetIndex((int)index2);
         }
+        
+        
+        
+        // - - - - - Interpolation  - - - - -
+        
+        /// \brief Permet de comptabiliser les modifs (ce que l'accès direct aux spatStates ne permet pas)
+        void OnNewExcitementAmount(size_t spatStateIndex, double newExcitement)
+        {
+            spatStates[spatStateIndex]->OnNewExcitementAmount(newExcitement);
+            updatedStatesCount++;
+            
+            std::cout << "excitation transmise au Modèle [état #" << spatStateIndex << " amount=" << newExcitement << "]" << std::endl;
+        }
+        /// \brief Fonction appelée lorsqu'on bien vidé les lock-free queues : on est prêt
+        /// à calculer des trucs (si nécessaire)
+        void OnDataUpdateFinished()
+        {
+            if (updatedStatesCount > 1)
+            {
+                // Addition des matrices creuses
+                // Addition des matrices creuses
+                // Addition des matrices creuses
+                // Addition des matrices creuses
+                // Addition des matrices creuses
+                // Addition des matrices creuses
+            }
+            
+            // On lance une nouvelle frame
+            updatedStatesCount = 0;
+        }
+        
+        
         
         // = = = = = = = = Property tree (for XML) import/export = = = = = = = =
         /// \brief Formats configuration data managed by the interpolator

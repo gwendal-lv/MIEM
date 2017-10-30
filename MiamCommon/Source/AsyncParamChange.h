@@ -46,6 +46,7 @@ namespace Miam
             Activate,
             Volume,
             Frequency,
+            Excitement,
 
 			Duration,
 			Position,

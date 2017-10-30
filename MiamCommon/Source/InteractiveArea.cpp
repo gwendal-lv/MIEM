@@ -84,9 +84,12 @@ std::shared_ptr<AreaEvent> InteractiveArea::UpdateInteraction(std::shared_ptr<Ex
     
     // - - - Pour finir, update et création de l'area event - - -
     if (somethingHappened)
+    {
         // On pourrait aussi mettre "color changed", mais c'est inclus dans le type "excitement" :
         // Et en plus ça serait plutôt "interaction weight changed", mais bon...
-        areaE = std::make_shared<AreaEvent>(shared_from_this(), AreaEventType::ExcitementAmountChanged);
+        std::shared_ptr<IDrawableArea> localSharedFromThis = shared_from_this();
+        areaE = std::make_shared<AreaEvent>(localSharedFromThis, AreaEventType::ExcitementAmountChanged);
+    }
     
     return areaE;
 }
@@ -97,7 +100,7 @@ double InteractiveArea::GetTotalInteractionWeight() const
     // accumulation type is defined by the type of the last input parameter
     return std::accumulate(excitersWeights.begin(), excitersWeights.end(), 0.0);
 }
-double InteractiveArea::GetTotalExcitationAmount() const
+double InteractiveArea::GetTotalExcitementAmount() const
 {
     // accumulation type is defined by the type of the last input parameter
     return std::accumulate(excitementAmounts.begin(), excitementAmounts.end(), 0.0);
@@ -112,7 +115,7 @@ void InteractiveArea::OnNewExcitementAmount(const std::shared_ptr<Exciter>& send
         excitementAmounts[exciterLocalIndex] = excitementAmount;
     
     // Calcul graphique ensuite (sur des float)
-    float totalExcitement = (float) GetTotalExcitationAmount();
+    float totalExcitement = (float) GetTotalExcitementAmount();
     if (totalExcitement < 0.0f)
         totalExcitement = 0.0f;
     else if (totalExcitement > 2.0f)

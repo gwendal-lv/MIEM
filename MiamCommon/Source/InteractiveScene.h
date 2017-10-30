@@ -200,13 +200,13 @@ namespace Miam
 		/// \brief Might update exciters interaction, send events about the new state, ....
         ///
         /// Pas encore définitif (va évoluer dans les prochaines versions)
-        virtual std::shared_ptr<MultiAreaEvent> OnSelection();
+        virtual std::shared_ptr<MultiAreaEvent> OnSelection(bool resetExciters = true);
         /// \ brief Behavior on unselection commanded from parent (area
         /// transformations are stopped, ...). Must be called by classes that
         /// inherit from this.
         ///
         /// \return A list of all the events that just happened
-        virtual std::vector<std::shared_ptr<GraphicEvent>> OnUnselection();
+        virtual std::shared_ptr<MultiAreaEvent> OnUnselection(bool shutExcitersDown = true);
         
         
         // - - - - - Canvas (mouse) events managing - - - - -
@@ -236,7 +236,7 @@ namespace Miam
         
         /// \brief Called when the scene's mode changes (from exciters transformation
         /// to something else...). because : The scene does not know its own mode !
-        virtual std::vector<std::shared_ptr<GraphicEvent>> StopCurrentTransformations();
+        virtual std::shared_ptr<MultiAreaEvent> StopCurrentTransformations();
 
         
         // - - - - - Quantification, gestion des interactions - - - - -

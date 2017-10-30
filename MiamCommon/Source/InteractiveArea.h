@@ -76,7 +76,7 @@ namespace Miam
         
         /// \brief Retourne la somme (sans saturation) de l'excitation cumulée
         /// de tous les excitateurs interagissant actuellement avec la forme.
-        virtual double GetTotalExcitationAmount() const override;
+        virtual double GetTotalExcitementAmount() const override;
         virtual double GetTotalInteractionWeight() const override;
         
         /// \brief Appelé par un excitateur lié à cette aire. On sauvegarde cette donnée en interne.

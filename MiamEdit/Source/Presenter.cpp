@@ -59,10 +59,10 @@ void Presenter::CompleteInitialisation(Model* _model, std::string& commandLine)
     // Copie du paramètre d'entrée,
     // pour permettre le chargement automatique de la session de test....
     std::string commandLineToParse = commandLine;
-#ifdef __MIAM_DEBUG
+//#ifdef __MIAM_DEBUG
     //commandLineToParse += " -session \"/Users/Gwendal/Music/Spat sessions/Session de débug.miam\" ";
     commandLineToParse += " -session \"/Users/Gwendal/Music/Spat sessions/Test.miam\" ";
-#endif
+//#endif
     
     // Récupération du nom de fichier à charger
     std::string commandLineFileName = TextUtils::FindFilenameInCommandLineArguments(commandLineToParse);
