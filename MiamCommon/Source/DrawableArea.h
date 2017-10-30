@@ -48,9 +48,10 @@ namespace Miam
         
         double renderingScale;
         /// \brief Pour tout ce qui est en cache, on fait de base du rendu
-        /// en taille x2. Ensuite, si besoin, on fait un resize au moment du rendu final OpenGL
+        /// en taille x2 mais aussi en taille x1 maintenant.
+        // Ensuite, si besoin, on fait un resize au moment du rendu final OpenGL
         /// (c'est Juce qui se débrouille avec...)
-        const double baseRenderingScale = 2.0;
+        // const double baseRenderingScale = 2.0; // plus utilisé...
         
         Colour fillColour; ///< Solid colour for filling the area (opacity should be 0xFF)
         float fillOpacity; ///< Opacity applied to the solid fill colour (in [0.0,1.0])
@@ -68,7 +69,9 @@ namespace Miam
         
         String name;
         bool isNameVisible;
+        // Images bêtement comme ça pour l'instant...
         Image nameImage;
+        Image nameImage2;
         static const int nameWidth = 120; // pixels
         static const int nameHeight = 15; // pixels
         
@@ -126,8 +129,8 @@ namespace Miam
         
         private :
         void init();
-        void resetImage();
-        void renderCachedNameImage();
+        void resetImages();
+        void renderCachedNameImages();
         public :
         
         

@@ -67,47 +67,75 @@ void DrawableArea::init()
     
     keepRatio = false;
     
-    resetImage();
+    resetImages();
 }
 
 
-void DrawableArea::resetImage()
+void DrawableArea::resetImages()
 {
     // Construction de l'image (fond transparent à l'avenir)
-    // On en recréée un 2è, qu'on assigne à la 1ière...
+    // On en recréée un 2è, qu'on assigne à la 1ière pour chaque taille...
     // Pour éviter de nombreux problèmes (écrire un constructeur de copie
     // de DrawableArea par exemple....)
-    
-    int scaledWidth = (int) std::round((double)nameWidth * baseRenderingScale);
-    int scaledHeight = (int) std::round((double)nameHeight * baseRenderingScale);
-    
-    Image nameImageToAssign = Image(Image::ARGB, scaledWidth, scaledHeight, true);
-    nameImage = nameImageToAssign;
-    nameImage.duplicateIfShared();
-    // Pas d'assignation de texte par défaut...
+ 
+    for (int integerScale = 1 ; integerScale<=2 ; integerScale++)
+    {
+        int scaledWidth = (int) nameWidth * integerScale;
+        int scaledHeight = (int) nameHeight * integerScale;
+        
+        Image nameImageToAssign = Image(Image::ARGB, scaledWidth, scaledHeight, true);
+        switch (integerScale)
+        {
+            case 1 :
+                nameImage = nameImageToAssign;
+                nameImage.duplicateIfShared();
+                break;
+            case 2 :
+                nameImage2 = nameImageToAssign;
+                nameImage2.duplicateIfShared();
+                break;
+            default :
+                throw std::logic_error("Échelle entière de " + std::to_string(integerScale) + "pas prise en compte directement. Rescale dynamique au rendu.");
+        }
+        // Pas d'assignation de texte par défaut...
+    }
 }
 
-void DrawableArea::renderCachedNameImage()
+void DrawableArea::renderCachedNameImages()
 {
-    // Contexte graphique permettant de faire du dessin dans l'image
-    // après réinit de l'image (nécessaire ici aussi)
-    resetImage();
-    Graphics g(nameImage);
-    
-    // Bounds de base, qu'on va décaler de qqs pixels
-    auto textBounds = nameImage.getBounds();
-    int shadowOffsetXY = 1 * (int) std::round(baseRenderingScale); // pixels
-    // black shadow
-    g.setFont(nameImage.getHeight() - shadowOffsetXY);
-    g.setColour(Colours::black);
-    textBounds.setPosition(shadowOffsetXY, shadowOffsetXY);
-    textBounds.removeFromBottom(shadowOffsetXY);
-    textBounds.removeFromRight(shadowOffsetXY);
-    g.drawText(name, textBounds, Justification::topLeft);
-    // white text
-    g.setColour(Colours::white);
-    textBounds.setPosition(0, 0);
-    g.drawText(name, textBounds, Justification::topLeft);
+    resetImages();
+    for (int integerScale = 1 ; integerScale<=2 ; integerScale++)
+    {
+        Image* imagePtr;
+        switch (integerScale)
+        {
+            case 1 :
+                imagePtr = &nameImage;
+                break;
+            case 2 :
+                imagePtr = &nameImage2;
+                break;
+            default :
+                throw std::logic_error("Échelle entière de " + std::to_string(integerScale) + "pas prise en compte directement. Rescale dynamique au rendu.");
+        }
+        // Contexte graphique permettant de faire du dessin dans l'image
+        // après réinit de l'image
+        Graphics g(*imagePtr);
+        // Bounds de base, qu'on va décaler de qqs pixels
+        auto textBounds = imagePtr->getBounds();
+        int shadowOffsetXY = 1 * integerScale; // pixels
+        // black shadow
+        g.setFont(imagePtr->getHeight() - shadowOffsetXY);
+        g.setColour(Colours::black);
+        textBounds.setPosition(shadowOffsetXY, shadowOffsetXY);
+        textBounds.removeFromBottom(shadowOffsetXY);
+        textBounds.removeFromRight(shadowOffsetXY);
+        g.drawText(name, textBounds, Justification::topLeft);
+        // white text
+        g.setColour(Colours::white);
+        textBounds.setPosition(0, 0);
+        g.drawText(name, textBounds, Justification::topLeft);
+    }
 }
 
 
@@ -134,22 +162,24 @@ void DrawableArea::Paint(Graphics& g)
         g.addTransform(AffineTransform::scale(1.0f/(float)renderingScale,
                                               1.0f/(float)renderingScale));
         
-        // Si on est proche de l'échelle de base : on ne fait rien
-        // Par contre, si on est loin de l'échelle de base, on doit faire du redimensionnement
-        bool mustScaleImages = ( std::abs(renderingScale-baseRenderingScale) > 0.1 );
+        // Si on est proche à 10% d'une échelle de base (1 ou 2) : on ne fait rien
+        // Par contre, si on est loin des 2 échelles de base, on doit faire du redimensionnement
         Image* scaledNameImage = nullptr;
         Image juceCreatedScaledNameImage;
-        if (mustScaleImages)
+        if ( std::abs(renderingScale-1.0) < 0.1 ) // échelle proche de 1
+            scaledNameImage = &nameImage;
+        else if ( std::abs(renderingScale-2.0) < 0.1 ) // échelle proche de 2
+            scaledNameImage = &nameImage2;
+        else // sinon, redimensionnement coûteux en CPU (très coûteux....)
         {
             // Tout ça sans utiliser de code de dessin de texte ! Car c'est ça qui ne passe pas
             // en multi-threadé....
             int newWidth = (int) std::round((double)nameWidth*renderingScale);
             int newHeight = (int) std::round((double)nameHeight*renderingScale);
-            juceCreatedScaledNameImage = nameImage.rescaled(newWidth, newHeight);
+            // On rescale alors la + grande et non la + petite (pour un meilleur rendu final...)
+            juceCreatedScaledNameImage = nameImage2.rescaled(newWidth, newHeight);
             scaledNameImage = &juceCreatedScaledNameImage;
         }
-        else
-            scaledNameImage = &nameImage;
         
         // Ensuite, le placement doit se faire en mettant soi-même à l'échelle...
         g.saveState();
@@ -195,7 +225,7 @@ void DrawableArea::SetName(String newName)
     if (name != newName)
     {
         name = newName;
-        renderCachedNameImage(); // au ratio de base (précisé en attribut constant dans la classe)
+        renderCachedNameImages(); // au ratio de base (précisé en attribut constant dans la classe)
     }
 }
 
