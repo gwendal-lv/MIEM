@@ -23,6 +23,8 @@
 #ifndef IDRAWABLEAREA_H_INCLUDED
 #define IDRAWABLEAREA_H_INCLUDED
 
+#include <memory>
+
 #include "JuceHeader.h"
 
 #include "boost/property_tree/ptree.hpp"
@@ -83,7 +85,7 @@ namespace Miam
         IDrawableArea(){}
         virtual ~IDrawableArea() {}
         /// \brief To be overriden within any concrete area that inherits from this.
-        virtual IDrawableArea* Clone() const = 0;
+        virtual std::shared_ptr<IDrawableArea> Clone() const = 0;
         
         
         

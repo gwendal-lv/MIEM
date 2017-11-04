@@ -130,7 +130,7 @@ void SceneCanvasComponent::renderOpenGL()
         if (canvasAreasPointersCopies[itIndex] != (*it))
         {
             canvasAreasPointersCopies[itIndex] = (*it);
-            duplicatedAreas[itIndex].reset( (*it)->Clone() ); // pas d'allocation d'un nouveau ptr
+            duplicatedAreas[itIndex] = (*it)->Clone();
         }
         // Double compteur
         itIndex++;

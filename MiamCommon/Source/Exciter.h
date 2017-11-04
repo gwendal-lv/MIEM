@@ -99,7 +99,8 @@ namespace Miam
         /// \brief Will automatically define the shape of the exciter
         Exciter(uint64_t uniqueId, std::chrono::time_point<clock> commonStartTimePoint_);
         virtual ~Exciter();
-        virtual IDrawableArea* Clone() const override {return new Exciter(*this);}
+        virtual std::shared_ptr<IDrawableArea> Clone() const override
+        { return std::make_shared<Exciter>(*this); }
         
         // - - - - - Ction helpers - - - - -
         private :

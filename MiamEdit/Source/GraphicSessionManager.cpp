@@ -516,22 +516,14 @@ void GraphicSessionManager::OnPasteArea()
         if (areaToCopy)
         {
             // On va forcer l'appel au constructeur de copie
-            IDrawableArea* copyConstructedPtr = areaToCopy->Clone();
-            // Création du shared_ptr (c'est seulement à partir de là
-            // que l'on pourra appeler shared_from_this() )
-            std::shared_ptr<IDrawableArea> newDrawbleArea();
+            // Création du shared_ptr directe (c'est seulement à partir de là
+            // que l'on pourra appeler shared_from_this() ) :
+            std::shared_ptr<IDrawableArea> newDrawbleArea = areaToCopy->Clone();
             std::shared_ptr<SpatArea> newArea;
             
             // If cast does not work...
             if (!(newArea = std::dynamic_pointer_cast<SpatArea>(newDrawbleArea)))
                 throw std::runtime_error("Area to copy canot be casted to a spat type");
-            
-            // DEBUG
-            // DEBUG
-            std::shared_ptr<SpatState<double>> nullSharedPtr;
-            newArea->LinkToSpatState(nullSharedPtr);
-            // DEBUG
-            // DEBUG
             
             // Puis : même procédure pour les cas possibles
             // Modification du polygone copié

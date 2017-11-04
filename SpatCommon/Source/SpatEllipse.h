@@ -47,7 +47,8 @@ namespace Miam
         
         virtual ~SpatEllipse() {}
         
-        virtual IDrawableArea* Clone() const override {return new SpatEllipse(*this);}
+        virtual std::shared_ptr<IDrawableArea> Clone() const override
+        { return std::make_shared<SpatEllipse>(*this); }
         
         
         

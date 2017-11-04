@@ -233,11 +233,10 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::ResetCurrentExcitersToInitialE
     for (size_t i = 0 ; i<initialExciters.size() ; i++)
     {
         // Et donc : le volume est cloné lui aussi
-        Exciter* clonedExciterPtr = dynamic_cast<Exciter*> (initialExciters[i]->Clone());
-        if ( ! clonedExciterPtr )
+        std::shared_ptr<IDrawableArea> clonedCopy = initialExciters[i]->Clone();
+        std::shared_ptr<Exciter> exciter;
+        if ( ! (exciter = std::dynamic_pointer_cast<Exciter>(clonedCopy)) )
             throw std::logic_error("Cloned exciter cannot be dynamically casted to a Miam::Exciter...");
-        
-        auto exciter = std::shared_ptr<Exciter>(clonedExciterPtr);
         
         // Ajout propre du nouvel élément
         auto areaAddedE = AddExciter(exciter);
@@ -258,11 +257,11 @@ void InteractiveScene::SaveCurrentExcitersToInitialExciters(bool deleteCurrentEx
     initialExciters.clear();
     for (size_t i = 0 ; i<currentExciters.size() ; i++)
     {
-        Exciter* clonedExciterPtr = dynamic_cast<Exciter*> (currentExciters[i]->Clone());
-        if (! clonedExciterPtr)
+        std::shared_ptr<IDrawableArea> clonedCopy = currentExciters[i]->Clone();
+        std::shared_ptr<Exciter> exciter;
+        if (! (exciter = std::dynamic_pointer_cast<Exciter>(clonedCopy)) )
             throw std::logic_error("Cloned exciter cannot be dynamically casted to a Miam::Exciter...");
         
-        auto exciter = std::shared_ptr<Exciter>(clonedExciterPtr);
         initialExciters.push_back( exciter );
     }
     

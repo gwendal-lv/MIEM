@@ -64,7 +64,8 @@ namespace Miam {
         /// \param _fillColour See DrawableArea::fillColour
 		DrawablePolygon(int64_t _Id, bpt _center, bpolygon& _bcontourPoints, Colour _fillColour);
         
-        virtual IDrawableArea* Clone() const override {return new DrawablePolygon(*this);}
+        virtual std::shared_ptr<IDrawableArea> Clone() const override
+        { return std::make_shared<DrawablePolygon>(*this); }
         
         // (re)Construction helpers
         private :

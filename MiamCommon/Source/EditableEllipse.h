@@ -30,7 +30,8 @@ namespace Miam
 
 			virtual ~EditableEllipse() {/* DBG("ellipse deleted"); */}
 
-			virtual IDrawableArea* Clone() const override { return new EditableEllipse(*this); }
+			virtual std::shared_ptr<IDrawableArea> Clone() const override
+        { return std::make_shared<EditableEllipse>(*this); }
 
 		private :
 			void init();
