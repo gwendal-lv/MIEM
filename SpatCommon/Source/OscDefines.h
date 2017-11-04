@@ -1,0 +1,15 @@
+/*
+  ==============================================================================
+
+    OscDefines.h
+    Created: 1 Nov 2017 10:09:51pm
+    Author:  Gwendal Le Vaillant
+
+  ==============================================================================
+*/
+
+#pragma once
+
+#define Miam_OSC_Matrix_Address       "/mat"
+#define Miam_OSC_Set_to_Zero_Address        "/set_to_zero"
+

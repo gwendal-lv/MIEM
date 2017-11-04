@@ -200,7 +200,7 @@ void GraphicSessionManager::setMode(GraphicSessionMode newMode)
             sceneEditionComponent->SetInitialStateGroupReduced(true);
             sceneEditionComponent->resized(); // right menu update
             
-            view->DisplayInfo("Editing a Canvas and its Scenes");
+            view->DisplayInfo("Edition of a canvas and its scenes.");
             break;
             
         case GraphicSessionMode::AreaSelected :
@@ -219,7 +219,7 @@ void GraphicSessionManager::setMode(GraphicSessionMode newMode)
             sceneEditionComponent->SetAreaColourValue(GetSelectedArea()->GetFillColour());
             sceneEditionComponent->resized(); // right menu update
             
-            view->DisplayInfo("Editing an Area");
+            view->DisplayInfo("Edition of an area.");
             break;
             
             /*
@@ -235,6 +235,8 @@ void GraphicSessionManager::setMode(GraphicSessionMode newMode)
             sceneEditionComponent->SetInitialStateGroupReduced(false);
             sceneEditionComponent->SetDeleteExciterButtonEnabled(false);
             sceneEditionComponent->resized(); // right menu update
+            
+            view->DisplayInfo("Edition of the exciters' initial position.");
             break;
         case GraphicSessionMode::ExciterSelected :
             sceneEditionComponent->SetDeleteExciterButtonEnabled(true);
@@ -514,11 +516,22 @@ void GraphicSessionManager::OnPasteArea()
         if (areaToCopy)
         {
             // On va forcer l'appel au constructeur de copie
-            std::shared_ptr<IDrawableArea> newDrawbleArea(areaToCopy->Clone());
-            std::shared_ptr<IEditableArea> newArea;
+            IDrawableArea* copyConstructedPtr = areaToCopy->Clone();
+            // Création du shared_ptr (c'est seulement à partir de là
+            // que l'on pourra appeler shared_from_this() )
+            std::shared_ptr<IDrawableArea> newDrawbleArea();
+            std::shared_ptr<SpatArea> newArea;
+            
             // If cast does not work...
-            if (!(newArea = std::dynamic_pointer_cast<IEditableArea>(newDrawbleArea)))
-                throw std::runtime_error("Area to copy canot be casted to an editable type");
+            if (!(newArea = std::dynamic_pointer_cast<SpatArea>(newDrawbleArea)))
+                throw std::runtime_error("Area to copy canot be casted to a spat type");
+            
+            // DEBUG
+            // DEBUG
+            std::shared_ptr<SpatState<double>> nullSharedPtr;
+            newArea->LinkToSpatState(nullSharedPtr);
+            // DEBUG
+            // DEBUG
             
             // Puis : même procédure pour les cas possibles
             // Modification du polygone copié

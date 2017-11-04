@@ -148,18 +148,17 @@ void GraphicSessionManager::handleSingleAreaEventSync(const std::shared_ptr<Area
         
         switch (areaE->GetType())
         {
-            case AreaEventType::Added :
-                //DBG("Area Added");
-                break;
-            case AreaEventType::Deleted :
-                //DBG("Area deleted");
+            // On n'envoie l'excitation qu'en mode de jeu réel
+            case AreaEventType::ExcitementAmountChanged :
+                if (presenter->getAppMode() == AppMode::Playing)
+                {
+                    paramChange.Type = AsyncParamChange::ParamType::Excitement;
+                    paramChange.Id1 = area->GetSpatStateIndex();
+                    paramChange.DoubleValue = area->GetTotalExcitementAmount();
+                    presenter->SendParamChange(paramChange);
+                }
                 break;
                 
-            case AreaEventType::ExcitementAmountChanged :
-                paramChange.Type = AsyncParamChange::ParamType::Excitement;
-                paramChange.Id1 = area->GetSpatStateIndex();
-                paramChange.DoubleValue = area->GetTotalExcitementAmount();
-                presenter->SendParamChange(paramChange);
             default:
                 break;
         }
@@ -170,17 +169,16 @@ void GraphicSessionManager::handleSingleAreaEventSync(const std::shared_ptr<Area
     {
         switch (areaE->GetType())
         {
-            case AreaEventType::Added :
-            case AreaEventType::Deleted :
-            case AreaEventType::Translation :
-                
-                break;
-                
             default:
                 break;
         }
     }
      */
+}
+void GraphicSessionManager::OnModelStarted()
+{
+    for (size_t i = 0 ; i <canvasManagers.size() ; i++)
+        canvasManagers[i]->SelectScene(0);
 }
 
 

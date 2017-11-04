@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="Eo3Z3f" name="MatrixRouter" projectType="audioplug" version="1.0.0"
-              bundleIdentifier="com.glv.MiamMatrixRouter" includeBinaryInAppConfig="1"
-              buildVST="1" buildVST3="0" buildAU="1" buildAUv3="0" buildRTAS="0"
-              buildAAX="0" pluginName="MiamMatrixRouter" pluginDesc="OSC controllable matrix router, for Miam Spat"
+<JUCERPROJECT id="Eo3Z3f" name="MIAM Matrix Router" projectType="audioplug"
+              version="1.0.1" bundleIdentifier="com.glv.MIAMMatrixRouter" includeBinaryInAppConfig="1"
+              buildVST="0" buildVST3="0" buildAU="1" buildAUv3="0" buildRTAS="0"
+              buildAAX="0" pluginName="MIAM Matrix Router" pluginDesc="OSC controllable matrix router, for MIAM Spat Player"
               pluginManufacturer="G. Le Vaillant" pluginManufacturerCode="Manu"
               pluginCode="Eo3z" pluginChannelConfigs="{8,8}" pluginIsSynth="0"
               pluginWantsMidiIn="0" pluginProducesMidiOut="0" pluginIsMidiEffectPlugin="0"
-              pluginEditorRequiresKeys="0" pluginAUExportPrefix="MatrixRouterAU"
-              pluginRTASCategory="" aaxIdentifier="com.yourcompany.MatrixRouter"
-              pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="5.0.2"
+              pluginEditorRequiresKeys="0" pluginAUExportPrefix="MIAMMatrixRouterAU"
+              pluginRTASCategory="" aaxIdentifier="com.yourcompany.MIAMMatrixRouter"
+              pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="5.2.0"
               defines="" displaySplashScreen="1" reportAppUsage="1" splashScreenColour="Dark"
               buildStandalone="1" enableIAA="0" companyName="LARAS (IRISIB)"
-              companyWebsite="http://www.laras.be" companyEmail="gwendal.le-vaillant@grenoble-inp.org">
-  <MAINGROUP id="uSK6Ed" name="MatrixRouter">
+              companyWebsite="http://www.laras.be" companyEmail="glevaillant@he2b.be"
+              cppLanguageStandard="11" companyCopyright="LARAS (IRISIB)">
+  <MAINGROUP id="uSK6Ed" name="MIAM Matrix Router">
     <GROUP id="{7E647B1E-1C9F-BD65-5FF1-5839B4766A43}" name="Source">
       <GROUP id="{E44EFD07-3B55-8033-8C2F-DBABCD5578FE}" name="View">
         <FILE id="YsIVqN" name="OscMatrixComponent.cpp" compile="1" resource="0"
@@ -42,6 +43,9 @@
     </GROUP>
     <GROUP id="{C4893356-5DEB-A030-074B-EE0422842B92}" name="SpatCommonSource">
       <GROUP id="{C17FEF1E-10B0-5811-F422-6C0377DB68EB}" name="Presenter">
+        <FILE id="cskFIQ" name="HelpContents.cpp" compile="1" resource="0"
+              file="../SpatCommon/Source/HelpContents.cpp"/>
+        <FILE id="DdU4oR" name="HelpContents.h" compile="0" resource="0" file="../SpatCommon/Source/HelpContents.h"/>
         <FILE id="Ki6TDF" name="SpatArea.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatArea.cpp"/>
         <FILE id="FS86Jb" name="SpatArea.h" compile="0" resource="0" file="../SpatCommon/Source/SpatArea.h"/>
         <FILE id="ucmZ6n" name="SpatEllipse.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatEllipse.cpp"/>
@@ -63,6 +67,12 @@
               file="../SpatCommon/Source/MatrixViewport.h"/>
       </GROUP>
       <GROUP id="{69F35838-D6F6-5ADE-9B31-E372F4C0078E}" name="Model">
+        <GROUP id="{CE2450A9-95D2-0EE6-C8D7-53BBF9CF35FE}" name="Communication">
+          <FILE id="xclkBS" name="MiamOscSender.hpp" compile="0" resource="0"
+                file="../SpatCommon/Source/MiamOscSender.hpp"/>
+          <FILE id="RMe4LS" name="OscDefines.h" compile="0" resource="0" file="../SpatCommon/Source/OscDefines.h"/>
+          <FILE id="YOdNbs" name="SpatSender.hpp" compile="0" resource="0" file="../SpatCommon/Source/SpatSender.hpp"/>
+        </GROUP>
         <GROUP id="{C8CFED74-46E5-A2FF-9824-723DC214C250}" name="SpatStates">
           <FILE id="WcoRns" name="SpatMatrix.hpp" compile="0" resource="0" file="../SpatCommon/Source/SpatMatrix.hpp"/>
           <FILE id="tOtOas" name="OutputVolumesState.hpp" compile="0" resource="0"
@@ -76,8 +86,6 @@
               file="../SpatCommon/Source/SpatInterpolator.hpp"/>
         <FILE id="azLEQu" name="SpatModel.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatModel.cpp"/>
         <FILE id="n9PyKE" name="SpatModel.h" compile="0" resource="0" file="../SpatCommon/Source/SpatModel.h"/>
-        <FILE id="DFPO9m" name="SpatSender.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatSender.cpp"/>
-        <FILE id="YOdNbs" name="SpatSender.h" compile="0" resource="0" file="../SpatCommon/Source/SpatSender.h"/>
         <FILE id="ISQcqH" name="SpatType.h" compile="0" resource="0" file="../SpatCommon/Source/SpatType.h"/>
         <FILE id="r9zTHA" name="Speaker.h" compile="0" resource="0" file="../SpatCommon/Source/Speaker.h"/>
         <FILE id="JAUbBW" name="Speaker.tpp.h" compile="0" resource="0" file="../SpatCommon/Source/Speaker.tpp.h"/>
@@ -229,9 +237,10 @@
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MatrixRouter"
                        headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../MiamCommon/Source/"
-                       defines="__MIAM_DEBUG"/>
+                       defines="__MIAM_DEBUG" enablePluginBinaryCopyStep="1"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MatrixRouter"
-                       headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../MiamCommon/Source/"/>
+                       headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../MiamCommon/Source/"
+                       enablePluginBinaryCopyStep="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
@@ -255,9 +264,12 @@
     <VS2015 targetFolder="Builds/VisualStudio2015">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="1" optimisation="1" targetName="MatrixRouter" headerPath="..\..\..\&#10;..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"/>
+                       isDebug="1" optimisation="1" targetName="MatrixRouter" headerPath="..\..\..\&#10;..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"
+                       debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"/>
         <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="0" optimisation="3" targetName="MatrixRouter" headerPath="..\..\..\&#10;..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"/>
+                       isDebug="0" optimisation="3" targetName="MatrixRouter" headerPath="..\..\..\&#10;..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"
+                       debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
+                       linkTimeOptimisation="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../JUCE/modules"/>

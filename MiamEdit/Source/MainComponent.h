@@ -18,6 +18,8 @@
 #include "SceneEditionComponent.h"
 #include "HardwareConfigurationComponent.h"
 
+#include "MiamLookAndFeel.h"
+
 // Presenter
 #include "Presenter.h"
 #include "AppMode.h"
@@ -54,7 +56,7 @@ namespace Miam
         HardwareConfigurationComponent* hardwareConfigurationComponent;
         std::vector<Component*> secondLevelComponents;
         
-        
+        MiamLookAndFeel lookAndFeel;
         
         
     public:

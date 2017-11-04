@@ -34,6 +34,10 @@ MainContentComponent::MainContentComponent()
      * we can use it to specify its "Main Component" parent's size
      */
     setSize(mainBackgroundComponent->getWidth(),mainBackgroundComponent->getHeight());
+    
+    
+    // Changement du look'n'feel, qui sera répercuté sur tous les enfants
+    setLookAndFeel(&lookAndFeel);
 }
 
 MainContentComponent::~MainContentComponent()
@@ -44,6 +48,9 @@ MainContentComponent::~MainContentComponent()
     delete speakersEditionComponent;
     
     delete mainBackgroundComponent;
+    
+    // Sinon assertion lancée.... Pas sérieux de Juce mais bon...
+    setLookAndFeel(nullptr);
 }
 
 

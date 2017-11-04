@@ -18,10 +18,12 @@ MainContentComponent::MainContentComponent()
     
     setSize (600, 400);
     
+    setLookAndFeel(&lookAndFeel);
 }
 
 MainContentComponent::~MainContentComponent()
 {
+    setLookAndFeel(nullptr);
 }
 
 void MainContentComponent::paint (Graphics& g)

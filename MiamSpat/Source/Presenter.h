@@ -92,6 +92,11 @@ namespace Miam {
         void OnNewConnectionStatus(bool isConnectionEstablished, std::shared_ptr<bptree::ptree> connectionParametersTree);
         
         // = = = = = XML loading only = = = = =
+        
+        /// \brief Override qui permet de démarrer le Modèle lorsque le chargement de session est terminé
+        /// (et qui arrête le modèle au début du chargement de session)
+        virtual void LoadSession(std::string filename) override;
+
         virtual void SetConfigurationFromTree(bptree::ptree&) override;
 
         

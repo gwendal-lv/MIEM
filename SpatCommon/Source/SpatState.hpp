@@ -101,6 +101,8 @@ namespace Miam
                 throw std::runtime_error("Spat state is linked to a non-existant area");
         }
         
+        double GetExcitement() const {return excitement;}
+        
         
         // = = = = = = = = = = METHODS = = = = = = = = = =
         public :

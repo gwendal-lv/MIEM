@@ -34,8 +34,14 @@
 
 // BEGIN SECTION A
 
-#define JUCE_DISPLAY_SPLASH_SCREEN 1
-#define JUCE_REPORT_APP_USAGE 1
+#ifndef JUCE_DISPLAY_SPLASH_SCREEN
+ #define JUCE_DISPLAY_SPLASH_SCREEN 1
+#endif
+
+#ifndef JUCE_REPORT_APP_USAGE
+ #define JUCE_REPORT_APP_USAGE 1
+#endif
+
 
 // END SECTION A
 
@@ -124,6 +130,10 @@
 
 #ifndef    JUCE_FORCE_USE_LEGACY_PARAM_IDS
  //#define JUCE_FORCE_USE_LEGACY_PARAM_IDS 1
+#endif
+
+#ifndef    JUCE_FORCE_LEGACY_PARAMETER_AUTOMATION_TYPE
+ //#define JUCE_FORCE_LEGACY_PARAMETER_AUTOMATION_TYPE 1
 #endif
 
 #ifndef    JUCE_USE_STUDIO_ONE_COMPATIBLE_PARAMETERS
@@ -242,18 +252,6 @@
 //==============================================================================
 // juce_video flags:
 
-#ifndef    JUCE_DIRECTSHOW
- //#define JUCE_DIRECTSHOW 1
-#endif
-
-#ifndef    JUCE_MEDIAFOUNDATION
- //#define JUCE_MEDIAFOUNDATION 1
-#endif
-
-#ifndef    JUCE_QUICKTIME
- #define   JUCE_QUICKTIME 0
-#endif
-
 #ifndef    JUCE_USE_CAMERA
  //#define JUCE_USE_CAMERA 1
 #endif
@@ -270,7 +268,7 @@
 // Audio plugin settings..
 
 #ifndef  JucePlugin_Build_VST
- #define JucePlugin_Build_VST              1
+ #define JucePlugin_Build_VST              0
 #endif
 #ifndef  JucePlugin_Build_VST3
  #define JucePlugin_Build_VST3             0
@@ -294,10 +292,10 @@
  #define JucePlugin_Enable_IAA             0
 #endif
 #ifndef  JucePlugin_Name
- #define JucePlugin_Name                   "MiamMatrixRouter"
+ #define JucePlugin_Name                   "MIAM Matrix Router"
 #endif
 #ifndef  JucePlugin_Desc
- #define JucePlugin_Desc                   "OSC controllable matrix router, for Miam Spat"
+ #define JucePlugin_Desc                   "OSC controllable matrix router, for MIAM Spat Player"
 #endif
 #ifndef  JucePlugin_Manufacturer
  #define JucePlugin_Manufacturer           "G. Le Vaillant"
@@ -306,7 +304,7 @@
  #define JucePlugin_ManufacturerWebsite    "http://www.laras.be"
 #endif
 #ifndef  JucePlugin_ManufacturerEmail
- #define JucePlugin_ManufacturerEmail      "gwendal.le-vaillant@grenoble-inp.org"
+ #define JucePlugin_ManufacturerEmail      "glevaillant@he2b.be"
 #endif
 #ifndef  JucePlugin_ManufacturerCode
  #define JucePlugin_ManufacturerCode       0x4d616e75 // 'Manu'
@@ -330,13 +328,13 @@
  #define JucePlugin_EditorRequiresKeyboardFocus  0
 #endif
 #ifndef  JucePlugin_Version
- #define JucePlugin_Version                1.0.0
+ #define JucePlugin_Version                1.0.1
 #endif
 #ifndef  JucePlugin_VersionCode
- #define JucePlugin_VersionCode            0x10000
+ #define JucePlugin_VersionCode            0x10001
 #endif
 #ifndef  JucePlugin_VersionString
- #define JucePlugin_VersionString          "1.0.0"
+ #define JucePlugin_VersionString          "1.0.1"
 #endif
 #ifndef  JucePlugin_VSTUniqueID
  #define JucePlugin_VSTUniqueID            JucePlugin_PluginCode
@@ -351,16 +349,16 @@
  #define JucePlugin_AUSubType              JucePlugin_PluginCode
 #endif
 #ifndef  JucePlugin_AUExportPrefix
- #define JucePlugin_AUExportPrefix         MatrixRouterAU
+ #define JucePlugin_AUExportPrefix         MIAMMatrixRouterAU
 #endif
 #ifndef  JucePlugin_AUExportPrefixQuoted
- #define JucePlugin_AUExportPrefixQuoted   "MatrixRouterAU"
+ #define JucePlugin_AUExportPrefixQuoted   "MIAMMatrixRouterAU"
 #endif
 #ifndef  JucePlugin_AUManufacturerCode
  #define JucePlugin_AUManufacturerCode     JucePlugin_ManufacturerCode
 #endif
 #ifndef  JucePlugin_CFBundleIdentifier
- #define JucePlugin_CFBundleIdentifier     com.glv.MiamMatrixRouter
+ #define JucePlugin_CFBundleIdentifier     com.glv.MIAMMatrixRouter
 #endif
 #ifndef  JucePlugin_RTASCategory
  #define JucePlugin_RTASCategory           ePlugInCategory_None
@@ -378,7 +376,7 @@
  #define JucePlugin_RTASDisableMultiMono   0
 #endif
 #ifndef  JucePlugin_AAXIdentifier
- #define JucePlugin_AAXIdentifier          com.yourcompany.MatrixRouter
+ #define JucePlugin_AAXIdentifier          com.yourcompany.MIAMMatrixRouter
 #endif
 #ifndef  JucePlugin_AAXManufacturerCode
  #define JucePlugin_AAXManufacturerCode    JucePlugin_ManufacturerCode
@@ -402,7 +400,7 @@
  #define JucePlugin_IAASubType             JucePlugin_PluginCode
 #endif
 #ifndef  JucePlugin_IAAName
- #define JucePlugin_IAAName                "G. Le Vaillant: MiamMatrixRouter"
+ #define JucePlugin_IAAName                "G. Le Vaillant: MIAM Matrix Router"
 #endif
 #ifndef  JucePlugin_MaxNumInputChannels
  #define JucePlugin_MaxNumInputChannels    8

@@ -29,12 +29,14 @@ Presenter::Presenter(View* _view) :
 
     graphicSessionManager(this, _view)
 {
+    appMode = AppMode::None;
+    
     // After all sub-modules are built, the presenter refers itself to the View
     view->CompleteInitialization(this);
     //view->GetMainContentComponent()->resized();
     
     
-    appModeChangeRequest(AppMode::None);
+    appModeChangeRequest(AppMode::Loading);
 }
 
 
@@ -105,18 +107,24 @@ void Presenter::LoadFirstSession(std::string commandLine)
 
 void Presenter::Update()
 {
-    
+    // Récupération des infos du modèle... Par exemple : info "OK je suis prêt
+    // à être contrôlé en SINGLE THREAD" lors de re-chargement d'une scène
 }
 
 
 AppMode Presenter::appModeChangeRequest(AppMode newAppMode)
 {
     // First check : are we running a new mode ?
+    // Si on fait un transition directe entre modes qui ne sont pas 'loading' ->
+    // on force le passage par loading
     if (newAppMode != appMode)
     {
-        view->ChangeAppMode(AppMode::Loading);
+        if (appMode != AppMode::Loading && newAppMode != AppMode::Loading)
+            view->ChangeAppMode(AppMode::Loading);
         
+        // Temps de changement ici : totalement négligeable !! Mais ça le sera peutêtre pas toujours...
         appMode = newAppMode;
+        
         view->ChangeAppMode(appMode);
     }
     
@@ -175,6 +183,38 @@ void Presenter::OnNewConnectionStatus(bool isConnectionEstablished, std::shared_
 
 
 // = = = = = XML loading only = = = = =
+void Presenter::LoadSession(std::string filename)
+{
+    // Arrêt des envois de ce module, déjà pour commencer
+    appModeChangeRequest(AppMode::Loading);
+    
+    // Arrêt du modèle
+    // Arrêt du modèle
+    // Arrêt du modèle
+    // Arrêt du modèle
+    // Arrêt du modèle
+    // Arrêt du modèle
+    // Arrêt du modèle
+    AsyncParamChange paramChange;
+    paramChange.Type = AsyncParamChange::Stop;
+    SendParamChange(paramChange);
+    // Il faudra un temps d'attente !! Une confirmation que tout s'est bien arrêté...
+    // Avant de faire le chargement qui lui sera SINGLE THREAD
+    
+    // Chargement d'une nouvelle session
+    SpatPresenter::LoadSession(filename);
+    
+    // Ensuite on se change de mode
+    appModeChangeRequest(AppMode::Playing);
+    
+    // Re-démarrage du modèle avec les bonnes infos
+    paramChange.Type = AsyncParamChange::Play;
+    SendParamChange(paramChange);
+    
+    // On force la ré-actualisation graphique
+    graphicSessionManager.OnModelStarted();
+}
+
 void Presenter::SetConfigurationFromTree(bptree::ptree&)
 {
     // Rien d'affiché : on attend le retour effectif des infos depuis le Modèle

@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="O4BfM6" name="MiamEdit" projectType="guiapp" version="1.0.0"
-              bundleIdentifier="com.yourcompany.MiamEdit" includeBinaryInAppConfig="1"
-              jucerVersion="5.2.0" displaySplashScreen="1" reportAppUsage="1"
-              splashScreenColour="Dark" cppLanguageStandard="11" companyCopyright="">
-  <MAINGROUP id="uJFjC5" name="MiamEdit">
+<JUCERPROJECT id="O4BfM6" name="MIAM Spat Editor" projectType="guiapp" version="1.0.0"
+              bundleIdentifier="com.yourcompany.MiamSpatEditor" includeBinaryInAppConfig="1"
+              jucerVersion="5.2.0" displaySplashScreen="0" reportAppUsage="0"
+              splashScreenColour="Dark" cppLanguageStandard="11" companyCopyright=""
+              companyWebsite="http://laras.be" companyName="LARAS-IRISIB / UMONS"
+              companyEmail="glevaillant@he2b.be">
+  <MAINGROUP id="uJFjC5" name="MIAM Spat Editor">
     <GROUP id="{7878353D-A1B6-291B-EABC-831E28CE51BB}" name="Source">
       <FILE id="MLMDSl" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <GROUP id="{8561608D-D4A3-5115-DAC2-8B42AE1F05FC}" name="Model">
@@ -206,6 +208,10 @@
               file="../MiamCommon/Source/MultiSceneCanvasInteractor.h"/>
       </GROUP>
       <GROUP id="{81FB02AB-9CF8-2FEF-77B6-9D5049B0BC47}" name="View">
+        <FILE id="XAPOxP" name="MiamLookAndFeel.cpp" compile="1" resource="0"
+              file="../MiamCommon/Source/MiamLookAndFeel.cpp"/>
+        <FILE id="UhtGNo" name="MiamLookAndFeel.h" compile="0" resource="0"
+              file="../MiamCommon/Source/MiamLookAndFeel.h"/>
         <GROUP id="{36323D02-59E2-4E89-249D-DCE39931C0AE}" name="Components">
           <FILE id="XSz62Q" name="MultiCanvasComponent.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/MultiCanvasComponent.cpp"/>

@@ -38,6 +38,7 @@ namespace Miam
             None,
             
             Reinitialize,
+            LoadingComplete,
 
 			Play,
 			Pause,

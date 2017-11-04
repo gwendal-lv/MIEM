@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.0.2
+  Created with Projucer version: 5.2.0
 
   ------------------------------------------------------------------------------
 
@@ -309,7 +309,8 @@ PopupMenu OscMatrixComponent::createHelpPopup()
         menu.addItem (++lastItemId, networkHelpContent[i].c_str(), false);
     // Automation advice
     menu.addSeparator();
-    menu.addItem(++lastItemId, "We recommand to use only simple 'read' or 'write' automation modes.", false);
+    menu.addItem(++lastItemId, "DAW-specific instructions : please read PDF manual.", false);
+
     return menu;
 }
 //[/MiscUserCode]

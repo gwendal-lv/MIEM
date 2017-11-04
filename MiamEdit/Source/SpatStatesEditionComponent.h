@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.0.2
+  Created with Projucer version: 5.2.0
 
   ------------------------------------------------------------------------------
 
@@ -49,8 +49,8 @@ namespace Miam {
 */
 class SpatStatesEditionComponent  : public Component,
                                     public ISlidersMatrixListener,
-                                    public ButtonListener,
-                                    public ComboBoxListener
+                                    public Button::Listener,
+                                    public ComboBox::Listener
 {
 public:
     //==============================================================================

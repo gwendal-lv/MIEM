@@ -177,7 +177,7 @@ namespace Miam
                 spatMatrix->GetIterator() < spatMatrix->GetEndIterator();
                 spatMatrix->IncIterator() )
             {
-                SpatMatrix::Index2d current2dCoord = spatMatrix->GetIterator2dCoord();
+                Index2d current2dCoord = spatMatrix->GetIterator2dCoord();
                 double sliderValue = Decibels::gainToDecibels(spatMatrix->GetIteratorValue());
                 SetSliderValue((int)current2dCoord.i, (int)current2dCoord.j,
                                sliderValue);

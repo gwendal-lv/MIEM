@@ -54,20 +54,10 @@ namespace Miam
         
         
         // - - - - - Communication - - - - -
-        // BESOIN DE CONNAITRE LE SPAT INTERPOLATOR (LE NB DE CANAUX) en weak_ptr
-        // BESOIN DE CONNAITRE LE SPAT INTERPOLATOR (LE NB DE CANAUX) en weak_ptr
-        // BESOIN DE CONNAITRE LE SPAT INTERPOLATOR (LE NB DE CANAUX) en weak_ptr
-        // BESOIN DE CONNAITRE LE SPAT INTERPOLATOR (LE NB DE CANAUX) en weak_ptr
-        // BESOIN DE CONNAITRE LE SPAT INTERPOLATOR (LE NB DE CANAUX) en weak_ptr
-        // BESOIN DE CONNAITRE LE SPAT INTERPOLATOR (LE NB DE CANAUX) en weak_ptr
-        // BESOIN DE CONNAITRE LE SPAT INTERPOLATOR (LE NB DE CANAUX) en weak_ptr
-        // BESOIN DE CONNAITRE LE SPAT INTERPOLATOR (LE NB DE CANAUX) en weak_ptr
-        // BESOIN DE CONNAITRE LE SPAT INTERPOLATOR (LE NB DE CANAUX) en weak_ptr
-        // BESOIN DE CONNAITRE LE SPAT INTERPOLATOR (LE NB DE CANAUX) en weak_ptr
-        // BESOIN DE CONNAITRE LE SPAT INTERPOLATOR (LE NB DE CANAUX) en weak_ptr
-        // BESOIN DE CONNAITRE LE SPAT INTERPOLATOR (LE NB DE CANAUX) en weak_ptr
         virtual void SendState(SpatState<double>& spatState) = 0;
-        
+        /// \brief Envoie un état de manière en optimisant la bande passante du réseau : on
+        /// ne transmet que les paramètres qui ont suffisamment varié depuis le dernier envoi
+        virtual void SendStateModifications(SpatState<T>& spatState) = 0;
         
         // - - - - - XML import/export - - - - -
         virtual std::shared_ptr<bptree::ptree> GetConfigurationTree()

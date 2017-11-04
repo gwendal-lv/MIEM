@@ -73,7 +73,7 @@ void View::ButtonClicked(const String& /*name*/)
 
 void View::ChangeAppMode(AppMode newAppMode)
 {
-    std::cerr << "Changement de mode à implémenter (mode " << (int)(newAppMode) << ")" << std::endl;
+    std::cerr << "[VIEW] Changement de mode à implémenter (mode " << (int)(newAppMode) << ")" << std::endl;
     //throw std::runtime_error("Unimplemented behavior on app mode change");
 }
 void View::DisplayInfo(const String& message)

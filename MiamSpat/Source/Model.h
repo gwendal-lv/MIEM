@@ -26,6 +26,8 @@ namespace Miam {
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
         private :
+        
+        // Modules
         Presenter* presenter;
         std::shared_ptr<MiamOscSender<double>> miamOscSender;
         

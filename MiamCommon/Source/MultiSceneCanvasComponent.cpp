@@ -107,7 +107,7 @@ void MultiSceneCanvasComponent::UpdateSceneButtons(std::vector< std::shared_ptr<
                 sceneChoiceTextButtons[i]->setColour(TextButton::textColourOffId, Colours::white);
             }
             else
-                sceneChoiceTextButtons[i]->setColour(TextButton::buttonColourId, Colours::silver);
+                sceneChoiceTextButtons[i]->setColour(TextButton::buttonColourId, Colour(0xFF303030));
         }
         
         // Graphical updates (minimal)

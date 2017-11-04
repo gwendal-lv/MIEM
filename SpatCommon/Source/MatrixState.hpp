@@ -15,6 +15,8 @@
 #include "SpatState.hpp"
 #include "AudioDefines.h"
 
+#include "SpatMatrix.hpp"
+
 #include "MiamExceptions.h"
 
 namespace Miam
@@ -27,18 +29,35 @@ namespace Miam
         
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
-        private :
+        protected :
         
+        // La base : la matrice creuse cachée à l'intérieur de l'état
+        SpatMatrix matrix;
         
-        SparseMatrix<T, Miam_MaxNumInputs, Miam_MaxNumOutputs, Miam_MinVolume_PowOf10> matrix;
+        // Attribut dupliqués depuis l'interpolateur
+        int inputsCount = 0;
+        int outputsCount = 0;
         
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
         
         
+        size_t GetInputsCount()
+        {return (size_t) inputsCount;}
         size_t GetOutputsCount() override
-        {throw std::logic_error("not implemented");}
+        {return (size_t) outputsCount;}
+
+        /// \brief Accès aux cases de la matrice par opérateur [] à simple entrée
+        inline T operator[] (size_t k) const { return matrix[k]; }
+
+        /// \brief Accès aux cases de la matrice par opérateur () à double entrée
+        ///
+        /// Opérateur [] n'accepte pas la surcharge à 2 paramètres
+        inline T operator() (size_t i, size_t j) const { return matrix(i,j); }
+
+        inline Index2d GetIndex2dFromIndex(size_t index)
+        { return matrix.GetIndex2dFromIndex(index); }
         
         
         // = = = = = = = = = = METHODS = = = = = = = = = =
@@ -67,23 +86,40 @@ namespace Miam
         // - - - - - Input channels : add, delete, swap, ... - - - - -
 
         /// \brief Does nothing.... Static matrix for now (keeps all existing coeffs)
-        void SetInputOuputChannelsCount(int _inputsCount, int _outputsCount)
+        void SetInputOuputChannelsCount(int inputsCount_, int outputsCount_)
         {
+            inputsCount = inputsCount_;
+            outputsCount = outputsCount_;
         }
 
         // - - - - - Matrix management - - - - -
         public :
         
+        void ClearMatrix() { matrix.Clear(); }
+        
         /// \brief Copy-constructs a duplicate of the internal matrix
         ///
         /// Dynamically allocates memory !
-        std::shared_ptr< SparseMatrix<T, Miam_MaxNumInputs, Miam_MaxNumOutputs, Miam_MinVolume_PowOf10> > GetMatrix()
-        { return std::make_shared< SparseMatrix<T, Miam_MaxNumInputs, Miam_MaxNumOutputs, Miam_MinVolume_PowOf10> >(matrix); }
+        std::shared_ptr< SpatMatrix > GetMatrix()
+        { return std::make_shared< SpatMatrix >(matrix); }
         
         /// \brief Internally sets the matrix from a shared_ptr of another
-        void SetMatrix(std::shared_ptr< SparseMatrix<T, Miam_MaxNumInputs, Miam_MaxNumOutputs, Miam_MinVolume_PowOf10> > newMatrix)
+        void SetMatrix(std::shared_ptr< SpatMatrix > newMatrix)
         {
             matrix = *(newMatrix.get());
+        }
+        
+        /// \brief Surcharge sans 'const' car la matrice a des attributs modifiés
+        /// quand on la lit (conteneur optimisé...)
+        void operator+=(MatrixState<T>& matrixState)
+        {
+            matrix += matrixState.matrix;
+        }
+        
+        /// \brief Voir Miam::SparseMatrix<T>::MultiplyAndAccumulate
+        void MultiplyAndAccumulate(MatrixState<T>& matrixToMultAndAdd, T factor)
+        {
+            matrix.MultiplyAndAccumulate(matrixToMultAndAdd.matrix, factor);
         }
         
         

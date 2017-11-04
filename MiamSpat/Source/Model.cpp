@@ -49,15 +49,52 @@ void Model::update()
     {
         updateThreadMeasurer.OnNewFrame();
         
+        // Infos de performance -> à passer dans un fichier texte pour ne pas perturber la mesure...
+        // (écriture en asynchrone dans un thread séparé)
+#ifdef __MIAM_DEBUG
         if (updateThreadMeasurer.IsFreshAverageAvailable())
             DBG(updateThreadMeasurer.GetInfo());
-        
+#endif
+      
+        // Récupération de toutes les données les + à jour
         AsyncParamChange lastParamChange;
         while (presenter->TryGetAsyncParamChange(lastParamChange))
         {
-            spatInterpolator->OnNewExcitementAmount(lastParamChange.Id1, lastParamChange.DoubleValue);
+            switch (lastParamChange.Type)
+            {
+                case AsyncParamChange::Excitement :
+                    spatInterpolator->OnNewExcitementAmount(lastParamChange.Id1, lastParamChange.DoubleValue);
+                    break;
+                    
+                case AsyncParamChange::Play :
+                    std::cout << "[Modèle] PLAY" << std::endl;
+                    spatInterpolator->OnPlay();
+                    break;
+                    
+                case AsyncParamChange::Stop :
+                    std::cout << "[Modèle] STOP (non-implémenté)" << std::endl;
+                    break;
+                    
+                default :
+                    break;
+            }
         }
         
+        // Envoi de la nouvelle matrice, si nécessaire
+        bool somethingWasUpdated = spatInterpolator->OnDataUpdateFinished();
+        if (somethingWasUpdated)
+        {
+            miamOscSender->SendStateModifications(spatInterpolator->GetCurrentInterpolatedState());
+        }
+        
+        
+        // Envoi d'un coefficient pour avoir toujours une mise à jour qui tourne derrière....
+        // Envoi d'un coefficient pour avoir toujours une mise à jour qui tourne derrière....
+        // Envoi d'un coefficient pour avoir toujours une mise à jour qui tourne derrière....
+        // Envoi d'un coefficient pour avoir toujours une mise à jour qui tourne derrière....
+        // Envoi d'un coefficient pour avoir toujours une mise à jour qui tourne derrière....
+        // Envoi d'un coefficient pour avoir toujours une mise à jour qui tourne derrière....
+        // TO DO
         
         // Sleep forcé uniquement si on est assez loin de la période souhaitée
         // On prend 1 ms de marge pour la réaction de l'OS en sortie de sleep (TOTALEMENT ARBITRAIRE !)

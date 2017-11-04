@@ -11,13 +11,16 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-
-
 // Presenter
 #include "Presenter.h"
 #include "AppMode.h"
 
+
+
+// View
+#include "MiamLookAndFeel.h"
 #include "BackgroundComponent.h"
+
 
 using namespace Miam;
 namespace Miam
@@ -50,6 +53,8 @@ private:
     ScopedPointer<BackgroundComponent> backgroundComponent;
     //MultiCanvasComponent* multiCanvasComponent = 0; // belongs to the presenter
     
+    // Display attributes
+    MiamLookAndFeel lookAndFeel;
     
     // ============== SETTERS AND GETTERS ==============
     public :

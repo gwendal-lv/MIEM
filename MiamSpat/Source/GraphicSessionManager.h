@@ -121,6 +121,10 @@ namespace Miam {
         // Là ça doit absolument être un simple
         void handleSingleAreaEventSync(const std::shared_ptr<AreaEvent>& areaE);
         
+        public :
+        // Déclenche des actualisations forcées, ...
+        void OnModelStarted();
+        
         
         
         // ----- Event to View -----

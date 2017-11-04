@@ -57,10 +57,12 @@ void SpatPresenter::LoadSession(std::string filename)
     // Envoi de chaque grande partie à la sous-partie de spat concernée
     // Si n'importe laquelle échoue : on annule tout....
     try {
-        model->GetSpatInterpolator()->SetSpatStatesFromTree(spatTree);
-        graphicSessionManager->SetFromTree(graphicSessionTree);
+        // Config modèle puis modèle
         model->SetConfigurationFromTree(settingsTree.get_child("model"));
+        model->GetSpatInterpolator()->SetSpatStatesFromTree(spatTree);
+        // Config graphique puis presenter
         this->SetConfigurationFromTree(settingsTree);
+        graphicSessionManager->SetFromTree(graphicSessionTree);
     }
     catch (XmlReadException& e)
     {
