@@ -220,7 +220,7 @@ std::shared_ptr<AreaEvent> InteractiveScene::DeleteSelectedExciter()
 
 std::shared_ptr<MultiAreaEvent> InteractiveScene::ResetCurrentExcitersToInitialExciters()
 {
-    auto multiAreaE = std::make_shared<MultiAreaEvent>(); // nothingHappened par défaut
+    auto multiAreaE = setSelectedExciter(nullptr);
     
     // Création des évènement de suppression des excitateurs courants
     // qui vont être supprimés
@@ -228,7 +228,6 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::ResetCurrentExcitersToInitialE
     {
         multiAreaE->AddAreaEvent(DeleteCurrentExciterByIndex(currentExciters.size()-1));
     }
-    
     // Duplication des excitateurs initiaux
     for (size_t i = 0 ; i<initialExciters.size() ; i++)
     {
@@ -239,6 +238,10 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::ResetCurrentExcitersToInitialE
             throw std::logic_error("Cloned exciter cannot be dynamically casted to a Miam::Exciter...");
         
         // Ajout propre du nouvel élément
+        auto canvasManagerLocked = canvasManager.lock();
+        if (! canvasManagerLocked)
+            throw std::logic_error("Cannot add a new current exciter : cannot get a Unique ID from the canvas manager (not linked to this)");
+        exciter->SetId(canvasManagerLocked->GetNextAreaId());
         auto areaAddedE = AddExciter(exciter);
         
         // Puis gestion de l'évènement : dans tous les cas on ajoute
@@ -292,6 +295,8 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::OnSelection(bool resetExciters
         // à l'avenir : transitions douces par Timers !!
         // à l'avenir : transitions douces par Timers !!
         // à l'avenir : transitions douces par Timers !!
+        for (auto& exciter : currentExciters)
+            exciter->SetVolume(1.0);
         
         // Pour l'instant tout dans une fonction bête et méchant, séparée
         // On remplace bien sauvagement les évènements créés précédemmet !

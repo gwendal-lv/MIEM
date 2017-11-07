@@ -222,6 +222,7 @@ void HardwareConfigurationComponent::buttonClicked (Button* buttonThatWasClicked
     if (buttonThatWasClicked == keyboardToggleButton)
     {
         //[UserButtonCode_keyboardToggleButton] -- add your button handler code here..
+        settingsManager->OnAllowKeyboardEdition(keyboardToggleButton->getToggleState());
         //[/UserButtonCode_keyboardToggleButton]
     }
 

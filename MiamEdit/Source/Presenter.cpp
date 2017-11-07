@@ -68,8 +68,24 @@ void Presenter::CompleteInitialisation(Model* _model, std::string& commandLine)
     std::string commandLineFileName = TextUtils::FindFilenameInCommandLineArguments(commandLineToParse);
     
     // Chargement, ou sauvegarde forcée selon le paramètre passé !
+    // NON ICI IL FAUT LAISSER LE CHOIX À L'UTILISATEUR
+    // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
+    // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
+    // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
+    // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
+    // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
+    // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
+    // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
     if (commandLineFileName.empty())
         SaveSession(); // Va demander un chemin de fichier pour la sauvegarde automatique ensuite
+    // NON ICI IL FAUT LAISSER LE CHOIX À L'UTILISATEUR
+    // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
+    // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
+    // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
+    // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
+    // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
+    // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
+    // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
     else
         LoadSession(commandLineFileName);
 }
@@ -98,13 +114,15 @@ AppMode Presenter::appModeChangeRequest(AppMode newAppMode)
                 case AppMode::EditSpatStates :
                     // If leaving the matrices editing : data save before changing mode
                     dataTree = spatStatesEditionManager.OnLeaveSpatStatesEdition();
-                    updateSpatStatesTree(dataTree);
+                    // va déclencher sauvegarde dans fichier xml
+                    updateSpatStatesTree(dataTree, true);
                     break;
                     
                 case AppMode::EditSpatScenes :
                     // If leaving the matrices editing : data save before changing mode
                     dataTree = graphicSessionManager.OnLeaveSpatScenesEdition();
-                    updateSpatScenesTree(dataTree);
+                    // va déclencher sauvegarde dans fichier xml
+                    updateSpatScenesTree(dataTree, true);
                     break;
                     
                 default :
@@ -176,10 +194,9 @@ void Presenter::SaveSession(std::string filename, bool forceDataRefresh)
     // Mise à jour d'abord (par des moyens spécifiques au miam edit)
     if (forceDataRefresh)
     {
-        auto dataTree = spatStatesEditionManager.OnLeaveSpatStatesEdition();
-        updateSpatStatesTree(dataTree);
-        dataTree = graphicSessionManager.OnLeaveSpatScenesEdition();
-        updateSpatScenesTree(dataTree);
+        // Sans faire la sauvegarde automatique cette fois !
+        updateSpatStatesTree(spatStatesEditionManager.GetTree(), false);
+        updateSpatScenesTree(graphicSessionManager.GetCanvasesTree(), false);
     }
     
     // Puis sauvegarde effective vers XML

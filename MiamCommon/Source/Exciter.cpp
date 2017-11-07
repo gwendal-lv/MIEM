@@ -48,6 +48,10 @@ commonStartTimePt(commonStartTimePoint_)
 
 Exciter::~Exciter()
 {
+    // Dé-exitation des aires qui existent encore
+    for (auto& weakArea : areasInteractingWith)
+        if (auto area = weakArea.lock())
+            area->OnExciterDestruction();
 }
 
 
@@ -120,10 +124,11 @@ void Exciter::OnAreaExcitedByThis(std::shared_ptr<IInteractiveArea> areaExcitedB
 	{
 		areasInteractingWith.push_back(areaExcitedByThis);
         areaInteractionWeights.push_back(0.0); // calcul juste après
-        areaExcitationAmounts.push_back(0.0); // calcul juste après
+        areaExcitementAmounts.push_back(Excitement()); // calcul juste après
 	}
     // Mise à jour dans tous les cas
     areaInteractionWeights[areaIndex] = interactionWeight;
+    
     // Pas de mise à jour des excitations : cela dépend des modifs apportées à TOUTES les aires,
     // on attend l'ordre de notification (par la scène mère, ou autre...)
 }
@@ -133,8 +138,8 @@ void Exciter::OnAreaNotExcitedByThis(std::shared_ptr<IInteractiveArea> areaExcit
     size_t areaIndex = findAreaInteractingIndex(areaExcitedByThis);
     if ( areaIndex < areasInteractingWith.size() )
     {
-        // D'abord on impose une mise à jour côté aire graphique
-        areasInteractingWith[areaIndex].lock()->OnNewExcitementAmount(getCastedSharedFromThis(), 0.0);
+        // D'abord on impose une mise à jour côté aire graphique (excitation nulle forcée)
+        areasInteractingWith[areaIndex].lock()->OnNewExcitementAmount(getCastedSharedFromThis(), Excitement());
         
         // Puis : Suppression effective
         auto areaIt = areasInteractingWith.begin();
@@ -143,9 +148,9 @@ void Exciter::OnAreaNotExcitedByThis(std::shared_ptr<IInteractiveArea> areaExcit
         auto interactionIt = areaInteractionWeights.begin();
         std::advance(interactionIt, areaIndex);
         areaInteractionWeights.erase(interactionIt);
-        auto excitementIt = areaExcitationAmounts.begin();
+        auto excitementIt = areaExcitementAmounts.begin();
         std::advance(excitementIt, areaIndex);
-        areaExcitationAmounts.erase(excitementIt);
+        areaExcitementAmounts.erase(excitementIt);
     }
     else
         DBG("Double notification de fin d'excitation d'une aire par cet excitateur");
@@ -172,28 +177,46 @@ size_t Exciter::findAreaInteractingIndex(std::shared_ptr<IInteractiveArea> areaT
 }
 void Exciter::updateExcitationAmounts()
 {
-    // On applique le volume le + tard possible (on fait tout par rapport à 1, puis on diminue ensuite...)
+    // On appliquera le volume le + tard possible (on fait tout par rapport à 1, puis on diminue ensuite...)
     
     // Total : accumulation type is defined by the type of the last input parameter
     double totalInteractionWeight
     = std::accumulate(areaInteractionWeights.begin(), areaInteractionWeights.end(), 0.0);
-    // On normalise le tout, en vérifiant les cas bizarres limites... Pour être sûr même si des erreurs
+    
+    // - - - - - Calcul des excitations, tel que la somme des excitations vaut 1 - - - - -
+    
+    // en vérifiant les cas bizarres limites...
+    // Pour être sûr même si des erreurs
     // numériques sont là...
     
     // Si on a un poids total non-valide : répartition uniforme sur toutes les aires
     if (totalInteractionWeight <= 0.0)
     {
-        double uniformWeight = 1.0 / (double)(areaExcitationAmounts.size());
-        for (size_t i=0 ; i<areaExcitationAmounts.size() ; i++)
-            areaExcitationAmounts[i] = volume * uniformWeight;
+        double uniformWeight = 1.0 / (double)(areaExcitementAmounts.size());
+        for (auto &excitement : areaExcitementAmounts)
+            excitement.Linear = uniformWeight;
     }
     // Si le poids total est OK : on normalise simplement les poids pour calculer les excitations
     else
     {
-        for (size_t i=0 ; i<areaExcitationAmounts.size() ; i++)
-            areaExcitationAmounts[i] = volume * areaInteractionWeights[i]
-                                        / totalInteractionWeight;
+        for (size_t i = 0 ; i<areaExcitementAmounts.size() ; i++)
+            areaExcitementAmounts[i].Linear = areaInteractionWeights[i] / totalInteractionWeight;
     }
+    
+    // - - - - - Distorsion logarithmique, pour donner la précision aux faibles volumes - - - - -
+    // Voir article JIM 2015 pour + d'explications (même si dans l'article la disto était appliquée
+    // directement sur les poids d'interaction)
+    // on prépare déjà la normalisation qui suit
+    double totalAudioExcitement = 0.0;
+    for (auto &excitement : areaExcitementAmounts)
+    {
+        excitement.Audio = AudioUtils<double>::ApplyLowVolumePrecisionDistorsion(excitement.Linear);
+        totalAudioExcitement += excitement.Audio;
+    }
+    
+    // - - - - - Dernière normalisation, et application du volume - - - - -
+    for (auto &excitement : areaExcitementAmounts)
+        excitement.Audio = excitement.Audio / totalAudioExcitement;
 }
 
 void Exciter::NotifyNewExcitationToAreas()
@@ -204,7 +227,7 @@ void Exciter::NotifyNewExcitationToAreas()
     
     // Notifications à toutes les aires
     for (size_t i = 0; i<areasInteractingWith.size() ; i++)
-        areasInteractingWith[i].lock()->OnNewExcitementAmount(getCastedSharedFromThis(), areaExcitationAmounts[i]);
+        areasInteractingWith[i].lock()->OnNewExcitementAmount(getCastedSharedFromThis(), areaExcitementAmounts[i]);
 }
 
 

@@ -351,7 +351,10 @@ void MultiSceneCanvasInteractor::recreateAllAsyncDrawableObjects()
     syncAllocatedAreaCopies.reserve(selectedScene->GetDrawableObjectsCount());
     for (size_t i=0 ; i<selectedScene->GetDrawableObjectsCount() ; i++)
     {
-        syncAllocatedAreaCopies.push_back(std::shared_ptr<IDrawableArea>(selectedScene->GetDrawableObject(i)->Clone()));
+        syncAllocatedAreaCopies.push_back(selectedScene->GetDrawableObject(i)->Clone());
+#ifdef __MIAM_DEBUG
+        syncAllocatedAreaCopies.back()->SetId(-1); // test : on met les copies à -1 pour l'instant
+#endif
     }
     
     // Actual assignation (OpenGL renderers get now the freshest data)
@@ -373,7 +376,7 @@ void MultiSceneCanvasInteractor::addAsyncDrawableObject(int insertionIdInScene, 
     /* Memory allocation done outside of the lock (may change almost nothing... and
      * cost 2 memory allocation of std::shared_ptr ? To be tested for optimization...
      */
-    std::shared_ptr<IDrawableArea> areaCopy = std::shared_ptr<IDrawableArea>(originalAreaToAdd->Clone());
+    std::shared_ptr<IDrawableArea> areaCopy = originalAreaToAdd->Clone();
 
     // Actual addition then
     asyncDrawableObjectsMutex.lock();
@@ -721,6 +724,15 @@ void MultiSceneCanvasInteractor::OnCanvasMouseUp(const MouseEvent& mouseE)
 
 void MultiSceneCanvasInteractor::OnResized()
 {
+    // We update ALL areas NOW, to avoid a consequent amount of calculus on
+    // scene change (which should happen as fast as possible)
+    for (size_t i=0;i<scenes.size();i++)
+    {
+        for (size_t j=0 ; j<scenes[i]->GetDrawableObjectsCount() ; j++)
+            scenes[i]->GetDrawableObject(j)->CanvasResized(GetMultiSceneCanvasComponent()->GetCanvas());
+    }
+    
+    // Update des duplicats pour OpenGL
     recreateAllAsyncDrawableObjects();
 }
 

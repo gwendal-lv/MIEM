@@ -61,13 +61,7 @@ void SceneCanvasComponent::resized()
     // Actualization of all areas graphical objets, if Presenter is accessible (not at first time)
     if (auto manager = canvasManager.lock())
     {
-        // We update ALL areas NOW, to avoid a consequent amount of calculus on
-        // scene change (which should happen as fast as possible)
-        for (size_t i=0;i<manager->GetScenesCount();i++)
-        {
-            for (size_t j=0 ; j<manager->GetScene(i)->GetDrawableObjectsCount() ; j++)
-                manager->GetScene(i)->GetDrawableObject(j)->CanvasResized(this);
-        }
+        manager->OnResized();
     }
 }
 
@@ -109,6 +103,7 @@ void SceneCanvasComponent::renderOpenGL()
     // - - - - - THIRD Duplication of the drawable objects for thread-safe rendering, - - - - -
     // Lorsque nécessaire seulement !
     manager->LockAsyncDrawableObjects();
+    
     
     bool areasCountChanged = (manager->GetAsyncDrawableObjects().size() != duplicatedAreas.size());
     // POUR L'INSTANT ALGO BÊTE

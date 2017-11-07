@@ -41,7 +41,7 @@ void SpatArea::OnVirtualBaseClassesContructed()
     setDefaultSpatName();
     
     // Forcer la mise à zéro graphique seulement
-    OnNewExcitementAmount(nullptr, 0.0);
+    OnNewExcitementAmount(nullptr, Excitement()); // excitation nulle
 }
 
 // - - - - - Spat attributes - - - - -

@@ -101,6 +101,13 @@ namespace Miam
         public :
         void AllowKeyboardEdition(bool allow);
         
+        
+        // - - - - - Property tree (XML) management - - - - -
+        /// \brief Va demander au Modèle les états de spatialisation courants,
+        /// puis les renvoie.
+        std::shared_ptr<bptree::ptree> GetTree();
+
+        
     };
     
 }

@@ -125,13 +125,15 @@ void SpatPresenter::SaveSession(std::string _filename, bool /*forceDataRefresh*/
         throw XmlWriteException(e.what());
     }
 }
-void SpatPresenter::updateSpatStatesTree(std::shared_ptr<bptree::ptree> newTree)
+void SpatPresenter::updateSpatStatesTree(std::shared_ptr<bptree::ptree> newTree, bool autoSave)
 {
     lastSpatStatesTree = newTree;
-    SaveSession();
+    if (autoSave)
+        SaveSession();
 }
-void SpatPresenter::updateSpatScenesTree(std::shared_ptr<bptree::ptree> newTree)
+void SpatPresenter::updateSpatScenesTree(std::shared_ptr<bptree::ptree> newTree, bool autoSave)
 {
     lastSpatScenesTree = newTree;
-    SaveSession();
+    if (autoSave)
+        SaveSession();
 }

@@ -172,3 +172,5 @@ bpt Math::ComputeIntersectionPoint(bpt A, bpt B, bpt C, bpt D)
 
 	return I;
 }
+
+

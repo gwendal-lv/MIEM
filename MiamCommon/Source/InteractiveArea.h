@@ -47,7 +47,7 @@ namespace Miam
         // un vecteur (accès direct random) plutôt qu'une liste (accès par itérateur)
         std::vector< std::weak_ptr<Exciter> > excitersInteractingWithThis;
         std::vector< double > excitersWeights;
-        std::vector< double > excitementAmounts;
+        std::vector< Excitement > excitementAmounts;
         
         
     protected:
@@ -73,19 +73,35 @@ namespace Miam
         /// \returns Wether the interaction between this
         /// area and an exciter has changed, or not.
         std::shared_ptr<AreaEvent> UpdateInteraction(std::shared_ptr<Exciter>& exciter) override;
+        /// \brief Appelé par un excitateur qui est supprimé (mais on ne sais lequel).
+        /// On doit forcer la suppression, en effet
+        /// sinon le test de collision de "UpdateInteraction" resterait
+        /// vrai, et donc l'excitateur resterait enregistré
+        ///
+        /// Pas d'argument : l'excitateur est en train d'être détruit... Pas de shared_ptr donc !!
+        /// On va juste re-rechecker
+        virtual void OnExciterDestruction() override;
+        private :
+        /// \brief Supprime toutes les références internes à l'excitateur décrit par son index interne.
+        ///
+        /// Pas de vérification de validité de l'index
+        void deleteLinksToExciter(size_t exciterLocalIndex);
+        public :
         
         /// \brief Retourne la somme (sans saturation) de l'excitation cumulée
         /// de tous les excitateurs interagissant actuellement avec la forme.
-        virtual double GetTotalExcitementAmount() const override;
+        virtual double GetTotalLinearExcitement() const override;
+        virtual double GetTotalAudioExcitement() const override;
         virtual double GetTotalInteractionWeight() const override;
         
         /// \brief Appelé par un excitateur lié à cette aire. On sauvegarde cette donnée en interne.
-        virtual void OnNewExcitementAmount(const std::shared_ptr<Exciter>& sender, double excitementAmount) override;
+        virtual void OnNewExcitementAmount(const std::shared_ptr<Exciter>& sender, Excitement excitementAmount) override;
         
         private :
         /// \brief Renvoie l'index de l'excitateur dans le tableau interne de
         /// weak_ptr (ou size() si n'est pas trouvé)
         size_t getExciterLocalIndex(const std::shared_ptr<Exciter>& exciter);
+
         
         
     };

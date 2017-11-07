@@ -17,9 +17,12 @@
 
 #include "AreaEvent.h"
 
+#include "AudioUtils.hpp"
+
 namespace Miam
 {
     class Exciter;
+    
     
     /// \brief Pure interface for all areas that can have an interaction
     /// with a user (via mouse, touch, MIDI events...). See Miam::InteractiveArea
@@ -61,11 +64,13 @@ namespace Miam
         
 
         virtual std::shared_ptr<AreaEvent> UpdateInteraction(std::shared_ptr<Exciter>& exciter) = 0;
+        virtual void OnExciterDestruction() = 0;
         
-        virtual double GetTotalExcitementAmount() const = 0;
+        virtual double GetTotalLinearExcitement() const = 0;
+        virtual double GetTotalAudioExcitement() const = 0;
         virtual double GetTotalInteractionWeight() const = 0;
         
-        virtual void OnNewExcitementAmount(const std::shared_ptr<Exciter>& sender, double excitementAmount) = 0;
+        virtual void OnNewExcitementAmount(const std::shared_ptr<Exciter>& sender, Excitement excitementAmount) = 0;
 
 		
         

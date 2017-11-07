@@ -69,8 +69,8 @@ namespace Miam {
         virtual void SaveSession(std::string filename = "", bool forceDataRefresh = false);
         
         protected :
-        virtual void updateSpatStatesTree(std::shared_ptr<bptree::ptree> newTree);
-        virtual void updateSpatScenesTree(std::shared_ptr<bptree::ptree> newTree);
+        virtual void updateSpatStatesTree(std::shared_ptr<bptree::ptree> newTree, bool autoSave = true);
+        virtual void updateSpatScenesTree(std::shared_ptr<bptree::ptree> newTree, bool autoSave = true);
     };
     
     

@@ -126,7 +126,6 @@ namespace Miam
         // Envoi d'un seul coeff
         void sendMatrixCoeff(int i, int j, float value)
         {
-            std::cout << "sending " << i << " " << j << std::endl;
             oscSender.send(Miam_OSC_Matrix_Address, i, j, value);
         }
         

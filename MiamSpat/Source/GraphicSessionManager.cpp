@@ -154,7 +154,7 @@ void GraphicSessionManager::handleSingleAreaEventSync(const std::shared_ptr<Area
                 {
                     paramChange.Type = AsyncParamChange::ParamType::Excitement;
                     paramChange.Id1 = area->GetSpatStateIndex();
-                    paramChange.DoubleValue = area->GetTotalExcitementAmount();
+                    paramChange.DoubleValue = area->GetTotalAudioExcitement();
                     presenter->SendParamChange(paramChange);
                 }
                 break;

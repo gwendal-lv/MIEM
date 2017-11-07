@@ -14,6 +14,8 @@
 
 #include "Exciter.h"
 
+#include "MiamMath.h"
+
 using namespace Miam;
 
 
@@ -48,8 +50,9 @@ std::shared_ptr<AreaEvent> InteractiveArea::UpdateInteraction(std::shared_ptr<Ex
     {
         // ajout local
         excitersInteractingWithThis.push_back(exciter);
+        
         excitersWeights.push_back(ComputeInteractionWeight(exciter->GetCenterInPixels()));
-        excitementAmounts.push_back(0.0);
+        excitementAmounts.push_back(Excitement());
         // notif à l'excitateur, qui renvoit son niveau d'excitation envers cette aire
         exciter->OnAreaExcitedByThis(shared_from_this(), excitersWeights.back());
     }
@@ -57,15 +60,7 @@ std::shared_ptr<AreaEvent> InteractiveArea::UpdateInteraction(std::shared_ptr<Ex
     else if (exciterLocalIndex != excitersInteractingWithThis.size() && !hitTestResult)
     {
         // Supression locale
-        auto exciterIt = excitersInteractingWithThis.begin();
-        std::advance(exciterIt, exciterLocalIndex);
-        excitersInteractingWithThis.erase(exciterIt);
-        auto weightIt = excitersWeights.begin();
-        std::advance(weightIt, exciterLocalIndex);
-        excitersWeights.erase(weightIt);
-        auto excitementIt = excitementAmounts.begin();
-        std::advance(excitementIt, exciterLocalIndex);
-        excitementAmounts.erase(excitementIt);
+        deleteLinksToExciter(exciterLocalIndex);
         // Notif à l'excitateur
         exciter->OnAreaNotExcitedByThis(shared_from_this());
     }
@@ -75,7 +70,7 @@ std::shared_ptr<AreaEvent> InteractiveArea::UpdateInteraction(std::shared_ptr<Ex
         // Poids seulement, pas excitation
         excitersWeights[exciterLocalIndex] = ComputeInteractionWeight(exciter->GetCenterInPixels());
         // Notif à l'excitateur
-        exciter->OnAreaExcitedByThis(shared_from_this(), excitersWeights.back());
+        exciter->OnAreaExcitedByThis(shared_from_this(), excitersWeights[exciterLocalIndex]);
     }
     // Dernier cas : il ne s'est rien passé...
     else
@@ -94,32 +89,65 @@ std::shared_ptr<AreaEvent> InteractiveArea::UpdateInteraction(std::shared_ptr<Ex
     return areaE;
 }
 
+void InteractiveArea::OnExciterDestruction()
+{
+    size_t i = 0;
+    while (i < excitersInteractingWithThis.size())
+    {
+        // On supprime les excitateurs expirés (détruits)
+        if (excitersInteractingWithThis[i].expired())
+            deleteLinksToExciter(i);
+        // seulement Si l'excitateur est OK, on incréménte
+        else
+            i++;
+    }
+}
+
+void InteractiveArea::deleteLinksToExciter(size_t exciterLocalIndex)
+{
+    auto exciterIt = excitersInteractingWithThis.begin();
+    std::advance(exciterIt, exciterLocalIndex);
+    excitersInteractingWithThis.erase(exciterIt);
+    auto weightIt = excitersWeights.begin();
+    std::advance(weightIt, exciterLocalIndex);
+    excitersWeights.erase(weightIt);
+    auto excitementIt = excitementAmounts.begin();
+    std::advance(excitementIt, exciterLocalIndex);
+    excitementAmounts.erase(excitementIt);
+}
 
 double InteractiveArea::GetTotalInteractionWeight() const
 {
     // accumulation type is defined by the type of the last input parameter
     return std::accumulate(excitersWeights.begin(), excitersWeights.end(), 0.0);
 }
-double InteractiveArea::GetTotalExcitementAmount() const
+double InteractiveArea::GetTotalLinearExcitement() const
 {
-    // accumulation type is defined by the type of the last input parameter
-    return std::accumulate(excitementAmounts.begin(), excitementAmounts.end(), 0.0);
+    double totalExcitement = 0.0;
+    for (const auto& excitement : excitementAmounts)
+        totalExcitement += excitement.Linear;
+    return totalExcitement;
+}
+double InteractiveArea::GetTotalAudioExcitement() const
+{
+    double totalExcitement = 0.0;
+    for (const auto& excitement : excitementAmounts)
+        totalExcitement += excitement.Audio;
+    return totalExcitement;
 }
 
-void InteractiveArea::OnNewExcitementAmount(const std::shared_ptr<Exciter>& sender, double excitementAmount)
+void InteractiveArea::OnNewExcitementAmount(const std::shared_ptr<Exciter>& sender, Excitement excitementAmount)
 {
     // Recherche inverse de l'excitateur
     size_t exciterLocalIndex = getExciterLocalIndex(sender);
-    // S'il n'est pas là, on continue quand même !
-    if (exciterLocalIndex < excitersInteractingWithThis.size())
+    // Qu'on le trouve ou pas, on continue quand même
+    if (exciterLocalIndex < excitersInteractingWithThis.size()) // si on le trouve
         excitementAmounts[exciterLocalIndex] = excitementAmount;
+
     
     // Calcul graphique ensuite (sur des float)
-    float totalExcitement = (float) GetTotalExcitementAmount();
-    if (totalExcitement < 0.0f)
-        totalExcitement = 0.0f;
-    else if (totalExcitement > 2.0f)
-        totalExcitement = 2.0f;
+    float totalExcitement = (float) GetTotalLinearExcitement();
+    totalExcitement = Math::Clamp(totalExcitement, 0.0f, 2.0f);
     
     // Opacité pleine à une excitation de 2.0, minimale à un excitation de 0.0
     float newAlpha = getLowFillOpacity() + (1.0f-getLowFillOpacity()) * (totalExcitement / 2.0f);

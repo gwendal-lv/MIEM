@@ -19,10 +19,12 @@
 #include "EditablePolygon.h"
 #include "EditableEllipse.h"
 
+#include "AudioUtils.hpp"
 
 namespace Miam
 {
     class MultiAreaEvent;
+    
     
     /// \brief 
     class Exciter : public EditableEllipse
@@ -55,7 +57,7 @@ namespace Miam
 		/// \brief Le poids d'interaction d'une aire vis-à-vis de cet excitateur en particulier
 		std::vector< double > areaInteractionWeights;
         /// \brief Les excitations pour chaque aire (dont la somme vaut 1.0)
-        std::vector< double > areaExcitationAmounts;
+        std::vector< Excitement > areaExcitementAmounts;
         
         // Pour synchronisation du clignotement de tous les excitateurs ensemble.
         private :
@@ -140,6 +142,9 @@ namespace Miam
         ///
         /// Fait une normalisation de sorte que la quantité totale d'excitation soit 1. Les tableaux de
         /// quantité doivent déjà faire la bonne taille.
+        ///
+        /// Applique aussi une distorsion logarithmique lors de la conversion des poids d'interaction
+        /// vers des quantités d'excitations (pour avoir de la précision au niveau des faibles excitations)
         void updateExcitationAmounts();
         
         public :

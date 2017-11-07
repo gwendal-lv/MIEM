@@ -87,7 +87,7 @@ std::shared_ptr<bptree::ptree> SpatStatesEditionManager::OnLeaveSpatStatesEditio
     selectSpatState(selectedSpatState);
     
     // Save to XML (Presenter does it)
-    return spatInterpolator->GetSpatStatesTree();
+    return GetTree();
 }
 
 
@@ -210,5 +210,13 @@ void SpatStatesEditionManager::AllowKeyboardEdition(bool allow)
 {
     editionComponent->AllowKeyboardEdition(allow);
 }
+
+
+// = = = = = = = = = = PROPERTY TREE (XML) MANAGEMENT = = = = = = = = = =
+std::shared_ptr<bptree::ptree> SpatStatesEditionManager::GetTree()
+{
+    return spatInterpolator->GetSpatStatesTree();
+}
+
 
 

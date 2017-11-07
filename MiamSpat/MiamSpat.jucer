@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="xCUiGi" name="MiamSpatPlayer" projectType="guiapp" version="1.0.0"
+<JUCERPROJECT id="xCUiGi" name="MIAM Spat Player" projectType="guiapp" version="1.0.0"
               bundleIdentifier="com.yourcompany.MiamSpatPlayer" includeBinaryInAppConfig="1"
               jucerVersion="5.2.0" displaySplashScreen="0" reportAppUsage="0"
               splashScreenColour="Dark" cppLanguageStandard="11" companyCopyright="">
-  <MAINGROUP id="m8VZoU" name="MiamSpatPlayer">
+  <MAINGROUP id="m8VZoU" name="MIAM Spat Player">
     <GROUP id="{D93792BB-5B8B-5A35-D554-58C4F4E4D3DA}" name="Source">
       <FILE id="oaxiVA" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <GROUP id="{23BAC1CB-3D2E-7345-7D78-B522A9B204B9}" name="Model">
