@@ -36,6 +36,9 @@ TimeLine::TimeLine()
 	offset = 0;
 
 	chordSize = 0;
+
+	filter = new IIRFilter();
+	filter->makeInactive();
 }
 
 TimeLine::~TimeLine()
@@ -61,6 +64,12 @@ TimeLine::~TimeLine()
 void TimeLine::setAudioManager(AudioManager* m_audioManager)
 {
 	audioManager = m_audioManager;
+	midiCollector.reset(audioManager->getCurrentSampleRate());
+	synth.setCurrentPlaybackSampleRate(audioManager->getCurrentSampleRate());
+	for (int i = 0; i < 16; i++)
+	{
+		synth.addVoice(new SamplerVoice);
+	}
 }
 
 void TimeLine::setPeriod(int m_period)
@@ -270,77 +279,77 @@ bool TimeLine::isChordOffTime(int m_position, int &m_channel, int m_chordToPlay[
 		return false;
 }
 
-void TimeLine::process(int time)
-{
-	//int b = midiTimesSize;
-	//DBG("midiTimes.size() = " + (String)midiTimesSize);
-	//DBG("midiOffTimes.size() = " + (String)midiOfftimesSize);
-	//DBG("time = " + (String)time);
-	//DBG("midiTimesSize : " + (String)midiTimesSize);
-	//time -= offset;
-	if (!continuous)
-	{
-		time += offset;
-		int oldTime = time;
-		time += t0;
-		//time += offset;
-		while (time >= currentPeriod)
-			time -= currentPeriod;
-		if (oldTime == period - 1)
-			t0 = time + 1;
-		//time += offset;
-		position = time;
-		/*if (time == 0)
-			t0 = 1;*/
-
-		
-		
-		int m_channel, m_note;
-		uint8 m_velocity;
-
-		bool m_end = false;
-		int i = 0;
-		while (m_end == false)
-		{
-			if (isNoteOnTime(time, i, m_end, m_channel, m_note, m_velocity))
-			{
-				MidiMessage midiMsg = MidiMessage::noteOn(m_channel, m_note, m_velocity);
-				audioManager->sendMidiMessage(midiMsg);
-			}
-			i++;
-		}
-
-		m_end = false;
-		i = 0;
-		while (m_end == false)
-		{
-			if (isNoteOffTime(time, i, m_end, m_channel, m_note))
-			{
-				MidiMessage midiMsgOff = MidiMessage::noteOff(m_channel, m_note);
-				audioManager->sendMidiMessage(midiMsgOff);
-			}
-			i++;
-		}
-
-		
-	}
-}
+//void TimeLine::process(int time)
+//{
+//	//int b = midiTimesSize;
+//	//DBG("midiTimes.size() = " + (String)midiTimesSize);
+//	//DBG("midiOffTimes.size() = " + (String)midiOfftimesSize);
+//	//DBG("time = " + (String)time);
+//	//DBG("midiTimesSize : " + (String)midiTimesSize);
+//	//time -= offset;
+//	if (!continuous)
+//	{
+//		time += offset;
+//		int oldTime = time;
+//		time += t0;
+//		//time += offset;
+//		while (time >= currentPeriod)
+//			time -= currentPeriod;
+//		if (oldTime == period - 1)
+//			t0 = time + 1;
+//		//time += offset;
+//		position = time;
+//		/*if (time == 0)
+//			t0 = 1;*/
+//
+//		
+//		
+//		int m_channel, m_note;
+//		uint8 m_velocity;
+//
+//		bool m_end = false;
+//		int i = 0;
+//		while (m_end == false)
+//		{
+//			if (isNoteOnTime(time, i, m_end, m_channel, m_note, m_velocity))
+//			{
+//				MidiMessage midiMsg = MidiMessage::noteOn(m_channel, m_note, m_velocity);
+//				audioManager->sendMidiMessage(midiMsg);
+//			}
+//			i++;
+//		}
+//
+//		m_end = false;
+//		i = 0;
+//		while (m_end == false)
+//		{
+//			if (isNoteOffTime(time, i, m_end, m_channel, m_note))
+//			{
+//				MidiMessage midiMsgOff = MidiMessage::noteOff(m_channel, m_note);
+//				audioManager->sendMidiMessage(midiMsgOff);
+//			}
+//			i++;
+//		}
+//
+//		
+//	}
+//}
 
 double TimeLine::getRelativePosition()
 {
 	return ( (double)position)/(double)currentPeriod;
 }
 
-void TimeLine::playNoteContinuously()
-{
-	continuous = true;
-	for (int i = 0; i < midiTimesSize; i++)
-	{
-			MidiMessage midiMsg = MidiMessage::noteOn(channel, notes[i], (uint8)100);
-			audioManager->sendMidiMessage(midiMsg);
-			lastNote = notes[i];			
-	}
-}
+//void TimeLine::playNoteContinuously()
+//{
+//	continuous = true;
+//	for (int i = 0; i < midiTimesSize; i++)
+//	{
+//			MidiMessage midiMsg = MidiMessage::noteOn(channel, notes[i], (uint8)100);
+//			audioManager->sendMidiMessage(midiMsg);
+//			lastNote = notes[i];			
+//	}
+//}
 
 void TimeLine::alignWith(TimeLine *ref, double phase)
 {
@@ -565,6 +574,27 @@ void TimeLine::resetAllChords()
 	chordSize = 0;
 }
 
+void TimeLine::setFilterFrequency(double frequency)
+{
+	if (frequency < 50.0) // < 50Hz, on garde la frequence de cassure a 50Hz
+		filter->setCoefficients(IIRCoefficients::makeLowPass(audioManager->getCurrentSampleRate(), 50.0));
+	else if (frequency > 15000.0) // > 15kHz, on garde la frequence de cassure a 15kHz
+		filter->setCoefficients(IIRCoefficients::makeHighPass(audioManager->getCurrentSampleRate(), 15000.0));
+	else if (frequency > 200 && frequency < 2000) // frequence au milieu -> pas de filtre
+		filter->makeInactive();
+	else if (frequency <= 200)
+		filter->setCoefficients(IIRCoefficients::makeLowPass(audioManager->getCurrentSampleRate(), frequency));
+	else if (frequency >= 2000)
+		filter->setCoefficients(IIRCoefficients::makeHighPass(audioManager->getCurrentSampleRate(), frequency));
+	else
+		DBG("probleme si aucun des cas du dessus");
+}
+
+IIRFilter * TimeLine::getFilter()
+{
+	return filter;
+}
+
 void TimeLine::applyOffSet(int _offset)
 {
 	for (int i = 0; i < midiTimesSize; i++)
@@ -607,4 +637,30 @@ void TimeLine::testMidi()
 		if (midiTimes[i] > currentPeriod)
 			DBG("connard");
 	}*/
+}
+
+void TimeLine::addMessageToQueue(MidiMessage msg)
+{
+	midiCollector.addMessageToQueue(msg);
+}
+
+void TimeLine::removeNextBlockOfMessages(MidiBuffer & incomingMidi, int numSamples)
+{
+	midiCollector.removeNextBlockOfMessages(incomingMidi, numSamples);
+	
+}
+
+void TimeLine::renderNextBlock(AudioSampleBuffer & outputAudio, const MidiBuffer & incomingMidi, int startSample, int numSamples)
+{
+	synth.renderNextBlock(outputAudio, incomingMidi, startSample, numSamples);
+}
+
+void TimeLine::clearSounds()
+{
+	synth.clearSounds();
+}
+
+void TimeLine::addSound(const SynthesiserSound::Ptr& newSound)
+{
+	synth.addSound(newSound);
 }

@@ -53,7 +53,9 @@ namespace Amusing {
 		void releaseResources() override;
 		void getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill) override;
 
-		void sendMidiMessage(MidiMessage midiMsg); // send Midi message to external synth
+		void sendMidiMessage(MidiMessage midiMsg, PlayHead* sender); // send Midi message to external synth
+
+		double getCurrentSampleRate();
 
 	private:
 
@@ -84,6 +86,8 @@ namespace Amusing {
 		
 		MidiBuffer midiBuffer;
 		MidiOutput *midiOuput;
+
+		AudioSampleBuffer *interComputeBuffer; // this buffer is summed with the bufferToFill in the audio thread
 		
 		void getParameters(); // function of the audio thread to handle parameters from the Presenter
 

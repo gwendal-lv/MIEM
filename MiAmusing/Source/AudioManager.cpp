@@ -79,13 +79,13 @@ void AudioManager::prepareToPlay(int samplesPerBlockExpected, double _sampleRate
 	currentSamplesPerBlock = samplesPerBlockExpected;
 	currentSampleRate = _sampleRate;
 
-	midiCollector.reset(_sampleRate);
+	/*midiCollector.reset(_sampleRate);
 	synth.setCurrentPlaybackSampleRate(_sampleRate);
 	int numVoice = 10;
 	for (int i = 0; i < numVoice; i++)
 	{
 		synth.addVoice(new SamplerVoice);
-	}
+	}*/
 	
 	metronome.setAudioParameter(samplesPerBlockExpected, _sampleRate);
 	
@@ -102,6 +102,10 @@ void AudioManager::prepareToPlay(int samplesPerBlockExpected, double _sampleRate
 		playInternalSynth = false;
 		audioFormatManager.clearFormats();
 	}
+	
+	int numOutChannels = model->sharedAudioDeviceManager->getCurrentAudioDevice()->getActiveOutputChannels().getHighestBit() + 1;
+	interComputeBuffer = new AudioSampleBuffer(numOutChannels, samplesPerBlockExpected);
+	interComputeBuffer->clear();
 }
 void AudioManager::releaseResources()
 {
@@ -174,9 +178,32 @@ void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 	
 	if (playInternalSynth)
 	{
-		MidiBuffer incomingMidi;
-		midiCollector.removeNextBlockOfMessages(incomingMidi, bufferToFill.numSamples); // recupere les messages MIDI à envoyer du midiCollector dans incomingMidi
-		synth.renderNextBlock(*bufferToFill.buffer, incomingMidi, 0, bufferToFill.numSamples); // le synthe interne transforme ces messages MIDI en samples
+		//MixerAudioSource
+
+		for (int i = 0; i < maxSize; ++i)
+		{
+			if (timeLinesKnown[i] != 0)
+			{
+				/*MidiBuffer incomingMidi;
+				interComputeBuffer->setSize(jmax(1, bufferToFill.buffer->getNumChannels()),
+					bufferToFill.buffer->getNumSamples());
+				AudioSourceChannelInfo info2(interComputeBuffer, 0, bufferToFill.numSamples);
+				info2.clearActiveBufferRegion();
+				playHeadsKnown[i]->removeNextBlockOfMessages(incomingMidi, bufferToFill.numSamples);
+				synth.renderNextBlock(*info2.buffer, incomingMidi, 0, bufferToFill.numSamples);
+				for(int j = 0; j < bufferToFill.buffer->getNumChannels();++j)
+					bufferToFill.buffer->addFrom(j, bufferToFill.startSample, *interComputeBuffer, j, 0, bufferToFill.numSamples);
+				         */
+				MidiBuffer incomingMidi;
+				timeLinesKnown[i]->removeNextBlockOfMessages(incomingMidi, bufferToFill.numSamples);
+				
+				timeLinesKnown[i]->renderNextBlock(*bufferToFill.buffer, incomingMidi, 0, bufferToFill.numSamples);
+				
+				//interComputeBuffer->clear(0,bufferToFill.numSamples);
+			}
+		}
+		//midiCollector.removeNextBlockOfMessages(incomingMidi, bufferToFill.numSamples); // recupere les messages MIDI à envoyer du midiCollector dans incomingMidi
+		//synth.renderNextBlock(*bufferToFill.buffer, incomingMidi, 0, bufferToFill.numSamples); // le synthe interne transforme ces messages MIDI en samples
 	}
 	else
 		bufferToFill.clearActiveBufferRegion();
@@ -206,7 +233,7 @@ void AudioManager::getNewPlayHeads()
 	}
 }
 
-void AudioManager::sendMidiMessage(MidiMessage msg)
+void AudioManager::sendMidiMessage(MidiMessage msg, PlayHead* sender)
 {
 	if (playInternalSynth)
 	{
@@ -215,7 +242,10 @@ void AudioManager::sendMidiMessage(MidiMessage msg)
 			s = (double)(timeStamp+1) / currentSampleRate;
 		//double ms = s * 1000;
 		msg.setTimeStamp(s);
-		midiCollector.addMessageToQueue(msg);
+		//midiCollector.addMessageToQueue(msg);
+		if(sender != nullptr && sender != 0)
+			if(timeLinesKnown[sender->getTimeLineId()] != 0)
+				timeLinesKnown[sender->getTimeLineId()]->addMessageToQueue(msg);
 	}
 	else
 	{
@@ -224,6 +254,11 @@ void AudioManager::sendMidiMessage(MidiMessage msg)
 			midiOuput->sendMessageNow(msg);
 		}
 	}
+}
+
+double Amusing::AudioManager::getCurrentSampleRate()
+{
+	return currentSampleRate;
 }
 
 void AudioManager::sendPosition()
@@ -283,15 +318,31 @@ void Amusing::AudioManager::setUsingSampledSound()
 	BigInteger allNotes;
 	allNotes.setRange(0, 128, true);
 
-	synth.clearSounds();
-	synth.addSound(new SamplerSound("demo sound",
-		*audioReader,
-		allNotes,
-		74,   // root midi note
-		0.1,  // attack time
-		0.1,  // release time
-		10.0  // maximum sample length
-	));
+	//synth.clearSounds();
+	//synth.addSound(new SamplerSound("demo sound",
+	//	*audioReader,
+	//	allNotes,
+	//	74,   // root midi note
+	//	0.1,  // attack time
+	//	0.1,  // release time
+	//	10.0  // maximum sample length
+	//));
+	auto newSound= new SamplerSound("demo sound",
+			*audioReader,
+			allNotes,
+			74,   // root midi note
+			0.1,  // attack time
+			0.1,  // release time
+			10.0  // maximum sample length
+		); 
+	for (int i = 0; i < maxSize; ++i)
+	{
+		if (timeLinesKnown[i] != 0)
+		{
+			timeLinesKnown[i]->clearSounds();
+			timeLinesKnown[i]->addSound(newSound);
+		}
+	}
 
 	playInternalSynth = true;
 }
@@ -371,6 +422,11 @@ void AudioManager::getParameters()
 			DBG("state = Play;");
 			state = Play;
 			playHeadsKnown[param.Id1]->setSpeed(param.DoubleValue);
+			if (param.IntegerValue == 1 && state == Play)
+			{
+				
+				playHeadsKnown[param.Id1]->changeState();
+			}
 			break;
 		case Miam::AsyncParamChange::ParamType::Pause :
 			DBG("state = Pause;");
@@ -396,9 +452,9 @@ void AudioManager::getParameters()
 			break;
 		case Miam::AsyncParamChange::Duration :
 			state = Play;
-			sendMidiMessage(juce::MidiMessage::controllerEvent(1, 7, roundToInt(param.FloatValue*127.0f)));
+			sendMidiMessage(juce::MidiMessage::controllerEvent(1, 7, roundToInt(param.FloatValue*127.0f)),nullptr);
 			//juce::MidiMessage::masterVolume(param.FloatValue));
-			sendMidiMessage(juce::MidiMessage::masterVolume(param.FloatValue));
+			sendMidiMessage(juce::MidiMessage::masterVolume(param.FloatValue),nullptr);
 			param.IntegerValue = metronome.BPMtoPeriodInSample(param.IntegerValue);//timeToSample(param.IntegerValue);
 			paramToAllocationThread.push(param);
 			break;
@@ -425,6 +481,15 @@ void AudioManager::getParameters()
 			else
 				paramToAllocationThread.push(param);
 			break;
+		case Miam::AsyncParamChange::Frequency :
+			if (timeLinesKnown[param.Id1] != 0)
+			{
+				// verifier si entraine allocation memoire... si oui -> mettre dans thread d'allocation
+				timeLinesKnown[param.Id1]->setFilterFrequency(param.DoubleValue);
+			}
+			else
+				paramToAllocationThread.push(param);
+			break;
 		default:
 			break;
 		}
@@ -434,6 +499,24 @@ void AudioManager::getParameters()
 void AudioManager::getAudioThreadMsg()
 {
 	Miam::AsyncParamChange param;
+
+	BigInteger allNotes;
+	WavAudioFormat wavFormat;
+	ScopedPointer<AudioFormatReader> audioReader(wavFormat.createReaderFor(new MemoryInputStream(BinaryData::cello_wav,
+		BinaryData::cello_wavSize,
+		false),
+		true));
+	allNotes.setRange(0, 128, true);
+	auto newSound = new SamplerSound("demo sound",
+		*audioReader,
+		allNotes,
+		74,   // root midi note
+		0.1,  // attack time
+		0.1,  // release time
+		10.0  // maximum sample length
+	);
+
+
 	while (paramToAllocationThread.pop(param))
 	{
 		switch (param.Type)
@@ -467,7 +550,7 @@ void AudioManager::getAudioThreadMsg()
 					if (param.FloatValue != 0)
 						timeLines[param.Id1]->setSpeed(param.FloatValue);
 					else
-						timeLines[param.Id1]->playNoteContinuously();
+						DBG("impossible");//timeLines[param.Id1]->playNoteContinuously();
 
 					timeLines[param.Id1]->setAudioManager(this);
 					//DBG("midiChannel : " + (String)param.IntegerValue);
@@ -476,10 +559,17 @@ void AudioManager::getAudioThreadMsg()
 					//timeLines[param.Id1]->setSpeed(param.FloatValue);
 					timeLines[param.Id1]->setId(param.Id1);
 					
+					// LAAAAAAAAAA
+					
+					timeLines[param.Id1]->clearSounds();
+					timeLines[param.Id1]->addSound(newSound);
+					// LAAAAAAAAAAA
+					
 					timeLinesToAudio.push(timeLines[param.Id1]);
 					break;
 				default:
 					DBG("IMPOSSIBLE");
+					break;
 				}
 			}
 			else if (param.Id1 == 1024)
@@ -493,6 +583,8 @@ void AudioManager::getAudioThreadMsg()
 				case 1:
 					if (playHeads[param.Id2] == 0)
 						playHeads[param.Id2] = new PlayHead();
+					if (state == Play)
+						playHeads[param.Id2]->setState(PlayHeadState::Play);
 					playHeads[param.Id2]->setId(param.Id2);
 					playHeads[param.Id2]->setSpeed(param.DoubleValue);
 					playHeads[param.Id2]->setAudioManager(this);
@@ -508,6 +600,8 @@ void AudioManager::getAudioThreadMsg()
 				playHeads[param.Id2]->setId(param.Id2);
 				playHeads[param.Id2]->LinkTo(timeLines[param.Id1]);
 				playHeads[param.Id2]->setSpeed(param.DoubleValue);
+				if (state == Play)
+					playHeads[param.Id2]->setState(PlayHeadState::Play);
 				playHeads[param.Id2]->setAudioManager(this);
 				playHeadsToAudio.push(playHeads[param.Id2]);
 			}

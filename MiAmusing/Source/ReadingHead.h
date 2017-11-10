@@ -29,6 +29,7 @@ public:
 	void setAudioManager(Amusing::AudioManager* m_audioManager);
 	void LinkTo(TimeLine* _timeLine);
 	void setSpeed(double m_speed);
+	void changeState();
 	void setReadingPosition(double p);
 	double getReadingPosition();
 	int getTimeLineId();
@@ -38,8 +39,7 @@ public:
 
 	
 
-	void process(); 
-	
+	void process();
 
 private:
 	// members of ReadingHead

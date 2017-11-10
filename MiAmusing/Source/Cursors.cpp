@@ -229,3 +229,15 @@ void Cursor::Paint(Graphics& g)
 {
 	EditableEllipse::Paint(g);
 }
+
+bool Cursor::isClicked(const Point<double>& hitPoint)
+{
+	AreaEventType areaEventType = EditableEllipse::TryBeginPointMove(hitPoint);
+	pointDraggedId = EditableAreaPointId::None;
+	if (areaEventType != AreaEventType::PointDragBegins)
+		return false;
+	else
+		return true;
+}
+
+

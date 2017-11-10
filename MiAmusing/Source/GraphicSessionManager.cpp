@@ -358,6 +358,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				{
 					DBG("Cursor's shape changed");
 					param.Type = AsyncParamChange::ParamType::Play;
+					param.IntegerValue = 0;
 					param.Id1 = myPresenter->getReadingHeadID(cursor);
 					param.DoubleValue = cursor->getSpeed();
 					myPresenter->SendParamChange(param);
@@ -412,10 +413,24 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				break;
 			case AreaEventType::RotScale :
 				DBG("RotScale");
-				
+				if (auto complete = std::dynamic_pointer_cast<CompletePolygon>(area))
+				{
+					param.Type = AsyncParamChange::Frequency;
+					param.Id1 = myPresenter->getTimeLineID(complete);
+					param.DoubleValue = myPresenter->computeFrequency(complete->GetSurface());
+					myPresenter->SendParamChange(param);
+				}
 				break;
 			case AreaEventType::Selected :
 				DBG("selection");
+				if (auto cursor = std::dynamic_pointer_cast<Cursor>(area))
+				{
+					param.Type = AsyncParamChange::Play;
+					param.Id1 = myPresenter->getReadingHeadID(cursor);
+					param.IntegerValue = 1;
+					param.DoubleValue = cursor->getSpeed();
+					myPresenter->SendParamChange(param);
+				}
 				break;
 				//case AreaEventType::
 			case AreaEventType::ParentChanged:

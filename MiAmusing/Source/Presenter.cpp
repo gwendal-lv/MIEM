@@ -271,6 +271,24 @@ std::shared_ptr<Follower> Presenter::getFollowerFromCtrl(int ctrlId)
 	return followerToCtrlSource.right.at(ctrlId);
 }
 
+double Amusing::Presenter::computeFrequency(double surface)
+{
+	double W = view->GetMainContentComponent()->getWidth();
+	double H = view->GetMainContentComponent()->getHeight();
+
+	double minSize = 0.03 * (W + H) / 2.0;
+	double maxSize = W * H;
+
+	double baseF = 50;
+
+	double minE = 0;
+	double maxE = 2 + log10(3.0);
+
+	double exp = minE + (maxE - minE) * (surface - minSize) / (maxSize - minSize);
+
+	return pow(10.0,exp);
+}
+
 static int updatesCount = 0;
 void Presenter::Update() // remettre l'interieur dans graphsessionmanager
 {

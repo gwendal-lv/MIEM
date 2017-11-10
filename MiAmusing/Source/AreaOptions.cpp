@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.1.2
+  Created with Projucer version: 5.2.0
 
   ------------------------------------------------------------------------------
 
@@ -125,7 +125,9 @@ void AreaOptions::sliderValueChanged (Slider* sliderThatWasMoved)
     {
         //[UserSliderCode_baseNote] -- add your slider handling code here..
 		//DBG("ici");
-		amusingSceneComponent->OnBaseNoteChanged(baseNote->getValue());
+		int octave = roundToInt(baseNote->getValue());
+		baseNote->setValue(octave);
+		amusingSceneComponent->OnBaseNoteChanged(octave);
         //[/UserSliderCode_baseNote]
     }
     else if (sliderThatWasMoved == speed)

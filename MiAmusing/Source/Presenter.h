@@ -97,6 +97,8 @@ namespace Amusing {
 			int getCtrlSourceId(std::shared_ptr<Follower> follower);
 			std::shared_ptr<Follower> getFollowerFromCtrl(int ctrlId);
 
+			double computeFrequency(double surface);
+
 			int getTempo();
 			void setTempo(int newTempo);
 			float getMasterVolume();

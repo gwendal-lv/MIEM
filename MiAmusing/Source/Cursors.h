@@ -13,8 +13,9 @@
 #include "EditableEllipse.h"
 #include "Exciter.h"
 #include "EditablePolygon.h"
+#include <memory>
 
-class Cursor : public Miam::Exciter//EditableEllipse//Exciter//EditableEllipse
+class Cursor : public Miam::Exciter, public std::enable_shared_from_this<Cursor> //EditableEllipse//Exciter//EditableEllipse
 {
 public:
 	Cursor(int64_t _Id);
@@ -38,6 +39,8 @@ public:
 	void setCenterPositionNormalize(bpt newCenter);
 
 	void Paint(Graphics & g) override;
+	bool isClicked(const Point<double>& hitPoint);
+	
 
 private:
 	JUCE_LEAK_DETECTOR(Cursor)

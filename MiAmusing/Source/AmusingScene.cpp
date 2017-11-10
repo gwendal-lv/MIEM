@@ -260,7 +260,29 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDown(const MouseEvent& 
 		}
 		else
 		{
-			return EditableScene::OnCanvasMouseDown(mouseE);
+			std::shared_ptr<GraphicEvent> graphE = EditableScene::OnCanvasMouseDown(mouseE);
+			if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(graphE))
+			{
+				return graphE; 
+			}
+			else
+			{
+				for (int i = 0; i < (int)currentExciters.size(); i++)
+				{
+					if (auto currentCursor = std::dynamic_pointer_cast<Cursor>(currentExciters[i]))
+					{
+						if (currentCursor->isClicked(Point<double>((double)mouseE.x, (double)mouseE.y)))
+						{
+							graphE = std::shared_ptr<AreaEvent>(new AreaEvent(currentExciters[i], AreaEventType::Selected, shared_from_this()));
+							break;
+						}
+					}
+					
+					
+				}
+				return graphE;
+				DBG("pas d'interaction avec une aire");
+			}
 		}
 	}
 	else

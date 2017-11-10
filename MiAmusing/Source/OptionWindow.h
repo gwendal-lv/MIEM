@@ -37,7 +37,7 @@ namespace Amusing
 		MainContentComponent* mainComponent;
 		std::shared_ptr<AudioDeviceManager> deviceManager;
 
-		static String getListOfActiveBits(const BitArray& b)
+		/*static String getListOfActiveBits(const BitArray& b)
 		{
 			StringArray bits;
 
@@ -46,7 +46,7 @@ namespace Amusing
 					bits.add(String(i));
 
 			return bits.joinIntoString(", ");
-		}
+		}*/
 
 	};
 }
