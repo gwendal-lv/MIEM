@@ -674,6 +674,7 @@ void AudioManager::getAudioThreadMsg()
 			break;
 		}
 	}
+	delete newSound;
 }
 
 void AudioManager::threadFunc()
