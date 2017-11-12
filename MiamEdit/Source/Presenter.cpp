@@ -42,7 +42,7 @@ Presenter::Presenter(View* _view) :
     
 }
 
-void Presenter::CompleteInitialisation(Model* _model, std::string& commandLine)
+void Presenter::CompleteInitialisation(Model* _model)
 {
     // Self init
     model = _model;
@@ -51,18 +51,21 @@ void Presenter::CompleteInitialisation(Model* _model, std::string& commandLine)
     spatStatesEditionManager.CompleteInitialisation(model->GetSpatInterpolator());
     settingsManager.CompleteInitialisation(model);
     
-    // Après initialisation : on montre des objets graphiques
+    // Après initialisation : on ne montre RIEN
     // On genère une requête interne puis on notifie View
-    appModeChangeRequest(AppMode::EditSpatScenes);
-    view->ChangeAppMode(AppMode::EditSpatScenes);
-    
+    appModeChangeRequest(AppMode::Loading);
+    view->ChangeAppMode(AppMode::Loading);
+}
+
+void Presenter::ManageInitialSession(std::string commandLine)
+{
     // Copie du paramètre d'entrée,
     // pour permettre le chargement automatique de la session de test....
     std::string commandLineToParse = commandLine;
-//#ifdef __MIAM_DEBUG
-    //commandLineToParse += " -session \"/Users/Gwendal/Music/Spat sessions/Session de débug.miam\" ";
-    commandLineToParse += " -session \"/Users/Gwendal/Music/Spat sessions/Test.miam\" ";
-//#endif
+#ifdef __MIAM_DEBUG
+    //commandLineToParse += " -session \"/Users/Gwendal/Music/Spat sessions/Session de débug.mspat\" ";
+    //commandLineToParse += " -session \"/Users/Gwendal/Music/Spat sessions/Test42.mspat\" ";
+#endif
     
     // Récupération du nom de fichier à charger
     std::string commandLineFileName = TextUtils::FindFilenameInCommandLineArguments(commandLineToParse);
@@ -77,7 +80,7 @@ void Presenter::CompleteInitialisation(Model* _model, std::string& commandLine)
     // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
     // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
     if (commandLineFileName.empty())
-        SaveSession(); // Va demander un chemin de fichier pour la sauvegarde automatique ensuite
+        SaveSession("", true); // Va demander un chemin de fichier pour la sauvegarde automatique ensuite
     // NON ICI IL FAUT LAISSER LE CHOIX À L'UTILISATEUR
     // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
     // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
@@ -88,9 +91,13 @@ void Presenter::CompleteInitialisation(Model* _model, std::string& commandLine)
     // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
     else
         LoadSession(commandLineFileName);
+    
+    
+    // Après premier chargement : on ne montre les objets graphiques
+    // On genère une requête interne puis on notifie View
+    appModeChangeRequest(AppMode::EditSpatScenes);
+    view->ChangeAppMode(AppMode::EditSpatScenes);
 }
-
-
 
 
 

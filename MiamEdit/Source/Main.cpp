@@ -54,14 +54,17 @@ public:
         else
             throw std::runtime_error("First child of Main Window is not a MainContentComponent...");
         presenter = new Miam::Presenter(view); // Will reference itself to the View module
-        model = new Miam::Model(presenter, commandLine.toStdString());// Will reference itself to the Presenter module
+        model = new Miam::Model(presenter);// Will reference itself to the Presenter module
         
-        // TAILLE INITIALE
-        // À CHANGER SELON LA PLATEFORME
-        //setSize(800, 600);
-        
+        // [] permet de préciser la liste de capture
+        // (& signifie "tout ce qui est accessible, et par réf ; = veut dire la même chose avec copies)
+        // () permet de préciser la liste des arguments
+        // et {} est le corps de la fonction lambda
+        Timer::callAfterDelay(100, [=] ()
+                              { presenter->ManageInitialSession(commandLine.toStdString()); } );
     }
 
+    public :
     void shutdown() override
     {
         // Add your application's shutdown code here..

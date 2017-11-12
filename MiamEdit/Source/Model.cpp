@@ -27,7 +27,7 @@ using namespace Miam;
 // = = = = = = = = = = METHODS = = = = = = = = = =
 
 // - - - - - Construction / destruction - - - - -
-Model::Model(Presenter* presenter_, std::string commandLine)
+Model::Model(Presenter* presenter_)
 :
     SpatModel(presenter_),
 presenter(presenter_)
@@ -41,7 +41,7 @@ presenter(presenter_)
     
     
     // Auto-referenciation to other modules
-    presenter->CompleteInitialisation(this, commandLine);
+    presenter->CompleteInitialisation(this);
 
 
 	// Launch of thread, at the specified frequency

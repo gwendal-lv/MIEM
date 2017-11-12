@@ -21,6 +21,7 @@
 #include "boost/property_tree/xml_parser.hpp"
 namespace bptree = boost::property_tree;
 
+#define Miam_SessionFileExtension       "mspat"
 
 namespace Miam {
     

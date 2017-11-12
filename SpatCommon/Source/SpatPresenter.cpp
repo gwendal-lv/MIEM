@@ -87,9 +87,23 @@ void SpatPresenter::SaveSession(std::string _filename, bool /*forceDataRefresh*/
     // Else, we continue only if a filename is currently in use
     else if (lastFilename.empty())
     {
+        //throw std::logic_error("après ça on n'a plus de pop-up");
+        // MAIS SI ON LE FAIT EN DEBUG LIGNE PAR LIGNE ÇA MARCHE !!!!
+        // Les pop-ups de Juce c'est de la merde
+        // Les pop-ups de Juce c'est de la merde
+        // Les pop-ups de Juce c'est de la merde
+        // Les pop-ups de Juce c'est de la merde
+        // trouver un système + propre...
+        // C'est ce code qui pose problème (Pop-ups Juce ne fonctionnent plus, après...)
+        // C'est ce code qui pose problème (Pop-ups Juce ne fonctionnent plus, après...)
+        // C'est ce code qui pose problème (Pop-ups Juce ne fonctionnent plus, après...)
+        // C'est ce code qui pose problème (Pop-ups Juce ne fonctionnent plus, après...)
+        // C'est ce code qui pose problème (Pop-ups Juce ne fonctionnent plus, après...)
+        // C'est ce code qui pose problème (Pop-ups Juce ne fonctionnent plus, après...)
+        // C'est ce code qui pose problème (Pop-ups Juce ne fonctionnent plus, après...)
         FileChooser fileChooser("Chargement d'un fichier",
                                 File::getSpecialLocation(File::SpecialLocationType::userMusicDirectory),
-                                "*.miam",
+                                std::string("*.") + Miam_SessionFileExtension,
                                 true);
         if ( fileChooser.browseForFileToSave(true) )
         {
@@ -100,6 +114,13 @@ void SpatPresenter::SaveSession(std::string _filename, bool /*forceDataRefresh*/
         // (dont le contenu sera affiché par le presenter réel, s'il peut)
         else
             throw XmlWriteException("File not saved");
+        // C'est ce code qui pose problème (Pop-ups Juce ne fonctionnent plus, après...)
+        // C'est ce code qui pose problème (Pop-ups Juce ne fonctionnent plus, après...)
+        // C'est ce code qui pose problème (Pop-ups Juce ne fonctionnent plus, après...)
+        // C'est ce code qui pose problème (Pop-ups Juce ne fonctionnent plus, après...)
+        // C'est ce code qui pose problème (Pop-ups Juce ne fonctionnent plus, après...)
+        // C'est ce code qui pose problème (Pop-ups Juce ne fonctionnent plus, après...)
+        // C'est ce code qui pose problème (Pop-ups Juce ne fonctionnent plus, après...)
     }
     
     // Whole properties tree reconstruction

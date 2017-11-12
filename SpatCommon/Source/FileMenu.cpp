@@ -50,7 +50,7 @@ void FileMenu::onLoad()
 {
     FileChooser fileChooser("Chargement d'un fichier",
                             File::getSpecialLocation(File::SpecialLocationType::userMusicDirectory),
-                            "*.miam",
+                            std::string("*.") + Miam_SessionFileExtension,
                             true);
     if ( fileChooser.browseForFileToOpen() )
     {
@@ -66,7 +66,7 @@ void FileMenu::onSaveAs()
 {
     FileChooser fileChooser("Chargement d'un fichier",
                             File::getSpecialLocation(File::SpecialLocationType::userMusicDirectory),
-                            "*.miam",
+                            std::string("*.") + Miam_SessionFileExtension,
                             true);
     if ( fileChooser.browseForFileToSave(true) )
     {
