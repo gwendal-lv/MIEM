@@ -37,6 +37,7 @@ TimeLine::TimeLine()
 
 	chordSize = 0;
 
+	newSound = nullptr;
 	filter = new IIRFilter();
 	filter->makeInactive();
 }
@@ -653,14 +654,40 @@ void TimeLine::removeNextBlockOfMessages(MidiBuffer & incomingMidi, int numSampl
 void TimeLine::renderNextBlock(AudioSampleBuffer & outputAudio, const MidiBuffer & incomingMidi, int startSample, int numSamples)
 {
 	synth.renderNextBlock(outputAudio, incomingMidi, startSample, numSamples);
+	for(int chan = 0; chan < (int)outputAudio.getNumChannels();++chan)
+		filter->processSamples(outputAudio.getWritePointer(chan,startSample), numSamples);
 }
 
 void TimeLine::clearSounds()
 {
 	synth.clearSounds();
+	if (newSound != nullptr)
+		delete newSound; // faudra mettre dans 2 synthé différents 
 }
 
 void TimeLine::addSound(const SynthesiserSound::Ptr& newSound)
 {
+	synth.addSound(newSound);
+}
+
+void TimeLine::addSound(const void * srcData, size_t srcDataSize, bool keepInternalCopyOfData)
+{
+	BigInteger allNotes;
+	WavAudioFormat wavFormat;
+	audioReader = wavFormat.createReaderFor(new MemoryInputStream(srcData,
+		srcDataSize,
+		keepInternalCopyOfData),
+		true);
+	allNotes.setRange(0, 128, true);
+	if (newSound != nullptr)
+		delete newSound; // faudra mettre dans 2 synthé différents 
+	newSound = new SamplerSound("demo sound",
+		*audioReader,
+		allNotes,
+		74,   // root midi note
+		0.1,  // attack time
+		0.1,  // release time
+		10.0  // maximum sample length
+	);
 	synth.addSound(newSound);
 }

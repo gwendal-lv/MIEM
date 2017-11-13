@@ -500,21 +500,21 @@ void AudioManager::getAudioThreadMsg()
 {
 	Miam::AsyncParamChange param;
 
-	BigInteger allNotes;
-	WavAudioFormat wavFormat;
-	ScopedPointer<AudioFormatReader> audioReader(wavFormat.createReaderFor(new MemoryInputStream(BinaryData::cello_wav,
-		BinaryData::cello_wavSize,
-		false),
-		true));
-	allNotes.setRange(0, 128, true);
-	auto newSound = new SamplerSound("demo sound",
-		*audioReader,
-		allNotes,
-		74,   // root midi note
-		0.1,  // attack time
-		0.1,  // release time
-		10.0  // maximum sample length
-	);
+	//BigInteger allNotes;
+	//WavAudioFormat wavFormat;
+	//ScopedPointer<AudioFormatReader> audioReader(wavFormat.createReaderFor(new MemoryInputStream(BinaryData::cello_wav,
+	//	BinaryData::cello_wavSize,
+	//	false),
+	//	true));
+	//allNotes.setRange(0, 128, true);
+	//auto newSound = new SamplerSound("demo sound",
+	//	*audioReader,
+	//	allNotes,
+	//	74,   // root midi note
+	//	0.1,  // attack time
+	//	0.1,  // release time
+	//	10.0  // maximum sample length
+	//);
 
 
 	while (paramToAllocationThread.pop(param))
@@ -562,7 +562,8 @@ void AudioManager::getAudioThreadMsg()
 					// LAAAAAAAAAA
 					
 					timeLines[param.Id1]->clearSounds();
-					timeLines[param.Id1]->addSound(newSound);
+					//timeLines[param.Id1]->addSound(newSound);
+					timeLines[param.Id1]->addSound(BinaryData::cello_wav,BinaryData::cello_wavSize,false);
 					// LAAAAAAAAAAA
 					
 					timeLinesToAudio.push(timeLines[param.Id1]);
@@ -674,7 +675,7 @@ void AudioManager::getAudioThreadMsg()
 			break;
 		}
 	}
-	delete newSound;
+	//delete newSound;
 }
 
 void AudioManager::threadFunc()

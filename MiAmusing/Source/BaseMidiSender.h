@@ -65,9 +65,11 @@ public:
 	void setFilterFrequency(double frequency);
 	IIRFilter* getFilter();
 
+
 	void renderNextBlock(AudioSampleBuffer &outputAudio, const MidiBuffer &incomingMidi, int startSample, int numSamples);
 	void clearSounds();
 	void addSound(const SynthesiserSound::Ptr& newSound);
+	void addSound(const void* srcData, size_t srcDataSize, bool keepInternalCopyOfData);
 
 private:
 	static const int maxSize = 128;
@@ -107,7 +109,8 @@ private:
 
 	IIRFilter* filter;
 	Synthesiser synth;
-	
+	ScopedPointer<AudioFormatReader> audioReader;
+	SamplerSound* newSound;
 
 	// reference to the audioManager to send the MIDI
 	Amusing::AudioManager* audioManager;
