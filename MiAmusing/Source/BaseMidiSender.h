@@ -26,6 +26,12 @@ enum ChordType
 	PerfectChord,
 };
 
+enum FilterType
+{
+	LowPass,
+	HighPass,
+};
+
 class TimeLine
 {
 public:
@@ -111,6 +117,11 @@ private:
 	Synthesiser synth;
 	ScopedPointer<AudioFormatReader> audioReader;
 	SamplerSound* newSound;
+	double currentFilterFrequency;
+	double deltaF;
+	double filterFrequencyToReach;
+	FilterType filterType;
+	void updateFilter();
 
 	// reference to the audioManager to send the MIDI
 	Amusing::AudioManager* audioManager;

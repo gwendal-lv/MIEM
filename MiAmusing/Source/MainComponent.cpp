@@ -45,7 +45,6 @@ void MainContentComponent::resized()
     // If you add any child components, this is where you should
     // update their positions.
 
-	DBG("MainContentComponent::resized()");
 	int toolbarWidth = getLocalBounds().getWidth() / 12;
 	if (multiCanvasComponent)
 	{

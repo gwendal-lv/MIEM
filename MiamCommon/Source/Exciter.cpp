@@ -58,6 +58,16 @@ void Exciter::init()
     isAnimationSynchronized = true;
 }
 
+double Exciter::computeXScale(float _canvasRatio)
+{
+	return 0.5f + 0.5f / _canvasRatio;
+}
+
+double Exciter::computeYScale(float _canvasRatio)
+{
+	return 0.5f + 0.5f * _canvasRatio;
+}
+
 
 // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
 void Exciter::SetIsAnimationSynchronized(bool isSynchronized_)

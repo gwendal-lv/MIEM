@@ -76,6 +76,9 @@ namespace Miam
         // - - - - - Ction helpers - - - - -
         private :
         void init();
+
+		double computeXScale(float _canvasRatio) override;
+		double computeYScale(float _canvasRatio) override;
         
         // - - - - - Display - - - - -
         public :

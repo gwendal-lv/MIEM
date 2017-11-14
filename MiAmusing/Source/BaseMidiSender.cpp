@@ -38,12 +38,16 @@ TimeLine::TimeLine()
 	chordSize = 0;
 
 	newSound = nullptr;
+	filterFrequencyToReach = 400.0;
+	currentFilterFrequency = 400.0;
+	deltaF = 0;
 	filter = new IIRFilter();
 	filter->makeInactive();
 }
 
 TimeLine::~TimeLine()
 {
+	delete filter;
 	/*if (!continuous)
 	{
 		MidiMessage midiMsgOff = MidiMessage::noteOff(channel, lastNote);
@@ -577,18 +581,40 @@ void TimeLine::resetAllChords()
 
 void TimeLine::setFilterFrequency(double frequency)
 {
-	if (frequency < 50.0) // < 50Hz, on garde la frequence de cassure a 50Hz
-		filter->setCoefficients(IIRCoefficients::makeLowPass(audioManager->getCurrentSampleRate(), 50.0));
-	else if (frequency > 15000.0) // > 15kHz, on garde la frequence de cassure a 15kHz
-		filter->setCoefficients(IIRCoefficients::makeHighPass(audioManager->getCurrentSampleRate(), 15000.0));
-	else if (frequency > 200 && frequency < 2000) // frequence au milieu -> pas de filtre
-		filter->makeInactive();
-	else if (frequency <= 200)
-		filter->setCoefficients(IIRCoefficients::makeLowPass(audioManager->getCurrentSampleRate(), frequency));
-	else if (frequency >= 2000)
-		filter->setCoefficients(IIRCoefficients::makeHighPass(audioManager->getCurrentSampleRate(), frequency));
-	else
-		DBG("probleme si aucun des cas du dessus");
+	if (frequency != filterFrequencyToReach)
+	{
+		if (frequency < 50.0) // < 50Hz, on garde la frequence de cassure a 50Hz
+		{
+			//filter->setCoefficients(IIRCoefficients::makeLowPass(audioManager->getCurrentSampleRate(), 50.0));
+			filterFrequencyToReach = 50.0;
+			filterType = FilterType::LowPass;
+		}
+		else if (frequency > 15000.0) // > 15kHz, on garde la frequence de cassure a 15kHz
+		{
+			filterFrequencyToReach = 15000.0;
+			filterType = FilterType::HighPass;
+			//filter->setCoefficients(IIRCoefficients::makeHighPass(audioManager->getCurrentSampleRate(), 15000.0));
+		}
+		else if (frequency > 200 && frequency < 2000) // frequence au milieu -> pas de filtre
+		{
+			filter->makeInactive();
+		}
+		else if (frequency <= 200)
+		{
+			filterFrequencyToReach = frequency;
+			filterType = FilterType::LowPass;
+			//filter->setCoefficients(IIRCoefficients::makeLowPass(audioManager->getCurrentSampleRate(), frequency));
+		}
+		else if (frequency >= 2000)
+		{
+			filterFrequencyToReach = frequency;
+			filterType = FilterType::HighPass;
+			//filter->setCoefficients(IIRCoefficients::makeHighPass(audioManager->getCurrentSampleRate(), frequency));
+		}
+		else
+			DBG("probleme si aucun des cas du dessus");
+	}
+	deltaF = (filterFrequencyToReach - currentFilterFrequency) / 5.0; // il faudra 5 buffer avant d'arriver à la frequence desiree
 }
 
 IIRFilter * TimeLine::getFilter()
@@ -640,6 +666,32 @@ void TimeLine::testMidi()
 	}*/
 }
 
+void TimeLine::updateFilter()
+{
+	if (currentFilterFrequency != filterFrequencyToReach)
+	{
+		if (filterFrequencyToReach - currentFilterFrequency < deltaF)
+			currentFilterFrequency = filterFrequencyToReach;
+		else
+			currentFilterFrequency += deltaF;
+
+		switch (filterType)
+		{
+		case LowPass:
+			filter->setCoefficients(IIRCoefficients::makeLowPass(audioManager->getCurrentSampleRate(), currentFilterFrequency));
+			filter->reset();
+			break;
+		case HighPass:
+			filter->setCoefficients(IIRCoefficients::makeHighPass(audioManager->getCurrentSampleRate(), currentFilterFrequency));
+			filter->reset();
+			break;
+		default:
+			DBG("prob");
+			break;
+		}
+	}
+}
+
 void TimeLine::addMessageToQueue(MidiMessage msg)
 {
 	midiCollector.addMessageToQueue(msg);
@@ -653,6 +705,7 @@ void TimeLine::removeNextBlockOfMessages(MidiBuffer & incomingMidi, int numSampl
 
 void TimeLine::renderNextBlock(AudioSampleBuffer & outputAudio, const MidiBuffer & incomingMidi, int startSample, int numSamples)
 {
+	updateFilter();
 	synth.renderNextBlock(outputAudio, incomingMidi, startSample, numSamples);
 	for(int chan = 0; chan < (int)outputAudio.getNumChannels();++chan)
 		filter->processSamples(outputAudio.getWritePointer(chan,startSample), numSamples);

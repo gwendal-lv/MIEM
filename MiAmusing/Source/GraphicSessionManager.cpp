@@ -418,6 +418,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					param.Type = AsyncParamChange::Frequency;
 					param.Id1 = myPresenter->getTimeLineID(complete);
 					param.DoubleValue = myPresenter->computeFrequency(complete->GetSurface());
+					DBG((String)param.DoubleValue);
 					myPresenter->SendParamChange(param);
 				}
 				break;
