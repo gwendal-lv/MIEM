@@ -56,6 +56,7 @@ namespace Amusing {
 		void sendMidiMessage(MidiMessage midiMsg, PlayHead* sender); // send Midi message to external synth
 
 		double getCurrentSampleRate();
+		int getCurrentSamplesBlock();
 
 	private:
 

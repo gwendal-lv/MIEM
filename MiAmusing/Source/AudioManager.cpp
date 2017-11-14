@@ -256,9 +256,14 @@ void AudioManager::sendMidiMessage(MidiMessage msg, PlayHead* sender)
 	}
 }
 
-double Amusing::AudioManager::getCurrentSampleRate()
+double AudioManager::getCurrentSampleRate()
 {
 	return currentSampleRate;
+}
+
+int AudioManager::getCurrentSamplesBlock()
+{
+	return currentSamplesPerBlock;
 }
 
 void AudioManager::sendPosition()
@@ -287,7 +292,7 @@ void AudioManager::sendPosition()
 	
 }
 
-void Amusing::AudioManager::startRecording()
+void AudioManager::startRecording()
 {
 	if (recorder.isRecording())
 	{
@@ -303,7 +308,7 @@ void Amusing::AudioManager::startRecording()
 	}
 }
 
-void Amusing::AudioManager::setUsingSampledSound()
+void AudioManager::setUsingSampledSound()
 {
 	WavAudioFormat wavFormat;
 	audioFormatManager.registerBasicFormats();

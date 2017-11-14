@@ -69,7 +69,6 @@ public:
 	void removeNextBlockOfMessages(MidiBuffer & incomingMidi, int numSamples);
 
 	void setFilterFrequency(double frequency);
-	IIRFilter* getFilter();
 
 
 	void renderNextBlock(AudioSampleBuffer &outputAudio, const MidiBuffer &incomingMidi, int startSample, int numSamples);
@@ -113,7 +112,8 @@ private:
 	void testMidi();
 	MidiMessageCollector midiCollector;
 
-	IIRFilter* filter;
+	//dsp::StateVariableFilter::Filter<float> filterDSP;
+	dsp::ProcessorDuplicator<dsp::StateVariableFilter::Filter<float>, dsp::StateVariableFilter::Parameters<float>> duplicatedFilter;
 	Synthesiser synth;
 	ScopedPointer<AudioFormatReader> audioReader;
 	SamplerSound* newSound;

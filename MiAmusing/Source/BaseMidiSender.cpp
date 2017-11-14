@@ -41,13 +41,10 @@ TimeLine::TimeLine()
 	filterFrequencyToReach = 400.0;
 	currentFilterFrequency = 400.0;
 	deltaF = 0;
-	filter = new IIRFilter();
-	filter->makeInactive();
 }
 
 TimeLine::~TimeLine()
 {
-	delete filter;
 	/*if (!continuous)
 	{
 		MidiMessage midiMsgOff = MidiMessage::noteOff(channel, lastNote);
@@ -75,6 +72,7 @@ void TimeLine::setAudioManager(AudioManager* m_audioManager)
 	{
 		synth.addVoice(new SamplerVoice);
 	}
+	duplicatedFilter.prepare({ audioManager->getCurrentSampleRate(),(uint32)audioManager->getCurrentSamplesBlock(),2 });
 }
 
 void TimeLine::setPeriod(int m_period)
@@ -617,11 +615,6 @@ void TimeLine::setFilterFrequency(double frequency)
 	deltaF = (filterFrequencyToReach - currentFilterFrequency) / 5.0; // il faudra 5 buffer avant d'arriver à la frequence desiree
 }
 
-IIRFilter * TimeLine::getFilter()
-{
-	return filter;
-}
-
 void TimeLine::applyOffSet(int _offset)
 {
 	for (int i = 0; i < midiTimesSize; i++)
@@ -670,20 +663,21 @@ void TimeLine::updateFilter()
 {
 	if (currentFilterFrequency != filterFrequencyToReach)
 	{
+		//ScopedLock audioLock(audioCallbackLock);
 		if (filterFrequencyToReach - currentFilterFrequency < deltaF)
 			currentFilterFrequency = filterFrequencyToReach;
 		else
 			currentFilterFrequency += deltaF;
-
+		dsp::StateVariableFilter::Parameters<float> parameters;
 		switch (filterType)
 		{
 		case LowPass:
-			filter->setCoefficients(IIRCoefficients::makeLowPass(audioManager->getCurrentSampleRate(), currentFilterFrequency));
-			filter->reset();
+			duplicatedFilter.state->type = dsp::StateVariableFilter::Parameters<float>::Type::lowPass;
+			duplicatedFilter.state->setCutOffFrequency(audioManager->getCurrentSampleRate(), currentFilterFrequency);
 			break;
 		case HighPass:
-			filter->setCoefficients(IIRCoefficients::makeHighPass(audioManager->getCurrentSampleRate(), currentFilterFrequency));
-			filter->reset();
+			duplicatedFilter.state->type = dsp::StateVariableFilter::Parameters<float>::Type::highPass;//filterDSP.parameters->type = dsp::StateVariableFilter::Parameters<float>::Type::highPass;
+			duplicatedFilter.state->setCutOffFrequency(audioManager->getCurrentSampleRate(), currentFilterFrequency);//filterDSP.parameters->setCutOffFrequency(audioManager->getCurrentSampleRate(), currentFilterFrequency);
 			break;
 		default:
 			DBG("prob");
@@ -707,8 +701,10 @@ void TimeLine::renderNextBlock(AudioSampleBuffer & outputAudio, const MidiBuffer
 {
 	updateFilter();
 	synth.renderNextBlock(outputAudio, incomingMidi, startSample, numSamples);
-	for(int chan = 0; chan < (int)outputAudio.getNumChannels();++chan)
-		filter->processSamples(outputAudio.getWritePointer(chan,startSample), numSamples);
+	dsp::AudioBlock<float> block(outputAudio,
+		(size_t)startSample);
+	
+	duplicatedFilter.process(dsp::ProcessContextReplacing<float>(block)); //filter->processSamples(outputAudio.getWritePointer(chan,startSample), numSamples);
 }
 
 void TimeLine::clearSounds()
