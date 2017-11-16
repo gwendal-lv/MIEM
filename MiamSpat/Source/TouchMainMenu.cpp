@@ -12,6 +12,8 @@
 
 #include "Presenter.h"
 
+#include <string>
+
 using namespace Miam;
 
 TouchMainMenu::TouchMainMenu(Presenter* presenter_) : presenter(presenter_)
@@ -40,7 +42,7 @@ void TouchMainMenu::onLoad()
 {
     FileChooser fileChooser("Chargement d'un fichier",
                             File::getSpecialLocation(File::SpecialLocationType::userMusicDirectory),
-                            "*.miam",
+                            std::string("*.") + Miam_SessionFileExtension,
                             true);
     if ( fileChooser.browseForFileToOpen() )
     {

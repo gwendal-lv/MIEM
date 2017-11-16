@@ -310,6 +310,10 @@ PopupMenu OscMatrixComponent::createHelpPopup()
     // Automation advice
     menu.addSeparator();
     menu.addItem(++lastItemId, "DAW-specific instructions : please read PDF manual.", false);
+    menu.addSeparator();
+    menu.addItem(++lastItemId, String("MIAM Matrix Router v") + JucePlugin_VersionString, false);
+    menu.addItem(++lastItemId, String("Gwendal Le Vaillant, ") + JucePlugin_ManufacturerEmail + ", 2017.", false);
+
 
     return menu;
 }

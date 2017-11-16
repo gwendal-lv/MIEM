@@ -30,6 +30,8 @@ using namespace Miam;
 // - - - - - Contruction and Destruction - - - - -
 
 Presenter::Presenter(View* _view) :
+    SpatPresenter(_view),
+
     view(_view),
     appMode(AppMode::Loading), // app is loading while the Model hasn't fully loaded yet
 
@@ -64,7 +66,7 @@ void Presenter::ManageInitialSession(std::string commandLine)
     std::string commandLineToParse = commandLine;
 #ifdef __MIAM_DEBUG
     //commandLineToParse += " -session \"/Users/Gwendal/Music/Spat sessions/Session de débug.mspat\" ";
-    //commandLineToParse += " -session \"/Users/Gwendal/Music/Spat sessions/Test42.mspat\" ";
+    commandLineToParse += " -session \"/Users/Gwendal/Music/Spat sessions/Mini-golf bureau.mspat\" ";
 #endif
     
     // Récupération du nom de fichier à charger

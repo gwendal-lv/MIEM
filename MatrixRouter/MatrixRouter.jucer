@@ -5,15 +5,15 @@
               buildVST="0" buildVST3="0" buildAU="1" buildAUv3="0" buildRTAS="0"
               buildAAX="0" pluginName="MIAM Matrix Router" pluginDesc="OSC controllable matrix router, for MIAM Spat Player"
               pluginManufacturer="G. Le Vaillant" pluginManufacturerCode="Manu"
-              pluginCode="Eo3z" pluginChannelConfigs="{8,8}" pluginIsSynth="0"
+              pluginCode="Eo3z" pluginChannelConfigs="{64,64}" pluginIsSynth="0"
               pluginWantsMidiIn="0" pluginProducesMidiOut="0" pluginIsMidiEffectPlugin="0"
               pluginEditorRequiresKeys="0" pluginAUExportPrefix="MIAMMatrixRouterAU"
               pluginRTASCategory="" aaxIdentifier="com.yourcompany.MIAMMatrixRouter"
               pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="5.2.0"
-              defines="" displaySplashScreen="1" reportAppUsage="1" splashScreenColour="Dark"
-              buildStandalone="1" enableIAA="0" companyName="LARAS (IRISIB)"
+              defines="" displaySplashScreen="0" reportAppUsage="0" splashScreenColour="Dark"
+              buildStandalone="1" enableIAA="0" companyName="IRISIB-LARAS, UMons"
               companyWebsite="http://www.laras.be" companyEmail="glevaillant@he2b.be"
-              cppLanguageStandard="11" companyCopyright="LARAS (IRISIB)">
+              cppLanguageStandard="11" companyCopyright="">
   <MAINGROUP id="uSK6Ed" name="MIAM Matrix Router">
     <GROUP id="{7E647B1E-1C9F-BD65-5FF1-5839B4766A43}" name="Source">
       <GROUP id="{E44EFD07-3B55-8033-8C2F-DBABCD5578FE}" name="View">

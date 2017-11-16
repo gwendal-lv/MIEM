@@ -13,6 +13,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#include "SpatView.h"
+
 #include "MainComponent.h"
 
 #include "DrawableArea.h"
@@ -34,14 +36,14 @@ namespace Miam {
 	/// user commands (events) to the presenter to act upon that data."
 	///
 	/// \remark Usual GUI controls (created from the Projucer) belong to this module.
-    class View {
+    class View : public SpatView
+    {
         
         // ========== ATTRIBUTES ==========
         private :
         Presenter* presenter;
         
-        // The first created window
-        DocumentWindow* mainWindow;
+        
         // Owned by the MainWindow within the MiamEditApplication
         MainContentComponent* mainContentComponent;
         
@@ -84,7 +86,6 @@ namespace Miam {
 		/// \param message Short sentence to be written in the upper uneditable text box.
         void DisplayInfo(const String& message);
         
-        void SetTitle(std::string title);
         
         
         // ----- Setters and Getters -----

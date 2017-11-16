@@ -24,6 +24,8 @@ using namespace Miam;
 // - - - - - Contruction and Destruction - - - - -
 
 Presenter::Presenter(View* _view) :
+    SpatPresenter(_view),
+
     view(_view),
     appMode(AppMode::Null),
 
@@ -80,7 +82,7 @@ void Presenter::LoadFirstSession(std::string commandLine)
         // Récupération d'un nouveau nom de fichier
         FileChooser fileChooser("Chargement d'un fichier",
                                 File::getSpecialLocation(File::SpecialLocationType::userMusicDirectory),
-                                "*.miam",
+                                std::string("*.") + Miam_SessionFileExtension,
                                 true);
         // Si l'utilisation a bien choisi un truc, on y va
         if ( fileChooser.browseForFileToOpen() )
@@ -95,11 +97,8 @@ void Presenter::LoadFirstSession(std::string commandLine)
         }
         // Sinon, user récalcitrant => programme récalcitrant !
         else
-            throw ForceQuitException("User refuses to choose a session .miam file to load.");
+            throw ForceQuitException("User refuses to choose a session ." + std::string(Miam_SessionFileExtension) + " file to load.");
     }
-    
-    // À la fin, on change le titre si tout s'est bien passé...
-    view->SetTitle(fileName + " - MIAM Spat");
 }
 
 

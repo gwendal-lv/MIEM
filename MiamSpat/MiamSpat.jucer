@@ -98,6 +98,8 @@
         <FILE id="Ec8PSJ" name="MatrixSlider.h" compile="0" resource="0" file="../SpatCommon/Source/MatrixSlider.h"/>
         <FILE id="T6O3os" name="MatrixViewport.h" compile="0" resource="0"
               file="../SpatCommon/Source/MatrixViewport.h"/>
+        <FILE id="YLeHkE" name="SpatView.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatView.cpp"/>
+        <FILE id="QaUQbE" name="SpatView.h" compile="0" resource="0" file="../SpatCommon/Source/SpatView.h"/>
       </GROUP>
       <GROUP id="{074EE7F9-67BB-F0C2-EAAF-33449FC42B60}" name="Utils">
         <FILE id="mVbott" name="SpatMatrix.hpp" compile="0" resource="0" file="../SpatCommon/Source/SpatMatrix.hpp"/>

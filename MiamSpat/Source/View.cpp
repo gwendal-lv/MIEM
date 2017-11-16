@@ -17,6 +17,8 @@ using namespace Miam;
 
 // Default constructor
 View::View(DocumentWindow* mainWindow_, MainContentComponent* mainContentComponent_)
+:
+SpatView(mainWindow_)
 {
     mainWindow = mainWindow_;
     mainContentComponent = mainContentComponent_;
@@ -81,9 +83,5 @@ void View::DisplayInfo(const String& message)
     mainContentComponent->GetBackgroundComponent()->DisplayInfo(message);
 }
 
-void View::SetTitle(std::string title)
-{
-    mainWindow->setName(title);
-}
 
 

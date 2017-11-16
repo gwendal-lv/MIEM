@@ -34,7 +34,7 @@ namespace Miam {
 	/// user commands (events) to the presenter to act upon that data."
 	///
 	/// \remark Usual GUI controls (created from the Projucer) belong to this module.
-    class View {
+    class View : public SpatView {
         
         // ========== ATTRIBUTES ==========
         private :
@@ -54,7 +54,7 @@ namespace Miam {
 		/// \param _mainContentComponent Pointer to the unique MainContentComponent, which is
 		/// auto-instanciated by Juce within the MainWindow, and sent to the View module from
 		/// the MiamEditApplication.
-        View(MainContentComponent* _mainContentComponent);
+        View(DocumentWindow* mainWindow_, MainContentComponent* _mainContentComponent);
 		/// \brief Destructor
         ~View();
         /// \brief Function called after both View and Presenter are contructed

@@ -15,7 +15,9 @@
 #include "SpatModel.h"
 
 
-SpatPresenter::SpatPresenter()
+SpatPresenter::SpatPresenter(SpatView* view_)
+:
+view(view_)
 {
     lastSpatStatesTree = std::make_shared<bptree::ptree>();
     lastSpatScenesTree = std::make_shared<bptree::ptree>();
@@ -77,6 +79,9 @@ void SpatPresenter::LoadSession(std::string filename)
         // Renvoi pour affichage graphique
         throw e;
     }
+    
+    // Update graphique
+    view->SetTitle(lastFilename + " - " + ProjectInfo::projectName);
 }
 void SpatPresenter::SaveSession(std::string _filename, bool /*forceDataRefresh*/)
 {
@@ -87,20 +92,6 @@ void SpatPresenter::SaveSession(std::string _filename, bool /*forceDataRefresh*/
     // Else, we continue only if a filename is currently in use
     else if (lastFilename.empty())
     {
-        //throw std::logic_error("après ça on n'a plus de pop-up");
-        // MAIS SI ON LE FAIT EN DEBUG LIGNE PAR LIGNE ÇA MARCHE !!!!
-        // Les pop-ups de Juce c'est de la merde
-        // Les pop-ups de Juce c'est de la merde
-        // Les pop-ups de Juce c'est de la merde
-        // Les pop-ups de Juce c'est de la merde
-        // trouver un système + propre...
-        // C'est ce code qui pose problème (Pop-ups Juce ne fonctionnent plus, après...)
-        // C'est ce code qui pose problème (Pop-ups Juce ne fonctionnent plus, après...)
-        // C'est ce code qui pose problème (Pop-ups Juce ne fonctionnent plus, après...)
-        // C'est ce code qui pose problème (Pop-ups Juce ne fonctionnent plus, après...)
-        // C'est ce code qui pose problème (Pop-ups Juce ne fonctionnent plus, après...)
-        // C'est ce code qui pose problème (Pop-ups Juce ne fonctionnent plus, après...)
-        // C'est ce code qui pose problème (Pop-ups Juce ne fonctionnent plus, après...)
         FileChooser fileChooser("Chargement d'un fichier",
                                 File::getSpecialLocation(File::SpecialLocationType::userMusicDirectory),
                                 std::string("*.") + Miam_SessionFileExtension,
@@ -114,13 +105,6 @@ void SpatPresenter::SaveSession(std::string _filename, bool /*forceDataRefresh*/
         // (dont le contenu sera affiché par le presenter réel, s'il peut)
         else
             throw XmlWriteException("File not saved");
-        // C'est ce code qui pose problème (Pop-ups Juce ne fonctionnent plus, après...)
-        // C'est ce code qui pose problème (Pop-ups Juce ne fonctionnent plus, après...)
-        // C'est ce code qui pose problème (Pop-ups Juce ne fonctionnent plus, après...)
-        // C'est ce code qui pose problème (Pop-ups Juce ne fonctionnent plus, après...)
-        // C'est ce code qui pose problème (Pop-ups Juce ne fonctionnent plus, après...)
-        // C'est ce code qui pose problème (Pop-ups Juce ne fonctionnent plus, après...)
-        // C'est ce code qui pose problème (Pop-ups Juce ne fonctionnent plus, après...)
     }
     
     // Whole properties tree reconstruction
@@ -145,6 +129,9 @@ void SpatPresenter::SaveSession(std::string _filename, bool /*forceDataRefresh*/
     catch (bptree::xml_parser::xml_parser_error& e) {
         throw XmlWriteException(e.what());
     }
+    
+    // Update graphique
+    view->SetTitle(lastFilename + " - " + ProjectInfo::projectName);
 }
 void SpatPresenter::updateSpatStatesTree(std::shared_ptr<bptree::ptree> newTree, bool autoSave)
 {

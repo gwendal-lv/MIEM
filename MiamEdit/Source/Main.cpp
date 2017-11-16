@@ -50,7 +50,7 @@ public:
         // Instanciation of the 3 main parts of the application : Model, Presenter, View
         MainContentComponent* mainContentComponent = dynamic_cast<MainContentComponent*>(mainWindow->getChildComponent(0));
         if (mainContentComponent)
-            view = new Miam::View(mainContentComponent);
+            view = new Miam::View(mainWindow, mainContentComponent);
         else
             throw std::runtime_error("First child of Main Window is not a MainContentComponent...");
         presenter = new Miam::Presenter(view); // Will reference itself to the View module
