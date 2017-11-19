@@ -286,7 +286,7 @@
  #define JucePlugin_Build_AAX              0
 #endif
 #ifndef  JucePlugin_Build_Standalone
- #define JucePlugin_Build_Standalone       1
+ #define JucePlugin_Build_Standalone       0
 #endif
 #ifndef  JucePlugin_Enable_IAA
  #define JucePlugin_Enable_IAA             0
@@ -403,11 +403,11 @@
  #define JucePlugin_IAAName                "G. Le Vaillant: MIAM Matrix Router"
 #endif
 #ifndef  JucePlugin_MaxNumInputChannels
- #define JucePlugin_MaxNumInputChannels    64
+ #define JucePlugin_MaxNumInputChannels    8
 #endif
 #ifndef  JucePlugin_MaxNumOutputChannels
- #define JucePlugin_MaxNumOutputChannels   64
+ #define JucePlugin_MaxNumOutputChannels   8
 #endif
 #ifndef  JucePlugin_PreferredChannelConfigurations
- #define JucePlugin_PreferredChannelConfigurations  {64,64}
+ #define JucePlugin_PreferredChannelConfigurations  {8,8}
 #endif

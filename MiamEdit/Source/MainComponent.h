@@ -13,6 +13,7 @@
 
 // View
 #include "MainBackgroundComponent.h"
+#include "StartupComponent.h"
 #include "SpeakersEditionComponent.h"
 #include "SpatStatesEditionComponent.h"
 #include "SceneEditionComponent.h"
@@ -49,6 +50,7 @@ namespace Miam
         
         
         MainBackgroundComponent* mainBackgroundComponent;
+        StartupComponent* startupComponent;
         
         SpatStatesEditionComponent* spatStatesEditionComponent;
         SpeakersEditionComponent* speakersEditionComponent;

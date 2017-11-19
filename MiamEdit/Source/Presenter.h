@@ -102,6 +102,8 @@ namespace Miam {
         /// on peut ouvrir la session passée en ligne de commande, ou bien créer une nouvelle
         /// session (vide, ou à partir de la session par défaut)
         void ManageInitialSession(std::string commandLine);
+        /// \brief Comportement final de l'application
+        void OnShutdownRequest();
         
         // - - - - -  XML import/export - - - - -
         virtual void LoadSession(std::string filename) override;

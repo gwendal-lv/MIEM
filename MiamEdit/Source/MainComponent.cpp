@@ -16,8 +16,9 @@ using namespace Miam;
 MainContentComponent::MainContentComponent()
 {
     // We add all big components from here (components edited from the introJucer)
-    // Background is automatically visible
-    addAndMakeVisible(mainBackgroundComponent = new MainBackgroundComponent());
+    // Background is automatically visible, after startup though
+    addChildComponent(mainBackgroundComponent = new MainBackgroundComponent());
+    addChildComponent(startupComponent = new StartupComponent());
     // Other display modes aren't displayed by default
     addChildComponent(speakersEditionComponent = new SpeakersEditionComponent());
     addChildComponent(spatStatesEditionComponent = new SpatStatesEditionComponent());
@@ -47,6 +48,7 @@ MainContentComponent::~MainContentComponent()
     delete spatStatesEditionComponent;
     delete speakersEditionComponent;
     
+    delete startupComponent;
     delete mainBackgroundComponent;
     
     // Sinon assertion lancée.... Pas sérieux de Juce mais bon...
@@ -62,6 +64,7 @@ void MainContentComponent::CompleteInitialization(Presenter* _presenter)
     presenter = _presenter;
     
     mainBackgroundComponent->CompleteInitialization(presenter);
+    startupComponent->CompleteInitialization(presenter);
 }
 
 void MainContentComponent::SetMiamView(Miam::View* _view)
@@ -86,22 +89,42 @@ void MainContentComponent::ChangeAppMode(AppMode newAppMode)
     
     switch (newAppMode)
     {
+        case AppMode::Startup :
+            startupComponent->setVisible(true);
+            mainBackgroundComponent->setVisible(false);
+            break;
+            
         case  AppMode::Loading :
-            // all component remains unvisible, and the "loading" label is revealed...
+            // all component remains unvisible, only background component is visible
+            startupComponent->setVisible(false);
+            mainBackgroundComponent->setVisible(true);
             break;
             
         case AppMode::EditSpeakers :
+            startupComponent->setVisible(false);
+            mainBackgroundComponent->setVisible(true);
+            
             speakersEditionComponent->setVisible(true);
             break;
             
         case AppMode::EditSpatStates :
+            startupComponent->setVisible(false);
+            mainBackgroundComponent->setVisible(true);
+            
             spatStatesEditionComponent->setVisible(true);
             break;
+            
         case AppMode::EditSpatScenes :
+            startupComponent->setVisible(false);
+            mainBackgroundComponent->setVisible(true);
+            
             sceneEditionComponent->setVisible(true);
             break;
         
         case AppMode::EditHardwareConfiguration :
+            startupComponent->setVisible(false);
+            mainBackgroundComponent->setVisible(true);
+            
             hardwareConfigurationComponent->setVisible(true);
             break;
             
@@ -137,6 +160,7 @@ void MainContentComponent::resized()
     
     // Background must always be resized
     mainBackgroundComponent->setBounds(getLocalBounds());
+    startupComponent->setBounds(getLocalBounds());
     // Other children are only resized if visible
     int yChildrenOffset = 5*8; // 5 cases depuis le haut (pour l'instant)
     for (size_t i=0;i<secondLevelComponents.size();i++)

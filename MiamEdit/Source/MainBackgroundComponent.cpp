@@ -81,14 +81,6 @@ MainBackgroundComponent::MainBackgroundComponent ()
     startTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     startTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    addAndMakeVisible (label = new Label ("new label",
-                                          TRANS("Loading...")));
-    label->setFont (Font (15.00f, Font::italic));
-    label->setJustificationType (Justification::centred);
-    label->setEditable (false, false, false);
-    label->setColour (TextEditor::textColourId, Colours::black);
-    label->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
-
     addAndMakeVisible (fileTextButton = new TextButton ("File text button"));
     fileTextButton->setButtonText (TRANS("File"));
     fileTextButton->addListener (this);
@@ -127,7 +119,6 @@ MainBackgroundComponent::~MainBackgroundComponent()
     scenesTextButton = nullptr;
     hardwareConfTextButton = nullptr;
     startTextButton = nullptr;
-    label = nullptr;
     fileTextButton = nullptr;
 
 
@@ -158,7 +149,6 @@ void MainBackgroundComponent::resized()
     scenesTextButton->setBounds (((8 + 64) + 8) + 112, 8, 112, 24);
     hardwareConfTextButton->setBounds (((8 + 64) + 8) + 112 - -120, 8, 112, 24);
     startTextButton->setBounds ((((8 + 64) + 8) + 112 - -120) + 112 - -16, 8, 8, 24);
-    label->setBounds (proportionOfWidth (0.5000f) - (150 / 2), proportionOfHeight (0.5000f) - (24 / 2), 150, 24);
     fileTextButton->setBounds (8, 8, 64, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
@@ -264,11 +254,6 @@ BEGIN_JUCER_METADATA
               virtualName="" explicitFocusOrder="0" pos="-16R 8 8 24" posRelativeX="1dad683cba944341"
               bgColOff="a0ffffff" bgColOn="ffffffff" textCol="ff000000" buttonText="Start MiamSpat"
               connectedEdges="0" needsCallback="0" radioGroupId="0"/>
-  <LABEL name="new label" id="f13afc15bc19a998" memberName="label" virtualName=""
-         explicitFocusOrder="0" pos="50%c 50%c 150 24" edTextCol="ff000000"
-         edBkgCol="0" labelText="Loading..." editableSingleClick="0" editableDoubleClick="0"
-         focusDiscardsChanges="0" fontname="Default font" fontsize="15"
-         kerning="0" bold="0" italic="1" justification="36" typefaceStyle="Italic"/>
   <TEXTBUTTON name="File text button" id="dcc32a783566df37" memberName="fileTextButton"
               virtualName="" explicitFocusOrder="0" pos="8 8 64 24" bgColOff="ffbfbfbf"
               bgColOn="ffffffff" textCol="ff000000" buttonText="File" connectedEdges="0"

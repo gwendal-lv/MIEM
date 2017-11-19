@@ -55,8 +55,8 @@ void Presenter::CompleteInitialisation(Model* _model)
     
     // Après initialisation : on ne montre RIEN
     // On genère une requête interne puis on notifie View
-    appModeChangeRequest(AppMode::Loading);
-    view->ChangeAppMode(AppMode::Loading);
+    // appModeChangeRequest(AppMode::Loading);
+    // view->ChangeAppMode(AppMode::Loading);
 }
 
 void Presenter::ManageInitialSession(std::string commandLine)
@@ -66,39 +66,29 @@ void Presenter::ManageInitialSession(std::string commandLine)
     std::string commandLineToParse = commandLine;
 #ifdef __MIAM_DEBUG
     //commandLineToParse += " -session \"/Users/Gwendal/Music/Spat sessions/Session de débug.mspat\" ";
-    commandLineToParse += " -session \"/Users/Gwendal/Music/Spat sessions/Mini-golf bureau.mspat\" ";
+    //commandLineToParse += " -session \"/Users/Gwendal/Music/Spat sessions/Mini-golf bureau.mspat\" ";
 #endif
     
     // Récupération du nom de fichier à charger
     std::string commandLineFileName = TextUtils::FindFilenameInCommandLineArguments(commandLineToParse);
     
-    // Chargement, ou sauvegarde forcée selon le paramètre passé !
-    // NON ICI IL FAUT LAISSER LE CHOIX À L'UTILISATEUR
-    // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
-    // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
-    // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
-    // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
-    // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
-    // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
-    // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
+    // Affichage de l'écran classique de démarrage si on a pas donné de nom de scène
     if (commandLineFileName.empty())
-        SaveSession("", true); // Va demander un chemin de fichier pour la sauvegarde automatique ensuite
-    // NON ICI IL FAUT LAISSER LE CHOIX À L'UTILISATEUR
-    // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
-    // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
-    // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
-    // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
-    // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
-    // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
-    // SI PAS DE PARAMÈTRE PASSÉ EN LIGNE DE COMMANDE : SOIT NOUVEAU, SOIT CHARGER
+    {
+        appModeChangeRequest(AppMode::Startup);
+    }
+    // Ou bien chargement si on avait un paramètre dans la ligne de commande
     else
-        LoadSession(commandLineFileName);
+        LoadSession(commandLineFileName); // fait les changements de modes (avant/après) automatiquement
     
-    
-    // Après premier chargement : on ne montre les objets graphiques
-    // On genère une requête interne puis on notifie View
-    appModeChangeRequest(AppMode::EditSpatScenes);
-    view->ChangeAppMode(AppMode::EditSpatScenes);
+    // À ce moment : on ne fait rien !
+    // On est peut-être toujours en train d'attendre un choix de l'utilisateur
+}
+
+void Presenter::OnShutdownRequest()
+{
+    if (appMode != AppMode::Startup)
+        SaveSession("", true); // current filename, forced data refresh
 }
 
 
@@ -213,6 +203,9 @@ void Presenter::SaveSession(std::string filename, bool forceDataRefresh)
     catch (XmlWriteException& e) {
         view->DisplayInfo(e.what());
     }
+    
+    // Si on venait du mode "startup", on passe à un mode d'édition
+    appModeChangeRequest(AppMode::EditSpatScenes);
 }
 
 std::shared_ptr<bptree::ptree> Presenter::GetConfigurationTree()

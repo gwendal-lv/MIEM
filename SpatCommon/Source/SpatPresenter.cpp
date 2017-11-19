@@ -92,10 +92,7 @@ void SpatPresenter::SaveSession(std::string _filename, bool /*forceDataRefresh*/
     // Else, we continue only if a filename is currently in use
     else if (lastFilename.empty())
     {
-        FileChooser fileChooser("Chargement d'un fichier",
-                                File::getSpecialLocation(File::SpecialLocationType::userMusicDirectory),
-                                std::string("*.") + Miam_SessionFileExtension,
-                                true);
+        LoadFileChooser fileChooser;
         if ( fileChooser.browseForFileToSave(true) )
         {
             File resultFile = fileChooser.getResult();

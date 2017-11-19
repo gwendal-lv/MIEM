@@ -20,20 +20,11 @@
 #pragma once
 
 //[Headers]     -- You can add your own extra header files here --
-#include "JuceHeader.h"
-
-// #include "View.h" // génère un pb d'includes croisés
-
-#include "FileMenu.h"
-#include "ClearLabelTimer.h"
-
+#include "../JuceLibraryCode/JuceHeader.h"
 
 namespace Miam {
-
-    // forward declarations
-    class View;
+    
     class Presenter;
-
 //[/Headers]
 
 
@@ -41,34 +32,22 @@ namespace Miam {
 //==============================================================================
 /**
                                                                     //[Comments]
+    An auto-generated component, created by the Projucer.
 
-// \brief The background component with a few UI controls (always displayed).
-//
-// An auto-generated component, created by the Projucer.
-//
-
+    Describe your class and how it works here!
                                                                     //[/Comments]
 */
-class MainBackgroundComponent  : public Component,
-                                 public Button::Listener
+class StartupComponent  : public Component,
+                          public Button::Listener
 {
 public:
     //==============================================================================
-    MainBackgroundComponent ();
-    ~MainBackgroundComponent();
+    StartupComponent ();
+    ~StartupComponent();
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-
-    void CompleteInitialization(Presenter* _presenter);
-
-
-    // SETTERS and GETTERS
-    void setMiamView(Miam::View* _miamView) {miamView = _miamView;}
-
-    // Orders from Presenter
-    void DisplayInfo(const String& message);
-
+    void CompleteInitialization(Presenter* presenter_) { presenter = presenter_; }
     //[/UserMethods]
 
     void paint (Graphics& g) override;
@@ -79,29 +58,19 @@ public:
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
-
-    View *miamView;
-    std::unique_ptr<FileMenu> fileMenu;
-
-    Miam::ClearLabelTimer clearLabelTimer;
-
+    Presenter* presenter;
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<TextButton> speakersTextButton;
-    ScopedPointer<TextButton> spatStatesTextButtn;
-    ScopedPointer<Label> mainInfoLabel;
-    ScopedPointer<TextButton> scenesTextButton;
-    ScopedPointer<TextButton> hardwareConfTextButton;
-    ScopedPointer<TextButton> startTextButton;
-    ScopedPointer<TextButton> fileTextButton;
+    ScopedPointer<TextButton> loadTextButton;
+    ScopedPointer<TextButton> createEmptyTextButton;
+    ScopedPointer<TextButton> createDefaultTextButton;
 
 
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainBackgroundComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StartupComponent)
 };
 
 //[EndFile] You can add extra defines here...
-
-} // namespace Miam
+} // fin de "namespace Miam"
 //[/EndFile]

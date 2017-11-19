@@ -12,6 +12,8 @@
 
 #include "SpatPresenter.h"
 
+#include "SpatFileChoosers.h"
+
 using namespace Miam;
 
 FileMenu::FileMenu(SpatPresenter* _spatPresenter) : presenter(_spatPresenter)
@@ -48,10 +50,7 @@ void FileMenu::ShowMenuAndSendUserAnswer()
 
 void FileMenu::onLoad()
 {
-    FileChooser fileChooser("Chargement d'un fichier",
-                            File::getSpecialLocation(File::SpecialLocationType::userMusicDirectory),
-                            std::string("*.") + Miam_SessionFileExtension,
-                            true);
+    LoadFileChooser fileChooser;
     if ( fileChooser.browseForFileToOpen() )
     {
         File resultFile = fileChooser.getResult();
@@ -64,10 +63,7 @@ void FileMenu::onSave()
 }
 void FileMenu::onSaveAs()
 {
-    FileChooser fileChooser("Chargement d'un fichier",
-                            File::getSpecialLocation(File::SpecialLocationType::userMusicDirectory),
-                            std::string("*.") + Miam_SessionFileExtension,
-                            true);
+    SaveFileChooser fileChooser;
     if ( fileChooser.browseForFileToSave(true) )
     {
         File resultFile = fileChooser.getResult();

@@ -17,11 +17,11 @@
 #include "IPresenter.h"
 #include "SpatView.h"
 
+#include "SpatFileChoosers.h"
+
 #include "boost/property_tree/ptree.hpp"
 #include "boost/property_tree/xml_parser.hpp"
 namespace bptree = boost::property_tree;
-
-#define Miam_SessionFileExtension       "mspat"
 
 namespace Miam {
     

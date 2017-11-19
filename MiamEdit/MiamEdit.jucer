@@ -58,6 +58,10 @@
                 file="Source/SpeakersEditionComponent.cpp"/>
           <FILE id="xTHH4m" name="SpeakersEditionComponent.h" compile="0" resource="0"
                 file="Source/SpeakersEditionComponent.h"/>
+          <FILE id="lZTmQI" name="StartupComponent.cpp" compile="1" resource="0"
+                file="Source/StartupComponent.cpp"/>
+          <FILE id="rZarq5" name="StartupComponent.h" compile="0" resource="0"
+                file="Source/StartupComponent.h"/>
         </GROUP>
         <FILE id="bjMV46" name="ClearLabelTimer.cpp" compile="1" resource="0"
               file="Source/ClearLabelTimer.cpp"/>
@@ -122,6 +126,8 @@
         <FILE id="Ec8PSJ" name="MatrixSlider.h" compile="0" resource="0" file="../SpatCommon/Source/MatrixSlider.h"/>
         <FILE id="T6O3os" name="MatrixViewport.h" compile="0" resource="0"
               file="../SpatCommon/Source/MatrixViewport.h"/>
+        <FILE id="Q7wrtq" name="SpatFileChoosers.h" compile="0" resource="0"
+              file="../SpatCommon/Source/SpatFileChoosers.h"/>
         <FILE id="YLeHkE" name="SpatView.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatView.cpp"/>
         <FILE id="QaUQbE" name="SpatView.h" compile="0" resource="0" file="../SpatCommon/Source/SpatView.h"/>
       </GROUP>
