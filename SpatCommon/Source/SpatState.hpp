@@ -175,7 +175,7 @@ namespace Miam
                     concernedExcitement = newExcitement;
             }
             // Cas 2 : insertion d'un nouvel elmt dans la map
-            catch (std::out_of_range &e) { // si on a pas trouvé la clé dans la map
+            catch (std::out_of_range & /*e*/) { // si on a pas trouvé la clé dans la map
                  // on teste quand même si pas trop faible
                 if ( ! AudioUtils<T>::IsVolumeNegligible(newExcitement) )
                     areaToExcitement[senderUID] = newExcitement; // insertion automatique via []

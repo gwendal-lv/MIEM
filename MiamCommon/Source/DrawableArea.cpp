@@ -125,7 +125,7 @@ void DrawableArea::renderCachedNameImages()
         auto textBounds = imagePtr->getBounds();
         int shadowOffsetXY = 1 * integerScale; // pixels
         // black shadow
-        g.setFont(imagePtr->getHeight() - shadowOffsetXY);
+        g.setFont((float)(imagePtr->getHeight() - shadowOffsetXY));
         g.setColour(Colours::black);
         textBounds.setPosition(shadowOffsetXY, shadowOffsetXY);
         textBounds.removeFromBottom(shadowOffsetXY);

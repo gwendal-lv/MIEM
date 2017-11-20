@@ -56,8 +56,8 @@ namespace Miam
         /// Opérateur [] n'accepte pas la surcharge à 2 paramètres
         inline T operator() (size_t i, size_t j) const { return matrix(i,j); }
 
-        inline Index2d GetIndex2dFromIndex(size_t index)
-        { return matrix.GetIndex2dFromIndex(index); }
+        inline Index2d GetIndex2dFromIndex(size_t index1d)
+        { return matrix.GetIndex2dFromIndex(index1d); }
         
         
         // = = = = = = = = = = METHODS = = = = = = = = = =
