@@ -13,6 +13,8 @@
 #include "Model.h"
 #include "View.h"
 
+#include "TextUtils.h"
+
 #include "JuceHeader.h"
 
 #include <sstream>
@@ -28,6 +30,8 @@ using namespace Miam;
 // - - - - - Contruction and Destruction - - - - -
 
 Presenter::Presenter(View* _view) :
+    SpatPresenter(_view),
+
     view(_view),
     appMode(AppMode::Loading), // app is loading while the Model hasn't fully loaded yet
 
@@ -40,66 +44,52 @@ Presenter::Presenter(View* _view) :
     
 }
 
-void Presenter::CompleteInitialisation(Model* _model, std::string& commandLine)
+void Presenter::CompleteInitialisation(Model* _model)
 {
     // Self init
     model = _model;
     SpatPresenter::CompleteInitialisation(&graphicSessionManager, _model);
-    // Sub-modules
+    // Sub-modules (graphic session manager : init from SpatPresenter)
     spatStatesEditionManager.CompleteInitialisation(model->GetSpatInterpolator());
-    graphicSessionManager.CompleteInitialisation(model->GetSpatInterpolator());
     settingsManager.CompleteInitialisation(model);
     
-    // Après initialisation : on montre des objets graphiques
+    // Après initialisation : on ne montre RIEN
     // On genère une requête interne puis on notifie View
-    appModeChangeRequest(AppMode::EditSpatScenes);
-    view->ChangeAppMode(AppMode::EditSpatScenes);
-    
-    // Copie pour permettre le chargement automatique de la session de test
-    std::string commandLineToParse = commandLine;
-#ifdef __MIAM_DEBUG
-    //commandLineToParse += " -session \"/Users/Gwendal/Music/Spat sessions/Session de débug.miam\" ";
-    commandLineToParse += " -session \"/Users/Gwendal/Music/Spat sessions/Test.miam\" ";
-#endif
-    
-    std::string commandLineFileName;
-    // Regex qui permet de récupérer le nom de fichier
-    std::regex word_regex( "(\"[^\"]+\"|[^\\s\"]+)" );
-    auto words_begin =
-    std::sregex_iterator(commandLineToParse.begin(), commandLineToParse.end(), word_regex);
-    auto words_end = std::sregex_iterator();
-    bool nextWordIsSession = false;
-    bool sessionPathFound = false;
-    for (std::sregex_iterator i = words_begin; i != words_end && !sessionPathFound; ++i)
-    {
-        std::smatch match = *i;
-        std::string match_str = match.str();
-        if (match_str == "-session")
-        {
-            nextWordIsSession = true;
-        }
-        else if(nextWordIsSession)
-        {
-            commandLineFileName = match_str;
-            sessionPathFound = true;
-        }
-    }
-    // Suppression des guillemets si nécessaire
-    auto firstCharIter = commandLineFileName.begin();
-    if ( *firstCharIter == '\"')
-        commandLineFileName.erase(firstCharIter);
-    auto lastActualCharIter = std::prev(commandLineFileName.end());
-    if ( *lastActualCharIter == '\"' )
-        commandLineFileName.erase(lastActualCharIter);
-    
-    // Chargement, ou sauvegarde forcée selon le paramètre passé !
-    if (commandLineFileName.empty())
-        SaveSession(); // Va demander un chemin de fichier pour la sauvegarde automatique ensuite
-    else
-        LoadSession(commandLineFileName);
+    // appModeChangeRequest(AppMode::Loading);
+    // view->ChangeAppMode(AppMode::Loading);
 }
 
+void Presenter::ManageInitialSession(std::string commandLine)
+{
+    // Copie du paramètre d'entrée,
+    // pour permettre le chargement automatique de la session de test....
+    std::string commandLineToParse = commandLine;
+#ifdef __MIAM_DEBUG
+    //commandLineToParse += " -session \"/Users/Gwendal/Music/Spat sessions/Session de débug.mspat\" ";
+    //commandLineToParse += " -session \"/Users/Gwendal/Music/Spat sessions/Mini-golf bureau.mspat\" ";
+#endif
+    
+    // Récupération du nom de fichier à charger
+    std::string commandLineFileName = TextUtils::FindFilenameInCommandLineArguments(commandLineToParse);
+    
+    // Affichage de l'écran classique de démarrage si on a pas donné de nom de scène
+    if (commandLineFileName.empty())
+    {
+        appModeChangeRequest(AppMode::Startup);
+    }
+    // Ou bien chargement si on avait un paramètre dans la ligne de commande
+    else
+        LoadSession(commandLineFileName); // fait les changements de modes (avant/après) automatiquement
+    
+    // À ce moment : on ne fait rien !
+    // On est peut-être toujours en train d'attendre un choix de l'utilisateur
+}
 
+void Presenter::OnShutdownRequest()
+{
+    if (appMode != AppMode::Startup)
+        SaveSession("", true); // current filename, forced data refresh
+}
 
 
 
@@ -123,13 +113,15 @@ AppMode Presenter::appModeChangeRequest(AppMode newAppMode)
                 case AppMode::EditSpatStates :
                     // If leaving the matrices editing : data save before changing mode
                     dataTree = spatStatesEditionManager.OnLeaveSpatStatesEdition();
-                    updateSpatStatesTree(dataTree);
+                    // va déclencher sauvegarde dans fichier xml
+                    updateSpatStatesTree(dataTree, true);
                     break;
                     
                 case AppMode::EditSpatScenes :
                     // If leaving the matrices editing : data save before changing mode
                     dataTree = graphicSessionManager.OnLeaveSpatScenesEdition();
-                    updateSpatScenesTree(dataTree);
+                    // va déclencher sauvegarde dans fichier xml
+                    updateSpatScenesTree(dataTree, true);
                     break;
                     
                 default :
@@ -201,10 +193,9 @@ void Presenter::SaveSession(std::string filename, bool forceDataRefresh)
     // Mise à jour d'abord (par des moyens spécifiques au miam edit)
     if (forceDataRefresh)
     {
-        auto dataTree = spatStatesEditionManager.OnLeaveSpatStatesEdition();
-        updateSpatStatesTree(dataTree);
-        dataTree = graphicSessionManager.OnLeaveSpatScenesEdition();
-        updateSpatScenesTree(dataTree);
+        // Sans faire la sauvegarde automatique cette fois !
+        updateSpatStatesTree(spatStatesEditionManager.GetTree(), false);
+        updateSpatScenesTree(graphicSessionManager.GetCanvasesTree(), false);
     }
     
     // Puis sauvegarde effective vers XML
@@ -212,6 +203,9 @@ void Presenter::SaveSession(std::string filename, bool forceDataRefresh)
     catch (XmlWriteException& e) {
         view->DisplayInfo(e.what());
     }
+    
+    // Si on venait du mode "startup", on passe à un mode d'édition
+    appModeChangeRequest(AppMode::EditSpatScenes);
 }
 
 std::shared_ptr<bptree::ptree> Presenter::GetConfigurationTree()

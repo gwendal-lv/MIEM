@@ -27,14 +27,11 @@ using namespace Miam;
 // = = = = = = = = = = METHODS = = = = = = = = = =
 
 // - - - - - Construction / destruction - - - - -
-Model::Model(Presenter* presenter_, std::string commandLine)
+Model::Model(Presenter* presenter_)
 :
     SpatModel(presenter_),
 presenter(presenter_)
 {
-    // Choice of interpolation type
-    spatInterpolator = std::make_shared<SpatInterpolator<double>>(SpatType::RoutingMatrix);
-    
     // OCTOPHONIE POUR L'INSTANT
     for (size_t i = 0; i<8 ; i++)
     {
@@ -44,7 +41,7 @@ presenter(presenter_)
     
     
     // Auto-referenciation to other modules
-    presenter->CompleteInitialisation(this, commandLine);
+    presenter->CompleteInitialisation(this);
 
 
 	// Launch of thread, at the specified frequency

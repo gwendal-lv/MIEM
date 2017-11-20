@@ -29,6 +29,88 @@ namespace Miam
     class DrawableArea : public virtual IDrawableArea
     {
         
+        // =============== ATTRIBUTS ===============
+        
+        // General data
+        protected :
+        uint64 Id; ///< Unique ID
+        SceneCanvasComponent* parentCanvas; ///< Parent that draws this(needed to get display properties)
+        
+        // Geometric data
+        protected :
+        bpt center; ///< Normalized center coordinates (x, y in [0.0,1.0])
+        bpt centerInPixels; ///< Center coordinates in pixels (relative to a canvas)
+        bool displayCenter;
+        bpolygon contourPointsInPixels; ///< Caracteristic points (coordinates in pixels) along the contour of the area (not necessarily drawn)
+        
+        // Display data
+        protected :
+        
+        double renderingScale;
+        /// \brief Pour tout ce qui est en cache, on fait de base du rendu
+        /// en taille x2 mais aussi en taille x1 maintenant.
+        // Ensuite, si besoin, on fait un resize au moment du rendu final OpenGL
+        /// (c'est Juce qui se débrouille avec...)
+        // const double baseRenderingScale = 2.0; // plus utilisé...
+        
+        Colour fillColour; ///< Solid colour for filling the area (opacity should be 0xFF)
+        float fillOpacity; ///< Opacity applied to the solid fill colour (in [0.0,1.0])
+        OpacityMode opacityMode;
+        
+        /// \brief The lowest opacity of a displayed area
+        static const uint8 lowFillOpacityUint8 = 40;
+        virtual float getLowFillOpacity() const override { return (float)(lowFillOpacityUint8) / 255.0f; }
+        
+        Colour contourColour; ///< Solid color of of the external shape of the 2D area.
+        float contourWidth; ///< Width (in pixels) of of the external shape of the 2D area.
+        float centerContourWidth; ///< Width (in pixels) of the center circle drawing.
+        
+        int centerCircleRadius; ///< Radius (in pixels) of the center circle drawing.
+        
+        String name;
+        bool isNameVisible;
+        // Images bêtement comme ça pour l'instant...
+        Image nameImage;
+        Image nameImage2;
+        static const int nameWidth = 120; // pixels
+        static const int nameHeight = 15; // pixels
+        
+        bool keepRatio;
+        
+        
+        // =============== SETTERS & GETTERS ===============
+        public :
+        /// \returns Unique ID of the area
+        virtual int64_t GetId() const override {return Id;}
+        /// \param _Id Unique ID of the area
+        virtual void SetId(int64_t _Id) override {Id = _Id;}
+        /// \returns See DrawableArea::fillColour
+        virtual Colour GetFillColour() const override {return fillColour;}
+        /// \param _fillColour See DrawableArea::fillColour
+        virtual void SetFillColour(Colour newColour) override;
+        /// \param _fillOpacity See DrawableArea::fillOpacity
+        virtual void SetAlpha(float newAlpha) override;
+        virtual float GetAlpha() const override;
+        
+        
+        virtual void SetOpacityMode(OpacityMode opacityMode_) override;
+        virtual OpacityMode GetOpacityMode() const override {return opacityMode;}
+        
+        /// \brief Sets the name that could be displayed on screen next to the center
+        virtual void SetName(String newName) override;
+        
+        void SetNameVisible(bool isVisible) {isNameVisible = isVisible;}
+        
+        void KeepRatio(bool _keepRatio);
+        
+        /// \brief Pour régler les problèmes d'écrans type "rétina"
+        virtual void SetRenderingScale(double renderingScale_) override;
+        
+        
+        
+        // =============== MÉTHODES ===============
+
+        
         public :
         
         /// \Brief Contruction from the unique ID, center, and fill colour that must
@@ -43,77 +125,22 @@ namespace Miam
 		DrawableArea(int64_t _Id, bpt _center, Colour _fillColour);
         
         /// \brief Virtual destructor.
-        virtual ~DrawableArea() {}
+        virtual ~DrawableArea();
         
         private :
         void init();
+        void resetImages();
+        void renderCachedNameImages();
         public :
         
         
         virtual void Paint(Graphics& g) override;
         virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
 
-        
-        // ----- Setters and Getters -----
-        
-        /// \returns Unique ID of the area
-        virtual int64_t GetId() override {return Id;}
-        /// \param _Id Unique ID of the area
-        virtual void SetId(int64_t _Id) override {Id = _Id;}
-        /// \returns See DrawableArea::fillColour
-        virtual Colour GetFillColour() override {return fillColour;}
-        /// \param _fillColour See DrawableArea::fillColour
-        virtual void SetFillColour(Colour newColour) override;
-		/// \param _fillOpacity See DrawableArea::fillOpacity
-		virtual void SetAlpha(float newAlpha) override;
-        
-        virtual void EnableLowOpacityMode(bool enable) override;
-        
-        /// \brief Sets the name that could be displayed on screen next to the center
-        virtual void SetName(String newName) override;
-        
-        void SetNameVisible(bool isVisible) {isNameVisible = isVisible;}
-
-		void KeepRatio(bool _keepRatio);
-        
         // - - - - - XML import/export - - - - -
         virtual std::shared_ptr<bptree::ptree> GetTree() override;
         
         
-        
-        
-        
-        // General data
-        protected :
-        uint64 Id; ///< Unique ID
-        SceneCanvasComponent* parentCanvas; ///< Parent that draws this(needed to get display properties)
-        
-        // Geometric data
-        protected :
-		bpt center; ///< Normalized center coordinates (x, y in [0.0,1.0])
-		bpt centerInPixels; ///< Center coordinates in pixels (relative to a canvas)
-        bool displayCenter;
-        
-        // Display data
-        protected :
-        Colour fillColour; ///< Solid colour for filling the area (opacity should be 0xFF)
-        float fillOpacity; ///< Opacity applied to the solid fill colour (in [0.0,1.0])
-        bool enableLowOpacityMode;
-        
-        /// \brief The lowest opacity of a displayed area
-        static const uint8 lowFillOpacityUint8 = 40;
-        float getLowFillOpacity() const { return (float)(lowFillOpacityUint8) / 255.0f; }
-        
-        Colour contourColour; ///< Solid color of of the external shape of the 2D area.
-        float contourWidth; ///< Width (in pixels) of of the external shape of the 2D area.
-        float centerContourWidth; ///< Width (in pixels) of the center circle drawing.
-        
-        int centerCircleRadius; ///< Radius (in pixels) of the center circle drawing.
-        
-        String name;
-        bool isNameVisible;
-
-		bool keepRatio;
     };
     
 }

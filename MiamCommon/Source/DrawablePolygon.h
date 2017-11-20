@@ -64,13 +64,16 @@ namespace Miam {
         /// \param _fillColour See DrawableArea::fillColour
 		DrawablePolygon(int64_t _Id, bpt _center, bpolygon& _bcontourPoints, Colour _fillColour);
         
-        virtual IDrawableArea* Clone() const override {return new DrawablePolygon(*this);}
+        virtual std::shared_ptr<IDrawableArea> Clone() const override
+        { return std::make_shared<DrawablePolygon>(*this); }
         
         // (re)Construction helpers
         private :
         void createJucePolygon(int width = 160, int height = 90);
-
-		void recreateContourPoints(int width, int height);
+        
+        /// \brief Ré-crée des contourPoints (en coordonnées normalisées) pour la nouvelle résolution
+        /// de canevas indiquée (et donc pour un nouveau ratio)
+		void rescaleContourPoints(int width, int height);
 
 		protected :
 		float xScale, yScale;

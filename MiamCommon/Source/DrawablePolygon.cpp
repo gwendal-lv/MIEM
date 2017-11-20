@@ -91,8 +91,12 @@ DrawablePolygon::DrawablePolygon(int64_t _Id, bpt _center, bpolygon& _bcontourPo
 // Construction helpers
 void DrawablePolygon::createJucePolygon(int width, int height)
 {
+    // Création de nouveaux points en coordonnées normalisées
 	if (keepRatio)
-		recreateContourPoints(width, height);
+		rescaleContourPoints(width, height);
+    
+    // Création du contour Juce, sachant que les coordonnées normalisées ont été modifiées
+    // si le ratio était consevé
     contour.clear();
 	contour.startNewSubPath((float)contourPoints.outer().at(0).get<0>(), (float)contourPoints.outer().at(0).get<1>());
 	for (size_t i = 1; i<contourPoints.outer().size(); i++)
@@ -100,9 +104,15 @@ void DrawablePolygon::createJucePolygon(int width, int height)
 	contour.closeSubPath();
     
     contour.applyTransform(AffineTransform::scale((float)width, (float)height));
+    
+    // Puis Création du contour en tant que Polygone BOOST (points (en pixels) séparés)
+    contourPointsInPixels.clear();
+    boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scale(width, height);
+    boost::geometry::transform(contourPoints, contourPointsInPixels, scale);
+    
 }
 
-void DrawablePolygon::recreateContourPoints(int width, int height)
+void DrawablePolygon::rescaleContourPoints(int width, int height)
 {
 	// first calculate the distances and angles so we could apply recreate the same polygon, but with the new xScale and yScale
 	float newCanvasRatio = (float)width / (float)height;
@@ -150,11 +160,11 @@ DrawablePolygon::~DrawablePolygon()
 void DrawablePolygon::Paint(Graphics& g)
 {
     g.setColour(fillColour);
-    g.setOpacity(enableLowOpacityMode ? getLowFillOpacity() : fillOpacity);
+    g.setOpacity(GetAlpha());
     g.fillPath(contour);
     
     g.setColour(contourColour);
-    g.setOpacity(enableLowOpacityMode ? getLowFillOpacity() : fillOpacity);
+    g.setOpacity(GetAlpha());
     g.strokePath(contour, PathStrokeType(contourWidth));
     
     // Parent's drawings on top of these ones
@@ -166,7 +176,13 @@ void DrawablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 {
     DrawableArea::CanvasResized(_parentCanvas);
     
+    // JUCE contour points in pixels
     createJucePolygon(parentCanvas->getWidth(), parentCanvas->getHeight());
+    
+    // Internal BOOST contour points in pixels
+    contourPointsInPixels.clear();
+    boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scale(parentCanvas->getWidth(), parentCanvas->getHeight());
+    boost::geometry::transform(contourPoints, contourPointsInPixels, scale);
 }
 
 

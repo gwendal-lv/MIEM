@@ -17,7 +17,7 @@
 
 #include "GraphicEvent.h"
 
-#include "IDrawableArea.h"
+#include "DrawableArea.h"
 
 
 
@@ -79,6 +79,11 @@ namespace Miam
         ColorChanged, ///< The contour and/or background color of the area has just changed
         
         
+        
+        //  - - - - - Event related to interactions quantification - - - - -
+        ExcitementAmountChanged, ///< The total amount of excitation on this area has changed
+        
+        
     };
     
     
@@ -105,10 +110,10 @@ namespace Miam
         
         
         public :
-        AreaEventType GetType() {return eventType;}
-        std::shared_ptr<IDrawableArea> GetConcernedArea() {return concernedArea;}
-        std::shared_ptr<InteractiveScene> GetConcernedScene() {return concernedScene;}
-        int GetAreaIdInScene() {return areaIdInScene;}
+        AreaEventType GetType() const {return eventType;}
+        std::shared_ptr<IDrawableArea> GetConcernedArea() const {return concernedArea;}
+        std::shared_ptr<InteractiveScene> GetConcernedScene() const {return concernedScene;}
+        int GetAreaIdInScene() const {return areaIdInScene;}
         
         /// \brief To call after the construction, in case the event is created by
         /// the scene itself (then, the scene does not know the shared_ptr to itself)
@@ -121,6 +126,11 @@ namespace Miam
         AreaEvent();
         
         /// \brief Contructs an event about an area that may be linked to a scene
+        ///
+        /// Optimisation "passage des arguments par référence" difficile : problèmes
+        /// avec les make_shared et le polymorphisme des références dans le constructeur
+        /// (plusieurs manières de caster implicitement vers IDrawable à cause de
+        /// l'héritage en diamant.... résoudre ça engendrerait beaucoup d'autres soucis...)
         ///
         /// If the "concerned scene" is nullptr, the area is linked to... something
         /// else ?

@@ -9,6 +9,8 @@
 */
 
 #include "GraphicSpatSessionManager.h"
+
+#include "SpatPresenter.h"
 #include "SpatPolygon.h"
 
 #include "XmlUtils.h"
@@ -142,14 +144,15 @@ void GraphicSpatSessionManager::SetFromTree(bptree::ptree& graphicSessionTree)
                 // par le canevas maître
             }
             
-            // Actualisations finales pour le canevas en cours
-            canvasManagers[i]->OnXmlLoadFinished();
-            
         } // fin de condition : si pas de réinitialisation forcée
     } // fin de la boucle : pour chaque canevas
     
-    // Finalement, on remet les bonnes valeurs pour les compteurs
+    // Bonnes valeurs pour les compteurs internes
     nextAreaId = biggestAreaUid + 1; // On passe à l'UID suivant
+    
+    // Actualisations pour chaque canevas
+    for (auto& canvas : canvasManagers)
+        canvas->OnXmlLoadFinished();
 }
 void GraphicSpatSessionManager::LoadSpatAreaLinks(std::shared_ptr<SpatArea> area, std::shared_ptr<bptree::ptree> spatStateTree)
 {

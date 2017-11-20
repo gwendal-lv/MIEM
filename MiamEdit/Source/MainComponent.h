@@ -13,10 +13,13 @@
 
 // View
 #include "MainBackgroundComponent.h"
+#include "StartupComponent.h"
 #include "SpeakersEditionComponent.h"
 #include "SpatStatesEditionComponent.h"
 #include "SceneEditionComponent.h"
 #include "HardwareConfigurationComponent.h"
+
+#include "MiamLookAndFeel.h"
 
 // Presenter
 #include "Presenter.h"
@@ -47,6 +50,7 @@ namespace Miam
         
         
         MainBackgroundComponent* mainBackgroundComponent;
+        StartupComponent* startupComponent;
         
         SpatStatesEditionComponent* spatStatesEditionComponent;
         SpeakersEditionComponent* speakersEditionComponent;
@@ -54,7 +58,7 @@ namespace Miam
         HardwareConfigurationComponent* hardwareConfigurationComponent;
         std::vector<Component*> secondLevelComponents;
         
-        
+        MiamLookAndFeel lookAndFeel;
         
         
     public:

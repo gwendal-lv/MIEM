@@ -53,7 +53,7 @@ void SettingsManager::OnInOutChannelsCountChanged(int inputsCount, int outputsCo
     // model updates
     
     // Might not validate the change... We don't know !
-    model->GetSpatInterpolator()->SetInputOuputChannelsCount(inputsCount, outputsCount);
+    model->GetSpatInterpolator()->SetInputOutputChannelsCount(inputsCount, outputsCount);
     
     // Direct dispatching of the event (not telling other presenter modules)
     view->GetMainContentComponent()->GetSpatStatesEditionComponent()->SetInsOutsCount(model->GetSpatInterpolator()->GetInputsCount(),

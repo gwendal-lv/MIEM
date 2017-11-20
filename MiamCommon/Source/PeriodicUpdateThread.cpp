@@ -17,7 +17,7 @@ using namespace Miam;
 
 PeriodicUpdateThread::PeriodicUpdateThread(std::string name_)
 :
-updateThreadMeasurer(name_)
+updateThreadMeasurer(name_, 1500)
 {
    
     // Test of lockfreeness

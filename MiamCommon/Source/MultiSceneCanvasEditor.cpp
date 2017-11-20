@@ -122,11 +122,13 @@ bool MultiSceneCanvasEditor::MoveSelectedSceneTowardsLast()
 // ------ Areas managing : Add and Delete ------
 void MultiSceneCanvasEditor::AddArea(std::shared_ptr<IEditableArea> newArea)
 {
-    handleAndSendAreaEventSync(selectedScene->AddArea(newArea));
+    auto areaE = selectedScene->AddArea(newArea);
+    handleAndSendAreaEventSync(areaE);
 }
 void MultiSceneCanvasEditor::AddDefaultArea(uint64_t nextAreaId)
 {
-    handleAndSendAreaEventSync(selectedScene->AddDefaultArea(nextAreaId));
+    auto areaE = selectedScene->AddDefaultArea(nextAreaId);
+    handleAndSendAreaEventSync(areaE);
 }
 void MultiSceneCanvasEditor::SetSelectedArea(std::shared_ptr<IEditableArea> newSelectedArea)
 {
@@ -138,7 +140,10 @@ void MultiSceneCanvasEditor::SetSelectedArea(std::shared_ptr<IEditableArea> newS
 void MultiSceneCanvasEditor::DeleteSelectedArea()
 {
     if (selectedScene)
-        handleAndSendAreaEventSync(selectedScene->DeleteSelectedArea());
+    {
+        auto areaE = selectedScene->DeleteSelectedArea();
+        handleAndSendAreaEventSync(areaE);
+    }
     else throw std::runtime_error("Cannot get the selected area : no scene selected on canvas" + std::to_string(selfId));
     
     //canvasComponent->repaint(); // useless with OpenGL

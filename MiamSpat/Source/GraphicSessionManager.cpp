@@ -8,15 +8,16 @@
   ==============================================================================
 */
 
-#include "GraphicSessionManager.h"
+#include <limits> // tests avant envoi dans les paquets lock-free
 
+#include "GraphicSessionManager.h"
 
 // Other includes
 
-#include "IPresenter.h"
+#include "Presenter.h"
 #include "View.h"
 
-#include "AreaEvent.h"
+#include "MultiAreaEvent.h"
 #include "Exciter.h"
 
 #include "SceneEvent.h"
@@ -26,21 +27,14 @@ using namespace Miam;
 
 // ========== CONSTRUCTION and DESTRUCTION ==========
 
-GraphicSessionManager::GraphicSessionManager(IPresenter* presenter_, View* view_) :
-    IGraphicSessionManager(presenter_),
+GraphicSessionManager::GraphicSessionManager(Presenter* presenter_, View* view_) :
+    GraphicSpatSessionManager(presenter_),
+    presenter(presenter_),
     view(view_)
-{
-    // SÉLECTION/CHARGEMENT D'UN TRUC PAR DÉFAUT
-    nextAreaId = 0; // plus tard : valeur contenue dans le fichier de sauvegarde
-
-    
-    // ICI ON CHARGE DES TRUCS
-    // Canvases const count defined here
-    // 1 SEUL CANVAS PAR EXEMPLE
-    // On doit créer les sous-objets graphiques de canevas (View) avant de
-    // les transmettre au sous-module de gestion de canevas (Presenter) que l'on crée
-    // d'ailleurs ici aussi.
+{    
+    // DEFINITION DU NOMBRE DE CANEVAS
     canvasManagers.push_back(std::make_shared<MultiSceneCanvasManager>(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas1));
+    canvasManagers.push_back(std::make_shared<MultiSceneCanvasManager>(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas2));
     
     // Links to the view module
     view->CompleteInitialization(this, multiCanvasComponent);
@@ -48,22 +42,19 @@ GraphicSessionManager::GraphicSessionManager(IPresenter* presenter_, View* view_
     for (size_t i=0 ; i<canvasManagers.size() ; i++)
     {
         // After canvases are created : scenes creation
-        // DEFAULT SCENES, TO BE CHANGED
-        canvasManagers[i]->AddScene("Scène 1, pour le plaisir");
-        canvasManagers[i]->AddScene("Scène 2 oh ouuiiii");
-        canvasManagers[i]->AddScene("Scène jamais 2 sans 3");
+        // Juste 1 scène pour ne pas avoir ne pointeur sur NULL
+        canvasManagers[i]->AddScene("[Scène vide]", true);
     }
     
     
     
     // And states of the canvases are forced
     for (size_t i=0 ; i<canvasManagers.size() ; i++)
-        canvasManagers[i]->SetMode(CanvasManagerMode::Unselected);
+        canvasManagers[i]->SetMode(CanvasManagerMode::PlayingWithExciters);
     
     
-    // SÉLECTION/CHARGEMENT D'UN TRUC PAR DÉFAUT
-    canvasManagers.front()->SetMode(CanvasManagerMode::SceneOnlySelected);
-    
+    // Resize forcé (pour ne pas avoir de trucs de taille zéro
+    view->GetMainContentComponent()->resized();
     
 }
 
@@ -72,29 +63,11 @@ GraphicSessionManager::~GraphicSessionManager()
 }
 
 
-// Testing purposes only
-void GraphicSessionManager::__LoadDefaultTest()
-{
-    srand(2016); // GRAINE fixée ici
-    
-    
-    for(size_t i=0 ; i<canvasManagers.size(); i++)
-        canvasManagers[i]->__AddTestAreas();
-}
 
 
 
 
 // ===== SETTERS AND GETTERS =====
-
-std::shared_ptr<IEditableArea> GraphicSessionManager::GetSelectedArea()
-{
-    if (selectedCanvas)
-        return getSelectedCanvasAsManager()->GetSelectedArea();
-    else
-        return nullptr;
-}
-
 
 
 
@@ -118,50 +91,111 @@ std::shared_ptr<MultiSceneCanvasManager> GraphicSessionManager::getSelectedCanva
 // ===== EVENTS FROM THE PRESENTER ITSELF =====
 void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_)
 {
-    // Event about an Area
+    // Event about one area, or several areas at once
     if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(event_))
     {
-        // Event about an Exciter in particular : we'll have to update the spat mix !
-        if (auto exciter = std::dynamic_pointer_cast<Exciter>(areaE->GetConcernedArea()))
-        {
-            //std::cout << "mix à mettre à jour" << std::endl;
-        }
-		else if (auto area = std::dynamic_pointer_cast<EditableArea>(areaE->GetConcernedArea()))
-		{
-			switch (areaE->GetType())
-			{
-			case AreaEventType::Added :
-				//DBG("Area Added");
-				break;
-			case AreaEventType::Deleted :
-				//DBG("Area deleted");
-				break;
-			default:
-				break;
-			}
-		}
+        handleAreaEventSync(areaE);
     }
+    
+    // Scene information
+    /*
 	else if (auto sceneE = std::dynamic_pointer_cast<SceneEvent>(event_))
-	{
-		switch (sceneE->GetType())
-		{
-		case SceneEventType::Added :
-			//DBG("Scene added");
-			break;
-		case SceneEventType::Deleted :
-			//DBG("Scene deleted");
-			break;
-		case SceneEventType::NothingHappened :
-			//DBG("Nothing happened");
-			break;
-		case SceneEventType::SceneChanged :
-			//DBG("Scene Changed");
-			break;
-		default:
-			break;
+    {
+        switch (sceneE->GetType())
+        {
+            case SceneEventType::Added :
+                //DBG("Scene added");
+                break;
+            case SceneEventType::Deleted :
+                //DBG("Scene deleted");
+                break;
+            case SceneEventType::NothingHappened :
+                //DBG("Nothing happened");
+                break;
+            case SceneEventType::SceneChanged :
+                //DBG("Scene Changed");
+                break;
+            default:
+                break;
 		}
 	}
+     */
 }
+void GraphicSessionManager::handleAreaEventSync(const std::shared_ptr<AreaEvent>& areaE)
+{
+    // Events about several areas at once
+    if (auto multiAreaE = std::dynamic_pointer_cast<MultiAreaEvent>(areaE))
+    {
+        // Constructeur de Copie vers un nouvel évènement simple
+        auto singleMainAreaE = std::make_shared<AreaEvent>( multiAreaE.get() );
+        handleSingleAreaEventSync(singleMainAreaE); // on est sûr que c'est un évnmt simple
+        // Pour les autres : il faut faire un appel récursif à cette fonction au cas où l'on
+        // a des MultiEvent imbriqués (cas très courant)
+        for (size_t i = 0 ; i < multiAreaE->GetOtherEventsCount() ; i++)
+            handleAreaEventSync(multiAreaE->GetOtherEvent(i));
+    }
+    // Event about a SINGLE Area
+    else
+    {
+        handleSingleAreaEventSync(areaE);
+    }
+}
+void GraphicSessionManager::handleSingleAreaEventSync(const std::shared_ptr<AreaEvent>& areaE)
+{
+    // Event about an Area in particular : we may have to update the spat mix !
+    if (auto area = std::dynamic_pointer_cast<SpatArea>(areaE->GetConcernedArea()))
+    {
+        AsyncParamChange paramChange;
+        
+        switch (areaE->GetType())
+        {
+            // On n'envoie l'excitation qu'en mode de jeu réel
+            case AreaEventType::ExcitementAmountChanged :
+                if (presenter->getAppMode() == AppMode::Playing)
+                {
+					// Et on n'envoie que les excitations liées réellement à un état de spat
+					if (area->GetSpatStateIndex() >= 0)
+					{
+						paramChange.Type = AsyncParamChange::ParamType::Excitement;
+						paramChange.DoubleValue = area->GetTotalAudioExcitement();
+
+						// Attention : pour les IDs, on déclenche une grosse exception si on dépasse...
+						if (area->GetSpatStateIndex() < std::numeric_limits<int>::max())
+							paramChange.Id1 = (int)area->GetSpatStateIndex();
+						else
+							throw std::overflow_error("Spat state Index is too big to fit into an 'int'. Cannot send the concerned lock-free parameter change.");
+						if (area->GetId() < std::numeric_limits<int>::max())
+							paramChange.Id2 = (int)area->GetId();
+						else
+							throw std::overflow_error("Area UID is too big to fit into an 'int'. Cannot send the concerned lock-free parameter change.");
+
+						presenter->SendParamChange(paramChange);
+					}
+                }
+                break;
+                
+            default:
+                break;
+        }
+    }
+    // Event about an Exciter in particular : ici on ne fait rien....
+    /*
+    else if (auto exciter = std::dynamic_pointer_cast<Exciter>(areaE->GetConcernedArea()))
+    {
+        switch (areaE->GetType())
+        {
+            default:
+                break;
+        }
+    }
+     */
+}
+void GraphicSessionManager::OnModelStarted()
+{
+    for (size_t i = 0 ; i <canvasManagers.size() ; i++)
+        canvasManagers[i]->SelectScene(0);
+}
+
 
 
 void GraphicSessionManager::CanvasModeChanged(CanvasManagerMode /*canvasMode*/)
@@ -173,16 +207,25 @@ void GraphicSessionManager::CanvasModeChanged(CanvasManagerMode /*canvasMode*/)
 
 
 
-
-
-
-
 // ===== EVENTS TO VIEW =====
 
 void GraphicSessionManager::DisplayInfo(String info)
 {
     view->DisplayInfo(info);
 }
+
+
+
+// = = = = = = = = = = XML import/export = = = = = = = = = =
+
+void GraphicSessionManager::SetFromTree(bptree::ptree& graphicSessionTree)
+{
+    GraphicSpatSessionManager::SetFromTree(graphicSessionTree);
+    
+    // Plus aucun traitement supplémentaire, pour l'instant...
+}
+
+
 
 
 

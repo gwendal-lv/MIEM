@@ -40,7 +40,8 @@ namespace Miam
         
         virtual ~InteractivePolygon() {}
         
-        virtual IDrawableArea* Clone() const override {return new InteractivePolygon(*this);}
+        virtual std::shared_ptr<IDrawableArea> Clone() const override
+        { return std::make_shared<InteractivePolygon>(*this); }
         
         
         // Contruction helpers

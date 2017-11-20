@@ -33,9 +33,10 @@ namespace Miam
         public :
         
         void AddAreaEvent(std::shared_ptr<AreaEvent> areaE);
+        void AddAreaEvent(AreaEvent* areaE);
         
-        size_t GetOtherEventsCount() {return otherEvents.size();}
-        std::shared_ptr<AreaEvent> GetOtherEvent(size_t i) {return otherEvents[i];}
+        size_t GetOtherEventsCount() const {return otherEvents.size();}
+        std::shared_ptr<AreaEvent>& GetOtherEvent(size_t i) {return otherEvents[i];}
         
         
         // Same constructors as the single-area version
@@ -46,7 +47,7 @@ namespace Miam
                        AreaEventType eventType_,
                        std::shared_ptr<InteractiveScene> concernedScene_);
         
-        MultiAreaEvent(std::shared_ptr<IDrawableArea> concernedArea_,
+        MultiAreaEvent(std::shared_ptr<DrawableArea> concernedArea_,
                   AreaEventType eventType_,
                   int areaIdInScene_ = -1,
                   std::shared_ptr<InteractiveScene> concernedScene_ = nullptr);

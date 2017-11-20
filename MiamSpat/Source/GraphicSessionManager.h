@@ -18,11 +18,11 @@
 #include <map>
 #include <string>
 
-#include "IGraphicSessionManager.h"
+#include "GraphicSpatSessionManager.h"
 
 #include "EditablePolygon.h"
 
-#include "Juceheader.h" // for : Point<float>, uint64
+#include "JuceHeader.h" // for : Point<float>, uint64
 
 #include "MultiSceneCanvasManager.h"
 #include "SceneCanvasComponent.h"
@@ -31,7 +31,7 @@ namespace Miam {
     
     // Simple declarations
     class View;
-    class IPresenter;
+    class Presenter;
     
     
     /// \brief Sub-module belonging to the Presenter module, which handles the editing
@@ -41,12 +41,15 @@ namespace Miam {
 	///
 	/// References itself to some components, for these components to transfer events to this sub-module
 	/// directly, and not to the Presenter.
-    class GraphicSessionManager : public IGraphicSessionManager {
+    class GraphicSessionManager : public GraphicSpatSessionManager {
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
         
         // Graphical objects belong to the Presenter module, not to the View
         private :
+        
+        Presenter* presenter;
+        
         // links back to the View module
         View* view;
         
@@ -67,14 +70,11 @@ namespace Miam {
         
         public :
         /// \brief Construction (the whole Presenter module is built after the View).
-        GraphicSessionManager(IPresenter* presenter_, View* view_);
+        GraphicSessionManager(Presenter* presenter_, View* view_);
         
         /// \brief Destruction and the editor and the canvases
         ~GraphicSessionManager();
         
-        // Debug purposes only
-        void __LoadDefaultTest();
-       
         
         
         // ---- Getters and Setters -----
@@ -102,13 +102,38 @@ namespace Miam {
         
         
         // ----- Events from the Presenter itself -----
+        /// \brief Selects all event that might have an effect on the global spatialization
+        /// state, translates it into data that the Model understands, then sends it
+        /// to the Model via the Presenter lock-free queue.
+        ///
+        /// Seule info importante à transmettre :
+        /// - changement d'excitation d'une aire graphique
+        ///   (qu'on transmet le + vite possible !!)
+        ///   -> cette info sera dans un event spécial déjà traité dans un CanvasInteractor
+        ///
+        /// Infos dont on se fout :
+        /// - toute info géométrique sur une aire...
         virtual void HandleEventSync(std::shared_ptr<GraphicEvent> event_) override;
+        
+        private :
+        // On ne sait pas si c'est un simple ou multi
+        void handleAreaEventSync(const std::shared_ptr<AreaEvent>& areaE);
+        // Là ça doit absolument être un simple
+        void handleSingleAreaEventSync(const std::shared_ptr<AreaEvent>& areaE);
+        
+        public :
+        // Déclenche des actualisations forcées, ...
+        void OnModelStarted();
         
         
         
         // ----- Event to View -----
+        public :
         void DisplayInfo(String info) override;
+
         
+        // - - - - - XML import/export - - - - -
+        virtual void SetFromTree(bptree::ptree& graphicSessionTree) override;
 
     };
     

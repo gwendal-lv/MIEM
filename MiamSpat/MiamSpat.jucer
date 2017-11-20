@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="xCUiGi" name="MiamSpat" projectType="guiapp" version="1.0.0"
-              bundleIdentifier="com.yourcompany.MiamSpat" includeBinaryInAppConfig="1"
-              jucerVersion="4.3.1">
-  <MAINGROUP id="m8VZoU" name="MiamSpat">
+<JUCERPROJECT id="xCUiGi" name="MIAM Spat Player" projectType="guiapp" version="1.0.0"
+              bundleIdentifier="com.yourcompany.MiamSpatPlayer" includeBinaryInAppConfig="1"
+              jucerVersion="5.2.0" displaySplashScreen="0" reportAppUsage="0"
+              splashScreenColour="Dark" cppLanguageStandard="11" companyCopyright="">
+  <MAINGROUP id="m8VZoU" name="MIAM Spat Player">
     <GROUP id="{D93792BB-5B8B-5A35-D554-58C4F4E4D3DA}" name="Source">
       <FILE id="oaxiVA" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <GROUP id="{23BAC1CB-3D2E-7345-7D78-B522A9B204B9}" name="Model">
@@ -28,72 +29,118 @@
         <FILE id="fpZaRJ" name="Presenter.h" compile="0" resource="0" file="Source/Presenter.h"/>
       </GROUP>
       <GROUP id="{7185BF7C-494C-765D-3B78-58581F32631D}" name="View">
+        <FILE id="SFIecL" name="BackgroundComponent.cpp" compile="1" resource="0"
+              file="Source/BackgroundComponent.cpp"/>
+        <FILE id="cp8fFT" name="BackgroundComponent.h" compile="0" resource="0"
+              file="Source/BackgroundComponent.h"/>
         <FILE id="TCTcR0" name="MainComponent.cpp" compile="1" resource="0"
               file="Source/MainComponent.cpp"/>
         <FILE id="NeblZc" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+        <FILE id="REKLzn" name="TouchMainMenu.cpp" compile="1" resource="0"
+              file="Source/TouchMainMenu.cpp"/>
+        <FILE id="NSAmpK" name="TouchMainMenu.h" compile="0" resource="0" file="Source/TouchMainMenu.h"/>
         <FILE id="wovY1v" name="View.cpp" compile="1" resource="0" file="Source/View.cpp"/>
         <FILE id="DzITRF" name="View.h" compile="0" resource="0" file="Source/View.h"/>
       </GROUP>
     </GROUP>
     <GROUP id="{C4893356-5DEB-A030-074B-EE0422842B92}" name="SpatCommonSource">
       <GROUP id="{69F35838-D6F6-5ADE-9B31-E372F4C0078E}" name="Model">
+        <GROUP id="{CE2450A9-95D2-0EE6-C8D7-53BBF9CF35FE}" name="Communication">
+          <FILE id="xclkBS" name="MiamOscSender.hpp" compile="0" resource="0"
+                file="../SpatCommon/Source/MiamOscSender.hpp"/>
+          <FILE id="RMe4LS" name="OscDefines.h" compile="0" resource="0" file="../SpatCommon/Source/OscDefines.h"/>
+          <FILE id="YOdNbs" name="SpatSender.hpp" compile="0" resource="0" file="../SpatCommon/Source/SpatSender.hpp"/>
+        </GROUP>
         <GROUP id="{C8CFED74-46E5-A2FF-9824-723DC214C250}" name="SpatStates">
-          <FILE id="VlduMz" name="OutputVolumesState.h" compile="0" resource="0"
-                file="../SpatCommon/Source/OutputVolumesState.h"/>
+          <FILE id="goJtqU" name="MatrixBackupState.hpp" compile="0" resource="0"
+                file="../SpatCommon/Source/MatrixBackupState.hpp"/>
+          <FILE id="EfBVcH" name="MatrixState.hpp" compile="0" resource="0" file="../SpatCommon/Source/MatrixState.hpp"/>
+          <FILE id="VlduMz" name="OutputVolumesState.hpp" compile="0" resource="0"
+                file="../SpatCommon/Source/OutputVolumesState.hpp"/>
           <FILE id="o3IF1g" name="OutputVolumesState.tpp.h" compile="0" resource="0"
                 file="../SpatCommon/Source/OutputVolumesState.tpp.h"/>
-          <FILE id="VJUdzj" name="SpatState.h" compile="0" resource="0" file="../SpatCommon/Source/SpatState.h"/>
-          <FILE id="bz3VgJ" name="SpatState.tpp.h" compile="0" resource="0" file="../SpatCommon/Source/SpatState.tpp.h"/>
+          <FILE id="VJUdzj" name="SpatState.hpp" compile="0" resource="0" file="../SpatCommon/Source/SpatState.hpp"/>
         </GROUP>
-        <FILE id="xR7ZzU" name="SpatInterpolator.h" compile="0" resource="0"
-              file="../SpatCommon/Source/SpatInterpolator.h"/>
-        <FILE id="njk7Fg" name="SpatInterpolator.tpp.h" compile="0" resource="0"
-              file="../SpatCommon/Source/SpatInterpolator.tpp.h"/>
-        <FILE id="J1ViFv" name="SpatModel.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatModel.cpp"/>
-        <FILE id="mc5PI6" name="SpatModel.h" compile="0" resource="0" file="../SpatCommon/Source/SpatModel.h"/>
-        <FILE id="DFPO9m" name="SpatSender.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatSender.cpp"/>
-        <FILE id="YOdNbs" name="SpatSender.h" compile="0" resource="0" file="../SpatCommon/Source/SpatSender.h"/>
+        <FILE id="xR7ZzU" name="SpatInterpolator.hpp" compile="0" resource="0"
+              file="../SpatCommon/Source/SpatInterpolator.hpp"/>
+        <FILE id="azLEQu" name="SpatModel.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatModel.cpp"/>
+        <FILE id="n9PyKE" name="SpatModel.h" compile="0" resource="0" file="../SpatCommon/Source/SpatModel.h"/>
         <FILE id="ISQcqH" name="SpatType.h" compile="0" resource="0" file="../SpatCommon/Source/SpatType.h"/>
         <FILE id="r9zTHA" name="Speaker.h" compile="0" resource="0" file="../SpatCommon/Source/Speaker.h"/>
         <FILE id="JAUbBW" name="Speaker.tpp.h" compile="0" resource="0" file="../SpatCommon/Source/Speaker.tpp.h"/>
       </GROUP>
+      <GROUP id="{E4F9C14C-128F-4855-B761-3D7F2B473A15}" name="Presenter">
+        <FILE id="pFXZPP" name="GraphicSpatSessionManager.cpp" compile="1"
+              resource="0" file="../SpatCommon/Source/GraphicSpatSessionManager.cpp"/>
+        <FILE id="HezEeo" name="GraphicSpatSessionManager.h" compile="0" resource="0"
+              file="../SpatCommon/Source/GraphicSpatSessionManager.h"/>
+        <FILE id="VVyjWB" name="SpatArea.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatArea.cpp"/>
+        <FILE id="J6QHjo" name="SpatArea.h" compile="0" resource="0" file="../SpatCommon/Source/SpatArea.h"/>
+        <FILE id="mFlpy0" name="SpatEllipse.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatEllipse.cpp"/>
+        <FILE id="JC2slY" name="SpatEllipse.h" compile="0" resource="0" file="../SpatCommon/Source/SpatEllipse.h"/>
+        <FILE id="RbKrb4" name="SpatPolygon.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatPolygon.cpp"/>
+        <FILE id="CWxYwo" name="SpatPolygon.h" compile="0" resource="0" file="../SpatCommon/Source/SpatPolygon.h"/>
+        <FILE id="t9TDiE" name="SpatPresenter.cpp" compile="1" resource="0"
+              file="../SpatCommon/Source/SpatPresenter.cpp"/>
+        <FILE id="Rwzbxl" name="SpatPresenter.h" compile="0" resource="0" file="../SpatCommon/Source/SpatPresenter.h"/>
+      </GROUP>
+      <GROUP id="{DCC9EBC6-B3B5-6597-7D50-FBAB32A4E73B}" name="View">
+        <FILE id="xwcnTq" name="FileMenu.cpp" compile="1" resource="0" file="../SpatCommon/Source/FileMenu.cpp"/>
+        <FILE id="bBqK2U" name="FileMenu.h" compile="0" resource="0" file="../SpatCommon/Source/FileMenu.h"/>
+        <FILE id="db1pb5" name="ISlidersMatrixListener.h" compile="0" resource="0"
+              file="../SpatCommon/Source/ISlidersMatrixListener.h"/>
+        <FILE id="AH63we" name="LabelledMatrixComponent.cpp" compile="1" resource="0"
+              file="../SpatCommon/Source/LabelledMatrixComponent.cpp"/>
+        <FILE id="IXyNk9" name="LabelledMatrixComponent.h" compile="0" resource="0"
+              file="../SpatCommon/Source/LabelledMatrixComponent.h"/>
+        <FILE id="v6IvfH" name="MatrixComponent.h" compile="0" resource="0"
+              file="../SpatCommon/Source/MatrixComponent.h"/>
+        <FILE id="Ec8PSJ" name="MatrixSlider.h" compile="0" resource="0" file="../SpatCommon/Source/MatrixSlider.h"/>
+        <FILE id="T6O3os" name="MatrixViewport.h" compile="0" resource="0"
+              file="../SpatCommon/Source/MatrixViewport.h"/>
+        <FILE id="YLeHkE" name="SpatView.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatView.cpp"/>
+        <FILE id="QaUQbE" name="SpatView.h" compile="0" resource="0" file="../SpatCommon/Source/SpatView.h"/>
+      </GROUP>
+      <GROUP id="{074EE7F9-67BB-F0C2-EAAF-33449FC42B60}" name="Utils">
+        <FILE id="mVbott" name="SpatMatrix.hpp" compile="0" resource="0" file="../SpatCommon/Source/SpatMatrix.hpp"/>
+      </GROUP>
     </GROUP>
     <GROUP id="{593B3C8B-4E9F-6C95-BD9D-6562983482B8}" name="MiamCommonSource">
       <GROUP id="{0479ADE3-37CD-6B82-AED4-7081C736E56C}" name="Model">
-        <FILE id="GsEH1I" name="IModel.cpp" compile="1" resource="0" file="../MiamCommon/Source/IModel.cpp"/>
-        <FILE id="NoGtM1" name="IModel.h" compile="0" resource="0" file="../MiamCommon/Source/IModel.h"/>
+        <FILE id="LDc2TJ" name="IModel.cpp" compile="1" resource="0" file="../MiamCommon/Source/IModel.cpp"/>
+        <FILE id="Yy9Xdd" name="IModel.h" compile="0" resource="0" file="../MiamCommon/Source/IModel.h"/>
       </GROUP>
       <GROUP id="{17C21196-8065-2A28-CE70-8A30193DECF0}" name="Presenter">
         <GROUP id="{56C10D2A-D21F-45CE-76A5-54034487512D}" name="Events">
-          <FILE id="NbytqS" name="AreaEvent.cpp" compile="1" resource="0" file="../MiamCommon/Source/AreaEvent.cpp"/>
-          <FILE id="OZaU4D" name="AreaEvent.h" compile="0" resource="0" file="../MiamCommon/Source/AreaEvent.h"/>
-          <FILE id="mPaSKQ" name="ControlEvent.cpp" compile="1" resource="0"
+          <FILE id="IOqigb" name="AreaEvent.cpp" compile="1" resource="0" file="../MiamCommon/Source/AreaEvent.cpp"/>
+          <FILE id="aVAfT0" name="AreaEvent.h" compile="0" resource="0" file="../MiamCommon/Source/AreaEvent.h"/>
+          <FILE id="Q2qftv" name="ControlEvent.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/ControlEvent.cpp"/>
-          <FILE id="Sl5aZg" name="ControlEvent.h" compile="0" resource="0" file="../MiamCommon/Source/ControlEvent.h"/>
-          <FILE id="hGfG2J" name="GraphicEvent.cpp" compile="1" resource="0"
+          <FILE id="wPnZ0p" name="ControlEvent.h" compile="0" resource="0" file="../MiamCommon/Source/ControlEvent.h"/>
+          <FILE id="P48GDy" name="GraphicEvent.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/GraphicEvent.cpp"/>
-          <FILE id="OhudXq" name="GraphicEvent.h" compile="0" resource="0" file="../MiamCommon/Source/GraphicEvent.h"/>
-          <FILE id="snVBkm" name="MultiAreaEvent.cpp" compile="1" resource="0"
+          <FILE id="Wlybd4" name="GraphicEvent.h" compile="0" resource="0" file="../MiamCommon/Source/GraphicEvent.h"/>
+          <FILE id="NX0ySy" name="MultiAreaEvent.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/MultiAreaEvent.cpp"/>
-          <FILE id="DoVqWX" name="MultiAreaEvent.h" compile="0" resource="0"
+          <FILE id="oRJw3g" name="MultiAreaEvent.h" compile="0" resource="0"
                 file="../MiamCommon/Source/MultiAreaEvent.h"/>
-          <FILE id="IDIerE" name="SceneEvent.cpp" compile="1" resource="0" file="../MiamCommon/Source/SceneEvent.cpp"/>
-          <FILE id="mz9IiL" name="SceneEvent.h" compile="0" resource="0" file="../MiamCommon/Source/SceneEvent.h"/>
+          <FILE id="RAwQe6" name="SceneEvent.cpp" compile="1" resource="0" file="../MiamCommon/Source/SceneEvent.cpp"/>
+          <FILE id="ekYbjp" name="SceneEvent.h" compile="0" resource="0" file="../MiamCommon/Source/SceneEvent.h"/>
         </GROUP>
         <GROUP id="{B66FA498-AC16-0510-B897-C4A4DB5848EB}" name="Areas">
           <FILE id="Lt60mX" name="EditableArea.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/EditableArea.cpp"/>
           <FILE id="u2pUf3" name="EditableArea.h" compile="0" resource="0" file="../MiamCommon/Source/EditableArea.h"/>
-          <FILE id="EgPsHb" name="EditableEllipse.cpp" compile="1" resource="0"
+          <FILE id="eCJIOT" name="EditableEllipse.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/EditableEllipse.cpp"/>
-          <FILE id="XvjtaP" name="EditableEllipse.h" compile="0" resource="0"
+          <FILE id="jJyzQI" name="EditableEllipse.h" compile="0" resource="0"
                 file="../MiamCommon/Source/EditableEllipse.h"/>
           <FILE id="wgUXFQ" name="EditablePolygon.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/EditablePolygon.cpp"/>
           <FILE id="JElhH7" name="EditablePolygon.h" compile="0" resource="0"
                 file="../MiamCommon/Source/EditablePolygon.h"/>
-          <FILE id="ZwqlAH" name="Exciter.cpp" compile="1" resource="0" file="../MiamCommon/Source/Exciter.cpp"/>
-          <FILE id="TFDrFJ" name="Exciter.h" compile="0" resource="0" file="../MiamCommon/Source/Exciter.h"/>
+          <FILE id="o4h3ZV" name="Exciter.cpp" compile="1" resource="0" file="../MiamCommon/Source/Exciter.cpp"/>
+          <FILE id="uFYMUE" name="Exciter.h" compile="0" resource="0" file="../MiamCommon/Source/Exciter.h"/>
           <FILE id="e38tNI" name="IEditableArea.h" compile="0" resource="0" file="../MiamCommon/Source/IEditableArea.h"/>
           <FILE id="AgdCS3" name="IInteractiveArea.h" compile="0" resource="0"
                 file="../MiamCommon/Source/IInteractiveArea.h"/>
@@ -101,9 +148,9 @@
                 file="../MiamCommon/Source/InteractiveArea.cpp"/>
           <FILE id="meCfcv" name="InteractiveArea.h" compile="0" resource="0"
                 file="../MiamCommon/Source/InteractiveArea.h"/>
-          <FILE id="lAXRW5" name="InteractiveEllipse.cpp" compile="1" resource="0"
+          <FILE id="ELULBi" name="InteractiveEllipse.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/InteractiveEllipse.cpp"/>
-          <FILE id="nquHx0" name="InteractiveEllipse.h" compile="0" resource="0"
+          <FILE id="o1IUT1" name="InteractiveEllipse.h" compile="0" resource="0"
                 file="../MiamCommon/Source/InteractiveEllipse.h"/>
           <FILE id="oqveHx" name="InteractivePolygon.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/InteractivePolygon.cpp"/>
@@ -127,8 +174,8 @@
               file="../MiamCommon/Source/IGraphicSessionManager.cpp"/>
         <FILE id="Lgollh" name="IGraphicSessionManager.h" compile="0" resource="0"
               file="../MiamCommon/Source/IGraphicSessionManager.h"/>
-        <FILE id="g1daJ4" name="IPresenter.cpp" compile="1" resource="0" file="../MiamCommon/Source/IPresenter.cpp"/>
-        <FILE id="xzOQj5" name="IPresenter.h" compile="0" resource="0" file="../MiamCommon/Source/IPresenter.h"/>
+        <FILE id="KYotIl" name="IPresenter.cpp" compile="1" resource="0" file="../MiamCommon/Source/IPresenter.cpp"/>
+        <FILE id="X4elLh" name="IPresenter.h" compile="0" resource="0" file="../MiamCommon/Source/IPresenter.h"/>
         <FILE id="Jtp0bl" name="MultiSceneCanvasEditor.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/MultiSceneCanvasEditor.cpp"/>
         <FILE id="OogkLH" name="MultiSceneCanvasEditor.h" compile="0" resource="0"
@@ -139,6 +186,10 @@
               file="../MiamCommon/Source/MultiSceneCanvasInteractor.h"/>
       </GROUP>
       <GROUP id="{81FB02AB-9CF8-2FEF-77B6-9D5049B0BC47}" name="View">
+        <FILE id="XAPOxP" name="MiamLookAndFeel.cpp" compile="1" resource="0"
+              file="../MiamCommon/Source/MiamLookAndFeel.cpp"/>
+        <FILE id="UhtGNo" name="MiamLookAndFeel.h" compile="0" resource="0"
+              file="../MiamCommon/Source/MiamLookAndFeel.h"/>
         <GROUP id="{36323D02-59E2-4E89-249D-DCE39931C0AE}" name="Components">
           <FILE id="XSz62Q" name="MultiCanvasComponent.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/MultiCanvasComponent.cpp"/>
@@ -157,9 +208,9 @@
           <FILE id="CGp3ln" name="DrawableArea.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/DrawableArea.cpp"/>
           <FILE id="AEfgX2" name="DrawableArea.h" compile="0" resource="0" file="../MiamCommon/Source/DrawableArea.h"/>
-          <FILE id="fTPWg3" name="DrawableEllipse.cpp" compile="1" resource="0"
+          <FILE id="So1nG4" name="DrawableEllipse.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/DrawableEllipse.cpp"/>
-          <FILE id="l4u7z6" name="DrawableEllipse.h" compile="0" resource="0"
+          <FILE id="zj9DE4" name="DrawableEllipse.h" compile="0" resource="0"
                 file="../MiamCommon/Source/DrawableEllipse.h"/>
           <FILE id="SW4w4d" name="DrawablePolygon.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/DrawablePolygon.cpp"/>
@@ -169,19 +220,40 @@
         </GROUP>
       </GROUP>
       <GROUP id="{B91B2137-DC4A-127C-0037-DB058876BEFA}" name="Utils">
-        <FILE id="yL79vC" name="AsyncParamChange.cpp" compile="1" resource="0"
-              file="../MiamCommon/Source/AsyncParamChange.cpp"/>
-        <FILE id="P91Fgx" name="AsyncParamChange.h" compile="0" resource="0"
-              file="../MiamCommon/Source/AsyncParamChange.h"/>
+        <GROUP id="{22E0B59F-81F6-AAC5-A6F4-3B584D7BBEA6}" name="AsyncParamChanges">
+          <FILE id="ik81Hn" name="AsyncParamChange.h" compile="0" resource="0"
+                file="../MiamCommon/Source/AsyncParamChange.h"/>
+          <FILE id="PuZWKs" name="LockFreeParamChangeSender.cpp" compile="1"
+                resource="0" file="../MiamCommon/Source/LockFreeParamChangeSender.cpp"/>
+          <FILE id="plVsBQ" name="LockFreeParamChangeSender.h" compile="0" resource="0"
+                file="../MiamCommon/Source/LockFreeParamChangeSender.h"/>
+          <FILE id="g38vVM" name="ParametersIds.h" compile="0" resource="0" file="../MiamCommon/Source/ParametersIds.h"/>
+        </GROUP>
+        <GROUP id="{5315337B-6E49-3E8D-A9F7-3A94BE3F4AA8}" name="Audio">
+          <FILE id="suhcBm" name="AudioDefines.h" compile="0" resource="0" file="../MiamCommon/Source/AudioDefines.h"/>
+          <FILE id="TDImc7" name="AudioUtils.hpp" compile="0" resource="0" file="../MiamCommon/Source/AudioUtils.hpp"/>
+        </GROUP>
         <FILE id="tPoEI0" name="CartesianLine.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/CartesianLine.cpp"/>
         <FILE id="eK35Tw" name="CartesianLine.h" compile="0" resource="0" file="../MiamCommon/Source/CartesianLine.h"/>
-        <FILE id="r8ju3i" name="FrequencyMeasurer.cpp" compile="1" resource="0"
+        <FILE id="RVYtYM" name="FrequencyMeasurer.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/FrequencyMeasurer.cpp"/>
-        <FILE id="LUNhJD" name="FrequencyMeasurer.h" compile="0" resource="0"
+        <FILE id="iQfIMF" name="FrequencyMeasurer.h" compile="0" resource="0"
               file="../MiamCommon/Source/FrequencyMeasurer.h"/>
+        <FILE id="gJleTH" name="MiamExceptions.h" compile="0" resource="0"
+              file="../MiamCommon/Source/MiamExceptions.h"/>
         <FILE id="Rla6rP" name="MiamMath.cpp" compile="1" resource="0" file="../MiamCommon/Source/MiamMath.cpp"/>
         <FILE id="WSGVmq" name="MiamMath.h" compile="0" resource="0" file="../MiamCommon/Source/MiamMath.h"/>
+        <FILE id="bHy1uW" name="PeriodicUpdateThread.cpp" compile="1" resource="0"
+              file="../MiamCommon/Source/PeriodicUpdateThread.cpp"/>
+        <FILE id="kKs1q1" name="PeriodicUpdateThread.h" compile="0" resource="0"
+              file="../MiamCommon/Source/PeriodicUpdateThread.h"/>
+        <FILE id="cEVkJR" name="SparseMatrix.hpp" compile="0" resource="0"
+              file="../MiamCommon/Source/SparseMatrix.hpp"/>
+        <FILE id="g4sp6a" name="TextUtils.cpp" compile="1" resource="0" file="../MiamCommon/Source/TextUtils.cpp"/>
+        <FILE id="rbmyw3" name="TextUtils.h" compile="0" resource="0" file="../MiamCommon/Source/TextUtils.h"/>
+        <FILE id="MzfIK4" name="XmlUtils.cpp" compile="1" resource="0" file="../MiamCommon/Source/XmlUtils.cpp"/>
+        <FILE id="hMBcir" name="XmlUtils.h" compile="0" resource="0" file="../MiamCommon/Source/XmlUtils.h"/>
       </GROUP>
     </GROUP>
   </MAINGROUP>
@@ -189,9 +261,11 @@
     <XCODE_MAC targetFolder="Builds/MacOSX">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MiamSpat"
-                       headerPath="../../../"/>
+                       headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../MiamCommon/Source/"
+                       defines="__MIAM_DEBUG" enablePluginBinaryCopyStep="1"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MiamSpat"
-                       headerPath="../../../"/>
+                       headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../MiamCommon/Source/"
+                       enablePluginBinaryCopyStep="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
@@ -207,14 +281,19 @@
         <MODULEPATH id="juce_audio_devices" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_formats" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
-    <VS2015 targetFolder="Builds/VisualStudio2015">
+    <VS2015 targetFolder="Builds/VisualStudio2015" windowsTargetPlatformVersion="8.1">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
-                       isDebug="1" optimisation="1" targetName="MiamSpat" headerPath="..\..\..\&#10;..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"/>
+                       isDebug="1" optimisation="1" targetName="MiamSpat" headerPath="..\..\..\&#10;..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"
+                       defines="__MIAM_DEBUG" debugInformationFormat="ProgramDatabase"
+                       enablePluginBinaryCopyStep="0"/>
         <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
-                       isDebug="0" optimisation="3" targetName="MiamSpat" headerPath="..\..\..\&#10;..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"/>
+                       isDebug="0" optimisation="3" targetName="MiamSpat" headerPath="..\..\..\&#10;..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"
+                       debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
+                       linkTimeOptimisation="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
@@ -230,13 +309,15 @@
         <MODULEPATH id="juce_audio_devices" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_formats" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </VS2015>
     <ANDROIDSTUDIO targetFolder="Builds/AndroidStudio" androidSDKPath="" androidNDKPath=""
                    extraDefs="__MIAMOBILE" androidMinimumSDK="21">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" androidArchitectures="armeabi armeabi-v7a x86" isDebug="1"
-                       optimisation="1" targetName="MiamSpat" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../SpatCommon/Source/"/>
+                       optimisation="1" targetName="MiamSpat" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../SpatCommon/Source/"
+                       defines="__MIAM_DEBUG"/>
         <CONFIGURATION name="Release" androidArchitectures="armeabi armeabi-v7a x86"
                        isDebug="0" optimisation="3" targetName="MiamSpat" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../SpatCommon/Source/"/>
       </CONFIGURATIONS>
@@ -254,6 +335,7 @@
         <MODULEPATH id="juce_audio_devices" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_formats" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </ANDROIDSTUDIO>
   </EXPORTFORMATS>
@@ -270,6 +352,7 @@
     <MODULE id="juce_gui_basics" showAllCode="0" useLocalCopy="0"/>
     <MODULE id="juce_gui_extra" showAllCode="0" useLocalCopy="0"/>
     <MODULE id="juce_opengl" showAllCode="0" useLocalCopy="0"/>
+    <MODULE id="juce_osc" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="juce_video" showAllCode="0" useLocalCopy="0"/>
   </MODULES>
   <JUCEOPTIONS/>

@@ -17,6 +17,8 @@
 
 #include "LockFreeParamChangeSender.h"
 
+#include "OscDefines.h"
+
 namespace Miam {
     
     
@@ -56,7 +58,7 @@ namespace Miam {
         
         // - - - - - Construction & destruction - - - - -
         public :
-        NetworkModel(MatrixRouterAudioProcessor& _model, std::string _oscAddress = "/miam/matrix", std::string _oscZeroMatrixSuffix = "/set_to_zero");
+        NetworkModel(MatrixRouterAudioProcessor& _model, std::string _oscAddress = Miam_OSC_Matrix_Address, std::string _oscZeroMatrixSuffix = Miam_OSC_Set_to_Zero_Address);
         ~NetworkModel();
         
         
@@ -73,7 +75,6 @@ namespace Miam {
         /// \Brief Not thread-safe at the moment !
         std::string GetOscAddress() {return oscAddress;}
         std::string GetOscZeroMatrixAddress() {return oscAddress + oscZeroMatrixSuffix;}
-        std::vector<std::string> GetOscCommandsHelp();
         
         // - - - - - Asynchronous OSC processing - - - - -
         private :

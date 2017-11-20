@@ -27,6 +27,15 @@ EditableArea::~EditableArea()
 }
 
 
+void EditableArea::SetActive(bool activate)
+{
+    isActive = activate;
+    
+    if (isActive)
+        SetOpacityMode(OpacityMode::High);
+    else
+        SetOpacityMode(OpacityMode::Mid);
+}
 
 
 

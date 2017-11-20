@@ -13,13 +13,15 @@
 #include <memory>
 
 #include "IGraphicSessionManager.h"
-#include "SpatPresenter.h"
 #include "SpatArea.h"
 
 #include "SpatInterpolator.hpp"
 
 namespace Miam
 {
+    // Forward declarations
+    class SpatPresenter;
+    
     class GraphicSpatSessionManager : public IGraphicSessionManager
     {
         

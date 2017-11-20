@@ -23,6 +23,8 @@
 #ifndef IDRAWABLEAREA_H_INCLUDED
 #define IDRAWABLEAREA_H_INCLUDED
 
+#include <memory>
+
 #include "JuceHeader.h"
 
 #include "boost/property_tree/ptree.hpp"
@@ -43,6 +45,17 @@ class SceneCanvasComponent;
 
 namespace Miam
 {
+    // Mise ici parce que les aires seulement sont concernées par l'opacité...
+    enum class OpacityMode {
+        Independent,
+        DependingOnExcitement,
+        
+        Low, ///< Lowest possible opacity for an area
+        Mid, ///< Medium opacity
+        High ///< High opacity, but not totally opaque
+    };
+    
+    
     /// /brief For menus creation by IDs, etc
     struct AreaDefaultType
     {
@@ -72,7 +85,7 @@ namespace Miam
         IDrawableArea(){}
         virtual ~IDrawableArea() {}
         /// \brief To be overriden within any concrete area that inherits from this.
-        virtual IDrawableArea* Clone() const = 0;
+        virtual std::shared_ptr<IDrawableArea> Clone() const = 0;
         
         
         
@@ -92,16 +105,21 @@ namespace Miam
         
         // ----- Setters and Getters -----
         
-        virtual int64_t GetId() = 0;
+        virtual int64_t GetId() const = 0;
         virtual void SetId(int64_t _Id) = 0;
-        virtual Colour GetFillColour() = 0;
+        virtual Colour GetFillColour() const = 0;
         virtual void SetFillColour(Colour newColour) = 0;
 		virtual void SetAlpha(float newAlpha) = 0;
-        virtual void EnableLowOpacityMode(bool enable) = 0;
+        virtual float GetAlpha() const = 0;
+        virtual void SetOpacityMode(OpacityMode enable) = 0;
+        virtual OpacityMode GetOpacityMode() const = 0;
+        virtual void SetRenderingScale(double renderingScale_) = 0;
         
         /// \brief Sets the name that could be displayed on screen next to the center
         virtual void SetName(String newName) = 0;
-        
+        protected :
+        virtual float getLowFillOpacity() const = 0;
+        public :
         
         
         // - - - - - XML import/export - - - - -

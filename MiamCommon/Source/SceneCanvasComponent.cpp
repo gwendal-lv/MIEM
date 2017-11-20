@@ -29,6 +29,8 @@ SceneCanvasComponent::SceneCanvasComponent() :
 
 SceneCanvasComponent::~SceneCanvasComponent()
 {
+    openGlContext.detach();
+    DBG("SceneCanvasComponent : destruction arrive à son terme");
 }
 
 void SceneCanvasComponent::CompleteInitialization(std::shared_ptr<MultiSceneCanvasInteractor> _canvasManager)
@@ -59,13 +61,7 @@ void SceneCanvasComponent::resized()
     // Actualization of all areas graphical objets, if Presenter is accessible (not at first time)
     if (auto manager = canvasManager.lock())
     {
-        // We update ALL areas NOW, to avoid a consequent amount of calculus on
-        // scene change (which should happen as fast as possible)
-        for (size_t i=0;i<manager->GetScenesCount();i++)
-        {
-            for (size_t j=0 ; j<manager->GetScene(i)->GetDrawableObjectsCount() ; j++)
-                manager->GetScene(i)->GetDrawableObject(j)->CanvasResized(this);
-        }
+        manager->OnResized();
     }
 }
 
@@ -85,13 +81,13 @@ void SceneCanvasComponent::renderOpenGL()
 	//DBG("render : " + getName());
     auto manager = canvasManager.lock();
     
-    const float desktopScale = (float) openGlContext.getRenderingScale();
+    const double desktopScale = openGlContext.getRenderingScale();
     std::unique_ptr<LowLevelGraphicsContext> glRenderer (createOpenGLGraphicsContext (openGlContext,
                                                                                     roundToInt (desktopScale * getWidth()),
                                                                                     roundToInt (desktopScale * getHeight())));
     Graphics g(*glRenderer);
     
-    g.addTransform(AffineTransform::scale(desktopScale));
+    g.addTransform(AffineTransform::scale((float) desktopScale));
     
     // Pure black background
     g.fillAll (Colours::black);
@@ -103,24 +99,50 @@ void SceneCanvasComponent::renderOpenGL()
         g.drawRect(1, 1, getWidth()-2, getHeight()-2, 2);
     }
     
-    // Duplication of the drawable objects for thread-safe rendering
+    
+    // - - - - - THIRD Duplication of the drawable objects for thread-safe rendering, - - - - -
+    // Lorsque nécessaire seulement !
     manager->LockAsyncDrawableObjects();
     
-    // Not a resize but just a pre-allocation (to avoid empty shared ptrs constructing)
-    std::vector<std::shared_ptr<IDrawableArea>> duplicatedAreas;
-    duplicatedAreas.reserve(manager->GetAsyncDrawableObjects().size());
+    
+    bool areasCountChanged = (manager->GetAsyncDrawableObjects().size() != duplicatedAreas.size());
+    // POUR L'INSTANT ALGO BÊTE
+    // on resize le vecteur : la construction des shared n'est pas grave, leur bloc de contrôle reste
+    // en mémoire finalement (on utilisera reset() )
+    if (areasCountChanged)
+    {
+        canvasAreasPointersCopies.resize(manager->GetAsyncDrawableObjects().size());
+        duplicatedAreas.resize(manager->GetAsyncDrawableObjects().size());
+    }
+    // Vérification simple de chaque aire 1 par 1
+    size_t itIndex = 0;
     for (auto it = manager->GetAsyncDrawableObjects().begin() ;
          it != manager->GetAsyncDrawableObjects().end() ;
          ++it)
     {
-        duplicatedAreas.push_back(std::shared_ptr<IDrawableArea>( (*it)->Clone() ) );
+        // S'il y a eu un changement : on re-crée un pointeur déjà, puis
+        // on fait effectivement la copie d'un nouvel objet
+        if (canvasAreasPointersCopies[itIndex] != (*it))
+        {
+            canvasAreasPointersCopies[itIndex] = (*it);
+            duplicatedAreas[itIndex] = (*it)->Clone();
+        }
+        // Double compteur
+        itIndex++;
     }
     
     manager->UnlockAsyncDrawableObjects();
     
-    // Areas painting (including exciters if existing)
+    
+    // - - - - - Areas painting (including exciters if existing) - - - - -
+    // Sans bloquer, du coup, les autres threads (pour réactivité max...)
     for (size_t i=0;i<duplicatedAreas.size();i++)
+    {
+        // Peut mettre à jour des images et autres (si l'échelle a changé)
+        duplicatedAreas[i]->SetRenderingScale(desktopScale);
+        // Dessin effectif
         duplicatedAreas[i]->Paint(g);
+    }
     
     
     // Call to a general Graphic update on the whole Presenter module
@@ -129,13 +151,13 @@ void SceneCanvasComponent::renderOpenGL()
     
     // Time measures just before swap (or the closer that we can get to the swaps)
     displayFrequencyMeasurer.OnNewFrame();
+    /*
     if (selectedForEditing)
     {
         if (displayFrequencyMeasurer.IsFreshAverageAvailable())
-        {
-            //DBG(displayFrequencyMeasurer.GetInfo());
-        }
+            DBG(displayFrequencyMeasurer.GetInfo());
     }
+     */
     // Forced sleep if drawing is too fast
     double underTime = desiredPeriod_ms - displayFrequencyMeasurer.GetLastDuration_ms();
     if (underTime > 0.0)
@@ -147,7 +169,8 @@ void SceneCanvasComponent::renderOpenGL()
 
 void SceneCanvasComponent::openGLContextClosing()
 {
-    
+    // Méthode même pas appelée dans Android... D'après la doc Juce au 30 octobre 2017
+    DBG("SceneCanvasComponent : closing OpenGL Context");
 }
 
 

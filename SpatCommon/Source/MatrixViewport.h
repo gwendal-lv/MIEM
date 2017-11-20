@@ -65,7 +65,7 @@ namespace Miam
         
         // - - - - - Juce graphics - - - - -
         
-        void paint (Graphics& g) override
+        void paint (Graphics& /*g*/) override
         {
         }
         
@@ -76,7 +76,7 @@ namespace Miam
         
         // - - - - - Callbacks - - - - -
 
-        void visibleAreaChanged (const Rectangle< int > &newVisibleArea) override
+        void visibleAreaChanged (const Rectangle< int > & /*newVisibleArea*/) override
         {
             parent->OnViewportVisibleAreaChanged();
         }

@@ -13,7 +13,7 @@
 
 #include <iostream>
 
-#include "IPresenter.h"
+#include "SpatPresenter.h"
 
 #include "AppMode.h"
 #include "SpatType.h"
@@ -37,7 +37,7 @@ namespace Miam {
 	/// repositories (the model), and formats it for display in the view".
 	///
 	/// \remark Usual GUI controls (created from the Projucer) however belong to the View.
-    class Presenter : public IPresenter
+    class Presenter : public SpatPresenter
     {
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
@@ -78,13 +78,27 @@ namespace Miam {
         ///
         /// Finished self-contruction, and also the construction of sub-modules
         void CompleteInitialisation(Model* _model);
-        
+        void LoadFirstSession(std::string commandLine);
         
         virtual void Update() override;
         
         
         // Events from the View
         AppMode appModeChangeRequest(AppMode newAppMode);
+        
+        // Event from the Model
+        /// \brief Processes the data then displays it. An empty tree means
+        /// that the connection failed.
+        void OnNewConnectionStatus(bool isConnectionEstablished, std::shared_ptr<bptree::ptree> connectionParametersTree);
+        
+        // = = = = = XML loading only = = = = =
+        
+        /// \brief Override qui permet de démarrer le Modèle lorsque le chargement de session est terminé
+        /// (et qui arrête le modèle au début du chargement de session)
+        virtual void LoadSession(std::string filename) override;
+
+        virtual void SetConfigurationFromTree(bptree::ptree&) override;
+
         
     };
     

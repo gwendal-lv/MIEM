@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.0.2
+  Created with Projucer version: 5.2.0
 
   ------------------------------------------------------------------------------
 
@@ -49,8 +49,8 @@ namespace Miam {
 */
 class SpatStatesEditionComponent  : public Component,
                                     public ISlidersMatrixListener,
-                                    public ButtonListener,
-                                    public ComboBoxListener
+                                    public Button::Listener,
+                                    public ComboBox::Listener
 {
 public:
     //==============================================================================
@@ -64,7 +64,7 @@ public:
     /// \brief Empty function : we'll deal with this editor with full
     /// up-to-date matrices only (to prevent any error with notifying
     /// and being notified of modifications...)
-    void OnSliderValueChanged(int row, int col, double value) override {}
+    void OnSliderValueChanged(int /*row*/, int /*col*/, double /*value*/) override {}
     // same thing (empty function, we save entire matrices only)
     void OnMatrixZeroed() override {}
 

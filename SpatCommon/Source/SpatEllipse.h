@@ -28,7 +28,9 @@ namespace Miam
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
-        
+        protected :
+        virtual std::shared_ptr<SpatArea> getCastedSharedFromThis() override
+        { return std::static_pointer_cast<SpatEllipse>(shared_from_this()); }
         
         
         // = = = = = = = = = = METHODS = = = = = = = = = =
@@ -45,7 +47,8 @@ namespace Miam
         
         virtual ~SpatEllipse() {}
         
-        virtual IDrawableArea* Clone() const override {return new SpatEllipse(*this);}
+        virtual std::shared_ptr<IDrawableArea> Clone() const override
+        { return std::make_shared<SpatEllipse>(*this); }
         
         
         

@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.0.2
+  Created with Projucer version: 5.2.0
 
   ------------------------------------------------------------------------------
 
@@ -50,8 +50,8 @@ namespace Miam {
 class OscMatrixComponent  : public Component,
                             public ISlidersMatrixListener,
                             public TextEditor::Listener,
-                            public ButtonListener,
-                            public SliderListener
+                            public Button::Listener,
+                            public Slider::Listener
 {
 public:
     //==============================================================================

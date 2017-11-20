@@ -69,20 +69,8 @@ bool NetworkModel::SetUdpPort(int _udpPort, bool notifyModel)
         return true;
     }
 }
-std::vector<std::string> NetworkModel::GetOscCommandsHelp()
-{
-    std::vector<std::string> returnStrings;
-    std::string int32str = " (32 bits integer) ";
-    std::string float32str = " (32 bits float) ";
-    
-    returnStrings.push_back("OSC commands available:");
-    returnStrings.push_back("---> '" + GetOscAddress() + " [input] [output] [volume]' sets one coefficient of the matrix");
-    returnStrings.push_back("[input]" + int32str + "index (starting from 0) of the input channel to be routed to [output]");
-    returnStrings.push_back("[output]" + int32str + "index (starting from 0) of the output channel");
-    returnStrings.push_back("[volume]" + float32str + "linear routing volume within [ 0.0 ; 2.0 ]");
-    returnStrings.push_back("---> '" + GetOscZeroMatrixAddress() + "' sets all coefficients of the matrix to zero");
-    return returnStrings;
-}
+
+
 
 // =================== Asynchronous OSC processing ===================
 void NetworkModel::oscMessageReceived(const OSCMessage& message)

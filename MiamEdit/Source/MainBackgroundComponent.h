@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.0.2
+  Created with Projucer version: 5.2.0
 
   ------------------------------------------------------------------------------
 
@@ -50,7 +50,7 @@ namespace Miam {
                                                                     //[/Comments]
 */
 class MainBackgroundComponent  : public Component,
-                                 public ButtonListener
+                                 public Button::Listener
 {
 public:
     //==============================================================================
@@ -94,7 +94,6 @@ private:
     ScopedPointer<TextButton> scenesTextButton;
     ScopedPointer<TextButton> hardwareConfTextButton;
     ScopedPointer<TextButton> startTextButton;
-    ScopedPointer<Label> label;
     ScopedPointer<TextButton> fileTextButton;
 
 

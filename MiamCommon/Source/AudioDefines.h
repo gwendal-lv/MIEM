@@ -16,7 +16,13 @@
 #define Miam_MaxVolume_dB               (6.0)
 #define Miam_MaxVolume                  (1.9952623149688)
 
+#define Miam_SignificantVolumeDifference_dB (0.1)
+
 // Overall maxima (particular applications, VSTs for example, might not
 // tolerate such numbers of inputs/outputs)
-#define Miam_MaxNumInputs               64
-#define Miam_MaxNumOutputs              64
+#define Miam_MaxNumInputs               (64)
+#define Miam_MaxNumOutputs              (64)
+
+// Plus cette valeur est grande, plus les volumes sont déformés
+// de sorte qu'on ait des + de précision pour les faibles volumes
+#define Miam_LowVolumePrecisionFactor   (5)

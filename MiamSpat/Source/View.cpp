@@ -16,9 +16,12 @@ using namespace Miam;
 
 
 // Default constructor
-View::View(MainContentComponent* _mainContentComponent)
+View::View(DocumentWindow* mainWindow_, MainContentComponent* mainContentComponent_)
+:
+SpatView(mainWindow_)
 {
-    mainContentComponent = _mainContentComponent;
+    mainWindow = mainWindow_;
+    mainContentComponent = mainContentComponent_;
     
     
     mainContentComponent->SetMiamView(this);
@@ -72,12 +75,12 @@ void View::ButtonClicked(const String& /*name*/)
 
 void View::ChangeAppMode(AppMode newAppMode)
 {
-    std::cerr << "Changement de mode à implémenter (mode " << (int)(newAppMode) << std::endl;
+    std::cerr << "[VIEW] Changement de mode à implémenter (mode " << (int)(newAppMode) << ")" << std::endl;
     //throw std::runtime_error("Unimplemented behavior on app mode change");
 }
 void View::DisplayInfo(const String& message)
 {
-    throw std::runtime_error("Unimplemented behavior on info display request (info = " + message.toStdString());
+    mainContentComponent->GetBackgroundComponent()->DisplayInfo(message);
 }
 
 

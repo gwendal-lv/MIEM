@@ -12,7 +12,9 @@
 #define MIAMMATH_H_INCLUDED
 
 #ifdef _MSC_VER
-#define _USE_MATH_DEFINES // for C++  
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES // for C++
+#endif
 #include <math.h>
 #endif
 
@@ -60,9 +62,24 @@ namespace Miam
 
 		static double ComputePositiveAngle(bpt p);
         
+        /// \brief Computes the intersection point between the lines AB and CD.
 		static Point<double> ComputeIntersectionPoint(Point<double> A, Point<double> B, Point<double> C, Point<double> D);
 
 		static bpt ComputeIntersectionPoint(bpt A, bpt B, bpt C, bpt D);
+        
+        /// \brief Remet la valeur dans l'intervalle
+        ///
+        /// Parce que ce n'est pas encore dans la STL avec le C++11...
+        template<typename T>
+        inline static T Clamp(T value, T lowerBound, T upperBound)
+        {
+            if (value < lowerBound)
+                return lowerBound;
+            else if (value > upperBound)
+                return upperBound;
+            else
+                return value;
+        }
    };
     
     

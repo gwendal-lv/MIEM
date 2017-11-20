@@ -23,15 +23,25 @@ namespace bptree = boost::property_tree;
 namespace Miam
 {
     
+    
+    typedef struct Index2d {
+        size_t i;
+        size_t j;
+    } Coord2d;
+    
+    
+    
     /// \brief Sparse matrix optimized for computation efficiency, and
-    /// not for memory efficiency. Everything is statically allocated on the stack
+    /// not for memory efficiency. Everything is allocated during construction.
+    ///
+    /// On garde quand même un accès direct aux coefficients ! Puisque tout est alloué d'avance.
     ///
     /// T is a type that std::abs can process
     /// matrix of N rows, and M columns
     ///
     /// ZT10 is the integer power of ten that allow us to compute the actual
     /// zero-threshold
-    /// (as float ain't authorized in templates)
+    /// (as float is not authorized in templates)
     ///
     /// Needs at least 2 * N * M * sizeof(T) bytes
     template<typename T, size_t N, size_t M, int ZT10>
@@ -48,8 +58,8 @@ namespace Miam
         size_t nonZeroIndexes[N*M];
         const size_t endIndex = N*M;
         // Stores the (maybe inexistant) index of the last useful coeff of the matrix
-        int indexOfLastNonZeroIndex = -1;
-        size_t iteratorPos = 0;
+        int indexOfLastNonZeroIndex;
+        size_t iteratorPos;
         
         
         // = = = = = = = = = = METHODS = = = = = = = = = =
@@ -60,7 +70,7 @@ namespace Miam
         SparseMatrix() :
         zeroThreshold( (T) std::pow((long double)10.0, (long double)ZT10) )
         {
-            reinitMatrix();
+            Clear();
         }
         // Copy constructor
         SparseMatrix(SparseMatrix<T,N,M,ZT10> & originalMatrix) :
@@ -75,10 +85,10 @@ namespace Miam
         SparseMatrix(T* rawDenseMatrix) :
         zeroThreshold( (T) std::pow((long double)10.0, (long double)ZT10) )
         {
-            reinitMatrix();
+            Clear();
             for (size_t k=0 ; k<endIndex ; k++)
             {
-                if ( ! isNegligible(rawDenseMatrix[k]) )
+                if ( ! IsNegligible(rawDenseMatrix[k]) )
                 {
                     matrix[k] = rawDenseMatrix[k];
                     indexOfLastNonZeroIndex++;
@@ -88,15 +98,19 @@ namespace Miam
         }
         
         // Auxiliary functions
-        private :
-        void reinitMatrix()
+        public :
+        void Clear()
         {
+            indexOfLastNonZeroIndex = -1;
             for (size_t k=0 ; k<endIndex ; k++)
             {
                 matrix[k] = {};
                 nonZeroIndexes[k] = endIndex;
             }
+            
+            iteratorPos = 0;
         }
+        private :
         void copyConstruct(SparseMatrix<T,N,M,ZT10> & originalMatrix)
         {
             indexOfLastNonZeroIndex = originalMatrix.indexOfLastNonZeroIndex;
@@ -108,11 +122,23 @@ namespace Miam
             }
         }
         inline size_t idx(size_t i, size_t j) const { return i*M+j; }
-        inline bool isNegligible(T value) const
-        {return ! (std::abs(value) >= (T)zeroThreshold) ; }
+        public :
+        inline bool IsNegligible(T value) const
+        { return ( std::abs(value) <= (T)zeroThreshold ) ; }
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
+        
+        inline Index2d GetIndex2dFromIndex(size_t index) const
+        {
+            Index2d returnCoord;
+            std::ldiv_t divisionResult = std::ldiv((long)index, (long)M);
+            returnCoord.i = (size_t)divisionResult.quot;
+            returnCoord.j = (size_t)divisionResult.rem;
+            return returnCoord;
+        }
+        
+        
         
         /// \brief Direct assignation from original data
         void operator= (SparseMatrix<T,N,M,ZT10> & originalMatrix)
@@ -123,37 +149,57 @@ namespace Miam
         /// \brief Operator "Get" overloaded (! "Set" not overloaded !)
         ///
         /// k is a global matrix index within [0 ; N*M-1]
-        /// Not used for now, as a class can access private members of other instances
-        //inline T operator() (size_t k) { return matrix[k]; }
+        inline T operator[] (size_t k) const { return matrix[k]; }
+        
         /// \brief Operator "Get" overloaded (! "Set" not overloaded !)
         ///
         /// i,j are the row and col indexes
         inline T operator() (size_t i, size_t j) const { return matrix[idx(i,j)]; }
         
         /// \brief Deals with zero/non-zero cases then sets the coefficient
-        inline void Set(size_t i, size_t j, T value)
+        inline void Set(size_t i, size_t j, T value) { Set(idx(i,j), value); }
+        inline void Set(size_t coeffIndex, T value)
         {
             // Non-zero case : the coeff is added to the list (if it wasn't in)
-            if ( ! isNegligible(value) )
+            if ( ! IsNegligible(value) )
             {
-                matrix[idx(i,j)] = value;
+                // Avant d'écrire effectivement le coeff : s'il était négligeable,
+                // on ne risque pas de le trouver...
+                bool coeffMustBeFound = ! IsNegligible(matrix[coeffIndex]); // was it already non-zero ?
+                
+                // Ensuite on fait l'affectation, et on update les états comme il faut
+                matrix[coeffIndex] = value;
+                
+                // Tant qu'on a pas trouvé le coeff on le cherche
+                // MAIS seulement si on a une chance de le trouver...
                 bool foundCoeff = false; // was it already there ?
-                for (size_t k=0 ; k<endIndex && !foundCoeff ; k++)
+                if (coeffMustBeFound)
                 {
-                    if (nonZeroIndexes[k] == idx(i,j))
-                        foundCoeff = true;
+                    for (size_t k=0 ; k<endIndex && !foundCoeff ; k++)
+                    {
+                        if (nonZeroIndexes[k] == coeffIndex)
+                            foundCoeff = true;
+                    }
                 }
-                if (!foundCoeff) // if is wasn't in yet
+                // if is wasn't in yet : là on ajoute effectivement, à la fin
+                if (!foundCoeff)
                 {
                     indexOfLastNonZeroIndex++;
-                    nonZeroIndexes[indexOfLastNonZeroIndex] = idx(i,j);
+                    nonZeroIndexes[indexOfLastNonZeroIndex] = coeffIndex;
                 }
+#ifdef __MIAM_DEBUG
+                // Erreur pour le débug.... Si on est dans ce cas là, c'est qu'il y a un truc
+                // qui a chié qqpart (mais çe ne devrait plus arriver)
+                if (coeffMustBeFound && !foundCoeff)
+                    throw std::logic_error("Problème logique dans une matrice creuse ! Coefficient non-nul qui devrait être trouvé dans la liste, mais qui n'est plus là en pratique...");
+#endif
             }
             // Else, we might need to remove it from the list
             else
             {
-                // If wasn't zero, we must find and remove it
-                if ( ! isNegligible(matrix[idx(i,j)]) )
+                // If wasn't zero (before set),
+                // we must find and remove it
+                if ( ! IsNegligible(matrix[coeffIndex]) )
                 {
                     size_t k=0;
                     bool foundCoeff = false;
@@ -163,7 +209,7 @@ namespace Miam
                         if (! foundCoeff) // si on cherche toujours
                         {
                             // suppression if necessary
-                            if (nonZeroIndexes[k] == idx(i,j))
+                            if (nonZeroIndexes[k] == coeffIndex)
                             {
                                 foundCoeff = true;
                                 nonZeroIndexes[k] = endIndex;
@@ -176,9 +222,9 @@ namespace Miam
                         k++;
                     }
                 }
-                // Else, true zero setting (must be unuseful, but...)
-                else
-                    matrix[idx(i,j)] = {};
+                
+                // In any case : ACTUAL true zero setting (must be unuseful, but...)
+                matrix[coeffIndex] = {};
             }
         }
         
@@ -190,34 +236,70 @@ namespace Miam
         /// The start might be the end as well...
         inline void ResetIterator() {iteratorPos = 0;}
         
-        /// \Returns the current iterator value
+        /// \Returns The current iterator value, pointing to a non-null coefficient.
         inline size_t GetIterator() const {return iteratorPos;}
-        /// \Returns the value pointed at by the current internal iterator.
+        /// \Returns The non-zero value pointed at by the current internal iterator.
         inline T GetIteratorValue() const { return matrix[nonZeroIndexes[iteratorPos]]; }
         /// \Returns The 1d matrix coordinate of the value pointed at by the current
         /// internal iterator
         inline size_t GetIterator1dCoord() const { return nonZeroIndexes[iteratorPos]; }
-        typedef struct Index2d {
-            size_t i;
-            size_t j;
-        } Coord2d;
         /// \Returns The 2d matrix coordinates of the value pointed at by the current
         /// internal iterator
-        inline Index2d GetIterator2dCoord() const
-        {
-            Index2d returnCoord;
-            std::ldiv_t divisionResult = std::ldiv((long)nonZeroIndexes[iteratorPos], (long)M);
-            returnCoord.i = (size_t)divisionResult.quot;
-            returnCoord.j = (size_t)divisionResult.rem;
-            return returnCoord;
-        }
+        inline Index2d GetIterator2dCoord() const { return GetIndex2dFromIndex(nonZeroIndexes[iteratorPos]); }
         
-        /// \brief Increments the iterator
+        /// \brief Increments the iterator. The iterator will then point to the next
+        /// non-zero coefficient of the matrix.
         inline void IncIterator() {iteratorPos++;}
         
         /// \brief Value that is >= 0
         inline size_t GetEndIterator() const {return (size_t)indexOfLastNonZeroIndex+1;}
         
+        
+        
+        // = = = = = = = = = = ARITHMETIC OPERATIONS = = = = = = = = = =
+        public :
+        
+        /// \brief La seule manière d'additionner... L'opérateur avec 2 arguments doit renvoyer
+        /// un nouvel objet (ce qui fait une grosse allocation mémoire ou de grosses copies de données)
+        ///
+        /// Peut prendre beaucoup de temps pour des matrices quasi-pleines, évidemment.
+        /// Si S non-nuls et T non-nuls, complexité max S*T
+        void operator+=(SparseMatrix<T,N,M,ZT10>& matrixToAdd)
+        {
+            // D'abord on parcourt tous les termes non-nuls de la matrice en argument
+            for (matrixToAdd.ResetIterator() ;
+                 matrixToAdd.GetIterator() < matrixToAdd.GetEndIterator() ;
+                 matrixToAdd.IncIterator() )
+            {
+                Coord2d coeff2dCoord = matrixToAdd.GetIterator2dCoord();
+                // On fait juste un "set" et on laisse cette méthode faire toutes les recherches
+                // nécessaires...
+                // En tout cas les temps d'accès ici sont négligeables.
+                Set(coeff2dCoord.i, coeff2dCoord.j,
+                    matrixToAdd.GetIteratorValue() + matrix[matrixToAdd.GetIterator1dCoord()]);
+            }
+        }
+        
+        /// \brief Fonction qui fait "multiplier l'argument par un scalaire
+        /// puis l'ajouter à this" de
+        /// manière optimisée.
+        ///
+        /// L'optimisation serait plus difficile via surcharge d'opérateurs. Code très proche de la
+        /// surcharge de +=
+        void MultiplyAndAccumulate(SparseMatrix<T,N,M,ZT10>& matrixToMultAndAdd, T factor)
+        {
+            // D'abord on parcourt tous les termes non-nuls de la matrice en argument
+            for (matrixToMultAndAdd.ResetIterator() ;
+                 matrixToMultAndAdd.GetIterator() < matrixToMultAndAdd.GetEndIterator() ;
+                 matrixToMultAndAdd.IncIterator() )
+            {
+                Coord2d coeff2dCoord = matrixToMultAndAdd.GetIterator2dCoord();
+                // On fait juste un "set" et on laisse cette méthode faire le nécessaire
+                Set(coeff2dCoord.i, coeff2dCoord.j,
+                    matrixToMultAndAdd.GetIteratorValue() * factor
+                    + matrix[matrixToMultAndAdd.GetIterator1dCoord()]);
+            }
+        }
         
         
         // = = = = = = = = Property tree (for XML) import/export = = = = = = = = =

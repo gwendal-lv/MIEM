@@ -57,12 +57,6 @@ void InteractivePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 {
     DrawablePolygon::CanvasResized(_parentCanvas);
     
-    
-    // Pixel contour points
-	contourPointsInPixels.clear();
-	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scale(parentCanvas->getWidth(), parentCanvas->getHeight());
-	boost::geometry::transform(contourPoints, contourPointsInPixels, scale);
-    
     // Finally, we update sub triangles
     updateSubTriangles();
 	computeSurface(); // mettre dans updateSubTriangle?
@@ -77,9 +71,13 @@ void InteractivePolygon::updateSubTriangles()
     subTriangles.clear();
 	
 	// We begin by the annoying one
-	subTriangles.push_back(SubTriangle(centerInPixels, contourPointsInPixels.outer().back(), contourPointsInPixels.outer().front()));
+    // ATTENTION les contour points forment un polygone boost FERMÉ
+    // c-à-d que le premier et le dernier point sont les mêmes
+	subTriangles.push_back(SubTriangle(centerInPixels,
+                                       contourPointsInPixels.outer().at(contourPointsInPixels.outer().size()-2), // avant-dernier, car premier et dernier sont identiques
+                                   contourPointsInPixels.outer().front()));
 	// Then add the others
-	for (size_t i = 0; i <contourPointsInPixels.outer().size() - 1; i++)
+	for (size_t i = 0; i <contourPointsInPixels.outer().size() - 2; i++)
 	{
 		subTriangles.push_back(SubTriangle(centerInPixels, contourPointsInPixels.outer().at(i), contourPointsInPixels.outer().at(i+1)));
 	}
@@ -115,7 +113,11 @@ double InteractivePolygon::ComputeInteractionWeight(bpt T)
     // else, we can compute an angle using atan and the 4 quadrants
     else
     {
+        // Angle à partir de l'axe x (horizontal vers la droite)
+        // Dans le sens trigo avec l'axe y qui va vers le bas
+        // (et donc dans le horaire avec les conventions math habituelles)
         double angle = Math::ComputePositiveAngle(GT);
+        //
         weight = findSubTriangle(angle).ComputeInteractionWeight(T);
     }
     

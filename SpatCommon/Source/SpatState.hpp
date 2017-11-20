@@ -15,9 +15,11 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <map>
+#include <numeric> // std::accumulate
 
 #include "SparseMatrix.hpp"
-#include "AudioDefines.h"
+#include "AudioUtils.hpp"
 
 #include "SpatArea.h"
 
@@ -62,8 +64,16 @@ namespace Miam
         /// \brief List of areas that represent this spatialization state
         ///
         /// Not the most optimal STL container (research is not optimized)
+        ///
+        /// \remark Pour accès synchrone aux aires graphiques ! Donc pour édition offline seulement...
+        /// On mode de jeu, on devra travailler avec les UIDs qui viennt des paquets lock-free
         std::vector< std::weak_ptr<SpatArea> > linkedAreas;
         
+        /// \brief Excitations en cours, issues d'objets graphiques quelconques référencés par leur UID
+        std::map< uint64_t, T > areaToExcitement;
+        
+        /// Copie Thread-safe d'une donnée qu'on pourrait retrouver depuis les linkedAreas
+        T excitement;
         
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
@@ -98,6 +108,8 @@ namespace Miam
             else
                 throw std::runtime_error("Spat state is linked to a non-existant area");
         }
+        
+        T GetExcitement() const {return excitement;}
         
         
         // = = = = = = = = = = METHODS = = = = = = = = = =
@@ -144,6 +156,41 @@ namespace Miam
                     areaPtr->LinkToSpatState(nullptr);
             }
         }
+        
+        
+        // - - - - - Interpolation computation - - - - -
+        
+        /// \brief Sauvegarde de l'excitation qui vient d'arriver, en utilisant/actualisation
+        /// la map qui permet d'associer des UIDs à des excitations
+        virtual void OnNewExcitementAmount(uint64_t senderUID, T newExcitement)
+        {
+            // Cas 1 : élement existe
+            try {
+                double& concernedExcitement = areaToExcitement.at(senderUID); // may throw except
+                // Cas 1.a : suppression d'un elmt existant, si excitation trop faible
+                if (AudioUtils<T>::IsVolumeNegligible(newExcitement))
+                    areaToExcitement.erase(senderUID);
+                // Cas 1.b : simpe mise à jour d'un elmt existant
+                else
+                    concernedExcitement = newExcitement;
+            }
+            // Cas 2 : insertion d'un nouvel elmt dans la map
+            catch (std::out_of_range & /*e*/) { // si on a pas trouvé la clé dans la map
+                 // on teste quand même si pas trop faible
+                if ( ! AudioUtils<T>::IsVolumeNegligible(newExcitement) )
+                    areaToExcitement[senderUID] = newExcitement; // insertion automatique via []
+            }
+            
+            // à la fin : update direct de la somme (accumulate ne fonctionne pas sur des elts de type map)
+            excitement = {};
+            for ( auto&& mapPair : areaToExcitement)
+                excitement += mapPair.second;
+            
+            /*
+            std::cout << "Arrivée aire #" << senderUID << ", excitation=" << newExcitement << " ---> spatState #" << index << " , " << areaToExcitement.size() << " excitations total=" << excitement << std::endl;
+             */
+        }
+        
         
         
         // - - - - - Output channels (speakers) : add, delete, swap, ... - - - - -

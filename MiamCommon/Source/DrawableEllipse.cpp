@@ -99,11 +99,11 @@ DrawableEllipse::~DrawableEllipse()
 void DrawableEllipse::Paint(Graphics& g)
 {
 	g.setColour(fillColour);
-    g.setOpacity(enableLowOpacityMode ? getLowFillOpacity() : fillOpacity);
+    g.setOpacity(GetAlpha());
 	g.fillPath(contour);
 
 	g.setColour(contourColour);
-    g.setOpacity(enableLowOpacityMode ? getLowFillOpacity() : fillOpacity);
+    g.setOpacity(GetAlpha());
 	g.strokePath(contour, PathStrokeType(contourWidth));
 
 	// Parent's drawings on top of these ones
@@ -115,6 +115,12 @@ void DrawableEllipse::CanvasResized(SceneCanvasComponent* _parentCanvas)
 	DrawableArea::CanvasResized(_parentCanvas);
 
 	createJucePolygon(parentCanvas->getWidth(), parentCanvas->getHeight());
+        
+    // Pixel contour points
+    contourPointsInPixels.clear();
+    boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scaler(parentCanvas->getWidth(), parentCanvas->getHeight());
+    boost::geometry::transform(contourPoints, contourPointsInPixels, scaler);
+
 }
 
 void DrawableEllipse::recreateContourPoints(int width, int height)

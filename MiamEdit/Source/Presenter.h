@@ -89,7 +89,7 @@ namespace Miam {
         /// constructed (happens after the construction of this class)
         ///
         /// Finished self-contruction, and also the construction of sub-modules
-        void CompleteInitialisation(Model* _model, std::string& commandLine);
+        void CompleteInitialisation(Model* _model);
         
         // Events from the View
         AppMode appModeChangeRequest(AppMode newAppMode);
@@ -98,6 +98,12 @@ namespace Miam {
         
         void Update() override;
         
+        /// \brief Fonction qui définit le comportement initial de l'application :
+        /// on peut ouvrir la session passée en ligne de commande, ou bien créer une nouvelle
+        /// session (vide, ou à partir de la session par défaut)
+        void ManageInitialSession(std::string commandLine);
+        /// \brief Comportement final de l'application
+        void OnShutdownRequest();
         
         // - - - - -  XML import/export - - - - -
         virtual void LoadSession(std::string filename) override;
