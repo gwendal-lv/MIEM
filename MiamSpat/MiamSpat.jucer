@@ -78,6 +78,8 @@
         <FILE id="J6QHjo" name="SpatArea.h" compile="0" resource="0" file="../SpatCommon/Source/SpatArea.h"/>
         <FILE id="mFlpy0" name="SpatEllipse.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatEllipse.cpp"/>
         <FILE id="JC2slY" name="SpatEllipse.h" compile="0" resource="0" file="../SpatCommon/Source/SpatEllipse.h"/>
+        <FILE id="g3YoUw" name="SpatFileChoosers.h" compile="0" resource="0"
+              file="../SpatCommon/Source/SpatFileChoosers.h"/>
         <FILE id="RbKrb4" name="SpatPolygon.cpp" compile="1" resource="0" file="../SpatCommon/Source/SpatPolygon.cpp"/>
         <FILE id="CWxYwo" name="SpatPolygon.h" compile="0" resource="0" file="../SpatCommon/Source/SpatPolygon.h"/>
         <FILE id="t9TDiE" name="SpatPresenter.cpp" compile="1" resource="0"

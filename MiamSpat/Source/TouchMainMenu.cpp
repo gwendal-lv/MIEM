@@ -9,6 +9,7 @@
 */
 
 #include "TouchMainMenu.h"
+#include "SpatFileChoosers.h"
 
 #include "Presenter.h"
 
@@ -40,10 +41,7 @@ void TouchMainMenu::ShowMenuAndSendUserAnswer()
 
 void TouchMainMenu::onLoad()
 {
-    FileChooser fileChooser("Chargement d'un fichier",
-                            File::getSpecialLocation(File::SpecialLocationType::userMusicDirectory),
-                            std::string("*.") + Miam_SessionFileExtension,
-                            true);
+	LoadFileChooser fileChooser;
     if ( fileChooser.browseForFileToOpen() )
     {
         File resultFile = fileChooser.getResult();
