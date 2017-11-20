@@ -94,7 +94,7 @@ void AmusingSceneComponent::OnBaseNoteChanged(double newBaseNote)
 
 void AmusingSceneComponent::SetAreaOptionsCenter(bpt center)
 {
-	areaOptions.setCentrePosition(center.get<0>(), center.get<1>());
+	areaOptions.setCentrePosition((int)center.get<0>(), (int)center.get<1>());
 	
 }
 

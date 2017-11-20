@@ -104,8 +104,8 @@ void PlayHead::process()
 		r = speed - ceil(speed);
 		if (r != 0) // not an integer -> find sub and up integer
 		{
-			sub = ceil(position);
-			up = ceil(position + speed);
+			sub = (int)ceil(position);
+			up = (int)ceil(position + speed);
 		}
 		else
 		{
@@ -134,7 +134,7 @@ void PlayHead::process()
 
 void PlayHead::testPosition(int P)
 {
-	bool m_On;
+
 	int m_channel, m_note;
 	uint8 m_velocity;
 

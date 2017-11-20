@@ -15,46 +15,6 @@
               file="Source/BaseMidiSender.h"/>
         <FILE id="ig63jS" name="Metronome.cpp" compile="1" resource="0" file="Source/Metronome.cpp"/>
         <FILE id="mE4MPS" name="Metronome.h" compile="0" resource="0" file="Source/Metronome.h"/>
-        <GROUP id="{E44CA5E1-A684-13FE-D8F5-DC4B3E1F3854}" name="Signals">
-          <GROUP id="{65A02069-7549-345C-A5F2-1BFFC4F73B03}" name="FourierSignals">
-            <FILE id="VcNvcJ" name="FourierSignal.cpp" compile="1" resource="0"
-                  file="Source/FourierSignal.cpp"/>
-            <FILE id="Ip02Yg" name="FourierSignal.h" compile="0" resource="0" file="Source/FourierSignal.h"/>
-            <FILE id="seKUAt" name="SawSignal.cpp" compile="1" resource="0" file="Source/SawSignal.cpp"/>
-            <FILE id="vBtrGh" name="SawSignal.h" compile="0" resource="0" file="Source/SawSignal.h"/>
-            <FILE id="y9vVcN" name="SinusSignal.cpp" compile="1" resource="0" file="Source/SinusSignal.cpp"/>
-            <FILE id="Mw9Q1r" name="SinusSignal.h" compile="0" resource="0" file="Source/SinusSignal.h"/>
-            <FILE id="SN5Trn" name="SquareSignal.cpp" compile="1" resource="0"
-                  file="Source/SquareSignal.cpp"/>
-            <FILE id="SNt2qG" name="SquareSignal.h" compile="0" resource="0" file="Source/SquareSignal.h"/>
-            <FILE id="VpNWOF" name="TriangleSignal.cpp" compile="1" resource="0"
-                  file="Source/TriangleSignal.cpp"/>
-            <FILE id="cFPnOt" name="TriangleSignal.h" compile="0" resource="0"
-                  file="Source/TriangleSignal.h"/>
-          </GROUP>
-          <GROUP id="{50CE76D7-7061-F979-1890-901D215006D3}" name="Oscillators">
-            <FILE id="tkDRtF" name="Modulator.cpp" compile="1" resource="0" file="Source/Modulator.cpp"/>
-            <FILE id="HuWIu9" name="Modulator.h" compile="0" resource="0" file="Source/Modulator.h"/>
-            <FILE id="RWXvHH" name="SinOsc.cpp" compile="1" resource="0" file="Source/SinOsc.cpp"/>
-            <FILE id="vaXAoS" name="SinOsc.h" compile="0" resource="0" file="Source/SinOsc.h"/>
-          </GROUP>
-          <GROUP id="{E2909203-749F-B5D1-6637-EF73C3444761}" name="Utils">
-            <FILE id="zUEQBM" name="AmusingFormatReaderSource.cpp" compile="1"
-                  resource="0" file="Source/AmusingFormatReaderSource.cpp"/>
-            <FILE id="BwO97F" name="AmusingFormatReaderSource.h" compile="0" resource="0"
-                  file="Source/AmusingFormatReaderSource.h"/>
-            <FILE id="s158Ff" name="Amusinus.cpp" compile="1" resource="0" file="Source/Amusinus.cpp"/>
-            <FILE id="Lc1vFR" name="Amusinus.h" compile="0" resource="0" file="Source/Amusinus.h"/>
-          </GROUP>
-          <FILE id="aA8HgK" name="ADSRSignal.cpp" compile="1" resource="0" file="Source/ADSRSignal.cpp"/>
-          <FILE id="a4yfTk" name="ADSRSignal.h" compile="0" resource="0" file="Source/ADSRSignal.h"/>
-          <FILE id="pP6TsS" name="AmuSignal.cpp" compile="1" resource="0" file="Source/AmuSignal.cpp"/>
-          <FILE id="WLTEow" name="AmuSignal.h" compile="0" resource="0" file="Source/AmuSignal.h"/>
-          <FILE id="dl5Hbo" name="Rythme.cpp" compile="1" resource="0" file="Source/Rythme.cpp"/>
-          <FILE id="xHHmqM" name="Rythme.h" compile="0" resource="0" file="Source/Rythme.h"/>
-          <FILE id="dLB0yG" name="Sound.cpp" compile="1" resource="0" file="Source/Sound.cpp"/>
-          <FILE id="LivYiM" name="Sound.h" compile="0" resource="0" file="Source/Sound.h"/>
-        </GROUP>
         <FILE id="wZiM4n" name="AudioManager.cpp" compile="1" resource="0"
               file="Source/AudioManager.cpp"/>
         <FILE id="FcBZyV" name="AudioManager.h" compile="0" resource="0" file="Source/AudioManager.h"/>
@@ -268,20 +228,20 @@
                        headerPath="..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\&#10;..\..\..\"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_core" path="..\..\JUCE5.1\modules"/>
-        <MODULEPATH id="juce_events" path="..\..\JUCE5.1\modules"/>
-        <MODULEPATH id="juce_graphics" path="..\..\JUCE5.1\modules"/>
-        <MODULEPATH id="juce_data_structures" path="..\..\JUCE5.1\modules"/>
-        <MODULEPATH id="juce_gui_basics" path="..\..\JUCE5.1\modules"/>
-        <MODULEPATH id="juce_gui_extra" path="..\..\JUCE5.1\modules"/>
-        <MODULEPATH id="juce_cryptography" path="..\..\JUCE5.1\modules"/>
-        <MODULEPATH id="juce_video" path="..\..\JUCE5.1\modules"/>
-        <MODULEPATH id="juce_opengl" path="..\..\JUCE5.1\modules"/>
-        <MODULEPATH id="juce_audio_basics" path="..\..\JUCE5.1\modules"/>
-        <MODULEPATH id="juce_audio_devices" path="..\..\JUCE5.1\modules"/>
-        <MODULEPATH id="juce_audio_formats" path="..\..\JUCE5.1\modules"/>
-        <MODULEPATH id="juce_audio_processors" path="..\..\JUCE5.1\modules"/>
-        <MODULEPATH id="juce_audio_utils" path="..\..\JUCE5.1\modules"/>
+        <MODULEPATH id="juce_core" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_events" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_graphics" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_data_structures" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_gui_basics" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_gui_extra" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_cryptography" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_video" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_opengl" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_basics" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_devices" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_formats" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_processors" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_utils" path="..\..\JUCE\modules"/>
       </MODULEPATHS>
     </VS2015>
   </EXPORTFORMATS>

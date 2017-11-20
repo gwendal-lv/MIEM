@@ -146,7 +146,7 @@ void DrawableEllipse::recreateContourPoints(int width, int height)
 	bpolygon newContourPoints;
 	boost::geometry::transform(contourPoints, newContourPoints, invTr);
 
-	for (int i = 0; i < newContourPoints.outer().size(); ++i)
+	for (int i = 0; i < (int)newContourPoints.outer().size(); ++i)
 		boost::geometry::multiply_point(newContourPoints.outer().at(i), bpt(newXScale / xScale, newYScale / yScale));
 
 	contourPoints.clear();

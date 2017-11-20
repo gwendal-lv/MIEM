@@ -135,7 +135,7 @@ void TimeLine::setSpeed(float newSpeed)
 		continuous = false;
 	if (newSpeed != speed)
 	{
-		int newPeriod = round((float)currentPeriod / (newSpeed / speed));
+		int newPeriod = (int)round((float)currentPeriod / (newSpeed / speed));
 		for (int i = 0; i < midiTimesSize; i++)
 		{
 			midiTimes[i] = round((double)midiTimes[i] * (double)newPeriod / (double)currentPeriod);
@@ -243,7 +243,6 @@ void TimeLine::process(int time)
 
 		
 		
-		bool m_On;
 		int m_channel, m_note;
 		uint8 m_velocity;
 
@@ -307,7 +306,7 @@ void TimeLine::alignWith(TimeLine *ref, double phase)
 	phase = 1 - phase;
 
 	// now that we have the same period, we apply the phase
-	int newOffset =  round(phase * (double)period);
+	int newOffset =  (int)round(phase * (double)period);
 	if (newOffset < 0)
 		while (newOffset < 0)
 			newOffset += currentPeriod;
@@ -323,13 +322,13 @@ void TimeLine::alignWith(TimeLine *ref, double phase)
 	testMidi();
 }
 
-void TimeLine::applyOffSet(int offset)
+void TimeLine::applyOffSet(int _offset)
 {
 	for (int i = 0; i < midiTimesSize; i++)
 	{
-		midiTimes[i] += offset;
-		midiOffTimes[i] += offset;
-		if (offset > 0)
+		midiTimes[i] += _offset;
+		midiOffTimes[i] += _offset;
+		if (_offset > 0)
 		{
 			while (midiTimes[i] > period)
 				midiTimes[i] -= period;

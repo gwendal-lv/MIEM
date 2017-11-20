@@ -161,7 +161,6 @@ class CustomLookAndFeel : public LookAndFeel_V4
 		{
 			int minInt = (int)ceil(minValue);
 			int maxInt = (int)floor(maxValue);
-			int N = maxInt - minInt; // number of marks to draw
 
 			for (int i = minInt; i <= maxInt; i++)
 			{

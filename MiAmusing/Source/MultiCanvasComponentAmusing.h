@@ -24,8 +24,7 @@ public:
 	MultiCanvasComponentAmusing(Miam::IGraphicSessionManager* _graphicSessionManager);
 	~MultiCanvasComponentAmusing();
 
-	void ShowDeviceOptionsDialog(AudioDeviceManager& deviceManager);
-	/*void CreateDeviceSelector(AudioDeviceManager* deviceManager);*/
+	
 
 	void resized() override;
 

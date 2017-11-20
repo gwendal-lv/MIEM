@@ -24,29 +24,7 @@ MultiCanvasComponentAmusing::~MultiCanvasComponentAmusing()
 	//delete audioSetupComp;
 }
 
-//void MultiCanvasComponentAmusing::CreateDeviceSelector(AudioDeviceManager* deviceManager)
-//{
-//	audioSetupComp = new AudioDeviceSelectorComponent(*deviceManager,
-//		0, 256, 0, 256, true, true, true, false);
-//
-//	options.content.setOwned(audioSetupComp);
-//	Rectangle<int> area(0, 0, getWidth(), getHeight());
-//	options.content->setSize(area.getWidth(), area.getHeight());
-//	options.dialogTitle = "Dialog Window";
-//	show = false;
-//}
 
-void MultiCanvasComponentAmusing::ShowDeviceOptionsDialog(AudioDeviceManager& deviceManager)
-{
-
-	DBG("showDeviceOptionDialog");
-	show = true;
-	
-	//dialogWindow = options.launchAsync();
-
-	/*if (dialogWindow != nullptr)
-		dialogWindow->centreWithSize(getWidth(), getHeight());*/
-}
 
 void MultiCanvasComponentAmusing::resized()
 {

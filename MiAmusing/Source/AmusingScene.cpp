@@ -48,11 +48,11 @@ AmusingScene::~AmusingScene()
 {
 	DBG("areas size" + (String)areas.size());
 	//DBG("associate size " + (String)associateArea.size());
-	for(int i = 0; i< currentExciters.size();i++)
+	for(int i = 0; i< (int)currentExciters.size();i++)
 		if (auto currentCursor = std::dynamic_pointer_cast<Cursor>(currentExciters[i]))
 			if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
 				manager->OnInteraction(std::shared_ptr<AreaEvent>(new AreaEvent(currentCursor, AreaEventType::Deleted, (int)areas.size() + i, shared_from_this())));
-	for (int i = 0; i < areas.size(); i++)
+	for (int i = 0; i < (int)areas.size(); i++)
 		if (auto currentArea = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
 			currentArea->deleteAllCursors();
 }
@@ -89,6 +89,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 		Colours::grey,
 		canvasComponent->GetRatio()));
 	newPolygon->SetActive(false);
+	newPolygon->KeepRatio(true);
 	newPolygon->CanvasResized(canvasComponent);
 	//if (areas.size() > 0)
 	//{
@@ -141,7 +142,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 void AmusingScene::DeleteIntersections(std::shared_ptr<Amusing::CompletePolygon> parent)
 {
 	bool order = true;
-	for (int i = 0; i < areas.size(); i++)
+	for (int i = 0; i < (int)areas.size(); i++)
 	{
 		if (auto parent2 = std::dynamic_pointer_cast<CompletePolygon> (areas[i]))
 		{
@@ -190,7 +191,7 @@ std::shared_ptr<AreaEvent> AmusingScene::DeleteSelectedArea()
 		if (auto selectedCompleteArea = std::dynamic_pointer_cast<CompletePolygon>(selectedArea))
 		{
 			DeleteIntersections(selectedCompleteArea);
-			for (int i = 0; i < currentExciters.size(); i++)
+			for (int i = 0; i < (int)currentExciters.size(); i++)
 				if (auto currentCursor = std::dynamic_pointer_cast<Cursor>(currentExciters[i]))
 					if (currentCursor->isLinkedTo(selectedCompleteArea))
 					{
@@ -200,7 +201,7 @@ std::shared_ptr<AreaEvent> AmusingScene::DeleteSelectedArea()
 						//associateArea.erase(currentCursor);
 						cursorToDeleteID.push_back(i);
 					}
-			for (int i = 0; i < cursorToDeleteID.size(); i++)
+			for (int i = 0; i < (int)cursorToDeleteID.size(); i++)
 				currentExciters.erase(currentExciters.begin() + cursorToDeleteID[i]);
 			selectedCompleteArea->deleteAllCursors();
 		}
@@ -384,7 +385,7 @@ void AmusingScene::AddAllIntersections(std::shared_ptr<Amusing::CompletePolygon>
 				parentTochildArea.insert(std::pair<std::pair<std::shared_ptr<CompletePolygon>, std::shared_ptr<CompletePolygon>>, std::vector<std::shared_ptr<CompletePolygon>>>(std::pair<std::shared_ptr<CompletePolygon>, std::shared_ptr<CompletePolygon>>(parent1, parent2), vec));
 				std::map<std::pair<std::shared_ptr<CompletePolygon>, std::shared_ptr<CompletePolygon>>, std::vector<std::shared_ptr<CompletePolygon>>>::iterator newIt;
 				newIt = parentTochildArea.find(std::pair<std::shared_ptr<CompletePolygon>, std::shared_ptr<CompletePolygon>>(parent1, parent2));
-				for (int j = 0; j < multiE->GetOtherEventsCount(); j++)
+				for (int j = 0; j < (int)multiE->GetOtherEventsCount(); j++)
 				{
 					//TO DO : add a size condition
 					//vec.push_back(std::dynamic_pointer_cast<CompletePolygon>(multiE->GetOtherEvent(j)->GetConcernedArea()));
@@ -401,10 +402,10 @@ void AmusingScene::AddAllIntersections(std::shared_ptr<Amusing::CompletePolygon>
 				//		we use this area as similarity criterion
 				
 				std::vector<bool> intersectionStillExist(it->second.size(),false);
-				for (int i = 0; i < multiE->GetOtherEventsCount(); i++)
+				for (int i = 0; i < (int)multiE->GetOtherEventsCount(); i++)
 				{
 					bool needToAdd = true;
-					for (int j = 0; j < it->second.size(); j++)
+					for (int j = 0; j < (int)it->second.size(); j++)
 					{
 						bpolygon newIntersection = std::dynamic_pointer_cast<CompletePolygon>(multiE->GetOtherEvent(i)->GetConcernedArea())->getPolygon();
 						bpolygon oldIntersection = it->second.at(j)->getPolygon();
@@ -414,7 +415,7 @@ void AmusingScene::AddAllIntersections(std::shared_ptr<Amusing::CompletePolygon>
 						double newArea = 0;
 						std::deque<bpolygon> overlapArea;
 						boost::geometry::intersection(newIntersection,oldIntersection, overlapArea);
-						for (int k = 0; k < overlapArea.size(); k++)
+						for (int k = 0; k < (int)overlapArea.size(); k++)
 						{
 							newArea += boost::geometry::area(overlapArea[k]);
 						}
@@ -449,7 +450,7 @@ void AmusingScene::AddAllIntersections(std::shared_ptr<Amusing::CompletePolygon>
 					}
 				}
 				// delete the intersection no longer existing
-				for (int i = 0; i < intersectionStillExist.size(); i++)
+				for (int i = 0; i < (int)intersectionStillExist.size(); i++)
 				{
 					if (intersectionStillExist[i] == false)
 					{
@@ -474,7 +475,7 @@ void AmusingScene::AddAllIntersections(std::shared_ptr<Amusing::CompletePolygon>
 			{
 				// previously there was intersections but they don't exist anymore
 				// first we delete all the intersections and send the info to the manager
-				for (int i = 0; i < it->second.size(); i++)
+				for (int i = 0; i < (int)it->second.size(); i++)
 				{
 					auto intersectionBackUp = it->second.at(i);
 					it->second.erase(it->second.begin() + i);
@@ -549,7 +550,7 @@ bool AmusingScene::getParents(std::shared_ptr<IEditableArea> child, std::shared_
 		std::map<std::pair<std::shared_ptr<CompletePolygon>, std::shared_ptr<CompletePolygon>>, std::vector<std::shared_ptr<CompletePolygon>>>::iterator it;
 		for (it = parentTochildArea.begin(); it != parentTochildArea.end(); it++)
 		{
-			for (int i = 0; i < it->second.size(); i++)
+			for (int i = 0; i < (int)it->second.size(); i++)
 			{
 				if (childC == it->second.at(i))
 				{
@@ -581,7 +582,7 @@ std::shared_ptr<CompletePolygon> AmusingScene::getConcernedIntersection(std::sha
 			// trouver la bonne intersection
 			int prox = 0;
 			double minDistance = 1000;
-			for (int i = 0; i < it->second.size(); ++i)
+			for (int i = 0; i < (int)it->second.size(); ++i)
 			{
 				double distance = boost::geometry::distance(hitPoint, it->second[i]->getPolygon());
 				if (distance < minDistance)
@@ -608,7 +609,7 @@ std::shared_ptr<CompletePolygon> AmusingScene::getConcernedIntersection(std::sha
 				// trouver la bonne intersection
 				int prox = 0;
 				double minDistance = 1000;
-				for (int i = 0; i < it->second.size(); ++i)
+				for (int i = 0; i < (int)it->second.size(); ++i)
 				{
 					double distance = boost::geometry::distance(hitPoint, it->second[i]->getPolygon());
 					if (distance < minDistance)
@@ -743,13 +744,13 @@ std::shared_ptr<Amusing::CompletePolygon> AmusingScene::getFirstCompleteArea()
 	return std::dynamic_pointer_cast<CompletePolygon>(areas[0]);
 }
 
-std::shared_ptr<MultiAreaEvent> AmusingScene::SetAllAudioPositions(double position)
+std::shared_ptr<MultiAreaEvent> AmusingScene::SetAllAudioPositions(double /*position*/)
 {
 	
 	std::shared_ptr<Miam::MultiAreaEvent> areaE;
 	areaE = std::shared_ptr<Miam::MultiAreaEvent>(new Miam::MultiAreaEvent());
 	bool first = true;
-	for (int i = 0; i < areas.size(); ++i)
+	for (int i = 0; i < (int)areas.size(); ++i)
 	{
 		//areaE = std::shared_ptr<Miam::MultiAreaEvent>(new Miam::MultiAreaEvent());
 		if (auto completeA = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
@@ -783,21 +784,7 @@ std::shared_ptr<AnimatedPolygon> AmusingScene::getNextArea()
 	return std::dynamic_pointer_cast<AnimatedPolygon>(areas[(Nfollower - 1)]);
 }
 
-Point<double> AmusingScene::hitPolygon(Point<double> hitPoint, std::shared_ptr<Amusing::AnimatedPolygon> polygon, Point<double> P, Point<double> Q)
-{
-	/*for (int i = 0; i < areas.size(); ++i)
-	{
-		if (areas[i]->HitTest(hitPoint) && areas[i] != polygon)
-		{
-			if (auto anime = std::dynamic_pointer_cast<AnimatedPolygon> (areas[i]))
-			{
-				return anime->computeInteractionPoint(hitPoint, P, Q);
-			}
-		}
 
-	}*/
-	return Point<double>(0, 0);
-}
 
 
 int AmusingScene::getNumberArea()
@@ -831,7 +818,7 @@ std::shared_ptr<AreaEvent> AmusingScene::SetSelectedArea(std::shared_ptr<IEditab
 		if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(selectedArea_))
 		{
 			sceneComponent->SetAreaOptionsCenter(completeArea->getCenter());
-			double currentSpeed, currentVelocity;
+			double currentSpeed(0), currentVelocity(0);
 			if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
 			{
 				currentSpeed = manager->getSpeed(completeArea);
@@ -861,7 +848,7 @@ std::shared_ptr<AreaEvent> AmusingScene::SetSelectedAreaOpacity(double newOpacit
 	std::shared_ptr<AreaEvent> areaE(new AreaEvent());
 	if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(selectedArea))
 	{
-		completeArea->SetAlpha(newOpacity);
+		completeArea->SetAlpha((float)newOpacity);
 		areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::ShapeChanged, completeArea->GetId(), shared_from_this()));
 	}
 	return areaE;
@@ -869,7 +856,7 @@ std::shared_ptr<AreaEvent> AmusingScene::SetSelectedAreaOpacity(double newOpacit
 
 bool AmusingScene::isDrew(std::shared_ptr<Cursor> cursor)
 {
-	for (int i = 0; i < currentExciters.size(); ++i)
+	for (int i = 0; i < (int)currentExciters.size(); ++i)
 		if (currentExciters[i] == cursor)
 			return true;
 	return false;

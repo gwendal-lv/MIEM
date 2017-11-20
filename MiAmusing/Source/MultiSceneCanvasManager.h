@@ -70,7 +70,7 @@ namespace Amusing {
 
 
 		void deleteUnusedFollowers();
-		void deleteAsyncDrawableObject(int idInScene, std::shared_ptr<IDrawableArea> originalAreaToDelete);
+		void deleteAsyncDrawableObject(std::shared_ptr<IDrawableArea> originalAreaToDelete);
 		void OnCanvasMouseUp(const MouseEvent& mouseE);
 		void OnCanvasMouseDown(const MouseEvent& mouseE);
 

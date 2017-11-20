@@ -52,7 +52,7 @@ CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
 	if (useBullsEye)
 	{
 		CreateBullsEye();
-		for (int i = 0; i < contourPoints.outer().size(); i++)
+		for (int i = 0; i < (int)contourPoints.outer().size(); i++)
 		{
 			OnCircles.push_back(0);
 		}
@@ -89,7 +89,7 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 	if (useBullsEye)
 	{
 		CreateBullsEye();
-		for (int i = 0; i < contourPoints.outer().size(); i++)
+		for (int i = 0; i < (int)contourPoints.outer().size(); i++)
 		{
 			OnCircles.push_back(0);
 		}
@@ -126,7 +126,7 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	if (useBullsEye)
 	{
 		CreateBullsEye();
-		for (int i = 0; i < contourPoints.outer().size(); i++)
+		for (int i = 0; i < (int)contourPoints.outer().size(); i++)
 		{
 			OnCircles.push_back(0);
 		}
@@ -165,9 +165,9 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	SetNameVisible(false);
 
 	bpt A = contourPoints.outer().at(0);
-	float xScale = 1.0f / 1.47f;
+	float _xScale = 1.0f / 1.47f;
 	
-	double midRadius = (A.get<0>() - center.get<0>()) / (xScale * cos(anglesPercentages[0] * 2 * M_PI));
+	double midRadius = (A.get<0>() - center.get<0>()) / (_xScale * cos(anglesPercentages[0] * 2 * M_PI));
 	startRadius = midRadius - OnCircles[0] * interval;
 	
 	//startRadius = 0.15;
@@ -282,7 +282,7 @@ void CompletePolygon::Paint(Graphics& g)
 	if (showCursor)
 	{
 		//DBG("paint cursor");
-		for(int i=0;i<cursors.size();i++)
+		for(int i=0;i<(int)cursors.size();i++)
 		cursors[i]->Paint(g);
 	}
 	if (isActive && showBullsEye)
@@ -330,13 +330,13 @@ boost::geometry::model::segment<bpt> CompletePolygon::getSegment(bpt hitPoint) /
 	// d'abord verifier si le point fait partie des points du contour
 	int prev = 0;
 	int suiv = 0;
-	for (int i = 0; i < contourPoints.outer().size(); i++)
+	for (int i = 0; i < (int)contourPoints.outer().size(); i++)
 	{
 		if (boost::geometry::equals(hitPoint, contourPoints.outer().at(i)))
 		{
 			prev = i;
 			suiv = i + 1;
-			if (suiv == contourPoints.outer().size())
+			if (suiv == (int)contourPoints.outer().size())
 				suiv = 1; // pas 0 car le point 0 et le dernier point sont les mêmes
 			return boost::geometry::model::segment<bpt>(contourPoints.outer().at(prev), contourPoints.outer().at(suiv));
 		}
@@ -369,13 +369,13 @@ boost::geometry::model::segment<bpt> CompletePolygon::getSegmentInPixels(bpt hit
 	// d'abord verifier si le point fait partie des points du contour
 	int prev = 0;
 	int suiv = 0;
-	for (int i = 0; i < contourPointsInPixels.outer().size(); i++)
+	for (int i = 0; i < (int)contourPointsInPixels.outer().size(); i++)
 	{
 		if (boost::geometry::equals(hitPointInPixels, contourPointsInPixels.outer().at(i)))
 		{
 			prev = i;
 			suiv = i + 1;
-			if (suiv == contourPointsInPixels.outer().size())
+			if (suiv == (int)contourPointsInPixels.outer().size())
 				suiv = 1; // pas 0 car le point 0 et le dernier point sont les mêmes
 			return boost::geometry::model::segment<bpt>(contourPointsInPixels.outer().at(prev), contourPointsInPixels.outer().at(suiv));
 		}
@@ -418,7 +418,6 @@ bpt CompletePolygon::computeLinearCursorCenter(double p)
 			pc = p;
 			// conversion percent to radian
 			angleToPercent();
-			double angle = p * 2 * M_PI;
 
 			//determiner entre quels points va se trouver le curseur
 			
@@ -481,8 +480,8 @@ bpt CompletePolygon::computeLinearCursorCenter(double p)
 		}
 		else
 		{
-			int prev = 0;
-			int suiv = 0;
+			prev = 0;
+			suiv = 0;
 			//DBG("tailles setReadingPosition : bcontourPointsInPixels " + (String)bcontourPointsInPixels.outer().size());
 			pc = p;
 			lengthToPercent();
@@ -529,7 +528,7 @@ bpt CompletePolygon::computeLinearCursorCenter(double p)
 
 		}
 
-		return bpt(0, 0);
+
 
 	}
 	return bpt(0, 0);
@@ -549,7 +548,6 @@ bpt CompletePolygon::computeAngularCursorCenter(double p)
 			pc = p;
 			// conversion percent to radian
 			angleToPercent();
-			double angle = p * 2 * M_PI;
 
 			//determiner entre quels points va se trouver le curseur
 
@@ -586,7 +584,7 @@ bpt CompletePolygon::computeAngularCursorCenter(double p)
 				suiv += 1;
 
 			// calcul du point où se trouve le curseur par interpolation linéaire
-			bpt P;
+			bpt P(0,0);
 			bpt extr;
 			//if( (0 <= p && p<0.25 ) || (0.75 <= p && p<1))
 			extr = bpt(center.get<0>() + 100 * cos(2 * M_PI*p), center.get<1>() + 100 * sin(2 * M_PI*p));
@@ -654,7 +652,7 @@ bpt CompletePolygon::computeAngularCursorCenter(double p)
 
 		}
 
-		return bpt(0, 0);
+
 
 	}
 	return bpt(0, 0);
@@ -664,7 +662,6 @@ float CompletePolygon::computeCursorAlpha(double p, bpt _center)
 {
 	// conversion percent to radian
 	angleToPercent();
-	double angle = p * 2 * M_PI;
 
 	//determiner entre quels points va se trouver le curseur
 	int prev = 0;
@@ -706,14 +703,14 @@ float CompletePolygon::computeCursorAlpha(double p, bpt _center)
 	{
 		if (1 - distPr * (1-H)/D < 0)
 			DBG("negatif");
-		return 1 - distPr * (1 - H) / D;//cursor->SetAlpha(1 - distPr * 10);
+		return 1.0f - float(distPr * (1.0 - H) / D);//cursor->SetAlpha(1 - distPr * 10);
 		//DBG((String)(1 - distPr * 10));
 	}
 	else if (distSui < D)
 	{
 		if (1 - distSui * (1 - H) / D < 0)
 			DBG("negatif");
-		return 1 - distSui * (1 - H) / D;
+		return 1.0f - float(distSui * (1.0 - H) / D);
 	}
 	else
 		return 0.5f;
@@ -733,7 +730,7 @@ void CompletePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 	//lengthToPercent();
 	if (showCursor)
 	{
-		for(int i=0;i<cursors.size();i++)
+		for(int i=0;i<(int)cursors.size();i++)
 			cursors[i]->CanvasResized(_parentCanvas);
 	}
 		
@@ -865,7 +862,7 @@ AreaEventType CompletePolygon::EndPointMove()
 
 void CompletePolygon::setCursorVisible(bool isVisible, SceneCanvasComponent* _parentCanvas)
 {
-	for(int i=0;i<cursors.size();i++)
+	for(int i=0;i<(int)cursors.size();i++)
 		cursors[i]->CanvasResized(_parentCanvas);
 	showCursor = isVisible;
 	
@@ -880,7 +877,7 @@ bpolygon CompletePolygon::getPolygon()
 	return contourPoints;
 }
 
-std::shared_ptr<AreaEvent> CompletePolygon::intersection(std::shared_ptr<CompletePolygon> hitPolygon, int Id, int N)
+std::shared_ptr<AreaEvent> CompletePolygon::intersection(std::shared_ptr<CompletePolygon> hitPolygon, int m_Id, int N)
 {
 	
 
@@ -899,7 +896,7 @@ std::shared_ptr<AreaEvent> CompletePolygon::intersection(std::shared_ptr<Complet
 	double hitArea = abs(boost::geometry::area(poly2));
 
 	double areaInter = 0;
-	for(int i = 0; i<inter.size();i++)
+	for(int i = 0; i<(int)inter.size();i++)
 		areaInter += abs(boost::geometry::area(inter[0]));
 
 
@@ -909,7 +906,7 @@ std::shared_ptr<AreaEvent> CompletePolygon::intersection(std::shared_ptr<Complet
 	if (areaInter >= 0.75 * hitArea || areaInter >= 0.75 * area)
 	{
 		//DBG("need To fusion ! : " + (String)areaInter + " >= " + (String)double(0.75 * hitArea) + " ou " + (String)double(0.75 * area));
-		completeP = fusion(hitPolygon, Id);
+		completeP = fusion(hitPolygon, m_Id);
 		//DBG("fusionned");
 		areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeP, AreaEventType::Added));
 	}
@@ -917,7 +914,7 @@ std::shared_ptr<AreaEvent> CompletePolygon::intersection(std::shared_ptr<Complet
 	{
 		//DBG("number of polygon by intersection : " + (String)inter.size());
 		std::shared_ptr<MultiAreaEvent> multiE(new MultiAreaEvent());
-		for (int i = 0; i < inter.size(); i++)
+		for (int i = 0; i < (int)inter.size(); i++)
 		{
 			//if (boost::geometry::area(inter[i]) > minimumSizePercentage)//*(parentCanvas->getWidth() + parentCanvas->getHeight()) / 2.0)
 			//{
@@ -929,7 +926,7 @@ std::shared_ptr<AreaEvent> CompletePolygon::intersection(std::shared_ptr<Complet
 			// compute the notes // verifier ordre des points si le son est bizarre
 			std::vector<int> newCircles;
 			std::vector<double> newAnglesPercentages;
-			for (int j = 0; j < inter[i].outer().size(); j++)
+			for (int j = 0; j < (int)inter[i].outer().size(); j++)
 			{
 				//newCircles.push_back(0);
 
@@ -972,8 +969,9 @@ std::shared_ptr<AreaEvent> CompletePolygon::intersection(std::shared_ptr<Complet
 	return areaE;
 }
 
-std::shared_ptr<CompletePolygon> CompletePolygon::fusion(std::shared_ptr<CompletePolygon> polyToFusion, int Id)
+std::shared_ptr<CompletePolygon> CompletePolygon::fusion(std::shared_ptr<CompletePolygon> polyToFusion, int m_Id)
 {
+
 	// structure to be able to sort the percentages and the circles the same way
 	struct Helper
 	{
@@ -987,7 +985,7 @@ std::shared_ptr<CompletePolygon> CompletePolygon::fusion(std::shared_ptr<Complet
 	// get all the coordinates of the points (percentages and circles) of the current polygon
 	angleToPercent();
 	std::vector<Helper> test;
-	for (int j = 0; j < anglesPercentages.size() - 1; ++j) // stop at size-1 because we don't need the closure point
+	for (int j = 0; j < (int)anglesPercentages.size() - 1; ++j) // stop at size-1 because we don't need the closure point
 	{
 		double value = anglesPercentages[j];
 		if (value > 1)
@@ -1022,7 +1020,7 @@ std::shared_ptr<CompletePolygon> CompletePolygon::fusion(std::shared_ptr<Complet
 	bpolygon newContourPointsInPixels;
 	std::vector<int> newCircles;
 	std::vector<double> newAnglesPercentages;
-	for (int j = 0; j < test.size(); j++)
+	for (int j = 0; j < (int)test.size(); j++)
 	{
 		double R = bullsEye[test[j].circ].getRadius();
 		double angle = test[j].pc * 2 * M_PI;
@@ -1044,7 +1042,7 @@ std::shared_ptr<CompletePolygon> CompletePolygon::fusion(std::shared_ptr<Complet
 		DBG((String)test[k].circ + "   " + (String)test[k].pc);*/
 
 	// create polygon
-	return std::shared_ptr<CompletePolygon>(new CompletePolygon(Id,center,newContourPoints,newCircles,newAnglesPercentages,fillColour));
+	return std::shared_ptr<CompletePolygon>(new CompletePolygon(m_Id,center,newContourPoints,newCircles,newAnglesPercentages,fillColour));
 
 }
 
@@ -1064,7 +1062,7 @@ bool CompletePolygon::getUnion(bpolygon hitPolygon, bpolygon &output)
 
 double CompletePolygon::getAngularPercentage(bpt hitPoint)
 {
-	for (int i = 0; i < contourPoints.outer().size(); i++)
+	for (int i = 0; i < (int)contourPoints.outer().size(); i++)
 	{
 		if (boost::geometry::equals(hitPoint, contourPoints.outer().at(i)))
 			return anglesPercentages[i];
@@ -1100,7 +1098,7 @@ double CompletePolygon::getAngularPercentage(bpt hitPoint)
 
 double CompletePolygon::getLinearPercentage(bpt hitPoint)
 {
-	for (int i = 0; i < contourPoints.outer().size(); i++)
+	for (int i = 0; i < (int)contourPoints.outer().size(); i++)
 	{
 		if (boost::geometry::equals(hitPoint, contourPoints.outer().at(i)))
 			return anglesPercentages[i];
@@ -1139,7 +1137,7 @@ bool CompletePolygon::getAllPercentages(int idx, double &value)
 	{
 		angleToPercent();
 		//DBG("percentage size : " + (String)percentages.size());
-		if (idx < anglesPercentages.size())
+		if (idx < (int)anglesPercentages.size())
 		{
 			value = anglesPercentages[idx];
 			while (value > 1)
@@ -1154,7 +1152,7 @@ bool CompletePolygon::getAllPercentages(int idx, double &value)
 	{
 		lengthToPercent();
 		//DBG("percentage size : " + (String)percentages.size());
-		if (idx < percentages.size())
+		if (idx < (int)percentages.size())
 		{
 			value = percentages[idx];
 			
@@ -1167,7 +1165,7 @@ bool CompletePolygon::getAllPercentages(int idx, double &value)
 
 bool CompletePolygon::getAllDistanceFromCenter(int idx, int &value)
 {
-	if (idx < OnCircles.size())
+	if (idx < (int)OnCircles.size())
 	{
 		value = OnCircles[idx];
 		return true;
@@ -1194,7 +1192,7 @@ void CompletePolygon::CreateBullsEye()
 
 void CompletePolygon::PaintBullsEye(Graphics& g)
 {
-	for (int i = 0; i < OnCircles.size(); ++i)
+	for (int i = 0; i < (int)OnCircles.size(); ++i)
 	{
 		bullsEye[OnCircles[i]].Paint(g);
 			//bullsEye[i].Paint(g);
