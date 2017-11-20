@@ -63,7 +63,9 @@ void Model::update()
             switch (lastParamChange.Type)
             {
                 case AsyncParamChange::Excitement :
-                    spatInterpolator->OnNewExcitementAmount(lastParamChange.Id1, lastParamChange.DoubleValue);
+                    spatInterpolator->OnNewExcitementAmount((size_t) lastParamChange.Id1,
+                                                            (uint64_t) lastParamChange.Id2,
+                                                            lastParamChange.DoubleValue);
                     break;
                     
                 case AsyncParamChange::Play :

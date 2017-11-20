@@ -180,9 +180,9 @@ namespace Miam
         }
         
         /// \brief Permet de comptabiliser les modifs (ce que l'accès direct aux spatStates ne permet pas)
-        void OnNewExcitementAmount(size_t spatStateIndex, double newExcitement)
+        void OnNewExcitementAmount(size_t spatStateIndex, uint64_t excitementSenderUID, double newExcitement)
         {
-            spatStates[spatStateIndex]->OnNewExcitementAmount(newExcitement);
+            spatStates[spatStateIndex]->OnNewExcitementAmount(excitementSenderUID, newExcitement);
             updatedStatesCount++;
         }
         /// \brief Fonction appelée lorsqu'on bien vidé les lock-free queues : on est prêt

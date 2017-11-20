@@ -214,9 +214,16 @@ void Exciter::updateExcitationAmounts()
         totalAudioExcitement += excitement.Audio;
     }
     
-    // - - - - - Dernière normalisation, et application du volume - - - - -
+    // - - - - - Dernière normalisation pour les coeffs Audio - - - - -
     for (auto &excitement : areaExcitementAmounts)
         excitement.Audio = excitement.Audio / totalAudioExcitement;
+    
+    // - - - - - Application du volume, de manière uniforme, à la toute fin - - - - -
+    for (auto &excitement : areaExcitementAmounts)
+    {
+        excitement.Linear *= volume;
+        excitement.Audio *= volume;
+    }
 }
 
 void Exciter::NotifyNewExcitationToAreas()

@@ -42,6 +42,12 @@ namespace Miam
             return ( std::abs(referenceVolume_dB - volumeToCompare_dB) > (T)Miam_SignificantVolumeDifference_dB );
         }
         
+        /// \brief Calcule si la valeur est petite que le define 'Miam_MinVolume'
+        static bool IsVolumeNegligible(T volume)
+        {
+            return std::abs(volume) < ((T)Miam_MinVolume) ;
+        }
+        
         /// \brief Calcule si la valeur est plus de 10 fois plus petite que le define 'Miam_MinVolume'
         static bool IsVolumeVeryNegligible(T volume)
         {
