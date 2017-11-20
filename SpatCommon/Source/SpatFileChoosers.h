@@ -49,7 +49,10 @@ namespace Miam
         {
 #ifdef __MIAM_DEBUG // Debug : sessions
 #if defined(BOOST_OS_WINDOWS) || defined(BOOST_OS_MACOS) // Debug DESKTOP : on cherche les sessions dans le repo
-            return File(GetAppToRepositorySessionsPath());
+            // Chemin du dossier, sans le '/' final
+            File appDirectory = File::getSpecialLocation(File::currentApplicationFile).getParentDirectory();
+            String sessionDirectoryPath = appDirectory.getFullPathName() + GetAppToRepositorySessionsPath();
+            return File(sessionDirectoryPath);
 #else // Debug MOBILE : on balance le dossier musique par défaut
             return File::getSpecialLocation(File::SpecialLocationType::userMusicDirectory);
 #endif
