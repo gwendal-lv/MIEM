@@ -203,9 +203,6 @@ void Presenter::SaveSession(std::string filename, bool forceDataRefresh)
     catch (XmlWriteException& e) {
         view->DisplayInfo(e.what());
     }
-    
-    // Si on venait du mode "startup", on passe à un mode d'édition
-    appModeChangeRequest(AppMode::EditSpatScenes);
 }
 
 std::shared_ptr<bptree::ptree> Presenter::GetConfigurationTree()

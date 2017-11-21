@@ -52,6 +52,11 @@ namespace Miam
         
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
+        private :
+        /// \brief Pour éviter des boucles de suppression (les aires re-notifient quand on se délie d'elles)
+        bool unlinkingFromAreas = false;
+        
+        
         protected :
         
         // Own attributes
@@ -126,20 +131,25 @@ namespace Miam
 
         
         // - - - - - Internal linking to spat areas - - - - -
+        /// \brief Ordre reçu d'une aire
         void LinkToArea(std::shared_ptr<SpatArea> spatArea)
         {
             // no check for double addition (but it's weak ptrs...)
             linkedAreas.push_back(spatArea);
         }
+        /// \brief Ordre reçu d'une aire
         void UnlinkToArea(std::shared_ptr<SpatArea> spatArea)
         {
-            for (auto it = linkedAreas.begin() ; it!=linkedAreas.end() ; it++)
+            if (! unlinkingFromAreas)
             {
-                auto curAreaPtr = (*it).lock();
-                if (curAreaPtr == spatArea)
+                for (auto it = linkedAreas.begin() ; it!=linkedAreas.end() ; it++)
                 {
-                    linkedAreas.erase(it);
-                    break;
+                    auto curAreaPtr = (*it).lock();
+                    if (curAreaPtr == spatArea)
+                    {
+                        linkedAreas.erase(it);
+                        break;
+                    }
                 }
             }
         }
@@ -147,7 +157,9 @@ namespace Miam
         // - - - - - External linking to spat areas - - - - -
         void UnregisterFromAreas()
         {
-            // does not need to internally unlink from area : the link is a weak_ptr
+            unlinkingFromAreas = true;
+            
+            // does not need to internally unlink from linked areas : the link is a weak_ptr
             // But still needs to unregister from linked areas
             for (size_t i=0 ; i < linkedAreas.size() ; i++)
             {
@@ -155,6 +167,8 @@ namespace Miam
                 if (areaPtr)
                     areaPtr->LinkToSpatState(nullptr);
             }
+            
+            unlinkingFromAreas = false;
         }
         
         

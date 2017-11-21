@@ -20,22 +20,16 @@
     <spat>
         <states>
             <state index="0">
-                <name>Matrice chargée 1</name>
-                <matrix>
-                    <coeff row="0" col="0" value="1"/>
-                </matrix>
-            </state>
-            <state index="1">
                 <name>Matrice chargée 2</name>
                 <matrix>
                     <coeff row="0" col="0" value="1"/>
-                    <coeff row="1" col="1" value="0.5"/>
+                    <coeff row="1" col="1" value="0.49999999999999994"/>
                 </matrix>
             </state>
-            <state index="2">
+            <state index="1">
                 <name>Matrice chargée 3</name>
                 <matrix>
-                    <coeff row="0" col="0" value="1.9990000000000001"/>
+                    <coeff row="0" col="0" value="1.9952623149688797"/>
                     <coeff row="1" col="1" value="1"/>
                     <coeff row="2" col="2" value="1"/>
                 </matrix>
@@ -50,18 +44,32 @@
                         <name>Mono scène de base</name>
                         <areas>
                             <area id="0" type="SpatPolygon" index="0">
-                                <center x="0.69021739130434778" y="0.59344718992248058"/>
+                                <center x="0.3953804347826087" y="0.34948825096899228"/>
                                 <colour>fff9dd5e</colour>
+                                <keep_ratio>false</keep_ratio>
                                 <geometry>
-                                    <point index="0" x="0.97903121659459169" y="0.71282035598132909"/>
-                                    <point index="1" x="0.77058359570788237" y="0.87923795487804179"/>
-                                    <point index="2" x="0.50161859047464075" y="0.83044926616626102"/>
-                                    <point index="3" x="0.37467231388918804" y="0.6031932097259598"/>
-                                    <point index="4" x="0.48533792832809064" y="0.36859817057319499"/>
-                                    <point index="5" x="0.75028207058702956" y="0.30331907332287178"/>
-                                    <point index="6" x="0.96999611557837684" y="0.45651228541973837"/>
+                                    <point index="0" x="0.68419426007285256" y="0.46886141702784079"/>
+                                    <point index="1" x="0.47574663918614307" y="0.63527901592455349"/>
+                                    <point index="2" x="0.20678163395290142" y="0.58649032721277261"/>
+                                    <point index="3" x="0.0798353573674489" y="0.35923427077247144"/>
+                                    <point index="4" x="0.19050097180635153" y="0.12463923161970661"/>
+                                    <point index="5" x="0.45544511406529026" y="0.059360134369383435"/>
+                                    <point index="6" x="0.6751591590566377" y="0.21255334646625001"/>
                                 </geometry>
-                                <spatstate index="0"/>
+                                <spatstate index="-1"/>
+                            </area>
+                            <area id="5" type="SpatPolygon" index="1">
+                                <center x="0.49508281573498963" y="0.60016957364341084"/>
+                                <colour>ff8080ed</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <geometry>
+                                    <point index="0" x="0.64508282169545417" y="0.60016957364341084"/>
+                                    <point index="1" x="0.5414353623970819" y="0.73370455644389454"/>
+                                    <point index="2" x="0.37373025491679429" y="0.68269871614238087"/>
+                                    <point index="3" x="0.37373026981795548" y="0.51764040879269901"/>
+                                    <point index="4" x="0.54143538474882369" y="0.46663460574408833"/>
+                                </geometry>
+                                <spatstate index="-1"/>
                             </area>
                         </areas>
                     </scene>
@@ -75,13 +83,14 @@
                             <area id="2" type="SpatPolygon" index="0">
                                 <center x="0.28688788659793818" y="0.34083545300387597"/>
                                 <colour>ffd82506</colour>
+                                <keep_ratio>false</keep_ratio>
                                 <geometry>
                                     <point index="0" x="0.43688789255840282" y="0.34083545300387597"/>
                                     <point index="1" x="0.28688788004122961" y="0.42542847338341927"/>
                                     <point index="2" x="0.1368878806374737" y="0.34083544560851919"/>
                                     <point index="3" x="0.28688788838667034" y="0.25624243262433266"/>
                                 </geometry>
-                                <spatstate index="1"/>
+                                <spatstate index="0"/>
                             </area>
                         </areas>
                     </scene>
@@ -91,12 +100,13 @@
                             <area id="1" type="SpatPolygon" index="0">
                                 <center x="0.5" y="0.5"/>
                                 <colour>ff808080</colour>
+                                <keep_ratio>false</keep_ratio>
                                 <geometry>
                                     <point index="0" x="0.65000000596046448" y="0.5"/>
                                     <point index="1" x="0.42499998956918716" y="0.57325970381498337"/>
                                     <point index="2" x="0.42500001192092896" y="0.42674028873443604"/>
                                 </geometry>
-                                <spatstate index="2"/>
+                                <spatstate index="1"/>
                             </area>
                         </areas>
                     </scene>
@@ -106,6 +116,7 @@
                             <area id="3" type="SpatPolygon" index="0">
                                 <center x="0.32738670532646041" y="0.23323189195736435"/>
                                 <colour>ff80ff80</colour>
+                                <keep_ratio>false</keep_ratio>
                                 <geometry>
                                     <point index="0" x="0.49732746486740287" y="0.15581603856342061"/>
                                     <point index="1" x="0.54461995915185457" y="0.24625879572910753"/>
@@ -116,7 +127,7 @@
                                     <point index="6" x="0.19011324547770556" y="0.13739321394139584"/>
                                     <point index="7" x="0.35048604396496646" y="0.11072244339733542"/>
                                 </geometry>
-                                <spatstate index="2"/>
+                                <spatstate index="1"/>
                             </area>
                         </areas>
                     </scene>

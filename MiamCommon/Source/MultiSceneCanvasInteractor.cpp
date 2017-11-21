@@ -449,6 +449,12 @@ void MultiSceneCanvasInteractor::SelectScene(int id)
     // and Deactivation of the scene
     if (selectedScene)
     {
+        // Si on était pas en mode de jeu (qu'on faisait de l'édition, on passe en mode scene only)
+        // -> ça permet de quitter les modes étranges dans lesquels la scène pouvait être, au moment
+        // de la dé-sélectionner
+        if (mode != CanvasManagerMode::PlayingWithExciters)
+            SetMode(CanvasManagerMode::SceneOnlySelected);
+        
         // Dé-sélection effective un peu plus loin dans le code
         unselectionEvents = selectedScene->OnUnselection();
         // Envoi direct des évènements
