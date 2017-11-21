@@ -282,7 +282,7 @@
                                 </geometry>
                                 <spatstate index="16"/>
                             </area>
-                            <area id="294" type="Exciter" index="9">
+                            <area id="315" type="Exciter" index="9">
                                 <center x="0.88839733935741938" y="0.9440724206349258"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>true</keep_ratio>
@@ -292,8 +292,8 @@
                                 <is_round>true</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
-                            <area id="295" type="Exciter" index="10">
-                                <center x="0.20085027610441505" y="0.89279513888889206"/>
+                            <area id="316" type="Exciter" index="10">
+                                <center x="0.17660402869241709" y="0.93902666747415997"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>true</keep_ratio>
                                 <geometry>
@@ -621,7 +621,7 @@
                                 </geometry>
                                 <spatstate index="9"/>
                             </area>
-                            <area id="283" type="Exciter" index="23">
+                            <area id="317" type="Exciter" index="23">
                                 <center x="0.92533643892340001" y="0.70175478439922434"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>true</keep_ratio>
@@ -631,7 +631,7 @@
                                 <is_round>true</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
-                            <area id="284" type="Exciter" index="24">
+                            <area id="318" type="Exciter" index="24">
                                 <center x="0.68384446169772495" y="0.16486494670542634"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>true</keep_ratio>
@@ -641,7 +641,7 @@
                                 <is_round>true</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
-                            <area id="285" type="Exciter" index="25">
+                            <area id="319" type="Exciter" index="25">
                                 <center x="0.15961438923395516" y="0.3936606710271317"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>true</keep_ratio>
@@ -756,7 +756,7 @@
                                 </geometry>
                                 <spatstate index="2"/>
                             </area>
-                            <area id="286" type="Exciter" index="8">
+                            <area id="320" type="Exciter" index="8">
                                 <center x="0.79854910714286276" y="0.56091024709302262"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>true</keep_ratio>
@@ -766,7 +766,7 @@
                                 <is_round>true</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
-                            <area id="287" type="Exciter" index="9">
+                            <area id="321" type="Exciter" index="9">
                                 <center x="0.25060656055900754" y="0.54327913032945674"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>true</keep_ratio>
@@ -833,7 +833,7 @@
                                 </geometry>
                                 <spatstate index="1"/>
                             </area>
-                            <area id="292" type="Exciter" index="4">
+                            <area id="307" type="Exciter" index="4">
                                 <center x="0.16205834564665264" y="0.59064287725737807"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>true</keep_ratio>
@@ -843,7 +843,7 @@
                                 <is_round>true</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
-                            <area id="293" type="Exciter" index="5">
+                            <area id="308" type="Exciter" index="5">
                                 <center x="0.86383491019003489" y="0.24387934384396592"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>true</keep_ratio>
@@ -920,7 +920,7 @@
                                 </geometry>
                                 <spatstate index="3"/>
                             </area>
-                            <area id="290" type="Exciter" index="5">
+                            <area id="305" type="Exciter" index="5">
                                 <center x="0.6346917955326441" y="0.85194101259689825"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>true</keep_ratio>
@@ -930,7 +930,7 @@
                                 <is_round>true</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
-                            <area id="291" type="Exciter" index="6">
+                            <area id="306" type="Exciter" index="6">
                                 <center x="0.56658075601374502" y="0.22114219961240258"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>true</keep_ratio>

@@ -72,15 +72,19 @@ namespace Miam
         
         bool isAnimationSynchronized;
         
+        
+        
+        
+        
+        // = = = = = = = = = = SETTERS & GETTERS = = = = = = = = = =
+        public :
+        
         virtual std::string GetTypeAsString() const override { return "Exciter"; }
         // Pour calcul d'interaction externe
         bpt GetCenterInPixels() const {return centerInPixels;}
 
         void SetVolume(double volume_);
 		double GetVolume() const { return volume; }
-        
-        public :
-        virtual std::string GetTypeAsString() const override {return "Exciter";}
         
         /// \brief Sets whether this exciter is animated the same as the others exciters that
         /// have this option activated.
@@ -92,17 +96,22 @@ namespace Miam
         /// The synchronized clock must have been initialized before
         void SetIsAnimationSynchronized(bool isSynchronized);
         
+        
+        
+        
+        
         // = = = = = = = = = = METHODS = = = = = = = = = =
         public :
         
         // - - - - - Construction/Destruction + polymorphic cloning - - - - -
         
+        Exciter(bptree::ptree & areaTree, std::chrono::time_point<clock> commonStartTimePoint_);
+        Exciter(uint64_t uniqueId, std::chrono::time_point<clock> commonStartTimePoint_);
+        
         virtual ~Exciter();
+        
         virtual std::shared_ptr<IDrawableArea> Clone() const override
         { return std::make_shared<Exciter>(*this); }
-        Exciter(uint64_t uniqueId, std::chrono::time_point<clock> commonStartTimePoint_);
-        virtual ~Exciter() {}
-        virtual IDrawableArea* Clone() const override {return new Exciter(*this);}
         
         // - - - - - Ction helpers - - - - -
         private :
