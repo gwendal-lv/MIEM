@@ -37,8 +37,8 @@ namespace Miam
         
         /// \brief Ids of the Mouse/touch inputs manipulating this area
         //std::vector<int> touchInputSources;
-        
         //std::shared_ptr<EditableEllipse> volumeControlArea;
+        std::shared_ptr<EditableEllipse> volumeControlArea;
         
         // Display attributes
         
@@ -48,8 +48,6 @@ namespace Miam
         std::chrono::time_point<clock> commonStartTimePt;
         double const omega = 2.0 * M_PI * 1.0; // 1 Hz
         double const deltaBrightnessAmplitude = 0.3;
-        double const deltaBrightnessOffset = 0.7;
-        
         // Lien avec des aires graphiques
         // Le + optimisé serait une liste, mais vu le nombre d'éléments stockés (10aine au grand max)
         // on s'en fout complètement...
@@ -59,10 +57,10 @@ namespace Miam
         /// \brief Les excitations pour chaque aire (dont la somme vaut 1.0)
         std::vector< Excitement > areaExcitementAmounts;
         
+        double const deltaBrightnessOffset = 0.7;
+        
         // Pour synchronisation du clignotement de tous les excitateurs ensemble.
         private :
-        bool isAnimationSynchronized;
-        
         // BESOIN D'UN TIMER QUI DÉCLENCHE DES ÉVÈNEMENTS SUR LE THREAD JUCE UI
         // BESOIN D'UN TIMER QUI DÉCLENCHE DES ÉVÈNEMENTS SUR LE THREAD JUCE UI
         // BESOIN D'UN TIMER QUI DÉCLENCHE DES ÉVÈNEMENTS SUR LE THREAD JUCE UI
@@ -72,49 +70,50 @@ namespace Miam
         // Fade in/out peuvent aussi être commandés par l'air graphique... C'est elle qui voit
         // si elle n'est plus excitée que par 1 seul excitateur
         
-        // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
-        public :
-        virtual std::string GetTypeAsString() const override { return "Exciter"; }
+        bool isAnimationSynchronized;
         
+        virtual std::string GetTypeAsString() const override { return "Exciter"; }
         // Pour calcul d'interaction externe
         bpt GetCenterInPixels() const {return centerInPixels;}
 
         void SetVolume(double volume_);
 		double GetVolume() const { return volume; }
         
+        public :
+        virtual std::string GetTypeAsString() const override {return "Exciter";}
+        
         /// \brief Sets whether this exciter is animated the same as the others exciters that
         /// have this option activated.
         ///
-        /// The synchronized clock must have been initialized before
-        void SetIsAnimationSynchronized(bool isSynchronized);
-        
         private :
         std::shared_ptr<Exciter> getCastedSharedFromThis()
         { return std::static_pointer_cast<Exciter>(shared_from_this()); }
+        
+        /// The synchronized clock must have been initialized before
+        void SetIsAnimationSynchronized(bool isSynchronized);
         
         // = = = = = = = = = = METHODS = = = = = = = = = =
         public :
         
         // - - - - - Construction/Destruction + polymorphic cloning - - - - -
         
-        Exciter(bptree::ptree & areaTree, std::chrono::time_point<clock> commonStartTimePoint_);
-        /// \brief Will automatically define the shape of the exciter
-        Exciter(uint64_t uniqueId, std::chrono::time_point<clock> commonStartTimePoint_);
         virtual ~Exciter();
         virtual std::shared_ptr<IDrawableArea> Clone() const override
         { return std::make_shared<Exciter>(*this); }
+        Exciter(uint64_t uniqueId, std::chrono::time_point<clock> commonStartTimePoint_);
+        virtual ~Exciter() {}
+        virtual IDrawableArea* Clone() const override {return new Exciter(*this);}
         
         // - - - - - Ction helpers - - - - -
         private :
         void init();
+
+		double computeXScale(float _canvasRatio) override;
+		double computeYScale(float _canvasRatio) override;
         
         // - - - - - Display - - - - -
         public :
         /// \brief Paints specific elements over the elements painted
-        /// by the EditableEllipse::Paint() method
-        virtual void Paint(Graphics& g) override;
-
-        
         
         // - - - - - Interactions - - - - -
         /// \brief Peut être appelé par une aire excitée par cette instance.
@@ -153,8 +152,12 @@ namespace Miam
         ///
         void NotifyNewExcitationToAreas();
         
-        // - - - - - XML import/export - - - - -
+        /// by the EditableEllipse::Paint() method
         public :
+        virtual void Paint(Graphics& g) override;
+
+        
+        // - - - - - XML import/export - - - - -
         virtual std::shared_ptr<bptree::ptree> GetTree() override;
         
     };

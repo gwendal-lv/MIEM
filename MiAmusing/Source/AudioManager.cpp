@@ -19,40 +19,23 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "AudioManager.h"
 #include "AsyncParamChange.h"
-#include "ADSRSignal.h"
-#include "AmuSignal.h"
-#include "SquareSignal.h"
-#include "TriangleSignal.h"
-#include "SinusSignal.h"
+
+
 using namespace Amusing;
 //==============================================================================
-AudioManager::AudioManager(AmusingModel *m_model) : model(m_model), Nsources(0), state(Stop)
+AudioManager::AudioManager(AmusingModel *m_model) : model(m_model), state(Stop), playInternalSynth(false), timeStamp(0)
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
 	DBG("AudioManager::AudioManager");
 
+	model->sharedAudioDeviceManager->addAudioCallback(&recorder);
 
-	/////////////////////
-	useADSR = 1;////////
-	////////////////////
-	testPos = 0;
-
-	count = 0;
-
-	
-	activeVector.reserve(Nmax);
-	mixer = new MixerAudioSource();
-	
-
-	//initialise(0, 2, nullptr, true);
-	//addAudioCallback(this);
 	setSource(this);
 	runThread = true;
 	T = std::thread(&AudioManager::threadFunc, this);
-	midiSenderSize = 0;
-	midiSenderVector.reserve(128);
-	midiSenderVector = std::vector<std::shared_ptr<TimeLine>>(128, std::shared_ptr<TimeLine>(new TimeLine));
+
+	
 
 	for (int i = 0; i < maxSize; i++)
 	{
@@ -76,9 +59,7 @@ AudioManager::~AudioManager()
 	
 	DBG("audioManager destructor fin");
 
-	//DBG("AudioManager::releaseResources");
-	delete mixer;
-	//DBG("AudioManager::releaseResources fin");
+	
 	if (midiOuput == nullptr)
 	{
 		DBG("midiOuput == nullptr !!!!!!!!!!!");
@@ -86,59 +67,55 @@ AudioManager::~AudioManager()
 	else
 		DBG("still exist");
 
-	
+	model->sharedAudioDeviceManager->removeAudioCallback(&recorder);
 	model->removeDeviceManagerFromOptionWindow();
 	//delete midiOuput;
 }
-/*
-void AudioManager::paint (Graphics& g)
-{
 
-
-   
-}
-*/
-/*
-void AudioManager::resized()
-{
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
-
-}
-*/
 
 void AudioManager::prepareToPlay(int samplesPerBlockExpected, double _sampleRate)
 {
 	DBG("AudioManager::prepareToPlay");
 	currentSamplesPerBlock = samplesPerBlockExpected;
 	currentSampleRate = _sampleRate;
-	div = ((_sampleRate / (double)samplesPerBlockExpected))/50;
+
+	/*midiCollector.reset(_sampleRate);
+	synth.setCurrentPlaybackSampleRate(_sampleRate);
+	int numVoice = 10;
+	for (int i = 0; i < numVoice; i++)
+	{
+		synth.addVoice(new SamplerVoice);
+	}*/
 	
 	metronome.setAudioParameter(samplesPerBlockExpected, _sampleRate);
 	
 	periode = metronome.BPMtoPeriodInSample(50);//timeToSample(4000);
 	position = 0;
 
-	/*AudioDeviceSetup currentAudioSetup;
-	this->getAudioDeviceSetup(currentAudioSetup);
-
-	DBG("default midi output : " + (String)this->getDefaultMidiOutputName());
-	midiOuput = this->getDefaultMidiOutput();*/
+	
 
 	midiOuput = model->getMidiOutput();
+	if (midiOuput == nullptr)
+		setUsingSampledSound();
+	else
+	{
+		playInternalSynth = false;
+		audioFormatManager.clearFormats();
+	}
 	
-	
-	
+	int numOutChannels = model->sharedAudioDeviceManager->getCurrentAudioDevice()->getActiveOutputChannels().getHighestBit() + 1;
+	interComputeBuffer = new AudioSampleBuffer(numOutChannels, samplesPerBlockExpected);
+	interComputeBuffer->clear();
 }
 void AudioManager::releaseResources()
 {
 	DBG("AudioManager::releaseResources");
-	for (int j = 0; j < maxSize; j++)
+	/*for (int j = 0; j < maxSize; j++)
 	{
 		if (timeLinesKnown[j] != 0)
 			timeLinesKnown[j] = 0;
 
-	}
+	}*/
 
 	/*runThread = false;
 	T.join();*/
@@ -149,8 +126,7 @@ void AudioManager::releaseResources()
 	}
 	else
 	{
-		//MidiOutput::
-		//delete midiOuput;
+		
 		if (midiOuput == nullptr)
 			DBG("bien detruit ! ");
 		else
@@ -159,7 +135,9 @@ void AudioManager::releaseResources()
 }
 void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 {
-	//DBG(String(position));
+	bufferToFill.clearActiveBufferRegion(); // buffer is the same for input and output -> need to clear the buffer before creating the output.
+											// otherwise, the input will be added to the output
+
 	getParameters();
 	getNewTimeLines();
 	getNewPlayHeads();
@@ -169,9 +147,9 @@ void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 		sendPosition();
 		for (int i = 0; i < bufferToFill.numSamples; ++i)
 		{
-
-			if (midiOuput != nullptr)
-			{
+			timeStamp++;
+			//if (midiOuput != nullptr)
+			//{
 				//midiSender->process(position);
 				for (int j = 0; j < maxSize; j++)
 				{
@@ -180,7 +158,7 @@ void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 
 
 				}
-			}
+			//}
 			++position;
 			if (position == periode)
 			{
@@ -198,7 +176,37 @@ void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 		break;
 	}
 	
-	bufferToFill.clearActiveBufferRegion();
+	if (playInternalSynth)
+	{
+		//MixerAudioSource
+
+		for (int i = 0; i < maxSize; ++i)
+		{
+			if (timeLinesKnown[i] != 0)
+			{
+				/*MidiBuffer incomingMidi;
+				interComputeBuffer->setSize(jmax(1, bufferToFill.buffer->getNumChannels()),
+					bufferToFill.buffer->getNumSamples());
+				AudioSourceChannelInfo info2(interComputeBuffer, 0, bufferToFill.numSamples);
+				info2.clearActiveBufferRegion();
+				playHeadsKnown[i]->removeNextBlockOfMessages(incomingMidi, bufferToFill.numSamples);
+				synth.renderNextBlock(*info2.buffer, incomingMidi, 0, bufferToFill.numSamples);
+				for(int j = 0; j < bufferToFill.buffer->getNumChannels();++j)
+					bufferToFill.buffer->addFrom(j, bufferToFill.startSample, *interComputeBuffer, j, 0, bufferToFill.numSamples);
+				         */
+				MidiBuffer incomingMidi;
+				timeLinesKnown[i]->removeNextBlockOfMessages(incomingMidi, bufferToFill.numSamples);
+				
+				timeLinesKnown[i]->renderNextBlock(*bufferToFill.buffer, incomingMidi, 0, bufferToFill.numSamples);
+				
+				//interComputeBuffer->clear(0,bufferToFill.numSamples);
+			}
+		}
+		//midiCollector.removeNextBlockOfMessages(incomingMidi, bufferToFill.numSamples); // recupere les messages MIDI à envoyer du midiCollector dans incomingMidi
+		//synth.renderNextBlock(*bufferToFill.buffer, incomingMidi, 0, bufferToFill.numSamples); // le synthe interne transforme ces messages MIDI en samples
+	}
+	else
+		bufferToFill.clearActiveBufferRegion();
 	//metronome.update();
 	//midiBuffer.addEvent(metronome.getNextMidiMsg(), 4);
 }
@@ -206,6 +214,7 @@ void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 void AudioManager::getNewTimeLines()
 {
 	TimeLine* ptr;
+	ptr = nullptr;
 	while (timeLinesToAudio.pop(ptr))
 	{
 		if(ptr != 0)
@@ -216,6 +225,7 @@ void AudioManager::getNewTimeLines()
 void AudioManager::getNewPlayHeads()
 {
 	PlayHead* ptr;
+	ptr = nullptr;
 	while (playHeadsToAudio.pop(ptr))
 	{
 		if (ptr != 0)
@@ -223,12 +233,32 @@ void AudioManager::getNewPlayHeads()
 	}
 }
 
-void AudioManager::sendMidiMessage(MidiMessage msg)
+void AudioManager::sendMidiMessage(MidiMessage msg, PlayHead* sender)
 {
-	if (midiOuput != nullptr)
+	if (playInternalSynth)
 	{
-		midiOuput->sendMessageNow(msg);
+		double s = (double)timeStamp / currentSampleRate;
+		if(s== 0.0)
+			s = (double)(timeStamp+1) / currentSampleRate;
+		//double ms = s * 1000;
+		msg.setTimeStamp(s);
+		//midiCollector.addMessageToQueue(msg);
+		if(sender != nullptr && sender != 0)
+			if(timeLinesKnown[sender->getTimeLineId()] != 0)
+				timeLinesKnown[sender->getTimeLineId()]->addMessageToQueue(msg);
 	}
+	else
+	{
+		if (midiOuput != nullptr)
+		{
+			midiOuput->sendMessageNow(msg);
+		}
+	}
+}
+
+double Amusing::AudioManager::getCurrentSampleRate()
+{
+	return currentSampleRate;
 }
 
 void AudioManager::sendPosition()
@@ -250,12 +280,71 @@ void AudioManager::sendPosition()
 			model->SendParamChange(param);
 		}
 	}
-	if (param.Id1 != 0)
-		DBG("2eme tete de lecture");
+
 	//param.Id1 = 0;
 	//param.DoubleValue = (double)position / (double)periode; //+ 1.0/8.0;
 	//model->SendParamChange(param);
 	
+}
+
+void Amusing::AudioManager::startRecording()
+{
+	if (recorder.isRecording())
+	{
+		DBG("already recording");
+		std::cout << "already recording" << std::endl;
+	}
+	else
+	{
+		playInternalSynth = false;
+		const File file(File::getSpecialLocation(File::userDocumentsDirectory)
+			.getNonexistentChildFile("Juce Test Recording 0", ".wav"));
+		recorder.startRecording(file);
+	}
+}
+
+void Amusing::AudioManager::setUsingSampledSound()
+{
+	WavAudioFormat wavFormat;
+	audioFormatManager.registerBasicFormats();
+	//const File file("C:\\Users\\ayup1\\Documents\\Juce Test Recording 0.wav"); // Downloads\\Bass-Drum-1.wav");
+	//ScopedPointer<AudioFormatReader> audioReader = audioFormatManager.createReaderFor(file);
+
+	ScopedPointer<AudioFormatReader> audioReader(wavFormat.createReaderFor(new MemoryInputStream(BinaryData::cello_wav,
+	BinaryData::cello_wavSize,
+	false),
+	true));
+
+	BigInteger allNotes;
+	allNotes.setRange(0, 128, true);
+
+	//synth.clearSounds();
+	//synth.addSound(new SamplerSound("demo sound",
+	//	*audioReader,
+	//	allNotes,
+	//	74,   // root midi note
+	//	0.1,  // attack time
+	//	0.1,  // release time
+	//	10.0  // maximum sample length
+	//));
+	auto newSound= new SamplerSound("demo sound",
+			*audioReader,
+			allNotes,
+			74,   // root midi note
+			0.1,  // attack time
+			0.1,  // release time
+			10.0  // maximum sample length
+		); 
+	for (int i = 0; i < maxSize; ++i)
+	{
+		if (timeLinesKnown[i] != 0)
+		{
+			timeLinesKnown[i]->clearSounds();
+			timeLinesKnown[i]->addSound(newSound);
+		}
+	}
+
+	playInternalSynth = true;
 }
 
 void AudioManager::getParameters()
@@ -332,12 +421,12 @@ void AudioManager::getParameters()
 		case Miam::AsyncParamChange::ParamType::Play :
 			DBG("state = Play;");
 			state = Play;
-			//DBG("send masterVolume midi : " + (String)roundToInt(param.FloatValue*127.0f));
-			//sendMidiMessage(juce::MidiMessage::controllerEvent(1,7,roundToInt(param.FloatValue*127.0f)));//juce::MidiMessage::masterVolume(param.FloatValue));
-			//sendMidiMessage(juce::MidiMessage::masterVolume(param.FloatValue));
-			//param.IntegerValue = metronome.BPMtoPeriodInSample(param.IntegerValue);//timeToSample(param.IntegerValue);
-			//paramToAllocationThread.push(param);
 			playHeadsKnown[param.Id1]->setSpeed(param.DoubleValue);
+			if (param.IntegerValue == 1 && state == Play)
+			{
+				
+				playHeadsKnown[param.Id1]->changeState();
+			}
 			break;
 		case Miam::AsyncParamChange::ParamType::Pause :
 			DBG("state = Pause;");
@@ -363,15 +452,41 @@ void AudioManager::getParameters()
 			break;
 		case Miam::AsyncParamChange::Duration :
 			state = Play;
-			sendMidiMessage(juce::MidiMessage::controllerEvent(1, 7, roundToInt(param.FloatValue*127.0f)));
+			sendMidiMessage(juce::MidiMessage::controllerEvent(1, 7, roundToInt(param.FloatValue*127.0f)),nullptr);
 			//juce::MidiMessage::masterVolume(param.FloatValue));
-			sendMidiMessage(juce::MidiMessage::masterVolume(param.FloatValue));
+			sendMidiMessage(juce::MidiMessage::masterVolume(param.FloatValue),nullptr);
 			param.IntegerValue = metronome.BPMtoPeriodInSample(param.IntegerValue);//timeToSample(param.IntegerValue);
 			paramToAllocationThread.push(param);
 			break;
 		case Miam::AsyncParamChange::UdpPort:
 			if (timeLinesKnown[param.Id1] != 0)
 				timeLinesKnown[param.Id1]->setMidiChannel(param.IntegerValue);
+			else
+				paramToAllocationThread.push(param);
+			break;
+		case Miam::AsyncParamChange::Volume :
+			if (timeLinesKnown[param.Id1] != 0) // si != 0 : il existe et on peut le modifier
+				timeLinesKnown[param.Id1]->setAllVelocities(param.FloatValue);
+			else // si == 0, on ne sait pas s'il n'existe pas ou si le thread est encore en train de le creer -> envoyer au thread pour verifier et faire le necessaire
+				paramToAllocationThread.push(param);
+			break;
+		case Miam::AsyncParamChange::Position :
+			if (timeLinesKnown[param.Id1] != 0 && timeLinesKnown[param.Id2] != 0)
+			{
+				if (param.Id1 == param.Id2)
+					timeLinesKnown[param.Id1]->resetAllChords();
+				else
+					timeLinesKnown[param.Id1]->addChord(timeLinesKnown[param.Id2], roundToInt(param.DoubleValue * (double)periode));
+			}
+			else
+				paramToAllocationThread.push(param);
+			break;
+		case Miam::AsyncParamChange::Frequency :
+			if (timeLinesKnown[param.Id1] != 0)
+			{
+				// verifier si entraine allocation memoire... si oui -> mettre dans thread d'allocation
+				timeLinesKnown[param.Id1]->setFilterFrequency(param.DoubleValue);
+			}
 			else
 				paramToAllocationThread.push(param);
 			break;
@@ -384,6 +499,24 @@ void AudioManager::getParameters()
 void AudioManager::getAudioThreadMsg()
 {
 	Miam::AsyncParamChange param;
+
+	//BigInteger allNotes;
+	//WavAudioFormat wavFormat;
+	//ScopedPointer<AudioFormatReader> audioReader(wavFormat.createReaderFor(new MemoryInputStream(BinaryData::cello_wav,
+	//	BinaryData::cello_wavSize,
+	//	false),
+	//	true));
+	//allNotes.setRange(0, 128, true);
+	//auto newSound = new SamplerSound("demo sound",
+	//	*audioReader,
+	//	allNotes,
+	//	74,   // root midi note
+	//	0.1,  // attack time
+	//	0.1,  // release time
+	//	10.0  // maximum sample length
+	//);
+
+
 	while (paramToAllocationThread.pop(param))
 	{
 		switch (param.Type)
@@ -396,24 +529,28 @@ void AudioManager::getAudioThreadMsg()
 				{
 				case 0:
 					DBG("desactivate source : " + (String)param.Id1);
-					--midiSenderSize;
-					delete timeLines[param.Id1];
-					timeLines[param.Id1] = 0;
+					if (timeLines[param.Id1] != 0)
+					{
+						delete timeLines[param.Id1];
+						timeLines[param.Id1] = 0;
+					}
 					DBG("source : " + (String)param.Id1 + "deleted");
-					//midiSenderVector.erase(midiSenderVector.begin() + param.Id1);
+					
 					break;
 				case 1:
 					//DBG("AM : I construct a new polygon with ID : " + (String)param.Id1);
-					//midiSenderVector[param.Id1] = std::shared_ptr<TimeLine>(new TimeLine());
+					
 					DBG("activate source    : " + (String)param.Id1);
 					if (timeLines[param.Id1] == 0)
 						timeLines[param.Id1] = new TimeLine();
+					else
+						DBG("impossible");
 
 					timeLines[param.Id1]->setPeriod(periode);
 					if (param.FloatValue != 0)
 						timeLines[param.Id1]->setSpeed(param.FloatValue);
 					else
-						timeLines[param.Id1]->playNoteContinuously();
+						DBG("impossible");//timeLines[param.Id1]->playNoteContinuously();
 
 					timeLines[param.Id1]->setAudioManager(this);
 					//DBG("midiChannel : " + (String)param.IntegerValue);
@@ -421,11 +558,19 @@ void AudioManager::getAudioThreadMsg()
 						timeLines[param.Id1]->setMidiChannel(param.IntegerValue);
 					//timeLines[param.Id1]->setSpeed(param.FloatValue);
 					timeLines[param.Id1]->setId(param.Id1);
-					++midiSenderSize;
+					
+					// LAAAAAAAAAA
+					
+					timeLines[param.Id1]->clearSounds();
+					//timeLines[param.Id1]->addSound(newSound);
+					timeLines[param.Id1]->addSound(BinaryData::cello_wav,BinaryData::cello_wavSize,false);
+					// LAAAAAAAAAAA
+					
 					timeLinesToAudio.push(timeLines[param.Id1]);
 					break;
 				default:
 					DBG("IMPOSSIBLE");
+					break;
 				}
 			}
 			else if (param.Id1 == 1024)
@@ -439,6 +584,8 @@ void AudioManager::getAudioThreadMsg()
 				case 1:
 					if (playHeads[param.Id2] == 0)
 						playHeads[param.Id2] = new PlayHead();
+					if (state == Play)
+						playHeads[param.Id2]->setState(PlayHeadState::Play);
 					playHeads[param.Id2]->setId(param.Id2);
 					playHeads[param.Id2]->setSpeed(param.DoubleValue);
 					playHeads[param.Id2]->setAudioManager(this);
@@ -454,6 +601,8 @@ void AudioManager::getAudioThreadMsg()
 				playHeads[param.Id2]->setId(param.Id2);
 				playHeads[param.Id2]->LinkTo(timeLines[param.Id1]);
 				playHeads[param.Id2]->setSpeed(param.DoubleValue);
+				if (state == Play)
+					playHeads[param.Id2]->setState(PlayHeadState::Play);
 				playHeads[param.Id2]->setAudioManager(this);
 				playHeadsToAudio.push(playHeads[param.Id2]);
 			}
@@ -509,11 +658,24 @@ void AudioManager::getAudioThreadMsg()
 			if (timeLines[param.Id1] != 0)
 				timeLines[param.Id1]->setMidiChannel(param.IntegerValue);
 			break;
+		case Miam::AsyncParamChange::Volume:
+			if (timeLines[param.Id1] != 0) // si != 0 : il existe et on peut le modifier
+				timeLines[param.Id1]->setAllVelocities(param.FloatValue);
+
+		case Miam::AsyncParamChange::Position:
+			if (timeLines[param.Id1] != 0 && timeLines[param.Id2] != 0)
+			{
+				if (param.Id1 == param.Id2)
+					timeLines[param.Id1]->resetAllChords();
+				else
+					timeLines[param.Id1]->addChord(timeLines[param.Id2], roundToInt(param.DoubleValue * (double)periode));
+			}
 		default:
 
 			break;
 		}
 	}
+	//delete newSound;
 }
 
 void AudioManager::threadFunc()
@@ -534,26 +696,11 @@ void AudioManager::threadFunc()
 		if (playHeads[i] != nullptr)
 			delete playHeads[i];
 	}
+	for (int j = 0; j < maxSize; j++)
+	{
+		if (timeLinesKnown[j] != 0)
+			timeLinesKnown[j] = 0;
+
+	}
 	DBG("exit thread");
 }
-
-
-
-
-
-
-
-
-void AudioManager::HandleEvent()
-{
-	//DBG("handleEvent");
-	Miam::AsyncParamChange param;
-	param.Id1 = 0;
-	param.Type = Miam::AsyncParamChange::ParamType::Activate;
-	model->SendParamChange(param);
-}
-
-//AudioDeviceManager& AudioManager::getAudioDeviceManager()
-//{
-//	return *this;
-//}

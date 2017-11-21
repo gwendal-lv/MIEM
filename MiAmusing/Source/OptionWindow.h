@@ -10,6 +10,7 @@
 
 #pragma once
 #include "JuceHeader.h"
+#include "AudioDeviceAndMidiOutputSelectorComponent.h"
 class MainContentComponent;
 
 namespace Amusing
@@ -23,8 +24,8 @@ namespace Amusing
 		void CompleteInitialization(std::shared_ptr<AudioDeviceManager> deviceManager);
 		void removeDeviceManager();
 
-		void paint(Graphics& g);
-		void resized();
+		void paint(Graphics& g) override;
+		void resized() override;
 
 		void buttonClicked(Button * button) override;
 
@@ -32,11 +33,11 @@ namespace Amusing
 
 	private:
 		TextButton* OKbutton;
-		ScopedPointer<AudioDeviceSelectorComponent> audioSetupComp;
+		ScopedPointer<AudioDeviceAndMidiOutputSelectorComponent> audioSetupComp;
 		MainContentComponent* mainComponent;
 		std::shared_ptr<AudioDeviceManager> deviceManager;
 
-		static String getListOfActiveBits(const BitArray& b)
+		/*static String getListOfActiveBits(const BitArray& b)
 		{
 			StringArray bits;
 
@@ -45,7 +46,7 @@ namespace Amusing
 					bits.add(String(i));
 
 			return bits.joinIntoString(", ");
-		}
+		}*/
 
 	};
 }

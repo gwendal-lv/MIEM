@@ -13,8 +13,9 @@
 #include "EditableEllipse.h"
 #include "Exciter.h"
 #include "EditablePolygon.h"
+#include <memory>
 
-class Cursor : public Miam::Exciter//EditableEllipse//Exciter//EditableEllipse
+class Cursor : public Miam::Exciter, public std::enable_shared_from_this<Cursor> //EditableEllipse//Exciter//EditableEllipse
 {
 public:
 	Cursor(int64_t _Id);
@@ -29,13 +30,17 @@ public:
 	bpt getPosition();
 	bpt getPositionInPixels();
 	double getPositionInAssociateArea();
-	void LinkTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon);
+	void LinkTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon, bool rememberPreviousAssociate);
 	bool isLinkedTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon);
 	bool CanLinkTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon);
 	void Inhibit(std::shared_ptr<Miam::EditablePolygon> m_Polygon);
 	std::shared_ptr<Miam::EditablePolygon> getAssociateArea();
 	bool setReadingPosition(double p);
 	void setCenterPositionNormalize(bpt newCenter);
+
+	void Paint(Graphics & g) override;
+	bool isClicked(const Point<double>& hitPoint);
+	
 
 private:
 	JUCE_LEAK_DETECTOR(Cursor)

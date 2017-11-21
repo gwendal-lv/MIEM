@@ -78,13 +78,14 @@ namespace Amusing {
 
 		void SetAllChannels();
 		std::shared_ptr<EditableScene> GetSelectedScene();
-		void resendToModel();
 
 		void ChangeBaseNote(double newBaseNote);
 		void ChangeSpeed(double newSpeed);
 		double getSpeed(std::shared_ptr<IEditableArea> area);
 		void ChangeVelocity(double newVelocity);
 		double getVelocity(std::shared_ptr<IEditableArea> area);
+		double getOctave(std::shared_ptr<IEditableArea> area);
+		void SetMode(Miam::CanvasManagerMode newMode);
     };
     
     

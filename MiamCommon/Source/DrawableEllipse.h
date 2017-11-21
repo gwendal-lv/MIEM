@@ -62,6 +62,10 @@ namespace Miam
 			double a, b; // grand axe et petit axe
 			double rotationAngle; // angle d'inclinaison de l'ellipse
 			float xScale, yScale;
+
+			virtual double computeXScale(float _canvasRatio);
+			virtual double computeYScale(float _canvasRatio);
+
 	};
 }
 

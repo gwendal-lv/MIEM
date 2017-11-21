@@ -146,56 +146,14 @@ void MultiSceneCanvasManager::SetAudioPositions(std::shared_ptr<Cursor> cursor, 
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
 	{
 		bpt oldPosition = cursor->getPosition();//InPixels();
+		int hitAreaId = 0;
 		if (amusingScene->isDrew(cursor) && cursor->setReadingPosition(position)) // vérifie si le curseur est dessiné et le met à jour (seulement si la condition "dessiné" est déjà vérifiée)
 		{
-			if (auto eventA = amusingScene->checkCursorPosition(cursor)) // regarder si collision avec une autre aire
-			{
-				// envoyer les evts de collision (Update pour lier le RH à la TL correspondante)
-				if (auto completeP = std::dynamic_pointer_cast<CompletePolygon>(eventA->GetConcernedArea()))
-				{
-					
-					std::vector<bpt> inter;
-					boost::geometry::model::segment<bpt> segB = completeP->getSegment(oldPosition);//InPixels(oldPosition);
-					boost::geometry::model::segment<bpt> segA(oldPosition, cursor->getPosition());//InPixels());
-					boost::geometry::intersection(segA, segB, inter);
-					DBG("interSize = " + inter.size());
-					if (inter.size() == 1)
-					{
-						cursor->setCenterPositionNormalize(inter[0]);//cursor->setCenterPosition(inter[0]);
-					}
-					else if(inter.size()==0)
-					{
-						inter.push_back(cursor->getPosition());
-					}
-					//double old = cursor->getPositionInAssociateArea();
-					DBG("change d'aire");
-					if (auto associate = std::dynamic_pointer_cast<CompletePolygon>(cursor->getAssociateArea()))
-					{
-						/*if (auto concernedIntersection = amusingScene->getConcernedIntersection(completeP, associate, inter[0]))
-						{
-							cursor->Inhibit(completeP);
-							cursor->LinkTo(concernedIntersection);
-						}
-						else
-						{*/
-							cursor->LinkTo(completeP);
-						//}
-					}
-					else
-					{
-						cursor->LinkTo(completeP);
-					}
-					//DBG("change d'aire : old "+ (String)old +" new "+ (String)cursor->getPositionInAssociateArea());
-					handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(cursor,eventA->GetType(),cursor->GetId(),eventA->GetConcernedScene())));
-				}
-				else
-					handleAndSendAreaEventSync(eventA);
-			}
-			else
-			{
-				std::shared_ptr<AreaEvent> areaE(new AreaEvent(cursor, AreaEventType::NothingHappened));
+
+			
+				std::shared_ptr<AreaEvent> areaE(new AreaEvent(cursor, AreaEventType::NothingHappened, selectedScene));
 				handleAndSendAreaEventSync(areaE);
-			}
+			
 		}
 		/*if(auto completeA = std::dynamic_pointer_cast<CompletePolygon>(area))
 			handleAndSendAreaEventSync(completeA->setReadingPosition(position));*/
@@ -309,19 +267,20 @@ void MultiSceneCanvasManager::SetAllChannels()
 	}
 }
 
-void MultiSceneCanvasManager::resendToModel()
-{
-	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
-	{
-		for (int i = 0; i < amusingScene->getNumberArea(); i++)
-			handleAndSendEventSync(amusingScene->resendArea(i));
-	}
-}
+
 
 void MultiSceneCanvasManager::ChangeBaseNote(double newBaseNote)
 {
 	DBG("new base = " + (String)newBaseNote);
-	
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+	{
+		if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)
+		{
+			myGraphicSessionManager->setOctave(amusingScene->GetSelectedArea(), newBaseNote);
+		}
+		//graphicSessionManager->setSpeedArea(amusingScene->GetSelectedArea(), newSpeed);
+		handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(amusingScene->GetSelectedArea(),AreaEventType::ShapeChanged,amusingScene)));//amusingScene->SetSelectedAreaOpacity(newVelocity / 127.0));
+	}
 }
 
 void MultiSceneCanvasManager::ChangeSpeed(double newSpeed)
@@ -329,10 +288,10 @@ void MultiSceneCanvasManager::ChangeSpeed(double newSpeed)
 	//DBG("new speed = " + (String)newSpeed);
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
 	{
-		/*if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)
+		if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)
 		{
 			myGraphicSessionManager->setSpeedArea(amusingScene->GetSelectedArea(), newSpeed);
-		}*/
+		}
 		//graphicSessionManager->setSpeedArea(amusingScene->GetSelectedArea(), newSpeed);
 		//handleAndSendAreaEventSync(amusingScene->SetSelectedAreaCursor(newSpeed));
 		if (auto selectedC = std::dynamic_pointer_cast<CompletePolygon>(amusingScene->GetSelectedArea()))
@@ -387,4 +346,108 @@ double MultiSceneCanvasManager::getVelocity(std::shared_ptr<IEditableArea> area)
 	}
 	else
 		return 64.0;
+}
+
+double MultiSceneCanvasManager::getOctave(std::shared_ptr<IEditableArea> area)
+{
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+	{
+		if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)
+		{
+			return myGraphicSessionManager->getOctave(amusingScene->GetSelectedArea());
+		}
+		else
+			return 0.0;
+	}
+	else
+		return 64.0;
+}
+
+// - - - - - - - - - - running Mode - - - - - - - - - -
+
+// The cases below are to be FORCED by the IGraphicSessionManager !
+// Or by the canvasinteractor itself
+void MultiSceneCanvasManager::SetMode(Miam::CanvasManagerMode newMode)
+{
+	/* Comportement assez asymétrique concernant les excitateurs.
+	* Si on sort d'un mode excitateur, on arrête toutes les transfos (et on vérifie
+	* ça hors du switch juste en-dessous, à la dégueu quoi (à améliorer))
+	* Si on entre dans le mode excitateur : c'est géré dans le switch proprement
+	*/
+	if (
+		(mode == CanvasManagerMode::ExcitersEdition || mode == CanvasManagerMode::ExciterSelected)
+		&&
+		(mode != CanvasManagerMode::ExcitersEdition && mode != CanvasManagerMode::ExciterSelected)
+		)
+	{
+		selectedScene->StopCurrentTransformations();
+	}
+
+	// We don't do a specific action on every mode change !
+	// But a few require checks and action
+	switch (newMode) {
+
+	case CanvasManagerMode::Unselected:
+		// Unselection of a selected area (1 area selected for all canvases...)
+		// And everything becomes dark, for another canvas to become
+		if (selectedScene) // on first scene adding... there would be a problem
+		{
+			auto areaE = selectedScene->SetSelectedArea(nullptr, false);
+			selectedScene->EnableExcitersLowOpacity(true);
+			selectedScene->EnableAreasLowOpacity(true);
+			// Pas d'évènements renvoyés pour les opacités : on update le tout
+			recreateAllAsyncDrawableObjects();
+			//handleAndSendAreaEventSync(areaE);
+		}
+		// Graphical updates
+		if (mode != CanvasManagerMode::Unselected)
+		{
+			canvasComponent->SetIsSelectedForEditing(false);
+		}
+		break;
+
+	case CanvasManagerMode::SceneOnlySelected:
+
+		// à quoi servent VRAIMENT les lignes là-dessous ?
+		/*if (selectedScene) // on first scene adding... there would be a problem
+		GetSelectedScene()->SetSelectedArea(nullptr, false);*/
+		// Graphical updates
+		if (mode == CanvasManagerMode::Unselected)
+		{
+			canvasComponent->SetIsSelectedForEditing(true);
+		}
+
+		// Mise en quasi-transparence des excitateurs seulement
+		if (selectedScene) // sinon pb à l'initialisation
+		{
+			
+			selectedScene->EnableAreasLowOpacity(false);
+			// Pas d'évènements renvoyés : on update le tout
+			//recreateAllAsyncDrawableObjects();
+		}
+		break;
+
+		// Quand on passe en mode excitateurs (on y passe forcément avant
+		// d'en sélectionner un...), on arrête les transfos en cours
+		// !! On doit vérifier qu'on était pas déjà en mode excitateurs !
+	case CanvasManagerMode::ExcitersEdition:
+		if (mode != CanvasManagerMode::ExciterSelected)
+			selectedScene->StopCurrentTransformations();
+
+		// Mise en quasi-transparence des aires graphiques à exciter seulement
+		selectedScene->EnableExcitersLowOpacity(false);
+		selectedScene->EnableAreasLowOpacity(true);
+		// Pas d'évènements renvoyés : on update le tout
+		recreateAllAsyncDrawableObjects();
+		break;
+
+		// Default case : we just apply the new mode
+	default:
+		break;
+	}
+
+	mode = newMode;
+
+
+	graphicSessionManager->CanvasModeChanged(mode);
 }

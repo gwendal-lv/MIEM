@@ -73,9 +73,9 @@ namespace Miam
 		bool deleting;
 		std::shared_ptr<AreaEvent> deleteEvent;
 		std::shared_ptr<Amusing::Follower> getFollowers(std::shared_ptr<Amusing::AnimatedPolygon> masterArea);
-		std::shared_ptr<AreaEvent> resendArea(int idx);
 
 		std::vector< std::shared_ptr<Amusing::CompletePolygon> > currentIntersectionsAreas;
+		void addChords(std::shared_ptr<Amusing::CompletePolygon> parent1, std::shared_ptr<Amusing::CompletePolygon> parent2, std::shared_ptr<MultiAreaEvent> multiE);
 		std::shared_ptr<AreaEvent> AddIntersectionArea(std::shared_ptr<Amusing::CompletePolygon> parent1, std::shared_ptr<Amusing::CompletePolygon> parent2, std::shared_ptr<Amusing::CompletePolygon> newIntersection);
 
 		// map with 2 entry = the parents polygons, and 1 output = the vector of overlap area between the two parent polygon
@@ -100,7 +100,9 @@ namespace Miam
 		std::shared_ptr<AreaEvent> SetSelectedAreaCursor(int idx, double newSize);
 		std::shared_ptr<AreaEvent> SetSelectedAreaOpacity(double newOpacity);
 		bool isDrew(std::shared_ptr<Cursor> cursor);
-		std::shared_ptr<AreaEvent> checkCursorPosition(std::shared_ptr<Cursor> cursor);
+		std::shared_ptr<AreaEvent> checkCursorPosition(std::shared_ptr<Cursor> cursor, int &areaId);
+		//size_t GetDrawableObjectsCount();
+		//std::shared_ptr<IDrawableArea> GetDrawableObject(size_t i);
 	};
 
 

@@ -53,17 +53,9 @@ DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b,
 	DrawableArea(_Id,_center,_fillColour), a(_a), b(_b)
 {
 	rotationAngle = 0.0;
-	//float xScale, yScale;
-	if (_canvasRatio > 1.0f) // ratio of an landscape-oriented window
-	{
-		xScale = 1.0f / _canvasRatio;
-		yScale = 1.0f;
-	}
-	else // ratio of an portrait-oriented window
-	{
-		xScale = 1.0f;
-		yScale = 1.0f*_canvasRatio;
-	}
+	
+	xScale = computeXScale(_canvasRatio);
+	yScale = computeYScale(_canvasRatio);
 
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() - (b / 2)*yScale));
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>() + (a / 2)*xScale, center.get<1>()));
@@ -129,16 +121,9 @@ void DrawableEllipse::recreateContourPoints(int width, int height)
 	float newCanvasRatio = (float)width / (float)height;
 	float newXScale;
 	float newYScale;
-	if (newCanvasRatio > 1.0f) // ratio of an landscape-oriented window
-	{
-		newXScale = 1.0f / newCanvasRatio;
-		newYScale = 1.0f;
-	}
-	else // ratio of an portrait-oriented window
-	{
-		newXScale = 1.0f;
-		newYScale = 1.0f*newCanvasRatio;
-	}
+	
+	newXScale = computeXScale(newCanvasRatio);
+	newYScale = computeYScale(newCanvasRatio);
 
 	boost::geometry::strategy::transform::translate_transformer<double, 2, 2> invTr(-center.get<0>(), -center.get<1>());
 	boost::geometry::strategy::transform::translate_transformer<double, 2, 2> Tr(center.get<0>(), center.get<1>());
@@ -154,6 +139,16 @@ void DrawableEllipse::recreateContourPoints(int width, int height)
 
 	xScale = newXScale;
 	yScale = newYScale;
+}
+
+double DrawableEllipse::computeXScale(float _canvasRatio)
+{
+	return _canvasRatio > 1.0f ? 1.0f/_canvasRatio : 1.0f;
+}
+
+double DrawableEllipse::computeYScale(float _canvasRatio)
+{
+	return _canvasRatio > 1.0f ? 1.0f : 1.0f / _canvasRatio;
 }
 
 

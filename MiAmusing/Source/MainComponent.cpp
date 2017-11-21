@@ -45,14 +45,13 @@ void MainContentComponent::resized()
     // If you add any child components, this is where you should
     // update their positions.
 
-	DBG("MainContentComponent::resized()");
-
+	int toolbarWidth = getLocalBounds().getWidth() / 12;
 	if (multiCanvasComponent)
 	{
-		multiCanvasComponent->setBounds(50, 0, 550, getLocalBounds().getHeight());
+		multiCanvasComponent->setBounds(toolbarWidth, 0, getLocalBounds().getWidth()-toolbarWidth, getLocalBounds().getHeight());
 	}
 	if (editSceneC)
-		editSceneC->setBounds(0, 0, 50, getLocalBounds().getHeight());
+		editSceneC->setBounds(0, 0, toolbarWidth, getLocalBounds().getHeight());
     //    multiCanvasComponent->setBounds(getLocalBounds());
 	//sceneEditionComponent->setBounds(0, 0, 50, getLocalBounds().getHeight());
 	//multiCanvasComponent->setBounds(50, 0, 550, getLocalBounds().getHeight());

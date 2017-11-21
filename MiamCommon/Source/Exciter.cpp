@@ -66,17 +66,26 @@ void Exciter::init()
     SetOpacityMode(OpacityMode::Mid);
     SetEnableTranslationOnly(true);
     
-    // Clignotement
+    volume = 0.0;
     startTimePt = clock::now();
-    isAnimationSynchronized = true;
     
     
     // Par défaut : volume de 1
     SetVolume(1.0);
+    isAnimationSynchronized = true;
+}
+double Exciter::computeXScale(float _canvasRatio)
+{
+	return 0.5f + 0.5f / _canvasRatio;
 }
 
 
-// = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
+double Exciter::computeYScale(float _canvasRatio)
+{
+	return 0.5f + 0.5f * _canvasRatio;
+}
+
+
 
 void Exciter::SetVolume(double volume_)
 {
@@ -85,6 +94,7 @@ void Exciter::SetVolume(double volume_)
     // Pour l'instant rien, mais à l'avenir ça devra afficher graphiquement le résultat
 }
 
+// = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
 void Exciter::SetIsAnimationSynchronized(bool isSynchronized_)
 {
     // On suppose que le point de départ commun a bien été initialisé auparavant...
@@ -112,7 +122,6 @@ void Exciter::Paint(Graphics& g)
     // Parent painting
     EditableEllipse::Paint(g);
 }
-
 
 // = = = = = = = = = = Interactions = = = = = = = = = =
 
@@ -236,6 +245,7 @@ void Exciter::NotifyNewExcitationToAreas()
     for (size_t i = 0; i<areasInteractingWith.size() ; i++)
         areasInteractingWith[i].lock()->OnNewExcitementAmount(getCastedSharedFromThis(), areaExcitementAmounts[i]);
 }
+
 
 
 // = = = = = = = = = = XML import/export = = = = = = = = = =

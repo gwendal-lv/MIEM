@@ -21,9 +21,11 @@ Cursor::Cursor(int64_t _Id) : Exciter(_Id, std::chrono::time_point<clock>())
 	speed = 1;
 }
 
-Cursor::Cursor(int64_t _Id, bpt /*_center*/, double _r, Colour _fillColour, float _canvasRatio) :
+Cursor::Cursor(int64_t _Id, bpt _center, double _r, Colour _fillColour, float _canvasRatio) :
 	Exciter(_Id, std::chrono::time_point<clock>())//EditableEllipse(_Id, _center, _a,  _b, _fillColour, _canvasRatio)
 {
+	center = _center;
+	fillColour = _fillColour;
 	a = _r;
 	b = _r;
 	SetIsRound(true);
@@ -48,6 +50,8 @@ Cursor::Cursor(int64_t _Id, bpt /*_center*/, double _r, Colour _fillColour, floa
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() + (b / 2)*yScale));
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>() - (a / 2)*xScale, center.get<1>()));
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() - (b / 2)*yScale));
+
+	SetIsAnimationSynchronized(false);
 }
 
 //Cursor::Cursor(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio) :
@@ -116,16 +120,20 @@ double Cursor::getPositionInAssociateArea()
 		return 0.0;
 }
 
-void Cursor::LinkTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon) // link the cursor to the form that compute its center position
+void Cursor::LinkTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon, bool rememberPreviousAssociate) // link the cursor to the form that compute its center position
 {
 	if (associate != m_Polygon)
 	{
 		if(associate == nullptr)
 			associate = m_Polygon;
-		else if (associate != nullptr && (oldAssociates.find(m_Polygon) == oldAssociates.end() || oldAssociates[m_Polygon].second > 0.05))
+		else if (rememberPreviousAssociate &&  associate != nullptr && (oldAssociates.find(m_Polygon) == oldAssociates.end() || oldAssociates[m_Polygon].second > 0.05))
 		{
 			oldAssociates[associate].first = center;
 			oldAssociates[associate].second = 0; // distance parcourue depuis que le curseur n'est plus lié à cette aire (= oldAssociate)
+			associate = m_Polygon;
+		}
+		else
+		{
 			associate = m_Polygon;
 		}
 	}
@@ -216,3 +224,20 @@ void Cursor::setCenterPositionNormalize(bpt newCenter)
 	Translate(translation);
 	//DBG((String)center.get<0>() + " " + (String)center.get<1>() + "setCenterPositionNormal");
 }
+
+void Cursor::Paint(Graphics& g)
+{
+	EditableEllipse::Paint(g);
+}
+
+bool Cursor::isClicked(const Point<double>& hitPoint)
+{
+	AreaEventType areaEventType = EditableEllipse::TryBeginPointMove(hitPoint);
+	pointDraggedId = EditableAreaPointId::None;
+	if (areaEventType != AreaEventType::PointDragBegins)
+		return false;
+	else
+		return true;
+}
+
+

@@ -10,6 +10,8 @@
 
 #include "OptionWindow.h"
 #include "MainComponent.h"
+#include "AudioDeviceAndMidiOutputSelectorComponent.h"
+
 using namespace Amusing;
 OptionWindow::OptionWindow(MainContentComponent* _mainComponent)
 {
@@ -31,15 +33,15 @@ void OptionWindow::CompleteInitialization(std::shared_ptr<AudioDeviceManager> m_
 	if (m_deviceManager == nullptr)
 		DBG("nullptr");
 	deviceManager = m_deviceManager;
-	audioSetupComp = new AudioDeviceSelectorComponent(*m_deviceManager,
-		0, 256, 0, 256, true, true, true, false);
+	audioSetupComp = new AudioDeviceAndMidiOutputSelectorComponent(*m_deviceManager,
+		0, 256, 0, 256, true, true, false);
 	m_deviceManager->addChangeListener(this);
 	addAndMakeVisible(audioSetupComp);
 }
 
 void OptionWindow::removeDeviceManager()
 {
-	audioSetupComp->deviceManager.removeAllChangeListeners();
+	audioSetupComp->removeAllChangeListener();
 }
 
 void OptionWindow::paint(Graphics& /*g*/)
@@ -49,8 +51,11 @@ void OptionWindow::paint(Graphics& /*g*/)
 
 void OptionWindow::resized()
 {
-	if(audioSetupComp)
-		audioSetupComp->setBounds(0,0,getWidth(),getHeight()-20);
+	if (audioSetupComp)
+	{
+		audioSetupComp->setItemHeight(20);
+		audioSetupComp->setBounds(0, 0, getWidth(), getHeight() - 30);
+	}
 	OKbutton->setBounds(getWidth()/2 - 25, getHeight()-20,50,20);
 }
 
@@ -63,7 +68,7 @@ void OptionWindow::buttonClicked(Button * button)
 
 void OptionWindow::changeListenerCallback(ChangeBroadcaster*)
 {
-	AudioIODevice* device = audioSetupComp->deviceManager.getCurrentAudioDevice();
+	/*AudioIODevice* device = audioSetupComp->deviceManager.getCurrentAudioDevice();
 	DBG("Current audio device: " + device->getName().quoted());
 	DBG("Sample rate: " + String(device->getCurrentSampleRate()) + " Hz");
 	DBG("Block size: " + String(device->getCurrentBufferSizeSamples()) + " samples");
@@ -73,5 +78,5 @@ void OptionWindow::changeListenerCallback(ChangeBroadcaster*)
 	DBG("Input channel names: " + device->getInputChannelNames().joinIntoString(", "));
 	DBG("Active input channels: " + getListOfActiveBits(device->getActiveInputChannels()));
 	DBG("Output channel names: " + device->getOutputChannelNames().joinIntoString(", "));
-	DBG("Active output channels: " + getListOfActiveBits(device->getActiveOutputChannels()));
+	DBG("Active output channels: " + getListOfActiveBits(device->getActiveOutputChannels()));*/
 }

@@ -94,6 +94,8 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 			OnCircles.push_back(0);
 		}
 	}
+	chordFlag = std::vector<bool>(pointsCount, false);
+	chordAreaForFlag = std::vector<std::shared_ptr<CompletePolygon>>(pointsCount, nullptr);
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id,
@@ -133,6 +135,7 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	}
 
 	//updateSubTriangles();
+	
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id,
@@ -180,7 +183,6 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 		
 	}
 
-	
 
 	// ajouter le calcul du rayon des cercles : on connait les coordonnees des points et a quels cercles ils appartienne -> possible de retrouver le rayon et le centre ! 
 }
@@ -298,7 +300,7 @@ void CompletePolygon::lengthToPercent()
 	perimeter = 0;
 	perimeter = boost::geometry::perimeter(contourPointsInPixels);
 
-	//calcul des poucentages correspondant à chaque point
+	//calcul des poucentages correspondant ï¿½ chaque point
 	percentages[0] = 0;
 	for (int i = 1; i < (int)contourPoints.outer().size(); ++i)
 	{
@@ -337,7 +339,7 @@ boost::geometry::model::segment<bpt> CompletePolygon::getSegment(bpt hitPoint) /
 			prev = i;
 			suiv = i + 1;
 			if (suiv == (int)contourPoints.outer().size())
-				suiv = 1; // pas 0 car le point 0 et le dernier point sont les mêmes
+				suiv = 1; // pas 0 car le point 0 et le dernier point sont les mï¿½mes
 			return boost::geometry::model::segment<bpt>(contourPoints.outer().at(prev), contourPoints.outer().at(suiv));
 		}
 	}
@@ -376,7 +378,7 @@ boost::geometry::model::segment<bpt> CompletePolygon::getSegmentInPixels(bpt hit
 			prev = i;
 			suiv = i + 1;
 			if (suiv == (int)contourPointsInPixels.outer().size())
-				suiv = 1; // pas 0 car le point 0 et le dernier point sont les mêmes
+				suiv = 1; // pas 0 car le point 0 et le dernier point sont les mï¿½mes
 			return boost::geometry::model::segment<bpt>(contourPointsInPixels.outer().at(prev), contourPointsInPixels.outer().at(suiv));
 		}
 	}
@@ -453,7 +455,7 @@ bpt CompletePolygon::computeLinearCursorCenter(double p)
 			if (suiv == 0)
 				suiv += 1;
 
-			// calcul du point où se trouve le curseur par interpolation linéaire
+			// calcul du point oï¿½ se trouve le curseur par interpolation linï¿½aire
 			bpt P;
 			if (suiv != 0)
 			{
@@ -583,7 +585,7 @@ bpt CompletePolygon::computeAngularCursorCenter(double p)
 			if (suiv == 0)
 				suiv += 1;
 
-			// calcul du point où se trouve le curseur par interpolation linéaire
+			// calcul du point oï¿½ se trouve le curseur par interpolation linï¿½aire
 			bpt P(0,0);
 			bpt extr;
 			//if( (0 <= p && p<0.25 ) || (0.75 <= p && p<1))
@@ -697,8 +699,8 @@ float CompletePolygon::computeCursorAlpha(double p, bpt _center)
 
 	double distPr = boost::geometry::distance(_center, contourPoints.outer().at(prev));
 	double distSui = boost::geometry::distance(_center, contourPoints.outer().at(suiv));
-	double D = 0.02; // distance à laquelle on commence à augmenter/diminuer l'opacité
-	double H = 0.5;  // opacité lorsqu'on est pas assez proche d"un sommet
+	double D = 0.02; // distance ï¿½ laquelle on commence ï¿½ augmenter/diminuer l'opacitï¿½
+	double H = 0.5;  // opacitï¿½ lorsqu'on est pas assez proche d"un sommet
 	if (distPr < D )
 	{
 		if (1 - distPr * (1-H)/D < 0)
@@ -746,6 +748,11 @@ void CompletePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 AreaEventType CompletePolygon::TryBeginPointMove(const Point<double>& newLocation)
 {
 	AreaEventType areaEventType = EditablePolygon::TryBeginPointMove(newLocation);
+	if (pointDraggedId == EditableAreaPointId::Center)
+	{
+		pointDraggedId = EditableAreaPointId::WholeArea;
+		lastLocation = newLocation;
+	}
 	for (int i = 0; i < Nradius; ++i)
 		bullsEye[i].TryBeginPointMove(newLocation);
 	return areaEventType;
@@ -966,6 +973,11 @@ std::shared_ptr<AreaEvent> CompletePolygon::intersection(std::shared_ptr<Complet
 		return multiE;
 		//areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeP, AreaEventType::NothingHappened));
 	}
+	else
+	{
+		std::shared_ptr<MultiAreaEvent> multiE(new MultiAreaEvent());
+		return multiE;
+	}
 	return areaE;
 }
 
@@ -978,7 +990,7 @@ std::shared_ptr<CompletePolygon> CompletePolygon::fusion(std::shared_ptr<Complet
 		double pc;
 		int circ;
 		Helper(double a, int b) : pc(a), circ(b) {};
-		bool operator< (Helper b) { return (this->pc < b.pc); }
+		//bool operator< (const Helper& b) { return (this->pc < b.pc); }
 		Helper() : pc(0), circ(0) {};
 	};
 
@@ -1005,7 +1017,7 @@ std::shared_ptr<CompletePolygon> CompletePolygon::fusion(std::shared_ptr<Complet
 	test.pop_back(); // delete last element = closure element of the second polygon
 
 	// sort to have all the points in clockwise order
-	std::sort(test.begin(), test.end());
+	std::sort(test.begin(), test.end(),[](Helper a, Helper b) {return (a.pc < b.pc); });
 
 	// close the polygon
 	test.push_back(Helper(test[0].pc+1,test[0].circ));
@@ -1265,4 +1277,74 @@ void CompletePolygon::deleteAllCursors()
 {
 	cursors.clear();
 		
+}
+
+void CompletePolygon::addChordPoints(double m_anglepercentage, std::shared_ptr<CompletePolygon> areaForChord)
+{
+	chordsAnglePercentage.push_back(m_anglepercentage);
+	chordAreaForPercentage.push_back(areaForChord);
+}
+
+void CompletePolygon::setChordFlag(bpt chordPt, bool isTrue, std::shared_ptr<CompletePolygon> areaForChord)
+{
+	for (int i = 0; i < (int)contourPoints.outer().size(); ++i)
+	{
+		if (boost::geometry::equals(chordPt, contourPoints.outer().at(i)))
+		{
+			chordFlag.at(i) = isTrue;
+			chordAreaForFlag.at(i) = areaForChord;
+			break;
+		}
+	}
+}
+
+void CompletePolygon::resetChords()
+{
+	chordFlag = std::vector<bool>(contourPoints.outer().size(), false);
+	chordAreaForFlag = std::vector<std::shared_ptr<CompletePolygon>>(contourPoints.outer().size(), nullptr);
+	chordAreaForPercentage.clear();
+	chordsAnglePercentage.clear();
+}
+
+bool CompletePolygon::getChordParameters(int idx, std::shared_ptr<CompletePolygon>& chordArea, double &m_pC)
+{
+	if (idx < chordAreaForPercentage.size())
+	{
+		m_pC = chordsAnglePercentage[idx];
+		chordArea = chordAreaForPercentage[idx];
+		return true;
+	}
+	else
+	{
+		idx -= chordAreaForPercentage.size();
+		int N = 0;
+		for (int i = 0; i < chordAreaForFlag.size(); ++i)
+			if (chordAreaForFlag[i] != nullptr)
+				N++;
+		if (idx < N)
+		{
+			// idx = indice en terme d'elt non nuls !
+			int count = 0;
+			int realIdx = 0;
+			for (int j = 0; j < chordAreaForFlag.size(); ++j)
+			{
+				if (chordAreaForFlag[j] != nullptr)
+				{
+					count++;
+					if (count == idx + 1)
+					{
+						realIdx = j;
+						break;
+					}
+				}
+			}
+			m_pC = anglesPercentages[realIdx];
+			chordArea = chordAreaForFlag[realIdx];
+			return true;
+		}
+		else
+			return false;
+
+	}
+	return false;
 }

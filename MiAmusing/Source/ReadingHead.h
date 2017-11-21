@@ -29,6 +29,7 @@ public:
 	void setAudioManager(Amusing::AudioManager* m_audioManager);
 	void LinkTo(TimeLine* _timeLine);
 	void setSpeed(double m_speed);
+	void changeState();
 	void setReadingPosition(double p);
 	double getReadingPosition();
 	int getTimeLineId();
@@ -38,8 +39,7 @@ public:
 
 	
 
-	void process(); 
-	
+	void process();
 
 private:
 	// members of ReadingHead
@@ -51,8 +51,13 @@ private:
 
 	void testPosition(int P); // look in the associate timeLine if there is a MIDI msg to send
 
+	static const int chordSize = 3;
+	int chordToPlay[chordSize];
+
 	// references to other objects
 	TimeLine* timeLine; // reference to the associated timeLine
 	Amusing::AudioManager* audioManager;// reference to the audioManager to send the MIDI
+
+	JUCE_LEAK_DETECTOR(PlayHead);
 };
 

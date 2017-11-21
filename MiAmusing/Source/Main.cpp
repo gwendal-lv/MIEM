@@ -101,9 +101,14 @@ public:
         {
             setUsingNativeTitleBar (true);
             setContentOwned (new MainContentComponent(), true);
+			setVisible(true);
 
+#if defined(__AMUSINGMOBILE)
+			setFullScreen(true);
+#else
             centreWithSize (getWidth(), getHeight());
-            setVisible (true);
+			setResizable(true, true);
+#endif
         }
 
         void closeButtonPressed() override

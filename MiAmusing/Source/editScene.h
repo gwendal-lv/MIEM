@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.0.1
+  Created with Projucer version: 5.2.0
 
   ------------------------------------------------------------------------------
 
@@ -44,9 +44,9 @@ using namespace Amusing;
                                                                     //[/Comments]
 */
 class EditScene  : public Component,
-                   public ButtonListener,
-                   public ComboBoxListener,
-                   public SliderListener
+                   public Button::Listener,
+                   public ComboBox::Listener,
+                   public Slider::Listener
 {
 public:
     //==============================================================================
@@ -65,6 +65,17 @@ public:
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
     void sliderValueChanged (Slider* sliderThatWasMoved) override;
 
+    // Binary resources:
+    static const char* stopOn_png;
+    static const int stopOn_pngSize;
+    static const char* pauseOn_png;
+    static const int pauseOn_pngSize;
+    static const char* optionOn_png;
+    static const int optionOn_pngSize;
+    static const char* lectureOn_png;
+    static const int lectureOn_pngSize;
+    static const char* deleteOn_png;
+    static const int deleteOn_pngSize;
 
 
 private:
@@ -75,18 +86,16 @@ private:
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<TextButton> playButton;
-    ScopedPointer<TextButton> pauseButton;
-    ScopedPointer<TextButton> stopButton;
     ScopedPointer<TextButton> addCarreButton;
     ScopedPointer<TextButton> addTriangleButton;
-    ScopedPointer<TextButton> addTrueCircleButton;
-    ScopedPointer<TextButton> deleteButton;
     ScopedPointer<TextButton> completeButton;
-    ScopedPointer<TextButton> optionButton;
     ScopedPointer<ComboBox> comboBoxMidi;
     ScopedPointer<Slider> timeSlider;
-    ScopedPointer<Slider> volumeSlider;
+    ScopedPointer<ImageButton> imgPlayButton;
+    ScopedPointer<ImageButton> imgStopButton;
+    ScopedPointer<ImageButton> imgPauseButton;
+    ScopedPointer<ImageButton> imgOptionButton;
+    ScopedPointer<ImageButton> imgDeleteButton;
 
 
     //==============================================================================

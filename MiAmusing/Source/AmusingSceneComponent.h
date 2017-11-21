@@ -36,7 +36,7 @@ public:
 
 	void SetAreaOptionsCenter(bpt center);
 	void SetAreaOptionsVisible(bool show);
-	void SetAreaOptionsVisible(bool show, double speed, double velocity);
+	void SetAreaOptionsVisible(bool show, double speed, double velocity, int octave);
 
 	/*void mouseDown(const juce::MouseEvent &event) override;
 	void mouseDrag(const juce::MouseEvent &event) override;

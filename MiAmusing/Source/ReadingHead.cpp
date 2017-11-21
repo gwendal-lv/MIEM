@@ -51,6 +51,22 @@ void PlayHead::setSpeed(double m_speed)
 	}
 }
 
+void PlayHead::changeState()
+{
+	switch (state)
+	{
+	case PlayHeadState::Play:
+		state = PlayHeadState::Pause;
+		break;
+	case PlayHeadState::Pause:
+		state = PlayHeadState::Play;
+		break;
+	case PlayHeadState::Stop:
+		break;
+	default:
+		break;
+	}
+}
 
 void PlayHead::setReadingPosition(double p)
 {
@@ -61,7 +77,7 @@ void PlayHead::setReadingPosition(double p)
 
 double PlayHead::getReadingPosition()
 {
-	return position / timeLine->getPeriod();//(double)currentPeriod;
+	return position / (double)timeLine->getPeriod();//(double)currentPeriod;
 }
 
 int PlayHead::getTimeLineId()
@@ -146,7 +162,7 @@ void PlayHead::testPosition(int P)
 		{
 			//DBG((String)i + " : " + (String)position + " " + (String)(P / (double)timeLine->getPeriod()));
 			MidiMessage midiMsg = MidiMessage::noteOn(m_channel, m_note, m_velocity);
-			audioManager->sendMidiMessage(midiMsg);
+			audioManager->sendMidiMessage(midiMsg,this);
 		}
 		i++;
 	}
@@ -158,8 +174,33 @@ void PlayHead::testPosition(int P)
 		if (timeLine->isNoteOffTime(P, i, m_end, m_channel, m_note))
 		{
 			MidiMessage midiMsgOff = MidiMessage::noteOff(m_channel, m_note);
-			audioManager->sendMidiMessage(midiMsgOff);
+			audioManager->sendMidiMessage(midiMsgOff,this);
 		}
 		i++;
 	}
+
+	if (timeLine->isChordOnTime(P, m_channel, chordToPlay, m_velocity))
+	{
+		for (int j = 0; j < chordSize; j++)
+		{
+			if (chordToPlay[j] > 0)
+			{
+				MidiMessage midiMsg = MidiMessage::noteOn(m_channel, chordToPlay[j], m_velocity);
+				audioManager->sendMidiMessage(midiMsg,this);
+			}
+		}
+	}
+
+	if (timeLine->isChordOffTime(P, m_channel, chordToPlay))
+	{
+		for (int j = 0; j < chordSize; j++)
+		{
+			if (chordToPlay[j] > 0)
+			{
+				MidiMessage midiMsgOff = MidiMessage::noteOff(m_channel, chordToPlay[j]);
+				audioManager->sendMidiMessage(midiMsgOff,this);
+			}
+		}
+	}
+
 }

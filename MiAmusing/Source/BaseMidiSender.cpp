@@ -23,7 +23,7 @@ TimeLine::TimeLine()
 
 	
 	channel = 1;
-	duration = 10000;
+	duration = 3 * 10000;
 
 	speed = 1.0f;
 	continuous = false;
@@ -35,10 +35,19 @@ TimeLine::TimeLine()
 
 	offset = 0;
 
+	chordSize = 0;
+
+	newSound = nullptr;
+	filterFrequencyToReach = 400.0;
+	currentFilterFrequency = 400.0;
+	deltaF = 0;
+	filter = new IIRFilter();
+	filter->makeInactive();
 }
 
 TimeLine::~TimeLine()
 {
+	delete filter;
 	/*if (!continuous)
 	{
 		MidiMessage midiMsgOff = MidiMessage::noteOff(channel, lastNote);
@@ -60,6 +69,12 @@ TimeLine::~TimeLine()
 void TimeLine::setAudioManager(AudioManager* m_audioManager)
 {
 	audioManager = m_audioManager;
+	midiCollector.reset(audioManager->getCurrentSampleRate());
+	synth.setCurrentPlaybackSampleRate(audioManager->getCurrentSampleRate());
+	for (int i = 0; i < 16; i++)
+	{
+		synth.addVoice(new SamplerVoice);
+	}
 }
 
 void TimeLine::setPeriod(int m_period)
@@ -153,6 +168,14 @@ void TimeLine::setId(int m_Id)
 	Id = m_Id;
 }
 
+void TimeLine::setAllVelocities(float m_velocity)
+{
+	for (int i = 0; i < midiTimesSize; ++i)
+	{
+		velocity[i] = m_velocity;
+	}
+}
+
 int TimeLine::getId()
 {
 	return Id;
@@ -218,77 +241,120 @@ bool TimeLine::isNoteOffTime(int m_position, int i, bool &m_end, int &m_channel,
 	}
 }
 
-void TimeLine::process(int time)
+bool TimeLine::isChordOnTime(int m_position, int &m_channel, int *m_chordToPlay, uint8 &m_velocity)
 {
-	//int b = midiTimesSize;
-	//DBG("midiTimes.size() = " + (String)midiTimesSize);
-	//DBG("midiOffTimes.size() = " + (String)midiOfftimesSize);
-	//DBG("time = " + (String)time);
-	//DBG("midiTimesSize : " + (String)midiTimesSize);
-	//time -= offset;
-	if (!continuous)
+	int num = 0;
+	for (int i = 0; i < chordSize; ++i)
 	{
-		time += offset;
-		int oldTime = time;
-		time += t0;
-		//time += offset;
-		while (time >= currentPeriod)
-			time -= currentPeriod;
-		if (oldTime == period - 1)
-			t0 = time + 1;
-		//time += offset;
-		position = time;
-		/*if (time == 0)
-			t0 = 1;*/
-
-		
-		
-		int m_channel, m_note;
-		uint8 m_velocity;
-
-		bool m_end = false;
-		int i = 0;
-		while (m_end == false)
+		if (chordTimesOn[i] == m_position)
 		{
-			if (isNoteOnTime(time, i, m_end, m_channel, m_note, m_velocity))
-			{
-				MidiMessage midiMsg = MidiMessage::noteOn(m_channel, m_note, m_velocity);
-				audioManager->sendMidiMessage(midiMsg);
-			}
-			i++;
+			m_chordToPlay[num] = chordNotesOn[i];
+			num++;
 		}
-
-		m_end = false;
-		i = 0;
-		while (m_end == false)
-		{
-			if (isNoteOffTime(time, i, m_end, m_channel, m_note))
-			{
-				MidiMessage midiMsgOff = MidiMessage::noteOff(m_channel, m_note);
-				audioManager->sendMidiMessage(midiMsgOff);
-			}
-			i++;
-		}
-
-		
 	}
+
+	if (num != 0)
+	{
+		m_channel = channel;
+		m_velocity = velocity[0];
+		return true;
+	}
+	else
+		return false;
 }
+
+bool TimeLine::isChordOffTime(int m_position, int &m_channel, int m_chordToPlay[])
+{
+	int num = 0;
+	for (int i = 0; i < chordSize; ++i)
+	{
+		if (chordTimesOff[i] == m_position)
+		{
+			m_chordToPlay[num] = chordNotesOff[i];
+			num++;
+		}
+	}
+
+	if (num != 0)
+	{
+		m_channel = channel;
+		return true;
+	}
+	else
+		return false;
+}
+
+//void TimeLine::process(int time)
+//{
+//	//int b = midiTimesSize;
+//	//DBG("midiTimes.size() = " + (String)midiTimesSize);
+//	//DBG("midiOffTimes.size() = " + (String)midiOfftimesSize);
+//	//DBG("time = " + (String)time);
+//	//DBG("midiTimesSize : " + (String)midiTimesSize);
+//	//time -= offset;
+//	if (!continuous)
+//	{
+//		time += offset;
+//		int oldTime = time;
+//		time += t0;
+//		//time += offset;
+//		while (time >= currentPeriod)
+//			time -= currentPeriod;
+//		if (oldTime == period - 1)
+//			t0 = time + 1;
+//		//time += offset;
+//		position = time;
+//		/*if (time == 0)
+//			t0 = 1;*/
+//
+//		
+//		
+//		int m_channel, m_note;
+//		uint8 m_velocity;
+//
+//		bool m_end = false;
+//		int i = 0;
+//		while (m_end == false)
+//		{
+//			if (isNoteOnTime(time, i, m_end, m_channel, m_note, m_velocity))
+//			{
+//				MidiMessage midiMsg = MidiMessage::noteOn(m_channel, m_note, m_velocity);
+//				audioManager->sendMidiMessage(midiMsg);
+//			}
+//			i++;
+//		}
+//
+//		m_end = false;
+//		i = 0;
+//		while (m_end == false)
+//		{
+//			if (isNoteOffTime(time, i, m_end, m_channel, m_note))
+//			{
+//				MidiMessage midiMsgOff = MidiMessage::noteOff(m_channel, m_note);
+//				audioManager->sendMidiMessage(midiMsgOff);
+//			}
+//			i++;
+//		}
+//
+//		
+//	}
+//}
 
 double TimeLine::getRelativePosition()
 {
 	return ( (double)position)/(double)currentPeriod;
 }
 
-void TimeLine::playNoteContinuously()
-{
-	continuous = true;
-	for (int i = 0; i < midiTimesSize; i++)
-	{
-			MidiMessage midiMsg = MidiMessage::noteOn(channel, notes[i], (uint8)100);
-			audioManager->sendMidiMessage(midiMsg);
-			lastNote = notes[i];			
-	}
-}
+//void TimeLine::playNoteContinuously()
+//{
+//	continuous = true;
+//	for (int i = 0; i < midiTimesSize; i++)
+//	{
+//			MidiMessage midiMsg = MidiMessage::noteOn(channel, notes[i], (uint8)100);
+//			audioManager->sendMidiMessage(midiMsg);
+//			lastNote = notes[i];			
+//	}
+//}
 
 void TimeLine::alignWith(TimeLine *ref, double phase)
 {
@@ -320,6 +386,240 @@ void TimeLine::alignWith(TimeLine *ref, double phase)
 		offset = newOffset;
 	}
 	testMidi();
+}
+
+void TimeLine::addChord(TimeLine * otherTimeLine, int chordTime)
+{
+	int currentNote = 0;
+
+	// recherche si on jouait déjà une note à l'instant chordTime
+	for (int i = 0; i < midiTimesSize; i++)
+	{
+		if (midiTimes[i] == chordTime)
+		{
+			currentNote = notes[i];
+			break;
+		}
+	}
+	
+	if (currentNote != 0)// si une note était jouée à cette instant elle devient une des notes de l'accord
+	{
+		int otherChordNote;
+		if (otherTimeLine->isNoteAvailable(ChordType::MajorThird, currentNote, otherChordNote))
+			createChord(ChordType::MajorThird, chordTime, currentNote, otherChordNote);
+		else if (otherTimeLine->isNoteAvailable(ChordType::MinorThird, currentNote, otherChordNote))
+			createChord(ChordType::MinorThird, chordTime, currentNote, otherChordNote);
+		else if (otherTimeLine->isNoteAvailable(ChordType::MinorThird, currentNote, otherChordNote))
+			createChord(ChordType::AugmentedQuart, chordTime, currentNote, otherChordNote);
+		else
+			createPerfectChord(chordTime, currentNote);
+
+	} 
+	else // sinon on sélectionnera une des autres notes comme base
+	{
+		/*for (int j = 0; j < midiTimesSize; j++)
+		{
+			currentNote = notes[j];
+			int otherChordNote;
+			if (otherTimeLine->isNoteAvailable(ChordType::MajorThird, currentNote, otherChordNote))
+			{
+				createChord(ChordType::MajorThird, chordTime, currentNote, otherChordNote);
+				break;
+			}
+			else if (otherTimeLine->isNoteAvailable(ChordType::MinorThird, currentNote, otherChordNote))
+			{
+				createChord(ChordType::MinorThird, chordTime, currentNote, otherChordNote);
+				break;
+			}
+			else if (otherTimeLine->isNoteAvailable(ChordType::MinorThird, currentNote, otherChordNote))
+			{
+				createChord(ChordType::AugmentedQuart, chordTime, currentNote, otherChordNote);
+				break;
+			}
+			else
+				currentNote = 0;
+		}*/
+	}
+	//if(currentNote == 0) // aucune note n'était jouée et aucun accord trouvé entre les 2 aires --> accord parfait avec juste la note comme base
+
+}
+
+bool TimeLine::isNoteAvailable(ChordType m_chordType, int baseNote1, int &otherChordNote)
+{
+	int difference = 13; // impossible
+	int baseNote2 = 0;
+	switch (m_chordType)
+	{
+	case MajorThird:
+		for (int i = 0; i < midiTimesSize; i++)
+		{
+			difference = abs(notes[i] - baseNote1);
+			if (difference > 11)
+			{
+				// baseNote2 = octaveNotes1 + position note dans son octave
+				baseNote2 = (baseNote1 / 12) + notes[i] % 12;
+				difference = abs(notes[i] - baseNote1);
+			}
+			else
+				baseNote2 = notes[i];
+
+			if (difference != 1 || difference != 2 || difference != 6 || difference != 10 || difference != 11)
+			{
+				otherChordNote = baseNote2;
+				return true;
+			}
+			else
+				return false;
+		}
+		break;
+	case MinorThird:
+
+		break;
+	case AugmentedQuart:
+		break;
+	case PerfectChord:
+		break;
+	default:
+		break;
+	}
+	return false;
+}
+
+void TimeLine::createChord(ChordType m_chordType, int m_chordTime, int baseNote1, int baseNote2)
+{
+	int difference = 13;
+	int baseNote3 = 0;
+	switch (m_chordType)
+	{
+	case MajorThird:
+		difference = abs(baseNote2 - baseNote1);
+		switch (difference)
+		{
+		case 3 :
+			baseNote3 = baseNote1 < baseNote2 ? baseNote1 - 4 : baseNote2 - 4;
+			break;
+		case 4 :
+			baseNote3 = baseNote1 < baseNote2 ? baseNote1 + 7 : baseNote2 + 7;
+			break;
+		case 5 :
+			baseNote3 = baseNote1 < baseNote2 ? baseNote1 -3 : baseNote2 -3;
+			break;
+		case 7 :
+			baseNote3 = baseNote1 > baseNote2 ? baseNote1 - 3 : baseNote2 - 3;
+			break;
+		case 8 :
+			baseNote3 = baseNote1 > baseNote2 ? baseNote1 - 5 : baseNote2 - 5;
+			break;
+		case 9 :
+			baseNote3 = baseNote1 > baseNote2 ? baseNote1 - 4 : baseNote2 - 4;
+			break;
+		case 0 :
+			baseNote2 = baseNote1 + 4;
+			baseNote3 = baseNote1 + 7;
+		default:
+			break;
+		}
+		break;
+	case MinorThird:
+		break;
+	case AugmentedQuart:
+		break;
+	case PerfectChord:
+		break;
+	default:
+		break;
+	}
+	chordTimesOn[chordSize] = m_chordTime;
+	chordTimesOn[chordSize+1] = m_chordTime + 1;
+	chordTimesOn[chordSize+2] = m_chordTime + 2;
+	chordNotesOn[chordSize] = baseNote1;
+	chordNotesOn[chordSize + 1] = baseNote2;
+	chordNotesOn[chordSize + 2] = baseNote3;
+	chordTimesOff[chordSize] = (m_chordTime + duration)%currentPeriod;
+	chordTimesOff[chordSize + 1] = (m_chordTime + 1 + duration)%currentPeriod;
+	chordTimesOff[chordSize + 2] = (m_chordTime + 2 + duration)%currentPeriod;
+	chordNotesOff[chordSize] = baseNote1;
+	chordNotesOff[chordSize + 1] = baseNote2;
+	chordNotesOff[chordSize + 2] = baseNote3;
+	chordSize += 3;
+}
+
+void TimeLine::createPerfectChord(int m_chordTime, int baseNote1)
+{
+	int baseNote2 = baseNote1 + 4;
+	int baseNote3 = baseNote1 + 7;
+	chordTimesOn[chordSize] = m_chordTime;
+	chordTimesOn[chordSize + 1] = m_chordTime + 1;
+	chordTimesOn[chordSize + 2] = m_chordTime + 2;
+	chordNotesOn[chordSize] = baseNote1;
+	chordNotesOn[chordSize + 1] = baseNote2;
+	chordNotesOn[chordSize + 2] = baseNote3;
+	chordTimesOff[chordSize] = (m_chordTime + duration) % currentPeriod;
+	chordTimesOff[chordSize + 1] = (m_chordTime + 1 + duration) % currentPeriod;
+	chordTimesOff[chordSize + 2] = (m_chordTime + 2 + duration) % currentPeriod;
+	chordNotesOff[chordSize] = baseNote1;
+	chordNotesOff[chordSize + 1] = baseNote2;
+	chordNotesOff[chordSize + 2] = baseNote3;
+	chordSize += 3;
+}
+
+void TimeLine::resetAllChords()
+{
+	for (int i = 0; i < chordSize; ++i)
+	{
+		chordTimesOn[i] = 0;
+		
+		chordNotesOn[i] = 0;
+		
+		chordTimesOff[i] = 0;
+		
+		chordNotesOff[i] = 0;
+				
+	}
+	chordSize = 0;
+}
+
+void TimeLine::setFilterFrequency(double frequency)
+{
+	if (frequency != filterFrequencyToReach)
+	{
+		if (frequency < 50.0) // < 50Hz, on garde la frequence de cassure a 50Hz
+		{
+			//filter->setCoefficients(IIRCoefficients::makeLowPass(audioManager->getCurrentSampleRate(), 50.0));
+			filterFrequencyToReach = 50.0;
+			filterType = FilterType::LowPass;
+		}
+		else if (frequency > 15000.0) // > 15kHz, on garde la frequence de cassure a 15kHz
+		{
+			filterFrequencyToReach = 15000.0;
+			filterType = FilterType::HighPass;
+			//filter->setCoefficients(IIRCoefficients::makeHighPass(audioManager->getCurrentSampleRate(), 15000.0));
+		}
+		else if (frequency > 200 && frequency < 2000) // frequence au milieu -> pas de filtre
+		{
+			filter->makeInactive();
+		}
+		else if (frequency <= 200)
+		{
+			filterFrequencyToReach = frequency;
+			filterType = FilterType::LowPass;
+			//filter->setCoefficients(IIRCoefficients::makeLowPass(audioManager->getCurrentSampleRate(), frequency));
+		}
+		else if (frequency >= 2000)
+		{
+			filterFrequencyToReach = frequency;
+			filterType = FilterType::HighPass;
+			//filter->setCoefficients(IIRCoefficients::makeHighPass(audioManager->getCurrentSampleRate(), frequency));
+		}
+		else
+			DBG("probleme si aucun des cas du dessus");
+	}
+	deltaF = (filterFrequencyToReach - currentFilterFrequency) / 5.0; // il faudra 5 buffer avant d'arriver à la frequence desiree
+}
+
+IIRFilter * TimeLine::getFilter()
+{
+	return filter;
 }
 
 void TimeLine::applyOffSet(int _offset)
@@ -364,4 +664,83 @@ void TimeLine::testMidi()
 		if (midiTimes[i] > currentPeriod)
 			DBG("connard");
 	}*/
+}
+
+void TimeLine::updateFilter()
+{
+	if (currentFilterFrequency != filterFrequencyToReach)
+	{
+		if (filterFrequencyToReach - currentFilterFrequency < deltaF)
+			currentFilterFrequency = filterFrequencyToReach;
+		else
+			currentFilterFrequency += deltaF;
+
+		switch (filterType)
+		{
+		case LowPass:
+			filter->setCoefficients(IIRCoefficients::makeLowPass(audioManager->getCurrentSampleRate(), currentFilterFrequency));
+			filter->reset();
+			break;
+		case HighPass:
+			filter->setCoefficients(IIRCoefficients::makeHighPass(audioManager->getCurrentSampleRate(), currentFilterFrequency));
+			filter->reset();
+			break;
+		default:
+			DBG("prob");
+			break;
+		}
+	}
+}
+
+void TimeLine::addMessageToQueue(MidiMessage msg)
+{
+	midiCollector.addMessageToQueue(msg);
+}
+
+void TimeLine::removeNextBlockOfMessages(MidiBuffer & incomingMidi, int numSamples)
+{
+	midiCollector.removeNextBlockOfMessages(incomingMidi, numSamples);
+	
+}
+
+void TimeLine::renderNextBlock(AudioSampleBuffer & outputAudio, const MidiBuffer & incomingMidi, int startSample, int numSamples)
+{
+	updateFilter();
+	synth.renderNextBlock(outputAudio, incomingMidi, startSample, numSamples);
+	for(int chan = 0; chan < (int)outputAudio.getNumChannels();++chan)
+		filter->processSamples(outputAudio.getWritePointer(chan,startSample), numSamples);
+}
+
+void TimeLine::clearSounds()
+{
+	synth.clearSounds();
+	if (newSound != nullptr)
+		delete newSound; // faudra mettre dans 2 synthé différents 
+}
+
+void TimeLine::addSound(const SynthesiserSound::Ptr& newSound)
+{
+	synth.addSound(newSound);
+}
+
+void TimeLine::addSound(const void * srcData, size_t srcDataSize, bool keepInternalCopyOfData)
+{
+	BigInteger allNotes;
+	WavAudioFormat wavFormat;
+	audioReader = wavFormat.createReaderFor(new MemoryInputStream(srcData,
+		srcDataSize,
+		keepInternalCopyOfData),
+		true);
+	allNotes.setRange(0, 128, true);
+	if (newSound != nullptr)
+		delete newSound; // faudra mettre dans 2 synthé différents 
+	newSound = new SamplerSound("demo sound",
+		*audioReader,
+		allNotes,
+		74,   // root midi note
+		0.1,  // attack time
+		0.1,  // release time
+		10.0  // maximum sample length
+	);
+	synth.addSound(newSound);
 }

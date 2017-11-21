@@ -64,6 +64,8 @@ namespace Amusing {
         
         // Conversion from areas to sources
 		//Presenter myPresenter;
+		int gamme[7] = {0,2,4,5,7,9,11};
+		std::map<std::shared_ptr<IEditableArea>, int> octave;
 		std::map<std::shared_ptr<IEditableArea>, double> phase;
 		std::map<std::shared_ptr<IEditableArea>, double> areaToSpeed;
 		std::map<std::shared_ptr<IEditableArea>, double> areaToVelocity;
@@ -77,7 +79,11 @@ namespace Amusing {
 		std::map<int, double> test;
 
 		public :
+			void addOctave(std::shared_ptr<IEditableArea> newArea);
+			int getNote(std::shared_ptr<IEditableArea> area, int circle);
+			void setOctave(std::shared_ptr<IEditableArea> currentArea, int newOctave);
 			void setChannel(std::shared_ptr<EditableScene> scene,int channel);
+			int getOctave(std::shared_ptr<IEditableArea> area);
 			int getChannel(std::shared_ptr<EditableScene> scene);
 			int getReadingHeadID(std::shared_ptr<Cursor> cursor);
 			int getTimeLineID(std::shared_ptr<IEditableArea> area);
@@ -90,6 +96,8 @@ namespace Amusing {
 			double getVelocityArea(std::shared_ptr<IEditableArea> area);
 			int getCtrlSourceId(std::shared_ptr<Follower> follower);
 			std::shared_ptr<Follower> getFollowerFromCtrl(int ctrlId);
+
+			double computeFrequency(double surface);
 
 			int getTempo();
 			void setTempo(int newTempo);

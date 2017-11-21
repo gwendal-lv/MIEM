@@ -20,9 +20,9 @@ AmusingModel::AmusingModel(Presenter* m_presenter) : presenter(m_presenter)
 	DBG("AmusingModel::AmusingModel");
 	//audioPlayer = new AudioPlayer();
 	
-	audioManager = new AudioManager(this);
 	sharedAudioDeviceManager = std::shared_ptr<AudioDeviceManager>(new AudioDeviceManager());
-	sharedAudioDeviceManager->initialise(0, 2, nullptr, true);
+	audioManager = new AudioManager(this);
+	sharedAudioDeviceManager->initialise(2, 2, nullptr, true);
 	sharedAudioDeviceManager->addAudioCallback(audioManager);
 	presenter->CompleteInitialisation(this);
 	//presenter->setAudioDeviceManager(audioManager);

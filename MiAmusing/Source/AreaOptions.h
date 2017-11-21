@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.1.1
+  Created with Projucer version: 5.2.0
 
   ------------------------------------------------------------------------------
 
@@ -201,7 +201,7 @@ class CustomLookAndFeel : public LookAndFeel_V4
                                                                     //[/Comments]
 */
 class AreaOptions  : public Component,
-                     public SliderListener
+                     public Slider::Listener
 {
 public:
     //==============================================================================
@@ -212,6 +212,7 @@ public:
     //[UserMethods]     -- You can add your own custom methods in this section.
 	void CompleteInitialization(AmusingSceneComponent* m_amusingSceneComponent);
 	void setSpeedSliderValue(double speed);
+	void setOctaveSlider(int currentOctave);
 	void setVelocitySliderValue(double _velocity);
     //[/UserMethods]
 

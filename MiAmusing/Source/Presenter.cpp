@@ -132,6 +132,36 @@ double Presenter::getVelocityArea(std::shared_ptr<IEditableArea> area)
 	return areaToVelocity[area];
 }
 
+void Presenter::addOctave(std::shared_ptr<IEditableArea> newArea)
+{
+	if (octave.find(newArea) == octave.end())
+	{
+		octave[newArea] = 6;
+	}
+}
+
+int Presenter::getNote(std::shared_ptr<IEditableArea> area, int circle)
+{
+	if (octave.find(area) != octave.end())
+	{
+		if (octave.at(area) == 10 && circle > 4)
+			return octave.at(area) * 12 + gamme[4];
+		else
+			return octave.at(area) *12+ gamme[circle];
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+void Presenter::setOctave(std::shared_ptr<IEditableArea> currentArea, int newOctave)
+{
+	if (octave.find(currentArea) != octave.end())
+		octave[currentArea] = newOctave;
+	
+}
+
 void Presenter::setChannel(std::shared_ptr<EditableScene> scene,int channel)
 {
 	DBG("size of the map = " + (String)sceneToChannel.size());
@@ -139,6 +169,14 @@ void Presenter::setChannel(std::shared_ptr<EditableScene> scene,int channel)
 	//test[5] = 2;
 	//test.insert(std::pair<int, double>(3, 5.8));
 	//graphicSessionManager.HandleEventSync(std::shared_ptr<SceneEven)
+}
+
+int Presenter::getOctave(std::shared_ptr<IEditableArea> area)
+{
+	if (octave.find(area) != octave.end())
+		return octave[area];
+	else
+		return 6;
 }
 
 int Presenter::getChannel(std::shared_ptr<EditableScene> scene)
@@ -231,6 +269,24 @@ std::shared_ptr<Follower> Presenter::getFollowerFromCtrl(int ctrlId)
 		return nullptr;
 	}
 	return followerToCtrlSource.right.at(ctrlId);
+}
+
+double Amusing::Presenter::computeFrequency(double surface)
+{
+	double W = view->GetMainContentComponent()->getWidth();
+	double H = view->GetMainContentComponent()->getHeight();
+
+	double minSize = W * H / 800;//0.03 * (W + H) / 2.0;
+	double maxSize = W * H / 4;
+
+	double baseF = 50;
+
+	double minE = 0;
+	double maxE = 2 + log10(3.0);
+
+	double exp = minE + (maxE - minE) * (surface - minSize) / (maxSize - minSize);
+
+	return baseF * pow(10.0,exp);
 }
 
 static int updatesCount = 0;
