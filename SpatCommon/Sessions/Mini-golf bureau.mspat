@@ -6,7 +6,7 @@
             <outputs count="10"/>
             <senders>
                 <sender type="MiamOsc">
-                    <ip>127.0.0.1</ip>
+                    <ip>172.30.4.71</ip>
                     <udp>
                         <port>8010</port>
                     </udp>

@@ -42,12 +42,20 @@ std::string TextUtils::FindFilenameInCommandLineArguments(std::string commandLin
     }
     // Suppression des guillemets si nécessaire
     auto firstCharIter = commandLineFileName.begin();
-    if ( *firstCharIter == '\"')
-        commandLineFileName.erase(firstCharIter);
-    auto lastActualCharIter = std::prev(commandLineFileName.end());
-    if ( *lastActualCharIter == '\"' )
-        commandLineFileName.erase(lastActualCharIter);
-    
+	// Attention à ne pas déréférencer le .end() ...
+	if (firstCharIter != commandLineFileName.end())
+	{
+		// Tentative de suppression du premier "
+		if (*firstCharIter == '\"')
+			commandLineFileName.erase(firstCharIter);
+		// tentative de suppression du " de fin
+		if (commandLineFileName.size() > 0)
+		{
+			auto lastActualCharIter = std::prev(commandLineFileName.end());
+			if (*lastActualCharIter == '\"')
+				commandLineFileName.erase(lastActualCharIter);
+		}
+	}
     // retour par copie
     return commandLineFileName;
 }
