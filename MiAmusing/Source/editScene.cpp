@@ -93,7 +93,7 @@ EditScene::EditScene ()
     imgOptionButton->setImages (false, true, true,
                                 ImageCache::getFromMemory (optionOn_png, optionOn_pngSize), 1.000f, Colour (0x00000000),
                                 Image(), 1.000f, Colour (0x00000000),
-                                Image(), 1.000f, Colour (0x00000000));
+                                Image(), 0.500f, Colour (0x00000000));
     addAndMakeVisible (imgDeleteButton = new ImageButton ("imgDeleteButton"));
     imgDeleteButton->setButtonText (TRANS("new button"));
     imgDeleteButton->addListener (this);
@@ -102,6 +102,10 @@ EditScene::EditScene ()
                                 ImageCache::getFromMemory (deleteOn_png, deleteOn_pngSize), 1.000f, Colour (0x00000000),
                                 Image(), 1.000f, Colour (0x00000000),
                                 Image(), 1.000f, Colour (0x00000000));
+    addAndMakeVisible (textButton = new TextButton ("new button"));
+    textButton->setButtonText (TRANS("changeSon"));
+    textButton->addListener (this);
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -135,6 +139,7 @@ EditScene::~EditScene()
     imgPauseButton = nullptr;
     imgOptionButton = nullptr;
     imgDeleteButton = nullptr;
+    textButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -158,16 +163,17 @@ void EditScene::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    addCarreButton->setBounds ((((0 + 0) + 0) + 0) + 0, (((proportionOfHeight (0.0750f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0750f)) + proportionOfHeight (0.0750f)) + proportionOfHeight (0.0750f), proportionOfWidth (1.0000f), proportionOfHeight (0.0750f));
-    addTriangleButton->setBounds (((((0 + 0) + 0) + 0) + 0) + 0, ((((proportionOfHeight (0.0750f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0750f)) + proportionOfHeight (0.0750f)) + proportionOfHeight (0.0750f)) + proportionOfHeight (0.0750f), proportionOfWidth (1.0000f), proportionOfHeight (0.0750f));
-    completeButton->setBounds ((((((0 + 0) + 0) + 0) + 0) + 0) + 0, (((((proportionOfHeight (0.0750f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0750f)) + proportionOfHeight (0.0750f)) + proportionOfHeight (0.0750f)) + proportionOfHeight (0.0750f)) + proportionOfHeight (0.0750f), proportionOfWidth (1.0000f), proportionOfHeight (0.0750f));
-    comboBoxMidi->setBounds (((((((0 + 0) + 0) + 0) + 0) + 0) + 0) + 0, ((((((proportionOfHeight (0.0750f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0750f)) + proportionOfHeight (0.0750f)) + proportionOfHeight (0.0750f)) + proportionOfHeight (0.0750f)) + proportionOfHeight (0.0750f)) + proportionOfHeight (0.0750f), proportionOfWidth (1.0000f), proportionOfHeight (0.0750f));
-    timeSlider->setBounds ((((((((0 + 0) + 0) + 0) + 0) + 0) + 0) + 0) + 0, (((((((proportionOfHeight (0.0750f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0750f)) + proportionOfHeight (0.0750f)) + proportionOfHeight (0.0750f)) + proportionOfHeight (0.0750f)) + proportionOfHeight (0.0750f)) + proportionOfHeight (0.0750f)) + proportionOfHeight (0.0750f) - -9, proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
-    imgPlayButton->setBounds (0, proportionOfHeight (0.0750f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
-    imgStopButton->setBounds ((0 + 0) + 0, (proportionOfHeight (0.0750f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0750f), proportionOfWidth (1.0000f), proportionOfHeight (0.0750f));
-    imgPauseButton->setBounds (0 + 0, proportionOfHeight (0.0750f) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0750f));
-    imgOptionButton->setBounds (((((((((0 + 0) + 0) + 0) + 0) + 0) + 0) + 0) + 0) + 0, ((((((((proportionOfHeight (0.0750f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0750f)) + proportionOfHeight (0.0750f)) + proportionOfHeight (0.0750f)) + proportionOfHeight (0.0750f)) + proportionOfHeight (0.0750f)) + proportionOfHeight (0.0750f)) + proportionOfHeight (0.0750f) - -9) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
-    imgDeleteButton->setBounds (((0 + 0) + 0) + 0, ((proportionOfHeight (0.0750f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0750f)) + proportionOfHeight (0.0750f), proportionOfWidth (1.0000f), proportionOfHeight (0.0750f));
+    addCarreButton->setBounds ((((0 + 0) + 0) + 0) + 0, (((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
+    addTriangleButton->setBounds (((((0 + 0) + 0) + 0) + 0) + 0, ((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
+    completeButton->setBounds ((((((0 + 0) + 0) + 0) + 0) + 0) + 0, (((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
+    comboBoxMidi->setBounds (((((((0 + 0) + 0) + 0) + 0) + 0) + 0) + 0, ((((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
+    timeSlider->setBounds ((((((((0 + 0) + 0) + 0) + 0) + 0) + 0) + 0) + 0, (((((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f) - -9, proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
+    imgPlayButton->setBounds (0, proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
+    imgStopButton->setBounds ((0 + 0) + 0, (proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
+    imgPauseButton->setBounds (0 + 0, proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
+    imgOptionButton->setBounds (((((((((0 + 0) + 0) + 0) + 0) + 0) + 0) + 0) + 0) + 0, ((((((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f) - -9) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
+    imgDeleteButton->setBounds (((0 + 0) + 0) + 0, ((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
+    textButton->setBounds ((((((((((0 + 0) + 0) + 0) + 0) + 0) + 0) + 0) + 0) + 0) + 0, (((((((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f) - -9) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0750f));
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -233,6 +239,12 @@ void EditScene::buttonClicked (Button* buttonThatWasClicked)
         //[UserButtonCode_imgDeleteButton] -- add your button handler code here..
         graphicSessionManager->OnDelete();
         //[/UserButtonCode_imgDeleteButton]
+    }
+    else if (buttonThatWasClicked == textButton)
+    {
+        //[UserButtonCode_textButton] -- add your button handler code here..
+		graphicSessionManager->OnTestChangeSound();
+        //[/UserButtonCode_textButton]
     }
 
     //[UserbuttonClicked_Post]
@@ -355,7 +367,7 @@ BEGIN_JUCER_METADATA
                buttonText="new button" connectedEdges="0" needsCallback="1"
                radioGroupId="0" keepProportions="1" resourceNormal="optionOn_png"
                opacityNormal="1" colourNormal="0" resourceOver="" opacityOver="1"
-               colourOver="0" resourceDown="" opacityDown="1" colourDown="0"/>
+               colourOver="0" resourceDown="" opacityDown="0.5" colourDown="0"/>
   <IMAGEBUTTON name="imgDeleteButton" id="9d5289b3af882e28" memberName="imgDeleteButton"
                virtualName="" explicitFocusOrder="0" pos="0 0R 100% 7.518%"
                posRelativeX="1ea8f58bfe76ab9b" posRelativeY="1ea8f58bfe76ab9b"
@@ -363,6 +375,10 @@ BEGIN_JUCER_METADATA
                radioGroupId="0" keepProportions="1" resourceNormal="deleteOn_png"
                opacityNormal="1" colourNormal="0" resourceOver="" opacityOver="1"
                colourOver="0" resourceDown="" opacityDown="1" colourDown="0"/>
+  <TEXTBUTTON name="new button" id="c84bea64b985b44" memberName="textButton"
+              virtualName="" explicitFocusOrder="0" pos="0 0R 100% 7.518%"
+              posRelativeX="bbfd3cbea2a71bfd" posRelativeY="bbfd3cbea2a71bfd"
+              buttonText="changeSon" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

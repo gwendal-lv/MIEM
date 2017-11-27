@@ -37,10 +37,11 @@ TimeLine::TimeLine()
 
 	chordSize = 0;
 
-	newSound = nullptr;
+	//newSound = nullptr;
 	filterFrequencyToReach = 400.0;
 	currentFilterFrequency = 400.0;
 	deltaF = 0;
+	filterActive = false;
 }
 
 TimeLine::~TimeLine()
@@ -67,10 +68,13 @@ void TimeLine::setAudioManager(AudioManager* m_audioManager)
 {
 	audioManager = m_audioManager;
 	midiCollector.reset(audioManager->getCurrentSampleRate());
-	synth.setCurrentPlaybackSampleRate(audioManager->getCurrentSampleRate());
+	swappableSynth.setCurrentPlaybackSampleRate(audioManager->getCurrentSampleRate());
+	swappableSynth.setBuffersSize(2, audioManager->getCurrentSamplesBlock());
+	//synth.setCurrentPlaybackSampleRate(audioManager->getCurrentSampleRate());
 	for (int i = 0; i < 16; i++)
 	{
-		synth.addVoice(new SamplerVoice);
+		//synth.addVoice(new SamplerVoice);
+		swappableSynth.addVoice(new SamplerVoice);
 	}
 	duplicatedFilter.prepare({ audioManager->getCurrentSampleRate(),(uint32)audioManager->getCurrentSamplesBlock(),2 });
 }
@@ -586,33 +590,37 @@ void TimeLine::setFilterFrequency(double frequency)
 			//filter->setCoefficients(IIRCoefficients::makeLowPass(audioManager->getCurrentSampleRate(), 50.0));
 			filterFrequencyToReach = 50.0;
 			filterType = FilterType::LowPass;
+			filterActive = true;
 		}
 		else if (frequency > 15000.0) // > 15kHz, on garde la frequence de cassure a 15kHz
 		{
 			filterFrequencyToReach = 15000.0;
 			filterType = FilterType::HighPass;
+			filterActive = true;
 			//filter->setCoefficients(IIRCoefficients::makeHighPass(audioManager->getCurrentSampleRate(), 15000.0));
 		}
 		else if (frequency > 200 && frequency < 2000) // frequence au milieu -> pas de filtre
 		{
-			filter->makeInactive();
+			filterActive = false;//filter->makeInactive();
 		}
 		else if (frequency <= 200)
 		{
 			filterFrequencyToReach = frequency;
 			filterType = FilterType::LowPass;
+			filterActive = true;
 			//filter->setCoefficients(IIRCoefficients::makeLowPass(audioManager->getCurrentSampleRate(), frequency));
 		}
 		else if (frequency >= 2000)
 		{
 			filterFrequencyToReach = frequency;
 			filterType = FilterType::HighPass;
+			filterActive = true;
 			//filter->setCoefficients(IIRCoefficients::makeHighPass(audioManager->getCurrentSampleRate(), frequency));
 		}
 		else
 			DBG("probleme si aucun des cas du dessus");
 	}
-	deltaF = (filterFrequencyToReach - currentFilterFrequency) / 5.0; // il faudra 5 buffer avant d'arriver à la frequence desiree
+	deltaF = (filterFrequencyToReach - currentFilterFrequency) / 1.0; // il faudra 5 buffer avant d'arriver à la frequence desiree
 }
 
 void TimeLine::applyOffSet(int _offset)
@@ -700,43 +708,51 @@ void TimeLine::removeNextBlockOfMessages(MidiBuffer & incomingMidi, int numSampl
 void TimeLine::renderNextBlock(AudioSampleBuffer & outputAudio, const MidiBuffer & incomingMidi, int startSample, int numSamples)
 {
 	updateFilter();
-	synth.renderNextBlock(outputAudio, incomingMidi, startSample, numSamples);
+	//synth.renderNextBlock(outputAudio, incomingMidi, startSample, numSamples);
+	swappableSynth.renderNextBlock(outputAudio, incomingMidi, startSample, numSamples);
 	dsp::AudioBlock<float> block(outputAudio,
 		(size_t)startSample);
-	
-	duplicatedFilter.process(dsp::ProcessContextReplacing<float>(block)); //filter->processSamples(outputAudio.getWritePointer(chan,startSample), numSamples);
+	if(filterActive)
+		duplicatedFilter.process(dsp::ProcessContextReplacing<float>(block)); //filter->processSamples(outputAudio.getWritePointer(chan,startSample), numSamples);
 }
 
 void TimeLine::clearSounds()
 {
-	synth.clearSounds();
-	if (newSound != nullptr)
-		delete newSound; // faudra mettre dans 2 synthé différents 
+	swappableSynth.clearSounds();
+	//synth.clearSounds();
+	//if (newSound != nullptr)
+		//delete newSound; // faudra mettre dans 2 synthé différents 
 }
 
 void TimeLine::addSound(const SynthesiserSound::Ptr& newSound)
 {
-	synth.addSound(newSound);
+	//synth.addSound(newSound);
 }
 
 void TimeLine::addSound(const void * srcData, size_t srcDataSize, bool keepInternalCopyOfData)
 {
-	BigInteger allNotes;
-	WavAudioFormat wavFormat;
-	audioReader = wavFormat.createReaderFor(new MemoryInputStream(srcData,
-		srcDataSize,
-		keepInternalCopyOfData),
-		true);
-	allNotes.setRange(0, 128, true);
-	if (newSound != nullptr)
-		delete newSound; // faudra mettre dans 2 synthé différents 
-	newSound = new SamplerSound("demo sound",
-		*audioReader,
-		allNotes,
-		74,   // root midi note
-		0.1,  // attack time
-		0.1,  // release time
-		10.0  // maximum sample length
-	);
-	synth.addSound(newSound);
+	//BigInteger allNotes;
+	//WavAudioFormat wavFormat;
+	//audioReader = wavFormat.createReaderFor(new MemoryInputStream(srcData,
+	//	srcDataSize,
+	//	keepInternalCopyOfData),
+	//	true);
+	//allNotes.setRange(0, 128, true);
+	//if (newSound != nullptr)
+	//	delete newSound; // faudra mettre dans 2 synthé différents 
+	//newSound = new SamplerSound("demo sound",
+	//	*audioReader,
+	//	allNotes,
+	//	74,   // root midi note
+	//	0.1,  // attack time
+	//	0.1,  // release time
+	//	10.0  // maximum sample length
+	//);
+	//synth.addSound(newSound);
+	swappableSynth.setSound(srcData, srcDataSize, keepInternalCopyOfData);
+}
+
+void TimeLine::addSound(String soundPath)
+{
+	swappableSynth.setSound(soundPath);
 }

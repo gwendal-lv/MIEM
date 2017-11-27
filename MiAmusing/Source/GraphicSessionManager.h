@@ -145,6 +145,7 @@ namespace Amusing {
 		void OnAddFollower();
 		void OnAddComplete();
 		void OnDelete();
+		void OnTestChangeSound();
 
 		void OnFollowerTranslation(std::shared_ptr<GraphicEvent> graphicE);
 		void OnAudioPosition(double position);

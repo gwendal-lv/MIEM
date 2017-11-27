@@ -13,6 +13,7 @@
 #include<vector>
 //#include "AudioManager.h"
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "SwappableSynth.h"
 namespace Amusing
 {
 	class AudioManager;
@@ -75,6 +76,7 @@ public:
 	void clearSounds();
 	void addSound(const SynthesiserSound::Ptr& newSound);
 	void addSound(const void* srcData, size_t srcDataSize, bool keepInternalCopyOfData);
+	void addSound(String soundPath);
 
 private:
 	static const int maxSize = 128;
@@ -114,14 +116,16 @@ private:
 
 	//dsp::StateVariableFilter::Filter<float> filterDSP;
 	dsp::ProcessorDuplicator<dsp::StateVariableFilter::Filter<float>, dsp::StateVariableFilter::Parameters<float>> duplicatedFilter;
-	Synthesiser synth;
-	ScopedPointer<AudioFormatReader> audioReader;
-	SamplerSound* newSound;
+	//Synthesiser synth;
+	SwappableSynth swappableSynth;
+	//ScopedPointer<AudioFormatReader> audioReader;
+	//SamplerSound* newSound;
 	double currentFilterFrequency;
 	double deltaF;
 	double filterFrequencyToReach;
 	FilterType filterType;
 	void updateFilter();
+	bool filterActive;
 
 	// reference to the audioManager to send the MIDI
 	Amusing::AudioManager* audioManager;

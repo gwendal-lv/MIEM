@@ -88,7 +88,6 @@ namespace Amusing {
 		MidiBuffer midiBuffer;
 		MidiOutput *midiOuput;
 
-		AudioSampleBuffer *interComputeBuffer; // this buffer is summed with the bufferToFill in the audio thread
 		
 		void getParameters(); // function of the audio thread to handle parameters from the Presenter
 

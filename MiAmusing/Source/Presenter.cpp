@@ -276,7 +276,7 @@ double Amusing::Presenter::computeFrequency(double surface)
 	double W = view->GetMainContentComponent()->getWidth();
 	double H = view->GetMainContentComponent()->getHeight();
 
-	double minSize = W * H / 800;//0.03 * (W + H) / 2.0;
+	double minSize = W * H / 100;//0.03 * (W + H) / 2.0;
 	double maxSize = W * H / 4;
 
 	double baseF = 50;
@@ -284,7 +284,7 @@ double Amusing::Presenter::computeFrequency(double surface)
 	double minE = 0;
 	double maxE = 2 + log10(3.0);
 
-	double exp = minE + (maxE - minE) * (surface - minSize) / (maxSize - minSize);
+	double exp = maxE + (minE - maxE) * (surface - minSize) / (maxSize - minSize);
 
 	return baseF * pow(10.0,exp);
 }

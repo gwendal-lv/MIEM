@@ -96,6 +96,7 @@ private:
     ScopedPointer<ImageButton> imgPauseButton;
     ScopedPointer<ImageButton> imgOptionButton;
     ScopedPointer<ImageButton> imgDeleteButton;
+    ScopedPointer<TextButton> textButton;
 
 
     //==============================================================================

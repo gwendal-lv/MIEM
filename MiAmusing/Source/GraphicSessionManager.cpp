@@ -182,7 +182,20 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 
 	Miam::AsyncParamChange param;
 	
-	
+	if (auto myTestEvent = std::dynamic_pointer_cast<AreaEvent>(event_))
+	{
+		if (myTestEvent->GetType() == AreaEventType::AnotherMonoTouchPointDragAlreadyBegun)
+		{
+			if (myTestEvent->GetConcernedArea() == nullptr)
+				if (myTestEvent->GetConcernedScene() == nullptr)
+				{
+					param.Id1 = 0;
+					param.Type = Miam::AsyncParamChange::InputsCount;
+					myPresenter->SendParamChange(param);
+					return;
+				}
+		}
+	}
 	
 	// Event about an Area
 	
@@ -682,6 +695,11 @@ void GraphicSessionManager::OnDelete()
 		getSelectedCanvasAsManager()->OnDelete();
 		deleting = true;
 	}
+}
+
+void Amusing::GraphicSessionManager::OnTestChangeSound()
+{
+	HandleEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(nullptr, AreaEventType::AnotherMonoTouchPointDragAlreadyBegun, nullptr)));
 }
 
 void GraphicSessionManager::OnAddComplete()

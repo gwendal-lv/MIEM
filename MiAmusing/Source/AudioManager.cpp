@@ -104,8 +104,6 @@ void AudioManager::prepareToPlay(int samplesPerBlockExpected, double _sampleRate
 	}
 	
 	int numOutChannels = model->sharedAudioDeviceManager->getCurrentAudioDevice()->getActiveOutputChannels().getHighestBit() + 1;
-	interComputeBuffer = new AudioSampleBuffer(numOutChannels, samplesPerBlockExpected);
-	interComputeBuffer->clear();
 }
 void AudioManager::releaseResources()
 {
@@ -119,6 +117,13 @@ void AudioManager::releaseResources()
 
 	/*runThread = false;
 	T.join();*/
+
+	for (int i = 0; i < maxSize; ++i)
+	{
+		if (timeLines[i] != nullptr)
+			timeLines[i]->clearSounds();
+	}
+	DBG("all sounds cleared");
 	
 	if (midiOuput == nullptr)
 	{
@@ -332,22 +337,23 @@ void AudioManager::setUsingSampledSound()
 	//	0.1,  // release time
 	//	10.0  // maximum sample length
 	//));
-	auto newSound= new SamplerSound("demo sound",
-			*audioReader,
-			allNotes,
-			74,   // root midi note
-			0.1,  // attack time
-			0.1,  // release time
-			10.0  // maximum sample length
-		); 
-	for (int i = 0; i < maxSize; ++i)
-	{
-		if (timeLinesKnown[i] != 0)
-		{
-			timeLinesKnown[i]->clearSounds();
-			timeLinesKnown[i]->addSound(newSound);
-		}
-	}
+
+	//auto newSound= new SamplerSound("demo sound",
+	//		*audioReader,
+	//		allNotes,
+	//		74,   // root midi note
+	//		0.1,  // attack time
+	//		0.1,  // release time
+	//		10.0  // maximum sample length
+	//	); 
+	//for (int i = 0; i < maxSize; ++i)
+	//{
+	//	if (timeLinesKnown[i] != 0)
+	//	{
+	//		timeLinesKnown[i]->clearSounds();
+	//		timeLinesKnown[i]->addSound(newSound);
+	//	}
+	//}
 
 	playInternalSynth = true;
 }
@@ -361,6 +367,11 @@ void AudioManager::getParameters()
 		//DBG("paramType = " + (String)((int)param.Type));
 		switch (param.Type)
 		{
+		case Miam::AsyncParamChange::ParamType::InputsCount:
+			// test switch synth
+			//timeLines[param.Id1]->addSound(BinaryData::cello_wav, BinaryData::cello_wavSize, false);
+			timeLines[param.Id1]->addSound(" ");
+			break;
 		case Miam::AsyncParamChange::ParamType::Activate:
 			if (param.Id2 == 1024) // crée ou supprime une timeLine
 			{
@@ -693,6 +704,7 @@ void AudioManager::threadFunc()
 	for (int i = 0; i < maxSize; ++i)
 	{
 		if (timeLines[i] != nullptr)
+			timeLines[i]->clearSounds();
 			delete timeLines[i];
 	}
 	DBG("delete all the playheads");
