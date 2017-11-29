@@ -187,6 +187,7 @@ void DrawableArea::Paint(Graphics& g)
         alpha = alpha + (1.0f - alpha)*0.3f; // légèrement plus opaque
         Colour actualContourColour = Colour(contourColour.getRed(), contourColour.getGreen(), contourColour.getBlue(), alpha );
         g.setColour(actualContourColour);
+        // Coordonnées du dessin : dépend de si oui ou non on a
         g.drawImageAt(*scaledNameImage,
                       (int)((centerInPixels.get<0>() + (double)centerCircleRadius + 2.0)*renderingScale),
                       (int)((centerInPixels.get<1>() + 2.0)*renderingScale),

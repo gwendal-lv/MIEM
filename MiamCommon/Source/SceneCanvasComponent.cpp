@@ -71,7 +71,7 @@ void SceneCanvasComponent::resized()
 // - - - - - - - - OpenGL specific - - - - - - - - -
 void SceneCanvasComponent::newOpenGLContextCreated()
 {
-    DBG("SceneCanvasComponent : init OpenGL");
+    //DBG("SceneCanvasComponent : init OpenGL");
 
 	// Will init the counter
 	//displayFrequencyMeasurer.OnNewFrame();
@@ -170,7 +170,7 @@ void SceneCanvasComponent::renderOpenGL()
 void SceneCanvasComponent::openGLContextClosing()
 {
     // Méthode même pas appelée dans Android... D'après la doc Juce au 30 octobre 2017
-    DBG("SceneCanvasComponent : closing OpenGL Context");
+    //DBG("SceneCanvasComponent : closing OpenGL Context");
 }
 
 

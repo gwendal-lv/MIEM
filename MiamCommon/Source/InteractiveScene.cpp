@@ -531,13 +531,17 @@ std::shared_ptr<bptree::ptree> InteractiveScene::GetTree()
         areaTree->put("<xmlattr>.index", i);
         areasTree.add_child("area", *areaTree);
     }
-    // Ajout des excitateur : on prend les initiaux, pas les actifs ! Choix discutable...
+    // Ajout des excitateurs : on prend les initiaux, pas les actifs ! Choix discutable...
     for (size_t i=0; i < initialExciters.size() ; i++)
     {
         auto areaTree = initialExciters[i]->GetTree();
         areaTree->put("<xmlattr>.index", getExciterDrawingIndex(i));
         areasTree.add_child("area", *areaTree);
     }
+    
+    // Message d'erreur pour tracker le bug des excitateurs qui disparaissent...
+    if (initialExciters.size() == 0)
+        std::cout << "***Attention*** : [Scène '" + name + "'] : ZERO excitateur enregistré" << std::endl;
     
     sceneTree->add_child("areas", areasTree);
     return sceneTree;
