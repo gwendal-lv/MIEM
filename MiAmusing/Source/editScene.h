@@ -76,6 +76,16 @@ public:
     static const int lectureOn_pngSize;
     static const char* deleteOn_png;
     static const int deleteOn_pngSize;
+    static const char* lecture_png;
+    static const int lecture_pngSize;
+    static const char* pause_png;
+    static const int pause_pngSize;
+    static const char* stop_png;
+    static const int stop_pngSize;
+    static const char* delete_png;
+    static const int delete_pngSize;
+    static const char* option_png;
+    static const int option_pngSize;
 
 
 private:
