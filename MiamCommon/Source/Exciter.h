@@ -48,14 +48,22 @@ namespace Miam
         std::chrono::time_point<clock> commonStartTimePt;
         double const omega = 2.0 * M_PI * 1.0; // 1 Hz
         double const deltaBrightnessAmplitude = 0.3;
-        // Lien avec des aires graphiques
-        // Le + optimisé serait une liste, mais vu le nombre d'éléments stockés (10aine au grand max)
-        // on s'en fout complètement...
-        std::vector< std::weak_ptr<IInteractiveArea> > areasInteractingWith;
-		/// \brief Le poids d'interaction d'une aire vis-à-vis de cet excitateur en particulier
-		std::vector< double > areaInteractionWeights;
-        /// \brief Les excitations pour chaque aire (dont la somme vaut 1.0)
-        std::vector< Excitement > areaExcitementAmounts;
+        
+        typedef struct AreaInteractingData {
+            /// \brief Constructeur avec une simple aire graphique déjà existante, le reste à zéro
+            AreaInteractingData(std::shared_ptr<IInteractiveArea>& area_)
+            : Area(area_), InteractionWeight(0.0) {}
+            /// \brief Lien avec des aires graphiques
+            ///
+            /// Le + optimisé serait une liste, mais vu le nombre d'éléments stockés (10aine au grand max)
+            /// on s'en fout complètement...
+            std::weak_ptr<IInteractiveArea> Area;
+            /// \brief Le poids d'interaction d'une aire vis-à-vis de cet excitateur en particulier
+            double InteractionWeight;
+            /// \brief Les excitations pour chaque aire (dont la somme vaut 1.0)
+            Excitement ExcitementAmount;
+        } AreaInteractingData;
+        std::vector< AreaInteractingData > areasInteractingWith;
         
         double const deltaBrightnessOffset = 0.7;
         
@@ -110,8 +118,15 @@ namespace Miam
         
         virtual ~Exciter();
         
-        virtual std::shared_ptr<IDrawableArea> Clone() const override
-        { return std::make_shared<Exciter>(*this); }
+        virtual std::shared_ptr<IDrawableArea> Clone() override
+        {
+            auto clone = std::make_shared<Exciter>(*this);
+            clone->onCloned();
+            return clone;
+        }
+        protected :
+        virtual void onCloned() override;
+        public :
         
         // - - - - - Ction helpers - - - - -
         private :
@@ -123,6 +138,7 @@ namespace Miam
         // - - - - - Display - - - - -
         public :
         /// \brief Paints specific elements over the elements painted
+        
         
         // - - - - - Interactions - - - - -
         /// \brief Peut être appelé par une aire excitée par cette instance.
@@ -141,10 +157,19 @@ namespace Miam
         private :
         /// \brief Recherche d'un shared_ptr parmi un tableau de weak_ptr.
         /// L'itérateur retourné peut pointer sur .end()
-        std::vector< std::weak_ptr<IInteractiveArea> >::iterator findAreaInteracting(std::shared_ptr<IInteractiveArea> areaToFind);
+        //std::vector< std::weak_ptr<IInteractiveArea> >::iterator findAreaInteracting(std::shared_ptr<IInteractiveArea> areaToFind);
         /// \brief Recherche d'un shared_ptr parmi le tableau de weak_ptr. L'indice retourné
         /// peut valoir size() des vector concernés, si rien n'a été trouvé.
         size_t findAreaInteractingIndex(std::shared_ptr<IInteractiveArea> areaToFind);
+        /// \brief Essaie de récupérer un shared_ptr valide sur une aire précisée par son index,
+        /// ou supprime le weak_ptr concerné si l'aire n'existe plus.
+        std::shared_ptr<IInteractiveArea> tryLockAreaOrDelete(size_t areaLocalIndex);
+        //std::shared_ptr<IInteractiveArea> tryLockAreaOrDelete(std::weak_ptr<IInteractiveArea>& area);
+        /// \brief Supprime toutes les références internes à l'aire graphique excitée,
+        /// référencée par son index interne.
+        ///
+        /// Pas de vérification de validité de l'index
+        void deleteLinksToArea(size_t areaLocalIndex);
         /// \brief To be called when any interaction weight has changed. Updates the excitation of all
         /// excited areas.
         ///

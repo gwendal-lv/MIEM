@@ -49,10 +49,22 @@ commonStartTimePt(commonStartTimePoint_)
 Exciter::~Exciter()
 {
     // Dé-exitation des aires qui existent encore
-    for (auto& weakArea : areasInteractingWith)
-        if (auto area = weakArea.lock())
+    for (auto& areaInteractingData : areasInteractingWith)
+    {
+        // ici : pas de test sur le lock... de toute manière la classe est détruite juste après
+        if (auto area = areaInteractingData.Area.lock())
             area->OnExciterDestruction();
+    }
 }
+void Exciter::onCloned()
+{
+    // D'abord on supprime tous les index locaux
+    while (areasInteractingWith.size() > 0)
+        deleteLinksToArea(areasInteractingWith.size() - 1); // suppresion du dernier (car vecteurs)
+    // Puis on appelle les parents qui devraient faire le même genre de chose
+    EditableEllipse::onCloned();
+}
+
 
 
 void Exciter::init()
@@ -78,8 +90,6 @@ double Exciter::computeXScale(float _canvasRatio)
 {
 	return 0.5f + 0.5f / _canvasRatio;
 }
-
-
 double Exciter::computeYScale(float _canvasRatio)
 {
 	return 0.5f + 0.5f * _canvasRatio;
@@ -131,12 +141,10 @@ void Exciter::OnAreaExcitedByThis(std::shared_ptr<IInteractiveArea> areaExcitedB
     // Si l'aire n'existait pas, on l'ajoute
 	if (areaIndex == areasInteractingWith.size())
 	{
-		areasInteractingWith.push_back(areaExcitedByThis);
-        areaInteractionWeights.push_back(0.0); // calcul juste après
-        areaExcitementAmounts.push_back(Excitement()); // calcul juste après
+		areasInteractingWith.push_back(AreaInteractingData(areaExcitedByThis));
 	}
     // Mise à jour dans tous les cas
-    areaInteractionWeights[areaIndex] = interactionWeight;
+    areasInteractingWith[areaIndex].InteractionWeight = interactionWeight;
     
     // Pas de mise à jour des excitations : cela dépend des modifs apportées à TOUTES les aires,
     // on attend l'ordre de notification (par la scène mère, ou autre...)
@@ -148,49 +156,61 @@ void Exciter::OnAreaNotExcitedByThis(std::shared_ptr<IInteractiveArea> areaExcit
     if ( areaIndex < areasInteractingWith.size() )
     {
         // D'abord on impose une mise à jour côté aire graphique (excitation nulle forcée)
-        areasInteractingWith[areaIndex].lock()->OnNewExcitementAmount(getCastedSharedFromThis(), Excitement());
+        // Pas de check du lock : on vient de retrouver l'index de l'aire graphique (via shared_ptr....)
+        areasInteractingWith[areaIndex].Area.lock()->OnNewExcitementAmount(getCastedSharedFromThis(), Excitement());
         
         // Puis : Suppression effective
-        auto areaIt = areasInteractingWith.begin();
-        std::advance(areaIt, areaIndex);
-        areasInteractingWith.erase(areaIt);
-        auto interactionIt = areaInteractionWeights.begin();
-        std::advance(interactionIt, areaIndex);
-        areaInteractionWeights.erase(interactionIt);
-        auto excitementIt = areaExcitementAmounts.begin();
-        std::advance(excitementIt, areaIndex);
-        areaExcitementAmounts.erase(excitementIt);
+        deleteLinksToArea(areaIndex);
     }
     else
         DBG("Double notification de fin d'excitation d'une aire par cet excitateur");
-}
-
-std::vector< std::weak_ptr<IInteractiveArea> >::iterator Exciter::findAreaInteracting(std::shared_ptr<IInteractiveArea> areaToFind)
-{
-    // naive research
-    for (auto it = areasInteractingWith.begin() ; it != areasInteractingWith.end() ; ++it )
-        if ( (*it).lock() == areaToFind )
-            return it;
-    // if nothing found :
-    return areasInteractingWith.end();
 }
 size_t Exciter::findAreaInteractingIndex(std::shared_ptr<IInteractiveArea> areaToFind)
 {
     // naive research
     size_t i = 0;
     for (i = 0 ; i < areasInteractingWith.size() ; i++ )
-        if ( areasInteractingWith[i].lock() == areaToFind )
+    {
+        auto lockedAreaInteractingWith = tryLockAreaOrDelete(i);
+        if ( lockedAreaInteractingWith == areaToFind )
             return i;
+    }
     // if nothing found :
     return i;
+}
+std::shared_ptr<IInteractiveArea> Exciter::tryLockAreaOrDelete(size_t areaLocalIndex)
+{
+    auto lockedAreaInteractingWith = areasInteractingWith[areaLocalIndex].Area.lock();
+    if (lockedAreaInteractingWith) // area is valid
+        return lockedAreaInteractingWith;
+    else // area has been destructed
+    {
+        deleteLinksToArea(areaLocalIndex);
+        return nullptr;
+    }
+}
+void Exciter::deleteLinksToArea(size_t areaLocalIndex)
+{
+    auto areaIt = areasInteractingWith.begin();
+    std::advance(areaIt, areaLocalIndex);
+    areasInteractingWith.erase(areaIt);
 }
 void Exciter::updateExcitationAmounts()
 {
     // On appliquera le volume le + tard possible (on fait tout par rapport à 1, puis on diminue ensuite...)
     
-    // Total : accumulation type is defined by the type of the last input parameter
-    double totalInteractionWeight
-    = std::accumulate(areaInteractionWeights.begin(), areaInteractionWeights.end(), 0.0);
+    // On calcule d'abord le total des poids d'interaction, et on en profite pour dégager toutes les aires
+    // qui ne peuvent pas être lockées
+    double totalInteractionWeight = 0.0;
+    for (size_t i=0 ; i < areasInteractingWith.size() ; i++)
+    {
+        // Si n'existe plus : on fait i-- car on aura un i++ au moment de passer l'itération suivante
+        if (! tryLockAreaOrDelete(i))
+            i--;
+        // Sinon, OK, on ajoute bien le poids concerné
+        else
+            totalInteractionWeight += areasInteractingWith[i].InteractionWeight;
+    }
     
     // - - - - - Calcul des excitations, tel que la somme des excitations vaut 1 - - - - -
     
@@ -201,15 +221,15 @@ void Exciter::updateExcitationAmounts()
     // Si on a un poids total non-valide : répartition uniforme sur toutes les aires
     if (totalInteractionWeight <= 0.0)
     {
-        double uniformWeight = 1.0 / (double)(areaExcitementAmounts.size());
-        for (auto &excitement : areaExcitementAmounts)
-            excitement.Linear = uniformWeight;
+        double uniformWeight = 1.0 / (double)(areasInteractingWith.size());
+        for (auto &areaData : areasInteractingWith)
+            areaData.ExcitementAmount.Linear = uniformWeight;
     }
     // Si le poids total est OK : on normalise simplement les poids pour calculer les excitations
     else
     {
-        for (size_t i = 0 ; i<areaExcitementAmounts.size() ; i++)
-            areaExcitementAmounts[i].Linear = areaInteractionWeights[i] / totalInteractionWeight;
+        for (auto &areaData : areasInteractingWith)
+            areaData.ExcitementAmount.Linear = areaData.InteractionWeight / totalInteractionWeight;
     }
     
     // - - - - - Distorsion logarithmique, pour donner la précision aux faibles volumes - - - - -
@@ -217,21 +237,21 @@ void Exciter::updateExcitationAmounts()
     // directement sur les poids d'interaction)
     // on prépare déjà la normalisation qui suit
     double totalAudioExcitement = 0.0;
-    for (auto &excitement : areaExcitementAmounts)
+    for (auto &areaData : areasInteractingWith)
     {
-        excitement.Audio = AudioUtils<double>::ApplyLowVolumePrecisionDistorsion(excitement.Linear);
-        totalAudioExcitement += excitement.Audio;
+        areaData.ExcitementAmount.Audio = AudioUtils<double>::ApplyLowVolumePrecisionDistorsion(areaData.ExcitementAmount.Linear);
+        totalAudioExcitement += areaData.ExcitementAmount.Audio;
     }
     
     // - - - - - Dernière normalisation pour les coeffs Audio - - - - -
-    for (auto &excitement : areaExcitementAmounts)
-        excitement.Audio = excitement.Audio / totalAudioExcitement;
+    for (auto &areaData : areasInteractingWith)
+        areaData.ExcitementAmount.Audio = areaData.ExcitementAmount.Audio / totalAudioExcitement;
     
     // - - - - - Application du volume, de manière uniforme, à la toute fin - - - - -
-    for (auto &excitement : areaExcitementAmounts)
+    for (auto &areaData : areasInteractingWith)
     {
-        excitement.Linear *= volume;
-        excitement.Audio *= volume;
+        areaData.ExcitementAmount.Linear *= volume;
+        areaData.ExcitementAmount.Audio *= volume;
     }
 }
 
@@ -243,7 +263,17 @@ void Exciter::NotifyNewExcitationToAreas()
     
     // Notifications à toutes les aires
     for (size_t i = 0; i<areasInteractingWith.size() ; i++)
-        areasInteractingWith[i].lock()->OnNewExcitementAmount(getCastedSharedFromThis(), areaExcitementAmounts[i]);
+    {
+        auto lockedAreaInteractingWith = areasInteractingWith[i].Area.lock();
+        // Ici on ne doit plus rater de lock()... Car les weak_ptr 'morts' auraient dû être supprimés
+        // au update juste au-dessus
+#ifdef __MIAM_DEBUG
+        if ( ! (lockedAreaInteractingWith) )
+            throw std::logic_error("weak_ptr sur Aire référencée dans un excitateur n'est plus valide...");
+#endif
+        lockedAreaInteractingWith->OnNewExcitementAmount(getCastedSharedFromThis(),
+                                                         areasInteractingWith[i].ExcitementAmount);
+    }
 }
 
 

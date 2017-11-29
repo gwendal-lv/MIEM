@@ -354,7 +354,9 @@ void GraphicSessionManager::DisplayInfo(String info)
 void GraphicSessionManager::OnAddScene()
 {
     if (selectedCanvas)
-        selectedCanvas->AddScene("Scene " + std::to_string(selectedCanvas->GetScenesCount()+1));
+        selectedCanvas->AddScene("Scene " + std::to_string(selectedCanvas->GetScenesCount()+1),
+                                 true); // ajout avec sélection
+    
     else throw std::runtime_error("No canvas selected : cannot add a scene (no canvas should be selected at this point");
 }
 void GraphicSessionManager::OnDeleteScene()

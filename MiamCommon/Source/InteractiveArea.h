@@ -37,9 +37,8 @@ namespace Miam
         // Comme ça, quand un excitateur interagit avec l'aire, on peut récupérer vite fait
         // les poids d'interaction avec les autres aires.
         //
-        // Lien dans le sens inverse pas nécessaire : quand un excitateur bouge,
-        // il re-checke son interaction avec toutes les aires graphiques.... (sinon il faudrait
-        // découper le canevas en sous-parties pour ne pas tout re-tester, etc...)
+        // L'aire ne notifie pas aux excitateur liés, lorsque qu'elle est détruite/modifiée/etc...
+        // Ce sont les excitateur qui gèreront leurs weak_ptr vers this
         //
         // On ne pas utiliser facilement de map
         // car weak_ptr ne permet pas la comparaison sans .lock() ...
@@ -58,10 +57,13 @@ namespace Miam
         
         
         
-        // - - - - - Construction/destruction - - - - -
+        // - - - - - Construction/destruction + clonage polymorphique - - - - -
         public :
         virtual ~InteractiveArea();
-        
+        protected :
+        // Suppression des liens avec les excitateurs
+        virtual void onCloned() override;
+        public :
         
         // - - - - - Interaction avec Excitateurs - - - - -
         

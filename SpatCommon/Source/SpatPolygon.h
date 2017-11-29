@@ -58,8 +58,12 @@ namespace Miam
         
         virtual ~SpatPolygon() {}
         
-        virtual std::shared_ptr<IDrawableArea> Clone() const override
-        { return std::make_shared<SpatPolygon>(*this); }
+        virtual std::shared_ptr<IDrawableArea> Clone() override
+        {
+            auto clone = std::make_shared<SpatPolygon>(*this);
+            clone->onCloned();
+            return clone;
+        }
         
         
         

@@ -127,6 +127,10 @@ namespace Miam
         /// \brief Virtual destructor.
         virtual ~DrawableArea();
         
+        // Clonage : rien de spé à faire ici...
+        protected :
+        virtual void onCloned() override {}
+        
         private :
         void init();
         void resetImages();

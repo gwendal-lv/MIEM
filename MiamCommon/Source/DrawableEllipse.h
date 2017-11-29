@@ -23,7 +23,7 @@ typedef boost::geometry::model::polygon<bpt> bpolygon;
 
 namespace Miam
 {
-	class DrawableEllipse : public Miam::DrawableArea
+	class DrawableEllipse : public DrawableArea
 	{
 		protected :
 			bpolygon contourPoints;
@@ -33,8 +33,6 @@ namespace Miam
             DrawableEllipse(bptree::ptree & areaTree);
 			DrawableEllipse(int64_t _Id);
 			DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio = 1.77777777f);
-			virtual std::shared_ptr<IDrawableArea> Clone() const override
-        { return std::make_shared<DrawableEllipse>(*this); }
 
 		private:
 			void createJucePolygon(int width = 160, int height = 90);
@@ -43,6 +41,13 @@ namespace Miam
 		/// \brief Destructor.
 		virtual ~DrawableEllipse();
         
+        /// \brief Clonage
+        virtual std::shared_ptr<IDrawableArea> Clone() override
+        {
+            auto clone = std::make_shared<DrawableEllipse>(*this);
+            clone->onCloned();
+            return clone;
+        }
         
         // - - - - - XML import/export - - - - -
         /// \returns "Ellipse" even if it is actually a circle.

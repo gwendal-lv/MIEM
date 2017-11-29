@@ -44,6 +44,20 @@ DrawablePolygon(_Id, _center, _contourPoints, _fillColour)
 }
 
 
+std::shared_ptr<IDrawableArea> InteractivePolygon::Clone()
+{
+    auto clone = std::make_shared<InteractivePolygon>(*this);
+    clone->onCloned();
+    return clone;
+}
+
+void InteractivePolygon::onCloned()
+{
+    // On n'appelle que le "onCloned" de la forme générique.
+    InteractiveArea::onCloned();
+    // Pas le "onCloned" du parent graphique Drawable (parent concret)
+}
+
 
 void InteractivePolygon::init()
 {

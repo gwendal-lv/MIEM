@@ -84,12 +84,22 @@ namespace Miam
         // - - - - - Construction/Destruction + polymorphic cloning - - - - -
         IDrawableArea(){}
         virtual ~IDrawableArea() {}
+        
         /// \brief To be overriden within any concrete area that inherits from this.
-        virtual std::shared_ptr<IDrawableArea> Clone() const = 0;
+        virtual std::shared_ptr<IDrawableArea> Clone() = 0;
+        protected :
+        /// \brief Applique toutes les modifications nécessaires suite au clonage d'un objet
+        ///
+        /// Par exemple : supprime les liens avec d'autres objets graphiques (s'ils existent),
+        /// en supposant que ces liens ont été copiés
+        /// simplement lors d'un clonage qui vient tout juste d'être fait.
+        ///
+        /// \warning To be called from any Clone() overriden method
+        virtual void onCloned() = 0;
         
         
         
-        
+        public :
         /// \brief Function called by a SceneCanvasComponent to draw the Area
         ///
         /// The whole painting job is at the moment performed by the CPU only, but should be

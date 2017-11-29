@@ -17,7 +17,142 @@
             <keyboardedition>true</keyboardedition>
         </presenter>
     </settings>
-    <spat/>
+    <spat>
+        <states>
+            <state index="0">
+                <name>OFF</name>
+                <matrix/>
+            </state>
+            <state index="1">
+                <name>HPs mini-golf - tutti</name>
+                <matrix>
+                    <coeff row="0" col="0" value="0.12589254117941673"/>
+                    <coeff row="1" col="1" value="0.12589254117941673"/>
+                    <coeff row="2" col="2" value="0.12589254117941673"/>
+                    <coeff row="3" col="3" value="0.12589254117941673"/>
+                    <coeff row="4" col="4" value="0.12589254117941673"/>
+                    <coeff row="5" col="5" value="0.12589254117941673"/>
+                    <coeff row="6" col="6" value="0.12589254117941673"/>
+                    <coeff row="7" col="7" value="0.12589254117941673"/>
+                </matrix>
+            </state>
+            <state index="2">
+                <name>HPs écran</name>
+                <matrix>
+                    <coeff row="0" col="0" value="0.50118723362727224"/>
+                    <coeff row="1" col="1" value="0.50118723362727224"/>
+                </matrix>
+            </state>
+            <state index="3">
+                <name>HPs centraux</name>
+                <matrix>
+                    <coeff row="4" col="4" value="0.25118864315095796"/>
+                    <coeff row="5" col="5" value="0.25118864315095796"/>
+                    <coeff row="6" col="6" value="0.25118864315095796"/>
+                    <coeff row="7" col="7" value="0.25118864315095796"/>
+                </matrix>
+            </state>
+            <state index="4">
+                <name>HPs Centre-Gauche</name>
+                <matrix>
+                    <coeff row="4" col="4" value="0.50118723362727224"/>
+                    <coeff row="6" col="6" value="0.50118723362727224"/>
+                </matrix>
+            </state>
+            <state index="5">
+                <name>HPs Centre-Droite</name>
+                <matrix>
+                    <coeff row="5" col="5" value="0.50118723362727224"/>
+                    <coeff row="7" col="7" value="0.50118723362727224"/>
+                </matrix>
+            </state>
+            <state index="6">
+                <name>HPs arrière</name>
+                <matrix>
+                    <coeff row="2" col="2" value="0.50118723362727224"/>
+                    <coeff row="3" col="3" value="0.50118723362727224"/>
+                </matrix>
+            </state>
+            <state index="7">
+                <name>HPs plafond</name>
+                <matrix/>
+            </state>
+            <state index="8">
+                <name>HPs sol</name>
+                <matrix>
+                    <coeff row="4" col="4" value="0.50118723362727224"/>
+                    <coeff row="5" col="5" value="0.50118723362727224"/>
+                </matrix>
+            </state>
+            <state index="9">
+                <name>Subwoofers</name>
+                <matrix>
+                    <coeff row="8" col="8" value="0.50118723362727224"/>
+                    <coeff row="9" col="9" value="0.50118723362727224"/>
+                </matrix>
+            </state>
+            <state index="10">
+                <name>écran G</name>
+                <matrix>
+                    <coeff row="0" col="0" value="1"/>
+                </matrix>
+            </state>
+            <state index="11">
+                <name>écran D</name>
+                <matrix>
+                    <coeff row="1" col="1" value="1"/>
+                </matrix>
+            </state>
+            <state index="12">
+                <name>arrière G</name>
+                <matrix>
+                    <coeff row="2" col="2" value="1"/>
+                </matrix>
+            </state>
+            <state index="13">
+                <name>arrière D</name>
+                <matrix>
+                    <coeff row="3" col="3" value="1"/>
+                </matrix>
+            </state>
+            <state index="14">
+                <name>sol G</name>
+                <matrix>
+                    <coeff row="4" col="4" value="1"/>
+                </matrix>
+            </state>
+            <state index="15">
+                <name>sol D</name>
+                <matrix>
+                    <coeff row="5" col="5" value="1"/>
+                </matrix>
+            </state>
+            <state index="16">
+                <name>plafond G</name>
+                <matrix>
+                    <coeff row="6" col="6" value="1"/>
+                </matrix>
+            </state>
+            <state index="17">
+                <name>plafond D</name>
+                <matrix>
+                    <coeff row="7" col="7" value="1"/>
+                </matrix>
+            </state>
+            <state index="18">
+                <name>Sub G</name>
+                <matrix>
+                    <coeff row="8" col="8" value="1"/>
+                </matrix>
+            </state>
+            <state index="19">
+                <name>Sub D</name>
+                <matrix>
+                    <coeff row="9" col="9" value="1"/>
+                </matrix>
+            </state>
+        </states>
+    </spat>
     <graphicsession>
         <canvases>
             <canvas index="0">
@@ -147,7 +282,7 @@
                                 </geometry>
                                 <spatstate index="16"/>
                             </area>
-                            <area id="329" type="Exciter" index="9">
+                            <area id="347" type="Exciter" index="9">
                                 <center x="0.88839733935741938" y="0.9440724206349258"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>true</keep_ratio>
@@ -157,7 +292,7 @@
                                 <is_round>true</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
-                            <area id="330" type="Exciter" index="10">
+                            <area id="348" type="Exciter" index="10">
                                 <center x="0.17660402869241709" y="0.93902666747415997"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>true</keep_ratio>
@@ -486,36 +621,6 @@
                                 </geometry>
                                 <spatstate index="9"/>
                             </area>
-                            <area id="344" type="Exciter" index="23">
-                                <center x="0.92533643892340001" y="0.70175478439922434"/>
-                                <colour>ffd3d3d3</colour>
-                                <keep_ratio>true</keep_ratio>
-                                <geometry>
-                                    <axes a="0.050000000000000003" b="0.050000000000000003"/>
-                                </geometry>
-                                <is_round>true</is_round>
-                                <is_animation_sync>true</is_animation_sync>
-                            </area>
-                            <area id="345" type="Exciter" index="24">
-                                <center x="0.68384446169772495" y="0.16486494670542634"/>
-                                <colour>ffd3d3d3</colour>
-                                <keep_ratio>true</keep_ratio>
-                                <geometry>
-                                    <axes a="0.050000000000000003" b="0.050000000000000003"/>
-                                </geometry>
-                                <is_round>true</is_round>
-                                <is_animation_sync>true</is_animation_sync>
-                            </area>
-                            <area id="346" type="Exciter" index="25">
-                                <center x="0.15961438923395516" y="0.3936606710271317"/>
-                                <colour>ffd3d3d3</colour>
-                                <keep_ratio>true</keep_ratio>
-                                <geometry>
-                                    <axes a="0.050000000000000003" b="0.050000000000000003"/>
-                                </geometry>
-                                <is_round>true</is_round>
-                                <is_animation_sync>true</is_animation_sync>
-                            </area>
                         </areas>
                     </scene>
                     <scene index="2">
@@ -621,26 +726,6 @@
                                 </geometry>
                                 <spatstate index="2"/>
                             </area>
-                            <area id="340" type="Exciter" index="8">
-                                <center x="0.79854910714286276" y="0.56091024709302262"/>
-                                <colour>ffd3d3d3</colour>
-                                <keep_ratio>true</keep_ratio>
-                                <geometry>
-                                    <axes a="0.050000000000000003" b="0.050000000000000003"/>
-                                </geometry>
-                                <is_round>true</is_round>
-                                <is_animation_sync>true</is_animation_sync>
-                            </area>
-                            <area id="341" type="Exciter" index="9">
-                                <center x="0.25060656055900754" y="0.54327913032945674"/>
-                                <colour>ffd3d3d3</colour>
-                                <keep_ratio>true</keep_ratio>
-                                <geometry>
-                                    <axes a="0.050000000000000003" b="0.050000000000000003"/>
-                                </geometry>
-                                <is_round>true</is_round>
-                                <is_animation_sync>true</is_animation_sync>
-                            </area>
                         </areas>
                     </scene>
                 </scenes>
@@ -698,7 +783,7 @@
                                 </geometry>
                                 <spatstate index="1"/>
                             </area>
-                            <area id="338" type="Exciter" index="4">
+                            <area id="349" type="Exciter" index="4">
                                 <center x="0.16205834564665264" y="0.59064287725737807"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>true</keep_ratio>
@@ -708,7 +793,7 @@
                                 <is_round>true</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
-                            <area id="339" type="Exciter" index="5">
+                            <area id="350" type="Exciter" index="5">
                                 <center x="0.86383491019003489" y="0.24387934384396592"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>true</keep_ratio>
@@ -784,26 +869,6 @@
                                     <point index="3" x="0.44232949773599411" y="0.39559078508726775"/>
                                 </geometry>
                                 <spatstate index="3"/>
-                            </area>
-                            <area id="342" type="Exciter" index="5">
-                                <center x="0.6346917955326441" y="0.85194101259689825"/>
-                                <colour>ffd3d3d3</colour>
-                                <keep_ratio>true</keep_ratio>
-                                <geometry>
-                                    <axes a="0.050000000000000003" b="0.050000000000000003"/>
-                                </geometry>
-                                <is_round>true</is_round>
-                                <is_animation_sync>true</is_animation_sync>
-                            </area>
-                            <area id="343" type="Exciter" index="6">
-                                <center x="0.56658075601374502" y="0.22114219961240258"/>
-                                <colour>ffd3d3d3</colour>
-                                <keep_ratio>true</keep_ratio>
-                                <geometry>
-                                    <axes a="0.050000000000000003" b="0.050000000000000003"/>
-                                </geometry>
-                                <is_round>true</is_round>
-                                <is_animation_sync>true</is_animation_sync>
                             </area>
                         </areas>
                     </scene>

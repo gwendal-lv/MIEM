@@ -108,6 +108,11 @@ namespace Miam {
         // - - - - -  XML import/export - - - - -
         virtual void LoadSession(std::string filename) override;
         virtual void SaveSession(std::string filename = "", bool forceDataRefresh = false) override;
+        /// \brief Crée une nouvelle session, en comment par la sauvegarder.
+        ///
+        /// Si la session à créer n'est pas vide, alors elle sere créée à partir d'une copie de la
+        /// session par défaut.
+        void CreateSession(std::string filename, bool isEmpty);
         
         virtual std::shared_ptr<bptree::ptree> GetConfigurationTree() override;
         virtual void SetConfigurationFromTree(bptree::ptree&) override;

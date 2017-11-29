@@ -204,11 +204,30 @@ void Presenter::SaveSession(std::string filename, bool forceDataRefresh)
         view->DisplayInfo(e.what());
     }
 }
+void Presenter::CreateSession(std::string filename, bool isEmpty)
+{
+    if (!isEmpty)
+        throw std::logic_error("Not implemented.");
+    
+    // ATTENTION : IL FAUDRAIT TOUT SUPPRIMER AVANT DE RE-CRÉER UNE SESSION
+    // ATTENTION : IL FAUDRAIT TOUT SUPPRIMER AVANT DE RE-CRÉER UNE SESSION
+    // ATTENTION : IL FAUDRAIT TOUT SUPPRIMER AVANT DE RE-CRÉER UNE SESSION
+    // ATTENTION : IL FAUDRAIT TOUT SUPPRIMER AVANT DE RE-CRÉER UNE SESSION
+    
+    // On force l'update (de la session forcément vide, car c'est mal fout pour l'instant...)
+    // Pour l'instant on ne peut faire ça que depuis l'écran de démarrage
+    SaveSession(filename, true);
+    
+    // Mode : repasse aux scène graphiques par défaut
+    appModeChangeRequest(AppMode::EditSpatScenes);
+}
+
 
 std::shared_ptr<bptree::ptree> Presenter::GetConfigurationTree()
 {
     return settingsManager.GetTree();
 }
+
 void Presenter::SetConfigurationFromTree(bptree::ptree& tree)
 {
     settingsManager.SetFromTree(tree);

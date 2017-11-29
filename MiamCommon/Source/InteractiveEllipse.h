@@ -27,8 +27,11 @@ namespace Miam
         InteractiveEllipse(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio);
 
 			virtual ~InteractiveEllipse() {}
-			virtual std::shared_ptr<IDrawableArea> Clone() const override
-        { return std::make_shared<InteractiveEllipse>(*this); }
+		
+        virtual std::shared_ptr<IDrawableArea> Clone() override;
+        protected :
+        virtual void onCloned() override;
+        public :
 
 		private :
 			void init();

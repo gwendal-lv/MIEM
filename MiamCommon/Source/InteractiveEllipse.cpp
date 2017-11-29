@@ -32,7 +32,18 @@ InteractiveEllipse::InteractiveEllipse(int64_t _Id)
 {
 	init();
 }
-
+std::shared_ptr<IDrawableArea> InteractiveEllipse::Clone()
+{
+    auto clone = std::make_shared<InteractiveEllipse>(*this);
+    clone->onCloned();
+    return clone;
+}
+void InteractiveEllipse::onCloned()
+{
+    // On n'appelle que le "onCloned" de la forme générique.
+    InteractiveArea::onCloned();
+    // Pas le "onCloned" du parent graphique Drawable (parent concret)
+}
 
 
 InteractiveEllipse::InteractiveEllipse(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio)

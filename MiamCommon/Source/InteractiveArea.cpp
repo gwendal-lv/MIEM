@@ -23,6 +23,12 @@ InteractiveArea::~InteractiveArea()
 {
 }
 
+void InteractiveArea::onCloned()
+{
+    while (excitersInteractingWithThis.size() > 0)
+        // comme on a des vector< >, on supprime les derniers pour éviter des ré-allocations
+        deleteLinksToExciter(excitersInteractingWithThis.size()-1);
+}
 
 
 
@@ -164,8 +170,15 @@ size_t InteractiveArea::getExciterLocalIndex(const std::shared_ptr<Exciter>& exc
     size_t i;
     for (i = 0 ; i<excitersInteractingWithThis.size() ; i++)
     {
-        if ( excitersInteractingWithThis[i].lock() == exciter)
+        auto lockedExciterInteractingWithThis = excitersInteractingWithThis[i].lock();
+#ifdef __MIAM_DEBUG
+        if ( ! (lockedExciterInteractingWithThis) )
+            throw std::logic_error("weak_ptr sur Excitateur référencé n'est plus valide...");
+#endif
+        if ( lockedExciterInteractingWithThis == exciter)
             return i;
     }
     return i;
 }
+
+

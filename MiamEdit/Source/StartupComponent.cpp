@@ -133,7 +133,7 @@ void StartupComponent::buttonClicked (Button* buttonThatWasClicked)
         if ( fileChooser.browseForFileToSave(true) )
         {
             File resultFile = fileChooser.getResult();
-            presenter->SaveSession(resultFile.getFullPathName().toStdString());
+            presenter->CreateSession(resultFile.getFullPathName().toStdString(), true);
         }
         //[/UserButtonCode_createEmptyTextButton]
     }
