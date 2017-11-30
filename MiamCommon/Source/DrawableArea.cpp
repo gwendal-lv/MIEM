@@ -187,10 +187,27 @@ void DrawableArea::Paint(Graphics& g)
         alpha = alpha + (1.0f - alpha)*0.3f; // légèrement plus opaque
         Colour actualContourColour = Colour(contourColour.getRed(), contourColour.getGreen(), contourColour.getBlue(), alpha );
         g.setColour(actualContourColour);
-        // Coordonnées du dessin : dépend de si oui ou non on a
+        // Coordonnées du dessin : dépend de si oui ou non on est proche du bord droit ou du bord bas
+        double deltaX = (double)centerCircleRadius + 2.0;
+        double deltaY = 2.0;
+        // Si on est trop proche de la droite, alors on centre (ça ira comme l'image a le texte à gauche)
+        // test avec le parent qui n'est pas mis à l'échelle rétina (pixels 'classiques')
+        if ( ((int)std::round(centerInPixels.get<0>()) + nameImage.getWidth())
+            > parentCanvas->getWidth() )
+        {
+            deltaX = -deltaX - name.length()*4; // le 4 est totalement arbitraire...
+            deltaY += (double)centerCircleRadius;
+        }
+        // Si on est trop proche du bas, alors on met le texte en haut de centre de la forme
+        if ( ((int)std::round(centerInPixels.get<1>()) + deltaY + nameImage.getHeight() + 8)
+            > parentCanvas->getHeight() )
+        {
+            deltaY = -deltaY - nameImage.getHeight();
+        }
+        // Code effectif de dessin
         g.drawImageAt(*scaledNameImage,
-                      (int)((centerInPixels.get<0>() + (double)centerCircleRadius + 2.0)*renderingScale),
-                      (int)((centerInPixels.get<1>() + 2.0)*renderingScale),
+                      (int)((centerInPixels.get<0>() + deltaX)*renderingScale),
+                      (int)((centerInPixels.get<1>() + deltaY)*renderingScale),
                       false); // don't fill alpha channel with current brush
         g.restoreState();
         

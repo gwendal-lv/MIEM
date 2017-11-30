@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="O4BfM6" name="MIAM Spat Editor" projectType="guiapp" version="1.0.0"
-              bundleIdentifier="com.yourcompany.MiamSpatEditor" includeBinaryInAppConfig="1"
+<JUCERPROJECT id="O4BfM6" name="MIAM Editor" projectType="guiapp" version="1.0.0"
+              bundleIdentifier="com.yourcompany.MiamEditor" includeBinaryInAppConfig="1"
               jucerVersion="5.2.0" displaySplashScreen="0" reportAppUsage="0"
               splashScreenColour="Dark" cppLanguageStandard="11" companyCopyright="LARAS-IRISIB / UMONS"
               companyWebsite="http://laras.be" companyName="LARAS-IRISIB / UMONS"
               companyEmail="glevaillant@he2b.be">
-  <MAINGROUP id="uJFjC5" name="MIAM Spat Editor">
+  <MAINGROUP id="uJFjC5" name="MIAM Editor">
     <GROUP id="{7878353D-A1B6-291B-EABC-831E28CE51BB}" name="Source">
       <FILE id="MLMDSl" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <GROUP id="{8561608D-D4A3-5115-DAC2-8B42AE1F05FC}" name="Model">
@@ -290,11 +290,12 @@
     <XCODE_MAC targetFolder="Builds/MacOSX">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="default" osxArchitecture="default"
-                       isDebug="1" optimisation="1" targetName="MiamSpatEditor" headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../MiamCommon/Source/"
+                       isDebug="1" optimisation="1" targetName="MiamEditor" headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../MiamCommon/Source/"
                        defines="__MIAM_DEBUG" enablePluginBinaryCopyStep="1"/>
         <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="default" osxArchitecture="default"
-                       isDebug="0" optimisation="3" targetName="MiamSpatEditor" headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../MiamCommon/Source/"
-                       defines="BOOST_UBLAS_NDEBUG&#10;NDEBUG" enablePluginBinaryCopyStep="1"/>
+                       isDebug="0" optimisation="3" targetName="MiamEditor" headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../MiamCommon/Source/"
+                       defines="BOOST_UBLAS_NDEBUG&#10;NDEBUG" enablePluginBinaryCopyStep="1"
+                       linkTimeOptimisation="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
