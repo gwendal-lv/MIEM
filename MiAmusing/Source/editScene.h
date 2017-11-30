@@ -44,9 +44,9 @@ using namespace Amusing;
                                                                     //[/Comments]
 */
 class EditScene  : public Component,
-                   public Button::Listener,
                    public ComboBox::Listener,
-                   public Slider::Listener
+                   public Slider::Listener,
+                   public Button::Listener
 {
 public:
     //==============================================================================
@@ -61,9 +61,9 @@ public:
 
     void paint (Graphics& g) override;
     void resized() override;
-    void buttonClicked (Button* buttonThatWasClicked) override;
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
     void sliderValueChanged (Slider* sliderThatWasMoved) override;
+    void buttonClicked (Button* buttonThatWasClicked) override;
 
     // Binary resources:
     static const char* stopOn_png;
@@ -96,9 +96,7 @@ private:
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<TextButton> addCarreButton;
-    ScopedPointer<TextButton> addTriangleButton;
-    ScopedPointer<TextButton> completeButton;
+    ScopedPointer<GroupComponent> groupComponent;
     ScopedPointer<ComboBox> comboBoxMidi;
     ScopedPointer<Slider> timeSlider;
     ScopedPointer<ImageButton> imgPlayButton;
@@ -107,6 +105,10 @@ private:
     ScopedPointer<ImageButton> imgOptionButton;
     ScopedPointer<ImageButton> imgDeleteButton;
     ScopedPointer<TextButton> textButton;
+    ScopedPointer<Label> label;
+    ScopedPointer<ShapeButton> addCarreShapeButton;
+    ScopedPointer<ShapeButton> addTriangleShapeButton2;
+    ScopedPointer<ShapeButton> addHexaShapeButton;
 
 
     //==============================================================================

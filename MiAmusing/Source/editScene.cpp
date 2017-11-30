@@ -35,17 +35,9 @@ EditScene::EditScene ()
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
-    addAndMakeVisible (addCarreButton = new TextButton ("new button"));
-    addCarreButton->setButtonText (TRANS("Square"));
-    addCarreButton->addListener (this);
-
-    addAndMakeVisible (addTriangleButton = new TextButton ("new button"));
-    addTriangleButton->setButtonText (TRANS("Triangle"));
-    addTriangleButton->addListener (this);
-
-    addAndMakeVisible (completeButton = new TextButton ("new button"));
-    completeButton->setButtonText (TRANS("Hexagone"));
-    completeButton->addListener (this);
+    addAndMakeVisible (groupComponent = new GroupComponent ("new group",
+                                                            String()));
+    groupComponent->setColour (GroupComponent::outlineColourId, Colours::white);
 
     addAndMakeVisible (comboBoxMidi = new ComboBox ("midiChannel"));
     comboBoxMidi->setEditableText (false);
@@ -106,6 +98,23 @@ EditScene::EditScene ()
     textButton->setButtonText (TRANS("changeSon"));
     textButton->addListener (this);
 
+    addAndMakeVisible (label = new Label ("new label",
+                                          TRANS("amusing")));
+    label->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    label->setJustificationType (Justification::centred);
+    label->setEditable (false, false, false);
+    label->setColour (TextEditor::textColourId, Colours::black);
+    label->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    addAndMakeVisible (addCarreShapeButton = new ShapeButton ("addCarreShape",Colours::white,Colours::blue,Colours::blue));
+    addCarreShapeButton->setName ("new component");
+
+    addAndMakeVisible (addTriangleShapeButton2 = new ShapeButton ("addCarreShape",Colours::white,Colours::blue,Colours::blue));
+    addTriangleShapeButton2->setName ("new component");
+
+    addAndMakeVisible (addHexaShapeButton = new ShapeButton ("addHexaShape",Colours::white,Colours::blue,Colours::blue));
+    addHexaShapeButton->setName ("new component");
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -114,6 +123,21 @@ EditScene::EditScene ()
 
 
     //[Constructor] You can add your own custom stuff here..
+	addCarreShapeButton->addListener(this);
+	addTriangleShapeButton2->addListener(this);
+	addHexaShapeButton->addListener(this);
+
+	Path squarePath, trianglePath, hexaPath;
+	squarePath.addPolygon(Point<float>((float)addCarreShapeButton->getWidth() / 2.0f, (float)addCarreShapeButton->getHeight() / 2.0f), 4, (float)addCarreShapeButton->getHeight() / 2.0f);
+	//squarePath.addRectangle(float(addCarreShapeButton->getWidth() - addCarreShapeButton->getHeight()) / 2.0f, 0, addCarreShapeButton->getHeight(), addCarreShapeButton->getHeight());
+	//trianglePath.addTriangle(float(addCarreShapeButton->getWidth() - addCarreShapeButton->getHeight()) / 2.0f, 0.0f, float(addCarreShapeButton->getWidth() - addCarreShapeButton->getHeight()) / 2.0f, getHeight(), float(addCarreShapeButton->getWidth() + addCarreShapeButton->getHeight()) / 2.0f, (float)getHeight() / 2.0f);
+	trianglePath.addPolygon(Point<float>((float)addTriangleShapeButton2->getWidth() / 2.0f, (float)addTriangleShapeButton2->getHeight() / 2.0f), 3, (float)addTriangleShapeButton2->getHeight() / 2.0f,M_PI/2.0f);
+	hexaPath.addPolygon(Point<float>((float)addHexaShapeButton->getWidth() / 2.0f, (float)addHexaShapeButton->getHeight() / 2.0f), 6, (float)addHexaShapeButton->getHeight() / 2.0f);
+
+	addCarreShapeButton->setShape(squarePath, false, true, false);
+	addTriangleShapeButton2->setShape(trianglePath, false, true, false);
+	addHexaShapeButton->setShape(hexaPath, false, true, false);
+
 	timeSlider->setValue(4);
 	for (int i = 0; i < 16;i++)
 		comboBoxMidi->addItem("ch " + (String)(i+1), i+1);
@@ -121,6 +145,9 @@ EditScene::EditScene ()
 
 	imgPauseButton->setState(Button::ButtonState::buttonDown);
 	imgStopButton->setState(Button::ButtonState::buttonDown);
+
+	comboBoxMidi->setVisible(false);
+	textButton->setVisible(false);
     //[/Constructor]
 }
 
@@ -129,9 +156,7 @@ EditScene::~EditScene()
     //[Destructor_pre]. You can add your own custom destruction code here..
     //[/Destructor_pre]
 
-    addCarreButton = nullptr;
-    addTriangleButton = nullptr;
-    completeButton = nullptr;
+    groupComponent = nullptr;
     comboBoxMidi = nullptr;
     timeSlider = nullptr;
     imgPlayButton = nullptr;
@@ -140,6 +165,10 @@ EditScene::~EditScene()
     imgOptionButton = nullptr;
     imgDeleteButton = nullptr;
     textButton = nullptr;
+    label = nullptr;
+    addCarreShapeButton = nullptr;
+    addTriangleShapeButton2 = nullptr;
+    addHexaShapeButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -163,45 +192,77 @@ void EditScene::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    addCarreButton->setBounds ((((0 + 0) + 0) + 0) + 0, (((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
-    addTriangleButton->setBounds (((((0 + 0) + 0) + 0) + 0) + 0, ((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
-    completeButton->setBounds ((((((0 + 0) + 0) + 0) + 0) + 0) + 0, (((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
-    comboBoxMidi->setBounds (((((((0 + 0) + 0) + 0) + 0) + 0) + 0) + 0, ((((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
-    timeSlider->setBounds ((((((((0 + 0) + 0) + 0) + 0) + 0) + 0) + 0) + 0, (((((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f) - -9, proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
+    groupComponent->setBounds (0, 0, proportionOfWidth (1.0000f), proportionOfHeight (1.0000f));
+    comboBoxMidi->setBounds (proportionOfWidth (0.0300f), ((((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f) - -5, proportionOfWidth (0.9400f), proportionOfHeight (0.0752f));
+    timeSlider->setBounds (proportionOfWidth (0.0300f) + 0, (((((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f) - -5) + proportionOfHeight (0.0752f) - -9, proportionOfWidth (0.9400f), proportionOfHeight (0.0752f));
     imgPlayButton->setBounds (0, proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
     imgStopButton->setBounds ((0 + 0) + 0, (proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
     imgPauseButton->setBounds (0 + 0, proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
-    imgOptionButton->setBounds (((((((((0 + 0) + 0) + 0) + 0) + 0) + 0) + 0) + 0) + 0, ((((((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f) - -9) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
+    imgOptionButton->setBounds (0, proportionOfHeight (0.9499f) + roundFloatToInt (proportionOfHeight (0.0501f) * -1.0000f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
     imgDeleteButton->setBounds (((0 + 0) + 0) + 0, ((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
-    textButton->setBounds ((((((((((0 + 0) + 0) + 0) + 0) + 0) + 0) + 0) + 0) + 0) + 0, (((((((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f) - -9) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
+    textButton->setBounds (proportionOfWidth (0.0000f), ((((((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f) - -5) + proportionOfHeight (0.0752f) - -9) + proportionOfHeight (0.0752f) - -28, proportionOfWidth (0.9497f), proportionOfHeight (0.0752f));
+    label->setBounds (proportionOfWidth (0.0248f), proportionOfHeight (0.9499f), proportionOfWidth (0.9497f), proportionOfHeight (0.0501f));
+    addCarreShapeButton->setBounds (proportionOfWidth (0.0000f), (((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
+    addTriangleShapeButton2->setBounds (proportionOfWidth (0.0000f) + 0, ((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
+    addHexaShapeButton->setBounds ((proportionOfWidth (0.0000f) + 0) + 0, (((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
+}
+
+void EditScene::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
+{
+    //[UsercomboBoxChanged_Pre]
+    //[/UsercomboBoxChanged_Pre]
+
+    if (comboBoxThatHasChanged == comboBoxMidi)
+    {
+        //[UserComboBoxCode_comboBoxMidi] -- add your combo box handling code here..
+		//DBG("now select : " + comboBoxMidi->getText() + " with Id : " + (String)comboBoxMidi->getSelectedId());
+		graphicSessionManager->SetMidiChannel(comboBoxMidi->getSelectedId());
+        //[/UserComboBoxCode_comboBoxMidi]
+    }
+
+    //[UsercomboBoxChanged_Post]
+    //[/UsercomboBoxChanged_Post]
+}
+
+void EditScene::sliderValueChanged (Slider* sliderThatWasMoved)
+{
+    //[UsersliderValueChanged_Pre]
+    //[/UsersliderValueChanged_Pre]
+
+    if (sliderThatWasMoved == timeSlider)
+    {
+        //[UserSliderCode_timeSlider] -- add your slider handling code here..
+		graphicSessionManager->OnTempoChanged((int)timeSlider->getValue());//*1000);
+        //[/UserSliderCode_timeSlider]
+    }
+
+    //[UsersliderValueChanged_Post]
+    //[/UsersliderValueChanged_Post]
 }
 
 void EditScene::buttonClicked (Button* buttonThatWasClicked)
 {
     //[UserbuttonClicked_Pre]
+	if (buttonThatWasClicked == addCarreShapeButton)
+	{
+		graphicSessionManager->OnAddSquare();
+		return;
+	}
+	else if (buttonThatWasClicked == addTriangleShapeButton2)
+	{
+		graphicSessionManager->OnAddTriangle();
+		return;
+	}
+	else if (buttonThatWasClicked == addHexaShapeButton)
+	{
+		graphicSessionManager->OnAddHexa();
+		return;
+	}
     //[/UserbuttonClicked_Pre]
 
-    if (buttonThatWasClicked == addCarreButton)
-    {
-        //[UserButtonCode_addCarreButton] -- add your button handler code here..
-        graphicSessionManager->OnAddSquare();
-        //[/UserButtonCode_addCarreButton]
-    }
-    else if (buttonThatWasClicked == addTriangleButton)
-    {
-        //[UserButtonCode_addTriangleButton] -- add your button handler code here..
-		graphicSessionManager->OnAddTriangle();
-        //[/UserButtonCode_addTriangleButton]
-    }
-    else if (buttonThatWasClicked == completeButton)
-    {
-        //[UserButtonCode_completeButton] -- add your button handler code here..
-		graphicSessionManager->OnAddHexa();//OnAddComplete();
-        //[/UserButtonCode_completeButton]
-    }
-    else if (buttonThatWasClicked == imgPlayButton)
+    if (buttonThatWasClicked == imgPlayButton)
     {
         //[UserButtonCode_imgPlayButton] -- add your button handler code here..
 		graphicSessionManager->HandleEventSync(std::shared_ptr<ControlEvent>(new ControlEvent(ControlEventType::Play)));
@@ -251,39 +312,6 @@ void EditScene::buttonClicked (Button* buttonThatWasClicked)
     //[/UserbuttonClicked_Post]
 }
 
-void EditScene::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
-{
-    //[UsercomboBoxChanged_Pre]
-    //[/UsercomboBoxChanged_Pre]
-
-    if (comboBoxThatHasChanged == comboBoxMidi)
-    {
-        //[UserComboBoxCode_comboBoxMidi] -- add your combo box handling code here..
-		//DBG("now select : " + comboBoxMidi->getText() + " with Id : " + (String)comboBoxMidi->getSelectedId());
-		graphicSessionManager->SetMidiChannel(comboBoxMidi->getSelectedId());
-        //[/UserComboBoxCode_comboBoxMidi]
-    }
-
-    //[UsercomboBoxChanged_Post]
-    //[/UsercomboBoxChanged_Post]
-}
-
-void EditScene::sliderValueChanged (Slider* sliderThatWasMoved)
-{
-    //[UsersliderValueChanged_Pre]
-    //[/UsersliderValueChanged_Pre]
-
-    if (sliderThatWasMoved == timeSlider)
-    {
-        //[UserSliderCode_timeSlider] -- add your slider handling code here..
-		graphicSessionManager->OnTempoChanged((int)timeSlider->getValue());//*1000);
-        //[/UserSliderCode_timeSlider]
-    }
-
-    //[UsersliderValueChanged_Post]
-    //[/UsersliderValueChanged_Post]
-}
-
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
@@ -319,24 +347,15 @@ BEGIN_JUCER_METADATA
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="0" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="ff323e44"/>
-  <TEXTBUTTON name="new button" id="571676e166394c53" memberName="addCarreButton"
-              virtualName="" explicitFocusOrder="0" pos="0 0R 100% 7.518%"
-              posRelativeX="9d5289b3af882e28" posRelativeY="9d5289b3af882e28"
-              buttonText="Square" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
-  <TEXTBUTTON name="new button" id="50fbe27b27abfd3" memberName="addTriangleButton"
-              virtualName="" explicitFocusOrder="0" pos="0 0R 100% 7.518%"
-              posRelativeX="571676e166394c53" posRelativeY="571676e166394c53"
-              buttonText="Triangle" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
-  <TEXTBUTTON name="new button" id="3ae91a7e9eec6859" memberName="completeButton"
-              virtualName="" explicitFocusOrder="0" pos="0 0R 100% 7.518%"
-              posRelativeX="50fbe27b27abfd3" posRelativeY="50fbe27b27abfd3"
-              buttonText="Hexagone" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
+  <GROUPCOMPONENT name="new group" id="b0496b43bf1770c8" memberName="groupComponent"
+                  virtualName="" explicitFocusOrder="0" pos="0 0 100% 100%" outlinecol="ffffffff"
+                  title=""/>
   <COMBOBOX name="midiChannel" id="15ec0fa26eb54f8b" memberName="comboBoxMidi"
-            virtualName="" explicitFocusOrder="0" pos="0 0R 100% 7.518%"
-            posRelativeX="3ae91a7e9eec6859" posRelativeY="3ae91a7e9eec6859"
-            editable="0" layout="33" items="" textWhenNonSelected="" textWhenNoItems="(no choices)"/>
+            virtualName="" explicitFocusOrder="0" pos="3.005% -5R 93.989% 7.518%"
+            posRelativeY="581ab4124f4712ed" editable="0" layout="33" items=""
+            textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <SLIDER name="new slider" id="31e65db12379ed8f" memberName="timeSlider"
-          virtualName="" explicitFocusOrder="0" pos="0 -9R 100% 7.518%"
+          virtualName="" explicitFocusOrder="0" pos="0 -9R 93.989% 7.518%"
           posRelativeX="15ec0fa26eb54f8b" posRelativeY="15ec0fa26eb54f8b"
           textboxtext="ffffffff" textboxbkgd="152f3c" min="50" max="200"
           int="1" style="IncDecButtons" textBoxPos="TextBoxAbove" textBoxEditable="1"
@@ -365,10 +384,9 @@ BEGIN_JUCER_METADATA
                opacityOver="1" colourOver="0" resourceDown="pauseOn_png" opacityDown="1"
                colourDown="0"/>
   <IMAGEBUTTON name="imgOptionButton" id="bbfd3cbea2a71bfd" memberName="imgOptionButton"
-               virtualName="" explicitFocusOrder="0" pos="0 0R 100% 7.518%"
-               posRelativeX="31e65db12379ed8f" posRelativeY="31e65db12379ed8f"
-               buttonText="new button" connectedEdges="0" needsCallback="1"
-               radioGroupId="0" keepProportions="1" resourceNormal="option_png"
+               virtualName="" explicitFocusOrder="0" pos="0 -100% 100% 7.518%"
+               posRelativeY="289502be800b82cf" buttonText="new button" connectedEdges="0"
+               needsCallback="1" radioGroupId="0" keepProportions="1" resourceNormal="option_png"
                opacityNormal="1" colourNormal="0" resourceOver="optionOn_png"
                opacityOver="1" colourOver="0" resourceDown="optionOn_png" opacityDown="1"
                colourDown="0"/>
@@ -381,9 +399,25 @@ BEGIN_JUCER_METADATA
                opacityOver="1" colourOver="0" resourceDown="deleteOn_png" opacityDown="1"
                colourDown="0"/>
   <TEXTBUTTON name="new button" id="c84bea64b985b44" memberName="textButton"
-              virtualName="" explicitFocusOrder="0" pos="0 0R 100% 7.518%"
-              posRelativeX="bbfd3cbea2a71bfd" posRelativeY="bbfd3cbea2a71bfd"
-              buttonText="changeSon" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
+              virtualName="" explicitFocusOrder="0" pos="0% -28R 94.966% 7.518%"
+              posRelativeY="31e65db12379ed8f" buttonText="changeSon" connectedEdges="0"
+              needsCallback="1" radioGroupId="0"/>
+  <LABEL name="new label" id="289502be800b82cf" memberName="label" virtualName=""
+         explicitFocusOrder="0" pos="2.479% 94.988% 94.966% 5.012%" edTextCol="ff000000"
+         edBkgCol="0" labelText="amusing" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15"
+         kerning="0" bold="0" italic="0" justification="36"/>
+  <GENERICCOMPONENT name="new component" id="1783a06d564fe381" memberName="addCarreShapeButton"
+                    virtualName="ShapeButton" explicitFocusOrder="0" pos="0% 0R 100% 7.518%"
+                    posRelativeY="9d5289b3af882e28" class="Component" params="&quot;addCarreShape&quot;,Colours::white,Colours::blue,Colours::blue"/>
+  <GENERICCOMPONENT name="new component" id="ffe0a52b5cd87f07" memberName="addTriangleShapeButton2"
+                    virtualName="ShapeButton" explicitFocusOrder="0" pos="0 0R 100% 7.518%"
+                    posRelativeX="1783a06d564fe381" posRelativeY="1783a06d564fe381"
+                    class="Component" params="&quot;addCarreShape&quot;,Colours::white,Colours::blue,Colours::blue"/>
+  <GENERICCOMPONENT name="new component" id="581ab4124f4712ed" memberName="addHexaShapeButton"
+                    virtualName="ShapeButton" explicitFocusOrder="0" pos="0 0R 100% 7.518%"
+                    posRelativeX="ffe0a52b5cd87f07" posRelativeY="ffe0a52b5cd87f07"
+                    class="Component" params="&quot;addHexaShape&quot;,Colours::white,Colours::blue,Colours::blue"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA
