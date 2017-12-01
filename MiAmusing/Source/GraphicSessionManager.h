@@ -144,6 +144,7 @@ namespace Amusing {
 		void OnAddTrueCircle();
 		void OnAddFollower();
 		void OnAddComplete();
+		void OnSoundClick();
 		void OnDelete();
 		void OnTestChangeSound();
 

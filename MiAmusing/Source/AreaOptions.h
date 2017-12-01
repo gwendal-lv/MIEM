@@ -21,6 +21,8 @@
 
 //[Headers]     -- You can add your own extra header files here --
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "ColorArray.h"
+class ColorArray;
 
 class AmusingSceneComponent;
 class CustomLookAndFeel : public LookAndFeel_V4
@@ -185,7 +187,7 @@ class CustomLookAndFeel : public LookAndFeel_V4
 	bool showScaleMarking = false;
 	double skewFactor = 1;
 
-	
+
 };
 
 //[/Headers]
@@ -214,6 +216,7 @@ public:
 	void setSpeedSliderValue(double speed);
 	void setOctaveSlider(int currentOctave);
 	void setVelocitySliderValue(double _velocity);
+	void OnColorChanged(Colour newColour);
     //[/UserMethods]
 
     void paint (Graphics& g) override;
@@ -236,6 +239,7 @@ private:
     ScopedPointer<Slider> speed;
     ScopedPointer<Label> speedLabel;
     ScopedPointer<Slider> velocitySlider;
+    ScopedPointer<ColorArray> colorArray;
 
 
     //==============================================================================

@@ -1,0 +1,47 @@
+/*
+  ==============================================================================
+
+    soundFilesManager.h
+    Created: 30 Nov 2017 7:03:48pm
+    Author:  ayup1
+
+  ==============================================================================
+*/
+
+#pragma once
+
+#include "../JuceLibraryCode/JuceHeader.h"
+#include "SoundFileViewer.h"
+#include "MainComponent.h"
+
+class SoundFileViewer;
+class MainContentComponent;
+
+//==============================================================================
+/*
+*/
+class SoundFilesManager    : public Component, public Button::Listener
+{
+public:
+    SoundFilesManager();
+    ~SoundFilesManager();
+
+    void paint (Graphics&) override;
+    void resized() override;
+
+	void buttonClicked(Button* buttonThatWasClicked) override;
+
+	void completeInitialisation(MainContentComponent *m_mainComponent);
+	void loadSoundFile(SoundFileViewer* SoundFileViewer);
+	void addSoundFileViewer();
+
+private:
+	int Nmax = 7;
+	int itemHeight, spaceHeight;
+	ScopedPointer<TextButton> closeSoundFileManagerButton;
+	ScopedPointer<TextButton> addSoundFileViewerButton;
+	OwnedArray<SoundFileViewer> soundFileViewerArray;
+
+	MainContentComponent* mainComponent;
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SoundFilesManager)
+};

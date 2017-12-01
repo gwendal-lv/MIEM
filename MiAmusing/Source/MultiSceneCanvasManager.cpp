@@ -333,6 +333,19 @@ void MultiSceneCanvasManager::ChangeVelocity(double newVelocity)
 	}
 }
 
+void MultiSceneCanvasManager::ChangeColour(Colour newColour)
+{
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+	{
+		/*if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)
+		{
+			myGraphicSessionManager->setVelocityArea(amusingScene->GetSelectedArea(), newVelocity);
+		}*/
+		
+		handleAndSendAreaEventSync(amusingScene->SetSelectedAreaColour(newColour));
+	}
+}
+
 double MultiSceneCanvasManager::getVelocity(std::shared_ptr<IEditableArea> area)
 {
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))

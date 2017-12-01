@@ -63,6 +63,9 @@ AreaOptions::AreaOptions ()
     velocitySlider->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     velocitySlider->addListener (this);
 
+    addAndMakeVisible (colorArray = new ColorArray());
+    colorArray->setName ("new component");
+
 
     //[UserPreSize]
 	speed->setValue(1);
@@ -75,6 +78,7 @@ AreaOptions::AreaOptions ()
 	speed->setSkewFactor(1);
 	customLook.setScaleMarking(speed->getMinimum(), speed->getMaximum(),speed->getSkewFactor());
 	speed->setLookAndFeel(&customLook);
+	colorArray->completeInitialisation(this);
     //[/Constructor]
 }
 
@@ -87,6 +91,7 @@ AreaOptions::~AreaOptions()
     speed = nullptr;
     speedLabel = nullptr;
     velocitySlider = nullptr;
+    colorArray = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -112,6 +117,7 @@ void AreaOptions::resized()
     speed->setBounds (46, 164, 160, 24);
     speedLabel->setBounds (206, 164, 50, 24);
     velocitySlider->setBounds (223, 19, 71, 56);
+    colorArray->setBounds (48, 16, 150, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -202,6 +208,11 @@ void AreaOptions::setVelocitySliderValue(double _velocity)
 {
 	velocitySlider->setValue(_velocity);
 }
+
+void AreaOptions::OnColorChanged(Colour newColour)
+{
+	amusingSceneComponent->OnColourChanged(newColour);
+}
 //[/MiscUserCode]
 
 
@@ -243,6 +254,9 @@ BEGIN_JUCER_METADATA
           virtualName="" explicitFocusOrder="0" pos="223 19 71 56" min="0"
           max="127" int="0" style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+  <GENERICCOMPONENT name="new component" id="deb5bed8d718a864" memberName="colorArray"
+                    virtualName="ColorArray" explicitFocusOrder="0" pos="48 16 150 24"
+                    class="Component" params=""/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

@@ -1,0 +1,43 @@
+/*
+  ==============================================================================
+
+    ColorArray.h
+    Created: 30 Nov 2017 11:54:40am
+    Author:  ayup1
+
+  ==============================================================================
+*/
+
+#pragma once
+
+#include "../JuceLibraryCode/JuceHeader.h"
+#include "AreaOptions.h"
+
+class AreaOptions;
+//==============================================================================
+/*
+*/
+class ColorArray    : public Component, public ButtonListener
+{
+public:
+    ColorArray(int size = 4);
+    ~ColorArray();
+
+    void paint (Graphics&) override;
+    void resized() override;
+
+	void buttonClicked(Button*) override;
+	void addButtonListener(juce::Button::Listener *listener);
+
+	void completeInitialisation(AreaOptions *m_areaOption);
+	//void addColor(Colour newColour);
+
+private:
+	int currentColor;
+	bool wasClicked;
+	OwnedArray<TextButton> buttonArray;
+
+	AreaOptions *areaOptions;
+	
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ColorArray)
+};

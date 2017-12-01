@@ -433,6 +433,22 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					param.DoubleValue = myPresenter->computeFrequency(complete->GetSurface());
 					DBG((String)param.DoubleValue);
 					myPresenter->SendParamChange(param);
+
+
+
+					param.Type = Miam::AsyncParamChange::ParamType::Source;
+					i = 0;
+					////DBG("before while");
+					while (complete->getAllPercentages(i, param.DoubleValue) && complete->getAllDistanceFromCenter(i, param.IntegerValue))
+					{
+						//param.IntegerValue = 60 + (2*param.IntegerValue);
+						param.IntegerValue = myPresenter->getNote(complete, param.IntegerValue);
+						//DBG("noteToSend = " + (String)param.IntegerValue);
+						param.Id2 = i;
+						param.FloatValue = (float)myPresenter->getVelocityArea(complete);
+						myPresenter->SendParamChange(param);
+						++i;
+					}
 				}
 				break;
 			case AreaEventType::Selected :
@@ -708,6 +724,11 @@ void GraphicSessionManager::OnAddComplete()
 	{
 		getSelectedCanvasAsManager()->AddCompleteArea();
 	}
+}
+
+void GraphicSessionManager::OnSoundClick()
+{
+	view->ShowSoundManager();
 }
 
 void GraphicSessionManager::OnDeviceOptionsClicked()

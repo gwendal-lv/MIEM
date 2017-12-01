@@ -19,8 +19,11 @@ MainContentComponent::MainContentComponent()
 {
 	//addAndMakeVisible(sceneEditionComponent = new SceneEditionComponent());
 	editSceneC = new EditScene();
+	soundFilesManager = new SoundFilesManager();
+	addChildComponent(soundFilesManager);
 	addAndMakeVisible(editSceneC);
     setSize (600, 400);
+	soundFilesManager->completeInitialisation(this);
 }
 
 MainContentComponent::~MainContentComponent()
@@ -52,6 +55,8 @@ void MainContentComponent::resized()
 	}
 	if (editSceneC)
 		editSceneC->setBounds(0, 0, toolbarWidth, getLocalBounds().getHeight());
+	if (soundFilesManager)
+		soundFilesManager->setBounds(toolbarWidth, 0, getLocalBounds().getWidth() - toolbarWidth, getLocalBounds().getHeight());
     //    multiCanvasComponent->setBounds(getLocalBounds());
 	//sceneEditionComponent->setBounds(0, 0, 50, getLocalBounds().getHeight());
 	//multiCanvasComponent->setBounds(50, 0, 550, getLocalBounds().getHeight());
@@ -99,10 +104,23 @@ void MainContentComponent::ShowDeviceOptionsDialog()
 	//multiCanvasComponent->ShowDeviceOptionsDialog(deviceManager);
 }
 
+void MainContentComponent::ShowSoundManagerComponent()
+{
+	multiCanvasComponent->setVisible(false);
+	optionWindow->setVisible(false);
+	soundFilesManager->setVisible(true);
+}
+
 void MainContentComponent::CloseOptionWindow()
 {
 	multiCanvasComponent->setVisible(true);
 	optionWindow->setVisible(false);
+}
+
+void MainContentComponent::CloseSoundFileManager()
+{
+	multiCanvasComponent->setVisible(true);
+	soundFilesManager->setVisible(false);
 }
 
 void MainContentComponent::removeDeviceManagerFromOptionWindow()

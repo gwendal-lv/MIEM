@@ -997,6 +997,17 @@ std::shared_ptr<AreaEvent> AmusingScene::SetSelectedAreaOpacity(double newOpacit
 	return areaE;
 }
 
+std::shared_ptr<AreaEvent> AmusingScene::SetSelectedAreaColour(Colour newColour)
+{
+	std::shared_ptr<AreaEvent> areaE(new AreaEvent());
+	if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(selectedArea))
+	{
+		completeArea->SetFillColour(newColour);
+		areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::ColorChanged, completeArea->GetId(), shared_from_this()));
+	}
+	return areaE;
+}
+
 bool AmusingScene::isDrew(std::shared_ptr<Cursor> cursor)
 {
 	for (int i = 0; i < (int)currentExciters.size(); ++i)

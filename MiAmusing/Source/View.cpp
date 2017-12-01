@@ -90,6 +90,12 @@ void View::ShowDeviceOptionsDialog()
 	mainContentComponent->ShowDeviceOptionsDialog();
 }
 
+void View::ShowSoundManager()
+{
+	mainContentComponent->ShowSoundManagerComponent();
+
+}
+
 void View::removeDeviceManagerFromOptionWindow()
 {
 	mainContentComponent->removeDeviceManagerFromOptionWindow();

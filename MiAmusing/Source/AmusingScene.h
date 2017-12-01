@@ -15,6 +15,7 @@
 #include "AnimatedPolygon.h"
 #include "Follower.h"
 #include "Cursors.h"
+#include "../JuceLibraryCode/JuceHeader.h"
 
 using namespace Miam;
 
@@ -99,6 +100,7 @@ namespace Miam
 		std::shared_ptr<AreaEvent> SetSelectedArea(std::shared_ptr<IEditableArea> selectedArea_, bool changeMode = true) override;
 		std::shared_ptr<AreaEvent> SetSelectedAreaCursor(int idx, double newSize);
 		std::shared_ptr<AreaEvent> SetSelectedAreaOpacity(double newOpacity);
+		std::shared_ptr<AreaEvent> SetSelectedAreaColour(Colour newColour);
 		bool isDrew(std::shared_ptr<Cursor> cursor);
 		std::shared_ptr<AreaEvent> checkCursorPosition(std::shared_ptr<Cursor> cursor, int &areaId);
 		//size_t GetDrawableObjectsCount();

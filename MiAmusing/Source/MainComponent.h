@@ -19,11 +19,13 @@
 
 #include "MultiCanvasComponent.h"
 #include "editScene.h"
+#include "SoundFilesManager.h"
 //#include "AudioManager.h"
 //#include "AudioPlayer.h"
 
 using namespace Miam;
 
+class SoundFilesManager;
 class MultiCanvasComponentAmusing;
 
 namespace Amusing
@@ -80,7 +82,9 @@ private:
 	}
     
 	void ShowDeviceOptionsDialog();
+	void ShowSoundManagerComponent();
 	void CloseOptionWindow();
+	void CloseSoundFileManager();
 	void removeDeviceManagerFromOptionWindow();
 	//void CreateDeviceSelector(AudioDeviceManager* deviceManager);
     
@@ -96,6 +100,7 @@ public:
 private:
 	//SafePointer<AudioDeviceSelectorComponent> audioSetupComp;
 	ScopedPointer<OptionWindow> optionWindow;
+	ScopedPointer<SoundFilesManager> soundFilesManager;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 };

@@ -34,6 +34,8 @@ public:
 	void OnBaseNoteChanged(double newBaseNote);
 	void OnVelocityChanged(double newVelocity);
 
+	void OnColourChanged(Colour newColour);
+
 	void SetAreaOptionsCenter(bpt center);
 	void SetAreaOptionsVisible(bool show);
 	void SetAreaOptionsVisible(bool show, double speed, double velocity, int octave);
