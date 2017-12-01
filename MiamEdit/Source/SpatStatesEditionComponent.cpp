@@ -176,9 +176,9 @@ void SpatStatesEditionComponent::resized()
     spatStateGroupComponent->setBounds (0, 4, getWidth() - 0, 52);
     addSpatStateTextButton->setBounds (0 + 8, 4 + 20, 80, 24);
     deleteSpatStateTextButton->setBounds (0 + 88, 4 + 20, 80, 24);
-    stateUpTextButton->setBounds ((((0 + 88) + 80 - -8) + (getWidth() - 476) - -8) + proportionOfWidth (0.1299f) - -8, 4 + 20, 72, 24);
-    stateDownTextButton->setBounds (((((0 + 88) + 80 - -8) + (getWidth() - 476) - -8) + proportionOfWidth (0.1299f) - -8) + 72, 4 + 20, 72, 24);
-    linksInfoLabel->setBounds (((0 + 88) + 80 - -8) + (getWidth() - 476) - -8, 4 + 20, proportionOfWidth (0.1299f), 24);
+    stateUpTextButton->setBounds ((((0 + 88) + 80 - -8) + (getWidth() - 476) - -8) + 132 - -8, 4 + 20, 72, 24);
+    stateDownTextButton->setBounds (((((0 + 88) + 80 - -8) + (getWidth() - 476) - -8) + 132 - -8) + 72, 4 + 20, 72, 24);
+    linksInfoLabel->setBounds (((0 + 88) + 80 - -8) + (getWidth() - 476) - -8, 4 + 20, 132, 24);
     spatStatesComboBox->setBounds ((0 + 88) + 80 - -8, 24, getWidth() - 476, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
@@ -391,12 +391,12 @@ BEGIN_JUCER_METADATA
               textCol="ff000000" buttonText="Down" connectedEdges="1" needsCallback="1"
               radioGroupId="0"/>
   <LABEL name="Links info label" id="3577c0e2ccd44371" memberName="linksInfoLabel"
-         virtualName="" explicitFocusOrder="0" pos="-8R 20 12.988% 24"
-         posRelativeX="89ad7c0a3be5a39c" posRelativeY="4250d5155a80be70"
-         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Linked to ? area"
-         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15" kerning="0" bold="0" italic="1"
-         justification="36" typefaceStyle="Italic"/>
+         virtualName="" explicitFocusOrder="0" pos="-8R 20 132 24" posRelativeX="89ad7c0a3be5a39c"
+         posRelativeY="4250d5155a80be70" textCol="ff000000" edTextCol="ff000000"
+         edBkgCol="0" labelText="Linked to ? area" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
+         fontsize="15" kerning="0" bold="0" italic="1" justification="36"
+         typefaceStyle="Italic"/>
   <COMBOBOX name="Spat states combo box" id="89ad7c0a3be5a39c" memberName="spatStatesComboBox"
             virtualName="" explicitFocusOrder="0" pos="-8R 24 476M 24" posRelativeX="5f4e8653b868a323"
             posRelativeY="90b16e3024c520fd" editable="1" layout="33" items="-1 undefined"
