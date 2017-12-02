@@ -253,7 +253,8 @@ namespace Miam
         
         /// \brief Value that is >= 0
         inline size_t GetEndIterator() const {return (size_t)indexOfLastNonZeroIndex+1;}
-        
+        /// \brief pour l'instant c'est la même chose que l'itérateur (= un size_t) de fin (similaire .end)
+        inline size_t GetNonZeroCoeffsCount() const {return (size_t)indexOfLastNonZeroIndex+1;}
         
         
         // = = = = = = = = = = ARITHMETIC OPERATIONS = = = = = = = = = =
@@ -353,6 +354,22 @@ namespace Miam
                 XmlReadException::FromBptree("matrix.coeff, attribute (row|col|value)", e);
             }
         }
+        
+        
+        
+        // = = = = = = = = Display functionnalities = = = = = = = = =
+        void DisplayInStdCout()
+        {
+            // D'abord on parcourt tous les termes non-nuls de la matrice en argument
+            for (ResetIterator() ;
+                 GetIterator() < GetEndIterator() ;
+                 IncIterator() )
+            {
+                Coord2d coeff2dCoord = GetIterator2dCoord();
+                std::cout << " [" << coeff2dCoord.i << "," << coeff2dCoord.j << "]=" << GetIteratorValue() << " ";
+            }
+        }
+
     };
     
     

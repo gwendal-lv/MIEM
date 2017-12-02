@@ -89,7 +89,7 @@ namespace Miam
                 {
                     for (size_t j = 0 ; j<matrixState->GetOutputsCount() ; j++)
                     {
-                        sendMatrixCoeff((int)i, (int)j, (float)(*matrixState)(i,j) );
+                        SendMatrixCoeff((int)i, (int)j, (float)(*matrixState)(i,j) );
                     }
                 }
             }
@@ -111,7 +111,7 @@ namespace Miam
                     // trop grandes, allouées statiquement à la taille max)
                     if (index2d.i < matrixState->GetInputsCount()
                         && index2d.j < matrixState->GetOutputsCount())
-                    sendMatrixCoeff((int) index2d.i, (int) index2d.j,
+                    SendMatrixCoeff((int) index2d.i, (int) index2d.j,
                                     (float) (*matrixState)[changesIndexes[i]]);
                 }
                 
@@ -122,9 +122,8 @@ namespace Miam
                 throw std::logic_error("Cannot send the modifications of a state that is not a BackupMatrix");
         }
         
-        private :
         // Envoi d'un seul coeff
-        void sendMatrixCoeff(int i, int j, float value)
+        void SendMatrixCoeff(int i, int j, float value)
         {
             oscSender.send(Miam_OSC_Matrix_Address, i, j, value);
         }

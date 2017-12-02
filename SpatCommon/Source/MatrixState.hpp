@@ -59,6 +59,16 @@ namespace Miam
         inline Index2d GetIndex2dFromIndex(size_t index1d)
         { return matrix.GetIndex2dFromIndex(index1d); }
         
+#ifdef __MIAM_DEBUG
+        inline size_t GetNonZeroCoeffsCount() {return matrix.GetNonZeroCoeffsCount();}
+        void DisplayMatrixInStdCout()
+        {
+            std::cout << GetNonZeroCoeffsCount() << " non-nuls : ";
+            matrix.DisplayInStdCout();
+            std::cout << std::endl;
+        }
+#endif
+        
         
         // = = = = = = = = = = METHODS = = = = = = = = = =
         public :

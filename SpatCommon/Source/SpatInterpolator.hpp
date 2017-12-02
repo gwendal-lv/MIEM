@@ -193,7 +193,7 @@ namespace Miam
         /// \returns Si on a mis quelque chose à jour, ou pas du tout
         bool OnDataUpdateFinished()
         {
-            if (updatedStatesCount > 1)
+            if (updatedStatesCount >= 1)
             {
                 // Addition des matrices creuses : on recalcule tout plutôt que d'essayer d'optimiser...
                 currentInterpolatedMatrixState.ClearMatrix();
@@ -220,11 +220,10 @@ namespace Miam
                 // On va chercher les différences dès maintenant
                 currentInterpolatedMatrixState.FindSignificantChanges();
             }
-            
+
             // On lance une nouvelle frame
             bool somethingWasUpdated = (updatedStatesCount > 0);
             updatedStatesCount = 0;
-            
             return somethingWasUpdated;
         }
         
