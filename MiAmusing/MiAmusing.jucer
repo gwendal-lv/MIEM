@@ -70,6 +70,10 @@
               compile="1" resource="0" file="Source/AudioDeviceAndMidiOutputSelectorComponent.cpp"/>
         <FILE id="Xq7fsV" name="AudioDeviceAndMidiOutputSelectorComponent.h"
               compile="0" resource="0" file="Source/AudioDeviceAndMidiOutputSelectorComponent.h"/>
+        <FILE id="X2HcUv" name="BinaryDataExplorer.cpp" compile="1" resource="0"
+              file="Source/BinaryDataExplorer.cpp"/>
+        <FILE id="cIzTi1" name="BinaryDataExplorer.h" compile="0" resource="0"
+              file="Source/BinaryDataExplorer.h"/>
         <FILE id="Q3sn9N" name="ColorArray.cpp" compile="1" resource="0" file="Source/ColorArray.cpp"/>
         <FILE id="rbd4Kt" name="ColorArray.h" compile="0" resource="0" file="Source/ColorArray.h"/>
         <FILE id="wihbQV" name="editScene.cpp" compile="1" resource="0" file="Source/editScene.cpp"/>
@@ -90,6 +94,9 @@
         <FILE id="zj4ZTk" name="OptionWindow.cpp" compile="1" resource="0"
               file="Source/OptionWindow.cpp"/>
         <FILE id="Hck3e6" name="OptionWindow.h" compile="0" resource="0" file="Source/OptionWindow.h"/>
+        <FILE id="ekJKk8" name="SoundBrowser.cpp" compile="1" resource="0"
+              file="Source/SoundBrowser.cpp"/>
+        <FILE id="zpTimK" name="SoundBrowser.h" compile="0" resource="0" file="Source/SoundBrowser.h"/>
         <FILE id="XfdWAv" name="SoundFilesManager.cpp" compile="1" resource="0"
               file="Source/SoundFilesManager.cpp"/>
         <FILE id="r3bzow" name="SoundFilesManager.h" compile="0" resource="0"

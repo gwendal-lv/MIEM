@@ -217,6 +217,8 @@ public:
 	void setOctaveSlider(int currentOctave);
 	void setVelocitySliderValue(double _velocity);
 	void OnColorChanged(Colour newColour);
+
+	void setSamplesColor(int Nsamples, Colour colorCode[]);
     //[/UserMethods]
 
     void paint (Graphics& g) override;

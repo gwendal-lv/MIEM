@@ -370,7 +370,7 @@ void AudioManager::getParameters()
 		case Miam::AsyncParamChange::ParamType::InputsCount:
 			// test switch synth
 			//timeLines[param.Id1]->addSound(BinaryData::cello_wav, BinaryData::cello_wavSize, false);
-			timeLines[param.Id1]->addSound(" ");
+			timeLines[param.Id1]->addSound(model->getSoundPath(param.Id2));
 			break;
 		case Miam::AsyncParamChange::ParamType::Activate:
 			if (param.Id2 == 1024) // crée ou supprime une timeLine

@@ -23,6 +23,8 @@ public:
 
 	void resized() override;
 
+	void setSamplesColor(int Nsamples, Colour colorCode[]);
+
 private:
 	//AreaOptions areaOptions;
 };

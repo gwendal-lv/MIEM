@@ -64,6 +64,7 @@ namespace Amusing {
 		void OnAudioPosition(double position);
 		void SetAllAudioPositions(double position);
 		void SetAudioPositions(std::shared_ptr<Cursor> area, double position);
+		void lookForAreasConcerned(Colour colourConcerned);
 		int getNumberArea();
 		void handleAndSendAreaEventSync(std::shared_ptr<AreaEvent> areaE);
 		void handleAndSendMultiAreaEventSync(std::shared_ptr<MultiAreaEvent> multiAreaE);
@@ -79,7 +80,7 @@ namespace Amusing {
 		void SetAllChannels();
 		std::shared_ptr<EditableScene> GetSelectedScene();
 
-		void ChangeBaseNote(double newBaseNote);
+		void ChangeBaseNote(int newBaseNote);
 		void ChangeSpeed(double newSpeed);
 		double getSpeed(std::shared_ptr<IEditableArea> area);
 		void ChangeVelocity(double newVelocity);

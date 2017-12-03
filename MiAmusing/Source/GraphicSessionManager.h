@@ -153,6 +153,8 @@ namespace Amusing {
 		void SetAllAudioPositions(double position);
 		void SetAudioPositions(std::shared_ptr<Cursor> area, double position);
 
+		void lookForAreasConcerned(Colour colourConcerned); //look for the areas concerned by this update to send msg to the audio model to update the corresponding timeLines
+
 		void OnPlayClicked();
 		void OnPauseClicked();
 		void OnStopClicked();
@@ -161,6 +163,7 @@ namespace Amusing {
 
 		void OnDeviceOptionsClicked();
 		void SetAllChannels(); // bouger d'endroit dans le constructeur pour la comprehension (pas view event)
+		void setSamplesColor(int Nsamples, Colour colorCode[]);
 		void SetMidiChannel(int ch);
 
 		void setSpeedArea(std::shared_ptr<IEditableArea> area, double speed);

@@ -24,6 +24,16 @@ MultiCanvasComponentAmusing::~MultiCanvasComponentAmusing()
 	//delete audioSetupComp;
 }
 
+void MultiCanvasComponentAmusing::setSamplesColor(int Nsamples, Colour colorCode[])
+{
+	MultiSceneCanvasComponent* compo = multiSceneCanvasComponents[0];
+	if (MultiSceneCanvasComponentAmusing* compoAmusing = (MultiSceneCanvasComponentAmusing*)compo)
+	{
+		compoAmusing->setSamplesColor(Nsamples, colorCode);
+		compoAmusing = nullptr;
+	}
+}
+
 
 
 void MultiCanvasComponentAmusing::resized()

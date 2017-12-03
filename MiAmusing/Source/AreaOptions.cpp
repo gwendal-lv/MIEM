@@ -213,6 +213,10 @@ void AreaOptions::OnColorChanged(Colour newColour)
 {
 	amusingSceneComponent->OnColourChanged(newColour);
 }
+void AreaOptions::setSamplesColor(int Nsamples, Colour colorCode[])
+{
+	colorArray->setSamplesColor(Nsamples, colorCode);
+}
 //[/MiscUserCode]
 
 

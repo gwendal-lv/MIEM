@@ -38,6 +38,17 @@ Presenter::Presenter(View* _view) :
     // After all sub-modules are built, the presenter refers itself to the View
     view->CompleteInitialization(this);
     view->GetMainContentComponent()->resized();
+
+	const int numSamples = 4;
+	Colour colorCode[numSamples] = { Colours::white,Colours::blue,Colours::red,Colours::green };
+	
+	String defaultPath = BinaryData::namedResourceList[0];
+	view->setSampleColor(numSamples, colorCode);
+	view->setDefaultPath(defaultPath);
+
+	
+
+	graphicSessionManager.setSamplesColor(numSamples, colorCode);
     
     // HERE, WE SHOULD LOAD THE DEFAULT FILE
     //graphicSessionManager.__LoadDefaultTest();
@@ -65,6 +76,13 @@ void Presenter::CompleteInitialisation(AmusingModel* _model)
     // Self init
     model = _model;
 	view->CompleteInitialization(model);
+
+	const int numSamples = 4;
+	Colour colorCode[numSamples] = { Colours::white,Colours::blue,Colours::red,Colours::green };
+
+	String defaultPath = BinaryData::namedResourceList[0];
+	for (int i = 0; i < numSamples; ++i)
+		setColorPath(i, colorCode[i], defaultPath);
 	//graphicSessionManager.CompleteInitialization(model);
 }
 
@@ -269,6 +287,18 @@ std::shared_ptr<Follower> Presenter::getFollowerFromCtrl(int ctrlId)
 		return nullptr;
 	}
 	return followerToCtrlSource.right.at(ctrlId);
+}
+
+void Amusing::Presenter::setColorPath(int idx, Colour colourConcerned, String pathAssociated)
+{
+	colourToIdx[colourConcerned] = idx; // utile?
+	model->addNewSoundPath(idx, pathAssociated.toStdString()); // update if the soundspath list
+	graphicSessionManager.lookForAreasConcerned(colourConcerned); //look for the areas concerned by this update to send msg to the audio model to update the corresponding timeLines
+}
+
+int Amusing::Presenter::getPathIdx(Colour color)
+{
+	return colourToIdx[color];
 }
 
 double Amusing::Presenter::computeFrequency(double surface)

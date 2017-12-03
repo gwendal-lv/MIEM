@@ -160,6 +160,14 @@ void MultiSceneCanvasManager::SetAudioPositions(std::shared_ptr<Cursor> cursor, 
 	}
 }
 
+void MultiSceneCanvasManager::lookForAreasConcerned(Colour concernedColour)
+{
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+	{
+		amusingScene->lookForAreasToUpdate(concernedColour);
+	}
+}
+
 int MultiSceneCanvasManager::getNumberArea()
 {
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
@@ -269,7 +277,7 @@ void MultiSceneCanvasManager::SetAllChannels()
 
 
 
-void MultiSceneCanvasManager::ChangeBaseNote(double newBaseNote)
+void MultiSceneCanvasManager::ChangeBaseNote(int newBaseNote)
 {
 	DBG("new base = " + (String)newBaseNote);
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))

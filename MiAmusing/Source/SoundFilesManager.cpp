@@ -37,8 +37,37 @@ SoundFilesManager::SoundFilesManager()
 	spaceHeight = 2;
 }
 
+SoundFilesManager::SoundFilesManager(const int Nsamples,Colour colorCode[])
+{
+	// In your constructor, you should add any child components, and
+	// initialise any special settings that your component needs.
+	addSoundFileViewerButton = new TextButton();
+	addSoundFileViewerButton->setButtonText("+");
+	addAndMakeVisible(addSoundFileViewerButton);
+	addSoundFileViewerButton->addListener(this);
+
+	closeSoundFileManagerButton = new TextButton();
+	closeSoundFileManagerButton->setButtonText("OK");
+	addAndMakeVisible(closeSoundFileManagerButton);
+	closeSoundFileManagerButton->addListener(this);
+
+	for (int i = 0; i < Nsamples; ++i)
+	{
+		soundFileViewerArray.add(new SoundFileViewer());
+		addAndMakeVisible(soundFileViewerArray.getLast());
+		soundFileViewerArray.getLast()->completeInitialization(this);
+		soundFileViewerArray.getLast()->setColourSample(colorCode[i]);
+	}
+
+	itemHeight = soundFileViewerArray.getFirst()->getHeight();
+	spaceHeight = 2;
+	repaint();
+}
+
 SoundFilesManager::~SoundFilesManager()
 {
+	for (int i = 0; i < soundFileViewerArray.size(); ++i)
+		soundFileViewerArray[i]->release();
 }
 
 void SoundFilesManager::paint (Graphics& g)
@@ -73,7 +102,10 @@ void SoundFilesManager::resized()
 	}
 	r.removeFromTop(itemHeight);
 	
-	closeSoundFileManagerButton->setBounds(r.removeFromBottom(itemHeight));
+	Rectangle<int> buttonArea = r.removeFromBottom(itemHeight);
+	buttonArea.reduce(100, 0);
+	closeSoundFileManagerButton->setBounds(buttonArea);
+	
 	r.removeFromBottom(spaceHeight);
 	addSoundFileViewerButton->setBounds(r.removeFromBottom(itemHeight));
 	
@@ -92,9 +124,35 @@ void SoundFilesManager::completeInitialisation(MainContentComponent * m_mainComp
 	mainComponent = m_mainComponent;
 }
 
+void SoundFilesManager::setDefaultPath(String m_defaultPath)
+{
+	defaultPath = m_defaultPath;
+	for (int i = 0; i < soundFileViewerArray.size(); ++i)
+		soundFileViewerArray[i]->setSoundPath(defaultPath);
+}
+
+String SoundFilesManager::getDefaultPath()
+{
+	return defaultPath;
+}
+
+void SoundFilesManager::release()
+{
+	mainComponent = nullptr;
+}
+
 void SoundFilesManager::loadSoundFile(SoundFileViewer * soundFileViewer)
 {
-	soundFileViewer->setSoundPath("myNewPath");
+	for (int i = 0; i < soundFileViewerArray.size(); ++i)
+		if (soundFileViewerArray[i] == soundFileViewer)
+			sampleToSet = i;
+	mainComponent->OpenSoundBrowser(sampleToSet,soundFileViewerArray[sampleToSet]->getSampleColour());
+	//soundFileViewer->setSoundPath("myNewPath");
+}
+
+void SoundFilesManager::setCurrentSoundFilePath(String m_soundPath)
+{
+	soundFileViewerArray[sampleToSet]->setSoundPath(m_soundPath);
 }
 
 void SoundFilesManager::addSoundFileViewer()

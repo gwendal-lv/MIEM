@@ -19,11 +19,13 @@ MainContentComponent::MainContentComponent()
 {
 	//addAndMakeVisible(sceneEditionComponent = new SceneEditionComponent());
 	editSceneC = new EditScene();
-	soundFilesManager = new SoundFilesManager();
-	addChildComponent(soundFilesManager);
+	
 	addAndMakeVisible(editSceneC);
     setSize (600, 400);
-	soundFilesManager->completeInitialisation(this);
+	
+	soundBrowser = new SoundBrowser();
+	soundBrowser->completeInitialisation(this);
+	addChildComponent(soundBrowser);
 }
 
 MainContentComponent::~MainContentComponent()
@@ -31,6 +33,8 @@ MainContentComponent::~MainContentComponent()
 	DBG("MainContentComponent destructor");
 	//delete sceneEditionComponent;
 	//delete editSceneC;
+	soundFilesManager->release();
+	soundBrowser->release();
 }
 
 void MainContentComponent::paint (Graphics& g)
@@ -57,6 +61,8 @@ void MainContentComponent::resized()
 		editSceneC->setBounds(0, 0, toolbarWidth, getLocalBounds().getHeight());
 	if (soundFilesManager)
 		soundFilesManager->setBounds(toolbarWidth, 0, getLocalBounds().getWidth() - toolbarWidth, getLocalBounds().getHeight());
+	if(soundBrowser)
+		soundBrowser->setBounds(toolbarWidth, 0, getLocalBounds().getWidth() - toolbarWidth, getLocalBounds().getHeight());
     //    multiCanvasComponent->setBounds(getLocalBounds());
 	//sceneEditionComponent->setBounds(0, 0, 50, getLocalBounds().getHeight());
 	//multiCanvasComponent->setBounds(50, 0, 550, getLocalBounds().getHeight());
@@ -123,10 +129,39 @@ void MainContentComponent::CloseSoundFileManager()
 	soundFilesManager->setVisible(false);
 }
 
+void MainContentComponent::OpenSoundBrowser(int idx, Colour concernedColour)//Colour concernedColor)
+{
+	colorToAssociate = concernedColour;// concernedColor;
+	idxToAssociate = idx;
+	soundFilesManager->setVisible(false);
+	soundBrowser->setVisible(true);
+}
+
+void MainContentComponent::CloseSoundBrowser(String m_path)
+{
+	soundFilesManager->setCurrentSoundFilePath(m_path);
+	presenter->setColorPath(idxToAssociate, colorToAssociate, m_path);
+	soundFilesManager->setVisible(true);
+	soundBrowser->setVisible(false);
+}
+
 void MainContentComponent::removeDeviceManagerFromOptionWindow()
 {
 
 	optionWindow->removeDeviceManager();
+}
+
+void MainContentComponent::setSamplesColor(const int numSamples, Colour colorCode[])
+{
+	soundFilesManager = new SoundFilesManager(numSamples,colorCode);
+	addChildComponent(soundFilesManager);
+	soundFilesManager->completeInitialisation(this);
+	resized();
+}
+
+void MainContentComponent::setDefaultPath(String m_defaultPath)
+{
+	soundFilesManager->setDefaultPath(m_defaultPath);
 }
 
 //void MainContentComponent::CreateDeviceSelector(AudioDeviceManager* deviceManager)

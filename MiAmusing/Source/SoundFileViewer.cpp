@@ -24,14 +24,29 @@
 
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
-void SoundFileViewer::completeInitialization(ScopedPointer<SoundFilesManager> m_manager)
+void SoundFileViewer::completeInitialization(SoundFilesManager *m_manager)
 {
 	manager = m_manager;
 }
 
+  void SoundFileViewer::release()
+  {
+	  manager = nullptr;
+  }
+
 void SoundFileViewer::setSoundPath(String m_path)
 {
 	sampleLabel->setText(m_path, NotificationType::dontSendNotification);
+}
+
+void SoundFileViewer::setColourSample(Colour newColor)
+{
+	colorLabel->setColour(Label::backgroundColourId, newColor);
+}
+
+Colour SoundFileViewer::getSampleColour()
+{
+	return colorLabel->findColour(Label::backgroundColourId);
 }
 
 //[/MiscUserDefs]
@@ -71,7 +86,7 @@ SoundFileViewer::SoundFileViewer ()
     //[UserPreSize]
     //[/UserPreSize]
 
-    setSize (600, 60);
+    setSize (600, 24);
 
 
     //[Constructor] You can add your own custom stuff here..
@@ -110,10 +125,10 @@ void SoundFileViewer::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    sampleLabel->setBounds (0, 0, proportionOfWidth (0.2503f), 30);
-    colorLabel->setBounds (proportionOfWidth (0.2700f), 0 + 0, 30, roundFloatToInt (30 * 1.0000f));
-    deleteButton->setBounds (proportionOfWidth (0.2700f) + 30 - -2, 0, roundFloatToInt (30 * 1.0000f), 30);
-    loadButton->setBounds ((proportionOfWidth (0.2700f) + 30 - -2) + (roundFloatToInt (30 * 1.0000f)) - -2, 0, roundFloatToInt (30 * 1.0000f), 30);
+    sampleLabel->setBounds (0, 0, proportionOfWidth (0.7003f), 24);
+    colorLabel->setBounds (proportionOfWidth (0.7497f), 0 + 0, 30, roundFloatToInt (24 * 1.0000f));
+    deleteButton->setBounds (proportionOfWidth (0.7497f) + 30 - -2, 0, roundFloatToInt (30 * 1.0000f), 24);
+    loadButton->setBounds ((proportionOfWidth (0.7497f) + 30 - -2) + (roundFloatToInt (30 * 1.0000f)) - -2, 0, roundFloatToInt (30 * 1.0000f), 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -126,6 +141,7 @@ void SoundFileViewer::buttonClicked (Button* buttonThatWasClicked)
     if (buttonThatWasClicked == deleteButton)
     {
         //[UserButtonCode_deleteButton] -- add your button handler code here..
+		setSoundPath(manager->getDefaultPath());
         //[/UserButtonCode_deleteButton]
     }
     else if (buttonThatWasClicked == loadButton)
@@ -157,26 +173,26 @@ BEGIN_JUCER_METADATA
 <JUCER_COMPONENT documentType="Component" className="SoundFileViewer" componentName=""
                  parentClasses="public Component" constructorParams="" variableInitialisers=""
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
-                 fixedSize="0" initialWidth="600" initialHeight="60">
+                 fixedSize="0" initialWidth="600" initialHeight="24">
   <BACKGROUND backgroundColour="ff323e44"/>
   <LABEL name="new label" id="58e3d52550dbb06c" memberName="sampleLabel"
-         virtualName="" explicitFocusOrder="0" pos="0 0 25.027% 30" edTextCol="ff000000"
+         virtualName="" explicitFocusOrder="0" pos="0 0 70.023% 24" edTextCol="ff000000"
          edBkgCol="0" labelText="sample" editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="20"
          kerning="0" bold="0" italic="0" justification="33"/>
   <LABEL name="new label" id="58c61de356dc76f2" memberName="colorLabel"
-         virtualName="" explicitFocusOrder="0" pos="27.003% 0 30 100%"
+         virtualName="" explicitFocusOrder="0" pos="74.981% 0 30 100%"
          posRelativeY="58e3d52550dbb06c" posRelativeH="58e3d52550dbb06c"
          bkgCol="ff0000ff" edTextCol="ff000000" edBkgCol="0" labelText=""
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
          justification="33"/>
   <TEXTBUTTON name="new button" id="c0d80ae5e1d7b066" memberName="deleteButton"
-              virtualName="" explicitFocusOrder="0" pos="-2R 0 100% 30" posRelativeX="58c61de356dc76f2"
+              virtualName="" explicitFocusOrder="0" pos="-2R 0 100% 24" posRelativeX="58c61de356dc76f2"
               posRelativeW="58c61de356dc76f2" buttonText="D" connectedEdges="0"
               needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="new button" id="e037833b40ce0505" memberName="loadButton"
-              virtualName="" explicitFocusOrder="0" pos="-2R 0 100% 30" posRelativeX="c0d80ae5e1d7b066"
+              virtualName="" explicitFocusOrder="0" pos="-2R 0 100% 24" posRelativeX="c0d80ae5e1d7b066"
               posRelativeW="58c61de356dc76f2" buttonText="L" connectedEdges="0"
               needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>

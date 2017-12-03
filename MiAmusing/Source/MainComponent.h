@@ -20,11 +20,13 @@
 #include "MultiCanvasComponent.h"
 #include "editScene.h"
 #include "SoundFilesManager.h"
+#include "SoundBrowser.h"
 //#include "AudioManager.h"
 //#include "AudioPlayer.h"
 
 using namespace Miam;
 
+class SoundBrowser;
 class SoundFilesManager;
 class MultiCanvasComponentAmusing;
 
@@ -85,7 +87,12 @@ private:
 	void ShowSoundManagerComponent();
 	void CloseOptionWindow();
 	void CloseSoundFileManager();
+	void OpenSoundBrowser(int idx,Colour concernedColor);
+	void CloseSoundBrowser(String m_path);
 	void removeDeviceManagerFromOptionWindow();
+
+	void setSamplesColor(const int numSamples, Colour colorCode[]);
+	void setDefaultPath(String m_defaultPath);
 	//void CreateDeviceSelector(AudioDeviceManager* deviceManager);
     
     // = = = = = = = = = = METHODS (JUCE AND USER-DEFINED) = = = = = = = = = =
@@ -101,6 +108,9 @@ private:
 	//SafePointer<AudioDeviceSelectorComponent> audioSetupComp;
 	ScopedPointer<OptionWindow> optionWindow;
 	ScopedPointer<SoundFilesManager> soundFilesManager;
+	ScopedPointer<SoundBrowser> soundBrowser;
+	Colour colorToAssociate;
+	int idxToAssociate;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 };

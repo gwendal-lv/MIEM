@@ -137,6 +137,11 @@ void GraphicSessionManager::SetAllChannels()
 	}
 }
 
+void GraphicSessionManager::setSamplesColor(int Nsamples, Colour colorCode[])
+{
+	myMultiCanvasComponent->setSamplesColor(Nsamples, colorCode);
+}
+
 
 
 // ===== UTILITIES =====
@@ -483,6 +488,11 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					param.Id2 = 0;
 					param.FloatValue = (float)myPresenter->getVelocityArea(complete);
 					myPresenter->SendParamChange(param);
+
+					param.Type = Miam::AsyncParamChange::ParamType::InputsCount;
+					param.Id2 = myPresenter->getPathIdx(complete->GetFillColour());
+					myPresenter->SendParamChange(param);
+					
 				}
 				break;
 			default:
@@ -652,6 +662,12 @@ void GraphicSessionManager::SetAudioPositions(std::shared_ptr<Cursor> area, doub
 {
 	if (selectedCanvas)
 		getSelectedCanvasAsManager()->SetAudioPositions(area, position);
+}
+
+void Amusing::GraphicSessionManager::lookForAreasConcerned(Colour colourConcerned)
+{
+	if (selectedCanvas)
+		getSelectedCanvasAsManager()->lookForAreasConcerned(colourConcerned);
 }
 
 void GraphicSessionManager::OnAddSquare()

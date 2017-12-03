@@ -46,8 +46,11 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-	void completeInitialization(ScopedPointer<SoundFilesManager> m_manager);
+	void completeInitialization(SoundFilesManager *m_manager);
+	void release();
 	void setSoundPath(String m_path);
+	void setColourSample(Colour newColor);
+	Colour getSampleColour();
     //[/UserMethods]
 
     void paint (Graphics& g) override;
@@ -58,7 +61,7 @@ public:
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
-	ScopedPointer<SoundFilesManager> manager;
+	SoundFilesManager* manager;
     //[/UserVariables]
 
     //==============================================================================

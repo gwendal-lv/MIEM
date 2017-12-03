@@ -24,7 +24,7 @@ public:
 	MultiCanvasComponentAmusing(Miam::IGraphicSessionManager* _graphicSessionManager);
 	~MultiCanvasComponentAmusing();
 
-	
+	void setSamplesColor(int Nsamples, Colour colorCode[]);
 
 	void resized() override;
 

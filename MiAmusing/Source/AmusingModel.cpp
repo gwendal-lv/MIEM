@@ -12,6 +12,9 @@
 #include "AmusingModel.h"
 #include "Presenter.h"
 
+#include <string>
+#include <map>
+
 
 using namespace Amusing;
 
@@ -52,6 +55,18 @@ bool AmusingModel::lookForParameter(Miam::AsyncParamChange &param)
 void AmusingModel::removeDeviceManagerFromOptionWindow()
 {
 	presenter->removeDeviceManagerFromOptionWindow();
+}
+
+void Amusing::AmusingModel::addNewSoundPath(int idx, std::string newPath)
+{
+	//idxToPath.at(idx) = newPath;
+	idxToPath[idx] = newPath;
+
+}
+
+String Amusing::AmusingModel::getSoundPath(int idx)
+{
+	return String(idxToPath[idx]);
 }
 
 MidiOutput* AmusingModel::getMidiOutput()

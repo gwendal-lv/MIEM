@@ -21,7 +21,7 @@ ColorArray::ColorArray(int size)
 
 	currentColor = 0;
 	wasClicked = false;
-	for (int i = 0; i < size; ++i)
+	/*for (int i = 0; i < size; ++i)
 	{
 		buttonArray.add(new TextButton(String(i)));
 		buttonArray.getLast()->addListener(this);
@@ -32,7 +32,7 @@ ColorArray::ColorArray(int size)
 			addChildComponent(buttonArray.getLast());
 
 
-	}
+	}*/
 }
 
 ColorArray::~ColorArray()
@@ -41,7 +41,7 @@ ColorArray::~ColorArray()
 
 
 
-void ColorArray::paint(Graphics &g)
+void ColorArray::paint(Graphics &/*g*/)
 {
 	//g.fillAll(Colours::black);//getLookAndFeel().findColour (ResizableWindow::backgroundColourId));   // clear the background
 
@@ -54,34 +54,37 @@ void ColorArray::resized()
     // This method is where you should set the bounds of any child
     // components that your component contains..
 
-	Rectangle<int> r = getLocalBounds();
-
-
-	if (getWidth() >= getHeight())
+	if (buttonArray.size() > 0)
 	{
-		int buttonWidth = r.getWidth() / buttonArray.size();
-		
-		for (int i = 0; i < buttonArray.size(); ++i)
-		{
-			buttonArray[i]->setBounds(r.removeFromLeft(buttonWidth));
-		}
-	}
-	else
-	{
-		int buttonHeight = r.getHeight() / buttonArray.size();
-		
-		for (int i = 0; i < buttonArray.size(); ++i)
-		{
-			buttonArray[i]->setBounds(r.removeFromTop(buttonHeight));
-		}
-	}
+		Rectangle<int> r = getLocalBounds();
 
 
+		if (getWidth() >= getHeight())
+		{
+			int buttonWidth = r.getWidth() / buttonArray.size();
+
+			for (int i = 0; i < buttonArray.size(); ++i)
+			{
+				buttonArray[i]->setBounds(r.removeFromLeft(buttonWidth));
+			}
+		}
+		else
+		{
+			int buttonHeight = r.getHeight() / buttonArray.size();
+
+			for (int i = 0; i < buttonArray.size(); ++i)
+			{
+				buttonArray[i]->setBounds(r.removeFromTop(buttonHeight));
+			}
+		}
+
+	}
 	
 }
 
 void ColorArray::buttonClicked(Button *buttonThatWasClicked)
 {
+
 	for (int i = 0; i < buttonArray.size(); ++i)
 	{
 		if (buttonThatWasClicked == buttonArray[i])
@@ -114,15 +117,26 @@ void ColorArray::buttonClicked(Button *buttonThatWasClicked)
 }
 
 
-void ColorArray::addButtonListener(juce::Button::Listener * listener)
-{
-	for (int i = 0; i < buttonArray.size(); ++i)
-		buttonArray[i]->addListener(listener);
-}
-
 void ColorArray::completeInitialisation(AreaOptions * m_areaOption)
 {
 	areaOptions = m_areaOption;
+}
+
+void ColorArray::setSamplesColor(int Nsamples, Colour colorCode[])
+{
+	for (int i = 0; i < Nsamples; ++i)
+	{
+		buttonArray.add(new TextButton(String(i)));
+		buttonArray.getLast()->addListener(this);
+		buttonArray.getLast()->setColour(TextButton::ColourIds::buttonColourId, colorCode[i]);
+		if (i == 0)
+			addAndMakeVisible(buttonArray.getLast());
+		else
+			addChildComponent(buttonArray.getLast());
+
+
+	}
+	resized();
 }
 
 //void ColorArray::addColor(Colour newColour)

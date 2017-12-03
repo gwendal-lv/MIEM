@@ -23,6 +23,13 @@ SwappableSynth::SwappableSynth()
 
 SwappableSynth::~SwappableSynth()
 {
+	if (synthA.getNumVoices() > 0)
+	{
+		synthA.clearVoices();
+	}
+	if(synthB.getNumVoices()>0 && synthB.getNumSounds()>0)
+		synthB.clearVoices();
+	DBG("swappableSynth desctructor");
 }
 
 void SwappableSynth::setBuffersSize(int numChannels, int numSamples)
@@ -46,12 +53,14 @@ void SwappableSynth::addVoice(juce::SynthesiserVoice * newVoice)
 
 void SwappableSynth::clearSounds()
 {
-	synthA.clearSounds();
-	synthB.clearSounds();
-	if (soundA != nullptr)
-		delete soundA; // faudra mettre dans 2 synthé différents
-	if (soundB != nullptr)
-		delete soundB;
+	if(synthA.getNumSounds()>0)
+		synthA.clearSounds();
+	if(synthB.getNumSounds()>0)
+		synthB.clearSounds();
+	//if (soundA != nullptr)
+	//	delete soundA; // faudra mettre dans 2 synthé différents
+	//if (soundB != nullptr)
+	//	delete soundB;
 }
 
 
@@ -163,6 +172,7 @@ bool SwappableSynth::setState(SwappableSynthState newState)
 
 void SwappableSynth::addSoundOnThread(const void * srcData, size_t srcDataSize, bool keepInternalCopyOfData)
 {
+
 	if (!synthAPlaying)
 	{
 		synthA.clearSounds();
@@ -216,50 +226,66 @@ void SwappableSynth::addSoundOnThread(const void * srcData, size_t srcDataSize, 
 
 void SwappableSynth::addSoundFromExternalFileOnThread(String soundPath)
 {
-	if (!synthAPlaying)
+	bool isBinary = false;
+	for (int i = 0; i < BinaryData::namedResourceListSize; ++i)
 	{
-		synthA.clearSounds();
-	}
-	else
-		synthB.clearSounds();
-
-	
-	const File file("C:\\Users\\ayup1\\Documents\\Juce Test Recording 0.wav"); // Downloads\\Bass-Drum-1.wav");
-	audioReader = audioFormatManager.createReaderFor(file);
-
-	BigInteger allNotes;
-
-	allNotes.setRange(0, 128, true);
-	
-	if (!synthAPlaying)
-	{
-		soundA = new SamplerSound("demo sound",
-			*audioReader,
-			allNotes,
-			74,   // root midi note
-			0.1,  // attack time
-			0.1,  // release time
-			10.0  // maximum sample length
-		);
-
-
-		synthA.addSound(soundA);
-	}
-	else
-	{
-		soundB = new SamplerSound("demo sound",
-			*audioReader,
-			allNotes,
-			74,   // root midi note
-			0.1,  // attack time
-			0.1,  // release time
-			10.0  // maximum sample length
-		);
-		synthB.addSound(soundB);
+		if (soundPath == BinaryData::namedResourceList[i])
+		{
+			isBinary = true;
+			int dataSize = 0;
+			const void * srcData = BinaryData::getNamedResource(BinaryData::namedResourceList[i], dataSize);
+			addSoundOnThread(srcData, dataSize, false);
+		}
 	}
 
-	state = SwappableSynthState::Swapping;
-	DBG("thread finished");
+	if (!isBinary)
+	{
+		if (!synthAPlaying)
+		{
+			synthA.clearSounds();
+		}
+		else
+			synthB.clearSounds();
+
+
+		//const File file("C:\\Users\\ayup1\\Documents\\Juce Test Recording 0.wav"); // Downloads\\Bass-Drum-1.wav");
+		const File file(soundPath);
+		audioReader = audioFormatManager.createReaderFor(file);
+
+		BigInteger allNotes;
+
+		allNotes.setRange(0, 128, true);
+
+		if (!synthAPlaying)
+		{
+			soundA = new SamplerSound("demo sound",
+				*audioReader,
+				allNotes,
+				74,   // root midi note
+				0.1,  // attack time
+				0.1,  // release time
+				10.0  // maximum sample length
+			);
+
+
+			synthA.addSound(soundA);
+		}
+		else
+		{
+			soundB = new SamplerSound("demo sound",
+				*audioReader,
+				allNotes,
+				74,   // root midi note
+				0.1,  // attack time
+				0.1,  // release time
+				10.0  // maximum sample length
+			);
+			synthB.addSound(soundB);
+		}
+
+		state = SwappableSynthState::Swapping;
+		DBG("thread finished");
+	}
 }
 
 float SwappableSynth::getNextGainOff(int numSamples)

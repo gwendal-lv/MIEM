@@ -34,6 +34,11 @@ AmusingSceneComponent::~AmusingSceneComponent()
 	//openGlContext.detach();
 }
 
+void AmusingSceneComponent::setSamplesColor(int Nsamples, Colour colorCode[])
+{
+	areaOptions.setSamplesColor(Nsamples, colorCode);
+}
+
 void AmusingSceneComponent::renderOpenGL()
 {
 	SceneCanvasComponent::renderOpenGL();
@@ -89,7 +94,7 @@ void AmusingSceneComponent::OnColourChanged(Colour newColour)
 	}
 }
 
-void AmusingSceneComponent::OnBaseNoteChanged(double newBaseNote)
+void AmusingSceneComponent::OnBaseNoteChanged(int newBaseNote)
 {
 	DBG("newBaseNote = " + (String)newBaseNote);
 	//canvasManager.lock()->

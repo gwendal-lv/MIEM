@@ -51,6 +51,17 @@ void View::CompleteInitialization(AmusingModel* _model)
 	mainContentComponent->CompleteInitialization(model);
 }
 
+void View::setSampleColor(const int numSamples, Colour colorCode[])
+{
+	mainContentComponent->setSamplesColor(numSamples, colorCode);
+}
+
+void Amusing::View::setDefaultPath(String defaultPath)
+{
+	mainContentComponent->setDefaultPath(defaultPath);
+}
+
+
 void View::ButtonClicked(const String& /*name*/)
 {
     throw std::runtime_error("Unimplemented behavior on button click");

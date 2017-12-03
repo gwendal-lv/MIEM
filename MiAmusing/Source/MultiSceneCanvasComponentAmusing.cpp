@@ -40,3 +40,11 @@ void MultiSceneCanvasComponentAmusing::resized()
 	MultiSceneCanvasComponent::resized();
 	//areaOptions.setBounds(0, 0, getWidth(), getHeight());
 }
+
+void MultiSceneCanvasComponentAmusing::setSamplesColor(int Nsamples, Colour colorCode[])
+{
+	if (AmusingSceneComponent* childrenCanvasAmusing = (AmusingSceneComponent*)childrenCanvas)
+	{
+		childrenCanvasAmusing->setSamplesColor(Nsamples, colorCode);
+	}
+}

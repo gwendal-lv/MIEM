@@ -26,12 +26,13 @@ public:
     AmusingSceneComponent();
     ~AmusingSceneComponent();
 
+	void setSamplesColor(int Nsamples, Colour colorCode[]);
 	
 	void renderOpenGL() override; // ! in background-thread !
 	AreaOptions areaOptions;
 
 	void OnSpeedChanged(double newVelocity);
-	void OnBaseNoteChanged(double newBaseNote);
+	void OnBaseNoteChanged(int newBaseNote);
 	void OnVelocityChanged(double newVelocity);
 
 	void OnColourChanged(Colour newColour);

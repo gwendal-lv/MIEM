@@ -14,8 +14,11 @@
 #include "AreaOptions.h"
 
 class AreaOptions;
+
 //==============================================================================
 /*
+	This component contains de avalaible color for the Polygons.
+	Each color is associated with a path to a sample by the SoundFileManager
 */
 class ColorArray    : public Component, public ButtonListener
 {
@@ -27,9 +30,9 @@ public:
     void resized() override;
 
 	void buttonClicked(Button*) override;
-	void addButtonListener(juce::Button::Listener *listener);
 
 	void completeInitialisation(AreaOptions *m_areaOption);
+	void setSamplesColor(int Nsamples, Colour colorCode[]);
 	//void addColor(Colour newColour);
 
 private:

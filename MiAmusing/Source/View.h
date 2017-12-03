@@ -69,6 +69,9 @@ namespace Amusing {
         void CompleteInitialization(GraphicSessionManager*, MultiCanvasComponentAmusing*);
 		void CompleteInitialization(AmusingModel* _model);
 
+		void setSampleColor(const int numSamples, Colour colorCode[]);
+		void setDefaultPath(String defaultPath);
+
 		// ----- Events to the Presenter -----
         
 		/// \brief Function called from all main- and sub-components, transmits

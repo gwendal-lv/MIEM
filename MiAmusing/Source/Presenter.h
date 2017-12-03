@@ -65,6 +65,34 @@ namespace Amusing {
         // Conversion from areas to sources
 		//Presenter myPresenter;
 		int gamme[7] = {0,2,4,5,7,9,11};
+		struct Class1Compare
+		{
+			bool operator() (const Colour& lhs, const Colour& rhs) const
+			{
+				if (lhs.getRed() < rhs.getRed())
+					return true;
+				else if (lhs.getRed() > rhs.getRed())
+					return false;
+				else
+				{
+					if (lhs.getGreen() < rhs.getGreen())
+						return true;
+					else if (lhs.getGreen() > rhs.getGreen())
+						return false;
+					else
+					{
+						if (lhs.getBlue() < rhs.getBlue())
+							return true;
+						else
+							return false;
+					}
+				}
+				
+			}
+		};
+
+
+		std::map<Colour, int,Class1Compare> colourToIdx;
 		std::map<std::shared_ptr<IEditableArea>, int> octave;
 		std::map<std::shared_ptr<IEditableArea>, double> phase;
 		std::map<std::shared_ptr<IEditableArea>, double> areaToSpeed;
@@ -96,6 +124,8 @@ namespace Amusing {
 			double getVelocityArea(std::shared_ptr<IEditableArea> area);
 			int getCtrlSourceId(std::shared_ptr<Follower> follower);
 			std::shared_ptr<Follower> getFollowerFromCtrl(int ctrlId);
+			void setColorPath(int idx, Colour concernedColour, String pathAssociated);
+			int getPathIdx(Colour color);
 
 			double computeFrequency(double surface);
 

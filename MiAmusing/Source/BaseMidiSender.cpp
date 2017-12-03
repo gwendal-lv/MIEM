@@ -685,7 +685,7 @@ void TimeLine::updateFilter()
 			break;
 		case HighPass:
 			duplicatedFilter.state->type = dsp::StateVariableFilter::Parameters<float>::Type::highPass;//filterDSP.parameters->type = dsp::StateVariableFilter::Parameters<float>::Type::highPass;
-			duplicatedFilter.state->setCutOffFrequency(audioManager->getCurrentSampleRate(), currentFilterFrequency);//filterDSP.parameters->setCutOffFrequency(audioManager->getCurrentSampleRate(), currentFilterFrequency);
+			duplicatedFilter.state->setCutOffFrequency(audioManager->getCurrentSampleRate(), (float)currentFilterFrequency);//filterDSP.parameters->setCutOffFrequency(audioManager->getCurrentSampleRate(), currentFilterFrequency);
 			break;
 		default:
 			DBG("prob");

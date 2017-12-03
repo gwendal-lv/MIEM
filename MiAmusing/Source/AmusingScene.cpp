@@ -1030,6 +1030,17 @@ std::shared_ptr<AreaEvent> AmusingScene::checkCursorPosition(std::shared_ptr<Cur
 	return nullptr;
 }
 
+void Miam::AmusingScene::lookForAreasToUpdate(Colour concernedColour)
+{
+	for (int i = 0; i < areas.size(); ++i)
+	{
+		if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
+			if (completeArea->GetFillColour() == concernedColour)
+				if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
+					manager->handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::ColorChanged, shared_from_this())));
+	}
+}
+
 //size_t AmusingScene::GetDrawableObjectsCount()
 //{
 //	int numInter = 0;
