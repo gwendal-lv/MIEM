@@ -362,7 +362,7 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent&
                  (i>=0 && (!selectedArea)) ;
                  i--)
             {
-                if (areas[i]->HitTest(clicLocation.x,clicLocation.y))
+                if (areas[i]->HitTest(bpt(clicLocation.x,clicLocation.y)))
                 {
                     // !!!!!!!!!!!!! TEST DES POIDS D'INTERACTION !!!!!!!!!!!
                     //std::cout << "poids d'interaction = " << areasOrderedForDrawing[i]->ComputeInteractionWeight(clicLocation.toDouble()) << std::endl;

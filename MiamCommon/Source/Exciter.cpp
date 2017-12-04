@@ -16,14 +16,17 @@
 #include <algorithm>
 #include <numeric> // std::accumulate
 
+#include "SceneCanvasComponent.h" // pour récupérer width/height
+
 using namespace Miam;
 
 // = = = = = = = = = = Construction/Destruction + polymorphic cloning = = = = = = = = = =
 
-Exciter::Exciter(bptree::ptree & areaTree, std::chrono::time_point<clock> commonStartTimePoint_)
+Exciter::Exciter(bptree::ptree & areaTree, std::chrono::time_point<clock> commonStartTimePoint_, int additionnalTouchGrabRadius_)
 :
 EditableEllipse(areaTree),
 
+additionnalTouchGrabRadius(additionnalTouchGrabRadius_),
 commonStartTimePt(commonStartTimePoint_)
 {
     init();
@@ -36,11 +39,12 @@ commonStartTimePt(commonStartTimePoint_)
     
 }
 
-Exciter::Exciter(uint64_t uniqueId, std::chrono::time_point<clock> commonStartTimePoint_)
+Exciter::Exciter(uint64_t uniqueId, std::chrono::time_point<clock> commonStartTimePoint_, int additionnalTouchGrabRadius_)
 :
 // Taille = 5% du canevas (de la + petite taille). Ratio inconnu, 1 par défaut...
 EditableEllipse(uniqueId, bpt(0.5, 0.5), 0.05, Colours::lightgrey, 1.0f),
 
+additionnalTouchGrabRadius(additionnalTouchGrabRadius_),
 commonStartTimePt(commonStartTimePoint_)
 {
     init();
@@ -80,7 +84,6 @@ void Exciter::init()
     
     volume = 0.0;
     startTimePt = clock::now();
-    
     
     // Par défaut : volume de 1
     SetVolume(1.0);
@@ -134,6 +137,29 @@ void Exciter::Paint(Graphics& g)
 }
 
 // = = = = = = = = = = Interactions = = = = = = = = = =
+bool Exciter::HitTest(bpt T) const
+{
+    if (additionnalTouchGrabRadius == 0)
+        return EditableEllipse::HitTest(T);
+    else
+    {
+        // Pas besoin d'appliquer le facteur d'échelle ? Il faudrait fouiller le code
+        // de Guillaume (avec les xscale et yscale) pour en être sûr
+        // ATTENTION a et b semblent être les longeurs des axes (pas les 1/2 longueurs)
+        double aInPx = (a/2.0) * (double)parentCanvas->getWidth() + additionnalTouchGrabRadius;
+        double bInPx = (b/2.0) * (double)parentCanvas->getHeight() + additionnalTouchGrabRadius;
+        // Point à tester, dans le repère du centre de l'ellipse
+        bpt relativeT = T; // copie car soustraction boost se fait par référence
+        boost::geometry::subtract_point(relativeT, centerInPixels);
+        // On applique juste l'inéquation paramétrique de l'ellipse
+        if ( (std::pow(relativeT.get<0>() / aInPx, 2)
+              + std::pow(relativeT.get<1>() / bInPx, 2) )
+            < 1.0 )
+            return true;
+        else
+            return false;
+    }
+}
 
 void Exciter::OnAreaExcitedByThis(std::shared_ptr<IInteractiveArea> areaExcitedByThis, double interactionWeight)
 {

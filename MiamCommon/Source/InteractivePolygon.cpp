@@ -109,9 +109,10 @@ void InteractivePolygon::computeSurface()
 // ===== INTERACTION COMPUTING =====
 
 
-bool InteractivePolygon::HitTest(double x, double y)
+bool InteractivePolygon::HitTest(bpt T) const
 {
-    return (contour.contains((float)x, (float)y));
+    return (contour.contains((float)T.get<0>(),
+                             (float)T.get<1>()));
 }
 
 

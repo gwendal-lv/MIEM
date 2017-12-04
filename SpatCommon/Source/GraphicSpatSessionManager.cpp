@@ -110,7 +110,7 @@ void GraphicSpatSessionManager::SetFromTree(bptree::ptree& graphicSessionTree)
                         else if (type == "Exciter")
                         {
                             try {
-                                areas[index] = std::make_shared<Exciter>(area.second, GetCommonTimePoint());
+                                areas[index] = std::make_shared<Exciter>(area.second, GetCommonTimePoint(), Exciter::AdditionnalGrabRadius::Medium);
                             }
                             catch (XmlReadException &e) {
                                 throw XmlReadException(canvasAndSceneString + e.what());

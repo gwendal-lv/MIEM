@@ -70,7 +70,7 @@ namespace Miam
         
         // Interactions computing
         public :
-        virtual bool HitTest(double x, double y) override;
+        virtual bool HitTest(bpt T) const override;
         double ComputeInteractionWeight(bpt T) override;
         
         

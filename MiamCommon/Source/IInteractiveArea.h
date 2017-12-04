@@ -38,12 +38,15 @@ namespace Miam
         
         // Interactions computing
         public :
-        
         /// \brief Collision test : tells whether the given point is inside the area
         /// or not. Coordinates in pixels within a canvas.
-        virtual bool HitTest(double x, double y) = 0;
-        virtual bool HitTest(bpt T)
-        { return HitTest(T.get<0>(), T.get<1>()); }
+        virtual bool HitTest(bpt T) const = 0;
+        
+        // Surcharge qui devrait disparaître dès que possible...
+        protected :
+        bool hitTest(double x, double y) const
+        { return HitTest(bpt(x,y)); }
+        public :
  
         /// \brief Computes a coefficient that quantifies the interaction between a
         /// given point and this area.

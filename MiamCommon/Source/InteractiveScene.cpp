@@ -34,19 +34,6 @@ canvasComponent(canvasComponent_),
 excitersBehavior(excitersBehavior_)
 {
     name = "Default Scene";
-    
-    // DEBUG/test
-    // DEBUG/test
-    // DEBUG/test
-    // DEBUG/test
-    // DEBUG/test
-    
-    
-    // DEBUG/test
-    // DEBUG/test
-    // DEBUG/test
-    // DEBUG/test
-    // DEBUG/test
 }
 
 
@@ -163,8 +150,9 @@ std::shared_ptr<AreaEvent> InteractiveScene::AddDefaultExciter()
     if (! canvasManagerLocked)
         throw std::logic_error("Cannot add a new current exciter : cannot get a Unique ID from the canvas manager (not linked to this)");
         
-    auto exciter = std::make_shared<Exciter>(canvasManagerLocked->GetNextAreaId(), canvasManagerLocked->GetCommonTimePoint());
-        
+    auto exciter = std::make_shared<Exciter>(canvasManagerLocked->GetNextAreaId(),
+                                             canvasManagerLocked->GetCommonTimePoint(),
+                                             Exciter::AdditionnalGrabRadius::Medium);
     return AddExciter(exciter);
 }
 std::shared_ptr<AreaEvent> InteractiveScene::AddExciter(std::shared_ptr<Exciter> newExciter, bool forceSelect)

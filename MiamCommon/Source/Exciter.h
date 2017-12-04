@@ -35,6 +35,14 @@ namespace Miam
         
         double volume;
         
+        int additionnalTouchGrabRadius;
+        public :
+        enum AdditionnalGrabRadius : int {
+            None = 0,
+            Medium = 8,
+        };
+        protected :
+        
         /// \brief Ids of the Mouse/touch inputs manipulating this area
         //std::vector<int> touchInputSources;
         //std::shared_ptr<EditableEllipse> volumeControlArea;
@@ -104,7 +112,8 @@ namespace Miam
         /// The synchronized clock must have been initialized before
         void SetIsAnimationSynchronized(bool isSynchronized);
         
-        
+        void SetAdditionnalTouchGrabRadius(int additionnalTouchGrabRadius_)
+        {additionnalTouchGrabRadius = additionnalTouchGrabRadius_;}
         
         
         
@@ -113,8 +122,12 @@ namespace Miam
         
         // - - - - - Construction/Destruction + polymorphic cloning - - - - -
         
-        Exciter(bptree::ptree & areaTree, std::chrono::time_point<clock> commonStartTimePoint_);
-        Exciter(uint64_t uniqueId, std::chrono::time_point<clock> commonStartTimePoint_);
+        Exciter(bptree::ptree & areaTree,
+                std::chrono::time_point<clock> commonStartTimePoint_,
+                int additionnalTouchGrabRadius_ = AdditionnalGrabRadius::None);
+        Exciter(uint64_t uniqueId,
+                std::chrono::time_point<clock> commonStartTimePoint_,
+                int additionnalTouchGrabRadius_ = AdditionnalGrabRadius::None);
         
         virtual ~Exciter();
         
@@ -141,6 +154,8 @@ namespace Miam
         
         
         // - - - - - Interactions - - - - -
+        /// \brief Prend en compte le rayon de "touch grab" éventuellement agrandi
+        virtual bool HitTest(bpt T) const override;
         /// \brief Peut être appelé par une aire excitée par cette instance.
 		///
 		/// Peut être appelé plusieurs (voire de nombreuses) fois par la même aire
