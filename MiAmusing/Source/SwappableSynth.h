@@ -37,7 +37,7 @@ public:
 
 	void setBuffersSize(int numChannels, int numSamples);
 	void setCurrentPlaybackSampleRate(double m_sampleRate);
-	void addVoice(juce::SynthesiserVoice* newVoice);
+	void addVoice();
 
 	void clearSounds();
 	void setSound(const void * srcData, size_t srcDataSize, bool keepInternalCopyOfData);
@@ -49,9 +49,9 @@ private:
 	bool setState(SwappableSynthState newState);
 
 	Synthesiser synthA, synthB;
-	ScopedPointer<AudioFormatReader> audioReader;
-	SamplerSound* soundA;
-	SamplerSound* soundB;
+	//ScopedPointer<AudioFormatReader> audioReader;
+	//SamplerSound* soundA;
+	//SamplerSound* soundB;
 	AudioFormatManager audioFormatManager;
 
 	void addSoundOnThread(const void * srcData, size_t srcDataSize, bool keepInternalCopyOfData);

@@ -74,7 +74,7 @@ void TimeLine::setAudioManager(AudioManager* m_audioManager)
 	for (int i = 0; i < 16; i++)
 	{
 		//synth.addVoice(new SamplerVoice);
-		swappableSynth.addVoice(new SamplerVoice);
+		swappableSynth.addVoice();//new SamplerVoice);
 	}
 	duplicatedFilter.prepare({ audioManager->getCurrentSampleRate(),(uint32)audioManager->getCurrentSamplesBlock(),2 });
 }

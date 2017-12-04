@@ -13,8 +13,8 @@
 
 SwappableSynth::SwappableSynth()
 {
-	soundA = nullptr;
-	soundB = nullptr;
+	//soundA = nullptr;
+	//soundB = nullptr;
 	synthAPlaying = false;
 	G_Off = 1.0;
 	G_On = 0.0;
@@ -23,13 +23,17 @@ SwappableSynth::SwappableSynth()
 
 SwappableSynth::~SwappableSynth()
 {
-	if (synthA.getNumVoices() > 0)
+	/*if (synthA.getNumVoices() > 0)
 	{
 		synthA.clearVoices();
 	}
-	if(synthB.getNumVoices()>0 && synthB.getNumSounds()>0)
-		synthB.clearVoices();
+	if(synthB.getNumVoices()>0)// && synthB.getNumSounds()>0)
+		synthB.clearVoices();*/
 	DBG("swappableSynth desctructor");
+	int numSoundsA = synthA.getNumSounds();
+	int numSoundsB = synthB.getNumSounds();
+	int numVoicesA = synthA.getNumVoices();
+	int numVoicesB = synthB.getNumVoices();
 }
 
 void SwappableSynth::setBuffersSize(int numChannels, int numSamples)
@@ -45,18 +49,20 @@ void SwappableSynth::setCurrentPlaybackSampleRate(double m_sampleRate)
 
 }
 
-void SwappableSynth::addVoice(juce::SynthesiserVoice * newVoice)
+void SwappableSynth::addVoice()
 {
-	synthA.addVoice(newVoice);
-	synthB.addVoice(newVoice);
+	synthA.addVoice(new SamplerVoice());
+	synthB.addVoice(new SamplerVoice());
 }
 
 void SwappableSynth::clearSounds()
 {
-	if(synthA.getNumSounds()>0)
+	/*if(synthA.getNumSounds()>0)
 		synthA.clearSounds();
 	if(synthB.getNumSounds()>0)
-		synthB.clearSounds();
+		synthB.clearSounds();*/
+
+
 	//if (soundA != nullptr)
 	//	delete soundA; // faudra mettre dans 2 synthé différents
 	//if (soundB != nullptr)
@@ -182,46 +188,60 @@ void SwappableSynth::addSoundOnThread(const void * srcData, size_t srcDataSize, 
 
 	BigInteger allNotes;
 	WavAudioFormat wavFormat;
-	audioReader = wavFormat.createReaderFor(new MemoryInputStream(srcData,
+	ScopedPointer<AudioFormatReader> audioReader = wavFormat.createReaderFor(new MemoryInputStream(srcData,
 		srcDataSize,
 		keepInternalCopyOfData),
 		true);
 	allNotes.setRange(0, 128, true);
-	if (!synthAPlaying)
-	{
-		//if(soundA != nullptr)
-		//	delete soundA;
-		soundA = new SamplerSound("demo sound",
-			*audioReader,
-			allNotes,
-			74,   // root midi note
-			0.1,  // attack time
-			0.1,  // release time
-			10.0  // maximum sample length
-		);
-	}
-	else if (synthAPlaying)
-	{
-		//if(soundB != nullptr)
-		//	delete soundB;
-		soundB = new SamplerSound("demo sound",
-			*audioReader,
-			allNotes,
-			74,   // root midi note
-			0.1,  // attack time
-			0.1,  // release time
-			10.0  // maximum sample length
-		);
-	}
+	//if (!synthAPlaying)
+	//{
+	//	//if(soundA != nullptr)
+	//	//	delete soundA;
+	//	soundA = new SamplerSound("demo sound",
+	//		*audioReader,
+	//		allNotes,
+	//		74,   // root midi note
+	//		0.1,  // attack time
+	//		0.1,  // release time
+	//		10.0  // maximum sample length
+	//	);
+	//}
+	//else if (synthAPlaying)
+	//{
+	//	//if(soundB != nullptr)
+	//	//	delete soundB;
+	//	soundB = new SamplerSound("demo sound",
+	//		*audioReader,
+	//		allNotes,
+	//		74,   // root midi note
+	//		0.1,  // attack time
+	//		0.1,  // release time
+	//		10.0  // maximum sample length
+	//	);
+	//}
 	
 
 	if (!synthAPlaying)
-		synthA.addSound(soundA);
+		synthA.addSound(new SamplerSound("demo sound",
+			*audioReader,
+			allNotes,
+			74,   // root midi note
+			0.1,  // attack time
+			0.1,  // release time
+			10.0  // maximum sample length
+		));
 	else
-		synthB.addSound(soundB);
+		synthB.addSound(new SamplerSound("demo sound",
+			*audioReader,
+			allNotes,
+			74,   // root midi note
+			0.1,  // attack time
+			0.1,  // release time
+			10.0  // maximum sample length
+		));
 
 	state = SwappableSynthState::Swapping;
-	DBG("thread finished");
+	DBG("thread finished : "+ (String)synthA.getNumSounds() + " " + (String)synthB.getNumSounds());
 }
 
 void SwappableSynth::addSoundFromExternalFileOnThread(String soundPath)
@@ -250,7 +270,7 @@ void SwappableSynth::addSoundFromExternalFileOnThread(String soundPath)
 
 		//const File file("C:\\Users\\ayup1\\Documents\\Juce Test Recording 0.wav"); // Downloads\\Bass-Drum-1.wav");
 		const File file(soundPath);
-		audioReader = audioFormatManager.createReaderFor(file);
+		ScopedPointer<AudioFormatReader> audioReader = audioFormatManager.createReaderFor(file);
 
 		BigInteger allNotes;
 
@@ -258,33 +278,48 @@ void SwappableSynth::addSoundFromExternalFileOnThread(String soundPath)
 
 		if (!synthAPlaying)
 		{
-			soundA = new SamplerSound("demo sound",
+			/*soundA = new SamplerSound("demo sound",
 				*audioReader,
 				allNotes,
 				74,   // root midi note
 				0.1,  // attack time
 				0.1,  // release time
 				10.0  // maximum sample length
-			);
+			);*/
 
 
-			synthA.addSound(soundA);
+			synthA.addSound(new SamplerSound("demo sound",
+				*audioReader,
+				allNotes,
+				74,   // root midi note
+				0.1,  // attack time
+				0.1,  // release time
+				10.0  // maximum sample length
+			));
 		}
 		else
 		{
-			soundB = new SamplerSound("demo sound",
+			/*soundB = new SamplerSound("demo sound",
 				*audioReader,
 				allNotes,
 				74,   // root midi note
 				0.1,  // attack time
 				0.1,  // release time
 				10.0  // maximum sample length
-			);
-			synthB.addSound(soundB);
+			);*/
+			synthB.addSound(new SamplerSound("demo sound",
+				*audioReader,
+				allNotes,
+				74,   // root midi note
+				0.1,  // attack time
+				0.1,  // release time
+				10.0  // maximum sample length
+			));
 		}
 
 		state = SwappableSynthState::Swapping;
-		DBG("thread finished");
+		DBG("thread finished : " + (String)synthA.getNumSounds() + " " + (String)synthB.getNumSounds());
+	
 	}
 }
 
