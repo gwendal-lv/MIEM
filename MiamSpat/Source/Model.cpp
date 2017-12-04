@@ -21,6 +21,8 @@ Model::Model(Presenter* presenter_)
 SpatModel(presenter_, 500.0),
 presenter(presenter_) // own private downcasted pointer
 {
+    playState = AsyncParamChange::Stop;
+    
     // Pas très propre... Mais pour l'instant c'est la seule option
     miamOscSender = std::dynamic_pointer_cast<MiamOscSender<double>>(spatSenders[0]);
     if (! miamOscSender )
@@ -69,11 +71,13 @@ void Model::update()
                     break;
                     
                 case AsyncParamChange::Play :
+                    playState = AsyncParamChange::Play;
                     std::cout << "[Modèle] PLAY" << std::endl;
                     spatInterpolator->OnPlay();
                     break;
                     
                 case AsyncParamChange::Stop :
+                    playState = AsyncParamChange::Stop;
                     std::cout << "[Modèle] STOP (non-implémenté)" << std::endl;
                     break;
                     
@@ -82,31 +86,45 @@ void Model::update()
             }
         }
         
-        // Envoi de la nouvelle matrice, si nécessaire
-        bool somethingWasUpdated = spatInterpolator->OnDataUpdateFinished();
-        if (somethingWasUpdated)
+        // - - - - - SI ON EST EN TRAIN DE JOUER - - - - -
+        if ( playState == AsyncParamChange::Play )
         {
-            miamOscSender->SendStateModifications(spatInterpolator->GetCurrentInterpolatedState());
+            // Envoi de la nouvelle matrice, si nécessaire
+            bool somethingWasUpdated = spatInterpolator->OnDataUpdateFinished();
+            if (somethingWasUpdated)
+            {
+                miamOscSender->SendStateModifications(spatInterpolator->GetCurrentInterpolatedState());
+            }
+            else
+            {
+                // Envoi d'un coefficient pour avoir toujours une mise à jour qui tourne derrière....
+                // Seulement si on a fait une frame vide !
+                
+                // Débit à 500Hz ? Si on suppose que 1 paquet UDP(8octets)/IP(60octetsMAX) fait 68octets max
+                // + adresse OSC de 4 octets ici + 3*4octets de données
+                // = 84 octets max par paquet
+                // -> total 42ko/s
+                // ça serait peut-être pas mal de diviser par 10....
+                // TODO
+                if ( (refreshFramesCounter++) >= refreshPeriod_frames )
+                {
+                    miamOscSender->ForceSend1MatrixCoeff(spatInterpolator->GetCurrentInterpolatedState());
+                    refreshFramesCounter = 0;
+                }
+                
+                
+                // ----------------------------------
+                // ----------------------------------
+                // OPTIMISATION POUR LA SUITE
+                // ----------------------------------
+                // -> envoyer des BLOCS OSC avec la matrice CREUSE à l'intérieur
+                //(uniquement les coeffs non nuls....)
+                // ----------------------------------
+                // ----------------------------------
+            }
         }
-        else
-        {
-            // Seulement si on a fait une frame vide !
-            
-            // Envoi d'un coefficient pour avoir toujours une mise à jour qui tourne derrière....
-            // Envoi d'un coefficient pour avoir toujours une mise à jour qui tourne derrière....
-            // Envoi d'un coefficient pour avoir toujours une mise à jour qui tourne derrière....
-            // Envoi d'un coefficient pour avoir toujours une mise à jour qui tourne derrière....
-            // Envoi d'un coefficient pour avoir toujours une mise à jour qui tourne derrière....
-            // Envoi d'un coefficient pour avoir toujours une mise à jour qui tourne derrière....
-            
-            // Débit à 500Hz ? Si on suppose que 1 paquet UDP(8octets)/IP(60octetsMAX) fait 68octets max
-            // + adresse OSC de 4 octets ici + 3*4octets de données
-            // = 84 octets max par paquet
-            // -> total 42ko/s
-            // ça serait peut-être pas mal de diviser par 10....
-            // TODO
-            // miamOscSender->SendMatrixCoeff(i,j,value)
-        }
+        // fin de : - - - - - SI ON EST EN TRAIN DE JOUER - - - - -
+
         
         
         // Sleep forcé uniquement si on est assez loin de la période souhaitée

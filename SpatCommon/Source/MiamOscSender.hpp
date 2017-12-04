@@ -31,6 +31,8 @@ namespace Miam
         std::string ipv4;
         OSCSender oscSender;
         
+        int iToRefresh, jToRefresh;
+        
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
         virtual std::string GetTypeAsString() const override
@@ -44,7 +46,10 @@ namespace Miam
         
         // - - - - - Construction / destruction - - - - -
         MiamOscSender() :
-        udpPort(8001), ipv4("127.0.0.1") {}
+        udpPort(8001), ipv4("127.0.0.1"), iToRefresh(0),
+        jToRefresh(-1) // -1 car on va l'incrémenter dès le premier tour
+        {
+        }
         
         virtual ~MiamOscSender() {}
         
@@ -126,6 +131,44 @@ namespace Miam
         void SendMatrixCoeff(int i, int j, float value)
         {
             oscSender.send(Miam_OSC_Matrix_Address, i, j, value);
+        }
+        
+        /// \brief Commande d'actualisation d'1 coefficient.
+        ///
+        /// Au prochain appel, c'est la case d'après qui sera transmise. Sens de parcours :
+        /// ligne entière par ligne entière
+        void ForceSend1MatrixCoeff(SpatState<T>& spatState)
+        {
+            // Capable d'envoyer un état matriciel avec backup seulement pour l'instant
+            if (MatrixBackupState<T>* matrixState = dynamic_cast<MatrixBackupState<T>*>(&spatState))
+            {
+                // Mise à jour du couple (i,j) pour commencer
+                // -> ça fait office de vérification qu'on a des coeffs bien dans la matrice
+                // fin de colonne : ligne suivante
+                if ( (jToRefresh++) >= matrixState->GetOutputsCount() )
+                {
+                    jToRefresh = 0;
+                    iToRefresh++;
+                    // fin de toutes les lignes : on revient à zéro
+                    if ( iToRefresh >= matrixState->GetInputsCount() )
+                        iToRefresh = 0;
+                }
+                
+                // Envoi du coeff concerné
+                SendMatrixCoeff(iToRefresh, jToRefresh, (*matrixState)(iToRefresh, jToRefresh));
+                
+                // ----------- à faire -------------
+                // ----------- à faire -------------
+                // ----------- à faire -------------
+                // On informe la matrice que tout a bien été envoyé
+                // Aucun update des états "backup"... Pour ne pas générer de pb de logique
+                // À améliorer : il faudrait dire qu'on vient d'envoyer JUSTE 1 COEFFICIENT (et pas TOUS les changements d'un coup)
+                // ----------- à faire -------------
+                // ----------- à faire -------------
+                // ----------- à faire -------------
+            }
+            else
+                throw std::logic_error("Cannot send 1 coeff of a state that is not a BackupMatrix");
         }
         
         // - - - - - XML import/export - - - - -

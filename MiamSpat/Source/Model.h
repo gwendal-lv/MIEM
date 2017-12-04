@@ -31,6 +31,12 @@ namespace Miam {
         Presenter* presenter;
         std::shared_ptr<MiamOscSender<double>> miamOscSender;
         
+        AsyncParamChange::ParamType playState;
+        
+        // Rafraîchissements forcés
+        int refreshFramesCounter = 0;
+        const int refreshPeriod_frames = 40; // unité = frames
+        
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
         protected :

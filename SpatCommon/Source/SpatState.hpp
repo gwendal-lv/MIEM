@@ -119,7 +119,12 @@ namespace Miam
         
         // = = = = = = = = = = METHODS = = = = = = = = = =
         public :
-        SpatState() : index(-1) {}
+        SpatState() : index(-1)
+        {
+            // pas possible de le mettre dans la liste d'initialisation
+            // car le double ne prend pas (sous XCode) un zéro de type 'void'
+            excitement = {};
+        }
         
         
         // - - - - - Construction / destruction - - - - -

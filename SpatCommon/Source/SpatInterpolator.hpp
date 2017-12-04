@@ -211,6 +211,14 @@ namespace Miam
                         // On suppose en fait que la balance et le placement dans la salle sont bien
                         // pensés.
                         currentInterpolatedMatrixState.MultiplyAndAccumulate(matrixState, matrixState.GetExcitement());
+                        
+                        
+                        if (matrixState.GetExcitement() < 0.0 || matrixState.GetExcitement() > 6.0)
+                        {
+                            std::cout << "- - - - - - - - - - - - - - - - - - -" << std::endl;
+                            std::cout << "***** Valeur d'excitation anormale (=" << matrixState.GetExcitement() << " pour spat state idx=" << i << ")" << std::endl;
+                            std::cout << "- - - - - - - - - - - - - - - - - - -" << std::endl;
+                        }
                     }
                     catch (std::bad_cast& e) {
                         throw std::logic_error(std::string("Impossible pour l'instant de traiter autre chose que des états de spat matriciels : ") + e.what());
