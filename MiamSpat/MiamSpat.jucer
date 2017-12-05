@@ -222,6 +222,17 @@
         </GROUP>
       </GROUP>
       <GROUP id="{B91B2137-DC4A-127C-0037-DB058876BEFA}" name="Utils">
+        <FILE id="TnfISL" name="InteractionParameters.h" compile="0" resource="0"
+              file="../MiamCommon/Source/InteractionParameters.h"/>
+        <GROUP id="{4920C830-8E65-674A-98AF-BB4CAAEF77DC}" name="Math">
+          <FILE id="tPoEI0" name="CartesianLine.cpp" compile="1" resource="0"
+                file="../MiamCommon/Source/CartesianLine.cpp"/>
+          <FILE id="eK35Tw" name="CartesianLine.h" compile="0" resource="0" file="../MiamCommon/Source/CartesianLine.h"/>
+          <FILE id="Rla6rP" name="MiamMath.cpp" compile="1" resource="0" file="../MiamCommon/Source/MiamMath.cpp"/>
+          <FILE id="WSGVmq" name="MiamMath.h" compile="0" resource="0" file="../MiamCommon/Source/MiamMath.h"/>
+          <FILE id="cEVkJR" name="SparseMatrix.hpp" compile="0" resource="0"
+                file="../MiamCommon/Source/SparseMatrix.hpp"/>
+        </GROUP>
         <GROUP id="{22E0B59F-81F6-AAC5-A6F4-3B584D7BBEA6}" name="AsyncParamChanges">
           <FILE id="ik81Hn" name="AsyncParamChange.h" compile="0" resource="0"
                 file="../MiamCommon/Source/AsyncParamChange.h"/>
@@ -235,23 +246,16 @@
           <FILE id="suhcBm" name="AudioDefines.h" compile="0" resource="0" file="../MiamCommon/Source/AudioDefines.h"/>
           <FILE id="TDImc7" name="AudioUtils.hpp" compile="0" resource="0" file="../MiamCommon/Source/AudioUtils.hpp"/>
         </GROUP>
-        <FILE id="tPoEI0" name="CartesianLine.cpp" compile="1" resource="0"
-              file="../MiamCommon/Source/CartesianLine.cpp"/>
-        <FILE id="eK35Tw" name="CartesianLine.h" compile="0" resource="0" file="../MiamCommon/Source/CartesianLine.h"/>
         <FILE id="RVYtYM" name="FrequencyMeasurer.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/FrequencyMeasurer.cpp"/>
         <FILE id="iQfIMF" name="FrequencyMeasurer.h" compile="0" resource="0"
               file="../MiamCommon/Source/FrequencyMeasurer.h"/>
         <FILE id="gJleTH" name="MiamExceptions.h" compile="0" resource="0"
               file="../MiamCommon/Source/MiamExceptions.h"/>
-        <FILE id="Rla6rP" name="MiamMath.cpp" compile="1" resource="0" file="../MiamCommon/Source/MiamMath.cpp"/>
-        <FILE id="WSGVmq" name="MiamMath.h" compile="0" resource="0" file="../MiamCommon/Source/MiamMath.h"/>
         <FILE id="bHy1uW" name="PeriodicUpdateThread.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/PeriodicUpdateThread.cpp"/>
         <FILE id="kKs1q1" name="PeriodicUpdateThread.h" compile="0" resource="0"
               file="../MiamCommon/Source/PeriodicUpdateThread.h"/>
-        <FILE id="cEVkJR" name="SparseMatrix.hpp" compile="0" resource="0"
-              file="../MiamCommon/Source/SparseMatrix.hpp"/>
         <FILE id="g4sp6a" name="TextUtils.cpp" compile="1" resource="0" file="../MiamCommon/Source/TextUtils.cpp"/>
         <FILE id="rbmyw3" name="TextUtils.h" compile="0" resource="0" file="../MiamCommon/Source/TextUtils.h"/>
         <FILE id="MzfIK4" name="XmlUtils.cpp" compile="1" resource="0" file="../MiamCommon/Source/XmlUtils.cpp"/>

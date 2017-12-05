@@ -90,6 +90,7 @@ namespace Miam
 
 	public :
 		double getSurface();
+        double GetLongestDistanceFromG() const;
         
     };
 }

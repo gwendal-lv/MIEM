@@ -13,6 +13,8 @@
 
 #include "MiamMath.h"
 
+#include "InteractionParameters.h"
+
 using namespace Miam;
 
 
@@ -73,7 +75,6 @@ void InteractivePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
     
     // Finally, we update sub triangles
     updateSubTriangles();
-	computeSurface(); // mettre dans updateSubTriangle?
 }
 
 
@@ -95,14 +96,23 @@ void InteractivePolygon::updateSubTriangles()
 	{
 		subTriangles.push_back(SubTriangle(centerInPixels, contourPointsInPixels.outer().at(i), contourPointsInPixels.outer().at(i+1)));
 	}
+    
+    // Actualisation après création des triangles
+    computeSurface();
+    longestDistanceFromCenter = 0.0;
+    for (auto&& subTriangle : subTriangles)
+    {
+        auto currentDistance = subTriangle.GetLongestDistanceFromG();
+        if (longestDistanceFromCenter < currentDistance)
+            longestDistanceFromCenter = currentDistance;
+    }
 }
 
 void InteractivePolygon::computeSurface()
 {
-	double S = 0;
+	surface = 0;
 	for (size_t i = 0; i < subTriangles.size(); ++i)
-		S += subTriangles[i].getSurface();
-	surface = S;
+		surface += subTriangles[i].getSurface();
 }
 
 
@@ -119,11 +129,13 @@ bool InteractivePolygon::HitTest(bpt T) const
 
 double InteractivePolygon::ComputeInteractionWeight(bpt T)
 {
+    double distanceFromCenter = boost::geometry::distance(centerInPixels,T);
+    
     double weight = 0.0;
     bpt GT(T.get<0>() - centerInPixels.get<0>(), T.get<1>() - centerInPixels.get<1>());
     
-    // if at center (at 0.5²pixel²) (to prevent 0/0 operations)
-    if (boost::geometry::distance(bpt(0,0),GT)<0.25)
+    // if at center (to prevent 0/0 operations)
+    if (distanceFromCenter < 0.5)
         weight = 1.0;
     // else, we can compute an angle using atan and the 4 quadrants
     else
@@ -132,8 +144,13 @@ double InteractivePolygon::ComputeInteractionWeight(bpt T)
         // Dans le sens trigo avec l'axe y qui va vers le bas
         // (et donc dans le horaire avec les conventions math habituelles)
         double angle = Math::ComputePositiveAngle(GT);
-        //
         weight = findSubTriangle(angle).ComputeInteractionWeight(T);
+        
+        // Influence de la distance par rapport au centre
+        double normalizedDistanceFromCenter = distanceFromCenter/longestDistanceFromCenter;
+#define Miam_DistanceFromCenterInfluenceFactor (0.2) // test temporaire
+        weight = std::pow(weight,
+                          1.0 + Miam_DistanceFromCenterInfluenceFactor * normalizedDistanceFromCenter);
     }
     
     return weight;

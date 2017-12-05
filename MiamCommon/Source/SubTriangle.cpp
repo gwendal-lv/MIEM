@@ -11,7 +11,7 @@
 
 #include <cmath>
 #include <vector>
-
+#include <algorithm> // max
 
 #include "SubTriangle.h"
 
@@ -147,5 +147,9 @@ double SubTriangle::getSurface()
 	return surface;
 }
 
+double SubTriangle::GetLongestDistanceFromG() const
+{
+    return std::max( boost::geometry::distance(bG, bB), boost::geometry::distance(bG, bC) );
+}
 
 

@@ -24,6 +24,26 @@ namespace Miam
     /// \brief A polygonal area with interactive abilities.
     class InteractivePolygon : public DrawablePolygon, public InteractiveArea
     {
+        // ================== ATTRIBUTES ====================
+        protected :
+        std::vector<SubTriangle> subTriangles;
+        
+        private :
+        double longestDistanceFromCenter;
+        
+        
+        
+        
+        
+        // ================== Setters & Getters ====================
+        public :
+        
+        double GetSurface() override;
+        
+        
+        
+        
+        // ================== METHODS ====================
         
         
         // - - - - - Construction/Destruction + polymorphic cloning - - - - -
@@ -50,15 +70,18 @@ namespace Miam
         void init();
  
         
-        // Display functions
+        // - - - - - Display functions - - - - -
         public :
         // virtual void Paint(Graphics& g) override; // Nothing to paint over a normal area !
         virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
         
         
+        // - - - - - Interactions computing - - - - -
+        public :
+        virtual bool HitTest(bpt T) const override;
+        double ComputeInteractionWeight(bpt T) override;
         
-        
-        // Updates
+        // ----- helpers (for interaction computing) -----
         protected :
         /// \brief Computation of the subdivisions of the polygon : it will be divided into
         /// triangles, each triangle being connected to the center.
@@ -66,16 +89,6 @@ namespace Miam
         /// Computation of the angular values (positive, and from the center) taken by each
         /// triangle.
         void updateSubTriangles();
-        
-        
-        // Interactions computing
-        public :
-        virtual bool HitTest(bpt T) const override;
-        double ComputeInteractionWeight(bpt T) override;
-        
-        
-        // ----- Private helpers (for interaction computing) -----
-        protected :
         /// <summary>
         /// Finds the id of the interacted sub triangle.
         ///
@@ -86,16 +99,8 @@ namespace Miam
         /// <returns></returns>
         SubTriangle& findSubTriangle(double angle);
         
-        
-        // Attributes
-        protected :
-        std::vector<SubTriangle> subTriangles;
-        
 		private :
 			void computeSurface();
-			//double area;
-		public :
-			double GetSurface() override;
         
     };
     

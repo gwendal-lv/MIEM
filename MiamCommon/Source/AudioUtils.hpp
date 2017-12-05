@@ -13,7 +13,7 @@
 #include <cmath>
 
 #include "AudioDefines.h"
-
+#include "InteractionParameters.h"
 
 namespace Miam
 {
@@ -55,13 +55,11 @@ namespace Miam
         }
         
         /// \brief Transforme un volume normalisé en un autre volume normalisé,
-        /// via une fonction puissance dont la dérivée seconde est paramétré par un #define
+        /// via une fonction puissance 2^(volume*facteur)
         static T ApplyLowVolumePrecisionDistorsion(T inputVolume)
         {
-            // Calcul optimisé du dénominateur (constant avec le define)
-            const int denom = (1 << (int)Miam_LowVolumePrecisionFactor) - 1; // 2^facteur - 1
-            T num = std::pow(2, inputVolume * (T)Miam_LowVolumePrecisionFactor);
-            return num / (T)denom;
+            return (std::pow(2, inputVolume * (T)Miam_LowVolumePrecisionFactor) - (T)1.0)
+                    / (std::pow(2, (T)Miam_LowVolumePrecisionFactor) - (T)1.0);
         }
         
     };
