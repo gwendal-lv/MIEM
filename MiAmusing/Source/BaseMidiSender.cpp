@@ -77,6 +77,8 @@ void TimeLine::setAudioManager(AudioManager* m_audioManager)
 		swappableSynth.addVoice();//new SamplerVoice);
 	}
 	duplicatedFilter.prepare({ audioManager->getCurrentSampleRate(),(uint32)audioManager->getCurrentSamplesBlock(),2 });
+	duplicatedFilter.state->type = dsp::StateVariableFilter::Parameters<float>::Type::lowPass;
+	duplicatedFilter.state->setCutOffFrequency(audioManager->getCurrentSampleRate(), 20000);
 }
 
 void TimeLine::setPeriod(int m_period)
@@ -585,40 +587,43 @@ void TimeLine::setFilterFrequency(double frequency)
 {
 	if (frequency != filterFrequencyToReach)
 	{
-		if (frequency < 50.0) // < 50Hz, on garde la frequence de cassure a 50Hz
-		{
-			//filter->setCoefficients(IIRCoefficients::makeLowPass(audioManager->getCurrentSampleRate(), 50.0));
-			filterFrequencyToReach = 50.0;
-			filterType = FilterType::LowPass;
-			filterActive = true;
-		}
-		else if (frequency > 15000.0) // > 15kHz, on garde la frequence de cassure a 15kHz
-		{
-			filterFrequencyToReach = 15000.0;
-			filterType = FilterType::HighPass;
-			filterActive = true;
-			//filter->setCoefficients(IIRCoefficients::makeHighPass(audioManager->getCurrentSampleRate(), 15000.0));
-		}
-		else if (frequency > 200 && frequency < 2000) // frequence au milieu -> pas de filtre
-		{
-			filterActive = false;//filter->makeInactive();
-		}
-		else if (frequency <= 200)
-		{
-			filterFrequencyToReach = frequency;
-			filterType = FilterType::LowPass;
-			filterActive = true;
-			//filter->setCoefficients(IIRCoefficients::makeLowPass(audioManager->getCurrentSampleRate(), frequency));
-		}
-		else if (frequency >= 2000)
-		{
-			filterFrequencyToReach = frequency;
-			filterType = FilterType::HighPass;
-			filterActive = true;
-			//filter->setCoefficients(IIRCoefficients::makeHighPass(audioManager->getCurrentSampleRate(), frequency));
-		}
-		else
-			DBG("probleme si aucun des cas du dessus");
+		//if (frequency < 50.0) // < 50Hz, on garde la frequence de cassure a 50Hz
+		//{
+		//	//filter->setCoefficients(IIRCoefficients::makeLowPass(audioManager->getCurrentSampleRate(), 50.0));
+		//	filterFrequencyToReach = 50.0;
+		//	filterType = FilterType::LowPass;
+		//	filterActive = true;
+		//}
+		//else if (frequency > 15000.0) // > 15kHz, on garde la frequence de cassure a 15kHz
+		//{
+		//	filterFrequencyToReach = 15000.0;
+		//	filterType = FilterType::HighPass;
+		//	filterActive = true;
+		//	//filter->setCoefficients(IIRCoefficients::makeHighPass(audioManager->getCurrentSampleRate(), 15000.0));
+		//}
+		//else if (frequency > 200 && frequency < 2000) // frequence au milieu -> pas de filtre
+		//{
+		//	filterActive = false;//filter->makeInactive();
+		//}
+		//else if (frequency <= 200)
+		//{
+		//	filterFrequencyToReach = frequency;
+		//	filterType = FilterType::LowPass;
+		//	filterActive = true;
+		//	//filter->setCoefficients(IIRCoefficients::makeLowPass(audioManager->getCurrentSampleRate(), frequency));
+		//}
+		//else if (frequency >= 2000)
+		//{
+		//	filterFrequencyToReach = frequency;
+		//	filterType = FilterType::HighPass;
+		//	filterActive = true;
+		//	//filter->setCoefficients(IIRCoefficients::makeHighPass(audioManager->getCurrentSampleRate(), frequency));
+		//}
+		//else
+		//	DBG("probleme si aucun des cas du dessus");
+		filterFrequencyToReach = frequency;//50.0;
+		filterType = FilterType::LowPass;
+		filterActive = true;
 	}
 	deltaF = (filterFrequencyToReach - currentFilterFrequency) / 1.0; // il faudra 5 buffer avant d'arriver à la frequence desiree
 }
@@ -676,21 +681,22 @@ void TimeLine::updateFilter()
 			currentFilterFrequency = filterFrequencyToReach;
 		else
 			currentFilterFrequency += deltaF;
-		dsp::StateVariableFilter::Parameters<float> parameters;
-		switch (filterType)
-		{
-		case LowPass:
-			duplicatedFilter.state->type = dsp::StateVariableFilter::Parameters<float>::Type::lowPass;
-			duplicatedFilter.state->setCutOffFrequency(audioManager->getCurrentSampleRate(), currentFilterFrequency);
-			break;
-		case HighPass:
-			duplicatedFilter.state->type = dsp::StateVariableFilter::Parameters<float>::Type::highPass;//filterDSP.parameters->type = dsp::StateVariableFilter::Parameters<float>::Type::highPass;
-			duplicatedFilter.state->setCutOffFrequency(audioManager->getCurrentSampleRate(), (float)currentFilterFrequency);//filterDSP.parameters->setCutOffFrequency(audioManager->getCurrentSampleRate(), currentFilterFrequency);
-			break;
-		default:
-			DBG("prob");
-			break;
-		}
+
+		//switch (filterType)
+		//{
+		//case LowPass:
+		//	duplicatedFilter.state->type = dsp::StateVariableFilter::Parameters<float>::Type::lowPass;
+		//	duplicatedFilter.state->setCutOffFrequency(audioManager->getCurrentSampleRate(), currentFilterFrequency);
+		//	break;
+		//case HighPass:
+		//	duplicatedFilter.state->type = dsp::StateVariableFilter::Parameters<float>::Type::highPass;//filterDSP.parameters->type = dsp::StateVariableFilter::Parameters<float>::Type::highPass;
+		//	duplicatedFilter.state->setCutOffFrequency(audioManager->getCurrentSampleRate(), (float)currentFilterFrequency);//filterDSP.parameters->setCutOffFrequency(audioManager->getCurrentSampleRate(), currentFilterFrequency);
+		//	break;
+		//default:
+		//	DBG("prob");
+		//	break;
+		//}
+		duplicatedFilter.state->setCutOffFrequency(audioManager->getCurrentSampleRate(), (float)currentFilterFrequency);
 	}
 }
 

@@ -248,6 +248,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 						param.Id1 = myPresenter->getTimeLineID(area);
 						//if (param.Id1 > 10)
 						//	DBG("trop grand pour mon nombre d'aire");
+						myPresenter->setInitSize(complete,complete->GetSurface());
 						myPresenter->addOctave(complete);
 						param.Id2 = 1024;
 						param.Type = Miam::AsyncParamChange::ParamType::Activate;
@@ -435,7 +436,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				{
 					param.Type = AsyncParamChange::Frequency;
 					param.Id1 = myPresenter->getTimeLineID(complete);
-					param.DoubleValue = myPresenter->computeFrequency(complete->GetSurface());
+					param.DoubleValue = myPresenter->computeFrequency(complete,complete->GetSurface());
 					DBG((String)param.DoubleValue);
 					myPresenter->SendParamChange(param);
 

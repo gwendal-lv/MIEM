@@ -125,10 +125,10 @@ void SoundFileViewer::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    sampleLabel->setBounds (0, 0, proportionOfWidth (0.7003f), 24);
-    colorLabel->setBounds (proportionOfWidth (0.7497f), 0 + 0, 30, roundFloatToInt (24 * 1.0000f));
-    deleteButton->setBounds (proportionOfWidth (0.7497f) + 30 - -2, 0, roundFloatToInt (30 * 1.0000f), 24);
-    loadButton->setBounds ((proportionOfWidth (0.7497f) + 30 - -2) + (roundFloatToInt (30 * 1.0000f)) - -2, 0, roundFloatToInt (30 * 1.0000f), 24);
+    sampleLabel->setBounds (0, 0, proportionOfWidth (0.7002f), 24);
+    colorLabel->setBounds (proportionOfWidth (0.7498f), 0 + 0, 30, roundFloatToInt (24 * 1.0000f));
+    deleteButton->setBounds (proportionOfWidth (0.7498f) + 30 - -2, 0, roundFloatToInt (30 * 1.0000f), 24);
+    loadButton->setBounds ((proportionOfWidth (0.7498f) + 30 - -2) + (roundFloatToInt (30 * 1.0000f)) - -2, 0, roundFloatToInt (30 * 1.0000f), 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }

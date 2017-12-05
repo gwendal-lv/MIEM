@@ -91,7 +91,7 @@ namespace Amusing {
 			}
 		};
 
-
+		std::map<std::shared_ptr<IEditableArea>, int> areaToInitSurface;
 		std::map<Colour, int,Class1Compare> colourToIdx;
 		std::map<std::shared_ptr<IEditableArea>, int> octave;
 		std::map<std::shared_ptr<IEditableArea>, double> phase;
@@ -126,8 +126,9 @@ namespace Amusing {
 			std::shared_ptr<Follower> getFollowerFromCtrl(int ctrlId);
 			void setColorPath(int idx, Colour concernedColour, String pathAssociated);
 			int getPathIdx(Colour color);
+			void setInitSize(std::shared_ptr<IEditableArea> newArea,int surface);
 
-			double computeFrequency(double surface);
+			double computeFrequency(std::shared_ptr<IEditableArea> newArea,double surface);
 
 			int getTempo();
 			void setTempo(int newTempo);

@@ -21,6 +21,7 @@
 #include "GraphicEvent.h"
 #include "MultiAreaEvent.h"
 #include "Cursors.h"
+#include "LUT.h"
 
 
 using namespace Amusing;
@@ -301,22 +302,45 @@ int Amusing::Presenter::getPathIdx(Colour color)
 	return colourToIdx[color];
 }
 
-double Amusing::Presenter::computeFrequency(double surface)
+void Amusing::Presenter::setInitSize(std::shared_ptr<IEditableArea> newArea, int surface)
 {
-	double W = view->GetMainContentComponent()->getWidth();
+	areaToInitSurface[newArea] = surface;
+}
+
+double Amusing::Presenter::computeFrequency(std::shared_ptr<IEditableArea> area,double surface)
+{
+	double W = (11.0 / 12.0 )* view->GetMainContentComponent()->getWidth();
 	double H = view->GetMainContentComponent()->getHeight();
 
-	double minSize = W * H / 100;//0.03 * (W + H) / 2.0;
+	double initFreq = 20000;
+	double minFreq = 300;
 	double maxSize = W * H / 4;
 
-	double baseF = 50;
+	double initSize = (double)areaToInitSurface[area] / maxSize;
+	double S = surface / maxSize;
+	maxSize = 1.0;
+	
+	
+	//double m = (std::log(initFreq) - std::log(minFreq)) / (areaToInitSurface[area] - maxSize);
+	//double p = (areaToInitSurface[area] * std::log(minFreq) - maxSize * std::log(initFreq)) / (areaToInitSurface[area] - maxSize);
+	/*double m = -2;
+	double k = (minFreq - initFreq * std::exp(m * (maxSize - initSize)))/(1 - std::exp(m * (maxSize - initSize)));
+	double A = (minFreq - initFreq) / (std::exp(m*maxSize) - std::exp(m*initSize));
+*/
+	if (S > maxSize)
+		return minFreq;
+	else if(S < initSize)
+		return  initFreq;
+	else
+	{
+		//return initFreq + (surface - areaToInitSurface[area]) * (minFreq - initFreq) / (maxSize - areaToInitSurface[area]);
+		//return std::exp(m*surface + p);
+		int idx = round((S - LUT::init) * LUT::size);
+		return LUT::LUT[idx];//k + A * std::exp(m * S);
+	}
+		
+	
 
-	double minE = 0;
-	double maxE = 2 + log10(3.0);
-
-	double exp = maxE + (minE - maxE) * (surface - minSize) / (maxSize - minSize);
-
-	return baseF * pow(10.0,exp);
 }
 
 static int updatesCount = 0;
