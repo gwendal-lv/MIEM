@@ -269,6 +269,10 @@ namespace Miam
                 stateTree->put("<xmlattr>.index", i);
                 statesInnerTree.add_child("state", *stateTree);
             }
+            
+            if (spatStates.size() == 0)
+                std::cout << "***Attention*** : [Spat Interpolator] : ZERO état de spatialisation ne sera exporté." << std::endl;
+            
             auto statesTree = std::make_shared<bptree::ptree>();
             statesTree->add_child("states", statesInnerTree);
             return statesTree;

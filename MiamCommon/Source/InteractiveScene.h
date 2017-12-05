@@ -124,7 +124,7 @@ namespace Miam
         protected :
         /// \brief Calcule l'index d'un excitateur parmi toutes les aires graphiques
         /// dessinables en openGL.
-        virtual size_t getExciterDrawingIndex(size_t exciterVectorIndex)
+        virtual size_t getExciterDrawingIndex(size_t exciterVectorIndex) const
         { return areas.size() + exciterVectorIndex; }
         
         public :
@@ -256,9 +256,9 @@ namespace Miam
         
         // - - - - - XML import/export - - - - -
         public :
-        /// \brief Exports the current areas of course, and the initial exciters saved
+        /// \brief Exports the current areas of course, and the initial exciters previously saved
         /// (does not export the current active exciters)
-        std::shared_ptr<bptree::ptree> GetTree();
+        std::shared_ptr<bptree::ptree> GetTree() const;
         // Pas de SetFromTree :
         // les aires graphiques concrètes ne peuvent être instanciées
         // que depuis une classe concrète spécifique de l'application finale.

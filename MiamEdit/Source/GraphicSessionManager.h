@@ -123,7 +123,7 @@ namespace Miam {
         
         
         // ----- Event to View -----
-        virtual void DisplayInfo(String info) override;
+        virtual void DisplayInfo(String info, int priority = 0) override;
         
         
         // ----- Events from View, transmitted to the selected Canvas Manager -----

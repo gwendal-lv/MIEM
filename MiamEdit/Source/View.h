@@ -79,7 +79,9 @@ namespace Miam {
 		///
 		/// \param message Short sentence to be written in the upper uneditable
         /// text box, and maybe in a dialog pop-up like window.
-        void DisplayInfo(const std::string& message, bool alsoDisplayInNewWindow = false);
+        void DisplayInfo(const std::string& message,
+                         int priority = 0,
+                         bool alsoDisplayInNewWindow = false);
         private :
         /// \brief Crée une nouvelle fenêtre sobre et affiche le message centré.
         ///

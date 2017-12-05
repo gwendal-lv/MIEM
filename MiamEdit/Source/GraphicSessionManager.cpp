@@ -339,9 +339,9 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 
 // ===== EVENTS TO VIEW =====
 
-void GraphicSessionManager::DisplayInfo(String info)
+void GraphicSessionManager::DisplayInfo(String info, int priority)
 {
-    view->DisplayInfo(info.toStdString());
+    view->DisplayInfo(info.toStdString(), priority);
 }
 
 

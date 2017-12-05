@@ -166,6 +166,7 @@ namespace Miam {
         
         std::chrono::time_point<std::chrono::steady_clock> GetCommonTimePoint() const;
         
+        void DisplayInfo(String info, int priority = 0);
         
         
         

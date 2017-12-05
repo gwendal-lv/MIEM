@@ -210,6 +210,11 @@ std::chrono::time_point<std::chrono::steady_clock> MultiSceneCanvasInteractor::G
     return graphicSessionManager->GetCommonTimePoint();
 }
 
+void MultiSceneCanvasInteractor::DisplayInfo(String info, int priority)
+{
+    graphicSessionManager->DisplayInfo(info, priority);
+}
+
 
 
 // - - - - - Internal events management - - - - -
@@ -769,7 +774,7 @@ std::shared_ptr<bptree::ptree> MultiSceneCanvasInteractor::GetTree()
     for (size_t i=0 ; i<scenes.size() ; i++)
     {
         // On sauvegarde les excitateurs courants dans les initiaux,
-        scenes[i]->SaveCurrentExcitersToInitialExciters();
+        scenes[i]->SaveCurrentExcitersToInitialExciters(false); // SANS supprimer les courants
         // Avant de chopper les initiaux :
         // Getting of the scene tree, then actual addition to the canvas tree
         auto sceneTree = scenes[i]->GetTree();

@@ -242,6 +242,10 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::ResetCurrentExcitersToInitialE
 
 void InteractiveScene::SaveCurrentExcitersToInitialExciters(bool deleteCurrentExciters)
 {
+    // Message d'erreur pour tracker le bug des excitateurs qui disparaissent...
+    if (initialExciters.size() == 0)
+        std::cout << "***Attention*** : [Scène '" + name + "'] : ZERO excitateur INITIAL (AVANT enregistrement des courants, à leur place)" << std::endl;
+    
     // On veut créer une sauvegarde à un instant figé dans le temps
     // donc on fait une copie des excitateurs, et pas seulement
     // des pointeurs sur les excitateurs
@@ -262,6 +266,17 @@ void InteractiveScene::SaveCurrentExcitersToInitialExciters(bool deleteCurrentEx
     
     // Aucun évènement renvoyé
     
+    
+    // Message d'erreur pour tracker le bug des excitateurs qui disparaissent...
+    // + info utilisateur, ça peut toujours servir
+    if (initialExciters.size() == 0)
+    {
+        canvasManager.lock()->DisplayInfo(TRANS("Warning: a scene has 0 exciter and cannot be played")
+                                          + String(" (") + TRANS("scene") + " '"
+                                          + name + "')",
+                                          10); // priorité de 10
+        std::cout << "***Attention*** : [Scène '" + name + "'] : ZERO excitateur INITIAL (APRÈS enregistrement des courants, à leur place)" << std::endl;
+    }
 }
 
 
@@ -273,8 +288,8 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::OnSelection(bool resetExciters
     if (resetExciters)
         multiAreaE = ResetCurrentExcitersToInitialExciters();
 
-    // Seulement en mode de jeu : on actualise l'influence des excitateurs
-    if (canvasManager.lock()->GetMode() == CanvasManagerMode::PlayingWithExciters)
+    // On actualise l'influence des excitateurs, dans TOUS les modes de jeu !
+    //if (canvasManager.lock()->GetMode() == CanvasManagerMode::PlayingWithExciters)
     {
         // à l'avenir : transitions douces par Timers !!
         // à l'avenir : transitions douces par Timers !!
@@ -286,7 +301,7 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::OnSelection(bool resetExciters
         for (auto& exciter : currentExciters)
             exciter->SetVolume(1.0);
         
-        // Pour l'instant tout dans une fonction bête et méchant, séparée
+        // Pour l'instant tout dans une fonction bête et méchante, séparée
         // On remplace bien sauvagement les évènements créés précédemmet !
         // L'idée c'est qu'on oublie les events graphiques à la transition entre scènes...
         multiAreaE = RecomputeAreaExciterInteractions();
@@ -506,7 +521,7 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::RecomputeAreaExciterInteractio
 
 
 // = = = = = = = = = = XML import/export = = = = = = = = = =
-std::shared_ptr<bptree::ptree> InteractiveScene::GetTree()
+std::shared_ptr<bptree::ptree> InteractiveScene::GetTree() const
 {
     auto sceneTree = std::make_shared<bptree::ptree>();
     sceneTree->put("name", name);

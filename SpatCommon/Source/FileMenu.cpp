@@ -59,7 +59,8 @@ void FileMenu::onLoad()
 }
 void FileMenu::onSave()
 {
-    presenter->SaveSession();
+    // nom de fichier non-spécifié, par contre on force le data refresh
+    presenter->SaveSession("", true);
 }
 void FileMenu::onSaveAs()
 {
@@ -67,7 +68,8 @@ void FileMenu::onSaveAs()
     if ( fileChooser.browseForFileToSave(true) )
     {
         File resultFile = fileChooser.getResult();
-        presenter->SaveSession(resultFile.getFullPathName().toStdString());
+        // data refresh forcé
+        presenter->SaveSession(resultFile.getFullPathName().toStdString(), true);
     }
 }
 

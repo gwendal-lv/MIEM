@@ -139,9 +139,9 @@ void MainContentComponent::ChangeAppMode(AppMode newAppMode)
     // Dans le doute...
     resized();
 }
-void MainContentComponent::DisplayInfo(const String& message)
+void MainContentComponent::DisplayInfo(const String& message, int priority)
 {
-    mainBackgroundComponent->DisplayInfo(message);
+    mainBackgroundComponent->DisplayInfo(message, priority);
 }
 
 

@@ -158,8 +158,12 @@ namespace Miam
                 // Displayable value
                 else
                 {
-                    double hue = (getValue()-GetMinVolume_dB()) / (GetMaxVolume_dB()-GetMinVolume_dB());
-                    hue = (1.0-hue)*0.5 + 0.1;
+                    // Volume relatif, entre 0 et 1
+                    double relativeVolume = ( getValue()-GetMinVolume_dB() )
+                                            / ( GetMaxVolume_dB()-GetMinVolume_dB() );
+                    // On applique une distortion simple....
+                    relativeVolume = std::pow(relativeVolume, 2.5);
+                    double hue = (1.0-relativeVolume)*0.5 + 0.1;
                     uint8 alpha;
                     if (GetIsActive())
                         alpha = 0xff;

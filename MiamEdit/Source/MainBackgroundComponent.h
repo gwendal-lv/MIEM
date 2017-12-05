@@ -67,7 +67,7 @@ public:
     void setMiamView(Miam::View* _miamView) {miamView = _miamView;}
 
     // Orders from Presenter
-    void DisplayInfo(const String& message);
+    void DisplayInfo(const String& message, int priority = 0);
 
     //[/UserMethods]
 
@@ -83,6 +83,7 @@ private:
     View *miamView;
     std::unique_ptr<FileMenu> fileMenu;
 
+    int currentDisplayedInfoPriority;
     Miam::ClearLabelTimer clearLabelTimer;
 
     //[/UserVariables]

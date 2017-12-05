@@ -179,7 +179,8 @@ void Presenter::LoadSession(std::string filename)
     catch (XmlReadException& e)
     {
         // Also display in a new window
-        view->DisplayInfo(std::string("[Reading XML] ") + e.what(), true);
+        view->DisplayInfo(std::string("[Reading XML] ") + e.what(),
+                          50, true);
     }
     // Updates (graphical mostly) just after
     spatStatesEditionManager.UpdateView();
@@ -201,7 +202,7 @@ void Presenter::SaveSession(std::string filename, bool forceDataRefresh)
     // Puis sauvegarde effective vers XML
     try { SpatPresenter::SaveSession(filename, forceDataRefresh); }
     catch (XmlWriteException& e) {
-        view->DisplayInfo(e.what());
+        view->DisplayInfo(e.what(), 50, true); // haute priorité, et dans nouvelle fenêtre
     }
 }
 void Presenter::CreateSession(std::string filename, bool isEmpty)

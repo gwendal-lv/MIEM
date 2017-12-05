@@ -30,6 +30,7 @@ using namespace Miam;
 
 //==============================================================================
 MainBackgroundComponent::MainBackgroundComponent ()
+    : clearLabelTimer(currentDisplayedInfoPriority)
 {
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
@@ -104,6 +105,10 @@ MainBackgroundComponent::MainBackgroundComponent ()
     // On les rend carrément invisibles aussi
     startTextButton->setVisible(false);
     speakersTextButton->setVisible(false);
+
+    // ClearLabelTimer + priorités des infos affichées
+    clearLabelTimer.SetLabelToClearAfterTimeout(mainInfoLabel.get());
+    currentDisplayedInfoPriority = -1; // plus petit que tout...
 
     //[/Constructor]
 }
@@ -203,10 +208,16 @@ void MainBackgroundComponent::CompleteInitialization(Presenter* _presenter)
     fileMenu.reset( new FileMenu(_presenter) );
 }
 
-void MainBackgroundComponent::DisplayInfo(const String& message)
+void MainBackgroundComponent::DisplayInfo(const String& message, int priority)
 {
-    mainInfoLabel->setText(message, NotificationType::sendNotificationAsync);
-    clearLabelTimer.StartTimer(mainInfoLabel.get()); // will clear it after a precise time
+    // On n'affiche que les priorités supérieures (si égale : on affiche la + fraîche)
+    if (priority >= currentDisplayedInfoPriority)
+    {
+        mainInfoLabel->setText(message, NotificationType::sendNotificationAsync);
+        currentDisplayedInfoPriority = priority;
+        
+        clearLabelTimer.StartTimer(); // will clear it after a precise time
+    }
 }
 
 //[/MiscUserCode]
@@ -223,8 +234,9 @@ BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="MainBackgroundComponent"
                  componentName="" parentClasses="public Component" constructorParams=""
-                 variableInitialisers="" snapPixels="8" snapActive="1" snapShown="1"
-                 overlayOpacity="0.330" fixedSize="1" initialWidth="1024" initialHeight="600">
+                 variableInitialisers="clearLabelTimer(currentDisplayedInfoPriority)"
+                 snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
+                 fixedSize="1" initialWidth="1024" initialHeight="600">
   <BACKGROUND backgroundColour="ff707070"/>
   <TEXTBUTTON name="Speakers text button" id="2752e5f61c280c43" memberName="speakersTextButton"
               virtualName="" explicitFocusOrder="0" pos="0R 8 8 24" posRelativeX="dcc32a783566df37"

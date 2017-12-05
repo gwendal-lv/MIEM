@@ -93,7 +93,7 @@ namespace Miam
         /// \brief Dispatches event re-transmitted by Miam::View::ChangeAppMode
         void ChangeAppMode(Miam::AppMode newAppMode);
         /// \brief Dispatches event re-transmitted by Miam::View::DisplayInfo
-        void DisplayInfo(const String& message);
+        void DisplayInfo(const String& message, int priority = 0);
         
         
         
