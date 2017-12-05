@@ -25,6 +25,11 @@ namespace Miam
 {
 	class DrawableEllipse : public DrawableArea
 	{
+        private :
+        /// \brief Nombre de points définissant la forme pseudo-elliptique dessinée
+        /// par Juce via OpenGL
+        const int ellipseVerticesCount = 20;
+        
 		protected :
 			bpolygon contourPoints;
 			Path contour;
@@ -64,6 +69,8 @@ namespace Miam
 		void recreateContourPoints(int width, int height);
 
 		protected:
+        // ATTENTION a et b ne sont pas le grand rayon et le petit rayon
+        // (demi grand axe et demi petit axe)... à corriger.
 			double a, b; // grand axe et petit axe
 			double rotationAngle; // angle d'inclinaison de l'ellipse
 			float xScale, yScale;

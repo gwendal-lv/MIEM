@@ -129,7 +129,7 @@ namespace Miam {
         
         // ----- Event to View -----
         public :
-        void DisplayInfo(String info) override;
+        void DisplayInfo(String info, int priority = 0) override;
 
         
         // - - - - - XML import/export - - - - -

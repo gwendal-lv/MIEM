@@ -209,7 +209,7 @@ void GraphicSessionManager::CanvasModeChanged(CanvasManagerMode /*canvasMode*/)
 
 // ===== EVENTS TO VIEW =====
 
-void GraphicSessionManager::DisplayInfo(String info)
+void GraphicSessionManager::DisplayInfo(String info, int /*priority*/)
 {
     view->DisplayInfo(info);
 }

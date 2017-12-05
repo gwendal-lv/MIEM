@@ -55,6 +55,7 @@ namespace Miam {
         
         // - - - - - Periodic updates - - - - -
         protected :
+        void setHighThreadPriority();
         void update() override;
         
         

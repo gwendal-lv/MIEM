@@ -72,11 +72,27 @@ void DrawableEllipse::createJucePolygon(int width, int height)
 
 	if (keepRatio)
 	{
-		
 		recreateContourPoints(width,height);
 	}
 
-	contour.addEllipse((float)center.get<0>() -((float)a*xScale/2), (float)center.get<1>() -((float)b*yScale/2), (float)a*xScale, (float)b*yScale);
+    // À faire "à la main" avec un certain nombre de points... Sinon Juce en utilise 32 par défaut
+    float centerX = (float)center.get<0>();
+    float centerY = (float)center.get<1>();
+    float aScaled = (float)(a/2.0) * xScale; // demi-axe, normalisé, rescalé si keepratio
+    float bScaled = (float)(b/2.0) * yScale; // demi-axe , (idem)
+    contour.startNewSubPath(centerX + aScaled * (float)std::cos(0.0),
+                            centerY + bScaled * (float)std::sin(0.0));
+    for (int i = 1; i<ellipseVerticesCount; i++)
+    {
+        double normalizedAngle = (double)(i)/(double)(ellipseVerticesCount);
+        contour.lineTo(centerX + aScaled * (float)std::cos(2.0 * M_PI * normalizedAngle),
+                       centerY + bScaled * (float)std::sin(2.0 * M_PI * normalizedAngle));
+    }
+    // Est-ce qu'il faut ABSOLUMENT faire le tour complet avec début=fin, avant de fermer le contour ?
+    contour.closeSubPath();
+    
+    // ancien contour : ellipse Juce directe
+    //contour.addEllipse((float)center.get<0>() -((float)a*xScale/2), (float)center.get<1>() -((float)b*yScale/2), (float)a*xScale, (float)b*yScale);
 
 	contour.applyTransform(AffineTransform::scale((float)width, (float)height));
 

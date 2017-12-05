@@ -8,9 +8,24 @@
   ==============================================================================
 */
 
+#include <map>
+#include <string>
+
 #include "Model.h"
 
 #include "Presenter.h"
+
+#if defined(__clang__) // XCode pour macOS et iOS.
+
+    // #include <mach/mach_init.h> // on laisse tomber pour l'instantt...
+    // #include <mach/thread_policy.h> // beaucoup trop d'investissement nécessaire !
+    // #include <mach/sched.h> // -> pas trouvé !!!!!!!
+
+    #include <pthread.h>
+
+#else // - - - - - autre OS.... - - - - -
+
+#endif
 
 
 using namespace Miam;
@@ -45,8 +60,62 @@ Model::~Model()
 }
 
 
+
+
+
+
+// = = = = = = = = = = Periodic updates = = = = = = = = = =
+
+void Model::setHighThreadPriority()
+{
+    // Si possible : mise à un niveau de priorité pour le thread de mise à jour
+    // -> voire même un autre ordonnancement sous certains OS ?
+    
+#if defined(__MIAM_MAC_OS_X) // - - - - - Pour macOS - - - - - (à tester pour iOS, devrait être OK)
+    // On n'utilisera pas les fonctions d'accès direct à l'ordonnanceur MACH, trop complexe...
+    // - - Identification des politiques d'ordonnancement POSIX - -
+    std::map<int, std::string> policyToString;
+    policyToString[SCHED_FIFO] = "FIFO"; // 4
+    policyToString[SCHED_RR] = "Round-Robin"; // 2
+    policyToString[SCHED_OTHER] = "Other"; // 1
+    int requestedPolicy = SCHED_FIFO;
+    // - - Choix de la priorité - -
+    // Le 2 (c-à-d Round-Robin) est bien précisé dans la doc via terminal macOS...
+    int minPriority = sched_get_priority_min(requestedPolicy);
+    int maxPriority = sched_get_priority_max(requestedPolicy);
+    int requestedPriority = maxPriority;
+    if (minPriority == maxPriority)
+        std::cout << "[Model] The OS does not provide thread priorities." << std::endl;
+    // - - Application de la priorité - -
+    struct sched_param initialSchedParam;
+    int initialPolicy = 0;
+    pthread_getschedparam(pthread_self(), &initialPolicy, &initialSchedParam);
+    struct sched_param actualSchedParam;
+    actualSchedParam.sched_priority = requestedPriority;
+    pthread_setschedparam(pthread_self(), requestedPolicy, &actualSchedParam);
+    int actualPolicy = 0;
+    pthread_getschedparam(pthread_self(), &actualPolicy, &actualSchedParam);
+    // Infos graphiques
+    std::cout << "[Model Thread] Scheduling was changed from "
+    << policyToString[initialPolicy] << "@prio=" << initialSchedParam.sched_priority
+    << " to " << policyToString[actualPolicy] << "@prio=" << actualSchedParam.sched_priority
+    << std::endl
+    << "(" << policyToString[actualPolicy] << " scheduling: minPriority=" << minPriority
+    << ", maxPriority=" << maxPriority << ")"
+    << std::endl;
+    
+#else
+    /* - - - - - Pour les autres OS - - - - -
+     * à développer...
+     */
+    std::cout << "[Thread Modèle] Pas d'augmentation de priorité pour ce système d'exploitation." << std::endl;
+#endif
+}
+
 void Model::update()
 {
+    setHighThreadPriority();
+    
     while(continueUpdate)
     {
         updateThreadMeasurer.OnNewFrame();
@@ -134,6 +203,13 @@ void Model::update()
                                                                   - updateThreadMeasurer.GetElapsedTimeSinceLastNewFrame_us() ) );
     }
 }
+
+
+
+
+
+// = = = = = = = = = = Property tree (for XML) import/export = = = = = = = = = =
+
 
 void Model::SetConfigurationFromTree(bptree::ptree& tree)
 {

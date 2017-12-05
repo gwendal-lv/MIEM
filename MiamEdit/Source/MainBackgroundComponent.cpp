@@ -215,7 +215,7 @@ void MainBackgroundComponent::DisplayInfo(const String& message, int priority)
     {
         mainInfoLabel->setText(message, NotificationType::sendNotificationAsync);
         currentDisplayedInfoPriority = priority;
-        
+
         clearLabelTimer.StartTimer(); // will clear it after a precise time
     }
 }

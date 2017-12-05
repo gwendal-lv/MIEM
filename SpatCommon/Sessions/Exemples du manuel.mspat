@@ -118,8 +118,8 @@
                                 </geometry>
                                 <spatstate index="3"/>
                             </area>
-                            <area id="30" type="Exciter" index="4">
-                                <center x="0.4127800263554196" y="0.12723642473978444"/>
+                            <area id="41" type="Exciter" index="4">
+                                <center x="0.2945411547198114" y="0.52070026921652823"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>true</keep_ratio>
                                 <geometry>
@@ -135,7 +135,7 @@
             <canvas index="1">
                 <scenes>
                     <scene index="0">
-                        <name>Simili-faders classiques</name>
+                        <name>Simulation de faders classiques</name>
                         <areas>
                             <area id="7" type="SpatPolygon" index="0">
                                 <center x="0.26075225515463918" y="0.95673601017441856"/>
@@ -185,7 +185,7 @@
                                 </geometry>
                                 <spatstate index="1"/>
                             </area>
-                            <area id="31" type="Exciter" index="4">
+                            <area id="42" type="Exciter" index="4">
                                 <center x="0.76164263752507499" y="0.79761356184824217"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>true</keep_ratio>
@@ -195,7 +195,7 @@
                                 <is_round>true</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
-                            <area id="32" type="Exciter" index="5">
+                            <area id="43" type="Exciter" index="5">
                                 <center x="0.26014826221997711" y="0.1720109040467053"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>true</keep_ratio>
