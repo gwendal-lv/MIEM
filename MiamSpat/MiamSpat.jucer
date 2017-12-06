@@ -222,6 +222,8 @@
         </GROUP>
       </GROUP>
       <GROUP id="{B91B2137-DC4A-127C-0037-DB058876BEFA}" name="Utils">
+        <FILE id="ije12g" name="InteractionParameters.cpp" compile="1" resource="0"
+              file="../MiamCommon/Source/InteractionParameters.cpp"/>
         <FILE id="TnfISL" name="InteractionParameters.h" compile="0" resource="0"
               file="../MiamCommon/Source/InteractionParameters.h"/>
         <GROUP id="{4920C830-8E65-674A-98AF-BB4CAAEF77DC}" name="Math">

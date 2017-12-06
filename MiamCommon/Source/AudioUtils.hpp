@@ -56,10 +56,11 @@ namespace Miam
         
         /// \brief Transforme un volume normalisé en un autre volume normalisé,
         /// via une fonction puissance 2^(volume*facteur)
-        static T ApplyLowVolumePrecisionDistorsion(T inputVolume)
+        static T ApplyLowVolumePrecisionDistorsion(T inputVolume,
+                                                   T precisionFactor = InteractionParameters::LowVolumePrecisionFactor)
         {
-            return (std::pow(2, inputVolume * (T)Miam_LowVolumePrecisionFactor) - (T)1.0)
-                    / (std::pow(2, (T)Miam_LowVolumePrecisionFactor) - (T)1.0);
+            return (std::pow(2, inputVolume * precisionFactor) - (T)1.0)
+                    / (std::pow(2, precisionFactor) - (T)1.0);
         }
         
     };

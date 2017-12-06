@@ -259,13 +259,13 @@ void Exciter::updateExcitationAmounts()
     }
     
     // - - - - - Distorsion logarithmique, pour donner la précision aux faibles volumes - - - - -
-    // Voir article JIM 2015 pour + d'explications (même si dans l'article la disto était appliquée
-    // directement sur les poids d'interaction)
+    // Voir feuille de calcul Matlab + explications papier nécessaires....
     // on prépare déjà la normalisation qui suit
     double totalAudioExcitement = 0.0;
     for (auto &areaData : areasInteractingWith)
     {
-        areaData.ExcitementAmount.Audio = AudioUtils<double>::ApplyLowVolumePrecisionDistorsion(areaData.ExcitementAmount.Linear);
+        areaData.ExcitementAmount.Audio
+            = AudioUtils<double>::ApplyLowVolumePrecisionDistorsion(areaData.ExcitementAmount.Linear);
         totalAudioExcitement += areaData.ExcitementAmount.Audio;
     }
     

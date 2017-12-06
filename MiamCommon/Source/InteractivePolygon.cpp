@@ -146,11 +146,16 @@ double InteractivePolygon::ComputeInteractionWeight(bpt T)
         double angle = Math::ComputePositiveAngle(GT);
         weight = findSubTriangle(angle).ComputeInteractionWeight(T);
         
-        // Influence de la distance par rapport au centre
-        double normalizedDistanceFromCenter = distanceFromCenter/longestDistanceFromCenter;
-#define Miam_DistanceFromCenterInfluenceFactor (0.2) // test temporaire
+        // Influence *normalisée* de la distance par rapport au centre
+        double alpha = distanceFromCenter/longestDistanceFromCenter;
+        // Application d'une disto qui diminue le poids des FAIBLES poids
+        // quand on est LOIN du centre -> supprimée
+        //weight = std::pow(weight,
+        //                  1.0 + Miam_DistanceFromCenterInfluenceFactor_1 * alpha);
+        // Application d'une disto qui augmente le poids des FORTS poids
+        // quand on est PROCHE du centre
         weight = std::pow(weight,
-                          1.0 + Miam_DistanceFromCenterInfluenceFactor * normalizedDistanceFromCenter);
+                          1.0 - InteractionParameters::InfluenceOfDistanceFromCenter * (1.0-alpha) );
     }
     
     return weight;
