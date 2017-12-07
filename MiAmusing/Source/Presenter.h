@@ -64,7 +64,8 @@ namespace Amusing {
         
         // Conversion from areas to sources
 		//Presenter myPresenter;
-		int gamme[7] = {0,2,4,5,7,9,11};
+		//int gamme[7] = {0,2,4,5,7,9,11};
+		int gamme[5] = { 0,3,4,6,7};
 		struct Class1Compare
 		{
 			bool operator() (const Colour& lhs, const Colour& rhs) const

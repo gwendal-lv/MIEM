@@ -212,22 +212,25 @@ std::shared_ptr<AreaEvent> AmusingScene::DeleteSelectedArea()
 					}
 			for (int i = 0; i < (int)cursorToDeleteID.size(); i++)
 				currentExciters.erase(currentExciters.begin() + cursorToDeleteID[i]);*/
+			int previousCurrentIdx = -5;
 			int currentIdx = 0;
-			while (currentIdx != (int)currentExciters.size())
+			while (currentIdx != (int)currentExciters.size() && currentIdx != previousCurrentIdx)
 			{
-				for (int i = currentIdx; i < (int)currentExciters.size(); i++)
-				{
-					if (auto currentCursor = std::dynamic_pointer_cast<Cursor>(currentExciters[i]))
-						if (currentCursor->isLinkedTo(selectedCompleteArea))
-						{
-							currentCursor->LinkTo(nullptr,false);
-							if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
-								manager->OnInteraction(std::shared_ptr<AreaEvent>(new AreaEvent(currentCursor, AreaEventType::Deleted, (int)areas.size() + i, shared_from_this())));
-							currentIdx = i;
-							currentExciters.erase(currentExciters.begin() + i);
-						}
+				previousCurrentIdx = currentIdx;
+					for (int i = currentIdx; i < (int)currentExciters.size(); i++)
+					{
+						if (auto currentCursor = std::dynamic_pointer_cast<Cursor>(currentExciters[i]))
+							if (currentCursor->isLinkedTo(selectedCompleteArea))
+							{
+								currentCursor->LinkTo(nullptr, false);
+								if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
+									manager->OnInteraction(std::shared_ptr<AreaEvent>(new AreaEvent(currentCursor, AreaEventType::Deleted, (int)areas.size() + i, shared_from_this())));
+								currentIdx = i;
+								currentExciters.erase(currentExciters.begin() + i);
+							}
 
-				}
+					}
+				
 			}
 			selectedCompleteArea->deleteAllCursors();
 		}
