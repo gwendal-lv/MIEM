@@ -55,6 +55,7 @@ void OptionWindow::resized()
 	{
 		audioSetupComp->setItemHeight(20);
 		audioSetupComp->setBounds(0, 0, getWidth(), getHeight() - 30);
+		audioSetupComp->setItemHeight(getHeight() / 20);
 	}
 	OKbutton->setBounds(getWidth()/2 - 25, getHeight()-20,50,20);
 }

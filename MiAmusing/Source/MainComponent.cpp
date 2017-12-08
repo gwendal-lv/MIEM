@@ -43,7 +43,7 @@ void MainContentComponent::paint (Graphics& g)
 
     g.setFont (Font (16.0f));
     g.setColour (Colours::white);
-    g.drawText ("Hello World!", getLocalBounds(), Justification::centred, true);
+   // g.drawText ("Hello World!", getLocalBounds(), Justification::centred, true);
 }
 
 void MainContentComponent::resized()
@@ -63,6 +63,8 @@ void MainContentComponent::resized()
 		soundFilesManager->setBounds(toolbarWidth, 0, getLocalBounds().getWidth() - toolbarWidth, getLocalBounds().getHeight());
 	if(soundBrowser)
 		soundBrowser->setBounds(toolbarWidth, 0, getLocalBounds().getWidth() - toolbarWidth, getLocalBounds().getHeight());
+	if (optionWindow)
+		optionWindow->setBounds(toolbarWidth, 0, getLocalBounds().getWidth() - toolbarWidth, getLocalBounds().getHeight());
     //    multiCanvasComponent->setBounds(getLocalBounds());
 	//sceneEditionComponent->setBounds(0, 0, 50, getLocalBounds().getHeight());
 	//multiCanvasComponent->setBounds(50, 0, 550, getLocalBounds().getHeight());
@@ -105,7 +107,7 @@ void MainContentComponent::ShowDeviceOptionsDialog()
 {
 	addAndMakeVisible(optionWindow);//addAndMakeVisible(audioSetupComp);
 	multiCanvasComponent->setVisible(false);
-	optionWindow->setBounds(50, 0, 550, getLocalBounds().getHeight());//audioSetupComp->setBounds(50, 0, 550, getLocalBounds().getHeight());
+	optionWindow->setBounds(getLocalBounds().getWidth() / 12, 0, getLocalBounds().getWidth() - (getLocalBounds().getWidth() / 12), getLocalBounds().getHeight());
 	optionWindow->setVisible(true);//audioSetupComp->setVisible(true);
 	//multiCanvasComponent->ShowDeviceOptionsDialog(deviceManager);
 }
