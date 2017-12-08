@@ -262,7 +262,11 @@ std::shared_ptr<Cursor> CompletePolygon::getCursor(int idx)
 void CompletePolygon::Paint(Graphics& g)
 {
 
-
+	if (isActive && showBullsEye)
+	{
+		CanvasResizedBullsEye(parentCanvas);
+		PaintBullsEye(g);
+	}
 	//DBG("CompletePolygon::Paint");
 	EditablePolygon::Paint(g);
 	g.setColour(Colours::white);
@@ -285,13 +289,9 @@ void CompletePolygon::Paint(Graphics& g)
 	{
 		//DBG("paint cursor");
 		for(int i=0;i<(int)cursors.size();i++)
-		cursors[i]->Paint(g);
+			cursors[i]->Paint(g);
 	}
-	if (isActive && showBullsEye)
-	{
-		CanvasResizedBullsEye(parentCanvas);
-		PaintBullsEye(g);
-	}
+	
 }
 
 void CompletePolygon::lengthToPercent()
@@ -1193,7 +1193,9 @@ void CompletePolygon::CreateBullsEye()
 	{
 		radius[i] = startRadius + i*interval;//(i + 1)*0.15f / 2;
 		bullsEye.push_back( EditableEllipse(0, center, 2*radius[i], 2*radius[i], Colours::grey, 1.47f));
-		bullsEye.back().SetAlpha(0.0);
+		bullsEye.back().SetAlpha(1.0);
+		bullsEye.back().SetFillColour(Colour());
+		
 	}
 	circlesToShow[0] = true;
 	for (int i = 1; i < Nradius; ++i)
@@ -1206,6 +1208,7 @@ void CompletePolygon::PaintBullsEye(Graphics& g)
 {
 	for (int i = 0; i < (int)OnCircles.size(); ++i)
 	{
+		//bullsEye[OnCircles[i]].SetAlpha(1.0);
 		bullsEye[OnCircles[i]].Paint(g);
 			//bullsEye[i].Paint(g);
 	}

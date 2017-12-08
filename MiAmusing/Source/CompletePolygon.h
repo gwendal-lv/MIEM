@@ -53,7 +53,7 @@ namespace Amusing
 		
 
 		
-		void CanvasResized(SceneCanvasComponent* _parentCanvas);
+		void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
 		void Paint(Graphics& g) override;
 
 		void lengthToPercent();
