@@ -74,6 +74,7 @@ namespace Miam {
 
 		protected :
 		float xScale, yScale;
+		bool isFilled;
         
         public :
         /// \brief Destructor.
@@ -82,6 +83,7 @@ namespace Miam {
         
         //  - - - - - Display functions - - - - -
         public :
+		void setIsFilled(bool shouldBeFilled);
         virtual void Paint(Graphics& g) override;
         virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
         

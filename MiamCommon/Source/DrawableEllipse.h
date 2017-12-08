@@ -51,6 +51,7 @@ namespace Miam
 
 		// Display functions
 	public:
+		void setIsFilled(bool shouldBeFilled);
 		virtual void Paint(Graphics& g) override;
 		virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
 	
@@ -64,6 +65,8 @@ namespace Miam
 
 			virtual double computeXScale(float _canvasRatio);
 			virtual double computeYScale(float _canvasRatio);
+
+			bool isFilled;
 
 	};
 }

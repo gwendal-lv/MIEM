@@ -38,6 +38,9 @@ DrawableArea(areaTree)
     for (auto& point : polygonPoints)
         contourPoints.outer().push_back(point);
     contourPoints.outer().push_back(polygonPoints[0]);// contour closing
+
+	isFilled = true;
+
     // Actualisation graphique
     createJucePolygon();
 }
@@ -73,6 +76,8 @@ DrawablePolygon::DrawablePolygon(int64_t _Id, bpt _center, int pointsCount, floa
     }
 	 // to close the boost polygon
 	contourPoints.outer().push_back(bpt(center.get<0>() + radius*xScale, center.get<1>()));
+
+	isFilled = true;
 
     // Definition of the Juce polygon
     createJucePolygon();
@@ -146,12 +151,20 @@ DrawablePolygon::~DrawablePolygon()
 
 
 
+void DrawablePolygon::setIsFilled(bool shouldBeFilled)
+{
+	isFilled = shouldBeFilled;
+}
+
 // Called by the parent component (which is a canvas)
 void DrawablePolygon::Paint(Graphics& g)
 {
-    g.setColour(fillColour);
-    g.setOpacity(enableLowOpacityMode ? getLowFillOpacity() : fillOpacity);
-    g.fillPath(contour);
+	if (isFilled)
+	{
+		g.setColour(fillColour);
+		g.setOpacity(enableLowOpacityMode ? getLowFillOpacity() : fillOpacity);
+		g.fillPath(contour);
+	}
     
     g.setColour(contourColour);
     g.setOpacity(enableLowOpacityMode ? getLowFillOpacity() : fillOpacity);

@@ -801,8 +801,8 @@ bool AmusingScene::lookForAreasInteractions(std::shared_ptr<CompletePolygon> cur
 					}
 					else
 					{
-						ApplyFusion(currentPolygon, hitP, singleAreaE);
-						parentAreaStillExisting = false;
+						//ApplyFusion(currentPolygon, hitP, singleAreaE);
+						//parentAreaStillExisting = false;
 					}
 
 				}

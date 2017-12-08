@@ -910,14 +910,15 @@ std::shared_ptr<AreaEvent> CompletePolygon::intersection(std::shared_ptr<Complet
 	//DBG((String)areaTest + " >= " + (String)double(0.75 * hitArea) + " ou " + (String)double(0.75 * area));
 	std::shared_ptr<CompletePolygon> completeP;
 	std::shared_ptr<AreaEvent> areaE;
+	/*
 	if (areaInter >= 0.75 * hitArea || areaInter >= 0.75 * area)
 	{
 		//DBG("need To fusion ! : " + (String)areaInter + " >= " + (String)double(0.75 * hitArea) + " ou " + (String)double(0.75 * area));
 		completeP = fusion(hitPolygon, m_Id);
 		//DBG("fusionned");
 		areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeP, AreaEventType::Added));
-	}
-	else if(inter.size() >= 0)
+	}*/
+	if(inter.size() >= 0)
 	{
 		//DBG("number of polygon by intersection : " + (String)inter.size());
 		std::shared_ptr<MultiAreaEvent> multiE(new MultiAreaEvent());
@@ -1194,7 +1195,8 @@ void CompletePolygon::CreateBullsEye()
 		radius[i] = startRadius + i*interval;//(i + 1)*0.15f / 2;
 		bullsEye.push_back( EditableEllipse(0, center, 2*radius[i], 2*radius[i], Colours::grey, 1.47f));
 		bullsEye.back().SetAlpha(1.0);
-		bullsEye.back().SetFillColour(Colour());
+		//bullsEye.back().Set
+		bullsEye.back().setIsFilled(false);
 		
 	}
 	circlesToShow[0] = true;

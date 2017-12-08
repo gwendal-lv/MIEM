@@ -39,6 +39,8 @@ DrawableArea(areaTree)
         rotationAngle = 0.0;
     }
     
+	isFilled = true;
+
     // Actualisation graphique
     createJucePolygon();
 }
@@ -62,6 +64,8 @@ DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b,
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() + (b / 2)*yScale));
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>() - (a / 2)*xScale, center.get<1>()));
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() - (b / 2)*yScale));
+
+	isFilled = true;
 
 	createJucePolygon();
 }
@@ -87,12 +91,20 @@ DrawableEllipse::~DrawableEllipse()
 {
 }
 
+void DrawableEllipse::setIsFilled(bool shouldBeFilled)
+{
+	isFilled = shouldBeFilled;
+}
+
 // Called by the parent component (which is a canvas)
 void DrawableEllipse::Paint(Graphics& g)
 {
-	g.setColour(fillColour);
-    g.setOpacity(enableLowOpacityMode ? getLowFillOpacity() : fillOpacity);
-	g.fillPath(contour);
+	if (isFilled)
+	{
+		g.setColour(fillColour);
+		g.setOpacity(enableLowOpacityMode ? getLowFillOpacity() : fillOpacity);
+		g.fillPath(contour);
+	}
 
 	g.setColour(contourColour);
     g.setOpacity(enableLowOpacityMode ? getLowFillOpacity() : fillOpacity);
