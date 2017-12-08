@@ -36,7 +36,7 @@ BackgroundComponent::BackgroundComponent ()
     //[/Constructor_pre]
 
     addAndMakeVisible (mainInfoLabel = new Label ("Main Info label",
-                                                  TRANS("MIAM Spat")));
+                                                  TRANS("MIEM Spat Player")));
     mainInfoLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     mainInfoLabel->setJustificationType (Justification::centredTop);
     mainInfoLabel->setEditable (false, false, false);
@@ -160,9 +160,10 @@ BEGIN_JUCER_METADATA
   <BACKGROUND backgroundColour="ff303030"/>
   <LABEL name="Main Info label" id="346700aa23dd510d" memberName="mainInfoLabel"
          virtualName="" explicitFocusOrder="0" pos="8 0Rr 54M 20" textCol="ff909090"
-         edTextCol="ff000000" edBkgCol="0" labelText="MIAM Spat" editableSingleClick="0"
-         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
-         fontsize="15" kerning="0" bold="0" italic="0" justification="12"/>
+         edTextCol="ff000000" edBkgCol="0" labelText="MIEM Spat Player"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
+         justification="12"/>
   <IMAGEBUTTON name="new button" id="83c438e933714a80" memberName="imageButton"
                virtualName="" explicitFocusOrder="0" pos="0Rr 0Rr 28 28" buttonText="new button"
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"

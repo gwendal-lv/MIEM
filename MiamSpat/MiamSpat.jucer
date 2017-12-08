@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="xCUiGi" name="MIAM Spat Player" projectType="guiapp" version="1.0.0"
-              bundleIdentifier="com.yourcompany.MiamSpatPlayer" includeBinaryInAppConfig="1"
+<JUCERPROJECT id="xCUiGi" name="MIEM Spat Player" projectType="guiapp" version="0.1.0"
+              bundleIdentifier="com.glv.MIEMSpatPlayer" includeBinaryInAppConfig="1"
               jucerVersion="5.2.0" displaySplashScreen="0" reportAppUsage="0"
-              splashScreenColour="Dark" cppLanguageStandard="11" companyCopyright="">
-  <MAINGROUP id="m8VZoU" name="MIAM Spat Player">
+              splashScreenColour="Dark" cppLanguageStandard="11" companyCopyright="Gwendal Le Vaillant (IRISIB/LARAS, UMons)"
+              companyName="IRISIB/LARAS, UMons" companyWebsite="htpp://laras.be"
+              companyEmail="glevaillant@he2b.be">
+  <MAINGROUP id="m8VZoU" name="MIEM Spat Player">
     <GROUP id="{D93792BB-5B8B-5A35-D554-58C4F4E4D3DA}" name="Source">
       <FILE id="oaxiVA" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <GROUP id="{23BAC1CB-3D2E-7345-7D78-B522A9B204B9}" name="Model">
@@ -268,10 +270,10 @@
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX" extraDefs="__MIAM_MAC_OS_X">
       <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MiamSpat"
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MiemSpatPlayer"
                        headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../MiamCommon/Source/"
-                       defines="__MIAM_DEBUG" enablePluginBinaryCopyStep="1"/>
-        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MiamSpat"
+                       defines="__MIAM_DEBUG&#10;" enablePluginBinaryCopyStep="1"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MiemSpatPlayer"
                        headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../MiamCommon/Source/"
                        enablePluginBinaryCopyStep="1"/>
       </CONFIGURATIONS>
@@ -295,11 +297,11 @@
     <VS2015 targetFolder="Builds/VisualStudio2015" windowsTargetPlatformVersion="8.1">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
-                       isDebug="1" optimisation="1" targetName="MiamSpatPlayer" headerPath="..\..\..\&#10;..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"
+                       isDebug="1" optimisation="1" targetName="MiemSpatPlayer" headerPath="..\..\..\&#10;..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"
                        defines="__MIAM_DEBUG" debugInformationFormat="ProgramDatabase"
                        enablePluginBinaryCopyStep="0"/>
         <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
-                       isDebug="0" optimisation="3" targetName="MiamSpatPlayer" headerPath="..\..\..\&#10;..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"
+                       isDebug="0" optimisation="3" targetName="MiemSpatPlayer" headerPath="..\..\..\&#10;..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"
                        debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
                        linkTimeOptimisation="1"/>
       </CONFIGURATIONS>
@@ -324,10 +326,10 @@
                    extraDefs="__MIAMOBILE" androidMinimumSDK="21">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" androidArchitectures="armeabi armeabi-v7a x86" isDebug="1"
-                       optimisation="1" targetName="MiamSpat" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../SpatCommon/Source/"
+                       optimisation="1" targetName="MiemSpatPlayer" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../SpatCommon/Source/"
                        defines="__MIAM_DEBUG"/>
         <CONFIGURATION name="Release" androidArchitectures="armeabi armeabi-v7a x86"
-                       isDebug="0" optimisation="3" targetName="MiamSpat" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../SpatCommon/Source/"/>
+                       isDebug="0" optimisation="3" targetName="MiemSpatPlayer" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../SpatCommon/Source/"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../JUCE/modules"/>

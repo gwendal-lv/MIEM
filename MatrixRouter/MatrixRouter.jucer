@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="Eo3Z3f" name="MIAM Matrix Router" projectType="audioplug"
-              version="1.0.1" bundleIdentifier="com.glv.MIAMMatrixRouter" includeBinaryInAppConfig="1"
-              buildVST="0" buildVST3="0" buildAU="1" buildAUv3="0" buildRTAS="0"
-              buildAAX="0" pluginName="MIAM Matrix Router" pluginDesc="OSC controllable matrix router, for MIAM Spat Player"
+<JUCERPROJECT id="Eo3Z3f" name="MIEM Matrix Router" projectType="audioplug"
+              version="0.1.0" bundleIdentifier="com.glv.MIEMMatrixRouter" includeBinaryInAppConfig="1"
+              buildVST="1" buildVST3="0" buildAU="1" buildAUv3="0" buildRTAS="0"
+              buildAAX="0" pluginName="MIEM Matrix Router" pluginDesc="OSC controllable matrix router, for MIEM Spat Player"
               pluginManufacturer="G. Le Vaillant" pluginManufacturerCode="Manu"
               pluginCode="Eo3z" pluginChannelConfigs="{8,8}" pluginIsSynth="0"
               pluginWantsMidiIn="0" pluginProducesMidiOut="0" pluginIsMidiEffectPlugin="0"
-              pluginEditorRequiresKeys="0" pluginAUExportPrefix="MIAMMatrixRouterAU"
-              pluginRTASCategory="" aaxIdentifier="com.yourcompany.MIAMMatrixRouter"
+              pluginEditorRequiresKeys="0" pluginAUExportPrefix="MIEMMatrixRouterAU"
+              pluginRTASCategory="" aaxIdentifier="com.glv.MIEMMatrixRouter"
               pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="5.2.0"
               defines="" displaySplashScreen="0" reportAppUsage="0" splashScreenColour="Dark"
-              buildStandalone="0" enableIAA="0" companyName="IRISIB-LARAS, UMons"
+              buildStandalone="0" enableIAA="0" companyName="IRISIB/LARAS, UMons"
               companyWebsite="http://www.laras.be" companyEmail="glevaillant@he2b.be"
-              cppLanguageStandard="11" companyCopyright="">
-  <MAINGROUP id="uSK6Ed" name="MIAM Matrix Router">
+              cppLanguageStandard="11" companyCopyright="Gwendal Le Vaillant (IRISIB/LARAS, UMons)">
+  <MAINGROUP id="uSK6Ed" name="MIEM Matrix Router">
     <GROUP id="{7E647B1E-1C9F-BD65-5FF1-5839B4766A43}" name="Source">
       <GROUP id="{E44EFD07-3B55-8033-8C2F-DBABCD5578FE}" name="View">
         <FILE id="YsIVqN" name="OscMatrixComponent.cpp" compile="1" resource="0"
@@ -261,7 +261,7 @@
         <MODULEPATH id="juce_audio_utils" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
-    <VS2015 targetFolder="Builds/VisualStudio2015">
+    <VS2015 targetFolder="Builds/VisualStudio2015" windowsTargetPlatformVersion="8.1">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
                        isDebug="1" optimisation="1" targetName="MatrixRouter" headerPath="..\..\..\&#10;..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\"
