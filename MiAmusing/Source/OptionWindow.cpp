@@ -20,12 +20,18 @@ OptionWindow::OptionWindow(MainContentComponent* _mainComponent)
 	OKbutton->addListener(this);
 	addAndMakeVisible(OKbutton);
 
+	cancelButton = new TextButton();
+	cancelButton->setButtonText("Cancel");
+	cancelButton->addListener(this);
+	addAndMakeVisible(cancelButton);
+
 	mainComponent = _mainComponent;
 }
 
 OptionWindow::~OptionWindow()
 {
 	delete OKbutton;
+	delete cancelButton;
 }
 
 void OptionWindow::CompleteInitialization(std::shared_ptr<AudioDeviceManager> m_deviceManager)
@@ -57,13 +63,20 @@ void OptionWindow::resized()
 		audioSetupComp->setBounds(0, 0, getWidth(), getHeight() - 30);
 		audioSetupComp->setItemHeight(getHeight() / 20);
 	}
-	OKbutton->setBounds(getWidth()/2 - 25, getHeight()-20,50,20);
+	OKbutton->setBounds(getWidth()/4 - 25, getHeight()-20,50,20);
+	cancelButton->setBounds(3 * getWidth() / 4 - 25, getHeight() - 20, 50, 20);
 }
 
 void OptionWindow::buttonClicked(Button * button)
 {
+	
 	if (button == OKbutton)
 		mainComponent->CloseOptionWindow();//DBG("OK clicked"); // dire au mainContentComponent de revenir aux scenes
+	else if (button == cancelButton)
+	{
+		audioSetupComp->reloadPreviousState();
+		mainComponent->CloseOptionWindow();
+	}
 }
 
 
@@ -80,4 +93,9 @@ void OptionWindow::changeListenerCallback(ChangeBroadcaster*)
 	DBG("Active input channels: " + getListOfActiveBits(device->getActiveInputChannels()));
 	DBG("Output channel names: " + device->getOutputChannelNames().joinIntoString(", "));
 	DBG("Active output channels: " + getListOfActiveBits(device->getActiveOutputChannels()));*/
+}
+
+void OptionWindow::saveAudioDeviceCurrentState()
+{
+	audioSetupComp->saveAudioDeviceCurrentState();
 }

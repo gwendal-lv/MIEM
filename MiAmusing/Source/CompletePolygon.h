@@ -71,7 +71,15 @@ namespace Amusing
 		bool getAllPercentages(int idx, double &value);
 		bool getAllDistanceFromCenter(int idx, int &value);
 
+		// return center Position in Pixels;
 		bpt getCenter();
+
+		// return normalized center position
+		bpt getCenterNormalized();
+
+		// return normalized radius
+		float getNormalizedRadius();
+
 		void setCursorsSpeed(int idx, double newSize);
 		bpt computeLinearCursorCenter(double p);
 		bpt computeAngularCursorCenter(double p);

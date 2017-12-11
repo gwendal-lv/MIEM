@@ -45,6 +45,7 @@ public:
 
         mainWindow = new MainWindow (getApplicationName());
         mainWindow->setResizable(true, true);
+		mainWindow->setFullScreen(true);
         
         // Instanciation of the 3 main parts of the application : Model, Presenter, View
         MainContentComponent* mainContentComponent = dynamic_cast<MainContentComponent*>(mainWindow->getChildComponent(0));

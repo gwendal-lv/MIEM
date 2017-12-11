@@ -42,6 +42,9 @@ public:
 	void resized() override;
 	void setItemHeight(int newItemHeight);
 
+	void saveAudioDeviceCurrentState();
+	void reloadPreviousState();
+
 	void removeAllChangeListener();
 
 private:
@@ -58,6 +61,9 @@ private:
 	//ScopedPointer<Label> midiInputsLabel, midiOutputLabel;
 	//ScopedPointer<TextButton> bluetoothButton;
 	
+	String savedAudioDeviceType;
+	AudioDeviceManager::AudioDeviceSetup savedState;
+	bool internalSynthButtonStateSaved;
 
 	void buttonStateChanged(Button*) override;
 	void buttonClicked(Button*) override;

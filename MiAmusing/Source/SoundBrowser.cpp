@@ -47,6 +47,11 @@ SoundBrowser::SoundBrowser() : soundsWildcardFilter("*.wav;*.aiff", "*", "Sound 
 	closeButton->addListener(this);
 	addAndMakeVisible(closeButton);
 
+	cancelButton = new TextButton();
+	cancelButton->setButtonText("Cancel");
+	cancelButton->addListener(this);
+	addAndMakeVisible(cancelButton);
+
 	filesExplorerOpen = false;
 }
 
@@ -86,7 +91,10 @@ void SoundBrowser::resized()
 	binaryDataExplorerButton->setBounds(buttonsLocation.removeFromLeft((buttonsLocation.getWidth()-4)/2));
 	buttonsLocation.removeFromLeft(4);
 	filesExplorerButton->setBounds(buttonsLocation);
-	closeButton->setBounds(r.removeFromBottom(24));
+
+	Rectangle<int> buttonsArea = r.removeFromBottom(24);
+	closeButton->setBounds(buttonsArea.removeFromLeft(buttonsArea.getWidth()/2));
+	cancelButton->setBounds(buttonsArea);
 
 	r.removeFromBottom(4);
 	fileTree.setBounds(r);
@@ -97,11 +105,13 @@ void SoundBrowser::buttonClicked(Button* buttonThatWasClicked)
 {
 	if (buttonThatWasClicked == closeButton)
 	{
-		if(filesExplorerOpen)
+		if (filesExplorerOpen)
 			mainComponent->CloseSoundBrowser(pathToSound);
 		else
 			mainComponent->CloseSoundBrowser(binaryDataExplorer->getSelectedFileName());
 	}
+	else if (buttonThatWasClicked == cancelButton)
+		mainComponent->CloseSoundBrowser("");
 	else if (buttonThatWasClicked == filesExplorerButton)
 	{
 		filesExplorerButton->setAlpha(1.0f);

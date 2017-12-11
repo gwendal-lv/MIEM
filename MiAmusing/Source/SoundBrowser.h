@@ -52,6 +52,7 @@ private:
 	ScopedPointer<TextButton> binaryDataExplorerButton;
 	ScopedPointer<TextButton> filesExplorerButton;
 	ScopedPointer<TextButton> closeButton;
+	ScopedPointer<TextButton> cancelButton;
 
 	ScopedPointer<BinaryDataExplorer> binaryDataExplorer;
 

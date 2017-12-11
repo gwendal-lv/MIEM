@@ -74,7 +74,7 @@ namespace Amusing {
 		Synthesiser synth;
 		AudioRecorder recorder;
 		MidiMessageCollector midiCollector; // midi message to send to the internal synth
-		AudioFormatManager audioFormatManager; // so we can read some audio format
+		//AudioFormatManager audioFormatManager; // so we can read some audio format
 
 		bool playInternalSynth;
 		void startRecording();

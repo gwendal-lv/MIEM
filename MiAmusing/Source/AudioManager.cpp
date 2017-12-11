@@ -100,7 +100,7 @@ void AudioManager::prepareToPlay(int samplesPerBlockExpected, double _sampleRate
 	else
 	{
 		playInternalSynth = false;
-		audioFormatManager.clearFormats();
+		//audioFormatManager.clearFormats();
 	}
 	
 	int numOutChannels = model->sharedAudioDeviceManager->getCurrentAudioDevice()->getActiveOutputChannels().getHighestBit() + 1;
@@ -316,10 +316,10 @@ void AudioManager::startRecording()
 void AudioManager::setUsingSampledSound()
 {
 	WavAudioFormat wavFormat;
-	audioFormatManager.registerBasicFormats();
+	//audioFormatManager.registerBasicFormats();
 	//const File file("C:\\Users\\ayup1\\Documents\\Juce Test Recording 0.wav"); // Downloads\\Bass-Drum-1.wav");
 	//ScopedPointer<AudioFormatReader> audioReader = audioFormatManager.createReaderFor(file);
-
+	/*
 	ScopedPointer<AudioFormatReader> audioReader(wavFormat.createReaderFor(new MemoryInputStream(BinaryData::cello_wav,
 	BinaryData::cello_wavSize,
 	false),
@@ -327,7 +327,7 @@ void AudioManager::setUsingSampledSound()
 
 	BigInteger allNotes;
 	allNotes.setRange(0, 128, true);
-
+	*/
 	//synth.clearSounds();
 	//synth.addSound(new SamplerSound("demo sound",
 	//	*audioReader,

@@ -84,8 +84,202 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 {
 	// centered grey Hexagon !...
 	//DBG("creation du polygon a N cotes");
+	float r = 0.15f;
+
+	bpt center(0.5f, 0.5f);
+	if (areas.size() == 0)
+		center = bpt(0.5f, 0.5f);
+	else if (areas.size() < 2)
+	{
+		if (auto complete = std::dynamic_pointer_cast<CompletePolygon>(areas[0]))
+		{
+			bpt oldCenter = complete->getCenterNormalized();
+
+			if (oldCenter.get<0>() < 0.3)
+				center.set<0>(1.0f - 0.15f);
+			else if (oldCenter.get<0>() > 0.7)
+				center.set<0>(0.15f);
+			else if (oldCenter.get<0>() < 1.0f - oldCenter.get<0>()) // il y a plus de place à droite
+				center.set<0>(oldCenter.get<0>() + 0.15f + (1.0f - oldCenter.get<0>() - 0.15f) / 2.0f);
+			else
+				center.set<0>((oldCenter.get<0>() - 0.15f) / 2.0f);
+
+			if (oldCenter.get<1>() < 0.3)
+				center.set<1>(1.0f - 0.15f);
+			else if (oldCenter.get<1>() > 0.7)
+				center.set<1>(0.15f);
+			else if (oldCenter.get<1>() < 1.0f - oldCenter.get<1>()) // il y a plus de place à droite
+				center.set<1>(oldCenter.get<1>() + 0.15f + (1.0f - oldCenter.get<1>() - 0.15f) / 2.0f);
+			else
+				center.set<1>((oldCenter.get<1>() - 0.15f) / 2.0f);
+
+		}
+	}
+	else
+	{
+		// rassemble toutes les positions selon les axes X et Y, et rayons des formes déjà présentes
+		struct SortHelper
+		{
+			float coord;
+			float radius;
+		};
+		std::vector<SortHelper> xValue;
+		std::vector<SortHelper> yValue;
+		for (int i = 0; i < areas.size(); ++i)
+		{
+			if (auto complete = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
+			{
+				SortHelper newElt;
+				newElt.radius = complete->getNormalizedRadius();
+				newElt.coord = complete->getCenterNormalized().get<0>();
+				xValue.push_back(newElt);
+				newElt.coord = complete->getCenterNormalized().get<1>();
+				yValue.push_back(newElt);
+			}
+		}
+
+		/// tri des positions sur les deux axes
+		std::sort(xValue.begin(), xValue.end(), [](SortHelper a, SortHelper b) {return (a.coord < b.coord); });
+		std::sort(yValue.begin(), yValue.end(), [](SortHelper a, SortHelper b) {return (a.coord < b.coord); });
+
+		std::vector<float> xSpaces;
+		std::vector<float> ySpaces;
+		std::vector<bool> xOccupied;
+		std::vector<bool> yOccupied;
+
+		xSpaces.push_back(0.0f);
+		ySpaces.push_back(0.0f);
+		std::map<std::pair<int, int>, bool> occupied;
+		//xOccupied.push_back(false);
+		//yOccupied.push_back(false);
+		int previousX(0), previousY(0);
+		for (int i = 0; i < xValue.size(); ++i)
+		{
+			int idX, idY;
+			float minX = xValue[i].coord - xValue[i].radius;
+			float maxX = xValue[i].coord + xValue[i].radius;
+			float minY = yValue[i].coord - yValue[i].radius;
+			float maxY = yValue[i].coord + yValue[i].radius;
+			if (minX > xSpaces[previousX])
+			{
+				xSpaces.push_back(minX);
+				previousX++;
+				//xOccupied.push_back(true);
+				idX = xSpaces.size() -1;
+			}
+			else
+				idX = previousX; //xOccupied[xOccupied.size()-1] = true;
+			if (maxX < 1.0f)
+			{
+				xSpaces.push_back(maxX);
+				previousX++;
+				//xOccupied.push_back(false);
+			}
+
+			if (minY > ySpaces[previousY])
+			{
+				ySpaces.push_back(minY);
+				previousY++;
+				//yOccupied.push_back(true);
+				idY = ySpaces.size() -1;
+			}
+			else
+				idY = previousY; //yOccupied[yOccupied.size()-1] = true;
+			if (maxY < 1.0f)
+			{
+				ySpaces.push_back(maxY);
+				previousY++;
+				//yOccupied.push_back(false);
+			}
+			occupied[std::pair<int, int>(idX, idY)]= true;
+
+		}
+		xSpaces.push_back(1.0f);
+		ySpaces.push_back(1.0f);
+
+		std::vector<float> surfaces;
+		int W = xSpaces.size() - 1;
+		int H = ySpaces.size() - 1;
+		for (int i = 0; i < H; ++i)
+		{
+			for (int j = 0; j < W; ++j)
+			{
+				if (occupied.find(std::pair<int,int>(i,j)) != occupied.end())
+					surfaces.push_back(0.0f);
+				else
+					surfaces.push_back((xSpaces[j + 1] - xSpaces[j]) * (ySpaces[i + 1] - ySpaces[i]));
+			}
+		}
+		auto Smax = std::max_element(surfaces.begin(),surfaces.end());
+		int Imax = std::distance(surfaces.begin(), Smax);
+		int Hmax = Imax % W;
+		int Wmax = (Imax - Hmax) / W;
+		float newX = (xSpaces[Wmax + 1] + xSpaces[Wmax])/2.0f;
+		float newY = (ySpaces[Hmax + 1] + ySpaces[Hmax]) / 2.0f;
+		center = bpt(newX, newY);
+
+
+		/*
+		xSpaces.push_back(xValue[0].coord - xValue[0].radius);
+		ySpaces.push_back(yValue[0].coord - yValue[0].radius);
+		for (int i = 0; i < xValue.size() - 1; ++i)
+		{
+			xSpaces.push_back((xValue[i + 1].coord - xValue[i + 1].radius) - (xValue[i].coord + xValue[i].radius));
+			ySpaces.push_back((yValue[i + 1].coord - yValue[i + 1].radius) - (yValue[i].coord + yValue[i].radius));
+		}
+		xSpaces.push_back(1.0f - (xValue[xValue.size() - 1].coord + xValue[xValue.size() - 1].radius));
+		ySpaces.push_back(1.0f - (yValue[yValue.size() - 1].coord + yValue[yValue.size() - 1].radius));
+
+		/// recherche du plus grand espace
+		auto maxItX = std::max_element(xSpaces.begin(), xSpaces.end());
+		int idxX = std::distance(xSpaces.begin(), maxItX);
+
+		auto maxItY = std::max_element(ySpaces.begin(), ySpaces.end());
+		int idxY = std::distance(ySpaces.begin(), maxItY);
+
+		/// calcul de la position
+		// coordonnée X
+		float X = 0.0f;
+		if (idxX == 0)
+		{
+			// calcul à partir du premier elt de xValue
+			X = (*maxItX) / 2.0;
+		}
+		else if (std::distance(maxItX, xSpaces.end()) == 0)
+		{
+			// calcul à partir du dernier elt de xValue
+			X = xValue.end()->coord + xValue.end()->radius + (*maxItX) / 2.0f;
+		}
+		else
+		{
+			// calcul à partir de l'elt idx - 1
+			X = xValue[idxX - 1].coord + xValue[idxX - 1].radius + (*maxItX)/2.0;
+		}
+
+		// coordonnée Y
+		float Y = 0.0f;
+		if (idxX == 0)
+		{
+			// calcul à partir du premier elt de xValue
+			Y = (*maxItY) / 2.0;
+		}
+		else if (std::distance(maxItY, ySpaces.end()) == 0)
+		{
+			// calcul à partir du dernier elt de xValue
+			Y = yValue.end()->coord + yValue.end()->radius + (*maxItY) / 2.0f;
+		}
+		else
+		{
+			// calcul à partir de l'elt idx - 1
+			Y = yValue[idxY - 1].coord + yValue[idxY - 1].radius + (*maxItY) / 2.0;
+		}
+		center = bpt(X, Y);
+		*/
+	}
+	
+
 	std::shared_ptr<CompletePolygon> newPolygon(new CompletePolygon(nextAreaId,
-		bpt(0.5f, 0.5f), N, 0.15f,
+		center, N, r,
 		Colours::grey,
 		canvasComponent->GetRatio()));
 	newPolygon->SetActive(false);
@@ -133,6 +327,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 	//}
 	newPolygon->setCursorVisible(true, canvasComponent);
 	std::shared_ptr<AreaEvent> areaE = AddArea(newPolygon);
+
 
 	//DBG("a la creation : size = " + (String)newPolygon->GetContourSize());
 	// Actual adding of this new polygon

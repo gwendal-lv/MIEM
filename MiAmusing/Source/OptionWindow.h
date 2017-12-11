@@ -31,8 +31,11 @@ namespace Amusing
 
 		void changeListenerCallback(ChangeBroadcaster*) override;
 
+		void saveAudioDeviceCurrentState();
+
 	private:
 		TextButton* OKbutton;
+		TextButton* cancelButton;
 		ScopedPointer<AudioDeviceAndMidiOutputSelectorComponent> audioSetupComp;
 		MainContentComponent* mainComponent;
 		std::shared_ptr<AudioDeviceManager> deviceManager;

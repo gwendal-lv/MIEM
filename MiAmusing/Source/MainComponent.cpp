@@ -105,6 +105,7 @@ void MainContentComponent::SetMiamView(Amusing::View* _view)
 
 void MainContentComponent::ShowDeviceOptionsDialog()
 {
+	optionWindow->saveAudioDeviceCurrentState();
 	addAndMakeVisible(optionWindow);//addAndMakeVisible(audioSetupComp);
 	multiCanvasComponent->setVisible(false);
 	optionWindow->setBounds(getLocalBounds().getWidth() / 12, 0, getLocalBounds().getWidth() - (getLocalBounds().getWidth() / 12), getLocalBounds().getHeight());
@@ -141,8 +142,11 @@ void MainContentComponent::OpenSoundBrowser(int idx, Colour concernedColour)//Co
 
 void MainContentComponent::CloseSoundBrowser(String m_path)
 {
-	soundFilesManager->setCurrentSoundFilePath(m_path);
-	presenter->setColorPath(idxToAssociate, colorToAssociate, m_path);
+	if (m_path != "")
+	{
+		soundFilesManager->setCurrentSoundFilePath(m_path);
+		presenter->setColorPath(idxToAssociate, colorToAssociate, m_path);
+	}
 	soundFilesManager->setVisible(true);
 	soundBrowser->setVisible(false);
 }

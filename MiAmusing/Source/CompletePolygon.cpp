@@ -1253,6 +1253,20 @@ bpt CompletePolygon::getCenter()
 	return centerInPixels;
 }
 
+bpt CompletePolygon::getCenterNormalized()
+{
+	return center;
+}
+
+float CompletePolygon::getNormalizedRadius()
+{
+	float distance = 0.0f;
+	for (int i = 0; i < contourPoints.outer().size(); ++i)
+		if (boost::geometry::distance(contourPoints.outer().at(i), center) > distance)
+			distance = boost::geometry::distance(contourPoints.outer().at(i), center);
+	return distance;
+}
+
 void CompletePolygon::setCursorsSpeed(int idx, double newSize)
 {
 	if (newSize == 0)
