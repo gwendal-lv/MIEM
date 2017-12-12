@@ -458,7 +458,11 @@ std::shared_ptr<AreaEvent> AmusingScene::DeleteSelectedArea()
 		
 		return deleteAreaByUniqueId(selectedAreaBackup->GetId());
 	}
-	else throw std::runtime_error("Impossible to delete the selected area (no area selected");
+	else
+	{
+		DBG("Impossible to delete the selected area (no area selected");
+		return std::shared_ptr<AreaEvent> (new AreaEvent());
+	}
 }
 
 std::shared_ptr<AreaEvent> AmusingScene::DeleteCursor(std::shared_ptr<Cursor> cursorToDelete)
