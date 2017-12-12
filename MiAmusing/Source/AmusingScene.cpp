@@ -87,6 +87,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 	float r = 0.15f;
 
 	bpt center(0.5f, 0.5f);
+	/*
 	if (areas.size() == 0)
 		center = bpt(0.5f, 0.5f);
 	else if (areas.size() < 2)
@@ -166,14 +167,25 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 				previousX++;
 				//xOccupied.push_back(true);
 				idX = xSpaces.size() -1;
+
+				if (maxX < 1.0f)
+				{
+					xSpaces.push_back(maxX);
+					previousX++;
+					//xOccupied.push_back(false);
+				}
 			}
 			else
-				idX = previousX; //xOccupied[xOccupied.size()-1] = true;
-			if (maxX < 1.0f)
 			{
-				xSpaces.push_back(maxX);
-				previousX++;
-				//xOccupied.push_back(false);
+				idX = previousX; //xOccupied[xOccupied.size()-1] = true;
+				if (maxX < 1.0f)
+				{
+					xSpaces[previousX] = maxX;
+					//previousX++;
+					//xOccupied.push_back(false);
+				}
+				else
+					xSpaces[previousX] = 1.0f;
 			}
 
 			if (minY > ySpaces[previousY])
@@ -182,20 +194,32 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 				previousY++;
 				//yOccupied.push_back(true);
 				idY = ySpaces.size() -1;
+				if (maxY < 1.0f)
+				{
+					ySpaces.push_back(maxY);
+					previousY++;
+					//yOccupied.push_back(false);
+				}
 			}
 			else
-				idY = previousY; //yOccupied[yOccupied.size()-1] = true;
-			if (maxY < 1.0f)
 			{
-				ySpaces.push_back(maxY);
-				previousY++;
-				//yOccupied.push_back(false);
+				idY = previousY; //yOccupied[yOccupied.size()-1] = true;
+				if (maxY < 1.0f)
+				{
+					ySpaces[previousY] = maxY;
+					//previousY++;
+					//yOccupied.push_back(false);
+				}
+				else
+					ySpaces[previousY] = 1.0f;
 			}
 			occupied[std::pair<int, int>(idX, idY)]= true;
 
 		}
-		xSpaces.push_back(1.0f);
-		ySpaces.push_back(1.0f);
+		if(xSpaces[xSpaces.size()-1] != 1.0f)
+			xSpaces.push_back(1.0f);
+		if(ySpaces[ySpaces.size() - 1] != 1.0f)
+			ySpaces.push_back(1.0f);
 
 		std::vector<float> surfaces;
 		int W = xSpaces.size() - 1;
@@ -274,10 +298,10 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 			Y = yValue[idxY - 1].coord + yValue[idxY - 1].radius + (*maxItY) / 2.0;
 		}
 		center = bpt(X, Y);
-		*/
+		
 	}
 	
-
+	*/
 	std::shared_ptr<CompletePolygon> newPolygon(new CompletePolygon(nextAreaId,
 		center, N, r,
 		Colours::grey,
