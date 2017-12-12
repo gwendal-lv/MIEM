@@ -59,6 +59,7 @@ namespace Miam
 			
 			bool SizeChanged(double sizeFactor, bool minSize);
 			void Rotate(double Radian);
+			void updateContourPoints();
 
 		protected:
 			void recreateNormalizedPoints() override;

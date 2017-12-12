@@ -794,6 +794,7 @@ AreaEventType CompletePolygon::TryMovePoint(const Point<double>& newLocation)
 			{
 				startRadius = newStartRadius;
 				radius[i] = newRadius; //startRadius + i*interval;
+				bullsEye[i].updateContourPoints();
 			}
 		}
 	}
@@ -1193,7 +1194,7 @@ void CompletePolygon::CreateBullsEye()
 	for (int i = 0; i < Nradius; ++i)
 	{
 		radius[i] = startRadius + i*interval;//(i + 1)*0.15f / 2;
-		bullsEye.push_back( EditableEllipse(0, center, 2*radius[i], 2*radius[i], Colours::grey, 1.47f));
+		bullsEye.push_back( EditableEllipse(0, center, 2*radius[i], Colours::grey, 1.47f));
 		bullsEye.back().SetAlpha(1.0);
 		//bullsEye.back().Set
 		bullsEye.back().setIsFilled(false);

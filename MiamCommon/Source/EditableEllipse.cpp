@@ -340,9 +340,7 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 			bmanipulationPointInPixels = newManipulationPoint;
 		}
 
-		contourPoints.clear();
-		boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scaler(1 / ((double)parentCanvas->getWidth()), 1 / ((double)parentCanvas->getHeight()));
-		boost::geometry::transform(contourPointsInPixels, contourPoints, scaler);
+		updateContourPoints();
 	}
 	else if (pointDraggedId == EditableAreaPointId::Center)
 	{
@@ -473,6 +471,13 @@ void EditableEllipse::Rotate(double Radian)
 	contourPointsInPixels.clear();
 	contourPointsInPixels = newPolygon;
 
+}
+
+void EditableEllipse::updateContourPoints()
+{
+	contourPoints.clear();
+	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scaler(1 / ((double)parentCanvas->getWidth()), 1 / ((double)parentCanvas->getHeight()));
+	boost::geometry::transform(contourPointsInPixels, contourPoints, scaler);
 }
 
 void EditableEllipse::Translate(const Point<double>& translation)
