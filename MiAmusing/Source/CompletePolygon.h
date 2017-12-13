@@ -50,7 +50,7 @@ namespace Amusing
 
 		void SetActive(bool activate);
 
-		
+		void SetAlpha(float newAlpha) override;
 
 		
 		void CanvasResized(SceneCanvasComponent* _parentCanvas) override;

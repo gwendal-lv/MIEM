@@ -1288,6 +1288,12 @@ void CompletePolygon::SetActive(bool activate)
 	EditableArea::SetActive(activate);
 }
 
+void CompletePolygon::SetAlpha(float newAlpha)
+{
+	if (newAlpha >= 0.3)
+		DrawableArea::SetAlpha(newAlpha);
+}
+
 bool CompletePolygon::contains(bpt point)
 {
 	return boost::geometry::within(point, contourPoints);

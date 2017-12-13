@@ -54,6 +54,9 @@ private:
 	//SamplerSound* soundB;
 	AudioFormatManager audioFormatManager;
 
+	String currentPathA;
+	String currentPathB;
+
 	void addSoundOnThread(const void * srcData, size_t srcDataSize, bool keepInternalCopyOfData);
 	void addSoundFromExternalFileOnThread(String soundPath);
 

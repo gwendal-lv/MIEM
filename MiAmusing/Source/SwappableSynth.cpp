@@ -99,6 +99,22 @@ void SwappableSynth::setSound(const void * srcData, size_t srcDataSize, bool kee
 
 void SwappableSynth::setSound(String soundPath)
 {
+	// avoid to load two times the same sample
+	if (synthAPlaying)
+	{
+		if (soundPath == currentPathA)
+			return;
+		else
+			currentPathA = soundPath;
+	}
+	else
+	{
+		if (soundPath == currentPathB)
+			return;
+		else
+			currentPathB = soundPath;
+	}
+	
 	state = SwappableSynth::Loading;
 	std::thread(&SwappableSynth::addSoundFromExternalFileOnThread, this, soundPath).detach();
 }
@@ -113,10 +129,15 @@ void SwappableSynth::renderNextBlock(AudioSampleBuffer & outputBuffer, const Mid
 		if (G_Off >= 0)
 		{
 			if (synthAPlaying)
+			{
 				synthA.renderNextBlock(rampBuffer_off, inputBuffer, startSample, numSample);
+				//synthB.renderNextBlock(rampBuffer_On, inputBuffer, 0.0f, 0.0f); // juste test...
+			}
 			else
+			{
 				synthB.renderNextBlock(rampBuffer_off, inputBuffer, startSample, numSample);
-
+				//synthA.renderNextBlock(rampBuffer_On, inputBuffer, 0.0f, 0.0f); // juste test...
+			}
 			startGain = G_Off;
 			endGain = getNextGainOff(numSample);
 			for (int ch = 0; ch < outputBuffer.getNumChannels(); ++ch)
