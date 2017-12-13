@@ -116,7 +116,7 @@ void PlayHead::process()
 
 		int sub, up; // interval to test for midi event
 
-					 // check if speed is an integer
+		// check if speed is an integer
 		r = speed - ceil(speed);
 		if (r != 0) // not an integer -> find sub and up integer
 		{

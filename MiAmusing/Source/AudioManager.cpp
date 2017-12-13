@@ -153,17 +153,15 @@ void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 		for (int i = 0; i < bufferToFill.numSamples; ++i)
 		{
 			timeStamp++;
-			//if (midiOuput != nullptr)
-			//{
-				//midiSender->process(position);
-				for (int j = 0; j < maxSize; j++)
-				{
-					if (playHeadsKnown[j] != 0)
-						playHeadsKnown[j]->process();
-
-
-				}
-			//}
+			
+			for (int j = 0; j < maxSize; j++)
+			{
+				// les têtes de lecture détermine s'il faut envoyer une note Midi
+				// celles-ci seront jouées par le synthé contenu par la timeLine
+				if (playHeadsKnown[j] != 0)
+					playHeadsKnown[j]->process();
+			}
+		
 			++position;
 			if (position == periode)
 			{
@@ -183,37 +181,24 @@ void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 	
 	if (playInternalSynth)
 	{
-		//MixerAudioSource
-
 		for (int i = 0; i < maxSize; ++i)
 		{
 			if (timeLinesKnown[i] != 0)
 			{
-				/*MidiBuffer incomingMidi;
-				interComputeBuffer->setSize(jmax(1, bufferToFill.buffer->getNumChannels()),
-					bufferToFill.buffer->getNumSamples());
-				AudioSourceChannelInfo info2(interComputeBuffer, 0, bufferToFill.numSamples);
-				info2.clearActiveBufferRegion();
-				playHeadsKnown[i]->removeNextBlockOfMessages(incomingMidi, bufferToFill.numSamples);
-				synth.renderNextBlock(*info2.buffer, incomingMidi, 0, bufferToFill.numSamples);
-				for(int j = 0; j < bufferToFill.buffer->getNumChannels();++j)
-					bufferToFill.buffer->addFrom(j, bufferToFill.startSample, *interComputeBuffer, j, 0, bufferToFill.numSamples);
-				         */
+				// les notes Midi devant être jouées sont récupérées dans le buffer incomingMidi
 				MidiBuffer incomingMidi;
 				timeLinesKnown[i]->removeNextBlockOfMessages(incomingMidi, bufferToFill.numSamples);
-				
+
+				// le synthé contenu par la timeLine joue les notes midi qui ont été récupérées
 				timeLinesKnown[i]->renderNextBlock(*bufferToFill.buffer, incomingMidi, 0, bufferToFill.numSamples);
-				
-				//interComputeBuffer->clear(0,bufferToFill.numSamples);
+
+
 			}
 		}
-		//midiCollector.removeNextBlockOfMessages(incomingMidi, bufferToFill.numSamples); // recupere les messages MIDI à envoyer du midiCollector dans incomingMidi
-		//synth.renderNextBlock(*bufferToFill.buffer, incomingMidi, 0, bufferToFill.numSamples); // le synthe interne transforme ces messages MIDI en samples
 	}
 	else
 		bufferToFill.clearActiveBufferRegion();
-	//metronome.update();
-	//midiBuffer.addEvent(metronome.getNextMidiMsg(), 4);
+	
 }
 
 void AudioManager::getNewTimeLines()
@@ -234,7 +219,10 @@ void AudioManager::getNewPlayHeads()
 	while (playHeadsToAudio.pop(ptr))
 	{
 		if (ptr != 0)
+		{
 			playHeadsKnown[ptr->getId()] = ptr;
+			playHeadsKnown[ptr->getId()]->setReadingPosition((double)position / (double)periode);
+		}
 	}
 }
 
