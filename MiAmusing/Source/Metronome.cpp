@@ -75,5 +75,8 @@ int Metronome::timeToSample(double ms)
 
 int Metronome::BPMtoPeriodInSample(int m_bpm)
 {
+	// retourne la periode d'un carré donnant le tempo de m_bpm :
+	//	m_bpm = 1 Tic tous les sampleRate * 60 / BPM
+	//  1 carré = 4 Tic = 4 * sampleRate * 60 / BPM
 	return (int)round(sampleRate * 60.0 * 4.0 / (double)m_bpm);
 }

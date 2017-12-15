@@ -84,10 +84,13 @@ Cursor::~Cursor()
 void Cursor::setSpeed(double m_speed)
 {
 	speed = m_speed;
-	double newCursorSize = (double)initCursorSize / m_speed;
-	double resize = newCursorSize / cursorSize;
-	if(SizeChanged(resize,false))
-		cursorSize = newCursorSize;
+	if (speed < 4.0 && speed > 0.1)
+	{
+		double newCursorSize = (double)initCursorSize / m_speed;
+		double resize = newCursorSize / cursorSize;
+		if (SizeChanged(resize, false))
+			cursorSize = newCursorSize;
+	}
 }
 
 void Cursor::setPosition(double m_position)

@@ -580,7 +580,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddCursor(std::shared_ptr<IDrawableArea
 			cursorCenter = completeArea->computeLinearCursorCenter(0);
 		else
 			cursorCenter = bpt(0, 0);
-		float cursorSize = 0.1f;
+		float cursorSize = 0.05f;
 		std::shared_ptr<Cursor> newCursor(new Cursor(0, cursorCenter, cursorSize, Colours::grey, canvasComponent->GetRatio())); //Cursor(0));//Cursor(0, cursorCenter, cursorSize, cursorSize, Colours::grey, 1.47f));
 
 		//ajouter le nouveau curseur à la liste de curseurs

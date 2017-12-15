@@ -11,9 +11,9 @@
 #include "ReadingHead.h"
 #include "AudioManager.h"
 
-PlayHead::PlayHead() : speed(1.0), position(0), state(PlayHeadState::Stop)
+PlayHead::PlayHead() : speed(1.0), speedToReach(1.0), position(0), state(PlayHeadState::Stop), transitionPosition(0)
 {
-
+	numT = 0;
 }
 
 PlayHead::~PlayHead()
@@ -23,6 +23,10 @@ PlayHead::~PlayHead()
 void PlayHead::setId(int _id)
 {
 	Id = _id;
+	if (Id == 0)
+		test = false;
+	else
+		test = true;
 }
 
 int PlayHead::getId()
@@ -43,11 +47,20 @@ void PlayHead::LinkTo(TimeLine* m_timeLine)
 
 void PlayHead::setSpeed(double m_speed)
 {
-	if (speed != m_speed)
+	if (speedToReach != m_speed)
 	{
-		speed = m_speed;
+		speedToReach = m_speed;
+		transitionTime =  timeLine->getPeriod() / 2.0; // une demi période pour retrouver la bonne position
+		double currentPeriodePercentage = (double)position / (double)timeLine->getPeriod(); // pourcentage de la période où l'on se trouve
+		double newPeriodePercentage =  currentPeriodePercentage + ((double)speedToReach / (double)speed) * 0.5; // pourcentage de la période où on devrait se trouver + demi-tour (car on prend un temps de transition T/2)
+		//speed = (newPeriodePercentage - currentPeriodePercentage) * (double)timeLine->getPeriod() / (double)transitionTime; // transition speed
+		
+		speed = (speedToReach * (double)((((double)position + numT * timeLine->getPeriod())/speed) + transitionTime) - (double)position) / (double)transitionTime;
+		transitionTime *= speed; // pour garder le nombre de "click"
+		// numT /= speedToReach; // trouver la transformation de numbre de tour
+
 		if(timeLine != nullptr)
-			currentPeriod = timeLine->getPeriod() / speed;
+			currentPeriod = timeLine->getPeriod() / speed; // peut poser problème...
 	}
 }
 
@@ -112,7 +125,28 @@ void PlayHead::process()
 	{
 	case PlayHeadState::Play:
 		if (position >= timeLine->getPeriod())
+		{
 			position = 0;
+			++numT;
+			if (numT >= speedToReach)
+				numT = 0;
+		}
+
+		if (position >= (double)timeLine->getPeriod() * 3.0 / 16.0 && test)
+		{
+			setSpeed(2.0);
+			test = false;
+		}
+
+		if (speed != speedToReach)
+		{
+			transitionPosition += speed;
+			if (transitionPosition >= transitionTime)
+			{
+				transitionPosition = 0;
+				speed = speedToReach;
+			}
+		}
 
 		int sub, up; // interval to test for midi event
 
