@@ -23,10 +23,7 @@ PlayHead::~PlayHead()
 void PlayHead::setId(int _id)
 {
 	Id = _id;
-	if (Id == 0)
-		test = false;
-	else
-		test = true;
+	
 }
 
 int PlayHead::getId()
@@ -130,12 +127,6 @@ void PlayHead::process()
 			++numT;
 			if (numT >= speedToReach)
 				numT = 0;
-		}
-
-		if (position >= (double)timeLine->getPeriod() * 3.0 / 16.0 && test)
-		{
-			setSpeed(2.0);
-			test = false;
 		}
 
 		if (speed != speedToReach)

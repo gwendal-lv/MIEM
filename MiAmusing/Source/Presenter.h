@@ -94,6 +94,7 @@ namespace Amusing {
 
 		std::map<std::shared_ptr<IEditableArea>, int> areaToInitSurface;
 		std::map<Colour, int,Class1Compare> colourToIdx;
+		std::map<std::shared_ptr<IEditableArea>, int> colorIdx;
 		std::map<std::shared_ptr<IEditableArea>, int> octave;
 		std::map<std::shared_ptr<IEditableArea>, double> phase;
 		std::map<std::shared_ptr<IEditableArea>, double> areaToSpeed;
@@ -111,6 +112,8 @@ namespace Amusing {
 			void addOctave(std::shared_ptr<IEditableArea> newArea);
 			int getNote(std::shared_ptr<IEditableArea> area, int circle);
 			void setOctave(std::shared_ptr<IEditableArea> currentArea, int newOctave);
+			int getColorIdx(std::shared_ptr<IEditableArea> currentArea);
+			void setColorIdx(std::shared_ptr<IEditableArea> currentArea, int idx);
 			void setChannel(std::shared_ptr<EditableScene> scene,int channel);
 			int getOctave(std::shared_ptr<IEditableArea> area);
 			int getChannel(std::shared_ptr<EditableScene> scene);

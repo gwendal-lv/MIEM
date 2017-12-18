@@ -172,6 +172,9 @@ namespace Amusing {
 		void setOctave(std::shared_ptr<IEditableArea> area, int newOctave);
 		double getVelocity(std::shared_ptr<IEditableArea> area);
 		int getOctave(std::shared_ptr<IEditableArea> area);
+		int getColor(std::shared_ptr<IEditableArea> area);
+		void setColor(std::shared_ptr<IEditableArea> area, int colourIdx);
+
 	private :
 		bool deleting;
 		int tempo;

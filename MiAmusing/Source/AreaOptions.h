@@ -216,7 +216,8 @@ public:
 	void setSpeedSliderValue(double speed);
 	void setOctaveSlider(int currentOctave);
 	void setVelocitySliderValue(double _velocity);
-	void OnColorChanged(Colour newColour);
+	void OnColorChanged(Colour newColour, int colourIdx);
+	void setCurrentColorSelected(int idx);
 
 	void setSamplesColor(int Nsamples, Colour colorCode[]);
     //[/UserMethods]

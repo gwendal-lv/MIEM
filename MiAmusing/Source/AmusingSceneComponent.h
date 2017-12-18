@@ -35,11 +35,11 @@ public:
 	void OnBaseNoteChanged(int newBaseNote);
 	void OnVelocityChanged(double newVelocity);
 
-	void OnColourChanged(Colour newColour);
+	void OnColourChanged(Colour newColour, int colourIdx);
 
 	void SetAreaOptionsCenter(bpt center);
 	void SetAreaOptionsVisible(bool show);
-	void SetAreaOptionsVisible(bool show, double speed, double velocity, int octave);
+	void SetAreaOptionsVisible(bool show, double speed, double velocity, int octave, int colorIdx);
 
 	/*void mouseDown(const juce::MouseEvent &event) override;
 	void mouseDrag(const juce::MouseEvent &event) override;

@@ -79,7 +79,7 @@ void Presenter::CompleteInitialisation(AmusingModel* _model)
 	view->CompleteInitialization(model);
 
 	const int numSamples = 4;
-	Colour colorCode[numSamples] = { Colours::white,Colours::blue,Colours::red,Colours::green };
+	Colour colorCode[numSamples] = { Colours::grey ,Colours::blue,Colours::red,Colours::green };
 
 	String defaultPath = BinaryData::namedResourceList[0];
 	for (int i = 0; i < numSamples; ++i)
@@ -179,6 +179,20 @@ void Presenter::setOctave(std::shared_ptr<IEditableArea> currentArea, int newOct
 	if (octave.find(currentArea) != octave.end())
 		octave[currentArea] = newOctave;
 	
+}
+
+int Presenter::getColorIdx(std::shared_ptr<IEditableArea> currentArea)
+{
+	if (colorIdx.find(currentArea) == colorIdx.end())
+	{
+		colorIdx[currentArea] = 0;
+	}
+	return colorIdx[currentArea];
+}
+
+void Presenter::setColorIdx(std::shared_ptr<IEditableArea> currentArea, int idx)
+{
+	colorIdx[currentArea] = idx;
 }
 
 void Presenter::setChannel(std::shared_ptr<EditableScene> scene,int channel)

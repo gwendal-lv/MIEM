@@ -797,6 +797,16 @@ int GraphicSessionManager::getOctave(std::shared_ptr<IEditableArea> area)
 	return myPresenter->getOctave(area);
 }
 
+int GraphicSessionManager::getColor(std::shared_ptr<IEditableArea> area)
+{
+	return myPresenter->getColorIdx(area);
+}
+
+void GraphicSessionManager::setColor(std::shared_ptr<IEditableArea> area, int colourIdx)
+{
+	myPresenter->setColorIdx(area, colourIdx);
+}
+
 void GraphicSessionManager::OnTempoChanged(int newTempo) // voir si laisser comme ca, pcq pas d'interpretation necessaire pour le tempo
 {
 	myPresenter->setTempo(newTempo);

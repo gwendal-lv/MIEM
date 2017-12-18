@@ -83,13 +83,13 @@ void AmusingSceneComponent::OnVelocityChanged(double newVelocity)
 	}
 }
 
-void AmusingSceneComponent::OnColourChanged(Colour newColour)
+void AmusingSceneComponent::OnColourChanged(Colour newColour, int colourIdx)
 {
 	if (auto manager = canvasManager.lock())
 	{
 		if (auto managerAsManager = std::dynamic_pointer_cast<Amusing::MultiSceneCanvasManager>(manager))
 		{
-			managerAsManager->ChangeColour(newColour);
+			managerAsManager->ChangeColour(newColour,colourIdx);
 		}
 	}
 }
@@ -125,13 +125,14 @@ void AmusingSceneComponent::SetAreaOptionsVisible(bool show)
 		areaOptions.setVisible(false);
 }
 
-void AmusingSceneComponent::SetAreaOptionsVisible(bool show,double speed, double velocity, int currentOctave)
+void AmusingSceneComponent::SetAreaOptionsVisible(bool show,double speed, double velocity, int currentOctave, int colorIdx)
 {
 	if (show)
 	{
 		areaOptions.setSpeedSliderValue(speed);
 		areaOptions.setVelocitySliderValue(velocity);
 		areaOptions.setOctaveSlider(currentOctave);
+		areaOptions.setCurrentColorSelected(colorIdx);
 		areaOptions.setVisible(true);
 	}
 	else

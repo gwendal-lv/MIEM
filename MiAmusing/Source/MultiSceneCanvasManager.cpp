@@ -341,14 +341,14 @@ void MultiSceneCanvasManager::ChangeVelocity(double newVelocity)
 	}
 }
 
-void MultiSceneCanvasManager::ChangeColour(Colour newColour)
+void MultiSceneCanvasManager::ChangeColour(Colour newColour, int idx)
 {
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
 	{
-		/*if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)
+		if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)
 		{
-			myGraphicSessionManager->setVelocityArea(amusingScene->GetSelectedArea(), newVelocity);
-		}*/
+			myGraphicSessionManager->setColor(amusingScene->GetSelectedArea(), idx);
+		}
 		
 		handleAndSendAreaEventSync(amusingScene->SetSelectedAreaColour(newColour));
 	}
@@ -382,6 +382,21 @@ double MultiSceneCanvasManager::getOctave(std::shared_ptr<IEditableArea> area)
 	}
 	else
 		return 64.0;
+}
+
+int MultiSceneCanvasManager::getCurrentColor(std::shared_ptr<IEditableArea> area)
+{
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+	{
+		if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)
+		{
+			return myGraphicSessionManager->getColor(amusingScene->GetSelectedArea());
+		}
+		else
+			return 0;
+	}
+	else
+		return 0;
 }
 
 // - - - - - - - - - - running Mode - - - - - - - - - -

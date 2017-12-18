@@ -105,7 +105,7 @@ void ColorArray::buttonClicked(Button *buttonThatWasClicked)
 					buttonArray[i]->setBounds(buttonArray[currentColor]->getBounds());
 					buttonArray[currentColor]->setBounds(r);
 					currentColor = i;
-					areaOptions->OnColorChanged(buttonArray[currentColor]->findColour(TextButton::ColourIds::buttonColourId));
+					areaOptions->OnColorChanged(buttonArray[currentColor]->findColour(TextButton::ColourIds::buttonColourId),currentColor);
 				}
 				for (int j = 0; j < buttonArray.size(); ++j)
 					if (j != i)
@@ -138,6 +138,19 @@ void ColorArray::setSamplesColor(int Nsamples, Colour colorCode[])
 	}
 	resized();
 }
+
+void ColorArray::setCurrentColorSelected(int idx)
+{
+	// appeler cette fonction dans buttonClicked pour plus de clareté !
+	Rectangle<int> r(buttonArray[idx]->getBounds());
+	buttonArray[idx]->setBounds(buttonArray[currentColor]->getBounds());
+	buttonArray[currentColor]->setBounds(r);
+	buttonArray[currentColor]->setVisible(false);
+	currentColor = idx;
+	buttonArray[idx]->setVisible(true);
+	
+}
+
 
 //void ColorArray::addColor(Colour newColour)
 //{

@@ -84,9 +84,10 @@ namespace Amusing {
 		void ChangeSpeed(double newSpeed);
 		double getSpeed(std::shared_ptr<IEditableArea> area);
 		void ChangeVelocity(double newVelocity);
-		void ChangeColour(Colour newColour);
+		void ChangeColour(Colour newColour, int colourIdx);
 		double getVelocity(std::shared_ptr<IEditableArea> area);
 		double getOctave(std::shared_ptr<IEditableArea> area);
+		int getCurrentColor(std::shared_ptr<IEditableArea> area);
 		void SetMode(Miam::CanvasManagerMode newMode);
     };
     

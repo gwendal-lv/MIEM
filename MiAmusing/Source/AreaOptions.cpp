@@ -209,10 +209,16 @@ void AreaOptions::setVelocitySliderValue(double _velocity)
 	velocitySlider->setValue(_velocity);
 }
 
-void AreaOptions::OnColorChanged(Colour newColour)
+void AreaOptions::OnColorChanged(Colour newColour, int colourIdx)
 {
-	amusingSceneComponent->OnColourChanged(newColour);
+	amusingSceneComponent->OnColourChanged(newColour,colourIdx);
 }
+
+void AreaOptions::setCurrentColorSelected(int idx)
+{
+	colorArray->setCurrentColorSelected(idx);
+}
+
 void AreaOptions::setSamplesColor(int Nsamples, Colour colorCode[])
 {
 	colorArray->setSamplesColor(Nsamples, colorCode);

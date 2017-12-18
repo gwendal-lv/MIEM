@@ -37,7 +37,6 @@ public:
 	int getId();
 	void setState(PlayHeadState m_state);
 
-	bool test;
 
 	void process();
 
