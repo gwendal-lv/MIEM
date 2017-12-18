@@ -41,7 +41,7 @@ Presenter::Presenter(View* _view) :
     view->GetMainContentComponent()->resized();
 
 	const int numSamples = 4;
-	Colour colorCode[numSamples] = { Colours::white,Colours::blue,Colours::red,Colours::green };
+	Colour colorCode[numSamples] = { Colours::grey,Colours::blue,Colours::red,Colours::green };
 	
 	String defaultPath = BinaryData::namedResourceList[0];
 	view->setSampleColor(numSamples, colorCode);

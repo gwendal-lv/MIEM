@@ -567,7 +567,8 @@ void AudioManager::getAudioThreadMsg()
 					
 					timeLines[param.Id1]->clearSounds();
 					//timeLines[param.Id1]->addSound(newSound);
-					timeLines[param.Id1]->addSound(BinaryData::cello_wav,BinaryData::cello_wavSize,false);
+					//timeLines[param.Id1]->addSound(model->getSoundPath(param.Id2));
+					timeLines[param.Id1]->addSound(model->getSoundPath(param.DoubleValue));//BinaryData::cello_wav,BinaryData::cello_wavSize,false);
 					// LAAAAAAAAAAA
 					
 					timeLinesToAudio.push(timeLines[param.Id1]);

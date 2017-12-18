@@ -18,7 +18,7 @@ SoundBrowser::SoundBrowser() : soundsWildcardFilter("*.wav;*.aiff", "*", "Sound 
 	fileTree(soundList)
 {
 	setOpaque(true);
-	soundList.setDirectory(File::getSpecialLocation(File::userDocumentsDirectory), true, true);
+	soundList.setDirectory(File("C:\\"),true,true);
 	directoryThread.startThread(1);
 
 	fileTree.addListener(this);

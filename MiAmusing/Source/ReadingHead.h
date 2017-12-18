@@ -49,7 +49,7 @@ private:
 	double transitionTime; // periode pendant laquelle la tête de lecture doit réduire ou accumuler du retard
 	int currentPeriod; // period taking speed into account
 	double position;
-	int numT;
+	double numT;
 	PlayHeadState state;
 
 	void testPosition(int P); // look in the associate timeLine if there is a MIDI msg to send

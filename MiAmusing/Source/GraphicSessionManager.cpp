@@ -260,6 +260,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 						else
 							param.IntegerValue = 0;
 						param.FloatValue = 1; // set initial speed to 1;
+						param.DoubleValue = myPresenter->getColorIdx(area);
 						myPresenter->SendParamChange(param); // envoie l'ordre de creer/ detruire une source audio
 						//DBG("GSM : construct a new audio polygon, please. Id : " + (String)param.Id1);
 						param.Type = Miam::AsyncParamChange::ParamType::Source;
@@ -492,6 +493,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 
 					param.Type = Miam::AsyncParamChange::ParamType::InputsCount;
 					param.Id2 = myPresenter->getPathIdx(complete->GetFillColour());
+					DBG("set path : " + (String)param.Id2);
 					myPresenter->SendParamChange(param);
 					
 				}

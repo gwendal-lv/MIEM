@@ -52,7 +52,7 @@ void PlayHead::setSpeed(double m_speed)
 		double newPeriodePercentage =  currentPeriodePercentage + ((double)speedToReach / (double)speed) * 0.5; // pourcentage de la période où on devrait se trouver + demi-tour (car on prend un temps de transition T/2)
 		//speed = (newPeriodePercentage - currentPeriodePercentage) * (double)timeLine->getPeriod() / (double)transitionTime; // transition speed
 		
-		speed = (speedToReach * (double)((((double)position + numT * timeLine->getPeriod())/speed) + transitionTime) - (double)position) / (double)transitionTime;
+		speed = (speedToReach * (double)((((double)position + numT * (double)timeLine->getPeriod())/speed) + transitionTime) - (double)position) / (double)transitionTime;
 		transitionTime *= speed; // pour garder le nombre de "click"
 		// numT /= speedToReach; // trouver la transformation de numbre de tour
 
@@ -124,9 +124,9 @@ void PlayHead::process()
 		if (position >= timeLine->getPeriod())
 		{
 			position = 0;
-			++numT;
+			numT += 1.0;
 			if (numT >= speedToReach)
-				numT = 0;
+				numT -= speedToReach;
 		}
 
 		if (speed != speedToReach)
@@ -136,6 +136,7 @@ void PlayHead::process()
 			{
 				transitionPosition = 0;
 				speed = speedToReach;
+				numT = 0;
 			}
 		}
 
