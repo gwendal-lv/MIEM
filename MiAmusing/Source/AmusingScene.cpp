@@ -486,7 +486,29 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDown(const MouseEvent& 
 		}
 		else
 		{
+			std::shared_ptr<IEditableArea> oldSelectedArea = selectedArea;
 			std::shared_ptr<GraphicEvent> graphE = EditableScene::OnCanvasMouseDown(mouseE);
+			
+			if (selectedArea != oldSelectedArea && selectedArea !=nullptr) // si on a changé d'aire ou qu'on vient d'en sélectionner une nouvelle -> essaie de la faire bouger
+			{
+				// did we clic next to a point, or at least inside the area ?
+				AreaEventType lastEventType = selectedArea->TryBeginPointMove(mouseE.position.toDouble()); // !! starts a point dragging !
+				if (lastEventType == AreaEventType::NothingHappened)
+				{
+					/* if not, we are sure that we clicked outside (checked by tryBeginPointMove)
+					* => it is a DEselection (maybe selection of another area, just after this)
+					*/
+					graphE = SetSelectedArea(nullptr);
+				}
+				else // special points which are not point dragging
+				{
+					// we must stop the dragging that was not actually wanted
+					if (canvasManager.lock()->GetMode() == CanvasManagerMode::WaitingForPointCreation
+						|| canvasManager.lock()->GetMode() == CanvasManagerMode::WaitingForPointDeletion)
+						selectedArea->EndPointMove();
+				}
+			}
+			
 			if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(graphE))
 			{
 				return graphE; 
@@ -1257,7 +1279,7 @@ std::shared_ptr<AreaEvent> AmusingScene::checkCursorPosition(std::shared_ptr<Cur
 	return nullptr;
 }
 
-void Miam::AmusingScene::lookForAreasToUpdate(Colour concernedColour)
+void AmusingScene::lookForAreasToUpdate(Colour concernedColour)
 {
 	for (int i = 0; i < areas.size(); ++i)
 	{
