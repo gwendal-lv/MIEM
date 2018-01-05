@@ -354,7 +354,7 @@ void GraphicSessionManager::DisplayInfo(String info, int priority)
 void GraphicSessionManager::OnAddScene()
 {
     if (selectedCanvas)
-        selectedCanvas->AddScene("Scene " + std::to_string(selectedCanvas->GetScenesCount()+1),
+        selectedCanvas->AddScene("Scene " + boost::lexical_cast<std::string>(selectedCanvas->GetScenesCount()+1),
                                  true); // ajout avec sélection
     
     else throw std::runtime_error("No canvas selected : cannot add a scene (no canvas should be selected at this point");
@@ -503,7 +503,7 @@ void GraphicSessionManager::OnCopyArea()
         if (localAreaToCopy)
             areaToCopy = localAreaToCopy;
         else
-            throw std::runtime_error("Cannot copy an area... No area selected in SceneCanvasComponent::Id" + std::to_string(selectedCanvas->GetId()));
+            throw std::runtime_error("Cannot copy an area... No area selected in SceneCanvasComponent::Id" + boost::lexical_cast<std::string>(selectedCanvas->GetId()));
     }
     else
         throw std::runtime_error("Cannot copy an area if no canvas is selected...");

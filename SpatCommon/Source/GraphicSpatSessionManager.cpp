@@ -72,7 +72,7 @@ void GraphicSpatSessionManager::SetFromTree(bptree::ptree& graphicSessionTree)
             // (seulement les SpatPolygon pour l'instant...)
             for (size_t j=0 ; j<sceneTrees.size() ; j++)
             {
-                std::string canvasAndSceneString = "Canvas " + std::to_string(i) + ", Scene " + std::to_string(j) + ": ";
+                std::string canvasAndSceneString = "Canvas " + boost::lexical_cast<std::string>(i) + ", Scene " + boost::lexical_cast<std::string>(j) + ": ";
                 
                 // Première passe de lecture
                 size_t areasCount;

@@ -31,7 +31,7 @@ DrawableArea(areaTree)
             polygonPoints[index].set<1>( point.second.get<double>("<xmlattr>.y") );
         }
         catch (bptree::ptree_error &e) {
-            throw XmlReadException("Point " + std::to_string(index) + ": ", e);
+            throw XmlReadException("Point " + boost::lexical_cast<std::string>(index) + ": ", e);
         }
     }
     // Ajout des points 1 par 1 dans le bon ordre

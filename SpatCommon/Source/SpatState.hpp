@@ -90,7 +90,7 @@ namespace Miam
         {
             std::string indexString;
             if (withId)
-                indexString += std::to_string(index+1) + ". ";
+                indexString += boost::lexical_cast<std::string>(index+1) + ". ";
             return indexString + name;
         }
         virtual void SetName(std::string _name)

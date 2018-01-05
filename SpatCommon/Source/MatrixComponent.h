@@ -238,8 +238,8 @@ namespace Miam
                 {
                     // Slider (i,j)
                     sliders[idx(i,j)] = new MatrixSlider();
-                    sliders[idx(i,j)]->setName("Slider ID=" + std::to_string(idx(i,j)) + " : row=" + std::to_string(i) + " col=" + std::to_string(j));
-                    sliders[idx(i,j)]->setComponentID(std::to_string(idx(i,j)));
+                    sliders[idx(i,j)]->setName("Slider ID=" + boost::lexical_cast<std::string>(idx(i,j)) + " : row=" + boost::lexical_cast<std::string>(i) + " col=" + boost::lexical_cast<std::string>(j));
+                    sliders[idx(i,j)]->setComponentID(boost::lexical_cast<std::string>(idx(i,j)));
                     initAndAddSlider(sliders[idx(i,j)]);
                     
                     sliders[idx(i,j)]->SetPropertiesFromVolume();

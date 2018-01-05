@@ -190,13 +190,13 @@ void LabelledMatrixComponent::ReconstructGuiObjects()
     for (int i=0 ; i<(int)maxRowsCount ; i++)
     {
         // Label on each row
-        labels[i] = new Label("Input label " + std::to_string(i), "" + std::to_string(i+1));
+        labels[i] = new Label("Input label " + boost::lexical_cast<std::string>(i), "" + boost::lexical_cast<std::string>(i+1));
         initAndAddLabel(labels[i]);
     }
     for (int j=0 ; j<(int)maxColsCount ; j++)
     {
         // Column labels
-        labels[maxRowsCount+j] = new Label("Output label " + std::to_string(j), "" + std::to_string(j+1));
+        labels[maxRowsCount+j] = new Label("Output label " + boost::lexical_cast<std::string>(j), "" + boost::lexical_cast<std::string>(j+1));
         initAndAddLabel(labels[maxRowsCount+j]);
     }
 

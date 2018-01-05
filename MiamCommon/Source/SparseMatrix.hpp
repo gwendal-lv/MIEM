@@ -15,6 +15,7 @@
 
 #include "MiamExceptions.h"
 
+#include "boost/lexical_cast.hpp"
 #include "boost/property_tree/ptree.hpp"
 #include "boost/property_tree/xml_parser.hpp"
 namespace bptree = boost::property_tree;
@@ -335,10 +336,10 @@ namespace Miam
                         auto coeffTree = matChildTree.second;
                         size_t row = coeffTree.get<size_t>("<xmlattr>.row");
                         if (row >= N)
-                            throw XmlReadException("matrix.coeff.<xmlattr>.row must be < " + std::to_string(N));
+                            throw XmlReadException("matrix.coeff.<xmlattr>.row must be < " + boost::lexical_cast<std::string>(N));
                         size_t col = coeffTree.get<size_t>("<xmlattr>.col");
                         if (col >= M)
-                            throw XmlReadException("matrix.coeff<xmlattr>.col must be < " + std::to_string(M));
+                            throw XmlReadException("matrix.coeff<xmlattr>.col must be < " + boost::lexical_cast<std::string>(M));
                         T value = coeffTree.get<T>("<xmlattr>.value");
                         if (value < zeroThreshold) // value too small : not loaded
                             continue;

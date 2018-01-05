@@ -12,6 +12,7 @@
 #define ASYNCPARAMCHANGE_H_INCLUDED
 
 #include <string>
+#include "boost/lexical_cast.hpp"
 
 #include "ParametersIds.h"
 
@@ -94,17 +95,17 @@ namespace Miam
                 case Volume : returnString = "Volume"; break;
                     
                 default :
-                    returnString = std::to_string((int)Type);
+                    returnString = boost::lexical_cast<std::string>((int)Type);
             }
             
             returnString += " Id1=";
-            returnString += std::to_string(Id1);
+            returnString += boost::lexical_cast<std::string>(Id1);
             returnString += " Id2=";
-            returnString += std::to_string(Id2);
+            returnString += boost::lexical_cast<std::string>(Id2);
             returnString += " DoubleValue=";
-            returnString += std::to_string(DoubleValue);
+            returnString += boost::lexical_cast<std::string>(DoubleValue);
             returnString += " IntegerValue=";
-            returnString += std::to_string(IntegerValue);
+            returnString += boost::lexical_cast<std::string>(IntegerValue);
             
             return returnString;
         }
