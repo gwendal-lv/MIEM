@@ -89,6 +89,8 @@ MainBackgroundComponent::MainBackgroundComponent ()
     fileTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     fileTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
+    fileTextButton->setBounds (8, 8, 64, 24);
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -154,7 +156,6 @@ void MainBackgroundComponent::resized()
     scenesTextButton->setBounds (((8 + 64) + 8) + 112, 8, 112, 24);
     hardwareConfTextButton->setBounds (((8 + 64) + 8) + 112 - -120, 8, 112, 24);
     startTextButton->setBounds ((((8 + 64) + 8) + 112 - -120) + 112 - -16, 8, 8, 24);
-    fileTextButton->setBounds (8, 8, 64, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }

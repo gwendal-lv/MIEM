@@ -5,7 +5,7 @@
               jucerVersion="5.2.0" displaySplashScreen="0" reportAppUsage="0"
               splashScreenColour="Dark" cppLanguageStandard="11" companyCopyright="Gwendal Le Vaillant (IRISIB/LARAS, UMons)"
               companyWebsite="http://laras.be" companyName="IRISIB/LARAS, UMons"
-              companyEmail="glevaillant@he2b.be">
+              companyEmail="glevaillant@he2b.be" headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../MiamCommon/Source/">
   <MAINGROUP id="uJFjC5" name="MIEM Editor">
     <GROUP id="{7878353D-A1B6-291B-EABC-831E28CE51BB}" name="Source">
       <FILE id="MLMDSl" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
@@ -349,12 +349,15 @@
       </MODULEPATHS>
     </VS2015>
     <ANDROIDSTUDIO targetFolder="Builds/AndroidStudio" androidSDKPath="" androidNDKPath=""
-                   extraDefs="__MIAMOBILE">
+                   extraDefs="__MIAMOBILE" androidMinimumSDK="23" gradleToolchain="gcc"
+                   buildToolsVersion="27.0.1" androidInternetNeeded="1" androidExternalWriteNeeded="1"
+                   androidExternalReadNeeded="1">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" androidArchitectures="armeabi armeabi-v7a x86" isDebug="1"
-                       optimisation="1" targetName="MiemEditor"/>
+                       optimisation="1" targetName="MiemEditor" headerPath=""/>
         <CONFIGURATION name="Release" androidArchitectures="armeabi armeabi-v7a x86"
-                       isDebug="0" optimisation="3" targetName="MiemEditor" defines="BOOST_UBLAS_NDEBUG&#10;NDEBUG"/>
+                       isDebug="0" optimisation="3" targetName="MiemEditor" defines="BOOST_UBLAS_NDEBUG&#10;NDEBUG"
+                       headerPath=""/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_video" path="../../JUCE/modules"/>
