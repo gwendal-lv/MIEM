@@ -428,7 +428,8 @@ void GraphicSessionManager::OnAddArea(int areaType)
         else
             throw std::logic_error("Cannot add something else than polygons at the moment");
         // Actual addition here
-        auto spatPolygon = std::make_shared<SpatPolygon>(GetNextAreaId(), bpt::point(0.5, 0.5), polygonPointsCount, 0.15, Colours::grey, ratio);
+        bpt centerPoint(0.5, 0.5);
+        auto spatPolygon = std::make_shared<SpatPolygon>(GetNextAreaId(), centerPoint, polygonPointsCount, 0.15, Colours::grey, ratio);
         getSelectedCanvasAsEditable()->AddArea(spatPolygon);
         selectedCanvas->CallRepaint();
     }
