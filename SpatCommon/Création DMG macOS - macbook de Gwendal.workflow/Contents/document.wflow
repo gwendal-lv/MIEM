@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>AMApplicationBuild</key>
-	<string>444.1</string>
+	<string>444.4</string>
 	<key>AMApplicationVersion</key>
 	<string>2.8</string>
 	<key>AMDocumentVersion</key>
@@ -77,21 +77,6 @@
 					<string>Numéro de version ? Sous la forme x.y.z (par exemple : 3.7.1)</string>
 					<key>requireInput</key>
 					<true/>
-				</dict>
-				<key>ActionRuntimeParameters</key>
-				<dict>
-					<key>buttonAffirmative</key>
-					<string>OK</string>
-					<key>buttonNegative</key>
-					<string>Annuler</string>
-					<key>defaultAnswer</key>
-					<string></string>
-					<key>defaultMessage</key>
-					<string>Numéro de version ? Sous la forme x.y.z (par exemple : 3.7.1)</string>
-					<key>requireInput</key>
-					<true/>
-					<key>temporary items path</key>
-					<string>/var/folders/gz/9373k10s2sdf_qj2g46r2qzr0000gn/T/E90E366C-E33D-4652-A815-017AD37F126E/1/com.apple.Automator.TextInputDialog</string>
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.TextInputDialog</string>
@@ -199,7 +184,7 @@
 				<key>isViewVisible</key>
 				<true/>
 				<key>location</key>
-				<string>441.500000:184.000000</string>
+				<string>415.500000:184.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Ask for Text.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -258,13 +243,6 @@
 					<key>variableUUID</key>
 					<string>8BE97790-0108-48AE-AB90-2DCCD240F8AB</string>
 				</dict>
-				<key>ActionRuntimeParameters</key>
-				<dict>
-					<key>temporary items path</key>
-					<string>/var/folders/gz/9373k10s2sdf_qj2g46r2qzr0000gn/T/E90E366C-E33D-4652-A815-017AD37F126E/1/com.apple.Automator.SetValueofVariable</string>
-					<key>variableUUID</key>
-					<string>8BE97790-0108-48AE-AB90-2DCCD240F8AB</string>
-				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.SetValueofVariable</string>
 				<key>CFBundleVersion</key>
@@ -318,7 +296,7 @@
 				<key>isViewVisible</key>
 				<true/>
 				<key>location</key>
-				<string>441.500000:290.000000</string>
+				<string>415.500000:290.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Set Value of Variable.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -452,7 +430,7 @@
 				<key>isViewVisible</key>
 				<false/>
 				<key>location</key>
-				<string>441.500000:332.000000</string>
+				<string>415.500000:332.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/New Folder.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -564,7 +542,7 @@
 				<key>isViewVisible</key>
 				<false/>
 				<key>location</key>
-				<string>441.500000:374.000000</string>
+				<string>415.500000:374.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Set Value of Variable.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -623,13 +601,6 @@
 					<key>variableUUID</key>
 					<string>E4E5FF0F-2C29-488C-9317-DB4C0ECDA164</string>
 				</dict>
-				<key>ActionRuntimeParameters</key>
-				<dict>
-					<key>temporary items path</key>
-					<string>/var/folders/gz/9373k10s2sdf_qj2g46r2qzr0000gn/T/E90E366C-E33D-4652-A815-017AD37F126E/1/com.apple.Automator.SetValueofVariable</string>
-					<key>variableUUID</key>
-					<string>E4E5FF0F-2C29-488C-9317-DB4C0ECDA164</string>
-				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.SetValueofVariable</string>
 				<key>CFBundleVersion</key>
@@ -681,7 +652,7 @@
 				<key>isViewVisible</key>
 				<true/>
 				<key>location</key>
-				<string>441.500000:480.000000</string>
+				<string>415.500000:480.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Set Value of Variable.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -714,7 +685,7 @@
 					<dict>
 						<key>tokenizedValue</key>
 						<array>
-							<string>MIEM Spat</string>
+							<string>MIEM Spat __VersionNum</string>
 						</array>
 					</dict>
 					<key>targetLocation</key>
@@ -741,18 +712,9 @@
 				<key>ActionParameters</key>
 				<dict>
 					<key>newName</key>
-					<string>MIEM Spat</string>
+					<string>MIEM Spat __VersionNum</string>
 					<key>targetLocation</key>
 					<string>~/Programmation/Miam/SpatCommon/Applications_macOS</string>
-				</dict>
-				<key>ActionRuntimeParameters</key>
-				<dict>
-					<key>newName</key>
-					<string>MIEM Spat</string>
-					<key>targetLocation</key>
-					<string>/Users/Gwendal/Programmation/Miam/SpatCommon/Applications_macOS</string>
-					<key>temporary items path</key>
-					<string>/var/folders/gz/9373k10s2sdf_qj2g46r2qzr0000gn/T/E90E366C-E33D-4652-A815-017AD37F126E/1/com.apple.Automator.MakeNewFolder</string>
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.MakeNewFolder</string>
@@ -819,7 +781,7 @@
 				<key>isViewVisible</key>
 				<true/>
 				<key>location</key>
-				<string>441.500000:610.000000</string>
+				<string>415.500000:610.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/New Folder.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -878,13 +840,6 @@
 					<key>variableUUID</key>
 					<string>87ACE335-ED0B-446D-AA92-3F71BFD7F66A</string>
 				</dict>
-				<key>ActionRuntimeParameters</key>
-				<dict>
-					<key>temporary items path</key>
-					<string>/var/folders/gz/9373k10s2sdf_qj2g46r2qzr0000gn/T/E90E366C-E33D-4652-A815-017AD37F126E/1/com.apple.Automator.SetValueofVariable</string>
-					<key>variableUUID</key>
-					<string>87ACE335-ED0B-446D-AA92-3F71BFD7F66A</string>
-				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.SetValueofVariable</string>
 				<key>CFBundleVersion</key>
@@ -936,7 +891,7 @@
 				<key>isViewVisible</key>
 				<true/>
 				<key>location</key>
-				<string>441.500000:716.000000</string>
+				<string>415.500000:716.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Set Value of Variable.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -993,13 +948,6 @@
 					<key>variableUUID</key>
 					<string>1CB354BB-CF89-4844-A829-5F3FC11DE5C2</string>
 				</dict>
-				<key>ActionRuntimeParameters</key>
-				<dict>
-					<key>temporary items path</key>
-					<string>/var/folders/gz/9373k10s2sdf_qj2g46r2qzr0000gn/T/E90E366C-E33D-4652-A815-017AD37F126E/1/com.apple.Automator.SetValueofVariable</string>
-					<key>variableUUID</key>
-					<string>1CB354BB-CF89-4844-A829-5F3FC11DE5C2</string>
-				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.SetValueofVariable</string>
 				<key>CFBundleVersion</key>
@@ -1051,7 +999,7 @@
 				<key>isViewVisible</key>
 				<true/>
 				<key>location</key>
-				<string>441.500000:822.000000</string>
+				<string>415.500000:822.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Set Value of Variable.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -1119,15 +1067,6 @@
 					<key>targetLocation</key>
 					<string></string>
 				</dict>
-				<key>ActionRuntimeParameters</key>
-				<dict>
-					<key>newName</key>
-					<string>Matrix Router plugins</string>
-					<key>targetLocation</key>
-					<string>/Users/Gwendal/Programmation/Miam/SpatCommon/Applications_macOS/MIEM Spat</string>
-					<key>temporary items path</key>
-					<string>/var/folders/gz/9373k10s2sdf_qj2g46r2qzr0000gn/T/E90E366C-E33D-4652-A815-017AD37F126E/1/com.apple.Automator.MakeNewFolder</string>
-				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.MakeNewFolder</string>
 				<key>CFBundleVersion</key>
@@ -1193,7 +1132,7 @@
 				<key>isViewVisible</key>
 				<true/>
 				<key>location</key>
-				<string>441.500000:952.000000</string>
+				<string>415.500000:952.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/New Folder.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -1252,13 +1191,6 @@
 					<key>variableUUID</key>
 					<string>B1D6CFB3-6021-47EE-BEF8-83B9C6595E56</string>
 				</dict>
-				<key>ActionRuntimeParameters</key>
-				<dict>
-					<key>temporary items path</key>
-					<string>/var/folders/gz/9373k10s2sdf_qj2g46r2qzr0000gn/T/E90E366C-E33D-4652-A815-017AD37F126E/1/com.apple.Automator.SetValueofVariable</string>
-					<key>variableUUID</key>
-					<string>B1D6CFB3-6021-47EE-BEF8-83B9C6595E56</string>
-				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.SetValueofVariable</string>
 				<key>CFBundleVersion</key>
@@ -1310,7 +1242,7 @@
 				<key>isViewVisible</key>
 				<true/>
 				<key>location</key>
-				<string>441.500000:1058.000000</string>
+				<string>415.500000:1058.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Set Value of Variable.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -1363,17 +1295,6 @@
 						<string>~/Library/Audio/Plug-Ins/Components/MatrixRouter_32ch.component</string>
 						<string>~/Library/Audio/Plug-Ins/Components/MatrixRouter_64ch.component</string>
 					</array>
-				</dict>
-				<key>ActionRuntimeParameters</key>
-				<dict>
-					<key>fileNames</key>
-					<array>
-						<string>~/Library/Audio/Plug-Ins/Components/MatrixRouter_8ch.component</string>
-						<string>~/Library/Audio/Plug-Ins/Components/MatrixRouter_32ch.component</string>
-						<string>~/Library/Audio/Plug-Ins/Components/MatrixRouter_64ch.component</string>
-					</array>
-					<key>temporary items path</key>
-					<string>/var/folders/gz/9373k10s2sdf_qj2g46r2qzr0000gn/T/E90E366C-E33D-4652-A815-017AD37F126E/1/com.apple.Automator.SpecifiedFiles</string>
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.SpecifiedFiles</string>
@@ -1429,7 +1350,7 @@
 				<key>isViewVisible</key>
 				<true/>
 				<key>location</key>
-				<string>441.500000:1296.000000</string>
+				<string>415.500000:1296.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Get Specified Finder Items.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -1491,15 +1412,6 @@
 					<false/>
 					<key>toDirectory</key>
 					<string>B1D6CFB3-6021-47EE-BEF8-83B9C6595E56</string>
-				</dict>
-				<key>ActionRuntimeParameters</key>
-				<dict>
-					<key>replaceExisting</key>
-					<false/>
-					<key>temporary items path</key>
-					<string>/var/folders/gz/9373k10s2sdf_qj2g46r2qzr0000gn/T/E90E366C-E33D-4652-A815-017AD37F126E/1/com.apple.Automator.CopyFiles</string>
-					<key>toDirectory</key>
-					<string>/Users/Gwendal/Programmation/Miam/SpatCommon/Applications_macOS/MIEM Spat/Matrix Router plugins</string>
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.CopyFiles</string>
@@ -1564,7 +1476,7 @@
 				<key>isViewVisible</key>
 				<true/>
 				<key>location</key>
-				<string>441.500000:1399.000000</string>
+				<string>415.500000:1399.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Copy Finder Items.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -1616,16 +1528,6 @@
 						<string>~/Programmation/Miam/MiamSpat/Builds/MacOSX/build/Release/MiemSpatPlayer.app</string>
 						<string>~/Programmation/Miam/MiamEdit/Builds/MacOSX/build/Release/MiemEditor.app</string>
 					</array>
-				</dict>
-				<key>ActionRuntimeParameters</key>
-				<dict>
-					<key>fileNames</key>
-					<array>
-						<string>~/Programmation/Miam/MiamSpat/Builds/MacOSX/build/Release/MiemSpatPlayer.app</string>
-						<string>~/Programmation/Miam/MiamEdit/Builds/MacOSX/build/Release/MiemEditor.app</string>
-					</array>
-					<key>temporary items path</key>
-					<string>/var/folders/gz/9373k10s2sdf_qj2g46r2qzr0000gn/T/E90E366C-E33D-4652-A815-017AD37F126E/1/com.apple.Automator.SpecifiedFiles</string>
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.SpecifiedFiles</string>
@@ -1679,7 +1581,7 @@
 				<key>isViewVisible</key>
 				<true/>
 				<key>location</key>
-				<string>441.500000:1637.000000</string>
+				<string>415.500000:1637.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Get Specified Finder Items.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -1742,15 +1644,6 @@
 					<key>toDirectory</key>
 					<string>87ACE335-ED0B-446D-AA92-3F71BFD7F66A</string>
 				</dict>
-				<key>ActionRuntimeParameters</key>
-				<dict>
-					<key>replaceExisting</key>
-					<false/>
-					<key>temporary items path</key>
-					<string>/var/folders/gz/9373k10s2sdf_qj2g46r2qzr0000gn/T/E90E366C-E33D-4652-A815-017AD37F126E/1/com.apple.Automator.CopyFiles</string>
-					<key>toDirectory</key>
-					<string>/Users/Gwendal/Programmation/Miam/SpatCommon/Applications_macOS/MIEM Spat</string>
-				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.CopyFiles</string>
 				<key>CFBundleVersion</key>
@@ -1812,7 +1705,7 @@
 				<key>isViewVisible</key>
 				<true/>
 				<key>location</key>
-				<string>441.500000:1740.000000</string>
+				<string>415.500000:1740.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Copy Finder Items.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -1868,7 +1761,7 @@
 				<key>ActionParameters</key>
 				<dict>
 					<key>COMMAND_STRING</key>
-					<string>hdiutil create -format UDZO -srcfolder "/Users/Gwendal/Programmation/Miam/SpatCommon/Applications_macOS/MIEM Spat" "/Users/Gwendal/Programmation/Miam/SpatCommon/Applications_macOS/MIEM Spat.dmg"</string>
+					<string>hdiutil create -format UDZO -srcfolder "/Users/Gwendal/Programmation/Miam/SpatCommon/Applications_macOS/MIEM Spat __VersionNum" "/Users/Gwendal/Programmation/Miam/SpatCommon/Applications_macOS/MIEM Spat __VersionNum.dmg"</string>
 					<key>CheckedForUserDefaultShell</key>
 					<true/>
 					<key>inputMethod</key>
@@ -1877,21 +1770,6 @@
 					<string>/bin/bash</string>
 					<key>source</key>
 					<string></string>
-				</dict>
-				<key>ActionRuntimeParameters</key>
-				<dict>
-					<key>COMMAND_STRING</key>
-					<string>hdiutil create -format UDZO -srcfolder "/Users/Gwendal/Programmation/Miam/SpatCommon/Applications_macOS/MIEM Spat" "/Users/Gwendal/Programmation/Miam/SpatCommon/Applications_macOS/MIEM Spat.dmg"</string>
-					<key>CheckedForUserDefaultShell</key>
-					<true/>
-					<key>inputMethod</key>
-					<integer>1</integer>
-					<key>shell</key>
-					<string>/bin/bash</string>
-					<key>source</key>
-					<string></string>
-					<key>temporary items path</key>
-					<string>/var/folders/gz/9373k10s2sdf_qj2g46r2qzr0000gn/T/E90E366C-E33D-4652-A815-017AD37F126E/1/com.apple.RunShellScript</string>
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.RunShellScript</string>
@@ -1998,7 +1876,7 @@
 				<key>isViewVisible</key>
 				<true/>
 				<key>location</key>
-				<string>441.500000:1923.000000</string>
+				<string>415.500000:1923.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Run Shell Script.action/Contents/Resources/French.lproj/main.nib</string>
 			</dict>
@@ -2104,7 +1982,7 @@
 				<key>isViewVisible</key>
 				<false/>
 				<key>location</key>
-				<string>441.500000:1965.000000</string>
+				<string>415.500000:1965.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Get Specified Finder Items.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -2230,7 +2108,7 @@
 				<key>isViewVisible</key>
 				<false/>
 				<key>location</key>
-				<string>441.500000:2007.000000</string>
+				<string>415.500000:2007.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Move Finder Items.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -2291,11 +2169,6 @@
 					<key>variableUUID</key>
 					<string>87ACE335-ED0B-446D-AA92-3F71BFD7F66A</string>
 				</dict>
-				<key>ActionRuntimeParameters</key>
-				<dict>
-					<key>variableUUID</key>
-					<string>/Users/Gwendal/Programmation/Miam/SpatCommon/Applications_macOS/MIEM Spat</string>
-				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.GetValueofVariable</string>
 				<key>CFBundleVersion</key>
@@ -2349,7 +2222,7 @@
 				<key>isViewVisible</key>
 				<true/>
 				<key>location</key>
-				<string>441.500000:2110.000000</string>
+				<string>415.500000:2110.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Get Value of Variable.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -2383,8 +2256,6 @@
 				<key>ActionName</key>
 				<string>Placer des éléments du Finder dans la corbeille</string>
 				<key>ActionParameters</key>
-				<dict/>
-				<key>ActionRuntimeParameters</key>
 				<dict/>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.MoveToTrash</string>
@@ -2463,14 +2334,7 @@
 				<dict>
 					<key>fileNames</key>
 					<array>
-						<string>~/Programmation/Miam/SpatCommon/Applications_macOS/MIEM Spat.dmg</string>
-					</array>
-				</dict>
-				<key>ActionRuntimeParameters</key>
-				<dict>
-					<key>fileNames</key>
-					<array>
-						<string>~/Programmation/Miam/SpatCommon/Applications_macOS/MIEM Spat.dmg</string>
+						<string>~/Programmation/Miam/SpatCommon/Applications_macOS/MIEM Spat __VersionNum.dmg</string>
 					</array>
 				</dict>
 				<key>BundleIdentifier</key>
@@ -2525,7 +2389,7 @@
 				<key>isViewVisible</key>
 				<true/>
 				<key>location</key>
-				<string>441.500000:2414.000000</string>
+				<string>415.500000:2414.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Get Specified Finder Items.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -2547,7 +2411,7 @@
 					</array>
 				</dict>
 				<key>AMActionVersion</key>
-				<string>1.3.2</string>
+				<string>v.1.3.2</string>
 				<key>AMApplication</key>
 				<array>
 					<string>Finder</string>
@@ -2587,7 +2451,12 @@
 					<key>renameType</key>
 					<dict/>
 					<key>replaceWithText</key>
-					<dict/>
+					<dict>
+						<key>tokenizedValue</key>
+						<array>
+							<string>$(8BE97790-0108-48AE-AB90-2DCCD240F8AB)</string>
+						</array>
+					</dict>
 					<key>singleItemOption</key>
 					<dict/>
 					<key>startingNumber</key>
@@ -2597,10 +2466,16 @@
 						<key>tokenizedValue</key>
 						<array>
 							<string> </string>
+							<string>$(8BE97790-0108-48AE-AB90-2DCCD240F8AB)</string>
 						</array>
 					</dict>
 					<key>textToFind</key>
-					<dict/>
+					<dict>
+						<key>tokenizedValue</key>
+						<array>
+							<string>__VersionNum</string>
+						</array>
+					</dict>
 					<key>useLeadingZeros</key>
 					<dict/>
 				</dict>
@@ -2616,7 +2491,7 @@
 				<key>ActionBundlePath</key>
 				<string>/System/Library/Automator/Rename Finder Items.action</string>
 				<key>ActionName</key>
-				<string>Renommer les éléments du Finder : Ajouter du texte</string>
+				<string>Renommer les éléments du Finder : Remplacer du texte</string>
 				<key>ActionParameters</key>
 				<dict>
 					<key>caseIndicator</key>
@@ -2650,64 +2525,17 @@
 					<key>renameItems</key>
 					<integer>0</integer>
 					<key>renameType</key>
-					<integer>1</integer>
+					<integer>4</integer>
 					<key>replaceWithText</key>
-					<string></string>
+					<string>$(8BE97790-0108-48AE-AB90-2DCCD240F8AB)</string>
 					<key>singleItemOption</key>
-					<integer>0</integer>
-					<key>startingNumber</key>
 					<integer>1</integer>
-					<key>textInput</key>
-					<string> </string>
-					<key>textToFind</key>
-					<string></string>
-					<key>useLeadingZeros</key>
-					<false/>
-				</dict>
-				<key>ActionRuntimeParameters</key>
-				<dict>
-					<key>caseIndicator</key>
-					<integer>0</integer>
-					<key>dateFormat</key>
-					<string>0</string>
-					<key>datePlacement</key>
-					<integer>0</integer>
-					<key>dateSeparator</key>
-					<string>0</string>
-					<key>dateToUse</key>
-					<integer>0</integer>
-					<key>defaultName</key>
-					<string></string>
-					<key>ignoreCase</key>
-					<true/>
-					<key>includeExtensions</key>
-					<integer>0</integer>
-					<key>insertionPosition</key>
-					<integer>0</integer>
-					<key>minimumCount</key>
-					<string>2</string>
-					<key>nameDateSeparator</key>
-					<integer>0</integer>
-					<key>nameSingleItem</key>
-					<string></string>
-					<key>numberLocation</key>
-					<integer>0</integer>
-					<key>numberSeparator</key>
-					<integer>0</integer>
-					<key>renameItems</key>
-					<integer>0</integer>
-					<key>renameType</key>
-					<integer>1</integer>
-					<key>replaceWithText</key>
-					<string></string>
-					<key>singleItemOption</key>
-					<integer>0</integer>
 					<key>startingNumber</key>
 					<integer>1</integer>
 					<key>textInput</key>
 					<string> $(8BE97790-0108-48AE-AB90-2DCCD240F8AB)</string>
 					<key>textToFind</key>
-					<string></string>
+					<string>__VersionNum</string>
 					<key>useLeadingZeros</key>
 					<false/>
 				</dict>
@@ -3043,12 +2871,10 @@
 						<string>9</string>
 					</dict>
 				</dict>
-				<key>conversionLabel</key>
-				<integer>0</integer>
 				<key>isViewVisible</key>
 				<true/>
 				<key>location</key>
-				<string>441.500000:2755.000000</string>
+				<string>415.500000:2602.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Rename Finder Items.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -3123,150 +2949,150 @@
 	</array>
 	<key>connectors</key>
 	<dict>
-		<key>2E414EBD-7232-4633-8DF2-3F5D5DFFA711</key>
+		<key>13226DEE-5541-4CB2-9E50-5D53A25C5D98</key>
 		<dict>
 			<key>from</key>
-			<string>B47638C8-8F06-4415-A57B-A4F551895127 - B47638C8-8F06-4415-A57B-A4F551895127</string>
+			<string>5C1B6F67-552B-4C54-817C-55192DC56F7A - 5C1B6F67-552B-4C54-817C-55192DC56F7A</string>
 			<key>to</key>
-			<string>14C4EF23-4FEC-4D82-9AB2-7B21C6612ABB - 14C4EF23-4FEC-4D82-9AB2-7B21C6612ABB</string>
+			<string>28C81440-764A-4A75-B415-E9C3E4DC5F37 - 28C81440-764A-4A75-B415-E9C3E4DC5F37</string>
 		</dict>
-		<key>3DA8774D-9746-42D0-B51F-A560F68DC848</key>
-		<dict>
-			<key>from</key>
-			<string>0B24B86D-A0B7-4438-A94A-13F446E5D3F0 - 0B24B86D-A0B7-4438-A94A-13F446E5D3F0</string>
-			<key>to</key>
-			<string>EBFE7BE3-2095-41ED-9AA9-9B1799271C36 - EBFE7BE3-2095-41ED-9AA9-9B1799271C36</string>
-		</dict>
-		<key>420606A1-FB63-41AF-9038-EDDF8310053F</key>
-		<dict>
-			<key>from</key>
-			<string>B577C164-2DB8-452B-BB68-0F4D5D3186A2 - B577C164-2DB8-452B-BB68-0F4D5D3186A2</string>
-			<key>to</key>
-			<string>3980E671-48E8-43CF-93DA-5A5AD373CDFB - 3980E671-48E8-43CF-93DA-5A5AD373CDFB</string>
-		</dict>
-		<key>42B21846-E37F-4A4F-8102-B2FF3CD793BD</key>
-		<dict>
-			<key>from</key>
-			<string>F215F669-15CD-4485-8160-51FF6C4533D0 - F215F669-15CD-4485-8160-51FF6C4533D0</string>
-			<key>to</key>
-			<string>0B24B86D-A0B7-4438-A94A-13F446E5D3F0 - 0B24B86D-A0B7-4438-A94A-13F446E5D3F0</string>
-		</dict>
-		<key>58115648-9932-4762-9885-27EE275FEEC4</key>
+		<key>22D9A3E7-3011-4E85-88A4-6A5F02BF479D</key>
 		<dict>
 			<key>from</key>
 			<string>9CF2F069-F81F-44AF-9064-9848CC84CC45 - 9CF2F069-F81F-44AF-9064-9848CC84CC45</string>
 			<key>to</key>
 			<string>273550EE-3EC2-4D55-8F31-E16325DA9C79 - 273550EE-3EC2-4D55-8F31-E16325DA9C79</string>
 		</dict>
-		<key>6B88F7ED-368A-41F9-8777-1AD0FF7F1DEA</key>
+		<key>25DADAF8-E028-4677-9397-ACEC62808884</key>
 		<dict>
 			<key>from</key>
-			<string>4A4EC57D-5153-482A-860B-6185A8AF4F34 - 4A4EC57D-5153-482A-860B-6185A8AF4F34</string>
+			<string>B47638C8-8F06-4415-A57B-A4F551895127 - B47638C8-8F06-4415-A57B-A4F551895127</string>
 			<key>to</key>
-			<string>BD707ADB-52E8-4D9E-A191-F60B45ACA870 - BD707ADB-52E8-4D9E-A191-F60B45ACA870</string>
+			<string>14C4EF23-4FEC-4D82-9AB2-7B21C6612ABB - 14C4EF23-4FEC-4D82-9AB2-7B21C6612ABB</string>
 		</dict>
-		<key>71593777-3A07-4463-A499-46810B68E3FC</key>
-		<dict>
-			<key>to</key>
-			<string>C37A0D3B-3F1C-4AFD-BC85-0BC2E1E16D6F - C37A0D3B-3F1C-4AFD-BC85-0BC2E1E16D6F</string>
-		</dict>
-		<key>75FEE08E-855A-4CEF-80D6-9FFD1AC8C146</key>
-		<dict>
-			<key>from</key>
-			<string>FC1A2772-E8F4-466B-A4C6-A1CC2220CB10 - FC1A2772-E8F4-466B-A4C6-A1CC2220CB10</string>
-			<key>to</key>
-			<string>084F1213-5486-4054-B7C3-6CC31F7EE64D - 084F1213-5486-4054-B7C3-6CC31F7EE64D</string>
-		</dict>
-		<key>7BF7D9EF-5CD3-46ED-9D76-C304E7DB25F3</key>
-		<dict>
-			<key>from</key>
-			<string>300987EA-EBA8-4B16-88E7-2E14AE8CBE52 - 300987EA-EBA8-4B16-88E7-2E14AE8CBE52</string>
-			<key>to</key>
-			<string>0BDEF541-6979-4B0D-A2F4-2F1A41560AC5 - 0BDEF541-6979-4B0D-A2F4-2F1A41560AC5</string>
-		</dict>
-		<key>8A52ABA5-214C-459C-AB36-75FC7E8C650E</key>
-		<dict>
-			<key>from</key>
-			<string>084F1213-5486-4054-B7C3-6CC31F7EE64D - 084F1213-5486-4054-B7C3-6CC31F7EE64D</string>
-			<key>to</key>
-			<string>5C1B6F67-552B-4C54-817C-55192DC56F7A - 5C1B6F67-552B-4C54-817C-55192DC56F7A</string>
-		</dict>
-		<key>8C26391D-D794-4FF7-A246-C09961F2CFEF</key>
+		<key>33ED1B0C-1117-4078-A133-E2A8F3DAABA7</key>
 		<dict>
 			<key>from</key>
 			<string>EBFE7BE3-2095-41ED-9AA9-9B1799271C36 - EBFE7BE3-2095-41ED-9AA9-9B1799271C36</string>
 			<key>to</key>
 			<string>B47638C8-8F06-4415-A57B-A4F551895127 - B47638C8-8F06-4415-A57B-A4F551895127</string>
 		</dict>
-		<key>9C06AE9B-436B-4CBD-AE89-81A635C12E0A</key>
-		<dict>
-			<key>from</key>
-			<string>13CFF01A-72E3-487A-86A1-5AEEF6544C1F - 13CFF01A-72E3-487A-86A1-5AEEF6544C1F</string>
-			<key>to</key>
-			<string>A77DFF5D-7A07-476A-BC89-066DA45C57E3 - A77DFF5D-7A07-476A-BC89-066DA45C57E3</string>
-		</dict>
-		<key>A74D12CC-ACCF-4159-9BC2-B84F061EE0B1</key>
-		<dict>
-			<key>from</key>
-			<string>5C1B6F67-552B-4C54-817C-55192DC56F7A - 5C1B6F67-552B-4C54-817C-55192DC56F7A</string>
-			<key>to</key>
-			<string>28C81440-764A-4A75-B415-E9C3E4DC5F37 - 28C81440-764A-4A75-B415-E9C3E4DC5F37</string>
-		</dict>
-		<key>C3C00DD7-B297-4E5A-A9EA-74E61CC71BA4</key>
-		<dict>
-			<key>from</key>
-			<string>28C81440-764A-4A75-B415-E9C3E4DC5F37 - 28C81440-764A-4A75-B415-E9C3E4DC5F37</string>
-			<key>to</key>
-			<string>47973180-8091-4AA3-9EA0-89B475557156 - 47973180-8091-4AA3-9EA0-89B475557156</string>
-		</dict>
-		<key>CCE8F24C-0575-4DC1-999F-BD60276C1405</key>
-		<dict>
-			<key>from</key>
-			<string>0BDEF541-6979-4B0D-A2F4-2F1A41560AC5 - 0BDEF541-6979-4B0D-A2F4-2F1A41560AC5</string>
-			<key>to</key>
-			<string>FC1A2772-E8F4-466B-A4C6-A1CC2220CB10 - FC1A2772-E8F4-466B-A4C6-A1CC2220CB10</string>
-		</dict>
-		<key>CFA746F4-031E-479F-9755-AF6E16957998</key>
-		<dict>
-			<key>from</key>
-			<string>273550EE-3EC2-4D55-8F31-E16325DA9C79 - 273550EE-3EC2-4D55-8F31-E16325DA9C79</string>
-			<key>to</key>
-			<string>B577C164-2DB8-452B-BB68-0F4D5D3186A2 - B577C164-2DB8-452B-BB68-0F4D5D3186A2</string>
-		</dict>
-		<key>D2481949-8714-408E-AE97-47EC1D745EE3</key>
+		<key>36D00769-1ACA-4EA8-874C-58F20A54E03C</key>
 		<dict>
 			<key>from</key>
 			<string>3980E671-48E8-43CF-93DA-5A5AD373CDFB - 3980E671-48E8-43CF-93DA-5A5AD373CDFB</string>
 			<key>to</key>
 			<string>13CFF01A-72E3-487A-86A1-5AEEF6544C1F - 13CFF01A-72E3-487A-86A1-5AEEF6544C1F</string>
 		</dict>
-		<key>F27F5999-3C07-43B3-BFCE-DFBFA204E374</key>
+		<key>482E1D06-1AA6-4D20-A253-629C2217FCDE</key>
 		<dict>
 			<key>from</key>
-			<string>14C4EF23-4FEC-4D82-9AB2-7B21C6612ABB - 14C4EF23-4FEC-4D82-9AB2-7B21C6612ABB</string>
+			<string>28C81440-764A-4A75-B415-E9C3E4DC5F37 - 28C81440-764A-4A75-B415-E9C3E4DC5F37</string>
 			<key>to</key>
-			<string>300987EA-EBA8-4B16-88E7-2E14AE8CBE52 - 300987EA-EBA8-4B16-88E7-2E14AE8CBE52</string>
+			<string>47973180-8091-4AA3-9EA0-89B475557156 - 47973180-8091-4AA3-9EA0-89B475557156</string>
 		</dict>
-		<key>F7AD0083-92A7-4B65-8998-5D736B8CD0BD</key>
-		<dict>
-			<key>from</key>
-			<string>C37A0D3B-3F1C-4AFD-BC85-0BC2E1E16D6F - C37A0D3B-3F1C-4AFD-BC85-0BC2E1E16D6F</string>
-			<key>to</key>
-			<string>4A4EC57D-5153-482A-860B-6185A8AF4F34 - 4A4EC57D-5153-482A-860B-6185A8AF4F34</string>
-		</dict>
-		<key>FB1DBBF7-7E26-4766-983D-62E5BF703AB0</key>
+		<key>4EF1A5DF-41FE-4FE7-8830-5AE1635A75FA</key>
 		<dict>
 			<key>from</key>
 			<string>47973180-8091-4AA3-9EA0-89B475557156 - 47973180-8091-4AA3-9EA0-89B475557156</string>
 			<key>to</key>
 			<string>0C853AC6-1C00-4475-827C-4497AEE10468 - 0C853AC6-1C00-4475-827C-4497AEE10468</string>
 		</dict>
-		<key>FB369AD5-5ABC-4CC6-8569-E46B01E60E8E</key>
+		<key>550686F8-8083-42C4-909B-73C75BC63A0C</key>
+		<dict>
+			<key>from</key>
+			<string>084F1213-5486-4054-B7C3-6CC31F7EE64D - 084F1213-5486-4054-B7C3-6CC31F7EE64D</string>
+			<key>to</key>
+			<string>5C1B6F67-552B-4C54-817C-55192DC56F7A - 5C1B6F67-552B-4C54-817C-55192DC56F7A</string>
+		</dict>
+		<key>555C63F1-29DC-47E1-B9E3-C8E821DF2A44</key>
+		<dict>
+			<key>from</key>
+			<string>C37A0D3B-3F1C-4AFD-BC85-0BC2E1E16D6F - C37A0D3B-3F1C-4AFD-BC85-0BC2E1E16D6F</string>
+			<key>to</key>
+			<string>4A4EC57D-5153-482A-860B-6185A8AF4F34 - 4A4EC57D-5153-482A-860B-6185A8AF4F34</string>
+		</dict>
+		<key>6E3D8B6E-D05B-418D-BBF9-872C9F0407FA</key>
+		<dict>
+			<key>from</key>
+			<string>FC1A2772-E8F4-466B-A4C6-A1CC2220CB10 - FC1A2772-E8F4-466B-A4C6-A1CC2220CB10</string>
+			<key>to</key>
+			<string>084F1213-5486-4054-B7C3-6CC31F7EE64D - 084F1213-5486-4054-B7C3-6CC31F7EE64D</string>
+		</dict>
+		<key>89C7257A-6B24-465A-AD5D-0A23FBEAC738</key>
+		<dict>
+			<key>from</key>
+			<string>0B24B86D-A0B7-4438-A94A-13F446E5D3F0 - 0B24B86D-A0B7-4438-A94A-13F446E5D3F0</string>
+			<key>to</key>
+			<string>EBFE7BE3-2095-41ED-9AA9-9B1799271C36 - EBFE7BE3-2095-41ED-9AA9-9B1799271C36</string>
+		</dict>
+		<key>8E1480D5-B6A3-48DC-A91F-6C25DFA49884</key>
 		<dict>
 			<key>from</key>
 			<string>A77DFF5D-7A07-476A-BC89-066DA45C57E3 - A77DFF5D-7A07-476A-BC89-066DA45C57E3</string>
 			<key>to</key>
 			<string>F215F669-15CD-4485-8160-51FF6C4533D0 - F215F669-15CD-4485-8160-51FF6C4533D0</string>
+		</dict>
+		<key>AA9225D8-E0D2-4762-9C1B-04868DD50437</key>
+		<dict>
+			<key>from</key>
+			<string>B577C164-2DB8-452B-BB68-0F4D5D3186A2 - B577C164-2DB8-452B-BB68-0F4D5D3186A2</string>
+			<key>to</key>
+			<string>3980E671-48E8-43CF-93DA-5A5AD373CDFB - 3980E671-48E8-43CF-93DA-5A5AD373CDFB</string>
+		</dict>
+		<key>AFA5E717-4538-4BE9-8D82-292C6289F99F</key>
+		<dict>
+			<key>from</key>
+			<string>F215F669-15CD-4485-8160-51FF6C4533D0 - F215F669-15CD-4485-8160-51FF6C4533D0</string>
+			<key>to</key>
+			<string>0B24B86D-A0B7-4438-A94A-13F446E5D3F0 - 0B24B86D-A0B7-4438-A94A-13F446E5D3F0</string>
+		</dict>
+		<key>B34415D1-F7FA-4B1E-8180-6EEE88B9572F</key>
+		<dict>
+			<key>from</key>
+			<string>0BDEF541-6979-4B0D-A2F4-2F1A41560AC5 - 0BDEF541-6979-4B0D-A2F4-2F1A41560AC5</string>
+			<key>to</key>
+			<string>FC1A2772-E8F4-466B-A4C6-A1CC2220CB10 - FC1A2772-E8F4-466B-A4C6-A1CC2220CB10</string>
+		</dict>
+		<key>BB1D2325-6B65-43F9-8AC3-2E3BC429C140</key>
+		<dict>
+			<key>to</key>
+			<string>C37A0D3B-3F1C-4AFD-BC85-0BC2E1E16D6F - C37A0D3B-3F1C-4AFD-BC85-0BC2E1E16D6F</string>
+		</dict>
+		<key>C06A32F2-FAE5-49FA-B552-A30E1747DC2F</key>
+		<dict>
+			<key>from</key>
+			<string>273550EE-3EC2-4D55-8F31-E16325DA9C79 - 273550EE-3EC2-4D55-8F31-E16325DA9C79</string>
+			<key>to</key>
+			<string>B577C164-2DB8-452B-BB68-0F4D5D3186A2 - B577C164-2DB8-452B-BB68-0F4D5D3186A2</string>
+		</dict>
+		<key>E83DEFEE-5F81-493B-B9CE-B53205A04B66</key>
+		<dict>
+			<key>from</key>
+			<string>4A4EC57D-5153-482A-860B-6185A8AF4F34 - 4A4EC57D-5153-482A-860B-6185A8AF4F34</string>
+			<key>to</key>
+			<string>BD707ADB-52E8-4D9E-A191-F60B45ACA870 - BD707ADB-52E8-4D9E-A191-F60B45ACA870</string>
+		</dict>
+		<key>EA7DDD06-3783-42A3-8AD1-95FD105907D3</key>
+		<dict>
+			<key>from</key>
+			<string>13CFF01A-72E3-487A-86A1-5AEEF6544C1F - 13CFF01A-72E3-487A-86A1-5AEEF6544C1F</string>
+			<key>to</key>
+			<string>A77DFF5D-7A07-476A-BC89-066DA45C57E3 - A77DFF5D-7A07-476A-BC89-066DA45C57E3</string>
+		</dict>
+		<key>FC321CD4-9765-48E5-9F83-410B93EEDCD7</key>
+		<dict>
+			<key>from</key>
+			<string>14C4EF23-4FEC-4D82-9AB2-7B21C6612ABB - 14C4EF23-4FEC-4D82-9AB2-7B21C6612ABB</string>
+			<key>to</key>
+			<string>300987EA-EBA8-4B16-88E7-2E14AE8CBE52 - 300987EA-EBA8-4B16-88E7-2E14AE8CBE52</string>
+		</dict>
+		<key>FE17B0D9-DA20-4A56-BA66-20DBBC280DE6</key>
+		<dict>
+			<key>from</key>
+			<string>300987EA-EBA8-4B16-88E7-2E14AE8CBE52 - 300987EA-EBA8-4B16-88E7-2E14AE8CBE52</string>
+			<key>to</key>
+			<string>0BDEF541-6979-4B0D-A2F4-2F1A41560AC5 - 0BDEF541-6979-4B0D-A2F4-2F1A41560AC5</string>
 		</dict>
 	</dict>
 	<key>variables</key>
@@ -3295,9 +3121,9 @@
 			<key>identifier</key>
 			<string>com.apple.Automator.Variable.Text</string>
 			<key>name</key>
-			<string>Numéro de version</string>
+			<string>NumeroDeVersion</string>
 			<key>value</key>
-			<string>0.1.0</string>
+			<string>0.0.2</string>
 		</dict>
 		<dict>
 			<key>UUID</key>
@@ -3317,7 +3143,7 @@
 			<key>name</key>
 			<string>Chemin dossier temporaire plugins</string>
 			<key>value</key>
-			<string>/Users/Gwendal/Programmation/Miam/SpatCommon/Applications_macOS/MIEM Spat/Matrix Router plugins</string>
+			<string>/Users/Gwendal/Programmation/Miam/SpatCommon/Applications_macOS/MIEM Spat __VersionNum/Matrix Router plugins</string>
 		</dict>
 		<dict>
 			<key>UUID</key>
@@ -3327,7 +3153,7 @@
 			<key>name</key>
 			<string>Chemin dossier TEMP</string>
 			<key>value</key>
-			<string>/Users/Gwendal/Programmation/Miam/SpatCommon/Applications_macOS/MIEM Spat</string>
+			<string>/Users/Gwendal/Programmation/Miam/SpatCommon/Applications_macOS/MIEM Spat __VersionNum</string>
 		</dict>
 		<dict>
 			<key>UUID</key>
@@ -3337,7 +3163,7 @@
 			<key>name</key>
 			<string>Chemin dossier TEMP _ copie</string>
 			<key>value</key>
-			<string>/Users/Gwendal/Programmation/Miam/SpatCommon/Applications_macOS/MIEM Spat</string>
+			<string>/Users/Gwendal/Programmation/Miam/SpatCommon/Applications_macOS/MIEM Spat __VersionNum</string>
 		</dict>
 		<dict>
 			<key>UUID</key>

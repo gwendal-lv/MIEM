@@ -13,7 +13,7 @@
 #include <memory>
 #include <list>
 
-#include "SpatState.hpp"
+// #include "SpatState.hpp"
 
 #include "IEditableArea.h"
 

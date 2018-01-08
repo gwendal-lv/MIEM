@@ -50,7 +50,7 @@ void SpatStatesEditionManager::selectSpatState(std::shared_ptr<SpatState<double>
     if (selectedSpatState)
     {
         infoText = "Linked to "
-        + std::to_string(selectedSpatState->GetLinkedAreasCount())
+        + boost::lexical_cast<std::string>(selectedSpatState->GetLinkedAreasCount())
         + " area" + (selectedSpatState->GetLinkedAreasCount()>1 ? "s" : "");
         stateIndexToSend = selectedSpatState->GetIndex();
         

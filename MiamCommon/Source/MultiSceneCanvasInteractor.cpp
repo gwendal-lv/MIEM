@@ -492,7 +492,7 @@ void MultiSceneCanvasInteractor::SelectScene(int id)
     }
     else if (id != -1) // -1 is "tolerated"....
     {
-        std::string errorMsg = "Scene id " + std::to_string(id) + " does not exist inside multi-scene canvas " + std::to_string(selfId);
+        std::string errorMsg = "Scene id " + boost::lexical_cast<std::string>(id) + " does not exist inside multi-scene canvas " + boost::lexical_cast<std::string>(selfId);
         throw std::runtime_error(errorMsg);
     }
     

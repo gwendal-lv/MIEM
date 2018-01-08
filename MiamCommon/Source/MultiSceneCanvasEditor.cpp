@@ -62,7 +62,7 @@ std::shared_ptr<IEditableArea> MultiSceneCanvasEditor::GetSelectedArea()
 {
     if (selectedScene)
         return selectedScene->GetSelectedArea();
-    else throw std::runtime_error("Cannot get the selected area : no scene selected on canvas" + std::to_string(selfId));
+    else throw std::runtime_error("Cannot get the selected area : no scene selected on canvas" + boost::lexical_cast<std::string>(selfId));
 }
 
 void MultiSceneCanvasEditor::SetSelectedSceneName(std::string _name)
@@ -144,7 +144,7 @@ void MultiSceneCanvasEditor::DeleteSelectedArea()
         auto areaE = selectedScene->DeleteSelectedArea();
         handleAndSendAreaEventSync(areaE);
     }
-    else throw std::runtime_error("Cannot get the selected area : no scene selected on canvas" + std::to_string(selfId));
+    else throw std::runtime_error("Cannot get the selected area : no scene selected on canvas" + boost::lexical_cast<std::string>(selfId));
     
     //canvasComponent->repaint(); // useless with OpenGL
 }

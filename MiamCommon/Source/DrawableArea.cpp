@@ -95,7 +95,7 @@ void DrawableArea::resetImages()
                 nameImage2.duplicateIfShared();
                 break;
             default :
-                throw std::logic_error("Échelle entière de " + std::to_string(integerScale) + "pas prise en compte directement. Rescale dynamique au rendu.");
+                throw std::logic_error("Échelle entière de " + boost::lexical_cast<std::string>(integerScale) + "pas prise en compte directement. Rescale dynamique au rendu.");
         }
         // Pas d'assignation de texte par défaut...
     }
@@ -116,7 +116,7 @@ void DrawableArea::renderCachedNameImages()
                 imagePtr = &nameImage2;
                 break;
             default :
-                throw std::logic_error("Échelle entière de " + std::to_string(integerScale) + "pas prise en compte directement. Rescale dynamique au rendu.");
+                throw std::logic_error("Échelle entière de " + boost::lexical_cast<std::string>(integerScale) + "pas prise en compte directement. Rescale dynamique au rendu.");
         }
         // Contexte graphique permettant de faire du dessin dans l'image
         // après réinit de l'image

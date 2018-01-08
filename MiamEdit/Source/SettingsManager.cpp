@@ -115,7 +115,7 @@ void SettingsManager::SetFromTree(bptree::ptree& tree)
     configurationComponent->ipAddressTextEditor->
     setText( tree.get<std::string>("model.senders.sender.ip") );
     configurationComponent->udpPortTextEditor->
-    setText( std::to_string(tree.get<int>("model.senders.sender.udp.port")) );
+    setText( boost::lexical_cast<std::string>(tree.get<int>("model.senders.sender.udp.port")) );
 }
 
 

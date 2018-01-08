@@ -142,7 +142,7 @@ namespace Miam
             for (size_t i = 0 ; i<3 ; i++)
             {
                 std::shared_ptr<MatrixState<T>> newState = std::make_shared<MatrixState<T>>();
-                newState->SetName("Matrice " + std::to_string(i+1));
+                newState->SetName("Matrice " + boost::lexical_cast<std::string>(i+1));
                 AddState(newState);
             }
         }

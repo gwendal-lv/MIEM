@@ -15,6 +15,7 @@
 
 #include "Presenter.h"
 
+#include "boost/lexical_cast.hpp"
 
 
 
@@ -36,7 +37,7 @@ presenter(presenter_)
     for (size_t i = 0; i<8 ; i++)
     {
         AddSpeaker();
-        speakers.back()->SetName("Octophonie " + std::to_string(i+1));
+        speakers.back()->SetName("Octophonie " + boost::lexical_cast<std::string>(i+1));
     }
     
     

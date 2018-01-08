@@ -12,6 +12,8 @@
 
 #include "Exciter.h"
 
+#include "SpatState.hpp" // ici pour éviter include croisé, pb sous AS 3.0
+
 using namespace Miam;
 
 
