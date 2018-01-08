@@ -19,25 +19,25 @@ public:
 	Metronome();
 	~Metronome();
 
-	void setAudioParameter(int m_samplesPerBlock, double m_sampleRate);
+	void setAudioParameter(double m_sampleRate, int m_BPM);
 	void update();
-
-	double getNextSample();
-	MidiMessage getNextMidiMsg();
-
-	int getSamplesToNextBeat();
-	int timeToSample(double ms);
-	int BPMtoPeriodInSample(int m_bpm);
+	int getNumSamplesToNextBeat();
+	int getCurrentBeat();
+	int getPeriodInSamples();
 
 private:
 	int BPM;
 	int samplesTime;
-	int samplesPerBlock;
+	
 	double sampleRate;
 
-	int samplePeriod;
+	int periodInSamples;
 	double nextSample;
 
 	int timeStamp;
+
+	int samplesLeftBeforeBeat;
+	int currentBeats;
+	int numOfBeats;
 };
 

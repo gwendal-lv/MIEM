@@ -29,13 +29,15 @@ AudioManager::AudioManager(AmusingModel *m_model) : model(m_model), state(Stop),
     // initialise any special settings that your component needs.
 	DBG("AudioManager::AudioManager");
 
+	beatsByTimeLine = 4;
+
 	model->sharedAudioDeviceManager->addAudioCallback(&recorder);
 
 	setSource(this);
 	runThread = true;
 	T = std::thread(&AudioManager::threadFunc, this);
 
-	
+	metronome = new Metronome();
 
 	for (int i = 0; i < maxSize; i++)
 	{
@@ -70,6 +72,7 @@ AudioManager::~AudioManager()
 	model->sharedAudioDeviceManager->removeAudioCallback(&recorder);
 	model->removeDeviceManagerFromOptionWindow();
 	//delete midiOuput;
+	delete metronome;
 }
 
 
@@ -87,9 +90,9 @@ void AudioManager::prepareToPlay(int samplesPerBlockExpected, double _sampleRate
 		synth.addVoice(new SamplerVoice);
 	}*/
 	
-	metronome.setAudioParameter(samplesPerBlockExpected, _sampleRate);
+	metronome->setAudioParameter(_sampleRate,50);
 	
-	periode = metronome.BPMtoPeriodInSample(50);//timeToSample(4000);
+	periode = beatsByTimeLine * metronome->getPeriodInSamples();//timeToSample(4000);
 	position = 0;
 
 	
@@ -161,7 +164,7 @@ void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 				if (playHeadsKnown[j] != 0)
 					playHeadsKnown[j]->process();
 			}
-		
+			metronome->update();
 			++position;
 			if (position == periode)
 			{
@@ -456,10 +459,10 @@ void AudioManager::getParameters()
 			break;
 		case Miam::AsyncParamChange::Duration :
 			state = Play;
-			sendMidiMessage(juce::MidiMessage::controllerEvent(1, 7, roundToInt(param.FloatValue*127.0f)),nullptr);
+			//sendMidiMessage(juce::MidiMessage::controllerEvent(1, 7, roundToInt(param.FloatValue*127.0f)),nullptr);
 			//juce::MidiMessage::masterVolume(param.FloatValue));
-			sendMidiMessage(juce::MidiMessage::masterVolume(param.FloatValue),nullptr);
-			param.IntegerValue = metronome.BPMtoPeriodInSample(param.IntegerValue);//timeToSample(param.IntegerValue);
+			//sendMidiMessage(juce::MidiMessage::masterVolume(param.FloatValue),nullptr);
+			param.IntegerValue = beatsByTimeLine * metronome->getPeriodInSamples();//timeToSample(param.IntegerValue);
 			paramToAllocationThread.push(param);
 			break;
 		case Miam::AsyncParamChange::UdpPort:
@@ -588,7 +591,7 @@ void AudioManager::getAudioThreadMsg()
 					break;
 				case 1:
 					if (playHeads[param.Id2] == 0)
-						playHeads[param.Id2] = new PlayHead();
+						playHeads[param.Id2] = new PlayHead(metronome);
 					if (state == Play)
 						playHeads[param.Id2]->setState(PlayHeadState::Play);
 					playHeads[param.Id2]->setId(param.Id2);
@@ -602,7 +605,7 @@ void AudioManager::getAudioThreadMsg()
 			}
 			else
 			{
-				playHeads[param.Id2] = new PlayHead(); // first create the PlayHead
+				playHeads[param.Id2] = new PlayHead(metronome); // first create the PlayHead
 				playHeads[param.Id2]->setId(param.Id2);
 				playHeads[param.Id2]->LinkTo(timeLines[param.Id1]);
 				playHeads[param.Id2]->setSpeed(param.DoubleValue);

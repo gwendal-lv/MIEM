@@ -12,6 +12,7 @@
 
 #include<memory>
 #include "BaseMidiSender.h"
+#include "Metronome.h"
 
 enum PlayHeadState
 {
@@ -23,7 +24,7 @@ enum PlayHeadState
 class PlayHead
 {
 public:
-	PlayHead();
+	PlayHead(Metronome* m_metronome);
 	~PlayHead();
 
 	void setAudioManager(Amusing::AudioManager* m_audioManager);
@@ -47,11 +48,18 @@ private:
 	double speedToReach; // vitesse à atteindre lors du changement de vitesse
 	double transitionPosition;
 	double transitionTime; // periode pendant laquelle la tête de lecture doit réduire ou accumuler du retard
+	double speedInc;
 	int currentPeriod; // period taking speed into account
 	double position;
 	double numT;
 	PlayHeadState state;
 
+	double position2;
+	int numOfBeats;
+	int currentBeats;
+
+	int periodInSamples;
+	Metronome *metronome; // used to be synchronized with all the reading head
 	void testPosition(int P); // look in the associate timeLine if there is a MIDI msg to send
 
 	static const int chordSize = 3;

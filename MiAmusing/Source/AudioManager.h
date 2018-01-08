@@ -58,6 +58,8 @@ namespace Amusing {
 		double getCurrentSampleRate();
 		int getCurrentSamplesBlock();
 
+		int getNumOfBeats() { return beatsByTimeLine; }
+
 	private:
 
 		AmusingModel *model; // reference to the parent
@@ -81,9 +83,10 @@ namespace Amusing {
 		void setUsingSampledSound();
 		int timeStamp;
 
+		int beatsByTimeLine;
 		int periode;
 		int position;
-		Metronome metronome;
+		Metronome *metronome;
 		
 		MidiBuffer midiBuffer;
 		MidiOutput *midiOuput;

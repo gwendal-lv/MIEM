@@ -23,7 +23,7 @@ TimeLine::TimeLine()
 
 	
 	channel = 1;
-	duration = 3 * 10000;
+	duration = 0.5 * 10000;
 
 	speed = 1.0f;
 	continuous = false;
@@ -164,7 +164,7 @@ void TimeLine::setSpeed(float newSpeed)
 		speed = newSpeed;
 		
 	}
-	testMidi();
+	//testMidi();
 }
 
 void TimeLine::setId(int m_Id)
@@ -187,7 +187,8 @@ int TimeLine::getId()
 
 bool TimeLine::isNoteOnTime(int m_position, int i, bool &m_end, int &m_channel, int &m_note, uint8 &m_velocity)
 {
-
+	while (m_position > currentPeriod)
+		m_position -= currentPeriod;
 	if (i < midiTimesSize)
 	{
 		m_end = false; // on a pas encore atteint la fin de la liste de notes (au cas où il y en a plusieurs à jouer au même moment)

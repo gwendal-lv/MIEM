@@ -52,6 +52,8 @@ namespace Amusing
 
 		void SetAlpha(float newAlpha) override;
 
+		bool shouldShowOptions();
+
 		
 		void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
 		void Paint(Graphics& g) override;

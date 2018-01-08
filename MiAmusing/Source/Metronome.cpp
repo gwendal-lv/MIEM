@@ -12,8 +12,10 @@
 
 #include<cmath>
 
-Metronome::Metronome() : BPM(120), samplesTime(0), samplePeriod(0)
+Metronome::Metronome() : BPM(120), samplesTime(0), periodInSamples(0), samplesLeftBeforeBeat(0)
 {
+	numOfBeats = 4;
+	currentBeats = 0;
 }
 
 Metronome::~Metronome()
@@ -24,59 +26,46 @@ void Metronome::update()
 {
 
 	/////
-	if (samplePeriod != 0)
+	if (periodInSamples != 0)
 	{
-		++samplesTime;//samplesTime += samplesPerBlock;
-		if (samplesTime%samplePeriod == 0)
+		--samplesLeftBeforeBeat;
+		if (samplesLeftBeforeBeat < 0)
 		{
-			nextSample = 1;
-			timeStamp = samplesTime;
+			samplesLeftBeforeBeat = periodInSamples;
+			++currentBeats;
+			if (currentBeats >= numOfBeats)
+				currentBeats = 0;
 		}
-		else
-			nextSample = 0;
+		
+		
 	}
 }
 
-int Metronome::getSamplesToNextBeat()
+int Metronome::getNumSamplesToNextBeat()
 {
-	return samplePeriod - samplesTime%samplePeriod; // modulo pas performant
+	return samplesLeftBeforeBeat; // modulo pas performant
 }
 
-void Metronome::setAudioParameter(int m_samplesPerBlock, double m_sampleRate)
+int Metronome::getCurrentBeat()
 {
-	samplesPerBlock = m_samplesPerBlock;
+	return currentBeats;
+}
+
+void Metronome::setAudioParameter(double m_sampleRate, int m_BPM)
+{
+	BPM = m_BPM;
 	sampleRate = m_sampleRate;
 
-	samplePeriod = (int)round((60.0 * sampleRate) / (double)BPM);
+	periodInSamples = (int)round((60.0 * sampleRate) / (double)BPM);
+	samplesLeftBeforeBeat = periodInSamples;
 }
 
-double Metronome::getNextSample()
-{
-	return nextSample;
-}
 
-MidiMessage Metronome::getNextMidiMsg()
-{
-	int midiChannel = 10;
-	if (nextSample)
-	{
-		MidiMessage msg = MidiMessage::noteOn(midiChannel, 36, (uint8)100);
-		msg.setTimeStamp(timeStamp);
-		return msg;
-	}
-	else
-		return MidiMessage();
-}
 
-int Metronome::timeToSample(double ms)
-{
-	return (int)round(ms * sampleRate / 1000);
-}
-
-int Metronome::BPMtoPeriodInSample(int m_bpm)
+int Metronome::getPeriodInSamples()
 {
 	// retourne la periode d'un carré donnant le tempo de m_bpm :
 	//	m_bpm = 1 Tic tous les sampleRate * 60 / BPM
 	//  1 carré = 4 Tic = 4 * sampleRate * 60 / BPM
-	return (int)round(sampleRate * 60.0 * 4.0 / (double)m_bpm);
+	return periodInSamples;
 }

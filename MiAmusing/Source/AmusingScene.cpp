@@ -1205,18 +1205,21 @@ std::shared_ptr<AreaEvent> AmusingScene::SetSelectedArea(std::shared_ptr<IEditab
 	{
 		if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(selectedArea_))
 		{
-			sceneComponent->SetAreaOptionsCenter(completeArea->getCenter());
-			double currentSpeed(0), currentVelocity(0);
-			int currentOctave(0), currentColor(0);
-			if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
+			if (completeArea->shouldShowOptions())
 			{
-				currentSpeed = manager->getSpeed(completeArea);
-				currentVelocity = manager->getVelocity(completeArea);
-				currentOctave = manager->getOctave(completeArea);
-				currentColor = manager->getCurrentColor(completeArea);
-				DBG("speed to show = " + (String)currentSpeed);
+				sceneComponent->SetAreaOptionsCenter(completeArea->getCenter());
+				double currentSpeed(0), currentVelocity(0);
+				int currentOctave(0), currentColor(0);
+				if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
+				{
+					currentSpeed = manager->getSpeed(completeArea);
+					currentVelocity = manager->getVelocity(completeArea);
+					currentOctave = manager->getOctave(completeArea);
+					currentColor = manager->getCurrentColor(completeArea);
+					DBG("speed to show = " + (String)currentSpeed);
+				}
+				sceneComponent->SetAreaOptionsVisible(true, currentSpeed, currentVelocity, currentOctave, currentColor);
 			}
-			sceneComponent->SetAreaOptionsVisible(true,currentSpeed, currentVelocity, currentOctave, currentColor);
 		}
 		else
 			sceneComponent->SetAreaOptionsVisible(false);
