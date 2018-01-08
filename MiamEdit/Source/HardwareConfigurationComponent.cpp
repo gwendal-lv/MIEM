@@ -248,7 +248,7 @@ void HardwareConfigurationComponent::textEditorReturnKeyPressed(TextEditor& edit
     else if (&editorThatHasChanged == udpPortTextEditor.get())
     {
         bool enteredValueIsCorrect = true;
-        int parsedValue;
+        int parsedValue = -1;
         // Value stays visible only if correct
         try {
             parsedValue = std::stoi(udpPortTextEditor->getText().toStdString());

@@ -54,8 +54,8 @@ DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b,
 {
 	rotationAngle = 0.0;
 	
-	xScale = computeXScale(_canvasRatio);
-	yScale = computeYScale(_canvasRatio);
+	xScale = (float) computeXScale(_canvasRatio);
+	yScale = (float)computeYScale(_canvasRatio);
 
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() - (b / 2)*yScale));
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>() + (a / 2)*xScale, center.get<1>()));
@@ -138,8 +138,8 @@ void DrawableEllipse::recreateContourPoints(int width, int height)
 	float newXScale;
 	float newYScale;
 	
-	newXScale = computeXScale(newCanvasRatio);
-	newYScale = computeYScale(newCanvasRatio);
+	newXScale = (float) computeXScale(newCanvasRatio);
+	newYScale = (float) computeYScale(newCanvasRatio);
 
 	boost::geometry::strategy::transform::translate_transformer<double, 2, 2> invTr(-center.get<0>(), -center.get<1>());
 	boost::geometry::strategy::transform::translate_transformer<double, 2, 2> Tr(center.get<0>(), center.get<1>());
