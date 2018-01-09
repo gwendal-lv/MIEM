@@ -69,11 +69,22 @@ void PlayHead::setSpeed(double m_speed)
 	//timeLine->setSpeed(m_speed);
 	if (speedToReach != m_speed)
 	{
-		transitionTime = (double)numOfBeats * (double)periodInSamples / 2.0;
-		speedToReach = m_speed;
-		//int positionToReach = speedToReach * ((position / speed) + transitionTime);
-		//speed = (positionToReach - position) / transitionTime;//((speedToReach - speed) * position + speedToReach * transitionTime) / (transitionTime);
-		speedInc = (speedToReach - speed) / transitionTime;
+		switch (state)
+		{
+			case PlayHeadState::Play :
+			case PlayHeadState::Pause:
+				transitionTime = ((numOfBeats - metronome->getCurrentBeat()) * periodInSamples - metronome->getNumSamplesToNextBeat())-speedToReach; //(double)numOfBeats * (double)periodInSamples / 2.0;
+
+				speedToReach = m_speed;
+				//int positionToReach = speedToReach * ((position / speed) + transitionTime);
+				//speed = (positionToReach - position) / transitionTime;//((speedToReach - speed) * position + speedToReach * transitionTime) / (transitionTime);
+				speedInc = (speedToReach - speed) / transitionTime;
+				break;
+			case PlayHeadState::Stop :
+				speed = m_speed;
+				speedToReach = m_speed;
+				break;
+		}
 	}
 }
 
@@ -134,6 +145,7 @@ void PlayHead::setState(PlayHeadState m_state)
 void PlayHead::process()
 {
 	double r = 0;
+	int a;
 	switch (state)
 	{
 	case PlayHeadState::Play:
@@ -148,6 +160,8 @@ void PlayHead::process()
 		*/
 		if (speed != speedToReach)
 		{
+			if (transitionPosition == transitionTime)
+				a = 1;
 			speed += speedInc;
 			++transitionPosition;
 			if (transitionPosition >= transitionTime)
@@ -157,8 +171,11 @@ void PlayHead::process()
 				numT = 0;
 			}
 		}
-		
-		position = speed * ( (metronome->getCurrentBeat() + 1) * periodInSamples - metronome->getNumSamplesToNextBeat());
+
+		if (((double)metronome->getCurrentBeat() + 1.0) * (double)periodInSamples - metronome->getNumSamplesToNextBeat() == (numOfBeats * periodInSamples - 1))
+			int b = 0;
+
+		position = speed * ( ((double)metronome->getCurrentBeat() + 1.0) * (double)periodInSamples - metronome->getNumSamplesToNextBeat());
 		//while (position >= (currentBeats + 1) * periodInSamples)
 		//	++currentBeats;
 		//if (currentBeats == numOfBeats)
