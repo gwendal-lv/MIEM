@@ -23,7 +23,7 @@ TimeLine::TimeLine()
 
 	
 	channel = 1;
-	duration = 0.5 * 10000;
+	duration = roundToInt( 0.5 * 10000.0);
 
 	speed = 1.0f;
 	continuous = false;
@@ -731,10 +731,10 @@ void TimeLine::clearSounds()
 		//delete newSound; // faudra mettre dans 2 synthé différents 
 }
 
-void TimeLine::addSound(const SynthesiserSound::Ptr& newSound)
-{
-	//synth.addSound(newSound);
-}
+//void TimeLine::addSound(const SynthesiserSound::Ptr& newSound)
+//{
+//	//synth.addSound(newSound);
+//}
 
 void TimeLine::addSound(const void * srcData, size_t srcDataSize, bool keepInternalCopyOfData)
 {

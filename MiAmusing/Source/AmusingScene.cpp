@@ -529,7 +529,7 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDown(const MouseEvent& 
 					
 				}
 				return graphE;
-				DBG("pas d'interaction avec une aire");
+				
 			}
 		}
 	}
@@ -1284,7 +1284,7 @@ std::shared_ptr<AreaEvent> AmusingScene::checkCursorPosition(std::shared_ptr<Cur
 
 void AmusingScene::lookForAreasToUpdate(Colour concernedColour)
 {
-	for (int i = 0; i < areas.size(); ++i)
+	for (int i = 0; i < (int)areas.size(); ++i)
 	{
 		if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
 			if (completeArea->GetFillColour() == concernedColour)

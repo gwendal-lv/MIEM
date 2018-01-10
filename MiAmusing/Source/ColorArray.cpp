@@ -12,7 +12,7 @@
 #include "ColorArray.h"
 
 //==============================================================================
-ColorArray::ColorArray(int size)
+ColorArray::ColorArray(int /*size*/)
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.

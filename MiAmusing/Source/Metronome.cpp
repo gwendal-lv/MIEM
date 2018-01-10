@@ -16,6 +16,7 @@ Metronome::Metronome() : BPM(120), samplesTime(0), periodInSamples(0), samplesLe
 {
 	numOfBeats = 4;
 	currentBeats = 0;
+	currentT = 0;
 }
 
 Metronome::~Metronome()
@@ -34,7 +35,10 @@ void Metronome::update()
 			samplesLeftBeforeBeat = periodInSamples;
 			++currentBeats;
 			if (currentBeats >= numOfBeats)
+			{
 				currentBeats = 0;
+				++currentT;
+			}
 		}
 		
 		
@@ -68,4 +72,9 @@ int Metronome::getPeriodInSamples()
 	//	m_bpm = 1 Tic tous les sampleRate * 60 / BPM
 	//  1 carré = 4 Tic = 4 * sampleRate * 60 / BPM
 	return periodInSamples;
+}
+
+int Metronome::getCurrentT()
+{
+	return currentT;
 }

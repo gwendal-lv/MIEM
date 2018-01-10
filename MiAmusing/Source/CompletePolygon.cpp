@@ -982,7 +982,7 @@ std::shared_ptr<AreaEvent> CompletePolygon::intersection(std::shared_ptr<Complet
 		std::shared_ptr<MultiAreaEvent> multiE(new MultiAreaEvent());
 		return multiE;
 	}
-	return areaE;
+	
 }
 
 std::shared_ptr<CompletePolygon> CompletePolygon::fusion(std::shared_ptr<CompletePolygon> polyToFusion, int m_Id)
@@ -1264,9 +1264,9 @@ bpt CompletePolygon::getCenterNormalized()
 float CompletePolygon::getNormalizedRadius()
 {
 	float distance = 0.0f;
-	for (int i = 0; i < contourPoints.outer().size(); ++i)
+	for (int i = 0; i < (int)contourPoints.outer().size(); ++i)
 		if (boost::geometry::distance(contourPoints.outer().at(i), center) > distance)
-			distance = boost::geometry::distance(contourPoints.outer().at(i), center);
+			distance = (float)boost::geometry::distance(contourPoints.outer().at(i), center);
 	return distance;
 }
 
@@ -1341,7 +1341,7 @@ void CompletePolygon::resetChords()
 
 bool CompletePolygon::getChordParameters(int idx, std::shared_ptr<CompletePolygon>& chordArea, double &m_pC)
 {
-	if (idx < chordAreaForPercentage.size())
+	if (idx < (int)chordAreaForPercentage.size())
 	{
 		m_pC = chordsAnglePercentage[idx];
 		chordArea = chordAreaForPercentage[idx];
@@ -1351,7 +1351,7 @@ bool CompletePolygon::getChordParameters(int idx, std::shared_ptr<CompletePolygo
 	{
 		idx -= chordAreaForPercentage.size();
 		int N = 0;
-		for (int i = 0; i < chordAreaForFlag.size(); ++i)
+		for (int i = 0; i < (int)chordAreaForFlag.size(); ++i)
 			if (chordAreaForFlag[i] != nullptr)
 				N++;
 		if (idx < N)
@@ -1359,7 +1359,7 @@ bool CompletePolygon::getChordParameters(int idx, std::shared_ptr<CompletePolygo
 			// idx = indice en terme d'elt non nuls !
 			int count = 0;
 			int realIdx = 0;
-			for (int j = 0; j < chordAreaForFlag.size(); ++j)
+			for (int j = 0; j < (int)chordAreaForFlag.size(); ++j)
 			{
 				if (chordAreaForFlag[j] != nullptr)
 				{
@@ -1379,5 +1379,5 @@ bool CompletePolygon::getChordParameters(int idx, std::shared_ptr<CompletePolygo
 			return false;
 
 	}
-	return false;
+	//return false;
 }

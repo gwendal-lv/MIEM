@@ -23,17 +23,6 @@ SwappableSynth::SwappableSynth()
 
 SwappableSynth::~SwappableSynth()
 {
-	/*if (synthA.getNumVoices() > 0)
-	{
-		synthA.clearVoices();
-	}
-	if(synthB.getNumVoices()>0)// && synthB.getNumSounds()>0)
-		synthB.clearVoices();*/
-	DBG("swappableSynth desctructor");
-	int numSoundsA = synthA.getNumSounds();
-	int numSoundsB = synthB.getNumSounds();
-	int numVoicesA = synthA.getNumVoices();
-	int numVoicesB = synthB.getNumVoices();
 }
 
 void SwappableSynth::setBuffersSize(int numChannels, int numSamples)
@@ -346,16 +335,16 @@ void SwappableSynth::addSoundFromExternalFileOnThread(String soundPath)
 
 float SwappableSynth::getNextGainOff(int numSamples)
 {
-	G_Off += ((double)numSamples / synthA.getSampleRate()) * (0.0 - 1.0) / ((double)T_Off / 1000.0);
-	if (G_Off < 0.0)
-		G_Off = 0.0;
+	G_Off += (float)( ((double)numSamples / synthA.getSampleRate()) * (0.0 - 1.0) / ((double)T_Off / 1000.0));
+	if (G_Off < 0.0f)
+		G_Off = 0.0f;
 	return G_Off;
 }
 
 float SwappableSynth::getNextGainOn(int numSamples)
 {
-	G_On += ((double)numSamples / synthA.getSampleRate()) * (1.0 - 0.0) / ((double)T_On / 1000.0);
-	if (G_On > 1.0)
-		G_On = 1.0;
+	G_On += (float)(((double)numSamples / synthA.getSampleRate()) * (1.0 - 0.0) / ((double)T_On / 1000.0));
+	if (G_On > 1.0f)
+		G_On = 1.0f;
 	return G_On;
 }

@@ -74,7 +74,7 @@ public:
 
 	void renderNextBlock(AudioSampleBuffer &outputAudio, const MidiBuffer &incomingMidi, int startSample, int numSamples);
 	void clearSounds();
-	void addSound(const SynthesiserSound::Ptr& newSound);
+	//void addSound(const SynthesiserSound::Ptr& newSound);
 	void addSound(const void* srcData, size_t srcDataSize, bool keepInternalCopyOfData);
 	void addSound(String soundPath);
 

@@ -24,6 +24,7 @@ public:
 	int getNumSamplesToNextBeat();
 	int getCurrentBeat();
 	int getPeriodInSamples();
+	int getCurrentT();
 
 private:
 	int BPM;
@@ -33,6 +34,8 @@ private:
 
 	int periodInSamples;
 	double nextSample;
+
+	int currentT;
 
 	int timeStamp;
 

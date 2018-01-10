@@ -51,12 +51,17 @@ private:
 	double speedInc;
 	int currentPeriod; // period taking speed into account
 	double position;
-	double numT;
+	int numT;
+	
+	double rest;
+	double plus;
 	PlayHeadState state;
 
 	double position2;
 	int numOfBeats;
 	int currentBeats;
+
+	double transitionSpeed;
 
 	int periodInSamples;
 	Metronome *metronome; // used to be synchronized with all the reading head

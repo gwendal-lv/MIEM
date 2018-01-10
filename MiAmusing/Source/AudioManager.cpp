@@ -159,7 +159,7 @@ void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 			
 			for (int j = 0; j < maxSize; j++)
 			{
-				// les têtes de lecture détermine s'il faut envoyer une note Midi
+				// les têtes de lecture déterminent s'il faut envoyer une note Midi
 				// celles-ci seront jouées par le synthé contenu par la timeLine
 				if (playHeadsKnown[j] != 0)
 					playHeadsKnown[j]->process();
@@ -571,7 +571,7 @@ void AudioManager::getAudioThreadMsg()
 					timeLines[param.Id1]->clearSounds();
 					//timeLines[param.Id1]->addSound(newSound);
 					//timeLines[param.Id1]->addSound(model->getSoundPath(param.Id2));
-					timeLines[param.Id1]->addSound(model->getSoundPath(param.DoubleValue));//BinaryData::cello_wav,BinaryData::cello_wavSize,false);
+					timeLines[param.Id1]->addSound(model->getSoundPath((int)param.DoubleValue));//BinaryData::cello_wav,BinaryData::cello_wavSize,false);
 					// LAAAAAAAAAAA
 					
 					timeLinesToAudio.push(timeLines[param.Id1]);
