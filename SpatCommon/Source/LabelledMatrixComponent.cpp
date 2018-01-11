@@ -245,6 +245,7 @@ void LabelledMatrixComponent::unhighlightLabel(Label* label)
 }
 void LabelledMatrixComponent::createAndManagePopupMenu()
 {
+#ifndef __MIAMOBILE
     PopupMenu menu;
     menu.addItem (1, "Reset to Zero matrix");
     menu.addItem (2, "Set to Identity matrix");
@@ -255,6 +256,12 @@ void LabelledMatrixComponent::createAndManagePopupMenu()
         setMatrixToZero();
     else if (userChoice == 2)
         setMatrixToIdentity();
+#else
+    /* This function uses pop-ups and
+     * must not be executed form a mobile platform.
+     */
+    assert(0);
+#endif
 }
 void LabelledMatrixComponent::setMatrixToZero()
 {
