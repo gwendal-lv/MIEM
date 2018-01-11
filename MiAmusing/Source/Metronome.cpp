@@ -45,6 +45,13 @@ void Metronome::update()
 	}
 }
 
+void Metronome::reset()
+{
+	currentBeats = 0;
+	samplesLeftBeforeBeat = periodInSamples;
+	currentT = 0;
+}
+
 int Metronome::getNumSamplesToNextBeat()
 {
 	return samplesLeftBeforeBeat; // modulo pas performant

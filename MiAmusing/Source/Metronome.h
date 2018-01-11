@@ -21,6 +21,7 @@ public:
 
 	void setAudioParameter(double m_sampleRate, int m_BPM);
 	void update();
+	void reset();
 	int getNumSamplesToNextBeat();
 	int getCurrentBeat();
 	int getPeriodInSamples();

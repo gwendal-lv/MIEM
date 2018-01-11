@@ -99,7 +99,11 @@ void PlayHead::setSpeed(double m_speed)
 						int addT;
 						if (rest != 0)
 						{
-							numT = (rest == 0) ? 1 : ceil(1.0 / rest);
+							//numT = (rest == 0) ? 1 : ceil(1.0 / rest);
+							double delta = 0.001;
+							for (int i = 2; i < 5; ++i)
+								if (speedToReach >= 1.0 / (double)i - delta / 2.0 && speedToReach <= 1.0 / (double)i + delta / 2.0)
+									numT = i;
 							addT = metronome->getCurrentT();
 							while (addT > numT)
 								addT -= numT;
@@ -132,8 +136,17 @@ void PlayHead::setSpeed(double m_speed)
 					speed = 0.5;*/
 				speedToReach = speed;
 				rest = speedToReach - floor(speedToReach);
-				
-				numT = (rest == 0) ? 1 : ceil(1.0 / rest);
+				double delta = 0.001;
+				for (int i = 2; i < 5; ++i)
+				{
+					if (speedToReach >= 1.0 / (double)i - delta / 2.0 && speedToReach <= 1.0 / (double)i + delta / 2.0)
+						numT = i;
+				}
+				int tmpT = metronome->getCurrentT();
+				while (tmpT > numT)
+					tmpT -= numT;
+				plus = tmpT * rest * numOfBeats * periodInSamples; //position + 1.0;
+				//numT = (rest == 0) ? 1 : ceil(1.0 / rest);
 				break;
 		}
 	}
@@ -238,8 +251,12 @@ void PlayHead::process()
 					transitionPosition = 0;
 					speed = speedToReach;
 					rest = speedToReach - floor(speedToReach);
-					
-					numT = (rest == 0) ? 1 : ceil(1.0 / rest);
+
+					int tmpT = metronome->getCurrentT();
+					while (tmpT > numT)
+						tmpT -= numT;
+					plus = tmpT * rest * numOfBeats * periodInSamples;
+					//numT = (rest == 0) ? 1 : ceil(1.0 / rest);
 				}
 			}
 		}

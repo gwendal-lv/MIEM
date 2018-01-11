@@ -177,6 +177,7 @@ void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 		break;
 	case Amusing::Stop:
 		position = 0;
+		metronome->reset();
 		break;
 	default:
 		break;
@@ -427,7 +428,7 @@ void AudioManager::getParameters()
 			break;
 		case Miam::AsyncParamChange::ParamType::Play :
 			DBG("state = Play;");
-			state = Play;
+			//state = Play;
 			playHeadsKnown[param.Id1]->setSpeed(param.DoubleValue);
 			if (param.IntegerValue == 1 && state == Play)
 			{
