@@ -110,7 +110,7 @@ void PlayHead::setSpeed(double m_speed)
 						}
 						else
 							addT = 0;
-						double positionToReach = numOfBeats * periodInSamples + addT * rest * numOfBeats * periodInSamples;
+						double positionToReach = numOfBeats * periodInSamples + addT * (1.0/(double)numT) * numOfBeats * periodInSamples;
 						double currentPositionAtSpeedToReach = speedToReach * (((double)metronome->getCurrentBeat() + 1.0) * (double)periodInSamples - metronome->getNumSamplesToNextBeat()) + addT * rest * numOfBeats * periodInSamples;;
 						transitionTime = (positionToReach - currentPositionAtSpeedToReach) / speedToReach;
 						transitionSpeed = (positionToReach - currentPosition) / transitionTime;
@@ -145,7 +145,7 @@ void PlayHead::setSpeed(double m_speed)
 				int tmpT = metronome->getCurrentT();
 				while (tmpT > numT)
 					tmpT -= numT;
-				plus = tmpT * rest * numOfBeats * periodInSamples; //position + 1.0;
+				plus = tmpT * (1.0/(double)numT) * numOfBeats * periodInSamples; //position + 1.0;
 				//numT = (rest == 0) ? 1 : ceil(1.0 / rest);
 				break;
 		}
@@ -255,7 +255,7 @@ void PlayHead::process()
 					int tmpT = metronome->getCurrentT();
 					while (tmpT > numT)
 						tmpT -= numT;
-					plus = tmpT * rest * numOfBeats * periodInSamples;
+					plus = tmpT * (1.0/(double)numT) * numOfBeats * periodInSamples;
 					//numT = (rest == 0) ? 1 : ceil(1.0 / rest);
 				}
 			}
