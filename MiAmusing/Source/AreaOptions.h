@@ -235,6 +235,7 @@ private:
     //[UserVariables]   -- You can add your own custom variables in this section.
 	AmusingSceneComponent* amusingSceneComponent;
 	CustomLookAndFeel customLook;
+	double speedTable[7] = { 0.25,0.3333333,0.5,1,2,3,4 };
     //[/UserVariables]
 
     //==============================================================================

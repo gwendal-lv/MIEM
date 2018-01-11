@@ -42,7 +42,7 @@ AreaOptions::AreaOptions ()
     baseNote->addListener (this);
 
     addAndMakeVisible (speed = new Slider ("new slider"));
-    speed->setRange (0, 10, 0);
+    speed->setRange (0, 6, 1);
     speed->setSliderStyle (Slider::LinearHorizontal);
     speed->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
     speed->setColour (Slider::backgroundColourId, Colour (0x00263238));
@@ -148,6 +148,7 @@ void AreaOptions::sliderValueChanged (Slider* sliderThatWasMoved)
 			value = valueInt;
 			speed->setValue(value);
 		}
+		value = speedTable[(int)valueInt];
 		amusingSceneComponent->OnSpeedChanged(value);
 
 
@@ -196,7 +197,11 @@ void AreaOptions::CompleteInitialization(AmusingSceneComponent* m_amusingSceneCo
 
 void AreaOptions::setSpeedSliderValue(double _speed)
 {
-	speed->setValue(_speed);
+	for (int i = 0; i < 7; ++i)
+	{
+		if(_speed == speedTable[i])
+			speed->setValue(i);
+	}
 }
 
 void AreaOptions::setOctaveSlider(int currentOctave)
@@ -252,7 +257,7 @@ BEGIN_JUCER_METADATA
           needsCallback="1"/>
   <SLIDER name="new slider" id="a3ec7f9759661bec" memberName="speed" virtualName=""
           explicitFocusOrder="0" pos="46 164 160 24" bkgcol="263238" textboxtext="ff000000"
-          min="0" max="10" int="0" style="LinearHorizontal" textBoxPos="NoTextBox"
+          min="0" max="6" int="1" style="LinearHorizontal" textBoxPos="NoTextBox"
           textBoxEditable="0" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
           needsCallback="1"/>
   <LABEL name="new label" id="6adeb9d99d4ed76a" memberName="speedLabel"
