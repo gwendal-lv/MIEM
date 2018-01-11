@@ -19,7 +19,6 @@
 
 //[Headers] You can add your own extra header files here...
 #include "Presenter.h"
-#include "TouchMainMenu.h"
 //[/Headers]
 
 #include "BackgroundComponent.h"
@@ -44,15 +43,17 @@ BackgroundComponent::BackgroundComponent ()
     mainInfoLabel->setColour (TextEditor::textColourId, Colours::black);
     mainInfoLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    addAndMakeVisible (imageButton = new ImageButton ("new button"));
-    imageButton->addListener (this);
+    addAndMakeVisible (mainMenuImageButton = new ImageButton ("Main Menu image button"));
+    mainMenuImageButton->setButtonText (TRANS("new button"));
+    mainMenuImageButton->addListener (this);
 
-    imageButton->setImages (false, true, true,
-                            ImageCache::getFromMemory (menu_icon_png2, menu_icon_png2Size), 1.000f, Colour (0x00000000),
-                            Image(), 1.000f, Colour (0x00000000),
-                            ImageCache::getFromMemory (menu_activated_icon_png2, menu_activated_icon_png2Size), 1.000f, Colour (0x00000000));
+    mainMenuImageButton->setImages (false, true, true,
+                                    ImageCache::getFromMemory (menu_icon_png2, menu_icon_png2Size), 1.000f, Colour (0x00000000),
+                                    Image(), 1.000f, Colour (0x00000000),
+                                    ImageCache::getFromMemory (menu_activated_icon_png2, menu_activated_icon_png2Size), 1.000f, Colour (0x00000000));
 
     //[UserPreSize]
+    addChildComponent(mainMenuComponent = new MainMenuComponent());
     //[/UserPreSize]
 
     setSize (600, 400);
@@ -68,7 +69,7 @@ BackgroundComponent::~BackgroundComponent()
     //[/Destructor_pre]
 
     mainInfoLabel = nullptr;
-    imageButton = nullptr;
+    mainMenuImageButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -93,14 +94,18 @@ void BackgroundComponent::resized()
     //[/UserPreResize]
 
     mainInfoLabel->setBounds (8, getHeight() - 20, getWidth() - 54, 20);
-    imageButton->setBounds (getWidth() - 28, getHeight() - 28, 28, 28);
+    mainMenuImageButton->setBounds (getWidth() - 28, getHeight() - 28, 28, 28);
     //[UserResized] Add your own custom resize handling here..
+    // Attention : remove from machin retourne le petit morceau découpé seulement !
+    auto menusRectangle = getLocalBounds();
+    menusRectangle.removeFromBottom(mainMenuImageButton->getHeight());
+    // Application : on laisse la place pour la barre de titre
+    mainMenuComponent->setBounds(menusRectangle);
+    // Rectangle + grand pour les canevas
     if (multiCanvasComponent)
     {
-        // Attention : remove from machin retourne le petit morceau découpé seulement !
         auto canvasesRectangle = getLocalBounds();
         canvasesRectangle.removeFromBottom(mainInfoLabel->getHeight());
-        // Application : on laisse la place pour la barre de titre
         multiCanvasComponent->setBounds(canvasesRectangle);
     }
     //[/UserResized]
@@ -111,11 +116,11 @@ void BackgroundComponent::buttonClicked (Button* buttonThatWasClicked)
     //[UserbuttonClicked_Pre]
     //[/UserbuttonClicked_Pre]
 
-    if (buttonThatWasClicked == imageButton)
+    if (buttonThatWasClicked == mainMenuImageButton)
     {
-        //[UserButtonCode_imageButton] -- add your button handler code here..
-        touchMainMenu->ShowMenuAndSendUserAnswer();
-        //[/UserButtonCode_imageButton]
+        //[UserButtonCode_mainMenuImageButton] -- add your button handler code here..
+        presenter->OnMainMenuButtonClicked();
+        //[/UserButtonCode_mainMenuImageButton]
     }
 
     //[UserbuttonClicked_Post]
@@ -128,7 +133,7 @@ void BackgroundComponent::buttonClicked (Button* buttonThatWasClicked)
 void BackgroundComponent::CompleteInitialization(Presenter* presenter_)
 {
     presenter = presenter_;
-    touchMainMenu = new TouchMainMenu(presenter);
+    mainMenuComponent->SetPresenter(presenter);
 }
 void BackgroundComponent::CompleteInitialization(MultiCanvasComponent* multiCanvasComponent_)
 {
@@ -140,6 +145,50 @@ void BackgroundComponent::CompleteInitialization(MultiCanvasComponent* multiCanv
 void BackgroundComponent::DisplayInfo(const String& stringToDisplay)
 {
     mainInfoLabel->setText(stringToDisplay, NotificationType::sendNotification);
+}
+
+void BackgroundComponent::ChangeAppMode(AppMode newAppMode)
+{
+    switch (newAppMode) {
+        case AppMode::Null:
+            //
+            break;
+        case AppMode::None:
+            //
+            break;
+        case AppMode::Loading:
+            //
+            break;
+        case AppMode::MainMenu:
+            multiCanvasComponent->setVisible(false);
+            mainMenuComponent->setVisible(true);
+            break;
+        case AppMode::LoadingFile:
+            multiCanvasComponent->setVisible(false);
+            mainMenuComponent->setVisible(false);
+            // Le FileChooser est géré pour l'instant directement par le Presenter...
+            break;
+
+
+        case AppMode::Stopped:
+            multiCanvasComponent->setVisible(false);
+            mainMenuComponent->setVisible(true);
+            break;
+        case AppMode::Playing:
+            // On laisse un délai, pour que le menu ait le temps d'afficher l'état "play" en vert
+            Timer::callAfterDelay(1000,
+                                  [this]
+                                  {
+                                      multiCanvasComponent->setVisible(true);
+                                      mainMenuComponent->setVisible(false);
+                                  });
+            break;
+
+        default:
+            break;
+    }
+    // Dans tous les cas : transmission au menu (qui affiche des choses en fonction)
+    mainMenuComponent->ChangeAppMode(newAppMode);
 }
 //[/MiscUserCode]
 
@@ -164,7 +213,7 @@ BEGIN_JUCER_METADATA
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
          justification="12"/>
-  <IMAGEBUTTON name="new button" id="83c438e933714a80" memberName="imageButton"
+  <IMAGEBUTTON name="Main Menu image button" id="83c438e933714a80" memberName="mainMenuImageButton"
                virtualName="" explicitFocusOrder="0" pos="0Rr 0Rr 28 28" buttonText="new button"
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
                resourceNormal="menu_icon_png2" opacityNormal="1" colourNormal="0"

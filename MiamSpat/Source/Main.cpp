@@ -57,7 +57,7 @@ public:
         
         // Chargement de la 1ière session
         try {
-            presenter->LoadFirstSession(commandLine.toStdString());
+            presenter->TryLoadFirstSession(commandLine.toStdString());
         }
         catch (Miam::ForceQuitException& )
         {

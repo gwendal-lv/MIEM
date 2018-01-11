@@ -20,6 +20,8 @@
 
 #include "GraphicSessionManager.h"
 
+#include "SpatFileChoosers.h"
+
 
 namespace Miam {
     // Simple declaration : we don't need the entire description
@@ -49,13 +51,21 @@ namespace Miam {
         Model* model = 0;
         
         AppMode appMode;
-        
+        /* Permet de savoir, lorsque l'on se balade qqpart dans le
+         * programme (dans les menus, etc....), si on a une spat qui joue en tâche de fond ou pas.
+         */
+        AppMode previousSpatialisationStatus;
         
         // Sub-modules
         GraphicSessionManager graphicSessionManager;
         
         
-        
+        /* Pour l'instant, cet objet est détenu directement par le Presenter
+         * Car il s'affiche en force, dans tous les cas, bien au-dessus de tout le reste....
+         *
+         * À changer peut-être dans une version future
+         */
+        LoadFileChooser loadFileChooser; // configuré à la construction
         
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
@@ -78,15 +88,22 @@ namespace Miam {
         ///
         /// Finished self-contruction, and also the construction of sub-modules
         void CompleteInitialisation(Model* _model);
-        void LoadFirstSession(std::string commandLine);
-        
+        void TryLoadFirstSession(std::string commandLine);
+        /// \brief Might be called from the Presenter itself, or from the View
+        ///
+        /// Not supposed to be called from the Model, but this might happen in the future...
+        AppMode appModeChangeRequest(AppMode newAppMode);
+        /// \brief Callback invoked when any FileChooser has asynchronously returned.
+        void OnFileChooserReturn(const FileChooser& chooser);
+    
         virtual void Update() override;
         
         
-        // Events from the View
-        AppMode appModeChangeRequest(AppMode newAppMode);
+        /// \brief Events from the View
+        void OnMainMenuButtonClicked();
         
-        // Event from the Model
+        
+        // Events from the Model
         /// \brief Processes the data then displays it. An empty tree means
         /// that the connection failed.
         void OnNewConnectionStatus(bool isConnectionEstablished, std::shared_ptr<bptree::ptree> connectionParametersTree);

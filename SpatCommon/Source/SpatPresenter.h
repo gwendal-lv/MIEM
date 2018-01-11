@@ -42,6 +42,7 @@ namespace Miam {
         // Private links to other modules
         SpatView* view;
         
+        protected :
         // - - - - - Back-ups of other spatialization data trees - - - - -
         std::shared_ptr<bptree::ptree> lastSpatStatesTree;
         std::shared_ptr<bptree::ptree> lastSpatScenesTree;

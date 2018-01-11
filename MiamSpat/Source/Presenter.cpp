@@ -18,6 +18,9 @@
 
 #include "JuceHeader.h"
 
+
+#include "SpatFileChoosers.h"
+
 using namespace Miam;
 
 
@@ -32,6 +35,7 @@ Presenter::Presenter(View* _view) :
     graphicSessionManager(this, _view)
 {
     appMode = AppMode::None;
+    previousSpatialisationStatus = AppMode::None;
     
     // After all sub-modules are built, the presenter refers itself to the View
     view->CompleteInitialization(this);
@@ -49,9 +53,11 @@ void Presenter::CompleteInitialisation(Model* _model)
     SpatPresenter::CompleteInitialisation(&graphicSessionManager, model);
     
     view->GetMainContentComponent()->resized();
+    
+    appModeChangeRequest(AppMode::Stopped); // pour forcer l'état
 }
 
-void Presenter::LoadFirstSession(std::string commandLine)
+void Presenter::TryLoadFirstSession(std::string commandLine)
 {
     // - - - Traitement du nom de fichier - - -
     // Copie du paramètre d'entrée,
@@ -59,15 +65,15 @@ void Presenter::LoadFirstSession(std::string commandLine)
     std::string commandLineToParse = commandLine;
 #ifdef __MIAM_DEBUG
     //commandLineToParse += " -session \"/Users/Gwendal/Music/Spat sessions/Session de débug.miam\" ";
-    commandLineToParse += " -session \"/Users/Gwendal/Music/Spat sessions/Test.miam\" ";
+    //commandLineToParse += " -session \"/Users/Gwendal/Music/Spat sessions/Test.miam\" ";
 #endif
     // Récupération du nom de fichier à charger
     std::string fileName = TextUtils::FindFilenameInCommandLineArguments(commandLineToParse);
     
-    // - - - Premier chargement de session - - -
+    // - - - Premier chargement de session OU BIEN menu principal - - -
     bool firstSessionLoaded = false;
     // D'abord on essaie de charger le truc depuis la ligne de commande, si possible
-    if ( ! fileName.empty() )
+    if (! fileName.empty())
     {
         try {
             LoadSession(fileName);
@@ -75,32 +81,112 @@ void Presenter::LoadFirstSession(std::string commandLine)
         }
         catch (XmlReadException& ) {} // firstSessionLoaded reste à false
     }
-    // Ensuite, tant qu'on a rien, on re-demande à l'utilisateur
-    // (sauf s'il annule, alors on quitte le programme via une exception)
-    while( !firstSessionLoaded )
+    if (! firstSessionLoaded)
     {
-        // Récupération d'un nouveau nom de fichier
-        FileChooser fileChooser("Chargement d'un fichier",
-                                File::getSpecialLocation(File::SpecialLocationType::userMusicDirectory),
-                                std::string("*.") + Miam_SessionFileExtension,
-                                true);
-        // Si l'utilisation a bien choisi un truc, on y va
-        if ( fileChooser.browseForFileToOpen() )
-        {
-            fileName = fileChooser.getResult().getFullPathName().toStdString();
-            // Et tentative de chargement
-            try {
-                LoadSession(fileName);
-                firstSessionLoaded = true;
-            }
-            catch (XmlReadException& ) {} // firstSessionLoaded reste à false
-        }
-        // Sinon, user récalcitrant => programme récalcitrant !
-        else
-            throw ForceQuitException("User refuses to choose a session ." + std::string(Miam_SessionFileExtension) + " file to load.");
+        // Sinon si rien n'a marché, on affiche le menu principal
+        appModeChangeRequest(AppMode::MainMenu);
     }
 }
 
+
+
+
+
+
+AppMode Presenter::appModeChangeRequest(AppMode newAppMode)
+{
+    AsyncParamChange paramChange;
+
+    // - - - - - Autorisation ou non du changement - - - - -
+    bool modeChangeAllowed = true; // vrai par défaut, on voit si c'est bon
+    // Si aucune session n'est chargée : on ne peut pas passer aux mode de play.
+    // On autorise stop, ce n'est peut-être pas une bonne idée... à voir.
+    if (newAppMode == appMode)
+        modeChangeAllowed = false;
+    else if (lastFilename.empty() && newAppMode == AppMode::Playing)
+    {
+        modeChangeAllowed = false;
+        view->DisplayInfo("Cannot begin spatialisation: no session loaded.");
+    }
+    
+    // First check : are we running a new mode ?
+    // Si on fait un transition directe entre modes qui ne sont pas 'loading' ->
+    // on force le passage par loading
+    if (modeChangeAllowed)
+    {
+        // - - - - - Traitements pré-changement - - - - -
+        // Passage par le mode loading de View, si nécessaire
+        if (appMode != AppMode::Loading && newAppMode != AppMode::Loading)
+            view->ChangeAppMode(AppMode::Loading);
+        // Sauvegarde du statut de spat (si continue en tâche de fond)
+        if (appMode == AppMode::Stopped || appMode == AppMode::Playing)
+            previousSpatialisationStatus = appMode;
+        
+        // - - - - - Changement interne - - - - -
+        appMode = newAppMode;
+        
+        // - - - - - Traitements Post-changement - - - - -
+        if (modeChangeAllowed)
+        {
+            switch (appMode)
+            {
+                case AppMode::LoadingFile :
+                    // On sait qu'on était pas en attente d'un résultat,
+                    // car c'est justement le mode LoadingFile qui indique cette attente.
+                    //
+                    // Et juste au-dessus, on a une protection contre les changements de mode vers le même mode
+                    loadFileChooser.launchAsync (FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles,
+                                                 [this] (const FileChooser& chooser)
+                                                 { this->OnFileChooserReturn(chooser); });
+                    break;
+                    
+                case AppMode::Stopped :
+                    // on ne renvoie l'ordre au modèle que dans le cas où l'on change de statut de spat
+                    // par rapport au statut de spat en tâche de fond.
+                    if (previousSpatialisationStatus != appMode)
+                    {
+                        paramChange.Type = AsyncParamChange::Stop;
+                        SendParamChange(paramChange);
+                    }
+                    break;
+                    
+                case AppMode::Playing :
+                    // on ne renvoie l'ordre au modèle que dans le cas où l'on change de statut de spat
+                    // par rapport au statut de spat en tâche de fond.
+                    if (previousSpatialisationStatus != appMode)
+                    {
+                        paramChange.Type = AsyncParamChange::Play;
+                        SendParamChange(paramChange);
+                    }
+                    break;
+                    
+                    
+                default:
+                    break;
+            }
+        }
+        // - - - - - Application graphique - - - - -
+        view->ChangeAppMode(appMode);
+    }
+    
+    
+    // Actual new mode
+    return appMode;
+}
+
+void Presenter::OnFileChooserReturn(const FileChooser& chooser)
+{
+    if (&chooser == &loadFileChooser)
+    {
+        File returnedFile = loadFileChooser.getResult();
+        // Si l'utilisateur a choisi un fichier, on le charge
+        if (returnedFile.exists())
+            LoadSession(returnedFile.getFullPathName().toStdString());
+        // Sinon, on remet le menu...
+        else
+            appModeChangeRequest(AppMode::MainMenu);
+    }
+}
 
 
 
@@ -111,25 +197,15 @@ void Presenter::Update()
 }
 
 
-AppMode Presenter::appModeChangeRequest(AppMode newAppMode)
+
+void Presenter::OnMainMenuButtonClicked()
 {
-    // First check : are we running a new mode ?
-    // Si on fait un transition directe entre modes qui ne sont pas 'loading' ->
-    // on force le passage par loading
-    if (newAppMode != appMode)
-    {
-        if (appMode != AppMode::Loading && newAppMode != AppMode::Loading)
-            view->ChangeAppMode(AppMode::Loading);
-        
-        // Temps de changement ici : totalement négligeable !! Mais ça le sera peutêtre pas toujours...
-        appMode = newAppMode;
-        
-        view->ChangeAppMode(appMode);
-    }
-    
-    
-    // Actual new mode
-    return appMode;
+    // Si l'on était déjà sur le menu : on retourne à l'affichage des canevas de jeu, mais selon l'état
+    // précédent de spatialisation.
+    if (appMode == AppMode::MainMenu)
+        appModeChangeRequest(previousSpatialisationStatus);
+    else
+        appModeChangeRequest(AppMode::MainMenu);
 }
 
 
@@ -184,31 +260,20 @@ void Presenter::OnNewConnectionStatus(bool isConnectionEstablished, std::shared_
 // = = = = = XML loading only = = = = =
 void Presenter::LoadSession(std::string filename)
 {
-    // Arrêt des envois de ce module, déjà pour commencer
-    appModeChangeRequest(AppMode::Loading);
-    
-    // Arrêt du modèle
-    // Arrêt du modèle
-    // Arrêt du modèle
-    // Arrêt du modèle
-    // Arrêt du modèle
-    // Arrêt du modèle
-    // Arrêt du modèle
-    AsyncParamChange paramChange;
-    paramChange.Type = AsyncParamChange::Stop;
-    SendParamChange(paramChange);
+    appModeChangeRequest(AppMode::Stopped); // aussi : Arrêt du modèle
     // Il faudra un temps d'attente !! Une confirmation que tout s'est bien arrêté...
     // Avant de faire le chargement qui lui sera SINGLE THREAD
+    
+    
+    
+    // Arrêt des envois de ce module, déjà pour commencer
+    appModeChangeRequest(AppMode::Loading);
     
     // Chargement d'une nouvelle session
     SpatPresenter::LoadSession(filename);
     
     // Ensuite on se change de mode
-    appModeChangeRequest(AppMode::Playing);
-    
-    // Re-démarrage du modèle avec les bonnes infos
-    paramChange.Type = AsyncParamChange::Play;
-    SendParamChange(paramChange);
+    appModeChangeRequest(AppMode::Playing); // va démarrer le modèle
     
     // On force la ré-actualisation graphique
     graphicSessionManager.OnModelStarted();

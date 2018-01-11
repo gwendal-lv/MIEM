@@ -22,17 +22,7 @@
 //[Headers]     -- You can add your own extra header files here --
 #include "../JuceLibraryCode/JuceHeader.h"
 
-// Forward declarations
-namespace Miam
-{
-    class Presenter;
-    class TouchMainMenu;
-}
-
-#include "AppMode.h"
-
-#include "MainMenuComponent.h"
-#include "SpatFileChoosers.h"
+#include "Presenter.h"
 //[/Headers]
 
 
@@ -45,25 +35,18 @@ namespace Miam
     Describe your class and how it works here!
                                                                     //[/Comments]
 */
-class BackgroundComponent  : public Component,
-                             public Button::Listener
+class MainMenuComponent  : public Component,
+                           public Button::Listener
 {
 public:
     //==============================================================================
-    BackgroundComponent ();
-    ~BackgroundComponent();
+    MainMenuComponent ();
+    ~MainMenuComponent();
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-
-    /// \brief Function called after both View and Presenter are contructed
-    void CompleteInitialization(Presenter*);
-    void CompleteInitialization(MultiCanvasComponent*);
-
-    void DisplayInfo(const String& stringToDisplay);
-
+    void SetPresenter(Presenter* presenter_) {presenter = presenter_;}
     void ChangeAppMode(AppMode newAppMode);
-
     //[/UserMethods]
 
     void paint (Graphics& g) override;
@@ -71,37 +54,36 @@ public:
     void buttonClicked (Button* buttonThatWasClicked) override;
 
     // Binary resources:
-    static const char* menu_icon_png;
-    static const int menu_icon_pngSize;
-    static const char* menu_activated_icon_png;
-    static const int menu_activated_icon_pngSize;
-    static const char* menu_icon_png2;
-    static const int menu_icon_png2Size;
-    static const char* menu_activated_icon_png2;
-    static const int menu_activated_icon_png2Size;
+    static const char* lecture_png;
+    static const int lecture_pngSize;
+    static const char* play_png;
+    static const int play_pngSize;
+    static const char* playOn_png;
+    static const int playOn_pngSize;
+    static const char* playOn_png2;
+    static const int playOn_png2Size;
+    static const char* stop_png;
+    static const int stop_pngSize;
+    static const char* stopOn_png;
+    static const int stopOn_pngSize;
 
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
-
-    /// \brief To send commands such as "load", "quit", ...
     Presenter* presenter;
-
-    /// Simple GUIs, owned by the View directly
-    ScopedPointer<MainMenuComponent> mainMenuComponent;
-
-    /// \brief Interactive, Owned by the Presenter
-    MultiCanvasComponent* multiCanvasComponent;
-
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<Label> mainInfoLabel;
-    ScopedPointer<ImageButton> mainMenuImageButton;
+    ScopedPointer<GroupComponent> sessionGroupComponent;
+    ScopedPointer<TextButton> loadFromFileButton;
+    ScopedPointer<ImageButton> playImageButton;
+    ScopedPointer<ImageButton> playingImageButton;
+    ScopedPointer<ImageButton> stopImageButton;
+    ScopedPointer<ImageButton> stoppedImageButton;
 
 
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BackgroundComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainMenuComponent)
 };
 
 //[EndFile] You can add extra defines here...
