@@ -147,7 +147,13 @@ void Model::update()
                     
                 case AsyncParamChange::Stop :
                     playState = AsyncParamChange::Stop;
-                    std::cout << "[Modèle] STOP (non-implémenté)" << std::endl;
+                    std::cout << "[Modèle] STOP" << std::endl;
+                    spatInterpolator->OnStop();
+                    // Après le stop, il faut peut-être envoyer des données
+                    if (spatInterpolator->OnDataUpdateFinished()) // vrai si données actualisées
+                    {
+                        miamOscSender->SendStateModifications(spatInterpolator->GetCurrentInterpolatedState());
+                    }
                     break;
                     
                 default :

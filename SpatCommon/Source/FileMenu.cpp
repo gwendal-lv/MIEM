@@ -19,13 +19,14 @@ using namespace Miam;
 FileMenu::FileMenu(SpatPresenter* _spatPresenter) : presenter(_spatPresenter)
 {
     menu.addItem(Choices::Load, "Load");
-    menu.addItem(Choices::Save, "Save"); // disabled for now...
-    menu.addItem(Choices::SaveAs, "Save As"); // disabled for now...
+    menu.addItem(Choices::Save, "Save");
+    menu.addItem(Choices::SaveAs, "Save As");
 }
 
 
 void FileMenu::ShowMenuAndSendUserAnswer()
 {
+#ifndef __MIAMOBILE
     int userAnswer = menu.show();
     
     switch(userAnswer)
@@ -45,17 +46,30 @@ void FileMenu::ShowMenuAndSendUserAnswer()
         default :
             break;
     }
+#else
+    /* This function uses pop-ups and
+     * must not be executed form a mobile platform.
+     */
+    assert(0);
+#endif
 }
 
 
 void FileMenu::onLoad()
 {
+#ifndef __MIAMOBILE
     LoadFileChooser fileChooser;
     if ( fileChooser.browseForFileToOpen() )
     {
         File resultFile = fileChooser.getResult();
         presenter->LoadSession(resultFile.getFullPathName().toStdString());
     }
+#else
+    /* This function uses pop-ups and
+     * must not be executed form a mobile platform.
+     */
+    assert(0);
+#endif
 }
 void FileMenu::onSave()
 {
@@ -64,6 +78,7 @@ void FileMenu::onSave()
 }
 void FileMenu::onSaveAs()
 {
+#ifndef __MIAMOBILE
     SaveFileChooser fileChooser;
     if ( fileChooser.browseForFileToSave(true) )
     {
@@ -71,5 +86,11 @@ void FileMenu::onSaveAs()
         // data refresh forcé
         presenter->SaveSession(resultFile.getFullPathName().toStdString(), true);
     }
+#else
+    /* This function uses pop-ups and
+     * must not be executed form a mobile platform.
+     */
+    assert(0);
+#endif
 }
 

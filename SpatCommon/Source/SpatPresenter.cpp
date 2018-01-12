@@ -93,6 +93,7 @@ void SpatPresenter::SaveSession(std::string _filename, bool /*forceDataRefresh*/
     else if (lastFilename.empty())
     {
         LoadFileChooser fileChooser;
+#ifndef __MIAMOBILE
         if ( fileChooser.browseForFileToSave(true) )
         {
             File resultFile = fileChooser.getResult();
@@ -102,6 +103,13 @@ void SpatPresenter::SaveSession(std::string _filename, bool /*forceDataRefresh*/
         // (dont le contenu sera affiché par le presenter réel, s'il peut)
         else
             throw XmlWriteException("File not saved");
+
+#else
+        /* This function uses pop-ups and
+         * must not be executed form a mobile platform.
+         */
+        assert(0);
+#endif
     }
     
     // Whole properties tree reconstruction

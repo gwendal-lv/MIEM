@@ -133,6 +133,13 @@ namespace Miam
             // Called when this spat state is unregistered from all areas that
             // kept a shared_ptr to this
         }
+        
+        
+        virtual void ClearExcitements()
+        {
+            areaToExcitement.clear();
+            excitement = {};
+        }
 
         
         // - - - - - Internal linking to spat areas - - - - -
