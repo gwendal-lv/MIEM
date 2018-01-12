@@ -12,9 +12,14 @@
 #define MIAMMATH_H_INCLUDED
 
 #ifdef _MSC_VER
+
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES // for C++
+
+// à nouveau des bugs en janvier 2018....
+//#define M_PI (3.14159265358979323846264338327) // not defined in VS 2015 community !
 #endif
+
 #include <math.h>
 #endif
 
@@ -26,7 +31,6 @@
 #include "IDrawableArea.h"
 
 
-//#define M_PI 3.14159265358979323846264338327 // not defined in VS 2015 community !
 
 
 namespace Miam

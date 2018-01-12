@@ -9,7 +9,7 @@
 */
 
 
-#include <cmath>
+#include <MiamMath.h> // plutôt que cmath simple, sinon problème avec M_PI sous VS2015
 
 #include "DrawableEllipse.h"
 #include "SceneCanvasComponent.h"

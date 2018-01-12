@@ -155,7 +155,8 @@ namespace Miam
                 }
                 
                 // Envoi du coeff concerné
-                SendMatrixCoeff(iToRefresh, jToRefresh, (*matrixState)(iToRefresh, jToRefresh));
+                SendMatrixCoeff(iToRefresh, jToRefresh,
+								(float) (*matrixState)(iToRefresh, jToRefresh));
                 
                 // ----------- à faire -------------
                 // ----------- à faire -------------
