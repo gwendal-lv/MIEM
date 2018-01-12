@@ -79,9 +79,12 @@
         <GROUP id="{CE2450A9-95D2-0EE6-C8D7-53BBF9CF35FE}" name="Communication">
           <FILE id="xclkBS" name="MiamOscSender.hpp" compile="0" resource="0"
                 file="../SpatCommon/Source/MiamOscSender.hpp"/>
+          <FILE id="AUz7dg" name="OscDefines.h" compile="0" resource="0" file="../SpatCommon/Source/OscDefines.h"/>
           <FILE id="YOdNbs" name="SpatSender.hpp" compile="0" resource="0" file="../SpatCommon/Source/SpatSender.hpp"/>
         </GROUP>
         <GROUP id="{C8CFED74-46E5-A2FF-9824-723DC214C250}" name="SpatStates">
+          <FILE id="gmkwTT" name="MatrixBackupState.hpp" compile="0" resource="0"
+                file="../SpatCommon/Source/MatrixBackupState.hpp"/>
           <FILE id="EfBVcH" name="MatrixState.hpp" compile="0" resource="0" file="../SpatCommon/Source/MatrixState.hpp"/>
           <FILE id="VlduMz" name="OutputVolumesState.hpp" compile="0" resource="0"
                 file="../SpatCommon/Source/OutputVolumesState.hpp"/>
@@ -132,6 +135,11 @@
         <FILE id="QaUQbE" name="SpatView.h" compile="0" resource="0" file="../SpatCommon/Source/SpatView.h"/>
       </GROUP>
       <GROUP id="{074EE7F9-67BB-F0C2-EAAF-33449FC42B60}" name="Utils">
+        <FILE id="ALeQxx" name="HelpContents.cpp" compile="1" resource="0"
+              file="../SpatCommon/Source/HelpContents.cpp"/>
+        <FILE id="kzlbJE" name="HelpContents.h" compile="0" resource="0" file="../SpatCommon/Source/HelpContents.h"/>
+        <FILE id="rqaNhE" name="PathUtils.cpp" compile="1" resource="0" file="../SpatCommon/Source/PathUtils.cpp"/>
+        <FILE id="Vqpk1z" name="PathUtils.h" compile="0" resource="0" file="../SpatCommon/Source/PathUtils.h"/>
         <FILE id="mVbott" name="SpatMatrix.hpp" compile="0" resource="0" file="../SpatCommon/Source/SpatMatrix.hpp"/>
       </GROUP>
     </GROUP>
