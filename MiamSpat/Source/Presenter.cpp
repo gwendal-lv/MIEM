@@ -157,6 +157,9 @@ AppMode Presenter::appModeChangeRequest(AppMode newAppMode)
                     {
                         paramChange.Type = AsyncParamChange::Play;
                         SendParamChange(paramChange);
+                        
+                        // Sélection des scènes 0 de chaque canevas -> remise en place des excitateurs
+                        graphicSessionManager.OnModelStarted();
                     }
                     break;
                     
@@ -274,9 +277,6 @@ void Presenter::LoadSession(std::string filename)
     
     // Ensuite on se change de mode
     appModeChangeRequest(AppMode::Playing); // va démarrer le modèle
-    
-    // On force la ré-actualisation graphique
-    graphicSessionManager.OnModelStarted();
 }
 
 void Presenter::SetConfigurationFromTree(bptree::ptree&)

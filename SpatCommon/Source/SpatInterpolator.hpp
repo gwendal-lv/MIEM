@@ -179,6 +179,17 @@ namespace Miam
         {
         }
         
+        /// \brief Lorsque le Modèle reçoit un ordre de stop
+        void OnStop()
+        {
+            /// On éteint tous les excitateurs de manière brutale
+            for (auto&& spatState : spatStates)
+                spatState->ClearExcitements();
+            
+            /// Le OnUpdateFinished devra être appelé par qq'un par contre, + tard
+            updatedStatesCount = 1; // pour forcer une mise à jour... même s'il y en sûrement + que 1 qui a changé
+        }
+        
         /// \brief Permet de comptabiliser les modifs (ce que l'accès direct aux spatStates ne permet pas)
         void OnNewExcitementAmount(size_t spatStateIndex, uint64_t excitementSenderUID, double newExcitement)
         {
