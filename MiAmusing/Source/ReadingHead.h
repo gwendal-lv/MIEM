@@ -62,7 +62,6 @@ private:
 	int currentBeats;
 
 	double transitionSpeed;
-	double tmpPlus; // stocke temporairement le décalage si lors de l'accélération d'une vitesse < 1 vers une autre vitesse < 1
 	double incPlus;
 
 	int periodInSamples;
