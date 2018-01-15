@@ -92,7 +92,6 @@ void AudioManager::prepareToPlay(int samplesPerBlockExpected, double _sampleRate
 	
 	metronome->setAudioParameter(_sampleRate,50);
 	
-	periode = beatsByTimeLine * metronome->getPeriodInSamples();//timeToSample(4000);
 	position = 0;
 
 	
@@ -166,7 +165,7 @@ void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 			}
 			metronome->update();
 			++position;
-			if (position == periode)
+			if (position == beatsByTimeLine * metronome->getPeriodInSamples())
 			{
 				//DBG("TOC");
 				position = 0;
@@ -225,7 +224,7 @@ void AudioManager::getNewPlayHeads()
 		if (ptr != 0)
 		{
 			playHeadsKnown[ptr->getId()] = ptr;
-			playHeadsKnown[ptr->getId()]->setReadingPosition((double)position / (double)periode);
+			playHeadsKnown[ptr->getId()]->setReadingPosition((double)position / (double)(beatsByTimeLine * metronome->getPeriodInSamples()));
 		}
 	}
 }
@@ -422,7 +421,7 @@ void AudioManager::getParameters()
 		case Miam::AsyncParamChange::ParamType::Source:
 			//DBG("AM : the side " + (String)param.Id2 + " is = " + (String)param.DoubleValue);
 			if (timeLinesKnown[param.Id1] != 0) // si != 0 : il existe et on peut le modifier
-				timeLinesKnown[param.Id1]->setMidiTime(param.Id2, roundToInt(param.DoubleValue * (double)periode), param.IntegerValue,param.FloatValue);
+				timeLinesKnown[param.Id1]->setMidiTime(param.Id2, roundToInt(param.DoubleValue * (double)getNumOfBeats() * (double)metronome->getPeriodInSamples()), param.IntegerValue,param.FloatValue);
 			else // si == 0, on ne sait pas s'il n'existe pas ou si le thread est encore en train de le creer -> envoyer au thread pour verifier et faire le necessaire
 				paramToAllocationThread.push(param);
 			break;
@@ -463,7 +462,6 @@ void AudioManager::getParameters()
 			//sendMidiMessage(juce::MidiMessage::controllerEvent(1, 7, roundToInt(param.FloatValue*127.0f)),nullptr);
 			//juce::MidiMessage::masterVolume(param.FloatValue));
 			//sendMidiMessage(juce::MidiMessage::masterVolume(param.FloatValue),nullptr);
-			param.IntegerValue = beatsByTimeLine * metronome->getPeriodInSamples();//timeToSample(param.IntegerValue);
 			paramToAllocationThread.push(param);
 			break;
 		case Miam::AsyncParamChange::UdpPort:
@@ -484,7 +482,7 @@ void AudioManager::getParameters()
 				if (param.Id1 == param.Id2)
 					timeLinesKnown[param.Id1]->resetAllChords();
 				else
-					timeLinesKnown[param.Id1]->addChord(timeLinesKnown[param.Id2], roundToInt(param.DoubleValue * (double)periode));
+					timeLinesKnown[param.Id1]->addChord(timeLinesKnown[param.Id2], roundToInt(param.DoubleValue * (double)metronome->getPeriodInSamples()));
 			}
 			else
 				paramToAllocationThread.push(param);
@@ -523,7 +521,7 @@ void AudioManager::getAudioThreadMsg()
 	//	0.1,  // release time
 	//	10.0  // maximum sample length
 	//);
-
+	int oldPeriod = 0;
 
 	while (paramToAllocationThread.pop(param))
 	{
@@ -554,7 +552,7 @@ void AudioManager::getAudioThreadMsg()
 					else
 						DBG("impossible");
 
-					timeLines[param.Id1]->setPeriod(periode);
+					timeLines[param.Id1]->setPeriod(beatsByTimeLine * metronome->getPeriodInSamples());
 					if (param.FloatValue != 0)
 						timeLines[param.Id1]->setSpeed(param.FloatValue);
 					else
@@ -620,7 +618,7 @@ void AudioManager::getAudioThreadMsg()
 			//DBG("AM : the side " + (String)param.Id2 + " is = " + (String)param.DoubleValue);
 			//DBG("new note received : " + (String)param.IntegerValue);
 			if (timeLines[param.Id1] != 0)
-				timeLines[param.Id1]->setMidiTime(param.Id2, roundToInt(param.DoubleValue * (double)periode), param.IntegerValue,param.FloatValue);
+				timeLines[param.Id1]->setMidiTime(param.Id2, roundToInt(param.DoubleValue * (double)beatsByTimeLine * (double)metronome->getPeriodInSamples()), param.IntegerValue,param.FloatValue);
 			break;
 		case Miam::AsyncParamChange::ParamType::Play :
 			
@@ -636,18 +634,20 @@ void AudioManager::getAudioThreadMsg()
 			}
 			break;
 		case Miam::AsyncParamChange::Duration:
+			oldPeriod = metronome->getPeriodInSamples();
+			metronome->setAudioParameter(currentSampleRate, param.IntegerValue);
 			for (int i = 0; i < maxSize; ++i)
 			{
 				if (timeLines[i] != 0)
-					timeLines[i]->setPeriod(param.IntegerValue);
+					timeLines[i]->setPeriod(beatsByTimeLine * metronome->getPeriodInSamples());
 			}
 			for (int i = 0; i < maxSize; ++i)
 			{
 				if (playHeads[i] != 0)
 					playHeads[i]->setState(PlayHeadState::Play);
 			}
-			position = (int)round((double)position * (double)param.IntegerValue / (double)periode);
-			periode = param.IntegerValue;
+			position = (int)round((double)position * (double)(beatsByTimeLine * metronome->getPeriodInSamples()) / (double)(beatsByTimeLine *oldPeriod));
+			
 			break;
 		case Miam::AsyncParamChange::Pause:
 			for (int i = 0; i < maxSize; ++i)
@@ -677,7 +677,7 @@ void AudioManager::getAudioThreadMsg()
 				if (param.Id1 == param.Id2)
 					timeLines[param.Id1]->resetAllChords();
 				else
-					timeLines[param.Id1]->addChord(timeLines[param.Id2], roundToInt(param.DoubleValue * (double)periode));
+					timeLines[param.Id1]->addChord(timeLines[param.Id2], roundToInt(param.DoubleValue * (double)metronome->getPeriodInSamples()));
 			}
 		default:
 

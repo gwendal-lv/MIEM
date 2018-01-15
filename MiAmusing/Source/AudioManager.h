@@ -84,7 +84,6 @@ namespace Amusing {
 		int timeStamp;
 
 		int beatsByTimeLine;
-		int periode;
 		int position;
 		Metronome *metronome;
 		

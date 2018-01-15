@@ -64,7 +64,6 @@ private:
 	double transitionSpeed;
 	double incPlus;
 
-	int periodInSamples;
 	Metronome *metronome; // used to be synchronized with all the reading head
 	void testPosition(int P); // look in the associate timeLine if there is a MIDI msg to send
 

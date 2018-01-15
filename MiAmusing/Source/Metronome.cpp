@@ -64,11 +64,23 @@ int Metronome::getCurrentBeat()
 
 void Metronome::setAudioParameter(double m_sampleRate, int m_BPM)
 {
-	BPM = m_BPM;
-	sampleRate = m_sampleRate;
+	if (BPM != m_BPM || sampleRate != m_sampleRate)
+	{
+		BPM = m_BPM;
+		sampleRate = m_sampleRate;
 
-	periodInSamples = (int)round((60.0 * sampleRate) / (double)BPM);
-	samplesLeftBeforeBeat = periodInSamples;
+		if (periodInSamples == 0)
+		{
+			periodInSamples = (int)round((60.0 * sampleRate) / (double)BPM);
+			samplesLeftBeforeBeat = periodInSamples;
+		}
+		else
+		{
+			int newPeriodInSamples = (int)round((60.0 * sampleRate) / (double)BPM);
+			samplesLeftBeforeBeat *= ((double)newPeriodInSamples / (double)periodInSamples);
+			periodInSamples = newPeriodInSamples;
+		}
+	}
 }
 
 
