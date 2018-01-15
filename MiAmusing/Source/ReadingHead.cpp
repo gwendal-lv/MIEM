@@ -260,6 +260,7 @@ void PlayHead::process()
 				if (speedToReach > speed)
 				{
 					speed += speedInc;
+					plus += incPlus;
 
 					if (transitionPosition >= transitionTime)
 					{
@@ -269,6 +270,7 @@ void PlayHead::process()
 
 					}
 					position = speed * (((double)metronome->getCurrentBeat() + 1.0) * (double)periodInSamples - metronome->getNumSamplesToNextBeat());
+					position += plus;
 				}
 				else
 				{
