@@ -46,29 +46,11 @@ void PlayHead::setAudioManager(AudioManager* m_audioManager)
 void PlayHead::LinkTo(TimeLine* m_timeLine)
 {
 	timeLine = m_timeLine;
-	currentPeriod = m_timeLine->getPeriod() / speed;
 }
 
 void PlayHead::setSpeed(double m_speed)
 {
-	/*
-	if (speedToReach != m_speed)
-	{
-		speedToReach = m_speed;
-		transitionTime =  timeLine->getPeriod() / 2.0; // une demi période pour retrouver la bonne position
-		double currentPeriodePercentage = (double)position / (double)timeLine->getPeriod(); // pourcentage de la période où l'on se trouve
-		double newPeriodePercentage =  currentPeriodePercentage + ((double)speedToReach / (double)speed) * 0.5; // pourcentage de la période où on devrait se trouver + demi-tour (car on prend un temps de transition T/2)
-		//speed = (newPeriodePercentage - currentPeriodePercentage) * (double)timeLine->getPeriod() / (double)transitionTime; // transition speed
-		
-		speed = (speedToReach * (double)((((double)position + numT * (double)timeLine->getPeriod())/speed) + transitionTime) - (double)position) / (double)transitionTime;
-		transitionTime *= speed; // pour garder le nombre de "click"
-		// numT /= speedToReach; // trouver la transformation de numbre de tour
 
-		if(timeLine != nullptr)
-			currentPeriod = timeLine->getPeriod() / speed; // peut poser problème...
-	}
-	*/
-	//timeLine->setSpeed(m_speed);
 	rest = 0;
 	if (speedToReach != m_speed)
 	{
@@ -208,12 +190,12 @@ void PlayHead::setReadingPosition(double p)
 {
 	if (p > 1)
 		p -= 1;
-	position = (double)timeLine->getPeriod() * p;//(double)currentPeriod * p;
+	position =  numOfBeats * metronome->getPeriodInSamples() * p;//(double)currentPeriod * p;
 }
 
 double PlayHead::getReadingPosition()
 {
-	return position / (double)timeLine->getPeriod();//(double)currentPeriod;
+	return position / double(numOfBeats * metronome->getPeriodInSamples()); 
 }
 
 int PlayHead::getTimeLineId()
@@ -244,7 +226,6 @@ void PlayHead::setState(PlayHeadState m_state)
 void PlayHead::process()
 {
 	double r = 0;
-	int a;
 	//int plus = 0;
 	switch (state)
 	{
@@ -388,7 +369,7 @@ void PlayHead::testPosition(int P)
 	int i = 0;
 	while (m_end == false)
 	{
-		if (timeLine->isNoteOnTime(P, i, m_end, m_channel, m_note, m_velocity))
+		if (timeLine->isNoteOnTime(P, i, numOfBeats * metronome->getPeriodInSamples(), m_end, m_channel, m_note, m_velocity))
 		{
 			//DBG((String)i + " : " + (String)position + " " + (String)(P / (double)timeLine->getPeriod()));
 			MidiMessage midiMsg = MidiMessage::noteOn(m_channel, m_note, m_velocity);
@@ -401,7 +382,7 @@ void PlayHead::testPosition(int P)
 	i = 0;
 	while (m_end == false)
 	{
-		if (timeLine->isNoteOffTime(P, i, m_end, m_channel, m_note))
+		if (timeLine->isNoteOffTime(P, i, numOfBeats * metronome->getPeriodInSamples(), m_end, m_channel, m_note))
 		{
 			MidiMessage midiMsgOff = MidiMessage::noteOff(m_channel, m_note);
 			audioManager->sendMidiMessage(midiMsgOff,this);
@@ -409,7 +390,7 @@ void PlayHead::testPosition(int P)
 		i++;
 	}
 
-	if (timeLine->isChordOnTime(P, m_channel, chordToPlay, m_velocity))
+	if (timeLine->isChordOnTime(P, numOfBeats * metronome->getPeriodInSamples(), m_channel, chordToPlay, m_velocity))
 	{
 		for (int j = 0; j < chordSize; j++)
 		{
@@ -421,7 +402,7 @@ void PlayHead::testPosition(int P)
 		}
 	}
 
-	if (timeLine->isChordOffTime(P, m_channel, chordToPlay))
+	if (timeLine->isChordOffTime(P, numOfBeats * metronome->getPeriodInSamples(), m_channel, chordToPlay))
 	{
 		for (int j = 0; j < chordSize; j++)
 		{

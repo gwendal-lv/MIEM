@@ -25,8 +25,33 @@ Metronome::~Metronome()
 
 void Metronome::update()
 {
+	// la mise à jour du metronome est séparée en deux parties : 
+	// 1) modification du BPM si besoin
+	// 2) le calcul de la position dans le temps : nombre d'échantillons restant avant le prochain temps, nombre de temps passés, et nombre de tour effectués
 
-	/////
+	if (BPM != BPM_ToReach)
+	{
+		++transitionPosition;
+		if (transitionPosition != transitionTime)
+		{
+			BPM += incBPM;
+			int newPeriodInSamples = (int)round((60.0 * sampleRate) / (double)BPM);
+			samplesLeftBeforeBeat *= roundToInt((double)newPeriodInSamples / (double)periodInSamples);
+			periodInSamples = newPeriodInSamples;
+		}
+		else
+		{
+			BPM = BPM_ToReach;
+			int newPeriodInSamples = (int)round((60.0 * sampleRate) / (double)BPM);
+			samplesLeftBeforeBeat *= roundToInt((double)newPeriodInSamples / (double)periodInSamples);
+			periodInSamples = (int)round((60.0 * sampleRate) / (double)BPM);
+			transitionPosition = 0;
+		}
+	}
+
+	// le nombre d'échantillons restant avant le prochain temps diminue à chaque update
+	// une fois qu'il atteint 0, on passe au temps suivant
+	// au bout de "numOfBeats" temps, le nombre de tour augmente de 1
 	if (periodInSamples != 0)
 	{
 		--samplesLeftBeforeBeat;
@@ -64,22 +89,20 @@ int Metronome::getCurrentBeat()
 
 void Metronome::setAudioParameter(double m_sampleRate, int m_BPM)
 {
-	if (BPM != m_BPM || sampleRate != m_sampleRate)
+	if (periodInSamples == 0) // on a pas encore configuré une première fois
 	{
 		BPM = m_BPM;
+		BPM_ToReach = m_BPM;
 		sampleRate = m_sampleRate;
-
-		if (periodInSamples == 0)
-		{
-			periodInSamples = (int)round((60.0 * sampleRate) / (double)BPM);
-			samplesLeftBeforeBeat = periodInSamples;
-		}
-		else
-		{
-			int newPeriodInSamples = (int)round((60.0 * sampleRate) / (double)BPM);
-			samplesLeftBeforeBeat *= ((double)newPeriodInSamples / (double)periodInSamples);
-			periodInSamples = newPeriodInSamples;
-		}
+		periodInSamples = (int)round((60.0 * sampleRate) / (double)BPM);
+		samplesLeftBeforeBeat = periodInSamples;
+	}
+	else if (BPM != m_BPM || sampleRate != m_sampleRate) // si on change une des options
+	{
+		BPM_ToReach = m_BPM;
+		transitionTime = roundToInt(5.0*sampleRate / 1000.0); // temps de transition = 5ms
+		incBPM = double(BPM_ToReach - BPM) / (double)transitionTime;
+		transitionPosition = 0;
 	}
 }
 

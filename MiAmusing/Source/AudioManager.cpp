@@ -421,7 +421,7 @@ void AudioManager::getParameters()
 		case Miam::AsyncParamChange::ParamType::Source:
 			//DBG("AM : the side " + (String)param.Id2 + " is = " + (String)param.DoubleValue);
 			if (timeLinesKnown[param.Id1] != 0) // si != 0 : il existe et on peut le modifier
-				timeLinesKnown[param.Id1]->setMidiTime(param.Id2, roundToInt(param.DoubleValue * (double)getNumOfBeats() * (double)metronome->getPeriodInSamples()), param.IntegerValue,param.FloatValue);
+				timeLinesKnown[param.Id1]->setMidiTime(param.Id2, param.DoubleValue, param.IntegerValue,param.FloatValue);
 			else // si == 0, on ne sait pas s'il n'existe pas ou si le thread est encore en train de le creer -> envoyer au thread pour verifier et faire le necessaire
 				paramToAllocationThread.push(param);
 			break;
@@ -552,12 +552,6 @@ void AudioManager::getAudioThreadMsg()
 					else
 						DBG("impossible");
 
-					timeLines[param.Id1]->setPeriod(beatsByTimeLine * metronome->getPeriodInSamples());
-					if (param.FloatValue != 0)
-						timeLines[param.Id1]->setSpeed(param.FloatValue);
-					else
-						DBG("impossible");//timeLines[param.Id1]->playNoteContinuously();
-
 					timeLines[param.Id1]->setAudioManager(this);
 					//DBG("midiChannel : " + (String)param.IntegerValue);
 					if (param.IntegerValue != 0)
@@ -618,7 +612,7 @@ void AudioManager::getAudioThreadMsg()
 			//DBG("AM : the side " + (String)param.Id2 + " is = " + (String)param.DoubleValue);
 			//DBG("new note received : " + (String)param.IntegerValue);
 			if (timeLines[param.Id1] != 0)
-				timeLines[param.Id1]->setMidiTime(param.Id2, roundToInt(param.DoubleValue * (double)beatsByTimeLine * (double)metronome->getPeriodInSamples()), param.IntegerValue,param.FloatValue);
+				timeLines[param.Id1]->setMidiTime(param.Id2, param.DoubleValue, param.IntegerValue,param.FloatValue);
 			break;
 		case Miam::AsyncParamChange::ParamType::Play :
 			
@@ -636,11 +630,7 @@ void AudioManager::getAudioThreadMsg()
 		case Miam::AsyncParamChange::Duration:
 			oldPeriod = metronome->getPeriodInSamples();
 			metronome->setAudioParameter(currentSampleRate, param.IntegerValue);
-			for (int i = 0; i < maxSize; ++i)
-			{
-				if (timeLines[i] != 0)
-					timeLines[i]->setPeriod(beatsByTimeLine * metronome->getPeriodInSamples());
-			}
+			
 			for (int i = 0; i < maxSize; ++i)
 			{
 				if (playHeads[i] != 0)

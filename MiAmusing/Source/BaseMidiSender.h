@@ -40,30 +40,24 @@ public:
 	~TimeLine();
 
 	void setAudioManager(Amusing::AudioManager* m_audioManager);
-	void setPeriod(int m_period);
-	void setSpeed(float newSpeed);
-	void setMidiTime(int idx, int newTime, int m_noteNumber, float m_velocity);
+	void setMidiTime(int idx, double newTime, int m_noteNumber, float m_velocity);
 	void setMidiChannel(int m_chan);
 	void setId(int m_Id);
 	void setAllVelocities(float m_velocity);
 	int getId();
-	float getSpeed();
-	int getPeriod();
 
-	bool isNoteOnTime(int m_position, int i, bool &end, int &channel, int &note, uint8 &m_velocity);
-	bool isNoteOffTime(int m_position, int i, bool &end, int &channel, int &note);
-	bool isChordOnTime(int m_position, int & m_channel, int *m_chordToPlay, uint8 & m_velocity);
-	bool isChordOffTime(int m_position, int & m_channel, int m_chordToPlay[]);
-	//void process(int time);
-	//void playNoteContinuously();
+	bool isNoteOnTime(int m_position, int i, int period, bool &end, int &channel, int &note, uint8 &m_velocity);
+	bool isNoteOffTime(int m_position, int i, int period, bool &end, int &channel, int &note);
+	bool isChordOnTime(int m_position, int period, int & m_channel, int *m_chordToPlay, uint8 & m_velocity);
+	bool isChordOffTime(int m_position, int period, int & m_channel, int m_chordToPlay[]);
+
 
 	double getRelativePosition();
-	void alignWith(TimeLine *ref, double phase);
 
-	void addChord(TimeLine* otherTimeLine, int chordTime);
+	void addChord(TimeLine* otherTimeLine, double chordTime);
 	bool isNoteAvailable(ChordType m_chordType, int baseNote1, int &otherChordNote);
-	void createChord(ChordType m_chordType, int m_chordTime, int baseNote1, int baseNote2);
-	void createPerfectChord(int chordTime, int currentNote);
+	void createChord(ChordType m_chordType, double m_chordTime, int baseNote1, int baseNote2);
+	void createPerfectChord(double chordTime, int currentNote);
 	void resetAllChords();
 
 	void addMessageToQueue(MidiMessage msg);
@@ -102,14 +96,10 @@ private:
 
 	// parameter of the notes to send
 	int channel;
-	float speed;
-	int duration;
-	int period; // period, to be sure we don't set a noteOff signal after the end of the period...
-	int currentPeriod; // period taking speed into accound
+	double duration;
 	int lastNote; // last note played -> we have to send the noteOff msg when the object is deleted
 	bool continuous; // if true, we send the noteOn for all the notes
 
-	void applyOffSet(int offset);
 
 	void testMidi();
 	MidiMessageCollector midiCollector;

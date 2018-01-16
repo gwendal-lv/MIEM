@@ -28,7 +28,11 @@ public:
 	int getCurrentT();
 
 private:
-	int BPM;
+	int BPM_ToReach;
+	int transitionPosition;
+	int transitionTime; // 5ms en samples
+	double incBPM;
+	double BPM; // format double pour pouvoir faire la transition d'un BPM à un autre, utilisé en int le reste du temps
 	int samplesTime;
 	
 	double sampleRate;
