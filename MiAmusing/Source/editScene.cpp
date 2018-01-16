@@ -147,6 +147,7 @@ EditScene::EditScene ()
 	imgStopButton->setState(Button::ButtonState::buttonDown);
 
 	comboBoxMidi->setVisible(false);
+	isAddEnabled = true;
 	//textButton->setVisible(false);
     //[/Constructor]
 }
@@ -245,20 +246,23 @@ void EditScene::sliderValueChanged (Slider* sliderThatWasMoved)
 void EditScene::buttonClicked (Button* buttonThatWasClicked)
 {
     //[UserbuttonClicked_Pre]
-	if (buttonThatWasClicked == addCarreShapeButton)
+	if (isAddEnabled)
 	{
-		graphicSessionManager->OnAddSquare();
-		return;
-	}
-	else if (buttonThatWasClicked == addTriangleShapeButton2)
-	{
-		graphicSessionManager->OnAddTriangle();
-		return;
-	}
-	else if (buttonThatWasClicked == addHexaShapeButton)
-	{
-		graphicSessionManager->OnAddHexa();
-		return;
+		if (buttonThatWasClicked == addCarreShapeButton)
+		{
+			graphicSessionManager->OnAddSquare();
+			return;
+		}
+		else if (buttonThatWasClicked == addTriangleShapeButton2)
+		{
+			graphicSessionManager->OnAddTriangle();
+			return;
+		}
+		else if (buttonThatWasClicked == addHexaShapeButton)
+		{
+			graphicSessionManager->OnAddHexa();
+			return;
+		}
 	}
     //[/UserbuttonClicked_Pre]
 
@@ -329,6 +333,28 @@ void EditScene::CompleteInitialization(GraphicSessionManager* _graphicSessionMan
 void EditScene::setMidiChannel(int chan)
 {
 	comboBoxMidi->setSelectedId(chan);
+}
+
+void EditScene::hideAddPolygon()
+{
+	addCarreShapeButton->setAlpha(0.5);
+	addTriangleShapeButton2->setAlpha(0.5);
+	addHexaShapeButton->setAlpha(0.5);
+	addCarreShapeButton->setColours(Colours::white, Colours::white, Colours::white);
+	addTriangleShapeButton2->setColours(Colours::white, Colours::white, Colours::white);
+	addHexaShapeButton->setColours(Colours::white, Colours::white, Colours::white);
+	isAddEnabled = false;
+}
+
+void EditScene::showAddPolygon()
+{
+	addCarreShapeButton->setAlpha(1.0);
+	addTriangleShapeButton2->setAlpha(1.0);
+	addHexaShapeButton->setAlpha(1.0);
+	addCarreShapeButton->setColours(Colours::white, Colours::blue, Colours::blue);
+	addTriangleShapeButton2->setColours(Colours::white, Colours::blue, Colours::blue);
+	addHexaShapeButton->setColours(Colours::white, Colours::blue, Colours::blue);
+	isAddEnabled = true;
 }
 
 //[/MiscUserCode]

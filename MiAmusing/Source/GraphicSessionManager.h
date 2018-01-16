@@ -143,6 +143,8 @@ namespace Amusing {
 		void OnAddCircle();
 		void OnAddTrueCircle();
 		void OnAddFollower();
+		void hideAddPolygon();
+		void showAddPolygon();
 		void OnAddComplete();
 		void OnSoundClick();
 		void OnDelete();

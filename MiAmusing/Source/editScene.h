@@ -57,6 +57,8 @@ public:
     //[UserMethods]     -- You can add your own custom methods in this section.
 	void CompleteInitialization(GraphicSessionManager* _graphicSessionManager);//, MultiCanvasComponent* _multiCanvasComponent);
 	void setMidiChannel(int chan);
+	void hideAddPolygon();
+	void showAddPolygon();
     //[/UserMethods]
 
     void paint (Graphics& g) override;
@@ -91,6 +93,7 @@ public:
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     GraphicSessionManager* graphicSessionManager = 0;
+	bool isAddEnabled;
 	//MultiCanvasComponent* multiCanvasComponent = 0;
 
     //[/UserVariables]

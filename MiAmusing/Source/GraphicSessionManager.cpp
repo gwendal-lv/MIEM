@@ -723,6 +723,16 @@ void GraphicSessionManager::OnAddFollower()
 	}
 }
 
+void GraphicSessionManager::hideAddPolygon()
+{
+	editScene->hideAddPolygon();
+}
+
+void GraphicSessionManager::showAddPolygon()
+{
+	editScene->showAddPolygon();
+}
+
 void GraphicSessionManager::OnDelete()
 {
 	if (selectedCanvas)

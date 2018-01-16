@@ -59,6 +59,8 @@ namespace Amusing {
 		void AddTrueCircle(uint64_t nextAreaId);
 		void AddFollower(uint64_t nextAreaId);
 		void AddCompleteArea();
+		void hideAddPolygon();
+		void showAddPolygon();
 		void OnDelete();
 		void OnFollowerTranslation(std::shared_ptr<GraphicEvent> graphicE);
 		void OnAudioPosition(double position);

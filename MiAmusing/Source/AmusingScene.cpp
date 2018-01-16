@@ -352,6 +352,9 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 	newPolygon->setCursorVisible(true, canvasComponent);
 	std::shared_ptr<AreaEvent> areaE = AddArea(newPolygon);
 
+	if (areas.size() >= 10)
+		if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
+			manager->hideAddPolygon();
 
 	//DBG("a la creation : size = " + (String)newPolygon->GetContourSize());
 	// Actual adding of this new polygon
@@ -455,6 +458,9 @@ std::shared_ptr<AreaEvent> AmusingScene::DeleteSelectedArea()
 		}
 
 		SetSelectedArea(nullptr);
+
+		if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
+			manager->showAddPolygon();
 		
 		return deleteAreaByUniqueId(selectedAreaBackup->GetId());
 	}
