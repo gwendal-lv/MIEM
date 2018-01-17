@@ -532,6 +532,10 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				
 				if(amusingScene->GetDrawableObjectsCount() > 0)
 					editScene->setMidiChannel(myPresenter->getChannel(sceneE->GetNewScene()));
+				if (amusingScene->getNumberArea() < 10)
+					editScene->showAddPolygon();
+				else
+					editScene->hideAddPolygon();
 					
 				for (int i = 0; i < (int)amusingScene->GetDrawableObjectsCount(); i++)
 				{
