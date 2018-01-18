@@ -267,6 +267,17 @@ void MultiSceneCanvasManager::OnCanvasMouseDown(const MouseEvent& mouseE)
 	MultiSceneCanvasEditor::OnCanvasMouseDown(mouseE);
 }
 
+void MultiSceneCanvasManager::OnCanvasMouseDoubleClick(const MouseEvent & mouseE)
+{
+	// juste vérification si le double click a été effectué dans une aire ou pas
+	// peut-être ajouter un calcul pour voir où faire apparaitre les options en fonction de comment est l'aire
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+	{
+		std::shared_ptr<GraphicEvent> graphicE = amusingScene->OnCanvasMouseDoubleClick(mouseE);
+
+	}
+}
+
 void MultiSceneCanvasManager::OnCanvasMouseUp(const MouseEvent& mouseE)
 {
 	DBG("passe par MultiSceneCanvasManager::OnCanvasMouseUp");

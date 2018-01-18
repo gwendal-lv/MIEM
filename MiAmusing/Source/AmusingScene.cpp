@@ -1100,6 +1100,23 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseUp(const MouseEvent& mo
 	return graphicE;
 }
 
+std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDoubleClick(const MouseEvent & mouseE)
+{
+	for (int i = 0; i < (int)areas.size(); ++i)
+	{
+		if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
+			if (completeArea->HitTest(mouseE.x, mouseE.y))
+			{
+				if(auto sceneComponent = (AmusingSceneComponent*)canvasComponent)
+				{
+					sceneComponent->SetAreaOptionsVisible(true);
+				}
+				return std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::Selected, -1, shared_from_this()));
+			}
+	}
+	return std::shared_ptr<GraphicEvent>();
+}
+
 std::shared_ptr<AreaEvent> AmusingScene::AddTrueCircle(uint64_t nextAreaId)
 {
 	DBG("Creation du cercle");

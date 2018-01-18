@@ -14,12 +14,22 @@
 
 #include <memory>
 
+using namespace Miam;
+
 //==============================================================================
 AmusingSceneComponent::AmusingSceneComponent()
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
+	isOptionShowed = false;
 
+	showOptionsButton = new TextButton();
+	showOptionsButton->setButtonText("opt");
+	showOptionsButton->setSize(40, 20);
+	showOptionsButton->setTopLeftPosition(0, 0);
+	showOptionsButton->addListener(this);
+	openGlContext.attachTo(*showOptionsButton);
+	addAndMakeVisible(showOptionsButton);
 
 	openGlContext.attachTo(areaOptions);
 	addAndMakeVisible(areaOptions); // test pour voir si on le voit bien
@@ -32,6 +42,7 @@ AmusingSceneComponent::~AmusingSceneComponent()
 {
 	//openGlContext.detach(areaOptions);
 	//openGlContext.detach();
+	delete showOptionsButton;
 }
 
 void AmusingSceneComponent::setSamplesColor(int Nsamples, Colour colorCode[])
@@ -110,6 +121,7 @@ void AmusingSceneComponent::OnBaseNoteChanged(int newBaseNote)
 
 void AmusingSceneComponent::SetAreaOptionsCenter(bpt center)
 {
+	showOptionsButton->setTopLeftPosition(center.get<0>()+100, center.get<1>() - 150);
 	areaOptions.setCentrePosition((int)center.get<0>(), (int)center.get<1>());
 	
 }
@@ -118,11 +130,16 @@ void AmusingSceneComponent::SetAreaOptionsVisible(bool show)
 {
 	if (show)
 	{
-
+		isOptionShowed = true;
 		areaOptions.setVisible(true);
+		showOptionsButton->setVisible(true);
 	}
 	else
+	{
+		isOptionShowed = false;
 		areaOptions.setVisible(false);
+		showOptionsButton->setVisible(false);
+	}
 }
 
 void AmusingSceneComponent::SetAreaOptionsVisible(bool show,double speed, double velocity, int currentOctave, int colorIdx)
@@ -133,8 +150,37 @@ void AmusingSceneComponent::SetAreaOptionsVisible(bool show,double speed, double
 		areaOptions.setVelocitySliderValue(velocity);
 		areaOptions.setOctaveSlider(currentOctave);
 		areaOptions.setCurrentColorSelected(colorIdx);
-		areaOptions.setVisible(true);
+		showOptionsButton->setVisible(true);
 	}
-	else
-		areaOptions.setVisible(false);
+	//else
+	//	areaOptions.setVisible(false);
+}
+
+void AmusingSceneComponent::buttonClicked(Button * buttonClicked)
+{
+	if (buttonClicked == showOptionsButton)
+	{
+		if (isOptionShowed)
+		{
+			areaOptions.setVisible(false);
+			isOptionShowed = false;
+		}
+		else
+		{
+			areaOptions.setVisible(true);
+			isOptionShowed = true;
+		}
+	}
+}
+
+void AmusingSceneComponent::mouseDown(const juce::MouseEvent & event)
+{
+	SceneCanvasComponent::mouseDown(event);
+}
+
+void AmusingSceneComponent::mouseDoubleClick(const juce::MouseEvent & event)
+{
+	DBG("doubleClick");
+	if (auto manager = std::dynamic_pointer_cast<Amusing::MultiSceneCanvasManager>(canvasManager.lock()))
+		manager->OnCanvasMouseDoubleClick(event);
 }

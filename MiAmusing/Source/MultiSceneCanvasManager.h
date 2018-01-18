@@ -76,6 +76,7 @@ namespace Amusing {
 		void deleteAsyncDrawableObject(std::shared_ptr<IDrawableArea> originalAreaToDelete);
 		void OnCanvasMouseUp(const MouseEvent& mouseE);
 		void OnCanvasMouseDown(const MouseEvent& mouseE);
+		void OnCanvasMouseDoubleClick(const MouseEvent& mouseE);
 
 		void OnInteraction(std::shared_ptr<AreaEvent> areaE);
 

@@ -45,6 +45,8 @@ namespace Miam
 		std::shared_ptr<GraphicEvent> OnCanvasMouseDown(const MouseEvent& mouseE) override;
 		std::shared_ptr<GraphicEvent> OnCanvasMouseDrag(const MouseEvent& mouseE) override;
 		std::shared_ptr<GraphicEvent> OnCanvasMouseUp(const MouseEvent& mouseE) override;
+		std::shared_ptr<GraphicEvent> OnCanvasMouseDoubleClick(const MouseEvent& mouseE);
+
 		std::shared_ptr<AreaEvent> AddTrueCircle(uint64_t nextAreaId);
 		std::shared_ptr<AreaEvent> AddFollower(uint64_t nextAreaId);
 		std::shared_ptr<AreaEvent> AddCompleteArea(uint64_t);
