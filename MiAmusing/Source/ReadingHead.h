@@ -63,6 +63,9 @@ private:
 
 	double transitionSpeed;
 	double incPlus;
+	double oldPeriod; // each time, we search from oldPosition to position if there's a note to play
+					  // thus we always need oldPosition < position -> if the BPM change, we need to applay the same transform to the oldPositon...
+					  // !! oldPeriod = period pour un beat et pas pour un tour !!
 
 	Metronome *metronome; // used to be synchronized with all the reading head
 	void testPosition(int P); // look in the associate timeLine if there is a MIDI msg to send

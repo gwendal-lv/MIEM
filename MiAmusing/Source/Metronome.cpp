@@ -113,6 +113,9 @@ int Metronome::getPeriodInSamples()
 	// retourne la periode d'un carré donnant le tempo de m_bpm :
 	//	m_bpm = 1 Tic tous les sampleRate * 60 / BPM
 	//  1 carré = 4 Tic = 4 * sampleRate * 60 / BPM
+
+	if (periodInSamples == 0)
+		double b = 5;
 	return periodInSamples;
 }
 

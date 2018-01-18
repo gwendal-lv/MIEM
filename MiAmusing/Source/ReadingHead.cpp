@@ -20,6 +20,7 @@ PlayHead::PlayHead(Metronome* m_metronome) : speed(1.0), speedToReach(1.0), posi
 	//periodInSamples = metronome->getPeriodInSamples();
 	plus = 0;
 	incPlus = 0;
+	oldPeriod = 0.0;
 }
 
 PlayHead::~PlayHead()
@@ -62,37 +63,52 @@ void PlayHead::setSpeed(double m_speed)
 				if (m_speed >= speed) // acceleration
 				{
 					// transition time = temps avant prochain passages par 0, pour pas avoir de problème de continuité de la position
-					transitionTime = ((numOfBeats - metronome->getCurrentBeat() - 1) * metronome->getPeriodInSamples() + metronome->getNumSamplesToNextBeat());//- speedToReach; //(double)numOfBeats * (double)periodInSamples / 2.0;
+					transitionTime = ((numOfBeats - metronome->getCurrentBeat() - 1) * metronome->getPeriodInSamples() + metronome->getNumSamplesToNextBeat());
 					speedToReach = m_speed;
 					rest = speedToReach - floor(speedToReach);
 					
 					numT = (rest == 0) ? 1 : ceil(1.0 / rest);
-					speedInc = (speedToReach - speed) / transitionTime;
-
-					// calculer les décalages de chacune des vitesse par rapport à la tête de lecture unitaire quand elle recommence la lecture
-					double newPlus = 0;
-					int newNumT(1),  newTmpT(0);
-
-					double delta = 0.001; // on pourrait faire numT = ceil(1.0 / rest), mais avec les arrondi on peut arriver à un mauvais résultat (1/3 = 0.33333000 -> numT = 4 !!! donc faux !)
-					for (int i = 2; i < 5; ++i)
+					if (transitionTime > metronome->getPeriodInSamples()) // si on a assez de temps avant le prochain passage à 0
 					{
-						if (speedToReach >= 1.0 / (double)i - delta / 2.0 && speedToReach <= 1.0 / (double)i + delta / 2.0)
-							newNumT = i;
+						speedInc = (speedToReach - speed) / transitionTime;
+
+						// calculer les décalages de chacune des vitesse par rapport à la tête de lecture unitaire quand elle recommence la lecture
+						double newPlus = 0;
+						int newNumT(1), newTmpT(0);
+
+						double delta = 0.001; // on pourrait faire numT = ceil(1.0 / rest), mais avec les arrondi on peut arriver à un mauvais résultat (1/3 = 0.33333000 -> numT = 4 !!! donc faux !)
+						for (int i = 2; i < 5; ++i)
+						{
+							if (speedToReach >= 1.0 / (double)i - delta / 2.0 && speedToReach <= 1.0 / (double)i + delta / 2.0)
+								newNumT = i;
+						}
+
+						newTmpT = metronome->getCurrentT();
+						while (newTmpT > newNumT)
+							newTmpT -= newNumT;
+
+
+
+
+						newPlus = newTmpT * (1.0 / (double)newNumT) * numOfBeats * metronome->getPeriodInSamples(); //position + 1.0;
+						if (newPlus < plus)
+							newPlus += numOfBeats * metronome->getPeriodInSamples();
+
+						incPlus = (newPlus - plus) / transitionTime;
+
+					}
+					else // si on a plus assez de temps -> on reporte la transition
+					{
+						speedInc = 0; // on garde la même vitesse
+						incPlus = 0; // on ne change pas le décalage
+						//double newPlus = 0; // on 
+						//if (newPlus < plus)
+						//	newPlus += numOfBeats * metronome->getPeriodInSamples();
+
+						//incPlus = (newPlus - plus) / transitionTime;
 					}
 
-					newTmpT = metronome->getCurrentT();
-					while (newTmpT > newNumT)
-						newTmpT -= newNumT;
-
 					
-
-
-					newPlus = newTmpT * (1.0 / (double)newNumT) * numOfBeats * metronome->getPeriodInSamples(); //position + 1.0;
-					if (newPlus < plus)
-						newPlus += numOfBeats * metronome->getPeriodInSamples();
-					
-					incPlus = (newPlus - plus) / transitionTime;
-
 					
 				}
 				else
@@ -225,8 +241,12 @@ void PlayHead::setState(PlayHeadState m_state)
 
 void PlayHead::process()
 {
+	if(oldPeriod == 0.0)
+		oldPeriod = metronome->getPeriodInSamples();
+	double oldPosition = position * metronome->getPeriodInSamples() / oldPeriod;
+	oldPeriod = metronome->getPeriodInSamples();
 	double r = 0;
-	//int plus = 0;
+	
 	switch (state)
 	{
 	case PlayHeadState::Play:
@@ -243,23 +263,55 @@ void PlayHead::process()
 
 				if (transitionPosition >= transitionTime)
 				{
-					transitionPosition = 0;
-					speed = speedToReach;
-					double delta = 0.001; // on pourrait faire numT = ceil(1.0 / rest), mais avec les arrondi on peut arriver à un mauvais résultat (1/3 = 0.33333000 -> numT = 4 !!! donc faux !)
-					for (int i = 2; i < 5; ++i)
+					if (speedToReach - 2 * speedInc < speed && speed < speedToReach + 2 * speedInc) // on est assez proche de la vitesse voulue
 					{
-						if (speedToReach >= 1.0 / (double)i - delta / 2.0 && speedToReach <= 1.0 / (double)i + delta / 2.0)
-							numT = i;
+						transitionPosition = 0;
+						speed = speedToReach;
+						double delta = 0.001; // on pourrait faire numT = ceil(1.0 / rest), mais avec les arrondi on peut arriver à un mauvais résultat (1/3 = 0.33333000 -> numT = 4 !!! donc faux !)
+						for (int i = 2; i < 5; ++i)
+						{
+							if (speedToReach >= 1.0 / (double)i - delta / 2.0 && speedToReach <= 1.0 / (double)i + delta / 2.0)
+								numT = i;
+						}
+
+						int tmpT = metronome->getCurrentT();
+						while (tmpT > numT)
+							tmpT -= numT;
+
+						// plus tient compte du décalage qu'il y aura par rapport à v = 1
+						plus = tmpT * (1.0 / (double)numT) * numOfBeats * metronome->getPeriodInSamples(); //position + 1.0;
+
 					}
+					else // si on n'est pas encore assez proche de la vitesse à atteindre -> refaire une transition
+					{
+						transitionPosition = 0;
+						transitionTime = numOfBeats * metronome->getPeriodInSamples(); // on ralonge la transition de 1 tour
+						speedInc = (speedToReach - speed) / transitionTime;
 
-					int tmpT = metronome->getCurrentT();
-					while (tmpT > numT)
-						tmpT -= numT;
+						// calculer les décalages de chacune des vitesse par rapport à la tête de lecture unitaire quand elle recommence la lecture
+						double newPlus = 0;
+						int newNumT(1), newTmpT(0);
 
-					// plus tient compte du décalage qu'il y aura par rapport à v = 1
-					plus = tmpT * (1.0 / (double)numT) * numOfBeats * metronome->getPeriodInSamples(); //position + 1.0;
-						
+						double delta = 0.001; // on pourrait faire numT = ceil(1.0 / rest), mais avec les arrondi on peut arriver à un mauvais résultat (1/3 = 0.33333000 -> numT = 4 !!! donc faux !)
+						for (int i = 2; i < 5; ++i)
+						{
+							if (speedToReach >= 1.0 / (double)i - delta / 2.0 && speedToReach <= 1.0 / (double)i + delta / 2.0)
+								newNumT = i;
+						}
 
+						newTmpT = metronome->getCurrentT();
+						while (newTmpT > newNumT)
+							newTmpT -= newNumT;
+
+
+
+
+						newPlus = newTmpT * (1.0 / (double)newNumT) * numOfBeats * metronome->getPeriodInSamples(); //position + 1.0;
+						if (newPlus < plus)
+							newPlus += numOfBeats * metronome->getPeriodInSamples();
+
+						incPlus = (newPlus - plus) / transitionTime;
+					}
 				}
 				position = speed * (((double)metronome->getCurrentBeat() + 1.0) * (double)metronome->getPeriodInSamples() - metronome->getNumSamplesToNextBeat());
 				position += plus;
@@ -287,17 +339,15 @@ void PlayHead::process()
 			if (speed < 1)
 			{
 				if (metronome->getCurrentBeat() == 0 && metronome->getNumSamplesToNextBeat() == metronome->getPeriodInSamples() && speed == speedToReach)
-				{ // ça marche mais il faut trouver comment gérer ça lors de la transition...
-					
+				{
 					if (numT != 0)
 					{
 						int tmpT = metronome->getCurrentT();
 						while (tmpT > numT)
 							tmpT -= numT;
 						plus = position + 1.0;
-						if (tmpT == numT) //&& (position == 0 || position == speed * numOfBeats * periodInSamples))
+						if (tmpT == numT) 
 						{
-							//currentT = 0;
 							plus = 0;
 						}
 					}
@@ -315,37 +365,41 @@ void PlayHead::process()
 		
 		
 
-		while(position > numOfBeats * metronome->getPeriodInSamples())
-			position -= (numOfBeats * metronome->getPeriodInSamples());
+		/*while(position > numOfBeats * metronome->getPeriodInSamples())
+			position -= (numOfBeats * metronome->getPeriodInSamples());*/
 
 		
 		int sub, up; // interval to test for midi event
 
 		// check if speed is an integer
-		r = speed - ceil(speed);
-		if (r != 0) // not an integer -> find sub and up integer
-		{
-			sub = (int)ceil(position);
-			up = (int)ceil(position + speed);
-		}
-		else
-		{
-			sub = (int)position;
-			up = (int)position + (int)speed;
-		}
+		//r = speed - ceil(speed);
+		//if (r != 0) // not an integer -> find sub and up integer
+		//{
+		//	sub = (int)ceil(position);
+		//	up = (int)ceil(position + speed);
+		//}
+		//else
+		//{
+		//	sub = (int)position;
+		//	up = (int)position + (int)speed;
+		//}
 
-		//position2 = periodInSamples - metronome->getNumSamplesToNextBeat(); //periodInSamples - metronome->getNumSamplesToNextBeat();
+		// peut-être vérifier que oldPosition est plus petite que newPosition?
+		sub = ceil(oldPosition);
+		up = ceil(position);
 
-		for (int i = sub; i < up; i++)
+		double test;
+		//if (sub > up) // passe dedans si : BPM change -> rien changer
+		//{			  // ou si on passe par 0 (entre fin de cycle et nouveau cycle
+		//	
+		//	test = sub;//up += (numOfBeats * metronome->getPeriodInSamples());*/
+		//	sub = up;
+		//}
+		for (int i = sub; i <= up; i++)
 		{
 			testPosition(i);
 		}
 
-		
-		
-
-		//position = periodInSamples - metronome->getNumSamplesToNextBeat(); //periodInSamples - metronome->getNumSamplesToNextBeat();
-		//testPosition(roundToInt(position));
 		break;
 	case PlayHeadState::Pause:
 		break;
@@ -376,7 +430,10 @@ void PlayHead::testPosition(int P)
 			audioManager->sendMidiMessage(midiMsg,this);
 		}
 		i++;
+		
 	}
+	if (i > 6)
+		int b = 8;
 
 	m_end = false;
 	i = 0;

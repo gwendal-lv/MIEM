@@ -23,7 +23,7 @@ TimeLine::TimeLine()
 
 	
 	channel = 1;
-	duration = 0.02;//roundToInt( 0.5 * 10000.0);
+	duration = 0.05;//roundToInt( 0.5 * 10000.0);
 
 	continuous = false;
 	
@@ -67,12 +67,12 @@ void TimeLine::setAudioManager(AudioManager* m_audioManager)
 
 void TimeLine::setMidiTime(int idx, double newTime, int m_noteNumber,float m_velocity)
 {
-	while (newTime > 1.0)
+	while (newTime >= 1.0)
 		newTime -= 1.0;
 	if (idx < maxSize)
 	{
 		//DBG("<");
-		if (idx < midiTimesSize)
+		if (idx < midiTimesSize) 
 		{
 			midiTimes[idx] = newTime;
 			if (newTime + duration > 1.0) // verif si on depasse pas le temps de la periode !
@@ -135,9 +135,18 @@ int TimeLine::getId()
 
 bool TimeLine::isNoteOnTime(int m_position, int i, int period, bool &m_end, int &m_channel, int &m_note, uint8 &m_velocity)
 {
-
-	while (m_position > period)
+	int numPassage(0), blop(26);
+	while (m_position >= period)
+	{
 		m_position -= period;
+		numPassage++;
+		if (numPassage >= 50)
+			blop = 12;
+		else if (numPassage >= 30)
+			blop = 22;
+		else if (numPassage >= 10)
+			blop = 24;
+	}
 	if (i < midiTimesSize)
 	{
 		m_end = false; // on a pas encore atteint la fin de la liste de notes (au cas où il y en a plusieurs à jouer au même moment)
