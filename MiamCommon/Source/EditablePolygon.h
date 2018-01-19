@@ -76,6 +76,9 @@ namespace Miam {
 		AreaEventType TryBeginPointMove(const Point<double>& hitPoint) override;
         AreaEventType TryMovePoint(const Point<double>& newLocation) override;
 		AreaEventType EndPointMove() override;
+		bool SizeChanged(double size, bool minSize);
+		void Rotate(double Radian);
+		void updateContourPoints();
         void Translate(const Point<double>& translation) override;
         protected :
         void recreateNormalizedPoints() override;

@@ -248,9 +248,8 @@ AreaEventType EditablePolygon::TryBeginPointMove(const Point<double>& hitPoint)
 
 AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
 {
-	bpt bnewLocation(newLocation.x, newLocation.y);
     AreaEventType areaEventType = AreaEventType::NothingHappened;
-    
+	bpt bnewLocation(newLocation.x, newLocation.y);
     // Simple contour point dragging
     if (pointDraggedId >= 0)
     {
@@ -273,6 +272,7 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
     {
         // Rotation will be applied anyway...
         // Security needed for point to stay within the canvas ?
+		
         areaEventType = AreaEventType::RotScale;
         
         // Computation of the RotScale transformation needed to move the manipulation
@@ -287,75 +287,92 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
          */
 		double r1 = boost::geometry::distance(centerInPixels, bmanipulationPointInPixels);
         double r2 = boost::geometry::distance(centerInPixels, bnewLocation);
-        double x1 = bmanipulationPointInPixels.get<0>() - centerInPixels.get<0>();
+       /* double x1 = bmanipulationPointInPixels.get<0>() - centerInPixels.get<0>();
         double x2 = bnewLocation.get<0>() - centerInPixels.get<0>();
         double y1 = bmanipulationPointInPixels.get<1>() - centerInPixels.get<1>();
         double y2 = bnewLocation.get<1>() - centerInPixels.get<1>();
 
 
 		double cos_a = (x2*x1 + y2*y1)/(r1*r2);
-        double sin_a = (y2*x1 - x2*y1)/(r1*r2);
+        double sin_a = (y2*x1 - x2*y1)/(r1*r2);*/
+
+		bpt testPt(bnewLocation);
+		boost::geometry::subtract_point(testPt, centerInPixels);
+		double radAngle = Math::ComputePositiveAngle(testPt);
+
         // ----- size -----
 		double size = r2 / r1;
         
         // === Application of this transformation to the whole polygon ===
         // --- size if polygon is still big enough only ---
-        double minDistanceFromCenter = 0.0;
+       // double minDistanceFromCenter = 0.0;
         bool wasSizeApplied = false;
-		bpolygon bnewContourPoints;
-        for (size_t i=0 ; i<contourPointsInPixels.outer().size() ;i++)
-        {
-			bnewContourPoints.outer().push_back(bpt(contourPointsInPixels.outer().at(i).get<0>() - centerInPixels.get<0>(),
-				contourPointsInPixels.outer().at(i).get<1>() - centerInPixels.get<1>()));
+		if (SizeChanged(size, true))
+		{
+			bmanipulationPointInPixels.set<0>(bnewLocation.get<0>());
+			bmanipulationPointInPixels.set<1>(bnewLocation.get<1>());
+			wasSizeApplied = true;
+		}
+		// always apply the rotation
+		//double radAngle = Math::ComputePositiveAngle(bnewLocation);//atan(sin_a / cos_a);
 
-            bnewContourPoints.outer().at(i) =bpt(size * bnewContourPoints.outer().at(i).get<0>(),
-                                                size * bnewContourPoints.outer().at(i).get<1>());
-            if (boost::geometry::distance(bnewContourPoints.outer().at(i), bpt(0,0)) > minDistanceFromCenter)
-                minDistanceFromCenter = boost::geometry::distance(bnewContourPoints.outer().at(i), bpt(0, 0));
+		Rotate(-radAngle + rotationAngle);
+		rotationAngle = radAngle;
 
-			bnewContourPoints.outer().at(i).set<0>(bnewContourPoints.outer().at(i).get<0>() + centerInPixels.get<0>());
-			bnewContourPoints.outer().at(i).set<1>(bnewContourPoints.outer().at(i).get<1>() + centerInPixels.get<1>());
-        }
+		//bpolygon bnewContourPoints;
+  //      for (size_t i=0 ; i<contourPointsInPixels.outer().size() ;i++)
+  //      {
+		//	bnewContourPoints.outer().push_back(bpt(contourPointsInPixels.outer().at(i).get<0>() - centerInPixels.get<0>(),
+		//		contourPointsInPixels.outer().at(i).get<1>() - centerInPixels.get<1>()));
 
-        if (minDistanceFromCenter >=
-            minimumSizePercentage*(parentCanvas->getWidth()+parentCanvas->getHeight())/2.0)
-        {
-            wasSizeApplied = true;
-            contourPointsInPixels = bnewContourPoints;
-            bmanipulationPointInPixels = bnewLocation;
-        }
-        // --- rotation is always applied ---
-        for (size_t i=0 ; i<contourPointsInPixels.outer().size() ;i++)
-        {
-			contourPointsInPixels.outer().at(i).set<0>(contourPointsInPixels.outer().at(i).get<0>() - centerInPixels.get<0>());
-			contourPointsInPixels.outer().at(i).set<1>(contourPointsInPixels.outer().at(i).get<1>() - centerInPixels.get<1>());
-			contourPointsInPixels.outer().at(i) = bpt(cos_a*contourPointsInPixels.outer().at(i).get<0>()
-                                                     -sin_a*contourPointsInPixels.outer().at(i).get<1>(),
-                                                     sin_a*contourPointsInPixels.outer().at(i).get<0>()
-                                                     +cos_a*contourPointsInPixels.outer().at(i).get<1>());
-			
-			contourPointsInPixels.outer().at(i).set<0>(contourPointsInPixels.outer().at(i).get<0>() + centerInPixels.get<0>());
-			contourPointsInPixels.outer().at(i).set<1>(contourPointsInPixels.outer().at(i).get<1>() + centerInPixels.get<1>());
-        }
+  //          bnewContourPoints.outer().at(i) =bpt(size * bnewContourPoints.outer().at(i).get<0>(),
+  //                                              size * bnewContourPoints.outer().at(i).get<1>());
+  //          if (boost::geometry::distance(bnewContourPoints.outer().at(i), bpt(0,0)) > minDistanceFromCenter)
+  //              minDistanceFromCenter = boost::geometry::distance(bnewContourPoints.outer().at(i), bpt(0, 0));
+
+		//	bnewContourPoints.outer().at(i).set<0>(bnewContourPoints.outer().at(i).get<0>() + centerInPixels.get<0>());
+		//	bnewContourPoints.outer().at(i).set<1>(bnewContourPoints.outer().at(i).get<1>() + centerInPixels.get<1>());
+  //      }
+
+  //      if (minDistanceFromCenter >=
+  //          minimumSizePercentage*(parentCanvas->getWidth()+parentCanvas->getHeight())/2.0)
+  //      {
+  //          wasSizeApplied = true;
+  //          contourPointsInPixels = bnewContourPoints;
+  //          bmanipulationPointInPixels = bnewLocation;
+  //      }
+  //      // --- rotation is always applied ---
+  //      for (size_t i=0 ; i<contourPointsInPixels.outer().size() ;i++)
+  //      {
+		//	contourPointsInPixels.outer().at(i).set<0>(contourPointsInPixels.outer().at(i).get<0>() - centerInPixels.get<0>());
+		//	contourPointsInPixels.outer().at(i).set<1>(contourPointsInPixels.outer().at(i).get<1>() - centerInPixels.get<1>());
+		//	contourPointsInPixels.outer().at(i) = bpt(cos_a*contourPointsInPixels.outer().at(i).get<0>()
+  //                                                   -sin_a*contourPointsInPixels.outer().at(i).get<1>(),
+  //                                                   sin_a*contourPointsInPixels.outer().at(i).get<0>()
+  //                                                   +cos_a*contourPointsInPixels.outer().at(i).get<1>());
+		//	
+		//	contourPointsInPixels.outer().at(i).set<0>(contourPointsInPixels.outer().at(i).get<0>() + centerInPixels.get<0>());
+		//	contourPointsInPixels.outer().at(i).set<1>(contourPointsInPixels.outer().at(i).get<1>() + centerInPixels.get<1>());
+  //      }
         if (!wasSizeApplied)
         {
             // If size wasn't applied, we need to rotate the manipulation point
-			bmanipulationPointInPixels.set<0>(bmanipulationPointInPixels.get<0>() - centerInPixels.get<0>());
-			bmanipulationPointInPixels.set<1>(bmanipulationPointInPixels.get<1>() - centerInPixels.get<1>());
-            bmanipulationPointInPixels = bpt(cos_a*bmanipulationPointInPixels.get<0>()
-                                                     -sin_a*bmanipulationPointInPixels.get<1>(),
-                                                     sin_a*bmanipulationPointInPixels.get<0>()
-                                                      +cos_a*bmanipulationPointInPixels.get<1>());
-			bmanipulationPointInPixels.set<0>(bmanipulationPointInPixels.get<0>() + centerInPixels.get<0>());
-			bmanipulationPointInPixels.set<1>(bmanipulationPointInPixels.get<1>() + centerInPixels.get<1>());
+			bpt newManipulationPoint;
+
+			boost::geometry::strategy::transform::translate_transformer<double, 2, 2> trans(-centerInPixels.get<0>(), -centerInPixels.get<1>());
+			boost::geometry::strategy::transform::translate_transformer<double, 2, 2> invtrans(centerInPixels.get<0>(), centerInPixels.get<1>());
+			boost::geometry::strategy::transform::rotate_transformer<boost::geometry::radian, double, 2, 2> rot(radAngle - rotationAngle);
+
+
+			boost::geometry::transform(bmanipulationPointInPixels, newManipulationPoint, trans);
+			boost::geometry::transform(newManipulationPoint, bmanipulationPointInPixels, rot);
+			boost::geometry::transform(bmanipulationPointInPixels, newManipulationPoint, invtrans);
+
+			bmanipulationPointInPixels = newManipulationPoint;
         }
         
         // After manipulation computation : normalized coordinates update
-        for (size_t i=0; i < contourPointsInPixels.outer().size() ; i++)
-        {
-			contourPoints.outer().at(i) = bpt(contourPointsInPixels.outer().at(i).get<0>() / ((double)parentCanvas->getWidth()),
-											   contourPointsInPixels.outer().at(i).get<1>() / ((double)parentCanvas->getHeight()));
-        }
+		updateContourPoints();
     }
     
     else if (pointDraggedId == EditableAreaPointId::Center)
@@ -407,6 +424,76 @@ AreaEventType EditablePolygon::EndPointMove()
 	eventType = AreaEventType::PointDragStops;
 
 	return eventType;
+}
+
+bool EditablePolygon::SizeChanged(double size, bool minSize)
+{
+
+	bool returnValue = false;
+	//// --- size if polygon is still big enough only ---
+	double minDistanceFromCenter = 0.0;
+	bool wasSizeApplied = false;
+	bpolygon testBoost2, testBoost;
+	boost::geometry::strategy::transform::translate_transformer<double, 2, 2> trans(-centerInPixels.get<0>(), -centerInPixels.get<1>());
+	boost::geometry::strategy::transform::translate_transformer<double, 2, 2> invtrans(centerInPixels.get<0>(), centerInPixels.get<1>());
+	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> resizer(size, size);
+
+	boost::geometry::transform(contourPointsInPixels, testBoost, trans);
+	boost::geometry::transform(testBoost, testBoost2, resizer);
+	boost::geometry::transform(testBoost2, testBoost, invtrans);
+
+
+	for (size_t i = 0; i < testBoost.outer().size(); i++)
+	{
+		//if (testBoost.outer().at(i).get<0>() < 0 || testBoost.outer().at(i).get<1>() < 0)
+		//	DBG("probleme");
+		if (boost::geometry::distance(testBoost.outer().at(i), centerInPixels) > minDistanceFromCenter)
+			minDistanceFromCenter = boost::geometry::distance(testBoost.outer().at(i), centerInPixels);
+	}
+	//std::vector<bpolygon> comparaison;
+	//boost::geometry::difference(bnewContourPoints, testBoost, comparaison);
+
+	if ((!minSize) || (minDistanceFromCenter >=
+		minimumSizePercentage*(parentCanvas->getWidth() + parentCanvas->getHeight()) / 2.0))
+	{
+		wasSizeApplied = true;
+		contourPointsInPixels.clear(); // test;
+		contourPointsInPixels = testBoost;//bnewContourPoints;
+										  //bmanipulationPointInPixels.set<0>(centerInPixels.get<0>() + manipulationPointRadius*size); //= bnewLocation;
+										  //bmanipulationPointInPixels.set<1>(centerInPixels.get<1>() + manipulationPointRadius*size);
+										  //bmanipulationPointInPixels = newManipulationPt;
+		returnValue = true;
+		//a *= size; // faire diviser pas Heght et width?
+		//b *= size;
+	}
+
+
+	return returnValue;
+}
+
+void EditablePolygon::Rotate(double Radian)
+{
+	bpolygon newPolygon;
+
+	boost::geometry::strategy::transform::translate_transformer<double, 2, 2> trans(-centerInPixels.get<0>(), -centerInPixels.get<1>());
+	boost::geometry::strategy::transform::translate_transformer<double, 2, 2> invtrans(centerInPixels.get<0>(), centerInPixels.get<1>());
+	boost::geometry::strategy::transform::rotate_transformer<boost::geometry::radian, double, 2, 2> rot(Radian);
+
+
+	boost::geometry::transform(contourPointsInPixels, newPolygon, trans);
+	boost::geometry::transform(newPolygon, contourPointsInPixels, rot);
+	boost::geometry::transform(contourPointsInPixels, newPolygon, invtrans);
+
+	contourPointsInPixels.clear();
+	contourPointsInPixels = newPolygon;
+
+}
+
+void EditablePolygon::updateContourPoints()
+{
+	contourPoints.clear();
+	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scaler(1 / ((double)parentCanvas->getWidth()), 1 / ((double)parentCanvas->getHeight()));
+	boost::geometry::transform(contourPointsInPixels, contourPoints, scaler);
 }
 
 

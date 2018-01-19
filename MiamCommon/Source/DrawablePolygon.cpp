@@ -48,13 +48,14 @@ DrawableArea(areaTree)
 DrawablePolygon::DrawablePolygon(int64_t _Id) :
     DrawablePolygon(_Id, bpt(0.5f,0.5f), 3, 0.1f, Colours::darkgrey)
 {
+	rotationAngle = 0.0;
 }
 
 
 DrawablePolygon::DrawablePolygon(int64_t _Id, bpt _center, int pointsCount, float radius, Colour _fillColour, float _canvasRatio) :
     DrawableArea(_Id, _center, _fillColour)
 {
-
+	rotationAngle = 0.0;
     if (_canvasRatio > 1.0f) // ratio of an landscape-oriented window
     {
         xScale = 1.0f/_canvasRatio;

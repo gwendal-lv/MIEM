@@ -113,6 +113,7 @@ namespace Amusing
 		std::vector<double> anglesPercentages;
 		//std::shared_ptr<Cursor> cursor;//std::shared_ptr<Miam::EditableEllipse> cursor;
 		std::vector<std::shared_ptr<Cursor>> cursors;
+		double orientationAngle;
 		
 		float initCursorSize;
 		float cursorSize;

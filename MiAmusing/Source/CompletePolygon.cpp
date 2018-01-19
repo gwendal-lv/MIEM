@@ -40,6 +40,7 @@ CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
 
 	showCursor = false;
 	pc = 0;
+	orientationAngle = 0.0;
 	
 	//AddCursor();
 	//percentages.reserve(contourPoints.size());
@@ -807,7 +808,8 @@ AreaEventType CompletePolygon::TryMovePoint(const Point<double>& newLocation)
 AreaEventType CompletePolygon::EndPointMove()
 {
 
-
+	int numAngles = 32;
+	double e = 0.01;
 	if (useBullsEye)
 	{
 
@@ -863,7 +865,47 @@ AreaEventType CompletePolygon::EndPointMove()
 		CanvasResized(parentCanvas);
 	}
 
+	// si on a touché au manipulationPoit -> on a changé l'orientation : vérifié qu'elle soit autorisée et la repositionnée si besoin
+	if (pointDraggedId == EditableAreaPointId::ManipulationPoint)
+	{
+		orientationAngle = rotationAngle;
+		rotationAngle = 0;
+		bool alreadyFound = false;
+		double distanceMin = 2 * M_PI;
+		double angleToReach = 0;
+		for (int i = 0; i <= numAngles; ++i)
+		{
+			double currentAngle = (double)i * 2 * M_PI / (double)numAngles;
 
+			double distance = currentAngle - orientationAngle;
+			if (abs(distance)<e/2.0) // vérifie si près de cet angle là
+			{
+				Rotate(orientationAngle - currentAngle);
+				alreadyFound = true;
+				orientationAngle = currentAngle;
+				break;
+			}
+			else // sinon regarder la distance
+			{
+				if (abs(distance) < abs(distanceMin))
+				{
+					distanceMin = distance;
+					angleToReach = currentAngle;
+				}
+			}
+
+		}
+
+		if (alreadyFound == false) // s'il ne correspondait à aucun angle parmi ceux-ci, on le remet sur le plus proche
+		{
+			Rotate(orientationAngle - angleToReach);
+			orientationAngle = angleToReach;
+		}
+
+		updateContourPoints();
+		CanvasResized(parentCanvas);
+	}
+	
 	AreaEventType eventType =  EditablePolygon::EndPointMove();
 	
 	
