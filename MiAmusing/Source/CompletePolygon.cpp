@@ -777,6 +777,8 @@ AreaEventType CompletePolygon::TryBeginMultiTouchAction(const Point<double>& new
 		currentTouchRotation = Math::ComputePositiveAngle(testPt);
 		DBG("begin : " + (String)currentTouchRotation);
 
+		currentTouchSize = boost::geometry::distance(centerInPixels, bnewLocation);
+
 		return AreaEventType::RotScale;
 	}
 	else if(pointDraggedId == EditableAreaPointId::WholeArea) // le point était simplement à l'intérieur de l'aire
@@ -800,6 +802,7 @@ AreaEventType CompletePolygon::TryBeginMultiTouchAction(const Point<double>& new
 			bpt testPt(bnewLocation);
 			boost::geometry::subtract_point(testPt, centerInPixels);
 			currentTouchRotation = Math::ComputePositiveAngle(testPt);
+			currentTouchSize = boost::geometry::distance(centerInPixels, bnewLocation);
 
 			return AreaEventType::RotScale;
 		}
@@ -821,10 +824,32 @@ AreaEventType CompletePolygon::TryMoveMultiTouchPoint(const Point<double>& newLo
 		boost::geometry::subtract_point(testPt, centerInPixels);
 		double radAngle = Math::ComputePositiveAngle(testPt);
 
+		double newTouchSize = boost::geometry::distance(centerInPixels, bnewLocation);
+		double size = newTouchSize / currentTouchSize;
+		SizeChanged(size, true);
+		currentTouchSize = newTouchSize;
+
 		DBG("radAngle : " + String(currentTouchRotation - radAngle));
 		Rotate(currentTouchRotation - radAngle);
 		currentTouchRotation = radAngle;
+
 		updateContourPoints();
+
+		double newStartRadius = startRadius * size;
+		for (int i = 0; i < Nradius; ++i)
+		{
+
+			double newRadius = newStartRadius + i* interval;
+			double resize = newRadius / radius[i];
+			if (bullsEye[i].SizeChanged(resize, false))
+			{
+				startRadius = newStartRadius;
+				radius[i] = newRadius; //startRadius + i*interval;
+				bullsEye[i].updateContourPoints();
+			}
+		}
+
+
 		CanvasResized(parentCanvas);
 
 		return AreaEventType::RotScale;
@@ -848,10 +873,32 @@ AreaEventType CompletePolygon::TryMoveMultiTouchPoint(const Point<double>& newLo
 			boost::geometry::subtract_point(testPt, centerInPixels);
 			double radAngle = Math::ComputePositiveAngle(testPt);
 
+			double newTouchSize = boost::geometry::distance(centerInPixels, bnewLocation);
+			double size = newTouchSize / currentTouchSize;
+			SizeChanged(size, true);
+			currentTouchSize = newTouchSize;
+
 			DBG("radAngle : " + String(currentTouchRotation - radAngle));
 			Rotate(currentTouchRotation - radAngle);
 			currentTouchRotation = radAngle;
 			updateContourPoints();
+
+
+			double newStartRadius = startRadius * size;
+			for (int i = 0; i < Nradius; ++i)
+			{
+
+				double newRadius = newStartRadius + i* interval;
+				double resize = newRadius / radius[i];
+				if (bullsEye[i].SizeChanged(resize, false))
+				{
+					startRadius = newStartRadius;
+					radius[i] = newRadius; //startRadius + i*interval;
+					bullsEye[i].updateContourPoints();
+				}
+			}
+
+
 			CanvasResized(parentCanvas);
 			return AreaEventType::RotScale;
 		}

@@ -119,6 +119,7 @@ namespace Amusing
 		double orientationAngle; // final orientation of the area after rotation
 		bool multiTouchActionBegun;
 		double currentTouchRotation; // to keep track of the rotation during multitouch action
+		double currentTouchSize;
 		
 		float initCursorSize;
 		float cursorSize;
