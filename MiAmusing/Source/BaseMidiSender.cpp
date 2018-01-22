@@ -139,13 +139,6 @@ bool TimeLine::isNoteOnTime(int m_position, int i, int period, bool &m_end, int 
 	while (m_position >= period)
 	{
 		m_position -= period;
-		numPassage++;
-		if (numPassage >= 50)
-			blop = 12;
-		else if (numPassage >= 30)
-			blop = 22;
-		else if (numPassage >= 10)
-			blop = 24;
 	}
 	if (i < midiTimesSize)
 	{
@@ -178,6 +171,10 @@ bool TimeLine::isNoteOnTime(int m_position, int i, int period, bool &m_end, int 
 
 bool TimeLine::isNoteOffTime(int m_position, int i, int period, bool &m_end, int &m_channel, int &m_note)
 {
+	while (m_position >= period)
+	{
+		m_position -= period;
+	}
 	if (i < midiOfftimesSize)
 	{
 		m_end = false;

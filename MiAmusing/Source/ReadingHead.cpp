@@ -395,7 +395,7 @@ void PlayHead::process()
 		//	test = sub;//up += (numOfBeats * metronome->getPeriodInSamples());*/
 		//	sub = up;
 		//}
-		for (int i = sub; i <= up; i++)
+		for (int i = sub; i < up; i++)
 		{
 			testPosition(i);
 		}
@@ -432,8 +432,7 @@ void PlayHead::testPosition(int P)
 		i++;
 		
 	}
-	if (i > 6)
-		int b = 8;
+	
 
 	m_end = false;
 	i = 0;
