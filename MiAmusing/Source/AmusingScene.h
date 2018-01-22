@@ -108,6 +108,8 @@ namespace Miam
 		void lookForAreasToUpdate(Colour concernedColour);
 		//size_t GetDrawableObjectsCount();
 		//std::shared_ptr<IDrawableArea> GetDrawableObject(size_t i);
+	private:
+		std::map<int, std::shared_ptr<Amusing::CompletePolygon>> mouseIdxToArea;
 	};
 
 

@@ -58,7 +58,7 @@ namespace Amusing
 		void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
 		AreaEventType TryBeginMultiTouchAction(const Point<double>& newLocation);
 		AreaEventType TryMoveMultiTouchPoint(const Point<double>& newLocation);
-		AreaEventType EndMultiTouchPointMove(const Point<double>& newLocation);
+		AreaEventType EndMultiTouchPointMove();
 		void Paint(Graphics& g) override;
 
 		void lengthToPercent();

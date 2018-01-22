@@ -862,9 +862,62 @@ AreaEventType CompletePolygon::TryMoveMultiTouchPoint(const Point<double>& newLo
 	}
 }
 
-AreaEventType CompletePolygon::EndMultiTouchPointMove(const Point<double>& newLocation)
+AreaEventType CompletePolygon::EndMultiTouchPointMove()
 {
-	return AreaEventType::Added;
+	multiTouchActionBegun = false;
+
+	/// verification de l'orientation !
+	int numAngles = 32;
+	double e = 0.01;
+	orientationAngle = rotationAngle;
+	rotationAngle = 0;
+	bool alreadyFound = false;
+	double distanceMin = 2 * M_PI;
+	double angleToReach = 0;
+	for (int i = 0; i <= numAngles; ++i)
+	{
+		double currentAngle = (double)i * 2 * M_PI / (double)numAngles;
+
+		double distance = currentAngle - orientationAngle;
+		if (abs(distance)<e / 2.0) // vérifie si près de cet angle là
+		{
+			Rotate(orientationAngle - currentAngle);
+			alreadyFound = true;
+			orientationAngle = currentAngle;
+			break;
+		}
+		else // sinon regarder la distance
+		{
+			if (abs(distance) < abs(distanceMin))
+			{
+				distanceMin = distance;
+				angleToReach = currentAngle;
+			}
+		}
+
+	}
+
+	if (alreadyFound == false) // s'il ne correspondait à aucun angle parmi ceux-ci, on le remet sur le plus proche
+	{
+		Rotate(orientationAngle - angleToReach);
+		orientationAngle = angleToReach;
+	}
+
+	updateContourPoints();
+	CanvasResized(parentCanvas);
+
+
+
+	currentTouchRotation = 0;
+
+	AreaEventType eventType = AreaEventType::NothingHappened;
+
+	// The point drag is always stopped without any check, for now
+	pointDraggedId = EditableAreaPointId::None;
+	eventType = AreaEventType::PointDragStops;
+
+
+	return eventType;
 }
 
 AreaEventType CompletePolygon::TryBeginPointMove(const Point<double>& newLocation)

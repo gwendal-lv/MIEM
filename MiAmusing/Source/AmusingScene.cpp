@@ -560,7 +560,17 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDown(const MouseEvent& 
 						}
 						else // on est pas dans la même aire -> bouger une autre aire
 						{
-
+							for (int i = 0; i < (int)areas.size(); ++i)
+							{
+								if (auto currentP = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
+								{
+									if (currentP->HitTest(mouseE.x, mouseE.y))
+									{
+										AreaEventType areaEventType = currentP->TryBeginPointMove(mouseE.position.toDouble());
+										mouseIdxToArea[mouseE.source.getIndex()] = currentP; // pour retenir quel idx était en train de bouger quel aire
+									}
+								}
+							}
 						}
 					}
 				}
@@ -618,13 +628,23 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDrag(const MouseEvent& 
 	}
 	else
 	{
-		if (selectedArea)
+		if (mouseIdxToArea.find(mouseE.source.getIndex()) != mouseIdxToArea.end()) // teste si l'idx était déjà associée à une aire pour la faire bouger
 		{
-			if (auto completeP = std::dynamic_pointer_cast<CompletePolygon>(selectedArea))
+			auto currentP = mouseIdxToArea.at(mouseE.source.getIndex());
+			AreaEventType areaEventType = currentP->TryMovePoint(mouseE.position.toDouble());
+			graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(currentP, areaEventType, shared_from_this()));
+			return graphicE;
+		}
+		else // si ce n'était pas associé à une aire -> faire tourner l'aire sélectionnée
+		{
+			if (selectedArea)
 			{
-				AreaEventType areaEventType = completeP->TryMoveMultiTouchPoint(mouseE.position.toDouble());
-				graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, areaEventType, shared_from_this()));
-				return graphicE;
+				if (auto completeP = std::dynamic_pointer_cast<CompletePolygon>(selectedArea))
+				{
+					AreaEventType areaEventType = completeP->TryMoveMultiTouchPoint(mouseE.position.toDouble());
+					graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, areaEventType, shared_from_this()));
+					return graphicE;
+				}
 			}
 		}
 	}
@@ -1128,6 +1148,28 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseUp(const MouseEvent& mo
 			{
 				AreaEventType areaEventType = selectedArea->EndPointMove();
 				graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, areaEventType, selectedArea->GetId(), shared_from_this()));
+			}
+		}
+		else
+		{
+			if (mouseIdxToArea.find(mouseE.source.getIndex()) != mouseIdxToArea.end()) // teste si l'idx était déjà associée à une aire pour la faire bouger
+			{
+				auto currentP = mouseIdxToArea.at(mouseE.source.getIndex());
+				AreaEventType areaEventType = currentP->EndPointMove();
+				graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(currentP, areaEventType, shared_from_this()));
+				mouseIdxToArea.erase(mouseE.source.getIndex());
+			}
+			else
+			{
+				if (selectedArea)
+				{
+					if (auto completeP = std::dynamic_pointer_cast<CompletePolygon>(selectedArea))
+					{
+						AreaEventType areaEventType = completeP->EndMultiTouchPointMove();
+						graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, areaEventType, shared_from_this()));
+						return graphicE;
+					}
+				}
 			}
 		}
 	}
