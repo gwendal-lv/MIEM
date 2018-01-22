@@ -38,6 +38,11 @@ CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
 	s = ost.str();
 	DBG("Constructor : " + s);*/
 
+	centerCircleRadius *= 2;
+	centerContourWidth *= 2;
+	multiTouchActionBegun = false;
+	currentTouchRotation = 0.0;
+
 	showCursor = false;
 	pc = 0;
 	orientationAngle = 0.0;
@@ -70,6 +75,10 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 	ost << this;
 	s = ost.str();
 	DBG("Constructor : " + s);*/
+	centerCircleRadius *= 2;
+	centerContourWidth *= 2;
+	multiTouchActionBegun = false;
+	currentTouchRotation = 0.0;
 
 	showCursor = false;
 	pc = 0;
@@ -108,6 +117,10 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	ost << this;
 	s = ost.str();
 	DBG("Constructor : " + s);*/
+	centerCircleRadius *= 2;
+	centerContourWidth *= 2;
+	multiTouchActionBegun = false;
+	currentTouchRotation = 0.0;
 
 	showCursor = true;
 	pc = 0;
@@ -145,6 +158,10 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	Colour _fillColour) : 
 	EditablePolygon(_Id, _center, _contourPoints, _fillColour)
 {
+	centerCircleRadius *= 2;
+	centerContourWidth *= 2;
+	multiTouchActionBegun = false;
+	currentTouchRotation = 0.0;
 	/*std::string s;
 	std::ostringstream ost;
 	ost << this;
@@ -746,13 +763,117 @@ void CompletePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 	pointDraggingRadius = 0.05f * (parentCanvas->getWidth() + parentCanvas->getHeight()) / 2.0f; // 5% => mieux pour le touch
 }
 
+AreaEventType CompletePolygon::TryBeginMultiTouchAction(const Point<double>& newLocation)
+{
+	bpt bnewLocation(newLocation.x, newLocation.y);
+	if (pointDraggedId == EditableAreaPointId::Center) // le centre est déjà selectionné -> commencer une rotation classique (idem manipulationPoint)
+	{
+		DBG("rotation classique");
+		multiTouchActionBegun = true;
+
+		// calcul de l'angle initial
+		bpt testPt(bnewLocation);
+		boost::geometry::subtract_point(testPt, centerInPixels);
+		currentTouchRotation = Math::ComputePositiveAngle(testPt);
+		DBG("begin : " + (String)currentTouchRotation);
+
+		return AreaEventType::RotScale;
+	}
+	else if(pointDraggedId == EditableAreaPointId::WholeArea) // le point était simplement à l'intérieur de l'aire
+	{
+		// vérifier si le nouveau point est, lui, sur le centre
+		multiTouchActionBegun = true;
+		if (boost::geometry::distance(centerInPixels, bpt(newLocation.x, newLocation.y))
+			< (centerCircleRadius + centerContourWidth))
+		{
+			// on est sur le centre -> commencer une rotation classique (idem manipulationPoint)
+			DBG("rotation classique");
+			return AreaEventType::RotScale;
+		}
+		else
+		{
+			// aucun des points n'est sur le centre -> prendre un des deux points comme manipulationPoint
+			DBG("rotation spéciale");
+			multiTouchActionBegun = true;
+
+			// calcul de l'angle initial
+			bpt testPt(bnewLocation);
+			boost::geometry::subtract_point(testPt, centerInPixels);
+			currentTouchRotation = Math::ComputePositiveAngle(testPt);
+
+			return AreaEventType::RotScale;
+		}
+	}
+	else
+	{
+		// pas d'action
+	}
+}
+
+AreaEventType CompletePolygon::TryMoveMultiTouchPoint(const Point<double>& newLocation)
+{
+	bpt bnewLocation(newLocation.x, newLocation.y);
+	if (pointDraggedId == EditableAreaPointId::Center) // le centre est déjà selectionné -> commencer une rotation classique (idem manipulationPoint)
+	{
+		DBG("rotation classique");
+
+		bpt testPt(bnewLocation);
+		boost::geometry::subtract_point(testPt, centerInPixels);
+		double radAngle = Math::ComputePositiveAngle(testPt);
+
+		DBG("radAngle : " + String(currentTouchRotation - radAngle));
+		Rotate(currentTouchRotation - radAngle);
+		currentTouchRotation = radAngle;
+		updateContourPoints();
+		CanvasResized(parentCanvas);
+
+		return AreaEventType::RotScale;
+	}
+	else if (pointDraggedId == EditableAreaPointId::WholeArea) // le point était simplement à l'intérieur de l'aire
+	{
+		// vérifier si le nouveau point est, lui, sur le centre
+		multiTouchActionBegun = true;
+		if (boost::geometry::distance(centerInPixels, bpt(newLocation.x, newLocation.y))
+			< (centerCircleRadius + centerContourWidth))
+		{
+			// on est sur le centre -> commencer une rotation classique (idem manipulationPoint)
+			DBG("rotation classique");
+			return AreaEventType::RotScale;
+		}
+		else
+		{
+			// aucun des points n'est sur le centre -> calculer les pentes...
+			DBG("rotation spéciale");
+			bpt testPt(bnewLocation);
+			boost::geometry::subtract_point(testPt, centerInPixels);
+			double radAngle = Math::ComputePositiveAngle(testPt);
+
+			DBG("radAngle : " + String(currentTouchRotation - radAngle));
+			Rotate(currentTouchRotation - radAngle);
+			currentTouchRotation = radAngle;
+			updateContourPoints();
+			CanvasResized(parentCanvas);
+			return AreaEventType::RotScale;
+		}
+	}
+	else
+	{
+		// pas d'action
+	}
+}
+
+AreaEventType CompletePolygon::EndMultiTouchPointMove(const Point<double>& newLocation)
+{
+	return AreaEventType::Added;
+}
+
 AreaEventType CompletePolygon::TryBeginPointMove(const Point<double>& newLocation)
 {
 	AreaEventType areaEventType = EditablePolygon::TryBeginPointMove(newLocation);
 	DBG("eventType : " + (String)((int)areaEventType));
 	if (pointDraggedId == EditableAreaPointId::Center)
 	{
-		pointDraggedId = EditableAreaPointId::WholeArea;
+		//pointDraggedId = EditableAreaPointId::WholeArea;
 		lastLocation = newLocation;
 	}
 	for (int i = 0; i < Nradius; ++i)
@@ -766,7 +887,14 @@ AreaEventType CompletePolygon::TryMovePoint(const Point<double>& newLocation)
 	//DBG("radius 0  = " + (String)radius[0]);
 	//DBG("radius 1  = " + (String)radius[1]);
 	double r1 = boost::geometry::distance(centerInPixels, bmanipulationPointInPixels);
+	int oldPointDraggedId = pointDraggedId;
+	if (pointDraggedId == EditableAreaPointId::Center)
+	{
+		pointDraggedId = EditableAreaPointId::WholeArea; // pour que EditablePolygon::TryMovePoint déplace toute l'aire et pas seulement le centre quand on touche le centre
+	}
 	AreaEventType areaEventType = EditablePolygon::TryMovePoint(newLocation);
+	pointDraggedId = oldPointDraggedId;
+
 	DBG("eventType : " + (String)((int)areaEventType));
 	double r2 = boost::geometry::distance(centerInPixels, bmanipulationPointInPixels);
 	double size = r2 / r1;

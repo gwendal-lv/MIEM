@@ -493,49 +493,82 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDown(const MouseEvent& 
 		else
 		{
 			std::shared_ptr<IEditableArea> oldSelectedArea = selectedArea;
-			std::shared_ptr<GraphicEvent> graphE = EditableScene::OnCanvasMouseDown(mouseE);
-			
-			if (selectedArea != oldSelectedArea && selectedArea !=nullptr) // si on a changé d'aire ou qu'on vient d'en sélectionner une nouvelle -> essaie de la faire bouger
+
+			if (mouseE.source.getIndex() == 0)
 			{
-				// did we clic next to a point, or at least inside the area ?
-				AreaEventType lastEventType = selectedArea->TryBeginPointMove(mouseE.position.toDouble()); // !! starts a point dragging !
-				if (lastEventType == AreaEventType::NothingHappened)
+				std::shared_ptr<GraphicEvent> graphE = EditableScene::OnCanvasMouseDown(mouseE);
+
+				if (selectedArea != oldSelectedArea && selectedArea != nullptr) // si on a changé d'aire ou qu'on vient d'en sélectionner une nouvelle -> essaie de la faire bouger
 				{
-					/* if not, we are sure that we clicked outside (checked by tryBeginPointMove)
-					* => it is a DEselection (maybe selection of another area, just after this)
-					*/
-					graphE = SetSelectedArea(nullptr);
+					// did we clic next to a point, or at least inside the area ?
+					AreaEventType lastEventType = selectedArea->TryBeginPointMove(mouseE.position.toDouble()); // !! starts a point dragging !
+					if (lastEventType == AreaEventType::NothingHappened)
+					{
+						/* if not, we are sure that we clicked outside (checked by tryBeginPointMove)
+						* => it is a DEselection (maybe selection of another area, just after this)
+						*/
+						graphE = SetSelectedArea(nullptr);
+					}
+					else // special points which are not point dragging
+					{
+						// we must stop the dragging that was not actually wanted
+						if (canvasManager.lock()->GetMode() == CanvasManagerMode::WaitingForPointCreation
+							|| canvasManager.lock()->GetMode() == CanvasManagerMode::WaitingForPointDeletion)
+							selectedArea->EndPointMove();
+					}
 				}
-				else // special points which are not point dragging
+
+				if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(graphE))
 				{
-					// we must stop the dragging that was not actually wanted
-					if (canvasManager.lock()->GetMode() == CanvasManagerMode::WaitingForPointCreation
-						|| canvasManager.lock()->GetMode() == CanvasManagerMode::WaitingForPointDeletion)
-						selectedArea->EndPointMove();
+					return graphE;
 				}
-			}
-			
-			if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(graphE))
-			{
-				return graphE; 
+				else
+				{
+					for (int i = 0; i < (int)currentExciters.size(); i++)
+					{
+						if (auto currentCursor = std::dynamic_pointer_cast<Cursor>(currentExciters[i]))
+						{
+							if (currentCursor->isClicked(Point<double>((double)mouseE.x, (double)mouseE.y)))
+							{
+								graphE = std::shared_ptr<AreaEvent>(new AreaEvent(currentExciters[i], AreaEventType::Selected, shared_from_this()));
+								break;
+							}
+						}
+
+
+					}
+					return graphE;
+
+				}
 			}
 			else
 			{
-				for (int i = 0; i < (int)currentExciters.size(); i++)
+				DBG("multiTouch");
+				auto graphicE = std::make_shared<GraphicEvent>();
+				if (selectedArea)
 				{
-					if (auto currentCursor = std::dynamic_pointer_cast<Cursor>(currentExciters[i]))
+					
+					DBG("une aire déjà sélectionnée -> verifier si 2 touches dans la même aire");
+					if (auto completeP = std::dynamic_pointer_cast<CompletePolygon>(selectedArea))
 					{
-						if (currentCursor->isClicked(Point<double>((double)mouseE.x, (double)mouseE.y)))
+						if (completeP->HitTest(mouseE.x, mouseE.y)) // on est dans la même aire 
 						{
-							graphE = std::shared_ptr<AreaEvent>(new AreaEvent(currentExciters[i], AreaEventType::Selected, shared_from_this()));
-							break;
+							// on est bien dans la même aire -> calculer la rotation et/ou le resize à effectuer :
+							// 1) regarder la position des 2 points  : si 1 près du centre -> faire une rotation classique avec l'autre point qui sert de manipulationPoint
+							//		sinon : calculer la pente de la droite formée par les deux points, et comparer à la pente précédente pour connaire la rotation a effectuer
+							AreaEventType areaEventType = completeP->TryBeginMultiTouchAction(mouseE.position.toDouble());
+						}
+						else // on est pas dans la même aire -> bouger une autre aire
+						{
+
 						}
 					}
-					
-					
 				}
-				return graphE;
-				
+				else
+				{
+					DBG("chercher si on est dans une autre aire pour la bouger");
+				}
+				return graphicE;
 			}
 		}
 	}
@@ -556,30 +589,45 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDrag(const MouseEvent& 
 																// float position (more accurate) converted to double
 	Point<double> mouseLocation = mouseE.position.toDouble();
 
-	graphicE = EditableScene::OnCanvasMouseDrag(mouseE);
-	
-	if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(graphicE))
+	if (mouseE.source.getIndex() == 0)
 	{
-		if (auto draggedArea = std::dynamic_pointer_cast<CompletePolygon>(areaE->GetConcernedArea()))
-		{
-			if (areaE->GetType() == AreaEventType::Translation)
-			{
-				if (auto sceneComponent = (AmusingSceneComponent*)canvasComponent)
-				{
-					sceneComponent->SetAreaOptionsCenter(draggedArea->getCenter());
-				}
-			}
+		graphicE = EditableScene::OnCanvasMouseDrag(mouseE);
 
-			if (lookForAreasInteractions(draggedArea))
-				return graphicE;
+		if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(graphicE))
+		{
+			if (auto draggedArea = std::dynamic_pointer_cast<CompletePolygon>(areaE->GetConcernedArea()))
+			{
+				if (areaE->GetType() == AreaEventType::Translation)
+				{
+					if (auto sceneComponent = (AmusingSceneComponent*)canvasComponent)
+					{
+						sceneComponent->SetAreaOptionsCenter(draggedArea->getCenter());
+					}
+				}
+
+				if (lookForAreasInteractions(draggedArea))
+					return graphicE;
+				else
+					return std::shared_ptr<AreaEvent>(new AreaEvent());
+			}
 			else
-				return std::shared_ptr<AreaEvent>(new AreaEvent());
+				return graphicE;
 		}
 		else
 			return graphicE;
 	}
 	else
-		return graphicE;
+	{
+		if (selectedArea)
+		{
+			if (auto completeP = std::dynamic_pointer_cast<CompletePolygon>(selectedArea))
+			{
+				AreaEventType areaEventType = completeP->TryMoveMultiTouchPoint(mouseE.position.toDouble());
+				graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, areaEventType, shared_from_this()));
+				return graphicE;
+			}
+		}
+	}
 }
 
 void AmusingScene::AddCursor()

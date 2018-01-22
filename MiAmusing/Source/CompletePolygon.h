@@ -56,6 +56,9 @@ namespace Amusing
 
 		
 		void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
+		AreaEventType TryBeginMultiTouchAction(const Point<double>& newLocation);
+		AreaEventType TryMoveMultiTouchPoint(const Point<double>& newLocation);
+		AreaEventType EndMultiTouchPointMove(const Point<double>& newLocation);
 		void Paint(Graphics& g) override;
 
 		void lengthToPercent();
@@ -113,7 +116,9 @@ namespace Amusing
 		std::vector<double> anglesPercentages;
 		//std::shared_ptr<Cursor> cursor;//std::shared_ptr<Miam::EditableEllipse> cursor;
 		std::vector<std::shared_ptr<Cursor>> cursors;
-		double orientationAngle;
+		double orientationAngle; // final orientation of the area after rotation
+		bool multiTouchActionBegun;
+		double currentTouchRotation; // to keep track of the rotation during multitouch action
 		
 		float initCursorSize;
 		float cursorSize;
