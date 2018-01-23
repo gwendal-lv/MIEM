@@ -25,7 +25,38 @@ AmusingModel::AmusingModel(Presenter* m_presenter) : presenter(m_presenter)
 	
 	sharedAudioDeviceManager = std::shared_ptr<AudioDeviceManager>(new AudioDeviceManager());
 	audioManager = new AudioManager(this);
+
+	/*for (int i = 0; i < sharedAudioDeviceManager->getAvailableDeviceTypes().size(); ++i)
+	{
+		DBG("Type : " + sharedAudioDeviceManager->getAvailableDeviceTypes()[i]->getTypeName());
+		StringArray outs = sharedAudioDeviceManager->getAvailableDeviceTypes()[i]->getDeviceNames(false);
+		for (int j = 0; j < outs.size(); ++j)
+		{
+			DBG(outs[j]);
+		}
+	}*/
+
+
 	sharedAudioDeviceManager->initialise(2, 2, nullptr, true);
+
+	
+	AudioDeviceManager::AudioDeviceSetup audioSetup;
+	sharedAudioDeviceManager->getAudioDeviceSetup(audioSetup);
+	
+	if (!sharedAudioDeviceManager->getCurrentAudioDevice()->isOpen())
+	{
+		for (int i = 0; i < sharedAudioDeviceManager->getAvailableDeviceTypes().size(); ++i)
+		{
+			StringArray outs = sharedAudioDeviceManager->getAvailableDeviceTypes()[i]->getDeviceNames(false);
+			if (outs.size() != 0)
+			{
+				audioSetup.outputDeviceName = outs[0];
+				sharedAudioDeviceManager->setAudioDeviceSetup(audioSetup,false);
+				break;
+			}
+		}
+	}
+	
 	sharedAudioDeviceManager->addAudioCallback(audioManager);
 	presenter->CompleteInitialisation(this);
 	//presenter->setAudioDeviceManager(audioManager);
