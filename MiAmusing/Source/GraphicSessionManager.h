@@ -134,7 +134,7 @@ namespace Amusing {
 
 
 		// ----- Event to View -----
-		void DisplayInfo(String info) override;
+		void DisplayInfo(String info,int priority = 0) override;
 
 		void OnAddArea();
 		void OnAddSquare();

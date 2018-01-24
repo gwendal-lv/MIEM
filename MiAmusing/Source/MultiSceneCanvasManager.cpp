@@ -39,7 +39,7 @@ MultiSceneCanvasManager::~MultiSceneCanvasManager()
     
 }
 
-void MultiSceneCanvasManager::AddScene(std::string name)
+void MultiSceneCanvasManager::AddScene(std::string name,bool selectNewScene)
 {
     // We construct scene that DO NOT allow the selection of a particular area
     //std::shared_ptr<EditableScene> newScene(new AmusingScene(this, canvasComponent->GetCanvas()));
@@ -47,7 +47,7 @@ void MultiSceneCanvasManager::AddScene(std::string name)
 	std::shared_ptr<AmusingScene> newScene(new AmusingScene(shared_from_this(), canvasComponent->GetCanvas()));
     newScene->SetName(name);
     
-    MultiSceneCanvasInteractor::AddScene(newScene);
+    MultiSceneCanvasInteractor::AddScene(newScene,selectNewScene);
 }
 
 void MultiSceneCanvasManager::__AddAnimatedTestAreas()
@@ -86,12 +86,6 @@ void MultiSceneCanvasManager::AddTrueCircle(uint64_t nextAreaId)
 {
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
 		handleAndSendAreaEventSync(amusingScene->AddTrueCircle(nextAreaId));
-}
-
-void MultiSceneCanvasManager::AddFollower(uint64_t nextAreaId)
-{
-	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
-		handleAndSendAreaEventSync(amusingScene->AddFollower(nextAreaId));
 }
 
 void MultiSceneCanvasManager::AddCompleteArea()
@@ -234,26 +228,7 @@ void MultiSceneCanvasManager::handleAndSendAreaEventSync(std::shared_ptr<AreaEve
 	
 }
 
-void MultiSceneCanvasManager::deleteUnusedFollowers()
-{
-	DBG("a supprimer");
-	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
-	{
-		while (true)
-		{
-			if (auto followerToDelete = amusingScene->getFollowers(nullptr))
-			{
-				DBG("followerToDelete");
-				std::shared_ptr<AreaEvent> areaE(new AreaEvent(followerToDelete, AreaEventType::Deleted));
-				graphicSessionManager->HandleEventSync(areaE);
-				deleteAsyncDrawableObject(followerToDelete);
-				// envoyer a l'audio que la source est plus la + retirer de la liste des followers?
-			}
-			else
-				break;
-		}
-	}
-}
+
 
 void MultiSceneCanvasManager::deleteAsyncDrawableObject(std::shared_ptr<IDrawableArea> originalAreaToDelete)
 {
@@ -456,8 +431,8 @@ void MultiSceneCanvasManager::SetMode(Miam::CanvasManagerMode newMode)
 		if (selectedScene) // on first scene adding... there would be a problem
 		{
 			auto areaE = selectedScene->SetSelectedArea(nullptr, false);
-			selectedScene->EnableExcitersLowOpacity(true);
-			selectedScene->EnableAreasLowOpacity(true);
+			//selectedScene->EnableExcitersLowOpacity(true);
+			//selectedScene->EnableAreasLowOpacity(true);
 			// Pas d'évènements renvoyés pour les opacités : on update le tout
 			recreateAllAsyncDrawableObjects();
 			//handleAndSendAreaEventSync(areaE);
@@ -484,7 +459,7 @@ void MultiSceneCanvasManager::SetMode(Miam::CanvasManagerMode newMode)
 		if (selectedScene) // sinon pb à l'initialisation
 		{
 			
-			selectedScene->EnableAreasLowOpacity(false);
+			selectedScene->SetAreasOpacityMode(OpacityMode::Independent);//->EnableAreasLowOpacity(false);
 			// Pas d'évènements renvoyés : on update le tout
 			//recreateAllAsyncDrawableObjects();
 		}
@@ -498,8 +473,8 @@ void MultiSceneCanvasManager::SetMode(Miam::CanvasManagerMode newMode)
 			selectedScene->StopCurrentTransformations();
 
 		// Mise en quasi-transparence des aires graphiques à exciter seulement
-		selectedScene->EnableExcitersLowOpacity(false);
-		selectedScene->EnableAreasLowOpacity(true);
+		selectedScene->SetExcitersOpacityMode(OpacityMode::Independent);//->EnableExcitersLowOpacity(false);
+		selectedScene->SetAreasOpacityMode(OpacityMode::Independent);//->EnableAreasLowOpacity(true);
 		// Pas d'évènements renvoyés : on update le tout
 		recreateAllAsyncDrawableObjects();
 		break;

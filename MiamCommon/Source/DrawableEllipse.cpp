@@ -103,12 +103,32 @@ DrawableEllipse::~DrawableEllipse()
 {
 }
 
+void DrawableEllipse::setVerticesCount(int newVerticesCount)
+{
+	ellipseVerticesCount = newVerticesCount;
+	createJucePolygon(parentCanvas->getWidth(),parentCanvas->getHeight());
+}
+
+int DrawableEllipse::getVerticesCount()
+{
+	return ellipseVerticesCount;
+}
+
+void DrawableEllipse::setIsFilled(bool shouldBeFilled)
+{
+	isFilled = shouldBeFilled;
+}
+
+
 // Called by the parent component (which is a canvas)
 void DrawableEllipse::Paint(Graphics& g)
 {
-	g.setColour(fillColour);
-    g.setOpacity(GetAlpha());
-	g.fillPath(contour);
+	if (isFilled)
+	{
+		g.setColour(fillColour);
+		g.setOpacity(GetAlpha());
+		g.fillPath(contour);
+	}
 
 	g.setColour(contourColour);
     g.setOpacity(GetAlpha());

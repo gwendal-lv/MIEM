@@ -44,7 +44,12 @@ namespace Amusing
 
 		~CompletePolygon();
 
-		virtual IDrawableArea* Clone() const override { return new CompletePolygon(*this); }
+		virtual std::shared_ptr<IDrawableArea> Clone() override
+		{
+			auto clone = std::make_shared<CompletePolygon>(*this);
+			clone->onCloned();
+			return clone;
+		}
 
 		void Copy(std::shared_ptr<CompletePolygon> polygonToCopy);
 

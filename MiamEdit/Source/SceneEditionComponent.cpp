@@ -235,7 +235,7 @@ SceneEditionComponent::SceneEditionComponent ()
 
     addAndMakeVisible (canvasInfoLabel = new Label ("Canvas Info label",
                                                     TRANS("...selected canvas info...")));
-    canvasInfoLabel->setFont (Font (15.00f, Font::italic));
+    canvasInfoLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Italic"));
     canvasInfoLabel->setJustificationType (Justification::centred);
     canvasInfoLabel->setEditable (false, false, false);
     canvasInfoLabel->setColour (Label::textColourId, Colours::black);

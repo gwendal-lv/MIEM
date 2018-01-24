@@ -17,7 +17,6 @@
 #include "JuceHeader.h"
 
 #include "AnimatedPolygon.h"
-#include "Follower.h"
 #include "GraphicEvent.h"
 #include "MultiAreaEvent.h"
 #include "Cursors.h"

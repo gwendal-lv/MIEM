@@ -16,7 +16,6 @@
 #include "SceneCanvasComponent.h"
 #include "AnimatedPolygon.h"
 #include "EditableEllipse.h"
-#include "Follower.h"
 #include "CompletePolygon.h"
 #include "Cursors.h"
 
@@ -551,7 +550,8 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDown(const MouseEvent& 
 					DBG("une aire déjà sélectionnée -> verifier si 2 touches dans la même aire");
 					if (auto completeP = std::dynamic_pointer_cast<CompletePolygon>(selectedArea))
 					{
-						if (completeP->HitTest(mouseE.x, mouseE.y)) // on est dans la même aire 
+						bpt mousePosition(mouseE.x, mouseE.y);
+						if (completeP->HitTest(mousePosition)) // on est dans la même aire 
 						{
 							// on est bien dans la même aire -> calculer la rotation et/ou le resize à effectuer :
 							// 1) regarder la position des 2 points  : si 1 près du centre -> faire une rotation classique avec l'autre point qui sert de manipulationPoint
@@ -564,7 +564,7 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDown(const MouseEvent& 
 							{
 								if (auto currentP = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
 								{
-									if (currentP->HitTest(mouseE.x, mouseE.y))
+									if (currentP->HitTest(mousePosition))
 									{
 										AreaEventType areaEventType = currentP->TryBeginPointMove(mouseE.position.toDouble());
 										mouseIdxToArea[mouseE.source.getIndex()] = currentP; // pour retenir quel idx était en train de bouger quel aire
@@ -1195,7 +1195,7 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDoubleClick(const Mouse
 	for (int i = 0; i < (int)areas.size(); ++i)
 	{
 		if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
-			if (completeArea->HitTest(mouseE.x, mouseE.y))
+			if (completeArea->HitTest(bpt(mouseE.x, mouseE.y)))
 			{
 				if(auto sceneComponent = (AmusingSceneComponent*)canvasComponent)
 				{
@@ -1216,27 +1216,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddTrueCircle(uint64_t nextAreaId)
 	return AddArea(newCircle);
 }
 
-std::shared_ptr<AreaEvent> AmusingScene::AddFollower(uint64_t nextAreaId)
-{
-	std::shared_ptr<Follower> newFollower(new Follower(nextAreaId, bpt(0.5f, 0.5f), 0.1f, Colours::grey, canvasComponent->GetRatio(), shared_from_this()));
-	followers.push_back(newFollower);
 
-	// Forced graphical updates
-	newFollower->CanvasResized(canvasComponent);
-
-	return std::make_shared<AreaEvent>(newFollower, AreaEventType::Added, nextAreaId, shared_from_this());
-	
-}
-
-std::shared_ptr<Follower> AmusingScene::getFollowers(std::shared_ptr<Amusing::AnimatedPolygon> masterArea)
-{
-	for(int i=0;i<(int)followers.size();++i)
-		if (followers[i]->isLinkTo(masterArea))
-		{
-			return followers[i];
-		}
-	return nullptr;
-}
 
 std::shared_ptr<AnimatedPolygon> AmusingScene::getFirstArea()
 {

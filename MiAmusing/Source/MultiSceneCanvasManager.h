@@ -53,11 +53,10 @@ namespace Amusing {
         virtual ~MultiSceneCanvasManager();
         
         // ------ Scenes managing : Add and Delete ------
-        virtual void AddScene(std::string name) override;
+        virtual void AddScene(std::string name,bool selectNewScene) override;
 		void __AddAnimatedTestAreas();
 		void AddNedgeArea(uint64_t nextAreaId, int N);
 		void AddTrueCircle(uint64_t nextAreaId);
-		void AddFollower(uint64_t nextAreaId);
 		void AddCompleteArea();
 		void hideAddPolygon();
 		void showAddPolygon();
@@ -72,7 +71,7 @@ namespace Amusing {
 		void handleAndSendMultiAreaEventSync(std::shared_ptr<MultiAreaEvent> multiAreaE);
 
 
-		void deleteUnusedFollowers();
+		
 		void deleteAsyncDrawableObject(std::shared_ptr<IDrawableArea> originalAreaToDelete);
 		void OnCanvasMouseUp(const MouseEvent& mouseE);
 		void OnCanvasMouseDown(const MouseEvent& mouseE);

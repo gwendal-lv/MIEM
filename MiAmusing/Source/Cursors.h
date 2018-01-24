@@ -22,7 +22,12 @@ public:
 	Cursor(int64_t _Id, bpt _center, double _r, Colour _fillColour, float _canvasRatio);
 	~Cursor();
 
-	virtual IDrawableArea* Clone() const override { return new Cursor(*this); }
+	virtual std::shared_ptr<IDrawableArea> Clone() override
+	{
+		auto clone = std::make_shared<Cursor>(*this);
+		clone->onCloned();
+		return clone;
+	}
 
 	void setSpeed(double m_speed);
 	void setPosition(double m_position);

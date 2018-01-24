@@ -13,7 +13,6 @@
 
 #include "EditableScene.h"
 #include "AnimatedPolygon.h"
-#include "Follower.h"
 #include "Cursors.h"
 #include "../JuceLibraryCode/JuceHeader.h"
 
@@ -48,10 +47,9 @@ namespace Miam
 		std::shared_ptr<GraphicEvent> OnCanvasMouseDoubleClick(const MouseEvent& mouseE);
 
 		std::shared_ptr<AreaEvent> AddTrueCircle(uint64_t nextAreaId);
-		std::shared_ptr<AreaEvent> AddFollower(uint64_t nextAreaId);
 		std::shared_ptr<AreaEvent> AddCompleteArea(uint64_t);
 
-		std::vector< std::shared_ptr<Amusing::Follower> > followers;
+		
 		int Nfollower;
 		std::shared_ptr<Amusing::AnimatedPolygon> getFirstArea();
 		std::shared_ptr<Amusing::AnimatedPolygon> getNextArea();
@@ -75,7 +73,7 @@ namespace Miam
 		std::shared_ptr<AreaEvent> OnDelete();
 		bool deleting;
 		std::shared_ptr<AreaEvent> deleteEvent;
-		std::shared_ptr<Amusing::Follower> getFollowers(std::shared_ptr<Amusing::AnimatedPolygon> masterArea);
+		
 
 		std::vector< std::shared_ptr<Amusing::CompletePolygon> > currentIntersectionsAreas;
 		void addChords(std::shared_ptr<Amusing::CompletePolygon> parent1, std::shared_ptr<Amusing::CompletePolygon> parent2, std::shared_ptr<MultiAreaEvent> multiE);

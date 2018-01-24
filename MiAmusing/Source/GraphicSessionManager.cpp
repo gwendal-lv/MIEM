@@ -29,7 +29,6 @@ Author:  Gwendal Le Vaillant
 #include "AmusingScene.h"
 #include "AnimatedPolygon.h"
 #include "EditableEllipse.h"
-#include "Follower.h"
 #include "CompletePolygon.h"
 #include <cmath>
 
@@ -75,7 +74,7 @@ GraphicSessionManager::GraphicSessionManager(Presenter* presenter_, View* view_)
 		// DEFAULT SCENES, TO BE CHANGED
 		canvasManagers[i]->AddScene("Scene 1");
 		canvasManagers[i]->AddScene("Scene 2");
-		canvasManagers[i]->AddScene("Scene 3");
+		canvasManagers[i]->AddScene("Scene 3",true);
 	}
 	
 	// Links to the view module
@@ -564,8 +563,6 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 		switch (controlE->GetType())
 		{
 		case ControlEventType::Play:
-			if (testCompletePolygon == false)
-				OnAddFollower();
 			DBG("play clicked");
 			param.Type = Miam::AsyncParamChange::ParamType::Duration;
 			param.IntegerValue = myPresenter->getTempo();
@@ -631,7 +628,7 @@ void GraphicSessionManager::CanvasModeChanged(CanvasManagerMode canvasMode)
 
 // ===== EVENTS TO VIEW =====
 
-void GraphicSessionManager::DisplayInfo(String info)
+void GraphicSessionManager::DisplayInfo(String info, int priority)
 {
 	view->DisplayInfo(info);
 }
@@ -715,17 +712,6 @@ void GraphicSessionManager::OnAddTrueCircle()
 		getSelectedCanvasAsManager()->AddTrueCircle(GetNextAreaId());
 }
 
-void GraphicSessionManager::OnAddFollower()
-{
-	if (selectedCanvas)
-	{
-		int N = getSelectedCanvasAsManager()->getNumberArea();
-		for (int i = 0; i < N; ++i)
-		{
-			getSelectedCanvasAsManager()->AddFollower(GetNextAreaId());
-		}
-	}
-}
 
 void GraphicSessionManager::hideAddPolygon()
 {
