@@ -1470,6 +1470,7 @@ void CompletePolygon::CreateBullsEye()
 		bullsEye.back().SetAlpha(1.0);
 		//bullsEye.back().Set
 		bullsEye.back().setIsFilled(false);
+		bullsEye.back().setVerticesCount(6 * bullsEye.back().getVerticesCount());
 		
 	}
 	circlesToShow[0] = true;

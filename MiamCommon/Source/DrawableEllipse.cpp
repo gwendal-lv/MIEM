@@ -106,7 +106,6 @@ DrawableEllipse::~DrawableEllipse()
 void DrawableEllipse::setVerticesCount(int newVerticesCount)
 {
 	ellipseVerticesCount = newVerticesCount;
-	createJucePolygon(parentCanvas->getWidth(),parentCanvas->getHeight());
 }
 
 int DrawableEllipse::getVerticesCount()
