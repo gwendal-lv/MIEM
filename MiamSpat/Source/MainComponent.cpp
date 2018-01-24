@@ -8,15 +8,22 @@
 
 #include "MainComponent.h"
 
+//#include "MultiCanvasComponent.h"
 
 //==============================================================================
 MainContentComponent::MainContentComponent()
 {
+    // Ajout des composants enfant
+    addAndMakeVisible(backgroundComponent = new BackgroundComponent());
+    
     setSize (600, 400);
+    
+    setLookAndFeel(&lookAndFeel);
 }
 
 MainContentComponent::~MainContentComponent()
 {
+    setLookAndFeel(nullptr);
 }
 
 void MainContentComponent::paint (Graphics& g)
@@ -25,16 +32,13 @@ void MainContentComponent::paint (Graphics& g)
 
     g.setFont (Font (16.0f));
     g.setColour (Colours::white);
-    g.drawText ("Miam Spat", getLocalBounds(), Justification::centred, true);
+    g.drawText ("Miam Spat Player", getLocalBounds(), Justification::centred, true);
 }
 
 void MainContentComponent::resized()
 {
-    // This is called when the MainContentComponent is resized.
-    // If you add any child components, this is where you should
-    // update their positions.
-    if (multiCanvasComponent)
-        multiCanvasComponent->setBounds(getLocalBounds());
+    backgroundComponent->setBounds(getLocalBounds());
+    backgroundComponent->resized(); //  forcé....
 }
 
 
@@ -44,16 +48,13 @@ void MainContentComponent::resized()
 void MainContentComponent::CompleteInitialization(Presenter* _presenter)
 {
     presenter = _presenter;
+    backgroundComponent->CompleteInitialization(presenter);
 }
-void MainContentComponent::CompleteInitialization(GraphicSessionManager* _graphicSessionManager, MultiCanvasComponent* _multiCanvasComponent)
+void MainContentComponent::CompleteInitialization(GraphicSessionManager* _graphicSessionManager, MultiCanvasComponent* multiCanvasComponent_)
 {
     graphicSessionManager = _graphicSessionManager;
     
-    // Add of the canvas to this component's children directly (for now ?)
-    multiCanvasComponent = _multiCanvasComponent;
-    addAndMakeVisible(multiCanvasComponent);
-    
-    multiCanvasComponent->CompleteInitialization();
+    backgroundComponent->CompleteInitialization(multiCanvasComponent_);
 }
 
 void MainContentComponent::SetMiamView(Miam::View* _view)

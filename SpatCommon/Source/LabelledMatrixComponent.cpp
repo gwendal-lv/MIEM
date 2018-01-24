@@ -132,10 +132,10 @@ void LabelledMatrixComponent::mouseMove (const MouseEvent& e)
 
             // Detection of concerned in/out labels
             Label* newInputLabel = 0;
-            if (0<=row && row < maxRowsCount)
+            if (0<=row && row < (int)maxRowsCount)
                 newInputLabel = labels[row];
             Label* newOutputLabel = 0;
-            if (0 <= col && col<maxColsCount)
+            if (0 <= col && col < (int)maxColsCount)
                 newOutputLabel = labels[maxColsCount+col];
 
             // Graphical updates for input
@@ -187,16 +187,16 @@ void LabelledMatrixComponent::ReconstructGuiObjects()
     labels.resize(maxColsCount+maxRowsCount);
 
     // Actual creation of sliders and labels
-    for (int i=0 ; i<maxRowsCount ; i++)
+    for (int i=0 ; i<(int)maxRowsCount ; i++)
     {
         // Label on each row
-        labels[i] = new Label("Input label " + std::to_string(i), "" + std::to_string(i+1));
+        labels[i] = new Label("Input label " + boost::lexical_cast<std::string>(i), "" + boost::lexical_cast<std::string>(i+1));
         initAndAddLabel(labels[i]);
     }
-    for (int j=0 ; j<maxColsCount ; j++)
+    for (int j=0 ; j<(int)maxColsCount ; j++)
     {
         // Column labels
-        labels[maxRowsCount+j] = new Label("Output label " + std::to_string(j), "" + std::to_string(j+1));
+        labels[maxRowsCount+j] = new Label("Output label " + boost::lexical_cast<std::string>(j), "" + boost::lexical_cast<std::string>(j+1));
         initAndAddLabel(labels[maxRowsCount+j]);
     }
 
@@ -222,12 +222,12 @@ void LabelledMatrixComponent::repositionLabels()
     const int matrixDeltaY = matrixViewport->getViewPositionY();
 
     // Labels dynamic positionning
-    for (int i=0 ; i<maxRowsCount ; i++)
+    for (int i=0 ; i<(int)maxRowsCount ; i++)
     {
         // Label on each row
         labels[i]->setBounds(0, i*matItemH - matrixDeltaY, inLabelsW, matItemH);
     }
-    for (int j=0 ; j<maxColsCount ; j++)
+    for (int j=0 ; j<(int)maxColsCount ; j++)
     {
         // Column labels
         labels[maxRowsCount+j]->setBounds(inLabelsW+j*matItemW - matrixDeltaX, inOutLabelY, matItemW, outLabelsH);
@@ -245,6 +245,7 @@ void LabelledMatrixComponent::unhighlightLabel(Label* label)
 }
 void LabelledMatrixComponent::createAndManagePopupMenu()
 {
+#ifndef __MIAMOBILE
     PopupMenu menu;
     menu.addItem (1, "Reset to Zero matrix");
     menu.addItem (2, "Set to Identity matrix");
@@ -255,6 +256,12 @@ void LabelledMatrixComponent::createAndManagePopupMenu()
         setMatrixToZero();
     else if (userChoice == 2)
         setMatrixToIdentity();
+#else
+    /* This function uses pop-ups and
+     * must not be executed form a mobile platform.
+     */
+    assert(0);
+#endif
 }
 void LabelledMatrixComponent::setMatrixToZero()
 {
@@ -269,7 +276,7 @@ void LabelledMatrixComponent::setMatrixToIdentity()
     
     // Then, actual setting to identity
     unsigned int smallestDimension = std::min(maxRowsCount, maxColsCount);
-    for (int i=0 ; i<smallestDimension ; i++)
+    for (int i=0 ; i<(int)smallestDimension ; i++)
         // each one will notify (not optimized but that's OK)
         GetMatrixComponent()->SetSliderValue(i, i, 0.0, NotificationType::sendNotification);
 }

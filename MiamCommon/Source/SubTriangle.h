@@ -39,7 +39,7 @@ namespace Miam
         
         // Attributes
         protected :
-        Point<double> G, B, C; // B at beginAngle and C at endAngle
+        //Point<double> G, B, C; // B at beginAngle and C at endAngle
 		bpt bG, bB, bC;
         double beginAngle, endAngle;
         
@@ -57,7 +57,7 @@ namespace Miam
         /// <param name="_G"></param>
         /// <param name="_B"></param>
         /// <param name="_C"></param>
-        SubTriangle(Point<double> _pointG, Point<double> _pointB, Point<double> _pointC);
+        //SubTriangle(Point<double> _pointG, Point<double> _pointB, Point<double> _pointC);
 
 		SubTriangle(bpt _pointG, bpt _pointB, bpt _pointC);
         
@@ -80,7 +80,7 @@ namespace Miam
         /// </summary>
         /// <param name="T">Interaction location</param>
         /// <returns></returns>
-        double ComputeInteractionWeight(Point<double> T);
+        //double ComputeInteractionWeight(Point<double> T);
 		double ComputeInteractionWeight(bpt T);
 
 		// Area computing
@@ -90,6 +90,7 @@ namespace Miam
 
 	public :
 		double getSurface();
+        double GetLongestDistanceFromG() const;
         
     };
 }

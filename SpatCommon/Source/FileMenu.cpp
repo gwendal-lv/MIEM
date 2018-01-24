@@ -12,18 +12,21 @@
 
 #include "SpatPresenter.h"
 
+#include "SpatFileChoosers.h"
+
 using namespace Miam;
 
 FileMenu::FileMenu(SpatPresenter* _spatPresenter) : presenter(_spatPresenter)
 {
     menu.addItem(Choices::Load, "Load");
-    menu.addItem(Choices::Save, "Save"); // disabled for now...
-    menu.addItem(Choices::SaveAs, "Save As"); // disabled for now...
+    menu.addItem(Choices::Save, "Save");
+    menu.addItem(Choices::SaveAs, "Save As");
 }
 
 
 void FileMenu::ShowMenuAndSendUserAnswer()
 {
+#ifndef __MIAMOBILE
     int userAnswer = menu.show();
     
     switch(userAnswer)
@@ -43,35 +46,51 @@ void FileMenu::ShowMenuAndSendUserAnswer()
         default :
             break;
     }
+#else
+    /* This function uses pop-ups and
+     * must not be executed form a mobile platform.
+     */
+    assert(0);
+#endif
 }
 
 
 void FileMenu::onLoad()
 {
-    FileChooser fileChooser("Chargement d'un fichier",
-                            File::getSpecialLocation(File::SpecialLocationType::userMusicDirectory),
-                            "*.miam",
-                            true);
+#ifndef __MIAMOBILE
+    LoadFileChooser fileChooser;
     if ( fileChooser.browseForFileToOpen() )
     {
         File resultFile = fileChooser.getResult();
         presenter->LoadSession(resultFile.getFullPathName().toStdString());
     }
+#else
+    /* This function uses pop-ups and
+     * must not be executed form a mobile platform.
+     */
+    assert(0);
+#endif
 }
 void FileMenu::onSave()
 {
-    presenter->SaveSession();
+    // nom de fichier non-spécifié, par contre on force le data refresh
+    presenter->SaveSession("", true);
 }
 void FileMenu::onSaveAs()
 {
-    FileChooser fileChooser("Chargement d'un fichier",
-                            File::getSpecialLocation(File::SpecialLocationType::userMusicDirectory),
-                            "*.miam",
-                            true);
+#ifndef __MIAMOBILE
+    SaveFileChooser fileChooser;
     if ( fileChooser.browseForFileToSave(true) )
     {
         File resultFile = fileChooser.getResult();
-        presenter->SaveSession(resultFile.getFullPathName().toStdString());
+        // data refresh forcé
+        presenter->SaveSession(resultFile.getFullPathName().toStdString(), true);
     }
+#else
+    /* This function uses pop-ups and
+     * must not be executed form a mobile platform.
+     */
+    assert(0);
+#endif
 }
 

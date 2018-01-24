@@ -158,8 +158,12 @@ namespace Miam
                 // Displayable value
                 else
                 {
-                    float hue = (getValue()-GetMinVolume_dB()) / (GetMaxVolume_dB()-GetMinVolume_dB());
-                    hue = (1.0-hue)*0.5 + 0.1;
+                    // Volume relatif, entre 0 et 1
+                    double relativeVolume = ( getValue()-GetMinVolume_dB() )
+                                            / ( GetMaxVolume_dB()-GetMinVolume_dB() );
+                    // On applique une distortion simple....
+                    relativeVolume = std::pow(relativeVolume, 2.5);
+                    double hue = (1.0-relativeVolume)*0.5 + 0.1;
                     uint8 alpha;
                     if (GetIsActive())
                         alpha = 0xff;
@@ -167,7 +171,7 @@ namespace Miam
                         alpha = 0x77;
                     
                     
-                    SetBackgroundColour(Colour(hue, 1.0, 0.7, alpha));
+                    SetBackgroundColour(Colour((float)hue, 1.0f, 0.7f, alpha));
                 }
                 
                 // In any case : possible value on next double click event

@@ -166,15 +166,6 @@ void EditablePolygon::computeManipulationPoint()
 void EditablePolygon::SetActive(bool activate)
 {
     EditableArea::SetActive(activate);
-    
-    if (isActive)
-    {
-        fillOpacity = 0.8f;
-    }
-    else
-    {
-        fillOpacity = 0.5f;
-    }
 }
 
 
@@ -235,7 +226,7 @@ AreaEventType EditablePolygon::TryBeginPointMove(const Point<double>& hitPoint)
     // Finally, was the point inside the polygon ? (which starts a translation)
     if (eventType != AreaEventType::PointDragBegins)
     {
-        if (HitTest(hitPoint.x,hitPoint.y))
+        if (hitTest(hitPoint.x,hitPoint.y))
         {
             pointDraggedId = EditableAreaPointId::WholeArea;
             lastLocation = hitPoint;

@@ -15,17 +15,18 @@
 #include <memory>
 
 #include "IPresenter.h"
+#include "SpatView.h"
 
-#include "IGraphicSessionManager.h"
+#include "SpatFileChoosers.h"
 
 #include "boost/property_tree/ptree.hpp"
 #include "boost/property_tree/xml_parser.hpp"
 namespace bptree = boost::property_tree;
 
-
 namespace Miam {
     
     class SpatModel;
+    class GraphicSpatSessionManager;
     
     /// \brief
     class SpatPresenter : public IPresenter
@@ -37,8 +38,11 @@ namespace Miam {
         private :
         // Private links to abtractions of sub-modules
         SpatModel* model = 0;
-        IGraphicSessionManager* graphicSessionManager = 0;
+        GraphicSpatSessionManager* graphicSessionManager = 0;
+        // Private links to other modules
+        SpatView* view;
         
+        protected :
         // - - - - - Back-ups of other spatialization data trees - - - - -
         std::shared_ptr<bptree::ptree> lastSpatStatesTree;
         std::shared_ptr<bptree::ptree> lastSpatScenesTree;
@@ -48,9 +52,9 @@ namespace Miam {
         
         public :
         // - - - - - Construction and Destruction (and init) - - - - -
-        SpatPresenter();
+        SpatPresenter(SpatView* view_);
         virtual ~SpatPresenter() {}
-        void CompleteInitialisation(IGraphicSessionManager* _graphicSessionManager, SpatModel* _model);
+        void CompleteInitialisation(GraphicSpatSessionManager* _graphicSessionManager, SpatModel* _model);
         
         
         
@@ -69,8 +73,8 @@ namespace Miam {
         virtual void SaveSession(std::string filename = "", bool forceDataRefresh = false);
         
         protected :
-        virtual void updateSpatStatesTree(std::shared_ptr<bptree::ptree> newTree);
-        virtual void updateSpatScenesTree(std::shared_ptr<bptree::ptree> newTree);
+        virtual void updateSpatStatesTree(std::shared_ptr<bptree::ptree> newTree, bool autoSave = true);
+        virtual void updateSpatScenesTree(std::shared_ptr<bptree::ptree> newTree, bool autoSave = true);
     };
     
     

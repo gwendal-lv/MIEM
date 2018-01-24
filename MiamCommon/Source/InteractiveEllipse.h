@@ -27,7 +27,11 @@ namespace Miam
         InteractiveEllipse(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio);
 
 			virtual ~InteractiveEllipse() {}
-			virtual IDrawableArea* Clone() const override { return new InteractiveEllipse(*this); }
+		
+        virtual std::shared_ptr<IDrawableArea> Clone() override;
+        protected :
+        virtual void onCloned() override;
+        public :
 
 		private :
 			void init();
@@ -44,7 +48,7 @@ namespace Miam
         
 			// Interactions computing
 		public:
-			virtual bool HitTest(double x, double y) override;
+			virtual bool HitTest(bpt T) const override;
 			double ComputeInteractionWeight(bpt T) override;
 
 		private :

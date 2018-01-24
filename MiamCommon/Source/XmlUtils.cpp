@@ -13,6 +13,8 @@
 #include <vector>
 #include <regex>
 
+#include "boost/lexical_cast.hpp"
+
 using namespace Miam;
 
 size_t XmlUtils::CheckIndexes(const bptree::ptree& tree, const std::string& parentPath, const std::string& childrenPath, const std::string& indexPath)
@@ -38,7 +40,7 @@ size_t XmlUtils::CheckIndexes(const bptree::ptree& tree, const std::string& pare
         }
         for (size_t i=0 ; i<indexesCounts.size() ; i++)
             if (indexesCounts[i] != 1)
-                throw XmlReadException("Each <" + childrenPath + "> child index attribute (named '" + indexPath + "') must be found exactly 1 time ( here, index values within [ 0 ; " + std::to_string(indexesCounts.size()-1) + " ] )");
+                throw XmlReadException("Each <" + childrenPath + "> child index attribute (named '" + indexPath + "') must be found exactly 1 time ( here, index values within [ 0 ; " + boost::lexical_cast<std::string>(indexesCounts.size()-1) + " ] )");
     }
     
     return indexesCounts.size();

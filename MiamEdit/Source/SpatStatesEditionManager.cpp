@@ -50,7 +50,7 @@ void SpatStatesEditionManager::selectSpatState(std::shared_ptr<SpatState<double>
     if (selectedSpatState)
     {
         infoText = "Linked to "
-        + std::to_string(selectedSpatState->GetLinkedAreasCount())
+        + boost::lexical_cast<std::string>(selectedSpatState->GetLinkedAreasCount())
         + " area" + (selectedSpatState->GetLinkedAreasCount()>1 ? "s" : "");
         stateIndexToSend = selectedSpatState->GetIndex();
         
@@ -82,12 +82,14 @@ void SpatStatesEditionManager::OnEnterSpatStatesEdition()
 }
 std::shared_ptr<bptree::ptree> SpatStatesEditionManager::OnLeaveSpatStatesEdition()
 {
+    // Actualisation depuis l'affichage graphique
     sendDataToModel(editionComponent->GetDisplayedSpatMatrix());
+    
     // Update now to the editionComponent
     selectSpatState(selectedSpatState);
     
     // Save to XML (Presenter does it)
-    return spatInterpolator->GetSpatStatesTree();
+    return GetTree();
 }
 
 
@@ -110,6 +112,9 @@ void SpatStatesEditionManager::OnSpatStateSelectedById(std::shared_ptr<SpatMatri
 }
 void SpatStatesEditionManager::OnRenameState(std::string newName, int stateIndex)
 {
+    // Sauvegarde avant tout
+    sendDataToModel(editionComponent->GetDisplayedSpatMatrix());
+    
     // Actual renaming
     spatInterpolator->GetSpatState(stateIndex)->SetName(newName);
     
@@ -121,6 +126,10 @@ void SpatStatesEditionManager::OnRenameState(std::string newName, int stateIndex
 
 void SpatStatesEditionManager::OnAddState()
 {
+    // Actualisation depuis l'affichage graphique
+    sendDataToModel(editionComponent->GetDisplayedSpatMatrix());
+    
+    // Puis addition
     auto newState = spatInterpolator->AddDefaultState();
     UpdateView();
     selectSpatState(newState);
@@ -155,6 +164,9 @@ void SpatStatesEditionManager::OnMoveSelectedStateUp()
         && spatInterpolator->GetSpatStatesCount() >= 2
         && selectedSpatState->GetIndex() > 0)
     {
+        // Actualisation depuis l'affichage graphique
+        sendDataToModel(editionComponent->GetDisplayedSpatMatrix());
+        
         spatInterpolator->SwapStatesByIndex(selectedSpatState->GetIndex(), selectedSpatState->GetIndex()-1);
         // Updates
         UpdateView();
@@ -169,6 +181,9 @@ void SpatStatesEditionManager::OnMoveSelectedStateDown()
         && spatInterpolator->GetSpatStatesCount() >= 2
         && selectedSpatState->GetIndex() < spatInterpolator->GetSpatStatesCount()-1)
     {
+        // Actualisation depuis l'affichage graphique
+        sendDataToModel(editionComponent->GetDisplayedSpatMatrix());
+        
         spatInterpolator->SwapStatesByIndex(selectedSpatState->GetIndex(), selectedSpatState->GetIndex()+1);
         // Updates
         UpdateView();
@@ -210,5 +225,13 @@ void SpatStatesEditionManager::AllowKeyboardEdition(bool allow)
 {
     editionComponent->AllowKeyboardEdition(allow);
 }
+
+
+// = = = = = = = = = = PROPERTY TREE (XML) MANAGEMENT = = = = = = = = = =
+std::shared_ptr<bptree::ptree> SpatStatesEditionManager::GetTree()
+{
+    return spatInterpolator->GetSpatStatesTree();
+}
+
 
 

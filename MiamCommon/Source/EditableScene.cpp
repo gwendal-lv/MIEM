@@ -302,25 +302,25 @@ void EditableScene::BringSelectedAreaToFront()
 
 
 // - - - - - Selection events managing (orders from parent manager) - - - - -
-void EditableScene::OnSelection()
+std::shared_ptr<MultiAreaEvent> EditableScene::OnSelection(bool resetExciters)
 {
+    return InteractiveScene::OnSelection(resetExciters);
 }
 
-std::vector<std::shared_ptr<GraphicEvent>> EditableScene::OnUnselection()
+std::shared_ptr<MultiAreaEvent> EditableScene::OnUnselection(bool shutExcitersDown)
 {
     // Absolutely needed (vector copy contructor won't be much time-consuming)
-    auto returnedVector = InteractiveScene::OnUnselection();
+    auto multiAreaE = InteractiveScene::OnUnselection(shutExcitersDown);
     
     // Own code for Editable features (and possible event getting)
     if (selectedArea)
-        returnedVector.push_back(SetSelectedArea(nullptr));
+        multiAreaE->AddAreaEvent(SetSelectedArea(nullptr));
     
-    return returnedVector;
+    return multiAreaE;
 }
 
 
 // - - - - - Canvas (mouse) events managing - - - - -
-
 std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent& mouseE)
 {
     // default : empty AREA event (TO DO : events may happen on exciters, etc, etc, ...)
@@ -362,7 +362,7 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent&
                  (i>=0 && (!selectedArea)) ;
                  i--)
             {
-                if (areas[i]->HitTest(clicLocation.x,clicLocation.y))
+                if (areas[i]->HitTest(bpt(clicLocation.x,clicLocation.y)))
                 {
                     // !!!!!!!!!!!!! TEST DES POIDS D'INTERACTION !!!!!!!!!!!
                     //std::cout << "poids d'interaction = " << areasOrderedForDrawing[i]->ComputeInteractionWeight(clicLocation.toDouble()) << std::endl;

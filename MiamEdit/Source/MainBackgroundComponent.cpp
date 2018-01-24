@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.0.2
+  Created with Projucer version: 5.2.0
 
   ------------------------------------------------------------------------------
 
@@ -30,6 +30,7 @@ using namespace Miam;
 
 //==============================================================================
 MainBackgroundComponent::MainBackgroundComponent ()
+    : clearLabelTimer(currentDisplayedInfoPriority)
 {
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
@@ -44,9 +45,9 @@ MainBackgroundComponent::MainBackgroundComponent ()
 
     addAndMakeVisible (spatStatesTextButtn = new TextButton ("Spatialization States text button"));
     spatStatesTextButtn->setButtonText (TRANS("Routing Matrices"));
-    spatStatesTextButtn->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnRight);
+    spatStatesTextButtn->setConnectedEdges (Button::ConnectedOnRight);
     spatStatesTextButtn->addListener (this);
-    spatStatesTextButtn->setColour (TextButton::buttonColourId, Colour (0x55ffffff));
+    spatStatesTextButtn->setColour (TextButton::buttonColourId, Colour (0xffbfbfbf));
     spatStatesTextButtn->setColour (TextButton::buttonOnColourId, Colours::white);
     spatStatesTextButtn->setColour (TextButton::textColourOffId, Colours::black);
 
@@ -56,7 +57,7 @@ MainBackgroundComponent::MainBackgroundComponent ()
     mainInfoLabel->setJustificationType (Justification::centredRight);
     mainInfoLabel->setEditable (false, false, false);
     mainInfoLabel->setColour (Label::backgroundColourId, Colour (0x56ffffff));
-    mainInfoLabel->setColour (Label::outlineColourId, Colour (0x84000000));
+    mainInfoLabel->setColour (Label::outlineColourId, Colour (0x84ffffff));
     mainInfoLabel->setColour (TextEditor::textColourId, Colours::black);
     mainInfoLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
@@ -64,14 +65,14 @@ MainBackgroundComponent::MainBackgroundComponent ()
     scenesTextButton->setButtonText (TRANS("Spat Scenes"));
     scenesTextButton->setConnectedEdges (Button::ConnectedOnLeft);
     scenesTextButton->addListener (this);
-    scenesTextButton->setColour (TextButton::buttonColourId, Colour (0x55ffffff));
+    scenesTextButton->setColour (TextButton::buttonColourId, Colour (0xffbfbfbf));
     scenesTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     scenesTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
     addAndMakeVisible (hardwareConfTextButton = new TextButton ("Hardware Configuration text button"));
     hardwareConfTextButton->setButtonText (TRANS("Configuration"));
     hardwareConfTextButton->addListener (this);
-    hardwareConfTextButton->setColour (TextButton::buttonColourId, Colour (0x55ffffff));
+    hardwareConfTextButton->setColour (TextButton::buttonColourId, Colour (0xffbfbfbf));
     hardwareConfTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     hardwareConfTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
@@ -81,20 +82,14 @@ MainBackgroundComponent::MainBackgroundComponent ()
     startTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     startTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    addAndMakeVisible (label = new Label ("new label",
-                                          TRANS("Loading...")));
-    label->setFont (Font (15.00f, Font::italic));
-    label->setJustificationType (Justification::centred);
-    label->setEditable (false, false, false);
-    label->setColour (TextEditor::textColourId, Colours::black);
-    label->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
-
     addAndMakeVisible (fileTextButton = new TextButton ("File text button"));
     fileTextButton->setButtonText (TRANS("File"));
     fileTextButton->addListener (this);
-    fileTextButton->setColour (TextButton::buttonColourId, Colour (0x55ffffff));
+    fileTextButton->setColour (TextButton::buttonColourId, Colour (0xffbfbfbf));
     fileTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     fileTextButton->setColour (TextButton::textColourOffId, Colours::black);
+
+    fileTextButton->setBounds (8, 8, 64, 24);
 
 
     //[UserPreSize]
@@ -108,6 +103,14 @@ MainBackgroundComponent::MainBackgroundComponent ()
     // Buttons still deactivated for now
     startTextButton->setEnabled(false);
     speakersTextButton->setEnabled(false);
+
+    // On les rend carrément invisibles aussi
+    startTextButton->setVisible(false);
+    speakersTextButton->setVisible(false);
+
+    // ClearLabelTimer + priorités des infos affichées
+    clearLabelTimer.SetLabelToClearAfterTimeout(mainInfoLabel.get());
+    currentDisplayedInfoPriority = -1; // plus petit que tout...
 
     //[/Constructor]
 }
@@ -123,7 +126,6 @@ MainBackgroundComponent::~MainBackgroundComponent()
     scenesTextButton = nullptr;
     hardwareConfTextButton = nullptr;
     startTextButton = nullptr;
-    label = nullptr;
     fileTextButton = nullptr;
 
 
@@ -148,14 +150,12 @@ void MainBackgroundComponent::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    speakersTextButton->setBounds (8 + 64 - -8, 8, 112, 24);
-    spatStatesTextButtn->setBounds ((8 + 64 - -8) + 112, 8, 112, 24);
-    mainInfoLabel->setBounds (getWidth() - 8 - (getWidth() - 680), 8, getWidth() - 680, 24);
-    scenesTextButton->setBounds (((8 + 64 - -8) + 112) + 112, 8, 112, 24);
-    hardwareConfTextButton->setBounds (((8 + 64 - -8) + 112) + 112 - -120, 8, 112, 24);
-    startTextButton->setBounds ((((8 + 64 - -8) + 112) + 112 - -120) + 112 - -16, 8, 104, 24);
-    label->setBounds (proportionOfWidth (0.5000f) - (150 / 2), proportionOfHeight (0.5000f) - (24 / 2), 150, 24);
-    fileTextButton->setBounds (8, 8, 64, 24);
+    speakersTextButton->setBounds (8 + 64, 8, 8, 24);
+    spatStatesTextButtn->setBounds ((8 + 64) + 8, 8, 112, 24);
+    mainInfoLabel->setBounds (getWidth() - 8 - (getWidth() - 456), 8, getWidth() - 456, 24);
+    scenesTextButton->setBounds (((8 + 64) + 8) + 112, 8, 112, 24);
+    hardwareConfTextButton->setBounds (((8 + 64) + 8) + 112 - -120, 8, 112, 24);
+    startTextButton->setBounds ((((8 + 64) + 8) + 112 - -120) + 112 - -16, 8, 8, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -209,10 +209,16 @@ void MainBackgroundComponent::CompleteInitialization(Presenter* _presenter)
     fileMenu.reset( new FileMenu(_presenter) );
 }
 
-void MainBackgroundComponent::DisplayInfo(const String& message)
+void MainBackgroundComponent::DisplayInfo(const String& message, int priority)
 {
-    mainInfoLabel->setText(message, NotificationType::sendNotificationAsync);
-    clearLabelTimer.StartTimer(mainInfoLabel.get()); // will clear it after a precise time
+    // On n'affiche que les priorités supérieures (si égale : on affiche la + fraîche)
+    if (priority >= currentDisplayedInfoPriority)
+    {
+        mainInfoLabel->setText(message, NotificationType::sendNotificationAsync);
+        currentDisplayedInfoPriority = priority;
+
+        clearLabelTimer.StartTimer(); // will clear it after a precise time
+    }
 }
 
 //[/MiscUserCode]
@@ -229,44 +235,40 @@ BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="MainBackgroundComponent"
                  componentName="" parentClasses="public Component" constructorParams=""
-                 variableInitialisers="" snapPixels="8" snapActive="1" snapShown="1"
-                 overlayOpacity="0.330" fixedSize="1" initialWidth="1024" initialHeight="600">
+                 variableInitialisers="clearLabelTimer(currentDisplayedInfoPriority)"
+                 snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
+                 fixedSize="1" initialWidth="1024" initialHeight="600">
   <BACKGROUND backgroundColour="ff707070"/>
   <TEXTBUTTON name="Speakers text button" id="2752e5f61c280c43" memberName="speakersTextButton"
-              virtualName="" explicitFocusOrder="0" pos="-8R 8 112 24" posRelativeX="dcc32a783566df37"
+              virtualName="" explicitFocusOrder="0" pos="0R 8 8 24" posRelativeX="dcc32a783566df37"
               bgColOff="55ffffff" bgColOn="ffffffff" textCol="ff000000" buttonText="Speakers"
               connectedEdges="2" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Spatialization States text button" id="8bdb167a1cca5b0b"
               memberName="spatStatesTextButtn" virtualName="" explicitFocusOrder="0"
-              pos="0R 8 112 24" posRelativeX="2752e5f61c280c43" bgColOff="55ffffff"
+              pos="0R 8 112 24" posRelativeX="2752e5f61c280c43" bgColOff="ffbfbfbf"
               bgColOn="ffffffff" textCol="ff000000" buttonText="Routing Matrices"
-              connectedEdges="3" needsCallback="1" radioGroupId="0"/>
+              connectedEdges="2" needsCallback="1" radioGroupId="0"/>
   <LABEL name="Main info label" id="d52b689341b86690" memberName="mainInfoLabel"
-         virtualName="" explicitFocusOrder="0" pos="8Rr 8 680M 24" bkgCol="56ffffff"
-         outlineCol="84000000" edTextCol="ff000000" edBkgCol="0" labelText="..."
+         virtualName="" explicitFocusOrder="0" pos="8Rr 8 456M 24" bkgCol="56ffffff"
+         outlineCol="84ffffff" edTextCol="ff000000" edBkgCol="0" labelText="..."
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
          justification="34"/>
   <TEXTBUTTON name="Scenes text button" id="9994cb0e99bfd3ca" memberName="scenesTextButton"
               virtualName="" explicitFocusOrder="0" pos="0R 8 112 24" posRelativeX="8bdb167a1cca5b0b"
-              bgColOff="55ffffff" bgColOn="ffffffff" textCol="ff000000" buttonText="Spat Scenes"
+              bgColOff="ffbfbfbf" bgColOn="ffffffff" textCol="ff000000" buttonText="Spat Scenes"
               connectedEdges="1" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Hardware Configuration text button" id="1dad683cba944341"
               memberName="hardwareConfTextButton" virtualName="" explicitFocusOrder="0"
-              pos="-120R 8 112 24" posRelativeX="8bdb167a1cca5b0b" bgColOff="55ffffff"
+              pos="-120R 8 112 24" posRelativeX="8bdb167a1cca5b0b" bgColOff="ffbfbfbf"
               bgColOn="ffffffff" textCol="ff000000" buttonText="Configuration"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Start text button" id="cecb4b1d1a8f7c2d" memberName="startTextButton"
-              virtualName="" explicitFocusOrder="0" pos="-16R 8 104 24" posRelativeX="1dad683cba944341"
+              virtualName="" explicitFocusOrder="0" pos="-16R 8 8 24" posRelativeX="1dad683cba944341"
               bgColOff="a0ffffff" bgColOn="ffffffff" textCol="ff000000" buttonText="Start MiamSpat"
               connectedEdges="0" needsCallback="0" radioGroupId="0"/>
-  <LABEL name="new label" id="f13afc15bc19a998" memberName="label" virtualName=""
-         explicitFocusOrder="0" pos="50%c 50%c 150 24" edTextCol="ff000000"
-         edBkgCol="0" labelText="Loading..." editableSingleClick="0" editableDoubleClick="0"
-         focusDiscardsChanges="0" fontname="Default font" fontsize="15"
-         kerning="0" bold="0" italic="1" justification="36" typefaceStyle="Italic"/>
   <TEXTBUTTON name="File text button" id="dcc32a783566df37" memberName="fileTextButton"
-              virtualName="" explicitFocusOrder="0" pos="8 8 64 24" bgColOff="55ffffff"
+              virtualName="" explicitFocusOrder="0" pos="8 8 64 24" bgColOff="ffbfbfbf"
               bgColOn="ffffffff" textCol="ff000000" buttonText="File" connectedEdges="0"
               needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>

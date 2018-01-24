@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.0.2
+  Created with Projucer version: 5.2.0
 
   ------------------------------------------------------------------------------
 
@@ -50,7 +50,7 @@ namespace Miam {
                                                                     //[/Comments]
 */
 class MainBackgroundComponent  : public Component,
-                                 public ButtonListener
+                                 public Button::Listener
 {
 public:
     //==============================================================================
@@ -67,7 +67,7 @@ public:
     void setMiamView(Miam::View* _miamView) {miamView = _miamView;}
 
     // Orders from Presenter
-    void DisplayInfo(const String& message);
+    void DisplayInfo(const String& message, int priority = 0);
 
     //[/UserMethods]
 
@@ -83,6 +83,7 @@ private:
     View *miamView;
     std::unique_ptr<FileMenu> fileMenu;
 
+    int currentDisplayedInfoPriority;
     Miam::ClearLabelTimer clearLabelTimer;
 
     //[/UserVariables]
@@ -94,7 +95,6 @@ private:
     ScopedPointer<TextButton> scenesTextButton;
     ScopedPointer<TextButton> hardwareConfTextButton;
     ScopedPointer<TextButton> startTextButton;
-    ScopedPointer<Label> label;
     ScopedPointer<TextButton> fileTextButton;
 
 

@@ -31,16 +31,13 @@ DrawableArea(areaTree)
             polygonPoints[index].set<1>( point.second.get<double>("<xmlattr>.y") );
         }
         catch (bptree::ptree_error &e) {
-            throw XmlReadException("Point " + std::to_string(index) + ": ", e);
+            throw XmlReadException("Point " + boost::lexical_cast<std::string>(index) + ": ", e);
         }
     }
     // Ajout des points 1 par 1 dans le bon ordre
     for (auto& point : polygonPoints)
         contourPoints.outer().push_back(point);
     contourPoints.outer().push_back(polygonPoints[0]);// contour closing
-
-	isFilled = true;
-
     // Actualisation graphique
     createJucePolygon();
 }
@@ -48,14 +45,13 @@ DrawableArea(areaTree)
 DrawablePolygon::DrawablePolygon(int64_t _Id) :
     DrawablePolygon(_Id, bpt(0.5f,0.5f), 3, 0.1f, Colours::darkgrey)
 {
-	rotationAngle = 0.0;
 }
 
 
 DrawablePolygon::DrawablePolygon(int64_t _Id, bpt _center, int pointsCount, float radius, Colour _fillColour, float _canvasRatio) :
     DrawableArea(_Id, _center, _fillColour)
 {
-	rotationAngle = 0.0;
+
     if (_canvasRatio > 1.0f) // ratio of an landscape-oriented window
     {
         xScale = 1.0f/_canvasRatio;
@@ -78,8 +74,6 @@ DrawablePolygon::DrawablePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 	 // to close the boost polygon
 	contourPoints.outer().push_back(bpt(center.get<0>() + radius*xScale, center.get<1>()));
 
-	isFilled = true;
-
     // Definition of the Juce polygon
     createJucePolygon();
 }
@@ -97,8 +91,12 @@ DrawablePolygon::DrawablePolygon(int64_t _Id, bpt _center, bpolygon& _bcontourPo
 // Construction helpers
 void DrawablePolygon::createJucePolygon(int width, int height)
 {
+    // Création de nouveaux points en coordonnées normalisées
 	if (keepRatio)
-		recreateContourPoints(width, height);
+		rescaleContourPoints(width, height);
+    
+    // Création du contour Juce, sachant que les coordonnées normalisées ont été modifiées
+    // si le ratio était consevé
     contour.clear();
 	contour.startNewSubPath((float)contourPoints.outer().at(0).get<0>(), (float)contourPoints.outer().at(0).get<1>());
 	for (size_t i = 1; i<contourPoints.outer().size(); i++)
@@ -106,9 +104,15 @@ void DrawablePolygon::createJucePolygon(int width, int height)
 	contour.closeSubPath();
     
     contour.applyTransform(AffineTransform::scale((float)width, (float)height));
+    
+    // Puis Création du contour en tant que Polygone BOOST (points (en pixels) séparés)
+    contourPointsInPixels.clear();
+    boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scale(width, height);
+    boost::geometry::transform(contourPoints, contourPointsInPixels, scale);
+    
 }
 
-void DrawablePolygon::recreateContourPoints(int width, int height)
+void DrawablePolygon::rescaleContourPoints(int width, int height)
 {
 	// first calculate the distances and angles so we could apply recreate the same polygon, but with the new xScale and yScale
 	float newCanvasRatio = (float)width / (float)height;
@@ -152,23 +156,15 @@ DrawablePolygon::~DrawablePolygon()
 
 
 
-void DrawablePolygon::setIsFilled(bool shouldBeFilled)
-{
-	isFilled = shouldBeFilled;
-}
-
 // Called by the parent component (which is a canvas)
 void DrawablePolygon::Paint(Graphics& g)
 {
-	if (isFilled)
-	{
-		g.setColour(fillColour);
-		g.setOpacity(enableLowOpacityMode ? getLowFillOpacity() : fillOpacity);
-		g.fillPath(contour);
-	}
+    g.setColour(fillColour);
+    g.setOpacity(GetAlpha());
+    g.fillPath(contour);
     
     g.setColour(contourColour);
-    g.setOpacity(enableLowOpacityMode ? getLowFillOpacity() : fillOpacity);
+    g.setOpacity(GetAlpha());
     g.strokePath(contour, PathStrokeType(contourWidth));
     
     // Parent's drawings on top of these ones
@@ -180,7 +176,13 @@ void DrawablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 {
     DrawableArea::CanvasResized(_parentCanvas);
     
+    // JUCE contour points in pixels
     createJucePolygon(parentCanvas->getWidth(), parentCanvas->getHeight());
+    
+    // Internal BOOST contour points in pixels
+    contourPointsInPixels.clear();
+    boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scale(parentCanvas->getWidth(), parentCanvas->getHeight());
+    boost::geometry::transform(contourPoints, contourPointsInPixels, scale);
 }
 
 

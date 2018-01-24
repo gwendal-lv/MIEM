@@ -44,13 +44,20 @@ DrawableArea::DrawableArea(int64_t _Id, bpt _center, Colour _fillColour)
     init();
 }
 
+DrawableArea::~DrawableArea()
+{
+}
+
 void DrawableArea::init()
 {
+    // On suppose un écran classique pour commencer...
+    renderingScale = 1.0;
+    
     centerCircleRadius = 5;
     displayCenter = true;
     
-    fillOpacity = 1.0;
-    enableLowOpacityMode = false;
+    fillOpacity = 1.0f;
+    opacityMode = OpacityMode::Independent;
     
     contourColour = Colours::white;
     contourWidth = 2.0f;
@@ -59,8 +66,77 @@ void DrawableArea::init()
     isNameVisible = true; // par défaut
     
     keepRatio = false;
+    
+    resetImages();
 }
 
+
+void DrawableArea::resetImages()
+{
+    // Construction de l'image (fond transparent à l'avenir)
+    // On en recréée un 2è, qu'on assigne à la 1ière pour chaque taille...
+    // Pour éviter de nombreux problèmes (écrire un constructeur de copie
+    // de DrawableArea par exemple....)
+ 
+    for (int integerScale = 1 ; integerScale<=2 ; integerScale++)
+    {
+        int scaledWidth = (int) nameWidth * integerScale;
+        int scaledHeight = (int) nameHeight * integerScale;
+        
+        Image nameImageToAssign = Image(Image::ARGB, scaledWidth, scaledHeight, true);
+        switch (integerScale)
+        {
+            case 1 :
+                nameImage = nameImageToAssign;
+                nameImage.duplicateIfShared();
+                break;
+            case 2 :
+                nameImage2 = nameImageToAssign;
+                nameImage2.duplicateIfShared();
+                break;
+            default :
+                throw std::logic_error("Échelle entière de " + boost::lexical_cast<std::string>(integerScale) + "pas prise en compte directement. Rescale dynamique au rendu.");
+        }
+        // Pas d'assignation de texte par défaut...
+    }
+}
+
+void DrawableArea::renderCachedNameImages()
+{
+    resetImages();
+    for (int integerScale = 1 ; integerScale<=2 ; integerScale++)
+    {
+        Image* imagePtr;
+        switch (integerScale)
+        {
+            case 1 :
+                imagePtr = &nameImage;
+                break;
+            case 2 :
+                imagePtr = &nameImage2;
+                break;
+            default :
+                throw std::logic_error("Échelle entière de " + boost::lexical_cast<std::string>(integerScale) + "pas prise en compte directement. Rescale dynamique au rendu.");
+        }
+        // Contexte graphique permettant de faire du dessin dans l'image
+        // après réinit de l'image
+        Graphics g(*imagePtr);
+        // Bounds de base, qu'on va décaler de qqs pixels
+        auto textBounds = imagePtr->getBounds();
+        int shadowOffsetXY = 1 * integerScale; // pixels
+        // black shadow
+        g.setFont((float)(imagePtr->getHeight() - shadowOffsetXY));
+        g.setColour(Colours::black);
+        textBounds.setPosition(shadowOffsetXY, shadowOffsetXY);
+        textBounds.removeFromBottom(shadowOffsetXY);
+        textBounds.removeFromRight(shadowOffsetXY);
+        g.drawText(name, textBounds, Justification::topLeft);
+        // white text
+        g.setColour(Colours::white);
+        textBounds.setPosition(0, 0);
+        g.drawText(name, textBounds, Justification::topLeft);
+    }
+}
 
 
 
@@ -69,10 +145,7 @@ void DrawableArea::Paint(Graphics& g)
     // Dessin du centre (couleur du contour) si nécessaire
     if (displayCenter)
     {
-        Colour actualContourColour = (enableLowOpacityMode) ?
-        Colour(contourColour.getRed(), contourColour.getGreen(), contourColour.getBlue(),
-               getLowFillOpacity() )
-        : contourColour;
+        Colour actualContourColour = Colour(contourColour.getRed(), contourColour.getGreen(), contourColour.getBlue(), GetAlpha() );        
         g.setColour(actualContourColour);
         g.drawEllipse((float)centerInPixels.get<0>()-centerCircleRadius,
                       (float)centerInPixels.get<1>()-centerCircleRadius,
@@ -80,28 +153,68 @@ void DrawableArea::Paint(Graphics& g)
     }
     
     // Dessin du texte :
-    // DEBUG pb MT getGlyphPosition
-    // DEBUG pb MT getGlyphPosition
-    // DEBUG pb MT getGlyphPosition
-    // DEBUG pb MT getGlyphPosition
-    // DEBUG pb MT getGlyphPosition
-    if (isNameVisible && false)
+    // à cet instant, le composant qui rend du OpenGL a déjà appliqué une transformation affine.
+    // On sauvegarde l'état graphique, on inverse la transfo affine, puis on rend les images
+    // comme il faut -> NON l'état ne prend pas en compte les tranformations affines....
+    if (isNameVisible)
     {
-        g.setColour(Colours::black); // black shadow
-        g.drawSingleLineText(name,
-                             (int)centerInPixels.get<0>()+1,
-                             (int)(centerInPixels.get<1>()-centerCircleRadius*2+1));
-        g.setColour(Colours::white); // white text
-        g.drawSingleLineText(name,
-                             (int)centerInPixels.get<0>(),
-                             (int)(centerInPixels.get<1>() -centerCircleRadius*2));
+        // Dans tous les cas, on inverse l'échelle appliquée avant,
+        g.addTransform(AffineTransform::scale(1.0f/(float)renderingScale,
+                                              1.0f/(float)renderingScale));
+        
+        // Si on est proche à 10% d'une échelle de base (1 ou 2) : on ne fait rien
+        // Par contre, si on est loin des 2 échelles de base, on doit faire du redimensionnement
+        Image* scaledNameImage = nullptr;
+        Image juceCreatedScaledNameImage;
+        if ( std::abs(renderingScale-1.0) < 0.1 ) // échelle proche de 1
+            scaledNameImage = &nameImage;
+        else if ( std::abs(renderingScale-2.0) < 0.1 ) // échelle proche de 2
+            scaledNameImage = &nameImage2;
+        else // sinon, redimensionnement coûteux en CPU (très coûteux....)
+        {
+            // Tout ça sans utiliser de code de dessin de texte ! Car c'est ça qui ne passe pas
+            // en multi-threadé....
+            int newWidth = (int) std::round((double)nameWidth*renderingScale);
+            int newHeight = (int) std::round((double)nameHeight*renderingScale);
+            // On rescale alors la + grande et non la + petite (pour un meilleur rendu final...)
+            juceCreatedScaledNameImage = nameImage2.rescaled(newWidth, newHeight);
+            scaledNameImage = &juceCreatedScaledNameImage;
+        }
+        
+        // Ensuite, le placement doit se faire en mettant soi-même à l'échelle...
+        g.saveState();
+        float alpha = GetAlpha();
+        alpha = alpha + (1.0f - alpha)*0.3f; // légèrement plus opaque
+        Colour actualContourColour = Colour(contourColour.getRed(), contourColour.getGreen(), contourColour.getBlue(), alpha );
+        g.setColour(actualContourColour);
+        // Coordonnées du dessin : dépend de si oui ou non on est proche du bord droit ou du bord bas
+        double deltaX = (double)centerCircleRadius + 2.0;
+        double deltaY = 2.0;
+        // Si on est trop proche de la droite, alors on centre (ça ira comme l'image a le texte à gauche)
+        // test avec le parent qui n'est pas mis à l'échelle rétina (pixels 'classiques')
+        if ( ((int)std::round(centerInPixels.get<0>()) + nameImage.getWidth())
+            > parentCanvas->getWidth() )
+        {
+            deltaX = -deltaX - name.length()*4; // le 4 est totalement arbitraire...
+            deltaY += (double)centerCircleRadius;
+        }
+        // Si on est trop proche du bas, alors on met le texte en haut de centre de la forme
+        if ( ((int)std::round(centerInPixels.get<1>()) + deltaY + nameImage.getHeight() + 8)
+            > parentCanvas->getHeight() )
+        {
+            deltaY = -deltaY - nameImage.getHeight();
+        }
+        // Code effectif de dessin
+        g.drawImageAt(*scaledNameImage,
+                      (int)((centerInPixels.get<0>() + deltaX)*renderingScale),
+                      (int)((centerInPixels.get<1>() + deltaY)*renderingScale),
+                      false); // don't fill alpha channel with current brush
+        g.restoreState();
+        
+        // Et on la remet après.... c'est dégueu mais avec Juce on n'a pas mieux.
+        g.addTransform(AffineTransform::scale((float)renderingScale,
+                                              (float)renderingScale));
     }
-    // DEBUG pb MT getGlyphPosition
-    // DEBUG pb MT getGlyphPosition
-    // DEBUG pb MT getGlyphPosition
-    // DEBUG pb MT getGlyphPosition
-    // DEBUG pb MT getGlyphPosition
-    // DEBUG pb MT getGlyphPosition
 }
 
 void DrawableArea::CanvasResized(SceneCanvasComponent* _parentCanvas)
@@ -115,6 +228,11 @@ void DrawableArea::KeepRatio(bool _keepRatio)
 {
 	keepRatio = _keepRatio;
 }
+void DrawableArea::SetRenderingScale(double renderingScale_)
+{
+    // On ne fait rien... Un resize aura seulement peut-être lieu au rendu.
+    renderingScale = renderingScale_;
+}
 
 void DrawableArea::SetFillColour(Colour newColour)
 {
@@ -122,17 +240,48 @@ void DrawableArea::SetFillColour(Colour newColour)
 }
 void DrawableArea::SetName(String newName)
 {
-    name = newName;
+    if (name != newName)
+    {
+        name = newName;
+        renderCachedNameImages(); // au ratio de base (précisé en attribut constant dans la classe)
+    }
 }
 
 void DrawableArea::SetAlpha(float newAlpha)
 {
 	fillOpacity = newAlpha;
 }
-
-void DrawableArea::EnableLowOpacityMode(bool enable)
+float DrawableArea::GetAlpha() const
 {
-    enableLowOpacityMode = enable;
+    switch (opacityMode)
+    {
+        case OpacityMode::Low :
+            return getLowFillOpacity();
+            break;
+            
+        case OpacityMode::Mid :
+            return 0.5f;
+            break;
+            
+        case OpacityMode::High :
+            return 0.8f;
+            break;
+            
+        case OpacityMode::Independent :
+        case OpacityMode::DependingOnExcitement :
+            //std::cout << fillOpacity << std::endl;
+            return fillOpacity;
+            break;
+            
+        default :
+            return 1.0;
+            break;
+    }
+}
+
+void DrawableArea::SetOpacityMode(OpacityMode opacityMode_)
+{
+    opacityMode = opacityMode_;
 }
 
 // = = = = = = = = = = XML import/export = = = = = = = = = =

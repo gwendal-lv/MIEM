@@ -32,7 +32,18 @@ InteractiveEllipse::InteractiveEllipse(int64_t _Id)
 {
 	init();
 }
-
+std::shared_ptr<IDrawableArea> InteractiveEllipse::Clone()
+{
+    auto clone = std::make_shared<InteractiveEllipse>(*this);
+    clone->onCloned();
+    return clone;
+}
+void InteractiveEllipse::onCloned()
+{
+    // On n'appelle que le "onCloned" de la forme générique.
+    InteractiveArea::onCloned();
+    // Pas le "onCloned" du parent graphique Drawable (parent concret)
+}
 
 
 InteractiveEllipse::InteractiveEllipse(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio)
@@ -52,12 +63,6 @@ void InteractiveEllipse::CanvasResized(SceneCanvasComponent* _parentCanvas)
 {
 	DrawableEllipse::CanvasResized(_parentCanvas);
 
-	
-	// Pixel contour points
-	contourPointsInPixels.clear();
-	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scaler(parentCanvas->getWidth(), parentCanvas->getHeight());
-	boost::geometry::transform(contourPoints, contourPointsInPixels, scaler);
-
 	// Finally, we update sub triangles
 	
 	computeSurface(); // mettre dans updateSubTriangle?
@@ -68,9 +73,10 @@ void InteractiveEllipse::computeSurface()
 	surface = a * b * M_PI;
 }
 
-bool InteractiveEllipse::HitTest(double x, double y)
+bool InteractiveEllipse::HitTest(bpt T) const
 {
-	return (contour.contains((float)x, (float)y));
+	return (contour.contains((float)T.get<0>(),
+                             (float)T.get<1>()));
 }
 
 double InteractiveEllipse::ComputeInteractionWeight(bpt /*T*/)

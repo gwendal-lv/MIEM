@@ -10,20 +10,27 @@
 
 #include "SpatPresenter.h"
 
+#include "GraphicSpatSessionManager.h"
 
 #include "SpatModel.h"
 
 
-SpatPresenter::SpatPresenter()
+SpatPresenter::SpatPresenter(SpatView* view_)
+:
+view(view_)
 {
     lastSpatStatesTree = std::make_shared<bptree::ptree>();
     lastSpatScenesTree = std::make_shared<bptree::ptree>();
 }
 
-void SpatPresenter::CompleteInitialisation(IGraphicSessionManager* _graphicSessionManager, SpatModel* _model)
+void SpatPresenter::CompleteInitialisation(GraphicSpatSessionManager* _graphicSessionManager, SpatModel* _model)
 {
+    // Attributs privés
     graphicSessionManager = _graphicSessionManager;
     model = _model;
+    
+    // Init des sous-modules
+    graphicSessionManager->CompleteInitialisation(model->GetSpatInterpolator());
 }
 
 
@@ -52,10 +59,12 @@ void SpatPresenter::LoadSession(std::string filename)
     // Envoi de chaque grande partie à la sous-partie de spat concernée
     // Si n'importe laquelle échoue : on annule tout....
     try {
-        model->GetSpatInterpolator()->SetSpatStatesFromTree(spatTree);
-        graphicSessionManager->SetFromTree(graphicSessionTree);
+        // Config modèle puis modèle
         model->SetConfigurationFromTree(settingsTree.get_child("model"));
+        model->GetSpatInterpolator()->SetSpatStatesFromTree(spatTree);
+        // Config graphique puis presenter
         this->SetConfigurationFromTree(settingsTree);
+        graphicSessionManager->SetFromTree(graphicSessionTree);
     }
     catch (XmlReadException& e)
     {
@@ -70,6 +79,9 @@ void SpatPresenter::LoadSession(std::string filename)
         // Renvoi pour affichage graphique
         throw e;
     }
+    
+    // Update graphique
+    view->SetTitle(lastFilename + " - " + ProjectInfo::projectName);
 }
 void SpatPresenter::SaveSession(std::string _filename, bool /*forceDataRefresh*/)
 {
@@ -80,10 +92,8 @@ void SpatPresenter::SaveSession(std::string _filename, bool /*forceDataRefresh*/
     // Else, we continue only if a filename is currently in use
     else if (lastFilename.empty())
     {
-        FileChooser fileChooser("Chargement d'un fichier",
-                                File::getSpecialLocation(File::SpecialLocationType::userMusicDirectory),
-                                "*.miam",
-                                true);
+        LoadFileChooser fileChooser;
+#ifndef __MIAMOBILE
         if ( fileChooser.browseForFileToSave(true) )
         {
             File resultFile = fileChooser.getResult();
@@ -93,6 +103,13 @@ void SpatPresenter::SaveSession(std::string _filename, bool /*forceDataRefresh*/
         // (dont le contenu sera affiché par le presenter réel, s'il peut)
         else
             throw XmlWriteException("File not saved");
+
+#else
+        /* This function uses pop-ups and
+         * must not be executed form a mobile platform.
+         */
+        assert(0);
+#endif
     }
     
     // Whole properties tree reconstruction
@@ -117,14 +134,19 @@ void SpatPresenter::SaveSession(std::string _filename, bool /*forceDataRefresh*/
     catch (bptree::xml_parser::xml_parser_error& e) {
         throw XmlWriteException(e.what());
     }
+    
+    // Update graphique
+    view->SetTitle(lastFilename + " - " + ProjectInfo::projectName);
 }
-void SpatPresenter::updateSpatStatesTree(std::shared_ptr<bptree::ptree> newTree)
+void SpatPresenter::updateSpatStatesTree(std::shared_ptr<bptree::ptree> newTree, bool autoSave)
 {
     lastSpatStatesTree = newTree;
-    SaveSession();
+    if (autoSave)
+        SaveSession();
 }
-void SpatPresenter::updateSpatScenesTree(std::shared_ptr<bptree::ptree> newTree)
+void SpatPresenter::updateSpatScenesTree(std::shared_ptr<bptree::ptree> newTree, bool autoSave)
 {
     lastSpatScenesTree = newTree;
-    SaveSession();
+    if (autoSave)
+        SaveSession();
 }

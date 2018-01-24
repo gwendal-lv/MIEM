@@ -19,7 +19,9 @@ using namespace Miam;
 
 
 // Default constructor
-View::View(MainContentComponent* _mainContentComponent)
+View::View(DocumentWindow* mainWindow_, MainContentComponent* _mainContentComponent)
+:
+SpatView(mainWindow_)
 {
     mainContentComponent = _mainContentComponent;
     
@@ -57,10 +59,6 @@ void View::ButtonClicked(const String& name)
         answeredAppMode = presenter->appModeChangeRequest(AppMode::EditHardwareConfiguration);
     else if (name == "Start text button")
         answeredAppMode = presenter->appModeChangeRequest(AppMode::MiamSpatPlaying);
-    
-    // This is a behavior : defined in presenter then....
-    /*if (answeredAppMode != AppMode::Null)
-        mainContentComponent->ChangeAppMode(answeredAppMode);*/
 }
 
 
@@ -69,9 +67,9 @@ void View::ChangeAppMode(AppMode newAppMode)
 {
     mainContentComponent->ChangeAppMode(newAppMode);
 }
-void View::DisplayInfo(const std::string& message, bool alsoDisplayInNewWindow)
+void View::DisplayInfo(const std::string& message, int priority, bool alsoDisplayInNewWindow)
 {
-    mainContentComponent->DisplayInfo(message);
+    mainContentComponent->DisplayInfo(message, priority);
 #ifndef __MIAMOBILE
     if (alsoDisplayInNewWindow)
         displayInfoInNewWindow(message);

@@ -69,15 +69,11 @@ void MultiSceneCanvasComponent::paint (Graphics& /*g*/) // unused Graphics conte
 void MultiSceneCanvasComponent::resized()
 {
     // Children display canvas on the bottom
-    childrenCanvas->setSize(getWidth(), getHeight() -24 -space);
+    childrenCanvas->setSize(getWidth(), getHeight() -24 -space); // appelera l'update du canvasinteractor (le manager)
     childrenCanvas->setTopLeftPosition(0, 24 +space);
     
     // Buttons positionning
     updateSceneButtonsBounds();
-    
-    // After children canvas resize, areas are up-to-date.
-    // Then, we update OpenGL copied area
-    canvasManager->OnResized();
 }
 
 
@@ -107,7 +103,10 @@ void MultiSceneCanvasComponent::UpdateSceneButtons(std::vector< std::shared_ptr<
                 sceneChoiceTextButtons[i]->setColour(TextButton::textColourOffId, Colours::white);
             }
             else
-                sceneChoiceTextButtons[i]->setColour(TextButton::buttonColourId, Colours::silver);
+            {
+                sceneChoiceTextButtons[i]->setColour(TextButton::buttonColourId, Colour(0xFF303030));
+                sceneChoiceTextButtons[i]->setColour(TextButton::textColourOffId, Colours::lightgrey);
+            }
         }
         
         // Graphical updates (minimal)

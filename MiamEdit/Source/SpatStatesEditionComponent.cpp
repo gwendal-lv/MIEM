@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.0.2
+  Created with Projucer version: 5.2.0
 
   ------------------------------------------------------------------------------
 
@@ -57,7 +57,7 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     addSpatStateTextButton->setButtonText (TRANS("Add State"));
     addSpatStateTextButton->setConnectedEdges (Button::ConnectedOnRight);
     addSpatStateTextButton->addListener (this);
-    addSpatStateTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
+    addSpatStateTextButton->setColour (TextButton::buttonColourId, Colour (0xfff0f0f0));
     addSpatStateTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     addSpatStateTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
@@ -65,7 +65,7 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     deleteSpatStateTextButton->setButtonText (TRANS("Delete"));
     deleteSpatStateTextButton->setConnectedEdges (Button::ConnectedOnLeft);
     deleteSpatStateTextButton->addListener (this);
-    deleteSpatStateTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
+    deleteSpatStateTextButton->setColour (TextButton::buttonColourId, Colour (0xfff0f0f0));
     deleteSpatStateTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     deleteSpatStateTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
@@ -73,7 +73,7 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     stateUpTextButton->setButtonText (TRANS("Move Up"));
     stateUpTextButton->setConnectedEdges (Button::ConnectedOnRight);
     stateUpTextButton->addListener (this);
-    stateUpTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
+    stateUpTextButton->setColour (TextButton::buttonColourId, Colour (0xfff0f0f0));
     stateUpTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     stateUpTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
@@ -81,7 +81,7 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     stateDownTextButton->setButtonText (TRANS("Down"));
     stateDownTextButton->setConnectedEdges (Button::ConnectedOnLeft);
     stateDownTextButton->addListener (this);
-    stateDownTextButton->setColour (TextButton::buttonColourId, Colour (0x33000000));
+    stateDownTextButton->setColour (TextButton::buttonColourId, Colour (0xfff0f0f0));
     stateDownTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     stateDownTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
@@ -176,9 +176,9 @@ void SpatStatesEditionComponent::resized()
     spatStateGroupComponent->setBounds (0, 4, getWidth() - 0, 52);
     addSpatStateTextButton->setBounds (0 + 8, 4 + 20, 80, 24);
     deleteSpatStateTextButton->setBounds (0 + 88, 4 + 20, 80, 24);
-    stateUpTextButton->setBounds ((((0 + 88) + 80 - -8) + (getWidth() - 476) - -8) + proportionOfWidth (0.1299f) - -8, 4 + 20, 72, 24);
-    stateDownTextButton->setBounds (((((0 + 88) + 80 - -8) + (getWidth() - 476) - -8) + proportionOfWidth (0.1299f) - -8) + 72, 4 + 20, 72, 24);
-    linksInfoLabel->setBounds (((0 + 88) + 80 - -8) + (getWidth() - 476) - -8, 4 + 20, proportionOfWidth (0.1299f), 24);
+    stateUpTextButton->setBounds ((((0 + 88) + 80 - -8) + (getWidth() - 476) - -8) + 132 - -8, 4 + 20, 72, 24);
+    stateDownTextButton->setBounds (((((0 + 88) + 80 - -8) + (getWidth() - 476) - -8) + 132 - -8) + 72, 4 + 20, 72, 24);
+    linksInfoLabel->setBounds (((0 + 88) + 80 - -8) + (getWidth() - 476) - -8, 4 + 20, 132, 24);
     spatStatesComboBox->setBounds ((0 + 88) + 80 - -8, 24, getWidth() - 476, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
@@ -274,7 +274,7 @@ void SpatStatesEditionComponent::UpdateStatesList(std::vector< std::shared_ptr<S
 
     // Addition of items==names one by one
     for (size_t i=0 ; i<newSpatStates.size() ; i++)
-        spatStatesComboBox->addItem(newSpatStates[i]->GetName(), i+1); // Id == Index+1
+        spatStatesComboBox->addItem(newSpatStates[i]->GetName(), (int)i+1); // Id == Index+1
     // Normally : no item selected at this point
     //editionManager->OnSpatStateSelectedById(spatStatesComboBox->getSelectedItemIndex());
 }
@@ -372,31 +372,31 @@ BEGIN_JUCER_METADATA
                   textcol="ff000000" title="Spatialization states list"/>
   <TEXTBUTTON name="Add state text button" id="47bebc9d3a03780d" memberName="addSpatStateTextButton"
               virtualName="" explicitFocusOrder="0" pos="8 20 80 24" posRelativeX="4250d5155a80be70"
-              posRelativeY="4250d5155a80be70" bgColOff="33000000" bgColOn="ffffffff"
+              posRelativeY="4250d5155a80be70" bgColOff="fff0f0f0" bgColOn="ffffffff"
               textCol="ff000000" buttonText="Add State" connectedEdges="2"
               needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Delete spat state text button" id="5f4e8653b868a323" memberName="deleteSpatStateTextButton"
               virtualName="" explicitFocusOrder="0" pos="88 20 80 24" posRelativeX="4250d5155a80be70"
-              posRelativeY="4250d5155a80be70" bgColOff="33000000" bgColOn="ffffffff"
+              posRelativeY="4250d5155a80be70" bgColOff="fff0f0f0" bgColOn="ffffffff"
               textCol="ff000000" buttonText="Delete" connectedEdges="1" needsCallback="1"
               radioGroupId="0"/>
   <TEXTBUTTON name="State up text button" id="43b96ebd16bb5586" memberName="stateUpTextButton"
               virtualName="" explicitFocusOrder="0" pos="-8R 20 72 24" posRelativeX="3577c0e2ccd44371"
-              posRelativeY="4250d5155a80be70" bgColOff="33000000" bgColOn="ffffffff"
+              posRelativeY="4250d5155a80be70" bgColOff="fff0f0f0" bgColOn="ffffffff"
               textCol="ff000000" buttonText="Move Up" connectedEdges="2" needsCallback="1"
               radioGroupId="0"/>
   <TEXTBUTTON name="State down text button" id="e6cf4b99a12776ee" memberName="stateDownTextButton"
               virtualName="" explicitFocusOrder="0" pos="0R 20 72 24" posRelativeX="43b96ebd16bb5586"
-              posRelativeY="4250d5155a80be70" bgColOff="33000000" bgColOn="ffffffff"
+              posRelativeY="4250d5155a80be70" bgColOff="fff0f0f0" bgColOn="ffffffff"
               textCol="ff000000" buttonText="Down" connectedEdges="1" needsCallback="1"
               radioGroupId="0"/>
   <LABEL name="Links info label" id="3577c0e2ccd44371" memberName="linksInfoLabel"
-         virtualName="" explicitFocusOrder="0" pos="-8R 20 12.988% 24"
-         posRelativeX="89ad7c0a3be5a39c" posRelativeY="4250d5155a80be70"
-         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Linked to ? area"
-         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15" kerning="0" bold="0" italic="1"
-         justification="36" typefaceStyle="Italic"/>
+         virtualName="" explicitFocusOrder="0" pos="-8R 20 132 24" posRelativeX="89ad7c0a3be5a39c"
+         posRelativeY="4250d5155a80be70" textCol="ff000000" edTextCol="ff000000"
+         edBkgCol="0" labelText="Linked to ? area" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
+         fontsize="15" kerning="0" bold="0" italic="1" justification="36"
+         typefaceStyle="Italic"/>
   <COMBOBOX name="Spat states combo box" id="89ad7c0a3be5a39c" memberName="spatStatesComboBox"
             virtualName="" explicitFocusOrder="0" pos="-8R 24 476M 24" posRelativeX="5f4e8653b868a323"
             posRelativeY="90b16e3024c520fd" editable="1" layout="33" items="-1 undefined"

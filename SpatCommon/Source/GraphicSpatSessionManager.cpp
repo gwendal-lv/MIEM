@@ -9,6 +9,8 @@
 */
 
 #include "GraphicSpatSessionManager.h"
+
+#include "SpatPresenter.h"
 #include "SpatPolygon.h"
 
 #include "XmlUtils.h"
@@ -70,7 +72,7 @@ void GraphicSpatSessionManager::SetFromTree(bptree::ptree& graphicSessionTree)
             // (seulement les SpatPolygon pour l'instant...)
             for (size_t j=0 ; j<sceneTrees.size() ; j++)
             {
-                std::string canvasAndSceneString = "Canvas " + std::to_string(i) + ", Scene " + std::to_string(j) + ": ";
+                std::string canvasAndSceneString = "Canvas " + boost::lexical_cast<std::string>(i) + ", Scene " + boost::lexical_cast<std::string>(j) + ": ";
                 
                 // Première passe de lecture
                 size_t areasCount;
@@ -108,7 +110,7 @@ void GraphicSpatSessionManager::SetFromTree(bptree::ptree& graphicSessionTree)
                         else if (type == "Exciter")
                         {
                             try {
-                                areas[index] = std::make_shared<Exciter>(area.second, GetCommonTimePoint());
+                                areas[index] = std::make_shared<Exciter>(area.second, GetCommonTimePoint(), Exciter::AdditionnalGrabRadius::Medium);
                             }
                             catch (XmlReadException &e) {
                                 throw XmlReadException(canvasAndSceneString + e.what());
@@ -142,14 +144,15 @@ void GraphicSpatSessionManager::SetFromTree(bptree::ptree& graphicSessionTree)
                 // par le canevas maître
             }
             
-            // Actualisations finales pour le canevas en cours
-            canvasManagers[i]->OnXmlLoadFinished();
-            
         } // fin de condition : si pas de réinitialisation forcée
     } // fin de la boucle : pour chaque canevas
     
-    // Finalement, on remet les bonnes valeurs pour les compteurs
+    // Bonnes valeurs pour les compteurs internes
     nextAreaId = biggestAreaUid + 1; // On passe à l'UID suivant
+    
+    // Actualisations pour chaque canevas
+    for (auto& canvas : canvasManagers)
+        canvas->OnXmlLoadFinished();
 }
 void GraphicSpatSessionManager::LoadSpatAreaLinks(std::shared_ptr<SpatArea> area, std::shared_ptr<bptree::ptree> spatStateTree)
 {

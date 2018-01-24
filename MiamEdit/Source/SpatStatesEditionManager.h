@@ -50,7 +50,7 @@ namespace Miam
         
         // 1 dimension speakers' volumes, faders edition
         size_t GetFadersCount();
-        std::string GetFaderName(size_t _i) {
+        std::string GetFaderName(size_t /*_i*/) {
             throw std::logic_error("Plus utilisé dans la version avec matrices");
          //   return spatInterpolator->GetOutputName(_i);
         }
@@ -100,6 +100,13 @@ namespace Miam
         // - - - - - Settings Management - - - - -
         public :
         void AllowKeyboardEdition(bool allow);
+        
+        
+        // - - - - - Property tree (XML) management - - - - -
+        /// \brief Va demander au Modèle les états de spatialisation courants,
+        /// puis les renvoie.
+        std::shared_ptr<bptree::ptree> GetTree();
+
         
     };
     

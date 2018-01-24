@@ -22,6 +22,8 @@ namespace Miam {
         Null, /**< Undefined state */
         None, /**< No app mode selected (menu bar available only) */
         
+        Startup, /**< During the launch phase of the app */
+        
         Loading, /**< Between modes change */
         
         EditSpeakers, /**< Normal single speakers editing mode */

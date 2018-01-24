@@ -20,6 +20,16 @@ namespace bptree = boost::property_tree;
 
 namespace Miam
 {
+    class ForceQuitException : public std::runtime_error
+    {
+        public :
+        // Juste une runtime castée...
+        ForceQuitException() : std::runtime_error(std::string("ForceQuitException"))
+        {}
+        ForceQuitException(std::string errorString) : std::runtime_error(errorString)
+        {}
+    };
+    
     
     class XmlReadException : public std::runtime_error
     {

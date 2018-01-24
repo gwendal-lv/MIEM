@@ -24,7 +24,12 @@ namespace Miam {
         
         Loading, /**< Between modes change */
         
-        Playing /**< normally spatialising */
+        MainMenu, /**< Menu menu is displayed, waiting for a user action */
+        LoadingFile, /**< A Native File Chooser is currently being displayed (for loading) */
+        //SavingFile, /**< A Native File Chooser is currently being displayed (for saving) */
+        
+        Playing, /**< normally spatialising, interactive canvases (playgrounds) displayed */
+        Stopped, /**< Spatialisation is currently stopped, canvases are displayed but disabled */
         
     };
     

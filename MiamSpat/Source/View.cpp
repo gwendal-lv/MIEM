@@ -16,9 +16,12 @@ using namespace Miam;
 
 
 // Default constructor
-View::View(MainContentComponent* _mainContentComponent)
+View::View(DocumentWindow* mainWindow_, MainContentComponent* mainContentComponent_)
+:
+SpatView(mainWindow_)
 {
-    mainContentComponent = _mainContentComponent;
+    mainWindow = mainWindow_;
+    mainContentComponent = mainContentComponent_;
     
     
     mainContentComponent->SetMiamView(this);
@@ -49,35 +52,21 @@ void View::CompleteInitialization(GraphicSessionManager* _graphicSessionManager,
 void View::ButtonClicked(const String& /*name*/)
 {
     throw std::runtime_error("Unimplemented behavior on button click");
-    /*
-    AppMode answeredAppMode = AppMode::Null;
-    if (name == "Speakers text button")
-        answeredAppMode = presenter->appModeChangeRequest(AppMode::EditSpeakers);
-    else if (name == "Speakers Groups text button")
-        answeredAppMode = presenter->appModeChangeRequest(AppMode::EditSpeakersGroups);
-    else if (name == "Scenes text button")
-        answeredAppMode = presenter->appModeChangeRequest(AppMode::EditSpatScenes);
-    else if (name == "Hardware Configuration text button")
-        answeredAppMode = presenter->appModeChangeRequest(AppMode::EditHardwareConfiguration);
-    else if (name == "Start text button")
-        answeredAppMode = presenter->appModeChangeRequest(AppMode::MiamSpatPlaying);
-    */
-    
-    // This is a behavior : defined in presenter then....
-    /*if (answeredAppMode != AppMode::Null)
-        mainContentComponent->ChangeAppMode(answeredAppMode);*/
 }
 
 
 
 void View::ChangeAppMode(AppMode newAppMode)
 {
-    std::cerr << "Changement de mode à implémenter (mode " << (int)(newAppMode) << std::endl;
-    //throw std::runtime_error("Unimplemented behavior on app mode change");
+    // Pas de traitement global ! On laisse toujours le fond visible.
+    // Retransmission simple au composant le + concerné....
+    if (mainContentComponent)
+        if (mainContentComponent->GetBackgroundComponent())
+            mainContentComponent->GetBackgroundComponent()->ChangeAppMode(newAppMode);
 }
 void View::DisplayInfo(const String& message)
 {
-    throw std::runtime_error("Unimplemented behavior on info display request (info = " + message.toStdString());
+    mainContentComponent->GetBackgroundComponent()->DisplayInfo(message);
 }
 
 

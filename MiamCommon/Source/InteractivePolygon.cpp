@@ -13,6 +13,8 @@
 
 #include "MiamMath.h"
 
+#include "InteractionParameters.h"
+
 using namespace Miam;
 
 
@@ -44,6 +46,20 @@ DrawablePolygon(_Id, _center, _contourPoints, _fillColour)
 }
 
 
+std::shared_ptr<IDrawableArea> InteractivePolygon::Clone()
+{
+    auto clone = std::make_shared<InteractivePolygon>(*this);
+    clone->onCloned();
+    return clone;
+}
+
+void InteractivePolygon::onCloned()
+{
+    // On n'appelle que le "onCloned" de la forme générique.
+    InteractiveArea::onCloned();
+    // Pas le "onCloned" du parent graphique Drawable (parent concret)
+}
+
 
 void InteractivePolygon::init()
 {
@@ -57,15 +73,8 @@ void InteractivePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 {
     DrawablePolygon::CanvasResized(_parentCanvas);
     
-    
-    // Pixel contour points
-	contourPointsInPixels.clear();
-	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scale(parentCanvas->getWidth(), parentCanvas->getHeight());
-	boost::geometry::transform(contourPoints, contourPointsInPixels, scale);
-    
     // Finally, we update sub triangles
     updateSubTriangles();
-	computeSurface(); // mettre dans updateSubTriangle?
 }
 
 
@@ -77,46 +86,76 @@ void InteractivePolygon::updateSubTriangles()
     subTriangles.clear();
 	
 	// We begin by the annoying one
-	subTriangles.push_back(SubTriangle(centerInPixels, contourPointsInPixels.outer().back(), contourPointsInPixels.outer().front()));
+    // ATTENTION les contour points forment un polygone boost FERMÉ
+    // c-à-d que le premier et le dernier point sont les mêmes
+	subTriangles.push_back(SubTriangle(centerInPixels,
+                                       contourPointsInPixels.outer().at(contourPointsInPixels.outer().size()-2), // avant-dernier, car premier et dernier sont identiques
+                                   contourPointsInPixels.outer().front()));
 	// Then add the others
-	for (size_t i = 0; i <contourPointsInPixels.outer().size() - 1; i++)
+	for (size_t i = 0; i <contourPointsInPixels.outer().size() - 2; i++)
 	{
 		subTriangles.push_back(SubTriangle(centerInPixels, contourPointsInPixels.outer().at(i), contourPointsInPixels.outer().at(i+1)));
 	}
+    
+    // Actualisation après création des triangles
+    computeSurface();
+    longestDistanceFromCenter = 0.0;
+    for (auto&& subTriangle : subTriangles)
+    {
+        auto currentDistance = subTriangle.GetLongestDistanceFromG();
+        if (longestDistanceFromCenter < currentDistance)
+            longestDistanceFromCenter = currentDistance;
+    }
 }
 
 void InteractivePolygon::computeSurface()
 {
-	double S = 0;
+	surface = 0;
 	for (size_t i = 0; i < subTriangles.size(); ++i)
-		S += subTriangles[i].getSurface();
-	surface = S;
+		surface += subTriangles[i].getSurface();
 }
 
 
 // ===== INTERACTION COMPUTING =====
 
 
-bool InteractivePolygon::HitTest(double x, double y)
+bool InteractivePolygon::HitTest(bpt T) const
 {
-    return (contour.contains((float)x, (float)y));
+    return (contour.contains((float)T.get<0>(),
+                             (float)T.get<1>()));
 }
 
 
 
 double InteractivePolygon::ComputeInteractionWeight(bpt T)
 {
+    double distanceFromCenter = boost::geometry::distance(centerInPixels,T);
+    
     double weight = 0.0;
     bpt GT(T.get<0>() - centerInPixels.get<0>(), T.get<1>() - centerInPixels.get<1>());
     
-    // if at center (at 0.5²pixel²) (to prevent 0/0 operations)
-    if (boost::geometry::distance(bpt(0,0),GT)<0.25)
+    // if at center (to prevent 0/0 operations)
+    if (distanceFromCenter < 0.5)
         weight = 1.0;
     // else, we can compute an angle using atan and the 4 quadrants
     else
     {
+        // Angle à partir de l'axe x (horizontal vers la droite)
+        // Dans le sens trigo avec l'axe y qui va vers le bas
+        // (et donc dans le horaire avec les conventions math habituelles)
         double angle = Math::ComputePositiveAngle(GT);
         weight = findSubTriangle(angle).ComputeInteractionWeight(T);
+        
+        // Influence *normalisée* de la distance par rapport au centre
+        double alpha = distanceFromCenter/longestDistanceFromCenter;
+        // Application d'une disto qui diminue le poids des FAIBLES poids
+        // quand on est LOIN du centre -> supprimée
+        //weight = std::pow(weight,
+        //                  1.0 + Miam_DistanceFromCenterInfluenceFactor_1 * alpha);
+        // Application d'une disto qui augmente le poids des FORTS poids
+        // quand on est PROCHE du centre
+        weight = std::pow(weight,
+                          1.0 - InteractionParameters::InfluenceOfDistanceFromCenter * (1.0-alpha) );
     }
     
     return weight;

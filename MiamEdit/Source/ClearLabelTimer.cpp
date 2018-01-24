@@ -14,15 +14,25 @@
 using namespace Miam;
 
 
-
-void ClearLabelTimer::StartTimer(Label* _label)
+void ClearLabelTimer::SetLabelToClearAfterTimeout(Label* label_)
 {
-    label = _label;
+    label = label_;
+}
+
+void ClearLabelTimer::StartTimer()
+{
     juce::Timer::startTimer(IntervalInMilliseconds);
 }
 
 void ClearLabelTimer::timerCallback()
 {
     stopTimer();
-    label->setText("...", NotificationType::sendNotificationAsync);
+    
+    if (label)
+    {
+        label->setText("...", NotificationType::sendNotificationAsync);
+        currentDisplayedInfoPriority = -1; // on se met en attente d'une info
+    }
+    else
+        throw std::runtime_error("Label to clear is not set within class ClearLabelTimer");
 }

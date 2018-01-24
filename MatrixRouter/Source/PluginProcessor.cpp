@@ -411,10 +411,15 @@ void MatrixRouterAudioProcessor::processParamChange(AsyncParamChange& paramChang
             if (0 <= paramChange.Id1
                 && paramChange.Id1 < JucePlugin_MaxNumInputChannels
                 && 0 <= paramChange.Id2
-                && paramChange.Id2 < JucePlugin_MaxNumOutputChannels
-                && 0.0f <= paramChange.FloatValue
-                && paramChange.FloatValue <= Miam_MaxVolume) // +6dB
+                && paramChange.Id2 < JucePlugin_MaxNumOutputChannels)
             {
+                // Le volume n'est pas considéré "corrompu" car il faut tolérer
+                // les erreurs d'arrondis avec les nombres en virgule flottante !
+                if (paramChange.FloatValue < 0.0f)
+                    paramChange.FloatValue = 0.0f;
+                else if (Miam_MaxVolume < paramChange.FloatValue)
+                    paramChange.FloatValue = Miam_MaxVolume; // normalement +6dB
+                
                 routingMatrix[paramChange.Id1][paramChange.Id2] = paramChange.FloatValue;
                 // no ramp on init values
                 if (origin != DataOrigin::InitialValue)

@@ -28,6 +28,9 @@ namespace Miam
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
+        protected :
+        virtual std::shared_ptr<SpatArea> getCastedSharedFromThis() override
+        { return std::static_pointer_cast<SpatPolygon>(shared_from_this()); }
         
         
         
@@ -55,7 +58,12 @@ namespace Miam
         
         virtual ~SpatPolygon() {}
         
-        virtual IDrawableArea* Clone() const override {return new SpatPolygon(*this);}
+        virtual std::shared_ptr<IDrawableArea> Clone() override
+        {
+            auto clone = std::make_shared<SpatPolygon>(*this);
+            clone->onCloned();
+            return clone;
+        }
         
         
         

@@ -166,6 +166,7 @@ namespace Miam {
         
         std::chrono::time_point<std::chrono::steady_clock> GetCommonTimePoint() const;
         
+        void DisplayInfo(String info, int priority = 0);
         
         
         
@@ -180,15 +181,17 @@ namespace Miam {
         /// \brief Can be called alone, or from the MultiArea version of this function
         /// (for optimization purposes).
         ///
-        /// Should notify the Graphic Session Manager only when directly called.
-        void handleAndSendAreaEventSync(std::shared_ptr<AreaEvent> areaE, bool notifyGraphicSessionManager = true);
+        /// Should notify the Graphic Session Manager only when directly called (not when called from
+        /// the multi-area event version).
+        void handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>& areaE, bool notifyGraphicSessionManager = true);
         /// \brief Splits a multi-area event into the sub area events. The main event is also turned into
         /// a single area event.
         ///
         /// Might be called from the AreaEvent-typed function
-        void handleAndSendMultiAreaEventSync(std::shared_ptr<MultiAreaEvent> multiAreaE);
+        void handleAndSendMultiAreaEventSync(std::shared_ptr<MultiAreaEvent>& multiAreaE);
         
-        
+        // Peut être override par les classes dérivées
+        virtual void processSingleAreaEventSync(std::shared_ptr<AreaEvent>& areaE);
         
         // - - - - - Thread-safe methods (for OpenGL async drawing) - - - - -
         
@@ -216,9 +219,9 @@ namespace Miam {
         
         // ------ Scenes managing : Add and Delete ------
         /// \brief Adds a Miam::EditableScene
-        virtual void AddScene(std::string name);
+        virtual void AddScene(std::string name, bool selectNewScene = false);
         /// \brief Adds a Miam::EditableScene
-        virtual void AddScene(std::shared_ptr<EditableScene> newScene);
+        virtual void AddScene(std::shared_ptr<EditableScene> newScene, bool selectNewScene = false);
         /// \Returns wether the selected scene has been deleted or not (if it
         /// was the last one).
         virtual bool DeleteScene();

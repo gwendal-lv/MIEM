@@ -42,7 +42,12 @@ namespace Miam {
 			bpt _center, bpolygon& _contourPoints,
 			Colour _fillColour);
         
-        virtual IDrawableArea* Clone() const override {return new EditablePolygon(*this);}
+        virtual std::shared_ptr<IDrawableArea> Clone() override
+        {
+            auto clone = std::make_shared<EditablePolygon>(*this);
+            clone->onCloned();
+            return clone;
+        }
         
         // Construction helpers
         private :

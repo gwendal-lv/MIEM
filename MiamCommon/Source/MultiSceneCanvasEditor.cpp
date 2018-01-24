@@ -42,7 +42,7 @@ void MultiSceneCanvasEditor::SetMode(CanvasManagerMode _mode)
             if (_mode != CanvasManagerMode::ExciterSelected
                 && _mode != CanvasManagerMode::ExcitersEdition)
             {
-                selectedScene->SaveCurrentExcitersToInitialExciters();
+                selectedScene->SaveCurrentExcitersToInitialExciters(false); // SANS supprimer les courants
             }
             break;
             
@@ -62,7 +62,7 @@ std::shared_ptr<IEditableArea> MultiSceneCanvasEditor::GetSelectedArea()
 {
     if (selectedScene)
         return selectedScene->GetSelectedArea();
-    else throw std::runtime_error("Cannot get the selected area : no scene selected on canvas" + std::to_string(selfId));
+    else throw std::runtime_error("Cannot get the selected area : no scene selected on canvas" + boost::lexical_cast<std::string>(selfId));
 }
 
 void MultiSceneCanvasEditor::SetSelectedSceneName(std::string _name)
@@ -122,11 +122,13 @@ bool MultiSceneCanvasEditor::MoveSelectedSceneTowardsLast()
 // ------ Areas managing : Add and Delete ------
 void MultiSceneCanvasEditor::AddArea(std::shared_ptr<IEditableArea> newArea)
 {
-    handleAndSendAreaEventSync(selectedScene->AddArea(newArea));
+    auto areaE = selectedScene->AddArea(newArea);
+    handleAndSendAreaEventSync(areaE);
 }
 void MultiSceneCanvasEditor::AddDefaultArea(uint64_t nextAreaId)
 {
-    handleAndSendAreaEventSync(selectedScene->AddDefaultArea(nextAreaId));
+    auto areaE = selectedScene->AddDefaultArea(nextAreaId);
+    handleAndSendAreaEventSync(areaE);
 }
 void MultiSceneCanvasEditor::SetSelectedArea(std::shared_ptr<IEditableArea> newSelectedArea)
 {
@@ -138,8 +140,11 @@ void MultiSceneCanvasEditor::SetSelectedArea(std::shared_ptr<IEditableArea> newS
 void MultiSceneCanvasEditor::DeleteSelectedArea()
 {
     if (selectedScene)
-        handleAndSendAreaEventSync(selectedScene->DeleteSelectedArea());
-    else throw std::runtime_error("Cannot get the selected area : no scene selected on canvas" + std::to_string(selfId));
+    {
+        auto areaE = selectedScene->DeleteSelectedArea();
+        handleAndSendAreaEventSync(areaE);
+    }
+    else throw std::runtime_error("Cannot get the selected area : no scene selected on canvas" + boost::lexical_cast<std::string>(selfId));
     
     //canvasComponent->repaint(); // useless with OpenGL
 }

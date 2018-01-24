@@ -135,7 +135,9 @@ namespace Miam
         /// \brief Displays an informative message sent by one of the managed
         /// objects (Miam::EditableScene, Miam::MultiSceneCanvasEditor,
         /// Miam::InteractiveArea, ...)
-        virtual void DisplayInfo(String info) = 0;
+        ///
+        /// Les infos de + forte priorité écraseront celles de moins forte priorité.
+        virtual void DisplayInfo(String info, int priority = 0) = 0;
         
         
         // - - - - - Events from a member of the Presenter module itself - - - - -

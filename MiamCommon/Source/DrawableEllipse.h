@@ -23,8 +23,13 @@ typedef boost::geometry::model::polygon<bpt> bpolygon;
 
 namespace Miam
 {
-	class DrawableEllipse : public Miam::DrawableArea
+	class DrawableEllipse : public DrawableArea
 	{
+        private :
+        /// \brief Nombre de points définissant la forme pseudo-elliptique dessinée
+        /// par Juce via OpenGL
+        const int ellipseVerticesCount = 20;
+        
 		protected :
 			bpolygon contourPoints;
 			Path contour;
@@ -33,7 +38,6 @@ namespace Miam
             DrawableEllipse(bptree::ptree & areaTree);
 			DrawableEllipse(int64_t _Id);
 			DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio = 1.77777777f);
-			virtual IDrawableArea* Clone() const override { return new DrawableEllipse(*this); }
 
 		private:
 			void createJucePolygon(int width = 160, int height = 90);
@@ -42,6 +46,13 @@ namespace Miam
 		/// \brief Destructor.
 		virtual ~DrawableEllipse();
         
+        /// \brief Clonage
+        virtual std::shared_ptr<IDrawableArea> Clone() override
+        {
+            auto clone = std::make_shared<DrawableEllipse>(*this);
+            clone->onCloned();
+            return clone;
+        }
         
         // - - - - - XML import/export - - - - -
         /// \returns "Ellipse" even if it is actually a circle.
@@ -59,6 +70,8 @@ namespace Miam
 		void recreateContourPoints(int width, int height);
 
 		protected:
+        // ATTENTION a et b ne sont pas le grand rayon et le petit rayon
+        // (demi grand axe et demi petit axe)... à corriger.
 			double a, b; // grand axe et petit axe
 			double rotationAngle; // angle d'inclinaison de l'ellipse
 			float xScale, yScale;

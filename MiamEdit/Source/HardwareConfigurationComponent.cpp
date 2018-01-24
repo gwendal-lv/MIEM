@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.0.2
+  Created with Projucer version: 5.2.0
 
   ------------------------------------------------------------------------------
 
@@ -222,6 +222,7 @@ void HardwareConfigurationComponent::buttonClicked (Button* buttonThatWasClicked
     if (buttonThatWasClicked == keyboardToggleButton)
     {
         //[UserButtonCode_keyboardToggleButton] -- add your button handler code here..
+        settingsManager->OnAllowKeyboardEdition(keyboardToggleButton->getToggleState());
         //[/UserButtonCode_keyboardToggleButton]
     }
 
@@ -247,7 +248,7 @@ void HardwareConfigurationComponent::textEditorReturnKeyPressed(TextEditor& edit
     else if (&editorThatHasChanged == udpPortTextEditor.get())
     {
         bool enteredValueIsCorrect = true;
-        int parsedValue;
+        int parsedValue = -1;
         // Value stays visible only if correct
         try {
             parsedValue = std::stoi(udpPortTextEditor->getText().toStdString());

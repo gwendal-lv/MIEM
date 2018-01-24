@@ -177,7 +177,7 @@ namespace Miam
                 spatMatrix->GetIterator() < spatMatrix->GetEndIterator();
                 spatMatrix->IncIterator() )
             {
-                SpatMatrix::Index2d current2dCoord = spatMatrix->GetIterator2dCoord();
+                Index2d current2dCoord = spatMatrix->GetIterator2dCoord();
                 double sliderValue = Decibels::gainToDecibels(spatMatrix->GetIteratorValue());
                 SetSliderValue((int)current2dCoord.i, (int)current2dCoord.j,
                                sliderValue);
@@ -204,7 +204,7 @@ namespace Miam
         
         void resized() override
         {
-            setSize(maxRowsCount*itemW, maxColsCount*itemH);
+            setSize((int)maxRowsCount*itemW, (int)maxColsCount*itemH);
         }
         
         void RepositionGuiObjects()
@@ -216,7 +216,7 @@ namespace Miam
                 // j repesents a *graphical* column (= matrix col now...)
                 for (int j=0 ; j<maxColsCount ; j++)
                 {
-                    int idx = i*maxRowsCount + j; // graphically one col further than the matrix
+                    int idx = i*(int)maxRowsCount + j; // graphically one col further than the matrix
                     sliders[idx]->setBounds((int)round(j*itemW), (int)round(i*itemH), (int)round(itemW), (int)round(itemH));
                 }
             }
@@ -238,8 +238,8 @@ namespace Miam
                 {
                     // Slider (i,j)
                     sliders[idx(i,j)] = new MatrixSlider();
-                    sliders[idx(i,j)]->setName("Slider ID=" + std::to_string(idx(i,j)) + " : row=" + std::to_string(i) + " col=" + std::to_string(j));
-                    sliders[idx(i,j)]->setComponentID(std::to_string(idx(i,j)));
+                    sliders[idx(i,j)]->setName("Slider ID=" + boost::lexical_cast<std::string>(idx(i,j)) + " : row=" + boost::lexical_cast<std::string>(i) + " col=" + boost::lexical_cast<std::string>(j));
+                    sliders[idx(i,j)]->setComponentID(boost::lexical_cast<std::string>(idx(i,j)));
                     initAndAddSlider(sliders[idx(i,j)]);
                     
                     sliders[idx(i,j)]->SetPropertiesFromVolume();

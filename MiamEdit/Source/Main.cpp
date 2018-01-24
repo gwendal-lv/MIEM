@@ -50,24 +50,24 @@ public:
         // Instanciation of the 3 main parts of the application : Model, Presenter, View
         MainContentComponent* mainContentComponent = dynamic_cast<MainContentComponent*>(mainWindow->getChildComponent(0));
         if (mainContentComponent)
-            view = new Miam::View(mainContentComponent);
+            view = new Miam::View(mainWindow, mainContentComponent);
         else
             throw std::runtime_error("First child of Main Window is not a MainContentComponent...");
         presenter = new Miam::Presenter(view); // Will reference itself to the View module
-        model = new Miam::Model(presenter, commandLine.toStdString());// Will reference itself to the Presenter module
+        model = new Miam::Model(presenter);// Will reference itself to the Presenter module
         
-        // TAILLE INITIALE
-        // À CHANGER SELON LA PLATEFORME
-        //setSize(800, 600);
-        
+        // [] permet de préciser la liste de capture
+        // (& signifie "tout ce qui est accessible, et par réf ; = veut dire la même chose avec copies)
+        // () permet de préciser la liste des arguments
+        // et {} est le corps de la fonction lambda
+        Timer::callAfterDelay(100, [=] ()
+                              { presenter->ManageInitialSession(commandLine.toStdString()); } );
     }
 
+    public :
     void shutdown() override
     {
         // Add your application's shutdown code here..
-        
-        // Sauvegarde avec de quitter
-        presenter->SaveSession("", true); // current filename, forced data refresh
         
         // Destruction des modules
         delete model;
@@ -80,6 +80,8 @@ public:
     //==============================================================================
     void systemRequestedQuit() override
     {
+        presenter->OnShutdownRequest();
+        
         // This is called when the app is being asked to quit: you can ignore this
         // request and let the app carry on running, or call quit() to allow the app to close.
         quit();

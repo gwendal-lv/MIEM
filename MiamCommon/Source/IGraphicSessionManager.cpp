@@ -81,7 +81,8 @@ void IGraphicSessionManager::SetSelectedCanvas(std::shared_ptr<MultiSceneCanvasI
         
         //setMode(GraphicSessionMode::CanvasSelected);
         
-        multiCanvasComponent->resized();
+        // Ligne ci-dessous pose un soucis de re-dessin à chaque clic sur un excitateur...
+        //multiCanvasComponent->resized();
     }
     else
     {
@@ -165,7 +166,7 @@ IGraphicSessionManager::ExtractCanvasesSubTrees(bptree::ptree& canvasesTree)
         canvasesCount++;
     }
     if (canvasesCount != canvasManagers.size())
-        throw XmlReadException(std::to_string(canvasesCount) + " <canvas> elements found, but exactly " + std::to_string(canvasManagers.size()) + " are required");
+        throw XmlReadException(boost::lexical_cast<std::string>(canvasesCount) + " <canvas> elements found, but exactly " + boost::lexical_cast<std::string>(canvasManagers.size()) + " are required");
     return canvasTrees;
 }
 

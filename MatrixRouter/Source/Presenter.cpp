@@ -21,6 +21,8 @@
 
 #include "ModelDefines.h" // Enums for lock-free communication
 
+#include "HelpContents.h"
+
 using namespace Miam;
 
 
@@ -33,7 +35,7 @@ Presenter::Presenter(MatrixRouterAudioProcessor& _model, std::shared_ptr<Network
 oscAddressCopy(networkModel->GetOscAddress()) // thread-safe at this point
 {
     oscMatrixComponent = new OscMatrixComponent(this);
-    oscMatrixComponent->SetNetworkHelpContent(networkModel->GetOscCommandsHelp());
+    oscMatrixComponent->SetNetworkHelpContent(HelpContents::GetOscCommandsHelp());
 }
 
 Presenter::~Presenter()

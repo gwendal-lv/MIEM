@@ -28,7 +28,8 @@ using namespace Miam;
 
 GraphicSessionManager::GraphicSessionManager(View* _view, Presenter* presenter_) :
     GraphicSpatSessionManager(presenter_),
-    view(_view)
+    view(_view),
+	mode(GraphicSessionMode::Null)
 {
     setMode(GraphicSessionMode::Loading);
     
@@ -50,14 +51,17 @@ GraphicSessionManager::GraphicSessionManager(View* _view, Presenter* presenter_)
     for (size_t i=0 ; i<canvasManagers.size() ; i++)
     {
         // After canvases are created : creation of 1 empty scene (to avoid bugs...)
-        canvasManagers[i]->AddScene("[scène vide]");
+        // On sélectionne directement cette scène
+        canvasManagers[i]->AddScene("[scène vide]", true);
     }
     
     // Finally, state of the presenter
     setMode(GraphicSessionMode::Loaded);
     // And states of the canvases
     for (size_t i=0 ; i<canvasManagers.size() ; i++)
+    {
         canvasManagers[i]->SetMode(CanvasManagerMode::Unselected);
+    }
     
     
     // SÉLECTION/CHARGEMENT D'UN TRUC PAR DÉFAUT
@@ -115,9 +119,9 @@ void GraphicSessionManager::SetSelectedCanvas(std::shared_ptr<MultiSceneCanvasIn
         selectedCanvas = _selectedCanvas;
         getSelectedCanvasAsEditable(); // just for the internal test of "editability"
         
-        // To force updates
-        selectedCanvas->SelectScene(selectedCanvas->GetSelectedSceneId());
-        //selectedCanvas->SetMode(CanvasManagerMode::SceneOnlySelected);
+        // To force updates (PLUS MAINTENANT !!!!)
+        //selectedCanvas->SelectScene(selectedCanvas->GetSelectedSceneId());
+        selectedCanvas->SetMode(CanvasManagerMode::SceneOnlySelected);
     
         setMode(GraphicSessionMode::CanvasSelected);
     }
@@ -196,7 +200,7 @@ void GraphicSessionManager::setMode(GraphicSessionMode newMode)
             sceneEditionComponent->SetInitialStateGroupReduced(true);
             sceneEditionComponent->resized(); // right menu update
             
-            view->DisplayInfo("Editing a Canvas and its Scenes");
+            view->DisplayInfo("Edition of a canvas and its scenes.");
             break;
             
         case GraphicSessionMode::AreaSelected :
@@ -215,7 +219,7 @@ void GraphicSessionManager::setMode(GraphicSessionMode newMode)
             sceneEditionComponent->SetAreaColourValue(GetSelectedArea()->GetFillColour());
             sceneEditionComponent->resized(); // right menu update
             
-            view->DisplayInfo("Editing an Area");
+            view->DisplayInfo("Edition of an area.");
             break;
             
             /*
@@ -231,6 +235,8 @@ void GraphicSessionManager::setMode(GraphicSessionMode newMode)
             sceneEditionComponent->SetInitialStateGroupReduced(false);
             sceneEditionComponent->SetDeleteExciterButtonEnabled(false);
             sceneEditionComponent->resized(); // right menu update
+            
+            view->DisplayInfo("Edition of the exciters' initial position.");
             break;
         case GraphicSessionMode::ExciterSelected :
             sceneEditionComponent->SetDeleteExciterButtonEnabled(true);
@@ -333,9 +339,9 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 
 // ===== EVENTS TO VIEW =====
 
-void GraphicSessionManager::DisplayInfo(String info)
+void GraphicSessionManager::DisplayInfo(String info, int priority)
 {
-    view->DisplayInfo(info.toStdString());
+    view->DisplayInfo(info.toStdString(), priority);
 }
 
 
@@ -348,7 +354,9 @@ void GraphicSessionManager::DisplayInfo(String info)
 void GraphicSessionManager::OnAddScene()
 {
     if (selectedCanvas)
-        selectedCanvas->AddScene("Scene " + std::to_string(selectedCanvas->GetScenesCount()+1));
+        selectedCanvas->AddScene("Scene " + boost::lexical_cast<std::string>(selectedCanvas->GetScenesCount()+1),
+                                 true); // ajout avec sélection
+    
     else throw std::runtime_error("No canvas selected : cannot add a scene (no canvas should be selected at this point");
 }
 void GraphicSessionManager::OnDeleteScene()
@@ -420,7 +428,8 @@ void GraphicSessionManager::OnAddArea(int areaType)
         else
             throw std::logic_error("Cannot add something else than polygons at the moment");
         // Actual addition here
-        auto spatPolygon = std::make_shared<SpatPolygon>(GetNextAreaId(), bpt::point(0.5, 0.5), polygonPointsCount, 0.15, Colours::grey, ratio);
+        bpt centerPoint(0.5, 0.5);
+        auto spatPolygon = std::make_shared<SpatPolygon>(GetNextAreaId(), centerPoint, polygonPointsCount, 0.15, Colours::grey, ratio);
         getSelectedCanvasAsEditable()->AddArea(spatPolygon);
         selectedCanvas->CallRepaint();
     }
@@ -495,7 +504,7 @@ void GraphicSessionManager::OnCopyArea()
         if (localAreaToCopy)
             areaToCopy = localAreaToCopy;
         else
-            throw std::runtime_error("Cannot copy an area... No area selected in SceneCanvasComponent::Id" + std::to_string(selectedCanvas->GetId()));
+            throw std::runtime_error("Cannot copy an area... No area selected in SceneCanvasComponent::Id" + boost::lexical_cast<std::string>(selectedCanvas->GetId()));
     }
     else
         throw std::runtime_error("Cannot copy an area if no canvas is selected...");
@@ -510,11 +519,14 @@ void GraphicSessionManager::OnPasteArea()
         if (areaToCopy)
         {
             // On va forcer l'appel au constructeur de copie
-            std::shared_ptr<IDrawableArea> newDrawbleArea(areaToCopy->Clone());
-            std::shared_ptr<IEditableArea> newArea;
+            // Création du shared_ptr directe (c'est seulement à partir de là
+            // que l'on pourra appeler shared_from_this() ) :
+            std::shared_ptr<IDrawableArea> newDrawbleArea = areaToCopy->Clone();
+            std::shared_ptr<SpatArea> newArea;
+            
             // If cast does not work...
-            if (!(newArea = std::dynamic_pointer_cast<IEditableArea>(newDrawbleArea)))
-                throw std::runtime_error("Area to copy canot be casted to an editable type");
+            if (!(newArea = std::dynamic_pointer_cast<SpatArea>(newDrawbleArea)))
+                throw std::runtime_error("Area to copy canot be casted to a spat type");
             
             // Puis : même procédure pour les cas possibles
             // Modification du polygone copié

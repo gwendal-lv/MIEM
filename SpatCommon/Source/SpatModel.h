@@ -73,7 +73,7 @@ namespace Miam
         SpatType GetSpatType() {return spatInterpolator->GetSpatType();}
         std::shared_ptr<SpatInterpolator<double>> GetSpatInterpolator() {return spatInterpolator;}
         /// \brief Only 1 spat sender (index 0) available at the moment.
-        std::shared_ptr<SpatSender<double>> GetSpatSender(size_t index)
+        std::shared_ptr<SpatSender<double>> GetSpatSender(size_t /*index*/)
         { return spatSenders[0]; };
         
         /// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -113,7 +113,7 @@ namespace Miam
         public :
         /// \brief Returns the property tree describing all model settings data
         std::shared_ptr<bptree::ptree> GetConfigurationTree();
-        void SetConfigurationFromTree(bptree::ptree& tree);
+        virtual void SetConfigurationFromTree(bptree::ptree& tree);
         
     };
     

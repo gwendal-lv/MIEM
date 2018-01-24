@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.0.2
+  Created with Projucer version: 5.2.0
 
   ------------------------------------------------------------------------------
 
@@ -56,9 +56,9 @@ namespace Miam
 */
 class SceneEditionComponent  : public Component,
                                public TextEditorListener,
-                               public ButtonListener,
-                               public SliderListener,
-                               public ComboBoxListener
+                               public Button::Listener,
+                               public Slider::Listener,
+                               public ComboBox::Listener
 {
 public:
     //==============================================================================
@@ -205,7 +205,6 @@ private:
     ScopedPointer<GroupComponent> initialStateGroupComponent;
     ScopedPointer<TextButton> addExciterTextButton;
     ScopedPointer<TextButton> deleteExciterTextButton;
-    ScopedPointer<TextButton> editInitialStateTextButton;
     ScopedPointer<Label> sceneNameLabel;
     ScopedPointer<TextEditor> sceneNameTextEditor;
     ScopedPointer<ToggleButton> excitersEditionButton;

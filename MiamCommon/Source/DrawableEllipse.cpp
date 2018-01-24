@@ -9,7 +9,7 @@
 */
 
 
-#include <cmath>
+#include <MiamMath.h> // plutôt que cmath simple, sinon problème avec M_PI sous VS2015
 
 #include "DrawableEllipse.h"
 #include "SceneCanvasComponent.h"
@@ -39,8 +39,6 @@ DrawableArea(areaTree)
         rotationAngle = 0.0;
     }
     
-	isFilled = true;
-
     // Actualisation graphique
     createJucePolygon();
 }
@@ -56,16 +54,14 @@ DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b,
 {
 	rotationAngle = 0.0;
 	
-	xScale = computeXScale(_canvasRatio);
-	yScale = computeYScale(_canvasRatio);
+	xScale = (float) computeXScale(_canvasRatio);
+	yScale = (float)computeYScale(_canvasRatio);
 
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() - (b / 2)*yScale));
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>() + (a / 2)*xScale, center.get<1>()));
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() + (b / 2)*yScale));
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>() - (a / 2)*xScale, center.get<1>()));
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() - (b / 2)*yScale));
-
-	isFilled = true;
 
 	createJucePolygon();
 }
@@ -76,11 +72,27 @@ void DrawableEllipse::createJucePolygon(int width, int height)
 
 	if (keepRatio)
 	{
-		
 		recreateContourPoints(width,height);
 	}
 
-	contour.addEllipse((float)center.get<0>() -((float)a*xScale/2), (float)center.get<1>() -((float)b*yScale/2), (float)a*xScale, (float)b*yScale);
+    // À faire "à la main" avec un certain nombre de points... Sinon Juce en utilise 32 par défaut
+    float centerX = (float)center.get<0>();
+    float centerY = (float)center.get<1>();
+    float aScaled = (float)(a/2.0) * xScale; // demi-axe, normalisé, rescalé si keepratio
+    float bScaled = (float)(b/2.0) * yScale; // demi-axe , (idem)
+    contour.startNewSubPath(centerX + aScaled * (float)std::cos(0.0),
+                            centerY + bScaled * (float)std::sin(0.0));
+    for (int i = 1; i<ellipseVerticesCount; i++)
+    {
+        double normalizedAngle = (double)(i)/(double)(ellipseVerticesCount);
+        contour.lineTo(centerX + aScaled * (float)std::cos(2.0 * M_PI * normalizedAngle),
+                       centerY + bScaled * (float)std::sin(2.0 * M_PI * normalizedAngle));
+    }
+    // Est-ce qu'il faut ABSOLUMENT faire le tour complet avec début=fin, avant de fermer le contour ?
+    contour.closeSubPath();
+    
+    // ancien contour : ellipse Juce directe
+    //contour.addEllipse((float)center.get<0>() -((float)a*xScale/2), (float)center.get<1>() -((float)b*yScale/2), (float)a*xScale, (float)b*yScale);
 
 	contour.applyTransform(AffineTransform::scale((float)width, (float)height));
 
@@ -91,23 +103,15 @@ DrawableEllipse::~DrawableEllipse()
 {
 }
 
-void DrawableEllipse::setIsFilled(bool shouldBeFilled)
-{
-	isFilled = shouldBeFilled;
-}
-
 // Called by the parent component (which is a canvas)
 void DrawableEllipse::Paint(Graphics& g)
 {
-	if (isFilled)
-	{
-		g.setColour(fillColour);
-		g.setOpacity(enableLowOpacityMode ? getLowFillOpacity() : fillOpacity);
-		g.fillPath(contour);
-	}
+	g.setColour(fillColour);
+    g.setOpacity(GetAlpha());
+	g.fillPath(contour);
 
 	g.setColour(contourColour);
-    g.setOpacity(enableLowOpacityMode ? getLowFillOpacity() : fillOpacity);
+    g.setOpacity(GetAlpha());
 	g.strokePath(contour, PathStrokeType(contourWidth));
 
 	// Parent's drawings on top of these ones
@@ -119,6 +123,12 @@ void DrawableEllipse::CanvasResized(SceneCanvasComponent* _parentCanvas)
 	DrawableArea::CanvasResized(_parentCanvas);
 
 	createJucePolygon(parentCanvas->getWidth(), parentCanvas->getHeight());
+        
+    // Pixel contour points
+    contourPointsInPixels.clear();
+    boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scaler(parentCanvas->getWidth(), parentCanvas->getHeight());
+    boost::geometry::transform(contourPoints, contourPointsInPixels, scaler);
+
 }
 
 void DrawableEllipse::recreateContourPoints(int width, int height)
@@ -128,8 +138,8 @@ void DrawableEllipse::recreateContourPoints(int width, int height)
 	float newXScale;
 	float newYScale;
 	
-	newXScale = computeXScale(newCanvasRatio);
-	newYScale = computeYScale(newCanvasRatio);
+	newXScale = (float) computeXScale(newCanvasRatio);
+	newYScale = (float) computeYScale(newCanvasRatio);
 
 	boost::geometry::strategy::transform::translate_transformer<double, 2, 2> invTr(-center.get<0>(), -center.get<1>());
 	boost::geometry::strategy::transform::translate_transformer<double, 2, 2> Tr(center.get<0>(), center.get<1>());

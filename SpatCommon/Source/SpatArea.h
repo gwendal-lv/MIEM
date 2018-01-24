@@ -11,9 +11,9 @@
 #pragma once
 
 #include <memory>
+#include <list>
 
-
-#include "SpatState.hpp"
+// #include "SpatState.hpp"
 
 #include "IEditableArea.h"
 
@@ -25,21 +25,22 @@ namespace Miam
     template<typename T>
     class SpatState;
     
+    class Exciter;
+    
     
     /// \brief Abtract class containing methods implemented by any area meant for
     /// spatialization with Miam::SpatStates
     ///
     /// Is an interface by inheritance, but its own features are all fully implemented
-    class SpatArea : public virtual IEditableArea,
-                     public std::enable_shared_from_this<SpatArea>
+    class SpatArea : public virtual IEditableArea //,
+                     //public std::enable_shared_from_this<SpatArea>
     {
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
         protected :
         
         std::shared_ptr< SpatState<double> > linkedSpatState;
-        
-        
+
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
         
@@ -50,7 +51,7 @@ namespace Miam
         public :
         
         // - - - - - Construction/Destruction (no polymorphic cloning) - - - - -
-        //SpatArea(bptree::ptree& areaTree);
+        SpatArea();
         
         /// \brief Virtual-inherited class (this one for example) are
         /// constructed first... So we cannot call
@@ -63,6 +64,7 @@ namespace Miam
         // - - - - - Spat attributes - - - - -
         protected :
         void setDefaultSpatName();
+        virtual std::shared_ptr<SpatArea> getCastedSharedFromThis() = 0;
         
         public :
         /// \brief Will notify itself to spat state after linked
@@ -71,6 +73,7 @@ namespace Miam
         void LinkToSpatState(std::shared_ptr< SpatState<double> > spatState);
         
         void OnSpatStateNameChanged();
+        
         
         
         // - - - - - XML import/export - - - - -

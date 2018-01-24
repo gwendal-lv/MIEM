@@ -26,9 +26,22 @@ namespace Miam {
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
         private :
+        
+        // Modules
         Presenter* presenter;
+        std::shared_ptr<MiamOscSender<double>> miamOscSender;
+        
+        AsyncParamChange::ParamType playState;
+        
+        // Rafraîchissements forcés
+        int refreshFramesCounter = 0;
+        const int refreshPeriod_frames = 40; // unité = frames
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
+        public :
+        protected :
+        std::shared_ptr<MiamOscSender<double>>& getMainSpatSender()
+        { return miamOscSender; };
         public :
         
         
@@ -38,17 +51,17 @@ namespace Miam {
         Model(Presenter* presenter_);
         virtual ~Model();
         
-        private :
-        // for testing purposes
-        void __resendParamChangesToPresenter__();
-        
         
         
         // - - - - - Periodic updates - - - - -
         protected :
+        void setHighThreadPriority();
         void update() override;
         
         
+        // - - - - - Property tree (for XML) import/export - - - - -
+        public :
+        virtual void SetConfigurationFromTree(bptree::ptree& tree) override;
         
         
     };
