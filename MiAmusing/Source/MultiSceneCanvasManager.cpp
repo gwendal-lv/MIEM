@@ -212,6 +212,26 @@ void MultiSceneCanvasManager::handleAndSendMultiAreaEventSync(std::shared_ptr<Mu
 	graphicSessionManager->HandleEventSync(multiAreaE);
 }
 
+std::shared_ptr<bptree::ptree> MultiSceneCanvasManager::GetTree()
+{
+	bptree::ptree scenesInnerTree;
+	// Internal properties. Some others may be written, this function can be overriden
+	auto canvasInnerTree = std::make_shared<bptree::ptree>();
+	canvasInnerTree->put("<xmlattr>.index", selfId);
+	canvasInnerTree->put("<xmlattr>.widthOnSaveTime", canvasComponent->getWidth());
+	canvasInnerTree->put("<xmlattr>.heightOnSaveTime", canvasComponent->getHeight());
+	// Scenes writing
+	for (size_t i = 0; i<scenes.size(); i++)
+	{
+		
+		auto sceneTree = scenes[i]->GetTree();
+		sceneTree->put("<xmlattr>.index", i);
+		scenesInnerTree.add_child("scene", *sceneTree);
+	}
+	canvasInnerTree->add_child("scenes", scenesInnerTree);
+	return canvasInnerTree;
+}
+
 void MultiSceneCanvasManager::handleAndSendAreaEventSync(std::shared_ptr<AreaEvent> areaE)
 {
 	

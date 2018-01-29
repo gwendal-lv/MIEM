@@ -51,6 +51,7 @@ public:
 	void setSoundPath(String m_path);
 	void setColourSample(Colour newColor);
 	Colour getSampleColour();
+	String getSoundPath();
     //[/UserMethods]
 
     void paint (Graphics& g) override;

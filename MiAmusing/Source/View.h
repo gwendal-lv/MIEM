@@ -106,6 +106,8 @@ namespace Amusing {
 		void ShowSoundManager();
 		void removeDeviceManagerFromOptionWindow();
 
+		std::shared_ptr<bptree::ptree> GetAudioSettingsTree();
+		void setSoundsSettings(bptree::ptree tree);
 		//void setDeviceSelectorComponent(AudioDeviceManager* deviceManager);
     };
     

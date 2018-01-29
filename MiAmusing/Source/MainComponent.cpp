@@ -103,6 +103,16 @@ void MainContentComponent::SetMiamView(Amusing::View* _view)
     
 }
 
+std::shared_ptr<bptree::ptree> MainContentComponent::GetSoundTree()
+{
+	return soundFilesManager->GetSoundTree();
+}
+
+void MainContentComponent::setSoundSettings(bptree::ptree tree)
+{
+	soundFilesManager->SetSoundTree(tree);
+}
+
 void MainContentComponent::ShowDeviceOptionsDialog()
 {
 	optionWindow->saveAudioDeviceCurrentState();

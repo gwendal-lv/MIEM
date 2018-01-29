@@ -18,6 +18,22 @@ DrawablePolygon::DrawablePolygon(bptree::ptree & areaTree)
 :
 DrawableArea(areaTree)
 {
+
+	int W = areaTree.get<int>("<xmlattr>.width");
+	int H = areaTree.get<int>("<xmlattr>.height");
+	float oldCanvasRation = (double)W / (double)H;
+	if (oldCanvasRation > 1.0F)
+	{
+		xScale = 1.0f / oldCanvasRation;
+		yScale = 1.0f;
+	}
+	else
+	{
+		xScale = 1.0f;
+		yScale = 1.0f / oldCanvasRation;
+	}
+
+
     // Vérification préliminaire de présence des points du polygone
     size_t pointsCount = XmlUtils::CheckIndexes(areaTree, "geometry", "point");
     // Pré-chargement de chaque point de contour de <geometry>

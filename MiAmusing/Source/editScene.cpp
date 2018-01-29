@@ -115,6 +115,14 @@ EditScene::EditScene ()
     addAndMakeVisible (addHexaShapeButton = new ShapeButton ("addHexaShape",Colours::white,Colours::blue,Colours::blue));
     addHexaShapeButton->setName ("new component");
 
+    addAndMakeVisible (saveButton = new TextButton ("saveButton"));
+    saveButton->setButtonText (TRANS("save"));
+    saveButton->addListener (this);
+
+    addAndMakeVisible (loadButton = new TextButton ("loadButton"));
+    loadButton->setButtonText (TRANS("load"));
+    loadButton->addListener (this);
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -170,6 +178,8 @@ EditScene::~EditScene()
     addCarreShapeButton = nullptr;
     addTriangleShapeButton2 = nullptr;
     addHexaShapeButton = nullptr;
+    saveButton = nullptr;
+    loadButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -206,6 +216,8 @@ void EditScene::resized()
     addCarreShapeButton->setBounds (proportionOfWidth (0.0000f), (((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
     addTriangleShapeButton2->setBounds (proportionOfWidth (0.0000f) + 0, ((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
     addHexaShapeButton->setBounds ((proportionOfWidth (0.0000f) + 0) + 0, (((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
+    saveButton->setBounds (proportionOfWidth (0.0278f), ((((((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f) - -5) + proportionOfHeight (0.0752f) - -9) + proportionOfHeight (0.0752f) - 627, proportionOfWidth (0.2727f), proportionOfHeight (0.0501f));
+    loadButton->setBounds (proportionOfWidth (0.6597f), ((((((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f) - -5) + proportionOfHeight (0.0752f) - -9) + proportionOfHeight (0.0752f) - 619, proportionOfWidth (0.2727f), proportionOfHeight (0.0501f));
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -311,6 +323,18 @@ void EditScene::buttonClicked (Button* buttonThatWasClicked)
 		//graphicSessionManager->OnTestChangeSound();
 		graphicSessionManager->OnSoundClick();
         //[/UserButtonCode_textButton]
+    }
+    else if (buttonThatWasClicked == saveButton)
+    {
+        //[UserButtonCode_saveButton] -- add your button handler code here..
+		graphicSessionManager->OnSave();
+        //[/UserButtonCode_saveButton]
+    }
+    else if (buttonThatWasClicked == loadButton)
+    {
+        //[UserButtonCode_loadButton] -- add your button handler code here..
+		graphicSessionManager->OnLoad("test.xml");
+        //[/UserButtonCode_loadButton]
     }
 
     //[UserbuttonClicked_Post]
@@ -445,6 +469,14 @@ BEGIN_JUCER_METADATA
                     virtualName="ShapeButton" explicitFocusOrder="0" pos="0 0R 100% 7.518%"
                     posRelativeX="ffe0a52b5cd87f07" posRelativeY="ffe0a52b5cd87f07"
                     class="Component" params="&quot;addHexaShape&quot;,Colours::white,Colours::blue,Colours::blue"/>
+  <TEXTBUTTON name="saveButton" id="48fde7c3628a30fd" memberName="saveButton"
+              virtualName="" explicitFocusOrder="0" pos="2.78% 627R 27.273% 5.012%"
+              posRelativeY="31e65db12379ed8f" buttonText="save" connectedEdges="0"
+              needsCallback="1" radioGroupId="0"/>
+  <TEXTBUTTON name="loadButton" id="3e438b12d4d1e208" memberName="loadButton"
+              virtualName="" explicitFocusOrder="0" pos="65.965% 619R 27.273% 5.012%"
+              posRelativeY="31e65db12379ed8f" buttonText="load" connectedEdges="0"
+              needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

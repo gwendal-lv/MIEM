@@ -91,6 +91,8 @@ GraphicSessionManager::GraphicSessionManager(Presenter* presenter_, View* view_)
 	canvasManagers.front()->SetMode(CanvasManagerMode::SceneOnlySelected);
 	DBG("front mode selected");
 
+
+	//OnLoad("test.xml");
 }
 
 GraphicSessionManager::~GraphicSessionManager()
@@ -735,6 +737,134 @@ void GraphicSessionManager::OnDelete()
 void Amusing::GraphicSessionManager::OnTestChangeSound()
 {
 	HandleEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(nullptr, AreaEventType::AnotherMonoTouchPointDragAlreadyBegun, nullptr)));
+}
+
+void GraphicSessionManager::OnSave()
+{
+	auto wholeAmusingTree = std::make_shared<bptree::ptree>();
+	bptree::xml_writer_settings<std::string> xmlSettings(' ', 4);
+	auto canvasesTree = GetCanvasesTree(); // OK
+	auto viewTree = view->GetAudioSettingsTree();
+	
+	wholeAmusingTree->add_child("canvas", *canvasesTree);
+	wholeAmusingTree->add_child("view", *viewTree);
+	
+	
+	boost::property_tree::write_xml(std::string("test.xml"), *wholeAmusingTree,std::locale(),xmlSettings);
+}
+
+void GraphicSessionManager::OnLoad(std::string filename)
+{
+	bptree::ptree xmlTree, graphicSessionManagerTree, viewTree;
+	try 
+	{
+		// Lecture
+		bptree::read_xml(filename, xmlTree);
+		// puis Séparation des grandes parties du fichier
+		graphicSessionManagerTree = xmlTree.get_child("canvas");
+		viewTree = xmlTree.get_child("view");
+		
+		std::vector< std::shared_ptr<bptree::ptree> > canvasTrees;
+		if (!graphicSessionManagerTree.empty())
+		{
+			try {
+				canvasTrees = IGraphicSessionManager::ExtractCanvasesSubTrees(graphicSessionManagerTree);
+			}
+			// S'il y a une erreur : on quitte la fonction directement
+			catch (bptree::ptree_error& e) {
+				throw XmlReadException("<graphicsession> : error extracting <canvas> nodes : ", e);
+			}
+		}
+		int64_t biggestAreaUid = -1;
+		if (!canvasTrees.empty())
+		{
+			for (size_t i = 0; i < canvasManagers.size(); i++)
+			{
+				auto sceneTrees = canvasManagers[i]->SetScenesFromTree<AmusingScene>(*(canvasTrees[i]));
+				{
+					int W = canvasTrees[i]->get_child("canvas").get<int>("<xmlattr>.widthOnSaveTime");
+					int H = canvasTrees[i]->get_child("canvas").get<int>("<xmlattr>.heightOnSaveTime");
+					for (size_t j = 0; j < sceneTrees.size(); j++)
+					{
+						std::string canvasAndSceneString = "Canvas " + boost::lexical_cast<std::string>(i) + ", Scene " + boost::lexical_cast<std::string>(j) + ": ";
+
+						// Première passe de lecture
+						size_t areasCount;
+						try {
+							areasCount = XmlUtils::CheckIndexes(*(sceneTrees[j]), "scene.areas", "area");
+						}
+						catch (XmlReadException &e) {
+							throw XmlReadException(canvasAndSceneString, e);
+						}
+
+						// Pré-chargement des aires
+						std::vector<std::shared_ptr<InteractiveArea>> areas; // y compris les excitateurs
+						areas.resize(areasCount);
+
+						for (auto& area : sceneTrees[j]->get_child("scene.areas"))
+						{
+
+							try 
+							{
+								auto index = area.second.get<size_t>("<xmlattr>.index");
+								auto type = area.second.get<std::string>("<xmlattr>.type");
+
+								/*area.second.get_child("geometry").put("<xmlattr>.width", W);
+								area.second.get_child("geometry").put("<xmlattr>.height", H);*/
+								area.second.put("<xmlattr>.width", W);
+								area.second.put("<xmlattr>.height", H);
+
+								// Spat Polygones
+								if (type == "DrawablePolygon")
+								{
+									try {
+										areas[index] = std::make_shared<CompletePolygon>(area.second);
+										
+									}
+									catch (XmlReadException &e) {
+										throw XmlReadException(canvasAndSceneString + e.what());
+									}
+								}
+								
+								// Recherche de l'UID le plus grand utilisé jusqu'ici
+								if (areas[index]->GetId() > biggestAreaUid)
+									biggestAreaUid = areas[index]->GetId();
+							}
+							catch (bptree::ptree_error &e) 
+							{
+								throw XmlReadException(canvasAndSceneString, e);
+							}
+
+						}
+
+						// Finalement, ajout effectif des aires dans le bon ordre
+						for (size_t k = 0; k<areas.size(); k++)
+						{
+							// Fonction commune à toutes les aires
+							canvasManagers[i]->AddAreaToScene(j, areas[k]);
+						}
+
+					}
+				}
+			}
+			nextAreaId = biggestAreaUid + 1;
+			// Actualisations pour chaque canevas
+			/*for (auto& canvas : canvasManagers)
+				canvas->OnXmlLoadFinished();*/
+			//SelectScene(0);
+		}
+
+
+
+		if (!viewTree.empty())
+		{
+			view->setSoundsSettings(viewTree);
+		}
+
+	}
+	catch (bptree::ptree_error &e) {
+		throw XmlReadException("Cannot load session: ", e);
+	}
 }
 
 void GraphicSessionManager::OnAddComplete()

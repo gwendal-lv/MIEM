@@ -49,6 +49,11 @@ Colour SoundFileViewer::getSampleColour()
 	return colorLabel->findColour(Label::backgroundColourId);
 }
 
+String SoundFileViewer::getSoundPath()
+{
+	return sampleLabel->getText();
+}
+
 //[/MiscUserDefs]
 
 //==============================================================================

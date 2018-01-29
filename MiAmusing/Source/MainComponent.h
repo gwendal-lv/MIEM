@@ -82,6 +82,9 @@ private:
 	{
 		return editSceneC;
 	}
+
+	std::shared_ptr<bptree::ptree> GetSoundTree();
+	void setSoundSettings(bptree::ptree tree);
     
 	void ShowDeviceOptionsDialog();
 	void ShowSoundManagerComponent();

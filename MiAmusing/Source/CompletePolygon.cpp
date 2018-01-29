@@ -29,6 +29,44 @@
 using namespace Amusing;
 using namespace Miam;
 
+CompletePolygon::CompletePolygon(bptree::ptree & areaTree) : EditablePolygon(areaTree)
+{
+
+	bptree::ptree completeParameterTree;
+
+	completeParameterTree = areaTree.get_child("completeParameter");
+	orientationAngle = completeParameterTree.get<double>("<xmlattr>.orientation");
+	fillOpacity = completeParameterTree.get<float>("<xmlattr>.opacity");
+	startRadius = completeParameterTree.get<double>("<xmlattr>.radius");
+	interval = completeParameterTree.get<double>("<xmlattr>.interval");
+	
+
+	multiTouchActionBegun = false;
+	currentTouchRotation = 0.0;
+
+	showCursor = false;
+	pc = 0;
+
+	useBullsEye = true;
+	showBullsEye = true;
+
+	for (int i = 0; i < (int)contourPoints.outer().size(); ++i)
+	{
+		percentages.push_back(0);
+		anglesPercentages.push_back(0);
+	}
+
+	SetNameVisible(false);
+
+	CreateBullsEye();
+	for (int i = 0; i < (int)contourPoints.outer().size(); i++)
+	{
+		OnCircles.push_back(0);
+	}
+
+	updateSubTriangles();
+}
+
 CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
 {
 
@@ -1651,4 +1689,27 @@ bool CompletePolygon::getChordParameters(int idx, std::shared_ptr<CompletePolygo
 
 	}
 	//return false;
+}
+
+std::shared_ptr<bptree::ptree> CompletePolygon::GetTree()
+{
+	auto inheritedTree = DrawablePolygon::GetTree();
+
+	bptree::ptree completeParameterTree;
+
+	bptree::ptree opacityTree;
+	opacityTree.put("<xmlattr>.opacity", fillOpacity);
+	bptree::ptree orientationTree;
+	orientationTree.put("<xmlattr>.orientation", orientationAngle);
+
+	completeParameterTree.put("<xmlattr>.opacity", fillOpacity);//.add_child("opacity", opacityTree);
+	completeParameterTree.put("<xmlattr>.orientation", orientationAngle);//.add_child("orientation", orientationTree);
+	completeParameterTree.put("<xmlattr>.radius", startRadius);
+	completeParameterTree.put("<xmlattr>.interval", interval);
+	//completeParameterTree.put("<xmlattr>.xScale", xScale);
+	//completeParameterTree.put("<xmlattr>.yScale", yScale);
+
+	inheritedTree->add_child("completeParameter", completeParameterTree);
+
+	return inheritedTree;
 }

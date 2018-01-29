@@ -112,6 +112,8 @@ private:
     ScopedPointer<ShapeButton> addCarreShapeButton;
     ScopedPointer<ShapeButton> addTriangleShapeButton2;
     ScopedPointer<ShapeButton> addHexaShapeButton;
+    ScopedPointer<TextButton> saveButton;
+    ScopedPointer<TextButton> loadButton;
 
 
     //==============================================================================

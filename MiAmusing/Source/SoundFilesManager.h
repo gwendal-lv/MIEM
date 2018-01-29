@@ -41,6 +41,10 @@ public:
 	void setCurrentSoundFilePath(String m_soundPath);
 	void addSoundFileViewer();
 
+	std::shared_ptr<bptree::ptree> GetSoundTree();
+
+	void SetSoundTree(bptree::ptree tree);
+
 private:
 	int Nmax = 7;
 	int itemHeight, spaceHeight;

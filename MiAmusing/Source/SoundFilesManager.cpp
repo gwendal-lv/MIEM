@@ -169,3 +169,36 @@ void SoundFilesManager::addSoundFileViewer()
 		
 	}
 }
+
+std::shared_ptr<bptree::ptree> SoundFilesManager::GetSoundTree()
+{
+	auto audioTree = std::make_shared<bptree::ptree>();
+	for (int i = 0; i < soundFileViewerArray.size(); ++i)
+	{
+		bptree::ptree soundTree;
+		soundTree.put("<xmlattr>.index", i);
+		soundTree.put("<xmlattr>.soundFilePath", soundFileViewerArray[i]->getSoundPath().toStdString());
+		soundTree.put("<xmlattr>.color", soundFileViewerArray[i]->getSampleColour().toString().toStdString());
+		audioTree->add_child("sound",soundTree);
+	}
+
+	return audioTree;
+}
+
+void SoundFilesManager::SetSoundTree(bptree::ptree tree)
+{
+	bptree::ptree soundTree;
+	soundTree = tree.get_child("soundTree");
+
+	// mettre un while !empty quand on pourra avoir autant de son qu'on veut
+	for (int i = 0; i < 4; ++i)
+	{
+		bptree::ptree currentSoundTree = soundTree.get_child("sound");
+		auto index = currentSoundTree.get<size_t>("<xmlattr>.index");
+		auto soundFilePath = currentSoundTree.get<std::string>("<xmlattr>.soundFilePath");
+		auto color = currentSoundTree.get<std::string>("<xmlattr>.color");
+		soundFileViewerArray[index]->setColourSample(Colour::fromString(StringRef(color)));
+		soundFileViewerArray[index]->setSoundPath(soundFilePath);
+	}
+
+}

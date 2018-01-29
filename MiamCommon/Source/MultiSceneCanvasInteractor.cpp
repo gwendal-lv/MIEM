@@ -770,6 +770,8 @@ std::shared_ptr<bptree::ptree> MultiSceneCanvasInteractor::GetTree()
     // Internal properties. Some others may be written, this function can be overriden
     auto canvasInnerTree = std::make_shared<bptree::ptree>();
     canvasInnerTree->put("<xmlattr>.index", selfId);
+	canvasInnerTree->put("<xmlattr>.widthOnSaveTime", canvasComponent->getWidth());
+	canvasInnerTree->put("<xmlattr>.heightOnSaveTime", canvasComponent->getHeight());
     // Scenes writing
     for (size_t i=0 ; i<scenes.size() ; i++)
     {

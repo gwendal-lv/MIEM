@@ -29,6 +29,8 @@ namespace Amusing
 		//public AnimatedAppComponent
 	{
 	public:
+
+		CompletePolygon(bptree::ptree& areaTree);
 		CompletePolygon(int64_t _Id);
 		CompletePolygon(int64_t _Id,
 			bpt _center, int pointsCount, float radius,
@@ -110,6 +112,8 @@ namespace Amusing
 		void setChordFlag(bpt chordPt, bool isTrue, std::shared_ptr<CompletePolygon> areaForChord);
 		void resetChords();
 		bool getChordParameters(int idx, std::shared_ptr<CompletePolygon> &chordArea, double &pC);
+
+		virtual std::shared_ptr<bptree::ptree> GetTree() override;
 		
 	private:
 		JUCE_LEAK_DETECTOR(CompletePolygon)

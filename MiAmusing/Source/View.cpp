@@ -112,6 +112,36 @@ void View::removeDeviceManagerFromOptionWindow()
 	mainContentComponent->removeDeviceManagerFromOptionWindow();
 }
 
+std::shared_ptr<bptree::ptree> View::GetAudioSettingsTree()
+{
+	auto viewTree = std::make_shared<bptree::ptree>();
+
+	auto viewInnerTree =  std::make_shared<bptree::ptree>();
+	auto soundTree = mainContentComponent->GetSoundTree();
+	viewInnerTree->add_child("soundTree", *soundTree);
+
+	viewTree->add_child("sound", *viewInnerTree);
+	return viewTree;//soundTree;//canvasInnerTree;
+}
+
+void View::setSoundsSettings(bptree::ptree tree)
+{
+	bptree::ptree soundTree;
+	try
+	{
+		soundTree = tree.get_child("sound");
+	}
+	catch (bptree::ptree_error& e)
+	{
+		throw XmlReadException("<view> : error extracting <sound> nodes : ", e);
+	}
+
+	if (!soundTree.empty())
+	{
+		mainContentComponent->setSoundSettings(soundTree);
+	}
+}
+
 
 //void View::setDeviceSelectorComponent(AudioDeviceManager* deviceManager)
 //{

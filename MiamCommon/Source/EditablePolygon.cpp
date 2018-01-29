@@ -310,41 +310,7 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
 		Rotate(-radAngle + rotationAngle);
 		rotationAngle = radAngle;
 
-		//bpolygon bnewContourPoints;
-  //      for (size_t i=0 ; i<contourPointsInPixels.outer().size() ;i++)
-  //      {
-		//	bnewContourPoints.outer().push_back(bpt(contourPointsInPixels.outer().at(i).get<0>() - centerInPixels.get<0>(),
-		//		contourPointsInPixels.outer().at(i).get<1>() - centerInPixels.get<1>()));
-
-  //          bnewContourPoints.outer().at(i) =bpt(size * bnewContourPoints.outer().at(i).get<0>(),
-  //                                              size * bnewContourPoints.outer().at(i).get<1>());
-  //          if (boost::geometry::distance(bnewContourPoints.outer().at(i), bpt(0,0)) > minDistanceFromCenter)
-  //              minDistanceFromCenter = boost::geometry::distance(bnewContourPoints.outer().at(i), bpt(0, 0));
-
-		//	bnewContourPoints.outer().at(i).set<0>(bnewContourPoints.outer().at(i).get<0>() + centerInPixels.get<0>());
-		//	bnewContourPoints.outer().at(i).set<1>(bnewContourPoints.outer().at(i).get<1>() + centerInPixels.get<1>());
-  //      }
-
-  //      if (minDistanceFromCenter >=
-  //          minimumSizePercentage*(parentCanvas->getWidth()+parentCanvas->getHeight())/2.0)
-  //      {
-  //          wasSizeApplied = true;
-  //          contourPointsInPixels = bnewContourPoints;
-  //          bmanipulationPointInPixels = bnewLocation;
-  //      }
-  //      // --- rotation is always applied ---
-  //      for (size_t i=0 ; i<contourPointsInPixels.outer().size() ;i++)
-  //      {
-		//	contourPointsInPixels.outer().at(i).set<0>(contourPointsInPixels.outer().at(i).get<0>() - centerInPixels.get<0>());
-		//	contourPointsInPixels.outer().at(i).set<1>(contourPointsInPixels.outer().at(i).get<1>() - centerInPixels.get<1>());
-		//	contourPointsInPixels.outer().at(i) = bpt(cos_a*contourPointsInPixels.outer().at(i).get<0>()
-  //                                                   -sin_a*contourPointsInPixels.outer().at(i).get<1>(),
-  //                                                   sin_a*contourPointsInPixels.outer().at(i).get<0>()
-  //                                                   +cos_a*contourPointsInPixels.outer().at(i).get<1>());
-		//	
-		//	contourPointsInPixels.outer().at(i).set<0>(contourPointsInPixels.outer().at(i).get<0>() + centerInPixels.get<0>());
-		//	contourPointsInPixels.outer().at(i).set<1>(contourPointsInPixels.outer().at(i).get<1>() + centerInPixels.get<1>());
-  //      }
+		
         if (!wasSizeApplied)
         {
             // If size wasn't applied, we need to rotate the manipulation point

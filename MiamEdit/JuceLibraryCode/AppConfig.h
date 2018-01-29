@@ -29,19 +29,19 @@
    under the GPL v3 license.
 
    End User License Agreement: www.juce.com/juce-5-licence
-
   ==============================================================================
 */
 
 // BEGIN SECTION A
 
 #ifndef JUCE_DISPLAY_SPLASH_SCREEN
- #define JUCE_DISPLAY_SPLASH_SCREEN 0
+ #define JUCE_DISPLAY_SPLASH_SCREEN 1
 #endif
 
 #ifndef JUCE_REPORT_APP_USAGE
- #define JUCE_REPORT_APP_USAGE 0
+ #define JUCE_REPORT_APP_USAGE 1
 #endif
+
 
 // END SECTION A
 
@@ -98,10 +98,6 @@
 
 #ifndef    JUCE_USE_WINRT_MIDI
  //#define JUCE_USE_WINRT_MIDI 1
-#endif
-
-#ifndef    JUCE_DISABLE_AUDIO_MIXING_WITH_OTHER_APPS
- //#define JUCE_DISABLE_AUDIO_MIXING_WITH_OTHER_APPS 1
 #endif
 
 //==============================================================================

@@ -18,6 +18,8 @@ Author:  Gwendal Le Vaillant
 #include <map>
 #include <string>
 
+#include <boost/property_tree/xml_parser.hpp>
+
 #include "IGraphicSessionManager.h"
 
 #include "EditablePolygon.h"
@@ -142,13 +144,15 @@ namespace Amusing {
 		void OnAddHexa();
 		void OnAddCircle();
 		void OnAddTrueCircle();
-		void OnAddFollower();
 		void hideAddPolygon();
 		void showAddPolygon();
 		void OnAddComplete();
 		void OnSoundClick();
 		void OnDelete();
 		void OnTestChangeSound();
+		void OnSave();
+
+		void OnLoad(std::string filename);
 
 		void OnFollowerTranslation(std::shared_ptr<GraphicEvent> graphicE);
 		void OnAudioPosition(double position);
