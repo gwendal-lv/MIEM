@@ -94,6 +94,18 @@ void MultiSceneCanvasManager::AddCompleteArea()
 		handleAndSendAreaEventSync(amusingScene->AddCompleteArea(12));
 }
 
+void MultiSceneCanvasManager::AddAreaToScene(size_t sceneIndex, std::shared_ptr<IInteractiveArea> area_)
+{
+	SelectScene(sceneIndex);
+	addAreaToScene(scenes[sceneIndex], area_);
+	//std::shared_ptr<AreaEvent> areaE(new AreaEvent(area_, AreaEventType::Added, area_->GetId(), scenes[sceneIndex]));
+	//handleAndSendAreaEventSync(areaE);
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(scenes[sceneIndex]))
+	{
+		handleAndSendAreaEventSync(amusingScene->AddCursor(area_));
+	}
+}
+
 void MultiSceneCanvasManager::hideAddPolygon()
 {
 	if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)

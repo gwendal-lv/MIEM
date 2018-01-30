@@ -58,6 +58,7 @@ namespace Amusing {
 		void AddNedgeArea(uint64_t nextAreaId, int N);
 		void AddTrueCircle(uint64_t nextAreaId);
 		void AddCompleteArea();
+		void AddAreaToScene(size_t sceneIndex, std::shared_ptr<IInteractiveArea> area_) override;
 		void hideAddPolygon();
 		void showAddPolygon();
 		void OnDelete();

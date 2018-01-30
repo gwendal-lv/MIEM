@@ -1386,6 +1386,37 @@ void AmusingScene::lookForAreasToUpdate(Colour concernedColour)
 	}
 }
 
+// = = = = = = = = = = XML import/export = = = = = = = = = =
+std::shared_ptr<bptree::ptree> AmusingScene::GetTree() const
+{
+	auto sceneTree = std::make_shared<bptree::ptree>();
+	sceneTree->put("name", name);
+	bptree::ptree areasTree;
+
+	// Ajout des aires interactives
+	for (size_t i = 0; i < areas.size(); i++)
+	{
+		auto areaTree = areas[i]->GetTree();
+		areaTree->put("<xmlattr>.index", i);
+		if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
+		{
+			bptree::ptree areaAudioParameterTree;
+			if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
+			{
+				areaAudioParameterTree.put("<xmlattr>.speed", manager->getSpeed(completeArea));
+				areaAudioParameterTree.put("<xmlattr>.octave", manager->getOctave(completeArea));
+				areaAudioParameterTree.put("<xmlattr>.velocity", manager->getVelocity(completeArea));
+			}
+			if (!areaAudioParameterTree.empty())
+				areaTree->add_child("optionsParameter", areaAudioParameterTree);
+		}
+		areasTree.add_child("area", *areaTree);
+	}
+	
+	sceneTree->add_child("areas", areasTree);
+	return sceneTree;
+}
+
 //size_t AmusingScene::GetDrawableObjectsCount()
 //{
 //	int numInter = 0;

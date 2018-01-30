@@ -245,7 +245,7 @@ namespace Miam {
         /// by its index.
         ///
         /// Function that is mostly intended to be used when loading a new session.
-        void AddAreaToScene(size_t sceneIndex, std::shared_ptr<IInteractiveArea> area_);
+        virtual void AddAreaToScene(size_t sceneIndex, std::shared_ptr<IInteractiveArea> area_);
         
         
         // ---------- Exciters management ----------

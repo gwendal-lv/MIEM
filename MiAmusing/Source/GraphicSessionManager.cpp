@@ -798,7 +798,7 @@ void GraphicSessionManager::OnLoad(std::string filename)
 						}
 
 						// Pré-chargement des aires
-						std::vector<std::shared_ptr<InteractiveArea>> areas; // y compris les excitateurs
+						std::vector<std::shared_ptr<CompletePolygon>> areas; // y compris les excitateurs
 						areas.resize(areasCount);
 
 						for (auto& area : sceneTrees[j]->get_child("scene.areas"))
@@ -819,7 +819,10 @@ void GraphicSessionManager::OnLoad(std::string filename)
 								{
 									try {
 										areas[index] = std::make_shared<CompletePolygon>(area.second);
-										
+										bptree::ptree areaAudioParameterTree = area.second.get_child("optionsParameter");
+										setSpeedArea(areas[index], areaAudioParameterTree.get<double>("<xmlattr>.speed"));
+										setOctave(areas[index], areaAudioParameterTree.get<int>("<xmlattr>.octave"));
+										setVelocityArea(areas[index], areaAudioParameterTree.get<double>("<xmlattr>.velocity"));
 									}
 									catch (XmlReadException &e) {
 										throw XmlReadException(canvasAndSceneString + e.what());

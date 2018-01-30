@@ -104,6 +104,7 @@ namespace Miam
 		bool isDrew(std::shared_ptr<Cursor> cursor);
 		std::shared_ptr<AreaEvent> checkCursorPosition(std::shared_ptr<Cursor> cursor, int &areaId);
 		void lookForAreasToUpdate(Colour concernedColour);
+		std::shared_ptr<bptree::ptree> GetTree() const override;
 		//size_t GetDrawableObjectsCount();
 		//std::shared_ptr<IDrawableArea> GetDrawableObject(size_t i);
 	private:
