@@ -175,7 +175,7 @@ int Presenter::getNote(std::shared_ptr<IEditableArea> area, int circle)
 
 void Presenter::setOctave(std::shared_ptr<IEditableArea> currentArea, int newOctave)
 {
-	if (octave.find(currentArea) != octave.end())
+	//if (octave.find(currentArea) != octave.end())
 		octave[currentArea] = newOctave;
 	
 }

@@ -862,6 +862,30 @@ void GraphicSessionManager::OnLoad(std::string filename)
 		if (!viewTree.empty())
 		{
 			view->setSoundsSettings(viewTree);
+			bptree::ptree subTree = viewTree.get_child("sound");
+			//bptree::ptree soundTree = subTree.get_child("soundTree");
+			for (auto& sound : subTree.get_child("soundTree"))
+			{
+				if (!sound.second.empty())
+				{
+					auto index = sound.second.get<int>("<xmlattr>.index");
+					
+					try
+					{
+						
+						auto color = sound.second.get<std::string>("<xmlattr>.color");
+						auto path = sound.second.get<std::string>("<xmlattr>.soundFilePath");
+						myPresenter->setColorPath(index, Colour::fromString(StringRef(color)), path);
+
+					}
+					catch (bptree::ptree_error &e) {
+						throw XmlReadException("Sound " + boost::lexical_cast<std::string>(index) + ": ", e);
+					}
+				}
+			}
+				
+			
+			
 		}
 
 	}

@@ -96,13 +96,20 @@ void MultiSceneCanvasManager::AddCompleteArea()
 
 void MultiSceneCanvasManager::AddAreaToScene(size_t sceneIndex, std::shared_ptr<IInteractiveArea> area_)
 {
-	SelectScene(sceneIndex);
+	SelectScene(sceneIndex); // lors du deuxième passage, le premier excitateur est supprimé
 	addAreaToScene(scenes[sceneIndex], area_);
-	//std::shared_ptr<AreaEvent> areaE(new AreaEvent(area_, AreaEventType::Added, area_->GetId(), scenes[sceneIndex]));
-	//handleAndSendAreaEventSync(areaE);
+	
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(scenes[sceneIndex]))
 	{
 		handleAndSendAreaEventSync(amusingScene->AddCursor(area_));
+		if (auto amusingArea = std::dynamic_pointer_cast<CompletePolygon>(area_))
+		{
+			amusingArea->setCursorsSpeed(0, getSpeed(amusingArea));
+
+			// evts pour mettre à jour du coté audio
+			handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(amusingArea->getCursor(0), AreaEventType::ShapeChanged, selectedScene)));
+			handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(amusingArea, AreaEventType::ShapeChanged, selectedScene)));
+		}
 	}
 }
 
@@ -352,7 +359,7 @@ double MultiSceneCanvasManager::getSpeed(std::shared_ptr<IEditableArea> area)
 	{
 		if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)
 		{
-			return myGraphicSessionManager->getSpeed(amusingScene->GetSelectedArea());
+			return myGraphicSessionManager->getSpeed(area);//amusingScene->GetSelectedArea());
 		}
 		else
 			return 1.0f;
@@ -394,7 +401,7 @@ double MultiSceneCanvasManager::getVelocity(std::shared_ptr<IEditableArea> area)
 	{
 		if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)
 		{
-			return myGraphicSessionManager->getVelocity(amusingScene->GetSelectedArea());
+			return myGraphicSessionManager->getVelocity(area);
 		}
 		else
 			return 64.0;
@@ -409,7 +416,7 @@ double MultiSceneCanvasManager::getOctave(std::shared_ptr<IEditableArea> area)
 	{
 		if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)
 		{
-			return myGraphicSessionManager->getOctave(amusingScene->GetSelectedArea());
+			return myGraphicSessionManager->getOctave(area);
 		}
 		else
 			return 0.0;

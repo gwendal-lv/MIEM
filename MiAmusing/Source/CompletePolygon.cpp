@@ -44,7 +44,7 @@ CompletePolygon::CompletePolygon(bptree::ptree & areaTree) : EditablePolygon(are
 	multiTouchActionBegun = false;
 	currentTouchRotation = 0.0;
 
-	showCursor = false;
+	showCursor = true;
 	pc = 0;
 
 	useBullsEye = true;

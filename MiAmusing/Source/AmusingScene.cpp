@@ -1417,6 +1417,21 @@ std::shared_ptr<bptree::ptree> AmusingScene::GetTree() const
 	return sceneTree;
 }
 
+std::shared_ptr<MultiAreaEvent> AmusingScene::OnSelection(bool resetExciters)
+{
+	return std::make_shared<MultiAreaEvent>(); //EditableScene::OnSelection(false);
+}
+
+std::shared_ptr<MultiAreaEvent> AmusingScene::OnUnselection(bool shutExcitersDown)
+{
+	// Absolutely needed (vector copy contructor won't be much time-consuming)
+	auto multiAreaE = InteractiveScene::OnUnselection(false);
+	//auto multiAreaE = std::make_shared<MultiAreaEvent>();
+	
+
+	return multiAreaE;
+}
+
 //size_t AmusingScene::GetDrawableObjectsCount()
 //{
 //	int numInter = 0;

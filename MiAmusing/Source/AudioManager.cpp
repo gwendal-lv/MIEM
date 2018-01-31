@@ -428,12 +428,17 @@ void AudioManager::getParameters()
 		case Miam::AsyncParamChange::ParamType::Play :
 			DBG("state = Play;");
 			//state = Play;
-			playHeadsKnown[param.Id1]->setSpeed(param.DoubleValue);
-			if (param.IntegerValue == 1 && state == Play)
+			if (playHeadsKnown[param.Id1] != 0)
 			{
-				
-				playHeadsKnown[param.Id1]->changeState();
+				playHeadsKnown[param.Id1]->setSpeed(param.DoubleValue);
+				if (param.IntegerValue == 1 && state == Play)
+				{
+
+					playHeadsKnown[param.Id1]->changeState();
+				}
 			}
+			else
+				paramToAllocationThread.push(param);
 			break;
 		case Miam::AsyncParamChange::ParamType::Pause :
 			DBG("state = Pause;");
@@ -615,7 +620,15 @@ void AudioManager::getAudioThreadMsg()
 				timeLines[param.Id1]->setMidiTime(param.Id2, param.DoubleValue, param.IntegerValue,param.FloatValue);
 			break;
 		case Miam::AsyncParamChange::ParamType::Play :
-			
+			if (playHeads[param.Id1] != 0)
+			{
+				playHeads[param.Id1]->setSpeed(param.DoubleValue);
+				if (param.IntegerValue == 1 && state == Play)
+				{
+
+					playHeads[param.Id1]->changeState();
+				}
+			}
 			break;
 		case Miam::AsyncParamChange::Update:
 			DBG("Updtae received");

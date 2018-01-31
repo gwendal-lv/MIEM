@@ -107,6 +107,8 @@ namespace Miam
 		std::shared_ptr<bptree::ptree> GetTree() const override;
 		//size_t GetDrawableObjectsCount();
 		//std::shared_ptr<IDrawableArea> GetDrawableObject(size_t i);
+		virtual std::shared_ptr<MultiAreaEvent> OnSelection(bool resetExciters = true) override; // on écrase resetExciters dans la fonction pour pas réinitialiser les exciters
+		virtual std::shared_ptr<MultiAreaEvent> OnUnselection(bool shutExcitersDown = true) override; // on remet aussi le paramètre par défaut à 0
 	private:
 		std::map<int, std::shared_ptr<Amusing::CompletePolygon>> mouseIdxToArea;
 	};
