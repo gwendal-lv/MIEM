@@ -187,16 +187,11 @@ std::shared_ptr<bptree::ptree> SoundFilesManager::GetSoundTree()
 
 void SoundFilesManager::SetSoundTree(bptree::ptree tree)
 {
-	bptree::ptree soundTree;
-	soundTree = tree.get_child("soundTree");
-
-	// mettre un while !empty quand on pourra avoir autant de son qu'on veut
-	for (int i = 0; i < 4; ++i)
+	for (auto& currentSound : tree.get_child("soundTree"))
 	{
-		bptree::ptree currentSoundTree = soundTree.get_child("sound");
-		auto index = currentSoundTree.get<size_t>("<xmlattr>.index");
-		auto soundFilePath = currentSoundTree.get<std::string>("<xmlattr>.soundFilePath");
-		auto color = currentSoundTree.get<std::string>("<xmlattr>.color");
+		auto index = currentSound.second.get<size_t>("<xmlattr>.index");
+		auto soundFilePath = currentSound.second.get<std::string>("<xmlattr>.soundFilePath");
+		auto color = currentSound.second.get<std::string>("<xmlattr>.color");
 		soundFileViewerArray[index]->setColourSample(Colour::fromString(StringRef(color)));
 		soundFileViewerArray[index]->setSoundPath(soundFilePath);
 	}
