@@ -97,6 +97,8 @@ void Amusing::AmusingModel::addNewSoundPath(int idx, std::string newPath)
 
 String Amusing::AmusingModel::getSoundPath(int idx)
 {
+	if (String(idxToPath[idx]).isEmpty())
+		DBG("deja vide ici");
 	return String(idxToPath[idx]);
 }
 

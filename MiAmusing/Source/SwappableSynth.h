@@ -13,7 +13,7 @@
 #include "JuceHeader.h"
 #include <thread>
 #include <atomic>
-
+#include <mutex>
 
 
 /*
@@ -62,6 +62,8 @@ private:
 
 	std::atomic_bool synthAPlaying;
 	std::atomic<SwappableSynthState> state;
+
+	std::mutex synthMtx;
 	
 	AudioSampleBuffer rampBuffer_off;
 	AudioSampleBuffer rampBuffer_On;

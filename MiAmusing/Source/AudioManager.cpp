@@ -361,7 +361,10 @@ void AudioManager::getParameters()
 		case Miam::AsyncParamChange::ParamType::InputsCount:
 			// test switch synth
 			//timeLines[param.Id1]->addSound(BinaryData::cello_wav, BinaryData::cello_wavSize, false);
-			timeLines[param.Id1]->addSound(model->getSoundPath(param.Id2));
+			if (timeLinesKnown[param.Id1] != 0)
+				timeLinesKnown[param.Id1]->addSound(model->getSoundPath(param.Id2));
+			else
+				paramToAllocationThread.push(param);
 			break;
 		case Miam::AsyncParamChange::ParamType::Activate:
 			if (param.Id2 == 1024) // crée ou supprime une timeLine
@@ -682,6 +685,15 @@ void AudioManager::getAudioThreadMsg()
 				else
 					timeLines[param.Id1]->addChord(timeLines[param.Id2], roundToInt(param.DoubleValue * (double)metronome->getPeriodInSamples()));
 			}
+			break;
+		case Miam::AsyncParamChange::ParamType::InputsCount:
+			// test switch synth
+			//timeLines[param.Id1]->addSound(BinaryData::cello_wav, BinaryData::cello_wavSize, false);
+			if (timeLines[param.Id1] != 0)
+				timeLines[param.Id1]->addSound(model->getSoundPath(param.Id2));
+			else
+				DBG("No timeLine " + String(param.Id1) + " created");
+			break;
 		default:
 
 			break;

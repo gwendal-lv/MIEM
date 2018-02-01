@@ -88,24 +88,13 @@ void SwappableSynth::setSound(const void * srcData, size_t srcDataSize, bool kee
 
 void SwappableSynth::setSound(String soundPath)
 {
-	// avoid to load two times the same sample
-	if (synthAPlaying)
-	{
-		if (soundPath == currentPathA)
-			return;
-		else
-			currentPathA = soundPath;
-	}
+	if (soundPath.isEmpty())
+		DBG("wtf");
 	else
 	{
-		if (soundPath == currentPathB)
-			return;
-		else
-			currentPathB = soundPath;
+		
+		std::thread(&SwappableSynth::addSoundFromExternalFileOnThread, this, soundPath).detach();
 	}
-	
-	state = SwappableSynth::Loading;
-	std::thread(&SwappableSynth::addSoundFromExternalFileOnThread, this, soundPath).detach();
 }
 
 void SwappableSynth::renderNextBlock(AudioSampleBuffer & outputBuffer, const MidiBuffer & inputBuffer, int startSample, int numSample)
@@ -169,6 +158,9 @@ void SwappableSynth::renderNextBlock(AudioSampleBuffer & outputBuffer, const Mid
 			G_On = 0.0;
 			G_Off = 1.0;
 			state = SwappableSynthState::Playing;
+			/////////////////////
+			//synthMtx.unlock();/// unlock the mutex -> the internal synths are once again accessible
+			/////////////////////
 			synthAPlaying = !synthAPlaying;
 		}
 
@@ -251,11 +243,46 @@ void SwappableSynth::addSoundOnThread(const void * srcData, size_t srcDataSize, 
 		));
 
 	state = SwappableSynthState::Swapping;
-	DBG("thread finished : "+ (String)synthA.getNumSounds() + " " + (String)synthB.getNumSounds());
+	//DBG("thread finished : "+ (String)synthA.getNumSounds() + " " + (String)synthB.getNumSounds());
 }
 
 void SwappableSynth::addSoundFromExternalFileOnThread(String soundPath)
 {
+	///////////////////
+	synthMtx.lock();///	Mutex to prevent access to one of the internal synth from loading to playing state
+					/////////////////// Mutex is release in the renderNextBlock when reaching the Playing state
+
+	// avoid to load two times the same sample
+	//if (synthAPlaying)
+	//{
+	//	if (soundPath == currentPathA) // A joue et c'est déjà le bon son 
+	//		return;
+	//	else
+	//		currentPathA = soundPath;  // A joue mais ce n'est pas le bon son
+	//}
+	//else // idem avec B
+	//{
+	//	if (soundPath == currentPathB)
+	//		return;
+	//	else
+	//		currentPathB = soundPath;
+	//}
+
+	
+
+	//if (synthAPlaying)
+	//{
+	//	currentPathA = soundPath;
+	//}
+	//else
+	//{
+	//	currentPathB = soundPath;
+	//}
+
+	state = SwappableSynth::Loading;
+
+
+	// si le nom du fichier est un des fichiers embarqués -> chargement différent
 	bool isBinary = false;
 	for (int i = 0; i < BinaryData::namedResourceListSize; ++i)
 	{
@@ -265,6 +292,7 @@ void SwappableSynth::addSoundFromExternalFileOnThread(String soundPath)
 			int dataSize = 0;
 			const void * srcData = BinaryData::getNamedResource(BinaryData::namedResourceList[i], dataSize);
 			addSoundOnThread(srcData, dataSize, false);
+			DBG("thread finished : " + soundPath);
 		}
 	}
 
@@ -298,7 +326,7 @@ void SwappableSynth::addSoundFromExternalFileOnThread(String soundPath)
 			);*/
 
 
-			synthA.addSound(new SamplerSound("demo sound",
+			synthA.addSound(new SamplerSound(soundPath,
 				*audioReader,
 				allNotes,
 				74,   // root midi note
@@ -317,7 +345,7 @@ void SwappableSynth::addSoundFromExternalFileOnThread(String soundPath)
 				0.1,  // release time
 				10.0  // maximum sample length
 			);*/
-			synthB.addSound(new SamplerSound("demo sound",
+			synthB.addSound(new SamplerSound(soundPath,
 				*audioReader,
 				allNotes,
 				74,   // root midi note
@@ -328,9 +356,17 @@ void SwappableSynth::addSoundFromExternalFileOnThread(String soundPath)
 		}
 
 		state = SwappableSynthState::Swapping;
-		DBG("thread finished : " + (String)synthA.getNumSounds() + " " + (String)synthB.getNumSounds());
+
+		
+
+		DBG("thread finished : " + soundPath);//(String)synthA.getNumSounds() + " " + (String)synthB.getNumSounds());
 	
 	}
+
+	/////////////////////
+	synthMtx.unlock();/// unlock the mutex -> the internal synths are once again accessible
+	/////////////////////
+	
 }
 
 float SwappableSynth::getNextGainOff(int numSamples)
