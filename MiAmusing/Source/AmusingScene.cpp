@@ -1307,7 +1307,7 @@ std::shared_ptr<AreaEvent> AmusingScene::SetSelectedArea(std::shared_ptr<IEditab
 				{
 					currentSpeed = manager->getSpeed(completeArea);
 					currentVelocity = manager->getVelocity(completeArea);
-					currentOctave = manager->getOctave(completeArea);
+					currentOctave = (int)manager->getOctave(completeArea);
 					currentColor = manager->getCurrentColor(completeArea);
 					DBG("speed to show = " + (String)currentSpeed);
 				}

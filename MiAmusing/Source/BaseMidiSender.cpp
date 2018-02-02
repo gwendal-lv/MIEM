@@ -124,7 +124,7 @@ void TimeLine::setAllVelocities(float m_velocity)
 {
 	for (int i = 0; i < midiTimesSize; ++i)
 	{
-		velocity[i] = m_velocity;
+		velocity[i] = (int)m_velocity;
 	}
 }
 

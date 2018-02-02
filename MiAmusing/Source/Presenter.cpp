@@ -303,14 +303,14 @@ std::shared_ptr<Follower> Presenter::getFollowerFromCtrl(int ctrlId)
 	return followerToCtrlSource.right.at(ctrlId);
 }
 
-void Amusing::Presenter::setColorPath(int idx, Colour colourConcerned, String pathAssociated)
+void Presenter::setColorPath(int idx, Colour colourConcerned, String pathAssociated)
 {
 	colourToIdx[colourConcerned] = idx; // utile?
 	model->addNewSoundPath(idx, pathAssociated.toStdString()); // update if the soundspath list
 	graphicSessionManager.lookForAreasConcerned(colourConcerned); //look for the areas concerned by this update to send msg to the audio model to update the corresponding timeLines
 }
 
-int Amusing::Presenter::getPathIdx(Colour color)
+int Presenter::getPathIdx(Colour color)
 {
 	return colourToIdx[color];
 }

@@ -31,6 +31,7 @@ using namespace Miam;
 
 CompletePolygon::CompletePolygon(bptree::ptree & areaTree) : EditablePolygon(areaTree)
 {
+	isFilled = true;
 
 	bptree::ptree completeParameterTree;
 
@@ -1210,7 +1211,6 @@ std::shared_ptr<AreaEvent> CompletePolygon::intersection(std::shared_ptr<Complet
 
 	
 	// compute the area of the 2 polygons and the intersection
-	double area = abs(boost::geometry::area(poly1));
 	double hitArea = abs(boost::geometry::area(poly2));
 
 	double areaInter = 0;

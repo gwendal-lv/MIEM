@@ -877,7 +877,7 @@ void GraphicSessionManager::OnLoad(std::string filename)
 						auto path = sound.second.get<std::string>("<xmlattr>.soundFilePath");
 						myPresenter->setColorPath(index, Colour::fromString(StringRef(color)), path);
 
-						for (int j = 0; j < canvasManagers.size(); ++j)
+						for (int j = 0; j < (int)canvasManagers.size(); ++j)
 						{
 							if (auto currentManager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManagers[j]))
 								currentManager->lookForAreasConcerned(Colour::fromString(StringRef(color)));

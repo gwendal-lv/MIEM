@@ -216,8 +216,8 @@ void EditScene::resized()
     addCarreShapeButton->setBounds (proportionOfWidth (0.0000f), (((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
     addTriangleShapeButton2->setBounds (proportionOfWidth (0.0000f) + 0, ((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
     addHexaShapeButton->setBounds ((proportionOfWidth (0.0000f) + 0) + 0, (((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
-    saveButton->setBounds (proportionOfWidth (0.0278f), ((((((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f) - -5) + proportionOfHeight (0.0752f) - -9) + proportionOfHeight (0.0752f) - 627, proportionOfWidth (0.2727f), proportionOfHeight (0.0501f));
-    loadButton->setBounds (proportionOfWidth (0.6597f), ((((((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f) - -5) + proportionOfHeight (0.0752f) - -9) + proportionOfHeight (0.0752f) - 619, proportionOfWidth (0.2727f), proportionOfHeight (0.0501f));
+    saveButton->setBounds (proportionOfWidth (0.1200f), proportionOfHeight (0.0200f), proportionOfWidth (0.3000f), proportionOfHeight (0.0501f));
+    loadButton->setBounds (proportionOfWidth (0.6000f), proportionOfHeight (0.0200f), proportionOfWidth (0.3000f), proportionOfHeight (0.0501f));
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -470,13 +470,11 @@ BEGIN_JUCER_METADATA
                     posRelativeX="ffe0a52b5cd87f07" posRelativeY="ffe0a52b5cd87f07"
                     class="Component" params="&quot;addHexaShape&quot;,Colours::white,Colours::blue,Colours::blue"/>
   <TEXTBUTTON name="saveButton" id="48fde7c3628a30fd" memberName="saveButton"
-              virtualName="" explicitFocusOrder="0" pos="2.78% 627R 27.273% 5.012%"
-              posRelativeY="31e65db12379ed8f" buttonText="save" connectedEdges="0"
-              needsCallback="1" radioGroupId="0"/>
+              virtualName="" explicitFocusOrder="0" pos="12.021% 2.029% 29.977% 5.012%"
+              buttonText="save" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="loadButton" id="3e438b12d4d1e208" memberName="loadButton"
-              virtualName="" explicitFocusOrder="0" pos="65.965% 619R 27.273% 5.012%"
-              posRelativeY="31e65db12379ed8f" buttonText="load" connectedEdges="0"
-              needsCallback="1" radioGroupId="0"/>
+              virtualName="" explicitFocusOrder="0" pos="60.03% 2.029% 29.977% 5.012%"
+              buttonText="load" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

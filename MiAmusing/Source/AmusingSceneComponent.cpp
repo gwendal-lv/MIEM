@@ -121,7 +121,7 @@ void AmusingSceneComponent::OnBaseNoteChanged(int newBaseNote)
 
 void AmusingSceneComponent::SetAreaOptionsCenter(bpt center)
 {
-	showOptionsButton->setTopLeftPosition(center.get<0>()+100, center.get<1>() - 150);
+	showOptionsButton->setTopLeftPosition((int)center.get<0>()+100,(int) center.get<1>() - 150);
 	areaOptions.setCentrePosition((int)center.get<0>(), (int)center.get<1>());
 	
 }
