@@ -94,6 +94,7 @@ private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     GraphicSessionManager* graphicSessionManager = 0;
 	bool isAddEnabled;
+	bool saveFileExists;
 	//MultiCanvasComponent* multiCanvasComponent = 0;
 
     //[/UserVariables]

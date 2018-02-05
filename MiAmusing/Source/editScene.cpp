@@ -22,7 +22,7 @@
 #include "ControlEvent.h"
 using namespace Amusing;
 //[/Headers]
-
+#include <fstream> // pour vérifier si le il existe un fichier de sauvegarde
 #include "editScene.h"
 
 
@@ -156,6 +156,20 @@ EditScene::EditScene ()
 
 	comboBoxMidi->setVisible(false);
 	isAddEnabled = true;
+
+	saveFileExists = true;
+	std::ifstream ifs("save.xml");
+	if (!ifs.good())
+	{
+		saveFileExists = false;
+		loadButton->setAlpha(0.5f);
+		ifs.close();
+	}
+	else
+	{
+		ifs.close();
+	}
+
 	//textButton->setVisible(false);
     //[/Constructor]
 }
@@ -327,13 +341,19 @@ void EditScene::buttonClicked (Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == saveButton)
     {
         //[UserButtonCode_saveButton] -- add your button handler code here..
-		graphicSessionManager->OnSave();
+		graphicSessionManager->OnSave("save.xml");
+		loadButton->setAlpha(1.0f);
+		saveFileExists = true;
         //[/UserButtonCode_saveButton]
     }
     else if (buttonThatWasClicked == loadButton)
     {
         //[UserButtonCode_loadButton] -- add your button handler code here..
-		graphicSessionManager->OnLoad("test.xml");
+		if (saveFileExists)
+		{
+			graphicSessionManager->OnLoad("save.xml");
+			
+		}
         //[/UserButtonCode_loadButton]
     }
 

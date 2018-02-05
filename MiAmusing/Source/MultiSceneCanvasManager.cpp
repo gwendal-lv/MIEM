@@ -528,3 +528,8 @@ void MultiSceneCanvasManager::SetMode(Miam::CanvasManagerMode newMode)
 
 	graphicSessionManager->CanvasModeChanged(mode);
 }
+
+void MultiSceneCanvasManager::UnselectScene()
+{
+	selectedScene = nullptr;
+}

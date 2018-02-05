@@ -562,8 +562,8 @@ void AudioManager::getAudioThreadMsg()
 
 					timeLines[param.Id1]->setAudioManager(this);
 					//DBG("midiChannel : " + (String)param.IntegerValue);
-					if (param.IntegerValue != 0)
-						timeLines[param.Id1]->setMidiChannel(param.IntegerValue);
+					/*if (param.IntegerValue != 0)
+						timeLines[param.Id1]->setMidiChannel(param.IntegerValue);*/
 					//timeLines[param.Id1]->setSpeed(param.FloatValue);
 					timeLines[param.Id1]->setId(param.Id1);
 					

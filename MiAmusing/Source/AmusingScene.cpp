@@ -47,13 +47,18 @@ AmusingScene::~AmusingScene()
 {
 	DBG("areas size" + (String)areas.size());
 	//DBG("associate size " + (String)associateArea.size());
-	for(int i = 0; i< (int)currentExciters.size();i++)
-		if (auto currentCursor = std::dynamic_pointer_cast<Cursor>(currentExciters[i]))
-			if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
-				manager->OnInteraction(std::shared_ptr<AreaEvent>(new AreaEvent(currentCursor, AreaEventType::Deleted, (int)areas.size() + i, shared_from_this())));
-	for (int i = 0; i < (int)areas.size(); i++)
-		if (auto currentArea = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
-			currentArea->deleteAllCursors();
+	if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
+	{
+		for (int i = 0; i < (int)currentExciters.size(); i++)
+			if (auto currentCursor = std::dynamic_pointer_cast<Cursor>(currentExciters[i]))
+				manager->OnInteraction(std::shared_ptr<AreaEvent>(new AreaEvent(currentCursor, AreaEventType::Deleted, (int)areas.size() + i, nullptr /*shared_from_this()*/)));
+		for (int i = 0; i < (int)areas.size(); i++)
+			if (auto currentArea = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
+			{
+				manager->OnInteraction(std::shared_ptr<AreaEvent>(new AreaEvent(currentArea, AreaEventType::Deleted, currentArea->GetId(), nullptr)));
+				currentArea->deleteAllCursors();
+			}
+	}
 }
 
 void AmusingScene::AddAnimatedArea(uint64_t nextAreaId)

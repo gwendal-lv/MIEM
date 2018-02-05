@@ -254,12 +254,12 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 						param.Id2 = 1024;
 						param.Type = Miam::AsyncParamChange::ParamType::Activate;
 						param.IntegerValue = 1; // 1 pour activer la source, 0 pour la supprimer
-						if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(areaE->GetConcernedScene()))
+						/*if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(areaE->GetConcernedScene()))
 						{
 							param.IntegerValue = myPresenter->getChannel(amusingScene);
 						}
-						else
-							param.IntegerValue = 0;
+						else*/
+							//param.IntegerValue = 0;
 						param.FloatValue = 1; // set initial speed to 1;
 						param.DoubleValue = myPresenter->getColorIdx(area);
 						myPresenter->SendParamChange(param); // envoie l'ordre de creer/ detruire une source audio
@@ -531,27 +531,27 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 			if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(sceneE->GetNewScene()))
 			{
 				
-				if(amusingScene->GetDrawableObjectsCount() > 0)
-					editScene->setMidiChannel(myPresenter->getChannel(sceneE->GetNewScene()));
+				/*if(amusingScene->GetDrawableObjectsCount() > 0)
+					editScene->setMidiChannel(myPresenter->getChannel(sceneE->GetNewScene()));*/
 				if (amusingScene->getNumberArea() < 10)
 					editScene->showAddPolygon();
 				else
 					editScene->hideAddPolygon();
 					
-				for (int i = 0; i < (int)amusingScene->GetDrawableObjectsCount(); i++)
-				{
-					if (auto area = amusingScene->GetDrawableObject(i))//myPresenter->getSceneArea(amusingScene, i))
-					{
-						if (auto areaC = std::dynamic_pointer_cast<CompletePolygon>(area))
-						{
-							param.Type = AsyncParamChange::ParamType::UdpPort;
-							param.Id1 = myPresenter->getTimeLineID(areaC);
-							param.IntegerValue = myPresenter->getChannel(sceneE->GetNewScene());
-							myPresenter->SendParamChange(param);
-						}
-						
-					}
-				}
+				//for (int i = 0; i < (int)amusingScene->GetDrawableObjectsCount(); i++)
+				//{
+				//	if (auto area = amusingScene->GetDrawableObject(i))//myPresenter->getSceneArea(amusingScene, i))
+				//	{
+				//		if (auto areaC = std::dynamic_pointer_cast<CompletePolygon>(area))
+				//		{
+				//			param.Type = AsyncParamChange::ParamType::UdpPort;
+				//			param.Id1 = myPresenter->getTimeLineID(areaC);
+				//			param.IntegerValue = 0;//myPresenter->getChannel(sceneE->GetNewScene());
+				//			myPresenter->SendParamChange(param);
+				//		}
+				//		
+				//	}
+				//}
 
 			}
 			break;
@@ -739,7 +739,7 @@ void Amusing::GraphicSessionManager::OnTestChangeSound()
 	HandleEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(nullptr, AreaEventType::AnotherMonoTouchPointDragAlreadyBegun, nullptr)));
 }
 
-void GraphicSessionManager::OnSave()
+void GraphicSessionManager::OnSave(std::string filename)
 {
 	auto wholeAmusingTree = std::make_shared<bptree::ptree>();
 	bptree::xml_writer_settings<std::string> xmlSettings(' ', 4);
@@ -750,7 +750,7 @@ void GraphicSessionManager::OnSave()
 	wholeAmusingTree->add_child("view", *viewTree);
 	
 	
-	boost::property_tree::write_xml(std::string("test.xml"), *wholeAmusingTree,std::locale(),xmlSettings);
+	boost::property_tree::write_xml(filename, *wholeAmusingTree,std::locale(),xmlSettings);
 }
 
 void GraphicSessionManager::OnLoad(std::string filename)
@@ -780,6 +780,8 @@ void GraphicSessionManager::OnLoad(std::string filename)
 		{
 			for (size_t i = 0; i < canvasManagers.size(); i++)
 			{
+				if (auto currentCanvas = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManagers[i]))
+					currentCanvas->UnselectScene();
 				auto sceneTrees = canvasManagers[i]->SetScenesFromTree<AmusingScene>(*(canvasTrees[i]));
 				{
 					int W = canvasTrees[i]->get_child("canvas").get<int>("<xmlattr>.widthOnSaveTime");
@@ -924,8 +926,8 @@ void GraphicSessionManager::SetMidiChannel(int ch)
 	{
 		if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(getSelectedCanvasAsManager()->GetSelectedScene()))
 		{
-			DBG("channel to send : " + (String)ch);
-			myPresenter->setChannel(amusingScene, ch);
+			//DBG("channel to send : " + (String)ch);
+			//myPresenter->setChannel(amusingScene, ch);
 			//getSelectedCanvasAsManager()->resendToModel();
 			HandleEventSync(std::shared_ptr<SceneEvent>(new SceneEvent(getSelectedCanvasAsManager(), amusingScene, SceneEventType::SceneChanged)));
 		}

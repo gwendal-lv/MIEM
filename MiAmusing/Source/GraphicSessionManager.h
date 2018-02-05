@@ -150,7 +150,7 @@ namespace Amusing {
 		void OnSoundClick();
 		void OnDelete();
 		void OnTestChangeSound();
-		void OnSave();
+		void OnSave(std::string filename);
 
 		void OnLoad(std::string filename);
 

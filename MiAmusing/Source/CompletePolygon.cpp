@@ -114,6 +114,8 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 	ost << this;
 	s = ost.str();
 	DBG("Constructor : " + s);*/
+	isFilled = true;
+
 	centerCircleRadius *= 2;
 	centerContourWidth *= 2;
 	multiTouchActionBegun = false;

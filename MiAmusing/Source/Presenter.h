@@ -114,9 +114,9 @@ namespace Amusing {
 			void setOctave(std::shared_ptr<IEditableArea> currentArea, int newOctave);
 			int getColorIdx(std::shared_ptr<IEditableArea> currentArea);
 			void setColorIdx(std::shared_ptr<IEditableArea> currentArea, int idx);
-			void setChannel(std::shared_ptr<EditableScene> scene,int channel);
+			//void setChannel(std::shared_ptr<EditableScene> scene,int channel);
 			int getOctave(std::shared_ptr<IEditableArea> area);
-			int getChannel(std::shared_ptr<EditableScene> scene);
+			//int getChannel(std::shared_ptr<EditableScene> scene);
 			int getReadingHeadID(std::shared_ptr<Cursor> cursor);
 			int getTimeLineID(std::shared_ptr<IEditableArea> area);
 			void deleteReadingHeadRef(std::shared_ptr<Cursor> cursor);

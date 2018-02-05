@@ -194,14 +194,14 @@ void Presenter::setColorIdx(std::shared_ptr<IEditableArea> currentArea, int idx)
 	colorIdx[currentArea] = idx;
 }
 
-void Presenter::setChannel(std::shared_ptr<EditableScene> scene,int channel)
-{
-	DBG("size of the map = " + (String)sceneToChannel.size());
-	sceneToChannel[scene] = channel;
-	//test[5] = 2;
-	//test.insert(std::pair<int, double>(3, 5.8));
-	//graphicSessionManager.HandleEventSync(std::shared_ptr<SceneEven)
-}
+//void Presenter::setChannel(std::shared_ptr<EditableScene> scene,int channel)
+//{
+//	DBG("size of the map = " + (String)sceneToChannel.size());
+//	sceneToChannel[scene] = channel;
+//	//test[5] = 2;
+//	//test.insert(std::pair<int, double>(3, 5.8));
+//	//graphicSessionManager.HandleEventSync(std::shared_ptr<SceneEven)
+//}
 
 int Presenter::getOctave(std::shared_ptr<IEditableArea> area)
 {
@@ -211,12 +211,12 @@ int Presenter::getOctave(std::shared_ptr<IEditableArea> area)
 		return 6;
 }
 
-int Presenter::getChannel(std::shared_ptr<EditableScene> scene)
-{
-	if (sceneToChannel.empty() || sceneToChannel.find(scene) == sceneToChannel.end())
-		sceneToChannel[scene] = 1;
-	return sceneToChannel[scene];
-}
+//int Presenter::getChannel(std::shared_ptr<EditableScene> scene)
+//{
+//	if (sceneToChannel.empty() || sceneToChannel.find(scene) == sceneToChannel.end())
+//		sceneToChannel[scene] = 1;
+//	return sceneToChannel[scene];
+//}
 
 int Presenter::getTimeLineID(std::shared_ptr<IEditableArea> area)
 {
