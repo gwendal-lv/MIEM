@@ -180,6 +180,7 @@ namespace Amusing {
 		int getOctave(std::shared_ptr<IEditableArea> area);
 		int getColor(std::shared_ptr<IEditableArea> area);
 		void setColor(std::shared_ptr<IEditableArea> area, int colourIdx);
+		int getTempo();
 
 	private :
 		bool deleting;

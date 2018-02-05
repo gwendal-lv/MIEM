@@ -102,11 +102,9 @@ namespace Amusing {
 		boost::bimap<std::shared_ptr<IEditableArea>,int> areaToSourceMulti;
 		boost::bimap<std::shared_ptr<Cursor>, int> cursorToReadingHead;
 		std::map<std::shared_ptr<EditableScene>, int> sceneToChannel;
-		int Nsources, Nfollower, Ncursors;
+		int Nsources, Ncursors;
 		void SetAllChannels();
 
-		boost::bimap < std::shared_ptr<Follower>, int> followerToCtrlSource;
-		std::map<int, double> test;
 
 		public :
 			void addOctave(std::shared_ptr<IEditableArea> newArea);
@@ -114,9 +112,7 @@ namespace Amusing {
 			void setOctave(std::shared_ptr<IEditableArea> currentArea, int newOctave);
 			int getColorIdx(std::shared_ptr<IEditableArea> currentArea);
 			void setColorIdx(std::shared_ptr<IEditableArea> currentArea, int idx);
-			//void setChannel(std::shared_ptr<EditableScene> scene,int channel);
 			int getOctave(std::shared_ptr<IEditableArea> area);
-			//int getChannel(std::shared_ptr<EditableScene> scene);
 			int getReadingHeadID(std::shared_ptr<Cursor> cursor);
 			int getTimeLineID(std::shared_ptr<IEditableArea> area);
 			void deleteReadingHeadRef(std::shared_ptr<Cursor> cursor);
@@ -126,8 +122,6 @@ namespace Amusing {
 			double getSpeedArea(std::shared_ptr<IEditableArea> area);
 			void setVelocityArea(std::shared_ptr<IEditableArea> scene, double velocity);
 			double getVelocityArea(std::shared_ptr<IEditableArea> area);
-			int getCtrlSourceId(std::shared_ptr<Follower> follower);
-			std::shared_ptr<Follower> getFollowerFromCtrl(int ctrlId);
 			void setColorPath(int idx, Colour concernedColour, String pathAssociated);
 			int getPathIdx(Colour color);
 			void setInitSize(std::shared_ptr<IEditableArea> newArea,int surface);
@@ -138,7 +132,7 @@ namespace Amusing {
 			void setTempo(int newTempo);
 			float getMasterVolume();
 			void setMasterVolume(float newVolume);
-			void setAudioDeviceManager(AudioDeviceManager* deviceManager);
+			
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         
         public :

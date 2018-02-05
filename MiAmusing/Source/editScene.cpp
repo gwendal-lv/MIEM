@@ -401,6 +401,11 @@ void EditScene::showAddPolygon()
 	isAddEnabled = true;
 }
 
+void EditScene::setTempoSlider(int newTempo)
+{
+	timeSlider->setValue(newTempo);
+}
+
 //[/MiscUserCode]
 
 

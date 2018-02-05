@@ -59,6 +59,7 @@ public:
 	void setMidiChannel(int chan);
 	void hideAddPolygon();
 	void showAddPolygon();
+	void setTempoSlider(int newTempo);
     //[/UserMethods]
 
     void paint (Graphics& g) override;

@@ -670,7 +670,7 @@ void GraphicSessionManager::SetAudioPositions(std::shared_ptr<Cursor> area, doub
 		getSelectedCanvasAsManager()->SetAudioPositions(area, position);
 }
 
-void Amusing::GraphicSessionManager::lookForAreasConcerned(Colour colourConcerned)
+void GraphicSessionManager::lookForAreasConcerned(Colour colourConcerned)
 {
 	if (selectedCanvas)
 		getSelectedCanvasAsManager()->lookForAreasConcerned(colourConcerned);
@@ -781,7 +781,12 @@ void GraphicSessionManager::OnLoad(std::string filename)
 			for (size_t i = 0; i < canvasManagers.size(); i++)
 			{
 				if (auto currentCanvas = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManagers[i]))
+				{
 					currentCanvas->UnselectScene();
+					myPresenter->setTempo(canvasTrees[i]->get_child("canvas").get<int>("<xmlattr>.BPM"));
+					editScene->setTempoSlider(canvasTrees[i]->get_child("canvas").get<int>("<xmlattr>.BPM"));
+					HandleEventSync(std::shared_ptr<ControlEvent>(new ControlEvent(ControlEventType::Play)));
+				}
 				auto sceneTrees = canvasManagers[i]->SetScenesFromTree<AmusingScene>(*(canvasTrees[i]));
 				{
 					int W = canvasTrees[i]->get_child("canvas").get<int>("<xmlattr>.widthOnSaveTime");
@@ -972,6 +977,11 @@ int GraphicSessionManager::getColor(std::shared_ptr<IEditableArea> area)
 void GraphicSessionManager::setColor(std::shared_ptr<IEditableArea> area, int colourIdx)
 {
 	myPresenter->setColorIdx(area, colourIdx);
+}
+
+int GraphicSessionManager::getTempo()
+{
+	return myPresenter->getTempo();
 }
 
 void GraphicSessionManager::OnTempoChanged(int newTempo) // voir si laisser comme ca, pcq pas d'interpretation necessaire pour le tempo

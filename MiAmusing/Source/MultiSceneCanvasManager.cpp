@@ -242,6 +242,7 @@ std::shared_ptr<bptree::ptree> MultiSceneCanvasManager::GetTree()
 	canvasInnerTree->put("<xmlattr>.index", selfId);
 	canvasInnerTree->put("<xmlattr>.widthOnSaveTime", canvasComponent->getWidth());
 	canvasInnerTree->put("<xmlattr>.heightOnSaveTime", canvasComponent->getHeight());
+	canvasInnerTree->put("<xmlattr>.BPM", ((GraphicSessionManager*)graphicSessionManager)->getTempo());
 	// Scenes writing
 	for (size_t i = 0; i<scenes.size(); i++)
 	{

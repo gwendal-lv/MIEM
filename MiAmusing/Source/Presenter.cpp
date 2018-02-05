@@ -29,12 +29,12 @@ using namespace Amusing;
 // - - - - - Contruction and Destruction - - - - -
 
 Presenter::Presenter(View* _view) :
-    view(_view), test(),
+    view(_view), 
     appMode(AppMode::Loading), // app is loading while the Model hasn't fully loaded yet
 
     graphicSessionManager(this, _view)
 {
-	test.insert(std::pair<int, double>(2, 5.5));
+	//test.insert(std::pair<int, double>(2, 5.5));
     // After all sub-modules are built, the presenter refers itself to the View
     view->CompleteInitialization(this);
     view->GetMainContentComponent()->resized();
@@ -57,7 +57,7 @@ Presenter::Presenter(View* _view) :
     appModeChangeRequest(AppMode::None);
 	Nsources = 0;
 	Ncursors = 0;
-	Nfollower = 0;
+	//Nfollower = 0;
 	tempo = 50;
 	masterVolume = 0.5f;
 	SetAllChannels();
@@ -255,17 +255,7 @@ void Presenter::deleteReadingHeadRef(std::shared_ptr<Cursor> cursor)
 	}
 }
 
-int Presenter::getCtrlSourceId(std::shared_ptr<Follower> follower)
-{
-	if (followerToCtrlSource.left.find(follower) == followerToCtrlSource.left.end())
-	{
-		DBG("ajoute : " + (String)Nfollower);
-		std::pair<std::shared_ptr<Follower>, int> newPair(follower, Nfollower);
-		followerToCtrlSource.left.insert(newPair);
-		++Nfollower;
-	}
-	return followerToCtrlSource.left.at(follower);
-}
+
 
 std::shared_ptr<Cursor> Presenter::getCursor(int m_Id)
 {
@@ -293,20 +283,10 @@ std::shared_ptr<IEditableArea> Presenter::getAreaFromSource(int source)
 	return areaToSourceMulti.right.at(source);
 }
 
-std::shared_ptr<Follower> Presenter::getFollowerFromCtrl(int ctrlId)
-{
-	if (followerToCtrlSource.right.find(ctrlId) == followerToCtrlSource.right.end())
-	{
-		DBG("pas de follower associe");
-		return nullptr;
-	}
-	return followerToCtrlSource.right.at(ctrlId);
-}
-
 void Presenter::setColorPath(int idx, Colour colourConcerned, String pathAssociated)
 {
 	colourToIdx[colourConcerned] = idx; // utile?
-	model->addNewSoundPath(idx, pathAssociated.toStdString()); // update if the soundspath list
+	model->addNewSoundPath(idx, pathAssociated.toStdString()); // update if the soundspath list has changed
 	graphicSessionManager.lookForAreasConcerned(colourConcerned); //look for the areas concerned by this update to send msg to the audio model to update the corresponding timeLines
 }
 
@@ -315,12 +295,12 @@ int Presenter::getPathIdx(Colour color)
 	return colourToIdx[color];
 }
 
-void Amusing::Presenter::setInitSize(std::shared_ptr<IEditableArea> newArea, int surface)
+void Presenter::setInitSize(std::shared_ptr<IEditableArea> newArea, int surface)
 {
 	areaToInitSurface[newArea] = surface;
 }
 
-double Amusing::Presenter::computeFrequency(std::shared_ptr<IEditableArea> area,double surface)
+double Presenter::computeFrequency(std::shared_ptr<IEditableArea> area,double surface)
 {
 	double W = (11.0 / 12.0 )* view->GetMainContentComponent()->getWidth();
 	double H = view->GetMainContentComponent()->getHeight();
@@ -414,17 +394,9 @@ void Presenter::Update() // remettre l'interieur dans graphsessionmanager
 	//graphicSessionManager.SetAllAudioPositions(lastPosition);
 }
 
-//AudioDeviceManager* Presenter::getAudioDeviceManager()
-//{
-//	return model->sharedAudioDeviceManager;//getAudioDeviceManager();
-//}
 
 void Presenter::removeDeviceManagerFromOptionWindow()
 {
 	view->removeDeviceManagerFromOptionWindow();
 }
 
-//void Presenter::setAudioDeviceManager(AudioDeviceManager* deviceManager)
-//{
-//	view->setDeviceSelectorComponent(deviceManager);
-//}
