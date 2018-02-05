@@ -156,6 +156,10 @@ namespace Miam
         // = = = = = = = = = = METHODS = = = = = = = = = =
         public :
         
+        #ifdef __MIAM_DEBUG
+        void __checkIfExcitersDisappeared__() const;
+        #endif
+        
         // - - - - - Construction and Destruction (and helpers) - - - - -
         InteractiveScene(std::shared_ptr<MultiSceneCanvasInteractor> canvasManager_, SceneCanvasComponent* canvasComponent_, ExcitersBehaviorType excitersBehavior_ = ExcitersBehaviorType::ManualAddAndDelete);
         virtual ~InteractiveScene();
