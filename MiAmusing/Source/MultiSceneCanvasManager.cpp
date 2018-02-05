@@ -191,9 +191,12 @@ void MultiSceneCanvasManager::SetAudioPositions(std::shared_ptr<Cursor> cursor, 
 
 void MultiSceneCanvasManager::lookForAreasConcerned(Colour concernedColour)
 {
-	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+	for (int i = 0; i < (int)scenes.size(); ++i)
 	{
-		amusingScene->lookForAreasToUpdate(concernedColour);
+		if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(scenes[i]))
+		{
+			amusingScene->lookForAreasToUpdate(concernedColour);
+		}
 	}
 }
 
