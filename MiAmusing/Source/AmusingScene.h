@@ -13,6 +13,7 @@
 
 #include "EditableScene.h"
 #include "AnimatedPolygon.h"
+#include "IntersectionPolygon.h"
 #include "Cursors.h"
 #include "../JuceLibraryCode/JuceHeader.h"
 
@@ -75,27 +76,20 @@ namespace Miam
 		std::shared_ptr<AreaEvent> deleteEvent;
 		
 
-		std::vector< std::shared_ptr<Amusing::CompletePolygon> > currentIntersectionsAreas;
+		std::vector< std::shared_ptr<Amusing::IntersectionPolygon> > currentIntersectionsAreas;
 		void addChords(std::shared_ptr<Amusing::CompletePolygon> parent1, std::shared_ptr<Amusing::CompletePolygon> parent2, std::shared_ptr<MultiAreaEvent> multiE);
-		std::shared_ptr<AreaEvent> AddIntersectionArea(std::shared_ptr<Amusing::CompletePolygon> parent1, std::shared_ptr<Amusing::CompletePolygon> parent2, std::shared_ptr<Amusing::CompletePolygon> newIntersection);
 
 		// map with 2 entry = the parents polygons, and 1 output = the vector of overlap area between the two parent polygon
 		std::map<std::pair<std::shared_ptr<Amusing::CompletePolygon>, std::shared_ptr<Amusing::CompletePolygon>>, std::vector<std::shared_ptr<Amusing::CompletePolygon>>> parentTochildArea;
 		bool getParents(std::shared_ptr<IEditableArea> child, std::shared_ptr<IEditableArea> &parent1, std::shared_ptr<IEditableArea> &parent2);
 		std::shared_ptr<Amusing::CompletePolygon> getConcernedIntersection(std::shared_ptr<Amusing::CompletePolygon> parent1, std::shared_ptr<Amusing::CompletePolygon> parent2, bpt hitPoint);
-		bool lookForAreasInteractions(std::shared_ptr<Amusing::CompletePolygon> currentPolygon);
-		void AddAllIntersections(std::shared_ptr<Amusing::CompletePolygon> parent1, std::shared_ptr<Amusing::CompletePolygon> parent2, std::shared_ptr<MultiAreaEvent> multiE);
-		void ApplyFusion(std::shared_ptr<Amusing::CompletePolygon> currentPolygon, std::shared_ptr<Amusing::CompletePolygon> hitPolygon, std::shared_ptr<AreaEvent> singleE);
-		void DeleteIntersections(std::shared_ptr<Amusing::CompletePolygon> parent);
 		std::shared_ptr<AreaEvent> DeleteSelectedArea();
 		std::shared_ptr<AreaEvent> DeleteCursor(std::shared_ptr<Cursor> cursorToDelete);
 
 		bool alreadyCursorInScene;
 		void AddCursor();
 		std::shared_ptr<AreaEvent> AddCursor(std::shared_ptr<IDrawableArea> area);
-		//std::map<std::shared_ptr<Cursor>, std::shared_ptr<IDrawableArea>> associateArea;
 		
-		//std::shared_ptr<IDrawableArea> getAssociateArea(std::shared_ptr<Cursor> cursor);
 
 		std::shared_ptr<AreaEvent> SetSelectedArea(std::shared_ptr<IEditableArea> selectedArea_, bool changeMode = true) override;
 		std::shared_ptr<AreaEvent> SetSelectedAreaCursor(int idx, double newSize);
@@ -105,8 +99,7 @@ namespace Miam
 		std::shared_ptr<AreaEvent> checkCursorPosition(std::shared_ptr<Cursor> cursor, int &areaId);
 		void lookForAreasToUpdate(Colour concernedColour);
 		std::shared_ptr<bptree::ptree> GetTree() const override;
-		//size_t GetDrawableObjectsCount();
-		//std::shared_ptr<IDrawableArea> GetDrawableObject(size_t i);
+		
 		virtual std::shared_ptr<MultiAreaEvent> OnSelection(bool resetExciters = true) override; // on écrase resetExciters dans la fonction pour pas réinitialiser les exciters
 		virtual std::shared_ptr<MultiAreaEvent> OnUnselection(bool shutExcitersDown = true) override; // on remet aussi le paramètre par défaut à 0
 	private:
