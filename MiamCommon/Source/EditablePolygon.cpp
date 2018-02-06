@@ -56,6 +56,7 @@ void EditablePolygon::init()
 }
 void EditablePolygon::graphicalInit()
 {
+	rotationAngle = 0;
     contourColour = Colour(0xAAFFFFFF); // white, but not totally opaque
     
     editingElementsColour = Colours::white; // pure white (more visible)
