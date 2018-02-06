@@ -40,6 +40,7 @@ namespace Miam
 
 		void AddAnimatedArea(uint64_t nextAreaId);
 		std::shared_ptr<AreaEvent> AddNedgeArea(uint64_t nextAreaId, int N);
+		void AddIntersections(std::shared_ptr<Amusing::CompletePolygon> m_area);
 		// override mouse callback
 
 		std::shared_ptr<GraphicEvent> OnCanvasMouseDown(const MouseEvent& mouseE) override;

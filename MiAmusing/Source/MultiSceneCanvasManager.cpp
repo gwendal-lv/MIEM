@@ -97,13 +97,15 @@ void MultiSceneCanvasManager::AddCompleteArea()
 void MultiSceneCanvasManager::AddAreaToScene(size_t sceneIndex, std::shared_ptr<IInteractiveArea> area_)
 {
 	SelectScene(sceneIndex); // lors du deuxième passage, le premier excitateur est supprimé
-	addAreaToScene(scenes[sceneIndex], area_);
-	
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(scenes[sceneIndex]))
 	{
-		handleAndSendAreaEventSync(amusingScene->AddCursor(area_));
 		if (auto amusingArea = std::dynamic_pointer_cast<CompletePolygon>(area_))
 		{
+			amusingScene->AddIntersections(amusingArea);
+			addAreaToScene(scenes[sceneIndex], area_);
+	
+			handleAndSendAreaEventSync(amusingScene->AddCursor(area_));
+		
 			amusingArea->setCursorsSpeed(0, getSpeed(amusingArea));
 
 			// evts pour mettre à jour du coté audio

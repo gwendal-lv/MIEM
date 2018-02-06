@@ -324,17 +324,8 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 	newPolygon->CanvasResized(canvasComponent);
 	newPolygon->setCursorVisible(true, canvasComponent);
 
-	for (int i = 0; i < (int)areas.size(); ++i)
-	{
-		if (auto currentPolygon = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
-		{
-			int index = areas.size() + currentIntersectionsAreas.size();
-			std::shared_ptr<IntersectionPolygon> newIntersection(new IntersectionPolygon(index, newPolygon, currentPolygon, Colours::red));
-			currentIntersectionsAreas.push_back(newIntersection);
-			if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
-				manager->handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(newIntersection, AreaEventType::Added,newIntersection->GetId(), shared_from_this())));
-		}
-	}
+	
+	AddIntersections(newPolygon);
 
 	std::shared_ptr<AreaEvent> areaE = AddArea(newPolygon);
 
@@ -345,6 +336,21 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 	//DBG("a la creation : size = " + (String)newPolygon->GetContourSize());
 	// Actual adding of this new polygon
 	return areaE;
+}
+
+void AmusingScene::AddIntersections(std::shared_ptr<CompletePolygon> m_area)
+{
+	for (int i = 0; i < (int)areas.size(); ++i)
+	{
+		if (auto currentPolygon = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
+		{
+			int index = areas.size() + currentIntersectionsAreas.size();
+			std::shared_ptr<IntersectionPolygon> newIntersection(new IntersectionPolygon(index, m_area, currentPolygon, Colours::red));
+			currentIntersectionsAreas.push_back(newIntersection);
+			if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
+				manager->handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(newIntersection, AreaEventType::Added, newIntersection->GetId(), shared_from_this())));
+		}
+	}
 }
 
 std::shared_ptr<AreaEvent> AmusingScene::DeleteSelectedArea()
