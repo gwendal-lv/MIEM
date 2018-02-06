@@ -5,7 +5,7 @@
               buildVST="1" buildVST3="0" buildAU="1" buildAUv3="0" buildRTAS="0"
               buildAAX="0" pluginName="MIEM Matrix Router" pluginDesc="OSC controllable matrix router, for MIEM Spat Player"
               pluginManufacturer="G. Le Vaillant" pluginManufacturerCode="Manu"
-              pluginCode="Eo3z" pluginChannelConfigs="{8,8}" pluginIsSynth="0"
+              pluginCode="Eo3z" pluginChannelConfigs="{64,64}" pluginIsSynth="0"
               pluginWantsMidiIn="0" pluginProducesMidiOut="0" pluginIsMidiEffectPlugin="0"
               pluginEditorRequiresKeys="0" pluginAUExportPrefix="MIEMMatrixRouterAU"
               pluginRTASCategory="" aaxIdentifier="com.glv.MIEMMatrixRouter"

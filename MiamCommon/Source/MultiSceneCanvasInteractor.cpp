@@ -770,12 +770,12 @@ std::shared_ptr<bptree::ptree> MultiSceneCanvasInteractor::GetTree()
     // Internal properties. Some others may be written, this function can be overriden
     auto canvasInnerTree = std::make_shared<bptree::ptree>();
     canvasInnerTree->put("<xmlattr>.index", selfId);
+    // récupération (interne à la scène) de l'état actuel de ses excitateurs
+    if (selectedScene)
+        selectedScene->SaveCurrentExcitersToInitialExciters(false); // SANS supprimer les courants
     // Scenes writing
     for (size_t i=0 ; i<scenes.size() ; i++)
     {
-        // On sauvegarde les excitateurs courants dans les initiaux,
-        scenes[i]->SaveCurrentExcitersToInitialExciters(false); // SANS supprimer les courants
-        // Avant de chopper les initiaux :
         // Getting of the scene tree, then actual addition to the canvas tree
         auto sceneTree = scenes[i]->GetTree();
         sceneTree->put("<xmlattr>.index", i);

@@ -167,9 +167,6 @@ void Presenter::Update()
 
 // = = = = = = = = = = XML import/export  = = = = = = = = = =
 
-#ifdef __MIAM_DEBUG
-bool IPresenter::__canStartDebug__ = false;
-#endif
 
 void Presenter::LoadSession(std::string filename)
 {
@@ -180,15 +177,9 @@ void Presenter::LoadSession(std::string filename)
     
     try {
         SpatPresenter::LoadSession(filename);
-#ifdef __MIAM_DEBUG
-        __canStartDebug__ = true;
-        #endif
     }
     catch (XmlReadException& e)
     {
-#ifdef __MIAM_DEBUG
-        __canStartDebug__ = false;
-        #endif
         // Also display in a new window
         view->DisplayInfo(std::string("[Reading XML] ") + e.what(),
                           50, true);

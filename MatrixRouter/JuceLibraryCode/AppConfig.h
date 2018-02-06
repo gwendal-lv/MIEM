@@ -29,6 +29,7 @@
    under the GPL v3 license.
 
    End User License Agreement: www.juce.com/juce-5-licence
+
   ==============================================================================
 */
 
@@ -41,7 +42,6 @@
 #ifndef JUCE_REPORT_APP_USAGE
  #define JUCE_REPORT_APP_USAGE 0
 #endif
-
 
 // END SECTION A
 
@@ -100,6 +100,10 @@
 
 #ifndef    JUCE_USE_WINRT_MIDI
  //#define JUCE_USE_WINRT_MIDI 1
+#endif
+
+#ifndef    JUCE_DISABLE_AUDIO_MIXING_WITH_OTHER_APPS
+ //#define JUCE_DISABLE_AUDIO_MIXING_WITH_OTHER_APPS 1
 #endif
 
 //==============================================================================
@@ -403,11 +407,11 @@
  #define JucePlugin_IAAName                "G. Le Vaillant: MIEM Matrix Router"
 #endif
 #ifndef  JucePlugin_MaxNumInputChannels
- #define JucePlugin_MaxNumInputChannels    8
+ #define JucePlugin_MaxNumInputChannels    64
 #endif
 #ifndef  JucePlugin_MaxNumOutputChannels
- #define JucePlugin_MaxNumOutputChannels   8
+ #define JucePlugin_MaxNumOutputChannels   64
 #endif
 #ifndef  JucePlugin_PreferredChannelConfigurations
- #define JucePlugin_PreferredChannelConfigurations  {8,8}
+ #define JucePlugin_PreferredChannelConfigurations  {64,64}
 #endif

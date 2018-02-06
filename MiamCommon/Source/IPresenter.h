@@ -54,11 +54,6 @@ namespace Miam
         virtual void Update() = 0;
         
         
-        #ifdef __MIAM_DEBUG
-        public :
-        static bool __canStartDebug__;
-        #endif
-        
         
     };
 }

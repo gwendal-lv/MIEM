@@ -25,29 +25,6 @@
 using namespace Miam;
 
 
-#ifdef __MIAM_DEBUG
-#include "IPresenter.h"
-void InteractiveScene::__checkIfExcitersDisappeared__() const
-{
-    if (IPresenter::__canStartDebug__)
-    {
-        // Message d'erreur pour tracker le bug des excitateurs qui disparaissent...
-        // + info utilisateur, ça peut toujours servir
-        if (initialExciters.size() == 0)
-        {
-            canvasManager.lock()->DisplayInfo(TRANS("Warning: a scene has 0 exciter and cannot be played")
-                                              + String(" (") + TRANS("scene") + " '"
-                                              + name + "')",
-                                              10); // priorité de 10
-            std::cout << "***Attention*** : [Scène '" + name + "'] : ZERO excitateur INITIAL" << std::endl;
-            
-            assert(false);
-        }
-    }
-}
-#endif
-
-
 // - - - - - Construction and Destruction (and helpers) - - - - -
 
 InteractiveScene::InteractiveScene(std::shared_ptr<MultiSceneCanvasInteractor> canvasManager_, SceneCanvasComponent* canvasComponent_, ExcitersBehaviorType excitersBehavior_)
@@ -96,8 +73,6 @@ std::shared_ptr<IInteractiveArea> InteractiveScene::GetInteractiveArea(size_t i)
 
 std::shared_ptr<MultiAreaEvent> InteractiveScene::setSelectedExciter(std::shared_ptr<Exciter> exciterToSelect)
 {
-    __checkIfExcitersDisappeared__();
-    
     auto areaE = std::make_shared<MultiAreaEvent>();
     // Désélection si nécessaire
     if (selectedExciter)
@@ -123,10 +98,6 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::setSelectedExciter(std::shared
             areaE = multiAreaE_temp; // échange, les shared_ptr gardent les 2 events proprement
         }
     }
-    
-    __checkIfExcitersDisappeared__();
-    
-
     
     return areaE;
 }
@@ -186,9 +157,6 @@ std::shared_ptr<AreaEvent> InteractiveScene::AddDefaultExciter()
 }
 std::shared_ptr<AreaEvent> InteractiveScene::AddExciter(std::shared_ptr<Exciter> newExciter, bool forceSelect)
 {
-    __checkIfExcitersDisappeared__();
-    
-
     currentExciters.push_back(newExciter);
     
     // Forced graphical updates
@@ -203,17 +171,11 @@ std::shared_ptr<AreaEvent> InteractiveScene::AddExciter(std::shared_ptr<Exciter>
     if (forceSelect)
         multiAreaE->AddAreaEvent( setSelectedExciter(newExciter) );
     
-    __checkIfExcitersDisappeared__();
-    
-
     return multiAreaE;
 }
 
 std::shared_ptr<AreaEvent> InteractiveScene::DeleteCurrentExciterByIndex(size_t excitersVectorIndex)
 {
-    __checkIfExcitersDisappeared__();
-    
-
     auto deletedExciter = currentExciters[excitersVectorIndex];
     
     // petite optimisation : on utilise pop_back sur le vector (censé pas trop le modifier...) si
@@ -241,17 +203,11 @@ std::shared_ptr<AreaEvent> InteractiveScene::DeleteSelectedExciter()
         }
     }
     
-    __checkIfExcitersDisappeared__();
-    
-
     return areaE;
 }
 
 std::shared_ptr<MultiAreaEvent> InteractiveScene::ResetCurrentExcitersToInitialExciters()
 {
-    __checkIfExcitersDisappeared__();
-    
-
     auto multiAreaE = setSelectedExciter(nullptr);
     
     // Création des évènement de suppression des excitateurs courants
@@ -280,18 +236,12 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::ResetCurrentExcitersToInitialE
         // (peu importe que l'évènement principal du multievent soit NothingHappened, ou non
         multiAreaE->AddAreaEvent(areaAddedE);
     }
-    
-    __checkIfExcitersDisappeared__();
-    
 
     return multiAreaE;
 }
 
 void InteractiveScene::SaveCurrentExcitersToInitialExciters(bool deleteCurrentExciters)
 {
-    __checkIfExcitersDisappeared__();
-    
-    
     // On veut créer une sauvegarde à un instant figé dans le temps
     // donc on fait une copie des excitateurs, et pas seulement
     // des pointeurs sur les excitateurs
@@ -311,17 +261,12 @@ void InteractiveScene::SaveCurrentExcitersToInitialExciters(bool deleteCurrentEx
         currentExciters.clear();
     
     // Aucun évènement renvoyé
-    
-    __checkIfExcitersDisappeared__();
-    
 }
 
 
 // - - - - - Selection events managing (orders from parent manager) - - - - -
 std::shared_ptr<MultiAreaEvent> InteractiveScene::OnSelection(bool resetExciters)
 {
-    __checkIfExcitersDisappeared__();
-    
     auto multiAreaE = std::make_shared<MultiAreaEvent>();
     
     if (resetExciters)
@@ -346,14 +291,10 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::OnSelection(bool resetExciters
         multiAreaE = RecomputeAreaExciterInteractions();
     }
     
-    __checkIfExcitersDisappeared__();
-    
     return multiAreaE;
 }
 std::shared_ptr<MultiAreaEvent> InteractiveScene::OnUnselection(bool shutExcitersDown)
 {
-    __checkIfExcitersDisappeared__();
-    
     // D'abord on arrête les manipulations graphiques
     auto multiAreaE = StopCurrentTransformations();
     
@@ -377,8 +318,6 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::OnUnselection(bool shutExciter
     // à l'avenir : transitions douces par Timers !!
     // à l'avenir : transitions douces par Timers !!
     // à l'avenir : transitions douces par Timers !!
-    
-    __checkIfExcitersDisappeared__();
     
     return multiAreaE;
 }
@@ -501,8 +440,6 @@ std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseUp(const MouseEvent
 
 std::shared_ptr<MultiAreaEvent> InteractiveScene::StopCurrentTransformations()
 {
-    __checkIfExcitersDisappeared__();
-    
     auto multiAreaE = std::make_shared<MultiAreaEvent>();
     
     // We stop all current movements
@@ -519,9 +456,6 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::StopCurrentTransformations()
         // Storage of event in vector (for events back sending)
         multiAreaE->AddAreaEvent(new AreaEvent(editableArea, eventType, shared_from_this()));
     }
-    
-    __checkIfExcitersDisappeared__();
-    
     return multiAreaE;
 }
 
@@ -532,8 +466,6 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::StopCurrentTransformations()
 
 std::shared_ptr<MultiAreaEvent> InteractiveScene::testAreasInteractionsWithExciter(std::shared_ptr<Exciter>& exciter)
 {
-    __checkIfExcitersDisappeared__();
-    
     auto multiAreaE = std::make_shared<MultiAreaEvent>(); // event de base restera "NothingHappened"...
     
     // PASSE 1
@@ -550,15 +482,11 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::testAreasInteractionsWithExcit
     // PASSE 2 (à l'intérieur de l'excitateur, car il enregistre les modifs !)
     exciter->NotifyNewExcitationToAreas();
     
-    __checkIfExcitersDisappeared__();
-    
     return multiAreaE;
 }
 
 std::shared_ptr<MultiAreaEvent> InteractiveScene::RecomputeAreaExciterInteractions()
 {
-    __checkIfExcitersDisappeared__();
-    
     auto multiAreaE = std::make_shared<MultiAreaEvent>();
     
     for (size_t i=0 ; i<currentExciters.size() ; i++)
@@ -568,8 +496,6 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::RecomputeAreaExciterInteractio
     // On recrée juste un évènement pour chaque aire
     for (size_t i=0 ; i<areas.size() ; i++)
         multiAreaE->AddAreaEvent(new AreaEvent(areas[i], AreaEventType::ExcitementAmountChanged, shared_from_this()));
-    
-    __checkIfExcitersDisappeared__();
     
     return multiAreaE;
 }
@@ -598,8 +524,6 @@ std::shared_ptr<bptree::ptree> InteractiveScene::GetTree() const
         areaTree->put("<xmlattr>.index", getExciterDrawingIndex(i));
         areasTree.add_child("area", *areaTree);
     }
-    
-    __checkIfExcitersDisappeared__();
     
     sceneTree->add_child("areas", areasTree);
     return sceneTree;
