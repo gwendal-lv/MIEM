@@ -27,6 +27,7 @@ TimeLine::TimeLine()
 
 	continuous = false;
 	
+	numOfReaders = 0;
 
 	lastNote = 0;
 	t0 = 0;
@@ -485,6 +486,23 @@ void TimeLine::setFilterFrequency(double frequency)
 		filterActive = true;
 	}
 	deltaF = (filterFrequencyToReach - currentFilterFrequency) / 1.0; // il faudra 5 buffer avant d'arriver à la frequence desiree
+}
+
+void TimeLine::setSynthPlaying(bool m_shouldPlay)
+{
+	if (m_shouldPlay)
+	{
+		++numOfReaders;
+		if (numOfReaders > 0)
+			swappableSynth.skipSwapping(false);
+	}
+	else
+	{
+		--numOfReaders;
+		// si pas de reader, inutile d'attendre l'état swapping
+		if (numOfReaders == 0)
+			swappableSynth.skipSwapping(true);
+	}
 }
 
 void TimeLine::testMidi()

@@ -44,9 +44,13 @@ public:
 	void setSound(String soundPath);
 	void renderNextBlock(AudioSampleBuffer &outputBuffer, const MidiBuffer &inputBuffer, int startSample, int numSample);
 
+	void skipSwapping(bool m_shouldSkip);
+
 private:
 	// setState return true if the transition is possible, false otherwise
 	bool setState(SwappableSynthState newState);
+	bool skipMutex; // if true, unlock the mutex directly after the loading
+					// else unlock the mutex after the swapping
 
 	Synthesiser synthA, synthB;
 	//ScopedPointer<AudioFormatReader> audioReader;
@@ -64,6 +68,7 @@ private:
 	std::atomic<SwappableSynthState> state;
 
 	std::mutex synthMtx;
+	std::atomic<bool> waitForUnlock;
 	
 	AudioSampleBuffer rampBuffer_off;
 	AudioSampleBuffer rampBuffer_On;

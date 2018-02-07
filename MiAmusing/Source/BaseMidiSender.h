@@ -64,7 +64,7 @@ public:
 	void removeNextBlockOfMessages(MidiBuffer & incomingMidi, int numSamples);
 
 	void setFilterFrequency(double frequency);
-
+	void setSynthPlaying(bool m_shouldPlay);
 
 	void renderNextBlock(AudioSampleBuffer &outputAudio, const MidiBuffer &incomingMidi, int startSample, int numSamples);
 	void clearSounds();
@@ -100,6 +100,7 @@ private:
 	int lastNote; // last note played -> we have to send the noteOff msg when the object is deleted
 	bool continuous; // if true, we send the noteOn for all the notes
 
+	int numOfReaders;
 
 	void testMidi();
 	MidiMessageCollector midiCollector;

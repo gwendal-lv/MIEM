@@ -228,11 +228,15 @@ void PlayHead::setState(PlayHeadState m_state)
 	switch (m_state)
 	{
 	case PlayHeadState::Play:
+		if (timeLine != 0)
+			timeLine->setSynthPlaying(true);
 		break;
 	case PlayHeadState::Pause:
 		break;
 	case PlayHeadState::Stop:
 		position = 0;
+		if (timeLine != 0)
+			timeLine->setSynthPlaying(false);
 		break;
 	default:
 		break;

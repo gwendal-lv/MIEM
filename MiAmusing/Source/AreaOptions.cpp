@@ -68,7 +68,7 @@ AreaOptions::AreaOptions ()
 
 
     //[UserPreSize]
-	speed->setValue(1);
+	speed->setValue(1, NotificationType::dontSendNotification);
     //[/UserPreSize]
 
     setSize (200, 200);
@@ -132,7 +132,7 @@ void AreaOptions::sliderValueChanged (Slider* sliderThatWasMoved)
         //[UserSliderCode_baseNote] -- add your slider handling code here..
 		//DBG("ici");
 		int octave = roundToInt(baseNote->getValue());
-		baseNote->setValue(octave);
+		baseNote->setValue(octave, NotificationType::dontSendNotification);
 		amusingSceneComponent->OnBaseNoteChanged(octave);
         //[/UserSliderCode_baseNote]
     }
@@ -146,7 +146,7 @@ void AreaOptions::sliderValueChanged (Slider* sliderThatWasMoved)
 		if (abs(value - valueInt) < tol)
 		{
 			value = valueInt;
-			speed->setValue(value);
+			speed->setValue(value, NotificationType::dontSendNotification);
 		}
 		value = speedTable[(int)valueInt];
 		amusingSceneComponent->OnSpeedChanged(value);
@@ -200,18 +200,18 @@ void AreaOptions::setSpeedSliderValue(double _speed)
 	for (int i = 0; i < 7; ++i)
 	{
 		if(_speed == speedTable[i])
-			speed->setValue(i);
+			speed->setValue(i,NotificationType::dontSendNotification);
 	}
 }
 
 void AreaOptions::setOctaveSlider(int currentOctave)
 {
-	baseNote->setValue(currentOctave);
+	baseNote->setValue(currentOctave, NotificationType::dontSendNotification);
 }
 
 void AreaOptions::setVelocitySliderValue(double _velocity)
 {
-	velocitySlider->setValue(_velocity);
+	velocitySlider->setValue(_velocity, NotificationType::dontSendNotification);
 }
 
 void AreaOptions::OnColorChanged(Colour newColour, int colourIdx)

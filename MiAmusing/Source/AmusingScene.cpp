@@ -329,6 +329,14 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 
 	std::shared_ptr<AreaEvent> areaE = AddArea(newPolygon);
 
+	for (int j = 0; j < currentIntersectionsAreas.size(); ++j)
+		if (currentIntersectionsAreas[j]->isChild(newPolygon))
+		{
+			currentIntersectionsAreas[j]->CanvasResized(canvasComponent);
+			if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
+				manager->handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(currentIntersectionsAreas[j], AreaEventType::ShapeChanged, currentIntersectionsAreas[j]->GetId(), shared_from_this())));
+		}
+
 	if (areas.size() >= 10)
 		if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
 			manager->hideAddPolygon();
