@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="xCUiGi" name="MIEM Spat Player" projectType="guiapp" version="0.1.0"
               bundleIdentifier="com.glv.MIEMSpatPlayer" includeBinaryInAppConfig="1"
-              jucerVersion="5.2.0" displaySplashScreen="0" reportAppUsage="0"
+              jucerVersion="5.2.1" displaySplashScreen="0" reportAppUsage="0"
               splashScreenColour="Dark" cppLanguageStandard="11" companyCopyright="Gwendal Le Vaillant (IRISIB/LARAS, UMons)"
               companyName="IRISIB/LARAS, UMons" companyWebsite="htpp://laras.be"
               companyEmail="glevaillant@he2b.be" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../SpatCommon/Source/">
