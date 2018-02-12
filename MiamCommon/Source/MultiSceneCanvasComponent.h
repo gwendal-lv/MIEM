@@ -31,7 +31,7 @@ namespace Miam
 /*
 */
 class MultiSceneCanvasComponent    : public Component,
-                                     public ButtonListener
+                                     public Button::Listener
 {
 
     

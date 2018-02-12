@@ -7,12 +7,12 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.2.0
+  Created with Projucer version: 5.2.1
 
   ------------------------------------------------------------------------------
 
-  The Projucer is part of the JUCE library - "Jules' Utility Class Extensions"
-  Copyright (c) 2015 - ROLI Ltd.
+  The Projucer is part of the JUCE library.
+  Copyright (c) 2017 - ROLI Ltd.
 
   ==============================================================================
 */
@@ -55,7 +55,7 @@ namespace Miam
                                                                     //[/Comments]
 */
 class SceneEditionComponent  : public Component,
-                               public TextEditorListener,
+                               public TextEditor::Listener,
                                public Button::Listener,
                                public Slider::Listener,
                                public ComboBox::Listener
@@ -127,6 +127,7 @@ public:
     void setVisibleSpatControls(bool areVisible);
     void colourSliderMoved();
 
+    // Translation avec sauvegarde en interne de ce qui vient d'être effectué
     void areaGroupTranslateY(int dY);
     void spatGroupTranslateY(int dY);
     void initialStateGroupTranslateY(int dY);
@@ -161,6 +162,9 @@ private:
         areaGroupReducedH,
         spatGroupReducedH,
         initialStateGroupReducedH ;
+    int areaGroupCurrentDy = 0,
+        spatGroupCurrentDy = 0,
+        initialStateGroupCurrentDy = 0;
     bool isCanvasGroupHidden = false,
         isAreaGroupReduced = false,
         isAreaGroupHidden = false,

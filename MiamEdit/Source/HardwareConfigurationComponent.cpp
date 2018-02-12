@@ -7,12 +7,12 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.2.0
+  Created with Projucer version: 5.2.1
 
   ------------------------------------------------------------------------------
 
-  The Projucer is part of the JUCE library - "Jules' Utility Class Extensions"
-  Copyright (c) 2015 - ROLI Ltd.
+  The Projucer is part of the JUCE library.
+  Copyright (c) 2017 - ROLI Ltd.
 
   ==============================================================================
 */
@@ -276,33 +276,35 @@ void HardwareConfigurationComponent::textEditorReturnKeyPressed(TextEditor& edit
 BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="HardwareConfigurationComponent"
-                 componentName="" parentClasses="public Component, public TextEditorListener"
+                 componentName="" parentClasses="public Component, public TextEditor::Listener"
                  constructorParams="" variableInitialisers="" snapPixels="8" snapActive="1"
                  snapShown="1" overlayOpacity="0.330" fixedSize="0" initialWidth="1024"
                  initialHeight="600">
   <BACKGROUND backgroundColour="ffafafaf"/>
   <SLIDER name="Inputs Count slider" id="77ed5b9e29dce02e" memberName="inputsCountSlider"
           virtualName="" explicitFocusOrder="0" pos="8C 16 150 24" textboxtext="ff000000"
-          min="1" max="1024" int="1" style="IncDecButtons" textBoxPos="TextBoxLeft"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          min="1.00000000000000000000" max="1024.00000000000000000000"
+          int="1.00000000000000000000" style="IncDecButtons" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.00000000000000000000"
           needsCallback="1"/>
   <SLIDER name="Outputs Count slider" id="ca10a4b3f2104985" memberName="outputsCountSlider"
           virtualName="" explicitFocusOrder="0" pos="8C 48 150 24" textboxtext="ff000000"
-          min="1" max="1024" int="1" style="IncDecButtons" textBoxPos="TextBoxLeft"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          min="1.00000000000000000000" max="1024.00000000000000000000"
+          int="1.00000000000000000000" style="IncDecButtons" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.00000000000000000000"
           needsCallback="1"/>
   <LABEL name="Inputs Count label" id="5edb179087fb7973" memberName="inputsCountLabel"
          virtualName="" explicitFocusOrder="0" pos="0Cr 0 208 24" posRelativeY="77ed5b9e29dce02e"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Number of input channels:"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
-         justification="34"/>
+         fontname="Default font" fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
+         bold="0" italic="0" justification="34"/>
   <LABEL name="outputs Count label" id="5b4dd76a50f5f0d4" memberName="outputsCountLabel"
          virtualName="" explicitFocusOrder="0" pos="0Cr 0 208 24" posRelativeY="ca10a4b3f2104985"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Number of output channels:"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
-         justification="34"/>
+         fontname="Default font" fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
+         bold="0" italic="0" justification="34"/>
   <TOGGLEBUTTON name="OSC Plugin toggle button" id="74b5dae6c2ea74a2" memberName="oscPluginToggleButton"
                 virtualName="" explicitFocusOrder="0" pos="0Cc 96 400 24" txtcol="ff000000"
                 buttonText="Send OSC to Miam Matrix Router remote plug-in" connectedEdges="0"
@@ -312,7 +314,8 @@ BEGIN_JUCER_METADATA
          posRelativeY="e4ef4437203ce19e" textCol="ff000000" edTextCol="ff000000"
          edBkgCol="0" labelText="Plug-in listening on UDP port:" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
-         fontsize="15" kerning="0" bold="0" italic="0" justification="34"/>
+         fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
+         bold="0" italic="0" justification="34"/>
   <TEXTEDITOR name="UDP Port Text Editor" id="e4ef4437203ce19e" memberName="udpPortTextEditor"
               virtualName="" explicitFocusOrder="0" pos="8C 160 64 24" initialText="8001"
               multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"
@@ -326,7 +329,8 @@ BEGIN_JUCER_METADATA
          posRelativeY="6997b5b4dc28675a" textCol="ff000000" edTextCol="ff000000"
          edBkgCol="0" labelText="Plug-in host IP address:" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
-         fontsize="15" kerning="0" bold="0" italic="0" justification="34"/>
+         fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
+         bold="0" italic="0" justification="34"/>
   <TEXTEDITOR name="IP Address Text Editor" id="6997b5b4dc28675a" memberName="ipAddressTextEditor"
               virtualName="" explicitFocusOrder="0" pos="8C 128 120 24" initialText="127.0.0.1"
               multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"
