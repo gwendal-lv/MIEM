@@ -182,6 +182,11 @@ namespace Miam
         // Envoi d'un blob avec tout un ensemble de coeffs
         void SendCoeffsInMemoryBlock()
         {
+            // Vérification que n'on ne passe pas en jumbo frame (dans le doute...)
+            if (oscMemoryBlock.getSize() < 1400)
+                assert(false);
+            
+            // Envoi si ça va
             OSCMessage blobMessage(Miam_OSC_Matrix_Address);
             blobMessage.addBlob(oscMemoryBlock);
             oscSender.send(blobMessage);
