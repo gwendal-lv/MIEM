@@ -14,6 +14,8 @@
 
 #include "PluginProcessor.h" // main model
 
+#include "boost/endian/conversion.hpp"
+
 using namespace Miam;
 
 
@@ -77,9 +79,10 @@ void NetworkModel::oscMessageReceived(const OSCMessage& message)
 {
     AsyncParamChange paramChange;
     
-    // Unique coefficient (identified by row and col)
+    // Coefficients (identified by row and col)
     if (message.getAddressPattern().matches(oscAddress.c_str()))
     {
+        // Unique coefficient
         if (message.size() == 3
             && message[0].isInt32() && message[1].isInt32()
             && message[2].isFloat32())
@@ -92,6 +95,39 @@ void NetworkModel::oscMessageReceived(const OSCMessage& message)
             
             SendParamChange(paramChange);
         }
+        // 2 coeffs or more
+        else if (message.size() == 1 && message[0].isBlob())
+        {
+            paramChange.Type = AsyncParamChange::Volume; // parce qu'on a que ça....
+            
+            const MemoryBlock& oscMemoryBlock = message[0].getBlob();
+            int32_t bigEndianInt;
+            // Lecture du nombre de coeffs contenus
+            // Check de la taille du bloc ? -> pas nécessaire.... Code interne pour l'instant seulement !
+            oscMemoryBlock.copyTo(&bigEndianInt, 0, sizeof(int32_t));
+            size_t totalCoeffsCount = (size_t) boost::endian::big_to_native<int32_t>(bigEndianInt);
+            // Lecture des triplets int/int/float et transmission lock-free directe + envoi
+            for (size_t i=0 ; i<totalCoeffsCount ; i++)
+            {
+                size_t currentCoeffOffset = sizeof(int32_t) * (1 + 2*i) + sizeof(Float32)*i;
+                
+                oscMemoryBlock.copyTo(&bigEndianInt, (int) currentCoeffOffset, sizeof(int32_t));
+                currentCoeffOffset += sizeof(int32_t);
+                paramChange.Id1 = (int) boost::endian::big_to_native<int32_t>(bigEndianInt);
+                oscMemoryBlock.copyTo(&bigEndianInt, (int) currentCoeffOffset, sizeof(int32_t));
+                currentCoeffOffset += sizeof(int32_t);
+                paramChange.Id2 = (int) boost::endian::big_to_native<int32_t>(bigEndianInt);
+                
+                Float32 floatValue;
+                oscMemoryBlock.copyTo(&floatValue, (int) currentCoeffOffset, sizeof(Float32));
+                currentCoeffOffset += sizeof(Float32);
+                paramChange.FloatValue = (float) floatValue;
+                
+                SendParamChange(paramChange);
+                if (paramChange.Id1 == 0 && paramChange.Id2 == 0)
+                    std::cout << "-----------    [0;0] == " << paramChange.FloatValue << std::endl;
+            }
+        }
     }
     // Zeroing of the whole matrix
     else if (message.getAddressPattern().matches(GetOscZeroMatrixAddress().c_str()))
@@ -100,3 +136,7 @@ void NetworkModel::oscMessageReceived(const OSCMessage& message)
         SendParamChange(paramChange);
     }
 }
+
+
+
+

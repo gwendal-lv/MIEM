@@ -15,7 +15,7 @@
 
 #include "Presenter.h"
 
-#if defined(JUCE_APPLE) // XCode pour macOS et iOS.
+#if defined(JUCE_MAC) || defined(JUCE_IOS)
 
     // #include <mach/mach_init.h> // on laisse tomber pour l'instantt...
     // #include <mach/thread_policy.h> // beaucoup trop d'investissement nécessaire !
@@ -27,7 +27,6 @@
 
 #endif
 
-#include "boost/endian.hpp"
 
 using namespace Miam;
 
@@ -170,16 +169,6 @@ void Model::update()
             if (somethingWasUpdated)
             {
                 miamOscSender->SendStateModifications(spatInterpolator->GetCurrentInterpolatedState());
-                
-                // TEST de transmission de bloc OSC
-                // TEST de transmission de bloc OSC
-                // TEST de transmission de bloc OSC
-                
-                
-                
-                // TEST de transmission de bloc OSC
-                // TEST de transmission de bloc OSC
-                // TEST de transmission de bloc OSC
             }
             else
             {

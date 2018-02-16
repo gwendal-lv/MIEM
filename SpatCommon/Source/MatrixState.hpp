@@ -101,6 +101,10 @@ namespace Miam
             inputsCount = inputsCount_;
             outputsCount = outputsCount_;
         }
+        bool IsIndexWithinActualInputOutputBounds(size_t index1d)
+        {
+            return (GetIndex2dFromIndex(index1d).i < inputsCount) && (GetIndex2dFromIndex(index1d).j < outputsCount);
+        }
 
         // - - - - - Matrix management - - - - -
         public :

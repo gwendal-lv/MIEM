@@ -17,6 +17,8 @@
 #include "SpatSender.hpp"
 #include "MatrixBackupState.hpp"
 
+#include "boost/endian/conversion.hpp"
+
 
 namespace Miam
 {
@@ -31,7 +33,18 @@ namespace Miam
         std::string ipv4;
         OSCSender oscSender;
         
+        // 2 = nombre minimum de coefficients de matrices que l'on doit mettre dans un bloc
+        // Si on moins d'infos que ça à transmettre : on transmet un coeff seul
+        const int minCoeffsInBlob = 2;
+        // Nombre max, de sorte d'avoir une trame de 1500octets max au total.
+        // (c'est la limite des jumbo frames / trames géantes). On va prendre
+        // 1400 octets de données binaires; dans le doute...
+        // Chaque coeff fait 3*4 = 12 octets
+        const int maxCoeffsInBlob = 116;
+        MemoryBlock oscMemoryBlock;
+        
         int iToRefresh, jToRefresh;
+        
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
@@ -46,7 +59,8 @@ namespace Miam
         
         // - - - - - Construction / destruction - - - - -
         MiamOscSender() :
-        udpPort(8001), ipv4("127.0.0.1"), iToRefresh(0),
+        udpPort(8001), ipv4("127.0.0.1"),
+        iToRefresh(0),
         jToRefresh(-1) // -1 car on va l'incrémenter dès le premier tour
         {
         }
@@ -109,15 +123,48 @@ namespace Miam
             {
                 // On met à jour les éléments nécessaires seulement
                 auto changesIndexes = matrixState->GetSignificantChangesIndexes();
-                for (size_t i=0 ; i<changesIndexes.size() ; i++)
+                // Transmission de TRèS PEU de coefficients
+                if (0 < changesIndexes.size() && changesIndexes.size() < minCoeffsInBlob)
                 {
-                    Index2d index2d = matrixState->GetIndex2dFromIndex(changesIndexes[i]);
-                    // et on n'envoie que les E/S nécessaires (sachant que toutes les matrices ici sont
-                    // trop grandes, allouées statiquement à la taille max)
-                    if (index2d.i < matrixState->GetInputsCount()
-                        && index2d.j < matrixState->GetOutputsCount())
-                    SendMatrixCoeff((int) index2d.i, (int) index2d.j,
-                                    (float) (*matrixState)[changesIndexes[i]]);
+                    for (size_t i=0 ; i<changesIndexes.size() ; i++)
+                    {
+                        if (matrixState->IsIndexWithinActualInputOutputBounds(changesIndexes[i]))
+                        {
+                            Index2d index2d = matrixState->GetIndex2dFromIndex(changesIndexes[i]);
+                            SendMatrixCoeff((int) index2d.i, (int) index2d.j,
+                                            (float) (*matrixState)[changesIndexes[i]]);
+                        }
+                    }
+                }
+                // Transmission de PLUSIEURS coefficients
+                else if (changesIndexes.size() >= minCoeffsInBlob)
+                {
+                    // Première passe : liste des coeffs avec indices valides
+                    std::vector<size_t> actualChangesIndexes;
+                    actualChangesIndexes.reserve(changesIndexes.size()); // on aura assez
+                    for (size_t i=0 ; i<changesIndexes.size() ; i++)
+                        if (matrixState->IsIndexWithinActualInputOutputBounds(changesIndexes[i]))
+                            actualChangesIndexes.push_back(changesIndexes[i]);
+                    // 2nde passe : remplissage et envoie effectifs
+                    // du ou des blocs de mémoire avec encodage big endian pour transmission réseau.
+                    // on sait qu'on a minimum 1 bloc (sinon c'était coeff seul), pas besoin de tester
+                    size_t oscBlobsCount = (actualChangesIndexes.size() / maxCoeffsInBlob) + 1;
+                    for (size_t i = 0 ; i<oscBlobsCount ; i++)
+                    {
+                        // Remplissage à partir d'un sous vecteur
+                        if (i == oscBlobsCount-1) // dernier blob : incomplet
+                            fillInternalCoeffsMemoryBlock(matrixState,
+                                                          actualChangesIndexes,
+                                                          i*maxCoeffsInBlob,
+                                                          actualChangesIndexes.size()-i*maxCoeffsInBlob);
+                        else // blobs complets proches de 1,4ko
+                            fillInternalCoeffsMemoryBlock(matrixState,
+                                                          actualChangesIndexes,
+                                                          i*maxCoeffsInBlob,
+                                                          maxCoeffsInBlob);
+                        // Transmission OSC (encodage déjà fait, au remplissage)
+                        SendCoeffsInMemoryBlock();
+                    }
                 }
                 
                 // On informe la matrice que tout a bien été envoyé
@@ -131,6 +178,13 @@ namespace Miam
         void SendMatrixCoeff(int i, int j, float value)
         {
             oscSender.send(Miam_OSC_Matrix_Address, i, j, value);
+        }
+        // Envoi d'un blob avec tout un ensemble de coeffs
+        void SendCoeffsInMemoryBlock()
+        {
+            OSCMessage blobMessage(Miam_OSC_Matrix_Address);
+            blobMessage.addBlob(oscMemoryBlock);
+            oscSender.send(blobMessage);
         }
         
         /// \brief Commande d'actualisation d'1 coefficient.
@@ -171,6 +225,59 @@ namespace Miam
             else
                 throw std::logic_error("Cannot send 1 coeff of a state that is not a BackupMatrix");
         }
+        
+        
+        
+        // - - - - - OSC and Memory blocks helpers - - - - -
+        private :
+        /// \brief The amount of bytes required to store N matrix coefficients
+        ///
+        ///   1  x int32 (number of coeffs)
+        /// + 2N x int32
+        /// + N  x float32
+        size_t getRequiredBytesCount(size_t coeffsCount)
+        {
+            return (sizeof(int32_t) * (2*coeffsCount +1)) + (sizeof(Float32) * coeffsCount);
+        }
+        /// \brief Fills the internal memory block with the concerned coefficients
+        ///
+        /// startPos is an included bound, count is the number of coeffs written
+        void fillInternalCoeffsMemoryBlock(MatrixBackupState<T>* matrixState,
+                                           std::vector<size_t>& actualChangesIndexes,
+                                           size_t startPos, size_t coeffsCount)
+        {
+            int32_t nativeInt, bigEndianInt;
+            oscMemoryBlock.setSize(getRequiredBytesCount(coeffsCount));
+            // Nombre de coeffs d'abord
+            nativeInt = (int32_t) coeffsCount;
+            bigEndianInt = boost::endian::native_to_big<int32_t>(nativeInt);
+            oscMemoryBlock.copyFrom(&bigEndianInt, 0, sizeof(int32_t));
+            // Ensuite, tous les triplets int/int/float
+            for (size_t i=0 ; i<coeffsCount ; i++)
+            {
+                auto index2d = matrixState->GetIndex2dFromIndex(actualChangesIndexes[i]);
+                nativeInt = (int32_t)index2d.i;
+                bigEndianInt = boost::endian::native_to_big<int32_t>(nativeInt);
+                oscMemoryBlock.copyFrom(&bigEndianInt,
+                                        (int) getRequiredBytesCount(i),
+                                        sizeof(int32_t));
+                nativeInt = (int32_t)index2d.j;
+                bigEndianInt = boost::endian::native_to_big<int32_t>(nativeInt);
+                oscMemoryBlock.copyFrom(&bigEndianInt,
+                                        (int) getRequiredBytesCount(i) + sizeof(int32_t),
+                                        sizeof(int32_t));
+                Float32 floatValue = (Float32) (*matrixState)[actualChangesIndexes[i]];
+                oscMemoryBlock.copyFrom(&floatValue,
+                                        (int) getRequiredBytesCount(i) + 2*sizeof(int32_t),
+                                        sizeof(Float32));
+                
+                if (index2d.i == 0 && index2d.j == 0)
+                {
+                    std::cout << "------- dans blob : [0;0] == " << floatValue << std::endl;
+                }
+            }
+        }
+        
         
         // - - - - - XML import/export - - - - -
         public :

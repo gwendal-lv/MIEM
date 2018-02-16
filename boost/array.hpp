@@ -183,7 +183,14 @@ namespace boost {
 
         // check range (may be private because it is static)
         static BOOST_CONSTEXPR bool rangecheck (size_type i) {
+            
+            // - - - - - - Début modif projet MIEM - - - - - - -
+#if defined(__clang__) // sous XCode (qui a détecté un possible truc bizarre avec l'opérateur ",")
+            return i > size() ? ( ((void)boost::throw_exception(std::out_of_range ("array<>: index out of range"))), true ) : true;
+#else // [code original] sous les autres plateformes qui ne renvoient pas de warning
             return i > size() ? boost::throw_exception(std::out_of_range ("array<>: index out of range")), true : true;
+#endif
+            // - - - - - - Fin modif projet MIEM - - - - - - -
         }
 
     };
