@@ -95,6 +95,8 @@ namespace Amusing {
 
 		std::thread T; // allocation thread
 		void threadFunc(); // function of the allocation thread
+		void clearAudioObjectsOnThread();
+		std::mutex allocationThreadsMutex;
 		bool runThread;	
 		void getAudioThreadMsg(); // function of the allocation thread to handle parameters from the audio thread
 

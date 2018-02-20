@@ -12,11 +12,12 @@
 
 #include "DrawablePolygon.h"
 #include "CompletePolygon.h"
+#include "InteractivePolygon.h"
 
 namespace Amusing
 {
 	/* IntersectionPolygon construct itself on base of two parents polygons*/
-	class IntersectionPolygon : public Miam::DrawablePolygon
+	class IntersectionPolygon : public Miam::InteractivePolygon
 	{
 	public:
 		IntersectionPolygon(int64_t _Id, std::shared_ptr<CompletePolygon> m_parent1, std::shared_ptr<CompletePolygon> m_parent2, Colour _fillColour);
@@ -36,6 +37,8 @@ namespace Amusing
 		void setSurfaceThreshold(double m_threshold);
 
 		bool isChild(std::shared_ptr<CompletePolygon> m_parent);
+
+		std::shared_ptr<CompletePolygon> getNearestParent(bpt location);
 
 	private:
 		// parents of the polygon -> determine this polygon

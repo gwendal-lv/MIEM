@@ -854,6 +854,11 @@ void GraphicSessionManager::OnLoad(std::string filename)
 							canvasManagers[i]->AddAreaToScene(j, areas[k]);
 						}
 
+						if (auto currentCanvas = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManagers[i]))
+						{
+							currentCanvas->AddAllIntersectionsToScene(j);
+						}
+
 					}
 				}
 			}

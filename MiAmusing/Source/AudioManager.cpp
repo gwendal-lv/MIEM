@@ -35,8 +35,8 @@ AudioManager::AudioManager(AmusingModel *m_model) : model(m_model), state(Stop),
 
 	setSource(this);
 	runThread = true;
-	T = std::thread(&AudioManager::threadFunc, this);
-
+	//T = std::thread(&AudioManager::threadFunc, this);
+	
 	metronome = new Metronome();
 
 	for (int i = 0; i < maxSize; i++)
@@ -55,8 +55,11 @@ AudioManager::~AudioManager()
 			midiOuput->sendMessageNow(MidiMessage::allNotesOff(i));
 	DBG("audioManager destructor");
 	
-	runThread = false;
-	T.join();
+	//runThread = false;
+	std::thread Tdelete (&AudioManager::clearAudioObjectsOnThread, this);
+	Tdelete.join();
+
+	//T.join();
 	setSource(nullptr);
 	
 	DBG("audioManager destructor fin");
@@ -364,7 +367,10 @@ void AudioManager::getParameters()
 			if (timeLinesKnown[param.Id1] != 0)
 				timeLinesKnown[param.Id1]->addSound(model->getSoundPath(param.Id2));
 			else
+			{
 				paramToAllocationThread.push(param);
+				std::thread(&AudioManager::threadFunc, this).detach();
+			}
 			break;
 		case Miam::AsyncParamChange::ParamType::Activate:
 			if (param.Id2 == 1024) // crée ou supprime une timeLine
@@ -374,11 +380,13 @@ void AudioManager::getParameters()
 				case 1:
 
 					paramToAllocationThread.push(param);
+					std::thread(&AudioManager::threadFunc, this).detach();
 					break;
 				case 0:
 
 					timeLinesKnown[param.Id1] = 0; // so we won't access to the element anymore, we forget it
 					paramToAllocationThread.push(param); // we ask to the allocation thread to delete it
+					std::thread(&AudioManager::threadFunc, this).detach();
 					break;
 				default:
 					DBG("IMPOSSIBLE : 1 to activate, 0 to desactivate");
@@ -391,13 +399,17 @@ void AudioManager::getParameters()
 				{
 				case 1: // création
 					if (playHeadsKnown[param.Id2] == 0)
+					{
 						paramToAllocationThread.push(param);
+						std::thread(&AudioManager::threadFunc, this).detach();
+					}
 					else
 						playHeadsKnown[param.Id2]->setSpeed(param.DoubleValue);
 					break;
 				case 0: // suppression
 					playHeadsKnown[param.Id2] = 0;
 					paramToAllocationThread.push(param);
+					std::thread(&AudioManager::threadFunc, this).detach();
 					break;
 				default:
 					break;
@@ -410,6 +422,7 @@ void AudioManager::getParameters()
 					if (playHeadsKnown[param.Id2] == 0) // la tête de lecture n'existe pas encore -> demander création + association
 					{
 						paramToAllocationThread.push(param);
+						std::thread(&AudioManager::threadFunc, this).detach();
 					}
 					else // faire juste l'association car la tête de lectire existe déjà
 					{
@@ -418,7 +431,10 @@ void AudioManager::getParameters()
 					}
 				}
 				else
+				{
 					paramToAllocationThread.push(param);
+					std::thread(&AudioManager::threadFunc, this).detach();
+				}
 			}
 			break;
 		case Miam::AsyncParamChange::ParamType::Source:
@@ -426,7 +442,10 @@ void AudioManager::getParameters()
 			if (timeLinesKnown[param.Id1] != 0) // si != 0 : il existe et on peut le modifier
 				timeLinesKnown[param.Id1]->setMidiTime(param.Id2, param.DoubleValue, param.IntegerValue,param.FloatValue);
 			else // si == 0, on ne sait pas s'il n'existe pas ou si le thread est encore en train de le creer -> envoyer au thread pour verifier et faire le necessaire
+			{
 				paramToAllocationThread.push(param);
+				std::thread(&AudioManager::threadFunc, this).detach();
+			}
 			break;
 		case Miam::AsyncParamChange::ParamType::Play :
 			DBG("state = Play;");
@@ -441,17 +460,22 @@ void AudioManager::getParameters()
 				}
 			}
 			else
+			{
 				paramToAllocationThread.push(param);
+				std::thread(&AudioManager::threadFunc, this).detach();
+			}
 			break;
 		case Miam::AsyncParamChange::ParamType::Pause :
 			DBG("state = Pause;");
 			state = Pause;
 			paramToAllocationThread.push(param);
+			std::thread(&AudioManager::threadFunc, this).detach();
 			break;
 		case Miam::AsyncParamChange::ParamType::Stop :
 			DBG("state = Stop;");
 			state = Stop;
 			paramToAllocationThread.push(param);
+			std::thread(&AudioManager::threadFunc, this).detach();
 			break;
 		case Miam::AsyncParamChange::Update :
 			//DBG("Update received");
@@ -463,7 +487,10 @@ void AudioManager::getParameters()
 				//playHeadsKnown[param.Id2]->setState(PlayHeadState::Pause);
 			}
 			else
+			{
 				paramToAllocationThread.push(param);
+				std::thread(&AudioManager::threadFunc, this).detach();
+			}
 			break;
 		case Miam::AsyncParamChange::Duration :
 			state = Play;
@@ -471,18 +498,25 @@ void AudioManager::getParameters()
 			//juce::MidiMessage::masterVolume(param.FloatValue));
 			//sendMidiMessage(juce::MidiMessage::masterVolume(param.FloatValue),nullptr);
 			paramToAllocationThread.push(param);
+			std::thread(&AudioManager::threadFunc, this).detach();
 			break;
 		case Miam::AsyncParamChange::UdpPort:
 			if (timeLinesKnown[param.Id1] != 0)
 				timeLinesKnown[param.Id1]->setMidiChannel(param.IntegerValue);
 			else
+			{
 				paramToAllocationThread.push(param);
+				std::thread(&AudioManager::threadFunc, this).detach();
+			}
 			break;
 		case Miam::AsyncParamChange::Volume :
 			if (timeLinesKnown[param.Id1] != 0) // si != 0 : il existe et on peut le modifier
 				timeLinesKnown[param.Id1]->setAllVelocities(param.FloatValue);
 			else // si == 0, on ne sait pas s'il n'existe pas ou si le thread est encore en train de le creer -> envoyer au thread pour verifier et faire le necessaire
+			{
 				paramToAllocationThread.push(param);
+				std::thread(&AudioManager::threadFunc, this).detach();
+			}
 			break;
 		case Miam::AsyncParamChange::Position :
 			if (timeLinesKnown[param.Id1] != 0 && timeLinesKnown[param.Id2] != 0)
@@ -493,7 +527,10 @@ void AudioManager::getParameters()
 					timeLinesKnown[param.Id1]->addChord(timeLinesKnown[param.Id2], roundToInt(param.DoubleValue * (double)metronome->getPeriodInSamples()));
 			}
 			else
+			{
 				paramToAllocationThread.push(param);
+				std::thread(&AudioManager::threadFunc, this).detach();
+			}
 			break;
 		case Miam::AsyncParamChange::Frequency :
 			if (timeLinesKnown[param.Id1] != 0)
@@ -502,7 +539,10 @@ void AudioManager::getParameters()
 				timeLinesKnown[param.Id1]->setFilterFrequency(param.DoubleValue);
 			}
 			else
+			{
 				paramToAllocationThread.push(param);
+				std::thread(&AudioManager::threadFunc, this).detach();
+			}
 			break;
 		default:
 			break;
@@ -704,16 +744,21 @@ void AudioManager::getAudioThreadMsg()
 
 void AudioManager::threadFunc()
 {
-	while (runThread)
-	{ 
-		getAudioThreadMsg();
-	}
+	allocationThreadsMutex.lock();
+	getAudioThreadMsg();
+	allocationThreadsMutex.unlock();
+	
+}
+
+void AudioManager::clearAudioObjectsOnThread()
+{
+	allocationThreadsMutex.lock();
 	DBG("delete all the timeLines");
 	for (int i = 0; i < maxSize; ++i)
 	{
 		if (timeLines[i] != nullptr)
 			timeLines[i]->clearSounds();
-			delete timeLines[i];
+		delete timeLines[i];
 	}
 	DBG("delete all the playheads");
 	for (int i = 0; i < maxSize; ++i)
@@ -728,4 +773,5 @@ void AudioManager::threadFunc()
 
 	}
 	DBG("exit thread");
+	allocationThreadsMutex.unlock();
 }

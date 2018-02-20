@@ -77,6 +77,7 @@ void MultiSceneCanvasManager::AddNedgeArea(uint64_t nextAreaId, int N)
 	{
 		std::shared_ptr<AreaEvent> areaE = amusingScene->AddNedgeArea(nextAreaId, N);
 		handleAndSendAreaEventSync(areaE);
+		amusingScene->AddIntersections(areaE->GetConcernedArea());
 		handleAndSendAreaEventSync(amusingScene->AddCursor(areaE->GetConcernedArea()));
 	}
 
@@ -112,6 +113,14 @@ void MultiSceneCanvasManager::AddAreaToScene(size_t sceneIndex, std::shared_ptr<
 			handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(amusingArea->getCursor(0), AreaEventType::ShapeChanged, selectedScene)));
 			handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(amusingArea, AreaEventType::ShapeChanged, selectedScene)));
 		}
+	}
+}
+
+void MultiSceneCanvasManager::AddAllIntersectionsToScene(int sceneIndex)
+{
+	if (auto currentScene = std::dynamic_pointer_cast<AmusingScene>(scenes[sceneIndex]))
+	{
+		currentScene->AddAllIntersections();
 	}
 }
 

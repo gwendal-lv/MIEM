@@ -325,7 +325,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 	newPolygon->setCursorVisible(true, canvasComponent);
 
 	
-	AddIntersections(newPolygon);
+	//AddIntersections(newPolygon);
 
 	std::shared_ptr<AreaEvent> areaE = AddArea(newPolygon);
 
@@ -337,7 +337,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 				manager->handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(currentIntersectionsAreas[j], AreaEventType::ShapeChanged, currentIntersectionsAreas[j]->GetId(), shared_from_this())));
 		}
 
-	if (areas.size() >= 10)
+	if (areas.size() - currentIntersectionsAreas.size() >= 10)
 		if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
 			manager->hideAddPolygon();
 
@@ -346,19 +346,67 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 	return areaE;
 }
 
-void AmusingScene::AddIntersections(std::shared_ptr<CompletePolygon> m_area)
+void AmusingScene::AddIntersections(std::shared_ptr<IDrawableArea> m_area)
 {
-	for (int i = 0; i < (int)areas.size(); ++i)
+	auto canvasManagerLocked = canvasManager.lock();
+	if (!canvasManagerLocked)
+		throw std::logic_error("Cannot add a new current exciter : cannot get a Unique ID from the canvas manager (not linked to this)");
+
+
+	if (auto completeParent = std::dynamic_pointer_cast<CompletePolygon>(m_area))
 	{
-		if (auto currentPolygon = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
+		for (int i = 0; i < (int)areas.size(); ++i)
 		{
-			int index = areas.size() + currentIntersectionsAreas.size();
-			std::shared_ptr<IntersectionPolygon> newIntersection(new IntersectionPolygon(index, m_area, currentPolygon, Colours::red));
-			currentIntersectionsAreas.push_back(newIntersection);
-			if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
-				manager->handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(newIntersection, AreaEventType::Added, newIntersection->GetId(), shared_from_this())));
+			if (areas[i] != m_area)
+			{
+				if (auto currentPolygon = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
+				{
+					int index = 0;//areas.size() + currentExciters.size() + currentIntersectionsAreas.size();
+					std::shared_ptr<IntersectionPolygon> newIntersection(new IntersectionPolygon(canvasManagerLocked->GetNextAreaId(), completeParent, currentPolygon, Colours::red));
+					currentIntersectionsAreas.push_back(newIntersection);
+
+					if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
+						manager->handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(AddArea(newIntersection)));//new AreaEvent(newIntersection, AreaEventType::Added, newIntersection->GetId(), shared_from_this())));
+				}
+			}
+		}
+
+	}
+}
+
+void AmusingScene::AddAllIntersections()
+{
+	auto canvasManagerLocked = canvasManager.lock();
+	if (!canvasManagerLocked)
+		throw std::logic_error("Cannot add a new current exciter : cannot get a Unique ID from the canvas manager (not linked to this)");
+
+	int N = areas.size();
+	for (int i = 0; i < N; ++i)
+	{
+		for (int j = i + 1; j < N; ++j)
+		{
+			if (auto parent1 = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
+			{
+				if (auto parent2 = std::dynamic_pointer_cast<CompletePolygon>(areas[j]))
+				{
+					std::shared_ptr<IntersectionPolygon> newIntersection(new IntersectionPolygon(canvasManagerLocked->GetNextAreaId(), parent1, parent2, Colours::red));
+					currentIntersectionsAreas.push_back(newIntersection);
+					
+					if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManagerLocked))
+					{
+						manager->handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(AddArea(newIntersection)));
+					}
+				}
+			}
 		}
 	}
+
+	
+}
+
+size_t Miam::AmusingScene::getIntersectionDrawingIndex(size_t intersectionVectorIndex)
+{
+	return areas.size() + currentExciters.size() + intersectionVectorIndex;
 }
 
 std::shared_ptr<AreaEvent> AmusingScene::DeleteSelectedArea()
@@ -370,15 +418,28 @@ std::shared_ptr<AreaEvent> AmusingScene::DeleteSelectedArea()
 		if (auto selectedCompleteArea = std::dynamic_pointer_cast<CompletePolygon>(selectedArea))
 		{
 			std::vector<int> idToDelete;
-			for (int j = 0; j < (int)currentIntersectionsAreas.size(); ++j)
-				if (currentIntersectionsAreas[j]->isChild(selectedCompleteArea))
-					idToDelete.push_back(j);
+			for (int j = 0; j < (int)areas.size()/*currentIntersectionsAreas.size()*/; ++j)
+			{
+				if (auto currentIntersection = std::dynamic_pointer_cast<IntersectionPolygon>(areas[j]))
+				{
+					if (currentIntersection->isChild(selectedCompleteArea))
+						idToDelete.push_back(j);
+				}
+			}
 			for (int j = (int)idToDelete.size(); j != 0; --j)
 			{
 				
 				if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
-					manager->OnInteraction(std::shared_ptr<AreaEvent>(new AreaEvent(currentIntersectionsAreas[idToDelete[j-1]], AreaEventType::Deleted, currentIntersectionsAreas[idToDelete[j-1]]->GetId(), shared_from_this())));
-				currentIntersectionsAreas.erase(currentIntersectionsAreas.begin() + idToDelete[j - 1]);
+					manager->OnInteraction(std::shared_ptr<AreaEvent>(new AreaEvent(areas[idToDelete[j-1]], AreaEventType::Deleted, idToDelete[j-1], shared_from_this())));
+
+				int idInIntersectionVector = -1;
+				for (int k = 0; k < (int)currentIntersectionsAreas.size(); ++k)
+					if (currentIntersectionsAreas[k] == areas[idToDelete[j - 1]])
+						idInIntersectionVector = k;
+
+				currentIntersectionsAreas.erase(currentIntersectionsAreas.begin() + idInIntersectionVector);
+
+				areas.erase(areas.begin() + idToDelete[j - 1]);
 			}
 			
 			int previousCurrentIdx = -5;
@@ -431,7 +492,8 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDown(const MouseEvent& 
 
 		if (deleting)
 		{
-			std::shared_ptr<GraphicEvent> graphicE = EditableScene::OnCanvasMouseDown(mouseE);
+
+			std::shared_ptr<GraphicEvent> graphicE = EditableScene::OnCanvasMouseDown(mouseE); // pour que l'aire où on a cliqué soit sélectionnée
 			canvasComponent->setMouseCursor(MouseCursor::StandardCursorType::NormalCursor);
 			deleting = false;
 			return DeleteSelectedArea();
@@ -443,6 +505,13 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDown(const MouseEvent& 
 
 			if (mouseE.source.getIndex() == 0)
 			{
+
+				for(int i = 0; i < (int)currentIntersectionsAreas.size();++i)
+					if (currentIntersectionsAreas[i]->HitTest(bpt(mouseE.position.toDouble().x, mouseE.position.toDouble().y)))
+					{
+						selectedArea = currentIntersectionsAreas[i]->getNearestParent(bpt(mouseE.position.toDouble().x, mouseE.position.toDouble().y));
+					}
+
 				std::shared_ptr<GraphicEvent> graphE = EditableScene::OnCanvasMouseDown(mouseE);
 
 				if (selectedArea != oldSelectedArea && selectedArea != nullptr) // si on a changé d'aire ou qu'on vient d'en sélectionner une nouvelle -> essaie de la faire bouger
@@ -800,6 +869,20 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseUp(const MouseEvent& mo
 		{
 			if (selectedArea)
 			{
+				
+				// test update intersections
+				if (auto completeP = std::dynamic_pointer_cast<CompletePolygon>(selectedArea))
+				{
+					for (int j = 0; j < currentIntersectionsAreas.size(); ++j)
+						if (currentIntersectionsAreas[j]->isChild(completeP))
+						{
+							currentIntersectionsAreas[j]->CanvasResized(canvasComponent);
+							if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
+								manager->handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(currentIntersectionsAreas[j], AreaEventType::ShapeChanged, currentIntersectionsAreas[j]->GetId(), shared_from_this())));
+						}
+				}
+				// end test update intersections
+
 				AreaEventType areaEventType = selectedArea->EndPointMove();
 				graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, areaEventType, selectedArea->GetId(), shared_from_this()));
 			}
@@ -809,6 +892,17 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseUp(const MouseEvent& mo
 			if (mouseIdxToArea.find(mouseE.source.getIndex()) != mouseIdxToArea.end()) // teste si l'idx était déjà associée à une aire pour la faire bouger
 			{
 				auto currentP = mouseIdxToArea.at(mouseE.source.getIndex());
+
+				// test update intersections
+				for (int j = 0; j < currentIntersectionsAreas.size(); ++j)
+					if (currentIntersectionsAreas[j]->isChild(currentP))
+					{
+						currentIntersectionsAreas[j]->CanvasResized(canvasComponent);
+						if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
+							manager->handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(currentIntersectionsAreas[j], AreaEventType::ShapeChanged, currentIntersectionsAreas[j]->GetId(), shared_from_this())));
+					}
+				// end test update intersections
+
 				AreaEventType areaEventType = currentP->EndPointMove();
 				graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(currentP, areaEventType, shared_from_this()));
 				mouseIdxToArea.erase(mouseE.source.getIndex());
@@ -819,6 +913,16 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseUp(const MouseEvent& mo
 				{
 					if (auto completeP = std::dynamic_pointer_cast<CompletePolygon>(selectedArea))
 					{
+						// test update intersections
+						for (int j = 0; j < currentIntersectionsAreas.size(); ++j)
+							if (currentIntersectionsAreas[j]->isChild(completeP))
+							{
+								currentIntersectionsAreas[j]->CanvasResized(canvasComponent);
+								if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
+									manager->handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(currentIntersectionsAreas[j], AreaEventType::ShapeChanged, currentIntersectionsAreas[j]->GetId(), shared_from_this())));
+							}
+						// end test update intersections
+
 						AreaEventType areaEventType = completeP->EndMultiTouchPointMove();
 						graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, areaEventType, shared_from_this()));
 						return graphicE;
@@ -931,7 +1035,7 @@ std::shared_ptr<AnimatedPolygon> AmusingScene::getNextArea()
 
 int AmusingScene::getNumberArea()
 {
-	return areas.size();
+	return areas.size() -currentIntersectionsAreas.size();
 }
 
 std::shared_ptr<AreaEvent> AmusingScene::OnDelete()
@@ -1053,21 +1157,31 @@ std::shared_ptr<bptree::ptree> AmusingScene::GetTree() const
 	// Ajout des aires interactives
 	for (size_t i = 0; i < areas.size(); i++)
 	{
-		auto areaTree = areas[i]->GetTree();
-		areaTree->put("<xmlattr>.index", i);
-		if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
-		{
-			bptree::ptree areaAudioParameterTree;
-			if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
+		bool isIntersection = false;
+		for(int j = 0; j < currentIntersectionsAreas.size();++j)
+			if (areas[i] == currentIntersectionsAreas[j])
 			{
-				areaAudioParameterTree.put("<xmlattr>.speed", manager->getSpeed(completeArea));
-				areaAudioParameterTree.put("<xmlattr>.octave", manager->getOctave(completeArea));
-				areaAudioParameterTree.put("<xmlattr>.velocity", manager->getVelocity(completeArea));
+				isIntersection = true;
 			}
-			if (!areaAudioParameterTree.empty())
-				areaTree->add_child("optionsParameter", areaAudioParameterTree);
+
+		if (!isIntersection)
+		{
+			auto areaTree = areas[i]->GetTree();
+			areaTree->put("<xmlattr>.index", i);
+			if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
+			{
+				bptree::ptree areaAudioParameterTree;
+				if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
+				{
+					areaAudioParameterTree.put("<xmlattr>.speed", manager->getSpeed(completeArea));
+					areaAudioParameterTree.put("<xmlattr>.octave", manager->getOctave(completeArea));
+					areaAudioParameterTree.put("<xmlattr>.velocity", manager->getVelocity(completeArea));
+				}
+				if (!areaAudioParameterTree.empty())
+					areaTree->add_child("optionsParameter", areaAudioParameterTree);
+			}
+			areasTree.add_child("area", *areaTree);
 		}
-		areasTree.add_child("area", *areaTree);
 	}
 	
 	sceneTree->add_child("areas", areasTree);

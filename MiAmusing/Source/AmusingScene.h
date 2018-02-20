@@ -15,6 +15,7 @@
 #include "AnimatedPolygon.h"
 #include "IntersectionPolygon.h"
 #include "Cursors.h"
+#include "IDrawableArea.h"
 #include "../JuceLibraryCode/JuceHeader.h"
 
 using namespace Miam;
@@ -38,9 +39,13 @@ namespace Miam
 		AmusingScene(std::shared_ptr<MultiSceneCanvasInteractor> _canvasManager, SceneCanvasComponent* _canvasComponent);
 		virtual ~AmusingScene();
 
+		
+
 		void AddAnimatedArea(uint64_t nextAreaId);
 		std::shared_ptr<AreaEvent> AddNedgeArea(uint64_t nextAreaId, int N);
-		void AddIntersections(std::shared_ptr<Amusing::CompletePolygon> m_area);
+		void AddIntersections(std::shared_ptr<IDrawableArea> m_area);
+		void AddAllIntersections();
+		size_t getIntersectionDrawingIndex(size_t intersectionVectorIndex);
 		// override mouse callback
 
 		std::shared_ptr<GraphicEvent> OnCanvasMouseDown(const MouseEvent& mouseE) override;
@@ -68,8 +73,6 @@ namespace Miam
 		// private attribut
 
 		//Model *model;
-
-		double testDephasage;
 
 		int getNumberArea();
 		std::shared_ptr<AreaEvent> OnDelete();

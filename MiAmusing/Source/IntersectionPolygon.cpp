@@ -12,7 +12,7 @@
 using namespace Amusing;
 
 IntersectionPolygon::IntersectionPolygon(int64_t _Id, std::shared_ptr<CompletePolygon> m_parent1, std::shared_ptr<CompletePolygon> m_parent2, Colour _fillColour) : 
-	Miam::DrawablePolygon(_Id)
+	Miam::InteractivePolygon(_Id)
 {
 	fillColour = _fillColour;
 	isFilled = true;
@@ -93,4 +93,14 @@ bool IntersectionPolygon::isChild(std::shared_ptr<CompletePolygon> m_parent)
 	if (m_parent == parent1 || m_parent == parent2)
 		return true;
 	return false;
+}
+
+std::shared_ptr<CompletePolygon> Amusing::IntersectionPolygon::getNearestParent(bpt location)
+{
+	double d1 = boost::geometry::distance(location, parent1->getCenter());
+	double d2 = boost::geometry::distance(location, parent2->getCenter());
+	if (d1 < d2)
+		return parent1;
+	else
+		return parent2;
 }
