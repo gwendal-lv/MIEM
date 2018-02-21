@@ -58,6 +58,8 @@ namespace Miam
 
         inline Index2d GetIndex2dFromIndex(size_t index1d)
         { return matrix.GetIndex2dFromIndex(index1d); }
+        inline size_t GetIndexFromIndex2d(Index2d index2d)
+        { return matrix.GetIndexFromIndex2d(index2d); }
         
 #ifdef __MIAM_DEBUG
         inline size_t GetNonZeroCoeffsCount() {return matrix.GetNonZeroCoeffsCount();}

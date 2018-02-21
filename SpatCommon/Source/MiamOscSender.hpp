@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <algorithm> // std::min ...
+
 #include "JuceHeader.h"
 
 #include "OscDefines.h"
@@ -42,6 +44,11 @@ namespace Miam
         // Chaque coeff fait 3*4 = 12 octets
         const int maxCoeffsInBlob = 116;
         MemoryBlock oscMemoryBlock;
+        
+        public :
+        /// \brief Nombre de coefficients transmis en même temps lors d'un rafraîchisssement forcé d'un bloc
+        const size_t BlockRefreshSize = 64;
+        private :
         
         int iToRefresh, jToRefresh;
         
@@ -163,7 +170,7 @@ namespace Miam
                                                           i*maxCoeffsInBlob,
                                                           maxCoeffsInBlob);
                         // Transmission OSC (encodage déjà fait, au remplissage)
-                        SendCoeffsInMemoryBlock();
+                        sendCoeffsInMemoryBlock();
                     }
                 }
                 
@@ -179,11 +186,13 @@ namespace Miam
         {
             oscSender.send(Miam_OSC_Matrix_Address, i, j, value);
         }
+        
         // Envoi d'un blob avec tout un ensemble de coeffs
-        void SendCoeffsInMemoryBlock()
+        protected :
+        void sendCoeffsInMemoryBlock()
         {
             // Vérification que n'on ne passe pas en jumbo frame (dans le doute...)
-            if (oscMemoryBlock.getSize() < 1400)
+            if (oscMemoryBlock.getSize() > 1400)
                 assert(false);
             
             // Envoi si ça va
@@ -191,6 +200,8 @@ namespace Miam
             blobMessage.addBlob(oscMemoryBlock);
             oscSender.send(blobMessage);
         }
+        
+        public :
         
         /// \brief Commande d'actualisation d'1 coefficient.
         ///
@@ -202,16 +213,7 @@ namespace Miam
             if (MatrixBackupState<T>* matrixState = dynamic_cast<MatrixBackupState<T>*>(&spatState))
             {
                 // Mise à jour du couple (i,j) pour commencer
-                // -> ça fait office de vérification qu'on a des coeffs bien dans la matrice
-                // fin de colonne : ligne suivante
-                if ( (jToRefresh++) >= matrixState->GetOutputsCount() )
-                {
-                    jToRefresh = 0;
-                    iToRefresh++;
-                    // fin de toutes les lignes : on revient à zéro
-                    if ( iToRefresh >= matrixState->GetInputsCount() )
-                        iToRefresh = 0;
-                }
+                increment2dRefreshIndex();
                 
                 // Envoi du coeff concerné
                 SendMatrixCoeff(iToRefresh, jToRefresh,
@@ -231,6 +233,80 @@ namespace Miam
                 throw std::logic_error("Cannot send 1 coeff of a state that is not a BackupMatrix");
         }
         
+        /// \brief Commande d'actualisation d'un paquet de coefficients
+        ///
+        /// Transmission dans un OSC blob du nombre MiamOscSender::BlockRefreshSize de coefficients.
+        /// à chaque appel, on envoie le blocks de coeffs suivants, ligne par ligne, dans les limites de
+        /// la matrice transmise à la fonction.
+        void ForceCoeffsBlockRefresh(SpatState<T>& spatState)
+        {
+            // Capable d'envoyer un état matriciel avec backup seulement pour l'instant
+            if (MatrixBackupState<T>* matrixState = dynamic_cast<MatrixBackupState<T>*>(&spatState))
+            {
+                // sauvegarde locale, car on va bcp s'en servir...
+                size_t outsCount = matrixState->GetOutputsCount();
+                size_t insCount = matrixState->GetInputsCount();
+                // On se sert des mêmes (i,j) que pour le refraîchissement d'un seul coeff
+                // SAUF s'il y a eu un soucis :
+                // on vérifie que la matrice n'a pas changé et que les indexes collent tjs
+                if (iToRefresh >= insCount || jToRefresh >= outsCount)
+                {
+                    // Sinon on réinitialise juste, sauvagement...
+                    iToRefresh = 0;
+                    jToRefresh = 0;
+                }
+                
+                // - - - D'abord : détermination du bloc à transmettre + mise à jour de i,j directement - - -
+                std::vector<size_t> changesIndexes;
+                size_t numberOfCoeffsToSend = std::min(insCount*outsCount, BlockRefreshSize);
+                changesIndexes.reserve(numberOfCoeffsToSend);
+                // on refraîchit juste toute la matrice
+                for (size_t k=0 ; k < numberOfCoeffsToSend ; k++)
+                {
+                    // Ajout d'un coeff
+                    Index2d index2d {.i = (size_t)iToRefresh, .j = (size_t)jToRefresh};
+                    changesIndexes.push_back(matrixState->GetIndexFromIndex2d(index2d));
+                    // Actualisation de i,j
+                    increment2dRefreshIndex(matrixState);
+                }
+                
+                // - - - Envoi des coeff concernés - - -
+                fillInternalCoeffsMemoryBlock(matrixState, changesIndexes, 0, changesIndexes.size());
+                sendCoeffsInMemoryBlock();
+                //std::cout << "block de refresh envoyé, taille " << oscMemoryBlock.getSize() << " pour " << changesIndexes.size() << "coefficients" << std::endl;
+                
+                // ----------- à faire -------------
+                // ----------- à faire -------------
+                // ----------- à faire -------------
+                // On informe la matrice que tout a bien été envoyé
+                // Aucun update des états "backup"... Pour ne pas générer de pb de logique
+                // À améliorer : il faudrait dire qu'on vient d'envoyer JUSTE QQS COEFFICIENT (et pas TOUS les changements d'un coup)
+                // ----------- à faire -------------
+                // ----------- à faire -------------
+                // ----------- à faire -------------
+            }
+            else
+                throw std::logic_error("Cannot send 1 coeff of a state that is not a BackupMatrix");
+        }
+        
+        
+        // - - - - - Various auxiliary functions - - - - -
+        /// \brief Incrémente le compteur interne 2d de coeffient
+        /// (compteur qui sert par exemple à rafraîchir 1 coeff en particulier)
+        /// en appliquant les modulos nécessaire pour ligne/colonne.
+        void increment2dRefreshIndex(MatrixState<T>* matrixState)
+        {
+            // -> ça fait office de vérification qu'on a des coeffs bien dans la matrice
+            // fin de colonne : ligne suivante
+            if ( (jToRefresh++) >= matrixState->GetOutputsCount() )
+            {
+                jToRefresh = 0;
+                iToRefresh++;
+                // fin de toutes les lignes : on revient à zéro
+                if ( iToRefresh >= matrixState->GetInputsCount() )
+                    iToRefresh = 0;
+            }
+        }
         
         
         // - - - - - OSC and Memory blocks helpers - - - - -
@@ -275,11 +351,6 @@ namespace Miam
                 oscMemoryBlock.copyFrom(&floatValue,
                                         (int) getRequiredBytesCount(i) + 2*sizeof(int32_t),
                                         sizeof(Float32));
-                
-                if (index2d.i == 0 && index2d.j == 0)
-                {
-                    std::cout << "------- dans blob : [0;0] == " << floatValue << std::endl;
-                }
             }
         }
         

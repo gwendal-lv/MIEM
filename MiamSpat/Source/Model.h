@@ -35,7 +35,7 @@ namespace Miam {
         
         // Rafraîchissements forcés
         int refreshFramesCounter = 0;
-        const int refreshPeriod_frames = 40; // unité = frames
+        const int refreshPeriod_frames = 500; // unité = frames
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :

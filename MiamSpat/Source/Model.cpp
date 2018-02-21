@@ -183,7 +183,7 @@ void Model::update()
                 // TODO
                 if ( (refreshFramesCounter++) >= refreshPeriod_frames )
                 {
-                    miamOscSender->ForceSend1MatrixCoeff(spatInterpolator->GetCurrentInterpolatedState());
+                    miamOscSender->ForceCoeffsBlockRefresh( spatInterpolator->GetCurrentInterpolatedState() );
                     refreshFramesCounter = 0;
                 }
                 
