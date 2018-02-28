@@ -12,7 +12,7 @@
 
 #include "Exciter.h"
 
-#include "SpatState.hpp" // ici pour éviter include croisé, pb sous AS 3.0
+#include "ControlState.hpp" // ici pour éviter include croisé, pb sous AS 3.0
 
 using namespace Miam;
 
@@ -51,7 +51,7 @@ void SpatArea::setDefaultSpatName()
 {
     SetName(String("[[[unlinked ") + String(GetId()) + String("]]]"));
 }
-void SpatArea::LinkToSpatState(std::shared_ptr< SpatState<double> > spatState)
+void SpatArea::LinkToSpatState(std::shared_ptr< ControlState<double> > spatState)
 {
     if ( ( (linkedSpatState) || (spatState) ) // Pour ne pas comparer 2 ptrs sur NULL
         && linkedSpatState != spatState)

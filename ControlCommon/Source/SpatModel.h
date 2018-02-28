@@ -26,7 +26,7 @@
 #include "MiamOscSender.hpp"
 #include "Speaker.h"
 
-#include "SpatMatrix.hpp"
+#include "ControlMatrix.hpp"
 #include "AudioDefines.h"
 
 

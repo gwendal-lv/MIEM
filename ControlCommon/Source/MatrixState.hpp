@@ -12,10 +12,10 @@
 
 #include <memory>
 
-#include "SpatState.hpp"
+#include "ControlState.hpp"
 #include "AudioDefines.h"
 
-#include "SpatMatrix.hpp"
+#include "ControlMatrix.hpp"
 
 #include "MiamExceptions.h"
 
@@ -24,7 +24,7 @@ namespace Miam
     
     /// \brief Low-level interpolable Routing matrix
     template<typename T>
-    class MatrixState : public SpatState<T>
+    class MatrixState : public ControlState<T>
     {
         
         
@@ -32,7 +32,7 @@ namespace Miam
         protected :
         
         // La base : la matrice creuse cachée à l'intérieur de l'état
-        SpatMatrix matrix;
+        ControlMatrix matrix;
         
         // Attribut dupliqués depuis l'interpolateur
         int inputsCount = 0;
@@ -116,11 +116,11 @@ namespace Miam
         /// \brief Copy-constructs a duplicate of the internal matrix
         ///
         /// Dynamically allocates memory !
-        std::shared_ptr< SpatMatrix > GetMatrix()
-        { return std::make_shared< SpatMatrix >(matrix); }
+        std::shared_ptr< ControlMatrix > GetMatrix()
+        { return std::make_shared< ControlMatrix >(matrix); }
         
         /// \brief Internally sets the matrix from a shared_ptr of another
-        void SetMatrix(std::shared_ptr< SpatMatrix > newMatrix)
+        void SetMatrix(std::shared_ptr< ControlMatrix > newMatrix)
         {
             matrix = *(newMatrix.get());
         }
@@ -142,7 +142,7 @@ namespace Miam
         // - - - - - Property tree (for XML) import/export - - - - -
         virtual std::shared_ptr<bptree::ptree> GetTree() override
         {
-            auto pTree = this->SpatState<T>::GetTree();
+            auto pTree = this->ControlState<T>::GetTree();
             pTree->put_child("matrix", *(matrix.GetTree()));
             return pTree;
         }
@@ -150,7 +150,7 @@ namespace Miam
         virtual void SetFromTree(bptree::ptree & stateTree) override
         {
             // At first, common properties for all spat states
-            this->SpatState<T>::SetFromTree(stateTree);
+            this->ControlState<T>::SetFromTree(stateTree);
             
             // Then, matrix attributes. SparseMatrix will
             // reinit at first (which may not be optimal when called just

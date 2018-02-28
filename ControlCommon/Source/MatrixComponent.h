@@ -138,7 +138,7 @@ namespace Miam
         }
         
         /// \brief Builds and constructs the corresponding Miam::SpatMatrix
-        std::shared_ptr<SpatMatrix> GetSpatMatrix()
+        std::shared_ptr<ControlMatrix> GetSpatMatrix()
         {
             // VLA (Variable Length Array) is not OK with the sparse matrix ctor
             double* rawDenseMatrix;
@@ -158,13 +158,13 @@ namespace Miam
                 }
             }
             // construction optimisée
-            std::shared_ptr<SpatMatrix> returnPtr = std::make_shared<SpatMatrix>(rawDenseMatrix);
+            std::shared_ptr<ControlMatrix> returnPtr = std::make_shared<ControlMatrix>(rawDenseMatrix);
             delete rawDenseMatrix;
             return returnPtr;
         }
         
         /// \brief Updates its internal sliders from the given Miam::SpatMatrix
-        void SetSpatMatrix(std::shared_ptr<SpatMatrix> spatMatrix)
+        void SetSpatMatrix(std::shared_ptr<ControlMatrix> spatMatrix)
         {
             // Reset to an undisplayed value in dB
             for (size_t i=0 ; i<maxRowsCount ; i++)

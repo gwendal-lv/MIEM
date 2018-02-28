@@ -7,12 +7,12 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.0.2
+  Created with Projucer version: 5.2.1
 
   ------------------------------------------------------------------------------
 
-  The Projucer is part of the JUCE library - "Jules' Utility Class Extensions"
-  Copyright (c) 2015 - ROLI Ltd.
+  The Projucer is part of the JUCE library.
+  Copyright (c) 2017 - ROLI Ltd.
 
   ==============================================================================
 */
@@ -167,7 +167,7 @@ void LabelledMatrixComponent::mouseMove (const MouseEvent& e)
 void LabelledMatrixComponent::mouseDown (const MouseEvent& e)
 {
     //[UserCode_mouseDown] -- Add your code here...
-    
+
     // Pop-up menu appears on Right-click anywhere,
     // Or it may appear on a click on the inputs/outputs label (not editable)
     if (e.mods.isRightButtonDown()
@@ -266,14 +266,14 @@ void LabelledMatrixComponent::createAndManagePopupMenu()
 void LabelledMatrixComponent::setMatrixToZero()
 {
     // Without notification
-    GetMatrixComponent()->SetSpatMatrix(std::make_shared<SpatMatrix>());
+    GetMatrixComponent()->SetSpatMatrix(std::make_shared<ControlMatrix>());
     listener->OnMatrixZeroed(); // special unique notification to the listener
 }
 void LabelledMatrixComponent::setMatrixToIdentity()
 {
     // At first : zeroing (supposed to be optimized)
     setMatrixToZero();
-    
+
     // Then, actual setting to identity
     unsigned int smallestDimension = std::min(maxRowsCount, maxColsCount);
     for (int i=0 ; i<(int)smallestDimension ; i++)
@@ -320,8 +320,8 @@ BEGIN_JUCER_METADATA
          bkgCol="ffc0c0c0" textCol="ff000000" edTextCol="ff000000" edBkgCol="0"
          labelText="inputs /&#10;    outputs" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
-         fontsize="15" kerning="0" bold="1" italic="0" justification="33"
-         typefaceStyle="Bold"/>
+         fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
+         bold="1" italic="0" justification="33" typefaceStyle="Bold"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

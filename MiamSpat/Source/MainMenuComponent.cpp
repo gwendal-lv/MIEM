@@ -7,12 +7,12 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.2.0
+  Created with Projucer version: 5.2.1
 
   ------------------------------------------------------------------------------
 
-  The Projucer is part of the JUCE library - "Jules' Utility Class Extensions"
-  Copyright (c) 2015 - ROLI Ltd.
+  The Projucer is part of the JUCE library.
+  Copyright (c) 2017 - ROLI Ltd.
 
   ==============================================================================
 */
@@ -220,27 +220,31 @@ BEGIN_JUCER_METADATA
   <IMAGEBUTTON name="Play image button" id="823680c6dd0a5a2e" memberName="playImageButton"
                virtualName="" explicitFocusOrder="0" pos="-72C -3C 62 62" buttonText="new button"
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
-               resourceNormal="play_png" opacityNormal="1" colourNormal="0"
-               resourceOver="" opacityOver="0.60000002384185791016" colourOver="0"
-               resourceDown="" opacityDown="1" colourDown="0"/>
+               resourceNormal="play_png" opacityNormal="1.00000000000000000000"
+               colourNormal="0" resourceOver="" opacityOver="0.60000002384185791016"
+               colourOver="0" resourceDown="" opacityDown="1.00000000000000000000"
+               colourDown="0"/>
   <IMAGEBUTTON name="Playing image button" id="26f63b20519a1739" memberName="playingImageButton"
                virtualName="" explicitFocusOrder="0" pos="-10Cr -3C 62 62" buttonText="new button"
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
-               resourceNormal="playOn_png2" opacityNormal="1" colourNormal="0"
-               resourceOver="" opacityOver="1" colourOver="0" resourceDown=""
-               opacityDown="1" colourDown="0"/>
+               resourceNormal="playOn_png2" opacityNormal="1.00000000000000000000"
+               colourNormal="0" resourceOver="" opacityOver="1.00000000000000000000"
+               colourOver="0" resourceDown="" opacityDown="1.00000000000000000000"
+               colourDown="0"/>
   <IMAGEBUTTON name="Stop image button" id="9385dfb43a053dc6" memberName="stopImageButton"
                virtualName="" explicitFocusOrder="0" pos="16C -3C 62 62" buttonText="new button"
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
-               resourceNormal="stop_png" opacityNormal="1" colourNormal="0"
-               resourceOver="" opacityOver="0.60000002384185791016" colourOver="0"
-               resourceDown="" opacityDown="1" colourDown="0"/>
+               resourceNormal="stop_png" opacityNormal="1.00000000000000000000"
+               colourNormal="0" resourceOver="" opacityOver="0.60000002384185791016"
+               colourOver="0" resourceDown="" opacityDown="1.00000000000000000000"
+               colourDown="0"/>
   <IMAGEBUTTON name="Stopped image button" id="1b06a982c2d60ddc" memberName="stoppedImageButton"
                virtualName="" explicitFocusOrder="0" pos="16C -3C 62 62" buttonText="new button"
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
-               resourceNormal="stopOn_png" opacityNormal="1" colourNormal="0"
-               resourceOver="" opacityOver="1" colourOver="0" resourceDown=""
-               opacityDown="1" colourDown="0"/>
+               resourceNormal="stopOn_png" opacityNormal="1.00000000000000000000"
+               colourNormal="0" resourceOver="" opacityOver="1.00000000000000000000"
+               colourOver="0" resourceDown="" opacityDown="1.00000000000000000000"
+               colourDown="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

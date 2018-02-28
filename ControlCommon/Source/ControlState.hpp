@@ -47,7 +47,7 @@ namespace Miam
     /// !!! Attention aux fonctions membres virtuelles qui ne peuvent alors
     /// pas être template !!! -> encore vrai sur tous les compilateurs ?
     template<typename T>
-    class SpatState
+    class ControlState
     {
         
         
@@ -119,7 +119,7 @@ namespace Miam
         
         // = = = = = = = = = = METHODS = = = = = = = = = =
         public :
-        SpatState() : index(-1)
+        ControlState() : index(-1)
         {
             // pas possible de le mettre dans la liste d'initialisation
             // car le double ne prend pas (sous XCode) un zéro de type 'void'
@@ -128,7 +128,7 @@ namespace Miam
         
         
         // - - - - - Construction / destruction - - - - -
-        virtual ~SpatState()
+        virtual ~ControlState()
         {
             // Called when this spat state is unregistered from all areas that
             // kept a shared_ptr to this

@@ -13,7 +13,7 @@
 
 #include <memory>
 #include <string>
-#include "SpatState.hpp"
+#include "ControlState.hpp"
 
 
 #include "boost/property_tree/ptree.hpp"
@@ -54,10 +54,10 @@ namespace Miam
         
         
         // - - - - - Communication - - - - -
-        virtual void SendState(SpatState<double>& spatState) = 0;
+        virtual void SendState(ControlState<double>& spatState) = 0;
         /// \brief Envoie un état de manière en optimisant la bande passante du réseau : on
         /// ne transmet que les paramètres qui ont suffisamment varié depuis le dernier envoi
-        virtual void SendStateModifications(SpatState<T>& spatState) = 0;
+        virtual void SendStateModifications(ControlState<T>& spatState) = 0;
         
         // - - - - - XML import/export - - - - -
         virtual std::shared_ptr<bptree::ptree> GetConfigurationTree()

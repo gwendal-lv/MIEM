@@ -13,7 +13,7 @@
 #include <memory>
 #include <list>
 
-// #include "SpatState.hpp"
+// #include "ControlState.hpp"
 
 #include "IEditableArea.h"
 
@@ -23,7 +23,7 @@ namespace Miam
  
     // Forward declaration of template
     template<typename T>
-    class SpatState;
+    class ControlState;
     
     class Exciter;
     
@@ -39,7 +39,7 @@ namespace Miam
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
         protected :
         
-        std::shared_ptr< SpatState<double> > linkedSpatState;
+        std::shared_ptr< ControlState<double> > linkedSpatState;
 
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
@@ -70,7 +70,7 @@ namespace Miam
         /// \brief Will notify itself to spat state after linked
         ///
         /// Also auto-unnotifies to the previous spat state, if necessary
-        void LinkToSpatState(std::shared_ptr< SpatState<double> > spatState);
+        void LinkToSpatState(std::shared_ptr< ControlState<double> > spatState);
         
         void OnSpatStateNameChanged();
         
