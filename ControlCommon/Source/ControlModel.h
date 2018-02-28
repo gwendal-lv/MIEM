@@ -1,15 +1,15 @@
 /*
   ==============================================================================
 
-    SpatModel.h
+    ControlModel.h
     Created: 28 Nov 2016 11:02:21pm
     Author:  Gwendal Le Vaillant
 
   ==============================================================================
 */
 
-#ifndef SPATMODEL_H_INCLUDED
-#define SPATMODEL_H_INCLUDED
+#ifndef CONTROLMODEL_H_INCLUDED
+#define CONTROLMODEL_H_INCLUDED
 
 
 #include <vector>
@@ -23,7 +23,6 @@
 
 #include "StatesInterpolator.hpp"
 #include "MiamOscSender.hpp"
-#include "Speaker.h"
 
 #include "ControlMatrix.hpp"
 #include "AudioDefines.h"
@@ -52,11 +51,8 @@ namespace Miam
         
         
         protected :
-        // The model itself manages the speakers, for now
-        // May be changed... But it remains important low-level data
-        std::vector< std::shared_ptr<Speaker<double>> > speakers;
         
-        // Spatialisation computer/interpolator, that owns the spat states
+        // States computer/interpolator, that owns the states
         std::shared_ptr<StatesInterpolator<double>> interpolator;
         
         // Communication
@@ -70,7 +66,7 @@ namespace Miam
         public :
         
         InterpolationType GetInterpolatorType() {return interpolator->GetType();}
-        std::shared_ptr<StatesInterpolator<double>> GetSpatInterpolator() {return interpolator;}
+        std::shared_ptr<StatesInterpolator<double>> GetInterpolator() {return interpolator;}
         /// \brief Only 1 sender (index 0) available at the moment.
         std::shared_ptr<ControlStateSender<double>> GetStateSender(size_t index);
         
@@ -85,10 +81,6 @@ namespace Miam
         // - - - - - Construction / destruction - - - - -
         ControlModel(ControlPresenter* presenter_, double updateFrequency_Hz = 500.0);
         virtual ~ControlModel();
-        
-        // - - - - - Speakers management - - - - -
-        virtual void AddSpeaker();
-        virtual void RemoveSpeaker(size_t id_);
         
         
         // - - - - - Periodic updates - - - - -
@@ -117,4 +109,4 @@ namespace Miam
 
 
 
-#endif  // SPATMODEL_H_INCLUDED
+#endif  // CONTROLMODEL_H_INCLUDED

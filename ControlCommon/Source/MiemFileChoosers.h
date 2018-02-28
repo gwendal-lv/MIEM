@@ -18,8 +18,6 @@
 
 #include "PathUtils.h"
 
-#define Miam_SessionFileExtension       "mspat"
-
 namespace Miam
 {
     
@@ -27,10 +25,10 @@ namespace Miam
     class LoadFileChooser : public FileChooser
     {
         public :
-        LoadFileChooser() :
-        FileChooser("Please select a MIAM session to load: ",
+        LoadFileChooser(std::initializer_list<AppPurpose> appTypeArgs) :
+        FileChooser("Please select a MIEM session to load: ",
                     PathUtils::GetSessionsFolderDefaultPath(),
-                    std::string("*.") + Miam_SessionFileExtension,
+                    PathUtils::GenerateAllowedFilePatterns(appTypeArgs),
                     true)
         {
 #if defined( __MIAMOBILE )
@@ -47,10 +45,10 @@ namespace Miam
     class SaveFileChooser : public FileChooser
     {
         public :
-        SaveFileChooser() :
-        FileChooser("Save MIAM session as...",
+        SaveFileChooser(std::initializer_list<AppPurpose> appTypeArgs) :
+        FileChooser("Save MIEM session as...",
                     PathUtils::GetSessionsFolderDefaultPath(),
-                    std::string("*.") + Miam_SessionFileExtension,
+                    PathUtils::GenerateAllowedFilePatterns(appTypeArgs),
                     true)
         {
 #if defined( __MIAMOBILE )

@@ -21,10 +21,13 @@
 
 #include "SpatFileChoosers.h"
 
+#include "AppPurpose.h"
+
 using namespace Miam;
 
 
 // - - - - - Contruction and Destruction - - - - -
+AppPurpose App::appPurpose = AppPurpose::Spatialisation;
 
 Presenter::Presenter(View* _view) :
     ControlPresenter(_view),
@@ -32,7 +35,8 @@ Presenter::Presenter(View* _view) :
     view(_view),
     appMode(AppMode::Null),
 
-    graphicSessionManager(this, _view)
+    graphicSessionManager(this, _view),
+    loadFileChooser({AppPurpose::Spatialisation})
 {
     appMode = AppMode::None;
     previousSpatialisationStatus = AppMode::None;

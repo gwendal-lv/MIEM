@@ -13,7 +13,7 @@
 #include <memory>
 
 #include "IGraphicSessionManager.h"
-#include "SpatArea.h"
+#include "ControlArea.h"
 
 #include "StatesInterpolator.hpp"
 
@@ -63,7 +63,7 @@ namespace Miam
         /// content of the <spatstate> tag.
         ///
         /// \param spatStateTree may be a std::nullptr
-        virtual void LoadSpatAreaLinks(std::shared_ptr<SpatArea> area, std::shared_ptr<bptree::ptree> spatStateTree);
+        virtual void LoadSpatAreaLinks(std::shared_ptr<ControlArea> area, std::shared_ptr<bptree::ptree> spatStateTree);
         
     };
 }

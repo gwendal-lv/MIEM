@@ -1,58 +1,58 @@
 /*
   ==============================================================================
 
-    SpatPolygon.cpp
+    ControlPolygon.cpp
     Created: 28 May 2017 11:06:18am
     Author:  Gwendal Le Vaillant
 
   ==============================================================================
 */
 
-#include "SpatPolygon.h"
+#include "ControlPolygon.h"
 
 using namespace Miam;
 
 // ========== CONSTRUCTION ==========
 
-SpatPolygon::SpatPolygon(bptree::ptree & areaTree)
+ControlPolygon::ControlPolygon(bptree::ptree & areaTree)
 :
-EditablePolygon(areaTree) //, SpatArea(areaTree)
+EditablePolygon(areaTree) //, ControlArea(areaTree)
 {
     init();
 }
 
-SpatPolygon::SpatPolygon(int64_t _Id) :
+ControlPolygon::ControlPolygon(int64_t _Id) :
 EditablePolygon(_Id),
-SpatArea()
+ControlArea()
 {
     init();
 }
 
-SpatPolygon::SpatPolygon(int64_t _Id, bpt _center, int pointsCount, float radius, Colour _fillColour, float _canvasRatio) :
+ControlPolygon::ControlPolygon(int64_t _Id, bpt _center, int pointsCount, float radius, Colour _fillColour, float _canvasRatio) :
 EditablePolygon(_Id, _center, pointsCount, radius, _fillColour, _canvasRatio),
-SpatArea()
+ControlArea()
 {
     init();
 }
 
-SpatPolygon::SpatPolygon(int64_t _Id, bpt _center, bpolygon& _contourPoints, Colour _fillColour) :
+ControlPolygon::ControlPolygon(int64_t _Id, bpt _center, bpolygon& _contourPoints, Colour _fillColour) :
 EditablePolygon(_Id, _center, _contourPoints, _fillColour),
-SpatArea()
+ControlArea()
 {
     init();
 }
 
-void SpatPolygon::init()
+void ControlPolygon::init()
 {
-    SpatArea::OnVirtualBaseClassesContructed();
+    ControlArea::OnVirtualBaseClassesContructed();
 }
 
 
 
 // = = = = = = = = = = XML import/export = = = = = = = = = =
-std::shared_ptr<bptree::ptree> SpatPolygon::GetTree()
+std::shared_ptr<bptree::ptree> ControlPolygon::GetTree()
 {
     auto inheritedTree = EditablePolygon::GetTree();
-    inheritedTree->add_child("spatstate", *getSpatStateTree());
+    inheritedTree->add_child("spatstate", *getStateTree());
     return inheritedTree;
 }

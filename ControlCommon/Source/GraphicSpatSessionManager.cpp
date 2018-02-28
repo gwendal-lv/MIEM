@@ -11,7 +11,7 @@
 #include "GraphicSpatSessionManager.h"
 
 #include "ControlPresenter.h"
-#include "SpatPolygon.h"
+#include "ControlPolygon.h"
 
 #include "XmlUtils.h"
 
@@ -96,7 +96,7 @@ void GraphicSpatSessionManager::SetFromTree(bptree::ptree& graphicSessionTree)
                         if (type == "SpatPolygon")
                         {
                             try {
-                                areas[index] = std::make_shared<SpatPolygon>(area.second);
+                                areas[index] = std::make_shared<ControlPolygon>(area.second);
                                 try {
                                     spatStateTrees[index] = std::make_shared<bptree::ptree>(area.second.get_child("spatstate"));
                                 }
@@ -135,7 +135,7 @@ void GraphicSpatSessionManager::SetFromTree(bptree::ptree& graphicSessionTree)
                     canvasManagers[i]->AddAreaToScene(j, areas[k]);
                     
                     // Spat areas seulement
-                    if (auto spatArea = std::dynamic_pointer_cast<SpatArea>(areas[k]))
+                    if (auto spatArea = std::dynamic_pointer_cast<ControlArea>(areas[k]))
                         LoadSpatAreaLinks(spatArea, spatStateTrees[k]);
                 }
                 
@@ -154,13 +154,13 @@ void GraphicSpatSessionManager::SetFromTree(bptree::ptree& graphicSessionTree)
     for (auto& canvas : canvasManagers)
         canvas->OnXmlLoadFinished();
 }
-void GraphicSpatSessionManager::LoadSpatAreaLinks(std::shared_ptr<SpatArea> area, std::shared_ptr<bptree::ptree> spatStateTree)
+void GraphicSpatSessionManager::LoadSpatAreaLinks(std::shared_ptr<ControlArea> area, std::shared_ptr<bptree::ptree> spatStateTree)
 {
     if (spatStateTree == nullptr)
         return;
     
     auto spatStateIndex = spatStateTree->get<int64_t>("<xmlattr>.index", -1);
     if (spatStateIndex >= 0)
-        area->LinkToSpatState(spatInterpolator->GetState(spatStateIndex));
+        area->LinkToState(spatInterpolator->GetState(spatStateIndex));
 }
 

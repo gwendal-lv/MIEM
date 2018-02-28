@@ -69,23 +69,6 @@ ControlModel::~ControlModel()
 
 
 
-// - - - - - Speakers management - - - - -
-void ControlModel::AddSpeaker()
-{
-    std::shared_ptr<Speaker<double>> newSpeaker(new Speaker<double>());
-    speakers.push_back(newSpeaker);
-    std::logic_error("not fully implemented");
-    //interpolator->AddSpeaker();
-}
-void ControlModel::RemoveSpeaker(size_t id_)
-{
-    std::logic_error("not fully implemented");
-    //interpolator->RemoveSpeaker(id_);
-    speakers.erase(speakers.begin()+id_);
-}
-
-
-
 // = = = = = = = = Property tree (for XML) import/export = = = = = = = =
 std::shared_ptr<bptree::ptree> ControlModel::GetConfigurationTree()
 {

@@ -21,7 +21,7 @@
 #include "SparseMatrix.hpp"
 #include "AudioUtils.hpp"
 
-#include "SpatArea.h"
+#include "ControlArea.h"
 
 #include "boost/property_tree/ptree.hpp"
 #include "boost/property_tree/xml_parser.hpp"
@@ -30,7 +30,7 @@ namespace bptree = boost::property_tree;
 namespace Miam
 {
     // Forward declarations
-    class SpatArea;
+    class ControlArea;
     
     
     /// \brief An abstract class that represents a state of the
@@ -72,7 +72,7 @@ namespace Miam
         ///
         /// \remark Pour accès synchrone aux aires graphiques ! Donc pour édition offline seulement...
         /// On mode de jeu, on devra travailler avec les UIDs qui viennt des paquets lock-free
-        std::vector< std::weak_ptr<SpatArea> > linkedAreas;
+        std::vector< std::weak_ptr<ControlArea> > linkedAreas;
         
         /// \brief Excitations en cours, issues d'objets graphiques quelconques référencés par leur UID
         std::map< uint64_t, T > areaToExcitement;
@@ -97,7 +97,7 @@ namespace Miam
         {
             name = _name;
             for (auto it = linkedAreas.begin() ; it!=linkedAreas.end() ; it++)
-                (*it).lock()->OnSpatStateNameChanged();
+                (*it).lock()->OnStateNameChanged();
         }
         
         void SetIndex(int newIndex) {index = newIndex;}
@@ -106,7 +106,7 @@ namespace Miam
         virtual size_t GetOutputsCount() = 0;
         
         virtual size_t GetLinkedAreasCount() {return linkedAreas.size();}
-        virtual std::shared_ptr<SpatArea> GetLinkedArea(size_t i)
+        virtual std::shared_ptr<ControlArea> GetLinkedArea(size_t i)
         {
             if(auto area = linkedAreas[i].lock())
                 return area;
@@ -144,13 +144,13 @@ namespace Miam
         
         // - - - - - Internal linking to spat areas - - - - -
         /// \brief Ordre reçu d'une aire
-        void LinkToArea(std::shared_ptr<SpatArea> spatArea)
+        void LinkToArea(std::shared_ptr<ControlArea> spatArea)
         {
             // no check for double addition (but it's weak ptrs...)
             linkedAreas.push_back(spatArea);
         }
         /// \brief Ordre reçu d'une aire
-        void UnlinkToArea(std::shared_ptr<SpatArea> spatArea)
+        void UnlinkToArea(std::shared_ptr<ControlArea> spatArea)
         {
             if (! unlinkingFromAreas)
             {

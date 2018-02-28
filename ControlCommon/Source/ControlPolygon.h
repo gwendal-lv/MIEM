@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    SpatPolygon.h
+    ControlPolygon.h
     Created: 28 May 2017 11:06:18am
     Author:  Gwendal Le Vaillant
 
@@ -11,7 +11,7 @@
 #pragma once
 
 #include "EditablePolygon.h"
-#include "SpatArea.h"
+#include "ControlArea.h"
 
 
 namespace Miam
@@ -19,7 +19,7 @@ namespace Miam
     
     
     // \brief Not really an interface for now... But might become one.
-    class SpatPolygon : public EditablePolygon, public SpatArea
+    class ControlPolygon : public EditablePolygon, public ControlArea
     {
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
@@ -29,8 +29,8 @@ namespace Miam
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
         protected :
-        virtual std::shared_ptr<SpatArea> getCastedSharedFromThis() override
-        { return std::static_pointer_cast<SpatPolygon>(shared_from_this()); }
+        virtual std::shared_ptr<ControlArea> getCastedSharedFromThis() override
+        { return std::static_pointer_cast<ControlPolygon>(shared_from_this()); }
         
         
         
@@ -39,16 +39,16 @@ namespace Miam
         
         // - - - - - Construction/Destruction + polymorphic cloning - - - - -
         
-        SpatPolygon(bptree::ptree & areaTree);
+        ControlPolygon(bptree::ptree & areaTree);
         
         /// \param _Id See EditablePolygon::EditablePolygon
-        SpatPolygon(int64_t _Id);
+        ControlPolygon(int64_t _Id);
         /// \param _Id See EditablePolygon::EditablePolygon
-        SpatPolygon(int64_t _Id,
+        ControlPolygon(int64_t _Id,
                         bpt _center, int pointsCount, float radius,
                         Colour _fillColour, float _canvasRatio = 1.47); // ratio 800/544 px
         /// \param _Id See EditablePolygon::EditablePolygon
-        SpatPolygon(int64_t _Id,
+        ControlPolygon(int64_t _Id,
                         bpt _center, bpolygon& _contourPoints,
                         Colour _fillColour);
         
@@ -56,11 +56,11 @@ namespace Miam
         void init();
         public :
         
-        virtual ~SpatPolygon() {}
+        virtual ~ControlPolygon() {}
         
         virtual std::shared_ptr<IDrawableArea> Clone() override
         {
-            auto clone = std::make_shared<SpatPolygon>(*this);
+            auto clone = std::make_shared<ControlPolygon>(*this);
             clone->onCloned();
             return clone;
         }

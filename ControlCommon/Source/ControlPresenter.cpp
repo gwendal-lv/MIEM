@@ -14,6 +14,7 @@
 
 #include "ControlModel.h"
 
+#include "AppPurpose.h"
 
 ControlPresenter::ControlPresenter(SpatView* view_)
 :
@@ -30,7 +31,7 @@ void ControlPresenter::CompleteInitialisation(GraphicSpatSessionManager* _graphi
     model = _model;
     
     // Init des sous-modules
-    graphicSessionManager->CompleteInitialisation(model->GetSpatInterpolator());
+    graphicSessionManager->CompleteInitialisation(model->GetInterpolator());
 }
 
 
@@ -61,7 +62,7 @@ void ControlPresenter::LoadSession(std::string filename)
     try {
         // Config modèle puis modèle
         model->SetConfigurationFromTree(settingsTree.get_child("model"));
-        model->GetSpatInterpolator()->SetStatesFromTree(spatTree);
+        model->GetInterpolator()->SetStatesFromTree(spatTree);
         // Config graphique puis presenter
         this->SetConfigurationFromTree(settingsTree);
         graphicSessionManager->SetFromTree(graphicSessionTree);
@@ -70,7 +71,7 @@ void ControlPresenter::LoadSession(std::string filename)
     {
         // Remise à zéro de tous les modules, commandée par arbre vide
         bptree::ptree emptyTree = bptree::ptree();
-        model->GetSpatInterpolator()->SetStatesFromTree(emptyTree);
+        model->GetInterpolator()->SetStatesFromTree(emptyTree);
         graphicSessionManager->SetFromTree(emptyTree);
         
         // Pour l'instant : on laisse la configuration dans son état précédent....
@@ -92,7 +93,7 @@ void ControlPresenter::SaveSession(std::string _filename, bool /*forceDataRefres
     // Else, we continue only if a filename is currently in use
     else if (lastFilename.empty())
     {
-        LoadFileChooser fileChooser;
+        LoadFileChooser fileChooser({App::GetPurpose()});
 #ifndef __MIAMOBILE
         if ( fileChooser.browseForFileToSave(true) )
         {

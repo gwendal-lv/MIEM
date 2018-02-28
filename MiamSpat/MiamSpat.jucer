@@ -30,18 +30,22 @@
               file="../ControlCommon/Source/StatesInterpolator.hpp"/>
       </GROUP>
       <GROUP id="{596BD696-C6A3-E262-0276-DB678B875C8B}" name="Presenter">
+        <FILE id="n32Dij" name="ControlPolygon.cpp" compile="1" resource="0"
+              file="../ControlCommon/Source/ControlPolygon.cpp"/>
+        <FILE id="FsTJI4" name="ControlPolygon.h" compile="0" resource="0"
+              file="../ControlCommon/Source/ControlPolygon.h"/>
+        <FILE id="mVjBSn" name="ControlEllipse.cpp" compile="1" resource="0"
+              file="../ControlCommon/Source/ControlEllipse.cpp"/>
+        <FILE id="yCl99C" name="ControlEllipse.h" compile="0" resource="0"
+              file="../ControlCommon/Source/ControlEllipse.h"/>
+        <FILE id="fKDEja" name="ControlArea.cpp" compile="1" resource="0" file="../ControlCommon/Source/ControlArea.cpp"/>
+        <FILE id="u61sXP" name="ControlArea.h" compile="0" resource="0" file="../ControlCommon/Source/ControlArea.h"/>
         <FILE id="k2deAw" name="GraphicSpatSessionManager.cpp" compile="1"
               resource="0" file="../ControlCommon/Source/GraphicSpatSessionManager.cpp"/>
         <FILE id="vg3CI3" name="GraphicSpatSessionManager.h" compile="0" resource="0"
               file="../ControlCommon/Source/GraphicSpatSessionManager.h"/>
-        <FILE id="Lb4s41" name="SpatArea.cpp" compile="1" resource="0" file="../ControlCommon/Source/SpatArea.cpp"/>
-        <FILE id="QKwprB" name="SpatArea.h" compile="0" resource="0" file="../ControlCommon/Source/SpatArea.h"/>
-        <FILE id="DIbEXH" name="SpatEllipse.cpp" compile="1" resource="0" file="../ControlCommon/Source/SpatEllipse.cpp"/>
-        <FILE id="hc4xyD" name="SpatEllipse.h" compile="0" resource="0" file="../ControlCommon/Source/SpatEllipse.h"/>
-        <FILE id="a6eq3F" name="SpatFileChoosers.h" compile="0" resource="0"
-              file="../ControlCommon/Source/SpatFileChoosers.h"/>
-        <FILE id="dhp8Gy" name="SpatPolygon.cpp" compile="1" resource="0" file="../ControlCommon/Source/SpatPolygon.cpp"/>
-        <FILE id="vQYVQq" name="SpatPolygon.h" compile="0" resource="0" file="../ControlCommon/Source/SpatPolygon.h"/>
+        <FILE id="a6eq3F" name="MiemFileChoosers.h" compile="0" resource="0"
+              file="../ControlCommon/Source/MiemFileChoosers.h"/>
         <FILE id="vgOrLM" name="ControlPresenter.cpp" compile="1" resource="0"
               file="../ControlCommon/Source/ControlPresenter.cpp"/>
         <FILE id="ZasBLY" name="ControlPresenter.h" compile="0" resource="0"
@@ -63,6 +67,7 @@
         <FILE id="FOm35I" name="SpatView.h" compile="0" resource="0" file="../ControlCommon/Source/SpatView.h"/>
       </GROUP>
       <GROUP id="{7DF86A8F-A8E0-F3D8-65C1-4CA2C20CE264}" name="Utils">
+        <FILE id="ZbkxOP" name="AppPurpose.h" compile="0" resource="0" file="../ControlCommon/Source/AppPurpose.h"/>
         <FILE id="C1mLzc" name="ControlMatrix.hpp" compile="0" resource="0"
               file="../ControlCommon/Source/ControlMatrix.hpp"/>
         <FILE id="NjGlBL" name="PathUtils.cpp" compile="1" resource="0" file="../ControlCommon/Source/PathUtils.cpp"/>

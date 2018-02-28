@@ -58,7 +58,7 @@ void FileMenu::ShowMenuAndSendUserAnswer()
 void FileMenu::onLoad()
 {
 #ifndef __MIAMOBILE
-    LoadFileChooser fileChooser;
+    LoadFileChooser fileChooser({AppPurpose::Spatialisation});
     if ( fileChooser.browseForFileToOpen() )
     {
         File resultFile = fileChooser.getResult();
@@ -79,7 +79,7 @@ void FileMenu::onSave()
 void FileMenu::onSaveAs()
 {
 #ifndef __MIAMOBILE
-    SaveFileChooser fileChooser;
+    SaveFileChooser fileChooser({AppPurpose::Spatialisation});
     if ( fileChooser.browseForFileToSave(true) )
     {
         File resultFile = fileChooser.getResult();

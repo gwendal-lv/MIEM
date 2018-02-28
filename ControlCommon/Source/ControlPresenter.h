@@ -56,9 +56,8 @@ namespace Miam {
         virtual ~ControlPresenter() {}
         void CompleteInitialisation(GraphicSpatSessionManager* _graphicSessionManager, ControlModel* _model);
         
-        
-        
         // - - - - - Self XML import/export - - - - -
+        public :
         
         virtual std::shared_ptr<bptree::ptree> GetConfigurationTree()
         {return std::make_shared<bptree::ptree>(); } // empty tree....

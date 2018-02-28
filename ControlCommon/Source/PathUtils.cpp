@@ -16,6 +16,60 @@ using namespace Miam;
 
 
 
+std::string PathUtils::GetSessionFileExtension(AppPurpose appType)
+{
+    switch (appType) {
+            
+        case AppPurpose::Spatialisation:
+            return std::string("mspat"); // Miem Spatialisation
+            break;
+            
+        case AppPurpose::GenericController:
+            return std::string("mcs"); // Miem Controller Session
+            break;
+            
+        default:
+            break;
+    }
+}
+
+std::string PathUtils::GenerateAllowedFilePatterns(std::initializer_list<AppPurpose> appTypeArgs)
+{
+    std::string returnString;
+    
+    bool firstElementWritten = false;
+    bool multiPurposeApp = false;
+    for (auto appPurpose : appTypeArgs)
+    {
+        // Cas spéciaux : multi et/ou none
+        if (appPurpose == AppPurpose::None)
+            continue;
+        else if (appPurpose == AppPurpose::Multi)
+        {
+            multiPurposeApp = true;
+            break;
+        }
+        else
+        {
+            // On ajoute un séparateur seulement après le premier élément
+            if (firstElementWritten)
+                returnString += ";";
+            // Ajout de l'extension demandée
+            returnString  = returnString + "*." + GetSessionFileExtension(appPurpose);
+            // élément suivant...
+            firstElementWritten = true;
+        }
+    }
+    
+    if (!multiPurposeApp)
+        return returnString;
+    else // précision ici du type multi !!!
+        return GenerateAllowedFilePatterns({AppPurpose::Spatialisation, AppPurpose::GenericController});
+}
+
+
+
+
 std::string PathUtils::GetAppToRepositoryRootPath()
 {
     // Chemin par rapport aux exécutables : dépend de l'OS
@@ -64,5 +118,6 @@ File PathUtils::GetSessionsFolderDefaultPath()
     return File::getSpecialLocation(File::SpecialLocationType::userMusicDirectory);
 #endif
 }
+
 
 
