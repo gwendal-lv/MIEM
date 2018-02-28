@@ -20,7 +20,7 @@
 namespace Miam
 {
     // Forward declarations
-    class SpatPresenter;
+    class ControlPresenter;
     
     class GraphicSpatSessionManager : public IGraphicSessionManager
     {
@@ -28,7 +28,7 @@ namespace Miam
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
         
         private :
-        SpatPresenter* presenter;
+        ControlPresenter* presenter;
         
         protected :
         
@@ -46,7 +46,7 @@ namespace Miam
         // - - - - - Construction/destruction, and helpers - - - - -
         
         /// \brief Construction (the whole Presenter module is built after the View).
-        GraphicSpatSessionManager(SpatPresenter* _presenter);
+        GraphicSpatSessionManager(ControlPresenter* _presenter);
         
         /// \Brief to be called after Model construction (which occurs
         /// after Presenter construction)

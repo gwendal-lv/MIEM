@@ -14,11 +14,11 @@
 
 namespace Miam
 {
-    class SpatPresenter;
+    class ControlPresenter;
     
     /// \brief Class that displays a pop-up menu for loading/saving/etc...
     /// files, and that also gets the user info about the file's location
-    /// and sends it to a Miam::SpatPresenter
+    /// and sends it to a Miam::ControlPresenter
     ///
     /// UN JOUR PEUT-ÊTRE on pourrait stocker dans une liste les fichiers récents,
     /// ou juste le nom du dernier dossier utilisé...
@@ -40,7 +40,7 @@ namespace Miam
         };
         
         // links
-        SpatPresenter* presenter;
+        ControlPresenter* presenter;
         
         // Graphical objects
         PopupMenu menu;
@@ -49,7 +49,7 @@ namespace Miam
         
         
         public :
-        FileMenu(SpatPresenter* _spatPresenter);
+        FileMenu(ControlPresenter* _spatPresenter);
         
         void ShowMenuAndSendUserAnswer();
         

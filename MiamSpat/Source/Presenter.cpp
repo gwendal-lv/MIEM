@@ -27,7 +27,7 @@ using namespace Miam;
 // - - - - - Contruction and Destruction - - - - -
 
 Presenter::Presenter(View* _view) :
-    SpatPresenter(_view),
+    ControlPresenter(_view),
 
     view(_view),
     appMode(AppMode::Null),
@@ -50,7 +50,7 @@ void Presenter::CompleteInitialisation(Model* _model)
 {
     // - - - Init des attributs privés puis du parent - - -
     model = _model;
-    SpatPresenter::CompleteInitialisation(&graphicSessionManager, model);
+    ControlPresenter::CompleteInitialisation(&graphicSessionManager, model);
     
     view->GetMainContentComponent()->resized();
     
@@ -273,7 +273,7 @@ void Presenter::LoadSession(std::string filename)
     appModeChangeRequest(AppMode::Loading);
     
     // Chargement d'une nouvelle session
-    SpatPresenter::LoadSession(filename);
+    ControlPresenter::LoadSession(filename);
     
     // Ensuite on se change de mode
     appModeChangeRequest(AppMode::Playing); // va démarrer le modèle

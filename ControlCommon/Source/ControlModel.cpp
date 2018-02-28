@@ -15,7 +15,7 @@
 #include "ControlModel.h"
 #include "MiamOscSender.hpp"
 
-#include "SpatPresenter.h"
+#include "ControlPresenter.h"
 
 
 using namespace Miam;
@@ -43,7 +43,7 @@ size_t ControlModel::GetOutputsCount()
 // = = = = = = = = = = METHODS = = = = = = = = = =
 
 // - - - - - Construction / destruction - - - - -
-ControlModel::ControlModel(SpatPresenter* presenter_, double updateFrequency_Hz)
+ControlModel::ControlModel(ControlPresenter* presenter_, double updateFrequency_Hz)
 :
 PeriodicUpdateThread("Control Model updater"), // base class
 

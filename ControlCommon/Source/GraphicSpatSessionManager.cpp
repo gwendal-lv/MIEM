@@ -10,12 +10,12 @@
 
 #include "GraphicSpatSessionManager.h"
 
-#include "SpatPresenter.h"
+#include "ControlPresenter.h"
 #include "SpatPolygon.h"
 
 #include "XmlUtils.h"
 
-GraphicSpatSessionManager::GraphicSpatSessionManager(SpatPresenter* _presenter)
+GraphicSpatSessionManager::GraphicSpatSessionManager(ControlPresenter* _presenter)
 :
 IGraphicSessionManager(_presenter),
 presenter(_presenter)

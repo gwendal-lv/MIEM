@@ -42,9 +42,10 @@
               file="../ControlCommon/Source/SpatFileChoosers.h"/>
         <FILE id="dhp8Gy" name="SpatPolygon.cpp" compile="1" resource="0" file="../ControlCommon/Source/SpatPolygon.cpp"/>
         <FILE id="vQYVQq" name="SpatPolygon.h" compile="0" resource="0" file="../ControlCommon/Source/SpatPolygon.h"/>
-        <FILE id="vgOrLM" name="SpatPresenter.cpp" compile="1" resource="0"
-              file="../ControlCommon/Source/SpatPresenter.cpp"/>
-        <FILE id="ZasBLY" name="SpatPresenter.h" compile="0" resource="0" file="../ControlCommon/Source/SpatPresenter.h"/>
+        <FILE id="vgOrLM" name="ControlPresenter.cpp" compile="1" resource="0"
+              file="../ControlCommon/Source/ControlPresenter.cpp"/>
+        <FILE id="ZasBLY" name="ControlPresenter.h" compile="0" resource="0"
+              file="../ControlCommon/Source/ControlPresenter.h"/>
       </GROUP>
       <GROUP id="{07BF93D8-C012-D439-DF67-3946D9CD4BEB}" name="View">
         <FILE id="lLSOSu" name="ISlidersMatrixListener.h" compile="0" resource="0"

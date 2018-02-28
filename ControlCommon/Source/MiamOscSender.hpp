@@ -266,7 +266,7 @@ namespace Miam
                 for (size_t k=0 ; k < numberOfCoeffsToSend ; k++)
                 {
                     // Ajout d'un coeff
-                    Index2d index2d {.i = (size_t)iToRefresh, .j = (size_t)jToRefresh};
+                    Index2d index2d {(size_t)iToRefresh, (size_t)jToRefresh};
                     changesIndexes.push_back(matrixState->GetIndexFromIndex2d(index2d));
                     // Actualisation de i,j
                     increment2dRefreshIndex(matrixState);
@@ -320,7 +320,7 @@ namespace Miam
         /// + N  x float32
         size_t getRequiredBytesCount(size_t coeffsCount)
         {
-            return (sizeof(int32_t) * (2*coeffsCount +1)) + (sizeof(Float32) * coeffsCount);
+            return (sizeof(int32_t) * (2*coeffsCount +1)) + (sizeof(float) * coeffsCount);
         }
         /// \brief Fills the internal memory block with the concerned coefficients
         ///
@@ -329,6 +329,9 @@ namespace Miam
                                            std::vector<size_t>& actualChangesIndexes,
                                            size_t startPos, size_t coeffsCount)
         {
+			// pas un test complet, mais donne déjà une idée
+			assert(sizeof(float) == 4); // cannot work on non-IEEE-754 architectures...
+
             int32_t nativeInt, bigEndianInt;
             oscMemoryBlock.setSize(getRequiredBytesCount(coeffsCount));
             // Nombre de coeffs d'abord
@@ -342,17 +345,17 @@ namespace Miam
                 nativeInt = (int32_t)index2d.i;
                 bigEndianInt = boost::endian::native_to_big<int32_t>(nativeInt);
                 oscMemoryBlock.copyFrom(&bigEndianInt,
-                                        (int) getRequiredBytesCount(i),
+                                        (int)(startPos + getRequiredBytesCount(i)),
                                         sizeof(int32_t));
                 nativeInt = (int32_t)index2d.j;
                 bigEndianInt = boost::endian::native_to_big<int32_t>(nativeInt);
                 oscMemoryBlock.copyFrom(&bigEndianInt,
-                                        (int) getRequiredBytesCount(i) + sizeof(int32_t),
+                                        (int)(startPos + getRequiredBytesCount(i) + sizeof(int32_t)),
                                         sizeof(int32_t));
-                Float32 floatValue = (Float32) (*matrixState)[actualChangesIndexes[i]];
+                float floatValue = (float) (*matrixState)[actualChangesIndexes[i]];
                 oscMemoryBlock.copyFrom(&floatValue,
-                                        (int) getRequiredBytesCount(i) + 2*sizeof(int32_t),
-                                        sizeof(Float32));
+                                        (int)(startPos + getRequiredBytesCount(i) + 2*sizeof(int32_t)),
+                                        sizeof(float));
             }
         }
         

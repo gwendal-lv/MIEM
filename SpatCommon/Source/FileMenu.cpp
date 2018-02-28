@@ -10,13 +10,13 @@
 
 #include "FileMenu.h"
 
-#include "SpatPresenter.h"
+#include "ControlPresenter.h"
 
 #include "SpatFileChoosers.h"
 
 using namespace Miam;
 
-FileMenu::FileMenu(SpatPresenter* _spatPresenter) : presenter(_spatPresenter)
+FileMenu::FileMenu(ControlPresenter* _spatPresenter) : presenter(_spatPresenter)
 {
     menu.addItem(Choices::Load, "Load");
     menu.addItem(Choices::Save, "Save");

@@ -32,7 +32,7 @@
 namespace Miam
 {
     // pre-declarations for pointers
-    class SpatPresenter;
+    class ControlPresenter;
     
     
     
@@ -48,7 +48,7 @@ namespace Miam
         
         private :
         // Link to presenter module, children classes will have their own ptr
-        SpatPresenter* presenter = 0;
+        ControlPresenter* presenter = 0;
         
         
         protected :
@@ -83,7 +83,7 @@ namespace Miam
         public :
         
         // - - - - - Construction / destruction - - - - -
-        ControlModel(SpatPresenter* presenter_, double updateFrequency_Hz = 500.0);
+        ControlModel(ControlPresenter* presenter_, double updateFrequency_Hz = 500.0);
         virtual ~ControlModel();
         
         // - - - - - Speakers management - - - - -
