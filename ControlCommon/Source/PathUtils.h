@@ -24,7 +24,8 @@ namespace Miam
         
         static std::string GetAppToRepositoryRootPath();
         
-        static std::string GetAppToRepositorySessionsPath();
+        static std::string GetAppToRepositorySpatSessionsPath();
+        static std::string GetAppToRepositoryControlSessionsPath();
         
         static File GetSessionsFolderDefaultPath();
 

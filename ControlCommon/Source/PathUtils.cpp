@@ -30,12 +30,21 @@ std::string PathUtils::GetAppToRepositoryRootPath()
 
 
 
-std::string PathUtils::GetAppToRepositorySessionsPath()
+std::string PathUtils::GetAppToRepositorySpatSessionsPath()
 {
     if (GetAppToRepositoryRootPath() == "")
         throw std::logic_error("Path to repo root is not defined. Cannot continue");
     else
         return GetAppToRepositoryRootPath() + "SpatCommon/Sessions/";
+}
+
+
+std::string PathUtils::GetAppToRepositoryControlSessionsPath()
+{
+    if (GetAppToRepositoryRootPath() == "")
+        throw std::logic_error("Path to repo root is not defined. Cannot continue");
+    else
+        return GetAppToRepositoryRootPath() + "GenericController/Sessions/";
 }
 
 

@@ -17,7 +17,7 @@ namespace Miam {
     
 
     // Typename for easiness of use ; the floating-point type follows what is defined
-    // in SpatModel.h
+    // in ControlModel.h
     typedef SparseMatrix<double, Miam_MaxNumInputs, Miam_MaxNumOutputs, Miam_MinVolume_PowOf10> ControlMatrix;
     
 }

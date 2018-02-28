@@ -81,7 +81,7 @@ namespace Miam
         /// \brief Builds a state based on a zero Miam::SparseMatrix
         MatrixState()
         {
-            this->SetName("Matrix-based spatialization state");
+            this->SetName("Matrix-based generic control state");
         }
         virtual ~MatrixState() {}
         
@@ -149,7 +149,7 @@ namespace Miam
         
         virtual void SetFromTree(bptree::ptree & stateTree) override
         {
-            // At first, common properties for all spat states
+            // At first, common properties for all states
             this->ControlState<T>::SetFromTree(stateTree);
             
             // Then, matrix attributes. SparseMatrix will

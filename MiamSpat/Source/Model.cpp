@@ -33,13 +33,13 @@ using namespace Miam;
 
 Model::Model(Presenter* presenter_)
 :
-SpatModel(presenter_, 500.0),
+ControlModel(presenter_, 500.0),
 presenter(presenter_) // own private downcasted pointer
 {
     playState = AsyncParamChange::Stop;
     
     // Pas très propre... Mais pour l'instant c'est la seule option
-    miamOscSender = std::dynamic_pointer_cast<MiamOscSender<double>>(spatSenders[0]);
+    miamOscSender = std::dynamic_pointer_cast<MiamOscSender<double>>(stateSenders[0]);
     if (! miamOscSender )
         throw std::runtime_error("First and only SpatSender must be a MiamOscSender at the moment");
     
@@ -134,7 +134,7 @@ void Model::update()
             switch (lastParamChange.Type)
             {
                 case AsyncParamChange::Excitement :
-                    spatInterpolator->OnNewExcitementAmount((size_t) lastParamChange.Id1,
+                    interpolator->OnNewExcitementAmount((size_t) lastParamChange.Id1,
                                                             (uint64_t) lastParamChange.Id2,
                                                             lastParamChange.DoubleValue);
                     break;
@@ -142,17 +142,17 @@ void Model::update()
                 case AsyncParamChange::Play :
                     playState = AsyncParamChange::Play;
                     std::cout << "[Modèle] PLAY" << std::endl;
-                    spatInterpolator->OnPlay();
+                    interpolator->OnPlay();
                     break;
                     
                 case AsyncParamChange::Stop :
                     playState = AsyncParamChange::Stop;
                     std::cout << "[Modèle] STOP" << std::endl;
-                    spatInterpolator->OnStop();
+                    interpolator->OnStop();
                     // Après le stop, il faut peut-être envoyer des données
-                    if (spatInterpolator->OnDataUpdateFinished()) // vrai si données actualisées
+                    if (interpolator->OnDataUpdateFinished()) // vrai si données actualisées
                     {
-                        miamOscSender->SendStateModifications(spatInterpolator->GetCurrentInterpolatedState());
+                        miamOscSender->SendStateModifications(interpolator->GetCurrentInterpolatedState());
                     }
                     break;
                     
@@ -165,10 +165,10 @@ void Model::update()
         if ( playState == AsyncParamChange::Play )
         {
             // Envoi de la nouvelle matrice, si nécessaire
-            bool somethingWasUpdated = spatInterpolator->OnDataUpdateFinished();
+            bool somethingWasUpdated = interpolator->OnDataUpdateFinished();
             if (somethingWasUpdated)
             {
-                miamOscSender->SendStateModifications(spatInterpolator->GetCurrentInterpolatedState());
+                miamOscSender->SendStateModifications(interpolator->GetCurrentInterpolatedState());
             }
             else
             {
@@ -183,7 +183,7 @@ void Model::update()
                 // TODO
                 if ( (refreshFramesCounter++) >= refreshPeriod_frames )
                 {
-                    miamOscSender->ForceCoeffsBlockRefresh( spatInterpolator->GetCurrentInterpolatedState() );
+                    miamOscSender->ForceCoeffsBlockRefresh( interpolator->GetCurrentInterpolatedState() );
                     refreshFramesCounter = 0;
                 }
                 
@@ -220,7 +220,7 @@ void Model::update()
 void Model::SetConfigurationFromTree(bptree::ptree& tree)
 {
     // D'abord on appelle le parent qui fait juste du stockage de données
-    SpatModel::SetConfigurationFromTree(tree);
+    ControlModel::SetConfigurationFromTree(tree);
     
     // Ensuite on essaie de mettre en route les fonctionnalités, puis
     // on tient le Presenter au courant

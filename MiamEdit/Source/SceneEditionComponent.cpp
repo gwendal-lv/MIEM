@@ -431,7 +431,7 @@ void SceneEditionComponent::resized()
     areaGroupTranslateY(-areaGroupCurrentDy);
     spatGroupTranslateY(-spatGroupCurrentDy);
     initialStateGroupTranslateY(-initialStateGroupCurrentDy);
-    
+
     // Placement des canevas
     if (multiCanvasComponent)
     {
@@ -975,7 +975,7 @@ void SceneEditionComponent::areaGroupTranslateY(int dY)
     componentTranslateY(sendToBackTextButton.get(), dY);
     componentTranslateY(bringForwardTextButton.get(), dY);
     componentTranslateY(bringToFrontTextButton.get(), dY);
-    
+
     areaGroupCurrentDy += dY; // accumulation du dY
 
     spatGroupTranslateY(dY);
@@ -985,7 +985,7 @@ void SceneEditionComponent::spatGroupTranslateY(int dY)
     componentTranslateY(spatGroupComponent.get(), dY);
     componentTranslateY(spatLabel.get(), dY);
     componentTranslateY(spatStatesComboBox.get(), dY);
-    
+
     spatGroupCurrentDy += dY; // accumulation du dY
 
     initialStateGroupTranslateY(dY);
@@ -996,7 +996,7 @@ void SceneEditionComponent::initialStateGroupTranslateY(int dY)
     componentTranslateY(addExciterTextButton, dY);
     componentTranslateY(deleteExciterTextButton, dY);
     componentTranslateY(excitersEditionButton, dY);
-    
+
     initialStateGroupCurrentDy += dY; // accumulation du dY
 }
 void SceneEditionComponent::componentTranslateY(Component* component, int dY)

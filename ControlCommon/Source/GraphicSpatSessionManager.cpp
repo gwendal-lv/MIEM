@@ -21,7 +21,7 @@ IGraphicSessionManager(_presenter),
 presenter(_presenter)
 {}
 
-void GraphicSpatSessionManager::CompleteInitialisation(std::shared_ptr<SpatInterpolator<double>> _spatInterpolator)
+void GraphicSpatSessionManager::CompleteInitialisation(std::shared_ptr<StatesInterpolator<double>> _spatInterpolator)
 {
     spatInterpolator = _spatInterpolator;
 }
@@ -161,6 +161,6 @@ void GraphicSpatSessionManager::LoadSpatAreaLinks(std::shared_ptr<SpatArea> area
     
     auto spatStateIndex = spatStateTree->get<int64_t>("<xmlattr>.index", -1);
     if (spatStateIndex >= 0)
-        area->LinkToSpatState(spatInterpolator->GetSpatState(spatStateIndex));
+        area->LinkToSpatState(spatInterpolator->GetState(spatStateIndex));
 }
 

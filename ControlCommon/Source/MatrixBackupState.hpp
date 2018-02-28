@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    BiMatrixState.h
+    MatrixBackupState.h
     Created: 31 Oct 2017 2:29:44pm
     Author:  Gwendal Le Vaillant
 

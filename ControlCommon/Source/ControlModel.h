@@ -21,8 +21,7 @@
 #include "IModel.h"
 #include "PeriodicUpdateThread.h"
 
-#include "SpatType.h"
-#include "SpatInterpolator.hpp"
+#include "StatesInterpolator.hpp"
 #include "MiamOscSender.hpp"
 #include "Speaker.h"
 
@@ -40,7 +39,7 @@ namespace Miam
     
     
     /// \brief
-    class SpatModel : public IModel, protected PeriodicUpdateThread
+    class ControlModel : public IModel, protected PeriodicUpdateThread
     {
         
         
@@ -58,10 +57,10 @@ namespace Miam
         std::vector< std::shared_ptr<Speaker<double>> > speakers;
         
         // Spatialisation computer/interpolator, that owns the spat states
-        std::shared_ptr<SpatInterpolator<double>> spatInterpolator;
+        std::shared_ptr<StatesInterpolator<double>> interpolator;
         
         // Communication
-        std::vector< std::shared_ptr<SpatSender<double>> > spatSenders;
+        std::vector< std::shared_ptr<ControlStateSender<double>> > stateSenders;
         
         // Time Management
         std::chrono::time_point<std::chrono::steady_clock> commonStartTimePt;
@@ -70,26 +69,22 @@ namespace Miam
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
         
-        SpatType GetSpatType() {return spatInterpolator->GetSpatType();}
-        std::shared_ptr<SpatInterpolator<double>> GetSpatInterpolator() {return spatInterpolator;}
-        /// \brief Only 1 spat sender (index 0) available at the moment.
-        std::shared_ptr<SpatSender<double>> GetSpatSender(size_t /*index*/)
-        { return spatSenders[0]; };
+        InterpolationType GetInterpolatorType() {return interpolator->GetType();}
+        std::shared_ptr<StatesInterpolator<double>> GetSpatInterpolator() {return interpolator;}
+        /// \brief Only 1 sender (index 0) available at the moment.
+        std::shared_ptr<ControlStateSender<double>> GetStateSender(size_t index);
         
-        /// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        /// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        /// plus valable..... le spat interpolator doit tout contrôler
-        /// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        /// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        size_t GetOutputsCount() {return speakers.size();}
+        /// \brief See Miam::StatesInterpolator
+        size_t GetOutputsCount();
+        
         //std::string GetOutputName(size_t i_) {return speakers[i_]->GetName();}
         
         // = = = = = = = = = = METHODS = = = = = = = = = =
         public :
         
         // - - - - - Construction / destruction - - - - -
-        SpatModel(SpatPresenter* presenter_, double updateFrequency_Hz = 500.0);
-        virtual ~SpatModel();
+        ControlModel(SpatPresenter* presenter_, double updateFrequency_Hz = 500.0);
+        virtual ~ControlModel();
         
         // - - - - - Speakers management - - - - -
         virtual void AddSpeaker();

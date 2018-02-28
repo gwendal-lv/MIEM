@@ -12,7 +12,7 @@
 
 #include "GraphicSpatSessionManager.h"
 
-#include "SpatModel.h"
+#include "ControlModel.h"
 
 
 SpatPresenter::SpatPresenter(SpatView* view_)
@@ -23,7 +23,7 @@ view(view_)
     lastSpatScenesTree = std::make_shared<bptree::ptree>();
 }
 
-void SpatPresenter::CompleteInitialisation(GraphicSpatSessionManager* _graphicSessionManager, SpatModel* _model)
+void SpatPresenter::CompleteInitialisation(GraphicSpatSessionManager* _graphicSessionManager, ControlModel* _model)
 {
     // Attributs privés
     graphicSessionManager = _graphicSessionManager;
@@ -61,7 +61,7 @@ void SpatPresenter::LoadSession(std::string filename)
     try {
         // Config modèle puis modèle
         model->SetConfigurationFromTree(settingsTree.get_child("model"));
-        model->GetSpatInterpolator()->SetSpatStatesFromTree(spatTree);
+        model->GetSpatInterpolator()->SetStatesFromTree(spatTree);
         // Config graphique puis presenter
         this->SetConfigurationFromTree(settingsTree);
         graphicSessionManager->SetFromTree(graphicSessionTree);
@@ -70,7 +70,7 @@ void SpatPresenter::LoadSession(std::string filename)
     {
         // Remise à zéro de tous les modules, commandée par arbre vide
         bptree::ptree emptyTree = bptree::ptree();
-        model->GetSpatInterpolator()->SetSpatStatesFromTree(emptyTree);
+        model->GetSpatInterpolator()->SetStatesFromTree(emptyTree);
         graphicSessionManager->SetFromTree(emptyTree);
         
         // Pour l'instant : on laisse la configuration dans son état précédent....

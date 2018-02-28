@@ -20,7 +20,7 @@
 
 #include "LabelledMatrixComponent.h"
 
-#include "SpatModel.h" // sparse miam spatialization matrix
+#include "ControlModel.h" // sparse miam spatialization matrix
 
 namespace Miam
 {

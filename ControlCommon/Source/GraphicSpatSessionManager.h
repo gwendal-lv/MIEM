@@ -15,7 +15,7 @@
 #include "IGraphicSessionManager.h"
 #include "SpatArea.h"
 
-#include "SpatInterpolator.hpp"
+#include "StatesInterpolator.hpp"
 
 namespace Miam
 {
@@ -33,7 +33,7 @@ namespace Miam
         protected :
         
         // For communication with Model
-        std::shared_ptr<SpatInterpolator<double>> spatInterpolator;
+        std::shared_ptr<StatesInterpolator<double>> spatInterpolator;
         
         
         
@@ -50,7 +50,7 @@ namespace Miam
         
         /// \Brief to be called after Model construction (which occurs
         /// after Presenter construction)
-        void CompleteInitialisation(std::shared_ptr<SpatInterpolator<double>> _spatInterpolator);
+        void CompleteInitialisation(std::shared_ptr<StatesInterpolator<double>> _spatInterpolator);
         
         /// \brief Destruction and the editor and the canvases
         virtual ~GraphicSpatSessionManager() {}

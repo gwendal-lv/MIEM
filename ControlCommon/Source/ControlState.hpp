@@ -1,15 +1,15 @@
 /*
   ==============================================================================
 
-    SpatState.h
+    ControlState.h
     Created: 26 Nov 2016 12:00:26pm
     Author:  Gwendal Le Vaillant
 
   ==============================================================================
 */
 
-#ifndef SPATSTATE_H_INCLUDED
-#define SPATSTATE_H_INCLUDED
+#ifndef CONTROLSTATE_H_INCLUDED
+#define CONTROLSTATE_H_INCLUDED
 
 #include <iostream>
 #include <string>
@@ -41,7 +41,7 @@ namespace Miam
     /// type some day in the future....
     ///
     /// The number of channels might not be exactly the same as
-    /// the parent Miam::SpatInterpolator (and this has to be
+    /// the parent Miam::StatesInterpolator (and this has to be
     /// properly managed)
     ///
     /// !!! Attention aux fonctions membres virtuelles qui ne peuvent alors
@@ -243,4 +243,4 @@ namespace Miam
 }
 
 
-#endif  // SPATSTATE_H_INCLUDED
+#endif  // CONTROLSTATE_H_INCLUDED

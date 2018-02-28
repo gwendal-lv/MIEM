@@ -16,7 +16,7 @@
 
 #include "OscDefines.h"
 
-#include "SpatSender.hpp"
+#include "ControlStateSender.hpp"
 #include "MatrixBackupState.hpp"
 
 #include "boost/endian/conversion.hpp"
@@ -26,7 +26,7 @@ namespace Miam
 {
     
     template<typename T>
-    class MiamOscSender : public SpatSender<T> {
+    class MiamOscSender : public ControlStateSender<T> {
         
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
@@ -101,15 +101,17 @@ namespace Miam
         // - - - - - Communication commands - - - - -
         public :
         
-        /// \brief Sends the whole spat states without any optimisation
-        virtual void SendState(ControlState<T>& spatState) override
+        /// \brief Sends a whole state without any optimisation.
+        ///
+        /// Only matrix states at the moment...
+        virtual void SendState(ControlState<T>& state) override
         {
             // Capable d'envoyer un état matriciel seulement pour l'instant !
             // On travaille avec pointeur... Sinon avec cast de référence : il faudrait vérifier
             // les exceptions "bad_cast"
             //
             /// Aucune optimisation : coefficients sont tous envoyés 1 par 1 dans des paquets OSC séparés...
-            if (MatrixState<T>* matrixState = dynamic_cast<MatrixState<T>*>(&spatState))
+            if (MatrixState<T>* matrixState = dynamic_cast<MatrixState<T>*>(&state))
             {
                 for (size_t i = 0 ; i<matrixState->GetInputsCount() ; i++)
                 {
@@ -123,10 +125,10 @@ namespace Miam
                 throw std::logic_error("Cannot send a state that is not a Matrix");
         }
         
-        virtual void SendStateModifications(ControlState<T>& spatState) override
+        virtual void SendStateModifications(ControlState<T>& state) override
         {
             // Capable d'envoyer un état matriciel avec backup seulement pour l'instant
-            if (MatrixBackupState<T>* matrixState = dynamic_cast<MatrixBackupState<T>*>(&spatState))
+            if (MatrixBackupState<T>* matrixState = dynamic_cast<MatrixBackupState<T>*>(&state))
             {
                 // On met à jour les éléments nécessaires seulement
                 auto changesIndexes = matrixState->GetSignificantChangesIndexes();
@@ -207,10 +209,10 @@ namespace Miam
         ///
         /// Au prochain appel, c'est la case d'après qui sera transmise. Sens de parcours :
         /// ligne entière par ligne entière
-        void ForceSend1MatrixCoeff(ControlState<T>& spatState)
+        void ForceSend1MatrixCoeff(ControlState<T>& state)
         {
             // Capable d'envoyer un état matriciel avec backup seulement pour l'instant
-            if (MatrixBackupState<T>* matrixState = dynamic_cast<MatrixBackupState<T>*>(&spatState))
+            if (MatrixBackupState<T>* matrixState = dynamic_cast<MatrixBackupState<T>*>(&state))
             {
                 // Mise à jour du couple (i,j) pour commencer
                 increment2dRefreshIndex();
@@ -359,7 +361,7 @@ namespace Miam
         public :
         virtual std::shared_ptr<bptree::ptree> GetConfigurationTree() override
         {
-            auto configurationTree = SpatSender<T>::GetConfigurationTree();
+            auto configurationTree = ControlStateSender<T>::GetConfigurationTree();
             configurationTree->put("ip", ipv4);
             configurationTree->put("udp.port", udpPort);
             return configurationTree;
@@ -367,7 +369,7 @@ namespace Miam
         virtual void SetConfigurationFromTree(bptree::ptree& tree) override
         {
             // Inutile pour l'instant, mais dans le doute...
-            SpatSender<T>::SetConfigurationFromTree(tree);
+            ControlStateSender<T>::SetConfigurationFromTree(tree);
             // Chargement des pptés spécifiques au messages miam osc
             udpPort = tree.get<int>("udp.port", udpPort); // no exception
             ipv4 = tree.get<std::string>("ip", ipv4); // no exception

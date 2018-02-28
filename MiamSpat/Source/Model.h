@@ -12,7 +12,7 @@
 #define MODEL_H_INCLUDED
 
 
-#include "SpatModel.h"
+#include "ControlModel.h"
 
 
 namespace Miam {
@@ -21,7 +21,7 @@ namespace Miam {
     class Presenter;
     
     /// \brief
-    class Model : public SpatModel
+    class Model : public ControlModel
     {
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =

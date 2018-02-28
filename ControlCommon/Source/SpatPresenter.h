@@ -25,7 +25,7 @@ namespace bptree = boost::property_tree;
 
 namespace Miam {
     
-    class SpatModel;
+    class ControlModel;
     class GraphicSpatSessionManager;
     
     /// \brief
@@ -37,7 +37,7 @@ namespace Miam {
         
         private :
         // Private links to abtractions of sub-modules
-        SpatModel* model = 0;
+        ControlModel* model = 0;
         GraphicSpatSessionManager* graphicSessionManager = 0;
         // Private links to other modules
         SpatView* view;
@@ -54,7 +54,7 @@ namespace Miam {
         // - - - - - Construction and Destruction (and init) - - - - -
         SpatPresenter(SpatView* view_);
         virtual ~SpatPresenter() {}
-        void CompleteInitialisation(GraphicSpatSessionManager* _graphicSessionManager, SpatModel* _model);
+        void CompleteInitialisation(GraphicSpatSessionManager* _graphicSessionManager, ControlModel* _model);
         
         
         

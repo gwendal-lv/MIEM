@@ -9,6 +9,13 @@
   <MAINGROUP id="m8VZoU" name="MIEM Spat Player">
     <GROUP id="{CC552857-6B1C-C3D2-B168-48387BA078AE}" name="ControlCommonSource">
       <GROUP id="{3CD4C810-FEB7-EC88-5368-9D579793FED4}" name="Model">
+        <GROUP id="{B4A6ACD4-D373-CCB2-83B3-7BB330CF44F0}" name="Communication">
+          <FILE id="m75mrG" name="ControlStateSender.hpp" compile="0" resource="0"
+                file="../ControlCommon/Source/ControlStateSender.hpp"/>
+          <FILE id="HARyBs" name="MiamOscSender.hpp" compile="0" resource="0"
+                file="../ControlCommon/Source/MiamOscSender.hpp"/>
+          <FILE id="qpW8h1" name="OscDefines.h" compile="0" resource="0" file="../ControlCommon/Source/OscDefines.h"/>
+        </GROUP>
         <GROUP id="{1D2620FE-94B3-496E-6FC7-350D53FA8AA3}" name="States">
           <FILE id="qn7PYI" name="ControlState.hpp" compile="0" resource="0"
                 file="../ControlCommon/Source/ControlState.hpp"/>
@@ -16,16 +23,11 @@
                 file="../ControlCommon/Source/MatrixBackupState.hpp"/>
           <FILE id="qsKU4e" name="MatrixState.hpp" compile="0" resource="0" file="../ControlCommon/Source/MatrixState.hpp"/>
         </GROUP>
-        <GROUP id="{B4A6ACD4-D373-CCB2-83B3-7BB330CF44F0}" name="Communication">
-          <FILE id="qpW8h1" name="OscDefines.h" compile="0" resource="0" file="../ControlCommon/Source/OscDefines.h"/>
-          <FILE id="AZCnJ6" name="SpatSender.hpp" compile="0" resource="0" file="../ControlCommon/Source/SpatSender.hpp"/>
-          <FILE id="HARyBs" name="MiamOscSender.hpp" compile="0" resource="0"
-                file="../ControlCommon/Source/MiamOscSender.hpp"/>
-        </GROUP>
-        <FILE id="Fr6yeI" name="SpatInterpolator.hpp" compile="0" resource="0"
-              file="../ControlCommon/Source/SpatInterpolator.hpp"/>
-        <FILE id="hY3pes" name="SpatModel.cpp" compile="1" resource="0" file="../ControlCommon/Source/SpatModel.cpp"/>
-        <FILE id="nAa9kU" name="SpatModel.h" compile="0" resource="0" file="../ControlCommon/Source/SpatModel.h"/>
+        <FILE id="xZ9bRl" name="ControlModel.cpp" compile="1" resource="0"
+              file="../ControlCommon/Source/ControlModel.cpp"/>
+        <FILE id="jd2PVn" name="ControlModel.h" compile="0" resource="0" file="../ControlCommon/Source/ControlModel.h"/>
+        <FILE id="i1Rdw4" name="StatesInterpolator.hpp" compile="0" resource="0"
+              file="../ControlCommon/Source/StatesInterpolator.hpp"/>
       </GROUP>
       <GROUP id="{596BD696-C6A3-E262-0276-DB678B875C8B}" name="Presenter">
         <FILE id="k2deAw" name="GraphicSpatSessionManager.cpp" compile="1"
