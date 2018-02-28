@@ -17,7 +17,7 @@
 #include "IPresenter.h"
 #include "SpatView.h"
 
-#include "SpatFileChoosers.h"
+#include "MiemFileChoosers.h"
 
 #include "boost/property_tree/ptree.hpp"
 #include "boost/property_tree/xml_parser.hpp"
@@ -26,7 +26,7 @@ namespace bptree = boost::property_tree;
 namespace Miam {
     
     class ControlModel;
-    class GraphicSpatSessionManager;
+    class GraphicControlSessionManager;
     
     /// \brief
     class ControlPresenter : public IPresenter
@@ -38,7 +38,7 @@ namespace Miam {
         private :
         // Private links to abtractions of sub-modules
         ControlModel* model = 0;
-        GraphicSpatSessionManager* graphicSessionManager = 0;
+        GraphicControlSessionManager* graphicSessionManager = 0;
         // Private links to other modules
         SpatView* view;
         
@@ -54,7 +54,7 @@ namespace Miam {
         // - - - - - Construction and Destruction (and init) - - - - -
         ControlPresenter(SpatView* view_);
         virtual ~ControlPresenter() {}
-        void CompleteInitialisation(GraphicSpatSessionManager* _graphicSessionManager, ControlModel* _model);
+        void CompleteInitialisation(GraphicControlSessionManager* _graphicSessionManager, ControlModel* _model);
         
         // - - - - - Self XML import/export - - - - -
         public :

@@ -20,7 +20,7 @@
 
 #include "GraphicSessionManager.h"
 
-#include "SpatFileChoosers.h"
+#include "MiemFileChoosers.h"
 
 
 namespace Miam {

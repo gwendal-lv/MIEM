@@ -24,7 +24,7 @@ view(view_)
     lastSpatScenesTree = std::make_shared<bptree::ptree>();
 }
 
-void ControlPresenter::CompleteInitialisation(GraphicSpatSessionManager* _graphicSessionManager, ControlModel* _model)
+void ControlPresenter::CompleteInitialisation(GraphicControlSessionManager* _graphicSessionManager, ControlModel* _model)
 {
     // Attributs privés
     graphicSessionManager = _graphicSessionManager;

@@ -18,7 +18,7 @@
 #include <map>
 #include <string>
 
-#include "GraphicSpatSessionManager.h"
+#include "GraphicControlSessionManager.h"
 
 #include "EditablePolygon.h"
 
@@ -41,7 +41,7 @@ namespace Miam {
 	///
 	/// References itself to some components, for these components to transfer events to this sub-module
 	/// directly, and not to the Presenter.
-    class GraphicSessionManager : public GraphicSpatSessionManager {
+    class GraphicSessionManager : public GraphicControlSessionManager {
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
         

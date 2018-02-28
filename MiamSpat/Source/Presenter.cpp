@@ -19,7 +19,7 @@
 #include "JuceHeader.h"
 
 
-#include "SpatFileChoosers.h"
+#include "MiemFileChoosers.h"
 
 #include "AppPurpose.h"
 

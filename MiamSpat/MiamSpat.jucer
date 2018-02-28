@@ -40,10 +40,10 @@
               file="../ControlCommon/Source/ControlEllipse.h"/>
         <FILE id="fKDEja" name="ControlArea.cpp" compile="1" resource="0" file="../ControlCommon/Source/ControlArea.cpp"/>
         <FILE id="u61sXP" name="ControlArea.h" compile="0" resource="0" file="../ControlCommon/Source/ControlArea.h"/>
-        <FILE id="k2deAw" name="GraphicSpatSessionManager.cpp" compile="1"
-              resource="0" file="../ControlCommon/Source/GraphicSpatSessionManager.cpp"/>
-        <FILE id="vg3CI3" name="GraphicSpatSessionManager.h" compile="0" resource="0"
-              file="../ControlCommon/Source/GraphicSpatSessionManager.h"/>
+        <FILE id="k2deAw" name="GraphicControlSessionManager.cpp" compile="1"
+              resource="0" file="../ControlCommon/Source/GraphicControlSessionManager.cpp"/>
+        <FILE id="vg3CI3" name="GraphicControlSessionManager.h" compile="0"
+              resource="0" file="../ControlCommon/Source/GraphicControlSessionManager.h"/>
         <FILE id="a6eq3F" name="MiemFileChoosers.h" compile="0" resource="0"
               file="../ControlCommon/Source/MiemFileChoosers.h"/>
         <FILE id="vgOrLM" name="ControlPresenter.cpp" compile="1" resource="0"

@@ -32,7 +32,7 @@ namespace Miam
 #include "AppMode.h"
 
 #include "MainMenuComponent.h"
-#include "SpatFileChoosers.h"
+#include "MiemFileChoosers.h"
 //[/Headers]
 
 

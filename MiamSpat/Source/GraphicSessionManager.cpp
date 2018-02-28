@@ -28,7 +28,7 @@ using namespace Miam;
 // ========== CONSTRUCTION and DESTRUCTION ==========
 
 GraphicSessionManager::GraphicSessionManager(Presenter* presenter_, View* view_) :
-    GraphicSpatSessionManager(presenter_),
+    GraphicControlSessionManager(presenter_),
     presenter(presenter_),
     view(view_)
 {    
@@ -220,7 +220,7 @@ void GraphicSessionManager::DisplayInfo(String info, int /*priority*/)
 
 void GraphicSessionManager::SetFromTree(bptree::ptree& graphicSessionTree)
 {
-    GraphicSpatSessionManager::SetFromTree(graphicSessionTree);
+    GraphicControlSessionManager::SetFromTree(graphicSessionTree);
     
     // Plus aucun traitement supplémentaire, pour l'instant...
 }

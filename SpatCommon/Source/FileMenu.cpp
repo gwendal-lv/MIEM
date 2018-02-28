@@ -12,7 +12,7 @@
 
 #include "ControlPresenter.h"
 
-#include "SpatFileChoosers.h"
+#include "MiemFileChoosers.h"
 
 using namespace Miam;
 
