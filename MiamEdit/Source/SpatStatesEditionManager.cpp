@@ -229,6 +229,10 @@ void SpatStatesEditionManager::AllowKeyboardEdition(bool allow)
 // = = = = = = = = = = PROPERTY TREE (XML) MANAGEMENT = = = = = = = = = =
 std::shared_ptr<bptree::ptree> SpatStatesEditionManager::GetTree()
 {
+    // à chaque fois qu'on demande l'arbre :
+    // D'abord on met à jour vers le modèle...
+    sendDataToModel(editionComponent->GetDisplayedSpatMatrix());
+    // Puis le modèle mis à jour renvoie les données bien formattées
     return spatInterpolator->GetStatesTree();
 }
 
