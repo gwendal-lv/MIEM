@@ -22,7 +22,10 @@
 //[Headers]     -- You can add your own extra header files here --
 #include "../JuceLibraryCode/JuceHeader.h"
 
-#include "Presenter.h"
+#include "PlayerAppMode.h"
+#include "PlayerPresenter.h"
+
+namespace Miam {
 //[/Headers]
 
 
@@ -35,18 +38,21 @@
     Describe your class and how it works here!
                                                                     //[/Comments]
 */
-class MainMenuComponent  : public Component,
-                           public Button::Listener
+class PlayerMainMenuComponent  : public Component,
+                                 public Button::Listener
 {
 public:
     //==============================================================================
-    MainMenuComponent ();
-    ~MainMenuComponent();
+    PlayerMainMenuComponent ();
+    ~PlayerMainMenuComponent();
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-    void SetPresenter(Presenter* presenter_) {presenter = presenter_;}
-    void ChangeAppMode(AppMode newAppMode);
+    void SetPresenter(PlayerPresenter* presenter_) {presenter = presenter_;}
+    void ChangeAppMode(PlayerAppMode newAppMode);
+
+    /// \brief Pour l'instant, fait simplement clignoter le bouton play
+    void PrepareToPlay(int delayBeforeActualPlay_ms);
     //[/UserMethods]
 
     void paint (Graphics& g) override;
@@ -70,7 +76,7 @@ public:
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
-    Presenter* presenter;
+    PlayerPresenter* presenter;
     //[/UserVariables]
 
     //==============================================================================
@@ -83,8 +89,9 @@ private:
 
 
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainMenuComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PlayerMainMenuComponent)
 };
 
 //[EndFile] You can add extra defines here...
+} // fin du namespace Miam
 //[/EndFile]

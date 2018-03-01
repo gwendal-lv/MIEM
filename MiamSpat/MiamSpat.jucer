@@ -7,6 +7,16 @@
               companyName="IRISIB/LARAS, UMons" companyWebsite="htpp://laras.be"
               companyEmail="glevaillant@he2b.be" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../ControlCommon/Source/&#10;../../../SpatCommon/Source/">
   <MAINGROUP id="m8VZoU" name="MIEM Spat Player">
+    <GROUP id="{D93792BB-5B8B-5A35-D554-58C4F4E4D3DA}" name="Source">
+      <FILE id="oaxiVA" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <FILE id="TCTcR0" name="MainComponent.cpp" compile="1" resource="0"
+            file="Source/MainComponent.cpp"/>
+      <FILE id="NeblZc" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+      <FILE id="iBrj0h" name="Presenter.cpp" compile="1" resource="0" file="Source/Presenter.cpp"/>
+      <FILE id="fpZaRJ" name="Presenter.h" compile="0" resource="0" file="Source/Presenter.h"/>
+      <FILE id="wovY1v" name="View.cpp" compile="1" resource="0" file="Source/View.cpp"/>
+      <FILE id="DzITRF" name="View.h" compile="0" resource="0" file="Source/View.h"/>
+    </GROUP>
     <GROUP id="{CC552857-6B1C-C3D2-B168-48387BA078AE}" name="ControlCommonSource">
       <GROUP id="{3CD4C810-FEB7-EC88-5368-9D579793FED4}" name="Model">
         <GROUP id="{B4A6ACD4-D373-CCB2-83B3-7BB330CF44F0}" name="Communication">
@@ -26,45 +36,76 @@
         <FILE id="xZ9bRl" name="ControlModel.cpp" compile="1" resource="0"
               file="../ControlCommon/Source/ControlModel.cpp"/>
         <FILE id="jd2PVn" name="ControlModel.h" compile="0" resource="0" file="../ControlCommon/Source/ControlModel.h"/>
+        <FILE id="baXNnV" name="PlayerModel.cpp" compile="1" resource="0" file="../ControlCommon/Source/PlayerModel.cpp"/>
+        <FILE id="PPt1Jg" name="PlayerModel.h" compile="0" resource="0" file="../ControlCommon/Source/PlayerModel.h"/>
         <FILE id="i1Rdw4" name="StatesInterpolator.hpp" compile="0" resource="0"
               file="../ControlCommon/Source/StatesInterpolator.hpp"/>
       </GROUP>
       <GROUP id="{596BD696-C6A3-E262-0276-DB678B875C8B}" name="Presenter">
-        <FILE id="n32Dij" name="ControlPolygon.cpp" compile="1" resource="0"
-              file="../ControlCommon/Source/ControlPolygon.cpp"/>
-        <FILE id="FsTJI4" name="ControlPolygon.h" compile="0" resource="0"
-              file="../ControlCommon/Source/ControlPolygon.h"/>
-        <FILE id="mVjBSn" name="ControlEllipse.cpp" compile="1" resource="0"
-              file="../ControlCommon/Source/ControlEllipse.cpp"/>
-        <FILE id="yCl99C" name="ControlEllipse.h" compile="0" resource="0"
-              file="../ControlCommon/Source/ControlEllipse.h"/>
-        <FILE id="fKDEja" name="ControlArea.cpp" compile="1" resource="0" file="../ControlCommon/Source/ControlArea.cpp"/>
-        <FILE id="u61sXP" name="ControlArea.h" compile="0" resource="0" file="../ControlCommon/Source/ControlArea.h"/>
-        <FILE id="k2deAw" name="GraphicControlSessionManager.cpp" compile="1"
-              resource="0" file="../ControlCommon/Source/GraphicControlSessionManager.cpp"/>
-        <FILE id="vg3CI3" name="GraphicControlSessionManager.h" compile="0"
-              resource="0" file="../ControlCommon/Source/GraphicControlSessionManager.h"/>
-        <FILE id="a6eq3F" name="MiemFileChoosers.h" compile="0" resource="0"
-              file="../ControlCommon/Source/MiemFileChoosers.h"/>
+        <GROUP id="{CC3078DA-52CD-0250-7460-2D48622CBD4F}" name="Areas">
+          <FILE id="n32Dij" name="ControlPolygon.cpp" compile="1" resource="0"
+                file="../ControlCommon/Source/ControlPolygon.cpp"/>
+          <FILE id="FsTJI4" name="ControlPolygon.h" compile="0" resource="0"
+                file="../ControlCommon/Source/ControlPolygon.h"/>
+          <FILE id="mVjBSn" name="ControlEllipse.cpp" compile="1" resource="0"
+                file="../ControlCommon/Source/ControlEllipse.cpp"/>
+          <FILE id="yCl99C" name="ControlEllipse.h" compile="0" resource="0"
+                file="../ControlCommon/Source/ControlEllipse.h"/>
+          <FILE id="fKDEja" name="ControlArea.cpp" compile="1" resource="0" file="../ControlCommon/Source/ControlArea.cpp"/>
+          <FILE id="u61sXP" name="ControlArea.h" compile="0" resource="0" file="../ControlCommon/Source/ControlArea.h"/>
+        </GROUP>
         <FILE id="vgOrLM" name="ControlPresenter.cpp" compile="1" resource="0"
               file="../ControlCommon/Source/ControlPresenter.cpp"/>
         <FILE id="ZasBLY" name="ControlPresenter.h" compile="0" resource="0"
               file="../ControlCommon/Source/ControlPresenter.h"/>
+        <FILE id="k2deAw" name="GraphicControlSessionManager.cpp" compile="1"
+              resource="0" file="../ControlCommon/Source/GraphicControlSessionManager.cpp"/>
+        <FILE id="vg3CI3" name="GraphicControlSessionManager.h" compile="0"
+              resource="0" file="../ControlCommon/Source/GraphicControlSessionManager.h"/>
+        <FILE id="MUQdaG" name="GraphicSessionPlayer.cpp" compile="1" resource="0"
+              file="../ControlCommon/Source/GraphicSessionPlayer.cpp"/>
+        <FILE id="TorQnO" name="GraphicSessionPlayer.h" compile="0" resource="0"
+              file="../ControlCommon/Source/GraphicSessionPlayer.h"/>
+        <FILE id="a6eq3F" name="MiemFileChoosers.h" compile="0" resource="0"
+              file="../ControlCommon/Source/MiemFileChoosers.h"/>
+        <FILE id="xdiGvo" name="MultiSceneCanvasPlayer.cpp" compile="1" resource="0"
+              file="../ControlCommon/Source/MultiSceneCanvasPlayer.cpp"/>
+        <FILE id="vqHK6N" name="MultiSceneCanvasPlayer.h" compile="0" resource="0"
+              file="../ControlCommon/Source/MultiSceneCanvasPlayer.h"/>
+        <FILE id="asTm4B" name="PlayerAppMode.h" compile="0" resource="0" file="../ControlCommon/Source/PlayerAppMode.h"/>
+        <FILE id="D1ZUgc" name="PlayerPresenter.cpp" compile="1" resource="0"
+              file="../ControlCommon/Source/PlayerPresenter.cpp"/>
+        <FILE id="tivpId" name="PlayerPresenter.h" compile="0" resource="0"
+              file="../ControlCommon/Source/PlayerPresenter.h"/>
+        <FILE id="wO4PIc" name="PlayScene.cpp" compile="1" resource="0" file="../ControlCommon/Source/PlayScene.cpp"/>
+        <FILE id="o8a3F9" name="PlayScene.h" compile="0" resource="0" file="../ControlCommon/Source/PlayScene.h"/>
       </GROUP>
       <GROUP id="{07BF93D8-C012-D439-DF67-3946D9CD4BEB}" name="View">
-        <FILE id="lLSOSu" name="ISlidersMatrixListener.h" compile="0" resource="0"
-              file="../ControlCommon/Source/ISlidersMatrixListener.h"/>
-        <FILE id="K2PgBO" name="LabelledMatrixComponent.cpp" compile="1" resource="0"
-              file="../ControlCommon/Source/LabelledMatrixComponent.cpp"/>
-        <FILE id="M7FJJ8" name="LabelledMatrixComponent.h" compile="0" resource="0"
-              file="../ControlCommon/Source/LabelledMatrixComponent.h"/>
-        <FILE id="D1VeJN" name="MatrixComponent.h" compile="0" resource="0"
-              file="../ControlCommon/Source/MatrixComponent.h"/>
-        <FILE id="CDLZvE" name="MatrixSlider.h" compile="0" resource="0" file="../ControlCommon/Source/MatrixSlider.h"/>
-        <FILE id="RW0Tdr" name="MatrixViewport.h" compile="0" resource="0"
-              file="../ControlCommon/Source/MatrixViewport.h"/>
+        <GROUP id="{CF87147C-17A9-BC31-701D-E5C672AAD90C}" name="Components">
+          <FILE id="B7KOaQ" name="PlayerBackgroundComponent.cpp" compile="1"
+                resource="0" file="../ControlCommon/Source/PlayerBackgroundComponent.cpp"/>
+          <FILE id="cgZPZG" name="PlayerBackgroundComponent.h" compile="0" resource="0"
+                file="../ControlCommon/Source/PlayerBackgroundComponent.h"/>
+          <FILE id="lLSOSu" name="ISlidersMatrixListener.h" compile="0" resource="0"
+                file="../ControlCommon/Source/ISlidersMatrixListener.h"/>
+          <FILE id="K2PgBO" name="LabelledMatrixComponent.cpp" compile="1" resource="0"
+                file="../ControlCommon/Source/LabelledMatrixComponent.cpp"/>
+          <FILE id="M7FJJ8" name="LabelledMatrixComponent.h" compile="0" resource="0"
+                file="../ControlCommon/Source/LabelledMatrixComponent.h"/>
+          <FILE id="kHD2Ad" name="PlayerMainMenuComponent.cpp" compile="1" resource="0"
+                file="../ControlCommon/Source/PlayerMainMenuComponent.cpp"/>
+          <FILE id="CIH7iT" name="PlayerMainMenuComponent.h" compile="0" resource="0"
+                file="../ControlCommon/Source/PlayerMainMenuComponent.h"/>
+          <FILE id="D1VeJN" name="MatrixComponent.h" compile="0" resource="0"
+                file="../ControlCommon/Source/MatrixComponent.h"/>
+          <FILE id="CDLZvE" name="MatrixSlider.h" compile="0" resource="0" file="../ControlCommon/Source/MatrixSlider.h"/>
+          <FILE id="RW0Tdr" name="MatrixViewport.h" compile="0" resource="0"
+                file="../ControlCommon/Source/MatrixViewport.h"/>
+        </GROUP>
         <FILE id="prXyfS" name="ControlView.cpp" compile="1" resource="0" file="../ControlCommon/Source/ControlView.cpp"/>
         <FILE id="FOm35I" name="ControlView.h" compile="0" resource="0" file="../ControlCommon/Source/ControlView.h"/>
+        <FILE id="M6EpwT" name="PlayerView.cpp" compile="1" resource="0" file="../ControlCommon/Source/PlayerView.cpp"/>
+        <FILE id="wzJKiP" name="PlayerView.h" compile="0" resource="0" file="../ControlCommon/Source/PlayerView.h"/>
       </GROUP>
       <GROUP id="{7DF86A8F-A8E0-F3D8-65C1-4CA2C20CE264}" name="Utils">
         <FILE id="ZbkxOP" name="AppPurpose.h" compile="0" resource="0" file="../ControlCommon/Source/AppPurpose.h"/>
@@ -72,45 +113,6 @@
               file="../ControlCommon/Source/ControlMatrix.hpp"/>
         <FILE id="NjGlBL" name="PathUtils.cpp" compile="1" resource="0" file="../ControlCommon/Source/PathUtils.cpp"/>
         <FILE id="D2SRcW" name="PathUtils.h" compile="0" resource="0" file="../ControlCommon/Source/PathUtils.h"/>
-      </GROUP>
-    </GROUP>
-    <GROUP id="{D93792BB-5B8B-5A35-D554-58C4F4E4D3DA}" name="Source">
-      <FILE id="oaxiVA" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
-      <GROUP id="{23BAC1CB-3D2E-7345-7D78-B522A9B204B9}" name="Model">
-        <FILE id="ympnMH" name="Model.cpp" compile="1" resource="0" file="Source/Model.cpp"/>
-        <FILE id="Ux9VG9" name="Model.h" compile="0" resource="0" file="Source/Model.h"/>
-      </GROUP>
-      <GROUP id="{45938C39-8750-2EF2-9298-4F650688CD28}" name="Presenter">
-        <GROUP id="{E07097EB-B121-B880-1313-B2ED1D4A659F}" name="Scenes">
-          <FILE id="RKCVev" name="SpatScene.cpp" compile="1" resource="0" file="Source/SpatScene.cpp"/>
-          <FILE id="TRrt7W" name="SpatScene.h" compile="0" resource="0" file="Source/SpatScene.h"/>
-        </GROUP>
-        <FILE id="pYokVf" name="AppMode.h" compile="0" resource="0" file="Source/AppMode.h"/>
-        <FILE id="nfUzJ2" name="GraphicSessionManager.cpp" compile="1" resource="0"
-              file="Source/GraphicSessionManager.cpp"/>
-        <FILE id="uQ1yo9" name="GraphicSessionManager.h" compile="0" resource="0"
-              file="Source/GraphicSessionManager.h"/>
-        <FILE id="X4614e" name="MultiSceneCanvasManager.cpp" compile="1" resource="0"
-              file="Source/MultiSceneCanvasManager.cpp"/>
-        <FILE id="cZwI02" name="MultiSceneCanvasManager.h" compile="0" resource="0"
-              file="Source/MultiSceneCanvasManager.h"/>
-        <FILE id="iBrj0h" name="Presenter.cpp" compile="1" resource="0" file="Source/Presenter.cpp"/>
-        <FILE id="fpZaRJ" name="Presenter.h" compile="0" resource="0" file="Source/Presenter.h"/>
-      </GROUP>
-      <GROUP id="{7185BF7C-494C-765D-3B78-58581F32631D}" name="View">
-        <FILE id="SFIecL" name="BackgroundComponent.cpp" compile="1" resource="0"
-              file="Source/BackgroundComponent.cpp"/>
-        <FILE id="cp8fFT" name="BackgroundComponent.h" compile="0" resource="0"
-              file="Source/BackgroundComponent.h"/>
-        <FILE id="TCTcR0" name="MainComponent.cpp" compile="1" resource="0"
-              file="Source/MainComponent.cpp"/>
-        <FILE id="NeblZc" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
-        <FILE id="XaEdXv" name="MainMenuComponent.cpp" compile="1" resource="0"
-              file="Source/MainMenuComponent.cpp"/>
-        <FILE id="IIbXOm" name="MainMenuComponent.h" compile="0" resource="0"
-              file="Source/MainMenuComponent.h"/>
-        <FILE id="wovY1v" name="View.cpp" compile="1" resource="0" file="Source/View.cpp"/>
-        <FILE id="DzITRF" name="View.h" compile="0" resource="0" file="Source/View.h"/>
       </GROUP>
     </GROUP>
     <GROUP id="{C4893356-5DEB-A030-074B-EE0422842B92}" name="SpatCommonSource">

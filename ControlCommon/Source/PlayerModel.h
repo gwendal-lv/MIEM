@@ -18,17 +18,17 @@
 namespace Miam {
     
     // Pre-declarations for pointer members
-    class Presenter;
+    class PlayerPresenter;
     
     /// \brief
-    class Model : public ControlModel
+    class PlayerModel : public ControlModel
     {
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
         private :
         
         // Modules
-        Presenter* presenter;
+        PlayerPresenter* presenter;
         std::shared_ptr<MiamOscSender<double>> miamOscSender;
         
         AsyncParamChange::ParamType playState;
@@ -48,8 +48,8 @@ namespace Miam {
         // = = = = = = = = = = METHODS = = = = = = = = = =
         
         public :
-        Model(Presenter* presenter_);
-        virtual ~Model();
+        PlayerModel(PlayerPresenter* presenter_);
+        virtual ~PlayerModel();
         
         
         

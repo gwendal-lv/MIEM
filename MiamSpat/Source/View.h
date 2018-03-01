@@ -13,7 +13,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-#include "ControlView.h"
+#include "PlayerView.h"
 
 #include "MainComponent.h"
 
@@ -36,15 +36,15 @@ namespace Miam {
 	/// user commands (events) to the presenter to act upon that data."
 	///
 	/// \remark Usual GUI controls (created from the Projucer) belong to this module.
-    class View : public ControlView
+    class View : public PlayerView
     {
         
         // ========== ATTRIBUTES ==========
         private :
         Presenter* presenter;
         
-        
         // Owned by the MainWindow within the MiamEditApplication
+        // Ne doit être pas être généralisé ! Chaque projet Juce en crée un différent....
         MainContentComponent* mainContentComponent;
         
         
@@ -64,7 +64,7 @@ namespace Miam {
         /// \brief Function called after both View and Presenter are contructed
         void CompleteInitialization(Presenter* _presenter);
         /// \brief Function called after both View and Presenter are contructed
-        void CompleteInitialization(GraphicSessionManager*, MultiCanvasComponent*);
+        virtual void CompleteInitialization(GraphicSessionPlayer*, MultiCanvasComponent*) override;
         
 
 		// ----- Events to the Presenter -----
@@ -73,19 +73,10 @@ namespace Miam {
 		/// proper events to the Presenter.
         void ButtonClicked(const String& name);
         
-
-		// ----- Events from the Presenter -----
-
-		/// \brief Obeys orders from the Presenter when the global AppMode has changed.
-		///
-		/// \param newAppMode The application mode that should be displayed as quickly as possible.
-        void ChangeAppMode(AppMode newAppMode);
-		/// \brief Obeys orders from the Presenter when a informative message has to de displayed to
-		/// the user.
-		///
-		/// \param message Short sentence to be written in the upper uneditable text box.
-        void DisplayInfo(const String& message);
         
+        
+        // ----- Graphical updates -----
+        virtual void ForceResized() override;
         
         
         // ----- Setters and Getters -----

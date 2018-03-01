@@ -18,11 +18,9 @@ using namespace Miam;
 // Default constructor
 View::View(DocumentWindow* mainWindow_, MainContentComponent* mainContentComponent_)
 :
-ControlView(mainWindow_)
+PlayerView(mainWindow_, mainContentComponent_->GetBackgroundComponent())
 {
-    mainWindow = mainWindow_;
     mainContentComponent = mainContentComponent_;
-    
     
     mainContentComponent->SetMiamView(this);
 }
@@ -42,9 +40,15 @@ void View::CompleteInitialization(Presenter* _presenter)
     
     mainContentComponent->CompleteInitialization(presenter);
 }
-void View::CompleteInitialization(GraphicSessionManager* _graphicSessionManager, MultiCanvasComponent* _multiCanvasComponent)
+void View::CompleteInitialization(GraphicSessionPlayer* _graphicSessionManager, MultiCanvasComponent* _multiCanvasComponent)
 {
     mainContentComponent->CompleteInitialization(_graphicSessionManager, _multiCanvasComponent);
+}
+
+
+void View::ForceResized()
+{
+    mainContentComponent->resized();
 }
 
 
@@ -52,21 +56,6 @@ void View::CompleteInitialization(GraphicSessionManager* _graphicSessionManager,
 void View::ButtonClicked(const String& /*name*/)
 {
     throw std::runtime_error("Unimplemented behavior on button click");
-}
-
-
-
-void View::ChangeAppMode(AppMode newAppMode)
-{
-    // Pas de traitement global ! On laisse toujours le fond visible.
-    // Retransmission simple au composant le + concerné....
-    if (mainContentComponent)
-        if (mainContentComponent->GetBackgroundComponent())
-            mainContentComponent->GetBackgroundComponent()->ChangeAppMode(newAppMode);
-}
-void View::DisplayInfo(const String& message)
-{
-    mainContentComponent->GetBackgroundComponent()->DisplayInfo(message);
 }
 
 

@@ -13,13 +13,13 @@
 
 // Presenter
 #include "Presenter.h"
-#include "AppMode.h"
+#include "PlayerAppMode.h"
 
 
 
 // View
 #include "MiamLookAndFeel.h"
-#include "BackgroundComponent.h"
+#include "PlayerBackgroundComponent.h"
 
 
 using namespace Miam;
@@ -47,10 +47,10 @@ private:
     Presenter* presenter = 0;
     
     // Links to sub-modules
-    GraphicSessionManager* graphicSessionManager = 0;
+    GraphicSessionPlayer* graphicSessionManager = 0;
     
     // Graphical component
-    ScopedPointer<BackgroundComponent> backgroundComponent;
+    ScopedPointer<PlayerBackgroundComponent> backgroundComponent;
     //MultiCanvasComponent* multiCanvasComponent = 0; // belongs to the presenter
     
     // Display attributes
@@ -61,13 +61,13 @@ private:
     /// \brief Function called after both Miam::View and Miam::Presenter are contructed
     void CompleteInitialization(Presenter* _presenter);
     /// \brief Function called after both View and Presenter are contructed
-    void CompleteInitialization(GraphicSessionManager*, MultiCanvasComponent*);
+    void CompleteInitialization(GraphicSessionPlayer*, MultiCanvasComponent*);
     
     /// \brief Necessary for the Miam::View to reference itself, because this class is always
     /// constructed by the MainWindow before the View module.
     void SetMiamView(View* _view);
     
-    BackgroundComponent* GetBackgroundComponent() const {return backgroundComponent.get(); }
+    PlayerBackgroundComponent* GetBackgroundComponent() const {return backgroundComponent.get(); }
     
     
     // = = = = = = = = = = METHODS (JUCE AND USER-DEFINED) = = = = = = = = = =

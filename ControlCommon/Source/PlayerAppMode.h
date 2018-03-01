@@ -1,15 +1,15 @@
 /*
   ==============================================================================
 
-    AppMode.h
+    PlayerAppMode.h
     Created: 24 Mar 2016 1:29:02pm
     Author:  Gwendal Le Vaillant
 
   ==============================================================================
 */
 
-#ifndef APPMODE_H_INCLUDED
-#define APPMODE_H_INCLUDED
+#ifndef PLAYERAPPMODE_H_INCLUDED
+#define PLAYERAPPMODE_H_INCLUDED
 
 
 namespace Miam {
@@ -17,7 +17,7 @@ namespace Miam {
     /// \brief Describes the current running mode of the Presenter (the MiamSpat GUI).
 	/// 
 	/// The app may be running in one of all these different modes, except "Null"
-    enum class AppMode {
+    enum class PlayerAppMode {
         
         Null, /**< Undefined state */
         None, /**< No app mode selected (menu bar available only) */
@@ -36,4 +36,4 @@ namespace Miam {
 }
 
 
-#endif  // APPMODE_H_INCLUDED
+#endif  // PLAYERAPPMODE_H_INCLUDED

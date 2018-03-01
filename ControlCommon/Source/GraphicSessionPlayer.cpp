@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    GraphicSessionManager.cpp
+    GraphicSessionPlayer.cpp
     Created: 28 Mar 2016 5:27:18pm
     Author:  Gwendal Le Vaillant
 
@@ -10,12 +10,12 @@
 
 #include <limits> // tests avant envoi dans les paquets lock-free
 
-#include "GraphicSessionManager.h"
+#include "GraphicSessionPlayer.h"
 
 // Other includes
 
-#include "Presenter.h"
-#include "View.h"
+#include "PlayerPresenter.h"
+#include "PlayerView.h"
 
 #include "MultiAreaEvent.h"
 #include "Exciter.h"
@@ -27,14 +27,14 @@ using namespace Miam;
 
 // ========== CONSTRUCTION and DESTRUCTION ==========
 
-GraphicSessionManager::GraphicSessionManager(Presenter* presenter_, View* view_) :
+GraphicSessionPlayer::GraphicSessionPlayer(PlayerPresenter* presenter_, PlayerView* view_) :
     GraphicControlSessionManager(presenter_),
     presenter(presenter_),
     view(view_)
 {    
     // DEFINITION DU NOMBRE DE CANEVAS
-    canvasManagers.push_back(std::make_shared<MultiSceneCanvasManager>(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas1));
-    canvasManagers.push_back(std::make_shared<MultiSceneCanvasManager>(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas2));
+    canvasManagers.push_back(std::make_shared<MultiSceneCanvasPlayer>(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas1));
+    canvasManagers.push_back(std::make_shared<MultiSceneCanvasPlayer>(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas2));
     
     // Links to the view module
     view->CompleteInitialization(this, multiCanvasComponent);
@@ -53,12 +53,12 @@ GraphicSessionManager::GraphicSessionManager(Presenter* presenter_, View* view_)
         canvasManagers[i]->SetMode(CanvasManagerMode::PlayingWithExciters);
     
     
-    // Resize forcé (pour ne pas avoir de trucs de taille zéro
-    view->GetMainContentComponent()->resized();
+    // Resize forcé (pour ne pas avoir de trucs de taille zéro)
+    view->ForceResized();
     
 }
 
-GraphicSessionManager::~GraphicSessionManager()
+GraphicSessionPlayer::~GraphicSessionPlayer()
 {
 }
 
@@ -78,50 +78,26 @@ GraphicSessionManager::~GraphicSessionManager()
 
 
 
-
-std::shared_ptr<MultiSceneCanvasManager> GraphicSessionManager::getSelectedCanvasAsManager()
+/*
+std::shared_ptr<MultiSceneCanvasPlayer> GraphicSessionPlayer::getSelectedCanvasAsManager()
 {
-    auto canvasPtr = std::dynamic_pointer_cast<MultiSceneCanvasManager>( selectedCanvas);
+    auto canvasPtr = std::dynamic_pointer_cast<MultiSceneCanvasPlayer>( selectedCanvas);
     if (canvasPtr)
         return canvasPtr;
-    else throw std::runtime_error("Canvas cannot be casted as a Miam::MultiSceneCanvasManager");
+    else throw std::runtime_error("Canvas cannot be casted as a Miam::MultiSceneCanvasPlayer");
 }
-
+*/
 
 // ===== EVENTS FROM THE PRESENTER ITSELF =====
-void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_)
+void GraphicSessionPlayer::HandleEventSync(std::shared_ptr<GraphicEvent> event_)
 {
     // Event about one area, or several areas at once
     if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(event_))
     {
         handleAreaEventSync(areaE);
     }
-    
-    // Scene information
-    /*
-	else if (auto sceneE = std::dynamic_pointer_cast<SceneEvent>(event_))
-    {
-        switch (sceneE->GetType())
-        {
-            case SceneEventType::Added :
-                //DBG("Scene added");
-                break;
-            case SceneEventType::Deleted :
-                //DBG("Scene deleted");
-                break;
-            case SceneEventType::NothingHappened :
-                //DBG("Nothing happened");
-                break;
-            case SceneEventType::SceneChanged :
-                //DBG("Scene Changed");
-                break;
-            default:
-                break;
-		}
-	}
-     */
 }
-void GraphicSessionManager::handleAreaEventSync(const std::shared_ptr<AreaEvent>& areaE)
+void GraphicSessionPlayer::handleAreaEventSync(const std::shared_ptr<AreaEvent>& areaE)
 {
     // Events about several areas at once
     if (auto multiAreaE = std::dynamic_pointer_cast<MultiAreaEvent>(areaE))
@@ -140,7 +116,7 @@ void GraphicSessionManager::handleAreaEventSync(const std::shared_ptr<AreaEvent>
         handleSingleAreaEventSync(areaE);
     }
 }
-void GraphicSessionManager::handleSingleAreaEventSync(const std::shared_ptr<AreaEvent>& areaE)
+void GraphicSessionPlayer::handleSingleAreaEventSync(const std::shared_ptr<AreaEvent>& areaE)
 {
     // Event about an Area in particular : we may have to update the spat mix !
     if (auto area = std::dynamic_pointer_cast<ControlArea>(areaE->GetConcernedArea()))
@@ -151,7 +127,7 @@ void GraphicSessionManager::handleSingleAreaEventSync(const std::shared_ptr<Area
         {
             // On n'envoie l'excitation qu'en mode de jeu réel
             case AreaEventType::ExcitementAmountChanged :
-                if (presenter->getAppMode() == AppMode::Playing)
+                if (presenter->getAppMode() == PlayerAppMode::Playing)
                 {
 					// Et on n'envoie que les excitations liées réellement à un état de spat
 					if (area->GetStateIndex() >= 0)
@@ -190,7 +166,7 @@ void GraphicSessionManager::handleSingleAreaEventSync(const std::shared_ptr<Area
     }
      */
 }
-void GraphicSessionManager::OnModelStarted()
+void GraphicSessionPlayer::OnModelStarted()
 {
     for (size_t i = 0 ; i <canvasManagers.size() ; i++)
         canvasManagers[i]->SelectScene(0);
@@ -198,7 +174,7 @@ void GraphicSessionManager::OnModelStarted()
 
 
 
-void GraphicSessionManager::CanvasModeChanged(CanvasManagerMode /*canvasMode*/)
+void GraphicSessionPlayer::CanvasModeChanged(CanvasManagerMode /*canvasMode*/)
 {
     
 }
@@ -209,7 +185,7 @@ void GraphicSessionManager::CanvasModeChanged(CanvasManagerMode /*canvasMode*/)
 
 // ===== EVENTS TO VIEW =====
 
-void GraphicSessionManager::DisplayInfo(String info, int /*priority*/)
+void GraphicSessionPlayer::DisplayInfo(String info, int /*priority*/)
 {
     view->DisplayInfo(info);
 }
@@ -218,7 +194,7 @@ void GraphicSessionManager::DisplayInfo(String info, int /*priority*/)
 
 // = = = = = = = = = = XML import/export = = = = = = = = = =
 
-void GraphicSessionManager::SetFromTree(bptree::ptree& graphicSessionTree)
+void GraphicSessionPlayer::SetFromTree(bptree::ptree& graphicSessionTree)
 {
     GraphicControlSessionManager::SetFromTree(graphicSessionTree);
     

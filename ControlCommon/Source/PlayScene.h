@@ -1,15 +1,15 @@
 /*
   ==============================================================================
 
-    SpatScene.h
+    PlayScene.h
     Created: 11 Jan 2017 10:50:21am
     Author:  Gwendal Le Vaillant
 
   ==============================================================================
 */
 
-#ifndef SPATSCENE_H_INCLUDED
-#define SPATSCENE_H_INCLUDED
+#ifndef PLAYSCENE_H_INCLUDED
+#define PLAYSCENE_H_INCLUDED
 
 #include "EditableScene.h"
 
@@ -19,7 +19,7 @@ namespace Miam {
     
     /// NÉCESSAIRE ? LE MIAM EDIT DEVRA LUI AUSSI FAIRE BOUGER DES EXCITATEURS...
     /// MAIS PEUT-ÊTRE LES EXCITATEURS INITIAUX ALORS ?
-    class SpatScene : public EditableScene
+    class PlayScene : public EditableScene
     {
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
@@ -33,8 +33,8 @@ namespace Miam {
         // = = = = = = = = = = METHODS = = = = = = = = = =
         
         public :
-        SpatScene(std::shared_ptr<MultiSceneCanvasInteractor> canvasManager_, SceneCanvasComponent* canvasComponent_);
-        virtual ~SpatScene();
+        PlayScene(std::shared_ptr<MultiSceneCanvasInteractor> canvasManager_, SceneCanvasComponent* canvasComponent_);
+        virtual ~PlayScene();
         
         
         // By-pass of "areas editing" methods
@@ -51,4 +51,4 @@ namespace Miam {
 
 
 
-#endif  // SPATSCENE_H_INCLUDED
+#endif  // PLAYSCENE_H_INCLUDED

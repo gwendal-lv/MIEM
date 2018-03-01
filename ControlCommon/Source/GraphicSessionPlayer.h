@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    GraphicSessionManager.h
+    GraphicSessionPlayer.h
     Created: 28 Mar 2016 5:27:18pm
     Author:  Gwendal Le Vaillant
 
@@ -24,14 +24,14 @@
 
 #include "JuceHeader.h" // for : Point<float>, uint64
 
-#include "MultiSceneCanvasManager.h"
+#include "MultiSceneCanvasPlayer.h"
 #include "SceneCanvasComponent.h"
 
 namespace Miam {
     
     // Simple declarations
-    class View;
-    class Presenter;
+    class PlayerView;
+    class PlayerPresenter;
     
     
     /// \brief Sub-module belonging to the Presenter module, which handles the editing
@@ -41,17 +41,17 @@ namespace Miam {
 	///
 	/// References itself to some components, for these components to transfer events to this sub-module
 	/// directly, and not to the Presenter.
-    class GraphicSessionManager : public GraphicControlSessionManager {
+    class GraphicSessionPlayer : public GraphicControlSessionManager {
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
         
         // Graphical objects belong to the Presenter module, not to the View
         private :
         
-        Presenter* presenter;
+        PlayerPresenter* presenter;
         
         // links back to the View module
-        View* view;
+        PlayerView* view;
         
         
         
@@ -70,10 +70,10 @@ namespace Miam {
         
         public :
         /// \brief Construction (the whole Presenter module is built after the View).
-        GraphicSessionManager(Presenter* presenter_, View* view_);
+        GraphicSessionPlayer(PlayerPresenter* presenter_, PlayerView* view_);
         
         /// \brief Destruction and the editor and the canvases
-        ~GraphicSessionManager();
+        ~GraphicSessionPlayer();
         
         
         
@@ -90,7 +90,8 @@ namespace Miam {
         
         
         protected :
-        std::shared_ptr<MultiSceneCanvasManager> getSelectedCanvasAsManager();
+        // plus utile, si ? EN tout cas : ne peut pas être généralisé
+        //std::shared_ptr<MultiSceneCanvasPlayer> getSelectedCanvasAsManager();
         
         
 		// ----- Running mode -----

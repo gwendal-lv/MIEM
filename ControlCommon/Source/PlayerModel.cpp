@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    Model.cpp
+    PlayerModel.cpp
     Created: 24 Jan 2017 9:09:12am
     Author:  Gwendal Le Vaillant
 
@@ -11,9 +11,9 @@
 #include <map>
 #include <string>
 
-#include "Model.h"
+#include "PlayerModel.h"
 
-#include "Presenter.h"
+#include "PlayerPresenter.h"
 
 #if defined(JUCE_MAC) || defined(JUCE_IOS)
 
@@ -31,7 +31,7 @@
 using namespace Miam;
 
 
-Model::Model(Presenter* presenter_)
+PlayerModel::PlayerModel(PlayerPresenter* presenter_)
 :
 ControlModel(presenter_, 500.0),
 presenter(presenter_) // own private downcasted pointer
@@ -41,7 +41,7 @@ presenter(presenter_) // own private downcasted pointer
     // Pas très propre... Mais pour l'instant c'est la seule option
     miamOscSender = std::dynamic_pointer_cast<MiamOscSender<double>>(stateSenders[0]);
     if (! miamOscSender )
-        throw std::runtime_error("First and only SpatSender must be a MiamOscSender at the moment");
+        throw std::runtime_error("First and only StateSender must be a MiamOscSender at the moment");
     
     // Fin d'Initialisation des autres modules
     presenter->CompleteInitialisation(this);
@@ -52,7 +52,7 @@ presenter(presenter_) // own private downcasted pointer
     updateThread = std::thread( [this] {this->update();} );
 }
 
-Model::~Model()
+PlayerModel::~PlayerModel()
 {
     // On attend le join propre du thread avant la fermeture
     continueUpdate = false;
@@ -66,7 +66,7 @@ Model::~Model()
 
 // = = = = = = = = = = Periodic updates = = = = = = = = = =
 
-void Model::setHighThreadPriority()
+void PlayerModel::setHighThreadPriority()
 {
     // Si possible : mise à un niveau de priorité pour le thread de mise à jour
     // -> voire même un autre ordonnancement sous certains OS ?
@@ -112,7 +112,7 @@ void Model::setHighThreadPriority()
 #endif
 }
 
-void Model::update()
+void PlayerModel::update()
 {
     setHighThreadPriority();
     
@@ -217,7 +217,7 @@ void Model::update()
 // = = = = = = = = = = Property tree (for XML) import/export = = = = = = = = = =
 
 
-void Model::SetConfigurationFromTree(bptree::ptree& tree)
+void PlayerModel::SetConfigurationFromTree(bptree::ptree& tree)
 {
     // D'abord on appelle le parent qui fait juste du stockage de données
     ControlModel::SetConfigurationFromTree(tree);

@@ -7,12 +7,12 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.2.0
+  Created with Projucer version: 5.2.1
 
   ------------------------------------------------------------------------------
 
-  The Projucer is part of the JUCE library - "Jules' Utility Class Extensions"
-  Copyright (c) 2015 - ROLI Ltd.
+  The Projucer is part of the JUCE library.
+  Copyright (c) 2017 - ROLI Ltd.
 
   ==============================================================================
 */
@@ -22,17 +22,18 @@
 //[Headers]     -- You can add your own extra header files here --
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#include "PlayerAppMode.h"
+
+#include "PlayerMainMenuComponent.h"
+#include "MiemFileChoosers.h"
+
 // Forward declarations
 namespace Miam
 {
-    class Presenter;
-    class TouchMainMenu;
-}
+    class PlayerPresenter;
+    
+    class MultiCanvasComponent;
 
-#include "AppMode.h"
-
-#include "MainMenuComponent.h"
-#include "MiemFileChoosers.h"
 //[/Headers]
 
 
@@ -45,24 +46,24 @@ namespace Miam
     Describe your class and how it works here!
                                                                     //[/Comments]
 */
-class BackgroundComponent  : public Component,
-                             public Button::Listener
+class PlayerBackgroundComponent  : public Component,
+                                   public Button::Listener
 {
 public:
     //==============================================================================
-    BackgroundComponent ();
-    ~BackgroundComponent();
+    PlayerBackgroundComponent ();
+    ~PlayerBackgroundComponent();
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
 
     /// \brief Function called after both View and Presenter are contructed
-    void CompleteInitialization(Presenter*);
+    void CompleteInitialization(PlayerPresenter*);
     void CompleteInitialization(MultiCanvasComponent*);
 
     void DisplayInfo(const String& stringToDisplay);
 
-    void ChangeAppMode(AppMode newAppMode);
+    void ChangeAppMode(PlayerAppMode newAppMode);
 
     //[/UserMethods]
 
@@ -85,10 +86,10 @@ private:
     //[UserVariables]   -- You can add your own custom variables in this section.
 
     /// \brief To send commands such as "load", "quit", ...
-    Presenter* presenter;
+    PlayerPresenter* presenter;
 
     /// Simple GUIs, owned by the View directly
-    ScopedPointer<MainMenuComponent> mainMenuComponent;
+    ScopedPointer<PlayerMainMenuComponent> mainMenuComponent;
 
     /// \brief Interactive, Owned by the Presenter
     MultiCanvasComponent* multiCanvasComponent;
@@ -101,8 +102,9 @@ private:
 
 
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BackgroundComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PlayerBackgroundComponent)
 };
 
 //[EndFile] You can add extra defines here...
+}
 //[/EndFile]

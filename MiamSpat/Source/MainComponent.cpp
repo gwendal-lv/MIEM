@@ -14,7 +14,7 @@
 MainContentComponent::MainContentComponent()
 {
     // Ajout des composants enfant
-    addAndMakeVisible(backgroundComponent = new BackgroundComponent());
+    addAndMakeVisible(backgroundComponent = new PlayerBackgroundComponent());
     
     setSize (600, 400);
     
@@ -50,7 +50,7 @@ void MainContentComponent::CompleteInitialization(Presenter* _presenter)
     presenter = _presenter;
     backgroundComponent->CompleteInitialization(presenter);
 }
-void MainContentComponent::CompleteInitialization(GraphicSessionManager* _graphicSessionManager, MultiCanvasComponent* multiCanvasComponent_)
+void MainContentComponent::CompleteInitialization(GraphicSessionPlayer* _graphicSessionManager, MultiCanvasComponent* multiCanvasComponent_)
 {
     graphicSessionManager = _graphicSessionManager;
     
