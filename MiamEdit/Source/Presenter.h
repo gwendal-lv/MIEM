@@ -13,7 +13,7 @@
 
 #include <iostream>
 
-#include "SpatPresenter.h"
+#include "ControlPresenter.h"
 
 #include "AppMode.h"
 #include "SpatType.h"
@@ -28,7 +28,7 @@ namespace bptree = boost::property_tree;
 
 
 namespace Miam {
-    // Simple declaration : we don't need the entire description
+    // Simple declarations : we don't need the entire description
     class Model;
     class View;
     
@@ -43,7 +43,7 @@ namespace Miam {
 	/// repositories (the model), and formats it for display in the view".
 	///
 	/// \remark Usual GUI controls (created from the Projucer) however belong to the View.
-    class Presenter : public SpatPresenter
+    class Presenter : public ControlPresenter
     {
         private :
         

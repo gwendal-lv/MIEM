@@ -53,11 +53,11 @@ void SettingsManager::OnInOutChannelsCountChanged(int inputsCount, int outputsCo
     // model updates
     
     // Might not validate the change... We don't know !
-    model->GetSpatInterpolator()->SetInputOutputChannelsCount(inputsCount, outputsCount);
+    model->GetInterpolator()->SetInputOutputChannelsCount(inputsCount, outputsCount);
     
     // Direct dispatching of the event (not telling other presenter modules)
-    view->GetMainContentComponent()->GetSpatStatesEditionComponent()->SetInsOutsCount(model->GetSpatInterpolator()->GetInputsCount(),
-         model->GetSpatInterpolator()->GetOutputsCount());
+    view->GetMainContentComponent()->GetSpatStatesEditionComponent()->SetInsOutsCount(model->GetInterpolator()->GetInputsCount(),
+         model->GetInterpolator()->GetOutputsCount());
 }
 void SettingsManager::OnAllowKeyboardEdition(bool allow)
 {
@@ -68,22 +68,22 @@ void SettingsManager::OnUdpPortChanged(int udpPort)
     if (!linksInitialized)
         return;
     
-    auto miamOscSender = std::dynamic_pointer_cast<MiamOscSender<double>>(model->GetSpatSender(0));
+    auto miamOscSender = std::dynamic_pointer_cast<MiamOscSender<double>>(model->GetStateSender(0));
     if (miamOscSender)
         miamOscSender->SetUdpPort(udpPort);
     else
-        throw std::logic_error("SpatSender[0] is not a MiamOscSender: cannot set UDP port");
+        throw std::logic_error("StateSender[0] is not a MiamOscSender: cannot set UDP port");
 }
 void SettingsManager::OnIpAddressChanged(std::string ipAddress)
 {
     if (!linksInitialized)
         return;
     
-    auto miamOscSender = std::dynamic_pointer_cast<MiamOscSender<double>>( model->GetSpatSender(0) );
+    auto miamOscSender = std::dynamic_pointer_cast<MiamOscSender<double>>( model->GetStateSender(0) );
     if (miamOscSender)
         miamOscSender->SetIpv4(ipAddress);
     else
-        throw std::logic_error("SpatSender[0] is not a MiamOscSender: cannot set IPv4 address");
+        throw std::logic_error("StateSender[0] is not a MiamOscSender: cannot set IPv4 address");
 }
 
 

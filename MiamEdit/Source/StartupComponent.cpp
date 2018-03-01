@@ -18,7 +18,7 @@
 */
 
 //[Headers] You can add your own extra header files here...
-#include "SpatFileChoosers.h"
+#include "MiemFileChoosers.h"
 //[/Headers]
 
 #include "StartupComponent.h"
@@ -118,7 +118,16 @@ void StartupComponent::buttonClicked (Button* buttonThatWasClicked)
     if (buttonThatWasClicked == loadTextButton)
     {
         //[UserButtonCode_loadTextButton] -- add your button handler code here..
-        LoadFileChooser fileChooser;
+        // CHANGER LE PURPOSE DU SELECTEUR DE FICHIER
+        // CHANGER LE PURPOSE DU SELECTEUR DE FICHIER
+        // CHANGER LE PURPOSE DU SELECTEUR DE FICHIER
+        // CHANGER LE PURPOSE DU SELECTEUR DE FICHIER
+        // CHANGER LE PURPOSE DU SELECTEUR DE FICHIER
+        LoadFileChooser fileChooser({App::GetPurpose()});
+        // CHANGER LE PURPOSE DU SELECTEUR DE FICHIER
+        // CHANGER LE PURPOSE DU SELECTEUR DE FICHIER
+        // CHANGER LE PURPOSE DU SELECTEUR DE FICHIER
+        // CHANGER LE PURPOSE DU SELECTEUR DE FICHIER
         if ( fileChooser.browseForFileToOpen() )
         {
             File resultFile = fileChooser.getResult();
@@ -129,7 +138,17 @@ void StartupComponent::buttonClicked (Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == createEmptyTextButton)
     {
         //[UserButtonCode_createEmptyTextButton] -- add your button handler code here..
-        SaveFileChooser fileChooser;
+        // CHANGER LE PURPOSE DU SELECTEUR DE FICHIER
+        // CHANGER LE PURPOSE DU SELECTEUR DE FICHIER
+        // CHANGER LE PURPOSE DU SELECTEUR DE FICHIER
+        // CHANGER LE PURPOSE DU SELECTEUR DE FICHIER
+        // CHANGER LE PURPOSE DU SELECTEUR DE FICHIER
+        SaveFileChooser fileChooser({App::GetPurpose()});
+        // CHANGER LE PURPOSE DU SELECTEUR DE FICHIER
+        // CHANGER LE PURPOSE DU SELECTEUR DE FICHIER
+        // CHANGER LE PURPOSE DU SELECTEUR DE FICHIER
+        // CHANGER LE PURPOSE DU SELECTEUR DE FICHIER
+        // CHANGER LE PURPOSE DU SELECTEUR DE FICHIER
         if ( fileChooser.browseForFileToSave(true) )
         {
             File resultFile = fileChooser.getResult();

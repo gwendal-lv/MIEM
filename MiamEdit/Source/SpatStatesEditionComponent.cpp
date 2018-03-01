@@ -25,6 +25,8 @@
 
 #include "MatrixComponent.h"
 
+#include "AppPurpose.h"
+
 //[/Headers]
 
 #include "SpatStatesEditionComponent.h"
@@ -150,19 +152,22 @@ void SpatStatesEditionComponent::paint (Graphics& g)
 
     //[UserPaint] Add your own custom painting code here..
 
-    if (editionManager->GetSpatType() == Miam::SpatType::None)
-    {
+    switch (Miam::App::GetPurpose()) {
+            
+        case Miam::AppPurpose::None:
+            break;
+            
+        case Miam::AppPurpose::Spatialisation:
+            break;
+            
+        case Miam::AppPurpose::GenericController:
+            throw std::runtime_error("Édition de contrôleur générique presque implémenté ! Mais pas encore....");
+            break;
+            
+        default:
+            throw std::runtime_error("Édition de truc ?? Non défini...");
+            break;
     }
-    else if (editionManager->GetSpatType() == Miam::SpatType::RoutingMatrix)
-    {
-    }
-    else if (editionManager->GetSpatType() == Miam::SpatType::Volumes1d)
-    {
-        throw std::runtime_error("Édition de spatialisation 1D par volumes de HPs non-implémentée pour l'instant...");
-    }
-    else
-        throw std::runtime_error("Édition de spatialisation par méthode non définie");
-
     //[/UserPaint]
 }
 
@@ -267,7 +272,7 @@ void SpatStatesEditionComponent::CompleteInitialization(SpatStatesEditionManager
     editionManager = _editionManager;
 }
 
-void SpatStatesEditionComponent::UpdateStatesList(std::vector< std::shared_ptr<SpatState<double>> > &newSpatStates)
+void SpatStatesEditionComponent::UpdateStatesList(std::vector< std::shared_ptr<ControlState<double>> > &newSpatStates)
 {
     // Empties the combo box at first
     spatStatesComboBox->clear();
@@ -278,7 +283,7 @@ void SpatStatesEditionComponent::UpdateStatesList(std::vector< std::shared_ptr<S
     // Normally : no item selected at this point
     //editionManager->OnSpatStateSelectedById(spatStatesComboBox->getSelectedItemIndex());
 }
-void SpatStatesEditionComponent::SelectAndUpdateState(int stateIndex, std::string infoText, std::shared_ptr<SpatMatrix> newSpatMatrix)
+void SpatStatesEditionComponent::SelectAndUpdateState(int stateIndex, std::string infoText, std::shared_ptr<ControlMatrix> newSpatMatrix)
 {
     // We keep here this copy of the model internal matrix
     spatMatrix = newSpatMatrix;
@@ -314,7 +319,7 @@ void SpatStatesEditionComponent::updateMatrix()
     if (spatMatrix) // may not exist if no state is selected
         labelledMatrixComponent->GetMatrixComponent()->SetSpatMatrix(spatMatrix);
     else // forced null matrix update
-        labelledMatrixComponent->GetMatrixComponent()->SetSpatMatrix(std::make_shared<SpatMatrix>());
+        labelledMatrixComponent->GetMatrixComponent()->SetSpatMatrix(std::make_shared<ControlMatrix>());
 
     // Graphical attributes
     // if a valid state is selected
@@ -333,7 +338,7 @@ void SpatStatesEditionComponent::SetInsOutsCount(int _inputsCount, int _outputsC
     // Applying of changes
     updateMatrix();
 }
-std::shared_ptr<SpatMatrix> SpatStatesEditionComponent::GetDisplayedSpatMatrix()
+std::shared_ptr<ControlMatrix> SpatStatesEditionComponent::GetDisplayedSpatMatrix()
 {
     return labelledMatrixComponent->GetMatrixComponent()->GetSpatMatrix();
 }

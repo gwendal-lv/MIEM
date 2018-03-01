@@ -855,7 +855,7 @@ void SceneEditionComponent::SetSpatGroupReduced(bool _isReduced)
     SetSpatGroupHidden(_isReduced);
     // isSpatGroupReduced = _isReduced;
 }
-void SceneEditionComponent::UpdateStatesList(std::vector< std::shared_ptr<SpatState<double>> > &newSpatStates)
+void SceneEditionComponent::UpdateStatesList(std::vector< std::shared_ptr<ControlState<double>> > &newSpatStates)
 {
     // Empties the combo box at first
     spatStatesComboBox->clear();

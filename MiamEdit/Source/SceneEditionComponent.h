@@ -31,7 +31,7 @@
 
 #include "DrawableArea.h"
 
-#include "SpatState.hpp"
+#include "ControlState.hpp"
 
 namespace Miam
 {
@@ -104,7 +104,7 @@ public:
     // - - - - - Spat group - - - - -
     void SetSpatGroupHidden(bool _isHidden);
     void SetSpatGroupReduced(bool _isReduced);
-    void UpdateStatesList(std::vector< std::shared_ptr<SpatState<double>> > &newSpatStates);
+    void UpdateStatesList(std::vector< std::shared_ptr<ControlState<double>> > &newSpatStates);
     void SelectSpatState(int index, NotificationType notificationType = NotificationType::dontSendNotification);
     // - - - - - Initial Scene State group - - - - -
     void SetInitialStateGroupHidden(bool _isHidden);

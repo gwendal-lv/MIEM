@@ -28,9 +28,10 @@ using namespace Miam;
 
 
 // - - - - - Contruction and Destruction - - - - -
+AppPurpose App::appPurpose = AppPurpose::Spatialisation;
 
 Presenter::Presenter(View* _view) :
-    SpatPresenter(_view),
+    ControlPresenter(_view),
 
     view(_view),
     appMode(AppMode::Loading), // app is loading while the Model hasn't fully loaded yet
@@ -48,9 +49,9 @@ void Presenter::CompleteInitialisation(Model* _model)
 {
     // Self init
     model = _model;
-    SpatPresenter::CompleteInitialisation(&graphicSessionManager, _model);
+    ControlPresenter::CompleteInitialisation(&graphicSessionManager, _model);
     // Sub-modules (graphic session manager : init from SpatPresenter)
-    spatStatesEditionManager.CompleteInitialisation(model->GetSpatInterpolator());
+    spatStatesEditionManager.CompleteInitialisation(model->GetInterpolator());
     settingsManager.CompleteInitialisation(model);
     
     // Après initialisation : on ne montre RIEN
@@ -176,7 +177,7 @@ void Presenter::LoadSession(std::string filename)
     appModeChangeRequest(AppMode::Loading);
     
     try {
-        SpatPresenter::LoadSession(filename);
+        ControlPresenter::LoadSession(filename);
     }
     catch (XmlReadException& e)
     {
@@ -202,7 +203,7 @@ void Presenter::SaveSession(std::string filename, bool forceDataRefresh)
     }
     
     // Puis sauvegarde effective vers XML
-    try { SpatPresenter::SaveSession(filename, forceDataRefresh); }
+    try { ControlPresenter::SaveSession(filename, forceDataRefresh); }
     catch (XmlWriteException& e) {
         view->DisplayInfo(e.what(), 50, true); // haute priorité, et dans nouvelle fenêtre
     }

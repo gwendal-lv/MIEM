@@ -28,7 +28,7 @@
 
 #include "ISlidersMatrixListener.h"
 
-#include "SpatMatrix.hpp"
+#include "ControlMatrix.hpp"
 
 namespace Miam {
 //[/Headers]
@@ -72,10 +72,10 @@ public:
     ///
     /// WARNING : Juce's items id's start from ONE and not from ZERO
     // But Juce's Indexes are OK (starting from zero)
-    void UpdateStatesList(std::vector< std::shared_ptr<SpatState<double>> > &newSpatStates);
+    void UpdateStatesList(std::vector< std::shared_ptr<ControlState<double>> > &newSpatStates);
 
     // When a new state is selected (from the Presenter or from an internal event)
-    void SelectAndUpdateState(int stateIndex, std::string infoText, std::shared_ptr<SpatMatrix> newSpatMatrix);
+    void SelectAndUpdateState(int stateIndex, std::string infoText, std::shared_ptr<ControlMatrix> newSpatMatrix);
 
     /// \brief Whole update of the matrix : all coefficients, and active sliders
     private :
@@ -83,7 +83,7 @@ public:
 
     public :
     void SetInsOutsCount(int _inputsCount, int _outputsCount);
-    std::shared_ptr<SpatMatrix> GetDisplayedSpatMatrix();
+    std::shared_ptr<ControlMatrix> GetDisplayedSpatMatrix();
 
     void AllowKeyboardEdition(bool allow);
 
@@ -106,7 +106,7 @@ private:
     int inputsCount = 0;
     int outputsCount = 0;
     // The last matrix coming from the Model
-    std::shared_ptr<SpatMatrix> spatMatrix;
+    std::shared_ptr<ControlMatrix> spatMatrix;
     //[/UserVariables]
 
     //==============================================================================

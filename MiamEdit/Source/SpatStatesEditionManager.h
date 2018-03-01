@@ -11,8 +11,8 @@
 #ifndef SPATSTATESEDITIONMANAGER_H_INCLUDED
 #define SPATSTATESEDITIONMANAGER_H_INCLUDED
 
-#include "SpatInterpolator.hpp"
-#include "SpatMatrix.hpp"
+#include "StatesInterpolator.hpp"
+#include "ControlMatrix.hpp"
 
 namespace Miam
 {
@@ -34,25 +34,39 @@ namespace Miam
         // Links to other modules
         View* view;
         SpatStatesEditionComponent* editionComponent;
-        std::shared_ptr<SpatInterpolator<double>> spatInterpolator; // from Model
+        std::shared_ptr<StatesInterpolator<double>> spatInterpolator; // from Model
         
         // Selected spat state
-        std::shared_ptr<SpatState<double>> selectedSpatState = nullptr;
+        std::shared_ptr<ControlState<double>> selectedSpatState = nullptr;
         
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
         
-        SpatType GetSpatType() {return spatInterpolator->GetSpatType();}
+        InterpolationType GetInterpolationType() {return spatInterpolator->GetType();}
     private :
-        void selectSpatState(std::shared_ptr<SpatState<double>> _spatState);
+        void selectSpatState(std::shared_ptr<ControlState<double>> _controlState);
     public :
         
         // 1 dimension speakers' volumes, faders edition
         size_t GetFadersCount();
-        std::string GetFaderName(size_t /*_i*/) {
+        std::string GetFaderName(size_t /*_i*/)
+        {
+            // ON DEVRAIT POUVOIR CONTINUER DE NOMMER LES SORTIES (IMPORTANT POUR LE CONTROLLEUR GENERIQUE)
+            // ON DEVRAIT POUVOIR CONTINUER DE NOMMER LES SORTIES (IMPORTANT POUR LE CONTROLLEUR GENERIQUE)
+            // ON DEVRAIT POUVOIR CONTINUER DE NOMMER LES SORTIES (IMPORTANT POUR LE CONTROLLEUR GENERIQUE)
+            // ON DEVRAIT POUVOIR CONTINUER DE NOMMER LES SORTIES (IMPORTANT POUR LE CONTROLLEUR GENERIQUE)
+            // ON DEVRAIT POUVOIR CONTINUER DE NOMMER LES SORTIES (IMPORTANT POUR LE CONTROLLEUR GENERIQUE)
+            // ON DEVRAIT POUVOIR CONTINUER DE NOMMER LES SORTIES (IMPORTANT POUR LE CONTROLLEUR GENERIQUE)
+            // ON DEVRAIT POUVOIR CONTINUER DE NOMMER LES SORTIES (IMPORTANT POUR LE CONTROLLEUR GENERIQUE)
             throw std::logic_error("Plus utilisé dans la version avec matrices");
-         //   return spatInterpolator->GetOutputName(_i);
+            // ON DEVRAIT POUVOIR CONTINUER DE NOMMER LES SORTIES (IMPORTANT POUR LE CONTROLLEUR GENERIQUE)
+            // ON DEVRAIT POUVOIR CONTINUER DE NOMMER LES SORTIES (IMPORTANT POUR LE CONTROLLEUR GENERIQUE)
+            // ON DEVRAIT POUVOIR CONTINUER DE NOMMER LES SORTIES (IMPORTANT POUR LE CONTROLLEUR GENERIQUE)
+            // ON DEVRAIT POUVOIR CONTINUER DE NOMMER LES SORTIES (IMPORTANT POUR LE CONTROLLEUR GENERIQUE)
+            // ON DEVRAIT POUVOIR CONTINUER DE NOMMER LES SORTIES (IMPORTANT POUR LE CONTROLLEUR GENERIQUE)
+            // ON DEVRAIT POUVOIR CONTINUER DE NOMMER LES SORTIES (IMPORTANT POUR LE CONTROLLEUR GENERIQUE)
+            //   return spatInterpolator->GetOutputName(_i);
         }
         
     
@@ -63,7 +77,7 @@ namespace Miam
         // - - - - - Construction / destruction - - - - -
         
         SpatStatesEditionManager(View* _view);
-        void CompleteInitialisation(std::shared_ptr<SpatInterpolator<double>> _spatInterpolator);
+        void CompleteInitialisation(std::shared_ptr<StatesInterpolator<double>> _spatInterpolator);
         
         
         // - - - - - Events from Presenter - - - - -
@@ -78,7 +92,7 @@ namespace Miam
         
         /// \brief Called with the next index to select, and directly with the current
         /// matrix (that must be saved to the state to be unselected)
-        void OnSpatStateSelectedById(std::shared_ptr<SpatMatrix> currentMatrix, int _spatStateId);
+        void OnSpatStateSelectedById(std::shared_ptr<ControlMatrix> currentMatrix, int _spatStateId);
         /// \brief Called when the displayed text of the combo box has been edited
         void OnRenameState(std::string newName, int stateIndex);
         
@@ -95,7 +109,7 @@ namespace Miam
         
         // - - - - - Internal helpers - - - - -
         private :
-        void sendDataToModel(std::shared_ptr<SpatMatrix> currentMatrix);
+        void sendDataToModel(std::shared_ptr<ControlMatrix> currentMatrix);
         
         // - - - - - Settings Management - - - - -
         public :

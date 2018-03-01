@@ -18,7 +18,7 @@
 #include <map>
 #include <string>
 
-#include "GraphicSpatSessionManager.h"
+#include "GraphicControlSessionManager.h"
 
 #include "EditablePolygon.h"
 
@@ -30,7 +30,7 @@
 #include "MultiSceneCanvasEditor.h"
 #include "SceneCanvasComponent.h"
 
-#include "SpatInterpolator.hpp"
+#include "StatesInterpolator.hpp"
 
 namespace Miam {
     
@@ -46,7 +46,7 @@ namespace Miam {
 	/// References itself to the SceneEditionComponent and the several
 	/// SceneCanvasComponents, for these components to transfer events to this sub-module
 	/// directly, and not to the Presenter.
-    class GraphicSessionManager : public GraphicSpatSessionManager {
+    class GraphicSessionManager : public GraphicControlSessionManager {
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
         
@@ -84,8 +84,8 @@ namespace Miam {
         
         /// \brief Gets the currently selected area, or nullptr if nothing selected
         ///
-        /// Throws an exception is the area cannot be casted to Miam::ISpatArea
-        std::shared_ptr<SpatArea> GetSelectedArea();
+        /// Throws an exception is the area cannot be casted to Miam::ControlArea
+        std::shared_ptr<ControlArea> GetSelectedArea();
         
         
         

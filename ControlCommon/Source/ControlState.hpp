@@ -177,7 +177,7 @@ namespace Miam
             {
                 auto areaPtr = linkedAreas[i].lock();
                 if (areaPtr)
-                    areaPtr->LinkToSpatState(nullptr);
+                    areaPtr->LinkToState(nullptr);
             }
             
             unlinkingFromAreas = false;

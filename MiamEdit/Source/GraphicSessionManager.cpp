@@ -18,7 +18,7 @@
 
 #include "SceneEvent.h"
 
-#include "SpatPolygon.h"
+#include "ControlPolygon.h"
 #include "XmlUtils.h"
 
 using namespace Miam;
@@ -27,7 +27,7 @@ using namespace Miam;
 // ========== CONSTRUCTION and DESTRUCTION ==========
 
 GraphicSessionManager::GraphicSessionManager(View* _view, Presenter* presenter_) :
-    GraphicSpatSessionManager(presenter_),
+    GraphicControlSessionManager(presenter_),
     view(_view),
 	mode(GraphicSessionMode::Null)
 {
@@ -80,14 +80,14 @@ uint64_t GraphicSessionManager::GetNextAreaId()
     nextAreaId++;
     return areaIdBackup;
 }
-std::shared_ptr<SpatArea> GraphicSessionManager::GetSelectedArea()
+std::shared_ptr<ControlArea> GraphicSessionManager::GetSelectedArea()
 {
     if (selectedCanvas)
     {
-        if (auto spatArea = std::dynamic_pointer_cast<SpatArea>(getSelectedCanvasAsEditable()->GetSelectedArea()))
+        if (auto spatArea = std::dynamic_pointer_cast<ControlArea>(getSelectedCanvasAsEditable()->GetSelectedArea()))
             return spatArea;
         else
-            throw std::runtime_error("Currently selected area cannot be casted to Miam::ISpatArea");
+            throw std::runtime_error("Currently selected area cannot be casted to Miam::ControlArea");
     }
     else
         return nullptr;
@@ -214,7 +214,7 @@ void GraphicSessionManager::setMode(GraphicSessionMode newMode)
             if (areaToCopy)
                 sceneEditionComponent->SetPasteEnabled(true);
             sceneEditionComponent->SetSpatGroupReduced(false);
-            sceneEditionComponent->SelectSpatState(GetSelectedArea()->GetSpatStateIndex());
+            sceneEditionComponent->SelectSpatState(GetSelectedArea()->GetStateIndex());
             sceneEditionComponent->SetInitialStateGroupHidden(true);
             sceneEditionComponent->SetAreaColourValue(GetSelectedArea()->GetFillColour());
             sceneEditionComponent->resized(); // right menu update
@@ -302,7 +302,7 @@ void GraphicSessionManager::CanvasModeChanged(CanvasManagerMode canvasMode)
 
 void GraphicSessionManager::OnEnterSpatScenesEdition()
 {
-    auto tempStates = spatInterpolator->GetSpatStates();
+    auto tempStates = spatInterpolator->GetStates();
     sceneEditionComponent->UpdateStatesList(tempStates);
     
     // Forced update of canvases
@@ -429,7 +429,7 @@ void GraphicSessionManager::OnAddArea(int areaType)
             throw std::logic_error("Cannot add something else than polygons at the moment");
         // Actual addition here
         bpt centerPoint(0.5, 0.5);
-        auto spatPolygon = std::make_shared<SpatPolygon>(GetNextAreaId(), centerPoint, polygonPointsCount, 0.15, Colours::grey, ratio);
+        auto spatPolygon = std::make_shared<ControlPolygon>(GetNextAreaId(), centerPoint, polygonPointsCount, 0.15, Colours::grey, ratio);
         getSelectedCanvasAsEditable()->AddArea(spatPolygon);
         selectedCanvas->CallRepaint();
     }
@@ -522,10 +522,10 @@ void GraphicSessionManager::OnPasteArea()
             // Création du shared_ptr directe (c'est seulement à partir de là
             // que l'on pourra appeler shared_from_this() ) :
             std::shared_ptr<IDrawableArea> newDrawbleArea = areaToCopy->Clone();
-            std::shared_ptr<SpatArea> newArea;
+            std::shared_ptr<ControlArea> newArea;
             
             // If cast does not work...
-            if (!(newArea = std::dynamic_pointer_cast<SpatArea>(newDrawbleArea)))
+            if (!(newArea = std::dynamic_pointer_cast<ControlArea>(newDrawbleArea)))
                 throw std::runtime_error("Area to copy canot be casted to a spat type");
             
             // Puis : même procédure pour les cas possibles
@@ -559,7 +559,7 @@ void GraphicSessionManager::OnSpatStateChanged(int spatStateIdx)
     if (auto selectedArea = GetSelectedArea())
     {
         // No check on index (view data is supposed to be up-to-date)
-        selectedArea->LinkToSpatState(spatInterpolator->GetSpatState((size_t)spatStateIdx));
+        selectedArea->LinkToState(spatInterpolator->GetState((size_t)spatStateIdx));
         // Forced unoptimized update of everything
         getSelectedCanvasAsEditable()->OnResized();
     }
