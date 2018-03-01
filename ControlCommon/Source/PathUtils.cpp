@@ -29,6 +29,9 @@ std::string PathUtils::GetSessionFileExtension(AppPurpose appType)
             break;
             
         default:
+            // on ne devrait pas demander l'extension d'un type pas clairement précisé...
+            assert(false);
+            return std::string(".*");
             break;
     }
 }

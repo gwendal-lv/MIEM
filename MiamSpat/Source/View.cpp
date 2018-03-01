@@ -18,7 +18,7 @@ using namespace Miam;
 // Default constructor
 View::View(DocumentWindow* mainWindow_, MainContentComponent* mainContentComponent_)
 :
-SpatView(mainWindow_)
+ControlView(mainWindow_)
 {
     mainWindow = mainWindow_;
     mainContentComponent = mainContentComponent_;

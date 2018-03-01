@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    SpatView.h
+    ControlView.h
     Created: 13 Nov 2017 2:40:41pm
     Author:  Gwendal Le Vaillant
 
@@ -15,7 +15,7 @@
 
 namespace Miam
 {
-    class SpatView
+    class ControlView
     {
         
         // ========== ATTRIBUTES ==========
@@ -30,7 +30,7 @@ namespace Miam
         
         public :
         
-        SpatView(DocumentWindow* mainWindow_) :
+        ControlView(DocumentWindow* mainWindow_) :
         mainWindow(mainWindow_)
         {}
         

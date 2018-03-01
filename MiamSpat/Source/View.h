@@ -13,7 +13,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-#include "SpatView.h"
+#include "ControlView.h"
 
 #include "MainComponent.h"
 
@@ -36,7 +36,7 @@ namespace Miam {
 	/// user commands (events) to the presenter to act upon that data."
 	///
 	/// \remark Usual GUI controls (created from the Projucer) belong to this module.
-    class View : public SpatView
+    class View : public ControlView
     {
         
         // ========== ATTRIBUTES ==========

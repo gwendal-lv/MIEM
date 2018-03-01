@@ -63,8 +63,8 @@
         <FILE id="CDLZvE" name="MatrixSlider.h" compile="0" resource="0" file="../ControlCommon/Source/MatrixSlider.h"/>
         <FILE id="RW0Tdr" name="MatrixViewport.h" compile="0" resource="0"
               file="../ControlCommon/Source/MatrixViewport.h"/>
-        <FILE id="prXyfS" name="SpatView.cpp" compile="1" resource="0" file="../ControlCommon/Source/SpatView.cpp"/>
-        <FILE id="FOm35I" name="SpatView.h" compile="0" resource="0" file="../ControlCommon/Source/SpatView.h"/>
+        <FILE id="prXyfS" name="ControlView.cpp" compile="1" resource="0" file="../ControlCommon/Source/ControlView.cpp"/>
+        <FILE id="FOm35I" name="ControlView.h" compile="0" resource="0" file="../ControlCommon/Source/ControlView.h"/>
       </GROUP>
       <GROUP id="{7DF86A8F-A8E0-F3D8-65C1-4CA2C20CE264}" name="Utils">
         <FILE id="ZbkxOP" name="AppPurpose.h" compile="0" resource="0" file="../ControlCommon/Source/AppPurpose.h"/>

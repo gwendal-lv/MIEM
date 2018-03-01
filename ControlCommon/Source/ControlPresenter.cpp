@@ -10,13 +10,13 @@
 
 #include "ControlPresenter.h"
 
-#include "GraphicSpatSessionManager.h"
+#include "GraphicControlSessionManager.h"
 
 #include "ControlModel.h"
 
 #include "AppPurpose.h"
 
-ControlPresenter::ControlPresenter(SpatView* view_)
+ControlPresenter::ControlPresenter(ControlView* view_)
 :
 view(view_)
 {

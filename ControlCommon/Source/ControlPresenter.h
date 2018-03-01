@@ -15,7 +15,7 @@
 #include <memory>
 
 #include "IPresenter.h"
-#include "SpatView.h"
+#include "ControlView.h"
 
 #include "MiemFileChoosers.h"
 
@@ -40,7 +40,7 @@ namespace Miam {
         ControlModel* model = 0;
         GraphicControlSessionManager* graphicSessionManager = 0;
         // Private links to other modules
-        SpatView* view;
+        ControlView* view;
         
         protected :
         // - - - - - Back-ups of other spatialization data trees - - - - -
@@ -52,7 +52,7 @@ namespace Miam {
         
         public :
         // - - - - - Construction and Destruction (and init) - - - - -
-        ControlPresenter(SpatView* view_);
+        ControlPresenter(ControlView* view_);
         virtual ~ControlPresenter() {}
         void CompleteInitialisation(GraphicControlSessionManager* _graphicSessionManager, ControlModel* _model);
         
