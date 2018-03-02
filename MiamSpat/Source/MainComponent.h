@@ -46,9 +46,6 @@ private:
     View* view = 0;
     Presenter* presenter = 0;
     
-    // Links to sub-modules
-    GraphicSessionPlayer* graphicSessionManager = 0;
-    
     // Graphical component
     ScopedPointer<PlayerBackgroundComponent> backgroundComponent;
     //MultiCanvasComponent* multiCanvasComponent = 0; // belongs to the presenter
@@ -61,7 +58,7 @@ private:
     /// \brief Function called after both Miam::View and Miam::Presenter are contructed
     void CompleteInitialization(Presenter* _presenter);
     /// \brief Function called after both View and Presenter are contructed
-    void CompleteInitialization(GraphicSessionPlayer*, MultiCanvasComponent*);
+    void CompleteInitialization(MultiCanvasComponent*);
     
     /// \brief Necessary for the Miam::View to reference itself, because this class is always
     /// constructed by the MainWindow before the View module.

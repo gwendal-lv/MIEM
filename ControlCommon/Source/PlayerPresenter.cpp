@@ -15,8 +15,15 @@
 
 #include "PlayerView.h"
 
+#include "PlayerModel.h"
+
+#include "TextUtils.h"
+
 using namespace Miam;
 
+
+
+// = = = = = = = = = = Construction, destruction, initialisation = = = = = = = = = =
 
 PlayerPresenter::PlayerPresenter(PlayerView* _view)
 :
@@ -25,15 +32,57 @@ ControlPresenter(_view),
 view(_view),
 
 appMode(PlayerAppMode::Null),
+previousPlayerStatus(PlayerAppMode::Null),
 
 loadFileChooser({App::GetPurpose()}) // purpose théoriquement initialisé avant tout (statique en dehors de toute fonction)
 {
-    
+    appMode = PlayerAppMode::None;
+    previousPlayerStatus = PlayerAppMode::None;
 }
+
 
 void PlayerPresenter::CompleteInitialisation(PlayerModel* _model)
 {
+    // - - - Init des attributs privés puis des parents - - -
     model = _model;
+    
+    ControlPresenter::CompleteInitialisation(GetGraphicSessionPlayer(), model);
+    
+    view->ForceResized();
+    
+    appModeChangeRequest(PlayerAppMode::Stopped); // pour forcer l'état
+}
+
+
+void PlayerPresenter::TryLoadFirstSession(std::string commandLine)
+{
+    // - - - Traitement du nom de fichier - - -
+    // Copie du paramètre d'entrée,
+    // pour permettre le chargement automatique de la session de test....
+    std::string commandLineToParse = commandLine;
+#ifdef __MIAM_DEBUG
+    //commandLineToParse += " -session \"/Users/Gwendal/Music/Spat sessions/Session de débug.miam\" ";
+    //commandLineToParse += " -session \"/Users/Gwendal/Music/Spat sessions/Test.miam\" ";
+#endif
+    // Récupération du nom de fichier à charger
+    std::string fileName = TextUtils::FindFilenameInCommandLineArguments(commandLineToParse);
+    
+    // - - - Premier chargement de session OU BIEN menu principal - - -
+    bool firstSessionLoaded = false;
+    // D'abord on essaie de charger le truc depuis la ligne de commande, si possible
+    if (! fileName.empty())
+    {
+        try {
+            LoadSession(fileName);
+            firstSessionLoaded = true;
+        }
+        catch (XmlReadException& ) {} // firstSessionLoaded reste à false
+    }
+    if (! firstSessionLoaded)
+    {
+        // Sinon si rien n'a marché, on affiche le menu principal
+        appModeChangeRequest(PlayerAppMode::MainMenu);
+    }
 }
 
 
@@ -41,6 +90,8 @@ void PlayerPresenter::CompleteInitialisation(PlayerModel* _model)
 
 
 
+
+// = = = = = = = = = = GENERAL MANAGEMENT = = = = = = = = = =
 
 PlayerAppMode PlayerPresenter::appModeChangeRequest(PlayerAppMode newAppMode)
 {
@@ -69,7 +120,7 @@ PlayerAppMode PlayerPresenter::appModeChangeRequest(PlayerAppMode newAppMode)
             view->ChangeAppMode(PlayerAppMode::Loading);
         // Sauvegarde du statut de spat (si continue en tâche de fond)
         if (appMode == PlayerAppMode::Stopped || appMode == PlayerAppMode::Playing)
-            previousSpatialisationStatus = appMode;
+            previousPlayerStatus = appMode;
         
         // - - - - - Changement interne - - - - -
         appMode = newAppMode;
@@ -92,7 +143,7 @@ PlayerAppMode PlayerPresenter::appModeChangeRequest(PlayerAppMode newAppMode)
                 case PlayerAppMode::Stopped :
                     // on ne renvoie l'ordre au modèle que dans le cas où l'on change de statut de spat
                     // par rapport au statut de spat en tâche de fond.
-                    if (previousSpatialisationStatus != appMode)
+                    if (previousPlayerStatus != appMode)
                     {
                         paramChange.Type = AsyncParamChange::Stop;
                         SendParamChange(paramChange);
@@ -102,7 +153,7 @@ PlayerAppMode PlayerPresenter::appModeChangeRequest(PlayerAppMode newAppMode)
                 case PlayerAppMode::Playing :
                     // on ne renvoie l'ordre au modèle que dans le cas où l'on change de statut de spat
                     // par rapport au statut de spat en tâche de fond.
-                    if (previousSpatialisationStatus != appMode)
+                    if (previousPlayerStatus != appMode)
                     {
                         paramChange.Type = AsyncParamChange::Play;
                         SendParamChange(paramChange);
@@ -126,8 +177,6 @@ PlayerAppMode PlayerPresenter::appModeChangeRequest(PlayerAppMode newAppMode)
     return appMode;
 }
 
-
-
 void PlayerPresenter::OnFileChooserReturn(const FileChooser& chooser)
 {
     if (&chooser == &loadFileChooser)
@@ -142,21 +191,30 @@ void PlayerPresenter::OnFileChooserReturn(const FileChooser& chooser)
     }
 }
 
+void PlayerPresenter::Update()
+{
+    // Récupération des infos du modèle... Par exemple : info "OK je suis prêt
+    // à être contrôlé en SINGLE THREAD" lors de re-chargement d'une scène
+}
 
 
 
-
-
+// = = = = = = = = = = EVENTS FROM VIEW = = = = = = = = = =
 
 void PlayerPresenter::OnMainMenuButtonClicked()
 {
     // Si l'on était déjà sur le menu : on retourne à l'affichage des canevas de jeu, mais selon l'état
     // précédent de spatialisation.
     if (appMode == PlayerAppMode::MainMenu)
-        appModeChangeRequest(previousSpatialisationStatus);
+        appModeChangeRequest(previousPlayerStatus);
     else
         appModeChangeRequest(PlayerAppMode::MainMenu);
 }
+
+
+
+
+// = = = = = = = = = = EVENTS FROM MODEL = = = = = = = = = =
 
 
 void PlayerPresenter::OnNewConnectionStatus(bool isConnectionEstablished, std::shared_ptr<bptree::ptree> connectionParametersTree)
@@ -205,6 +263,39 @@ void PlayerPresenter::OnNewConnectionStatus(bool isConnectionEstablished, std::s
     
     
 }
+
+
+
+
+// = = = = = XML loading only = = = = =
+
+void PlayerPresenter::LoadSession(std::string filename)
+{
+    appModeChangeRequest(PlayerAppMode::Stopped); // aussi : Arrêt du modèle
+    // Il faudra un temps d'attente !! Une confirmation que tout s'est bien arrêté...
+    // Avant de faire le chargement qui lui sera SINGLE THREAD
+    
+    
+    
+    // Arrêt des envois de ce module, déjà pour commencer
+    appModeChangeRequest(PlayerAppMode::Loading);
+    
+    // Chargement d'une nouvelle session
+    ControlPresenter::LoadSession(filename);
+    
+    // Ensuite on se change de mode
+    appModeChangeRequest(PlayerAppMode::Playing); // va démarrer le modèle
+}
+
+void PlayerPresenter::SetConfigurationFromTree(bptree::ptree&)
+{
+    // Rien d'affiché : on attend le retour effectif des infos depuis le Modèle
+}
+
+
+
+
+
 
 
 

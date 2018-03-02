@@ -8,6 +8,8 @@
 
 #include "MainComponent.h"
 
+#include <string>
+
 //#include "MultiCanvasComponent.h"
 
 //==============================================================================
@@ -32,7 +34,8 @@ void MainContentComponent::paint (Graphics& g)
 
     g.setFont (Font (16.0f));
     g.setColour (Colours::white);
-    g.drawText ("Miam Spat Player", getLocalBounds(), Justification::centred, true);
+    g.drawText (std::string(ProjectInfo::projectName) + " " + std::to_string(ProjectInfo::versionNumber),
+                getLocalBounds(), Justification::centred, true);
 }
 
 void MainContentComponent::resized()
@@ -50,10 +53,8 @@ void MainContentComponent::CompleteInitialization(Presenter* _presenter)
     presenter = _presenter;
     backgroundComponent->CompleteInitialization(presenter);
 }
-void MainContentComponent::CompleteInitialization(GraphicSessionPlayer* _graphicSessionManager, MultiCanvasComponent* multiCanvasComponent_)
+void MainContentComponent::CompleteInitialization(MultiCanvasComponent* multiCanvasComponent_)
 {
-    graphicSessionManager = _graphicSessionManager;
-    
     backgroundComponent->CompleteInitialization(multiCanvasComponent_);
 }
 

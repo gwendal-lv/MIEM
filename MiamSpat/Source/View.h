@@ -60,20 +60,13 @@ namespace Miam {
 		/// the MiamEditApplication.
         View(DocumentWindow* mainWindow_, MainContentComponent* _mainContentComponent);
 		/// \brief Destructor
-        ~View();
+        virtual ~View();
         /// \brief Function called after both View and Presenter are contructed
         void CompleteInitialization(Presenter* _presenter);
         /// \brief Function called after both View and Presenter are contructed
         virtual void CompleteInitialization(GraphicSessionPlayer*, MultiCanvasComponent*) override;
         
 
-		// ----- Events to the Presenter -----
-        
-		/// \brief Function called from all main- and sub-components, transmits
-		/// proper events to the Presenter.
-        void ButtonClicked(const String& name);
-        
-        
         
         // ----- Graphical updates -----
         virtual void ForceResized() override;

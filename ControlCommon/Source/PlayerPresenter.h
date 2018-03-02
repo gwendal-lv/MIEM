@@ -38,9 +38,9 @@ namespace Miam
         
         PlayerAppMode appMode;
         /* Permet de savoir, lorsque l'on se balade qqpart dans le
-         * programme (dans les menus, etc....), si on a une spat qui joue en tâche de fond ou pas.
+         * programme (dans les menus, etc....), si on a le modèle qui joue en tâche de fond ou pas.
          */
-        PlayerAppMode previousSpatialisationStatus;
+        PlayerAppMode previousPlayerStatus;
         
         
         
@@ -70,9 +70,17 @@ namespace Miam
         PlayerPresenter(PlayerView* _view);
         // virtual dtor
         virtual ~PlayerPresenter() {}
+        /// \brief To be called from the Miam::Model when it is being
+        /// constructed (happens after the construction of this class)
+        ///
+        /// Finished self-contruction, and also the construction of sub-modules
         virtual void CompleteInitialisation(PlayerModel* _model);
         
-        // - - - - - Modes management - - - - -
+        void TryLoadFirstSession(std::string commandLine);
+        
+        
+        
+        // - - - - - General Management - - - - -
         
         /// \brief Might be called from the Presenter itself, or from the View
         ///
@@ -81,6 +89,8 @@ namespace Miam
         
         /// \brief Callback invoked when any FileChooser has asynchronously returned.
         void OnFileChooserReturn(const FileChooser& chooser);
+        
+        virtual void Update() override;
         
         
         
@@ -96,6 +106,16 @@ namespace Miam
         /// \brief Processes the data then displays it. An empty tree means
         /// that the connection failed.
         void OnNewConnectionStatus(bool isConnectionEstablished, std::shared_ptr<bptree::ptree> connectionParametersTree);
+        
+        
+        // = = = = = XML loading only = = = = =
+        
+        /// \brief Override qui permet de démarrer le Modèle lorsque le chargement de session est terminé
+        /// (et qui arrête le modèle au début du chargement de session)
+        virtual void LoadSession(std::string filename) override;
+        
+        virtual void SetConfigurationFromTree(bptree::ptree&) override;
+        
         
         
     };

@@ -40,9 +40,9 @@ void View::CompleteInitialization(Presenter* _presenter)
     
     mainContentComponent->CompleteInitialization(presenter);
 }
-void View::CompleteInitialization(GraphicSessionPlayer* _graphicSessionManager, MultiCanvasComponent* _multiCanvasComponent)
+void View::CompleteInitialization(GraphicSessionPlayer* /*_graphicSessionManager*/, MultiCanvasComponent* _multiCanvasComponent)
 {
-    mainContentComponent->CompleteInitialization(_graphicSessionManager, _multiCanvasComponent);
+    mainContentComponent->CompleteInitialization(_multiCanvasComponent);
 }
 
 
@@ -50,13 +50,4 @@ void View::ForceResized()
 {
     mainContentComponent->resized();
 }
-
-
-
-void View::ButtonClicked(const String& /*name*/)
-{
-    throw std::runtime_error("Unimplemented behavior on button click");
-}
-
-
 

@@ -46,8 +46,6 @@ namespace Miam {
         
         // Pointer to the unique View module
         View* view = 0;
-        // Pointer to the unique Model module
-        PlayerModel* model = 0;
         
         
         // Sub-modules
@@ -72,24 +70,6 @@ namespace Miam {
         Presenter(View* _view);
         virtual ~Presenter() {}
         
-        /// \brief To be called from the Miam::Model when it is being
-        /// constructed (happens after the construction of this class)
-        ///
-        /// Finished self-contruction, and also the construction of sub-modules
-        virtual void CompleteInitialisation(PlayerModel* _model) override;
-        void TryLoadFirstSession(std::string commandLine);
-        
-        
-        virtual void Update() override;
-        
-        // = = = = = XML loading only = = = = =
-        
-        /// \brief Override qui permet de démarrer le Modèle lorsque le chargement de session est terminé
-        /// (et qui arrête le modèle au début du chargement de session)
-        virtual void LoadSession(std::string filename) override;
-
-        virtual void SetConfigurationFromTree(bptree::ptree&) override;
-
         
     };
     
