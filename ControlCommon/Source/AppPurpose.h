@@ -10,19 +10,24 @@
 
 #pragma once
 
+#include "JuceHeader.h"
+
 
 namespace Miam
 {
     
     enum class AppPurpose
     {
-        Spatialisation = 1,
         
-        GenericController = 2,
+        None = 1,
         
-        Multi = 4,
         
-        None = 8,
+        Multi = 2,
+        
+        
+        Spatialisation = 4,
+        
+        GenericController = 8,
     };
     
     
@@ -34,7 +39,15 @@ namespace Miam
         static AppPurpose appPurpose;
         
         public :
-        static AppPurpose GetPurpose() {return appPurpose;}
+        static AppPurpose GetPurpose()
+        {
+            return appPurpose;
+        }
+        
+        static std::string GetNameWithVersion()
+        {
+            return std::string(ProjectInfo::projectName) + " " + ProjectInfo::versionString;
+        }
     };
     
 }

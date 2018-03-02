@@ -58,7 +58,7 @@ void FileMenu::ShowMenuAndSendUserAnswer()
 void FileMenu::onLoad()
 {
 #ifndef __MIAMOBILE
-    LoadFileChooser fileChooser({AppPurpose::Spatialisation});
+    LoadFileChooser fileChooser({App::GetPurpose()});
     if ( fileChooser.browseForFileToOpen() )
     {
         File resultFile = fileChooser.getResult();
@@ -80,6 +80,7 @@ void FileMenu::onSaveAs()
 {
 #ifndef __MIAMOBILE
     SaveFileChooser fileChooser({AppPurpose::Spatialisation});
+    std::cout << "[FILE LOADER] permission de n'ouvrir que des fichiers de session de spatialisation...." << std::endl;
     if ( fileChooser.browseForFileToSave(true) )
     {
         File resultFile = fileChooser.getResult();

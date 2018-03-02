@@ -63,6 +63,7 @@ PlayerBackgroundComponent::PlayerBackgroundComponent ()
 
 
     //[Constructor] You can add your own custom stuff here..
+    mainInfoLabel->setText(App::GetNameWithVersion(), NotificationType::sendNotification);
     //[/Constructor]
 }
 

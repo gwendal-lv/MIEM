@@ -39,7 +39,7 @@ PlayerMainMenuComponent::PlayerMainMenuComponent ()
     sessionGroupComponent->setColour (GroupComponent::textColourId, Colour (0xff909090));
 
     addAndMakeVisible (loadFromFileButton = new TextButton ("Load From File text button"));
-    loadFromFileButton->setButtonText (TRANS("Load from .mspat file"));
+    loadFromFileButton->setButtonText (TRANS("Load from .XYZ file"));
     loadFromFileButton->addListener (this);
     loadFromFileButton->setColour (TextButton::buttonColourId, Colour (0xff404040));
 
@@ -83,6 +83,11 @@ PlayerMainMenuComponent::PlayerMainMenuComponent ()
 
 
     //[Constructor] You can add your own custom stuff here..
+    loadFromFileButton->setButtonText (TRANS("Load from ") +
+                                       PathUtils::GenerateAllowedFilePatterns({App::GetPurpose()},
+                                                                              false,
+                                                                              " " + (TRANS("or")).toStdString() + " ") +
+                                       + " " + TRANS("file"));
     //[/Constructor]
 }
 

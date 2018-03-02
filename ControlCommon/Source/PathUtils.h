@@ -35,7 +35,9 @@ namespace Miam
         ///
         /// Les séparateurs sont des ';', et les extensions demandées sont précisées avec le '.'
         /// avant l'extension.
-        static std::string GenerateAllowedFilePatterns(std::initializer_list<AppPurpose> appTypeArgs);
+        static std::string GenerateAllowedFilePatterns(std::initializer_list<AppPurpose> appTypeArgs,
+                                                       bool includeStarInPattern = true,
+                                                       std::string separator = ";");
         
         
         static std::string GetAppToRepositoryRootPath();

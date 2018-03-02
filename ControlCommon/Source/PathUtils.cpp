@@ -31,12 +31,14 @@ std::string PathUtils::GetSessionFileExtension(AppPurpose appType)
         default:
             // on ne devrait pas demander l'extension d'un type pas clairement précisé...
             assert(false);
-            return std::string(".*");
+            return std::string("*");
             break;
     }
 }
 
-std::string PathUtils::GenerateAllowedFilePatterns(std::initializer_list<AppPurpose> appTypeArgs)
+std::string PathUtils::GenerateAllowedFilePatterns(std::initializer_list<AppPurpose> appTypeArgs,
+                                                   bool includeStarInPattern,
+                                                   std::string separator)
 {
     std::string returnString;
     
@@ -56,9 +58,12 @@ std::string PathUtils::GenerateAllowedFilePatterns(std::initializer_list<AppPurp
         {
             // On ajoute un séparateur seulement après le premier élément
             if (firstElementWritten)
-                returnString += ";";
+                returnString += separator;
+            // Ajout de l'étoile si demandé seulement
+            if (includeStarInPattern)
+                returnString = returnString + "*";
             // Ajout de l'extension demandée
-            returnString  = returnString + "*." + GetSessionFileExtension(appPurpose);
+            returnString = returnString + "." + GetSessionFileExtension(appPurpose);
             // élément suivant...
             firstElementWritten = true;
         }
