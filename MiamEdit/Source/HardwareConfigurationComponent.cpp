@@ -230,6 +230,31 @@ void HardwareConfigurationComponent::buttonClicked (Button* buttonThatWasClicked
     //[/UserbuttonClicked_Post]
 }
 
+void HardwareConfigurationComponent::visibilityChanged()
+{
+    //[UserCode_visibilityChanged] -- Add your code here...
+
+    // Selon le mode : on affiche ou non les paramètres d'E/S
+    if (settingsManager)
+    {
+        switch (settingsManager->GetSessionPurpose())
+        {
+            case AppPurpose::Spatialisation :
+                SetInputSettingsVisible(true);
+                break;
+
+            case AppPurpose::GenericController :
+                SetInputSettingsVisible(false);
+                break;
+
+            default :
+                break;
+        }
+    }
+
+    //[/UserCode_visibilityChanged]
+}
+
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
@@ -263,6 +288,14 @@ void HardwareConfigurationComponent::textEditorReturnKeyPressed(TextEditor& edit
             settingsManager->OnUdpPortChanged(parsedValue);
     }
 }
+
+
+void HardwareConfigurationComponent::SetInputSettingsVisible(bool areVisible)
+{
+    inputsCountLabel->setVisible(areVisible);
+    inputsCountSlider->setVisible(areVisible);
+}
+
 //[/MiscUserCode]
 
 
@@ -280,6 +313,9 @@ BEGIN_JUCER_METADATA
                  constructorParams="" variableInitialisers="" snapPixels="8" snapActive="1"
                  snapShown="1" overlayOpacity="0.330" fixedSize="0" initialWidth="1024"
                  initialHeight="600">
+  <METHODS>
+    <METHOD name="visibilityChanged()"/>
+  </METHODS>
   <BACKGROUND backgroundColour="ffafafaf"/>
   <SLIDER name="Inputs Count slider" id="77ed5b9e29dce02e" memberName="inputsCountSlider"
           virtualName="" explicitFocusOrder="0" pos="8C 16 150 24" textboxtext="ff000000"

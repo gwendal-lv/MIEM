@@ -19,6 +19,8 @@
 
 #include "DrawableArea.h"
 
+#include "AppPurpose.h"
+
 
 namespace Miam {
     
@@ -46,6 +48,19 @@ namespace Miam {
         MainContentComponent* mainContentComponent;
         
         
+        
+        // ========== Setters and Getters ==========
+        public :
+        
+        // Basic
+        /// \brief Pointer to the unique MainContentComponent.
+        MainContentComponent* GetMainContentComponent()
+        {return mainContentComponent;}
+        
+        // General UI controls and displays
+        AppPurpose GetSessionPurpose();
+        
+        
 
 
 		// ========== METHODS ==========
@@ -58,7 +73,7 @@ namespace Miam {
 		/// the MiamEditApplication.
         View(DocumentWindow* mainWindow_, MainContentComponent* _mainContentComponent);
 		/// \brief Destructor
-        ~View();
+        virtual ~View();
         /// \brief Function called after both View and Presenter are contructed
         void CompleteInitialization(Presenter* _presenter);
         
@@ -84,24 +99,15 @@ namespace Miam {
         void DisplayInfo(const std::string& message,
                          int priority = 0,
                          bool alsoDisplayInNewWindow = false);
+        
+        virtual void SetTitle(std::string title) override;
+
         private :
         /// \brief Crée une nouvelle fenêtre sobre et affiche le message centré.
         ///
         /// Si le début du message est entre crochets, il va devenir le titre de la
         /// fenêtre.
         void displayInfoInNewWindow(const std::string& message);
-        
-        
-        // ----- Setters and Getters -----
-	public :
-        
-        // Basic
-		/// \brief Pointer to the unique MainContentComponent.
-        MainContentComponent* GetMainContentComponent()
-		{return mainContentComponent;}
-        
-        // General UI controls and displays
-
         
     };
     

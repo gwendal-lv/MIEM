@@ -43,6 +43,18 @@ void SettingsManager::CompleteInitialisation(Model* _model)
 
 
 
+// = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
+
+
+AppPurpose SettingsManager::GetSessionPurpose()
+{
+    return model->GetSessionPurpose();
+}
+
+
+
+
+// - - - - - Callbacks from View, retransmitted - - - - -
 
 
 void SettingsManager::OnInOutChannelsCountChanged(int inputsCount, int outputsCount)

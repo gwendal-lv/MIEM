@@ -16,6 +16,7 @@
 #include "boost/property_tree/xml_parser.hpp"
 namespace bptree = boost::property_tree;
 
+#include "AppPurpose.h"
 
 namespace Miam {
     
@@ -57,7 +58,7 @@ namespace Miam {
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         
         public :
-        
+        AppPurpose GetSessionPurpose();
         
         
         // = = = = = = = = = = METHODS = = = = = = = = = =

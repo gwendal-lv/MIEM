@@ -7,12 +7,12 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.2.0
+  Created with Projucer version: 5.2.1
 
   ------------------------------------------------------------------------------
 
-  The Projucer is part of the JUCE library - "Jules' Utility Class Extensions"
-  Copyright (c) 2015 - ROLI Ltd.
+  The Projucer is part of the JUCE library.
+  Copyright (c) 2017 - ROLI Ltd.
 
   ==============================================================================
 */
@@ -43,17 +43,17 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     //[/Constructor_pre]
 
     addAndMakeVisible (stateEditorGroupComponent = new GroupComponent ("State Editor group component",
-                                                                       TRANS("Routing matrix for selected state")));
+                                                                       TRANS("Control data for selected state")));
     stateEditorGroupComponent->setColour (GroupComponent::outlineColourId, Colour (0xff454545));
     stateEditorGroupComponent->setColour (GroupComponent::textColourId, Colours::black);
 
     addAndMakeVisible (labelledMatrixComponent = new Miam::LabelledMatrixComponent (this, Miam_MaxNumInputs, Miam_MaxNumOutputs));
     labelledMatrixComponent->setName ("Labelled Matrix component");
 
-    addAndMakeVisible (spatStateGroupComponent = new GroupComponent ("Spat state group component",
-                                                                     TRANS("Spatialization states list")));
-    spatStateGroupComponent->setColour (GroupComponent::outlineColourId, Colour (0xff454545));
-    spatStateGroupComponent->setColour (GroupComponent::textColourId, Colours::black);
+    addAndMakeVisible (statesListGroupComponent = new GroupComponent ("States list group component",
+                                                                      TRANS("States list")));
+    statesListGroupComponent->setColour (GroupComponent::outlineColourId, Colour (0xff454545));
+    statesListGroupComponent->setColour (GroupComponent::textColourId, Colours::black);
 
     addAndMakeVisible (addSpatStateTextButton = new TextButton ("Add state text button"));
     addSpatStateTextButton->setButtonText (TRANS("Add State"));
@@ -63,6 +63,8 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     addSpatStateTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     addSpatStateTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
+    addSpatStateTextButton->setBounds (0 + 8, 4 + 20, 80, 24);
+
     addAndMakeVisible (deleteSpatStateTextButton = new TextButton ("Delete spat state text button"));
     deleteSpatStateTextButton->setButtonText (TRANS("Delete"));
     deleteSpatStateTextButton->setConnectedEdges (Button::ConnectedOnLeft);
@@ -70,6 +72,8 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     deleteSpatStateTextButton->setColour (TextButton::buttonColourId, Colour (0xfff0f0f0));
     deleteSpatStateTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     deleteSpatStateTextButton->setColour (TextButton::textColourOffId, Colours::black);
+
+    deleteSpatStateTextButton->setBounds (0 + 88, 4 + 20, 80, 24);
 
     addAndMakeVisible (stateUpTextButton = new TextButton ("State up text button"));
     stateUpTextButton->setButtonText (TRANS("Move Up"));
@@ -113,6 +117,13 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
 
 
     //[Constructor] You can add your own custom stuff here..
+    
+    // On sauvegarde le texte générique, mais on précise ici le texte pour spat
+    genericStatesListText = statesListGroupComponent->getText();
+    genericStateEditorText = stateEditorGroupComponent->getText();
+    spatStatesListText = TRANS("Spatialization states list");
+    spatStateEditorText = TRANS("Routing matrix for selected state");
+    
     //[/Constructor]
 }
 
@@ -123,7 +134,7 @@ SpatStatesEditionComponent::~SpatStatesEditionComponent()
 
     stateEditorGroupComponent = nullptr;
     labelledMatrixComponent = nullptr;
-    spatStateGroupComponent = nullptr;
+    statesListGroupComponent = nullptr;
     addSpatStateTextButton = nullptr;
     deleteSpatStateTextButton = nullptr;
     stateUpTextButton = nullptr;
@@ -151,23 +162,6 @@ void SpatStatesEditionComponent::paint (Graphics& g)
     g.fillAll (Colour (0xffbfbfbf));
 
     //[UserPaint] Add your own custom painting code here..
-
-    switch (Miam::App::GetPurpose()) {
-            
-        case Miam::AppPurpose::None:
-            break;
-            
-        case Miam::AppPurpose::Spatialisation:
-            break;
-            
-        case Miam::AppPurpose::GenericController:
-            throw std::runtime_error("Édition de contrôleur générique presque implémenté ! Mais pas encore....");
-            break;
-            
-        default:
-            throw std::runtime_error("Édition de truc ?? Non défini...");
-            break;
-    }
     //[/UserPaint]
 }
 
@@ -178,9 +172,7 @@ void SpatStatesEditionComponent::resized()
 
     stateEditorGroupComponent->setBounds (0, 60, getWidth() - 0, getHeight() - 60);
     labelledMatrixComponent->setBounds (0 + 8, 60 + 16, (getWidth() - 0) - 16, (getHeight() - 60) - 24);
-    spatStateGroupComponent->setBounds (0, 4, getWidth() - 0, 52);
-    addSpatStateTextButton->setBounds (0 + 8, 4 + 20, 80, 24);
-    deleteSpatStateTextButton->setBounds (0 + 88, 4 + 20, 80, 24);
+    statesListGroupComponent->setBounds (0, 4, getWidth() - 0, 52);
     stateUpTextButton->setBounds ((((0 + 88) + 80 - -8) + (getWidth() - 476) - -8) + 132 - -8, 4 + 20, 72, 24);
     stateDownTextButton->setBounds (((((0 + 88) + 80 - -8) + (getWidth() - 476) - -8) + 132 - -8) + 72, 4 + 20, 72, 24);
     linksInfoLabel->setBounds (((0 + 88) + 80 - -8) + (getWidth() - 476) - -8, 4 + 20, 132, 24);
@@ -262,6 +254,34 @@ void SpatStatesEditionComponent::comboBoxChanged (ComboBox* comboBoxThatHasChang
 
     //[UsercomboBoxChanged_Post]
     //[/UsercomboBoxChanged_Post]
+}
+
+void SpatStatesEditionComponent::visibilityChanged()
+{
+    //[UserCode_visibilityChanged] -- Add your code here...
+    if (editionManager)
+    {
+        switch (editionManager->GetSessionPurpose()) {
+
+            case Miam::AppPurpose::None:
+                break;
+
+            case Miam::AppPurpose::Spatialisation:
+                statesListGroupComponent->setText(spatStatesListText);
+                stateEditorGroupComponent->setText(spatStateEditorText);
+                break;
+
+            case Miam::AppPurpose::GenericController:
+                statesListGroupComponent->setText(genericStatesListText);
+                stateEditorGroupComponent->setText(genericStateEditorText);
+                break;
+
+            default:
+                throw std::runtime_error("Édition de truc ?? Non défini...");
+                break;
+        }
+    }
+    //[/UserCode_visibilityChanged]
 }
 
 
@@ -363,18 +383,21 @@ BEGIN_JUCER_METADATA
                  constructorParams="" variableInitialisers="" snapPixels="8" snapActive="1"
                  snapShown="1" overlayOpacity="0.330" fixedSize="1" initialWidth="1024"
                  initialHeight="600">
+  <METHODS>
+    <METHOD name="visibilityChanged()"/>
+  </METHODS>
   <BACKGROUND backgroundColour="ffbfbfbf"/>
   <GROUPCOMPONENT name="State Editor group component" id="1b9d22beb5fc6bfd" memberName="stateEditorGroupComponent"
                   virtualName="" explicitFocusOrder="0" pos="0 60 0M 60M" outlinecol="ff454545"
-                  textcol="ff000000" title="Routing matrix for selected state"/>
+                  textcol="ff000000" title="Control data for selected state"/>
   <GENERICCOMPONENT name="Labelled Matrix component" id="d34fbdc233d627af" memberName="labelledMatrixComponent"
                     virtualName="" explicitFocusOrder="0" pos="8 16 16M 24M" posRelativeX="1b9d22beb5fc6bfd"
                     posRelativeY="1b9d22beb5fc6bfd" posRelativeW="1b9d22beb5fc6bfd"
                     posRelativeH="1b9d22beb5fc6bfd" class="Miam::LabelledMatrixComponent"
                     params="this, Miam_MaxNumInputs, Miam_MaxNumOutputs"/>
-  <GROUPCOMPONENT name="Spat state group component" id="4250d5155a80be70" memberName="spatStateGroupComponent"
+  <GROUPCOMPONENT name="States list group component" id="4250d5155a80be70" memberName="statesListGroupComponent"
                   virtualName="" explicitFocusOrder="0" pos="0 4 0M 52" outlinecol="ff454545"
-                  textcol="ff000000" title="Spatialization states list"/>
+                  textcol="ff000000" title="States list"/>
   <TEXTBUTTON name="Add state text button" id="47bebc9d3a03780d" memberName="addSpatStateTextButton"
               virtualName="" explicitFocusOrder="0" pos="8 20 80 24" posRelativeX="4250d5155a80be70"
               posRelativeY="4250d5155a80be70" bgColOff="fff0f0f0" bgColOn="ffffffff"
@@ -400,8 +423,8 @@ BEGIN_JUCER_METADATA
          posRelativeY="4250d5155a80be70" textCol="ff000000" edTextCol="ff000000"
          edBkgCol="0" labelText="Linked to ? area" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
-         fontsize="15" kerning="0" bold="0" italic="1" justification="36"
-         typefaceStyle="Italic"/>
+         fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
+         bold="0" italic="1" justification="36" typefaceStyle="Italic"/>
   <COMBOBOX name="Spat states combo box" id="89ad7c0a3be5a39c" memberName="spatStatesComboBox"
             virtualName="" explicitFocusOrder="0" pos="-8R 24 476M 24" posRelativeX="5f4e8653b868a323"
             posRelativeY="90b16e3024c520fd" editable="1" layout="33" items="-1 undefined"

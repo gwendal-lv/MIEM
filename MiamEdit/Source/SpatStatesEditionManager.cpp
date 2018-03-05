@@ -38,6 +38,11 @@ void SpatStatesEditionManager::CompleteInitialisation(std::shared_ptr<StatesInte
 
 
 // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
+AppPurpose SpatStatesEditionManager::GetSessionPurpose()
+{
+    return view->GetSessionPurpose();
+}
+
 void SpatStatesEditionManager::selectSpatState(std::shared_ptr<ControlState<double>> _spatState)
 {
     // Internal update at first

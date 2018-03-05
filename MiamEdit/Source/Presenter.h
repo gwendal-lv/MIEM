@@ -16,6 +16,7 @@
 #include "ControlPresenter.h"
 
 #include "AppMode.h"
+#include "AppPurpose.h"
 #include "SpatType.h"
 
 #include "GraphicSessionManager.h"
@@ -76,6 +77,7 @@ namespace Miam {
         SettingsManager* GetSettingsManager() {return &settingsManager;}
         SpatStatesEditionManager* GetSpatStatesManager() {return &spatStatesEditionManager;}
         
+        AppPurpose GetSessionPurpose() const;
         
         
         // = = = = = = = = = = METHODS = = = = = = = = = =
@@ -108,11 +110,13 @@ namespace Miam {
         // - - - - -  XML import/export - - - - -
         virtual void LoadSession(std::string filename) override;
         virtual void SaveSession(std::string filename = "", bool forceDataRefresh = false) override;
-        /// \brief Crée une nouvelle session, en comment par la sauvegarder.
+        
+        /// \brief Crée une nouvelle session, en commençant par la sauvegarder. 'filename' doit être
+        /// complet (y compris extension du fichier)
         ///
         /// Si la session à créer n'est pas vide, alors elle sere créée à partir d'une copie de la
         /// session par défaut.
-        void CreateSession(std::string filename, bool isEmpty);
+        void CreateSession(std::string filename, AppPurpose sessionPurpose, bool isEmpty);
         
         virtual std::shared_ptr<bptree::ptree> GetConfigurationTree() override;
         virtual void SetConfigurationFromTree(bptree::ptree&) override;

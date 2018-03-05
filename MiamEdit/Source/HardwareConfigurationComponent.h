@@ -59,12 +59,15 @@ public:
     friend class SettingsManager;
 
     virtual void textEditorReturnKeyPressed(TextEditor& editorThatHasChanged) override;
+
+    void SetInputSettingsVisible(bool areVisible);
     //[/UserMethods]
 
     void paint (Graphics& g) override;
     void resized() override;
     void sliderValueChanged (Slider* sliderThatWasMoved) override;
     void buttonClicked (Button* buttonThatWasClicked) override;
+    void visibilityChanged() override;
 
 
 

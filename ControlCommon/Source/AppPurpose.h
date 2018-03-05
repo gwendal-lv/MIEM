@@ -44,6 +44,24 @@ namespace Miam
             return appPurpose;
         }
         
+        static std::string GetPurposeName(AppPurpose appPurpose_)
+        {
+            switch (appPurpose_)
+            {
+                case AppPurpose::Spatialisation :
+                    return translate("Spatialization").toStdString();
+                    break;
+                    
+                case AppPurpose::GenericController :
+                    return translate("Generic controller").toStdString();
+                    break;
+                    
+                default :
+                    return translate("Undefined purpose").toStdString();
+                    break;
+            }
+        }
+        
         static std::string GetNameWithVersion()
         {
             return std::string(ProjectInfo::projectName) + " " + ProjectInfo::versionString;

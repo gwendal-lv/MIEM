@@ -7,12 +7,12 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.2.0
+  Created with Projucer version: 5.2.1
 
   ------------------------------------------------------------------------------
 
-  The Projucer is part of the JUCE library - "Jules' Utility Class Extensions"
-  Copyright (c) 2015 - ROLI Ltd.
+  The Projucer is part of the JUCE library.
+  Copyright (c) 2017 - ROLI Ltd.
 
   ==============================================================================
 */
@@ -43,13 +43,13 @@ MainBackgroundComponent::MainBackgroundComponent ()
     speakersTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     speakersTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    addAndMakeVisible (spatStatesTextButtn = new TextButton ("Spatialization States text button"));
-    spatStatesTextButtn->setButtonText (TRANS("Routing Matrices"));
-    spatStatesTextButtn->setConnectedEdges (Button::ConnectedOnRight);
-    spatStatesTextButtn->addListener (this);
-    spatStatesTextButtn->setColour (TextButton::buttonColourId, Colour (0xffbfbfbf));
-    spatStatesTextButtn->setColour (TextButton::buttonOnColourId, Colours::white);
-    spatStatesTextButtn->setColour (TextButton::textColourOffId, Colours::black);
+    addAndMakeVisible (statesTextButton = new TextButton ("States text button"));
+    statesTextButton->setButtonText (TRANS("Control States"));
+    statesTextButton->setConnectedEdges (Button::ConnectedOnRight);
+    statesTextButton->addListener (this);
+    statesTextButton->setColour (TextButton::buttonColourId, Colour (0xffbfbfbf));
+    statesTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+    statesTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
     addAndMakeVisible (mainInfoLabel = new Label ("Main info label",
                                                   TRANS("...")));
@@ -62,7 +62,7 @@ MainBackgroundComponent::MainBackgroundComponent ()
     mainInfoLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
     addAndMakeVisible (scenesTextButton = new TextButton ("Scenes text button"));
-    scenesTextButton->setButtonText (TRANS("Spat Scenes"));
+    scenesTextButton->setButtonText (TRANS("Geometric Scenes"));
     scenesTextButton->setConnectedEdges (Button::ConnectedOnLeft);
     scenesTextButton->addListener (this);
     scenesTextButton->setColour (TextButton::buttonColourId, Colour (0xffbfbfbf));
@@ -93,6 +93,10 @@ MainBackgroundComponent::MainBackgroundComponent ()
 
 
     //[UserPreSize]
+    genericScenesText = scenesTextButton->getButtonText();
+    genericStatesText = statesTextButton->getButtonText();
+    spatScenesText = TRANS("Spat Scenes");
+    spatStatesText = TRANS("Routing Matrices");
     //[/UserPreSize]
 
     setSize (1024, 600);
@@ -121,7 +125,7 @@ MainBackgroundComponent::~MainBackgroundComponent()
     //[/Destructor_pre]
 
     speakersTextButton = nullptr;
-    spatStatesTextButtn = nullptr;
+    statesTextButton = nullptr;
     mainInfoLabel = nullptr;
     scenesTextButton = nullptr;
     hardwareConfTextButton = nullptr;
@@ -151,11 +155,11 @@ void MainBackgroundComponent::resized()
     //[/UserPreResize]
 
     speakersTextButton->setBounds (8 + 64, 8, 8, 24);
-    spatStatesTextButtn->setBounds ((8 + 64) + 8, 8, 112, 24);
+    statesTextButton->setBounds ((8 + 64) + 8, 8, 120, 24);
     mainInfoLabel->setBounds (getWidth() - 8 - (getWidth() - 456), 8, getWidth() - 456, 24);
-    scenesTextButton->setBounds (((8 + 64) + 8) + 112, 8, 112, 24);
-    hardwareConfTextButton->setBounds (((8 + 64) + 8) + 112 - -120, 8, 112, 24);
-    startTextButton->setBounds ((((8 + 64) + 8) + 112 - -120) + 112 - -16, 8, 8, 24);
+    scenesTextButton->setBounds (((8 + 64) + 8) + 120, 8, 120, 24);
+    hardwareConfTextButton->setBounds (((8 + 64) + 8) + 120 - -128, 8, 112, 24);
+    startTextButton->setBounds ((((8 + 64) + 8) + 120 - -128) + 112 - -16, 8, 8, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -165,7 +169,7 @@ void MainBackgroundComponent::buttonClicked (Button* buttonThatWasClicked)
     //[UserbuttonClicked_Pre]
 
     // Button click retransmitted to the view
-    miamView->ButtonClicked(buttonThatWasClicked->getName());
+    view->ButtonClicked(buttonThatWasClicked->getName());
 
     //[/UserbuttonClicked_Pre]
 
@@ -174,10 +178,10 @@ void MainBackgroundComponent::buttonClicked (Button* buttonThatWasClicked)
         //[UserButtonCode_speakersTextButton] -- add your button handler code here..
         //[/UserButtonCode_speakersTextButton]
     }
-    else if (buttonThatWasClicked == spatStatesTextButtn)
+    else if (buttonThatWasClicked == statesTextButton)
     {
-        //[UserButtonCode_spatStatesTextButtn] -- add your button handler code here..
-        //[/UserButtonCode_spatStatesTextButtn]
+        //[UserButtonCode_statesTextButton] -- add your button handler code here..
+        //[/UserButtonCode_statesTextButton]
     }
     else if (buttonThatWasClicked == scenesTextButton)
     {
@@ -198,6 +202,27 @@ void MainBackgroundComponent::buttonClicked (Button* buttonThatWasClicked)
 
     //[UserbuttonClicked_Post]
     //[/UserbuttonClicked_Post]
+}
+
+void MainBackgroundComponent::visibilityChanged()
+{
+    //[UserCode_visibilityChanged] -- Add your code here...
+    switch(view->GetSessionPurpose())
+    {
+        case AppPurpose::Spatialisation :
+            scenesTextButton->setButtonText(spatScenesText);
+            statesTextButton->setButtonText(spatStatesText);
+            break;
+
+        case AppPurpose::GenericController :
+            scenesTextButton->setButtonText(genericScenesText);
+            statesTextButton->setButtonText(genericStatesText);
+            break;
+
+        default :
+            break;
+    }
+    //[/UserCode_visibilityChanged]
 }
 
 
@@ -238,29 +263,31 @@ BEGIN_JUCER_METADATA
                  variableInitialisers="clearLabelTimer(currentDisplayedInfoPriority)"
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="1" initialWidth="1024" initialHeight="600">
+  <METHODS>
+    <METHOD name="visibilityChanged()"/>
+  </METHODS>
   <BACKGROUND backgroundColour="ff707070"/>
   <TEXTBUTTON name="Speakers text button" id="2752e5f61c280c43" memberName="speakersTextButton"
               virtualName="" explicitFocusOrder="0" pos="0R 8 8 24" posRelativeX="dcc32a783566df37"
               bgColOff="55ffffff" bgColOn="ffffffff" textCol="ff000000" buttonText="Speakers"
               connectedEdges="2" needsCallback="1" radioGroupId="0"/>
-  <TEXTBUTTON name="Spatialization States text button" id="8bdb167a1cca5b0b"
-              memberName="spatStatesTextButtn" virtualName="" explicitFocusOrder="0"
-              pos="0R 8 112 24" posRelativeX="2752e5f61c280c43" bgColOff="ffbfbfbf"
-              bgColOn="ffffffff" textCol="ff000000" buttonText="Routing Matrices"
+  <TEXTBUTTON name="States text button" id="8bdb167a1cca5b0b" memberName="statesTextButton"
+              virtualName="" explicitFocusOrder="0" pos="0R 8 120 24" posRelativeX="2752e5f61c280c43"
+              bgColOff="ffbfbfbf" bgColOn="ffffffff" textCol="ff000000" buttonText="Control States"
               connectedEdges="2" needsCallback="1" radioGroupId="0"/>
   <LABEL name="Main info label" id="d52b689341b86690" memberName="mainInfoLabel"
          virtualName="" explicitFocusOrder="0" pos="8Rr 8 456M 24" bkgCol="56ffffff"
          outlineCol="84ffffff" edTextCol="ff000000" edBkgCol="0" labelText="..."
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
-         justification="34"/>
+         fontname="Default font" fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
+         bold="0" italic="0" justification="34"/>
   <TEXTBUTTON name="Scenes text button" id="9994cb0e99bfd3ca" memberName="scenesTextButton"
-              virtualName="" explicitFocusOrder="0" pos="0R 8 112 24" posRelativeX="8bdb167a1cca5b0b"
-              bgColOff="ffbfbfbf" bgColOn="ffffffff" textCol="ff000000" buttonText="Spat Scenes"
+              virtualName="" explicitFocusOrder="0" pos="0R 8 120 24" posRelativeX="8bdb167a1cca5b0b"
+              bgColOff="ffbfbfbf" bgColOn="ffffffff" textCol="ff000000" buttonText="Geometric Scenes"
               connectedEdges="1" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Hardware Configuration text button" id="1dad683cba944341"
               memberName="hardwareConfTextButton" virtualName="" explicitFocusOrder="0"
-              pos="-120R 8 112 24" posRelativeX="8bdb167a1cca5b0b" bgColOff="ffbfbfbf"
+              pos="-128R 8 112 24" posRelativeX="8bdb167a1cca5b0b" bgColOff="ffbfbfbf"
               bgColOn="ffffffff" textCol="ff000000" buttonText="Configuration"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Start text button" id="cecb4b1d1a8f7c2d" memberName="startTextButton"

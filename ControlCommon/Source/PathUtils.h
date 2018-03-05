@@ -31,6 +31,10 @@ namespace Miam
         /// \brief Retourne l'extension associée au type demandé, sans le '.' avant l'extension.
         static std::string GetSessionFileExtension(AppPurpose appType);
         
+        /// \brief Retourne si le fichier passé en paramètre a une extension qui correspond
+        /// bien au type de session précisé en paramètre, ou non.
+        static bool CheckForExtensionAndPurposeCoherence(std::string filename, AppPurpose sessionPurpose);
+        
         /// \brief Génère une chaîne de caractère formatée pour les juce::FileChooser
         ///
         /// Les séparateurs sont des ';', et les extensions demandées sont précisées avec le '.'

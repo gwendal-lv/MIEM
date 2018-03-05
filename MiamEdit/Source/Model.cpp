@@ -31,7 +31,9 @@ using namespace Miam;
 Model::Model(Presenter* presenter_)
 :
     ControlModel(presenter_),
-presenter(presenter_)
+
+presenter(presenter_),
+sessionPurpose(AppPurpose::None)
 {
     // Après construction des classes parentes : référencement aux autres modules
     presenter->CompleteInitialisation(this);

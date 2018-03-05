@@ -14,6 +14,8 @@
 #include "StatesInterpolator.hpp"
 #include "ControlMatrix.hpp"
 
+#include "AppPurpose.h"
+
 namespace Miam
 {
     // forward declarations
@@ -44,6 +46,7 @@ namespace Miam
         public :
         
         InterpolationType GetInterpolationType() {return spatInterpolator->GetType();}
+        AppPurpose GetSessionPurpose();
     private :
         void selectSpatState(std::shared_ptr<ControlState<double>> _controlState);
     public :

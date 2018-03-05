@@ -7,12 +7,12 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.2.0
+  Created with Projucer version: 5.2.1
 
   ------------------------------------------------------------------------------
 
-  The Projucer is part of the JUCE library - "Jules' Utility Class Extensions"
-  Copyright (c) 2015 - ROLI Ltd.
+  The Projucer is part of the JUCE library.
+  Copyright (c) 2017 - ROLI Ltd.
 
   ==============================================================================
 */
@@ -93,6 +93,7 @@ public:
     void resized() override;
     void buttonClicked (Button* buttonThatWasClicked) override;
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
+    void visibilityChanged() override;
 
 
 
@@ -107,12 +108,18 @@ private:
     int outputsCount = 0;
     // The last matrix coming from the Model
     std::shared_ptr<ControlMatrix> spatMatrix;
+    
+    String spatStatesListText;
+    String spatStateEditorText;
+    String genericStatesListText;
+    String genericStateEditorText;
+    
     //[/UserVariables]
 
     //==============================================================================
     ScopedPointer<GroupComponent> stateEditorGroupComponent;
     ScopedPointer<Miam::LabelledMatrixComponent> labelledMatrixComponent;
-    ScopedPointer<GroupComponent> spatStateGroupComponent;
+    ScopedPointer<GroupComponent> statesListGroupComponent;
     ScopedPointer<TextButton> addSpatStateTextButton;
     ScopedPointer<TextButton> deleteSpatStateTextButton;
     ScopedPointer<TextButton> stateUpTextButton;

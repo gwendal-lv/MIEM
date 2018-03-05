@@ -81,6 +81,7 @@ void MainContentComponent::SetMiamView(Miam::View* _view)
 void MainContentComponent::ChangeAppMode(AppMode newAppMode)
 {
     // Firstly, we hide everything
+    mainBackgroundComponent->setVisible(false);
     for (size_t i=0 ; i<secondLevelComponents.size() ; i++)
     {
         secondLevelComponents[i]->setVisible(false);

@@ -7,12 +7,12 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.2.0
+  Created with Projucer version: 5.2.1
 
   ------------------------------------------------------------------------------
 
-  The Projucer is part of the JUCE library - "Jules' Utility Class Extensions"
-  Copyright (c) 2015 - ROLI Ltd.
+  The Projucer is part of the JUCE library.
+  Copyright (c) 2017 - ROLI Ltd.
 
   ==============================================================================
 */
@@ -27,6 +27,7 @@
 #include "FileMenu.h"
 #include "ClearLabelTimer.h"
 
+#include "AppPurpose.h"
 
 namespace Miam {
 
@@ -64,33 +65,40 @@ public:
 
 
     // SETTERS and GETTERS
-    void setMiamView(Miam::View* _miamView) {miamView = _miamView;}
+    void setMiamView(Miam::View* _miamView) {view = _miamView;}
 
     // Orders from Presenter
     void DisplayInfo(const String& message, int priority = 0);
-
     //[/UserMethods]
 
     void paint (Graphics& g) override;
     void resized() override;
     void buttonClicked (Button* buttonThatWasClicked) override;
+    void visibilityChanged() override;
 
 
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
 
-    View *miamView;
+    View *view;
     std::unique_ptr<FileMenu> fileMenu;
 
     int currentDisplayedInfoPriority;
     Miam::ClearLabelTimer clearLabelTimer;
 
+    // par défaut : texte générique
+    // on crée le texte de spat dans le constructeur
+    String spatScenesText;
+    String genericScenesText;
+    String spatStatesText;
+    String genericStatesText;
+
     //[/UserVariables]
 
     //==============================================================================
     ScopedPointer<TextButton> speakersTextButton;
-    ScopedPointer<TextButton> spatStatesTextButtn;
+    ScopedPointer<TextButton> statesTextButton;
     ScopedPointer<Label> mainInfoLabel;
     ScopedPointer<TextButton> scenesTextButton;
     ScopedPointer<TextButton> hardwareConfTextButton;

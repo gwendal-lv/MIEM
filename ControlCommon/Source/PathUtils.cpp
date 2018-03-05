@@ -36,6 +36,16 @@ std::string PathUtils::GetSessionFileExtension(AppPurpose appType)
     }
 }
 
+
+bool PathUtils::CheckForExtensionAndPurposeCoherence(std::string filename, AppPurpose sessionPurpose)
+{
+    auto lastDotPos = filename.find_last_of(".");
+    std::string extension = filename.substr(lastDotPos + 1); // sans le point
+    
+    return (GetSessionFileExtension(sessionPurpose) == extension);
+}
+
+
 std::string PathUtils::GenerateAllowedFilePatterns(std::initializer_list<AppPurpose> appTypeArgs,
                                                    bool includeStarInPattern,
                                                    std::string separator)

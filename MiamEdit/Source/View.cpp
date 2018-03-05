@@ -46,12 +46,26 @@ void View::CompleteInitialization(Presenter* _presenter)
 
 
 
+
+// ========== Setters and Getters ==========
+
+AppPurpose View::GetSessionPurpose()
+{
+    return presenter->GetSessionPurpose();
+}
+
+
+
+
+
+// ========== METHODS ==========
+
 void View::ButtonClicked(const String& name)
 {    
     AppMode answeredAppMode = AppMode::Null;
     if (name == "Speakers text button")
         answeredAppMode = presenter->appModeChangeRequest(AppMode::EditSpeakers);
-    else if (name == "Spatialization States text button")
+    else if (name == "States text button")
         answeredAppMode = presenter->appModeChangeRequest(AppMode::EditSpatStates);
     else if (name == "Scenes text button")
         answeredAppMode = presenter->appModeChangeRequest(AppMode::EditSpatScenes);
@@ -75,6 +89,12 @@ void View::DisplayInfo(const std::string& message, int priority, bool alsoDispla
         displayInfoInNewWindow(message);
 #endif
 }
+
+void View::SetTitle(std::string title)
+{
+    ControlView::SetTitle(title + " [" + App::GetPurposeName(presenter->GetSessionPurpose()) + " Session]");
+}
+
 void View::displayInfoInNewWindow(const std::string& message)
 {
     // Code pompé à mort depuis la démo Juce

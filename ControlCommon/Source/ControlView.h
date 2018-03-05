@@ -34,7 +34,9 @@ namespace Miam
         mainWindow(mainWindow_)
         {}
         
-        void SetTitle(std::string title);
+        virtual ~ControlView() {}
+        
+        virtual void SetTitle(std::string title);
         
     };
 }

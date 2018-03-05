@@ -14,6 +14,7 @@
 #include "View.h"
 
 #include "TextUtils.h"
+#include "PathUtils.h"
 
 #include "JuceHeader.h"
 
@@ -28,7 +29,7 @@ using namespace Miam;
 
 
 // - - - - - Contruction and Destruction - - - - -
-AppPurpose App::appPurpose = AppPurpose::Spatialisation;
+AppPurpose App::appPurpose = AppPurpose::Multi;
 
 Presenter::Presenter(View* _view) :
     ControlPresenter(_view),
@@ -166,6 +167,19 @@ void Presenter::Update()
 
 
 
+
+// = = = = = = = = = = Setters and Getters  = = = = = = = = = =
+
+AppPurpose Presenter::GetSessionPurpose() const
+{
+    return model->GetSessionPurpose();
+}
+
+
+
+
+
+
 // = = = = = = = = = = XML import/export  = = = = = = = = = =
 
 
@@ -176,7 +190,18 @@ void Presenter::LoadSession(std::string filename)
     // déclenche de vraies actualisations
     appModeChangeRequest(AppMode::Loading);
     
+    
     try {
+        // Chargement des données dépendant du type de session
+        if (PathUtils::CheckForExtensionAndPurposeCoherence(filename, AppPurpose::Spatialisation))
+            model->setSessionPurpose(AppPurpose::Spatialisation);
+        else if (PathUtils::CheckForExtensionAndPurposeCoherence(filename, AppPurpose::GenericController))
+            model->setSessionPurpose(AppPurpose::GenericController);
+        else
+            throw XmlReadException("Session type is unknown. Should be either 'Spatialisation' or 'Generic Controller'");
+        
+        
+        // Chargement des données communes à toute session de contrôle
         ControlPresenter::LoadSession(filename);
     }
     catch (XmlReadException& e)
@@ -208,15 +233,19 @@ void Presenter::SaveSession(std::string filename, bool forceDataRefresh)
         view->DisplayInfo(e.what(), 50, true); // haute priorité, et dans nouvelle fenêtre
     }
 }
-void Presenter::CreateSession(std::string filename, bool isEmpty)
+void Presenter::CreateSession(std::string filename, AppPurpose sessionPurpose, bool isEmpty)
 {
     if (!isEmpty)
-        throw std::logic_error("Not implemented.");
+        throw std::logic_error("Not implemented. On peut ne peut créer que des session vides pour l'instant.");
     
     // ATTENTION : IL FAUDRAIT TOUT SUPPRIMER AVANT DE RE-CRÉER UNE SESSION
     // ATTENTION : IL FAUDRAIT TOUT SUPPRIMER AVANT DE RE-CRÉER UNE SESSION
     // ATTENTION : IL FAUDRAIT TOUT SUPPRIMER AVANT DE RE-CRÉER UNE SESSION
     // ATTENTION : IL FAUDRAIT TOUT SUPPRIMER AVANT DE RE-CRÉER UNE SESSION
+    
+    // Initialisation du type de session dans le modèle
+    assert( PathUtils::CheckForExtensionAndPurposeCoherence(filename, sessionPurpose) );
+    model->setSessionPurpose(sessionPurpose);
     
     // On force l'update (de la session forcément vide, car c'est mal fout pour l'instant...)
     // Pour l'instant on ne peut faire ça que depuis l'écran de démarrage

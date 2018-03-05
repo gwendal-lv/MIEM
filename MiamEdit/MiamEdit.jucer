@@ -34,6 +34,12 @@
       </GROUP>
       <GROUP id="{F6BB049F-E535-45AB-5A0C-454B64DE18EA}" name="View">
         <GROUP id="{EC5E55BB-07A7-BF56-A7EA-A7410AC9FE64}" name="Components">
+          <GROUP id="{79AA34EC-0702-155B-A1CB-F0D8EB287BCB}" name="Obsolete">
+            <FILE id="iN2TGI" name="SpatStateFadersDisplayComponent.cpp" compile="1"
+                  resource="0" file="Source/SpatStateFadersDisplayComponent.cpp"/>
+            <FILE id="VPCSMO" name="SpatStateFadersDisplayComponent.h" compile="0"
+                  resource="0" file="Source/SpatStateFadersDisplayComponent.h"/>
+          </GROUP>
           <FILE id="WzOuAs" name="HardwareConfigurationComponent.cpp" compile="1"
                 resource="0" file="Source/HardwareConfigurationComponent.cpp"/>
           <FILE id="UXk0vx" name="HardwareConfigurationComponent.h" compile="0"
@@ -46,10 +52,6 @@
                 file="Source/SceneEditionComponent.cpp"/>
           <FILE id="m7w8e5" name="SceneEditionComponent.h" compile="0" resource="0"
                 file="Source/SceneEditionComponent.h"/>
-          <FILE id="iN2TGI" name="SpatStateFadersDisplayComponent.cpp" compile="1"
-                resource="0" file="Source/SpatStateFadersDisplayComponent.cpp"/>
-          <FILE id="VPCSMO" name="SpatStateFadersDisplayComponent.h" compile="0"
-                resource="0" file="Source/SpatStateFadersDisplayComponent.h"/>
           <FILE id="v95oCh" name="SpatStatesEditionComponent.cpp" compile="1"
                 resource="0" file="Source/SpatStatesEditionComponent.cpp"/>
           <FILE id="OrbxdO" name="SpatStatesEditionComponent.h" compile="0" resource="0"

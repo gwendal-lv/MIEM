@@ -16,6 +16,7 @@
 
 #include "ControlModel.h"
 
+#include "AppPurpose.h"
 
 
 namespace Miam
@@ -28,17 +29,27 @@ namespace Miam
     /// \brief
     class Model : public ControlModel
     {
+        friend class Presenter;
         
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
         private :
         Presenter* presenter;
+        
+        // va pouvoir varier selon la session actuellement chargée
+        AppPurpose sessionPurpose;
+        
         protected :
         
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
-
+        AppPurpose GetSessionPurpose() {return sessionPurpose; }
+        
+        private :
+        // Privé, accessible via le presenter ami
+        void setSessionPurpose(AppPurpose sessionPurpose_)
+        { sessionPurpose = sessionPurpose_; }
         
         
         // = = = = = = = = = = METHODS = = = = = = = = = =

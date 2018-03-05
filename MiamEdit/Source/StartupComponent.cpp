@@ -7,18 +7,20 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.2.0
+  Created with Projucer version: 5.2.1
 
   ------------------------------------------------------------------------------
 
-  The Projucer is part of the JUCE library - "Jules' Utility Class Extensions"
-  Copyright (c) 2015 - ROLI Ltd.
+  The Projucer is part of the JUCE library.
+  Copyright (c) 2017 - ROLI Ltd.
 
   ==============================================================================
 */
 
 //[Headers] You can add your own extra header files here...
 #include "MiemFileChoosers.h"
+
+#include "AppPurpose.h"
 //[/Headers]
 
 #include "StartupComponent.h"
@@ -43,12 +45,12 @@ StartupComponent::StartupComponent ()
     loadTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     loadTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    addAndMakeVisible (createEmptyTextButton = new TextButton ("Create Empty text button"));
-    createEmptyTextButton->setButtonText (TRANS("Create empty session"));
-    createEmptyTextButton->addListener (this);
-    createEmptyTextButton->setColour (TextButton::buttonColourId, Colour (0xffbfbfbf));
-    createEmptyTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
-    createEmptyTextButton->setColour (TextButton::textColourOffId, Colours::black);
+    addAndMakeVisible (createSpatTextButton = new TextButton ("Create Spat text button"));
+    createSpatTextButton->setButtonText (TRANS("Create new Spat session"));
+    createSpatTextButton->addListener (this);
+    createSpatTextButton->setColour (TextButton::buttonColourId, Colour (0xffbfbfbf));
+    createSpatTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+    createSpatTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
     addAndMakeVisible (createDefaultTextButton = new TextButton ("Create Default text button"));
     createDefaultTextButton->setButtonText (TRANS("Create default session"));
@@ -56,6 +58,13 @@ StartupComponent::StartupComponent ()
     createDefaultTextButton->setColour (TextButton::buttonColourId, Colour (0xffbfbfbf));
     createDefaultTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     createDefaultTextButton->setColour (TextButton::textColourOffId, Colours::black);
+
+    addAndMakeVisible (createGenericTextButton = new TextButton ("Create Empty text button"));
+    createGenericTextButton->setButtonText (TRANS("Create new Generic Controller session"));
+    createGenericTextButton->addListener (this);
+    createGenericTextButton->setColour (TextButton::buttonColourId, Colour (0xffbfbfbf));
+    createGenericTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+    createGenericTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
 
     //[UserPreSize]
@@ -65,10 +74,10 @@ StartupComponent::StartupComponent ()
 
 
     //[Constructor] You can add your own custom stuff here..
-    
+
     //bouton désactivé pour l'instant...
-    createDefaultTextButton->setEnabled(false);
-    
+    createDefaultTextButton->setVisible(false);
+
     //[/Constructor]
 }
 
@@ -78,8 +87,9 @@ StartupComponent::~StartupComponent()
     //[/Destructor_pre]
 
     loadTextButton = nullptr;
-    createEmptyTextButton = nullptr;
+    createSpatTextButton = nullptr;
     createDefaultTextButton = nullptr;
+    createGenericTextButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -103,9 +113,10 @@ void StartupComponent::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    loadTextButton->setBounds ((getWidth() / 2) - (168 / 2), (getHeight() / 2) + -48, 168, 24);
-    createEmptyTextButton->setBounds ((getWidth() / 2) - (168 / 2), (getHeight() / 2), 168, 24);
-    createDefaultTextButton->setBounds ((getWidth() / 2) - (168 / 2), (getHeight() / 2) + 28, 168, 24);
+    loadTextButton->setBounds ((getWidth() / 2) - (168 / 2), (getHeight() / 2) + -96, 168, 36);
+    createSpatTextButton->setBounds ((getWidth() / 2) + -12 - 168, (getHeight() / 2), 168, 36);
+    createDefaultTextButton->setBounds ((getWidth() / 2) - (168 / 2), (getHeight() / 2) + 60, 168, 24);
+    createGenericTextButton->setBounds ((getWidth() / 2) + 12, (getHeight() / 2), 168, 36);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -135,31 +146,36 @@ void StartupComponent::buttonClicked (Button* buttonThatWasClicked)
         }
         //[/UserButtonCode_loadTextButton]
     }
-    else if (buttonThatWasClicked == createEmptyTextButton)
+    else if (buttonThatWasClicked == createSpatTextButton)
     {
-        //[UserButtonCode_createEmptyTextButton] -- add your button handler code here..
-        // CHANGER LE PURPOSE DU SELECTEUR DE FICHIER
-        // CHANGER LE PURPOSE DU SELECTEUR DE FICHIER
-        // CHANGER LE PURPOSE DU SELECTEUR DE FICHIER
-        // CHANGER LE PURPOSE DU SELECTEUR DE FICHIER
-        // CHANGER LE PURPOSE DU SELECTEUR DE FICHIER
-        SaveFileChooser fileChooser({App::GetPurpose()});
-        // CHANGER LE PURPOSE DU SELECTEUR DE FICHIER
-        // CHANGER LE PURPOSE DU SELECTEUR DE FICHIER
-        // CHANGER LE PURPOSE DU SELECTEUR DE FICHIER
-        // CHANGER LE PURPOSE DU SELECTEUR DE FICHIER
-        // CHANGER LE PURPOSE DU SELECTEUR DE FICHIER
+        //[UserButtonCode_createSpatTextButton] -- add your button handler code here..
+        SaveFileChooser fileChooser({AppPurpose::Spatialisation});
         if ( fileChooser.browseForFileToSave(true) )
         {
             File resultFile = fileChooser.getResult();
-            presenter->CreateSession(resultFile.getFullPathName().toStdString(), true);
+            presenter->CreateSession(resultFile.getFullPathName().toStdString(),
+                                     AppPurpose::Spatialisation,
+                                     true); // yes, is empty
         }
-        //[/UserButtonCode_createEmptyTextButton]
+        //[/UserButtonCode_createSpatTextButton]
     }
     else if (buttonThatWasClicked == createDefaultTextButton)
     {
         //[UserButtonCode_createDefaultTextButton] -- add your button handler code here..
         //[/UserButtonCode_createDefaultTextButton]
+    }
+    else if (buttonThatWasClicked == createGenericTextButton)
+    {
+        //[UserButtonCode_createGenericTextButton] -- add your button handler code here..
+        SaveFileChooser fileChooser({AppPurpose::GenericController});
+        if ( fileChooser.browseForFileToSave(true) )
+        {
+            File resultFile = fileChooser.getResult();
+            presenter->CreateSession(resultFile.getFullPathName().toStdString(),
+                                     AppPurpose::GenericController,
+                                     true); // yes, is empty
+        }
+        //[/UserButtonCode_createGenericTextButton]
     }
 
     //[UserbuttonClicked_Post]
@@ -187,16 +203,20 @@ BEGIN_JUCER_METADATA
                  fixedSize="0" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="ff707070"/>
   <TEXTBUTTON name="Load text button" id="dcc32a783566df37" memberName="loadTextButton"
-              virtualName="" explicitFocusOrder="0" pos="0Cc -48C 168 24" bgColOff="ffbfbfbf"
+              virtualName="" explicitFocusOrder="0" pos="0Cc -96C 168 36" bgColOff="ffbfbfbf"
               bgColOn="ffffffff" textCol="ff000000" buttonText="Load existing session"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
-  <TEXTBUTTON name="Create Empty text button" id="714ffb446833c5ce" memberName="createEmptyTextButton"
-              virtualName="" explicitFocusOrder="0" pos="0Cc 0C 168 24" bgColOff="ffbfbfbf"
-              bgColOn="ffffffff" textCol="ff000000" buttonText="Create empty session"
+  <TEXTBUTTON name="Create Spat text button" id="714ffb446833c5ce" memberName="createSpatTextButton"
+              virtualName="" explicitFocusOrder="0" pos="-12Cr 0C 168 36" bgColOff="ffbfbfbf"
+              bgColOn="ffffffff" textCol="ff000000" buttonText="Create new Spat session"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Create Default text button" id="ac4f9aa6f5974fbc" memberName="createDefaultTextButton"
-              virtualName="" explicitFocusOrder="0" pos="0Cc 28C 168 24" bgColOff="ffbfbfbf"
+              virtualName="" explicitFocusOrder="0" pos="0Cc 60C 168 24" bgColOff="ffbfbfbf"
               bgColOn="ffffffff" textCol="ff000000" buttonText="Create default session"
+              connectedEdges="0" needsCallback="1" radioGroupId="0"/>
+  <TEXTBUTTON name="Create Empty text button" id="fb033c6855f61992" memberName="createGenericTextButton"
+              virtualName="" explicitFocusOrder="0" pos="12C 0C 168 36" bgColOff="ffbfbfbf"
+              bgColOn="ffffffff" textCol="ff000000" buttonText="Create new Generic Controller session"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>
 
