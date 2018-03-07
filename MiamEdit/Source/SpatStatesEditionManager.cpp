@@ -87,8 +87,9 @@ void SpatStatesEditionManager::OnEnterSpatStatesEdition()
 }
 std::shared_ptr<bptree::ptree> SpatStatesEditionManager::OnLeaveSpatStatesEdition()
 {
-    // Actualisation depuis l'affichage graphique
+    // Transfert des données depuis l'affichage graphique vers le modèle
     sendDataToModel(editionComponent->GetDisplayedSpatMatrix());
+    editionComponent->GetLabelledMatrix()->GetChannelsName();
     
     // Update now to the editionComponent
     selectSpatState(selectedSpatState);
@@ -96,7 +97,10 @@ std::shared_ptr<bptree::ptree> SpatStatesEditionManager::OnLeaveSpatStatesEditio
     // Save to XML (Presenter does it)
     return GetTree();
 }
-
+void SpatStatesEditionManager::OnInOutNamesDisplayedChanged(bool areInputNamesVisible, bool areOutputNamesVisible)
+{
+    editionComponent->SetInOutNamesDisplayed(areInputNamesVisible, areOutputNamesVisible);
+}
 
 // = = = = = = = = = = EVENTS from VIEW = = = = = = = = = =
 

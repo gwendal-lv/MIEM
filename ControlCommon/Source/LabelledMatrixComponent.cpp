@@ -23,6 +23,8 @@
 #include "JuceHeader.h"
 
 #include <algorithm>
+
+#include "MiamMath.h"
 //[/Headers]
 
 #include "LabelledMatrixComponent.h"
@@ -42,6 +44,11 @@ LabelledMatrixComponent::LabelledMatrixComponent (ISlidersMatrixListener* _liste
     listener = _listener;
     maxRowsCount = _maxRowsCount;
     maxColsCount = _maxColsCount;
+    
+    showInputsNames = true;
+    showOutputsNames = true;
+    showInputsNumbers = true;
+    showOutputsNumbers = true;
     //[/Constructor_pre]
 
     addAndMakeVisible (matrixViewport = new Miam::MatrixViewport (this, maxRowsCount, maxColsCount));
@@ -106,6 +113,17 @@ void LabelledMatrixComponent::resized()
     inputsOutputsLabel->setBounds (0, getHeight() - 40, 80, 40);
     //[UserResized] Add your own custom resize handling here..
 
+    // On va re-replacer les objets placés juste au-dessus... selon qu'on ait des labels
+    // des noms des sorties, ou non
+    auto matrixViewportBounds = matrixViewport->getBounds();
+    const int maxWidthToRemove = std::min(getWidth()/2 - 120, 320);
+    const int maxHeightToRemove = std::min(getHeight()/2 - 40, 360);
+    if (showInputsNames)
+        matrixViewportBounds.removeFromLeft(maxWidthToRemove);
+    if (showOutputsNames)
+        matrixViewportBounds.removeFromBottom(maxHeightToRemove);
+    matrixViewport->setBounds(matrixViewportBounds);
+    
     repositionLabels();
 
     //[/UserResized]
@@ -182,9 +200,20 @@ void LabelledMatrixComponent::mouseDown (const MouseEvent& e)
 
 void LabelledMatrixComponent::ReconstructGuiObjects()
 {
+    // Suppression des objets temporaires et des références
+    highlightedInputLabel = nullptr;
+    highlightedOutputLabel = nullptr;
+    
+    // Mise en visible des objets qui conviennent
+    inputsOutputsLabel->setVisible(showInputsNumbers);
+    
     // Pre-allocations for vector of scoped pointers
     labels.clear();
     labels.resize(maxColsCount+maxRowsCount);
+    inputNameTextEditors.clear();
+    inputNameTextEditors.resize(maxRowsCount);
+    outputNameTextEditors.clear();
+    outputNameTextEditors.resize(maxColsCount);
 
     // Actual creation of sliders and labels
     for (int i=0 ; i<(int)maxRowsCount ; i++)
@@ -192,12 +221,19 @@ void LabelledMatrixComponent::ReconstructGuiObjects()
         // Label on each row
         labels[i] = new Label("Input label " + boost::lexical_cast<std::string>(i), "" + boost::lexical_cast<std::string>(i+1));
         initAndAddLabel(labels[i]);
+        inputNameTextEditors[i] = new TextEditor("Input Name text editor " + boost::lexical_cast<std::string>(i));
+        inputNameTextEditors[i]->setText("/miem/pacarana/param/" + boost::lexical_cast<std::string>(i));
+        initAndAddNameTextEditor(inputNameTextEditors[i], false); // horizontal
     }
     for (int j=0 ; j<(int)maxColsCount ; j++)
     {
         // Column labels
-        labels[maxRowsCount+j] = new Label("Output label " + boost::lexical_cast<std::string>(j), "" + boost::lexical_cast<std::string>(j+1));
+        labels[maxRowsCount+j] = new Label("Output label " + boost::lexical_cast<std::string>(j),
+                                           "" + boost::lexical_cast<std::string>(j+1));
         initAndAddLabel(labels[maxRowsCount+j]);
+        outputNameTextEditors[j] = new TextEditor("Output Name text editor " + boost::lexical_cast<std::string>(j));
+        outputNameTextEditors[j]->setText("/control/data/" + boost::lexical_cast<std::string>(j));
+        initAndAddNameTextEditor(outputNameTextEditors[j], true); // vertical
     }
 
     // Graphical placement
@@ -210,6 +246,18 @@ void LabelledMatrixComponent::initAndAddLabel(Label* label)
     label->setJustificationType(Justification::horizontallyCentred | Justification::verticallyCentred);
     addAndMakeVisible(label);
     label->toBack();
+}
+void LabelledMatrixComponent::initAndAddNameTextEditor(TextEditor* textEditor, bool isVertical)
+{
+    if (isVertical) // police avec + d'espacement
+        textEditor->applyFontToAllText(Font().withExtraKerningFactor(0.10f));
+    else
+        textEditor->applyFontToAllText(Font().withExtraKerningFactor(0.05f));
+    
+    addAndMakeVisible(textEditor);
+    textEditor->setMultiLine(false);
+    textEditor->setJustification(Justification(Justification::Flags::horizontallyCentred
+                                          | Justification::Flags::verticallyCentred));
 }
 void LabelledMatrixComponent::repositionLabels()
 {
@@ -226,11 +274,81 @@ void LabelledMatrixComponent::repositionLabels()
     {
         // Label on each row
         labels[i]->setBounds(0, i*matItemH - matrixDeltaY, inLabelsW, matItemH);
+        // On dessine les text editors d'entrée, si besoin
+        if (showInputsNames)
+        {
+            inputNameTextEditors[i]->setBounds(inLabelsW, i*matItemH - matrixDeltaY,
+                                               getWidth() - inLabelsW - matrixViewport->getWidth(),
+                                               matItemH);
+        }
+        else
+            inputNameTextEditors[i]->setVisible(false);
+        // On désactive les composants correspondant à des entrées désactivées
+        if (i >= getN())
+        {
+            inputNameTextEditors[i]->setEnabled(false);
+            labels[i]->setEnabled(false);
+        }
+        else
+        {
+            inputNameTextEditors[i]->setEnabled(true);
+            labels[i]->setEnabled(true);
+        }
+        // On cache les éléments d'entrée plus bas que le viewport
+        if (labels[i]->getBottom() > (matrixViewport->getBottom() + 8))
+        {
+            labels[i]->setVisible(false);
+            inputNameTextEditors[i]->setVisible(false);
+        }
+        else
+        {
+            labels[i]->setVisible(true);
+            if (showInputsNames)
+                inputNameTextEditors[i]->setVisible(true);
+        }
     }
     for (int j=0 ; j<(int)maxColsCount ; j++)
     {
-        // Column labels
-        labels[maxRowsCount+j]->setBounds(inLabelsW+j*matItemW - matrixDeltaX, inOutLabelY, matItemW, outLabelsH);
+        // Column labels : numbers
+        labels[maxRowsCount+j]->setBounds(matrixViewport->getX() + j*matItemW - matrixDeltaX,
+                                          inOutLabelY,
+                                          matItemW, outLabelsH);
+        // Les noms si besoin : juste en dessous du viewport
+        if (showOutputsNames)
+        {
+            // transformation -90°. Effet : x' = -y et y = x
+            outputNameTextEditors[j]->setTransform(AffineTransform::rotation(-M_PI_2, 0.0f, 0.0f));
+            const int verticalTextEditorLength = getHeight() - outLabelsH - matrixViewport->getHeight();
+            outputNameTextEditors[j]->setBounds(- matrixViewport->getBottom() - verticalTextEditorLength,
+                                                matrixViewport->getX() + j*matItemW - matrixDeltaX + 6,
+                                                verticalTextEditorLength,
+                                                matItemW - 12);
+        }
+        else
+            outputNameTextEditors[j]->setVisible(false);
+        // On désactive les composants correspondant à des sorties désactivées
+        if (j >= getM())
+        {
+            outputNameTextEditors[j]->setEnabled(false);
+            labels[maxRowsCount + j]->setEnabled(false);
+        }
+        else
+        {
+            outputNameTextEditors[j]->setEnabled(true);
+            labels[maxRowsCount + j]->setEnabled(true);
+        }
+        // Dans tous les cas : on vire les labels qui dépassent
+        if (labels[maxRowsCount + j]->getX() < (matrixViewport->getX() - 12) )
+        {
+            outputNameTextEditors[j]->setVisible(false);
+            labels[maxRowsCount + j]->setVisible(false);
+        }
+        else
+        {
+            labels[maxRowsCount + j]->setVisible(true);
+            if (showOutputsNames)
+                outputNameTextEditors[j]->setVisible(true);
+        }
     }
 }
 void LabelledMatrixComponent::highlightLabel(Label* label)
@@ -280,6 +398,14 @@ void LabelledMatrixComponent::setMatrixToIdentity()
         // each one will notify (not optimized but that's OK)
         GetMatrixComponent()->SetSliderValue(i, i, 0.0, NotificationType::sendNotification);
 }
+size_t LabelledMatrixComponent::getN()
+{
+    return GetMatrixComponent()->GetActiveInputsCount();
+}
+size_t LabelledMatrixComponent::getM()
+{
+    return GetMatrixComponent()->GetActiveOutputsCount();
+}
 
 void LabelledMatrixComponent::OnViewportVisibleAreaChanged()
 {
@@ -290,7 +416,42 @@ MatrixComponent* LabelledMatrixComponent::GetMatrixComponent()
 {
     return matrixViewport->GetMatrixComponent();
 }
-
+void LabelledMatrixComponent::SetInputNamesVisible(bool areVisible)
+{
+    if (showInputsNames != areVisible)
+    {
+        showInputsNames = areVisible;
+        resized();
+    }
+}
+void LabelledMatrixComponent::SetOutputNamesVisible(bool areVisible)
+{
+    if (showOutputsNames != areVisible)
+    {
+        showOutputsNames = areVisible;
+        resized();
+    }
+}
+void LabelledMatrixComponent::SetActiveSliders(int inputsCount, int outputsCount)
+{
+    // On sauvegarde les valeurs dans la matrice seulement....
+    GetMatrixComponent()->SetActiveSliders(inputsCount, outputsCount);
+    
+    ReconstructGuiObjects();
+}
+std::shared_ptr<InOutChannelsName> LabelledMatrixComponent::GetChannelsName()
+{
+    auto channelsName = std::make_shared<InOutChannelsName>();
+    
+    channelsName->InputsName.reserve(maxRowsCount);
+    for (int i=0 ; i<maxRowsCount ; i++)
+        channelsName->InputsName.push_back(inputNameTextEditors[i]->getText().toStdString());
+    channelsName->OutputsName.reserve(maxColsCount);
+    for (int j=0 ; j<maxColsCount ; j++)
+        channelsName->OutputsName.push_back(outputNameTextEditors[j]->getText().toStdString());
+    
+    return channelsName;
+}
 //[/MiscUserCode]
 
 

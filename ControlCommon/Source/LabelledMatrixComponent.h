@@ -21,12 +21,12 @@
 
 //[Headers]     -- You can add your own extra header files here --
 
-// disabled for cross-project usage
-//#include "../../MatrixRouter/JuceLibraryCode/JuceHeader.h"
-
 //#include "MatrixComponent.h"
 
 #include "ISlidersMatrixListener.h"
+#include "AudioUtils.hpp"
+
+#include <memory>
 
 namespace Miam
 {
@@ -63,6 +63,7 @@ public:
 
     private :
     void initAndAddLabel(Label* label);
+    void initAndAddNameTextEditor(TextEditor* label, bool isVertical);
     void repositionLabels();
     void highlightLabel(Label* label);
     void unhighlightLabel(Label* label);
@@ -70,6 +71,11 @@ public:
     void createAndManagePopupMenu();
     void setMatrixToZero();
     void setMatrixToIdentity();
+    
+    // Ces 2 fonctions vont chercher le nombre de lignes (ou colonnes)
+    // vraiment actives. C'est une info dans le matrixcomponent enfant
+    size_t getN();
+    size_t getM();
 
     public :
 
@@ -79,7 +85,14 @@ public:
     void OnSliderValueChanged(int row, int col, double value)
     {listener->OnSliderValueChanged(row, col, value);}
 
+    // - - - - - - Getters and Setters - - - - -
     MatrixComponent* GetMatrixComponent();
+    
+    void SetInputNamesVisible(bool areVisible);
+    void SetOutputNamesVisible(bool areVisible);
+    void SetActiveSliders(int inputsCount, int outputsCount);
+    
+    std::shared_ptr<InOutChannelsName> GetChannelsName();
 
     //[/UserMethods]
 
@@ -106,6 +119,15 @@ private:
     std::vector<ScopedPointer<Label>> labels;
     Label* highlightedInputLabel = 0;
     Label* highlightedOutputLabel = 0;
+    
+    bool showInputsNames;
+    bool showOutputsNames;
+    bool showInputsNumbers;
+    bool showOutputsNumbers;
+    /// labels [0] to [m-1] for outputs' names
+    // Si on voit les noms des sorties leur hauteur est this->getHeight()/2
+    std::vector<ScopedPointer<TextEditor>> inputNameTextEditors;
+    std::vector<ScopedPointer<TextEditor>> outputNameTextEditors;
     //[/UserVariables]
 
     //==============================================================================

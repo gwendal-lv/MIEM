@@ -11,6 +11,8 @@
 #pragma once
 
 #include <cmath>
+#include <vector>
+#include <string>
 
 #include "AudioDefines.h"
 #include "InteractionParameters.h"
@@ -24,6 +26,14 @@ namespace Miam
         T Audio{};
     };
     typedef struct GenericExcitement<double> Excitement;
+    
+    
+    struct InOutChannelsName
+    {
+        public :
+        std::vector<std::string> InputsName;
+        std::vector<std::string> OutputsName;
+    };
     
     
     template<typename T>

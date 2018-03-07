@@ -76,6 +76,7 @@ namespace Miam {
         
         // - - - - - Callbacks from View, retransmitted - - - - -
         void OnInOutChannelsCountChanged(int inputsCount, int outputsCount);
+        void OnInOutNamesDisplayedChanged(bool areInputNamesVisible, bool areOutputNamesVisible);
         void OnUdpPortChanged(int udpPort);
         void OnIpAddressChanged(std::string ipAddress);
         // - - - - - Callbacks from View, concerning Presenter - - - - -

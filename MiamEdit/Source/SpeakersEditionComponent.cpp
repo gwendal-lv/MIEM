@@ -7,12 +7,12 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.2.0
+  Created with Projucer version: 5.2.1
 
   ------------------------------------------------------------------------------
 
-  The Projucer is part of the JUCE library - "Jules' Utility Class Extensions"
-  Copyright (c) 2015 - ROLI Ltd.
+  The Projucer is part of the JUCE library.
+  Copyright (c) 2017 - ROLI Ltd.
 
   ==============================================================================
 */
@@ -112,8 +112,8 @@ BEGIN_JUCER_METADATA
          explicitFocusOrder="0" pos="50.049%c 50%c 157 54" bkgCol="87ffffff"
          edTextCol="ff000000" edBkgCol="0" labelText="&#201;dition des haut-parleurs...&#10;&#199;a va venir !"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15" kerning="0" bold="0" italic="1"
-         justification="36" typefaceStyle="Italic"/>
+         fontname="Default font" fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
+         bold="0" italic="1" justification="36" typefaceStyle="Italic"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

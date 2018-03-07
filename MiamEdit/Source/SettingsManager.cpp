@@ -71,6 +71,15 @@ void SettingsManager::OnInOutChannelsCountChanged(int inputsCount, int outputsCo
     view->GetMainContentComponent()->GetSpatStatesEditionComponent()->SetInsOutsCount(model->GetInterpolator()->GetInputsCount(),
          model->GetInterpolator()->GetOutputsCount());
 }
+void SettingsManager::OnInOutNamesDisplayedChanged(bool areInputNamesVisible, bool areOutputNamesVisible)
+{
+    if (!linksInitialized)
+        return;
+    
+    // View updates only
+    presenter->GetSpatStatesManager()->OnInOutNamesDisplayedChanged(areInputNamesVisible,
+                                                                    areOutputNamesVisible);
+}
 void SettingsManager::OnAllowKeyboardEdition(bool allow)
 {
     presenter->GetSpatStatesManager()->AllowKeyboardEdition(allow);

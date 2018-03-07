@@ -76,6 +76,8 @@ namespace Miam
         public:
         
         // - - - - - Setters and Getters - - - - -
+        size_t GetActiveInputsCount() {return n;}
+        size_t GetActiveOutputsCount() {return m;}
         void SetSliderValue(int row, int col, double newValue, NotificationType juceNotification = NotificationType::dontSendNotification)
         {
             MatrixSlider* slider = sliders[idx(row,col)].get();
@@ -128,7 +130,7 @@ namespace Miam
             }
             
             // Repaint at the very end
-            repaint();
+            //repaint(); // now : done from the grand-parent LabelledMatrixComponent
         }
         void SetSlidersTextBoxesAreEditable(bool shouldBeEditable)
         {

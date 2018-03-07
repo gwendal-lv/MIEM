@@ -117,13 +117,13 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
 
 
     //[Constructor] You can add your own custom stuff here..
-    
+
     // On sauvegarde le texte générique, mais on précise ici le texte pour spat
     genericStatesListText = statesListGroupComponent->getText();
     genericStateEditorText = stateEditorGroupComponent->getText();
     spatStatesListText = TRANS("Spatialization states list");
     spatStateEditorText = TRANS("Routing matrix for selected state");
-    
+
     //[/Constructor]
 }
 
@@ -344,10 +344,10 @@ void SpatStatesEditionComponent::updateMatrix()
     // Graphical attributes
     // if a valid state is selected
     if (spatStatesComboBox->getSelectedItemIndex() >= 0)
-        labelledMatrixComponent->GetMatrixComponent()->SetActiveSliders(inputsCount, outputsCount);
+        labelledMatrixComponent->SetActiveSliders(inputsCount, outputsCount);
     // else : disabled matrix
     else
-        labelledMatrixComponent->GetMatrixComponent()->SetActiveSliders(0,0);
+        labelledMatrixComponent->SetActiveSliders(0,0);
 }
 void SpatStatesEditionComponent::SetInsOutsCount(int _inputsCount, int _outputsCount)
 {
@@ -357,6 +357,11 @@ void SpatStatesEditionComponent::SetInsOutsCount(int _inputsCount, int _outputsC
 
     // Applying of changes
     updateMatrix();
+}
+void SpatStatesEditionComponent::SetInOutNamesDisplayed(bool areInputNamesVisible, bool areOutputNamesVisible)
+{
+    labelledMatrixComponent->SetInputNamesVisible(areInputNamesVisible);
+    labelledMatrixComponent->SetOutputNamesVisible(areOutputNamesVisible);
 }
 std::shared_ptr<ControlMatrix> SpatStatesEditionComponent::GetDisplayedSpatMatrix()
 {

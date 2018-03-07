@@ -51,3 +51,17 @@ void MiamLookAndFeel::drawButtonBackground (Graphics& g, Button& button, const C
     g.setColour (actualBackgroundColour);
     g.fillRoundedRectangle(buttonReduced, cornersSize);
 }
+
+
+void MiamLookAndFeel::fillTextEditorBackground (Graphics & g, int width, int height,
+                                                TextEditor & textEditor)
+{
+    auto textEditorArea = textEditor.getLocalBounds();
+    if (textEditor.isEnabled())
+        g.setColour(Colours::darkgrey);
+    else
+        g.setColour(Colours::grey);
+    g.fillRect(textEditorArea);
+}
+
+

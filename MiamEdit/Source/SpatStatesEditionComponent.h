@@ -83,7 +83,9 @@ public:
 
     public :
     void SetInsOutsCount(int _inputsCount, int _outputsCount);
+    void SetInOutNamesDisplayed(bool areInputNamesVisible, bool areOutputNamesVisible);
     std::shared_ptr<ControlMatrix> GetDisplayedSpatMatrix();
+    LabelledMatrixComponent* GetLabelledMatrix() { return labelledMatrixComponent.get(); }
 
     void AllowKeyboardEdition(bool allow);
 
@@ -108,12 +110,12 @@ private:
     int outputsCount = 0;
     // The last matrix coming from the Model
     std::shared_ptr<ControlMatrix> spatMatrix;
-    
+
     String spatStatesListText;
     String spatStateEditorText;
     String genericStatesListText;
     String genericStateEditorText;
-    
+
     //[/UserVariables]
 
     //==============================================================================

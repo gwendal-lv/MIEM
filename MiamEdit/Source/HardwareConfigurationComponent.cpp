@@ -117,6 +117,16 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
     ipAddressTextEditor->setPopupMenuEnabled (true);
     ipAddressTextEditor->setText (TRANS("127.0.0.1"));
 
+    addAndMakeVisible (inputNamesToggleButton = new ToggleButton ("Input Names toggle button"));
+    inputNamesToggleButton->setButtonText (TRANS("Display input channels names"));
+    inputNamesToggleButton->addListener (this);
+    inputNamesToggleButton->setColour (ToggleButton::textColourId, Colours::black);
+
+    addAndMakeVisible (outputNamesToggleButton = new ToggleButton ("Output Names toggle button"));
+    outputNamesToggleButton->setButtonText (TRANS("Display output channels names"));
+    outputNamesToggleButton->addListener (this);
+    outputNamesToggleButton->setColour (ToggleButton::textColourId, Colours::black);
+
 
     //[UserPreSize]
 
@@ -155,6 +165,8 @@ HardwareConfigurationComponent::~HardwareConfigurationComponent()
     keyboardToggleButton = nullptr;
     ipAddressLabel = nullptr;
     ipAddressTextEditor = nullptr;
+    inputNamesToggleButton = nullptr;
+    outputNamesToggleButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -178,16 +190,18 @@ void HardwareConfigurationComponent::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    inputsCountSlider->setBounds ((getWidth() / 2) + 8, 16, 150, 24);
-    outputsCountSlider->setBounds ((getWidth() / 2) + 8, 48, 150, 24);
-    inputsCountLabel->setBounds ((getWidth() / 2) - 208, 16 + 0, 208, 24);
-    outputsCountLabel->setBounds ((getWidth() / 2) - 208, 48 + 0, 208, 24);
+    inputsCountSlider->setBounds ((getWidth() / 2) + -8 - 150, 16, 150, 24);
+    outputsCountSlider->setBounds ((getWidth() / 2) + -8 - 150, 48, 150, 24);
+    inputsCountLabel->setBounds ((getWidth() / 2) + -156 - 208, 16 + 0, 208, 24);
+    outputsCountLabel->setBounds ((getWidth() / 2) + -156 - 208, 48 + 0, 208, 24);
     oscPluginToggleButton->setBounds ((getWidth() / 2) - (400 / 2), 96, 400, 24);
     udpPortLabel->setBounds ((getWidth() / 2) - 336, 160 + 0, 336, 24);
     udpPortTextEditor->setBounds ((getWidth() / 2) + 8, 160, 64, 24);
     keyboardToggleButton->setBounds ((getWidth() / 2) - (400 / 2), getHeight() - 48, 400, 24);
     ipAddressLabel->setBounds ((getWidth() / 2) - 336, 128 + 0, 336, 24);
     ipAddressTextEditor->setBounds ((getWidth() / 2) + 8, 128, 120, 24);
+    inputNamesToggleButton->setBounds ((getWidth() / 2) + 212 - (400 / 2), 16, 400, 24);
+    outputNamesToggleButton->setBounds ((getWidth() / 2) + 212 - (400 / 2), 48, 400, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -224,6 +238,20 @@ void HardwareConfigurationComponent::buttonClicked (Button* buttonThatWasClicked
         //[UserButtonCode_keyboardToggleButton] -- add your button handler code here..
         settingsManager->OnAllowKeyboardEdition(keyboardToggleButton->getToggleState());
         //[/UserButtonCode_keyboardToggleButton]
+    }
+    else if (buttonThatWasClicked == inputNamesToggleButton)
+    {
+        //[UserButtonCode_inputNamesToggleButton] -- add your button handler code here..
+        settingsManager->OnInOutNamesDisplayedChanged(inputNamesToggleButton->getToggleState(),
+                                                      outputNamesToggleButton->getToggleState());
+        //[/UserButtonCode_inputNamesToggleButton]
+    }
+    else if (buttonThatWasClicked == outputNamesToggleButton)
+    {
+        //[UserButtonCode_outputNamesToggleButton] -- add your button handler code here..
+        settingsManager->OnInOutNamesDisplayedChanged(inputNamesToggleButton->getToggleState(),
+                                                      outputNamesToggleButton->getToggleState());
+        //[/UserButtonCode_outputNamesToggleButton]
     }
 
     //[UserbuttonClicked_Post]
@@ -318,25 +346,25 @@ BEGIN_JUCER_METADATA
   </METHODS>
   <BACKGROUND backgroundColour="ffafafaf"/>
   <SLIDER name="Inputs Count slider" id="77ed5b9e29dce02e" memberName="inputsCountSlider"
-          virtualName="" explicitFocusOrder="0" pos="8C 16 150 24" textboxtext="ff000000"
+          virtualName="" explicitFocusOrder="0" pos="-8Cr 16 150 24" textboxtext="ff000000"
           min="1.00000000000000000000" max="1024.00000000000000000000"
           int="1.00000000000000000000" style="IncDecButtons" textBoxPos="TextBoxLeft"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.00000000000000000000"
           needsCallback="1"/>
   <SLIDER name="Outputs Count slider" id="ca10a4b3f2104985" memberName="outputsCountSlider"
-          virtualName="" explicitFocusOrder="0" pos="8C 48 150 24" textboxtext="ff000000"
+          virtualName="" explicitFocusOrder="0" pos="-8Cr 48 150 24" textboxtext="ff000000"
           min="1.00000000000000000000" max="1024.00000000000000000000"
           int="1.00000000000000000000" style="IncDecButtons" textBoxPos="TextBoxLeft"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.00000000000000000000"
           needsCallback="1"/>
   <LABEL name="Inputs Count label" id="5edb179087fb7973" memberName="inputsCountLabel"
-         virtualName="" explicitFocusOrder="0" pos="0Cr 0 208 24" posRelativeY="77ed5b9e29dce02e"
+         virtualName="" explicitFocusOrder="0" pos="-156Cr 0 208 24" posRelativeY="77ed5b9e29dce02e"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Number of input channels:"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
          bold="0" italic="0" justification="34"/>
   <LABEL name="outputs Count label" id="5b4dd76a50f5f0d4" memberName="outputsCountLabel"
-         virtualName="" explicitFocusOrder="0" pos="0Cr 0 208 24" posRelativeY="ca10a4b3f2104985"
+         virtualName="" explicitFocusOrder="0" pos="-156Cr 0 208 24" posRelativeY="ca10a4b3f2104985"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Number of output channels:"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
@@ -371,6 +399,14 @@ BEGIN_JUCER_METADATA
               virtualName="" explicitFocusOrder="0" pos="8C 128 120 24" initialText="127.0.0.1"
               multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"
               caret="1" popupmenu="1"/>
+  <TOGGLEBUTTON name="Input Names toggle button" id="b7d5b33136328768" memberName="inputNamesToggleButton"
+                virtualName="" explicitFocusOrder="0" pos="212Cc 16 400 24" txtcol="ff000000"
+                buttonText="Display input channels names" connectedEdges="0"
+                needsCallback="1" radioGroupId="0" state="0"/>
+  <TOGGLEBUTTON name="Output Names toggle button" id="ba9f950d6ef902d9" memberName="outputNamesToggleButton"
+                virtualName="" explicitFocusOrder="0" pos="212Cc 48 400 24" txtcol="ff000000"
+                buttonText="Display output channels names" connectedEdges="0"
+                needsCallback="1" radioGroupId="0" state="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

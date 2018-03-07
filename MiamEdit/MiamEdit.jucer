@@ -215,6 +215,7 @@
         </GROUP>
         <GROUP id="{5315337B-6E49-3E8D-A9F7-3A94BE3F4AA8}" name="Audio">
           <FILE id="suhcBm" name="AudioDefines.h" compile="0" resource="0" file="../MiamCommon/Source/AudioDefines.h"/>
+          <FILE id="acbcCT" name="AudioUtils.hpp" compile="0" resource="0" file="../MiamCommon/Source/AudioUtils.hpp"/>
         </GROUP>
         <FILE id="RVYtYM" name="FrequencyMeasurer.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/FrequencyMeasurer.cpp"/>

@@ -87,6 +87,8 @@ private:
     ScopedPointer<ToggleButton> keyboardToggleButton;
     ScopedPointer<Label> ipAddressLabel;
     ScopedPointer<TextEditor> ipAddressTextEditor;
+    ScopedPointer<ToggleButton> inputNamesToggleButton;
+    ScopedPointer<ToggleButton> outputNamesToggleButton;
 
 
     //==============================================================================

@@ -90,6 +90,8 @@ namespace Miam
         /// \brief Data saving (and returning by pointer) before entering
         /// another mode.
         std::shared_ptr<bptree::ptree> OnLeaveSpatStatesEdition();
+        /// \brief Retransmis depuis le Miam::SettingsManager
+        void OnInOutNamesDisplayedChanged(bool areInputNamesVisible, bool areOutputNamesVisible);
         
         // - - - - - Events from View - - - - -
         
@@ -98,6 +100,7 @@ namespace Miam
         void OnSpatStateSelectedById(std::shared_ptr<ControlMatrix> currentMatrix, int _spatStateId);
         /// \brief Called when the displayed text of the combo box has been edited
         void OnRenameState(std::string newName, int stateIndex);
+        
         
         void OnAddState();
         void OnDeleteSelectedState();

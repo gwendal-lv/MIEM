@@ -40,6 +40,8 @@ namespace Miam
         void drawButtonBackground (Graphics& g, Button& button, const Colour& backgroundColour,
                                    bool isMouseOverButton, bool isButtonDown) override;
         
+        // - - - - - - - - - - Méthodes spécifiques aux Text Editors - - - - - - - - - -
+        void fillTextEditorBackground (Graphics &, int width, int height, TextEditor &) override;
         
     };
 }
