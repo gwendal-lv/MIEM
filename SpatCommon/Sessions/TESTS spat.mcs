@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<miam>
+    <settings>
+        <model>
+            <inputs count="0"/>
+            <outputs count="0"/>
+            <senders>
+                <sender type="MiamOsc">
+                    <ip>127.0.0.1</ip>
+                    <udp>
+                        <port>8001</port>
+                    </udp>
+                </sender>
+            </senders>
+        </model>
+        <presenter>
+            <keyboardedition>false</keyboardedition>
+        </presenter>
+    </settings>
+    <spat>
+        <states>
+            <state index="0">
+                <name>Matrix-based generic control state</name>
+                <matrix/>
+            </state>
+        </states>
+    </spat>
+    <graphicsession>
+        <canvases>
+            <canvas index="0">
+                <scenes>
+                    <scene index="0">
+                        <name>[scène vide]</name>
+                        <areas>
+                            <area id="1" type="SpatPolygon" index="0">
+                                <center x="0.351438186351412" y="0.38160882994186046"/>
+                                <colour>ff808080</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <geometry>
+                                    <point index="0" x="0.56498925945287726" y="0.50339194046962799"/>
+                                    <point index="1" x="0.24145479501088568" y="0.54956272634020953"/>
+                                    <point index="2" x="0.14078411524129991" y="0.26200484566035481"/>
+                                    <point index="3" x="0.46142156822543318" y="0.21365492811199055"/>
+                                </geometry>
+                                <spatstate index="-1"/>
+                            </area>
+                            <area id="8" type="SpatPolygon" index="1">
+                                <center x="0.45371538561076602" y="0.53836603682170547"/>
+                                <colour>ff808080</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <geometry>
+                                    <point index="0" x="0.60371539157123055" y="0.53836603682170547"/>
+                                    <point index="1" x="0.52871538114041772" y="0.6599620528114859"/>
+                                    <point index="2" x="0.37871537517995318" y="0.6599620453609053"/>
+                                    <point index="3" x="0.30371537965030154" y="0.5383660245469376"/>
+                                    <point index="4" x="0.37871539753169497" y="0.41677002083192499"/>
+                                    <point index="5" x="0.52871544074506249" y="0.41677005063424738"/>
+                                </geometry>
+                                <spatstate index="-1"/>
+                            </area>
+                            <area id="2" type="Exciter" index="2">
+                                <center x="0.54993206521739324" y="0.69900678294573593"/>
+                                <colour>ffd3d3d3</colour>
+                                <keep_ratio>true</keep_ratio>
+                                <geometry>
+                                    <axes a="0.050000000000000003" b="0.050000000000000003"/>
+                                </geometry>
+                                <is_round>true</is_round>
+                                <is_animation_sync>true</is_animation_sync>
+                            </area>
+                            <area id="3" type="Exciter" index="3">
+                                <center x="0.5971629140786755" y="0.58839026162790675"/>
+                                <colour>ffd3d3d3</colour>
+                                <keep_ratio>true</keep_ratio>
+                                <geometry>
+                                    <axes a="0.050000000000000003" b="0.050000000000000003"/>
+                                </geometry>
+                                <is_round>true</is_round>
+                                <is_animation_sync>true</is_animation_sync>
+                            </area>
+                            <area id="4" type="Exciter" index="4">
+                                <center x="0.35792734213254945" y="0.55869216327518256"/>
+                                <colour>ffd3d3d3</colour>
+                                <keep_ratio>true</keep_ratio>
+                                <geometry>
+                                    <axes a="0.050000000000000003" b="0.050000000000000003"/>
+                                </geometry>
+                                <is_round>true</is_round>
+                                <is_animation_sync>true</is_animation_sync>
+                            </area>
+                            <area id="5" type="Exciter" index="5">
+                                <center x="0.30823790113871852" y="0.62824006782945674"/>
+                                <colour>ffd3d3d3</colour>
+                                <keep_ratio>true</keep_ratio>
+                                <geometry>
+                                    <axes a="0.050000000000000003" b="0.050000000000000003"/>
+                                </geometry>
+                                <is_round>true</is_round>
+                                <is_animation_sync>true</is_animation_sync>
+                            </area>
+                            <area id="6" type="Exciter" index="6">
+                                <center x="0.48464997412011146" y="0.57090297965115666"/>
+                                <colour>ffd3d3d3</colour>
+                                <keep_ratio>true</keep_ratio>
+                                <geometry>
+                                    <axes a="0.050000000000000003" b="0.050000000000000003"/>
+                                </geometry>
+                                <is_round>true</is_round>
+                                <is_animation_sync>true</is_animation_sync>
+                            </area>
+                            <area id="7" type="Exciter" index="7">
+                                <center x="0.36814990942029019" y="0.36712693798449608"/>
+                                <colour>ffd3d3d3</colour>
+                                <keep_ratio>true</keep_ratio>
+                                <geometry>
+                                    <axes a="0.050000000000000003" b="0.050000000000000003"/>
+                                </geometry>
+                                <is_round>true</is_round>
+                                <is_animation_sync>true</is_animation_sync>
+                            </area>
+                        </areas>
+                    </scene>
+                </scenes>
+            </canvas>
+            <canvas index="1">
+                <scenes>
+                    <scene index="0">
+                        <name>[scène vide]</name>
+                        <areas>
+                            <area id="0" type="SpatPolygon" index="0">
+                                <center x="0.37600676546391765" y="0.43962724079457366"/>
+                                <colour>ff808080</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <geometry>
+                                    <point index="0" x="0.52600677142438201" y="0.43962724079457366"/>
+                                    <point index="1" x="0.37600675890720897" y="0.52422026117411691"/>
+                                    <point index="2" x="0.22600675950345309" y="0.43962723339921689"/>
+                                    <point index="3" x="0.37600676725264975" y="0.35503422041503035"/>
+                                </geometry>
+                                <spatstate index="-1"/>
+                            </area>
+                        </areas>
+                    </scene>
+                </scenes>
+            </canvas>
+        </canvases>
+    </graphicsession>
+</miam>

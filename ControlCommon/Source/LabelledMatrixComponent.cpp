@@ -68,7 +68,7 @@ LabelledMatrixComponent::LabelledMatrixComponent (ISlidersMatrixListener* _liste
 
 
     //[UserPreSize]
-    ReconstructGuiObjects();
+    constructGuiObjects();
     //[/UserPreSize]
 
     setSize (600, 400);
@@ -197,8 +197,38 @@ void LabelledMatrixComponent::mouseDown (const MouseEvent& e)
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
+void LabelledMatrixComponent::constructGuiObjects()
+{
+    // Pre-allocations for vector of scoped pointers
+    labels.clear();
+    labels.resize(maxColsCount+maxRowsCount);
+    inputNameTextEditors.clear();
+    inputNameTextEditors.resize(maxRowsCount);
+    outputNameTextEditors.clear();
+    outputNameTextEditors.resize(maxColsCount);
+    
+    // Actual creation of sliders and labels
+    for (int i=0 ; i<(int)maxRowsCount ; i++)
+    {
+        // Label on each row
+        labels[i] = new Label("Input label " + boost::lexical_cast<std::string>(i), "" + boost::lexical_cast<std::string>(i+1));
+        addAndMakeVisible(labels[i]);
+        inputNameTextEditors[i] = new TextEditor("Input Name text editor " + boost::lexical_cast<std::string>(i));
+        addAndMakeVisible(inputNameTextEditors[i]);
+    }
+    for (int j=0 ; j<(int)maxColsCount ; j++)
+    {
+        // Column labels
+        labels[maxRowsCount+j] = new Label("Output label " + boost::lexical_cast<std::string>(j),
+                                           "" + boost::lexical_cast<std::string>(j+1));
+        addAndMakeVisible(labels[maxRowsCount+j]);
+        outputNameTextEditors[j] = new TextEditor("Output Name text editor " + boost::lexical_cast<std::string>(j));
+        addAndMakeVisible(outputNameTextEditors[j]);
+    }
 
-void LabelledMatrixComponent::ReconstructGuiObjects()
+    ReinitGuiObjects();
+}
+void LabelledMatrixComponent::ReinitGuiObjects()
 {
     // Suppression des objets temporaires et des références
     highlightedInputLabel = nullptr;
@@ -207,47 +237,31 @@ void LabelledMatrixComponent::ReconstructGuiObjects()
     // Mise en visible des objets qui conviennent
     inputsOutputsLabel->setVisible(showInputsNumbers);
     
-    // Pre-allocations for vector of scoped pointers
-    labels.clear();
-    labels.resize(maxColsCount+maxRowsCount);
-    inputNameTextEditors.clear();
-    inputNameTextEditors.resize(maxRowsCount);
-    outputNameTextEditors.clear();
-    outputNameTextEditors.resize(maxColsCount);
-
-    // Actual creation of sliders and labels
+    // réinit de tous les labels et text editors associés
     for (int i=0 ; i<(int)maxRowsCount ; i++)
     {
         // Label on each row
-        labels[i] = new Label("Input label " + boost::lexical_cast<std::string>(i), "" + boost::lexical_cast<std::string>(i+1));
-        initAndAddLabel(labels[i]);
-        inputNameTextEditors[i] = new TextEditor("Input Name text editor " + boost::lexical_cast<std::string>(i));
-        inputNameTextEditors[i]->setText("/miem/pacarana/param/" + boost::lexical_cast<std::string>(i));
-        initAndAddNameTextEditor(inputNameTextEditors[i], false); // horizontal
+        initLabel(labels[i]);
+        initNameTextEditor(inputNameTextEditors[i], false); // horizontal
     }
     for (int j=0 ; j<(int)maxColsCount ; j++)
     {
-        // Column labels
-        labels[maxRowsCount+j] = new Label("Output label " + boost::lexical_cast<std::string>(j),
-                                           "" + boost::lexical_cast<std::string>(j+1));
-        initAndAddLabel(labels[maxRowsCount+j]);
-        outputNameTextEditors[j] = new TextEditor("Output Name text editor " + boost::lexical_cast<std::string>(j));
-        outputNameTextEditors[j]->setText("/control/data/" + boost::lexical_cast<std::string>(j));
-        initAndAddNameTextEditor(outputNameTextEditors[j], true); // vertical
+        initLabel(labels[maxRowsCount+j]);
+        initNameTextEditor(outputNameTextEditors[j], true); // vertical
     }
 
     // Graphical placement
     resized();
 }
 
-void LabelledMatrixComponent::initAndAddLabel(Label* label)
+void LabelledMatrixComponent::initLabel(Label* label)
 {
     unhighlightLabel(label);
     label->setJustificationType(Justification::horizontallyCentred | Justification::verticallyCentred);
     addAndMakeVisible(label);
     label->toBack();
 }
-void LabelledMatrixComponent::initAndAddNameTextEditor(TextEditor* textEditor, bool isVertical)
+void LabelledMatrixComponent::initNameTextEditor(TextEditor* textEditor, bool isVertical)
 {
     if (isVertical) // police avec + d'espacement
         textEditor->applyFontToAllText(Font().withExtraKerningFactor(0.10f));
@@ -416,6 +430,25 @@ MatrixComponent* LabelledMatrixComponent::GetMatrixComponent()
 {
     return matrixViewport->GetMatrixComponent();
 }
+void LabelledMatrixComponent::SetChannelsNames(InOutChannelsName &channelsName)
+{
+    for (size_t i=0 ; i<inputNameTextEditors.size() ; i++)
+    {
+        if (i < channelsName.Inputs.size())
+            inputNameTextEditors[i]->setText(channelsName.Inputs[i]);
+        else
+            // On devrait toujours avoir suffisamment de données pour remplir tous les text editors !
+            assert(false);
+    }
+    for (size_t j=0 ; j<outputNameTextEditors.size() ; j++)
+    {
+        if (j < channelsName.Outputs.size())
+            outputNameTextEditors[j]->setText(channelsName.Outputs[j]);
+        else
+            // On devrait toujours avoir suffisamment de données pour remplir tous les text editors !
+            assert(false);
+    }
+}
 void LabelledMatrixComponent::SetInputNamesVisible(bool areVisible)
 {
     if (showInputsNames != areVisible)
@@ -437,18 +470,18 @@ void LabelledMatrixComponent::SetActiveSliders(int inputsCount, int outputsCount
     // On sauvegarde les valeurs dans la matrice seulement....
     GetMatrixComponent()->SetActiveSliders(inputsCount, outputsCount);
     
-    ReconstructGuiObjects();
+    ReinitGuiObjects();
 }
-std::shared_ptr<InOutChannelsName> LabelledMatrixComponent::GetChannelsName()
+InOutChannelsName LabelledMatrixComponent::GetChannelsName()
 {
-    auto channelsName = std::make_shared<InOutChannelsName>();
+    InOutChannelsName channelsName;
     
-    channelsName->InputsName.reserve(maxRowsCount);
+    channelsName.Inputs.reserve(maxRowsCount);
     for (int i=0 ; i<maxRowsCount ; i++)
-        channelsName->InputsName.push_back(inputNameTextEditors[i]->getText().toStdString());
-    channelsName->OutputsName.reserve(maxColsCount);
+        channelsName.Inputs.push_back(inputNameTextEditors[i]->getText().toStdString());
+    channelsName.Outputs.reserve(maxColsCount);
     for (int j=0 ; j<maxColsCount ; j++)
-        channelsName->OutputsName.push_back(outputNameTextEditors[j]->getText().toStdString());
+        channelsName.Outputs.push_back(outputNameTextEditors[j]->getText().toStdString());
     
     return channelsName;
 }

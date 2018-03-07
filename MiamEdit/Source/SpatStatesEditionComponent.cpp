@@ -358,6 +358,10 @@ void SpatStatesEditionComponent::SetInsOutsCount(int _inputsCount, int _outputsC
     // Applying of changes
     updateMatrix();
 }
+void SpatStatesEditionComponent::SetInOutNames(InOutChannelsName &channelsName)
+{
+    labelledMatrixComponent->SetChannelsNames(channelsName);
+}
 void SpatStatesEditionComponent::SetInOutNamesDisplayed(bool areInputNamesVisible, bool areOutputNamesVisible)
 {
     labelledMatrixComponent->SetInputNamesVisible(areInputNamesVisible);

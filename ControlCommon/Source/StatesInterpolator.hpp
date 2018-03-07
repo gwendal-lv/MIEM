@@ -24,6 +24,9 @@
 #include "boost/property_tree/xml_parser.hpp"
 namespace bptree = boost::property_tree;
 
+#include "AudioUtils.hpp"
+
+
 namespace Miam
 {
     class ControlModel;
@@ -63,10 +66,12 @@ namespace Miam
         
         
         
-        //
+        // E/S
         int inputsCount = 0;
         int outputsCount = 0;
-        
+        // Pour l'instant, on crée un maximum de noms de canaux... Quitte à ce que beaucoup soient vides
+        // (on fait comme les coefficients de la matrice, en fait...)
+        InOutChannelsName channelsName;
         
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
@@ -74,6 +79,10 @@ namespace Miam
         
         int GetInputsCount() {return inputsCount;}
         int GetOutputsCount() {return outputsCount;}
+        /// \brief Copie de toutes les données
+        InOutChannelsName GetInOutChannelsName() {return channelsName;}
+        /// \brief Va copier les nouvelles données en gardant les noms des canaux non-précisés
+        void SetInOutChannelsName(InOutChannelsName& channelsName_) {channelsName = channelsName_;}
         
         InterpolationType GetType() {return interpolationType;}
         
@@ -122,7 +131,15 @@ namespace Miam
         /// \brief The type of interpolation defines the class
         StatesInterpolator(InterpolationType _interpolationType) :
         interpolationType(_interpolationType)
-        {}
+        {
+            channelsName.Inputs.resize(Miam_MaxNumInputs);
+            for (size_t i=0 ; i<channelsName.Inputs.size() ; i++)
+                channelsName.Inputs[i] = "interpolator input channel " + boost::lexical_cast<std::string>(i+1);
+            
+            channelsName.Outputs.resize(Miam_MaxNumOutputs);
+            for (size_t i=0 ; i<channelsName.Outputs.size() ; i++)
+                channelsName.Outputs[i] = "interpolator output channel " + boost::lexical_cast<std::string>(i+1);
+        }
         
         
         

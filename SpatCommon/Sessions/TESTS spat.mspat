@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<miam>
+    <settings>
+        <model>
+            <inputs count="10"/>
+            <outputs count="8"/>
+            <senders>
+                <sender type="MiamOsc">
+                    <ip>127.0.0.1</ip>
+                    <udp>
+                        <port>8001</port>
+                    </udp>
+                </sender>
+            </senders>
+        </model>
+        <presenter>
+            <keyboardedition>false</keyboardedition>
+        </presenter>
+    </settings>
+    <spat>
+        <states>
+            <state index="0">
+                <name>Matrix-based generic control state</name>
+                <matrix>
+                    <coeff row="7" col="3" value="0.0032772630081388003"/>
+                    <coeff row="8" col="2" value="0.0045808790754630615"/>
+                    <coeff row="8" col="3" value="0.0014034210985478979"/>
+                </matrix>
+            </state>
+        </states>
+    </spat>
+    <graphicsession>
+        <canvases>
+            <canvas index="0">
+                <scenes>
+                    <scene index="0">
+                        <name>[scène vide]</name>
+                        <areas>
+                            <area id="0" type="SpatPolygon" index="0">
+                                <center x="0.5" y="0.5"/>
+                                <colour>ff808080</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <geometry>
+                                    <point index="0" x="0.65000000596046448" y="0.5"/>
+                                    <point index="1" x="0.54635254666209221" y="0.6335349828004837"/>
+                                    <point index="2" x="0.37864743918180466" y="0.58252914249897003"/>
+                                    <point index="3" x="0.37864745408296585" y="0.41747083514928818"/>
+                                    <point index="4" x="0.546352569013834" y="0.36646503210067749"/>
+                                </geometry>
+                                <spatstate index="-1"/>
+                            </area>
+                        </areas>
+                    </scene>
+                </scenes>
+            </canvas>
+            <canvas index="1">
+                <scenes>
+                    <scene index="0">
+                        <name>[scène vide]</name>
+                        <areas/>
+                    </scene>
+                </scenes>
+            </canvas>
+        </canvases>
+    </graphicsession>
+</miam>

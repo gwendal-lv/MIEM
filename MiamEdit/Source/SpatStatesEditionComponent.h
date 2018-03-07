@@ -30,6 +30,8 @@
 
 #include "ControlMatrix.hpp"
 
+#include "AudioUtils.hpp"
+
 namespace Miam {
 //[/Headers]
 
@@ -83,6 +85,7 @@ public:
 
     public :
     void SetInsOutsCount(int _inputsCount, int _outputsCount);
+    void SetInOutNames(InOutChannelsName &channelsName);
     void SetInOutNamesDisplayed(bool areInputNamesVisible, bool areOutputNamesVisible);
     std::shared_ptr<ControlMatrix> GetDisplayedSpatMatrix();
     LabelledMatrixComponent* GetLabelledMatrix() { return labelledMatrixComponent.get(); }

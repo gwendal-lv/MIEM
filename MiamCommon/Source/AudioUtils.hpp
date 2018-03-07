@@ -31,8 +31,19 @@ namespace Miam
     struct InOutChannelsName
     {
         public :
-        std::vector<std::string> InputsName;
-        std::vector<std::string> OutputsName;
+        std::vector<std::string> Inputs;
+        std::vector<std::string> Outputs;
+        
+        /// \brief Opérateur d'assignation surchargé pour garder les données des E/S d'indices
+        /// plus grands que les indices des E/S à assigner
+        InOutChannelsName& operator=(const InOutChannelsName& copy)
+        {
+            for (size_t i=0 ; i<copy.Inputs.size() ; i++)
+                this->Inputs[i] = copy.Inputs[i];
+            for (size_t i=0 ; i<copy.Outputs.size() ; i++)
+                this->Outputs[i] = copy.Outputs[i];
+            return *this;
+        }
     };
     
     

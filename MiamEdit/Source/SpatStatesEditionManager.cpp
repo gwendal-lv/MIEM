@@ -68,8 +68,10 @@ void SpatStatesEditionManager::selectSpatState(std::shared_ptr<ControlState<doub
     }
     else // if no state selected
         infoText = "-";
-    // Update command
+    // Update commands
     editionComponent->SelectAndUpdateState(stateIndexToSend, infoText, matrixToSend);
+    auto channelsNameCopy = editionComponent->GetLabelledMatrix()->GetChannelsName();
+    editionComponent->SetInOutNames(channelsNameCopy);
 }
 
 
@@ -82,14 +84,18 @@ size_t SpatStatesEditionManager::GetFadersCount()
 // = = = = = = = = = = EVENTS from PRESENTER = = = = = = = = = =
 void SpatStatesEditionManager::OnEnterSpatStatesEdition()
 {
-    // Forces graphical updates
+    // Forces graphical updates concerning the state
     selectSpatState(selectedSpatState);
+    // Concernant tous les états (donc aucun en particulier...) màj des noms des canaux
+    InOutChannelsName interpolatorChannelsName = spatInterpolator->GetInOutChannelsName();
+    editionComponent->SetInOutNames(interpolatorChannelsName);
 }
 std::shared_ptr<bptree::ptree> SpatStatesEditionManager::OnLeaveSpatStatesEdition()
 {
     // Transfert des données depuis l'affichage graphique vers le modèle
     sendDataToModel(editionComponent->GetDisplayedSpatMatrix());
-    editionComponent->GetLabelledMatrix()->GetChannelsName();
+    auto channelsNameCopy = editionComponent->GetLabelledMatrix()->GetChannelsName();
+    spatInterpolator->SetInOutChannelsName(channelsNameCopy);
     
     // Update now to the editionComponent
     selectSpatState(selectedSpatState);

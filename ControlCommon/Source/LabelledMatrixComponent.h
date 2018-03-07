@@ -57,13 +57,14 @@ public:
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
 
+    private :
+    void constructGuiObjects();
     public :
-
-    void ReconstructGuiObjects();
+    void ReinitGuiObjects();
 
     private :
-    void initAndAddLabel(Label* label);
-    void initAndAddNameTextEditor(TextEditor* label, bool isVertical);
+    void initLabel(Label* label);
+    void initNameTextEditor(TextEditor* label, bool isVertical);
     void repositionLabels();
     void highlightLabel(Label* label);
     void unhighlightLabel(Label* label);
@@ -88,11 +89,13 @@ public:
     // - - - - - - Getters and Setters - - - - -
     MatrixComponent* GetMatrixComponent();
     
+    void SetChannelsNames(InOutChannelsName &channelsName);
+    InOutChannelsName GetChannelsName();
+
     void SetInputNamesVisible(bool areVisible);
     void SetOutputNamesVisible(bool areVisible);
     void SetActiveSliders(int inputsCount, int outputsCount);
     
-    std::shared_ptr<InOutChannelsName> GetChannelsName();
 
     //[/UserMethods]
 
