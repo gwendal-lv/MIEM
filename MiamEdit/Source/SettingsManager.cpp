@@ -125,18 +125,22 @@ void SettingsManager::SetFromTree(bptree::ptree& tree)
         bool allow = tree.get<bool>("presenter.keyboardedition");
         configurationComponent->keyboardToggleButton->setToggleState(allow, NotificationType::dontSendNotification);
         presenter->GetSpatStatesManager()->AllowKeyboardEdition(allow);
-    } catch (std::exception) {}
     
-    // Interpolator-related
-    configurationComponent->inputsCountSlider->
-    setValue((double) tree.get<int>("model.inputs.<xmlattr>.count") );
-    configurationComponent->outputsCountSlider->
-    setValue((double) tree.get<int>("model.outputs.<xmlattr>.count") );
-    // Spat sender-related
-    configurationComponent->ipAddressTextEditor->
-    setText( tree.get<std::string>("model.senders.sender.ip") );
-    configurationComponent->udpPortTextEditor->
-    setText( boost::lexical_cast<std::string>(tree.get<int>("model.senders.sender.udp.port")) );
+        // Interpolator-related
+        configurationComponent->inputsCountSlider->
+        setValue((double) tree.get<int>("model.inputs.<xmlattr>.activeCount") );
+        configurationComponent->outputsCountSlider->
+        setValue((double) tree.get<int>("model.outputs.<xmlattr>.activeCount") );
+        // Spat sender-related
+        configurationComponent->ipAddressTextEditor->
+        setText( tree.get<std::string>("model.senders.sender.ip") );
+        configurationComponent->udpPortTextEditor->
+        setText( boost::lexical_cast<std::string>(tree.get<int>("model.senders.sender.udp.port")) );
+        
+    }
+    catch (bptree::ptree_error& e) {
+        throw XmlReadException(std::string("Cannot read a necessary settings tag: ") + e.what());
+    }
 }
 
 

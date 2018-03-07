@@ -20,7 +20,6 @@
 //[Headers] You can add your own extra header files here...
 #include <regex> // c++11
 
-#include "SpatStateFadersDisplayComponent.h"
 #include "AudioDefines.h"
 
 #include "MatrixComponent.h"
@@ -267,19 +266,26 @@ void SpatStatesEditionComponent::visibilityChanged()
                 break;
 
             case Miam::AppPurpose::Spatialisation:
+                // textes
                 statesListGroupComponent->setText(spatStatesListText);
                 stateEditorGroupComponent->setText(spatStateEditorText);
+                // format matrice de sliders colorés
                 break;
 
             case Miam::AppPurpose::GenericController:
+                // textes
                 statesListGroupComponent->setText(genericStatesListText);
                 stateEditorGroupComponent->setText(genericStateEditorText);
+                // format sliders linéaires simples
                 break;
 
             default:
                 throw std::runtime_error("Édition de truc ?? Non défini...");
                 break;
         }
+        
+        // S'adaptera si nécessaire
+        labelledMatrixComponent->SetDisplayPurpose(editionManager->GetSessionPurpose());
     }
     //[/UserCode_visibilityChanged]
 }

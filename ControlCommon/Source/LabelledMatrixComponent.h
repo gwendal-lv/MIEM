@@ -28,6 +28,8 @@
 
 #include <memory>
 
+#include "AppPurpose.h"
+
 namespace Miam
 {
 
@@ -96,6 +98,7 @@ public:
     void SetOutputNamesVisible(bool areVisible);
     void SetActiveSliders(int inputsCount, int outputsCount);
     
+    void SetDisplayPurpose(AppPurpose newSessionPurpose);
 
     //[/UserMethods]
 
@@ -108,8 +111,10 @@ public:
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
+    AppPurpose currentDisplayPurpose;
+    
     ISlidersMatrixListener* listener;
-        unsigned int maxRowsCount, maxColsCount;
+    unsigned int maxRowsCount, maxColsCount;
 
     // Graphical parameters from Miam::MatrixComponent
     const int matItemW = 40;

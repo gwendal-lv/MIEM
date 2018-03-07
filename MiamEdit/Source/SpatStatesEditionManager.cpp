@@ -70,14 +70,20 @@ void SpatStatesEditionManager::selectSpatState(std::shared_ptr<ControlState<doub
         infoText = "-";
     // Update commands
     editionComponent->SelectAndUpdateState(stateIndexToSend, infoText, matrixToSend);
+    /*
     auto channelsNameCopy = editionComponent->GetLabelledMatrix()->GetChannelsName();
-    editionComponent->SetInOutNames(channelsNameCopy);
-}
-
-
-size_t SpatStatesEditionManager::GetFadersCount()
-{
-    return selectedSpatState->GetOutputsCount();
+    // ?????? à quoi ça sert ???
+    // ?????? à quoi ça sert ???
+    // ?????? à quoi ça sert ???
+    // ?????? à quoi ça sert ???
+    // ?????? à quoi ça sert ???
+    editionComponent->SetInOutNames(channelsNameCopy);  // ?????? à quoi ça sert ???
+    // ?????? à quoi ça sert ???
+    // ?????? à quoi ça sert ???
+    // ?????? à quoi ça sert ???
+    // ?????? à quoi ça sert ???
+    // ?????? à quoi ça sert ???
+    */
 }
 
 
@@ -93,9 +99,7 @@ void SpatStatesEditionManager::OnEnterSpatStatesEdition()
 std::shared_ptr<bptree::ptree> SpatStatesEditionManager::OnLeaveSpatStatesEdition()
 {
     // Transfert des données depuis l'affichage graphique vers le modèle
-    sendDataToModel(editionComponent->GetDisplayedSpatMatrix());
-    auto channelsNameCopy = editionComponent->GetLabelledMatrix()->GetChannelsName();
-    spatInterpolator->SetInOutChannelsName(channelsNameCopy);
+    sendCurrentDataToModel();
     
     // Update now to the editionComponent
     selectSpatState(selectedSpatState);
@@ -222,6 +226,12 @@ void SpatStatesEditionManager::UpdateView()
 
 // = = = = = = = = = = INTERNAL HELPERS = = = = = = = = = =
 
+void SpatStatesEditionManager::sendCurrentDataToModel()
+{
+    sendDataToModel(editionComponent->GetDisplayedSpatMatrix());
+    auto channelsNameCopy = editionComponent->GetLabelledMatrix()->GetChannelsName();
+    spatInterpolator->SetInOutChannelsName(channelsNameCopy);
+}
 void SpatStatesEditionManager::sendDataToModel(std::shared_ptr<ControlMatrix> currentMatrix)
 {
     if (selectedSpatState) // if exists
@@ -246,7 +256,8 @@ std::shared_ptr<bptree::ptree> SpatStatesEditionManager::GetTree()
 {
     // à chaque fois qu'on demande l'arbre :
     // D'abord on met à jour vers le modèle...
-    sendDataToModel(editionComponent->GetDisplayedSpatMatrix());
+    sendCurrentDataToModel();
+    
     // Puis le modèle mis à jour renvoie les données bien formattées
     return spatInterpolator->GetStatesTree();
 }

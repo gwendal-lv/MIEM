@@ -60,6 +60,9 @@ void ControlPresenter::LoadSession(std::string filename)
     // Envoi de chaque grande partie à la sous-partie de spat concernée
     // Si n'importe laquelle échoue : on annule tout....
     try {
+        // Envoie une XmlReadException s'il y a une erreur
+        App::CheckSessionVersionNumber(miamTree);
+        
         // Config modèle puis modèle
         model->SetConfigurationFromTree(settingsTree.get_child("model"));
         model->GetInterpolator()->SetStatesFromTree(spatTree);
@@ -76,6 +79,9 @@ void ControlPresenter::LoadSession(std::string filename)
         
         // Pour l'instant : on laisse la configuration dans son état précédent....
         // Pas de réinitialisation
+        
+        // Remise à zéro des états locaux internes
+        lastFilename = "";
         
         // Renvoi pour affichage graphique
         throw e;
@@ -115,6 +121,8 @@ void ControlPresenter::SaveSession(std::string _filename, bool /*forceDataRefres
     
     // Whole properties tree reconstruction
     bptree::ptree miamChildrenTree;
+    miamChildrenTree.put("<xmlattr>.appVersion", ProjectInfo::versionNumber);
+    miamChildrenTree.put("<xmlattr>.appPurpose", App::GetPurposeName(App::GetPurpose()));
     // Les settings sont ajoutés catégorie par catégorie
     bptree::ptree settingsTree;
     settingsTree.add_child("model", *(model->GetConfigurationTree()) );

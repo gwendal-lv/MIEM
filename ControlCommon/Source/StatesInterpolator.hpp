@@ -24,6 +24,8 @@
 #include "boost/property_tree/xml_parser.hpp"
 namespace bptree = boost::property_tree;
 
+#include "boost/lexical_cast.hpp"
+
 #include "AudioUtils.hpp"
 
 
@@ -133,12 +135,13 @@ namespace Miam
         interpolationType(_interpolationType)
         {
             channelsName.Inputs.resize(Miam_MaxNumInputs);
+            channelsName.Outputs.resize(Miam_MaxNumOutputs);
+            /*
             for (size_t i=0 ; i<channelsName.Inputs.size() ; i++)
                 channelsName.Inputs[i] = "interpolator input channel " + boost::lexical_cast<std::string>(i+1);
-            
-            channelsName.Outputs.resize(Miam_MaxNumOutputs);
             for (size_t i=0 ; i<channelsName.Outputs.size() ; i++)
                 channelsName.Outputs[i] = "interpolator output channel " + boost::lexical_cast<std::string>(i+1);
+             */
         }
         
         
@@ -272,22 +275,109 @@ namespace Miam
         
         
         
-        // = = = = = = = = Property tree (for XML) import/export = = = = = = = =
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        // = = = = = = = = = = = = = = = Property tree (for XML) import/export = = = = = = = = = = = = = = =
+        
+        
         /// \brief Formats configuration data managed by the interpolator
-        /// in a property tree.
-        ///
-        /// May also someday return the name of ins/outs, ....
+        /// in a property tree: number and names of in/outs, ...
         std::shared_ptr<bptree::ptree> GetConfigurationTree()
         {
             auto confTree = std::make_shared<bptree::ptree>();
-            confTree->put("inputs.<xmlattr>.count", inputsCount);
-            confTree->put("outputs.<xmlattr>.count", outputsCount);
+            // Inputs (counts and names)
+            bptree::ptree inputsInnerTree;
+            inputsInnerTree.put("<xmlattr>.activeCount", inputsCount);
+            inputsInnerTree.put("<xmlattr>.maxCount", Miam_MaxNumInputs);
+            for (size_t i=0 ; i<channelsName.Inputs.size() ; i++)
+                if (! channelsName.Inputs[i].empty())
+                {
+                    bptree::ptree nameInnerTree;
+                    nameInnerTree.put("<xmlattr>.id", i);
+                    nameInnerTree.put_value(channelsName.Inputs[i]);
+                    inputsInnerTree.add_child("name", nameInnerTree);
+                }
+            confTree->add_child("inputs", inputsInnerTree);
+            // Outputs (counts and names)
+            bptree::ptree outputsInnerTree;
+            outputsInnerTree.put("<xmlattr>.activeCount", outputsCount);
+            outputsInnerTree.put("<xmlattr>.maxCount", Miam_MaxNumOutputs);
+            for (size_t i=0 ; i<channelsName.Outputs.size() ; i++)
+                if (! channelsName.Outputs[i].empty())
+                {
+                    bptree::ptree nameInnerTree;
+                    nameInnerTree.put("<xmlattr>.id", i);
+                    nameInnerTree.put_value(channelsName.Outputs[i]);
+                    outputsInnerTree.add_child("name", nameInnerTree);
+                }
+            confTree->add_child("outputs", outputsInnerTree);
+            
             return confTree;
         }
+        /// \brief Sets the configuration from XML tree
         void SetConfigurationFromTree(bptree::ptree& tree)
         {
-            inputsCount = tree.get<int>("inputs.<xmlattr>.count");
-            outputsCount = tree.get<int>("outputs.<xmlattr>.count");
+            // - - - Inputs - - -
+            try {
+                inputsCount = tree.get<int>("inputs.<xmlattr>.activeCount");
+            }
+            catch (bptree::ptree_error &e) {
+                throw XmlReadException("<inputs> node : cannot read the 'activeCount' XML attribute");
+            }
+            // Lecture de tous les noeuds enfant, on ne prendra que les noms.
+            // Pas de try car si on a lu le compte, le noeud inputs existe forcément (et a le droit d'etre vide)
+            for (auto& inputChild : tree.get_child("inputs"))
+            {
+                if (inputChild.first == "name")
+                {
+                    try {
+                        size_t nameId = inputChild.second.get<size_t>("<xmlattr>.id");
+                        if (nameId >= Miam_MaxNumInputs)
+                            throw bptree::ptree_error("given id (" + boost::lexical_cast<std::string>(nameId) + ") is bigger than the maximum value (" + boost::lexical_cast<std::string>(Miam_MaxNumInputs) + ")");
+                        else
+                            channelsName.Inputs[nameId] = inputChild.second.get_value<std::string>();
+                    }
+                    catch (bptree::ptree_error& e) {
+#if defined(__MIAM_DEBUG)
+                        throw XmlReadException(std::string("All <names> inside <inputs> must have a valid id XML attribute: ") + e.what());
+#endif
+                    }
+                }
+            }
+            // - - - Ouputs - - -
+            try {
+                outputsCount = tree.get<int>("outputs.<xmlattr>.activeCount");
+            }
+            catch (bptree::ptree_error &e) {
+                throw XmlReadException("<outputs> node : cannot read the 'activeCount' XML attribute");
+            }
+            // Lecture de tous les noeuds enfant, on ne prendra que les noms.
+            // Pas de try car si on a lu le compte, le noeud inputs existe forcément (et a le droit d'etre vide)
+            for (auto& outputChild : tree.get_child("outputs"))
+            {
+                if (outputChild.first == "name")
+                {
+                    try {
+                        size_t nameId = outputChild.second.get<size_t>("<xmlattr>.id");
+                        if (nameId >= Miam_MaxNumOutputs)
+                            throw bptree::ptree_error("given id (" + boost::lexical_cast<std::string>(nameId) + ") is bigger than the maximum value (" + boost::lexical_cast<std::string>(Miam_MaxNumOutputs) + ")");
+                        else
+                            channelsName.Outputs[nameId] = outputChild.second.get_value<std::string>();
+                    }
+                    catch (bptree::ptree_error& e) {
+#if defined(__MIAM_DEBUG)
+                        throw XmlReadException(std::string("All <names> inside <outputs> must have a valid id XML attribute: ") + e.what());
+#endif
+                    }
+                }
+            }
         }
 
         /// \brief Returns the property tree describing the states' data

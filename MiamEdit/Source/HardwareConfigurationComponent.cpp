@@ -118,17 +118,21 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
     ipAddressTextEditor->setText (TRANS("127.0.0.1"));
 
     addAndMakeVisible (inputNamesToggleButton = new ToggleButton ("Input Names toggle button"));
-    inputNamesToggleButton->setButtonText (TRANS("Display input channels names"));
+    inputNamesToggleButton->setButtonText (TRANS("Display names"));
     inputNamesToggleButton->addListener (this);
     inputNamesToggleButton->setColour (ToggleButton::textColourId, Colours::black);
 
     addAndMakeVisible (outputNamesToggleButton = new ToggleButton ("Output Names toggle button"));
-    outputNamesToggleButton->setButtonText (TRANS("Display output channels names"));
+    outputNamesToggleButton->setButtonText (TRANS("Display names"));
     outputNamesToggleButton->addListener (this);
     outputNamesToggleButton->setColour (ToggleButton::textColourId, Colours::black);
 
 
     //[UserPreSize]
+
+    // Sauvegarde des valeurs SPAT par défaut pour l'instant dans le Projucer
+    inputLabelSpatText = inputsCountLabel->getText();
+    inputLabelGenericText = TRANS("Number of parameters:");
 
     // Sliders max values from defines
     inputsCountSlider->setRange (1, Miam_MaxNumInputs, 1);
@@ -200,8 +204,8 @@ void HardwareConfigurationComponent::resized()
     keyboardToggleButton->setBounds ((getWidth() / 2) - (400 / 2), getHeight() - 48, 400, 24);
     ipAddressLabel->setBounds ((getWidth() / 2) - 336, 128 + 0, 336, 24);
     ipAddressTextEditor->setBounds ((getWidth() / 2) + 8, 128, 120, 24);
-    inputNamesToggleButton->setBounds ((getWidth() / 2) + 212 - (400 / 2), 16, 400, 24);
-    outputNamesToggleButton->setBounds ((getWidth() / 2) + 212 - (400 / 2), 48, 400, 24);
+    inputNamesToggleButton->setBounds ((getWidth() / 2) + 8, 16, 400, 24);
+    outputNamesToggleButton->setBounds ((getWidth() / 2) + 8, 48, 400, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -249,8 +253,6 @@ void HardwareConfigurationComponent::buttonClicked (Button* buttonThatWasClicked
     else if (buttonThatWasClicked == outputNamesToggleButton)
     {
         //[UserButtonCode_outputNamesToggleButton] -- add your button handler code here..
-        settingsManager->OnInOutNamesDisplayedChanged(inputNamesToggleButton->getToggleState(),
-                                                      outputNamesToggleButton->getToggleState());
         //[/UserButtonCode_outputNamesToggleButton]
     }
 
@@ -268,11 +270,22 @@ void HardwareConfigurationComponent::visibilityChanged()
         switch (settingsManager->GetSessionPurpose())
         {
             case AppPurpose::Spatialisation :
-                SetInputSettingsVisible(true);
+                inputsCountLabel->setText(inputLabelSpatText, NotificationType::sendNotification);
+                outputsCountLabel->setVisible(true);
+                outputsCountSlider->setVisible(true);
+                outputNamesToggleButton->setVisible(true);
+                // coché, mais garde la valeur d'activation précédente
+                inputNamesToggleButton->setEnabled(true);
                 break;
 
             case AppPurpose::GenericController :
-                SetInputSettingsVisible(false);
+                inputsCountLabel->setText(inputLabelGenericText, NotificationType::sendNotification);
+                outputsCountLabel->setVisible(false);
+                outputsCountSlider->setVisible(false);
+                outputNamesToggleButton->setVisible(false);
+                // coché mais désactivé
+                inputNamesToggleButton->setToggleState(true, dontSendNotification);
+                inputNamesToggleButton->setEnabled(false);
                 break;
 
             default :
@@ -315,13 +328,6 @@ void HardwareConfigurationComponent::textEditorReturnKeyPressed(TextEditor& edit
         else
             settingsManager->OnUdpPortChanged(parsedValue);
     }
-}
-
-
-void HardwareConfigurationComponent::SetInputSettingsVisible(bool areVisible)
-{
-    inputsCountLabel->setVisible(areVisible);
-    inputsCountSlider->setVisible(areVisible);
 }
 
 //[/MiscUserCode]
@@ -400,13 +406,13 @@ BEGIN_JUCER_METADATA
               multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"
               caret="1" popupmenu="1"/>
   <TOGGLEBUTTON name="Input Names toggle button" id="b7d5b33136328768" memberName="inputNamesToggleButton"
-                virtualName="" explicitFocusOrder="0" pos="212Cc 16 400 24" txtcol="ff000000"
-                buttonText="Display input channels names" connectedEdges="0"
-                needsCallback="1" radioGroupId="0" state="0"/>
+                virtualName="" explicitFocusOrder="0" pos="8C 16 400 24" txtcol="ff000000"
+                buttonText="Display names" connectedEdges="0" needsCallback="1"
+                radioGroupId="0" state="0"/>
   <TOGGLEBUTTON name="Output Names toggle button" id="ba9f950d6ef902d9" memberName="outputNamesToggleButton"
-                virtualName="" explicitFocusOrder="0" pos="212Cc 48 400 24" txtcol="ff000000"
-                buttonText="Display output channels names" connectedEdges="0"
-                needsCallback="1" radioGroupId="0" state="0"/>
+                virtualName="" explicitFocusOrder="0" pos="8C 48 400 24" txtcol="ff000000"
+                buttonText="Display names" connectedEdges="0" needsCallback="1"
+                radioGroupId="0" state="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

@@ -38,7 +38,11 @@ using namespace Miam;
 //[/MiscUserDefs]
 
 //==============================================================================
-LabelledMatrixComponent::LabelledMatrixComponent (ISlidersMatrixListener* _listener, unsigned int _maxRowsCount, unsigned int _maxColsCount)
+LabelledMatrixComponent::LabelledMatrixComponent (ISlidersMatrixListener* _listener,
+                                                  unsigned int _maxRowsCount,
+                                                  unsigned int _maxColsCount)
+:
+currentDisplayPurpose(AppPurpose::None)
 {
     //[Constructor_pre] You can add your own custom stuff here..
     listener = _listener;
@@ -235,7 +239,7 @@ void LabelledMatrixComponent::ReinitGuiObjects()
     highlightedOutputLabel = nullptr;
     
     // Mise en visible des objets qui conviennent
-    inputsOutputsLabel->setVisible(showInputsNumbers);
+    inputsOutputsLabel->setVisible(currentDisplayPurpose != AppPurpose::GenericController);
     
     // réinit de tous les labels et text editors associés
     for (int i=0 ; i<(int)maxRowsCount ; i++)
@@ -246,6 +250,7 @@ void LabelledMatrixComponent::ReinitGuiObjects()
     }
     for (int j=0 ; j<(int)maxColsCount ; j++)
     {
+        // On each col
         initLabel(labels[maxRowsCount+j]);
         initNameTextEditor(outputNameTextEditors[j], true); // vertical
     }
@@ -256,9 +261,9 @@ void LabelledMatrixComponent::ReinitGuiObjects()
 
 void LabelledMatrixComponent::initLabel(Label* label)
 {
+    label->setVisible(true);
     unhighlightLabel(label);
     label->setJustificationType(Justification::horizontallyCentred | Justification::verticallyCentred);
-    addAndMakeVisible(label);
     label->toBack();
 }
 void LabelledMatrixComponent::initNameTextEditor(TextEditor* textEditor, bool isVertical)
@@ -267,8 +272,6 @@ void LabelledMatrixComponent::initNameTextEditor(TextEditor* textEditor, bool is
         textEditor->applyFontToAllText(Font().withExtraKerningFactor(0.10f));
     else
         textEditor->applyFontToAllText(Font().withExtraKerningFactor(0.05f));
-    
-    addAndMakeVisible(textEditor);
     textEditor->setMultiLine(false);
     textEditor->setJustification(Justification(Justification::Flags::horizontallyCentred
                                           | Justification::Flags::verticallyCentred));
@@ -359,7 +362,7 @@ void LabelledMatrixComponent::repositionLabels()
         }
         else
         {
-            labels[maxRowsCount + j]->setVisible(true);
+            labels[maxRowsCount + j]->setVisible(currentDisplayPurpose != AppPurpose::GenericController);
             if (showOutputsNames)
                 outputNameTextEditors[j]->setVisible(true);
         }
@@ -449,6 +452,19 @@ void LabelledMatrixComponent::SetChannelsNames(InOutChannelsName &channelsName)
             assert(false);
     }
 }
+InOutChannelsName LabelledMatrixComponent::GetChannelsName()
+{
+    InOutChannelsName channelsName;
+    
+    channelsName.Inputs.reserve(maxRowsCount);
+    for (int i=0 ; i<maxRowsCount ; i++)
+        channelsName.Inputs.push_back(inputNameTextEditors[i]->getText().toStdString());
+    channelsName.Outputs.reserve(maxColsCount);
+    for (int j=0 ; j<maxColsCount ; j++)
+        channelsName.Outputs.push_back(outputNameTextEditors[j]->getText().toStdString());
+    
+    return channelsName;
+}
 void LabelledMatrixComponent::SetInputNamesVisible(bool areVisible)
 {
     if (showInputsNames != areVisible)
@@ -472,18 +488,13 @@ void LabelledMatrixComponent::SetActiveSliders(int inputsCount, int outputsCount
     
     ReinitGuiObjects();
 }
-InOutChannelsName LabelledMatrixComponent::GetChannelsName()
+void LabelledMatrixComponent::SetDisplayPurpose(AppPurpose newSessionPurpose)
 {
-    InOutChannelsName channelsName;
-    
-    channelsName.Inputs.reserve(maxRowsCount);
-    for (int i=0 ; i<maxRowsCount ; i++)
-        channelsName.Inputs.push_back(inputNameTextEditors[i]->getText().toStdString());
-    channelsName.Outputs.reserve(maxColsCount);
-    for (int j=0 ; j<maxColsCount ; j++)
-        channelsName.Outputs.push_back(outputNameTextEditors[j]->getText().toStdString());
-    
-    return channelsName;
+    if (currentDisplayPurpose != newSessionPurpose)
+    {
+        currentDisplayPurpose =  newSessionPurpose;
+        ReinitGuiObjects();
+    }
 }
 //[/MiscUserCode]
 

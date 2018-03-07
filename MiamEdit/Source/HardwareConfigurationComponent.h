@@ -60,7 +60,6 @@ public:
 
     virtual void textEditorReturnKeyPressed(TextEditor& editorThatHasChanged) override;
 
-    void SetInputSettingsVisible(bool areVisible);
     //[/UserMethods]
 
     void paint (Graphics& g) override;
@@ -74,6 +73,9 @@ public:
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     SettingsManager* settingsManager = 0;
+
+    String inputLabelSpatText;
+    String inputLabelGenericText;
     //[/UserVariables]
 
     //==============================================================================
