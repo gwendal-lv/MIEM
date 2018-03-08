@@ -58,10 +58,10 @@ namespace Miam
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
         private :
         
-        const InterpolationType interpolationType;
+        InterpolationType interpolationType;
         std::vector< std::shared_ptr<ControlState<T>> > states;
         
-        MatrixBackupState<T> currentInterpolatedMatrixState;
+        std::unique_ptr<MatrixBackupState<T>> currentInterpolatedMatrixState;
         
         /// \brief Le nombre d'états mis à jour durant cette phase de mise à jour du Modèle
         int updatedStatesCount = 0;
@@ -99,7 +99,7 @@ namespace Miam
         /// En tout cas : pas const (quand on envoie un état comme ça, il va être modifié lui-même
         /// à l'intérieur par le Miam::ControlStateSender, et d'autres....)
         ControlState<T>& GetCurrentInterpolatedState()
-        {return currentInterpolatedMatrixState;}
+        {return *(currentInterpolatedMatrixState.get());}
         
         /// \brief Inputs and Outputs config (applies changes to all states)
         void SetInputOutputChannelsCount(int _inputsCount, int _outputsCount)
@@ -109,7 +109,7 @@ namespace Miam
             outputsCount = _outputsCount;
             
             // Config transmission to the individual states
-            currentInterpolatedMatrixState.SetInputOuputChannelsCount(inputsCount,outputsCount);
+            currentInterpolatedMatrixState->SetInputOuputChannelsCount(inputsCount,outputsCount);
             for (size_t i=0 ; i<states.size() ; i++)
             {
                 // Dynamic cast of the state to a MatrixState only for now
@@ -131,19 +131,26 @@ namespace Miam
         // - - - - - Construction and Destruction  - - - - -
 
         /// \brief The type of interpolation defines the class
-        StatesInterpolator(InterpolationType _interpolationType) :
-        interpolationType(_interpolationType)
+        StatesInterpolator(InterpolationType _interpolationType)
         {
-            channelsName.Inputs.resize(Miam_MaxNumInputs);
-            channelsName.Outputs.resize(Miam_MaxNumOutputs);
-            /*
-            for (size_t i=0 ; i<channelsName.Inputs.size() ; i++)
-                channelsName.Inputs[i] = "interpolator input channel " + boost::lexical_cast<std::string>(i+1);
-            for (size_t i=0 ; i<channelsName.Outputs.size() ; i++)
-                channelsName.Outputs[i] = "interpolator output channel " + boost::lexical_cast<std::string>(i+1);
-             */
+            reinitConfiguration();
+            ReinitInterpolation(_interpolationType);
         }
         
+        void ReinitInterpolation(InterpolationType newType)
+        {
+            interpolationType = newType;
+            currentInterpolatedMatrixState.reset(new MatrixBackupState<T>());
+        }
+        private :
+        void reinitConfiguration()
+        {
+            channelsName.Inputs.clear();
+            channelsName.Outputs.clear();
+            channelsName.Inputs.resize(Miam_MaxNumInputs);
+            channelsName.Outputs.resize(Miam_MaxNumOutputs);
+        }
+        public :
         
         
         // - - - - - States management  - - - - -
@@ -234,7 +241,7 @@ namespace Miam
             if (updatedStatesCount >= 1)
             {
                 // Addition des matrices creuses : on recalcule tout plutôt que d'essayer d'optimiser...
-                currentInterpolatedMatrixState.ClearMatrix();
+                currentInterpolatedMatrixState->ClearMatrix();
                 // Pour l'instant : on ne peut ajouter que des matrices ! Pas d'autre état
                 for (size_t i=0 ; i<states.size() ; i++)
                 {
@@ -264,7 +271,7 @@ namespace Miam
                 }
                 
                 // On va chercher les différences dès maintenant
-                currentInterpolatedMatrixState.FindSignificantChanges();
+                currentInterpolatedMatrixState->FindSignificantChanges();
             }
 
             // On lance une nouvelle frame
@@ -324,6 +331,8 @@ namespace Miam
         /// \brief Sets the configuration from XML tree
         void SetConfigurationFromTree(bptree::ptree& tree)
         {
+            reinitConfiguration();
+            
             // - - - Inputs - - -
             try {
                 inputsCount = tree.get<int>("inputs.<xmlattr>.activeCount");

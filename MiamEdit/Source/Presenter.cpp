@@ -185,11 +185,15 @@ AppPurpose Presenter::GetSessionPurpose() const
 
 void Presenter::LoadSession(std::string filename)
 {
-    // Pas tant pour l'affichage graphique....
+    // D'abord on va sauvegarder ce qu'il y a : toute nouvelle session est dans un nouveau fichier...
+    // sauf si on était en train de charger la toute, toute première session
+    if (!lastFilename.empty())
+        SaveSession(lastFilename,  true);
+    
+    // Changement de mode, pas tant pour l'affichage graphique....
     // Que pour que le changement de mode vers les spat scenes à la fin
     // déclenche de vraies actualisations
     appModeChangeRequest(AppMode::Loading);
-    
     
     try {
         // Chargement des données dépendant du type de session
@@ -201,7 +205,10 @@ void Presenter::LoadSession(std::string filename)
             throw XmlReadException("Session type is unknown. Should be either 'Spatialisation' or 'Generic Controller'");
         
         
-        // Chargement des données communes à toute session de contrôle
+        // Reinitialisation de certains modules....
+        spatStatesEditionManager.Reinit();
+        
+        // Puis chargement des données communes à toute session de contrôle
         ControlPresenter::LoadSession(filename);
     }
     catch (XmlReadException& e)
@@ -210,7 +217,8 @@ void Presenter::LoadSession(std::string filename)
         view->DisplayInfo(std::string("[Reading XML] ") + e.what(),
                           50, true);
     }
-    // Updates (graphical mostly) just after
+    
+    // Reinitialisation de certains modules....
     spatStatesEditionManager.UpdateView();
     
     // Actual mode change here

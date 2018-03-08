@@ -31,6 +31,11 @@ void SpatStatesEditionManager::CompleteInitialisation(std::shared_ptr<StatesInte
 {
     spatInterpolator = _statesInterpolator;
     
+    Reinit();
+}
+
+void SpatStatesEditionManager::Reinit()
+{
     // Update of the list on the GUI side
     selectSpatState(nullptr);
     UpdateView();

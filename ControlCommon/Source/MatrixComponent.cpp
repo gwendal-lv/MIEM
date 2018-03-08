@@ -10,6 +10,8 @@
 
 #include "MatrixComponent.h"
 
+#include <algorithm> // std::fill
+
 using namespace Miam;
 
 // - - - - - Construction and Destruction - - - - -
@@ -24,6 +26,7 @@ maxRowsCount(_maxRowsCount), maxColsCount(_maxColsCount)
     m = 0;
     
     rawDenseMatrix = new double[maxRowsCount*maxColsCount];
+    std::fill(rawDenseMatrix, rawDenseMatrix + maxRowsCount*maxColsCount, (double)0.0);
     
     ReconstructGuiObjects();
 }
@@ -151,29 +154,35 @@ void MatrixComponent::resized()
 
 // - - - - - Callbacks - - - - -
 
-void MatrixComponent::sliderValueChanged(Slider* _slider)
+void MatrixComponent::sliderValueChanged(Slider* slider)
 {
-    MatrixSlider* slider = dynamic_cast<MatrixSlider*>(_slider);
-    if (slider) // Slider au sein d'une matrice
+    MatrixSlider* matrixSlider = dynamic_cast<MatrixSlider*>(slider);
+    if (matrixSlider) // Slider au sein d'une matrice
     {
         // Slider identification for a matrix slider
-        int sliderId = std::stoi(slider->getComponentID().toStdString());
+        int sliderId = std::stoi(matrixSlider->getComponentID().toStdString());
         auto i = idx2d(sliderId).i;
         auto j = idx2d(sliderId).j;
         
         // màj des données internes (on oublie les autres types de sliders, pas visibles...)
-        rawDenseMatrix[idx(i, j)] = Decibels::decibelsToGain(slider->getValue());
+        rawDenseMatrix[idx(i, j)] = Decibels::decibelsToGain(matrixSlider->getValue());
         
         // Data transmission to the grandparent (and the listeners)
         grandParent->OnSliderValueChanged((int)i, (int)j,
                                           rawDenseMatrix[idx(i, j)]);
         
         // Graphical update depending on new value
-        slider->SetPropertiesFromVolume();
+        matrixSlider->SetPropertiesFromVolume();
     }
     else // Slider simple, horizontal
     {
-        std::cout << "changement de valeur de slider horizontal" << std::endl;
+        int sliderId = std::stoi(slider->getComponentID().toStdString());
+        
+        // Valeur linéaire simple mise dans la colonne 0
+        rawDenseMatrix[idx(sliderId, 0)] = slider->getValue();
+        // Data transmission to the grandparent (and the listeners)
+        grandParent->OnSliderValueChanged(sliderId, 0,
+                                          rawDenseMatrix[idx(sliderId, 0)]);
     }
 }
 
@@ -183,45 +192,72 @@ void MatrixComponent::sliderValueChanged(Slider* _slider)
 
 void MatrixComponent::SetActiveSliders(int inputsCount, int outputsCount)
 {
+    // Sliders matrice : plusieurs milliers, système optimisé nécessaire
     // Rows updating
-    if (n != inputsCount)
+    if (getPurpose() == AppPurpose::Spatialisation)
     {
-        // For all existing cols, we do something
-        for (int j=0 ; j<m ; j++)
+        if (n != inputsCount)
         {
-            if (inputsCount > n) // Increase of the rows count
+            // For all existing cols, we do something
+            for (int j=0 ; j<m ; j++)
             {
-                for (int i=n ; i<inputsCount ; i++)
-                    sliders[idx(i,j)]->SetIsActive(true);
-            }
-            else // Decrease of the rows count
-            {
-                for (int i=n-1 ; i>=inputsCount ; i--)
-                    sliders[idx(i,j)]->SetIsActive(false);
+                if (inputsCount > n) // Increase of the rows count
+                {
+                    for (int i=n ; i<inputsCount ; i++)
+                    {
+                        sliders[idx(i,j)]->SetIsActive(true);
+                    }
+                }
+                else // Decrease of the rows count
+                {
+                    for (int i=n-1 ; i>=inputsCount ; i--)
+                    {
+                        sliders[idx(i,j)]->SetIsActive(false);
+                    }
+                }
             }
         }
-        n = inputsCount;
     }
+    n = inputsCount;
     
     // Cols updating, based on the current up-to-date rows number
-    if (m != outputsCount)
+    if (getPurpose() == AppPurpose::Spatialisation)
     {
-        // For all existing rows, we do something
-        for (int i=0 ; i<n ; i++)
+        if (m != outputsCount)
         {
-            if (outputsCount > m) // Increase of the cols count
+            // For all existing rows, we do something
+            for (int i=0 ; i<n ; i++)
             {
-                for (int j=m ; j<outputsCount ; j++)
-                    sliders[idx(i,j)]->SetIsActive(true);
-            }
-            else // Decrease of the cols count
-            {
-                for (int j=m-1 ; j>=outputsCount ; j--)
-                    sliders[idx(i,j)]->SetIsActive(false);
+                if (outputsCount > m) // Increase of the cols count
+                {
+                    for (int j=m ; j<outputsCount ; j++)
+                        sliders[idx(i,j)]->SetIsActive(true);
+                }
+                else // Decrease of the cols count
+                {
+                    for (int j=m-1 ; j>=outputsCount ; j--)
+                        sliders[idx(i,j)]->SetIsActive(false);
+                }
             }
         }
-        m = outputsCount;
     }
+    m = outputsCount;
+    
+    
+    // Sliders horizontaux : il n'y en a pas des miliers... Alors on n'optimise pas
+    // remise aux bons états de tout
+    // On fait APRèS  avoir fait la mise à jour de n,m dans les boucles précédentes
+    if (getPurpose() == AppPurpose::GenericController)
+    {
+        for (int i=0 ; i<maxRowsCount ; i++)
+        {
+            if (i<n)
+                horizontalSliders[i]->setVisible(true);
+            else
+                horizontalSliders[i]->setVisible(false);
+        }
+    }
+    
     
     // Repaint at the very end
     //repaint(); // now : done from the grand-parent LabelledMatrixComponent
@@ -236,27 +272,19 @@ AppPurpose MatrixComponent::getPurpose()
 
 void MatrixComponent::SetSpatMatrix(std::shared_ptr<ControlMatrix> spatMatrix)
 {
-    // Reset of the internal matrix
+    // Reset to an displayed values in dB for all sliders
     for (size_t i=0 ; i<maxRowsCount ; i++)
         for (size_t j=0 ; j<maxColsCount ; j++)
-            rawDenseMatrix[idx(i,j)] = 0.0;
-    // Reset to an undisplayed value in dB for the sliders' matrix
-    for (size_t i=0 ; i<maxRowsCount ; i++)
-        for (size_t j=0 ; j<maxColsCount ; j++)
-            SetSliderValue_dB((int)i, (int)j,
-                              Miam_MinVolume_dB-MiamRouter_LowVolumeThreshold_dB);
+            SetSliderValue((int)i, (int)j, 0.0);
     
     // Update of non-zero sliders only (input is a sparse matrix)
     for( spatMatrix->ResetIterator() ;
         spatMatrix->GetIterator() < spatMatrix->GetEndIterator();
         spatMatrix->IncIterator() )
     {
-        rawDenseMatrix[spatMatrix->GetIterator1dCoord()] = spatMatrix->GetIteratorValue();
-        
         Index2d current2dCoord = spatMatrix->GetIterator2dCoord();
-        double sliderValue_dB = Decibels::gainToDecibels(rawDenseMatrix[spatMatrix->GetIterator1dCoord()]);
-        SetSliderValue_dB((int)current2dCoord.i, (int)current2dCoord.j,
-                          sliderValue_dB);
+        SetSliderValue((int)current2dCoord.i, (int)current2dCoord.j,
+                       spatMatrix->GetIteratorValue());
     }
 }
 void MatrixComponent::SetSliderValue_dB(int row, int col, double newValue_dB,
@@ -270,13 +298,19 @@ void MatrixComponent::SetSliderValue(int row, int col, double newValue,
     // Avant tout, sauvegarde interne
     rawDenseMatrix[idx(row,col)] = newValue;
     
-    // Mises à jour des données graphiques
+    // Slider de matrice
     MatrixSlider* slider = sliders[idx(row,col)].get();
-    // To prevent direct backwards retransmission
-    slider->setValue(Decibels::gainToDecibels(newValue), juceNotification);
-    
+    // valeur selon que l'on soit en dessous du treshold en dB, ou non
+    if (Decibels::gainToDecibels(newValue) < Miam_MinVolume_dB)
+        slider->setValue(Miam_MinVolume_dB-MiamRouter_LowVolumeThreshold_dB, juceNotification);
+    else
+        slider->setValue(Decibels::gainToDecibels(newValue), juceNotification); // To prevent direct backwards retransmission
     // Display update
     slider->SetPropertiesFromVolume();
+    
+    // Slider horizontal colonne zéro
+    if (col == 0)
+        horizontalSliders[row]->setValue(newValue);
 }
 std::shared_ptr<ControlMatrix> MatrixComponent::GetSpatMatrix()
 {

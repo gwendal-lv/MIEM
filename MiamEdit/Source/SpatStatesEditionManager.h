@@ -60,7 +60,7 @@ namespace Miam
         
         SpatStatesEditionManager(View* _view);
         void CompleteInitialisation(std::shared_ptr<StatesInterpolator<double>> _spatInterpolator);
-        
+        void Reinit();
         
         // - - - - - Events from Presenter - - - - -
         /// \brief Actualization of everything that might have been modified from
