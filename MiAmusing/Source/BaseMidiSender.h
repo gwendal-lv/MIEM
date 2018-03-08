@@ -48,8 +48,8 @@ public:
 
 	bool isNoteOnTime(int m_position, int i, int period, bool &end, int &channel, int &note, uint8 &m_velocity);
 	bool isNoteOffTime(int m_position, int i, int period, bool &end, int &channel, int &note);
-	bool isChordOnTime(int m_position, int period, int & m_channel, int *m_chordToPlay, uint8 & m_velocity);
-	bool isChordOffTime(int m_position, int period, int & m_channel, int m_chordToPlay[]);
+	bool isChordOnTime(int m_position, int i, int period, bool &end, int & m_channel, int &noteToPlay, uint8 & m_velocity);
+	bool isChordOffTime(int m_position, int period, int i, bool &end, int& m_channel, int &m_chordToPlay);
 
 
 	double getRelativePosition();
@@ -59,6 +59,8 @@ public:
 	void createChord(ChordType m_chordType, double m_chordTime, int baseNote1, int baseNote2);
 	void createPerfectChord(double chordTime, int currentNote);
 	void resetAllChords();
+
+	int getRandomNote();
 
 	void addMessageToQueue(MidiMessage msg);
 	void removeNextBlockOfMessages(MidiBuffer & incomingMidi, int numSamples);

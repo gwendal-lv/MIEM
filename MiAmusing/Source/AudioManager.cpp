@@ -524,7 +524,7 @@ void AudioManager::getParameters()
 				if (param.Id1 == param.Id2)
 					timeLinesKnown[param.Id1]->resetAllChords();
 				else
-					timeLinesKnown[param.Id1]->addChord(timeLinesKnown[param.Id2], roundToInt(param.DoubleValue * (double)metronome->getPeriodInSamples()));
+					timeLinesKnown[param.Id1]->addChord(timeLinesKnown[param.Id2], param.DoubleValue);
 			}
 			else
 			{
@@ -723,7 +723,7 @@ void AudioManager::getAudioThreadMsg()
 				if (param.Id1 == param.Id2)
 					timeLines[param.Id1]->resetAllChords();
 				else
-					timeLines[param.Id1]->addChord(timeLines[param.Id2], roundToInt(param.DoubleValue * (double)metronome->getPeriodInSamples()));
+					timeLines[param.Id1]->addChord(timeLines[param.Id2], param.DoubleValue);
 			}
 			break;
 		case Miam::AsyncParamChange::ParamType::InputsCount:

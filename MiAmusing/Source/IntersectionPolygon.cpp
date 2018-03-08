@@ -39,7 +39,8 @@ void IntersectionPolygon::Paint(Graphics & g)
 void IntersectionPolygon::CanvasResized(SceneCanvasComponent * _parentCanvas)
 {
 	parentCanvas = _parentCanvas;
-	// On part des polygones parents pour créer le polygone
+
+	/// On part des polygones parents pour créer le polygone
 
 	// compute the intersection
 	bpolygon poly1, poly2;
@@ -71,7 +72,24 @@ void IntersectionPolygon::CanvasResized(SceneCanvasComponent * _parentCanvas)
 		tmp.clear();
 	}
 
-	// creation of JUCE polygon
+	/// appartenance des différents points aux différents polygons
+	//clear memory
+	parent1ApexesAngle.clear();
+	parent2ApexesAngle.clear();
+	//verification des sommets de parent1
+	for (int i = 0; i < poly1.outer().size(); ++i)
+	{
+		if(parent2->contains(poly1.outer().at(i))) // si est contenu dans parent 2 -> garder en memoire
+			parent1ApexesAngle.push_back(parent1->getAngularPercentage(poly1.outer().at(i)));
+	}
+
+	for (int i = 0; i < poly2.outer().size(); ++i)
+	{
+		if (parent1->contains(poly2.outer().at(i))) // si est contenu dans parent 1 -> garder en memoire
+			parent2ApexesAngle.push_back(parent2->getAngularPercentage(poly2.outer().at(i)));
+	}
+
+	/// creation of JUCE polygon
 	contour.clear();
 	for (int j = 0; j < inter.size(); ++j)
 	{
@@ -95,6 +113,14 @@ bool IntersectionPolygon::isChild(std::shared_ptr<CompletePolygon> m_parent)
 	return false;
 }
 
+bool IntersectionPolygon::isEmpty()
+{
+	if (inter.size() > 0)
+		return false;
+	else
+		return false;
+}
+
 std::shared_ptr<CompletePolygon> Amusing::IntersectionPolygon::getNearestParent(bpt location)
 {
 	double d1 = boost::geometry::distance(location, parent1->getCenter());
@@ -103,4 +129,44 @@ std::shared_ptr<CompletePolygon> Amusing::IntersectionPolygon::getNearestParent(
 		return parent1;
 	else
 		return parent2;
+}
+
+std::shared_ptr<CompletePolygon> Amusing::IntersectionPolygon::getOtherParent(std::shared_ptr<CompletePolygon> parentA)
+{
+	if (parentA == parent1)
+		return parent2;
+	else if (parentA == parent2)
+		return parent1;
+	else
+		return nullptr;
+}
+
+int IntersectionPolygon::getApexesCount(std::shared_ptr<CompletePolygon> parent)
+{
+	if (parent == parent1)
+		return parent1ApexesAngle.size();
+	else if (parent == parent2)
+		return parent2ApexesAngle.size();
+	else
+		return 0;
+}
+
+double IntersectionPolygon::getApexesAngle(std::shared_ptr<CompletePolygon> parent, int index)
+{
+	if (parent == parent1)
+	{
+		if (index < parent1ApexesAngle.size())
+			return parent1ApexesAngle[index];
+		else
+			return 0.0;
+	}
+	else if (parent == parent2)
+	{
+		if (index < parent2ApexesAngle.size())
+			return parent2ApexesAngle[index];
+		else
+			return 0.0;
+	}
+	else
+		return 0.0;
 }

@@ -450,28 +450,27 @@ void PlayHead::testPosition(int P)
 		i++;
 	}
 
-	if (timeLine->isChordOnTime(P, numOfBeats * metronome->getPeriodInSamples(), m_channel, chordToPlay, m_velocity))
+	m_end = false;
+	i = 0;
+	while (m_end == false)
 	{
-		for (int j = 0; j < chordSize; j++)
+		if (timeLine->isChordOnTime(P, i, numOfBeats * metronome->getPeriodInSamples(), m_end, m_channel, m_note, m_velocity))
 		{
-			if (chordToPlay[j] > 0)
-			{
-				MidiMessage midiMsg = MidiMessage::noteOn(m_channel, chordToPlay[j], m_velocity);
-				audioManager->sendMidiMessage(midiMsg,this);
-			}
+			MidiMessage midiMsg = MidiMessage::noteOn(m_channel, m_note, m_velocity);
+			audioManager->sendMidiMessage(midiMsg, this);
 		}
+		++i;
 	}
 
-	if (timeLine->isChordOffTime(P, numOfBeats * metronome->getPeriodInSamples(), m_channel, chordToPlay))
+	m_end = false;
+	i = 0;
+	while (m_end == false)
 	{
-		for (int j = 0; j < chordSize; j++)
+		if (timeLine->isChordOffTime(P, i, numOfBeats * metronome->getPeriodInSamples(), m_end, m_channel, m_note))
 		{
-			if (chordToPlay[j] > 0)
-			{
-				MidiMessage midiMsgOff = MidiMessage::noteOff(m_channel, chordToPlay[j]);
-				audioManager->sendMidiMessage(midiMsgOff,this);
-			}
+			MidiMessage midiMsg = MidiMessage::noteOff(m_channel, m_note);
+			audioManager->sendMidiMessage(midiMsg, this);
 		}
+		++i;
 	}
-
 }

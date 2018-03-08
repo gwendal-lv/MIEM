@@ -387,7 +387,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 				if (auto complete = std::dynamic_pointer_cast<CompletePolygon>(area))
 				{
 					
-					// envoie des infos sur les notes à jouer
+					/// envoie des infos sur les notes à jouer
 
 					param.Id1 = myPresenter->getTimeLineID(area);
 					param.Type = Miam::AsyncParamChange::ParamType::Source;
@@ -406,30 +406,97 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					}
 					i = 0;
 
-					// envoie des infos sur les accords
+					/// envoie des infos sur les accords
 					param.Type = Miam::AsyncParamChange::ParamType::Position;
-					std::shared_ptr<CompletePolygon> chordArea;
+					std::shared_ptr<CompletePolygon> chordArea = nullptr;
 					double pC = 0;
 					param.Id2 = param.Id1;
-					myPresenter->SendParamChange(param);
+					myPresenter->SendParamChange(param); // to reset chords
 
-					while(complete->getChordParameters(i,chordArea,pC))
-					{
-						if (chordArea == complete)
-							DBG("pas possible");
-						param.Id2 = myPresenter->getTimeLineID(chordArea);
-						param.DoubleValue = pC;
-						myPresenter->SendParamChange(param);
-						i++;
-					}
-					i = 0;
 					
-				}
-				
+
+					int i = 0;
+					if (auto amusingS = std::dynamic_pointer_cast<AmusingScene>(areaE->GetConcernedScene()))
+					{
+						while (auto intersection = amusingS->getNextChildOf(complete, i))
+						{
+							auto otherParent = intersection->getOtherParent(complete);
+
+							// send new chords belonging to polygon "complete" already reset before the loop
+							param.Id1 = myPresenter->getTimeLineID(complete);
+							param.Id2 = myPresenter->getTimeLineID(otherParent);
+							for (int k = 0; k < intersection->getApexesCount(complete); ++k)
+							{
+								param.DoubleValue = intersection->getApexesAngle(complete,k);
+								myPresenter->SendParamChange(param);
+							}
+
+							// first reset chords belonging to the other parent
+							int tmp = param.Id1;
+							param.Id1 = param.Id2;
+							myPresenter->SendParamChange(param);
+
+							// send new chords belonging to the other parent
+							param.Id2 = tmp;
+							for (int k = 0; k < intersection->getApexesCount(otherParent); ++k)
+							{
+								param.DoubleValue = intersection->getApexesAngle(otherParent, k);
+								myPresenter->SendParamChange(param);
+							}
+
+
+							++i;
+						}
+					}
+				}				
 				break;
 			case AreaEventType::Translation :
 				//DBG("Translation");
-				
+				if (auto complete = std::dynamic_pointer_cast<CompletePolygon>(area))
+				{
+					/// envoie des infos sur les accords
+					param.Type = Miam::AsyncParamChange::ParamType::Position;
+					param.Id1 = myPresenter->getTimeLineID(area);
+					std::shared_ptr<CompletePolygon> chordArea;
+					double pC = 0;
+					param.Id2 = param.Id1;
+					myPresenter->SendParamChange(param); // to reset chords
+
+					// send new chords
+					int i = 0;
+					if (auto amusingS = std::dynamic_pointer_cast<AmusingScene>(areaE->GetConcernedScene()))
+					{
+						while (auto intersection = amusingS->getNextChildOf(complete, i))
+						{
+							auto otherParent = intersection->getOtherParent(complete);
+
+							// send new chords belonging to polygon "complete"
+							param.Id1 = myPresenter->getTimeLineID(complete);
+							param.Id2 = myPresenter->getTimeLineID(otherParent);
+							for (int k = 0; k < intersection->getApexesCount(complete); ++k)
+							{
+								param.DoubleValue = intersection->getApexesAngle(complete, k);
+								myPresenter->SendParamChange(param);
+							}
+
+							// first reset chords belonging to the other parent
+							int tmp = param.Id1;
+							param.Id1 = param.Id2;
+							myPresenter->SendParamChange(param);
+
+							// send new chords belonging to the other parent
+							param.Id2 = tmp;
+							for (int k = 0; k < intersection->getApexesCount(otherParent); ++k)
+							{
+								param.DoubleValue = intersection->getApexesAngle(otherParent, k);
+								myPresenter->SendParamChange(param);
+							}
+
+
+							++i;
+						}
+					}
+				}
 				//area-> get center height --> volume
 				break;
 			case AreaEventType::RotScale :

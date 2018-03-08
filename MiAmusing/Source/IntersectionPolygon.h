@@ -37,8 +37,12 @@ namespace Amusing
 		void setSurfaceThreshold(double m_threshold);
 
 		bool isChild(std::shared_ptr<CompletePolygon> m_parent);
+		bool isEmpty();
 
 		std::shared_ptr<CompletePolygon> getNearestParent(bpt location);
+		std::shared_ptr<CompletePolygon> getOtherParent(std::shared_ptr<CompletePolygon> parentA);
+		int getApexesCount(std::shared_ptr<CompletePolygon> parent);
+		double getApexesAngle(std::shared_ptr<CompletePolygon> parent, int index);
 
 	private:
 		// parents of the polygon -> determine this polygon
@@ -49,6 +53,10 @@ namespace Amusing
 
 		// the intersection can lead to multiple "pieces" of polygon
 		std::deque<bpolygon> inter;
+
+		// angular position of apexes belonging to parentX 
+		std::vector<double> parent1ApexesAngle;
+		std::vector<double> parent2ApexesAngle;
 	};
 
 }

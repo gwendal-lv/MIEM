@@ -732,6 +732,22 @@ std::shared_ptr<AreaEvent> AmusingScene::AddCursor(std::shared_ptr<IDrawableArea
 
 
 
+std::shared_ptr<Amusing::IntersectionPolygon> AmusingScene::getNextChildOf(std::shared_ptr<Amusing::CompletePolygon> parent, int index)
+{
+	int num = 0;
+	for (int j = 0; j < (int)currentIntersectionsAreas.size(); ++j)
+	{
+		if (currentIntersectionsAreas[j]->isChild(parent))
+		{
+			if (num == index)
+				return currentIntersectionsAreas[j];
+			else
+				++num;
+		}
+	}
+	return nullptr;
+}
+
 void AmusingScene::addChords(std::shared_ptr<Amusing::CompletePolygon> parent1, std::shared_ptr<Amusing::CompletePolygon> parent2, std::shared_ptr<MultiAreaEvent> multiE)
 {
 	if (multiE->GetOtherEventsCount() > 0)
@@ -869,6 +885,7 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseUp(const MouseEvent& mo
 		{
 			if (selectedArea)
 			{
+				AreaEventType areaEventType = selectedArea->EndPointMove();
 				
 				// test update intersections
 				if (auto completeP = std::dynamic_pointer_cast<CompletePolygon>(selectedArea))
@@ -883,7 +900,7 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseUp(const MouseEvent& mo
 				}
 				// end test update intersections
 
-				AreaEventType areaEventType = selectedArea->EndPointMove();
+				
 				graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, areaEventType, selectedArea->GetId(), shared_from_this()));
 			}
 		}

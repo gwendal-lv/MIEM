@@ -81,6 +81,9 @@ namespace Miam
 		
 
 		std::vector< std::shared_ptr<Amusing::IntersectionPolygon> > currentIntersectionsAreas;
+
+		std::shared_ptr<Amusing::IntersectionPolygon> getNextChildOf(std::shared_ptr<Amusing::CompletePolygon> parent, int index);
+
 		void addChords(std::shared_ptr<Amusing::CompletePolygon> parent1, std::shared_ptr<Amusing::CompletePolygon> parent2, std::shared_ptr<MultiAreaEvent> multiE);
 
 		// map with 2 entry = the parents polygons, and 1 output = the vector of overlap area between the two parent polygon
