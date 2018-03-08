@@ -413,7 +413,7 @@ void LabelledMatrixComponent::setMatrixToIdentity()
     unsigned int smallestDimension = std::min(maxRowsCount, maxColsCount);
     for (int i=0 ; i<(int)smallestDimension ; i++)
         // each one will notify (not optimized but that's OK)
-        GetMatrixComponent()->SetSliderValue(i, i, 0.0, NotificationType::sendNotification);
+        GetMatrixComponent()->SetSliderValue_dB(i, i, 0.0, NotificationType::sendNotification);
 }
 size_t LabelledMatrixComponent::getN()
 {
@@ -490,10 +490,21 @@ void LabelledMatrixComponent::SetActiveSliders(int inputsCount, int outputsCount
 }
 void LabelledMatrixComponent::SetDisplayPurpose(AppPurpose newSessionPurpose)
 {
+    // États internes indirects
+    switch(newSessionPurpose)
+    {
+        case AppPurpose::GenericController :
+            SetOutputNamesVisible(false); // actualisation si besoin
+            break;
+            
+        default : break;
+    }
+    // États internes directs et actualisations
     if (currentDisplayPurpose != newSessionPurpose)
     {
-        currentDisplayPurpose =  newSessionPurpose;
+        currentDisplayPurpose = newSessionPurpose;
         ReinitGuiObjects();
+        GetMatrixComponent()->RepositionGuiObjects();
     }
 }
 //[/MiscUserCode]

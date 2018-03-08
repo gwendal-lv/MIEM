@@ -36,11 +36,16 @@ namespace Miam
         
         // Children and parent components
         LabelledMatrixComponent* grandParent;
+        // matrice
         std::vector<ScopedPointer<MatrixSlider>> sliders;
+        // Sliders lorsque l'on n'a qu'une seule colonne
+        std::vector<ScopedPointer<Slider>> horizontalSliders;
         
-        // Graphics
+        // Graphics and internal data
         const size_t maxRowsCount;
         const size_t maxColsCount;
+        // VLA (Variable Length Array) is not OK with the sparse matrix ctor
+        double* rawDenseMatrix;
         
         int n; // Number of actually displayed rows
         int m; // Number of actually displayed columns
@@ -54,84 +59,26 @@ namespace Miam
         
         // - - - - - Construction and Destruction - - - - -
         
-        MatrixComponent(LabelledMatrixComponent* _grandParent, unsigned int _maxRowsCount, unsigned int _maxColsCount)
-        :
-        grandParent(_grandParent),
-        maxRowsCount(_maxRowsCount), maxColsCount(_maxColsCount)
-        {
-            // Initial values (to be changed after construction)
-            n = 0;
-            m = 0;
-            
-            ReconstructGuiObjects();
-        }
+        MatrixComponent(LabelledMatrixComponent* _grandParent,
+                        unsigned int _maxRowsCount, unsigned int _maxColsCount);
+        ~MatrixComponent();
         
-        ~MatrixComponent()
-        {
-        }
+        void ReconstructGuiObjects();
+        void RepositionGuiObjects();
         
         // Auxiliary functions
         private :
         inline size_t idx(size_t i, size_t j) { return i*maxColsCount+j; }
+        Index2d idx2d(size_t indexToConvert);
         public:
         
         // - - - - - Setters and Getters - - - - -
         size_t GetActiveInputsCount() {return n;}
         size_t GetActiveOutputsCount() {return m;}
-        void SetSliderValue(int row, int col, double newValue, NotificationType juceNotification = NotificationType::dontSendNotification)
-        {
-            MatrixSlider* slider = sliders[idx(row,col)].get();
-            // To prevent direct backwards retransmission
-            slider->setValue(newValue, juceNotification);
-            
-            // Graphical update
-            slider->SetPropertiesFromVolume();
-        }
-        void SetActiveSliders(int inputsCount, int outputsCount)
-        {
-            // Rows updating
-            if (n != inputsCount)
-            {
-                // For all existing cols, we do something
-                for (int j=0 ; j<m ; j++)
-                {
-                    if (inputsCount > n) // Increase of the rows count
-                    {
-                        for (int i=n ; i<inputsCount ; i++)
-                            sliders[idx(i,j)]->SetIsActive(true);
-                    }
-                    else // Decrease of the rows count
-                    {
-                        for (int i=n-1 ; i>=inputsCount ; i--)
-                            sliders[idx(i,j)]->SetIsActive(false);
-                    }
-                }
-                n = inputsCount;
-            }
-                
-            // Cols updating, based on the current up-to-date rows number
-            if (m != outputsCount)
-            {
-                // For all existing rows, we do something
-                for (int i=0 ; i<n ; i++)
-                {
-                    if (outputsCount > m) // Increase of the cols count
-                    {
-                        for (int j=m ; j<outputsCount ; j++)
-                            sliders[idx(i,j)]->SetIsActive(true);
-                    }
-                    else // Decrease of the cols count
-                    {
-                        for (int j=m-1 ; j>=outputsCount ; j--)
-                            sliders[idx(i,j)]->SetIsActive(false);
-                    }
-                }
-                m = outputsCount;
-            }
-            
-            // Repaint at the very end
-            //repaint(); // now : done from the grand-parent LabelledMatrixComponent
-        }
+        void SetActiveSliders(int inputsCount, int outputsCount);
+        private :
+        AppPurpose getPurpose();
+        public :
         void SetSlidersTextBoxesAreEditable(bool shouldBeEditable)
         {
             for (int i=0 ; i<maxRowsCount ; i++)
@@ -139,131 +86,26 @@ namespace Miam
                     sliders[idx(i,j)]->setTextBoxIsEditable(shouldBeEditable);
         }
         
-        /// \brief Builds and constructs the corresponding Miam::SpatMatrix
-        std::shared_ptr<ControlMatrix> GetSpatMatrix()
-        {
-            // VLA (Variable Length Array) is not OK with the sparse matrix ctor
-            double* rawDenseMatrix;
-            rawDenseMatrix = new double[maxRowsCount*maxColsCount];
-            for (int i=0 ; i<maxRowsCount ; i++)
-            {
-                for (int j=0 ; j<maxColsCount ; j++)
-                {
-                    // If non-zero only
-                    if (sliders[idx(i,j)]->getValue() > sliders[idx(i,j)]->GetMinVolume_dB() + MiamRouter_LowVolumeThreshold_dB)
-                    {
-                        double linearValue = Decibels::decibelsToGain(sliders[idx(i,j)]->getValue());
-                        rawDenseMatrix[idx(i,j)] = linearValue;
-                    }
-                    else
-                        rawDenseMatrix[idx(i,j)] = 0.0;
-                }
-            }
-            // construction optimisée
-            std::shared_ptr<ControlMatrix> returnPtr = std::make_shared<ControlMatrix>(rawDenseMatrix);
-            delete rawDenseMatrix;
-            return returnPtr;
-        }
-        
         /// \brief Updates its internal sliders from the given Miam::SpatMatrix
-        void SetSpatMatrix(std::shared_ptr<ControlMatrix> spatMatrix)
-        {
-            // Reset to an undisplayed value in dB
-            for (size_t i=0 ; i<maxRowsCount ; i++)
-                for (size_t j=0 ; j<maxColsCount ; j++)
-                    SetSliderValue((int)i, (int)j,
-                                   Miam_MinVolume_dB-MiamRouter_LowVolumeThreshold_dB);
-            
-            // Update of non-zero sliders only (input is a sparse matrix)
-            for( spatMatrix->ResetIterator() ;
-                spatMatrix->GetIterator() < spatMatrix->GetEndIterator();
-                spatMatrix->IncIterator() )
-            {
-                Index2d current2dCoord = spatMatrix->GetIterator2dCoord();
-                double sliderValue = Decibels::gainToDecibels(spatMatrix->GetIteratorValue());
-                SetSliderValue((int)current2dCoord.i, (int)current2dCoord.j,
-                               sliderValue);
-            }
-        }
+        void SetSpatMatrix(std::shared_ptr<ControlMatrix> spatMatrix);
+        void SetSliderValue_dB(int row, int col, double newValue_dB,
+                               NotificationType juceNotification = NotificationType::dontSendNotification);
+        void SetSliderValue(int row, int col, double newValue,
+                            NotificationType juceNotification = NotificationType::dontSendNotification);
+        /// \brief Builds and constructs the corresponding Miam::SpatMatrix
+        std::shared_ptr<ControlMatrix> GetSpatMatrix();
+        
         
         // - - - - - Juce graphics - - - - -
+        public :
+        void paint (Graphics& g) override;
+        void resized() override;
         
-        void paint (Graphics& g) override
-        {
-            /* This demo code just fills the component's background and
-             draws some placeholder text to get you started.
-             
-             You should replace everything in this method with your own
-             drawing code..
-             */
-            
-            g.fillAll (Colours::lightgrey);   // clear the background
-            
-            g.setColour (Colours::grey);
-            g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
-        }
-        
-        
-        void resized() override
-        {
-            setSize((int)maxRowsCount*itemW, (int)maxColsCount*itemH);
-        }
-        
-        void RepositionGuiObjects()
-        {
-            // Actual positionning
-            // i repesents a *graphical* row (= matrix row in this case...)
-            for (int i=0 ; i<maxRowsCount ; i++)
-            {
-                // j repesents a *graphical* column (= matrix col now...)
-                for (int j=0 ; j<maxColsCount ; j++)
-                {
-                    int idx = i*(int)maxRowsCount + j; // graphically one col further than the matrix
-                    sliders[idx]->setBounds((int)round(j*itemW), (int)round(i*itemH), (int)round(itemW), (int)round(itemH));
-                }
-            }
-        }
-        
-        void ReconstructGuiObjects()
-        {
-            // Auto-sizing at first
-            resized();
-            
-            // Pre-allocations for vector of scoped pointers
-            sliders.clear();
-            sliders.resize(maxRowsCount*maxColsCount);
-            
-            // Actual creation of sliders and labels
-            for (int i=0 ; i<maxRowsCount ; i++)
-            {
-                for (int j=0 ; j<maxColsCount ; j++)
-                {
-                    // Slider (i,j)
-                    sliders[idx(i,j)] = new MatrixSlider();
-                    sliders[idx(i,j)]->setName("Slider ID=" + boost::lexical_cast<std::string>(idx(i,j)) + " : row=" + boost::lexical_cast<std::string>(i) + " col=" + boost::lexical_cast<std::string>(j));
-                    sliders[idx(i,j)]->setComponentID(boost::lexical_cast<std::string>(idx(i,j)));
-                    initAndAddSlider(sliders[idx(i,j)]);
-                    
-                    sliders[idx(i,j)]->SetPropertiesFromVolume();
-                }
-            }
-            
-            // Active sliders
-            SetActiveSliders(n, m);
-            
-            // Graphical placement
-            RepositionGuiObjects();
-        }
         
         // - Internal graphical helpers -
         private :
-
-        void initAndAddSlider(Slider* slider)
-        {
-            addAndMakeVisible(slider);
-            slider->addListener(this);
-        }
-        
+        void addSlider(Slider* slider);
+        void initAndAddHorizontalSlider(Slider* slider);
         
         
         // - - - - - Callbacks - - - - -
@@ -273,23 +115,7 @@ namespace Miam
         ///
         /// Might be called from mouse input as well as from direct value assignation
         /// from c++ code.
-        void sliderValueChanged(Slider* _slider) override
-        {
-            MatrixSlider* slider = dynamic_cast<MatrixSlider*>(_slider);
-            if (slider)
-            {
-                // Slider identification
-                int sliderId = std::stoi(slider->getComponentID().toStdString());
-                unsigned int sliderRow = (unsigned int) std::floor((double)(sliderId)/(double)(maxRowsCount));
-                unsigned int sliderCol = sliderId % maxColsCount;
-                
-                // Data transmission
-                grandParent->OnSliderValueChanged(sliderRow, sliderCol, slider->getValue());
-                
-                // Graphical update depending on new value
-                slider->SetPropertiesFromVolume();
-            }
-        }
+        void sliderValueChanged(Slider* _slider) override;
         
         
         

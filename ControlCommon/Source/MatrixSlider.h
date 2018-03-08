@@ -31,7 +31,8 @@
 namespace Miam
 {
     
-    /// \brief Box within a matrix slider, displaying a limited number of digits only
+    /// \brief Box within a matrix slider, displaying a limited number of digits only. Values
+    /// contained inside are decibels only.
     class MatrixSlider : public Slider
     {
         private :

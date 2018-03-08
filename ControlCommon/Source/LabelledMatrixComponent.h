@@ -84,7 +84,8 @@ public:
 
     /// \brief Callback from the MatrixViewport
     void OnViewportVisibleAreaChanged();
-    /// \brief Callback from the MatrixComponent
+    /// \brief Callback from the MatrixComponent.
+    /// 'value' is a linear value (not given in decibels)
     void OnSliderValueChanged(int row, int col, double value)
     {listener->OnSliderValueChanged(row, col, value);}
 
@@ -99,6 +100,7 @@ public:
     void SetActiveSliders(int inputsCount, int outputsCount);
     
     void SetDisplayPurpose(AppPurpose newSessionPurpose);
+    AppPurpose GetDisplayPurpose() {return currentDisplayPurpose;}
 
     //[/UserMethods]
 
