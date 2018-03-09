@@ -253,6 +253,8 @@ void HardwareConfigurationComponent::buttonClicked (Button* buttonThatWasClicked
     else if (buttonThatWasClicked == outputNamesToggleButton)
     {
         //[UserButtonCode_outputNamesToggleButton] -- add your button handler code here..
+        settingsManager->OnInOutNamesDisplayedChanged(inputNamesToggleButton->getToggleState(),
+                                                      outputNamesToggleButton->getToggleState());
         //[/UserButtonCode_outputNamesToggleButton]
     }
 

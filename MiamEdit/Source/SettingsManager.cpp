@@ -141,6 +141,26 @@ void SettingsManager::SetFromTree(bptree::ptree& tree)
     catch (bptree::ptree_error& e) {
         throw XmlReadException(std::string("Cannot read a necessary settings tag: ") + e.what());
     }
+    
+    // à la fin du chargement : on met les données par défaut pour certains paramètres (channels names
+    // cachés ou pas, ...) qui ne sont pas précisés dans le XML
+    switch (GetSessionPurpose())
+    {
+        case AppPurpose::Spatialisation :
+            
+            configurationComponent->inputNamesToggleButton->setToggleState(false, NotificationType::dontSendNotification);
+            configurationComponent->outputNamesToggleButton->setToggleState(false, NotificationType::dontSendNotification);
+            // on ne peut pas (ne doit pas...) faire confiance à la vue pour re-déclencher des callbacks !
+            OnInOutNamesDisplayedChanged(false, false);
+            break;
+        case AppPurpose::GenericController :
+            configurationComponent->inputNamesToggleButton->setToggleState(true, NotificationType::dontSendNotification);
+            // on ne peut pas (ne doit pas...) faire confiance à la vue pour re-déclencher des callbacks !
+            OnInOutNamesDisplayedChanged(true, false);
+            break;
+        default :
+            break;
+    }
 }
 
 
