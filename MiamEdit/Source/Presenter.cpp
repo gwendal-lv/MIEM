@@ -255,12 +255,18 @@ void Presenter::CreateSession(std::string filename, AppPurpose sessionPurpose, b
     assert( PathUtils::CheckForExtensionAndPurposeCoherence(filename, sessionPurpose) );
     model->setSessionPurpose(sessionPurpose);
     
-    // On force l'update (de la session forcément vide, car c'est mal fout pour l'instant...)
+#ifdef __MIAM_DEBUG
+    spatStatesEditionManager.OnAddState(); // pour essayer de détecter le bug des états supprimés...
+#endif
+    
+    // On force l'update (de la session forcément vide, car c'est mal foutu pour l'instant...)
     // Pour l'instant on ne peut faire ça que depuis l'écran de démarrage
     SaveSession(filename, true);
     
+    // Et on charge direct cette session pour faire les updates..... à supprimer à l'avenir...
+    LoadSession(filename);
     // Mode : repasse aux scène graphiques par défaut
-    appModeChangeRequest(AppMode::EditSpatScenes);
+    //appModeChangeRequest(AppMode::EditSpatScenes);
 }
 
 

@@ -225,6 +225,7 @@ void SpatStatesEditionManager::UpdateView()
     // GUI update (copy of whole vector)
     std::vector<std::shared_ptr<ControlState<double>>> newSpatStates = spatInterpolator->GetStates();
     editionComponent->UpdateStatesList(newSpatStates);
+    //editionComponent->resized(); // pas mal de modifs si le AppPurpose de session a changé
 }
 
 

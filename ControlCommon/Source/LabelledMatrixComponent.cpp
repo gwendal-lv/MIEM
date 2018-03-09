@@ -505,6 +505,7 @@ void LabelledMatrixComponent::SetDisplayPurpose(AppPurpose newSessionPurpose)
         currentDisplayPurpose = newSessionPurpose;
         ReinitGuiObjects();
         GetMatrixComponent()->RepositionGuiObjects();
+        GetMatrixComponent()->resized(); // pour redonner la bonne taile au contenu du viewport
     }
 }
 //[/MiscUserCode]

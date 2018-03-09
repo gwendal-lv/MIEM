@@ -395,6 +395,14 @@ namespace Miam
         /// but only knows its <states> tag and its <state> children
         std::shared_ptr<bptree::ptree> GetStatesTree()
         {
+#ifdef __MIAM_DEBUG
+            if (states.size() == 0)
+            {
+                std::cout << "----------DEBUG----------- Plus aucun état enregistré !! ----------DEBUG----------- " << std::endl;
+                throw std::logic_error("Plus aucun état enregistré !!");
+            }
+#endif
+            
             bptree::ptree statesInnerTree;
             for (size_t i=0 ; i<states.size() ; i++)
             {
