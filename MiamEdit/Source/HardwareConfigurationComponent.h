@@ -46,7 +46,8 @@ namespace Miam {
 class HardwareConfigurationComponent  : public Component,
                                         public TextEditor::Listener,
                                         public Slider::Listener,
-                                        public Button::Listener
+                                        public Button::Listener,
+                                        public ComboBox::Listener
 {
 public:
     //==============================================================================
@@ -66,6 +67,7 @@ public:
     void resized() override;
     void sliderValueChanged (Slider* sliderThatWasMoved) override;
     void buttonClicked (Button* buttonThatWasClicked) override;
+    void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
     void visibilityChanged() override;
 
 
@@ -91,6 +93,8 @@ private:
     ScopedPointer<TextEditor> ipAddressTextEditor;
     ScopedPointer<ToggleButton> inputNamesToggleButton;
     ScopedPointer<ToggleButton> outputNamesToggleButton;
+    ScopedPointer<ComboBox> interpolationTypeComboBox;
+    ScopedPointer<Label> interpolationTypeLabel;
 
 
     //==============================================================================

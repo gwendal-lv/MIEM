@@ -51,7 +51,7 @@ presenter(presenter_),
 commonStartTimePt( presenter->GetCommonTimePoint() )
 {
     // Choice of interpolation type
-    interpolator = std::make_shared<StatesInterpolator<double>>(InterpolationType::Matrix_ConstantVolumeInterpolation);
+    interpolator = std::make_shared<StatesInterpolator<double>>(InterpolationType::None);
     
     // Définition de la fréquence de fonctionnement
     updateThreadF_Hz = updateFrequency_Hz;

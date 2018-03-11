@@ -96,6 +96,8 @@
                 file="../ControlCommon/Source/PlayerMainMenuComponent.cpp"/>
           <FILE id="CIH7iT" name="PlayerMainMenuComponent.h" compile="0" resource="0"
                 file="../ControlCommon/Source/PlayerMainMenuComponent.h"/>
+          <FILE id="X9ujP6" name="MatrixComponent.cpp" compile="1" resource="0"
+                file="../ControlCommon/Source/MatrixComponent.cpp"/>
           <FILE id="D1VeJN" name="MatrixComponent.h" compile="0" resource="0"
                 file="../ControlCommon/Source/MatrixComponent.h"/>
           <FILE id="CDLZvE" name="MatrixSlider.h" compile="0" resource="0" file="../ControlCommon/Source/MatrixSlider.h"/>

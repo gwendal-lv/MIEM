@@ -15,6 +15,8 @@
 #include <vector>
 #include <memory>
 
+#include "InterpolationTypes.h"
+
 #include "ControlState.hpp"
 #include "MatrixState.hpp"
 #include "MatrixBackupState.hpp"
@@ -32,19 +34,6 @@ namespace bptree = boost::property_tree;
 namespace Miam
 {
     class ControlModel;
-    
-    
-    
-    /// \brief Describes the current method
-    enum class InterpolationType {
-        
-        None, ///< Interpolator not configured yet
-        
-        Matrix_LinearInterpolation, ///< états matriciels, avec interpolation linéaire basique, coefficient par coefficient
-        Matrix_ConstantVolumeInterpolation, ///< Interpolation à conservation de volume (si transitions entre matrices de même volume total)
-        
-    };
-    
     
     
     /// \brief Manages some Miam::ControlState children, and does the
@@ -255,15 +244,7 @@ namespace Miam
                         //
                         // On suppose en fait que la balance et le placement dans la salle sont bien
                         // pensés.
-                        currentInterpolatedMatrixState.MultiplyAndAccumulate(matrixState, matrixState.GetExcitement());
-                        
-                        
-                        if (matrixState.GetExcitement() < 0.0 || matrixState.GetExcitement() > 6.0)
-                        {
-                            std::cout << "- - - - - - - - - - - - - - - - - - -" << std::endl;
-                            std::cout << "***** Valeur d'excitation anormale (=" << matrixState.GetExcitement() << " pour state idx=" << i << ")" << std::endl;
-                            std::cout << "- - - - - - - - - - - - - - - - - - -" << std::endl;
-                        }
+                        currentInterpolatedMatrixState->MultiplyAndAccumulate(matrixState, matrixState.GetExcitement());
                     }
                     catch (std::bad_cast& e) {
                         throw std::logic_error(std::string("Impossible pour l'instant de traiter autre chose que des états matriciels : ") + e.what());
@@ -299,6 +280,8 @@ namespace Miam
         std::shared_ptr<bptree::ptree> GetConfigurationTree()
         {
             auto confTree = std::make_shared<bptree::ptree>();
+            // Interpolator type
+            confTree->put("interpolation.<xmlattr>.type", InterpolationTypes::GetInterpolationName(interpolationType, false, true).toStdString());
             // Inputs (counts and names)
             bptree::ptree inputsInnerTree;
             inputsInnerTree.put("<xmlattr>.activeCount", inputsCount);
@@ -333,6 +316,18 @@ namespace Miam
         {
             reinitConfiguration();
             
+            // - - - Interpolation type - - -
+            try {
+                std::string typeString = tree.get<std::string>("interpolation.<xmlattr>.type");
+                InterpolationType parsedInterpolationType = InterpolationTypes::ParseName(typeString);
+                ReinitInterpolation(parsedInterpolationType);
+            }
+            catch (bptree::ptree_error& e) {
+                throw XmlReadException(std::string("Cannot read the 'type' attribute from the <interpolation> tag: ") + e.what());
+            }
+            catch (ParseException& e) {
+                throw XmlReadException(std::string("Cannot parse the 'type' attribute from the <interpolation> tag: ") + e.what());
+            }
             // - - - Inputs - - -
             try {
                 inputsCount = tree.get<int>("inputs.<xmlattr>.activeCount");

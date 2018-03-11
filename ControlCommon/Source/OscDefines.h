@@ -13,3 +13,4 @@
 #define Miam_OSC_Matrix_Address       "/mat"
 #define Miam_OSC_Set_to_Zero_Address        "/set_to_zero"
 
+#define Miam_OSC_Generic_Param_Address      "/miem"

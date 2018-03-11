@@ -254,6 +254,9 @@ void Presenter::CreateSession(std::string filename, AppPurpose sessionPurpose, b
     // Initialisation du type de session dans le modèle
     assert( PathUtils::CheckForExtensionAndPurposeCoherence(filename, sessionPurpose) );
     model->setSessionPurpose(sessionPurpose);
+    // Si besoin : on met le type d'interpolation qui va avec
+    if (sessionPurpose == AppPurpose::Spatialisation)
+        model->GetInterpolator()->ReinitInterpolation(InterpolationType::Matrix_ConstantVolumeInterpolation);
     
 #ifdef __MIAM_DEBUG
     spatStatesEditionManager.OnAddState(); // pour essayer de détecter le bug des états supprimés...

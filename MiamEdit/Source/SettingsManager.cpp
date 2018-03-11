@@ -56,7 +56,6 @@ AppPurpose SettingsManager::GetSessionPurpose()
 
 // - - - - - Callbacks from View, retransmitted - - - - -
 
-
 void SettingsManager::OnInOutChannelsCountChanged(int inputsCount, int outputsCount)
 {
     if (!linksInitialized)
@@ -79,6 +78,10 @@ void SettingsManager::OnInOutNamesDisplayedChanged(bool areInputNamesVisible, bo
     // View updates only
     presenter->GetSpatStatesManager()->OnInOutNamesDisplayedChanged(areInputNamesVisible,
                                                                     areOutputNamesVisible);
+}
+void SettingsManager::OnInterpolationTypeChanged(InterpolationType type)
+{
+    model->GetInterpolator()->ReinitInterpolation(type);
 }
 void SettingsManager::OnAllowKeyboardEdition(bool allow)
 {
@@ -126,7 +129,11 @@ void SettingsManager::SetFromTree(bptree::ptree& tree)
         configurationComponent->keyboardToggleButton->setToggleState(allow, NotificationType::dontSendNotification);
         presenter->GetSpatStatesManager()->AllowKeyboardEdition(allow);
     
-        // Interpolator-related
+        // Interpolator-related : simple transmission of data to View, without notifications
+        std::string typeString = tree.get<std::string>("model.interpolation.<xmlattr>.type");
+        InterpolationType interpolationType = InterpolationTypes::ParseName(typeString);
+        configurationComponent->interpolationTypeComboBox->setSelectedId((int)interpolationType,
+                                                        NotificationType::dontSendNotification);
         configurationComponent->inputsCountSlider->
         setValue((double) tree.get<int>("model.inputs.<xmlattr>.activeCount") );
         configurationComponent->outputsCountSlider->

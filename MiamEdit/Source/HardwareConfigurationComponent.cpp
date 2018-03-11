@@ -22,6 +22,7 @@
 
 #include "SettingsManager.h"
 #include "AudioDefines.h"
+#include "InterpolationTypes.h"
 
 #include "XmlUtils.h"
 //[/Headers]
@@ -127,6 +128,22 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
     outputNamesToggleButton->addListener (this);
     outputNamesToggleButton->setColour (ToggleButton::textColourId, Colours::black);
 
+    addAndMakeVisible (interpolationTypeComboBox = new ComboBox ("Interpolation Type combo box"));
+    interpolationTypeComboBox->setEditableText (false);
+    interpolationTypeComboBox->setJustificationType (Justification::centredLeft);
+    interpolationTypeComboBox->setTextWhenNothingSelected (String());
+    interpolationTypeComboBox->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
+    interpolationTypeComboBox->addListener (this);
+
+    addAndMakeVisible (interpolationTypeLabel = new Label ("Interpolation Type label",
+                                                           TRANS("Type of interpolation:")));
+    interpolationTypeLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    interpolationTypeLabel->setJustificationType (Justification::centredRight);
+    interpolationTypeLabel->setEditable (false, false, false);
+    interpolationTypeLabel->setColour (Label::textColourId, Colours::black);
+    interpolationTypeLabel->setColour (TextEditor::textColourId, Colours::black);
+    interpolationTypeLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
 
     //[UserPreSize]
 
@@ -137,6 +154,13 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
     // Sliders max values from defines
     inputsCountSlider->setRange (1, Miam_MaxNumInputs, 1);
     outputsCountSlider->setRange (1, Miam_MaxNumOutputs, 1);
+    
+    // Remplissage de la combobox interpolation, sans choix par défaut
+    // Le zéro doit être "aucun interpolateur" pour correspondre aux indices des combobox....
+    assert((int)(InterpolationType::None) == 0);
+    for (int i=1 ; i < (int)InterpolationType::InterpolationTypesCount ; i++)
+        interpolationTypeComboBox->addItem(InterpolationTypes::GetInterpolationName((InterpolationType)i),
+                                           i);
 
     // OSC plugin control is the only choice for now (defaultly activated)
     oscPluginToggleButton->setEnabled(false);
@@ -171,6 +195,8 @@ HardwareConfigurationComponent::~HardwareConfigurationComponent()
     ipAddressTextEditor = nullptr;
     inputNamesToggleButton = nullptr;
     outputNamesToggleButton = nullptr;
+    interpolationTypeComboBox = nullptr;
+    interpolationTypeLabel = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -198,14 +224,16 @@ void HardwareConfigurationComponent::resized()
     outputsCountSlider->setBounds ((getWidth() / 2) + -8 - 150, 48, 150, 24);
     inputsCountLabel->setBounds ((getWidth() / 2) + -156 - 208, 16 + 0, 208, 24);
     outputsCountLabel->setBounds ((getWidth() / 2) + -156 - 208, 48 + 0, 208, 24);
-    oscPluginToggleButton->setBounds ((getWidth() / 2) - (400 / 2), 96, 400, 24);
-    udpPortLabel->setBounds ((getWidth() / 2) - 336, 160 + 0, 336, 24);
-    udpPortTextEditor->setBounds ((getWidth() / 2) + 8, 160, 64, 24);
+    oscPluginToggleButton->setBounds ((getWidth() / 2) - (400 / 2), 160, 400, 24);
+    udpPortLabel->setBounds ((getWidth() / 2) - 336, 224 + 0, 336, 24);
+    udpPortTextEditor->setBounds ((getWidth() / 2) + 8, 224, 64, 24);
     keyboardToggleButton->setBounds ((getWidth() / 2) - (400 / 2), getHeight() - 48, 400, 24);
-    ipAddressLabel->setBounds ((getWidth() / 2) - 336, 128 + 0, 336, 24);
-    ipAddressTextEditor->setBounds ((getWidth() / 2) + 8, 128, 120, 24);
+    ipAddressLabel->setBounds ((getWidth() / 2) - 336, 192 + 0, 336, 24);
+    ipAddressTextEditor->setBounds ((getWidth() / 2) + 8, 192, 120, 24);
     inputNamesToggleButton->setBounds ((getWidth() / 2) + 8, 16, 400, 24);
     outputNamesToggleButton->setBounds ((getWidth() / 2) + 8, 48, 400, 24);
+    interpolationTypeComboBox->setBounds ((getWidth() / 2) + 8, 104, 320, 24);
+    interpolationTypeLabel->setBounds ((getWidth() / 2) - 336, 104 + 0, 336, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -262,6 +290,24 @@ void HardwareConfigurationComponent::buttonClicked (Button* buttonThatWasClicked
     //[/UserbuttonClicked_Post]
 }
 
+void HardwareConfigurationComponent::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
+{
+    //[UsercomboBoxChanged_Pre]
+    //[/UsercomboBoxChanged_Pre]
+
+    if (comboBoxThatHasChanged == interpolationTypeComboBox)
+    {
+        //[UserComboBoxCode_interpolationTypeComboBox] -- add your combo box handling code here..
+        int chosenId = interpolationTypeComboBox->getSelectedId();
+        if (0 < chosenId && chosenId < (int)InterpolationType::InterpolationTypesCount)
+            settingsManager->OnInterpolationTypeChanged((InterpolationType)chosenId);
+        //[/UserComboBoxCode_interpolationTypeComboBox]
+    }
+
+    //[UsercomboBoxChanged_Post]
+    //[/UsercomboBoxChanged_Post]
+}
+
 void HardwareConfigurationComponent::visibilityChanged()
 {
     //[UserCode_visibilityChanged] -- Add your code here...
@@ -276,8 +322,12 @@ void HardwareConfigurationComponent::visibilityChanged()
                 outputsCountLabel->setVisible(true);
                 outputsCountSlider->setVisible(true);
                 outputNamesToggleButton->setVisible(true);
-                // coché, mais garde la valeur d'activation précédente
+                // input name toggle :  coché, mais garde la valeur d'activation précédente
                 inputNamesToggleButton->setEnabled(true);
+                // type d'interpolateur verrouillé mais affiché
+                interpolationTypeLabel->setEnabled(false);
+                interpolationTypeComboBox->setSelectedId((int)InterpolationType::Matrix_ConstantVolumeInterpolation, NotificationType::dontSendNotification);
+                interpolationTypeComboBox->setEnabled(false);
                 break;
 
             case AppPurpose::GenericController :
@@ -285,9 +335,12 @@ void HardwareConfigurationComponent::visibilityChanged()
                 outputsCountLabel->setVisible(false);
                 outputsCountSlider->setVisible(false);
                 outputNamesToggleButton->setVisible(false);
-                // coché mais désactivé
+                // input name toggle : coché mais désactivé
                 inputNamesToggleButton->setToggleState(true, dontSendNotification);
                 inputNamesToggleButton->setEnabled(false);
+                // type d'interpolateur libre
+                interpolationTypeLabel->setEnabled(true);
+                interpolationTypeComboBox->setEnabled(true);
                 break;
 
             default :
@@ -378,7 +431,7 @@ BEGIN_JUCER_METADATA
          fontname="Default font" fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
          bold="0" italic="0" justification="34"/>
   <TOGGLEBUTTON name="OSC Plugin toggle button" id="74b5dae6c2ea74a2" memberName="oscPluginToggleButton"
-                virtualName="" explicitFocusOrder="0" pos="0Cc 96 400 24" txtcol="ff000000"
+                virtualName="" explicitFocusOrder="0" pos="0Cc 160 400 24" txtcol="ff000000"
                 buttonText="Send OSC to Miam Matrix Router remote plug-in" connectedEdges="0"
                 needsCallback="0" radioGroupId="0" state="1"/>
   <LABEL name="UPD Port Label" id="8d369e08975b779c" memberName="udpPortLabel"
@@ -389,7 +442,7 @@ BEGIN_JUCER_METADATA
          fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
          bold="0" italic="0" justification="34"/>
   <TEXTEDITOR name="UDP Port Text Editor" id="e4ef4437203ce19e" memberName="udpPortTextEditor"
-              virtualName="" explicitFocusOrder="0" pos="8C 160 64 24" initialText="8001"
+              virtualName="" explicitFocusOrder="0" pos="8C 224 64 24" initialText="8001"
               multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"
               caret="1" popupmenu="1"/>
   <TOGGLEBUTTON name="Keyboard toggle button" id="8c809b7ecaa8a037" memberName="keyboardToggleButton"
@@ -404,7 +457,7 @@ BEGIN_JUCER_METADATA
          fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
          bold="0" italic="0" justification="34"/>
   <TEXTEDITOR name="IP Address Text Editor" id="6997b5b4dc28675a" memberName="ipAddressTextEditor"
-              virtualName="" explicitFocusOrder="0" pos="8C 128 120 24" initialText="127.0.0.1"
+              virtualName="" explicitFocusOrder="0" pos="8C 192 120 24" initialText="127.0.0.1"
               multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"
               caret="1" popupmenu="1"/>
   <TOGGLEBUTTON name="Input Names toggle button" id="b7d5b33136328768" memberName="inputNamesToggleButton"
@@ -415,6 +468,16 @@ BEGIN_JUCER_METADATA
                 virtualName="" explicitFocusOrder="0" pos="8C 48 400 24" txtcol="ff000000"
                 buttonText="Display names" connectedEdges="0" needsCallback="1"
                 radioGroupId="0" state="0"/>
+  <COMBOBOX name="Interpolation Type combo box" id="900a9258dc365ad0" memberName="interpolationTypeComboBox"
+            virtualName="" explicitFocusOrder="0" pos="8C 104 320 24" editable="0"
+            layout="33" items="" textWhenNonSelected="" textWhenNoItems="(no choices)"/>
+  <LABEL name="Interpolation Type label" id="184dbfa5837bdd41" memberName="interpolationTypeLabel"
+         virtualName="" explicitFocusOrder="0" pos="0Cr 0 336 24" posRelativeX="dfbb24a51fa3d6c0"
+         posRelativeY="900a9258dc365ad0" textCol="ff000000" edTextCol="ff000000"
+         edBkgCol="0" labelText="Type of interpolation:" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
+         fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
+         bold="0" italic="0" justification="34"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

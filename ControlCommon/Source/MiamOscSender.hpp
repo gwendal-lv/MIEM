@@ -20,6 +20,7 @@
 #include "MatrixBackupState.hpp"
 
 #include "boost/endian/conversion.hpp"
+#include "boost/lexical_cast.hpp"
 
 
 namespace Miam
@@ -34,6 +35,9 @@ namespace Miam
         int udpPort;
         std::string ipv4;
         OSCSender oscSender;
+        
+        bool sendFirstColOnly = false;
+        std::vector<OSCMessage> firstColOscMessages;
         
         // 2 = nombre minimum de coefficients de matrices que l'on doit mettre dans un bloc
         // Si on moins d'infos que ça à transmettre : on transmet un coeff seul
@@ -94,9 +98,58 @@ namespace Miam
             if ( ( !ipv4.empty() ) && ( udpPort > 0 ) )
                 return oscSender.connect(ipv4, udpPort);
             else
+                
                 return false;
         }
-        
+        /// \brief Choisit si l'on ne va envoyer que les coeffients de la première colonne
+        /// (contrôle de paramètres simple, pas contrôle de matrice entière). Si c'est le cas,
+        /// on peut préciser l'adresse OSC pour chaque ligne (sinon, adresse de ligne par défaut
+        /// avec numéro de ligne)
+        void EnableSendFirstColOnly(bool sendFirstColOnly_,
+                                    const std::vector<std::string> & oscAddressPatterns)
+        {
+            EnableSendFirstColOnly(sendFirstColOnly_);
+            
+            if (sendFirstColOnly)
+            {
+                // Création du maximum possible de messages
+                firstColOscMessages.reserve(Miam_MaxNumInputs);
+                for (size_t i=0 ; i<Miam_MaxNumInputs ; i++)
+                {
+                    bool useGenericAddressPattern = false;
+                    if (i < oscAddressPatterns.size())
+                    {
+                        if (! oscAddressPatterns[i].empty())
+                        {
+                            try {
+                                OSCAddressPattern addressPattern(oscAddressPatterns[i]);
+                                firstColOscMessages.push_back(OSCMessage(addressPattern));
+                            }
+                            catch (OSCFormatError& e) {
+                                useGenericAddressPattern = true;
+                            }
+                        }
+                        else
+                            useGenericAddressPattern = true;
+                    }
+                    else
+                        useGenericAddressPattern = true;
+                     // si le parse n'a pas fonctionné, ou si n'avait juste pas de string précisée
+                    if (useGenericAddressPattern)
+                    {
+                        OSCAddressPattern addressPattern(Miam_OSC_Generic_Param_Address
+                                                         + std::string("/")
+                                                         + boost::lexical_cast<std::string>(i));
+                        firstColOscMessages.push_back(OSCMessage(addressPattern));
+                    }
+                }
+            }
+        }
+        void EnableSendFirstColOnly(bool sendFirstColOnly_)
+        {
+            sendFirstColOnly = sendFirstColOnly_;
+            firstColOscMessages.clear(); // dans tous les cas...
+        }
         
         // - - - - - Communication commands - - - - -
         public :
@@ -132,51 +185,70 @@ namespace Miam
             {
                 // On met à jour les éléments nécessaires seulement
                 auto changesIndexes = matrixState->GetSignificantChangesIndexes();
-                // Transmission de TRèS PEU de coefficients
-                if (0 < changesIndexes.size() && changesIndexes.size() < minCoeffsInBlob)
+                
+                // - - - mode MATRICE COMPLÈTE - - -
+                if (!sendFirstColOnly)
+                {
+                    // Transmission de TRèS PEU de coefficients
+                    if (0 < changesIndexes.size() && changesIndexes.size() < minCoeffsInBlob)
+                    {
+                        for (size_t i=0 ; i<changesIndexes.size() ; i++)
+                        {
+                            if (matrixState->IsIndexWithinActualInputOutputBounds(changesIndexes[i]))
+                            {
+                                Index2d index2d = matrixState->GetIndex2dFromIndex(changesIndexes[i]);
+                                SendMatrixCoeff((int) index2d.i, (int) index2d.j,
+                                                (float) (*matrixState)[changesIndexes[i]]);
+                            }
+                        }
+                    }
+                    // Transmission de PLUSIEURS coefficients
+                    else if (changesIndexes.size() >= minCoeffsInBlob)
+                    {
+                        // Première passe : liste des coeffs avec indices valides
+                        std::vector<size_t> actualChangesIndexes;
+                        actualChangesIndexes.reserve(changesIndexes.size()); // on aura assez
+                        for (size_t i=0 ; i<changesIndexes.size() ; i++)
+                            if (matrixState->IsIndexWithinActualInputOutputBounds(changesIndexes[i]))
+                                actualChangesIndexes.push_back(changesIndexes[i]);
+                        // 2nde passe : remplissage et envoie effectifs
+                        // du ou des blocs de mémoire avec encodage big endian pour transmission réseau.
+                        // on sait qu'on a minimum 1 bloc (sinon c'était coeff seul), pas besoin de tester
+                        size_t oscBlobsCount = (actualChangesIndexes.size() / maxCoeffsInBlob) + 1;
+                        for (size_t i = 0 ; i<oscBlobsCount ; i++)
+                        {
+                            // Remplissage à partir d'un sous vecteur
+                            if (i == oscBlobsCount-1) // dernier blob : incomplet
+                                fillInternalCoeffsMemoryBlock(matrixState,
+                                                              actualChangesIndexes,
+                                                              i*maxCoeffsInBlob,
+                                                              actualChangesIndexes.size()-i*maxCoeffsInBlob);
+                            else // blobs complets proches de 1,4ko
+                                fillInternalCoeffsMemoryBlock(matrixState,
+                                                              actualChangesIndexes,
+                                                              i*maxCoeffsInBlob,
+                                                              maxCoeffsInBlob);
+                            // Transmission OSC (encodage déjà fait, au remplissage)
+                            sendCoeffsInMemoryBlock();
+                        }
+                    }
+                }
+                // - - - mode PREMIÈRE COLONNE SEULEMENT - - -
+                else
                 {
                     for (size_t i=0 ; i<changesIndexes.size() ; i++)
                     {
                         if (matrixState->IsIndexWithinActualInputOutputBounds(changesIndexes[i]))
                         {
                             Index2d index2d = matrixState->GetIndex2dFromIndex(changesIndexes[i]);
-                            SendMatrixCoeff((int) index2d.i, (int) index2d.j,
-                                            (float) (*matrixState)[changesIndexes[i]]);
+                            if (index2d.j == 0)
+                                SendParam(index2d.i, (float) (*matrixState)[changesIndexes[i]]);
                         }
-                    }
-                }
-                // Transmission de PLUSIEURS coefficients
-                else if (changesIndexes.size() >= minCoeffsInBlob)
-                {
-                    // Première passe : liste des coeffs avec indices valides
-                    std::vector<size_t> actualChangesIndexes;
-                    actualChangesIndexes.reserve(changesIndexes.size()); // on aura assez
-                    for (size_t i=0 ; i<changesIndexes.size() ; i++)
-                        if (matrixState->IsIndexWithinActualInputOutputBounds(changesIndexes[i]))
-                            actualChangesIndexes.push_back(changesIndexes[i]);
-                    // 2nde passe : remplissage et envoie effectifs
-                    // du ou des blocs de mémoire avec encodage big endian pour transmission réseau.
-                    // on sait qu'on a minimum 1 bloc (sinon c'était coeff seul), pas besoin de tester
-                    size_t oscBlobsCount = (actualChangesIndexes.size() / maxCoeffsInBlob) + 1;
-                    for (size_t i = 0 ; i<oscBlobsCount ; i++)
-                    {
-                        // Remplissage à partir d'un sous vecteur
-                        if (i == oscBlobsCount-1) // dernier blob : incomplet
-                            fillInternalCoeffsMemoryBlock(matrixState,
-                                                          actualChangesIndexes,
-                                                          i*maxCoeffsInBlob,
-                                                          actualChangesIndexes.size()-i*maxCoeffsInBlob);
-                        else // blobs complets proches de 1,4ko
-                            fillInternalCoeffsMemoryBlock(matrixState,
-                                                          actualChangesIndexes,
-                                                          i*maxCoeffsInBlob,
-                                                          maxCoeffsInBlob);
-                        // Transmission OSC (encodage déjà fait, au remplissage)
-                        sendCoeffsInMemoryBlock();
                     }
                 }
                 
                 // On informe la matrice que tout a bien été envoyé
+                // ... même si on n'a envoyé que la première colonne
                 matrixState->ApplyAndClearChangesList();
             }
             else
@@ -187,6 +259,13 @@ namespace Miam
         void SendMatrixCoeff(int i, int j, float value)
         {
             oscSender.send(Miam_OSC_Matrix_Address, i, j, value);
+        }
+        // Envoi d'un seul coeff, à une adresse de paramètre déjà configurée
+        void SendParam(size_t paramIndex, float value)
+        {
+            firstColOscMessages[paramIndex].clear();
+            firstColOscMessages[paramIndex].addFloat32(value);
+            oscSender.send(firstColOscMessages[paramIndex]);
         }
         
         // Envoi d'un blob avec tout un ensemble de coeffs

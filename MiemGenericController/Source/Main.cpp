@@ -11,9 +11,11 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "MainComponent.h"
 
-#include "PlayerModel.h"
+#include "Model.h"
 #include "Presenter.h"
 #include "View.h"
+
+#include "PlayerAppMode.h"
 
 #include "MiamExceptions.h"
 
@@ -24,7 +26,7 @@ class MiemGenericControllerApplication  : public JUCEApplication
         
     // - - - - - The 3 main modules of our app - - - - -
     private :
-    Miam::PlayerModel* model;
+    Miam::Model* model;
     Miam::Presenter* presenter;
     Miam::View* view;
     // - - - - - The 3 main modules of our app - - - - -
@@ -54,7 +56,7 @@ public:
         else
             throw std::runtime_error("First child of Main Window is not a MainContentComponent...");
         presenter = new Miam::Presenter(view); // Will reference itself to the View module
-        model = new Miam::PlayerModel(presenter);// Will reference itself to the Presenter module
+        model = new Miam::Model(presenter);// Will reference itself to the Presenter module
         
         // Chargement de la 1ière session
         try {
@@ -68,6 +70,8 @@ public:
 
     void shutdown() override
     {
+        presenter->appModeChangeRequest(PlayerAppMode::Stopped);
+        
         // Add your application's shutdown code here..
         delete model;
         delete presenter;

@@ -15,6 +15,8 @@
 
 #include "PlayerPresenter.h"
 
+#include "InterpolationTypes.h"
+
 #if defined(JUCE_MAC) || defined(JUCE_IOS)
 
     // #include <mach/mach_init.h> // on laisse tomber pour l'instantt...
@@ -71,7 +73,7 @@ void PlayerModel::setHighThreadPriority()
     // Si possible : mise à un niveau de priorité pour le thread de mise à jour
     // -> voire même un autre ordonnancement sous certains OS ?
     
-#if defined(__MIAM_MAC_OS_X) // - - - - - Pour macOS - - - - - (à tester pour iOS, devrait être OK)
+#if defined(JUCE_MAC)
     // On n'utilisera pas les fonctions d'accès direct à l'ordonnanceur MACH, trop complexe...
     // - - Identification des politiques d'ordonnancement POSIX - -
     std::map<int, std::string> policyToString;
@@ -141,7 +143,7 @@ void PlayerModel::update()
                     
                 case AsyncParamChange::Play :
                     playState = AsyncParamChange::Play;
-                    std::cout << "[Modèle] PLAY" << std::endl;
+                    std::cout << "[Modèle] PLAY (interpolation de type '" << InterpolationTypes::GetInterpolationName(GetInterpolator()->GetType()) << "')" << std::endl;
                     interpolator->OnPlay();
                     break;
                     
@@ -170,7 +172,7 @@ void PlayerModel::update()
             {
                 miamOscSender->SendStateModifications(interpolator->GetCurrentInterpolatedState());
             }
-            else
+            else if (continuousBackgroundBlobMatrixRefresh)
             {
                 // Envoi d'un coefficient pour avoir toujours une mise à jour qui tourne derrière....
                 // Seulement si on a fait une frame vide !

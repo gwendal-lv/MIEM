@@ -30,6 +30,15 @@ namespace Miam
         {}
     };
     
+    class ParseException : public std::runtime_error
+    {
+        public :
+        // Juste une runtime castée...
+        ParseException() : std::runtime_error(std::string("Parse Error"))
+        {}
+        ParseException(std::string errorString) : std::runtime_error(errorString)
+        {}
+    };
     
     class XmlReadException : public std::runtime_error
     {

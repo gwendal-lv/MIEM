@@ -246,6 +246,10 @@
         <FILE id="xZ9bRl" name="ControlModel.cpp" compile="1" resource="0"
               file="../ControlCommon/Source/ControlModel.cpp"/>
         <FILE id="jd2PVn" name="ControlModel.h" compile="0" resource="0" file="../ControlCommon/Source/ControlModel.h"/>
+        <FILE id="uUaqIe" name="InterpolationTypes.cpp" compile="1" resource="0"
+              file="../ControlCommon/Source/InterpolationTypes.cpp"/>
+        <FILE id="xeKnqh" name="InterpolationTypes.h" compile="0" resource="0"
+              file="../ControlCommon/Source/InterpolationTypes.h"/>
         <FILE id="i1Rdw4" name="StatesInterpolator.hpp" compile="0" resource="0"
               file="../ControlCommon/Source/StatesInterpolator.hpp"/>
       </GROUP>

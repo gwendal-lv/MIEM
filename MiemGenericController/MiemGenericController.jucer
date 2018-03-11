@@ -8,13 +8,15 @@
   <MAINGROUP id="Krx0MS" name="MIEM Generic Controller">
     <GROUP id="{B7F5CB5C-B6F8-A8AA-0F14-17FA42CC4DDF}" name="Source">
       <FILE id="BwuW2o" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
-      <FILE id="GWfQNK" name="MainComponent.cpp" compile="1" resource="0"
-            file="Source/MainComponent.cpp"/>
-      <FILE id="hO6jI1" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+      <FILE id="tPf6XE" name="Model.cpp" compile="1" resource="0" file="Source/Model.cpp"/>
+      <FILE id="owKBjI" name="Model.h" compile="0" resource="0" file="Source/Model.h"/>
       <FILE id="wdwLKR" name="Presenter.cpp" compile="1" resource="0" file="Source/Presenter.cpp"/>
       <FILE id="PVZi0V" name="Presenter.h" compile="0" resource="0" file="Source/Presenter.h"/>
       <FILE id="H2zk2O" name="View.cpp" compile="1" resource="0" file="Source/View.cpp"/>
       <FILE id="E8B3CF" name="View.h" compile="0" resource="0" file="Source/View.h"/>
+      <FILE id="GWfQNK" name="MainComponent.cpp" compile="1" resource="0"
+            file="Source/MainComponent.cpp"/>
+      <FILE id="hO6jI1" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
     </GROUP>
     <GROUP id="{CC552857-6B1C-C3D2-B168-48387BA078AE}" name="ControlCommonSource">
       <GROUP id="{3CD4C810-FEB7-EC88-5368-9D579793FED4}" name="Model">
@@ -35,6 +37,10 @@
         <FILE id="xZ9bRl" name="ControlModel.cpp" compile="1" resource="0"
               file="../ControlCommon/Source/ControlModel.cpp"/>
         <FILE id="jd2PVn" name="ControlModel.h" compile="0" resource="0" file="../ControlCommon/Source/ControlModel.h"/>
+        <FILE id="uUaqIe" name="InterpolationTypes.cpp" compile="1" resource="0"
+              file="../ControlCommon/Source/InterpolationTypes.cpp"/>
+        <FILE id="xeKnqh" name="InterpolationTypes.h" compile="0" resource="0"
+              file="../ControlCommon/Source/InterpolationTypes.h"/>
         <FILE id="baXNnV" name="PlayerModel.cpp" compile="1" resource="0" file="../ControlCommon/Source/PlayerModel.cpp"/>
         <FILE id="PPt1Jg" name="PlayerModel.h" compile="0" resource="0" file="../ControlCommon/Source/PlayerModel.h"/>
         <FILE id="i1Rdw4" name="StatesInterpolator.hpp" compile="0" resource="0"
@@ -95,6 +101,8 @@
                 file="../ControlCommon/Source/PlayerMainMenuComponent.cpp"/>
           <FILE id="CIH7iT" name="PlayerMainMenuComponent.h" compile="0" resource="0"
                 file="../ControlCommon/Source/PlayerMainMenuComponent.h"/>
+          <FILE id="X9ujP6" name="MatrixComponent.cpp" compile="1" resource="0"
+                file="../ControlCommon/Source/MatrixComponent.cpp"/>
           <FILE id="D1VeJN" name="MatrixComponent.h" compile="0" resource="0"
                 file="../ControlCommon/Source/MatrixComponent.h"/>
           <FILE id="CDLZvE" name="MatrixSlider.h" compile="0" resource="0" file="../ControlCommon/Source/MatrixSlider.h"/>
