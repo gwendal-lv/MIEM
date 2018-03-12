@@ -75,30 +75,68 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 
 	// Will init the counter
 	//displayFrequencyMeasurer.OnNewFrame();
+
+	shaderProgram = new OpenGLShaderProgram(openGlContext);
+	shaderProgram->addVertexShader(OpenGLHelpers::translateVertexShaderToV3(myVertexShader));
+	shaderProgram->addFragmentShader(OpenGLHelpers::translateFragmentShaderToV3(myFragmentShader));
+	shaderProgram->link();
+
+	shaderProgram->use();
+
+	// TRIANGLE
+	// openGL génère 1 buffer, avec l'ID vertexBuffer, et qui contiendra g_vertex_buffer_data
+	openGlContext.extensions.glGenBuffers(1, &vertexBuffer);
+	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+	openGlContext.extensions.glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data),
+		g_vertex_buffer_data, GL_STATIC_DRAW);
+
+	// TRIANGLE
+	// pareil pour les buffers de couleurs des deux
+	openGlContext.extensions.glGenBuffers(1, &colorBuffer);
+	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
+	openGlContext.extensions.glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
+
+	// déclaration des attributs et uniforms : !!! aux noms et leurs utilisations dans les shaders !!!
+	position = new OpenGLShaderProgram::Attribute(*shaderProgram, String("position").toRawUTF8());
+	colour = new OpenGLShaderProgram::Attribute(*shaderProgram, "colour");
+
+	projectionMatrix = new OpenGLShaderProgram::Uniform(*shaderProgram, "projectionMatrix");
+	viewMatrix = new OpenGLShaderProgram::Uniform(*shaderProgram, "viewMatrix");
+	modelMatrix = new OpenGLShaderProgram::Uniform(*shaderProgram, "modelMatrix");
 }
 void SceneCanvasComponent::renderOpenGL()
 {
 	//DBG("render : " + getName());
     auto manager = canvasManager.lock();
-    
-    const double desktopScale = openGlContext.getRenderingScale();
-    std::unique_ptr<LowLevelGraphicsContext> glRenderer (createOpenGLGraphicsContext (openGlContext,
+	OpenGLHelpers::clear(Colours::black);
+    const double desktopScale = (float)openGlContext.getRenderingScale();
+    /*std::unique_ptr<LowLevelGraphicsContext> glRenderer (createOpenGLGraphicsContext (openGlContext,
                                                                                     roundToInt (desktopScale * getWidth()),
-                                                                                    roundToInt (desktopScale * getHeight())));
-    Graphics g(*glRenderer);
+                                                                                    roundToInt (desktopScale * getHeight())));*/
+   // Graphics g(*glRenderer);
     
-    g.addTransform(AffineTransform::scale((float) desktopScale));
+    //g.addTransform(AffineTransform::scale((float) desktopScale));
     
     // Pure black background
-    g.fillAll (Colours::black);
+   // g.fillAll (Colours::black);
     
     // White interior contour 2px line to show when the canvas is active
-    if (selectedForEditing)
+    /*if (selectedForEditing)
     {
         g.setColour(Colours::white);
         g.drawRect(1, 1, getWidth()-2, getHeight()-2, 2);
-    }
+    }*/
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	openGlContext.extensions.glActiveTexture(GL_TEXTURE0);
+	glEnable(GL_TEXTURE_2D);
+
+	glViewport(0, 0, roundToInt(desktopScale * getWidth()), roundToInt(desktopScale * getHeight()));
     
+	shaderProgram->use();
     
     // - - - - - THIRD Duplication of the drawable objects for thread-safe rendering, - - - - -
     // Lorsque nécessaire seulement !
@@ -136,14 +174,49 @@ void SceneCanvasComponent::renderOpenGL()
     
     // - - - - - Areas painting (including exciters if existing) - - - - -
     // Sans bloquer, du coup, les autres threads (pour réactivité max...)
-    for (size_t i=0;i<duplicatedAreas.size();i++)
-    {
-        // Peut mettre à jour des images et autres (si l'échelle a changé)
-        duplicatedAreas[i]->SetRenderingScale(desktopScale);
-        // Dessin effectif
-        duplicatedAreas[i]->Paint(g);
-    }
+    //for (size_t i=0;i<duplicatedAreas.size();i++)
+    //{
+    //    // Peut mettre à jour des images et autres (si l'échelle a changé)
+    //    duplicatedAreas[i]->SetRenderingScale(desktopScale);
+    //    // Dessin effectif
+    //    duplicatedAreas[i]->Paint(g);
+    //}
     
+
+	/// calcul des matrices
+	Matrix3D<float> testView = lookAt(Vector3D<float>(0, 0, 10), Vector3D<float>(0, 0, 0), Vector3D<float>(0, -1, 0));
+
+	if (projectionMatrix != nullptr)
+		projectionMatrix->setMatrix4(perspective(45.0f, getWidth(), getHeight(), 0.1f, 100.0f).mat, 1, false);
+
+	if (viewMatrix != nullptr)
+		viewMatrix->setMatrix4(testView.mat, 1, false);
+
+	Matrix3D<float> model(1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f);
+
+	if (modelMatrix != nullptr)
+		modelMatrix->setMatrix4(model.mat, 1, false);
+
+	/// Draw triangle
+	openGlContext.extensions.glEnableVertexAttribArray(position->attributeID);
+	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+	openGlContext.extensions.glVertexAttribPointer(position->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
+	//openGLContext.extensions.glEnableVertexAttribArray(position->attributeID);
+
+	openGlContext.extensions.glEnableVertexAttribArray(colour->attributeID);
+	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
+	openGlContext.extensions.glVertexAttribPointer(colour->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
+
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+	openGlContext.extensions.glDisableVertexAttribArray(position->attributeID);
+	openGlContext.extensions.glDisableVertexAttribArray(colour->attributeID);
+
+	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, 0);
+	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
     
     // Call to a general Graphic update on the whole Presenter module
 	if ( ! manager->isUpdatePending() )

@@ -124,6 +124,116 @@ public:
     
 
 private:
+
+	ScopedPointer<OpenGLShaderProgram> shaderProgram;
+	ScopedPointer<OpenGLShaderProgram::Attribute> position, colour;
+
+	ScopedPointer<OpenGLShaderProgram::Uniform> projectionMatrix, viewMatrix, modelMatrix;
+
+	String myVertexShader = "attribute vec4 position;\n"
+		"attribute vec4 colour;\n"
+		"\n"
+		"uniform mat4 modelMatrix;\n"
+		"uniform mat4 projectionMatrix;\n"
+		"uniform mat4 viewMatrix;\n"
+		"\n"
+		"out vec4 fragmentColor;\n"
+		"\n"
+		"void main()\n"
+		"{\n"
+		"\n"
+		"    gl_Position = projectionMatrix * viewMatrix * modelMatrix * position;\n"
+		"    fragmentColor = colour;"
+		"}\n";
+
+	String myFragmentShader =
+#if JUCE_OPENGL_ES
+		"varying lowp vec4 destinationColour;\n"
+#else
+		"varying vec4 destinationColour;\n"
+#endif
+		"\n"
+		"in vec4 fragmentColor;\n"
+		"\n"
+		"void main()\n"
+		"{\n"
+#if JUCE_OPENGL_ES
+		"   highp float l = 0.3;\n"
+
+#else
+		"   float l = 0.3;\n"
+
+#endif
+		"    gl_FragColor = fragmentColor;\n"
+		"}\n";
+
+	GLuint vertexBuffer;
+	GLfloat g_vertex_buffer_data[3 * 3] = {
+		-1.0f, -1.0f, 0.0f,
+		1.0f, -1.0f, 0.0f,
+		0.0f,  1.0f, 0.0f
+	};
+
+	GLuint colorBuffer;
+	GLfloat g_color_buffer_data[3 * 3] = {
+		1.0f,  0.0f,  0.0f,
+		1.0f,  0.0f,  0.0f,
+		1.0f,  0.0f,  0.0f
+	};
+
+	///// vertex de toutes les formes dans g_vertex_buffer
+	//GLuint vertexBuffer; 
+	//GLfloat g_vertex_buffer_data[3 * 3 * 32 * 20 * 3]; // taille = 3 composants * 32 triangles (max pour un cercle) *  3 sommets du triangle * 20 formes/scenes (10 curseurs + 10 polygones) * 3 scenes
+
+	///// contient les indices pour dessiner les formes sans stocker plusieurs fois le mm sommet
+	//GLuint indexVertexBuffer;
+	//GLuint g_index_vertex_buffer[3 * 32 * 20 * 3]; // 3 sommets par triangle * 32 triangles (max pour un cercle) * 20 formes * 3 scenes
+
+	///// contient les positions et rotation de chaque forme pour construire la modelMatrix de chaque forme
+	//GLuint modelPositionBuffer;
+	//GLfloat g_model_position[3 * 20 * 3]; // 3 composants (x, y, theta) * 20 formes * 3 scenes
+
+	///// indices pour que tout les triangles d'une même forme subissent la même transformation de la matrice model
+	//GLuint indexPositionBuffer;
+	//GLuint g_index_model_position[20 * 3]; // 1 matrices * 20 formes * 3 scenes
+
+	///// couleurs
+	//GLuint colourBuffer;
+	//GLfloat g_colour_buffer[3 * 3 * 32 * 20 * 3]; // 1 pour chaque vertex
+
+	Matrix3D<float> lookAt(Vector3D<float> eye, Vector3D<float> center, Vector3D<float> up)
+	{
+		/*Vector3D<float> F = center - eye;
+		Vector3D<float> s = F.normalised() ^ up;
+		Vector3D<float> u = s.normalised() ^ F.normalised();
+		return Matrix3D<float>(s.x, s.y, s.z, -eye * s,
+		u.x, u.y, u.z, -eye * u,
+		-F.normalised().x, -F.normalised().y, -F.normalised().z, -eye * F,
+		0, 0.0f, 0.0f, 1.0f);*/
+		Vector3D<float> zaxis = (eye - center).normalised();
+		Vector3D<float> xaxis = (zaxis ^ up).normalised();
+		Vector3D<float> yaxis = -(xaxis ^ zaxis);
+
+		Matrix3D<float> viewMatrix(xaxis.x, xaxis.y, xaxis.z, -(xaxis * eye),
+			yaxis.x, yaxis.y, yaxis.z, -(yaxis * eye),
+			zaxis.x, zaxis.y, zaxis.z, -(zaxis * eye),
+			0, 0, 0, 1);
+
+		Matrix3D<float> viewMatrixTr(xaxis.x, yaxis.x, zaxis.x, 0,
+			xaxis.y, yaxis.y, zaxis.y, 0,
+			xaxis.z, yaxis.z, zaxis.z, 0,
+			-(xaxis * eye), -(yaxis * eye), -(zaxis*eye), 1);
+		return viewMatrixTr;
+	}
+
+	Matrix3D<float> perspective(float fovy, float width, float height, float near, float far)
+	{
+		float top = tan(fovy / 2.0f) * near;
+		float bottom = -top;
+		return Matrix3D<float>::fromFrustum(-top * width / height, top * width / height, bottom, top, near, far);
+	}
+
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SceneCanvasComponent)
 };
 
