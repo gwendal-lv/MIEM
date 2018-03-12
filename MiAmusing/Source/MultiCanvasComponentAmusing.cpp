@@ -34,7 +34,15 @@ void MultiCanvasComponentAmusing::setSamplesColor(int Nsamples, Colour colorCode
 	}
 }
 
-
+void MultiCanvasComponentAmusing::addColourSample(int index, Colour colour)
+{
+	MultiSceneCanvasComponent* compo = multiSceneCanvasComponents[0];
+	if (MultiSceneCanvasComponentAmusing* compoAmusing = (MultiSceneCanvasComponentAmusing*)compo)
+	{
+		compoAmusing->addColourSample(index, colour);
+		compoAmusing = nullptr;
+	}
+}
 
 void MultiCanvasComponentAmusing::resized()
 {

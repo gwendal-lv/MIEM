@@ -92,6 +92,7 @@ private:
 	void CloseSoundFileManager();
 	void OpenSoundBrowser(int idx,Colour concernedColor);
 	void CloseSoundBrowser(String m_path);
+	void addColourPath(int idx, Colour colour, String path);
 	void removeDeviceManagerFromOptionWindow();
 
 	void setSamplesColor(const int numSamples, Colour colorCode[]);

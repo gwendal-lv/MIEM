@@ -228,6 +228,13 @@ void AreaOptions::setSamplesColor(int Nsamples, Colour colorCode[])
 {
 	colorArray->setSamplesColor(Nsamples, colorCode);
 }
+
+void AreaOptions::addColourSample(int index, Colour colour)
+{
+	colorArray->addColourSample(index, colour);
+}
+
+
 //[/MiscUserCode]
 
 

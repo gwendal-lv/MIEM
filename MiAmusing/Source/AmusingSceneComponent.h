@@ -28,6 +28,8 @@ public:
     ~AmusingSceneComponent();
 
 	void setSamplesColor(int Nsamples, Colour colorCode[]);
+
+	void addColourSample(int index, Colour color);
 	
 	void renderOpenGL() override; // ! in background-thread !
 	AreaOptions areaOptions;

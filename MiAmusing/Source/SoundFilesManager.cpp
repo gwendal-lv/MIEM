@@ -114,7 +114,10 @@ void SoundFilesManager::resized()
 void SoundFilesManager::buttonClicked(Button * buttonThatWasClicked)
 {
 	if (buttonThatWasClicked == addSoundFileViewerButton)
+	{
 		addSoundFileViewer();
+		mainComponent->addColourPath(soundFileViewerArray.size() - 1, soundFileViewerArray.getLast()->getSampleColour(), soundFileViewerArray.getLast()->getSoundPath());
+	}
 	else if (buttonThatWasClicked == closeSoundFileManagerButton)
 		mainComponent->CloseSoundFileManager();
 }
@@ -166,7 +169,9 @@ void SoundFilesManager::addSoundFileViewer()
 		soundFileViewerArray.getLast()->completeInitialization(this);
 		soundFileViewerArray.getLast()->setBounds(soundFileViewerArray[soundFileViewerArray.size()-2]->getX(), soundFileViewerArray[soundFileViewerArray.size() - 2]->getY() + itemHeight + spaceHeight,
 			soundFileViewerArray[soundFileViewerArray.size() - 2]->getWidth(), soundFileViewerArray[soundFileViewerArray.size() - 2]->getHeight());
-		
+		soundFileViewerArray.getLast()->setColourSample(Colour((uint8)255, (uint8)255, (uint8)255));
+		if(defaultPath.isNotEmpty())
+			soundFileViewerArray.getLast()->setSoundPath(defaultPath);
 	}
 }
 

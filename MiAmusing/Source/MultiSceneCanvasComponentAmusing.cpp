@@ -48,3 +48,11 @@ void MultiSceneCanvasComponentAmusing::setSamplesColor(int Nsamples, Colour colo
 		childrenCanvasAmusing->setSamplesColor(Nsamples, colorCode);
 	}
 }
+
+void MultiSceneCanvasComponentAmusing::addColourSample(int index, Colour colour)
+{
+	if (AmusingSceneComponent* childrenCanvasAmusing = (AmusingSceneComponent*)childrenCanvas)
+	{
+		childrenCanvasAmusing->addColourSample(index, colour);
+	}
+}

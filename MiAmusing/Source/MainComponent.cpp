@@ -161,6 +161,12 @@ void MainContentComponent::CloseSoundBrowser(String m_path)
 	soundBrowser->setVisible(false);
 }
 
+void MainContentComponent::addColourPath(int idx, Colour colour, String path)
+{
+	presenter->setColorPath(idx, colour, path);
+	multiCanvasComponent->addColourSample(idx, colour);
+}
+
 void MainContentComponent::removeDeviceManagerFromOptionWindow()
 {
 

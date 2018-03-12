@@ -25,6 +25,8 @@ public:
 
 	void setSamplesColor(int Nsamples, Colour colorCode[]);
 
+	void addColourSample(int index, Colour colour);
+
 private:
 	//AreaOptions areaOptions;
 };

@@ -50,6 +50,11 @@ void AmusingSceneComponent::setSamplesColor(int Nsamples, Colour colorCode[])
 	areaOptions.setSamplesColor(Nsamples, colorCode);
 }
 
+void AmusingSceneComponent::addColourSample(int index, Colour colour)
+{
+	areaOptions.addColourSample(index, colour);
+}
+
 void AmusingSceneComponent::renderOpenGL()
 {
 	SceneCanvasComponent::renderOpenGL();

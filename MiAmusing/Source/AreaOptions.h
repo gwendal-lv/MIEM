@@ -220,6 +220,7 @@ public:
 	void setCurrentColorSelected(int idx);
 
 	void setSamplesColor(int Nsamples, Colour colorCode[]);
+	void addColourSample(int index, Colour colour);
     //[/UserMethods]
 
     void paint (Graphics& g) override;

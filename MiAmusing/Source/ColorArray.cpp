@@ -139,6 +139,15 @@ void ColorArray::setSamplesColor(int Nsamples, Colour colorCode[])
 	resized();
 }
 
+void ColorArray::addColourSample(int index, Colour colour)
+{
+	buttonArray.add(new TextButton(String(index)));
+	buttonArray.getLast()->addListener(this);
+	buttonArray.getLast()->setColour(TextButton::ColourIds::buttonColourId, colour);
+	addChildComponent(buttonArray.getLast());
+	resized();
+}
+
 void ColorArray::setCurrentColorSelected(int idx)
 {
 	// appeler cette fonction dans buttonClicked pour plus de clareté !

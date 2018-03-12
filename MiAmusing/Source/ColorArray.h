@@ -33,6 +33,7 @@ public:
 
 	void completeInitialisation(AreaOptions *m_areaOption);
 	void setSamplesColor(int Nsamples, Colour colorCode[]);
+	void addColourSample(int index, Colour colour);
 	void setCurrentColorSelected(int idx);
 	//void addColor(Colour newColour);
 
