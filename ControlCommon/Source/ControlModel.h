@@ -65,6 +65,7 @@ namespace Miam
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
         
+        virtual InterpolationType GetInterpolatorType_Atomic () override;
         InterpolationType GetInterpolatorType() {return interpolator->GetType();}
         std::shared_ptr<StatesInterpolator<double>> GetInterpolator() {return interpolator;}
         /// \brief Only 1 sender (index 0) available at the moment.

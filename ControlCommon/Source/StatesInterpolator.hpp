@@ -14,6 +14,7 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <atomic>
 
 #include "InterpolationTypes.h"
 
@@ -48,6 +49,8 @@ namespace Miam
         private :
         
         InterpolationType interpolationType;
+        std::atomic<int> lockFreeInterpolationType;
+        
         std::vector< std::shared_ptr<ControlState<T>> > states;
         
         std::unique_ptr<MatrixBackupState<T>> currentInterpolatedMatrixState;
@@ -76,6 +79,11 @@ namespace Miam
         void SetInOutChannelsName(InOutChannelsName& channelsName_) {channelsName = channelsName_;}
         
         InterpolationType GetType() {return interpolationType;}
+        InterpolationType GetType_Atomic() {
+            int typeCopyAsInt = (int)lockFreeInterpolationType;
+            InterpolationType typeCopy = (InterpolationType)typeCopyAsInt;
+            return typeCopy;
+        }
         
         size_t GetStatesCount() {return states.size();}
         std::shared_ptr<ControlState<T>> GetState(size_t i) {return states[i];}
@@ -129,6 +137,8 @@ namespace Miam
         void ReinitInterpolation(InterpolationType newType)
         {
             interpolationType = newType;
+            lockFreeInterpolationType = (int) interpolationType;
+
             currentInterpolatedMatrixState.reset(new MatrixBackupState<T>());
         }
         private :

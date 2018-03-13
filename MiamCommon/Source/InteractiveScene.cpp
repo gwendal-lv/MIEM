@@ -157,6 +157,10 @@ std::shared_ptr<AreaEvent> InteractiveScene::AddDefaultExciter()
 }
 std::shared_ptr<AreaEvent> InteractiveScene::AddExciter(std::shared_ptr<Exciter> newExciter, bool forceSelect)
 {
+    if (auto canvasManagerLocked = canvasManager.lock())
+        newExciter->SetInterpolationType(canvasManagerLocked->GetInterpolatorType());
+    else
+        assert(0); // on devrait toujours pouvoir acquérir un canvasmanager à ce stade...
     currentExciters.push_back(newExciter);
     
     // Forced graphical updates

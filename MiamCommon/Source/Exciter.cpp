@@ -73,6 +73,8 @@ void Exciter::onCloned()
 
 void Exciter::init()
 {
+    interpolationType = InterpolationType::None;
+    
     // Centre (voir DrawableArea)
     displayCenter = false;
     
@@ -264,8 +266,20 @@ void Exciter::updateExcitationAmounts()
     double totalAudioExcitement = 0.0;
     for (auto &areaData : areasInteractingWith)
     {
-        areaData.ExcitementAmount.Audio
-            = AudioUtils<double>::ApplyLowVolumePrecisionDistorsion(areaData.ExcitementAmount.Linear);
+        switch (interpolationType)
+        {
+            case InterpolationType::Matrix_LinearInterpolation :
+                areaData.ExcitementAmount.Audio = areaData.ExcitementAmount.Linear;
+                break;
+            case InterpolationType::Matrix_ConstantVolumeInterpolation :
+                areaData.ExcitementAmount.Audio
+                    = AudioUtils<double>::ApplyLowVolumePrecisionDistorsion(areaData.ExcitementAmount.Linear);
+                break;
+                
+            default : // None, (Count,) etc...
+                areaData.ExcitementAmount.Audio = 1.0;
+                break;
+        }
         totalAudioExcitement += areaData.ExcitementAmount.Audio;
     }
     

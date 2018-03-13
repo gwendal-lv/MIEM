@@ -15,6 +15,8 @@
 #include "LockFreeParamChangeSender.h"
 #include <iostream>
 
+#include "InterpolationTypes.h"
+
 
 namespace Miam
 {
@@ -30,6 +32,11 @@ namespace Miam
         IModel();
         virtual ~IModel() {}
         
+        /// \brief Renvoie le type d'interpolation actuellement calculée, ce qui est une
+        /// donnée partagée par le Presenter et le Modèle ;
+        /// doit donc rester thread-safe y compris pour les override potentiels
+        virtual InterpolationType GetInterpolatorType_Atomic ()
+        { return InterpolationType::Matrix_LinearInterpolation; } // par défaut
         
     };
 }

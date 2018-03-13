@@ -26,6 +26,9 @@ view(view_)
 
 void ControlPresenter::CompleteInitialisation(GraphicControlSessionManager* _graphicSessionManager, ControlModel* _model)
 {
+    // Parent
+    IPresenter::CompleteInitialization(_model);
+    
     // Attributs privés
     graphicSessionManager = _graphicSessionManager;
     model = _model;

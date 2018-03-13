@@ -209,6 +209,10 @@ std::chrono::time_point<std::chrono::steady_clock> MultiSceneCanvasInteractor::G
 {
     return graphicSessionManager->GetCommonTimePoint();
 }
+InterpolationType MultiSceneCanvasInteractor::GetInterpolatorType() const
+{
+    return graphicSessionManager->GetInterpolatorType();
+}
 
 void MultiSceneCanvasInteractor::DisplayInfo(String info, int priority)
 {

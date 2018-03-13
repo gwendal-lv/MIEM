@@ -37,10 +37,6 @@
         <FILE id="xZ9bRl" name="ControlModel.cpp" compile="1" resource="0"
               file="../ControlCommon/Source/ControlModel.cpp"/>
         <FILE id="jd2PVn" name="ControlModel.h" compile="0" resource="0" file="../ControlCommon/Source/ControlModel.h"/>
-        <FILE id="uUaqIe" name="InterpolationTypes.cpp" compile="1" resource="0"
-              file="../ControlCommon/Source/InterpolationTypes.cpp"/>
-        <FILE id="xeKnqh" name="InterpolationTypes.h" compile="0" resource="0"
-              file="../ControlCommon/Source/InterpolationTypes.h"/>
         <FILE id="baXNnV" name="PlayerModel.cpp" compile="1" resource="0" file="../ControlCommon/Source/PlayerModel.cpp"/>
         <FILE id="PPt1Jg" name="PlayerModel.h" compile="0" resource="0" file="../ControlCommon/Source/PlayerModel.h"/>
         <FILE id="i1Rdw4" name="StatesInterpolator.hpp" compile="0" resource="0"
@@ -122,21 +118,14 @@
         <FILE id="D2SRcW" name="PathUtils.h" compile="0" resource="0" file="../ControlCommon/Source/PathUtils.h"/>
       </GROUP>
     </GROUP>
-    <GROUP id="{C4893356-5DEB-A030-074B-EE0422842B92}" name="SpatCommonSource">
-      <GROUP id="{69F35838-D6F6-5ADE-9B31-E372F4C0078E}" name="Model">
-        <FILE id="ISQcqH" name="SpatType.h" compile="0" resource="0" file="../SpatCommon/Source/SpatType.h"/>
-        <FILE id="r9zTHA" name="Speaker.h" compile="0" resource="0" file="../SpatCommon/Source/Speaker.h"/>
-        <FILE id="JAUbBW" name="Speaker.tpp.h" compile="0" resource="0" file="../SpatCommon/Source/Speaker.tpp.h"/>
-      </GROUP>
-      <GROUP id="{DCC9EBC6-B3B5-6597-7D50-FBAB32A4E73B}" name="View">
-        <FILE id="xwcnTq" name="FileMenu.cpp" compile="1" resource="0" file="../SpatCommon/Source/FileMenu.cpp"/>
-        <FILE id="bBqK2U" name="FileMenu.h" compile="0" resource="0" file="../SpatCommon/Source/FileMenu.h"/>
-      </GROUP>
-    </GROUP>
     <GROUP id="{593B3C8B-4E9F-6C95-BD9D-6562983482B8}" name="MiamCommonSource">
       <GROUP id="{0479ADE3-37CD-6B82-AED4-7081C736E56C}" name="Model">
         <FILE id="LDc2TJ" name="IModel.cpp" compile="1" resource="0" file="../MiamCommon/Source/IModel.cpp"/>
         <FILE id="Yy9Xdd" name="IModel.h" compile="0" resource="0" file="../MiamCommon/Source/IModel.h"/>
+        <FILE id="o5pQKb" name="InterpolationTypes.cpp" compile="1" resource="0"
+              file="../MiamCommon/Source/InterpolationTypes.cpp"/>
+        <FILE id="ePll36" name="InterpolationTypes.h" compile="0" resource="0"
+              file="../MiamCommon/Source/InterpolationTypes.h"/>
       </GROUP>
       <GROUP id="{17C21196-8065-2A28-CE70-8A30193DECF0}" name="Presenter">
         <GROUP id="{56C10D2A-D21F-45CE-76A5-54034487512D}" name="Events">

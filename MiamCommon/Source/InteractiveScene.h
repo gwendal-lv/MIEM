@@ -175,7 +175,8 @@ namespace Miam
         
         /// \brief Adds a default exciter
         virtual std::shared_ptr<AreaEvent> AddDefaultExciter();
-        /// \brief Adds an exciter without creating it before
+        /// \brief Adds an exciter without creating it before. Configure le type d'interpolation
+        /// de l'excitateur (en le demandant au modèle, via le Presenter) juste avant l'ajout.
         virtual std::shared_ptr<AreaEvent> AddExciter(std::shared_ptr<Exciter> newExciter, bool forceSelect = true);
         /// \brief Deletes a current ("active") exciter by reference.
         ///

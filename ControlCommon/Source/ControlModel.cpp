@@ -23,6 +23,10 @@ using namespace Miam;
 
 
 // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
+InterpolationType ControlModel::GetInterpolatorType_Atomic ()
+{
+    return interpolator->GetType_Atomic();
+}
 std::shared_ptr<ControlStateSender<double>> ControlModel::GetStateSender(size_t index)
 {
     if ( index == 0 )

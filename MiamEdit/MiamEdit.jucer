@@ -74,6 +74,10 @@
       <GROUP id="{0479ADE3-37CD-6B82-AED4-7081C736E56C}" name="Model">
         <FILE id="LDc2TJ" name="IModel.cpp" compile="1" resource="0" file="../MiamCommon/Source/IModel.cpp"/>
         <FILE id="Yy9Xdd" name="IModel.h" compile="0" resource="0" file="../MiamCommon/Source/IModel.h"/>
+        <FILE id="kBSZlH" name="InterpolationTypes.cpp" compile="1" resource="0"
+              file="../MiamCommon/Source/InterpolationTypes.cpp"/>
+        <FILE id="uJ80UL" name="InterpolationTypes.h" compile="0" resource="0"
+              file="../MiamCommon/Source/InterpolationTypes.h"/>
       </GROUP>
       <GROUP id="{17C21196-8065-2A28-CE70-8A30193DECF0}" name="Presenter">
         <GROUP id="{56C10D2A-D21F-45CE-76A5-54034487512D}" name="Events">
@@ -246,10 +250,6 @@
         <FILE id="xZ9bRl" name="ControlModel.cpp" compile="1" resource="0"
               file="../ControlCommon/Source/ControlModel.cpp"/>
         <FILE id="jd2PVn" name="ControlModel.h" compile="0" resource="0" file="../ControlCommon/Source/ControlModel.h"/>
-        <FILE id="uUaqIe" name="InterpolationTypes.cpp" compile="1" resource="0"
-              file="../ControlCommon/Source/InterpolationTypes.cpp"/>
-        <FILE id="xeKnqh" name="InterpolationTypes.h" compile="0" resource="0"
-              file="../ControlCommon/Source/InterpolationTypes.h"/>
         <FILE id="i1Rdw4" name="StatesInterpolator.hpp" compile="0" resource="0"
               file="../ControlCommon/Source/StatesInterpolator.hpp"/>
       </GROUP>

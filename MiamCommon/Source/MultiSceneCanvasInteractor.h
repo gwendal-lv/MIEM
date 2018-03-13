@@ -32,6 +32,8 @@
 #include "MiamExceptions.h"
 #include "XmlUtils.h"
 
+#include "InterpolationTypes.h"
+
 #include "boost/property_tree/ptree.hpp"
 #include "boost/property_tree/xml_parser.hpp"
 namespace bptree = boost::property_tree;
@@ -165,6 +167,8 @@ namespace Miam {
         virtual int GetSelectedSceneId();
         
         std::chrono::time_point<std::chrono::steady_clock> GetCommonTimePoint() const;
+        
+        InterpolationType GetInterpolatorType() const;
         
         void DisplayInfo(String info, int priority = 0);
         

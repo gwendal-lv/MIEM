@@ -111,6 +111,7 @@ void MatrixComponent::initAndAddHorizontalSlider(Slider* slider)
 {
     slider->setSliderStyle(Slider::SliderStyle::LinearHorizontal);
     slider->setColour(Slider::ColourIds::textBoxTextColourId, Colours::black);
+    slider->setRange(0.0, 1.0);
     
     addSlider(slider);
 }

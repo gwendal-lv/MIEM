@@ -16,10 +16,14 @@
 
 #include "LockFreeParamChangeSender.h"
 
+#include "InterpolationTypes.h"
 
 
 namespace Miam
 {
+    class IModel;
+    
+    
     class IPresenter : public LockFreeParamChangeSender
     {
         
@@ -27,7 +31,7 @@ namespace Miam
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
         private :
-
+        IModel* model = 0;
         
         // - - - - - Time management - - - - -
         protected :
@@ -48,12 +52,15 @@ namespace Miam
         IPresenter();
         virtual ~IPresenter() {}
 
+        void CompleteInitialization(IModel*);
+        
         /// \brief Called within the MessageThread by a pseudo-periodic object,
         /// and enslaved to its frequency (for example an OpenGL renderer at ~60Hz).
         ///
         virtual void Update() = 0;
         
         
+        InterpolationType GetInterpolatorType() const;
         
     };
 }

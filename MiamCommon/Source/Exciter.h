@@ -21,6 +21,8 @@
 
 #include "AudioUtils.hpp"
 
+#include "InterpolationTypes.h"
+
 namespace Miam
 {
     class MultiAreaEvent;
@@ -34,6 +36,8 @@ namespace Miam
         protected :
         
         double volume;
+        
+        InterpolationType interpolationType;
         
         int additionnalTouchGrabRadius;
         public :
@@ -115,6 +119,8 @@ namespace Miam
         void SetAdditionnalTouchGrabRadius(int additionnalTouchGrabRadius_)
         {additionnalTouchGrabRadius = additionnalTouchGrabRadius_;}
         
+        public :
+        void SetInterpolationType(InterpolationType type) {interpolationType = type;}
         
         
         // = = = = = = = = = = METHODS = = = = = = = = = =

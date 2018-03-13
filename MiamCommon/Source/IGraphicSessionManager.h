@@ -24,6 +24,8 @@
 
 #include "MiamExceptions.h"
 
+#include "InterpolationTypes.h"
+
 #include "boost/property_tree/ptree.hpp"
 #include "boost/property_tree/xml_parser.hpp"
 namespace bptree = boost::property_tree;
@@ -89,6 +91,7 @@ namespace Miam
         /// \brief !!!!!!!!! À CHANGER pour l'instant toujours faux : pas d'OpenGL... !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         virtual bool IsOpenGlSwapSynced() {return false;}
         
+        InterpolationType GetInterpolatorType() const;
         
         
         
