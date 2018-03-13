@@ -112,6 +112,13 @@ namespace Miam
         /// of all points.
         virtual void CanvasResized(SceneCanvasComponent* parentCanvas) = 0;
         
+		virtual bool hasVerticesChanged() = 0;
+		virtual bool hasPositionChanged() = 0;
+		virtual int GetVerticesCount() = 0;
+		virtual int GetIndexCount() = 0;
+		virtual std::vector<float> GetVertices() = 0;
+		virtual std::vector<int> GetIndex() = 0;
+		//virtual Matrix3D<float> GetModelMatrix() = 0;
         
         // ----- Setters and Getters -----
         

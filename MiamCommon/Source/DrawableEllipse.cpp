@@ -63,7 +63,75 @@ DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b,
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>() - (a / 2)*xScale, center.get<1>()));
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() - (b / 2)*yScale));
 
+	float centerX = (float)center.get<0>();
+	float centerY = (float)center.get<1>();
+	float aScaled = (float)(a / 2.0) * xScale; // demi-axe, normalisé, rescalé si keepratio
+	float bScaled = (float)(b / 2.0) * yScale; // demi-axe , (idem)
+
+	int verticesCount = (ellipseVerticesCount + 1);
+	//vertex_buffer = new float[verticesCount * 3]; // tout sommets + le centre * (x,y,z)
+	vertex_buffer.resize(verticesCount * 3);
+	vertex_buffer[0] = 0.0f;
+	vertex_buffer[1] = 0.0f;
+	vertex_buffer[2] = 0.0f;
+
+	vertex_buffer[3] = aScaled * (float)std::cos(0.0);
+	vertex_buffer[4] = bScaled * (float)std::sin(0.0);
+	vertex_buffer[5] = 0.0f;
+
+	for (int i = 1; i<ellipseVerticesCount; i++)
+	{
+		double normalizedAngle = (double)(i) / (double)(ellipseVerticesCount);
+		vertex_buffer[(i + 1) * 3]     = aScaled * (float)std::cos(2.0 * M_PI * normalizedAngle);
+		vertex_buffer[(i + 1) * 3 + 1] = bScaled * (float)std::sin(2.0 * M_PI * normalizedAngle);
+		vertex_buffer[(i + 1) * 3 + 2] = 0.0f;
+		
+	}
+
+	int indexCount = ellipseVerticesCount * 3;
+	index_buffer.resize(indexCount);//index_buffer = new int[indexCount];
+	for (int i = 0; i < ellipseVerticesCount; ++i)
+	{
+		index_buffer[i * 3] = i + 1;
+		index_buffer[i * 3 + 1] = 0;
+		index_buffer[i * 3 + 2] = i + 2;
+	}
+
 	createJucePolygon();
+}
+
+int DrawableEllipse::GetVerticesCount()
+{
+	return 0;// verticesCount;
+}
+
+int DrawableEllipse::GetIndexCount()
+{
+	return 0;//indexCount;
+}
+
+bool DrawableEllipse::hasVerticesChanged()
+{
+	return verticesChanged;
+}
+
+bool DrawableEllipse::hasPositionChanged()
+{
+	return positionChanged;
+}
+
+std::vector<float> DrawableEllipse::GetVertices()
+{
+	if (vertex_buffer.size() > 0)
+		return vertex_buffer;
+	return std::vector<float>();//nullptr;
+}
+
+std::vector<int> DrawableEllipse::GetIndex()
+{
+	if (index_buffer.size() > 0)
+		return index_buffer;
+	return std::vector<int>();
 }
 
 void DrawableEllipse::createJucePolygon(int width, int height)

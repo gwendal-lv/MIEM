@@ -39,6 +39,13 @@ namespace Miam
 			DrawableEllipse(int64_t _Id);
 			DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio = 1.77777777f);
 
+			int GetVerticesCount() override;
+			int GetIndexCount() override;
+			bool hasVerticesChanged() override;
+			bool hasPositionChanged() override;
+			std::vector<float> GetVertices() override;
+			std::vector<int> GetIndex() override;
+
 		private:
 			void createJucePolygon(int width = 160, int height = 90);
 

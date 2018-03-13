@@ -168,18 +168,46 @@ private:
 		"}\n";
 
 	GLuint vertexBuffer;
-	GLfloat g_vertex_buffer_data[3 * 3] = {
-		-1.0f, -1.0f, 0.0f,
-		1.0f, -1.0f, 0.0f,
-		0.0f,  1.0f, 0.0f
-	};
+	GLfloat g_vertex_buffer_data[3 * 3 * 32];
 
 	GLuint colorBuffer;
-	GLfloat g_color_buffer_data[3 * 3] = {
+	GLfloat g_color_buffer_data[3 * 32] = {
+		1.0f,  0.0f,  0.0f,
+		1.0f,  0.0f,  0.0f,
+		1.0f,  0.0f,  0.0f,
+		1.0f,  0.0f,  0.0f,
+		1.0f,  0.0f,  0.0f,
+		1.0f,  0.0f,  0.0f,
+		1.0f,  0.0f,  0.0f,
+		1.0f,  0.0f,  0.0f,
+		1.0f,  0.0f,  0.0f,
+		1.0f,  0.0f,  0.0f,
+		1.0f,  0.0f,  0.0f,
+		1.0f,  0.0f,  0.0f,
+		1.0f,  0.0f,  0.0f,
+		1.0f,  0.0f,  0.0f,
+		1.0f,  0.0f,  0.0f,
+		1.0f,  0.0f,  0.0f,
+		1.0f,  0.0f,  0.0f,
+		1.0f,  0.0f,  0.0f,
+		1.0f,  0.0f,  0.0f,
+		1.0f,  0.0f,  0.0f,
+		1.0f,  0.0f,  0.0f,
+		1.0f,  0.0f,  0.0f,
+		1.0f,  0.0f,  0.0f,
+		1.0f,  0.0f,  0.0f,
+		1.0f,  0.0f,  0.0f,
+		1.0f,  0.0f,  0.0f,
+		1.0f,  0.0f,  0.0f,
+		1.0f,  0.0f,  0.0f,
+		1.0f,  0.0f,  0.0f,
 		1.0f,  0.0f,  0.0f,
 		1.0f,  0.0f,  0.0f,
 		1.0f,  0.0f,  0.0f
 	};
+
+	GLuint elementBuffer;
+	unsigned int indices[3 * 32];
 
 	///// vertex de toutes les formes dans g_vertex_buffer
 	//GLuint vertexBuffer; 

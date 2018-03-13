@@ -83,18 +83,23 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 
 	shaderProgram->use();
 
-	// TRIANGLE
+	// TRIANGLE BUFFER
 	// openGL génère 1 buffer, avec l'ID vertexBuffer, et qui contiendra g_vertex_buffer_data
 	openGlContext.extensions.glGenBuffers(1, &vertexBuffer);
 	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 	openGlContext.extensions.glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data),
 		g_vertex_buffer_data, GL_STATIC_DRAW);
 
-	// TRIANGLE
+	// TRIANGLE COULEUR
 	// pareil pour les buffers de couleurs des deux
 	openGlContext.extensions.glGenBuffers(1, &colorBuffer);
 	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
 	openGlContext.extensions.glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
+
+	// TRIANGLE INDEX
+	openGlContext.extensions.glGenBuffers(1, &elementBuffer);
+	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer);
+	openGlContext.extensions.glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * 32 * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
 	// déclaration des attributs et uniforms : !!! aux noms et leurs utilisations dans les shaders !!!
 	position = new OpenGLShaderProgram::Attribute(*shaderProgram, String("position").toRawUTF8());
@@ -106,6 +111,8 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 }
 void SceneCanvasComponent::renderOpenGL()
 {
+
+
 	//DBG("render : " + getName());
     auto manager = canvasManager.lock();
 	OpenGLHelpers::clear(Colours::black);
@@ -174,14 +181,36 @@ void SceneCanvasComponent::renderOpenGL()
     
     // - - - - - Areas painting (including exciters if existing) - - - - -
     // Sans bloquer, du coup, les autres threads (pour réactivité max...)
-    //for (size_t i=0;i<duplicatedAreas.size();i++)
-    //{
+    for (size_t i=0;i<duplicatedAreas.size();i++)
+    {
     //    // Peut mettre à jour des images et autres (si l'échelle a changé)
     //    duplicatedAreas[i]->SetRenderingScale(desktopScale);
     //    // Dessin effectif
     //    duplicatedAreas[i]->Paint(g);
-    //}
+		if (duplicatedAreas[i]->GetVerticesCount() >= 3)
+		{
+			
+			std::vector<float> newVertex = duplicatedAreas[i]->GetVertices();
+			for (int j = 0; j < newVertex.size(); ++j)
+			{
+				g_vertex_buffer_data[j] = newVertex[j]* 10;
+			}
+		}
+
+		if (duplicatedAreas[i]->GetIndexCount() >= 3)
+		{
+			
+			std::vector<int> newIndex = duplicatedAreas[i]->GetIndex();
+			for (int j = 0; j < newIndex.size(); ++j)
+			{
+				indices[j] = (unsigned int)newIndex[j];
+			}
+		}
+
+    }
     
+
+
 
 	/// calcul des matrices
 	Matrix3D<float> testView = lookAt(Vector3D<float>(0, 0, 10), Vector3D<float>(0, 0, 0), Vector3D<float>(0, -1, 0));
@@ -203,6 +232,7 @@ void SceneCanvasComponent::renderOpenGL()
 	/// Draw triangle
 	openGlContext.extensions.glEnableVertexAttribArray(position->attributeID);
 	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+	openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(g_vertex_buffer_data), g_vertex_buffer_data);
 	openGlContext.extensions.glVertexAttribPointer(position->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
 	//openGLContext.extensions.glEnableVertexAttribArray(position->attributeID);
 
@@ -210,7 +240,13 @@ void SceneCanvasComponent::renderOpenGL()
 	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
 	openGlContext.extensions.glVertexAttribPointer(colour->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
 
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+	
+	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer);
+	//openGlContext.extensions.glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+	openGlContext.extensions.glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, 3*32 * sizeof(unsigned int), &indices[0]);
+
+	glDrawElements(GL_TRIANGLES, 3 * 32, GL_UNSIGNED_INT, (void*)0);
+	//glDrawArrays(GL_TRIANGLES, 0, 3);
 	openGlContext.extensions.glDisableVertexAttribArray(position->attributeID);
 	openGlContext.extensions.glDisableVertexAttribArray(colour->attributeID);
 

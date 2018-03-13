@@ -63,6 +63,13 @@ namespace Miam {
         /// \param _contourPoints See DrawablePolygon::contourPoints
         /// \param _fillColour See DrawableArea::fillColour
 		DrawablePolygon(int64_t _Id, bpt _center, bpolygon& _bcontourPoints, Colour _fillColour);
+
+		int GetVerticesCount() override;
+		int GetIndexCount() override;
+		bool hasVerticesChanged() override;
+		bool hasPositionChanged() override;
+		std::vector<float> GetVertices() override;
+		std::vector<int> GetIndex() override;
         
         virtual std::shared_ptr<IDrawableArea> Clone() override
         {

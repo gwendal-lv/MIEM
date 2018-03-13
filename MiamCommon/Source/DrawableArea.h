@@ -77,6 +77,11 @@ namespace Miam
         
         bool keepRatio;
         
+		bool verticesChanged = false;
+		bool positionChanged = false;
+		std::vector<float> vertex_buffer;
+		std::vector<int> index_buffer;
+		Vector3D<float> position;
         
         // =============== SETTERS & GETTERS ===============
         public :
