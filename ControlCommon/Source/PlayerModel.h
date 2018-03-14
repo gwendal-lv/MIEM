@@ -38,6 +38,7 @@ namespace Miam {
         int refreshFramesCounter = 0;
         const int refreshPeriod_frames = 500; // unité = frames
         bool continuousBackgroundBlobMatrixRefresh = true;
+        bool continuousBackgroundSingleMatrixCoeffRefresh = false;
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         protected :

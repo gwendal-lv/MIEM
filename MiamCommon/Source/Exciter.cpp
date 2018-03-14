@@ -263,6 +263,7 @@ void Exciter::updateExcitationAmounts()
     // - - - - - Distorsion logarithmique, pour donner la précision aux faibles volumes - - - - -
     // Voir feuille de calcul Matlab + explications papier nécessaires....
     // on prépare déjà la normalisation qui suit
+    // - - - - -         Ou aucune distorsion si interpolation linéaire simple          - - - - -
     double totalAudioExcitement = 0.0;
     for (auto &areaData : areasInteractingWith)
     {

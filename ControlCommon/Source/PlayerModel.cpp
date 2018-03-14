@@ -174,30 +174,19 @@ void PlayerModel::update()
             }
             else if (continuousBackgroundBlobMatrixRefresh)
             {
-                // Envoi d'un coefficient pour avoir toujours une mise à jour qui tourne derrière....
-                // Seulement si on a fait une frame vide !
-                
-                // Débit à 500Hz ? Si on suppose que 1 paquet UDP(8octets)/IP(60octetsMAX) fait 68octets max
-                // + adresse OSC de 4 octets ici + 3*4octets de données
-                // = 84 octets max par paquet
-                // -> total 42ko/s
-                // ça serait peut-être pas mal de diviser par 10....
-                // TODO
                 if ( (refreshFramesCounter++) >= refreshPeriod_frames )
                 {
                     miamOscSender->ForceCoeffsBlockRefresh( interpolator->GetCurrentInterpolatedState() );
                     refreshFramesCounter = 0;
                 }
-                
-                
-                // ----------------------------------
-                // ----------------------------------
-                // OPTIMISATION POUR LA SUITE
-                // ----------------------------------
-                // -> envoyer des BLOCS OSC avec la matrice CREUSE à l'intérieur
-                //(uniquement les coeffs non nuls....)
-                // ----------------------------------
-                // ----------------------------------
+            }
+            else if (continuousBackgroundSingleMatrixCoeffRefresh)
+            {
+                if ( (refreshFramesCounter++) >= refreshPeriod_frames )
+                {
+                    miamOscSender->ForceSend1MatrixCoeff( interpolator->GetCurrentInterpolatedState() );
+                    refreshFramesCounter = 0;
+                }
             }
         }
         // fin de : - - - - - SI ON EST EN TRAIN DE JOUER - - - - -

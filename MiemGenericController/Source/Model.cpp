@@ -19,10 +19,13 @@ Model::Model(Presenter* presenter_)
 PlayerModel(presenter_),
 presenter(presenter_)
 {
-    continuousBackgroundBlobMatrixRefresh = false;
-    
     std::vector<std::string> emptyVector;
     miamOscSender->EnableSendFirstColOnly(true, emptyVector);
+    
+    continuousBackgroundBlobMatrixRefresh = false;
+    // va fonctionner automatiquement avec les bonnes adresses, puisqu'on a configuré
+    // le OSC sender comme il faut
+    continuousBackgroundSingleMatrixCoeffRefresh = true;
 }
 
 void Model::SetConfigurationFromTree(bptree::ptree& tree)

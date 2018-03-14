@@ -293,12 +293,17 @@ namespace Miam
             // Capable d'envoyer un état matriciel avec backup seulement pour l'instant
             if (MatrixBackupState<T>* matrixState = dynamic_cast<MatrixBackupState<T>*>(&state))
             {
-                // Mise à jour du couple (i,j) pour commencer
-                increment2dRefreshIndex();
-                
-                // Envoi du coeff concerné
-                SendMatrixCoeff(iToRefresh, jToRefresh,
-								(float) (*matrixState)(iToRefresh, jToRefresh));
+                // Mise à jour du couple (i,j)toRefresh pour commencer
+                // (gère le mode 1 seule colonne)
+                increment2dRefreshIndex(matrixState);
+                std::cout << "envoi forcé du " << iToRefresh << "," << jToRefresh << std::endl;
+                // Envoi du coeff concerné, selon que l'on soit en mode 1 seule colonne ou non.
+                if (!sendFirstColOnly)
+                    SendMatrixCoeff(iToRefresh, jToRefresh,
+                                    (float) (*matrixState)(iToRefresh, jToRefresh));
+                // Si 1 seule colonne : on utilise juste SendParam(i,value)
+                else // avec le bon nom de message OSC
+                    SendParam(iToRefresh, (float) (*matrixState)(iToRefresh, jToRefresh)); // j vaudra zéro !
                 
                 // ----------- à faire -------------
                 // ----------- à faire -------------
@@ -377,9 +382,18 @@ namespace Miam
         /// en appliquant les modulos nécessaire pour ligne/colonne.
         void increment2dRefreshIndex(MatrixState<T>* matrixState)
         {
+            // limite en j (sur la ligne) : selon qu'on travaille
+            // uniquement sur la colonne 1, ou non !
+            int refreshColsCount = 0;
+            if (sendFirstColOnly)
+                refreshColsCount = 1;
+            else
+                refreshColsCount = (int) matrixState->GetOutputsCount();
+            
             // -> ça fait office de vérification qu'on a des coeffs bien dans la matrice
             // fin de colonne : ligne suivante
-            if ( (jToRefresh++) >= matrixState->GetOutputsCount() )
+            jToRefresh++;
+            if ( jToRefresh >= refreshColsCount )
             {
                 jToRefresh = 0;
                 iToRefresh++;
