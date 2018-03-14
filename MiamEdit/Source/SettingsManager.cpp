@@ -130,19 +130,19 @@ void SettingsManager::SetFromTree(bptree::ptree& tree)
         presenter->GetSpatStatesManager()->AllowKeyboardEdition(allow);
     
         // Interpolator-related : simple transmission of data to View, without notifications
-        std::string typeString = tree.get<std::string>("model.interpolation.<xmlattr>.type");
+        std::string typeString = tree.get<std::string>("control.interpolation.<xmlattr>.type");
         InterpolationType interpolationType = InterpolationTypes::ParseName(typeString);
         configurationComponent->interpolationTypeComboBox->setSelectedId((int)interpolationType,
                                                         NotificationType::dontSendNotification);
         configurationComponent->inputsCountSlider->
-        setValue((double) tree.get<int>("model.inputs.<xmlattr>.activeCount") );
+        setValue((double) tree.get<int>("control.inputs.<xmlattr>.activeCount") );
         configurationComponent->outputsCountSlider->
-        setValue((double) tree.get<int>("model.outputs.<xmlattr>.activeCount") );
+        setValue((double) tree.get<int>("control.outputs.<xmlattr>.activeCount") );
         // Spat sender-related
         configurationComponent->ipAddressTextEditor->
-        setText( tree.get<std::string>("model.senders.sender.ip") );
+        setText( tree.get<std::string>("control.senders.sender.ip") );
         configurationComponent->udpPortTextEditor->
-        setText( boost::lexical_cast<std::string>(tree.get<int>("model.senders.sender.udp.port")) );
+        setText( boost::lexical_cast<std::string>(tree.get<int>("control.senders.sender.udp.port")) );
         
     }
     catch (bptree::ptree_error& e) {

@@ -47,8 +47,8 @@ void ControlPresenter::LoadSession(std::string filename)
         // Lecture
         bptree::read_xml(filename, xmlTree);
         // puis Séparation des grandes parties du fichier
-        miamTree = xmlTree.get_child("miam");
-        spatTree = miamTree.get_child("spat");
+        miamTree = xmlTree.get_child("miem");
+        spatTree = miamTree.get_child("control");
         graphicSessionTree = miamTree.get_child("graphicsession");
         settingsTree = miamTree.get_child("settings");
     }
@@ -67,7 +67,7 @@ void ControlPresenter::LoadSession(std::string filename)
         App::CheckSessionVersionNumber(miamTree);
         
         // Config modèle puis modèle
-        model->SetConfigurationFromTree(settingsTree.get_child("model"));
+        model->SetConfigurationFromTree(settingsTree.get_child("control"));
         model->GetInterpolator()->SetStatesFromTree(spatTree);
         // Config graphique puis presenter
         this->SetConfigurationFromTree(settingsTree);
@@ -128,15 +128,15 @@ void ControlPresenter::SaveSession(std::string _filename, bool /*forceDataRefres
     miamChildrenTree.put("<xmlattr>.appPurpose", App::GetPurposeName(App::GetPurpose()));
     // Les settings sont ajoutés catégorie par catégorie
     bptree::ptree settingsTree;
-    settingsTree.add_child("model", *(model->GetConfigurationTree()) );
+    settingsTree.add_child("control", *(model->GetConfigurationTree()) );
     settingsTree.add_child("presenter", *(this->GetConfigurationTree()) );
     miamChildrenTree.add_child("settings", settingsTree);
     // Puis on sauvegarde les données des modules
-    miamChildrenTree.add_child("spat", *lastSpatStatesTree);
+    miamChildrenTree.add_child("control", *lastSpatStatesTree);
     miamChildrenTree.add_child("graphicsession", *lastSpatScenesTree);
     
     auto wholeMiamTree = std::make_shared<bptree::ptree>();
-    wholeMiamTree->add_child("miam", miamChildrenTree);
+    wholeMiamTree->add_child("miem", miamChildrenTree);
     
     // Actual XML data writing into file
     bptree::xml_writer_settings<std::string> xmlSettings(' ', 4);
