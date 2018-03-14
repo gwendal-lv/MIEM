@@ -124,8 +124,6 @@ void NetworkModel::oscMessageReceived(const OSCMessage& message)
                 paramChange.FloatValue = (float) floatValue;
                 
                 SendParamChange(paramChange);
-                if (paramChange.Id1 == 0 && paramChange.Id2 == 0)
-                    std::cout << "-----------    [0;0] == " << paramChange.FloatValue << std::endl;
             }
         }
     }

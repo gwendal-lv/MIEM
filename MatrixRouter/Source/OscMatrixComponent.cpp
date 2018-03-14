@@ -7,12 +7,12 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.2.0
+  Created with Projucer version: 5.2.1
 
   ------------------------------------------------------------------------------
 
-  The Projucer is part of the JUCE library - "Jules' Utility Class Extensions"
-  Copyright (c) 2015 - ROLI Ltd.
+  The Projucer is part of the JUCE library.
+  Copyright (c) 2017 - ROLI Ltd.
 
   ==============================================================================
 */
@@ -28,6 +28,7 @@
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
 using namespace Miam;
+
 //[/MiscUserDefs]
 
 //==============================================================================
@@ -65,6 +66,8 @@ OscMatrixComponent::OscMatrixComponent (Presenter* _presenter)
     udpPortLabel->setColour (TextEditor::textColourId, Colours::black);
     udpPortLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
+    udpPortLabel->setBounds (256 + 8, 16, 184, 24);
+
     addAndMakeVisible (udpStatusLabel = new Label ("UPD Status Label",
                                                    TRANS("Status : ...")));
     udpStatusLabel->setFont (Font (15.00f, Font::italic));
@@ -78,6 +81,8 @@ OscMatrixComponent::OscMatrixComponent (Presenter* _presenter)
                                                                   TRANS("Audio dynamics")));
     audioConfigComponent->setColour (GroupComponent::outlineColourId, Colour (0xff454545));
     audioConfigComponent->setColour (GroupComponent::textColourId, Colours::black);
+
+    audioConfigComponent->setBounds (0, 0, 248, 72);
 
     addAndMakeVisible (keyboardButton = new ToggleButton ("keyboard button"));
     keyboardButton->setButtonText (TRANS("Keyboard editing mode"));
@@ -102,6 +107,8 @@ OscMatrixComponent::OscMatrixComponent (Presenter* _presenter)
     attackLabel->setColour (Label::textColourId, Colours::black);
     attackLabel->setColour (TextEditor::textColourId, Colours::black);
     attackLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    attackLabel->setBounds (0 + 8, 28, 56, 24);
 
     addAndMakeVisible (attackUnitLabel = new Label ("Attack unit Label",
                                                     TRANS("milliseconds")));
@@ -136,6 +143,11 @@ OscMatrixComponent::OscMatrixComponent (Presenter* _presenter)
 
     //Initially disabled (will be re-enabled on timeout from Model)
     //setEnabled(false);
+
+    // Matrice de sliders : pour l'instant, type matriciel avec noms de E/S caché
+    slidersMatrix->SetDisplayPurpose(App::GetPurpose());
+    slidersMatrix->SetInputNamesVisible(false);
+    slidersMatrix->SetOutputNamesVisible(false);
 
     //[/Constructor]
 }
@@ -181,15 +193,12 @@ void OscMatrixComponent::resized()
     //[/UserPreResize]
 
     matrixGroupComponent->setBounds (0, 0 + 72, getWidth() - 0, getHeight() - 72);
-    preferencesGroupComponent->setBounds (256, 0, getWidth() - 291, roundFloatToInt (72 * 1.0000f));
+    preferencesGroupComponent->setBounds (256, 0, getWidth() - 291, roundToInt (72 * 1.0000f));
     udpPortTextEditor->setBounds ((256 + 8) + 184 - -8, 16, 64, 24);
-    udpPortLabel->setBounds (256 + 8, 16, 184, 24);
     udpStatusLabel->setBounds (((256 + 8) + 184 - -8) + 64 - -8, 16, (getWidth() - 291) - 280, 24);
-    audioConfigComponent->setBounds (0, 0, 248, 72);
     keyboardButton->setBounds (256 + 8, 40, (getWidth() - 291) - 24, 24);
     slidersMatrix->setBounds (0 + 8, (0 + 72) + 16, (getWidth() - 0) - 16, (getHeight() - 72) - 24);
     attackSlider->setBounds ((0 + 8) + 56 - 16, 16, 108, 48);
-    attackLabel->setBounds (0 + 8, 28, 56, 24);
     attackUnitLabel->setBounds (((0 + 8) + 56 - 16) + 108, 28, 88, 24);
     helpTextButton->setBounds (getWidth() - 4 - 24, 8, 24, 60);
     //[UserResized] Add your own custom resize handling here..
@@ -295,7 +304,7 @@ void OscMatrixComponent::SetUdpPortAndMessage(int udpPort, bool isConnected, std
 }
 void OscMatrixComponent::SetActiveSliders(int inputsCount, int outputsCount)
 {
-    slidersMatrix->GetMatrixComponent()->SetActiveSliders(inputsCount, outputsCount);
+    slidersMatrix->SetActiveSliders(inputsCount, outputsCount);
 }
 PopupMenu OscMatrixComponent::createHelpPopup()
 {
@@ -311,7 +320,7 @@ PopupMenu OscMatrixComponent::createHelpPopup()
     menu.addSeparator();
     menu.addItem(++lastItemId, "DAW-specific instructions : please read PDF manual.", false);
     menu.addSeparator();
-    menu.addItem(++lastItemId, String("MIAM Matrix Router v") + JucePlugin_VersionString, false);
+    menu.addItem(++lastItemId, String("MIEM Matrix Router v") + JucePlugin_VersionString, false);
     menu.addItem(++lastItemId, String("Gwendal Le Vaillant, ") + JucePlugin_ManufacturerEmail + ", 2017.", false);
 
 
@@ -336,28 +345,29 @@ BEGIN_JUCER_METADATA
                  fixedSize="0" initialWidth="400" initialHeight="300">
   <BACKGROUND backgroundColour="ff909090"/>
   <GROUPCOMPONENT name="Matrix Group Component" id="19b69873bd3945f7" memberName="matrixGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="0 0R 0M 72M" posRelativeY="bb46950e139db507"
+                  virtualName="" explicitFocusOrder="0" pos="0 -1345R 0M 72M" posRelativeY="bb46950e139db507"
                   outlinecol="ff454545" textcol="ff000000" title="Routing matrix"/>
   <GROUPCOMPONENT name="Preferences Group Component" id="dfbb24a51fa3d6c0" memberName="preferencesGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="256 0 291M 100%" posRelativeH="bb46950e139db507"
-                  outlinecol="ff454545" textcol="ff000000" title="Preferences"/>
+                  virtualName="" explicitFocusOrder="0" pos="256 0 291M 1968.06%"
+                  posRelativeH="bb46950e139db507" outlinecol="ff454545" textcol="ff000000"
+                  title="Preferences"/>
   <TEXTEDITOR name="UDP Port Text Editor" id="e4ef4437203ce19e" memberName="udpPortTextEditor"
-              virtualName="" explicitFocusOrder="0" pos="-8R 16 64 24" posRelativeX="8d369e08975b779c"
+              virtualName="" explicitFocusOrder="0" pos="-2120R 16 64 24" posRelativeX="8d369e08975b779c"
               initialText="-1" multiline="0" retKeyStartsLine="0" readonly="0"
               scrollbars="1" caret="1" popupmenu="1"/>
   <LABEL name="UPD Port Label" id="8d369e08975b779c" memberName="udpPortLabel"
          virtualName="" explicitFocusOrder="0" pos="8 16 184 24" posRelativeX="dfbb24a51fa3d6c0"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Listen to OSC on UDP port :"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
-         justification="33"/>
+         fontname="Default font" fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
+         bold="0" italic="0" justification="33"/>
   <LABEL name="UPD Status Label" id="3fd4c40c4d48dfec" memberName="udpStatusLabel"
          virtualName="" explicitFocusOrder="0" pos="-8R 16 280M 24" posRelativeX="e4ef4437203ce19e"
          posRelativeW="dfbb24a51fa3d6c0" textCol="ff000000" edTextCol="ff000000"
          edBkgCol="0" labelText="Status : ..." editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
-         fontsize="15" kerning="0" bold="0" italic="1" justification="33"
-         typefaceStyle="Italic"/>
+         fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
+         bold="0" italic="1" justification="33" typefaceStyle="Italic"/>
   <GROUPCOMPONENT name="Audio Config Group Component" id="bb46950e139db507" memberName="audioConfigComponent"
                   virtualName="" explicitFocusOrder="0" pos="0 0 248 72" outlinecol="ff454545"
                   textcol="ff000000" title="Audio dynamics"/>
@@ -371,22 +381,23 @@ BEGIN_JUCER_METADATA
                     posRelativeH="19b69873bd3945f7" class="Miam::LabelledMatrixComponent"
                     params="this, JucePlugin_MaxNumInputChannels, JucePlugin_MaxNumOutputChannels"/>
   <SLIDER name="Attack Slider" id="b96b5d59dd56bbaa" memberName="attackSlider"
-          virtualName="" explicitFocusOrder="0" pos="16R 16 108 48" posRelativeX="19707b3f29742e60"
-          textboxtext="ff000000" min="1" max="100" int="1" style="RotaryVerticalDrag"
+          virtualName="" explicitFocusOrder="0" pos="-2480R 16 108 48"
+          posRelativeX="19707b3f29742e60" textboxtext="ff000000" min="1.00000000000000000000"
+          max="100.00000000000000000000" int="1.00000000000000000000" style="RotaryVerticalDrag"
           textBoxPos="TextBoxRight" textBoxEditable="1" textBoxWidth="60"
-          textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          textBoxHeight="20" skewFactor="1.00000000000000000000" needsCallback="1"/>
   <LABEL name="Attack Label" id="19707b3f29742e60" memberName="attackLabel"
          virtualName="" explicitFocusOrder="0" pos="8 28 56 24" posRelativeX="bb46950e139db507"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Attack"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
-         justification="33"/>
+         fontname="Default font" fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
+         bold="0" italic="0" justification="33"/>
   <LABEL name="Attack unit Label" id="c34a141f13007692" memberName="attackUnitLabel"
          virtualName="" explicitFocusOrder="0" pos="0R 28 88 24" posRelativeX="b96b5d59dd56bbaa"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="milliseconds"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
-         justification="33"/>
+         fontname="Default font" fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
+         bold="0" italic="0" justification="33"/>
   <TEXTBUTTON name="Help button" id="99be38dc78387f16" memberName="helpTextButton"
               virtualName="" explicitFocusOrder="0" pos="4Rr 8 24 60" posRelativeX="922404df7bcd082e"
               posRelativeY="922404df7bcd082e" posRelativeW="922404df7bcd082e"

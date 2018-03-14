@@ -428,6 +428,10 @@ void LabelledMatrixComponent::OnViewportVisibleAreaChanged()
 {
     repositionLabels();
 }
+void LabelledMatrixComponent::OnSliderValueChanged(int row, int col, double value)
+{
+    listener->OnSliderValueChanged(row, col, value);
+}
 
 MatrixComponent* LabelledMatrixComponent::GetMatrixComponent()
 {

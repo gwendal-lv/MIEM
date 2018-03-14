@@ -86,8 +86,7 @@ public:
     void OnViewportVisibleAreaChanged();
     /// \brief Callback from the MatrixComponent.
     /// 'value' is a linear value (not given in decibels)
-    void OnSliderValueChanged(int row, int col, double value)
-    {listener->OnSliderValueChanged(row, col, value);}
+    void OnSliderValueChanged(int row, int col, double value);
 
     // - - - - - - Getters and Setters - - - - -
     MatrixComponent* GetMatrixComponent();

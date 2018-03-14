@@ -303,10 +303,15 @@ void MatrixComponent::SetSliderValue(int row, int col, double newValue,
     // Slider de matrice
     MatrixSlider* slider = sliders[idx(row,col)].get();
     // valeur selon que l'on soit en dessous du treshold en dB, ou non
-    if (Decibels::gainToDecibels(newValue) < Miam_MinVolume_dB)
+    auto value_dB = Decibels::gainToDecibels<double>(newValue);
+    if (value_dB < Miam_MinVolume_dB)
+    {
         slider->setValue(Miam_MinVolume_dB-MiamRouter_LowVolumeThreshold_dB, juceNotification);
+    }
     else
-        slider->setValue(Decibels::gainToDecibels(newValue), juceNotification); // To prevent direct backwards retransmission
+    {
+        slider->setValue(value_dB, juceNotification); // To prevent direct backwards retransmission
+    }
     // Display update
     slider->SetPropertiesFromVolume();
     

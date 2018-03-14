@@ -11,6 +11,7 @@
 #include <cmath>
 
 #include "Presenter.h"
+#include "AppPurpose.h"
 
 #include "PluginProcessor.h" // class MatrixRouterAudioProcessor
 #include "NetworkModel.h"
@@ -27,6 +28,7 @@ using namespace Miam;
 
 
 
+AppPurpose App::appPurpose = AppPurpose::Spatialisation;
 
 // =================== Construction & destruction ===================
 Presenter::Presenter(MatrixRouterAudioProcessor& _model, std::shared_ptr<NetworkModel> _networkModel)
@@ -84,7 +86,6 @@ void Presenter::UpdateFromView(MatrixRouterAudioProcessorEditor* view)
 {
     // Have new messages arrived ?
     AsyncParamChange newParamChange;
-    double sliderValue_dB;
     while( model.TryGetAsyncParamChange(newParamChange) )
     {
         switch (newParamChange.Type)
@@ -96,6 +97,7 @@ void Presenter::UpdateFromView(MatrixRouterAudioProcessorEditor* view)
                 
             case AsyncParamChange::InputsAndOutputsCount :
                 oscMatrixComponent->SetActiveSliders(newParamChange.Id1, newParamChange.Id2);
+                //oscMatrixComponent->SetActiveSliders(JucePlugin_MaxNumInputChannels, JucePlugin_MaxNumOutputChannels);
                 break;
                 
             case AsyncParamChange::Duration :
@@ -104,8 +106,7 @@ void Presenter::UpdateFromView(MatrixRouterAudioProcessorEditor* view)
                 break;
                 
             case AsyncParamChange::Volume :
-                sliderValue_dB = Decibels::gainToDecibels(newParamChange.FloatValue);
-                oscMatrixComponent->SetSliderValue(newParamChange.Id1, newParamChange.Id2, sliderValue_dB);
+                oscMatrixComponent->SetSliderValue(newParamChange.Id1, newParamChange.Id2, newParamChange.FloatValue);
                 break;
                 
             default :

@@ -116,8 +116,6 @@ namespace Miam
         }
 
         
-        
-        
         String getTextFromValue(double value) override
         {
             // On récupère d'abord des infos sur ce nombre
@@ -140,74 +138,74 @@ namespace Miam
             return String(result);
         }
             
+        
+        
+        
+        // - - - - - Volume-related functions - - - - -
+        void SetPropertiesFromVolume()
+        {
+            // Graphical update depending on new value
             
-            
-            
-            // - - - - - Volume-related functions - - - - -
-            void SetPropertiesFromVolume()
+            // If value is a bit lower than the minimum : special pure white box
+            if (getValue() < GetMinVolume_dB() + MiamRouter_LowVolumeThreshold_dB)
             {
-                // Graphical update depending on new value
+                // And depending on the active or not state
+                if (isActive)
+                    SetBackgroundColour(Colours::white);
+                else
+                    SetBackgroundColour(Colours::lightgrey);
+            }
+            
+            // Displayable value
+            else
+            {
+                // Volume relatif, entre 0 et 1
+                double relativeVolume = ( getValue()-GetMinVolume_dB() )
+                                        / ( GetMaxVolume_dB()-GetMinVolume_dB() );
+                // On applique une distortion simple....
+                relativeVolume = std::pow(relativeVolume, 2.5);
+                double hue = (1.0-relativeVolume)*0.5 + 0.1;
+                uint8 alpha;
+                if (GetIsActive())
+                    alpha = 0xff;
+                else
+                    alpha = 0x77;
                 
-                // If value is a bit lower than the minimum : special pure white box
-                if (getValue() < GetMinVolume_dB() + MiamRouter_LowVolumeThreshold_dB)
+                
+                SetBackgroundColour(Colour((float)hue, 1.0f, 0.7f, alpha));
+            }
+            
+            // In any case : possible value on next double click event
+            if (! isTextBoxEditable()) // textbox is read-only
+            {
+                // We'll go to 0dB if lower than the median volume
+                if (getValue() < GetMiddleVolume_dB())
                 {
-                    // And depending on the active or not state
-                    if (isActive)
-                        SetBackgroundColour(Colours::white);
-                    else
-                        SetBackgroundColour(Colours::lightgrey);
+                    setDoubleClickReturnValue(true, 0.0);
                 }
-                
-                // Displayable value
+                // Else, we'll go to the minimum (undisplayed) volume
                 else
                 {
-                    // Volume relatif, entre 0 et 1
-                    double relativeVolume = ( getValue()-GetMinVolume_dB() )
-                                            / ( GetMaxVolume_dB()-GetMinVolume_dB() );
-                    // On applique une distortion simple....
-                    relativeVolume = std::pow(relativeVolume, 2.5);
-                    double hue = (1.0-relativeVolume)*0.5 + 0.1;
-                    uint8 alpha;
-                    if (GetIsActive())
-                        alpha = 0xff;
-                    else
-                        alpha = 0x77;
-                    
-                    
-                    SetBackgroundColour(Colour((float)hue, 1.0f, 0.7f, alpha));
-                }
-                
-                // In any case : possible value on next double click event
-                if (! isTextBoxEditable()) // textbox is read-only
-                {
-                    // We'll go to 0dB if lower than the median volume
-                    if (getValue() < GetMiddleVolume_dB())
-                    {
-                        setDoubleClickReturnValue(true, 0.0);
-                    }
-                    // Else, we'll go to the minimum (undisplayed) volume
-                    else
-                    {
-                        setDoubleClickReturnValue(true, GetMinVolume_dB());
-                    }
+                    setDoubleClickReturnValue(true, GetMinVolume_dB());
                 }
             }
-            
-            public :
-            static double GetMaxVolume_dB()
-            {
-                return Miam_MaxVolume_dB;
-            }
-            static double GetMinVolume_dB()
-            {
-                // we autorize the slider to get a bit lower than
-                return Miam_MinVolume_dB - MiamRouter_LowVolumeThreshold_dB;
-            }
-            static double GetMiddleVolume_dB()
-            {
-                return (0.0 + Miam_MinVolume_dB)/2.0;
-            }
-            
+        }
+        
+        public :
+        static double GetMaxVolume_dB()
+        {
+            return Miam_MaxVolume_dB;
+        }
+        static double GetMinVolume_dB()
+        {
+            // we autorize the slider to get a bit lower than
+            return Miam_MinVolume_dB - MiamRouter_LowVolumeThreshold_dB;
+        }
+        static double GetMiddleVolume_dB()
+        {
+            return (0.0 + Miam_MinVolume_dB)/2.0;
+        }
+        
         
     };
     
