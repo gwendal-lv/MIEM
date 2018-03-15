@@ -258,7 +258,8 @@ private:
 	{
 		float top = tan(fovy / 2.0f) * near;
 		float bottom = -top;
-		return Matrix3D<float>::fromFrustum(-top * width / height, top * width / height, bottom, top, near, far);
+		//return Matrix3D<float>::fromFrustum(-top * width / height, top * width / height, bottom, top, near, far);
+		return Matrix3D<float>::fromFrustum(0, width, 0, height, near, far);
 	}
 
 

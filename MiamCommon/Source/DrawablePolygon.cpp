@@ -92,17 +92,9 @@ DrawablePolygon::DrawablePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 
 	int verticesCount = (pointsCount + 1);
 	vertex_buffer.resize(verticesCount * 3);// = new float[verticesCount * 3]; // tout sommets + le centre * (x,y,z)
-	vertex_buffer[0] = 0.0f;
-	vertex_buffer[1] = 0.0f;
-	vertex_buffer[2] = 0.0f;
 	
-	for (int i = 0; i<pointsCount; i++)
-	{
-		currentAngle = 2.0f*float_Pi*(float)(i) / (float)(pointsCount);
-		vertex_buffer[3 + i * 3] = radius*cosf(currentAngle);
-		vertex_buffer[3 + i * 3 + 1] = radius*sinf(currentAngle);
-		vertex_buffer[3 + i * 3 + 2] = 0.0f;
-	}
+	
+	
 
 	int indexCount = pointsCount * 3;
 	index_buffer.resize(indexCount);
@@ -275,6 +267,17 @@ void DrawablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
     contourPointsInPixels.clear();
     boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scale(parentCanvas->getWidth(), parentCanvas->getHeight());
     boost::geometry::transform(contourPoints, contourPointsInPixels, scale);
+
+	vertex_buffer[0] = centerInPixels.get<0>();
+	vertex_buffer[1] = centerInPixels.get<1>();
+	vertex_buffer[2] = 0.0f;
+	
+	for (int i = 0; i<contourPointsInPixels.outer().size()-1; i++)
+	{
+		vertex_buffer[3 + i * 3] = contourPointsInPixels.outer().at(i).get<0>();//radius*cosf(currentAngle);
+		vertex_buffer[3 + i * 3 + 1] = contourPointsInPixels.outer().at(i).get<1>();
+		vertex_buffer[3 + i * 3 + 2] = 0.0f;
+	}
 }
 
 
