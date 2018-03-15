@@ -97,6 +97,8 @@ DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b,
 		index_buffer[i * 3 + 2] = i + 2;
 	}
 
+	modelParameters = Vector3D<float>(0.0f, 0.0f, 0.0f);
+
 	createJucePolygon();
 }
 
@@ -132,6 +134,11 @@ std::vector<int> DrawableEllipse::GetIndex()
 	if (index_buffer.size() > 0)
 		return index_buffer;
 	return std::vector<int>();
+}
+
+Vector3D<float> Miam::DrawableEllipse::GetModelParameters()
+{
+	return modelParameters;
 }
 
 void DrawableEllipse::createJucePolygon(int width, int height)

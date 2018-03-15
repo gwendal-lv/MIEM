@@ -70,6 +70,7 @@ namespace Miam {
 		bool hasPositionChanged() override;
 		std::vector<float> GetVertices() override;
 		std::vector<int> GetIndex() override;
+		Vector3D<float> GetModelParameters() override;
         
         virtual std::shared_ptr<IDrawableArea> Clone() override
         {

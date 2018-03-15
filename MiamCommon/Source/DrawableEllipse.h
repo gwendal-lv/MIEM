@@ -45,6 +45,7 @@ namespace Miam
 			bool hasPositionChanged() override;
 			std::vector<float> GetVertices() override;
 			std::vector<int> GetIndex() override;
+			Vector3D<float> GetModelParameters() override;
 
 		private:
 			void createJucePolygon(int width = 160, int height = 90);

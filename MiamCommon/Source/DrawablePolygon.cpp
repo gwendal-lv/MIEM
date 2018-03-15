@@ -117,6 +117,7 @@ DrawablePolygon::DrawablePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f);*/
+	modelParameters = Vector3D<float>(0.0f, 0.0f, 0.0f); // initialisé en 0,0 avec un angle de 0
 
     // Definition of the Juce polygon
     createJucePolygon();
@@ -163,6 +164,11 @@ std::vector<int> DrawablePolygon::GetIndex()
 	if (index_buffer.size() > 0)
 		return index_buffer;
 	return std::vector<int>();
+}
+
+Vector3D<float> DrawablePolygon::GetModelParameters()
+{
+	return modelParameters;
 }
 
 // Construction helpers

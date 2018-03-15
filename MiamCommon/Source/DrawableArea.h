@@ -81,7 +81,7 @@ namespace Miam
 		bool positionChanged = false;
 		std::vector<float> vertex_buffer;
 		std::vector<int> index_buffer;
-		Vector3D<float> position;
+		Vector3D<float> modelParameters; // x, y, theta
         
         // =============== SETTERS & GETTERS ===============
         public :
