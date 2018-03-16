@@ -53,7 +53,7 @@ void MiamLookAndFeel::drawButtonBackground (Graphics& g, Button& button, const C
 }
 
 
-void MiamLookAndFeel::fillTextEditorBackground (Graphics & g, int width, int height,
+void MiamLookAndFeel::fillTextEditorBackground (Graphics & g, int /*width*/, int /*height*/,
                                                 TextEditor & textEditor)
 {
     auto textEditorArea = textEditor.getLocalBounds();

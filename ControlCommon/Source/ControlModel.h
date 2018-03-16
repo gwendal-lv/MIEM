@@ -27,6 +27,8 @@
 #include "ControlMatrix.hpp"
 #include "AudioDefines.h"
 
+#include "AppPurpose.h"
+
 
 namespace Miam
 {
@@ -65,6 +67,9 @@ namespace Miam
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
         
+		/// \brief Par défaut, on retourne l'attribut statique global
+		virtual AppPurpose GetSessionPurpose() const { return App::GetPurpose(); }
+
         virtual InterpolationType GetInterpolatorType_Atomic () override;
         InterpolationType GetInterpolatorType() {return interpolator->GetType();}
         std::shared_ptr<StatesInterpolator<double>> GetInterpolator() {return interpolator;}

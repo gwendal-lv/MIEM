@@ -125,7 +125,7 @@ namespace Miam
                                 OSCAddressPattern addressPattern(oscAddressPatterns[i]);
                                 firstColOscMessages.push_back(OSCMessage(addressPattern));
                             }
-                            catch (OSCFormatError& e) {
+                            catch (OSCFormatError& /*e*/) {
                                 useGenericAddressPattern = true;
                             }
                         }

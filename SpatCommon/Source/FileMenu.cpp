@@ -79,8 +79,7 @@ void FileMenu::onSave()
 void FileMenu::onSaveAs()
 {
 #ifndef __MIAMOBILE
-    SaveFileChooser fileChooser({AppPurpose::Spatialisation});
-    std::cout << "[FILE LOADER] permission de n'ouvrir que des fichiers de session de spatialisation...." << std::endl;
+    SaveFileChooser fileChooser({App::GetPurpose()});
     if ( fileChooser.browseForFileToSave(true) )
     {
         File resultFile = fileChooser.getResult();

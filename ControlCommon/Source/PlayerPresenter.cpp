@@ -183,8 +183,17 @@ void PlayerPresenter::OnFileChooserReturn(const FileChooser& chooser)
     {
         File returnedFile = loadFileChooser.getResult();
         // Si l'utilisateur a choisi un fichier, on le charge
-        if (returnedFile.exists())
-            LoadSession(returnedFile.getFullPathName().toStdString());
+		// En gérant l'exception s'il y en a eu une !!!
+		if (returnedFile.exists())
+		{
+			try {
+				LoadSession(returnedFile.getFullPathName().toStdString());
+			}
+			catch (XmlReadException& e) {
+				view->DisplayInfo(e.what(), true); // important display
+				appModeChangeRequest(PlayerAppMode::MainMenu);
+			}
+		}
         // Sinon, on remet le menu...
         else
             appModeChangeRequest(PlayerAppMode::MainMenu);

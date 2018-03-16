@@ -61,7 +61,11 @@ namespace Miam
                 case AppPurpose::GenericController :
                     return translate("Generic controller").toStdString();
                     break;
-                    
+
+				case AppPurpose::Multi:
+					return translate("Multi-purpose session").toStdString();
+					break;
+
                 default :
                     return translate("Undefined purpose").toStdString();
                     break;

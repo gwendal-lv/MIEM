@@ -343,7 +343,7 @@ namespace Miam
                 inputsCount = tree.get<int>("inputs.<xmlattr>.activeCount");
             }
             catch (bptree::ptree_error &e) {
-                throw XmlReadException("<inputs> node : cannot read the 'activeCount' XML attribute");
+                throw XmlReadException(std::string("<inputs> node : cannot read the 'activeCount' XML attribute: ") + e.what());
             }
             // Lecture de tous les noeuds enfant, on ne prendra que les noms.
             // Pas de try car si on a lu le compte, le noeud inputs existe forcément (et a le droit d'etre vide)
@@ -370,7 +370,7 @@ namespace Miam
                 outputsCount = tree.get<int>("outputs.<xmlattr>.activeCount");
             }
             catch (bptree::ptree_error &e) {
-                throw XmlReadException("<outputs> node : cannot read the 'activeCount' XML attribute");
+                throw XmlReadException(std::string("<outputs> node : cannot read the 'activeCount' XML attribute") + e.what());
             }
             // Lecture de tous les noeuds enfant, on ne prendra que les noms.
             // Pas de try car si on a lu le compte, le noeud inputs existe forcément (et a le droit d'etre vide)

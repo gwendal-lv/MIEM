@@ -28,9 +28,9 @@ void PlayerView::ChangeAppMode(PlayerAppMode newAppMode)
     if (backgroundComponent)
         backgroundComponent->ChangeAppMode(newAppMode);
 }
-void PlayerView::DisplayInfo(const String& message)
+void PlayerView::DisplayInfo(const String& message, bool isImportant)
 {
-    backgroundComponent->DisplayInfo(message);
+    backgroundComponent->DisplayInfo(message, isImportant);
 }
 
 

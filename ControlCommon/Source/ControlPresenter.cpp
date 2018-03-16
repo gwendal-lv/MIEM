@@ -125,7 +125,7 @@ void ControlPresenter::SaveSession(std::string _filename, bool /*forceDataRefres
     // Whole properties tree reconstruction
     bptree::ptree miamChildrenTree;
     miamChildrenTree.put("<xmlattr>.appVersion", ProjectInfo::versionNumber);
-    miamChildrenTree.put("<xmlattr>.appPurpose", App::GetPurposeName(App::GetPurpose()));
+    miamChildrenTree.put("<xmlattr>.appPurpose", App::GetPurposeName(model->GetSessionPurpose()));
     // Les settings sont ajoutés catégorie par catégorie
     bptree::ptree settingsTree;
     settingsTree.add_child("control", *(model->GetConfigurationTree()) );

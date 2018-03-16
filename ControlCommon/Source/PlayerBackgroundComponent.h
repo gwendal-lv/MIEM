@@ -61,7 +61,7 @@ public:
     void CompleteInitialization(PlayerPresenter*);
     void CompleteInitialization(MultiCanvasComponent*);
 
-    void DisplayInfo(const String& stringToDisplay);
+    void DisplayInfo(const String& stringToDisplay, bool isImportant = false);
 
     void ChangeAppMode(PlayerAppMode newAppMode);
 
@@ -93,6 +93,10 @@ private:
 
     /// \brief Interactive, Owned by the Presenter
     MultiCanvasComponent* multiCanvasComponent;
+
+	/// \brief Sauvegarde la valeur correspondante choisie dans le Projucer
+	Colour mainInfoLabelDefaultTextColour;
+	Font mainInfoLabelDefaultFont;
 
     //[/UserVariables]
 

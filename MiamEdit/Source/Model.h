@@ -44,7 +44,7 @@ namespace Miam
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
-        AppPurpose GetSessionPurpose() {return sessionPurpose; }
+        virtual AppPurpose GetSessionPurpose() const override {return sessionPurpose; }
         
         private :
         // Privé, accessible via le presenter ami

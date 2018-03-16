@@ -70,7 +70,7 @@ namespace Miam
         /// the user.
         ///
         /// \param message Short sentence to be written in the upper uneditable text box.
-        void DisplayInfo(const String& message);
+        void DisplayInfo(const String& message, bool isImportant = false);
         
         virtual void ForceResized() = 0;
         

@@ -15,8 +15,11 @@
 
 using namespace Miam;
 
-const char* const InterpolationTypes::interpolationNames[];
-const char* const InterpolationTypes::interpolationShortNames[];
+// Définition des variables statiques déclarées dans le header... ??
+// VS2015 disait "il faut initialiser directement les types const" lorsqu'il
+// n'y avait pas "constexpr". Avec le constexpr, ça compile....
+constexpr const char* const InterpolationTypes::interpolationNames[];
+constexpr const char* const InterpolationTypes::interpolationShortNames[];
 
 
 

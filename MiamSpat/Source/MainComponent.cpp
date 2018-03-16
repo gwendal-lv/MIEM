@@ -25,6 +25,8 @@ MainContentComponent::MainContentComponent()
 
 MainContentComponent::~MainContentComponent()
 {
+	backgroundComponent = nullptr;
+
     setLookAndFeel(nullptr);
 }
 

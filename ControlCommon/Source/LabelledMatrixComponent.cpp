@@ -334,7 +334,7 @@ void LabelledMatrixComponent::repositionLabels()
         if (showOutputsNames)
         {
             // transformation -90°. Effet : x' = -y et y = x
-            outputNameTextEditors[j]->setTransform(AffineTransform::rotation(-M_PI_2, 0.0f, 0.0f));
+            outputNameTextEditors[j]->setTransform(AffineTransform::rotation((float)-M_PI_2, 0.0f, 0.0f));
             const int verticalTextEditorLength = getHeight() - outLabelsH - matrixViewport->getHeight();
             outputNameTextEditors[j]->setBounds(- matrixViewport->getBottom() - verticalTextEditorLength,
                                                 matrixViewport->getX() + j*matItemW - matrixDeltaX + 6,
@@ -461,10 +461,10 @@ InOutChannelsName LabelledMatrixComponent::GetChannelsName()
     InOutChannelsName channelsName;
     
     channelsName.Inputs.reserve(maxRowsCount);
-    for (int i=0 ; i<maxRowsCount ; i++)
+    for (unsigned int i=0 ; i<maxRowsCount ; i++)
         channelsName.Inputs.push_back(inputNameTextEditors[i]->getText().toStdString());
     channelsName.Outputs.reserve(maxColsCount);
-    for (int j=0 ; j<maxColsCount ; j++)
+    for (unsigned int j=0 ; j<maxColsCount ; j++)
         channelsName.Outputs.push_back(outputNameTextEditors[j]->getText().toStdString());
     
     return channelsName;

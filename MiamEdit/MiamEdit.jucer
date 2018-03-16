@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="O4BfM6" name="MIEM Editor" projectType="guiapp" version="0.2.0"
               bundleIdentifier="com.glv.MIEMEditor" includeBinaryInAppConfig="1"
-              jucerVersion="5.2.1" displaySplashScreen="0" reportAppUsage="0"
+              jucerVersion="5.3.0" displaySplashScreen="0" reportAppUsage="0"
               splashScreenColour="Dark" cppLanguageStandard="11" companyCopyright="Gwendal Le Vaillant (IRISIB/LARAS, UMons)"
               companyWebsite="http://laras.be" companyName="IRISIB/LARAS, UMons"
               companyEmail="glevaillant@he2b.be" headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../ControlCommon/Source/&#10;../../../MiamCommon/Source/">

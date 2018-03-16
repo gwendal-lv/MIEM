@@ -63,8 +63,10 @@ PlayerBackgroundComponent::PlayerBackgroundComponent ()
 
 
     //[Constructor] You can add your own custom stuff here..
+	mainInfoLabelDefaultTextColour = mainInfoLabel->findColour(Label::textColourId);
+	mainInfoLabelDefaultFont = mainInfoLabel->getFont();
     mainInfoLabel->setText(App::GetNameWithVersion(), NotificationType::sendNotification);
-    //[/Constructor]
+	//[/Constructor]
 }
 
 PlayerBackgroundComponent::~PlayerBackgroundComponent()
@@ -146,9 +148,21 @@ void PlayerBackgroundComponent::CompleteInitialization(MultiCanvasComponent* mul
 
     multiCanvasComponent->CompleteInitialization();
 }
-void PlayerBackgroundComponent::DisplayInfo(const String& stringToDisplay)
+void PlayerBackgroundComponent::DisplayInfo(const String& stringToDisplay, bool isImportant)
 {
     mainInfoLabel->setText(stringToDisplay, NotificationType::sendNotification);
+	if (!isImportant)
+	{
+		mainInfoLabel->setColour(Label::textColourId, mainInfoLabelDefaultTextColour);
+		mainInfoLabel->setFont(mainInfoLabelDefaultFont);
+	}
+	else
+	{
+		auto boldenedFont = mainInfoLabelDefaultFont;
+		boldenedFont.setBold(true);
+		mainInfoLabel->setColour(Label::textColourId, Colours::indianred);
+		mainInfoLabel->setFont(boldenedFont);
+	}
 }
 
 void PlayerBackgroundComponent::ChangeAppMode(PlayerAppMode newAppMode)
