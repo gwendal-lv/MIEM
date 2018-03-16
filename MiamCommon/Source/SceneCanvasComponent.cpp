@@ -193,7 +193,7 @@ void SceneCanvasComponent::renderOpenGL()
 			std::vector<float> newVertex = duplicatedAreas[i]->GetVertices();
 			for (int j = 0; j < newVertex.size(); ++j)
 			{
-				g_vertex_buffer_data[j] = newVertex[j]* 10;
+				g_vertex_buffer_data[j] = newVertex[j];//*10
 			}
 		}
 
@@ -213,18 +213,18 @@ void SceneCanvasComponent::renderOpenGL()
 
 
 	/// calcul des matrices
-	Matrix3D<float> testView = lookAt(Vector3D<float>(0, 0, 10), Vector3D<float>(0, 0, 0), Vector3D<float>(0, -1, 0));
+	Matrix3D<float> testView = lookAt(Vector3D<float>(0, 0, 1), Vector3D<float>(0, 0, 0), Vector3D<float>(0, -1, 0));
 	Matrix3D<float> testProject = perspective(45.0f, getWidth(), getHeight(), 0.1f, 100.0f);
 	if (projectionMatrix != nullptr)
-		projectionMatrix->setMatrix4(perspective(45.0f, getWidth(), getHeight(), 0.1f, 100.0f).mat, 1, false);
+		projectionMatrix->setMatrix4(perspective(45.0f, getWidth(), getHeight(), 0.9f, 1.1f).mat, 1, false);
 
 	if (viewMatrix != nullptr)
 		viewMatrix->setMatrix4(testView.mat, 1, false);
 
 	Matrix3D<float> model(1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, -1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f);
+		0.0f, getHeight(), 0.0f, 1.0f);//10*getHeight()
 
 	if (modelMatrix != nullptr)
 		modelMatrix->setMatrix4(model.mat, 1, false);
