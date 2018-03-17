@@ -38,7 +38,14 @@ NetworkModel::~NetworkModel()
 // =================== Setters and Getters ===================
 bool NetworkModel::SetUdpPort(int _udpPort, bool notifyModel)
 {
-    if (_udpPort < 0 || _udpPort > 65535)
+    // IMPLÉMENTATION DU -1 POUR SE DÉCONNECTER : À FAIRE
+    // IMPLÉMENTATION DU -1 POUR SE DÉCONNECTER : À FAIRE
+    // IMPLÉMENTATION DU -1 POUR SE DÉCONNECTER : À FAIRE
+    // IMPLÉMENTATION DU -1 POUR SE DÉCONNECTER : À FAIRE
+    // IMPLÉMENTATION DU -1 POUR SE DÉCONNECTER : À FAIRE
+    // IMPLÉMENTATION DU -1 POUR SE DÉCONNECTER : À FAIRE
+    // IMPLÉMENTATION DU -1 POUR SE DÉCONNECTER : À FAIRE
+    if (_udpPort < 0 || _udpPort > 65535) // -1 accepté, signifie déconnection
     {
         std::cout << "Port number " << _udpPort << "is not valid." << std::endl;
         return false;

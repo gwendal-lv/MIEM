@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.2.1
+  Created with Projucer version: 5.3.0
 
   ------------------------------------------------------------------------------
 
@@ -27,7 +27,6 @@
 
 #include "ISlidersMatrixListener.h"
 #include "LabelledMatrixComponent.h"
-
 
 
 namespace Miam {
@@ -62,6 +61,10 @@ public:
     //[UserMethods]     -- You can add your own custom methods in this section.
 
     void textEditorReturnKeyPressed(TextEditor& textEditor) override;
+    void textEditorTextChanged(TextEditor& textEditor) override;
+    private :
+    void parseUdpPortAndSendEvent();
+    public :
 
     void OnSliderValueChanged(int row, int col, double value) override;
     void OnMatrixZeroed() override;
@@ -99,17 +102,18 @@ private:
 
     //==============================================================================
     ScopedPointer<GroupComponent> matrixGroupComponent;
+    ScopedPointer<Miam::LabelledMatrixComponent> slidersMatrix;
     ScopedPointer<GroupComponent> preferencesGroupComponent;
     ScopedPointer<TextEditor> udpPortTextEditor;
     ScopedPointer<Label> udpPortLabel;
     ScopedPointer<Label> udpStatusLabel;
     ScopedPointer<GroupComponent> audioConfigComponent;
     ScopedPointer<ToggleButton> keyboardButton;
-    ScopedPointer<Miam::LabelledMatrixComponent> slidersMatrix;
     ScopedPointer<Slider> attackSlider;
     ScopedPointer<Label> attackLabel;
     ScopedPointer<Label> attackUnitLabel;
     ScopedPointer<TextButton> helpTextButton;
+    ScopedPointer<TextButton> connectTextButton;
 
 
     //==============================================================================

@@ -1,24 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <FILTERGRAPH>
-  <FILTER uid="1" x="0.11548839719373987789" y="0.099487179487179486226"
-          uiLastX_Generic="905" uiLastY_Generic="461" uiopen_Generic="0"
-          uiLastX_="161" uiLastY_="158" uiopen_="0">
+  <FILTER uid="1" x="0.11548839719373987789" y="0.09948717948717948623"
+          uiLastX_Generic="905" uiLastY_Generic="461" uiopen_Generic="0">
     <PLUGIN name="Audio Input" descriptiveName="" format="Internal" category="I/O devices"
             manufacturer="ROLI Ltd." version="1.0" file="" uid="246006c0"
             isInstrument="0" fileTime="0" infoUpdateTime="0" numInputs="0"
-            numOutputs="4" isShell="0"/>
+            numOutputs="2" isShell="0"/>
     <STATE>0.</STATE>
     <LAYOUT>
       <INPUTS>
         <BUS index="0" layout="disabled"/>
       </INPUTS>
       <OUTPUTS>
-        <BUS index="0" layout="L R C Lfe Ls Rs"/>
+        <BUS index="0" layout="L R"/>
       </OUTPUTS>
     </LAYOUT>
   </FILTER>
-  <FILTER uid="2" x="0.25" y="0.10000000149011611938">
+  <FILTER uid="2" x="0.25000000000000000000" y="0.10000000149011611938">
     <PLUGIN name="Midi Input" descriptiveName="" format="Internal" category="I/O devices"
             manufacturer="ROLI Ltd." version="1.0" file="" uid="cb5fde0b"
             isInstrument="0" fileTime="0" infoUpdateTime="0" numInputs="0"
@@ -36,33 +35,32 @@
   <FILTER uid="3" x="0.18888289260658391866" y="0.92146118721461178769">
     <PLUGIN name="Audio Output" descriptiveName="" format="Internal" category="I/O devices"
             manufacturer="ROLI Ltd." version="1.0" file="" uid="724248cb"
-            isInstrument="0" fileTime="0" infoUpdateTime="0" numInputs="6"
+            isInstrument="0" fileTime="0" infoUpdateTime="0" numInputs="2"
             numOutputs="0" isShell="0"/>
     <STATE>0.</STATE>
     <LAYOUT>
       <INPUTS>
-        <BUS index="0" layout="L R Ls Rs"/>
+        <BUS index="0" layout="L R"/>
       </INPUTS>
       <OUTPUTS>
         <BUS index="0" layout="disabled"/>
       </OUTPUTS>
     </LAYOUT>
   </FILTER>
-  <FILTER uid="4" x="0.17107393416082028459" y="0.3907692307692307021">
-    <PLUGIN name="MiamMatrixRouter" format="AudioUnit" category="Effect"
-            manufacturer="G. Le Vaillant" version="1.0.0" file="AudioUnit:Effects/aufx,Eo3z,Manu"
-            uid="697b3b77" isInstrument="0" fileTime="0" infoUpdateTime="15bf94cc2e0"
-            numInputs="2" numOutputs="2" isShell="0"/>
-    <STATE>218.hAGaoMGcv.C1AHv.DTfAGfPBJrvDTTgEWvUag4VclE1XzUmbkIGUjEFcgwUYrUVak4Fcs3VXsU1UyUmXzkGbkckckI2bo8laTQWdvU1WP7fZ0MVYPwVcmklaSQWXzUFUtEVakIQSg4Vc.IMCM3PDQESTxD8CPDELUkjavUGcQ+fDV8TczAWczIQQuMidP.fDgUmY3Qj4c...XUkazkFcrUFYHjgIqfCPH0zWjklZuE2b1gmeAhXiORYl........AD..........X....................HJ</STATE>
+  <FILTER uid="5" x="0.25156250000000002220" y="0.45755395683453237154"
+          uiLastX_Normal="311" uiLastY_Normal="422" uiopen_Normal="0">
+    <PLUGIN name="MIEM Matrix Router" format="AudioUnit" category="Effect"
+            manufacturer="G. Le Vaillant" version="0.2.0" file="AudioUnit:Effects/aufx,Eo3z,Manu"
+            uid="697b3b77" isInstrument="0" fileTime="0" infoUpdateTime="162348bb634"
+            numInputs="8" numOutputs="8" isShell="0"/>
+    <STATE>1040.hAGaoMGcv.C1AHv.DTfAGfPBJrvDTTgEWvUag4VclE1XzUmbkIGUjEFcgwUYrUVak4Fcs3VXsU1UyUmXzkGbkckckI2bo8laTQWdvU1WP7fZ0MVYPwVcmklaSQWXzUFUtEVakIQSg4VcOEg.T...............AA..+FN.......vuhC.......763........+RN.......vukC.......7q4........+dN.......vunC.......Lrn........COJ.......vvjB.......Lbo........CaJ.......vvmB.......LLp........CmJ.......vwiA.......bLY........GWF.......vwlA.......b7Y........GiF.......vwoA.......brZ........KSB.......vxk........rrI........KeB.......vxn........rbJ........KqB.......vxq........3b4........NaN.......fymC.......3L5........NmN.......fypC.......375........NyN.......fzlB.......H8o........RiJ.......fzoB.......Hsp........RuJ.......fzrB.......Hcq........VeF.......f0nA.......XcZ........VqF.......f0qA.......XMa........V2F.......f0tA.......nMJ........ZmB.......f1p........n8J........ZyB.......f1s........nsK........Z+B.....KsBx+1SI9UqzLzfCQDULQISzO.QTvTURtAWczE8CRX0S0QGb0QmDE81L5AA.RDVclg2SQD.BA8A..T..........................................................................................................................................................................................................................................................................................................................................................XUkazkFcrUFY.f..Y.fI.rB.3..P.fD.MAvW.PF.oIPfBXn.HJfhBzn.OJPkBfo.eJ.oBXp.qNvs........BD..........X...................C.L</STATE>
     <LAYOUT>
       <INPUTS>
-        <BUS index="0" layout="L R"/>
+        <BUS index="0" layout="L R C Lfe Lss Rss Lrs Rrs"/>
       </INPUTS>
       <OUTPUTS>
-        <BUS index="0" layout="L R"/>
+        <BUS index="0" layout="L R C Lfe Lss Rss Lrs Rrs"/>
       </OUTPUTS>
     </LAYOUT>
   </FILTER>
-  <CONNECTION srcFilter="1" srcChannel="0" dstFilter="4" dstChannel="0"/>
-  <CONNECTION srcFilter="1" srcChannel="1" dstFilter="4" dstChannel="1"/>
 </FILTERGRAPH>

@@ -94,6 +94,10 @@
  //#define JUCE_JACK 0
 #endif
 
+#ifndef    JUCE_USE_ANDROID_OBOE
+ //#define JUCE_USE_ANDROID_OBOE 0
+#endif
+
 #ifndef    JUCE_USE_ANDROID_OPENSLES
  //#define JUCE_USE_ANDROID_OPENSLES 0
 #endif
@@ -419,11 +423,11 @@
  #define JucePlugin_IAAName                "G. Le Vaillant: MIEM Matrix Router"
 #endif
 #ifndef  JucePlugin_MaxNumInputChannels
- #define JucePlugin_MaxNumInputChannels    8
+ #define JucePlugin_MaxNumInputChannels    64
 #endif
 #ifndef  JucePlugin_MaxNumOutputChannels
- #define JucePlugin_MaxNumOutputChannels   8
+ #define JucePlugin_MaxNumOutputChannels   64
 #endif
 #ifndef  JucePlugin_PreferredChannelConfigurations
- #define JucePlugin_PreferredChannelConfigurations  {8,8}
+ #define JucePlugin_PreferredChannelConfigurations  {64,64}
 #endif

@@ -39,7 +39,11 @@ namespace Miam {
         
         // ================== ATTRIBUTES ===================
 #ifdef __MIAM_DEBUG
+    private :
         OscDebugger oscLocalhostDebugger;
+    public :
+        static OscDebugger* OscLocalhostDebugger;
+    private:
 #endif
         
         

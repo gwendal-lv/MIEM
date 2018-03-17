@@ -115,7 +115,9 @@ namespace Miam
         // - - - - - Callbacks - - - - -
         public :
         
-        /// \brief
+        /// \brief Fonction appelée dès qu'un slider horizontal, ou une case de matrice a changé.
+        /// Le grand-parent (labelled matrice) n'aura en retour que les évènement intéressants
+        /// selon le AppPurpose (les sliders horizontaux, ou la matrice de sliders)
         ///
         /// Might be called from mouse input as well as from direct value assignation
         /// from c++ code.

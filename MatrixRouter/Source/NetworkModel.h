@@ -65,10 +65,19 @@ namespace Miam {
         // - - - - - Setters and Getters - - - - -
         
         /// Called from ??? At the moment, should be called from the Juce UI thread
-        /// only... We'll see if we observe strange MT conflicts
+        /// only... We'll see if we observe strange MT conflicts. -1 means 'disconnect'
         ///
-        /// \return Wether the connection could be established or not
+        /// \return Wether the connection (or disconnection) could be performed or not
         bool SetUdpPort(int _udpPort, bool notifyModel=false);
+        // IMPLÉMENTATION DU -1 POUR SE DÉCONNECTER : À FAIRE
+        // IMPLÉMENTATION DU -1 POUR SE DÉCONNECTER : À FAIRE
+        // IMPLÉMENTATION DU -1 POUR SE DÉCONNECTER : À FAIRE
+        // IMPLÉMENTATION DU -1 POUR SE DÉCONNECTER : À FAIRE
+        // IMPLÉMENTATION DU -1 POUR SE DÉCONNECTER : À FAIRE
+        // IMPLÉMENTATION DU -1 POUR SE DÉCONNECTER : À FAIRE
+        // IMPLÉMENTATION DU -1 POUR SE DÉCONNECTER : À FAIRE
+        
+        
         
         int GetUdpPort() {return udpPort;}
         

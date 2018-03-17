@@ -296,7 +296,6 @@ namespace Miam
                 // Mise à jour du couple (i,j)toRefresh pour commencer
                 // (gère le mode 1 seule colonne)
                 increment2dRefreshIndex(matrixState);
-                std::cout << "envoi forcé du " << iToRefresh << "," << jToRefresh << std::endl;
                 // Envoi du coeff concerné, selon que l'on soit en mode 1 seule colonne ou non.
                 if (!sendFirstColOnly)
                     SendMatrixCoeff(iToRefresh, jToRefresh,

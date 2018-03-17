@@ -21,7 +21,9 @@
 
 using namespace Miam;
 
-
+#ifdef __MIAM_DEBUG
+OscDebugger* MatrixRouterAudioProcessor::OscLocalhostDebugger;
+#endif
 
 //==============================================================================
 MatrixRouterAudioProcessor::MatrixRouterAudioProcessor()
@@ -96,6 +98,10 @@ MatrixRouterAudioProcessor::MatrixRouterAudioProcessor()
     paramChange.Type = AsyncParamChange::Activate;
     paramChange.Id1 = ActivateId::PresenterToModelParametersTransmission;
     SendParamChange(paramChange); // exception thrown if full (can't notify presenter to start....)
+    
+    #ifdef __MIAM_DEBUG
+    OscLocalhostDebugger = &oscLocalhostDebugger;
+    #endif
 }
 
 MatrixRouterAudioProcessor::~MatrixRouterAudioProcessor()
@@ -341,6 +347,18 @@ void MatrixRouterAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBu
                     // Gain ramp computing
                     if (remainingRampSamples[i][j] < nSamples) // if ramp ends here
                     {
+                        #ifdef __MIAM_DEBUG
+                        /*
+                        if (i==0 && j==0)
+                        {
+                            AsyncParamChange paramChangeLocal;
+                            paramChangeLocal.Id1 = 0;
+                            paramChangeLocal.Id2 = 0;
+                            paramChangeLocal.FloatValue = routingMatrix[i][j];
+                            oscLocalhostDebugger.SendParamChange(paramChangeLocal, DataOrigin::PluginProcessorModel, false);
+                        }
+                         */
+                        #endif
                         // RAMP (input buf modifier)
                         currentInputBuffer.applyGainRamp(0, 0, remainingRampSamples[i][j], oldRoutingMatrix[i][j], routingMatrix[i][j]);
                         currentInputBuffer.applyGain(0, remainingRampSamples[i][j], nSamples-remainingRampSamples[i][j], routingMatrix[i][j]);
@@ -421,6 +439,17 @@ void MatrixRouterAudioProcessor::processParamChange(AsyncParamChange& paramChang
                     paramChange.FloatValue = Miam_MaxVolume; // normalement +6dB
                 
                 routingMatrix[paramChange.Id1][paramChange.Id2] = paramChange.FloatValue;
+                #ifdef __MIAM_DEBUG
+                if (paramChange.Id1==3 && paramChange.Id2==0)
+                {
+                    AsyncParamChange paramChangeLocal;
+                    paramChangeLocal.Id1 = 0;
+                    paramChangeLocal.Id2 = 0;
+                    paramChangeLocal.FloatValue = routingMatrix[paramChange.Id1][paramChange.Id2];
+                    oscLocalhostDebugger.SendParamChange(paramChangeLocal, origin, false);
+                }
+                #endif
+                
                 // no ramp on init values
                 if (origin != DataOrigin::InitialValue)
                     remainingRampSamples[paramChange.Id1][paramChange.Id2] = initialRampSamples;

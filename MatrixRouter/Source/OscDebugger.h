@@ -32,26 +32,32 @@ namespace Miam
             send("/miamDebugPoint", (int32_t)ptNum);
         }
         
-        void SendParamChange(AsyncParamChange paramChange, DataOrigin origin)
+        void SendParamChange(AsyncParamChange paramChange, DataOrigin origin, bool sendIds = true)
         {
             std::string oscAddress = "/";
             switch (origin)
             {
                 case DataOrigin::Daw :
-                    oscAddress += "DAWenvoie";
+                    oscAddress += "DAW_envoie";
                     break;
                 case DataOrigin::Presenter :
-                    oscAddress += "PRESENTERenvoie";
+                    oscAddress += "PRESENTER_envoie";
                     break;
                 case DataOrigin::NetworkModel :
-                    oscAddress += "NETWORKenvoie";
+                    oscAddress += "NETWORK_envoie";
+                    break;
+                case DataOrigin::PluginProcessorModel :
+                    oscAddress += "PROCESSOR_envoie";
                     break;
                     
                 default :
-                    oscAddress += "origineAUTRE";
+                    oscAddress += "origine_AUTRE";
             }
             
-            send(oscAddress.c_str(), (int32_t)paramChange.Id1, (int32_t)paramChange.Id2, (Float32)paramChange.FloatValue);
+            if (sendIds)
+                send(oscAddress.c_str(), (int32_t)paramChange.Id1, (int32_t)paramChange.Id2, (Float32)paramChange.FloatValue);
+            else
+                send(oscAddress.c_str(), (Float32)paramChange.FloatValue);
         }
     };
 }

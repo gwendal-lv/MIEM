@@ -159,7 +159,7 @@ void MatrixComponent::resized()
 void MatrixComponent::sliderValueChanged(Slider* slider)
 {
     MatrixSlider* matrixSlider = dynamic_cast<MatrixSlider*>(slider);
-    if (matrixSlider) // Slider au sein d'une matrice
+    if (matrixSlider && getPurpose() == AppPurpose::Spatialisation) // Slider au sein d'une matrice, et si ça convient au type d'app
     {
         // Slider identification for a matrix slider
         int sliderId = std::stoi(matrixSlider->getComponentID().toStdString());
@@ -176,7 +176,7 @@ void MatrixComponent::sliderValueChanged(Slider* slider)
         // Graphical update depending on new value
         matrixSlider->SetPropertiesFromVolume();
     }
-    else // Slider simple, horizontal
+    else if (getPurpose() == AppPurpose::GenericController)// Slider simple, horizontal, avec le bon purpose
     {
         int sliderId = std::stoi(slider->getComponentID().toStdString());
         
@@ -317,7 +317,7 @@ void MatrixComponent::SetSliderValue(int row, int col, double newValue,
     
     // Slider horizontal colonne zéro
     if (col == 0)
-        horizontalSliders[row]->setValue(newValue);
+        horizontalSliders[row]->setValue(newValue, juceNotification);
 }
 std::shared_ptr<ControlMatrix> MatrixComponent::GetSpatMatrix()
 {

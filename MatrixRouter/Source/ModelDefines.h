@@ -26,7 +26,8 @@ namespace Miam
     enum class DataOrigin
     {
         InitialValue,
-        //PluginProcessorModel,
+        
+        PluginProcessorModel, ///< For debug purposes mostly
         
         NetworkModel,
         
