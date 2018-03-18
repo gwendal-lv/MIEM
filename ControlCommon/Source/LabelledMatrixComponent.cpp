@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.2.1
+  Created with Projucer version: 5.3.0
 
   ------------------------------------------------------------------------------
 
@@ -25,6 +25,7 @@
 #include <algorithm>
 
 #include "MiamMath.h"
+#include "TextUtils.h"
 //[/Headers]
 
 #include "LabelledMatrixComponent.h"
@@ -38,17 +39,13 @@ using namespace Miam;
 //[/MiscUserDefs]
 
 //==============================================================================
-LabelledMatrixComponent::LabelledMatrixComponent (ISlidersMatrixListener* _listener,
-                                                  unsigned int _maxRowsCount,
-                                                  unsigned int _maxColsCount)
-:
-currentDisplayPurpose(AppPurpose::None)
+LabelledMatrixComponent::LabelledMatrixComponent (ISlidersMatrixListener* _listener, unsigned int _maxRowsCount, unsigned int _maxColsCount)
 {
     //[Constructor_pre] You can add your own custom stuff here..
     listener = _listener;
     maxRowsCount = _maxRowsCount;
     maxColsCount = _maxColsCount;
-    
+
     showInputsNames = true;
     showOutputsNames = true;
     showInputsNumbers = true;
@@ -127,7 +124,7 @@ void LabelledMatrixComponent::resized()
     if (showOutputsNames)
         matrixViewportBounds.removeFromBottom(maxHeightToRemove);
     matrixViewport->setBounds(matrixViewportBounds);
-    
+
     repositionLabels();
 
     //[/UserResized]
@@ -210,7 +207,7 @@ void LabelledMatrixComponent::constructGuiObjects()
     inputNameTextEditors.resize(maxRowsCount);
     outputNameTextEditors.clear();
     outputNameTextEditors.resize(maxColsCount);
-    
+
     // Actual creation of sliders and labels
     for (int i=0 ; i<(int)maxRowsCount ; i++)
     {
@@ -218,7 +215,9 @@ void LabelledMatrixComponent::constructGuiObjects()
         labels[i] = new Label("Input label " + boost::lexical_cast<std::string>(i), "" + boost::lexical_cast<std::string>(i+1));
         addAndMakeVisible(labels[i]);
         inputNameTextEditors[i] = new TextEditor("Input Name text editor " + boost::lexical_cast<std::string>(i));
+        inputNameTextEditors[i]->setComponentID("i" + boost::lexical_cast<std::string>(i));
         addAndMakeVisible(inputNameTextEditors[i]);
+        inputNameTextEditors[i]->addListener(this);
     }
     for (int j=0 ; j<(int)maxColsCount ; j++)
     {
@@ -227,7 +226,9 @@ void LabelledMatrixComponent::constructGuiObjects()
                                            "" + boost::lexical_cast<std::string>(j+1));
         addAndMakeVisible(labels[maxRowsCount+j]);
         outputNameTextEditors[j] = new TextEditor("Output Name text editor " + boost::lexical_cast<std::string>(j));
+        outputNameTextEditors[j]->setComponentID("o" + boost::lexical_cast<std::string>(j));
         addAndMakeVisible(outputNameTextEditors[j]);
+        outputNameTextEditors[j]->addListener(this);
     }
 
     ReinitGuiObjects();
@@ -237,10 +238,10 @@ void LabelledMatrixComponent::ReinitGuiObjects()
     // Suppression des objets temporaires et des références
     highlightedInputLabel = nullptr;
     highlightedOutputLabel = nullptr;
-    
+
     // Mise en visible des objets qui conviennent
     inputsOutputsLabel->setVisible(currentDisplayPurpose != AppPurpose::GenericController);
-    
+
     // réinit de tous les labels et text editors associés
     for (int i=0 ; i<(int)maxRowsCount ; i++)
     {
@@ -272,6 +273,20 @@ void LabelledMatrixComponent::initNameTextEditor(TextEditor* textEditor, bool is
         textEditor->applyFontToAllText(Font().withExtraKerningFactor(0.10f));
     else
         textEditor->applyFontToAllText(Font().withExtraKerningFactor(0.05f));
+    // Code spécifique selon OSC valide ou non
+    try {
+        TextUtils::ParseStringToJuceOscMessage(textEditor->getText().toStdString());
+        
+        Font textEditorFont = textEditor->getFont(); // copie
+        textEditorFont.setBold(true); // si pas d'exception, on met en gras
+        textEditor->applyFontToAllText(textEditorFont, false); // ne devient pas la font actuelle
+        textEditor->applyColourToAllText(Colours::palegreen);
+    }
+    catch (ParseException&) {
+        textEditor->applyFontToAllText(textEditor->getFont()); // sinon on laisse normal
+        textEditor->applyColourToAllText(Colours::white);
+    }
+    // Dans tous les cas :
     textEditor->setMultiLine(false);
     textEditor->setJustification(Justification(Justification::Flags::horizontallyCentred
                                           | Justification::Flags::verticallyCentred));
@@ -432,6 +447,15 @@ void LabelledMatrixComponent::OnSliderValueChanged(int row, int col, double valu
 {
     listener->OnSliderValueChanged(row, col, value);
 }
+void LabelledMatrixComponent::textEditorTextChanged (TextEditor & textEditor)
+{
+    if (textEditor.getComponentID().startsWithChar('i')) // input text editor
+        initNameTextEditor(&textEditor, false);
+    else if (textEditor.getComponentID().startsWithChar('i')) // input text editor
+        initNameTextEditor(&textEditor, true);
+    else
+        throw std::runtime_error("Cannot parse the ID of the calling text editor object");
+}
 
 MatrixComponent* LabelledMatrixComponent::GetMatrixComponent()
 {
@@ -459,14 +483,14 @@ void LabelledMatrixComponent::SetChannelsNames(InOutChannelsName &channelsName)
 InOutChannelsName LabelledMatrixComponent::GetChannelsName()
 {
     InOutChannelsName channelsName;
-    
+
     channelsName.Inputs.reserve(maxRowsCount);
     for (unsigned int i=0 ; i<maxRowsCount ; i++)
         channelsName.Inputs.push_back(inputNameTextEditors[i]->getText().toStdString());
     channelsName.Outputs.reserve(maxColsCount);
     for (unsigned int j=0 ; j<maxColsCount ; j++)
         channelsName.Outputs.push_back(outputNameTextEditors[j]->getText().toStdString());
-    
+
     return channelsName;
 }
 void LabelledMatrixComponent::SetInputNamesVisible(bool areVisible)
@@ -489,7 +513,7 @@ void LabelledMatrixComponent::SetActiveSliders(int inputsCount, int outputsCount
 {
     // On sauvegarde les valeurs dans la matrice seulement....
     GetMatrixComponent()->SetActiveSliders(inputsCount, outputsCount);
-    
+
     ReinitGuiObjects();
 }
 void LabelledMatrixComponent::SetDisplayPurpose(AppPurpose newSessionPurpose)
@@ -500,7 +524,7 @@ void LabelledMatrixComponent::SetDisplayPurpose(AppPurpose newSessionPurpose)
         case AppPurpose::GenericController :
             SetOutputNamesVisible(false); // actualisation si besoin
             break;
-            
+
         default : break;
     }
     // États internes directs et actualisations
@@ -525,7 +549,8 @@ void LabelledMatrixComponent::SetDisplayPurpose(AppPurpose newSessionPurpose)
 BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="LabelledMatrixComponent"
-                 componentName="" parentClasses="public Component" constructorParams="ISlidersMatrixListener* _listener, unsigned int _maxRowsCount, unsigned int _maxColsCount"
+                 componentName="" parentClasses="public Component, public TextEditor::Listener"
+                 constructorParams="ISlidersMatrixListener* _listener, unsigned int _maxRowsCount, unsigned int _maxColsCount"
                  variableInitialisers="" snapPixels="8" snapActive="1" snapShown="1"
                  overlayOpacity="0.330" fixedSize="0" initialWidth="600" initialHeight="400">
   <METHODS>

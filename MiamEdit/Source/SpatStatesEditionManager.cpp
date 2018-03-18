@@ -103,8 +103,11 @@ void SpatStatesEditionManager::OnEnterSpatStatesEdition()
 }
 std::shared_ptr<bptree::ptree> SpatStatesEditionManager::OnLeaveSpatStatesEdition()
 {
+    // !!!!!!!!!
+    // !!!!!!!!!
     // Transfert des données depuis l'affichage graphique vers le modèle
-    sendCurrentDataToModel();
+    sendCurrentDataToModel(); // en double ! Sera refait juste après, au GetTree...
+    // Mais on laisse pour l'instant puisque ça fonctionne....
     
     // Update now to the editionComponent
     selectSpatState(selectedSpatState);

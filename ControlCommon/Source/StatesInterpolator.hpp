@@ -30,6 +30,7 @@ namespace bptree = boost::property_tree;
 #include "boost/lexical_cast.hpp"
 
 #include "AudioUtils.hpp"
+#include "TextUtils.h"
 
 
 namespace Miam
@@ -76,7 +77,16 @@ namespace Miam
         /// \brief Copie de toutes les données
         InOutChannelsName GetInOutChannelsName() {return channelsName;}
         /// \brief Va copier les nouvelles données en gardant les noms des canaux non-précisés
-        void SetInOutChannelsName(InOutChannelsName& channelsName_) {channelsName = channelsName_;}
+        void SetInOutChannelsName(InOutChannelsName& channelsName_)
+        {
+            channelsName = channelsName_;
+            try {
+            TextUtils::ParseStringToJuceOscMessage(channelsName.Inputs[0]);
+            }
+            catch (ParseException &e) {
+                std::cout << e.what() << std::endl;
+            }
+        }
         
         InterpolationType GetType() {return interpolationType;}
         InterpolationType GetType_Atomic() {

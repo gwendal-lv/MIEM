@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.2.1
+  Created with Projucer version: 5.3.0
 
   ------------------------------------------------------------------------------
 
@@ -49,7 +49,8 @@ namespace Miam
      Describe your class and how it works here!
                                                                     //[/Comments]
 */
-class LabelledMatrixComponent  : public Component
+class LabelledMatrixComponent  : public Component,
+                                 public TextEditor::Listener
 {
 public:
     //==============================================================================
@@ -74,7 +75,7 @@ public:
     void createAndManagePopupMenu();
     void setMatrixToZero();
     void setMatrixToIdentity();
-    
+
     // Ces 2 fonctions vont chercher le nombre de lignes (ou colonnes)
     // vraiment actives. C'est une info dans le matrixcomponent enfant
     size_t getN();
@@ -87,17 +88,22 @@ public:
     /// \brief Callback from the MatrixComponent.
     /// 'value' is a linear value (not given in decibels)
     void OnSliderValueChanged(int row, int col, double value);
+    /// \brief Callback from any text editor. Display (in bold, or not) wether the input name
+    /// can be parsed to a valid OSC message with address and arguments.
+    ///
+    /// Parse made by TextUtils::ParseStringToJuceOscMessage
+    virtual void textEditorTextChanged (TextEditor &) override;
 
     // - - - - - - Getters and Setters - - - - -
     MatrixComponent* GetMatrixComponent();
-    
+
     void SetChannelsNames(InOutChannelsName &channelsName);
     InOutChannelsName GetChannelsName();
 
     void SetInputNamesVisible(bool areVisible);
     void SetOutputNamesVisible(bool areVisible);
     void SetActiveSliders(int inputsCount, int outputsCount);
-    
+
     void SetDisplayPurpose(AppPurpose newSessionPurpose);
     AppPurpose GetDisplayPurpose() {return currentDisplayPurpose;}
 
@@ -113,7 +119,7 @@ public:
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     AppPurpose currentDisplayPurpose;
-    
+
     ISlidersMatrixListener* listener;
     unsigned int maxRowsCount, maxColsCount;
 
@@ -128,7 +134,7 @@ private:
     std::vector<ScopedPointer<Label>> labels;
     Label* highlightedInputLabel = 0;
     Label* highlightedOutputLabel = 0;
-    
+
     bool showInputsNames;
     bool showOutputsNames;
     bool showInputsNumbers;
