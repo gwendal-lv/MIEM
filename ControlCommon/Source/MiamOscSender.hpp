@@ -16,6 +16,8 @@
 
 #include "OscDefines.h"
 
+#include "TextUtils.h"
+
 #include "ControlStateSender.hpp"
 #include "MatrixBackupState.hpp"
 
@@ -122,10 +124,10 @@ namespace Miam
                         if (! oscAddressPatterns[i].empty())
                         {
                             try {
-                                OSCAddressPattern addressPattern(oscAddressPatterns[i]);
-                                firstColOscMessages.push_back(OSCMessage(addressPattern));
+                                OSCMessage message = TextUtils::ParseStringToJuceOscMessage(oscAddressPatterns[i]);
+                                firstColOscMessages.push_back(message);
                             }
-                            catch (OSCFormatError& /*e*/) {
+                            catch (ParseException& /*e*/) {
                                 useGenericAddressPattern = true;
                             }
                         }
@@ -263,9 +265,10 @@ namespace Miam
         // Envoi d'un seul coeff, à une adresse de paramètre déjà configurée
         void SendParam(size_t paramIndex, float value)
         {
-            firstColOscMessages[paramIndex].clear();
-            firstColOscMessages[paramIndex].addFloat32(value);
-            oscSender.send(firstColOscMessages[paramIndex]);
+            // On garde les arguments constants pré-configurés
+            OSCMessage oscMessage = firstColOscMessages[paramIndex];
+            oscMessage.addFloat32(value);
+            oscSender.send(oscMessage);
         }
         
         // Envoi d'un blob avec tout un ensemble de coeffs
