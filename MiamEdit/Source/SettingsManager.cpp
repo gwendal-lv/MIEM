@@ -53,8 +53,32 @@ AppPurpose SettingsManager::GetSessionPurpose()
 
 
 
+// - - - - - Callbacks from the Presenter - - - - -
 
-// - - - - - Callbacks from View, retransmitted - - - - -
+void SettingsManager::OnEnterSettingsEdition()
+{
+    
+}
+void SettingsManager::OnLeaveSettingsEdition()
+{
+    // Mise à jour des paramètres nécessaires (pas ceux qui réagissent direct à l'utilisateur)
+    
+    int udpPort = configurationComponent->TryParseUdpPort();
+    if (udpPort != -1)
+        OnUdpPortChanged(udpPort);
+    else
+        configurationComponent->udpPortTextEditor->setText("");
+    
+    std::string ipAddress = configurationComponent->TryParseIpAddress();
+    if (!ipAddress.empty())
+        OnIpAddressChanged(ipAddress);
+    else
+        configurationComponent->ipAddressTextEditor->setText("");
+}
+
+
+
+// - - - - - Callbacks from View to Model, retransmitted - - - - -
 
 void SettingsManager::OnInOutChannelsCountChanged(int inputsCount, int outputsCount)
 {
@@ -87,6 +111,7 @@ void SettingsManager::OnAllowKeyboardEdition(bool allow)
 {
     presenter->GetSpatStatesManager()->AllowKeyboardEdition(allow);
 }
+
 void SettingsManager::OnUdpPortChanged(int udpPort)
 {
     if (!linksInitialized)

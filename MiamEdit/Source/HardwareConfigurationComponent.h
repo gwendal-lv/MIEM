@@ -59,7 +59,13 @@ public:
 
     friend class SettingsManager;
 
-    virtual void textEditorReturnKeyPressed(TextEditor& editorThatHasChanged) override;
+    virtual void textEditorTextChanged(TextEditor& editorThatHasChanged) override;
+    
+    /// \brief Returns the IP address as a string, or an empty string if given character sequence
+    /// is not valid.
+    std::string TryParseIpAddress();
+    /// \brief Returns the UDP port as a positive int, or -1 if user input was not valid.
+    int TryParseUdpPort();
 
     //[/UserMethods]
 

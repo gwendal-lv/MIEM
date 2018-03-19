@@ -90,7 +90,7 @@ void ControlPresenter::LoadSession(std::string filename)
         throw e;
     }
     
-    // Update graphique
+    // Update graphique final
     view->SetTitle(lastFilename + " - " + ProjectInfo::projectName);
 }
 void ControlPresenter::SaveSession(std::string _filename, bool /*forceDataRefresh*/)

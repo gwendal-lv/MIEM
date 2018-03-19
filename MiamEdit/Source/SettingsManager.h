@@ -75,12 +75,30 @@ namespace Miam {
         void CompleteInitialisation(Model* _model);
         
         
-        // - - - - - Callbacks from View, retransmitted - - - - -
+        // ----- Events from the Presenter itself -----
+        /// \brief Updates the data that may have been modified during AppMode
+        void OnEnterSettingsEdition();
+        /// \brief Traite les objets qui ne déclenchent une action qu'à la fermeture du mode
+        /// (et pas en direct suite à des modifs de l'utilisateur)
+        void OnLeaveSettingsEdition(); // pas d'arbre retourné
+        
+        
+        // - - - - - Callbacks from View concerning Model, retransmitted - - - - -
+        // On a 2 grands types de données :
+        // - celles qui sont retransmises en direct lorsque l'instant
+        // du choix utilisateur est facilement identifiable (changement de
+        // slider, choix de combo box, etc...)
+        // - celles qui sont transmises lorsqu'on quitte le mode, typiquement les
+        // text editors. Mais quand on édite, on met en gras les valeurs OK pour informer user
+        
         void OnInOutChannelsCountChanged(int inputsCount, int outputsCount);
         void OnInOutNamesDisplayedChanged(bool areInputNamesVisible, bool areOutputNamesVisible);
         void OnInterpolationTypeChanged(InterpolationType type);
+        private : // sont maintenant cachés, inaccessibles depuis l'extérieur
         void OnUdpPortChanged(int udpPort);
         void OnIpAddressChanged(std::string ipAddress);
+        public :
+        
         // - - - - - Callbacks from View, concerning Presenter - - - - -
         void OnAllowKeyboardEdition(bool allow);
         

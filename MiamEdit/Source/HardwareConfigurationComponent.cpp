@@ -355,33 +355,54 @@ void HardwareConfigurationComponent::visibilityChanged()
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 
-void HardwareConfigurationComponent::textEditorReturnKeyPressed(TextEditor& editorThatHasChanged)
+void HardwareConfigurationComponent::textEditorTextChanged(TextEditor& editorThatHasChanged)
 {
     if (&editorThatHasChanged == ipAddressTextEditor.get())
     {
-        // Value stays visible only if correct
-        std::string ipAddress = ipAddressTextEditor->getText().toStdString();
-        if ( ! XmlUtils::IsIpv4AddressValid(ipAddress))
-            ipAddressTextEditor->setText("", NotificationType::dontSendNotification);
-        else
-            settingsManager->OnIpAddressChanged(ipAddress);
+        TryParseIpAddress();
     }
     else if (&editorThatHasChanged == udpPortTextEditor.get())
     {
-        bool enteredValueIsCorrect = true;
-        int parsedValue = -1;
-        // Value stays visible only if correct
-        try {
-            parsedValue = std::stoi(udpPortTextEditor->getText().toStdString());
-        } catch (std::exception) {
-            enteredValueIsCorrect = false;
-        }
-        if (parsedValue <= 0 || 65535 < parsedValue)
-            enteredValueIsCorrect = false;
-        if ( ! enteredValueIsCorrect)
-            udpPortTextEditor->setText("", NotificationType::dontSendNotification);
-        else
-            settingsManager->OnUdpPortChanged(parsedValue);
+        TryParseUdpPort();
+    }
+}
+std::string HardwareConfigurationComponent::TryParseIpAddress()
+{
+    std::string ipAddress = ipAddressTextEditor->getText().toStdString();
+    if ( XmlUtils::IsIpv4AddressValid(ipAddress) ) // en gras
+    {
+        ipAddressTextEditor->applyFontToAllText(Font().boldened());
+        //ipAddressTextEditor->setColour(TextEditor::ColourIds::textColourId, Colours::palegreen);
+        return ipAddress;
+    }
+    else
+    {
+        ipAddressTextEditor->applyFontToAllText(Font()); // font par défaut si c'est pas bon
+        //ipAddressTextEditor->setColour(TextEditor::ColourIds::textColourId, Colours::white);
+        return "";
+    }
+}
+int HardwareConfigurationComponent::TryParseUdpPort()
+{
+    bool enteredValueIsCorrect = true;
+    int parsedValue = -1;
+    try {
+        parsedValue = std::stoi(udpPortTextEditor->getText().toStdString());
+    } catch (std::exception) {
+        enteredValueIsCorrect = false;
+    }
+    if (parsedValue <= 0 || 65535 < parsedValue)
+        enteredValueIsCorrect = false;
+    
+    if ( enteredValueIsCorrect ) // en gras
+    {
+        udpPortTextEditor->applyFontToAllText(Font().boldened());
+        return parsedValue;
+    }
+    else
+    {
+        udpPortTextEditor->applyFontToAllText(Font()); // font par défaut si c'est pas bon
+        return -1;
     }
 }
 

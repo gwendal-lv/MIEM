@@ -126,6 +126,10 @@ AppMode Presenter::appModeChangeRequest(AppMode newAppMode)
                     updateSpatScenesTree(dataTree, true);
                     break;
                     
+                case AppMode::EditHardwareConfiguration :
+                    settingsManager.OnLeaveSettingsEdition();
+                    break;
+                    
                 default :
                     break;
             }
@@ -220,6 +224,10 @@ void Presenter::LoadSession(std::string filename)
     
     // Reinitialisation de certains modules....
     spatStatesEditionManager.UpdateView();
+    
+    // Si tout s'est bien passé : les tree internes sont initialisés maintenant
+    updateSpatStatesTree(spatStatesEditionManager.GetTree(), false); // sans sauvegarde forcée
+    updateSpatScenesTree(graphicSessionManager.GetCanvasesTree(), false);
     
     // Actual mode change here
     // App mode changer to Scenes Edition by default (should be stored within the file ?)
