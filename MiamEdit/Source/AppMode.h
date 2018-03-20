@@ -31,7 +31,9 @@ namespace Miam {
         EditSpatScenes,  /**< Normal spat scene editing mode */
         EditHardwareConfiguration,  /**< Normal hardware configuration editing mode */
         
-        MiamSpatPlaying /**< When the external Miam::Spat Player is running */
+        MiamSpatPlaying, /**< When the external Miam::Spat Player is running */
+        
+        Quitting /**< Le dernier mode, juste avant la fermeture de l'application */
     };
     
 }

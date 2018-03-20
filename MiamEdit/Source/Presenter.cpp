@@ -89,6 +89,10 @@ void Presenter::ManageInitialSession(std::string commandLine)
 
 void Presenter::OnShutdownRequest()
 {
+    appModeChangeRequest(AppMode::Quitting);
+    
+    // PAS BESOIN DE SAUVEGARDER UNE DEUXIÈME FOIS
+    // Le changement de mode juste au-dessus va essayer cette action... Mais bon dans le doute on laisse....
     if (appMode != AppMode::Startup)
         SaveSession("", true); // current filename, forced data refresh
 }
@@ -128,6 +132,8 @@ AppMode Presenter::appModeChangeRequest(AppMode newAppMode)
                     
                 case AppMode::EditHardwareConfiguration :
                     settingsManager.OnLeaveSettingsEdition();
+                    // déclenchement de sauvegarde dans fichier xml, sans update des autres
+                    SaveSession("", false); // sans refresh data forcé
                     break;
                     
                 default :
