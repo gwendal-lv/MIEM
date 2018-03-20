@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.2.1
+  Created with Projucer version: 5.3.0
 
   ------------------------------------------------------------------------------
 
@@ -113,10 +113,10 @@ void StartupComponent::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    loadTextButton->setBounds ((getWidth() / 2) - (168 / 2), (getHeight() / 2) + -96, 168, 36);
-    createSpatTextButton->setBounds ((getWidth() / 2) + -12 - 168, (getHeight() / 2), 168, 36);
+    loadTextButton->setBounds ((getWidth() / 2) - (168 / 2), (getHeight() / 2) + -96, 168, 52);
+    createSpatTextButton->setBounds ((getWidth() / 2) + -12 - 168, (getHeight() / 2), 168, 52);
     createDefaultTextButton->setBounds ((getWidth() / 2) - (168 / 2), (getHeight() / 2) + 60, 168, 24);
-    createGenericTextButton->setBounds ((getWidth() / 2) + 12, (getHeight() / 2), 168, 36);
+    createGenericTextButton->setBounds ((getWidth() / 2) + 12, (getHeight() / 2), 168, 52);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -203,11 +203,11 @@ BEGIN_JUCER_METADATA
                  fixedSize="0" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="ff707070"/>
   <TEXTBUTTON name="Load text button" id="dcc32a783566df37" memberName="loadTextButton"
-              virtualName="" explicitFocusOrder="0" pos="0Cc -96C 168 36" bgColOff="ffbfbfbf"
+              virtualName="" explicitFocusOrder="0" pos="0Cc -96C 168 52" bgColOff="ffbfbfbf"
               bgColOn="ffffffff" textCol="ff000000" buttonText="Load existing session"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Create Spat text button" id="714ffb446833c5ce" memberName="createSpatTextButton"
-              virtualName="" explicitFocusOrder="0" pos="-12Cr 0C 168 36" bgColOff="ffbfbfbf"
+              virtualName="" explicitFocusOrder="0" pos="-12Cr 0C 168 52" bgColOff="ffbfbfbf"
               bgColOn="ffffffff" textCol="ff000000" buttonText="Create new Spat session"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Create Default text button" id="ac4f9aa6f5974fbc" memberName="createDefaultTextButton"
@@ -215,7 +215,7 @@ BEGIN_JUCER_METADATA
               bgColOn="ffffffff" textCol="ff000000" buttonText="Create default session"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Create Empty text button" id="fb033c6855f61992" memberName="createGenericTextButton"
-              virtualName="" explicitFocusOrder="0" pos="12C 0C 168 36" bgColOff="ffbfbfbf"
+              virtualName="" explicitFocusOrder="0" pos="12C 0C 168 52" bgColOff="ffbfbfbf"
               bgColOn="ffffffff" textCol="ff000000" buttonText="Create new Generic Controller session"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>

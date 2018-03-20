@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.2.1
+  Created with Projucer version: 5.3.0
 
   ------------------------------------------------------------------------------
 
@@ -146,6 +146,7 @@ public:
     void buttonClicked (Button* buttonThatWasClicked) override;
     void sliderValueChanged (Slider* sliderThatWasMoved) override;
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
+    void visibilityChanged() override;
 
 
 
@@ -181,7 +182,7 @@ private:
 
     //==============================================================================
     ScopedPointer<GroupComponent> areaGroupComponent;
-    ScopedPointer<GroupComponent> spatGroupComponent;
+    ScopedPointer<GroupComponent> controlGroupComponent;
     ScopedPointer<TextButton> addPointTextButton;
     ScopedPointer<TextButton> deletePointTextButton;
     ScopedPointer<TextButton> copyTextButton;
@@ -200,7 +201,7 @@ private:
     ScopedPointer<TextButton> sendToBackTextButton;
     ScopedPointer<GroupComponent> canvasGroupComponent;
     ScopedPointer<ComboBox> spatStatesComboBox;
-    ScopedPointer<Label> spatLabel;
+    ScopedPointer<Label> controlStateLabel;
     ScopedPointer<TextButton> addSceneTextButton;
     ScopedPointer<TextButton> deleteSceneTextButton;
     ScopedPointer<TextButton> sceneLeftTextButton;

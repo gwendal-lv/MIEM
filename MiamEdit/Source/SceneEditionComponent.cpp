@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.2.1
+  Created with Projucer version: 5.3.0
 
   ------------------------------------------------------------------------------
 
@@ -43,10 +43,10 @@ SceneEditionComponent::SceneEditionComponent ()
     areaGroupComponent->setColour (GroupComponent::outlineColourId, Colour (0xff454545));
     areaGroupComponent->setColour (GroupComponent::textColourId, Colours::black);
 
-    addAndMakeVisible (spatGroupComponent = new GroupComponent ("Spatialization group component",
-                                                                TRANS("Spatialization effect")));
-    spatGroupComponent->setColour (GroupComponent::outlineColourId, Colour (0xff454545));
-    spatGroupComponent->setColour (GroupComponent::textColourId, Colours::black);
+    addAndMakeVisible (controlGroupComponent = new GroupComponent ("Control group component",
+                                                                   TRANS("Control data")));
+    controlGroupComponent->setColour (GroupComponent::outlineColourId, Colour (0xff454545));
+    controlGroupComponent->setColour (GroupComponent::textColourId, Colours::black);
 
     addAndMakeVisible (addPointTextButton = new TextButton ("Add Point text button"));
     addPointTextButton->setButtonText (TRANS("Add Point"));
@@ -228,16 +228,16 @@ SceneEditionComponent::SceneEditionComponent ()
 
     spatStatesComboBox->setBounds (16, ((8 + 136 - -8) + 240 - -8) + 40, 176, 24);
 
-    addAndMakeVisible (spatLabel = new Label ("Spat label",
-                                              TRANS("Link to spat state:")));
-    spatLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
-    spatLabel->setJustificationType (Justification::centredLeft);
-    spatLabel->setEditable (false, false, false);
-    spatLabel->setColour (Label::textColourId, Colours::black);
-    spatLabel->setColour (TextEditor::textColourId, Colours::black);
-    spatLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+    addAndMakeVisible (controlStateLabel = new Label ("Control State label",
+                                                      TRANS("Link to control state:")));
+    controlStateLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    controlStateLabel->setJustificationType (Justification::centredLeft);
+    controlStateLabel->setEditable (false, false, false);
+    controlStateLabel->setColour (Label::textColourId, Colours::black);
+    controlStateLabel->setColour (TextEditor::textColourId, Colours::black);
+    controlStateLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    spatLabel->setBounds (16, ((8 + 136 - -8) + 240 - -8) + 16, 176, 24);
+    controlStateLabel->setBounds (16, ((8 + 136 - -8) + 240 - -8) + 16, 176, 24);
 
     addAndMakeVisible (addSceneTextButton = new TextButton ("Add Scene text button"));
     addSceneTextButton->setButtonText (TRANS("Add Scene"));
@@ -372,7 +372,7 @@ SceneEditionComponent::~SceneEditionComponent()
     //[/Destructor_pre]
 
     areaGroupComponent = nullptr;
-    spatGroupComponent = nullptr;
+    controlGroupComponent = nullptr;
     addPointTextButton = nullptr;
     deletePointTextButton = nullptr;
     copyTextButton = nullptr;
@@ -391,7 +391,7 @@ SceneEditionComponent::~SceneEditionComponent()
     sendToBackTextButton = nullptr;
     canvasGroupComponent = nullptr;
     spatStatesComboBox = nullptr;
-    spatLabel = nullptr;
+    controlStateLabel = nullptr;
     addSceneTextButton = nullptr;
     deleteSceneTextButton = nullptr;
     sceneLeftTextButton = nullptr;
@@ -444,14 +444,14 @@ void SceneEditionComponent::resized()
     //[/UserPreResize]
 
     areaGroupComponent->setBounds (8, 8 + 136 - -8, 192, 240);
-    spatGroupComponent->setBounds (8, (8 + 136 - -8) + 240 - -8, 192, 80);
+    controlGroupComponent->setBounds (8, (8 + 136 - -8) + 240 - -8, 192, 80);
     initialStateGroupComponent->setBounds (8, ((8 + 136 - -8) + 240 - -8) + 80 - -8, 192, 80);
     //[UserResized] Add your own custom resize handling here..
 
     // Backup of Projucer's sizes
     int canvasGroupInitH = canvasGroupComponent->getHeight();
     int areaGroupInitH = areaGroupComponent->getHeight();
-    int spatGroupInitH = spatGroupComponent->getHeight();
+    int spatGroupInitH = controlGroupComponent->getHeight();
     //int initialStateGroupInitH = initialStateGroupComponent->getHeight();
 
     // Variable menus' size
@@ -666,6 +666,24 @@ void SceneEditionComponent::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
     //[/UsercomboBoxChanged_Post]
 }
 
+void SceneEditionComponent::visibilityChanged()
+{
+    //[UserCode_visibilityChanged] -- Add your code here...
+    switch (graphicSessionManager->GetSessionPurpose())
+    {
+        case AppPurpose::Spatialisation :
+            controlStateLabel->setText(TRANS("Link to spatialization state:"), NotificationType::sendNotification);
+            break;
+        case AppPurpose::GenericController :
+            controlStateLabel->setText(TRANS("Link to control state:"), NotificationType::sendNotification);
+            break;
+            
+        default :
+            break;
+    }
+    //[/UserCode_visibilityChanged]
+}
+
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
@@ -835,11 +853,11 @@ void SceneEditionComponent::setEnabledSelectedAreaControls(bool areEnabled)
 }
 void SceneEditionComponent::setVisibleSpatControls(bool areVisible)
 {
-    spatGroupComponent->setVisible(areVisible);
+    controlGroupComponent->setVisible(areVisible);
     if (spatStatesComboBox->isPopupActive())
         spatStatesComboBox->hidePopup();
     spatStatesComboBox->setVisible(areVisible);
-    spatLabel->setVisible(areVisible);
+    controlStateLabel->setVisible(areVisible);
     spatStatesComboBox->setVisible(areVisible);
 }
 
@@ -982,8 +1000,8 @@ void SceneEditionComponent::areaGroupTranslateY(int dY)
 }
 void SceneEditionComponent::spatGroupTranslateY(int dY)
 {
-    componentTranslateY(spatGroupComponent.get(), dY);
-    componentTranslateY(spatLabel.get(), dY);
+    componentTranslateY(controlGroupComponent.get(), dY);
+    componentTranslateY(controlStateLabel.get(), dY);
     componentTranslateY(spatStatesComboBox.get(), dY);
 
     spatGroupCurrentDy += dY; // accumulation du dY
@@ -1023,13 +1041,16 @@ BEGIN_JUCER_METADATA
                  constructorParams="" variableInitialisers="" snapPixels="8" snapActive="1"
                  snapShown="1" overlayOpacity="0.330" fixedSize="0" initialWidth="1024"
                  initialHeight="1024">
+  <METHODS>
+    <METHOD name="visibilityChanged()"/>
+  </METHODS>
   <BACKGROUND backgroundColour="ffbfbfbf"/>
   <GROUPCOMPONENT name="Area edition group component" id="87d416270d41f58c" memberName="areaGroupComponent"
                   virtualName="" explicitFocusOrder="0" pos="8 -8R 192 240" posRelativeY="4250d5155a80be70"
                   outlinecol="ff454545" textcol="ff000000" title="Area edition"/>
-  <GROUPCOMPONENT name="Spatialization group component" id="90b16e3024c520fd" memberName="spatGroupComponent"
+  <GROUPCOMPONENT name="Control group component" id="90b16e3024c520fd" memberName="controlGroupComponent"
                   virtualName="" explicitFocusOrder="0" pos="8 -8R 192 80" posRelativeY="87d416270d41f58c"
-                  outlinecol="ff454545" textcol="ff000000" title="Spatialization effect"/>
+                  outlinecol="ff454545" textcol="ff000000" title="Control data"/>
   <TEXTBUTTON name="Add Point text button" id="71769222a7765795" memberName="addPointTextButton"
               virtualName="" explicitFocusOrder="0" pos="16 208 88 24" posRelativeY="87d416270d41f58c"
               bgColOff="fff0f0f0" bgColOn="ffffffff" textCol="ff000000" buttonText="Add Point"
@@ -1113,9 +1134,9 @@ BEGIN_JUCER_METADATA
             virtualName="" explicitFocusOrder="0" pos="16 40 176 24" posRelativeY="90b16e3024c520fd"
             editable="0" layout="33" items="-1 undefined" textWhenNonSelected=""
             textWhenNoItems="(no choices)"/>
-  <LABEL name="Spat label" id="b1f047be2f31dc5" memberName="spatLabel"
+  <LABEL name="Control State label" id="b1f047be2f31dc5" memberName="controlStateLabel"
          virtualName="" explicitFocusOrder="0" pos="16 16 176 24" posRelativeY="90b16e3024c520fd"
-         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Link to spat state:"
+         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Link to control state:"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
          bold="0" italic="0" justification="33"/>

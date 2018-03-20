@@ -29,6 +29,7 @@ using namespace Miam;
 GraphicSessionManager::GraphicSessionManager(View* _view, Presenter* presenter_) :
     GraphicControlSessionManager(presenter_),
     view(_view),
+    presenter(presenter_),
 	mode(GraphicSessionMode::Null)
 {
     setMode(GraphicSessionMode::Loading);
@@ -79,6 +80,10 @@ uint64_t GraphicSessionManager::GetNextAreaId()
     uint64_t areaIdBackup = nextAreaId;
     nextAreaId++;
     return areaIdBackup;
+}
+AppPurpose GraphicSessionManager::GetSessionPurpose()
+{
+    return presenter->GetSessionPurpose();
 }
 std::shared_ptr<ControlArea> GraphicSessionManager::GetSelectedArea()
 {

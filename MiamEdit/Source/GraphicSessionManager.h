@@ -26,6 +26,7 @@
 
 #include "SceneEditionComponent.h"
 #include "GraphicSessionMode.h"
+#include "AppPurpose.h"
 
 #include "MultiSceneCanvasEditor.h"
 #include "SceneCanvasComponent.h"
@@ -54,6 +55,7 @@ namespace Miam {
         
         // links back to the View module
         View* view;
+        Presenter* presenter;
         SceneEditionComponent* sceneEditionComponent;
         
         // internal states
@@ -80,7 +82,7 @@ namespace Miam {
         // ---- Getters and Setters -----
         public :
         uint64_t GetNextAreaId() override;
-        
+        AppPurpose GetSessionPurpose();
         
         /// \brief Gets the currently selected area, or nullptr if nothing selected
         ///

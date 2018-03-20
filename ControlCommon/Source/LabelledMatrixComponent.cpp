@@ -276,7 +276,7 @@ void LabelledMatrixComponent::initNameTextEditor(TextEditor* textEditor, bool is
     // Code spécifique selon OSC valide ou non
     try {
         TextUtils::ParseStringToJuceOscMessage(textEditor->getText().toStdString());
-        
+
         Font textEditorFont = textEditor->getFont(); // copie
         textEditorFont.setBold(true); // si pas d'exception, on met en gras
         textEditor->applyFontToAllText(textEditorFont, false); // ne devient pas la font actuelle

@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.2.1
+  Created with Projucer version: 5.3.0
 
   ------------------------------------------------------------------------------
 
@@ -154,7 +154,7 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
     // Sliders max values from defines
     inputsCountSlider->setRange (1, Miam_MaxNumInputs, 1);
     outputsCountSlider->setRange (1, Miam_MaxNumOutputs, 1);
-    
+
     // Remplissage de la combobox interpolation, sans choix par défaut
     // Le zéro doit être "aucun interpolateur" pour correspondre aux indices des combobox....
     assert((int)(InterpolationType::None) == 0);
@@ -393,7 +393,7 @@ int HardwareConfigurationComponent::TryParseUdpPort()
     }
     if (parsedValue <= 0 || 65535 < parsedValue)
         enteredValueIsCorrect = false;
-    
+
     if ( enteredValueIsCorrect ) // en gras
     {
         udpPortTextEditor->applyFontToAllText(Font().boldened());
