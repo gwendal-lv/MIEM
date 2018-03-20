@@ -108,28 +108,28 @@ void MainContentComponent::ChangeAppMode(AppMode newAppMode)
             speakersEditionComponent->setVisible(true);
             break;
             
-        case AppMode::EditSpatStates :
+        case AppMode::EditControlStates :
             startupComponent->setVisible(false);
             mainBackgroundComponent->setVisible(true);
             
             spatStatesEditionComponent->setVisible(true);
             break;
             
-        case AppMode::EditSpatScenes :
+        case AppMode::EditControlScenes :
             startupComponent->setVisible(false);
             mainBackgroundComponent->setVisible(true);
             
             sceneEditionComponent->setVisible(true);
             break;
         
-        case AppMode::EditHardwareConfiguration :
+        case AppMode::EditSettings :
             startupComponent->setVisible(false);
             mainBackgroundComponent->setVisible(true);
             
             hardwareConfigurationComponent->setVisible(true);
             break;
             
-        case AppMode::MiamSpatPlaying :
+        case AppMode::MiemPlayerLaunched :
             DisplayInfo("Can't launch the external Spat player yet!");
             break;
             

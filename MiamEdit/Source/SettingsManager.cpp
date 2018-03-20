@@ -57,7 +57,10 @@ AppPurpose SettingsManager::GetSessionPurpose()
 
 void SettingsManager::OnEnterSettingsEdition()
 {
-    
+    // On force l'actualisation graphique des choses qui changent d'apparence selon la
+	// validité des données
+	configurationComponent->TryParseIpAddress();
+	configurationComponent->TryParseUdpPort();
 }
 void SettingsManager::OnLeaveSettingsEdition()
 {

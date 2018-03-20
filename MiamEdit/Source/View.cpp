@@ -66,13 +66,13 @@ void View::ButtonClicked(const String& name)
     if (name == "Speakers text button")
         answeredAppMode = presenter->appModeChangeRequest(AppMode::EditSpeakers);
     else if (name == "States text button")
-        answeredAppMode = presenter->appModeChangeRequest(AppMode::EditSpatStates);
+        answeredAppMode = presenter->appModeChangeRequest(AppMode::EditControlStates);
     else if (name == "Scenes text button")
-        answeredAppMode = presenter->appModeChangeRequest(AppMode::EditSpatScenes);
+        answeredAppMode = presenter->appModeChangeRequest(AppMode::EditControlScenes);
     else if (name == "Hardware Configuration text button")
-        answeredAppMode = presenter->appModeChangeRequest(AppMode::EditHardwareConfiguration);
+        answeredAppMode = presenter->appModeChangeRequest(AppMode::EditSettings);
     else if (name == "Start text button")
-        answeredAppMode = presenter->appModeChangeRequest(AppMode::MiamSpatPlaying);
+        answeredAppMode = presenter->appModeChangeRequest(AppMode::MiemPlayerLaunched);
 }
 
 

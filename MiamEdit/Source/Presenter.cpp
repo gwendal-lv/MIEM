@@ -116,21 +116,21 @@ AppMode Presenter::appModeChangeRequest(AppMode newAppMode)
             std::shared_ptr<bptree::ptree> dataTree;
             switch(appMode)
             {
-                case AppMode::EditSpatStates :
+                case AppMode::EditControlStates :
                     // If leaving the matrices editing : data save before changing mode
                     dataTree = spatStatesEditionManager.OnLeaveSpatStatesEdition();
                     // va déclencher sauvegarde dans fichier xml
                     updateSpatStatesTree(dataTree, true);
                     break;
                     
-                case AppMode::EditSpatScenes :
+                case AppMode::EditControlScenes :
                     // If leaving the matrices editing : data save before changing mode
                     dataTree = graphicSessionManager.OnLeaveSpatScenesEdition();
                     // va déclencher sauvegarde dans fichier xml
                     updateSpatScenesTree(dataTree, true);
                     break;
                     
-                case AppMode::EditHardwareConfiguration :
+                case AppMode::EditSettings :
                     settingsManager.OnLeaveSettingsEdition();
                     // déclenchement de sauvegarde dans fichier xml, sans update des autres
                     SaveSession("", false); // sans refresh data forcé
@@ -148,15 +148,19 @@ AppMode Presenter::appModeChangeRequest(AppMode newAppMode)
         // - - - - - POST-CHANGE PROCESSING - - - - -
         switch(appMode)
         {
-            case AppMode::EditSpatStates :
+            case AppMode::EditControlStates :
                 // At leats : reloading of maybe changed data from other mode
                 spatStatesEditionManager.OnEnterSpatStatesEdition();
                 break;
                 
-            case AppMode::EditSpatScenes :
+            case AppMode::EditControlScenes :
                 // At leats : reloading of maybe changed data from other mode
                 graphicSessionManager.OnEnterSpatScenesEdition();
                 break;
+
+			case AppMode::EditSettings :
+				settingsManager.OnEnterSettingsEdition();
+				break;
                 
             default :
                 break;
@@ -237,7 +241,7 @@ void Presenter::LoadSession(std::string filename)
     
     // Actual mode change here
     // App mode changer to Scenes Edition by default (should be stored within the file ?)
-    appModeChangeRequest(AppMode::EditSpatScenes);
+    appModeChangeRequest(AppMode::EditControlScenes);
 }
 void Presenter::SaveSession(std::string filename, bool forceDataRefresh)
 {
@@ -291,7 +295,7 @@ void Presenter::CreateSession(std::string filename, AppPurpose sessionPurpose, b
     // Et on charge direct cette session pour faire les updates..... à supprimer à l'avenir...
     LoadSession(filename);
     // Mode : repasse aux scène graphiques par défaut
-    //appModeChangeRequest(AppMode::EditSpatScenes);
+    //appModeChangeRequest(AppMode::EditControlScenes);
 }
 
 

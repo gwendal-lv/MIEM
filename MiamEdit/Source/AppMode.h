@@ -27,11 +27,11 @@ namespace Miam {
         Loading, /**< Between modes change */
         
         EditSpeakers, /**< Normal single speakers editing mode */
-        EditSpatStates, /**< Normal spatialization state editing mode (routing matrix only at the moment) */
-        EditSpatScenes,  /**< Normal spat scene editing mode */
-        EditHardwareConfiguration,  /**< Normal hardware configuration editing mode */
+        EditControlStates, /**< Normal control state editing mode (matrices or independant coeffs) */
+        EditControlScenes,  /**< Normal graphical control scenes editing mode */
+        EditSettings,  /**< Normal settings editing mode */
         
-        MiamSpatPlaying, /**< When the external Miam::Spat Player is running */
+        MiemPlayerLaunched, /**< When the external Spat Player (or Generic Controller) is running */
         
         Quitting /**< Le dernier mode, juste avant la fermeture de l'application */
     };
