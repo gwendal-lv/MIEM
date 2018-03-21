@@ -21,7 +21,7 @@
 */
 class AmusingSceneComponent    : public SceneCanvasComponent,
 	public std::enable_shared_from_this<AmusingSceneComponent>,
-	public ButtonListener
+	public Button::Listener
 {
 public:
     AmusingSceneComponent();

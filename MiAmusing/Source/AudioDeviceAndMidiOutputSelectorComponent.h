@@ -12,7 +12,7 @@
 
 #include "JuceHeader.h"
 
-class AudioDeviceAndMidiOutputSelectorComponent : public Component, public ButtonListener
+class AudioDeviceAndMidiOutputSelectorComponent : public Component, public Button::Listener
 {
 public:
 	/* This component is an an AudioDeviceSelectorComponent with the possibility to 

@@ -216,7 +216,7 @@ void SceneCanvasComponent::renderOpenGL()
 	Matrix3D<float> testView = lookAt(Vector3D<float>(0, 0, 1), Vector3D<float>(0, 0, 0), Vector3D<float>(0, -1, 0));
 	Matrix3D<float> testProject = perspective(45.0f, getWidth(), getHeight(), 0.1f, 100.0f);
 	if (projectionMatrix != nullptr)
-		projectionMatrix->setMatrix4(perspective(45.0f, getWidth(), getHeight(), 0.9f, 1.1f).mat, 1, false);
+		projectionMatrix->setMatrix4(perspective(45.0f, getWidth(), getHeight(), 0.5f, 1.1f).mat, 1, false);
 
 	if (viewMatrix != nullptr)
 		viewMatrix->setMatrix4(testView.mat, 1, false);

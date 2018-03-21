@@ -20,7 +20,7 @@ class MainContentComponent;
 //==============================================================================
 /*
 */
-class SoundBrowser    : public Component, public FileBrowserListener, public ButtonListener
+class SoundBrowser    : public Component, public FileBrowserListener, public Button::Listener
 {
 public:
     SoundBrowser();

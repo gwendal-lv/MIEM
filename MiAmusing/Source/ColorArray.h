@@ -20,7 +20,7 @@ class AreaOptions;
 	This component contains de avalaible color for the Polygons.
 	Each color is associated with a path to a sample by the SoundFileManager
 */
-class ColorArray    : public Component, public ButtonListener
+class ColorArray    : public Component, public Button::Listener
 {
 public:
     ColorArray(int size = 4);
