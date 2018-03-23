@@ -63,8 +63,6 @@ DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b,
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>() - (a / 2)*xScale, center.get<1>()));
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() - (b / 2)*yScale));
 
-	float centerX = (float)center.get<0>();
-	float centerY = (float)center.get<1>();
 	float aScaled = (float)(a / 2.0) * xScale; // demi-axe, normalisé, rescalé si keepratio
 	float bScaled = (float)(b / 2.0) * yScale; // demi-axe , (idem)
 

@@ -25,7 +25,7 @@ SceneCanvasComponent::SceneCanvasComponent() :
 	// calcul d'un anneau de centre 0, de rayon 5 pixels et avec une épaisseur de 2 pixels
 	int radius = 20;
 	int width = 2;
-	int numPoints = 32;
+	int numPoints = numPointsRing;
 	int ri = radius - width / 2;
 	int re = radius + width / 2;
 
@@ -51,8 +51,8 @@ SceneCanvasComponent::SceneCanvasComponent() :
 		ringIndices[i * 6 + 5] = i + 1 >= numPoints? 0 : i+1;
 	}
 
-	g_vertex_buffer_data[3 * 3 * numVerticesPolygon + 3 * 3 * numVerticesRing];
-	for (int i = 0; i < 3 * 3 * numVerticesPolygon + 3 * 3 * numVerticesRing; ++i)
+	//g_vertex_buffer_data[3 * 3 * numVerticesPolygon + 3 * 3 * numVerticesRing];
+	for (int i = 0; i < 3 * numVerticesPolygon + 3 * numVerticesRing; ++i)
 		g_vertex_buffer_data[i] = 0;
 
 	for (int i = 0; i < 3 * numVerticesPolygon + 3 * numVerticesPolygon; ++i)
@@ -135,7 +135,7 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 	// TRIANGLE INDEX
 	openGlContext.extensions.glGenBuffers(1, &elementBuffer);
 	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer);
-	openGlContext.extensions.glBufferData(GL_ELEMENT_ARRAY_BUFFER, (3 * 32 + 2 * 3 * 64) * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+	openGlContext.extensions.glBufferData(GL_ELEMENT_ARRAY_BUFFER, (3 * numVerticesPolygon + 3 * numVerticesRing) * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
 	// déclaration des attributs et uniforms : !!! aux noms et leurs utilisations dans les shaders !!!
 	position = new OpenGLShaderProgram::Attribute(*shaderProgram, String("position").toRawUTF8());
@@ -223,7 +223,7 @@ void SceneCanvasComponent::renderOpenGL()
     //    duplicatedAreas[i]->SetRenderingScale(desktopScale);
     //    // Dessin effectif
     //    duplicatedAreas[i]->Paint(g);
-		int decalage = 32;
+		int decalage = numPointsRing + 1;
 		if (duplicatedAreas[i]->GetVerticesCount() >= 3)
 		{
 			
@@ -233,7 +233,7 @@ void SceneCanvasComponent::renderOpenGL()
 				g_vertex_buffer_data[j] = 0;//newVertex[j];//*10
 			}
 			
-			for (int j = 0; j < 3 * 3 * 64; j+= 3)
+			for (int j = 0; j < 3 * numVerticesRing; j+= 3)
 			{
 				g_vertex_buffer_data[3 *decalage/*numVerticesPolygon*/ + j] = getWidth()/2 + g_vertex_ring[j];
 				g_vertex_buffer_data[3 *decalage/*numVerticesPolygon*/ + j + 1] = getHeight()/2 + g_vertex_ring[j + 1];
@@ -250,7 +250,7 @@ void SceneCanvasComponent::renderOpenGL()
 				indices[j] = (unsigned int)newIndex[j];
 			}
 			
-			for (int j = 0; j < 3 * 64; ++j)
+			for (int j = 0; j < 3 * numVerticesRing; ++j)
 			{
 				indices[j/*+ numVerticesPolygon*/] = ringIndices[j] + decalage;/*+ numVerticesPolygon*/;
 			}
@@ -263,9 +263,9 @@ void SceneCanvasComponent::renderOpenGL()
 
 	/// calcul des matrices
 	Matrix3D<float> testView = lookAt(Vector3D<float>(0, 0, 1), Vector3D<float>(0, 0, 0), Vector3D<float>(0, -1, 0));
-	Matrix3D<float> testProject = perspective(45.0f, getWidth(), getHeight(), 0.1f, 100.0f);
+	Matrix3D<float> testProject = perspective(getWidth(), getHeight(), 0.1f, 100.0f);
 	if (projectionMatrix != nullptr)
-		projectionMatrix->setMatrix4(perspective(45.0f, getWidth(), getHeight(), 0.5f, 1.1f).mat, 1, false);
+		projectionMatrix->setMatrix4(perspective(getWidth(), getHeight(), 0.5f, 1.1f).mat, 1, false);
 
 	if (viewMatrix != nullptr)
 		viewMatrix->setMatrix4(testView.mat, 1, false);
@@ -292,9 +292,9 @@ void SceneCanvasComponent::renderOpenGL()
 	
 	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer);
 	//openGlContext.extensions.glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
-	openGlContext.extensions.glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, (3*32+3*64) * sizeof(unsigned int), &indices[0]);
+	openGlContext.extensions.glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, (3 * numVerticesPolygon + 3 * numVerticesRing) * sizeof(unsigned int), &indices[0]);
 
-	glDrawElements(GL_TRIANGLES, 3 * numVerticesPolygon + 2 * 3 * numVerticesRing /*+ 3 * 64*/, GL_UNSIGNED_INT, (void*)0);
+	glDrawElements(GL_TRIANGLES, 3 * numVerticesPolygon + 3 * numVerticesRing /*+ 3 * 64*/, GL_UNSIGNED_INT, (void*)0);
 	//glDrawArrays(GL_TRIANGLES, 0, 3);
 	openGlContext.extensions.glDisableVertexAttribArray(position->attributeID);
 	openGlContext.extensions.glDisableVertexAttribArray(colour->attributeID);
