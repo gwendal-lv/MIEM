@@ -167,11 +167,18 @@ private:
 		"    gl_FragColor = fragmentColor;\n"
 		"}\n";
 
+	static const int numVerticesPolygon = 32;
+	static const int numVerticesRing = 64;
+
+	GLfloat g_vertex_ring[3 * numVerticesRing];
+	unsigned int ringIndices[3 * numVerticesRing];
+
 	GLuint vertexBuffer;
-	GLfloat g_vertex_buffer_data[3 * 3 * 32];
+	GLfloat g_vertex_buffer_data[3 * 3 * numVerticesPolygon + 3 * 3 * numVerticesRing]; // forme + vertex
 
 	GLuint colorBuffer;
-	GLfloat g_color_buffer_data[3 * 32] = {
+	GLfloat g_color_buffer_data[3 * numVerticesPolygon + 2 * 3 * numVerticesRing] = {
+		1.0f,  0.0f,  0.0f, // debut couleur polygone
 		1.0f,  0.0f,  0.0f,
 		1.0f,  0.0f,  0.0f,
 		1.0f,  0.0f,  0.0f,
@@ -202,12 +209,203 @@ private:
 		1.0f,  0.0f,  0.0f,
 		1.0f,  0.0f,  0.0f,
 		1.0f,  0.0f,  0.0f,
-		1.0f,  0.0f,  0.0f,
-		1.0f,  0.0f,  0.0f
+		1.0f,  0.0f,  0.0f, // fin couleur polygone
+		1.0f,  1.0f,  1.0f, // debut couleur centre
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f, 
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f, // fin couleur centre
+		1.0f,  1.0f,  1.0f, // debut couleur centre
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f // fin couleur centre
+		//1.0f, 1.0f, 1.0f, // debut couleur centre
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f,
+		//1.0f, 1.0f, 1.0f // fin couleur centre
 	};
 
 	GLuint elementBuffer;
-	unsigned int indices[3 * 32];
+	unsigned int indices[3 * numVerticesPolygon + 3 * numVerticesRing];
 
 	///// vertex de toutes les formes dans g_vertex_buffer
 	//GLuint vertexBuffer; 
@@ -242,10 +440,10 @@ private:
 		Vector3D<float> xaxis = (zaxis ^ up).normalised();
 		Vector3D<float> yaxis = -(xaxis ^ zaxis);
 
-		Matrix3D<float> viewMatrix(xaxis.x, xaxis.y, xaxis.z, -(xaxis * eye),
+		/*Matrix3D<float> viewMatrix(xaxis.x, xaxis.y, xaxis.z, -(xaxis * eye),
 			yaxis.x, yaxis.y, yaxis.z, -(yaxis * eye),
 			zaxis.x, zaxis.y, zaxis.z, -(zaxis * eye),
-			0, 0, 0, 1);
+			0, 0, 0, 1);*/
 
 		Matrix3D<float> viewMatrixTr(xaxis.x, yaxis.x, zaxis.x, 0,
 			xaxis.y, yaxis.y, zaxis.y, 0,
@@ -256,8 +454,8 @@ private:
 
 	Matrix3D<float> perspective(float fovy, float width, float height, float near, float far)
 	{
-		float top = tan(fovy / 2.0f) * near;
-		float bottom = -top;
+		/*float top = tan(fovy / 2.0f) * near;
+		float bottom = -top;*/
 		//return Matrix3D<float>::fromFrustum(-top * width / height, top * width / height, bottom, top, near, far);
 		return Matrix3D<float>::fromFrustum(0, width/2, 0, height/2, near, far);
 	}
