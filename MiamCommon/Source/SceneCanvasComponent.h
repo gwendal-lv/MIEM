@@ -166,6 +166,11 @@ private:
 #endif
 		"    gl_FragColor = fragmentColor;\n"
 		"}\n";
+	enum Layers
+	{
+		Shapes,
+		ShapesOverlay
+	};
 
 	static const int numPointsPolygon = 32;
 	static const int numPointsRing = 32;
@@ -398,6 +403,21 @@ private:
 		float bottom = -top;*/
 		//return Matrix3D<float>::fromFrustum(-top * width / height, top * width / height, bottom, top, near, far);
 		return Matrix3D<float>::fromFrustum(0, width/2, 0, height/2, near, far);
+	}
+
+	float getLayerRatio(Layers layers)
+	{
+		switch (layers)
+		{
+		case SceneCanvasComponent::Shapes:
+			return 1.0f;
+			break;
+		case SceneCanvasComponent::ShapesOverlay:
+			return 0.9f;
+			break;
+		default:
+			break;
+		}
 	}
 
 

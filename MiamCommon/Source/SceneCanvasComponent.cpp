@@ -169,8 +169,8 @@ void SceneCanvasComponent::renderOpenGL()
         g.setColour(Colours::white);
         g.drawRect(1, 1, getWidth()-2, getHeight()-2, 2);
     }*/
-
 	glEnable(GL_DEPTH_TEST);
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glDepthFunc(GL_LESS);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -230,14 +230,14 @@ void SceneCanvasComponent::renderOpenGL()
 			std::vector<float> newVertex = duplicatedAreas[i]->GetVertices();
 			for (int j = 0; j < newVertex.size(); ++j)
 			{
-				g_vertex_buffer_data[j] = 0;//newVertex[j];//*10
+				g_vertex_buffer_data[j] = newVertex[j];//*10
 			}
 			
 			for (int j = 0; j < 3 * numVerticesRing; j+= 3)
 			{
-				g_vertex_buffer_data[3 *decalage/*numVerticesPolygon*/ + j] = getWidth()/2 + g_vertex_ring[j];
-				g_vertex_buffer_data[3 *decalage/*numVerticesPolygon*/ + j + 1] = getHeight()/2 + g_vertex_ring[j + 1];
-				g_vertex_buffer_data[3 *decalage/*numVerticesPolygon*/ + j + 2] = g_vertex_ring[j + 2];
+				g_vertex_buffer_data[3 *decalage/*numVerticesPolygon*/ + j] = 0.9* (getWidth()/2 + g_vertex_ring[j]);
+				g_vertex_buffer_data[3 *decalage/*numVerticesPolygon*/ + j + 1] = 0.9*(getHeight()/2 + g_vertex_ring[j + 1]);
+				g_vertex_buffer_data[3 *decalage/*numVerticesPolygon*/ + j + 2] = 0.1 + g_vertex_ring[j + 2];
 			}
 		}
 
@@ -252,8 +252,9 @@ void SceneCanvasComponent::renderOpenGL()
 			
 			for (int j = 0; j < 3 * numVerticesRing; ++j)
 			{
-				indices[j/*+ numVerticesPolygon*/] = ringIndices[j] + decalage;/*+ numVerticesPolygon*/;
+				indices[j+decalage/*+ numVerticesPolygon*/] = ringIndices[j] + decalage;/*+ numVerticesPolygon*/;
 			}
+
 		}
 
     }
