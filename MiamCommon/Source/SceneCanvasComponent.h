@@ -402,7 +402,19 @@ private:
 		/*float top = tan(fovy / 2.0f) * near;
 		float bottom = -top;*/
 		//return Matrix3D<float>::fromFrustum(-top * width / height, top * width / height, bottom, top, near, far);
-		return Matrix3D<float>::fromFrustum(0, width/2, 0, height/2, near, far);
+
+		float r = width;
+		float l = 0.0f;
+		float b = 0.0f;
+		float t = height;
+		Matrix3D<float> orthoProj(2.0f / (r - l), 0.0f, 0.0f, 0.0f,
+			0.0f, 2.0f / (t - b), 0.0f, 0.0f,
+			0.0f, 0.0f, -2.0f / (far - near), 0.0f,
+			-(r + l) / (r - l), -(t + b) / (t - b), -(far + near) / (far - near), 1.0f);
+		Matrix3D<float> autre = Matrix3D<float>::fromFrustum(0, width / 2, 0, height / 2, near, far);
+
+		return orthoProj;
+
 	}
 
 	float getLayerRatio(Layers layers)

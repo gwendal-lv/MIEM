@@ -23,13 +23,13 @@ SceneCanvasComponent::SceneCanvasComponent() :
     // initialise any special settings that your component needs.
 
 	// calcul d'un anneau de centre 0, de rayon 5 pixels et avec une épaisseur de 2 pixels
-	int radius = 20;
-	int width = 2;
+	float radius = 5.0f;
+	float width = 3.0f;
 	int numPoints = numPointsRing;
-	int ri = radius - width / 2;
-	int re = radius + width / 2;
+	float ri = radius - width / 2.0f;
+	float re = radius + width / 2.0f;
 
-	double currentAngle = 0;
+	double currentAngle = 0.0;
 	double incAngle = 2 * M_PI / (double)numPoints;
 	for (int i = 0; i < numPoints; ++i)
 	{
@@ -176,6 +176,7 @@ void SceneCanvasComponent::renderOpenGL()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	openGlContext.extensions.glActiveTexture(GL_TEXTURE0);
 	glEnable(GL_TEXTURE_2D);
+	
 
 	glViewport(0, 0, roundToInt(desktopScale * getWidth()), roundToInt(desktopScale * getHeight()));
     
@@ -235,8 +236,8 @@ void SceneCanvasComponent::renderOpenGL()
 			
 			for (int j = 0; j < 3 * numVerticesRing; j+= 3)
 			{
-				g_vertex_buffer_data[3 *decalage/*numVerticesPolygon*/ + j] = 0.9* (getWidth()/2 + g_vertex_ring[j]);
-				g_vertex_buffer_data[3 *decalage/*numVerticesPolygon*/ + j + 1] = 0.9*(getHeight()/2 + g_vertex_ring[j + 1]);
+				g_vertex_buffer_data[3 *decalage/*numVerticesPolygon*/ + j] = 1.0* (newVertex[0] + g_vertex_ring[j]);
+				g_vertex_buffer_data[3 *decalage/*numVerticesPolygon*/ + j + 1] = 1.0*(newVertex[1] + g_vertex_ring[j + 1]);
 				g_vertex_buffer_data[3 *decalage/*numVerticesPolygon*/ + j + 2] = 0.1 + g_vertex_ring[j + 2];
 			}
 		}
@@ -260,7 +261,7 @@ void SceneCanvasComponent::renderOpenGL()
     }
     
 
-
+	glOrtho(0,getWidth(),0, getHeight(), 0.5f, 1.1f);
 
 	/// calcul des matrices
 	Matrix3D<float> testView = lookAt(Vector3D<float>(0, 0, 1), Vector3D<float>(0, 0, 0), Vector3D<float>(0, -1, 0));
