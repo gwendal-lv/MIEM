@@ -178,17 +178,21 @@ private:
 	static const int numVerticesPolygon = numPointsPolygon + 1;
 	static const int numVerticesRing = 2 * numPointsRing;
 
+	static const int vertexBufferSize = 3 * numVerticesPolygon +  (3 * numVerticesRing);
+	static const int colorBufferSize = 3 * numVerticesPolygon +  (3 * numVerticesRing);
+	static const int indicesSize = 3 * numVerticesPolygon + (3 * numVerticesRing);
+
 	GLfloat g_vertex_ring[3 * numVerticesRing];
 	unsigned int ringIndices[3 * numVerticesRing];
 
 	GLuint vertexBuffer;
-	GLfloat g_vertex_buffer_data[3 * numVerticesPolygon + 3 * numVerticesRing]; // forme + vertex
+	GLfloat g_vertex_buffer_data[vertexBufferSize]; // forme + vertex
 
 	GLuint colorBuffer;
 	std::vector<GLfloat> g_color_buffer_data;// [3 * numVerticesPolygon + 3 * numVerticesRing];
 
 	GLuint elementBuffer;
-	unsigned int indices[3 * numVerticesPolygon + 3 * numVerticesRing];
+	unsigned int indices[indicesSize];
 
 	///// vertex de toutes les formes dans g_vertex_buffer
 	//GLuint vertexBuffer; 

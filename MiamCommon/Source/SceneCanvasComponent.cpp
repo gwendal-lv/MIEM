@@ -41,7 +41,7 @@ SceneCanvasComponent::SceneCanvasComponent() :
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
 	
-	g_color_buffer_data = std::vector<GLfloat>(3 * numVerticesPolygon + 3 * numVerticesRing,0.0f);
+	g_color_buffer_data = std::vector<GLfloat>(colorBufferSize,0.0f);
 	ColorGenerator g(0.5f, 0.5f, 0.5f);
 	std::generate(g_color_buffer_data.begin(), g_color_buffer_data.begin() + 3 * numVerticesPolygon, g);
 	ColorGenerator f(1.0f, 1.0f, 1.0f);
@@ -156,12 +156,12 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 	// pareil pour les buffers de couleurs des deux
 	openGlContext.extensions.glGenBuffers(1, &colorBuffer);
 	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
-	openGlContext.extensions.glBufferData(GL_ARRAY_BUFFER, (3 * numVerticesPolygon + 3 * numVerticesRing)* sizeof(GLfloat[3]), &g_color_buffer_data[0], GL_STATIC_DRAW);
+	openGlContext.extensions.glBufferData(GL_ARRAY_BUFFER, colorBufferSize* sizeof(GLfloat[3]), &g_color_buffer_data[0], GL_STATIC_DRAW);
 
 	// TRIANGLE INDEX
 	openGlContext.extensions.glGenBuffers(1, &elementBuffer);
 	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer);
-	openGlContext.extensions.glBufferData(GL_ELEMENT_ARRAY_BUFFER, (3 * numVerticesPolygon + 3 * numVerticesRing) * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+	openGlContext.extensions.glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesSize * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
 	// déclaration des attributs et uniforms : !!! aux noms et leurs utilisations dans les shaders !!!
 	position = new OpenGLShaderProgram::Attribute(*shaderProgram, String("position").toRawUTF8());
@@ -250,7 +250,7 @@ void SceneCanvasComponent::renderOpenGL()
     //    duplicatedAreas[i]->SetRenderingScale(desktopScale);
     //    // Dessin effectif
     //    duplicatedAreas[i]->Paint(g);
-		int decalage = numPointsRing + 1;
+		int decalage = numPointsPolygon + 1;
 		if (duplicatedAreas[i]->GetVerticesCount() >= 3)
 		{
 			
@@ -266,8 +266,21 @@ void SceneCanvasComponent::renderOpenGL()
 				g_vertex_buffer_data[3 *decalage/*numVerticesPolygon*/ + j + 1] = 1.0*(newVertex[1] + g_vertex_ring[j + 1]);
 				g_vertex_buffer_data[3 *decalage/*numVerticesPolygon*/ + j + 2] = 0.1 + g_vertex_ring[j + 2];
 			}
+
+			
+			//for (int k = 0; k < (newVertex.size() - 3)/3;++k)
+			//{
+			//	decalage += numVerticesRing;
+			//	for (int j = 0; j < 3 * numVerticesRing; j += 3)
+			//	{
+			//		g_vertex_buffer_data[3 * decalage/*numVerticesPolygon*/ + j] = 1.0* (newVertex[0] + g_vertex_ring[j]);
+			//		g_vertex_buffer_data[3 * decalage/*numVerticesPolygon*/ + j + 1] = 1.0*(newVertex[1] + g_vertex_ring[j + 1]);
+			//		g_vertex_buffer_data[3 * decalage/*numVerticesPolygon*/ + j + 2] = 0.1 + g_vertex_ring[j + 2];
+			//	}
+			//}
 		}
 
+		decalage = numPointsPolygon + 1;
 		if (duplicatedAreas[i]->GetIndexCount() >= 3)
 		{
 			
@@ -282,6 +295,14 @@ void SceneCanvasComponent::renderOpenGL()
 				indices[j+decalage/*+ numVerticesPolygon*/] = ringIndices[j] + decalage;/*+ numVerticesPolygon*/;
 			}
 
+			//for (int k = 0; k < newIndex.size() / 3; ++k)
+			//{
+			//	decalage += numVerticesRing;
+			//	for (int j = 0; j < 3 * numVerticesRing; ++j)
+			//	{
+			//		indices[j + decalage/*+ numVerticesPolygon*/] = ringIndices[j] + decalage;/*+ numVerticesPolygon*/;
+			//	}
+			//}
 		}
 
     }
@@ -320,9 +341,9 @@ void SceneCanvasComponent::renderOpenGL()
 	
 	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer);
 	//openGlContext.extensions.glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
-	openGlContext.extensions.glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, (3 * numVerticesPolygon + 3 * numVerticesRing) * sizeof(unsigned int), &indices[0]);
+	openGlContext.extensions.glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indicesSize * sizeof(unsigned int), &indices[0]);
 
-	glDrawElements(GL_TRIANGLES, 3 * numVerticesPolygon + 3 * numVerticesRing /*+ 3 * 64*/, GL_UNSIGNED_INT, (void*)0);
+	glDrawElements(GL_TRIANGLES, 3 * numVerticesPolygon + numPointsRing * 3 * numVerticesRing /*+ 3 * 64*/, GL_UNSIGNED_INT, (void*)0);
 	//glDrawArrays(GL_TRIANGLES, 0, 3);
 	openGlContext.extensions.glDisableVertexAttribArray(position->attributeID);
 	openGlContext.extensions.glDisableVertexAttribArray(colour->attributeID);
