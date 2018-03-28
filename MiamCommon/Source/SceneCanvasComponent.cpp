@@ -76,6 +76,27 @@ SceneCanvasComponent::SceneCanvasComponent() :
 		ringIndices[i * 6 + 4] = i;
 		ringIndices[i * 6 + 5] = i + 1 >= numPoints? 0 : i+1;
 	}
+	
+	// calcul d'un cercle de centre 0 et de rayon 5 pixels
+	radius = 5.0f;
+	currentAngle = 0.0;
+	incAngle = 2 * M_PI / (double)numPoints;
+	g_vertex_circle[0] = 0.0f;
+	g_vertex_circle[1] = 0.0f;
+	g_vertex_circle[2] = 0.0f;
+	for (int i = 0; i < numPointCircle; ++i)
+	{
+		g_vertex_circle[(i+1) * 3] = radius * cos(currentAngle);
+		g_vertex_circle[(i+1) * 3 + 1] = radius * sin(currentAngle);
+		g_vertex_circle[(i+1) * 3 + 2] = 0;
+		currentAngle += incAngle;
+	}
+	for (int i = 0; i < numPointCircle; ++i)
+	{
+		circleIndices[i * 3] = i + 1;
+		circleIndices[i * 3 + 1] = 0;
+		circleIndices[i * 3 + 2] = i + 2 > numPointCircle ? 1 : i + 2;
+	}
 
 	//g_vertex_buffer_data[3 * 3 * numVerticesPolygon + 3 * 3 * numVerticesRing];
 	for (int i = 0; i < 3 * numVerticesPolygon + 3 * numVerticesRing; ++i)
@@ -262,12 +283,39 @@ void SceneCanvasComponent::renderOpenGL()
 			
 			for (int j = 0; j < 3 * numVerticesRing; j+= 3)
 			{
-				g_vertex_buffer_data[3 *decalage/*numVerticesPolygon*/ + j] = 1.0* (newVertex[0] + g_vertex_ring[j]);
-				g_vertex_buffer_data[3 *decalage/*numVerticesPolygon*/ + j + 1] = 1.0*(newVertex[1] + g_vertex_ring[j + 1]);
-				g_vertex_buffer_data[3 *decalage/*numVerticesPolygon*/ + j + 2] = 0.1 + g_vertex_ring[j + 2];
+				g_vertex_buffer_data[3 *decalage + j] = 1.0* (newVertex[0] + g_vertex_ring[j]);
+				g_vertex_buffer_data[3 *decalage + j + 1] = 1.0*(newVertex[1] + g_vertex_ring[j + 1]);
+				g_vertex_buffer_data[3 *decalage + j + 2] = 0.1 + g_vertex_ring[j + 2];
 			}
 
+			decalage += numVerticesRing;
+
+			for (int j = 0; j < 3 * numVerticesCircle; j += 3)
+			{
+				g_vertex_buffer_data[3 * decalage + j] = 1.0* (newVertex[3] + g_vertex_circle[j]);
+				g_vertex_buffer_data[3 * decalage + j + 1] = 1.0*(newVertex[4] + g_vertex_circle[j + 1]);
+				g_vertex_buffer_data[3 * decalage + j + 2] = 0.1 + g_vertex_circle[j + 2];
+			}
 			
+			decalage += numVerticesCircle;
+
+			for (int j = 0; j < 3 * numVerticesCircle; j += 3)
+			{
+				g_vertex_buffer_data[3 * decalage + j] = 1.0* (newVertex[6] + g_vertex_circle[j]);
+				g_vertex_buffer_data[3 * decalage + j + 1] = 1.0*(newVertex[7] + g_vertex_circle[j + 1]);
+				g_vertex_buffer_data[3 * decalage + j + 2] = 0.1 + g_vertex_circle[j + 2];
+			}
+
+			decalage += numVerticesCircle;
+
+			for (int j = 0; j < 3 * numVerticesCircle; j += 3)
+			{
+				g_vertex_buffer_data[3 * decalage + j] = 1.0* (newVertex[9] + g_vertex_circle[j]);
+				g_vertex_buffer_data[3 * decalage + j + 1] = 1.0*(newVertex[10] + g_vertex_circle[j + 1]);
+				g_vertex_buffer_data[3 * decalage + j + 2] = 0.1 + g_vertex_circle[j + 2];
+			}
+
+
 			//for (int k = 0; k < (newVertex.size() - 3)/3;++k)
 			//{
 			//	decalage += numVerticesRing;
@@ -292,7 +340,26 @@ void SceneCanvasComponent::renderOpenGL()
 			
 			for (int j = 0; j < 3 * numVerticesRing; ++j)
 			{
-				indices[j+decalage/*+ numVerticesPolygon*/] = ringIndices[j] + decalage;/*+ numVerticesPolygon*/;
+				indices[j + 3 * decalage/*+ numVerticesPolygon*/] = ringIndices[j] + decalage;/*+ numVerticesPolygon*/;
+			}
+
+			decalage += numVerticesRing;
+
+			for (int j = 0; j < 3 * numPointCircle; ++j)
+			{
+				indices[j + 3 * decalage/*+ numVerticesPolygon*/] = circleIndices[j] + decalage;/*+ numVerticesPolygon*/;
+			}
+
+			decalage += numPointCircle;
+			for (int j = 0; j < 3 * numPointCircle; ++j)
+			{
+				indices[j + 3 * decalage/*+ numVerticesPolygon*/] = circleIndices[j] + decalage + 1;/*+ numVerticesPolygon*/;
+			}
+
+			decalage += numPointCircle;
+			for (int j = 0; j < 3 * numPointCircle; ++j)
+			{
+				indices[j + 3 * decalage/*+ numVerticesPolygon*/] = circleIndices[j] + decalage + 2;/*+ numVerticesPolygon*/;
 			}
 
 			//for (int k = 0; k < newIndex.size() / 3; ++k)
@@ -343,7 +410,7 @@ void SceneCanvasComponent::renderOpenGL()
 	//openGlContext.extensions.glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 	openGlContext.extensions.glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indicesSize * sizeof(unsigned int), &indices[0]);
 
-	glDrawElements(GL_TRIANGLES, 3 * numVerticesPolygon + numPointsRing * 3 * numVerticesRing /*+ 3 * 64*/, GL_UNSIGNED_INT, (void*)0);
+	glDrawElements(GL_TRIANGLES, 3 * numVerticesPolygon + (3 * numVerticesRing) + 3 * (3 * numPointCircle) /*+ 3 * 64*/, GL_UNSIGNED_INT, (void*)0);
 	//glDrawArrays(GL_TRIANGLES, 0, 3);
 	openGlContext.extensions.glDisableVertexAttribArray(position->attributeID);
 	openGlContext.extensions.glDisableVertexAttribArray(colour->attributeID);

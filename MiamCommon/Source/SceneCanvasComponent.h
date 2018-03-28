@@ -174,16 +174,21 @@ private:
 
 	static const int numPointsPolygon = 32;
 	static const int numPointsRing = 32;
+	static const int numPointCircle = 32;
 
 	static const int numVerticesPolygon = numPointsPolygon + 1;
 	static const int numVerticesRing = 2 * numPointsRing;
+	static const int numVerticesCircle = numPointCircle + 1;
 
-	static const int vertexBufferSize = 3 * numVerticesPolygon +  (3 * numVerticesRing);
-	static const int colorBufferSize = 3 * numVerticesPolygon +  (3 * numVerticesRing);
-	static const int indicesSize = 3 * numVerticesPolygon + (3 * numVerticesRing);
+	static const int vertexBufferSize = 3 * numVerticesPolygon + (3 * numVerticesRing) + 3 * (3 * numVerticesCircle);
+	static const int colorBufferSize = 3 * numVerticesPolygon +  (3 * numVerticesRing) + 3 * (3 * numVerticesCircle);
+	static const int indicesSize = 3 * numVerticesPolygon + (3 * numVerticesRing) + 3 * (3 * numPointCircle);
 
 	GLfloat g_vertex_ring[3 * numVerticesRing];
 	unsigned int ringIndices[3 * numVerticesRing];
+
+	GLfloat g_vertex_circle[3 * numVerticesCircle];
+	unsigned int circleIndices[3 * numPointCircle];
 
 	GLuint vertexBuffer;
 	GLfloat g_vertex_buffer_data[vertexBufferSize]; // forme + vertex
