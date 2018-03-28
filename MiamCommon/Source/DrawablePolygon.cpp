@@ -92,7 +92,7 @@ DrawablePolygon::DrawablePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 
 	int verticesCount = (pointsCount + 1);
 	vertex_buffer.resize(verticesCount * 3);// = new float[verticesCount * 3]; // tout sommets + le centre * (x,y,z)
-	
+	outline_vertex_buffer.resize(pointsCount * 3);
 	
 	
 
@@ -148,6 +148,13 @@ std::vector<float> DrawablePolygon::GetVertices()
 {
 	if (vertex_buffer.size() > 0)
 		return vertex_buffer;
+	return std::vector<float>();
+}
+
+std::vector<float> DrawablePolygon::GetOutline()
+{
+	if (outline_vertex_buffer.size() > 0)
+		return outline_vertex_buffer;
 	return std::vector<float>();
 }
 
@@ -277,6 +284,25 @@ void DrawablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 		vertex_buffer[3 + i * 3] = contourPointsInPixels.outer().at(i).get<0>();//radius*cosf(currentAngle);
 		vertex_buffer[3 + i * 3 + 1] = contourPointsInPixels.outer().at(i).get<1>();
 		vertex_buffer[3 + i * 3 + 2] = 0.0f;
+	}
+
+	bpolygon outlinePolygon,tmpPolygon;
+	float dist = (float)boost::geometry::distance(centerInPixels, contourPointsInPixels.outer().at(0));
+	float newDist = dist + contourWidth;
+	float resizeFactor = newDist / dist;
+	boost::geometry::strategy::transform::translate_transformer<double, 2, 2> tr(-centerInPixels.get<0>(), -centerInPixels.get<1>());
+	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> rescaler(resizeFactor, resizeFactor);
+	boost::geometry::strategy::transform::translate_transformer<double, 2, 2> invTr(centerInPixels.get<0>(), centerInPixels.get<1>());
+
+	boost::geometry::transform(contourPointsInPixels, outlinePolygon, tr);
+	boost::geometry::transform(outlinePolygon, tmpPolygon, rescaler);
+	boost::geometry::transform(tmpPolygon, outlinePolygon, invTr);
+
+	for (int i = 0; i < outlinePolygon.outer().size()-1; ++i)
+	{
+		outline_vertex_buffer[i * 3] = outlinePolygon.outer().at(i).get<0>();//radius*cosf(currentAngle);
+		outline_vertex_buffer[i * 3 + 1] = outlinePolygon.outer().at(i).get<1>();
+		outline_vertex_buffer[i * 3 + 2] = 0.0f;
 	}
 }
 

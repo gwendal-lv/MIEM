@@ -69,6 +69,7 @@ namespace Miam {
 		bool hasVerticesChanged() override;
 		bool hasPositionChanged() override;
 		std::vector<float> GetVertices() override;
+		std::vector<float> GetOutline() override;
 		std::vector<int> GetIndex() override;
 		Vector3D<float> GetModelParameters() override;
         

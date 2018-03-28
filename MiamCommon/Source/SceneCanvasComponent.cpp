@@ -274,22 +274,24 @@ void SceneCanvasComponent::renderOpenGL()
 		int decalage = numPointsPolygon + 1;
 		if (duplicatedAreas[i]->GetVerticesCount() >= 3)
 		{
-			
+			/// vertex
+			//1. forme
 			std::vector<float> newVertex = duplicatedAreas[i]->GetVertices();
 			for (int j = 0; j < newVertex.size(); ++j)
 			{
 				g_vertex_buffer_data[j] = newVertex[j];//*10
 			}
 			
+			//2. centre
 			for (int j = 0; j < 3 * numVerticesRing; j+= 3)
 			{
 				g_vertex_buffer_data[3 *decalage + j] = 1.0* (newVertex[0] + g_vertex_ring[j]);
 				g_vertex_buffer_data[3 *decalage + j + 1] = 1.0*(newVertex[1] + g_vertex_ring[j + 1]);
 				g_vertex_buffer_data[3 *decalage + j + 2] = 0.1 + g_vertex_ring[j + 2];
 			}
-
 			decalage += numVerticesRing;
 
+			//3. points
 			int numApexes = (newVertex.size() - 3) / 3;
 			for (int k = 0; k < numApexes; ++k)
 			{
@@ -302,24 +304,36 @@ void SceneCanvasComponent::renderOpenGL()
 				decalage += numVerticesCircle;
 			}
 
+			decalage = numVerticesPolygon + (numVerticesRing) + numPointsPolygon * (numVerticesCircle);
+
+			//4. contour
+			std::vector<float> newOutline = duplicatedAreas[i]->GetOutline();
+			for (int j = 0; j < newOutline.size(); ++j)
+			{
+				g_vertex_buffer_data[3 * decalage + j] = newOutline[j];
+			}
+			decalage += numPointsPolygon;
 		}
 
+		/// indices
 		decalage = numPointsPolygon + 1;
 		if (duplicatedAreas[i]->GetIndexCount() >= 3)
 		{
-			
+			//1. forme
 			std::vector<int> newIndex = duplicatedAreas[i]->GetIndex();
 			for (int j = 0; j < newIndex.size(); ++j)
 			{
 				indices[j] = (unsigned int)newIndex[j];
 			}
 			
+			//2. centre
 			for (int j = 0; j < 3 * numVerticesRing; ++j)
 			{
 				indices[j + 3 * decalage/*+ numVerticesPolygon*/] = ringIndices[j] + decalage;/*+ numVerticesPolygon*/;
 			}
-
 			decalage += numVerticesRing;
+
+			//3. points
 			int numApexes = newIndex.size() / 3;
 			for (int k = 0; k < numApexes; ++k)
 			{
@@ -328,7 +342,20 @@ void SceneCanvasComponent::renderOpenGL()
 				decalage += numPointCircle;
 			}
 
-			
+			decalage = numVerticesPolygon + (numVerticesRing) + numPointsPolygon * (numPointCircle+1);
+
+			//4. contour
+			for (int i = 0; i < numApexes; ++i)
+			{
+				indices[3 * decalage + i * 6] = i+1;
+				indices[3 * decalage + i * 6 + 1] = decalage + i;
+				indices[3 * decalage + i * 6 + 2] = decalage + i + 1 >= decalage + numApexes ? decalage : decalage + i + 1;
+				indices[3 * decalage + i * 6 + 3] = decalage + i + 1 >= decalage + numApexes ? decalage : decalage + i + 1;
+				indices[3 * decalage + i * 6 + 4] = i+1;
+				indices[3 * decalage + i * 6 + 5] = i + 2 >= numApexes + 1 ? 0 : i + 2;
+			}
+
+			decalage += 2 * numPointsPolygon;
 		}
 
     }
@@ -369,7 +396,7 @@ void SceneCanvasComponent::renderOpenGL()
 	//openGlContext.extensions.glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 	openGlContext.extensions.glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indicesSize * sizeof(unsigned int), &indices[0]);
 
-	glDrawElements(GL_TRIANGLES, 3 * numVerticesPolygon + (3 * numVerticesRing) + numPointsPolygon * (3 * numPointCircle) /*+ 3 * 64*/, GL_UNSIGNED_INT, (void*)0);
+	glDrawElements(GL_TRIANGLES, indicesSize /*+ 3 * 64*/, GL_UNSIGNED_INT, (void*)0);
 	//glDrawArrays(GL_TRIANGLES, 0, 3);
 	openGlContext.extensions.glDisableVertexAttribArray(position->attributeID);
 	openGlContext.extensions.glDisableVertexAttribArray(colour->attributeID);

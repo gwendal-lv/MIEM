@@ -127,6 +127,11 @@ std::vector<float> DrawableEllipse::GetVertices()
 	return std::vector<float>();//nullptr;
 }
 
+std::vector<float> DrawableEllipse::GetOutline()
+{
+	return std::vector<float>();
+}
+
 std::vector<int> DrawableEllipse::GetIndex()
 {
 	if (index_buffer.size() > 0)
