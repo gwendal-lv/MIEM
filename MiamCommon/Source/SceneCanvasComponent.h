@@ -180,9 +180,9 @@ private:
 	static const int numVerticesRing = 2 * numPointsRing;
 	static const int numVerticesCircle = numPointCircle + 1;
 
-	static const int vertexBufferSize = 3 * numVerticesPolygon + (3 * numVerticesRing) + 3 * (3 * numVerticesCircle);
-	static const int colorBufferSize = 3 * numVerticesPolygon +  (3 * numVerticesRing) + 3 * (3 * numVerticesCircle);
-	static const int indicesSize = 3 * numVerticesPolygon + (3 * numVerticesRing) + 3 * (3 * numPointCircle);
+	static const int vertexBufferSize = 3 * numVerticesPolygon + (3 * numVerticesRing) + numPointsPolygon * (3 * numVerticesCircle);
+	static const int colorBufferSize = 3 * numVerticesPolygon +  (3 * numVerticesRing) + numPointsPolygon * (3 * numVerticesCircle);
+	static const int indicesSize = 3 * numVerticesPolygon + (3 * numVerticesRing) + numPointsPolygon * (3 * numPointCircle);
 
 	GLfloat g_vertex_ring[3 * numVerticesRing];
 	unsigned int ringIndices[3 * numVerticesRing];
