@@ -180,10 +180,16 @@ private:
 	static const int numVerticesRing = 2 * numPointsRing;
 	static const int numVerticesCircle = numPointCircle + 1;
 
-	//											forme					centre							points
-	static const int vertexBufferSize = 3 * numVerticesPolygon + (3 * numVerticesRing) + numPointsPolygon * (3 * numVerticesCircle) + (3 * numPointsPolygon);
-	static const int colorBufferSize = 3 * numVerticesPolygon +  (3 * numVerticesRing) + numPointsPolygon * (3 * numVerticesCircle) + (3 * numPointsPolygon);
-	static const int indicesSize = 3 * numVerticesPolygon + (3 * numVerticesRing) + numPointsPolygon * (3 * numPointCircle) + (3 * 2 * numPointsPolygon);
+	//											forme					centre							points									contour
+	static const int numVertexShape = numVerticesPolygon	+		numVerticesRing +	 (numPointsPolygon * numVerticesCircle) +			numPointsPolygon;
+	static const int shapeVertexBufferSize = 3 * numVerticesPolygon + (3 * numVerticesRing) + numPointsPolygon * (3 * numVerticesCircle) + (3 * numPointsPolygon);
+	static const int shapeColorBufferSize = 3 * numVerticesPolygon +  (3 * numVerticesRing) + numPointsPolygon * (3 * numVerticesCircle) + (3 * numPointsPolygon);
+	static const int shapeIndicesSize = 3 * numVerticesPolygon + (3 * numVerticesRing) + numPointsPolygon * (3 * numPointCircle) + (3 * 2 * numPointsPolygon);
+
+	static const int Nshapes = 2;
+	static const int vertexBufferSize = Nshapes * shapeVertexBufferSize;
+	static const int colorBufferSize = Nshapes * shapeColorBufferSize;
+	static const int indicesSize = Nshapes * shapeIndicesSize;
 
 	GLfloat g_vertex_ring[3 * numVerticesRing];
 	unsigned int ringIndices[3 * numVerticesRing];
@@ -199,6 +205,8 @@ private:
 
 	GLuint elementBuffer;
 	unsigned int indices[indicesSize];
+
+	void DrawShape(std::shared_ptr<IDrawableArea> area, int positionInBuffer);
 
 	///// vertex de toutes les formes dans g_vertex_buffer
 	//GLuint vertexBuffer; 

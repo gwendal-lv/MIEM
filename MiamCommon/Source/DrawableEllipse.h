@@ -28,7 +28,7 @@ namespace Miam
         private :
         /// \brief Nombre de points définissant la forme pseudo-elliptique dessinée
         /// par Juce via OpenGL
-        int ellipseVerticesCount = 20;
+        int ellipseVerticesCount = 32;
         
 		protected :
 			bpolygon contourPoints;
