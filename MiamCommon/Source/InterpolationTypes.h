@@ -20,10 +20,13 @@ namespace Miam
     /// \brief Describes the current method
     enum class InterpolationType {
         
+            Any = -1, ///< Special value that represents any of the following types of interpolation
+        
             None = 0, ///< Interpolator not configured yet
             
-            Matrix_LinearInterpolation, ///< états matriciels, avec interpolation linéaire basique, coefficient par coefficient
-            Matrix_ConstantVolumeInterpolation, ///< Interpolation à conservation de volume (si transitions entre matrices de même volume total)
+            Matrix_Linear, ///< états matriciels, avec interpolation linéaire basique, coefficient par coefficient
+            Matrix_ConstantPower, ///< Interpolation à conservation de puissance audio <=> conservation de la somme des amplitudes au carré (si transitions entre matrices de même amplitude/volume au total). Des déformations logarithmiques sont appliquées pour permettre un contrôle + fin des amplitudes audio.
+            Matrix_ConstantAmplitude, ///< Interpolation à conservation d'amplitude (de volume) (si transitions entre matrices de même volume total). Des déformations logarithmiques sont appliquées pour permettre un contrôle + fin des amplitudes audio.
         
             InterpolationTypesCount, ///< Contient le nombre d'interpolations différentes, y compris l'interpolation non-définie
     };
@@ -37,12 +40,14 @@ namespace Miam
         constexpr static const char* const interpolationNames[] = {
             "",
             "Linear",
-            "Logarithmic (constant volume transitions)"
+            "Quadratic: constant power transitions",
+            "Constant volume transitions"
         };
         constexpr static const char* const interpolationShortNames[] = {
             "",
             "Linear",
-            "Logarithmic"
+            "Quadratic",
+            "LinearVolume"
         };
         
         public :

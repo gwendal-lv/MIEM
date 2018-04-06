@@ -40,7 +40,7 @@
 namespace ProjectInfo
 {
     const char* const  projectName    = "MIEM Spat Player";
-    const char* const  versionString  = "0.2.0";
-    const int          versionNumber  = 0x200;
+    const char* const  versionString  = "0.2.1";
+    const int          versionNumber  = 0x201;
 }
 #endif

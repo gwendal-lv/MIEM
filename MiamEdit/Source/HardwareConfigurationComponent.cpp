@@ -73,7 +73,7 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
     outputsCountLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
     addAndMakeVisible (oscPluginToggleButton = new ToggleButton ("OSC Plugin toggle button"));
-    oscPluginToggleButton->setButtonText (TRANS("Send OSC to Miam Matrix Router remote plug-in"));
+    oscPluginToggleButton->setButtonText (TRANS("Send OSC to MIEM Matrix Router remote plug-in"));
     oscPluginToggleButton->setToggleState (true, dontSendNotification);
     oscPluginToggleButton->setColour (ToggleButton::textColourId, Colours::black);
 
@@ -150,6 +150,8 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
     // Sauvegarde des valeurs SPAT par défaut pour l'instant dans le Projucer
     inputLabelSpatText = inputsCountLabel->getText();
     inputLabelGenericText = TRANS("Number of parameters:");
+    oscTargetSpatText = oscPluginToggleButton->getButtonText();
+    oscTargetGenericText = TRANS("Send OSC control data to target device");
 
     // Sliders max values from defines
     inputsCountSlider->setRange (1, Miam_MaxNumInputs, 1);
@@ -319,28 +321,23 @@ void HardwareConfigurationComponent::visibilityChanged()
         {
             case AppPurpose::Spatialisation :
                 inputsCountLabel->setText(inputLabelSpatText, NotificationType::sendNotification);
+                oscPluginToggleButton->setButtonText(oscTargetSpatText);
                 outputsCountLabel->setVisible(true);
                 outputsCountSlider->setVisible(true);
                 outputNamesToggleButton->setVisible(true);
                 // input name toggle :  coché, mais garde la valeur d'activation précédente
                 inputNamesToggleButton->setEnabled(true);
-                // type d'interpolateur verrouillé mais affiché
-                interpolationTypeLabel->setEnabled(false);
-                interpolationTypeComboBox->setSelectedId((int)InterpolationType::Matrix_ConstantVolumeInterpolation, NotificationType::dontSendNotification);
-                interpolationTypeComboBox->setEnabled(false);
                 break;
 
             case AppPurpose::GenericController :
                 inputsCountLabel->setText(inputLabelGenericText, NotificationType::sendNotification);
+                oscPluginToggleButton->setButtonText(oscTargetGenericText);
                 outputsCountLabel->setVisible(false);
                 outputsCountSlider->setVisible(false);
                 outputNamesToggleButton->setVisible(false);
                 // input name toggle : coché mais désactivé
                 inputNamesToggleButton->setToggleState(true, dontSendNotification);
                 inputNamesToggleButton->setEnabled(false);
-                // type d'interpolateur libre
-                interpolationTypeLabel->setEnabled(true);
-                interpolationTypeComboBox->setEnabled(true);
                 break;
 
             default :
@@ -405,6 +402,30 @@ int HardwareConfigurationComponent::TryParseUdpPort()
         return -1;
     }
 }
+void HardwareConfigurationComponent::SetAvailableInterpolations(std::initializer_list<InterpolationType> interpolationTypeArgs)
+{
+    // Par défaut, tout est considéré désactivé
+    std::vector<bool> isInterpolationAvailable;
+    isInterpolationAvailable.resize((size_t)InterpolationType::InterpolationTypesCount, false);
+    // Recherche des types à activer
+    // (le ::None est le numéro zéro)
+    for (auto interpolationType : interpolationTypeArgs)
+    {
+        int typeAsInteger = (int)interpolationType;
+        if (interpolationType == InterpolationType::Any)
+        {
+            for (size_t i=0; i<isInterpolationAvailable.size() ; i++)
+                isInterpolationAvailable[i] = true;
+            break;
+        }
+        else if (1 <= typeAsInteger && typeAsInteger < (int)InterpolationType::InterpolationTypesCount)
+            isInterpolationAvailable[typeAsInteger] = true;
+    }
+    // Activation des bons éléments de la liste
+    // (le ::None est le numéro zéro)
+    for (int i=1 ; i<(int)isInterpolationAvailable.size() ; i++)
+        interpolationTypeComboBox->setItemEnabled(i, isInterpolationAvailable[i]);
+}
 
 //[/MiscUserCode]
 
@@ -453,7 +474,7 @@ BEGIN_JUCER_METADATA
          bold="0" italic="0" justification="34"/>
   <TOGGLEBUTTON name="OSC Plugin toggle button" id="74b5dae6c2ea74a2" memberName="oscPluginToggleButton"
                 virtualName="" explicitFocusOrder="0" pos="0Cc 160 400 24" txtcol="ff000000"
-                buttonText="Send OSC to Miam Matrix Router remote plug-in" connectedEdges="0"
+                buttonText="Send OSC to MIEM Matrix Router remote plug-in" connectedEdges="0"
                 needsCallback="0" radioGroupId="0" state="1"/>
   <LABEL name="UPD Port Label" id="8d369e08975b779c" memberName="udpPortLabel"
          virtualName="" explicitFocusOrder="0" pos="0Cr 0 336 24" posRelativeX="dfbb24a51fa3d6c0"

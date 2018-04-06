@@ -67,6 +67,9 @@ public:
     /// \brief Returns the UDP port as a positive int, or -1 if user input was not valid.
     int TryParseUdpPort();
 
+    /// \brief Sets the interpolation types that the user can choose in the list.
+    void SetAvailableInterpolations(std::initializer_list<InterpolationType> interpolationTypeArgs);
+
     //[/UserMethods]
 
     void paint (Graphics& g) override;
@@ -84,6 +87,8 @@ private:
 
     String inputLabelSpatText;
     String inputLabelGenericText;
+    String oscTargetSpatText;
+    String oscTargetGenericText;
     //[/UserVariables]
 
     //==============================================================================

@@ -36,7 +36,7 @@ namespace Miam
         /// donnée partagée par le Presenter et le Modèle ;
         /// doit donc rester thread-safe y compris pour les override potentiels
         virtual InterpolationType GetInterpolatorType_Atomic ()
-        { return InterpolationType::Matrix_LinearInterpolation; } // par défaut
+        { return InterpolationType::Matrix_Linear; } // par défaut
         
     };
 }

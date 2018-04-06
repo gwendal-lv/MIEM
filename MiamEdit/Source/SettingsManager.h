@@ -74,6 +74,9 @@ namespace Miam {
         /// constructed
         void CompleteInitialisation(Model* _model);
         
+        /// \brief Configures the GUI for it to correspond to current session's Miam::AppPurpose
+        void ConfigureGuiForSessionPurpose();
+        
         
         // ----- Events from the Presenter itself -----
         /// \brief Updates the data that may have been modified during AppMode

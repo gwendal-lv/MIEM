@@ -240,8 +240,8 @@ void Exciter::updateExcitationAmounts()
             totalInteractionWeight += areasInteractingWith[i].InteractionWeight;
     }
     
-    // - - - - - Calcul des excitations, tel que la somme des excitations vaut 1 - - - - -
     
+    // - - - - - Calcul des excitations, tel que la somme des excitations vaut 1 - - - - -
     // en vérifiant les cas bizarres limites...
     // Pour être sûr même si des erreurs
     // numériques sont là...
@@ -260,33 +260,60 @@ void Exciter::updateExcitationAmounts()
             areaData.ExcitementAmount.Linear = areaData.InteractionWeight / totalInteractionWeight;
     }
     
+    
     // - - - - - Distorsion logarithmique, pour donner la précision aux faibles volumes - - - - -
     // Voir feuille de calcul Matlab + explications papier nécessaires....
-    // on prépare déjà la normalisation qui suit
     // - - - - -         Ou aucune distorsion si interpolation linéaire simple          - - - - -
-    double totalAudioExcitement = 0.0;
     for (auto &areaData : areasInteractingWith)
     {
         switch (interpolationType)
         {
-            case InterpolationType::Matrix_LinearInterpolation :
-                areaData.ExcitementAmount.Audio = areaData.ExcitementAmount.Linear;
-                break;
-            case InterpolationType::Matrix_ConstantVolumeInterpolation :
+            // - - - distorsion pour les faibles volumes - - -
+            case InterpolationType::Matrix_ConstantAmplitude :
+            case InterpolationType::Matrix_ConstantPower :
                 areaData.ExcitementAmount.Audio
                     = AudioUtils<double>::ApplyLowVolumePrecisionDistorsion(areaData.ExcitementAmount.Linear);
+                break;
+                
+            // - - - pas de distorsion - - -
+            case InterpolationType::Matrix_Linear :
+                areaData.ExcitementAmount.Audio = areaData.ExcitementAmount.Linear;
                 break;
                 
             default : // None, (Count,) etc...
                 areaData.ExcitementAmount.Audio = 1.0;
                 break;
         }
-        totalAudioExcitement += areaData.ExcitementAmount.Audio;
     }
     
-    // - - - - - Dernière normalisation pour les coeffs Audio - - - - -
-    for (auto &areaData : areasInteractingWith)
-        areaData.ExcitementAmount.Audio = areaData.ExcitementAmount.Audio / totalAudioExcitement;
+    
+    // - - - - - Normalisation pour les coeffs Audio, selon le type d'interpolation - - - - -
+    double normalisationFactor = 0.0;
+    switch (interpolationType)
+    {
+        // - - - Normalisation de la somme des amplitudes - - -
+        case InterpolationType::Matrix_ConstantAmplitude :
+            for (auto &areaData : areasInteractingWith)
+                normalisationFactor += areaData.ExcitementAmount.Audio;
+            for (auto &areaData : areasInteractingWith)
+                areaData.ExcitementAmount.Audio = areaData.ExcitementAmount.Audio / normalisationFactor;
+            break;
+            
+        // - - - Normalisation de la somme du carré des amplitudes - - -
+        case InterpolationType::Matrix_ConstantPower :
+            for (auto &areaData : areasInteractingWith)
+                normalisationFactor += std::pow(areaData.ExcitementAmount.Audio, 2);
+            normalisationFactor = std::sqrt(normalisationFactor); // == sqrt( somme( amplitudes^2 ) )
+            for (auto &areaData : areasInteractingWith)
+                areaData.ExcitementAmount.Audio = areaData.ExcitementAmount.Audio / normalisationFactor;
+            break;
+            
+        // - - - cas où l'on ne fait rien - - -
+        case InterpolationType::Matrix_Linear :
+        default :
+            break;
+    }
+    
     
     // - - - - - Application du volume, de manière uniforme, à la toute fin - - - - -
     for (auto &areaData : areasInteractingWith)

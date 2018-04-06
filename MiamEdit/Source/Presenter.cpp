@@ -276,10 +276,10 @@ void Presenter::CreateSession(std::string filename, AppPurpose sessionPurpose, b
 	switch (sessionPurpose)
 	{
 	case AppPurpose::Spatialisation:
-		model->GetInterpolator()->ReinitInterpolation(InterpolationType::Matrix_ConstantVolumeInterpolation);
+		model->GetInterpolator()->ReinitInterpolation(InterpolationType::Matrix_ConstantPower);
 		break;
 	case AppPurpose::GenericController:
-		model->GetInterpolator()->ReinitInterpolation(InterpolationType::Matrix_LinearInterpolation);
+		model->GetInterpolator()->ReinitInterpolation(InterpolationType::Matrix_Linear);
 	default:
 		break;
 	}

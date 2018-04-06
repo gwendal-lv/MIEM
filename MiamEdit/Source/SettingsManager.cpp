@@ -41,6 +41,44 @@ void SettingsManager::CompleteInitialisation(Model* _model)
     linksInitialized = true;
 }
 
+void SettingsManager::ConfigureGuiForSessionPurpose()
+{
+    switch (GetSessionPurpose())
+    {
+        case AppPurpose::Spatialisation :
+            
+            configurationComponent->inputNamesToggleButton->setToggleState(false, NotificationType::dontSendNotification);
+            configurationComponent->outputNamesToggleButton->setToggleState(false, NotificationType::dontSendNotification);
+            // on ne peut pas (ne doit pas...) faire confiance à la vue pour re-déclencher des callbacks !
+            OnInOutNamesDisplayedChanged(false, false);
+            // UDP / IP
+            configurationComponent->ipAddressLabel->setText(TRANS("Plug-in host IP address:"), NotificationType::sendNotification);
+            configurationComponent->udpPortLabel->setText(TRANS("Plug-in listening on UDP port:"), NotificationType::sendNotification);
+            // Seuls certains types d'interpolation sont dispo
+            configurationComponent->SetAvailableInterpolations({
+                InterpolationType::Matrix_ConstantPower,
+                InterpolationType::Matrix_ConstantAmplitude
+            });
+            break;
+            
+            
+        case AppPurpose::GenericController :
+            configurationComponent->inputNamesToggleButton->setToggleState(true, NotificationType::dontSendNotification);
+            // on ne peut pas (ne doit pas...) faire confiance à la vue pour re-déclencher des callbacks !
+            OnInOutNamesDisplayedChanged(true, false);
+            // UDP / IP
+            configurationComponent->ipAddressLabel->setText(TRANS("Target device IP address:"), NotificationType::sendNotification);
+            configurationComponent->udpPortLabel->setText(TRANS("Target device listening on UDP port:"), NotificationType::sendNotification);
+            // Seuls certains types d'interpolation sont dispo
+            configurationComponent->SetAvailableInterpolations({
+                InterpolationType::Any
+            });
+            break;
+        default :
+            break;
+    }
+}
+
 
 
 // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
@@ -179,29 +217,7 @@ void SettingsManager::SetFromTree(bptree::ptree& tree)
     
     // à la fin du chargement : on met les données par défaut pour certains paramètres (channels names
     // cachés ou pas, ...) qui ne sont pas précisés dans le XML
-    switch (GetSessionPurpose())
-    {
-        case AppPurpose::Spatialisation :
-            
-            configurationComponent->inputNamesToggleButton->setToggleState(false, NotificationType::dontSendNotification);
-            configurationComponent->outputNamesToggleButton->setToggleState(false, NotificationType::dontSendNotification);
-            // on ne peut pas (ne doit pas...) faire confiance à la vue pour re-déclencher des callbacks !
-            OnInOutNamesDisplayedChanged(false, false);
-            // UDP / IP
-            configurationComponent->ipAddressLabel->setText(TRANS("Plug-in host IP address:"), NotificationType::sendNotification);
-            configurationComponent->udpPortLabel->setText(TRANS("Plug-in listening on UDP port:"), NotificationType::sendNotification);
-            break;
-        case AppPurpose::GenericController :
-            configurationComponent->inputNamesToggleButton->setToggleState(true, NotificationType::dontSendNotification);
-            // on ne peut pas (ne doit pas...) faire confiance à la vue pour re-déclencher des callbacks !
-            OnInOutNamesDisplayedChanged(true, false);
-            // UDP / IP
-            configurationComponent->ipAddressLabel->setText(TRANS("Target device IP address:"), NotificationType::sendNotification);
-            configurationComponent->udpPortLabel->setText(TRANS("Target device listening on UDP port:"), NotificationType::sendNotification);
-            break;
-        default :
-            break;
-    }
+    ConfigureGuiForSessionPurpose();
 }
 
 

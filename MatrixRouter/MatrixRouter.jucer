@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="Eo3Z3f" name="MIEM Matrix Router" projectType="audioplug"
-              version="0.2.0" bundleIdentifier="com.glv.MIEMMatrixRouter" includeBinaryInAppConfig="1"
+              version="0.2.1" bundleIdentifier="com.glv.MIEMMatrixRouter" includeBinaryInAppConfig="1"
               buildVST="1" buildVST3="1" buildAU="1" buildAUv3="1" buildRTAS="0"
               buildAAX="0" pluginName="MIEM Matrix Router" pluginDesc="OSC controllable matrix router, for MIEM Spat Player"
               pluginManufacturer="G. Le Vaillant" pluginManufacturerCode="Manu"
