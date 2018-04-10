@@ -116,7 +116,7 @@ namespace Miam
 		virtual bool hasPositionChanged() = 0;
 		virtual int GetVerticesCount() = 0;
 		virtual int GetIndexCount() = 0;
-		virtual std::vector<float> GetVertices() = 0;
+		virtual float GetVertices(int idx) = 0;
 		virtual std::vector<int> GetIndex() = 0;
 		virtual std::vector<float> GetOutline() = 0;
 		virtual Vector3D<float> GetModelParameters() = 0; // return parameter for ModelMatrix

@@ -47,6 +47,7 @@ DrawableEllipse::DrawableEllipse(int64_t _Id) :
 	DrawableEllipse(_Id, bpt(0.5f, 0.5f),0.2f,0.2f,Colours::darkgrey)
 {
 	rotationAngle = 0.0;
+	
 }
 
 DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio) :
@@ -67,8 +68,9 @@ DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b,
 	float bScaled = (float)(b / 2.0) * yScale; // demi-axe , (idem)
 
 	int verticesCount = (ellipseVerticesCount + 1);
-	//vertex_buffer = new float[verticesCount * 3]; // tout sommets + le centre * (x,y,z)
-	vertex_buffer.resize(verticesCount * 3);
+	
+	//vertex_buffer = new float[verticesCount];
+	//vertex_buffer.resize(verticesCount * 3);
 	outline_vertex_buffer.resize(ellipseVerticesCount * 3);
 	/*
 	vertex_buffer[0] = 0.0f;
@@ -104,7 +106,7 @@ DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b,
 
 int DrawableEllipse::GetVerticesCount()
 {
-	return  vertex_buffer.size();
+	return (ellipseVerticesCount+1) * 3;
 }
 
 int DrawableEllipse::GetIndexCount()
@@ -122,11 +124,11 @@ bool DrawableEllipse::hasPositionChanged()
 	return positionChanged;
 }
 
-std::vector<float> DrawableEllipse::GetVertices()
+float DrawableEllipse::GetVertices(int idx)
 {
-	if (vertex_buffer.size() > 0)
-		return vertex_buffer;
-	return std::vector<float>();//nullptr;
+	if (ellipseVerticesCount * 3 > 0)
+		return vertex_buffer[idx];
+	return 0.0f;//nullptr;
 }
 
 std::vector<float> DrawableEllipse::GetOutline()
@@ -198,6 +200,7 @@ void DrawableEllipse::createJucePolygon(int width, int height)
 
 DrawableEllipse::~DrawableEllipse()
 {
+	
 }
 
 void DrawableEllipse::setVerticesCount(int newVerticesCount)

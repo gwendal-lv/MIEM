@@ -488,13 +488,13 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 	{
 		/// vertex
 		//1. forme
-		std::vector<float> newVertex = area->GetVertices();
+		int verticesCount = area->GetVerticesCount();
 		for (int j = 0; j < 3*(numPointsPolygon + 1); ++j)
 		{
 			/*if (3 * decalage + j > shapeVertexBufferSize)
 				DBG("depasse");*/
-			if (j < newVertex.size())
-				g_vertex_buffer_data[3 * decalage + j] = newVertex[j];//*10
+			if (j < verticesCount)
+				g_vertex_buffer_data[3 * decalage + j] = area->GetVertices(j);//*10
 			else
 				g_vertex_buffer_data[3 * decalage + j] = 0;
 		}
@@ -507,15 +507,15 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 		{
 			/*if (3 * decalage + j > shapeVertexBufferSize)
 				DBG("depasse");*/
-			g_vertex_buffer_data[3 * decalage + j] = 1.0* (newVertex[0] + g_vertex_ring[j]);
-			g_vertex_buffer_data[3 * decalage + j + 1] = 1.0*(newVertex[1] + g_vertex_ring[j + 1]);
+			g_vertex_buffer_data[3 * decalage + j] = 1.0* (area->GetVertices(0) + g_vertex_ring[j]);
+			g_vertex_buffer_data[3 * decalage + j + 1] = 1.0*(area->GetVertices(1) + g_vertex_ring[j + 1]);
 			g_vertex_buffer_data[3 * decalage + j + 2] = 0.1 + g_vertex_ring[j + 2];
 		}
 		decalage += numVerticesRing;
 		//shift.push_back(decalage);
 
 		//3. points
-		int numApexes = (newVertex.size() - 3) / 3;
+		int numApexes = (verticesCount - 3) / 3;
 		for (int k = 0; k < numPointsPolygon; ++k)
 		{
 			if (k < numApexes)
@@ -524,8 +524,8 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 				{
 					/*if (3 * decalage + j > shapeVertexBufferSize)
 						DBG("depasse");*/
-					g_vertex_buffer_data[3 * decalage + j] = 1.0* (newVertex[3 + k * 3] + g_vertex_circle[j]);
-					g_vertex_buffer_data[3 * decalage + j + 1] = 1.0*(newVertex[3 + k * 3 + 1] + g_vertex_circle[j + 1]);
+					g_vertex_buffer_data[3 * decalage + j] = 1.0* (area->GetVertices(3 + k * 3) + g_vertex_circle[j]);
+					g_vertex_buffer_data[3 * decalage + j + 1] = 1.0*(area->GetVertices(3 + k * 3 + 1) + g_vertex_circle[j + 1]);
 					g_vertex_buffer_data[3 * decalage + j + 2] = 0.1 + g_vertex_circle[j + 2];
 				}
 				decalage += numVerticesCircle;

@@ -90,8 +90,8 @@ DrawablePolygon::DrawablePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 	 // to close the boost polygon
 	contourPoints.outer().push_back(bpt(center.get<0>() + radius*xScale, center.get<1>()));
 
-	int verticesCount = (pointsCount + 1);
-	vertex_buffer.resize(verticesCount * 3);// = new float[verticesCount * 3]; // tout sommets + le centre * (x,y,z)
+	verticesCount = (pointsCount + 1);
+	//vertex_buffer = new float[verticesCount * 3];// = new float[verticesCount * 3]; // tout sommets + le centre * (x,y,z)
 	outline_vertex_buffer.resize(pointsCount * 3);
 	
 	
@@ -126,7 +126,7 @@ DrawablePolygon::DrawablePolygon(int64_t _Id, bpt _center, bpolygon& _bcontourPo
 
 int DrawablePolygon::GetVerticesCount()
 {
-	return vertex_buffer.size();
+	return 3*verticesCount;
 }
 
 int DrawablePolygon::GetIndexCount()
@@ -144,11 +144,11 @@ bool DrawablePolygon::hasPositionChanged()
 	return positionChanged;
 }
 
-std::vector<float> DrawablePolygon::GetVertices()
+float DrawablePolygon::GetVertices(int idx)
 {
-	if (vertex_buffer.size() > 0)
-		return vertex_buffer;
-	return std::vector<float>();
+	if (verticesCount > 0)
+		return vertex_buffer[idx];
+	return 0.0f;
 }
 
 std::vector<float> DrawablePolygon::GetOutline()
@@ -233,6 +233,7 @@ void DrawablePolygon::rescaleContourPoints(int width, int height)
 // Default destructor
 DrawablePolygon::~DrawablePolygon()
 {
+
 }
 
 

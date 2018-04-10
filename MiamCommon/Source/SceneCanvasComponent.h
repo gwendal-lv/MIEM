@@ -186,7 +186,8 @@ private:
 	static const int shapeColorBufferSize = 3 * numVerticesPolygon +  (3 * numVerticesRing) + numPointsPolygon * (3 * numVerticesCircle) + (3 * numPointsPolygon);
 	static const int shapeIndicesSize = 3 * numVerticesPolygon + (3 * numVerticesRing) + numPointsPolygon * (3 * numPointCircle) + (3 * 2 * numPointsPolygon);
 
-	static const int Nshapes = 2*5+(5-1);
+	static const int Npolygons = 10;
+	static const int Nshapes = Npolygons + Npolygons * (Npolygons + 1) / 2;
 	static const int vertexBufferSize = Nshapes * shapeVertexBufferSize;
 	static const int colorBufferSize = Nshapes * shapeColorBufferSize;
 	static const int indicesSize = Nshapes * shapeIndicesSize;
