@@ -21,7 +21,7 @@ DrawableArea(areaTree)
 
 	int W = areaTree.get<int>("<xmlattr>.width");
 	int H = areaTree.get<int>("<xmlattr>.height");
-	float oldCanvasRation = (double)W / (double)H;
+	float oldCanvasRation = (float)W / (float)H;
 	if (oldCanvasRation > 1.0F)
 	{
 		xScale = 1.0f / oldCanvasRation;
@@ -131,7 +131,7 @@ int DrawablePolygon::GetVerticesCount()
 
 int DrawablePolygon::GetIndexCount()
 {
-	return index_buffer.size();
+	return (int)index_buffer.size();
 }
 
 bool DrawablePolygon::hasVerticesChanged()
@@ -276,14 +276,14 @@ void DrawablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
     boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scale(parentCanvas->getWidth(), parentCanvas->getHeight());
     boost::geometry::transform(contourPoints, contourPointsInPixels, scale);
 
-	vertex_buffer[0] = centerInPixels.get<0>();
-	vertex_buffer[1] = centerInPixels.get<1>();
+	vertex_buffer[0] = (float)centerInPixels.get<0>();
+	vertex_buffer[1] = (float)centerInPixels.get<1>();
 	vertex_buffer[2] = 0.0f;
 	
 	for (int i = 0; i<contourPointsInPixels.outer().size()-1; i++)
 	{
-		vertex_buffer[3 + i * 3] = contourPointsInPixels.outer().at(i).get<0>();//radius*cosf(currentAngle);
-		vertex_buffer[3 + i * 3 + 1] = contourPointsInPixels.outer().at(i).get<1>();
+		vertex_buffer[3 + i * 3] = (float)contourPointsInPixels.outer().at(i).get<0>();//radius*cosf(currentAngle);
+		vertex_buffer[3 + i * 3 + 1] = (float)contourPointsInPixels.outer().at(i).get<1>();
 		vertex_buffer[3 + i * 3 + 2] = 0.0f;
 	}
 
@@ -299,10 +299,10 @@ void DrawablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 	boost::geometry::transform(outlinePolygon, tmpPolygon, rescaler);
 	boost::geometry::transform(tmpPolygon, outlinePolygon, invTr);
 
-	for (int i = 0; i < outlinePolygon.outer().size()-1; ++i)
+	for (int i = 0; i < (int)outlinePolygon.outer().size()-1; ++i)
 	{
-		outline_vertex_buffer[i * 3] = outlinePolygon.outer().at(i).get<0>();//radius*cosf(currentAngle);
-		outline_vertex_buffer[i * 3 + 1] = outlinePolygon.outer().at(i).get<1>();
+		outline_vertex_buffer[i * 3] = (float)outlinePolygon.outer().at(i).get<0>();//radius*cosf(currentAngle);
+		outline_vertex_buffer[i * 3 + 1] = (float)outlinePolygon.outer().at(i).get<1>();
 		outline_vertex_buffer[i * 3 + 2] = 0.0f;
 	}
 }

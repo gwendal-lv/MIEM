@@ -144,9 +144,9 @@ std::shared_ptr<CompletePolygon> Amusing::IntersectionPolygon::getOtherParent(st
 int IntersectionPolygon::getApexesCount(std::shared_ptr<CompletePolygon> parent)
 {
 	if (parent == parent1)
-		return parent1ApexesAngle.size();
+		return (int)parent1ApexesAngle.size();
 	else if (parent == parent2)
-		return parent2ApexesAngle.size();
+		return (int)parent2ApexesAngle.size();
 	else
 		return 0;
 }

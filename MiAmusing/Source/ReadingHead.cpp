@@ -249,7 +249,6 @@ void PlayHead::process()
 		oldPeriod = metronome->getPeriodInSamples();
 	double oldPosition = position * metronome->getPeriodInSamples() / oldPeriod;
 	oldPeriod = metronome->getPeriodInSamples();
-	double r = 0;
 	
 	switch (state)
 	{
@@ -392,7 +391,7 @@ void PlayHead::process()
 		sub = ceil(oldPosition);
 		up = ceil(position);
 
-		double test;
+		
 		//if (sub > up) // passe dedans si : BPM change -> rien changer
 		//{			  // ou si on passe par 0 (entre fin de cycle et nouveau cycle
 		//	

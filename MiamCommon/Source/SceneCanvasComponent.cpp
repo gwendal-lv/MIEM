@@ -68,12 +68,12 @@ SceneCanvasComponent::SceneCanvasComponent() :
 	double incAngle = 2 * M_PI / (double)numPoints;
 	for (int i = 0; i < numPoints; ++i)
 	{
-		g_vertex_ring[i * 3] = ri * cos(currentAngle);
-		g_vertex_ring[i * 3 + 1] =  ri * sin(currentAngle);
-		g_vertex_ring[i * 3 + 2] = 0;
-		g_vertex_ring[numPoints*3 + i*3] = re * cos(currentAngle);
-		g_vertex_ring[numPoints*3 + i*3 + 1] = re * sin(currentAngle);
-		g_vertex_ring[numPoints*3 + i*3 + 2] = 0;
+		g_vertex_ring[i * 3] = ri * (float)cos(currentAngle);
+		g_vertex_ring[i * 3 + 1] =  ri * (float)sin(currentAngle);
+		g_vertex_ring[i * 3 + 2] = 0.0f;
+		g_vertex_ring[numPoints*3 + i*3] = re * (float)cos(currentAngle);
+		g_vertex_ring[numPoints*3 + i*3 + 1] = re * (float)sin(currentAngle);
+		g_vertex_ring[numPoints*3 + i*3 + 2] = 0.0;
 		currentAngle += incAngle;
 	}
 	for (int i = 0; i < numPoints; ++i)
@@ -95,9 +95,9 @@ SceneCanvasComponent::SceneCanvasComponent() :
 	g_vertex_circle[2] = 0.0f;
 	for (int i = 0; i < numPointCircle; ++i)
 	{
-		g_vertex_circle[(i+1) * 3] = radius * cos(currentAngle);
-		g_vertex_circle[(i+1) * 3 + 1] = radius * sin(currentAngle);
-		g_vertex_circle[(i+1) * 3 + 2] = 0;
+		g_vertex_circle[(i+1) * 3] = radius * (float)cos(currentAngle);
+		g_vertex_circle[(i+1) * 3 + 1] = radius * (float)sin(currentAngle);
+		g_vertex_circle[(i+1) * 3 + 2] = 0.0f;
 		currentAngle += incAngle;
 	}
 	for (int i = 0; i < numPointCircle; ++i)
@@ -379,7 +379,7 @@ void SceneCanvasComponent::renderOpenGL()
 			decalage += 2 * numPointsPolygon;
 		}*/
 		//if(duplicatedAreas.size() > 1)
-			DrawShape(duplicatedAreas[i], i * numVertexShape);
+		DrawShape(duplicatedAreas[i], (int)i * numVertexShape);
 		//DrawShape(duplicatedAreas[1], 0 * numVertexShape);
     }
     
@@ -388,9 +388,9 @@ void SceneCanvasComponent::renderOpenGL()
 
 	/// calcul des matrices
 	Matrix3D<float> testView = lookAt(Vector3D<float>(0, 0, 1), Vector3D<float>(0, 0, 0), Vector3D<float>(0, -1, 0));
-	Matrix3D<float> testProject = perspective(getWidth(), getHeight(), 0.1f, 100.0f);
+	Matrix3D<float> testProject = perspective((float)getWidth(), (float)getHeight(), 0.1f, 100.0f);
 	if (projectionMatrix != nullptr)
-		projectionMatrix->setMatrix4(perspective(getWidth(), getHeight(), 0.5f, 1.1f).mat, 1, false);
+		projectionMatrix->setMatrix4(perspective((float)getWidth(), (float)getHeight(), 0.5f, 1.1f).mat, 1, false);
 
 	if (viewMatrix != nullptr)
 		viewMatrix->setMatrix4(testView.mat, 1, false);
@@ -398,7 +398,7 @@ void SceneCanvasComponent::renderOpenGL()
 	Matrix3D<float> model(1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, -1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, getHeight(), 0.0f, 1.0f);//10*getHeight()
+		0.0f, (float)getHeight(), 0.0f, 1.0f);//10*getHeight()
 
 	if (modelMatrix != nullptr)
 		modelMatrix->setMatrix4(model.mat, 1, false);
@@ -514,9 +514,9 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 		{
 			/*if (3 * decalage + j > shapeVertexBufferSize)
 				DBG("depasse");*/
-			g_vertex_buffer_data[3 * decalage + j] = 1.0* (area->GetVertices(0) + g_vertex_ring[j]);
-			g_vertex_buffer_data[3 * decalage + j + 1] = 1.0*(area->GetVertices(1) + g_vertex_ring[j + 1]);
-			g_vertex_buffer_data[3 * decalage + j + 2] = 0.1 + g_vertex_ring[j + 2];
+			g_vertex_buffer_data[3 * decalage + j] = 1.0f* (area->GetVertices(0) + g_vertex_ring[j]);
+			g_vertex_buffer_data[3 * decalage + j + 1] = 1.0f*(area->GetVertices(1) + g_vertex_ring[j + 1]);
+			g_vertex_buffer_data[3 * decalage + j + 2] = 0.1f + g_vertex_ring[j + 2];
 		}
 		decalage += numVerticesRing;
 		//shift.push_back(decalage);
@@ -531,9 +531,9 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 				{
 					/*if (3 * decalage + j > shapeVertexBufferSize)
 						DBG("depasse");*/
-					g_vertex_buffer_data[3 * decalage + j] = 1.0* (area->GetVertices(3 + k * 3) + g_vertex_circle[j]);
-					g_vertex_buffer_data[3 * decalage + j + 1] = 1.0*(area->GetVertices(3 + k * 3 + 1) + g_vertex_circle[j + 1]);
-					g_vertex_buffer_data[3 * decalage + j + 2] = 0.1 + g_vertex_circle[j + 2];
+					g_vertex_buffer_data[3 * decalage + j] = 1.0f* (area->GetVertices(3 + k * 3) + g_vertex_circle[j]);
+					g_vertex_buffer_data[3 * decalage + j + 1] = 1.0f*(area->GetVertices(3 + k * 3 + 1) + g_vertex_circle[j + 1]);
+					g_vertex_buffer_data[3 * decalage + j + 2] = 0.1f + g_vertex_circle[j + 2];
 				}
 				decalage += numVerticesCircle;
 			}
@@ -600,7 +600,7 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 			DBG("depasse");*/
 
 		//3. points
-		int numApexes = newIndex.size() / 3;
+		int numApexes = (int)newIndex.size() / 3;
 		for (int k = 0; k < numPointsPolygon; ++k)
 		{
 			if (k < numApexes)

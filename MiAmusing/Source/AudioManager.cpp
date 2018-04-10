@@ -108,7 +108,7 @@ void AudioManager::prepareToPlay(int samplesPerBlockExpected, double _sampleRate
 		//audioFormatManager.clearFormats();
 	}
 	
-	int numOutChannels = model->sharedAudioDeviceManager->getCurrentAudioDevice()->getActiveOutputChannels().getHighestBit() + 1;
+	//int numOutChannels = model->sharedAudioDeviceManager->getCurrentAudioDevice()->getActiveOutputChannels().getHighestBit() + 1;
 }
 void AudioManager::releaseResources()
 {

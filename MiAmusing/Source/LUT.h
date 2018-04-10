@@ -4,7 +4,7 @@ namespace LUT
 	 //Look Up Table for the function :  f = k + A exp(m * x)
 	 //with k = -3164.71 and A = 25601 calculated for m = -6
 	int size = 4096;
-	int init = 0.05;
+	double init = 0.05;
 	double LUT[4096] = 
 	{
 		20000, 19972.5, 19945, 19917.6, 19890.3, 19862.9, 19835.6, 19808.3, 19781.1, 19753.9, 19726.8, 19699.7, 19672.6, 19645.5, 19618.5, 19591.6, 19564.7, 19537.8, 19510.9, 19484.1,

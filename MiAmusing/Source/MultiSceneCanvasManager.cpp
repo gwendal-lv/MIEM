@@ -98,7 +98,7 @@ void MultiSceneCanvasManager::AddCompleteArea()
 void MultiSceneCanvasManager::AddAreaToScene(size_t sceneIndex, std::shared_ptr<IInteractiveArea> area_)
 {
 	SelectScene(sceneIndex); // lors du deuxième passage, le premier excitateur est supprimé
-	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(scenes[sceneIndex]))
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(scenes[(int)sceneIndex]))
 	{
 		if (auto amusingArea = std::dynamic_pointer_cast<CompletePolygon>(area_))
 		{
@@ -186,7 +186,6 @@ void MultiSceneCanvasManager::SetAudioPositions(std::shared_ptr<Cursor> cursor, 
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
 	{
 		bpt oldPosition = cursor->getPosition();//InPixels();
-		int hitAreaId = 0;
 		if (amusingScene->isDrew(cursor) && cursor->setReadingPosition(position)) // vérifie si le curseur est dessiné et le met à jour (seulement si la condition "dessiné" est déjà vérifiée)
 		{
 

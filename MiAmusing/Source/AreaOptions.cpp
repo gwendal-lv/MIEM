@@ -99,7 +99,7 @@ AreaOptions::~AreaOptions()
 }
 
 //==============================================================================
-void AreaOptions::paint (Graphics& g)
+void AreaOptions::paint (Graphics& /*g*/)
 {
     //[UserPrePaint] Add your own custom painting code here..
     //[/UserPrePaint]

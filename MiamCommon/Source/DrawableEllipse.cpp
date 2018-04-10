@@ -64,10 +64,8 @@ DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b,
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>() - (a / 2)*xScale, center.get<1>()));
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() - (b / 2)*yScale));
 
-	float aScaled = (float)(a / 2.0) * xScale; // demi-axe, normalisé, rescalé si keepratio
-	float bScaled = (float)(b / 2.0) * yScale; // demi-axe , (idem)
 
-	int verticesCount = (ellipseVerticesCount + 1);
+	//int verticesCount = (ellipseVerticesCount + 1);
 	
 	//vertex_buffer = new float[verticesCount];
 	//vertex_buffer.resize(verticesCount * 3);
@@ -111,7 +109,7 @@ int DrawableEllipse::GetVerticesCount()
 
 int DrawableEllipse::GetIndexCount()
 {
-	return index_buffer.size();
+	return (int)index_buffer.size();
 }
 
 bool DrawableEllipse::hasVerticesChanged()
@@ -254,17 +252,17 @@ void DrawableEllipse::CanvasResized(SceneCanvasComponent* _parentCanvas)
 	
 
 	float dR = (float)sqrt(2) * contourWidth / 2.0f;
-	vertex_buffer[0] = centerInPixels.get<0>();
-	vertex_buffer[1] = centerInPixels.get<1>();
+	vertex_buffer[0] = (float)centerInPixels.get<0>();
+	vertex_buffer[1] = (float)centerInPixels.get<1>();
 	vertex_buffer[2] = 0.0f;
 	for (int i = 0; i < ellipseVerticesCount; i++)
 	{
 		double normalizedAngle = (double)(i) / (double)(ellipseVerticesCount);
-		vertex_buffer[3 + i * 3] = centerInPixels.get<0>() + aInPixels * (float)std::cos(2.0 * M_PI * normalizedAngle);
-		vertex_buffer[3 + i * 3 + 1] = centerInPixels.get<1>() + bInPixels * (float)std::sin(2.0 * M_PI * normalizedAngle);
+		vertex_buffer[3 + i * 3] = (float)centerInPixels.get<0>() + (float)aInPixels * (float)std::cos(2.0 * M_PI * normalizedAngle);
+		vertex_buffer[3 + i * 3 + 1] = (float)centerInPixels.get<1>() + (float)bInPixels * (float)std::sin(2.0 * M_PI * normalizedAngle);
 		vertex_buffer[3 + i * 3 + 2] = 0.0f;
-		outline_vertex_buffer[i * 3] = centerInPixels.get<0>() + (aInPixels + dR) * (float)std::cos(2.0 * M_PI * normalizedAngle);
-		outline_vertex_buffer[i * 3 + 1] = centerInPixels.get<1>() + (bInPixels + dR) * (float)std::sin(2.0 * M_PI * normalizedAngle);
+		outline_vertex_buffer[i * 3] = (float)centerInPixels.get<0>() + float(aInPixels + dR) * (float)std::cos(2.0 * M_PI * normalizedAngle);
+		outline_vertex_buffer[i * 3 + 1] = (float)centerInPixels.get<1>() + float(bInPixels + dR) * (float)std::sin(2.0 * M_PI * normalizedAngle);
 		outline_vertex_buffer[i * 3 + 2] = 0.0f;
 	}
 

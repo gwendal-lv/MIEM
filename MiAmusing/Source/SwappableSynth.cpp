@@ -185,7 +185,7 @@ void SwappableSynth::skipSwapping(bool m_shouldSkip)
 		skipMutex = true;
 }
 
-bool SwappableSynth::setState(SwappableSynthState newState)
+bool SwappableSynth::setState(SwappableSynthState /*newState*/)
 {
 
 	return false;

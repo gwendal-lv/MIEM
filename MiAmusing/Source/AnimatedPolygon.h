@@ -45,7 +45,7 @@ namespace Amusing
 			//DBG((String)contourPointsInPixels.size());
 			//DBG((String)contourPoints.size());
 			//DBG((String)contour);
-			return contourPoints.outer().size();
+			return (int)contourPoints.outer().size();
 		}
 
 		int GetHeight()

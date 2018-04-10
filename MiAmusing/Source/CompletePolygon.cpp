@@ -413,7 +413,7 @@ boost::geometry::model::segment<bpt> CompletePolygon::getSegment(bpt hitPoint) /
 	
 	if (i == 0)
 	{
-		prev = contourPoints.outer().size() - 1;
+		prev = (int)contourPoints.outer().size() - 1;
 		suiv = 0;
 	}
 	else
@@ -452,7 +452,7 @@ boost::geometry::model::segment<bpt> CompletePolygon::getSegmentInPixels(bpt hit
 
 	if (i == 0)
 	{
-		prev = contourPointsInPixels.outer().size() - 1;
+		prev = (int)contourPointsInPixels.outer().size() - 1;
 		suiv = 0;
 	}
 	else
@@ -1307,7 +1307,7 @@ double CompletePolygon::getAngularPercentage(bpt hitPoint)
 	int suiv = 0;
 	if (i == 0)
 	{
-		prev = contourPoints.outer().size() - 1;
+		prev = (int)contourPoints.outer().size() - 1;
 		suiv = 0;
 	}
 	else
@@ -1343,7 +1343,7 @@ double CompletePolygon::getLinearPercentage(bpt hitPoint)
 	int suiv = 0;
 	if (i == 0)
 	{
-		prev = contourPoints.outer().size() - 1;
+		prev = (int)contourPoints.outer().size() - 1;
 		suiv = 0;
 	}
 	else
@@ -1563,7 +1563,7 @@ bool CompletePolygon::getChordParameters(int idx, std::shared_ptr<CompletePolygo
 	}
 	else
 	{
-		idx -= chordAreaForPercentage.size();
+		idx -= (int)chordAreaForPercentage.size();
 		int N = 0;
 		for (int i = 0; i < (int)chordAreaForFlag.size(); ++i)
 			if (chordAreaForFlag[i] != nullptr)

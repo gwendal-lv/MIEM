@@ -361,7 +361,6 @@ void AmusingScene::AddIntersections(std::shared_ptr<IDrawableArea> m_area)
 			{
 				if (auto currentPolygon = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
 				{
-					int index = 0;//areas.size() + currentExciters.size() + currentIntersectionsAreas.size();
 					std::shared_ptr<IntersectionPolygon> newIntersection(new IntersectionPolygon(canvasManagerLocked->GetNextAreaId(), completeParent, currentPolygon, Colours::red));
 					currentIntersectionsAreas.push_back(newIntersection);
 
@@ -380,7 +379,7 @@ void AmusingScene::AddAllIntersections()
 	if (!canvasManagerLocked)
 		throw std::logic_error("Cannot add a new current exciter : cannot get a Unique ID from the canvas manager (not linked to this)");
 
-	int N = areas.size();
+	int N = (int)areas.size();
 	for (int i = 0; i < N; ++i)
 	{
 		for (int j = i + 1; j < N; ++j)
@@ -1012,7 +1011,6 @@ std::shared_ptr<MultiAreaEvent> AmusingScene::SetAllAudioPositions(double /*posi
 	
 	std::shared_ptr<Miam::MultiAreaEvent> areaE;
 	areaE = std::shared_ptr<Miam::MultiAreaEvent>(new Miam::MultiAreaEvent());
-	bool first = true;
 	for (int i = 0; i < (int)areas.size(); ++i)
 	{
 		//areaE = std::shared_ptr<Miam::MultiAreaEvent>(new Miam::MultiAreaEvent());
@@ -1052,7 +1050,7 @@ std::shared_ptr<AnimatedPolygon> AmusingScene::getNextArea()
 
 int AmusingScene::getNumberArea()
 {
-	return areas.size() -currentIntersectionsAreas.size();
+	return (int)areas.size() -currentIntersectionsAreas.size();
 }
 
 std::shared_ptr<AreaEvent> AmusingScene::OnDelete()
@@ -1205,12 +1203,12 @@ std::shared_ptr<bptree::ptree> AmusingScene::GetTree() const
 	return sceneTree;
 }
 
-std::shared_ptr<MultiAreaEvent> AmusingScene::OnSelection(bool resetExciters)
+std::shared_ptr<MultiAreaEvent> AmusingScene::OnSelection(bool /*resetExciters*/)
 {
 	return std::make_shared<MultiAreaEvent>(); //EditableScene::OnSelection(false);
 }
 
-std::shared_ptr<MultiAreaEvent> AmusingScene::OnUnselection(bool shutExcitersDown)
+std::shared_ptr<MultiAreaEvent> AmusingScene::OnUnselection(bool /*shutExcitersDown*/)
 {
 	// Absolutely needed (vector copy contructor won't be much time-consuming)
 	auto multiAreaE = InteractiveScene::OnUnselection(false);
