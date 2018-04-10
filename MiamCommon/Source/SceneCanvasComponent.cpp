@@ -41,13 +41,20 @@ SceneCanvasComponent::SceneCanvasComponent() :
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
 	
-	g_color_buffer_data = std::vector<GLfloat>(colorBufferSize,0.0f);
 	for (int i = 0; i < Nshapes;++i)
 	{
-		ColorGenerator g(0.5f, 0.5f, 0.5f);
-		std::generate(g_color_buffer_data.begin() + i * shapeColorBufferSize, g_color_buffer_data.begin() + i * shapeColorBufferSize + 3 * numVerticesPolygon, g);
-		ColorGenerator f(1.0f, 0.0f, 0.0f);
-		std::generate(g_color_buffer_data.begin() + i * shapeColorBufferSize + 3 * numVerticesPolygon + 1, g_color_buffer_data.begin() + (i+1) * shapeColorBufferSize, f);
+		for (int j = i* shapeColorBufferSize; j <  i* shapeColorBufferSize + 3 * numVerticesPolygon; j+=3)
+		{
+			g_color_buffer_data[j] = 0.5f;
+			g_color_buffer_data[j+1] = 0.5f;
+			g_color_buffer_data[j+2] = 0.5f;
+		}
+		for (int j = i * shapeColorBufferSize + 3 * numVerticesPolygon; j < (i+1)*shapeColorBufferSize; j+=3)
+		{
+			g_color_buffer_data[j] = 1.0f;
+			g_color_buffer_data[j + 1] = 0.0f;
+			g_color_buffer_data[j + 2] = 0.0f;
+		}
 	}
 
 	// calcul d'un anneau de centre 0, de rayon 5 pixels et avec une épaisseur de 2 pixels
@@ -189,7 +196,7 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 	// pareil pour les buffers de couleurs des deux
 	openGlContext.extensions.glGenBuffers(1, &colorBuffer);
 	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
-	openGlContext.extensions.glBufferData(GL_ARRAY_BUFFER, colorBufferSize* sizeof(GLfloat[3]), &g_color_buffer_data[0], GL_STATIC_DRAW);
+	openGlContext.extensions.glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
 
 	// TRIANGLE INDEX
 	openGlContext.extensions.glGenBuffers(1, &elementBuffer);
