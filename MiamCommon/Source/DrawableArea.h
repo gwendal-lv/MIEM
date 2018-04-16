@@ -80,6 +80,7 @@ namespace Miam
 		bool verticesChanged = false;
 		bool positionChanged = false;
 		float vertex_buffer[33*3]; // taille maximum : 32 points + centre
+
 		std::vector<float> outline_vertex_buffer;
 		std::vector<int> index_buffer;
 		Vector3D<float> modelParameters; // x, y, theta
@@ -112,7 +113,7 @@ namespace Miam
         /// \brief Pour régler les problèmes d'écrans type "rétina"
         virtual void SetRenderingScale(double renderingScale_) override;
         
-        
+		bool hasVerticesChanged() override;
         
         // =============== MÉTHODES ===============
 

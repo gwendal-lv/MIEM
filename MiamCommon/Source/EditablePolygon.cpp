@@ -199,6 +199,7 @@ AreaEventType EditablePolygon::TryBeginPointMove(const Point<double>& hitPoint)
         {
             pointDraggedId = EditableAreaPointId::ManipulationPoint;
 			eventType = AreaEventType::PointDragBegins;
+			verticesChanged = true;
         }
         
         // Are we grabbing one of the contour points ?
@@ -208,6 +209,7 @@ AreaEventType EditablePolygon::TryBeginPointMove(const Point<double>& hitPoint)
             {
                 pointDraggedId = (int)i;
 				eventType = AreaEventType::PointDragBegins;
+				verticesChanged = true;
             }
         }
 
@@ -220,6 +222,7 @@ AreaEventType EditablePolygon::TryBeginPointMove(const Point<double>& hitPoint)
             {
                 pointDraggedId = EditableAreaPointId::Center;
 				eventType = AreaEventType::PointDragBegins;
+				verticesChanged = true;
             }
         }
     }
@@ -232,6 +235,7 @@ AreaEventType EditablePolygon::TryBeginPointMove(const Point<double>& hitPoint)
             pointDraggedId = EditableAreaPointId::WholeArea;
             lastLocation = hitPoint;
 			eventType = AreaEventType::PointDragBegins;
+			verticesChanged = true;
         }
     }
     
@@ -380,6 +384,7 @@ AreaEventType EditablePolygon::EndPointMove()
     computeManipulationPoint();
     pointDraggedId = EditableAreaPointId::None;
 	eventType = AreaEventType::PointDragStops;
+	verticesChanged = false;
 
 	return eventType;
 }

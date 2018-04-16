@@ -379,7 +379,8 @@ void SceneCanvasComponent::renderOpenGL()
 			decalage += 2 * numPointsPolygon;
 		}*/
 		//if(duplicatedAreas.size() > 1)
-		DrawShape(duplicatedAreas[i], (int)i * numVertexShape);
+		if(areasCountChanged || duplicatedAreas[i]->hasVerticesChanged())
+			DrawShape(duplicatedAreas[i], (int)i * numVertexShape);
 		//DrawShape(duplicatedAreas[1], 0 * numVertexShape);
     }
     
@@ -412,6 +413,7 @@ void SceneCanvasComponent::renderOpenGL()
 
 	openGlContext.extensions.glEnableVertexAttribArray(colour->attributeID);
 	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
+	openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(g_color_buffer_data), g_color_buffer_data);
 	openGlContext.extensions.glVertexAttribPointer(colour->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
 
 	
@@ -498,8 +500,6 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 		int verticesCount = area->GetVerticesCount();
 		for (int j = 0; j < 3*(numPointsPolygon + 1); ++j)
 		{
-			/*if (3 * decalage + j > shapeVertexBufferSize)
-				DBG("depasse");*/
 			if (j < verticesCount)
 				g_vertex_buffer_data[3 * decalage + j] = area->GetVertices(j);//*10
 			else
@@ -507,19 +507,16 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 		}
 
 		decalage += (numPointsPolygon + 1);
-		//shift.push_back(decalage);
 
 		//2. centre
 		for (int j = 0; j < 3 * numVerticesRing; j += 3)
 		{
-			/*if (3 * decalage + j > shapeVertexBufferSize)
-				DBG("depasse");*/
 			g_vertex_buffer_data[3 * decalage + j] = 1.0f* (area->GetVertices(0) + g_vertex_ring[j]);
 			g_vertex_buffer_data[3 * decalage + j + 1] = 1.0f*(area->GetVertices(1) + g_vertex_ring[j + 1]);
 			g_vertex_buffer_data[3 * decalage + j + 2] = 0.1f + g_vertex_ring[j + 2];
 		}
 		decalage += numVerticesRing;
-		//shift.push_back(decalage);
+		
 
 		//3. points
 		int numApexes = (verticesCount - 3) / 3;
@@ -529,8 +526,6 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 			{
 				for (int j = 0; j < 3 * numVerticesCircle; j += 3)
 				{
-					/*if (3 * decalage + j > shapeVertexBufferSize)
-						DBG("depasse");*/
 					g_vertex_buffer_data[3 * decalage + j] = 1.0f* (area->GetVertices(3 + k * 3) + g_vertex_circle[j]);
 					g_vertex_buffer_data[3 * decalage + j + 1] = 1.0f*(area->GetVertices(3 + k * 3 + 1) + g_vertex_circle[j + 1]);
 					g_vertex_buffer_data[3 * decalage + j + 2] = 0.1f + g_vertex_circle[j + 2];
@@ -543,10 +538,7 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 					g_vertex_buffer_data[3 * decalage + j] = 0;
 				decalage += numVerticesCircle;
 			}
-			//shift.push_back(decalage);
 		}
-		/*for (int i = numApexes; i < numPointsPolygon; ++i)
-			shift.push_back(positionInBuffer + numVerticesPolygon + numVerticesRing + (i+1)*numVerticesCircle);*/
 
 		decalage = positionInBuffer + numVerticesPolygon + (numVerticesRing)+numPointsPolygon * (numVerticesCircle);//(numPointCircle);
 
@@ -554,8 +546,6 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 		std::vector<float> newOutline = area->GetOutline();
 		for (int j = 0; j < 3*numPointsPolygon; ++j)
 		{
-			/*if (3 * decalage + j > shapeVertexBufferSize)
-				DBG("depasse");*/
 			if (j < newOutline.size())
 				g_vertex_buffer_data[3 * decalage + j] = newOutline[j];
 			else
@@ -569,35 +559,24 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 	decalage = positionInBuffer;// +numPointsPolygon + 1;
 	if (area->GetIndexCount() >= 3)
 	{
-		int last = 0;
 		//1. forme
 		std::vector<int> newIndex = area->GetIndex();
 		for (int j = 0; j < 3*(numPointsPolygon + 1); ++j)
 		{
-			/*if (3 * decalage + j > shapeIndicesSize || 3 * decalage + j > 3*(decalage + numPointsPolygon + 1))
-				DBG("depasse");*/
 			if (j < newIndex.size())
 				indices[3 * decalage + j] = (unsigned int)newIndex[j] + shift2[0] + positionInBuffer;
 			else
 				indices[3 * decalage + j] = 0;
-			last = 3 * decalage + j;
 		}
 
 		decalage += numPointsPolygon + 1;
-		/*if (last > 3 * decalage)
-			DBG("depasse");*/
 
 		//2. centre
 		for (int j = 0; j < 3 * numVerticesRing; ++j)
 		{
-			/*if (3 * decalage + j > shapeIndicesSize || 3 * decalage + j > 3*(decalage + numVerticesRing))
-				DBG("depasse");*/
 			indices[j + 3 * decalage/*+ numVerticesPolygon*/] = ringIndices[j] + shift2[1] + positionInBuffer;/*+ numVerticesPolygon*/;
-			last = j + 3 * decalage;
 		}
 		decalage += numVerticesRing;
-		/*if (last > 3 * decalage)
-			DBG("depasse");*/
 
 		//3. points
 		int numApexes = (int)newIndex.size() / 3;
@@ -607,10 +586,7 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 			{
 				for (int j = 0; j < 3 * numPointCircle; ++j)
 				{
-					/*if (3 * decalage + j > shapeIndicesSize || 3 * decalage + j > 3 * (decalage + numPointCircle))
-						DBG("depasse");*/
 					indices[j + 3 * decalage/*+ numVerticesPolygon*/] = circleIndices[j] + shift2[2 + k] + positionInBuffer;
-					last = j + 3 * decalage;
 				}
 			}
 			else
@@ -622,16 +598,10 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 		}
 
 		decalage = positionInBuffer + numVerticesPolygon + (numVerticesRing)+numPointsPolygon * (numPointCircle);
-		/*if (last > 3 * decalage)
-			DBG("depasse");*/
-										
 		
-		int count = 0;
 		//4. contour
 		for (int i = 0; i < numPointsPolygon; ++i)
 		{
-			/*if (3 * decalage + i * 6 > shapeIndicesSize || 3 * decalage + i * 6 > 3*(decalage+2*numPointsPolygon))
-				DBG("depasse");*/
 			if (i < numApexes)
 			{
 				indices[3 * decalage + i * 6] = positionInBuffer + i + 1;
@@ -640,7 +610,6 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 				indices[3 * decalage + i * 6 + 3] = shift2[2 + numPointsPolygon] + positionInBuffer + i + 1 >= shift2[2 + numPointsPolygon] + positionInBuffer + numApexes ? shift2[2 + numPointsPolygon] + positionInBuffer : shift2[2 + numPointsPolygon] + positionInBuffer + i + 1;
 				indices[3 * decalage + i * 6 + 4] = positionInBuffer + i + 1;
 				indices[3 * decalage + i * 6 + 5] = positionInBuffer + i + 2 >= positionInBuffer + numApexes + 1 ? positionInBuffer + 1 : positionInBuffer + i + 2;
-				count += 6;
 			}
 			else
 			{
@@ -650,14 +619,26 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 				indices[3 * decalage + i * 6 + 3] = 0;
 				indices[3 * decalage + i * 6 + 4] = 0;
 				indices[3 * decalage + i * 6 + 5] = 0;
-				count += 6;
 			}
-			last = 3 * decalage + i * 6 + 5;
 		}
 
 		decalage += 2 * numPointsPolygon;
-		/*if (last > 3 * decalage)
-			DBG("depasse");*/
+		
+		float R = area->GetFillColour().getFloatRed();
+		float G = area->GetFillColour().getFloatGreen();
+		float B = area->GetFillColour().getFloatBlue();
+		for (int j = positionInBuffer; j < positionInBuffer + 3 * numVerticesPolygon; j += 3)
+		{
+			g_color_buffer_data[j] = R;
+			g_color_buffer_data[j + 1] = G;
+			g_color_buffer_data[j + 2] = B;
+		}
+		for (int j = positionInBuffer + 3 * numVerticesPolygon; j < positionInBuffer +  numVertexShape; j += 3)
+		{
+			g_color_buffer_data[j] = 1.0f;
+			g_color_buffer_data[j + 1] = 0.0f;
+			g_color_buffer_data[j + 2] = 0.0f;
+		}
 	}
 
 

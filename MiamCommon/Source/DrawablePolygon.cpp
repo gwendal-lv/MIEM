@@ -151,6 +151,7 @@ float DrawablePolygon::GetVertices(int idx)
 	return 0.0f;
 }
 
+
 std::vector<float> DrawablePolygon::GetOutline()
 {
 	if (outline_vertex_buffer.size() > 0)

@@ -217,6 +217,7 @@ bool Cursor::setReadingPosition(double p)
 			DBG("alpha négatif");
 		SetAlpha(newAlpha);
 		CanvasResized(parentCanvas);
+		verticesChanged = true;
 		//DBG((String)center.get<0>() + " " + (String)center.get<1>() + "setReadingPosition");
 		return true;
 	}

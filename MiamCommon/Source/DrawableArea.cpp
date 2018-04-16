@@ -234,6 +234,11 @@ void DrawableArea::SetRenderingScale(double renderingScale_)
     renderingScale = renderingScale_;
 }
 
+bool DrawableArea::hasVerticesChanged()
+{
+	return verticesChanged;
+}
+
 void DrawableArea::SetFillColour(Colour newColour)
 {
     fillColour = newColour;
