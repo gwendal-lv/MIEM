@@ -25,17 +25,19 @@ SceneCanvasComponent::SceneCanvasComponent() :
 	
 	for (int i = 0; i < Nshapes;++i)
 	{
-		for (int j = i* shapeColorBufferSize; j <  i* shapeColorBufferSize + 3 * numVerticesPolygon; j+=3)
+		for (int j = i* shapeColorBufferSize; j <  i* shapeColorBufferSize + 4 * numVerticesPolygon; j+=4)
 		{
 			g_color_buffer_data[j] = 0.5f;
 			g_color_buffer_data[j+1] = 0.5f;
 			g_color_buffer_data[j+2] = 0.5f;
+			g_color_buffer_data[j + 3] = 1.0f;
 		}
-		for (int j = i * shapeColorBufferSize + 3 * numVerticesPolygon; j < (i+1)*shapeColorBufferSize; j+=3)
+		for (int j = i * shapeColorBufferSize + 4 * numVerticesPolygon; j < (i+1)*shapeColorBufferSize; j+=4)
 		{
 			g_color_buffer_data[j] = 1.0f;
 			g_color_buffer_data[j + 1] = 0.0f;
 			g_color_buffer_data[j + 2] = 0.0f;
+			g_color_buffer_data[j + 3] = 1.0f;
 		}
 	}
 
@@ -109,7 +111,7 @@ SceneCanvasComponent::SceneCanvasComponent() :
 	shift2[2 + numPointsPolygon + 1] = shift2[2 + numPointsPolygon] + numPointsPolygon;
 	shift2[2 + numPointsPolygon + 2] = shift2[2 + numPointsPolygon + 1] + dottedLineVertexes;
     
-    openGlContext.setComponentPaintingEnabled(false); // default behavior, lower perfs
+    openGlContext.setComponentPaintingEnabled(true); // default behavior, lower perfs
     // OpenGL final initialization will happen in the COmpleteInitialization method
     
 }
@@ -225,6 +227,7 @@ void SceneCanvasComponent::renderOpenGL()
 	glDepthFunc(GL_LESS);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glBlendFunc(GL_ONE, GL_ZERO);
 	openGlContext.extensions.glActiveTexture(GL_TEXTURE0);
 	glEnable(GL_TEXTURE_2D);
 	
@@ -364,7 +367,7 @@ void SceneCanvasComponent::renderOpenGL()
 			decalage += 2 * numPointsPolygon;
 		}*/
 		//if(duplicatedAreas.size() > 1)
-		if(areasCountChanged || duplicatedAreas[i]->hasVerticesChanged())
+		//if(areasCountChanged || duplicatedAreas[i]->hasVerticesChanged())
 			DrawShape(duplicatedAreas[i], (int)i * numVertexShape);
 		//DrawShape(duplicatedAreas[1], 0 * numVertexShape);
     }
@@ -399,7 +402,7 @@ void SceneCanvasComponent::renderOpenGL()
 	openGlContext.extensions.glEnableVertexAttribArray(colour->attributeID);
 	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
 	openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(g_color_buffer_data), g_color_buffer_data);
-	openGlContext.extensions.glVertexAttribPointer(colour->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
+	openGlContext.extensions.glVertexAttribPointer(colour->attributeID, 4, GL_FLOAT, GL_FALSE, sizeof(float[4]), 0);
 
 	
 	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer);
@@ -645,41 +648,54 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 
 		decalage += 2 * numPointsPolygon;
 
-		//5. manipulationLine
+		
 		if (area->IsActive())
 		{
+			//5. manipulationLine
 			for (int i = 0; i < dottedLineIndices; ++i)
 				indices[3 * decalage + i] = g_indices_dotted_line[i] + shift2[2 + numPointsPolygon + 1] + positionInBuffer;
+			decalage += 2 * dottedLineNparts;
+
+			//6. manipulationPoint
+			for (int j = 0; j < 3 * numVerticesRing; ++j)
+			{
+				indices[j + 3 * decalage/*+ numVerticesPolygon*/] = ringIndices[j] + shift2[2 + numPointsPolygon + 2] + positionInBuffer;/*+ numVerticesPolygon*/;
+			}
+			decalage += numVerticesRing;
 		}
 		else
 		{
 			for (int i = 0; i < dottedLineIndices; ++i)
 				indices[3 * decalage + i] = 0;
+			decalage += 2 * dottedLineNparts;
+			for (int j = 0; j < 3 * numVerticesRing; ++j)
+			{
+				indices[j + 3 * decalage] = 0;
+			}
+			decalage += numVerticesRing;
 		}
-		decalage += 2 * dottedLineNparts;
-
-		//6. manipulationPoint
-		for (int j = 0; j < 3 * numVerticesRing; ++j)
-		{
-			indices[j + 3 * decalage/*+ numVerticesPolygon*/] = ringIndices[j] + shift2[2 + numPointsPolygon + 2] + positionInBuffer;/*+ numVerticesPolygon*/;
-		}
-		decalage += numVerticesRing;
+		
 
 		// colors
+		float A = area->GetAlpha();
 		float R = area->GetFillColour().getFloatRed();
 		float G = area->GetFillColour().getFloatGreen();
 		float B = area->GetFillColour().getFloatBlue();
-		for (int j = positionInBuffer; j < positionInBuffer + 3 * numVerticesPolygon; j += 3)
+
+		
+		for (int j = 4 * positionInBuffer; j < 4 * positionInBuffer + 4 * numVerticesPolygon; j += 4)
 		{
 			g_color_buffer_data[j] = R;
 			g_color_buffer_data[j + 1] = G;
 			g_color_buffer_data[j + 2] = B;
+			g_color_buffer_data[j + 3] = A;
 		}
-		for (int j = positionInBuffer + 3 * numVerticesPolygon; j < positionInBuffer +  numVertexShape; j += 3)
+		for (int j = 4 * positionInBuffer + 4 * numVerticesPolygon; j < 4 * positionInBuffer + shapeColorBufferSize; j += 4)
 		{
 			g_color_buffer_data[j] = 1.0f;
 			g_color_buffer_data[j + 1] = 0.0f;
 			g_color_buffer_data[j + 2] = 0.0f;
+			g_color_buffer_data[j + 3] = 1.0f;
 		}
 	}
 

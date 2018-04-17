@@ -187,7 +187,7 @@ private:
 	//											forme					centre							points									contour				manipulationLine	manipulationPoint
 	static const int numVertexShape = numVerticesPolygon	+		numVerticesRing +	 (numPointsPolygon * numVerticesCircle) +			numPointsPolygon + dottedLineVertexes		+ numVerticesRing;
 	static const int shapeVertexBufferSize = 3 * numVerticesPolygon + (3 * numVerticesRing) + numPointsPolygon * (3 * numVerticesCircle) + (3 * numPointsPolygon) + 3 * dottedLineVertexes + 3 * numVerticesRing;
-	static const int shapeColorBufferSize = 3 * numVerticesPolygon +  (3 * numVerticesRing) + numPointsPolygon * (3 * numVerticesCircle) + (3 * numPointsPolygon) + 3 * dottedLineVertexes + 3 * numVerticesRing;
+	static const int shapeColorBufferSize = 4 * (numVerticesPolygon +  (numVerticesRing) + numPointsPolygon * ( numVerticesCircle) + ( numPointsPolygon) +  dottedLineVertexes +  numVerticesRing);
 	static const int shapeIndicesSize = 3 * numVerticesPolygon + (3 * numVerticesRing) + numPointsPolygon * (3 * numPointCircle) + (3 * 2 * numPointsPolygon) + dottedLineIndices + (3 * numVerticesRing);
 
 	static const int Npolygons = 10;
