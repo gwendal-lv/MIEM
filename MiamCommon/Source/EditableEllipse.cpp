@@ -150,6 +150,16 @@ void EditableEllipse::SetActive(bool activate)
 	EditableArea::SetActive(activate);
 }
 
+bool EditableEllipse::IsActive()
+{
+	return isActive;
+}
+
+bool EditableEllipse::ShowCenter()
+{
+	return displayCenter;
+}
+
 
 
 AreaEventType EditableEllipse::TryBeginPointMove(const Point<double>& hitPoint)
@@ -596,4 +606,9 @@ void EditableEllipse::recreateNormalizedPoints()
 double EditableEllipse::getRadius()
 {
 	return boost::geometry::distance(centerInPixels, contourPointsInPixels.outer().at(0));
+}
+
+bpt EditableEllipse::GetManipulationPoint()
+{
+	return bmanipulationPointInPixels;
 }

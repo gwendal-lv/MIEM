@@ -112,8 +112,11 @@ namespace Miam
         /// of all points.
         virtual void CanvasResized(SceneCanvasComponent* parentCanvas) = 0;
         
+		virtual bool IsActive() { return true; }
+		virtual bool ShowCenter() { return true; }
 		virtual bool hasVerticesChanged() = 0;
 		virtual bool hasPositionChanged() = 0;
+		virtual bpt GetManipulationPoint() { return bpt(0.0, 0.0); }
 		virtual int GetVerticesCount() = 0;
 		virtual int GetIndexCount() = 0;
 		virtual float GetVertices(int idx) = 0;

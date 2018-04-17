@@ -72,7 +72,8 @@ namespace Miam {
         // ----- Setters and Getters -----
         public :
         void SetActive(bool activate) override;
-        
+		bool IsActive() override;
+		bool ShowCenter() override;
         
         // ----- Edition functions -----
 
@@ -115,7 +116,7 @@ namespace Miam {
         
         // Graphical assets for editing
         private :
-        
+			bpt GetManipulationPoint() override;
     };
     
     

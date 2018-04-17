@@ -15,24 +15,6 @@
 
 #include "MultiSceneCanvasInteractor.h"
 
-struct ColorGenerator
-{
-	int count;
-	GLfloat color[3];
-	ColorGenerator(GLfloat R, GLfloat G, GLfloat B) : count(0)
-	{
-		color[0] = R;
-		color[1] = G;
-		color[2] = B;
-	}
-	GLfloat operator() ()
-	{
-		GLfloat ret = color[count % 3];
-		++count;
-		return ret;
-	}
-};
-
 //==============================================================================
 SceneCanvasComponent::SceneCanvasComponent() :
     selectedForEditing(false),
@@ -123,6 +105,8 @@ SceneCanvasComponent::SceneCanvasComponent() :
 	{
 		shift2[3 + k] = shift2[2] + (k+1) * numVerticesCircle;
 	}
+
+	shift2[2 + numPointsPolygon + 1] = shift2[2 + numPointsPolygon] + numPointsPolygon;
     
     openGlContext.setComponentPaintingEnabled(false); // default behavior, lower perfs
     // OpenGL final initialization will happen in the COmpleteInitialization method
@@ -511,9 +495,18 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 		//2. centre
 		for (int j = 0; j < 3 * numVerticesRing; j += 3)
 		{
-			g_vertex_buffer_data[3 * decalage + j] = 1.0f* (area->GetVertices(0) + g_vertex_ring[j]);
-			g_vertex_buffer_data[3 * decalage + j + 1] = 1.0f*(area->GetVertices(1) + g_vertex_ring[j + 1]);
-			g_vertex_buffer_data[3 * decalage + j + 2] = 0.1f + g_vertex_ring[j + 2];
+			if (area->ShowCenter())
+			{
+				g_vertex_buffer_data[3 * decalage + j] = 1.0f* (area->GetVertices(0) + g_vertex_ring[j]);
+				g_vertex_buffer_data[3 * decalage + j + 1] = 1.0f*(area->GetVertices(1) + g_vertex_ring[j + 1]);
+				g_vertex_buffer_data[3 * decalage + j + 2] = 0.1f + g_vertex_ring[j + 2];
+			}
+			else
+			{
+				g_vertex_buffer_data[3 * decalage + j] = 0.0f;
+				g_vertex_buffer_data[3 * decalage + j + 1] = 0.0f;
+				g_vertex_buffer_data[3 * decalage + j + 2] = 0.0f;
+			}
 		}
 		decalage += numVerticesRing;
 		
@@ -522,7 +515,7 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 		int numApexes = (verticesCount - 3) / 3;
 		for (int k = 0; k < numPointsPolygon; ++k)
 		{
-			if (k < numApexes)
+			if (area->IsActive() && k < numApexes)
 			{
 				for (int j = 0; j < 3 * numVerticesCircle; j += 3)
 				{
@@ -552,6 +545,19 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 				g_vertex_buffer_data[3 * decalage + j] = 0;
 		}
 		decalage += numPointsPolygon;
+
+		//5. manipulationLine
+		if (area->IsActive())
+		{
+			computeManipulationLine(area->GetVertices(0), area->GetVertices(1), area->GetManipulationPoint().get<0>(), area->GetManipulationPoint().get<1>(), 4.0f, 4.0f);
+			for (int i = 0; i < 3 * dottedLineVertexes; ++i)
+				g_vertex_buffer_data[3 * decalage + i] = g_vertex_dotted_line[i];
+		}
+		else
+		{
+			for (int i = 0; i < 3 * dottedLineVertexes; ++i)
+				g_vertex_buffer_data[3 * decalage + i] = 0.0f;
+		}
 	}
 
 
@@ -623,7 +629,20 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 		}
 
 		decalage += 2 * numPointsPolygon;
+
+		//5. manipulationLine
+		if (area->IsActive())
+		{
+			for (int i = 0; i < dottedLineIndices; ++i)
+				indices[3 * decalage + i] = g_indices_dotted_line[i] + shift2[2 + numPointsPolygon + 1] + positionInBuffer;
+		}
+		else
+		{
+			for (int i = 0; i < dottedLineIndices; ++i)
+				indices[3 * decalage + i] = 0;
+		}
 		
+		// colors
 		float R = area->GetFillColour().getFloatRed();
 		float G = area->GetFillColour().getFloatGreen();
 		float B = area->GetFillColour().getFloatBlue();
@@ -644,3 +663,57 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 
 }
 
+void SceneCanvasComponent::computeManipulationLine(float Ox, float Oy, float Mx, float My, float width, float height)
+{
+	int N = 20;
+	float length = boost::geometry::distance(bpt(Ox, Oy), bpt(Mx, My));//0.25 * (getWidth() + getHeight()) / 2.0;
+	if (length / (2 * height) > 20.0f)
+		height = (length / 20.0f) / 2.0f;
+	else
+		N = length / (2 * height);
+
+	float sina = (My - Oy) / length;
+	float cosa = (Mx - Ox) / length;
+
+	for (int i = 0; i <  dottedLineNparts; ++i)
+	{
+		if (i < N)
+		{
+			// up_left
+			g_vertex_dotted_line[i * 3 * 4] = Ox + i * 2 * height * cosa - (width/2.0) * sina;
+			g_vertex_dotted_line[i * 3 * 4 + 1] = Oy + i * 2 * height * sina + (width / 2.0) * cosa;
+			g_vertex_dotted_line[i * 3 * 4 + 2] = 0.1f;
+			// down_left
+			g_vertex_dotted_line[i * 3 * 4 + 3] = Ox + i * 2 * height * cosa + (width / 2.0) * sina;
+			g_vertex_dotted_line[i * 3 * 4 + 4] = Oy + i * 2 * height * sina - (width / 2.0) * cosa;
+			g_vertex_dotted_line[i * 3 * 4 + 5] = 0.1f;
+			// up_right
+			g_vertex_dotted_line[i * 3 * 4 + 6] = Ox + (2 * i + 1)  * height * cosa - (width / 2.0) * sina;
+			g_vertex_dotted_line[i * 3 * 4 + 7] = Oy + (2 * i + 1) * height * sina + (width / 2.0) * cosa;
+			g_vertex_dotted_line[i * 3 * 4 + 8] = 0.1f;
+			// down_right
+			g_vertex_dotted_line[i * 3 * 4 + 9] = Ox + (2 * i + 1) * height * cosa + (width / 2.0) * sina;
+			g_vertex_dotted_line[i * 3 * 4 + 10] = Oy + (2* i + 1) * height * sina - (width / 2.0) * cosa;
+			g_vertex_dotted_line[i * 3 * 4 + 11] = 0.1f;
+
+			g_indices_dotted_line[i * 6] = i * 4;
+			g_indices_dotted_line[i * 6 + 1] = i * 4 + 1;
+			g_indices_dotted_line[i * 6 + 2] = i * 4 + 2;
+			g_indices_dotted_line[i * 6 + 3] = i * 4 + 1;
+			g_indices_dotted_line[i * 6 + 4] = i * 4 + 2;
+			g_indices_dotted_line[i * 6 + 5] = i * 4 + 3;
+		}
+		else
+		{
+			for (int j = 0; j < 12; ++j)
+			{
+				g_vertex_dotted_line[i * 12 + j] = 0.0f;
+			}
+			for (int j = 0; j < 6; ++j)
+			{
+				g_indices_dotted_line[i * 6 + j] = 0;
+			}
+		}
+	}
+
+}

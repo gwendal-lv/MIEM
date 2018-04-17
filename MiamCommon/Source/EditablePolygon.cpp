@@ -169,6 +169,16 @@ void EditablePolygon::SetActive(bool activate)
     EditableArea::SetActive(activate);
 }
 
+bool EditablePolygon::IsActive()
+{
+	return isActive;
+}
+
+bool EditablePolygon::ShowCenter()
+{
+	return displayCenter;
+}
+
 
 
 
@@ -651,6 +661,11 @@ void EditablePolygon::deletePoint(int position)
     
     recreateNormalizedPoints();
 	this->CanvasResized(parentCanvas);
+}
+
+bpt EditablePolygon::GetManipulationPoint()
+{
+	return bmanipulationPointInPixels;
 }
 
 void EditablePolygon::recreateNormalizedPoints()

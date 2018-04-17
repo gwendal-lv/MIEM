@@ -52,8 +52,10 @@ namespace Miam
 			// ----- Setters and Getters -----
 		public:
 			void SetActive(bool activate) override;
+			bool IsActive() override;
+			bool ShowCenter() override;
 			double getRadius();
-
+			bpt GetManipulationPoint() override;
 		public :
 			
 			Miam::AreaEventType TryBeginPointMove(const Point<double>& hitPoint) override;

@@ -180,11 +180,15 @@ private:
 	static const int numVerticesRing = 2 * numPointsRing;
 	static const int numVerticesCircle = numPointCircle + 1;
 
-	//											forme					centre							points									contour
-	static const int numVertexShape = numVerticesPolygon	+		numVerticesRing +	 (numPointsPolygon * numVerticesCircle) +			numPointsPolygon;
-	static const int shapeVertexBufferSize = 3 * numVerticesPolygon + (3 * numVerticesRing) + numPointsPolygon * (3 * numVerticesCircle) + (3 * numPointsPolygon);
-	static const int shapeColorBufferSize = 3 * numVerticesPolygon +  (3 * numVerticesRing) + numPointsPolygon * (3 * numVerticesCircle) + (3 * numPointsPolygon);
-	static const int shapeIndicesSize = 3 * numVerticesPolygon + (3 * numVerticesRing) + numPointsPolygon * (3 * numPointCircle) + (3 * 2 * numPointsPolygon);
+	static const int dottedLineNparts = 20;
+	static const int dottedLineVertexes = 4 * dottedLineNparts;
+	static const int dottedLineIndices = 6 * dottedLineNparts;
+
+	//											forme					centre							points									contour				manipulationLine
+	static const int numVertexShape = numVerticesPolygon	+		numVerticesRing +	 (numPointsPolygon * numVerticesCircle) +			numPointsPolygon + dottedLineVertexes;
+	static const int shapeVertexBufferSize = 3 * numVerticesPolygon + (3 * numVerticesRing) + numPointsPolygon * (3 * numVerticesCircle) + (3 * numPointsPolygon) + 3 * dottedLineVertexes;
+	static const int shapeColorBufferSize = 3 * numVerticesPolygon +  (3 * numVerticesRing) + numPointsPolygon * (3 * numVerticesCircle) + (3 * numPointsPolygon) + 3 * dottedLineVertexes;
+	static const int shapeIndicesSize = 3 * numVerticesPolygon + (3 * numVerticesRing) + numPointsPolygon * (3 * numPointCircle) + (3 * 2 * numPointsPolygon) + dottedLineIndices;
 
 	static const int Npolygons = 10;
 	static const int Nshapes = Npolygons + Npolygons * (Npolygons + 1) / 2;
@@ -192,7 +196,7 @@ private:
 	static const int colorBufferSize = Nshapes * shapeColorBufferSize;
 	static const int indicesSize = Nshapes * shapeIndicesSize;
 
-	int shift2[35]; // tableau contenant les séparations entre les différentes parties d'une forme (forme, centre, points, contour)
+	int shift2[35+1]; // tableau contenant les séparations entre les différentes parties d'une forme (forme, centre, points, contour)
 
 	GLfloat g_vertex_ring[3 * numVerticesRing];
 	unsigned int ringIndices[3 * numVerticesRing];
@@ -208,6 +212,10 @@ private:
 
 	GLuint elementBuffer;
 	unsigned int indices[indicesSize];
+
+	
+	GLfloat g_vertex_dotted_line[3 * dottedLineVertexes];
+	GLuint g_indices_dotted_line[dottedLineIndices];
 
 	void DrawShape(std::shared_ptr<IDrawableArea> area, int positionInBuffer);
 
@@ -290,6 +298,10 @@ private:
 			break;
 		}
 	}
+
+	
+
+	void computeManipulationLine(float Ox, float Oy, float Mx, float My, float width, float height);
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SceneCanvasComponent)
