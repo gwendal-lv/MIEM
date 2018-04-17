@@ -107,6 +107,7 @@ SceneCanvasComponent::SceneCanvasComponent() :
 	}
 
 	shift2[2 + numPointsPolygon + 1] = shift2[2 + numPointsPolygon] + numPointsPolygon;
+	shift2[2 + numPointsPolygon + 2] = shift2[2 + numPointsPolygon + 1] + dottedLineVertexes;
     
     openGlContext.setComponentPaintingEnabled(false); // default behavior, lower perfs
     // OpenGL final initialization will happen in the COmpleteInitialization method
@@ -558,6 +559,20 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 			for (int i = 0; i < 3 * dottedLineVertexes; ++i)
 				g_vertex_buffer_data[3 * decalage + i] = 0.0f;
 		}
+		decalage += dottedLineVertexes;
+
+		//6. manipulationPoint
+		if (area->IsActive())
+		{
+			for (int j = 0; j < 3 * numVerticesRing; j += 3)
+			{
+				
+					g_vertex_buffer_data[3 * decalage + j] = 1.0f* (area->GetManipulationPoint().get<0>() + g_vertex_ring[j]);
+					g_vertex_buffer_data[3 * decalage + j + 1] = 1.0f*(area->GetManipulationPoint().get<1>() + g_vertex_ring[j + 1]);
+					g_vertex_buffer_data[3 * decalage + j + 2] = 0.1f + g_vertex_ring[j + 2];
+				
+			}
+		}
 	}
 
 
@@ -641,7 +656,15 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 			for (int i = 0; i < dottedLineIndices; ++i)
 				indices[3 * decalage + i] = 0;
 		}
-		
+		decalage += 2 * dottedLineNparts;
+
+		//6. manipulationPoint
+		for (int j = 0; j < 3 * numVerticesRing; ++j)
+		{
+			indices[j + 3 * decalage/*+ numVerticesPolygon*/] = ringIndices[j] + shift2[2 + numPointsPolygon + 2] + positionInBuffer;/*+ numVerticesPolygon*/;
+		}
+		decalage += numVerticesRing;
+
 		// colors
 		float R = area->GetFillColour().getFloatRed();
 		float G = area->GetFillColour().getFloatGreen();
