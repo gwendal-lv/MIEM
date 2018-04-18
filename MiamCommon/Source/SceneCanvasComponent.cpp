@@ -371,7 +371,18 @@ void SceneCanvasComponent::renderOpenGL()
 			DrawShape(duplicatedAreas[i], (int)i * numVertexShape);
 		//DrawShape(duplicatedAreas[1], 0 * numVertexShape);
     }
-    
+	for (int i = duplicatedAreas.size() * shapeVertexBufferSize; i < vertexBufferSize; ++i)
+	{
+		g_vertex_buffer_data[i] = 0.0f;
+	}
+	for (int i = duplicatedAreas.size() * shapeColorBufferSize; i < colorBufferSize; ++i)
+	{
+		g_color_buffer_data[i] = 0.0f;
+	}
+	for (int i = duplicatedAreas.size() * shapeIndicesSize; i < indicesSize; ++i)
+	{
+		indices[i] = 0;
+	}
 
 	glOrtho(0,getWidth(),0, getHeight(), 0.5f, 1.1f);
 
