@@ -368,7 +368,7 @@ void SceneCanvasComponent::renderOpenGL()
 		}*/
 		//if(duplicatedAreas.size() > 1)
 		//if(areasCountChanged || duplicatedAreas[i]->hasVerticesChanged())
-			DrawShape(duplicatedAreas[i], (int)i * numVertexShape);
+			DrawShape(duplicatedAreas[0], (int)0 * numVertexShape);
 		//DrawShape(duplicatedAreas[1], 0 * numVertexShape);
     }
 	for (int i = duplicatedAreas.size() * shapeVertexBufferSize; i < vertexBufferSize; ++i)
@@ -492,15 +492,15 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 	int decalage = positionInBuffer;// + numPointsPolygon + 1;
 	//std::vector<int> shift;
 	//shift.push_back(decalage);
-	if (area->GetVerticesCount() >= 3)
+	if (area->GetOpaqueVerticesCount() >= 3)
 	{
 		/// vertex
 		//1. forme
-		int verticesCount = area->GetVerticesCount();
-		for (int j = 0; j < 3*(numPointsPolygon + 1); ++j)
+		int verticesCount = area->GetOpaqueVerticesCount();
+		for (int j = 0; j < 3*verticesCount; ++j)
 		{
-			if (j < verticesCount)
-				g_vertex_buffer_data[3 * decalage + j] = area->GetVertices(j);//*10
+			if (j < 3*verticesCount)
+				g_vertex_buffer_data[3 * decalage + j] = area->GetOpaqueVertices(j);//*10
 			else
 				g_vertex_buffer_data[3 * decalage + j] = 0;
 		}
@@ -508,85 +508,71 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 		decalage += (numPointsPolygon + 1);
 
 		//2. centre
-		for (int j = 0; j < 3 * numVerticesRing; j += 3)
-		{
-			if (area->ShowCenter())
-			{
-				g_vertex_buffer_data[3 * decalage + j] = 1.0f* (area->GetVertices(0) + g_vertex_ring[j]);
-				g_vertex_buffer_data[3 * decalage + j + 1] = 1.0f*(area->GetVertices(1) + g_vertex_ring[j + 1]);
-				g_vertex_buffer_data[3 * decalage + j + 2] = 0.1f + g_vertex_ring[j + 2];
-			}
-			else
-			{
-				g_vertex_buffer_data[3 * decalage + j] = 0.0f;
-				g_vertex_buffer_data[3 * decalage + j + 1] = 0.0f;
-				g_vertex_buffer_data[3 * decalage + j + 2] = 0.0f;
-			}
-		}
-		decalage += numVerticesRing;
 		
+		decalage += numVerticesRing;
+
 
 		//3. points
-		int numApexes = (verticesCount - 3) / 3;
-		for (int k = 0; k < numPointsPolygon; ++k)
-		{
-			if (area->IsActive() && k < numApexes)
-			{
-				for (int j = 0; j < 3 * numVerticesCircle; j += 3)
-				{
-					g_vertex_buffer_data[3 * decalage + j] = 1.0f* (area->GetVertices(3 + k * 3) + g_vertex_circle[j]);
-					g_vertex_buffer_data[3 * decalage + j + 1] = 1.0f*(area->GetVertices(3 + k * 3 + 1) + g_vertex_circle[j + 1]);
-					g_vertex_buffer_data[3 * decalage + j + 2] = 0.1f + g_vertex_circle[j + 2];
-				}
-				decalage += numVerticesCircle;
-			}
-			else
-			{
-				for (int j = 0; j < 3 * numVerticesCircle; j++)
-					g_vertex_buffer_data[3 * decalage + j] = 0;
-				decalage += numVerticesCircle;
-			}
-		}
+		//int numApexes = (verticesCount - 3) / 3;
+		//for (int k = 0; k < numPointsPolygon; ++k)
+		//{
+		//	if (area->IsActive() && k < numApexes)
+		//	{
+		//		for (int j = 0; j < 3 * numVerticesCircle; j += 3)
+		//		{
+		//			g_vertex_buffer_data[3 * decalage + j] = 1.0f* (area->GetVertices(3 + k * 3) + g_vertex_circle[j]);
+		//			g_vertex_buffer_data[3 * decalage + j + 1] = 1.0f*(area->GetVertices(3 + k * 3 + 1) + g_vertex_circle[j + 1]);
+		//			g_vertex_buffer_data[3 * decalage + j + 2] = 0.1f + g_vertex_circle[j + 2];
+		//		}
+		//		decalage += numVerticesCircle;
+		//	}
+		//	else
+		//	{
+		//		for (int j = 0; j < 3 * numVerticesCircle; j++)
+		//			g_vertex_buffer_data[3 * decalage + j] = 0;
+		//		decalage += numVerticesCircle;
+		//	}
+		//}
 
-		decalage = positionInBuffer + numVerticesPolygon + (numVerticesRing)+numPointsPolygon * (numVerticesCircle);//(numPointCircle);
+		//decalage = positionInBuffer + numVerticesPolygon + (numVerticesRing)+numPointsPolygon * (numVerticesCircle);//(numPointCircle);
 
-		//4. contour
-		std::vector<float> newOutline = area->GetOutline();
-		for (int j = 0; j < 3*numPointsPolygon; ++j)
-		{
-			if (j < newOutline.size())
-				g_vertex_buffer_data[3 * decalage + j] = newOutline[j];
-			else
-				g_vertex_buffer_data[3 * decalage + j] = 0;
-		}
-		decalage += numPointsPolygon;
+		////4. contour
+		//std::vector<float> newOutline = area->GetOutline();
+		//for (int j = 0; j < 3*numPointsPolygon; ++j)
+		//{
+		//	if (j < newOutline.size())
+		//		g_vertex_buffer_data[3 * decalage + j] = newOutline[j];
+		//	else
+		//		g_vertex_buffer_data[3 * decalage + j] = 0;
+		//}
+		//decalage += numPointsPolygon;
 
-		//5. manipulationLine
-		if (area->IsActive())
-		{
-			computeManipulationLine(area->GetVertices(0), area->GetVertices(1), area->GetManipulationPoint().get<0>(), area->GetManipulationPoint().get<1>(), 4.0f, 4.0f);
-			for (int i = 0; i < 3 * dottedLineVertexes; ++i)
-				g_vertex_buffer_data[3 * decalage + i] = g_vertex_dotted_line[i];
-		}
-		else
-		{
-			for (int i = 0; i < 3 * dottedLineVertexes; ++i)
-				g_vertex_buffer_data[3 * decalage + i] = 0.0f;
-		}
-		decalage += dottedLineVertexes;
+		////5. manipulationLine
+		//if (area->IsActive())
+		//{
+		//	computeManipulationLine(area->GetVertices(0), area->GetVertices(1), area->GetManipulationPoint().get<0>(), area->GetManipulationPoint().get<1>(), 4.0f, 4.0f);
+		//	for (int i = 0; i < 3 * dottedLineVertexes; ++i)
+		//		g_vertex_buffer_data[3 * decalage + i] = g_vertex_dotted_line[i];
+		//}
+		//else
+		//{
+		//	for (int i = 0; i < 3 * dottedLineVertexes; ++i)
+		//		g_vertex_buffer_data[3 * decalage + i] = 0.0f;
+		//}
+		//decalage += dottedLineVertexes;
 
-		//6. manipulationPoint
-		if (area->IsActive())
-		{
-			for (int j = 0; j < 3 * numVerticesRing; j += 3)
-			{
-				
-					g_vertex_buffer_data[3 * decalage + j] = 1.0f* (area->GetManipulationPoint().get<0>() + g_vertex_ring[j]);
-					g_vertex_buffer_data[3 * decalage + j + 1] = 1.0f*(area->GetManipulationPoint().get<1>() + g_vertex_ring[j + 1]);
-					g_vertex_buffer_data[3 * decalage + j + 2] = 0.1f + g_vertex_ring[j + 2];
-				
-			}
-		}
+		////6. manipulationPoint
+		//if (area->IsActive())
+		//{
+		//	for (int j = 0; j < 3 * numVerticesRing; j += 3)
+		//	{
+		//		
+		//			g_vertex_buffer_data[3 * decalage + j] = 1.0f* (area->GetManipulationPoint().get<0>() + g_vertex_ring[j]);
+		//			g_vertex_buffer_data[3 * decalage + j + 1] = 1.0f*(area->GetManipulationPoint().get<1>() + g_vertex_ring[j + 1]);
+		//			g_vertex_buffer_data[3 * decalage + j + 2] = 0.1f + g_vertex_ring[j + 2];
+		//		
+		//	}
+		//}
 	}
 
 
@@ -595,119 +581,155 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 	if (area->GetIndexCount() >= 3)
 	{
 		//1. forme
-		std::vector<int> newIndex = area->GetIndex();
-		for (int j = 0; j < 3*(numPointsPolygon + 1); ++j)
-		{
-			if (j < newIndex.size())
-				indices[3 * decalage + j] = (unsigned int)newIndex[j] + shift2[0] + positionInBuffer;
-			else
-				indices[3 * decalage + j] = 0;
-		}
+		//std::vector<int> newIndex = area->GetIndex();
+		//for (int j = 0; j < 3*(numPointsPolygon + 1); ++j)
+		//{
+		//	if (j < newIndex.size())
+		//		indices[3 * decalage + j] = (unsigned int)newIndex[j] + shift2[0] + positionInBuffer;
+		//	else
+		//		indices[3 * decalage + j] = 0;
+		//}
 
-		decalage += numPointsPolygon + 1;
+		//decalage += numPointsPolygon + 1;
 
-		//2. centre
-		for (int j = 0; j < 3 * numVerticesRing; ++j)
-		{
-			indices[j + 3 * decalage/*+ numVerticesPolygon*/] = ringIndices[j] + shift2[1] + positionInBuffer;/*+ numVerticesPolygon*/;
-		}
-		decalage += numVerticesRing;
+		////2. centre
+		//for (int j = 0; j < 3 * numVerticesRing; ++j)
+		//{
+		//	indices[j + 3 * decalage/*+ numVerticesPolygon*/] = ringIndices[j] + shift2[1] + positionInBuffer;/*+ numVerticesPolygon*/;
+		//}
+		//decalage += numVerticesRing;
 
-		//3. points
-		int numApexes = (int)newIndex.size() / 3;
-		for (int k = 0; k < numPointsPolygon; ++k)
-		{
-			if (k < numApexes)
-			{
-				for (int j = 0; j < 3 * numPointCircle; ++j)
-				{
-					indices[j + 3 * decalage/*+ numVerticesPolygon*/] = circleIndices[j] + shift2[2 + k] + positionInBuffer;
-				}
-			}
-			else
-			{
-				for (int j = 0; j < 3 * numPointCircle; ++j)
-					indices[j + 3 * decalage/*+ numVerticesPolygon*/] = 0;
-			}
-			decalage += numPointCircle;
-		}
+		////3. points
+		//int numApexes = (int)newIndex.size() / 3;
+		//for (int k = 0; k < numPointsPolygon; ++k)
+		//{
+		//	if (k < numApexes)
+		//	{
+		//		for (int j = 0; j < 3 * numPointCircle; ++j)
+		//		{
+		//			indices[j + 3 * decalage/*+ numVerticesPolygon*/] = circleIndices[j] + shift2[2 + k] + positionInBuffer;
+		//		}
+		//	}
+		//	else
+		//	{
+		//		for (int j = 0; j < 3 * numPointCircle; ++j)
+		//			indices[j + 3 * decalage/*+ numVerticesPolygon*/] = 0;
+		//	}
+		//	decalage += numPointCircle;
+		//}
 
-		decalage = positionInBuffer + numVerticesPolygon + (numVerticesRing)+numPointsPolygon * (numPointCircle);
+		//decalage = positionInBuffer + numVerticesPolygon + (numVerticesRing)+numPointsPolygon * (numPointCircle);
+		//
+		////4. contour
+		//for (int i = 0; i < numPointsPolygon; ++i)
+		//{
+		//	if (i < numApexes)
+		//	{
+		//		indices[3 * decalage + i * 6] = positionInBuffer + i + 1;
+		//		indices[3 * decalage + i * 6 + 1] = shift2[2 + numPointsPolygon] + positionInBuffer + i;
+		//		indices[3 * decalage + i * 6 + 2] = shift2[2 + numPointsPolygon] + positionInBuffer + i + 1 >= shift2[2 + numPointsPolygon] + positionInBuffer + numApexes ? shift2[2 + numPointsPolygon] + positionInBuffer : shift2[2 + numPointsPolygon] + positionInBuffer + i + 1;
+		//		indices[3 * decalage + i * 6 + 3] = shift2[2 + numPointsPolygon] + positionInBuffer + i + 1 >= shift2[2 + numPointsPolygon] + positionInBuffer + numApexes ? shift2[2 + numPointsPolygon] + positionInBuffer : shift2[2 + numPointsPolygon] + positionInBuffer + i + 1;
+		//		indices[3 * decalage + i * 6 + 4] = positionInBuffer + i + 1;
+		//		indices[3 * decalage + i * 6 + 5] = positionInBuffer + i + 2 >= positionInBuffer + numApexes + 1 ? positionInBuffer + 1 : positionInBuffer + i + 2;
+		//	}
+		//	else
+		//	{
+		//		indices[3 * decalage + i * 6] = 0;
+		//		indices[3 * decalage + i * 6 + 1] = 0;
+		//		indices[3 * decalage + i * 6 + 2] = 0;
+		//		indices[3 * decalage + i * 6 + 3] = 0;
+		//		indices[3 * decalage + i * 6 + 4] = 0;
+		//		indices[3 * decalage + i * 6 + 5] = 0;
+		//	}
+		//}
+
+		//decalage += 2 * numPointsPolygon;
+
+		//
+		//if (area->IsActive())
+		//{
+		//	//5. manipulationLine
+		//	for (int i = 0; i < dottedLineIndices; ++i)
+		//		indices[3 * decalage + i] = g_indices_dotted_line[i] + shift2[2 + numPointsPolygon + 1] + positionInBuffer;
+		//	decalage += 2 * dottedLineNparts;
+
+		//	//6. manipulationPoint
+		//	for (int j = 0; j < 3 * numVerticesRing; ++j)
+		//	{
+		//		indices[j + 3 * decalage/*+ numVerticesPolygon*/] = ringIndices[j] + shift2[2 + numPointsPolygon + 2] + positionInBuffer;/*+ numVerticesPolygon*/;
+		//	}
+		//	decalage += numVerticesRing;
+		//}
+		//else
+		//{
+		//	for (int i = 0; i < dottedLineIndices; ++i)
+		//		indices[3 * decalage + i] = 0;
+		//	decalage += 2 * dottedLineNparts;
+		//	for (int j = 0; j < 3 * numVerticesRing; ++j)
+		//	{
+		//		indices[j + 3 * decalage] = 0;
+		//	}
+		//	decalage += numVerticesRing;
+		//}
 		
-		//4. contour
-		for (int i = 0; i < numPointsPolygon; ++i)
-		{
-			if (i < numApexes)
-			{
-				indices[3 * decalage + i * 6] = positionInBuffer + i + 1;
-				indices[3 * decalage + i * 6 + 1] = shift2[2 + numPointsPolygon] + positionInBuffer + i;
-				indices[3 * decalage + i * 6 + 2] = shift2[2 + numPointsPolygon] + positionInBuffer + i + 1 >= shift2[2 + numPointsPolygon] + positionInBuffer + numApexes ? shift2[2 + numPointsPolygon] + positionInBuffer : shift2[2 + numPointsPolygon] + positionInBuffer + i + 1;
-				indices[3 * decalage + i * 6 + 3] = shift2[2 + numPointsPolygon] + positionInBuffer + i + 1 >= shift2[2 + numPointsPolygon] + positionInBuffer + numApexes ? shift2[2 + numPointsPolygon] + positionInBuffer : shift2[2 + numPointsPolygon] + positionInBuffer + i + 1;
-				indices[3 * decalage + i * 6 + 4] = positionInBuffer + i + 1;
-				indices[3 * decalage + i * 6 + 5] = positionInBuffer + i + 2 >= positionInBuffer + numApexes + 1 ? positionInBuffer + 1 : positionInBuffer + i + 2;
-			}
-			else
-			{
-				indices[3 * decalage + i * 6] = 0;
-				indices[3 * decalage + i * 6 + 1] = 0;
-				indices[3 * decalage + i * 6 + 2] = 0;
-				indices[3 * decalage + i * 6 + 3] = 0;
-				indices[3 * decalage + i * 6 + 4] = 0;
-				indices[3 * decalage + i * 6 + 5] = 0;
-			}
-		}
-
-		decalage += 2 * numPointsPolygon;
+		for(int i = 0; i < area->GetIndexCount();++i)
+			indices[3 * decalage + i] = area->GetIndex(i)  + positionInBuffer;
 
 		
-		if (area->IsActive())
-		{
-			//5. manipulationLine
-			for (int i = 0; i < dottedLineIndices; ++i)
-				indices[3 * decalage + i] = g_indices_dotted_line[i] + shift2[2 + numPointsPolygon + 1] + positionInBuffer;
-			decalage += 2 * dottedLineNparts;
 
-			//6. manipulationPoint
-			for (int j = 0; j < 3 * numVerticesRing; ++j)
-			{
-				indices[j + 3 * decalage/*+ numVerticesPolygon*/] = ringIndices[j] + shift2[2 + numPointsPolygon + 2] + positionInBuffer;/*+ numVerticesPolygon*/;
-			}
-			decalage += numVerticesRing;
-		}
-		else
-		{
-			for (int i = 0; i < dottedLineIndices; ++i)
-				indices[3 * decalage + i] = 0;
-			decalage += 2 * dottedLineNparts;
-			for (int j = 0; j < 3 * numVerticesRing; ++j)
-			{
-				indices[j + 3 * decalage] = 0;
-			}
-			decalage += numVerticesRing;
-		}
-		
+	
 
 		// colors
 		float A = area->GetAlpha();
-		float R = area->GetFillColour().getFloatRed();
-		float G = area->GetFillColour().getFloatGreen();
-		float B = area->GetFillColour().getFloatBlue();
+		//float R = area->GetFillColour().getFloatRed();
+		//float G = area->GetFillColour().getFloatGreen();
+		//float B = area->GetFillColour().getFloatBlue();
 
-		
-		for (int j = 4 * positionInBuffer; j < 4 * positionInBuffer + 4 * numVerticesPolygon; j += 4)
+		//
+		//for (int j = 4 * positionInBuffer; j < 4 * positionInBuffer + 4 * numVerticesPolygon; j += 4)
+		//{
+		//	g_color_buffer_data[j] = 1.0f;
+		//	g_color_buffer_data[j + 1] = 0.0f;
+		//	g_color_buffer_data[j + 2] = 0.0f;
+		//	g_color_buffer_data[j + 3] = 1.0f;
+		//}
+		//for (int j = 4 * positionInBuffer + 4 * numVerticesPolygon; j < 4 * positionInBuffer + shapeColorBufferSize; j += 4)
+		//{
+		//	g_color_buffer_data[j] = 1.0f;
+		//	g_color_buffer_data[j + 1] = 0.0f;
+		//	g_color_buffer_data[j + 2] = 0.0f;
+		//	g_color_buffer_data[j + 3] = 1.0f;
+		//}
+
+		int kgdayh = 0;
+		int testNum = area->GetOpaqueColourCount();
+		if (testNum != 4 * (numVerticesRing + numVerticesPolygon + numPointsPolygon))
+			kgdayh = 0;
+		for (int i = 0; i < area->GetOpaqueColourCount(); ++i)
 		{
-			g_color_buffer_data[j] = R;
-			g_color_buffer_data[j + 1] = G;
-			g_color_buffer_data[j + 2] = B;
-			g_color_buffer_data[j + 3] = A;
+			g_color_buffer_data[4 * decalage + i] = area->GetOpaqueColour(i);
 		}
-		for (int j = 4 * positionInBuffer + 4 * numVerticesPolygon; j < 4 * positionInBuffer + shapeColorBufferSize; j += 4)
+
+		DBG("------ path -------");
+		for (int i = 3 * (numVerticesRing + numVerticesPolygon); i < 3 * ((numVerticesRing + numVerticesPolygon + 2 * 4)); ++i)
 		{
-			g_color_buffer_data[j] = 1.0f;
-			g_color_buffer_data[j + 1] = 0.0f;
-			g_color_buffer_data[j + 2] = 0.0f;
-			g_color_buffer_data[j + 3] = 1.0f;
+			DBG((String)indices[i] + " : (" + (String)g_vertex_buffer_data[3 * indices[i]] + " " + (String)g_vertex_buffer_data[3 * indices[i] + 1] + ")" + " : "
+				+ (String)g_vertex_buffer_data[4 * indices[i]] + ", " + (String)g_vertex_buffer_data[4 * indices[i] + 1] + ", " + (String)g_vertex_buffer_data[4 * indices[i] + 2] + ", " + (String)g_vertex_buffer_data[4 * indices[i] + 3]);
 		}
+		int bl = 5;
+
+		int test;
+		for (int i = 0; i < area->GetIndexCount(); ++i)
+		{
+			if (g_vertex_buffer_data[3 * indices[i]] == 0 || g_vertex_buffer_data[3 * indices[i] + 1] == 0)
+				test = 0;
+			if (g_color_buffer_data[4 * indices[i]] == 0
+				&& g_color_buffer_data[4 * indices[i] + 1] == 0
+				&& g_color_buffer_data[4 * indices[i] + 2] == 0
+				&& g_color_buffer_data[4 * indices[i] + 2] == 0)
+				test = 0;
+		}
+
 	}
 
 

@@ -117,11 +117,12 @@ namespace Miam
 		virtual bool hasVerticesChanged() = 0;
 		virtual bool hasPositionChanged() = 0;
 		virtual bpt GetManipulationPoint() { return bpt(0.0, 0.0); }
-		virtual int GetVerticesCount() = 0;
+		virtual int GetOpaqueVerticesCount() = 0;
 		virtual int GetIndexCount() = 0;
-		virtual float GetVertices(int idx) = 0;
-		virtual std::vector<int> GetIndex() = 0;
-		virtual std::vector<float> GetOutline() = 0;
+		virtual int GetOpaqueColourCount() = 0;
+		virtual float GetOpaqueColour(int idx) = 0;
+		virtual float GetOpaqueVertices(int idx) = 0;
+		virtual int GetIndex(int idx) = 0;
 		virtual Vector3D<float> GetModelParameters() = 0; // return parameter for ModelMatrix
 		//virtual Matrix3D<float> GetModelMatrix() = 0;
         

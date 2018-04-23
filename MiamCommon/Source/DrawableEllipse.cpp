@@ -64,37 +64,53 @@ DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b,
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>() - (a / 2)*xScale, center.get<1>()));
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() - (b / 2)*yScale));
 
+	// ajout de la forme et du contour !
+	opaque_vertex_buffer_size += (3 * numVerticesPolygon + 3 * numPointsPolygon);
+	opaque_index_buffer_size += (3 * numVerticesPolygon + 3 * 2 * numPointsPolygon);
+	opaque_color_buffer_size += (4 * numVerticesPolygon + 4 * numPointsPolygon);
 
-	//int verticesCount = (ellipseVerticesCount + 1);
+
+	// resize des buffers
+	opaque_vertex_buffer.resize(opaque_vertex_buffer_size);
+	opaque_index_buffer.resize(opaque_index_buffer_size);
+	opaque_color_buffer.resize(opaque_color_buffer_size);
 	
-	//vertex_buffer = new float[verticesCount];
-	//vertex_buffer.resize(verticesCount * 3);
-	outline_vertex_buffer.resize(ellipseVerticesCount * 3);
-	/*
-	vertex_buffer[0] = 0.0f;
-	vertex_buffer[1] = 0.0f;
-	vertex_buffer[2] = 0.0f;
-
-	vertex_buffer[3] = aScaled * (float)std::cos(0.0);
-	vertex_buffer[4] = bScaled * (float)std::sin(0.0);
-	vertex_buffer[5] = 0.0f;
-
-	for (int i = 1; i<ellipseVerticesCount; i++)
-	{
-		double normalizedAngle = (double)(i) / (double)(ellipseVerticesCount);
-		vertex_buffer[(i + 1) * 3]     = aScaled * (float)std::cos(2.0 * M_PI * normalizedAngle);
-		vertex_buffer[(i + 1) * 3 + 1] = bScaled * (float)std::sin(2.0 * M_PI * normalizedAngle);
-		vertex_buffer[(i + 1) * 3 + 2] = 0.0f;
-		
-	}
-	*/
+	// indices pour dessiner la forme
+	int decalage = DrawableArea::GetOpaqueVerticesCount();
 	int indexCount = ellipseVerticesCount * 3;
-	index_buffer.resize(indexCount);//index_buffer = new int[indexCount];
 	for (int i = 0; i < ellipseVerticesCount; ++i)
 	{
-		index_buffer[i * 3] = i + 1;
-		index_buffer[i * 3 + 1] = 0;
-		index_buffer[i * 3 + 2] = i + 2 > ellipseVerticesCount? 1 : i + 2;
+		opaque_index_buffer[3 * decalage + i * 3] = decalage + i + 1;
+		opaque_index_buffer[3 * decalage + i * 3 + 1] = decalage + 0;
+		opaque_index_buffer[3 * decalage + i * 3 + 2] = decalage + i + 2 > decalage + ellipseVerticesCount? 1 : decalage + i + 2;
+	}
+	for (int i = 3*ellipseVerticesCount; i < opaque_index_buffer_size; ++i)
+	{
+		opaque_index_buffer[i] = 0;
+	}
+
+	// indices pour dessiner le contour
+	decalage += numVerticesPolygon;
+	for (int i = 0; i < numPointsPolygon; ++i)
+	{
+		if (i < ellipseVerticesCount)
+		{
+			opaque_index_buffer[3 * decalage + i * 6] = i + 1;
+			opaque_index_buffer[3 * decalage + i * 6 + 1] = decalage + i;
+			opaque_index_buffer[3 * decalage + i * 6 + 3] = decalage + i + 1 >= decalage + ellipseVerticesCount ? decalage : decalage + i + 1;
+			opaque_index_buffer[3 * decalage + i * 6 + 2] = decalage + i + 1 >= decalage + ellipseVerticesCount ? decalage : decalage + i + 1;
+			opaque_index_buffer[3 * decalage + i * 6 + 4] = i + 1;
+			opaque_index_buffer[3 * decalage + i * 6 + 5] = i + 2 >= ellipseVerticesCount + 1 ? 1 : i + 2;
+		}
+		else
+		{
+			opaque_index_buffer[3 * decalage + i * 6] = 0;
+			opaque_index_buffer[3 * decalage + i * 6 + 1] = 0;
+			opaque_index_buffer[3 * decalage + i * 6 + 2] = 0;
+			opaque_index_buffer[3 * decalage + i * 6 + 3] = 0;
+			opaque_index_buffer[3 * decalage + i * 6 + 4] = 0;
+			opaque_index_buffer[3 * decalage + i * 6 + 5] = 0;
+		}
 	}
 
 	modelParameters = Vector3D<float>(0.0f, 0.0f, 0.0f);
@@ -102,14 +118,11 @@ DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b,
 	createJucePolygon();
 }
 
-int DrawableEllipse::GetVerticesCount()
-{
-	return (ellipseVerticesCount+1) * 3;
-}
+
 
 int DrawableEllipse::GetIndexCount()
 {
-	return (int)index_buffer.size();
+	return DrawableArea::GetIndexCount() + (3 * numVerticesPolygon + 3 * 2 * numPointsPolygon);
 }
 
 bool DrawableEllipse::hasVerticesChanged()
@@ -122,26 +135,6 @@ bool DrawableEllipse::hasPositionChanged()
 	return positionChanged;
 }
 
-float DrawableEllipse::GetVertices(int idx)
-{
-	if (ellipseVerticesCount * 3 > 0)
-		return vertex_buffer[idx];
-	return 0.0f;//nullptr;
-}
-
-std::vector<float> DrawableEllipse::GetOutline()
-{
-	if (outline_vertex_buffer.size() > 0)
-		return outline_vertex_buffer;
-	return std::vector<float>();
-}
-
-std::vector<int> DrawableEllipse::GetIndex()
-{
-	if (index_buffer.size() > 0)
-		return index_buffer;
-	return std::vector<int>();
-}
 
 Vector3D<float> Miam::DrawableEllipse::GetModelParameters()
 {
@@ -206,10 +199,6 @@ void DrawableEllipse::setVerticesCount(int newVerticesCount)
 	ellipseVerticesCount = newVerticesCount;
 }
 
-int DrawableEllipse::getVerticesCount()
-{
-	return ellipseVerticesCount;
-}
 
 void DrawableEllipse::setIsFilled(bool shouldBeFilled)
 {
@@ -250,22 +239,38 @@ void DrawableEllipse::CanvasResized(SceneCanvasComponent* _parentCanvas)
 	int aInPixels = (int)(a * (double)parentCanvas->getWidth() * xScale);
 	int bInPixels = (int)(b * (double)parentCanvas->getWidth() * xScale);
 	
-
+	// forme
+	int decalage = DrawableArea::GetOpaqueVerticesCount();
 	float dR = (float)sqrt(2) * contourWidth / 2.0f;
-	vertex_buffer[0] = (float)centerInPixels.get<0>();
-	vertex_buffer[1] = (float)centerInPixels.get<1>();
-	vertex_buffer[2] = 0.0f;
+	opaque_vertex_buffer[3 * decalage + 0] = (float)centerInPixels.get<0>();
+	opaque_vertex_buffer[3 * decalage + 1] = (float)centerInPixels.get<1>();
+	opaque_vertex_buffer[3 * decalage + 2] = 0.0f;
 	for (int i = 0; i < ellipseVerticesCount; i++)
 	{
 		double normalizedAngle = (double)(i) / (double)(ellipseVerticesCount);
-		vertex_buffer[3 + i * 3] = (float)centerInPixels.get<0>() + (float)aInPixels * (float)std::cos(2.0 * M_PI * normalizedAngle);
-		vertex_buffer[3 + i * 3 + 1] = (float)centerInPixels.get<1>() + (float)bInPixels * (float)std::sin(2.0 * M_PI * normalizedAngle);
-		vertex_buffer[3 + i * 3 + 2] = 0.0f;
-		outline_vertex_buffer[i * 3] = (float)centerInPixels.get<0>() + float(aInPixels + dR) * (float)std::cos(2.0 * M_PI * normalizedAngle);
-		outline_vertex_buffer[i * 3 + 1] = (float)centerInPixels.get<1>() + float(bInPixels + dR) * (float)std::sin(2.0 * M_PI * normalizedAngle);
-		outline_vertex_buffer[i * 3 + 2] = 0.0f;
+		opaque_vertex_buffer[3 * decalage + 3 + i * 3] = (float)centerInPixels.get<0>() + (float)aInPixels * (float)std::cos(2.0 * M_PI * normalizedAngle);
+		opaque_vertex_buffer[3 * decalage + 3 + i * 3 + 1] = (float)centerInPixels.get<1>() + (float)bInPixels * (float)std::sin(2.0 * M_PI * normalizedAngle);
+		opaque_vertex_buffer[3 * decalage + 3 + i * 3 + 2] = 0.0f;
 	}
+	for (int i = 3 * decalage + 3 * ellipseVerticesCount; i< 3 * decalage + 3 * numVerticesPolygon; ++i)
+	{
+		opaque_vertex_buffer[i] = 0.0f;
+	}
+	decalage += numVerticesPolygon;
 
+	// contour
+	for (int i = 0; i < ellipseVerticesCount; i++)
+	{
+		double normalizedAngle = (double)(i) / (double)(ellipseVerticesCount);
+		opaque_vertex_buffer[3 * decalage + i * 3] = (float)centerInPixels.get<0>() + float(aInPixels + dR) * (float)std::cos(2.0 * M_PI * normalizedAngle);
+		opaque_vertex_buffer[3 * decalage + i * 3 + 1] = (float)centerInPixels.get<1>() + float(bInPixels + dR) * (float)std::sin(2.0 * M_PI * normalizedAngle);
+		opaque_vertex_buffer[3 * decalage + i * 3 + 2] = 0.0f;
+	}
+	
+	for (int i = 3 * decalage + 3 * ellipseVerticesCount; i< opaque_vertex_buffer_size; ++i)
+	{
+		opaque_vertex_buffer[i] = 0.0f;
+	}
 }
 
 void DrawableEllipse::recreateContourPoints(int width, int height)

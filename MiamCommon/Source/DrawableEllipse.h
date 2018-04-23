@@ -39,13 +39,13 @@ namespace Miam
 			DrawableEllipse(int64_t _Id);
 			DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio = 1.77777777f);
 
-			int GetVerticesCount() override;
+			int GetOpaqueVerticesCount() override {
+				return DrawableArea::GetOpaqueVerticesCount() + numVerticesPolygon + numPointsPolygon;
+			};
+
 			int GetIndexCount() override;
 			bool hasVerticesChanged() override;
 			bool hasPositionChanged() override;
-			float GetVertices(int idx) override;
-			std::vector<float> GetOutline() override;
-			std::vector<int> GetIndex() override;
 			Vector3D<float> GetModelParameters() override;
 
 		private:
@@ -72,7 +72,6 @@ namespace Miam
 		// Display functions
 	public:
 		void setVerticesCount(int newVerticesCount);
-		int getVerticesCount();
 		void setIsFilled(bool shouldBeFilled);
 		virtual void Paint(Graphics& g) override;
 		virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;

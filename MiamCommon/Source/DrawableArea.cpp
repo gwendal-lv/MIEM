@@ -8,7 +8,7 @@
   ==============================================================================
 */
 
-#include <cmath>
+#include <MiamMath.h>
 
 #include "DrawableArea.h"
 
@@ -68,6 +68,56 @@ void DrawableArea::init()
     keepRatio = false;
     
     resetImages();
+
+	// taille des buffers
+	opaque_vertex_buffer.resize(opaque_vertex_buffer_size);
+	opaque_index_buffer.resize(opaque_index_buffer_size);
+	opaque_color_buffer.resize(opaque_color_buffer_size);	
+
+	int numPoints = numPointsRing;
+	ComputeRing(numPoints);
+
+	for (int i = 0; i < opaque_color_buffer_size/4; ++i)
+	{
+		opaque_color_buffer[4 * i + 0] = contourColour.getRed();
+		opaque_color_buffer[4 * i + 1] = contourColour.getGreen();
+		opaque_color_buffer[4 * i + 2] = contourColour.getBlue();
+		opaque_color_buffer[4 * i + 3] = contourColour.getAlpha();
+	}
+	//for (int i = 4 * numPoints; i < opaque_color_buffer_size; ++i)
+	//	opaque_color_buffer[i] = 0;
+}
+
+void DrawableArea::ComputeRing(int numPoints)
+{
+	// calcul d'un anneau de centre 0, de rayon 5 pixels et avec une épaisseur de 2 pixels
+	float radius = 5.0f;
+	float width = 3.0f;
+
+	float ri = radius - width / 2.0f;
+	float re = radius + width / 2.0f;
+
+	double currentAngle = 0.0;
+	double incAngle = 2 * M_PI / (double)numPoints;
+	for (int i = 0; i < numPoints; ++i)
+	{
+		g_vertex_ring[i * 3] = ri * (float)cos(currentAngle);
+		g_vertex_ring[i * 3 + 1] = ri * (float)sin(currentAngle);
+		g_vertex_ring[i * 3 + 2] = 0.0f;
+		g_vertex_ring[numPoints * 3 + i * 3] = re * (float)cos(currentAngle);
+		g_vertex_ring[numPoints * 3 + i * 3 + 1] = re * (float)sin(currentAngle);
+		g_vertex_ring[numPoints * 3 + i * 3 + 2] = 0.0;
+		currentAngle += incAngle;
+	}
+	for (int i = 0; i < numPoints; ++i)
+	{
+		ringIndices[i * 6] = i;
+		ringIndices[i * 6 + 1] = numPoints + i;
+		ringIndices[i * 6 + 2] = numPoints + i + 1 >= 2 * numPoints ? numPoints : numPoints + i + 1;
+		ringIndices[i * 6 + 3] = numPoints + i + 1 >= 2 * numPoints ? numPoints : numPoints + i + 1;
+		ringIndices[i * 6 + 4] = i;
+		ringIndices[i * 6 + 5] = i + 1 >= numPoints ? 0 : i + 1;
+	}
 }
 
 
@@ -222,6 +272,28 @@ void DrawableArea::CanvasResized(SceneCanvasComponent* _parentCanvas)
     parentCanvas = _parentCanvas;
 	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scale(parentCanvas->getWidth(), parentCanvas->getHeight());
 	boost::geometry::transform(center, centerInPixels, scale);
+
+	int decalage = 0;
+	for (int j = 0; j < 3 * numVerticesRing; j += 3)
+	{
+		if (displayCenter)
+		{
+			opaque_vertex_buffer[3 * decalage + j] = 1.0f* (centerInPixels.get<0>() + g_vertex_ring[j]);
+			opaque_vertex_buffer[3 * decalage + j + 1] = 1.0f*(centerInPixels.get<1>() + g_vertex_ring[j + 1]);
+			opaque_vertex_buffer[3 * decalage + j + 2] = 0.1f + g_vertex_ring[j + 2];
+		}
+		else
+		{
+			opaque_vertex_buffer[3 * decalage + j] = 0.0f;
+			opaque_vertex_buffer[3 * decalage + j + 1] = 0.0f;
+			opaque_vertex_buffer[3 * decalage + j + 2] = 0.0f;
+		}
+	}
+
+	for (int j = 0; j < 3 * numVerticesRing; ++j)
+	{
+		opaque_index_buffer[j + 3 * decalage] = ringIndices[j];/*+ numVerticesPolygon*/;
+	}
 }
 
 void DrawableArea::KeepRatio(bool _keepRatio)

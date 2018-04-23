@@ -65,13 +65,15 @@ namespace Miam {
 		DrawablePolygon(int64_t _Id, bpt _center, bpolygon& _bcontourPoints, Colour _fillColour);
 
 		int verticesCount;
-		int GetVerticesCount() override;
+		int GetOpaqueVerticesCount() override {
+			return DrawableArea::GetOpaqueVerticesCount() + numVerticesPolygon + numPointsPolygon;
+		}
+		int GetOpaqueColourCount() { return DrawableArea::GetOpaqueColourCount() + 4 * (numVerticesPolygon + numPointsPolygon); }
 		int GetIndexCount() override;
 		bool hasVerticesChanged() override;
 		bool hasPositionChanged() override;
-		float GetVertices(int idx) override;
-		std::vector<float> GetOutline() override;
-		std::vector<int> GetIndex() override;
+		
+		
 		Vector3D<float> GetModelParameters() override;
         
         virtual std::shared_ptr<IDrawableArea> Clone() override
