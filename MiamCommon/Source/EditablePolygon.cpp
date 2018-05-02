@@ -62,6 +62,50 @@ void EditablePolygon::graphicalInit()
     editingElementsColour = Colours::white; // pure white (more visible)
     contourPointsRadius = 1.4f*contourWidth;
     manipulationPointRadius = centerContourWidth+centerCircleRadius;
+
+	// ajout de la forme et du contour !
+	opaque_vertex_buffer_size += (3 * (numPointsPolygon * numVerticesCircle));
+	opaque_index_buffer_size += (3 * (numPointsPolygon * numPointCircle));
+	opaque_color_buffer_size += (4 * (numPointsPolygon * numVerticesCircle));
+
+	// resize des buffers
+	opaque_vertex_buffer.resize(opaque_vertex_buffer_size);
+	opaque_index_buffer.resize(opaque_index_buffer_size);
+	opaque_color_buffer.resize(opaque_color_buffer_size);
+
+	// calcul d'un disque de centre 0 et de rayon 5 pixels
+	float radius = 5.0f;
+	float width = 3.0f;
+	int numPoints = numPointsRing;
+	radius = 5.0f;
+	double currentAngle = 0.0;
+	double incAngle = 2 * M_PI / (double)numPoints;
+	g_vertex_circle[0] = 0.0f;
+	g_vertex_circle[1] = 0.0f;
+	g_vertex_circle[2] = 0.0f;
+	for (int i = 0; i < numPointCircle; ++i)
+	{
+		g_vertex_circle[(i + 1) * 3] = radius * (float)cos(currentAngle);
+		g_vertex_circle[(i + 1) * 3 + 1] = radius * (float)sin(currentAngle);
+		g_vertex_circle[(i + 1) * 3 + 2] = 0.0f;
+		currentAngle += incAngle;
+	}
+	for (int i = 0; i < numPointCircle; ++i)
+	{
+		circleIndices[i * 3] = i + 1;
+		circleIndices[i * 3 + 1] = 0;
+		circleIndices[i * 3 + 2] = i + 2 > numPointCircle ? 1 : i + 2;
+	}
+
+	// couleur
+	int decalage = DrawablePolygon::GetOpaqueColourCount();
+	for (int i = 0; i < (numPointsPolygon * numVerticesCircle); ++i)
+	{
+		opaque_color_buffer[decalage + 4 * i + 0] = fillColour.getRed();
+		opaque_color_buffer[decalage + 4 * i + 1] = fillColour.getGreen();
+		opaque_color_buffer[decalage + 4 * i + 2] = fillColour.getBlue();
+		opaque_color_buffer[decalage + 4 * i + 3] = GetAlpha();
+	}
 }
 void EditablePolygon::behaviorInit()
 {
@@ -120,6 +164,48 @@ void EditablePolygon::Paint(Graphics& g)
 void EditablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 {
     InteractivePolygon::CanvasResized(_parentCanvas);
+
+	int decalage = DrawablePolygon::GetOpaqueVerticesCount();
+	int numApexes = contourPointsInPixels.outer().size() - 1;//isActive? contourPointsInPixels.outer().size() - 1 : 0;
+
+	// points
+	for (int k = 0; k < numApexes; ++k)
+	{
+			
+		for (int j = 0; j < 3 * numVerticesCircle; j += 3)
+		{
+			opaque_vertex_buffer[3 * decalage + j] = 1.0f* ((float)contourPointsInPixels.outer().at(k).get<0>() + g_vertex_circle[j]);
+			opaque_vertex_buffer[3 * decalage + j + 1] = 1.0f*((float)contourPointsInPixels.outer().at(k).get<1>() + g_vertex_circle[j + 1]);
+			opaque_vertex_buffer[3 * decalage + j + 2] = 0.1f + g_vertex_circle[j + 2];
+		}
+		decalage += numVerticesCircle;
+			
+			
+	}
+	for (int k = numApexes; k < numPointsPolygon; ++k)
+	{
+		for (int j = 0; j < 3 * numVerticesCircle; j++)
+			opaque_vertex_buffer[3 * decalage + j] = 0;
+		decalage += numVerticesCircle;
+	}
+	
+
+	decalage = DrawablePolygon::GetOpaqueVerticesCount();
+	int begin = DrawablePolygon::GetOpaqueVerticesCount();
+	for (int k = 0; k < numApexes; ++k)
+	{
+		for (int j = 0; j < 3 * numPointCircle; ++j)
+		{
+			opaque_index_buffer[j + 3 * decalage/*+ numVerticesPolygon*/] = circleIndices[j] + begin + k * numVerticesCircle;
+		}
+		decalage += numPointCircle;
+	}
+	for (int k = numApexes; k < numPointsPolygon; ++k)
+	{
+		for (int j = 0; j < 3 * numPointCircle; ++j)
+			opaque_index_buffer[j + 3 * decalage/*+ numVerticesPolygon*/] = 0;
+		decalage += numPointCircle;
+	}
     
     // Manipulation point (+ line...)
     computeManipulationPoint();

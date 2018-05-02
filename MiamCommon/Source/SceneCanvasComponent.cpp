@@ -725,9 +725,9 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 			DBG((String)indices[i] + " : (" + (String)g_vertex_buffer_data[3 * indices[i]] + " " + (String)g_vertex_buffer_data[3 * indices[i] + 1] + ")" + " : "
 				+ (String)g_vertex_buffer_data[4 * indices[i]] + ", " + (String)g_vertex_buffer_data[4 * indices[i] + 1] + ", " + (String)g_vertex_buffer_data[4 * indices[i] + 2] + ", " + (String)g_vertex_buffer_data[4 * indices[i] + 3]);
 		}*/
-		/*int bl = 5;
+		int bl = 5;
 
-		int test = 5;
+		/*int test = 5;
 		for (int i = 0; i < area->GetIndexCount(); ++i)
 		{
 			if (g_vertex_buffer_data[3 * indices[i]] == 0 || g_vertex_buffer_data[3 * indices[i] + 1] == 0)
@@ -743,8 +743,16 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 					DBG("centre pas complet");
 				else if (3 * indices[i] < 3 * numVerticesRing + 3 * numVerticesPolygon)
 					DBG("forme pas complete");
-				else if (3 * indices[i] < 3 * numVerticesRing + 3 * numVerticesPolygon + 3 * 2 * numPointsPolygon)
+				else if (3 * indices[i] < 3 * numVerticesRing + 3 * numVerticesPolygon + 3 * numPointsPolygon)
 					DBG("contour pas complet");
+				else if (3 * indices[i] < 3 * numVerticesRing + 3 * numVerticesPolygon + 3 * numPointsPolygon + 3 * (numPointsPolygon * numVerticesCircle))
+				{
+					for (int k = 0; k < numPointsPolygon; ++k)
+					{
+						if (3 * indices[i] < 3 * numVerticesRing + 3 * numVerticesPolygon + 3 * numPointsPolygon + k * numVerticesCircle)
+							DBG("points " + (String)k + " incomplet");
+					}
+				}
 				else
 					DBG("hors de la zone");
 			}
