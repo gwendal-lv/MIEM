@@ -1172,6 +1172,7 @@ std::shared_ptr<bptree::ptree> AmusingScene::GetTree() const
 	bptree::ptree areasTree;
 
 	// Ajout des aires interactives
+	int currentIndex = 0;
 	for (size_t i = 0; i < areas.size(); i++)
 	{
 		bool isIntersection = false;
@@ -1184,7 +1185,8 @@ std::shared_ptr<bptree::ptree> AmusingScene::GetTree() const
 		if (!isIntersection)
 		{
 			auto areaTree = areas[i]->GetTree();
-			areaTree->put("<xmlattr>.index", i);
+			areaTree->put("<xmlattr>.index", currentIndex);
+			++currentIndex;
 			if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
 			{
 				bptree::ptree areaAudioParameterTree;
