@@ -82,25 +82,36 @@ DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b,
 	{
 		opaque_index_buffer[3 * decalage + i * 3] = decalage + i + 1;
 		opaque_index_buffer[3 * decalage + i * 3 + 1] = decalage + 0;
-		opaque_index_buffer[3 * decalage + i * 3 + 2] = decalage + i + 2 > decalage + ellipseVerticesCount? 1 : decalage + i + 2;
+		opaque_index_buffer[3 * decalage + i * 3 + 2] = decalage + i + 2 > decalage + ellipseVerticesCount? decalage + 1 : decalage + i + 2;
 	}
-	for (int i = 3*ellipseVerticesCount; i < opaque_index_buffer_size; ++i)
+	for (int i = 3*ellipseVerticesCount; i <3 * numVerticesPolygon; ++i)
 	{
-		opaque_index_buffer[i] = 0;
+		opaque_index_buffer[3 * decalage + i] = 0;
 	}
 
+	for (int i = 0; i < ellipseVerticesCount; ++i)
+	{
+		opaque_color_buffer[4 * decalage + i * 4] = fillColour.getRed() / 255.0f;
+		opaque_color_buffer[4 * decalage + i * 4 + 1] = fillColour.getGreen() / 255.0f;
+		opaque_color_buffer[4 * decalage + i * 4 + 2] = fillColour.getBlue() / 255.0f;
+		opaque_color_buffer[4 * decalage + i * 4 + 3] = GetAlpha();
+	}
+	for (int i = 4 * ellipseVerticesCount; i < 4 * numVerticesPolygon; ++i)
+		opaque_color_buffer[4 * decalage + i] = 0.0f;
+
 	// indices pour dessiner le contour
+	int shapeBegin = DrawableArea::GetOpaqueVerticesCount();
 	decalage += numVerticesPolygon;
 	for (int i = 0; i < numPointsPolygon; ++i)
 	{
 		if (i < ellipseVerticesCount)
 		{
-			opaque_index_buffer[3 * decalage + i * 6] = i + 1;
+			opaque_index_buffer[3 * decalage + i * 6] = shapeBegin + i + 1;
 			opaque_index_buffer[3 * decalage + i * 6 + 1] = decalage + i;
 			opaque_index_buffer[3 * decalage + i * 6 + 3] = decalage + i + 1 >= decalage + ellipseVerticesCount ? decalage : decalage + i + 1;
 			opaque_index_buffer[3 * decalage + i * 6 + 2] = decalage + i + 1 >= decalage + ellipseVerticesCount ? decalage : decalage + i + 1;
-			opaque_index_buffer[3 * decalage + i * 6 + 4] = i + 1;
-			opaque_index_buffer[3 * decalage + i * 6 + 5] = i + 2 >= ellipseVerticesCount + 1 ? 1 : i + 2;
+			opaque_index_buffer[3 * decalage + i * 6 + 4] = shapeBegin + i + 1;
+			opaque_index_buffer[3 * decalage + i * 6 + 5] = shapeBegin + i + 2 >= shapeBegin + ellipseVerticesCount + 1 ? shapeBegin + 1 : shapeBegin + i + 2;
 		}
 		else
 		{
@@ -112,6 +123,15 @@ DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b,
 			opaque_index_buffer[3 * decalage + i * 6 + 5] = 0;
 		}
 	}
+
+	for (int i = 0; i < numPointsPolygon; ++i)
+	{
+		opaque_color_buffer[4 * decalage + i * 4] = contourColour.getRed();
+		opaque_color_buffer[4 * decalage + i * 4 + 1] = contourColour.getGreen();
+		opaque_color_buffer[4 * decalage + i * 4 + 2] = contourColour.getBlue();
+		opaque_color_buffer[4 * decalage + i * 4 + 3] = contourColour.getAlpha();
+	}
+	
 
 	modelParameters = Vector3D<float>(0.0f, 0.0f, 0.0f);
 
@@ -252,10 +272,20 @@ void DrawableEllipse::CanvasResized(SceneCanvasComponent* _parentCanvas)
 		opaque_vertex_buffer[3 * decalage + 3 + i * 3 + 1] = (float)centerInPixels.get<1>() + (float)bInPixels * (float)std::sin(2.0 * M_PI * normalizedAngle);
 		opaque_vertex_buffer[3 * decalage + 3 + i * 3 + 2] = 0.0f;
 	}
-	for (int i = 3 * decalage + 3 * ellipseVerticesCount; i< 3 * decalage + 3 * numVerticesPolygon; ++i)
+	for (int i = 3 * decalage + 3 * (ellipseVerticesCount+1); i< 3 * decalage + 3 * numVerticesPolygon; ++i)
 	{
 		opaque_vertex_buffer[i] = 0.0f;
 	}
+
+	float A = GetAlpha();
+	for (int i = 0; i < numVerticesPolygon; ++i)
+	{
+		opaque_color_buffer[4 * decalage + i * 4] = fillColour.getRed() / 255.0f;
+		opaque_color_buffer[4 * decalage + i * 4 + 1] = fillColour.getGreen() / 255.0f;
+		opaque_color_buffer[4 * decalage + i * 4 + 2] = fillColour.getBlue() / 255.0f;
+		opaque_color_buffer[4 * decalage + i * 4 + 3] = A;
+	}
+
 	decalage += numVerticesPolygon;
 
 	// contour

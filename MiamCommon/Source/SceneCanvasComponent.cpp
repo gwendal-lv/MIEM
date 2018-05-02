@@ -368,7 +368,8 @@ void SceneCanvasComponent::renderOpenGL()
 		}*/
 		//if(duplicatedAreas.size() > 1)
 		//if(areasCountChanged || duplicatedAreas[i]->hasVerticesChanged())
-			DrawShape(duplicatedAreas[0], (int)0 * numVertexShape);
+		//if (duplicatedAreas.size() > 1)
+			DrawShape(duplicatedAreas[i], (int)i * numVertexShape);
 		//DrawShape(duplicatedAreas[1], 0 * numVertexShape);
     }
 	for (int i = duplicatedAreas.size() * shapeVertexBufferSize; i < vertexBufferSize; ++i)
@@ -672,6 +673,7 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 		//	decalage += numVerticesRing;
 		//}
 		
+		int numIdx = area->GetIndexCount();
 		for(int i = 0; i < area->GetIndexCount();++i)
 			indices[3 * decalage + i] = area->GetIndex(i)  + positionInBuffer;
 
@@ -710,15 +712,22 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 			g_color_buffer_data[4 * decalage + i] = area->GetOpaqueColour(i);
 		}
 
-		DBG("------ path -------");
+		/*DBG("------ shape path -------");
+		for (int i = 3 * numVerticesRing ; i < 3 * ((numVerticesRing + numVerticesPolygon )); ++i)
+		{
+			DBG((String)indices[i] + " : (" + (String)g_vertex_buffer_data[3 * indices[i]] + " " + (String)g_vertex_buffer_data[3 * indices[i] + 1] + ")" + " : "
+				+ (String)g_vertex_buffer_data[4 * indices[i]] + ", " + (String)g_vertex_buffer_data[4 * indices[i] + 1] + ", " + (String)g_vertex_buffer_data[4 * indices[i] + 2] + ", " + (String)g_vertex_buffer_data[4 * indices[i] + 3]);
+		}*/
+
+		/*DBG("------ contour path -------");
 		for (int i = 3 * (numVerticesRing + numVerticesPolygon); i < 3 * ((numVerticesRing + numVerticesPolygon + 2 * 4)); ++i)
 		{
 			DBG((String)indices[i] + " : (" + (String)g_vertex_buffer_data[3 * indices[i]] + " " + (String)g_vertex_buffer_data[3 * indices[i] + 1] + ")" + " : "
 				+ (String)g_vertex_buffer_data[4 * indices[i]] + ", " + (String)g_vertex_buffer_data[4 * indices[i] + 1] + ", " + (String)g_vertex_buffer_data[4 * indices[i] + 2] + ", " + (String)g_vertex_buffer_data[4 * indices[i] + 3]);
-		}
-		int bl = 5;
+		}*/
+		/*int bl = 5;
 
-		int test;
+		int test = 5;
 		for (int i = 0; i < area->GetIndexCount(); ++i)
 		{
 			if (g_vertex_buffer_data[3 * indices[i]] == 0 || g_vertex_buffer_data[3 * indices[i] + 1] == 0)
@@ -728,7 +737,18 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 				&& g_color_buffer_data[4 * indices[i] + 2] == 0
 				&& g_color_buffer_data[4 * indices[i] + 2] == 0)
 				test = 0;
-		}
+			if (test == 0)
+			{
+				if (3 * indices[i] < 3 * numVerticesRing)
+					DBG("centre pas complet");
+				else if (3 * indices[i] < 3 * numVerticesRing + 3 * numVerticesPolygon)
+					DBG("forme pas complete");
+				else if (3 * indices[i] < 3 * numVerticesRing + 3 * numVerticesPolygon + 3 * 2 * numPointsPolygon)
+					DBG("contour pas complet");
+				else
+					DBG("hors de la zone");
+			}
+		}*/
 
 	}
 

@@ -42,7 +42,7 @@ namespace Miam
 			int GetOpaqueVerticesCount() override {
 				return DrawableArea::GetOpaqueVerticesCount() + numVerticesPolygon + numPointsPolygon;
 			};
-
+			int GetOpaqueColourCount() { return DrawableArea::GetOpaqueColourCount() + 4 * (numVerticesPolygon + numPointsPolygon); }
 			int GetIndexCount() override;
 			bool hasVerticesChanged() override;
 			bool hasPositionChanged() override;

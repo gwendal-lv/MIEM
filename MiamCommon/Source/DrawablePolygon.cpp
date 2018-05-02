@@ -117,10 +117,10 @@ DrawablePolygon::DrawablePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 
 	for (int i = 0; i < pointsCount; ++i)
 	{
-		opaque_color_buffer[4 * decalage + i * 4] = 0;//fillColour.getRed();
-		opaque_color_buffer[4 * decalage + i * 4 + 1] = 255;//fillColour.getGreen();
-		opaque_color_buffer[4 * decalage + i * 4 + 2] = 0;//fillColour.getBlue();
-		opaque_color_buffer[4 * decalage + i * 4 + 3] = 255;//fillColour.getAlpha();
+		opaque_color_buffer[4 * decalage + i * 4] = fillColour.getRed()/255.0f;
+		opaque_color_buffer[4 * decalage + i * 4 + 1] = fillColour.getGreen()/255.0f;
+		opaque_color_buffer[4 * decalage + i * 4 + 2] = fillColour.getBlue()/255.0f;
+		opaque_color_buffer[4 * decalage + i * 4 + 3] = GetAlpha();
 	}
 	for (int i = 4 * pointsCount; i < 4 * numVerticesPolygon; ++i)
 		opaque_color_buffer[4 * decalage + i] = 0.0f;
@@ -152,10 +152,10 @@ DrawablePolygon::DrawablePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 
 	for (int i = 0; i < numPointsPolygon; ++i)
 	{
-		opaque_color_buffer[4 * decalage + i * 4] = 0;// contourColour.getRed();
-		opaque_color_buffer[4 * decalage + i * 4 + 1] = 0;// contourColour.getGreen();
-		opaque_color_buffer[4 * decalage + i * 4 + 2] = 255;// contourColour.getBlue();
-		opaque_color_buffer[4 * decalage + i * 4 + 3] = 255;// contourColour.getAlpha();
+		opaque_color_buffer[4 * decalage + i * 4] = contourColour.getRed();
+		opaque_color_buffer[4 * decalage + i * 4 + 1] = contourColour.getGreen();
+		opaque_color_buffer[4 * decalage + i * 4 + 2] = contourColour.getBlue();
+		opaque_color_buffer[4 * decalage + i * 4 + 3] = contourColour.getAlpha();
 	}
 	for (int i = 4 * pointsCount; i < 4 * numPointsPolygon; ++i)
 		opaque_color_buffer[4 * decalage + i] = 1.0f;
@@ -327,12 +327,12 @@ void DrawablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 
 	
 
-	float A = 255 * GetAlpha();
+	float A = GetAlpha();
 	for (int i = 0; i < numVerticesPolygon; ++i)
 	{
-		opaque_color_buffer[4 * decalage + i * 4] = 0;//fillColour.getRed();
-		opaque_color_buffer[4 * decalage + i * 4 + 1] = 255;// fillColour.getGreen();
-		opaque_color_buffer[4 * decalage + i * 4 + 2] = 0;//fillColour.getBlue();
+		opaque_color_buffer[4 * decalage + i * 4] = fillColour.getRed()/255.0f;
+		opaque_color_buffer[4 * decalage + i * 4 + 1] = fillColour.getGreen()/255.0f;
+		opaque_color_buffer[4 * decalage + i * 4 + 2] = fillColour.getBlue()/255.0f;
 		opaque_color_buffer[4 * decalage + i * 4 + 3] = A;
 	}
 	/*for (int i = 4 * (contourPointsInPixels.outer().size() - 1); i < 4 * numVerticesPolygon; ++i)
