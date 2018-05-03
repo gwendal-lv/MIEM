@@ -71,11 +71,11 @@ namespace Miam {
 
 			GLfloat g_vertex_circle[3 * numVerticesCircle];
 			unsigned int circleIndices[3 * numPointCircle];
-			int GetOpaqueVerticesCount() override {					// points du contour					manipulationLine
-				return DrawablePolygon::GetOpaqueVerticesCount() + (numPointsPolygon * numVerticesCircle) + dottedLineVertexes;
+			int GetOpaqueVerticesCount() override {					// points du contour					manipulationLine	manipulationPoint
+				return DrawablePolygon::GetOpaqueVerticesCount() + (numPointsPolygon * numVerticesCircle) + dottedLineVertexes + numVerticesRing;
 			}
-			int GetOpaqueColourCount() override { return DrawablePolygon::GetOpaqueColourCount() + 4 * ((numPointsPolygon * numVerticesCircle) + dottedLineVertexes); }
-			int GetIndexCount() override { return DrawablePolygon::GetIndexCount() + numPointsPolygon * (3 * numPointCircle) + dottedLineIndices; }
+			int GetOpaqueColourCount() override { return DrawablePolygon::GetOpaqueColourCount() + 4 * ((numPointsPolygon * numVerticesCircle) + dottedLineVertexes + numVerticesRing); }
+			int GetIndexCount() override { return DrawablePolygon::GetIndexCount() + numPointsPolygon * (3 * numPointCircle) + dottedLineIndices + (3 * numVerticesRing); }
         virtual void Paint(Graphics& g) override;
         virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
         // Display helpers

@@ -64,9 +64,9 @@ void EditablePolygon::graphicalInit()
     manipulationPointRadius = centerContourWidth+centerCircleRadius;
 
 	// ajout de la forme et du contour !
-	opaque_vertex_buffer_size += (3 * (numPointsPolygon * numVerticesCircle) + 3 * dottedLineVertexes);
-	opaque_index_buffer_size += (3 * (numPointsPolygon * numPointCircle) + dottedLineIndices);
-	opaque_color_buffer_size += (4 * (numPointsPolygon * numVerticesCircle) + 4 * dottedLineVertexes);
+	opaque_vertex_buffer_size += (3 * (numPointsPolygon * numVerticesCircle) + 3 * dottedLineVertexes + 3 * numVerticesRing);
+	opaque_index_buffer_size += (3 * (numPointsPolygon * numPointCircle) + dottedLineIndices + 3 * numVerticesRing);
+	opaque_color_buffer_size += (4 * (numPointsPolygon * numVerticesCircle) + 4 * dottedLineVertexes + 4 * numVerticesRing);
 
 	// resize des buffers
 	opaque_vertex_buffer.resize(opaque_vertex_buffer_size);
@@ -116,7 +116,15 @@ void EditablePolygon::graphicalInit()
 		opaque_color_buffer[decalage + 4 * i + 2] = contourColour.getBlue();
 		opaque_color_buffer[decalage + 4 * i + 3] = contourColour.getAlpha();
 	}
-
+	// manipulationPoint
+	decalage += 4 * dottedLineVertexes;
+	for (int i = 0; i < numVerticesRing; ++i)
+	{
+		opaque_color_buffer[decalage + 4 * i + 0] = contourColour.getRed();
+		opaque_color_buffer[decalage + 4 * i + 1] = contourColour.getGreen();
+		opaque_color_buffer[decalage + 4 * i + 2] = contourColour.getBlue();
+		opaque_color_buffer[decalage + 4 * i + 3] = contourColour.getAlpha();
+	}
 }
 void EditablePolygon::behaviorInit()
 {
@@ -206,17 +214,30 @@ void EditablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 		decalage += numVerticesCircle;
 	}
 
-	// manipulationLine
+	// manipulationLine + manipulationPoint
 	if (isActive)
 	{
 		computeManipulationLine(centerInPixels.get<0>(), centerInPixels.get<1>(), bmanipulationPointInPixels.get<0>(), bmanipulationPointInPixels.get<1>(), 4.0f, 4.0f);
 		for (int i = 0; i < 3 * dottedLineVertexes; ++i)
 			opaque_vertex_buffer[3 * decalage + i] = g_vertex_dotted_line[i];
+		decalage += dottedLineVertexes;
+
+		for (int j = 0; j < 3 * numVerticesRing; j += 3)
+		{
+				
+			opaque_vertex_buffer[3 * decalage + j] = 1.0f* (bmanipulationPointInPixels.get<0>() + g_vertex_ring[j]);
+			opaque_vertex_buffer[3 * decalage + j + 1] = 1.0f*(bmanipulationPointInPixels.get<1>() + g_vertex_ring[j + 1]);
+			opaque_vertex_buffer[3 * decalage + j + 2] = 0.1f + g_vertex_ring[j + 2];
+				
+		}
 	}
 	else
 	{
 		for (int i = 0; i < 3 * dottedLineVertexes; ++i)
 			opaque_vertex_buffer[3 * decalage + i] = 0.0f;
+		decalage += dottedLineVertexes;
+		for (int j = 0; j < 3 * numVerticesRing; ++j)
+			opaque_vertex_buffer[3 * decalage + j] = 0.0f;
 	}
 	
 	/// index
@@ -239,13 +260,18 @@ void EditablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 	}
 	begin += numPointsPolygon * numVerticesCircle;
 
-	// manipulationLine
+	// manipulationLine + manipulationPoint
 	if (isActive)
 	{
-		//5. manipulationLine
 		for (int i = 0; i < dottedLineIndices; ++i)
 			opaque_index_buffer[3 * decalage + i] = g_indices_dotted_line[i] + begin;
 		decalage += 2 * dottedLineNparts;
+		begin += dottedLineVertexes;
+		for (int j = 0; j < 3 * numVerticesRing; ++j)
+		{
+			opaque_index_buffer[j + 3 * decalage] = ringIndices[j] + begin;
+		}
+		decalage += numVerticesRing;
 	}
     
     
