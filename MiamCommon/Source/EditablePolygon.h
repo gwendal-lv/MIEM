@@ -62,13 +62,20 @@ namespace Miam {
         
         // ----- Display functions -----
         public :
+			static const int dottedLineNparts = 20;
+			static const int dottedLineVertexes = 4 * dottedLineNparts;
+			static const int dottedLineIndices = 6 * dottedLineNparts;
+
+			GLfloat g_vertex_dotted_line[3 * dottedLineVertexes];
+			GLuint g_indices_dotted_line[dottedLineIndices];
+
 			GLfloat g_vertex_circle[3 * numVerticesCircle];
 			unsigned int circleIndices[3 * numPointCircle];
-			int GetOpaqueVerticesCount() override {					// points du contour
-				return DrawablePolygon::GetOpaqueVerticesCount() + (numPointsPolygon * numVerticesCircle);
+			int GetOpaqueVerticesCount() override {					// points du contour					manipulationLine
+				return DrawablePolygon::GetOpaqueVerticesCount() + (numPointsPolygon * numVerticesCircle) + dottedLineVertexes;
 			}
-			int GetOpaqueColourCount() override { return DrawablePolygon::GetOpaqueColourCount() + 4 * ((numPointsPolygon * numVerticesCircle)); }
-			int GetIndexCount() override { return DrawablePolygon::GetIndexCount() + numPointsPolygon * (3 * numPointCircle); }
+			int GetOpaqueColourCount() override { return DrawablePolygon::GetOpaqueColourCount() + 4 * ((numPointsPolygon * numVerticesCircle) + dottedLineVertexes); }
+			int GetIndexCount() override { return DrawablePolygon::GetIndexCount() + numPointsPolygon * (3 * numPointCircle) + dottedLineIndices; }
         virtual void Paint(Graphics& g) override;
         virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
         // Display helpers
@@ -95,6 +102,7 @@ namespace Miam {
         void Translate(const Point<double>& translation) override;
         protected :
         void recreateNormalizedPoints() override;
+		void computeManipulationLine(float Ox, float Oy, float Mx, float My, float width, float height);
         // Polygon-specific editing function
         public :
 		/// \brief Asks the polygonal area if a new point may be created close to

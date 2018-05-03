@@ -64,9 +64,9 @@ void EditablePolygon::graphicalInit()
     manipulationPointRadius = centerContourWidth+centerCircleRadius;
 
 	// ajout de la forme et du contour !
-	opaque_vertex_buffer_size += (3 * (numPointsPolygon * numVerticesCircle));
-	opaque_index_buffer_size += (3 * (numPointsPolygon * numPointCircle));
-	opaque_color_buffer_size += (4 * (numPointsPolygon * numVerticesCircle));
+	opaque_vertex_buffer_size += (3 * (numPointsPolygon * numVerticesCircle) + 3 * dottedLineVertexes);
+	opaque_index_buffer_size += (3 * (numPointsPolygon * numPointCircle) + dottedLineIndices);
+	opaque_color_buffer_size += (4 * (numPointsPolygon * numVerticesCircle) + 4 * dottedLineVertexes);
 
 	// resize des buffers
 	opaque_vertex_buffer.resize(opaque_vertex_buffer_size);
@@ -97,7 +97,8 @@ void EditablePolygon::graphicalInit()
 		circleIndices[i * 3 + 2] = i + 2 > numPointCircle ? 1 : i + 2;
 	}
 
-	// couleur
+	/// couleur
+	// points
 	int decalage = DrawablePolygon::GetOpaqueColourCount();
 	for (int i = 0; i < (numPointsPolygon * numVerticesCircle); ++i)
 	{
@@ -106,6 +107,16 @@ void EditablePolygon::graphicalInit()
 		opaque_color_buffer[decalage + 4 * i + 2] = fillColour.getBlue();
 		opaque_color_buffer[decalage + 4 * i + 3] = GetAlpha();
 	}
+	// manipulationLine
+	decalage += 4 * (numPointsPolygon * numVerticesCircle);
+	for (int i = 0; i < dottedLineVertexes; ++i)
+	{
+		opaque_color_buffer[decalage + 4 * i + 0] = contourColour.getRed();
+		opaque_color_buffer[decalage + 4 * i + 1] = contourColour.getGreen();
+		opaque_color_buffer[decalage + 4 * i + 2] = contourColour.getBlue();
+		opaque_color_buffer[decalage + 4 * i + 3] = contourColour.getAlpha();
+	}
+
 }
 void EditablePolygon::behaviorInit()
 {
@@ -165,9 +176,15 @@ void EditablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 {
     InteractivePolygon::CanvasResized(_parentCanvas);
 
+	// Manipulation point (+ line...)
+	computeManipulationPoint();
+
+	pointDraggingRadius = 0.01f * (parentCanvas->getWidth() + parentCanvas->getHeight()) / 2.0f; // 1%
+
 	int decalage = DrawablePolygon::GetOpaqueVerticesCount();
 	int numApexes = contourPointsInPixels.outer().size() - 1;//isActive? contourPointsInPixels.outer().size() - 1 : 0;
 
+	/// vertex
 	// points
 	for (int k = 0; k < numApexes; ++k)
 	{
@@ -188,10 +205,24 @@ void EditablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 			opaque_vertex_buffer[3 * decalage + j] = 0;
 		decalage += numVerticesCircle;
 	}
-	
 
-	decalage = DrawablePolygon::GetOpaqueVerticesCount();
-	int begin = DrawablePolygon::GetOpaqueVerticesCount();
+	// manipulationLine
+	if (isActive)
+	{
+		computeManipulationLine(centerInPixels.get<0>(), centerInPixels.get<1>(), bmanipulationPointInPixels.get<0>(), bmanipulationPointInPixels.get<1>(), 4.0f, 4.0f);
+		for (int i = 0; i < 3 * dottedLineVertexes; ++i)
+			opaque_vertex_buffer[3 * decalage + i] = g_vertex_dotted_line[i];
+	}
+	else
+	{
+		for (int i = 0; i < 3 * dottedLineVertexes; ++i)
+			opaque_vertex_buffer[3 * decalage + i] = 0.0f;
+	}
+	
+	/// index
+	// points
+	decalage = DrawablePolygon::GetOpaqueVerticesCount(); // decalage dans le buffer index
+	int begin = DrawablePolygon::GetOpaqueVerticesCount(); // decalage dans le buffer vertex
 	for (int k = 0; k < numApexes; ++k)
 	{
 		for (int j = 0; j < 3 * numPointCircle; ++j)
@@ -206,11 +237,18 @@ void EditablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 			opaque_index_buffer[j + 3 * decalage/*+ numVerticesPolygon*/] = 0;
 		decalage += numPointCircle;
 	}
+	begin += numPointsPolygon * numVerticesCircle;
+
+	// manipulationLine
+	if (isActive)
+	{
+		//5. manipulationLine
+		for (int i = 0; i < dottedLineIndices; ++i)
+			opaque_index_buffer[3 * decalage + i] = g_indices_dotted_line[i] + begin;
+		decalage += 2 * dottedLineNparts;
+	}
     
-    // Manipulation point (+ line...)
-    computeManipulationPoint();
     
-    pointDraggingRadius = 0.01f * (parentCanvas->getWidth()+parentCanvas->getHeight())/2.0f; // 1%
 }
 
 void EditablePolygon::computeManipulationPoint()
@@ -766,4 +804,57 @@ void EditablePolygon::recreateNormalizedPoints()
                            centerInPixels.get<1>()/parentCanvas->getHeight());
 }
 
+void EditablePolygon::computeManipulationLine(float Ox, float Oy, float Mx, float My, float width, float height)
+{
+	int N = 20;
+	float length = boost::geometry::distance(bpt(Ox, Oy), bpt(Mx, My));//0.25 * (getWidth() + getHeight()) / 2.0;
+	if (length / (2 * height) > 20.0f)
+		height = (length / 20.0f) / 2.0f;
+	else
+		N = length / (2 * height);
 
+	float sina = (My - Oy) / length;
+	float cosa = (Mx - Ox) / length;
+
+	for (int i = 0; i < dottedLineNparts; ++i)
+	{
+		if (i < N)
+		{
+			// up_left
+			g_vertex_dotted_line[i * 3 * 4] = Ox + i * 2 * height * cosa - (width / 2.0) * sina;
+			g_vertex_dotted_line[i * 3 * 4 + 1] = Oy + i * 2 * height * sina + (width / 2.0) * cosa;
+			g_vertex_dotted_line[i * 3 * 4 + 2] = 0.1f;
+			// down_left
+			g_vertex_dotted_line[i * 3 * 4 + 3] = Ox + i * 2 * height * cosa + (width / 2.0) * sina;
+			g_vertex_dotted_line[i * 3 * 4 + 4] = Oy + i * 2 * height * sina - (width / 2.0) * cosa;
+			g_vertex_dotted_line[i * 3 * 4 + 5] = 0.1f;
+			// up_right
+			g_vertex_dotted_line[i * 3 * 4 + 6] = Ox + (2 * i + 1)  * height * cosa - (width / 2.0) * sina;
+			g_vertex_dotted_line[i * 3 * 4 + 7] = Oy + (2 * i + 1) * height * sina + (width / 2.0) * cosa;
+			g_vertex_dotted_line[i * 3 * 4 + 8] = 0.1f;
+			// down_right
+			g_vertex_dotted_line[i * 3 * 4 + 9] = Ox + (2 * i + 1) * height * cosa + (width / 2.0) * sina;
+			g_vertex_dotted_line[i * 3 * 4 + 10] = Oy + (2 * i + 1) * height * sina - (width / 2.0) * cosa;
+			g_vertex_dotted_line[i * 3 * 4 + 11] = 0.1f;
+
+			g_indices_dotted_line[i * 6] = i * 4;
+			g_indices_dotted_line[i * 6 + 1] = i * 4 + 1;
+			g_indices_dotted_line[i * 6 + 2] = i * 4 + 2;
+			g_indices_dotted_line[i * 6 + 3] = i * 4 + 1;
+			g_indices_dotted_line[i * 6 + 4] = i * 4 + 2;
+			g_indices_dotted_line[i * 6 + 5] = i * 4 + 3;
+		}
+		else
+		{
+			for (int j = 0; j < 12; ++j)
+			{
+				g_vertex_dotted_line[i * 12 + j] = 0.0f;
+			}
+			for (int j = 0; j < 6; ++j)
+			{
+				g_indices_dotted_line[i * 6 + j] = 0;
+			}
+		}
+	}
+
+}
