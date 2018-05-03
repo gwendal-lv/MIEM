@@ -491,6 +491,7 @@ void SceneCanvasComponent::SetIsSelectedForEditing(bool isSelected)
 void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int positionInBuffer)
 {
 	int decalage = positionInBuffer;// + numPointsPolygon + 1;
+	area->fillOpenGLBuffers();
 	//std::vector<int> shift;
 	//shift.push_back(decalage);
 	if (area->GetOpaqueVerticesCount() >= 3)

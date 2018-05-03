@@ -189,14 +189,19 @@ void EditablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 
 	pointDraggingRadius = 0.01f * (parentCanvas->getWidth() + parentCanvas->getHeight()) / 2.0f; // 1%
 
+}
+
+void EditablePolygon::fillOpenGLBuffers()
+{
+	DrawablePolygon::fillOpenGLBuffers();
 	int decalage = DrawablePolygon::GetOpaqueVerticesCount();
 	int numApexes = contourPointsInPixels.outer().size() - 1;//isActive? contourPointsInPixels.outer().size() - 1 : 0;
 
-	/// vertex
-	// points
+	 /// vertex
+	 // points
 	for (int k = 0; k < numApexes; ++k)
 	{
-			
+
 		for (int j = 0; j < 3 * numVerticesCircle; j += 3)
 		{
 			opaque_vertex_buffer[3 * decalage + j] = 1.0f* ((float)contourPointsInPixels.outer().at(k).get<0>() + g_vertex_circle[j]);
@@ -204,8 +209,8 @@ void EditablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 			opaque_vertex_buffer[3 * decalage + j + 2] = 0.1f + g_vertex_circle[j + 2];
 		}
 		decalage += numVerticesCircle;
-			
-			
+
+
 	}
 	for (int k = numApexes; k < numPointsPolygon; ++k)
 	{
@@ -224,11 +229,11 @@ void EditablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 
 		for (int j = 0; j < 3 * numVerticesRing; j += 3)
 		{
-				
+
 			opaque_vertex_buffer[3 * decalage + j] = 1.0f* (bmanipulationPointInPixels.get<0>() + g_vertex_ring[j]);
 			opaque_vertex_buffer[3 * decalage + j + 1] = 1.0f*(bmanipulationPointInPixels.get<1>() + g_vertex_ring[j + 1]);
 			opaque_vertex_buffer[3 * decalage + j + 2] = 0.1f + g_vertex_ring[j + 2];
-				
+
 		}
 	}
 	else
@@ -239,7 +244,7 @@ void EditablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 		for (int j = 0; j < 3 * numVerticesRing; ++j)
 			opaque_vertex_buffer[3 * decalage + j] = 0.0f;
 	}
-	
+
 	/// index
 	// points
 	decalage = DrawablePolygon::GetOpaqueVerticesCount(); // decalage dans le buffer index
@@ -273,8 +278,6 @@ void EditablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 		}
 		decalage += numVerticesRing;
 	}
-    
-    
 }
 
 void EditablePolygon::computeManipulationPoint()

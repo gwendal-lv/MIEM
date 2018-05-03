@@ -78,6 +78,7 @@ namespace Miam {
 			int GetIndexCount() override { return DrawablePolygon::GetIndexCount() + numPointsPolygon * (3 * numPointCircle) + dottedLineIndices + (3 * numVerticesRing); }
         virtual void Paint(Graphics& g) override;
         virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
+		virtual void fillOpenGLBuffers() override;
         // Display helpers
         private :
         void computeManipulationPoint();

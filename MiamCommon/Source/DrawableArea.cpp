@@ -273,6 +273,10 @@ void DrawableArea::CanvasResized(SceneCanvasComponent* _parentCanvas)
 	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scale(parentCanvas->getWidth(), parentCanvas->getHeight());
 	boost::geometry::transform(center, centerInPixels, scale);
 
+}
+
+void DrawableArea::fillOpenGLBuffers()
+{
 	int decalage = 0;
 	for (int j = 0; j < 3 * numVerticesRing; j += 3)
 	{

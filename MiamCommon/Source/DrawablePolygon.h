@@ -105,6 +105,8 @@ namespace Miam {
 		void setIsFilled(bool shouldBeFilled);
         virtual void Paint(Graphics& g) override;
         virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
+
+		virtual void fillOpenGLBuffers() override;
         
         
         // - - - - - XML import/export - - - - -

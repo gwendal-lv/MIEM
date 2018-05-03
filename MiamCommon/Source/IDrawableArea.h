@@ -112,6 +112,7 @@ namespace Miam
         /// of all points.
         virtual void CanvasResized(SceneCanvasComponent* parentCanvas) = 0;
         
+		virtual void fillOpenGLBuffers() = 0;
 		virtual bool IsActive() { return true; }
 		virtual bool ShowCenter() { return true; }
 		virtual bool hasVerticesChanged() = 0;

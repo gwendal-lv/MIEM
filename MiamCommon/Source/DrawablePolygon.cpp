@@ -309,14 +309,18 @@ void DrawablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
     contourPointsInPixels.clear();
     boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scale(parentCanvas->getWidth(), parentCanvas->getHeight());
     boost::geometry::transform(contourPoints, contourPointsInPixels, scale);
+}
 
+void DrawablePolygon::fillOpenGLBuffers()
+{
+	DrawableArea::fillOpenGLBuffers();
 	// forme
 	int decalage = DrawableArea::GetOpaqueVerticesCount();
 	opaque_vertex_buffer[3 * decalage] = (float)centerInPixels.get<0>();
 	opaque_vertex_buffer[3 * decalage + 1] = (float)centerInPixels.get<1>();
 	opaque_vertex_buffer[3 * decalage + 2] = 0.0f;
-	
-	for (int i = 0; i<contourPointsInPixels.outer().size()-1; i++)
+
+	for (int i = 0; i<contourPointsInPixels.outer().size() - 1; i++)
 	{
 		opaque_vertex_buffer[3 * decalage + 3 + i * 3] = (float)contourPointsInPixels.outer().at(i).get<0>();//radius*cosf(currentAngle);
 		opaque_vertex_buffer[3 * decalage + 3 + i * 3 + 1] = (float)contourPointsInPixels.outer().at(i).get<1>();
@@ -325,23 +329,23 @@ void DrawablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 	for (int i = 3 * decalage + 3 + 3 * (contourPointsInPixels.outer().size() - 1); i < 3 * decalage + 3 * numVerticesPolygon; ++i)
 		opaque_vertex_buffer[i] = 0.0f;
 
-	
+
 
 	float A = GetAlpha();
 	for (int i = 0; i < numVerticesPolygon; ++i)
 	{
-		opaque_color_buffer[4 * decalage + i * 4] = fillColour.getRed()/255.0f;
-		opaque_color_buffer[4 * decalage + i * 4 + 1] = fillColour.getGreen()/255.0f;
-		opaque_color_buffer[4 * decalage + i * 4 + 2] = fillColour.getBlue()/255.0f;
+		opaque_color_buffer[4 * decalage + i * 4] = fillColour.getRed() / 255.0f;
+		opaque_color_buffer[4 * decalage + i * 4 + 1] = fillColour.getGreen() / 255.0f;
+		opaque_color_buffer[4 * decalage + i * 4 + 2] = fillColour.getBlue() / 255.0f;
 		opaque_color_buffer[4 * decalage + i * 4 + 3] = A;
 	}
 	/*for (int i = 4 * (contourPointsInPixels.outer().size() - 1); i < 4 * numVerticesPolygon; ++i)
-		opaque_color_buffer[4 * decalage + i] = 0.0f;*/
+	opaque_color_buffer[4 * decalage + i] = 0.0f;*/
 
 	decalage += numVerticesPolygon;
 
 	// contour
-	bpolygon outlinePolygon,tmpPolygon;
+	bpolygon outlinePolygon, tmpPolygon;
 	float dist = (float)boost::geometry::distance(centerInPixels, contourPointsInPixels.outer().at(0));
 	float newDist = dist + contourWidth;
 	float resizeFactor = newDist / dist;
@@ -353,24 +357,24 @@ void DrawablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 	boost::geometry::transform(outlinePolygon, tmpPolygon, rescaler);
 	boost::geometry::transform(tmpPolygon, outlinePolygon, invTr);
 
-	for (int i = 0; i < (int)outlinePolygon.outer().size()-1; ++i)
+	for (int i = 0; i < (int)outlinePolygon.outer().size() - 1; ++i)
 	{
 		opaque_vertex_buffer[3 * decalage + i * 3] = (float)outlinePolygon.outer().at(i).get<0>();//radius*cosf(currentAngle);
 		opaque_vertex_buffer[3 * decalage + i * 3 + 1] = (float)outlinePolygon.outer().at(i).get<1>();
 		opaque_vertex_buffer[3 * decalage + i * 3 + 2] = 0.0f;
 	}
-	for (int i = 3 * decalage + 3 * ((int)outlinePolygon.outer().size() - 1); i <  opaque_vertex_buffer_size;++i)
+	for (int i = 3 * decalage + 3 * ((int)outlinePolygon.outer().size() - 1); i <3 * decalage + (3 * numPointsPolygon); ++i)
 		opaque_vertex_buffer[i] = 0.0f;
 
 	/*for (int i = 0; i < numPointsPolygon; ++i)
 	{
-		opaque_color_buffer[4 * decalage + i * 4] = contourColour.getRed();
-		opaque_color_buffer[4 * decalage + i * 4 + 1] = contourColour.getGreen();
-		opaque_color_buffer[4 * decalage + i * 4 + 2] = contourColour.getBlue();
-		opaque_color_buffer[4 * decalage + i * 4 + 3] = contourColour.getAlpha();
+	opaque_color_buffer[4 * decalage + i * 4] = contourColour.getRed();
+	opaque_color_buffer[4 * decalage + i * 4 + 1] = contourColour.getGreen();
+	opaque_color_buffer[4 * decalage + i * 4 + 2] = contourColour.getBlue();
+	opaque_color_buffer[4 * decalage + i * 4 + 3] = contourColour.getAlpha();
 	}*/
 	/*for (int i = 4 * (outlinePolygon.outer().size() - 1); i < 4 * numPointsPolygon; ++i)
-		opaque_color_buffer[4 * decalage + i] = 0.0f;*/
+	opaque_color_buffer[4 * decalage + i] = 0.0f;*/
 
 	//DBG("------ path -------");
 	//for (int i = 3*(numVerticesRing + numVerticesPolygon); i < 3*((numVerticesRing + numVerticesPolygon + 2 * ((int)outlinePolygon.outer().size() - 1))); ++i)
@@ -387,7 +391,6 @@ void DrawablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 		if (opaque_color_buffer[4 * opaque_index_buffer[i]] == 0 && opaque_color_buffer[4 * opaque_index_buffer[i] + 1] == 0 && opaque_color_buffer[4 * opaque_index_buffer[i] + 2] == 0 && opaque_color_buffer[4 * opaque_index_buffer[i] + 2] == 0)
 			test = 0;
 	}
-	
 }
 
 
