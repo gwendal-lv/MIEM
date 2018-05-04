@@ -102,28 +102,28 @@ void EditablePolygon::graphicalInit()
 	int decalage = DrawablePolygon::GetOpaqueColourCount();
 	for (int i = 0; i < (numPointsPolygon * numVerticesCircle); ++i)
 	{
-		opaque_color_buffer[decalage + 4 * i + 0] = contourColour.getRed() / 255.0f;
-		opaque_color_buffer[decalage + 4 * i + 1] = contourColour.getGreen() / 255.0f;
-		opaque_color_buffer[decalage + 4 * i + 2] = contourColour.getBlue() / 255.0f;
-		opaque_color_buffer[decalage + 4 * i + 3] = contourColour.getAlpha() / 255.0f;
+		opaque_color_buffer[decalage + 4 * i + 0] = editingElementsColour.getRed() / 255.0f;
+		opaque_color_buffer[decalage + 4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
+		opaque_color_buffer[decalage + 4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
+		opaque_color_buffer[decalage + 4 * i + 3] = editingElementsColour.getAlpha() / 255.0f;
 	}
 	// manipulationLine
 	decalage += 4 * (numPointsPolygon * numVerticesCircle);
 	for (int i = 0; i < dottedLineVertexes; ++i)
 	{
-		opaque_color_buffer[decalage + 4 * i + 0] = contourColour.getRed() / 255.0f;
-		opaque_color_buffer[decalage + 4 * i + 1] = contourColour.getGreen() / 255.0f;
-		opaque_color_buffer[decalage + 4 * i + 2] = contourColour.getBlue() / 255.0f;
-		opaque_color_buffer[decalage + 4 * i + 3] = contourColour.getAlpha() / 255.0f;
+		opaque_color_buffer[decalage + 4 * i + 0] = editingElementsColour.getRed() / 255.0f;
+		opaque_color_buffer[decalage + 4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
+		opaque_color_buffer[decalage + 4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
+		opaque_color_buffer[decalage + 4 * i + 3] = editingElementsColour.getAlpha() / 255.0f;
 	}
 	// manipulationPoint
 	decalage += 4 * dottedLineVertexes;
 	for (int i = 0; i < numVerticesRing; ++i)
 	{
-		opaque_color_buffer[decalage + 4 * i + 0] = contourColour.getRed() / 255.0f;
-		opaque_color_buffer[decalage + 4 * i + 1] = contourColour.getGreen() / 255.0f;
-		opaque_color_buffer[decalage + 4 * i + 2] = contourColour.getBlue() / 255.0f;
-		opaque_color_buffer[decalage + 4 * i + 3] = contourColour.getAlpha() / 255.0f;
+		opaque_color_buffer[decalage + 4 * i + 0] = editingElementsColour.getRed() / 255.0f;
+		opaque_color_buffer[decalage + 4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
+		opaque_color_buffer[decalage + 4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
+		opaque_color_buffer[decalage + 4 * i + 3] = editingElementsColour.getAlpha() / 255.0f;
 	}
 }
 void EditablePolygon::behaviorInit()

@@ -368,8 +368,8 @@ void SceneCanvasComponent::renderOpenGL()
 		}*/
 		//if(duplicatedAreas.size() > 1)
 		//if(areasCountChanged || duplicatedAreas[i]->hasVerticesChanged())
-		if (duplicatedAreas.size() > 1)
-			DrawShape(duplicatedAreas[1], (int)0);
+		//if (duplicatedAreas.size() > 1)
+			DrawShape(duplicatedAreas[i], (int)i);
 		//DrawShape(duplicatedAreas[1], 0 * numVertexShape);
     }
 	for (int i = duplicatedAreas.size() * shapeVertexBufferSize; i < vertexBufferSize; ++i)

@@ -152,10 +152,10 @@ DrawablePolygon::DrawablePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 
 	for (int i = 0; i < numPointsPolygon; ++i)
 	{
-		opaque_color_buffer[4 * decalage + i * 4] = contourColour.getRed();
-		opaque_color_buffer[4 * decalage + i * 4 + 1] = contourColour.getGreen();
-		opaque_color_buffer[4 * decalage + i * 4 + 2] = contourColour.getBlue();
-		opaque_color_buffer[4 * decalage + i * 4 + 3] = contourColour.getAlpha();
+		opaque_color_buffer[4 * decalage + i * 4] = contourColour.getRed() / 255.0f;
+		opaque_color_buffer[4 * decalage + i * 4 + 1] = contourColour.getGreen() / 255.0f;
+		opaque_color_buffer[4 * decalage + i * 4 + 2] = contourColour.getBlue() / 255.0f;
+		opaque_color_buffer[4 * decalage + i * 4 + 3] = contourColour.getAlpha() / 255.0f;
 	}
 	for (int i = 4 * pointsCount; i < 4 * numPointsPolygon; ++i)
 		opaque_color_buffer[4 * decalage + i] = 1.0f;

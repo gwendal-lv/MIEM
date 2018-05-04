@@ -79,10 +79,10 @@ void DrawableArea::init()
 
 	for (int i = 0; i < opaque_color_buffer_size/4; ++i)
 	{
-		opaque_color_buffer[4 * i + 0] = contourColour.getRed();
-		opaque_color_buffer[4 * i + 1] = contourColour.getGreen();
-		opaque_color_buffer[4 * i + 2] = contourColour.getBlue();
-		opaque_color_buffer[4 * i + 3] = contourColour.getAlpha();
+		opaque_color_buffer[4 * i + 0] = contourColour.getRed() / 255.0f;
+		opaque_color_buffer[4 * i + 1] = contourColour.getGreen() / 255.0f;
+		opaque_color_buffer[4 * i + 2] = contourColour.getBlue() / 255.0f;
+		opaque_color_buffer[4 * i + 3] = contourColour.getAlpha() / 255.0f;
 	}
 	//for (int i = 4 * numPoints; i < opaque_color_buffer_size; ++i)
 	//	opaque_color_buffer[i] = 0;
