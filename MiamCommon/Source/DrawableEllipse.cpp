@@ -255,10 +255,14 @@ void DrawableEllipse::CanvasResized(SceneCanvasComponent* _parentCanvas)
     boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scaler(parentCanvas->getWidth(), parentCanvas->getHeight());
     boost::geometry::transform(contourPoints, contourPointsInPixels, scaler);
 
-	
+}
+
+void DrawableEllipse::fillOpenGLBuffers()
+{
+	DrawableArea::fillOpenGLBuffers();
 	int aInPixels = (int)(a * (double)parentCanvas->getWidth() * xScale);
 	int bInPixels = (int)(b * (double)parentCanvas->getWidth() * xScale);
-	
+
 	// forme
 	int decalage = DrawableArea::GetOpaqueVerticesCount();
 	float dR = (float)sqrt(2) * contourWidth / 2.0f;
@@ -272,7 +276,7 @@ void DrawableEllipse::CanvasResized(SceneCanvasComponent* _parentCanvas)
 		opaque_vertex_buffer[3 * decalage + 3 + i * 3 + 1] = (float)centerInPixels.get<1>() + (float)bInPixels * (float)std::sin(2.0 * M_PI * normalizedAngle);
 		opaque_vertex_buffer[3 * decalage + 3 + i * 3 + 2] = 0.0f;
 	}
-	for (int i = 3 * decalage + 3 * (ellipseVerticesCount+1); i< 3 * decalage + 3 * numVerticesPolygon; ++i)
+	for (int i = 3 * decalage + 3 * (ellipseVerticesCount + 1); i< 3 * decalage + 3 * numVerticesPolygon; ++i)
 	{
 		opaque_vertex_buffer[i] = 0.0f;
 	}
@@ -296,8 +300,8 @@ void DrawableEllipse::CanvasResized(SceneCanvasComponent* _parentCanvas)
 		opaque_vertex_buffer[3 * decalage + i * 3 + 1] = (float)centerInPixels.get<1>() + float(bInPixels + dR) * (float)std::sin(2.0 * M_PI * normalizedAngle);
 		opaque_vertex_buffer[3 * decalage + i * 3 + 2] = 0.0f;
 	}
-	
-	for (int i = 3 * decalage + 3 * ellipseVerticesCount; i< opaque_vertex_buffer_size; ++i)
+
+	for (int i = 3 * decalage + 3 * ellipseVerticesCount; i< 3 * decalage + (3 * numPointsPolygon); ++i)
 	{
 		opaque_vertex_buffer[i] = 0.0f;
 	}

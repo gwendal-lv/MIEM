@@ -43,9 +43,23 @@ namespace Miam
 			void behaviorInit();
 
 		public :
+			static const int dottedLineNparts = 20;
+			static const int dottedLineVertexes = 4 * dottedLineNparts;
+			static const int dottedLineIndices = 6 * dottedLineNparts;
+
+			GLfloat g_vertex_dotted_line[3 * dottedLineVertexes];
+			GLuint g_indices_dotted_line[dottedLineIndices];
+
+			GLfloat g_vertex_circle[3 * numVerticesCircle];
+			unsigned int circleIndices[3 * numPointCircle];
+			int GetOpaqueVerticesCount() override {					// points du contour					manipulationLine	manipulationPoint
+				return DrawableEllipse::GetOpaqueVerticesCount() + (numPointsPolygon * numVerticesCircle) + dottedLineVertexes + numVerticesRing;
+			}
+			int GetOpaqueColourCount() override { return DrawableEllipse::GetOpaqueColourCount() + 4 * ((numPointsPolygon * numVerticesCircle) + dottedLineVertexes + numVerticesRing); }
+			int GetIndexCount() override { return DrawableEllipse::GetIndexCount() + numPointsPolygon * (3 * numPointCircle) + dottedLineIndices + (3 * numVerticesRing); }
 			virtual void Paint(Graphics& g) override;
 			virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
-
+			virtual void fillOpenGLBuffers() override;
 		private:
 			void computeManipulationPoint();
 
@@ -56,6 +70,7 @@ namespace Miam
 			bool ShowCenter() override;
 			double getRadius();
 			bpt GetManipulationPoint() override;
+			void computeManipulationLine(float Ox, float Oy, float Mx, float My, float width, float height);
 		public :
 			
 			Miam::AreaEventType TryBeginPointMove(const Point<double>& hitPoint) override;

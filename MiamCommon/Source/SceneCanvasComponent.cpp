@@ -368,8 +368,8 @@ void SceneCanvasComponent::renderOpenGL()
 		}*/
 		//if(duplicatedAreas.size() > 1)
 		//if(areasCountChanged || duplicatedAreas[i]->hasVerticesChanged())
-		//if (duplicatedAreas.size() > 1)
-			DrawShape(duplicatedAreas[i], (int)i * numVertexShape);
+		if (duplicatedAreas.size() > 1)
+			DrawShape(duplicatedAreas[1], (int)0);
 		//DrawShape(duplicatedAreas[1], 0 * numVertexShape);
     }
 	for (int i = duplicatedAreas.size() * shapeVertexBufferSize; i < vertexBufferSize; ++i)
@@ -490,7 +490,7 @@ void SceneCanvasComponent::SetIsSelectedForEditing(bool isSelected)
 
 void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int positionInBuffer)
 {
-	int decalage = positionInBuffer;// + numPointsPolygon + 1;
+	int decalage = (int)positionInBuffer * numVertexShape;// + numPointsPolygon + 1;
 	area->fillOpenGLBuffers();
 	//std::vector<int> shift;
 	//shift.push_back(decalage);
@@ -579,7 +579,8 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 
 
 	/// indices
-	decalage = positionInBuffer;// +numPointsPolygon + 1;
+	decalage = positionInBuffer * shapeVertexBufferSize;// différent du decalage pour les vertex et les couleurs !
+	int beginShape = positionInBuffer * numVertexShape;
 	if (area->GetIndexCount() >= 3)
 	{
 		//1. forme
@@ -676,13 +677,14 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 		
 		int numIdx = area->GetIndexCount();
 		for(int i = 0; i < area->GetIndexCount();++i)
-			indices[3 * decalage + i] = area->GetIndex(i)  + positionInBuffer;
+			indices[decalage + i] = area->GetIndex(i)  + beginShape;
 
 		
 
 	
 
 		// colors
+		decalage = (int)positionInBuffer * numVertexShape;
 		float A = area->GetAlpha();
 		//float R = area->GetFillColour().getFloatRed();
 		//float G = area->GetFillColour().getFloatGreen();
@@ -719,6 +721,7 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 			DBG((String)indices[i] + " : (" + (String)g_vertex_buffer_data[3 * indices[i]] + " " + (String)g_vertex_buffer_data[3 * indices[i] + 1] + ")" + " : "
 				+ (String)g_vertex_buffer_data[4 * indices[i]] + ", " + (String)g_vertex_buffer_data[4 * indices[i] + 1] + ", " + (String)g_vertex_buffer_data[4 * indices[i] + 2] + ", " + (String)g_vertex_buffer_data[4 * indices[i] + 3]);
 		}*/
+
 
 		/*DBG("------ contour path -------");
 		for (int i = 3 * (numVerticesRing + numVerticesPolygon); i < 3 * ((numVerticesRing + numVerticesPolygon + 2 * 4)); ++i)
