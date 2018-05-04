@@ -579,7 +579,7 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 
 
 	/// indices
-	decalage = positionInBuffer * shapeVertexBufferSize;// différent du decalage pour les vertex et les couleurs !
+	decalage = positionInBuffer * shapeIndicesSize;// différent du decalage pour les vertex et les couleurs !
 	int beginShape = positionInBuffer * numVertexShape;
 	if (area->GetIndexCount() >= 3)
 	{
