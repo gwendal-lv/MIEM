@@ -37,7 +37,7 @@ AmusingModel::AmusingModel(Presenter* m_presenter) : presenter(m_presenter)
 	}*/
 
 
-	sharedAudioDeviceManager->initialise(2, 2, nullptr, true);
+	sharedAudioDeviceManager->initialise(0, 2, nullptr, true);
 
 	
 	AudioDeviceManager::AudioDeviceSetup audioSetup;

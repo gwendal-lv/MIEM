@@ -11,9 +11,6 @@
               file="Source/SwappableSynth.cpp"/>
         <FILE id="At6bg1" name="SwappableSynth.h" compile="0" resource="0"
               file="Source/SwappableSynth.h"/>
-        <FILE id="urht6A" name="AudioRecorder.cpp" compile="1" resource="0"
-              file="Source/AudioRecorder.cpp"/>
-        <FILE id="NUdghm" name="AudioRecorder.h" compile="0" resource="0" file="Source/AudioRecorder.h"/>
         <FILE id="tsro0s" name="ReadingHead.cpp" compile="1" resource="0" file="Source/ReadingHead.cpp"/>
         <FILE id="sh1gU7" name="ReadingHead.h" compile="0" resource="0" file="Source/ReadingHead.h"/>
         <FILE id="EqpVAZ" name="BaseMidiSender.cpp" compile="1" resource="0"

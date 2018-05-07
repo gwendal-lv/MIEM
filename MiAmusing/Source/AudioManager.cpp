@@ -31,7 +31,7 @@ AudioManager::AudioManager(AmusingModel *m_model) : model(m_model), state(Stop),
 
 	beatsByTimeLine = 4;
 
-	model->sharedAudioDeviceManager->addAudioCallback(&recorder);
+	//model->sharedAudioDeviceManager->addAudioCallback(&recorder);
 
 	setSource(this);
 	runThread = true;
@@ -72,7 +72,7 @@ AudioManager::~AudioManager()
 	else
 		DBG("still exist");
 
-	model->sharedAudioDeviceManager->removeAudioCallback(&recorder);
+	//model->sharedAudioDeviceManager->removeAudioCallback(&recorder);
 	model->removeDeviceManagerFromOptionWindow();
 	//delete midiOuput;
 	delete metronome;
@@ -291,21 +291,7 @@ void AudioManager::sendPosition()
 	
 }
 
-void AudioManager::startRecording()
-{
-	if (recorder.isRecording())
-	{
-		DBG("already recording");
-		std::cout << "already recording" << std::endl;
-	}
-	else
-	{
-		playInternalSynth = false;
-		const File file(File::getSpecialLocation(File::userDocumentsDirectory)
-			.getNonexistentChildFile("Juce Test Recording 0", ".wav"));
-		recorder.startRecording(file);
-	}
-}
+
 
 void AudioManager::setUsingSampledSound()
 {
