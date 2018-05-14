@@ -144,7 +144,7 @@ private:
 #if JUCE_OPENGL_ES
 		"varying lowp vec4 fragmentColor;\n"
 #else
-		"out vec4 fragmentColor;\n"
+		"varying vec4 fragmentColor;\n"
 #endif
 		"\n"
 		"void main()\n"
@@ -164,7 +164,7 @@ private:
 #if JUCE_OPENGL_ES
 		"varying lowp vec4 fragmentColor;\n"
 #else
-		"in vec4 fragmentColor;\n"
+		"varying vec4 fragmentColor;\n"
 #endif
 		"\n"
 		"void main()\n"
