@@ -22,6 +22,8 @@ SoundBrowser::SoundBrowser() : soundsWildcardFilter("*.wav;*.aiff", "*", "Sound 
 	soundList.setDirectory(File::getSpecialLocation(File::userDocumentsDirectory), true, true);
 #elif __AMUSINGIOS
 	soundList.setDirectory(File::getSpecialLocation(File::userDocumentsDirectory), true, true);
+#elif __AMUSINGOSX
+	soundList.setDirectory(File::getSpecialLocation(File::userDocumentsDirectory), true, true);
 #else
 	soundList.setDirectory(File("C:\\"),true,true);
 #endif
