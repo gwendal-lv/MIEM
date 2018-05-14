@@ -131,13 +131,21 @@ private:
 	ScopedPointer<OpenGLShaderProgram::Uniform> projectionMatrix, viewMatrix, modelMatrix;
 
 	String myVertexShader = "attribute vec4 position;\n"
+#if JUCE_OPENGL_ES
+		"attribute lowp vec4 colour;\n"
+#else
 		"attribute vec4 colour;\n"
+#endif
 		"\n"
 		"uniform mat4 modelMatrix;\n"
 		"uniform mat4 projectionMatrix;\n"
 		"uniform mat4 viewMatrix;\n"
 		"\n"
+#if JUCE_OPENGL_ES
+		"varying lowp vec4 fragmentColor;\n"
+#else
 		"out vec4 fragmentColor;\n"
+#endif
 		"\n"
 		"void main()\n"
 		"{\n"
@@ -153,7 +161,11 @@ private:
 		"varying vec4 destinationColour;\n"
 #endif
 		"\n"
+#if JUCE_OPENGL_ES
+		"varying lowp vec4 fragmentColor;\n"
+#else
 		"in vec4 fragmentColor;\n"
+#endif
 		"\n"
 		"void main()\n"
 		"{\n"

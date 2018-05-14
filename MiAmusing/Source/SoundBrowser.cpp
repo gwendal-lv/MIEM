@@ -18,7 +18,11 @@ SoundBrowser::SoundBrowser() : soundsWildcardFilter("*.wav;*.aiff", "*", "Sound 
 	fileTree(soundList)
 {
 	setOpaque(true);
+#if __AMUSINGMOBILE
+	soundList.setDirectory(File::getSpecialLocation(File::userDocumentsDirectory), true, true));
+#else
 	soundList.setDirectory(File("C:\\"),true,true);
+#endif
 	directoryThread.startThread(1);
 
 	fileTree.addListener(this);

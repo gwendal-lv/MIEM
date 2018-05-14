@@ -382,7 +382,7 @@ void DrawablePolygon::fillOpenGLBuffers()
 	//	DBG((String)opaque_index_buffer[i] + " : (" + (String)opaque_vertex_buffer[3 * opaque_index_buffer[i]] + " " + (String)opaque_vertex_buffer[3 * opaque_index_buffer[i] + 1] + ")" + " : "
 	//		+ (String)opaque_color_buffer[4 * opaque_index_buffer[i]] + ", " + (String)opaque_color_buffer[4 * opaque_index_buffer[i] + 1] + ", " + (String)opaque_color_buffer[4 * opaque_index_buffer[i] + 2] + ", " + (String)opaque_color_buffer[4 * opaque_index_buffer[i] + 3]);
 	//}
-
+	/*
 	int test;
 	for (int i = 0; i < GetIndexCount(); ++i)
 	{
@@ -390,7 +390,7 @@ void DrawablePolygon::fillOpenGLBuffers()
 			test = 0;
 		if (opaque_color_buffer[4 * opaque_index_buffer[i]] == 0 && opaque_color_buffer[4 * opaque_index_buffer[i] + 1] == 0 && opaque_color_buffer[4 * opaque_index_buffer[i] + 2] == 0 && opaque_color_buffer[4 * opaque_index_buffer[i] + 2] == 0)
 			test = 0;
-	}
+	}*/
 }
 
 

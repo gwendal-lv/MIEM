@@ -385,7 +385,7 @@ void SceneCanvasComponent::renderOpenGL()
 		indices[i] = 0;
 	}
 
-	glOrtho(0,getWidth(),0, getHeight(), 0.5f, 1.1f);
+	//glOrtho(0,getWidth(),0, getHeight(), 0.5f, 1.1f);
 
 	/// calcul des matrices
 	Matrix3D<float> testView = lookAt(Vector3D<float>(0, 0, 1), Vector3D<float>(0, 0, 0), Vector3D<float>(0, -1, 0));
@@ -444,7 +444,12 @@ void SceneCanvasComponent::renderOpenGL()
     }
      */
     // Forced sleep if drawing is too fast
-    double underTime = desiredPeriod_ms - displayFrequencyMeasurer.GetLastDuration_ms();
+#if __AMUSINGMOBILE
+	double lastDuration = displayFrequencyMeasurer.GetLastDuration_ms();
+	double underTime = lastDuration > 0.0? desiredPeriod_ms - lastDuration : 0.0;
+#else
+	double underTime = desiredPeriod_ms - displayFrequencyMeasurer.GetLastDuration_ms();
+#endif
     if (underTime > 0.0)
     {
         Thread::sleep((int)std::floor(underTime));

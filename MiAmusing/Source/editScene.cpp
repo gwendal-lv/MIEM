@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.3.0
+  Created with Projucer version: 5.3.2
 
   ------------------------------------------------------------------------------
 
@@ -36,18 +36,21 @@ EditScene::EditScene ()
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
-    addAndMakeVisible (groupComponent = new GroupComponent ("new group",
-                                                            String()));
+    groupComponent.reset (new GroupComponent ("new group",
+                                              String()));
+    addAndMakeVisible (groupComponent.get());
     groupComponent->setColour (GroupComponent::outlineColourId, Colours::white);
 
-    addAndMakeVisible (comboBoxMidi = new ComboBox ("midiChannel"));
+    comboBoxMidi.reset (new ComboBox ("midiChannel"));
+    addAndMakeVisible (comboBoxMidi.get());
     comboBoxMidi->setEditableText (false);
     comboBoxMidi->setJustificationType (Justification::centredLeft);
     comboBoxMidi->setTextWhenNothingSelected (String());
     comboBoxMidi->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
     comboBoxMidi->addListener (this);
 
-    addAndMakeVisible (timeSlider = new Slider ("new slider"));
+    timeSlider.reset (new Slider ("new slider"));
+    addAndMakeVisible (timeSlider.get());
     timeSlider->setRange (50, 200, 1);
     timeSlider->setSliderStyle (Slider::IncDecButtons);
     timeSlider->setTextBoxStyle (Slider::TextBoxAbove, false, 80, 20);
@@ -55,7 +58,8 @@ EditScene::EditScene ()
     timeSlider->setColour (Slider::textBoxBackgroundColourId, Colour (0x00152f3c));
     timeSlider->addListener (this);
 
-    addAndMakeVisible (imgPlayButton = new ImageButton ("imgPlaybutton"));
+    imgPlayButton.reset (new ImageButton ("imgPlaybutton"));
+    addAndMakeVisible (imgPlayButton.get());
     imgPlayButton->setButtonText (TRANS("new button"));
     imgPlayButton->addListener (this);
 
@@ -63,7 +67,8 @@ EditScene::EditScene ()
                               ImageCache::getFromMemory (lecture_png, lecture_pngSize), 1.000f, Colour (0x00000000),
                               ImageCache::getFromMemory (lectureOn_png, lectureOn_pngSize), 1.000f, Colour (0x00000000),
                               ImageCache::getFromMemory (lectureOn_png, lectureOn_pngSize), 1.000f, Colour (0x00000000));
-    addAndMakeVisible (imgStopButton = new ImageButton ("imgStopButton"));
+    imgStopButton.reset (new ImageButton ("imgStopButton"));
+    addAndMakeVisible (imgStopButton.get());
     imgStopButton->setButtonText (TRANS("new button"));
     imgStopButton->addListener (this);
 
@@ -71,7 +76,8 @@ EditScene::EditScene ()
                               ImageCache::getFromMemory (stop_png, stop_pngSize), 1.000f, Colour (0x00000000),
                               ImageCache::getFromMemory (stopOn_png, stopOn_pngSize), 1.000f, Colour (0x00000000),
                               ImageCache::getFromMemory (stopOn_png, stopOn_pngSize), 1.000f, Colour (0x00000000));
-    addAndMakeVisible (imgPauseButton = new ImageButton ("imgPauseButton"));
+    imgPauseButton.reset (new ImageButton ("imgPauseButton"));
+    addAndMakeVisible (imgPauseButton.get());
     imgPauseButton->setButtonText (TRANS("new button"));
     imgPauseButton->addListener (this);
 
@@ -79,7 +85,8 @@ EditScene::EditScene ()
                                ImageCache::getFromMemory (pause_png, pause_pngSize), 1.000f, Colour (0x00000000),
                                ImageCache::getFromMemory (pauseOn_png, pauseOn_pngSize), 1.000f, Colour (0x00000000),
                                ImageCache::getFromMemory (pauseOn_png, pauseOn_pngSize), 1.000f, Colour (0x00000000));
-    addAndMakeVisible (imgOptionButton = new ImageButton ("imgOptionButton"));
+    imgOptionButton.reset (new ImageButton ("imgOptionButton"));
+    addAndMakeVisible (imgOptionButton.get());
     imgOptionButton->setButtonText (TRANS("new button"));
     imgOptionButton->addListener (this);
 
@@ -87,7 +94,8 @@ EditScene::EditScene ()
                                 ImageCache::getFromMemory (option_png, option_pngSize), 1.000f, Colour (0x00000000),
                                 ImageCache::getFromMemory (optionOn_png, optionOn_pngSize), 1.000f, Colour (0x00000000),
                                 ImageCache::getFromMemory (optionOn_png, optionOn_pngSize), 1.000f, Colour (0x00000000));
-    addAndMakeVisible (imgDeleteButton = new ImageButton ("imgDeleteButton"));
+    imgDeleteButton.reset (new ImageButton ("imgDeleteButton"));
+    addAndMakeVisible (imgDeleteButton.get());
     imgDeleteButton->setButtonText (TRANS("new button"));
     imgDeleteButton->addListener (this);
 
@@ -95,32 +103,39 @@ EditScene::EditScene ()
                                 ImageCache::getFromMemory (delete_png, delete_pngSize), 1.000f, Colour (0x00000000),
                                 ImageCache::getFromMemory (deleteOn_png, deleteOn_pngSize), 1.000f, Colour (0x00000000),
                                 ImageCache::getFromMemory (deleteOn_png, deleteOn_pngSize), 1.000f, Colour (0x00000000));
-    addAndMakeVisible (textButton = new TextButton ("new button"));
+    textButton.reset (new TextButton ("new button"));
+    addAndMakeVisible (textButton.get());
     textButton->setButtonText (TRANS("samples"));
     textButton->addListener (this);
 
-    addAndMakeVisible (label = new Label ("new label",
-                                          TRANS("amusing")));
+    label.reset (new Label ("new label",
+                            TRANS("amusing")));
+    addAndMakeVisible (label.get());
     label->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     label->setJustificationType (Justification::centred);
     label->setEditable (false, false, false);
     label->setColour (TextEditor::textColourId, Colours::black);
     label->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    addAndMakeVisible (addCarreShapeButton = new ShapeButton ("addCarreShape",Colours::white,Colours::blue,Colours::blue));
+    addCarreShapeButton.reset (new ShapeButton ("addCarreShape",Colours::white,Colours::blue,Colours::blue));
+    addAndMakeVisible (addCarreShapeButton.get());
     addCarreShapeButton->setName ("new component");
 
-    addAndMakeVisible (addTriangleShapeButton2 = new ShapeButton ("addCarreShape",Colours::white,Colours::blue,Colours::blue));
+    addTriangleShapeButton2.reset (new ShapeButton ("addCarreShape",Colours::white,Colours::blue,Colours::blue));
+    addAndMakeVisible (addTriangleShapeButton2.get());
     addTriangleShapeButton2->setName ("new component");
 
-    addAndMakeVisible (addHexaShapeButton = new ShapeButton ("addHexaShape",Colours::white,Colours::blue,Colours::blue));
+    addHexaShapeButton.reset (new ShapeButton ("addHexaShape",Colours::white,Colours::blue,Colours::blue));
+    addAndMakeVisible (addHexaShapeButton.get());
     addHexaShapeButton->setName ("new component");
 
-    addAndMakeVisible (saveButton = new TextButton ("saveButton"));
+    saveButton.reset (new TextButton ("saveButton"));
+    addAndMakeVisible (saveButton.get());
     saveButton->setButtonText (TRANS("save"));
     saveButton->addListener (this);
 
-    addAndMakeVisible (loadButton = new TextButton ("loadButton"));
+    loadButton.reset (new TextButton ("loadButton"));
+    addAndMakeVisible (loadButton.get());
     loadButton->setButtonText (TRANS("load"));
     loadButton->addListener (this);
 
@@ -242,7 +257,7 @@ void EditScene::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
     //[UsercomboBoxChanged_Pre]
     //[/UsercomboBoxChanged_Pre]
 
-    if (comboBoxThatHasChanged == comboBoxMidi)
+    if (comboBoxThatHasChanged == comboBoxMidi.get())
     {
         //[UserComboBoxCode_comboBoxMidi] -- add your combo box handling code here..
 		//DBG("now select : " + comboBoxMidi->getText() + " with Id : " + (String)comboBoxMidi->getSelectedId());
@@ -259,7 +274,7 @@ void EditScene::sliderValueChanged (Slider* sliderThatWasMoved)
     //[UsersliderValueChanged_Pre]
     //[/UsersliderValueChanged_Pre]
 
-    if (sliderThatWasMoved == timeSlider)
+    if (sliderThatWasMoved == timeSlider.get())
     {
         //[UserSliderCode_timeSlider] -- add your slider handling code here..
 		graphicSessionManager->OnTempoChanged((int)timeSlider->getValue());//*1000);
@@ -275,17 +290,17 @@ void EditScene::buttonClicked (Button* buttonThatWasClicked)
     //[UserbuttonClicked_Pre]
 	if (isAddEnabled)
 	{
-		if (buttonThatWasClicked == addCarreShapeButton)
+		if (buttonThatWasClicked == addCarreShapeButton.get())
 		{
 			graphicSessionManager->OnAddSquare();
 			return;
 		}
-		else if (buttonThatWasClicked == addTriangleShapeButton2)
+		else if (buttonThatWasClicked == addTriangleShapeButton2.get())
 		{
 			graphicSessionManager->OnAddTriangle();
 			return;
 		}
-		else if (buttonThatWasClicked == addHexaShapeButton)
+		else if (buttonThatWasClicked == addHexaShapeButton.get())
 		{
 			graphicSessionManager->OnAddHexa();
 			return;
@@ -293,7 +308,7 @@ void EditScene::buttonClicked (Button* buttonThatWasClicked)
 	}
     //[/UserbuttonClicked_Pre]
 
-    if (buttonThatWasClicked == imgPlayButton)
+    if (buttonThatWasClicked == imgPlayButton.get())
     {
         //[UserButtonCode_imgPlayButton] -- add your button handler code here..
 		graphicSessionManager->HandleEventSync(std::shared_ptr<ControlEvent>(new ControlEvent(ControlEventType::Play)));
@@ -302,7 +317,7 @@ void EditScene::buttonClicked (Button* buttonThatWasClicked)
 		imgStopButton->setState(Button::ButtonState::buttonNormal);
         //[/UserButtonCode_imgPlayButton]
     }
-    else if (buttonThatWasClicked == imgStopButton)
+    else if (buttonThatWasClicked == imgStopButton.get())
     {
         //[UserButtonCode_imgStopButton] -- add your button handler code here..
 		graphicSessionManager->HandleEventSync(std::shared_ptr<ControlEvent>(new ControlEvent(ControlEventType::Stop)));
@@ -311,7 +326,7 @@ void EditScene::buttonClicked (Button* buttonThatWasClicked)
 		imgStopButton->setState(Button::ButtonState::buttonDown);
         //[/UserButtonCode_imgStopButton]
     }
-    else if (buttonThatWasClicked == imgPauseButton)
+    else if (buttonThatWasClicked == imgPauseButton.get())
     {
         //[UserButtonCode_imgPauseButton] -- add your button handler code here..
         graphicSessionManager->HandleEventSync(std::shared_ptr<ControlEvent>(new ControlEvent(ControlEventType::Pause)));
@@ -320,26 +335,26 @@ void EditScene::buttonClicked (Button* buttonThatWasClicked)
 		imgStopButton->setState(Button::ButtonState::buttonNormal);
         //[/UserButtonCode_imgPauseButton]
     }
-    else if (buttonThatWasClicked == imgOptionButton)
+    else if (buttonThatWasClicked == imgOptionButton.get())
     {
         //[UserButtonCode_imgOptionButton] -- add your button handler code here..
         graphicSessionManager->OnDeviceOptionsClicked();
         //[/UserButtonCode_imgOptionButton]
     }
-    else if (buttonThatWasClicked == imgDeleteButton)
+    else if (buttonThatWasClicked == imgDeleteButton.get())
     {
         //[UserButtonCode_imgDeleteButton] -- add your button handler code here..
         graphicSessionManager->OnDelete();
         //[/UserButtonCode_imgDeleteButton]
     }
-    else if (buttonThatWasClicked == textButton)
+    else if (buttonThatWasClicked == textButton.get())
     {
         //[UserButtonCode_textButton] -- add your button handler code here..
 		//graphicSessionManager->OnTestChangeSound();
 		graphicSessionManager->OnSoundClick();
         //[/UserButtonCode_textButton]
     }
-    else if (buttonThatWasClicked == saveButton)
+    else if (buttonThatWasClicked == saveButton.get())
     {
         //[UserButtonCode_saveButton] -- add your button handler code here..
 		graphicSessionManager->OnSave("save.xml");
@@ -347,7 +362,7 @@ void EditScene::buttonClicked (Button* buttonThatWasClicked)
 		saveFileExists = true;
         //[/UserButtonCode_saveButton]
     }
-    else if (buttonThatWasClicked == loadButton)
+    else if (buttonThatWasClicked == loadButton.get())
     {
         //[UserButtonCode_loadButton] -- add your button handler code here..
 		if (saveFileExists)
@@ -428,76 +443,79 @@ BEGIN_JUCER_METADATA
                   virtualName="" explicitFocusOrder="0" pos="0 0 100% 100%" outlinecol="ffffffff"
                   title=""/>
   <COMBOBOX name="midiChannel" id="15ec0fa26eb54f8b" memberName="comboBoxMidi"
-            virtualName="" explicitFocusOrder="0" pos="2.854% -5R 93.853% 7.52%"
+            virtualName="" explicitFocusOrder="0" pos="2.894% -5R 93.891% 7.556%"
             posRelativeY="581ab4124f4712ed" editable="0" layout="33" items=""
             textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <SLIDER name="new slider" id="31e65db12379ed8f" memberName="timeSlider"
-          virtualName="" explicitFocusOrder="0" pos="0 -9R 93.853% 7.52%"
+          virtualName="" explicitFocusOrder="0" pos="0 -9R 93.891% 7.556%"
           posRelativeX="15ec0fa26eb54f8b" posRelativeY="15ec0fa26eb54f8b"
           textboxtext="ffffffff" textboxbkgd="152f3c" min="50.00000000000000000000"
           max="200.00000000000000000000" int="1.00000000000000000000" style="IncDecButtons"
           textBoxPos="TextBoxAbove" textBoxEditable="1" textBoxWidth="80"
           textBoxHeight="20" skewFactor="1.00000000000000000000" needsCallback="1"/>
   <IMAGEBUTTON name="imgPlaybutton" id="2b4803c7ccf2d5d1" memberName="imgPlayButton"
-               virtualName="" explicitFocusOrder="0" pos="0 7.52% 100% 7.52%"
+               virtualName="" explicitFocusOrder="0" pos="0 7.556% 100% 7.556%"
                buttonText="new button" connectedEdges="0" needsCallback="1"
                radioGroupId="0" keepProportions="1" resourceNormal="lecture_png"
                opacityNormal="1.00000000000000000000" colourNormal="0" resourceOver="lectureOn_png"
                opacityOver="1.00000000000000000000" colourOver="0" resourceDown="lectureOn_png"
                opacityDown="1.00000000000000000000" colourDown="0"/>
   <IMAGEBUTTON name="imgStopButton" id="1ea8f58bfe76ab9b" memberName="imgStopButton"
-               virtualName="" explicitFocusOrder="0" pos="0 0R 100% 7.52%" posRelativeX="210adb97ba16e19"
-               posRelativeY="210adb97ba16e19" buttonText="new button" connectedEdges="0"
-               needsCallback="1" radioGroupId="0" keepProportions="1" resourceNormal="stop_png"
+               virtualName="" explicitFocusOrder="0" pos="0 0R 100% 7.556%"
+               posRelativeX="210adb97ba16e19" posRelativeY="210adb97ba16e19"
+               buttonText="new button" connectedEdges="0" needsCallback="1"
+               radioGroupId="0" keepProportions="1" resourceNormal="stop_png"
                opacityNormal="1.00000000000000000000" colourNormal="0" resourceOver="stopOn_png"
                opacityOver="1.00000000000000000000" colourOver="0" resourceDown="stopOn_png"
                opacityDown="1.00000000000000000000" colourDown="0"/>
   <IMAGEBUTTON name="imgPauseButton" id="210adb97ba16e19" memberName="imgPauseButton"
-               virtualName="" explicitFocusOrder="0" pos="0 0R 100% 7.52%" posRelativeX="2b4803c7ccf2d5d1"
-               posRelativeY="2b4803c7ccf2d5d1" buttonText="new button" connectedEdges="0"
-               needsCallback="1" radioGroupId="0" keepProportions="1" resourceNormal="pause_png"
+               virtualName="" explicitFocusOrder="0" pos="0 0R 100% 7.556%"
+               posRelativeX="2b4803c7ccf2d5d1" posRelativeY="2b4803c7ccf2d5d1"
+               buttonText="new button" connectedEdges="0" needsCallback="1"
+               radioGroupId="0" keepProportions="1" resourceNormal="pause_png"
                opacityNormal="1.00000000000000000000" colourNormal="0" resourceOver="pauseOn_png"
                opacityOver="1.00000000000000000000" colourOver="0" resourceDown="pauseOn_png"
                opacityDown="1.00000000000000000000" colourDown="0"/>
   <IMAGEBUTTON name="imgOptionButton" id="bbfd3cbea2a71bfd" memberName="imgOptionButton"
-               virtualName="" explicitFocusOrder="0" pos="0 -100% 100% 7.52%"
+               virtualName="" explicitFocusOrder="0" pos="0 -100% 100% 7.556%"
                posRelativeY="289502be800b82cf" buttonText="new button" connectedEdges="0"
                needsCallback="1" radioGroupId="0" keepProportions="1" resourceNormal="option_png"
                opacityNormal="1.00000000000000000000" colourNormal="0" resourceOver="optionOn_png"
                opacityOver="1.00000000000000000000" colourOver="0" resourceDown="optionOn_png"
                opacityDown="1.00000000000000000000" colourDown="0"/>
   <IMAGEBUTTON name="imgDeleteButton" id="9d5289b3af882e28" memberName="imgDeleteButton"
-               virtualName="" explicitFocusOrder="0" pos="0 0R 100% 7.52%" posRelativeX="1ea8f58bfe76ab9b"
-               posRelativeY="1ea8f58bfe76ab9b" buttonText="new button" connectedEdges="0"
-               needsCallback="1" radioGroupId="0" keepProportions="1" resourceNormal="delete_png"
+               virtualName="" explicitFocusOrder="0" pos="0 0R 100% 7.556%"
+               posRelativeX="1ea8f58bfe76ab9b" posRelativeY="1ea8f58bfe76ab9b"
+               buttonText="new button" connectedEdges="0" needsCallback="1"
+               radioGroupId="0" keepProportions="1" resourceNormal="delete_png"
                opacityNormal="1.00000000000000000000" colourNormal="0" resourceOver="deleteOn_png"
                opacityOver="1.00000000000000000000" colourOver="0" resourceDown="deleteOn_png"
                opacityDown="1.00000000000000000000" colourDown="0"/>
   <TEXTBUTTON name="new button" id="c84bea64b985b44" memberName="textButton"
-              virtualName="" explicitFocusOrder="0" pos="3.513% -32R 94.841% 7.52%"
+              virtualName="" explicitFocusOrder="0" pos="3.537% -32R 94.855% 7.556%"
               posRelativeY="31e65db12379ed8f" buttonText="samples" connectedEdges="0"
               needsCallback="1" radioGroupId="0"/>
   <LABEL name="new label" id="289502be800b82cf" memberName="label" virtualName=""
-         explicitFocusOrder="0" pos="2.525% 94.855% 94.841% 5.145%" edTextCol="ff000000"
+         explicitFocusOrder="0" pos="2.572% 94.889% 94.855% 5.111%" edTextCol="ff000000"
          edBkgCol="0" labelText="amusing" editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="15.00000000000000000000"
          kerning="0.00000000000000000000" bold="0" italic="0" justification="36"/>
   <GENERICCOMPONENT name="new component" id="1783a06d564fe381" memberName="addCarreShapeButton"
-                    virtualName="ShapeButton" explicitFocusOrder="0" pos="0% 0R 100% 7.52%"
+                    virtualName="ShapeButton" explicitFocusOrder="0" pos="0% 0R 100% 7.556%"
                     posRelativeY="9d5289b3af882e28" class="Component" params="&quot;addCarreShape&quot;,Colours::white,Colours::blue,Colours::blue"/>
   <GENERICCOMPONENT name="new component" id="ffe0a52b5cd87f07" memberName="addTriangleShapeButton2"
-                    virtualName="ShapeButton" explicitFocusOrder="0" pos="0 0R 100% 7.52%"
+                    virtualName="ShapeButton" explicitFocusOrder="0" pos="0 0R 100% 7.556%"
                     posRelativeX="1783a06d564fe381" posRelativeY="1783a06d564fe381"
                     class="Component" params="&quot;addCarreShape&quot;,Colours::white,Colours::blue,Colours::blue"/>
   <GENERICCOMPONENT name="new component" id="581ab4124f4712ed" memberName="addHexaShapeButton"
-                    virtualName="ShapeButton" explicitFocusOrder="0" pos="0 0R 100% 7.52%"
+                    virtualName="ShapeButton" explicitFocusOrder="0" pos="0 0R 100% 7.556%"
                     posRelativeX="ffe0a52b5cd87f07" posRelativeY="ffe0a52b5cd87f07"
                     class="Component" params="&quot;addHexaShape&quot;,Colours::white,Colours::blue,Colours::blue"/>
   <TEXTBUTTON name="saveButton" id="48fde7c3628a30fd" memberName="saveButton"
-              virtualName="" explicitFocusOrder="0" pos="12.184% 1.979% 29.857% 5.145%"
+              virtualName="" explicitFocusOrder="0" pos="12.219% 2% 29.904% 5.111%"
               buttonText="save" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="loadButton" id="3e438b12d4d1e208" memberName="loadButton"
-              virtualName="" explicitFocusOrder="0" pos="60.154% 1.979% 29.857% 5.145%"
+              virtualName="" explicitFocusOrder="0" pos="60.129% 2% 29.904% 5.111%"
               buttonText="load" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>
 
