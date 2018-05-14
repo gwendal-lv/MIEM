@@ -19,7 +19,9 @@ SoundBrowser::SoundBrowser() : soundsWildcardFilter("*.wav;*.aiff", "*", "Sound 
 {
 	setOpaque(true);
 #if __AMUSINGMOBILE
-	soundList.setDirectory(File::getSpecialLocation(File::userDocumentsDirectory), true, true));
+	soundList.setDirectory(File::getSpecialLocation(File::userDocumentsDirectory), true, true);
+#elif
+	soundList.setDirectory(File::getSpecialLocation(File::userDocumentsDirectory), true, true);
 #else
 	soundList.setDirectory(File("C:\\"),true,true);
 #endif
