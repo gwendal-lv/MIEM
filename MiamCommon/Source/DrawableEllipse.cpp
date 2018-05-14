@@ -260,8 +260,8 @@ void DrawableEllipse::CanvasResized(SceneCanvasComponent* _parentCanvas)
 void DrawableEllipse::fillOpenGLBuffers()
 {
 	DrawableArea::fillOpenGLBuffers();
-	int aInPixels = (int)(a * (double)parentCanvas->getWidth() * xScale);
-	int bInPixels = (int)(b * (double)parentCanvas->getWidth() * xScale);
+	int aInPixels = (int)(a * (double)parentCanvas->getWidth() * xScale/2.0);
+	int bInPixels = (int)(b * (double)parentCanvas->getWidth() * xScale/2.0);
 
 	// forme
 	int decalage = DrawableArea::GetOpaqueVerticesCount();

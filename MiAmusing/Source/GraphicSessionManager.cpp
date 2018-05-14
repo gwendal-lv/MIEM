@@ -768,7 +768,7 @@ void GraphicSessionManager::OnAddCircle()
 {
 	if (selectedCanvas)
 	{
-		getSelectedCanvasAsManager()->AddNedgeArea(GetNextAreaId(), 20);
+		getSelectedCanvasAsManager()->AddNedgeArea(GetNextAreaId(), 32);
 	}
 }
 
