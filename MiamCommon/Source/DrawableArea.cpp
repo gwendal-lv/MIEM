@@ -282,8 +282,8 @@ void DrawableArea::fillOpenGLBuffers()
 	{
 		if (displayCenter)
 		{
-			opaque_vertex_buffer[3 * decalage + j] = 1.0f* (centerInPixels.get<0>() + g_vertex_ring[j]);
-			opaque_vertex_buffer[3 * decalage + j + 1] = 1.0f*(centerInPixels.get<1>() + g_vertex_ring[j + 1]);
+			opaque_vertex_buffer[3 * decalage + j] = 1.0f* float(centerInPixels.get<0>() + g_vertex_ring[j]);
+			opaque_vertex_buffer[3 * decalage + j + 1] = 1.0f*float(centerInPixels.get<1>() + g_vertex_ring[j + 1]);
 			opaque_vertex_buffer[3 * decalage + j + 2] = 0.1f + g_vertex_ring[j + 2];
 		}
 		else
@@ -308,11 +308,6 @@ void DrawableArea::SetRenderingScale(double renderingScale_)
 {
     // On ne fait rien... Un resize aura seulement peut-être lieu au rendu.
     renderingScale = renderingScale_;
-}
-
-bool DrawableArea::hasVerticesChanged()
-{
-	return verticesChanged;
 }
 
 void DrawableArea::SetFillColour(Colour newColour)

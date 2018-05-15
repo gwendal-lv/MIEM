@@ -372,15 +372,15 @@ void SceneCanvasComponent::renderOpenGL()
 			DrawShape(duplicatedAreas[i], (int)i);
 		//DrawShape(duplicatedAreas[1], 0 * numVertexShape);
     }
-	for (int i = duplicatedAreas.size() * shapeVertexBufferSize; i < vertexBufferSize; ++i)
+	for (int i = (int)duplicatedAreas.size() * shapeVertexBufferSize; i < vertexBufferSize; ++i)
 	{
 		g_vertex_buffer_data[i] = 0.0f;
 	}
-	for (int i = duplicatedAreas.size() * shapeColorBufferSize; i < colorBufferSize; ++i)
+	for (int i = (int)duplicatedAreas.size() * shapeColorBufferSize; i < colorBufferSize; ++i)
 	{
 		g_color_buffer_data[i] = 0.0f;
 	}
-	for (int i = duplicatedAreas.size() * shapeIndicesSize; i < indicesSize; ++i)
+	for (int i = (int)duplicatedAreas.size() * shapeIndicesSize; i < indicesSize; ++i)
 	{
 		indices[i] = 0;
 	}
@@ -680,7 +680,6 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 		//	decalage += numVerticesRing;
 		//}
 		
-		int numIdx = area->GetIndexCount();
 		for(int i = 0; i < area->GetIndexCount();++i)
 			indices[decalage + i] = area->GetIndex(i)  + beginShape;
 
@@ -690,7 +689,6 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 
 		// colors
 		decalage = (int)positionInBuffer * numVertexShape;
-		float A = area->GetAlpha();
 		//float R = area->GetFillColour().getFloatRed();
 		//float G = area->GetFillColour().getFloatGreen();
 		//float B = area->GetFillColour().getFloatBlue();
@@ -734,7 +732,6 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 			DBG((String)indices[i] + " : (" + (String)g_vertex_buffer_data[3 * indices[i]] + " " + (String)g_vertex_buffer_data[3 * indices[i] + 1] + ")" + " : "
 				+ (String)g_vertex_buffer_data[4 * indices[i]] + ", " + (String)g_vertex_buffer_data[4 * indices[i] + 1] + ", " + (String)g_vertex_buffer_data[4 * indices[i] + 2] + ", " + (String)g_vertex_buffer_data[4 * indices[i] + 3]);
 		}*/
-		int bl = 5;
 
 		/*int test = 5;
 		for (int i = 0; i < area->GetIndexCount(); ++i)
@@ -775,11 +772,11 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 void SceneCanvasComponent::computeManipulationLine(float Ox, float Oy, float Mx, float My, float width, float height)
 {
 	int N = 20;
-	float length = boost::geometry::distance(bpt(Ox, Oy), bpt(Mx, My));//0.25 * (getWidth() + getHeight()) / 2.0;
+	float length = (float)boost::geometry::distance(bpt(Ox, Oy), bpt(Mx, My));//0.25 * (getWidth() + getHeight()) / 2.0;
 	if (length / (2 * height) > 20.0f)
 		height = (length / 20.0f) / 2.0f;
 	else
-		N = length / (2 * height);
+		N = int(length / (2.0f * height));
 
 	float sina = (My - Oy) / length;
 	float cosa = (Mx - Ox) / length;
@@ -789,20 +786,20 @@ void SceneCanvasComponent::computeManipulationLine(float Ox, float Oy, float Mx,
 		if (i < N)
 		{
 			// up_left
-			g_vertex_dotted_line[i * 3 * 4] = Ox + i * 2 * height * cosa - (width/2.0) * sina;
-			g_vertex_dotted_line[i * 3 * 4 + 1] = Oy + i * 2 * height * sina + (width / 2.0) * cosa;
+			g_vertex_dotted_line[i * 3 * 4] = Ox + i * 2 * height * cosa - (width/2.0f) * sina;
+			g_vertex_dotted_line[i * 3 * 4 + 1] = Oy + i * 2 * height * sina + (width / 2.0f) * cosa;
 			g_vertex_dotted_line[i * 3 * 4 + 2] = 0.1f;
 			// down_left
-			g_vertex_dotted_line[i * 3 * 4 + 3] = Ox + i * 2 * height * cosa + (width / 2.0) * sina;
-			g_vertex_dotted_line[i * 3 * 4 + 4] = Oy + i * 2 * height * sina - (width / 2.0) * cosa;
+			g_vertex_dotted_line[i * 3 * 4 + 3] = Ox + i * 2 * height * cosa + (width / 2.0f) * sina;
+			g_vertex_dotted_line[i * 3 * 4 + 4] = Oy + i * 2 * height * sina - (width / 2.0f) * cosa;
 			g_vertex_dotted_line[i * 3 * 4 + 5] = 0.1f;
 			// up_right
-			g_vertex_dotted_line[i * 3 * 4 + 6] = Ox + (2 * i + 1)  * height * cosa - (width / 2.0) * sina;
-			g_vertex_dotted_line[i * 3 * 4 + 7] = Oy + (2 * i + 1) * height * sina + (width / 2.0) * cosa;
+			g_vertex_dotted_line[i * 3 * 4 + 6] = Ox + (2 * i + 1)  * height * cosa - (width / 2.0f) * sina;
+			g_vertex_dotted_line[i * 3 * 4 + 7] = Oy + (2 * i + 1) * height * sina + (width / 2.0f) * cosa;
 			g_vertex_dotted_line[i * 3 * 4 + 8] = 0.1f;
 			// down_right
-			g_vertex_dotted_line[i * 3 * 4 + 9] = Ox + (2 * i + 1) * height * cosa + (width / 2.0) * sina;
-			g_vertex_dotted_line[i * 3 * 4 + 10] = Oy + (2* i + 1) * height * sina - (width / 2.0) * cosa;
+			g_vertex_dotted_line[i * 3 * 4 + 9] = Ox + (2 * i + 1) * height * cosa + (width / 2.0f) * sina;
+			g_vertex_dotted_line[i * 3 * 4 + 10] = Oy + (2* i + 1) * height * sina - (width / 2.0f) * cosa;
 			g_vertex_dotted_line[i * 3 * 4 + 11] = 0.1f;
 
 			g_indices_dotted_line[i * 6] = i * 4;

@@ -76,7 +76,6 @@ void EditableEllipse::graphicalInit()
 
 	// calcul d'un disque de centre 0 et de rayon 5 pixels
 	float radius = 5.0f;
-	float width = 3.0f;
 	int numPoints = numPointsRing;
 	radius = 5.0f;
 	double currentAngle = 0.0;
@@ -197,7 +196,7 @@ void EditableEllipse::fillOpenGLBuffers()
 	DrawableEllipse::fillOpenGLBuffers();
 
 	int decalage = DrawableEllipse::GetOpaqueVerticesCount();
-	int numApexes = contourPointsInPixels.outer().size() - 1;//isActive? contourPointsInPixels.outer().size() - 1 : 0;
+	int numApexes = (int)contourPointsInPixels.outer().size() - 1;//isActive? contourPointsInPixels.outer().size() - 1 : 0;
 
 	//bool contourFull = std::all_of(opaque_vertex_buffer.begin() + 291, opaque_vertex_buffer.begin() + 385, [](float x) { return x !=0.0f; });
 	//if (!contourFull)
@@ -229,16 +228,15 @@ void EditableEllipse::fillOpenGLBuffers()
 	// manipulationLine + manipulationPoint
 	if (true)
 	{
-		computeManipulationLine(centerInPixels.get<0>(), centerInPixels.get<1>(), bmanipulationPointInPixels.get<0>(), bmanipulationPointInPixels.get<1>(), 4.0f, 4.0f);
+		computeManipulationLine((float)centerInPixels.get<0>(), (float)centerInPixels.get<1>(), (float)bmanipulationPointInPixels.get<0>(), (float)bmanipulationPointInPixels.get<1>(), 4.0f, 4.0f);
 		for (int i = 0; i < 3 * dottedLineVertexes; ++i)
 			opaque_vertex_buffer[3 * decalage + i] = g_vertex_dotted_line[i];
 		decalage += dottedLineVertexes;
 
 		for (int j = 0; j < 3 * numVerticesRing; j += 3)
 		{
-
-			opaque_vertex_buffer[3 * decalage + j] = 1.0f* (bmanipulationPointInPixels.get<0>() + g_vertex_ring[j]);
-			opaque_vertex_buffer[3 * decalage + j + 1] = 1.0f*(bmanipulationPointInPixels.get<1>() + g_vertex_ring[j + 1]);
+			opaque_vertex_buffer[3 * decalage + j] = 1.0f* ((float)bmanipulationPointInPixels.get<0>() + g_vertex_ring[j]);
+			opaque_vertex_buffer[3 * decalage + j + 1] = 1.0f*((float)bmanipulationPointInPixels.get<1>() + g_vertex_ring[j + 1]);
 			opaque_vertex_buffer[3 * decalage + j + 2] = 0.1f + g_vertex_ring[j + 2];
 
 		}
@@ -321,18 +319,6 @@ void EditableEllipse::SetActive(bool activate)
 {
 	EditableArea::SetActive(activate);
 }
-
-bool EditableEllipse::IsActive()
-{
-	return isActive;
-}
-
-bool EditableEllipse::ShowCenter()
-{
-	return displayCenter;
-}
-
-
 
 AreaEventType EditableEllipse::TryBeginPointMove(const Point<double>& hitPoint)
 {
@@ -780,19 +766,15 @@ double EditableEllipse::getRadius()
 	return boost::geometry::distance(centerInPixels, contourPointsInPixels.outer().at(0));
 }
 
-bpt EditableEllipse::GetManipulationPoint()
-{
-	return bmanipulationPointInPixels;
-}
 
 void EditableEllipse::computeManipulationLine(float Ox, float Oy, float Mx, float My, float width, float height)
 {
 	int N = 20;
-	float length = boost::geometry::distance(bpt(Ox, Oy), bpt(Mx, My));//0.25 * (getWidth() + getHeight()) / 2.0;
+	float length = (float)boost::geometry::distance(bpt(Ox, Oy), bpt(Mx, My));//0.25 * (getWidth() + getHeight()) / 2.0;
 	if (length / (2 * height) > 20.0f)
 		height = (length / 20.0f) / 2.0f;
 	else
-		N = length / (2 * height);
+		N = int(length / (2 * height));
 
 	float sina = (My - Oy) / length;
 	float cosa = (Mx - Ox) / length;
@@ -802,20 +784,20 @@ void EditableEllipse::computeManipulationLine(float Ox, float Oy, float Mx, floa
 		if (i < N)
 		{
 			// up_left
-			g_vertex_dotted_line[i * 3 * 4] = Ox + i * 2 * height * cosa - (width / 2.0) * sina;
-			g_vertex_dotted_line[i * 3 * 4 + 1] = Oy + i * 2 * height * sina + (width / 2.0) * cosa;
+			g_vertex_dotted_line[i * 3 * 4] = Ox + i * 2 * height * cosa - (width / 2.0f) * sina;
+			g_vertex_dotted_line[i * 3 * 4 + 1] = Oy + i * 2 * height * sina + (width / 2.0f) * cosa;
 			g_vertex_dotted_line[i * 3 * 4 + 2] = 0.1f;
 			// down_left
-			g_vertex_dotted_line[i * 3 * 4 + 3] = Ox + i * 2 * height * cosa + (width / 2.0) * sina;
-			g_vertex_dotted_line[i * 3 * 4 + 4] = Oy + i * 2 * height * sina - (width / 2.0) * cosa;
+			g_vertex_dotted_line[i * 3 * 4 + 3] = Ox + i * 2 * height * cosa + (width / 2.0f) * sina;
+			g_vertex_dotted_line[i * 3 * 4 + 4] = Oy + i * 2 * height * sina - (width / 2.0f) * cosa;
 			g_vertex_dotted_line[i * 3 * 4 + 5] = 0.1f;
 			// up_right
-			g_vertex_dotted_line[i * 3 * 4 + 6] = Ox + (2 * i + 1)  * height * cosa - (width / 2.0) * sina;
-			g_vertex_dotted_line[i * 3 * 4 + 7] = Oy + (2 * i + 1) * height * sina + (width / 2.0) * cosa;
+			g_vertex_dotted_line[i * 3 * 4 + 6] = Ox + (2 * i + 1)  * height * cosa - (width / 2.0f) * sina;
+			g_vertex_dotted_line[i * 3 * 4 + 7] = Oy + (2 * i + 1) * height * sina + (width / 2.0f) * cosa;
 			g_vertex_dotted_line[i * 3 * 4 + 8] = 0.1f;
 			// down_right
-			g_vertex_dotted_line[i * 3 * 4 + 9] = Ox + (2 * i + 1) * height * cosa + (width / 2.0) * sina;
-			g_vertex_dotted_line[i * 3 * 4 + 10] = Oy + (2 * i + 1) * height * sina - (width / 2.0) * cosa;
+			g_vertex_dotted_line[i * 3 * 4 + 9] = Ox + (2 * i + 1) * height * cosa + (width / 2.0f) * sina;
+			g_vertex_dotted_line[i * 3 * 4 + 10] = Oy + (2 * i + 1) * height * sina - (width / 2.0f) * cosa;
 			g_vertex_dotted_line[i * 3 * 4 + 11] = 0.1f;
 
 			g_indices_dotted_line[i * 6] = i * 4;

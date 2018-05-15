@@ -65,7 +65,6 @@ namespace Miam
         
 		int GetPointDraggedId() override { return pointDraggedId; }
         
-		bpt GetManipulationPoint() override { return bmanipulationPointInPixels; }
         
         // ===== COMMON ATTRIBUTES TO ALL EDITABLE AREAS =====
         protected :

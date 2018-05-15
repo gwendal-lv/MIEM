@@ -77,7 +77,6 @@ DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b,
 	
 	// indices pour dessiner la forme
 	int decalage = DrawableArea::GetOpaqueVerticesCount();
-	int indexCount = ellipseVerticesCount * 3;
 	for (int i = 0; i < ellipseVerticesCount; ++i)
 	{
 		opaque_index_buffer[3 * decalage + i * 3] = decalage + i + 1;
@@ -143,22 +142,6 @@ DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b,
 int DrawableEllipse::GetIndexCount()
 {
 	return DrawableArea::GetIndexCount() + (3 * numVerticesPolygon + 3 * 2 * numPointsPolygon);
-}
-
-bool DrawableEllipse::hasVerticesChanged()
-{
-	return verticesChanged;
-}
-
-bool DrawableEllipse::hasPositionChanged()
-{
-	return positionChanged;
-}
-
-
-Vector3D<float> Miam::DrawableEllipse::GetModelParameters()
-{
-	return modelParameters;
 }
 
 void DrawableEllipse::createJucePolygon(int width, int height)

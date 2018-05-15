@@ -132,8 +132,6 @@ namespace Miam
         /// \brief Pour régler les problèmes d'écrans type "rétina"
         virtual void SetRenderingScale(double renderingScale_) override;
         
-		bool hasVerticesChanged() override;
-        
         // =============== MÉTHODES ===============
 
         

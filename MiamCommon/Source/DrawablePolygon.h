@@ -70,12 +70,7 @@ namespace Miam {
 		}
 		int GetOpaqueColourCount() override { return DrawableArea::GetOpaqueColourCount() + 4 * (numVerticesPolygon + numPointsPolygon); }
 		int GetIndexCount() override;
-		bool hasVerticesChanged() override;
-		bool hasPositionChanged() override;
-		
-		
-		Vector3D<float> GetModelParameters() override;
-        
+		        
         virtual std::shared_ptr<IDrawableArea> Clone() override
         {
             auto clone = std::make_shared<DrawablePolygon>(*this);

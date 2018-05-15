@@ -66,10 +66,7 @@ namespace Miam
 			// ----- Setters and Getters -----
 		public:
 			void SetActive(bool activate) override;
-			bool IsActive() override;
-			bool ShowCenter() override;
 			double getRadius();
-			bpt GetManipulationPoint() override;
 			void computeManipulationLine(float Ox, float Oy, float Mx, float My, float width, float height);
 		public :
 			

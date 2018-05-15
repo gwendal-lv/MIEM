@@ -184,24 +184,6 @@ int DrawablePolygon::GetIndexCount()
 	return DrawableArea::GetIndexCount() + (3 * numVerticesPolygon + 3 * 2 * numPointsPolygon);
 }
 
-bool DrawablePolygon::hasVerticesChanged()
-{
-	return verticesChanged;
-}
-
-bool DrawablePolygon::hasPositionChanged()
-{
-	return positionChanged;
-}
-
-
-
-
-Vector3D<float> DrawablePolygon::GetModelParameters()
-{
-	return modelParameters;
-}
-
 // Construction helpers
 void DrawablePolygon::createJucePolygon(int width, int height)
 {
@@ -320,13 +302,13 @@ void DrawablePolygon::fillOpenGLBuffers()
 	opaque_vertex_buffer[3 * decalage + 1] = (float)centerInPixels.get<1>();
 	opaque_vertex_buffer[3 * decalage + 2] = 0.0f;
 
-	for (int i = 0; i<contourPointsInPixels.outer().size() - 1; i++)
+	for (int i = 0; i<(int)contourPointsInPixels.outer().size() - 1; i++)
 	{
 		opaque_vertex_buffer[3 * decalage + 3 + i * 3] = (float)contourPointsInPixels.outer().at(i).get<0>();//radius*cosf(currentAngle);
 		opaque_vertex_buffer[3 * decalage + 3 + i * 3 + 1] = (float)contourPointsInPixels.outer().at(i).get<1>();
 		opaque_vertex_buffer[3 * decalage + 3 + i * 3 + 2] = 0.0f;
 	}
-	for (int i = 3 * decalage + 3 + 3 * (contourPointsInPixels.outer().size() - 1); i < 3 * decalage + 3 * numVerticesPolygon; ++i)
+	for (int i = 3 * decalage + 3 + 3 * ((int)contourPointsInPixels.outer().size() - 1); i < 3 * decalage + 3 * numVerticesPolygon; ++i)
 		opaque_vertex_buffer[i] = 0.0f;
 
 

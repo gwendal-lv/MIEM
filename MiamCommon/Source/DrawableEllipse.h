@@ -44,9 +44,7 @@ namespace Miam
 			};
 			int GetOpaqueColourCount() { return DrawableArea::GetOpaqueColourCount() + 4 * (numVerticesPolygon + numPointsPolygon); }
 			int GetIndexCount() override;
-			bool hasVerticesChanged() override;
-			bool hasPositionChanged() override;
-			Vector3D<float> GetModelParameters() override;
+			
 
 		private:
 			void createJucePolygon(int width = 160, int height = 90);
