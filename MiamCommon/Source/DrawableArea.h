@@ -77,10 +77,7 @@ namespace Miam
         
         bool keepRatio;
         
-		bool verticesChanged = false;
-		bool positionChanged = false;
-		//float vertex_buffer[33*3]; // taille maximum : 32 points + centre
-
+		// size of the different buffer parts
 		static const int numPointsPolygon = 32;
 		static const int numPointsRing = 32;
 		static const int numPointCircle = 32;
@@ -88,21 +85,18 @@ namespace Miam
 		static const int numVerticesPolygon = numPointsPolygon + 1;
 		static const int numVerticesRing = 2 * numPointsRing;
 		static const int numVerticesCircle = numPointCircle + 1;
-
 		
-		int opaque_vertex_buffer_size = 3 * numVerticesRing;//3 * numPointsPolygon + 3 * numVerticesRing; // par défaut : contour + centre
-		int opaque_index_buffer_size = 3 * numVerticesRing;//3 * 2 * numPointsPolygon + 3 * numVerticesRing;
-		int opaque_color_buffer_size = 4 * numVerticesRing;
+		int verticesBufferSize = 3 * numVerticesRing;//3 * numPointsPolygon + 3 * numVerticesRing; // par défaut : contour + centre
+		int indicesBufferSize = 3 * numVerticesRing;//3 * 2 * numPointsPolygon + 3 * numVerticesRing;
+		int couloursBufferSize = 4 * numVerticesRing;
 
 		GLfloat g_vertex_ring[3 * numVerticesRing];
 		unsigned int ringIndices[3 * numVerticesRing];
 
-		std::vector<float> opaque_vertex_buffer;
-		std::vector<int> opaque_index_buffer;
-		std::vector<float> opaque_color_buffer;
-
-
-		Vector3D<float> modelParameters; // x, y, theta
+		// buffer used by OpenGL
+		std::vector<float> vertices_buffer;
+		std::vector<int> indices_buffer;
+		std::vector<float> coulours_buffer;
         
         // =============== SETTERS & GETTERS ===============
         public :
@@ -162,16 +156,16 @@ namespace Miam
         void renderCachedNameImages();
         public :
         
-			int GetOpaqueVerticesCount() override { return numVerticesRing; }
-			float GetOpaqueVertices(int idx) override { return opaque_vertex_buffer[idx]; }
-			int GetIndexCount() override { return  3 * numVerticesRing; }
-			int GetIndex(int idx) override { return opaque_index_buffer[idx]; }
-			int GetOpaqueColourCount() { return 4 * numVerticesRing; }
-			float GetOpaqueColour(int idx) { return opaque_color_buffer[idx]; }
+			int GetVerticesBufferSize() override { return numVerticesRing; }
+			float GetVerticesBufferElt(int idx) override { return vertices_buffer[idx]; }
+			int GetIndicesBufferSize() override { return  3 * numVerticesRing; }
+			int GetIndicesBufferElt(int idx) override { return indices_buffer[idx]; }
+			int GetCouloursBufferSize() { return 4 * numVerticesRing; }
+			float GetCouloursBufferElt(int idx) { return coulours_buffer[idx]; }
         
         virtual void Paint(Graphics& g) override;
         virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
-		virtual void fillOpenGLBuffers() override;
+		virtual void RefreshOpenGLBuffers() override;
 
         // - - - - - XML import/export - - - - -
         virtual std::shared_ptr<bptree::ptree> GetTree() override;

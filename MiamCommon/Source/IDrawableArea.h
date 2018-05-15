@@ -112,14 +112,9 @@ namespace Miam
         /// of all points.
         virtual void CanvasResized(SceneCanvasComponent* parentCanvas) = 0;
         
-		virtual void fillOpenGLBuffers() = 0;
-
-		virtual int GetOpaqueVerticesCount() = 0;
-		virtual int GetIndexCount() = 0;
-		virtual int GetOpaqueColourCount() = 0;
-		virtual float GetOpaqueColour(int idx) = 0;
-		virtual float GetOpaqueVertices(int idx) = 0;
-		virtual int GetIndex(int idx) = 0;
+		/// \brief This function is used to refresh the vertices, the indices, and the coulours buffers
+		/// before sending them to OpenGL renderer
+		virtual void RefreshOpenGLBuffers() = 0;
 		
 		//virtual Matrix3D<float> GetModelMatrix() = 0;
         
@@ -134,6 +129,13 @@ namespace Miam
         virtual void SetOpacityMode(OpacityMode enable) = 0;
         virtual OpacityMode GetOpacityMode() const = 0;
         virtual void SetRenderingScale(double renderingScale_) = 0;
+
+		virtual int GetVerticesBufferSize() = 0;
+		virtual int GetIndicesBufferSize() = 0;
+		virtual int GetCouloursBufferSize() = 0;
+		virtual float GetCouloursBufferElt(int idx) = 0;
+		virtual float GetVerticesBufferElt(int idx) = 0;
+		virtual int GetIndicesBufferElt(int idx) = 0;
         
         /// \brief Sets the name that could be displayed on screen next to the center
         virtual void SetName(String newName) = 0;

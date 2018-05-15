@@ -90,81 +90,79 @@ DrawablePolygon::DrawablePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 	 // to close the boost polygon
 	contourPoints.outer().push_back(bpt(center.get<0>() + radius*xScale, center.get<1>()));
 
-	verticesCount = (pointsCount + 1);
 	//vertex_buffer = new float[verticesCount * 3];// = new float[verticesCount * 3]; // tout sommets + le centre * (x,y,z)
 	
 	// ajout de la forme et du contour !
-	opaque_vertex_buffer_size += (3 * numVerticesPolygon + 3 * numPointsPolygon);
-	opaque_index_buffer_size += (3 * numVerticesPolygon + 3 * 2 * numPointsPolygon);
-	opaque_color_buffer_size += (4 * numVerticesPolygon + 4 * numPointsPolygon);
+	verticesBufferSize += (3 * numVerticesPolygon + 3 * numPointsPolygon);
+	indicesBufferSize += (3 * numVerticesPolygon + 3 * 2 * numPointsPolygon);
+	couloursBufferSize += (4 * numVerticesPolygon + 4 * numPointsPolygon);
 
 
 	// resize des buffers
-	opaque_vertex_buffer.resize(opaque_vertex_buffer_size);
-	opaque_index_buffer.resize(opaque_index_buffer_size);
-	opaque_color_buffer.resize(opaque_color_buffer_size);
+	vertices_buffer.resize(verticesBufferSize);
+	indices_buffer.resize(indicesBufferSize);
+	coulours_buffer.resize(couloursBufferSize);
 
 	// indices pour dessiner la forme
-	int decalage = DrawableArea::GetOpaqueVerticesCount();
+	int decalage = DrawableArea::GetVerticesBufferSize();
 	for (int i = 0; i < pointsCount; ++i)
 	{
-		opaque_index_buffer[3 * decalage + i * 3]	= decalage + i + 1;
-		opaque_index_buffer[3 * decalage + i * 3 + 1] = decalage + 0;
-		opaque_index_buffer[3 * decalage + i * 3 + 2] = decalage + i + 2 > decalage + pointsCount ? decalage + 1 : decalage + i + 2;
+		indices_buffer[3 * decalage + i * 3]	= decalage + i + 1;
+		indices_buffer[3 * decalage + i * 3 + 1] = decalage + 0;
+		indices_buffer[3 * decalage + i * 3 + 2] = decalage + i + 2 > decalage + pointsCount ? decalage + 1 : decalage + i + 2;
 	}
 	for (int i = 3 * pointsCount; i < 3 * numVerticesPolygon; ++i)
-		opaque_index_buffer[3 * decalage + i] = 0;
+		indices_buffer[3 * decalage + i] = 0;
 
 	for (int i = 0; i < pointsCount; ++i)
 	{
-		opaque_color_buffer[4 * decalage + i * 4] = fillColour.getRed()/255.0f;
-		opaque_color_buffer[4 * decalage + i * 4 + 1] = fillColour.getGreen()/255.0f;
-		opaque_color_buffer[4 * decalage + i * 4 + 2] = fillColour.getBlue()/255.0f;
-		opaque_color_buffer[4 * decalage + i * 4 + 3] = GetAlpha();
+		coulours_buffer[4 * decalage + i * 4] = fillColour.getRed()/255.0f;
+		coulours_buffer[4 * decalage + i * 4 + 1] = fillColour.getGreen()/255.0f;
+		coulours_buffer[4 * decalage + i * 4 + 2] = fillColour.getBlue()/255.0f;
+		coulours_buffer[4 * decalage + i * 4 + 3] = GetAlpha();
 	}
 	for (int i = 4 * pointsCount; i < 4 * numVerticesPolygon; ++i)
-		opaque_color_buffer[4 * decalage + i] = 0.0f;
+		coulours_buffer[4 * decalage + i] = 0.0f;
 
 	// indices pour dessiner le contour
-	int shapeBegin = DrawableArea::GetOpaqueVerticesCount();
+	int shapeBegin = DrawableArea::GetVerticesBufferSize();
 	decalage += numVerticesPolygon;
 	for (int i = 0; i < numPointsPolygon; ++i)
 	{
 		if (i < pointsCount)
 		{
-			opaque_index_buffer[3 * decalage + i * 6] = shapeBegin + i + 1;
-			opaque_index_buffer[3 * decalage + i * 6 + 1] = decalage + i;
-			opaque_index_buffer[3 * decalage + i * 6 + 3] = decalage + i + 1 >= decalage + pointsCount ? decalage : decalage + i + 1;
-			opaque_index_buffer[3 * decalage + i * 6 + 2] = decalage + i + 1 >= decalage + pointsCount ? decalage : decalage + i + 1;
-			opaque_index_buffer[3 * decalage + i * 6 + 4] = shapeBegin + i + 1;
-			opaque_index_buffer[3 * decalage + i * 6 + 5] = shapeBegin + i + 2 >= shapeBegin + pointsCount + 1 ? shapeBegin + 1 : shapeBegin + i + 2;
+			indices_buffer[3 * decalage + i * 6] = shapeBegin + i + 1;
+			indices_buffer[3 * decalage + i * 6 + 1] = decalage + i;
+			indices_buffer[3 * decalage + i * 6 + 3] = decalage + i + 1 >= decalage + pointsCount ? decalage : decalage + i + 1;
+			indices_buffer[3 * decalage + i * 6 + 2] = decalage + i + 1 >= decalage + pointsCount ? decalage : decalage + i + 1;
+			indices_buffer[3 * decalage + i * 6 + 4] = shapeBegin + i + 1;
+			indices_buffer[3 * decalage + i * 6 + 5] = shapeBegin + i + 2 >= shapeBegin + pointsCount + 1 ? shapeBegin + 1 : shapeBegin + i + 2;
 		}
 		else
 		{
-			opaque_index_buffer[3 * decalage + i * 6] = 0;
-			opaque_index_buffer[3 * decalage + i * 6 + 1] = 0;
-			opaque_index_buffer[3 * decalage + i * 6 + 2] = 0;
-			opaque_index_buffer[3 * decalage + i * 6 + 3] = 0;
-			opaque_index_buffer[3 * decalage + i * 6 + 4] = 0;
-			opaque_index_buffer[3 * decalage + i * 6 + 5] = 0;
+			indices_buffer[3 * decalage + i * 6] = 0;
+			indices_buffer[3 * decalage + i * 6 + 1] = 0;
+			indices_buffer[3 * decalage + i * 6 + 2] = 0;
+			indices_buffer[3 * decalage + i * 6 + 3] = 0;
+			indices_buffer[3 * decalage + i * 6 + 4] = 0;
+			indices_buffer[3 * decalage + i * 6 + 5] = 0;
 		}
 	}
 
 	for (int i = 0; i < numPointsPolygon; ++i)
 	{
-		opaque_color_buffer[4 * decalage + i * 4] = contourColour.getRed() / 255.0f;
-		opaque_color_buffer[4 * decalage + i * 4 + 1] = contourColour.getGreen() / 255.0f;
-		opaque_color_buffer[4 * decalage + i * 4 + 2] = contourColour.getBlue() / 255.0f;
-		opaque_color_buffer[4 * decalage + i * 4 + 3] = contourColour.getAlpha() / 255.0f;
+		coulours_buffer[4 * decalage + i * 4] = contourColour.getRed() / 255.0f;
+		coulours_buffer[4 * decalage + i * 4 + 1] = contourColour.getGreen() / 255.0f;
+		coulours_buffer[4 * decalage + i * 4 + 2] = contourColour.getBlue() / 255.0f;
+		coulours_buffer[4 * decalage + i * 4 + 3] = contourColour.getAlpha() / 255.0f;
 	}
 	for (int i = 4 * pointsCount; i < 4 * numPointsPolygon; ++i)
-		opaque_color_buffer[4 * decalage + i] = 1.0f;
+		coulours_buffer[4 * decalage + i] = 1.0f;
 
 	/*modelMatrix = Matrix3D<float>(1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f);*/
-	modelParameters = Vector3D<float>(0.0f, 0.0f, 0.0f); // initialisé en 0,0 avec un angle de 0
 
     // Definition of the Juce polygon
     createJucePolygon();
@@ -179,9 +177,9 @@ DrawablePolygon::DrawablePolygon(int64_t _Id, bpt _center, bpolygon& _bcontourPo
 	createJucePolygon();
 }
 
-int DrawablePolygon::GetIndexCount()
+int DrawablePolygon::GetIndicesBufferSize()
 {
-	return DrawableArea::GetIndexCount() + (3 * numVerticesPolygon + 3 * 2 * numPointsPolygon);
+	return DrawableArea::GetIndicesBufferSize() + (3 * numVerticesPolygon + 3 * 2 * numPointsPolygon);
 }
 
 // Construction helpers
@@ -293,33 +291,33 @@ void DrawablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
     boost::geometry::transform(contourPoints, contourPointsInPixels, scale);
 }
 
-void DrawablePolygon::fillOpenGLBuffers()
+void DrawablePolygon::RefreshOpenGLBuffers()
 {
-	DrawableArea::fillOpenGLBuffers();
+	DrawableArea::RefreshOpenGLBuffers();
 	// forme
-	int decalage = DrawableArea::GetOpaqueVerticesCount();
-	opaque_vertex_buffer[3 * decalage] = (float)centerInPixels.get<0>();
-	opaque_vertex_buffer[3 * decalage + 1] = (float)centerInPixels.get<1>();
-	opaque_vertex_buffer[3 * decalage + 2] = 0.0f;
+	int decalage = DrawableArea::GetVerticesBufferSize();
+	vertices_buffer[3 * decalage] = (float)centerInPixels.get<0>();
+	vertices_buffer[3 * decalage + 1] = (float)centerInPixels.get<1>();
+	vertices_buffer[3 * decalage + 2] = 0.0f;
 
 	for (int i = 0; i<(int)contourPointsInPixels.outer().size() - 1; i++)
 	{
-		opaque_vertex_buffer[3 * decalage + 3 + i * 3] = (float)contourPointsInPixels.outer().at(i).get<0>();//radius*cosf(currentAngle);
-		opaque_vertex_buffer[3 * decalage + 3 + i * 3 + 1] = (float)contourPointsInPixels.outer().at(i).get<1>();
-		opaque_vertex_buffer[3 * decalage + 3 + i * 3 + 2] = 0.0f;
+		vertices_buffer[3 * decalage + 3 + i * 3] = (float)contourPointsInPixels.outer().at(i).get<0>();//radius*cosf(currentAngle);
+		vertices_buffer[3 * decalage + 3 + i * 3 + 1] = (float)contourPointsInPixels.outer().at(i).get<1>();
+		vertices_buffer[3 * decalage + 3 + i * 3 + 2] = 0.0f;
 	}
 	for (int i = 3 * decalage + 3 + 3 * ((int)contourPointsInPixels.outer().size() - 1); i < 3 * decalage + 3 * numVerticesPolygon; ++i)
-		opaque_vertex_buffer[i] = 0.0f;
+		vertices_buffer[i] = 0.0f;
 
 
 
 	float A = GetAlpha();
 	for (int i = 0; i < numVerticesPolygon; ++i)
 	{
-		opaque_color_buffer[4 * decalage + i * 4] = fillColour.getRed() / 255.0f;
-		opaque_color_buffer[4 * decalage + i * 4 + 1] = fillColour.getGreen() / 255.0f;
-		opaque_color_buffer[4 * decalage + i * 4 + 2] = fillColour.getBlue() / 255.0f;
-		opaque_color_buffer[4 * decalage + i * 4 + 3] = A;
+		coulours_buffer[4 * decalage + i * 4] = fillColour.getRed() / 255.0f;
+		coulours_buffer[4 * decalage + i * 4 + 1] = fillColour.getGreen() / 255.0f;
+		coulours_buffer[4 * decalage + i * 4 + 2] = fillColour.getBlue() / 255.0f;
+		coulours_buffer[4 * decalage + i * 4 + 3] = A;
 	}
 	/*for (int i = 4 * (contourPointsInPixels.outer().size() - 1); i < 4 * numVerticesPolygon; ++i)
 	opaque_color_buffer[4 * decalage + i] = 0.0f;*/
@@ -341,12 +339,12 @@ void DrawablePolygon::fillOpenGLBuffers()
 
 	for (int i = 0; i < (int)outlinePolygon.outer().size() - 1; ++i)
 	{
-		opaque_vertex_buffer[3 * decalage + i * 3] = (float)outlinePolygon.outer().at(i).get<0>();//radius*cosf(currentAngle);
-		opaque_vertex_buffer[3 * decalage + i * 3 + 1] = (float)outlinePolygon.outer().at(i).get<1>();
-		opaque_vertex_buffer[3 * decalage + i * 3 + 2] = 0.0f;
+		vertices_buffer[3 * decalage + i * 3] = (float)outlinePolygon.outer().at(i).get<0>();//radius*cosf(currentAngle);
+		vertices_buffer[3 * decalage + i * 3 + 1] = (float)outlinePolygon.outer().at(i).get<1>();
+		vertices_buffer[3 * decalage + i * 3 + 2] = 0.0f;
 	}
 	for (int i = 3 * decalage + 3 * ((int)outlinePolygon.outer().size() - 1); i <3 * decalage + (3 * numPointsPolygon); ++i)
-		opaque_vertex_buffer[i] = 0.0f;
+		vertices_buffer[i] = 0.0f;
 
 	/*for (int i = 0; i < numPointsPolygon; ++i)
 	{

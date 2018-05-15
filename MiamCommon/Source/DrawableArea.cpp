@@ -70,19 +70,19 @@ void DrawableArea::init()
     resetImages();
 
 	// taille des buffers
-	opaque_vertex_buffer.resize(opaque_vertex_buffer_size);
-	opaque_index_buffer.resize(opaque_index_buffer_size);
-	opaque_color_buffer.resize(opaque_color_buffer_size);	
+	vertices_buffer.resize(verticesBufferSize);
+	indices_buffer.resize(indicesBufferSize);
+	coulours_buffer.resize(couloursBufferSize);	
 
 	int numPoints = numPointsRing;
 	ComputeRing(numPoints);
 
-	for (int i = 0; i < opaque_color_buffer_size/4; ++i)
+	for (int i = 0; i < couloursBufferSize/4; ++i)
 	{
-		opaque_color_buffer[4 * i + 0] = contourColour.getRed() / 255.0f;
-		opaque_color_buffer[4 * i + 1] = contourColour.getGreen() / 255.0f;
-		opaque_color_buffer[4 * i + 2] = contourColour.getBlue() / 255.0f;
-		opaque_color_buffer[4 * i + 3] = contourColour.getAlpha() / 255.0f;
+		coulours_buffer[4 * i + 0] = contourColour.getRed() / 255.0f;
+		coulours_buffer[4 * i + 1] = contourColour.getGreen() / 255.0f;
+		coulours_buffer[4 * i + 2] = contourColour.getBlue() / 255.0f;
+		coulours_buffer[4 * i + 3] = contourColour.getAlpha() / 255.0f;
 	}
 	//for (int i = 4 * numPoints; i < opaque_color_buffer_size; ++i)
 	//	opaque_color_buffer[i] = 0;
@@ -275,28 +275,28 @@ void DrawableArea::CanvasResized(SceneCanvasComponent* _parentCanvas)
 
 }
 
-void DrawableArea::fillOpenGLBuffers()
+void DrawableArea::RefreshOpenGLBuffers()
 {
 	int decalage = 0;
 	for (int j = 0; j < 3 * numVerticesRing; j += 3)
 	{
 		if (displayCenter)
 		{
-			opaque_vertex_buffer[3 * decalage + j] = 1.0f* float(centerInPixels.get<0>() + g_vertex_ring[j]);
-			opaque_vertex_buffer[3 * decalage + j + 1] = 1.0f*float(centerInPixels.get<1>() + g_vertex_ring[j + 1]);
-			opaque_vertex_buffer[3 * decalage + j + 2] = 0.1f + g_vertex_ring[j + 2];
+			vertices_buffer[3 * decalage + j] = 1.0f* float(centerInPixels.get<0>() + g_vertex_ring[j]);
+			vertices_buffer[3 * decalage + j + 1] = 1.0f*float(centerInPixels.get<1>() + g_vertex_ring[j + 1]);
+			vertices_buffer[3 * decalage + j + 2] = 0.1f + g_vertex_ring[j + 2];
 		}
 		else
 		{
-			opaque_vertex_buffer[3 * decalage + j] = 0.0f;
-			opaque_vertex_buffer[3 * decalage + j + 1] = 0.0f;
-			opaque_vertex_buffer[3 * decalage + j + 2] = 0.0f;
+			vertices_buffer[3 * decalage + j] = 0.0f;
+			vertices_buffer[3 * decalage + j + 1] = 0.0f;
+			vertices_buffer[3 * decalage + j + 2] = 0.0f;
 		}
 	}
 
 	for (int j = 0; j < 3 * numVerticesRing; ++j)
 	{
-		opaque_index_buffer[j + 3 * decalage] = ringIndices[j];/*+ numVerticesPolygon*/;
+		indices_buffer[j + 3 * decalage] = ringIndices[j];/*+ numVerticesPolygon*/;
 	}
 }
 

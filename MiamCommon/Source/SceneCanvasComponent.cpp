@@ -496,18 +496,18 @@ void SceneCanvasComponent::SetIsSelectedForEditing(bool isSelected)
 void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int positionInBuffer)
 {
 	int decalage = (int)positionInBuffer * numVertexShape;// + numPointsPolygon + 1;
-	area->fillOpenGLBuffers();
+	area->RefreshOpenGLBuffers();
 	//std::vector<int> shift;
 	//shift.push_back(decalage);
-	if (area->GetOpaqueVerticesCount() >= 3)
+	if (area->GetVerticesBufferSize() >= 3)
 	{
 		/// vertex
 		//1. forme
-		int verticesCount = area->GetOpaqueVerticesCount();
+		int verticesCount = area->GetVerticesBufferSize();
 		for (int j = 0; j < 3*verticesCount; ++j)
 		{
 			if (j < 3*verticesCount)
-				g_vertex_buffer_data[3 * decalage + j] = area->GetOpaqueVertices(j);//*10
+				g_vertex_buffer_data[3 * decalage + j] = area->GetVerticesBufferElt(j);//*10
 			else
 				g_vertex_buffer_data[3 * decalage + j] = 0;
 		}
@@ -586,7 +586,7 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 	/// indices
 	decalage = positionInBuffer * shapeIndicesSize;// différent du decalage pour les vertex et les couleurs !
 	int beginShape = positionInBuffer * numVertexShape;
-	if (area->GetIndexCount() >= 3)
+	if (area->GetIndicesBufferSize() >= 3)
 	{
 		//1. forme
 		//std::vector<int> newIndex = area->GetIndex();
@@ -680,8 +680,8 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 		//	decalage += numVerticesRing;
 		//}
 		
-		for(int i = 0; i < area->GetIndexCount();++i)
-			indices[decalage + i] = area->GetIndex(i)  + beginShape;
+		for(int i = 0; i < area->GetIndicesBufferSize();++i)
+			indices[decalage + i] = area->GetIndicesBufferElt(i)  + beginShape;
 
 		
 
@@ -710,12 +710,12 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 		//}
 
 		int kgdayh = 0;
-		int testNum = area->GetOpaqueColourCount();
+		int testNum = area->GetCouloursBufferSize();
 		if (testNum != 4 * (numVerticesRing + numVerticesPolygon + numPointsPolygon))
 			kgdayh = 0;
-		for (int i = 0; i < area->GetOpaqueColourCount(); ++i)
+		for (int i = 0; i < area->GetCouloursBufferSize(); ++i)
 		{
-			g_color_buffer_data[4 * decalage + i] = area->GetOpaqueColour(i);
+			g_color_buffer_data[4 * decalage + i] = area->GetCouloursBufferElt(i);
 		}
 
 		/*DBG("------ shape path -------");

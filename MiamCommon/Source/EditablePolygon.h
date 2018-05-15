@@ -62,6 +62,17 @@ namespace Miam {
         
         // ----- Display functions -----
         public :
+			
+			int GetVerticesBufferSize() override {					// points du contour					manipulationLine	manipulationPoint
+				return DrawablePolygon::GetVerticesBufferSize() + (numPointsPolygon * numVerticesCircle) + dottedLineVertexes + numVerticesRing;
+			}
+			int GetCouloursBufferSize() override { return DrawablePolygon::GetCouloursBufferSize() + 4 * ((numPointsPolygon * numVerticesCircle) + dottedLineVertexes + numVerticesRing); }
+			int GetIndicesBufferSize() override { return DrawablePolygon::GetIndicesBufferSize() + numPointsPolygon * (3 * numPointCircle) + dottedLineIndices + (3 * numVerticesRing); }
+			virtual void Paint(Graphics& g) override;
+			virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
+			virtual void RefreshOpenGLBuffers() override;
+        // Display helpers
+        private :
 			static const int dottedLineNparts = 20;
 			static const int dottedLineVertexes = 4 * dottedLineNparts;
 			static const int dottedLineIndices = 6 * dottedLineNparts;
@@ -71,17 +82,7 @@ namespace Miam {
 
 			GLfloat g_vertex_circle[3 * numVerticesCircle];
 			unsigned int circleIndices[3 * numPointCircle];
-			int GetOpaqueVerticesCount() override {					// points du contour					manipulationLine	manipulationPoint
-				return DrawablePolygon::GetOpaqueVerticesCount() + (numPointsPolygon * numVerticesCircle) + dottedLineVertexes + numVerticesRing;
-			}
-			int GetOpaqueColourCount() override { return DrawablePolygon::GetOpaqueColourCount() + 4 * ((numPointsPolygon * numVerticesCircle) + dottedLineVertexes + numVerticesRing); }
-			int GetIndexCount() override { return DrawablePolygon::GetIndexCount() + numPointsPolygon * (3 * numPointCircle) + dottedLineIndices + (3 * numVerticesRing); }
-        virtual void Paint(Graphics& g) override;
-        virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
-		virtual void fillOpenGLBuffers() override;
-        // Display helpers
-        private :
-        void computeManipulationPoint();
+			void computeManipulationPoint();
         
         
         // ----- Setters and Getters -----
