@@ -53,6 +53,8 @@ namespace Miam
 		std::shared_ptr<GraphicEvent> OnCanvasMouseUp(const MouseEvent& mouseE) override;
 		std::shared_ptr<GraphicEvent> OnCanvasMouseDoubleClick(const MouseEvent& mouseE);
 
+		std::shared_ptr<GraphicEvent> resetAreaPosition();
+
 		std::shared_ptr<AreaEvent> AddTrueCircle(uint64_t nextAreaId);
 		std::shared_ptr<AreaEvent> AddCompleteArea(uint64_t);
 
@@ -111,6 +113,7 @@ namespace Miam
 		virtual std::shared_ptr<MultiAreaEvent> OnUnselection(bool shutExcitersDown = true) override; // on remet aussi le paramètre par défaut à 0
 	private:
 		std::map<int, std::shared_ptr<Amusing::CompletePolygon>> mouseIdxToArea;
+		bpt previousAreaLocation;
 	};
 
 

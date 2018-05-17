@@ -31,8 +31,6 @@ AudioManager::AudioManager(AmusingModel *m_model) : model(m_model), state(Stop),
 
 	beatsByTimeLine = 4;
 
-	model->sharedAudioDeviceManager->addAudioCallback(&recorder);
-
 	setSource(this);
 	runThread = true;
 	//T = std::thread(&AudioManager::threadFunc, this);
@@ -72,7 +70,6 @@ AudioManager::~AudioManager()
 	else
 		DBG("still exist");
 
-	model->sharedAudioDeviceManager->removeAudioCallback(&recorder);
 	model->removeDeviceManagerFromOptionWindow();
 	//delete midiOuput;
 	delete metronome;
@@ -108,7 +105,6 @@ void AudioManager::prepareToPlay(int samplesPerBlockExpected, double _sampleRate
 		//audioFormatManager.clearFormats();
 	}
 	
-	int numOutChannels = model->sharedAudioDeviceManager->getCurrentAudioDevice()->getActiveOutputChannels().getHighestBit() + 1;
 }
 void AudioManager::releaseResources()
 {
@@ -289,22 +285,6 @@ void AudioManager::sendPosition()
 	//param.DoubleValue = (double)position / (double)periode; //+ 1.0/8.0;
 	//model->SendParamChange(param);
 	
-}
-
-void AudioManager::startRecording()
-{
-	if (recorder.isRecording())
-	{
-		DBG("already recording");
-		std::cout << "already recording" << std::endl;
-	}
-	else
-	{
-		playInternalSynth = false;
-		const File file(File::getSpecialLocation(File::userDocumentsDirectory)
-			.getNonexistentChildFile("Juce Test Recording 0", ".wav"));
-		recorder.startRecording(file);
-	}
 }
 
 void AudioManager::setUsingSampledSound()

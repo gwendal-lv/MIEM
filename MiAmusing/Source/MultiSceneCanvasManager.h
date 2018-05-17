@@ -72,6 +72,8 @@ namespace Amusing {
 		void handleAndSendAreaEventSync(std::shared_ptr<AreaEvent> areaE);
 		void handleAndSendMultiAreaEventSync(std::shared_ptr<MultiAreaEvent> multiAreaE);
 
+		void resetAreaPosition();
+
 		virtual std::shared_ptr<bptree::ptree> GetTree() override;
 		
 		void deleteAsyncDrawableObject(std::shared_ptr<IDrawableArea> originalAreaToDelete);

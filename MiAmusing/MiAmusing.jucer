@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="MkqyzI" name="MiAmusing" projectType="guiapp" version="1.0.0"
               bundleIdentifier="com.yourcompany.MiAmusing" includeBinaryInAppConfig="1"
-              jucerVersion="5.3.0" displaySplashScreen="1" reportAppUsage="1"
+              jucerVersion="5.3.2" displaySplashScreen="1" reportAppUsage="1"
               splashScreenColour="Dark" cppLanguageStandard="11" companyCopyright="">
   <MAINGROUP id="Ak6ojc" name="MiAmusing">
     <GROUP id="{E74684B7-0B02-F2F7-C571-317039AB4495}" name="Source">
@@ -71,6 +71,10 @@
               file="Source/AmusingSceneComponent.h"/>
         <FILE id="zL9zBL" name="AreaOptions.cpp" compile="1" resource="0" file="Source/AreaOptions.cpp"/>
         <FILE id="HIcl1x" name="AreaOptions.h" compile="0" resource="0" file="Source/AreaOptions.h"/>
+        <FILE id="a8Ct4o" name="AreaOptionsComponent.cpp" compile="1" resource="0"
+              file="Source/AreaOptionsComponent.cpp"/>
+        <FILE id="A2C9sM" name="AreaOptionsComponent.h" compile="0" resource="0"
+              file="Source/AreaOptionsComponent.h"/>
         <FILE id="luxgya" name="AudioDeviceAndMidiOutputSelectorComponent.cpp"
               compile="1" resource="0" file="Source/AudioDeviceAndMidiOutputSelectorComponent.cpp"/>
         <FILE id="Xq7fsV" name="AudioDeviceAndMidiOutputSelectorComponent.h"
@@ -374,4 +378,7 @@
     <MODULE id="juce_video" showAllCode="1" useLocalCopy="0"/>
   </MODULES>
   <JUCEOPTIONS/>
+  <LIVE_SETTINGS>
+    <WINDOWS/>
+  </LIVE_SETTINGS>
 </JUCERPROJECT>

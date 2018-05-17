@@ -978,9 +978,25 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDoubleClick(const Mouse
 				if(auto sceneComponent = (AmusingSceneComponent*)canvasComponent)
 				{
 					sceneComponent->SetAreaOptionsVisible(true);
+					previousAreaLocation = completeArea->getCenter();
+					Point<double> tr((double)canvasComponent->getWidth() / 2.0 - completeArea->getCenter().get<0>(), (double)canvasComponent->getHeight() / 2.0 - completeArea->getCenter().get<1>());
+					completeArea->Translate(tr);
+					completeArea->CanvasResized(canvasComponent);
 				}
 				return std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::Selected, -1, shared_from_this()));
 			}
+	}
+	return std::shared_ptr<GraphicEvent>();
+}
+
+std::shared_ptr<GraphicEvent> AmusingScene::resetAreaPosition()
+{
+	if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(selectedArea))
+	{
+		Point<double> tr(previousAreaLocation.get<0>() - completeArea->getCenter().get<0>(), previousAreaLocation.get<1>() - completeArea->getCenter().get<1>());
+		completeArea->Translate(tr);
+		completeArea->CanvasResized(canvasComponent);
+		return std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::Selected, -1, shared_from_this()));
 	}
 	return std::shared_ptr<GraphicEvent>();
 }

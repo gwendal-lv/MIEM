@@ -11,6 +11,7 @@
 #include "MultiSceneCanvasManager.h"
 
 #include "MultiSceneCanvasComponent.h"
+#include "MultiSceneCanvasComponentAmusing.h"
 
 #include "AmusingScene.h"
 
@@ -245,6 +246,15 @@ void MultiSceneCanvasManager::handleAndSendMultiAreaEventSync(std::shared_ptr<Mu
 	graphicSessionManager->HandleEventSync(multiAreaE);
 }
 
+void MultiSceneCanvasManager::resetAreaPosition()
+{
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+	{
+		std::shared_ptr<GraphicEvent> graphicE = amusingScene->resetAreaPosition();
+		handleAndSendEventSync(graphicE);
+	}
+}
+
 std::shared_ptr<bptree::ptree> MultiSceneCanvasManager::GetTree()
 {
 	bptree::ptree scenesInnerTree;
@@ -303,7 +313,20 @@ void MultiSceneCanvasManager::OnCanvasMouseDoubleClick(const MouseEvent & mouseE
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
 	{
 		std::shared_ptr<GraphicEvent> graphicE = amusingScene->OnCanvasMouseDoubleClick(mouseE);
-
+		handleAndSendEventSync(graphicE);
+		if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(graphicE))
+		{
+			if (areaE->GetType() == AreaEventType::Selected)
+			{
+				if (auto amusingCanvas = (MultiSceneCanvasComponentAmusing*)canvasComponent)
+				{
+					if (auto selectedArea = std::dynamic_pointer_cast<CompletePolygon>(amusingScene->GetSelectedArea()))
+					{
+						amusingCanvas->showAreaOptions(true);
+					}
+				}
+			}
+		}
 	}
 }
 

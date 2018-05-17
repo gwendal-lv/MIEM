@@ -7,12 +7,12 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.2.0
+  Created with Projucer version: 5.3.2
 
   ------------------------------------------------------------------------------
 
-  The Projucer is part of the JUCE library - "Jules' Utility Class Extensions"
-  Copyright (c) 2015 - ROLI Ltd.
+  The Projucer is part of the JUCE library.
+  Copyright (c) 2017 - ROLI Ltd.
 
   ==============================================================================
 */
@@ -101,21 +101,21 @@ private:
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<GroupComponent> groupComponent;
-    ScopedPointer<ComboBox> comboBoxMidi;
-    ScopedPointer<Slider> timeSlider;
-    ScopedPointer<ImageButton> imgPlayButton;
-    ScopedPointer<ImageButton> imgStopButton;
-    ScopedPointer<ImageButton> imgPauseButton;
-    ScopedPointer<ImageButton> imgOptionButton;
-    ScopedPointer<ImageButton> imgDeleteButton;
-    ScopedPointer<TextButton> textButton;
-    ScopedPointer<Label> label;
-    ScopedPointer<ShapeButton> addCarreShapeButton;
-    ScopedPointer<ShapeButton> addTriangleShapeButton2;
-    ScopedPointer<ShapeButton> addHexaShapeButton;
-    ScopedPointer<TextButton> saveButton;
-    ScopedPointer<TextButton> loadButton;
+    std::unique_ptr<GroupComponent> groupComponent;
+    std::unique_ptr<ComboBox> comboBoxMidi;
+    std::unique_ptr<Slider> timeSlider;
+    std::unique_ptr<ImageButton> imgPlayButton;
+    std::unique_ptr<ImageButton> imgStopButton;
+    std::unique_ptr<ImageButton> imgPauseButton;
+    std::unique_ptr<ImageButton> imgOptionButton;
+    std::unique_ptr<ImageButton> imgDeleteButton;
+    std::unique_ptr<TextButton> textButton;
+    std::unique_ptr<Label> label;
+    std::unique_ptr<ShapeButton> addCarreShapeButton;
+    std::unique_ptr<ShapeButton> addTriangleShapeButton2;
+    std::unique_ptr<ShapeButton> addHexaShapeButton;
+    std::unique_ptr<TextButton> saveButton;
+    std::unique_ptr<TextButton> loadButton;
 
 
     //==============================================================================
