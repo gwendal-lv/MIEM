@@ -12,7 +12,6 @@
 #define AMUSINGSCENE_H_INCLUDED
 
 #include "EditableScene.h"
-#include "AnimatedPolygon.h"
 #include "IntersectionPolygon.h"
 #include "Cursors.h"
 #include "IDrawableArea.h"
@@ -22,7 +21,6 @@ using namespace Miam;
 
 namespace Amusing
 {
-	class AnimatedPolygon;
 	class CompletePolygon;
 	class Follower;
 }
@@ -41,7 +39,6 @@ namespace Miam
 
 		
 
-		void AddAnimatedArea(uint64_t nextAreaId);
 		std::shared_ptr<AreaEvent> AddNedgeArea(uint64_t nextAreaId, int N);
 		void AddIntersections(std::shared_ptr<IDrawableArea> m_area);
 		void AddAllIntersections();
@@ -60,8 +57,6 @@ namespace Miam
 
 		
 		int Nfollower;
-		std::shared_ptr<Amusing::AnimatedPolygon> getFirstArea();
-		std::shared_ptr<Amusing::AnimatedPolygon> getNextArea();
 		std::shared_ptr<Amusing::CompletePolygon> getFirstCompleteArea();
 		std::shared_ptr<Miam::MultiAreaEvent> SetAllAudioPositions(double position);
 
@@ -109,8 +104,8 @@ namespace Miam
 		void lookForAreasToUpdate(Colour concernedColour);
 		std::shared_ptr<bptree::ptree> GetTree() const override;
 		
-		virtual std::shared_ptr<MultiAreaEvent> OnSelection(bool resetExciters = true) override; // on écrase resetExciters dans la fonction pour pas réinitialiser les exciters
-		virtual std::shared_ptr<MultiAreaEvent> OnUnselection(bool shutExcitersDown = true) override; // on remet aussi le paramètre par défaut à 0
+		virtual std::shared_ptr<MultiAreaEvent> OnSelection(bool resetExciters = true) override; // on Ã©crase resetExciters dans la fonction pour pas rÃ©initialiser les exciters
+		virtual std::shared_ptr<MultiAreaEvent> OnUnselection(bool shutExcitersDown = true) override; // on remet aussi le paramÃ¨tre par dÃ©faut Ã  0
 	private:
 		std::map<int, std::shared_ptr<Amusing::CompletePolygon>> mouseIdxToArea;
 		bpt previousAreaLocation;

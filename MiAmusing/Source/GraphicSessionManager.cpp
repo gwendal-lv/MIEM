@@ -27,7 +27,6 @@ Author:  Gwendal Le Vaillant
 #include "MultiAreaEvent.h"
 
 #include "AmusingScene.h"
-#include "AnimatedPolygon.h"
 #include "EditableEllipse.h"
 #include "CompletePolygon.h"
 #include <cmath>
@@ -702,16 +701,6 @@ void GraphicSessionManager::DisplayInfo(String info, int priority)
 	view->DisplayInfo(info);
 }
 
-void GraphicSessionManager::OnAddArea()
-{
-	if (selectedCanvas)
-	{
-		if (auto canvas = std::dynamic_pointer_cast<AmusingScene>(getSelectedCanvasAsEditable()))
-			canvas->AddAnimatedArea(GetNextAreaId());
-		else
-			getSelectedCanvasAsEditable()->AddDefaultArea(GetNextAreaId());
-	}
-}
 
 void GraphicSessionManager::OnFollowerTranslation(std::shared_ptr<GraphicEvent> graphicE)
 {

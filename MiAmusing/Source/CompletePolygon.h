@@ -113,6 +113,10 @@ namespace Amusing
 		bool getChordParameters(int idx, std::shared_ptr<CompletePolygon> &chordArea, double &pC);
 
 		virtual std::shared_ptr<bptree::ptree> GetTree() override;
+
+		void showAllTarget(bool shouldBeShowed);
+
+		void Translate(const Point<double>& translation);
 		
 	private:
 		JUCE_LEAK_DETECTOR(CompletePolygon)
@@ -146,6 +150,7 @@ namespace Amusing
 		void PaintBullsEye(Graphics& g);
 		void CanvasResizedBullsEye(SceneCanvasComponent* _parentCanvas);
 		std::vector<int> OnCircles;
+		bool showAllCircles;
 		
 		// flags and invisible points for chords
 		std::vector<bool> chordFlag;

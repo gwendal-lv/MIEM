@@ -14,7 +14,6 @@
 #include "MultiSceneCanvasInteractor.h"
 
 #include "SceneCanvasComponent.h"
-#include "AnimatedPolygon.h"
 #include "EditableEllipse.h"
 #include "CompletePolygon.h"
 #include "Cursors.h"
@@ -70,17 +69,7 @@ AmusingScene::~AmusingScene()
 	}
 }
 
-void AmusingScene::AddAnimatedArea(uint64_t nextAreaId)
-{
-	// centered grey Hexagon !...
-	std::shared_ptr<AnimatedPolygon> newPolygon(new AnimatedPolygon(nextAreaId,
-		bpt(0.5f, 0.5f), 6, 0.15f,
-		Colours::grey,
-		canvasComponent->GetRatio()));
 
-	// Actual adding of this new polygon
-	AddArea(newPolygon);
-}
 
 std::shared_ptr<AreaEvent> AmusingScene::AddCompleteArea(uint64_t nextAreaId)
 {
@@ -982,6 +971,7 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDoubleClick(const Mouse
 					Point<double> tr((double)canvasComponent->getWidth() / 2.0 - completeArea->getCenter().get<0>(), (double)canvasComponent->getHeight() / 2.0 - completeArea->getCenter().get<1>());
 					completeArea->Translate(tr);
 					completeArea->CanvasResized(canvasComponent);
+					completeArea->showAllTarget(true);
 				}
 				return std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::Selected, -1, shared_from_this()));
 			}
@@ -995,6 +985,7 @@ std::shared_ptr<GraphicEvent> AmusingScene::resetAreaPosition()
 	{
 		Point<double> tr(previousAreaLocation.get<0>() - completeArea->getCenter().get<0>(), previousAreaLocation.get<1>() - completeArea->getCenter().get<1>());
 		completeArea->Translate(tr);
+		completeArea->showAllTarget(false);
 		completeArea->CanvasResized(canvasComponent);
 		return std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::Selected, -1, shared_from_this()));
 	}
@@ -1012,10 +1003,6 @@ std::shared_ptr<AreaEvent> AmusingScene::AddTrueCircle(uint64_t nextAreaId)
 
 
 
-std::shared_ptr<AnimatedPolygon> AmusingScene::getFirstArea()
-{
-	return std::dynamic_pointer_cast<AnimatedPolygon>(areas[0]);
-}
 
 std::shared_ptr<Amusing::CompletePolygon> AmusingScene::getFirstCompleteArea()
 {
@@ -1056,12 +1043,6 @@ std::shared_ptr<MultiAreaEvent> AmusingScene::SetAllAudioPositions(double /*posi
 	return areaE;
 }
 
-std::shared_ptr<AnimatedPolygon> AmusingScene::getNextArea()
-{
-	DBG("Nfollower = " + (String)Nfollower);
-	++Nfollower;
-	return std::dynamic_pointer_cast<AnimatedPolygon>(areas[(Nfollower - 1)]);
-}
 
 
 

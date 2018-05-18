@@ -147,6 +147,7 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 	}
 	chordFlag = std::vector<bool>(pointsCount, false);
 	chordAreaForFlag = std::vector<std::shared_ptr<CompletePolygon>>(pointsCount, nullptr);
+	showAllCircles = false;
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id,
@@ -190,7 +191,7 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	}
 
 	//updateSubTriangles();
-	
+	showAllCircles = false;
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id,
@@ -1040,19 +1041,19 @@ AreaEventType CompletePolygon::TryMovePoint(const Point<double>& newLocation)
 	double r2 = boost::geometry::distance(centerInPixels, bmanipulationPointInPixels);
 	double size = r2 / r1;
 
-	if (!boost::geometry::equals(center, bullsEyeCenter)) // at the creation, they're equal
-	{
-		bpt translation(center.get<0>() - bullsEyeCenter.get<0>(), center.get<1>() - bullsEyeCenter.get<1>());
-		
-		translation.set<0>(translation.get<0>() * (double)parentCanvas->getWidth());
-		translation.set<1>(translation.get<1>() * (double)parentCanvas->getHeight());
-		
+	//if (!boost::geometry::equals(center, bullsEyeCenter)) // at the creation, they're equal
+	//{
+	//	bpt translation(center.get<0>() - bullsEyeCenter.get<0>(), center.get<1>() - bullsEyeCenter.get<1>());
+	//	
+	//	translation.set<0>(translation.get<0>() * (double)parentCanvas->getWidth());
+	//	translation.set<1>(translation.get<1>() * (double)parentCanvas->getHeight());
+	//	
 
-		for (int i = 0; i < Nradius; ++i)
-			bullsEye[i].Translate(juce::Point<double>(translation.get<0>(), translation.get<1>()));
-		
-		bullsEyeCenter = center;
-	}
+	//	for (int i = 0; i < Nradius; ++i)
+	//		bullsEye[i].Translate(juce::Point<double>(translation.get<0>(), translation.get<1>()));
+	//	
+	//	bullsEyeCenter = center;
+	//}
 
 	if (areaEventType == AreaEventType::RotScale)
 	{
@@ -1425,11 +1426,19 @@ void CompletePolygon::CreateBullsEye()
 
 void CompletePolygon::PaintBullsEye(Graphics& g)
 {
-	for (int i = 0; i < (int)OnCircles.size(); ++i)
+	if (showAllCircles)
 	{
-		//bullsEye[OnCircles[i]].SetAlpha(1.0);
-		bullsEye[OnCircles[i]].Paint(g);
+		for(int i = 0; i < bullsEye.size();++i)
+			bullsEye[i].Paint(g);
+	}
+	else
+	{
+		for (int i = 0; i < (int)OnCircles.size(); ++i)
+		{
+			//bullsEye[OnCircles[i]].SetAlpha(1.0);
+			bullsEye[OnCircles[i]].Paint(g);
 			//bullsEye[i].Paint(g);
+		}
 	}
 }
 
@@ -1617,4 +1626,30 @@ std::shared_ptr<bptree::ptree> CompletePolygon::GetTree()
 	inheritedTree->add_child("completeParameter", completeParameterTree);
 
 	return inheritedTree;
+}
+
+void CompletePolygon::showAllTarget(bool shouldBeShowed)
+{
+	showAllCircles = shouldBeShowed;
+}
+
+void CompletePolygon::Translate(const Point<double>& translation)
+{
+	EditablePolygon::Translate(translation);
+
+	if (!boost::geometry::equals(center, bullsEyeCenter)) // at the creation, they're equal
+	{
+		bpt btranslation(center.get<0>() - bullsEyeCenter.get<0>(), center.get<1>() - bullsEyeCenter.get<1>());
+
+		btranslation.set<0>(btranslation.get<0>() * (double)parentCanvas->getWidth());
+		btranslation.set<1>(btranslation.get<1>() * (double)parentCanvas->getHeight());
+
+
+		for (int i = 0; i < Nradius; ++i)
+			bullsEye[i].Translate(juce::Point<double>(btranslation.get<0>(), btranslation.get<1>()));
+
+		bullsEyeCenter = center;
+	}
+
+	
 }

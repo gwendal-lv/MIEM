@@ -32,10 +32,6 @@
       <GROUP id="{92B3F81C-D5E2-88E6-6EC3-B31792EEA57D}" name="Presenter">
         <FILE id="ZfKBA3" name="LUT.h" compile="0" resource="0" file="Source/LUT.h"/>
         <GROUP id="{690FB287-1852-3C4A-91A1-F5B474582291}" name="Areas">
-          <FILE id="r2GOwl" name="AnimatedPolygon.cpp" compile="1" resource="0"
-                file="Source/AnimatedPolygon.cpp"/>
-          <FILE id="MRW6Cl" name="AnimatedPolygon.h" compile="0" resource="0"
-                file="Source/AnimatedPolygon.h"/>
           <FILE id="aIERwf" name="CompletePolygon.cpp" compile="1" resource="0"
                 file="Source/CompletePolygon.cpp"/>
           <FILE id="cOpwTH" name="CompletePolygon.h" compile="0" resource="0"
