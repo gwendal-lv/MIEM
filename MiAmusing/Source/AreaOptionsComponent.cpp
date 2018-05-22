@@ -126,6 +126,7 @@ void AreaOptionsComponent::buttonClicked (Button* buttonThatWasClicked)
     if (buttonThatWasClicked == volumeButton.get())
     {
         //[UserButtonCode_volumeButton] -- add your button handler code here..
+		canvasComponent->optionButtonClicked(OptionButtonClicked::Volume);
         //[/UserButtonCode_volumeButton]
     }
     else if (buttonThatWasClicked == speedButton.get())
@@ -152,7 +153,7 @@ void AreaOptionsComponent::buttonClicked (Button* buttonThatWasClicked)
     {
         //[UserButtonCode_closeOptionsButton] -- add your button handler code here..
 		setVisible(false);
-		canvasComponent->optionsClosed();
+		canvasComponent->optionButtonClicked(OptionButtonClicked::Closed);
         //[/UserButtonCode_closeOptionsButton]
     }
 

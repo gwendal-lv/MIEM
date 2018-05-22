@@ -14,7 +14,13 @@
 #include "SceneCanvasComponent.h"
 #include "AreaOptions.h"
 
-
+enum SideBarType
+{
+	None,
+	GrayScale,
+	TextScale,
+	ColourButtons,
+};
 
 //==============================================================================
 /*
@@ -23,6 +29,7 @@ class AmusingSceneComponent    : public SceneCanvasComponent,
 	public std::enable_shared_from_this<AmusingSceneComponent>,
 	public Button::Listener
 {
+
 public:
     AmusingSceneComponent();
     ~AmusingSceneComponent();
@@ -50,12 +57,15 @@ public:
 	void mouseDown(const juce::MouseEvent &event) override;
 	void mouseDoubleClick(const juce::MouseEvent &event) override;
 
+	void ShowSideBar(SideBarType sideBarType);
+
 	/*void mouseDown(const juce::MouseEvent &event) override;
 	void mouseDrag(const juce::MouseEvent &event) override;
 	void mouseUp(const juce::MouseEvent &event) override;*/
 
 private:
 	bool isOptionShowed;
+	SideBarType currentSideBarType;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AmusingSceneComponent)
 };

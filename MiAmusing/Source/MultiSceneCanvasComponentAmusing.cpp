@@ -85,11 +85,35 @@ void MultiSceneCanvasComponentAmusing::showAreaOptions(bool shouldBeVisible)
 	resized();
 }
 
-void MultiSceneCanvasComponentAmusing::optionsClosed()
+void MultiSceneCanvasComponentAmusing::optionButtonClicked(OptionButtonClicked optionClicked)
 {
 	resized();
 	if (auto canvasManagerAsManager = std::dynamic_pointer_cast<Amusing::MultiSceneCanvasManager>(canvasManager))
 	{
-		canvasManagerAsManager->resetAreaPosition();
+		if(auto amusingChildren = (AmusingSceneComponent*)(childrenCanvas))
+		{
+			switch (optionClicked)
+			{
+			case Volume:
+				amusingChildren->ShowSideBar(SideBarType::GrayScale);
+				break;
+			case Speed:
+				break;
+			case Rhythm:
+				break;
+			case Sample:
+				break;
+			case Octave:
+				break;
+			case Closed:
+				amusingChildren->ShowSideBar(SideBarType::None);
+				canvasManagerAsManager->resetAreaPosition();
+				break;
+			default:
+				break;
+			}
+		}
+		
+		
 	}
 }

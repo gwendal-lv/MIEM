@@ -14,7 +14,9 @@
 
 #include "MultiSceneCanvasComponent.h"
 
-class AreaOptionsComponent;
+#include "AreaOptionsComponent.h"
+
+//class AreaOptionsComponent;
 namespace Amusing
 {
 	class MultiSceneCanvasManager;
@@ -34,7 +36,7 @@ public:
 
 	void showAreaOptions(bool shouldBeVisible);
 
-	void optionsClosed();
+	void optionButtonClicked(OptionButtonClicked optionClicked);
 
 private:
 	//AreaOptions areaOptions;

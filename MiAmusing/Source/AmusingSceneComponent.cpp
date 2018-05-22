@@ -21,6 +21,7 @@ AmusingSceneComponent::AmusingSceneComponent()
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
+	currentSideBarType = SideBarType::None;
 	isOptionShowed = false;
 
 	showOptionsButton = new TextButton();
@@ -58,7 +59,29 @@ void AmusingSceneComponent::addColourSample(int index, Colour colour)
 void AmusingSceneComponent::renderOpenGL()
 {
 	SceneCanvasComponent::renderOpenGL();
-	//areaOptions.setBounds(0, 0, getWidth(), getHeight());
+	auto manager = canvasManager.lock();
+
+	const double desktopScale = openGlContext.getRenderingScale();
+	std::unique_ptr<LowLevelGraphicsContext> glRenderer(createOpenGLGraphicsContext(openGlContext,
+		roundToInt(desktopScale * getWidth()),
+		roundToInt(desktopScale * getHeight())));
+	Graphics g(*glRenderer);
+
+	g.addTransform(AffineTransform::scale((float)desktopScale));
+
+	switch (currentSideBarType)
+	{
+	case GrayScale :
+		g.setGradientFill(ColourGradient::vertical(Colours::lightgrey, 0, Colours::darkgrey, getHeight()));
+		g.fillRect(getWidth() - 100, 4, 100 - 4, getHeight() - 8);
+		break;
+	case TextScale :
+		break;
+	case ColourButtons :
+		break;
+	}
+
+	
 }
 
 //void AmusingSceneComponent::mouseDown(const juce::MouseEvent &event)
@@ -188,4 +211,9 @@ void AmusingSceneComponent::mouseDoubleClick(const juce::MouseEvent & event)
 	DBG("doubleClick");
 	if (auto manager = std::dynamic_pointer_cast<Amusing::MultiSceneCanvasManager>(canvasManager.lock()))
 		manager->OnCanvasMouseDoubleClick(event);
+}
+
+void AmusingSceneComponent::ShowSideBar(SideBarType sideBarType)
+{
+	currentSideBarType = sideBarType;
 }
