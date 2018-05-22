@@ -65,6 +65,8 @@ CompletePolygon::CompletePolygon(bptree::ptree & areaTree) : EditablePolygon(are
 		OnCircles.push_back(0);
 	}
 
+	numAngles = 32;
+
 	updateSubTriangles();
 }
 
@@ -115,6 +117,7 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 	s = ost.str();
 	DBG("Constructor : " + s);*/
 	isFilled = true;
+	numAngles = 32;
 
 	centerCircleRadius *= 2;
 	centerContourWidth *= 2;
@@ -163,6 +166,7 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	centerContourWidth *= 2;
 	multiTouchActionBegun = false;
 	currentTouchRotation = 0.0;
+	numAngles = 32;
 
 	showCursor = true;
 	pc = 0;
@@ -200,12 +204,14 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	Colour _fillColour) : 
 	EditablePolygon(_Id, _center, _contourPoints, _fillColour)
 {
+	numAngles = 32;
 	centerCircleRadius *= 2;
 	centerContourWidth *= 2;
 	multiTouchActionBegun = false;
 	currentTouchRotation = 0.0;
 	/*std::string s;
-	std::ostringstream ost;
+	std::ostringstrea
+	m ost;
 	ost << this;
 	s = ost.str();
 	DBG("Constructor : " + s);*/
@@ -1078,7 +1084,7 @@ AreaEventType CompletePolygon::TryMovePoint(const Point<double>& newLocation)
 AreaEventType CompletePolygon::EndPointMove()
 {
 
-	int numAngles = 32;
+	
 	double e = 0.01;
 	if (useBullsEye)
 	{
@@ -1109,6 +1115,41 @@ AreaEventType CompletePolygon::EndPointMove()
 			boost::geometry::model::point<double, 3, boost::geometry::cs::spherical<boost::geometry::radian>> ptRad;
 			boost::geometry::transform(pt3D, ptRad);
 			double angle = ptRad.get<0>();//M_PI;//M_PI/2;//ptRad.get<0>(); // --> cos = 1, sin = 0, contourPointsInPixels.outer().at(pointDraggedId) = bpt(centerInPixels.get<0>() + radius[i] * parent.getWidth(), 0)
+			while (angle < 0.0)
+				angle += 2 * M_PI;
+
+			bool alreadyFound = false;
+			double distanceMin = 2 * M_PI;
+			double angleToReach = 0;
+			for (int i = 0; i <= numAngles; ++i)
+			{
+				double currentAngle = (double)i * 2 * M_PI / (double)numAngles;
+
+				double distance = currentAngle - angle;
+				if (abs(distance)<e / 2.0) // vérifie si près de cet angle là
+				{
+					//Rotate(orientationAngle - currentAngle);
+					alreadyFound = true;
+					angle = currentAngle;
+					break;
+				}
+				else // sinon regarder la distance
+				{
+					if (abs(distance) < abs(distanceMin))
+					{
+						distanceMin = distance;
+						angleToReach = currentAngle;
+					}
+				}
+
+			}
+
+			if (alreadyFound == false) // s'il ne correspondait à aucun angle parmi ceux-ci, on le remet sur le plus proche
+			{
+				//Rotate(orientationAngle - angleToReach);
+				angle = angleToReach;
+			}
+
 
 			double R = bullsEye[nearest].getRadius();//54;//bullsEye[nearest].getRadius();//radius[nearest];
 			contourPointsInPixels.outer().at(pointDraggedId) = bpt(centerInPixels.get<0>() + R * std::cos(angle),
@@ -1428,8 +1469,19 @@ void CompletePolygon::PaintBullsEye(Graphics& g)
 {
 	if (showAllCircles)
 	{
-		for(int i = 0; i < bullsEye.size();++i)
+		for (int i = 0; i < bullsEye.size(); ++i)
+		{
+			bullsEye[i].SetOpacityMode(OpacityMode::Independent);
+			bullsEye[i].SetAlpha(0.2);
 			bullsEye[i].Paint(g);
+		}
+		g.setOpacity(0.2);
+		double currentAngle = 0.0;
+		for (int i = 0; i < numAngles; ++i)
+		{
+			currentAngle += 2 * M_PI / (double)numAngles;
+			g.drawLine(centerInPixels.get<0>(), centerInPixels.get<1>(), centerInPixels.get<0>()+ radius[4] * std::cos(currentAngle) * parentCanvas->getWidth() * xScale, centerInPixels.get<1>() + radius[4] * std::sin(currentAngle) * parentCanvas->getHeight()*yScale);
+		}
 	}
 	else
 	{

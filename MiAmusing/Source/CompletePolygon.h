@@ -119,6 +119,7 @@ namespace Amusing
 		void Translate(const Point<double>& translation);
 		
 	private:
+		int numAngles;
 		JUCE_LEAK_DETECTOR(CompletePolygon)
 		// attributes linked to the Cursor
 		bool showCursor;
