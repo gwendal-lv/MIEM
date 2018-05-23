@@ -50,7 +50,30 @@ void MultiSceneCanvasManager::AddScene(std::string name,bool selectNewScene)
     MultiSceneCanvasInteractor::AddScene(newScene,selectNewScene);
 }
 
+void MultiSceneCanvasManager::OnAddTabExciter()
+{
+	if (selectedScene)
+	{
+		auto areaE = selectedScene->AddDefaultExciter();
+		// Après coup, on analyse l'état de sélection d'un excitateur
+		// Comme ça c'est la scène qui choisit si elle sélectionne le nouvellement créé, ou non...
+		if (selectedScene->GetSelectedExciter())
+			SetMode(CanvasManagerMode::ExciterSelected);
+		else
+			SetMode(CanvasManagerMode::ExcitersEdition);
 
+
+		handleAndSendAreaEventSync(areaE);
+		
+		if (auto exciter = std::dynamic_pointer_cast<Exciter>(areaE->GetConcernedArea()))
+		{
+			
+			std::shared_ptr<AreaEvent> newAreaE(new AreaEvent(exciter, AreaEventType::NothingHappened, selectedScene));
+			handleAndSendAreaEventSync(newAreaE);
+		}
+	}
+	else throw std::runtime_error("Cannot add an exciter : no scene selected");
+}
 
 void MultiSceneCanvasManager::AddNedgeArea(uint64_t nextAreaId, int N)
 {
@@ -232,6 +255,7 @@ void MultiSceneCanvasManager::resetAreaPosition()
 	{
 		std::shared_ptr<GraphicEvent> graphicE = amusingScene->resetAreaPosition();
 		handleAndSendEventSync(graphicE);
+		handleAndSendEventSync(amusingScene->DeleteTabExciter());
 	}
 }
 

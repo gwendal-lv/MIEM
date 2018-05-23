@@ -96,6 +96,7 @@ void MultiSceneCanvasComponentAmusing::optionButtonClicked(OptionButtonClicked o
 			{
 			case Volume:
 				amusingChildren->ShowSideBar(SideBarType::GrayScale);
+				canvasManagerAsManager->OnAddExciter();
 				break;
 			case Speed:
 				break;

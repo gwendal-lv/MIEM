@@ -58,7 +58,24 @@ void AmusingSceneComponent::addColourSample(int index, Colour colour)
 
 void AmusingSceneComponent::renderOpenGL()
 {
-	SceneCanvasComponent::renderOpenGL();
+	//SceneCanvasComponent::renderOpenGL();
+
+	/*auto manager = canvasManager.lock();
+
+	const double desktopScale = openGlContext.getRenderingScale();
+	std::unique_ptr<LowLevelGraphicsContext> glRenderer(createOpenGLGraphicsContext(openGlContext,
+		roundToInt(desktopScale * getWidth()),
+		roundToInt(desktopScale * getHeight())));
+	Graphics g(*glRenderer);
+
+	g.addTransform(AffineTransform::scale((float)desktopScale));
+
+	*/
+
+	
+
+	
+
 	auto manager = canvasManager.lock();
 
 	const double desktopScale = openGlContext.getRenderingScale();
@@ -69,18 +86,94 @@ void AmusingSceneComponent::renderOpenGL()
 
 	g.addTransform(AffineTransform::scale((float)desktopScale));
 
+	// Pure black background
+	g.fillAll(Colours::black);
+
+	//side bar if needed
 	switch (currentSideBarType)
 	{
-	case GrayScale :
+	case GrayScale:
 		g.setGradientFill(ColourGradient::vertical(Colours::lightgrey, 0, Colours::darkgrey, getHeight()));
 		g.fillRect(getWidth() - 100, 4, 100 - 4, getHeight() - 8);
 		break;
-	case TextScale :
+	case TextScale:
 		break;
-	case ColourButtons :
+	case ColourButtons:
 		break;
 	}
 
+	// White interior contour 2px line to show when the canvas is active
+	if (selectedForEditing)
+	{
+		g.setColour(Colours::white);
+		g.drawRect(1, 1, getWidth() - 2, getHeight() - 2, 2);
+	}
+
+
+	// - - - - - THIRD Duplication of the drawable objects for thread-safe rendering, - - - - -
+	// Lorsque nécessaire seulement !
+	manager->LockAsyncDrawableObjects();
+
+
+	bool areasCountChanged = (manager->GetAsyncDrawableObjects().size() != duplicatedAreas.size());
+	// POUR L'INSTANT ALGO BÊTE
+	// on resize le vecteur : la construction des shared n'est pas grave, leur bloc de contrôle reste
+	// en mémoire finalement (on utilisera reset() )
+	if (areasCountChanged)
+	{
+		canvasAreasPointersCopies.resize(manager->GetAsyncDrawableObjects().size());
+		duplicatedAreas.resize(manager->GetAsyncDrawableObjects().size());
+	}
+	// Vérification simple de chaque aire 1 par 1
+	size_t itIndex = 0;
+	for (auto it = manager->GetAsyncDrawableObjects().begin();
+		it != manager->GetAsyncDrawableObjects().end();
+		++it)
+	{
+		// S'il y a eu un changement : on re-crée un pointeur déjà, puis
+		// on fait effectivement la copie d'un nouvel objet
+		if (canvasAreasPointersCopies[itIndex] != (*it))
+		{
+			canvasAreasPointersCopies[itIndex] = (*it);
+			duplicatedAreas[itIndex] = (*it)->Clone();
+		}
+		// Double compteur
+		itIndex++;
+	}
+
+	manager->UnlockAsyncDrawableObjects();
+
+
+	// - - - - - Areas painting (including exciters if existing) - - - - -
+	// Sans bloquer, du coup, les autres threads (pour réactivité max...)
+	for (size_t i = 0; i<duplicatedAreas.size(); i++)
+	{
+		// Peut mettre à jour des images et autres (si l'échelle a changé)
+		duplicatedAreas[i]->SetRenderingScale(desktopScale);
+		// Dessin effectif
+		duplicatedAreas[i]->Paint(g);
+	}
+
+
+	// Call to a general Graphic update on the whole Presenter module
+	if (!manager->isUpdatePending())
+		manager->triggerAsyncUpdate();
+
+	// Time measures just before swap (or the closer that we can get to the swaps)
+	displayFrequencyMeasurer.OnNewFrame();
+	/*
+	if (selectedForEditing)
+	{
+	if (displayFrequencyMeasurer.IsFreshAverageAvailable())
+	DBG(displayFrequencyMeasurer.GetInfo());
+	}
+	*/
+	// Forced sleep if drawing is too fast
+	double underTime = desiredPeriod_ms - displayFrequencyMeasurer.GetLastDuration_ms();
+	if (underTime > 0.0)
+	{
+		Thread::sleep((int)std::floor(underTime));
+	}
 	
 }
 

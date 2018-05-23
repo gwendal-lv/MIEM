@@ -666,6 +666,49 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDrag(const MouseEvent& 
 	}
 }
 
+std::shared_ptr<AreaEvent> AmusingScene::AddDefaultExciter()
+{
+	auto canvasManagerLocked = canvasManager.lock();
+	if (!canvasManagerLocked)
+		throw std::logic_error("Cannot add a new current exciter : cannot get a Unique ID from the canvas manager (not linked to this)");
+
+	auto exciter = std::make_shared<Exciter>(canvasManagerLocked->GetNextAreaId(),
+		canvasManagerLocked->GetCommonTimePoint(),
+		Exciter::AdditionnalGrabRadius::Medium);
+	std::shared_ptr<AreaEvent> areaE = AddExciter(exciter);
+	exciter->setCenterPosition(bpt(canvasComponent->getWidth() - 50, 4 + (canvasComponent->getHeight() - 8) / 2.0));
+	exciter->CanvasResized(canvasComponent);
+	return areaE;
+}
+
+std::shared_ptr<AreaEvent> AmusingScene::DeleteTabExciter()
+{
+	auto areaE = std::make_shared<AreaEvent>();
+
+	if (selectedExciter == nullptr)
+	{
+		for (size_t i = 0; i < currentExciters.size(); ++i)
+		{
+			auto exciterToDelete = std::dynamic_pointer_cast<Cursor>(currentExciters[i]);
+			if (exciterToDelete == nullptr)
+				selectedExciter = currentExciters[i];
+		}
+	}
+	
+	// Recherche inverse de l'index, et dé-sélection et suppression directement
+	for (size_t i = 0; i < currentExciters.size() && selectedExciter; i++)
+	{
+		if (currentExciters[i] == selectedExciter)
+		{
+			std::shared_ptr<MultiAreaEvent> multiAreaE_temp = setSelectedExciter(nullptr);
+			multiAreaE_temp->AddAreaEvent(DeleteCurrentExciterByIndex(i));
+			areaE = multiAreaE_temp;
+		}
+	}
+	
+	return areaE;
+}
+
 void AmusingScene::AddCursor()
 {
 	// creation du curseur
