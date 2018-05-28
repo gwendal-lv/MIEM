@@ -147,6 +147,7 @@ void AreaOptionsComponent::buttonClicked (Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == rhythmButton.get())
     {
         //[UserButtonCode_rhythmButton] -- add your button handler code here..
+		canvasComponent->optionButtonClicked(OptionButtonClicked::Rhythm);
         //[/UserButtonCode_rhythmButton]
     }
     else if (buttonThatWasClicked == closeOptionsButton.get())

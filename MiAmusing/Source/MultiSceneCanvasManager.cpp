@@ -335,10 +335,19 @@ void MultiSceneCanvasManager::OnCanvasMouseDrag(const MouseEvent& mouseE)
 				{
 					if (auto area = std::dynamic_pointer_cast<TabCursor>(areaEvent->GetConcernedArea()))
 					{
-						ChangeVelocity(area->getPercentage());
-						handleAndSendEventSync(graphicE);
-						std::shared_ptr<AreaEvent> newAreaE(new AreaEvent(GetSelectedArea(), AreaEventType::ColorChanged, selectedScene));
-						handleAndSendEventSync(newAreaE);
+						std::shared_ptr<AreaEvent> newAreaE(new AreaEvent());
+						switch (currentOptionClicked)
+						{
+							case Volume :
+								ChangeVelocity(area->getPercentage());
+								handleAndSendEventSync(graphicE);
+								newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(GetSelectedArea(), AreaEventType::ColorChanged, selectedScene));
+								handleAndSendEventSync(newAreaE);
+								break;
+							default :
+								break;
+						}
+						
 					}
 				}
 			}
@@ -579,6 +588,38 @@ void MultiSceneCanvasManager::SetMode(Miam::CanvasManagerMode newMode)
 
 
 	graphicSessionManager->CanvasModeChanged(mode);
+}
+
+void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
+{
+	currentOptionClicked = optionClicked;
+	if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(selectedScene->GetSelectedArea()))
+	{
+		switch (currentOptionClicked)
+		{
+		case Volume:
+			completeArea->showAllTarget(false);
+			completeArea->SetActive(false);
+			completeArea->SetOpacityMode(OpacityMode::Independent);
+			break;
+		case Speed:
+			break;
+		case Rhythm:
+			completeArea->showAllTarget(true);
+			completeArea->SetActive(true);
+			//completeArea->SetActive(true);
+			break;
+		case Sample:
+			break;
+		case Octave:
+			break;
+		case Closed:
+			break;
+		default:
+			break;
+		}
+		handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::ShapeChanged, selectedScene)));
+	}
 }
 
 void MultiSceneCanvasManager::UnselectScene()

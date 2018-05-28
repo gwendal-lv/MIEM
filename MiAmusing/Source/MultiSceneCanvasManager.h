@@ -11,7 +11,7 @@
 #ifndef MULTISCENECANVASMANAGER_H_INCLUDED
 #define MULTISCENECANVASMANAGER_H_INCLUDED
 
-
+#include "AreaOptionsComponent.h"
 #include "MultiSceneCanvasEditor.h"
 #include "IGraphicSessionManager.h"
 
@@ -23,7 +23,7 @@ namespace Amusing {
     
     
     // Simple declarations
-    
+
     
     /// \brief
     class MultiSceneCanvasManager : public Miam::MultiSceneCanvasEditor {
@@ -95,9 +95,11 @@ namespace Amusing {
 		double getOctave(std::shared_ptr<IEditableArea> area);
 		int getCurrentColor(std::shared_ptr<IEditableArea> area);
 		void SetMode(Miam::CanvasManagerMode newMode);
+		void SetEditingMode(OptionButtonClicked optionClicked);
 
 		void UnselectScene();
-		
+		OptionButtonClicked currentOptionClicked;
+
     };
     
     

@@ -41,5 +41,6 @@ public:
 private:
 	//AreaOptions areaOptions;
 	ScopedPointer<AreaOptionsComponent> areaOptionsComponent;
+	OptionButtonClicked currentOptionClicked;
 };
 

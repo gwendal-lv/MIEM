@@ -34,6 +34,8 @@ MultiSceneCanvasComponentAmusing::MultiSceneCanvasComponentAmusing()
 	areaOptionsComponent->CompleteInitialisation(this);
 	addChildComponent(areaOptionsComponent);
 	areaOptionsComponent->setVisible(false);
+
+	currentOptionClicked = Closed;
 }
 
 MultiSceneCanvasComponentAmusing::~MultiSceneCanvasComponentAmusing()
@@ -88,33 +90,41 @@ void MultiSceneCanvasComponentAmusing::showAreaOptions(bool shouldBeVisible)
 void MultiSceneCanvasComponentAmusing::optionButtonClicked(OptionButtonClicked optionClicked)
 {
 	resized();
-	if (auto canvasManagerAsManager = std::dynamic_pointer_cast<Amusing::MultiSceneCanvasManager>(canvasManager))
+	if (optionClicked != currentOptionClicked)
 	{
-		if(auto amusingChildren = (AmusingSceneComponent*)(childrenCanvas))
+		currentOptionClicked = optionClicked;
+		if (auto canvasManagerAsManager = std::dynamic_pointer_cast<Amusing::MultiSceneCanvasManager>(canvasManager))
 		{
-			switch (optionClicked)
+			if (auto amusingChildren = (AmusingSceneComponent*)(childrenCanvas))
 			{
-			case Volume:
-				amusingChildren->ShowSideBar(SideBarType::GrayScale);
-				canvasManagerAsManager->OnAddExciter();
-				break;
-			case Speed:
-				break;
-			case Rhythm:
-				break;
-			case Sample:
-				break;
-			case Octave:
-				break;
-			case Closed:
-				amusingChildren->ShowSideBar(SideBarType::None);
-				canvasManagerAsManager->resetAreaPosition();
-				break;
-			default:
-				break;
+				switch (optionClicked)
+				{
+				case Volume:
+					amusingChildren->ShowSideBar(SideBarType::GrayScale);
+					canvasManagerAsManager->SetEditingMode(optionClicked);
+					canvasManagerAsManager->OnAddExciter();
+					break;
+				case Speed:
+					break;
+				case Rhythm:
+					amusingChildren->ShowSideBar(SideBarType::None);
+					canvasManagerAsManager->SetEditingMode(optionClicked);
+					canvasManagerAsManager->OnDeleteExciter();
+					break;
+				case Sample:
+					break;
+				case Octave:
+					break;
+				case Closed:
+					amusingChildren->ShowSideBar(SideBarType::None);
+					canvasManagerAsManager->resetAreaPosition();
+					break;
+				default:
+					break;
+				}
 			}
+
+
 		}
-		
-		
 	}
 }
