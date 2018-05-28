@@ -54,7 +54,6 @@ namespace Amusing {
         
         // ------ Scenes managing : Add and Delete ------
         virtual void AddScene(std::string name,bool selectNewScene) override;
-		void OnAddTabExciter();
 		void AddNedgeArea(uint64_t nextAreaId, int N);
 		void AddTrueCircle(uint64_t nextAreaId);
 		void AddCompleteArea();
@@ -78,6 +77,7 @@ namespace Amusing {
 		
 		void deleteAsyncDrawableObject(std::shared_ptr<IDrawableArea> originalAreaToDelete);
 		void OnCanvasMouseUp(const MouseEvent& mouseE);
+		void OnCanvasMouseDrag(const MouseEvent & mouseE);
 		void OnCanvasMouseDown(const MouseEvent& mouseE);
 		void OnCanvasMouseDoubleClick(const MouseEvent& mouseE);
 

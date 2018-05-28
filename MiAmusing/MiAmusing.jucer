@@ -42,6 +42,8 @@
                 file="Source/IntersectionPolygon.cpp"/>
           <FILE id="FpRTHC" name="IntersectionPolygon.h" compile="0" resource="0"
                 file="Source/IntersectionPolygon.h"/>
+          <FILE id="Xlznab" name="TabCursor.cpp" compile="1" resource="0" file="Source/TabCursor.cpp"/>
+          <FILE id="rqP78J" name="TabCursor.h" compile="0" resource="0" file="Source/TabCursor.h"/>
         </GROUP>
         <GROUP id="{95DB4C60-BE55-A464-CA00-678CBCAB86CE}" name="Scenes">
           <FILE id="nhV1zs" name="AmusingScene.cpp" compile="1" resource="0"

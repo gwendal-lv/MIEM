@@ -16,6 +16,7 @@
 #include "AmusingScene.h"
 
 #include "CompletePolygon.h"
+#include "TabCursor.h"
 
 #include "SceneEvent.h"
 #include "GraphicEvent.h"
@@ -48,31 +49,6 @@ void MultiSceneCanvasManager::AddScene(std::string name,bool selectNewScene)
     newScene->SetName(name);
     
     MultiSceneCanvasInteractor::AddScene(newScene,selectNewScene);
-}
-
-void MultiSceneCanvasManager::OnAddTabExciter()
-{
-	if (selectedScene)
-	{
-		auto areaE = selectedScene->AddDefaultExciter();
-		// Après coup, on analyse l'état de sélection d'un excitateur
-		// Comme ça c'est la scène qui choisit si elle sélectionne le nouvellement créé, ou non...
-		if (selectedScene->GetSelectedExciter())
-			SetMode(CanvasManagerMode::ExciterSelected);
-		else
-			SetMode(CanvasManagerMode::ExcitersEdition);
-
-
-		handleAndSendAreaEventSync(areaE);
-		
-		if (auto exciter = std::dynamic_pointer_cast<Exciter>(areaE->GetConcernedArea()))
-		{
-			
-			std::shared_ptr<AreaEvent> newAreaE(new AreaEvent(exciter, AreaEventType::NothingHappened, selectedScene));
-			handleAndSendAreaEventSync(newAreaE);
-		}
-	}
-	else throw std::runtime_error("Cannot add an exciter : no scene selected");
 }
 
 void MultiSceneCanvasManager::AddNedgeArea(uint64_t nextAreaId, int N)
@@ -254,6 +230,7 @@ void MultiSceneCanvasManager::resetAreaPosition()
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
 	{
 		std::shared_ptr<GraphicEvent> graphicE = amusingScene->resetAreaPosition();
+		SetMode(CanvasManagerMode::AreaSelected);
 		handleAndSendEventSync(graphicE);
 		handleAndSendEventSync(amusingScene->DeleteTabExciter());
 	}
@@ -340,6 +317,39 @@ void MultiSceneCanvasManager::OnCanvasMouseUp(const MouseEvent& mouseE)
 	MultiSceneCanvasEditor::OnCanvasMouseUp(mouseE);
 }
 
+void MultiSceneCanvasManager::OnCanvasMouseDrag(const MouseEvent& mouseE)
+{
+	std::shared_ptr<GraphicEvent> graphicE;
+	switch (mode)
+	{
+	case Miam::CanvasManagerMode::PlayingWithExciters:
+	case Miam::CanvasManagerMode::ExcitersEdition:
+	case Miam::CanvasManagerMode::ExciterSelected:
+		// when using the TabCursor
+		graphicE = selectedScene->InteractiveScene::OnCanvasMouseDrag(mouseE);
+		if (auto multiE = std::dynamic_pointer_cast<MultiAreaEvent>(graphicE))
+		{
+			for (int i = 0; i < multiE->GetOtherEventsCount(); ++i)
+			{
+				if (auto areaEvent = std::dynamic_pointer_cast<AreaEvent>(multiE->GetOtherEvent(i)))
+				{
+					if (auto area = std::dynamic_pointer_cast<TabCursor>(areaEvent->GetConcernedArea()))
+					{
+						ChangeVelocity(area->getPercentage());
+						handleAndSendEventSync(graphicE);
+						std::shared_ptr<AreaEvent> newAreaE(new AreaEvent(GetSelectedArea(), AreaEventType::ColorChanged, selectedScene));
+						handleAndSendEventSync(newAreaE);
+					}
+				}
+			}
+		}
+		break;
+	default:
+		MultiSceneCanvasInteractor::OnCanvasMouseDrag(mouseE);
+		break;
+	}
+}
+
 void MultiSceneCanvasManager::OnInteraction(std::shared_ptr<AreaEvent> areaE)
 {
 	handleAndSendAreaEventSync(areaE);
@@ -417,10 +427,10 @@ void MultiSceneCanvasManager::ChangeVelocity(double newVelocity)
 	{
 		if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)
 		{
-			myGraphicSessionManager->setVelocityArea(amusingScene->GetSelectedArea(), newVelocity);
+			myGraphicSessionManager->setVelocityArea(amusingScene->GetSelectedArea(), newVelocity * 127.0);
 		}
 		//graphicSessionManager->setSpeedArea(amusingScene->GetSelectedArea(), newSpeed);
-		handleAndSendAreaEventSync(amusingScene->SetSelectedAreaOpacity(newVelocity/127.0));
+		handleAndSendAreaEventSync(amusingScene->SetSelectedAreaOpacity(newVelocity/**127.0*/));
 	}
 }
 

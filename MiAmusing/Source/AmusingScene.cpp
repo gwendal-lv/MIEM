@@ -22,7 +22,7 @@
 #include "SceneEvent.h"
 #include "MultiAreaEvent.h"
 
-
+#include "TabCursor.h"
 
 #include <vector>
 
@@ -672,9 +672,10 @@ std::shared_ptr<AreaEvent> AmusingScene::AddDefaultExciter()
 	if (!canvasManagerLocked)
 		throw std::logic_error("Cannot add a new current exciter : cannot get a Unique ID from the canvas manager (not linked to this)");
 
-	auto exciter = std::make_shared<Exciter>(canvasManagerLocked->GetNextAreaId(),
+	auto exciter = std::make_shared<TabCursor>(canvasManagerLocked->GetNextAreaId(),
 		canvasManagerLocked->GetCommonTimePoint(),
 		Exciter::AdditionnalGrabRadius::Medium);
+	exciter->setZone(Rectangle<int>(canvasComponent->getWidth() - 100, 4, 100, canvasComponent->getHeight() - 8));
 	std::shared_ptr<AreaEvent> areaE = AddExciter(exciter);
 	exciter->setCenterPosition(bpt(canvasComponent->getWidth() - 50, 4 + (canvasComponent->getHeight() - 8) / 2.0));
 	exciter->CanvasResized(canvasComponent);

@@ -1567,7 +1567,7 @@ void CompletePolygon::SetActive(bool activate)
 
 void CompletePolygon::SetAlpha(float newAlpha)
 {
-	if (newAlpha >= 0.3)
+	//if (newAlpha >= 0.3)
 		DrawableArea::SetAlpha(newAlpha);
 }
 

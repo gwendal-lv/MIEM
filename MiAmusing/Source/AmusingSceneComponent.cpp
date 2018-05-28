@@ -210,7 +210,7 @@ void AmusingSceneComponent::OnVelocityChanged(double newVelocity)
 	{
 		if (auto managerAsManager = std::dynamic_pointer_cast<Amusing::MultiSceneCanvasManager>(manager))
 		{
-			managerAsManager->ChangeVelocity(newVelocity);
+			managerAsManager->ChangeVelocity(newVelocity * 127);
 		}
 	}
 }
@@ -304,6 +304,12 @@ void AmusingSceneComponent::mouseDoubleClick(const juce::MouseEvent & event)
 	DBG("doubleClick");
 	if (auto manager = std::dynamic_pointer_cast<Amusing::MultiSceneCanvasManager>(canvasManager.lock()))
 		manager->OnCanvasMouseDoubleClick(event);
+}
+
+void AmusingSceneComponent::mouseDrag(const juce::MouseEvent & event)
+{
+	if (auto manager = std::dynamic_pointer_cast<Amusing::MultiSceneCanvasManager>(canvasManager.lock()))
+		manager->OnCanvasMouseDrag(event);
 }
 
 void AmusingSceneComponent::ShowSideBar(SideBarType sideBarType)

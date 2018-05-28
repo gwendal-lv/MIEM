@@ -56,6 +56,7 @@ public:
 
 	void mouseDown(const juce::MouseEvent &event) override;
 	void mouseDoubleClick(const juce::MouseEvent &event) override;
+	void mouseDrag(const juce::MouseEvent &event) override;
 
 	void ShowSideBar(SideBarType sideBarType);
 
