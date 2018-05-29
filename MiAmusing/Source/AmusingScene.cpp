@@ -1010,7 +1010,7 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDoubleClick(const Mouse
 			{
 				if(auto sceneComponent = (AmusingSceneComponent*)canvasComponent)
 				{
-					sceneComponent->SetAreaOptionsVisible(true);
+					//sceneComponent->SetAreaOptionsVisible(true);
 					previousAreaLocation = completeArea->getCenter();
 					Point<double> tr((double)canvasComponent->getWidth() / 2.0 - completeArea->getCenter().get<0>(), (double)canvasComponent->getHeight() / 2.0 - completeArea->getCenter().get<1>());
 					completeArea->Translate(tr);
@@ -1021,6 +1021,17 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDoubleClick(const Mouse
 			}
 	}
 	return std::shared_ptr<GraphicEvent>();
+}
+
+void AmusingScene::HideUnselectedAreas()
+{
+	for (int i = 0; i < areas.size();++i)
+	{
+		if (areas[i] != selectedArea)
+		{
+			areas[i]->SetOpacityMode(OpacityMode::Low);
+		}
+	}
 }
 
 std::shared_ptr<GraphicEvent> AmusingScene::resetAreaPosition()
@@ -1130,11 +1141,11 @@ std::shared_ptr<AreaEvent> AmusingScene::SetSelectedArea(std::shared_ptr<IEditab
 					currentColor = manager->getCurrentColor(completeArea);
 					DBG("speed to show = " + (String)currentSpeed);
 				}
-				sceneComponent->SetAreaOptionsVisible(true, currentSpeed, currentVelocity, currentOctave, currentColor);
+				//sceneComponent->SetAreaOptionsVisible(true, currentSpeed, currentVelocity, currentOctave, currentColor);
 			}
 		}
-		else
-			sceneComponent->SetAreaOptionsVisible(false);
+		/*else
+			sceneComponent->SetAreaOptionsVisible(false);*/
 	}
 	return areaE;
 }

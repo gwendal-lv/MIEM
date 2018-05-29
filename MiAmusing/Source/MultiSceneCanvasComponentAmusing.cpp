@@ -84,6 +84,7 @@ void MultiSceneCanvasComponentAmusing::addColourSample(int index, Colour colour)
 void MultiSceneCanvasComponentAmusing::showAreaOptions(bool shouldBeVisible)
 {
 	areaOptionsComponent->setVisible(shouldBeVisible);
+	currentOptionClicked = Rhythm;
 	resized();
 }
 

@@ -299,6 +299,7 @@ void MultiSceneCanvasManager::OnCanvasMouseDoubleClick(const MouseEvent & mouseE
 		{
 			if (areaE->GetType() == AreaEventType::Selected)
 			{
+				amusingScene->HideUnselectedAreas();
 				if (auto amusingCanvas = (MultiSceneCanvasComponentAmusing*)canvasComponent)
 				{
 					if (auto selectedArea = std::dynamic_pointer_cast<CompletePolygon>(amusingScene->GetSelectedArea()))

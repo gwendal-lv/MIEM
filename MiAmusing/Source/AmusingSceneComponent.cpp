@@ -30,7 +30,7 @@ AmusingSceneComponent::AmusingSceneComponent()
 	showOptionsButton->setTopLeftPosition(0, 0);
 	showOptionsButton->addListener(this);
 	openGlContext.attachTo(*showOptionsButton);
-	addAndMakeVisible(showOptionsButton);
+	//addAndMakeVisible(showOptionsButton);
 
 	openGlContext.attachTo(areaOptions);
 	addAndMakeVisible(areaOptions); // test pour voir si on le voit bien

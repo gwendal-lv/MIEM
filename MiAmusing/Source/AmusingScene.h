@@ -52,6 +52,8 @@ namespace Miam
 		std::shared_ptr<GraphicEvent> OnCanvasMouseUp(const MouseEvent& mouseE) override;
 		std::shared_ptr<GraphicEvent> OnCanvasMouseDoubleClick(const MouseEvent& mouseE);
 
+		void HideUnselectedAreas();
+
 		std::shared_ptr<GraphicEvent> resetAreaPosition();
 
 		std::shared_ptr<AreaEvent> AddTrueCircle(uint64_t nextAreaId);
