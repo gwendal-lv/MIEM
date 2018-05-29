@@ -64,3 +64,15 @@ double TabCursor::getPercentage()
 	else
 		return centerInPixels.get<0>() / (double)zone.getWidth();
 }
+
+void TabCursor::setPercentage(double pc)
+{
+	bpt newCenter = centerInPixels;
+	if (zone.getHeight() > zone.getWidth())
+		newCenter.set<1>(zone.getY() + (1.0 - pc) * (double)zone.getHeight());
+	else
+		newCenter.set<0>(zone.getX() + pc * (double)zone.getWidth());
+
+	setCenterPosition(newCenter);
+	CanvasResized(parentCanvas);
+}

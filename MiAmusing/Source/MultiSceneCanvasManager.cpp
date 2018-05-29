@@ -624,27 +624,50 @@ void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
 	currentOptionClicked = optionClicked;
 	if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(selectedScene->GetSelectedArea()))
 	{
-		switch (currentOptionClicked)
+		if (auto tabCursor = std::dynamic_pointer_cast<TabCursor>(selectedScene->GetSelectedExciter()))
 		{
-		case Sample:
-		case Octave:
-		case Volume:
-		case Speed:
-			completeArea->showAllTarget(false);
-			completeArea->SetActive(false);
-			completeArea->SetOpacityMode(OpacityMode::Independent);
-			break;
-		case Rhythm:
-			completeArea->showAllTarget(true);
-			completeArea->SetActive(true);
-			//completeArea->SetActive(true);
-			break;
-		case Closed:
-			break;
-		default:
-			break;
+			switch (currentOptionClicked)
+			{
+			case Sample:
+				SetMode(CanvasManagerMode::ExciterSelected);
+				completeArea->showAllTarget(false);
+				completeArea->SetActive(false);
+				completeArea->SetOpacityMode(OpacityMode::Independent);
+				break;
+			case Octave:
+				tabCursor->setPercentage(getOctave(completeArea) / 9.0);
+				SetMode(CanvasManagerMode::ExciterSelected);
+				completeArea->showAllTarget(false);
+				completeArea->SetActive(false);
+				break;
+				completeArea->SetOpacityMode(OpacityMode::Independent);
+			case Volume:
+				tabCursor->setPercentage(getVelocity(completeArea)/128.0);
+				SetMode(CanvasManagerMode::ExciterSelected);
+				completeArea->showAllTarget(false);
+				completeArea->SetActive(false);
+				completeArea->SetOpacityMode(OpacityMode::Independent);
+				break;
+			case Speed:
+				completeArea->showAllTarget(false);
+				SetMode(CanvasManagerMode::ExciterSelected);
+				completeArea->SetActive(false);
+				completeArea->SetOpacityMode(OpacityMode::Independent);
+				break;
+			case Rhythm:
+				completeArea->showAllTarget(true);
+				completeArea->SetActive(true);
+				SetMode(CanvasManagerMode::EditingArea);
+				//completeArea->SetActive(true);
+				break;
+			case Closed:
+				break;
+			default:
+				break;
+			}
+			handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(tabCursor, AreaEventType::Translation, selectedScene)));
+			handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::ShapeChanged, selectedScene)));
 		}
-		handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::ShapeChanged, selectedScene)));
 	}
 }
 

@@ -39,6 +39,8 @@ class TabCursor : public Miam::Exciter
 
 		double getPercentage();
 
+		void setPercentage(double pc);
+
 	private :
 		Rectangle<int> zone;
 
