@@ -99,21 +99,26 @@ void MultiSceneCanvasComponentAmusing::optionButtonClicked(OptionButtonClicked o
 			{
 				switch (optionClicked)
 				{
+				case Octave:
 				case Volume:
 					amusingChildren->ShowSideBar(SideBarType::GrayScale);
 					canvasManagerAsManager->SetEditingMode(optionClicked);
+					canvasManagerAsManager->OnDeleteExciter();
 					canvasManagerAsManager->OnAddExciter();
 					break;
 				case Speed:
+					amusingChildren->ShowSideBar(SideBarType::ColourScale);
+					canvasManagerAsManager->SetEditingMode(optionClicked);
+					canvasManagerAsManager->OnDeleteExciter();
+					canvasManagerAsManager->OnAddExciter();
 					break;
 				case Rhythm:
 					amusingChildren->ShowSideBar(SideBarType::None);
 					canvasManagerAsManager->SetEditingMode(optionClicked);
 					canvasManagerAsManager->OnDeleteExciter();
+					canvasManagerAsManager->SetMode(CanvasManagerMode::EditingArea);
 					break;
 				case Sample:
-					break;
-				case Octave:
 					break;
 				case Closed:
 					amusingChildren->ShowSideBar(SideBarType::None);

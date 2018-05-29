@@ -132,6 +132,7 @@ void AreaOptionsComponent::buttonClicked (Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == speedButton.get())
     {
         //[UserButtonCode_speedButton] -- add your button handler code here..
+		canvasComponent->optionButtonClicked(OptionButtonClicked::Speed);
         //[/UserButtonCode_speedButton]
     }
     else if (buttonThatWasClicked == sampleButton.get())
@@ -142,6 +143,7 @@ void AreaOptionsComponent::buttonClicked (Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == octaveButton.get())
     {
         //[UserButtonCode_octaveButton] -- add your button handler code here..
+		canvasComponent->optionButtonClicked(OptionButtonClicked::Octave);
         //[/UserButtonCode_octaveButton]
     }
     else if (buttonThatWasClicked == rhythmButton.get())

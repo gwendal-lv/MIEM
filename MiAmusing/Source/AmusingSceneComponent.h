@@ -20,6 +20,7 @@ enum SideBarType
 	GrayScale,
 	TextScale,
 	ColourButtons,
+	ColourScale,
 };
 
 //==============================================================================

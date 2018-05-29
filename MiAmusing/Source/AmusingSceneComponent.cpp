@@ -100,6 +100,10 @@ void AmusingSceneComponent::renderOpenGL()
 		break;
 	case ColourButtons:
 		break;
+	case ColourScale:
+		g.setGradientFill(ColourGradient::vertical(Colours::red, 0, Colours::blue, getHeight()));
+		g.fillRect(getWidth() - 100, 4, 100 - 4, getHeight() - 8);
+		break;
 	}
 
 	// White interior contour 2px line to show when the canvas is active

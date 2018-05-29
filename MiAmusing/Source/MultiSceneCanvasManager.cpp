@@ -344,6 +344,21 @@ void MultiSceneCanvasManager::OnCanvasMouseDrag(const MouseEvent& mouseE)
 								newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(GetSelectedArea(), AreaEventType::ColorChanged, selectedScene));
 								handleAndSendEventSync(newAreaE);
 								break;
+							case Speed :
+								if (area->getPercentage() > 0.5)
+									ChangeSpeed(round(4 * 2 * (area->getPercentage() - 0.5)));
+								else
+									ChangeSpeed((0.1 + ceil(4 * 2 * area->getPercentage())) / 4.0);
+								handleAndSendEventSync(graphicE);
+								newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(GetSelectedArea(), AreaEventType::ShapeChanged, selectedScene));
+								handleAndSendEventSync(newAreaE);
+								break;
+							case Octave :
+								ChangeBaseNote(round(area->getPercentage() * 9.0));
+								handleAndSendEventSync(graphicE);
+								newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(GetSelectedArea(), AreaEventType::ShapeChanged, selectedScene));
+								handleAndSendEventSync(newAreaE);
+								break;
 							default :
 								break;
 						}
@@ -597,12 +612,12 @@ void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
 	{
 		switch (currentOptionClicked)
 		{
+		case Octave:
 		case Volume:
+		case Speed:
 			completeArea->showAllTarget(false);
 			completeArea->SetActive(false);
 			completeArea->SetOpacityMode(OpacityMode::Independent);
-			break;
-		case Speed:
 			break;
 		case Rhythm:
 			completeArea->showAllTarget(true);
@@ -610,8 +625,6 @@ void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
 			//completeArea->SetActive(true);
 			break;
 		case Sample:
-			break;
-		case Octave:
 			break;
 		case Closed:
 			break;
