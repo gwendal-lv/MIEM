@@ -68,6 +68,8 @@ CompletePolygon::CompletePolygon(bptree::ptree & areaTree) : EditablePolygon(are
 	numAngles = 32;
 
 	updateSubTriangles();
+
+	translationDisabled = false;
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
@@ -105,6 +107,7 @@ CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
 		}
 	}
 	updateSubTriangles();
+	translationDisabled = false;
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, float radius,
@@ -151,6 +154,7 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 	chordFlag = std::vector<bool>(pointsCount, false);
 	chordAreaForFlag = std::vector<std::shared_ptr<CompletePolygon>>(pointsCount, nullptr);
 	showAllCircles = false;
+	translationDisabled = false;
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id,
@@ -196,6 +200,7 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 
 	//updateSubTriangles();
 	showAllCircles = false;
+	translationDisabled = false;
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id,
@@ -249,7 +254,7 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 		
 	}
 
-
+	translationDisabled = false;
 	// ajouter le calcul du rayon des cercles : on connait les coordonnees des points et a quels cercles ils appartienne -> possible de retrouver le rayon et le centre ! 
 }
 
@@ -1024,6 +1029,12 @@ AreaEventType CompletePolygon::TryBeginPointMove(const Point<double>& newLocatio
 		//pointDraggedId = EditableAreaPointId::WholeArea;
 		lastLocation = newLocation;
 	}
+
+	if (translationDisabled && (pointDraggedId == EditableAreaPointId::WholeArea || pointDraggedId == EditableAreaPointId::Center))
+	{
+		pointDraggedId = EditableAreaPointId::None;
+	}
+
 	for (int i = 0; i < Nradius; ++i)
 		bullsEye[i].TryBeginPointMove(newLocation);
 	return areaEventType;
@@ -1704,4 +1715,9 @@ void CompletePolygon::Translate(const Point<double>& translation)
 	}
 
 	
+}
+
+void CompletePolygon::DisableTranslation(bool shouldBeDisabled)
+{
+	translationDisabled = shouldBeDisabled;
 }

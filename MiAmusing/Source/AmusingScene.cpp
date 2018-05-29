@@ -1058,6 +1058,7 @@ std::shared_ptr<GraphicEvent> AmusingScene::resetAreaPosition()
 		completeArea->Translate(tr);
 		completeArea->showAllTarget(false);
 		completeArea->CanvasResized(canvasComponent);
+		completeArea->DisableTranslation(false);
 		allowOtherAreaSelection = true; // pour permettre de sélectionner à nouveau d'autres aires
 		return std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::Selected, -1, shared_from_this()));
 	}

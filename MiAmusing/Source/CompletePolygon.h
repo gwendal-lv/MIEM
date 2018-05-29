@@ -117,6 +117,8 @@ namespace Amusing
 		void showAllTarget(bool shouldBeShowed);
 
 		void Translate(const Point<double>& translation);
+
+		void DisableTranslation(bool shouldBeDisabled);
 		
 	private:
 		int numAngles;
@@ -161,6 +163,8 @@ namespace Amusing
 
 
 		double pc; // si ca foire quand on bouge la forme en mm temps que le curseur doit tourner -> garder en memoire le poucentage ou se trouve le curseur et rappeler setreadingposition avec ce pourcentage pour le remettre au nouvel endroit.
+
+		bool translationDisabled;
 	};
 }
 

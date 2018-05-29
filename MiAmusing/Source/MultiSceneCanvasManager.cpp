@@ -306,6 +306,7 @@ void MultiSceneCanvasManager::OnCanvasMouseDoubleClick(const MouseEvent & mouseE
 					{
 						amusingCanvas->showAreaOptions(true);
 						SetMode(CanvasManagerMode::EditingArea);
+						selectedArea->DisableTranslation(true);
 					}
 				}
 			}
