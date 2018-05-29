@@ -140,6 +140,11 @@ void GraphicSessionManager::SetAllChannels()
 void GraphicSessionManager::setSamplesColor(int Nsamples, Colour colorCode[])
 {
 	myMultiCanvasComponent->setSamplesColor(Nsamples, colorCode);
+	for (int i = 0; i < (int)canvasManagers.size(); i++)
+	{
+		std::shared_ptr<MultiSceneCanvasManager> canvasPtr = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManagers[i]);
+		canvasPtr->SetColorCode(Nsamples, colorCode);
+	}
 }
 
 

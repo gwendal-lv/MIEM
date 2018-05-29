@@ -1166,8 +1166,11 @@ std::shared_ptr<AreaEvent> AmusingScene::SetSelectedAreaColour(Colour newColour)
 	std::shared_ptr<AreaEvent> areaE(new AreaEvent());
 	if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(selectedArea))
 	{
-		completeArea->SetFillColour(newColour);
-		areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::ColorChanged, completeArea->GetId(), shared_from_this()));
+		if (completeArea->GetFillColour() != newColour)
+		{
+			completeArea->SetFillColour(newColour);
+			areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::ColorChanged, completeArea->GetId(), shared_from_this()));
+		}
 	}
 	return areaE;
 }

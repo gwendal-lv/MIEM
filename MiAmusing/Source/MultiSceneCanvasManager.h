@@ -90,6 +90,7 @@ namespace Amusing {
 		void ChangeSpeed(double newSpeed);
 		double getSpeed(std::shared_ptr<IEditableArea> area);
 		void ChangeVelocity(double newVelocity);
+		void SetColorCode(int Nsamples, Colour colorCode[]);
 		void ChangeColour(Colour newColour, int colourIdx);
 		double getVelocity(std::shared_ptr<IEditableArea> area);
 		double getOctave(std::shared_ptr<IEditableArea> area);
@@ -100,6 +101,7 @@ namespace Amusing {
 		void UnselectScene();
 		OptionButtonClicked currentOptionClicked;
 
+		std::vector<Colour> colorCode;
     };
     
     

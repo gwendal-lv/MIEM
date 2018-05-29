@@ -138,6 +138,7 @@ void AreaOptionsComponent::buttonClicked (Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == sampleButton.get())
     {
         //[UserButtonCode_sampleButton] -- add your button handler code here..
+		canvasComponent->optionButtonClicked(OptionButtonClicked::Sample);
         //[/UserButtonCode_sampleButton]
     }
     else if (buttonThatWasClicked == octaveButton.get())

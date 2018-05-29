@@ -12,6 +12,9 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "SceneCanvasComponent.h"
+
+#include <vector>
+
 #include "AreaOptions.h"
 
 enum SideBarType
@@ -68,6 +71,7 @@ public:
 private:
 	bool isOptionShowed;
 	SideBarType currentSideBarType;
+	std::vector<Colour> buttonsColor;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AmusingSceneComponent)
 };

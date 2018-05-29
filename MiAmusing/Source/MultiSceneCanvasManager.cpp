@@ -348,13 +348,19 @@ void MultiSceneCanvasManager::OnCanvasMouseDrag(const MouseEvent& mouseE)
 								if (area->getPercentage() > 0.5)
 									ChangeSpeed(round(4 * 2 * (area->getPercentage() - 0.5)));
 								else
-									ChangeSpeed((0.1 + ceil(4 * 2 * area->getPercentage())) / 4.0);
+									ChangeSpeed((0.1 + floor(4 * 2 * area->getPercentage())) / 4.0);
 								handleAndSendEventSync(graphicE);
 								newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(GetSelectedArea(), AreaEventType::ShapeChanged, selectedScene));
 								handleAndSendEventSync(newAreaE);
 								break;
 							case Octave :
 								ChangeBaseNote(round(area->getPercentage() * 9.0));
+								handleAndSendEventSync(graphicE);
+								newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(GetSelectedArea(), AreaEventType::ShapeChanged, selectedScene));
+								handleAndSendEventSync(newAreaE);
+								break;
+							case Sample :
+								ChangeColour(colorCode[floor((1.0 - area->getPercentage()) * colorCode.size())], floor((1.0 - area->getPercentage()) * colorCode.size()));
 								handleAndSendEventSync(graphicE);
 								newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(GetSelectedArea(), AreaEventType::ShapeChanged, selectedScene));
 								handleAndSendEventSync(newAreaE);
@@ -456,6 +462,12 @@ void MultiSceneCanvasManager::ChangeVelocity(double newVelocity)
 		//graphicSessionManager->setSpeedArea(amusingScene->GetSelectedArea(), newSpeed);
 		handleAndSendAreaEventSync(amusingScene->SetSelectedAreaOpacity(newVelocity/**127.0*/));
 	}
+}
+
+void MultiSceneCanvasManager::SetColorCode(int Nsamples, Colour _colorCode[])
+{
+	for (int i = 0; i < Nsamples; ++i)
+		colorCode.push_back(_colorCode[i]);
 }
 
 void MultiSceneCanvasManager::ChangeColour(Colour newColour, int idx)
@@ -612,6 +624,7 @@ void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
 	{
 		switch (currentOptionClicked)
 		{
+		case Sample:
 		case Octave:
 		case Volume:
 		case Speed:
@@ -623,8 +636,6 @@ void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
 			completeArea->showAllTarget(true);
 			completeArea->SetActive(true);
 			//completeArea->SetActive(true);
-			break;
-		case Sample:
 			break;
 		case Closed:
 			break;

@@ -49,11 +49,15 @@ AmusingSceneComponent::~AmusingSceneComponent()
 void AmusingSceneComponent::setSamplesColor(int Nsamples, Colour colorCode[])
 {
 	areaOptions.setSamplesColor(Nsamples, colorCode);
+
+	for (int i = 0; i < Nsamples; ++i)
+		buttonsColor.push_back(colorCode[i]);
 }
 
 void AmusingSceneComponent::addColourSample(int index, Colour colour)
 {
 	areaOptions.addColourSample(index, colour);
+	buttonsColor.insert(buttonsColor.begin() + index, colour);
 }
 
 void AmusingSceneComponent::renderOpenGL()
@@ -99,6 +103,11 @@ void AmusingSceneComponent::renderOpenGL()
 	case TextScale:
 		break;
 	case ColourButtons:
+		for (int i = 0; i < buttonsColor.size(); ++i)
+		{
+			g.setColour(buttonsColor[i]);
+			g.fillRect(getWidth() - 100, 4 + i * (getHeight() - 8) / buttonsColor.size(), 100 - 4, (getHeight() - 8) / buttonsColor.size());
+		}
 		break;
 	case ColourScale:
 		g.setGradientFill(ColourGradient::vertical(Colours::red, 0, Colours::blue, getHeight()));

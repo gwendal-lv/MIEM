@@ -119,6 +119,10 @@ void MultiSceneCanvasComponentAmusing::optionButtonClicked(OptionButtonClicked o
 					canvasManagerAsManager->SetMode(CanvasManagerMode::EditingArea);
 					break;
 				case Sample:
+					amusingChildren->ShowSideBar(SideBarType::ColourButtons);
+					canvasManagerAsManager->SetEditingMode(optionClicked);
+					canvasManagerAsManager->OnDeleteExciter();
+					canvasManagerAsManager->OnAddExciter();
 					break;
 				case Closed:
 					amusingChildren->ShowSideBar(SideBarType::None);
