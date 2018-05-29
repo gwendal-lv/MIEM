@@ -305,6 +305,7 @@ void MultiSceneCanvasManager::OnCanvasMouseDoubleClick(const MouseEvent & mouseE
 					if (auto selectedArea = std::dynamic_pointer_cast<CompletePolygon>(amusingScene->GetSelectedArea()))
 					{
 						amusingCanvas->showAreaOptions(true);
+						SetMode(CanvasManagerMode::EditingArea);
 					}
 				}
 			}

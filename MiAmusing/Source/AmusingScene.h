@@ -113,6 +113,7 @@ namespace Miam
 	private:
 		std::map<int, std::shared_ptr<Amusing::CompletePolygon>> mouseIdxToArea;
 		bpt previousAreaLocation;
+		bool allowOtherAreaSelection;
 	};
 
 

@@ -40,6 +40,7 @@ AmusingScene::AmusingScene(std::shared_ptr<MultiSceneCanvasInteractor> _canvasMa
 	deleting = false;
 	deleteEvent = std::shared_ptr<AreaEvent>(new AreaEvent(nullptr, AreaEventType::NothingHappened));
 	alreadyCursorInScene = false;
+	allowOtherAreaSelection = true;
 }
 
 AmusingScene::~AmusingScene()
@@ -494,56 +495,67 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDown(const MouseEvent& 
 
 			if (mouseE.source.getIndex() == 0)
 			{
-
-				for(int i = 0; i < (int)currentIntersectionsAreas.size();++i)
-					if (currentIntersectionsAreas[i]->HitTest(bpt(mouseE.position.toDouble().x, mouseE.position.toDouble().y)))
-					{
-						selectedArea = currentIntersectionsAreas[i]->getNearestParent(bpt(mouseE.position.toDouble().x, mouseE.position.toDouble().y));
-					}
-
-				std::shared_ptr<GraphicEvent> graphE = EditableScene::OnCanvasMouseDown(mouseE);
-
-				if (selectedArea != oldSelectedArea && selectedArea != nullptr) // si on a changé d'aire ou qu'on vient d'en sélectionner une nouvelle -> essaie de la faire bouger
+				if (allowOtherAreaSelection)
 				{
-					// did we clic next to a point, or at least inside the area ?
-					AreaEventType lastEventType = selectedArea->TryBeginPointMove(mouseE.position.toDouble()); // !! starts a point dragging !
-					if (lastEventType == AreaEventType::NothingHappened)
-					{
-						/* if not, we are sure that we clicked outside (checked by tryBeginPointMove)
-						* => it is a DEselection (maybe selection of another area, just after this)
-						*/
-						graphE = SetSelectedArea(nullptr);
-					}
-					else // special points which are not point dragging
-					{
-						// we must stop the dragging that was not actually wanted
-						if (canvasManager.lock()->GetMode() == CanvasManagerMode::WaitingForPointCreation
-							|| canvasManager.lock()->GetMode() == CanvasManagerMode::WaitingForPointDeletion)
-							selectedArea->EndPointMove();
-					}
-				}
+					for (int i = 0; i < (int)currentIntersectionsAreas.size(); ++i)
+						if (currentIntersectionsAreas[i]->HitTest(bpt(mouseE.position.toDouble().x, mouseE.position.toDouble().y)))
+						{
+							selectedArea = currentIntersectionsAreas[i]->getNearestParent(bpt(mouseE.position.toDouble().x, mouseE.position.toDouble().y));
+						}
 
-				if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(graphE))
-				{
-					return graphE;
+					std::shared_ptr<GraphicEvent> graphE = EditableScene::OnCanvasMouseDown(mouseE);
+
+					if (selectedArea != oldSelectedArea && selectedArea != nullptr) // si on a changé d'aire ou qu'on vient d'en sélectionner une nouvelle -> essaie de la faire bouger
+					{
+						// did we clic next to a point, or at least inside the area ?
+						AreaEventType lastEventType = selectedArea->TryBeginPointMove(mouseE.position.toDouble()); // !! starts a point dragging !
+						if (lastEventType == AreaEventType::NothingHappened)
+						{
+							/* if not, we are sure that we clicked outside (checked by tryBeginPointMove)
+							* => it is a DEselection (maybe selection of another area, just after this)
+							*/
+							graphE = SetSelectedArea(nullptr);
+						}
+						else // special points which are not point dragging
+						{
+							// we must stop the dragging that was not actually wanted
+							if (canvasManager.lock()->GetMode() == CanvasManagerMode::WaitingForPointCreation
+								|| canvasManager.lock()->GetMode() == CanvasManagerMode::WaitingForPointDeletion)
+								selectedArea->EndPointMove();
+						}
+					}
+
+					if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(graphE))
+					{
+						return graphE;
+					}
+					else
+					{
+						for (int i = 0; i < (int)currentExciters.size(); i++)
+						{
+							if (auto currentCursor = std::dynamic_pointer_cast<Cursor>(currentExciters[i]))
+							{
+								if (currentCursor->isClicked(Point<double>((double)mouseE.x, (double)mouseE.y)))
+								{
+									graphE = std::shared_ptr<AreaEvent>(new AreaEvent(currentExciters[i], AreaEventType::Selected, shared_from_this()));
+									break;
+								}
+							}
+
+
+						}
+						return graphE;
+
+					}
 				}
 				else
 				{
-					for (int i = 0; i < (int)currentExciters.size(); i++)
+					if (selectedArea)
 					{
-						if (auto currentCursor = std::dynamic_pointer_cast<Cursor>(currentExciters[i]))
-						{
-							if (currentCursor->isClicked(Point<double>((double)mouseE.x, (double)mouseE.y)))
-							{
-								graphE = std::shared_ptr<AreaEvent>(new AreaEvent(currentExciters[i], AreaEventType::Selected, shared_from_this()));
-								break;
-							}
-						}
-
-
+						AreaEventType lastEventType = selectedArea->TryBeginPointMove(mouseE.position.toDouble());
+						std::shared_ptr<GraphicEvent> graphicE(new GraphicEvent());
+						return graphicE;
 					}
-					return graphE;
-
 				}
 			}
 			else
@@ -1025,13 +1037,17 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDoubleClick(const Mouse
 
 void AmusingScene::HideUnselectedAreas()
 {
+	// grise les autres aires
 	for (int i = 0; i < areas.size();++i)
 	{
 		if (areas[i] != selectedArea)
 		{
 			areas[i]->SetOpacityMode(OpacityMode::Low);
+			if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
+				completeArea->SetActive(false);
 		}
 	}
+	allowOtherAreaSelection = false; // empeche de selectionner d'autes aires pendant qu'on en édite une !
 }
 
 std::shared_ptr<GraphicEvent> AmusingScene::resetAreaPosition()
@@ -1042,6 +1058,7 @@ std::shared_ptr<GraphicEvent> AmusingScene::resetAreaPosition()
 		completeArea->Translate(tr);
 		completeArea->showAllTarget(false);
 		completeArea->CanvasResized(canvasComponent);
+		allowOtherAreaSelection = true; // pour permettre de sélectionner à nouveau d'autres aires
 		return std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::Selected, -1, shared_from_this()));
 	}
 	return std::shared_ptr<GraphicEvent>();
