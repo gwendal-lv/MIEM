@@ -1028,7 +1028,8 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDoubleClick(const Mouse
 					completeArea->Translate(tr);
 					completeArea->CanvasResized(canvasComponent);
 					completeArea->showAllTarget(true);
-					completeArea->SizeChanged(completeArea->GetFullSceneRatio(), false);
+					previousSize = completeArea->GetFullSceneRatio();
+					completeArea->SizeChanged(previousSize, false);
 					completeArea->updateContourPoints();
 					completeArea->CanvasResized(canvasComponent);
 				}
@@ -1060,8 +1061,11 @@ std::shared_ptr<GraphicEvent> AmusingScene::resetAreaPosition()
 		Point<double> tr(previousAreaLocation.get<0>() - completeArea->getCenter().get<0>(), previousAreaLocation.get<1>() - completeArea->getCenter().get<1>());
 		completeArea->Translate(tr);
 		completeArea->showAllTarget(false);
+		completeArea->SizeChanged(1.0 / previousSize, false);
+		completeArea->updateContourPoints();
 		completeArea->CanvasResized(canvasComponent);
 		completeArea->DisableTranslation(false);
+		
 		allowOtherAreaSelection = true; // pour permettre de sélectionner à nouveau d'autres aires
 		return std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::Selected, -1, shared_from_this()));
 	}
