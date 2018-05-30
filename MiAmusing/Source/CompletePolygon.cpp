@@ -69,7 +69,7 @@ CompletePolygon::CompletePolygon(bptree::ptree & areaTree) : EditablePolygon(are
 
 	updateSubTriangles();
 
-	translationDisabled = false;
+	onlyRotationAllowed = false;
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
@@ -107,7 +107,7 @@ CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
 		}
 	}
 	updateSubTriangles();
-	translationDisabled = false;
+	onlyRotationAllowed = false;
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, float radius,
@@ -154,7 +154,7 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 	chordFlag = std::vector<bool>(pointsCount, false);
 	chordAreaForFlag = std::vector<std::shared_ptr<CompletePolygon>>(pointsCount, nullptr);
 	showAllCircles = false;
-	translationDisabled = false;
+	onlyRotationAllowed = false;
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id,
@@ -200,7 +200,7 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 
 	//updateSubTriangles();
 	showAllCircles = false;
-	translationDisabled = false;
+	onlyRotationAllowed = false;
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id,
@@ -254,7 +254,7 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 		
 	}
 
-	translationDisabled = false;
+	onlyRotationAllowed = false;
 	// ajouter le calcul du rayon des cercles : on connait les coordonnees des points et a quels cercles ils appartienne -> possible de retrouver le rayon et le centre ! 
 }
 
@@ -879,7 +879,7 @@ AreaEventType CompletePolygon::TryMoveMultiTouchPoint(const Point<double>& newLo
 
 		double newTouchSize = boost::geometry::distance(centerInPixels, bnewLocation);
 		double size = newTouchSize / currentTouchSize;
-		SizeChanged(size, true);
+		EditablePolygon::SizeChanged(size, true);
 		currentTouchSize = newTouchSize;
 
 		DBG("radAngle : " + String(currentTouchRotation - radAngle));
@@ -928,7 +928,7 @@ AreaEventType CompletePolygon::TryMoveMultiTouchPoint(const Point<double>& newLo
 
 			double newTouchSize = boost::geometry::distance(centerInPixels, bnewLocation);
 			double size = newTouchSize / currentTouchSize;
-			SizeChanged(size, true);
+			EditablePolygon::SizeChanged(size, true);
 			currentTouchSize = newTouchSize;
 
 			DBG("radAngle : " + String(currentTouchRotation - radAngle));
@@ -1030,7 +1030,7 @@ AreaEventType CompletePolygon::TryBeginPointMove(const Point<double>& newLocatio
 		lastLocation = newLocation;
 	}
 
-	if (translationDisabled && (pointDraggedId == EditableAreaPointId::WholeArea || pointDraggedId == EditableAreaPointId::Center))
+	if (onlyRotationAllowed && (pointDraggedId == EditableAreaPointId::WholeArea || pointDraggedId == EditableAreaPointId::Center))
 	{
 		pointDraggedId = EditableAreaPointId::None;
 	}
@@ -1051,7 +1051,30 @@ AreaEventType CompletePolygon::TryMovePoint(const Point<double>& newLocation)
 	{
 		pointDraggedId = EditableAreaPointId::WholeArea; // pour que EditablePolygon::TryMovePoint déplace toute l'aire et pas seulement le centre quand on touche le centre
 	}
-	AreaEventType areaEventType = EditablePolygon::TryMovePoint(newLocation);
+
+	AreaEventType areaEventType;
+	if (onlyRotationAllowed)
+	{
+		if (pointDraggedId = EditableAreaPointId::ManipulationPoint)
+		{
+			bpt location(newLocation.x, newLocation.y);
+			boost::geometry::subtract_point(location, centerInPixels);
+			boost::geometry::model::point<long double, 3, boost::geometry::cs::cartesian> pt3D(location.get<0>(), location.get<1>());
+			boost::geometry::model::point<double, 3, boost::geometry::cs::spherical<boost::geometry::radian>> ptRad;
+			boost::geometry::transform(pt3D, ptRad);
+			ptRad.set<2>(boost::geometry::distance(centerInPixels, bmanipulationPointInPixels));
+			boost::geometry::transform(ptRad, pt3D);
+			location = bpt(pt3D.get<0>(), pt3D.get<1>());
+			boost::geometry::add_point(location, centerInPixels);
+			const Point<double> correctLocation(location.get<0>(), location.get<1>());
+			areaEventType = EditablePolygon::TryMovePoint(correctLocation);
+		}
+		else
+			areaEventType = EditablePolygon::TryMovePoint(newLocation);
+	}
+	else
+		areaEventType = EditablePolygon::TryMovePoint(newLocation);
+
 	pointDraggedId = oldPointDraggedId;
 
 	DBG("eventType : " + (String)((int)areaEventType));
@@ -1719,5 +1742,35 @@ void CompletePolygon::Translate(const Point<double>& translation)
 
 void CompletePolygon::DisableTranslation(bool shouldBeDisabled)
 {
-	translationDisabled = shouldBeDisabled;
+	onlyRotationAllowed = shouldBeDisabled;
+}
+
+double CompletePolygon::GetFullSceneRatio()
+{
+	if (parentCanvas->getHeight() < parentCanvas->getWidth())
+		return (parentCanvas->getHeight() - 8 * interval * parentCanvas->getHeight() * yScale - 10) / (2 * startRadius * parentCanvas->getHeight() * yScale);
+	else
+		return (parentCanvas->getWidth() - 8 * interval * parentCanvas->getWidth() * xScale) / (2 * startRadius * parentCanvas->getWidth() * xScale);
+}
+
+bool CompletePolygon::SizeChanged(double _size, bool minSize)
+{
+	bool ans = EditablePolygon::SizeChanged(_size,minSize);
+	if (ans) // le changement de taille de la forme a été effectué -> changer la taille des cercles
+	{
+		double newStartRadius = startRadius * _size;
+		for (int i = 0; i < Nradius; ++i)
+		{
+
+			double newRadius = newStartRadius + i * interval;
+			double resize = newRadius / radius[i];
+			if (bullsEye[i].SizeChanged(resize, false))
+			{
+				startRadius = newStartRadius;
+				radius[i] = newRadius; //startRadius + i*interval;
+				bullsEye[i].updateContourPoints();
+			}
+		}
+	}
+	return ans;
 }

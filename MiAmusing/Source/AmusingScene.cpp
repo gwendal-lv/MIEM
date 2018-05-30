@@ -1028,6 +1028,9 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDoubleClick(const Mouse
 					completeArea->Translate(tr);
 					completeArea->CanvasResized(canvasComponent);
 					completeArea->showAllTarget(true);
+					completeArea->SizeChanged(completeArea->GetFullSceneRatio(), false);
+					completeArea->updateContourPoints();
+					completeArea->CanvasResized(canvasComponent);
 				}
 				return std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::Selected, -1, shared_from_this()));
 			}
