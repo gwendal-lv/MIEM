@@ -62,6 +62,7 @@ namespace Amusing {
 		void hideAddPolygon();
 		void showAddPolygon();
 		void OnDelete();
+		void OnDeleteExciter();
 		void OnFollowerTranslation(std::shared_ptr<GraphicEvent> graphicE);
 		void OnAudioPosition(double position);
 		void SetAllAudioPositions(double position);

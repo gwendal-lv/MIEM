@@ -208,6 +208,23 @@ void MultiSceneCanvasManager::OnDelete()
 	
 }
 
+void MultiSceneCanvasManager::OnDeleteExciter()
+{
+	if (selectedScene)
+	{
+		if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+		{
+			auto areaE = amusingScene->DeleteTabExciter();
+
+			handleAndSendAreaEventSync(areaE);
+
+			// Changement de mode : plus d'excitateur sélectionné.
+			SetMode(CanvasManagerMode::ExcitersEdition);
+		}
+	}
+	else throw std::runtime_error("Cannot delete an exciter : no scene selected");
+}
+
 void MultiSceneCanvasManager::handleAndSendMultiAreaEventSync(std::shared_ptr<MultiAreaEvent> multiAreaE)
 {
 	// Cast de l'évènement principal vers la classe mère
@@ -625,8 +642,8 @@ void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
 	currentOptionClicked = optionClicked;
 	if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(selectedScene->GetSelectedArea()))
 	{
-		if (auto tabCursor = std::dynamic_pointer_cast<TabCursor>(selectedScene->GetSelectedExciter()))
-		{
+		std::shared_ptr<TabCursor> tabCursor;
+		
 			switch (currentOptionClicked)
 			{
 			case Sample:
@@ -636,14 +653,20 @@ void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
 				completeArea->SetOpacityMode(OpacityMode::Independent);
 				break;
 			case Octave:
-				tabCursor->setPercentage(getOctave(completeArea) / 9.0);
+				if (tabCursor = std::dynamic_pointer_cast<TabCursor>(selectedScene->GetSelectedExciter()))
+				{
+					tabCursor->setPercentage(getOctave(completeArea) / 9.0);
+				}
 				SetMode(CanvasManagerMode::ExciterSelected);
 				completeArea->showAllTarget(false);
 				completeArea->SetActive(false);
-				break;
 				completeArea->SetOpacityMode(OpacityMode::Independent);
+				break;
 			case Volume:
-				tabCursor->setPercentage(getVelocity(completeArea)/128.0);
+				if (tabCursor = std::dynamic_pointer_cast<TabCursor>(selectedScene->GetSelectedExciter()))
+				{
+					tabCursor->setPercentage(getVelocity(completeArea) / 128.0);
+				}
 				SetMode(CanvasManagerMode::ExciterSelected);
 				completeArea->showAllTarget(false);
 				completeArea->SetActive(false);
@@ -666,9 +689,12 @@ void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
 			default:
 				break;
 			}
-			handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(tabCursor, AreaEventType::Translation, selectedScene)));
+			if (auto tabCursor = std::dynamic_pointer_cast<TabCursor>(selectedScene->GetSelectedExciter()))
+			{
+				handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(tabCursor, AreaEventType::Translation, selectedScene)));
+			}
 			handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::ShapeChanged, selectedScene)));
-		}
+		
 	}
 }
 
