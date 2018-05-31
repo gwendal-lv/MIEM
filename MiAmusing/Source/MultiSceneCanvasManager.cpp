@@ -365,10 +365,7 @@ void MultiSceneCanvasManager::OnCanvasMouseDrag(const MouseEvent& mouseE)
 								handleAndSendEventSync(newAreaE);
 								break;
 							case Speed :
-								if (area->getPercentage() > 0.5)
-									ChangeSpeed(round(4 * 2 * (area->getPercentage() - 0.5)));
-								else
-									ChangeSpeed((0.1 + floor(4 * 2 * area->getPercentage())) / 4.0);
+								ChangeSpeed(speedTab[(int)floor(area->getPercentage() * 7.0)]);
 								handleAndSendEventSync(graphicE);
 								newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(GetSelectedArea(), AreaEventType::ShapeChanged, selectedScene));
 								handleAndSendEventSync(newAreaE);

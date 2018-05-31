@@ -103,6 +103,8 @@ namespace Amusing {
 		OptionButtonClicked currentOptionClicked;
 
 		std::vector<Colour> colorCode;
+
+		double speedTab[7] = { 0.25, 1.0 / 3.0, 0.5, 1.0, 2.0, 3.0, 4.0 };
     };
     
     
