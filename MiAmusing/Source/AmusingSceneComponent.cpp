@@ -97,7 +97,7 @@ void AmusingSceneComponent::renderOpenGL()
 	switch (currentSideBarType)
 	{
 	case GrayScale:
-		g.setGradientFill(ColourGradient::vertical(Colours::lightgrey, 0, Colours::darkgrey, getHeight()));
+		g.setGradientFill(ColourGradient::vertical(Colours::lightgrey, 0.0f, Colours::darkgrey, (float)getHeight()));
 		g.fillRect(getWidth() - 100, 4, 100 - 4, getHeight() - 8);
 		break;
 	case TextScale:
@@ -106,11 +106,11 @@ void AmusingSceneComponent::renderOpenGL()
 		for (int i = 0; i < buttonsColor.size(); ++i)
 		{
 			g.setColour(buttonsColor[i]);
-			g.fillRect(getWidth() - 100, 4 + i * (getHeight() - 8) / buttonsColor.size(), 100 - 4, (getHeight() - 8) / buttonsColor.size());
+			g.fillRect(getWidth() - 100, 4 + i * (getHeight() - 8) / buttonsColor.size(), 100 - 4, (getHeight() - 8) / (int)buttonsColor.size());
 		}
 		break;
 	case ColourScale:
-		g.setGradientFill(ColourGradient::vertical(Colours::red, 0, Colours::blue, getHeight()));
+		g.setGradientFill(ColourGradient::vertical(Colours::red, 0.0f, Colours::blue, (float)getHeight()));
 		g.fillRect(getWidth() - 100, 4, 100 - 4, getHeight() - 8);
 		break;
 	case ScaleMarking:

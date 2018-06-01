@@ -425,7 +425,7 @@ boost::geometry::model::segment<bpt> CompletePolygon::getSegment(bpt hitPoint) /
 	
 	if (i == 0)
 	{
-		prev = contourPoints.outer().size() - 1;
+		prev = (int)contourPoints.outer().size() - 1;
 		suiv = 0;
 	}
 	else
@@ -464,7 +464,7 @@ boost::geometry::model::segment<bpt> CompletePolygon::getSegmentInPixels(bpt hit
 
 	if (i == 0)
 	{
-		prev = contourPointsInPixels.outer().size() - 1;
+		prev = (int)contourPointsInPixels.outer().size() - 1;
 		suiv = 0;
 	}
 	else
@@ -863,6 +863,7 @@ AreaEventType CompletePolygon::TryBeginMultiTouchAction(const Point<double>& new
 	else
 	{
 		// pas d'action
+		return AreaEventType::NothingHappened;
 	}
 }
 
@@ -959,6 +960,7 @@ AreaEventType CompletePolygon::TryMoveMultiTouchPoint(const Point<double>& newLo
 	else
 	{
 		// pas d'action
+		return AreaEventType::NothingHappened;
 	}
 }
 
@@ -1055,7 +1057,7 @@ AreaEventType CompletePolygon::TryMovePoint(const Point<double>& newLocation)
 	AreaEventType areaEventType;
 	if (onlyRotationAllowed)
 	{
-		if (pointDraggedId = EditableAreaPointId::ManipulationPoint)
+		if (pointDraggedId == EditableAreaPointId::ManipulationPoint)
 		{
 			bpt location(newLocation.x, newLocation.y);
 			boost::geometry::subtract_point(location, centerInPixels);
@@ -1506,15 +1508,15 @@ void CompletePolygon::PaintBullsEye(Graphics& g)
 		for (int i = 0; i < bullsEye.size(); ++i)
 		{
 			bullsEye[i].SetOpacityMode(OpacityMode::Independent);
-			bullsEye[i].SetAlpha(0.2);
+			bullsEye[i].SetAlpha(0.2f);
 			bullsEye[i].Paint(g);
 		}
-		g.setOpacity(0.2);
+		g.setOpacity(0.2f);
 		double currentAngle = 0.0;
 		for (int i = 0; i < numAngles; ++i)
 		{
 			currentAngle += 2 * M_PI / (double)numAngles;
-			g.drawLine(centerInPixels.get<0>(), centerInPixels.get<1>(), centerInPixels.get<0>()+ radius[4] * std::cos(currentAngle) * parentCanvas->getWidth() * xScale, centerInPixels.get<1>() + radius[4] * std::sin(currentAngle) * parentCanvas->getHeight()*yScale);
+			g.drawLine((float)centerInPixels.get<0>(), (float)centerInPixels.get<1>(), (float)centerInPixels.get<0>()+ radius[4] * std::cos(currentAngle) * parentCanvas->getWidth() * xScale, (float)centerInPixels.get<1>() + radius[4] * std::sin(currentAngle) * parentCanvas->getHeight()*yScale);
 		}
 	}
 	else
@@ -1658,7 +1660,7 @@ bool CompletePolygon::getChordParameters(int idx, std::shared_ptr<CompletePolygo
 	}
 	else
 	{
-		idx -= chordAreaForPercentage.size();
+		idx -= (int)chordAreaForPercentage.size();
 		int N = 0;
 		for (int i = 0; i < (int)chordAreaForFlag.size(); ++i)
 			if (chordAreaForFlag[i] != nullptr)
