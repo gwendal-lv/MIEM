@@ -101,6 +101,12 @@ void MultiSceneCanvasComponentAmusing::optionButtonClicked(OptionButtonClicked o
 				switch (optionClicked)
 				{
 				case Octave:
+					amusingChildren->SetNumScaleMarking(9);
+					amusingChildren->ShowSideBar(SideBarType::ScaleMarking);
+					canvasManagerAsManager->OnDeleteExciter();
+					canvasManagerAsManager->OnAddExciter();
+					canvasManagerAsManager->SetEditingMode(optionClicked);
+					break;
 				case Volume:
 					amusingChildren->ShowSideBar(SideBarType::GrayScale);
 					canvasManagerAsManager->OnDeleteExciter();
@@ -108,7 +114,8 @@ void MultiSceneCanvasComponentAmusing::optionButtonClicked(OptionButtonClicked o
 					canvasManagerAsManager->SetEditingMode(optionClicked);
 					break;
 				case Speed:
-					amusingChildren->ShowSideBar(SideBarType::ColourScale);
+					amusingChildren->SetNumScaleMarking(7);
+					amusingChildren->ShowSideBar(SideBarType::ScaleMarking);
 					canvasManagerAsManager->OnDeleteExciter();
 					canvasManagerAsManager->OnAddExciter();
 					canvasManagerAsManager->SetEditingMode(optionClicked);

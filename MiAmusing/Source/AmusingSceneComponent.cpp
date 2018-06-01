@@ -113,6 +113,14 @@ void AmusingSceneComponent::renderOpenGL()
 		g.setGradientFill(ColourGradient::vertical(Colours::red, 0, Colours::blue, getHeight()));
 		g.fillRect(getWidth() - 100, 4, 100 - 4, getHeight() - 8);
 		break;
+	case ScaleMarking:
+		g.setColour(Colours::white);
+		g.fillRect(getWidth() - 50, 4, 1, getHeight() - 4);
+		int markSpace = (getHeight() - 4) / numScaleMarking ;
+		for (int i = 0; i < numScaleMarking; ++i)
+		{
+			g.fillRect(getWidth() - 100, 4 + markSpace/2 + i * markSpace, 100, 1);
+		}
 	}
 
 	// White interior contour 2px line to show when the canvas is active
@@ -323,6 +331,12 @@ void AmusingSceneComponent::mouseDrag(const juce::MouseEvent & event)
 {
 	if (auto manager = std::dynamic_pointer_cast<Amusing::MultiSceneCanvasManager>(canvasManager.lock()))
 		manager->OnCanvasMouseDrag(event);
+}
+
+void AmusingSceneComponent::mouseUp(const juce::MouseEvent& event)
+{
+	if (auto manager = std::dynamic_pointer_cast<Amusing::MultiSceneCanvasManager>(canvasManager.lock()))
+		manager->OnCanvasMouseUp(event);
 }
 
 void AmusingSceneComponent::ShowSideBar(SideBarType sideBarType)

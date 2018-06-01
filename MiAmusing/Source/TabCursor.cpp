@@ -18,12 +18,16 @@ TabCursor::TabCursor(bptree::ptree & areaTree, std::chrono::time_point<clock> co
 	Exciter(areaTree,commonStartTimePoint_,additionnalTouchGrabRadius_)
 {
 	zone = Rectangle<int>(0, 0, 10000, 10000);
+	numDivisions = 0;
+	magnetized = false;
 }
 
 TabCursor::TabCursor(uint64_t uniqueId, std::chrono::time_point<clock> commonStartTimePoint_, int additionnalTouchGrabRadius_) :
 	Exciter::Exciter(uniqueId,commonStartTimePoint_,additionnalTouchGrabRadius_)
 {
 	zone = Rectangle<int>(0, 0, 10000, 10000);
+	numDivisions = 0;
+	magnetized = false;
 }
 
 TabCursor::~TabCursor()
@@ -49,12 +53,55 @@ AreaEventType TabCursor::TryMovePoint(const Point<double>& newLocation)
 		else
 			newCenter.set<1>(zone.getY() + zone.getHeight() / 2);
 
+		
+
 		setCenterPosition(newCenter);
 
 		return areaEventType;
 	}
 	else
 		return AreaEventType::NothingHappened;
+}
+
+AreaEventType TabCursor::EndPointMove()
+{
+	bpt newCenter = centerInPixels;
+	if (magnetized)
+	{
+		double maxDist = 1000.0;
+		int nearest = 0;
+
+		if (zone.getHeight() > zone.getWidth())
+		{
+			int space = (double)zone.getHeight() / (double)numDivisions;
+			for (int i = 0; i < numDivisions; ++i)
+			{
+				if (abs(space/2 + (i * space - newCenter.get<1>()) < maxDist))
+				{
+					maxDist = abs(space/2 + i * space - newCenter.get<1>());
+					nearest = i;
+				}
+			}
+			newCenter.set<1>(zone.getY() + (nearest * space) + space/2);
+		}
+		else
+		{
+			int space = (double)zone.getWidth() / (double)numDivisions;
+			for (int i = 0; i < numDivisions; ++i)
+			{
+				if (abs(space/2 + (i * space) - newCenter.get<0>()) < maxDist)
+				{
+					maxDist = abs(space/2 + (i * space) - newCenter.get<1>());
+					nearest = i;
+				}
+			}
+			newCenter.set<0>(zone.getX() + (nearest * space) + space/2);
+		}
+	}
+
+	setCenterPosition(newCenter);
+	CanvasResized(parentCanvas);
+	return Exciter::EndPointMove();
 }
 
 double TabCursor::getPercentage()
@@ -75,4 +122,46 @@ void TabCursor::setPercentage(double pc)
 
 	setCenterPosition(newCenter);
 	CanvasResized(parentCanvas);
+}
+
+void TabCursor::SetNumDivisions(int _numDivisions)
+{
+	numDivisions = _numDivisions;
+}
+
+void TabCursor::EnableMagnet(bool _shouldBeMagnetized)
+{
+	magnetized = _shouldBeMagnetized;
+}
+
+int TabCursor::getNearestDivision()
+{
+	double maxDist = 1000.0;
+	int nearest = 0;
+	if (zone.getHeight() > zone.getWidth())
+	{
+		int space = (double)zone.getHeight() / (double)numDivisions;
+		for (int i = 0; i < numDivisions; ++i)
+		{
+			if (abs(space / 2 + (i * space - centerInPixels.get<1>())) < maxDist)
+			{
+				maxDist = abs(space / 2 + i * space - centerInPixels.get<1>());
+				nearest = i;
+			}
+		}
+		return numDivisions-nearest - 1;
+	}
+	else
+	{
+		int space = (double)zone.getWidth() / (double)numDivisions;
+		for (int i = 0; i < numDivisions; ++i)
+		{
+			if (abs(space / 2 + (i * space) - centerInPixels.get<0>()) < maxDist)
+			{
+				maxDist = abs(space / 2 + (i * space) - centerInPixels.get<1>());
+				nearest = i;
+			}
+		}
+		return nearest;
+	}
 }

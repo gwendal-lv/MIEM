@@ -334,7 +334,24 @@ void MultiSceneCanvasManager::OnCanvasMouseDoubleClick(const MouseEvent & mouseE
 void MultiSceneCanvasManager::OnCanvasMouseUp(const MouseEvent& mouseE)
 {
 	DBG("passe par MultiSceneCanvasManager::OnCanvasMouseUp");
-	MultiSceneCanvasEditor::OnCanvasMouseUp(mouseE);
+	std::shared_ptr<AmusingScene> amusingScene;
+	switch (mode)
+	{
+	case CanvasManagerMode::PlayingWithExciters:
+	case CanvasManagerMode::ExcitersEdition:
+	case CanvasManagerMode::ExciterSelected:
+		MultiSceneCanvasEditor::OnCanvasMouseUp(mouseE);
+		if (amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+		{
+			handleAndSendEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(amusingScene->GetSelectedExciter(), AreaEventType::ShapeChanged, selectedScene)));
+		}
+		break;
+	default :
+		MultiSceneCanvasEditor::OnCanvasMouseUp(mouseE);
+		break;
+	}
+
+	
 }
 
 void MultiSceneCanvasManager::OnCanvasMouseDrag(const MouseEvent& mouseE)
@@ -365,13 +382,13 @@ void MultiSceneCanvasManager::OnCanvasMouseDrag(const MouseEvent& mouseE)
 								handleAndSendEventSync(newAreaE);
 								break;
 							case Speed :
-								ChangeSpeed(speedTab[(int)floor(area->getPercentage() * 7.0)]);
+								ChangeSpeed(speedTab[area->getNearestDivision()]);
 								handleAndSendEventSync(graphicE);
 								newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(GetSelectedArea(), AreaEventType::ShapeChanged, selectedScene));
 								handleAndSendEventSync(newAreaE);
 								break;
 							case Octave :
-								ChangeBaseNote(round(area->getPercentage() * 9.0));
+								ChangeBaseNote(area->getNearestDivision());
 								handleAndSendEventSync(graphicE);
 								newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(GetSelectedArea(), AreaEventType::ShapeChanged, selectedScene));
 								handleAndSendEventSync(newAreaE);
@@ -652,7 +669,9 @@ void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
 			case Octave:
 				if (tabCursor = std::dynamic_pointer_cast<TabCursor>(selectedScene->GetSelectedExciter()))
 				{
-					tabCursor->setPercentage(getOctave(completeArea) / 9.0);
+					tabCursor->setPercentage(getOctave(completeArea) / 9.0 - 1.0/18.0);
+					tabCursor->SetNumDivisions(9);
+					tabCursor->EnableMagnet(true);
 				}
 				SetMode(CanvasManagerMode::ExciterSelected);
 				completeArea->showAllTarget(false);
@@ -662,6 +681,7 @@ void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
 			case Volume:
 				if (tabCursor = std::dynamic_pointer_cast<TabCursor>(selectedScene->GetSelectedExciter()))
 				{
+					tabCursor->EnableMagnet(false);
 					tabCursor->setPercentage(getVelocity(completeArea) / 128.0);
 				}
 				SetMode(CanvasManagerMode::ExciterSelected);
@@ -670,6 +690,15 @@ void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
 				completeArea->SetOpacityMode(OpacityMode::Independent);
 				break;
 			case Speed:
+				if (tabCursor = std::dynamic_pointer_cast<TabCursor>(selectedScene->GetSelectedExciter()))
+				{
+					if (getSpeed(completeArea) > 1)
+						tabCursor->setPercentage((getSpeed(completeArea) + 2) / 7.0 - 1.0 / 14.0);
+					else
+						tabCursor->setPercentage((4.0 - 1.0 / getSpeed(completeArea)) / 7.0 - 1.0 / 14.0);
+					tabCursor->SetNumDivisions(7);
+					tabCursor->EnableMagnet(true);
+				}
 				completeArea->showAllTarget(false);
 				SetMode(CanvasManagerMode::ExciterSelected);
 				completeArea->SetActive(false);

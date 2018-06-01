@@ -36,12 +36,20 @@ class TabCursor : public Miam::Exciter
 		void setZone(Rectangle<int> _zone);
 
 		Miam::AreaEventType TryMovePoint(const Point<double>& newLocation);
+		Miam::AreaEventType EndPointMove();
 
 		double getPercentage();
 
 		void setPercentage(double pc);
 
+		void SetNumDivisions(int _numDivisions);
+
+		void EnableMagnet(bool _shouldBeMagnetized);
+
+		int getNearestDivision();
+
 	private :
 		Rectangle<int> zone;
-
+		int numDivisions;
+		bool magnetized;
 };
