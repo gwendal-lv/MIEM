@@ -136,7 +136,6 @@ int TimeLine::getId()
 
 bool TimeLine::isNoteOnTime(int m_position, int i, int period, bool &m_end, int &m_channel, int &m_note, uint8 &m_velocity)
 {
-	int numPassage(0), blop(26);
 	while (m_position >= period)
 	{
 		m_position -= period;

@@ -77,7 +77,7 @@ void MultiSceneCanvasManager::AddCompleteArea()
 
 void MultiSceneCanvasManager::AddAreaToScene(size_t sceneIndex, std::shared_ptr<IInteractiveArea> area_)
 {
-	SelectScene(sceneIndex); // lors du deuxième passage, le premier excitateur est supprimé
+	SelectScene((int)sceneIndex); // lors du deuxième passage, le premier excitateur est supprimé
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(scenes[sceneIndex]))
 	{
 		if (auto amusingArea = std::dynamic_pointer_cast<CompletePolygon>(area_))
@@ -166,7 +166,6 @@ void MultiSceneCanvasManager::SetAudioPositions(std::shared_ptr<Cursor> cursor, 
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
 	{
 		bpt oldPosition = cursor->getPosition();//InPixels();
-		int hitAreaId = 0;
 		if (amusingScene->isDrew(cursor) && cursor->setReadingPosition(position)) // vérifie si le curseur est dessiné et le met à jour (seulement si la condition "dessiné" est déjà vérifiée)
 		{
 
@@ -394,7 +393,7 @@ void MultiSceneCanvasManager::OnCanvasMouseDrag(const MouseEvent& mouseE)
 								handleAndSendEventSync(newAreaE);
 								break;
 							case Sample :
-								ChangeColour(colorCode[floor((1.0 - area->getPercentage()) * colorCode.size())], floor((1.0 - area->getPercentage()) * colorCode.size()));
+								ChangeColour(colorCode[(int)floor((1.0 - area->getPercentage()) * colorCode.size())], floor((1.0 - area->getPercentage()) * colorCode.size()));
 								handleAndSendEventSync(graphicE);
 								newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(GetSelectedArea(), AreaEventType::ShapeChanged, selectedScene));
 								handleAndSendEventSync(newAreaE);
@@ -715,7 +714,7 @@ void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
 			default:
 				break;
 			}
-			if (auto tabCursor = std::dynamic_pointer_cast<TabCursor>(selectedScene->GetSelectedExciter()))
+			if (tabCursor)
 			{
 				handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(tabCursor, AreaEventType::Translation, selectedScene)));
 			}

@@ -327,7 +327,7 @@ double Presenter::computeFrequency(std::shared_ptr<IEditableArea> area,double su
 	{
 		//return initFreq + (surface - areaToInitSurface[area]) * (minFreq - initFreq) / (maxSize - areaToInitSurface[area]);
 		//return std::exp(m*surface + p);
-		int idx = round((S - LUT::init) * LUT::size);
+		int idx = (int)round((S - LUT::init) * LUT::size);
 		return LUT::LUT[idx];//k + A * std::exp(m * S);
 	}
 		

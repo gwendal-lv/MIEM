@@ -253,7 +253,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 						param.Id1 = myPresenter->getTimeLineID(area);
 						//if (param.Id1 > 10)
 						//	DBG("trop grand pour mon nombre d'aire");
-						myPresenter->setInitSize(complete,complete->GetSurface());
+						myPresenter->setInitSize(complete,(int)complete->GetSurface());
 						myPresenter->addOctave(complete);
 						param.Id2 = 1024;
 						param.Type = Miam::AsyncParamChange::ParamType::Activate;
@@ -413,13 +413,12 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					/// envoie des infos sur les accords
 					param.Type = Miam::AsyncParamChange::ParamType::Position;
 					std::shared_ptr<CompletePolygon> chordArea = nullptr;
-					double pC = 0;
 					param.Id2 = param.Id1;
 					myPresenter->SendParamChange(param); // to reset chords
 
 					
 
-					int i = 0;
+					i = 0;
 					if (auto amusingS = std::dynamic_pointer_cast<AmusingScene>(areaE->GetConcernedScene()))
 					{
 						while (auto intersection = amusingS->getNextChildOf(complete, i))
@@ -462,12 +461,11 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 					param.Type = Miam::AsyncParamChange::ParamType::Position;
 					param.Id1 = myPresenter->getTimeLineID(area);
 					std::shared_ptr<CompletePolygon> chordArea;
-					double pC = 0;
 					param.Id2 = param.Id1;
 					myPresenter->SendParamChange(param); // to reset chords
 
 					// send new chords
-					int i = 0;
+					i = 0;
 					if (auto amusingS = std::dynamic_pointer_cast<AmusingScene>(areaE->GetConcernedScene()))
 					{
 						while (auto intersection = amusingS->getNextChildOf(complete, i))
@@ -632,7 +630,6 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 	}
 	else if(auto controlE = std::dynamic_pointer_cast<ControlEvent>(event_ ))
 	{
-		bool testCompletePolygon = true;
 		switch (controlE->GetType())
 		{
 		case ControlEventType::Play:
@@ -701,7 +698,7 @@ void GraphicSessionManager::CanvasModeChanged(CanvasManagerMode canvasMode)
 
 // ===== EVENTS TO VIEW =====
 
-void GraphicSessionManager::DisplayInfo(String info, int priority)
+void GraphicSessionManager::DisplayInfo(String info, int /*priority*/)
 {
 	view->DisplayInfo(info);
 }
@@ -917,7 +914,7 @@ void GraphicSessionManager::OnLoad(std::string filename)
 
 						if (auto currentCanvas = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManagers[i]))
 						{
-							currentCanvas->AddAllIntersectionsToScene(j);
+							currentCanvas->AddAllIntersectionsToScene((int)j);
 						}
 
 					}
@@ -991,7 +988,7 @@ void GraphicSessionManager::OnDeviceOptionsClicked()
 	view->ShowDeviceOptionsDialog();
 }
 
-void GraphicSessionManager::SetMidiChannel(int ch)
+void GraphicSessionManager::SetMidiChannel(int /*ch*/)
 {
 	if (selectedCanvas)
 	{

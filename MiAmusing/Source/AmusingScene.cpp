@@ -551,10 +551,10 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDown(const MouseEvent& 
 				{
 					if (selectedArea)
 					{
-						AreaEventType lastEventType = selectedArea->TryBeginPointMove(mouseE.position.toDouble());
-						std::shared_ptr<GraphicEvent> graphicE(new GraphicEvent());
-						return graphicE;
+						selectedArea->TryBeginPointMove(mouseE.position.toDouble());
 					}
+					std::shared_ptr<GraphicEvent> graphicE(new GraphicEvent());
+					return graphicE;
 				}
 			}
 			else
@@ -573,7 +573,7 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDown(const MouseEvent& 
 							// on est bien dans la même aire -> calculer la rotation et/ou le resize à effectuer :
 							// 1) regarder la position des 2 points  : si 1 près du centre -> faire une rotation classique avec l'autre point qui sert de manipulationPoint
 							//		sinon : calculer la pente de la droite formée par les deux points, et comparer à la pente précédente pour connaire la rotation a effectuer
-							AreaEventType areaEventType = completeP->TryBeginMultiTouchAction(mouseE.position.toDouble());
+							completeP->TryBeginMultiTouchAction(mouseE.position.toDouble());
 						}
 						else // on est pas dans la même aire -> bouger une autre aire
 						{
@@ -583,19 +583,20 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDown(const MouseEvent& 
 								{
 									if (currentP->HitTest(mousePosition))
 									{
-										AreaEventType areaEventType = currentP->TryBeginPointMove(mouseE.position.toDouble());
+										currentP->TryBeginPointMove(mouseE.position.toDouble());
 										mouseIdxToArea[mouseE.source.getIndex()] = currentP; // pour retenir quel idx était en train de bouger quel aire
 									}
 								}
 							}
 						}
 					}
+					return graphicE;
 				}
 				else
 				{
 					DBG("chercher si on est dans une autre aire pour la bouger");
+					return graphicE;
 				}
-				return graphicE;
 			}
 		}
 	}
@@ -607,7 +608,6 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDown(const MouseEvent& 
 			return graphicE;
 		
 	}
-
 }
 
 std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDrag(const MouseEvent& mouseE)
@@ -675,6 +675,7 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDrag(const MouseEvent& 
 			}
 		}
 	}
+	return graphicE;
 }
 
 std::shared_ptr<AreaEvent> AmusingScene::AddDefaultExciter()

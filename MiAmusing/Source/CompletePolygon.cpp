@@ -969,7 +969,7 @@ AreaEventType CompletePolygon::EndMultiTouchPointMove()
 	multiTouchActionBegun = false;
 
 	/// verification de l'orientation !
-	int numAngles = 32;
+	numAngles = 32;
 	double e = 0.01;
 	orientationAngle = rotationAngle;
 	rotationAngle = 0;
@@ -1066,7 +1066,9 @@ AreaEventType CompletePolygon::TryMovePoint(const Point<double>& newLocation)
 			boost::geometry::transform(pt3D, ptRad);
 			ptRad.set<2>(boost::geometry::distance(centerInPixels, bmanipulationPointInPixels));
 			boost::geometry::transform(ptRad, pt3D);
-			location = bpt(pt3D.get<0>(), pt3D.get<1>());
+			boost::geometry::model::point<double, 3, boost::geometry::cs::cartesian> pt3Dshort;
+			boost::geometry::transform(pt3D, pt3Dshort);
+			location = bpt(pt3Dshort.get<0>(), pt3Dshort.get<1>());
 			boost::geometry::add_point(location, centerInPixels);
 			const Point<double> correctLocation(location.get<0>(), location.get<1>());
 			areaEventType = EditablePolygon::TryMovePoint(correctLocation);
@@ -1385,7 +1387,7 @@ double CompletePolygon::getAngularPercentage(bpt hitPoint)
 	int suiv = 0;
 	if (i == 0)
 	{
-		prev = contourPoints.outer().size() - 1;
+		prev = (int)contourPoints.outer().size() - 1;
 		suiv = 0;
 	}
 	else
@@ -1421,7 +1423,7 @@ double CompletePolygon::getLinearPercentage(bpt hitPoint)
 	int suiv = 0;
 	if (i == 0)
 	{
-		prev = contourPoints.outer().size() - 1;
+		prev = (int)contourPoints.outer().size() - 1;
 		suiv = 0;
 	}
 	else
@@ -1516,7 +1518,7 @@ void CompletePolygon::PaintBullsEye(Graphics& g)
 		for (int i = 0; i < numAngles; ++i)
 		{
 			currentAngle += 2 * M_PI / (double)numAngles;
-			g.drawLine((float)centerInPixels.get<0>(), (float)centerInPixels.get<1>(), (float)centerInPixels.get<0>()+ radius[4] * std::cos(currentAngle) * parentCanvas->getWidth() * xScale, (float)centerInPixels.get<1>() + radius[4] * std::sin(currentAngle) * parentCanvas->getHeight()*yScale);
+			g.drawLine((float)centerInPixels.get<0>(), (float)centerInPixels.get<1>(), (float)centerInPixels.get<0>()+ (float)radius[4] * (float)std::cos(currentAngle) * (float)parentCanvas->getWidth() * xScale, (float)centerInPixels.get<1>() + (float)radius[4] * (float)std::sin(currentAngle) * (float)parentCanvas->getHeight()*yScale);
 		}
 	}
 	else

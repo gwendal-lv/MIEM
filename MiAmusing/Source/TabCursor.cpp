@@ -73,7 +73,7 @@ AreaEventType TabCursor::EndPointMove()
 
 		if (zone.getHeight() > zone.getWidth())
 		{
-			int space = (double)zone.getHeight() / (double)numDivisions;
+			int space = int(zone.getHeight() /numDivisions);
 			for (int i = 0; i < numDivisions; ++i)
 			{
 				if (abs(space/2 + (i * space - newCenter.get<1>()) < maxDist))
@@ -86,7 +86,7 @@ AreaEventType TabCursor::EndPointMove()
 		}
 		else
 		{
-			int space = (double)zone.getWidth() / (double)numDivisions;
+			int space = int(zone.getWidth() / numDivisions);
 			for (int i = 0; i < numDivisions; ++i)
 			{
 				if (abs(space/2 + (i * space) - newCenter.get<0>()) < maxDist)
@@ -140,7 +140,7 @@ int TabCursor::getNearestDivision()
 	int nearest = 0;
 	if (zone.getHeight() > zone.getWidth())
 	{
-		int space = (double)zone.getHeight() / (double)numDivisions;
+		int space = int(zone.getHeight() / numDivisions);
 		for (int i = 0; i < numDivisions; ++i)
 		{
 			if (abs(space / 2 + (i * space - centerInPixels.get<1>())) < maxDist)
@@ -153,7 +153,7 @@ int TabCursor::getNearestDivision()
 	}
 	else
 	{
-		int space = (double)zone.getWidth() / (double)numDivisions;
+		int space = int(zone.getWidth() / numDivisions);
 		for (int i = 0; i < numDivisions; ++i)
 		{
 			if (abs(space / 2 + (i * space) - centerInPixels.get<0>()) < maxDist)
