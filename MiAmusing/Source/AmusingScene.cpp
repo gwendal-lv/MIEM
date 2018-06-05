@@ -313,7 +313,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 	newPolygon->KeepRatio(true);
 	newPolygon->CanvasResized(canvasComponent);
 	newPolygon->setCursorVisible(true, canvasComponent);
-
+	newPolygon->SetOpacityMode(OpacityMode::Independent);
 	
 	//AddIntersections(newPolygon);
 
@@ -1043,6 +1043,7 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDoubleClick(const Mouse
 					Point<double> tr((double)canvasComponent->getWidth() / 2.0 - completeArea->getCenter().get<0>(), (double)canvasComponent->getHeight() / 2.0 - completeArea->getCenter().get<1>());
 					completeArea->Translate(tr);
 					completeArea->CanvasResized(canvasComponent);
+					completeArea->SetActive(true);
 					completeArea->showAllTarget(true);
 					previousSize = completeArea->GetFullSceneRatio();
 					completeArea->SizeChanged(previousSize, false);

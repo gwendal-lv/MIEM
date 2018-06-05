@@ -65,7 +65,7 @@ CompletePolygon::CompletePolygon(bptree::ptree & areaTree) : EditablePolygon(are
 		OnCircles.push_back(0);
 	}
 
-	numAngles = 32;
+	numAngles = 48;
 
 	updateSubTriangles();
 
@@ -120,7 +120,7 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 	s = ost.str();
 	DBG("Constructor : " + s);*/
 	isFilled = true;
-	numAngles = 32;
+	numAngles = 48;
 
 	centerCircleRadius *= 2;
 	centerContourWidth *= 2;
@@ -170,7 +170,7 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	centerContourWidth *= 2;
 	multiTouchActionBegun = false;
 	currentTouchRotation = 0.0;
-	numAngles = 32;
+	numAngles = 48;
 
 	showCursor = true;
 	pc = 0;
@@ -209,7 +209,7 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	Colour _fillColour) : 
 	EditablePolygon(_Id, _center, _contourPoints, _fillColour)
 {
-	numAngles = 32;
+	numAngles = 48;
 	centerCircleRadius *= 2;
 	centerContourWidth *= 2;
 	multiTouchActionBegun = false;
@@ -893,12 +893,16 @@ AreaEventType CompletePolygon::TryMoveMultiTouchPoint(const Point<double>& newLo
 		for (int i = 0; i < Nradius; ++i)
 		{
 
-			double newRadius = newStartRadius + i* interval;
+			double newRadius = radius[i] * size;//newStartRadius + i* interval;
 			double resize = size;//newRadius / radius[i];
 			if (bullsEye[i].SizeChanged(resize, false))
 			{
 				startRadius = newStartRadius;
 				radius[i] = newRadius; //startRadius + i*interval;
+				if (radius[i] > 0.05)
+					bullsEye[i].setVerticesCount(64);
+				else
+					bullsEye[i].setVerticesCount(32);
 				bullsEye[i].updateContourPoints();
 			}
 		}
@@ -942,7 +946,7 @@ AreaEventType CompletePolygon::TryMoveMultiTouchPoint(const Point<double>& newLo
 			for (int i = 0; i < Nradius; ++i)
 			{
 
-				double newRadius = newStartRadius + i* interval;
+				double newRadius = radius[i] * size;//newStartRadius + i* interval;
 				double resize = size;//newRadius / radius[i];
 				if (bullsEye[i].SizeChanged(resize, false))
 				{
@@ -969,7 +973,7 @@ AreaEventType CompletePolygon::EndMultiTouchPointMove()
 	multiTouchActionBegun = false;
 
 	/// verification de l'orientation !
-	numAngles = 32;
+	numAngles = 48;
 	double e = 0.01;
 	orientationAngle = rotationAngle;
 	rotationAngle = 0;
@@ -1105,12 +1109,16 @@ AreaEventType CompletePolygon::TryMovePoint(const Point<double>& newLocation)
 		for (int i = 0; i < Nradius; ++i)
 		{
 
-			double newRadius = newStartRadius + i* interval;
+			double newRadius = radius[i] * size;//newStartRadius + i* interval;
 			double resize = size;//newRadius / radius[i];
 			if (bullsEye[i].SizeChanged(resize,false))
 			{
 				startRadius = newStartRadius;
 				radius[i] = newRadius; //startRadius + i*interval;
+				if (radius[i] > 0.0456)
+					bullsEye[i].setVerticesCount(64);
+				else
+					bullsEye[i].setVerticesCount(32);
 				bullsEye[i].updateContourPoints();
 			}
 		}
@@ -1493,7 +1501,7 @@ void CompletePolygon::CreateBullsEye()
 		bullsEye.back().SetAlpha(1.0);
 		//bullsEye.back().Set
 		bullsEye.back().setIsFilled(false);
-		bullsEye.back().setVerticesCount(6 * bullsEye.back().getVerticesCount());
+		bullsEye.back().setVerticesCount(64/*6 * bullsEye.back().getVerticesCount()*/);
 		
 	}
 	circlesToShow[0] = true;
@@ -1767,7 +1775,7 @@ bool CompletePolygon::SizeChanged(double _size, bool minSize)
 		for (int i = 0; i < Nradius; ++i)
 		{
 
-			double newRadius = newStartRadius + i * interval;
+			double newRadius = radius[i] * _size;//newStartRadius + i * interval;
 			double resize = _size;//newRadius / radius[i];
 			if (bullsEye[i].SizeChanged(resize, false))
 			{

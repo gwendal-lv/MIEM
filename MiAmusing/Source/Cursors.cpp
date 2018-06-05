@@ -91,7 +91,13 @@ void Cursor::setSpeed(double m_speed)
 		double newCursorSize = (double)initCursorSize / m_speed;
 		double resize = newCursorSize / cursorSize;
 		if (SizeChanged(resize, false))
+		{
 			cursorSize = newCursorSize;
+			if (cursorSize > 0.5)
+				setVerticesCount(64);
+			else
+				setVerticesCount(32);
+		}
 	}
 }
 
