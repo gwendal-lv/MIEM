@@ -894,7 +894,7 @@ AreaEventType CompletePolygon::TryMoveMultiTouchPoint(const Point<double>& newLo
 		{
 
 			double newRadius = newStartRadius + i* interval;
-			double resize = newRadius / radius[i];
+			double resize = size;//newRadius / radius[i];
 			if (bullsEye[i].SizeChanged(resize, false))
 			{
 				startRadius = newStartRadius;
@@ -943,7 +943,7 @@ AreaEventType CompletePolygon::TryMoveMultiTouchPoint(const Point<double>& newLo
 			{
 
 				double newRadius = newStartRadius + i* interval;
-				double resize = newRadius / radius[i];
+				double resize = size;//newRadius / radius[i];
 				if (bullsEye[i].SizeChanged(resize, false))
 				{
 					startRadius = newStartRadius;
@@ -1106,7 +1106,7 @@ AreaEventType CompletePolygon::TryMovePoint(const Point<double>& newLocation)
 		{
 
 			double newRadius = newStartRadius + i* interval;
-			double resize = newRadius / radius[i];
+			double resize = size;//newRadius / radius[i];
 			if (bullsEye[i].SizeChanged(resize,false))
 			{
 				startRadius = newStartRadius;
@@ -1514,11 +1514,12 @@ void CompletePolygon::PaintBullsEye(Graphics& g)
 			bullsEye[i].Paint(g);
 		}
 		g.setOpacity(0.2f);
+		int minDimension = parentCanvas->getHeight() > parentCanvas->getWidth() ? parentCanvas->getWidth() - 10 : parentCanvas->getHeight() - 10;
 		double currentAngle = 0.0;
 		for (int i = 0; i < numAngles; ++i)
 		{
 			currentAngle += 2 * M_PI / (double)numAngles;
-			g.drawLine((float)centerInPixels.get<0>(), (float)centerInPixels.get<1>(), (float)centerInPixels.get<0>()+ (float)radius[4] * (float)std::cos(currentAngle) * (float)parentCanvas->getWidth() * xScale, (float)centerInPixels.get<1>() + (float)radius[4] * (float)std::sin(currentAngle) * (float)parentCanvas->getHeight()*yScale);
+			g.drawLine((float)centerInPixels.get<0>(), (float)centerInPixels.get<1>(), (float)centerInPixels.get<0>()+ (float)minDimension/2.0f * (float)std::cos(currentAngle), (float)centerInPixels.get<1>() + (float)minDimension/2.0f * (float)std::sin(currentAngle));
 		}
 	}
 	else
@@ -1752,9 +1753,9 @@ void CompletePolygon::DisableTranslation(bool shouldBeDisabled)
 double CompletePolygon::GetFullSceneRatio()
 {
 	if (parentCanvas->getHeight() < parentCanvas->getWidth())
-		return (parentCanvas->getHeight() - 8 * interval * parentCanvas->getHeight() * yScale - 10) / (2 * startRadius * parentCanvas->getHeight() * yScale);
+		return (parentCanvas->getHeight() - 10) / (2 * radius[4] * parentCanvas->getHeight() * yScale);
 	else
-		return (parentCanvas->getWidth() - 8 * interval * parentCanvas->getWidth() * xScale) / (2 * startRadius * parentCanvas->getWidth() * xScale);
+		return (parentCanvas->getWidth() - 10) / (2 * radius[4] * parentCanvas->getWidth() * xScale);
 }
 
 bool CompletePolygon::SizeChanged(double _size, bool minSize)
@@ -1767,7 +1768,7 @@ bool CompletePolygon::SizeChanged(double _size, bool minSize)
 		{
 
 			double newRadius = newStartRadius + i * interval;
-			double resize = newRadius / radius[i];
+			double resize = _size;//newRadius / radius[i];
 			if (bullsEye[i].SizeChanged(resize, false))
 			{
 				startRadius = newStartRadius;

@@ -481,6 +481,22 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDown(const MouseEvent& 
 
 		if (deleting)
 		{
+			// d'abord vérifier si l'aire cliquée est une intersection : 
+			//	si c'est une intersection -> ne rien faire, on ne sait pas quelle aire devrait être supprimée.
+			//	sinon -> supprimer l'aire
+			bpt mousePosition(mouseE.x, mouseE.y);
+			for (int i = 0; i < (int)areas.size(); ++i)
+			{
+				if (areas[i]->HitTest(mousePosition))
+				{
+					if (auto intersectionArea = std::dynamic_pointer_cast<IntersectionPolygon>(areas[i]))
+					{
+						deleting = false;
+						canvasComponent->setMouseCursor(MouseCursor::StandardCursorType::NormalCursor);
+						return std::make_shared<GraphicEvent>();
+					}
+				}
+			}
 
 			std::shared_ptr<GraphicEvent> graphicE = EditableScene::OnCanvasMouseDown(mouseE); // pour que l'aire où on a cliqué soit sélectionnée
 			canvasComponent->setMouseCursor(MouseCursor::StandardCursorType::NormalCursor);
