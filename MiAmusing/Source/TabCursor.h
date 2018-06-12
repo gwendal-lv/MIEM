@@ -48,8 +48,21 @@ class TabCursor : public Miam::Exciter
 
 		int getNearestDivision();
 
+		void freeSize(bool m_sizeIsFree);
+
+		void SetCurrentSize(double _currentSize);
+
+		int getIndexValue();
+
+		void setIndexValue(int idxValue);
+
 	private :
 		Rectangle<int> zone;
 		int numDivisions;
 		bool magnetized;
+		bool allSizeEnabled;
+		double initCursorSize;
+		double authorizedSize[7] = {0.6, 0.73333, 0.866666, 1.0, 1.3333, 1.6666, 2.0/* 1.0 / 4.0, 1.0 / 3.0, 0.5, 1.0, 2.0, 3.0, 4.0 */};
+		double currentAreaResize;
+		int currentSizeIdx;
 };

@@ -356,13 +356,19 @@ void MultiSceneCanvasManager::OnCanvasMouseUp(const MouseEvent& mouseE)
 void MultiSceneCanvasManager::OnCanvasMouseDrag(const MouseEvent& mouseE)
 {
 	std::shared_ptr<GraphicEvent> graphicE;
+	std::shared_ptr<AmusingScene> amusingScene;
+	std::shared_ptr<Cursor> currentCursor;
+	std::shared_ptr<CompletePolygon> completeP;
 	switch (mode)
 	{
 	case Miam::CanvasManagerMode::PlayingWithExciters:
 	case Miam::CanvasManagerMode::ExcitersEdition:
 	case Miam::CanvasManagerMode::ExciterSelected:
 		// when using the TabCursor
-		graphicE = selectedScene->InteractiveScene::OnCanvasMouseDrag(mouseE);
+		if (amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+			graphicE = amusingScene->OnInteractiveCanvasMouseDrag(mouseE);
+		else
+			graphicE = selectedScene->InteractiveScene::OnCanvasMouseDrag(mouseE);
 		if (auto multiE = std::dynamic_pointer_cast<MultiAreaEvent>(graphicE))
 		{
 			for (int i = 0; i < multiE->GetOtherEventsCount(); ++i)
@@ -374,38 +380,86 @@ void MultiSceneCanvasManager::OnCanvasMouseDrag(const MouseEvent& mouseE)
 						std::shared_ptr<AreaEvent> newAreaE(new AreaEvent());
 						switch (currentOptionClicked)
 						{
-							case Volume :
-								ChangeVelocity(area->getPercentage());
-								handleAndSendEventSync(graphicE);
-								newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(GetSelectedArea(), AreaEventType::ColorChanged, selectedScene));
-								handleAndSendEventSync(newAreaE);
-								break;
-							case Speed :
-								ChangeSpeed(speedTab[area->getNearestDivision()]);
-								handleAndSendEventSync(graphicE);
-								newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(GetSelectedArea(), AreaEventType::ShapeChanged, selectedScene));
-								handleAndSendEventSync(newAreaE);
-								break;
-							case Octave :
-								ChangeBaseNote(area->getNearestDivision());
-								handleAndSendEventSync(graphicE);
-								newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(GetSelectedArea(), AreaEventType::ShapeChanged, selectedScene));
-								handleAndSendEventSync(newAreaE);
-								break;
-							case Sample :
-								ChangeColour(colorCode[(int)floor((1.0 - area->getPercentage()) * colorCode.size())], floor((1.0 - area->getPercentage()) * colorCode.size()));
-								handleAndSendEventSync(graphicE);
-								newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(GetSelectedArea(), AreaEventType::ShapeChanged, selectedScene));
-								handleAndSendEventSync(newAreaE);
-								break;
-							default :
-								break;
+						case Volume:
+							ChangeVelocity(area->getPercentage());
+							handleAndSendEventSync(graphicE);
+							newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(GetSelectedArea(), AreaEventType::ColorChanged, selectedScene));
+							handleAndSendEventSync(newAreaE);
+							break;
+						case Speed:
+							ChangeSpeed(speedTab[area->getIndexValue()]);
+							handleAndSendEventSync(graphicE);
+							newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(GetSelectedArea(), AreaEventType::ShapeChanged, selectedScene));
+							handleAndSendEventSync(newAreaE);
+							break;
+						case Octave:
+							ChangeBaseNote(area->getNearestDivision());
+							handleAndSendEventSync(graphicE);
+							newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(GetSelectedArea(), AreaEventType::ShapeChanged, selectedScene));
+							handleAndSendEventSync(newAreaE);
+							break;
+						case Sample:
+							ChangeColour(colorCode[(int)floor((1.0 - area->getPercentage()) * colorCode.size())], floor((1.0 - area->getPercentage()) * colorCode.size()));
+							handleAndSendEventSync(graphicE);
+							newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(GetSelectedArea(), AreaEventType::ShapeChanged, selectedScene));
+							handleAndSendEventSync(newAreaE);
+							break;
+						default:
+							break;
 						}
-						
+
+					}
+					else
+					{
+						handleAndSendEventSync(areaEvent);
 					}
 				}
 			}
 		}
+		else if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(graphicE))
+		{
+			if (auto area = std::dynamic_pointer_cast<TabCursor>(areaE->GetConcernedArea()))
+			{
+				std::shared_ptr<AreaEvent> newAreaE(new AreaEvent());
+				switch (currentOptionClicked)
+				{
+				case Volume:
+					ChangeVelocity(area->getPercentage());
+					handleAndSendEventSync(graphicE);
+					newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(GetSelectedArea(), AreaEventType::ColorChanged, selectedScene));
+					handleAndSendEventSync(newAreaE);
+					break;
+				case Speed:
+					ChangeSpeed(speedTab[area->getIndexValue()]);
+					handleAndSendEventSync(graphicE);
+					newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(GetSelectedArea(), AreaEventType::ShapeChanged, selectedScene));
+					handleAndSendEventSync(newAreaE);
+					if (completeP = std::dynamic_pointer_cast<CompletePolygon>(GetSelectedArea()))
+					{
+						currentCursor = completeP->getCursor(0);
+						newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(currentCursor, AreaEventType::ShapeChanged, selectedScene));
+					}
+					break;
+				case Octave:
+					ChangeBaseNote(area->getNearestDivision());
+					handleAndSendEventSync(graphicE);
+					newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(GetSelectedArea(), AreaEventType::ShapeChanged, selectedScene));
+					handleAndSendEventSync(newAreaE);
+					break;
+				case Sample:
+					ChangeColour(colorCode[(int)floor((1.0 - area->getPercentage()) * colorCode.size())], floor((1.0 - area->getPercentage()) * colorCode.size()));
+					handleAndSendEventSync(graphicE);
+					newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(GetSelectedArea(), AreaEventType::ShapeChanged, selectedScene));
+					handleAndSendEventSync(newAreaE);
+					break;
+				default:
+					break;
+				}
+
+			}
+		}
+		else
+			handleAndSendEventSync(graphicE);
 		break;
 	default:
 		MultiSceneCanvasInteractor::OnCanvasMouseDrag(mouseE);
@@ -656,6 +710,18 @@ void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
 	if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(selectedScene->GetSelectedArea()))
 	{
 		std::shared_ptr<TabCursor> tabCursor;
+		std::shared_ptr<Cursor> currentCursor;
+		std::shared_ptr<AmusingScene> amusingScene;
+
+		if (currentOptionClicked != Speed)
+		{
+			if (currentCursorSize != 1.0)
+			{
+				currentCursor = completeArea->getCursor(0);
+				currentCursor->SizeChanged(1.0/currentCursorSize, false);
+				currentCursorSize = 1.0;
+			}
+		}
 		
 			switch (currentOptionClicked)
 			{
@@ -689,19 +755,46 @@ void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
 				completeArea->SetOpacityMode(OpacityMode::Independent);
 				break;
 			case Speed:
+				//if (tabCursor = std::dynamic_pointer_cast<TabCursor>(selectedScene->GetSelectedExciter()))
+				//{
+				//	/*
+				//	if (getSpeed(completeArea) > 1)
+				//		tabCursor->setPercentage((getSpeed(completeArea) + 2) / 7.0 - 1.0 / 14.0);
+				//	else
+				//		tabCursor->setPercentage((4.0 - 1.0 / getSpeed(completeArea)) / 7.0 - 1.0 / 14.0);
+				//	tabCursor->SetNumDivisions(7);
+				//	tabCursor->EnableMagnet(true);
+				//	*/
+				//	tabCursor->EnableMagnet(false);
+				//	tabCursor->setCenterPosition(completeArea->getPolygon().outer().at(0));
+				//	tabCursor->updateContourPoints();
+				//}
+				//currentCursor = completeArea->getCursor(0);
+				//currentCursorSize = 2.0;
+				//currentCursor->SizeChanged(2.0, false);
+				//currentCursor->SetAlpha(0.1);
+				////currentCursor->SetEnableTranslationOnly(false);
+				////currentCursor->SetActive(true);
+				
 				if (tabCursor = std::dynamic_pointer_cast<TabCursor>(selectedScene->GetSelectedExciter()))
 				{
-					if (getSpeed(completeArea) > 1)
-						tabCursor->setPercentage((getSpeed(completeArea) + 2) / 7.0 - 1.0 / 14.0);
-					else
-						tabCursor->setPercentage((4.0 - 1.0 / getSpeed(completeArea)) / 7.0 - 1.0 / 14.0);
-					tabCursor->SetNumDivisions(7);
-					tabCursor->EnableMagnet(true);
+					tabCursor->setIndexValue(3);
 				}
+
 				completeArea->showAllTarget(false);
 				SetMode(CanvasManagerMode::ExciterSelected);
 				completeArea->SetActive(false);
 				completeArea->SetOpacityMode(OpacityMode::Independent);
+
+				if (amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+				{
+					handleAndSendAreaEventSync(amusingScene->addShadowCursor());
+				}
+
+				currentCursor = completeArea->getCursor(0);
+				currentCursorSize = 2.0;
+				currentCursor->SizeChanged(2.0, false);
+				currentCursor->SetAlpha(0.1);
 				break;
 			case Rhythm:
 				completeArea->showAllTarget(true);
@@ -714,6 +807,8 @@ void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
 			default:
 				break;
 			}
+			if(currentCursor)
+				handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(currentCursor, AreaEventType::Translation, selectedScene)));
 			if (tabCursor)
 			{
 				handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(tabCursor, AreaEventType::Translation, selectedScene)));

@@ -694,6 +694,34 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDrag(const MouseEvent& 
 	return graphicE;
 }
 
+std::shared_ptr<GraphicEvent> AmusingScene::OnInteractiveCanvasMouseDrag(const MouseEvent& mouseE)
+{
+	// Default empty event...
+	auto graphicE = std::make_shared<GraphicEvent>();
+
+	int touchIndex = mouseE.source.getIndex();
+	auto mapIt = touchSourceToEditableArea.find(touchIndex);
+	// If the touch is related to an area being moved
+	if (mapIt != touchSourceToEditableArea.end())
+	{
+		auto exciter = std::dynamic_pointer_cast<Exciter>(mapIt->second);
+		if (!exciter)
+			throw std::logic_error("An interactive scene can handle Miam::Exciters only");
+
+		// Création de l'évènement de l'excitateur seul, pour renvoi (dans un multi event, dans le doute)
+		AreaEventType eventType = exciter->TryMovePoint(mouseE.position.toDouble());
+		auto simpleAreaE = std::make_shared<AreaEvent>(exciter, eventType, shared_from_this());
+
+		// Test sur toutes les aires
+		// auto multiAreaE = testAreasInteractionsWithExciter(exciter);
+		//multiAreaE->AddAreaEvent(simpleAreaE); // excitateur lui-même
+
+		graphicE = simpleAreaE;//multiAreaE;
+	}
+
+	return graphicE;
+}
+
 std::shared_ptr<AreaEvent> AmusingScene::AddDefaultExciter()
 {
 	auto canvasManagerLocked = canvasManager.lock();
@@ -1316,5 +1344,30 @@ std::shared_ptr<MultiAreaEvent> AmusingScene::OnUnselection(bool /*shutExcitersD
 	
 
 	return multiAreaE;
+}
+
+std::shared_ptr<AreaEvent> AmusingScene::addShadowCursor()
+{
+	std::shared_ptr<AreaEvent> areaE;
+	if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(selectedArea))
+	{
+		if (auto tabCursor = std::dynamic_pointer_cast<TabCursor>(selectedExciter))
+		{
+			bpt newCenter(canvasComponent->getWidth(), canvasComponent->getHeight());
+			boost::geometry::multiply_point(newCenter,completeArea->getPolygon().outer().at(0));
+			tabCursor->EnableMagnet(false);
+			tabCursor->freeSize(false);
+			tabCursor->setCenterPosition(newCenter);
+			tabCursor->SizeChanged(2.0, false);
+			tabCursor->SetCurrentSize(2.0);
+			tabCursor->updateContourPoints();
+			tabCursor->CanvasResized(canvasComponent);
+			tabCursor->SetActive(true);
+			tabCursor->SetEnableTranslationOnly(false);
+			areaE = std::shared_ptr<AreaEvent>(new AreaEvent(tabCursor, AreaEventType::Translation, shared_from_this()));
+		}
+
+	}
+	return areaE;
 }
 

@@ -47,6 +47,7 @@ namespace Miam
 
 		std::shared_ptr<GraphicEvent> OnCanvasMouseDown(const MouseEvent& mouseE) override;
 		std::shared_ptr<GraphicEvent> OnCanvasMouseDrag(const MouseEvent& mouseE) override;
+		std::shared_ptr<GraphicEvent> OnInteractiveCanvasMouseDrag(const MouseEvent& mouseE);
 		std::shared_ptr<AreaEvent> AddDefaultExciter();
 		std::shared_ptr<AreaEvent> DeleteTabExciter();
 		std::shared_ptr<GraphicEvent> OnCanvasMouseUp(const MouseEvent& mouseE) override;
@@ -110,6 +111,8 @@ namespace Miam
 		
 		virtual std::shared_ptr<MultiAreaEvent> OnSelection(bool resetExciters = true) override; // on écrase resetExciters dans la fonction pour pas réinitialiser les exciters
 		virtual std::shared_ptr<MultiAreaEvent> OnUnselection(bool shutExcitersDown = true) override; // on remet aussi le paramètre par défaut à 0
+
+		std::shared_ptr<AreaEvent> addShadowCursor();
 	private:
 		std::map<int, std::shared_ptr<Amusing::CompletePolygon>> mouseIdxToArea;
 		bpt previousAreaLocation;
