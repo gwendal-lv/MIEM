@@ -55,6 +55,8 @@ public:
 	void mouseUp(const juce::MouseEvent &event) override;*/
 
 private:
+	static const int Npolygons = 20;
+
 	bool isOptionShowed;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AmusingSceneComponent)

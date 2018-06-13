@@ -157,11 +157,44 @@ namespace Miam
         public :
         
 			int GetVerticesBufferSize() override { return numVerticesRing; }
-			float GetVerticesBufferElt(int idx) override { return vertices_buffer[idx]; }
+			float GetVerticesBufferElt(int idx) override
+			{ 
+				try
+				{
+					return vertices_buffer[idx];
+				}
+				catch (const std::out_of_range& e)
+				{
+					DBG(e.what());
+					return 0.0f;
+				}
+			}
 			int GetIndicesBufferSize() override { return  3 * numVerticesRing; }
-			int GetIndicesBufferElt(int idx) override { return indices_buffer[idx]; }
+			int GetIndicesBufferElt(int idx) override 
+			{ 
+				try
+				{
+					return indices_buffer[idx];
+				}
+				catch (const std::out_of_range& e)
+				{
+					DBG(e.what());
+					return 0;
+				}
+			}
 			int GetCouloursBufferSize() { return 4 * numVerticesRing; }
-			float GetCouloursBufferElt(int idx) { return coulours_buffer[idx]; }
+			float GetCouloursBufferElt(int idx) 
+			{ 
+				try
+				{
+					return coulours_buffer[idx];
+				}
+				catch (const std::out_of_range& e)
+				{
+					DBG(e.what());
+					return 0.0;
+				}
+			}
         
         virtual void Paint(Graphics& g) override;
         virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;

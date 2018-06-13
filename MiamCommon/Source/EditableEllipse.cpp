@@ -196,7 +196,7 @@ void EditableEllipse::RefreshOpenGLBuffers()
 	DrawableEllipse::RefreshOpenGLBuffers();
 
 	int decalage = DrawableEllipse::GetVerticesBufferSize();
-	int numApexes = (int)contourPointsInPixels.outer().size() - 1;//isActive? contourPointsInPixels.outer().size() - 1 : 0;
+	int numApexes = isActive? (int)contourPointsInPixels.outer().size() - 1 : 0;
 
 	//bool contourFull = std::all_of(opaque_vertex_buffer.begin() + 291, opaque_vertex_buffer.begin() + 385, [](float x) { return x !=0.0f; });
 	//if (!contourFull)
@@ -226,7 +226,7 @@ void EditableEllipse::RefreshOpenGLBuffers()
 	}
 
 	// manipulationLine + manipulationPoint
-	if (true)
+	if (isActive)
 	{
 		computeManipulationLine((float)centerInPixels.get<0>(), (float)centerInPixels.get<1>(), (float)bmanipulationPointInPixels.get<0>(), (float)bmanipulationPointInPixels.get<1>(), 4.0f, 4.0f);
 		for (int i = 0; i < 3 * dottedLineVertexes; ++i)
@@ -273,7 +273,7 @@ void EditableEllipse::RefreshOpenGLBuffers()
 
 
 	// manipulationLine + manipulationPoint
-	if (true)
+	if (isActive)
 	{
 		for (int i = 0; i < dottedLineIndices; ++i)
 			indices_buffer[decalage + i] = g_indices_dotted_line[i] + begin;

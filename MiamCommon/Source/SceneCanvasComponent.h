@@ -96,6 +96,10 @@ public:
     public :
     
     SceneCanvasComponent();
+	SceneCanvasComponent(int numShapesMax, int numPointsMax = 64);
+
+	void init(int numShapesMax, int numPointsMax);
+
     ~SceneCanvasComponent();
     
 	/// \brief Also called from Miam::View::CompleteInitialization
@@ -184,11 +188,11 @@ private:
 		ShapesOverlay
 	};
 
-	static const int numPointsPolygon = 32;
-	static const int numPointsRing = 32;
-	static const int numPointCircle = 32;
+	/*static const int*/const int*  numPointsPolygon;// = 64;
+	static const int numPointsRing = 64;
+	static const int numPointCircle = 64;
 
-	static const int numVerticesPolygon = numPointsPolygon + 1;
+	/*static const int*/const int* numVerticesPolygon;// = numPointsPolygon + 1;
 	static const int numVerticesRing = 2 * numPointsRing;
 	static const int numVerticesCircle = numPointCircle + 1;
 
@@ -197,18 +201,18 @@ private:
 	static const int dottedLineIndices = 6 * dottedLineNparts;
 
 	//											forme					centre							points									contour				manipulationLine	manipulationPoint
-	static const int numVertexShape = numVerticesPolygon	+		numVerticesRing +	 (numPointsPolygon * numVerticesCircle) +			numPointsPolygon + dottedLineVertexes		+ numVerticesRing;
-	static const int shapeVertexBufferSize = 3 * numVerticesPolygon + (3 * numVerticesRing) + numPointsPolygon * (3 * numVerticesCircle) + (3 * numPointsPolygon) + 3 * dottedLineVertexes + 3 * numVerticesRing;
-	static const int shapeColorBufferSize = 4 * (numVerticesPolygon +  (numVerticesRing) + numPointsPolygon * ( numVerticesCircle) + ( numPointsPolygon) +  dottedLineVertexes +  numVerticesRing);
-	static const int shapeIndicesSize = 3 * numVerticesPolygon + (3 * numVerticesRing) + numPointsPolygon * (3 * numPointCircle) + (3 * 2 * numPointsPolygon) + dottedLineIndices + (3 * numVerticesRing);
+	/*static const int*/const int* numVertexShape;// = numVerticesPolygon	+		numVerticesRing +	 (numPointsPolygon * numVerticesCircle) +			numPointsPolygon + dottedLineVertexes		+ numVerticesRing;
+	/*static const int*/const int* shapeVertexBufferSize;// = 3 * numVerticesPolygon + (3 * numVerticesRing) + numPointsPolygon * (3 * numVerticesCircle) + (3 * numPointsPolygon) + 3 * dottedLineVertexes + 3 * numVerticesRing;
+	/*static const int*/const int* shapeColorBufferSize;// = 4 * (numVerticesPolygon + (numVerticesRing)+numPointsPolygon * (numVerticesCircle)+(numPointsPolygon)+dottedLineVertexes + numVerticesRing);
+	/*static const int*/const int* shapeIndicesSize;// = 3 * numVerticesPolygon + (3 * numVerticesRing) + numPointsPolygon * (3 * numPointCircle) + (3 * 2 * numPointsPolygon) + dottedLineIndices + (3 * numVerticesRing);
 
 	static const int Npolygons = 10;
-	static const int Nshapes = Npolygons + Npolygons * (Npolygons + 1) / 2;
-	static const int vertexBufferSize = Nshapes * shapeVertexBufferSize;
-	static const int colorBufferSize = Nshapes * shapeColorBufferSize;
-	static const int indicesSize = Nshapes * shapeIndicesSize;
+	/*static const int*/const int* Nshapes;// = Npolygons + Npolygons * (Npolygons + 1) / 2;
+	/*static const int*/const int* vertexBufferSize;// = Nshapes * shapeVertexBufferSize;
+	/*static const int*/const int* colorBufferSize;// = Nshapes * shapeColorBufferSize;
+	/*static const int*/const int* indicesSize;// = Nshapes * shapeIndicesSize;
 
-	int shift2[35+1]; // tableau contenant les séparations entre les différentes parties d'une forme (forme, centre, points, contour)
+	int shift2[35+1]; // tableau contenant les séparations entre les différentes parties d'une forme (forme = 1, centre = 1, points = 32, contour = 1)
 
 	GLfloat g_vertex_ring[3 * numVerticesRing];
 	unsigned int ringIndices[3 * numVerticesRing];
@@ -217,13 +221,13 @@ private:
 	unsigned int circleIndices[3 * numPointCircle];
 
 	GLuint vertexBuffer;
-	GLfloat g_vertex_buffer_data[vertexBufferSize]; // forme + vertex
+	GLfloat *g_vertex_buffer_data;//[vertexBufferSize]; // forme + vertex
 
 	GLuint colorBuffer;
-	GLfloat g_color_buffer_data[colorBufferSize];// [3 * numVerticesPolygon + 3 * numVerticesRing];
+	GLfloat *g_color_buffer_data;// [colorBufferSize];// [3 * numVerticesPolygon + 3 * numVerticesRing];
 
 	GLuint elementBuffer;
-	unsigned int indices[indicesSize];
+	unsigned int *indices;// [indicesSize];
 
 	
 	GLfloat g_vertex_dotted_line[3 * dottedLineVertexes];

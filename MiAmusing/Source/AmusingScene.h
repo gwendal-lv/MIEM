@@ -107,8 +107,8 @@ namespace Miam
 		void lookForAreasToUpdate(Colour concernedColour);
 		std::shared_ptr<bptree::ptree> GetTree() const override;
 		
-		virtual std::shared_ptr<MultiAreaEvent> OnSelection(bool resetExciters = true) override; // on écrase resetExciters dans la fonction pour pas réinitialiser les exciters
-		virtual std::shared_ptr<MultiAreaEvent> OnUnselection(bool shutExcitersDown = true) override; // on remet aussi le paramètre par défaut à 0
+		virtual std::shared_ptr<MultiAreaEvent> OnSelection(bool resetExciters = true) override; // on Ã©crase resetExciters dans la fonction pour pas rÃ©initialiser les exciters
+		virtual std::shared_ptr<MultiAreaEvent> OnUnselection(bool shutExcitersDown = true) override; // on remet aussi le paramÃ¨tre par dÃ©faut Ã  0
 	private:
 		std::map<int, std::shared_ptr<Amusing::CompletePolygon>> mouseIdxToArea;
 	};
