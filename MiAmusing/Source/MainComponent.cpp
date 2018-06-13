@@ -19,7 +19,7 @@ MainContentComponent::MainContentComponent()
 {
 	//addAndMakeVisible(sceneEditionComponent = new SceneEditionComponent());
 	editSceneC = new EditScene();
-	
+
 	addAndMakeVisible(editSceneC);
     setSize (600, 400);
 	

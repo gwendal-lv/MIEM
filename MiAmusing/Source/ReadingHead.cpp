@@ -53,6 +53,25 @@ void PlayHead::setSpeed(double m_speed)
 {
 
 	rest = 0;
+	speedToReach = m_speed;
+	speed = m_speed;
+	rest = speedToReach - floor(speedToReach);
+	double delta = 0.001;
+	for (int i = 2; i < 5; ++i)
+	{
+		if (speedToReach >= 1.0 / (double)i - delta / 2.0 && speedToReach <= 1.0 / (double)i + delta / 2.0)
+			numT = i;
+	}
+	int tmpT = metronome->getCurrentT();
+	if (numT != 0)
+	{
+		while (tmpT > numT)
+			tmpT -= numT;
+	}
+
+	// plus tient compte du décalage qu'il y aura par rapport à v = 1
+	plus = tmpT * (1.0 / (double)numT) * numOfBeats * metronome->getPeriodInSamples(); //position + 1.0;
+
 	if (speedToReach != m_speed)
 	{
 		switch (state)
@@ -67,7 +86,7 @@ void PlayHead::setSpeed(double m_speed)
 					speedToReach = m_speed;
 					rest = speedToReach - floor(speedToReach);
 					
-					numT = (rest == 0) ? 1 : ceil(1.0 / rest);
+					numT = (rest == 0.0f) ? 1 : (int)ceil(1.0 / rest);
 					if (transitionTime > metronome->getPeriodInSamples()) // si on a assez de temps avant le prochain passage à 0
 					{
 						speedInc = (speedToReach - speed) / transitionTime;
@@ -388,10 +407,9 @@ void PlayHead::process()
 		//}
 
 		// peut-être vérifier que oldPosition est plus petite que newPosition?
-		sub = ceil(oldPosition);
-		up = ceil(position);
+		sub = (int)ceil(oldPosition);
+		up = (int)ceil(position);
 
-		
 		//if (sub > up) // passe dedans si : BPM change -> rien changer
 		//{			  // ou si on passe par 0 (entre fin de cycle et nouveau cycle
 		//	

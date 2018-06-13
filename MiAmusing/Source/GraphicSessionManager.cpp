@@ -27,7 +27,6 @@ Author:  Gwendal Le Vaillant
 #include "MultiAreaEvent.h"
 
 #include "AmusingScene.h"
-#include "AnimatedPolygon.h"
 #include "EditableEllipse.h"
 #include "CompletePolygon.h"
 #include <cmath>
@@ -141,6 +140,11 @@ void GraphicSessionManager::SetAllChannels()
 void GraphicSessionManager::setSamplesColor(int Nsamples, Colour colorCode[])
 {
 	myMultiCanvasComponent->setSamplesColor(Nsamples, colorCode);
+	for (int i = 0; i < (int)canvasManagers.size(); i++)
+	{
+		std::shared_ptr<MultiSceneCanvasManager> canvasPtr = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManagers[i]);
+		canvasPtr->SetColorCode(Nsamples, colorCode);
+	}
 }
 
 
@@ -249,7 +253,7 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
 						param.Id1 = myPresenter->getTimeLineID(area);
 						//if (param.Id1 > 10)
 						//	DBG("trop grand pour mon nombre d'aire");
-						myPresenter->setInitSize(complete,complete->GetSurface());
+						myPresenter->setInitSize(complete,(int)complete->GetSurface());
 						myPresenter->addOctave(complete);
 						param.Id2 = 1024;
 						param.Type = Miam::AsyncParamChange::ParamType::Activate;
@@ -699,16 +703,6 @@ void GraphicSessionManager::DisplayInfo(String info, int /*priority*/)
 	view->DisplayInfo(info);
 }
 
-void GraphicSessionManager::OnAddArea()
-{
-	if (selectedCanvas)
-	{
-		if (auto canvas = std::dynamic_pointer_cast<AmusingScene>(getSelectedCanvasAsEditable()))
-			canvas->AddAnimatedArea(GetNextAreaId());
-		else
-			getSelectedCanvasAsEditable()->AddDefaultArea(GetNextAreaId());
-	}
-}
 
 void GraphicSessionManager::OnFollowerTranslation(std::shared_ptr<GraphicEvent> graphicE)
 {

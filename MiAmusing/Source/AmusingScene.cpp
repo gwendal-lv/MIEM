@@ -14,7 +14,6 @@
 #include "MultiSceneCanvasInteractor.h"
 
 #include "SceneCanvasComponent.h"
-#include "AnimatedPolygon.h"
 #include "EditableEllipse.h"
 #include "CompletePolygon.h"
 #include "Cursors.h"
@@ -23,7 +22,7 @@
 #include "SceneEvent.h"
 #include "MultiAreaEvent.h"
 
-
+#include "TabCursor.h"
 
 #include <vector>
 
@@ -41,6 +40,7 @@ AmusingScene::AmusingScene(std::shared_ptr<MultiSceneCanvasInteractor> _canvasMa
 	deleting = false;
 	deleteEvent = std::shared_ptr<AreaEvent>(new AreaEvent(nullptr, AreaEventType::NothingHappened));
 	alreadyCursorInScene = false;
+	allowOtherAreaSelection = true;
 }
 
 AmusingScene::~AmusingScene()
@@ -70,17 +70,7 @@ AmusingScene::~AmusingScene()
 	}
 }
 
-void AmusingScene::AddAnimatedArea(uint64_t nextAreaId)
-{
-	// centered grey Hexagon !...
-	std::shared_ptr<AnimatedPolygon> newPolygon(new AnimatedPolygon(nextAreaId,
-		bpt(0.5f, 0.5f), 6, 0.15f,
-		Colours::grey,
-		canvasComponent->GetRatio()));
 
-	// Actual adding of this new polygon
-	AddArea(newPolygon);
-}
 
 std::shared_ptr<AreaEvent> AmusingScene::AddCompleteArea(uint64_t nextAreaId)
 {
@@ -323,7 +313,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 	newPolygon->KeepRatio(true);
 	newPolygon->CanvasResized(canvasComponent);
 	newPolygon->setCursorVisible(true, canvasComponent);
-
+	newPolygon->SetOpacityMode(OpacityMode::Independent);
 	
 	//AddIntersections(newPolygon);
 
@@ -379,7 +369,7 @@ void AmusingScene::AddAllIntersections()
 	if (!canvasManagerLocked)
 		throw std::logic_error("Cannot add a new current exciter : cannot get a Unique ID from the canvas manager (not linked to this)");
 
-	int N = (int)areas.size();
+	int N = areas.size();
 	for (int i = 0; i < N; ++i)
 	{
 		for (int j = i + 1; j < N; ++j)
@@ -491,6 +481,22 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDown(const MouseEvent& 
 
 		if (deleting)
 		{
+			// d'abord vérifier si l'aire cliquée est une intersection : 
+			//	si c'est une intersection -> ne rien faire, on ne sait pas quelle aire devrait être supprimée.
+			//	sinon -> supprimer l'aire
+			bpt mousePosition(mouseE.x, mouseE.y);
+			for (int i = 0; i < (int)areas.size(); ++i)
+			{
+				if (areas[i]->HitTest(mousePosition))
+				{
+					if (auto intersectionArea = std::dynamic_pointer_cast<IntersectionPolygon>(areas[i]))
+					{
+						deleting = false;
+						canvasComponent->setMouseCursor(MouseCursor::StandardCursorType::NormalCursor);
+						return std::make_shared<GraphicEvent>();
+					}
+				}
+			}
 
 			std::shared_ptr<GraphicEvent> graphicE = EditableScene::OnCanvasMouseDown(mouseE); // pour que l'aire où on a cliqué soit sélectionnée
 			canvasComponent->setMouseCursor(MouseCursor::StandardCursorType::NormalCursor);
@@ -504,56 +510,67 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDown(const MouseEvent& 
 
 			if (mouseE.source.getIndex() == 0)
 			{
-
-				for(int i = 0; i < (int)currentIntersectionsAreas.size();++i)
-					if (currentIntersectionsAreas[i]->HitTest(bpt(mouseE.position.toDouble().x, mouseE.position.toDouble().y)))
-					{
-						selectedArea = currentIntersectionsAreas[i]->getNearestParent(bpt(mouseE.position.toDouble().x, mouseE.position.toDouble().y));
-					}
-
-				std::shared_ptr<GraphicEvent> graphE = EditableScene::OnCanvasMouseDown(mouseE);
-
-				if (selectedArea != oldSelectedArea && selectedArea != nullptr) // si on a changé d'aire ou qu'on vient d'en sélectionner une nouvelle -> essaie de la faire bouger
+				if (allowOtherAreaSelection)
 				{
-					// did we clic next to a point, or at least inside the area ?
-					AreaEventType lastEventType = selectedArea->TryBeginPointMove(mouseE.position.toDouble()); // !! starts a point dragging !
-					if (lastEventType == AreaEventType::NothingHappened)
-					{
-						/* if not, we are sure that we clicked outside (checked by tryBeginPointMove)
-						* => it is a DEselection (maybe selection of another area, just after this)
-						*/
-						graphE = SetSelectedArea(nullptr);
-					}
-					else // special points which are not point dragging
-					{
-						// we must stop the dragging that was not actually wanted
-						if (canvasManager.lock()->GetMode() == CanvasManagerMode::WaitingForPointCreation
-							|| canvasManager.lock()->GetMode() == CanvasManagerMode::WaitingForPointDeletion)
-							selectedArea->EndPointMove();
-					}
-				}
+					for (int i = 0; i < (int)currentIntersectionsAreas.size(); ++i)
+						if (currentIntersectionsAreas[i]->HitTest(bpt(mouseE.position.toDouble().x, mouseE.position.toDouble().y)))
+						{
+							selectedArea = currentIntersectionsAreas[i]->getNearestParent(bpt(mouseE.position.toDouble().x, mouseE.position.toDouble().y));
+						}
 
-				if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(graphE))
-				{
-					return graphE;
+					std::shared_ptr<GraphicEvent> graphE = EditableScene::OnCanvasMouseDown(mouseE);
+
+					if (selectedArea != oldSelectedArea && selectedArea != nullptr) // si on a changé d'aire ou qu'on vient d'en sélectionner une nouvelle -> essaie de la faire bouger
+					{
+						// did we clic next to a point, or at least inside the area ?
+						AreaEventType lastEventType = selectedArea->TryBeginPointMove(mouseE.position.toDouble()); // !! starts a point dragging !
+						if (lastEventType == AreaEventType::NothingHappened)
+						{
+							/* if not, we are sure that we clicked outside (checked by tryBeginPointMove)
+							* => it is a DEselection (maybe selection of another area, just after this)
+							*/
+							graphE = SetSelectedArea(nullptr);
+						}
+						else // special points which are not point dragging
+						{
+							// we must stop the dragging that was not actually wanted
+							if (canvasManager.lock()->GetMode() == CanvasManagerMode::WaitingForPointCreation
+								|| canvasManager.lock()->GetMode() == CanvasManagerMode::WaitingForPointDeletion)
+								selectedArea->EndPointMove();
+						}
+					}
+
+					if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(graphE))
+					{
+						return graphE;
+					}
+					else
+					{
+						for (int i = 0; i < (int)currentExciters.size(); i++)
+						{
+							if (auto currentCursor = std::dynamic_pointer_cast<Cursor>(currentExciters[i]))
+							{
+								if (currentCursor->isClicked(Point<double>((double)mouseE.x, (double)mouseE.y)))
+								{
+									graphE = std::shared_ptr<AreaEvent>(new AreaEvent(currentExciters[i], AreaEventType::Selected, shared_from_this()));
+									break;
+								}
+							}
+
+
+						}
+						return graphE;
+
+					}
 				}
 				else
 				{
-					for (int i = 0; i < (int)currentExciters.size(); i++)
+					if (selectedArea)
 					{
-						if (auto currentCursor = std::dynamic_pointer_cast<Cursor>(currentExciters[i]))
-						{
-							if (currentCursor->isClicked(Point<double>((double)mouseE.x, (double)mouseE.y)))
-							{
-								graphE = std::shared_ptr<AreaEvent>(new AreaEvent(currentExciters[i], AreaEventType::Selected, shared_from_this()));
-								break;
-							}
-						}
-
-
+						selectedArea->TryBeginPointMove(mouseE.position.toDouble());
 					}
-					return graphE;
-
+					std::shared_ptr<GraphicEvent> graphicE(new GraphicEvent());
+					return graphicE;
 				}
 			}
 			else
@@ -572,7 +589,7 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDown(const MouseEvent& 
 							// on est bien dans la même aire -> calculer la rotation et/ou le resize à effectuer :
 							// 1) regarder la position des 2 points  : si 1 près du centre -> faire une rotation classique avec l'autre point qui sert de manipulationPoint
 							//		sinon : calculer la pente de la droite formée par les deux points, et comparer à la pente précédente pour connaire la rotation a effectuer
-							AreaEventType areaEventType = completeP->TryBeginMultiTouchAction(mouseE.position.toDouble());
+							completeP->TryBeginMultiTouchAction(mouseE.position.toDouble());
 						}
 						else // on est pas dans la même aire -> bouger une autre aire
 						{
@@ -582,19 +599,20 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDown(const MouseEvent& 
 								{
 									if (currentP->HitTest(mousePosition))
 									{
-										AreaEventType areaEventType = currentP->TryBeginPointMove(mouseE.position.toDouble());
+										currentP->TryBeginPointMove(mouseE.position.toDouble());
 										mouseIdxToArea[mouseE.source.getIndex()] = currentP; // pour retenir quel idx était en train de bouger quel aire
 									}
 								}
 							}
 						}
 					}
+					return graphicE;
 				}
 				else
 				{
 					DBG("chercher si on est dans une autre aire pour la bouger");
+					return graphicE;
 				}
-				return graphicE;
 			}
 		}
 	}
@@ -606,7 +624,6 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDown(const MouseEvent& 
 			return graphicE;
 		
 	}
-
 }
 
 std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDrag(const MouseEvent& mouseE)
@@ -674,6 +691,79 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDrag(const MouseEvent& 
 			}
 		}
 	}
+	return graphicE;
+}
+
+std::shared_ptr<GraphicEvent> AmusingScene::OnInteractiveCanvasMouseDrag(const MouseEvent& mouseE)
+{
+	// Default empty event...
+	auto graphicE = std::make_shared<GraphicEvent>();
+
+	int touchIndex = mouseE.source.getIndex();
+	auto mapIt = touchSourceToEditableArea.find(touchIndex);
+	// If the touch is related to an area being moved
+	if (mapIt != touchSourceToEditableArea.end())
+	{
+		auto exciter = std::dynamic_pointer_cast<Exciter>(mapIt->second);
+		if (!exciter)
+			throw std::logic_error("An interactive scene can handle Miam::Exciters only");
+
+		// Création de l'évènement de l'excitateur seul, pour renvoi (dans un multi event, dans le doute)
+		AreaEventType eventType = exciter->TryMovePoint(mouseE.position.toDouble());
+		auto simpleAreaE = std::make_shared<AreaEvent>(exciter, eventType, shared_from_this());
+
+		// Test sur toutes les aires
+		// auto multiAreaE = testAreasInteractionsWithExciter(exciter);
+		//multiAreaE->AddAreaEvent(simpleAreaE); // excitateur lui-même
+
+		graphicE = simpleAreaE;//multiAreaE;
+	}
+
+	return graphicE;
+}
+
+std::shared_ptr<AreaEvent> AmusingScene::AddDefaultExciter()
+{
+	auto canvasManagerLocked = canvasManager.lock();
+	if (!canvasManagerLocked)
+		throw std::logic_error("Cannot add a new current exciter : cannot get a Unique ID from the canvas manager (not linked to this)");
+
+	auto exciter = std::make_shared<TabCursor>(canvasManagerLocked->GetNextAreaId(),
+		canvasManagerLocked->GetCommonTimePoint(),
+		Exciter::AdditionnalGrabRadius::Medium);
+	exciter->setZone(Rectangle<int>(canvasComponent->getWidth() - 100, 4, 100, canvasComponent->getHeight() - 8));
+	std::shared_ptr<AreaEvent> areaE = AddExciter(exciter);
+	exciter->setCenterPosition(bpt(canvasComponent->getWidth() - 50, 4 + (canvasComponent->getHeight() - 8) / 2.0));
+	exciter->CanvasResized(canvasComponent);
+	return areaE;
+}
+
+std::shared_ptr<AreaEvent> AmusingScene::DeleteTabExciter()
+{
+	auto areaE = std::make_shared<AreaEvent>();
+
+	if (selectedExciter == nullptr)
+	{
+		for (size_t i = 0; i < currentExciters.size(); ++i)
+		{
+			auto exciterToDelete = std::dynamic_pointer_cast<Cursor>(currentExciters[i]);
+			if (exciterToDelete == nullptr)
+				selectedExciter = currentExciters[i];
+		}
+	}
+	
+	// Recherche inverse de l'index, et dé-sélection et suppression directement
+	for (size_t i = 0; i < currentExciters.size() && selectedExciter; i++)
+	{
+		if (currentExciters[i] == selectedExciter)
+		{
+			std::shared_ptr<MultiAreaEvent> multiAreaE_temp = setSelectedExciter(nullptr);
+			multiAreaE_temp->AddAreaEvent(DeleteCurrentExciterByIndex(i));
+			areaE = multiAreaE_temp;
+		}
+	}
+	
+	return areaE;
 }
 
 void AmusingScene::AddCursor()
@@ -976,10 +1066,53 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDoubleClick(const Mouse
 			{
 				if(auto sceneComponent = (AmusingSceneComponent*)canvasComponent)
 				{
-					sceneComponent->SetAreaOptionsVisible(true);
+					//sceneComponent->SetAreaOptionsVisible(true);
+					previousAreaLocation = completeArea->getCenter();
+					Point<double> tr((double)canvasComponent->getWidth() / 2.0 - completeArea->getCenter().get<0>(), (double)canvasComponent->getHeight() / 2.0 - completeArea->getCenter().get<1>());
+					completeArea->Translate(tr);
+					completeArea->CanvasResized(canvasComponent);
+					completeArea->SetActive(true);
+					completeArea->showAllTarget(true);
+					previousSize = completeArea->GetFullSceneRatio();
+					completeArea->SizeChanged(previousSize, false);
+					completeArea->updateContourPoints();
+					completeArea->CanvasResized(canvasComponent);
 				}
 				return std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::Selected, -1, shared_from_this()));
 			}
+	}
+	return std::shared_ptr<GraphicEvent>();
+}
+
+void AmusingScene::HideUnselectedAreas()
+{
+	// grise les autres aires
+	for (int i = 0; i < areas.size();++i)
+	{
+		if (areas[i] != selectedArea)
+		{
+			areas[i]->SetOpacityMode(OpacityMode::Low);
+			if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
+				completeArea->SetActive(false);
+		}
+	}
+	allowOtherAreaSelection = false; // empeche de selectionner d'autes aires pendant qu'on en édite une !
+}
+
+std::shared_ptr<GraphicEvent> AmusingScene::resetAreaPosition()
+{
+	if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(selectedArea))
+	{
+		Point<double> tr(previousAreaLocation.get<0>() - completeArea->getCenter().get<0>(), previousAreaLocation.get<1>() - completeArea->getCenter().get<1>());
+		completeArea->Translate(tr);
+		completeArea->showAllTarget(false);
+		completeArea->SizeChanged(1.0 / previousSize, false);
+		completeArea->updateContourPoints();
+		completeArea->CanvasResized(canvasComponent);
+		completeArea->DisableTranslation(false);
+		
+		allowOtherAreaSelection = true; // pour permettre de sélectionner à nouveau d'autres aires
+		return std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::Selected, -1, shared_from_this()));
 	}
 	return std::shared_ptr<GraphicEvent>();
 }
@@ -995,10 +1128,6 @@ std::shared_ptr<AreaEvent> AmusingScene::AddTrueCircle(uint64_t nextAreaId)
 
 
 
-std::shared_ptr<AnimatedPolygon> AmusingScene::getFirstArea()
-{
-	return std::dynamic_pointer_cast<AnimatedPolygon>(areas[0]);
-}
 
 std::shared_ptr<Amusing::CompletePolygon> AmusingScene::getFirstCompleteArea()
 {
@@ -1038,19 +1167,13 @@ std::shared_ptr<MultiAreaEvent> AmusingScene::SetAllAudioPositions(double /*posi
 	return areaE;
 }
 
-std::shared_ptr<AnimatedPolygon> AmusingScene::getNextArea()
-{
-	DBG("Nfollower = " + (String)Nfollower);
-	++Nfollower;
-	return std::dynamic_pointer_cast<AnimatedPolygon>(areas[(Nfollower - 1)]);
-}
 
 
 
 
 int AmusingScene::getNumberArea()
 {
-	return (int)areas.size() -currentIntersectionsAreas.size();
+	return int(areas.size() -currentIntersectionsAreas.size());
 }
 
 std::shared_ptr<AreaEvent> AmusingScene::OnDelete()
@@ -1087,11 +1210,11 @@ std::shared_ptr<AreaEvent> AmusingScene::SetSelectedArea(std::shared_ptr<IEditab
 					currentColor = manager->getCurrentColor(completeArea);
 					DBG("speed to show = " + (String)currentSpeed);
 				}
-				sceneComponent->SetAreaOptionsVisible(true, currentSpeed, currentVelocity, currentOctave, currentColor);
+				//sceneComponent->SetAreaOptionsVisible(true, currentSpeed, currentVelocity, currentOctave, currentColor);
 			}
 		}
-		else
-			sceneComponent->SetAreaOptionsVisible(false);
+		/*else
+			sceneComponent->SetAreaOptionsVisible(false);*/
 	}
 	return areaE;
 }
@@ -1123,8 +1246,11 @@ std::shared_ptr<AreaEvent> AmusingScene::SetSelectedAreaColour(Colour newColour)
 	std::shared_ptr<AreaEvent> areaE(new AreaEvent());
 	if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(selectedArea))
 	{
-		completeArea->SetFillColour(newColour);
-		areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::ColorChanged, completeArea->GetId(), shared_from_this()));
+		if (completeArea->GetFillColour() != newColour)
+		{
+			completeArea->SetFillColour(newColour);
+			areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::ColorChanged, completeArea->GetId(), shared_from_this()));
+		}
 	}
 	return areaE;
 }
@@ -1170,6 +1296,7 @@ std::shared_ptr<bptree::ptree> AmusingScene::GetTree() const
 	bptree::ptree areasTree;
 
 	// Ajout des aires interactives
+	int currentIndex = 0;
 	for (size_t i = 0; i < areas.size(); i++)
 	{
 		bool isIntersection = false;
@@ -1182,7 +1309,8 @@ std::shared_ptr<bptree::ptree> AmusingScene::GetTree() const
 		if (!isIntersection)
 		{
 			auto areaTree = areas[i]->GetTree();
-			areaTree->put("<xmlattr>.index", i);
+			areaTree->put("<xmlattr>.index", currentIndex);
+			++currentIndex;
 			if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
 			{
 				bptree::ptree areaAudioParameterTree;
@@ -1216,5 +1344,30 @@ std::shared_ptr<MultiAreaEvent> AmusingScene::OnUnselection(bool /*shutExcitersD
 	
 
 	return multiAreaE;
+}
+
+std::shared_ptr<AreaEvent> AmusingScene::addShadowCursor()
+{
+	std::shared_ptr<AreaEvent> areaE;
+	if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(selectedArea))
+	{
+		if (auto tabCursor = std::dynamic_pointer_cast<TabCursor>(selectedExciter))
+		{
+			bpt newCenter(canvasComponent->getWidth(), canvasComponent->getHeight());
+			boost::geometry::multiply_point(newCenter,completeArea->getPolygon().outer().at(0));
+			tabCursor->EnableMagnet(false);
+			tabCursor->freeSize(false);
+			tabCursor->setCenterPosition(newCenter);
+			tabCursor->SizeChanged(2.0, false);
+			tabCursor->SetCurrentSize(2.0);
+			tabCursor->updateContourPoints();
+			tabCursor->CanvasResized(canvasComponent);
+			tabCursor->SetActive(true);
+			tabCursor->SetEnableTranslationOnly(false);
+			areaE = std::shared_ptr<AreaEvent>(new AreaEvent(tabCursor, AreaEventType::Translation, shared_from_this()));
+		}
+
+	}
+	return areaE;
 }
 

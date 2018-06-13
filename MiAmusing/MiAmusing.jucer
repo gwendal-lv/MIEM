@@ -3,7 +3,7 @@
 <JUCERPROJECT id="MkqyzI" name="MiAmusing" projectType="guiapp" version="1.0.0"
               bundleIdentifier="com.yourcompany.MiAmusing" includeBinaryInAppConfig="1"
               jucerVersion="5.3.2" displaySplashScreen="1" reportAppUsage="1"
-              splashScreenColour="Dark" cppLanguageStandard="14" companyCopyright="">
+              splashScreenColour="Dark" cppLanguageStandard="11" companyCopyright="">
   <MAINGROUP id="Ak6ojc" name="MiAmusing">
     <GROUP id="{E74684B7-0B02-F2F7-C571-317039AB4495}" name="Source">
       <GROUP id="{8B585BA3-71E5-255C-C070-4910B268744C}" name="Model">
@@ -11,6 +11,9 @@
               file="Source/SwappableSynth.cpp"/>
         <FILE id="At6bg1" name="SwappableSynth.h" compile="0" resource="0"
               file="Source/SwappableSynth.h"/>
+        <FILE id="urht6A" name="AudioRecorder.cpp" compile="1" resource="0"
+              file="Source/AudioRecorder.cpp"/>
+        <FILE id="NUdghm" name="AudioRecorder.h" compile="0" resource="0" file="Source/AudioRecorder.h"/>
         <FILE id="tsro0s" name="ReadingHead.cpp" compile="1" resource="0" file="Source/ReadingHead.cpp"/>
         <FILE id="sh1gU7" name="ReadingHead.h" compile="0" resource="0" file="Source/ReadingHead.h"/>
         <FILE id="EqpVAZ" name="BaseMidiSender.cpp" compile="1" resource="0"
@@ -29,10 +32,6 @@
       <GROUP id="{92B3F81C-D5E2-88E6-6EC3-B31792EEA57D}" name="Presenter">
         <FILE id="ZfKBA3" name="LUT.h" compile="0" resource="0" file="Source/LUT.h"/>
         <GROUP id="{690FB287-1852-3C4A-91A1-F5B474582291}" name="Areas">
-          <FILE id="r2GOwl" name="AnimatedPolygon.cpp" compile="1" resource="0"
-                file="Source/AnimatedPolygon.cpp"/>
-          <FILE id="MRW6Cl" name="AnimatedPolygon.h" compile="0" resource="0"
-                file="Source/AnimatedPolygon.h"/>
           <FILE id="aIERwf" name="CompletePolygon.cpp" compile="1" resource="0"
                 file="Source/CompletePolygon.cpp"/>
           <FILE id="cOpwTH" name="CompletePolygon.h" compile="0" resource="0"
@@ -43,6 +42,8 @@
                 file="Source/IntersectionPolygon.cpp"/>
           <FILE id="FpRTHC" name="IntersectionPolygon.h" compile="0" resource="0"
                 file="Source/IntersectionPolygon.h"/>
+          <FILE id="Xlznab" name="TabCursor.cpp" compile="1" resource="0" file="Source/TabCursor.cpp"/>
+          <FILE id="rqP78J" name="TabCursor.h" compile="0" resource="0" file="Source/TabCursor.h"/>
         </GROUP>
         <GROUP id="{95DB4C60-BE55-A464-CA00-678CBCAB86CE}" name="Scenes">
           <FILE id="nhV1zs" name="AmusingScene.cpp" compile="1" resource="0"
@@ -68,6 +69,10 @@
               file="Source/AmusingSceneComponent.h"/>
         <FILE id="zL9zBL" name="AreaOptions.cpp" compile="1" resource="0" file="Source/AreaOptions.cpp"/>
         <FILE id="HIcl1x" name="AreaOptions.h" compile="0" resource="0" file="Source/AreaOptions.h"/>
+        <FILE id="a8Ct4o" name="AreaOptionsComponent.cpp" compile="1" resource="0"
+              file="Source/AreaOptionsComponent.cpp"/>
+        <FILE id="A2C9sM" name="AreaOptionsComponent.h" compile="0" resource="0"
+              file="Source/AreaOptionsComponent.h"/>
         <FILE id="luxgya" name="AudioDeviceAndMidiOutputSelectorComponent.cpp"
               compile="1" resource="0" file="Source/AudioDeviceAndMidiOutputSelectorComponent.cpp"/>
         <FILE id="Xq7fsV" name="AudioDeviceAndMidiOutputSelectorComponent.h"
@@ -330,7 +335,8 @@
     </ANDROIDSTUDIO>
     <VS2017 targetFolder="Builds/VisualStudio2017">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" headerPath="..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\&#10;..\..\..\"/>
+        <CONFIGURATION isDebug="1" name="Debug" headerPath="..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\&#10;..\..\..\"
+                       defines="BOOST_ALL_NO_LIB=1"/>
         <CONFIGURATION isDebug="0" name="Release" headerPath="..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\&#10;..\..\..\"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
@@ -351,52 +357,6 @@
         <MODULEPATH id="juce_audio_basics" path="..\..\JUCE\modules"/>
       </MODULEPATHS>
     </VS2017>
-    <XCODE_IPHONE targetFolder="Builds/iOS" extraDefs="__AMUSINGIOS">
-      <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" headerPath="../../../MiamCommon/Source/&#10;../../../SpatCommon/Source/&#10;../../../"/>
-        <CONFIGURATION isDebug="0" name="Release" headerPath="../../../MiamCommon/Source/&#10;../../../SpatCommon/Source/&#10;../../../"/>
-      </CONFIGURATIONS>
-      <MODULEPATHS>
-        <MODULEPATH id="juce_video" path="..\..\JUCE\modules"/>
-        <MODULEPATH id="juce_opengl" path="..\..\JUCE\modules"/>
-        <MODULEPATH id="juce_gui_extra" path="..\..\JUCE\modules"/>
-        <MODULEPATH id="juce_gui_basics" path="..\..\JUCE\modules"/>
-        <MODULEPATH id="juce_graphics" path="..\..\JUCE\modules"/>
-        <MODULEPATH id="juce_events" path="..\..\JUCE\modules"/>
-        <MODULEPATH id="juce_dsp" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_data_structures" path="..\..\JUCE\modules"/>
-        <MODULEPATH id="juce_cryptography" path="..\..\JUCE\modules"/>
-        <MODULEPATH id="juce_core" path="..\..\JUCE\modules"/>
-        <MODULEPATH id="juce_audio_utils" path="..\..\JUCE\modules"/>
-        <MODULEPATH id="juce_audio_processors" path="..\..\JUCE\modules"/>
-        <MODULEPATH id="juce_audio_formats" path="..\..\JUCE\modules"/>
-        <MODULEPATH id="juce_audio_devices" path="..\..\JUCE\modules"/>
-        <MODULEPATH id="juce_audio_basics" path="..\..\JUCE\modules"/>
-      </MODULEPATHS>
-    </XCODE_IPHONE>
-    <XCODE_MAC targetFolder="Builds/MacOSX" extraDefs="__AMUSINGOSX">
-      <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" headerPath="../../../MiamCommon/Source/&#10;../../../SpatCommon/Source/&#10;../../../"/>
-        <CONFIGURATION isDebug="0" name="Release" headerPath="../../../MiamCommon/Source/&#10;../../../SpatCommon/Source/&#10;../../../"/>
-      </CONFIGURATIONS>
-      <MODULEPATHS>
-        <MODULEPATH id="juce_video" path="..\..\JUCE\modules"/>
-        <MODULEPATH id="juce_opengl" path="..\..\JUCE\modules"/>
-        <MODULEPATH id="juce_gui_extra" path="..\..\JUCE\modules"/>
-        <MODULEPATH id="juce_gui_basics" path="..\..\JUCE\modules"/>
-        <MODULEPATH id="juce_graphics" path="..\..\JUCE\modules"/>
-        <MODULEPATH id="juce_events" path="..\..\JUCE\modules"/>
-        <MODULEPATH id="juce_dsp" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_data_structures" path="..\..\JUCE\modules"/>
-        <MODULEPATH id="juce_cryptography" path="..\..\JUCE\modules"/>
-        <MODULEPATH id="juce_core" path="..\..\JUCE\modules"/>
-        <MODULEPATH id="juce_audio_utils" path="..\..\JUCE\modules"/>
-        <MODULEPATH id="juce_audio_processors" path="..\..\JUCE\modules"/>
-        <MODULEPATH id="juce_audio_formats" path="..\..\JUCE\modules"/>
-        <MODULEPATH id="juce_audio_devices" path="..\..\JUCE\modules"/>
-        <MODULEPATH id="juce_audio_basics" path="..\..\JUCE\modules"/>
-      </MODULEPATHS>
-    </XCODE_MAC>
   </EXPORTFORMATS>
   <MODULES>
     <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0"/>

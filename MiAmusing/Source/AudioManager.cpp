@@ -10,9 +10,9 @@
 //..\..\..\..\boost_1_63_0\geometry\algorithms
 #include<thread>
 #include<cmath>
-#include<boost/geometry.hpp>
-#include<boost/lockfree/queue.hpp>
-#include<boost/lockfree/spsc_queue.hpp>
+#include<boost\geometry.hpp>
+#include<boost\lockfree\queue.hpp>
+#include<boost\lockfree\spsc_queue.hpp>
 
 
 
@@ -30,8 +30,6 @@ AudioManager::AudioManager(AmusingModel *m_model) : model(m_model), state(Stop),
 	DBG("AudioManager::AudioManager");
 
 	beatsByTimeLine = 4;
-
-	//model->sharedAudioDeviceManager->addAudioCallback(&recorder);
 
 	setSource(this);
 	runThread = true;
@@ -72,7 +70,6 @@ AudioManager::~AudioManager()
 	else
 		DBG("still exist");
 
-	//model->sharedAudioDeviceManager->removeAudioCallback(&recorder);
 	model->removeDeviceManagerFromOptionWindow();
 	//delete midiOuput;
 	delete metronome;
@@ -108,7 +105,6 @@ void AudioManager::prepareToPlay(int samplesPerBlockExpected, double _sampleRate
 		//audioFormatManager.clearFormats();
 	}
 	
-	//int numOutChannels = model->sharedAudioDeviceManager->getCurrentAudioDevice()->getActiveOutputChannels().getHighestBit() + 1;
 }
 void AudioManager::releaseResources()
 {
@@ -290,8 +286,6 @@ void AudioManager::sendPosition()
 	//model->SendParamChange(param);
 	
 }
-
-
 
 void AudioManager::setUsingSampledSound()
 {

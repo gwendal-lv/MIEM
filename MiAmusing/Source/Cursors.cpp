@@ -19,6 +19,7 @@ using namespace Amusing;
 Cursor::Cursor(int64_t _Id) : Exciter(_Id, std::chrono::time_point<clock>())
 {
 	speed = 1;
+	minimumSizePercentage = 0.01;
 }
 
 Cursor::Cursor(int64_t _Id, bpt _center, double _r, Colour _fillColour, float _canvasRatio) :
@@ -54,6 +55,7 @@ Cursor::Cursor(int64_t _Id, bpt _center, double _r, Colour _fillColour, float _c
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() - (b / 2)*yScale));
 
 	SetIsAnimationSynchronized(false);
+	minimumSizePercentage = 0.01;
 }
 
 //Cursor::Cursor(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio) :
@@ -86,12 +88,24 @@ Cursor::~Cursor()
 void Cursor::setSpeed(double m_speed)
 {
 	speed = m_speed;
-	if (speed < 4.0 && speed > 0.1)
+	if (speed <= 4 && speed > 0.1)
 	{
-		double newCursorSize = (double)initCursorSize / m_speed;
+		double newCursorSize = 0.0;
+		if (speed >= 1)
+			newCursorSize = 1.0 + (speed - 1.0) * (2.0 - 1.0) / 3.0;
+		else
+			newCursorSize = 0.6 + (4 - (1.0 / speed)) * (1.0 - 0.6) / 3.0;
+		newCursorSize *= initCursorSize;
+		//double newCursorSize = (double)initCursorSize / m_speed;
 		double resize = newCursorSize / cursorSize;
 		if (SizeChanged(resize, false))
+		{
 			cursorSize = newCursorSize;
+			if (cursorSize > 0.5)
+				setVerticesCount(64);
+			else
+				setVerticesCount(32);
+		}
 	}
 }
 

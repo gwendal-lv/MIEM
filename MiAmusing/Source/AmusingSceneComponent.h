@@ -12,9 +12,20 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "SceneCanvasComponent.h"
+
+#include <vector>
+
 #include "AreaOptions.h"
 
-
+enum SideBarType
+{
+	None,
+	GrayScale,
+	TextScale,
+	ColourButtons,
+	ColourScale,
+	ScaleMarking,
+};
 
 //==============================================================================
 /*
@@ -23,6 +34,7 @@ class AmusingSceneComponent    : public SceneCanvasComponent,
 	public std::enable_shared_from_this<AmusingSceneComponent>,
 	public Button::Listener
 {
+
 public:
     AmusingSceneComponent();
     ~AmusingSceneComponent();
@@ -49,6 +61,12 @@ public:
 
 	void mouseDown(const juce::MouseEvent &event) override;
 	void mouseDoubleClick(const juce::MouseEvent &event) override;
+	void mouseDrag(const juce::MouseEvent &event) override;
+
+	void mouseUp(const juce::MouseEvent & event) override;
+
+	void ShowSideBar(SideBarType sideBarType);
+	void SetNumScaleMarking(int _numScaleMarking) { numScaleMarking = _numScaleMarking; }
 
 	/*void mouseDown(const juce::MouseEvent &event) override;
 	void mouseDrag(const juce::MouseEvent &event) override;
@@ -58,6 +76,9 @@ private:
 	static const int Npolygons = 20;
 
 	bool isOptionShowed;
+	SideBarType currentSideBarType;
+	std::vector<Colour> buttonsColor;
+	int numScaleMarking;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AmusingSceneComponent)
 };

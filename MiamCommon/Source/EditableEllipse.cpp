@@ -691,7 +691,7 @@ void EditableEllipse::Translate(const Point<double>& translation)
 void EditableEllipse::setCenterPosition(bpt newCenter) // pixels
 {
 	
-	Point<double> translation(newCenter.get<0>() - centerInPixels.get<0>(), newCenter.get<0>() - centerInPixels.get<0>()); // pixels
+	Point<double> translation(newCenter.get<0>() - centerInPixels.get<0>(), newCenter.get<1>() - centerInPixels.get<1>()); // pixels
 	Translate(translation);
 	
 }

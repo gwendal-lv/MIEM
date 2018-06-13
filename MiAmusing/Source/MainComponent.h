@@ -37,6 +37,7 @@ namespace Amusing
 	class AmusingModel;
 	class GraphicSessionManager;
 	class OptionWindow;
+	
 }
 using namespace Amusing;
 //==============================================================================

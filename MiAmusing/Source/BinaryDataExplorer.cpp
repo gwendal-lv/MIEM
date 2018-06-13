@@ -71,7 +71,7 @@ int BinaryDataExplorer::getNumRows()
 
 // This is overloaded from TableListBoxModel, and must paint any cells that aren't using custom
 // components.
-void BinaryDataExplorer::paintCell(Graphics& g, int rowNumber, int columnId,
+void BinaryDataExplorer::paintCell(Graphics& g, int rowNumber, int /*columnId*/,
 	int width, int height, bool rowIsSelected)
 {
 	if (rowIsSelected)
@@ -94,7 +94,7 @@ void BinaryDataExplorer::paintRowBackground(Graphics& g, int rowNumber, int /*wi
 		g.fillAll(alternateColour);
 }
 
-void BinaryDataExplorer::cellClicked(int rowNumber, int columnId, const MouseEvent &)
+void BinaryDataExplorer::cellClicked(int rowNumber, int /*columnId*/, const MouseEvent &)
 {
 	binaryDataName = BinaryData::namedResourceList[rowNumber];
 }

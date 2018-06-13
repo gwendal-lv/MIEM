@@ -113,8 +113,19 @@ namespace Amusing
 		bool getChordParameters(int idx, std::shared_ptr<CompletePolygon> &chordArea, double &pC);
 
 		virtual std::shared_ptr<bptree::ptree> GetTree() override;
+
+		void showAllTarget(bool shouldBeShowed);
+
+		void Translate(const Point<double>& translation);
+
+		void DisableTranslation(bool shouldBeDisabled);
+
+		double GetFullSceneRatio();
+
+		bool SizeChanged(double _size, bool minSize);
 		
 	private:
+		int numAngles;
 		JUCE_LEAK_DETECTOR(CompletePolygon)
 		// attributes linked to the Cursor
 		bool showCursor;
@@ -146,6 +157,7 @@ namespace Amusing
 		void PaintBullsEye(Graphics& g);
 		void CanvasResizedBullsEye(SceneCanvasComponent* _parentCanvas);
 		std::vector<int> OnCircles;
+		bool showAllCircles;
 		
 		// flags and invisible points for chords
 		std::vector<bool> chordFlag;
@@ -155,6 +167,8 @@ namespace Amusing
 
 
 		double pc; // si ca foire quand on bouge la forme en mm temps que le curseur doit tourner -> garder en memoire le poucentage ou se trouve le curseur et rappeler setreadingposition avec ce pourcentage pour le remettre au nouvel endroit.
+
+		bool onlyRotationAllowed;
 	};
 }
 

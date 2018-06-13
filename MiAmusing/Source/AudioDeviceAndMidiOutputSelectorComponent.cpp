@@ -67,7 +67,7 @@ void AudioDeviceAndMidiOutputSelectorComponent::buttonStateChanged(Button *butto
 	}
 }
 
-void AudioDeviceAndMidiOutputSelectorComponent::buttonClicked(Button* clickedButton)
+void AudioDeviceAndMidiOutputSelectorComponent::buttonClicked(Button* /*clickedButton*/)
 {
 
 }

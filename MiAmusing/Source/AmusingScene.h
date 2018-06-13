@@ -12,7 +12,6 @@
 #define AMUSINGSCENE_H_INCLUDED
 
 #include "EditableScene.h"
-#include "AnimatedPolygon.h"
 #include "IntersectionPolygon.h"
 #include "Cursors.h"
 #include "IDrawableArea.h"
@@ -22,7 +21,6 @@ using namespace Miam;
 
 namespace Amusing
 {
-	class AnimatedPolygon;
 	class CompletePolygon;
 	class Follower;
 }
@@ -41,7 +39,6 @@ namespace Miam
 
 		
 
-		void AddAnimatedArea(uint64_t nextAreaId);
 		std::shared_ptr<AreaEvent> AddNedgeArea(uint64_t nextAreaId, int N);
 		void AddIntersections(std::shared_ptr<IDrawableArea> m_area);
 		void AddAllIntersections();
@@ -50,16 +47,21 @@ namespace Miam
 
 		std::shared_ptr<GraphicEvent> OnCanvasMouseDown(const MouseEvent& mouseE) override;
 		std::shared_ptr<GraphicEvent> OnCanvasMouseDrag(const MouseEvent& mouseE) override;
+		std::shared_ptr<GraphicEvent> OnInteractiveCanvasMouseDrag(const MouseEvent& mouseE);
+		std::shared_ptr<AreaEvent> AddDefaultExciter();
+		std::shared_ptr<AreaEvent> DeleteTabExciter();
 		std::shared_ptr<GraphicEvent> OnCanvasMouseUp(const MouseEvent& mouseE) override;
 		std::shared_ptr<GraphicEvent> OnCanvasMouseDoubleClick(const MouseEvent& mouseE);
+
+		void HideUnselectedAreas();
+
+		std::shared_ptr<GraphicEvent> resetAreaPosition();
 
 		std::shared_ptr<AreaEvent> AddTrueCircle(uint64_t nextAreaId);
 		std::shared_ptr<AreaEvent> AddCompleteArea(uint64_t);
 
 		
 		int Nfollower;
-		std::shared_ptr<Amusing::AnimatedPolygon> getFirstArea();
-		std::shared_ptr<Amusing::AnimatedPolygon> getNextArea();
 		std::shared_ptr<Amusing::CompletePolygon> getFirstCompleteArea();
 		std::shared_ptr<Miam::MultiAreaEvent> SetAllAudioPositions(double position);
 
@@ -109,8 +111,13 @@ namespace Miam
 		
 		virtual std::shared_ptr<MultiAreaEvent> OnSelection(bool resetExciters = true) override; // on écrase resetExciters dans la fonction pour pas réinitialiser les exciters
 		virtual std::shared_ptr<MultiAreaEvent> OnUnselection(bool shutExcitersDown = true) override; // on remet aussi le paramètre par défaut à 0
+
+		std::shared_ptr<AreaEvent> addShadowCursor();
 	private:
 		std::map<int, std::shared_ptr<Amusing::CompletePolygon>> mouseIdxToArea;
+		bpt previousAreaLocation;
+		double previousSize;
+		bool allowOtherAreaSelection;
 	};
 
 
