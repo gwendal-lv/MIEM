@@ -369,7 +369,7 @@ void AmusingScene::AddAllIntersections()
 	if (!canvasManagerLocked)
 		throw std::logic_error("Cannot add a new current exciter : cannot get a Unique ID from the canvas manager (not linked to this)");
 
-	int N = areas.size();
+	int N = (int)areas.size();
 	for (int i = 0; i < N; ++i)
 	{
 		for (int j = i + 1; j < N; ++j)

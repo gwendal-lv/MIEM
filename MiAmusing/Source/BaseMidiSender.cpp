@@ -613,6 +613,9 @@ void TimeLine::updateFilter()
 		else
 			currentFilterFrequency += deltaF;
 
+		if (currentFilterFrequency < 0.0)
+			currentFilterFrequency = 0;
+
 		//switch (filterType)
 		//{
 		//case LowPass:

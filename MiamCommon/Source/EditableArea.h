@@ -66,7 +66,6 @@ namespace Miam
 		int GetPointDraggedId() override { return pointDraggedId; }
         
         
-        
         // ===== COMMON ATTRIBUTES TO ALL EDITABLE AREAS =====
         protected :
         

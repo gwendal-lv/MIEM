@@ -23,8 +23,8 @@
 #include "MultiAreaEvent.h"
 
 
-#include "boost\geometry.hpp"
-#include "boost\geometry\algorithms\transform.hpp"
+#include "boost/geometry.hpp"
+#include "boost/geometry/algorithms/transform.hpp"
 
 using namespace Amusing;
 using namespace Miam;

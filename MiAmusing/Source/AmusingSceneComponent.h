@@ -73,6 +73,8 @@ public:
 	void mouseUp(const juce::MouseEvent &event) override;*/
 
 private:
+	static const int Npolygons = 20;
+
 	bool isOptionShowed;
 	SideBarType currentSideBarType;
 	std::vector<Colour> buttonsColor;

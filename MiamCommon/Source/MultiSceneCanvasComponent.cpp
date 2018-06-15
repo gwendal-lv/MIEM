@@ -122,7 +122,7 @@ void MultiSceneCanvasComponent::UpdateSceneButtons(std::vector< std::shared_ptr<
 
 void MultiSceneCanvasComponent::updateSceneButtonsBounds()
 {
-    int buttonWidth = roundFloatToInt(((float)(getWidth())-(float)(space))/(float)(sceneChoiceTextButtons.size()))-space;
+    int buttonWidth = int(((float)(getWidth())-(float)(space))/(float)(sceneChoiceTextButtons.size()))-space;
     for (size_t i=0 ; i<sceneChoiceTextButtons.size() ; i++)
     {
         sceneChoiceTextButtons[i]->setBounds(space+(int)(i)*(buttonWidth+space), 0, buttonWidth, 24);
