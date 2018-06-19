@@ -157,6 +157,19 @@ namespace Miam
         public :
         
 			int GetVerticesBufferSize() override { return numVerticesRing; }
+			float* GetVerticesBufferPtr() override
+			{
+				return vertices_buffer.data();
+			}
+			float* GetCoulourBufferPtr() override
+			{
+				return coulours_buffer.data();
+			}
+			int* GetIndicesBufferPtr() override
+			{
+				return indices_buffer.data();
+			}
+
 			float GetVerticesBufferElt(int idx) override
 			{ 
 				try

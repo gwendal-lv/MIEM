@@ -36,6 +36,10 @@ SceneCanvasComponent::SceneCanvasComponent(int numShapesMax, int numPointsMax) :
 
 void SceneCanvasComponent::init(int numShapesMax, int numPointsMax)
 {
+	EunderTime = 0.0;
+	previousMaxSize = 0;
+	needToResetBufferParts = false;
+
 	Nshapes = new const int(numShapesMax/*Npolygons + Npolygons * (Npolygons + 1) / 2*/);
 
 	numPointsPolygon = new const int(numPointsMax);
@@ -209,6 +213,7 @@ void SceneCanvasComponent::resized()
 void SceneCanvasComponent::newOpenGLContextCreated()
 {
     //DBG("SceneCanvasComponent : init OpenGL");
+	numFrame = 0;
 
 	// Will init the counter
 	//displayFrequencyMeasurer.OnNewFrame();
@@ -245,10 +250,30 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 	projectionMatrix = new OpenGLShaderProgram::Uniform(*shaderProgram, "projectionMatrix");
 	viewMatrix = new OpenGLShaderProgram::Uniform(*shaderProgram, "viewMatrix");
 	modelMatrix = new OpenGLShaderProgram::Uniform(*shaderProgram, "modelMatrix");
+
+
+	/// calcul des matrices
+	Matrix3D<float> testView = lookAt(Vector3D<float>(0, 0, 1), Vector3D<float>(0, 0, 0), Vector3D<float>(0, -1, 0));
+	//Matrix3D<float> testProject = perspective((float)getWidth(), (float)getHeight(), 0.1f, 100.0f);
+	if (projectionMatrix != nullptr)
+		projectionMatrix->setMatrix4(perspective((float)getWidth(), (float)getHeight(), 0.5f, 1.1f).mat, 1, false);
+
+	if (viewMatrix != nullptr)
+		viewMatrix->setMatrix4(testView.mat, 1, false);
+
+	Matrix3D<float> model(1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, -1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, (float)getHeight(), 0.0f, 1.0f);//10*getHeight()
+
+	if (modelMatrix != nullptr)
+		modelMatrix->setMatrix4(model.mat, 1, false);
+
+	//shaderProgram->use(); // on utilise qu'un seul shader program pour le moment donc on appelle une seule fois cette fonction
 }
 void SceneCanvasComponent::renderOpenGL()
 {
-
+	++numFrame;
 
 	//DBG("render : " + getName());
     auto manager = canvasManager.lock();
@@ -289,9 +314,23 @@ void SceneCanvasComponent::renderOpenGL()
     // en mémoire finalement (on utilisera reset() )
     if (areasCountChanged)
     {
+		if (manager->GetAsyncDrawableObjects().size() < duplicatedAreas.size())
+		{
+			previousMaxSize = (int)duplicatedAreas.size();
+			needToResetBufferParts = true;
+		}
+		else
+		{
+			previousMaxSize = (int)manager->GetAsyncDrawableObjects().size();
+			needToResetBufferParts = false;
+		}
         canvasAreasPointersCopies.resize(manager->GetAsyncDrawableObjects().size());
         duplicatedAreas.resize(manager->GetAsyncDrawableObjects().size());
     }
+	else
+	{
+		previousMaxSize = (int)duplicatedAreas.size();
+	}
     // Vérification simple de chaque aire 1 par 1
     size_t itIndex = 0;
     for (auto it = manager->GetAsyncDrawableObjects().begin() ;
@@ -314,11 +353,19 @@ void SceneCanvasComponent::renderOpenGL()
     
     // - - - - - Areas painting (including exciters if existing) - - - - -
     // Sans bloquer, du coup, les autres threads (pour réactivité max...)
-    for (size_t i=0;i<duplicatedAreas.size();i++)
+	const int duplicatedSize = duplicatedAreas.size();
+	for (size_t i=0;i<duplicatedSize;i++)
     {
 		DrawShape(duplicatedAreas[i], (int)i);
     }
-	for (int i = (int)duplicatedAreas.size() * *shapeVertexBufferSize; i < *vertexBufferSize; ++i)
+
+	if (needToResetBufferParts)
+	{
+		std::fill(g_vertex_buffer_data + (int)duplicatedAreas.size() * *shapeVertexBufferSize, g_vertex_buffer_data + previousMaxSize * *shapeVertexBufferSize/**vertexBufferSize*/, 0.0f);
+		std::fill(g_color_buffer_data + (int)duplicatedAreas.size() * *shapeColorBufferSize, g_color_buffer_data + previousMaxSize * *shapeColorBufferSize/**colorBufferSize*/, 0.0f);
+		std::fill(indices + (int)duplicatedAreas.size() * *shapeIndicesSize, indices + previousMaxSize * *shapeIndicesSize/**indicesSize*/, 0);
+	}
+	/*for (int i = (int)duplicatedAreas.size() * *shapeVertexBufferSize; i < *vertexBufferSize; ++i)
 	{
 		g_vertex_buffer_data[i] = 0.0f;
 	}
@@ -329,43 +376,28 @@ void SceneCanvasComponent::renderOpenGL()
 	for (int i = (int)duplicatedAreas.size() * *shapeIndicesSize; i < *indicesSize; ++i)
 	{
 		indices[i] = 0;
-	}
+	}*/
 
 	//glOrtho(0,getWidth(),0, getHeight(), 0.5f, 1.1f);
 
-	/// calcul des matrices
-	Matrix3D<float> testView = lookAt(Vector3D<float>(0, 0, 1), Vector3D<float>(0, 0, 0), Vector3D<float>(0, -1, 0));
-	Matrix3D<float> testProject = perspective((float)getWidth(), (float)getHeight(), 0.1f, 100.0f);
-	if (projectionMatrix != nullptr)
-		projectionMatrix->setMatrix4(perspective((float)getWidth(), (float)getHeight(), 0.5f, 1.1f).mat, 1, false);
 
-	if (viewMatrix != nullptr)
-		viewMatrix->setMatrix4(testView.mat, 1, false);
-
-	Matrix3D<float> model(1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, -1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, (float)getHeight(), 0.0f, 1.0f);//10*getHeight()
-
-	if (modelMatrix != nullptr)
-		modelMatrix->setMatrix4(model.mat, 1, false);
 
 	/// Draw triangle
 	openGlContext.extensions.glEnableVertexAttribArray(position->attributeID);
 	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-	openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, *vertexBufferSize * sizeof(GLfloat)/*sizeof(g_vertex_buffer_data)*/, g_vertex_buffer_data);
+	openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, /**vertexBufferSize*/ previousMaxSize * *shapeVertexBufferSize * sizeof(GLfloat)/*sizeof(g_vertex_buffer_data)*/, g_vertex_buffer_data);
 	openGlContext.extensions.glVertexAttribPointer(position->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
 	//openGLContext.extensions.glEnableVertexAttribArray(position->attributeID);
 
 	openGlContext.extensions.glEnableVertexAttribArray(colour->attributeID);
 	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
-	openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, *colorBufferSize * sizeof(GLfloat), g_color_buffer_data);
+	openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, /**colorBufferSize*/ previousMaxSize * *shapeColorBufferSize * sizeof(GLfloat), g_color_buffer_data);
 	openGlContext.extensions.glVertexAttribPointer(colour->attributeID, 4, GL_FLOAT, GL_FALSE, sizeof(float[4]), 0);
 
 	
 	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer);
 	//openGlContext.extensions.glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
-	openGlContext.extensions.glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, *indicesSize * sizeof(unsigned int), indices);
+	openGlContext.extensions.glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, /**indicesSize*/ previousMaxSize * *shapeIndicesSize * sizeof(unsigned int), indices);
 
 	glDrawElements(GL_TRIANGLES, *indicesSize /*+ 3 * 64*/, GL_UNSIGNED_INT, (void*)0);
 	//glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -396,7 +428,28 @@ void SceneCanvasComponent::renderOpenGL()
 #else
 	double underTime = desiredPeriod_ms - displayFrequencyMeasurer.GetLastDuration_ms();
 #endif
-    if (underTime > 0.0)
+
+	
+	double last = displayFrequencyMeasurer.GetLastDuration_ms();
+	if (last < 0.0)
+		DBG("probleme lastDuration: " + (String)last);
+	EunderTime += underTime;
+	if (numFrame > 600)
+	{
+		DBG("60 frames, underTime : "+ (String)underTime +" [underTime]" + (String)(EunderTime/600.0));
+		//DBG("probleme underTime : " + (String)underTime);
+		EunderTime = 0.0;
+		numFrame = 0;
+	}
+	if (underTime < 0.0)
+	{
+		//DBG("probleme underTime : " + (String)underTime);
+		underTime = 0.0;
+	}
+	//if (last > desiredPeriod_ms)
+	//	DBG("probleme : last > desiredPeriod_ms");
+
+    if (underTime >= 0.0)
     {
         Thread::sleep((int)std::floor(underTime));
     }
@@ -441,7 +494,7 @@ void SceneCanvasComponent::SetIsSelectedForEditing(bool isSelected)
 
 void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int positionInBuffer)
 {
-	int decalage = (int)positionInBuffer * *numVertexShape;// + numPointsPolygon + 1;
+	int decalage = 3 * ((int)positionInBuffer * *numVertexShape);// + numPointsPolygon + 1;
 	area->RefreshOpenGLBuffers();
 	//std::vector<int> shift;
 	//shift.push_back(decalage);
@@ -451,13 +504,15 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 		//1. forme
 		try
 		{
-			int verticesCount = 100000000;//area->GetVerticesBufferSize();
-			for (int j = 0; j < 3 * verticesCount; ++j)
+			const int verticesCount = 3 * area->GetVerticesBufferSize();
+			float* vertexPtr = area->GetVerticesBufferPtr();
+			for (int j = 0; j < verticesCount; ++j)
 			{
-				if (j < 3 * verticesCount)
-					g_vertex_buffer_data[3 * decalage + j] = area->GetVerticesBufferElt(j);//*10
+				if (j < verticesCount)
+					g_vertex_buffer_data[decalage + j] = (*vertexPtr);//area->GetVerticesBufferElt(j);//*10
 				else
-					g_vertex_buffer_data[3 * decalage + j] = 0;
+					g_vertex_buffer_data[decalage + j] = 0.0f;
+				++vertexPtr;
 			}
 		}
 		catch (const std::out_of_range& e)
@@ -465,11 +520,11 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 			DBG(e.what());
 		}
 
-		decalage += (*numPointsPolygon + 1);
+		//decalage += (*numPointsPolygon + 1);
 
 		//2. centre
 		
-		decalage += numVerticesRing;
+		//decalage += numVerticesRing;
 
 	}
 
@@ -481,8 +536,13 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 	{
 		try
 		{
-			for (int i = 0; i < area->GetIndicesBufferSize(); ++i)
-				indices[decalage + i] = area->GetIndicesBufferElt(i) + beginShape;
+			const int indicesCount = area->GetIndicesBufferSize();
+			int* indicesPtr = area->GetIndicesBufferPtr();
+			for (int i = 0; i < indicesCount; ++i)
+			{
+				indices[decalage + i] = (*indicesPtr) + beginShape;
+				++indicesPtr;
+			}
 		}
 		catch (const std::out_of_range& e)
 		{
@@ -490,13 +550,16 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 		}
 
 		// colors
-		decalage = (int)positionInBuffer * *numVertexShape;
+		decalage = 4 * ((int)positionInBuffer * *numVertexShape);
 
 		try
 		{
-			for (int i = 0; i < area->GetCouloursBufferSize(); ++i)
+			const int couloursCount = area->GetCouloursBufferSize();
+			float* couloursPtr = area->GetCoulourBufferPtr();
+			for (int i = 0; i < couloursCount; ++i)
 			{
-				g_color_buffer_data[4 * decalage + i] = area->GetCouloursBufferElt(i);
+				g_color_buffer_data[decalage + i] = (*couloursPtr);
+				++couloursPtr;
 			}
 		}
 		catch (const std::out_of_range& e)

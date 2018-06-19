@@ -128,6 +128,11 @@ public:
     
 
 private:
+	int numFrame;
+	double EunderTime;
+
+	bool needToResetBufferParts;
+	int previousMaxSize; // utilisé pour remettre à 0 les parties de buffer qui étaient utilisées à la frame précédente et qui ne le sont plus mtn
 
 	ScopedPointer<OpenGLShaderProgram> shaderProgram;
 	ScopedPointer<OpenGLShaderProgram::Attribute> position, colour;

@@ -200,23 +200,29 @@ void EditablePolygon::RefreshOpenGLBuffers()
 	 // points
 	for (int k = 0; k < numApexes; ++k)
 	{
-
+		int Xoffset = (float)contourPointsInPixels.outer().at(k).get<0>();
+		int Yoffset = (float)contourPointsInPixels.outer().at(k).get<1>();
+		int Zoffset = 0.1f;
 		for (int j = 0; j < 3 * numVerticesCircle; j += 3)
 		{
-			vertices_buffer[3 * decalage + j] = 1.0f* ((float)contourPointsInPixels.outer().at(k).get<0>() + g_vertex_circle[j]);
-			vertices_buffer[3 * decalage + j + 1] = 1.0f*((float)contourPointsInPixels.outer().at(k).get<1>() + g_vertex_circle[j + 1]);
-			vertices_buffer[3 * decalage + j + 2] = 0.1f + g_vertex_circle[j + 2];
+			vertices_buffer[3 * decalage + j] = Xoffset + g_vertex_circle[j];
+			vertices_buffer[3 * decalage + j + 1] = Yoffset + g_vertex_circle[j + 1];
+			vertices_buffer[3 * decalage + j + 2] = Zoffset + g_vertex_circle[j + 2];
 		}
 		decalage += numVerticesCircle;
 
 
 	}
-	for (int k = numApexes; k < numPointsPolygon; ++k)
+	int decalageMax = 3 * numVerticesCircle * (numPointsPolygon - numApexes);
+	float *vertexPtr = &vertices_buffer[3 * decalage];
+	for (int k = 0; k < decalageMax; ++k)
+		vertexPtr[k] = 0.0f;
+	/*for (int k = numApexes; k < numPointsPolygon; ++k)
 	{
 		for (int j = 0; j < 3 * numVerticesCircle; j++)
 			vertices_buffer[3 * decalage + j] = 0;
 		decalage += numVerticesCircle;
-	}
+	}*/
 
 	// manipulationLine + manipulationPoint
 	if (isActive)
@@ -226,13 +232,14 @@ void EditablePolygon::RefreshOpenGLBuffers()
 			vertices_buffer[3 * decalage + i] = g_vertex_dotted_line[i];
 		decalage += dottedLineVertexes;
 
+		int Xoffset = (float)bmanipulationPointInPixels.get<0>();
+		int Yoffset = (float)bmanipulationPointInPixels.get<1>();
+		int Zoffset = 0.1f;
 		for (int j = 0; j < 3 * numVerticesRing; j += 3)
 		{
-
-			vertices_buffer[3 * decalage + j] = 1.0f* ((float)bmanipulationPointInPixels.get<0>() + g_vertex_ring[j]);
-			vertices_buffer[3 * decalage + j + 1] = 1.0f*((float)bmanipulationPointInPixels.get<1>() + g_vertex_ring[j + 1]);
-			vertices_buffer[3 * decalage + j + 2] = 0.1f + g_vertex_ring[j + 2];
-
+			vertices_buffer[3 * decalage + j] = Xoffset + g_vertex_ring[j];
+			vertices_buffer[3 * decalage + j + 1] = Yoffset + g_vertex_ring[j + 1];
+			vertices_buffer[3 * decalage + j + 2] = Zoffset + g_vertex_ring[j + 2];
 		}
 	}
 	else
@@ -248,18 +255,24 @@ void EditablePolygon::RefreshOpenGLBuffers()
 	// points
 	decalage = DrawablePolygon::GetVerticesBufferSize(); // decalage dans le buffer index
 	int begin = DrawablePolygon::GetVerticesBufferSize(); // decalage dans le buffer vertex
+	const int count = 3 * numPointCircle;
 	for (int k = 0; k < numApexes; ++k)
 	{
-		for (int j = 0; j < 3 * numPointCircle; ++j)
+		int indexToAdd = begin + k * numVerticesCircle;
+		const int currentDecalage = 3 * decalage;
+		for (int j = 0; j < count; ++j)
 		{
-			indices_buffer[j + 3 * decalage/*+ numVerticesPolygon*/] = circleIndices[j] + begin + k * numVerticesCircle;
+			indices_buffer[j +currentDecalage/*+ numVerticesPolygon*/] = circleIndices[j] + indexToAdd;
 		}
 		decalage += numPointCircle;
 	}
 	for (int k = numApexes; k < numPointsPolygon; ++k)
 	{
-		for (int j = 0; j < 3 * numPointCircle; ++j)
-			indices_buffer[j + 3 * decalage/*+ numVerticesPolygon*/] = 0;
+		const int currentDecalage = 3 * decalage;
+		int *indicesPtr = &indices_buffer[currentDecalage];
+		for (int j = 0; j < count; ++j)
+			indicesPtr[j] = 0;
+			//indices_buffer[j +currentDecalage/*+ numVerticesPolygon*/] = 0;
 		decalage += numPointCircle;
 	}
 	begin += numPointsPolygon * numVerticesCircle;

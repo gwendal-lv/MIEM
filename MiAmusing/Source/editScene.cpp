@@ -131,9 +131,7 @@ EditScene::EditScene ()
     loadButton->setButtonText (TRANS("load"));
     loadButton->addListener (this);
 
-    addCircleButton.reset (new ShapeButton ("addCircleShape",Colours::white,Colours::blue,Colours::blue));
-    addAndMakeVisible (addCircleButton.get());
-    addCircleButton->setName ("new component");
+    
 
 
     //[UserPreSize]
@@ -146,7 +144,6 @@ EditScene::EditScene ()
 	addCarreShapeButton->addListener(this);
 	addTriangleShapeButton2->addListener(this);
 	addHexaShapeButton->addListener(this);
-	addCircleButton->addListener(this);
 
 	Path squarePath, trianglePath, hexaPath, circlePath;
 	squarePath.addPolygon(Point<float>((float)addCarreShapeButton->getWidth() / 2.0f, (float)addCarreShapeButton->getHeight() / 2.0f), 4, (float)addCarreShapeButton->getHeight() / 2.0f);
@@ -159,7 +156,6 @@ EditScene::EditScene ()
 	addCarreShapeButton->setShape(squarePath, false, true, false);
 	addTriangleShapeButton2->setShape(trianglePath, false, true, false);
 	addHexaShapeButton->setShape(hexaPath, false, true, false);
-	addCircleButton->setShape(circlePath, false, true, false);
 
 	timeSlider->setValue(4);
 	/*for (int i = 0; i < 16;i++)
@@ -208,7 +204,6 @@ EditScene::~EditScene()
     addHexaShapeButton = nullptr;
     saveButton = nullptr;
     loadButton = nullptr;
-    addCircleButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -246,7 +241,6 @@ void EditScene::resized()
     addHexaShapeButton->setBounds ((proportionOfWidth (0.0000f) + 0) + 0, (((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
     saveButton->setBounds (proportionOfWidth (0.1225f), proportionOfHeight (0.0203f), proportionOfWidth (0.2990f), proportionOfHeight (0.0513f));
     loadButton->setBounds (proportionOfWidth (0.6011f), proportionOfHeight (0.0203f), proportionOfWidth (0.2990f), proportionOfHeight (0.0513f));
-    addCircleButton->setBounds (((proportionOfWidth (0.0000f) + 0) + 0) + 0, ((((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -285,12 +279,6 @@ void EditScene::buttonClicked (Button* buttonThatWasClicked)
 		else if (buttonThatWasClicked == addHexaShapeButton.get())
 		{
 			graphicSessionManager->OnAddHexa();
-			return;
-		}
-		else if (buttonThatWasClicked == addCircleButton.get())
-		{
-			//graphicSessionManager->OnAddCircle();
-			graphicSessionManager->OnAddTrueCircle();
 			return;
 		}
 	}
@@ -378,7 +366,7 @@ void EditScene::CompleteInitialization(GraphicSessionManager* _graphicSessionMan
     //addAndMakeVisible(multiCanvasComponent);
 }
 
-void EditScene::setMidiChannel(int chan)
+void EditScene::setMidiChannel(int /*chan*/)
 {
 	//comboBoxMidi->setSelectedId(chan);
 }

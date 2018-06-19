@@ -130,9 +130,14 @@ namespace Miam
         virtual OpacityMode GetOpacityMode() const = 0;
         virtual void SetRenderingScale(double renderingScale_) = 0;
 
+		virtual float* GetVerticesBufferPtr() = 0;
+		virtual float* GetCoulourBufferPtr() = 0;
+		virtual int* GetIndicesBufferPtr() = 0;
+
 		virtual int GetVerticesBufferSize() = 0;
 		virtual int GetIndicesBufferSize() = 0;
 		virtual int GetCouloursBufferSize() = 0;
+
 		virtual float GetCouloursBufferElt(int idx) = 0;
 		virtual float GetVerticesBufferElt(int idx) = 0;
 		virtual int GetIndicesBufferElt(int idx) = 0;

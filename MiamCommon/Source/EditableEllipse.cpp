@@ -218,12 +218,16 @@ void EditableEllipse::RefreshOpenGLBuffers()
 		}
 		decalage += numVerticesCircle;
 	}
-	for (int k = numApexes; k < numPointsPolygon; ++k)
+	int decalageMax = 3 * numVerticesCircle * (numPointsPolygon - numApexes);
+	float *vertexPtr = &vertices_buffer[3 * decalage];
+	for (int k = 0; k < decalageMax; ++k)
+		vertexPtr[k] = 0.0f;
+	/*for (int k = numApexes; k < numPointsPolygon; ++k)
 	{
 		for (int j = 0; j < 3 * numVerticesCircle; j++)
 			vertices_buffer[3 * decalage + j] = 0;
 		decalage += numVerticesCircle;
-	}
+	}*/
 
 	// manipulationLine + manipulationPoint
 	if (isActive)
@@ -254,9 +258,10 @@ void EditableEllipse::RefreshOpenGLBuffers()
 	//// points
 	decalage = DrawableEllipse::GetIndicesBufferSize(); // decalage dans le buffer index
 	int begin = DrawableEllipse::GetVerticesBufferSize(); // decalage dans le buffer vertex
+	const int count = 3 * numPointCircle;
 	for (int k = 0; k < numApexes; ++k)
 	{
-		for (int j = 0; j < 3 * numPointCircle; ++j)
+		for (int j = 0; j < count; ++j)
 		{
 			indices_buffer[j + decalage/*+ numVerticesPolygon*/] = circleIndices[j] + begin + k * numVerticesCircle;
 		}
@@ -265,8 +270,10 @@ void EditableEllipse::RefreshOpenGLBuffers()
 
 	for (int k = numApexes; k < numPointsPolygon; ++k)
 	{
-		for (int j = 0; j < 3 * numPointCircle; ++j)
-			indices_buffer[j + decalage/*+ numVerticesPolygon*/] = 0;
+		int *indicesPtr = &indices_buffer[decalage];
+		for (int j = 0; j < count; ++j)
+			indicesPtr[j] = 0;
+			//indices_buffer[j + decalage/*+ numVerticesPolygon*/] = 0;
 		decalage += 3 * numPointCircle;
 	}
 	begin += numPointsPolygon * numVerticesCircle;

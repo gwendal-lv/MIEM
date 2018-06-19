@@ -278,7 +278,29 @@ void DrawableArea::CanvasResized(SceneCanvasComponent* _parentCanvas)
 void DrawableArea::RefreshOpenGLBuffers()
 {
 	int decalage = 0;
-	for (int j = 0; j < 3 * numVerticesRing; j += 3)
+	int count = 3 * numVerticesRing;
+	const float Xoffset = float(centerInPixels.get<0>());
+	const float Yoffset = float(centerInPixels.get<1>());
+	const float Zoffset = 0.1f;
+	if (displayCenter)
+	{
+		for (int j = 0; j < count; j += 3)
+		{
+			vertices_buffer[3 * decalage + j] = Xoffset + g_vertex_ring[j];
+			vertices_buffer[3 * decalage + j + 1] = Yoffset + g_vertex_ring[j + 1];
+			vertices_buffer[3 * decalage + j + 2] = Zoffset + g_vertex_ring[j + 2];
+		}
+	}
+	else
+	{
+		for (int j = 0; j < count; j += 3)
+		{
+			vertices_buffer[3 * decalage + j] = 0.0f;
+			vertices_buffer[3 * decalage + j + 1] = 0.0f;
+			vertices_buffer[3 * decalage + j + 2] = 0.0f;
+		}
+	}
+	/*for (int j = 0; j < count; j += 3)
 	{
 		if (displayCenter)
 		{
@@ -292,7 +314,7 @@ void DrawableArea::RefreshOpenGLBuffers()
 			vertices_buffer[3 * decalage + j + 1] = 0.0f;
 			vertices_buffer[3 * decalage + j + 2] = 0.0f;
 		}
-	}
+	}*/
 
 	for (int j = 0; j < 3 * numVerticesRing; ++j)
 	{

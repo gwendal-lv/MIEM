@@ -123,6 +123,8 @@ namespace Amusing
 		double GetFullSceneRatio();
 
 		bool SizeChanged(double _size, bool minSize);
+
+		virtual void RefreshOpenGLBuffers() override;
 		
 	private:
 		int numAngles;

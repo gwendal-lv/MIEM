@@ -70,6 +70,10 @@ CompletePolygon::CompletePolygon(bptree::ptree & areaTree) : EditablePolygon(are
 	updateSubTriangles();
 
 	onlyRotationAllowed = false;
+
+	/*verticesBufferSize += Nradius * bullsEye[0].GetVerticesBufferSize();
+	indicesBufferSize += Nradius * bullsEye[0].GetIndicesBufferSize();
+	couloursBufferSize += Nradius * bullsEye[0].GetCouloursBufferSize();*/
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
@@ -1786,4 +1790,10 @@ bool CompletePolygon::SizeChanged(double _size, bool minSize)
 		}
 	}
 	return ans;
+}
+
+void CompletePolygon::RefreshOpenGLBuffers()
+{
+	EditablePolygon::RefreshOpenGLBuffers();
+	//int decalage = EditablePolygon::GetVerticesBufferSize();
 }
