@@ -197,7 +197,7 @@ DrawableEllipse::~DrawableEllipse()
 
 void DrawableEllipse::setVerticesCount(int newVerticesCount)
 {
-	ellipseVerticesCount = newVerticesCount;
+	ellipseVerticesCount = 32;//newVerticesCount;
 }
 
 
@@ -247,15 +247,21 @@ void DrawableEllipse::RefreshOpenGLBuffers()
 	// forme
 	int decalage = DrawableArea::GetVerticesBufferSize();
 	float dR = (float)sqrt(2) * contourWidth / 2.0f;
-	vertices_buffer[3 * decalage + 0] = (float)centerInPixels.get<0>();
-	vertices_buffer[3 * decalage + 1] = (float)centerInPixels.get<1>();
-	vertices_buffer[3 * decalage + 2] = 0.0f;
+	const float Cx = (float)centerInPixels.get<0>();
+	const float Cy = (float)centerInPixels.get<1>();
+
+	float* verticesPtr = &vertices_buffer[3 * decalage];
+
+	verticesPtr[0] = Cx;
+	verticesPtr[1] = Cy;
+	verticesPtr[2] = 0.0f;
+	verticesPtr += 3;
 	for (int i = 0; i < ellipseVerticesCount; i++)
 	{
 		double normalizedAngle = (double)(i) / (double)(ellipseVerticesCount);
-		vertices_buffer[3 * decalage + 3 + i * 3] = (float)centerInPixels.get<0>() + (float)aInPixels * (float)std::cos(2.0 * M_PI * normalizedAngle);
-		vertices_buffer[3 * decalage + 3 + i * 3 + 1] = (float)centerInPixels.get<1>() + (float)bInPixels * (float)std::sin(2.0 * M_PI * normalizedAngle);
-		vertices_buffer[3 * decalage + 3 + i * 3 + 2] = 0.0f;
+		verticesPtr[i * 3] = Cx + (float)aInPixels * (float)std::cos(2.0 * M_PI * normalizedAngle);
+		verticesPtr[i * 3 + 1] = Cy + (float)bInPixels * (float)std::sin(2.0 * M_PI * normalizedAngle);
+		verticesPtr[i * 3 + 2] = 0.0f;
 	}
 	for (int i = 3 * decalage + 3 * (ellipseVerticesCount + 1); i< 3 * decalage + 3 * numVerticesPolygon; ++i)
 	{
@@ -263,28 +269,37 @@ void DrawableEllipse::RefreshOpenGLBuffers()
 	}
 
 	float A = GetAlpha();
+	float R = fillColour.getRed() / 255.0f;
+	float G = fillColour.getGreen() / 255.0f;
+	float B = fillColour.getBlue() / 255.0f;
+	float *couloursPtr = &coulours_buffer[4 * decalage];
 	for (int i = 0; i < numVerticesPolygon; ++i)
 	{
-		coulours_buffer[4 * decalage + i * 4] = fillColour.getRed() / 255.0f;
-		coulours_buffer[4 * decalage + i * 4 + 1] = fillColour.getGreen() / 255.0f;
-		coulours_buffer[4 * decalage + i * 4 + 2] = fillColour.getBlue() / 255.0f;
-		coulours_buffer[4 * decalage + i * 4 + 3] = A;
+		couloursPtr[i * 4] = R;
+		couloursPtr[i * 4 + 1] = G;
+		couloursPtr[i * 4 + 2] = B;
+		couloursPtr[i * 4 + 3] = A;
 	}
 
 	decalage += numVerticesPolygon;
 
 	// contour
+	const float extA = float(aInPixels + dR);
+	const float extB = float(bInPixels + dR);
+	const float Xoffset = (float)centerInPixels.get<0>();
+	const float Yoffset = (float)centerInPixels.get<1>();
+	float *vertexPtr = &vertices_buffer[3 * decalage];
 	for (int i = 0; i < ellipseVerticesCount; i++)
 	{
 		double normalizedAngle = (double)(i) / (double)(ellipseVerticesCount);
-		vertices_buffer[3 * decalage + i * 3] = (float)centerInPixels.get<0>() + float(aInPixels + dR) * (float)std::cos(2.0 * M_PI * normalizedAngle);
-		vertices_buffer[3 * decalage + i * 3 + 1] = (float)centerInPixels.get<1>() + float(bInPixels + dR) * (float)std::sin(2.0 * M_PI * normalizedAngle);
-		vertices_buffer[3 * decalage + i * 3 + 2] = 0.0f;
+		vertexPtr[i * 3] = Xoffset + extA * (float)std::cos(2.0 * M_PI * normalizedAngle);
+		vertexPtr[i * 3 + 1] = Yoffset + extB * (float)std::sin(2.0 * M_PI * normalizedAngle);
+		vertexPtr[i * 3 + 2] = 0.0f;
 	}
 
 	for (int i = 3 * decalage + 3 * ellipseVerticesCount; i< 3 * decalage + (3 * numPointsPolygon); ++i)
 	{
-		vertices_buffer[i] = 0.0f;
+		vertexPtr[i] = 0.0f;
 	}
 }
 

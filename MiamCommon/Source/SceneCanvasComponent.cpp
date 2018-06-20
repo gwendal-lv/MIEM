@@ -399,7 +399,7 @@ void SceneCanvasComponent::renderOpenGL()
 	//openGlContext.extensions.glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 	openGlContext.extensions.glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, /**indicesSize*/ previousMaxSize * *shapeIndicesSize * sizeof(unsigned int), indices);
 
-	glDrawElements(GL_TRIANGLES, *indicesSize /*+ 3 * 64*/, GL_UNSIGNED_INT, (void*)0);
+	glDrawElements(GL_TRIANGLES, previousMaxSize * *shapeIndicesSize/**indicesSize*/ /*+ 3 * 64*/, GL_UNSIGNED_INT, (void*)0);
 	//glDrawArrays(GL_TRIANGLES, 0, 3);
 	openGlContext.extensions.glDisableVertexAttribArray(position->attributeID);
 	openGlContext.extensions.glDisableVertexAttribArray(colour->attributeID);
@@ -434,9 +434,9 @@ void SceneCanvasComponent::renderOpenGL()
 	if (last < 0.0)
 		DBG("probleme lastDuration: " + (String)last);
 	EunderTime += underTime;
-	if (numFrame > 600)
+	if (numFrame > 6000)
 	{
-		DBG("60 frames, underTime : "+ (String)underTime +" [underTime]" + (String)(EunderTime/600.0));
+		//DBG("60 frames, underTime : "+ (String)underTime +" [underTime]" + (String)(EunderTime/600.0));
 		//DBG("probleme underTime : " + (String)underTime);
 		EunderTime = 0.0;
 		numFrame = 0;

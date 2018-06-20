@@ -71,9 +71,13 @@ CompletePolygon::CompletePolygon(bptree::ptree & areaTree) : EditablePolygon(are
 
 	onlyRotationAllowed = false;
 
-	/*verticesBufferSize += Nradius * bullsEye[0].GetVerticesBufferSize();
+	verticesBufferSize += 3 * Nradius * bullsEye[0].GetVerticesBufferSize();
 	indicesBufferSize += Nradius * bullsEye[0].GetIndicesBufferSize();
-	couloursBufferSize += Nradius * bullsEye[0].GetCouloursBufferSize();*/
+	couloursBufferSize += Nradius * bullsEye[0].GetCouloursBufferSize();
+
+	vertices_buffer.resize(verticesBufferSize);
+	indices_buffer.resize(indicesBufferSize);
+	coulours_buffer.resize(couloursBufferSize);
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
@@ -112,6 +116,14 @@ CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
 	}
 	updateSubTriangles();
 	onlyRotationAllowed = false;
+
+	verticesBufferSize += 3 * Nradius * bullsEye[0].GetVerticesBufferSize();
+	indicesBufferSize += Nradius * bullsEye[0].GetIndicesBufferSize();
+	couloursBufferSize += Nradius * bullsEye[0].GetCouloursBufferSize();
+
+	vertices_buffer.resize(verticesBufferSize);
+	indices_buffer.resize(indicesBufferSize);
+	coulours_buffer.resize(couloursBufferSize);
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, float radius,
@@ -159,6 +171,14 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 	chordAreaForFlag = std::vector<std::shared_ptr<CompletePolygon>>(pointsCount, nullptr);
 	showAllCircles = false;
 	onlyRotationAllowed = false;
+
+	verticesBufferSize += 3 * Nradius * bullsEye[0].GetVerticesBufferSize();
+	indicesBufferSize += Nradius * bullsEye[0].GetIndicesBufferSize();
+	couloursBufferSize += Nradius * bullsEye[0].GetCouloursBufferSize();
+
+	vertices_buffer.resize(verticesBufferSize);
+	indices_buffer.resize(indicesBufferSize);
+	coulours_buffer.resize(couloursBufferSize);
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id,
@@ -205,6 +225,14 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	//updateSubTriangles();
 	showAllCircles = false;
 	onlyRotationAllowed = false;
+
+	verticesBufferSize += 3 * Nradius * bullsEye[0].GetVerticesBufferSize();
+	indicesBufferSize += Nradius * bullsEye[0].GetIndicesBufferSize();
+	couloursBufferSize += Nradius * bullsEye[0].GetCouloursBufferSize();
+
+	vertices_buffer.resize(verticesBufferSize);
+	indices_buffer.resize(indicesBufferSize);
+	coulours_buffer.resize(couloursBufferSize);
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id,
@@ -260,6 +288,14 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 
 	onlyRotationAllowed = false;
 	// ajouter le calcul du rayon des cercles : on connait les coordonnees des points et a quels cercles ils appartienne -> possible de retrouver le rayon et le centre ! 
+
+	verticesBufferSize += 3 * Nradius * bullsEye[0].GetVerticesBufferSize();
+	indicesBufferSize += Nradius * bullsEye[0].GetIndicesBufferSize();
+	couloursBufferSize += Nradius * bullsEye[0].GetCouloursBufferSize();
+
+	vertices_buffer.resize(verticesBufferSize);
+	indices_buffer.resize(indicesBufferSize);
+	coulours_buffer.resize(couloursBufferSize);
 }
 
 
@@ -1795,5 +1831,114 @@ bool CompletePolygon::SizeChanged(double _size, bool minSize)
 void CompletePolygon::RefreshOpenGLBuffers()
 {
 	EditablePolygon::RefreshOpenGLBuffers();
-	//int decalage = EditablePolygon::GetVerticesBufferSize();
+	int decalage = EditablePolygon::GetVerticesBufferSize();
+	const int circlesSize = (int)bullsEye.size();
+	const int incDecalage = bullsEye[0].GetVerticesBufferSize();
+	const int circleVertexCount = 3 * bullsEye[0].GetVerticesBufferSize();
+	const int circleIndiceCount = bullsEye[0].GetIndicesBufferSize();
+	const int circleCoulourCount = bullsEye[0].GetCouloursBufferSize();
+
+
+	if (circlesSize > 0)
+	{
+		if (showAllCircles)
+		{
+			for (int i = 0; i < circlesSize; ++i)
+				bullsEye[i].RefreshOpenGLBuffers();
+
+			// vertex
+			for (int i = 0; i < circlesSize; ++i)
+			{
+				float *circleVertexPtr = bullsEye[i].GetVerticesBufferPtr();
+				float *vertexPtr = &vertices_buffer[3 * decalage];
+				for (int j = 0; j < circleVertexCount; ++j)
+				{
+					vertexPtr[j] = circleVertexPtr[j];
+					//vertices_buffer[3 * decalage + j] = circleVertexPtr[j];
+				}
+				decalage += incDecalage;
+			}
+
+			// index
+			decalage = EditablePolygon::GetIndicesBufferSize(); // pour decaler dans le buffer
+			int begin = EditablePolygon::GetVerticesBufferSize(); // pour prendre en compte le nombre de vertex
+			for (int i = 0; i < circlesSize; ++i)
+			{
+				int *circleIndicesPtr = bullsEye[i].GetIndicesBufferPtr();
+				int *indicesPtr = &indices_buffer[decalage];
+				for (int j = 0; j < circleIndiceCount; ++j)
+				{
+					indicesPtr[j] = circleIndicesPtr[j] + begin;
+				}
+				decalage += circleIndiceCount; // on se decale dans le buffer
+				begin += incDecalage; // il faut ajouter aux indices le nombre de vertex déjà existant
+			}
+
+			// coulour
+			decalage = EditablePolygon::GetCouloursBufferSize();
+			for (int i = 0; i < circlesSize; ++i)
+			{
+				float *circleCoulourPtr = bullsEye[i].GetCoulourBufferPtr();
+				float *coulourPtr = &coulours_buffer[decalage];
+				for (int j = 0; j < circleCoulourCount; ++j)
+				{
+					coulourPtr[j] = circleCoulourPtr[j];
+				}
+				decalage += circleCoulourCount;
+			}
+		}
+		else
+		{
+			std::vector<int> needToShow = OnCircles;
+			auto end = std::unique(needToShow.begin(), needToShow.end());
+			int newSize = std::distance(needToShow.begin(), end);
+
+			for (int i = 0; i < newSize; ++i)
+				bullsEye[needToShow[i]].RefreshOpenGLBuffers();
+			
+			//vertex
+			for (int i = 0; i < newSize; ++i)
+			{
+				
+				float *circleVertexPtr = bullsEye[needToShow[i]].GetVerticesBufferPtr();
+				float *vertexPtr = &vertices_buffer[3 * decalage];
+				for (int j = 0; j < circleVertexCount; ++j)
+				{
+					vertexPtr[j] = circleVertexPtr[j];
+					//vertices_buffer[3 * decalage + j] = circleVertexPtr[j];
+				}
+				decalage += incDecalage;
+			}
+
+			// index
+			decalage = EditablePolygon::GetIndicesBufferSize(); // pour decaler dans le buffer
+			int begin = EditablePolygon::GetVerticesBufferSize(); // pour prendre en compte le nombre de vertex
+			for (int i = 0; i < newSize; ++i)
+			{
+				int *circleIndicesPtr = bullsEye[needToShow[i]].GetIndicesBufferPtr();
+				int *indicesPtr = &indices_buffer[decalage];
+				for (int j = 0; j < circleIndiceCount; ++j)
+				{
+					indicesPtr[j] = circleIndicesPtr[j] + begin;
+				}
+				decalage += circleIndiceCount; // on se decale dans le buffer
+				begin += incDecalage; // il faut ajouter aux indices le nombre de vertex déjà existant
+			}
+
+			// coulour
+			decalage = EditablePolygon::GetCouloursBufferSize();
+			for (int i = 0; i < newSize; ++i)
+			{
+				float *circleCoulourPtr = bullsEye[needToShow[i]].GetCoulourBufferPtr();
+				float *coulourPtr = &coulours_buffer[decalage];
+				for (int j = 0; j < circleCoulourCount; ++j)
+				{
+					coulourPtr[j] = circleCoulourPtr[j];
+				}
+				decalage += circleCoulourCount;
+			}
+
+
+		}
+	}
 }

@@ -794,7 +794,7 @@ void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
 				currentCursor = completeArea->getCursor(0);
 				currentCursorSize = 2.0;
 				currentCursor->SizeChanged(2.0, false);
-				currentCursor->SetAlpha(0.1);
+				currentCursor->SetAlpha(0.1f);
 				break;
 			case Rhythm:
 				completeArea->showAllTarget(true);

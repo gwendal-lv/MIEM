@@ -282,22 +282,23 @@ void DrawableArea::RefreshOpenGLBuffers()
 	const float Xoffset = float(centerInPixels.get<0>());
 	const float Yoffset = float(centerInPixels.get<1>());
 	const float Zoffset = 0.1f;
+	float *verticesPtr = &vertices_buffer[3 * decalage];
 	if (displayCenter)
 	{
 		for (int j = 0; j < count; j += 3)
 		{
-			vertices_buffer[3 * decalage + j] = Xoffset + g_vertex_ring[j];
-			vertices_buffer[3 * decalage + j + 1] = Yoffset + g_vertex_ring[j + 1];
-			vertices_buffer[3 * decalage + j + 2] = Zoffset + g_vertex_ring[j + 2];
+			verticesPtr[j] = Xoffset + g_vertex_ring[j];
+			verticesPtr[j + 1] = Yoffset + g_vertex_ring[j + 1];
+			verticesPtr[j + 2] = Zoffset + g_vertex_ring[j + 2];
 		}
 	}
 	else
 	{
 		for (int j = 0; j < count; j += 3)
 		{
-			vertices_buffer[3 * decalage + j] = 0.0f;
-			vertices_buffer[3 * decalage + j + 1] = 0.0f;
-			vertices_buffer[3 * decalage + j + 2] = 0.0f;
+			verticesPtr[j] = 0.0f;
+			verticesPtr[j + 1] = 0.0f;
+			verticesPtr[j + 2] = 0.0f;
 		}
 	}
 	/*for (int j = 0; j < count; j += 3)
@@ -316,9 +317,10 @@ void DrawableArea::RefreshOpenGLBuffers()
 		}
 	}*/
 
+	int *indicesPtr = &indices_buffer[3 * decalage];
 	for (int j = 0; j < 3 * numVerticesRing; ++j)
 	{
-		indices_buffer[j + 3 * decalage] = ringIndices[j];/*+ numVerticesPolygon*/;
+		indicesPtr[j] = ringIndices[j];/*+ numVerticesPolygon*/;
 	}
 }
 

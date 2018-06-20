@@ -125,6 +125,12 @@ namespace Amusing
 		bool SizeChanged(double _size, bool minSize);
 
 		virtual void RefreshOpenGLBuffers() override;
+
+		int GetVerticesBufferSize() override {					// points du contour					manipulationLine	manipulationPoint
+			return EditablePolygon::GetVerticesBufferSize() + Nradius * bullsEye[0].GetVerticesBufferSize();
+		}
+		int GetCouloursBufferSize() override { return EditablePolygon::GetCouloursBufferSize() + Nradius * bullsEye[0].GetCouloursBufferSize(); }
+		int GetIndicesBufferSize() override { return EditablePolygon::GetIndicesBufferSize() + Nradius * bullsEye[0].GetIndicesBufferSize(); }
 		
 	private:
 		int numAngles;
