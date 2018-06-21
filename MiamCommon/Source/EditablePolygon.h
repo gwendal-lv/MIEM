@@ -63,7 +63,7 @@ namespace Miam {
         // ----- Display functions -----
         public :
 			
-			int GetVerticesBufferSize() override {					// points du contour					manipulationLine	manipulationPoint
+			const int GetVerticesBufferSize() override {					// points du contour					manipulationLine	manipulationPoint
 				return DrawablePolygon::GetVerticesBufferSize() + (numPointsPolygon * numVerticesCircle) + dottedLineVertexes + numVerticesRing;
 			}
 			int GetCouloursBufferSize() override { return DrawablePolygon::GetCouloursBufferSize() + 4 * ((numPointsPolygon * numVerticesCircle) + dottedLineVertexes + numVerticesRing); }
@@ -71,6 +71,8 @@ namespace Miam {
 			virtual void Paint(Graphics& g) override;
 			virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
 			virtual void RefreshOpenGLBuffers() override;
+			void RefreshManipulationPointOpenGLBuffer();
+			void RefreshContourPointsOpenGLBuffers();
         // Display helpers
         private :
 			static const int dottedLineNparts = 20;

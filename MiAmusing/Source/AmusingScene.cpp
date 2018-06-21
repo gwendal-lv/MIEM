@@ -735,6 +735,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddDefaultExciter()
 	std::shared_ptr<AreaEvent> areaE = AddExciter(exciter);
 	exciter->setCenterPosition(bpt(canvasComponent->getWidth() - 50, 4 + (canvasComponent->getHeight() - 8) / 2.0));
 	exciter->CanvasResized(canvasComponent);
+	exciter->RefreshOpenGLBuffers();
 	return areaE;
 }
 
@@ -810,6 +811,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddCursor(std::shared_ptr<IDrawableArea
 		//associateArea[newCursor] = area; // association à l'aire qui déterminera sa position et donc le son produit
 
 		newCursor->CanvasResized(canvasComponent);//trouver le nouveau centre
+		newCursor->RefreshOpenGLBuffers();
 
 		alreadyCursorInScene = true;
 		//std::shared_ptr<AreaEvent> areaE(new AreaEvent(newCursor, AreaEventType::Added, (int)areas.size() + cursors.size() -1, shared_from_this()));

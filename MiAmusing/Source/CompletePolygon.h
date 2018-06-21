@@ -125,8 +125,9 @@ namespace Amusing
 		bool SizeChanged(double _size, bool minSize);
 
 		virtual void RefreshOpenGLBuffers() override;
+		void RefreshTargetOpenGLBuffers();
 
-		int GetVerticesBufferSize() override {					// points du contour					manipulationLine	manipulationPoint
+		const int GetVerticesBufferSize() override {					// points du contour					manipulationLine	manipulationPoint
 			return EditablePolygon::GetVerticesBufferSize() + Nradius * bullsEye[0].GetVerticesBufferSize();
 		}
 		int GetCouloursBufferSize() override { return EditablePolygon::GetCouloursBufferSize() + Nradius * bullsEye[0].GetCouloursBufferSize(); }
@@ -173,6 +174,7 @@ namespace Amusing
 		std::vector<std::shared_ptr<CompletePolygon>>  chordAreaForPercentage;
 		std::vector<double> chordsAnglePercentage; // no need of chordsOnCircle, the audio manager will compute the chords
 
+		int previousSizeToShow; // nombre de cercle qu'il fallait dessiner précédemment
 
 		double pc; // si ca foire quand on bouge la forme en mm temps que le curseur doit tourner -> garder en memoire le poucentage ou se trouve le curseur et rappeler setreadingposition avec ce pourcentage pour le remettre au nouvel endroit.
 

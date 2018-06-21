@@ -19,7 +19,7 @@
 
 #include "FrequencyMeasurer.h"
 
-
+#include <fstream>
 
 using namespace Miam;
 
@@ -320,7 +320,7 @@ private:
 		}
 	}
 
-	
+	std::ofstream ofs;
 
 	void computeManipulationLine(float Ox, float Oy, float Mx, float My, float width, float height);
 

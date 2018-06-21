@@ -193,38 +193,15 @@ void EditablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 void EditablePolygon::RefreshOpenGLBuffers()
 {
 	DrawablePolygon::RefreshOpenGLBuffers();
-	int decalage = DrawablePolygon::GetVerticesBufferSize();
-	int numApexes = (int)contourPointsInPixels.outer().size() - 1;//isActive? contourPointsInPixels.outer().size() - 1 : 0;
+	RefreshContourPointsOpenGLBuffers();
+	RefreshManipulationPointOpenGLBuffer();
+}
 
-	 /// vertex
-	 // points
-	for (int k = 0; k < numApexes; ++k)
-	{
-		int Xoffset = (float)contourPointsInPixels.outer().at(k).get<0>();
-		int Yoffset = (float)contourPointsInPixels.outer().at(k).get<1>();
-		int Zoffset = 0.1f;
-		for (int j = 0; j < 3 * numVerticesCircle; j += 3)
-		{
-			vertices_buffer[3 * decalage + j] = Xoffset + g_vertex_circle[j];
-			vertices_buffer[3 * decalage + j + 1] = Yoffset + g_vertex_circle[j + 1];
-			vertices_buffer[3 * decalage + j + 2] = Zoffset + g_vertex_circle[j + 2];
-		}
-		decalage += numVerticesCircle;
-
-
-	}
-	int decalageMax = 3 * numVerticesCircle * (numPointsPolygon - numApexes);
-	float *vertexPtr = &vertices_buffer[3 * decalage];
-	for (int k = 0; k < decalageMax; ++k)
-		vertexPtr[k] = 0.0f;
-	/*for (int k = numApexes; k < numPointsPolygon; ++k)
-	{
-		for (int j = 0; j < 3 * numVerticesCircle; j++)
-			vertices_buffer[3 * decalage + j] = 0;
-		decalage += numVerticesCircle;
-	}*/
-
-	// manipulationLine + manipulationPoint
+void EditablePolygon::RefreshManipulationPointOpenGLBuffer()
+{
+	/// manipulationLine + manipulationPoint
+	//vertex
+	int decalage = DrawablePolygon::GetVerticesBufferSize() + numPointsPolygon * numVerticesCircle;
 	if (isActive)
 	{
 		computeManipulationLine((float)centerInPixels.get<0>(), (float)centerInPixels.get<1>(), (float)bmanipulationPointInPixels.get<0>(), (float)bmanipulationPointInPixels.get<1>(), 4.0f, 4.0f);
@@ -232,9 +209,9 @@ void EditablePolygon::RefreshOpenGLBuffers()
 			vertices_buffer[3 * decalage + i] = g_vertex_dotted_line[i];
 		decalage += dottedLineVertexes;
 
-		int Xoffset = (float)bmanipulationPointInPixels.get<0>();
-		int Yoffset = (float)bmanipulationPointInPixels.get<1>();
-		int Zoffset = 0.1f;
+		float Xoffset = (float)bmanipulationPointInPixels.get<0>();
+		float Yoffset = (float)bmanipulationPointInPixels.get<1>();
+		float Zoffset = 0.1f;
 		for (int j = 0; j < 3 * numVerticesRing; j += 3)
 		{
 			vertices_buffer[3 * decalage + j] = Xoffset + g_vertex_ring[j];
@@ -251,33 +228,10 @@ void EditablePolygon::RefreshOpenGLBuffers()
 			vertices_buffer[3 * decalage + j] = 0.0f;
 	}
 
-	/// index
-	// points
-	decalage = DrawablePolygon::GetVerticesBufferSize(); // decalage dans le buffer index
-	int begin = DrawablePolygon::GetVerticesBufferSize(); // decalage dans le buffer vertex
-	const int count = 3 * numPointCircle;
-	for (int k = 0; k < numApexes; ++k)
-	{
-		int indexToAdd = begin + k * numVerticesCircle;
-		const int currentDecalage = 3 * decalage;
-		for (int j = 0; j < count; ++j)
-		{
-			indices_buffer[j +currentDecalage/*+ numVerticesPolygon*/] = circleIndices[j] + indexToAdd;
-		}
-		decalage += numPointCircle;
-	}
-	for (int k = numApexes; k < numPointsPolygon; ++k)
-	{
-		const int currentDecalage = 3 * decalage;
-		int *indicesPtr = &indices_buffer[currentDecalage];
-		for (int j = 0; j < count; ++j)
-			indicesPtr[j] = 0;
-			//indices_buffer[j +currentDecalage/*+ numVerticesPolygon*/] = 0;
-		decalage += numPointCircle;
-	}
-	begin += numPointsPolygon * numVerticesCircle;
 
-	// manipulationLine + manipulationPoint
+	//index
+	decalage = DrawablePolygon::GetVerticesBufferSize() + numPointsPolygon * numPointCircle;
+	int begin = DrawablePolygon::GetVerticesBufferSize() + numPointsPolygon * numVerticesCircle;
 	if (isActive)
 	{
 		for (int i = 0; i < dottedLineIndices; ++i)
@@ -290,6 +244,57 @@ void EditablePolygon::RefreshOpenGLBuffers()
 		}
 		decalage += numVerticesRing;
 	}
+}
+
+void EditablePolygon::RefreshContourPointsOpenGLBuffers()
+{
+	int decalage = DrawablePolygon::GetVerticesBufferSize();
+	int numApexes = (int)contourPointsInPixels.outer().size() - 1;//isActive? contourPointsInPixels.outer().size() - 1 : 0;
+
+																  /// points
+																  // vertex
+	for (int k = 0; k < numApexes; ++k)
+	{
+		float Xoffset = (float)contourPointsInPixels.outer().at(k).get<0>();
+		float Yoffset = (float)contourPointsInPixels.outer().at(k).get<1>();
+		float Zoffset = 0.1f;
+		for (int j = 0; j < 3 * numVerticesCircle; j += 3)
+		{
+			vertices_buffer[3 * decalage + j] = Xoffset + g_vertex_circle[j];
+			vertices_buffer[3 * decalage + j + 1] = Yoffset + g_vertex_circle[j + 1];
+			vertices_buffer[3 * decalage + j + 2] = Zoffset + g_vertex_circle[j + 2];
+		}
+		decalage += numVerticesCircle;
+	}
+	int decalageMax = 3 * numVerticesCircle * (numPointsPolygon - numApexes);
+	float *vertexPtr = &vertices_buffer[3 * decalage];
+	for (int k = 0; k < decalageMax; ++k)
+		vertexPtr[k] = 0.0f;
+
+	// index
+	decalage = DrawablePolygon::GetVerticesBufferSize(); // decalage dans le buffer index
+	int begin = DrawablePolygon::GetVerticesBufferSize(); // decalage dans le buffer vertex
+	const int count = 3 * numPointCircle;
+	for (int k = 0; k < numApexes; ++k)
+	{
+		int indexToAdd = begin + k * numVerticesCircle;
+		const int currentDecalage = 3 * decalage;
+		for (int j = 0; j < count; ++j)
+		{
+			indices_buffer[j + currentDecalage/*+ numVerticesPolygon*/] = circleIndices[j] + indexToAdd;
+		}
+		decalage += numPointCircle;
+	}
+	for (int k = numApexes; k < numPointsPolygon; ++k)
+	{
+		const int currentDecalage = 3 * decalage;
+		unsigned int *indicesPtr = &indices_buffer[currentDecalage];
+		for (int j = 0; j < count; ++j)
+			indicesPtr[j] = 0;
+		//indices_buffer[j +currentDecalage/*+ numVerticesPolygon*/] = 0;
+		decalage += numPointCircle;
+	}
+	begin += numPointsPolygon * numVerticesCircle;
 }
 
 void EditablePolygon::computeManipulationPoint()
@@ -417,6 +422,7 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
 				contourPointsInPixels.outer().at(contourPointsInPixels.outer().size() - 1) = contourPointsInPixels.outer().at(0);
 				contourPoints.outer().at(contourPoints.outer().size() - 1) = contourPoints.outer().at(0);
 			}
+			RefreshContourPointsOpenGLBuffers();
             areaEventType = AreaEventType::ShapeChanged;
         }
     }
@@ -492,6 +498,8 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
         
         // After manipulation computation : normalized coordinates update
 		updateContourPoints();
+		RefreshContourPointsOpenGLBuffers();
+		RefreshManipulationPointOpenGLBuffer();
     }
     
     else if (pointDraggedId == EditableAreaPointId::Center)
@@ -523,11 +531,18 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
             // Actualisation en prévision du prochain petit déplacement
             lastLocation = newLocation;
         }
+		// la partie du buffer pour le polygon et son contour sont calculée par InteractivePolygon::Refresh...
+		// à la fin de la fonction -> juste recalculer les cercles pour les points du contour et le manipulationPoint
+		RefreshContourPointsOpenGLBuffers();
+		RefreshManipulationPointOpenGLBuffer();
     }
     
     // Graphic updates to all base attributes inherited
-    if (areaEventType != AreaEventType::NothingHappened)
-        InteractivePolygon::CanvasResized(this->parentCanvas);
+	if (areaEventType != AreaEventType::NothingHappened)
+	{
+		InteractivePolygon::CanvasResized(this->parentCanvas);
+		InteractivePolygon::RefreshOpenGLBuffers();
+	}
     return areaEventType;
 }
 

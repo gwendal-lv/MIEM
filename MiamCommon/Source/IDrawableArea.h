@@ -132,9 +132,9 @@ namespace Miam
 
 		virtual float* GetVerticesBufferPtr() = 0;
 		virtual float* GetCoulourBufferPtr() = 0;
-		virtual int* GetIndicesBufferPtr() = 0;
+		virtual unsigned int* GetIndicesBufferPtr() = 0;
 
-		virtual int GetVerticesBufferSize() = 0;
+		virtual const int GetVerticesBufferSize() = 0;
 		virtual int GetIndicesBufferSize() = 0;
 		virtual int GetCouloursBufferSize() = 0;
 

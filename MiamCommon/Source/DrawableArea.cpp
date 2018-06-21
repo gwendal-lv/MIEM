@@ -317,7 +317,7 @@ void DrawableArea::RefreshOpenGLBuffers()
 		}
 	}*/
 
-	int *indicesPtr = &indices_buffer[3 * decalage];
+	unsigned int *indicesPtr = &indices_buffer[3 * decalage];
 	for (int j = 0; j < 3 * numVerticesRing; ++j)
 	{
 		indicesPtr[j] = ringIndices[j];/*+ numVerticesPolygon*/;

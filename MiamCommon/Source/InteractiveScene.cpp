@@ -136,6 +136,7 @@ std::shared_ptr<AreaEvent> InteractiveScene::AddArea(std::shared_ptr<IInteractiv
     
     // Forced graphical updates
     newArea->CanvasResized(canvasComponent);
+	newArea->RefreshOpenGLBuffers();
     
     return std::make_shared<AreaEvent>(newArea, AreaEventType::Added, (int)areas.size()-1, shared_from_this());
 }
@@ -161,6 +162,7 @@ std::shared_ptr<AreaEvent> InteractiveScene::AddExciter(std::shared_ptr<Exciter>
     
     // Forced graphical updates
     newExciter->CanvasResized(canvasComponent);
+	newExciter->RefreshOpenGLBuffers();
     
     // WARNING
     // The vector index is the one relative to all drawable objects....

@@ -78,6 +78,8 @@ CompletePolygon::CompletePolygon(bptree::ptree & areaTree) : EditablePolygon(are
 	vertices_buffer.resize(verticesBufferSize);
 	indices_buffer.resize(indicesBufferSize);
 	coulours_buffer.resize(couloursBufferSize);
+
+	previousSizeToShow = 5;
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
@@ -124,6 +126,8 @@ CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
 	vertices_buffer.resize(verticesBufferSize);
 	indices_buffer.resize(indicesBufferSize);
 	coulours_buffer.resize(couloursBufferSize);
+
+	previousSizeToShow = 5;
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, float radius,
@@ -179,6 +183,8 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 	vertices_buffer.resize(verticesBufferSize);
 	indices_buffer.resize(indicesBufferSize);
 	coulours_buffer.resize(couloursBufferSize);
+
+	previousSizeToShow = 5;
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id,
@@ -233,6 +239,8 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	vertices_buffer.resize(verticesBufferSize);
 	indices_buffer.resize(indicesBufferSize);
 	coulours_buffer.resize(couloursBufferSize);
+
+	previousSizeToShow = 5;
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id,
@@ -296,6 +304,8 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	vertices_buffer.resize(verticesBufferSize);
 	indices_buffer.resize(indicesBufferSize);
 	coulours_buffer.resize(couloursBufferSize);
+
+	previousSizeToShow = 5;
 }
 
 
@@ -327,7 +337,7 @@ void CompletePolygon::Copy(std::shared_ptr<CompletePolygon> polygonToCopy)
 	boost::geometry::centroid(contourPoints,center);
 	// voir s'il faut recalculer le centre
 	CanvasResized(parentCanvas);
-
+	RefreshOpenGLBuffers();
 	
 }
 
@@ -949,6 +959,7 @@ AreaEventType CompletePolygon::TryMoveMultiTouchPoint(const Point<double>& newLo
 
 
 		CanvasResized(parentCanvas);
+		RefreshOpenGLBuffers();
 
 		return AreaEventType::RotScale;
 	}
@@ -998,6 +1009,7 @@ AreaEventType CompletePolygon::TryMoveMultiTouchPoint(const Point<double>& newLo
 
 
 			CanvasResized(parentCanvas);
+			RefreshOpenGLBuffers();
 			return AreaEventType::RotScale;
 		}
 	}
@@ -1051,7 +1063,7 @@ AreaEventType CompletePolygon::EndMultiTouchPointMove()
 
 	updateContourPoints();
 	CanvasResized(parentCanvas);
-
+	RefreshOpenGLBuffers();
 
 
 	currentTouchRotation = 0;
@@ -1164,6 +1176,8 @@ AreaEventType CompletePolygon::TryMovePoint(const Point<double>& newLocation)
 		}
 	}
 	//CanvasResized(this->parentCanvas);
+	RefreshTargetOpenGLBuffers();
+
 	return areaEventType;
 }
 
@@ -1260,6 +1274,7 @@ AreaEventType CompletePolygon::EndPointMove()
 			
 		}
 		CanvasResized(parentCanvas);
+		RefreshOpenGLBuffers();
 	}
 
 	// si on a touché au manipulationPoit -> on a changé l'orientation : vérifié qu'elle soit autorisée et la repositionnée si besoin
@@ -1301,6 +1316,7 @@ AreaEventType CompletePolygon::EndPointMove()
 
 		updateContourPoints();
 		CanvasResized(parentCanvas);
+		RefreshOpenGLBuffers();
 	}
 	
 	AreaEventType eventType =  EditablePolygon::EndPointMove();
@@ -1311,8 +1327,11 @@ AreaEventType CompletePolygon::EndPointMove()
 
 void CompletePolygon::setCursorVisible(bool isVisible, SceneCanvasComponent* _parentCanvas)
 {
-	for(int i=0;i<(int)cursors.size();i++)
+	for (int i = 0; i < (int)cursors.size(); i++)
+	{
 		cursors[i]->CanvasResized(_parentCanvas);
+		cursors[i]->RefreshOpenGLBuffers();
+	}
 	showCursor = isVisible;
 	
 	//CanvasResized(this->parentCanvas);
@@ -1608,6 +1627,7 @@ void CompletePolygon::CanvasResizedBullsEye(SceneCanvasComponent* _parentCanvas)
 	for (int i = 0; i < Nradius; ++i)
 	{
 		bullsEye[i].CanvasResized(_parentCanvas);
+		bullsEye[i].RefreshOpenGLBuffers();
 	}
 
 	
@@ -1828,9 +1848,8 @@ bool CompletePolygon::SizeChanged(double _size, bool minSize)
 	return ans;
 }
 
-void CompletePolygon::RefreshOpenGLBuffers()
+void CompletePolygon::RefreshTargetOpenGLBuffers()
 {
-	EditablePolygon::RefreshOpenGLBuffers();
 	int decalage = EditablePolygon::GetVerticesBufferSize();
 	const int circlesSize = (int)bullsEye.size();
 	const int incDecalage = bullsEye[0].GetVerticesBufferSize();
@@ -1864,8 +1883,8 @@ void CompletePolygon::RefreshOpenGLBuffers()
 			int begin = EditablePolygon::GetVerticesBufferSize(); // pour prendre en compte le nombre de vertex
 			for (int i = 0; i < circlesSize; ++i)
 			{
-				int *circleIndicesPtr = bullsEye[i].GetIndicesBufferPtr();
-				int *indicesPtr = &indices_buffer[decalage];
+				unsigned int *circleIndicesPtr = bullsEye[i].GetIndicesBufferPtr();
+				unsigned int *indicesPtr = &indices_buffer[decalage];
 				for (int j = 0; j < circleIndiceCount; ++j)
 				{
 					indicesPtr[j] = circleIndicesPtr[j] + begin;
@@ -1890,16 +1909,27 @@ void CompletePolygon::RefreshOpenGLBuffers()
 		else
 		{
 			std::vector<int> needToShow = OnCircles;
-			auto end = std::unique(needToShow.begin(), needToShow.end());
+			auto end = std::unique(needToShow.begin(), needToShow.end()); // enleve juste les doublons consecutif -> il peut rester des doublons mais qui dessineront la mm chose :)
 			int newSize = std::distance(needToShow.begin(), end);
+			while (newSize > Nradius)
+			{
+				end = std::unique(needToShow.begin(), needToShow.end());
+				newSize = std::distance(needToShow.begin(), end);
+			}
+
+			bool needToResetPart = false;
+			if (newSize < previousSizeToShow)
+				needToResetPart = true;
+				
+			previousSizeToShow = newSize;
 
 			for (int i = 0; i < newSize; ++i)
 				bullsEye[needToShow[i]].RefreshOpenGLBuffers();
-			
+
 			//vertex
 			for (int i = 0; i < newSize; ++i)
 			{
-				
+
 				float *circleVertexPtr = bullsEye[needToShow[i]].GetVerticesBufferPtr();
 				float *vertexPtr = &vertices_buffer[3 * decalage];
 				for (int j = 0; j < circleVertexCount; ++j)
@@ -1909,20 +1939,38 @@ void CompletePolygon::RefreshOpenGLBuffers()
 				}
 				decalage += incDecalage;
 			}
+			if (needToResetPart)
+			{
+				int count = (Nradius - newSize) * incDecalage;
+				float *vertexPtr = &vertices_buffer[3 * decalage];
+				for (int i = 0; i < count; ++i)
+				{
+					vertexPtr[i] = 0.0f;
+				}
+			}
 
 			// index
 			decalage = EditablePolygon::GetIndicesBufferSize(); // pour decaler dans le buffer
 			int begin = EditablePolygon::GetVerticesBufferSize(); // pour prendre en compte le nombre de vertex
 			for (int i = 0; i < newSize; ++i)
 			{
-				int *circleIndicesPtr = bullsEye[needToShow[i]].GetIndicesBufferPtr();
-				int *indicesPtr = &indices_buffer[decalage];
+				unsigned int *circleIndicesPtr = bullsEye[needToShow[i]].GetIndicesBufferPtr();
+				unsigned int *indicesPtr = &indices_buffer[decalage];
 				for (int j = 0; j < circleIndiceCount; ++j)
 				{
 					indicesPtr[j] = circleIndicesPtr[j] + begin;
 				}
 				decalage += circleIndiceCount; // on se decale dans le buffer
 				begin += incDecalage; // il faut ajouter aux indices le nombre de vertex déjà existant
+			}
+			if (needToResetPart)
+			{
+				int count = (Nradius - newSize) * circleIndiceCount;
+				unsigned int *indicesPtr = &indices_buffer[decalage];
+				for (int i = 0; i < count; ++i)
+				{
+					indicesPtr[i] = 0;
+				}
 			}
 
 			// coulour
@@ -1937,8 +1985,22 @@ void CompletePolygon::RefreshOpenGLBuffers()
 				}
 				decalage += circleCoulourCount;
 			}
-
+			if (needToResetPart)
+			{
+				int count = (Nradius - newSize) * circleCoulourCount;
+				float *coulourPtr = &coulours_buffer[decalage];
+				for (int i = 0; i < count; ++i)
+				{
+					coulourPtr[i] = 0.0f;
+				}
+			}
 
 		}
 	}
+}
+
+void CompletePolygon::RefreshOpenGLBuffers()
+{
+	EditablePolygon::RefreshOpenGLBuffers();
+	RefreshTargetOpenGLBuffers();
 }

@@ -95,7 +95,7 @@ namespace Miam
 
 		// buffer used by OpenGL
 		std::vector<float> vertices_buffer;
-		std::vector<int> indices_buffer;
+		std::vector<unsigned int> indices_buffer;
 		std::vector<float> coulours_buffer;
         
         // =============== SETTERS & GETTERS ===============
@@ -156,7 +156,7 @@ namespace Miam
         void renderCachedNameImages();
         public :
         
-			int GetVerticesBufferSize() override { return numVerticesRing; }
+			const int GetVerticesBufferSize() override { return numVerticesRing; }
 			float* GetVerticesBufferPtr() override
 			{
 				return vertices_buffer.data();
@@ -165,7 +165,7 @@ namespace Miam
 			{
 				return coulours_buffer.data();
 			}
-			int* GetIndicesBufferPtr() override
+			unsigned int* GetIndicesBufferPtr() override
 			{
 				return indices_buffer.data();
 			}

@@ -72,7 +72,6 @@ void InteractivePolygon::init()
 void InteractivePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 {
     DrawablePolygon::CanvasResized(_parentCanvas);
-    
     // Finally, we update sub triangles
     updateSubTriangles();
 }

@@ -283,7 +283,7 @@ void EditableEllipse::RefreshOpenGLBuffers()
 
 	for (int k = numApexes; k < numPointsPolygon; ++k)
 	{
-		int *indicesPtr = &indices_buffer[decalage];
+		unsigned int *indicesPtr = &indices_buffer[decalage];
 		for (int j = 0; j < count; ++j)
 			indicesPtr[j] = 0;
 			//indices_buffer[j + decalage/*+ numVerticesPolygon*/] = 0;
@@ -307,7 +307,7 @@ void EditableEllipse::RefreshOpenGLBuffers()
 	}
 	else
 	{
-		int* indicesPtr = &indices_buffer[decalage];
+		unsigned int* indicesPtr = &indices_buffer[decalage];
 		for (int i = 0; i < dottedLineIndices; ++i)
 			indicesPtr[i] = 0;
 		decalage += 3 * 2 * dottedLineNparts;
