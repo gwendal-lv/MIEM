@@ -53,7 +53,7 @@ void MultiSceneCanvasComponentAmusing::resized()
 	{
 		Rectangle<int> r(getBounds());
 		r.removeFromTop(24 + space);
-		childrenCanvas->setBounds(r.removeFromLeft(getWidth()-150));
+		childrenCanvas->setBounds(r.removeFromLeft(getWidth() - 150));
 		areaOptionsComponent->setBounds(r);
 	}
 	else

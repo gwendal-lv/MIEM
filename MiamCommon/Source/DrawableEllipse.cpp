@@ -249,6 +249,7 @@ void DrawableEllipse::RefreshOpenGLBuffers()
 	float dR = (float)sqrt(2) * contourWidth / 2.0f;
 	const float Cx = (float)centerInPixels.get<0>();
 	const float Cy = (float)centerInPixels.get<1>();
+	float Zoffset = mainZoffset + 0.0f;
 
 	float* verticesPtr = &vertices_buffer[3 * decalage];
 
@@ -261,7 +262,7 @@ void DrawableEllipse::RefreshOpenGLBuffers()
 		double normalizedAngle = (double)(i) / (double)(ellipseVerticesCount);
 		verticesPtr[i * 3] = Cx + (float)aInPixels * (float)std::cos(2.0 * M_PI * normalizedAngle);
 		verticesPtr[i * 3 + 1] = Cy + (float)bInPixels * (float)std::sin(2.0 * M_PI * normalizedAngle);
-		verticesPtr[i * 3 + 2] = 0.0f;
+		verticesPtr[i * 3 + 2] = Zoffset;
 	}
 	for (int i = 3 * decalage + 3 * (ellipseVerticesCount + 1); i< 3 * decalage + 3 * numVerticesPolygon; ++i)
 	{
@@ -288,13 +289,14 @@ void DrawableEllipse::RefreshOpenGLBuffers()
 	const float extB = float(bInPixels + dR);
 	const float Xoffset = (float)centerInPixels.get<0>();
 	const float Yoffset = (float)centerInPixels.get<1>();
+	Zoffset = mainZoffset + 0.1f;
 	float *vertexPtr = &vertices_buffer[3 * decalage];
 	for (int i = 0; i < ellipseVerticesCount; i++)
 	{
 		double normalizedAngle = (double)(i) / (double)(ellipseVerticesCount);
 		vertexPtr[i * 3] = Xoffset + extA * (float)std::cos(2.0 * M_PI * normalizedAngle);
 		vertexPtr[i * 3 + 1] = Yoffset + extB * (float)std::sin(2.0 * M_PI * normalizedAngle);
-		vertexPtr[i * 3 + 2] = 0.0f;
+		vertexPtr[i * 3 + 2] = Zoffset;
 	}
 
 	for (int i = 3 * decalage + 3 * ellipseVerticesCount; i< 3 * decalage + (3 * numPointsPolygon); ++i)

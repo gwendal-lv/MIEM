@@ -35,7 +35,7 @@ DrawableArea::DrawableArea(bptree::ptree& areaTree)
     catch (bptree::ptree_error&) {}
 }
 
-DrawableArea::DrawableArea(int64_t _Id, bpt _center, Colour _fillColour)
+DrawableArea::DrawableArea(int64_t _Id, bpt _center, Colour _fillColour) : mainZoffset(0.0f)
 {
 	Id = _Id;
 	center = _center;
@@ -281,7 +281,7 @@ void DrawableArea::RefreshOpenGLBuffers()
 	int count = 3 * numVerticesRing;
 	const float Xoffset = float(centerInPixels.get<0>());
 	const float Yoffset = float(centerInPixels.get<1>());
-	const float Zoffset = 0.1f;
+	const float Zoffset = mainZoffset + 0.1f;
 	float *verticesPtr = &vertices_buffer[3 * decalage];
 	if (displayCenter)
 	{
@@ -301,21 +301,6 @@ void DrawableArea::RefreshOpenGLBuffers()
 			verticesPtr[j + 2] = 0.0f;
 		}
 	}
-	/*for (int j = 0; j < count; j += 3)
-	{
-		if (displayCenter)
-		{
-			vertices_buffer[3 * decalage + j] = 1.0f* float(centerInPixels.get<0>() + g_vertex_ring[j]);
-			vertices_buffer[3 * decalage + j + 1] = 1.0f*float(centerInPixels.get<1>() + g_vertex_ring[j + 1]);
-			vertices_buffer[3 * decalage + j + 2] = 0.1f + g_vertex_ring[j + 2];
-		}
-		else
-		{
-			vertices_buffer[3 * decalage + j] = 0.0f;
-			vertices_buffer[3 * decalage + j + 1] = 0.0f;
-			vertices_buffer[3 * decalage + j + 2] = 0.0f;
-		}
-	}*/
 
 	unsigned int *indicesPtr = &indices_buffer[3 * decalage];
 	for (int j = 0; j < 3 * numVerticesRing; ++j)

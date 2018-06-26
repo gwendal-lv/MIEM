@@ -811,6 +811,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddCursor(std::shared_ptr<IDrawableArea
 		//associateArea[newCursor] = area; // association à l'aire qui déterminera sa position et donc le son produit
 
 		newCursor->CanvasResized(canvasComponent);//trouver le nouveau centre
+		newCursor->setZoffset(0.2f);
 		newCursor->RefreshOpenGLBuffers();
 
 		alreadyCursorInScene = true;
@@ -1070,13 +1071,14 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDoubleClick(const Mouse
 				{
 					//sceneComponent->SetAreaOptionsVisible(true);
 					previousAreaLocation = completeArea->getCenter();
-					Point<double> tr((double)canvasComponent->getWidth() / 2.0 - completeArea->getCenter().get<0>(), (double)canvasComponent->getHeight() / 2.0 - completeArea->getCenter().get<1>());
-					completeArea->Translate(tr);
+					//Point<double> tr((double)canvasComponent->getWidth() / 2.0 - completeArea->getCenter().get<0>(), (double)canvasComponent->getHeight() / 2.0 - completeArea->getCenter().get<1>());
+					//completeArea->Translate(tr);
 					completeArea->CanvasResized(canvasComponent);
+					completeArea->RefreshOpenGLBuffers();
 					completeArea->SetActive(true);
 					completeArea->showAllTarget(true);
-					previousSize = completeArea->GetFullSceneRatio();
-					completeArea->SizeChanged(previousSize, false);
+					//previousSize = completeArea->GetFullSceneRatio();
+					//completeArea->SizeChanged(previousSize, false);
 					completeArea->updateContourPoints();
 					completeArea->CanvasResized(canvasComponent);
 				}

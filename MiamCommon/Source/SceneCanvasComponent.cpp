@@ -251,28 +251,31 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 	position = new OpenGLShaderProgram::Attribute(*shaderProgram, String("position").toRawUTF8());
 	colour = new OpenGLShaderProgram::Attribute(*shaderProgram, "colour");
 
-	projectionMatrix = new OpenGLShaderProgram::Uniform(*shaderProgram, "projectionMatrix");
-	viewMatrix = new OpenGLShaderProgram::Uniform(*shaderProgram, "viewMatrix");
-	modelMatrix = new OpenGLShaderProgram::Uniform(*shaderProgram, "modelMatrix");
+	projectionMatrix.reset(new OpenGLShaderProgram::Uniform(*shaderProgram, "projectionMatrix"));
+	viewMatrix.reset(new OpenGLShaderProgram::Uniform(*shaderProgram, "viewMatrix"));
+	modelMatrix.reset(new OpenGLShaderProgram::Uniform(*shaderProgram, "modelMatrix"));
 
 
 	/// calcul des matrices
 	Matrix3D<float> testView = lookAt(Vector3D<float>(0, 0, 1), Vector3D<float>(0, 0, 0), Vector3D<float>(0, -1, 0));
 	//Matrix3D<float> testProject = perspective((float)getWidth(), (float)getHeight(), 0.1f, 100.0f);
-	if (projectionMatrix != nullptr)
+	if (projectionMatrix.get() != nullptr)
 		projectionMatrix->setMatrix4(perspective((float)getWidth(), (float)getHeight(), 0.5f, 1.1f).mat, 1, false);
 
-	if (viewMatrix != nullptr)
+	if (viewMatrix.get() != nullptr)
 		viewMatrix->setMatrix4(testView.mat, 1, false);
 
 	Matrix3D<float> model(1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, -1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, (float)getHeight(), 0.0f, 1.0f);//10*getHeight()
+		0.0f, (float)/*desktopScale **/ getHeight(), 0.0f, 1.0f);//10*getHeight()
 
-	if (modelMatrix != nullptr)
+	if (modelMatrix.get() != nullptr)
 		modelMatrix->setMatrix4(model.mat, 1, false);
 
+	
+	W = 1359;
+	H = 894;
 	//shaderProgram->use(); // on utilise qu'un seul shader program pour le moment donc on appelle une seule fois cette fonction
 }
 void SceneCanvasComponent::renderOpenGL()
@@ -282,7 +285,9 @@ void SceneCanvasComponent::renderOpenGL()
 	//DBG("render : " + getName());
     auto manager = canvasManager.lock();
 	OpenGLHelpers::clear(Colours::black);
-    const double desktopScale = (float)openGlContext.getRenderingScale();
+	
+
+	const double desktopScale = (float)openGlContext.getRenderingScale();
     
     // Pure black background
    // g.fillAll (Colours::black);
@@ -301,11 +306,48 @@ void SceneCanvasComponent::renderOpenGL()
 	//glBlendFunc(GL_ONE, GL_ZERO);
 	openGlContext.extensions.glActiveTexture(GL_TEXTURE0);
 	glEnable(GL_TEXTURE_2D);
+
+	float w = (float)getWidth();
+	float h = (float)getHeight();
+
+	/*float newRatio = (float)w / (float)h;
+	float Xscale, Yscale;
+	if (newRatio > 1.0f)
+	{
+		Xscale = 1.0f / newRatio;
+		Yscale = 1.0f;
+	}
+	else
+	{
+		Xscale = 1.0f;
+		Yscale = 1.0f * newRatio;
+	}*/
+	
+	//projectionMatrix->setMatrix4(perspective(Xscale, Yscale, 0.5f, 1.1f).mat, 1, false);
+
 	
 
 	glViewport(0, 0, roundToInt(desktopScale * getWidth()), roundToInt(desktopScale * getHeight()));
-    
+
+
 	shaderProgram->use();
+	
+	//		/|\
+	//	   / | \		IL FAUT METTRE LES UPDATES DE MATRICES APRES LE USE ET AVANT LE DRAW !!!!
+	//	  /  |  \
+	//	 /   O   \
+	//	-----------
+    
+	projectionMatrix->setMatrix4(perspective((float)/*desktopScale **/ getWidth(), (float)/*desktopScale **/ getHeight(), 0.5f, 1.1f).mat, 1, false);
+
+	
+	Matrix3D<float> model(1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, -1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, (float)getHeight(), 0.0f, 1.0f);
+
+	if (modelMatrix.get() != nullptr)
+		modelMatrix->setMatrix4(model.mat, 1, false);
     
     // - - - - - THIRD Duplication of the drawable objects for thread-safe rendering, - - - - -
     // Lorsque nécessaire seulement !
@@ -438,11 +480,11 @@ void SceneCanvasComponent::renderOpenGL()
 	if (last < 0.0)
 		DBG("probleme lastDuration: " + (String)last);
 	EunderTime += underTime;
-	if (numFrame > 6000)
+	if (numFrame > 2 * 60)
 	{
 		//DBG("60 frames, underTime : "+ (String)underTime +" [underTime]" + (String)(EunderTime/600.0));
 		//DBG("probleme underTime : " + (String)underTime);
-		ofs << String(EunderTime / 6000.0).toStdString() << std::endl;
+		//ofs << String(EunderTime / 6000.0).toStdString() << std::endl;
 		EunderTime = 0.0;
 		numFrame = 0;
 	}
@@ -499,10 +541,51 @@ void SceneCanvasComponent::SetIsSelectedForEditing(bool isSelected)
 
 void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int positionInBuffer)
 {
+	//positionInBuffer = 0;
+	// test : cadre bleu de 25px d'epaisseur
+	/*unsigned int cadreIdx[24] = { 0,4,5,
+	5,0,1,
+	5,1,2,
+	5,2,6,
+	6,2,7,
+	2,7,3,
+	3,7,4,
+	3,4,0 };
+	GLfloat cadreVertex[8 * 3] = {
+	(float)getWidth() - 20.0f,(float)getHeight() - 20.0f,0.0f,
+	20.0f,(float)getHeight() - 20.0f,0.0f,
+	20.0f,20.0f,0.0f,
+	(float)getWidth() - 20.0f,20.0f,0.0f,
+	(float)getWidth(),(float)getHeight(),0.0f,
+	0.0f,(float)getHeight(),0.0f,
+	0.0f,0.0f,0.0f,
+	(float)getWidth(),0.0f,0.0f };
+	GLfloat cadreCoulours[8 * 4] = {
+		0.0f, 0.0f, 1.0f, 1.0f,
+		0.0f, 0.0f, 1.0f, 1.0f,
+		0.0f, 0.0f, 1.0f, 1.0f,
+		0.0f, 0.0f, 1.0f, 1.0f,
+		0.0f, 0.0f, 1.0f, 1.0f,
+		0.0f, 0.0f, 1.0f, 1.0f,
+		0.0f, 0.0f, 1.0f, 1.0f,
+		0.0f, 0.0f, 1.0f, 1.0f,
+	};
+
+	GLfloat *destPtr = &g_vertex_buffer_data[0];
+	for (int j = 0; j < 8 * 3; ++j)
+		destPtr[j] = cadreVertex[j];
+
+	unsigned int *destIndicesPtr = &indices[0];
+	for (int j = 0; j < 8 * 3; ++j)
+		destIndicesPtr[j] = cadreIdx[j];
+
+	float* destCouloursPtr = &g_color_buffer_data[0];
+	for (int j = 0; j < 8 * 4; ++j)
+		destCouloursPtr[j] = cadreCoulours[j];*/
+
+
 	int decalage = 3 * ((int)positionInBuffer * *numVertexShape);// + numPointsPolygon + 1;
-	//area->RefreshOpenGLBuffers();
-	//std::vector<int> shift;
-	//shift.push_back(decalage);
+	
 	if (area->GetVerticesBufferSize() >= 3)
 	{
 		/// vertex
@@ -525,12 +608,7 @@ void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int po
 			DBG(e.what());
 		}
 
-		//decalage += (*numPointsPolygon + 1);
-
-		//2. centre
 		
-		//decalage += numVerticesRing;
-
 	}
 
 

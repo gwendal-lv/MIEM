@@ -296,6 +296,7 @@ void DrawablePolygon::RefreshOpenGLBuffers()
 	DrawableArea::RefreshOpenGLBuffers();
 	// forme
 	int decalage = DrawableArea::GetVerticesBufferSize();
+	float Zoffset = mainZoffset + 0.0f;
 	vertices_buffer[3 * decalage] = (float)centerInPixels.get<0>();
 	vertices_buffer[3 * decalage + 1] = (float)centerInPixels.get<1>();
 	vertices_buffer[3 * decalage + 2] = 0.0f;
@@ -304,7 +305,7 @@ void DrawablePolygon::RefreshOpenGLBuffers()
 	{
 		vertices_buffer[3 * decalage + 3 + i * 3] = (float)contourPointsInPixels.outer().at(i).get<0>();//radius*cosf(currentAngle);
 		vertices_buffer[3 * decalage + 3 + i * 3 + 1] = (float)contourPointsInPixels.outer().at(i).get<1>();
-		vertices_buffer[3 * decalage + 3 + i * 3 + 2] = 0.0f;
+		vertices_buffer[3 * decalage + 3 + i * 3 + 2] = Zoffset;
 	}
 	for (int i = 3 * decalage + 3 + 3 * ((int)contourPointsInPixels.outer().size() - 1); i < 3 * decalage + 3 * numVerticesPolygon; ++i)
 		vertices_buffer[i] = 0.0f;
@@ -342,6 +343,7 @@ void DrawablePolygon::RefreshOpenGLBuffers()
 
 	const float Xoffset = (float)centerInPixels.get<0>();
 	const float Yoffset = (float)centerInPixels.get<1>();
+	Zoffset = mainZoffset + 0.1f;
 
 	for (int i = 0; i < (int)contourPointsInPixels.outer().size() - 1; ++i)
 	{

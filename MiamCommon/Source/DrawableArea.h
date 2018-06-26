@@ -92,6 +92,7 @@ namespace Miam
 
 		GLfloat g_vertex_ring[3 * numVerticesRing];
 		unsigned int ringIndices[3 * numVerticesRing];
+		float mainZoffset;
 
 		// buffer used by OpenGL
 		std::vector<float> vertices_buffer;
@@ -207,6 +208,10 @@ namespace Miam
 					DBG(e.what());
 					return 0.0;
 				}
+			}
+			void setZoffset(const float newOffset) override
+			{
+				mainZoffset = newOffset;
 			}
         
         virtual void Paint(Graphics& g) override;

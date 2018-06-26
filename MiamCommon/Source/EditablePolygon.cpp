@@ -211,7 +211,7 @@ void EditablePolygon::RefreshManipulationPointOpenGLBuffer()
 
 		float Xoffset = (float)bmanipulationPointInPixels.get<0>();
 		float Yoffset = (float)bmanipulationPointInPixels.get<1>();
-		float Zoffset = 0.1f;
+		float Zoffset = mainZoffset + 0.1f;
 		for (int j = 0; j < 3 * numVerticesRing; j += 3)
 		{
 			vertices_buffer[3 * decalage + j] = Xoffset + g_vertex_ring[j];
@@ -257,7 +257,7 @@ void EditablePolygon::RefreshContourPointsOpenGLBuffers()
 	{
 		float Xoffset = (float)contourPointsInPixels.outer().at(k).get<0>();
 		float Yoffset = (float)contourPointsInPixels.outer().at(k).get<1>();
-		float Zoffset = 0.1f;
+		float Zoffset = mainZoffset + 0.1f;
 		for (int j = 0; j < 3 * numVerticesCircle; j += 3)
 		{
 			vertices_buffer[3 * decalage + j] = Xoffset + g_vertex_circle[j];
@@ -347,7 +347,7 @@ void EditablePolygon::SetActive(bool activate)
 AreaEventType EditablePolygon::TryBeginPointMove(const Point<double>& hitPoint)
 {
 	AreaEventType eventType = AreaEventType::NothingHappened;
-
+	DBG("hP : (" + (String)hitPoint.x + " " + (String)hitPoint.y + ")");
 	// ONE TOUCH POINT IS AUTHORIZED BY AREA, AT THE MOMENT
 	// And this is decided... Here
 	if (pointDraggedId != EditableAreaPointId::None)
@@ -411,20 +411,22 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
     // Simple contour point dragging
     if (pointDraggedId >= 0)
     {
-        if ( parentCanvas->getLocalBounds().contains(newLocation.toInt())
-            && isNewContourPointValid(newLocation))
-        {
+		if (parentCanvas->getLocalBounds().contains(newLocation.toInt())
+			&& isNewContourPointValid(newLocation))
+		{
 			contourPointsInPixels.outer().at(pointDraggedId) = bpt(newLocation.x, newLocation.y);
 			contourPoints.outer().at(pointDraggedId) = bpt(newLocation.x / (double)parentCanvas->getWidth(),
-															newLocation.y / (double)parentCanvas->getHeight());
+				newLocation.y / (double)parentCanvas->getHeight());
 			if (pointDraggedId == 0) // first point = last point
 			{
 				contourPointsInPixels.outer().at(contourPointsInPixels.outer().size() - 1) = contourPointsInPixels.outer().at(0);
 				contourPoints.outer().at(contourPoints.outer().size() - 1) = contourPoints.outer().at(0);
 			}
 			RefreshContourPointsOpenGLBuffers();
-            areaEventType = AreaEventType::ShapeChanged;
-        }
+			areaEventType = AreaEventType::ShapeChanged;
+		}
+		else
+			DBG("out of bounds : " + (String)newLocation.x + " " + (String)newLocation.y);
     }
     
     else if (pointDraggedId == EditableAreaPointId::ManipulationPoint)

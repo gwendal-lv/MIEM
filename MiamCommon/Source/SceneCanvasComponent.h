@@ -137,7 +137,7 @@ private:
 	ScopedPointer<OpenGLShaderProgram> shaderProgram;
 	ScopedPointer<OpenGLShaderProgram::Attribute> position, colour;
 
-	ScopedPointer<OpenGLShaderProgram::Uniform> projectionMatrix, viewMatrix, modelMatrix;
+	std::unique_ptr<OpenGLShaderProgram::Uniform> projectionMatrix, viewMatrix, modelMatrix;
 
 	String myVertexShader = "attribute vec4 position;\n"
 #if JUCE_OPENGL_ES

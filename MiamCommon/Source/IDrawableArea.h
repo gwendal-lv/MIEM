@@ -141,6 +141,8 @@ namespace Miam
 		virtual float GetCouloursBufferElt(int idx) = 0;
 		virtual float GetVerticesBufferElt(int idx) = 0;
 		virtual int GetIndicesBufferElt(int idx) = 0;
+
+		virtual void setZoffset(const float newOffset) = 0;
         
         /// \brief Sets the name that could be displayed on screen next to the center
         virtual void SetName(String newName) = 0;

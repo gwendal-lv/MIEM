@@ -54,10 +54,10 @@ void AmusingSceneComponent::setSamplesColor(int Nsamples, Colour colorCode[])
 		buttonsColor.push_back(colorCode[i]);
 }
 
-void AmusingSceneComponent::addColourSample(int index, Colour colour)
+void AmusingSceneComponent::addColourSample(int index, Colour _colour)
 {
-	areaOptions.addColourSample(index, colour);
-	buttonsColor.insert(buttonsColor.begin() + index, colour);
+	areaOptions.addColourSample(index, _colour);
+	buttonsColor.insert(buttonsColor.begin() + index, _colour);
 }
 
 void AmusingSceneComponent::renderOpenGL()

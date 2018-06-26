@@ -211,7 +211,7 @@ void EditableEllipse::RefreshOpenGLBuffers()
 	{
 		const float Xoffset = (float)contourPointsInPixels.outer().at(k).get<0>();
 		const float Yoffset = (float)contourPointsInPixels.outer().at(k).get<1>();
-		const float Zoffset = 0.1f;
+		const float Zoffset = mainZoffset + 0.1f;
 		float* verticesPtr = &vertices_buffer[3 * decalage];
 		for (int j = 0; j < 3 * numVerticesCircle; j += 3)
 		{
@@ -240,11 +240,12 @@ void EditableEllipse::RefreshOpenGLBuffers()
 			vertices_buffer[3 * decalage + i] = g_vertex_dotted_line[i];
 		decalage += dottedLineVertexes;
 
+		const float Zoffset = mainZoffset + 0.1f;
 		for (int j = 0; j < 3 * numVerticesRing; j += 3)
 		{
 			vertices_buffer[3 * decalage + j] = 1.0f* ((float)bmanipulationPointInPixels.get<0>() + g_vertex_ring[j]);
 			vertices_buffer[3 * decalage + j + 1] = 1.0f*((float)bmanipulationPointInPixels.get<1>() + g_vertex_ring[j + 1]);
-			vertices_buffer[3 * decalage + j + 2] = 0.1f + g_vertex_ring[j + 2];
+			vertices_buffer[3 * decalage + j + 2] = Zoffset + g_vertex_ring[j + 2];
 
 		}
 	}
