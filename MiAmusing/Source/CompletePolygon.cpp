@@ -80,6 +80,7 @@ CompletePolygon::CompletePolygon(bptree::ptree & areaTree) : EditablePolygon(are
 	coulours_buffer.resize(couloursBufferSize);
 
 	previousSizeToShow = 5;
+	deleteOldCircles = false;
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
@@ -128,6 +129,7 @@ CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
 	coulours_buffer.resize(couloursBufferSize);
 
 	previousSizeToShow = 5;
+	deleteOldCircles = false;
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, float radius,
@@ -185,6 +187,7 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 	coulours_buffer.resize(couloursBufferSize);
 
 	previousSizeToShow = 5;
+	deleteOldCircles = false;
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id,
@@ -241,6 +244,7 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	coulours_buffer.resize(couloursBufferSize);
 
 	previousSizeToShow = 5;
+	deleteOldCircles = false;
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id,
@@ -306,6 +310,7 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	coulours_buffer.resize(couloursBufferSize);
 
 	previousSizeToShow = 5;
+	deleteOldCircles = false;
 }
 
 
@@ -1789,6 +1794,8 @@ std::shared_ptr<bptree::ptree> CompletePolygon::GetTree()
 
 void CompletePolygon::showAllTarget(bool shouldBeShowed)
 {
+	if (shouldBeShowed == false && showAllCircles == true)
+		deleteOldCircles = true;
 	showAllCircles = shouldBeShowed;
 }
 
@@ -1939,7 +1946,7 @@ void CompletePolygon::RefreshTargetOpenGLBuffers()
 				}
 				decalage += incDecalage;
 			}
-			if (needToResetPart)
+			if (needToResetPart || deleteOldCircles)
 			{
 				int count = (Nradius - newSize) * incDecalage;
 				float *vertexPtr = &vertices_buffer[3 * decalage];
@@ -1963,7 +1970,7 @@ void CompletePolygon::RefreshTargetOpenGLBuffers()
 				decalage += circleIndiceCount; // on se decale dans le buffer
 				begin += incDecalage; // il faut ajouter aux indices le nombre de vertex déjà existant
 			}
-			if (needToResetPart)
+			if (needToResetPart || deleteOldCircles)
 			{
 				int count = (Nradius - newSize) * circleIndiceCount;
 				unsigned int *indicesPtr = &indices_buffer[decalage];
@@ -1985,7 +1992,7 @@ void CompletePolygon::RefreshTargetOpenGLBuffers()
 				}
 				decalage += circleCoulourCount;
 			}
-			if (needToResetPart)
+			if (needToResetPart || deleteOldCircles)
 			{
 				int count = (Nradius - newSize) * circleCoulourCount;
 				float *coulourPtr = &coulours_buffer[decalage];

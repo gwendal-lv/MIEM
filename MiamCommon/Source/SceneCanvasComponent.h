@@ -111,6 +111,8 @@ public:
     // - - - - - - - - OpenGL specific - - - - - - - - -
     virtual void newOpenGLContextCreated() override;
     virtual void renderOpenGL() override; // ! in background-thread !
+	void DrawShapes();
+	void DrawCanvasOutline();
     virtual void openGLContextClosing() override;
     
     // - - - - - - - - Actual painting codes - - - - - - - - -
@@ -126,6 +128,8 @@ public:
     float GetRatio() {return ((float)getWidth()) / ((float)getHeight()) ; }
     void SetIsSelectedForEditing(bool isSelected);
     
+protected :
+	ScopedPointer<OpenGLShaderProgram::Attribute> position, colour;
 
 private:
 	int numFrame;
@@ -135,7 +139,7 @@ private:
 	int previousMaxSize; // utilisé pour remettre à 0 les parties de buffer qui étaient utilisées à la frame précédente et qui ne le sont plus mtn
 
 	ScopedPointer<OpenGLShaderProgram> shaderProgram;
-	ScopedPointer<OpenGLShaderProgram::Attribute> position, colour;
+	
 
 	std::unique_ptr<OpenGLShaderProgram::Uniform> projectionMatrix, viewMatrix, modelMatrix;
 
@@ -217,6 +221,7 @@ private:
 	/*static const int*/const int* colorBufferSize;// = Nshapes * shapeColorBufferSize;
 	/*static const int*/const int* indicesSize;// = Nshapes * shapeIndicesSize;
 
+
 	int shift2[35+1]; // tableau contenant les séparations entre les différentes parties d'une forme (forme = 1, centre = 1, points = 32, contour = 1)
 
 	GLfloat g_vertex_ring[3 * numVerticesRing];
@@ -234,11 +239,23 @@ private:
 	GLuint elementBuffer;
 	unsigned int *indices;// [indicesSize];
 
+	GLuint canvasOutlineVertexBuffer;
+	GLfloat g_canvasOutlineVertex_buffer_data[8*3];
+
+	GLuint canvasOutlineCoulourBuffer;
+	GLfloat g_canvasOutlineCoulour_buffer_data[8 * 4];
+
+	GLuint canvasOutlineIndexBuffer;
+	unsigned int g_canvasOutlineIndex_buffer_data[24];
+
+	void computeCanvasOutline();
+	bool redrawCanvasOutline;
+
 	
 	GLfloat g_vertex_dotted_line[3 * dottedLineVertexes];
 	GLuint g_indices_dotted_line[dottedLineIndices];
 
-	void DrawShape(std::shared_ptr<IDrawableArea> area, int positionInBuffer);
+	void CreateShapeBuffer(std::shared_ptr<IDrawableArea> area, int positionInBuffer);
 
 	///// vertex de toutes les formes dans g_vertex_buffer
 	//GLuint vertexBuffer; 

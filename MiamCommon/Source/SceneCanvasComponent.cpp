@@ -43,7 +43,7 @@ void SceneCanvasComponent::init(int numShapesMax, int numPointsMax)
 	previousMaxSize = 0;
 	needToResetBufferParts = false;
 
-	Nshapes = new const int(numShapesMax/*Npolygons + Npolygons * (Npolygons + 1) / 2*/);
+	Nshapes = new const int(numShapesMax);
 
 	numPointsPolygon = new const int(numPointsMax);
 
@@ -80,75 +80,32 @@ void SceneCanvasComponent::init(int numShapesMax, int numPointsMax)
 		}
 	}
 
-	// calcul d'un anneau de centre 0, de rayon 5 pixels et avec une épaisseur de 2 pixels
-	float radius = 5.0f;
-	float width = 3.0f;
-	int numPoints = numPointsRing;
-	float ri = radius - width / 2.0f;
-	float re = radius + width / 2.0f;
-
-	double currentAngle = 0.0;
-	double incAngle = 2 * M_PI / (double)numPoints;
-	for (int i = 0; i < numPoints; ++i)
-	{
-		g_vertex_ring[i * 3] = ri * (float)cos(currentAngle);
-		g_vertex_ring[i * 3 + 1] = ri * (float)sin(currentAngle);
-		g_vertex_ring[i * 3 + 2] = 0.0f;
-		g_vertex_ring[numPoints * 3 + i * 3] = re * (float)cos(currentAngle);
-		g_vertex_ring[numPoints * 3 + i * 3 + 1] = re * (float)sin(currentAngle);
-		g_vertex_ring[numPoints * 3 + i * 3 + 2] = 0.0;
-		currentAngle += incAngle;
-	}
-	for (int i = 0; i < numPoints; ++i)
-	{
-		ringIndices[i * 6] = i;
-		ringIndices[i * 6 + 1] = numPoints + i;
-		ringIndices[i * 6 + 2] = numPoints + i + 1 >= 2 * numPoints ? numPoints : numPoints + i + 1;
-		ringIndices[i * 6 + 3] = numPoints + i + 1 >= 2 * numPoints ? numPoints : numPoints + i + 1;
-		ringIndices[i * 6 + 4] = i;
-		ringIndices[i * 6 + 5] = i + 1 >= numPoints ? 0 : i + 1;
-	}
-
-	// calcul d'un cercle de centre 0 et de rayon 5 pixels
-	radius = 5.0f;
-	currentAngle = 0.0;
-	incAngle = 2 * M_PI / (double)numPoints;
-	g_vertex_circle[0] = 0.0f;
-	g_vertex_circle[1] = 0.0f;
-	g_vertex_circle[2] = 0.0f;
-	for (int i = 0; i < numPointCircle; ++i)
-	{
-		g_vertex_circle[(i + 1) * 3] = radius * (float)cos(currentAngle);
-		g_vertex_circle[(i + 1) * 3 + 1] = radius * (float)sin(currentAngle);
-		g_vertex_circle[(i + 1) * 3 + 2] = 0.0f;
-		currentAngle += incAngle;
-	}
-	for (int i = 0; i < numPointCircle; ++i)
-	{
-		circleIndices[i * 3] = i + 1;
-		circleIndices[i * 3 + 1] = 0;
-		circleIndices[i * 3 + 2] = i + 2 > numPointCircle ? 1 : i + 2;
-	}
-
-	// mise à 0 des buffers
-	for (int i = 0; i < 3 * (*numVerticesPolygon) + 3 * numVerticesRing; ++i)
-		g_vertex_buffer_data[i] = 0;
-
-	for (int i = 0; i < 3 * (*numVerticesPolygon) + 3 * (*numVerticesPolygon); ++i)
-		indices[i] = 0;
-
-	shift2[0] = 0;
-	shift2[1] = *numVerticesPolygon;
-	shift2[2] = *numVerticesPolygon + numVerticesRing;
+	g_canvasOutlineIndex_buffer_data[0] = 0;
+	g_canvasOutlineIndex_buffer_data[1] = 4;
+	g_canvasOutlineIndex_buffer_data[2] = 5;
+	g_canvasOutlineIndex_buffer_data[3] = 5;
+	g_canvasOutlineIndex_buffer_data[4] = 0;
+	g_canvasOutlineIndex_buffer_data[5] = 1;
+	g_canvasOutlineIndex_buffer_data[6] = 5;
+	g_canvasOutlineIndex_buffer_data[7] = 1;
+	g_canvasOutlineIndex_buffer_data[8] = 2;
+	g_canvasOutlineIndex_buffer_data[9] = 5;
+	g_canvasOutlineIndex_buffer_data[10] = 2;
+	g_canvasOutlineIndex_buffer_data[11] = 6;
+	g_canvasOutlineIndex_buffer_data[12] = 6;
+	g_canvasOutlineIndex_buffer_data[13] = 2;
+	g_canvasOutlineIndex_buffer_data[14] = 7;
+	g_canvasOutlineIndex_buffer_data[15] = 2;
+	g_canvasOutlineIndex_buffer_data[16] = 7;
+	g_canvasOutlineIndex_buffer_data[17] = 3;
+	g_canvasOutlineIndex_buffer_data[18] = 3;
+	g_canvasOutlineIndex_buffer_data[19] = 7;
+	g_canvasOutlineIndex_buffer_data[20] = 4;
+	g_canvasOutlineIndex_buffer_data[21] = 3;
+	g_canvasOutlineIndex_buffer_data[22] = 4;
+	g_canvasOutlineIndex_buffer_data[23] = 0;
 
 
-	for (int k = 0; k < *numPointsPolygon; ++k)
-	{
-		shift2[3 + k] = shift2[2] + (k + 1) * numVerticesCircle;
-	}
-
-	shift2[2 + *numPointsPolygon + 1] = shift2[2 + *numPointsPolygon] + *numPointsPolygon;
-	shift2[2 + *numPointsPolygon + 2] = shift2[2 + *numPointsPolygon + 1] + dottedLineVertexes;
 
 	openGlContext.setComponentPaintingEnabled(true); // default behavior, lower perfs
 													 // OpenGL final initialization will happen in the COmpleteInitialization method
@@ -208,6 +165,9 @@ void SceneCanvasComponent::resized()
     {
         manager->OnResized();
     }
+	redrawCanvasOutline = true;
+	if (redrawCanvasOutline)
+		computeCanvasOutline();
 }
 
 
@@ -217,6 +177,7 @@ void SceneCanvasComponent::resized()
 void SceneCanvasComponent::newOpenGLContextCreated()
 {
     //DBG("SceneCanvasComponent : init OpenGL");
+	redrawCanvasOutline = true;
 	numFrame = 0;
 
 	// Will init the counter
@@ -228,6 +189,22 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 	shaderProgram->link();
 
 	shaderProgram->use();
+
+	/// canvas outline buffer
+	openGlContext.extensions.glGenBuffers(1, &canvasOutlineVertexBuffer);
+	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, canvasOutlineVertexBuffer);
+	openGlContext.extensions.glBufferData(GL_ARRAY_BUFFER, 8 * 3 * sizeof(GLfloat),
+		g_canvasOutlineVertex_buffer_data, GL_STREAM_DRAW);
+
+	openGlContext.extensions.glGenBuffers(1, &canvasOutlineCoulourBuffer);
+	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, canvasOutlineCoulourBuffer);
+	openGlContext.extensions.glBufferData(GL_ARRAY_BUFFER, 8 * 4 * sizeof(GLfloat), g_canvasOutlineCoulour_buffer_data, GL_STREAM_DRAW);
+
+	openGlContext.extensions.glGenBuffers(1, &canvasOutlineIndexBuffer);
+	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, canvasOutlineIndexBuffer);
+	openGlContext.extensions.glBufferData(GL_ELEMENT_ARRAY_BUFFER, 8 * 4 * sizeof(unsigned int), g_canvasOutlineIndex_buffer_data, GL_STREAM_DRAW);
+
+	/// shapes buffer
 
 	// TRIANGLE BUFFER
 	// openGL génère 1 buffer, avec l'ID vertexBuffer, et qui contiendra g_vertex_buffer_data
@@ -246,6 +223,8 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 	openGlContext.extensions.glGenBuffers(1, &elementBuffer);
 	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer);
 	openGlContext.extensions.glBufferData(GL_ELEMENT_ARRAY_BUFFER, *indicesSize * sizeof(unsigned int), indices, GL_STREAM_DRAW);
+
+	///uniforms
 
 	// déclaration des attributs et uniforms : !!! aux noms et leurs utilisations dans les shaders !!!
 	position = new OpenGLShaderProgram::Attribute(*shaderProgram, String("position").toRawUTF8());
@@ -273,9 +252,7 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 	if (modelMatrix.get() != nullptr)
 		modelMatrix->setMatrix4(model.mat, 1, false);
 
-	
-	W = 1359;
-	H = 894;
+	computeCanvasOutline();
 	//shaderProgram->use(); // on utilise qu'un seul shader program pour le moment donc on appelle une seule fois cette fonction
 }
 void SceneCanvasComponent::renderOpenGL()
@@ -307,25 +284,6 @@ void SceneCanvasComponent::renderOpenGL()
 	openGlContext.extensions.glActiveTexture(GL_TEXTURE0);
 	glEnable(GL_TEXTURE_2D);
 
-	float w = (float)getWidth();
-	float h = (float)getHeight();
-
-	/*float newRatio = (float)w / (float)h;
-	float Xscale, Yscale;
-	if (newRatio > 1.0f)
-	{
-		Xscale = 1.0f / newRatio;
-		Yscale = 1.0f;
-	}
-	else
-	{
-		Xscale = 1.0f;
-		Yscale = 1.0f * newRatio;
-	}*/
-	
-	//projectionMatrix->setMatrix4(perspective(Xscale, Yscale, 0.5f, 1.1f).mat, 1, false);
-
-	
 
 	glViewport(0, 0, roundToInt(desktopScale * getWidth()), roundToInt(desktopScale * getHeight()));
 
@@ -402,7 +360,7 @@ void SceneCanvasComponent::renderOpenGL()
 	const int duplicatedSize = (int)duplicatedAreas.size();
 	for (size_t i=0;i<duplicatedSize;i++)
     {
-		DrawShape(duplicatedAreas[i], (int)i);
+		CreateShapeBuffer(duplicatedAreas[i], (int)i);
     }
 
 	if (needToResetBufferParts)
@@ -411,47 +369,14 @@ void SceneCanvasComponent::renderOpenGL()
 		std::fill(g_color_buffer_data + (int)duplicatedAreas.size() * *shapeColorBufferSize, g_color_buffer_data + previousMaxSize * *shapeColorBufferSize/**colorBufferSize*/, 0.0f);
 		std::fill(indices + (int)duplicatedAreas.size() * *shapeIndicesSize, indices + previousMaxSize * *shapeIndicesSize/**indicesSize*/, 0);
 	}
-	/*for (int i = (int)duplicatedAreas.size() * *shapeVertexBufferSize; i < *vertexBufferSize; ++i)
-	{
-		g_vertex_buffer_data[i] = 0.0f;
-	}
-	for (int i = (int)duplicatedAreas.size() * *shapeColorBufferSize; i < *colorBufferSize; ++i)
-	{
-		g_color_buffer_data[i] = 0.0f;
-	}
-	for (int i = (int)duplicatedAreas.size() * *shapeIndicesSize; i < *indicesSize; ++i)
-	{
-		indices[i] = 0;
-	}*/
 
-	//glOrtho(0,getWidth(),0, getHeight(), 0.5f, 1.1f);
+
+	DrawCanvasOutline();
+	
 
 	if (!(!areasCountChanged && duplicatedSize == 0))
 	{
-		/// Draw triangle
-		openGlContext.extensions.glEnableVertexAttribArray(position->attributeID);
-		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, /**vertexBufferSize*/ previousMaxSize * *shapeVertexBufferSize * sizeof(GLfloat)/*sizeof(g_vertex_buffer_data)*/, g_vertex_buffer_data);
-		openGlContext.extensions.glVertexAttribPointer(position->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
-		//openGLContext.extensions.glEnableVertexAttribArray(position->attributeID);
-
-		openGlContext.extensions.glEnableVertexAttribArray(colour->attributeID);
-		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
-		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, /**colorBufferSize*/ previousMaxSize * *shapeColorBufferSize * sizeof(GLfloat), g_color_buffer_data);
-		openGlContext.extensions.glVertexAttribPointer(colour->attributeID, 4, GL_FLOAT, GL_FALSE, sizeof(float[4]), 0);
-
-
-		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer);
-		//openGlContext.extensions.glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
-		openGlContext.extensions.glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, /**indicesSize*/ previousMaxSize * *shapeIndicesSize * sizeof(unsigned int), indices);
-
-		glDrawElements(GL_TRIANGLES, previousMaxSize * *shapeIndicesSize/**indicesSize*/ /*+ 3 * 64*/, GL_UNSIGNED_INT, (void*)0);
-		//glDrawArrays(GL_TRIANGLES, 0, 3);
-		openGlContext.extensions.glDisableVertexAttribArray(position->attributeID);
-		openGlContext.extensions.glDisableVertexAttribArray(colour->attributeID);
-
-		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, 0);
-		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		DrawShapes();
 	}
     
     // Call to a general Graphic update on the whole Presenter module
@@ -480,7 +405,7 @@ void SceneCanvasComponent::renderOpenGL()
 	if (last < 0.0)
 		DBG("probleme lastDuration: " + (String)last);
 	EunderTime += underTime;
-	if (numFrame > 2 * 60)
+	if (numFrame > 100 * 60)
 	{
 		//DBG("60 frames, underTime : "+ (String)underTime +" [underTime]" + (String)(EunderTime/600.0));
 		//DBG("probleme underTime : " + (String)underTime);
@@ -500,6 +425,65 @@ void SceneCanvasComponent::renderOpenGL()
     {
         Thread::sleep((int)std::floor(underTime));
     }
+}
+
+void SceneCanvasComponent::DrawShapes()
+{
+	/// Draw triangle
+	openGlContext.extensions.glEnableVertexAttribArray(position->attributeID);
+	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+	openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, /**vertexBufferSize*/previousMaxSize * *shapeVertexBufferSize * sizeof(GLfloat)/*sizeof(g_vertex_buffer_data)*/, g_vertex_buffer_data);
+	openGlContext.extensions.glVertexAttribPointer(position->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
+	//openGLContext.extensions.glEnableVertexAttribArray(position->attributeID);
+
+	openGlContext.extensions.glEnableVertexAttribArray(colour->attributeID);
+	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
+	openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, /**colorBufferSize*/previousMaxSize * *shapeColorBufferSize * sizeof(GLfloat), g_color_buffer_data);
+	openGlContext.extensions.glVertexAttribPointer(colour->attributeID, 4, GL_FLOAT, GL_FALSE, sizeof(float[4]), 0);
+
+
+	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer);
+	//openGlContext.extensions.glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+	openGlContext.extensions.glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, /**indicesSize*/ previousMaxSize * *shapeIndicesSize * sizeof(unsigned int), indices);
+
+	glDrawElements(GL_TRIANGLES, previousMaxSize * *shapeIndicesSize/**indicesSize*/ /*+ 3 * 64*/, GL_UNSIGNED_INT, (void*)0);
+	//glDrawArrays(GL_TRIANGLES, 0, 3);
+	openGlContext.extensions.glDisableVertexAttribArray(position->attributeID);
+	openGlContext.extensions.glDisableVertexAttribArray(colour->attributeID);
+
+	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, 0);
+	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+void SceneCanvasComponent::DrawCanvasOutline()
+{
+	if (redrawCanvasOutline)
+		computeCanvasOutline();
+
+	openGlContext.extensions.glEnableVertexAttribArray(position->attributeID);
+	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, canvasOutlineVertexBuffer);
+	if (redrawCanvasOutline)
+		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, 8 * 3 * sizeof(GLfloat), g_canvasOutlineVertex_buffer_data);
+	openGlContext.extensions.glVertexAttribPointer(position->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
+
+	openGlContext.extensions.glEnableVertexAttribArray(colour->attributeID);
+	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, canvasOutlineCoulourBuffer);
+	if (redrawCanvasOutline)
+		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, 8 * 4 * sizeof(GLfloat), g_canvasOutlineCoulour_buffer_data);
+	openGlContext.extensions.glVertexAttribPointer(colour->attributeID, 4, GL_FLOAT, GL_FALSE, sizeof(float[4]), 0);
+
+	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, canvasOutlineIndexBuffer);
+
+	glDrawElements(GL_TRIANGLES, 24, GL_UNSIGNED_INT, (void*)0);
+
+	openGlContext.extensions.glDisableVertexAttribArray(position->attributeID);
+	openGlContext.extensions.glDisableVertexAttribArray(colour->attributeID);
+
+	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, 0);
+	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	if (redrawCanvasOutline)
+		redrawCanvasOutline = false;
 }
 
 
@@ -539,51 +523,48 @@ void SceneCanvasComponent::SetIsSelectedForEditing(bool isSelected)
     selectedForEditing = isSelected;
 }
 
-void SceneCanvasComponent::DrawShape(std::shared_ptr<IDrawableArea> area, int positionInBuffer)
+void SceneCanvasComponent::computeCanvasOutline()
 {
-	//positionInBuffer = 0;
-	// test : cadre bleu de 25px d'epaisseur
-	/*unsigned int cadreIdx[24] = { 0,4,5,
-	5,0,1,
-	5,1,2,
-	5,2,6,
-	6,2,7,
-	2,7,3,
-	3,7,4,
-	3,4,0 };
-	GLfloat cadreVertex[8 * 3] = {
-	(float)getWidth() - 20.0f,(float)getHeight() - 20.0f,0.0f,
-	20.0f,(float)getHeight() - 20.0f,0.0f,
-	20.0f,20.0f,0.0f,
-	(float)getWidth() - 20.0f,20.0f,0.0f,
-	(float)getWidth(),(float)getHeight(),0.0f,
-	0.0f,(float)getHeight(),0.0f,
-	0.0f,0.0f,0.0f,
-	(float)getWidth(),0.0f,0.0f };
-	GLfloat cadreCoulours[8 * 4] = {
-		0.0f, 0.0f, 1.0f, 1.0f,
-		0.0f, 0.0f, 1.0f, 1.0f,
-		0.0f, 0.0f, 1.0f, 1.0f,
-		0.0f, 0.0f, 1.0f, 1.0f,
-		0.0f, 0.0f, 1.0f, 1.0f,
-		0.0f, 0.0f, 1.0f, 1.0f,
-		0.0f, 0.0f, 1.0f, 1.0f,
-		0.0f, 0.0f, 1.0f, 1.0f,
-	};
+	float outlineWidth = 5.0f; //px
+	g_canvasOutlineVertex_buffer_data[0] = ((float)getWidth() /** (1.0f + 0.5f * std::sin(2.0f * M_PI * (1.0f/60.0f) * (float)numFrame - 50.0f * 60.0f))*/) - outlineWidth;
+	g_canvasOutlineVertex_buffer_data[1] = (float)getHeight() - outlineWidth;
+	g_canvasOutlineVertex_buffer_data[2] = 0.0f;
 
-	GLfloat *destPtr = &g_vertex_buffer_data[0];
-	for (int j = 0; j < 8 * 3; ++j)
-		destPtr[j] = cadreVertex[j];
+	g_canvasOutlineVertex_buffer_data[3] = outlineWidth;
+	g_canvasOutlineVertex_buffer_data[4] = (float)getHeight() - outlineWidth;
+	g_canvasOutlineVertex_buffer_data[5] = 0.0f;
 
-	unsigned int *destIndicesPtr = &indices[0];
-	for (int j = 0; j < 8 * 3; ++j)
-		destIndicesPtr[j] = cadreIdx[j];
+	g_canvasOutlineVertex_buffer_data[6] = outlineWidth;
+	g_canvasOutlineVertex_buffer_data[7] = outlineWidth;
+	g_canvasOutlineVertex_buffer_data[8] = 0.0f;
 
-	float* destCouloursPtr = &g_color_buffer_data[0];
-	for (int j = 0; j < 8 * 4; ++j)
-		destCouloursPtr[j] = cadreCoulours[j];*/
+	g_canvasOutlineVertex_buffer_data[9] = ((float)getWidth() /** (1.0f + 0.5f * std::sin(2.0f * M_PI * (1.0f / 60.0f) * (float)numFrame - 50.0f * 60.0f))*/) - outlineWidth;
+	g_canvasOutlineVertex_buffer_data[10] = outlineWidth;
+	g_canvasOutlineVertex_buffer_data[11] = 0.0f;
+
+	g_canvasOutlineVertex_buffer_data[12] = (float)getWidth();//* (1.0f + 0.5f * std::sin(2.0f * M_PI * (1.0f / 60.0f) * (float)numFrame - 50.0f * 60.0f));
+	g_canvasOutlineVertex_buffer_data[13] = (float)getHeight();
+	g_canvasOutlineVertex_buffer_data[14] = 0.0f;
+
+	g_canvasOutlineVertex_buffer_data[15] = 0.0f;
+	g_canvasOutlineVertex_buffer_data[16] = (float)getHeight();
+	g_canvasOutlineVertex_buffer_data[17] = 0.0f;
+
+	g_canvasOutlineVertex_buffer_data[18] = 0.0f;
+	g_canvasOutlineVertex_buffer_data[19] = 0.0f;
+	g_canvasOutlineVertex_buffer_data[20] = 0.0f;
+
+	g_canvasOutlineVertex_buffer_data[21] = (float)getWidth();// *(1.0f + 0.5f * std::sin(2.0f * M_PI * (1.0f / 60.0f) * (float)numFrame - 50.0f * 60.0f));
+	g_canvasOutlineVertex_buffer_data[22] = 0.0f;
+	g_canvasOutlineVertex_buffer_data[23] = 0.0f;
+
+	for(int i = 0; i < 32; ++i)
+		g_canvasOutlineCoulour_buffer_data[i] = 1.0f;
+}
 
 
+void SceneCanvasComponent::CreateShapeBuffer(std::shared_ptr<IDrawableArea> area, int positionInBuffer)
+{
 	int decalage = 3 * ((int)positionInBuffer * *numVertexShape);// + numPointsPolygon + 1;
 	
 	if (area->GetVerticesBufferSize() >= 3)

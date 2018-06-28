@@ -312,7 +312,7 @@ void DrawablePolygon::RefreshOpenGLBuffers()
 
 
 
-	float A = GetAlpha();
+	float A = isFilled? GetAlpha() : 0.0f;
 	const float R = fillColour.getRed() / 255.0f;
 	const float G = fillColour.getGreen() / 255.0f;
 	const float B = fillColour.getBlue() / 255.0f;
@@ -333,13 +333,7 @@ void DrawablePolygon::RefreshOpenGLBuffers()
 	float dist = (float)boost::geometry::distance(centerInPixels, contourPointsInPixels.outer().at(0));
 	float newDist = dist + contourWidth;
 	float resizeFactor = newDist / dist;
-	/*boost::geometry::strategy::transform::translate_transformer<double, 2, 2> tr(-centerInPixels.get<0>(), -centerInPixels.get<1>());
-	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> rescaler(resizeFactor, resizeFactor);
-	boost::geometry::strategy::transform::translate_transformer<double, 2, 2> invTr(centerInPixels.get<0>(), centerInPixels.get<1>());
 
-	boost::geometry::transform(contourPointsInPixels, outlinePolygon, tr);
-	boost::geometry::transform(outlinePolygon, tmpPolygon, rescaler);
-	boost::geometry::transform(tmpPolygon, outlinePolygon, invTr);*/
 
 	const float Xoffset = (float)centerInPixels.get<0>();
 	const float Yoffset = (float)centerInPixels.get<1>();

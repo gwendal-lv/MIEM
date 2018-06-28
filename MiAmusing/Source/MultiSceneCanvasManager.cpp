@@ -730,6 +730,7 @@ void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
 				completeArea->showAllTarget(false);
 				completeArea->SetActive(false);
 				completeArea->SetOpacityMode(OpacityMode::Independent);
+				completeArea->RefreshOpenGLBuffers();
 				break;
 			case Octave:
 				if (tabCursor = std::dynamic_pointer_cast<TabCursor>(selectedScene->GetSelectedExciter()))
@@ -742,6 +743,7 @@ void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
 				completeArea->showAllTarget(false);
 				completeArea->SetActive(false);
 				completeArea->SetOpacityMode(OpacityMode::Independent);
+				completeArea->RefreshOpenGLBuffers();
 				break;
 			case Volume:
 				if (tabCursor = std::dynamic_pointer_cast<TabCursor>(selectedScene->GetSelectedExciter()))
@@ -753,6 +755,7 @@ void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
 				completeArea->showAllTarget(false);
 				completeArea->SetActive(false);
 				completeArea->SetOpacityMode(OpacityMode::Independent);
+				completeArea->RefreshOpenGLBuffers();
 				break;
 			case Speed:
 				//if (tabCursor = std::dynamic_pointer_cast<TabCursor>(selectedScene->GetSelectedExciter()))
@@ -795,11 +798,13 @@ void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
 				currentCursorSize = 2.0;
 				currentCursor->SizeChanged(2.0, false);
 				currentCursor->SetAlpha(0.1f);
+				completeArea->RefreshOpenGLBuffers();
 				break;
 			case Rhythm:
 				completeArea->showAllTarget(true);
 				completeArea->SetActive(true);
 				SetMode(CanvasManagerMode::EditingArea);
+				completeArea->RefreshOpenGLBuffers();
 				//completeArea->SetActive(true);
 				break;
 			case Closed:

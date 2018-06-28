@@ -44,6 +44,8 @@ public:
 	void addColourSample(int index, Colour color);
 	
 	void renderOpenGL() override; // ! in background-thread !
+	void newOpenGLContextCreated() override;
+
 	AreaOptions areaOptions;
 	TextButton *showOptionsButton;
 
@@ -79,6 +81,16 @@ private:
 	SideBarType currentSideBarType;
 	std::vector<Colour> buttonsColor;
 	int numScaleMarking;
+
+	GLuint testSideBarVertexBuffer;
+	GLfloat g_testSideBarVertex_buffer_data[4 * 3];
+
+	GLuint testSideBarCoulourBuffer;
+	GLfloat g_testSideBarCoulour_buffer_data[4 * 4];
+
+	GLuint testSideBarIndexBuffer;
+	unsigned int g_testSideBarIndex_buffer_data[6];
+
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AmusingSceneComponent)
 };

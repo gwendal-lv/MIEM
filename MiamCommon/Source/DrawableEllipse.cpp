@@ -269,7 +269,7 @@ void DrawableEllipse::RefreshOpenGLBuffers()
 		vertices_buffer[i] = 0.0f;
 	}
 
-	float A = GetAlpha();
+	float A = isFilled? GetAlpha() : 0.0f;
 	float R = fillColour.getRed() / 255.0f;
 	float G = fillColour.getGreen() / 255.0f;
 	float B = fillColour.getBlue() / 255.0f;

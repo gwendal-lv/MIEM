@@ -314,6 +314,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 	newPolygon->CanvasResized(canvasComponent);
 	newPolygon->setCursorVisible(true, canvasComponent);
 	newPolygon->SetOpacityMode(OpacityMode::Independent);
+	newPolygon->RefreshOpenGLBuffers();
 	
 	//AddIntersections(newPolygon);
 
@@ -1071,14 +1072,15 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDoubleClick(const Mouse
 				{
 					//sceneComponent->SetAreaOptionsVisible(true);
 					previousAreaLocation = completeArea->getCenter();
-					//Point<double> tr((double)canvasComponent->getWidth() / 2.0 - completeArea->getCenter().get<0>(), (double)canvasComponent->getHeight() / 2.0 - completeArea->getCenter().get<1>());
-					//completeArea->Translate(tr);
+					Point<double> tr((double)canvasComponent->getWidth() / 2.0 - completeArea->getCenter().get<0>(), (double)canvasComponent->getHeight() / 2.0 - completeArea->getCenter().get<1>());
+					completeArea->Translate(tr);
 					completeArea->CanvasResized(canvasComponent);
-					completeArea->RefreshOpenGLBuffers();
+					
 					completeArea->SetActive(true);
 					completeArea->showAllTarget(true);
-					//previousSize = completeArea->GetFullSceneRatio();
-					//completeArea->SizeChanged(previousSize, false);
+					completeArea->RefreshOpenGLBuffers();
+					previousSize = completeArea->GetFullSceneRatio();
+					completeArea->SizeChanged(previousSize, false);
 					completeArea->updateContourPoints();
 					completeArea->CanvasResized(canvasComponent);
 				}
@@ -1098,6 +1100,7 @@ void AmusingScene::HideUnselectedAreas()
 			areas[i]->SetOpacityMode(OpacityMode::Low);
 			if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
 				completeArea->SetActive(false);
+			areas[i]->RefreshOpenGLBuffers();
 		}
 	}
 	allowOtherAreaSelection = false; // empeche de selectionner d'autes aires pendant qu'on en édite une !
@@ -1240,6 +1243,7 @@ std::shared_ptr<AreaEvent> AmusingScene::SetSelectedAreaOpacity(double newOpacit
 	if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(selectedArea))
 	{
 		completeArea->SetAlpha((float)newOpacity);
+		completeArea->RefreshOpenGLBuffers();
 		areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::ColorChanged, completeArea->GetId(), shared_from_this()));
 	}
 	return areaE;
@@ -1253,6 +1257,7 @@ std::shared_ptr<AreaEvent> AmusingScene::SetSelectedAreaColour(Colour newColour)
 		if (completeArea->GetFillColour() != newColour)
 		{
 			completeArea->SetFillColour(newColour);
+			completeArea->RefreshOpenGLBuffers();
 			areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::ColorChanged, completeArea->GetId(), shared_from_this()));
 		}
 	}

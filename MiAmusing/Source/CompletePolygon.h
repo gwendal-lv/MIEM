@@ -167,6 +167,7 @@ namespace Amusing
 		void CanvasResizedBullsEye(SceneCanvasComponent* _parentCanvas);
 		std::vector<int> OnCircles;
 		bool showAllCircles;
+		bool deleteOldCircles;
 		
 		// flags and invisible points for chords
 		std::vector<bool> chordFlag;

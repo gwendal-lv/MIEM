@@ -76,13 +76,17 @@ void DrawableArea::init()
 
 	int numPoints = numPointsRing;
 	ComputeRing(numPoints);
+	const float R = contourColour.getRed() / 255.0f;
+	const float G = contourColour.getGreen() / 250.0f;
+	const float B = contourColour.getBlue() / 250.0f;
+	const float A = contourColour.getAlpha() / 250.0f;
 
 	for (int i = 0; i < couloursBufferSize/4; ++i)
 	{
-		coulours_buffer[4 * i + 0] = contourColour.getRed() / 255.0f;
-		coulours_buffer[4 * i + 1] = contourColour.getGreen() / 255.0f;
-		coulours_buffer[4 * i + 2] = contourColour.getBlue() / 255.0f;
-		coulours_buffer[4 * i + 3] = contourColour.getAlpha() / 255.0f;
+		coulours_buffer[4 * i + 0] = R;
+		coulours_buffer[4 * i + 1] = G;
+		coulours_buffer[4 * i + 2] = B;
+		coulours_buffer[4 * i + 3] = A;
 	}
 	//for (int i = 4 * numPoints; i < opaque_color_buffer_size; ++i)
 	//	opaque_color_buffer[i] = 0;
@@ -336,6 +340,7 @@ void DrawableArea::SetAlpha(float newAlpha)
 {
 	fillOpacity = newAlpha;
 }
+
 float DrawableArea::GetAlpha() const
 {
     switch (opacityMode)
