@@ -43,6 +43,20 @@ void TabCursor::setZone(Rectangle<int> _zone)
 	zone = _zone;
 }
 
+AreaEventType TabCursor::TryBeginPointMove(const Point<double>& hitPoint)
+{
+	AreaEventType areaEventType = EditableEllipse::TryBeginPointMove(hitPoint);
+	if (!allSizeEnabled)
+	{
+		if (pointDraggedId == EditableAreaPointId::WholeArea || pointDraggedId == EditableAreaPointId::Center)
+		{
+			areaEventType = AreaEventType::NothingHappened;
+			pointDraggedId = EditableAreaPointId::None;
+		}
+	}
+	return areaEventType;
+}
+
 AreaEventType TabCursor::TryMovePoint(const Point<double>& newLocation)
 {
 	if (allSizeEnabled)
@@ -62,7 +76,7 @@ AreaEventType TabCursor::TryMovePoint(const Point<double>& newLocation)
 
 
 			setCenterPosition(newCenter);
-
+			RefreshOpenGLBuffers();
 			return areaEventType;
 		}
 		else
@@ -70,7 +84,9 @@ AreaEventType TabCursor::TryMovePoint(const Point<double>& newLocation)
 	}
 	else
 	{
-		return Exciter::TryMovePoint(newLocation);
+		AreaEventType areaEventType = Exciter::TryMovePoint(newLocation);
+		RefreshOpenGLBuffers();
+		return areaEventType;
 	}
 }
 
@@ -112,7 +128,7 @@ AreaEventType TabCursor::EndPointMove()
 			}
 		}
 
-		if (!allSizeEnabled && pointDraggedId == EditableAreaPointId::ManipulationPoint)
+		if (!allSizeEnabled && (pointDraggedId == EditableAreaPointId::ManipulationPoint || pointDraggedId > 0))
 		{
 			double currentSize = a;
 			double currentResize = currentSize / initCursorSize;

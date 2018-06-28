@@ -32,7 +32,7 @@ MultiSceneCanvasManager::MultiSceneCanvasManager(IGraphicSessionManager* graphic
 MultiSceneCanvasEditor(graphicSessionManager_, canvasComponent_, selfId_),
 graphicSessionManager(graphicSessionManager_)
 {
-    
+	currentCursorSize = 1.0;
 }
 
 MultiSceneCanvasManager::~MultiSceneCanvasManager()
@@ -738,6 +738,7 @@ void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
 					tabCursor->setPercentage(getOctave(completeArea) / 9.0 - 1.0/18.0);
 					tabCursor->SetNumDivisions(9);
 					tabCursor->EnableMagnet(true);
+					tabCursor->RefreshOpenGLBuffers();
 				}
 				SetMode(CanvasManagerMode::ExciterSelected);
 				completeArea->showAllTarget(false);

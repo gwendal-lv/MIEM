@@ -1373,6 +1373,7 @@ std::shared_ptr<AreaEvent> AmusingScene::addShadowCursor()
 			tabCursor->CanvasResized(canvasComponent);
 			tabCursor->SetActive(true);
 			tabCursor->SetEnableTranslationOnly(false);
+			tabCursor->RefreshOpenGLBuffers();
 			areaE = std::shared_ptr<AreaEvent>(new AreaEvent(tabCursor, AreaEventType::Translation, shared_from_this()));
 		}
 
