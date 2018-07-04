@@ -239,7 +239,7 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 	Matrix3D<float> testView = lookAt(Vector3D<float>(0, 0, 1), Vector3D<float>(0, 0, 0), Vector3D<float>(0, -1, 0));
 	//Matrix3D<float> testProject = perspective((float)getWidth(), (float)getHeight(), 0.1f, 100.0f);
 	if (projectionMatrix.get() != nullptr)
-		projectionMatrix->setMatrix4(perspective((float)getWidth(), (float)getHeight(), 0.5f, 1.1f).mat, 1, false);
+		projectionMatrix->setMatrix4(perspective((float)getWidth(), (float)getHeight(), 0.5f, 5.0f).mat, 1, false);
 
 	if (viewMatrix.get() != nullptr)
 		viewMatrix->setMatrix4(testView.mat, 1, false);
@@ -566,11 +566,9 @@ void SceneCanvasComponent::computeCanvasOutline()
 void SceneCanvasComponent::CreateShapeBuffer(std::shared_ptr<IDrawableArea> area, int positionInBuffer)
 {
 	int decalage = 3 * ((int)positionInBuffer * *numVertexShape);// + numPointsPolygon + 1;
-	
-	if (area->GetVerticesBufferSize() >= 3)
+	if (area->isVisible())
 	{
 		/// vertex
-		//1. forme
 		try
 		{
 			const int verticesCount = 3 * area->GetVerticesBufferSize();
@@ -578,9 +576,7 @@ void SceneCanvasComponent::CreateShapeBuffer(std::shared_ptr<IDrawableArea> area
 			float* vertexPtr = area->GetVerticesBufferPtr();
 			for (int j = 0; j < verticesCount; ++j)
 			{
-				
 				destPtr[j] = (*vertexPtr);//area->GetVerticesBufferElt(j);//*10
-				
 				++vertexPtr;
 			}
 		}
@@ -589,15 +585,9 @@ void SceneCanvasComponent::CreateShapeBuffer(std::shared_ptr<IDrawableArea> area
 			DBG(e.what());
 		}
 
-		
-	}
-
-
-	/// indices
-	decalage = positionInBuffer * *shapeIndicesSize;// différent du decalage pour les vertex et les couleurs !
-	int beginShape = positionInBuffer * *numVertexShape;
-	if (area->GetIndicesBufferSize() >= 3)
-	{
+		/// indices
+		decalage = positionInBuffer * *shapeIndicesSize;// différent du decalage pour les vertex et les couleurs !
+		int beginShape = positionInBuffer * *numVertexShape;
 		try
 		{
 			const int indicesCount = area->GetIndicesBufferSize();
@@ -614,9 +604,8 @@ void SceneCanvasComponent::CreateShapeBuffer(std::shared_ptr<IDrawableArea> area
 			DBG(e.what());
 		}
 
-		// colors
+		/// colors
 		decalage = 4 * ((int)positionInBuffer * *numVertexShape);
-
 		try
 		{
 			const int couloursCount = area->GetCouloursBufferSize();
@@ -632,10 +621,28 @@ void SceneCanvasComponent::CreateShapeBuffer(std::shared_ptr<IDrawableArea> area
 		{
 			DBG(e.what());
 		}
-
 	}
+	else
+	{
+		const int verticesCount = 3 * area->GetVerticesBufferSize();
+		GLfloat *destPtr = &g_vertex_buffer_data[decalage];
+		for (int j = 0; j < verticesCount; ++j)
+			destPtr[j] = 0.0f;
 
+		decalage = positionInBuffer * *shapeIndicesSize;// différent du decalage pour les vertex et les couleurs !
 
+		const int indicesCount = area->GetIndicesBufferSize();
+		unsigned int *destIndicesPtr = &indices[decalage];
+		for (int i = 0; i < indicesCount; ++i)
+			destIndicesPtr[i] = 0;
+
+		decalage = 4 * ((int)positionInBuffer * *numVertexShape);
+		const int couloursCount = area->GetCouloursBufferSize();
+		float* destCouloursPtr = &g_color_buffer_data[decalage];
+		for (int i = 0; i < couloursCount; ++i)
+			destCouloursPtr[i] = 0.0f;
+		
+	}
 }
 
 void SceneCanvasComponent::computeManipulationLine(float Ox, float Oy, float Mx, float My, float width, float height)

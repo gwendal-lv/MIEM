@@ -437,8 +437,10 @@ void MultiSceneCanvasManager::OnCanvasMouseDrag(const MouseEvent& mouseE)
 					if (completeP = std::dynamic_pointer_cast<CompletePolygon>(GetSelectedArea()))
 					{
 						currentCursor = completeP->getCursor(0);
+						currentCursor->RefreshOpenGLBuffers();
 						newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(currentCursor, AreaEventType::ShapeChanged, selectedScene));
 					}
+					handleAndSendEventSync(newAreaE);
 					break;
 				case Octave:
 					ChangeBaseNote(area->getNearestDivision());

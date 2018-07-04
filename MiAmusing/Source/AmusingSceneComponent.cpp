@@ -43,6 +43,7 @@ AmusingSceneComponent::~AmusingSceneComponent()
 {
 	//openGlContext.detach(areaOptions);
 	//openGlContext.detach();
+	textTexture.release();
 	delete showOptionsButton;
 }
 
@@ -52,6 +53,42 @@ void AmusingSceneComponent::setSamplesColor(int Nsamples, Colour colorCode[])
 
 	for (int i = 0; i < Nsamples; ++i)
 		buttonsColor.push_back(colorCode[i]);
+
+	const float interval = (float)getHeight() / (float)(Nsamples);
+	for (int i = 0; i < Nsamples; ++i)
+	{
+		g_coulourBoutonsVertex_buffer_data[i * 3 * 4] = getWidth();
+		g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 1]  = i * interval;
+		g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 2]  = 0.0f;
+		g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 3]  = getWidth() - 150.0f;
+		g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 4]  = i * interval;
+		g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 5]  = 0.0f;
+		g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 6]  = getWidth()-150.0f;
+		g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 7] = (i + 1)*interval;
+		g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 8]  = 0.0f;
+		g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 9]  = getWidth();
+		g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 10] = (i + 1) * interval;
+		g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 11] = 0.0f;
+
+		const float R = (float)colorCode[i].getRed() / 255.0f;
+		const float G = (float)colorCode[i].getGreen() / 255.0f;
+		const float B = (float)colorCode[i].getBlue() / 255.0f;
+		const float A = (float)colorCode[i].getAlpha() / 255.0f;
+		for (int j = 0; j < 4; ++j)
+		{
+			g_coulourBoutonsCoulour_buffer_data[i * 4 * 4 + j * 4 + 0] = R;
+			g_coulourBoutonsCoulour_buffer_data[i * 4 * 4 + j * 4 + 1] = G;
+			g_coulourBoutonsCoulour_buffer_data[i * 4 * 4 + j * 4 + 2] = B;
+			g_coulourBoutonsCoulour_buffer_data[i * 4 * 4 + j * 4 + 3] = A;
+		}
+
+		g_coulourBoutonsIndex_buffer_data[i * 6 + 0] = i * 4 + 0;
+		g_coulourBoutonsIndex_buffer_data[i * 6 + 1] = i * 4 + 1;
+		g_coulourBoutonsIndex_buffer_data[i * 6 + 2] = i * 4 + 2;
+		g_coulourBoutonsIndex_buffer_data[i * 6 + 3] = i * 4 + 2;
+		g_coulourBoutonsIndex_buffer_data[i * 6 + 4] = i * 4 + 3;
+		g_coulourBoutonsIndex_buffer_data[i * 6 + 5] = i * 4 + 0;
+	}
 }
 
 void AmusingSceneComponent::addColourSample(int index, Colour _colour)
@@ -103,6 +140,8 @@ void AmusingSceneComponent::newOpenGLContextCreated()
 
 	SceneCanvasComponent::newOpenGLContextCreated();
 
+
+	/// GrayScale
 	openGlContext.extensions.glGenBuffers(1, &testSideBarVertexBuffer);
 	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, testSideBarVertexBuffer);
 	openGlContext.extensions.glBufferData(GL_ARRAY_BUFFER, 4 * 3 * sizeof(GLfloat),
@@ -115,7 +154,188 @@ void AmusingSceneComponent::newOpenGLContextCreated()
 	openGlContext.extensions.glGenBuffers(1, &testSideBarIndexBuffer);
 	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, testSideBarIndexBuffer);
 	openGlContext.extensions.glBufferData(GL_ELEMENT_ARRAY_BUFFER, 8 * 4 * sizeof(unsigned int), g_testSideBarIndex_buffer_data, GL_STREAM_DRAW);
+
+	/// Coulours boutons
+	openGlContext.extensions.glGenBuffers(1, &coulourBoutonsVertex);
+	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, coulourBoutonsVertex);
+	openGlContext.extensions.glBufferData(GL_ARRAY_BUFFER, 10 * 4 * 3 * sizeof(GLfloat),
+		g_coulourBoutonsVertex_buffer_data, GL_STREAM_DRAW);
+
+	openGlContext.extensions.glGenBuffers(1, &coulourBoutonsCoulour);
+	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, coulourBoutonsCoulour);
+	openGlContext.extensions.glBufferData(GL_ARRAY_BUFFER, 10 * 4 * 4 * sizeof(GLfloat), g_coulourBoutonsCoulour_buffer_data, GL_STREAM_DRAW);
+
+	openGlContext.extensions.glGenBuffers(1, &coulourBoutonsIndex);
+	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, coulourBoutonsIndex);
+	openGlContext.extensions.glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * 10 * sizeof(unsigned int), g_coulourBoutonsIndex_buffer_data, GL_STREAM_DRAW);
+
+	/// Scale marking
+	openGlContext.extensions.glGenBuffers(1, &scaleMarkingVertex);
+	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, scaleMarkingVertex);
+	openGlContext.extensions.glBufferData(GL_ARRAY_BUFFER, (128 + 1) * 4 * 3 * sizeof(GLfloat),
+		g_scaleMarkingVertex_buffer_data, GL_STREAM_DRAW);
+
+	openGlContext.extensions.glGenBuffers(1, &scaleMarkingCoulour);
+	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, scaleMarkingCoulour);
+	openGlContext.extensions.glBufferData(GL_ARRAY_BUFFER, (128 + 1) * 4 * 4 * sizeof(GLfloat), g_scaleMarkingCoulour_buffer_data, GL_STREAM_DRAW);
+
+	openGlContext.extensions.glGenBuffers(1, &scaleMarkingIndex);
+	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, scaleMarkingIndex);
+	openGlContext.extensions.glBufferData(GL_ELEMENT_ARRAY_BUFFER, (128 + 1) * 6 * sizeof(unsigned int), g_scaleMarkingIndex_buffer_data, GL_STREAM_DRAW);
+
+	/// chargement de la texture pour le texte
+	textTexture.loadImage(resizeImageToPowerOfTwo(ImageFileFormat::loadFrom(File("C:\\Users\\ayup1\\Downloads\\ExportedFont.png"))));
+
+	///shader pour le text
+	textShaderProgram = new OpenGLShaderProgram(openGlContext);
+	textShaderProgram->addVertexShader(OpenGLHelpers::translateVertexShaderToV3(textVertexShader));
+	textShaderProgram->addFragmentShader(OpenGLHelpers::translateFragmentShaderToV3(textFragmentShader));
+	textShaderProgram->link();
+
+	positionText = new OpenGLShaderProgram::Attribute(*textShaderProgram, "positionText");
+	vertexUV = new OpenGLShaderProgram::Attribute(*textShaderProgram, "vertexUV");
+	texture.reset(new OpenGLShaderProgram::Uniform(*textShaderProgram, "demoTexture"));
+
+	projectionMatrix.reset(new OpenGLShaderProgram::Uniform(*textShaderProgram, "projectionMatrix"));
+	viewMatrix.reset(new OpenGLShaderProgram::Uniform(*textShaderProgram, "viewMatrix"));
+	modelMatrix.reset(new OpenGLShaderProgram::Uniform(*textShaderProgram, "modelMatrix"));
+	
+
+	/// buffers pour le text
+	openGlContext.extensions.glGenBuffers(1, &textVertexBuffer);
+	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, textVertexBuffer);
+	openGlContext.extensions.glBufferData(GL_ARRAY_BUFFER, 4 * 3 * sizeof(GLfloat),
+		g_textVertex_buffer_data, GL_STREAM_DRAW);
+
+	/*openGlContext.extensions.glGenBuffers(1, &textCoulourBuffer);
+	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, textCoulourBuffer);
+	openGlContext.extensions.glBufferData(GL_ARRAY_BUFFER, 4 * 4 * sizeof(GLfloat), g_textCoulour_buffer_data, GL_STREAM_DRAW);*/
+
+	openGlContext.extensions.glGenBuffers(1, &textUVBuffer);
+	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, textUVBuffer);
+	openGlContext.extensions.glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(GLfloat), g_textUV_buffer_data, GL_STREAM_DRAW);
+
+	openGlContext.extensions.glGenBuffers(1, &textIndexBuffer);
+	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, textIndexBuffer);
+	openGlContext.extensions.glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), g_textIndex_buffer_data, GL_STREAM_DRAW);
 }
+
+Image AmusingSceneComponent::resizeImageToPowerOfTwo(Image image)
+{
+	if (!(isPowerOfTwo(image.getWidth()) && isPowerOfTwo(image.getHeight())))
+		return image.rescaled(jmin(1024, nextPowerOfTwo(image.getWidth())),
+			jmin(1024, nextPowerOfTwo(image.getHeight())));
+
+	return image;
+}
+
+
+
+void AmusingSceneComponent::computeScaleMarking(Point<float> beginPoint, float height, float width, int numMarks)
+{
+	float lineWidth = 5.0f;
+	// main line
+	g_scaleMarkingIndex_buffer_data[0] = 0;
+	g_scaleMarkingIndex_buffer_data[1] = 1;
+	g_scaleMarkingIndex_buffer_data[2] = 2;
+	g_scaleMarkingIndex_buffer_data[3] = 3;
+	g_scaleMarkingIndex_buffer_data[4] = 2;
+	g_scaleMarkingIndex_buffer_data[5] = 1;
+
+	g_scaleMarkingVertex_buffer_data[0] = beginPoint.x - lineWidth/2.0f;
+	g_scaleMarkingVertex_buffer_data[1] = beginPoint.y;
+	g_scaleMarkingVertex_buffer_data[2] = 0.0f;
+	g_scaleMarkingVertex_buffer_data[3] = beginPoint.x + lineWidth / 2.0f;
+	g_scaleMarkingVertex_buffer_data[4] = beginPoint.y;
+	g_scaleMarkingVertex_buffer_data[5] = 0.0f;
+	g_scaleMarkingVertex_buffer_data[6] = beginPoint.x - lineWidth / 2.0f;
+	g_scaleMarkingVertex_buffer_data[7] = beginPoint.y + height;
+	g_scaleMarkingVertex_buffer_data[8] = 0.0f;
+	g_scaleMarkingVertex_buffer_data[9] = beginPoint.x + lineWidth / 2.0f;
+	g_scaleMarkingVertex_buffer_data[10] = beginPoint.y + height;
+	g_scaleMarkingVertex_buffer_data[11] = 0.0f;
+
+	for (int i = 0; i < (128 + 1) * 4 * 4; ++i)
+		g_scaleMarkingCoulour_buffer_data[i] = 1.0f;
+
+	const float interval = height / ((float)numMarks-1.0f);
+	for (int i = 0; i < numMarks; ++i)
+	{
+		g_scaleMarkingIndex_buffer_data[6 * (i+1) + 0] = (i + 1) * 4 + 0;
+		g_scaleMarkingIndex_buffer_data[6 * (i+1) + 1] = (i + 1) * 4 + 1;
+		g_scaleMarkingIndex_buffer_data[6 * (i+1) + 2] = (i + 1) * 4 + 2;
+		g_scaleMarkingIndex_buffer_data[6 * (i+1) + 3] = (i + 1) * 4 + 3;
+		g_scaleMarkingIndex_buffer_data[6 * (i+1) + 4] = (i + 1) * 4 + 2;
+		g_scaleMarkingIndex_buffer_data[6 * (i+1) + 5] = (i + 1) * 4 + 1;
+
+		g_scaleMarkingVertex_buffer_data[12 * (i + 1) + 0] = beginPoint.x - width / 2.0f;
+		g_scaleMarkingVertex_buffer_data[12 * (i + 1) + 1] = i * interval + beginPoint.y;
+		g_scaleMarkingVertex_buffer_data[12 * (i + 1) + 2] = 0.0f;
+		g_scaleMarkingVertex_buffer_data[12 * (i + 1) + 3] = beginPoint.x + width / 2.0f;
+		g_scaleMarkingVertex_buffer_data[12 * (i + 1) + 4] = i * interval + beginPoint.y;
+		g_scaleMarkingVertex_buffer_data[12 * (i + 1) + 5] = 0.0f;
+		g_scaleMarkingVertex_buffer_data[12 * (i + 1) + 6] = beginPoint.x - width / 2.0f;
+		g_scaleMarkingVertex_buffer_data[12 * (i + 1) + 7] = i * interval + beginPoint.y + lineWidth;
+		g_scaleMarkingVertex_buffer_data[12 * (i + 1) + 8] = 0.0f;
+		g_scaleMarkingVertex_buffer_data[12 * (i + 1) + 9] = beginPoint.x + width / 2.0f;
+		g_scaleMarkingVertex_buffer_data[12 * (i + 1) + 10] = i * interval + beginPoint.y + lineWidth;
+		g_scaleMarkingVertex_buffer_data[12 * (i + 1) + 11] = 0.0f;
+	}
+}
+
+void AmusingSceneComponent::computeTextBuffers()
+{
+	g_textIndex_buffer_data[0] = 0;
+	g_textIndex_buffer_data[1] = 1;
+	g_textIndex_buffer_data[2] = 2;
+	g_textIndex_buffer_data[3] = 1;
+	g_textIndex_buffer_data[4] = 2;
+	g_textIndex_buffer_data[5] = 3;
+
+	float x = 50;
+	float y = 50;
+	float w = 50;
+	float h = 50;
+
+	int a = 65;
+	float uv_x = float(a % 16) / 16.0f;
+	float uv_y = float(a / 16) / 16.0f;
+
+	g_textVertex_buffer_data[0] = x;
+	g_textVertex_buffer_data[1] = y;
+	g_textVertex_buffer_data[2] = 0.0f;
+
+	g_textUV_buffer_data[0] = uv_x;
+	g_textUV_buffer_data[1] = 1.0f - uv_y;
+
+
+	g_textVertex_buffer_data[3] = x+w;
+	g_textVertex_buffer_data[4] = y;
+	g_textVertex_buffer_data[5] = 0.0f;
+
+	g_textUV_buffer_data[2] = uv_x + 1.0f / 16.0f;
+	g_textUV_buffer_data[3] = 1.0f - uv_y;
+
+	g_textVertex_buffer_data[6] = x+w;
+	g_textVertex_buffer_data[7] = y+h;
+	g_textVertex_buffer_data[8] = 0.0f;
+
+	g_textUV_buffer_data[4] = uv_x + 1.0f / 16.0f;
+	g_textUV_buffer_data[5] = 1.0f - (uv_y + 1.0f / 16.0f);
+
+	g_textVertex_buffer_data[9] = x;
+	g_textVertex_buffer_data[10] = y+h;
+	g_textVertex_buffer_data[11] = 0.0f;
+
+	g_textUV_buffer_data[6] = uv_x;
+	g_textUV_buffer_data[7] = 1.0f - (uv_y + 1.0f / 16.0f);
+
+	for (int i = 0; i < 16; ++i)
+		g_textCoulour_buffer_data[i] = 1.0f;
+
+
+}
+
 
 void AmusingSceneComponent::renderOpenGL()
 {
@@ -150,67 +370,180 @@ void AmusingSceneComponent::renderOpenGL()
 	//		g.fillRect(getWidth() - 100, 4 + markSpace/2 + i * markSpace, 100, 1);
 	//	}
 	//}
+	float interval = 0.0f;
+	switch (currentSideBarType)
+	{
+	case GrayScale :
+		g_testSideBarVertex_buffer_data[0] = (float)getWidth();
+		g_testSideBarVertex_buffer_data[1] = (float)0.0f;
+		g_testSideBarVertex_buffer_data[2] = (float)0.0f;
+		g_testSideBarVertex_buffer_data[3] = (float)getWidth() - 150.0f;
+		g_testSideBarVertex_buffer_data[4] = (float)0.0f;
+		g_testSideBarVertex_buffer_data[5] = (float)0.0f;
+		g_testSideBarVertex_buffer_data[6] = (float)getWidth() - 150.0f;
+		g_testSideBarVertex_buffer_data[7] = (float)getHeight();
+		g_testSideBarVertex_buffer_data[8] = (float)0.0f;
+		g_testSideBarVertex_buffer_data[9] = (float)getWidth();
+		g_testSideBarVertex_buffer_data[10] = (float)getHeight();
+		g_testSideBarVertex_buffer_data[11] = (float)0.0f;
 
-	g_testSideBarVertex_buffer_data[0] = (float)getWidth();
-	g_testSideBarVertex_buffer_data[1] = (float)0.0f;
-	g_testSideBarVertex_buffer_data[2] = (float)0.0f;
-	g_testSideBarVertex_buffer_data[3] = (float)getWidth() - 150.0f;
-	g_testSideBarVertex_buffer_data[4] = (float)0.0f;
-	g_testSideBarVertex_buffer_data[5] = (float)0.0f;
-	g_testSideBarVertex_buffer_data[6] = (float)getWidth() - 150.0f;
-	g_testSideBarVertex_buffer_data[7] = (float)getHeight();
-	g_testSideBarVertex_buffer_data[8] = (float)0.0f;
-	g_testSideBarVertex_buffer_data[9] = (float)getWidth();
-	g_testSideBarVertex_buffer_data[10] = (float)getHeight();
-	g_testSideBarVertex_buffer_data[11] = (float)0.0f;
+		g_testSideBarCoulour_buffer_data[0] = 1.0f;
+		g_testSideBarCoulour_buffer_data[1] = 1.0f;
+		g_testSideBarCoulour_buffer_data[2] = 1.0f;
+		g_testSideBarCoulour_buffer_data[3] = 1.0f;
+		g_testSideBarCoulour_buffer_data[4] = 1.0f;
+		g_testSideBarCoulour_buffer_data[5] = 1.0f;
+		g_testSideBarCoulour_buffer_data[6] = 1.0f;
+		g_testSideBarCoulour_buffer_data[7] = 1.0f;
+		g_testSideBarCoulour_buffer_data[8] = 0.3f;
+		g_testSideBarCoulour_buffer_data[9] = 0.3f;
+		g_testSideBarCoulour_buffer_data[10] = 0.3f;
+		g_testSideBarCoulour_buffer_data[11] = 0.3f;
+		g_testSideBarCoulour_buffer_data[12] = 0.3f;
+		g_testSideBarCoulour_buffer_data[13] = 0.3f;
+		g_testSideBarCoulour_buffer_data[14] = 0.3f;
+		g_testSideBarCoulour_buffer_data[15] = 0.3f;
 
-	g_testSideBarCoulour_buffer_data[0] = 1.0f;
-	g_testSideBarCoulour_buffer_data[1] = 1.0f;
-	g_testSideBarCoulour_buffer_data[2] = 1.0f;
-	g_testSideBarCoulour_buffer_data[3] = 1.0f;
-	g_testSideBarCoulour_buffer_data[4] = 1.0f;
-	g_testSideBarCoulour_buffer_data[5] = 1.0f;
-	g_testSideBarCoulour_buffer_data[6] = 1.0f;
-	g_testSideBarCoulour_buffer_data[7] = 1.0f;
-	g_testSideBarCoulour_buffer_data[8] = 1.0f;
-	g_testSideBarCoulour_buffer_data[9] = 1.0f;
-	g_testSideBarCoulour_buffer_data[10] = 1.0f;
-	g_testSideBarCoulour_buffer_data[11] = 1.0f;
-	g_testSideBarCoulour_buffer_data[12] = 1.0f;
-	g_testSideBarCoulour_buffer_data[13] = 1.0f;
-	g_testSideBarCoulour_buffer_data[14] = 1.0f;
-	g_testSideBarCoulour_buffer_data[15] = 1.0f;
-
-	g_testSideBarIndex_buffer_data[0] = 0;
-	g_testSideBarIndex_buffer_data[1] = 1;
-	g_testSideBarIndex_buffer_data[2] = 2;
-	g_testSideBarIndex_buffer_data[3] = 3;
-	g_testSideBarIndex_buffer_data[4] = 2;
-	g_testSideBarIndex_buffer_data[5] = 0;
+		g_testSideBarIndex_buffer_data[0] = 0;
+		g_testSideBarIndex_buffer_data[1] = 1;
+		g_testSideBarIndex_buffer_data[2] = 2;
+		g_testSideBarIndex_buffer_data[3] = 3;
+		g_testSideBarIndex_buffer_data[4] = 2;
+		g_testSideBarIndex_buffer_data[5] = 0;
 
 
-	openGlContext.extensions.glEnableVertexAttribArray(position->attributeID);
-	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, testSideBarVertexBuffer);
-	openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * 3 * sizeof(GLfloat), g_testSideBarVertex_buffer_data);
-	openGlContext.extensions.glVertexAttribPointer(position->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
-	
-	openGlContext.extensions.glEnableVertexAttribArray(colour->attributeID);
-	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, testSideBarCoulourBuffer);
-	openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * 4 * sizeof(GLfloat), g_testSideBarCoulour_buffer_data);
-	openGlContext.extensions.glVertexAttribPointer(colour->attributeID, 4, GL_FLOAT, GL_FALSE, sizeof(float[4]), 0);
+		openGlContext.extensions.glEnableVertexAttribArray(position->attributeID);
+		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, testSideBarVertexBuffer);
+		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * 3 * sizeof(GLfloat), g_testSideBarVertex_buffer_data);
+		openGlContext.extensions.glVertexAttribPointer(position->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
 
-	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, testSideBarIndexBuffer);
+		openGlContext.extensions.glEnableVertexAttribArray(colour->attributeID);
+		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, testSideBarCoulourBuffer);
+		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * 4 * sizeof(GLfloat), g_testSideBarCoulour_buffer_data);
+		openGlContext.extensions.glVertexAttribPointer(colour->attributeID, 4, GL_FLOAT, GL_FALSE, sizeof(float[4]), 0);
 
-	glDrawElements(GL_TRIANGLES, 24, GL_UNSIGNED_INT, (void*)0);
+		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, testSideBarIndexBuffer);
 
-	openGlContext.extensions.glDisableVertexAttribArray(position->attributeID);
-	openGlContext.extensions.glDisableVertexAttribArray(colour->attributeID);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
+
+		openGlContext.extensions.glDisableVertexAttribArray(position->attributeID);
+		openGlContext.extensions.glDisableVertexAttribArray(colour->attributeID);
+
+		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, 0);
+		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		break;
+	case SideBarType::ColourButtons :
+		interval = (float)getHeight() / 4.0f;
+		for (int i = 0; i < 4; ++i)
+		{
+			g_coulourBoutonsVertex_buffer_data[i * 3 * 4] = getWidth();
+			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 1] = i * interval;
+			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 2] = 0.0f;
+			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 3] = getWidth() - 150.0f;
+			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 4] = i * interval;
+			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 5] = 0.0f;
+			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 6] = getWidth() - 150.0f;
+			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 7] = (i + 1)*interval;
+			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 8] = 0.0f;
+			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 9] = getWidth();
+			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 10] = (i + 1) * interval;
+			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 11] = 0.0f;
+		}
+		openGlContext.extensions.glEnableVertexAttribArray(position->attributeID);
+		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, coulourBoutonsVertex);
+		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * 4 * 3 * sizeof(GLfloat), g_coulourBoutonsVertex_buffer_data);
+		openGlContext.extensions.glVertexAttribPointer(position->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
+
+		openGlContext.extensions.glEnableVertexAttribArray(colour->attributeID);
+		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, coulourBoutonsCoulour);
+		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * 4 * 4 * sizeof(GLfloat), g_coulourBoutonsCoulour_buffer_data);
+		openGlContext.extensions.glVertexAttribPointer(colour->attributeID, 4, GL_FLOAT, GL_FALSE, sizeof(float[4]), 0);
+
+		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, coulourBoutonsIndex);
+
+		glDrawElements(GL_TRIANGLES, 4 * 6, GL_UNSIGNED_INT, (void*)0);
+
+		openGlContext.extensions.glDisableVertexAttribArray(position->attributeID);
+		openGlContext.extensions.glDisableVertexAttribArray(colour->attributeID);
+
+		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, 0);
+		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		break;
+	case ScaleMarking :
+		computeScaleMarking(Point<float>(getWidth() - 75, 0), getHeight(), 75, 12);
+		openGlContext.extensions.glEnableVertexAttribArray(position->attributeID);
+		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, scaleMarkingVertex);
+		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, (128 + 1) * 4 * 3 * sizeof(GLfloat), g_scaleMarkingVertex_buffer_data);
+		openGlContext.extensions.glVertexAttribPointer(position->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
+
+		openGlContext.extensions.glEnableVertexAttribArray(colour->attributeID);
+		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, scaleMarkingCoulour);
+		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, (128 + 1) * 4 * 4 * sizeof(GLfloat), g_scaleMarkingCoulour_buffer_data);
+		openGlContext.extensions.glVertexAttribPointer(colour->attributeID, 4, GL_FLOAT, GL_FALSE, sizeof(float[4]), 0);
+
+		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, scaleMarkingIndex);
+		openGlContext.extensions.glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, (128 + 1) * 6 * sizeof(unsigned int), g_scaleMarkingIndex_buffer_data);
+
+		glDrawElements(GL_TRIANGLES, (128 + 1) * 6, GL_UNSIGNED_INT, (void*)0);
+
+		openGlContext.extensions.glDisableVertexAttribArray(position->attributeID);
+		openGlContext.extensions.glDisableVertexAttribArray(colour->attributeID);
+
+		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, 0);
+		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		break;
+	default :
+		break;
+	}
+
+
+	textTexture.bind();
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	textShaderProgram->use();
+
+	projectionMatrix->setMatrix4(perspective((float)/*desktopScale **/ getWidth(), (float)/*desktopScale **/ getHeight(), 0.5f, 1.1f).mat, 1, false);
+
+
+	Matrix3D<float> model(1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, -1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, (float)getHeight(), 0.0f, 1.0f);
+
+	/*if (texture.get() != nullptr)
+		texture->set((GLint)0);*/
+
+	if (modelMatrix.get() != nullptr)
+		modelMatrix->setMatrix4(model.mat, 1, false);
+
+	computeTextBuffers();
+
+	texture->set(1);
+
+	openGlContext.extensions.glEnableVertexAttribArray(positionText->attributeID);
+	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, textVertexBuffer);
+	openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * 3 * sizeof(GLfloat), g_textVertex_buffer_data);
+	openGlContext.extensions.glVertexAttribPointer(positionText->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
+
+	openGlContext.extensions.glEnableVertexAttribArray(vertexUV->attributeID);
+	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, textUVBuffer);
+	openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * 2 * sizeof(GLfloat), g_textUV_buffer_data);
+	openGlContext.extensions.glVertexAttribPointer(vertexUV->attributeID, 4, GL_FLOAT, GL_FALSE, sizeof(float[4]), 0);
+
+	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, textIndexBuffer);
+	openGlContext.extensions.glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, (128 + 1) * 6 * sizeof(unsigned int), g_textIndex_buffer_data);
+
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
+
+	openGlContext.extensions.glDisableVertexAttribArray(positionText->attributeID);
+	openGlContext.extensions.glDisableVertexAttribArray(vertexUV->attributeID);
 
 	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, 0);
 	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-
-
+	/// faire le draw
 
 	//auto manager = canvasManager.lock();
 

@@ -127,6 +127,52 @@ public:
     // Getters and Setters
     float GetRatio() {return ((float)getWidth()) / ((float)getHeight()) ; }
     void SetIsSelectedForEditing(bool isSelected);
+
+	Matrix3D<float> lookAt(Vector3D<float> eye, Vector3D<float> center, Vector3D<float> up)
+	{
+		/*Vector3D<float> F = center - eye;
+		Vector3D<float> s = F.normalised() ^ up;
+		Vector3D<float> u = s.normalised() ^ F.normalised();
+		return Matrix3D<float>(s.x, s.y, s.z, -eye * s,
+		u.x, u.y, u.z, -eye * u,
+		-F.normalised().x, -F.normalised().y, -F.normalised().z, -eye * F,
+		0, 0.0f, 0.0f, 1.0f);*/
+		Vector3D<float> zaxis = (eye - center).normalised();
+		Vector3D<float> xaxis = (zaxis ^ up).normalised();
+		Vector3D<float> yaxis = -(xaxis ^ zaxis);
+
+		/*Matrix3D<float> viewMatrix(xaxis.x, xaxis.y, xaxis.z, -(xaxis * eye),
+		yaxis.x, yaxis.y, yaxis.z, -(yaxis * eye),
+		zaxis.x, zaxis.y, zaxis.z, -(zaxis * eye),
+		0, 0, 0, 1);*/
+
+		Matrix3D<float> viewMatrixTr(xaxis.x, yaxis.x, zaxis.x, 0,
+			xaxis.y, yaxis.y, zaxis.y, 0,
+			xaxis.z, yaxis.z, zaxis.z, 0,
+			-(xaxis * eye), -(yaxis * eye), -(zaxis*eye), 1);
+		return viewMatrixTr;
+	}
+
+	Matrix3D<float> perspective(float width, float height, float near, float far)
+	{
+		/*float top = tan(fovy / 2.0f) * near;
+		float bottom = -top;*/
+		//return Matrix3D<float>::fromFrustum(-top * width / height, top * width / height, bottom, top, near, far);
+
+		float r = width;
+		float l = 0.0f;
+		float b = 0.0f;
+		float t = height;
+		Matrix3D<float> orthoProj(2.0f / (r - l), 0.0f, 0.0f, 0.0f,
+			0.0f, 2.0f / (t - b), 0.0f, 0.0f,
+			0.0f, 0.0f, -2.0f / (far - near), 0.0f,
+			-(r + l) / (r - l), -(t + b) / (t - b), -(far + near) / (far - near), 1.0f);
+		Matrix3D<float> autre = Matrix3D<float>::fromFrustum(0, width / 2, 0, height / 2, near, far);
+
+		return orthoProj;
+
+	}
+
     
 protected :
 	ScopedPointer<OpenGLShaderProgram::Attribute> position, colour;
@@ -277,51 +323,7 @@ private:
 	//GLuint colourBuffer;
 	//GLfloat g_colour_buffer[3 * 3 * 32 * 20 * 3]; // 1 pour chaque vertex
 
-	Matrix3D<float> lookAt(Vector3D<float> eye, Vector3D<float> center, Vector3D<float> up)
-	{
-		/*Vector3D<float> F = center - eye;
-		Vector3D<float> s = F.normalised() ^ up;
-		Vector3D<float> u = s.normalised() ^ F.normalised();
-		return Matrix3D<float>(s.x, s.y, s.z, -eye * s,
-		u.x, u.y, u.z, -eye * u,
-		-F.normalised().x, -F.normalised().y, -F.normalised().z, -eye * F,
-		0, 0.0f, 0.0f, 1.0f);*/
-		Vector3D<float> zaxis = (eye - center).normalised();
-		Vector3D<float> xaxis = (zaxis ^ up).normalised();
-		Vector3D<float> yaxis = -(xaxis ^ zaxis);
-
-		/*Matrix3D<float> viewMatrix(xaxis.x, xaxis.y, xaxis.z, -(xaxis * eye),
-			yaxis.x, yaxis.y, yaxis.z, -(yaxis * eye),
-			zaxis.x, zaxis.y, zaxis.z, -(zaxis * eye),
-			0, 0, 0, 1);*/
-
-		Matrix3D<float> viewMatrixTr(xaxis.x, yaxis.x, zaxis.x, 0,
-			xaxis.y, yaxis.y, zaxis.y, 0,
-			xaxis.z, yaxis.z, zaxis.z, 0,
-			-(xaxis * eye), -(yaxis * eye), -(zaxis*eye), 1);
-		return viewMatrixTr;
-	}
-
-	Matrix3D<float> perspective(float width, float height, float near, float far)
-	{
-		/*float top = tan(fovy / 2.0f) * near;
-		float bottom = -top;*/
-		//return Matrix3D<float>::fromFrustum(-top * width / height, top * width / height, bottom, top, near, far);
-
-		float r = width;
-		float l = 0.0f;
-		float b = 0.0f;
-		float t = height;
-		Matrix3D<float> orthoProj(2.0f / (r - l), 0.0f, 0.0f, 0.0f,
-			0.0f, 2.0f / (t - b), 0.0f, 0.0f,
-			0.0f, 0.0f, -2.0f / (far - near), 0.0f,
-			-(r + l) / (r - l), -(t + b) / (t - b), -(far + near) / (far - near), 1.0f);
-		Matrix3D<float> autre = Matrix3D<float>::fromFrustum(0, width / 2, 0, height / 2, near, far);
-
-		return orthoProj;
-
-	}
-
+	
 	float getLayerRatio(Layers layers)
 	{
 		switch (layers)

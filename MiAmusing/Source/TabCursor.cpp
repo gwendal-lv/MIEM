@@ -22,6 +22,7 @@ TabCursor::TabCursor(bptree::ptree & areaTree, std::chrono::time_point<clock> co
 	magnetized = false;
 	initCursorSize = a;
 	currentAreaResize = 1.0;
+	//setZoffset(1.1f);
 }
 
 TabCursor::TabCursor(uint64_t uniqueId, std::chrono::time_point<clock> commonStartTimePoint_, int additionnalTouchGrabRadius_) :
@@ -32,6 +33,7 @@ TabCursor::TabCursor(uint64_t uniqueId, std::chrono::time_point<clock> commonSta
 	magnetized = false;
 	initCursorSize = a;
 	currentAreaResize = 1.0;
+	//setZoffset(1.1f);
 }
 
 TabCursor::~TabCursor()
@@ -155,13 +157,14 @@ AreaEventType TabCursor::EndPointMove()
 
 		setCenterPosition(newCenter);
 		CanvasResized(parentCanvas);
+		RefreshOpenGLBuffers();
 	}
 	return Exciter::EndPointMove();
 }
 
 int TabCursor::getIndexValue()
 {
-	return currentSizeIdx;
+	return 6 - currentSizeIdx;
 }
 
 double TabCursor::getPercentage()

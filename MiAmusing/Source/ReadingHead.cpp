@@ -53,6 +53,26 @@ void PlayHead::setSpeed(double m_speed)
 {
 
 	rest = 0;
+	speedToReach = m_speed;
+	speed = m_speed;
+	rest = speedToReach - floor(speedToReach);
+	double delta = 0.001;
+	for (int i = 2; i < 5; ++i)
+	{
+		if (speedToReach >= 1.0 / (double)i - delta / 2.0 && speedToReach <= 1.0 / (double)i + delta / 2.0)
+			numT = i;
+	}
+	int tmpT = metronome->getCurrentT();
+	if (numT != 0)
+	{
+		while (tmpT > numT)
+			tmpT -= numT;
+	}
+
+	// plus tient compte du décalage qu'il y aura par rapport à v = 1
+	plus = tmpT * (1.0 / (double)numT) * numOfBeats * metronome->getPeriodInSamples(); //position + 1.0;
+
+
 	if (speedToReach != m_speed)
 	{
 		switch (state)

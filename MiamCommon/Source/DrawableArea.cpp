@@ -66,6 +66,8 @@ void DrawableArea::init()
     isNameVisible = true; // par défaut
     
     keepRatio = false;
+
+	areaVisible = true;
     
     resetImages();
 

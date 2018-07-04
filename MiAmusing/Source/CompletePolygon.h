@@ -175,7 +175,7 @@ namespace Amusing
 		std::vector<std::shared_ptr<CompletePolygon>>  chordAreaForPercentage;
 		std::vector<double> chordsAnglePercentage; // no need of chordsOnCircle, the audio manager will compute the chords
 
-		int previousSizeToShow; // nombre de cercle qu'il fallait dessiner précédemment
+		int previousSizeToShow; // nombre de cercle qu'il fallait dessiner prÃ©cÃ©demment
 
 		double pc; // si ca foire quand on bouge la forme en mm temps que le curseur doit tourner -> garder en memoire le poucentage ou se trouve le curseur et rappeler setreadingposition avec ce pourcentage pour le remettre au nouvel endroit.
 

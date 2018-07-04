@@ -76,6 +76,7 @@ namespace Miam
         static const int nameHeight = 15; // pixels
         
         bool keepRatio;
+		bool areaVisible;
         
 		// size of the different buffer parts
 		static const int numPointsPolygon = 32;
@@ -116,6 +117,9 @@ namespace Miam
         
         virtual void SetOpacityMode(OpacityMode opacityMode_) override;
         virtual OpacityMode GetOpacityMode() const override {return opacityMode;}
+
+		void setVisible(bool shoulBeVisible) override { areaVisible = shoulBeVisible; }
+		bool isVisible() override { return areaVisible; }
         
         /// \brief Sets the name that could be displayed on screen next to the center
         virtual void SetName(String newName) override;
