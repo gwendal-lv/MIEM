@@ -29,7 +29,6 @@ namespace Miam
         std::vector<SubTriangle> subTriangles;
         
         private :
-        double longestDistanceFromCenter;
         
         
         

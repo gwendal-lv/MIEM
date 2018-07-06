@@ -97,15 +97,10 @@ void InteractivePolygon::updateSubTriangles()
 		subTriangles.push_back(SubTriangle(centerInPixels, contourPointsInPixels.outer().at(i), contourPointsInPixels.outer().at(i+1)));
 	}
     
-    // Actualisation après création des triangles
+    // Actualisations après création des triangles
     computeSurface();
-    longestDistanceFromCenter = 0.0;
-    for (auto&& subTriangle : subTriangles)
-    {
-        auto currentDistance = subTriangle.GetLongestDistanceFromG();
-        if (longestDistanceFromCenter < currentDistance)
-            longestDistanceFromCenter = currentDistance;
-    }
+    
+    // Génération des splines pour le calcul des poids d'interaction
 }
 
 void InteractivePolygon::computeSurface()
@@ -144,18 +139,11 @@ double InteractivePolygon::ComputeInteractionWeight(bpt T)
         // Dans le sens trigo avec l'axe y qui va vers le bas
         // (et donc dans le horaire avec les conventions math habituelles)
         double angle = Math::ComputePositiveAngle(GT);
+        
+        // poids sans distorsion via sous-triangle
         weight = findSubTriangle(angle).ComputeInteractionWeight(T);
         
-        // Influence *normalisée* de la distance par rapport au centre
-        double alpha = distanceFromCenter/longestDistanceFromCenter;
-        // Application d'une disto qui diminue le poids des FAIBLES poids
-        // quand on est LOIN du centre -> supprimée
-        //weight = std::pow(weight,
-        //                  1.0 + Miam_DistanceFromCenterInfluenceFactor_1 * alpha);
-        // Application d'une disto qui augmente le poids des FORTS poids
-        // quand on est PROCHE du centre
-        weight = std::pow(weight,
-                          1.0 - InteractionParameters::InfluenceOfDistanceFromCenter * (1.0-alpha) );
+        
     }
     
     return weight;

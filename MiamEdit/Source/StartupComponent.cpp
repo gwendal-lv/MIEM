@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.3.0
+  Created with Projucer version: 5.3.2
 
   ------------------------------------------------------------------------------
 
@@ -38,28 +38,32 @@ StartupComponent::StartupComponent ()
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
-    addAndMakeVisible (loadTextButton = new TextButton ("Load text button"));
+    loadTextButton.reset (new TextButton ("Load text button"));
+    addAndMakeVisible (loadTextButton.get());
     loadTextButton->setButtonText (TRANS("Load existing session"));
     loadTextButton->addListener (this);
     loadTextButton->setColour (TextButton::buttonColourId, Colour (0xffbfbfbf));
     loadTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     loadTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    addAndMakeVisible (createSpatTextButton = new TextButton ("Create Spat text button"));
+    createSpatTextButton.reset (new TextButton ("Create Spat text button"));
+    addAndMakeVisible (createSpatTextButton.get());
     createSpatTextButton->setButtonText (TRANS("Create new Spat session"));
     createSpatTextButton->addListener (this);
     createSpatTextButton->setColour (TextButton::buttonColourId, Colour (0xffbfbfbf));
     createSpatTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     createSpatTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    addAndMakeVisible (createDefaultTextButton = new TextButton ("Create Default text button"));
+    createDefaultTextButton.reset (new TextButton ("Create Default text button"));
+    addAndMakeVisible (createDefaultTextButton.get());
     createDefaultTextButton->setButtonText (TRANS("Create default session"));
     createDefaultTextButton->addListener (this);
     createDefaultTextButton->setColour (TextButton::buttonColourId, Colour (0xffbfbfbf));
     createDefaultTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     createDefaultTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    addAndMakeVisible (createGenericTextButton = new TextButton ("Create Empty text button"));
+    createGenericTextButton.reset (new TextButton ("Create Empty text button"));
+    addAndMakeVisible (createGenericTextButton.get());
     createGenericTextButton->setButtonText (TRANS("Create new Generic Controller session"));
     createGenericTextButton->addListener (this);
     createGenericTextButton->setColour (TextButton::buttonColourId, Colour (0xffbfbfbf));
@@ -126,7 +130,7 @@ void StartupComponent::buttonClicked (Button* buttonThatWasClicked)
     //[UserbuttonClicked_Pre]
     //[/UserbuttonClicked_Pre]
 
-    if (buttonThatWasClicked == loadTextButton)
+    if (buttonThatWasClicked == loadTextButton.get())
     {
         //[UserButtonCode_loadTextButton] -- add your button handler code here..
         // CHANGER LE PURPOSE DU SELECTEUR DE FICHIER
@@ -146,7 +150,7 @@ void StartupComponent::buttonClicked (Button* buttonThatWasClicked)
         }
         //[/UserButtonCode_loadTextButton]
     }
-    else if (buttonThatWasClicked == createSpatTextButton)
+    else if (buttonThatWasClicked == createSpatTextButton.get())
     {
         //[UserButtonCode_createSpatTextButton] -- add your button handler code here..
         SaveFileChooser fileChooser({AppPurpose::Spatialisation});
@@ -159,12 +163,12 @@ void StartupComponent::buttonClicked (Button* buttonThatWasClicked)
         }
         //[/UserButtonCode_createSpatTextButton]
     }
-    else if (buttonThatWasClicked == createDefaultTextButton)
+    else if (buttonThatWasClicked == createDefaultTextButton.get())
     {
         //[UserButtonCode_createDefaultTextButton] -- add your button handler code here..
         //[/UserButtonCode_createDefaultTextButton]
     }
-    else if (buttonThatWasClicked == createGenericTextButton)
+    else if (buttonThatWasClicked == createGenericTextButton.get())
     {
         //[UserButtonCode_createGenericTextButton] -- add your button handler code here..
         SaveFileChooser fileChooser({AppPurpose::GenericController});
