@@ -795,6 +795,10 @@ void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
 				SetMode(CanvasManagerMode::ExciterSelected);
 				if (tabCursor = std::dynamic_pointer_cast<TabCursor>(selectedScene->GetSelectedExciter()))
 				{
+					if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)
+					{
+						tabCursor->setPercentage((1.0 - (double)myGraphicSessionManager->getColor(selectedScene->GetSelectedArea())/(double)colorCode.size()) - 1.0 / (2 * (double)colorCode.size()));
+					}
 					tabCursor->freeSize(true);
 				}
 				completeArea->showAllTarget(false);
