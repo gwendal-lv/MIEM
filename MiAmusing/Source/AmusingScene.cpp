@@ -1084,19 +1084,42 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDoubleClick(const Mouse
 	return std::shared_ptr<GraphicEvent>();
 }
 
-void AmusingScene::HideUnselectedAreas()
+std::shared_ptr<AreaEvent> AmusingScene::HideUnselectedAreas(int idx)
 {
 	// grise les autres aires
-	for (int i = 0; i < areas.size();++i)
-	{
-		if (areas[i] != selectedArea)
+	std::shared_ptr<AreaEvent> areaEvent(new AreaEvent());
+	if (areas[idx] != selectedArea)
 		{
-			areas[i]->SetOpacityMode(OpacityMode::Low);
-			if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
+			areas[idx]->SetOpacityMode(OpacityMode::Low);
+			if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(areas[idx]))
+			{
+				completeArea->setVisible(false);
 				completeArea->SetActive(false);
+				areaEvent = std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::NothingHappened, shared_from_this()));
+			}
+	}
+	
+	allowOtherAreaSelection = false; // empeche de selectionner d'autes aires pendant qu'on en édite une !
+	return areaEvent;
+}
+
+std::shared_ptr<AreaEvent> AmusingScene::ShowUnselectedAreas(int idx)
+{
+	// grise les autres aires
+	std::shared_ptr<AreaEvent> areaEvent(new AreaEvent());
+	if (areas[idx] != selectedArea)
+	{
+		areas[idx]->SetOpacityMode(OpacityMode::Independent);
+		if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(areas[idx]))
+		{
+			completeArea->setVisible(true);
+			//completeArea->SetActive(true);
+			areaEvent = std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::NothingHappened, shared_from_this()));
 		}
 	}
-	allowOtherAreaSelection = false; // empeche de selectionner d'autes aires pendant qu'on en édite une !
+
+	allowOtherAreaSelection = true; // empeche de selectionner d'autes aires pendant qu'on en édite une !
+	return areaEvent;
 }
 
 std::shared_ptr<GraphicEvent> AmusingScene::resetAreaPosition()
@@ -1226,6 +1249,17 @@ std::shared_ptr<AreaEvent> AmusingScene::SetSelectedAreaCursor(int idx, double n
 	{
 		completeArea->setCursorsSpeed(idx, newSize);
 		areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeArea->getCursor(idx),AreaEventType::ShapeChanged,completeArea->GetId(),shared_from_this()));
+	}
+	return areaE;
+}
+
+std::shared_ptr<AreaEvent> AmusingScene::SetSelectedAreaCursorBaseNote(int idx, double newBaseNote)
+{
+	std::shared_ptr<AreaEvent> areaE(new AreaEvent());
+	if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(selectedArea))
+	{
+		completeArea->setCursorsBaseNote(idx, newBaseNote);
+		areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeArea->getCursor(idx), AreaEventType::ColorChanged, completeArea->GetId(), shared_from_this()));
 	}
 	return areaE;
 }

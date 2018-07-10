@@ -22,6 +22,8 @@ TabCursor::TabCursor(bptree::ptree & areaTree, std::chrono::time_point<clock> co
 	magnetized = false;
 	initCursorSize = a;
 	currentAreaResize = 1.0;
+	allSizeEnabled = true;
+	
 }
 
 TabCursor::TabCursor(uint64_t uniqueId, std::chrono::time_point<clock> commonStartTimePoint_, int additionnalTouchGrabRadius_) :
@@ -32,6 +34,7 @@ TabCursor::TabCursor(uint64_t uniqueId, std::chrono::time_point<clock> commonSta
 	magnetized = false;
 	initCursorSize = a;
 	currentAreaResize = 1.0;
+	allSizeEnabled = true;
 }
 
 TabCursor::~TabCursor()
@@ -41,6 +44,20 @@ TabCursor::~TabCursor()
 void TabCursor::setZone(Rectangle<int> _zone)
 {
 	zone = _zone;
+}
+
+AreaEventType TabCursor::TryBeginPointMove(const Point<double>& hitPoint)
+{
+	AreaEventType areaEventType = EditableEllipse::TryBeginPointMove(hitPoint);
+	if (!allSizeEnabled)
+	{
+		if (pointDraggedId == EditableAreaPointId::WholeArea || pointDraggedId == EditableAreaPointId::Center)
+		{
+			areaEventType = AreaEventType::NothingHappened;
+			pointDraggedId = EditableAreaPointId::None;
+		}
+	}
+	return areaEventType;
 }
 
 AreaEventType TabCursor::TryMovePoint(const Point<double>& newLocation)
@@ -76,6 +93,40 @@ AreaEventType TabCursor::TryMovePoint(const Point<double>& newLocation)
 
 AreaEventType TabCursor::EndPointMove()
 {
+	if (magnetized && allSizeEnabled)
+	{
+		double maxDist = 1000.0;
+		int nearest = 0;
+		bpt newCenter = centerInPixels;
+		if (zone.getHeight() > zone.getWidth())
+		{
+			int space = int(zone.getHeight() / numDivisions);
+			for (int i = 0; i < numDivisions; ++i)
+			{
+				if (abs(space / 2 + (i * space - newCenter.get<1>()) < maxDist))
+				{
+					maxDist = abs(space / 2 + i * space - newCenter.get<1>());
+					nearest = i;
+				}
+			}
+			newCenter.set<1>(zone.getY() + (nearest * space) + space / 2);
+		}
+		else
+		{
+			int space = int(zone.getWidth() / numDivisions);
+			for (int i = 0; i < numDivisions; ++i)
+			{
+				if (abs(space / 2 + (i * space) - newCenter.get<0>()) < maxDist)
+				{
+					maxDist = abs(space / 2 + (i * space) - newCenter.get<1>());
+					nearest = i;
+				}
+			}
+			newCenter.set<0>(zone.getX() + (nearest * space) + space / 2);
+		}
+		setCenterPosition(newCenter);
+		CanvasResized(parentCanvas);
+	}
 	if (!allSizeEnabled)
 	{
 		bpt newCenter = centerInPixels;
@@ -112,7 +163,7 @@ AreaEventType TabCursor::EndPointMove()
 			}
 		}
 
-		if (!allSizeEnabled && pointDraggedId == EditableAreaPointId::ManipulationPoint)
+		if (!allSizeEnabled && (pointDraggedId == EditableAreaPointId::ManipulationPoint || pointDraggedId > 0))
 		{
 			double currentSize = a;
 			double currentResize = currentSize / initCursorSize;
@@ -145,7 +196,7 @@ AreaEventType TabCursor::EndPointMove()
 
 int TabCursor::getIndexValue()
 {
-	return currentSizeIdx;
+	return 6 - currentSizeIdx;
 }
 
 double TabCursor::getPercentage()

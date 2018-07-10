@@ -115,7 +115,7 @@ void MultiSceneCanvasComponentAmusing::optionButtonClicked(OptionButtonClicked o
 					break;
 				case Speed:
 					amusingChildren->SetNumScaleMarking(7);
-					amusingChildren->ShowSideBar(SideBarType::ScaleMarking);
+					amusingChildren->ShowSideBar(SideBarType::None);
 					canvasManagerAsManager->OnDeleteExciter();
 					canvasManagerAsManager->OnAddExciter();
 					canvasManagerAsManager->SetEditingMode(optionClicked);
@@ -135,6 +135,7 @@ void MultiSceneCanvasComponentAmusing::optionButtonClicked(OptionButtonClicked o
 				case Closed:
 					amusingChildren->ShowSideBar(SideBarType::None);
 					canvasManagerAsManager->resetAreaPosition();
+					canvasManagerAsManager->SetEditingMode(optionClicked);
 					break;
 				default:
 					break;

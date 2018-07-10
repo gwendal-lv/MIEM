@@ -32,7 +32,7 @@ MultiSceneCanvasManager::MultiSceneCanvasManager(IGraphicSessionManager* graphic
 MultiSceneCanvasEditor(graphicSessionManager_, canvasComponent_, selfId_),
 graphicSessionManager(graphicSessionManager_)
 {
-    
+	currentCursorSize = 1.0;
 }
 
 MultiSceneCanvasManager::~MultiSceneCanvasManager()
@@ -249,6 +249,10 @@ void MultiSceneCanvasManager::resetAreaPosition()
 		SetMode(CanvasManagerMode::AreaSelected);
 		handleAndSendEventSync(graphicE);
 		handleAndSendEventSync(amusingScene->DeleteTabExciter());
+		for (int i = 0; i < amusingScene->GetInteractiveAreasCount(); ++i)
+		{
+			handleAndSendAreaEventSync(amusingScene->ShowUnselectedAreas(i));
+		}
 	}
 }
 
@@ -315,7 +319,12 @@ void MultiSceneCanvasManager::OnCanvasMouseDoubleClick(const MouseEvent & mouseE
 		{
 			if (areaE->GetType() == AreaEventType::Selected)
 			{
-				amusingScene->HideUnselectedAreas();
+				for (int i = 0; i < amusingScene->GetInteractiveAreasCount(); ++i)
+				{
+					if (auto areaE = std::dynamic_pointer_cast<AreaEvent>(amusingScene->HideUnselectedAreas(i)))
+						handleAndSendAreaEventSync(areaE);
+				}
+				
 				if (auto amusingCanvas = (MultiSceneCanvasComponentAmusing*)canvasComponent)
 				{
 					if (auto selectedArea = std::dynamic_pointer_cast<CompletePolygon>(amusingScene->GetSelectedArea()))
@@ -343,6 +352,47 @@ void MultiSceneCanvasManager::OnCanvasMouseUp(const MouseEvent& mouseE)
 		if (amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
 		{
 			handleAndSendEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(amusingScene->GetSelectedExciter(), AreaEventType::ShapeChanged, selectedScene)));
+			std::shared_ptr<AreaEvent> newAreaE(new AreaEvent());
+			if (auto area = std::dynamic_pointer_cast<TabCursor>(amusingScene->GetSelectedExciter()))
+			{
+				if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(GetSelectedArea()))
+				{
+					if (auto currentCursor = std::dynamic_pointer_cast<Cursor>(completeArea->getCursor(0)))
+					{
+						//if (currentOptionClicked == OptionButtonClicked::Speed)
+						switch (currentOptionClicked)
+						{
+						case Volume:
+							ChangeVelocity(area->getPercentage());
+							//handleAndSendEventSync(graphicE);
+							newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(GetSelectedArea(), AreaEventType::ColorChanged, selectedScene));
+							handleAndSendEventSync(newAreaE);
+							break;
+						case Speed :
+							ChangeSpeed(speedTab[area->getIndexValue()]);
+							newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(GetSelectedArea(), AreaEventType::ShapeChanged, selectedScene));
+							handleAndSendEventSync(newAreaE);
+							newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(currentCursor, AreaEventType::ShapeChanged, selectedScene));
+							handleAndSendEventSync(newAreaE);
+							break;
+						case Octave:
+							ChangeBaseNote(area->getNearestDivision());
+							//handleAndSendEventSync(graphicE);
+							newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(GetSelectedArea(), AreaEventType::ShapeChanged, selectedScene));
+							handleAndSendEventSync(newAreaE);
+							break;
+						case Sample:
+							ChangeColour(colorCode[(int)floor((1.0 - area->getPercentage()) * colorCode.size())], floor((1.0 - area->getPercentage()) * colorCode.size()));
+							//handleAndSendEventSync(graphicE);
+							newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(GetSelectedArea(), AreaEventType::ShapeChanged, selectedScene));
+							handleAndSendEventSync(newAreaE);
+							break;
+						default:
+							break;
+						}
+					}
+				}
+			}
 		}
 		break;
 	default :
@@ -368,8 +418,11 @@ void MultiSceneCanvasManager::OnCanvasMouseDrag(const MouseEvent& mouseE)
 		if (amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
 			graphicE = amusingScene->OnInteractiveCanvasMouseDrag(mouseE);
 		else
+		{
 			graphicE = selectedScene->InteractiveScene::OnCanvasMouseDrag(mouseE);
-		if (auto multiE = std::dynamic_pointer_cast<MultiAreaEvent>(graphicE))
+		}
+		
+		/*if (auto multiE = std::dynamic_pointer_cast<MultiAreaEvent>(graphicE))
 		{
 			for (int i = 0; i < multiE->GetOtherEventsCount(); ++i)
 			{
@@ -457,8 +510,8 @@ void MultiSceneCanvasManager::OnCanvasMouseDrag(const MouseEvent& mouseE)
 				}
 
 			}
-		}
-		else
+		}*/
+		//else
 			handleAndSendEventSync(graphicE);
 		break;
 	default:
@@ -498,6 +551,14 @@ void MultiSceneCanvasManager::ChangeBaseNote(int newBaseNote)
 		}
 		//graphicSessionManager->setSpeedArea(amusingScene->GetSelectedArea(), newSpeed);
 		handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(amusingScene->GetSelectedArea(),AreaEventType::ShapeChanged,amusingScene)));//amusingScene->SetSelectedAreaOpacity(newVelocity / 127.0));
+
+		if (auto selectedC = std::dynamic_pointer_cast<CompletePolygon>(amusingScene->GetSelectedArea()))
+		{
+			for (int i = 0; i < selectedC->getCursorsCount(); i++)
+			{
+				handleAndSendAreaEventSync(amusingScene->SetSelectedAreaCursorBaseNote(i, newBaseNote));
+			}
+		}
 	}
 }
 
@@ -540,14 +601,19 @@ double MultiSceneCanvasManager::getSpeed(std::shared_ptr<IEditableArea> area)
 void MultiSceneCanvasManager::ChangeVelocity(double newVelocity)
 {
 	//DBG("new speed = " + (String)newSpeed);
-	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+	if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)
 	{
-		if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)
+		
+		if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
 		{
-			myGraphicSessionManager->setVelocityArea(amusingScene->GetSelectedArea(), newVelocity * 127.0);
+			if (myGraphicSessionManager->getSpeed(amusingScene->GetSelectedArea()) != newVelocity * 127.0)
+			{
+				myGraphicSessionManager->setVelocityArea(amusingScene->GetSelectedArea(), newVelocity * 127.0);
+				handleAndSendAreaEventSync(amusingScene->SetSelectedAreaOpacity(newVelocity/**127.0*/));
+			}
 		}
 		//graphicSessionManager->setSpeedArea(amusingScene->GetSelectedArea(), newSpeed);
-		handleAndSendAreaEventSync(amusingScene->SetSelectedAreaOpacity(newVelocity/**127.0*/));
+		
 	}
 }
 
@@ -727,6 +793,10 @@ void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
 			{
 			case Sample:
 				SetMode(CanvasManagerMode::ExciterSelected);
+				if (tabCursor = std::dynamic_pointer_cast<TabCursor>(selectedScene->GetSelectedExciter()))
+				{
+					tabCursor->freeSize(true);
+				}
 				completeArea->showAllTarget(false);
 				completeArea->SetActive(false);
 				completeArea->SetOpacityMode(OpacityMode::Independent);
@@ -737,6 +807,7 @@ void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
 					tabCursor->setPercentage(getOctave(completeArea) / 9.0 - 1.0/18.0);
 					tabCursor->SetNumDivisions(9);
 					tabCursor->EnableMagnet(true);
+					tabCursor->freeSize(true);
 				}
 				SetMode(CanvasManagerMode::ExciterSelected);
 				completeArea->showAllTarget(false);
@@ -748,6 +819,7 @@ void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
 				{
 					tabCursor->EnableMagnet(false);
 					tabCursor->setPercentage(getVelocity(completeArea) / 128.0);
+					tabCursor->freeSize(true);
 				}
 				SetMode(CanvasManagerMode::ExciterSelected);
 				completeArea->showAllTarget(false);
