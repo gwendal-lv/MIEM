@@ -1392,7 +1392,13 @@ std::shared_ptr<AreaEvent> AmusingScene::addShadowCursor()
 			tabCursor->EnableMagnet(false);
 			tabCursor->freeSize(false);
 			tabCursor->setCenterPosition(newCenter);
-			tabCursor->SizeChanged(2.0, false);
+			if (auto cursor = completeArea->getCursor(0))
+			{
+				tabCursor->SetSpeed(cursor->getSpeed());
+				tabCursor->SizeChanged(2.0, false);
+			}
+			else
+				tabCursor->SizeChanged(2.0, false);
 			tabCursor->SetCurrentSize(2.0);
 			tabCursor->updateContourPoints();
 			tabCursor->CanvasResized(canvasComponent);

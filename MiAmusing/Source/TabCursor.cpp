@@ -24,6 +24,13 @@ TabCursor::TabCursor(bptree::ptree & areaTree, std::chrono::time_point<clock> co
 	currentAreaResize = 1.0;
 	allSizeEnabled = true;
 	
+	speedToSize[4.0] = 0.6;//2.0;
+	speedToSize[3.0] = 0.73333;//1.666;
+	speedToSize[2.0] = 0.866666;//1.3333;
+	speedToSize[1.0] = 1.0;
+	speedToSize[0.5] = 1.3333;
+	speedToSize[1.0 / 3.0] = 1.6666;
+	speedToSize[0.25] = 2.0;
 }
 
 TabCursor::TabCursor(uint64_t uniqueId, std::chrono::time_point<clock> commonStartTimePoint_, int additionnalTouchGrabRadius_) :
@@ -35,6 +42,14 @@ TabCursor::TabCursor(uint64_t uniqueId, std::chrono::time_point<clock> commonSta
 	initCursorSize = a;
 	currentAreaResize = 1.0;
 	allSizeEnabled = true;
+
+	speedToSize[4.0] = 0.6;//2.0;
+	speedToSize[3.0] = 0.73333;//1.666;
+	speedToSize[2.0] = 0.866666;//1.3333;
+	speedToSize[1.0] = 1.0;
+	speedToSize[0.5] = 1.3333;
+	speedToSize[1.0 / 3.0] = 1.6666;
+	speedToSize[0.25] = 2.0;
 }
 
 TabCursor::~TabCursor()
@@ -225,6 +240,19 @@ void TabCursor::setIndexValue(int _idxValue)
 	currentSizeIdx = _idxValue;
 	SizeChanged(newSize, false);
 	updateContourPoints();
+}
+
+void TabCursor::SetSpeed(double _speed)
+{
+	// mettre un std::map<double, double> speedToSize;
+	double sizeToReach = 1.0;
+	if (speedToSize.find(_speed) != speedToSize.end())
+	{
+		sizeToReach = speedToSize[_speed];
+	}
+	sizeToReach *= initCursorSize;
+	double resize = sizeToReach / a;
+	SizeChanged(resize, false);
 }
 
 void TabCursor::SetNumDivisions(int _numDivisions)
