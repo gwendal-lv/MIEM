@@ -71,6 +71,7 @@ namespace Amusing {
 
 		void setSampleColor(const int numSamples, Colour colorCode[]);
 		void setDefaultPath(String defaultPath);
+		void setSoundPath(int idx, String _path);
 
 		// ----- Events to the Presenter -----
         

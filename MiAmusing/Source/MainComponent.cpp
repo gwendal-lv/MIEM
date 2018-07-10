@@ -186,6 +186,11 @@ void MainContentComponent::setDefaultPath(String m_defaultPath)
 	soundFilesManager->setDefaultPath(m_defaultPath);
 }
 
+void MainContentComponent::setSoundPath(int idx, String _path)
+{
+	soundFilesManager->setSoundPath(idx, _path);
+}
+
 //void MainContentComponent::CreateDeviceSelector(AudioDeviceManager* deviceManager)
 //{
 //	multiCanvasComponent->CreateDeviceSelector(deviceManager);

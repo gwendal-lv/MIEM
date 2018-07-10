@@ -134,6 +134,11 @@ void SoundFilesManager::setDefaultPath(String m_defaultPath)
 		soundFileViewerArray[i]->setSoundPath(defaultPath);
 }
 
+void SoundFilesManager::setSoundPath(int idx, String _path)
+{
+	soundFileViewerArray[idx]->setSoundPath(_path);
+}
+
 String SoundFilesManager::getDefaultPath()
 {
 	return defaultPath;

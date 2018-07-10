@@ -38,13 +38,34 @@ Presenter::Presenter(View* _view) :
     view->CompleteInitialization(this);
     view->GetMainContentComponent()->resized();
 
-	const int numSamples = 4;
-	Colour colorCode[numSamples] = { Colours::grey,Colours::blue,Colours::red,Colours::green };
+	const int numSamples = 10;
+	Colour colorCode[numSamples] = { 
+		Colours::grey,
+		Colours::red,
+		Colours::green,
+		Colours::blue,
+		Colours::beige,
+		Colours::burlywood,
+		Colours::indianred,
+		Colours::cyan,
+		Colours::fuchsia,
+		Colours::yellow
+	};
 	
-	String defaultPath = BinaryData::namedResourceList[0];
 	view->setSampleColor(numSamples, colorCode);
-	view->setDefaultPath(defaultPath);
 
+	if (BinaryData::namedResourceListSize == 1)
+	{
+		String defaultPath = BinaryData::namedResourceList[0];
+		view->setDefaultPath(defaultPath);
+	}
+	else
+	{
+		for (int i = 0; i < BinaryData::namedResourceListSize; ++i)
+		{
+			view->setSoundPath(i, BinaryData::namedResourceList[i]);
+		}
+	}
 	
 
 	graphicSessionManager.setSamplesColor(numSamples, colorCode);
@@ -76,12 +97,32 @@ void Presenter::CompleteInitialisation(AmusingModel* _model)
     model = _model;
 	view->CompleteInitialization(model);
 
-	const int numSamples = 4;
-	Colour colorCode[numSamples] = { Colours::grey ,Colours::blue,Colours::red,Colours::green };
+	const int numSamples = 10;
+	//Colour colorCode[numSamples] = { Colours::grey ,Colours::blue,Colours::red,Colours::green };
+	Colour colorCode[numSamples] = {
+		Colours::grey,
+		Colours::red,
+		Colours::green,
+		Colours::blue,
+		Colours::beige,
+		Colours::burlywood,
+		Colours::indianred,
+		Colours::cyan,
+		Colours::fuchsia,
+		Colours::yellow
+	};
 
-	String defaultPath = BinaryData::namedResourceList[0];
-	for (int i = 0; i < numSamples; ++i)
-		setColorPath(i, colorCode[i], defaultPath);
+	if (BinaryData::namedResourceListSize == 1)
+	{
+		String defaultPath = BinaryData::namedResourceList[0];
+		for (int i = 0; i < numSamples; ++i)
+			setColorPath(i, colorCode[i], defaultPath);
+	}
+	else
+	{
+		for (int i = 0; i < numSamples; ++i)
+			setColorPath(i, colorCode[i], BinaryData::namedResourceList[i]);
+	}
 	//graphicSessionManager.CompleteInitialization(model);
 }
 
