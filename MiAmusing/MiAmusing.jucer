@@ -207,6 +207,10 @@
                 resource="0" file="../MiamCommon/Source/MultiSceneCanvasComponent.cpp"/>
           <FILE id="BW3uQh" name="MultiSceneCanvasComponent.h" compile="0" resource="0"
                 file="../MiamCommon/Source/MultiSceneCanvasComponent.h"/>
+          <FILE id="unrELJ" name="OpenGLTextObject.cpp" compile="1" resource="0"
+                file="../MiamCommon/Source/OpenGLTextObject.cpp"/>
+          <FILE id="AoeGi1" name="OpenGLTextObject.h" compile="0" resource="0"
+                file="../MiamCommon/Source/OpenGLTextObject.h"/>
           <FILE id="M9g0pY" name="SceneCanvasComponent.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/SceneCanvasComponent.cpp"/>
           <FILE id="CBymDY" name="SceneCanvasComponent.h" compile="0" resource="0"

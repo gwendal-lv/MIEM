@@ -37,7 +37,7 @@ SceneCanvasComponent::SceneCanvasComponent(int numShapesMax, int numPointsMax) :
 
 void SceneCanvasComponent::init(int numShapesMax, int numPointsMax)
 {
-	
+	openGLLabel = std::shared_ptr<OpenGLTextObject>(new OpenGLTextObject("C:\\Users\\ayup1\\Downloads\\ExportedFont2.png", 100.0f, 100.0f, 20.0f, -30.0f, 12));
 	ofs.open("testFps.txt", std::ofstream::out | std::ofstream::app);
 	EunderTime = 0.0;
 	previousMaxSize = 0;
@@ -253,6 +253,7 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 		modelMatrix->setMatrix4(model.mat, 1, false);
 
 	computeCanvasOutline();
+	openGLLabel->initialiseText(openGlContext);
 	//shaderProgram->use(); // on utilise qu'un seul shader program pour le moment donc on appelle une seule fois cette fonction
 }
 void SceneCanvasComponent::renderOpenGL()
@@ -378,6 +379,12 @@ void SceneCanvasComponent::renderOpenGL()
 	{
 		DrawShapes();
 	}
+
+	int fps = displayFrequencyMeasurer.GetAverageFrequency_Hz();
+
+	Matrix3D<float> testView = lookAt(Vector3D<float>(0, 0, 1), Vector3D<float>(0, 0, 0), Vector3D<float>(0, -1, 0));
+	Matrix3D<float> testProjecxtion = perspective((float)/*desktopScale **/ getWidth(), (float)/*desktopScale **/ getHeight(), 0.5f, 1.1f);
+	openGLLabel->drawOneTexturedRectangle(openGlContext, model, testView, testProjecxtion, std::to_string(fps));
     
     // Call to a general Graphic update on the whole Presenter module
 	if ( ! manager->isUpdatePending() )

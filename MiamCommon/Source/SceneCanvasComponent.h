@@ -19,6 +19,8 @@
 
 #include "FrequencyMeasurer.h"
 
+#include "OpenGLTextObject.h"
+
 #include <fstream>
 
 using namespace Miam;
@@ -180,6 +182,7 @@ protected :
 private:
 	int numFrame;
 	double EunderTime;
+	std::shared_ptr<OpenGLTextObject> openGLLabel;
 
 	bool needToResetBufferParts;
 	int previousMaxSize; // utilisé pour remettre à 0 les parties de buffer qui étaient utilisées à la frame précédente et qui ne le sont plus mtn
@@ -256,16 +259,16 @@ private:
 	static const int dottedLineIndices = 6 * dottedLineNparts;
 
 	//											forme					centre							points									contour				manipulationLine	manipulationPoint
-	/*static const int*/const int* numVertexShape;// = numVerticesPolygon	+		numVerticesRing +	 (numPointsPolygon * numVerticesCircle) +			numPointsPolygon + dottedLineVertexes		+ numVerticesRing;
-	/*static const int*/const int* shapeVertexBufferSize;// = 3 * numVerticesPolygon + (3 * numVerticesRing) + numPointsPolygon * (3 * numVerticesCircle) + (3 * numPointsPolygon) + 3 * dottedLineVertexes + 3 * numVerticesRing;
-	/*static const int*/const int* shapeColorBufferSize;// = 4 * (numVerticesPolygon + (numVerticesRing)+numPointsPolygon * (numVerticesCircle)+(numPointsPolygon)+dottedLineVertexes + numVerticesRing);
-	/*static const int*/const int* shapeIndicesSize;// = 3 * numVerticesPolygon + (3 * numVerticesRing) + numPointsPolygon * (3 * numPointCircle) + (3 * 2 * numPointsPolygon) + dottedLineIndices + (3 * numVerticesRing);
+	const int* numVertexShape;// = numVerticesPolygon	+		numVerticesRing +	 (numPointsPolygon * numVerticesCircle) +			numPointsPolygon + dottedLineVertexes		+ numVerticesRing;
+	const int* shapeVertexBufferSize;// = 3 * numVerticesPolygon + (3 * numVerticesRing) + numPointsPolygon * (3 * numVerticesCircle) + (3 * numPointsPolygon) + 3 * dottedLineVertexes + 3 * numVerticesRing;
+	const int* shapeColorBufferSize;// = 4 * (numVerticesPolygon + (numVerticesRing)+numPointsPolygon * (numVerticesCircle)+(numPointsPolygon)+dottedLineVertexes + numVerticesRing);
+	const int* shapeIndicesSize;// = 3 * numVerticesPolygon + (3 * numVerticesRing) + numPointsPolygon * (3 * numPointCircle) + (3 * 2 * numPointsPolygon) + dottedLineIndices + (3 * numVerticesRing);
 
 	static const int Npolygons = 10;
-	/*static const int*/const int* Nshapes;// = Npolygons + Npolygons * (Npolygons + 1) / 2;
-	/*static const int*/const int* vertexBufferSize;// = Nshapes * shapeVertexBufferSize;
-	/*static const int*/const int* colorBufferSize;// = Nshapes * shapeColorBufferSize;
-	/*static const int*/const int* indicesSize;// = Nshapes * shapeIndicesSize;
+	const int* Nshapes;// = Npolygons + Npolygons * (Npolygons + 1) / 2;
+	const int* vertexBufferSize;// = Nshapes * shapeVertexBufferSize;
+	const int* colorBufferSize;// = Nshapes * shapeColorBufferSize;
+	const int* indicesSize;// = Nshapes * shapeIndicesSize;
 
 
 	int shift2[35+1]; // tableau contenant les séparations entre les différentes parties d'une forme (forme = 1, centre = 1, points = 32, contour = 1)
@@ -302,26 +305,6 @@ private:
 	GLuint g_indices_dotted_line[dottedLineIndices];
 
 	void CreateShapeBuffer(std::shared_ptr<IDrawableArea> area, int positionInBuffer);
-
-	///// vertex de toutes les formes dans g_vertex_buffer
-	//GLuint vertexBuffer; 
-	//GLfloat g_vertex_buffer_data[3 * 3 * 32 * 20 * 3]; // taille = 3 composants * 32 triangles (max pour un cercle) *  3 sommets du triangle * 20 formes/scenes (10 curseurs + 10 polygones) * 3 scenes
-
-	///// contient les indices pour dessiner les formes sans stocker plusieurs fois le mm sommet
-	//GLuint indexVertexBuffer;
-	//GLuint g_index_vertex_buffer[3 * 32 * 20 * 3]; // 3 sommets par triangle * 32 triangles (max pour un cercle) * 20 formes * 3 scenes
-
-	///// contient les positions et rotation de chaque forme pour construire la modelMatrix de chaque forme
-	//GLuint modelPositionBuffer;
-	//GLfloat g_model_position[3 * 20 * 3]; // 3 composants (x, y, theta) * 20 formes * 3 scenes
-
-	///// indices pour que tout les triangles d'une même forme subissent la même transformation de la matrice model
-	//GLuint indexPositionBuffer;
-	//GLuint g_index_model_position[20 * 3]; // 1 matrices * 20 formes * 3 scenes
-
-	///// couleurs
-	//GLuint colourBuffer;
-	//GLfloat g_colour_buffer[3 * 3 * 32 * 20 * 3]; // 1 pour chaque vertex
 
 	
 	float getLayerRatio(Layers layers)
