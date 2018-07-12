@@ -77,6 +77,8 @@ void OpenGLTextObject::drawOneTexturedRectangle(OpenGLContext &context, juce::Ma
 	computeVertices();
 	for (int i = 0; i < stringToDraw.length(); ++i)
 		computeUV(i, stringToDraw[i]);
+	for(int i = stringToDraw.length(); i < maxSize;++i)
+		computeUV(i, ' ');
 	context.extensions.glBindBuffer(GL_ARRAY_BUFFER, 0);
 	context.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
