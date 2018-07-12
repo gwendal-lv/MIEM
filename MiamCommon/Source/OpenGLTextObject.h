@@ -21,15 +21,8 @@ public:
 
 	void initialiseText(OpenGLContext& context);
 	void drawOneTexturedRectangle(OpenGLContext &context, juce::Matrix3D<float> &model, juce::Matrix3D<float> &testView, juce::Matrix3D<float> &testPerspective, std::string stringToDraw);
-
-	Image resizeImageToPowerOfTwo(Image image)
-	{
-		if (!(isPowerOfTwo(image.getWidth()) && isPowerOfTwo(image.getHeight())))
-			return image.rescaled(jmin(1024, nextPowerOfTwo(image.getWidth())),
-				jmin(1024, nextPowerOfTwo(image.getHeight())));
-
-		return image;
-	}
+	void release();
+		
 private:
 	void computeVertices();
 	void computeUV(int idx, char character);
@@ -50,7 +43,7 @@ private:
 
 	ScopedPointer<OpenGLShaderProgram::Attribute> positionText, colourText, vertexUV;
 	ScopedPointer<OpenGLShaderProgram::Uniform> textProjectionMatrix, textViewMatrix, textModelMatrix, texture;
-	OpenGLTexture textTexture;
+	std::unique_ptr<OpenGLTexture> textTexture;
 	juce::Image image;
 
 	String myTextVertexShader = "attribute vec4 position;\n"
@@ -90,4 +83,13 @@ private:
 #endif
 		"    gl_FragColor = texture2D(demoTexture,UV);\n"
 		"}\n";
+
+	Image resizeImageToPowerOfTwo(Image image)
+	{
+		if (!(isPowerOfTwo(image.getWidth()) && isPowerOfTwo(image.getHeight())))
+			return image.rescaled(jmin(1024, nextPowerOfTwo(image.getWidth())),
+				jmin(1024, nextPowerOfTwo(image.getHeight())));
+
+		return image;
+	}
 };

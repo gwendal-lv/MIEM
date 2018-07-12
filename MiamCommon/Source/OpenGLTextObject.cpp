@@ -14,6 +14,7 @@ using namespace std;
 OpenGLTextObject::OpenGLTextObject(String path, float _x, float _y, float _characterWidth, float _characterHeight, int _maxSize) : 
 	textX(_x), textY(_y), characterWidth(_characterWidth), characterHeight(_characterHeight), maxSize(_maxSize)
 {
+	textTexture = std::unique_ptr<OpenGLTexture>( new OpenGLTexture());
 	image = resizeImageToPowerOfTwo(ImageFileFormat::loadFrom(File(path/*"C:\\Users\\ayup1\\Downloads\\ExportedFont2.png"*/)));
 	g_vertex_buffer_data = new GLfloat[maxSize * 6 * 3];
 	g_UV_buffer_data = new GLfloat[maxSize * 6 * 2];
@@ -57,7 +58,7 @@ void OpenGLTextObject::initialiseAttribute()
 	textModelMatrix = new OpenGLShaderProgram::Uniform(*textShaderProgram, "modelMatrix");
 	texture = new OpenGLShaderProgram::Uniform(*textShaderProgram, "demoTexture");
 
-	textTexture.loadImage(image);
+	textTexture->loadImage(image);
 }
 
 void OpenGLTextObject::initialiseShaderProgram(OpenGLContext &context)
@@ -94,7 +95,8 @@ void OpenGLTextObject::drawOneTexturedRectangle(OpenGLContext &context, juce::Ma
 	if (textViewMatrix != nullptr)
 		textViewMatrix->setMatrix4(testView.mat, 1, false);
 
-	textTexture.loadImage(image);
+	if (textTexture != nullptr)
+		textTexture->loadImage(image);
 	if (texture != nullptr)
 		texture->set(0);
 
@@ -120,7 +122,8 @@ void OpenGLTextObject::drawOneTexturedRectangle(OpenGLContext &context, juce::Ma
 	context.extensions.glDisableVertexAttribArray(positionText->attributeID);
 	context.extensions.glDisableVertexAttribArray(vertexUV->attributeID);
 
-	textTexture.loadImage(image);
+	if(textTexture != nullptr)
+		textTexture->loadImage(image);
 }
 
 void OpenGLTextObject::computeVertices()
@@ -170,4 +173,10 @@ void OpenGLTextObject::computeUV(int idx, char character)
 	g_UV_buffer_data[idx * 12 + 9] = yNew + 1.0f / 8.0f;
 	g_UV_buffer_data[idx * 12 + 10] = xNew + 0.0f;
 	g_UV_buffer_data[idx * 12 + 11] = yNew + 1.0f / 16.0f;
+}
+
+void OpenGLTextObject::release()
+{
+	textTexture->release();
+	textTexture = nullptr;
 }

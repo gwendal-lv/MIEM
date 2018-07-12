@@ -74,6 +74,8 @@ private:
     void CompleteInitialization(GraphicSessionManager*, MultiCanvasComponentAmusing*);
 	/// \brief Function called after both View, Presenter and Model are constructed
 	void CompleteInitialization(AmusingModel* _model);
+
+	void ReleaseOpengGLResources();
     
     /// \brief Necessary for the Miam::View to reference itself, because this class is always
     /// constructed by the MainWindow before the View module.

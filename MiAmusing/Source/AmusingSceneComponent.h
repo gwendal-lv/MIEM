@@ -112,28 +112,6 @@ private:
 
 	void computeScaleMarking(Point<float> beginPoint, float height, float width, int numMarks);
 
-	GLuint textVertexBuffer;
-	GLfloat g_textVertex_buffer_data[4 * 3];
-
-	GLuint textCoulourBuffer;
-	GLfloat g_textCoulour_buffer_data[4 * 4];
-
-	GLuint textUVBuffer;
-	GLfloat g_textUV_buffer_data[4 * 2];
-
-	GLuint textIndexBuffer;
-	unsigned int g_textIndex_buffer_data[6];
-
-	void computeTextBuffers();
-
-	OpenGLTexture textTexture;
-
-	ScopedPointer<OpenGLShaderProgram::Attribute> positionText, vertexUV;
-	std::unique_ptr<OpenGLShaderProgram::Uniform> projectionMatrix, viewMatrix, modelMatrix, texture;
-
-	Image resizeImageToPowerOfTwo(Image image);
-
-	ScopedPointer<OpenGLShaderProgram> textShaderProgram;
 
 	String textVertexShader =
 		"attribute vec4 positionText;\n"

@@ -51,6 +51,11 @@ void View::CompleteInitialization(AmusingModel* _model)
 	mainContentComponent->CompleteInitialization(model);
 }
 
+void View::ReleaseOpengGLResources()
+{
+	mainContentComponent->ReleaseOpengGLResources();
+}
+
 void View::setSampleColor(const int numSamples, Colour colorCode[])
 {
 	mainContentComponent->setSamplesColor(numSamples, colorCode);

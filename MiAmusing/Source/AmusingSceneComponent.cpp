@@ -43,7 +43,7 @@ AmusingSceneComponent::~AmusingSceneComponent()
 {
 	//openGlContext.detach(areaOptions);
 	//openGlContext.detach();
-	textTexture.release();
+	
 	delete showOptionsButton;
 }
 
@@ -183,51 +183,9 @@ void AmusingSceneComponent::newOpenGLContextCreated()
 	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, scaleMarkingIndex);
 	openGlContext.extensions.glBufferData(GL_ELEMENT_ARRAY_BUFFER, (128 + 1) * 6 * sizeof(unsigned int), g_scaleMarkingIndex_buffer_data, GL_STREAM_DRAW);
 
-	/// chargement de la texture pour le texte
-	textTexture.loadImage(resizeImageToPowerOfTwo(ImageFileFormat::loadFrom(File("C:\\Users\\ayup1\\Downloads\\ExportedFont.png"))));
-
-	///shader pour le text
-	textShaderProgram = new OpenGLShaderProgram(openGlContext);
-	textShaderProgram->addVertexShader(OpenGLHelpers::translateVertexShaderToV3(textVertexShader));
-	textShaderProgram->addFragmentShader(OpenGLHelpers::translateFragmentShaderToV3(textFragmentShader));
-	textShaderProgram->link();
-
-	positionText = new OpenGLShaderProgram::Attribute(*textShaderProgram, "positionText");
-	vertexUV = new OpenGLShaderProgram::Attribute(*textShaderProgram, "vertexUV");
-	texture.reset(new OpenGLShaderProgram::Uniform(*textShaderProgram, "demoTexture"));
-
-	projectionMatrix.reset(new OpenGLShaderProgram::Uniform(*textShaderProgram, "projectionMatrix"));
-	viewMatrix.reset(new OpenGLShaderProgram::Uniform(*textShaderProgram, "viewMatrix"));
-	modelMatrix.reset(new OpenGLShaderProgram::Uniform(*textShaderProgram, "modelMatrix"));
-	
-
-	/// buffers pour le text
-	openGlContext.extensions.glGenBuffers(1, &textVertexBuffer);
-	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, textVertexBuffer);
-	openGlContext.extensions.glBufferData(GL_ARRAY_BUFFER, 4 * 3 * sizeof(GLfloat),
-		g_textVertex_buffer_data, GL_STREAM_DRAW);
-
-	/*openGlContext.extensions.glGenBuffers(1, &textCoulourBuffer);
-	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, textCoulourBuffer);
-	openGlContext.extensions.glBufferData(GL_ARRAY_BUFFER, 4 * 4 * sizeof(GLfloat), g_textCoulour_buffer_data, GL_STREAM_DRAW);*/
-
-	openGlContext.extensions.glGenBuffers(1, &textUVBuffer);
-	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, textUVBuffer);
-	openGlContext.extensions.glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(GLfloat), g_textUV_buffer_data, GL_STREAM_DRAW);
-
-	openGlContext.extensions.glGenBuffers(1, &textIndexBuffer);
-	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, textIndexBuffer);
-	openGlContext.extensions.glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), g_textIndex_buffer_data, GL_STREAM_DRAW);
 }
 
-Image AmusingSceneComponent::resizeImageToPowerOfTwo(Image image)
-{
-	if (!(isPowerOfTwo(image.getWidth()) && isPowerOfTwo(image.getHeight())))
-		return image.rescaled(jmin(1024, nextPowerOfTwo(image.getWidth())),
-			jmin(1024, nextPowerOfTwo(image.getHeight())));
 
-	return image;
-}
 
 
 
@@ -283,58 +241,6 @@ void AmusingSceneComponent::computeScaleMarking(Point<float> beginPoint, float h
 	}
 }
 
-void AmusingSceneComponent::computeTextBuffers()
-{
-	g_textIndex_buffer_data[0] = 0;
-	g_textIndex_buffer_data[1] = 1;
-	g_textIndex_buffer_data[2] = 2;
-	g_textIndex_buffer_data[3] = 1;
-	g_textIndex_buffer_data[4] = 2;
-	g_textIndex_buffer_data[5] = 3;
-
-	float x = 50;
-	float y = 50;
-	float w = 50;
-	float h = 50;
-
-	int a = 65;
-	float uv_x = float(a % 16) / 16.0f;
-	float uv_y = float(a / 16) / 16.0f;
-
-	g_textVertex_buffer_data[0] = x;
-	g_textVertex_buffer_data[1] = y;
-	g_textVertex_buffer_data[2] = 0.0f;
-
-	g_textUV_buffer_data[0] = uv_x;
-	g_textUV_buffer_data[1] = 1.0f - uv_y;
-
-
-	g_textVertex_buffer_data[3] = x+w;
-	g_textVertex_buffer_data[4] = y;
-	g_textVertex_buffer_data[5] = 0.0f;
-
-	g_textUV_buffer_data[2] = uv_x + 1.0f / 16.0f;
-	g_textUV_buffer_data[3] = 1.0f - uv_y;
-
-	g_textVertex_buffer_data[6] = x+w;
-	g_textVertex_buffer_data[7] = y+h;
-	g_textVertex_buffer_data[8] = 0.0f;
-
-	g_textUV_buffer_data[4] = uv_x + 1.0f / 16.0f;
-	g_textUV_buffer_data[5] = 1.0f - (uv_y + 1.0f / 16.0f);
-
-	g_textVertex_buffer_data[9] = x;
-	g_textVertex_buffer_data[10] = y+h;
-	g_textVertex_buffer_data[11] = 0.0f;
-
-	g_textUV_buffer_data[6] = uv_x;
-	g_textUV_buffer_data[7] = 1.0f - (uv_y + 1.0f / 16.0f);
-
-	for (int i = 0; i < 16; ++i)
-		g_textCoulour_buffer_data[i] = 1.0f;
-
-
-}
 
 
 void AmusingSceneComponent::renderOpenGL()
@@ -496,49 +402,6 @@ void AmusingSceneComponent::renderOpenGL()
 		break;
 	}
 
-
-	textTexture.bind();
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-	textShaderProgram->use();
-
-	projectionMatrix->setMatrix4(perspective((float)/*desktopScale **/ getWidth(), (float)/*desktopScale **/ getHeight(), 0.5f, 1.1f).mat, 1, false);
-
-
-	Matrix3D<float> model(1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, -1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, (float)getHeight(), 0.0f, 1.0f);
-
-	/*if (texture.get() != nullptr)
-		texture->set((GLint)0);*/
-
-	if (modelMatrix.get() != nullptr)
-		modelMatrix->setMatrix4(model.mat, 1, false);
-
-	computeTextBuffers();
-
-	texture->set(1);
-
-	openGlContext.extensions.glEnableVertexAttribArray(positionText->attributeID);
-	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, textVertexBuffer);
-	openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * 3 * sizeof(GLfloat), g_textVertex_buffer_data);
-	openGlContext.extensions.glVertexAttribPointer(positionText->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
-
-	openGlContext.extensions.glEnableVertexAttribArray(vertexUV->attributeID);
-	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, textUVBuffer);
-	openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * 2 * sizeof(GLfloat), g_textUV_buffer_data);
-	openGlContext.extensions.glVertexAttribPointer(vertexUV->attributeID, 4, GL_FLOAT, GL_FALSE, sizeof(float[4]), 0);
-
-	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, textIndexBuffer);
-	openGlContext.extensions.glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, (128 + 1) * 6 * sizeof(unsigned int), g_textIndex_buffer_data);
-
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
-
-	openGlContext.extensions.glDisableVertexAttribArray(positionText->attributeID);
-	openGlContext.extensions.glDisableVertexAttribArray(vertexUV->attributeID);
 
 	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, 0);
 	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);

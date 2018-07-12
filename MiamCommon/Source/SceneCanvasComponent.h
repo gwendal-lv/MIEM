@@ -101,6 +101,7 @@ public:
 	SceneCanvasComponent(int numShapesMax, int numPointsMax = 64);
 
 	void init(int numShapesMax, int numPointsMax);
+	void ReleaseOpengGLResources();
 
     ~SceneCanvasComponent();
     
@@ -323,6 +324,8 @@ private:
 	}
 
 	std::ofstream ofs;
+
+	std::atomic<bool> releaseResources;
 
 	void computeManipulationLine(float Ox, float Oy, float Mx, float My, float width, float height);
 

@@ -68,6 +68,7 @@ namespace Amusing {
         /// \brief Function called after both View and Presenter are contructed
         void CompleteInitialization(GraphicSessionManager*, MultiCanvasComponentAmusing*);
 		void CompleteInitialization(AmusingModel* _model);
+		void ReleaseOpengGLResources();
 
 		void setSampleColor(const int numSamples, Colour colorCode[]);
 		void setDefaultPath(String defaultPath);

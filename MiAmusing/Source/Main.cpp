@@ -62,7 +62,7 @@ public:
         // Add your application's shutdown code here..
 
 		DBG("####### main destructor #########");
-
+		view->ReleaseOpengGLResources();
 		delete model;
 		DBG("------- model deleted --------");
         delete presenter;

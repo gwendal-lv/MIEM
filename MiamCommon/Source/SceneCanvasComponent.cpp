@@ -105,10 +105,16 @@ void SceneCanvasComponent::init(int numShapesMax, int numPointsMax)
 	g_canvasOutlineIndex_buffer_data[22] = 4;
 	g_canvasOutlineIndex_buffer_data[23] = 0;
 
-
+	releaseResources = false;
 
 	openGlContext.setComponentPaintingEnabled(true); // default behavior, lower perfs
 													 // OpenGL final initialization will happen in the COmpleteInitialization method
+}
+
+void SceneCanvasComponent::ReleaseOpengGLResources()
+{
+	releaseResources = true;
+	//openGLLabel->release();
 }
 
 SceneCanvasComponent::~SceneCanvasComponent()
@@ -258,6 +264,12 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 }
 void SceneCanvasComponent::renderOpenGL()
 {
+	if (releaseResources)
+	{
+		openGLLabel->release();
+		openGLLabel = nullptr;
+		releaseResources = false;
+	}
 	++numFrame;
 
 	//DBG("render : " + getName());
@@ -382,9 +394,12 @@ void SceneCanvasComponent::renderOpenGL()
 
 	int fps = displayFrequencyMeasurer.GetAverageFrequency_Hz();
 
-	Matrix3D<float> testView = lookAt(Vector3D<float>(0, 0, 1), Vector3D<float>(0, 0, 0), Vector3D<float>(0, -1, 0));
-	Matrix3D<float> testProjecxtion = perspective((float)/*desktopScale **/ getWidth(), (float)/*desktopScale **/ getHeight(), 0.5f, 1.1f);
-	openGLLabel->drawOneTexturedRectangle(openGlContext, model, testView, testProjecxtion, std::to_string(fps));
+	if (openGLLabel != nullptr)
+	{
+		Matrix3D<float> testView = lookAt(Vector3D<float>(0, 0, 1), Vector3D<float>(0, 0, 0), Vector3D<float>(0, -1, 0));
+		Matrix3D<float> testProjecxtion = perspective((float)/*desktopScale **/ getWidth(), (float)/*desktopScale **/ getHeight(), 0.5f, 1.1f);
+		openGLLabel->drawOneTexturedRectangle(openGlContext, model, testView, testProjecxtion, std::to_string(fps));
+	}
     
     // Call to a general Graphic update on the whole Presenter module
 	if ( ! manager->isUpdatePending() )
