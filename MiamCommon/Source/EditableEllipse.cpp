@@ -125,8 +125,6 @@ void EditableEllipse::CanvasResized(SceneCanvasComponent* _parentCanvas)
 
 	// Manipulation point (+ line...)
 	computeManipulationPoint();
-
-	pointDraggingRadius = 0.01f * (parentCanvas->getWidth() + parentCanvas->getHeight()) / 2.0f; // 1%
 }
 
 void EditableEllipse::computeManipulationPoint()
@@ -178,7 +176,7 @@ AreaEventType EditableEllipse::TryBeginPointMove(const Point<double>& hitPoint)
 		for (size_t i = 0; (i < contourPointsInPixels.outer().size() && (eventType != AreaEventType::PointDragBegins)); i++)
 		{
 			
-			if (boost::geometry::distance(contourPointsInPixels.outer().at(i), bpt(hitPoint.x, hitPoint.y)) < pointDraggingRadius)
+			if (boost::geometry::distance(contourPointsInPixels.outer().at(i), bpt(hitPoint.x, hitPoint.y)) < elementInteractionRadius)
 			{
 				pointDraggedId = (int)i;
 				eventType = AreaEventType::PointDragBegins;

@@ -61,11 +61,10 @@ void InteractiveEllipse::init()
 
 void InteractiveEllipse::CanvasResized(SceneCanvasComponent* _parentCanvas)
 {
-	DrawableEllipse::CanvasResized(_parentCanvas);
-
-	// Finally, we update sub triangles
+    DrawableEllipse::CanvasResized(_parentCanvas);
+    InteractiveArea::CanvasResized(_parentCanvas);
 	
-	computeSurface(); // mettre dans updateSubTriangle?
+	computeSurface(); 
 }
 
 void InteractiveEllipse::computeSurface()

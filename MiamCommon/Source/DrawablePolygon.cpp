@@ -107,8 +107,8 @@ void DrawablePolygon::createJucePolygon(int width, int height)
     
     // Puis Création du contour en tant que Polygone BOOST (points (en pixels) séparés)
     contourPointsInPixels.clear();
-    boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scale(width, height);
-    boost::geometry::transform(contourPoints, contourPointsInPixels, scale);
+    boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scaler(width, height);
+    boost::geometry::transform(contourPoints, contourPointsInPixels, scaler);
     
 }
 
@@ -181,8 +181,8 @@ void DrawablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
     
     // Internal BOOST contour points in pixels
     contourPointsInPixels.clear();
-    boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scale(parentCanvas->getWidth(), parentCanvas->getHeight());
-    boost::geometry::transform(contourPoints, contourPointsInPixels, scale);
+    boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scaler(parentCanvas->getWidth(), parentCanvas->getHeight());
+    boost::geometry::transform(contourPoints, contourPointsInPixels, scaler);
 }
 
 

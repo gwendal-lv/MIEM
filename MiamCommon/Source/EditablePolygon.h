@@ -85,6 +85,8 @@ namespace Miam {
         protected :
         void recreateNormalizedPoints() override;
         // Polygon-specific editing function
+        private :
+        void moveContourPoint(size_t pointIndex, const Point<double>& newLocation);
         public :
 		/// \brief Asks the polygonal area if a new point may be created close to
 		/// the hitPoint.
@@ -102,7 +104,7 @@ namespace Miam {
         String TryDeletePoint(const Point<double>& hitPoint);
         // Editing helpers
         private :
-        bool isNewContourPointValid(const Point<double>& newLocation);
+        bool isNewContourPointValid(size_t pointIndex, const Point<double>& newLocation);
         bool isNewCenterValid(const Point<double>& newLocation);
         bool isCenterValidWithoutContourPoint(size_t contourPointId);
         void insertPointInPixels(const bpt& newContourPoint, int position);

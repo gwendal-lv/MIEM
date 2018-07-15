@@ -38,6 +38,8 @@ namespace Miam
         /// to area points associated to "special functions" (the center, or editing points).
         enum EditableAreaPointId : int { // enum *class* brings cast (to int) issues...
             
+            TwoNeighbourPoints = -50, ///< Special value that indicates that two neighbour points = a side is being dragged
+            
             ManipulationPoint = -40, ///< Point that allows rotation and scaling of the whole area
             Center = -30, ///< Center of interaction
             WholeArea = -20, ///< Special point representing the whole area
@@ -93,17 +95,16 @@ namespace Miam
 		/// EditableArea::manipulationPointInPixels)
         float manipulationPointRadius;
         
-		/// \brief Maximum distance in pixels between a displayed point (normal or
-		/// special), and a user event that could move this point.
-        float pointDraggingRadius;
-		/// \brief ID of the only point of this area that is being moved.
+        /// \brief ID of the only point of this area that is being moved.
         //int pointDraggedId;
+        
         Point<double> lastLocation; ///< Back-up for EditableArea::pointDraggedId
         
         float minimumSizePercentage = 0.03f; ///< In % of mean of canvas width and height
 
 		protected :
-			int pointDraggedId;
+        int pointDraggedId;
+        int sideDraggedId = -1; // utilisé uniquement lorsque pointDraggedId indique TwoPoints
         
     };
     

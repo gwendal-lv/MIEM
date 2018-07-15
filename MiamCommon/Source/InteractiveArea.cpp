@@ -11,8 +11,9 @@
 #include <numeric> // std::accumulate
 
 #include "InteractiveArea.h"
-
 #include "Exciter.h"
+
+#include "SceneCanvasComponent.h"
 
 #include "MiamMath.h"
 
@@ -28,6 +29,14 @@ void InteractiveArea::onCloned()
     while (excitersInteractingWithThis.size() > 0)
         // comme on a des vector< >, on supprime les derniers pour éviter des ré-allocations
         deleteLinksToExciter(excitersInteractingWithThis.size()-1);
+}
+
+
+
+
+void InteractiveArea::CanvasResized(SceneCanvasComponent* _parentCanvas)
+{
+    elementInteractionRadius = 0.01f * (_parentCanvas->getWidth()+_parentCanvas->getHeight())/2.0f; // 1%
 }
 
 

@@ -49,6 +49,12 @@ namespace Miam
         std::vector< Excitement > excitementAmounts;
         
         
+        /// \brief Maximum distance in pixels between a displayed element (point,
+        /// edge, surface...), and a user event that could move this element
+        float elementInteractionRadius;
+
+        
+        
     protected:
         double surface;
         
@@ -64,6 +70,11 @@ namespace Miam
         // Suppression des liens avec les excitateurs
         virtual void onCloned() override;
         public :
+        
+        
+        // - - - - - Fonctions de mise à jour - - - - -
+        virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
+
         
         // - - - - - Interaction avec Excitateurs - - - - -
         

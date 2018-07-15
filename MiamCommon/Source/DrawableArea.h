@@ -41,7 +41,7 @@ namespace Miam
         bpt center; ///< Normalized center coordinates (x, y in [0.0,1.0])
         bpt centerInPixels; ///< Center coordinates in pixels (relative to a canvas)
         bool displayCenter;
-        bpolygon contourPointsInPixels; ///< Caracteristic points (coordinates in pixels) along the contour of the area (not necessarily drawn)
+        bpolygon contourPointsInPixels; ///< Caracteristic points (coordinates in pixels) along the contour of the area (not necessarily drawn). Last point is a duplicate of the first for closed polygons.
         
         // Display data
         protected :

@@ -27,6 +27,7 @@ namespace Miam
         // ================== ATTRIBUTES ====================
         protected :
         std::vector<SubTriangle> subTriangles;
+        std::vector<bpolygon> edgesHitBoxes; ///< Arête k correspond aux points k et k+1
         
         private :
         
@@ -97,6 +98,10 @@ namespace Miam
         /// <param name="angle"></param>
         /// <returns></returns>
         SubTriangle& findSubTriangle(double angle);
+        
+        
+        /// \brief Computes the hit box of each edge of the polygon
+        void updateEdgesHitBoxes();
         
 		private :
 			void computeSurface();

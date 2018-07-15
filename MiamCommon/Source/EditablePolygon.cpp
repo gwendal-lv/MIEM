@@ -122,8 +122,6 @@ void EditablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
     
     // Manipulation point (+ line...)
     computeManipulationPoint();
-    
-    pointDraggingRadius = 0.01f * (parentCanvas->getWidth()+parentCanvas->getHeight())/2.0f; // 1%
 }
 
 void EditablePolygon::computeManipulationPoint()
@@ -180,6 +178,7 @@ void EditablePolygon::SetActive(bool activate)
 AreaEventType EditablePolygon::TryBeginPointMove(const Point<double>& hitPoint)
 {
 	AreaEventType eventType = AreaEventType::NothingHappened;
+    auto hitBpt = bpt(hitPoint.x, hitPoint.y);
 
 	// ONE TOUCH POINT IS AUTHORIZED BY AREA, AT THE MOMENT
 	// And this is decided... Here
@@ -193,7 +192,7 @@ AreaEventType EditablePolygon::TryBeginPointMove(const Point<double>& hitPoint)
     if (!enableTranslationOnly)
     {
         // Are we grabbing the manipulation dot ?
-        if (boost::geometry::distance(bmanipulationPointInPixels, bpt(hitPoint.x, hitPoint.y))
+        if (boost::geometry::distance(bmanipulationPointInPixels, hitBpt)
             < (centerCircleRadius+centerContourWidth)) // same radius than the center
         {
             pointDraggedId = EditableAreaPointId::ManipulationPoint;
@@ -203,7 +202,7 @@ AreaEventType EditablePolygon::TryBeginPointMove(const Point<double>& hitPoint)
         // Are we grabbing one of the contour points ?
         for (size_t i=0; (i < contourPointsInPixels.outer().size()-1 && (eventType!=AreaEventType::PointDragBegins)) ; i++)
         {
-            if (boost::geometry::distance(contourPointsInPixels.outer().at(i), bpt(hitPoint.x, hitPoint.y)) < pointDraggingRadius)
+            if (boost::geometry::distance(contourPointsInPixels.outer().at(i), hitBpt) < elementInteractionRadius)
             {
                 pointDraggedId = (int)i;
 				eventType = AreaEventType::PointDragBegins;
@@ -213,12 +212,23 @@ AreaEventType EditablePolygon::TryBeginPointMove(const Point<double>& hitPoint)
         // Are we grabbing the center ?
         if (eventType != AreaEventType::PointDragBegins)
         {
-			
-            if (boost::geometry::distance(centerInPixels, bpt(hitPoint.x, hitPoint.y))
+            if (boost::geometry::distance(centerInPixels, hitBpt)
                 < (centerCircleRadius+centerContourWidth))
             {
                 pointDraggedId = EditableAreaPointId::Center;
 				eventType = AreaEventType::PointDragBegins;
+            }
+        }
+        
+        // Are we grabbing an entire side ? If the used clicked close enough to a painted side line
+        for (size_t i=0; i < edgesHitBoxes.size() && (eventType != AreaEventType::PointDragBegins) ; i++)
+        {
+            if (boost::geometry::within(hitBpt, edgesHitBoxes[i]))
+            {
+                std::cout << "collision avec arête #" << i << std::endl;
+                eventType = AreaEventType::PointDragBegins;
+                pointDraggedId = EditableAreaPointId::TwoNeighbourPoints;
+                sideDraggedId = (int)i;
             }
         }
     }
@@ -229,11 +239,16 @@ AreaEventType EditablePolygon::TryBeginPointMove(const Point<double>& hitPoint)
         if (hitTest(hitPoint.x,hitPoint.y))
         {
             pointDraggedId = EditableAreaPointId::WholeArea;
-            lastLocation = hitPoint;
 			eventType = AreaEventType::PointDragBegins;
         }
     }
     
+    // If something starts : data backups
+    if (eventType == AreaEventType::PointDragBegins)
+    {
+        lastLocation = hitPoint;
+    }
+
 	return eventType;
 }
 
@@ -245,21 +260,42 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
     // Simple contour point dragging
     if (pointDraggedId >= 0)
     {
-        if ( parentCanvas->getLocalBounds().contains(newLocation.toInt())
-            && isNewContourPointValid(newLocation))
+        if ( isNewContourPointValid(pointDraggedId, newLocation) )
         {
-			contourPointsInPixels.outer().at(pointDraggedId) = bpt(newLocation.x, newLocation.y);
-			contourPoints.outer().at(pointDraggedId) = bpt(newLocation.x / (double)parentCanvas->getWidth(),
-															newLocation.y / (double)parentCanvas->getHeight());
-			if (pointDraggedId == 0) // first point = last point
-			{
-				contourPointsInPixels.outer().at(contourPointsInPixels.outer().size() - 1) = contourPointsInPixels.outer().at(0);
-				contourPoints.outer().at(contourPoints.outer().size() - 1) = contourPoints.outer().at(0);
-			}
+            moveContourPoint(pointDraggedId, newLocation);
             areaEventType = AreaEventType::ShapeChanged;
         }
     }
-    
+    // arête du polygone : 2 points déplacés ensemble
+    else if (pointDraggedId == EditableAreaPointId::TwoNeighbourPoints)
+    {
+        // On essaie de faire la translation un point après l'autre
+        // si la seconde n'est pas valide, on devra annuler la première...
+        Point<double> translation = newLocation - lastLocation;
+        Point<double> newLocation1(contourPointsInPixels.outer()[sideDraggedId].get<0>(),
+                                   contourPointsInPixels.outer()[sideDraggedId].get<1>());
+        newLocation1 += translation;
+        if (isNewContourPointValid(sideDraggedId, newLocation1))
+        {
+            moveContourPoint(sideDraggedId, newLocation1);
+            Point<double> newLocation2(contourPointsInPixels.outer()[sideDraggedId+1].get<0>(),
+                                       contourPointsInPixels.outer()[sideDraggedId+1].get<1>());
+            newLocation2 += translation;
+            // déplacement effectif de l'arête entière + évènement
+            if (isNewContourPointValid(sideDraggedId+1, newLocation2))
+            {
+                moveContourPoint(sideDraggedId+1, newLocation2);
+                areaEventType = AreaEventType::ShapeChanged;
+            }
+            // sinon, annulation du premier déplacement
+            else
+            {
+                newLocation1 -= translation;
+                moveContourPoint(sideDraggedId, newLocation1);
+            }
+        }
+    }
+    // manipulation point
     else if (pointDraggedId == EditableAreaPointId::ManipulationPoint)
     {
         // Rotation will be applied anyway...
@@ -362,11 +398,10 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
         }
     }
     
-    // Déplacement itératif
+    // aire entière
     else if (pointDraggedId == EditableAreaPointId::WholeArea)
     {
-        // If translation leads to an out-of-canvas polygon, we just cancel it... No numeric issue
-        // with double-precision floating-point numbers...
+        // test de validité de la translation en passant par la bouding box
         Rectangle<double> boundingBoxContour = contour.getBounds().toDouble();
         Point<double> translation = newLocation - lastLocation;
         boundingBoxContour.translate(translation.getX(), translation.getY());
@@ -375,10 +410,12 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
         {
             Translate(translation);
             areaEventType = AreaEventType::Translation;
-            // Actualisation en prévision du prochain petit déplacement
-            lastLocation = newLocation;
         }
     }
+    
+    
+    // Actualisation en prévision du prochain petit déplacement
+    lastLocation = newLocation;
     
     // Graphic updates to all base attributes inherited
     if (areaEventType != AreaEventType::NothingHappened)
@@ -395,6 +432,7 @@ AreaEventType EditablePolygon::EndPointMove()
 	// The point drag is always stopped without any check, for now
     computeManipulationPoint();
     pointDraggedId = EditableAreaPointId::None;
+    sideDraggedId = -1;
 	eventType = AreaEventType::PointDragStops;
 
 	return eventType;
@@ -419,6 +457,25 @@ void EditablePolygon::Translate(const Point<double>& translation) // remplacer p
     // Manipulation point (+ line...)
     computeManipulationPoint();
 }
+void EditablePolygon::moveContourPoint(size_t pointIndex, const Point<double>& newLocation)
+{
+    // Translation du point
+    contourPointsInPixels.outer()[pointIndex] = bpt(newLocation.x, newLocation.y);
+    contourPoints.outer()[pointIndex] = bpt(newLocation.x / ((double)parentCanvas->getWidth()),
+                                            newLocation.y / ((double)parentCanvas->getHeight()));
+    // Translation éventuelle du duplicat (si point de fermeture du polygone)
+    const size_t closingPointIndex = contourPointsInPixels.outer().size() - 1;
+    if (pointIndex == 0)
+    {
+        contourPointsInPixels.outer()[closingPointIndex] = contourPointsInPixels.outer()[0];
+        contourPoints.outer()[closingPointIndex] = contourPoints.outer()[0];
+    }
+    else if (pointIndex == closingPointIndex)
+    {
+        contourPointsInPixels.outer()[0] = contourPointsInPixels.outer()[closingPointIndex];
+        contourPoints.outer()[0] = contourPoints.outer()[closingPointIndex];
+    }
+}
 
 
 bool EditablePolygon::TryCreatePoint(const Point<double>& hitPoint)
@@ -439,7 +496,7 @@ bool EditablePolygon::TryCreatePoint(const Point<double>& hitPoint)
     int otherPointIndex = Math::Modulo(closestPointIndex+1, (int)contourPointsInPixels.outer().size());
     
     // Is the hitPoint to far from the two current points ?
-    if ( closestDistance <= 10 * pointDraggingRadius )
+    if ( closestDistance <= 10 * elementInteractionRadius )
     {
         bpt newPoint = bpt((contourPointsInPixels.outer().at(closestPointIndex).get<0>()+contourPointsInPixels.outer().at(otherPointIndex).get<0>())/2.0,(contourPointsInPixels.outer().at(closestPointIndex).get<1>()+contourPointsInPixels.outer().at(otherPointIndex).get<1>())/2.0);
         
@@ -468,7 +525,7 @@ String EditablePolygon::TryDeletePoint(const Point<double>& hitPoint)
         }
         // - same code as in "TryCreatePoint" -
         // Is the hitPoint to far from the closest point ?
-        if ( closestDistance <= pointDraggingRadius )
+        if ( closestDistance <= elementInteractionRadius )
         {
             // If we reach this code, we MAY delete the point, if the polygon centre would remain within the new polygon
             if (isCenterValidWithoutContourPoint(closestPointIndex))
@@ -510,28 +567,32 @@ bool EditablePolygon::isCenterValidWithoutContourPoint(size_t contourPointId)
 
 // ===== EDITING HELPERS =====
 
-bool EditablePolygon::isNewContourPointValid(const Point<double>& newLocation)
+bool EditablePolygon::isNewContourPointValid(size_t pointIndex, const Point<double>& newLocation)
 {
+    // Si le point sort du canevas -> non-valide
+    if (!(parentCanvas->getLocalBounds().contains(newLocation.toInt())))
+        return false;
+    
+    // Dans l'algorithme qui suit : on fait tout par rapport au point original [0]
+    // et pas son duplicat le [.size()-1]
+    int uniquePointIndex = Math::Modulo((int)pointIndex, (int)contourPointsInPixels.outer().size()-1);
+    
     // Init : we save indexes of adjacent points (that will help build the borders)
-	int pointBefore;
-	if(pointDraggedId != 0)
-		pointBefore = Math::Modulo(pointDraggedId - 1, (int)contourPointsInPixels.outer().size());
-	else
-		pointBefore = Math::Modulo(pointDraggedId - 2, (int)contourPointsInPixels.outer().size());
-    int pointAfter = Math::Modulo(pointDraggedId+1, (int)contourPointsInPixels.outer().size());
+	int previousIndex = Math::Modulo((int)uniquePointIndex - 1, (int)contourPointsInPixels.outer().size() - 1);
+    int nextIndex = Math::Modulo((int)uniquePointIndex + 1, (int)contourPointsInPixels.outer().size() - 1);
     /* Étape 1, on construit les équations des droites suivantes :
      * - droite 1 entre le centre et le point d'avant
      * - droite 2 entre le centre et le point d'après
      */
     CartesianLine droite1 = CartesianLine(centerInPixels,
-                                          contourPointsInPixels.outer().at(pointBefore));
+                                          contourPointsInPixels.outer().at(previousIndex));
     CartesianLine droite2 = CartesianLine(centerInPixels,
-                                          contourPointsInPixels.outer().at(pointAfter));
+                                          contourPointsInPixels.outer().at(nextIndex));
     /* Étape 2
      * on vérifie ne pas avoir changé de côté par rapport aux 2 lignes considérées
      */
-    if ( droite1.PointWentThrough(contourPointsInPixels.outer().at(pointDraggedId), bpt(newLocation.x, newLocation.y))
-        || droite2.PointWentThrough(contourPointsInPixels.outer().at(pointDraggedId), bpt(newLocation.x, newLocation.y)))
+    if ( droite1.PointWentThrough(contourPointsInPixels.outer()[uniquePointIndex], bpt(newLocation.x, newLocation.y))
+        || droite2.PointWentThrough(contourPointsInPixels.outer()[uniquePointIndex], bpt(newLocation.x, newLocation.y)))
     {
         return false;
     }
@@ -593,6 +654,7 @@ void EditablePolygon::deletePoint(int position)
     recreateNormalizedPoints();
 	this->CanvasResized(parentCanvas);
 }
+
 
 void EditablePolygon::recreateNormalizedPoints()
 {

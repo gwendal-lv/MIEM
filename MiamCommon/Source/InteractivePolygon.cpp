@@ -72,9 +72,11 @@ void InteractivePolygon::init()
 void InteractivePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 {
     DrawablePolygon::CanvasResized(_parentCanvas);
+    InteractiveArea::CanvasResized(_parentCanvas);
     
-    // Finally, we update sub triangles
+    // Finally, we update internal geometric data
     updateSubTriangles();
+    updateEdgesHitBoxes();
 }
 
 
@@ -157,6 +159,48 @@ SubTriangle& InteractivePolygon::findSubTriangle(double angle)
     
     return subTriangles[i];
 }
+
+void InteractivePolygon::updateEdgesHitBoxes()
+{
+    // !! optimisation possible !!
+    // on pourrait ne rajouter/supprimer que le nombre qu'il faut ?
+    // car les hit boxes n'ont toujours que 4 côtés
+    edgesHitBoxes.clear();
+    
+    for (size_t i=0 ; i<contourPointsInPixels.outer().size()-1 ; i++)
+    {
+        // N.B. : le point [i+1] existe toujours (polygone fermé)
+        
+        // calcul de l'orientation de l'arête i -> i+1
+        double orientation = std::atan2( contourPointsInPixels.outer()[i+1].get<1>()
+                                         - contourPointsInPixels.outer()[i].get<1>(),
+                                         contourPointsInPixels.outer()[i+1].get<0>()
+                                         - contourPointsInPixels.outer()[i].get<0>());
+        auto alpha = orientation + M_PI_2; // alpha = perpendiculaire de l'orientation de l'arête
+        // création et placement du polygone et des 4 points
+        bpolygon hitBoxRectangle;
+        hitBoxRectangle.outer().push_back(bpt(contourPointsInPixels.outer()[i].get<0>()
+                                              - std::cos(alpha)*elementInteractionRadius,
+                                              contourPointsInPixels.outer()[i].get<1>()
+                                              - std::sin(alpha)*elementInteractionRadius));
+        hitBoxRectangle.outer().push_back(bpt(contourPointsInPixels.outer()[i].get<0>()
+                                              + std::cos(alpha)*elementInteractionRadius,
+                                              contourPointsInPixels.outer()[i].get<1>()
+                                              + std::sin(alpha)*elementInteractionRadius));
+        hitBoxRectangle.outer().push_back(bpt(contourPointsInPixels.outer()[i+1].get<0>()
+                                              + std::cos(alpha)*elementInteractionRadius,
+                                              contourPointsInPixels.outer()[i+1].get<1>()
+                                              + std::sin(alpha)*elementInteractionRadius));
+        hitBoxRectangle.outer().push_back(bpt(contourPointsInPixels.outer()[i+1].get<0>()
+                                              - std::cos(alpha)*elementInteractionRadius,
+                                              contourPointsInPixels.outer()[i+1].get<1>()
+                                              - std::sin(alpha)*elementInteractionRadius));
+        // fermeture pour test d'appartenance ('within') au contenu d'un contour fermé
+        hitBoxRectangle.outer().push_back(hitBoxRectangle.outer()[0]);
+        edgesHitBoxes.push_back(hitBoxRectangle);
+    }
+}
+
 
 double InteractivePolygon::GetSurface()
 {
