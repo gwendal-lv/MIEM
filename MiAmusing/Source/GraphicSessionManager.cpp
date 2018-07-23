@@ -734,6 +734,14 @@ void GraphicSessionManager::lookForAreasConcerned(Colour colourConcerned)
 		getSelectedCanvasAsManager()->lookForAreasConcerned(colourConcerned);
 }
 
+void GraphicSessionManager::OnAddPentagone()
+{
+	if (selectedCanvas)
+	{
+		getSelectedCanvasAsManager()->AddNedgeArea(GetNextAreaId(), 5);
+	}
+}
+
 void GraphicSessionManager::OnAddSquare()
 {
 	if (selectedCanvas)

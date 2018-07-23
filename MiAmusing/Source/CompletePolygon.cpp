@@ -65,7 +65,7 @@ CompletePolygon::CompletePolygon(bptree::ptree & areaTree) : EditablePolygon(are
 		OnCircles.push_back(0);
 	}
 
-	numAngles = 48;
+	numAngles = 120;//48;
 
 	updateSubTriangles();
 
@@ -124,7 +124,7 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 	s = ost.str();
 	DBG("Constructor : " + s);*/
 	isFilled = true;
-	numAngles = 48;
+	numAngles = 120;//48;
 
 	centerCircleRadius *= 2;
 	centerContourWidth *= 2;
@@ -175,7 +175,7 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	centerContourWidth *= 2;
 	multiTouchActionBegun = false;
 	currentTouchRotation = 0.0;
-	numAngles = 48;
+	numAngles = 120;//48;
 
 	showCursor = true;
 	pc = 0;
@@ -215,7 +215,7 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	Colour _fillColour) : 
 	EditablePolygon(_Id, _center, _contourPoints, _fillColour)
 {
-	numAngles = 48;
+	numAngles = 120;//48;
 	centerCircleRadius *= 2;
 	centerContourWidth *= 2;
 	multiTouchActionBegun = false;
@@ -981,7 +981,7 @@ AreaEventType CompletePolygon::EndMultiTouchPointMove()
 	multiTouchActionBegun = false;
 
 	/// verification de l'orientation !
-	numAngles = 48;
+	numAngles = 120;//48;
 	double e = 0.01;
 	orientationAngle = rotationAngle;
 	rotationAngle = 0;
