@@ -113,7 +113,6 @@ private:
     std::unique_ptr<ShapeButton> addHexaShapeButton;
     std::unique_ptr<TextButton> saveButton;
     std::unique_ptr<TextButton> loadButton;
-    std::unique_ptr<ShapeButton> addPentaShapeButton;
 
 
     //==============================================================================

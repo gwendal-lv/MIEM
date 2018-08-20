@@ -138,7 +138,6 @@ namespace Amusing {
 		// ----- Event to View -----
 		void DisplayInfo(String info,int priority = 0) override;
 
-		void OnAddPentagone();
 		void OnAddSquare();
 		void OnAddTriangle();
 		void OnAddHexa();
