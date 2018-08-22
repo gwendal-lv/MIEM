@@ -154,6 +154,10 @@ EditScene::EditScene ()
 	addTriangleShapeButton2->setShape(trianglePath, false, true, false);
 	addHexaShapeButton->setShape(hexaPath, false, true, false);
 
+	addCarreShapeButton->addMouseListener(this, true);
+	addTriangleShapeButton2->addMouseListener(this, true);
+	addHexaShapeButton->addMouseListener(this, true);
+
 	timeSlider->setValue(4);
 
 
@@ -175,6 +179,8 @@ EditScene::EditScene ()
 		ifs.close();
 	}
 
+	hasExited = false;
+	prepareToAdd = 0;
 	//textButton->setVisible(false);
     //[/Constructor]
 }
@@ -222,19 +228,19 @@ void EditScene::resized()
     //[/UserPreResize]
 
     groupComponent->setBounds (0, 0, proportionOfWidth (1.0000f), proportionOfHeight (1.0000f));
-    timeSlider->setBounds (((proportionOfWidth (0.0000f) + 0) + 0) + roundToInt (proportionOfWidth (1.0000f) * 0.0289f), ((((((proportionOfHeight (0.0756f) + proportionOfHeight (0.0756f)) + proportionOfHeight (0.0756f)) + proportionOfHeight (0.0756f)) + proportionOfHeight (0.0756f)) + proportionOfHeight (0.0756f)) + proportionOfHeight (0.0756f)) + proportionOfHeight (0.0752f), proportionOfWidth (0.9389f), proportionOfHeight (0.0756f));
-    imgPlayButton->setBounds (0, proportionOfHeight (0.0756f), proportionOfWidth (1.0000f), proportionOfHeight (0.0756f));
-    imgStopButton->setBounds ((0 + 0) + 0, (proportionOfHeight (0.0756f) + proportionOfHeight (0.0756f)) + proportionOfHeight (0.0756f), proportionOfWidth (1.0000f), proportionOfHeight (0.0756f));
-    imgPauseButton->setBounds (0 + 0, proportionOfHeight (0.0756f) + proportionOfHeight (0.0756f), proportionOfWidth (1.0000f), proportionOfHeight (0.0756f));
-    imgOptionButton->setBounds (0, proportionOfHeight (0.9489f) + roundToInt (proportionOfHeight (0.0511f) * -1.0000f), proportionOfWidth (1.0000f), proportionOfHeight (0.0756f));
-    imgDeleteButton->setBounds (((0 + 0) + 0) + 0, ((proportionOfHeight (0.0756f) + proportionOfHeight (0.0756f)) + proportionOfHeight (0.0756f)) + proportionOfHeight (0.0756f), proportionOfWidth (1.0000f), proportionOfHeight (0.0756f));
-    textButton->setBounds (proportionOfWidth (0.0354f), (((((((proportionOfHeight (0.0756f) + proportionOfHeight (0.0756f)) + proportionOfHeight (0.0756f)) + proportionOfHeight (0.0756f)) + proportionOfHeight (0.0756f)) + proportionOfHeight (0.0756f)) + proportionOfHeight (0.0756f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0756f) - -32, proportionOfWidth (0.9486f), proportionOfHeight (0.0756f));
-    label->setBounds (proportionOfWidth (0.0257f), proportionOfHeight (0.9489f), proportionOfWidth (0.9486f), proportionOfHeight (0.0511f));
-    addCarreShapeButton->setBounds (proportionOfWidth (0.0000f), (((proportionOfHeight (0.0756f) + proportionOfHeight (0.0756f)) + proportionOfHeight (0.0756f)) + proportionOfHeight (0.0756f)) + proportionOfHeight (0.0756f), proportionOfWidth (1.0000f), proportionOfHeight (0.0756f));
-    addTriangleShapeButton2->setBounds (proportionOfWidth (0.0000f) + 0, ((((proportionOfHeight (0.0756f) + proportionOfHeight (0.0756f)) + proportionOfHeight (0.0756f)) + proportionOfHeight (0.0756f)) + proportionOfHeight (0.0756f)) + proportionOfHeight (0.0756f), proportionOfWidth (1.0000f), proportionOfHeight (0.0756f));
-    addHexaShapeButton->setBounds ((proportionOfWidth (0.0000f) + 0) + 0, (((((proportionOfHeight (0.0756f) + proportionOfHeight (0.0756f)) + proportionOfHeight (0.0756f)) + proportionOfHeight (0.0756f)) + proportionOfHeight (0.0756f)) + proportionOfHeight (0.0756f)) + proportionOfHeight (0.0756f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
-    saveButton->setBounds (proportionOfWidth (0.1222f), proportionOfHeight (0.0200f), proportionOfWidth (0.2990f), proportionOfHeight (0.0511f));
-    loadButton->setBounds (proportionOfWidth (0.6013f), proportionOfHeight (0.0200f), proportionOfWidth (0.2990f), proportionOfHeight (0.0511f));
+    timeSlider->setBounds (((getWidth() / 2) - (proportionOfWidth (0.8000f) / 2)) + 0, ((((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (0.8000f), proportionOfHeight (0.0752f));
+    imgPlayButton->setBounds ((getWidth() / 2) - (proportionOfWidth (0.8001f) / 2), proportionOfHeight (0.0752f), proportionOfWidth (0.8001f), proportionOfHeight (0.0752f));
+    imgStopButton->setBounds ((((getWidth() / 2) - (proportionOfWidth (0.8001f) / 2)) + 0) + 0, (proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), roundToInt (proportionOfWidth (0.8001f) * 1.0000f), proportionOfHeight (0.0752f));
+    imgPauseButton->setBounds (((getWidth() / 2) - (proportionOfWidth (0.8001f) / 2)) + 0, proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f), roundToInt (proportionOfWidth (0.8001f) * 1.0000f), proportionOfHeight (0.0752f));
+    imgOptionButton->setBounds (proportionOfWidth (0.1000f), proportionOfHeight (0.9487f) + roundToInt (proportionOfHeight (0.0513f) * -1.0000f), proportionOfWidth (0.8000f), proportionOfHeight (0.0752f));
+    imgDeleteButton->setBounds (((((getWidth() / 2) - (proportionOfWidth (0.8001f) / 2)) + 0) + 0) + 0, ((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), roundToInt (proportionOfWidth (0.8001f) * 1.0000f), proportionOfHeight (0.0752f));
+    textButton->setBounds (proportionOfWidth (0.1000f), (((((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f) - -32, proportionOfWidth (0.8000f), proportionOfHeight (0.0752f));
+    label->setBounds (proportionOfWidth (0.1000f), proportionOfHeight (0.9487f), proportionOfWidth (0.8000f), proportionOfHeight (0.0513f));
+    addCarreShapeButton->setBounds ((getWidth() / 2) - (proportionOfWidth (0.8000f) / 2), (((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (0.8000f), proportionOfHeight (0.0752f));
+    addTriangleShapeButton2->setBounds (((getWidth() / 2) - (proportionOfWidth (0.8000f) / 2)) + 0, ((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (0.8000f), proportionOfHeight (0.0752f));
+    addHexaShapeButton->setBounds ((((getWidth() / 2) - (proportionOfWidth (0.8000f) / 2)) + 0) + 0, (((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (0.8000f), proportionOfHeight (0.0752f));
+    saveButton->setBounds (proportionOfWidth (0.1217f), proportionOfHeight (0.0203f), proportionOfWidth (0.2983f), proportionOfHeight (0.0513f));
+    loadButton->setBounds (proportionOfWidth (0.6018f), proportionOfHeight (0.0203f), proportionOfWidth (0.2983f), proportionOfHeight (0.0513f));
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -263,19 +269,22 @@ void EditScene::buttonClicked (Button* buttonThatWasClicked)
 		if (buttonThatWasClicked == addCarreShapeButton.get())
 		{
 			graphicSessionManager->OnAddSquare();
+			prepareToAdd = 0;
 			return;
 		}
 		else if (buttonThatWasClicked == addTriangleShapeButton2.get())
 		{
 			graphicSessionManager->OnAddTriangle();
+			prepareToAdd = 0;
 			return;
 		}
 		else if (buttonThatWasClicked == addHexaShapeButton.get())
 		{
 			graphicSessionManager->OnAddHexa();
+			prepareToAdd = 0;
 			return;
 		}
-		
+
 	}
     //[/UserbuttonClicked_Pre]
 
@@ -348,6 +357,83 @@ void EditScene::buttonClicked (Button* buttonThatWasClicked)
     //[/UserbuttonClicked_Post]
 }
 
+void EditScene::mouseExit (const MouseEvent& e)
+{
+    //[UserCode_mouseExit] -- Add your code here...
+	if(!contains(e.getPosition()))
+		DBG("exit now");
+    //[/UserCode_mouseExit]
+}
+
+void EditScene::mouseDrag (const MouseEvent& e)
+{
+    //[UserCode_mouseDrag] -- Add your code here...
+	
+	if (!contains(e.getPosition()))
+	{
+		if (!hasExited)
+		{
+			DBG((String)e.x + " " + (String)e.y);
+			hasExited = true;
+			switch (prepareToAdd)
+			{
+			case 0 :
+				// nothing to do
+				break;
+			case 1 :
+				exitPosition = e.getEventRelativeTo(this).getPosition();
+				graphicSessionManager->OnAddAndSelectSquare(e.withNewPosition(Point<int>(0, e.getEventRelativeTo(this).y)));
+				
+				break;
+			case 2 :
+				graphicSessionManager->OnAddTriangle();
+				break;
+			case 3 :
+				graphicSessionManager->OnAddHexa();
+				break;
+			default:
+				break;
+			}
+		}
+		else
+		{
+			DBG("continueToDrag : " + (String)e.x + " " + (String)e.y);
+			
+			// reste dehors
+			if (prepareToAdd == 0)
+				DBG("no need to add shape");
+			else if (prepareToAdd == 1)
+			{
+				DBG("need to add square");
+				Point<int> canvasHitPoint(e.getEventRelativeTo(this).getPosition());
+				canvasHitPoint.addXY(-exitPosition.x, 0);
+				graphicSessionManager->TransmitMouseDrag(e.withNewPosition(canvasHitPoint));
+			}
+			else if (prepareToAdd == 2)
+				DBG("need to add triangle");
+			else if (prepareToAdd == 3)
+				DBG("need to add hexa");
+			
+		}
+	}
+	else
+	{
+		DBG("drag");
+		if (hasExited) // est sorti avant de rerentrer dans le menu
+		{
+			// il faut supprimer la forme qui a été ajouté en "glissant" vers le canvas : 
+			// 1) dire qu'on supprime
+			graphicSessionManager->OnDelete();
+			// 2) transmettre un mouseDown à l'emplacement de la forme
+			Point<int> canvasHitPoint(e.getEventRelativeTo(this).getPosition());
+			canvasHitPoint.addXY(-exitPosition.x, 0);
+			graphicSessionManager->SendDeletingMouseDown(e.withNewPosition(canvasHitPoint));
+			hasExited = false;
+		}
+	}
+    //[/UserCode_mouseDrag]
+}
+
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
@@ -393,6 +479,40 @@ void EditScene::setTempoSlider(int newTempo)
 	timeSlider->setValue(newTempo);
 }
 
+void EditScene::buttonStateChanged(Button *concernedButton)
+{
+	if (isAddEnabled)
+	{
+		if (concernedButton == addCarreShapeButton.get())
+		{
+			Button::ButtonState newState = addCarreShapeButton->getState();
+			if (newState == Button::ButtonState::buttonDown)
+				prepareToAdd = 1;
+			return;
+		}
+		else if (concernedButton == addTriangleShapeButton2.get())
+		{
+			Button::ButtonState newState = addTriangleShapeButton2->getState();
+			if (newState == Button::ButtonState::buttonDown)
+				prepareToAdd = 2;
+			return;
+		}
+		else if (concernedButton == addHexaShapeButton.get())
+		{
+			Button::ButtonState newState = addHexaShapeButton->getState();
+			if (newState == Button::ButtonState::buttonDown)
+				prepareToAdd = 3;
+			return;
+		}
+	}
+}
+
+void EditScene::mouseUp(const MouseEvent& e)
+{
+	if (prepareToAdd != 0)
+		prepareToAdd = 0;
+}
+
 //[/MiscUserCode]
 
 
@@ -409,77 +529,84 @@ BEGIN_JUCER_METADATA
                  parentClasses="public Component" constructorParams="" variableInitialisers=""
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="0" initialWidth="600" initialHeight="400">
+  <METHODS>
+    <METHOD name="mouseExit (const MouseEvent&amp; e)"/>
+    <METHOD name="mouseDrag (const MouseEvent&amp; e)"/>
+  </METHODS>
   <BACKGROUND backgroundColour="ff323e44"/>
   <GROUPCOMPONENT name="new group" id="b0496b43bf1770c8" memberName="groupComponent"
                   virtualName="" explicitFocusOrder="0" pos="0 0 100% 100%" outlinecol="ffffffff"
                   title=""/>
   <SLIDER name="new slider" id="31e65db12379ed8f" memberName="timeSlider"
-          virtualName="" explicitFocusOrder="0" pos="2.854% 0R 93.853% 7.52%"
-          posRelativeX="581ab4124f4712ed" posRelativeY="581ab4124f4712ed"
+          virtualName="" explicitFocusOrder="0" pos="0 0R 80.015% 7.518%"
+          posRelativeX="1783a06d564fe381" posRelativeY="581ab4124f4712ed"
           textboxtext="ffffffff" textboxbkgd="152f3c" min="50.00000000000000000000"
           max="200.00000000000000000000" int="1.00000000000000000000" style="IncDecButtons"
           textBoxPos="TextBoxAbove" textBoxEditable="1" textBoxWidth="80"
           textBoxHeight="20" skewFactor="1.00000000000000000000" needsCallback="1"/>
   <IMAGEBUTTON name="imgPlaybutton" id="2b4803c7ccf2d5d1" memberName="imgPlayButton"
-               virtualName="" explicitFocusOrder="0" pos="0 7.52% 100% 7.52%"
+               virtualName="" explicitFocusOrder="0" pos="-0.5Cc 7.518% 80.015% 7.518%"
                buttonText="new button" connectedEdges="0" needsCallback="1"
                radioGroupId="0" keepProportions="1" resourceNormal="lecture_png"
                opacityNormal="1.00000000000000000000" colourNormal="0" resourceOver="lectureOn_png"
                opacityOver="1.00000000000000000000" colourOver="0" resourceDown="lectureOn_png"
                opacityDown="1.00000000000000000000" colourDown="0"/>
   <IMAGEBUTTON name="imgStopButton" id="1ea8f58bfe76ab9b" memberName="imgStopButton"
-               virtualName="" explicitFocusOrder="0" pos="0 0R 100% 7.52%" posRelativeX="210adb97ba16e19"
-               posRelativeY="210adb97ba16e19" buttonText="new button" connectedEdges="0"
+               virtualName="" explicitFocusOrder="0" pos="0 0R 100% 7.518%"
+               posRelativeX="210adb97ba16e19" posRelativeY="210adb97ba16e19"
+               posRelativeW="2b4803c7ccf2d5d1" buttonText="new button" connectedEdges="0"
                needsCallback="1" radioGroupId="0" keepProportions="1" resourceNormal="stop_png"
                opacityNormal="1.00000000000000000000" colourNormal="0" resourceOver="stopOn_png"
                opacityOver="1.00000000000000000000" colourOver="0" resourceDown="stopOn_png"
                opacityDown="1.00000000000000000000" colourDown="0"/>
   <IMAGEBUTTON name="imgPauseButton" id="210adb97ba16e19" memberName="imgPauseButton"
-               virtualName="" explicitFocusOrder="0" pos="0 0R 100% 7.52%" posRelativeX="2b4803c7ccf2d5d1"
-               posRelativeY="2b4803c7ccf2d5d1" buttonText="new button" connectedEdges="0"
+               virtualName="" explicitFocusOrder="0" pos="0 0R 100% 7.518%"
+               posRelativeX="2b4803c7ccf2d5d1" posRelativeY="2b4803c7ccf2d5d1"
+               posRelativeW="2b4803c7ccf2d5d1" buttonText="new button" connectedEdges="0"
                needsCallback="1" radioGroupId="0" keepProportions="1" resourceNormal="pause_png"
                opacityNormal="1.00000000000000000000" colourNormal="0" resourceOver="pauseOn_png"
                opacityOver="1.00000000000000000000" colourOver="0" resourceDown="pauseOn_png"
                opacityDown="1.00000000000000000000" colourDown="0"/>
   <IMAGEBUTTON name="imgOptionButton" id="bbfd3cbea2a71bfd" memberName="imgOptionButton"
-               virtualName="" explicitFocusOrder="0" pos="0 -100% 100% 7.52%"
+               virtualName="" explicitFocusOrder="0" pos="9.992% -100% 80.015% 7.518%"
                posRelativeY="289502be800b82cf" buttonText="new button" connectedEdges="0"
                needsCallback="1" radioGroupId="0" keepProportions="1" resourceNormal="option_png"
                opacityNormal="1.00000000000000000000" colourNormal="0" resourceOver="optionOn_png"
                opacityOver="1.00000000000000000000" colourOver="0" resourceDown="optionOn_png"
                opacityDown="1.00000000000000000000" colourDown="0"/>
   <IMAGEBUTTON name="imgDeleteButton" id="9d5289b3af882e28" memberName="imgDeleteButton"
-               virtualName="" explicitFocusOrder="0" pos="0 0R 100% 7.52%" posRelativeX="1ea8f58bfe76ab9b"
-               posRelativeY="1ea8f58bfe76ab9b" buttonText="new button" connectedEdges="0"
+               virtualName="" explicitFocusOrder="0" pos="0 0R 100% 7.518%"
+               posRelativeX="1ea8f58bfe76ab9b" posRelativeY="1ea8f58bfe76ab9b"
+               posRelativeW="2b4803c7ccf2d5d1" buttonText="new button" connectedEdges="0"
                needsCallback="1" radioGroupId="0" keepProportions="1" resourceNormal="delete_png"
                opacityNormal="1.00000000000000000000" colourNormal="0" resourceOver="deleteOn_png"
                opacityOver="1.00000000000000000000" colourOver="0" resourceDown="deleteOn_png"
                opacityDown="1.00000000000000000000" colourDown="0"/>
   <TEXTBUTTON name="new button" id="c84bea64b985b44" memberName="textButton"
-              virtualName="" explicitFocusOrder="0" pos="3.513% -32R 94.841% 7.52%"
+              virtualName="" explicitFocusOrder="0" pos="9.992% -32R 80.015% 7.518%"
               posRelativeY="31e65db12379ed8f" buttonText="samples" connectedEdges="0"
               needsCallback="1" radioGroupId="0"/>
   <LABEL name="new label" id="289502be800b82cf" memberName="label" virtualName=""
-         explicitFocusOrder="0" pos="2.525% 94.855% 94.841% 5.145%" edTextCol="ff000000"
+         explicitFocusOrder="0" pos="9.992% 94.869% 80.015% 5.131%" edTextCol="ff000000"
          edBkgCol="0" labelText="amusing" editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="15.00000000000000000000"
          kerning="0.00000000000000000000" bold="0" italic="0" justification="36"/>
   <GENERICCOMPONENT name="new component" id="1783a06d564fe381" memberName="addCarreShapeButton"
-                    virtualName="ShapeButton" explicitFocusOrder="0" pos="0% 0R 100% 7.52%"
+                    virtualName="ShapeButton" explicitFocusOrder="0" pos="-0.5Cc 0R 80.015% 7.518%"
                     posRelativeY="9d5289b3af882e28" class="Component" params="&quot;addCarreShape&quot;,Colours::white,Colours::blue,Colours::blue"/>
   <GENERICCOMPONENT name="new component" id="ffe0a52b5cd87f07" memberName="addTriangleShapeButton2"
-                    virtualName="ShapeButton" explicitFocusOrder="0" pos="0 0R 100% 7.52%"
+                    virtualName="ShapeButton" explicitFocusOrder="0" pos="0 0R 80.015% 7.518%"
                     posRelativeX="1783a06d564fe381" posRelativeY="1783a06d564fe381"
                     class="Component" params="&quot;addCarreShape&quot;,Colours::white,Colours::blue,Colours::blue"/>
   <GENERICCOMPONENT name="new component" id="581ab4124f4712ed" memberName="addHexaShapeButton"
-                    virtualName="ShapeButton" explicitFocusOrder="0" pos="0 0R 100% 7.52%"
+                    virtualName="ShapeButton" explicitFocusOrder="0" pos="0 0R 80.015% 7.518%"
                     posRelativeX="ffe0a52b5cd87f07" posRelativeY="ffe0a52b5cd87f07"
                     class="Component" params="&quot;addHexaShape&quot;,Colours::white,Colours::blue,Colours::blue"/>
   <TEXTBUTTON name="saveButton" id="48fde7c3628a30fd" memberName="saveButton"
-              virtualName="" explicitFocusOrder="0" pos="12.184% 1.979% 29.857% 5.145%"
+              virtualName="" explicitFocusOrder="0" pos="12.171% 2.029% 29.827% 5.131%"
               buttonText="save" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="loadButton" id="3e438b12d4d1e208" memberName="loadButton"
-              virtualName="" explicitFocusOrder="0" pos="60.154% 1.979% 29.857% 5.145%"
+              virtualName="" explicitFocusOrder="0" pos="60.18% 2.029% 29.827% 5.131%"
               buttonText="load" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>
 

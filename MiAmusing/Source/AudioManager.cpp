@@ -222,6 +222,7 @@ void AudioManager::getNewPlayHeads()
 	{
 		if (ptr != 0)
 		{
+			DBG("get playHead");
 			playHeadsKnown[ptr->getId()] = ptr;
 			playHeadsKnown[ptr->getId()]->setReadingPosition((double)position / (double)(beatsByTimeLine * metronome->getPeriodInSamples()));
 		}
@@ -607,6 +608,7 @@ void AudioManager::getAudioThreadMsg()
 				switch (param.IntegerValue)
 				{
 				case 0:
+					DBG("delete playHeads");
 					delete playHeads[param.Id2];
 					playHeads[param.Id2] = 0;
 					break;

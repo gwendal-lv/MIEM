@@ -40,6 +40,7 @@ namespace Miam
 		
 
 		std::shared_ptr<AreaEvent> AddNedgeArea(uint64_t nextAreaId, int N);
+		std::shared_ptr<AreaEvent> AddNedgeArea(uint64_t nextAreaId, int N, int height);
 		void AddIntersections(std::shared_ptr<IDrawableArea> m_area);
 		void AddAllIntersections();
 		size_t getIntersectionDrawingIndex(size_t intersectionVectorIndex);

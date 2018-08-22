@@ -63,6 +63,23 @@ void MultiSceneCanvasManager::AddNedgeArea(uint64_t nextAreaId, int N)
 
 }
 
+std::shared_ptr<IDrawableArea> MultiSceneCanvasManager::AddAndSelectNedgeArea(uint64_t nextAreaId, int N, int height)
+{
+	// add and select au polygon
+	// + return a reference to this polygon to delete it if needed
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+	{
+		std::shared_ptr<AreaEvent> areaE = amusingScene->AddNedgeArea(nextAreaId, N,height);
+		handleAndSendAreaEventSync(areaE);
+		amusingScene->AddIntersections(areaE->GetConcernedArea());
+		handleAndSendAreaEventSync(amusingScene->AddCursor(areaE->GetConcernedArea()));
+		if(auto iEditableArea = std::dynamic_pointer_cast<IEditableArea>(areaE->GetConcernedArea()))
+			handleAndSendAreaEventSync(amusingScene->SetSelectedArea(iEditableArea));
+		return areaE->GetConcernedArea();
+	}
+
+}
+
 void MultiSceneCanvasManager::AddTrueCircle(uint64_t nextAreaId)
 {
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))

@@ -336,6 +336,45 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 	return areaE;
 }
 
+std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N, int height)
+{
+	// centered grey Hexagon !...
+	//DBG("creation du polygon a N cotes");
+	float r = 0.15f;
+
+	bpt center(0.0f, (float)height/canvasComponent->getHeight());
+	
+	std::shared_ptr<CompletePolygon> newPolygon(new CompletePolygon(nextAreaId,
+		center, N, r,
+		Colours::grey,
+		canvasComponent->GetRatio()));
+	newPolygon->SetActive(false);
+	newPolygon->KeepRatio(true);
+	newPolygon->CanvasResized(canvasComponent);
+	newPolygon->setCursorVisible(true, canvasComponent);
+	newPolygon->SetOpacityMode(OpacityMode::Independent);
+
+	//AddIntersections(newPolygon);
+
+	std::shared_ptr<AreaEvent> areaE = AddArea(newPolygon);
+
+	for (int j = 0; j < currentIntersectionsAreas.size(); ++j)
+		if (currentIntersectionsAreas[j]->isChild(newPolygon))
+		{
+			currentIntersectionsAreas[j]->CanvasResized(canvasComponent);
+			if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
+				manager->handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(currentIntersectionsAreas[j], AreaEventType::ShapeChanged, currentIntersectionsAreas[j]->GetId(), shared_from_this())));
+		}
+
+	if (areas.size() - currentIntersectionsAreas.size() >= 10)
+		if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
+			manager->hideAddPolygon();
+
+	//DBG("a la creation : size = " + (String)newPolygon->GetContourSize());
+	// Actual adding of this new polygon
+	return areaE;
+}
+
 void AmusingScene::AddIntersections(std::shared_ptr<IDrawableArea> m_area)
 {
 	auto canvasManagerLocked = canvasManager.lock();

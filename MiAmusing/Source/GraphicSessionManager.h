@@ -138,7 +138,10 @@ namespace Amusing {
 		// ----- Event to View -----
 		void DisplayInfo(String info,int priority = 0) override;
 
-		void OnAddSquare();
+		void OnAddSquare(float x = 0.5f, float y = 0.5f);
+		void OnAddAndSelectSquare(const MouseEvent& mouseE);
+		void TransmitMouseDrag(const MouseEvent& mouseE);
+		void SendDeletingMouseDown(const MouseEvent& mouseE);
 		void OnAddTriangle();
 		void OnAddHexa();
 		void OnAddCircle();
@@ -185,6 +188,7 @@ namespace Amusing {
 		bool deleting;
 		int tempo;
 		int circleToNote(int numCirc);
+		std::shared_ptr<IDrawableArea> temporaryArea;
 	};
 
 
