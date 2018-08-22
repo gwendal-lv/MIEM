@@ -100,7 +100,7 @@ private:
 	bool saveFileExists;
 	int prepareToAdd; // 0 = no shape to add, 1 = square, 2 = triangle, 3 = hexa
 	bool hasExited;
-	Point<int> exitPosition; // position où la sourie a quitté le menu pour entrer dans le canvas
+	Point<int> exitPosition; // position oÃ¹ la sourie a quittÃ© le menu pour entrer dans le canvas
 	//MultiCanvasComponent* multiCanvasComponent = 0;
 
     //[/UserVariables]
