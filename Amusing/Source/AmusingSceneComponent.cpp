@@ -132,26 +132,26 @@ void AmusingSceneComponent::renderOpenGL()
 
 
 	// - - - - - THIRD Duplication of the drawable objects for thread-safe rendering, - - - - -
-	// Lorsque nÈcessaire seulement !
+	// Lorsque n√©cessaire seulement !
 	manager->LockAsyncDrawableObjects();
 
 
 	bool areasCountChanged = (manager->GetAsyncDrawableObjects().size() != duplicatedAreas.size());
-	// POUR L'INSTANT ALGO B TE
-	// on resize le vecteur : la construction des shared n'est pas grave, leur bloc de contrÙle reste
-	// en mÈmoire finalement (on utilisera reset() )
+	// POUR L'INSTANT ALGO B√äTE
+	// on resize le vecteur : la construction des shared n'est pas grave, leur bloc de contr√¥le reste
+	// en m√©moire finalement (on utilisera reset() )
 	if (areasCountChanged)
 	{
 		canvasAreasPointersCopies.resize(manager->GetAsyncDrawableObjects().size());
 		duplicatedAreas.resize(manager->GetAsyncDrawableObjects().size());
 	}
-	// VÈrification simple de chaque aire 1 par 1
+	// V√©rification simple de chaque aire 1 par 1
 	size_t itIndex = 0;
 	for (auto it = manager->GetAsyncDrawableObjects().begin();
 		it != manager->GetAsyncDrawableObjects().end();
 		++it)
 	{
-		// S'il y a eu un changement : on re-crÈe un pointeur dÈj‡, puis
+		// S'il y a eu un changement : on re-cr√©e un pointeur d√©j√†, puis
 		// on fait effectivement la copie d'un nouvel objet
 		if (canvasAreasPointersCopies[itIndex] != (*it))
 		{
@@ -166,10 +166,10 @@ void AmusingSceneComponent::renderOpenGL()
 
 
 	// - - - - - Areas painting (including exciters if existing) - - - - -
-	// Sans bloquer, du coup, les autres threads (pour rÈactivitÈ max...)
+	// Sans bloquer, du coup, les autres threads (pour r√©activit√© max...)
 	for (size_t i = 0; i<duplicatedAreas.size(); i++)
 	{
-		// Peut mettre ‡ jour des images et autres (si l'Èchelle a changÈ)
+		// Peut mettre √† jour des images et autres (si l'√©chelle a chang√©)
 		duplicatedAreas[i]->SetRenderingScale(desktopScale);
 		// Dessin effectif
 		duplicatedAreas[i]->Paint(g);
