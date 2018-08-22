@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="MkqyzI" name="MiAmusing" projectType="guiapp" version="1.0.0"
+<JUCERPROJECT id="MkqyzI" name="Amusing" projectType="guiapp" version="1.0.0"
               bundleIdentifier="com.yourcompany.MiAmusing" includeBinaryInAppConfig="1"
               jucerVersion="5.3.2" displaySplashScreen="1" reportAppUsage="1"
               splashScreenColour="Dark" cppLanguageStandard="11" companyCopyright="">
-  <MAINGROUP id="Ak6ojc" name="MiAmusing">
+  <MAINGROUP id="Ak6ojc" name="Amusing">
     <GROUP id="{E74684B7-0B02-F2F7-C571-317039AB4495}" name="Source">
       <GROUP id="{8B585BA3-71E5-255C-C070-4910B268744C}" name="Model">
         <FILE id="GDYzTN" name="SwappableSynth.cpp" compile="1" resource="0"
