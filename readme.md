@@ -25,3 +25,7 @@ The framework has been explained in a paper at ICMC 2017 : http://www.icmc2017.c
 
 Amusing app has been presented at ICMC 2018 : proceedings to be published.
 
+# Contact
+
+Gwendal Le Vaillant : glevaillant@he2b.be
+Guillaume Villée : guillaume.villee@irisib.be
