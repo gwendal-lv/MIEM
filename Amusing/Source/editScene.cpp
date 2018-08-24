@@ -386,10 +386,12 @@ void EditScene::mouseDrag (const MouseEvent& e)
 
 				break;
 			case 2 :
-				graphicSessionManager->OnAddTriangle();
+				exitPosition = e.getEventRelativeTo(this).getPosition();
+				graphicSessionManager->OnAddAndSelectTriangle(e.withNewPosition(Point<int>(0, e.getEventRelativeTo(this).y)));
 				break;
 			case 3 :
-				graphicSessionManager->OnAddHexa();
+				exitPosition = e.getEventRelativeTo(this).getPosition();
+				graphicSessionManager->OnAddAndSelectHexa(e.withNewPosition(Point<int>(0, e.getEventRelativeTo(this).y)));
 				break;
 			default:
 				break;
@@ -397,28 +399,22 @@ void EditScene::mouseDrag (const MouseEvent& e)
 		}
 		else
 		{
-			DBG("continueToDrag : " + (String)e.x + " " + (String)e.y);
 
 			// reste dehors
 			if (prepareToAdd == 0)
 				DBG("no need to add shape");
-			else if (prepareToAdd == 1)
+			else
 			{
-				DBG("need to add square");
 				Point<int> canvasHitPoint(e.getEventRelativeTo(this).getPosition());
 				canvasHitPoint.addXY(-exitPosition.x, 0);
 				graphicSessionManager->TransmitMouseDrag(e.withNewPosition(canvasHitPoint));
 			}
-			else if (prepareToAdd == 2)
-				DBG("need to add triangle");
-			else if (prepareToAdd == 3)
-				DBG("need to add hexa");
+			
 
 		}
 	}
 	else
 	{
-		DBG("drag");
 		if (hasExited) // est sorti avant de rerentrer dans le menu
 		{
 			// il faut supprimer la forme qui a été ajouté en "glissant" vers le canvas :
@@ -510,7 +506,11 @@ void EditScene::buttonStateChanged(Button *concernedButton)
 void EditScene::mouseUp(const MouseEvent& e)
 {
 	if (prepareToAdd != 0)
+	{
 		prepareToAdd = 0;
+		hasExited = false;
+		graphicSessionManager->TransmitMouseUp(e);
+	}
 }
 
 //[/MiscUserCode]

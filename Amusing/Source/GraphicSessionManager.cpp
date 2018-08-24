@@ -744,30 +744,57 @@ void GraphicSessionManager::OnAddSquare(float x, float y)
 
 void GraphicSessionManager::OnAddAndSelectSquare(const MouseEvent& mouseE)
 {
-	if (selectedCanvas)
+	if (selectedCanvas && temporaryArea == nullptr)
 	{
 		temporaryArea = getSelectedCanvasAsManager()->AddAndSelectNedgeArea(GetNextAreaId(), 4, mouseE.y);
 		getSelectedCanvasAsManager()->OnCanvasMouseDown(mouseE);
-		//GetMultiCanvasComponent()
+	}
+}
+
+void GraphicSessionManager::OnAddAndSelectTriangle(const MouseEvent& mouseE)
+{
+	if (selectedCanvas && temporaryArea == nullptr)
+	{
+		temporaryArea = getSelectedCanvasAsManager()->AddAndSelectNedgeArea(GetNextAreaId(), 3, mouseE.y);
+		getSelectedCanvasAsManager()->OnCanvasMouseDown(mouseE);
+	}
+}
+
+void GraphicSessionManager::OnAddAndSelectHexa(const MouseEvent& mouseE)
+{
+	if (selectedCanvas && temporaryArea == nullptr)
+	{
+		temporaryArea = getSelectedCanvasAsManager()->AddAndSelectNedgeArea(GetNextAreaId(), 6, mouseE.y);
+		getSelectedCanvasAsManager()->OnCanvasMouseDown(mouseE);
 	}
 }
 
 void GraphicSessionManager::TransmitMouseDrag(const MouseEvent& mouseE)
 {
-	if (selectedCanvas)
+	if (selectedCanvas && temporaryArea != nullptr)
 	{
 		getSelectedCanvasAsManager()->OnCanvasMouseDrag(mouseE);
 	}
 }
 
+void GraphicSessionManager::TransmitMouseUp(const MouseEvent& mouseE)
+{
+	if (selectedCanvas && temporaryArea != nullptr)
+	{
+		getSelectedCanvasAsManager()->OnCanvasMouseUp(mouseE);
+		temporaryArea = nullptr;
+	}
+}
+
 void GraphicSessionManager::SendDeletingMouseDown(const MouseEvent& mouseE)
 {
-	if (selectedCanvas)
+	if (selectedCanvas && temporaryArea != nullptr)
 	{
 		bpt center;
 		if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(temporaryArea))
 			center = completeArea->getCenter();
 		getSelectedCanvasAsManager()->OnCanvasMouseDown(mouseE.withNewPosition(Point<int>(center.get<0>(),center.get<1>())));
+		temporaryArea = nullptr;
 	}
 }
 

@@ -42,6 +42,9 @@ TimeLine::TimeLine()
 	currentFilterFrequency = 400.0;
 	deltaF = 0;
 	filterActive = false;
+
+	hasBeenPop = false;
+	currentlyBeingDeleted = false;
 }
 
 TimeLine::~TimeLine()
@@ -689,4 +692,24 @@ void TimeLine::addSound(const void * srcData, size_t srcDataSize, bool keepInter
 void TimeLine::addSound(String soundPath)
 {
 	swappableSynth.setSound(soundPath);
+}
+
+void TimeLine::setDeletable()
+{
+	hasBeenPop = true;
+}
+
+bool TimeLine::isDeletable()
+{
+	return hasBeenPop;
+}
+
+void TimeLine::setDeleting()
+{
+	currentlyBeingDeleted = true;
+}
+
+bool TimeLine::isDeleting()
+{
+	return currentlyBeingDeleted;
 }

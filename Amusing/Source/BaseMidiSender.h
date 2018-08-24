@@ -74,6 +74,11 @@ public:
 	void addSound(const void* srcData, size_t srcDataSize, bool keepInternalCopyOfData);
 	void addSound(String soundPath);
 
+	void setDeletable();
+	bool isDeletable();
+	void setDeleting();
+	bool isDeleting();
+
 private:
 	static const int maxSize = 128;
 	double midiTimes[maxSize]; // times to send MIDI note On
@@ -119,6 +124,9 @@ private:
 	FilterType filterType;
 	void updateFilter();
 	bool filterActive;
+
+	bool hasBeenPop;
+	bool currentlyBeingDeleted;
 
 	// reference to the audioManager to send the MIDI
 	Amusing::AudioManager* audioManager;

@@ -30,7 +30,7 @@ AudioManager::AudioManager(AmusingModel *m_model) : model(m_model), state(Stop),
 	DBG("AudioManager::AudioManager");
 
 	beatsByTimeLine = 4;
-
+	retainIds.reserve(10);
 	setSource(this);
 	runThread = true;
 	//T = std::thread(&AudioManager::threadFunc, this);
@@ -187,13 +187,20 @@ void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 		{
 			if (timeLinesKnown[i] != 0)
 			{
-				// les notes Midi devant être jouées sont récupérées dans le buffer incomingMidi
-				MidiBuffer incomingMidi;
-				timeLinesKnown[i]->removeNextBlockOfMessages(incomingMidi, bufferToFill.numSamples);
+				bool stillExist = true;
+				for (int j = 0; j < retainIds.size(); ++j)
+					if (retainIds[j] == i)
+						stillExist = false;
 
-				// le synthé contenu par la timeLine joue les notes midi qui ont été récupérées
-				timeLinesKnown[i]->renderNextBlock(*bufferToFill.buffer, incomingMidi, 0, bufferToFill.numSamples);
+				if (stillExist)
+				{
+					// les notes Midi devant être jouées sont récupérées dans le buffer incomingMidi
+					MidiBuffer incomingMidi;
+					timeLinesKnown[i]->removeNextBlockOfMessages(incomingMidi, bufferToFill.numSamples);
 
+					// le synthé contenu par la timeLine joue les notes midi qui ont été récupérées
+					timeLinesKnown[i]->renderNextBlock(*bufferToFill.buffer, incomingMidi, 0, bufferToFill.numSamples);
+				}
 
 			}
 		}
@@ -209,8 +216,14 @@ void AudioManager::getNewTimeLines()
 	ptr = nullptr;
 	while (timeLinesToAudio.pop(ptr))
 	{
-		if(ptr != 0)
-			timeLinesKnown[ptr->getId()] = ptr;
+		if (ptr != 0)
+		{
+			/*if (ptr->getId() == retainId)
+				DBG("hmmmm : " + (String)retainId);*/
+			ptr->setDeletable();
+			if(!ptr->isDeleting())
+				timeLinesKnown[ptr->getId()] = ptr;
+		}
 	}
 }
 
@@ -225,6 +238,7 @@ void AudioManager::getNewPlayHeads()
 			DBG("get playHead");
 			playHeadsKnown[ptr->getId()] = ptr;
 			playHeadsKnown[ptr->getId()]->setReadingPosition((double)position / (double)(beatsByTimeLine * metronome->getPeriodInSamples()));
+			playHeadsKnown[ptr->getId()]->setDeletable();
 		}
 	}
 }
@@ -364,7 +378,7 @@ void AudioManager::getParameters()
 					std::thread(&AudioManager::threadFunc, this).detach();
 					break;
 				case 0:
-
+					retainIds.push_back(param.Id1);
 					timeLinesKnown[param.Id1] = 0; // so we won't access to the element anymore, we forget it
 					paramToAllocationThread.push(param); // we ask to the allocation thread to delete it
 					std::thread(&AudioManager::threadFunc, this).detach();
@@ -566,6 +580,11 @@ void AudioManager::getAudioThreadMsg()
 					DBG("desactivate source : " + (String)param.Id1);
 					if (timeLines[param.Id1] != 0)
 					{
+						timeLines[param.Id1]->setDeleting();
+						while (!timeLines[param.Id1]->isDeletable())
+						{
+							//attend qu'il aie été pop : ok car dans un thread séparé de l'audiothread
+						}
 						delete timeLines[param.Id1];
 						timeLines[param.Id1] = 0;
 					}
@@ -609,6 +628,10 @@ void AudioManager::getAudioThreadMsg()
 				{
 				case 0:
 					DBG("delete playHeads");
+					while (!playHeads[param.Id2]->isDeletable())
+					{
+						//attend qu'il aie été pop...
+					}
 					delete playHeads[param.Id2];
 					playHeads[param.Id2] = 0;
 					break;

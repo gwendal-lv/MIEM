@@ -96,6 +96,8 @@ namespace Amusing {
 		std::mutex allocationThreadsMutex;
 		bool runThread;	
 		void getAudioThreadMsg(); // function of the allocation thread to handle parameters from the audio thread
+		std::vector<int> retainIds;
+		
 
 		/////////////
 		// timeLines is the array of the timeLines, the allocation is manage by the thread

@@ -1037,7 +1037,7 @@ AreaEventType CompletePolygon::EndMultiTouchPointMove()
 AreaEventType CompletePolygon::TryBeginPointMove(const Point<double>& newLocation)
 {
 	AreaEventType areaEventType = EditablePolygon::TryBeginPointMove(newLocation);
-	DBG("eventType : " + (String)((int)areaEventType));
+	//DBG("eventType : " + (String)((int)areaEventType));
 	if (pointDraggedId == EditableAreaPointId::Center)
 	{
 		//pointDraggedId = EditableAreaPointId::WholeArea;
@@ -1093,7 +1093,7 @@ AreaEventType CompletePolygon::TryMovePoint(const Point<double>& newLocation)
 
 	pointDraggedId = oldPointDraggedId;
 
-	DBG("eventType : " + (String)((int)areaEventType));
+	//DBG("eventType : " + (String)((int)areaEventType));
 	double r2 = boost::geometry::distance(centerInPixels, bmanipulationPointInPixels);
 	double size = r2 / r1;
 

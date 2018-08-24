@@ -140,7 +140,10 @@ namespace Amusing {
 
 		void OnAddSquare(float x = 0.5f, float y = 0.5f);
 		void OnAddAndSelectSquare(const MouseEvent& mouseE);
+		void OnAddAndSelectTriangle(const MouseEvent& mouseE);
+		void OnAddAndSelectHexa(const MouseEvent& mouseE);
 		void TransmitMouseDrag(const MouseEvent& mouseE);
+		void TransmitMouseUp(const MouseEvent& mouseE);
 		void SendDeletingMouseDown(const MouseEvent& mouseE);
 		void OnAddTriangle();
 		void OnAddHexa();

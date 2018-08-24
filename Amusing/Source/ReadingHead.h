@@ -37,7 +37,8 @@ public:
 	void setId(int _id);
 	int getId();
 	void setState(PlayHeadState m_state);
-
+	void setDeletable();
+	bool isDeletable();
 
 	void process();
 
@@ -72,6 +73,8 @@ private:
 
 	static const int chordSize = 3;
 	int chordToPlay[chordSize];
+
+	bool hasBeenPop;
 
 	// references to other objects
 	TimeLine* timeLine; // reference to the associated timeLine

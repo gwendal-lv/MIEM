@@ -21,6 +21,7 @@ PlayHead::PlayHead(Metronome* m_metronome) : speed(1.0), speedToReach(1.0), posi
 	plus = 0;
 	incPlus = 0;
 	oldPeriod = 0.0;
+	hasBeenPop = false;
 }
 
 PlayHead::~PlayHead()
@@ -260,6 +261,16 @@ void PlayHead::setState(PlayHeadState m_state)
 	default:
 		break;
 	}
+}
+
+void PlayHead::setDeletable()
+{
+	hasBeenPop = true;
+}
+
+bool PlayHead::isDeletable()
+{
+	return hasBeenPop;
 }
 
 void PlayHead::process()
