@@ -12,11 +12,14 @@ Needed :
 *  **JUCE** (https://juce.com/), last version tested : 5.3.2
 * up to date IDE according to the target
 
-Step :
+Steps :
+
 1) **Clone** repository
+
 2) Open the chosen *.jucer  file with the Projucer
 
 Please notice that several **issues** have been oberved with **windows 8**.
+
 These issues will not be addressed as mobile devices are the main target.
 
 # Further information
@@ -28,4 +31,5 @@ Amusing app has been presented at ICMC 2018 : proceedings to be published.
 # Contact
 
 Gwendal Le Vaillant : glevaillant@he2b.be
-Guillaume VillÃ©e : guillaume.villee@irisib.be
+
+Guillaume Villée : guillaume.villee@irisib.be
