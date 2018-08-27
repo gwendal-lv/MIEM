@@ -44,7 +44,6 @@ using namespace Amusing;
                                                                     //[/Comments]
 */
 class EditScene  : public Component,
-                   public ComboBox::Listener,
                    public Slider::Listener,
                    public Button::Listener
 {
@@ -64,7 +63,6 @@ public:
 
     void paint (Graphics& g) override;
     void resized() override;
-    void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
     void sliderValueChanged (Slider* sliderThatWasMoved) override;
     void buttonClicked (Button* buttonThatWasClicked) override;
 
@@ -102,7 +100,6 @@ private:
 
     //==============================================================================
     std::unique_ptr<GroupComponent> groupComponent;
-    std::unique_ptr<ComboBox> comboBoxMidi;
     std::unique_ptr<Slider> timeSlider;
     std::unique_ptr<ImageButton> imgPlayButton;
     std::unique_ptr<ImageButton> imgStopButton;
