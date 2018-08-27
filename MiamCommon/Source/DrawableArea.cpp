@@ -35,7 +35,7 @@ DrawableArea::DrawableArea(bptree::ptree& areaTree)
     catch (bptree::ptree_error&) {}
 }
 
-DrawableArea::DrawableArea(int64_t _Id, bpt _center, Colour _fillColour)
+DrawableArea::DrawableArea(int64_t _Id, bpt _center, Colour _fillColour) : mainZoffset(0.0f)
 {
 	Id = _Id;
 	center = _center;
@@ -66,6 +66,8 @@ void DrawableArea::init()
     isNameVisible = true; // par défaut
     
     keepRatio = false;
+
+	areaVisible = true;
     
     resetImages();
 
@@ -76,13 +78,17 @@ void DrawableArea::init()
 
 	int numPoints = numPointsRing;
 	ComputeRing(numPoints);
+	const float R = contourColour.getRed() / 255.0f;
+	const float G = contourColour.getGreen() / 250.0f;
+	const float B = contourColour.getBlue() / 250.0f;
+	const float A = contourColour.getAlpha() / 250.0f;
 
 	for (int i = 0; i < couloursBufferSize/4; ++i)
 	{
-		coulours_buffer[4 * i + 0] = contourColour.getRed() / 255.0f;
-		coulours_buffer[4 * i + 1] = contourColour.getGreen() / 255.0f;
-		coulours_buffer[4 * i + 2] = contourColour.getBlue() / 255.0f;
-		coulours_buffer[4 * i + 3] = contourColour.getAlpha() / 255.0f;
+		coulours_buffer[4 * i + 0] = R;
+		coulours_buffer[4 * i + 1] = G;
+		coulours_buffer[4 * i + 2] = B;
+		coulours_buffer[4 * i + 3] = A;
 	}
 	//for (int i = 4 * numPoints; i < opaque_color_buffer_size; ++i)
 	//	opaque_color_buffer[i] = 0;
@@ -278,25 +284,34 @@ void DrawableArea::CanvasResized(SceneCanvasComponent* _parentCanvas)
 void DrawableArea::RefreshOpenGLBuffers()
 {
 	int decalage = 0;
-	for (int j = 0; j < 3 * numVerticesRing; j += 3)
+	int count = 3 * numVerticesRing;
+	const float Xoffset = float(centerInPixels.get<0>());
+	const float Yoffset = float(centerInPixels.get<1>());
+	const float Zoffset = mainZoffset + 0.1f;
+	float *verticesPtr = &vertices_buffer[3 * decalage];
+	if (displayCenter)
 	{
-		if (displayCenter)
+		for (int j = 0; j < count; j += 3)
 		{
-			vertices_buffer[3 * decalage + j] = 1.0f* float(centerInPixels.get<0>() + g_vertex_ring[j]);
-			vertices_buffer[3 * decalage + j + 1] = 1.0f*float(centerInPixels.get<1>() + g_vertex_ring[j + 1]);
-			vertices_buffer[3 * decalage + j + 2] = 0.1f + g_vertex_ring[j + 2];
+			verticesPtr[j] = Xoffset + g_vertex_ring[j];
+			verticesPtr[j + 1] = Yoffset + g_vertex_ring[j + 1];
+			verticesPtr[j + 2] = Zoffset + g_vertex_ring[j + 2];
 		}
-		else
+	}
+	else
+	{
+		for (int j = 0; j < count; j += 3)
 		{
-			vertices_buffer[3 * decalage + j] = 0.0f;
-			vertices_buffer[3 * decalage + j + 1] = 0.0f;
-			vertices_buffer[3 * decalage + j + 2] = 0.0f;
+			verticesPtr[j] = 0.0f;
+			verticesPtr[j + 1] = 0.0f;
+			verticesPtr[j + 2] = 0.0f;
 		}
 	}
 
+	unsigned int *indicesPtr = &indices_buffer[3 * decalage];
 	for (int j = 0; j < 3 * numVerticesRing; ++j)
 	{
-		indices_buffer[j + 3 * decalage] = ringIndices[j];/*+ numVerticesPolygon*/;
+		indicesPtr[j] = ringIndices[j];/*+ numVerticesPolygon*/;
 	}
 }
 
@@ -327,6 +342,7 @@ void DrawableArea::SetAlpha(float newAlpha)
 {
 	fillOpacity = newAlpha;
 }
+
 float DrawableArea::GetAlpha() const
 {
     switch (opacityMode)

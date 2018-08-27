@@ -76,7 +76,7 @@ public:
     ~MultiSceneCanvasComponent();
     
     void LinkToManager(std::shared_ptr<MultiSceneCanvasInteractor> canvasManager_);
-
+	void ReleaseOpengGLResources();
     
     // - - - - - Painting and Resizing - - - - -
     

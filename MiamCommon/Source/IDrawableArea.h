@@ -130,12 +130,22 @@ namespace Miam
         virtual OpacityMode GetOpacityMode() const = 0;
         virtual void SetRenderingScale(double renderingScale_) = 0;
 
-		virtual int GetVerticesBufferSize() = 0;
+		virtual float* GetVerticesBufferPtr() = 0;
+		virtual float* GetCoulourBufferPtr() = 0;
+		virtual unsigned int* GetIndicesBufferPtr() = 0;
+
+		virtual void setVisible(bool shouldBeVisible) = 0;
+		virtual bool isVisible() = 0;
+
+		virtual const int GetVerticesBufferSize() = 0;
 		virtual int GetIndicesBufferSize() = 0;
 		virtual int GetCouloursBufferSize() = 0;
+
 		virtual float GetCouloursBufferElt(int idx) = 0;
 		virtual float GetVerticesBufferElt(int idx) = 0;
 		virtual int GetIndicesBufferElt(int idx) = 0;
+
+		virtual void setZoffset(const float newOffset) = 0;
         
         /// \brief Sets the name that could be displayed on screen next to the center
         virtual void SetName(String newName) = 0;

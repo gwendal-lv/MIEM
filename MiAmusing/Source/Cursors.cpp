@@ -19,7 +19,7 @@ using namespace Amusing;
 Cursor::Cursor(int64_t _Id) : Exciter(_Id, std::chrono::time_point<clock>())
 {
 	speed = 1;
-	minimumSizePercentage = 0.01;
+	minimumSizePercentage = 0.01f;
 }
 
 Cursor::Cursor(int64_t _Id, bpt _center, double _r, Colour _fillColour, float _canvasRatio) :
@@ -55,7 +55,7 @@ Cursor::Cursor(int64_t _Id, bpt _center, double _r, Colour _fillColour, float _c
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() - (b / 2)*yScale));
 
 	SetIsAnimationSynchronized(false);
-	minimumSizePercentage = 0.01;
+	minimumSizePercentage = 0.01f;
 }
 
 //Cursor::Cursor(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio) :
@@ -230,7 +230,8 @@ bool Cursor::setReadingPosition(double p)
 		if (newAlpha < 0)
 			DBG("alpha négatif");
 		SetAlpha(newAlpha);
-		CanvasResized(parentCanvas);
+		RefreshOpenGLBuffers();
+		//CanvasResized(parentCanvas);
 		//DBG((String)center.get<0>() + " " + (String)center.get<1>() + "setReadingPosition");
 		return true;
 	}

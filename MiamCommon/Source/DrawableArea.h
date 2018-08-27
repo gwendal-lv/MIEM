@@ -76,6 +76,7 @@ namespace Miam
         static const int nameHeight = 15; // pixels
         
         bool keepRatio;
+		bool areaVisible;
         
 		// size of the different buffer parts
 		static const int numPointsPolygon = 32;
@@ -92,10 +93,11 @@ namespace Miam
 
 		GLfloat g_vertex_ring[3 * numVerticesRing];
 		unsigned int ringIndices[3 * numVerticesRing];
+		float mainZoffset;
 
 		// buffer used by OpenGL
 		std::vector<float> vertices_buffer;
-		std::vector<int> indices_buffer;
+		std::vector<unsigned int> indices_buffer;
 		std::vector<float> coulours_buffer;
         
         // =============== SETTERS & GETTERS ===============
@@ -115,6 +117,9 @@ namespace Miam
         
         virtual void SetOpacityMode(OpacityMode opacityMode_) override;
         virtual OpacityMode GetOpacityMode() const override {return opacityMode;}
+
+		void setVisible(bool shoulBeVisible) override { areaVisible = shoulBeVisible; }
+		bool isVisible() override { return areaVisible; }
         
         /// \brief Sets the name that could be displayed on screen next to the center
         virtual void SetName(String newName) override;
@@ -156,7 +161,20 @@ namespace Miam
         void renderCachedNameImages();
         public :
         
-			int GetVerticesBufferSize() override { return numVerticesRing; }
+			const int GetVerticesBufferSize() override { return numVerticesRing; }
+			float* GetVerticesBufferPtr() override
+			{
+				return vertices_buffer.data();
+			}
+			float* GetCoulourBufferPtr() override
+			{
+				return coulours_buffer.data();
+			}
+			unsigned int* GetIndicesBufferPtr() override
+			{
+				return indices_buffer.data();
+			}
+
 			float GetVerticesBufferElt(int idx) override
 			{ 
 				try
@@ -194,6 +212,10 @@ namespace Miam
 					DBG(e.what());
 					return 0.0;
 				}
+			}
+			void setZoffset(const float newOffset) override
+			{
+				mainZoffset = newOffset;
 			}
         
         virtual void Paint(Graphics& g) override;

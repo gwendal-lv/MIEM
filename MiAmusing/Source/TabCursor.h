@@ -35,6 +35,7 @@ class TabCursor : public Miam::Exciter
 
 		void setZone(Rectangle<int> _zone);
 
+		Miam::AreaEventType TryBeginPointMove(const Point<double>& hitPoint) override;
 		Miam::AreaEventType TryMovePoint(const Point<double>& newLocation);
 		Miam::AreaEventType EndPointMove();
 

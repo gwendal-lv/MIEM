@@ -123,6 +123,15 @@ namespace Amusing
 		double GetFullSceneRatio();
 
 		bool SizeChanged(double _size, bool minSize);
+
+		virtual void RefreshOpenGLBuffers() override;
+		void RefreshTargetOpenGLBuffers();
+
+		const int GetVerticesBufferSize() override {					// points du contour					manipulationLine	manipulationPoint
+			return EditablePolygon::GetVerticesBufferSize() + Nradius * bullsEye[0].GetVerticesBufferSize();
+		}
+		int GetCouloursBufferSize() override { return EditablePolygon::GetCouloursBufferSize() + Nradius * bullsEye[0].GetCouloursBufferSize(); }
+		int GetIndicesBufferSize() override { return EditablePolygon::GetIndicesBufferSize() + Nradius * bullsEye[0].GetIndicesBufferSize(); }
 		
 	private:
 		int numAngles;
@@ -158,6 +167,7 @@ namespace Amusing
 		void CanvasResizedBullsEye(SceneCanvasComponent* _parentCanvas);
 		std::vector<int> OnCircles;
 		bool showAllCircles;
+		bool deleteOldCircles;
 		
 		// flags and invisible points for chords
 		std::vector<bool> chordFlag;
@@ -165,6 +175,7 @@ namespace Amusing
 		std::vector<std::shared_ptr<CompletePolygon>>  chordAreaForPercentage;
 		std::vector<double> chordsAnglePercentage; // no need of chordsOnCircle, the audio manager will compute the chords
 
+		int previousSizeToShow; // nombre de cercle qu'il fallait dessiner précédemment
 
 		double pc; // si ca foire quand on bouge la forme en mm temps que le curseur doit tourner -> garder en memoire le poucentage ou se trouve le curseur et rappeler setreadingposition avec ce pourcentage pour le remettre au nouvel endroit.
 

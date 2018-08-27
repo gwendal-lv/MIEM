@@ -22,6 +22,7 @@ TabCursor::TabCursor(bptree::ptree & areaTree, std::chrono::time_point<clock> co
 	magnetized = false;
 	initCursorSize = a;
 	currentAreaResize = 1.0;
+	//setZoffset(1.1f);
 }
 
 TabCursor::TabCursor(uint64_t uniqueId, std::chrono::time_point<clock> commonStartTimePoint_, int additionnalTouchGrabRadius_) :
@@ -32,6 +33,7 @@ TabCursor::TabCursor(uint64_t uniqueId, std::chrono::time_point<clock> commonSta
 	magnetized = false;
 	initCursorSize = a;
 	currentAreaResize = 1.0;
+	//setZoffset(1.1f);
 }
 
 TabCursor::~TabCursor()
@@ -41,6 +43,20 @@ TabCursor::~TabCursor()
 void TabCursor::setZone(Rectangle<int> _zone)
 {
 	zone = _zone;
+}
+
+AreaEventType TabCursor::TryBeginPointMove(const Point<double>& hitPoint)
+{
+	AreaEventType areaEventType = EditableEllipse::TryBeginPointMove(hitPoint);
+	if (!allSizeEnabled)
+	{
+		if (pointDraggedId == EditableAreaPointId::WholeArea || pointDraggedId == EditableAreaPointId::Center)
+		{
+			areaEventType = AreaEventType::NothingHappened;
+			pointDraggedId = EditableAreaPointId::None;
+		}
+	}
+	return areaEventType;
 }
 
 AreaEventType TabCursor::TryMovePoint(const Point<double>& newLocation)
@@ -62,7 +78,7 @@ AreaEventType TabCursor::TryMovePoint(const Point<double>& newLocation)
 
 
 			setCenterPosition(newCenter);
-
+			RefreshOpenGLBuffers();
 			return areaEventType;
 		}
 		else
@@ -70,7 +86,9 @@ AreaEventType TabCursor::TryMovePoint(const Point<double>& newLocation)
 	}
 	else
 	{
-		return Exciter::TryMovePoint(newLocation);
+		AreaEventType areaEventType = Exciter::TryMovePoint(newLocation);
+		RefreshOpenGLBuffers();
+		return areaEventType;
 	}
 }
 
@@ -112,7 +130,7 @@ AreaEventType TabCursor::EndPointMove()
 			}
 		}
 
-		if (!allSizeEnabled && pointDraggedId == EditableAreaPointId::ManipulationPoint)
+		if (!allSizeEnabled && (pointDraggedId == EditableAreaPointId::ManipulationPoint || pointDraggedId > 0))
 		{
 			double currentSize = a;
 			double currentResize = currentSize / initCursorSize;
@@ -139,13 +157,14 @@ AreaEventType TabCursor::EndPointMove()
 
 		setCenterPosition(newCenter);
 		CanvasResized(parentCanvas);
+		RefreshOpenGLBuffers();
 	}
 	return Exciter::EndPointMove();
 }
 
 int TabCursor::getIndexValue()
 {
-	return currentSizeIdx;
+	return 6 - currentSizeIdx;
 }
 
 double TabCursor::getPercentage()

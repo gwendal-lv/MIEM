@@ -296,6 +296,7 @@ void DrawablePolygon::RefreshOpenGLBuffers()
 	DrawableArea::RefreshOpenGLBuffers();
 	// forme
 	int decalage = DrawableArea::GetVerticesBufferSize();
+	float Zoffset = mainZoffset + 0.0f;
 	vertices_buffer[3 * decalage] = (float)centerInPixels.get<0>();
 	vertices_buffer[3 * decalage + 1] = (float)centerInPixels.get<1>();
 	vertices_buffer[3 * decalage + 2] = 0.0f;
@@ -304,19 +305,22 @@ void DrawablePolygon::RefreshOpenGLBuffers()
 	{
 		vertices_buffer[3 * decalage + 3 + i * 3] = (float)contourPointsInPixels.outer().at(i).get<0>();//radius*cosf(currentAngle);
 		vertices_buffer[3 * decalage + 3 + i * 3 + 1] = (float)contourPointsInPixels.outer().at(i).get<1>();
-		vertices_buffer[3 * decalage + 3 + i * 3 + 2] = 0.0f;
+		vertices_buffer[3 * decalage + 3 + i * 3 + 2] = Zoffset;
 	}
 	for (int i = 3 * decalage + 3 + 3 * ((int)contourPointsInPixels.outer().size() - 1); i < 3 * decalage + 3 * numVerticesPolygon; ++i)
 		vertices_buffer[i] = 0.0f;
 
 
 
-	float A = GetAlpha();
+	float A = isFilled? GetAlpha() : 0.0f;
+	const float R = fillColour.getRed() / 255.0f;
+	const float G = fillColour.getGreen() / 255.0f;
+	const float B = fillColour.getBlue() / 255.0f;
 	for (int i = 0; i < numVerticesPolygon; ++i)
 	{
-		coulours_buffer[4 * decalage + i * 4] = fillColour.getRed() / 255.0f;
-		coulours_buffer[4 * decalage + i * 4 + 1] = fillColour.getGreen() / 255.0f;
-		coulours_buffer[4 * decalage + i * 4 + 2] = fillColour.getBlue() / 255.0f;
+		coulours_buffer[4 * decalage + i * 4] = R;
+		coulours_buffer[4 * decalage + i * 4 + 1] = G;
+		coulours_buffer[4 * decalage + i * 4 + 2] = B;
 		coulours_buffer[4 * decalage + i * 4 + 3] = A;
 	}
 	/*for (int i = 4 * (contourPointsInPixels.outer().size() - 1); i < 4 * numVerticesPolygon; ++i)
@@ -325,25 +329,23 @@ void DrawablePolygon::RefreshOpenGLBuffers()
 	decalage += numVerticesPolygon;
 
 	// contour
-	bpolygon outlinePolygon, tmpPolygon;
+	//bpolygon outlinePolygon, tmpPolygon;
 	float dist = (float)boost::geometry::distance(centerInPixels, contourPointsInPixels.outer().at(0));
 	float newDist = dist + contourWidth;
 	float resizeFactor = newDist / dist;
-	boost::geometry::strategy::transform::translate_transformer<double, 2, 2> tr(-centerInPixels.get<0>(), -centerInPixels.get<1>());
-	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> rescaler(resizeFactor, resizeFactor);
-	boost::geometry::strategy::transform::translate_transformer<double, 2, 2> invTr(centerInPixels.get<0>(), centerInPixels.get<1>());
 
-	boost::geometry::transform(contourPointsInPixels, outlinePolygon, tr);
-	boost::geometry::transform(outlinePolygon, tmpPolygon, rescaler);
-	boost::geometry::transform(tmpPolygon, outlinePolygon, invTr);
 
-	for (int i = 0; i < (int)outlinePolygon.outer().size() - 1; ++i)
+	const float Xoffset = (float)centerInPixels.get<0>();
+	const float Yoffset = (float)centerInPixels.get<1>();
+	Zoffset = mainZoffset + 0.1f;
+
+	for (int i = 0; i < (int)contourPointsInPixels.outer().size() - 1; ++i)
 	{
-		vertices_buffer[3 * decalage + i * 3] = (float)outlinePolygon.outer().at(i).get<0>();//radius*cosf(currentAngle);
-		vertices_buffer[3 * decalage + i * 3 + 1] = (float)outlinePolygon.outer().at(i).get<1>();
+		vertices_buffer[3 * decalage + i * 3] = Xoffset + resizeFactor * ((float)contourPointsInPixels.outer().at(i).get<0>() - Xoffset);//radius*cosf(currentAngle);
+		vertices_buffer[3 * decalage + i * 3 + 1] = Yoffset + resizeFactor * ((float)contourPointsInPixels.outer().at(i).get<1>() - Yoffset);
 		vertices_buffer[3 * decalage + i * 3 + 2] = 0.0f;
 	}
-	for (int i = 3 * decalage + 3 * ((int)outlinePolygon.outer().size() - 1); i <3 * decalage + (3 * numPointsPolygon); ++i)
+	for (int i = 3 * decalage + 3 * ((int)contourPointsInPixels.outer().size() - 1); i <3 * decalage + (3 * numPointsPolygon); ++i)
 		vertices_buffer[i] = 0.0f;
 
 	/*for (int i = 0; i < numPointsPolygon; ++i)

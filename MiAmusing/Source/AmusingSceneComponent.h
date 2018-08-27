@@ -44,6 +44,8 @@ public:
 	void addColourSample(int index, Colour color);
 	
 	void renderOpenGL() override; // ! in background-thread !
+	void newOpenGLContextCreated() override;
+
 	AreaOptions areaOptions;
 	TextButton *showOptionsButton;
 
@@ -79,6 +81,92 @@ private:
 	SideBarType currentSideBarType;
 	std::vector<Colour> buttonsColor;
 	int numScaleMarking;
+
+	GLuint testSideBarVertexBuffer;
+	GLfloat g_testSideBarVertex_buffer_data[4 * 3];
+
+	GLuint testSideBarCoulourBuffer;
+	GLfloat g_testSideBarCoulour_buffer_data[4 * 4];
+
+	GLuint testSideBarIndexBuffer;
+	unsigned int g_testSideBarIndex_buffer_data[6];
+
+
+	GLuint coulourBoutonsVertex;
+	GLfloat g_coulourBoutonsVertex_buffer_data[3 * 4 * 10];
+
+	GLuint coulourBoutonsCoulour;
+	GLfloat g_coulourBoutonsCoulour_buffer_data[4 * 4 * 10];
+
+	GLuint coulourBoutonsIndex;
+	GLuint g_coulourBoutonsIndex_buffer_data[6 * 10];
+
+	GLuint scaleMarkingVertex;
+	GLfloat g_scaleMarkingVertex_buffer_data[(128 + 1) * 4 * 3];
+
+	GLuint scaleMarkingCoulour;
+	GLfloat g_scaleMarkingCoulour_buffer_data[(128 + 1) * 4 * 4];
+
+	GLuint scaleMarkingIndex;
+	GLuint g_scaleMarkingIndex_buffer_data[(128 + 1) * 6];
+
+	void computeScaleMarking(Point<float> beginPoint, float height, float width, int numMarks);
+
+
+	String textVertexShader =
+		"attribute vec4 positionText;\n"
+#if JUCE_OPENGL_ES
+		"attribute lowp vec2 vertexUV;\n"
+#else
+		"attribute vec2 vertexUV;\n"
+#endif
+		"\n"
+
+		"uniform mat4 modelMatrix;\n"
+		"uniform mat4 projectionMatrix;\n"
+		"uniform mat4 viewMatrix;\n"
+		"\n"
+#if JUCE_OPENGL_ES
+		"varying lowp vec2 UV;\n"
+#else
+		"varying vec2 UV;\n"
+#endif
+		"\n"
+		"void main()\n"
+		"{\n"
+		"\n"
+		"    gl_Position = projectionMatrix * viewMatrix * modelMatrix * positionText;\n"
+		"    UV = vertexUV;"
+		"}\n";
+
+	String textFragmentShader =
+#if JUCE_OPENGL_ES
+		"varying lowp vec4 destinationColour;\n"
+#else
+		"varying vec4 destinationColour;\n"
+#endif
+		"\n"
+#if JUCE_OPENGL_ES
+		"varying lowp vec2 UV;\n"
+#else
+		"varying vec2 UV;\n"
+#endif
+		"uniform sampler2D demoTexture;"
+		"\n"
+		"void main()\n"
+		"{\n"
+#if JUCE_OPENGL_ES
+		"   highp float l = 0.3;\n"
+
+#else
+		"   float l = 0.3;\n"
+
+#endif
+		"    gl_FragColor = texture2D(demoTexture,UV);\n"
+		"    gl_FragColor.w = 1.0;\n"
+		"    gl_FragColor.x = 1.0;\n"
+		"    gl_FragColor.y = 1.0;\n"
+		"}\n";
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AmusingSceneComponent)
 };

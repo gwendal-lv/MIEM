@@ -97,6 +97,11 @@ void MainContentComponent::CompleteInitialization(AmusingModel* _model)
 	//addAndMakeVisible(model->audioPlayer);
 }
 
+void MainContentComponent::ReleaseOpengGLResources()
+{
+	multiCanvasComponent->ReleaseOpengGLResources();
+}
+
 void MainContentComponent::SetMiamView(Amusing::View* _view)
 {
     view = _view;

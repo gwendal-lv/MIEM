@@ -57,6 +57,11 @@ void MultiSceneCanvasComponent::LinkToManager(std::shared_ptr<MultiSceneCanvasIn
     childrenCanvas->CompleteInitialization(canvasManager);
 }
 
+void MultiSceneCanvasComponent::ReleaseOpengGLResources()
+{
+	childrenCanvas->ReleaseOpengGLResources();
+}
+
 
 
 // - - - - - - - - - - - - - - Painting and Resizing - - - - - - - - - - - - - -
