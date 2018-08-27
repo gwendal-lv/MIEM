@@ -82,6 +82,8 @@
         <FILE id="rbd4Kt" name="ColorArray.h" compile="0" resource="0" file="Source/ColorArray.h"/>
         <FILE id="wihbQV" name="editScene.cpp" compile="1" resource="0" file="Source/editScene.cpp"/>
         <FILE id="yBAnTJ" name="editScene.h" compile="0" resource="0" file="Source/editScene.h"/>
+        <FILE id="XEwX00" name="ExportedFont2.png" compile="0" resource="1"
+              file="../MiamCommon/Resources/ExportedFont2.png"/>
         <FILE id="UU8cSP" name="MainComponent.cpp" compile="1" resource="0"
               file="Source/MainComponent.cpp"/>
         <FILE id="W5cilK" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>

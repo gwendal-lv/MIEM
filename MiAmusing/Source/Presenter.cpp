@@ -79,9 +79,21 @@ void Presenter::CompleteInitialisation(AmusingModel* _model)
 	const int numSamples = 4;
 	Colour colorCode[numSamples] = { Colours::grey ,Colours::blue,Colours::red,Colours::green };
 
-	String defaultPath = BinaryData::namedResourceList[0];
+
+	String defaultPath;
+	for (int i = 0; i < BinaryData::namedResourceListSize; ++i)
+	{
+		defaultPath = BinaryData::originalFilenames[i];
+		if (!defaultPath.matchesWildcard("*.png", true))
+		{
+			defaultPath = BinaryData::namedResourceList[i];
+			break;
+		}
+	}
+	
+	int idx = 0;
 	for (int i = 0; i < numSamples; ++i)
-		setColorPath(i, colorCode[i], defaultPath);
+			setColorPath(i, colorCode[i], defaultPath);
 	//graphicSessionManager.CompleteInitialization(model);
 }
 

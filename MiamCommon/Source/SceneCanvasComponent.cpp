@@ -37,7 +37,7 @@ SceneCanvasComponent::SceneCanvasComponent(int numShapesMax, int numPointsMax) :
 
 void SceneCanvasComponent::init(int numShapesMax, int numPointsMax)
 {
-	openGLLabel = std::shared_ptr<OpenGLTextObject>(new OpenGLTextObject("C:\\Users\\ayup1\\Downloads\\ExportedFont2.png", 100.0f, 100.0f, 20.0f, -30.0f, 12));
+	openGLLabel = std::shared_ptr<OpenGLTextObject>(new OpenGLTextObject("ExportedFont2_png", 100.0f, 100.0f, 20.0f, -30.0f, 12));
 	ofs.open("testFps.txt", std::ofstream::out | std::ofstream::app);
 	EunderTime = 0.0;
 	previousMaxSize = 0;

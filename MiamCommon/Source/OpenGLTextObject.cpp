@@ -15,7 +15,27 @@ OpenGLTextObject::OpenGLTextObject(String path, float _x, float _y, float _chara
 	textX(_x), textY(_y), characterWidth(_characterWidth), characterHeight(_characterHeight), maxSize(_maxSize)
 {
 	textTexture = std::unique_ptr<OpenGLTexture>( new OpenGLTexture());
-	image = resizeImageToPowerOfTwo(ImageFileFormat::loadFrom(File(path/*"C:\\Users\\ayup1\\Downloads\\ExportedFont2.png"*/)));
+
+	bool isBinary = false;
+	int resourceId = 0;
+	for (int i = 0; i < BinaryData::namedResourceListSize; ++i)
+	{
+		if (path == BinaryData::namedResourceList[i])
+		{
+			isBinary = true;
+			resourceId = i;
+		}
+	}
+
+	if (isBinary)
+	{
+		int dataSize = 0;
+		const void * srcData = BinaryData::getNamedResource(BinaryData::namedResourceList[resourceId], dataSize);
+		image = resizeImageToPowerOfTwo(ImageCache::getFromMemory(srcData,dataSize));
+	}
+	else
+		image = resizeImageToPowerOfTwo(ImageFileFormat::loadFrom(File(path)));
+
 	g_vertex_buffer_data = new GLfloat[maxSize * 6 * 3];
 	g_UV_buffer_data = new GLfloat[maxSize * 6 * 2];
 	computeVertices();

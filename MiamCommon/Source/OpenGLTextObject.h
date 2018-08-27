@@ -53,7 +53,7 @@ private:
 		"uniform mat4 projectionMatrix;\n"
 		"uniform mat4 viewMatrix;\n"
 		"\n"
-		"out vec2 UV;\n"
+		"varying vec2 UV;\n"
 		"\n"
 		"void main()\n"
 		"{\n"
@@ -69,7 +69,7 @@ private:
 		"varying vec4 destinationColour;\n"
 #endif
 		"\n"
-		"in vec2 UV;\n"
+		"varying vec2 UV;\n"
 		"uniform sampler2D demoTexture;\n"
 		"\n"
 		"void main()\n"
