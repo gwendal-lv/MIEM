@@ -416,21 +416,21 @@ BEGIN_JUCER_METADATA
                   virtualName="" explicitFocusOrder="0" pos="0 0 100% 100%" outlinecol="ffffffff"
                   title=""/>
   <SLIDER name="new slider" id="31e65db12379ed8f" memberName="timeSlider"
-          virtualName="" explicitFocusOrder="0" pos="3.005% -77R 93.914% 7.518%"
+          virtualName="" explicitFocusOrder="0" pos="2.894% -77R 93.891% 7.556%"
           posRelativeX="581ab4124f4712ed" posRelativeY="581ab4124f4712ed"
           textboxtext="ffffffff" textboxbkgd="152f3c" min="50.00000000000000000000"
           max="200.00000000000000000000" int="1.00000000000000000000" style="IncDecButtons"
           textBoxPos="TextBoxAbove" textBoxEditable="1" textBoxWidth="80"
           textBoxHeight="20" skewFactor="1.00000000000000000000" needsCallback="1"/>
   <IMAGEBUTTON name="imgPlaybutton" id="2b4803c7ccf2d5d1" memberName="imgPlayButton"
-               virtualName="" explicitFocusOrder="0" pos="0 7.518% 100% 7.518%"
+               virtualName="" explicitFocusOrder="0" pos="0 7.556% 100% 7.556%"
                buttonText="new button" connectedEdges="0" needsCallback="1"
                radioGroupId="0" keepProportions="1" resourceNormal="lecture_png"
                opacityNormal="1.00000000000000000000" colourNormal="0" resourceOver="lectureOn_png"
                opacityOver="1.00000000000000000000" colourOver="0" resourceDown="lectureOn_png"
                opacityDown="1.00000000000000000000" colourDown="0"/>
   <IMAGEBUTTON name="imgStopButton" id="1ea8f58bfe76ab9b" memberName="imgStopButton"
-               virtualName="" explicitFocusOrder="0" pos="0 0R 100% 7.518%"
+               virtualName="" explicitFocusOrder="0" pos="0 0R 100% 7.556%"
                posRelativeX="210adb97ba16e19" posRelativeY="210adb97ba16e19"
                buttonText="new button" connectedEdges="0" needsCallback="1"
                radioGroupId="0" keepProportions="1" resourceNormal="stop_png"
@@ -438,7 +438,7 @@ BEGIN_JUCER_METADATA
                opacityOver="1.00000000000000000000" colourOver="0" resourceDown="stopOn_png"
                opacityDown="1.00000000000000000000" colourDown="0"/>
   <IMAGEBUTTON name="imgPauseButton" id="210adb97ba16e19" memberName="imgPauseButton"
-               virtualName="" explicitFocusOrder="0" pos="0 0R 100% 7.518%"
+               virtualName="" explicitFocusOrder="0" pos="0 0R 100% 7.556%"
                posRelativeX="2b4803c7ccf2d5d1" posRelativeY="2b4803c7ccf2d5d1"
                buttonText="new button" connectedEdges="0" needsCallback="1"
                radioGroupId="0" keepProportions="1" resourceNormal="pause_png"
@@ -446,14 +446,14 @@ BEGIN_JUCER_METADATA
                opacityOver="1.00000000000000000000" colourOver="0" resourceDown="pauseOn_png"
                opacityDown="1.00000000000000000000" colourDown="0"/>
   <IMAGEBUTTON name="imgOptionButton" id="bbfd3cbea2a71bfd" memberName="imgOptionButton"
-               virtualName="" explicitFocusOrder="0" pos="0 -100% 100% 7.518%"
+               virtualName="" explicitFocusOrder="0" pos="0 -100% 100% 7.556%"
                posRelativeY="289502be800b82cf" buttonText="new button" connectedEdges="0"
                needsCallback="1" radioGroupId="0" keepProportions="1" resourceNormal="option_png"
                opacityNormal="1.00000000000000000000" colourNormal="0" resourceOver="optionOn_png"
                opacityOver="1.00000000000000000000" colourOver="0" resourceDown="optionOn_png"
                opacityDown="1.00000000000000000000" colourDown="0"/>
   <IMAGEBUTTON name="imgDeleteButton" id="9d5289b3af882e28" memberName="imgDeleteButton"
-               virtualName="" explicitFocusOrder="0" pos="0 0R 100% 7.518%"
+               virtualName="" explicitFocusOrder="0" pos="0 0R 100% 7.556%"
                posRelativeX="1ea8f58bfe76ab9b" posRelativeY="1ea8f58bfe76ab9b"
                buttonText="new button" connectedEdges="0" needsCallback="1"
                radioGroupId="0" keepProportions="1" resourceNormal="delete_png"
@@ -461,30 +461,30 @@ BEGIN_JUCER_METADATA
                opacityOver="1.00000000000000000000" colourOver="0" resourceDown="deleteOn_png"
                opacityDown="1.00000000000000000000" colourDown="0"/>
   <TEXTBUTTON name="new button" id="c84bea64b985b44" memberName="textButton"
-              virtualName="" explicitFocusOrder="0" pos="3.531% -32R 94.891% 7.518%"
+              virtualName="" explicitFocusOrder="0" pos="3.537% -32R 94.855% 7.556%"
               posRelativeY="31e65db12379ed8f" buttonText="samples" connectedEdges="0"
               needsCallback="1" radioGroupId="0"/>
   <LABEL name="new label" id="289502be800b82cf" memberName="label" virtualName=""
-         explicitFocusOrder="0" pos="2.554% 94.869% 94.891% 5.131%" edTextCol="ff000000"
+         explicitFocusOrder="0" pos="2.572% 94.889% 94.855% 5.111%" edTextCol="ff000000"
          edBkgCol="0" labelText="amusing" editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="15.00000000000000000000"
          kerning="0.00000000000000000000" bold="0" italic="0" justification="36"/>
   <GENERICCOMPONENT name="new component" id="1783a06d564fe381" memberName="addCarreShapeButton"
-                    virtualName="ShapeButton" explicitFocusOrder="0" pos="0% 0R 100% 7.518%"
+                    virtualName="ShapeButton" explicitFocusOrder="0" pos="0% 0R 100% 7.556%"
                     posRelativeY="9d5289b3af882e28" class="Component" params="&quot;addCarreShape&quot;,Colours::white,Colours::blue,Colours::blue"/>
   <GENERICCOMPONENT name="new component" id="ffe0a52b5cd87f07" memberName="addTriangleShapeButton2"
-                    virtualName="ShapeButton" explicitFocusOrder="0" pos="0 0R 100% 7.518%"
+                    virtualName="ShapeButton" explicitFocusOrder="0" pos="0 0R 100% 7.556%"
                     posRelativeX="1783a06d564fe381" posRelativeY="1783a06d564fe381"
                     class="Component" params="&quot;addCarreShape&quot;,Colours::white,Colours::blue,Colours::blue"/>
   <GENERICCOMPONENT name="new component" id="581ab4124f4712ed" memberName="addHexaShapeButton"
-                    virtualName="ShapeButton" explicitFocusOrder="0" pos="0 0R 100% 7.518%"
+                    virtualName="ShapeButton" explicitFocusOrder="0" pos="0 0R 100% 7.556%"
                     posRelativeX="ffe0a52b5cd87f07" posRelativeY="ffe0a52b5cd87f07"
                     class="Component" params="&quot;addHexaShape&quot;,Colours::white,Colours::blue,Colours::blue"/>
   <TEXTBUTTON name="saveButton" id="48fde7c3628a30fd" memberName="saveButton"
-              virtualName="" explicitFocusOrder="0" pos="12.246% 2.029% 29.902% 5.131%"
+              virtualName="" explicitFocusOrder="0" pos="12.219% 2% 29.904% 5.111%"
               buttonText="save" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="loadButton" id="3e438b12d4d1e208" memberName="loadButton"
-              virtualName="" explicitFocusOrder="0" pos="60.105% 2.029% 29.902% 5.131%"
+              virtualName="" explicitFocusOrder="0" pos="60.129% 2% 29.904% 5.111%"
               buttonText="load" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>
 

@@ -339,7 +339,7 @@
         <MODULEPATH id="juce_dsp" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </ANDROIDSTUDIO>
-    <VS2017 targetFolder="Builds/VisualStudio2017">
+    <VS2017 targetFolder="Builds/VisualStudio2017" extraDefs="OPENGL_RENDERING = 0">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" headerPath="..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\&#10;..\..\..\"/>
         <CONFIGURATION isDebug="0" name="Release" headerPath="..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\&#10;..\..\..\"/>

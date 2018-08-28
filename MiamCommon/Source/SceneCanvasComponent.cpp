@@ -264,6 +264,75 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 }
 void SceneCanvasComponent::renderOpenGL()
 {
+#if !defined(OPENGL_RENDERING) || (OPENGL_RENDERING == 0)
+
+	auto manager = canvasManager.lock();
+
+	const double desktopScale = openGlContext.getRenderingScale();
+	std::unique_ptr<LowLevelGraphicsContext> glRenderer(createOpenGLGraphicsContext(openGlContext,
+		roundToInt(desktopScale * getWidth()),
+		roundToInt(desktopScale * getHeight())));
+	Graphics g(*glRenderer);
+
+	g.addTransform(AffineTransform::scale((float)desktopScale));
+
+	// Pure black background
+	g.fillAll(Colours::black);
+
+	// White interior contour 2px line to show when the canvas is active
+	if (selectedForEditing)
+	{
+		g.setColour(Colours::white);
+		g.drawRect(1, 1, getWidth() - 2, getHeight() - 2, 2);
+	}
+
+
+	// - - - - - THIRD Duplication of the drawable objects for thread-safe rendering, - - - - -
+	// Lorsque nécessaire seulement !
+	manager->LockAsyncDrawableObjects();
+
+
+	bool areasCountChanged = (manager->GetAsyncDrawableObjects().size() != duplicatedAreas.size());
+	// POUR L'INSTANT ALGO BÊTE
+	// on resize le vecteur : la construction des shared n'est pas grave, leur bloc de contrôle reste
+	// en mémoire finalement (on utilisera reset() )
+	if (areasCountChanged)
+	{
+		canvasAreasPointersCopies.resize(manager->GetAsyncDrawableObjects().size());
+		duplicatedAreas.resize(manager->GetAsyncDrawableObjects().size());
+	}
+	// Vérification simple de chaque aire 1 par 1
+	size_t itIndex = 0;
+	for (auto it = manager->GetAsyncDrawableObjects().begin();
+		it != manager->GetAsyncDrawableObjects().end();
+		++it)
+	{
+		// S'il y a eu un changement : on re-crée un pointeur déjà, puis
+		// on fait effectivement la copie d'un nouvel objet
+		if (canvasAreasPointersCopies[itIndex] != (*it))
+		{
+			canvasAreasPointersCopies[itIndex] = (*it);
+			duplicatedAreas[itIndex] = (*it)->Clone();
+		}
+		// Double compteur
+		itIndex++;
+	}
+
+	manager->UnlockAsyncDrawableObjects();
+
+
+	// - - - - - Areas painting (including exciters if existing) - - - - -
+	// Sans bloquer, du coup, les autres threads (pour réactivité max...)
+	for (size_t i = 0; i<duplicatedAreas.size(); i++)
+	{
+		// Peut mettre à jour des images et autres (si l'échelle a changé)
+		duplicatedAreas[i]->SetRenderingScale(desktopScale);
+		// Dessin effectif
+		duplicatedAreas[i]->Paint(g);
+	}
+
+#else // !OPENGL_RENDERING || OPENGL_RENDERING == 0
+
 	if (releaseResources)
 	{
 		openGLLabel->release();
@@ -400,6 +469,8 @@ void SceneCanvasComponent::renderOpenGL()
 		Matrix3D<float> testProjecxtion = perspective((float)/*desktopScale **/ getWidth(), (float)/*desktopScale **/ getHeight(), 0.5f, 1.1f);
 		openGLLabel->drawOneTexturedRectangle(openGlContext, model, testView, testProjecxtion, std::to_string(fps));
 	}
+
+#endif // !OPENGL_RENDERING || OPENGL_RENDERING == 0
     
     // Call to a general Graphic update on the whole Presenter module
 	if ( ! manager->isUpdatePending() )

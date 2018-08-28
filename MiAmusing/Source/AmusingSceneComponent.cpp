@@ -57,7 +57,7 @@ void AmusingSceneComponent::setSamplesColor(int Nsamples, Colour colorCode[])
 	const float interval = (float)getHeight() / (float)(Nsamples);
 	for (int i = 0; i < Nsamples; ++i)
 	{
-		g_coulourBoutonsVertex_buffer_data[i * 3 * 4] = getWidth();
+		g_coulourBoutonsVertex_buffer_data[i * 3 * 4] = (float)getWidth();
 		g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 1]  = i * interval;
 		g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 2]  = 0.0f;
 		g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 3]  = getWidth() - 150.0f;
@@ -66,7 +66,7 @@ void AmusingSceneComponent::setSamplesColor(int Nsamples, Colour colorCode[])
 		g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 6]  = getWidth()-150.0f;
 		g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 7] = (i + 1)*interval;
 		g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 8]  = 0.0f;
-		g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 9]  = getWidth();
+		g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 9]  = (float)getWidth();
 		g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 10] = (i + 1) * interval;
 		g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 11] = 0.0f;
 
@@ -342,7 +342,7 @@ void AmusingSceneComponent::renderOpenGL()
 		interval = (float)getHeight() / 4.0f;
 		for (int i = 0; i < 4; ++i)
 		{
-			g_coulourBoutonsVertex_buffer_data[i * 3 * 4] = getWidth();
+			g_coulourBoutonsVertex_buffer_data[i * 3 * 4] = (float)getWidth();
 			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 1] = i * interval;
 			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 2] = 0.0f;
 			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 3] = getWidth() - 150.0f;
@@ -351,7 +351,7 @@ void AmusingSceneComponent::renderOpenGL()
 			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 6] = getWidth() - 150.0f;
 			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 7] = (i + 1)*interval;
 			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 8] = 0.0f;
-			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 9] = getWidth();
+			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 9] = (float)getWidth();
 			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 10] = (i + 1) * interval;
 			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 11] = 0.0f;
 		}
