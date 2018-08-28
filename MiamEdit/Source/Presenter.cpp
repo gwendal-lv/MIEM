@@ -52,7 +52,7 @@ void Presenter::CompleteInitialisation(Model* _model)
     model = _model;
     ControlPresenter::CompleteInitialisation(&graphicSessionManager, _model);
     // Sub-modules (graphic session manager : init from SpatPresenter)
-    spatStatesEditionManager.CompleteInitialisation(model->GetInterpolator());
+    spatStatesEditionManager.CompleteInitialisation(model, model->GetInterpolator());
     settingsManager.CompleteInitialisation(model);
     
     // Après initialisation : on ne montre RIEN

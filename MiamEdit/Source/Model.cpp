@@ -15,6 +15,8 @@
 
 #include "Presenter.h"
 
+#include "MiamExceptions.h"
+
 #include "boost/lexical_cast.hpp"
 
 
@@ -69,14 +71,19 @@ void Model::update()
 
 
 // - - - - - Simple OSC sender (for devices OSC learn) - - - - -
-void Model::TryConnectAndSendOSCMessage(const std::string& oscAddress, double argumentValue)
+void Model::ConnectAndSendOSCMessage(const std::string& oscAddressPattern, double argumentValue)
 {
     // At first, we ask the interpolator for the current MiamOSCSender status and data
+    std::shared_ptr<MiamOscSender<double>> miamOscSender = std::dynamic_pointer_cast<MiamOscSender<double>>(GetStateSender(0));
+    if (! miamOscSender )
+        throw std::logic_error("State sender has to be an OSC one for now.");
     
     // Then we open a connection if necessary (or we keep it alive if it was opened)
+    if (! miamOscSender->TryConnect() )
+        throw Miam::OscException(TRANS("Cannot connect to the device. Please check OSC settings.").toStdString());
     
     // Finally : OSC Message sending
-    std::cout << "Modèle envoie des trucs" << std::endl;
+    miamOscSender->SendToAddressAsFloat(oscAddressPattern, argumentValue);
 }
 
 

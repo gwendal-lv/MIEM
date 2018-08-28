@@ -63,7 +63,8 @@ namespace Miam
         public :
         virtual std::string GetTypeAsString() const override
         {return std::string("MiamOsc");}
-        
+        virtual std::string GetAddressAsString() const override
+        { return ipv4 + ":" + boost::lexical_cast<std::string>(udpPort); }
         
         
         // = = = = = = = = = = METHODS = = = = = = = = = =
@@ -100,7 +101,6 @@ namespace Miam
             if ( ( !ipv4.empty() ) && ( udpPort > 0 ) )
                 return oscSender.connect(ipv4, udpPort);
             else
-                
                 return false;
         }
         /// \brief Choisit si l'on ne va envoyer que les coeffients de la première colonne
@@ -269,6 +269,19 @@ namespace Miam
             OSCMessage oscMessage = firstColOscMessages[paramIndex];
             oscMessage.addFloat32(value);
             oscSender.send(oscMessage);
+        }
+        /// \brief Converts the value and sends its as a float to the given OSC address
+        ///
+        /// Might send an exception if address isn't valid of if message couldn't be sent
+        ///
+        /// \param addressPattern OSC address that can contain pre-defined arguments ([int] 3 or [float] 4.5 for example)
+        void SendToAddressAsFloat(const std::string& addressPattern, T argumentValue)
+        {
+            OSCMessage message = TextUtils::ParseStringToJuceOscMessage(addressPattern);
+            message.addFloat32( (float) argumentValue );
+            
+            if (! oscSender.send(message))
+                throw Miam::OscException("OSC Message couldn't be sent. Check OSC settings and addresses.");
         }
         
         // Envoi d'un blob avec tout un ensemble de coeffs

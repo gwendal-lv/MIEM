@@ -30,6 +30,16 @@ namespace Miam
         {}
     };
     
+    class OscException : public std::runtime_error
+    {
+        public :
+        // Juste une runtime castée...
+        OscException() : std::runtime_error(std::string("MIEM OSC Exception"))
+        {}
+        OscException(std::string errorString) : std::runtime_error(errorString)
+        {}
+    };
+    
     class ForceQuitException : public std::runtime_error
     {
         public :
@@ -111,5 +121,7 @@ namespace Miam
         std::runtime_error(textErrorToAddFirst + originalError.what())
         {}
     };
+    
+    
     
 }

@@ -12,8 +12,11 @@
 
 #include "SpatStatesEditionManager.h"
 
+#include "Model.h"
 #include "View.h"
 #include "SpatStatesEditionComponent.h"
+
+#include "TextUtils.h"
 
 
 
@@ -27,8 +30,9 @@ SpatStatesEditionManager::SpatStatesEditionManager(View* _view)
     editionComponent->CompleteInitialization(this);
 }
 
-void SpatStatesEditionManager::CompleteInitialisation(std::shared_ptr<StatesInterpolator<double>> _statesInterpolator)
+void SpatStatesEditionManager::CompleteInitialisation(Model* _model, std::shared_ptr<StatesInterpolator<double>> _statesInterpolator)
 {
+    model = _model;
     spatInterpolator = _statesInterpolator;
     
     Reinit();
@@ -223,14 +227,24 @@ void SpatStatesEditionManager::OnMatrixButtonClicked(int row, int col, std::stri
 {
     if (GetSessionPurpose() == AppPurpose::GenericController)
     {
-        // Transmission au modèle d'une demande d'envoi OSC
-        // BESOIN D'UN POINTEUR VERS LE MODÈLE
-        
         // On checke d'abord si le message OSC est OK... Sinon on envoie rien sauf un msg d'erreur
+        try {
+            TextUtils::ParseStringToJuceOscMessage(matrixText);
+        }
+        catch(ParseException&) {
+            view->DisplayInfo( TRANS("Cannot send the OSC message: incorrect OSC address pattern.").toStdString() );
+            return;
+        }
         
         // Si le modèle a bien envoyé : on affiche ENVOYÉ
-        
+        try {
+            model->ConnectAndSendOSCMessage(matrixText, matrixValue);
+            view->DisplayInfo(TRANS("OSC Message sent to ").toStdString() + model->GetStateSender(0)->GetAddressAsString());
+        }
         // Sinon on affiche l'erreur de connection transmise par le modèle
+        catch(Miam::OscException& e) {
+            view->DisplayInfo( e.what() );
+        }
     }
 }
 

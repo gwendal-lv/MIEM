@@ -42,7 +42,7 @@ namespace Miam
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
         virtual std::string GetTypeAsString() const = 0;
-
+        virtual std::string GetAddressAsString() const = 0;
 
         
         // = = = = = = = = = = METHODS = = = = = = = = = =

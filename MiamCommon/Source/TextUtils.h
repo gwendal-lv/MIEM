@@ -36,7 +36,9 @@ namespace Miam {
         /// \brief Sépare une chaîne de caractères du type "/adresseOSC/et/des/choses [int] 2
         /// [int] 647 .... [float] 45.2 [float] 32.5 ...." vers un message Osc
         ///
-        /// Seul l'espace peut servir de séparateur
+        /// Seul l'espace peut servir de séparateur.
+        ///
+        /// Might throw a Miam::ParseException if necessary
         static OSCMessage ParseStringToJuceOscMessage(const std::string& stringToParse);
     };
 }

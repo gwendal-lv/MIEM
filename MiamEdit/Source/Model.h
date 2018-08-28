@@ -68,9 +68,14 @@ namespace Miam
         
         
         // - - - - - Simple OSC sender (for devices OSC learn) - - - - -
-        // Works in a purely synchronous way... Which is not good for the responsiveness of the GUI
-        // (but this is a very small and non-blocking functionnality)
-        void TryConnectAndSendOSCMessage(const std::string& oscAddress, double argumentValue);
+        public :
+        /// \brief Synchronously sends a unique osc message via the first sender.
+        ///
+        /// Works in a purely synchronous way... Which is not good for the responsiveness of the GUI
+        /// (but this should a very small and non-blocking functionnality)
+        ///
+        /// Throws exceptions if the OSC sender or OSC message are not configured properly
+        void ConnectAndSendOSCMessage(const std::string& oscAddress, double argumentValue);
         
     };
     

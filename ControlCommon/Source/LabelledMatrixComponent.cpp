@@ -269,6 +269,11 @@ void LabelledMatrixComponent::ReinitGuiObjects()
         // Label on each row
         initLabel(labels[i]);
         initNameTextEditor(inputNameTextEditors[i], false); // horizontal
+        if (GetDisplayPurpose() == AppPurpose::GenericController)
+        {
+            rowTextButtons[i]->setButtonText(TRANS("Send"));
+            rowTextButtons[i]->setTooltip(TRANS("Click to send this parameter to the configured OSC device."));
+        }
     }
     for (int j=0 ; j<(int)maxColsCount ; j++)
     {

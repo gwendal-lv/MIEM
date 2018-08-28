@@ -61,7 +61,7 @@ namespace Miam
         // - - - - - Construction / destruction - - - - -
         
         SpatStatesEditionManager(View* _view);
-        void CompleteInitialisation(std::shared_ptr<StatesInterpolator<double>> _spatInterpolator);
+        void CompleteInitialisation(Model* _model, std::shared_ptr<StatesInterpolator<double>> _spatInterpolator);
         void Reinit();
         
         // - - - - - Events from Presenter - - - - -
