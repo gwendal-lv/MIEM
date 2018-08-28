@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.3.0
+  Created with Projucer version: 5.3.2
 
   ------------------------------------------------------------------------------
 
@@ -24,6 +24,7 @@
 //#include "MatrixComponent.h"
 
 #include "ISlidersMatrixListener.h"
+#include "IMatrixButtonListener.h"
 #include "AudioUtils.hpp"
 
 #include <memory>
@@ -50,7 +51,8 @@ namespace Miam
                                                                     //[/Comments]
 */
 class LabelledMatrixComponent  : public Component,
-                                 public TextEditor::Listener
+                                 public TextEditor::Listener,
+                                 public Button::Listener
 {
 public:
     //==============================================================================
@@ -68,7 +70,7 @@ public:
     private :
     void initLabel(Label* label);
     void initNameTextEditor(TextEditor* label, bool isVertical);
-    void repositionLabels();
+    void repositionLabelsAndButtons();
     void highlightLabel(Label* label);
     void unhighlightLabel(Label* label);
 
@@ -93,6 +95,9 @@ public:
     ///
     /// Parse made by TextUtils::ParseStringToJuceOscMessage
     virtual void textEditorTextChanged (TextEditor &) override;
+    /// \brief Callback from a generic action button (currently, the buttons
+    /// displayed at the beginning of each line).
+    virtual void buttonClicked (Button* ) override;
 
     // - - - - - - Getters and Setters - - - - -
     MatrixComponent* GetMatrixComponent();
@@ -106,6 +111,8 @@ public:
 
     void SetDisplayPurpose(AppPurpose newSessionPurpose);
     AppPurpose GetDisplayPurpose() {return currentDisplayPurpose;}
+
+    void SetButtonsListener(IMatrixButtonListener* _listener) {buttonsListener = _listener;}
 
     //[/UserMethods]
 
@@ -121,11 +128,16 @@ private:
     AppPurpose currentDisplayPurpose;
 
     ISlidersMatrixListener* listener;
+    IMatrixButtonListener* buttonsListener = nullptr;
     unsigned int maxRowsCount, maxColsCount;
 
     // Graphical parameters from Miam::MatrixComponent
     const int matItemW = 40;
     const int matItemH = 20;
+    const int actionButtonW = 120;
+    // Positionning variables
+    int removedFromLeftOfMatrix = 100; // just in case, to avoid zero-sized buttons if it happens...
+    int removedFromBottomOfMatrix = 100;
 
     /// \brief Labels precising input and outputs within the matrix
     ///
@@ -141,13 +153,17 @@ private:
     bool showOutputsNumbers;
     /// labels [0] to [m-1] for outputs' names
     // Si on voit les noms des sorties leur hauteur est this->getHeight()/2
-    std::vector<ScopedPointer<TextEditor>> inputNameTextEditors;
-    std::vector<ScopedPointer<TextEditor>> outputNameTextEditors;
+    std::vector<ScopedPointer<TextEditor>> inputNameTextEditors; // component ID : 'i#', # is the row number
+    std::vector<ScopedPointer<TextEditor>> outputNameTextEditors; // component ID : 'o#', # is the col number
+    // These buttons will trigger a generic callback (the user will be able to
+    // use it through a registered listener system). Shown in GenericController
+    // mode only (at the moment ?)
+    std::vector<ScopedPointer<TextButton>> rowTextButtons;  // component ID : 'bi#', # is the row number
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<Miam::MatrixViewport> matrixViewport;
-    ScopedPointer<Label> inputsOutputsLabel;
+    std::unique_ptr<Miam::MatrixViewport> matrixViewport;
+    std::unique_ptr<Label> inputsOutputsLabel;
 
 
     //==============================================================================

@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.2.1
+  Created with Projucer version: 5.3.2
 
   ------------------------------------------------------------------------------
 
@@ -27,6 +27,7 @@
 #include "LabelledMatrixComponent.h"
 
 #include "ISlidersMatrixListener.h"
+#include "IMatrixButtonListener.h"
 
 #include "ControlMatrix.hpp"
 
@@ -51,6 +52,7 @@ namespace Miam {
 */
 class SpatStatesEditionComponent  : public Component,
                                     public ISlidersMatrixListener,
+                                    public IMatrixButtonListener,
                                     public Button::Listener,
                                     public ComboBox::Listener
 {
@@ -67,6 +69,7 @@ public:
     /// up-to-date matrices only (to prevent any error with notifying
     /// and being notified of modifications...)
     void OnSliderValueChanged(int /*row*/, int /*col*/, double /*value*/) override {}
+    virtual void OnMatrixButtonClicked(int row, int col, std::string matrixText, double matrixValue) override;
     // same thing (empty function, we save entire matrices only)
     void OnMatrixZeroed() override {}
 
@@ -122,15 +125,15 @@ private:
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<GroupComponent> stateEditorGroupComponent;
-    ScopedPointer<Miam::LabelledMatrixComponent> labelledMatrixComponent;
-    ScopedPointer<GroupComponent> statesListGroupComponent;
-    ScopedPointer<TextButton> addSpatStateTextButton;
-    ScopedPointer<TextButton> deleteSpatStateTextButton;
-    ScopedPointer<TextButton> stateUpTextButton;
-    ScopedPointer<TextButton> stateDownTextButton;
-    ScopedPointer<Label> linksInfoLabel;
-    ScopedPointer<ComboBox> spatStatesComboBox;
+    std::unique_ptr<GroupComponent> stateEditorGroupComponent;
+    std::unique_ptr<Miam::LabelledMatrixComponent> labelledMatrixComponent;
+    std::unique_ptr<GroupComponent> statesListGroupComponent;
+    std::unique_ptr<TextButton> addSpatStateTextButton;
+    std::unique_ptr<TextButton> deleteSpatStateTextButton;
+    std::unique_ptr<TextButton> stateUpTextButton;
+    std::unique_ptr<TextButton> stateDownTextButton;
+    std::unique_ptr<Label> linksInfoLabel;
+    std::unique_ptr<ComboBox> spatStatesComboBox;
 
 
     //==============================================================================

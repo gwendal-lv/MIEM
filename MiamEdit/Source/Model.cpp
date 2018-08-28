@@ -50,6 +50,8 @@ Model::~Model()
 	// Joining of threads
 	continueUpdate = false;
 	updateThread.join();
+    
+    // Disconnection / Destruction of the OSC sender
 }
 
 
@@ -65,5 +67,16 @@ void Model::update()
     }
 }
 
+
+// - - - - - Simple OSC sender (for devices OSC learn) - - - - -
+void Model::TryConnectAndSendOSCMessage(const std::string& oscAddress, double argumentValue)
+{
+    // At first, we ask the interpolator for the current MiamOSCSender status and data
+    
+    // Then we open a connection if necessary (or we keep it alive if it was opened)
+    
+    // Finally : OSC Message sending
+    std::cout << "Modèle envoie des trucs" << std::endl;
+}
 
 

@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.3.0
+  Created with Projucer version: 5.3.2
 
   ------------------------------------------------------------------------------
 
@@ -52,12 +52,14 @@ LabelledMatrixComponent::LabelledMatrixComponent (ISlidersMatrixListener* _liste
     showOutputsNumbers = true;
     //[/Constructor_pre]
 
-    addAndMakeVisible (matrixViewport = new Miam::MatrixViewport (this, maxRowsCount, maxColsCount));
+    matrixViewport.reset (new Miam::MatrixViewport (this, maxRowsCount, maxColsCount));
+    addAndMakeVisible (matrixViewport.get());
     matrixViewport->setName ("Matrix Viewport");
 
-    addAndMakeVisible (inputsOutputsLabel = new Label ("Inputs Outputs Label",
-                                                       TRANS("inputs /\n"
-                                                       "    outputs")));
+    inputsOutputsLabel.reset (new Label ("Inputs Outputs Label",
+                                         TRANS("inputs /\n"
+                                         "    outputs")));
+    addAndMakeVisible (inputsOutputsLabel.get());
     inputsOutputsLabel->setTooltip (TRANS("\n"));
     inputsOutputsLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Bold"));
     inputsOutputsLabel->setJustificationType (Justification::centredLeft);
@@ -117,15 +119,26 @@ void LabelledMatrixComponent::resized()
     // On va re-replacer les objets placés juste au-dessus... selon qu'on ait des labels
     // des noms des sorties, ou non
     auto matrixViewportBounds = matrixViewport->getBounds();
-    const int maxWidthToRemove = std::min(getWidth()/2 - 120, 320);
-    const int maxHeightToRemove = std::min(getHeight()/2 - 40, 360);
+
     if (showInputsNames)
-        matrixViewportBounds.removeFromLeft(maxWidthToRemove);
+        removedFromLeftOfMatrix = std::min(getWidth()/2 - 120, 320);
+    else
+        removedFromLeftOfMatrix = 0; // space is already substracted for input numbers
+    if (GetDisplayPurpose() == AppPurpose::GenericController)
+        removedFromLeftOfMatrix += actionButtonW; // for the action button
+    matrixViewportBounds.removeFromLeft(removedFromLeftOfMatrix);
+    removedFromLeftOfMatrix += 80; // because the previous projucer resize (takes the i/o ID into account)
+
     if (showOutputsNames)
-        matrixViewportBounds.removeFromBottom(maxHeightToRemove);
+        removedFromBottomOfMatrix = std::min(getHeight()/2 - 40, 360);
+    else
+        removedFromBottomOfMatrix = 0; // space is already substracted for output numbers
+    matrixViewportBounds.removeFromBottom(removedFromBottomOfMatrix);
+    removedFromBottomOfMatrix += 40; // because the previous projucer resize (takes the i/o ID into account)
+
     matrixViewport->setBounds(matrixViewportBounds);
 
-    repositionLabels();
+    repositionLabelsAndButtons();
 
     //[/UserResized]
 }
@@ -190,7 +203,7 @@ void LabelledMatrixComponent::mouseDown (const MouseEvent& e)
     // Pop-up menu appears on Right-click anywhere,
     // Or it may appear on a click on the inputs/outputs label (not editable)
     if (e.mods.isRightButtonDown()
-        || inputsOutputsLabel->contains(e.getEventRelativeTo(inputsOutputsLabel).getPosition()))
+        || inputsOutputsLabel->contains(e.getEventRelativeTo(inputsOutputsLabel.get()).getPosition()))
         createAndManagePopupMenu();
     //[/UserCode_mouseDown]
 }
@@ -207,8 +220,10 @@ void LabelledMatrixComponent::constructGuiObjects()
     inputNameTextEditors.resize(maxRowsCount);
     outputNameTextEditors.clear();
     outputNameTextEditors.resize(maxColsCount);
+    rowTextButtons.clear();
+    rowTextButtons.resize(maxRowsCount);
 
-    // Actual creation of sliders and labels
+    // Actual creation of sliders, labels and buttons
     for (int i=0 ; i<(int)maxRowsCount ; i++)
     {
         // Label on each row
@@ -218,6 +233,12 @@ void LabelledMatrixComponent::constructGuiObjects()
         inputNameTextEditors[i]->setComponentID("i" + boost::lexical_cast<std::string>(i));
         addAndMakeVisible(inputNameTextEditors[i]);
         inputNameTextEditors[i]->addListener(this);
+        // And the row's button
+        rowTextButtons[i] = new TextButton("[action " + boost::lexical_cast<std::string>(i) + "]",
+                                           "Not initialized yet");
+        addAndMakeVisible(rowTextButtons[i]);
+        rowTextButtons[i]->setComponentID("bi" + boost::lexical_cast<std::string>(i));
+        rowTextButtons[i]->addListener(this);
     }
     for (int j=0 ; j<(int)maxColsCount ; j++)
     {
@@ -289,9 +310,9 @@ void LabelledMatrixComponent::initNameTextEditor(TextEditor* textEditor, bool is
     // Dans tous les cas :
     textEditor->setMultiLine(false);
     textEditor->setJustification(Justification(Justification::Flags::horizontallyCentred
-                                          | Justification::Flags::verticallyCentred));
+                                             | Justification::Flags::verticallyCentred));
 }
-void LabelledMatrixComponent::repositionLabels()
+void LabelledMatrixComponent::repositionLabelsAndButtons()
 {
     // Info retrieval (ui controls' data from the projucer)
     const int inLabelsW = inputsOutputsLabel->getWidth();
@@ -306,12 +327,29 @@ void LabelledMatrixComponent::repositionLabels()
     {
         // Label on each row
         labels[i]->setBounds(0, i*matItemH - matrixDeltaY, inLabelsW, matItemH);
+        // Action button are drawn for the GenericController app purpose
+        if (GetDisplayPurpose() == AppPurpose::GenericController)
+        {
+            rowTextButtons[i]->setVisible(true);
+            rowTextButtons[i]->setBounds(matrixViewport->getX() - actionButtonW + 4,
+                                         i*matItemH - matrixDeltaY,
+                                         actionButtonW - 4,
+                                         matItemH);
+        }
+        else
+            rowTextButtons[i]->setVisible(false);
         // On dessine les text editors d'entrée, si besoin
         if (showInputsNames)
         {
-            inputNameTextEditors[i]->setBounds(inLabelsW, i*matItemH - matrixDeltaY,
-                                               getWidth() - inLabelsW - matrixViewport->getWidth(),
-                                               matItemH);
+            inputNameTextEditors[i]->setVisible(true);
+            if (rowTextButtons[i]->isVisible())
+                inputNameTextEditors[i]->setBounds(inLabelsW, i*matItemH - matrixDeltaY,
+                                                   matrixViewport->getX() - inLabelsW - actionButtonW,
+                                                   matItemH);
+            else
+                inputNameTextEditors[i]->setBounds(inLabelsW, i*matItemH - matrixDeltaY,
+                                                   matrixViewport->getX() - inLabelsW,
+                                                   matItemH);
         }
         else
             inputNameTextEditors[i]->setVisible(false);
@@ -320,21 +358,25 @@ void LabelledMatrixComponent::repositionLabels()
         {
             inputNameTextEditors[i]->setEnabled(false);
             labels[i]->setEnabled(false);
+            rowTextButtons[i]->setEnabled(false);
         }
         else
         {
             inputNameTextEditors[i]->setEnabled(true);
             labels[i]->setEnabled(true);
+            rowTextButtons[i]->setEnabled(true);
         }
         // On cache les éléments d'entrée plus bas que le viewport
         if (labels[i]->getBottom() > (matrixViewport->getBottom() + 8))
         {
             labels[i]->setVisible(false);
             inputNameTextEditors[i]->setVisible(false);
+            rowTextButtons[i]->setVisible(false);
         }
         else
         {
             labels[i]->setVisible(true);
+            rowTextButtons[i]->setVisible(true);
             if (showInputsNames)
                 inputNameTextEditors[i]->setVisible(true);
         }
@@ -441,7 +483,7 @@ size_t LabelledMatrixComponent::getM()
 
 void LabelledMatrixComponent::OnViewportVisibleAreaChanged()
 {
-    repositionLabels();
+    repositionLabelsAndButtons();
 }
 void LabelledMatrixComponent::OnSliderValueChanged(int row, int col, double value)
 {
@@ -455,6 +497,36 @@ void LabelledMatrixComponent::textEditorTextChanged (TextEditor & textEditor)
         initNameTextEditor(&textEditor, true);
     else
         throw std::runtime_error("Cannot parse the ID of the calling text editor object");
+}
+void LabelledMatrixComponent::buttonClicked (Button* _button)
+{
+    int integerID;
+    
+    // We get its row index #, from its ID which must be 'bi#'
+    auto buttonID = _button->getComponentID().toStdString();
+    try {
+        if (buttonID.length() < 3)
+            throw BadIdException();
+        if (buttonID[0] != 'b' || buttonID[1] != 'i')
+            throw BadIdException();
+        
+        // At the moment, only 1 unique button on each row -> no valid col index will be given
+        try {
+            integerID = boost::lexical_cast<int>(buttonID.substr(2));
+        } catch (boost::bad_lexical_cast&) {
+            throw BadIdException();
+        }
+        if (integerID < 0 || maxRowsCount < integerID)
+            throw BadIdException();
+    }
+    catch (BadIdException& e) {
+        assert(false); // a bad-referenced (bas ID) button has been clicked. This must not happen!
+    }
+    
+    // Callback transmitted to the listener component
+    buttonsListener->OnMatrixButtonClicked(integerID, -1,
+                                           inputNameTextEditors[integerID]->getText().toStdString(),
+                                           matrixViewport->GetMatrixComponent()->GetSliderValue(integerID, 0));
 }
 
 MatrixComponent* LabelledMatrixComponent::GetMatrixComponent()
@@ -549,7 +621,7 @@ void LabelledMatrixComponent::SetDisplayPurpose(AppPurpose newSessionPurpose)
 BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="LabelledMatrixComponent"
-                 componentName="" parentClasses="public Component, public TextEditor::Listener"
+                 componentName="" parentClasses="public Component, public TextEditor::Listener, public Button::Listener"
                  constructorParams="ISlidersMatrixListener* _listener, unsigned int _maxRowsCount, unsigned int _maxColsCount"
                  variableInitialisers="" snapPixels="8" snapActive="1" snapShown="1"
                  overlayOpacity="0.330" fixedSize="0" initialWidth="600" initialHeight="400">

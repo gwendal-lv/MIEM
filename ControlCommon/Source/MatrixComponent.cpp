@@ -146,6 +146,7 @@ void MatrixComponent::resized()
         
         case AppPurpose::GenericController :
             setSize(getParentWidth(), (int)maxRowsCount*itemH);
+            RepositionGuiObjects();
             break;
             
         default :
@@ -319,6 +320,19 @@ void MatrixComponent::SetSliderValue(int row, int col, double newValue,
     if (col == 0)
         horizontalSliders[row]->setValue(newValue, juceNotification);
 }
+
+
+double MatrixComponent::GetSliderValue(int row, int col)
+{
+    if (0 <= row && row < maxRowsCount && 0 <= col && col < maxColsCount)
+        return rawDenseMatrix[idx(row,col)];
+    else
+    {
+        assert(false); // A bad row and col coefficient should never be asked for
+        return 0.0;
+    }
+}
+
 std::shared_ptr<ControlMatrix> MatrixComponent::GetSpatMatrix()
 {
     /* Normalement : tout ça est maintenant fait au fur et à mesure...

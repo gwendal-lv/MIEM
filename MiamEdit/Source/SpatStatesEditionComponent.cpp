@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.2.1
+  Created with Projucer version: 5.3.2
 
   ------------------------------------------------------------------------------
 
@@ -41,20 +41,24 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
-    addAndMakeVisible (stateEditorGroupComponent = new GroupComponent ("State Editor group component",
-                                                                       TRANS("Control data for selected state")));
+    stateEditorGroupComponent.reset (new GroupComponent ("State Editor group component",
+                                                         TRANS("Control data for selected state")));
+    addAndMakeVisible (stateEditorGroupComponent.get());
     stateEditorGroupComponent->setColour (GroupComponent::outlineColourId, Colour (0xff454545));
     stateEditorGroupComponent->setColour (GroupComponent::textColourId, Colours::black);
 
-    addAndMakeVisible (labelledMatrixComponent = new Miam::LabelledMatrixComponent (this, Miam_MaxNumInputs, Miam_MaxNumOutputs));
+    labelledMatrixComponent.reset (new Miam::LabelledMatrixComponent (this, Miam_MaxNumInputs, Miam_MaxNumOutputs));
+    addAndMakeVisible (labelledMatrixComponent.get());
     labelledMatrixComponent->setName ("Labelled Matrix component");
 
-    addAndMakeVisible (statesListGroupComponent = new GroupComponent ("States list group component",
-                                                                      TRANS("States list")));
+    statesListGroupComponent.reset (new GroupComponent ("States list group component",
+                                                        TRANS("States list")));
+    addAndMakeVisible (statesListGroupComponent.get());
     statesListGroupComponent->setColour (GroupComponent::outlineColourId, Colour (0xff454545));
     statesListGroupComponent->setColour (GroupComponent::textColourId, Colours::black);
 
-    addAndMakeVisible (addSpatStateTextButton = new TextButton ("Add state text button"));
+    addSpatStateTextButton.reset (new TextButton ("Add state text button"));
+    addAndMakeVisible (addSpatStateTextButton.get());
     addSpatStateTextButton->setButtonText (TRANS("Add State"));
     addSpatStateTextButton->setConnectedEdges (Button::ConnectedOnRight);
     addSpatStateTextButton->addListener (this);
@@ -64,7 +68,8 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
 
     addSpatStateTextButton->setBounds (0 + 8, 4 + 20, 80, 24);
 
-    addAndMakeVisible (deleteSpatStateTextButton = new TextButton ("Delete spat state text button"));
+    deleteSpatStateTextButton.reset (new TextButton ("Delete spat state text button"));
+    addAndMakeVisible (deleteSpatStateTextButton.get());
     deleteSpatStateTextButton->setButtonText (TRANS("Delete"));
     deleteSpatStateTextButton->setConnectedEdges (Button::ConnectedOnLeft);
     deleteSpatStateTextButton->addListener (this);
@@ -74,7 +79,8 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
 
     deleteSpatStateTextButton->setBounds (0 + 88, 4 + 20, 80, 24);
 
-    addAndMakeVisible (stateUpTextButton = new TextButton ("State up text button"));
+    stateUpTextButton.reset (new TextButton ("State up text button"));
+    addAndMakeVisible (stateUpTextButton.get());
     stateUpTextButton->setButtonText (TRANS("Move Up"));
     stateUpTextButton->setConnectedEdges (Button::ConnectedOnRight);
     stateUpTextButton->addListener (this);
@@ -82,7 +88,8 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     stateUpTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     stateUpTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    addAndMakeVisible (stateDownTextButton = new TextButton ("State down text button"));
+    stateDownTextButton.reset (new TextButton ("State down text button"));
+    addAndMakeVisible (stateDownTextButton.get());
     stateDownTextButton->setButtonText (TRANS("Down"));
     stateDownTextButton->setConnectedEdges (Button::ConnectedOnLeft);
     stateDownTextButton->addListener (this);
@@ -90,8 +97,9 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     stateDownTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     stateDownTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    addAndMakeVisible (linksInfoLabel = new Label ("Links info label",
-                                                   TRANS("Linked to ? area")));
+    linksInfoLabel.reset (new Label ("Links info label",
+                                     TRANS("Linked to ? area")));
+    addAndMakeVisible (linksInfoLabel.get());
     linksInfoLabel->setFont (Font (15.00f, Font::italic));
     linksInfoLabel->setJustificationType (Justification::centred);
     linksInfoLabel->setEditable (false, false, false);
@@ -99,7 +107,8 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     linksInfoLabel->setColour (TextEditor::textColourId, Colours::black);
     linksInfoLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    addAndMakeVisible (spatStatesComboBox = new ComboBox ("Spat states combo box"));
+    spatStatesComboBox.reset (new ComboBox ("Spat states combo box"));
+    addAndMakeVisible (spatStatesComboBox.get());
     spatStatesComboBox->setEditableText (true);
     spatStatesComboBox->setJustificationType (Justification::centredLeft);
     spatStatesComboBox->setTextWhenNothingSelected (String());
@@ -109,7 +118,7 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
 
 
     //[UserPreSize]
-
+    labelledMatrixComponent->SetButtonsListener(this);
     //[/UserPreSize]
 
     setSize (1024, 600);
@@ -185,25 +194,25 @@ void SpatStatesEditionComponent::buttonClicked (Button* buttonThatWasClicked)
     //[UserbuttonClicked_Pre]
     //[/UserbuttonClicked_Pre]
 
-    if (buttonThatWasClicked == addSpatStateTextButton)
+    if (buttonThatWasClicked == addSpatStateTextButton.get())
     {
         //[UserButtonCode_addSpatStateTextButton] -- add your button handler code here..
         editionManager->OnAddState();
         //[/UserButtonCode_addSpatStateTextButton]
     }
-    else if (buttonThatWasClicked == deleteSpatStateTextButton)
+    else if (buttonThatWasClicked == deleteSpatStateTextButton.get())
     {
         //[UserButtonCode_deleteSpatStateTextButton] -- add your button handler code here..
         editionManager->OnDeleteSelectedState();
         //[/UserButtonCode_deleteSpatStateTextButton]
     }
-    else if (buttonThatWasClicked == stateUpTextButton)
+    else if (buttonThatWasClicked == stateUpTextButton.get())
     {
         //[UserButtonCode_stateUpTextButton] -- add your button handler code here..
         editionManager->OnMoveSelectedStateUp();
         //[/UserButtonCode_stateUpTextButton]
     }
-    else if (buttonThatWasClicked == stateDownTextButton)
+    else if (buttonThatWasClicked == stateDownTextButton.get())
     {
         //[UserButtonCode_stateDownTextButton] -- add your button handler code here..
         editionManager->OnMoveSelectedStateDown();
@@ -219,7 +228,7 @@ void SpatStatesEditionComponent::comboBoxChanged (ComboBox* comboBoxThatHasChang
     //[UsercomboBoxChanged_Pre]
     //[/UsercomboBoxChanged_Pre]
 
-    if (comboBoxThatHasChanged == spatStatesComboBox)
+    if (comboBoxThatHasChanged == spatStatesComboBox.get())
     {
         //[UserComboBoxCode_spatStatesComboBox] -- add your combo box handling code here..
         // Change might happen when editing the text has just finished ("new" item)
@@ -283,7 +292,7 @@ void SpatStatesEditionComponent::visibilityChanged()
                 throw std::runtime_error("Édition de truc ?? Non défini...");
                 break;
         }
-        
+
         // S'adaptera si nécessaire
         labelledMatrixComponent->SetDisplayPurpose(editionManager->GetSessionPurpose());
     }
@@ -309,6 +318,14 @@ void SpatStatesEditionComponent::UpdateStatesList(std::vector< std::shared_ptr<C
     // Normally : no item selected at this point
     //editionManager->OnSpatStateSelectedById(spatStatesComboBox->getSelectedItemIndex());
 }
+
+
+void SpatStatesEditionComponent::OnMatrixButtonClicked(int row, int col, std::string matrixText, double matrixValue)
+{
+    editionManager->OnMatrixButtonClicked(row, col, matrixText, matrixValue);
+}
+
+
 void SpatStatesEditionComponent::SelectAndUpdateState(int stateIndex, std::string infoText, std::shared_ptr<ControlMatrix> newSpatMatrix)
 {
     // We keep here this copy of the model internal matrix
@@ -394,7 +411,7 @@ void SpatStatesEditionComponent::AllowKeyboardEdition(bool allow)
 BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="SpatStatesEditionComponent"
-                 componentName="" parentClasses="public Component, public ISlidersMatrixListener"
+                 componentName="" parentClasses="public Component, public ISlidersMatrixListener, public IMatrixButtonListener"
                  constructorParams="" variableInitialisers="" snapPixels="8" snapActive="1"
                  snapShown="1" overlayOpacity="0.330" fixedSize="1" initialWidth="1024"
                  initialHeight="600">

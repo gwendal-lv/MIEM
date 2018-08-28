@@ -278,6 +278,8 @@
       <GROUP id="{07BF93D8-C012-D439-DF67-3946D9CD4BEB}" name="View">
         <FILE id="prXyfS" name="ControlView.cpp" compile="1" resource="0" file="../ControlCommon/Source/ControlView.cpp"/>
         <FILE id="FOm35I" name="ControlView.h" compile="0" resource="0" file="../ControlCommon/Source/ControlView.h"/>
+        <FILE id="s5a2JQ" name="IMatrixButtonListener.h" compile="0" resource="0"
+              file="../ControlCommon/Source/IMatrixButtonListener.h"/>
         <FILE id="lLSOSu" name="ISlidersMatrixListener.h" compile="0" resource="0"
               file="../ControlCommon/Source/ISlidersMatrixListener.h"/>
         <FILE id="K2PgBO" name="LabelledMatrixComponent.cpp" compile="1" resource="0"

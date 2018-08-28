@@ -20,6 +20,16 @@ namespace bptree = boost::property_tree;
 
 namespace Miam
 {
+    class BadIdException : public std::runtime_error
+    {
+        public :
+        // Juste une runtime castée...
+        BadIdException() : std::runtime_error(std::string("MIEM bad ID Exception"))
+        {}
+        BadIdException(std::string errorString) : std::runtime_error(errorString)
+        {}
+    };
+    
     class ForceQuitException : public std::runtime_error
     {
         public :

@@ -219,6 +219,21 @@ void SpatStatesEditionManager::OnMoveSelectedStateDown()
         throw std::logic_error("Cannot move spat state towards the last position.");
 }
 
+void SpatStatesEditionManager::OnMatrixButtonClicked(int row, int col, std::string matrixText, double matrixValue)
+{
+    if (GetSessionPurpose() == AppPurpose::GenericController)
+    {
+        // Transmission au modèle d'une demande d'envoi OSC
+        // BESOIN D'UN POINTEUR VERS LE MODÈLE
+        
+        // On checke d'abord si le message OSC est OK... Sinon on envoie rien sauf un msg d'erreur
+        
+        // Si le modèle a bien envoyé : on affiche ENVOYÉ
+        
+        // Sinon on affiche l'erreur de connection transmise par le modèle
+    }
+}
+
 
 
 // = = = = = = = = = = GRAPHICAL HELPERS = = = = = = = = = =

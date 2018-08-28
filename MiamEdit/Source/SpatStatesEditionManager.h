@@ -20,6 +20,7 @@ namespace Miam
 {
     // forward declarations
     class View;
+    class Model;
     class SpatStatesEditionComponent;
     /*class SpatInterpolator<double>;*/ // from Model
     
@@ -36,6 +37,7 @@ namespace Miam
         // Links to other modules
         View* view;
         SpatStatesEditionComponent* editionComponent;
+        Model* model; // for direct OSC messages send requests... this link should is to be deleted if more functionnalities are implemented
         std::shared_ptr<StatesInterpolator<double>> spatInterpolator; // from Model
         
         // Selected spat state
@@ -85,6 +87,8 @@ namespace Miam
         void OnDeleteSelectedState();
         void OnMoveSelectedStateUp();
         void OnMoveSelectedStateDown();
+        
+        void OnMatrixButtonClicked(int row, int col, std::string matrixText, double matrixValue);
         
         
         // - - - - - Graphical helpers - - - - -

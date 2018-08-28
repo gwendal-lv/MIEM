@@ -75,6 +75,7 @@ namespace Miam
         // - - - - - Setters and Getters - - - - -
         size_t GetActiveInputsCount() {return n;}
         size_t GetActiveOutputsCount() {return m;}
+        
         void SetActiveSliders(int inputsCount, int outputsCount);
         private :
         AppPurpose getPurpose();
@@ -97,6 +98,8 @@ namespace Miam
         void SetSliderValue(int row, int col, double newValue,
                             NotificationType juceNotification = NotificationType::dontSendNotification);
         /// \brief Builds and constructs the corresponding Miam::SpatMatrix
+        
+        double GetSliderValue(int row, int col);
         std::shared_ptr<ControlMatrix> GetSpatMatrix();
         
         
