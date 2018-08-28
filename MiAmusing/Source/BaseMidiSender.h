@@ -55,7 +55,6 @@ public:
 	double getRelativePosition();
 
 	void addChord(TimeLine* otherTimeLine, double chordTime);
-	bool isNoteAvailable(ChordType m_chordType, int baseNote1, int &otherChordNote);
 	void createChord(ChordType m_chordType, double m_chordTime, int baseNote1, int baseNote2);
 	void createPerfectChord(double chordTime, int currentNote);
 	void resetAllChords();

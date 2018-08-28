@@ -147,7 +147,7 @@ EditScene::EditScene ()
 	squarePath.addPolygon(Point<float>((float)addCarreShapeButton->getWidth() / 2.0f, (float)addCarreShapeButton->getHeight() / 2.0f), 4, (float)addCarreShapeButton->getHeight() / 2.0f);
 	//squarePath.addRectangle(float(addCarreShapeButton->getWidth() - addCarreShapeButton->getHeight()) / 2.0f, 0, addCarreShapeButton->getHeight(), addCarreShapeButton->getHeight());
 	//trianglePath.addTriangle(float(addCarreShapeButton->getWidth() - addCarreShapeButton->getHeight()) / 2.0f, 0.0f, float(addCarreShapeButton->getWidth() - addCarreShapeButton->getHeight()) / 2.0f, getHeight(), float(addCarreShapeButton->getWidth() + addCarreShapeButton->getHeight()) / 2.0f, (float)getHeight() / 2.0f);
-	trianglePath.addPolygon(Point<float>((float)addTriangleShapeButton2->getWidth() / 2.0f, (float)addTriangleShapeButton2->getHeight() / 2.0f), 3, (float)addTriangleShapeButton2->getHeight() / 2.0f,M_PI/2.0f);
+	trianglePath.addPolygon(Point<float>((float)addTriangleShapeButton2->getWidth() / 2.0f, (float)addTriangleShapeButton2->getHeight() / 2.0f), 3, (float)addTriangleShapeButton2->getHeight() / 2.0f,(float)M_PI/2.0f);
 	hexaPath.addPolygon(Point<float>((float)addHexaShapeButton->getWidth() / 2.0f, (float)addHexaShapeButton->getHeight() / 2.0f), 6, (float)addHexaShapeButton->getHeight() / 2.0f);
 
 	addCarreShapeButton->setShape(squarePath, false, true, false);
@@ -363,7 +363,7 @@ void EditScene::CompleteInitialization(GraphicSessionManager* _graphicSessionMan
     //addAndMakeVisible(multiCanvasComponent);
 }
 
-void EditScene::setMidiChannel(int chan)
+void EditScene::setMidiChannel(int /*chan*/)
 {
 	//comboBoxMidi->setSelectedId(chan);
 }

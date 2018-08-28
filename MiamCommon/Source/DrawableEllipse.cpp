@@ -195,7 +195,7 @@ DrawableEllipse::~DrawableEllipse()
 	
 }
 
-void DrawableEllipse::setVerticesCount(int newVerticesCount)
+void DrawableEllipse::setVerticesCount(int /*newVerticesCount*/)
 {
 	ellipseVerticesCount = 32;//newVerticesCount;
 }

@@ -1917,11 +1917,11 @@ void CompletePolygon::RefreshTargetOpenGLBuffers()
 		{
 			std::vector<int> needToShow = OnCircles;
 			auto end = std::unique(needToShow.begin(), needToShow.end()); // enleve juste les doublons consecutif -> il peut rester des doublons mais qui dessineront la mm chose :)
-			int newSize = std::distance(needToShow.begin(), end);
+			int newSize = (int)std::distance(needToShow.begin(), end);
 			while (newSize > Nradius)
 			{
 				end = std::unique(needToShow.begin(), needToShow.end());
-				newSize = std::distance(needToShow.begin(), end);
+				newSize = (int)std::distance(needToShow.begin(), end);
 			}
 
 			bool needToResetPart = false;

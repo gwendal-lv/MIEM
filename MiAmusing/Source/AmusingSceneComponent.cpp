@@ -408,7 +408,7 @@ void AmusingSceneComponent::renderOpenGL()
 		for (int i = 0; i < (int)buttonsColor.size(); ++i)
 		{
 			g.setColour(buttonsColor[i]);
-			g.fillRect(getWidth() - 100, 4 + i * (getHeight() - 8) / buttonsColor.size(), 100 - 4, (getHeight() - 8) / (int)buttonsColor.size());
+			g.fillRect(getWidth() - 100, 4 + i * (getHeight() - 8) / (int)buttonsColor.size(), 100 - 4, (getHeight() - 8) / (int)buttonsColor.size());
 		}
 		break;
 	case ColourScale:

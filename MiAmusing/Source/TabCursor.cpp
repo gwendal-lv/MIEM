@@ -135,7 +135,7 @@ AreaEventType TabCursor::EndPointMove()
 			double currentSize = a;
 			double currentResize = currentSize / initCursorSize;
 			double maxDiff = 100000.0;
-			double resizeToApply;
+			double resizeToApply = 0; // ne restera jamais à 0 comme on prend un maxDiff assez grand
 			for (int i = 0; i < 7; ++i)
 			{
 				if (abs(currentResize - currentAreaResize * authorizedSize[i]) < maxDiff)

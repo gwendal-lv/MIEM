@@ -55,7 +55,7 @@ AmusingScene::~AmusingScene()
 		for (int i = 0; i < (int)areas.size(); i++)
 			if (auto currentArea = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
 			{
-				manager->OnInteraction(std::shared_ptr<AreaEvent>(new AreaEvent(currentArea, AreaEventType::Deleted, currentArea->GetId(), nullptr)));
+				manager->OnInteraction(std::shared_ptr<AreaEvent>(new AreaEvent(currentArea, AreaEventType::Deleted, (int)currentArea->GetId(), nullptr)));
 				currentArea->deleteAllCursors();
 			}
 	}
@@ -325,7 +325,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 		{
 			currentIntersectionsAreas[j]->CanvasResized(canvasComponent);
 			if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
-				manager->handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(currentIntersectionsAreas[j], AreaEventType::ShapeChanged, currentIntersectionsAreas[j]->GetId(), shared_from_this())));
+				manager->handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(currentIntersectionsAreas[j], AreaEventType::ShapeChanged, (int)currentIntersectionsAreas[j]->GetId(), shared_from_this())));
 		}
 
 	if (areas.size() - currentIntersectionsAreas.size() >= 10)
@@ -370,7 +370,7 @@ void AmusingScene::AddAllIntersections()
 	if (!canvasManagerLocked)
 		throw std::logic_error("Cannot add a new current exciter : cannot get a Unique ID from the canvas manager (not linked to this)");
 
-	int N = areas.size();
+	int N = (int)areas.size();
 	for (int i = 0; i < N; ++i)
 	{
 		for (int j = i + 1; j < N; ++j)
@@ -655,7 +655,7 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDrag(const MouseEvent& 
 					{
 						currentIntersectionsAreas[j]->CanvasResized(canvasComponent);
 						if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
-							manager->handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(currentIntersectionsAreas[j], AreaEventType::ShapeChanged, currentIntersectionsAreas[j]->GetId(), shared_from_this())));
+							manager->handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(currentIntersectionsAreas[j], AreaEventType::ShapeChanged, (int)currentIntersectionsAreas[j]->GetId(), shared_from_this())));
 					}
 
 				return graphicE;
@@ -989,13 +989,13 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseUp(const MouseEvent& mo
 						{
 							currentIntersectionsAreas[j]->CanvasResized(canvasComponent);
 							if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
-								manager->handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(currentIntersectionsAreas[j], AreaEventType::ShapeChanged, currentIntersectionsAreas[j]->GetId(), shared_from_this())));
+								manager->handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(currentIntersectionsAreas[j], AreaEventType::ShapeChanged, (int)currentIntersectionsAreas[j]->GetId(), shared_from_this())));
 						}
 				}
 				// end test update intersections
 
 				
-				graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, areaEventType, selectedArea->GetId(), shared_from_this()));
+				graphicE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, areaEventType, (int)selectedArea->GetId(), shared_from_this()));
 			}
 		}
 		else
@@ -1010,7 +1010,7 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseUp(const MouseEvent& mo
 					{
 						currentIntersectionsAreas[j]->CanvasResized(canvasComponent);
 						if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
-							manager->handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(currentIntersectionsAreas[j], AreaEventType::ShapeChanged, currentIntersectionsAreas[j]->GetId(), shared_from_this())));
+							manager->handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(currentIntersectionsAreas[j], AreaEventType::ShapeChanged, (int)currentIntersectionsAreas[j]->GetId(), shared_from_this())));
 					}
 				// end test update intersections
 
@@ -1030,7 +1030,7 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseUp(const MouseEvent& mo
 							{
 								currentIntersectionsAreas[j]->CanvasResized(canvasComponent);
 								if (auto manager = std::dynamic_pointer_cast<MultiSceneCanvasManager>(canvasManager.lock()))
-									manager->handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(currentIntersectionsAreas[j], AreaEventType::ShapeChanged, currentIntersectionsAreas[j]->GetId(), shared_from_this())));
+									manager->handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(currentIntersectionsAreas[j], AreaEventType::ShapeChanged, (int)currentIntersectionsAreas[j]->GetId(), shared_from_this())));
 							}
 						// end test update intersections
 
@@ -1136,11 +1136,11 @@ std::shared_ptr<GraphicEvent> AmusingScene::resetAreaPosition()
 				/*areas[i]->SetOpacityMode(OpacityMode::Independent);
 				areas[i]->SetAlpha(0.0f);*/
 				areas[i]->setVisible(true);
-				if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
+				if (auto completeArea2 = std::dynamic_pointer_cast<CompletePolygon>(areas[i]))
 				{
-					if (auto cursor = completeArea->getCursor(0))
+					if (auto cursor = completeArea2->getCursor(0))
 						cursor->setVisible(true);
-					completeArea->SetActive(false);
+					completeArea2->SetActive(false);
 				}
 
 				areas[i]->RefreshOpenGLBuffers();
@@ -1260,7 +1260,7 @@ std::shared_ptr<AreaEvent> AmusingScene::SetSelectedAreaCursor(int idx, double n
 	if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(selectedArea))
 	{
 		completeArea->setCursorsSpeed(idx, newSize);
-		areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeArea->getCursor(idx),AreaEventType::ShapeChanged,completeArea->GetId(),shared_from_this()));
+		areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeArea->getCursor(idx),AreaEventType::ShapeChanged,(int)completeArea->GetId(),shared_from_this()));
 	}
 	return areaE;
 }
@@ -1272,7 +1272,7 @@ std::shared_ptr<AreaEvent> AmusingScene::SetSelectedAreaOpacity(double newOpacit
 	{
 		completeArea->SetAlpha((float)newOpacity);
 		completeArea->RefreshOpenGLBuffers();
-		areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::ColorChanged, completeArea->GetId(), shared_from_this()));
+		areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::ColorChanged, (int)completeArea->GetId(), shared_from_this()));
 	}
 	return areaE;
 }
@@ -1286,7 +1286,7 @@ std::shared_ptr<AreaEvent> AmusingScene::SetSelectedAreaColour(Colour newColour)
 		{
 			completeArea->SetFillColour(newColour);
 			completeArea->RefreshOpenGLBuffers();
-			areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::ColorChanged, completeArea->GetId(), shared_from_this()));
+			areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::ColorChanged, (int)completeArea->GetId(), shared_from_this()));
 		}
 	}
 	return areaE;

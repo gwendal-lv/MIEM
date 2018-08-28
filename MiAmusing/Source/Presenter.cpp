@@ -91,7 +91,6 @@ void Presenter::CompleteInitialisation(AmusingModel* _model)
 		}
 	}
 	
-	int idx = 0;
 	for (int i = 0; i < numSamples; ++i)
 			setColorPath(i, colorCode[i], defaultPath);
 	//graphicSessionManager.CompleteInitialization(model);

@@ -84,11 +84,11 @@ private:
 		"    gl_FragColor = texture2D(demoTexture,UV);\n"
 		"}\n";
 
-	Image resizeImageToPowerOfTwo(Image image)
+	Image resizeImageToPowerOfTwo(Image m_image)
 	{
-		if (!(isPowerOfTwo(image.getWidth()) && isPowerOfTwo(image.getHeight())))
-			return image.rescaled(jmin(1024, nextPowerOfTwo(image.getWidth())),
-				jmin(1024, nextPowerOfTwo(image.getHeight())));
+		if (!(isPowerOfTwo(m_image.getWidth()) && isPowerOfTwo(m_image.getHeight())))
+			return m_image.rescaled(jmin(1024, nextPowerOfTwo(m_image.getWidth())),
+				jmin(1024, nextPowerOfTwo(m_image.getHeight())));
 
 		return image;
 	}

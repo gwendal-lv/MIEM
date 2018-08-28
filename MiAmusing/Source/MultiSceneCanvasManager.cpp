@@ -147,7 +147,7 @@ void MultiSceneCanvasManager::OnAudioPosition(double /*position*/)
 		//DBG("position = " + (String)position);
 		//amusingScene->getFirstCompleteArea()->setReadingPosition(position);
 		std::shared_ptr<AreaEvent> areaE(new AreaEvent(amusingScene->getFirstCompleteArea(), AreaEventType::NothingHappened,
-			amusingScene->getFirstCompleteArea()->GetId()));
+			(int)amusingScene->getFirstCompleteArea()->GetId()));
 		handleAndSendAreaEventSync(areaE);
 	}
 }
@@ -399,7 +399,7 @@ void MultiSceneCanvasManager::OnCanvasMouseDrag(const MouseEvent& mouseE)
 							handleAndSendEventSync(newAreaE);
 							break;
 						case Sample:
-							ChangeColour(colorCode[(int)floor((1.0 - area->getPercentage()) * colorCode.size())], floor((1.0 - area->getPercentage()) * colorCode.size()));
+							ChangeColour(colorCode[(int)floor((1.0 - area->getPercentage()) * colorCode.size())], (int)floor((1.0 - area->getPercentage()) * colorCode.size()));
 							handleAndSendEventSync(graphicE);
 							newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(GetSelectedArea(), AreaEventType::ShapeChanged, selectedScene));
 							handleAndSendEventSync(newAreaE);
@@ -449,7 +449,7 @@ void MultiSceneCanvasManager::OnCanvasMouseDrag(const MouseEvent& mouseE)
 					handleAndSendEventSync(newAreaE);
 					break;
 				case Sample:
-					ChangeColour(colorCode[(int)floor((1.0 - area->getPercentage()) * colorCode.size())], floor((1.0 - area->getPercentage()) * colorCode.size()));
+					ChangeColour(colorCode[(int)floor((1.0 - area->getPercentage()) * colorCode.size())], (int)floor((1.0 - area->getPercentage()) * colorCode.size()));
 					handleAndSendEventSync(graphicE);
 					newAreaE = std::shared_ptr<AreaEvent>(new AreaEvent(GetSelectedArea(), AreaEventType::ShapeChanged, selectedScene));
 					handleAndSendEventSync(newAreaE);

@@ -197,8 +197,8 @@ void SoundFilesManager::SetSoundTree(bptree::ptree tree)
 		auto index = currentSound.second.get<size_t>("<xmlattr>.index");
 		auto soundFilePath = currentSound.second.get<std::string>("<xmlattr>.soundFilePath");
 		auto color = currentSound.second.get<std::string>("<xmlattr>.color");
-		soundFileViewerArray[index]->setColourSample(Colour::fromString(StringRef(color)));
-		soundFileViewerArray[index]->setSoundPath(soundFilePath);
+		soundFileViewerArray[(int)index]->setColourSample(Colour::fromString(StringRef(color)));
+		soundFileViewerArray[(int)index]->setSoundPath(soundFilePath);
 	}
 
 }

@@ -208,7 +208,7 @@ bool TimeLine::isChordOnTime(int m_position, int i, int period, bool &end, int &
 		if (abs(chordTimesOn[i] * period - m_position) < 1)
 		{
 			m_channel = channel;
-			m_velocity = velocity[0];
+			m_velocity = (uint8)velocity[0];
 			noteToPlay = chordNotesOn[i];
 			if (noteToPlay > 128 || noteToPlay <= 0)
 				DBG("pas possible");
@@ -390,47 +390,6 @@ void TimeLine::addChord(TimeLine * otherTimeLine, double chordTime)
 	}
 	//if(currentNote == 0) // aucune note n'était jouée et aucun accord trouvé entre les 2 aires --> accord parfait avec juste la note comme base
 
-}
-
-bool TimeLine::isNoteAvailable(ChordType m_chordType, int baseNote1, int &otherChordNote)
-{
-	int difference = 13; // impossible
-	int baseNote2 = 0;
-	switch (m_chordType)
-	{
-	case MajorThird:
-		for (int i = 0; i < midiTimesSize; i++)
-		{
-			difference = abs(notes[i] - baseNote1);
-			if (difference > 11)
-			{
-				// baseNote2 = octaveNotes1 + position note dans son octave
-				baseNote2 = (baseNote1 / 12) + notes[i] % 12;
-				difference = abs(notes[i] - baseNote1);
-			}
-			else
-				baseNote2 = notes[i];
-
-			if (difference != 1 || difference != 2 || difference != 6 || difference != 10 || difference != 11)
-			{
-				otherChordNote = baseNote2;
-				return true;
-			}
-			else
-				return false;
-		}
-		break;
-	case MinorThird:
-
-		break;
-	case AugmentedQuart:
-		break;
-	case PerfectChord:
-		break;
-	default:
-		break;
-	}
-	return false;
 }
 
 void TimeLine::createChord(ChordType m_chordType, double m_chordTime, int baseNote1, int baseNote2)
