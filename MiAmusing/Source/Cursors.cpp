@@ -230,8 +230,14 @@ bool Cursor::setReadingPosition(double p)
 		if (newAlpha < 0)
 			DBG("alpha négatif");
 		SetAlpha(newAlpha);
+#if defined(OPENGL_RENDERING) || OPENGL_RENDERING == 0
+		CanvasResized(parentCanvas);
+#else
 		RefreshOpenGLBuffers();
-		//CanvasResized(parentCanvas);
+#endif // 
+
+		
+		
 		//DBG((String)center.get<0>() + " " + (String)center.get<1>() + "setReadingPosition");
 		return true;
 	}
