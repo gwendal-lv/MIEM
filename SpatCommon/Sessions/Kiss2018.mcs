@@ -20,7 +20,7 @@
             <outputs activeCount="1" maxCount="64"/>
             <senders>
                 <sender type="MiamOsc">
-                    <ip>169.254.188.252</ip>
+                    <ip>169.254.46.154</ip>
                     <udp>
                         <port>8000</port>
                     </udp>
@@ -155,13 +155,19 @@
                 </matrix>
             </state>
             <state index="12">
-                <name>BMC Distorted low-pass</name>
+                <name>BMC Distorted transition</name>
                 <matrix>
+                    <coeff row="0" col="0" value="0.052631578947368418"/>
+                    <coeff row="1" col="0" value="0.87236842105263157"/>
+                    <coeff row="2" col="0" value="0.96184210526315794"/>
+                    <coeff row="3" col="0" value="0.30263157894736842"/>
+                    <coeff row="4" col="0" value="0.074999999999999997"/>
+                    <coeff row="5" col="0" value="0.1591796875"/>
                     <coeff row="7" col="0" value="0.15394736842105264"/>
                     <coeff row="8" col="0" value="0.15526315789473685"/>
                     <coeff row="9" col="0" value="1"/>
                     <coeff row="10" col="0" value="0.0050000000000000001"/>
-                    <coeff row="11" col="0" value="0.43289473684210528"/>
+                    <coeff row="11" col="0" value="0.087890625"/>
                 </matrix>
             </state>
             <state index="13">
@@ -183,7 +189,7 @@
                     <coeff row="6" col="0" value="0.070000000000000007"/>
                     <coeff row="8" col="0" value="0.134765625"/>
                     <coeff row="9" col="0" value="1"/>
-                    <coeff row="10" col="0" value="0.0947265625"/>
+                    <coeff row="10" col="0" value="0.040789473684210528"/>
                     <coeff row="11" col="0" value="1"/>
                 </matrix>
             </state>
@@ -246,7 +252,7 @@
                                 </geometry>
                                 <spatstate index="2"/>
                             </area>
-                            <area id="144" type="Exciter" index="4">
+                            <area id="180" type="Exciter" index="4">
                                 <center x="0.15599223144432961" y="0.40078718783930489"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>true</keep_ratio>
@@ -256,7 +262,7 @@
                                 <is_round>true</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
-                            <area id="145" type="Exciter" index="5">
+                            <area id="181" type="Exciter" index="5">
                                 <center x="0.11801242236024978" y="0.93798449612403012"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>true</keep_ratio>
@@ -428,7 +434,7 @@
                                 </geometry>
                                 <spatstate index="5"/>
                             </area>
-                            <area id="136" type="Exciter" index="6">
+                            <area id="182" type="Exciter" index="6">
                                 <center x="0.27934527039247609" y="0.46802325581395332"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>true</keep_ratio>
@@ -438,7 +444,7 @@
                                 <is_round>true</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
-                            <area id="137" type="Exciter" index="7">
+                            <area id="183" type="Exciter" index="7">
                                 <center x="0.86024597576415329" y="0.13662790697674235"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>true</keep_ratio>
@@ -517,7 +523,7 @@
                                 </geometry>
                                 <spatstate index="12"/>
                             </area>
-                            <area id="142" type="Exciter" index="5">
+                            <area id="166" type="Exciter" index="5">
                                 <center x="0.10871767046482238" y="0.74515503875968792"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>true</keep_ratio>
@@ -527,7 +533,7 @@
                                 <is_round>true</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
-                            <area id="143" type="Exciter" index="6">
+                            <area id="167" type="Exciter" index="6">
                                 <center x="0.890034364261168" y="0.05038759689922457"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>true</keep_ratio>
