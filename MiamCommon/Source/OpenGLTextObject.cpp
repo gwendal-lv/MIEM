@@ -91,13 +91,13 @@ void OpenGLTextObject::initialiseShaderProgram(OpenGLContext &context)
 	textShaderProgram->use();
 }
 
-void OpenGLTextObject::drawOneTexturedRectangle(OpenGLContext &context, juce::Matrix3D<float> &model, juce::Matrix3D<float> &testView, juce::Matrix3D<float> &testPerspective, std::string stringToDraw)
+void OpenGLTextObject::drawOneTexturedRectangle(OpenGLContext &context, juce::Matrix3D<float> &model, juce::Matrix3D<float> &testView, juce::Matrix3D<float> &testPerspective, std::wstring &stringToDraw)
 {
 	//std::string stringToDraw = "BB";
 	computeVertices();
 	for (int i = 0; i < stringToDraw.length(); ++i)
-		computeUV(i, stringToDraw[i]);
-	for(int i = (int)stringToDraw.length(); i < maxSize;++i)
+		computeUV(i, wchar_t(stringToDraw[i]));
+	for(int i = stringToDraw.length(); i < maxSize;++i)
 		computeUV(i, ' ');
 	context.extensions.glBindBuffer(GL_ARRAY_BUFFER, 0);
 	context.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -178,23 +178,54 @@ void OpenGLTextObject::computeVertices()
 	}
 }
 
-void OpenGLTextObject::computeUV(int idx, char character)
+void OpenGLTextObject::computeUV(int idx, wchar_t character)
 {
-	float xNew = float(character % 8) / 8.0f;//float(character % 16) / 8.0f;
-	float yNew = (7 - (float(character / 8) - 4)) / 8.0f;//(float(character / 16)-1.0f) / 8.0f;
+	float wRatio = (39.0f / 1024.0f); // width of character in % of texture width
+	float hRatio = 1.0f / 16.0f; // height of character in % of texture height
 
-	g_UV_buffer_data[idx * 12 + 0] = xNew + 0.0f;
-	g_UV_buffer_data[idx * 12 + 1] = yNew + 1.0f / 16.0f;
-	g_UV_buffer_data[idx * 12 + 2] = xNew + 1.0f / 16.0f;
-	g_UV_buffer_data[idx * 12 + 3] = yNew + 1.0f / 16.0f;
-	g_UV_buffer_data[idx * 12 + 4] = xNew + 1.0f / 16.0f;
-	g_UV_buffer_data[idx * 12 + 5] = yNew + 1.0f / 8.0f;
-	g_UV_buffer_data[idx * 12 + 6] = xNew + 0.0f;
-	g_UV_buffer_data[idx * 12 + 7] = yNew + 1.0f / 8.0f;
-	g_UV_buffer_data[idx * 12 + 8] = xNew + 1.0f / 16.0f;
-	g_UV_buffer_data[idx * 12 + 9] = yNew + 1.0f / 8.0f;
-	g_UV_buffer_data[idx * 12 + 10] = xNew + 0.0f;
-	g_UV_buffer_data[idx * 12 + 11] = yNew + 1.0f / 16.0f;
+	unsigned char test = 'י';
+	float xNew = wRatio * float(character % 16);//float(character % 16) * wRatio;//float(character % 16) / 8.0f;
+	float yNew = 1.0f - float(int(character / 16) - 2) * hRatio;//1 - float(int(character / 16)) * hRatio;//(7 - (float(character / 8) - 4)) / 8.0f;//(float(character / 16)-1.0f) / 8.0f;
+
+	std::wstring testString = L"ארנ";
+	int strSz = testString.length();
+	wchar_t firstChar = testString[0];
+	wchar_t scndChar = testString[1];
+	wchar_t lastChar = testString[2];
+
+	// UV :30------>1
+	//     | \      |
+	//     |  \     |
+	//     |   \    |
+	//     |    \   |
+	//     |     \  |
+	//     |      V V
+	//     5------>42
+
+
+
+	// coin inferieur droit
+
+	g_UV_buffer_data[idx * 12 + 0] = xNew;//xNew + 0.0f;
+	g_UV_buffer_data[idx * 12 + 1] = yNew - hRatio;//0.0f;//yNew - hRatio;
+
+	g_UV_buffer_data[idx * 12 + 2] = xNew + wRatio;//1.0f;//xNew + wRatio;
+	g_UV_buffer_data[idx * 12 + 3] = yNew - hRatio; //0.0f;//yNew - hRatio;
+
+	g_UV_buffer_data[idx * 12 + 4] = xNew + wRatio; //1.0f;//xNew + wRatio;
+	g_UV_buffer_data[idx * 12 + 5] = yNew; //1.0f;//yNew - 2 * hRatio;
+
+
+	//coin superieur gauche
+
+	g_UV_buffer_data[idx * 12 + 6] = xNew;//xNew + 0.0f;
+	g_UV_buffer_data[idx * 12 + 7] = yNew;//1.0f;//yNew - hRatio;
+
+	g_UV_buffer_data[idx * 12 + 8] = xNew + wRatio; //1.0f;//xNew + wRatio;
+	g_UV_buffer_data[idx * 12 + 9] = yNew; //1.0f;//yNew - 2 * hRatio;
+
+	g_UV_buffer_data[idx * 12 + 10] = xNew;//xNew + 0.0f;
+	g_UV_buffer_data[idx * 12 + 11] = yNew - hRatio;;//0.0f;//yNew - 2 * hRatio;
 }
 
 void OpenGLTextObject::release()

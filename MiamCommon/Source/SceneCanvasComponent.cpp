@@ -37,7 +37,7 @@ SceneCanvasComponent::SceneCanvasComponent(int numShapesMax, int numPointsMax) :
 
 void SceneCanvasComponent::init(int numShapesMax, int numPointsMax)
 {
-	openGLLabel = std::shared_ptr<OpenGLTextObject>(new OpenGLTextObject("ExportedFont2_png", 100.0f, 100.0f, 20.0f, -30.0f, 12));
+	openGLLabel = std::shared_ptr<OpenGLTextObject>(new OpenGLTextObject("C:\\Users\\ayup1\\PycharmProjects\\fontPNG\\newFontImg.png", 100.0f, 300.0f, 200.0f, -200.0f, 1)); // "ExportedFont2_png", "C:\\Users\\ayup1\\Downloads\\newFontImg.png"
 	ofs.open("testFps.txt", std::ofstream::out | std::ofstream::app);
 	EunderTime = 0.0;
 	previousMaxSize = 0;
@@ -467,7 +467,17 @@ void SceneCanvasComponent::renderOpenGL()
 	{
 		Matrix3D<float> testView = lookAt(Vector3D<float>(0, 0, 1), Vector3D<float>(0, 0, 0), Vector3D<float>(0, -1, 0));
 		Matrix3D<float> testProjecxtion = perspective((float)/*desktopScale **/ getWidth(), (float)/*desktopScale **/ getHeight(), 0.5f, 1.1f);
-		openGLLabel->drawOneTexturedRectangle(openGlContext, model, testView, testProjecxtion, std::to_string(fps));
+
+		//std::string test = u8'à';
+
+		std::wstring testString = L"àøð";
+		int strSz = testString.length();
+		wchar_t firstChar = testString[0];
+		wchar_t scndChar = testString[1];
+		wchar_t lastChar = testString[2];
+
+		std::wstring testString2 = L"à";
+		openGLLabel->drawOneTexturedRectangle(openGlContext, model, testView, testProjecxtion, testString2/*std::to_string(fps)*/);
 	}
 
 #endif // !OPENGL_RENDERING || OPENGL_RENDERING == 0

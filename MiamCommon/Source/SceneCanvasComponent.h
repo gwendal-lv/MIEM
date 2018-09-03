@@ -23,6 +23,8 @@
 
 #include <fstream>
 
+#include <string>
+
 using namespace Miam;
 
 namespace Miam {

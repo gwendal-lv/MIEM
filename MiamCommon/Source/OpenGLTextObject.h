@@ -20,12 +20,12 @@ public:
 	~OpenGLTextObject();
 
 	void initialiseText(OpenGLContext& context);
-	void drawOneTexturedRectangle(OpenGLContext &context, juce::Matrix3D<float> &model, juce::Matrix3D<float> &testView, juce::Matrix3D<float> &testPerspective, std::string stringToDraw);
+	void drawOneTexturedRectangle(OpenGLContext &context, juce::Matrix3D<float> &model, juce::Matrix3D<float> &testView, juce::Matrix3D<float> &testPerspective, std::wstring& stringToDraw);
 	void release();
 		
 private:
 	void computeVertices();
-	void computeUV(int idx, char character);
+	void computeUV(int idx, wchar_t character);
 	void initialiseBuffer(OpenGLContext& context);
 	void initialiseAttribute();
 	void initialiseShaderProgram(OpenGLContext &context);
@@ -90,6 +90,6 @@ private:
 			return m_image.rescaled(jmin(1024, nextPowerOfTwo(m_image.getWidth())),
 				jmin(1024, nextPowerOfTwo(m_image.getHeight())));
 
-		return image;
+		return m_image;
 	}
 };

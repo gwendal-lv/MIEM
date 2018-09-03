@@ -11,9 +11,6 @@
 
 
 #include "JuceHeader.h"
-#include "boost/geometry.hpp"
-#include "boost/geometry/geometries/geometries.hpp"
-#include "boost/geometry/geometries/polygon.hpp"
 #include "DrawableArea.h"
 
 
