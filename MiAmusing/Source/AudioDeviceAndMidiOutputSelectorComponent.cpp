@@ -55,7 +55,7 @@ void AudioDeviceAndMidiOutputSelectorComponent::buttonStateChanged(Button *butto
 		internalSynthButtonState = internalSynthButton->getToggleState();
 		if (internalSynthButtonState)
 		{
-			// bouton On : on utilise le synthé interne -> pas besoin de montrer le midiOutputSelector
+			// bouton On : on utilise le synthÃ© interne -> pas besoin de montrer le midiOutputSelector
 			audioDeviceSelectorComponent->getChildComponent(midiOutputSelectorId)->setVisible(false);
 			audioDeviceSelectorComponent->deviceManager.setDefaultMidiOutput(String());
 		}
@@ -103,7 +103,7 @@ void AudioDeviceAndMidiOutputSelectorComponent::reloadPreviousState()
 
 	if (internalSynthButtonStateSaved)
 	{
-		// bouton On : on utilise le synthé interne -> pas besoin de montrer le midiOutputSelector
+		// bouton On : on utilise le synthÃ© interne -> pas besoin de montrer le midiOutputSelector
 		audioDeviceSelectorComponent->getChildComponent(midiOutputSelectorId)->setVisible(false);
 		audioDeviceSelectorComponent->deviceManager.setDefaultMidiOutput(String());
 	}

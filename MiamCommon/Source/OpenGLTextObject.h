@@ -20,12 +20,13 @@ public:
 	~OpenGLTextObject();
 
 	void initialiseText(OpenGLContext& context);
-	void drawOneTexturedRectangle(OpenGLContext &context, juce::Matrix3D<float> &model, juce::Matrix3D<float> &testView, juce::Matrix3D<float> &testPerspective, std::wstring& stringToDraw);
+	void drawOneTexturedRectangle(OpenGLContext &context, juce::Matrix3D<float> &model, juce::Matrix3D<float> &testView, juce::Matrix3D<float> &testPerspective, std::u16string stringToDraw[]);
 	void release();
 		
 private:
 	void computeVertices();
-	void computeUV(int idx, wchar_t character);
+	void computeUV(int idx, char32_t character);
+	void UTF16ToCodePoint(std::u16string::iterator &it, char32_t &currentCodePoint);
 	void initialiseBuffer(OpenGLContext& context);
 	void initialiseAttribute();
 	void initialiseShaderProgram(OpenGLContext &context);

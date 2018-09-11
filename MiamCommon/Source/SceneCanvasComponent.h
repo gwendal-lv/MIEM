@@ -325,7 +325,6 @@ private:
 		}
 	}
 
-	std::ofstream ofs;
 
 	std::atomic<bool> releaseResources;
 

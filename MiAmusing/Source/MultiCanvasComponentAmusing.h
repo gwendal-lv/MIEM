@@ -33,9 +33,5 @@ public:
 	MultiSceneCanvasComponent* AddCanvas() override;
 
 private:
-	SafePointer<AudioDeviceSelectorComponent> audioSetupComp;
-	SafePointer<DialogWindow> dialogWindow;
-	DialogWindow::LaunchOptions options;
-	bool show;
 };
 

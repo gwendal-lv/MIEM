@@ -63,55 +63,59 @@
         <FILE id="to3tGG" name="Presenter.h" compile="0" resource="0" file="Source/Presenter.h"/>
       </GROUP>
       <GROUP id="{6C8312F9-4A59-989E-1DC5-6EC6799A0035}" name="View">
-        <FILE id="fvDGnO" name="AmusingSceneComponent.cpp" compile="1" resource="0"
-              file="Source/AmusingSceneComponent.cpp"/>
-        <FILE id="HqoQys" name="AmusingSceneComponent.h" compile="0" resource="0"
-              file="Source/AmusingSceneComponent.h"/>
+        <GROUP id="{8A490DCF-4319-3FD7-D35F-9A670467252C}" name="Components">
+          <FILE id="luxgya" name="AudioDeviceAndMidiOutputSelectorComponent.cpp"
+                compile="1" resource="0" file="Source/AudioDeviceAndMidiOutputSelectorComponent.cpp"/>
+          <FILE id="Xq7fsV" name="AudioDeviceAndMidiOutputSelectorComponent.h"
+                compile="0" resource="0" file="Source/AudioDeviceAndMidiOutputSelectorComponent.h"/>
+          <FILE id="DDewx3" name="MultiCanvasComponentAmusing.cpp" compile="1"
+                resource="0" file="Source/MultiCanvasComponentAmusing.cpp"/>
+          <FILE id="a1eNGz" name="MultiCanvasComponentAmusing.h" compile="0"
+                resource="0" file="Source/MultiCanvasComponentAmusing.h"/>
+          <FILE id="GE7I1N" name="MultiSceneCanvasComponentAmusing.cpp" compile="1"
+                resource="0" file="Source/MultiSceneCanvasComponentAmusing.cpp"/>
+          <FILE id="salJhk" name="MultiSceneCanvasComponentAmusing.h" compile="0"
+                resource="0" file="Source/MultiSceneCanvasComponentAmusing.h"/>
+          <FILE id="wihbQV" name="editScene.cpp" compile="1" resource="0" file="Source/editScene.cpp"/>
+          <FILE id="yBAnTJ" name="editScene.h" compile="0" resource="0" file="Source/editScene.h"/>
+          <FILE id="zj4ZTk" name="OptionWindow.cpp" compile="1" resource="0"
+                file="Source/OptionWindow.cpp"/>
+          <FILE id="Hck3e6" name="OptionWindow.h" compile="0" resource="0" file="Source/OptionWindow.h"/>
+          <FILE id="a8Ct4o" name="AreaOptionsComponent.cpp" compile="1" resource="0"
+                file="Source/AreaOptionsComponent.cpp"/>
+          <FILE id="A2C9sM" name="AreaOptionsComponent.h" compile="0" resource="0"
+                file="Source/AreaOptionsComponent.h"/>
+          <FILE id="fvDGnO" name="AmusingSceneComponent.cpp" compile="1" resource="0"
+                file="Source/AmusingSceneComponent.cpp"/>
+          <FILE id="HqoQys" name="AmusingSceneComponent.h" compile="0" resource="0"
+                file="Source/AmusingSceneComponent.h"/>
+          <FILE id="UU8cSP" name="MainComponent.cpp" compile="1" resource="0"
+                file="Source/MainComponent.cpp"/>
+          <FILE id="W5cilK" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+        </GROUP>
+        <GROUP id="{44639BF3-9F71-5A5C-BE57-34EA570E57CD}" name="SamplesManagement">
+          <FILE id="X2HcUv" name="BinaryDataExplorer.cpp" compile="1" resource="0"
+                file="Source/BinaryDataExplorer.cpp"/>
+          <FILE id="cIzTi1" name="BinaryDataExplorer.h" compile="0" resource="0"
+                file="Source/BinaryDataExplorer.h"/>
+          <FILE id="Q3sn9N" name="ColorArray.cpp" compile="1" resource="0" file="Source/ColorArray.cpp"/>
+          <FILE id="rbd4Kt" name="ColorArray.h" compile="0" resource="0" file="Source/ColorArray.h"/>
+          <FILE id="ekJKk8" name="SoundBrowser.cpp" compile="1" resource="0"
+                file="Source/SoundBrowser.cpp"/>
+          <FILE id="zpTimK" name="SoundBrowser.h" compile="0" resource="0" file="Source/SoundBrowser.h"/>
+          <FILE id="XfdWAv" name="SoundFilesManager.cpp" compile="1" resource="0"
+                file="Source/SoundFilesManager.cpp"/>
+          <FILE id="r3bzow" name="SoundFilesManager.h" compile="0" resource="0"
+                file="Source/SoundFilesManager.h"/>
+          <FILE id="dqVA3o" name="SoundFileViewer.cpp" compile="1" resource="0"
+                file="Source/SoundFileViewer.cpp"/>
+          <FILE id="HUtq1X" name="SoundFileViewer.h" compile="0" resource="0"
+                file="Source/SoundFileViewer.h"/>
+        </GROUP>
         <FILE id="zL9zBL" name="AreaOptions.cpp" compile="1" resource="0" file="Source/AreaOptions.cpp"/>
         <FILE id="HIcl1x" name="AreaOptions.h" compile="0" resource="0" file="Source/AreaOptions.h"/>
-        <FILE id="a8Ct4o" name="AreaOptionsComponent.cpp" compile="1" resource="0"
-              file="Source/AreaOptionsComponent.cpp"/>
-        <FILE id="A2C9sM" name="AreaOptionsComponent.h" compile="0" resource="0"
-              file="Source/AreaOptionsComponent.h"/>
-        <FILE id="luxgya" name="AudioDeviceAndMidiOutputSelectorComponent.cpp"
-              compile="1" resource="0" file="Source/AudioDeviceAndMidiOutputSelectorComponent.cpp"/>
-        <FILE id="Xq7fsV" name="AudioDeviceAndMidiOutputSelectorComponent.h"
-              compile="0" resource="0" file="Source/AudioDeviceAndMidiOutputSelectorComponent.h"/>
-        <FILE id="X2HcUv" name="BinaryDataExplorer.cpp" compile="1" resource="0"
-              file="Source/BinaryDataExplorer.cpp"/>
-        <FILE id="cIzTi1" name="BinaryDataExplorer.h" compile="0" resource="0"
-              file="Source/BinaryDataExplorer.h"/>
-        <FILE id="Q3sn9N" name="ColorArray.cpp" compile="1" resource="0" file="Source/ColorArray.cpp"/>
-        <FILE id="rbd4Kt" name="ColorArray.h" compile="0" resource="0" file="Source/ColorArray.h"/>
-        <FILE id="wihbQV" name="editScene.cpp" compile="1" resource="0" file="Source/editScene.cpp"/>
-        <FILE id="yBAnTJ" name="editScene.h" compile="0" resource="0" file="Source/editScene.h"/>
         <FILE id="XEwX00" name="ExportedFont2.png" compile="0" resource="1"
               file="../MiamCommon/Resources/ExportedFont2.png"/>
-        <FILE id="UU8cSP" name="MainComponent.cpp" compile="1" resource="0"
-              file="Source/MainComponent.cpp"/>
-        <FILE id="W5cilK" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
-        <FILE id="DDewx3" name="MultiCanvasComponentAmusing.cpp" compile="1"
-              resource="0" file="Source/MultiCanvasComponentAmusing.cpp"/>
-        <FILE id="a1eNGz" name="MultiCanvasComponentAmusing.h" compile="0"
-              resource="0" file="Source/MultiCanvasComponentAmusing.h"/>
-        <FILE id="GE7I1N" name="MultiSceneCanvasComponentAmusing.cpp" compile="1"
-              resource="0" file="Source/MultiSceneCanvasComponentAmusing.cpp"/>
-        <FILE id="salJhk" name="MultiSceneCanvasComponentAmusing.h" compile="0"
-              resource="0" file="Source/MultiSceneCanvasComponentAmusing.h"/>
-        <FILE id="zj4ZTk" name="OptionWindow.cpp" compile="1" resource="0"
-              file="Source/OptionWindow.cpp"/>
-        <FILE id="Hck3e6" name="OptionWindow.h" compile="0" resource="0" file="Source/OptionWindow.h"/>
-        <FILE id="ekJKk8" name="SoundBrowser.cpp" compile="1" resource="0"
-              file="Source/SoundBrowser.cpp"/>
-        <FILE id="zpTimK" name="SoundBrowser.h" compile="0" resource="0" file="Source/SoundBrowser.h"/>
-        <FILE id="XfdWAv" name="SoundFilesManager.cpp" compile="1" resource="0"
-              file="Source/SoundFilesManager.cpp"/>
-        <FILE id="r3bzow" name="SoundFilesManager.h" compile="0" resource="0"
-              file="Source/SoundFilesManager.h"/>
-        <FILE id="dqVA3o" name="SoundFileViewer.cpp" compile="1" resource="0"
-              file="Source/SoundFileViewer.cpp"/>
-        <FILE id="HUtq1X" name="SoundFileViewer.h" compile="0" resource="0"
-              file="Source/SoundFileViewer.h"/>
         <FILE id="GceKis" name="View.cpp" compile="1" resource="0" file="Source/View.cpp"/>
         <FILE id="AJOEwp" name="View.h" compile="0" resource="0" file="Source/View.h"/>
       </GROUP>
@@ -341,7 +345,7 @@
     </ANDROIDSTUDIO>
     <VS2017 targetFolder="Builds/VisualStudio2017" extraDefs="OPENGL_RENDERING = 1">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" headerPath="..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\&#10;..\..\..\"/>
+        <CONFIGURATION isDebug="1" name="Debug" headerPath="..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\&#10;..\..\..\&#10;..\..\..\..\..\..\Downloads\ft291\freetype-2.9.1\include\"/>
         <CONFIGURATION isDebug="0" name="Release" headerPath="..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\&#10;..\..\..\"/>
       </CONFIGURATIONS>
       <MODULEPATHS>

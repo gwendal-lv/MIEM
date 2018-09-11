@@ -47,15 +47,7 @@ void MultiCanvasComponentAmusing::addColourSample(int index, Colour colour)
 void MultiCanvasComponentAmusing::resized()
 {
 	MultiCanvasComponent::resized();
-	if (show == true)
-	{
-		DBG("resized with audioSetUpCOmp");
-		Rectangle<int> rCanvas = getLocalBounds();
-		rCanvas.reduce(8, 8);
-		audioSetupComp->setBounds(rCanvas);
-		addAndMakeVisible(audioSetupComp);
-		audioSetupComp->setAlwaysOnTop(true);//toFront(true);
-	}
+	
 }
 
 // - - - - - Canvases & canvas group - - - - -

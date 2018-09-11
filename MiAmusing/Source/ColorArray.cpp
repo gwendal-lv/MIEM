@@ -150,7 +150,7 @@ void ColorArray::addColourSample(int index, Colour colour)
 
 void ColorArray::setCurrentColorSelected(int idx)
 {
-	// appeler cette fonction dans buttonClicked pour plus de clareté !
+	// appeler cette fonction dans buttonClicked pour plus de claretÃ© !
 	Rectangle<int> r(buttonArray[idx]->getBounds());
 	buttonArray[idx]->setBounds(buttonArray[currentColor]->getBounds());
 	buttonArray[currentColor]->setBounds(r);
