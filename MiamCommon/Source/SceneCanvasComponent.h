@@ -180,7 +180,7 @@ public:
 
     
 protected :
-	ScopedPointer<OpenGLShaderProgram::Attribute> position, colour;
+	std::unique_ptr<OpenGLShaderProgram::Attribute> position, colour;
 
 private:
 	int numFrame;
@@ -190,7 +190,7 @@ private:
 	bool needToResetBufferParts;
 	int previousMaxSize; // utilisé pour remettre à 0 les parties de buffer qui étaient utilisées à la frame précédente et qui ne le sont plus mtn
 
-	ScopedPointer<OpenGLShaderProgram> shaderProgram;
+	std::unique_ptr<OpenGLShaderProgram> shaderProgram;
 	
 
 	std::unique_ptr<OpenGLShaderProgram::Uniform> projectionMatrix, viewMatrix, modelMatrix;

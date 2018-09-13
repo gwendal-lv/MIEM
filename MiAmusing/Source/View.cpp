@@ -103,13 +103,14 @@ void View::DisplayInfo(const String& /*message*/)
 
 void View::ShowDeviceOptionsDialog()
 {
+	mainContentComponent->ReleaseOpengGLResources();
 	mainContentComponent->ShowDeviceOptionsDialog();
 }
 
 void View::ShowSoundManager()
 {
+	mainContentComponent->ReleaseOpengGLResources();
 	mainContentComponent->ShowSoundManagerComponent();
-
 }
 
 void View::removeDeviceManagerFromOptionWindow()

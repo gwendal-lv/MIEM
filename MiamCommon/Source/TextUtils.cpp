@@ -60,4 +60,12 @@ std::string TextUtils::FindFilenameInCommandLineArguments(std::string commandLin
     return commandLineFileName;
 }
 
+void Miam::TextUtils::intToU16string(int I, std::u16string stringU16[])
+{
+	std::string stringASCII = std::to_string(I);
+	for (int i = 0; i < stringASCII.length(); ++i)
+		stringU16[0].push_back(char16_t(stringASCII[i]));
+	return;
+}
+
 
