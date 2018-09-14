@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT name="MIEM Generic Controller" projectType="guiapp" jucerVersion="5.3.2"
-              version="0.2.0" companyName="IRISIB/LARAS, UMons" companyCopyright="Gwendal Le Vaillant (IRISIB/LARAS, UMons)"
+<JUCERPROJECT name="MIEM Controller" projectType="guiapp" jucerVersion="5.3.2"
+              version="0.2.1" companyName="IRISIB/LARAS, UMons" companyCopyright="Gwendal Le Vaillant (IRISIB/LARAS, UMons)"
               companyWebsite="htpp://laras.be" companyEmail="glevaillant@he2b.be"
-              reportAppUsage="0" displaySplashScreen="0" bundleIdentifier="com.glv.MIEMGenericController"
+              reportAppUsage="0" displaySplashScreen="0" bundleIdentifier="com.glv.MIEMController"
               headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../ControlCommon/Source/&#10;../../../SpatCommon/Source/"
               id="k0BzOi">
-  <MAINGROUP id="Krx0MS" name="MIEM Generic Controller">
+  <MAINGROUP id="Krx0MS" name="MIEM Controller">
     <GROUP id="{B7F5CB5C-B6F8-A8AA-0F14-17FA42CC4DDF}" name="Source">
       <FILE id="BwuW2o" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="tPf6XE" name="Model.cpp" compile="1" resource="0" file="Source/Model.cpp"/>
@@ -304,7 +304,8 @@
         <MODULEPATH id="juce_osc" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
-    <XCODE_IPHONE targetFolder="Builds/iOS" extraDefs="__MIAMOBILE">
+    <XCODE_IPHONE targetFolder="Builds/iOS" extraDefs="__MIAMOBILE" iCloudPermissions="1"
+                  iosDevelopmentTeamID="JU6GKA4Z3B">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" defines="__MIAM_DEBUG"/>
         <CONFIGURATION isDebug="0" name="Release"/>

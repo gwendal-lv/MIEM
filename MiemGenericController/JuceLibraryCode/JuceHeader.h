@@ -39,8 +39,8 @@
 #if ! JUCE_DONT_DECLARE_PROJECTINFO
 namespace ProjectInfo
 {
-    const char* const  projectName    = "MIEM Generic Controller";
-    const char* const  versionString  = "0.2.0";
-    const int          versionNumber  = 0x200;
+    const char* const  projectName    = "MIEM Controller";
+    const char* const  versionString  = "0.2.1";
+    const int          versionNumber  = 0x201;
 }
 #endif
