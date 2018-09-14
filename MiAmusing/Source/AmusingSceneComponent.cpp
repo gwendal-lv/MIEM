@@ -348,7 +348,7 @@ void AmusingSceneComponent::renderOpenGL()
 		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		break;
 	case ScaleMarking :
-		computeScaleMarking(Point<float>(getWidth() - 75, 0), (float)getHeight(), 75.0f, 12);
+		computeScaleMarking(Point<float>((float)getWidth() - 75.0f, 0.0f), (float)getHeight(), 75.0f, 12);
 		openGlContext.extensions.glEnableVertexAttribArray(position->attributeID);
 		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, scaleMarkingVertex);
 		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, (128 + 1) * 4 * 3 * sizeof(GLfloat), g_scaleMarkingVertex_buffer_data);

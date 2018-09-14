@@ -44,7 +44,7 @@ private:
 
 	ScopedPointer<OpenGLShaderProgram::Attribute> positionText, colourText, vertexUV;
 	ScopedPointer<OpenGLShaderProgram::Uniform> textProjectionMatrix, textViewMatrix, textModelMatrix, texture;
-	std::unique_ptr<OpenGLTexture> textTexture;
+	OpenGLTexture* textTexture;
 	juce::Image image;
 
 	String myTextVertexShader = "attribute vec4 position;\n"
@@ -93,4 +93,6 @@ private:
 
 		return m_image;
 	}
+
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OpenGLTextObject)
 };
