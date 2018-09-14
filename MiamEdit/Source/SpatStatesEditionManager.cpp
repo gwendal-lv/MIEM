@@ -128,8 +128,8 @@ void SpatStatesEditionManager::OnInOutNamesDisplayedChanged(bool areInputNamesVi
 
 void SpatStatesEditionManager::OnSpatStateSelectedById(std::shared_ptr<ControlMatrix> currentMatrix, int _spatStateId)
 {
-    // Matrix save within Model if necessary
-    sendDataToModel(currentMatrix);
+    // All data save within Model if necessary
+    sendCurrentDataToModel();
     
     // Check for the information (not updated info might come the GUI, we never know...)
     if (_spatStateId == -1)
@@ -144,7 +144,7 @@ void SpatStatesEditionManager::OnSpatStateSelectedById(std::shared_ptr<ControlMa
 void SpatStatesEditionManager::OnRenameState(std::string newName, int stateIndex)
 {
     // Sauvegarde avant tout
-    sendDataToModel(editionComponent->GetDisplayedSpatMatrix());
+    sendCurrentDataToModel();
     
     // Actual renaming
     spatInterpolator->GetState(stateIndex)->SetName(newName);
@@ -158,7 +158,7 @@ void SpatStatesEditionManager::OnRenameState(std::string newName, int stateIndex
 void SpatStatesEditionManager::OnAddState()
 {
     // Actualisation depuis l'affichage graphique
-    sendDataToModel(editionComponent->GetDisplayedSpatMatrix());
+    sendCurrentDataToModel();
     
     // Puis addition
     auto newState = spatInterpolator->AddDefaultState();
@@ -195,7 +195,7 @@ void SpatStatesEditionManager::OnMoveSelectedStateUp()
         && selectedSpatState->GetIndex() > 0)
     {
         // Actualisation depuis l'affichage graphique
-        sendDataToModel(editionComponent->GetDisplayedSpatMatrix());
+        sendCurrentDataToModel();
         
         spatInterpolator->SwapStatesByIndex(selectedSpatState->GetIndex(), selectedSpatState->GetIndex()-1);
         // Updates
@@ -212,7 +212,7 @@ void SpatStatesEditionManager::OnMoveSelectedStateDown()
         && selectedSpatState->GetIndex() < spatInterpolator->GetStatesCount()-1)
     {
         // Actualisation depuis l'affichage graphique
-        sendDataToModel(editionComponent->GetDisplayedSpatMatrix());
+        sendCurrentDataToModel();
         
         spatInterpolator->SwapStatesByIndex(selectedSpatState->GetIndex(), selectedSpatState->GetIndex()+1);
         // Updates
@@ -270,11 +270,11 @@ void SpatStatesEditionManager::UpdateView()
 
 void SpatStatesEditionManager::sendCurrentDataToModel()
 {
-    sendDataToModel(editionComponent->GetDisplayedSpatMatrix());
+    sendMatrixDataToModel(editionComponent->GetDisplayedSpatMatrix());
     auto channelsNameCopy = editionComponent->GetLabelledMatrix()->GetChannelsName();
     spatInterpolator->SetInOutChannelsName(channelsNameCopy);
 }
-void SpatStatesEditionManager::sendDataToModel(std::shared_ptr<ControlMatrix> currentMatrix)
+void SpatStatesEditionManager::sendMatrixDataToModel(std::shared_ptr<ControlMatrix> currentMatrix)
 {
     if (selectedSpatState) // if exists
     {
