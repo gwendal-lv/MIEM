@@ -36,7 +36,7 @@ private:
 	float textX, textY, characterWidth, characterHeight;
 	int maxSize;
 
-	OpenGLShaderProgram* textShaderProgram;
+	std::unique_ptr<OpenGLShaderProgram> textShaderProgram;
 
 	GLuint vertexBuffer;
 	GLfloat *g_vertex_buffer_data;//[6 * 3];
@@ -44,9 +44,9 @@ private:
 	GLuint UVBuffer;
 	GLfloat *g_UV_buffer_data;//[6 * 2];
 
-	OpenGLShaderProgram::Attribute *positionText, *colourText, *vertexUV;
-	OpenGLShaderProgram::Uniform *textProjectionMatrix, *textViewMatrix, *textModelMatrix, *texture;
-	OpenGLTexture* textTexture;
+	std::unique_ptr<OpenGLShaderProgram::Attribute> positionText, colourText, vertexUV;
+	std::unique_ptr<OpenGLShaderProgram::Uniform> textProjectionMatrix, textViewMatrix, textModelMatrix, texture;
+	std::unique_ptr<OpenGLTexture> textTexture;
 	juce::Image image;
 
 	String myTextVertexShader = "attribute vec4 position;\n"
@@ -96,11 +96,6 @@ private:
 		return m_image;
 	}
 
-	OpenGLShaderProgram* textShaderProgramCopy;
-
-	OpenGLShaderProgram::Attribute *positionTextCopy, *colourTextCopy, *vertexUVCopy;
-	OpenGLShaderProgram::Uniform *textProjectionMatrixCopy, *textViewMatrixCopy, *textModelMatrixCopy, *textureCopy;
-	OpenGLTexture* textTextureCopy;
 
 	std::thread destructionThread;
 	void destructionThreadFunc();
