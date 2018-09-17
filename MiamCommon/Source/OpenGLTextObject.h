@@ -11,6 +11,7 @@
 #pragma once
 
 #include <string>
+#include <thread>
 #include "JuceHeader.h"
 
 class OpenGLTextObject
@@ -22,6 +23,7 @@ public:
 	void initialiseText(OpenGLContext& context);
 	void drawOneTexturedRectangle(OpenGLContext &context, juce::Matrix3D<float> &model, juce::Matrix3D<float> &testView, juce::Matrix3D<float> &testPerspective, std::u16string stringToDraw[]);
 	void release();
+	void waitForOpenGLResourcesRealeased();
 		
 private:
 	void computeVertices();
@@ -34,7 +36,7 @@ private:
 	float textX, textY, characterWidth, characterHeight;
 	int maxSize;
 
-	ScopedPointer<OpenGLShaderProgram> textShaderProgram;
+	OpenGLShaderProgram* textShaderProgram;
 
 	GLuint vertexBuffer;
 	GLfloat *g_vertex_buffer_data;//[6 * 3];
@@ -42,8 +44,8 @@ private:
 	GLuint UVBuffer;
 	GLfloat *g_UV_buffer_data;//[6 * 2];
 
-	ScopedPointer<OpenGLShaderProgram::Attribute> positionText, colourText, vertexUV;
-	ScopedPointer<OpenGLShaderProgram::Uniform> textProjectionMatrix, textViewMatrix, textModelMatrix, texture;
+	OpenGLShaderProgram::Attribute *positionText, *colourText, *vertexUV;
+	OpenGLShaderProgram::Uniform *textProjectionMatrix, *textViewMatrix, *textModelMatrix, *texture;
 	OpenGLTexture* textTexture;
 	juce::Image image;
 
@@ -93,6 +95,18 @@ private:
 
 		return m_image;
 	}
+
+	OpenGLShaderProgram* textShaderProgramCopy;
+
+	OpenGLShaderProgram::Attribute *positionTextCopy, *colourTextCopy, *vertexUVCopy;
+	OpenGLShaderProgram::Uniform *textProjectionMatrixCopy, *textViewMatrixCopy, *textModelMatrixCopy, *textureCopy;
+	OpenGLTexture* textTextureCopy;
+
+	std::thread destructionThread;
+	void destructionThreadFunc();
+	
+
+	std::atomic<bool> needToRelease;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OpenGLTextObject)
 };

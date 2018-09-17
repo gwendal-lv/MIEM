@@ -91,6 +91,7 @@ private:
     
 	void ShowDeviceOptionsDialog();
 	void ShowSoundManagerComponent();
+	void HideOpenGLCanevas();
 	void CloseOptionWindow();
 	void CloseSoundFileManager();
 	void OpenSoundBrowser(int idx,Colour concernedColor);

@@ -54,6 +54,7 @@ void View::CompleteInitialization(AmusingModel* _model)
 void View::ReleaseOpengGLResources()
 {
 	mainContentComponent->ReleaseOpengGLResources();
+	mainContentComponent->HideOpenGLCanevas();
 }
 
 void View::setSampleColor(const int numSamples, Colour colorCode[])

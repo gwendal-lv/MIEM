@@ -135,6 +135,11 @@ void MainContentComponent::ShowSoundManagerComponent()
 	soundFilesManager->setVisible(true);
 }
 
+void MainContentComponent::HideOpenGLCanevas()
+{
+	multiCanvasComponent->setVisible(false);
+}
+
 void MainContentComponent::CloseOptionWindow()
 {
 	multiCanvasComponent->setVisible(true);
