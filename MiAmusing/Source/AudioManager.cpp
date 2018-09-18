@@ -10,9 +10,9 @@
 //..\..\..\..\boost_1_63_0\geometry\algorithms
 #include<thread>
 #include<cmath>
-#include<boost\geometry.hpp>
-#include<boost\lockfree\queue.hpp>
-#include<boost\lockfree\spsc_queue.hpp>
+#include<boost/geometry.hpp>
+#include<boost/lockfree/queue.hpp>
+#include<boost/lockfree/spsc_queue.hpp>
 
 
 
