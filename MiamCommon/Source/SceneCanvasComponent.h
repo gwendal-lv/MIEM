@@ -118,6 +118,7 @@ public:
     // - - - - - - - - OpenGL specific - - - - - - - - -
     virtual void newOpenGLContextCreated() override;
     virtual void renderOpenGL() override; // ! in background-thread !
+	virtual void DrawOnSceneCanevas(std::shared_ptr<Miam::MultiSceneCanvasInteractor> &manager);
 	void DrawShapes();
 	void DrawCanvasOutline();
     virtual void openGLContextClosing() override;

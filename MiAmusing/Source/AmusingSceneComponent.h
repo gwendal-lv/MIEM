@@ -46,6 +46,8 @@ public:
 	void renderOpenGL() override; // ! in background-thread !
 	void newOpenGLContextCreated() override;
 
+	void DrawOnSceneCanevas(std::shared_ptr<Miam::MultiSceneCanvasInteractor> &manager) override;
+
 	AreaOptions areaOptions;
 	TextButton *showOptionsButton;
 

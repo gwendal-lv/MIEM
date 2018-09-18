@@ -248,135 +248,7 @@ void AmusingSceneComponent::renderOpenGL()
 #if defined(OPENGL_RENDERING) && OPENGL_RENDERING == 1
 
 	SceneCanvasComponent::renderOpenGL();
-	float interval = 0.0f;
-	switch (currentSideBarType)
-	{
-	case GrayScale :
-		g_testSideBarVertex_buffer_data[0] = (float)getWidth();
-		g_testSideBarVertex_buffer_data[1] = (float)0.0f;
-		g_testSideBarVertex_buffer_data[2] = (float)0.0f;
-		g_testSideBarVertex_buffer_data[3] = (float)getWidth() - 150.0f;
-		g_testSideBarVertex_buffer_data[4] = (float)0.0f;
-		g_testSideBarVertex_buffer_data[5] = (float)0.0f;
-		g_testSideBarVertex_buffer_data[6] = (float)getWidth() - 150.0f;
-		g_testSideBarVertex_buffer_data[7] = (float)getHeight();
-		g_testSideBarVertex_buffer_data[8] = (float)0.0f;
-		g_testSideBarVertex_buffer_data[9] = (float)getWidth();
-		g_testSideBarVertex_buffer_data[10] = (float)getHeight();
-		g_testSideBarVertex_buffer_data[11] = (float)0.0f;
-
-		g_testSideBarCoulour_buffer_data[0] = 1.0f;
-		g_testSideBarCoulour_buffer_data[1] = 1.0f;
-		g_testSideBarCoulour_buffer_data[2] = 1.0f;
-		g_testSideBarCoulour_buffer_data[3] = 1.0f;
-		g_testSideBarCoulour_buffer_data[4] = 1.0f;
-		g_testSideBarCoulour_buffer_data[5] = 1.0f;
-		g_testSideBarCoulour_buffer_data[6] = 1.0f;
-		g_testSideBarCoulour_buffer_data[7] = 1.0f;
-		g_testSideBarCoulour_buffer_data[8] = 0.3f;
-		g_testSideBarCoulour_buffer_data[9] = 0.3f;
-		g_testSideBarCoulour_buffer_data[10] = 0.3f;
-		g_testSideBarCoulour_buffer_data[11] = 0.3f;
-		g_testSideBarCoulour_buffer_data[12] = 0.3f;
-		g_testSideBarCoulour_buffer_data[13] = 0.3f;
-		g_testSideBarCoulour_buffer_data[14] = 0.3f;
-		g_testSideBarCoulour_buffer_data[15] = 0.3f;
-
-		g_testSideBarIndex_buffer_data[0] = 0;
-		g_testSideBarIndex_buffer_data[1] = 1;
-		g_testSideBarIndex_buffer_data[2] = 2;
-		g_testSideBarIndex_buffer_data[3] = 3;
-		g_testSideBarIndex_buffer_data[4] = 2;
-		g_testSideBarIndex_buffer_data[5] = 0;
-
-
-		openGlContext.extensions.glEnableVertexAttribArray(position->attributeID);
-		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, testSideBarVertexBuffer);
-		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * 3 * sizeof(GLfloat), g_testSideBarVertex_buffer_data);
-		openGlContext.extensions.glVertexAttribPointer(position->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
-
-		openGlContext.extensions.glEnableVertexAttribArray(colour->attributeID);
-		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, testSideBarCoulourBuffer);
-		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * 4 * sizeof(GLfloat), g_testSideBarCoulour_buffer_data);
-		openGlContext.extensions.glVertexAttribPointer(colour->attributeID, 4, GL_FLOAT, GL_FALSE, sizeof(float[4]), 0);
-
-		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, testSideBarIndexBuffer);
-
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
-
-		openGlContext.extensions.glDisableVertexAttribArray(position->attributeID);
-		openGlContext.extensions.glDisableVertexAttribArray(colour->attributeID);
-
-		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, 0);
-		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		break;
-	case SideBarType::ColourButtons :
-		interval = (float)getHeight() / 4.0f;
-		for (int i = 0; i < 4; ++i)
-		{
-			g_coulourBoutonsVertex_buffer_data[i * 3 * 4] = (float)getWidth();
-			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 1] = i * interval;
-			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 2] = 0.0f;
-			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 3] = getWidth() - 150.0f;
-			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 4] = i * interval;
-			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 5] = 0.0f;
-			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 6] = getWidth() - 150.0f;
-			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 7] = (i + 1)*interval;
-			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 8] = 0.0f;
-			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 9] = (float)getWidth();
-			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 10] = (i + 1) * interval;
-			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 11] = 0.0f;
-		}
-		openGlContext.extensions.glEnableVertexAttribArray(position->attributeID);
-		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, coulourBoutonsVertex);
-		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * 4 * 3 * sizeof(GLfloat), g_coulourBoutonsVertex_buffer_data);
-		openGlContext.extensions.glVertexAttribPointer(position->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
-
-		openGlContext.extensions.glEnableVertexAttribArray(colour->attributeID);
-		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, coulourBoutonsCoulour);
-		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * 4 * 4 * sizeof(GLfloat), g_coulourBoutonsCoulour_buffer_data);
-		openGlContext.extensions.glVertexAttribPointer(colour->attributeID, 4, GL_FLOAT, GL_FALSE, sizeof(float[4]), 0);
-
-		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, coulourBoutonsIndex);
-
-		glDrawElements(GL_TRIANGLES, 4 * 6, GL_UNSIGNED_INT, (void*)0);
-
-		openGlContext.extensions.glDisableVertexAttribArray(position->attributeID);
-		openGlContext.extensions.glDisableVertexAttribArray(colour->attributeID);
-
-		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, 0);
-		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		break;
-	case ScaleMarking :
-		computeScaleMarking(Point<float>((float)getWidth() - 75.0f, 0.0f), (float)getHeight(), 75.0f, 12);
-		openGlContext.extensions.glEnableVertexAttribArray(position->attributeID);
-		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, scaleMarkingVertex);
-		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, (128 + 1) * 4 * 3 * sizeof(GLfloat), g_scaleMarkingVertex_buffer_data);
-		openGlContext.extensions.glVertexAttribPointer(position->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
-
-		openGlContext.extensions.glEnableVertexAttribArray(colour->attributeID);
-		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, scaleMarkingCoulour);
-		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, (128 + 1) * 4 * 4 * sizeof(GLfloat), g_scaleMarkingCoulour_buffer_data);
-		openGlContext.extensions.glVertexAttribPointer(colour->attributeID, 4, GL_FLOAT, GL_FALSE, sizeof(float[4]), 0);
-
-		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, scaleMarkingIndex);
-		openGlContext.extensions.glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, (128 + 1) * 6 * sizeof(unsigned int), g_scaleMarkingIndex_buffer_data);
-
-		glDrawElements(GL_TRIANGLES, (128 + 1) * 6, GL_UNSIGNED_INT, (void*)0);
-
-		openGlContext.extensions.glDisableVertexAttribArray(position->attributeID);
-		openGlContext.extensions.glDisableVertexAttribArray(colour->attributeID);
-
-		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, 0);
-		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		break;
-	default :
-		break;
-	}
-
-
-	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, 0);
-	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	
 
 #else
 
@@ -504,6 +376,146 @@ void AmusingSceneComponent::renderOpenGL()
 	}
 #endif
 }
+
+void AmusingSceneComponent::DrawOnSceneCanevas(std::shared_ptr<Miam::MultiSceneCanvasInteractor> &manager)
+{
+	SceneCanvasComponent::DrawOnSceneCanevas(manager);
+	float interval = 0.0f;
+	switch (currentSideBarType)
+	{
+	case GrayScale :
+		g_testSideBarVertex_buffer_data[0] = (float)getWidth();
+		g_testSideBarVertex_buffer_data[1] = (float)0.0f;
+		g_testSideBarVertex_buffer_data[2] = (float)0.0f;
+		g_testSideBarVertex_buffer_data[3] = (float)getWidth() - 150.0f;
+		g_testSideBarVertex_buffer_data[4] = (float)0.0f;
+		g_testSideBarVertex_buffer_data[5] = (float)0.0f;
+		g_testSideBarVertex_buffer_data[6] = (float)getWidth() - 150.0f;
+		g_testSideBarVertex_buffer_data[7] = (float)getHeight();
+		g_testSideBarVertex_buffer_data[8] = (float)0.0f;
+		g_testSideBarVertex_buffer_data[9] = (float)getWidth();
+		g_testSideBarVertex_buffer_data[10] = (float)getHeight();
+		g_testSideBarVertex_buffer_data[11] = (float)0.0f;
+
+		g_testSideBarCoulour_buffer_data[0] = 1.0f;
+		g_testSideBarCoulour_buffer_data[1] = 1.0f;
+		g_testSideBarCoulour_buffer_data[2] = 1.0f;
+		g_testSideBarCoulour_buffer_data[3] = 1.0f;
+
+		g_testSideBarCoulour_buffer_data[4] = 1.0f;
+		g_testSideBarCoulour_buffer_data[5] = 1.0f;
+		g_testSideBarCoulour_buffer_data[6] = 1.0f;
+		g_testSideBarCoulour_buffer_data[7] = 1.0f;
+
+		g_testSideBarCoulour_buffer_data[8] = 0.3f;
+		g_testSideBarCoulour_buffer_data[9] = 0.3f;
+		g_testSideBarCoulour_buffer_data[10] = 0.3f;
+		g_testSideBarCoulour_buffer_data[11] = 0.3f;
+
+		g_testSideBarCoulour_buffer_data[12] = 0.3f;
+		g_testSideBarCoulour_buffer_data[13] = 0.3f;
+		g_testSideBarCoulour_buffer_data[14] = 0.3f;
+		g_testSideBarCoulour_buffer_data[15] = 0.3f;
+
+		g_testSideBarIndex_buffer_data[0] = 0;
+		g_testSideBarIndex_buffer_data[1] = 1;
+		g_testSideBarIndex_buffer_data[2] = 2;
+		g_testSideBarIndex_buffer_data[3] = 3;
+		g_testSideBarIndex_buffer_data[4] = 2;
+		g_testSideBarIndex_buffer_data[5] = 0;
+
+
+		openGlContext.extensions.glEnableVertexAttribArray(position->attributeID);
+		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, testSideBarVertexBuffer);
+		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * 3 * sizeof(GLfloat), g_testSideBarVertex_buffer_data);
+		openGlContext.extensions.glVertexAttribPointer(position->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
+
+		openGlContext.extensions.glEnableVertexAttribArray(colour->attributeID);
+		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, testSideBarCoulourBuffer);
+		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * 4 * sizeof(GLfloat), g_testSideBarCoulour_buffer_data);
+		openGlContext.extensions.glVertexAttribPointer(colour->attributeID, 4, GL_FLOAT, GL_FALSE, sizeof(float[4]), 0);
+
+		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, testSideBarIndexBuffer);
+
+		glDrawElements(GL_TRIANGLES, 6 * 2 * 3, GL_UNSIGNED_INT, (void*)0);
+
+		openGlContext.extensions.glDisableVertexAttribArray(position->attributeID);
+		openGlContext.extensions.glDisableVertexAttribArray(colour->attributeID);
+
+		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, 0);
+		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		break;
+	case SideBarType::ColourButtons :
+		interval = (float)getHeight() / 4.0f;
+		for (int i = 0; i < 4; ++i)
+		{
+			g_coulourBoutonsVertex_buffer_data[i * 3 * 4] = (float)getWidth();
+			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 1] = i * interval;
+			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 2] = 0.0f;
+			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 3] = getWidth() - 150.0f;
+			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 4] = i * interval;
+			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 5] = 0.0f;
+			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 6] = getWidth() - 150.0f;
+			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 7] = (i + 1)*interval;
+			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 8] = 0.0f;
+			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 9] = (float)getWidth();
+			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 10] = (i + 1) * interval;
+			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 11] = 0.0f;
+		}
+		openGlContext.extensions.glEnableVertexAttribArray(position->attributeID);
+		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, coulourBoutonsVertex);
+		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * 4 * 3 * sizeof(GLfloat), g_coulourBoutonsVertex_buffer_data);
+		openGlContext.extensions.glVertexAttribPointer(position->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
+
+		openGlContext.extensions.glEnableVertexAttribArray(colour->attributeID);
+		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, coulourBoutonsCoulour);
+		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * 4 * 4 * sizeof(GLfloat), g_coulourBoutonsCoulour_buffer_data);
+		openGlContext.extensions.glVertexAttribPointer(colour->attributeID, 4, GL_FLOAT, GL_FALSE, sizeof(float[4]), 0);
+
+		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, coulourBoutonsIndex);
+
+		glDrawElements(GL_TRIANGLES, 4 * 6, GL_UNSIGNED_INT, (void*)0);
+
+		openGlContext.extensions.glDisableVertexAttribArray(position->attributeID);
+		openGlContext.extensions.glDisableVertexAttribArray(colour->attributeID);
+
+		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, 0);
+		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		break;
+	case ScaleMarking :
+		computeScaleMarking(Point<float>((float)getWidth() - 75.0f, 0.0f), (float)getHeight(), 75.0f, 12);
+		openGlContext.extensions.glEnableVertexAttribArray(position->attributeID);
+		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, scaleMarkingVertex);
+		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, (128 + 1) * 4 * 3 * sizeof(GLfloat), g_scaleMarkingVertex_buffer_data);
+		openGlContext.extensions.glVertexAttribPointer(position->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
+
+		openGlContext.extensions.glEnableVertexAttribArray(colour->attributeID);
+		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, scaleMarkingCoulour);
+		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, (128 + 1) * 4 * 4 * sizeof(GLfloat), g_scaleMarkingCoulour_buffer_data);
+		openGlContext.extensions.glVertexAttribPointer(colour->attributeID, 4, GL_FLOAT, GL_FALSE, sizeof(float[4]), 0);
+
+		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, scaleMarkingIndex);
+		openGlContext.extensions.glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, (128 + 1) * 6 * sizeof(unsigned int), g_scaleMarkingIndex_buffer_data);
+
+		glDrawElements(GL_TRIANGLES, (128 + 1) * 6, GL_UNSIGNED_INT, (void*)0);
+
+		openGlContext.extensions.glDisableVertexAttribArray(position->attributeID);
+		openGlContext.extensions.glDisableVertexAttribArray(colour->attributeID);
+
+		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, 0);
+		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		break;
+	default :
+		break;
+	}
+
+
+
+	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, 0);
+	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+
 
 //void AmusingSceneComponent::mouseDown(const juce::MouseEvent &event)
 //{
