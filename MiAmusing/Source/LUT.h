@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 namespace LUT
 {
 	 //Look Up Table for the function :  f = k + A exp(m * x)

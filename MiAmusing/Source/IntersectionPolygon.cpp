@@ -1,4 +1,4 @@
-/*
+ï»¿/*
   ==============================================================================
 
     IntersectionPolygon.cpp
@@ -40,7 +40,7 @@ void IntersectionPolygon::CanvasResized(SceneCanvasComponent * _parentCanvas)
 {
 	parentCanvas = _parentCanvas;
 
-	/// On part des polygones parents pour créer le polygone
+	/// On part des polygones parents pour crï¿½er le polygone
 
 	// compute the intersection
 	bpolygon poly1, poly2;
@@ -72,7 +72,7 @@ void IntersectionPolygon::CanvasResized(SceneCanvasComponent * _parentCanvas)
 		tmp.clear();
 	}
 
-	/// appartenance des différents points aux différents polygons
+	/// appartenance des diffï¿½rents points aux diffï¿½rents polygons
 	//clear memory
 	parent1ApexesAngle.clear();
 	parent2ApexesAngle.clear();

@@ -1,4 +1,4 @@
-/*
+ï»¿/*
   ==============================================================================
 
     Metronome.cpp
@@ -25,9 +25,9 @@ Metronome::~Metronome()
 
 void Metronome::update()
 {
-	// la mise à jour du metronome est séparée en deux parties : 
+	// la mise ï¿½ jour du metronome est sï¿½parï¿½e en deux parties : 
 	// 1) modification du BPM si besoin
-	// 2) le calcul de la position dans le temps : nombre d'échantillons restant avant le prochain temps, nombre de temps passés, et nombre de tour effectués
+	// 2) le calcul de la position dans le temps : nombre d'ï¿½chantillons restant avant le prochain temps, nombre de temps passï¿½s, et nombre de tour effectuï¿½s
 
 	if (BPM != BPM_ToReach)
 	{
@@ -49,7 +49,7 @@ void Metronome::update()
 		}
 	}
 
-	// le nombre d'échantillons restant avant le prochain temps diminue à chaque update
+	// le nombre d'ï¿½chantillons restant avant le prochain temps diminue ï¿½ chaque update
 	// une fois qu'il atteint 0, on passe au temps suivant
 	// au bout de "numOfBeats" temps, le nombre de tour augmente de 1
 	if (periodInSamples != 0)
@@ -89,7 +89,7 @@ int Metronome::getCurrentBeat()
 
 void Metronome::setAudioParameter(double m_sampleRate, int m_BPM)
 {
-	if (periodInSamples == 0) // on a pas encore configuré une première fois
+	if (periodInSamples == 0) // on a pas encore configurï¿½ une premiï¿½re fois
 	{
 		BPM = m_BPM;
 		BPM_ToReach = m_BPM;
@@ -110,9 +110,9 @@ void Metronome::setAudioParameter(double m_sampleRate, int m_BPM)
 
 int Metronome::getPeriodInSamples()
 {
-	// retourne la periode d'un carré donnant le tempo de m_bpm :
+	// retourne la periode d'un carrï¿½ donnant le tempo de m_bpm :
 	//	m_bpm = 1 Tic tous les sampleRate * 60 / BPM
-	//  1 carré = 4 Tic = 4 * sampleRate * 60 / BPM
+	//  1 carrï¿½ = 4 Tic = 4 * sampleRate * 60 / BPM
 
 	return periodInSamples;
 }

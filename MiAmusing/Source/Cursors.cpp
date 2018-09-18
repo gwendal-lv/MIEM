@@ -1,4 +1,4 @@
-/*
+ï»¿/*
   ==============================================================================
 
     Cursors.cpp
@@ -148,7 +148,7 @@ void Cursor::LinkTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon, bool remem
 		else if (rememberPreviousAssociate &&  associate != nullptr && (oldAssociates.find(m_Polygon) == oldAssociates.end() || oldAssociates[m_Polygon].second > 0.05))
 		{
 			oldAssociates[associate].first = center;
-			oldAssociates[associate].second = 0; // distance parcourue depuis que le curseur n'est plus lié à cette aire (= oldAssociate)
+			oldAssociates[associate].second = 0; // distance parcourue depuis que le curseur n'est plus liï¿½ ï¿½ cette aire (= oldAssociate)
 			associate = m_Polygon;
 		}
 		else
@@ -192,7 +192,7 @@ bool Cursor::setReadingPosition(double p)
 	{
 		bpt P = complete->computeLinearCursorCenter(p); // nouveau centre
 		
-		// mise à jour de la liste des anciens associé (distance et vérification si on peut les supprimer)
+		// mise ï¿½ jour de la liste des anciens associï¿½ (distance et vï¿½rification si on peut les supprimer)
 		std::vector<int> positionToDelete;
 		//std::map<std::shared_ptr<EditablePolygon>, std::pair<bpt, double>>::iterator it;
 		auto it = oldAssociates.begin();
@@ -219,7 +219,7 @@ bool Cursor::setReadingPosition(double p)
 		//}
 
 
-		//placer le curseur à ce point
+		//placer le curseur ï¿½ ce point
 		bpt translation(P.get<0>() - center.get<0>(), P.get<1>() - center.get<1>());
 		translation.set<0>(translation.get<0>() * (double)parentCanvas->getWidth());
 		translation.set<1>(translation.get<1>() * (double)parentCanvas->getHeight());
@@ -228,7 +228,7 @@ bool Cursor::setReadingPosition(double p)
 		float newAlpha = complete->computeCursorAlpha(p,P);
 		
 		if (newAlpha < 0)
-			DBG("alpha négatif");
+			DBG("alpha nï¿½gatif");
 		SetAlpha(newAlpha);
 #if !defined(OPENGL_RENDERING) || OPENGL_RENDERING == 0
 		CanvasResized(parentCanvas);

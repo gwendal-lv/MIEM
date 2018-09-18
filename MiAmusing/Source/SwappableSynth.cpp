@@ -1,4 +1,4 @@
-/*
+ï»¿/*
   ==============================================================================
 
     SwappableSynth.cpp
@@ -56,7 +56,7 @@ void SwappableSynth::clearSounds()
 
 
 	//if (soundA != nullptr)
-	//	delete soundA; // faudra mettre dans 2 synthé différents
+	//	delete soundA; // faudra mettre dans 2 synthï¿½ diffï¿½rents
 	//if (soundB != nullptr)
 	//	delete soundB;
 }
@@ -76,7 +76,7 @@ void SwappableSynth::setSound(const void * srcData, size_t srcDataSize, bool kee
 	//	true);
 	//allNotes.setRange(0, 128, true);
 	//if (newSound != nullptr)
-	//	delete newSound; // faudra mettre dans 2 synthé différents 
+	//	delete newSound; // faudra mettre dans 2 synthï¿½ diffï¿½rents 
 	//newSound = new SamplerSound("demo sound",
 	//	*audioReader,
 	//	allNotes,
@@ -143,7 +143,7 @@ void SwappableSynth::renderNextBlock(AudioSampleBuffer & outputBuffer, const Mid
 			synthA.renderNextBlock(rampBuffer_On, inputBuffer, startSample, numSample);
 		}
 
-		if (G_Off != 0.0) // si le synthé précédent n'est pas encore arrêté, continuer de le diminuer
+		if (G_Off != 0.0) // si le synthï¿½ prï¿½cï¿½dent n'est pas encore arrï¿½tï¿½, continuer de le diminuer
 		{
 			startGain = G_Off;
 			endGain = getNextGainOff(numSample);
@@ -268,7 +268,7 @@ void SwappableSynth::addSoundFromExternalFileOnThread(String soundPath)
 	// avoid to load two times the same sample
 	//if (synthAPlaying)
 	//{
-	//	if (soundPath == currentPathA) // A joue et c'est déjà le bon son 
+	//	if (soundPath == currentPathA) // A joue et c'est dï¿½jï¿½ le bon son 
 	//		return;
 	//	else
 	//		currentPathA = soundPath;  // A joue mais ce n'est pas le bon son
@@ -292,16 +292,16 @@ void SwappableSynth::addSoundFromExternalFileOnThread(String soundPath)
 	//	currentPathB = soundPath;
 	//}
 
-	if (soundPath == currentPathA) // A contient déjà ce sample
+	if (soundPath == currentPathA) // A contient dï¿½jï¿½ ce sample
 	{
-		if (synthAPlaying) // A joue déjà -> rien à changer : arrêt du thread car rien à changer ! 
+		if (synthAPlaying) // A joue dï¿½jï¿½ -> rien ï¿½ changer : arrï¿½t du thread car rien ï¿½ changer ! 
 		{
 			synthMtx.unlock(); 
 			return;
 		}
-		else // A ne joue pas -> il faut faire le swap entre les deux synthé internes !
+		else // A ne joue pas -> il faut faire le swap entre les deux synthï¿½ internes !
 		{
-			// entre dans l'état "swapping", lorsqu'on atteint l'état "playing" on libère le mutex
+			// entre dans l'ï¿½tat "swapping", lorsqu'on atteint l'ï¿½tat "playing" on libï¿½re le mutex
 			state = SwappableSynthState::Swapping;
 			waitForUnlock = true;
 			while (waitForUnlock)
@@ -315,9 +315,9 @@ void SwappableSynth::addSoundFromExternalFileOnThread(String soundPath)
 	}
 	else if (soundPath == currentPathB)
 	{
-		if (synthAPlaying) // A joue alors que B a déjà le bon sample -> swapping
+		if (synthAPlaying) // A joue alors que B a dï¿½jï¿½ le bon sample -> swapping
 		{
-			// entre dans l'état "swapping", lorsqu'on atteint l'état "playing" on libère le mutex
+			// entre dans l'ï¿½tat "swapping", lorsqu'on atteint l'ï¿½tat "playing" on libï¿½re le mutex
 			state = SwappableSynthState::Swapping;
 			waitForUnlock = true;
 			while (waitForUnlock)
@@ -328,7 +328,7 @@ void SwappableSynth::addSoundFromExternalFileOnThread(String soundPath)
 			/////////////////////
 			return;
 		}
-		else // B joue déjà -> rien à changer -> on peut direct libérer
+		else // B joue dï¿½jï¿½ -> rien ï¿½ changer -> on peut direct libï¿½rer
 		{
 			synthMtx.unlock();
 			return;
@@ -338,7 +338,7 @@ void SwappableSynth::addSoundFromExternalFileOnThread(String soundPath)
 	state = SwappableSynth::Loading;
 
 
-	// si le nom du fichier est un des fichiers embarqués -> chargement différent
+	// si le nom du fichier est un des fichiers embarquï¿½s -> chargement diffï¿½rent
 	bool isBinary = false;
 	for (int i = 0; i < BinaryData::namedResourceListSize; ++i)
 	{
@@ -428,7 +428,7 @@ void SwappableSynth::addSoundFromExternalFileOnThread(String soundPath)
 		
 
 		state = SwappableSynthState::Playing;
-		synthAPlaying = !synthAPlaying; // le synthé interne courant a changé
+		synthAPlaying = !synthAPlaying; // le synthï¿½ interne courant a changï¿½
 		/////////////////////
 		synthMtx.unlock();/// unlock the mutex -> the internal synths are once again accessible
 		/////////////////////
@@ -436,7 +436,7 @@ void SwappableSynth::addSoundFromExternalFileOnThread(String soundPath)
 	}
 	else
 	{
-		// besoin de passer par un état de "swapping", à la fin de cet état, on pourra de nouveau accéder au synthé
+		// besoin de passer par un ï¿½tat de "swapping", ï¿½ la fin de cet ï¿½tat, on pourra de nouveau accï¿½der au synthï¿½
 		state = SwappableSynthState::Swapping;
 		waitForUnlock = true;
 		while (waitForUnlock)

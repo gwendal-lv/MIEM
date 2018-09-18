@@ -1,4 +1,4 @@
-/*
+ï»¿/*
   ==============================================================================
 
     BaseMidiSender.cpp
@@ -142,7 +142,7 @@ bool TimeLine::isNoteOnTime(int m_position, int i, int period, bool &m_end, int 
 	}
 	if (i < midiTimesSize)
 	{
-		m_end = false; // on a pas encore atteint la fin de la liste de notes (au cas où il y en a plusieurs à jouer au même moment)
+		m_end = false; // on a pas encore atteint la fin de la liste de notes (au cas oï¿½ il y en a plusieurs ï¿½ jouer au mï¿½me moment)
 		if (m_position == roundToInt(midiTimes[i] * period))
 		{
 			if (velocity[i] != 0)
@@ -152,7 +152,7 @@ bool TimeLine::isNoteOnTime(int m_position, int i, int period, bool &m_end, int 
 				m_velocity = (uint8)velocity[i];
 				return true;
 			}
-			else // si velocité == 0, pas besoin d'envoyer de note vu qu'on l'entend pas...
+			else // si velocitï¿½ == 0, pas besoin d'envoyer de note vu qu'on l'entend pas...
 				return false;
 
 
@@ -187,7 +187,7 @@ bool TimeLine::isNoteOffTime(int m_position, int i, int period, bool &m_end, int
 				m_note = notes[i];
 				return true;
 			}
-			else // si velocité == 0, pas besoin d'envoyer de note vu qu'on l'entend pas...
+			else // si velocitï¿½ == 0, pas besoin d'envoyer de note vu qu'on l'entend pas...
 				return false;
 		}
 		else
@@ -266,7 +266,7 @@ void TimeLine::addChord(TimeLine * otherTimeLine, double chordTime)
 	while (chordTime > 1)
 		chordTime -= 1;
 
-	// recherche si on jouait déjà une note à l'instant chordTime
+	// recherche si on jouait dï¿½jï¿½ une note ï¿½ l'instant chordTime
 	for (int i = 0; i < midiTimesSize; i++)
 	{
 		if (abs(midiTimes[i] - chordTime) < 0.0001)
@@ -276,7 +276,7 @@ void TimeLine::addChord(TimeLine * otherTimeLine, double chordTime)
 		}
 	}
 	
-	if (currentNote != 0)// si une note était jouée à cette instant elle devient une des notes de l'accord
+	if (currentNote != 0)// si une note ï¿½tait jouï¿½e ï¿½ cette instant elle devient une des notes de l'accord
 	{
 		int otherChordNote = otherTimeLine->getRandomNote();
 
@@ -289,10 +289,10 @@ void TimeLine::addChord(TimeLine * otherTimeLine, double chordTime)
 		else
 			createPerfectChord(chordTime, currentNote);*/
 
-		int octaveCurrent = currentNote / 12; // division entière !
+		int octaveCurrent = currentNote / 12; // division entiï¿½re !
 		int octaveOther = otherChordNote / 12;
 
-		otherChordNote += (octaveCurrent - octaveOther) * 12; // la deuxième note est remise à la même octave que la première;
+		otherChordNote += (octaveCurrent - octaveOther) * 12; // la deuxiï¿½me note est remise ï¿½ la mï¿½me octave que la premiï¿½re;
 
 		int noteL = currentNote < otherChordNote ? currentNote : otherChordNote;
 		int noteH = currentNote > otherChordNote ? currentNote : otherChordNote;
@@ -363,7 +363,7 @@ void TimeLine::addChord(TimeLine * otherTimeLine, double chordTime)
 		chordSize += 3;
 
 	} 
-	else // sinon on sélectionnera une des autres notes comme base
+	else // sinon on sï¿½lectionnera une des autres notes comme base
 	{
 		/*for (int j = 0; j < midiTimesSize; j++)
 		{
@@ -388,7 +388,7 @@ void TimeLine::addChord(TimeLine * otherTimeLine, double chordTime)
 				currentNote = 0;
 		}*/
 	}
-	//if(currentNote == 0) // aucune note n'était jouée et aucun accord trouvé entre les 2 aires --> accord parfait avec juste la note comme base
+	//if(currentNote == 0) // aucune note n'ï¿½tait jouï¿½e et aucun accord trouvï¿½ entre les 2 aires --> accord parfait avec juste la note comme base
 
 }
 
@@ -533,7 +533,7 @@ void TimeLine::setFilterFrequency(double frequency)
 		filterType = FilterType::LowPass;
 		filterActive = true;
 	}
-	deltaF = (filterFrequencyToReach - currentFilterFrequency) / 1.0; // il faudra 5 buffer avant d'arriver à la frequence desiree
+	deltaF = (filterFrequencyToReach - currentFilterFrequency) / 1.0; // il faudra 5 buffer avant d'arriver ï¿½ la frequence desiree
 }
 
 void TimeLine::setSynthPlaying(bool m_shouldPlay)
@@ -547,7 +547,7 @@ void TimeLine::setSynthPlaying(bool m_shouldPlay)
 	else
 	{
 		--numOfReaders;
-		// si pas de reader, inutile d'attendre l'état swapping
+		// si pas de reader, inutile d'attendre l'ï¿½tat swapping
 		if (numOfReaders == 0)
 			swappableSynth.skipSwapping(true);
 	}
@@ -631,7 +631,7 @@ void TimeLine::addSound(const void * srcData, size_t srcDataSize, bool keepInter
 	//	true);
 	//allNotes.setRange(0, 128, true);
 	//if (newSound != nullptr)
-	//	delete newSound; // faudra mettre dans 2 synthé différents 
+	//	delete newSound; // faudra mettre dans 2 synthï¿½ diffï¿½rents 
 	//newSound = new SamplerSound("demo sound",
 	//	*audioReader,
 	//	allNotes,

@@ -1,4 +1,4 @@
-/*
+ï»¿/*
   ==============================================================================
 
     AudioManager.cpp
@@ -157,8 +157,8 @@ void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 			
 			for (int j = 0; j < maxSize; j++)
 			{
-				// les têtes de lecture déterminent s'il faut envoyer une note Midi
-				// celles-ci seront jouées par le synthé contenu par la timeLine
+				// les tï¿½tes de lecture dï¿½terminent s'il faut envoyer une note Midi
+				// celles-ci seront jouï¿½es par le synthï¿½ contenu par la timeLine
 				if (playHeadsKnown[j] != 0)
 					playHeadsKnown[j]->process();
 			}
@@ -187,11 +187,11 @@ void AudioManager::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
 		{
 			if (timeLinesKnown[i] != 0)
 			{
-				// les notes Midi devant être jouées sont récupérées dans le buffer incomingMidi
+				// les notes Midi devant ï¿½tre jouï¿½es sont rï¿½cupï¿½rï¿½es dans le buffer incomingMidi
 				MidiBuffer incomingMidi;
 				timeLinesKnown[i]->removeNextBlockOfMessages(incomingMidi, bufferToFill.numSamples);
 
-				// le synthé contenu par la timeLine joue les notes midi qui ont été récupérées
+				// le synthï¿½ contenu par la timeLine joue les notes midi qui ont ï¿½tï¿½ rï¿½cupï¿½rï¿½es
 				timeLinesKnown[i]->renderNextBlock(*bufferToFill.buffer, incomingMidi, 0, bufferToFill.numSamples);
 
 
@@ -353,7 +353,7 @@ void AudioManager::getParameters()
 			}
 			break;
 		case Miam::AsyncParamChange::ParamType::Activate:
-			if (param.Id2 == 1024) // crée ou supprime une timeLine
+			if (param.Id2 == 1024) // crï¿½e ou supprime une timeLine
 			{
 				switch (param.IntegerValue)
 				{
@@ -373,11 +373,11 @@ void AudioManager::getParameters()
 					break;
 				}
 			}
-			else if (param.Id1 == 1024) // crée ou supprime une tête de lectire
+			else if (param.Id1 == 1024) // crï¿½e ou supprime une tï¿½te de lectire
 			{
 				switch (param.IntegerValue)
 				{
-				case 1: // création
+				case 1: // crï¿½ation
 					if (playHeadsKnown[param.Id2] == 0)
 					{
 						paramToAllocationThread.push(param);
@@ -395,16 +395,16 @@ void AudioManager::getParameters()
 					break;
 				}
 			}
-			else // (crée et) associe une tête de lecture à une timeLine 
+			else // (crï¿½e et) associe une tï¿½te de lecture ï¿½ une timeLine 
 			{
-				if (timeLinesKnown[param.Id1] != 0) // pour s'assurer que la timeLines à associer existe
+				if (timeLinesKnown[param.Id1] != 0) // pour s'assurer que la timeLines ï¿½ associer existe
 				{
-					if (playHeadsKnown[param.Id2] == 0) // la tête de lecture n'existe pas encore -> demander création + association
+					if (playHeadsKnown[param.Id2] == 0) // la tï¿½te de lecture n'existe pas encore -> demander crï¿½ation + association
 					{
 						paramToAllocationThread.push(param);
 						std::thread(&AudioManager::threadFunc, this).detach();
 					}
-					else // faire juste l'association car la tête de lectire existe déjà
+					else // faire juste l'association car la tï¿½te de lectire existe dï¿½jï¿½
 					{
 						playHeadsKnown[param.Id2]->LinkTo(timeLinesKnown[param.Id1]);
 						playHeadsKnown[param.Id2]->setSpeed(param.DoubleValue);

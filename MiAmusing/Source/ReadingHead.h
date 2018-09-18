@@ -1,4 +1,4 @@
-/*
+ï»¿/*
   ==============================================================================
 
     ReadingHead.h
@@ -45,9 +45,9 @@ private:
 	// members of ReadingHead
 	int Id;
 	double speed;
-	double speedToReach; // vitesse à atteindre lors du changement de vitesse
+	double speedToReach; // vitesse ï¿½ atteindre lors du changement de vitesse
 	double transitionPosition;
-	double transitionTime; // periode pendant laquelle la tête de lecture doit réduire ou accumuler du retard
+	double transitionTime; // periode pendant laquelle la tï¿½te de lecture doit rï¿½duire ou accumuler du retard
 	double speedInc;
 	int currentPeriod; // period taking speed into account
 	double position;

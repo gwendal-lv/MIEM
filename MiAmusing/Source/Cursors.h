@@ -1,4 +1,4 @@
-/*
+ï»¿/*
   ==============================================================================
 
     Cursors.h
@@ -54,6 +54,6 @@ private:
 	double initCursorSize;
 	double cursorSize;
 	std::shared_ptr<Miam::EditablePolygon> associate; // aire que l'on parcourt
-	std::map<std::shared_ptr<Miam::EditablePolygon>,std::pair<bpt, double>> oldAssociates; // retient les aires par lesquels ont est déjà passé
+	std::map<std::shared_ptr<Miam::EditablePolygon>,std::pair<bpt, double>> oldAssociates; // retient les aires par lesquels ont est dï¿½jï¿½ passï¿½
 };
 

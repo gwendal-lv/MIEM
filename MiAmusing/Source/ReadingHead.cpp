@@ -1,4 +1,4 @@
-/*
+ï»¿/*
   ==============================================================================
 
     ReadingHead.cpp
@@ -69,7 +69,7 @@ void PlayHead::setSpeed(double m_speed)
 			tmpT -= numT;
 	}
 
-	// plus tient compte du décalage qu'il y aura par rapport à v = 1
+	// plus tient compte du dï¿½calage qu'il y aura par rapport ï¿½ v = 1
 	plus = tmpT * (1.0 / (double)numT) * numOfBeats * metronome->getPeriodInSamples(); //position + 1.0;
 
 
@@ -161,7 +161,7 @@ void PlayHead::process()
 					{
 						transitionPosition = 0;
 						speed = speedToReach;
-						double delta = 0.001; // on pourrait faire numT = ceil(1.0 / rest), mais avec les arrondi on peut arriver à un mauvais résultat (1/3 = 0.33333000 -> numT = 4 !!! donc faux !)
+						double delta = 0.001; // on pourrait faire numT = ceil(1.0 / rest), mais avec les arrondi on peut arriver ï¿½ un mauvais rï¿½sultat (1/3 = 0.33333000 -> numT = 4 !!! donc faux !)
 						for (int i = 2; i < 5; ++i)
 						{
 							if (speedToReach >= 1.0 / (double)i - delta / 2.0 && speedToReach <= 1.0 / (double)i + delta / 2.0)
@@ -172,21 +172,21 @@ void PlayHead::process()
 						while (tmpT > numT)
 							tmpT -= numT;
 
-						// plus tient compte du décalage qu'il y aura par rapport à v = 1
+						// plus tient compte du dï¿½calage qu'il y aura par rapport ï¿½ v = 1
 						plus = tmpT * (1.0 / (double)numT) * numOfBeats * metronome->getPeriodInSamples(); //position + 1.0;
 
 					}
-					else // si on n'est pas encore assez proche de la vitesse à atteindre -> refaire une transition
+					else // si on n'est pas encore assez proche de la vitesse ï¿½ atteindre -> refaire une transition
 					{
 						transitionPosition = 0;
 						transitionTime = numOfBeats * metronome->getPeriodInSamples(); // on ralonge la transition de 1 tour
 						speedInc = (speedToReach - speed) / transitionTime;
 
-						// calculer les décalages de chacune des vitesse par rapport à la tête de lecture unitaire quand elle recommence la lecture
+						// calculer les dï¿½calages de chacune des vitesse par rapport ï¿½ la tï¿½te de lecture unitaire quand elle recommence la lecture
 						double newPlus = 0;
 						int newNumT(1), newTmpT(0);
 
-						double delta = 0.001; // on pourrait faire numT = ceil(1.0 / rest), mais avec les arrondi on peut arriver à un mauvais résultat (1/3 = 0.33333000 -> numT = 4 !!! donc faux !)
+						double delta = 0.001; // on pourrait faire numT = ceil(1.0 / rest), mais avec les arrondi on peut arriver ï¿½ un mauvais rï¿½sultat (1/3 = 0.33333000 -> numT = 4 !!! donc faux !)
 						for (int i = 2; i < 5; ++i)
 						{
 							if (speedToReach >= 1.0 / (double)i - delta / 2.0 && speedToReach <= 1.0 / (double)i + delta / 2.0)
@@ -278,7 +278,7 @@ void PlayHead::process()
 		//	up = (int)position + (int)speed;
 		//}
 
-		// peut-être vérifier que oldPosition est plus petite que newPosition?
+		// peut-ï¿½tre vï¿½rifier que oldPosition est plus petite que newPosition?
 		sub = (int)ceil(oldPosition);
 		up = (int)ceil(position);
 

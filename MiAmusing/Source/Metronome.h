@@ -1,4 +1,4 @@
-/*
+ï»¿/*
   ==============================================================================
 
     Metronome.h
@@ -32,7 +32,7 @@ private:
 	int transitionPosition;
 	int transitionTime; // 5ms en samples
 	double incBPM;
-	double BPM; // format double pour pouvoir faire la transition d'un BPM à un autre, utilisé en int le reste du temps
+	double BPM; // format double pour pouvoir faire la transition d'un BPM ï¿½ un autre, utilisï¿½ en int le reste du temps
 	int samplesTime;
 	
 	double sampleRate;

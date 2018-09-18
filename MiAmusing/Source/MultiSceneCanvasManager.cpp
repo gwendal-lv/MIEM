@@ -1,4 +1,4 @@
-/*
+ï»¿/*
   ==============================================================================
 
     MultiSceneCanvasManager.cpp
@@ -77,7 +77,7 @@ void MultiSceneCanvasManager::AddCompleteArea()
 
 void MultiSceneCanvasManager::AddAreaToScene(size_t sceneIndex, std::shared_ptr<IInteractiveArea> area_)
 {
-	SelectScene((int)sceneIndex); // lors du deuxième passage, le premier excitateur est supprimé
+	SelectScene((int)sceneIndex); // lors du deuxiï¿½me passage, le premier excitateur est supprimï¿½
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(scenes[sceneIndex]))
 	{
 		if (auto amusingArea = std::dynamic_pointer_cast<CompletePolygon>(area_))
@@ -89,7 +89,7 @@ void MultiSceneCanvasManager::AddAreaToScene(size_t sceneIndex, std::shared_ptr<
 		
 			amusingArea->setCursorsSpeed(0, getSpeed(amusingArea));
 
-			// evts pour mettre à jour du coté audio
+			// evts pour mettre ï¿½ jour du cotï¿½ audio
 			handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(amusingArea->getCursor(0), AreaEventType::ShapeChanged, selectedScene)));
 			handleAndSendAreaEventSync(std::shared_ptr<AreaEvent>(new AreaEvent(amusingArea, AreaEventType::ShapeChanged, selectedScene)));
 		}
@@ -166,7 +166,7 @@ void MultiSceneCanvasManager::SetAudioPositions(std::shared_ptr<Cursor> cursor, 
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
 	{
 		bpt oldPosition = cursor->getPosition();//InPixels();
-		if (amusingScene->isDrew(cursor) && cursor->setReadingPosition(position)) // vérifie si le curseur est dessiné et le met à jour (seulement si la condition "dessiné" est déjà vérifiée)
+		if (amusingScene->isDrew(cursor) && cursor->setReadingPosition(position)) // vï¿½rifie si le curseur est dessinï¿½ et le met ï¿½ jour (seulement si la condition "dessinï¿½" est dï¿½jï¿½ vï¿½rifiï¿½e)
 		{
 
 			
@@ -217,7 +217,7 @@ void MultiSceneCanvasManager::OnDeleteExciter()
 
 			handleAndSendAreaEventSync(areaE);
 
-			// Changement de mode : plus d'excitateur sélectionné.
+			// Changement de mode : plus d'excitateur sï¿½lectionnï¿½.
 			SetMode(CanvasManagerMode::ExcitersEdition);
 		}
 	}
@@ -226,18 +226,18 @@ void MultiSceneCanvasManager::OnDeleteExciter()
 
 void MultiSceneCanvasManager::handleAndSendMultiAreaEventSync(std::shared_ptr<MultiAreaEvent> multiAreaE)
 {
-	// Cast de l'évènement principal vers la classe mère
+	// Cast de l'ï¿½vï¿½nement principal vers la classe mï¿½re
 	auto mainAreaE = std::make_shared<AreaEvent>(multiAreaE.get());
 	MultiSceneCanvasInteractor::handleAndSendAreaEventSync(mainAreaE, true); // pas de notif
 
-												  // Dispatching des sous-évènements
+												  // Dispatching des sous-ï¿½vï¿½nements
 	for (size_t i = 0; i<multiAreaE->GetOtherEventsCount(); i++)
 	{
 		MultiSceneCanvasInteractor::handleAndSendAreaEventSync(multiAreaE->GetOtherEvent(i), true); // pas de notif
 	}
 
 	// Ensuite on envoie le gros multiarea event au GraphicSessionManager en 1 paquet
-	// (plutôt que chacun des petits séparément, pour lesquels la notification a été supprimée)
+	// (plutï¿½t que chacun des petits sï¿½parï¿½ment, pour lesquels la notification a ï¿½tï¿½ supprimï¿½e)
 	graphicSessionManager->HandleEventSync(multiAreaE);
 }
 
@@ -305,8 +305,8 @@ void MultiSceneCanvasManager::OnCanvasMouseDown(const MouseEvent& mouseE)
 
 void MultiSceneCanvasManager::OnCanvasMouseDoubleClick(const MouseEvent & mouseE)
 {
-	// juste vérification si le double click a été effectué dans une aire ou pas
-	// peut-être ajouter un calcul pour voir où faire apparaitre les options en fonction de comment est l'aire
+	// juste vï¿½rification si le double click a ï¿½tï¿½ effectuï¿½ dans une aire ou pas
+	// peut-ï¿½tre ajouter un calcul pour voir oï¿½ faire apparaitre les options en fonction de comment est l'aire
 	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
 	{
 		std::shared_ptr<GraphicEvent> graphicE = amusingScene->OnCanvasMouseDoubleClick(mouseE);
@@ -623,10 +623,10 @@ int MultiSceneCanvasManager::getCurrentColor(std::shared_ptr<IEditableArea> area
 // Or by the canvasinteractor itself
 void MultiSceneCanvasManager::SetMode(Miam::CanvasManagerMode newMode)
 {
-	/* Comportement assez asymétrique concernant les excitateurs.
-	* Si on sort d'un mode excitateur, on arrête toutes les transfos (et on vérifie
-	* ça hors du switch juste en-dessous, à la dégueu quoi (à améliorer))
-	* Si on entre dans le mode excitateur : c'est géré dans le switch proprement
+	/* Comportement assez asymï¿½trique concernant les excitateurs.
+	* Si on sort d'un mode excitateur, on arrï¿½te toutes les transfos (et on vï¿½rifie
+	* ï¿½a hors du switch juste en-dessous, ï¿½ la dï¿½gueu quoi (ï¿½ amï¿½liorer))
+	* Si on entre dans le mode excitateur : c'est gï¿½rï¿½ dans le switch proprement
 	*/
 	if (
 		(mode == CanvasManagerMode::ExcitersEdition || mode == CanvasManagerMode::ExciterSelected)
@@ -649,7 +649,7 @@ void MultiSceneCanvasManager::SetMode(Miam::CanvasManagerMode newMode)
 			auto areaE = selectedScene->SetSelectedArea(nullptr, false);
 			//selectedScene->EnableExcitersLowOpacity(true);
 			//selectedScene->EnableAreasLowOpacity(true);
-			// Pas d'évènements renvoyés pour les opacités : on update le tout
+			// Pas d'ï¿½vï¿½nements renvoyï¿½s pour les opacitï¿½s : on update le tout
 			recreateAllAsyncDrawableObjects();
 			//handleAndSendAreaEventSync(areaE);
 		}
@@ -662,7 +662,7 @@ void MultiSceneCanvasManager::SetMode(Miam::CanvasManagerMode newMode)
 
 	case CanvasManagerMode::SceneOnlySelected:
 
-		// à quoi servent VRAIMENT les lignes là-dessous ?
+		// ï¿½ quoi servent VRAIMENT les lignes lï¿½-dessous ?
 		/*if (selectedScene) // on first scene adding... there would be a problem
 		GetSelectedScene()->SetSelectedArea(nullptr, false);*/
 		// Graphical updates
@@ -672,26 +672,26 @@ void MultiSceneCanvasManager::SetMode(Miam::CanvasManagerMode newMode)
 		}
 
 		// Mise en quasi-transparence des excitateurs seulement
-		if (selectedScene) // sinon pb à l'initialisation
+		if (selectedScene) // sinon pb ï¿½ l'initialisation
 		{
 			
 			selectedScene->SetAreasOpacityMode(OpacityMode::Independent);//->EnableAreasLowOpacity(false);
-			// Pas d'évènements renvoyés : on update le tout
+			// Pas d'ï¿½vï¿½nements renvoyï¿½s : on update le tout
 			//recreateAllAsyncDrawableObjects();
 		}
 		break;
 
-		// Quand on passe en mode excitateurs (on y passe forcément avant
-		// d'en sélectionner un...), on arrête les transfos en cours
-		// !! On doit vérifier qu'on était pas déjà en mode excitateurs !
+		// Quand on passe en mode excitateurs (on y passe forcï¿½ment avant
+		// d'en sï¿½lectionner un...), on arrï¿½te les transfos en cours
+		// !! On doit vï¿½rifier qu'on ï¿½tait pas dï¿½jï¿½ en mode excitateurs !
 	case CanvasManagerMode::ExcitersEdition:
 		if (mode != CanvasManagerMode::ExciterSelected)
 			selectedScene->StopCurrentTransformations();
 
-		// Mise en quasi-transparence des aires graphiques à exciter seulement
+		// Mise en quasi-transparence des aires graphiques ï¿½ exciter seulement
 		selectedScene->SetExcitersOpacityMode(OpacityMode::Independent);//->EnableExcitersLowOpacity(false);
 		selectedScene->SetAreasOpacityMode(OpacityMode::Independent);//->EnableAreasLowOpacity(true);
-		// Pas d'évènements renvoyés : on update le tout
+		// Pas d'ï¿½vï¿½nements renvoyï¿½s : on update le tout
 		recreateAllAsyncDrawableObjects();
 		break;
 
