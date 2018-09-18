@@ -1,4 +1,4 @@
-/*
+Ôªø/*
   ==============================================================================
 
     IDrawableArea.h
@@ -11,7 +11,7 @@
 
 
 // = = = = = = = = = SUPPRESSION D'UN WARNING Visual Studio = = = = = = = = = = =
-// Warning d'héritage virtuel... Alors que c'est prévu normalement en C++11 !
+// Warning d'hÔøΩritage virtuel... Alors que c'est prÔøΩvu normalement en C++11 !
 #ifdef _MSC_VER // indique que c'est une version de visual studio
 	#pragma warning( disable : 4250 )
 #endif
@@ -45,7 +45,7 @@ class SceneCanvasComponent;
 
 namespace Miam
 {
-    // Mise ici parce que les aires seulement sont concernées par l'opacité...
+    // Mise ici parce que les aires seulement sont concernÔøΩes par l'opacitÔøΩ...
     enum class OpacityMode {
         Independent,
         DependingOnExcitement,
@@ -88,11 +88,11 @@ namespace Miam
         /// \brief To be overriden within any concrete area that inherits from this.
         virtual std::shared_ptr<IDrawableArea> Clone() = 0;
         protected :
-        /// \brief Applique toutes les modifications nécessaires suite au clonage d'un objet
+        /// \brief Applique toutes les modifications nÔøΩcessaires suite au clonage d'un objet
         ///
         /// Par exemple : supprime les liens avec d'autres objets graphiques (s'ils existent),
-        /// en supposant que ces liens ont été copiés
-        /// simplement lors d'un clonage qui vient tout juste d'être fait.
+        /// en supposant que ces liens ont ÔøΩtÔøΩ copiÔøΩs
+        /// simplement lors d'un clonage qui vient tout juste d'ÔøΩtre fait.
         ///
         /// \warning To be called from any Clone() overriden method
         virtual void onCloned() = 0;
