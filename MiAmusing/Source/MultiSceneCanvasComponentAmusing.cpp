@@ -135,6 +135,7 @@ void MultiSceneCanvasComponentAmusing::optionButtonClicked(OptionButtonClicked o
 				case Closed:
 					amusingChildren->ShowSideBar(SideBarType::None);
 					canvasManagerAsManager->resetAreaPosition();
+					canvasManagerAsManager->showAddPolygon();
 					break;
 				default:
 					break;

@@ -631,7 +631,10 @@ void AmusingSceneComponent::mouseDoubleClick(const juce::MouseEvent & event)
 {
 	DBG("doubleClick");
 	if (auto manager = std::dynamic_pointer_cast<Amusing::MultiSceneCanvasManager>(canvasManager.lock()))
+	{
+		manager->hideAddPolygon();
 		manager->OnCanvasMouseDoubleClick(event);
+	}
 }
 
 void AmusingSceneComponent::mouseDrag(const juce::MouseEvent & event)
