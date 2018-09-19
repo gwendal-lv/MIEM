@@ -1,4 +1,4 @@
-﻿//
+//
 //  DrawablePolygon.hpp
 //  MiamEdit
 //
