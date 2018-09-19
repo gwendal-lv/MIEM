@@ -116,6 +116,7 @@
         <FILE id="HIcl1x" name="AreaOptions.h" compile="0" resource="0" file="Source/AreaOptions.h"/>
         <FILE id="XEwX00" name="ExportedFont2.png" compile="0" resource="1"
               file="../MiamCommon/Resources/ExportedFont2.png"/>
+        <FILE id="j7JL8i" name="newFontImg.png" compile="0" resource="1" file="../MiamCommon/Resources/newFontImg.png"/>
         <FILE id="GceKis" name="View.cpp" compile="1" resource="0" file="Source/View.cpp"/>
         <FILE id="AJOEwp" name="View.h" compile="0" resource="0" file="Source/View.h"/>
       </GROUP>
@@ -389,7 +390,7 @@
         <MODULEPATH id="juce_audio_basics" path="..\..\JUCE\modules"/>
       </MODULEPATHS>
     </XCODE_IPHONE>
-    <XCODE_MAC targetFolder="Builds/MacOSX" extraDefs="__AMUSINGOSX">
+    <XCODE_MAC targetFolder="Builds/MacOSX" extraDefs="__AMUSINGOSX&#10;OPENGL_RENDERING = 1">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" headerPath="../../../MiamCommon/Source/&#10;../../../SpatCommon/Source/&#10;../../../"/>
         <CONFIGURATION isDebug="0" name="Release" headerPath="../../../MiamCommon/Source/&#10;../../../SpatCommon/Source/&#10;../../../"/>

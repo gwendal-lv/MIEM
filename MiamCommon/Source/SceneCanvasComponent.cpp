@@ -284,7 +284,7 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 	computeCanvasOutline();
 
 	if(openGLLabel == nullptr)
-		openGLLabel = std::make_unique<OpenGLTextObject>("C:\\Users\\ayup1\\PycharmProjects\\fontPNG\\newFontImg.png", 100.0f, 300.0f, 100.0f, -100.0f, 12); // "ExportedFont2_png", "C:\\Users\\ayup1\\Downloads\\newFontImg.png"
+		openGLLabel = std::make_unique<OpenGLTextObject>("newFontImg_png"/*"C:\\Users\\ayup1\\PycharmProjects\\fontPNG\\newFontImg.png"*/, 100.0f, 300.0f, 100.0f, -100.0f, 12); // "ExportedFont2_png", "C:\\Users\\ayup1\\Downloads\\newFontImg.png"
 	openGLLabel->initialiseText(openGlContext);
 
 	
