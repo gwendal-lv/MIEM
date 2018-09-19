@@ -129,8 +129,10 @@ void SceneCanvasComponent::ReleaseOpengGLResources()
 
 void SceneCanvasComponent::waitForOpenGLResourcesRealeased()
 {
+#if OPENGL_RENDERING == 1
 	while (!openGLDestructionThread.joinable()) {}
 	openGLDestructionThread.join();
+#endif
 }
 
 SceneCanvasComponent::~SceneCanvasComponent()
@@ -212,6 +214,8 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 	//	openGLLabel = nullptr;
 	//}
 
+#if OPENGL_RENDERING == 1
+
 	shaderProgram = std::make_unique<OpenGLShaderProgram>(openGlContext);
 	shaderProgram->addVertexShader(OpenGLHelpers::translateVertexShaderToV3(myVertexShader));
 	shaderProgram->addFragmentShader(OpenGLHelpers::translateFragmentShaderToV3(myFragmentShader));
@@ -288,7 +292,8 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 	openGLLabel->initialiseText(openGlContext);
 
 	
-	
+
+#endif // OPENGL_RENDERING == 1
 	//shaderProgram->use(); // on utilise qu'un seul shader program pour le moment donc on appelle une seule fois cette fonction
 }
 void SceneCanvasComponent::renderOpenGL()
@@ -402,7 +407,7 @@ void SceneCanvasComponent::renderOpenGL()
 		glViewport(0, 0, roundToInt(desktopScale * getWidth()), roundToInt(desktopScale * getHeight()));
 
 		DrawOnSceneCanevas(manager);
-		
+
 
 		int fps = (int)displayFrequencyMeasurer.GetAverageFrequency_Hz();
 
@@ -426,49 +431,50 @@ void SceneCanvasComponent::renderOpenGL()
 		// Call to a general Graphic update on the whole Presenter module
 		if (!manager->isUpdatePending())
 			manager->triggerAsyncUpdate();
-	}
-    // Time measures just before swap (or the closer that we can get to the swaps)
-    displayFrequencyMeasurer.OnNewFrame();
-    /*
-    if (selectedForEditing)
-    {
-        if (displayFrequencyMeasurer.IsFreshAverageAvailable())
-            DBG(displayFrequencyMeasurer.GetInfo());
-    }
-     */
-    // Forced sleep if drawing is too fast
+
+		// Time measures just before swap (or the closer that we can get to the swaps)
+		displayFrequencyMeasurer.OnNewFrame();
+		/*
+		if (selectedForEditing)
+		{
+			if (displayFrequencyMeasurer.IsFreshAverageAvailable())
+				DBG(displayFrequencyMeasurer.GetInfo());
+		}
+		 */
+		 // Forced sleep if drawing is too fast
 #if __AMUSINGMOBILE
-	double lastDuration = displayFrequencyMeasurer.GetLastDuration_ms();
-	double underTime = lastDuration > 0.0? desiredPeriod_ms - lastDuration : 0.0;
+		double lastDuration = displayFrequencyMeasurer.GetLastDuration_ms();
+		double underTime = lastDuration > 0.0 ? desiredPeriod_ms - lastDuration : 0.0;
 #else
-	double underTime = desiredPeriod_ms - displayFrequencyMeasurer.GetLastDuration_ms();
+		double underTime = desiredPeriod_ms - displayFrequencyMeasurer.GetLastDuration_ms();
 #endif
 
-	
-	double last = displayFrequencyMeasurer.GetLastDuration_ms();
-	if (last < 0.0)
-		DBG("probleme lastDuration: " + (String)last);
-	EunderTime += underTime;
-	if (numFrame > 100 * 60)
-	{
-		//DBG("60 frames, underTime : "+ (String)underTime +" [underTime]" + (String)(EunderTime/600.0));
-		//DBG("probleme underTime : " + (String)underTime);
-		//ofs << String(EunderTime / 6000.0).toStdString() << std::endl;
-		EunderTime = 0.0;
-		numFrame = 0;
-	}
-	if (underTime < 0.0)
-	{
-		//DBG("probleme underTime : " + (String)underTime);
-		underTime = 0.0;
-	}
-	//if (last > desiredPeriod_ms)
-	//	DBG("probleme : last > desiredPeriod_ms");
 
-    if (underTime >= 0.0)
-    {
-        Thread::sleep((int)std::floor(underTime));
-    }
+		double last = displayFrequencyMeasurer.GetLastDuration_ms();
+		if (last < 0.0)
+			DBG("probleme lastDuration: " + (String)last);
+		EunderTime += underTime;
+		if (numFrame > 100 * 60)
+		{
+			//DBG("60 frames, underTime : "+ (String)underTime +" [underTime]" + (String)(EunderTime/600.0));
+			//DBG("probleme underTime : " + (String)underTime);
+			//ofs << String(EunderTime / 6000.0).toStdString() << std::endl;
+			EunderTime = 0.0;
+			numFrame = 0;
+		}
+		if (underTime < 0.0)
+		{
+			//DBG("probleme underTime : " + (String)underTime);
+			underTime = 0.0;
+		}
+		//if (last > desiredPeriod_ms)
+		//	DBG("probleme : last > desiredPeriod_ms");
+
+		if (underTime >= 0.0)
+		{
+			Thread::sleep((int)std::floor(underTime));
+		}
+	}
 }
 
 void SceneCanvasComponent::DrawOnSceneCanevas(std::shared_ptr<Miam::MultiSceneCanvasInteractor> &manager)
