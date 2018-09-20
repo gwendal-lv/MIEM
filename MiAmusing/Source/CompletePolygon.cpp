@@ -121,6 +121,7 @@ CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
 	}
 	updateSubTriangles();
 	onlyRotationAllowed = false;
+	previousSizeToShow = 5;
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, float radius,
@@ -168,6 +169,17 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 	chordAreaForFlag = std::vector<std::shared_ptr<CompletePolygon>>(pointsCount, nullptr);
 	showAllCircles = false;
 	onlyRotationAllowed = false;
+
+	verticesBufferSize += 3 * Nradius * bullsEye[0].GetVerticesBufferSize();
+	indicesBufferSize += Nradius * bullsEye[0].GetIndicesBufferSize();
+	couloursBufferSize += Nradius * bullsEye[0].GetCouloursBufferSize();
+
+	vertices_buffer.resize(verticesBufferSize);
+	indices_buffer.resize(indicesBufferSize);
+	coulours_buffer.resize(couloursBufferSize);
+
+	previousSizeToShow = 5;
+	deleteOldCircles = false;
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id,
@@ -214,6 +226,17 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	//updateSubTriangles();
 	showAllCircles = false;
 	onlyRotationAllowed = false;
+
+	verticesBufferSize += 3 * Nradius * bullsEye[0].GetVerticesBufferSize();
+	indicesBufferSize += Nradius * bullsEye[0].GetIndicesBufferSize();
+	couloursBufferSize += Nradius * bullsEye[0].GetCouloursBufferSize();
+
+	vertices_buffer.resize(verticesBufferSize);
+	indices_buffer.resize(indicesBufferSize);
+	coulours_buffer.resize(couloursBufferSize);
+
+	previousSizeToShow = 5;
+	deleteOldCircles = false;
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id,
@@ -1249,8 +1272,11 @@ AreaEventType CompletePolygon::EndPointMove()
 				OnCircles.at(OnCircles.size() - 1) = nearest;
 			
 		}
+#if !defined(OPENGLRENDERING) || OPENGLRENDERING == 0
 		CanvasResized(parentCanvas);
+#else
 		RefreshOpenGLBuffers();
+#endif
 	}
 
 	// si on a touché au manipulationPoit -> on a changé l'orientation : vérifié qu'elle soit autorisée et la repositionnée si besoin

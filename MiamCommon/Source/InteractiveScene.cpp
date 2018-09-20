@@ -136,7 +136,10 @@ std::shared_ptr<AreaEvent> InteractiveScene::AddArea(std::shared_ptr<IInteractiv
     
     // Forced graphical updates
     newArea->CanvasResized(canvasComponent);
+
+#if defined(OPENGL_RENDERING) && OPENGL_RENDERING == 1
 	newArea->RefreshOpenGLBuffers();
+#endif
     
     return std::make_shared<AreaEvent>(newArea, AreaEventType::Added, (int)areas.size()-1, shared_from_this());
 }
