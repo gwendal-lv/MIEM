@@ -91,10 +91,11 @@ namespace Amusing
 		// return normalized radius
 		float getNormalizedRadius();
 
+		void setCursorsBaseNote(int idx, double newBaseNote);
 		void setCursorsSpeed(int idx, double newSize);
 		bpt computeLinearCursorCenter(double p);
 		bpt computeAngularCursorCenter(double p);
-		float computeCursorAlpha(double p, bpt _center);
+		float computeCursorAlpha(double p, bpt _center,float a);
 		boost::geometry::model::segment<bpt> getSegment(bpt hitPoint);
 		boost::geometry::model::segment<bpt> getSegmentInPixels(bpt hitPointInPixels);
 
@@ -132,6 +133,8 @@ namespace Amusing
 		}
 		int GetCouloursBufferSize() override { return EditablePolygon::GetCouloursBufferSize() + Nradius * bullsEye[0].GetCouloursBufferSize(); }
 		int GetIndicesBufferSize() override { return EditablePolygon::GetIndicesBufferSize() + Nradius * bullsEye[0].GetIndicesBufferSize(); }
+		void setVisible(bool shoulBeVisible) { areaIsVisible = shoulBeVisible; }
+		bool isVisible() { return areaIsVisible; }
 		
 	private:
 		int numAngles;
@@ -180,6 +183,9 @@ namespace Amusing
 		double pc; // si ca foire quand on bouge la forme en mm temps que le curseur doit tourner -> garder en memoire le poucentage ou se trouve le curseur et rappeler setreadingposition avec ce pourcentage pour le remettre au nouvel endroit.
 
 		bool onlyRotationAllowed;
+
+		bool areaIsVisible;
+		
 	};
 }
 

@@ -40,6 +40,7 @@ namespace Miam
 		
 
 		std::shared_ptr<AreaEvent> AddNedgeArea(uint64_t nextAreaId, int N);
+		std::shared_ptr<AreaEvent> AddNedgeArea(uint64_t nextAreaId, int N, int height);
 		void AddIntersections(std::shared_ptr<IDrawableArea> m_area);
 		void AddAllIntersections();
 		size_t getIntersectionDrawingIndex(size_t intersectionVectorIndex);
@@ -53,7 +54,8 @@ namespace Miam
 		std::shared_ptr<GraphicEvent> OnCanvasMouseUp(const MouseEvent& mouseE) override;
 		std::shared_ptr<GraphicEvent> OnCanvasMouseDoubleClick(const MouseEvent& mouseE);
 
-		void HideUnselectedAreas();
+		std::shared_ptr<AreaEvent> HideUnselectedAreas(int idx);
+		std::shared_ptr<AreaEvent>ShowUnselectedAreas(int idx);
 
 		std::shared_ptr<GraphicEvent> resetAreaPosition();
 
@@ -102,6 +104,7 @@ namespace Miam
 
 		std::shared_ptr<AreaEvent> SetSelectedArea(std::shared_ptr<IEditableArea> selectedArea_, bool changeMode = true) override;
 		std::shared_ptr<AreaEvent> SetSelectedAreaCursor(int idx, double newSize);
+		std::shared_ptr<AreaEvent> SetSelectedAreaCursorBaseNote(int idx, double newBaseNote);
 		std::shared_ptr<AreaEvent> SetSelectedAreaOpacity(double newOpacity);
 		std::shared_ptr<AreaEvent> SetSelectedAreaColour(Colour newColour);
 		bool isDrew(std::shared_ptr<Cursor> cursor);

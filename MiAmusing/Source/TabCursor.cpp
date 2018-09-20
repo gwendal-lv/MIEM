@@ -23,7 +23,14 @@ TabCursor::TabCursor(bptree::ptree & areaTree, std::chrono::time_point<clock> co
 	initCursorSize = a;
 	currentAreaResize = 1.0;
 	allSizeEnabled = true;
-	//setZoffset(1.1f);
+	
+	speedToSize[4.0] = 0.6;//2.0;
+	speedToSize[3.0] = 0.73333;//1.666;
+	speedToSize[2.0] = 0.866666;//1.3333;
+	speedToSize[1.0] = 1.0;
+	speedToSize[0.5] = 1.3333;
+	speedToSize[1.0 / 3.0] = 1.6666;
+	speedToSize[0.25] = 2.0;
 }
 
 TabCursor::TabCursor(uint64_t uniqueId, std::chrono::time_point<clock> commonStartTimePoint_, int additionnalTouchGrabRadius_) :
@@ -35,7 +42,14 @@ TabCursor::TabCursor(uint64_t uniqueId, std::chrono::time_point<clock> commonSta
 	initCursorSize = a;
 	currentAreaResize = 1.0;
 	allSizeEnabled = true;
-	//setZoffset(1.1f);
+
+	speedToSize[4.0] = 0.6;//2.0;
+	speedToSize[3.0] = 0.73333;//1.666;
+	speedToSize[2.0] = 0.866666;//1.3333;
+	speedToSize[1.0] = 1.0;
+	speedToSize[0.5] = 1.3333;
+	speedToSize[1.0 / 3.0] = 1.6666;
+	speedToSize[0.25] = 2.0;
 }
 
 TabCursor::~TabCursor()
@@ -96,6 +110,40 @@ AreaEventType TabCursor::TryMovePoint(const Point<double>& newLocation)
 
 AreaEventType TabCursor::EndPointMove()
 {
+	if (magnetized && allSizeEnabled)
+	{
+		double maxDist = 1000.0;
+		int nearest = 0;
+		bpt newCenter = centerInPixels;
+		if (zone.getHeight() > zone.getWidth())
+		{
+			int space = int(zone.getHeight() / numDivisions);
+			for (int i = 0; i < numDivisions; ++i)
+			{
+				if (abs(space / 2 + (i * space - newCenter.get<1>()) < maxDist))
+				{
+					maxDist = abs(space / 2 + i * space - newCenter.get<1>());
+					nearest = i;
+				}
+			}
+			newCenter.set<1>(zone.getY() + (nearest * space) + space / 2);
+		}
+		else
+		{
+			int space = int(zone.getWidth() / numDivisions);
+			for (int i = 0; i < numDivisions; ++i)
+			{
+				if (abs(space / 2 + (i * space) - newCenter.get<0>()) < maxDist)
+				{
+					maxDist = abs(space / 2 + (i * space) - newCenter.get<1>());
+					nearest = i;
+				}
+			}
+			newCenter.set<0>(zone.getX() + (nearest * space) + space / 2);
+		}
+		setCenterPosition(newCenter);
+		CanvasResized(parentCanvas);
+	}
 	if (!allSizeEnabled)
 	{
 		bpt newCenter = centerInPixels;
@@ -195,6 +243,19 @@ void TabCursor::setIndexValue(int _idxValue)
 	currentSizeIdx = _idxValue;
 	SizeChanged(newSize, false);
 	updateContourPoints();
+}
+
+void TabCursor::SetSpeed(double _speed)
+{
+	// mettre un std::map<double, double> speedToSize;
+	double sizeToReach = 1.0;
+	if (speedToSize.find(_speed) != speedToSize.end())
+	{
+		sizeToReach = speedToSize[_speed];
+	}
+	sizeToReach *= initCursorSize;
+	double resize = sizeToReach / a;
+	SizeChanged(resize, false);
 }
 
 void TabCursor::SetNumDivisions(int _numDivisions)

@@ -59,12 +59,16 @@ public:
 	void hideAddPolygon();
 	void showAddPolygon();
 	void setTempoSlider(int newTempo);
+	void buttonStateChanged(Button *concernedButton) override;
+	void mouseUp(const MouseEvent& e) override;
     //[/UserMethods]
 
     void paint (Graphics& g) override;
     void resized() override;
     void sliderValueChanged (Slider* sliderThatWasMoved) override;
     void buttonClicked (Button* buttonThatWasClicked) override;
+    void mouseExit (const MouseEvent& e) override;
+    void mouseDrag (const MouseEvent& e) override;
 
     // Binary resources:
     static const char* stopOn_png;
@@ -94,6 +98,9 @@ private:
     GraphicSessionManager* graphicSessionManager = 0;
 	bool isAddEnabled;
 	bool saveFileExists;
+	int prepareToAdd; // 0 = no shape to add, 1 = square, 2 = triangle, 3 = hexa
+	bool hasExited;
+	Point<int> exitPosition; // position où la sourie a quitté le menu pour entrer dans le canvas
 	//MultiCanvasComponent* multiCanvasComponent = 0;
 
     //[/UserVariables]

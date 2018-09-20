@@ -19,7 +19,8 @@ using namespace Amusing;
 Cursor::Cursor(int64_t _Id) : Exciter(_Id, std::chrono::time_point<clock>())
 {
 	speed = 1;
-	minimumSizePercentage = 0.01f;
+	minimumSizePercentage = 0.01;
+	maxAlpha = 64.0f / 128.0f;
 }
 
 Cursor::Cursor(int64_t _Id, bpt _center, double _r, Colour _fillColour, float _canvasRatio) :
@@ -55,7 +56,17 @@ Cursor::Cursor(int64_t _Id, bpt _center, double _r, Colour _fillColour, float _c
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() - (b / 2)*yScale));
 
 	SetIsAnimationSynchronized(false);
-	minimumSizePercentage = 0.01f;
+	minimumSizePercentage = 0.01;
+
+	speedToSize[4.0] = 0.6;//2.0;
+	speedToSize[3.0] = 0.73333;//1.666;
+	speedToSize[2.0] = 0.866666;//1.3333;
+	speedToSize[1.0] = 1.0;
+	speedToSize[0.5] = 1.3333;
+	speedToSize[1.0 / 3.0] = 1.6666;
+	speedToSize[0.25] = 2.0;
+
+	maxAlpha = 64.0f / 128.0f;
 }
 
 //Cursor::Cursor(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio) :
@@ -91,10 +102,12 @@ void Cursor::setSpeed(double m_speed)
 	if (speed <= 4 && speed > 0.1)
 	{
 		double newCursorSize = 0.0;
-		if (speed >= 1)
-			newCursorSize = 1.0 + (speed - 1.0) * (2.0 - 1.0) / 3.0;
-		else
-			newCursorSize = 0.6 + (4 - (1.0 / speed)) * (1.0 - 0.6) / 3.0;
+		//if (speed >= 1)
+		//	newCursorSize = 1.0 + (0.6 - 1.0) * (speed - 1.0) / (4.0 - 1.0); //1.0 + (speed - 1.0) * (2.0 - 1.0) / 3.0;
+		//else
+		//	newCursorSize = 2.0 + (1.0 - 2.0) * (speed - 0.25) / (1.0 - 0.25); //0.6 + (4 - (1.0 / speed)) * (1.0 - 0.6) / 3.0;
+		if(speedToSize.find(speed)!=speedToSize.end())
+			newCursorSize = speedToSize.at(speed);
 		newCursorSize *= initCursorSize;
 		//double newCursorSize = (double)initCursorSize / m_speed;
 		double resize = newCursorSize / cursorSize;
@@ -225,7 +238,7 @@ bool Cursor::setReadingPosition(double p)
 		translation.set<1>(translation.get<1>() * (double)parentCanvas->getHeight());
 
 		Translate(juce::Point<double>(translation.get<0>(), translation.get<1>()));
-		float newAlpha = complete->computeCursorAlpha(p,P);
+		float newAlpha = complete->computeCursorAlpha(p,P,maxAlpha);
 		
 		if (newAlpha < 0)
 			DBG("alpha n�gatif");
@@ -253,7 +266,13 @@ void Cursor::setCenterPositionNormalize(bpt newCenter)
 
 void Cursor::Paint(Graphics& g)
 {
-	EditableEllipse::Paint(g);
+	if (auto complete = std::dynamic_pointer_cast<CompletePolygon>(associate))
+	{
+		if(complete->isVisible())
+			EditableEllipse::Paint(g);
+	}
+	else
+		EditableEllipse::Paint(g);
 }
 
 bool Cursor::isClicked(const Point<double>& hitPoint)

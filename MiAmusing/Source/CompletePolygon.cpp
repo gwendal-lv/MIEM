@@ -70,6 +70,8 @@ CompletePolygon::CompletePolygon(bptree::ptree & areaTree) : EditablePolygon(are
 	updateSubTriangles();
 
 	onlyRotationAllowed = false;
+	areaIsVisible = true;
+	showAllCircles = false;
 
 	verticesBufferSize += 3 * Nradius * bullsEye[0].GetVerticesBufferSize();
 	indicesBufferSize += Nradius * bullsEye[0].GetIndicesBufferSize();
@@ -119,17 +121,6 @@ CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
 	}
 	updateSubTriangles();
 	onlyRotationAllowed = false;
-
-	verticesBufferSize += 3 * Nradius * bullsEye[0].GetVerticesBufferSize();
-	indicesBufferSize += Nradius * bullsEye[0].GetIndicesBufferSize();
-	couloursBufferSize += Nradius * bullsEye[0].GetCouloursBufferSize();
-
-	vertices_buffer.resize(verticesBufferSize);
-	indices_buffer.resize(indicesBufferSize);
-	coulours_buffer.resize(couloursBufferSize);
-
-	previousSizeToShow = 5;
-	deleteOldCircles = false;
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, float radius,
@@ -177,17 +168,6 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 	chordAreaForFlag = std::vector<std::shared_ptr<CompletePolygon>>(pointsCount, nullptr);
 	showAllCircles = false;
 	onlyRotationAllowed = false;
-
-	verticesBufferSize += 3 * Nradius * bullsEye[0].GetVerticesBufferSize();
-	indicesBufferSize += Nradius * bullsEye[0].GetIndicesBufferSize();
-	couloursBufferSize += Nradius * bullsEye[0].GetCouloursBufferSize();
-
-	vertices_buffer.resize(verticesBufferSize);
-	indices_buffer.resize(indicesBufferSize);
-	coulours_buffer.resize(couloursBufferSize);
-
-	previousSizeToShow = 5;
-	deleteOldCircles = false;
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id,
@@ -234,17 +214,6 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	//updateSubTriangles();
 	showAllCircles = false;
 	onlyRotationAllowed = false;
-
-	verticesBufferSize += 3 * Nradius * bullsEye[0].GetVerticesBufferSize();
-	indicesBufferSize += Nradius * bullsEye[0].GetIndicesBufferSize();
-	couloursBufferSize += Nradius * bullsEye[0].GetCouloursBufferSize();
-
-	vertices_buffer.resize(verticesBufferSize);
-	indices_buffer.resize(indicesBufferSize);
-	coulours_buffer.resize(couloursBufferSize);
-
-	previousSizeToShow = 5;
-	deleteOldCircles = false;
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id,
@@ -299,6 +268,7 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	}
 
 	onlyRotationAllowed = false;
+	areaIsVisible = true;
 	// ajouter le calcul du rayon des cercles : on connait les coordonnees des points et a quels cercles ils appartienne -> possible de retrouver le rayon et le centre ! 
 
 	verticesBufferSize += 3 * Nradius * bullsEye[0].GetVerticesBufferSize();
@@ -387,37 +357,38 @@ std::shared_ptr<Cursor> CompletePolygon::getCursor(int idx)
 
 void CompletePolygon::Paint(Graphics& g)
 {
-
-	if (isActive && showBullsEye)
+	if (areaIsVisible)
 	{
-		CanvasResizedBullsEye(parentCanvas);
-		PaintBullsEye(g);
-	}
-	//DBG("CompletePolygon::Paint");
-	EditablePolygon::Paint(g);
-	g.setColour(Colours::white);
-	//DBG((String)contourPoints[0].getX());
-	//Point<double> diff = contourPointsInPixels[fromPt] - contourPointsInPixels[fromPt + 1];
-	//double dist = contourPointsInPixels[fromPt].getDistanceFrom(contourPointsInPixels[fromPt + 1]);
-	//double angle = atan(diff.getY() / diff.getX());
-	//point.addXY(dist * 24 / speed*cos(angle), dist * 24 / speed*sin(angle));
-	//Point<double> diff =  contourPointsInPixels[fromPt] - contourPointsInPixels[fromPt + 1];
-	//Point<double> diff;
-	//DBG((String)(contourPointsInPixels[1] - contourPointsInPixels[0]).getX());
-	//DBG((String)contourPointsInPixels[1].getAngleToPoint(contourPointsInPixels[0]));
-	//diff.setX(contourPointsInPixels[fromPt].getX() - contourPointsInPixels[fromPt + 1].getX());
-	//g.fillEllipse(point.getX(), point.getY(), 20, 20);
-	//g.fillEllipse(contourPointsInPixels[0].getX() - contourPointsRadius,
-	//	contourPointsInPixels[0].getY() - contourPointsRadius, 20, 20);
+		if (isActive && showBullsEye)
+		{
+			CanvasResizedBullsEye(parentCanvas);
+			PaintBullsEye(g);
+		}
+		//DBG("CompletePolygon::Paint");
+		EditablePolygon::Paint(g);
+		g.setColour(Colours::white);
+		//DBG((String)contourPoints[0].getX());
+		//Point<double> diff = contourPointsInPixels[fromPt] - contourPointsInPixels[fromPt + 1];
+		//double dist = contourPointsInPixels[fromPt].getDistanceFrom(contourPointsInPixels[fromPt + 1]);
+		//double angle = atan(diff.getY() / diff.getX());
+		//point.addXY(dist * 24 / speed*cos(angle), dist * 24 / speed*sin(angle));
+		//Point<double> diff =  contourPointsInPixels[fromPt] - contourPointsInPixels[fromPt + 1];
+		//Point<double> diff;
+		//DBG((String)(contourPointsInPixels[1] - contourPointsInPixels[0]).getX());
+		//DBG((String)contourPointsInPixels[1].getAngleToPoint(contourPointsInPixels[0]));
+		//diff.setX(contourPointsInPixels[fromPt].getX() - contourPointsInPixels[fromPt + 1].getX());
+		//g.fillEllipse(point.getX(), point.getY(), 20, 20);
+		//g.fillEllipse(contourPointsInPixels[0].getX() - contourPointsRadius,
+		//	contourPointsInPixels[0].getY() - contourPointsRadius, 20, 20);
 
-	//DBG("showCursorPaint = " + (String)showCursor);
-	if (showCursor)
-	{
-		//DBG("paint cursor");
-		for(int i=0;i<(int)cursors.size();i++)
-			cursors[i]->Paint(g);
+		//DBG("showCursorPaint = " + (String)showCursor);
+		if (showCursor)
+		{
+			//DBG("paint cursor");
+			for (int i = 0; i < (int)cursors.size(); i++)
+				cursors[i]->Paint(g);
+		}
 	}
-	
 }
 
 void CompletePolygon::lengthToPercent()
@@ -786,7 +757,7 @@ bpt CompletePolygon::computeAngularCursorCenter(double p)
 	return bpt(0, 0);
 }
 
-float CompletePolygon::computeCursorAlpha(double p, bpt _center)
+float CompletePolygon::computeCursorAlpha(double p, bpt _center,float _maxAlpha)
 {
 	// conversion percent to radian
 	angleToPercent();
@@ -826,7 +797,7 @@ float CompletePolygon::computeCursorAlpha(double p, bpt _center)
 	double distPr = boost::geometry::distance(_center, contourPoints.outer().at(prev));
 	double distSui = boost::geometry::distance(_center, contourPoints.outer().at(suiv));
 	double D = 0.02; // distance � laquelle on commence � augmenter/diminuer l'opacit�
-	double H = 0.5;  // opacit� lorsqu'on est pas assez proche d"un sommet
+	double H = (double)_maxAlpha; //0.5;  // opacit� lorsqu'on est pas assez proche d"un sommet
 	if (distPr < D )
 	{
 		if (1 - distPr * (1-H)/D < 0)
@@ -841,7 +812,7 @@ float CompletePolygon::computeCursorAlpha(double p, bpt _center)
 		return 1.0f - float(distSui * (1.0 - H) / D);
 	}
 	else
-		return 0.5f;
+		return _maxAlpha;
 	
 
 }
@@ -1670,6 +1641,14 @@ void CompletePolygon::setCursorsSpeed(int idx, double newSize)
 		cursors[idx]->setSpeed(newSize);
 		
 	}
+}
+
+void CompletePolygon::setCursorsBaseNote(int idx, double newBaseNote)
+{
+		if (showCursor == false)
+			setCursorVisible(true, parentCanvas);
+		//cursors[idx]->SetAlpha(newBaseNote/127.0); //setAlpha(newBaseNote);//setSpeed(newSize);
+		cursors[idx]->setMaxAlpha(0.05f + (0.65f - 0.05f) * (float)newBaseNote / 10.0f);/*(newBaseNote / 10.0)+1.0/20.0*/
 }
 
 void CompletePolygon::SetActive(bool activate)

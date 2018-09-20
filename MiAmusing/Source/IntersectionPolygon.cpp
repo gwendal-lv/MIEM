@@ -32,7 +32,7 @@ IntersectionPolygon::~IntersectionPolygon()
 
 void IntersectionPolygon::Paint(Graphics & g)
 {
-	if (inter.size() > 0)
+	if (inter.size() > 0 && parent1->isVisible() && parent2->isVisible())
 		DrawablePolygon::Paint(g);
 }
 
@@ -40,39 +40,40 @@ void IntersectionPolygon::CanvasResized(SceneCanvasComponent * _parentCanvas)
 {
 	parentCanvas = _parentCanvas;
 
-	/// On part des polygones parents pour crï¿½er le polygone
-
-	// compute the intersection
-	bpolygon poly1, poly2;
-	poly1 = parent1->getPolygon();
-	poly2 = parent2->getPolygon();
-	boost::geometry::correct(poly1);
-	boost::geometry::correct(poly2);
-	
-	inter.clear();
-	boost::geometry::intersection(poly1, poly2, inter);
-	
-	// threshold
-	std::vector<int> idToDelete;
-	for (int i = 0; i < (int)inter.size(); ++i)
-		if (boost::geometry::area(inter[i]) < threshold)
-			idToDelete.push_back(i);
-
-	for (int i = (int)idToDelete.size(); i != 0; --i)
-		inter.erase(inter.begin() + idToDelete[i]);
-
-	//rescale
-	bpolygon tmp;
-	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scaler(_parentCanvas->getWidth(), _parentCanvas->getHeight());
-	for (int i = 0; i < inter.size(); ++i)
+	/// On part des polygones parents pour créer le polygone
+	if (parent1->isVisible() && parent2->isVisible())
 	{
-		boost::geometry::transform(inter[i], tmp, scaler);
-		inter[i].clear();
-		inter[i] = tmp;
-		tmp.clear();
-	}
+		// compute the intersection
+		bpolygon poly1, poly2;
+		poly1 = parent1->getPolygon();
+		poly2 = parent2->getPolygon();
+		boost::geometry::correct(poly1);
+		boost::geometry::correct(poly2);
 
-	/// appartenance des diffï¿½rents points aux diffï¿½rents polygons
+		inter.clear();
+		boost::geometry::intersection(poly1, poly2, inter);
+
+		// threshold
+		std::vector<int> idToDelete;
+		for (int i = 0; i < (int)inter.size(); ++i)
+			if (boost::geometry::area(inter[i]) < threshold)
+				idToDelete.push_back(i);
+
+		for (int i = (int)idToDelete.size(); i != 0; --i)
+			inter.erase(inter.begin() + idToDelete[i]);
+
+		//rescale
+		bpolygon tmp;
+		boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scaler(_parentCanvas->getWidth(), _parentCanvas->getHeight());
+		for (int i = 0; i < inter.size(); ++i)
+		{
+			boost::geometry::transform(inter[i], tmp, scaler);
+			inter[i].clear();
+			inter[i] = tmp;
+			tmp.clear();
+		}
+
+	/// appartenance des différents points aux différents polygons
 	//clear memory
 	parent1ApexesAngle.clear();
 	parent2ApexesAngle.clear();
@@ -83,22 +84,22 @@ void IntersectionPolygon::CanvasResized(SceneCanvasComponent * _parentCanvas)
 			parent1ApexesAngle.push_back(parent1->getAngularPercentage(poly1.outer().at(i)));
 	}
 
-	for (int i = 0; i < poly2.outer().size(); ++i)
-	{
-		if (parent1->contains(poly2.outer().at(i))) // si est contenu dans parent 1 -> garder en memoire
-			parent2ApexesAngle.push_back(parent2->getAngularPercentage(poly2.outer().at(i)));
-	}
+		for (int i = 0; i < poly2.outer().size(); ++i)
+		{
+			if (parent1->contains(poly2.outer().at(i))) // si est contenu dans parent 1 -> garder en memoire
+				parent2ApexesAngle.push_back(parent2->getAngularPercentage(poly2.outer().at(i)));
+		}
 
-	/// creation of JUCE polygon
-	contour.clear();
-	for (int j = 0; j < inter.size(); ++j)
-	{
-		contour.startNewSubPath((float)inter.at(j).outer().at(0).get<0>(), (float)inter.at(j).outer().at(0).get<1>());
-		for (size_t i = 1; i<inter.at(j).outer().size(); i++)
-			contour.lineTo((float)inter.at(j).outer().at(i).get<0>(), (float)inter.at(j).outer().at(i).get<1>());
-		contour.closeSubPath();
+		/// creation of JUCE polygon
+		contour.clear();
+		for (int j = 0; j < inter.size(); ++j)
+		{
+			contour.startNewSubPath((float)inter.at(j).outer().at(0).get<0>(), (float)inter.at(j).outer().at(0).get<1>());
+			for (size_t i = 1; i < inter.at(j).outer().size(); i++)
+				contour.lineTo((float)inter.at(j).outer().at(i).get<0>(), (float)inter.at(j).outer().at(i).get<1>());
+			contour.closeSubPath();
+		}
 	}
-
 }
 
 void IntersectionPolygon::setSurfaceThreshold(double m_threshold)
@@ -143,10 +144,15 @@ std::shared_ptr<CompletePolygon> Amusing::IntersectionPolygon::getOtherParent(st
 
 int IntersectionPolygon::getApexesCount(std::shared_ptr<CompletePolygon> parent)
 {
-	if (parent == parent1)
-		return (int)parent1ApexesAngle.size();
-	else if (parent == parent2)
-		return (int)parent2ApexesAngle.size();
+	if (parent1->isVisible() && parent2->isVisible())
+	{
+		if (parent == parent1)
+			return (int)parent1ApexesAngle.size();
+		else if (parent == parent2)
+			return (int)parent2ApexesAngle.size();
+		else
+			return 0;
+	}
 	else
 		return 0;
 }

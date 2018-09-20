@@ -53,6 +53,8 @@ class TabCursor : public Miam::Exciter
 
 		void SetCurrentSize(double _currentSize);
 
+		void SetSpeed(double _speed);
+
 		int getIndexValue();
 
 		void setIndexValue(int idxValue);
@@ -66,4 +68,5 @@ class TabCursor : public Miam::Exciter
 		double authorizedSize[7] = {0.6, 0.73333, 0.866666, 1.0, 1.3333, 1.6666, 2.0/* 1.0 / 4.0, 1.0 / 3.0, 0.5, 1.0, 2.0, 3.0, 4.0 */};
 		double currentAreaResize;
 		int currentSizeIdx;
+		std::map<double, double> speedToSize;
 };

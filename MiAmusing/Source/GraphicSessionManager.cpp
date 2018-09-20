@@ -734,11 +734,40 @@ void GraphicSessionManager::lookForAreasConcerned(Colour colourConcerned)
 		getSelectedCanvasAsManager()->lookForAreasConcerned(colourConcerned);
 }
 
-void GraphicSessionManager::OnAddSquare()
+void GraphicSessionManager::OnAddSquare(float x, float y)
 {
 	if (selectedCanvas)
 	{
 		getSelectedCanvasAsManager()->AddNedgeArea(GetNextAreaId(), 4);
+	}
+}
+
+void GraphicSessionManager::OnAddAndSelectSquare(const MouseEvent& mouseE)
+{
+	if (selectedCanvas)
+	{
+		temporaryArea = getSelectedCanvasAsManager()->AddAndSelectNedgeArea(GetNextAreaId(), 4, mouseE.y);
+		getSelectedCanvasAsManager()->OnCanvasMouseDown(mouseE);
+		//GetMultiCanvasComponent()
+	}
+}
+
+void GraphicSessionManager::TransmitMouseDrag(const MouseEvent& mouseE)
+{
+	if (selectedCanvas)
+	{
+		getSelectedCanvasAsManager()->OnCanvasMouseDrag(mouseE);
+	}
+}
+
+void GraphicSessionManager::SendDeletingMouseDown(const MouseEvent& mouseE)
+{
+	if (selectedCanvas)
+	{
+		bpt center;
+		if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(temporaryArea))
+			center = completeArea->getCenter();
+		getSelectedCanvasAsManager()->OnCanvasMouseDown(mouseE.withNewPosition(Point<int>(center.get<0>(),center.get<1>())));
 	}
 }
 

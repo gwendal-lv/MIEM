@@ -45,7 +45,7 @@ public:
 
 	void Paint(Graphics & g) override;
 	bool isClicked(const Point<double>& hitPoint);
-	
+	void setMaxAlpha(float _a) { maxAlpha = _a; }
 
 private:
 	JUCE_LEAK_DETECTOR(Cursor)
@@ -54,6 +54,9 @@ private:
 	double initCursorSize;
 	double cursorSize;
 	std::shared_ptr<Miam::EditablePolygon> associate; // aire que l'on parcourt
-	std::map<std::shared_ptr<Miam::EditablePolygon>,std::pair<bpt, double>> oldAssociates; // retient les aires par lesquels ont est dï¿½jï¿½ passï¿½
+	std::map<std::shared_ptr<Miam::EditablePolygon>,std::pair<bpt, double>> oldAssociates; // retient les aires par lesquels ont est déjà passé
+
+	float maxAlpha;
+	std::map<double, double> speedToSize;
 };
 
