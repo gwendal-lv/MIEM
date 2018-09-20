@@ -133,8 +133,8 @@ namespace Amusing
 		}
 		int GetCouloursBufferSize() override { return EditablePolygon::GetCouloursBufferSize() + Nradius * bullsEye[0].GetCouloursBufferSize(); }
 		int GetIndicesBufferSize() override { return EditablePolygon::GetIndicesBufferSize() + Nradius * bullsEye[0].GetIndicesBufferSize(); }
-		void setVisible(bool shoulBeVisible) { areaIsVisible = shoulBeVisible; }
-		bool isVisible() { return areaIsVisible; }
+//        void setVisible(bool shoulBeVisible) override{ DBG("no more visible !!"); areaIsVisible = shoulBeVisible; }
+//        bool isVisible() override { return areaIsVisible; }
 		
 	private:
 		int numAngles;

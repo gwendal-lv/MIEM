@@ -76,7 +76,7 @@ namespace Miam
         static const int nameHeight = 15; // pixels
         
         bool keepRatio;
-		bool areaVisible;
+		bool areaVisible = true;
         
 		// size of the different buffer parts
 		static const int numPointsPolygon = 32;

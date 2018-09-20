@@ -380,7 +380,7 @@ std::shared_ptr<Cursor> CompletePolygon::getCursor(int idx)
 
 void CompletePolygon::Paint(Graphics& g)
 {
-	if (areaIsVisible)
+	if (areaVisible)
 	{
 		if (isActive && showBullsEye)
 		{
