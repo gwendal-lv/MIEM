@@ -113,29 +113,25 @@ void SceneCanvasComponent::init(int numShapesMax, int numPointsMax)
 
 void SceneCanvasComponent::ReleaseOpengGLResources()
 {
-    DBG("enter SceneCanvasComponent::ReleaseOpengGLResources()");
-
+	releaseResources = true;
 	/*openGLLabel->release();*/
-    openGLLabel = nullptr;
 	shaderProgram = nullptr;
 	projectionMatrix = nullptr;
 	viewMatrix = nullptr;
 	modelMatrix = nullptr;
 	position = nullptr;
 	colour = nullptr;
-    releaseResources = true;
+
 	//openGLDestructionThread = std::thread(&SceneCanvasComponent::openGLDestructionFunc, this);
-    DBG("exiting SceneCanvasComponent::ReleaseOpengGLResources()");
+
 		
 }
 
-void SceneCanvasComponent::waitForOpenGLResourcesRealeased() {
+void SceneCanvasComponent::waitForOpenGLResourcesRealeased()
+{
 #if OPENGL_RENDERING == 1
-    while(!destructionDone) {
-
-    }
-    destructionDone = false;
-    DBG("released");
+	while (!openGLDestructionThread.joinable()) {}
+	openGLDestructionThread.join();
 #endif
 }
 
@@ -204,7 +200,6 @@ void SceneCanvasComponent::resized()
 void SceneCanvasComponent::newOpenGLContextCreated()
 {
     //DBG("SceneCanvasComponent : init OpenGL");
-    destructionDone = false;
 	redrawCanvasOutline = true;
 	numFrame = 0;
 
@@ -221,7 +216,7 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 
 #if OPENGL_RENDERING == 1
 
-	shaderProgram = new OpenGLShaderProgram(openGlContext);
+	shaderProgram = std::make_unique<OpenGLShaderProgram>(openGlContext);
 	shaderProgram->addVertexShader(OpenGLHelpers::translateVertexShaderToV3(myVertexShader));
 	shaderProgram->addFragmentShader(OpenGLHelpers::translateFragmentShaderToV3(myFragmentShader));
 	shaderProgram->link();
@@ -265,12 +260,12 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 	///uniforms
 
 	// déclaration des attributs et uniforms : !!! aux noms et leurs utilisations dans les shaders !!!
-	position = new OpenGLShaderProgram::Attribute(*shaderProgram, String("position").toRawUTF8());
-	colour = new OpenGLShaderProgram::Attribute(*shaderProgram, "colour");
+	position = std::make_unique<OpenGLShaderProgram::Attribute>(*shaderProgram.get(), String("position").toRawUTF8());
+	colour = std::make_unique<OpenGLShaderProgram::Attribute>(*shaderProgram.get(), "colour");
 
-	projectionMatrix = new OpenGLShaderProgram::Uniform(*shaderProgram, "projectionMatrix");
-	viewMatrix = new OpenGLShaderProgram::Uniform(*shaderProgram, "viewMatrix");
-	modelMatrix = new OpenGLShaderProgram::Uniform(*shaderProgram, "modelMatrix");
+	projectionMatrix = std::make_unique<OpenGLShaderProgram::Uniform>(*shaderProgram.get(), "projectionMatrix");
+	viewMatrix = std::make_unique<OpenGLShaderProgram::Uniform>(*shaderProgram.get(), "viewMatrix");
+	modelMatrix = std::make_unique<OpenGLShaderProgram::Uniform>(*shaderProgram.get(), "modelMatrix");
 
 
 	/// calcul des matrices
@@ -293,16 +288,10 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 	computeCanvasOutline();
 
 	if(openGLLabel == nullptr)
-		openGLLabel = new OpenGLTextObject("newFontImg_png"/*"C:\\Users\\ayup1\\PycharmProjects\\fontPNG\\newFontImg.png"*/, 100.0f, 300.0f, 100.0f, -100.0f, 12); // "ExportedFont2_png", "C:\\Users\\ayup1\\Downloads\\newFontImg.png"
+		openGLLabel = std::make_unique<OpenGLTextObject>("newFontImg_png"/*"C:\\Users\\ayup1\\PycharmProjects\\fontPNG\\newFontImg.png"*/, 100.0f, 300.0f, 100.0f, -100.0f, 12); // "ExportedFont2_png", "C:\\Users\\ayup1\\Downloads\\newFontImg.png"
 	openGLLabel->initialiseText(openGlContext);
 
-	shaderProgramCopy = shaderProgram;
-    openGLLabelCopy = openGLLabel;
-    positionCopy = position;
-    colourCopy = colour;
-    projectionMatrixCopy = projectionMatrix;
-    viewMatrixCopy = viewMatrix;
-    modelMatrixCopy = modelMatrix;
+	
 
 #endif // OPENGL_RENDERING == 1
 	//shaderProgram->use(); // on utilise qu'un seul shader program pour le moment donc on appelle une seule fois cette fonction
@@ -380,14 +369,12 @@ void SceneCanvasComponent::renderOpenGL()
 	
 	if (releaseResources)
 	{
-        DBG("releaseResources == true");
-		openGLLabelCopy->release();
+		openGLLabel->release();
 		std::u16string dummyString[]{ u"" };
 		Matrix3D<float> dummyMatrix(Vector3D<float>(0.0f,0.0f,0.0f));
-		openGLLabelCopy->drawOneTexturedRectangle(openGlContext, dummyMatrix, dummyMatrix, dummyMatrix, dummyString/*std::to_string(fps)*/);
-		openGLLabelCopy->waitForOpenGLResourcesRealeased();
-        delete openGLLabelCopy;
-		openGLLabelCopy = nullptr;
+		openGLLabel->drawOneTexturedRectangle(openGlContext, dummyMatrix, dummyMatrix, dummyMatrix, dummyString/*std::to_string(fps)*/);
+		openGLLabel->waitForOpenGLResourcesRealeased();
+		openGLLabel = nullptr;
 
 		releaseResources = false;
 		openGLDestructionThread = std::thread(&SceneCanvasComponent::openGLDestructionFunc, this);
@@ -466,12 +453,11 @@ void SceneCanvasComponent::renderOpenGL()
 		if (last < 0.0)
 			DBG("probleme lastDuration: " + (String)last);
 		EunderTime += underTime;
-		if (numFrame >  60)
+		if (numFrame > 100 * 60)
 		{
 			//DBG("60 frames, underTime : "+ (String)underTime +" [underTime]" + (String)(EunderTime/600.0));
 			//DBG("probleme underTime : " + (String)underTime);
 			//ofs << String(EunderTime / 6000.0).toStdString() << std::endl;
-            DBG("still running openGL");
 			EunderTime = 0.0;
 			numFrame = 0;
 		}
@@ -830,21 +816,13 @@ void SceneCanvasComponent::CreateShapeBuffer(std::shared_ptr<IDrawableArea> area
 void SceneCanvasComponent::openGLDestructionFunc()
 {
 	// à appeler tant que le context est encore actif afin de pouvoir supprimer correctement les ressources OpenGL
-	DBG("destruction begun");
-    delete shaderProgramCopy;
-	shaderProgramCopy = nullptr;
-    delete viewMatrixCopy;
-	viewMatrixCopy = nullptr;
-    delete projectionMatrixCopy;
-	projectionMatrixCopy = nullptr;
-    delete modelMatrixCopy;
-	modelMatrixCopy = nullptr;
-    delete positionCopy;
-	positionCopy = nullptr;
-    delete colourCopy;
-	colourCopy = nullptr;
-    destructionDone = true;
-    DBG("destruction finished");
+	
+	shaderProgram = nullptr;
+	viewMatrix = nullptr;
+	projectionMatrix = nullptr;
+	modelMatrix = nullptr;
+	position = nullptr;
+	colour = nullptr;
 }
 
 void SceneCanvasComponent::computeManipulationLine(float Ox, float Oy, float Mx, float My, float width, float height)
