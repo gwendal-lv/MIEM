@@ -1107,8 +1107,11 @@ void AmusingScene::HideUnselectedAreas()
 					cursor->setVisible(false);
 				completeArea->SetActive(false);
 			}
-			
+#if !defined(OPENGLRENDERING) || OPENGLRENDERING == 0
+			areas[i]->CanvasResized(canvasComponent);
+#else
 			areas[i]->RefreshOpenGLBuffers();
+#endif
 		}
 	}
 	allowOtherAreaSelection = false; // empeche de selectionner d'autes aires pendant qu'on en édite une !

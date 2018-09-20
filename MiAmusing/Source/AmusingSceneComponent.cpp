@@ -346,7 +346,8 @@ void AmusingSceneComponent::renderOpenGL()
 		// Peut mettre à jour des images et autres (si l'échelle a changé)
 		duplicatedAreas[i]->SetRenderingScale(desktopScale);
 		// Dessin effectif
-		duplicatedAreas[i]->Paint(g);
+		if(duplicatedAreas[i]->isVisible())
+			duplicatedAreas[i]->Paint(g);
 	}
 
 

@@ -296,6 +296,7 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 #endif // OPENGL_RENDERING == 1
 	//shaderProgram->use(); // on utilise qu'un seul shader program pour le moment donc on appelle une seule fois cette fonction
 }
+
 void SceneCanvasComponent::renderOpenGL()
 {
 	auto manager = canvasManager.lock();
@@ -361,7 +362,8 @@ void SceneCanvasComponent::renderOpenGL()
 		// Peut mettre à jour des images et autres (si l'échelle a changé)
 		duplicatedAreas[i]->SetRenderingScale(desktopScale);
 		// Dessin effectif
-		duplicatedAreas[i]->Paint(g);
+		if(duplicatedAreas[i]->isVisible())
+			duplicatedAreas[i]->Paint(g);
 	}
 
 #else // !OPENGL_RENDERING || OPENGL_RENDERING == 0

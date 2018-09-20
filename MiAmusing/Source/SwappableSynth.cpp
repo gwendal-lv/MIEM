@@ -104,6 +104,8 @@ void SwappableSynth::renderNextBlock(AudioSampleBuffer & outputBuffer, const Mid
 {
 	float startGain = 0.0f;
 	float endGain = 0.0f;
+	rampBuffer_off.clear();
+	rampBuffer_On.clear();
 	switch (state)
 	{
 	case SwappableSynthState::Loading :

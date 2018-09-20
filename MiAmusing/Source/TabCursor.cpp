@@ -22,6 +22,7 @@ TabCursor::TabCursor(bptree::ptree & areaTree, std::chrono::time_point<clock> co
 	magnetized = false;
 	initCursorSize = a;
 	currentAreaResize = 1.0;
+	allSizeEnabled = true;
 	//setZoffset(1.1f);
 }
 
@@ -33,6 +34,7 @@ TabCursor::TabCursor(uint64_t uniqueId, std::chrono::time_point<clock> commonSta
 	magnetized = false;
 	initCursorSize = a;
 	currentAreaResize = 1.0;
+	allSizeEnabled = true;
 	//setZoffset(1.1f);
 }
 
