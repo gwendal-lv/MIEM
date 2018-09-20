@@ -608,11 +608,16 @@ void TimeLine::renderNextBlock(AudioSampleBuffer & outputAudio, const MidiBuffer
 {
 	updateFilter();
 	//synth.renderNextBlock(outputAudio, incomingMidi, startSample, numSamples);
-	swappableSynth.renderNextBlock(outputAudio, incomingMidi, startSample, numSamples);
-	dsp::AudioBlock<float> block(outputAudio,
+	AudioSampleBuffer selfBuffer(2, numSamples);
+	selfBuffer.clear();
+	swappableSynth.renderNextBlock(selfBuffer, incomingMidi, startSample, numSamples);
+	dsp::AudioBlock<float> block(selfBuffer,
 		(size_t)startSample);
 	if(filterActive)
 		duplicatedFilter.process(dsp::ProcessContextReplacing<float>(block)); //filter->processSamples(outputAudio.getWritePointer(chan,startSample), numSamples);
+	outputAudio.addFrom(0, startSample, selfBuffer.getReadPointer(0), numSamples);
+	outputAudio.addFrom(1, startSample, selfBuffer.getReadPointer(1), numSamples);
+
 }
 
 void TimeLine::clearSounds()
