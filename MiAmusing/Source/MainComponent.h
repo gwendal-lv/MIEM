@@ -101,6 +101,7 @@ private:
 
 	void setSamplesColor(const int numSamples, Colour colorCode[]);
 	void setDefaultPath(String m_defaultPath);
+	void setSoundPath(int idx, String _path);
 	//void CreateDeviceSelector(AudioDeviceManager* deviceManager);
     
     // = = = = = = = = = = METHODS (JUCE AND USER-DEFINED) = = = = = = = = = =

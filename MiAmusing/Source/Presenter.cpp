@@ -38,13 +38,43 @@ Presenter::Presenter(View* _view) :
     view->CompleteInitialization(this);
     view->GetMainContentComponent()->resized();
 
-	const int numSamples = 4;
-	Colour colorCode[numSamples] = { Colours::grey,Colours::blue,Colours::red,Colours::green };
+	const int numSamples = 10;
+	Colour colorCode[numSamples] = { 
+		Colours::grey,
+		Colours::red,
+		Colours::green,
+		Colours::blue,
+		Colours::beige,
+		Colours::burlywood,
+		Colours::indianred,
+		Colours::cyan,
+		Colours::fuchsia,
+		Colours::yellow
+	};
 	
-	String defaultPath = BinaryData::namedResourceList[0];
 	view->setSampleColor(numSamples, colorCode);
-	view->setDefaultPath(defaultPath);
 
+	if (BinaryData::namedResourceListSize == 1)
+	{
+		String defaultPath = BinaryData::namedResourceList[0];
+		view->setDefaultPath(defaultPath);
+	}
+	else
+	{
+		int idx(0);
+		int i(0);
+		while (i < BinaryData::namedResourceListSize)
+		{
+			String originalName = BinaryData::originalFilenames[i];
+			if (!originalName.matchesWildcard("*.png", true))
+			{
+				view->setSoundPath(idx, BinaryData::namedResourceList[i]);
+				++idx;
+			}
+			++i;
+		}
+
+	}
 	
 
 	graphicSessionManager.setSamplesColor(numSamples, colorCode);
@@ -76,11 +106,23 @@ void Presenter::CompleteInitialisation(AmusingModel* _model)
     model = _model;
 	view->CompleteInitialization(model);
 
-	const int numSamples = 4;
-	Colour colorCode[numSamples] = { Colours::grey ,Colours::blue,Colours::red,Colours::green };
+	const int numSamples = 10;
+	//Colour colorCode[numSamples] = { Colours::grey ,Colours::blue,Colours::red,Colours::green };
+	Colour colorCode[numSamples] = {
+		Colours::grey,
+		Colours::red,
+		Colours::green,
+		Colours::blue,
+		Colours::beige,
+		Colours::burlywood,
+		Colours::indianred,
+		Colours::cyan,
+		Colours::fuchsia,
+		Colours::yellow
+	};
 
 
-	String defaultPath;
+	/*String defaultPath;
 	for (int i = 0; i < BinaryData::namedResourceListSize; ++i)
 	{
 		defaultPath = BinaryData::originalFilenames[i];
@@ -92,7 +134,20 @@ void Presenter::CompleteInitialisation(AmusingModel* _model)
 	}
 	
 	for (int i = 0; i < numSamples; ++i)
-			setColorPath(i, colorCode[i], defaultPath);
+			setColorPath(i, colorCode[i], defaultPath);*/
+
+	int idx(0);
+	int i(0);
+	while(idx < numSamples)
+	{
+		String originalName = BinaryData::originalFilenames[i];
+		if (!originalName.matchesWildcard("*.png", true))
+		{
+			setColorPath(idx, colorCode[idx], BinaryData::namedResourceList[i]);
+			++idx;
+		}
+		++i;
+	}
 	//graphicSessionManager.CompleteInitialization(model);
 }
 

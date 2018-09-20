@@ -34,6 +34,7 @@ public:
 
 	void completeInitialisation(MainContentComponent *m_mainComponent);
 	void setDefaultPath(String m_defaultPath);
+	void setSoundPath(int idx, String _path);
 	String getDefaultPath();
 	void release();
 

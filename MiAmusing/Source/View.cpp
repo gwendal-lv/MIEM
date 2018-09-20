@@ -67,6 +67,10 @@ void Amusing::View::setDefaultPath(String defaultPath)
 	mainContentComponent->setDefaultPath(defaultPath);
 }
 
+void Amusing::View::setSoundPath(int idx, String _path)
+{
+	mainContentComponent->setSoundPath(idx, _path);
+}
 
 void View::ButtonClicked(const String& /*name*/)
 {

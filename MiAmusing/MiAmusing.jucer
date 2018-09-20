@@ -118,7 +118,20 @@
         <FILE id="GceKis" name="View.cpp" compile="1" resource="0" file="Source/View.cpp"/>
         <FILE id="AJOEwp" name="View.h" compile="0" resource="0" file="Source/View.h"/>
       </GROUP>
+      <FILE id="h6TYfk" name="808-Clap12.wav" compile="0" resource="1" file="Source/808-Clap12.wav"/>
+      <FILE id="JBdTkL" name="808-HiHats15.wav" compile="0" resource="1"
+            file="Source/808-HiHats15.wav"/>
+      <FILE id="QTR32S" name="B3-Leslie2c.wav" compile="0" resource="1" file="Source/B3-Leslie2c.wav"/>
       <FILE id="GOduOp" name="cello.wav" compile="0" resource="1" file="Source/cello.wav"/>
+      <FILE id="c8NJlI" name="epiano1-2c.wav" compile="0" resource="1" file="Source/epiano1-2c.wav"/>
+      <FILE id="YN0dVi" name="gesaffelstein1.wav" compile="0" resource="1"
+            file="Source/gesaffelstein1.wav"/>
+      <FILE id="pMnQAm" name="gesaffelstein2.wav" compile="0" resource="1"
+            file="Source/gesaffelstein2.wav"/>
+      <FILE id="Ywta8K" name="gesaffelstein3.wav" compile="0" resource="1"
+            file="Source/gesaffelstein3.wav"/>
+      <FILE id="rOmYNN" name="hmd2c.wav" compile="0" resource="1" file="Source/hmd2c.wav"/>
+      <FILE id="AgY2mG" name="wurldel2c.wav" compile="0" resource="1" file="Source/wurldel2c.wav"/>
     </GROUP>
     <FILE id="v8jCgE" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
     <GROUP id="{593B3C8B-4E9F-6C95-BD9D-6562983482B8}" name="MiamCommonSource">
