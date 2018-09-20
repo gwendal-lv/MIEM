@@ -59,6 +59,7 @@ void MultiSceneCanvasComponent::LinkToManager(std::shared_ptr<MultiSceneCanvasIn
 
 void MultiSceneCanvasComponent::ReleaseOpengGLResources()
 {
+    DBG("ReleaseOpenGLResources");
 	childrenCanvas->ReleaseOpengGLResources();
 	childrenCanvas->waitForOpenGLResourcesRealeased();
 }

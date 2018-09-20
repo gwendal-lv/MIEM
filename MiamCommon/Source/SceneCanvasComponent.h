@@ -183,18 +183,18 @@ public:
 
     
 protected :
-	std::unique_ptr<OpenGLShaderProgram::Attribute> position, colour;
+	OpenGLShaderProgram::Attribute *position, *colour, *positionCopy, *colourCopy;
 
 private:
 	int numFrame;
 	double EunderTime;
-	std::unique_ptr<OpenGLTextObject> openGLLabel;
+	OpenGLTextObject *openGLLabel, *openGLLabelCopy;
 
 	bool needToResetBufferParts;
 	int previousMaxSize; // utilisé pour remettre à 0 les parties de buffer qui étaient utilisées à la frame précédente et qui ne le sont plus mtn
 
-	std::unique_ptr<OpenGLShaderProgram> shaderProgram;
-	std::unique_ptr<OpenGLShaderProgram::Uniform> projectionMatrix, viewMatrix, modelMatrix;
+	OpenGLShaderProgram *shaderProgram, *shaderProgramCopy;
+	OpenGLShaderProgram::Uniform *projectionMatrix, *viewMatrix, *modelMatrix, *projectionMatrixCopy, *viewMatrixCopy, *modelMatrixCopy;
 
 	String myVertexShader = "attribute vec4 position;\n"
 #if JUCE_OPENGL_ES
@@ -331,7 +331,7 @@ private:
 
 
 
-
+    std::atomic<bool> destructionDone;
 	std::thread openGLDestructionThread;
 	void openGLDestructionFunc();
 
