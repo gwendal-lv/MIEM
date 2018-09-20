@@ -298,9 +298,8 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 }
 void SceneCanvasComponent::renderOpenGL()
 {
-#if !defined(OPENGL_RENDERING) || (OPENGL_RENDERING == 0)
-
 	auto manager = canvasManager.lock();
+#if !defined(OPENGL_RENDERING) || (OPENGL_RENDERING == 0)
 
 	const double desktopScale = openGlContext.getRenderingScale();
 	std::unique_ptr<LowLevelGraphicsContext> glRenderer(createOpenGLGraphicsContext(openGlContext,
@@ -425,7 +424,7 @@ void SceneCanvasComponent::renderOpenGL()
 
 			openGLLabel->drawOneTexturedRectangle(openGlContext, testModel, testView, testProjecxtion, testFPS/*std::to_string(fps)*/);
 		}
-
+    }
 #endif // !OPENGL_RENDERING || OPENGL_RENDERING == 0
 
 		// Call to a general Graphic update on the whole Presenter module
@@ -474,7 +473,7 @@ void SceneCanvasComponent::renderOpenGL()
 		{
 			Thread::sleep((int)std::floor(underTime));
 		}
-	}
+	
 }
 
 void SceneCanvasComponent::DrawOnSceneCanevas(std::shared_ptr<Miam::MultiSceneCanvasInteractor> &manager)
