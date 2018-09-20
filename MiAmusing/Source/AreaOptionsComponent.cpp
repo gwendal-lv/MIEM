@@ -65,6 +65,11 @@ AreaOptionsComponent::AreaOptionsComponent ()
 
 
     //[UserPreSize]
+	volumeButton->setAlpha(0.5f);
+	speedButton->setAlpha(0.5f);
+	sampleButton->setAlpha(0.5f);
+	octaveButton->setAlpha(0.5f);
+	rhythmButton->setAlpha(1.0f);
     //[/UserPreSize]
 
     setSize (600, 400);
@@ -126,30 +131,55 @@ void AreaOptionsComponent::buttonClicked (Button* buttonThatWasClicked)
     if (buttonThatWasClicked == volumeButton.get())
     {
         //[UserButtonCode_volumeButton] -- add your button handler code here..
+		volumeButton->setAlpha(1.0f);
+		speedButton->setAlpha(0.5f);
+		sampleButton->setAlpha(0.5f);
+		octaveButton->setAlpha(0.5f);
+		rhythmButton->setAlpha(0.5f);
 		canvasComponent->optionButtonClicked(OptionButtonClicked::Volume);
         //[/UserButtonCode_volumeButton]
     }
     else if (buttonThatWasClicked == speedButton.get())
     {
         //[UserButtonCode_speedButton] -- add your button handler code here..
+		volumeButton->setAlpha(0.5f);
+		speedButton->setAlpha(1.0f);
+		sampleButton->setAlpha(0.5f);
+		octaveButton->setAlpha(0.5f);
+		rhythmButton->setAlpha(0.5f);
 		canvasComponent->optionButtonClicked(OptionButtonClicked::Speed);
         //[/UserButtonCode_speedButton]
     }
     else if (buttonThatWasClicked == sampleButton.get())
     {
         //[UserButtonCode_sampleButton] -- add your button handler code here..
+		volumeButton->setAlpha(0.5f);
+		speedButton->setAlpha(0.5f);
+		sampleButton->setAlpha(1.0f);
+		octaveButton->setAlpha(0.5f);
+		rhythmButton->setAlpha(0.5f);
 		canvasComponent->optionButtonClicked(OptionButtonClicked::Sample);
         //[/UserButtonCode_sampleButton]
     }
     else if (buttonThatWasClicked == octaveButton.get())
     {
         //[UserButtonCode_octaveButton] -- add your button handler code here..
+		volumeButton->setAlpha(0.5f);
+		speedButton->setAlpha(0.5f);
+		sampleButton->setAlpha(0.5f);
+		octaveButton->setAlpha(1.0f);
+		rhythmButton->setAlpha(0.5f);
 		canvasComponent->optionButtonClicked(OptionButtonClicked::Octave);
         //[/UserButtonCode_octaveButton]
     }
     else if (buttonThatWasClicked == rhythmButton.get())
     {
         //[UserButtonCode_rhythmButton] -- add your button handler code here..
+		volumeButton->setAlpha(0.5f);
+		speedButton->setAlpha(0.5f);
+		sampleButton->setAlpha(0.5f);
+		octaveButton->setAlpha(0.5f);
+		rhythmButton->setAlpha(1.0f);
 		canvasComponent->optionButtonClicked(OptionButtonClicked::Rhythm);
         //[/UserButtonCode_rhythmButton]
     }
@@ -157,6 +187,11 @@ void AreaOptionsComponent::buttonClicked (Button* buttonThatWasClicked)
     {
         //[UserButtonCode_closeOptionsButton] -- add your button handler code here..
 		setVisible(false);
+		volumeButton->setAlpha(0.5f);
+		speedButton->setAlpha(0.5f);
+		sampleButton->setAlpha(0.5f);
+		octaveButton->setAlpha(0.5f);
+		rhythmButton->setAlpha(1.0f);
 		canvasComponent->optionButtonClicked(OptionButtonClicked::Closed);
         //[/UserButtonCode_closeOptionsButton]
     }
