@@ -789,6 +789,48 @@ void MultiSceneCanvasManager::SetMode(Miam::CanvasManagerMode newMode)
 	graphicSessionManager->CanvasModeChanged(mode);
 }
 
+void MultiSceneCanvasManager::muteOtherAreas(int shouldMuteOtherAreas)
+{
+	if (auto amusingScene = std::dynamic_pointer_cast<AmusingScene>(selectedScene))
+	{
+		if (shouldMuteOtherAreas == 1)
+		{
+			for (int i = 0; i < amusingScene->GetInteractiveAreasCount(); ++i)
+			{
+				if (auto completeP = std::dynamic_pointer_cast<CompletePolygon>(amusingScene->GetEditableArea(i)))
+				{
+					if (completeP != GetSelectedArea())
+					{
+						if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)
+						{
+							completeP->setOldVelocity(myGraphicSessionManager->getVelocity(completeP));
+							myGraphicSessionManager->setVelocityArea(completeP, 0);
+							handleAndSendAreaEventSync(std::make_shared<AreaEvent>(completeP, AreaEventType::ColorChanged, amusingScene));
+						}
+					}
+				}
+			}
+		}
+		else
+		{
+			for (int i = 0; i < amusingScene->GetInteractiveAreasCount(); ++i)
+			{
+				if (auto completeP = std::dynamic_pointer_cast<CompletePolygon>(amusingScene->GetEditableArea(i)))
+				{
+					if (completeP != GetSelectedArea())
+					{
+						if (auto myGraphicSessionManager = (GraphicSessionManager*)graphicSessionManager)
+						{
+							myGraphicSessionManager->setVelocityArea(completeP, completeP->getOldVelocity());
+							handleAndSendAreaEventSync(std::make_shared<AreaEvent>(completeP, AreaEventType::ColorChanged, amusingScene));
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
 void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
 {
 	currentOptionClicked = optionClicked;

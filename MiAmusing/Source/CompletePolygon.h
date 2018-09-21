@@ -126,6 +126,8 @@ namespace Amusing
 		bool SizeChanged(double _size, bool minSize);
 
 		virtual void RefreshOpenGLBuffers() override;
+		void setOldVelocity(double value);
+		double getOldVelocity();
 		void RefreshTargetOpenGLBuffers();
 
 		const int GetVerticesBufferSize() override {					// points du contour					manipulationLine	manipulationPoint
@@ -137,6 +139,7 @@ namespace Amusing
 //        bool isVisible() override { return areaIsVisible; }
 		
 	private:
+		double oldVelocity;
 		int numAngles;
 		JUCE_LEAK_DETECTOR(CompletePolygon)
 		// attributes linked to the Cursor

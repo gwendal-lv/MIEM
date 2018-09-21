@@ -46,7 +46,8 @@ enum OptionButtonClicked
                                                                     //[/Comments]
 */
 class AreaOptionsComponent  : public Component,
-                              public Button::Listener
+                              public Button::Listener,
+                              public Slider::Listener
 {
 public:
     //==============================================================================
@@ -61,6 +62,7 @@ public:
     void paint (Graphics& g) override;
     void resized() override;
     void buttonClicked (Button* buttonThatWasClicked) override;
+    void sliderValueChanged (Slider* sliderThatWasMoved) override;
 
 
 
@@ -76,6 +78,8 @@ private:
     std::unique_ptr<TextButton> octaveButton;
     std::unique_ptr<TextButton> rhythmButton;
     std::unique_ptr<TextButton> closeOptionsButton;
+    std::unique_ptr<Slider> soloSlider;
+    std::unique_ptr<Label> soloLabel;
 
 
     //==============================================================================

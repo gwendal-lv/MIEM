@@ -88,6 +88,14 @@ void MultiSceneCanvasComponentAmusing::showAreaOptions(bool shouldBeVisible)
 	resized();
 }
 
+void MultiSceneCanvasComponentAmusing::muteOtherAreas(int shouldMuteOtherAreas)
+{
+	if (auto canvasManagerAsManager = std::dynamic_pointer_cast<Amusing::MultiSceneCanvasManager>(canvasManager))
+	{
+		canvasManagerAsManager->muteOtherAreas(shouldMuteOtherAreas);
+	}
+}
+
 void MultiSceneCanvasComponentAmusing::optionButtonClicked(OptionButtonClicked optionClicked)
 {
 	resized();

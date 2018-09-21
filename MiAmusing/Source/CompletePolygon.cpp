@@ -2016,3 +2016,13 @@ void CompletePolygon::RefreshOpenGLBuffers()
 	EditablePolygon::RefreshOpenGLBuffers();
 	RefreshTargetOpenGLBuffers();
 }
+
+void CompletePolygon::setOldVelocity(double value)
+{
+	oldVelocity = value;
+}
+
+double CompletePolygon::getOldVelocity()
+{
+	return oldVelocity;
+}

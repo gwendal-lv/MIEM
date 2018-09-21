@@ -36,6 +36,8 @@ public:
 
 	void showAreaOptions(bool shouldBeVisible);
 
+	void muteOtherAreas(int shouldMuteOtherAreas);
+
 	void optionButtonClicked(OptionButtonClicked optionClicked);
 
 private:

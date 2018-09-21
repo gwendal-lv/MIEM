@@ -63,6 +63,22 @@ AreaOptionsComponent::AreaOptionsComponent ()
     closeOptionsButton->setButtonText (TRANS("X"));
     closeOptionsButton->addListener (this);
 
+    soloSlider.reset (new Slider ("new slider"));
+    addAndMakeVisible (soloSlider.get());
+    soloSlider->setRange (0, 1, 1);
+    soloSlider->setSliderStyle (Slider::LinearHorizontal);
+    soloSlider->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    soloSlider->addListener (this);
+
+    soloLabel.reset (new Label ("new label",
+                                TRANS("Solo")));
+    addAndMakeVisible (soloLabel.get());
+    soloLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    soloLabel->setJustificationType (Justification::centred);
+    soloLabel->setEditable (false, false, false);
+    soloLabel->setColour (TextEditor::textColourId, Colours::black);
+    soloLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
 
     //[UserPreSize]
 	volumeButton->setAlpha(0.5f);
@@ -90,6 +106,8 @@ AreaOptionsComponent::~AreaOptionsComponent()
     octaveButton = nullptr;
     rhythmButton = nullptr;
     closeOptionsButton = nullptr;
+    soloSlider = nullptr;
+    soloLabel = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -113,12 +131,14 @@ void AreaOptionsComponent::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    volumeButton->setBounds (proportionOfWidth (0.0200f), 0, proportionOfWidth (0.9001f), proportionOfHeight (0.1500f));
-    speedButton->setBounds (proportionOfWidth (0.0200f), 0 + proportionOfHeight (0.1500f) - -2, proportionOfWidth (0.9001f), roundToInt (proportionOfHeight (0.1500f) * 1.0000f));
-    sampleButton->setBounds (proportionOfWidth (0.0200f), (0 + proportionOfHeight (0.1500f) - -2) + (roundToInt (proportionOfHeight (0.1500f) * 1.0000f)) - -2, proportionOfWidth (0.9001f), roundToInt (proportionOfHeight (0.1500f) * 1.0000f));
-    octaveButton->setBounds (proportionOfWidth (0.0200f), ((0 + proportionOfHeight (0.1500f) - -2) + (roundToInt (proportionOfHeight (0.1500f) * 1.0000f)) - -2) + (roundToInt (proportionOfHeight (0.1500f) * 1.0000f)) - -2, proportionOfWidth (0.9001f), roundToInt (proportionOfHeight (0.1500f) * 1.0000f));
-    rhythmButton->setBounds (proportionOfWidth (0.0200f), (((0 + proportionOfHeight (0.1500f) - -2) + (roundToInt (proportionOfHeight (0.1500f) * 1.0000f)) - -2) + (roundToInt (proportionOfHeight (0.1500f) * 1.0000f)) - -2) + (roundToInt (proportionOfHeight (0.1500f) * 1.0000f)) - -2, proportionOfWidth (0.9001f), roundToInt (proportionOfHeight (0.1500f) * 1.0000f));
-    closeOptionsButton->setBounds (proportionOfWidth (0.0203f), ((((0 + proportionOfHeight (0.1500f) - -2) + (roundToInt (proportionOfHeight (0.1500f) * 1.0000f)) - -2) + (roundToInt (proportionOfHeight (0.1500f) * 1.0000f)) - -2) + (roundToInt (proportionOfHeight (0.1500f) * 1.0000f)) - -2) + (roundToInt (proportionOfHeight (0.1500f) * 1.0000f)) - -2, proportionOfWidth (0.9001f), roundToInt (proportionOfHeight (0.1500f) * 1.0000f));
+    volumeButton->setBounds (proportionOfWidth (0.0206f), (0 + 0) + proportionOfHeight (0.1306f), proportionOfWidth (0.9003f), proportionOfHeight (0.1306f));
+    speedButton->setBounds (proportionOfWidth (0.0206f), ((0 + 0) + proportionOfHeight (0.1306f)) + proportionOfHeight (0.1306f) - -2, proportionOfWidth (0.9003f), roundToInt (proportionOfHeight (0.1306f) * 1.0000f));
+    sampleButton->setBounds (proportionOfWidth (0.0206f), (((0 + 0) + proportionOfHeight (0.1306f)) + proportionOfHeight (0.1306f) - -2) + (roundToInt (proportionOfHeight (0.1306f) * 1.0000f)) - -2, proportionOfWidth (0.9003f), roundToInt (proportionOfHeight (0.1306f) * 1.0000f));
+    octaveButton->setBounds (proportionOfWidth (0.0206f), ((((0 + 0) + proportionOfHeight (0.1306f)) + proportionOfHeight (0.1306f) - -2) + (roundToInt (proportionOfHeight (0.1306f) * 1.0000f)) - -2) + (roundToInt (proportionOfHeight (0.1306f) * 1.0000f)) - -2, proportionOfWidth (0.9003f), roundToInt (proportionOfHeight (0.1306f) * 1.0000f));
+    rhythmButton->setBounds (proportionOfWidth (0.0206f), (((((0 + 0) + proportionOfHeight (0.1306f)) + proportionOfHeight (0.1306f) - -2) + (roundToInt (proportionOfHeight (0.1306f) * 1.0000f)) - -2) + (roundToInt (proportionOfHeight (0.1306f) * 1.0000f)) - -2) + (roundToInt (proportionOfHeight (0.1306f) * 1.0000f)) - -2, proportionOfWidth (0.9003f), roundToInt (proportionOfHeight (0.1306f) * 1.0000f));
+    closeOptionsButton->setBounds (proportionOfWidth (0.0206f), ((((((0 + 0) + proportionOfHeight (0.1306f)) + proportionOfHeight (0.1306f) - -2) + (roundToInt (proportionOfHeight (0.1306f) * 1.0000f)) - -2) + (roundToInt (proportionOfHeight (0.1306f) * 1.0000f)) - -2) + (roundToInt (proportionOfHeight (0.1306f) * 1.0000f)) - -2) + (roundToInt (proportionOfHeight (0.1306f) * 1.0000f)) - -2, proportionOfWidth (0.9003f), roundToInt (proportionOfHeight (0.1306f) * 1.0000f));
+    soloSlider->setBounds (proportionOfWidth (0.0260f) + proportionOfWidth (0.4496f), 0 + 0, proportionOfWidth (0.4496f), proportionOfHeight (0.1306f));
+    soloLabel->setBounds (proportionOfWidth (0.0260f), 0, proportionOfWidth (0.4496f), proportionOfHeight (0.1306f));
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -200,6 +220,22 @@ void AreaOptionsComponent::buttonClicked (Button* buttonThatWasClicked)
     //[/UserbuttonClicked_Post]
 }
 
+void AreaOptionsComponent::sliderValueChanged (Slider* sliderThatWasMoved)
+{
+    //[UsersliderValueChanged_Pre]
+    //[/UsersliderValueChanged_Pre]
+
+    if (sliderThatWasMoved == soloSlider.get())
+    {
+        //[UserSliderCode_soloSlider] -- add your slider handling code here..
+		canvasComponent->muteOtherAreas((int)sliderThatWasMoved->getValue());
+        //[/UserSliderCode_soloSlider]
+    }
+
+    //[UsersliderValueChanged_Post]
+    //[/UsersliderValueChanged_Post]
+}
+
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
@@ -225,28 +261,42 @@ BEGIN_JUCER_METADATA
                  fixedSize="0" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="ff323e44"/>
   <TEXTBUTTON name="new button" id="5c62636afaa99798" memberName="volumeButton"
-              virtualName="" explicitFocusOrder="0" pos="2.029% 0 90.008% 15.036%"
-              buttonText="Volume" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
+              virtualName="" explicitFocusOrder="0" pos="2.059% 0R 90.033% 13.061%"
+              posRelativeY="50de1a8aa8ab7dae" buttonText="Volume" connectedEdges="0"
+              needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="new button" id="482bb152c7d9cc28" memberName="speedButton"
-              virtualName="" explicitFocusOrder="0" pos="2.029% -2R 90.008% 100%"
+              virtualName="" explicitFocusOrder="0" pos="2.059% -2R 90.033% 100%"
               posRelativeY="5c62636afaa99798" posRelativeH="5c62636afaa99798"
               buttonText="Speed" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="new button" id="e95fad03e7a3c441" memberName="sampleButton"
-              virtualName="" explicitFocusOrder="0" pos="2.029% -2R 90.008% 100%"
+              virtualName="" explicitFocusOrder="0" pos="2.059% -2R 90.033% 100%"
               posRelativeY="482bb152c7d9cc28" posRelativeH="5c62636afaa99798"
               buttonText="Sample" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="new button" id="5960e66316e7ae3d" memberName="octaveButton"
-              virtualName="" explicitFocusOrder="0" pos="2.029% -2R 90.008% 100%"
+              virtualName="" explicitFocusOrder="0" pos="2.059% -2R 90.033% 100%"
               posRelativeY="e95fad03e7a3c441" posRelativeH="5c62636afaa99798"
               buttonText="Octave" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="new button" id="b237be36e238aabb" memberName="rhythmButton"
-              virtualName="" explicitFocusOrder="0" pos="2.029% -2R 90.008% 100%"
+              virtualName="" explicitFocusOrder="0" pos="2.059% -2R 90.033% 100%"
               posRelativeY="5960e66316e7ae3d" posRelativeH="5c62636afaa99798"
               buttonText="Rhythm" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="new button" id="d76c1069cbfb80a3" memberName="closeOptionsButton"
-              virtualName="" explicitFocusOrder="0" pos="2.029% -2R 90.008% 100%"
+              virtualName="" explicitFocusOrder="0" pos="2.059% -2R 90.033% 100%"
               posRelativeY="b237be36e238aabb" posRelativeH="5c62636afaa99798"
               buttonText="X" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
+  <SLIDER name="new slider" id="50de1a8aa8ab7dae" memberName="soloSlider"
+          virtualName="" explicitFocusOrder="0" pos="0R 0 44.962% 13.061%"
+          posRelativeX="8621ed6c9e1093e6" posRelativeY="8621ed6c9e1093e6"
+          min="0.00000000000000000000" max="1.00000000000000000000" int="1.00000000000000000000"
+          style="LinearHorizontal" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1.00000000000000000000"
+          needsCallback="1"/>
+  <LABEL name="new label" id="8621ed6c9e1093e6" memberName="soloLabel"
+         virtualName="" explicitFocusOrder="0" pos="2.6% 0 44.962% 13.061%"
+         edTextCol="ff000000" edBkgCol="0" labelText="Solo" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
+         fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
+         bold="0" italic="0" justification="36"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

@@ -98,6 +98,7 @@ namespace Amusing {
 		double getOctave(std::shared_ptr<IEditableArea> area);
 		int getCurrentColor(std::shared_ptr<IEditableArea> area);
 		void SetMode(Miam::CanvasManagerMode newMode);
+		void muteOtherAreas(int shouldMuteOtherAreas);
 		void SetEditingMode(OptionButtonClicked optionClicked);
 
 		void UnselectScene();
