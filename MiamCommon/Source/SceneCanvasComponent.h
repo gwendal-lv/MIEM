@@ -27,6 +27,8 @@
 
 #include <thread>
 
+#include <mutex>
+
 using namespace Miam;
 
 namespace Miam {
@@ -329,7 +331,7 @@ private:
 
 	std::atomic<bool> releaseResources;
 	std::atomic<bool> releaseDone;
-
+	std::mutex rendering_mutex;
 
 
 	std::thread openGLDestructionThread;

@@ -114,6 +114,7 @@ void SceneCanvasComponent::init(int numShapesMax, int numPointsMax)
 
 void SceneCanvasComponent::ReleaseOpengGLResources()
 {
+	rendering_mutex.lock();
 	releaseResources = true;
 	/*openGLLabel->release();*/
 	shaderProgram = nullptr;
@@ -122,7 +123,7 @@ void SceneCanvasComponent::ReleaseOpengGLResources()
 	modelMatrix = nullptr;
 	position = nullptr;
 	colour = nullptr;
-
+	rendering_mutex.unlock();
 	//openGLDestructionThread = std::thread(&SceneCanvasComponent::openGLDestructionFunc, this);
 
 		
@@ -388,6 +389,7 @@ void SceneCanvasComponent::renderOpenGL()
 	}
 	else
 	{
+		rendering_mutex.lock();
 		++numFrame;
 
 		//DBG("render : " + getName());
@@ -431,6 +433,7 @@ void SceneCanvasComponent::renderOpenGL()
 
 			openGLLabel->drawOneTexturedRectangle(openGlContext, testModel, testView, testProjecxtion, testFPS/*std::to_string(fps)*/);
 		}
+		rendering_mutex.unlock();
     }
 #endif // !OPENGL_RENDERING || OPENGL_RENDERING == 0
 
@@ -475,7 +478,7 @@ void SceneCanvasComponent::renderOpenGL()
 		}
 		//if (last > desiredPeriod_ms)
 		//	DBG("probleme : last > desiredPeriod_ms");
-
+		
 		if (underTime >= 0.0)
 		{
 			Thread::sleep((int)std::floor(underTime));
