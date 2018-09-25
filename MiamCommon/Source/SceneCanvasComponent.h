@@ -328,7 +328,7 @@ private:
 
 
 	std::atomic<bool> releaseResources;
-
+	std::atomic<bool> releaseDone;
 
 
 

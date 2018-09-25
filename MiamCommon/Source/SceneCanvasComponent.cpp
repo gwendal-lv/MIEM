@@ -39,6 +39,7 @@ SceneCanvasComponent::SceneCanvasComponent(int numShapesMax, int numPointsMax) :
 
 void SceneCanvasComponent::init(int numShapesMax, int numPointsMax)
 {
+	releaseDone = false;
 	EunderTime = 0.0;
 	previousMaxSize = 0;
 	needToResetBufferParts = false;
@@ -130,13 +131,16 @@ void SceneCanvasComponent::ReleaseOpengGLResources()
 void SceneCanvasComponent::waitForOpenGLResourcesRealeased()
 {
 #if OPENGL_RENDERING == 1
+	while (!releaseDone) {}
 	while (!openGLDestructionThread.joinable()) {}
 	openGLDestructionThread.join();
+	releaseDone = false;
 #endif
 }
 
 SceneCanvasComponent::~SceneCanvasComponent()
 {
+
     openGlContext.detach();
 	delete[] g_vertex_buffer_data;
 	delete[] g_color_buffer_data;
@@ -378,6 +382,7 @@ void SceneCanvasComponent::renderOpenGL()
 		openGLLabel->waitForOpenGLResourcesRealeased();
 		openGLLabel = nullptr;
 
+		releaseDone = false;
 		releaseResources = false;
 		openGLDestructionThread = std::thread(&SceneCanvasComponent::openGLDestructionFunc, this);
 	}
@@ -825,6 +830,7 @@ void SceneCanvasComponent::openGLDestructionFunc()
 	modelMatrix = nullptr;
 	position = nullptr;
 	colour = nullptr;
+	releaseDone = true;
 }
 
 void SceneCanvasComponent::computeManipulationLine(float Ox, float Oy, float Mx, float My, float width, float height)
