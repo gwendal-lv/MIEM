@@ -228,13 +228,13 @@ void EditScene::resized()
     //[/UserPreResize]
 
     groupComponent->setBounds (0, 0, proportionOfWidth (1.0000f), proportionOfHeight (1.0000f));
-    timeSlider->setBounds (0, getHeight() - -9, proportionOfWidth (0.9393f), proportionOfHeight (0.0752f));
+    timeSlider->setBounds (proportionOfWidth (0.0300f), ((((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f) - -9, proportionOfWidth (0.9393f), proportionOfHeight (0.0752f));
     imgPlayButton->setBounds (0, proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
     imgStopButton->setBounds ((0 + 0) + 0, (proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
     imgPauseButton->setBounds (0 + 0, proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
     imgOptionButton->setBounds (0, proportionOfHeight (0.9486f) + roundToInt (proportionOfHeight (0.0515f) * -1.0000f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
     imgDeleteButton->setBounds (((0 + 0) + 0) + 0, ((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
-    textButton->setBounds (proportionOfWidth (0.0358f), (getHeight() - -9) + proportionOfHeight (0.0752f) - -32, proportionOfWidth (0.9491f), proportionOfHeight (0.0752f));
+    textButton->setBounds (proportionOfWidth (0.0250f), (((((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f) - -9) + proportionOfHeight (0.0752f) - -32, proportionOfWidth (0.9491f), proportionOfHeight (0.0752f));
     label->setBounds (proportionOfWidth (0.0260f), proportionOfHeight (0.9486f), proportionOfWidth (0.9491f), proportionOfHeight (0.0515f));
     addCarreShapeButton->setBounds (proportionOfWidth (0.0000f), (((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
     addTriangleShapeButton2->setBounds (proportionOfWidth (0.0000f) + 0, ((((proportionOfHeight (0.0752f) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f)) + proportionOfHeight (0.0752f), proportionOfWidth (1.0000f), proportionOfHeight (0.0752f));
@@ -538,12 +538,12 @@ BEGIN_JUCER_METADATA
                   virtualName="" explicitFocusOrder="0" pos="0 0 100% 100%" outlinecol="ffffffff"
                   title=""/>
   <SLIDER name="new slider" id="31e65db12379ed8f" memberName="timeSlider"
-          virtualName="" explicitFocusOrder="0" pos="0 -9R 93.933% 7.52%"
-          posRelativeX="15ec0fa26eb54f8b" posRelativeY="15ec0fa26eb54f8b"
-          textboxtext="ffffffff" textboxbkgd="152f3c" min="50.00000000000000000000"
-          max="200.00000000000000000000" int="1.00000000000000000000" style="IncDecButtons"
-          textBoxPos="TextBoxAbove" textBoxEditable="1" textBoxWidth="80"
-          textBoxHeight="20" skewFactor="1.00000000000000000000" needsCallback="1"/>
+          virtualName="" explicitFocusOrder="0" pos="3.034% -9R 93.933% 7.52%"
+          posRelativeY="581ab4124f4712ed" textboxtext="ffffffff" textboxbkgd="152f3c"
+          min="50.00000000000000000000" max="200.00000000000000000000"
+          int="1.00000000000000000000" style="IncDecButtons" textBoxPos="TextBoxAbove"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.00000000000000000000"
+          needsCallback="1"/>
   <IMAGEBUTTON name="imgPlaybutton" id="2b4803c7ccf2d5d1" memberName="imgPlayButton"
                virtualName="" explicitFocusOrder="0" pos="0 7.52% 100% 7.52%"
                buttonText="new button" connectedEdges="0" needsCallback="1"
@@ -580,7 +580,7 @@ BEGIN_JUCER_METADATA
                opacityOver="1.00000000000000000000" colourOver="0" resourceDown="deleteOn_png"
                opacityDown="1.00000000000000000000" colourDown="0"/>
   <TEXTBUTTON name="new button" id="c84bea64b985b44" memberName="textButton"
-              virtualName="" explicitFocusOrder="0" pos="3.575% -32R 94.908% 7.52%"
+              virtualName="" explicitFocusOrder="0" pos="2.492% -32R 94.908% 7.52%"
               posRelativeY="31e65db12379ed8f" buttonText="samples" connectedEdges="0"
               needsCallback="1" radioGroupId="0"/>
   <LABEL name="new label" id="289502be800b82cf" memberName="label" virtualName=""
