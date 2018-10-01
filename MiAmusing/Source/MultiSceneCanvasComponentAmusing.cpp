@@ -84,6 +84,8 @@ void MultiSceneCanvasComponentAmusing::addColourSample(int index, Colour colour)
 void MultiSceneCanvasComponentAmusing::showAreaOptions(bool shouldBeVisible)
 {
 	areaOptionsComponent->setVisible(shouldBeVisible);
+	if (auto amusingChildren = (AmusingSceneComponent*)(childrenCanvas))
+		amusingChildren->ShowTarget(true);
 	currentOptionClicked = Rhythm;
 	resized();
 }
@@ -109,6 +111,7 @@ void MultiSceneCanvasComponentAmusing::optionButtonClicked(OptionButtonClicked o
 				switch (optionClicked)
 				{
 				case Octave:
+					amusingChildren->ShowTarget(false);
 					amusingChildren->SetNumScaleMarking(9);
 					amusingChildren->ShowSideBar(SideBarType::ScaleMarking);
 					canvasManagerAsManager->OnDeleteExciter();
@@ -116,12 +119,14 @@ void MultiSceneCanvasComponentAmusing::optionButtonClicked(OptionButtonClicked o
 					canvasManagerAsManager->SetEditingMode(optionClicked);
 					break;
 				case Volume:
+					amusingChildren->ShowTarget(false);
 					amusingChildren->ShowSideBar(SideBarType::GrayScale);
 					canvasManagerAsManager->OnDeleteExciter();
 					canvasManagerAsManager->OnAddExciter();
 					canvasManagerAsManager->SetEditingMode(optionClicked);
 					break;
 				case Speed:
+					amusingChildren->ShowTarget(false);
 					amusingChildren->SetNumScaleMarking(7);
 					amusingChildren->ShowSideBar(SideBarType::None);
 					canvasManagerAsManager->OnDeleteExciter();
@@ -129,18 +134,21 @@ void MultiSceneCanvasComponentAmusing::optionButtonClicked(OptionButtonClicked o
 					canvasManagerAsManager->SetEditingMode(optionClicked);
 					break;
 				case Rhythm:
+					amusingChildren->ShowTarget(true);
 					amusingChildren->ShowSideBar(SideBarType::None);
 					canvasManagerAsManager->SetEditingMode(optionClicked);
 					canvasManagerAsManager->OnDeleteExciter();
 					canvasManagerAsManager->SetMode(CanvasManagerMode::EditingArea);
 					break;
 				case Sample:
+					amusingChildren->ShowTarget(false);
 					amusingChildren->ShowSideBar(SideBarType::ColourButtons);
 					canvasManagerAsManager->OnDeleteExciter();
 					canvasManagerAsManager->OnAddExciter();
 					canvasManagerAsManager->SetEditingMode(optionClicked);
 					break;
 				case Closed:
+					amusingChildren->ShowTarget(false);
 					amusingChildren->ShowSideBar(SideBarType::None);
 					canvasManagerAsManager->resetAreaPosition();
 					canvasManagerAsManager->SetEditingMode(optionClicked);

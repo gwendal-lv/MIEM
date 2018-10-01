@@ -75,7 +75,7 @@ namespace Amusing
 		AreaEventType EndPointMove();
 		void setCursorVisible(bool isVisible, SceneCanvasComponent* _parentCanvas);
 		bpolygon getPolygon();
-		std::shared_ptr<CompletePolygon> fusion(std::shared_ptr<CompletePolygon> polyToFusion, int Id);
+		//std::shared_ptr<CompletePolygon> fusion(std::shared_ptr<CompletePolygon> polyToFusion, int Id);
 		bool getUnion(bpolygon hitPolygon, bpolygon &output);
 		double getAngularPercentage(bpt hitPoint);
 		double getLinearPercentage(bpt hitPoint);
@@ -167,6 +167,7 @@ namespace Amusing
 		static const int Nradius = 5;
 		std::vector<EditableEllipse> bullsEye;
 		double radius[Nradius];
+		double radiusInPixels[Nradius];
 		bool circlesToShow[Nradius];
 		void CreateBullsEye();
 		void PaintBullsEye(Graphics& g);

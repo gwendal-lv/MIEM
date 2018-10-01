@@ -23,6 +23,7 @@ AmusingSceneComponent::AmusingSceneComponent() : SceneCanvasComponent(Npolygons 
     // initialise any special settings that your component needs.
 	currentSideBarType = SideBarType::None;
 	isOptionShowed = false;
+	showTarget = false;
 
 	showOptionsButton = new TextButton();
 	showOptionsButton->setButtonText("opt");
@@ -267,6 +268,17 @@ void AmusingSceneComponent::renderOpenGL()
 	// Pure black background
 	g.fillAll(Colours::black);
 
+	// background target if needed
+	if (showTarget)
+	{
+		//g.setOpacity(0.1f);
+		int numAngles = 48;
+		int Ncircles = 5;
+		float r0 = 0.1566 * getWidth();//189; // .42857f;//(0.15f) * float(getHeight() - 10);
+		drawTarget(g, r0, Ncircles, numAngles);
+	}
+
+
 	//side bar if needed
 	switch (currentSideBarType)
 	{
@@ -376,6 +388,36 @@ void AmusingSceneComponent::renderOpenGL()
 		Thread::sleep((int)std::floor(underTime));
 	}
 #endif
+}
+
+void AmusingSceneComponent::drawTarget(juce::Graphics &g, float r0, int Ncircles, int numAngles)
+{
+	g.setColour(Colours::lightgrey);
+	g.setOpacity(0.5f);
+	float thickness = 0.5f;
+	float canvasRatio = (float)getWidth() / (float)getHeight();
+
+	float xScale;
+	if (canvasRatio > 1.0f)
+		xScale = 1.0f / canvasRatio;
+	else
+		xScale = 1.0f;
+
+	int sideLength = getWidth() < getHeight() ? getWidth() - 10 : getHeight() - 10;
+	int deltaX = (sideLength - 2.0f * r0) / (Ncircles - 1);
+	for (int i = Ncircles - 1; i > -1; --i)
+	{
+		g.drawEllipse((getWidth() - (sideLength - i * deltaX)) / 2.0f, (getHeight() - (sideLength - i * deltaX)) / 2.0f,
+			float(sideLength - i * deltaX), float(sideLength - i * deltaX), thickness);
+	}
+
+	int minDimension = sideLength;
+	double currentAngle = 0.0;
+	for (int i = 0; i < numAngles; ++i)
+	{
+		currentAngle += 2 * M_PI / (double)numAngles;
+		g.drawLine((float)getWidth() / 2.0f, (float)getHeight() / 2.0f, (float)getWidth() / 2.0f + (float)minDimension / 2.0f * (float)std::cos(currentAngle), (float)getHeight() / 2.0f + (float)minDimension / 2.0f * (float)std::sin(currentAngle), thickness);
+	}
 }
 
 void AmusingSceneComponent::DrawOnSceneCanevas(std::shared_ptr<Miam::MultiSceneCanvasInteractor> &manager)
@@ -660,6 +702,11 @@ void AmusingSceneComponent::mouseUp(const juce::MouseEvent& event)
 {
 	if (auto manager = std::dynamic_pointer_cast<Amusing::MultiSceneCanvasManager>(canvasManager.lock()))
 		manager->OnCanvasMouseUp(event);
+}
+
+void AmusingSceneComponent::ShowTarget(bool _shouldBeShown)
+{
+	showTarget = _shouldBeShown;
 }
 
 void AmusingSceneComponent::ShowSideBar(SideBarType sideBarType)

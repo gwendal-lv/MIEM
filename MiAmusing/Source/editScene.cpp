@@ -181,6 +181,9 @@ EditScene::EditScene ()
 
 	hasExited = false;
 	prepareToAdd = 0;
+
+	saveButton->setVisible(false);
+	loadButton->setVisible(false);
 	//textButton->setVisible(false);
     //[/Constructor]
 }

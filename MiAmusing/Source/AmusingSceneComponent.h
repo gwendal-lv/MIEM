@@ -44,6 +44,7 @@ public:
 	void addColourSample(int index, Colour color);
 	
 	void renderOpenGL() override; // ! in background-thread !
+	void drawTarget(juce::Graphics &g, float r0, int Ncircles, int numAngles);
 	void newOpenGLContextCreated() override;
 
 	void DrawOnSceneCanevas(std::shared_ptr<Miam::MultiSceneCanvasInteractor> &manager) override;
@@ -69,6 +70,7 @@ public:
 
 	void mouseUp(const juce::MouseEvent & event) override;
 
+	void ShowTarget(bool _shouldBeShown);
 	void ShowSideBar(SideBarType sideBarType);
 	void SetNumScaleMarking(int _numScaleMarking) { numScaleMarking = _numScaleMarking; }
 
@@ -80,6 +82,7 @@ private:
 	static const int Npolygons = 20;
 
 	bool isOptionShowed;
+	bool showTarget;
 	SideBarType currentSideBarType;
 	std::vector<Colour> buttonsColor;
 	int numScaleMarking;

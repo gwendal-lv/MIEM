@@ -1196,9 +1196,9 @@ AreaEventType CompletePolygon::EndPointMove()
 			double Df;
 			for (int i = 0; i < Nradius; ++i)
 			{
-				if (epsilon > abs(bullsEye[i].getRadius() - Di))
+				if (epsilon > abs(radiusInPixels[i]/*bullsEye[i].getRadius()*/ - Di))
 				{
-					epsilon = abs(bullsEye[i].getRadius() - Di);
+					epsilon = abs(radiusInPixels[i]/*bullsEye[i].getRadius()*/ - Di);
 					Df = radius[i];
 					nearest = i;
 					//circlesToShow[i] = true;
@@ -1347,82 +1347,82 @@ bpolygon CompletePolygon::getPolygon()
 	return contourPoints;
 }
 
-std::shared_ptr<CompletePolygon> CompletePolygon::fusion(std::shared_ptr<CompletePolygon> polyToFusion, int m_Id)
-{
-
-	// structure to be able to sort the percentages and the circles the same way
-	struct Helper
-	{
-		double pc;
-		int circ;
-		Helper(double a, int b) : pc(a), circ(b) {};
-		//bool operator< (const Helper& b) { return (this->pc < b.pc); }
-		Helper() : pc(0), circ(0) {};
-	};
-
-	// get all the coordinates of the points (percentages and circles) of the current polygon
-	angleToPercent();
-	std::vector<Helper> test;
-	for (int j = 0; j < (int)anglesPercentages.size() - 1; ++j) // stop at size-1 because we don't need the closure point
-	{
-		double value = anglesPercentages[j];
-		if (value > 1)
-			value -= 1;
-		test.push_back(Helper(anglesPercentages[j], OnCircles[j]));
-	}
-
-	// add all the coordinates of the other polygon to the vector of coordinates
-	int i = 0;
-	double value;
-	int distance;
-	while (polyToFusion->getAllPercentages(i, value) && polyToFusion->getAllDistanceFromCenter(i, distance))
-	{
-		test.push_back(Helper(value, distance));
-		++i;
-	}
-	test.pop_back(); // delete last element = closure element of the second polygon
-
-	// sort to have all the points in clockwise order
-	std::sort(test.begin(), test.end(),[](Helper a, Helper b) {return (a.pc < b.pc); });
-
-	// close the polygon
-	test.push_back(Helper(test[0].pc+1,test[0].circ));
-	
-	// delete duplicates
-	std::vector<Helper>::iterator it;
-	it = std::unique(test.begin(), test.end(), [](Helper a, Helper b) {return ((a.circ == b.circ) && (a.pc == b.pc)); });
-	test.resize(std::distance(test.begin(), it));
-
-	// get the XY(pixels) coordinates from the previously sorted coordinates
-	// + separate percentages and circles in different vectors
-	bpolygon newContourPointsInPixels;
-	std::vector<int> newCircles;
-	std::vector<double> newAnglesPercentages;
-	for (int j = 0; j < (int)test.size(); j++)
-	{
-		double R = bullsEye[test[j].circ].getRadius();
-		double angle = test[j].pc * 2 * M_PI;
-		bpt newPoint(R * std::cos(angle), R * std::sin(angle));
-		boost::geometry::add_point(newPoint, centerInPixels);
-		boost::geometry::append(newContourPointsInPixels.outer(),newPoint);
-		newCircles.push_back(test[j].circ);
-		newAnglesPercentages.push_back(test[j].pc);
-	}
-	//boost::geometry::append(newContourPointsInPixels.outer(), newContourPointsInPixels.outer().at(0));
-
-	// get normalized coordinates
-	bpolygon newContourPoints;
-	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> rescaler(1.0 / (double)parentCanvas->getWidth(), 1.0 / (double)parentCanvas->getHeight());
-	boost::geometry::transform(newContourPointsInPixels, newContourPoints, rescaler);
-	
-	/*DBG("new size : " + (String)int(newContourPoints.outer().size()));
-	for (int k = 0; k < test.size(); k++)
-		DBG((String)test[k].circ + "   " + (String)test[k].pc);*/
-
-	// create polygon
-	return std::shared_ptr<CompletePolygon>(new CompletePolygon(m_Id,center,newContourPoints,newCircles,newAnglesPercentages,fillColour));
-
-}
+//std::shared_ptr<CompletePolygon> CompletePolygon::fusion(std::shared_ptr<CompletePolygon> polyToFusion, int m_Id)
+//{
+//
+//	// structure to be able to sort the percentages and the circles the same way
+//	struct Helper
+//	{
+//		double pc;
+//		int circ;
+//		Helper(double a, int b) : pc(a), circ(b) {};
+//		//bool operator< (const Helper& b) { return (this->pc < b.pc); }
+//		Helper() : pc(0), circ(0) {};
+//	};
+//
+//	// get all the coordinates of the points (percentages and circles) of the current polygon
+//	angleToPercent();
+//	std::vector<Helper> test;
+//	for (int j = 0; j < (int)anglesPercentages.size() - 1; ++j) // stop at size-1 because we don't need the closure point
+//	{
+//		double value = anglesPercentages[j];
+//		if (value > 1)
+//			value -= 1;
+//		test.push_back(Helper(anglesPercentages[j], OnCircles[j]));
+//	}
+//
+//	// add all the coordinates of the other polygon to the vector of coordinates
+//	int i = 0;
+//	double value;
+//	int distance;
+//	while (polyToFusion->getAllPercentages(i, value) && polyToFusion->getAllDistanceFromCenter(i, distance))
+//	{
+//		test.push_back(Helper(value, distance));
+//		++i;
+//	}
+//	test.pop_back(); // delete last element = closure element of the second polygon
+//
+//	// sort to have all the points in clockwise order
+//	std::sort(test.begin(), test.end(),[](Helper a, Helper b) {return (a.pc < b.pc); });
+//
+//	// close the polygon
+//	test.push_back(Helper(test[0].pc+1,test[0].circ));
+//	
+//	// delete duplicates
+//	std::vector<Helper>::iterator it;
+//	it = std::unique(test.begin(), test.end(), [](Helper a, Helper b) {return ((a.circ == b.circ) && (a.pc == b.pc)); });
+//	test.resize(std::distance(test.begin(), it));
+//
+//	// get the XY(pixels) coordinates from the previously sorted coordinates
+//	// + separate percentages and circles in different vectors
+//	bpolygon newContourPointsInPixels;
+//	std::vector<int> newCircles;
+//	std::vector<double> newAnglesPercentages;
+//	for (int j = 0; j < (int)test.size(); j++)
+//	{
+//		double R = bullsEye[test[j].circ].getRadius();
+//		double angle = test[j].pc * 2 * M_PI;
+//		bpt newPoint(R * std::cos(angle), R * std::sin(angle));
+//		boost::geometry::add_point(newPoint, centerInPixels);
+//		boost::geometry::append(newContourPointsInPixels.outer(),newPoint);
+//		newCircles.push_back(test[j].circ);
+//		newAnglesPercentages.push_back(test[j].pc);
+//	}
+//	//boost::geometry::append(newContourPointsInPixels.outer(), newContourPointsInPixels.outer().at(0));
+//
+//	// get normalized coordinates
+//	bpolygon newContourPoints;
+//	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> rescaler(1.0 / (double)parentCanvas->getWidth(), 1.0 / (double)parentCanvas->getHeight());
+//	boost::geometry::transform(newContourPointsInPixels, newContourPoints, rescaler);
+//	
+//	/*DBG("new size : " + (String)int(newContourPoints.outer().size()));
+//	for (int k = 0; k < test.size(); k++)
+//		DBG((String)test[k].circ + "   " + (String)test[k].pc);*/
+//
+//	// create polygon
+//	return std::shared_ptr<CompletePolygon>(new CompletePolygon(m_Id,center,newContourPoints,newCircles,newAnglesPercentages,fillColour));
+//
+//}
 
 bool CompletePolygon::getUnion(bpolygon hitPolygon, bpolygon &output)
 {
@@ -1580,7 +1580,7 @@ void CompletePolygon::PaintBullsEye(Graphics& g)
 		{
 			bullsEye[i].SetOpacityMode(OpacityMode::Independent);
 			bullsEye[i].SetAlpha(0.2f);
-			bullsEye[i].Paint(g);
+			//bullsEye[i].Paint(g);
 		}
 		g.setOpacity(0.2f);
 		int minDimension = parentCanvas->getHeight() > parentCanvas->getWidth() ? parentCanvas->getWidth() - 10 : parentCanvas->getHeight() - 10;
@@ -1630,6 +1630,7 @@ void CompletePolygon::CanvasResizedBullsEye(SceneCanvasComponent* _parentCanvas)
 	{
 		bullsEye[i].CanvasResized(_parentCanvas);
 		bullsEye[i].RefreshOpenGLBuffers();
+		radiusInPixels[i] = radius[i] * xScale * _parentCanvas->getWidth();
 	}
 
 	
@@ -1833,9 +1834,9 @@ void CompletePolygon::DisableTranslation(bool shouldBeDisabled)
 double CompletePolygon::GetFullSceneRatio()
 {
 	if (parentCanvas->getHeight() < parentCanvas->getWidth())
-		return (parentCanvas->getHeight() - 10) / (2 * radius[4] * parentCanvas->getHeight() * yScale);
+		return (parentCanvas->getHeight() - 10) / (2 * radiusInPixels[4]/*radius[4] * parentCanvas->getHeight() * yScale*/);
 	else
-		return (parentCanvas->getWidth() - 10) / (2 * radius[4] * parentCanvas->getWidth() * xScale);
+		return (parentCanvas->getWidth() - 10) / (2 * radiusInPixels[4]/*radius[4] * parentCanvas->getWidth() * xScale*/);
 }
 
 bool CompletePolygon::SizeChanged(double _size, bool minSize)
