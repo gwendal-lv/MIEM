@@ -185,7 +185,7 @@ void AmusingSceneComponent::newOpenGLContextCreated()
 	openGlContext.extensions.glBufferData(GL_ELEMENT_ARRAY_BUFFER, (128 + 1) * 6 * sizeof(unsigned int), g_scaleMarkingIndex_buffer_data, GL_STREAM_DRAW);
 
 	if (openGLTargetObject == nullptr)
-		openGLTargetObject = std::make_unique<OpenGLTargetObject>(float((getWidth()-150)-(getHeight()-20))/2.0f, 10, getHeight()-20, getHeight()-20, 48, 5, 0.1566f);
+		openGLTargetObject = std::make_unique<OpenGLTargetObject>(float((getWidth()-150)-(getHeight()-10))/2.0f, 5, getHeight()-10, getHeight()-10, 48, 5, 0.16f * ((float)(getWidth())/(1024.0f-(20.0f * 1024.0f/(float)getWidth()))));
 	openGLTargetObject->initialise(openGlContext);
 }
 
@@ -444,13 +444,16 @@ void AmusingSceneComponent::DrawOnSceneCanevas(std::shared_ptr<Miam::MultiSceneC
 {
 	if (openGLTargetObject != nullptr)
 	{
-		Matrix3D<float> testModel(1.0f, 0.0f, 0.0f, 0.0f,
-			0.0f, -1.0f, 0.0f, 0.0f,
-			0.0f, 0.0f, 1.0f, 0.0f,
-			0.0f, (float)getHeight(), 0.0f, 1.0f);
-		Matrix3D<float> testView = lookAt(Vector3D<float>(0, 0, 1), Vector3D<float>(0, 0, 0), Vector3D<float>(0, -1, 0));
-		Matrix3D<float> testProjection = perspective((float)/*desktopScale **/ getWidth(), (float)/*desktopScale **/ getHeight(), 0.5f, 1.1f);
-		openGLTargetObject->drawTarget(openGlContext, testModel, testView, testProjection);
+		if (showTarget)
+		{
+			Matrix3D<float> testModel(1.0f, 0.0f, 0.0f, 0.0f,
+				0.0f, -1.0f, 0.0f, 0.0f,
+				0.0f, 0.0f, 1.0f, 0.0f,
+				0.0f, (float)getHeight(), 0.0f, 1.0f);
+			Matrix3D<float> testView = lookAt(Vector3D<float>(0, 0, 1), Vector3D<float>(0, 0, 0), Vector3D<float>(0, -1, 0));
+			Matrix3D<float> testProjection = perspective((float)/*desktopScale **/ getWidth(), (float)/*desktopScale **/ getHeight(), 0.5f, 1.1f);
+			openGLTargetObject->drawTarget(openGlContext, testModel, testView, testProjection);
+		}
 	}
 
 	SceneCanvasComponent::DrawOnSceneCanevas(manager);

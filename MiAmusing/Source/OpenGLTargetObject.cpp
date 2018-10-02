@@ -17,7 +17,7 @@ OpenGLTargetObject::OpenGLTargetObject(int _x, int _y, int _w, int _h, int _numA
 	textTexture = std::make_unique<OpenGLTexture>();
 	targetImage = Image(juce::Image::PixelFormat::ARGB, 1024, 1024, true);//Image(PixelARGB, 1024, 1024, true);
 	Graphics g(targetImage);
-	g.fillAll(Colours::black);
+	g.fillAll(Colours::black);//Colour((uint8)0, (uint8)0, (uint8)0, (uint8)0));
 	g.setColour(Colours::lightgrey);
 	g.setOpacity(0.5f);
 	float thickness = 0.5f;
@@ -27,10 +27,27 @@ OpenGLTargetObject::OpenGLTargetObject(int _x, int _y, int _w, int _h, int _numA
 	int width = 1024;
 	int height = 1024;
 	int deltaX = (sideLength - 2.0f * r0) / (_Ncircles - 1);
+	int ellipseVerticesCount = 32;
+	int centerX = 512;
+	int centerY = 512;
 	for (int i = _Ncircles - 1; i > -1; --i)
 	{
-		g.drawEllipse((width - (sideLength - i * deltaX)) / 2.0f, (height - (sideLength - i * deltaX)) / 2.0f,
-			float(sideLength - i * deltaX), float(sideLength - i * deltaX), thickness);
+		/*g.drawEllipse((width - (sideLength - i * deltaX)) / 2.0f, (height - (sideLength - i * deltaX)) / 2.0f,
+			float(sideLength - i * deltaX), float(sideLength - i * deltaX), thickness);*/
+		
+		juce::Path contour;
+		float r = r0 + i * (1024.0f/2.0f - float(r0)) / (_Ncircles - 1);
+		contour.startNewSubPath(centerX + r * (float)std::cos(0.0),
+			centerY + r * (float)std::sin(0.0));
+		for (int i = 1; i<ellipseVerticesCount; i++)
+		{
+			double normalizedAngle = (double)(i) / (double)(ellipseVerticesCount);
+
+			contour.lineTo(centerX + r * (float)std::cos(2.0 * M_PI * normalizedAngle),
+				centerY + r * (float)std::sin(2.0 * M_PI * normalizedAngle));
+		}
+		contour.closeSubPath();
+		g.strokePath(contour, PathStrokeType(thickness));
 	}
 
 	int minDimension = sideLength;
