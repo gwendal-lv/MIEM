@@ -51,6 +51,7 @@ AmusingSceneComponent::~AmusingSceneComponent()
 void AmusingSceneComponent::setSamplesColor(int Nsamples, Colour colorCode[])
 {
 	areaOptions.setSamplesColor(Nsamples, colorCode);
+	boutonsCoulourSize = Nsamples;
 
 	for (int i = 0; i < Nsamples; ++i)
 		buttonsColor.push_back(colorCode[i]);
@@ -534,8 +535,8 @@ void AmusingSceneComponent::DrawOnSceneCanevas(std::shared_ptr<Miam::MultiSceneC
 		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		break;
 	case SideBarType::ColourButtons :
-		interval = (float)getHeight() / 4.0f;
-		for (int i = 0; i < 4; ++i)
+		interval = (float)getHeight() / boutonsCoulourSize;
+		for (int i = 0; i < boutonsCoulourSize; ++i)
 		{
 			g_coulourBoutonsVertex_buffer_data[i * 3 * 4] = (float)getWidth();
 			g_coulourBoutonsVertex_buffer_data[i * 3 * 4 + 1] = i * interval;
@@ -552,17 +553,17 @@ void AmusingSceneComponent::DrawOnSceneCanevas(std::shared_ptr<Miam::MultiSceneC
 		}
 		openGlContext.extensions.glEnableVertexAttribArray(position->attributeID);
 		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, coulourBoutonsVertex);
-		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * 4 * 3 * sizeof(GLfloat), g_coulourBoutonsVertex_buffer_data);
+		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, boutonsCoulourSize * 4 * 3 * sizeof(GLfloat), g_coulourBoutonsVertex_buffer_data);
 		openGlContext.extensions.glVertexAttribPointer(position->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
 
 		openGlContext.extensions.glEnableVertexAttribArray(colour->attributeID);
 		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, coulourBoutonsCoulour);
-		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * 4 * 4 * sizeof(GLfloat), g_coulourBoutonsCoulour_buffer_data);
+		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, boutonsCoulourSize * 4 * 4 * sizeof(GLfloat), g_coulourBoutonsCoulour_buffer_data);
 		openGlContext.extensions.glVertexAttribPointer(colour->attributeID, 4, GL_FLOAT, GL_FALSE, sizeof(float[4]), 0);
 
 		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, coulourBoutonsIndex);
 
-		glDrawElements(GL_TRIANGLES, 4 * 6, GL_UNSIGNED_INT, (void*)0);
+		glDrawElements(GL_TRIANGLES, boutonsCoulourSize * 6, GL_UNSIGNED_INT, (void*)0);
 
 		openGlContext.extensions.glDisableVertexAttribArray(position->attributeID);
 		openGlContext.extensions.glDisableVertexAttribArray(colour->attributeID);

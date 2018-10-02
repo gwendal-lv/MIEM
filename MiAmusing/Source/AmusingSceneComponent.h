@@ -104,6 +104,7 @@ private:
 	GLuint coulourBoutonsVertex;
 	GLfloat g_coulourBoutonsVertex_buffer_data[3 * 4 * 10];
 
+	int boutonsCoulourSize;
 	GLuint coulourBoutonsCoulour;
 	GLfloat g_coulourBoutonsCoulour_buffer_data[4 * 4 * 10];
 
