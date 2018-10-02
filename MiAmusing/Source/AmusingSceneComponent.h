@@ -83,7 +83,7 @@ public:
 	void mouseUp(const juce::MouseEvent &event) override;*/
 
 private:
-	static const int Npolygons = 20;
+	static const int Npolygons = 10;
 
 	bool isOptionShowed;
 	bool showTarget;

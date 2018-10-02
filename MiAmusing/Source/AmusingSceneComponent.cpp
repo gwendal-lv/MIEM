@@ -17,7 +17,7 @@
 using namespace Miam;
 
 //==============================================================================
-AmusingSceneComponent::AmusingSceneComponent() : SceneCanvasComponent(Npolygons + Npolygons * (Npolygons + 1) / 2, 6*64)
+AmusingSceneComponent::AmusingSceneComponent() : SceneCanvasComponent(Npolygons + Npolygons * (Npolygons + 1) / 2, 64)
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
