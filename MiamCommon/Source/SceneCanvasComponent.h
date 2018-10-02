@@ -120,6 +120,7 @@ public:
     // - - - - - - - - OpenGL specific - - - - - - - - -
     virtual void newOpenGLContextCreated() override;
     virtual void renderOpenGL() override; // ! in background-thread !
+	virtual void openGLDestructionAtLastFrame();
 	virtual void DrawOnSceneCanevas(std::shared_ptr<Miam::MultiSceneCanvasInteractor> &manager);
 	void DrawShapes();
 	void DrawCanvasOutline();
@@ -335,10 +336,11 @@ private:
 
 
 	std::thread openGLDestructionThread;
-	void openGLDestructionFunc();
+	
 
 	public :
-	void waitForOpenGLResourcesRealeased();
+		virtual void openGLDestructionAfterLastFrame();
+		void waitForOpenGLResourcesRealeased();
 	private:
 	void computeManipulationLine(float Ox, float Oy, float Mx, float My, float width, float height);
 

@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "AreaOptions.h"
+#include "OpenGLTargetObject.h"
 
 enum SideBarType
 {
@@ -46,6 +47,9 @@ public:
 	void renderOpenGL() override; // ! in background-thread !
 	void drawTarget(juce::Graphics &g, float r0, int Ncircles, int numAngles);
 	void newOpenGLContextCreated() override;
+
+	virtual void openGLDestructionAtLastFrame() override;
+	virtual void openGLDestructionAfterLastFrame() override;
 
 	void DrawOnSceneCanevas(std::shared_ptr<Miam::MultiSceneCanvasInteractor> &manager) override;
 
@@ -172,6 +176,8 @@ private:
 		"    gl_FragColor.x = 1.0;\n"
 		"    gl_FragColor.y = 1.0;\n"
 		"}\n";
+
+	std::unique_ptr<OpenGLTargetObject> openGLTargetObject;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AmusingSceneComponent)
 };

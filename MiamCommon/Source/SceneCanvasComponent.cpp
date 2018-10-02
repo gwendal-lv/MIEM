@@ -124,7 +124,7 @@ void SceneCanvasComponent::ReleaseOpengGLResources()
 	position = nullptr;
 	colour = nullptr;
 	rendering_mutex.unlock();
-	//openGLDestructionThread = std::thread(&SceneCanvasComponent::openGLDestructionFunc, this);
+	//openGLDestructionThread = std::thread(&SceneCanvasComponent::openGLDestructionAfterLastFrame, this);
 
 		
 }
@@ -376,16 +376,11 @@ void SceneCanvasComponent::renderOpenGL()
 	
 	if (releaseResources)
 	{
-		openGLLabel->release();
-		std::u16string dummyString[]{ u"" };
-		Matrix3D<float> dummyMatrix(Vector3D<float>(0.0f,0.0f,0.0f));
-		openGLLabel->drawOneTexturedRectangle(openGlContext, dummyMatrix, dummyMatrix, dummyMatrix, dummyString/*std::to_string(fps)*/);
-		openGLLabel->waitForOpenGLResourcesRealeased();
-		openGLLabel = nullptr;
+		openGLDestructionAtLastFrame();
 
 		releaseDone = false;
 		releaseResources = false;
-		openGLDestructionThread = std::thread(&SceneCanvasComponent::openGLDestructionFunc, this);
+		openGLDestructionThread = std::thread(&SceneCanvasComponent::openGLDestructionAfterLastFrame, this);
 	}
 	else
 	{
@@ -484,6 +479,16 @@ void SceneCanvasComponent::renderOpenGL()
 			Thread::sleep((int)std::floor(underTime));
 		}
 	
+}
+
+void SceneCanvasComponent::openGLDestructionAtLastFrame()
+{
+	openGLLabel->release();
+	std::u16string dummyString[]{ u"" };
+	Matrix3D<float> dummyMatrix(Vector3D<float>(0.0f, 0.0f, 0.0f));
+	openGLLabel->drawOneTexturedRectangle(openGlContext, dummyMatrix, dummyMatrix, dummyMatrix, dummyString/*std::to_string(fps)*/);
+	openGLLabel->waitForOpenGLResourcesRealeased();
+	openGLLabel = nullptr;
 }
 
 void SceneCanvasComponent::DrawOnSceneCanevas(std::shared_ptr<Miam::MultiSceneCanvasInteractor> &manager)
@@ -823,7 +828,7 @@ void SceneCanvasComponent::CreateShapeBuffer(std::shared_ptr<IDrawableArea> area
 	}
 }
 
-void SceneCanvasComponent::openGLDestructionFunc()
+void SceneCanvasComponent::openGLDestructionAfterLastFrame()
 {
 	// à appeler tant que le context est encore actif afin de pouvoir supprimer correctement les ressources OpenGL
 	

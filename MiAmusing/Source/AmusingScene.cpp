@@ -95,6 +95,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 		center, N, r,
 		Colours::grey,
 		canvasComponent->GetRatio()));
+	newPolygon->setZoffset(0.1f);
 	newPolygon->SetActive(false);
 	newPolygon->KeepRatio(true);
 	newPolygon->CanvasResized(canvasComponent);

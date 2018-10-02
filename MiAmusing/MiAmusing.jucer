@@ -64,6 +64,10 @@
       </GROUP>
       <GROUP id="{6C8312F9-4A59-989E-1DC5-6EC6799A0035}" name="View">
         <GROUP id="{8A490DCF-4319-3FD7-D35F-9A670467252C}" name="Components">
+          <FILE id="RVuBXc" name="OpenGLTargetObject.cpp" compile="1" resource="0"
+                file="Source/OpenGLTargetObject.cpp"/>
+          <FILE id="anIr7D" name="OpenGLTargetObject.h" compile="0" resource="0"
+                file="Source/OpenGLTargetObject.h"/>
           <FILE id="luxgya" name="AudioDeviceAndMidiOutputSelectorComponent.cpp"
                 compile="1" resource="0" file="Source/AudioDeviceAndMidiOutputSelectorComponent.cpp"/>
           <FILE id="Xq7fsV" name="AudioDeviceAndMidiOutputSelectorComponent.h"
@@ -355,7 +359,7 @@
         <MODULEPATH id="juce_dsp" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </ANDROIDSTUDIO>
-    <VS2017 targetFolder="Builds/VisualStudio2017" extraDefs="OPENGL_RENDERING = 0">
+    <VS2017 targetFolder="Builds/VisualStudio2017" extraDefs="OPENGL_RENDERING = 1">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" headerPath="..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\&#10;..\..\..\&#10;..\..\..\..\..\..\Downloads\ft291\freetype-2.9.1\include\"/>
         <CONFIGURATION isDebug="0" name="Release" headerPath="..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\&#10;..\..\..\"/>
