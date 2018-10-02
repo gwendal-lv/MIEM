@@ -185,7 +185,7 @@ void AmusingSceneComponent::newOpenGLContextCreated()
 	openGlContext.extensions.glBufferData(GL_ELEMENT_ARRAY_BUFFER, (128 + 1) * 6 * sizeof(unsigned int), g_scaleMarkingIndex_buffer_data, GL_STREAM_DRAW);
 
 	if (openGLTargetObject == nullptr)
-		openGLTargetObject = std::make_unique<OpenGLTargetObject>(float((getWidth()-150)-getHeight())/2.0f, 10, getHeight()-20, getHeight()-20, 48, 5, 0.1566f);
+		openGLTargetObject = std::make_unique<OpenGLTargetObject>(float((getWidth()-150)-(getHeight()-20))/2.0f, 10, getHeight()-20, getHeight()-20, 48, 5, 0.1566f);
 	openGLTargetObject->initialise(openGlContext);
 }
 
