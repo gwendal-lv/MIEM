@@ -131,10 +131,10 @@ namespace Amusing
 		void RefreshTargetOpenGLBuffers();
 
 		const int GetVerticesBufferSize() override {					// points du contour					manipulationLine	manipulationPoint
-			return EditablePolygon::GetVerticesBufferSize() + Nradius * bullsEye[0].GetVerticesBufferSize();
+			return EditablePolygon::GetVerticesBufferSize() /*+ Nradius * bullsEye[0].GetVerticesBufferSize()*/;
 		}
-		int GetCouloursBufferSize() override { return EditablePolygon::GetCouloursBufferSize() + Nradius * bullsEye[0].GetCouloursBufferSize(); }
-		int GetIndicesBufferSize() override { return EditablePolygon::GetIndicesBufferSize() + Nradius * bullsEye[0].GetIndicesBufferSize(); }
+		int GetCouloursBufferSize() override { return EditablePolygon::GetCouloursBufferSize() /*+ Nradius * bullsEye[0].GetCouloursBufferSize()*/; }
+		int GetIndicesBufferSize() override { return EditablePolygon::GetIndicesBufferSize() /*+ Nradius * bullsEye[0].GetIndicesBufferSize()*/; }
 //        void setVisible(bool shoulBeVisible) override{ DBG("no more visible !!"); areaIsVisible = shoulBeVisible; }
 //        bool isVisible() override { return areaIsVisible; }
 		
@@ -165,7 +165,7 @@ namespace Amusing
 		double interval;
 		double startRadius;
 		static const int Nradius = 5;
-		std::vector<EditableEllipse> bullsEye;
+		//std::vector<EditableEllipse> bullsEye;
 		double radius[Nradius];
 		double radiusInPixels[Nradius];
 		bool circlesToShow[Nradius];
