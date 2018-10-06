@@ -195,10 +195,13 @@ void AmusingSceneComponent::newOpenGLContextCreated()
 #else
 		r0_normalized = 0.16f;
 #endif // __AMUSINGIOS
-
+#if defined(OPENGL_RENDERING) && OPENGL_RENDERING == 1
 		openGLTargetObject = std::make_unique<OpenGLTargetObject>(float((getWidth() - 150) - (getHeight() - 10)) / 2.0f, 5, getHeight() - 10, getHeight() - 10, 48, 5, r0_normalized * ((float)(getWidth()) / (1024.0f - (20.0f * 1024.0f / (float)getWidth()))));
+#endif
 	}
+#if defined(OPENGL_RENDERING) && OPENGL_RENDERING == 1
 	openGLTargetObject->initialise(openGlContext);
+#endif
 }
 
 void AmusingSceneComponent::openGLDestructionAtLastFrame()

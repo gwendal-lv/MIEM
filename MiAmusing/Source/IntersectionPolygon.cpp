@@ -24,6 +24,9 @@ IntersectionPolygon::IntersectionPolygon(int64_t _Id, std::shared_ptr<CompletePo
 	threshold = 0.0;
 	parent1 = m_parent1;
 	parent2 = m_parent2;
+
+	for (int i = 0; i < couloursBufferSize; ++i)
+		coulours_buffer[i] = 0.0f;
 }
 
 IntersectionPolygon::~IntersectionPolygon()
@@ -175,4 +178,10 @@ double IntersectionPolygon::getApexesAngle(std::shared_ptr<CompletePolygon> pare
 	}
 	else
 		return 0.0;
+}
+
+void IntersectionPolygon::RefreshOpenGLBuffers()
+{
+	/*for (int i = 0; i < couloursBufferSize; ++i)
+		coulours_buffer[i] = 0.0f;*/
 }

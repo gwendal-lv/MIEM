@@ -46,10 +46,10 @@ public:
 	void setAllVelocities(float m_velocity);
 	int getId();
 
-	bool isNoteOnTime(int m_position, int i, int period, bool &end, int &channel, int &note, uint8 &m_velocity);
-	bool isNoteOffTime(int m_position, int i, int period, bool &end, int &channel, int &note);
-	bool isChordOnTime(int m_position, int i, int period, bool &end, int & m_channel, int &noteToPlay, uint8 & m_velocity);
-	bool isChordOffTime(int m_position, int period, int i, bool &end, int& m_channel, int &m_chordToPlay);
+	bool isNoteOnTime(int const &m_position, int const &i, int const &period, bool &end, int &channel, int &note, uint8 &m_velocity);
+	bool isNoteOffTime(int const &m_position, int const &i, int const &period, bool &end, int &channel, int &note);
+	bool isChordOnTime(int const &m_position, int const &i, int const &period, bool &end, int & m_channel, int &noteToPlay, uint8 & m_velocity);
+	bool isChordOffTime(int const &m_position, int const &period, int const &i, bool &end, int& m_channel, int &m_chordToPlay);
 
 
 	double getRelativePosition();

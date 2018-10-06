@@ -102,7 +102,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 	newPolygon->setCursorVisible(true, canvasComponent);
 	newPolygon->SetOpacityMode(OpacityMode::Independent);
 
-#if defined(OPENGLRENDERING) && OPENGLRENDERING == 0
+#if defined(OPENGL_RENDERING) && OPENGL_RENDERING == 0
 	newPolygon->RefreshOpenGLBuffers();
 #endif
 	
@@ -978,7 +978,14 @@ std::shared_ptr<GraphicEvent> AmusingScene::resetAreaPosition()
 		completeArea->showAllTarget(false);
 		completeArea->SizeChanged(1.0 / previousSize, false);
 		completeArea->updateContourPoints();
+
+#if !defined(OPENGL_RENDERING) || OPENGL_RENDERING == 0
 		completeArea->CanvasResized(canvasComponent);
+#else
+		completeArea->RefreshOpenGLBuffers();
+#endif
+
+		//completeArea->CanvasResized(canvasComponent);
 		completeArea->DisableTranslation(false);
 		
 		allowOtherAreaSelection = true; // pour permettre de sélectionner à nouveau d'autres aires

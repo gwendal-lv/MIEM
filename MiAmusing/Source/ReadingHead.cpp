@@ -306,44 +306,46 @@ void PlayHead::process()
 	
 }
 
-void PlayHead::testPosition(int P)
+void PlayHead::testPosition(int const &P)
 {
 
 	int m_channel, m_note;
 	uint8 m_velocity;
+	const int fullPeriod = numOfBeats * metronome->getPeriodInSamples();
 
 	bool m_end = false;
 	int i = 0;
 	while (m_end == false)
 	{
-		if (timeLine->isNoteOnTime(P, i, numOfBeats * metronome->getPeriodInSamples(), m_end, m_channel, m_note, m_velocity))
+		if (timeLine->isNoteOnTime(P, i, fullPeriod, m_end, m_channel, m_note, m_velocity))
 		{
 			//DBG((String)i + " : " + (String)position + " " + (String)(P / (double)timeLine->getPeriod()));
 			MidiMessage midiMsg = MidiMessage::noteOn(m_channel, m_note, m_velocity);
 			audioManager->sendMidiMessage(midiMsg,this);
 		}
-		i++;
+		++i;
 		
 	}
 	
 
 	m_end = false;
 	i = 0;
+	
 	while (m_end == false)
 	{
-		if (timeLine->isNoteOffTime(P, i, numOfBeats * metronome->getPeriodInSamples(), m_end, m_channel, m_note))
+		if (timeLine->isNoteOffTime(P, i, fullPeriod, m_end, m_channel, m_note))
 		{
 			MidiMessage midiMsgOff = MidiMessage::noteOff(m_channel, m_note);
 			audioManager->sendMidiMessage(midiMsgOff,this);
 		}
-		i++;
+		++i;
 	}
 
 	m_end = false;
 	i = 0;
 	while (m_end == false)
 	{
-		if (timeLine->isChordOnTime(P, i, numOfBeats * metronome->getPeriodInSamples(), m_end, m_channel, m_note, m_velocity))
+		if (timeLine->isChordOnTime(P, i, fullPeriod, m_end, m_channel, m_note, m_velocity))
 		{
 			MidiMessage midiMsg = MidiMessage::noteOn(m_channel, m_note, m_velocity);
 			audioManager->sendMidiMessage(midiMsg, this);
@@ -355,7 +357,7 @@ void PlayHead::testPosition(int P)
 	i = 0;
 	while (m_end == false)
 	{
-		if (timeLine->isChordOffTime(P, i, numOfBeats * metronome->getPeriodInSamples(), m_end, m_channel, m_note))
+		if (timeLine->isChordOffTime(P, i, fullPeriod, m_end, m_channel, m_note))
 		{
 			MidiMessage midiMsg = MidiMessage::noteOff(m_channel, m_note);
 			audioManager->sendMidiMessage(midiMsg, this);

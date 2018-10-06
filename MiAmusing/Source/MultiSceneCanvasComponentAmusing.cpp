@@ -86,6 +86,7 @@ void MultiSceneCanvasComponentAmusing::showAreaOptions(bool shouldBeVisible)
 	areaOptionsComponent->setVisible(shouldBeVisible);
 	if (auto amusingChildren = (AmusingSceneComponent*)(childrenCanvas))
 		amusingChildren->ShowTarget(true);
+	
 	currentOptionClicked = Rhythm;
 	resized();
 }

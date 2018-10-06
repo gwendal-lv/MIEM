@@ -1272,7 +1272,7 @@ AreaEventType CompletePolygon::EndPointMove()
 				OnCircles.at(OnCircles.size() - 1) = nearest;
 			
 		}
-#if !defined(OPENGLRENDERING) || OPENGLRENDERING == 0
+#if !defined(OPENGL_RENDERING) || OPENGL_RENDERING == 0
 		CanvasResized(parentCanvas);
 #else
 		RefreshOpenGLBuffers();

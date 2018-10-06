@@ -234,7 +234,12 @@ void TabCursor::setPercentage(double pc)
 		newCenter.set<0>(zone.getX() + pc * (double)zone.getWidth());
 
 	setCenterPosition(newCenter);
+
+#if !defined(OPENGL_RENDERING) || OPENGL_RENDERING == 0
 	CanvasResized(parentCanvas);
+#else
+	RefreshOpenGLBuffers();
+#endif
 }
 
 void TabCursor::setIndexValue(int _idxValue)
@@ -243,6 +248,12 @@ void TabCursor::setIndexValue(int _idxValue)
 	currentSizeIdx = _idxValue;
 	SizeChanged(newSize, false);
 	updateContourPoints();
+
+#if !defined(OPENGL_RENDERING) || OPENGL_RENDERING == 0
+	CanvasResized(parentCanvas);
+#else
+	RefreshOpenGLBuffers();
+#endif
 }
 
 void TabCursor::SetSpeed(double _speed)

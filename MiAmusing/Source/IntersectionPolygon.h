@@ -34,6 +34,8 @@ namespace Amusing
 		virtual void Paint(Graphics& g) override;
 		virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
 
+		virtual void RefreshOpenGLBuffers() override;
+
 		void setSurfaceThreshold(double m_threshold);
 
 		bool isChild(std::shared_ptr<CompletePolygon> m_parent);

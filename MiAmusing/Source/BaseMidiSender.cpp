@@ -134,16 +134,16 @@ int TimeLine::getId()
 	return Id;
 }
 
-bool TimeLine::isNoteOnTime(int m_position, int i, int period, bool &m_end, int &m_channel, int &m_note, uint8 &m_velocity)
+bool TimeLine::isNoteOnTime(int const &m_position, int const &i, int const &period, bool &m_end, int &m_channel, int &m_note, uint8 &m_velocity)
 {
-	while (m_position >= period)
+	/*while (m_position >= period)
 	{
 		m_position -= period;
-	}
+	}*/
 	if (i < midiTimesSize)
 	{
 		m_end = false; // on a pas encore atteint la fin de la liste de notes (au cas o� il y en a plusieurs � jouer au m�me moment)
-		if (m_position == roundToInt(midiTimes[i] * period))
+		if (m_position == (midiTimes[i] * period))
 		{
 			if (velocity[i] != 0)
 			{
@@ -169,16 +169,16 @@ bool TimeLine::isNoteOnTime(int m_position, int i, int period, bool &m_end, int 
 	
 }
 
-bool TimeLine::isNoteOffTime(int m_position, int i, int period, bool &m_end, int &m_channel, int &m_note)
+bool TimeLine::isNoteOffTime(int const &m_position, int const &i, int const &period, bool &m_end, int &m_channel, int &m_note)
 {
-	while (m_position >= period)
+	/*while (m_position >= period)
 	{
 		m_position -= period;
-	}
+	}*/
 	if (i < midiOfftimesSize)
 	{
 		m_end = false;
-		if (m_position == roundToInt(midiOffTimes[i] * period))
+		if (m_position == (midiOffTimes[i] * period))
 		{
 
 			if (velocity[i] != 0)
@@ -201,7 +201,7 @@ bool TimeLine::isNoteOffTime(int m_position, int i, int period, bool &m_end, int
 	}
 }
 
-bool TimeLine::isChordOnTime(int m_position, int i, int period, bool &end, int &m_channel, int &noteToPlay, uint8 &m_velocity)
+bool TimeLine::isChordOnTime(int const &m_position, int const &i, int const &period, bool &end, int &m_channel, int &noteToPlay, uint8 &m_velocity)
 {
 	if (i < chordSize)
 	{
@@ -228,11 +228,11 @@ bool TimeLine::isChordOnTime(int m_position, int i, int period, bool &end, int &
 	}
 }
 
-bool TimeLine::isChordOffTime(int m_position, int i, int period, bool &end, int &m_channel, int &noteToPlay)
+bool TimeLine::isChordOffTime(int const &m_position, int const &i, int const &period, bool &end, int &m_channel, int &noteToPlay)
 {
 	if (i < chordSize)
 	{
-		if (chordTimesOff[i] * period == m_position)
+		if (chordTimesOff[i] * (period) == m_position)
 		{
 			noteToPlay = chordNotesOff[i];
 			m_channel = channel;

@@ -68,7 +68,7 @@ private:
 					  // !! oldPeriod = period pour un beat et pas pour un tour !!
 
 	Metronome *metronome; // used to be synchronized with all the reading head
-	void testPosition(int P); // look in the associate timeLine if there is a MIDI msg to send
+	void testPosition(int const &P); // look in the associate timeLine if there is a MIDI msg to send
 
 	static const int chordSize = 3;
 	int chordToPlay[chordSize];
