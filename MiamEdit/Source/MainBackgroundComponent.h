@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.2.1
+  Created with Projucer version: 5.3.2
 
   ------------------------------------------------------------------------------
 
@@ -97,13 +97,13 @@ private:
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<TextButton> speakersTextButton;
-    ScopedPointer<TextButton> statesTextButton;
-    ScopedPointer<Label> mainInfoLabel;
-    ScopedPointer<TextButton> scenesTextButton;
-    ScopedPointer<TextButton> hardwareConfTextButton;
-    ScopedPointer<TextButton> startTextButton;
-    ScopedPointer<TextButton> fileTextButton;
+    std::unique_ptr<TextButton> speakersTextButton;
+    std::unique_ptr<TextButton> statesTextButton;
+    std::unique_ptr<Label> mainInfoLabel;
+    std::unique_ptr<TextButton> scenesTextButton;
+    std::unique_ptr<TextButton> hardwareConfTextButton;
+    std::unique_ptr<TextButton> startTextButton;
+    std::unique_ptr<TextButton> fileTextButton;
 
 
     //==============================================================================

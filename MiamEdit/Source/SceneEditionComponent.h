@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.3.0
+  Created with Projucer version: 5.3.2
 
   ------------------------------------------------------------------------------
 
@@ -57,7 +57,6 @@ namespace Miam
 class SceneEditionComponent  : public Component,
                                public TextEditor::Listener,
                                public Button::Listener,
-                               public Slider::Listener,
                                public ComboBox::Listener
 {
 public:
@@ -113,8 +112,6 @@ public:
 
 
     // ----- Other setters and getters -----
-    // - - - - - Colours - - - - -
-    void SetAreaColourValue(juce::Colour colour);
     // - - - - - Text Values - - - - -
     void SetSceneName(std::string _name);
     void SetCanvasInfo(SceneCanvasComponent::Id _id);
@@ -125,7 +122,6 @@ public:
     void setVisibleAllAreaControls(bool areVisible);
     void setEnabledSelectedAreaControls(bool areEnabled);
     void setVisibleSpatControls(bool areVisible);
-    void colourSliderMoved();
 
     // Translation avec sauvegarde en interne de ce qui vient d'être effectué
     void areaGroupTranslateY(int dY);
@@ -144,7 +140,6 @@ public:
     void paint (Graphics& g) override;
     void resized() override;
     void buttonClicked (Button* buttonThatWasClicked) override;
-    void sliderValueChanged (Slider* sliderThatWasMoved) override;
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
     void visibilityChanged() override;
 
@@ -181,38 +176,32 @@ private:
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<GroupComponent> areaGroupComponent;
-    ScopedPointer<GroupComponent> controlGroupComponent;
-    ScopedPointer<TextButton> addPointTextButton;
-    ScopedPointer<TextButton> deletePointTextButton;
-    ScopedPointer<TextButton> copyTextButton;
-    ScopedPointer<TextButton> pasteTextButton;
-    ScopedPointer<TextButton> addAreaTextButton;
-    ScopedPointer<TextButton> deleteAreaTextButton;
-    ScopedPointer<Label> labelR;
-    ScopedPointer<Slider> sliderR;
-    ScopedPointer<Label> labelG;
-    ScopedPointer<Slider> sliderG;
-    ScopedPointer<Label> labelB;
-    ScopedPointer<Slider> sliderB;
-    ScopedPointer<TextButton> sendBackwardTextButton;
-    ScopedPointer<TextButton> bringForwardTextButton;
-    ScopedPointer<TextButton> bringToFrontTextButton;
-    ScopedPointer<TextButton> sendToBackTextButton;
-    ScopedPointer<GroupComponent> canvasGroupComponent;
-    ScopedPointer<ComboBox> spatStatesComboBox;
-    ScopedPointer<Label> controlStateLabel;
-    ScopedPointer<TextButton> addSceneTextButton;
-    ScopedPointer<TextButton> deleteSceneTextButton;
-    ScopedPointer<TextButton> sceneLeftTextButton;
-    ScopedPointer<TextButton> sceneRightTextButton;
-    ScopedPointer<Label> canvasInfoLabel;
-    ScopedPointer<GroupComponent> initialStateGroupComponent;
-    ScopedPointer<TextButton> addExciterTextButton;
-    ScopedPointer<TextButton> deleteExciterTextButton;
-    ScopedPointer<Label> sceneNameLabel;
-    ScopedPointer<TextEditor> sceneNameTextEditor;
-    ScopedPointer<ToggleButton> excitersEditionButton;
+    std::unique_ptr<GroupComponent> areaGroupComponent;
+    std::unique_ptr<GroupComponent> controlGroupComponent;
+    std::unique_ptr<TextButton> addPointTextButton;
+    std::unique_ptr<TextButton> deletePointTextButton;
+    std::unique_ptr<TextButton> copyTextButton;
+    std::unique_ptr<TextButton> pasteTextButton;
+    std::unique_ptr<TextButton> addAreaTextButton;
+    std::unique_ptr<TextButton> deleteAreaTextButton;
+    std::unique_ptr<TextButton> sendBackwardTextButton;
+    std::unique_ptr<TextButton> bringForwardTextButton;
+    std::unique_ptr<TextButton> bringToFrontTextButton;
+    std::unique_ptr<TextButton> sendToBackTextButton;
+    std::unique_ptr<GroupComponent> canvasGroupComponent;
+    std::unique_ptr<ComboBox> spatStatesComboBox;
+    std::unique_ptr<Label> controlStateLabel;
+    std::unique_ptr<TextButton> addSceneTextButton;
+    std::unique_ptr<TextButton> deleteSceneTextButton;
+    std::unique_ptr<TextButton> sceneLeftTextButton;
+    std::unique_ptr<TextButton> sceneRightTextButton;
+    std::unique_ptr<Label> canvasInfoLabel;
+    std::unique_ptr<GroupComponent> initialStateGroupComponent;
+    std::unique_ptr<TextButton> addExciterTextButton;
+    std::unique_ptr<TextButton> deleteExciterTextButton;
+    std::unique_ptr<Label> sceneNameLabel;
+    std::unique_ptr<TextEditor> sceneNameTextEditor;
+    std::unique_ptr<ToggleButton> excitersEditionButton;
 
 
     //==============================================================================

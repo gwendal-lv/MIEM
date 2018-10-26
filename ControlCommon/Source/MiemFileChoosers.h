@@ -28,7 +28,7 @@ namespace Miam
         LoadFileChooser(std::initializer_list<AppPurpose> appTypeArgs) :
         FileChooser(TRANS("Please select a MIEM session to load: "),
                     PathUtils::GetSessionsFolderDefaultPath(),
-                    "*.txt",//PathUtils::GenerateAllowedFilePatterns(appTypeArgs),
+                    PathUtils::GenerateAllowedFilePatterns(appTypeArgs),
                     true)
         {
 #if defined( __MIAMOBILE )

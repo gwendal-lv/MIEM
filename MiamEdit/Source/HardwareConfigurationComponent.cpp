@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.3.0
+  Created with Projucer version: 5.3.2
 
   ------------------------------------------------------------------------------
 
@@ -40,22 +40,25 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
-    addAndMakeVisible (inputsCountSlider = new Slider ("Inputs Count slider"));
+    inputsCountSlider.reset (new Slider ("Inputs Count slider"));
+    addAndMakeVisible (inputsCountSlider.get());
     inputsCountSlider->setRange (1, 1024, 1);
     inputsCountSlider->setSliderStyle (Slider::IncDecButtons);
     inputsCountSlider->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
     inputsCountSlider->setColour (Slider::textBoxTextColourId, Colours::black);
     inputsCountSlider->addListener (this);
 
-    addAndMakeVisible (outputsCountSlider = new Slider ("Outputs Count slider"));
+    outputsCountSlider.reset (new Slider ("Outputs Count slider"));
+    addAndMakeVisible (outputsCountSlider.get());
     outputsCountSlider->setRange (1, 1024, 1);
     outputsCountSlider->setSliderStyle (Slider::IncDecButtons);
     outputsCountSlider->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
     outputsCountSlider->setColour (Slider::textBoxTextColourId, Colours::black);
     outputsCountSlider->addListener (this);
 
-    addAndMakeVisible (inputsCountLabel = new Label ("Inputs Count label",
-                                                     TRANS("Number of input channels:")));
+    inputsCountLabel.reset (new Label ("Inputs Count label",
+                                       TRANS("Number of input channels:")));
+    addAndMakeVisible (inputsCountLabel.get());
     inputsCountLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     inputsCountLabel->setJustificationType (Justification::centredRight);
     inputsCountLabel->setEditable (false, false, false);
@@ -63,8 +66,9 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
     inputsCountLabel->setColour (TextEditor::textColourId, Colours::black);
     inputsCountLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    addAndMakeVisible (outputsCountLabel = new Label ("outputs Count label",
-                                                      TRANS("Number of output channels:")));
+    outputsCountLabel.reset (new Label ("outputs Count label",
+                                        TRANS("Number of output channels:")));
+    addAndMakeVisible (outputsCountLabel.get());
     outputsCountLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     outputsCountLabel->setJustificationType (Justification::centredRight);
     outputsCountLabel->setEditable (false, false, false);
@@ -72,13 +76,15 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
     outputsCountLabel->setColour (TextEditor::textColourId, Colours::black);
     outputsCountLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    addAndMakeVisible (oscPluginToggleButton = new ToggleButton ("OSC Plugin toggle button"));
+    oscPluginToggleButton.reset (new ToggleButton ("OSC Plugin toggle button"));
+    addAndMakeVisible (oscPluginToggleButton.get());
     oscPluginToggleButton->setButtonText (TRANS("Send OSC to MIEM Matrix Router remote plug-in"));
     oscPluginToggleButton->setToggleState (true, dontSendNotification);
     oscPluginToggleButton->setColour (ToggleButton::textColourId, Colours::black);
 
-    addAndMakeVisible (udpPortLabel = new Label ("UPD Port Label",
-                                                 TRANS("Plug-in listening on UDP port:")));
+    udpPortLabel.reset (new Label ("UPD Port Label",
+                                   TRANS("Plug-in listening on UDP port:")));
+    addAndMakeVisible (udpPortLabel.get());
     udpPortLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     udpPortLabel->setJustificationType (Justification::centredRight);
     udpPortLabel->setEditable (false, false, false);
@@ -86,7 +92,8 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
     udpPortLabel->setColour (TextEditor::textColourId, Colours::black);
     udpPortLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    addAndMakeVisible (udpPortTextEditor = new TextEditor ("UDP Port Text Editor"));
+    udpPortTextEditor.reset (new TextEditor ("UDP Port Text Editor"));
+    addAndMakeVisible (udpPortTextEditor.get());
     udpPortTextEditor->setMultiLine (false);
     udpPortTextEditor->setReturnKeyStartsNewLine (false);
     udpPortTextEditor->setReadOnly (false);
@@ -95,13 +102,15 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
     udpPortTextEditor->setPopupMenuEnabled (true);
     udpPortTextEditor->setText (TRANS("8001"));
 
-    addAndMakeVisible (keyboardToggleButton = new ToggleButton ("Keyboard toggle button"));
+    keyboardToggleButton.reset (new ToggleButton ("Keyboard toggle button"));
+    addAndMakeVisible (keyboardToggleButton.get());
     keyboardToggleButton->setButtonText (TRANS("Edit routing matrices from keyboard"));
     keyboardToggleButton->addListener (this);
     keyboardToggleButton->setColour (ToggleButton::textColourId, Colours::black);
 
-    addAndMakeVisible (ipAddressLabel = new Label ("Ip Address Label",
-                                                   TRANS("Plug-in host IP address:")));
+    ipAddressLabel.reset (new Label ("Ip Address Label",
+                                     TRANS("Plug-in host IP address:")));
+    addAndMakeVisible (ipAddressLabel.get());
     ipAddressLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     ipAddressLabel->setJustificationType (Justification::centredRight);
     ipAddressLabel->setEditable (false, false, false);
@@ -109,7 +118,8 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
     ipAddressLabel->setColour (TextEditor::textColourId, Colours::black);
     ipAddressLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    addAndMakeVisible (ipAddressTextEditor = new TextEditor ("IP Address Text Editor"));
+    ipAddressTextEditor.reset (new TextEditor ("IP Address Text Editor"));
+    addAndMakeVisible (ipAddressTextEditor.get());
     ipAddressTextEditor->setMultiLine (false);
     ipAddressTextEditor->setReturnKeyStartsNewLine (false);
     ipAddressTextEditor->setReadOnly (false);
@@ -118,25 +128,29 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
     ipAddressTextEditor->setPopupMenuEnabled (true);
     ipAddressTextEditor->setText (TRANS("127.0.0.1"));
 
-    addAndMakeVisible (inputNamesToggleButton = new ToggleButton ("Input Names toggle button"));
+    inputNamesToggleButton.reset (new ToggleButton ("Input Names toggle button"));
+    addAndMakeVisible (inputNamesToggleButton.get());
     inputNamesToggleButton->setButtonText (TRANS("Display names"));
     inputNamesToggleButton->addListener (this);
     inputNamesToggleButton->setColour (ToggleButton::textColourId, Colours::black);
 
-    addAndMakeVisible (outputNamesToggleButton = new ToggleButton ("Output Names toggle button"));
+    outputNamesToggleButton.reset (new ToggleButton ("Output Names toggle button"));
+    addAndMakeVisible (outputNamesToggleButton.get());
     outputNamesToggleButton->setButtonText (TRANS("Display names"));
     outputNamesToggleButton->addListener (this);
     outputNamesToggleButton->setColour (ToggleButton::textColourId, Colours::black);
 
-    addAndMakeVisible (interpolationTypeComboBox = new ComboBox ("Interpolation Type combo box"));
+    interpolationTypeComboBox.reset (new ComboBox ("Interpolation Type combo box"));
+    addAndMakeVisible (interpolationTypeComboBox.get());
     interpolationTypeComboBox->setEditableText (false);
     interpolationTypeComboBox->setJustificationType (Justification::centredLeft);
     interpolationTypeComboBox->setTextWhenNothingSelected (String());
     interpolationTypeComboBox->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
     interpolationTypeComboBox->addListener (this);
 
-    addAndMakeVisible (interpolationTypeLabel = new Label ("Interpolation Type label",
-                                                           TRANS("Type of interpolation:")));
+    interpolationTypeLabel.reset (new Label ("Interpolation Type label",
+                                             TRANS("Type of interpolation:")));
+    addAndMakeVisible (interpolationTypeLabel.get());
     interpolationTypeLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     interpolationTypeLabel->setJustificationType (Justification::centredRight);
     interpolationTypeLabel->setEditable (false, false, false);
@@ -245,13 +259,13 @@ void HardwareConfigurationComponent::sliderValueChanged (Slider* sliderThatWasMo
     //[UsersliderValueChanged_Pre]
     //[/UsersliderValueChanged_Pre]
 
-    if (sliderThatWasMoved == inputsCountSlider)
+    if (sliderThatWasMoved == inputsCountSlider.get())
     {
         //[UserSliderCode_inputsCountSlider] -- add your slider handling code here..
         settingsManager->OnInOutChannelsCountChanged((int) std::round(inputsCountSlider->getValue()), (int) std::round(outputsCountSlider->getValue()));
         //[/UserSliderCode_inputsCountSlider]
     }
-    else if (sliderThatWasMoved == outputsCountSlider)
+    else if (sliderThatWasMoved == outputsCountSlider.get())
     {
         //[UserSliderCode_outputsCountSlider] -- add your slider handling code here..
         settingsManager->OnInOutChannelsCountChanged((int) std::round(inputsCountSlider->getValue()), (int) std::round(outputsCountSlider->getValue()));
@@ -267,20 +281,20 @@ void HardwareConfigurationComponent::buttonClicked (Button* buttonThatWasClicked
     //[UserbuttonClicked_Pre]
     //[/UserbuttonClicked_Pre]
 
-    if (buttonThatWasClicked == keyboardToggleButton)
+    if (buttonThatWasClicked == keyboardToggleButton.get())
     {
         //[UserButtonCode_keyboardToggleButton] -- add your button handler code here..
         settingsManager->OnAllowKeyboardEdition(keyboardToggleButton->getToggleState());
         //[/UserButtonCode_keyboardToggleButton]
     }
-    else if (buttonThatWasClicked == inputNamesToggleButton)
+    else if (buttonThatWasClicked == inputNamesToggleButton.get())
     {
         //[UserButtonCode_inputNamesToggleButton] -- add your button handler code here..
         settingsManager->OnInOutNamesDisplayedChanged(inputNamesToggleButton->getToggleState(),
                                                       outputNamesToggleButton->getToggleState());
         //[/UserButtonCode_inputNamesToggleButton]
     }
-    else if (buttonThatWasClicked == outputNamesToggleButton)
+    else if (buttonThatWasClicked == outputNamesToggleButton.get())
     {
         //[UserButtonCode_outputNamesToggleButton] -- add your button handler code here..
         settingsManager->OnInOutNamesDisplayedChanged(inputNamesToggleButton->getToggleState(),
@@ -297,7 +311,7 @@ void HardwareConfigurationComponent::comboBoxChanged (ComboBox* comboBoxThatHasC
     //[UsercomboBoxChanged_Pre]
     //[/UsercomboBoxChanged_Pre]
 
-    if (comboBoxThatHasChanged == interpolationTypeComboBox)
+    if (comboBoxThatHasChanged == interpolationTypeComboBox.get())
     {
         //[UserComboBoxCode_interpolationTypeComboBox] -- add your combo box handling code here..
         int chosenId = interpolationTypeComboBox->getSelectedId();

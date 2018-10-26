@@ -54,7 +54,8 @@ class SpatStatesEditionComponent  : public Component,
                                     public ISlidersMatrixListener,
                                     public IMatrixButtonListener,
                                     public Button::Listener,
-                                    public ComboBox::Listener
+                                    public ComboBox::Listener,
+                                    public Slider::Listener
 {
 public:
     //==============================================================================
@@ -64,6 +65,12 @@ public:
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
     void CompleteInitialization(SpatStatesEditionManager* _editionManager);
+
+
+    /// - - - - - Events - - - - -
+
+    /// \brief À IMPLÉMENTER *****************************
+    void colourSliderMoved();
 
     /// \brief Empty function : we'll deal with this editor with full
     /// up-to-date matrices only (to prevent any error with notifying
@@ -86,14 +93,20 @@ public:
     private :
     void updateMatrix();
 
+
+    // - - - - - Setters and Getters - - - - -
     public :
     void SetInsOutsCount(int _inputsCount, int _outputsCount);
     void SetInOutNames(InOutChannelsName &channelsName);
     void SetInOutNamesDisplayed(bool areInputNamesVisible, bool areOutputNamesVisible);
+
+    void SetAreaColourValue(juce::Colour colour);
+
     std::shared_ptr<ControlMatrix> GetDisplayedSpatMatrix();
     LabelledMatrixComponent* GetLabelledMatrix() { return labelledMatrixComponent.get(); }
 
     void AllowKeyboardEdition(bool allow);
+
 
     //[/UserMethods]
 
@@ -101,6 +114,7 @@ public:
     void resized() override;
     void buttonClicked (Button* buttonThatWasClicked) override;
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
+    void sliderValueChanged (Slider* sliderThatWasMoved) override;
     void visibilityChanged() override;
 
 
@@ -125,15 +139,23 @@ private:
     //[/UserVariables]
 
     //==============================================================================
+    std::unique_ptr<GroupComponent> stateParametersGroupComponent;
     std::unique_ptr<GroupComponent> stateEditorGroupComponent;
     std::unique_ptr<Miam::LabelledMatrixComponent> labelledMatrixComponent;
     std::unique_ptr<GroupComponent> statesListGroupComponent;
-    std::unique_ptr<TextButton> addSpatStateTextButton;
-    std::unique_ptr<TextButton> deleteSpatStateTextButton;
+    std::unique_ptr<TextButton> addStateTextButton;
+    std::unique_ptr<TextButton> deleteStateTextButton;
     std::unique_ptr<TextButton> stateUpTextButton;
     std::unique_ptr<TextButton> stateDownTextButton;
     std::unique_ptr<Label> linksInfoLabel;
-    std::unique_ptr<ComboBox> spatStatesComboBox;
+    std::unique_ptr<ComboBox> statesComboBox;
+    std::unique_ptr<Label> labelR;
+    std::unique_ptr<Slider> sliderR;
+    std::unique_ptr<Label> labelG;
+    std::unique_ptr<Slider> sliderG;
+    std::unique_ptr<Label> labelB;
+    std::unique_ptr<Slider> sliderB;
+    std::unique_ptr<Label> label;
 
 
     //==============================================================================

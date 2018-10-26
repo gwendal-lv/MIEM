@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.2.1
+  Created with Projucer version: 5.3.2
 
   ------------------------------------------------------------------------------
 
@@ -35,7 +35,8 @@ MainBackgroundComponent::MainBackgroundComponent ()
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
-    addAndMakeVisible (speakersTextButton = new TextButton ("Speakers text button"));
+    speakersTextButton.reset (new TextButton ("Speakers text button"));
+    addAndMakeVisible (speakersTextButton.get());
     speakersTextButton->setButtonText (TRANS("Speakers"));
     speakersTextButton->setConnectedEdges (Button::ConnectedOnRight);
     speakersTextButton->addListener (this);
@@ -43,7 +44,8 @@ MainBackgroundComponent::MainBackgroundComponent ()
     speakersTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     speakersTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    addAndMakeVisible (statesTextButton = new TextButton ("States text button"));
+    statesTextButton.reset (new TextButton ("States text button"));
+    addAndMakeVisible (statesTextButton.get());
     statesTextButton->setButtonText (TRANS("Control States"));
     statesTextButton->setConnectedEdges (Button::ConnectedOnRight);
     statesTextButton->addListener (this);
@@ -51,8 +53,9 @@ MainBackgroundComponent::MainBackgroundComponent ()
     statesTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     statesTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    addAndMakeVisible (mainInfoLabel = new Label ("Main info label",
-                                                  TRANS("...")));
+    mainInfoLabel.reset (new Label ("Main info label",
+                                    TRANS("...")));
+    addAndMakeVisible (mainInfoLabel.get());
     mainInfoLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     mainInfoLabel->setJustificationType (Justification::centredRight);
     mainInfoLabel->setEditable (false, false, false);
@@ -61,7 +64,8 @@ MainBackgroundComponent::MainBackgroundComponent ()
     mainInfoLabel->setColour (TextEditor::textColourId, Colours::black);
     mainInfoLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    addAndMakeVisible (scenesTextButton = new TextButton ("Scenes text button"));
+    scenesTextButton.reset (new TextButton ("Scenes text button"));
+    addAndMakeVisible (scenesTextButton.get());
     scenesTextButton->setButtonText (TRANS("Geometric Scenes"));
     scenesTextButton->setConnectedEdges (Button::ConnectedOnLeft);
     scenesTextButton->addListener (this);
@@ -69,20 +73,23 @@ MainBackgroundComponent::MainBackgroundComponent ()
     scenesTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     scenesTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    addAndMakeVisible (hardwareConfTextButton = new TextButton ("Hardware Configuration text button"));
+    hardwareConfTextButton.reset (new TextButton ("Hardware Configuration text button"));
+    addAndMakeVisible (hardwareConfTextButton.get());
     hardwareConfTextButton->setButtonText (TRANS("Configuration"));
     hardwareConfTextButton->addListener (this);
     hardwareConfTextButton->setColour (TextButton::buttonColourId, Colour (0xffbfbfbf));
     hardwareConfTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     hardwareConfTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    addAndMakeVisible (startTextButton = new TextButton ("Start text button"));
+    startTextButton.reset (new TextButton ("Start text button"));
+    addAndMakeVisible (startTextButton.get());
     startTextButton->setButtonText (TRANS("Start MiamSpat"));
     startTextButton->setColour (TextButton::buttonColourId, Colour (0xa0ffffff));
     startTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     startTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    addAndMakeVisible (fileTextButton = new TextButton ("File text button"));
+    fileTextButton.reset (new TextButton ("File text button"));
+    addAndMakeVisible (fileTextButton.get());
     fileTextButton->setButtonText (TRANS("File"));
     fileTextButton->addListener (this);
     fileTextButton->setColour (TextButton::buttonColourId, Colour (0xffbfbfbf));
@@ -173,27 +180,27 @@ void MainBackgroundComponent::buttonClicked (Button* buttonThatWasClicked)
 
     //[/UserbuttonClicked_Pre]
 
-    if (buttonThatWasClicked == speakersTextButton)
+    if (buttonThatWasClicked == speakersTextButton.get())
     {
         //[UserButtonCode_speakersTextButton] -- add your button handler code here..
         //[/UserButtonCode_speakersTextButton]
     }
-    else if (buttonThatWasClicked == statesTextButton)
+    else if (buttonThatWasClicked == statesTextButton.get())
     {
         //[UserButtonCode_statesTextButton] -- add your button handler code here..
         //[/UserButtonCode_statesTextButton]
     }
-    else if (buttonThatWasClicked == scenesTextButton)
+    else if (buttonThatWasClicked == scenesTextButton.get())
     {
         //[UserButtonCode_scenesTextButton] -- add your button handler code here..
         //[/UserButtonCode_scenesTextButton]
     }
-    else if (buttonThatWasClicked == hardwareConfTextButton)
+    else if (buttonThatWasClicked == hardwareConfTextButton.get())
     {
         //[UserButtonCode_hardwareConfTextButton] -- add your button handler code here..
         //[/UserButtonCode_hardwareConfTextButton]
     }
-    else if (buttonThatWasClicked == fileTextButton)
+    else if (buttonThatWasClicked == fileTextButton.get())
     {
         //[UserButtonCode_fileTextButton] -- add your button handler code here..
         fileMenu->ShowMenuAndSendUserAnswer();

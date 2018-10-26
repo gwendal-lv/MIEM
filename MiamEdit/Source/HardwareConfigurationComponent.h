@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.3.0
+  Created with Projucer version: 5.3.2
 
   ------------------------------------------------------------------------------
 
@@ -92,20 +92,20 @@ private:
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<Slider> inputsCountSlider;
-    ScopedPointer<Slider> outputsCountSlider;
-    ScopedPointer<Label> inputsCountLabel;
-    ScopedPointer<Label> outputsCountLabel;
-    ScopedPointer<ToggleButton> oscPluginToggleButton;
-    ScopedPointer<Label> udpPortLabel;
-    ScopedPointer<TextEditor> udpPortTextEditor;
-    ScopedPointer<ToggleButton> keyboardToggleButton;
-    ScopedPointer<Label> ipAddressLabel;
-    ScopedPointer<TextEditor> ipAddressTextEditor;
-    ScopedPointer<ToggleButton> inputNamesToggleButton;
-    ScopedPointer<ToggleButton> outputNamesToggleButton;
-    ScopedPointer<ComboBox> interpolationTypeComboBox;
-    ScopedPointer<Label> interpolationTypeLabel;
+    std::unique_ptr<Slider> inputsCountSlider;
+    std::unique_ptr<Slider> outputsCountSlider;
+    std::unique_ptr<Label> inputsCountLabel;
+    std::unique_ptr<Label> outputsCountLabel;
+    std::unique_ptr<ToggleButton> oscPluginToggleButton;
+    std::unique_ptr<Label> udpPortLabel;
+    std::unique_ptr<TextEditor> udpPortTextEditor;
+    std::unique_ptr<ToggleButton> keyboardToggleButton;
+    std::unique_ptr<Label> ipAddressLabel;
+    std::unique_ptr<TextEditor> ipAddressTextEditor;
+    std::unique_ptr<ToggleButton> inputNamesToggleButton;
+    std::unique_ptr<ToggleButton> outputNamesToggleButton;
+    std::unique_ptr<ComboBox> interpolationTypeComboBox;
+    std::unique_ptr<Label> interpolationTypeLabel;
 
 
     //==============================================================================

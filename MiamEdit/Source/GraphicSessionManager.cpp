@@ -221,7 +221,6 @@ void GraphicSessionManager::setMode(GraphicSessionMode newMode)
             sceneEditionComponent->SetSpatGroupReduced(false);
             sceneEditionComponent->SelectSpatState(GetSelectedArea()->GetStateIndex());
             sceneEditionComponent->SetInitialStateGroupHidden(true);
-            sceneEditionComponent->SetAreaColourValue(GetSelectedArea()->GetFillColour());
             sceneEditionComponent->resized(); // right menu update
             
             view->DisplayInfo("Edition of an area.");

@@ -41,8 +41,14 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
+    stateParametersGroupComponent.reset (new GroupComponent ("State Parameters group component",
+                                                             TRANS("State parameters")));
+    addAndMakeVisible (stateParametersGroupComponent.get());
+    stateParametersGroupComponent->setColour (GroupComponent::outlineColourId, Colour (0xff454545));
+    stateParametersGroupComponent->setColour (GroupComponent::textColourId, Colours::black);
+
     stateEditorGroupComponent.reset (new GroupComponent ("State Editor group component",
-                                                         TRANS("Control data for selected state")));
+                                                         TRANS("State control data")));
     addAndMakeVisible (stateEditorGroupComponent.get());
     stateEditorGroupComponent->setColour (GroupComponent::outlineColourId, Colour (0xff454545));
     stateEditorGroupComponent->setColour (GroupComponent::textColourId, Colours::black);
@@ -52,32 +58,32 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     labelledMatrixComponent->setName ("Labelled Matrix component");
 
     statesListGroupComponent.reset (new GroupComponent ("States list group component",
-                                                        TRANS("States list")));
+                                                        TRANS("List of states")));
     addAndMakeVisible (statesListGroupComponent.get());
     statesListGroupComponent->setColour (GroupComponent::outlineColourId, Colour (0xff454545));
     statesListGroupComponent->setColour (GroupComponent::textColourId, Colours::black);
 
-    addSpatStateTextButton.reset (new TextButton ("Add state text button"));
-    addAndMakeVisible (addSpatStateTextButton.get());
-    addSpatStateTextButton->setButtonText (TRANS("Add State"));
-    addSpatStateTextButton->setConnectedEdges (Button::ConnectedOnRight);
-    addSpatStateTextButton->addListener (this);
-    addSpatStateTextButton->setColour (TextButton::buttonColourId, Colour (0xfff0f0f0));
-    addSpatStateTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
-    addSpatStateTextButton->setColour (TextButton::textColourOffId, Colours::black);
+    addStateTextButton.reset (new TextButton ("Add state text button"));
+    addAndMakeVisible (addStateTextButton.get());
+    addStateTextButton->setButtonText (TRANS("Add State"));
+    addStateTextButton->setConnectedEdges (Button::ConnectedOnRight);
+    addStateTextButton->addListener (this);
+    addStateTextButton->setColour (TextButton::buttonColourId, Colour (0xfff0f0f0));
+    addStateTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+    addStateTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    addSpatStateTextButton->setBounds (0 + 8, 4 + 20, 80, 24);
+    addStateTextButton->setBounds (0 + 8, 4 + 20, 80, 24);
 
-    deleteSpatStateTextButton.reset (new TextButton ("Delete spat state text button"));
-    addAndMakeVisible (deleteSpatStateTextButton.get());
-    deleteSpatStateTextButton->setButtonText (TRANS("Delete"));
-    deleteSpatStateTextButton->setConnectedEdges (Button::ConnectedOnLeft);
-    deleteSpatStateTextButton->addListener (this);
-    deleteSpatStateTextButton->setColour (TextButton::buttonColourId, Colour (0xfff0f0f0));
-    deleteSpatStateTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
-    deleteSpatStateTextButton->setColour (TextButton::textColourOffId, Colours::black);
+    deleteStateTextButton.reset (new TextButton ("Delete State text button"));
+    addAndMakeVisible (deleteStateTextButton.get());
+    deleteStateTextButton->setButtonText (TRANS("Delete"));
+    deleteStateTextButton->setConnectedEdges (Button::ConnectedOnLeft);
+    deleteStateTextButton->addListener (this);
+    deleteStateTextButton->setColour (TextButton::buttonColourId, Colour (0xfff0f0f0));
+    deleteStateTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+    deleteStateTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    deleteSpatStateTextButton->setBounds (0 + 88, 4 + 20, 80, 24);
+    deleteStateTextButton->setBounds (0 + 88, 4 + 20, 80, 24);
 
     stateUpTextButton.reset (new TextButton ("State up text button"));
     addAndMakeVisible (stateUpTextButton.get());
@@ -87,6 +93,8 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     stateUpTextButton->setColour (TextButton::buttonColourId, Colour (0xfff0f0f0));
     stateUpTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     stateUpTextButton->setColour (TextButton::textColourOffId, Colours::black);
+
+    stateUpTextButton->setBounds ((0 + (getWidth() - 272) - 80) + -72, 4 + 20, 72, 24);
 
     stateDownTextButton.reset (new TextButton ("State down text button"));
     addAndMakeVisible (stateDownTextButton.get());
@@ -107,14 +115,93 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     linksInfoLabel->setColour (TextEditor::textColourId, Colours::black);
     linksInfoLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    spatStatesComboBox.reset (new ComboBox ("Spat states combo box"));
-    addAndMakeVisible (spatStatesComboBox.get());
-    spatStatesComboBox->setEditableText (true);
-    spatStatesComboBox->setJustificationType (Justification::centredLeft);
-    spatStatesComboBox->setTextWhenNothingSelected (String());
-    spatStatesComboBox->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
-    spatStatesComboBox->addItem (TRANS("-1 undefined"), 1);
-    spatStatesComboBox->addListener (this);
+    statesComboBox.reset (new ComboBox ("States combo box"));
+    addAndMakeVisible (statesComboBox.get());
+    statesComboBox->setEditableText (true);
+    statesComboBox->setJustificationType (Justification::centredLeft);
+    statesComboBox->setTextWhenNothingSelected (String());
+    statesComboBox->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
+    statesComboBox->addItem (TRANS("-1 undefined"), 1);
+    statesComboBox->addListener (this);
+
+    labelR.reset (new Label ("new label",
+                             TRANS("R")));
+    addAndMakeVisible (labelR.get());
+    labelR->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    labelR->setJustificationType (Justification::centredLeft);
+    labelR->setEditable (false, false, false);
+    labelR->setColour (Label::textColourId, Colours::black);
+    labelR->setColour (TextEditor::textColourId, Colours::black);
+    labelR->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    labelR->setBounds ((getWidth() - 264) + 6, 20, 24, 24);
+
+    sliderR.reset (new Slider ("Slider R"));
+    addAndMakeVisible (sliderR.get());
+    sliderR->setRange (0, 255, 1);
+    sliderR->setSliderStyle (Slider::LinearHorizontal);
+    sliderR->setTextBoxStyle (Slider::TextBoxLeft, false, 40, 20);
+    sliderR->setColour (Slider::thumbColourId, Colour (0xa0ff0000));
+    sliderR->setColour (Slider::textBoxTextColourId, Colours::black);
+    sliderR->addListener (this);
+
+    sliderR->setBounds ((getWidth() - 264) + 24, 24, 158, 16);
+
+    labelG.reset (new Label ("new label",
+                             TRANS("G")));
+    addAndMakeVisible (labelG.get());
+    labelG->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    labelG->setJustificationType (Justification::centredLeft);
+    labelG->setEditable (false, false, false);
+    labelG->setColour (Label::textColourId, Colours::black);
+    labelG->setColour (TextEditor::textColourId, Colours::black);
+    labelG->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    labelG->setBounds ((getWidth() - 264) + 6, 40, 24, 24);
+
+    sliderG.reset (new Slider ("SliderG"));
+    addAndMakeVisible (sliderG.get());
+    sliderG->setRange (0, 255, 1);
+    sliderG->setSliderStyle (Slider::LinearHorizontal);
+    sliderG->setTextBoxStyle (Slider::TextBoxLeft, false, 40, 20);
+    sliderG->setColour (Slider::thumbColourId, Colour (0xa000ff00));
+    sliderG->setColour (Slider::textBoxTextColourId, Colours::black);
+    sliderG->addListener (this);
+
+    sliderG->setBounds ((getWidth() - 264) + 24, 44, 158, 16);
+
+    labelB.reset (new Label ("new label",
+                             TRANS("B")));
+    addAndMakeVisible (labelB.get());
+    labelB->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    labelB->setJustificationType (Justification::centredLeft);
+    labelB->setEditable (false, false, false);
+    labelB->setColour (Label::textColourId, Colours::black);
+    labelB->setColour (TextEditor::textColourId, Colours::black);
+    labelB->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    labelB->setBounds ((getWidth() - 264) + 7, 60, 24, 24);
+
+    sliderB.reset (new Slider ("Slider B"));
+    addAndMakeVisible (sliderB.get());
+    sliderB->setRange (0, 255, 1);
+    sliderB->setSliderStyle (Slider::LinearHorizontal);
+    sliderB->setTextBoxStyle (Slider::TextBoxLeft, false, 40, 20);
+    sliderB->setColour (Slider::thumbColourId, Colour (0xa00000ff));
+    sliderB->setColour (Slider::textBoxTextColourId, Colours::black);
+    sliderB->addListener (this);
+
+    sliderB->setBounds ((getWidth() - 264) + 24, 64, 158, 16);
+
+    label.reset (new Label ("new label",
+                            TRANS("+ ajouter visu couleur\n")));
+    addAndMakeVisible (label.get());
+    label->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    label->setJustificationType (Justification::centredLeft);
+    label->setEditable (false, false, false);
+    label->setColour (Label::outlineColourId, Colours::white);
+    label->setColour (TextEditor::textColourId, Colours::black);
+    label->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
 
     //[UserPreSize]
@@ -140,15 +227,23 @@ SpatStatesEditionComponent::~SpatStatesEditionComponent()
     //[Destructor_pre]. You can add your own custom destruction code here..
     //[/Destructor_pre]
 
+    stateParametersGroupComponent = nullptr;
     stateEditorGroupComponent = nullptr;
     labelledMatrixComponent = nullptr;
     statesListGroupComponent = nullptr;
-    addSpatStateTextButton = nullptr;
-    deleteSpatStateTextButton = nullptr;
+    addStateTextButton = nullptr;
+    deleteStateTextButton = nullptr;
     stateUpTextButton = nullptr;
     stateDownTextButton = nullptr;
     linksInfoLabel = nullptr;
-    spatStatesComboBox = nullptr;
+    statesComboBox = nullptr;
+    labelR = nullptr;
+    sliderR = nullptr;
+    labelG = nullptr;
+    sliderG = nullptr;
+    labelB = nullptr;
+    sliderB = nullptr;
+    label = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -178,13 +273,14 @@ void SpatStatesEditionComponent::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    stateEditorGroupComponent->setBounds (0, 60, getWidth() - 0, getHeight() - 60);
-    labelledMatrixComponent->setBounds (0 + 8, 60 + 16, (getWidth() - 0) - 16, (getHeight() - 60) - 24);
-    statesListGroupComponent->setBounds (0, 4, getWidth() - 0, 52);
-    stateUpTextButton->setBounds ((((0 + 88) + 80 - -8) + (getWidth() - 476) - -8) + 132 - -8, 4 + 20, 72, 24);
-    stateDownTextButton->setBounds (((((0 + 88) + 80 - -8) + (getWidth() - 476) - -8) + 132 - -8) + 72, 4 + 20, 72, 24);
-    linksInfoLabel->setBounds (((0 + 88) + 80 - -8) + (getWidth() - 476) - -8, 4 + 20, 132, 24);
-    spatStatesComboBox->setBounds ((0 + 88) + 80 - -8, 24, getWidth() - 476, 24);
+    stateParametersGroupComponent->setBounds (getWidth() - 264, 4 + 0, 264, 84);
+    stateEditorGroupComponent->setBounds (0, 88, getWidth() - 0, getHeight() - 88);
+    labelledMatrixComponent->setBounds (0 + 8, 88 + 16, (getWidth() - 0) - 16, (getHeight() - 88) - 24);
+    statesListGroupComponent->setBounds (0, 4, getWidth() - 272, 84);
+    stateDownTextButton->setBounds (0 + (getWidth() - 272) - 80, 4 + 20, 72, 24);
+    linksInfoLabel->setBounds ((0 + 88) + 80 - -8, 4 + 20, (getWidth() - 272) - 336, 24);
+    statesComboBox->setBounds (0 + 8, 56, (getWidth() - 272) - 16, 24);
+    label->setBounds ((getWidth() - 264) + 264 - 80, 24, 72, 56);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -194,17 +290,15 @@ void SpatStatesEditionComponent::buttonClicked (Button* buttonThatWasClicked)
     //[UserbuttonClicked_Pre]
     //[/UserbuttonClicked_Pre]
 
-    if (buttonThatWasClicked == addSpatStateTextButton.get())
+    if (buttonThatWasClicked == addStateTextButton.get())
     {
-        //[UserButtonCode_addSpatStateTextButton] -- add your button handler code here..
-        editionManager->OnAddState();
-        //[/UserButtonCode_addSpatStateTextButton]
+        //[UserButtonCode_addStateTextButton] -- add your button handler code here..
+        //[/UserButtonCode_addStateTextButton]
     }
-    else if (buttonThatWasClicked == deleteSpatStateTextButton.get())
+    else if (buttonThatWasClicked == deleteStateTextButton.get())
     {
-        //[UserButtonCode_deleteSpatStateTextButton] -- add your button handler code here..
-        editionManager->OnDeleteSelectedState();
-        //[/UserButtonCode_deleteSpatStateTextButton]
+        //[UserButtonCode_deleteStateTextButton] -- add your button handler code here..
+        //[/UserButtonCode_deleteStateTextButton]
     }
     else if (buttonThatWasClicked == stateUpTextButton.get())
     {
@@ -228,40 +322,39 @@ void SpatStatesEditionComponent::comboBoxChanged (ComboBox* comboBoxThatHasChang
     //[UsercomboBoxChanged_Pre]
     //[/UsercomboBoxChanged_Pre]
 
-    if (comboBoxThatHasChanged == spatStatesComboBox.get())
+    if (comboBoxThatHasChanged == statesComboBox.get())
     {
-        //[UserComboBoxCode_spatStatesComboBox] -- add your combo box handling code here..
-        // Change might happen when editing the text has just finished ("new" item)
-        if (spatStatesComboBox->getSelectedItemIndex() == -1)
-        {
-            // If a state was selected before...
-            if (previousStateIndex >= 0)
-            {
-                // Using a regex, we remove the number (if existing)
-                // from the state's name
-                std::string nameToProcess = spatStatesComboBox->getText().toStdString();
-                std::regex deleteIndexAndDotRegex("[0-9]{1,}\\. "); // and the space
-                std::string processedString
-                = std::regex_replace(nameToProcess,
-                                     deleteIndexAndDotRegex,
-                                     ""); // replacement with an empty string...
-                // Actual renaming
-                editionManager->OnRenameState(processedString, previousStateIndex);
-            }
-            else
-                spatStatesComboBox->setSelectedItemIndex(-1); // nothing with notif
-        }
-        // Or when another existing item has just been selected
-        else
-        {
-            editionManager->OnSpatStateSelectedById(GetDisplayedSpatMatrix(), spatStatesComboBox->getSelectedItemIndex());
-        }
-
-        //[/UserComboBoxCode_spatStatesComboBox]
+        //[UserComboBoxCode_statesComboBox] -- add your combo box handling code here..
+        //[/UserComboBoxCode_statesComboBox]
     }
 
     //[UsercomboBoxChanged_Post]
     //[/UsercomboBoxChanged_Post]
+}
+
+void SpatStatesEditionComponent::sliderValueChanged (Slider* sliderThatWasMoved)
+{
+    //[UsersliderValueChanged_Pre]
+    //[/UsersliderValueChanged_Pre]
+
+    if (sliderThatWasMoved == sliderR.get())
+    {
+        //[UserSliderCode_sliderR] -- add your slider handling code here..
+        //[/UserSliderCode_sliderR]
+    }
+    else if (sliderThatWasMoved == sliderG.get())
+    {
+        //[UserSliderCode_sliderG] -- add your slider handling code here..
+        //[/UserSliderCode_sliderG]
+    }
+    else if (sliderThatWasMoved == sliderB.get())
+    {
+        //[UserSliderCode_sliderB] -- add your slider handling code here..
+        //[/UserSliderCode_sliderB]
+    }
+
+    //[UsersliderValueChanged_Post]
+    //[/UsersliderValueChanged_Post]
 }
 
 void SpatStatesEditionComponent::visibilityChanged()
@@ -310,13 +403,33 @@ void SpatStatesEditionComponent::CompleteInitialization(SpatStatesEditionManager
 void SpatStatesEditionComponent::UpdateStatesList(std::vector< std::shared_ptr<ControlState<double>> > &newSpatStates)
 {
     // Empties the combo box at first
-    spatStatesComboBox->clear();
+    statesComboBox->clear();
 
     // Addition of items==names one by one
     for (size_t i=0 ; i<newSpatStates.size() ; i++)
-        spatStatesComboBox->addItem(newSpatStates[i]->GetName(), (int)i+1); // Id == Index+1
+        statesComboBox->addItem(newSpatStates[i]->GetName(), (int)i+1); // Id == Index+1
     // Normally : no item selected at this point
     //editionManager->OnSpatStateSelectedById(spatStatesComboBox->getSelectedItemIndex());
+}
+
+
+// - - - - - Colours - - - - -
+void SpatStatesEditionComponent::SetAreaColourValue(juce::Colour colour)
+{
+    sliderR->setValue(colour.getRed());
+    sliderG->setValue(colour.getGreen());
+    sliderB->setValue(colour.getBlue());
+}
+// À IMPLÉMENTEEEEEEEEEEEEER ********************************
+void SpatStatesEditionComponent::colourSliderMoved()
+{
+    Colour newColour = Colour((uint8)sliderR->getValue(),
+                              (uint8)sliderG->getValue(),
+                              (uint8)sliderB->getValue());
+
+    // *********************
+    // il faudra transmettre l'évènement à l'état puis aux formes liées
+    //graphicSessionManager->OnNewColour(newColour);
 }
 
 
@@ -332,8 +445,8 @@ void SpatStatesEditionComponent::SelectAndUpdateState(int stateIndex, std::strin
     spatMatrix = newSpatMatrix;
 
     // Internal updates
-    spatStatesComboBox->setSelectedItemIndex(stateIndex, NotificationType::dontSendNotification);
-    previousStateIndex = spatStatesComboBox->getSelectedItemIndex();
+    statesComboBox->setSelectedItemIndex(stateIndex, NotificationType::dontSendNotification);
+    previousStateIndex = statesComboBox->getSelectedItemIndex();
 
     // Text elements
     linksInfoLabel->setText(infoText, NotificationType::dontSendNotification);
@@ -341,18 +454,18 @@ void SpatStatesEditionComponent::SelectAndUpdateState(int stateIndex, std::strin
     // Last updates
     updateMatrix();
     // Buttons enabled state (should be PRESENTER code normally....)
-    bool isAnyStateSelected = spatStatesComboBox->getSelectedItemIndex() != -1;
-    deleteSpatStateTextButton->setEnabled(isAnyStateSelected);
+    bool isAnyStateSelected = statesComboBox->getSelectedItemIndex() != -1;
+    deleteStateTextButton->setEnabled(isAnyStateSelected);
     stateUpTextButton->setEnabled(isAnyStateSelected);
     stateDownTextButton->setEnabled(isAnyStateSelected);
     stateUpTextButton->setEnabled(isAnyStateSelected);
     stateDownTextButton->setEnabled(isAnyStateSelected);
     if (isAnyStateSelected) // up/down may be deactivated depending on state's count
     {
-        if (spatStatesComboBox->getSelectedItemIndex() == 0)
+        if (statesComboBox->getSelectedItemIndex() == 0)
             stateUpTextButton->setEnabled(false);
-        else if (spatStatesComboBox->getSelectedItemIndex()
-                 == spatStatesComboBox->getNumItems()-1)
+        else if (statesComboBox->getSelectedItemIndex()
+                 == statesComboBox->getNumItems()-1)
             stateDownTextButton->setEnabled(false);
     }
 }
@@ -366,7 +479,7 @@ void SpatStatesEditionComponent::updateMatrix()
 
     // Graphical attributes
     // if a valid state is selected
-    if (spatStatesComboBox->getSelectedItemIndex() >= 0)
+    if (statesComboBox->getSelectedItemIndex() >= 0)
         labelledMatrixComponent->SetActiveSliders(inputsCount, outputsCount);
     // else : disabled matrix
     else
@@ -413,54 +526,104 @@ BEGIN_JUCER_METADATA
 <JUCER_COMPONENT documentType="Component" className="SpatStatesEditionComponent"
                  componentName="" parentClasses="public Component, public ISlidersMatrixListener, public IMatrixButtonListener"
                  constructorParams="" variableInitialisers="" snapPixels="8" snapActive="1"
-                 snapShown="1" overlayOpacity="0.330" fixedSize="1" initialWidth="1024"
+                 snapShown="1" overlayOpacity="0.330" fixedSize="0" initialWidth="1024"
                  initialHeight="600">
   <METHODS>
     <METHOD name="visibilityChanged()"/>
   </METHODS>
   <BACKGROUND backgroundColour="ffbfbfbf"/>
+  <GROUPCOMPONENT name="State Parameters group component" id="9d63d9acaf1299f6"
+                  memberName="stateParametersGroupComponent" virtualName="" explicitFocusOrder="0"
+                  pos="264R 0 264 84" posRelativeY="4250d5155a80be70" posRelativeH="4250d5155a80be70"
+                  outlinecol="ff454545" textcol="ff000000" title="State parameters"/>
   <GROUPCOMPONENT name="State Editor group component" id="1b9d22beb5fc6bfd" memberName="stateEditorGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="0 60 0M 60M" outlinecol="ff454545"
-                  textcol="ff000000" title="Control data for selected state"/>
+                  virtualName="" explicitFocusOrder="0" pos="0 88 0M 88M" outlinecol="ff454545"
+                  textcol="ff000000" title="State control data"/>
   <GENERICCOMPONENT name="Labelled Matrix component" id="d34fbdc233d627af" memberName="labelledMatrixComponent"
                     virtualName="" explicitFocusOrder="0" pos="8 16 16M 24M" posRelativeX="1b9d22beb5fc6bfd"
                     posRelativeY="1b9d22beb5fc6bfd" posRelativeW="1b9d22beb5fc6bfd"
                     posRelativeH="1b9d22beb5fc6bfd" class="Miam::LabelledMatrixComponent"
                     params="this, Miam_MaxNumInputs, Miam_MaxNumOutputs"/>
   <GROUPCOMPONENT name="States list group component" id="4250d5155a80be70" memberName="statesListGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="0 4 0M 52" outlinecol="ff454545"
-                  textcol="ff000000" title="States list"/>
-  <TEXTBUTTON name="Add state text button" id="47bebc9d3a03780d" memberName="addSpatStateTextButton"
+                  virtualName="" explicitFocusOrder="0" pos="0 4 272M 84" outlinecol="ff454545"
+                  textcol="ff000000" title="List of states"/>
+  <TEXTBUTTON name="Add state text button" id="47bebc9d3a03780d" memberName="addStateTextButton"
               virtualName="" explicitFocusOrder="0" pos="8 20 80 24" posRelativeX="4250d5155a80be70"
               posRelativeY="4250d5155a80be70" bgColOff="fff0f0f0" bgColOn="ffffffff"
               textCol="ff000000" buttonText="Add State" connectedEdges="2"
               needsCallback="1" radioGroupId="0"/>
-  <TEXTBUTTON name="Delete spat state text button" id="5f4e8653b868a323" memberName="deleteSpatStateTextButton"
+  <TEXTBUTTON name="Delete State text button" id="5f4e8653b868a323" memberName="deleteStateTextButton"
               virtualName="" explicitFocusOrder="0" pos="88 20 80 24" posRelativeX="4250d5155a80be70"
               posRelativeY="4250d5155a80be70" bgColOff="fff0f0f0" bgColOn="ffffffff"
               textCol="ff000000" buttonText="Delete" connectedEdges="1" needsCallback="1"
               radioGroupId="0"/>
   <TEXTBUTTON name="State up text button" id="43b96ebd16bb5586" memberName="stateUpTextButton"
-              virtualName="" explicitFocusOrder="0" pos="-8R 20 72 24" posRelativeX="3577c0e2ccd44371"
+              virtualName="" explicitFocusOrder="0" pos="-72 20 72 24" posRelativeX="e6cf4b99a12776ee"
               posRelativeY="4250d5155a80be70" bgColOff="fff0f0f0" bgColOn="ffffffff"
               textCol="ff000000" buttonText="Move Up" connectedEdges="2" needsCallback="1"
               radioGroupId="0"/>
   <TEXTBUTTON name="State down text button" id="e6cf4b99a12776ee" memberName="stateDownTextButton"
-              virtualName="" explicitFocusOrder="0" pos="0R 20 72 24" posRelativeX="43b96ebd16bb5586"
+              virtualName="" explicitFocusOrder="0" pos="80R 20 72 24" posRelativeX="4250d5155a80be70"
               posRelativeY="4250d5155a80be70" bgColOff="fff0f0f0" bgColOn="ffffffff"
               textCol="ff000000" buttonText="Down" connectedEdges="1" needsCallback="1"
               radioGroupId="0"/>
   <LABEL name="Links info label" id="3577c0e2ccd44371" memberName="linksInfoLabel"
-         virtualName="" explicitFocusOrder="0" pos="-8R 20 132 24" posRelativeX="89ad7c0a3be5a39c"
-         posRelativeY="4250d5155a80be70" textCol="ff000000" edTextCol="ff000000"
-         edBkgCol="0" labelText="Linked to ? area" editableSingleClick="0"
-         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
-         fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
+         virtualName="" explicitFocusOrder="0" pos="-8R 20 331M 24" posRelativeX="5f4e8653b868a323"
+         posRelativeY="4250d5155a80be70" posRelativeW="4250d5155a80be70"
+         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Linked to ? area"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
          bold="0" italic="1" justification="36" typefaceStyle="Italic"/>
-  <COMBOBOX name="Spat states combo box" id="89ad7c0a3be5a39c" memberName="spatStatesComboBox"
-            virtualName="" explicitFocusOrder="0" pos="-8R 24 476M 24" posRelativeX="5f4e8653b868a323"
-            posRelativeY="90b16e3024c520fd" editable="1" layout="33" items="-1 undefined"
-            textWhenNonSelected="" textWhenNoItems="(no choices)"/>
+  <COMBOBOX name="States combo box" id="89ad7c0a3be5a39c" memberName="statesComboBox"
+            virtualName="" explicitFocusOrder="0" pos="8 56 16M 24" posRelativeX="4250d5155a80be70"
+            posRelativeY="90b16e3024c520fd" posRelativeW="4250d5155a80be70"
+            editable="1" layout="33" items="-1 undefined" textWhenNonSelected=""
+            textWhenNoItems="(no choices)"/>
+  <LABEL name="new label" id="893f3de478724dd" memberName="labelR" virtualName=""
+         explicitFocusOrder="0" pos="6 20 24 24" posRelativeX="9d63d9acaf1299f6"
+         posRelativeY="87d416270d41f58c" textCol="ff000000" edTextCol="ff000000"
+         edBkgCol="0" labelText="R" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15.00000000000000000000"
+         kerning="0.00000000000000000000" bold="0" italic="0" justification="33"/>
+  <SLIDER name="Slider R" id="c86e71b3772d49e9" memberName="sliderR" virtualName=""
+          explicitFocusOrder="0" pos="24 24 158 16" posRelativeX="9d63d9acaf1299f6"
+          posRelativeY="87d416270d41f58c" thumbcol="a0ff0000" textboxtext="ff000000"
+          min="0.00000000000000000000" max="255.00000000000000000000" int="1.00000000000000000000"
+          style="LinearHorizontal" textBoxPos="TextBoxLeft" textBoxEditable="1"
+          textBoxWidth="40" textBoxHeight="20" skewFactor="1.00000000000000000000"
+          needsCallback="1"/>
+  <LABEL name="new label" id="d31faee34d487318" memberName="labelG" virtualName=""
+         explicitFocusOrder="0" pos="6 40 24 24" posRelativeX="9d63d9acaf1299f6"
+         posRelativeY="87d416270d41f58c" textCol="ff000000" edTextCol="ff000000"
+         edBkgCol="0" labelText="G" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15.00000000000000000000"
+         kerning="0.00000000000000000000" bold="0" italic="0" justification="33"/>
+  <SLIDER name="SliderG" id="8455ecc13f47ec08" memberName="sliderG" virtualName=""
+          explicitFocusOrder="0" pos="24 44 158 16" posRelativeX="9d63d9acaf1299f6"
+          posRelativeY="87d416270d41f58c" thumbcol="a000ff00" textboxtext="ff000000"
+          min="0.00000000000000000000" max="255.00000000000000000000" int="1.00000000000000000000"
+          style="LinearHorizontal" textBoxPos="TextBoxLeft" textBoxEditable="1"
+          textBoxWidth="40" textBoxHeight="20" skewFactor="1.00000000000000000000"
+          needsCallback="1"/>
+  <LABEL name="new label" id="ae5abc145d9184cf" memberName="labelB" virtualName=""
+         explicitFocusOrder="0" pos="7 60 24 24" posRelativeX="9d63d9acaf1299f6"
+         posRelativeY="87d416270d41f58c" textCol="ff000000" edTextCol="ff000000"
+         edBkgCol="0" labelText="B" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15.00000000000000000000"
+         kerning="0.00000000000000000000" bold="0" italic="0" justification="33"/>
+  <SLIDER name="Slider B" id="15aa4b94476e3563" memberName="sliderB" virtualName=""
+          explicitFocusOrder="0" pos="24 64 158 16" posRelativeX="9d63d9acaf1299f6"
+          posRelativeY="87d416270d41f58c" thumbcol="a00000ff" textboxtext="ff000000"
+          min="0.00000000000000000000" max="255.00000000000000000000" int="1.00000000000000000000"
+          style="LinearHorizontal" textBoxPos="TextBoxLeft" textBoxEditable="1"
+          textBoxWidth="40" textBoxHeight="20" skewFactor="1.00000000000000000000"
+          needsCallback="1"/>
+  <LABEL name="new label" id="7c0151d2e33a36b5" memberName="label" virtualName=""
+         explicitFocusOrder="0" pos="80R 24 72 56" posRelativeX="9d63d9acaf1299f6"
+         outlineCol="ffffffff" edTextCol="ff000000" edBkgCol="0" labelText="+ ajouter visu couleur&#10;"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
+         bold="0" italic="0" justification="33"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA
