@@ -28,6 +28,7 @@ MultiSceneCanvasComponentAmusing::MultiSceneCanvasComponentAmusing()
 	// A CHANGER
 	sceneChoiceTextButtons.push_back(new TextButton("Default unique scene"));
 	addAndMakeVisible(sceneChoiceTextButtons.back());
+	sceneChoiceTextButtons.back()->setLookAndFeel(&customLF);
 	//addAndMakeVisible(areaOptions);
 
 	areaOptionsComponent = new AreaOptionsComponent();

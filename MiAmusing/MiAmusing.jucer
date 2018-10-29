@@ -135,6 +135,7 @@
       <FILE id="Ywta8K" name="gesaffelstein3.wav" compile="0" resource="1"
             file="Source/gesaffelstein3.wav"/>
       <FILE id="rOmYNN" name="hmd2c.wav" compile="0" resource="1" file="Source/hmd2c.wav"/>
+      <FILE id="DviJlg" name="save.xml" compile="0" resource="1" file="Builds/VisualStudio2017/save.xml"/>
       <FILE id="AgY2mG" name="wurldel2c.wav" compile="0" resource="1" file="Source/wurldel2c.wav"/>
     </GROUP>
     <FILE id="v8jCgE" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
@@ -359,7 +360,7 @@
         <MODULEPATH id="juce_dsp" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </ANDROIDSTUDIO>
-    <VS2017 targetFolder="Builds/VisualStudio2017" extraDefs="OPENGL_RENDERING = 0">
+    <VS2017 targetFolder="Builds/VisualStudio2017" extraDefs="OPENGL_RENDERING = 1">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" headerPath="..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\&#10;..\..\..\&#10;..\..\..\..\..\..\Downloads\ft291\freetype-2.9.1\include\"/>
         <CONFIGURATION isDebug="0" name="Release" headerPath="..\..\..\MiamCommon\Source\&#10;..\..\..\SpatCommon\Source\&#10;..\..\..\"/>

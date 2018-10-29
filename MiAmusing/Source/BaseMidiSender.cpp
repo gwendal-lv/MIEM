@@ -142,8 +142,11 @@ bool TimeLine::isNoteOnTime(int const &m_position, int const &i, int const &peri
 	}*/
 	if (i < midiTimesSize)
 	{
+		int bla;
+		if (m_position == 48000)
+			bla = 5;
 		m_end = false; // on a pas encore atteint la fin de la liste de notes (au cas o� il y en a plusieurs � jouer au m�me moment)
-		if (m_position == (midiTimes[i] * period))
+		if (m_position == int(midiTimes[i] * period))
 		{
 			if (velocity[i] != 0)
 			{
@@ -178,7 +181,7 @@ bool TimeLine::isNoteOffTime(int const &m_position, int const &i, int const &per
 	if (i < midiOfftimesSize)
 	{
 		m_end = false;
-		if (m_position == (midiOffTimes[i] * period))
+		if (m_position == int(midiOffTimes[i] * period))
 		{
 
 			if (velocity[i] != 0)
@@ -232,7 +235,7 @@ bool TimeLine::isChordOffTime(int const &m_position, int const &i, int const &pe
 {
 	if (i < chordSize)
 	{
-		if (chordTimesOff[i] * (period) == m_position)
+		if (int(chordTimesOff[i] * (period)) == m_position)
 		{
 			noteToPlay = chordNotesOff[i];
 			m_channel = channel;

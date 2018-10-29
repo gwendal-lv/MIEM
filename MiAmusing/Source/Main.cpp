@@ -45,8 +45,8 @@ public:
 
         mainWindow = new MainWindow (getApplicationName());
         mainWindow->setResizable(true, true);
-		//mainWindow->setFullScreen(true);
-		mainWindow->setSize(1100, 700);
+		mainWindow->setFullScreen(true);
+		//mainWindow->setSize(1100, 700);
         
         // Instanciation of the 3 main parts of the application : Model, Presenter, View
         MainContentComponent* mainContentComponent = dynamic_cast<MainContentComponent*>(mainWindow->getChildComponent(0));
@@ -102,7 +102,6 @@ public:
                                                     DocumentWindow::allButtons)
         {
             setUsingNativeTitleBar (true);
-			//setTitleBarHeight(0);
             setContentOwned (new MainContentComponent(), true);
 			setVisible(true);
 
@@ -119,10 +118,8 @@ public:
             // This is called when the user tries to close this window. Here, we'll just
             // ask the app to quit when this happens, but you can change this to do
             // whatever you need.
-			setUsingNativeTitleBar(false);
-			setTitleBarHeight(0);
-			//repaint();
-            //JUCEApplication::getInstance()->systemRequestedQuit();
+
+            JUCEApplication::getInstance()->systemRequestedQuit();
         }
 
         /* Note: Be careful if you override any DocumentWindow methods - the base
@@ -131,11 +128,7 @@ public:
            you really have to override any DocumentWindow methods, make sure your
            subclass also calls the superclass's method.
         */
-		void maximiseButtonPressed() override
-		{
-			setUsingNativeTitleBar(true);
-			setTitleBarHeight(0);
-		}
+
 
     private:
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainWindow)

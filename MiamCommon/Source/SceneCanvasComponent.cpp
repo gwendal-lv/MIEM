@@ -547,6 +547,7 @@ void SceneCanvasComponent::DrawOnSceneCanevas(std::shared_ptr<Miam::MultiSceneCa
 	else
 	{
 		previousMaxSize = (int)duplicatedAreas.size();
+		needToResetBufferParts = false;
 	}
 	// Vérification simple de chaque aire 1 par 1
 	size_t itIndex = 0;

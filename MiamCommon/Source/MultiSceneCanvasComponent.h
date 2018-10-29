@@ -27,14 +27,23 @@ namespace Miam
     class MultiSceneCanvasInteractor;
 }
 
+class CustomLF : public LookAndFeel_V4
+{
+	//void drawButtonBackground(Graphics &, Button &, const Colour &backgroundColour, bool isMouseOverButton, bool isButtonDown) override = 0;
+	Font getTextButtonFont(TextButton&, int buttonHeight) override
+	{
+		return Font(28.0f);
+	}
+};
+
 //==============================================================================
 /*
 */
 class MultiSceneCanvasComponent    : public Component,
 	public Button::Listener
 {
-
-    
+public:
+	CustomLF customLF;
     
     // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
     

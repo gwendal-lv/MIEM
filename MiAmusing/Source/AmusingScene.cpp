@@ -102,7 +102,7 @@ std::shared_ptr<AreaEvent> AmusingScene::AddNedgeArea(uint64_t nextAreaId, int N
 	newPolygon->setCursorVisible(true, canvasComponent);
 	newPolygon->SetOpacityMode(OpacityMode::Independent);
 
-#if defined(OPENGL_RENDERING) && OPENGL_RENDERING == 0
+#if defined(OPENGL_RENDERING) && OPENGL_RENDERING == 1
 	newPolygon->RefreshOpenGLBuffers();
 #endif
 	
@@ -566,7 +566,9 @@ std::shared_ptr<AreaEvent> AmusingScene::AddDefaultExciter()
 	std::shared_ptr<AreaEvent> areaE = AddExciter(exciter);
 	exciter->setCenterPosition(bpt(canvasComponent->getWidth() - 50, 4 + (canvasComponent->getHeight() - 8) / 2.0));
 	exciter->CanvasResized(canvasComponent);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
 	exciter->RefreshOpenGLBuffers();
+#endif
 	return areaE;
 }
 
@@ -642,8 +644,10 @@ std::shared_ptr<AreaEvent> AmusingScene::AddCursor(std::shared_ptr<IDrawableArea
 		//associateArea[newCursor] = area; // association à l'aire qui déterminera sa position et donc le son produit
 
 		newCursor->CanvasResized(canvasComponent);//trouver le nouveau centre
-		newCursor->setZoffset(0.2f);
+		newCursor->setZoffset(0.0f);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
 		newCursor->RefreshOpenGLBuffers();
+#endif
 
 		alreadyCursorInScene = true;
 		//std::shared_ptr<AreaEvent> areaE(new AreaEvent(newCursor, AreaEventType::Added, (int)areas.size() + cursors.size() -1, shared_from_this()));
@@ -908,7 +912,9 @@ std::shared_ptr<GraphicEvent> AmusingScene::OnCanvasMouseDoubleClick(const Mouse
 					
 					completeArea->SetActive(true);
 					completeArea->showAllTarget(true);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
 					completeArea->RefreshOpenGLBuffers();
+#endif
 					previousSize = completeArea->GetFullSceneRatio();
 					completeArea->SizeChanged(previousSize, false);
 					completeArea->updateContourPoints();
@@ -1005,7 +1011,9 @@ std::shared_ptr<GraphicEvent> AmusingScene::resetAreaPosition()
 					completeArea2->SetActive(false);
 				}
 
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
 				areas[i]->RefreshOpenGLBuffers();
+#endif
 			}
 		}
 
@@ -1144,7 +1152,9 @@ std::shared_ptr<AreaEvent> AmusingScene::SetSelectedAreaOpacity(double newOpacit
 	if (auto completeArea = std::dynamic_pointer_cast<CompletePolygon>(selectedArea))
 	{
 		completeArea->SetAlpha((float)newOpacity);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
 		completeArea->RefreshOpenGLBuffers();
+#endif
 		areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::ColorChanged, (int)completeArea->GetId(), shared_from_this()));
 	}
 	return areaE;
@@ -1158,7 +1168,9 @@ std::shared_ptr<AreaEvent> AmusingScene::SetSelectedAreaColour(Colour newColour)
 		if (completeArea->GetFillColour() != newColour)
 		{
 			completeArea->SetFillColour(newColour);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
 			completeArea->RefreshOpenGLBuffers();
+#endif
 			areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeArea, AreaEventType::ColorChanged, (int)completeArea->GetId(), shared_from_this()));
 		}
 	}
@@ -1280,7 +1292,9 @@ std::shared_ptr<AreaEvent> AmusingScene::addShadowCursor()
 			tabCursor->CanvasResized(canvasComponent);
 			tabCursor->SetActive(true);
 			tabCursor->SetEnableTranslationOnly(false);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
 			tabCursor->RefreshOpenGLBuffers();
+#endif
 			areaE = std::shared_ptr<AreaEvent>(new AreaEvent(tabCursor, AreaEventType::Translation, shared_from_this()));
 		}
 

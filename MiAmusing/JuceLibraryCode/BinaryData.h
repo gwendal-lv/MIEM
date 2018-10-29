@@ -38,11 +38,14 @@ namespace BinaryData
     extern const char*   hmd2c_wav;
     const int            hmd2c_wavSize = 251910;
 
+    extern const char*   save_xml;
+    const int            save_xmlSize = 6388;
+
     extern const char*   wurldel2c_wav;
     const int            wurldel2c_wavSize = 265260;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
-    const int namedResourceListSize = 11;
+    const int namedResourceListSize = 12;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];

@@ -31,6 +31,40 @@ namespace Amusing
 }
 using namespace Amusing;
 
+class CustomButtonLookAndFeel : public LookAndFeel_V4
+{
+	//void drawButtonBackground(Graphics &, Button &, const Colour &backgroundColour, bool isMouseOverButton, bool isButtonDown) override = 0;
+	Font getTextButtonFont(TextButton&, int buttonHeight) override
+	{
+		return Font(20.0f);
+	}
+	Label* createSliderTextBox(Slider &currentSlider) override
+	{
+		Label *currentLabel = LookAndFeel_V4::createSliderTextBox(currentSlider);
+		currentLabel->setLookAndFeel(this);
+		return currentLabel;
+	}
+	Font getLabelFont(Label &) override
+	{
+		return Font(28.0f);
+	}
+	Slider::SliderLayout getSliderLayout(Slider &currentSlider) override
+	{
+		Slider::SliderLayout currentSliderLayout = LookAndFeel_V4::getSliderLayout(currentSlider);
+		if (currentSliderLayout.sliderBounds.getHeight() > currentSliderLayout.textBoxBounds.getHeight())
+		{
+			int total = currentSliderLayout.sliderBounds.getHeight() + currentSliderLayout.textBoxBounds.getHeight();
+			currentSliderLayout.sliderBounds.setHeight(total / 2);
+			currentSliderLayout.textBoxBounds.setHeight(total / 2);
+			if (currentSliderLayout.sliderBounds.getY() < currentSliderLayout.textBoxBounds.getY())
+				currentSliderLayout.textBoxBounds.setY(currentSliderLayout.sliderBounds.getY() + total / 2);
+			else
+				currentSliderLayout.sliderBounds.setY(currentSliderLayout.textBoxBounds.getY() + total / 2);
+		}
+		return currentSliderLayout;
+	}
+};
+
 //[/Headers]
 
 
@@ -101,6 +135,7 @@ private:
 	int prepareToAdd; // 0 = no shape to add, 1 = square, 2 = triangle, 3 = hexa
 	bool hasExited;
 	Point<int> exitPosition; // position où la sourie a quitté le menu pour entrer dans le canvas
+	CustomButtonLookAndFeel customLAF;
 	//MultiCanvasComponent* multiCanvasComponent = 0;
 
     //[/UserVariables]

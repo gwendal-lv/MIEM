@@ -73,9 +73,9 @@ CompletePolygon::CompletePolygon(bptree::ptree & areaTree) : EditablePolygon(are
 	areaIsVisible = true;
 	showAllCircles = false;
 
-	//verticesBufferSize += 3 * Nradius * bullsEye[0].GetVerticesBufferSize();
-	//indicesBufferSize += Nradius * bullsEye[0].GetIndicesBufferSize();
-	//couloursBufferSize += Nradius * bullsEye[0].GetCouloursBufferSize();
+	/*verticesBufferSize += 3 * Nradius * bullsEye[0].GetVerticesBufferSize();
+	indicesBufferSize += Nradius * bullsEye[0].GetIndicesBufferSize();
+	couloursBufferSize += Nradius * bullsEye[0].GetCouloursBufferSize();*/
 
 	vertices_buffer.resize(verticesBufferSize);
 	indices_buffer.resize(indicesBufferSize);
@@ -83,6 +83,8 @@ CompletePolygon::CompletePolygon(bptree::ptree & areaTree) : EditablePolygon(are
 
 	previousSizeToShow = 5;
 	deleteOldCircles = false;
+
+	RefreshOpenGLBuffers();
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
@@ -335,7 +337,9 @@ void CompletePolygon::Copy(std::shared_ptr<CompletePolygon> polygonToCopy)
 	boost::geometry::centroid(contourPoints,center);
 	// voir s'il faut recalculer le centre
 	CanvasResized(parentCanvas);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
 	RefreshOpenGLBuffers();
+#endif
 	
 }
 
@@ -958,7 +962,9 @@ AreaEventType CompletePolygon::TryMoveMultiTouchPoint(const Point<double>& newLo
 
 
 		CanvasResized(parentCanvas);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
 		RefreshOpenGLBuffers();
+#endif
 
 		return AreaEventType::RotScale;
 	}
@@ -1008,7 +1014,9 @@ AreaEventType CompletePolygon::TryMoveMultiTouchPoint(const Point<double>& newLo
 
 
 			CanvasResized(parentCanvas);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
 			RefreshOpenGLBuffers();
+#endif
 			return AreaEventType::RotScale;
 		}
 	}
@@ -1062,7 +1070,9 @@ AreaEventType CompletePolygon::EndMultiTouchPointMove()
 
 	updateContourPoints();
 	CanvasResized(parentCanvas);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
 	RefreshOpenGLBuffers();
+#endif
 
 
 	currentTouchRotation = 0;
@@ -1318,7 +1328,9 @@ AreaEventType CompletePolygon::EndPointMove()
 
 		updateContourPoints();
 		CanvasResized(parentCanvas);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
 		RefreshOpenGLBuffers();
+#endif
 	}
 	
 	AreaEventType eventType =  EditablePolygon::EndPointMove();
@@ -1332,7 +1344,9 @@ void CompletePolygon::setCursorVisible(bool isVisible, SceneCanvasComponent* _pa
 	for (int i = 0; i < (int)cursors.size(); i++)
 	{
 		cursors[i]->CanvasResized(_parentCanvas);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
 		cursors[i]->RefreshOpenGLBuffers();
+#endif
 	}
 	showCursor = isVisible;
 	

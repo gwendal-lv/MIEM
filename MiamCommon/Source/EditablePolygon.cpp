@@ -63,67 +63,69 @@ void EditablePolygon::graphicalInit()
     contourPointsRadius = 1.4f*contourWidth;
     manipulationPointRadius = centerContourWidth+centerCircleRadius;
 
-	// ajout de la forme et du contour !
-	verticesBufferSize += (3 * (numPointsPolygon * numVerticesCircle) + 3 * dottedLineVertexes + 3 * numVerticesRing);
-	indicesBufferSize += (3 * (numPointsPolygon * numPointCircle) + dottedLineIndices + 3 * numVerticesRing);
-	couloursBufferSize += (4 * (numPointsPolygon * numVerticesCircle) + 4 * dottedLineVertexes + 4 * numVerticesRing);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
+		// ajout de la forme et du contour !
+		verticesBufferSize += (3 * (numPointsPolygon * numVerticesCircle) + 3 * dottedLineVertexes + 3 * numVerticesRing);
+		indicesBufferSize += (3 * (numPointsPolygon * numPointCircle) + dottedLineIndices + 3 * numVerticesRing);
+		couloursBufferSize += (4 * (numPointsPolygon * numVerticesCircle) + 4 * dottedLineVertexes + 4 * numVerticesRing);
 
-	// resize des buffers
-	vertices_buffer.resize(verticesBufferSize);
-	indices_buffer.resize(indicesBufferSize);
-	coulours_buffer.resize(couloursBufferSize);
+		// resize des buffers
+		vertices_buffer.resize(verticesBufferSize);
+		indices_buffer.resize(indicesBufferSize);
+		coulours_buffer.resize(couloursBufferSize);
 
-	// calcul d'un disque de centre 0 et de rayon 5 pixels
-	float radius = 5.0f;
-	int numPoints = numPointsRing;
-	radius = 5.0f;
-	double currentAngle = 0.0;
-	double incAngle = 2 * M_PI / (double)numPoints;
-	g_vertex_circle[0] = 0.0f;
-	g_vertex_circle[1] = 0.0f;
-	g_vertex_circle[2] = 0.0f;
-	for (int i = 0; i < numPointCircle; ++i)
-	{
-		g_vertex_circle[(i + 1) * 3] = radius * (float)cos(currentAngle);
-		g_vertex_circle[(i + 1) * 3 + 1] = radius * (float)sin(currentAngle);
-		g_vertex_circle[(i + 1) * 3 + 2] = 0.0f;
-		currentAngle += incAngle;
-	}
-	for (int i = 0; i < numPointCircle; ++i)
-	{
-		circleIndices[i * 3] = i + 1;
-		circleIndices[i * 3 + 1] = 0;
-		circleIndices[i * 3 + 2] = i + 2 > numPointCircle ? 1 : i + 2;
-	}
+		// calcul d'un disque de centre 0 et de rayon 5 pixels
+		float radius = 5.0f;
+		int numPoints = numPointsRing;
+		radius = 5.0f;
+		double currentAngle = 0.0;
+		double incAngle = 2 * M_PI / (double)numPoints;
+		g_vertex_circle[0] = 0.0f;
+		g_vertex_circle[1] = 0.0f;
+		g_vertex_circle[2] = 0.0f;
+		for (int i = 0; i < numPointCircle; ++i)
+		{
+			g_vertex_circle[(i + 1) * 3] = radius * (float)cos(currentAngle);
+			g_vertex_circle[(i + 1) * 3 + 1] = radius * (float)sin(currentAngle);
+			g_vertex_circle[(i + 1) * 3 + 2] = 0.0f;
+			currentAngle += incAngle;
+		}
+		for (int i = 0; i < numPointCircle; ++i)
+		{
+			circleIndices[i * 3] = i + 1;
+			circleIndices[i * 3 + 1] = 0;
+			circleIndices[i * 3 + 2] = i + 2 > numPointCircle ? 1 : i + 2;
+		}
 
-	/// couleur
-	// points
-	int decalage = DrawablePolygon::GetCouloursBufferSize();
-	for (int i = 0; i < (numPointsPolygon * numVerticesCircle); ++i)
-	{
-		coulours_buffer[decalage + 4 * i + 0] = editingElementsColour.getRed() / 255.0f;
-		coulours_buffer[decalage + 4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
-		coulours_buffer[decalage + 4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
-		coulours_buffer[decalage + 4 * i + 3] = editingElementsColour.getAlpha() / 255.0f;
-	}
-	// manipulationLine
-	decalage += 4 * (numPointsPolygon * numVerticesCircle);
-	for (int i = 0; i < dottedLineVertexes; ++i)
-	{
-		coulours_buffer[decalage + 4 * i + 0] = editingElementsColour.getRed() / 255.0f;
-		coulours_buffer[decalage + 4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
-		coulours_buffer[decalage + 4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
-		coulours_buffer[decalage + 4 * i + 3] = editingElementsColour.getAlpha() / 255.0f;
-	}
-	// manipulationPoint
-	decalage += 4 * dottedLineVertexes;
-	for (int i = 0; i < numVerticesRing; ++i)
-	{
-		coulours_buffer[decalage + 4 * i + 0] = editingElementsColour.getRed() / 255.0f;
-		coulours_buffer[decalage + 4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
-		coulours_buffer[decalage + 4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
-		coulours_buffer[decalage + 4 * i + 3] = editingElementsColour.getAlpha() / 255.0f;
-	}
+		/// couleur
+		// points
+		int decalage = DrawablePolygon::GetCouloursBufferSize();
+		for (int i = 0; i < (numPointsPolygon * numVerticesCircle); ++i)
+		{
+			coulours_buffer[decalage + 4 * i + 0] = editingElementsColour.getRed() / 255.0f;
+			coulours_buffer[decalage + 4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
+			coulours_buffer[decalage + 4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
+			coulours_buffer[decalage + 4 * i + 3] = editingElementsColour.getAlpha() / 255.0f;
+		}
+		// manipulationLine
+		decalage += 4 * (numPointsPolygon * numVerticesCircle);
+		for (int i = 0; i < dottedLineVertexes; ++i)
+		{
+			coulours_buffer[decalage + 4 * i + 0] = editingElementsColour.getRed() / 255.0f;
+			coulours_buffer[decalage + 4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
+			coulours_buffer[decalage + 4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
+			coulours_buffer[decalage + 4 * i + 3] = editingElementsColour.getAlpha() / 255.0f;
+		}
+		// manipulationPoint
+		decalage += 4 * dottedLineVertexes;
+		for (int i = 0; i < numVerticesRing; ++i)
+		{
+			coulours_buffer[decalage + 4 * i + 0] = editingElementsColour.getRed() / 255.0f;
+			coulours_buffer[decalage + 4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
+			coulours_buffer[decalage + 4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
+			coulours_buffer[decalage + 4 * i + 3] = editingElementsColour.getAlpha() / 255.0f;
+		}
+#endif
 }
 void EditablePolygon::behaviorInit()
 {
@@ -192,9 +194,11 @@ void EditablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 
 void EditablePolygon::RefreshOpenGLBuffers()
 {
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
 	DrawablePolygon::RefreshOpenGLBuffers();
 	RefreshContourPointsOpenGLBuffers();
 	RefreshManipulationPointOpenGLBuffer();
+#endif
 }
 
 void EditablePolygon::RefreshManipulationPointOpenGLBuffer()
@@ -422,7 +426,9 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
 				contourPointsInPixels.outer().at(contourPointsInPixels.outer().size() - 1) = contourPointsInPixels.outer().at(0);
 				contourPoints.outer().at(contourPoints.outer().size() - 1) = contourPoints.outer().at(0);
 			}
+#if defined(OPENGL_RENDERING) && OPENGL_RENDERING == 1
 			RefreshContourPointsOpenGLBuffers();
+#endif
 			areaEventType = AreaEventType::ShapeChanged;
 		}
 		else
@@ -535,15 +541,19 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
         }
 		// la partie du buffer pour le polygon et son contour sont calculée par InteractivePolygon::Refresh...
 		// à la fin de la fonction -> juste recalculer les cercles pour les points du contour et le manipulationPoint
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
 		RefreshContourPointsOpenGLBuffers();
 		RefreshManipulationPointOpenGLBuffer();
+#endif
     }
     
     // Graphic updates to all base attributes inherited
 	if (areaEventType != AreaEventType::NothingHappened)
 	{
 		InteractivePolygon::CanvasResized(this->parentCanvas);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
 		InteractivePolygon::RefreshOpenGLBuffers();
+#endif
 	}
     return areaEventType;
 }

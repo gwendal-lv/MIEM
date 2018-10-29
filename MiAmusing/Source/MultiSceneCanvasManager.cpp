@@ -865,7 +865,9 @@ void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
 				completeArea->showAllTarget(false);
 				completeArea->SetActive(false);
 				completeArea->SetOpacityMode(OpacityMode::Independent);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
 				completeArea->RefreshOpenGLBuffers();
+#endif
 				break;
 			case Octave:
 				if (tabCursor = std::dynamic_pointer_cast<TabCursor>(selectedScene->GetSelectedExciter()))
@@ -874,13 +876,17 @@ void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
 					tabCursor->SetNumDivisions(9);
 					tabCursor->EnableMagnet(true);
 					tabCursor->freeSize(true);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
 					tabCursor->RefreshOpenGLBuffers();
+#endif
 				}
 				SetMode(CanvasManagerMode::ExciterSelected);
 				completeArea->showAllTarget(false);
 				completeArea->SetActive(false);
 				completeArea->SetOpacityMode(OpacityMode::Independent);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
 				completeArea->RefreshOpenGLBuffers();
+#endif
 				break;
 			case Volume:
 				if (tabCursor = std::dynamic_pointer_cast<TabCursor>(selectedScene->GetSelectedExciter()))
@@ -893,7 +899,9 @@ void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
 				completeArea->showAllTarget(false);
 				completeArea->SetActive(false);
 				completeArea->SetOpacityMode(OpacityMode::Independent);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
 				completeArea->RefreshOpenGLBuffers();
+#endif
 				break;
 			case Speed:
 				//if (tabCursor = std::dynamic_pointer_cast<TabCursor>(selectedScene->GetSelectedExciter()))
@@ -936,13 +944,17 @@ void MultiSceneCanvasManager::SetEditingMode(OptionButtonClicked optionClicked)
 				currentCursorSize = 2.0;
 				currentCursor->SizeChanged(2.0, false);
 				currentCursor->SetAlpha(0.1f);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
 				completeArea->RefreshOpenGLBuffers();
+#endif
 				break;
 			case Rhythm:
 				completeArea->showAllTarget(true);
 				completeArea->SetActive(true);
 				SetMode(CanvasManagerMode::EditingArea);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
 				completeArea->RefreshOpenGLBuffers();
+#endif
 				//completeArea->SetActive(true);
 				break;
 			case Closed:

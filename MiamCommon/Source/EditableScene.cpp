@@ -68,7 +68,9 @@ std::shared_ptr<AreaEvent> EditableScene::SetSelectedArea(std::shared_ptr<IEdita
             selectedArea->SetActive(false);
             // Area event concerning 1 area only
             areaE = std::shared_ptr<AreaEvent>(new AreaEvent(selectedArea, AreaEventType::Unselected, shared_from_this()));
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
 			selectedArea->RefreshOpenGLBuffers();
+#endif
         }
         // If nothing was selected : event stays empty
         

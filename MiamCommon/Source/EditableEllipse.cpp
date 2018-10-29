@@ -592,7 +592,9 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 	if (areaEventType != AreaEventType::NothingHappened)
 	{
 		InteractiveEllipse::CanvasResized(this->parentCanvas);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
 		InteractiveEllipse::RefreshOpenGLBuffers();
+#endif
 	}
 
 

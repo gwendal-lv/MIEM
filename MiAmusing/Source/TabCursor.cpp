@@ -94,7 +94,9 @@ AreaEventType TabCursor::TryMovePoint(const Point<double>& newLocation)
 
 
 			setCenterPosition(newCenter);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
 			RefreshOpenGLBuffers();
+#endif
 			return areaEventType;
 		}
 		else
@@ -103,7 +105,9 @@ AreaEventType TabCursor::TryMovePoint(const Point<double>& newLocation)
 	else
 	{
 		AreaEventType areaEventType = Exciter::TryMovePoint(newLocation);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
 		RefreshOpenGLBuffers();
+#endif
 		return areaEventType;
 	}
 }
@@ -207,7 +211,9 @@ AreaEventType TabCursor::EndPointMove()
 
 		setCenterPosition(newCenter);
 		CanvasResized(parentCanvas);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
 		RefreshOpenGLBuffers();
+#endif
 	}
 	return Exciter::EndPointMove();
 }

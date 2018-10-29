@@ -30,6 +30,7 @@ Author:  Gwendal Le Vaillant
 #include "EditableEllipse.h"
 #include "CompletePolygon.h"
 #include <cmath>
+#include <sstream>
 
 #include "MultiCanvasComponentAmusing.h"
 
@@ -846,7 +847,19 @@ void GraphicSessionManager::OnLoad(std::string filename)
 	try 
 	{
 		// Lecture
-		bptree::read_xml(filename, xmlTree);
+		std::stringstream str;
+
+		int dataSize = 0;
+		const char* dataString;
+		dataString = BinaryData::getNamedResource("save_xml"/*BinaryData::save_xml*/, dataSize);
+
+
+		str << dataString;
+		bptree::read_xml(str/*filename*/, xmlTree);
+
+
+
+
 		// puis Séparation des grandes parties du fichier
 		graphicSessionManagerTree = xmlTree.get_child("canvas");
 		viewTree = xmlTree.get_child("view");
@@ -913,6 +926,7 @@ void GraphicSessionManager::OnLoad(std::string filename)
 								{
 									try {
 										areas[index] = std::make_shared<CompletePolygon>(area.second);
+										areas[index]->setZoffset(0.1f);
 										bptree::ptree areaAudioParameterTree = area.second.get_child("optionsParameter");
 										setSpeedArea(areas[index], areaAudioParameterTree.get<double>("<xmlattr>.speed"));
 										setOctave(areas[index], areaAudioParameterTree.get<int>("<xmlattr>.octave"));

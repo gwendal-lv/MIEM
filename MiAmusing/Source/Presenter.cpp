@@ -66,7 +66,7 @@ Presenter::Presenter(View* _view) :
 		while (i < BinaryData::namedResourceListSize)
 		{
 			String originalName = BinaryData::originalFilenames[i];
-			if (!originalName.matchesWildcard("*.png", true))
+			if (!originalName.matchesWildcard("*.png", true) && !originalName.matchesWildcard("*.xml", true))
 			{
 				view->setSoundPath(idx, BinaryData::namedResourceList[i]);
 				++idx;

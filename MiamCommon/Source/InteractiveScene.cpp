@@ -165,7 +165,9 @@ std::shared_ptr<AreaEvent> InteractiveScene::AddExciter(std::shared_ptr<Exciter>
     
     // Forced graphical updates
     newExciter->CanvasResized(canvasComponent);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
 	newExciter->RefreshOpenGLBuffers();
+#endif
     
     // WARNING
     // The vector index is the one relative to all drawable objects....

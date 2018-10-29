@@ -54,6 +54,76 @@ DrawableArea(areaTree)
     for (auto& point : polygonPoints)
         contourPoints.outer().push_back(point);
     contourPoints.outer().push_back(polygonPoints[0]);// contour closing
+
+
+													  // ajout de la forme et du contour !
+	verticesBufferSize += (3 * numVerticesPolygon + 3 * numPointsPolygon);
+	indicesBufferSize += (3 * numVerticesPolygon + 3 * 2 * numPointsPolygon);
+	couloursBufferSize += (4 * numVerticesPolygon + 4 * numPointsPolygon);
+
+
+	// resize des buffers
+	vertices_buffer.resize(verticesBufferSize);
+	indices_buffer.resize(indicesBufferSize);
+	coulours_buffer.resize(couloursBufferSize);
+
+	// indices pour dessiner la forme
+	int decalage = DrawableArea::GetVerticesBufferSize();
+	for (int i = 0; i < pointsCount; ++i)
+	{
+		indices_buffer[3 * decalage + i * 3] = decalage + i + 1;
+		indices_buffer[3 * decalage + i * 3 + 1] = decalage + 0;
+		indices_buffer[3 * decalage + i * 3 + 2] = decalage + i + 2 > decalage + pointsCount ? decalage + 1 : decalage + i + 2;
+	}
+	for (int i = 3 * pointsCount; i < 3 * numVerticesPolygon; ++i)
+		indices_buffer[3 * decalage + i] = 0;
+
+	for (int i = 0; i < pointsCount; ++i)
+	{
+		coulours_buffer[4 * decalage + i * 4] = fillColour.getRed() / 255.0f;
+		coulours_buffer[4 * decalage + i * 4 + 1] = fillColour.getGreen() / 255.0f;
+		coulours_buffer[4 * decalage + i * 4 + 2] = fillColour.getBlue() / 255.0f;
+		coulours_buffer[4 * decalage + i * 4 + 3] = GetAlpha();
+	}
+	for (int i = 4 * pointsCount; i < 4 * numVerticesPolygon; ++i)
+		coulours_buffer[4 * decalage + i] = 0.0f;
+
+	// indices pour dessiner le contour
+	int shapeBegin = DrawableArea::GetVerticesBufferSize();
+	decalage += numVerticesPolygon;
+	for (int i = 0; i < numPointsPolygon; ++i)
+	{
+		if (i < pointsCount)
+		{
+			indices_buffer[3 * decalage + i * 6] = shapeBegin + i + 1;
+			indices_buffer[3 * decalage + i * 6 + 1] = decalage + i;
+			indices_buffer[3 * decalage + i * 6 + 3] = decalage + i + 1 >= decalage + pointsCount ? decalage : decalage + i + 1;
+			indices_buffer[3 * decalage + i * 6 + 2] = decalage + i + 1 >= decalage + pointsCount ? decalage : decalage + i + 1;
+			indices_buffer[3 * decalage + i * 6 + 4] = shapeBegin + i + 1;
+			indices_buffer[3 * decalage + i * 6 + 5] = shapeBegin + i + 2 >= shapeBegin + pointsCount + 1 ? shapeBegin + 1 : shapeBegin + i + 2;
+		}
+		else
+		{
+			indices_buffer[3 * decalage + i * 6] = 0;
+			indices_buffer[3 * decalage + i * 6 + 1] = 0;
+			indices_buffer[3 * decalage + i * 6 + 2] = 0;
+			indices_buffer[3 * decalage + i * 6 + 3] = 0;
+			indices_buffer[3 * decalage + i * 6 + 4] = 0;
+			indices_buffer[3 * decalage + i * 6 + 5] = 0;
+		}
+	}
+
+	for (int i = 0; i < numPointsPolygon; ++i)
+	{
+		coulours_buffer[4 * decalage + i * 4] = contourColour.getRed() / 255.0f;
+		coulours_buffer[4 * decalage + i * 4 + 1] = contourColour.getGreen() / 255.0f;
+		coulours_buffer[4 * decalage + i * 4 + 2] = contourColour.getBlue() / 255.0f;
+		coulours_buffer[4 * decalage + i * 4 + 3] = contourColour.getAlpha() / 255.0f;
+	}
+	for (int i = 4 * pointsCount; i < 4 * numPointsPolygon; ++i)
+		coulours_buffer[4 * decalage + i] = 1.0f;
+
+
     // Actualisation graphique
     createJucePolygon();
 }

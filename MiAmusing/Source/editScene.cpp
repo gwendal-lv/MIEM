@@ -133,6 +133,10 @@ EditScene::EditScene ()
 
 
     //[UserPreSize]
+	saveButton->setLookAndFeel(&customLAF);
+	loadButton->setLookAndFeel(&customLAF);
+	textButton->setLookAndFeel(&customLAF);
+	timeSlider->setLookAndFeel(&customLAF);
     //[/UserPreSize]
 
     setSize (600, 400);
@@ -183,7 +187,10 @@ EditScene::EditScene ()
 	prepareToAdd = 0;
 
 	saveButton->setVisible(false);
-	loadButton->setVisible(false);
+
+	
+	loadButton->setButtonText("Reload");
+	loadButton->setVisible(true);
 	//textButton->setVisible(false);
     //[/Constructor]
 }
@@ -245,6 +252,9 @@ void EditScene::resized()
     saveButton->setBounds (proportionOfWidth (0.1224f), proportionOfHeight (0.0198f), proportionOfWidth (0.2990f), proportionOfHeight (0.0515f));
     loadButton->setBounds (proportionOfWidth (0.6013f), proportionOfHeight (0.0198f), proportionOfWidth (0.2990f), proportionOfHeight (0.0515f));
     //[UserResized] Add your own custom resize handling here..
+
+	loadButton->setSize(0.9f * (float)getWidth(), loadButton->getHeight());
+	loadButton->setCentrePosition(getWidth() / 2, loadButton->getY() + 20);
     //[/UserResized]
 }
 
