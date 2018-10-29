@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<canvas>
+    <canvases>
+        <canvas index="0" widthOnSaveTime="1359" heightOnSaveTime="922" BPM="60">
+            <scenes>
+                <scene index="0">
+                    <name>Scene 1</name>
+                    <areas/>
+                </scene>
+                <scene index="1">
+                    <name>Scene 2</name>
+                    <areas/>
+                </scene>
+                <scene index="2">
+                    <name>Scene 3</name>
+                    <areas>
+                        <area id="0" type="DrawablePolygon" index="0">
+                            <center x="0.18469462840323772" y="0.21756152125279635"/>
+                            <colour>ff0000ff</colour>
+                            <keep_ratio>true</keep_ratio>
+                            <geometry>
+                                <point index="0" x="0.28337013273005796" y="0.21756152125279635"/>
+                                <point index="1" x="0.18469462408999468" y="0.36756152721326096"/>
+                                <point index="2" x="0.086019124076417347" y="0.21756150813937941"/>
+                                <point index="3" x="0.18469462957993135" y="0.067561515292331925"/>
+                            </geometry>
+                            <completeParameter opacity="1" orientation="0" radius="0.15000000596046448" interval="0.050000000000000003"/>
+                            <optionsParameter speed="1" octave="6" velocity="127"/>
+                        </area>
+                        <area id="1" type="DrawablePolygon" index="1">
+                            <center x="0.64164827078734343" y="0.18959731543624156"/>
+                            <colour>ff808080</colour>
+                            <keep_ratio>true</keep_ratio>
+                            <geometry>
+                                <point index="0" x="0.74032377511416347" y="0.18959731543624156"/>
+                                <point index="1" x="0.64164826647410045" y="0.33959732139670601"/>
+                                <point index="2" x="0.54297276646052339" y="0.1895973023228246"/>
+                                <point index="3" x="0.64164827196403751" y="0.039597309475777165"/>
+                            </geometry>
+                            <completeParameter opacity="0.652190506" orientation="0" radius="0.15000000596046448" interval="0.050000000000000003"/>
+                            <optionsParameter speed="1" octave="6" velocity="82.828196767945386"/>
+                        </area>
+                        <area id="2" type="DrawablePolygon" index="2">
+                            <center x="0.18285504047093432" y="0.58277404921700271"/>
+                            <colour>ffff0000</colour>
+                            <keep_ratio>true</keep_ratio>
+                            <geometry>
+                                <point index="0" x="0.28153054479775497" y="0.58277404921700271"/>
+                                <point index="1" x="0.27264867200964893" y="0.64496887229606759"/>
+                                <point index="2" x="0.22296509672809647" y="0.7198227098198321"/>
+                                <point index="3" x="0.14033240132302205" y="0.71813156386826904"/>
+                                <point index="4" x="0.092836387553461172" y="0.64421261208342739"/>
+                                <point index="5" x="0.19958571035746731" y="0.38439771036775738"/>
+                            </geometry>
+                            <completeParameter opacity="1" orientation="0" radius="0.15000000596046448" interval="0.050000000000000003"/>
+                            <optionsParameter speed="1" octave="6" velocity="64"/>
+                        </area>
+                        <area id="3" type="DrawablePolygon" index="3">
+                            <center x="0.55445180279617379" y="0.70749440715883638"/>
+                            <colour>ffff0000</colour>
+                            <keep_ratio>true</keep_ratio>
+                            <geometry>
+                                <point index="0" x="0.63095527108000049" y="0.61275608862651076"/>
+                                <point index="1" x="0.55594107466730103" y="0.85747732810639332"/>
+                                <point index="2" x="0.45620812775016328" y="0.721512215468045"/>
+                                <point index="3" x="0.43278323098887134" y="0.47128993230466648"/>
+                            </geometry>
+                            <completeParameter opacity="1" orientation="0" radius="0.15000000596046448" interval="0.050000000000000003"/>
+                            <optionsParameter speed="1" octave="6" velocity="64"/>
+                        </area>
+                        <area id="4" type="DrawablePolygon" index="4">
+                            <center x="0.40949227373068431" y="0.23881431767337818"/>
+                            <colour>ff0000ff</colour>
+                            <keep_ratio>true</keep_ratio>
+                            <geometry>
+                                <point index="0" x="0.47913457523453401" y="0.34467996391916278"/>
+                                <point index="1" x="0.33984997180607041" y="0.34467995530371237"/>
+                                <point index="2" x="0.33984997831515795" y="0.13294866217252418"/>
+                                <point index="3" x="0.47913457344161331" y="0.13294867667794433"/>
+                            </geometry>
+                            <completeParameter opacity="1" orientation="0.78539816339744828" radius="0.14971662707041658" interval="0.050000000000000003"/>
+                            <optionsParameter speed="1" octave="6" velocity="127"/>
+                        </area>
+                    </areas>
+                </scene>
+            </scenes>
+        </canvas>
+    </canvases>
+</canvas>
+<view>
+    <sound>
+        <soundTree>
+            <sound index="0" soundFilePath="gesaffelstein1_wav" color="ff808080"/>
+            <sound index="1" soundFilePath="gesaffelstein2_wav" color="ff0000ff"/>
+            <sound index="2" soundFilePath="gesaffelstein3_wav" color="ffff0000"/>
+            <sound index="3" soundFilePath="gesaffelstein1_wav" color="ff008000"/>
+        </soundTree>
+    </sound>
+</view>
