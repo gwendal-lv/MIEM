@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.3.2
+  Created with Projucer version: 5.4.1
 
   ------------------------------------------------------------------------------
 
@@ -59,7 +59,7 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
     inputsCountLabel.reset (new Label ("Inputs Count label",
                                        TRANS("Number of input channels:")));
     addAndMakeVisible (inputsCountLabel.get());
-    inputsCountLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    inputsCountLabel->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
     inputsCountLabel->setJustificationType (Justification::centredRight);
     inputsCountLabel->setEditable (false, false, false);
     inputsCountLabel->setColour (Label::textColourId, Colours::black);
@@ -69,7 +69,7 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
     outputsCountLabel.reset (new Label ("outputs Count label",
                                         TRANS("Number of output channels:")));
     addAndMakeVisible (outputsCountLabel.get());
-    outputsCountLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    outputsCountLabel->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
     outputsCountLabel->setJustificationType (Justification::centredRight);
     outputsCountLabel->setEditable (false, false, false);
     outputsCountLabel->setColour (Label::textColourId, Colours::black);
@@ -85,7 +85,7 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
     udpPortLabel.reset (new Label ("UPD Port Label",
                                    TRANS("Plug-in listening on UDP port:")));
     addAndMakeVisible (udpPortLabel.get());
-    udpPortLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    udpPortLabel->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
     udpPortLabel->setJustificationType (Justification::centredRight);
     udpPortLabel->setEditable (false, false, false);
     udpPortLabel->setColour (Label::textColourId, Colours::black);
@@ -111,7 +111,7 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
     ipAddressLabel.reset (new Label ("Ip Address Label",
                                      TRANS("Plug-in host IP address:")));
     addAndMakeVisible (ipAddressLabel.get());
-    ipAddressLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    ipAddressLabel->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
     ipAddressLabel->setJustificationType (Justification::centredRight);
     ipAddressLabel->setEditable (false, false, false);
     ipAddressLabel->setColour (Label::textColourId, Colours::black);
@@ -151,7 +151,7 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
     interpolationTypeLabel.reset (new Label ("Interpolation Type label",
                                              TRANS("Type of interpolation:")));
     addAndMakeVisible (interpolationTypeLabel.get());
-    interpolationTypeLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    interpolationTypeLabel->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
     interpolationTypeLabel->setJustificationType (Justification::centredRight);
     interpolationTypeLabel->setEditable (false, false, false);
     interpolationTypeLabel->setColour (Label::textColourId, Colours::black);
@@ -456,7 +456,7 @@ BEGIN_JUCER_METADATA
 <JUCER_COMPONENT documentType="Component" className="HardwareConfigurationComponent"
                  componentName="" parentClasses="public Component, public TextEditor::Listener"
                  constructorParams="" variableInitialisers="" snapPixels="8" snapActive="1"
-                 snapShown="1" overlayOpacity="0.330" fixedSize="0" initialWidth="1024"
+                 snapShown="1" overlayOpacity="0.33" fixedSize="0" initialWidth="1024"
                  initialHeight="600">
   <METHODS>
     <METHOD name="visibilityChanged()"/>
@@ -464,28 +464,26 @@ BEGIN_JUCER_METADATA
   <BACKGROUND backgroundColour="ffafafaf"/>
   <SLIDER name="Inputs Count slider" id="77ed5b9e29dce02e" memberName="inputsCountSlider"
           virtualName="" explicitFocusOrder="0" pos="-8Cr 16 150 24" textboxtext="ff000000"
-          min="1.00000000000000000000" max="1024.00000000000000000000"
-          int="1.00000000000000000000" style="IncDecButtons" textBoxPos="TextBoxLeft"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.00000000000000000000"
+          min="1.0" max="1024.0" int="1.0" style="IncDecButtons" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="Outputs Count slider" id="ca10a4b3f2104985" memberName="outputsCountSlider"
           virtualName="" explicitFocusOrder="0" pos="-8Cr 48 150 24" textboxtext="ff000000"
-          min="1.00000000000000000000" max="1024.00000000000000000000"
-          int="1.00000000000000000000" style="IncDecButtons" textBoxPos="TextBoxLeft"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.00000000000000000000"
+          min="1.0" max="1024.0" int="1.0" style="IncDecButtons" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <LABEL name="Inputs Count label" id="5edb179087fb7973" memberName="inputsCountLabel"
          virtualName="" explicitFocusOrder="0" pos="-156Cr 0 208 24" posRelativeY="77ed5b9e29dce02e"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Number of input channels:"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
-         bold="0" italic="0" justification="34"/>
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         italic="0" justification="34"/>
   <LABEL name="outputs Count label" id="5b4dd76a50f5f0d4" memberName="outputsCountLabel"
          virtualName="" explicitFocusOrder="0" pos="-156Cr 0 208 24" posRelativeY="ca10a4b3f2104985"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Number of output channels:"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
-         bold="0" italic="0" justification="34"/>
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         italic="0" justification="34"/>
   <TOGGLEBUTTON name="OSC Plugin toggle button" id="74b5dae6c2ea74a2" memberName="oscPluginToggleButton"
                 virtualName="" explicitFocusOrder="0" pos="0Cc 160 400 24" txtcol="ff000000"
                 buttonText="Send OSC to MIEM Matrix Router remote plug-in" connectedEdges="0"
@@ -495,8 +493,7 @@ BEGIN_JUCER_METADATA
          posRelativeY="e4ef4437203ce19e" textCol="ff000000" edTextCol="ff000000"
          edBkgCol="0" labelText="Plug-in listening on UDP port:" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
-         fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
-         bold="0" italic="0" justification="34"/>
+         fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="34"/>
   <TEXTEDITOR name="UDP Port Text Editor" id="e4ef4437203ce19e" memberName="udpPortTextEditor"
               virtualName="" explicitFocusOrder="0" pos="8C 224 64 24" initialText="8001"
               multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"
@@ -510,8 +507,7 @@ BEGIN_JUCER_METADATA
          posRelativeY="6997b5b4dc28675a" textCol="ff000000" edTextCol="ff000000"
          edBkgCol="0" labelText="Plug-in host IP address:" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
-         fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
-         bold="0" italic="0" justification="34"/>
+         fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="34"/>
   <TEXTEDITOR name="IP Address Text Editor" id="6997b5b4dc28675a" memberName="ipAddressTextEditor"
               virtualName="" explicitFocusOrder="0" pos="8C 192 120 24" initialText="127.0.0.1"
               multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"
@@ -532,8 +528,7 @@ BEGIN_JUCER_METADATA
          posRelativeY="900a9258dc365ad0" textCol="ff000000" edTextCol="ff000000"
          edBkgCol="0" labelText="Type of interpolation:" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
-         fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
-         bold="0" italic="0" justification="34"/>
+         fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="34"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA
