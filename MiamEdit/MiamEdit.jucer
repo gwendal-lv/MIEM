@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="O4BfM6" name="MIEM Editor" projectType="guiapp" version="0.2.1"
+<JUCERPROJECT id="O4BfM6" name="MIEM Editor" projectType="guiapp" version="0.2.5"
               bundleIdentifier="com.glv.MIEMEditor" includeBinaryInAppConfig="1"
               jucerVersion="5.4.1" displaySplashScreen="0" reportAppUsage="0"
               splashScreenColour="Dark" companyCopyright="Gwendal Le Vaillant (IRISIB/LARAS, UMons)"
               companyWebsite="http://laras.be" companyName="IRISIB/LARAS, UMons"
-              companyEmail="glevaillant@he2b.be" headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../ControlCommon/Source/&#10;../../../MiamCommon/Source/">
+              companyEmail="glevaillant@he2b.be" headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../ControlCommon/Source/&#10;../../../MiamCommon/Source/"
+              userNotes="v0.2.5 : Color choice transfered from the Scene (polygons) view to the State (matrix or vector) view">
   <MAINGROUP id="uJFjC5" name="MIEM Editor">
     <GROUP id="{7878353D-A1B6-291B-EABC-831E28CE51BB}" name="Source">
       <FILE id="MLMDSl" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>

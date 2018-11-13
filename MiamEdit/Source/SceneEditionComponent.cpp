@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.3.2
+  Created with Projucer version: 5.4.1
 
   ------------------------------------------------------------------------------
 
@@ -182,7 +182,7 @@ SceneEditionComponent::SceneEditionComponent ()
     controlStateLabel.reset (new Label ("Control State label",
                                         TRANS("Link to control state:")));
     addAndMakeVisible (controlStateLabel.get());
-    controlStateLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    controlStateLabel->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
     controlStateLabel->setJustificationType (Justification::centredLeft);
     controlStateLabel->setEditable (false, false, false);
     controlStateLabel->setColour (Label::textColourId, Colours::black);
@@ -238,7 +238,7 @@ SceneEditionComponent::SceneEditionComponent ()
     canvasInfoLabel.reset (new Label ("Canvas Info label",
                                       TRANS("...selected canvas info...")));
     addAndMakeVisible (canvasInfoLabel.get());
-    canvasInfoLabel->setFont (Font (15.00f, Font::italic));
+    canvasInfoLabel->setFont (Font (15.0f, Font::italic));
     canvasInfoLabel->setJustificationType (Justification::centred);
     canvasInfoLabel->setEditable (false, false, false);
     canvasInfoLabel->setColour (Label::textColourId, Colours::black);
@@ -278,7 +278,7 @@ SceneEditionComponent::SceneEditionComponent ()
     sceneNameLabel.reset (new Label ("Scene Name Label",
                                      TRANS("Name:")));
     addAndMakeVisible (sceneNameLabel.get());
-    sceneNameLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    sceneNameLabel->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
     sceneNameLabel->setJustificationType (Justification::centredLeft);
     sceneNameLabel->setEditable (false, false, false);
     sceneNameLabel->setColour (Label::textColourId, Colours::black);
@@ -935,7 +935,7 @@ BEGIN_JUCER_METADATA
 <JUCER_COMPONENT documentType="Component" className="SceneEditionComponent" componentName=""
                  parentClasses="public Component, public TextEditor::Listener"
                  constructorParams="" variableInitialisers="" snapPixels="8" snapActive="1"
-                 snapShown="1" overlayOpacity="0.330" fixedSize="0" initialWidth="1024"
+                 snapShown="1" overlayOpacity="0.33" fixedSize="0" initialWidth="1024"
                  initialHeight="1024">
   <METHODS>
     <METHOD name="visibilityChanged()"/>
@@ -998,8 +998,8 @@ BEGIN_JUCER_METADATA
          virtualName="" explicitFocusOrder="0" pos="16 16 176 24" posRelativeY="90b16e3024c520fd"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Link to control state:"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
-         bold="0" italic="0" justification="33"/>
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         italic="0" justification="33"/>
   <TEXTBUTTON name="Add Scene text button" id="47bebc9d3a03780d" memberName="addSceneTextButton"
               virtualName="" explicitFocusOrder="0" pos="16 24 88 24" posRelativeY="4250d5155a80be70"
               bgColOff="fff0f0f0" bgColOn="ff000000" textCol="ff000000" buttonText="Add Scene"
@@ -1020,8 +1020,8 @@ BEGIN_JUCER_METADATA
          virtualName="" explicitFocusOrder="0" pos="16 48 176 24" posRelativeY="4250d5155a80be70"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="...selected canvas info..."
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
-         bold="0" italic="1" justification="36" typefaceStyle="Italic"/>
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         italic="1" justification="36" typefaceStyle="Italic"/>
   <GROUPCOMPONENT name="Initial state group component" id="cc3bdf8d18c3f428" memberName="initialStateGroupComponent"
                   virtualName="" explicitFocusOrder="0" pos="8 -8R 192 80" posRelativeY="90b16e3024c520fd"
                   outlinecol="ff454545" textcol="ff000000" title="Scene initial state"/>
@@ -1037,8 +1037,8 @@ BEGIN_JUCER_METADATA
          virtualName="" explicitFocusOrder="0" pos="15 103 56 24" posRelativeY="4250d5155a80be70"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Name:"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
-         bold="0" italic="0" justification="33"/>
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         italic="0" justification="33"/>
   <TEXTEDITOR name="Scene Name text editor" id="fd7eace3e677fc36" memberName="sceneNameTextEditor"
               virtualName="" explicitFocusOrder="0" pos="64 112 128 24" initialText=""
               multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"

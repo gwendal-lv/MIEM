@@ -39,7 +39,13 @@ namespace Miam
     
     class App
     {
+        // ################ Retro-compatibility towards older Session files ##############
         private :
+        /// \brief Retourne la version minimale des sessions (fichiers mspat ou mcs) que cette version
+        /// de l'application peut traiter.
+        static const int MinimumCompatibleSessionVersionNumber = 0x205; // 0.2.5
+        
+        
         // Si problème de link (symbole non-défini), il ne faut pas oublier de déclarer et d'initialiser cet
         // attribut qqpart dans le code !! Dans le Presenter final par exemple
         static AppPurpose appPurpose;
@@ -77,10 +83,6 @@ namespace Miam
             return std::string(ProjectInfo::projectName) + " " + ProjectInfo::versionString;
         }
         
-        private :
-        /// \brief Retourne la version minimale des sessions (fichiers mspat ou mcs) que cette version
-        /// de l'application peut traiter.
-        static const int MinimumCompatibleSessionVersionNumber = 0x200;
         public :
         
         /// \brief Checks if the version number (from the main <miam> node) is big enough.
@@ -96,7 +98,11 @@ namespace Miam
             }
             
             if (versionNumber < MinimumCompatibleSessionVersionNumber)
-                throw XmlReadException("Cannot open this session, which was created by a too old version of a MIEM application.");
+            {
+                std::string errorLog = (TRANS("Cannot open this session, which was created by a too old version of a MIEM application.")).toStdString();
+                DBG(errorLog);
+                throw XmlReadException(errorLog);
+            }
         }
     };
     
