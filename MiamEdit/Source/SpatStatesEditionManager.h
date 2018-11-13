@@ -81,12 +81,12 @@ namespace Miam
         void OnSpatStateSelectedById(std::shared_ptr<ControlMatrix> currentMatrix, int _spatStateId);
         /// \brief Called when the displayed text of the combo box has been edited
         void OnRenameState(std::string newName, int stateIndex);
-        
-        
         void OnAddState();
         void OnDeleteSelectedState();
         void OnMoveSelectedStateUp();
         void OnMoveSelectedStateDown();
+        
+        void OnColourChanged(Colour& colour);
         
         void OnMatrixButtonClicked(int row, int col, std::string matrixText, double matrixValue);
         

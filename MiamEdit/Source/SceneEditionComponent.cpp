@@ -685,7 +685,7 @@ void SceneEditionComponent::PrepareUnvisible()
 void SceneEditionComponent::SetCanvasGroupHidden(bool _isHidden)
 {
     canvasGroupComponent->setVisible(!_isHidden);
-    canvasInfoLabel->setVisible(!_isHidden);
+    canvasInfoLabel->setVisible(false); // Only ONE CANVAS currently
     addSceneTextButton->setVisible(!_isHidden);
     deleteSceneTextButton->setVisible(!_isHidden);
     sceneLeftTextButton->setVisible(!_isHidden);

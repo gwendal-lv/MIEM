@@ -61,6 +61,7 @@ namespace Miam
         
         // Own attributes
         std::string name;
+        Colour colour;
         
         // For convenience and optimizations...
         int index;
@@ -71,7 +72,7 @@ namespace Miam
         /// Not the most optimal STL container (research is not optimized)
         ///
         /// \remark Pour accès synchrone aux aires graphiques ! Donc pour édition offline seulement...
-        /// On mode de jeu, on devra travailler avec les UIDs qui viennt des paquets lock-free
+        /// On mode de jeu, on devra travailler avec les UIDs qui viennent des paquets lock-free
         std::vector< std::weak_ptr<ControlArea> > linkedAreas;
         
         /// \brief Excitations en cours, issues d'objets graphiques quelconques référencés par leur UID
@@ -99,6 +100,21 @@ namespace Miam
             for (auto it = linkedAreas.begin() ; it!=linkedAreas.end() ; it++)
                 (*it).lock()->OnStateNameChanged();
         }
+        virtual Colour GetColour() const {return colour;}
+        virtual void SetColour(Colour& _colour)
+        {
+            colour = _colour;
+            // Sent back to all linked areas
+            for (size_t i = 0; i < linkedAreas.size() ; i++)
+            {
+                if (auto sharedPtr = linkedAreas[i].lock())
+                    sharedPtr->SetFillColour(colour);
+                #ifdef __MIAM_DEBUG
+                else
+                    throw std::runtime_error("No weak pointer should be unvalid at that point");
+                #endif
+            }
+        }
         
         void SetIndex(int newIndex) {index = newIndex;}
         int GetIndex() const {return index;}
@@ -119,7 +135,8 @@ namespace Miam
         
         // = = = = = = = = = = METHODS = = = = = = = = = =
         public :
-        ControlState() : index(-1)
+        ControlState() : colour(127, 255, 0), // chartreuse
+                            index(-1)
         {
             // pas possible de le mettre dans la liste d'initialisation
             // car le double ne prend pas (sous XCode) un zéro de type 'void'
@@ -226,6 +243,7 @@ namespace Miam
             auto pTree = std::make_shared<bptree::ptree>();
             // This sub-tree does not know its own "master name tag" = <state>
             pTree->put("name", GetName(false));
+            pTree->put("colour", colour.toString().toStdString());
             return pTree;
         }
         /// \brief Receives all the children nodes and contents inside a <state> tag,
@@ -236,6 +254,7 @@ namespace Miam
             // With default value to avoid try/catch block
             // And automatic data type identifying (= default value type)
             SetName( stateTree.get("name", std::string("unnamed")) );
+            colour = Colour::fromString(stateTree.get("colour", std::string("ff7fff00"))); // chartreuse
         }
         
     };

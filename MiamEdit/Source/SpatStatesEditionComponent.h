@@ -69,9 +69,11 @@ public:
 
     /// - - - - - Events - - - - -
 
-    /// \brief À IMPLÉMENTER *****************************
+    private :
+    /// \brief Called by any color slider that moved
     void colourSliderMoved();
 
+    public :
     /// \brief Empty function : we'll deal with this editor with full
     /// up-to-date matrices only (to prevent any error with notifying
     /// and being notified of modifications...)
@@ -86,13 +88,18 @@ public:
     // But Juce's Indexes are OK (starting from zero)
     void UpdateStatesList(std::vector< std::shared_ptr<ControlState<double>> > &newSpatStates);
 
-    // When a new state is selected (from the Presenter or from an internal event)
-    void SelectAndUpdateState(int stateIndex, std::string infoText, std::shared_ptr<ControlMatrix> newSpatMatrix);
+    // When a new state is selected (order from the Presenter only)
+    void SelectAndUpdateState(int stateIndex, std::string infoText, std::shared_ptr<ControlMatrix> newSpatMatrix, const Colour& stateColour);
 
     /// \brief Whole update of the matrix : all coefficients, and active sliders
     private :
     void updateMatrix();
 
+    
+    /// - - - - - Helpers - - - - -
+    private :
+    void setParametersGroupEnabled(bool shouldBeEnabled);
+    void setColour(const Colour& stateColour);
 
     // - - - - - Setters and Getters - - - - -
     public :
@@ -155,7 +162,7 @@ private:
     std::unique_ptr<Slider> sliderG;
     std::unique_ptr<Label> labelB;
     std::unique_ptr<Slider> sliderB;
-    std::unique_ptr<Label> label;
+    std::unique_ptr<Label> colourVisualisationLabel;
 
 
     //==============================================================================

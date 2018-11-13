@@ -52,10 +52,10 @@ AppPurpose SpatStatesEditionManager::GetSessionPurpose()
     return view->GetSessionPurpose();
 }
 
-void SpatStatesEditionManager::selectSpatState(std::shared_ptr<ControlState<double>> _spatState)
+void SpatStatesEditionManager::selectSpatState(std::shared_ptr<ControlState<double>> _state)
 {
     // Internal update at first
-    selectedSpatState = _spatState;
+    selectedSpatState = _state;
     
     // Graphical updates : info label (links count)
     std::string infoText;
@@ -78,7 +78,9 @@ void SpatStatesEditionManager::selectSpatState(std::shared_ptr<ControlState<doub
     else // if no state selected
         infoText = "-";
     // Update commands
-    editionComponent->SelectAndUpdateState(stateIndexToSend, infoText, matrixToSend);
+    Colour colourToDisplay = selectedSpatState ? selectedSpatState->GetColour() : Colours::black;
+    if (selectedSpatState)
+        editionComponent->SelectAndUpdateState(stateIndexToSend, infoText, matrixToSend, colourToDisplay);
     /*
     auto channelsNameCopy = editionComponent->GetLabelledMatrix()->GetChannelsName();
     // ?????? à quoi ça sert ???
@@ -221,6 +223,11 @@ void SpatStatesEditionManager::OnMoveSelectedStateDown()
     }
     else
         throw std::logic_error("Cannot move spat state towards the last position.");
+}
+void SpatStatesEditionManager::OnColourChanged(Colour& colour)
+{
+    if (selectedSpatState)
+        selectedSpatState->SetColour(colour);
 }
 
 void SpatStatesEditionManager::OnMatrixButtonClicked(int row, int col, std::string matrixText, double matrixValue)

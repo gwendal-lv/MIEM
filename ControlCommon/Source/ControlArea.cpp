@@ -64,10 +64,12 @@ void ControlArea::LinkToState(std::shared_ptr< ControlState<double> > state)
         linkedState = state;
         if (linkedState)
         {
-            SetName(linkedState->GetName(false));
-        
-            // Registering if necessary
+            // Registering
             linkedState->LinkToArea(getCastedSharedFromThis());
+            
+            // auto-update from data of the state
+            SetName(linkedState->GetName(false));
+            SetFillColour(linkedState->GetColour());
         }
         else
             setDefaultName();

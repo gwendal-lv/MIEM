@@ -94,8 +94,6 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     stateUpTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     stateUpTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    stateUpTextButton->setBounds ((0 + (getWidth() - 272) - 80) + -72, 4 + 20, 72, 24);
-
     stateDownTextButton.reset (new TextButton ("State down text button"));
     addAndMakeVisible (stateDownTextButton.get());
     stateDownTextButton->setButtonText (TRANS("Down"));
@@ -134,8 +132,6 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     labelR->setColour (TextEditor::textColourId, Colours::black);
     labelR->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    labelR->setBounds ((getWidth() - 264) + 6, 20, 24, 24);
-
     sliderR.reset (new Slider ("Slider R"));
     addAndMakeVisible (sliderR.get());
     sliderR->setRange (0, 255, 1);
@@ -144,8 +140,6 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     sliderR->setColour (Slider::thumbColourId, Colour (0xa0ff0000));
     sliderR->setColour (Slider::textBoxTextColourId, Colours::black);
     sliderR->addListener (this);
-
-    sliderR->setBounds ((getWidth() - 264) + 24, 24, 158, 16);
 
     labelG.reset (new Label ("new label",
                              TRANS("G")));
@@ -157,8 +151,6 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     labelG->setColour (TextEditor::textColourId, Colours::black);
     labelG->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    labelG->setBounds ((getWidth() - 264) + 6, 40, 24, 24);
-
     sliderG.reset (new Slider ("SliderG"));
     addAndMakeVisible (sliderG.get());
     sliderG->setRange (0, 255, 1);
@@ -167,8 +159,6 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     sliderG->setColour (Slider::thumbColourId, Colour (0xa000ff00));
     sliderG->setColour (Slider::textBoxTextColourId, Colours::black);
     sliderG->addListener (this);
-
-    sliderG->setBounds ((getWidth() - 264) + 24, 44, 158, 16);
 
     labelB.reset (new Label ("new label",
                              TRANS("B")));
@@ -180,8 +170,6 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     labelB->setColour (TextEditor::textColourId, Colours::black);
     labelB->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    labelB->setBounds ((getWidth() - 264) + 7, 60, 24, 24);
-
     sliderB.reset (new Slider ("Slider B"));
     addAndMakeVisible (sliderB.get());
     sliderB->setRange (0, 255, 1);
@@ -191,17 +179,16 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     sliderB->setColour (Slider::textBoxTextColourId, Colours::black);
     sliderB->addListener (this);
 
-    sliderB->setBounds ((getWidth() - 264) + 24, 64, 158, 16);
-
-    label.reset (new Label ("new label",
-                            TRANS("+ ajouter visu couleur\n")));
-    addAndMakeVisible (label.get());
-    label->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
-    label->setJustificationType (Justification::centredLeft);
-    label->setEditable (false, false, false);
-    label->setColour (Label::outlineColourId, Colours::white);
-    label->setColour (TextEditor::textColourId, Colours::black);
-    label->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+    colourVisualisationLabel.reset (new Label ("Colour Visualisation Label",
+                                               TRANS("\n")));
+    addAndMakeVisible (colourVisualisationLabel.get());
+    colourVisualisationLabel->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
+    colourVisualisationLabel->setJustificationType (Justification::centredLeft);
+    colourVisualisationLabel->setEditable (false, false, false);
+    colourVisualisationLabel->setColour (Label::backgroundColourId, Colours::black);
+    colourVisualisationLabel->setColour (Label::outlineColourId, Colours::white);
+    colourVisualisationLabel->setColour (TextEditor::textColourId, Colours::black);
+    colourVisualisationLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
 
     //[UserPreSize]
@@ -243,7 +230,7 @@ SpatStatesEditionComponent::~SpatStatesEditionComponent()
     sliderG = nullptr;
     labelB = nullptr;
     sliderB = nullptr;
-    label = nullptr;
+    colourVisualisationLabel = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -277,10 +264,17 @@ void SpatStatesEditionComponent::resized()
     stateEditorGroupComponent->setBounds (0, 88, getWidth() - 0, getHeight() - 88);
     labelledMatrixComponent->setBounds (0 + 8, 88 + 16, (getWidth() - 0) - 16, (getHeight() - 88) - 24);
     statesListGroupComponent->setBounds (0, 4, getWidth() - 272, 84);
-    stateDownTextButton->setBounds (0 + (getWidth() - 272) - 80, 4 + 20, 72, 24);
+    stateUpTextButton->setBounds (0 + (getWidth() - 272) - 154, 4 + 20, 72, 24);
+    stateDownTextButton->setBounds (0 + (getWidth() - 272) - 82, 4 + 20, 74, 24);
     linksInfoLabel->setBounds ((0 + 88) + 80 - -8, 4 + 20, (getWidth() - 272) - 331, 24);
     statesComboBox->setBounds (0 + 8, 56, (getWidth() - 272) - 16, 24);
-    label->setBounds ((getWidth() - 264) + 264 - 80, 24, 72, 56);
+    labelR->setBounds (getWidth() - 258, 20, 24, 24);
+    sliderR->setBounds (getWidth() - 240, 24, 158, 16);
+    labelG->setBounds (getWidth() - 258, 40, 24, 24);
+    sliderG->setBounds (getWidth() - 240, 44, 158, 16);
+    labelB->setBounds (getWidth() - 257, 60, 24, 24);
+    sliderB->setBounds (getWidth() - 240, 64, 158, 16);
+    colourVisualisationLabel->setBounds ((getWidth() - 264) + 264 - 80, 24, 72, 56);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -293,11 +287,13 @@ void SpatStatesEditionComponent::buttonClicked (Button* buttonThatWasClicked)
     if (buttonThatWasClicked == addStateTextButton.get())
     {
         //[UserButtonCode_addStateTextButton] -- add your button handler code here..
+        editionManager->OnAddState();
         //[/UserButtonCode_addStateTextButton]
     }
     else if (buttonThatWasClicked == deleteStateTextButton.get())
     {
         //[UserButtonCode_deleteStateTextButton] -- add your button handler code here..
+        editionManager->OnDeleteSelectedState();
         //[/UserButtonCode_deleteStateTextButton]
     }
     else if (buttonThatWasClicked == stateUpTextButton.get())
@@ -325,6 +321,33 @@ void SpatStatesEditionComponent::comboBoxChanged (ComboBox* comboBoxThatHasChang
     if (comboBoxThatHasChanged == statesComboBox.get())
     {
         //[UserComboBoxCode_statesComboBox] -- add your combo box handling code here..
+
+        // Change might happen when editing the text has just finished ("new" item)
+        if (statesComboBox->getSelectedItemIndex() == -1)
+        {
+            // If a state was selected before...
+            if (previousStateIndex >= 0)
+            {
+                // Using a regex, we remove the number (if existing)
+                // from the state's name
+                std::string nameToProcess = statesComboBox->getText().toStdString();
+                std::regex deleteIndexAndDotRegex("[0-9]{1,}\\. "); // and the space
+                std::string processedString
+                = std::regex_replace(nameToProcess,
+                                     deleteIndexAndDotRegex,
+                                     ""); // replacement with an empty string...
+                // Actual renaming
+                editionManager->OnRenameState(processedString, previousStateIndex);
+            }
+            else
+                statesComboBox->setSelectedItemIndex(-1); // nothing with notif
+        }
+
+        // Or when another existing item has just been selected
+        else
+            editionManager->OnSpatStateSelectedById(GetDisplayedSpatMatrix(), statesComboBox->getSelectedItemIndex());
+
+
         //[/UserComboBoxCode_statesComboBox]
     }
 
@@ -340,16 +363,19 @@ void SpatStatesEditionComponent::sliderValueChanged (Slider* sliderThatWasMoved)
     if (sliderThatWasMoved == sliderR.get())
     {
         //[UserSliderCode_sliderR] -- add your slider handling code here..
+        colourSliderMoved();
         //[/UserSliderCode_sliderR]
     }
     else if (sliderThatWasMoved == sliderG.get())
     {
         //[UserSliderCode_sliderG] -- add your slider handling code here..
+        colourSliderMoved();
         //[/UserSliderCode_sliderG]
     }
     else if (sliderThatWasMoved == sliderB.get())
     {
         //[UserSliderCode_sliderB] -- add your slider handling code here..
+        colourSliderMoved();
         //[/UserSliderCode_sliderB]
     }
 
@@ -420,16 +446,17 @@ void SpatStatesEditionComponent::SetAreaColourValue(juce::Colour colour)
     sliderG->setValue(colour.getGreen());
     sliderB->setValue(colour.getBlue());
 }
-// À IMPLÉMENTEEEEEEEEEEEEER ********************************
 void SpatStatesEditionComponent::colourSliderMoved()
 {
     Colour newColour = Colour((uint8)sliderR->getValue(),
                               (uint8)sliderG->getValue(),
                               (uint8)sliderB->getValue());
 
-    // *********************
     // il faudra transmettre l'évènement à l'état puis aux formes liées
-    //graphicSessionManager->OnNewColour(newColour);
+    editionManager->OnColourChanged(newColour);
+
+    // actualisation directe de la prévisualisation de la couleur
+    colourVisualisationLabel->setColour(Label::backgroundColourId, newColour);
 }
 
 
@@ -439,7 +466,7 @@ void SpatStatesEditionComponent::OnMatrixButtonClicked(int row, int col, std::st
 }
 
 
-void SpatStatesEditionComponent::SelectAndUpdateState(int stateIndex, std::string infoText, std::shared_ptr<ControlMatrix> newSpatMatrix)
+void SpatStatesEditionComponent::SelectAndUpdateState(int stateIndex, std::string infoText, std::shared_ptr<ControlMatrix> newSpatMatrix, const Colour& stateColour)
 {
     // We keep here this copy of the model internal matrix
     spatMatrix = newSpatMatrix;
@@ -448,8 +475,9 @@ void SpatStatesEditionComponent::SelectAndUpdateState(int stateIndex, std::strin
     statesComboBox->setSelectedItemIndex(stateIndex, NotificationType::dontSendNotification);
     previousStateIndex = statesComboBox->getSelectedItemIndex();
 
-    // Text elements
+    // Text and colour elements
     linksInfoLabel->setText(infoText, NotificationType::dontSendNotification);
+    setColour(stateColour);
 
     // Last updates
     updateMatrix();
@@ -460,14 +488,16 @@ void SpatStatesEditionComponent::SelectAndUpdateState(int stateIndex, std::strin
     stateDownTextButton->setEnabled(isAnyStateSelected);
     stateUpTextButton->setEnabled(isAnyStateSelected);
     stateDownTextButton->setEnabled(isAnyStateSelected);
-    if (isAnyStateSelected) // up/down may be deactivated depending on state's count
+    if (isAnyStateSelected)
     {
+        // up/down may be deactivated depending on state's count
         if (statesComboBox->getSelectedItemIndex() == 0)
             stateUpTextButton->setEnabled(false);
         else if (statesComboBox->getSelectedItemIndex()
                  == statesComboBox->getNumItems()-1)
             stateDownTextButton->setEnabled(false);
     }
+    setParametersGroupEnabled(isAnyStateSelected);
 }
 void SpatStatesEditionComponent::updateMatrix()
 {
@@ -485,6 +515,31 @@ void SpatStatesEditionComponent::updateMatrix()
     else
         labelledMatrixComponent->SetActiveSliders(0,0);
 }
+
+void SpatStatesEditionComponent::setParametersGroupEnabled(bool shouldBeEnabled)
+{
+    labelR->setEnabled(shouldBeEnabled);
+    sliderR->setEnabled(shouldBeEnabled);
+    labelG->setEnabled(shouldBeEnabled);
+    sliderG->setEnabled(shouldBeEnabled);
+    labelB->setEnabled(shouldBeEnabled);
+    sliderB->setEnabled(shouldBeEnabled);
+    colourVisualisationLabel->setEnabled(shouldBeEnabled);
+    // Colour set to black if disabled
+    if (! shouldBeEnabled)
+    {
+        // Special "disabled" black == actual grey
+        colourVisualisationLabel->setColour(Label::backgroundColourId, Colours::grey);
+    }
+}
+void SpatStatesEditionComponent::setColour(const Colour& stateColour)
+{
+    sliderR->setValue((double)stateColour.getRed(), NotificationType::dontSendNotification);
+    sliderG->setValue((double)stateColour.getGreen(), NotificationType::dontSendNotification);
+    sliderB->setValue((double)stateColour.getBlue(), NotificationType::dontSendNotification);
+    colourVisualisationLabel->setColour(Label::backgroundColourId, stateColour);
+}
+
 void SpatStatesEditionComponent::SetInsOutsCount(int _inputsCount, int _outputsCount)
 {
     // Backup
@@ -558,12 +613,12 @@ BEGIN_JUCER_METADATA
               textCol="ff000000" buttonText="Delete" connectedEdges="1" needsCallback="1"
               radioGroupId="0"/>
   <TEXTBUTTON name="State up text button" id="43b96ebd16bb5586" memberName="stateUpTextButton"
-              virtualName="" explicitFocusOrder="0" pos="-72 20 72 24" posRelativeX="e6cf4b99a12776ee"
+              virtualName="" explicitFocusOrder="0" pos="154R 20 72 24" posRelativeX="4250d5155a80be70"
               posRelativeY="4250d5155a80be70" bgColOff="fff0f0f0" bgColOn="ffffffff"
               textCol="ff000000" buttonText="Move Up" connectedEdges="2" needsCallback="1"
               radioGroupId="0"/>
   <TEXTBUTTON name="State down text button" id="e6cf4b99a12776ee" memberName="stateDownTextButton"
-              virtualName="" explicitFocusOrder="0" pos="80R 20 72 24" posRelativeX="4250d5155a80be70"
+              virtualName="" explicitFocusOrder="0" pos="82R 20 74 24" posRelativeX="4250d5155a80be70"
               posRelativeY="4250d5155a80be70" bgColOff="fff0f0f0" bgColOn="ffffffff"
               textCol="ff000000" buttonText="Down" connectedEdges="1" needsCallback="1"
               radioGroupId="0"/>
@@ -580,47 +635,44 @@ BEGIN_JUCER_METADATA
             editable="1" layout="33" items="-1 undefined" textWhenNonSelected=""
             textWhenNoItems="(no choices)"/>
   <LABEL name="new label" id="893f3de478724dd" memberName="labelR" virtualName=""
-         explicitFocusOrder="0" pos="6 20 24 24" posRelativeX="9d63d9acaf1299f6"
-         posRelativeY="87d416270d41f58c" textCol="ff000000" edTextCol="ff000000"
-         edBkgCol="0" labelText="R" editableSingleClick="0" editableDoubleClick="0"
-         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
-         kerning="0.0" bold="0" italic="0" justification="33"/>
-  <SLIDER name="Slider R" id="c86e71b3772d49e9" memberName="sliderR" virtualName=""
-          explicitFocusOrder="0" pos="24 24 158 16" posRelativeX="9d63d9acaf1299f6"
-          posRelativeY="87d416270d41f58c" thumbcol="a0ff0000" textboxtext="ff000000"
-          min="0.0" max="255.0" int="1.0" style="LinearHorizontal" textBoxPos="TextBoxLeft"
-          textBoxEditable="1" textBoxWidth="40" textBoxHeight="20" skewFactor="1.0"
-          needsCallback="1"/>
-  <LABEL name="new label" id="d31faee34d487318" memberName="labelG" virtualName=""
-         explicitFocusOrder="0" pos="6 40 24 24" posRelativeX="9d63d9acaf1299f6"
-         posRelativeY="87d416270d41f58c" textCol="ff000000" edTextCol="ff000000"
-         edBkgCol="0" labelText="G" editableSingleClick="0" editableDoubleClick="0"
-         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
-         kerning="0.0" bold="0" italic="0" justification="33"/>
-  <SLIDER name="SliderG" id="8455ecc13f47ec08" memberName="sliderG" virtualName=""
-          explicitFocusOrder="0" pos="24 44 158 16" posRelativeX="9d63d9acaf1299f6"
-          posRelativeY="87d416270d41f58c" thumbcol="a000ff00" textboxtext="ff000000"
-          min="0.0" max="255.0" int="1.0" style="LinearHorizontal" textBoxPos="TextBoxLeft"
-          textBoxEditable="1" textBoxWidth="40" textBoxHeight="20" skewFactor="1.0"
-          needsCallback="1"/>
-  <LABEL name="new label" id="ae5abc145d9184cf" memberName="labelB" virtualName=""
-         explicitFocusOrder="0" pos="7 60 24 24" posRelativeX="9d63d9acaf1299f6"
-         posRelativeY="87d416270d41f58c" textCol="ff000000" edTextCol="ff000000"
-         edBkgCol="0" labelText="B" editableSingleClick="0" editableDoubleClick="0"
-         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
-         kerning="0.0" bold="0" italic="0" justification="33"/>
-  <SLIDER name="Slider B" id="15aa4b94476e3563" memberName="sliderB" virtualName=""
-          explicitFocusOrder="0" pos="24 64 158 16" posRelativeX="9d63d9acaf1299f6"
-          posRelativeY="87d416270d41f58c" thumbcol="a00000ff" textboxtext="ff000000"
-          min="0.0" max="255.0" int="1.0" style="LinearHorizontal" textBoxPos="TextBoxLeft"
-          textBoxEditable="1" textBoxWidth="40" textBoxHeight="20" skewFactor="1.0"
-          needsCallback="1"/>
-  <LABEL name="new label" id="7c0151d2e33a36b5" memberName="label" virtualName=""
-         explicitFocusOrder="0" pos="80R 24 72 56" posRelativeX="9d63d9acaf1299f6"
-         outlineCol="ffffffff" edTextCol="ff000000" edBkgCol="0" labelText="+ ajouter visu couleur&#10;"
+         explicitFocusOrder="0" pos="258R 20 24 24" posRelativeY="87d416270d41f58c"
+         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="R"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="33"/>
+  <SLIDER name="Slider R" id="c86e71b3772d49e9" memberName="sliderR" virtualName=""
+          explicitFocusOrder="0" pos="240R 24 158 16" posRelativeY="87d416270d41f58c"
+          thumbcol="a0ff0000" textboxtext="ff000000" min="0.0" max="255.0"
+          int="1.0" style="LinearHorizontal" textBoxPos="TextBoxLeft" textBoxEditable="1"
+          textBoxWidth="40" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
+  <LABEL name="new label" id="d31faee34d487318" memberName="labelG" virtualName=""
+         explicitFocusOrder="0" pos="258R 40 24 24" posRelativeY="87d416270d41f58c"
+         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="G"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         italic="0" justification="33"/>
+  <SLIDER name="SliderG" id="8455ecc13f47ec08" memberName="sliderG" virtualName=""
+          explicitFocusOrder="0" pos="240R 44 158 16" posRelativeY="87d416270d41f58c"
+          thumbcol="a000ff00" textboxtext="ff000000" min="0.0" max="255.0"
+          int="1.0" style="LinearHorizontal" textBoxPos="TextBoxLeft" textBoxEditable="1"
+          textBoxWidth="40" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
+  <LABEL name="new label" id="ae5abc145d9184cf" memberName="labelB" virtualName=""
+         explicitFocusOrder="0" pos="257R 60 24 24" posRelativeY="87d416270d41f58c"
+         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="B"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         italic="0" justification="33"/>
+  <SLIDER name="Slider B" id="15aa4b94476e3563" memberName="sliderB" virtualName=""
+          explicitFocusOrder="0" pos="240R 64 158 16" posRelativeY="87d416270d41f58c"
+          thumbcol="a00000ff" textboxtext="ff000000" min="0.0" max="255.0"
+          int="1.0" style="LinearHorizontal" textBoxPos="TextBoxLeft" textBoxEditable="1"
+          textBoxWidth="40" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
+  <LABEL name="Colour Visualisation Label" id="7c0151d2e33a36b5" memberName="colourVisualisationLabel"
+         virtualName="" explicitFocusOrder="0" pos="80R 24 72 56" posRelativeX="9d63d9acaf1299f6"
+         bkgCol="ff000000" outlineCol="ffffffff" edTextCol="ff000000"
+         edBkgCol="0" labelText="&#10;" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
+         kerning="0.0" bold="0" italic="0" justification="33"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA
