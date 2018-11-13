@@ -39,13 +39,8 @@ void SceneCanvasComponent::CompleteInitialization(std::shared_ptr<MultiSceneCanv
     
     // OpenGL final initialization here
     openGlContext.setRenderer(this);
-    openGlContext.attachTo(*this);
-    openGlContext.setContinuousRepainting(true);
-    isSwapSynced = openGlContext.setSwapInterval(swapInterval);
-    if (isSwapSynced)
-        DBG("Platform supports synced OpenGL swaps");
-    else
-        DBG("Platform does not support synced OpenGL swaps");
+    
+    SetupGLResources();
 }
 
 
@@ -69,15 +64,59 @@ void SceneCanvasComponent::resized()
 
 
 // - - - - - - - - OpenGL specific - - - - - - - - -
+
+
+
+void SceneCanvasComponent::SetupGLResources()
+{
+    openGlContext.attachTo(*this);
+    openGlContext.setContinuousRepainting(true);
+    isSwapSynced = openGlContext.setSwapInterval(swapInterval);
+    if (isSwapSynced)
+        DBG("Context attached (supports synced OpenGL swaps)");
+    else
+        DBG("Context attached (does not support synced OpenGL swaps)");
+    setVisible(true);
+}
+
+void SceneCanvasComponent::ReleaseGLResources()
+{
+    if (! isVisible())
+        return;
+    
+    DBG("Relâchement ressource GL d'un Canvas Component...");
+    
+    
+    openGlContext.executeOnGLThread(
+                                    [this] (OpenGLContext& openGlContext)
+    {
+        DBG("Arrêt du *continuous repainting* du contexte GL");
+        openGlContext.setContinuousRepainting(false); DBG("OK");
+    }                               ,
+                                    true); // will block until finished
+    
+    //DBG("Détachement contexte");
+    //openGlContext.detach(); DBG("OK");
+    DBG("auto-invisibilité....");
+    setVisible(false); DBG("OK");
+}
+
+
+
+
+
+
 void SceneCanvasComponent::newOpenGLContextCreated()
 {
-    //DBG("SceneCanvasComponent : init OpenGL");
+    DBG("SceneCanvasComponent : new GL context created");
 
 	// Will init the counter
 	//displayFrequencyMeasurer.OnNewFrame();
 }
 void SceneCanvasComponent::renderOpenGL()
 {
+    //return; // -------- DEBUG ---------
+    
 	//DBG("render : " + getName());
     auto manager = canvasManager.lock();
     
@@ -170,9 +209,8 @@ void SceneCanvasComponent::renderOpenGL()
 void SceneCanvasComponent::openGLContextClosing()
 {
     // Méthode même pas appelée dans Android... D'après la doc Juce au 30 octobre 2017
-    //DBG("SceneCanvasComponent : closing OpenGL Context");
+    DBG("SceneCanvasComponent : GL Context closing...");
 }
-
 
 
 

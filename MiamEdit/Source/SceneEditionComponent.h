@@ -87,6 +87,8 @@ public:
     public :
     void SetEnabledAllControls(bool areEnabled, bool controlsBackUp = true);
     void CloseTemporaryDisplayedObjects();
+    void PrepareVisible();
+    void PrepareUnvisible();
 
     // - - - - - Canvases group - - - - -
     void SetCanvasGroupHidden(bool _isHidden);

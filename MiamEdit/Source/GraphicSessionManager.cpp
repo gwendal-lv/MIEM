@@ -39,12 +39,13 @@ GraphicSessionManager::GraphicSessionManager(View* _view, Presenter* presenter_)
     // Links to the view module
     sceneEditionComponent = view->GetMainContentComponent()->GetSceneEditionComponent();
     
-    // NOMBRE DE CANEVAS EST DÉFINI ICI, 2 en l'occurence pour le Miam Edit (idem Miam Spat)
+    // **************  NOMBRE DE CANEVAS EST DÉFINI ICI ###################
+    // ((2))     1 SEUL MAINTENANT en l'occurence pour tous les programmes MIEM
     // On doit créer les sous-objets graphiques de canevas (View) avant de
     // les transmettre au sous-module de gestion de canevas (Presenter) que l'on crée
     // d'ailleurs ici aussi.
     canvasManagers.push_back(std::shared_ptr<MultiSceneCanvasInteractor>(new MultiSceneCanvasEditor(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas1)));    
-    canvasManagers.push_back(std::shared_ptr<MultiSceneCanvasInteractor>(new MultiSceneCanvasEditor(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas2)));
+    //canvasManagers.push_back(std::shared_ptr<MultiSceneCanvasInteractor>(new MultiSceneCanvasEditor(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas2)));
     
     // Links to the view module
     sceneEditionComponent->CompleteInitialization(this, multiCanvasComponent);

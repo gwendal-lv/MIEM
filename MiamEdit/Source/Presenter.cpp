@@ -104,6 +104,10 @@ AppMode Presenter::appModeChangeRequest(AppMode newAppMode)
     // First check : are we running a new mode ?
     if (newAppMode != appMode)
     {
+        // Nettoyage OpenGL si nécessaire
+        if (appMode == AppMode::EditControlScenes)
+            view->GetMainContentComponent()->GetSceneEditionComponent()->PrepareUnvisible();
+        
         view->ChangeAppMode(AppMode::Loading);
         
         // - - - - - PRE-CHANGE PROCESSING - - - - -
@@ -154,6 +158,8 @@ AppMode Presenter::appModeChangeRequest(AppMode newAppMode)
                 break;
                 
             case AppMode::EditControlScenes :
+                // Preparing for OpenGL to be back
+                view->GetMainContentComponent()->GetSceneEditionComponent()->PrepareVisible();
                 // At leats : reloading of maybe changed data from other mode
                 graphicSessionManager.OnEnterSpatScenesEdition();
                 break;
@@ -241,7 +247,8 @@ void Presenter::LoadSession(std::string filename)
     
     // Actual mode change here
     // App mode changer to Scenes Edition by default (should be stored within the file ?)
-    appModeChangeRequest(AppMode::EditControlScenes);
+    appModeChangeRequest(AppMode::EditControlStates);
+    //appModeChangeRequest(AppMode::EditControlScenes);
 }
 void Presenter::SaveSession(std::string filename, bool forceDataRefresh)
 {

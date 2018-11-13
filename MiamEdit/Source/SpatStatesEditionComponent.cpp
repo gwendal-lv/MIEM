@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.3.2
+  Created with Projucer version: 5.4.1
 
   ------------------------------------------------------------------------------
 
@@ -108,7 +108,7 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     linksInfoLabel.reset (new Label ("Links info label",
                                      TRANS("Linked to ? area")));
     addAndMakeVisible (linksInfoLabel.get());
-    linksInfoLabel->setFont (Font (15.00f, Font::italic));
+    linksInfoLabel->setFont (Font (15.0f, Font::italic));
     linksInfoLabel->setJustificationType (Justification::centred);
     linksInfoLabel->setEditable (false, false, false);
     linksInfoLabel->setColour (Label::textColourId, Colours::black);
@@ -127,7 +127,7 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     labelR.reset (new Label ("new label",
                              TRANS("R")));
     addAndMakeVisible (labelR.get());
-    labelR->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    labelR->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
     labelR->setJustificationType (Justification::centredLeft);
     labelR->setEditable (false, false, false);
     labelR->setColour (Label::textColourId, Colours::black);
@@ -150,7 +150,7 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     labelG.reset (new Label ("new label",
                              TRANS("G")));
     addAndMakeVisible (labelG.get());
-    labelG->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    labelG->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
     labelG->setJustificationType (Justification::centredLeft);
     labelG->setEditable (false, false, false);
     labelG->setColour (Label::textColourId, Colours::black);
@@ -173,7 +173,7 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     labelB.reset (new Label ("new label",
                              TRANS("B")));
     addAndMakeVisible (labelB.get());
-    labelB->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    labelB->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
     labelB->setJustificationType (Justification::centredLeft);
     labelB->setEditable (false, false, false);
     labelB->setColour (Label::textColourId, Colours::black);
@@ -196,7 +196,7 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     label.reset (new Label ("new label",
                             TRANS("+ ajouter visu couleur\n")));
     addAndMakeVisible (label.get());
-    label->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    label->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
     label->setJustificationType (Justification::centredLeft);
     label->setEditable (false, false, false);
     label->setColour (Label::outlineColourId, Colours::white);
@@ -278,7 +278,7 @@ void SpatStatesEditionComponent::resized()
     labelledMatrixComponent->setBounds (0 + 8, 88 + 16, (getWidth() - 0) - 16, (getHeight() - 88) - 24);
     statesListGroupComponent->setBounds (0, 4, getWidth() - 272, 84);
     stateDownTextButton->setBounds (0 + (getWidth() - 272) - 80, 4 + 20, 72, 24);
-    linksInfoLabel->setBounds ((0 + 88) + 80 - -8, 4 + 20, (getWidth() - 272) - 336, 24);
+    linksInfoLabel->setBounds ((0 + 88) + 80 - -8, 4 + 20, (getWidth() - 272) - 331, 24);
     statesComboBox->setBounds (0 + 8, 56, (getWidth() - 272) - 16, 24);
     label->setBounds ((getWidth() - 264) + 264 - 80, 24, 72, 56);
     //[UserResized] Add your own custom resize handling here..
@@ -526,7 +526,7 @@ BEGIN_JUCER_METADATA
 <JUCER_COMPONENT documentType="Component" className="SpatStatesEditionComponent"
                  componentName="" parentClasses="public Component, public ISlidersMatrixListener, public IMatrixButtonListener"
                  constructorParams="" variableInitialisers="" snapPixels="8" snapActive="1"
-                 snapShown="1" overlayOpacity="0.330" fixedSize="0" initialWidth="1024"
+                 snapShown="1" overlayOpacity="0.33" fixedSize="0" initialWidth="1024"
                  initialHeight="600">
   <METHODS>
     <METHOD name="visibilityChanged()"/>
@@ -572,8 +572,8 @@ BEGIN_JUCER_METADATA
          posRelativeY="4250d5155a80be70" posRelativeW="4250d5155a80be70"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Linked to ? area"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
-         bold="0" italic="1" justification="36" typefaceStyle="Italic"/>
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         italic="1" justification="36" typefaceStyle="Italic"/>
   <COMBOBOX name="States combo box" id="89ad7c0a3be5a39c" memberName="statesComboBox"
             virtualName="" explicitFocusOrder="0" pos="8 56 16M 24" posRelativeX="4250d5155a80be70"
             posRelativeY="90b16e3024c520fd" posRelativeW="4250d5155a80be70"
@@ -583,47 +583,44 @@ BEGIN_JUCER_METADATA
          explicitFocusOrder="0" pos="6 20 24 24" posRelativeX="9d63d9acaf1299f6"
          posRelativeY="87d416270d41f58c" textCol="ff000000" edTextCol="ff000000"
          edBkgCol="0" labelText="R" editableSingleClick="0" editableDoubleClick="0"
-         focusDiscardsChanges="0" fontname="Default font" fontsize="15.00000000000000000000"
-         kerning="0.00000000000000000000" bold="0" italic="0" justification="33"/>
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
+         kerning="0.0" bold="0" italic="0" justification="33"/>
   <SLIDER name="Slider R" id="c86e71b3772d49e9" memberName="sliderR" virtualName=""
           explicitFocusOrder="0" pos="24 24 158 16" posRelativeX="9d63d9acaf1299f6"
           posRelativeY="87d416270d41f58c" thumbcol="a0ff0000" textboxtext="ff000000"
-          min="0.00000000000000000000" max="255.00000000000000000000" int="1.00000000000000000000"
-          style="LinearHorizontal" textBoxPos="TextBoxLeft" textBoxEditable="1"
-          textBoxWidth="40" textBoxHeight="20" skewFactor="1.00000000000000000000"
+          min="0.0" max="255.0" int="1.0" style="LinearHorizontal" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="40" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <LABEL name="new label" id="d31faee34d487318" memberName="labelG" virtualName=""
          explicitFocusOrder="0" pos="6 40 24 24" posRelativeX="9d63d9acaf1299f6"
          posRelativeY="87d416270d41f58c" textCol="ff000000" edTextCol="ff000000"
          edBkgCol="0" labelText="G" editableSingleClick="0" editableDoubleClick="0"
-         focusDiscardsChanges="0" fontname="Default font" fontsize="15.00000000000000000000"
-         kerning="0.00000000000000000000" bold="0" italic="0" justification="33"/>
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
+         kerning="0.0" bold="0" italic="0" justification="33"/>
   <SLIDER name="SliderG" id="8455ecc13f47ec08" memberName="sliderG" virtualName=""
           explicitFocusOrder="0" pos="24 44 158 16" posRelativeX="9d63d9acaf1299f6"
           posRelativeY="87d416270d41f58c" thumbcol="a000ff00" textboxtext="ff000000"
-          min="0.00000000000000000000" max="255.00000000000000000000" int="1.00000000000000000000"
-          style="LinearHorizontal" textBoxPos="TextBoxLeft" textBoxEditable="1"
-          textBoxWidth="40" textBoxHeight="20" skewFactor="1.00000000000000000000"
+          min="0.0" max="255.0" int="1.0" style="LinearHorizontal" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="40" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <LABEL name="new label" id="ae5abc145d9184cf" memberName="labelB" virtualName=""
          explicitFocusOrder="0" pos="7 60 24 24" posRelativeX="9d63d9acaf1299f6"
          posRelativeY="87d416270d41f58c" textCol="ff000000" edTextCol="ff000000"
          edBkgCol="0" labelText="B" editableSingleClick="0" editableDoubleClick="0"
-         focusDiscardsChanges="0" fontname="Default font" fontsize="15.00000000000000000000"
-         kerning="0.00000000000000000000" bold="0" italic="0" justification="33"/>
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
+         kerning="0.0" bold="0" italic="0" justification="33"/>
   <SLIDER name="Slider B" id="15aa4b94476e3563" memberName="sliderB" virtualName=""
           explicitFocusOrder="0" pos="24 64 158 16" posRelativeX="9d63d9acaf1299f6"
           posRelativeY="87d416270d41f58c" thumbcol="a00000ff" textboxtext="ff000000"
-          min="0.00000000000000000000" max="255.00000000000000000000" int="1.00000000000000000000"
-          style="LinearHorizontal" textBoxPos="TextBoxLeft" textBoxEditable="1"
-          textBoxWidth="40" textBoxHeight="20" skewFactor="1.00000000000000000000"
+          min="0.0" max="255.0" int="1.0" style="LinearHorizontal" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="40" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <LABEL name="new label" id="7c0151d2e33a36b5" memberName="label" virtualName=""
          explicitFocusOrder="0" pos="80R 24 72 56" posRelativeX="9d63d9acaf1299f6"
          outlineCol="ffffffff" edTextCol="ff000000" edBkgCol="0" labelText="+ ajouter visu couleur&#10;"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
-         bold="0" italic="0" justification="33"/>
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         italic="0" justification="33"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

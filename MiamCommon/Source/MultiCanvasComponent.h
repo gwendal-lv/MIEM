@@ -68,6 +68,8 @@ namespace Miam {
         virtual void resized() override;
         
         void CompleteInitialization();
+        void PrepareVisible();
+        void PrepareUnvisible();
         
 		//void update() override;
         

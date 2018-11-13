@@ -19,6 +19,7 @@
 
 #include "boost/lexical_cast.hpp"
 
+#include <pthread.h>
 
 
 using namespace Miam;
@@ -62,6 +63,11 @@ Model::~Model()
 
 void Model::update()
 {
+#ifndef JUCE_WINDOWS // toutes plateformes POSIX 
+    pthread_setname_np(/*pthread_self(), */"MIEM Model::update Thread"); // pas de TID pour FreeBSD 2003... (doc macOS)
+#endif
+    
+    
     while(continueUpdate)
     {
         std::this_thread::sleep_for(std::chrono::seconds(1));

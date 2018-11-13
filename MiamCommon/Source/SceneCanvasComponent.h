@@ -109,6 +109,9 @@ public:
     virtual void renderOpenGL() override; // ! in background-thread !
     virtual void openGLContextClosing() override;
     
+    void SetupGLResources();
+    void ReleaseGLResources();
+    
     // - - - - - - - - Actual painting codes - - - - - - - - -
     protected :
     

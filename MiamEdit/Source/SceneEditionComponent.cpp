@@ -671,6 +671,14 @@ void SceneEditionComponent::CloseTemporaryDisplayedObjects()
 {
     spatStatesComboBox->hidePopup();
 }
+void SceneEditionComponent::PrepareVisible()
+{
+    multiCanvasComponent->PrepareVisible();
+}
+void SceneEditionComponent::PrepareUnvisible()
+{
+    multiCanvasComponent->PrepareUnvisible();
+}
 
 // - - - - - Canvases & canvas group - - - - -
 

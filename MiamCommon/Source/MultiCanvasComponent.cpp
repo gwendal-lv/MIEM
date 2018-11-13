@@ -124,6 +124,20 @@ void MultiCanvasComponent::CompleteInitialization()
         multiSceneCanvasComponents[i]->LinkToManager(graphicSessionManager->canvasManagers[i]);
     }
 }
+void MultiCanvasComponent::PrepareUnvisible()
+{
+    for (size_t i=0 ; i<multiSceneCanvasComponents.size() ; i++)
+    {
+        multiSceneCanvasComponents[i]->GetCanvas()->ReleaseGLResources();
+    }
+}
+void MultiCanvasComponent::PrepareVisible()
+{
+    for (size_t i=0 ; i<multiSceneCanvasComponents.size() ; i++)
+    {
+        multiSceneCanvasComponents[i]->GetCanvas()->SetupGLResources();
+    }
+}
 
 
 // - - - - - Mouse events re-transmission to Graphic Session Manager - - - - -
