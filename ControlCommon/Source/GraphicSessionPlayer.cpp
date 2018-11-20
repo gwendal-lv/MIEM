@@ -32,9 +32,10 @@ GraphicSessionPlayer::GraphicSessionPlayer(PlayerPresenter* presenter_, PlayerVi
     presenter(presenter_),
     view(view_)
 {    
-    // DEFINITION DU NOMBRE DE CANEVAS
+    // ========= DEFINITION ICI DU NOMBRE DE CANEVAS ====================
     canvasManagers.push_back(std::make_shared<MultiSceneCanvasPlayer>(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas1));
-    canvasManagers.push_back(std::make_shared<MultiSceneCanvasPlayer>(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas2));
+    // 1 seul canevas depuis la v0.2.5
+    //canvasManagers.push_back(std::make_shared<MultiSceneCanvasPlayer>(this, multiCanvasComponent->AddCanvas(), SceneCanvasComponent::Id::Canvas2));
     
     // Links to the view module
     view->CompleteInitialization(this, multiCanvasComponent);

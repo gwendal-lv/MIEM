@@ -89,11 +89,11 @@ namespace Miam
         // - - - - - Output channels (speakers) : add, delete, swap, ... - - - - -
         
         void AddOutput() override
-        {throw std::logic_error("not implemented");}
+        {throw std::logic_error("MIEM not implemented");}
         void DeleteOutput(size_t /*i*/) override
-        {throw std::logic_error("not implemented");}
+        {throw std::logic_error("MIEM not implemented");}
         void SwapOutputs(size_t /*i*/, size_t /*j*/) override
-        {throw std::logic_error("not implemented");}
+        {throw std::logic_error("MIEM not implemented");}
         
         // - - - - - Input channels : add, delete, swap, ... - - - - -
 
