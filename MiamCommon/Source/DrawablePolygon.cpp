@@ -18,10 +18,16 @@ DrawablePolygon::DrawablePolygon(bptree::ptree & areaTree)
 :
 DrawableArea(areaTree)
 {
-
+    
+    // ????
+    // utile ?? Inséré avec commit fusion Amusing OpenGL
+    /* ============================
 	int W = areaTree.get<int>("<xmlattr>.width");
 	int H = areaTree.get<int>("<xmlattr>.height");
-	float oldCanvasRation = (float)W / (float)H;
+     */
+    
+    
+    float oldCanvasRation = 9.0f / 16.0f; // TOTALEMENT ARBITRAIREEEEEE
 	if (oldCanvasRation > 1.0F)
 	{
 		xScale = 1.0f / oldCanvasRation;
@@ -32,7 +38,7 @@ DrawableArea(areaTree)
 		xScale = 1.0f;
 		yScale = 1.0f / oldCanvasRation;
 	}
-
+    
 
     // Vérification préliminaire de présence des points du polygone
     size_t pointsCount = XmlUtils::CheckIndexes(areaTree, "geometry", "point");

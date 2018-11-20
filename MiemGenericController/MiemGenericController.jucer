@@ -204,6 +204,11 @@
               file="../MiamCommon/Source/MultiSceneCanvasInteractor.h"/>
       </GROUP>
       <GROUP id="{81FB02AB-9CF8-2FEF-77B6-9D5049B0BC47}" name="View">
+        <FILE id="ByHs9p" name="newFontImg.png" compile="0" resource="1" file="../MiamCommon/Resources/newFontImg.png"/>
+        <FILE id="oKZGII" name="OpenGLTextObject.cpp" compile="1" resource="0"
+              file="../MiamCommon/Source/OpenGLTextObject.cpp"/>
+        <FILE id="Md2bol" name="OpenGLTextObject.h" compile="0" resource="0"
+              file="../MiamCommon/Source/OpenGLTextObject.h"/>
         <FILE id="XAPOxP" name="MiamLookAndFeel.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/MiamLookAndFeel.cpp"/>
         <FILE id="UhtGNo" name="MiamLookAndFeel.h" compile="0" resource="0"

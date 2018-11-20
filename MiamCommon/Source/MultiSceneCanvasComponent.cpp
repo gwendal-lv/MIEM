@@ -40,9 +40,12 @@ MultiSceneCanvasComponent::MultiSceneCanvasComponent()
     
     // Buttons then
     // A CHANGER
+    // AMUSING SEULEMENT ???????????????????????????????????????????????????????
+    /*
     sceneChoiceTextButtons.push_back(new TextButton("Default unique scene"));
 	sceneChoiceTextButtons.back()->setLookAndFeel(&customLF);
     addAndMakeVisible(sceneChoiceTextButtons.back());
+     */
 }
 
 MultiSceneCanvasComponent::~MultiSceneCanvasComponent()
@@ -142,7 +145,6 @@ void MultiSceneCanvasComponent::addButton(std::string buttonName)
     sceneChoiceTextButtons.push_back(new TextButton(buttonName));
     addAndMakeVisible(sceneChoiceTextButtons.back());
     sceneChoiceTextButtons.back()->addListener(this);
-	sceneChoiceTextButtons.back()->setLookAndFeel(&customLF);
 
 	// Solves an issue with touch : some touch events are interpreted (win, mac)
 	// as "right clicks" and would not trigger the button...
