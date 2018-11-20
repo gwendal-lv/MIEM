@@ -68,8 +68,11 @@ namespace Miam {
         virtual void resized() override;
         
         void CompleteInitialization();
+        
         void PrepareVisible();
         void PrepareUnvisible();
+        
+		void ReleaseOpengGLResources();
         
 		//void update() override;
         

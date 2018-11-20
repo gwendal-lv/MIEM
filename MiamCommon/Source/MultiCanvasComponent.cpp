@@ -139,6 +139,13 @@ void MultiCanvasComponent::PrepareVisible()
     }
 }
 
+void MultiCanvasComponent::ReleaseOpengGLResources()
+{
+	for (size_t i = 0; i<multiSceneCanvasComponents.size(); i++)
+	{
+		multiSceneCanvasComponents[i]->ReleaseOpengGLResources();
+	}
+}
 
 // - - - - - Mouse events re-transmission to Graphic Session Manager - - - - -
 

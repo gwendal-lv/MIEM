@@ -62,17 +62,34 @@ namespace Miam {
         
         // ----- Display functions -----
         public :
-        virtual void Paint(Graphics& g) override;
-        virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
+			
+			const int GetVerticesBufferSize() override {					// points du contour					manipulationLine	manipulationPoint
+				return DrawablePolygon::GetVerticesBufferSize() + (numPointsPolygon * numVerticesCircle) + dottedLineVertexes + numVerticesRing;
+			}
+			int GetCouloursBufferSize() override { return DrawablePolygon::GetCouloursBufferSize() + 4 * ((numPointsPolygon * numVerticesCircle) + dottedLineVertexes + numVerticesRing); }
+			int GetIndicesBufferSize() override { return DrawablePolygon::GetIndicesBufferSize() + numPointsPolygon * (3 * numPointCircle) + dottedLineIndices + (3 * numVerticesRing); }
+			virtual void Paint(Graphics& g) override;
+			virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
+			virtual void RefreshOpenGLBuffers() override;
+			void RefreshManipulationPointOpenGLBuffer();
+			void RefreshContourPointsOpenGLBuffers();
         // Display helpers
         private :
-        void computeManipulationPoint();
+			static const int dottedLineNparts = 20;
+			static const int dottedLineVertexes = 4 * dottedLineNparts;
+			static const int dottedLineIndices = 6 * dottedLineNparts;
+
+			GLfloat g_vertex_dotted_line[3 * dottedLineVertexes];
+			GLuint g_indices_dotted_line[dottedLineIndices];
+
+			GLfloat g_vertex_circle[3 * numVerticesCircle];
+			unsigned int circleIndices[3 * numPointCircle];
+			void computeManipulationPoint();
         
         
         // ----- Setters and Getters -----
         public :
         void SetActive(bool activate) override;
-        
         
         // ----- Edition functions -----
 
@@ -81,9 +98,13 @@ namespace Miam {
 		AreaEventType TryBeginPointMove(const Point<double>& hitPoint) override;
         AreaEventType TryMovePoint(const Point<double>& newLocation) override;
 		AreaEventType EndPointMove() override;
+		bool SizeChanged(double size, bool minSize);
+		void Rotate(double Radian);
+		void updateContourPoints();
         void Translate(const Point<double>& translation) override;
         protected :
         void recreateNormalizedPoints() override;
+		void computeManipulationLine(float Ox, float Oy, float Mx, float My, float width, float height);
         // Polygon-specific editing function
         private :
         void moveContourPoint(size_t pointIndex, const Point<double>& newLocation);
@@ -114,7 +135,6 @@ namespace Miam {
         
         // Graphical assets for editing
         private :
-        
     };
     
     

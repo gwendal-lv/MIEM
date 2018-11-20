@@ -14,6 +14,13 @@
 
 #include "MultiSceneCanvasComponent.h"
 
+#include "AreaOptionsComponent.h"
+
+//class AreaOptionsComponent;
+namespace Amusing
+{
+	class MultiSceneCanvasManager;
+}
 
 class MultiSceneCanvasComponentAmusing : public MultiSceneCanvasComponent
 {
@@ -23,7 +30,19 @@ public:
 
 	void resized() override;
 
+	void setSamplesColor(int Nsamples, Colour colorCode[]);
+
+	void addColourSample(int index, Colour colour);
+
+	void showAreaOptions(bool shouldBeVisible);
+
+	void muteOtherAreas(int shouldMuteOtherAreas);
+
+	void optionButtonClicked(OptionButtonClicked optionClicked);
+
 private:
 	//AreaOptions areaOptions;
+	ScopedPointer<AreaOptionsComponent> areaOptionsComponent;
+	OptionButtonClicked currentOptionClicked;
 };
 

@@ -56,11 +56,76 @@ void EditablePolygon::init()
 }
 void EditablePolygon::graphicalInit()
 {
+	rotationAngle = 0;
     contourColour = Colour(0xAAFFFFFF); // white, but not totally opaque
     
     editingElementsColour = Colours::white; // pure white (more visible)
     contourPointsRadius = 1.4f*contourWidth;
     manipulationPointRadius = centerContourWidth+centerCircleRadius;
+
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
+		// ajout de la forme et du contour !
+		verticesBufferSize += (3 * (numPointsPolygon * numVerticesCircle) + 3 * dottedLineVertexes + 3 * numVerticesRing);
+		indicesBufferSize += (3 * (numPointsPolygon * numPointCircle) + dottedLineIndices + 3 * numVerticesRing);
+		couloursBufferSize += (4 * (numPointsPolygon * numVerticesCircle) + 4 * dottedLineVertexes + 4 * numVerticesRing);
+
+		// resize des buffers
+		vertices_buffer.resize(verticesBufferSize);
+		indices_buffer.resize(indicesBufferSize);
+		coulours_buffer.resize(couloursBufferSize);
+
+		// calcul d'un disque de centre 0 et de rayon 5 pixels
+		float radius = 5.0f;
+		int numPoints = numPointsRing;
+		radius = 5.0f;
+		double currentAngle = 0.0;
+		double incAngle = 2 * M_PI / (double)numPoints;
+		g_vertex_circle[0] = 0.0f;
+		g_vertex_circle[1] = 0.0f;
+		g_vertex_circle[2] = 0.0f;
+		for (int i = 0; i < numPointCircle; ++i)
+		{
+			g_vertex_circle[(i + 1) * 3] = radius * (float)cos(currentAngle);
+			g_vertex_circle[(i + 1) * 3 + 1] = radius * (float)sin(currentAngle);
+			g_vertex_circle[(i + 1) * 3 + 2] = 0.0f;
+			currentAngle += incAngle;
+		}
+		for (int i = 0; i < numPointCircle; ++i)
+		{
+			circleIndices[i * 3] = i + 1;
+			circleIndices[i * 3 + 1] = 0;
+			circleIndices[i * 3 + 2] = i + 2 > numPointCircle ? 1 : i + 2;
+		}
+
+		/// couleur
+		// points
+		int decalage = DrawablePolygon::GetCouloursBufferSize();
+		for (int i = 0; i < (numPointsPolygon * numVerticesCircle); ++i)
+		{
+			coulours_buffer[decalage + 4 * i + 0] = editingElementsColour.getRed() / 255.0f;
+			coulours_buffer[decalage + 4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
+			coulours_buffer[decalage + 4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
+			coulours_buffer[decalage + 4 * i + 3] = editingElementsColour.getAlpha() / 255.0f;
+		}
+		// manipulationLine
+		decalage += 4 * (numPointsPolygon * numVerticesCircle);
+		for (int i = 0; i < dottedLineVertexes; ++i)
+		{
+			coulours_buffer[decalage + 4 * i + 0] = editingElementsColour.getRed() / 255.0f;
+			coulours_buffer[decalage + 4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
+			coulours_buffer[decalage + 4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
+			coulours_buffer[decalage + 4 * i + 3] = editingElementsColour.getAlpha() / 255.0f;
+		}
+		// manipulationPoint
+		decalage += 4 * dottedLineVertexes;
+		for (int i = 0; i < numVerticesRing; ++i)
+		{
+			coulours_buffer[decalage + 4 * i + 0] = editingElementsColour.getRed() / 255.0f;
+			coulours_buffer[decalage + 4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
+			coulours_buffer[decalage + 4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
+			coulours_buffer[decalage + 4 * i + 3] = editingElementsColour.getAlpha() / 255.0f;
+		}
+#endif
 }
 void EditablePolygon::behaviorInit()
 {
@@ -119,9 +184,122 @@ void EditablePolygon::Paint(Graphics& g)
 void EditablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 {
     InteractivePolygon::CanvasResized(_parentCanvas);
-    
-    // Manipulation point (+ line...)
-    computeManipulationPoint();
+
+	// Manipulation point (+ line...)
+	computeManipulationPoint();
+
+    // vérifier fonctionnement après fusion
+	//pointDraggingRadius = 0.01f * (parentCanvas->getWidth() + parentCanvas->getHeight()) / 2.0f; // 1%
+
+}
+
+void EditablePolygon::RefreshOpenGLBuffers()
+{
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
+	DrawablePolygon::RefreshOpenGLBuffers();
+	RefreshContourPointsOpenGLBuffers();
+	RefreshManipulationPointOpenGLBuffer();
+#endif
+}
+
+void EditablePolygon::RefreshManipulationPointOpenGLBuffer()
+{
+	/// manipulationLine + manipulationPoint
+	//vertex
+	int decalage = DrawablePolygon::GetVerticesBufferSize() + numPointsPolygon * numVerticesCircle;
+	if (isActive)
+	{
+		computeManipulationLine((float)centerInPixels.get<0>(), (float)centerInPixels.get<1>(), (float)bmanipulationPointInPixels.get<0>(), (float)bmanipulationPointInPixels.get<1>(), 4.0f, 4.0f);
+		for (int i = 0; i < 3 * dottedLineVertexes; ++i)
+			vertices_buffer[3 * decalage + i] = g_vertex_dotted_line[i];
+		decalage += dottedLineVertexes;
+
+		float Xoffset = (float)bmanipulationPointInPixels.get<0>();
+		float Yoffset = (float)bmanipulationPointInPixels.get<1>();
+		float Zoffset = mainZoffset + 0.1f;
+		for (int j = 0; j < 3 * numVerticesRing; j += 3)
+		{
+			vertices_buffer[3 * decalage + j] = Xoffset + g_vertex_ring[j];
+			vertices_buffer[3 * decalage + j + 1] = Yoffset + g_vertex_ring[j + 1];
+			vertices_buffer[3 * decalage + j + 2] = Zoffset + g_vertex_ring[j + 2];
+		}
+	}
+	else
+	{
+		for (int i = 0; i < 3 * dottedLineVertexes; ++i)
+			vertices_buffer[3 * decalage + i] = 0.0f;
+		decalage += dottedLineVertexes;
+		for (int j = 0; j < 3 * numVerticesRing; ++j)
+			vertices_buffer[3 * decalage + j] = 0.0f;
+	}
+
+
+	//index
+	decalage = DrawablePolygon::GetVerticesBufferSize() + numPointsPolygon * numPointCircle;
+	int begin = DrawablePolygon::GetVerticesBufferSize() + numPointsPolygon * numVerticesCircle;
+	if (isActive)
+	{
+		for (int i = 0; i < dottedLineIndices; ++i)
+			indices_buffer[3 * decalage + i] = g_indices_dotted_line[i] + begin;
+		decalage += 2 * dottedLineNparts;
+		begin += dottedLineVertexes;
+		for (int j = 0; j < 3 * numVerticesRing; ++j)
+		{
+			indices_buffer[j + 3 * decalage] = ringIndices[j] + begin;
+		}
+		decalage += numVerticesRing;
+	}
+}
+
+void EditablePolygon::RefreshContourPointsOpenGLBuffers()
+{
+	int decalage = DrawablePolygon::GetVerticesBufferSize();
+	int numApexes = (int)contourPointsInPixels.outer().size() - 1;//isActive? contourPointsInPixels.outer().size() - 1 : 0;
+
+																  /// points
+																  // vertex
+	for (int k = 0; k < numApexes; ++k)
+	{
+		float Xoffset = (float)contourPointsInPixels.outer().at(k).get<0>();
+		float Yoffset = (float)contourPointsInPixels.outer().at(k).get<1>();
+		float Zoffset = mainZoffset + 0.1f;
+		for (int j = 0; j < 3 * numVerticesCircle; j += 3)
+		{
+			vertices_buffer[3 * decalage + j] = Xoffset + g_vertex_circle[j];
+			vertices_buffer[3 * decalage + j + 1] = Yoffset + g_vertex_circle[j + 1];
+			vertices_buffer[3 * decalage + j + 2] = Zoffset + g_vertex_circle[j + 2];
+		}
+		decalage += numVerticesCircle;
+	}
+	int decalageMax = 3 * numVerticesCircle * (numPointsPolygon - numApexes);
+	float *vertexPtr = &vertices_buffer[3 * decalage];
+	for (int k = 0; k < decalageMax; ++k)
+		vertexPtr[k] = 0.0f;
+
+	// index
+	decalage = DrawablePolygon::GetVerticesBufferSize(); // decalage dans le buffer index
+	int begin = DrawablePolygon::GetVerticesBufferSize(); // decalage dans le buffer vertex
+	const int count = 3 * numPointCircle;
+	for (int k = 0; k < numApexes; ++k)
+	{
+		int indexToAdd = begin + k * numVerticesCircle;
+		const int currentDecalage = 3 * decalage;
+		for (int j = 0; j < count; ++j)
+		{
+			indices_buffer[j + currentDecalage/*+ numVerticesPolygon*/] = circleIndices[j] + indexToAdd;
+		}
+		decalage += numPointCircle;
+	}
+	for (int k = numApexes; k < numPointsPolygon; ++k)
+	{
+		const int currentDecalage = 3 * decalage;
+		unsigned int *indicesPtr = &indices_buffer[currentDecalage];
+		for (int j = 0; j < count; ++j)
+			indicesPtr[j] = 0;
+		//indices_buffer[j +currentDecalage/*+ numVerticesPolygon*/] = 0;
+		decalage += numPointCircle;
+	}
+	begin += numPointsPolygon * numVerticesCircle;
 }
 
 void EditablePolygon::computeManipulationPoint()
@@ -167,10 +345,6 @@ void EditablePolygon::SetActive(bool activate)
 }
 
 
-
-
-
-// ===== EDITION FUNCTIONS =====
 
 
 
@@ -254,9 +428,8 @@ AreaEventType EditablePolygon::TryBeginPointMove(const Point<double>& hitPoint)
 
 AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
 {
-	bpt bnewLocation(newLocation.x, newLocation.y);
     AreaEventType areaEventType = AreaEventType::NothingHappened;
-    
+	bpt bnewLocation(newLocation.x, newLocation.y);
     // Simple contour point dragging
     if (pointDraggedId >= 0)
     {
@@ -285,6 +458,9 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
             if (isNewContourPointValid(sideDraggedId+1, newLocation2))
             {
                 moveContourPoint(sideDraggedId+1, newLocation2);
+#if defined(OPENGL_RENDERING) && OPENGL_RENDERING == 1
+                RefreshContourPointsOpenGLBuffers();
+#endif
                 areaEventType = AreaEventType::ShapeChanged;
             }
             // sinon, annulation du premier déplacement
@@ -300,6 +476,7 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
     {
         // Rotation will be applied anyway...
         // Security needed for point to stay within the canvas ?
+		
         areaEventType = AreaEventType::RotScale;
         
         // Computation of the RotScale transformation needed to move the manipulation
@@ -314,75 +491,60 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
          */
 		double r1 = boost::geometry::distance(centerInPixels, bmanipulationPointInPixels);
         double r2 = boost::geometry::distance(centerInPixels, bnewLocation);
-        double x1 = bmanipulationPointInPixels.get<0>() - centerInPixels.get<0>();
+       /* double x1 = bmanipulationPointInPixels.get<0>() - centerInPixels.get<0>();
         double x2 = bnewLocation.get<0>() - centerInPixels.get<0>();
         double y1 = bmanipulationPointInPixels.get<1>() - centerInPixels.get<1>();
         double y2 = bnewLocation.get<1>() - centerInPixels.get<1>();
 
 
 		double cos_a = (x2*x1 + y2*y1)/(r1*r2);
-        double sin_a = (y2*x1 - x2*y1)/(r1*r2);
+        double sin_a = (y2*x1 - x2*y1)/(r1*r2);*/
+
+		bpt testPt(bnewLocation);
+		boost::geometry::subtract_point(testPt, centerInPixels);
+		double radAngle = Math::ComputePositiveAngle(testPt);
+
         // ----- size -----
 		double size = r2 / r1;
         
         // === Application of this transformation to the whole polygon ===
         // --- size if polygon is still big enough only ---
-        double minDistanceFromCenter = 0.0;
+       // double minDistanceFromCenter = 0.0;
         bool wasSizeApplied = false;
-		bpolygon bnewContourPoints;
-        for (size_t i=0 ; i<contourPointsInPixels.outer().size() ;i++)
-        {
-			bnewContourPoints.outer().push_back(bpt(contourPointsInPixels.outer().at(i).get<0>() - centerInPixels.get<0>(),
-				contourPointsInPixels.outer().at(i).get<1>() - centerInPixels.get<1>()));
+		if (SizeChanged(size, true))
+		{
+			bmanipulationPointInPixels.set<0>(bnewLocation.get<0>());
+			bmanipulationPointInPixels.set<1>(bnewLocation.get<1>());
+			wasSizeApplied = true;
+		}
+		// always apply the rotation
+		//double radAngle = Math::ComputePositiveAngle(bnewLocation);//atan(sin_a / cos_a);
 
-            bnewContourPoints.outer().at(i) =bpt(size * bnewContourPoints.outer().at(i).get<0>(),
-                                                size * bnewContourPoints.outer().at(i).get<1>());
-            if (boost::geometry::distance(bnewContourPoints.outer().at(i), bpt(0,0)) > minDistanceFromCenter)
-                minDistanceFromCenter = boost::geometry::distance(bnewContourPoints.outer().at(i), bpt(0, 0));
+		Rotate(-radAngle + rotationAngle);
+		rotationAngle = radAngle;
 
-			bnewContourPoints.outer().at(i).set<0>(bnewContourPoints.outer().at(i).get<0>() + centerInPixels.get<0>());
-			bnewContourPoints.outer().at(i).set<1>(bnewContourPoints.outer().at(i).get<1>() + centerInPixels.get<1>());
-        }
-
-        if (minDistanceFromCenter >=
-            minimumSizePercentage*(parentCanvas->getWidth()+parentCanvas->getHeight())/2.0)
-        {
-            wasSizeApplied = true;
-            contourPointsInPixels = bnewContourPoints;
-            bmanipulationPointInPixels = bnewLocation;
-        }
-        // --- rotation is always applied ---
-        for (size_t i=0 ; i<contourPointsInPixels.outer().size() ;i++)
-        {
-			contourPointsInPixels.outer().at(i).set<0>(contourPointsInPixels.outer().at(i).get<0>() - centerInPixels.get<0>());
-			contourPointsInPixels.outer().at(i).set<1>(contourPointsInPixels.outer().at(i).get<1>() - centerInPixels.get<1>());
-			contourPointsInPixels.outer().at(i) = bpt(cos_a*contourPointsInPixels.outer().at(i).get<0>()
-                                                     -sin_a*contourPointsInPixels.outer().at(i).get<1>(),
-                                                     sin_a*contourPointsInPixels.outer().at(i).get<0>()
-                                                     +cos_a*contourPointsInPixels.outer().at(i).get<1>());
-			
-			contourPointsInPixels.outer().at(i).set<0>(contourPointsInPixels.outer().at(i).get<0>() + centerInPixels.get<0>());
-			contourPointsInPixels.outer().at(i).set<1>(contourPointsInPixels.outer().at(i).get<1>() + centerInPixels.get<1>());
-        }
+		
         if (!wasSizeApplied)
         {
             // If size wasn't applied, we need to rotate the manipulation point
-			bmanipulationPointInPixels.set<0>(bmanipulationPointInPixels.get<0>() - centerInPixels.get<0>());
-			bmanipulationPointInPixels.set<1>(bmanipulationPointInPixels.get<1>() - centerInPixels.get<1>());
-            bmanipulationPointInPixels = bpt(cos_a*bmanipulationPointInPixels.get<0>()
-                                                     -sin_a*bmanipulationPointInPixels.get<1>(),
-                                                     sin_a*bmanipulationPointInPixels.get<0>()
-                                                      +cos_a*bmanipulationPointInPixels.get<1>());
-			bmanipulationPointInPixels.set<0>(bmanipulationPointInPixels.get<0>() + centerInPixels.get<0>());
-			bmanipulationPointInPixels.set<1>(bmanipulationPointInPixels.get<1>() + centerInPixels.get<1>());
+			bpt newManipulationPoint;
+
+			boost::geometry::strategy::transform::translate_transformer<double, 2, 2> trans(-centerInPixels.get<0>(), -centerInPixels.get<1>());
+			boost::geometry::strategy::transform::translate_transformer<double, 2, 2> invtrans(centerInPixels.get<0>(), centerInPixels.get<1>());
+			boost::geometry::strategy::transform::rotate_transformer<boost::geometry::radian, double, 2, 2> rot(radAngle - rotationAngle);
+
+
+			boost::geometry::transform(bmanipulationPointInPixels, newManipulationPoint, trans);
+			boost::geometry::transform(newManipulationPoint, bmanipulationPointInPixels, rot);
+			boost::geometry::transform(bmanipulationPointInPixels, newManipulationPoint, invtrans);
+
+			bmanipulationPointInPixels = newManipulationPoint;
         }
         
         // After manipulation computation : normalized coordinates update
-        for (size_t i=0; i < contourPointsInPixels.outer().size() ; i++)
-        {
-			contourPoints.outer().at(i) = bpt(contourPointsInPixels.outer().at(i).get<0>() / ((double)parentCanvas->getWidth()),
-											   contourPointsInPixels.outer().at(i).get<1>() / ((double)parentCanvas->getHeight()));
-        }
+		updateContourPoints();
+		RefreshContourPointsOpenGLBuffers();
+		RefreshManipulationPointOpenGLBuffer();
     }
     
     else if (pointDraggedId == EditableAreaPointId::Center)
@@ -411,6 +573,12 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
             Translate(translation);
             areaEventType = AreaEventType::Translation;
         }
+		// la partie du buffer pour le polygon et son contour sont calculée par InteractivePolygon::Refresh...
+		// à la fin de la fonction -> juste recalculer les cercles pour les points du contour et le manipulationPoint
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
+		RefreshContourPointsOpenGLBuffers();
+		RefreshManipulationPointOpenGLBuffer();
+#endif
     }
     
     
@@ -418,8 +586,13 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
     lastLocation = newLocation;
     
     // Graphic updates to all base attributes inherited
-    if (areaEventType != AreaEventType::NothingHappened)
-        InteractivePolygon::CanvasResized(this->parentCanvas);
+	if (areaEventType != AreaEventType::NothingHappened)
+	{
+		InteractivePolygon::CanvasResized(this->parentCanvas);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
+		InteractivePolygon::RefreshOpenGLBuffers();
+#endif
+	}
     return areaEventType;
 }
 
@@ -436,6 +609,76 @@ AreaEventType EditablePolygon::EndPointMove()
 	eventType = AreaEventType::PointDragStops;
 
 	return eventType;
+}
+
+bool EditablePolygon::SizeChanged(double size, bool minSize)
+{
+
+	bool returnValue = false;
+	//// --- size if polygon is still big enough only ---
+	double minDistanceFromCenter = 0.0;
+	bool wasSizeApplied = false;
+	bpolygon testBoost2, testBoost;
+	boost::geometry::strategy::transform::translate_transformer<double, 2, 2> trans(-centerInPixels.get<0>(), -centerInPixels.get<1>());
+	boost::geometry::strategy::transform::translate_transformer<double, 2, 2> invtrans(centerInPixels.get<0>(), centerInPixels.get<1>());
+	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> resizer(size, size);
+
+	boost::geometry::transform(contourPointsInPixels, testBoost, trans);
+	boost::geometry::transform(testBoost, testBoost2, resizer);
+	boost::geometry::transform(testBoost2, testBoost, invtrans);
+
+
+	for (size_t i = 0; i < testBoost.outer().size(); i++)
+	{
+		//if (testBoost.outer().at(i).get<0>() < 0 || testBoost.outer().at(i).get<1>() < 0)
+		//	DBG("probleme");
+		if (boost::geometry::distance(testBoost.outer().at(i), centerInPixels) > minDistanceFromCenter)
+			minDistanceFromCenter = boost::geometry::distance(testBoost.outer().at(i), centerInPixels);
+	}
+	//std::vector<bpolygon> comparaison;
+	//boost::geometry::difference(bnewContourPoints, testBoost, comparaison);
+
+	if ((!minSize) || (minDistanceFromCenter >=
+		minimumSizePercentage*(parentCanvas->getWidth() + parentCanvas->getHeight()) / 2.0))
+	{
+		wasSizeApplied = true;
+		contourPointsInPixels.clear(); // test;
+		contourPointsInPixels = testBoost;//bnewContourPoints;
+										  //bmanipulationPointInPixels.set<0>(centerInPixels.get<0>() + manipulationPointRadius*size); //= bnewLocation;
+										  //bmanipulationPointInPixels.set<1>(centerInPixels.get<1>() + manipulationPointRadius*size);
+										  //bmanipulationPointInPixels = newManipulationPt;
+		returnValue = true;
+		//a *= size; // faire diviser pas Heght et width?
+		//b *= size;
+	}
+
+
+	return returnValue;
+}
+
+void EditablePolygon::Rotate(double Radian)
+{
+	bpolygon newPolygon;
+
+	boost::geometry::strategy::transform::translate_transformer<double, 2, 2> trans(-centerInPixels.get<0>(), -centerInPixels.get<1>());
+	boost::geometry::strategy::transform::translate_transformer<double, 2, 2> invtrans(centerInPixels.get<0>(), centerInPixels.get<1>());
+	boost::geometry::strategy::transform::rotate_transformer<boost::geometry::radian, double, 2, 2> rot(Radian);
+
+
+	boost::geometry::transform(contourPointsInPixels, newPolygon, trans);
+	boost::geometry::transform(newPolygon, contourPointsInPixels, rot);
+	boost::geometry::transform(contourPointsInPixels, newPolygon, invtrans);
+
+	contourPointsInPixels.clear();
+	contourPointsInPixels = newPolygon;
+
+}
+
+void EditablePolygon::updateContourPoints()
+{
+	contourPoints.clear();
+	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scaler(1 / ((double)parentCanvas->getWidth()), 1 / ((double)parentCanvas->getHeight()));
+	boost::geometry::transform(contourPointsInPixels, contourPoints, scaler);
 }
 
 
@@ -668,4 +911,57 @@ void EditablePolygon::recreateNormalizedPoints()
                            centerInPixels.get<1>()/parentCanvas->getHeight());
 }
 
+void EditablePolygon::computeManipulationLine(float Ox, float Oy, float Mx, float My, float width, float height)
+{
+	int N = 20;
+	float length = (float)boost::geometry::distance(bpt(Ox, Oy), bpt(Mx, My));//0.25 * (getWidth() + getHeight()) / 2.0;
+	if (length / (2 * height) > 20.0f)
+		height = (length / 20.0f) / 2.0f;
+	else
+		N = int(length / (2 * height));
 
+	float sina = (My - Oy) / length;
+	float cosa = (Mx - Ox) / length;
+
+	for (int i = 0; i < dottedLineNparts; ++i)
+	{
+		if (i < N)
+		{
+			// up_left
+			g_vertex_dotted_line[i * 3 * 4] = Ox + i * 2 * height * cosa - (width / 2.0f) * sina;
+			g_vertex_dotted_line[i * 3 * 4 + 1] = Oy + i * 2 * height * sina + (width / 2.0f) * cosa;
+			g_vertex_dotted_line[i * 3 * 4 + 2] = 0.1f;
+			// down_left
+			g_vertex_dotted_line[i * 3 * 4 + 3] = Ox + i * 2 * height * cosa + (width / 2.0f) * sina;
+			g_vertex_dotted_line[i * 3 * 4 + 4] = Oy + i * 2 * height * sina - (width / 2.0f) * cosa;
+			g_vertex_dotted_line[i * 3 * 4 + 5] = 0.1f;
+			// up_right
+			g_vertex_dotted_line[i * 3 * 4 + 6] = Ox + (2 * i + 1)  * height * cosa - (width / 2.0f) * sina;
+			g_vertex_dotted_line[i * 3 * 4 + 7] = Oy + (2 * i + 1) * height * sina + (width / 2.0f) * cosa;
+			g_vertex_dotted_line[i * 3 * 4 + 8] = 0.1f;
+			// down_right
+			g_vertex_dotted_line[i * 3 * 4 + 9] = Ox + (2 * i + 1) * height * cosa + (width / 2.0f) * sina;
+			g_vertex_dotted_line[i * 3 * 4 + 10] = Oy + (2 * i + 1) * height * sina - (width / 2.0f) * cosa;
+			g_vertex_dotted_line[i * 3 * 4 + 11] = 0.1f;
+
+			g_indices_dotted_line[i * 6] = i * 4;
+			g_indices_dotted_line[i * 6 + 1] = i * 4 + 1;
+			g_indices_dotted_line[i * 6 + 2] = i * 4 + 2;
+			g_indices_dotted_line[i * 6 + 3] = i * 4 + 1;
+			g_indices_dotted_line[i * 6 + 4] = i * 4 + 2;
+			g_indices_dotted_line[i * 6 + 5] = i * 4 + 3;
+		}
+		else
+		{
+			for (int j = 0; j < 12; ++j)
+			{
+				g_vertex_dotted_line[i * 12 + j] = 0.0f;
+			}
+			for (int j = 0; j < 6; ++j)
+			{
+				g_indices_dotted_line[i * 6 + j] = 0;
+			}
+		}
+	}
+
+}

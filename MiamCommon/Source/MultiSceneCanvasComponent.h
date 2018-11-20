@@ -33,8 +33,6 @@ namespace Miam
 class MultiSceneCanvasComponent    : public Component,
                                      public Button::Listener
 {
-
-    
     
     // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
     
@@ -76,7 +74,7 @@ public:
     ~MultiSceneCanvasComponent();
     
     void LinkToManager(std::shared_ptr<MultiSceneCanvasInteractor> canvasManager_);
-
+	void ReleaseOpengGLResources();
     
     // - - - - - Painting and Resizing - - - - -
     

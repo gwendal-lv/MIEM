@@ -41,6 +41,7 @@ MultiSceneCanvasComponent::MultiSceneCanvasComponent()
     // Buttons then
     // A CHANGER
     sceneChoiceTextButtons.push_back(new TextButton("Default unique scene"));
+	sceneChoiceTextButtons.back()->setLookAndFeel(&customLF);
     addAndMakeVisible(sceneChoiceTextButtons.back());
 }
 
@@ -55,6 +56,12 @@ void MultiSceneCanvasComponent::LinkToManager(std::shared_ptr<MultiSceneCanvasIn
     canvasManager = canvasManager_;
     
     childrenCanvas->CompleteInitialization(canvasManager);
+}
+
+void MultiSceneCanvasComponent::ReleaseOpengGLResources()
+{
+	childrenCanvas->ReleaseOpengGLResources();
+	childrenCanvas->waitForOpenGLResourcesRealeased();
 }
 
 
@@ -122,7 +129,7 @@ void MultiSceneCanvasComponent::UpdateSceneButtons(std::vector< std::shared_ptr<
 
 void MultiSceneCanvasComponent::updateSceneButtonsBounds()
 {
-    int buttonWidth = roundToInt(((float)(getWidth())-(float)(space))/(float)(sceneChoiceTextButtons.size()))-space;
+    int buttonWidth = int(((float)(getWidth())-(float)(space))/(float)(sceneChoiceTextButtons.size()))-space;
     for (size_t i=0 ; i<sceneChoiceTextButtons.size() ; i++)
     {
         sceneChoiceTextButtons[i]->setBounds(space+(int)(i)*(buttonWidth+space), 0, buttonWidth, 24);
@@ -135,6 +142,7 @@ void MultiSceneCanvasComponent::addButton(std::string buttonName)
     sceneChoiceTextButtons.push_back(new TextButton(buttonName));
     addAndMakeVisible(sceneChoiceTextButtons.back());
     sceneChoiceTextButtons.back()->addListener(this);
+	sceneChoiceTextButtons.back()->setLookAndFeel(&customLF);
 
 	// Solves an issue with touch : some touch events are interpreted (win, mac)
 	// as "right clicks" and would not trigger the button...

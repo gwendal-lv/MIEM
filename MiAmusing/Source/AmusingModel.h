@@ -17,7 +17,7 @@
 //#include "AudioPlayer.h"
 #include "AudioManager.h"
 #include "Presenter.h"
-
+#include <string>
 
 #include<memory>
 
@@ -44,8 +44,11 @@ namespace Amusing
 			void removeDeviceManagerFromOptionWindow();
 			std::shared_ptr<AudioDeviceManager> sharedAudioDeviceManager;
 			//ScopedPointer<AudioDeviceManager> sharedAudioDeviceManager;
+			void addNewSoundPath(int idx, std::string newPath);
+			String getSoundPath(int idx);
 			
 			MidiOutput* getMidiOutput();
+			std::map<int, std::string> idxToPath;
     };
 }
 

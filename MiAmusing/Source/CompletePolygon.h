@@ -29,6 +29,8 @@ namespace Amusing
 		//public AnimatedAppComponent
 	{
 	public:
+
+		CompletePolygon(bptree::ptree& areaTree);
 		CompletePolygon(int64_t _Id);
 		CompletePolygon(int64_t _Id,
 			bpt _center, int pointsCount, float radius,
@@ -44,16 +46,26 @@ namespace Amusing
 
 		~CompletePolygon();
 
-		virtual IDrawableArea* Clone() const override { return new CompletePolygon(*this); }
+		virtual std::shared_ptr<IDrawableArea> Clone() override
+		{
+			auto clone = std::make_shared<CompletePolygon>(*this);
+			clone->onCloned();
+			return clone;
+		}
 
 		void Copy(std::shared_ptr<CompletePolygon> polygonToCopy);
 
 		void SetActive(bool activate);
 
-		
+		void SetAlpha(float newAlpha) override;
+
+		bool shouldShowOptions();
 
 		
-		void CanvasResized(SceneCanvasComponent* _parentCanvas);
+		void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
+		AreaEventType TryBeginMultiTouchAction(const Point<double>& newLocation);
+		AreaEventType TryMoveMultiTouchPoint(const Point<double>& newLocation);
+		AreaEventType EndMultiTouchPointMove();
 		void Paint(Graphics& g) override;
 
 		void lengthToPercent();
@@ -63,19 +75,27 @@ namespace Amusing
 		AreaEventType EndPointMove();
 		void setCursorVisible(bool isVisible, SceneCanvasComponent* _parentCanvas);
 		bpolygon getPolygon();
-		std::shared_ptr<CompletePolygon> fusion(std::shared_ptr<CompletePolygon> polyToFusion, int Id);
-		std::shared_ptr<AreaEvent> intersection(std::shared_ptr<CompletePolygon> hitPolygon, int Id, int N);
+		//std::shared_ptr<CompletePolygon> fusion(std::shared_ptr<CompletePolygon> polyToFusion, int Id);
 		bool getUnion(bpolygon hitPolygon, bpolygon &output);
 		double getAngularPercentage(bpt hitPoint);
 		double getLinearPercentage(bpt hitPoint);
 		bool getAllPercentages(int idx, double &value);
 		bool getAllDistanceFromCenter(int idx, int &value);
 
+		// return center Position in Pixels;
 		bpt getCenter();
+
+		// return normalized center position
+		bpt getCenterNormalized();
+
+		// return normalized radius
+		float getNormalizedRadius();
+
+		void setCursorsBaseNote(int idx, double newBaseNote);
 		void setCursorsSpeed(int idx, double newSize);
 		bpt computeLinearCursorCenter(double p);
 		bpt computeAngularCursorCenter(double p);
-		float computeCursorAlpha(double p, bpt _center);
+		float computeCursorAlpha(double p, bpt _center,float a);
 		boost::geometry::model::segment<bpt> getSegment(bpt hitPoint);
 		boost::geometry::model::segment<bpt> getSegmentInPixels(bpt hitPointInPixels);
 
@@ -92,8 +112,35 @@ namespace Amusing
 		void setChordFlag(bpt chordPt, bool isTrue, std::shared_ptr<CompletePolygon> areaForChord);
 		void resetChords();
 		bool getChordParameters(int idx, std::shared_ptr<CompletePolygon> &chordArea, double &pC);
+
+		virtual std::shared_ptr<bptree::ptree> GetTree() override;
+
+		void showAllTarget(bool shouldBeShowed);
+
+		void Translate(const Point<double>& translation);
+
+		void DisableTranslation(bool shouldBeDisabled);
+
+		double GetFullSceneRatio();
+
+		bool SizeChanged(double _size, bool minSize);
+
+		virtual void RefreshOpenGLBuffers() override;
+		void setOldVelocity(double value);
+		double getOldVelocity();
+		void RefreshTargetOpenGLBuffers();
+
+		const int GetVerticesBufferSize() override {					// points du contour					manipulationLine	manipulationPoint
+			return EditablePolygon::GetVerticesBufferSize() /*+ Nradius * bullsEye[0].GetVerticesBufferSize()*/;
+		}
+		int GetCouloursBufferSize() override { return EditablePolygon::GetCouloursBufferSize() /*+ Nradius * bullsEye[0].GetCouloursBufferSize()*/; }
+		int GetIndicesBufferSize() override { return EditablePolygon::GetIndicesBufferSize() /*+ Nradius * bullsEye[0].GetIndicesBufferSize()*/; }
+//        void setVisible(bool shoulBeVisible) override{ DBG("no more visible !!"); areaIsVisible = shoulBeVisible; }
+//        bool isVisible() override { return areaIsVisible; }
 		
 	private:
+		double oldVelocity;
+		int numAngles;
 		JUCE_LEAK_DETECTOR(CompletePolygon)
 		// attributes linked to the Cursor
 		bool showCursor;
@@ -103,6 +150,10 @@ namespace Amusing
 		std::vector<double> anglesPercentages;
 		//std::shared_ptr<Cursor> cursor;//std::shared_ptr<Miam::EditableEllipse> cursor;
 		std::vector<std::shared_ptr<Cursor>> cursors;
+		double orientationAngle; // final orientation of the area after rotation
+		bool multiTouchActionBegun;
+		double currentTouchRotation; // to keep track of the rotation during multitouch action
+		double currentTouchSize;
 		
 		float initCursorSize;
 		float cursorSize;
@@ -113,14 +164,17 @@ namespace Amusing
 		bpt bullsEyeCenter;
 		double interval;
 		double startRadius;
-		static const int Nradius = 7;
-		std::vector<EditableEllipse> bullsEye;
+		static const int Nradius = 5;
+		//std::vector<EditableEllipse> bullsEye;
 		double radius[Nradius];
+		double radiusInPixels[Nradius];
 		bool circlesToShow[Nradius];
 		void CreateBullsEye();
 		void PaintBullsEye(Graphics& g);
 		void CanvasResizedBullsEye(SceneCanvasComponent* _parentCanvas);
 		std::vector<int> OnCircles;
+		bool showAllCircles;
+		bool deleteOldCircles;
 		
 		// flags and invisible points for chords
 		std::vector<bool> chordFlag;
@@ -128,8 +182,14 @@ namespace Amusing
 		std::vector<std::shared_ptr<CompletePolygon>>  chordAreaForPercentage;
 		std::vector<double> chordsAnglePercentage; // no need of chordsOnCircle, the audio manager will compute the chords
 
+		int previousSizeToShow; // nombre de cercle qu'il fallait dessiner précédemment
 
 		double pc; // si ca foire quand on bouge la forme en mm temps que le curseur doit tourner -> garder en memoire le poucentage ou se trouve le curseur et rappeler setreadingposition avec ce pourcentage pour le remettre au nouvel endroit.
+
+		bool onlyRotationAllowed;
+
+		bool areaIsVisible;
+		
 	};
 }
 

@@ -18,6 +18,8 @@ Author:  Gwendal Le Vaillant
 #include <map>
 #include <string>
 
+#include <boost/property_tree/xml_parser.hpp>
+
 #include "IGraphicSessionManager.h"
 
 #include "EditablePolygon.h"
@@ -134,22 +136,32 @@ namespace Amusing {
 
 
 		// ----- Event to View -----
-		void DisplayInfo(String info) override;
+		void DisplayInfo(String info,int priority = 0) override;
 
-		void OnAddArea();
-		void OnAddSquare();
+		void OnAddSquare(float x = 0.5f, float y = 0.5f);
+		void OnAddAndSelectSquare(const MouseEvent& mouseE);
+		void TransmitMouseDrag(const MouseEvent& mouseE);
+		void SendDeletingMouseDown(const MouseEvent& mouseE);
 		void OnAddTriangle();
 		void OnAddHexa();
 		void OnAddCircle();
 		void OnAddTrueCircle();
-		void OnAddFollower();
+		void hideAddPolygon();
+		void showAddPolygon();
 		void OnAddComplete();
+		void OnSoundClick();
 		void OnDelete();
+		void OnTestChangeSound();
+		void OnSave(std::string filename);
+
+		void OnLoad(std::string filename);
 
 		void OnFollowerTranslation(std::shared_ptr<GraphicEvent> graphicE);
 		void OnAudioPosition(double position);
 		void SetAllAudioPositions(double position);
 		void SetAudioPositions(std::shared_ptr<Cursor> area, double position);
+
+		void lookForAreasConcerned(Colour colourConcerned); //look for the areas concerned by this update to send msg to the audio model to update the corresponding timeLines
 
 		void OnPlayClicked();
 		void OnPauseClicked();
@@ -159,6 +171,7 @@ namespace Amusing {
 
 		void OnDeviceOptionsClicked();
 		void SetAllChannels(); // bouger d'endroit dans le constructeur pour la comprehension (pas view event)
+		void setSamplesColor(int Nsamples, Colour colorCode[]);
 		void SetMidiChannel(int ch);
 
 		void setSpeedArea(std::shared_ptr<IEditableArea> area, double speed);
@@ -167,10 +180,15 @@ namespace Amusing {
 		void setOctave(std::shared_ptr<IEditableArea> area, int newOctave);
 		double getVelocity(std::shared_ptr<IEditableArea> area);
 		int getOctave(std::shared_ptr<IEditableArea> area);
+		int getColor(std::shared_ptr<IEditableArea> area);
+		void setColor(std::shared_ptr<IEditableArea> area, int colourIdx);
+		int getTempo();
+
 	private :
 		bool deleting;
 		int tempo;
 		int circleToNote(int numCirc);
+		std::shared_ptr<IDrawableArea> temporaryArea;
 	};
 
 

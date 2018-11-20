@@ -68,6 +68,11 @@ namespace Amusing {
         /// \brief Function called after both View and Presenter are contructed
         void CompleteInitialization(GraphicSessionManager*, MultiCanvasComponentAmusing*);
 		void CompleteInitialization(AmusingModel* _model);
+		void ReleaseOpengGLResources();
+
+		void setSampleColor(const int numSamples, Colour colorCode[]);
+		void setDefaultPath(String defaultPath);
+		void setSoundPath(int idx, String _path);
 
 		// ----- Events to the Presenter -----
         
@@ -100,8 +105,11 @@ namespace Amusing {
         
         // General UI controls and displays
 		void ShowDeviceOptionsDialog();
+		void ShowSoundManager();
 		void removeDeviceManagerFromOptionWindow();
 
+		std::shared_ptr<bptree::ptree> GetAudioSettingsTree();
+		void setSoundsSettings(bptree::ptree tree);
 		//void setDeviceSelectorComponent(AudioDeviceManager* deviceManager);
     };
     

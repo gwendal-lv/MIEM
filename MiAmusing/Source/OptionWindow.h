@@ -16,7 +16,7 @@ class MainContentComponent;
 namespace Amusing
 {
 	class OptionWindow : public Component,
-		public ButtonListener, public ChangeListener
+		public Button::Listener, public ChangeListener
 	{
 	public:
 		OptionWindow(MainContentComponent* _mainComponent);
@@ -31,8 +31,11 @@ namespace Amusing
 
 		void changeListenerCallback(ChangeBroadcaster*) override;
 
+		void saveAudioDeviceCurrentState();
+
 	private:
 		TextButton* OKbutton;
+		TextButton* cancelButton;
 		ScopedPointer<AudioDeviceAndMidiOutputSelectorComponent> audioSetupComp;
 		MainContentComponent* mainComponent;
 		std::shared_ptr<AudioDeviceManager> deviceManager;

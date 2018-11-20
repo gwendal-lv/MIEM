@@ -11,7 +11,7 @@
 
 
 // = = = = = = = = = SUPPRESSION D'UN WARNING Visual Studio = = = = = = = = = = =
-// Warning d'hŽritage virtuel... Alors que c'est prŽvu normalement en C++11 !
+// Warning d'h�ritage virtuel... Alors que c'est pr�vu normalement en C++11 !
 #ifdef _MSC_VER // indique que c'est une version de visual studio
 	#pragma warning( disable : 4250 )
 #endif
@@ -45,7 +45,7 @@ class SceneCanvasComponent;
 
 namespace Miam
 {
-    // Mise ici parce que les aires seulement sont concernŽes par l'opacitŽ...
+    // Mise ici parce que les aires seulement sont concern�es par l'opacit�...
     enum class OpacityMode {
         Independent,
         DependingOnExcitement,
@@ -88,11 +88,11 @@ namespace Miam
         /// \brief To be overriden within any concrete area that inherits from this.
         virtual std::shared_ptr<IDrawableArea> Clone() = 0;
         protected :
-        /// \brief Applique toutes les modifications nŽcessaires suite au clonage d'un objet
+        /// \brief Applique toutes les modifications n�cessaires suite au clonage d'un objet
         ///
         /// Par exemple : supprime les liens avec d'autres objets graphiques (s'ils existent),
-        /// en supposant que ces liens ont ŽtŽ copiŽs
-        /// simplement lors d'un clonage qui vient tout juste d'tre fait.
+        /// en supposant que ces liens ont �t� copi�s
+        /// simplement lors d'un clonage qui vient tout juste d'�tre fait.
         ///
         /// \warning To be called from any Clone() overriden method
         virtual void onCloned() = 0;
@@ -112,6 +112,11 @@ namespace Miam
         /// of all points.
         virtual void CanvasResized(SceneCanvasComponent* parentCanvas) = 0;
         
+		/// \brief This function is used to refresh the vertices, the indices, and the coulours buffers
+		/// before sending them to OpenGL renderer
+		virtual void RefreshOpenGLBuffers() = 0;
+		
+		//virtual Matrix3D<float> GetModelMatrix() = 0;
         
         // ----- Setters and Getters -----
         
@@ -124,6 +129,23 @@ namespace Miam
         virtual void SetOpacityMode(OpacityMode enable) = 0;
         virtual OpacityMode GetOpacityMode() const = 0;
         virtual void SetRenderingScale(double renderingScale_) = 0;
+
+		virtual float* GetVerticesBufferPtr() = 0;
+		virtual float* GetCoulourBufferPtr() = 0;
+		virtual unsigned int* GetIndicesBufferPtr() = 0;
+
+		virtual void setVisible(bool shouldBeVisible) = 0;
+		virtual bool isVisible() = 0;
+
+		virtual const int GetVerticesBufferSize() = 0;
+		virtual int GetIndicesBufferSize() = 0;
+		virtual int GetCouloursBufferSize() = 0;
+
+		virtual float GetCouloursBufferElt(int idx) = 0;
+		virtual float GetVerticesBufferElt(int idx) = 0;
+		virtual int GetIndicesBufferElt(int idx) = 0;
+
+		virtual void setZoffset(const float newOffset) = 0;
         
         /// \brief Sets the name that could be displayed on screen next to the center
         virtual void SetName(String newName) = 0;

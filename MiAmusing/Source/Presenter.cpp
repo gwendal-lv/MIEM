@@ -16,11 +16,10 @@
 
 #include "JuceHeader.h"
 
-#include "AnimatedPolygon.h"
-#include "Follower.h"
 #include "GraphicEvent.h"
 #include "MultiAreaEvent.h"
 #include "Cursors.h"
+#include "LUT.h"
 
 
 using namespace Amusing;
@@ -29,15 +28,56 @@ using namespace Amusing;
 // - - - - - Contruction and Destruction - - - - -
 
 Presenter::Presenter(View* _view) :
-    view(_view), test(),
+    view(_view), 
     appMode(AppMode::Loading), // app is loading while the Model hasn't fully loaded yet
 
     graphicSessionManager(this, _view)
 {
-	test.insert(std::pair<int, double>(2, 5.5));
+	//test.insert(std::pair<int, double>(2, 5.5));
     // After all sub-modules are built, the presenter refers itself to the View
     view->CompleteInitialization(this);
     view->GetMainContentComponent()->resized();
+
+	const int numSamples = 10;
+	Colour colorCode[numSamples] = { 
+		Colours::grey,
+		Colours::red,
+		Colours::green,
+		Colours::blue,
+		Colours::beige,
+		Colours::burlywood,
+		Colours::indianred,
+		Colours::cyan,
+		Colours::fuchsia,
+		Colours::yellow
+	};
+	
+	view->setSampleColor(numSamples, colorCode);
+
+	if (BinaryData::namedResourceListSize == 1)
+	{
+		String defaultPath = BinaryData::namedResourceList[0];
+		view->setDefaultPath(defaultPath);
+	}
+	else
+	{
+		int idx(0);
+		int i(0);
+		while (i < BinaryData::namedResourceListSize)
+		{
+			String originalName = BinaryData::originalFilenames[i];
+			if (!originalName.matchesWildcard("*.png", true) && !originalName.matchesWildcard("*.xml", true))
+			{
+				view->setSoundPath(idx, BinaryData::namedResourceList[i]);
+				++idx;
+			}
+			++i;
+		}
+
+	}
+	
+
+	graphicSessionManager.setSamplesColor(numSamples, colorCode);
     
     // HERE, WE SHOULD LOAD THE DEFAULT FILE
     //graphicSessionManager.__LoadDefaultTest();
@@ -46,7 +86,7 @@ Presenter::Presenter(View* _view) :
     appModeChangeRequest(AppMode::None);
 	Nsources = 0;
 	Ncursors = 0;
-	Nfollower = 0;
+	//Nfollower = 0;
 	tempo = 50;
 	masterVolume = 0.5f;
 	SetAllChannels();
@@ -65,6 +105,49 @@ void Presenter::CompleteInitialisation(AmusingModel* _model)
     // Self init
     model = _model;
 	view->CompleteInitialization(model);
+
+	const int numSamples = 10;
+	//Colour colorCode[numSamples] = { Colours::grey ,Colours::blue,Colours::red,Colours::green };
+	Colour colorCode[numSamples] = {
+		Colours::grey,
+		Colours::red,
+		Colours::green,
+		Colours::blue,
+		Colours::beige,
+		Colours::burlywood,
+		Colours::indianred,
+		Colours::cyan,
+		Colours::fuchsia,
+		Colours::yellow
+	};
+
+
+	/*String defaultPath;
+	for (int i = 0; i < BinaryData::namedResourceListSize; ++i)
+	{
+		defaultPath = BinaryData::originalFilenames[i];
+		if (!defaultPath.matchesWildcard("*.png", true))
+		{
+			defaultPath = BinaryData::namedResourceList[i];
+			break;
+		}
+	}
+	
+	for (int i = 0; i < numSamples; ++i)
+			setColorPath(i, colorCode[i], defaultPath);*/
+
+	int idx(0);
+	int i(0);
+	while(idx < numSamples)
+	{
+		String originalName = BinaryData::originalFilenames[i];
+		if (!originalName.matchesWildcard("*.png", true))
+		{
+			setColorPath(idx, colorCode[idx], BinaryData::namedResourceList[i]);
+			++idx;
+		}
+		++i;
+	}
 	//graphicSessionManager.CompleteInitialization(model);
 }
 
@@ -157,19 +240,33 @@ int Presenter::getNote(std::shared_ptr<IEditableArea> area, int circle)
 
 void Presenter::setOctave(std::shared_ptr<IEditableArea> currentArea, int newOctave)
 {
-	if (octave.find(currentArea) != octave.end())
+	//if (octave.find(currentArea) != octave.end())
 		octave[currentArea] = newOctave;
 	
 }
 
-void Presenter::setChannel(std::shared_ptr<EditableScene> scene,int channel)
+int Presenter::getColorIdx(std::shared_ptr<IEditableArea> currentArea)
 {
-	DBG("size of the map = " + (String)sceneToChannel.size());
-	sceneToChannel[scene] = channel;
-	//test[5] = 2;
-	//test.insert(std::pair<int, double>(3, 5.8));
-	//graphicSessionManager.HandleEventSync(std::shared_ptr<SceneEven)
+	if (colorIdx.find(currentArea) == colorIdx.end())
+	{
+		colorIdx[currentArea] = 0;
+	}
+	return colorIdx[currentArea];
 }
+
+void Presenter::setColorIdx(std::shared_ptr<IEditableArea> currentArea, int idx)
+{
+	colorIdx[currentArea] = idx;
+}
+
+//void Presenter::setChannel(std::shared_ptr<EditableScene> scene,int channel)
+//{
+//	DBG("size of the map = " + (String)sceneToChannel.size());
+//	sceneToChannel[scene] = channel;
+//	//test[5] = 2;
+//	//test.insert(std::pair<int, double>(3, 5.8));
+//	//graphicSessionManager.HandleEventSync(std::shared_ptr<SceneEven)
+//}
 
 int Presenter::getOctave(std::shared_ptr<IEditableArea> area)
 {
@@ -179,12 +276,12 @@ int Presenter::getOctave(std::shared_ptr<IEditableArea> area)
 		return 6;
 }
 
-int Presenter::getChannel(std::shared_ptr<EditableScene> scene)
-{
-	if (sceneToChannel.empty() || sceneToChannel.find(scene) == sceneToChannel.end())
-		sceneToChannel[scene] = 1;
-	return sceneToChannel[scene];
-}
+//int Presenter::getChannel(std::shared_ptr<EditableScene> scene)
+//{
+//	if (sceneToChannel.empty() || sceneToChannel.find(scene) == sceneToChannel.end())
+//		sceneToChannel[scene] = 1;
+//	return sceneToChannel[scene];
+//}
 
 int Presenter::getTimeLineID(std::shared_ptr<IEditableArea> area)
 {
@@ -223,17 +320,7 @@ void Presenter::deleteReadingHeadRef(std::shared_ptr<Cursor> cursor)
 	}
 }
 
-int Presenter::getCtrlSourceId(std::shared_ptr<Follower> follower)
-{
-	if (followerToCtrlSource.left.find(follower) == followerToCtrlSource.left.end())
-	{
-		DBG("ajoute : " + (String)Nfollower);
-		std::pair<std::shared_ptr<Follower>, int> newPair(follower, Nfollower);
-		followerToCtrlSource.left.insert(newPair);
-		++Nfollower;
-	}
-	return followerToCtrlSource.left.at(follower);
-}
+
 
 std::shared_ptr<Cursor> Presenter::getCursor(int m_Id)
 {
@@ -261,32 +348,57 @@ std::shared_ptr<IEditableArea> Presenter::getAreaFromSource(int source)
 	return areaToSourceMulti.right.at(source);
 }
 
-std::shared_ptr<Follower> Presenter::getFollowerFromCtrl(int ctrlId)
+void Presenter::setColorPath(int idx, Colour colourConcerned, String pathAssociated)
 {
-	if (followerToCtrlSource.right.find(ctrlId) == followerToCtrlSource.right.end())
-	{
-		DBG("pas de follower associe");
-		return nullptr;
-	}
-	return followerToCtrlSource.right.at(ctrlId);
+	colourToIdx[colourConcerned] = idx; // utile?
+	model->addNewSoundPath(idx, pathAssociated.toStdString()); // update if the soundspath list has changed
+	graphicSessionManager.lookForAreasConcerned(colourConcerned); //look for the areas concerned by this update to send msg to the audio model to update the corresponding timeLines
 }
 
-double Amusing::Presenter::computeFrequency(double surface)
+int Presenter::getPathIdx(Colour color)
 {
-	double W = view->GetMainContentComponent()->getWidth();
+	return colourToIdx[color];
+}
+
+void Presenter::setInitSize(std::shared_ptr<IEditableArea> newArea, int surface)
+{
+	areaToInitSurface[newArea] = surface;
+}
+
+double Presenter::computeFrequency(std::shared_ptr<IEditableArea> area,double surface)
+{
+	double W = (11.0 / 12.0 )* view->GetMainContentComponent()->getWidth();
 	double H = view->GetMainContentComponent()->getHeight();
 
-	double minSize = W * H / 800;//0.03 * (W + H) / 2.0;
+	double initFreq = 20000;
+	double minFreq = 300;
 	double maxSize = W * H / 4;
 
-	double baseF = 50;
+	double initSize = (double)areaToInitSurface[area] / maxSize;
+	double S = surface / maxSize;
+	maxSize = 1.0;
+	
+	
+	//double m = (std::log(initFreq) - std::log(minFreq)) / (areaToInitSurface[area] - maxSize);
+	//double p = (areaToInitSurface[area] * std::log(minFreq) - maxSize * std::log(initFreq)) / (areaToInitSurface[area] - maxSize);
+	/*double m = -2;
+	double k = (minFreq - initFreq * std::exp(m * (maxSize - initSize)))/(1 - std::exp(m * (maxSize - initSize)));
+	double A = (minFreq - initFreq) / (std::exp(m*maxSize) - std::exp(m*initSize));
+*/
+	if (S > maxSize)
+		return minFreq;
+	else if(S < initSize)
+		return  initFreq;
+	else
+	{
+		//return initFreq + (surface - areaToInitSurface[area]) * (minFreq - initFreq) / (maxSize - areaToInitSurface[area]);
+		//return std::exp(m*surface + p);
+		int idx = (int)round((S - LUT::init) * LUT::size);
+		return LUT::LUT[idx];//k + A * std::exp(m * S);
+	}
+		
+	
 
-	double minE = 0;
-	double maxE = 2 + log10(3.0);
-
-	double exp = minE + (maxE - minE) * (surface - minSize) / (maxSize - minSize);
-
-	return baseF * pow(10.0,exp);
 }
 
 static int updatesCount = 0;
@@ -347,17 +459,9 @@ void Presenter::Update() // remettre l'interieur dans graphsessionmanager
 	//graphicSessionManager.SetAllAudioPositions(lastPosition);
 }
 
-//AudioDeviceManager* Presenter::getAudioDeviceManager()
-//{
-//	return model->sharedAudioDeviceManager;//getAudioDeviceManager();
-//}
 
 void Presenter::removeDeviceManagerFromOptionWindow()
 {
 	view->removeDeviceManagerFromOptionWindow();
 }
 
-//void Presenter::setAudioDeviceManager(AudioDeviceManager* deviceManager)
-//{
-//	view->setDeviceSelectorComponent(deviceManager);
-//}

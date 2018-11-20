@@ -24,16 +24,14 @@ public:
 	MultiCanvasComponentAmusing(Miam::IGraphicSessionManager* _graphicSessionManager);
 	~MultiCanvasComponentAmusing();
 
-	
+	void setSamplesColor(int Nsamples, Colour colorCode[]);
+
+	void addColourSample(int index, Colour colour);
 
 	void resized() override;
 
 	MultiSceneCanvasComponent* AddCanvas() override;
 
 private:
-	SafePointer<AudioDeviceSelectorComponent> audioSetupComp;
-	SafePointer<DialogWindow> dialogWindow;
-	DialogWindow::LaunchOptions options;
-	bool show;
 };
 

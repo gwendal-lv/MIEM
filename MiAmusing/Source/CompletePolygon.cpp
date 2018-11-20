@@ -23,11 +23,69 @@
 #include "MultiAreaEvent.h"
 
 
-#include "boost\geometry.hpp"
-#include "boost\geometry\algorithms\transform.hpp"
+#include "boost/geometry.hpp"
+#include "boost/geometry/algorithms/transform.hpp"
 
 using namespace Amusing;
 using namespace Miam;
+
+CompletePolygon::CompletePolygon(bptree::ptree & areaTree) : EditablePolygon(areaTree)
+{
+	isFilled = true;
+
+	bptree::ptree completeParameterTree;
+
+	completeParameterTree = areaTree.get_child("completeParameter");
+	orientationAngle = completeParameterTree.get<double>("<xmlattr>.orientation");
+	fillOpacity = completeParameterTree.get<float>("<xmlattr>.opacity");
+	startRadius = completeParameterTree.get<double>("<xmlattr>.radius");
+	interval = completeParameterTree.get<double>("<xmlattr>.interval");
+	
+
+	multiTouchActionBegun = false;
+	currentTouchRotation = 0.0;
+
+	showCursor = true;
+	pc = 0;
+
+	useBullsEye = true;
+	showBullsEye = true;
+
+	for (int i = 0; i < (int)contourPoints.outer().size(); ++i)
+	{
+		percentages.push_back(0);
+		anglesPercentages.push_back(0);
+	}
+
+	SetNameVisible(false);
+
+	CreateBullsEye();
+	for (int i = 0; i < (int)contourPoints.outer().size(); i++)
+	{
+		OnCircles.push_back(0);
+	}
+
+	numAngles = 48;
+
+	updateSubTriangles();
+
+	onlyRotationAllowed = false;
+	areaIsVisible = true;
+	showAllCircles = false;
+
+	/*verticesBufferSize += 3 * Nradius * bullsEye[0].GetVerticesBufferSize();
+	indicesBufferSize += Nradius * bullsEye[0].GetIndicesBufferSize();
+	couloursBufferSize += Nradius * bullsEye[0].GetCouloursBufferSize();*/
+
+	vertices_buffer.resize(verticesBufferSize);
+	indices_buffer.resize(indicesBufferSize);
+	coulours_buffer.resize(couloursBufferSize);
+
+	previousSizeToShow = 5;
+	deleteOldCircles = false;
+
+	RefreshOpenGLBuffers();
+}
 
 CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
 {
@@ -38,8 +96,14 @@ CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
 	s = ost.str();
 	DBG("Constructor : " + s);*/
 
+	centerCircleRadius *= 2;
+	centerContourWidth *= 2;
+	multiTouchActionBegun = false;
+	currentTouchRotation = 0.0;
+
 	showCursor = false;
 	pc = 0;
+	orientationAngle = 0.0;
 	
 	//AddCursor();
 	//percentages.reserve(contourPoints.size());
@@ -58,6 +122,8 @@ CompletePolygon::CompletePolygon(int64_t _Id) : EditablePolygon(_Id)
 		}
 	}
 	updateSubTriangles();
+	onlyRotationAllowed = false;
+	previousSizeToShow = 5;
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, float radius,
@@ -69,6 +135,13 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 	ost << this;
 	s = ost.str();
 	DBG("Constructor : " + s);*/
+	isFilled = true;
+	numAngles = 48;
+
+	centerCircleRadius *= 2;
+	centerContourWidth *= 2;
+	multiTouchActionBegun = false;
+	currentTouchRotation = 0.0;
 
 	showCursor = false;
 	pc = 0;
@@ -96,6 +169,19 @@ CompletePolygon::CompletePolygon(int64_t _Id, bpt _center, int pointsCount, floa
 	}
 	chordFlag = std::vector<bool>(pointsCount, false);
 	chordAreaForFlag = std::vector<std::shared_ptr<CompletePolygon>>(pointsCount, nullptr);
+	showAllCircles = false;
+	onlyRotationAllowed = false;
+
+	//verticesBufferSize += 3 * Nradius * bullsEye[0].GetVerticesBufferSize();
+	//indicesBufferSize += Nradius * bullsEye[0].GetIndicesBufferSize();
+	//couloursBufferSize += Nradius * bullsEye[0].GetCouloursBufferSize();
+
+	vertices_buffer.resize(verticesBufferSize);
+	indices_buffer.resize(indicesBufferSize);
+	coulours_buffer.resize(couloursBufferSize);
+
+	previousSizeToShow = 5;
+	deleteOldCircles = false;
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id,
@@ -107,6 +193,11 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	ost << this;
 	s = ost.str();
 	DBG("Constructor : " + s);*/
+	centerCircleRadius *= 2;
+	centerContourWidth *= 2;
+	multiTouchActionBegun = false;
+	currentTouchRotation = 0.0;
+	numAngles = 48;
 
 	showCursor = true;
 	pc = 0;
@@ -135,7 +226,19 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	}
 
 	//updateSubTriangles();
-	
+	showAllCircles = false;
+	onlyRotationAllowed = false;
+
+	//verticesBufferSize += 3 * Nradius * bullsEye[0].GetVerticesBufferSize();
+	//indicesBufferSize += Nradius * bullsEye[0].GetIndicesBufferSize();
+	//couloursBufferSize += Nradius * bullsEye[0].GetCouloursBufferSize();
+
+	vertices_buffer.resize(verticesBufferSize);
+	indices_buffer.resize(indicesBufferSize);
+	coulours_buffer.resize(couloursBufferSize);
+
+	previousSizeToShow = 5;
+	deleteOldCircles = false;
 }
 
 CompletePolygon::CompletePolygon(int64_t _Id,
@@ -144,8 +247,14 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 	Colour _fillColour) : 
 	EditablePolygon(_Id, _center, _contourPoints, _fillColour)
 {
+	numAngles = 48;
+	centerCircleRadius *= 2;
+	centerContourWidth *= 2;
+	multiTouchActionBegun = false;
+	currentTouchRotation = 0.0;
 	/*std::string s;
-	std::ostringstream ost;
+	std::ostringstrea
+	m ost;
 	ost << this;
 	s = ost.str();
 	DBG("Constructor : " + s);*/
@@ -183,8 +292,20 @@ CompletePolygon::CompletePolygon(int64_t _Id,
 		
 	}
 
-
+	onlyRotationAllowed = false;
+	areaIsVisible = true;
 	// ajouter le calcul du rayon des cercles : on connait les coordonnees des points et a quels cercles ils appartienne -> possible de retrouver le rayon et le centre ! 
+
+	//verticesBufferSize += 3 * Nradius * bullsEye[0].GetVerticesBufferSize();
+	//indicesBufferSize += Nradius * bullsEye[0].GetIndicesBufferSize();
+	//couloursBufferSize += Nradius * bullsEye[0].GetCouloursBufferSize();
+
+	vertices_buffer.resize(verticesBufferSize);
+	indices_buffer.resize(indicesBufferSize);
+	coulours_buffer.resize(couloursBufferSize);
+
+	previousSizeToShow = 5;
+	deleteOldCircles = false;
 }
 
 
@@ -216,7 +337,9 @@ void CompletePolygon::Copy(std::shared_ptr<CompletePolygon> polygonToCopy)
 	boost::geometry::centroid(contourPoints,center);
 	// voir s'il faut recalculer le centre
 	CanvasResized(parentCanvas);
-
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
+	RefreshOpenGLBuffers();
+#endif
 	
 }
 
@@ -261,36 +384,37 @@ std::shared_ptr<Cursor> CompletePolygon::getCursor(int idx)
 
 void CompletePolygon::Paint(Graphics& g)
 {
-
-
-	//DBG("CompletePolygon::Paint");
-	EditablePolygon::Paint(g);
-	g.setColour(Colours::white);
-	//DBG((String)contourPoints[0].getX());
-	//Point<double> diff = contourPointsInPixels[fromPt] - contourPointsInPixels[fromPt + 1];
-	//double dist = contourPointsInPixels[fromPt].getDistanceFrom(contourPointsInPixels[fromPt + 1]);
-	//double angle = atan(diff.getY() / diff.getX());
-	//point.addXY(dist * 24 / speed*cos(angle), dist * 24 / speed*sin(angle));
-	//Point<double> diff =  contourPointsInPixels[fromPt] - contourPointsInPixels[fromPt + 1];
-	//Point<double> diff;
-	//DBG((String)(contourPointsInPixels[1] - contourPointsInPixels[0]).getX());
-	//DBG((String)contourPointsInPixels[1].getAngleToPoint(contourPointsInPixels[0]));
-	//diff.setX(contourPointsInPixels[fromPt].getX() - contourPointsInPixels[fromPt + 1].getX());
-	//g.fillEllipse(point.getX(), point.getY(), 20, 20);
-	//g.fillEllipse(contourPointsInPixels[0].getX() - contourPointsRadius,
-	//	contourPointsInPixels[0].getY() - contourPointsRadius, 20, 20);
-
-	//DBG("showCursorPaint = " + (String)showCursor);
-	if (showCursor)
+	if (areaVisible)
 	{
-		//DBG("paint cursor");
-		for(int i=0;i<(int)cursors.size();i++)
-		cursors[i]->Paint(g);
-	}
-	if (isActive && showBullsEye)
-	{
-		CanvasResizedBullsEye(parentCanvas);
-		PaintBullsEye(g);
+		if (isActive && showBullsEye)
+		{
+			CanvasResizedBullsEye(parentCanvas);
+			PaintBullsEye(g);
+		}
+		//DBG("CompletePolygon::Paint");
+		EditablePolygon::Paint(g);
+		g.setColour(Colours::white);
+		//DBG((String)contourPoints[0].getX());
+		//Point<double> diff = contourPointsInPixels[fromPt] - contourPointsInPixels[fromPt + 1];
+		//double dist = contourPointsInPixels[fromPt].getDistanceFrom(contourPointsInPixels[fromPt + 1]);
+		//double angle = atan(diff.getY() / diff.getX());
+		//point.addXY(dist * 24 / speed*cos(angle), dist * 24 / speed*sin(angle));
+		//Point<double> diff =  contourPointsInPixels[fromPt] - contourPointsInPixels[fromPt + 1];
+		//Point<double> diff;
+		//DBG((String)(contourPointsInPixels[1] - contourPointsInPixels[0]).getX());
+		//DBG((String)contourPointsInPixels[1].getAngleToPoint(contourPointsInPixels[0]));
+		//diff.setX(contourPointsInPixels[fromPt].getX() - contourPointsInPixels[fromPt + 1].getX());
+		//g.fillEllipse(point.getX(), point.getY(), 20, 20);
+		//g.fillEllipse(contourPointsInPixels[0].getX() - contourPointsRadius,
+		//	contourPointsInPixels[0].getY() - contourPointsRadius, 20, 20);
+
+		//DBG("showCursorPaint = " + (String)showCursor);
+		if (showCursor)
+		{
+			//DBG("paint cursor");
+			for (int i = 0; i < (int)cursors.size(); i++)
+				cursors[i]->Paint(g);
+		}
 	}
 }
 
@@ -354,7 +478,7 @@ boost::geometry::model::segment<bpt> CompletePolygon::getSegment(bpt hitPoint) /
 	
 	if (i == 0)
 	{
-		prev = contourPoints.outer().size() - 1;
+		prev = (int)contourPoints.outer().size() - 1;
 		suiv = 0;
 	}
 	else
@@ -393,7 +517,7 @@ boost::geometry::model::segment<bpt> CompletePolygon::getSegmentInPixels(bpt hit
 
 	if (i == 0)
 	{
-		prev = contourPointsInPixels.outer().size() - 1;
+		prev = (int)contourPointsInPixels.outer().size() - 1;
 		suiv = 0;
 	}
 	else
@@ -660,7 +784,7 @@ bpt CompletePolygon::computeAngularCursorCenter(double p)
 	return bpt(0, 0);
 }
 
-float CompletePolygon::computeCursorAlpha(double p, bpt _center)
+float CompletePolygon::computeCursorAlpha(double p, bpt _center,float _maxAlpha)
 {
 	// conversion percent to radian
 	angleToPercent();
@@ -700,7 +824,7 @@ float CompletePolygon::computeCursorAlpha(double p, bpt _center)
 	double distPr = boost::geometry::distance(_center, contourPoints.outer().at(prev));
 	double distSui = boost::geometry::distance(_center, contourPoints.outer().at(suiv));
 	double D = 0.02; // distance � laquelle on commence � augmenter/diminuer l'opacit�
-	double H = 0.5;  // opacit� lorsqu'on est pas assez proche d"un sommet
+	double H = (double)_maxAlpha; //0.5;  // opacit� lorsqu'on est pas assez proche d"un sommet
 	if (distPr < D )
 	{
 		if (1 - distPr * (1-H)/D < 0)
@@ -715,7 +839,7 @@ float CompletePolygon::computeCursorAlpha(double p, bpt _center)
 		return 1.0f - float(distSui * (1.0 - H) / D);
 	}
 	else
-		return 0.5f;
+		return _maxAlpha;
 	
 
 }
@@ -745,16 +869,241 @@ void CompletePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 	pointDraggingRadius = 0.05f * (parentCanvas->getWidth() + parentCanvas->getHeight()) / 2.0f; // 5% => mieux pour le touch
 }
 
+AreaEventType CompletePolygon::TryBeginMultiTouchAction(const Point<double>& newLocation)
+{
+	bpt bnewLocation(newLocation.x, newLocation.y);
+	if (pointDraggedId == EditableAreaPointId::Center) // le centre est déjà selectionné -> commencer une rotation classique (idem manipulationPoint)
+	{
+		DBG("rotation classique");
+		multiTouchActionBegun = true;
+
+		// calcul de l'angle initial
+		bpt testPt(bnewLocation);
+		boost::geometry::subtract_point(testPt, centerInPixels);
+		currentTouchRotation = Math::ComputePositiveAngle(testPt);
+		DBG("begin : " + (String)currentTouchRotation);
+
+		currentTouchSize = boost::geometry::distance(centerInPixels, bnewLocation);
+
+		return AreaEventType::RotScale;
+	}
+	else if(pointDraggedId == EditableAreaPointId::WholeArea) // le point était simplement à l'intérieur de l'aire
+	{
+		// vérifier si le nouveau point est, lui, sur le centre
+		multiTouchActionBegun = true;
+		if (boost::geometry::distance(centerInPixels, bpt(newLocation.x, newLocation.y))
+			< (centerCircleRadius + centerContourWidth))
+		{
+			// on est sur le centre -> commencer une rotation classique (idem manipulationPoint)
+			DBG("rotation classique");
+			return AreaEventType::RotScale;
+		}
+		else
+		{
+			// aucun des points n'est sur le centre -> prendre un des deux points comme manipulationPoint
+			DBG("rotation spéciale");
+			multiTouchActionBegun = true;
+
+			// calcul de l'angle initial
+			bpt testPt(bnewLocation);
+			boost::geometry::subtract_point(testPt, centerInPixels);
+			currentTouchRotation = Math::ComputePositiveAngle(testPt);
+			currentTouchSize = boost::geometry::distance(centerInPixels, bnewLocation);
+
+			return AreaEventType::RotScale;
+		}
+	}
+	else
+	{
+		// pas d'action
+		return AreaEventType::NothingHappened;
+	}
+}
+
+AreaEventType CompletePolygon::TryMoveMultiTouchPoint(const Point<double>& newLocation)
+{
+	bpt bnewLocation(newLocation.x, newLocation.y);
+	if (pointDraggedId == EditableAreaPointId::Center) // le centre est déjà selectionné -> commencer une rotation classique (idem manipulationPoint)
+	{
+		DBG("rotation classique");
+
+		bpt testPt(bnewLocation);
+		boost::geometry::subtract_point(testPt, centerInPixels);
+		double radAngle = Math::ComputePositiveAngle(testPt);
+
+		double newTouchSize = boost::geometry::distance(centerInPixels, bnewLocation);
+		double size = newTouchSize / currentTouchSize;
+		EditablePolygon::SizeChanged(size, true);
+		currentTouchSize = newTouchSize;
+
+		DBG("radAngle : " + String(currentTouchRotation - radAngle));
+		Rotate(currentTouchRotation - radAngle);
+		currentTouchRotation = radAngle;
+
+		updateContourPoints();
+
+		double newStartRadius = startRadius * size;
+		for (int i = 0; i < Nradius; ++i)
+		{
+
+			double newRadius = radius[i] * size;//newStartRadius + i* interval;
+			double resize = size;//newRadius / radius[i];
+			/*if (bullsEye[i].SizeChanged(resize, false))
+			{*/
+				startRadius = newStartRadius;
+				radius[i] = newRadius; //startRadius + i*interval;
+				/*if (radius[i] > 0.05)
+					bullsEye[i].setVerticesCount(64);
+				else
+					bullsEye[i].setVerticesCount(32);
+				bullsEye[i].updateContourPoints();*/
+			//}
+		}
+
+
+		CanvasResized(parentCanvas);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
+		RefreshOpenGLBuffers();
+#endif
+
+		return AreaEventType::RotScale;
+	}
+	else if (pointDraggedId == EditableAreaPointId::WholeArea) // le point était simplement à l'intérieur de l'aire
+	{
+		// vérifier si le nouveau point est, lui, sur le centre
+		multiTouchActionBegun = true;
+		if (boost::geometry::distance(centerInPixels, bpt(newLocation.x, newLocation.y))
+			< (centerCircleRadius + centerContourWidth))
+		{
+			// on est sur le centre -> commencer une rotation classique (idem manipulationPoint)
+			DBG("rotation classique");
+			return AreaEventType::RotScale;
+		}
+		else
+		{
+			// aucun des points n'est sur le centre -> calculer les pentes...
+			DBG("rotation spéciale");
+			bpt testPt(bnewLocation);
+			boost::geometry::subtract_point(testPt, centerInPixels);
+			double radAngle = Math::ComputePositiveAngle(testPt);
+
+			double newTouchSize = boost::geometry::distance(centerInPixels, bnewLocation);
+			double size = newTouchSize / currentTouchSize;
+			EditablePolygon::SizeChanged(size, true);
+			currentTouchSize = newTouchSize;
+
+			DBG("radAngle : " + String(currentTouchRotation - radAngle));
+			Rotate(currentTouchRotation - radAngle);
+			currentTouchRotation = radAngle;
+			updateContourPoints();
+
+
+			double newStartRadius = startRadius * size;
+			for (int i = 0; i < Nradius; ++i)
+			{
+
+				double newRadius = radius[i] * size;//newStartRadius + i* interval;
+				double resize = size;//newRadius / radius[i];
+				/*if (bullsEye[i].SizeChanged(resize, false))
+				{*/
+					startRadius = newStartRadius;
+					radius[i] = newRadius; //startRadius + i*interval;
+					/*bullsEye[i].updateContourPoints();
+				}*/
+			}
+
+
+			CanvasResized(parentCanvas);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
+			RefreshOpenGLBuffers();
+#endif
+			return AreaEventType::RotScale;
+		}
+	}
+	else
+	{
+		// pas d'action
+		return AreaEventType::NothingHappened;
+	}
+}
+
+AreaEventType CompletePolygon::EndMultiTouchPointMove()
+{
+	multiTouchActionBegun = false;
+
+	/// verification de l'orientation !
+	numAngles = 48;
+	double e = 0.01;
+	orientationAngle = rotationAngle;
+	rotationAngle = 0;
+	bool alreadyFound = false;
+	double distanceMin = 2 * M_PI;
+	double angleToReach = 0;
+	for (int i = 0; i <= numAngles; ++i)
+	{
+		double currentAngle = (double)i * 2 * M_PI / (double)numAngles;
+
+		double distance = currentAngle - orientationAngle;
+		if (abs(distance)<e / 2.0) // vérifie si près de cet angle là
+		{
+			Rotate(orientationAngle - currentAngle);
+			alreadyFound = true;
+			orientationAngle = currentAngle;
+			break;
+		}
+		else // sinon regarder la distance
+		{
+			if (abs(distance) < abs(distanceMin))
+			{
+				distanceMin = distance;
+				angleToReach = currentAngle;
+			}
+		}
+
+	}
+
+	if (alreadyFound == false) // s'il ne correspondait à aucun angle parmi ceux-ci, on le remet sur le plus proche
+	{
+		Rotate(orientationAngle - angleToReach);
+		orientationAngle = angleToReach;
+	}
+
+	updateContourPoints();
+	CanvasResized(parentCanvas);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
+	RefreshOpenGLBuffers();
+#endif
+
+
+	currentTouchRotation = 0;
+
+	AreaEventType eventType = AreaEventType::NothingHappened;
+
+	// The point drag is always stopped without any check, for now
+	pointDraggedId = EditableAreaPointId::None;
+	eventType = AreaEventType::PointDragStops;
+
+
+	return eventType;
+}
+
 AreaEventType CompletePolygon::TryBeginPointMove(const Point<double>& newLocation)
 {
 	AreaEventType areaEventType = EditablePolygon::TryBeginPointMove(newLocation);
+	DBG("eventType : " + (String)((int)areaEventType));
 	if (pointDraggedId == EditableAreaPointId::Center)
 	{
-		pointDraggedId = EditableAreaPointId::WholeArea;
+		//pointDraggedId = EditableAreaPointId::WholeArea;
 		lastLocation = newLocation;
 	}
-	for (int i = 0; i < Nradius; ++i)
-		bullsEye[i].TryBeginPointMove(newLocation);
+
+	if (onlyRotationAllowed && (pointDraggedId == EditableAreaPointId::WholeArea || pointDraggedId == EditableAreaPointId::Center))
+	{
+		pointDraggedId = EditableAreaPointId::None;
+	}
+
+	/*for (int i = 0; i < Nradius; ++i)
+		bullsEye[i].TryBeginPointMove(newLocation);*/
 	return areaEventType;
 }
 
@@ -764,23 +1113,56 @@ AreaEventType CompletePolygon::TryMovePoint(const Point<double>& newLocation)
 	//DBG("radius 0  = " + (String)radius[0]);
 	//DBG("radius 1  = " + (String)radius[1]);
 	double r1 = boost::geometry::distance(centerInPixels, bmanipulationPointInPixels);
-	AreaEventType areaEventType = EditablePolygon::TryMovePoint(newLocation);
+	int oldPointDraggedId = pointDraggedId;
+	if (pointDraggedId == EditableAreaPointId::Center)
+	{
+		pointDraggedId = EditableAreaPointId::WholeArea; // pour que EditablePolygon::TryMovePoint déplace toute l'aire et pas seulement le centre quand on touche le centre
+	}
+
+	AreaEventType areaEventType;
+	if (onlyRotationAllowed)
+	{
+		if (pointDraggedId == EditableAreaPointId::ManipulationPoint)
+		{
+			bpt location(newLocation.x, newLocation.y);
+			boost::geometry::subtract_point(location, centerInPixels);
+			boost::geometry::model::point<long double, 3, boost::geometry::cs::cartesian> pt3D(location.get<0>(), location.get<1>());
+			boost::geometry::model::point<double, 3, boost::geometry::cs::spherical<boost::geometry::radian>> ptRad;
+			boost::geometry::transform(pt3D, ptRad);
+			ptRad.set<2>(boost::geometry::distance(centerInPixels, bmanipulationPointInPixels));
+			boost::geometry::transform(ptRad, pt3D);
+			boost::geometry::model::point<double, 3, boost::geometry::cs::cartesian> pt3Dshort;
+			boost::geometry::transform(pt3D, pt3Dshort);
+			location = bpt(pt3Dshort.get<0>(), pt3Dshort.get<1>());
+			boost::geometry::add_point(location, centerInPixels);
+			const Point<double> correctLocation(location.get<0>(), location.get<1>());
+			areaEventType = EditablePolygon::TryMovePoint(correctLocation);
+		}
+		else
+			areaEventType = EditablePolygon::TryMovePoint(newLocation);
+	}
+	else
+		areaEventType = EditablePolygon::TryMovePoint(newLocation);
+
+	pointDraggedId = oldPointDraggedId;
+
+	DBG("eventType : " + (String)((int)areaEventType));
 	double r2 = boost::geometry::distance(centerInPixels, bmanipulationPointInPixels);
 	double size = r2 / r1;
 
-	if (!boost::geometry::equals(center, bullsEyeCenter)) // at the creation, they're equal
-	{
-		bpt translation(center.get<0>() - bullsEyeCenter.get<0>(), center.get<1>() - bullsEyeCenter.get<1>());
-		
-		translation.set<0>(translation.get<0>() * (double)parentCanvas->getWidth());
-		translation.set<1>(translation.get<1>() * (double)parentCanvas->getHeight());
-		
+	//if (!boost::geometry::equals(center, bullsEyeCenter)) // at the creation, they're equal
+	//{
+	//	bpt translation(center.get<0>() - bullsEyeCenter.get<0>(), center.get<1>() - bullsEyeCenter.get<1>());
+	//	
+	//	translation.set<0>(translation.get<0>() * (double)parentCanvas->getWidth());
+	//	translation.set<1>(translation.get<1>() * (double)parentCanvas->getHeight());
+	//	
 
-		for (int i = 0; i < Nradius; ++i)
-			bullsEye[i].Translate(juce::Point<double>(translation.get<0>(), translation.get<1>()));
-		
-		bullsEyeCenter = center;
-	}
+	//	for (int i = 0; i < Nradius; ++i)
+	//		bullsEye[i].Translate(juce::Point<double>(translation.get<0>(), translation.get<1>()));
+	//	
+	//	bullsEyeCenter = center;
+	//}
 
 	if (areaEventType == AreaEventType::RotScale)
 	{
@@ -788,23 +1170,31 @@ AreaEventType CompletePolygon::TryMovePoint(const Point<double>& newLocation)
 		for (int i = 0; i < Nradius; ++i)
 		{
 
-			double newRadius = newStartRadius + i* interval;
-			double resize = newRadius / radius[i];
-			if (bullsEye[i].SizeChanged(resize,false))
-			{
+			double newRadius = radius[i] * size;//newStartRadius + i* interval;
+			double resize = size;//newRadius / radius[i];
+			/*if (bullsEye[i].SizeChanged(resize,false))
+			{*/
 				startRadius = newStartRadius;
 				radius[i] = newRadius; //startRadius + i*interval;
-			}
+				/*if (radius[i] > 0.0456)
+					bullsEye[i].setVerticesCount(64);
+				else
+					bullsEye[i].setVerticesCount(32);
+				bullsEye[i].updateContourPoints();*/
+			//}
 		}
 	}
 	//CanvasResized(this->parentCanvas);
+	RefreshTargetOpenGLBuffers();
+
 	return areaEventType;
 }
 
 AreaEventType CompletePolygon::EndPointMove()
 {
 
-
+	
+	double e = 0.01;
 	if (useBullsEye)
 	{
 
@@ -816,9 +1206,9 @@ AreaEventType CompletePolygon::EndPointMove()
 			double Df;
 			for (int i = 0; i < Nradius; ++i)
 			{
-				if (epsilon > abs(bullsEye[i].getRadius() - Di))
+				if (epsilon > abs(radiusInPixels[i]/*bullsEye[i].getRadius()*/ - Di))
 				{
-					epsilon = abs(bullsEye[i].getRadius() - Di);
+					epsilon = abs(radiusInPixels[i]/*bullsEye[i].getRadius()*/ - Di);
 					Df = radius[i];
 					nearest = i;
 					//circlesToShow[i] = true;
@@ -834,8 +1224,43 @@ AreaEventType CompletePolygon::EndPointMove()
 			boost::geometry::model::point<double, 3, boost::geometry::cs::spherical<boost::geometry::radian>> ptRad;
 			boost::geometry::transform(pt3D, ptRad);
 			double angle = ptRad.get<0>();//M_PI;//M_PI/2;//ptRad.get<0>(); // --> cos = 1, sin = 0, contourPointsInPixels.outer().at(pointDraggedId) = bpt(centerInPixels.get<0>() + radius[i] * parent.getWidth(), 0)
+			while (angle < 0.0)
+				angle += 2 * M_PI;
 
-			double R = bullsEye[nearest].getRadius();//54;//bullsEye[nearest].getRadius();//radius[nearest];
+			bool alreadyFound = false;
+			double distanceMin = 2 * M_PI;
+			double angleToReach = 0;
+			for (int i = 0; i <= numAngles; ++i)
+			{
+				double currentAngle = (double)i * 2 * M_PI / (double)numAngles;
+
+				double distance = currentAngle - angle;
+				if (abs(distance)<e / 2.0) // vérifie si près de cet angle là
+				{
+					//Rotate(orientationAngle - currentAngle);
+					alreadyFound = true;
+					angle = currentAngle;
+					break;
+				}
+				else // sinon regarder la distance
+				{
+					if (abs(distance) < abs(distanceMin))
+					{
+						distanceMin = distance;
+						angleToReach = currentAngle;
+					}
+				}
+
+			}
+
+			if (alreadyFound == false) // s'il ne correspondait à aucun angle parmi ceux-ci, on le remet sur le plus proche
+			{
+				//Rotate(orientationAngle - angleToReach);
+				angle = angleToReach;
+			}
+
+
+			double R = radiusInPixels[nearest];//bullsEye[nearest].getRadius();//54;//bullsEye[nearest].getRadius();//radius[nearest];
 			contourPointsInPixels.outer().at(pointDraggedId) = bpt(centerInPixels.get<0>() + R * std::cos(angle),
 					centerInPixels.get<1>() + R * std::sin(angle));
 			contourPoints.outer().at(pointDraggedId) = bpt(
@@ -857,10 +1282,57 @@ AreaEventType CompletePolygon::EndPointMove()
 				OnCircles.at(OnCircles.size() - 1) = nearest;
 			
 		}
+#if !defined(OPENGL_RENDERING) || OPENGL_RENDERING == 0
 		CanvasResized(parentCanvas);
+#else
+		RefreshOpenGLBuffers();
+#endif
 	}
 
+	// si on a touché au manipulationPoit -> on a changé l'orientation : vérifié qu'elle soit autorisée et la repositionnée si besoin
+	if (pointDraggedId == EditableAreaPointId::ManipulationPoint)
+	{
+		orientationAngle = rotationAngle;
+		rotationAngle = 0;
+		bool alreadyFound = false;
+		double distanceMin = 2 * M_PI;
+		double angleToReach = 0;
+		for (int i = 0; i <= numAngles; ++i)
+		{
+			double currentAngle = (double)i * 2 * M_PI / (double)numAngles;
 
+			double distance = currentAngle - orientationAngle;
+			if (abs(distance)<e/2.0) // vérifie si près de cet angle là
+			{
+				Rotate(orientationAngle - currentAngle);
+				alreadyFound = true;
+				orientationAngle = currentAngle;
+				break;
+			}
+			else // sinon regarder la distance
+			{
+				if (abs(distance) < abs(distanceMin))
+				{
+					distanceMin = distance;
+					angleToReach = currentAngle;
+				}
+			}
+
+		}
+
+		if (alreadyFound == false) // s'il ne correspondait à aucun angle parmi ceux-ci, on le remet sur le plus proche
+		{
+			Rotate(orientationAngle - angleToReach);
+			orientationAngle = angleToReach;
+		}
+
+		updateContourPoints();
+		CanvasResized(parentCanvas);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
+		RefreshOpenGLBuffers();
+#endif
+	}
+	
 	AreaEventType eventType =  EditablePolygon::EndPointMove();
 	
 	
@@ -869,8 +1341,13 @@ AreaEventType CompletePolygon::EndPointMove()
 
 void CompletePolygon::setCursorVisible(bool isVisible, SceneCanvasComponent* _parentCanvas)
 {
-	for(int i=0;i<(int)cursors.size();i++)
+	for (int i = 0; i < (int)cursors.size(); i++)
+	{
 		cursors[i]->CanvasResized(_parentCanvas);
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
+		cursors[i]->RefreshOpenGLBuffers();
+#endif
+	}
 	showCursor = isVisible;
 	
 	//CanvasResized(this->parentCanvas);
@@ -884,179 +1361,82 @@ bpolygon CompletePolygon::getPolygon()
 	return contourPoints;
 }
 
-std::shared_ptr<AreaEvent> CompletePolygon::intersection(std::shared_ptr<CompletePolygon> hitPolygon, int m_Id, int N)
-{
-	
-
-	// compute the intersection
-	bpolygon poly1, poly2;
-	poly1 = contourPoints;
-	poly2 = hitPolygon->getPolygon();
-	boost::geometry::correct(poly1);
-	boost::geometry::correct(poly2);
-	std::deque<bpolygon> inter;
-	boost::geometry::intersection(poly1, poly2, inter);
-
-	
-	// compute the area of the 2 polygons and the intersection
-	double area = abs(boost::geometry::area(poly1));
-	double hitArea = abs(boost::geometry::area(poly2));
-
-	double areaInter = 0;
-	for(int i = 0; i<(int)inter.size();i++)
-		areaInter += abs(boost::geometry::area(inter[0]));
-
-
-	//DBG((String)areaTest + " >= " + (String)double(0.75 * hitArea) + " ou " + (String)double(0.75 * area));
-	std::shared_ptr<CompletePolygon> completeP;
-	std::shared_ptr<AreaEvent> areaE;
-	if (areaInter >= 0.75 * hitArea || areaInter >= 0.75 * area)
-	{
-		//DBG("need To fusion ! : " + (String)areaInter + " >= " + (String)double(0.75 * hitArea) + " ou " + (String)double(0.75 * area));
-		completeP = fusion(hitPolygon, m_Id);
-		//DBG("fusionned");
-		areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeP, AreaEventType::Added));
-	}
-	else if(inter.size() >= 0)
-	{
-		//DBG("number of polygon by intersection : " + (String)inter.size());
-		std::shared_ptr<MultiAreaEvent> multiE(new MultiAreaEvent());
-		for (int i = 0; i < (int)inter.size(); i++)
-		{
-			//if (boost::geometry::area(inter[i]) > minimumSizePercentage)//*(parentCanvas->getWidth() + parentCanvas->getHeight()) / 2.0)
-			//{
-				// compute the center coordinate
-			bpt interCenter;
-			boost::geometry::reverse(inter[i]);
-			boost::geometry::centroid(inter[i], interCenter);
-
-			// compute the notes // verifier ordre des points si le son est bizarre
-			std::vector<int> newCircles;
-			std::vector<double> newAnglesPercentages;
-			for (int j = 0; j < (int)inter[i].outer().size(); j++)
-			{
-				//newCircles.push_back(0);
-
-				if (boost::geometry::within(inter[i].outer().at(j), poly1))
-					newCircles.push_back(OnCircles[0]);
-				else if (boost::geometry::within(inter[i].outer().at(j), poly2))
-				{
-					int val;
-					hitPolygon->getAllDistanceFromCenter(0, val);
-					newCircles.push_back(val);
-				}
-				else
-				{
-					int val;
-					hitPolygon->getAllDistanceFromCenter(0, val);
-					newCircles.push_back(val + OnCircles[0]);
-				}
-
-
-				bpt centeredPt(inter[i].outer().at(j));
-				boost::geometry::subtract_point(centeredPt, interCenter);
-				newAnglesPercentages.push_back(Math::ComputePositiveAngle(centeredPt)/ (2* M_PI));
-				while (j > 0 && newAnglesPercentages[j] < newAnglesPercentages[j - 1])
-					newAnglesPercentages[j] += 1;
-			}
-
-			// create the polygon and the event
-			completeP = std::shared_ptr<CompletePolygon>(new CompletePolygon(N + i, interCenter, inter[i], newCircles, newAnglesPercentages, juce::Colours::red));
-
-			// intersection's polygon must not be clickable and won't show the circles
-			completeP->SetActive(false);
-
-			// add the cration of the polygon in the MultiAreaEvent
-			multiE->AddAreaEvent(std::shared_ptr<AreaEvent>(new AreaEvent(completeP, AreaEventType::NothingHappened)));
-			//}
-		}
-		return multiE;
-		//areaE = std::shared_ptr<AreaEvent>(new AreaEvent(completeP, AreaEventType::NothingHappened));
-	}
-	else
-	{
-		std::shared_ptr<MultiAreaEvent> multiE(new MultiAreaEvent());
-		return multiE;
-	}
-	return areaE;
-}
-
-std::shared_ptr<CompletePolygon> CompletePolygon::fusion(std::shared_ptr<CompletePolygon> polyToFusion, int m_Id)
-{
-
-	// structure to be able to sort the percentages and the circles the same way
-	struct Helper
-	{
-		double pc;
-		int circ;
-		Helper(double a, int b) : pc(a), circ(b) {};
-		//bool operator< (const Helper& b) { return (this->pc < b.pc); }
-		Helper() : pc(0), circ(0) {};
-	};
-
-	// get all the coordinates of the points (percentages and circles) of the current polygon
-	angleToPercent();
-	std::vector<Helper> test;
-	for (int j = 0; j < (int)anglesPercentages.size() - 1; ++j) // stop at size-1 because we don't need the closure point
-	{
-		double value = anglesPercentages[j];
-		if (value > 1)
-			value -= 1;
-		test.push_back(Helper(anglesPercentages[j], OnCircles[j]));
-	}
-
-	// add all the coordinates of the other polygon to the vector of coordinates
-	int i = 0;
-	double value;
-	int distance;
-	while (polyToFusion->getAllPercentages(i, value) && polyToFusion->getAllDistanceFromCenter(i, distance))
-	{
-		test.push_back(Helper(value, distance));
-		++i;
-	}
-	test.pop_back(); // delete last element = closure element of the second polygon
-
-	// sort to have all the points in clockwise order
-	std::sort(test.begin(), test.end(),[](Helper a, Helper b) {return (a.pc < b.pc); });
-
-	// close the polygon
-	test.push_back(Helper(test[0].pc+1,test[0].circ));
-	
-	// delete duplicates
-	std::vector<Helper>::iterator it;
-	it = std::unique(test.begin(), test.end(), [](Helper a, Helper b) {return ((a.circ == b.circ) && (a.pc == b.pc)); });
-	test.resize(std::distance(test.begin(), it));
-
-	// get the XY(pixels) coordinates from the previously sorted coordinates
-	// + separate percentages and circles in different vectors
-	bpolygon newContourPointsInPixels;
-	std::vector<int> newCircles;
-	std::vector<double> newAnglesPercentages;
-	for (int j = 0; j < (int)test.size(); j++)
-	{
-		double R = bullsEye[test[j].circ].getRadius();
-		double angle = test[j].pc * 2 * M_PI;
-		bpt newPoint(R * std::cos(angle), R * std::sin(angle));
-		boost::geometry::add_point(newPoint, centerInPixels);
-		boost::geometry::append(newContourPointsInPixels.outer(),newPoint);
-		newCircles.push_back(test[j].circ);
-		newAnglesPercentages.push_back(test[j].pc);
-	}
-	//boost::geometry::append(newContourPointsInPixels.outer(), newContourPointsInPixels.outer().at(0));
-
-	// get normalized coordinates
-	bpolygon newContourPoints;
-	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> rescaler(1.0 / (double)parentCanvas->getWidth(), 1.0 / (double)parentCanvas->getHeight());
-	boost::geometry::transform(newContourPointsInPixels, newContourPoints, rescaler);
-	
-	/*DBG("new size : " + (String)int(newContourPoints.outer().size()));
-	for (int k = 0; k < test.size(); k++)
-		DBG((String)test[k].circ + "   " + (String)test[k].pc);*/
-
-	// create polygon
-	return std::shared_ptr<CompletePolygon>(new CompletePolygon(m_Id,center,newContourPoints,newCircles,newAnglesPercentages,fillColour));
-
-}
+//std::shared_ptr<CompletePolygon> CompletePolygon::fusion(std::shared_ptr<CompletePolygon> polyToFusion, int m_Id)
+//{
+//
+//	// structure to be able to sort the percentages and the circles the same way
+//	struct Helper
+//	{
+//		double pc;
+//		int circ;
+//		Helper(double a, int b) : pc(a), circ(b) {};
+//		//bool operator< (const Helper& b) { return (this->pc < b.pc); }
+//		Helper() : pc(0), circ(0) {};
+//	};
+//
+//	// get all the coordinates of the points (percentages and circles) of the current polygon
+//	angleToPercent();
+//	std::vector<Helper> test;
+//	for (int j = 0; j < (int)anglesPercentages.size() - 1; ++j) // stop at size-1 because we don't need the closure point
+//	{
+//		double value = anglesPercentages[j];
+//		if (value > 1)
+//			value -= 1;
+//		test.push_back(Helper(anglesPercentages[j], OnCircles[j]));
+//	}
+//
+//	// add all the coordinates of the other polygon to the vector of coordinates
+//	int i = 0;
+//	double value;
+//	int distance;
+//	while (polyToFusion->getAllPercentages(i, value) && polyToFusion->getAllDistanceFromCenter(i, distance))
+//	{
+//		test.push_back(Helper(value, distance));
+//		++i;
+//	}
+//	test.pop_back(); // delete last element = closure element of the second polygon
+//
+//	// sort to have all the points in clockwise order
+//	std::sort(test.begin(), test.end(),[](Helper a, Helper b) {return (a.pc < b.pc); });
+//
+//	// close the polygon
+//	test.push_back(Helper(test[0].pc+1,test[0].circ));
+//	
+//	// delete duplicates
+//	std::vector<Helper>::iterator it;
+//	it = std::unique(test.begin(), test.end(), [](Helper a, Helper b) {return ((a.circ == b.circ) && (a.pc == b.pc)); });
+//	test.resize(std::distance(test.begin(), it));
+//
+//	// get the XY(pixels) coordinates from the previously sorted coordinates
+//	// + separate percentages and circles in different vectors
+//	bpolygon newContourPointsInPixels;
+//	std::vector<int> newCircles;
+//	std::vector<double> newAnglesPercentages;
+//	for (int j = 0; j < (int)test.size(); j++)
+//	{
+//		double R = bullsEye[test[j].circ].getRadius();
+//		double angle = test[j].pc * 2 * M_PI;
+//		bpt newPoint(R * std::cos(angle), R * std::sin(angle));
+//		boost::geometry::add_point(newPoint, centerInPixels);
+//		boost::geometry::append(newContourPointsInPixels.outer(),newPoint);
+//		newCircles.push_back(test[j].circ);
+//		newAnglesPercentages.push_back(test[j].pc);
+//	}
+//	//boost::geometry::append(newContourPointsInPixels.outer(), newContourPointsInPixels.outer().at(0));
+//
+//	// get normalized coordinates
+//	bpolygon newContourPoints;
+//	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> rescaler(1.0 / (double)parentCanvas->getWidth(), 1.0 / (double)parentCanvas->getHeight());
+//	boost::geometry::transform(newContourPointsInPixels, newContourPoints, rescaler);
+//	
+//	/*DBG("new size : " + (String)int(newContourPoints.outer().size()));
+//	for (int k = 0; k < test.size(); k++)
+//		DBG((String)test[k].circ + "   " + (String)test[k].pc);*/
+//
+//	// create polygon
+//	return std::shared_ptr<CompletePolygon>(new CompletePolygon(m_Id,center,newContourPoints,newCircles,newAnglesPercentages,fillColour));
+//
+//}
 
 bool CompletePolygon::getUnion(bpolygon hitPolygon, bpolygon &output)
 {
@@ -1090,7 +1470,7 @@ double CompletePolygon::getAngularPercentage(bpt hitPoint)
 	int suiv = 0;
 	if (i == 0)
 	{
-		prev = contourPoints.outer().size() - 1;
+		prev = (int)contourPoints.outer().size() - 1;
 		suiv = 0;
 	}
 	else
@@ -1126,7 +1506,7 @@ double CompletePolygon::getLinearPercentage(bpt hitPoint)
 	int suiv = 0;
 	if (i == 0)
 	{
-		prev = contourPoints.outer().size() - 1;
+		prev = (int)contourPoints.outer().size() - 1;
 		suiv = 0;
 	}
 	else
@@ -1192,8 +1572,11 @@ void CompletePolygon::CreateBullsEye()
 	for (int i = 0; i < Nradius; ++i)
 	{
 		radius[i] = startRadius + i*interval;//(i + 1)*0.15f / 2;
-		bullsEye.push_back( EditableEllipse(0, center, 2*radius[i], 2*radius[i], Colours::grey, 1.47f));
-		bullsEye.back().SetAlpha(0.0);
+		//bullsEye.push_back( EditableEllipse(0, center, 2*radius[i], Colours::grey, 1.47f));
+		//bullsEye.back().SetAlpha(1.0);
+		//bullsEye.back().setIsFilled(false);
+		//bullsEye.back().setVerticesCount(64/*6 * bullsEye.back().getVerticesCount()*/);
+		
 	}
 	circlesToShow[0] = true;
 	for (int i = 1; i < Nradius; ++i)
@@ -1204,10 +1587,31 @@ void CompletePolygon::CreateBullsEye()
 
 void CompletePolygon::PaintBullsEye(Graphics& g)
 {
-	for (int i = 0; i < (int)OnCircles.size(); ++i)
+	if (showAllCircles)
 	{
-		bullsEye[OnCircles[i]].Paint(g);
+		//for (int i = 0; i < bullsEye.size(); ++i)
+		//{
+		//	bullsEye[i].SetOpacityMode(OpacityMode::Independent);
+		//	bullsEye[i].SetAlpha(0.2f);
+		//	//bullsEye[i].Paint(g);
+		//}
+		g.setOpacity(0.2f);
+		int minDimension = parentCanvas->getHeight() > parentCanvas->getWidth() ? parentCanvas->getWidth() - 10 : parentCanvas->getHeight() - 10;
+		double currentAngle = 0.0;
+		for (int i = 0; i < numAngles; ++i)
+		{
+			currentAngle += 2 * M_PI / (double)numAngles;
+			g.drawLine((float)centerInPixels.get<0>(), (float)centerInPixels.get<1>(), (float)centerInPixels.get<0>()+ (float)minDimension/2.0f * (float)std::cos(currentAngle), (float)centerInPixels.get<1>() + (float)minDimension/2.0f * (float)std::sin(currentAngle));
+		}
+	}
+	else
+	{
+		for (int i = 0; i < (int)OnCircles.size(); ++i)
+		{
+			//bullsEye[OnCircles[i]].SetAlpha(1.0);
+			//bullsEye[OnCircles[i]].Paint(g);
 			//bullsEye[i].Paint(g);
+		}
 	}
 }
 
@@ -1237,7 +1641,9 @@ void CompletePolygon::CanvasResizedBullsEye(SceneCanvasComponent* _parentCanvas)
 
 	for (int i = 0; i < Nradius; ++i)
 	{
-		bullsEye[i].CanvasResized(_parentCanvas);
+		/*bullsEye[i].CanvasResized(_parentCanvas);
+		bullsEye[i].RefreshOpenGLBuffers();*/
+		radiusInPixels[i] = radius[i] * xScale * _parentCanvas->getWidth();
 	}
 
 	
@@ -1246,6 +1652,20 @@ void CompletePolygon::CanvasResizedBullsEye(SceneCanvasComponent* _parentCanvas)
 bpt CompletePolygon::getCenter()
 {
 	return centerInPixels;
+}
+
+bpt CompletePolygon::getCenterNormalized()
+{
+	return center;
+}
+
+float CompletePolygon::getNormalizedRadius()
+{
+	float distance = 0.0f;
+	for (int i = 0; i < (int)contourPoints.outer().size(); ++i)
+		if (boost::geometry::distance(contourPoints.outer().at(i), center) > distance)
+			distance = (float)boost::geometry::distance(contourPoints.outer().at(i), center);
+	return distance;
 }
 
 void CompletePolygon::setCursorsSpeed(int idx, double newSize)
@@ -1263,9 +1683,28 @@ void CompletePolygon::setCursorsSpeed(int idx, double newSize)
 	}
 }
 
+void CompletePolygon::setCursorsBaseNote(int idx, double newBaseNote)
+{
+		if (showCursor == false)
+			setCursorVisible(true, parentCanvas);
+		//cursors[idx]->SetAlpha(newBaseNote/127.0); //setAlpha(newBaseNote);//setSpeed(newSize);
+		cursors[idx]->setMaxAlpha(0.05f + (0.65f - 0.05f) * (float)newBaseNote / 10.0f);/*(newBaseNote / 10.0)+1.0/20.0*/
+}
+
 void CompletePolygon::SetActive(bool activate)
 {
 	EditableArea::SetActive(activate);
+}
+
+void CompletePolygon::SetAlpha(float newAlpha)
+{
+	//if (newAlpha >= 0.3)
+		DrawableArea::SetAlpha(newAlpha);
+}
+
+bool CompletePolygon::shouldShowOptions()
+{
+	return true;
 }
 
 bool CompletePolygon::contains(bpt point)
@@ -1308,7 +1747,7 @@ void CompletePolygon::resetChords()
 
 bool CompletePolygon::getChordParameters(int idx, std::shared_ptr<CompletePolygon>& chordArea, double &m_pC)
 {
-	if (idx < chordAreaForPercentage.size())
+	if (idx < (int)chordAreaForPercentage.size())
 	{
 		m_pC = chordsAnglePercentage[idx];
 		chordArea = chordAreaForPercentage[idx];
@@ -1316,9 +1755,9 @@ bool CompletePolygon::getChordParameters(int idx, std::shared_ptr<CompletePolygo
 	}
 	else
 	{
-		idx -= chordAreaForPercentage.size();
+		idx -= (int)chordAreaForPercentage.size();
 		int N = 0;
-		for (int i = 0; i < chordAreaForFlag.size(); ++i)
+		for (int i = 0; i < (int)chordAreaForFlag.size(); ++i)
 			if (chordAreaForFlag[i] != nullptr)
 				N++;
 		if (idx < N)
@@ -1326,7 +1765,7 @@ bool CompletePolygon::getChordParameters(int idx, std::shared_ptr<CompletePolygo
 			// idx = indice en terme d'elt non nuls !
 			int count = 0;
 			int realIdx = 0;
-			for (int j = 0; j < chordAreaForFlag.size(); ++j)
+			for (int j = 0; j < (int)chordAreaForFlag.size(); ++j)
 			{
 				if (chordAreaForFlag[j] != nullptr)
 				{
@@ -1346,5 +1785,258 @@ bool CompletePolygon::getChordParameters(int idx, std::shared_ptr<CompletePolygo
 			return false;
 
 	}
-	return false;
+	//return false;
+}
+
+std::shared_ptr<bptree::ptree> CompletePolygon::GetTree()
+{
+	auto inheritedTree = DrawablePolygon::GetTree();
+
+	bptree::ptree completeParameterTree;
+
+	bptree::ptree opacityTree;
+	opacityTree.put("<xmlattr>.opacity", fillOpacity);
+	bptree::ptree orientationTree;
+	orientationTree.put("<xmlattr>.orientation", orientationAngle);
+
+	completeParameterTree.put("<xmlattr>.opacity", fillOpacity);//.add_child("opacity", opacityTree);
+	completeParameterTree.put("<xmlattr>.orientation", orientationAngle);//.add_child("orientation", orientationTree);
+	completeParameterTree.put("<xmlattr>.radius", startRadius);
+	completeParameterTree.put("<xmlattr>.interval", interval);
+	//completeParameterTree.put("<xmlattr>.xScale", xScale);
+	//completeParameterTree.put("<xmlattr>.yScale", yScale);
+
+	inheritedTree->add_child("completeParameter", completeParameterTree);
+
+	return inheritedTree;
+}
+
+void CompletePolygon::showAllTarget(bool shouldBeShowed)
+{
+	if (shouldBeShowed == false && showAllCircles == true)
+		deleteOldCircles = true;
+	showAllCircles = shouldBeShowed;
+}
+
+void CompletePolygon::Translate(const Point<double>& translation)
+{
+	EditablePolygon::Translate(translation);
+
+	if (!boost::geometry::equals(center, bullsEyeCenter)) // at the creation, they're equal
+	{
+		bpt btranslation(center.get<0>() - bullsEyeCenter.get<0>(), center.get<1>() - bullsEyeCenter.get<1>());
+
+		btranslation.set<0>(btranslation.get<0>() * (double)parentCanvas->getWidth());
+		btranslation.set<1>(btranslation.get<1>() * (double)parentCanvas->getHeight());
+
+
+		/*for (int i = 0; i < Nradius; ++i)
+			bullsEye[i].Translate(juce::Point<double>(btranslation.get<0>(), btranslation.get<1>()));*/
+
+		bullsEyeCenter = center;
+	}
+
+	
+}
+
+void CompletePolygon::DisableTranslation(bool shouldBeDisabled)
+{
+	onlyRotationAllowed = shouldBeDisabled;
+}
+
+double CompletePolygon::GetFullSceneRatio()
+{
+	if (parentCanvas->getHeight() < parentCanvas->getWidth())
+		return (parentCanvas->getHeight() - 10) / (2 * radiusInPixels[4]/*radius[4] * parentCanvas->getHeight() * yScale*/);
+	else
+		return (parentCanvas->getWidth() - 10) / (2 * radiusInPixels[4]/*radius[4] * parentCanvas->getWidth() * xScale*/);
+}
+
+bool CompletePolygon::SizeChanged(double _size, bool minSize)
+{
+	bool ans = EditablePolygon::SizeChanged(_size,minSize);
+	if (ans) // le changement de taille de la forme a été effectué -> changer la taille des cercles
+	{
+		double newStartRadius = startRadius * _size;
+		for (int i = 0; i < Nradius; ++i)
+		{
+
+			double newRadius = radius[i] * _size;//newStartRadius + i * interval;
+			double resize = _size;//newRadius / radius[i];
+			/*if (bullsEye[i].SizeChanged(resize, false))
+			{*/
+				startRadius = newStartRadius;
+				radius[i] = newRadius; //startRadius + i*interval;
+			/*	bullsEye[i].updateContourPoints();
+			}*/
+		}
+	}
+	return ans;
+}
+
+void CompletePolygon::RefreshTargetOpenGLBuffers()
+{
+	//int decalage = EditablePolygon::GetVerticesBufferSize();
+	//const int circlesSize = (int)bullsEye.size();
+	//const int incDecalage = bullsEye[0].GetVerticesBufferSize();
+	//const int circleVertexCount = 3 * bullsEye[0].GetVerticesBufferSize();
+	//const int circleIndiceCount = bullsEye[0].GetIndicesBufferSize();
+	//const int circleCoulourCount = bullsEye[0].GetCouloursBufferSize();
+
+
+	//if (circlesSize > 0)
+	//{
+	//	if (showAllCircles)
+	//	{
+	//		/*for (int i = 0; i < circlesSize; ++i)
+	//			bullsEye[i].RefreshOpenGLBuffers();*/
+
+	//		// vertex
+	//		for (int i = 0; i < circlesSize; ++i)
+	//		{
+	//			float *circleVertexPtr = bullsEye[i].GetVerticesBufferPtr();
+	//			float *vertexPtr = &vertices_buffer[3 * decalage];
+	//			for (int j = 0; j < circleVertexCount; ++j)
+	//			{
+	//				vertexPtr[j] = circleVertexPtr[j];
+	//				//vertices_buffer[3 * decalage + j] = circleVertexPtr[j];
+	//			}
+	//			decalage += incDecalage;
+	//		}
+
+	//		// index
+	//		decalage = EditablePolygon::GetIndicesBufferSize(); // pour decaler dans le buffer
+	//		int begin = EditablePolygon::GetVerticesBufferSize(); // pour prendre en compte le nombre de vertex
+	//		for (int i = 0; i < circlesSize; ++i)
+	//		{
+	//			unsigned int *circleIndicesPtr = bullsEye[i].GetIndicesBufferPtr();
+	//			unsigned int *indicesPtr = &indices_buffer[decalage];
+	//			for (int j = 0; j < circleIndiceCount; ++j)
+	//			{
+	//				indicesPtr[j] = circleIndicesPtr[j] + begin;
+	//			}
+	//			decalage += circleIndiceCount; // on se decale dans le buffer
+	//			begin += incDecalage; // il faut ajouter aux indices le nombre de vertex déjà existant
+	//		}
+
+	//		// coulour
+	//		decalage = EditablePolygon::GetCouloursBufferSize();
+	//		for (int i = 0; i < circlesSize; ++i)
+	//		{
+	//			float *circleCoulourPtr = bullsEye[i].GetCoulourBufferPtr();
+	//			float *coulourPtr = &coulours_buffer[decalage];
+	//			for (int j = 0; j < circleCoulourCount; ++j)
+	//			{
+	//				coulourPtr[j] = circleCoulourPtr[j];
+	//			}
+	//			decalage += circleCoulourCount;
+	//		}
+	//	}
+	//	else
+	//	{
+	//		std::vector<int> needToShow = OnCircles;
+	//		auto end = std::unique(needToShow.begin(), needToShow.end()); // enleve juste les doublons consecutif -> il peut rester des doublons mais qui dessineront la mm chose :)
+	//		int newSize = (int)std::distance(needToShow.begin(), end);
+	//		while (newSize > Nradius)
+	//		{
+	//			end = std::unique(needToShow.begin(), needToShow.end());
+	//			newSize = (int)std::distance(needToShow.begin(), end);
+	//		}
+
+	//		bool needToResetPart = false;
+	//		if (newSize < previousSizeToShow)
+	//			needToResetPart = true;
+	//			
+	//		previousSizeToShow = newSize;
+
+	//		/*for (int i = 0; i < newSize; ++i)
+	//			bullsEye[needToShow[i]].RefreshOpenGLBuffers();*/
+
+	//		//vertex
+	//		for (int i = 0; i < newSize; ++i)
+	//		{
+
+	//			float *circleVertexPtr = bullsEye[needToShow[i]].GetVerticesBufferPtr();
+	//			float *vertexPtr = &vertices_buffer[3 * decalage];
+	//			for (int j = 0; j < circleVertexCount; ++j)
+	//			{
+	//				vertexPtr[j] = circleVertexPtr[j];
+	//				//vertices_buffer[3 * decalage + j] = circleVertexPtr[j];
+	//			}
+	//			decalage += incDecalage;
+	//		}
+	//		if (needToResetPart || deleteOldCircles)
+	//		{
+	//			int count = (Nradius - newSize) * incDecalage;
+	//			float *vertexPtr = &vertices_buffer[3 * decalage];
+	//			for (int i = 0; i < count; ++i)
+	//			{
+	//				vertexPtr[i] = 0.0f;
+	//			}
+	//		}
+
+	//		// index
+	//		decalage = EditablePolygon::GetIndicesBufferSize(); // pour decaler dans le buffer
+	//		int begin = EditablePolygon::GetVerticesBufferSize(); // pour prendre en compte le nombre de vertex
+	//		for (int i = 0; i < newSize; ++i)
+	//		{
+	//			unsigned int *circleIndicesPtr = bullsEye[needToShow[i]].GetIndicesBufferPtr();
+	//			unsigned int *indicesPtr = &indices_buffer[decalage];
+	//			for (int j = 0; j < circleIndiceCount; ++j)
+	//			{
+	//				indicesPtr[j] = circleIndicesPtr[j] + begin;
+	//			}
+	//			decalage += circleIndiceCount; // on se decale dans le buffer
+	//			begin += incDecalage; // il faut ajouter aux indices le nombre de vertex déjà existant
+	//		}
+	//		if (needToResetPart || deleteOldCircles)
+	//		{
+	//			int count = (Nradius - newSize) * circleIndiceCount;
+	//			unsigned int *indicesPtr = &indices_buffer[decalage];
+	//			for (int i = 0; i < count; ++i)
+	//			{
+	//				indicesPtr[i] = 0;
+	//			}
+	//		}
+
+	//		// coulour
+	//		decalage = EditablePolygon::GetCouloursBufferSize();
+	//		for (int i = 0; i < newSize; ++i)
+	//		{
+	//			float *circleCoulourPtr = bullsEye[needToShow[i]].GetCoulourBufferPtr();
+	//			float *coulourPtr = &coulours_buffer[decalage];
+	//			for (int j = 0; j < circleCoulourCount; ++j)
+	//			{
+	//				coulourPtr[j] = circleCoulourPtr[j];
+	//			}
+	//			decalage += circleCoulourCount;
+	//		}
+	//		if (needToResetPart || deleteOldCircles)
+	//		{
+	//			int count = (Nradius - newSize) * circleCoulourCount;
+	//			float *coulourPtr = &coulours_buffer[decalage];
+	//			for (int i = 0; i < count; ++i)
+	//			{
+	//				coulourPtr[i] = 0.0f;
+	//			}
+	//		}
+
+	//	}
+	//}
+}
+
+void CompletePolygon::RefreshOpenGLBuffers()
+{
+	EditablePolygon::RefreshOpenGLBuffers();
+	RefreshTargetOpenGLBuffers();
+}
+
+void CompletePolygon::setOldVelocity(double value)
+{
+	oldVelocity = value;
+}
+
+double CompletePolygon::getOldVelocity()
+{
+	return oldVelocity;
 }

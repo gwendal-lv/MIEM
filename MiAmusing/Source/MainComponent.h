@@ -19,11 +19,15 @@
 
 #include "MultiCanvasComponent.h"
 #include "editScene.h"
+#include "SoundFilesManager.h"
+#include "SoundBrowser.h"
 //#include "AudioManager.h"
 //#include "AudioPlayer.h"
 
 using namespace Miam;
 
+class SoundBrowser;
+class SoundFilesManager;
 class MultiCanvasComponentAmusing;
 
 namespace Amusing
@@ -33,6 +37,7 @@ namespace Amusing
 	class AmusingModel;
 	class GraphicSessionManager;
 	class OptionWindow;
+	
 }
 using namespace Amusing;
 //==============================================================================
@@ -69,6 +74,8 @@ private:
     void CompleteInitialization(GraphicSessionManager*, MultiCanvasComponentAmusing*);
 	/// \brief Function called after both View, Presenter and Model are constructed
 	void CompleteInitialization(AmusingModel* _model);
+
+	void ReleaseOpengGLResources();
     
     /// \brief Necessary for the Miam::View to reference itself, because this class is always
     /// constructed by the MainWindow before the View module.
@@ -78,10 +85,23 @@ private:
 	{
 		return editSceneC;
 	}
+
+	std::shared_ptr<bptree::ptree> GetSoundTree();
+	void setSoundSettings(bptree::ptree tree);
     
 	void ShowDeviceOptionsDialog();
+	void ShowSoundManagerComponent();
+	void HideOpenGLCanevas();
 	void CloseOptionWindow();
+	void CloseSoundFileManager();
+	void OpenSoundBrowser(int idx,Colour concernedColor);
+	void CloseSoundBrowser(String m_path);
+	void addColourPath(int idx, Colour colour, String path);
 	void removeDeviceManagerFromOptionWindow();
+
+	void setSamplesColor(const int numSamples, Colour colorCode[]);
+	void setDefaultPath(String m_defaultPath);
+	void setSoundPath(int idx, String _path);
 	//void CreateDeviceSelector(AudioDeviceManager* deviceManager);
     
     // = = = = = = = = = = METHODS (JUCE AND USER-DEFINED) = = = = = = = = = =
@@ -96,6 +116,10 @@ public:
 private:
 	//SafePointer<AudioDeviceSelectorComponent> audioSetupComp;
 	ScopedPointer<OptionWindow> optionWindow;
+	ScopedPointer<SoundFilesManager> soundFilesManager;
+	ScopedPointer<SoundBrowser> soundBrowser;
+	Colour colorToAssociate;
+	int idxToAssociate;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 };

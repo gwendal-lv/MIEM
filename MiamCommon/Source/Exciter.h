@@ -113,6 +113,7 @@ namespace Miam
         std::shared_ptr<Exciter> getCastedSharedFromThis()
         { return std::static_pointer_cast<Exciter>(shared_from_this()); }
         
+		public :
         /// The synchronized clock must have been initialized before
         void SetIsAnimationSynchronized(bool isSynchronized);
         

@@ -12,8 +12,11 @@
 
 #include<cmath>
 
-Metronome::Metronome() : BPM(120), samplesTime(0), samplePeriod(0)
+Metronome::Metronome() : BPM(120), samplesTime(0), periodInSamples(0), samplesLeftBeforeBeat(0)
 {
+	numOfBeats = 4;
+	currentBeats = 0;
+	currentT = 0;
 }
 
 Metronome::~Metronome()
@@ -22,58 +25,99 @@ Metronome::~Metronome()
 
 void Metronome::update()
 {
+	// la mise � jour du metronome est s�par�e en deux parties : 
+	// 1) modification du BPM si besoin
+	// 2) le calcul de la position dans le temps : nombre d'�chantillons restant avant le prochain temps, nombre de temps pass�s, et nombre de tour effectu�s
 
-	/////
-	if (samplePeriod != 0)
+	if (BPM != BPM_ToReach)
 	{
-		++samplesTime;//samplesTime += samplesPerBlock;
-		if (samplesTime%samplePeriod == 0)
+		++transitionPosition;
+		if (transitionPosition != transitionTime)
 		{
-			nextSample = 1;
-			timeStamp = samplesTime;
+			BPM += incBPM;
+			int newPeriodInSamples = (int)round((60.0 * sampleRate) / (double)BPM);
+			samplesLeftBeforeBeat *= roundToInt((double)newPeriodInSamples / (double)periodInSamples);
+			periodInSamples = newPeriodInSamples;
 		}
 		else
-			nextSample = 0;
+		{
+			BPM = BPM_ToReach;
+			int newPeriodInSamples = (int)round((60.0 * sampleRate) / (double)BPM);
+			samplesLeftBeforeBeat *= roundToInt((double)newPeriodInSamples / (double)periodInSamples);
+			periodInSamples = (int)round((60.0 * sampleRate) / (double)BPM);
+			transitionPosition = 0;
+		}
 	}
-}
 
-int Metronome::getSamplesToNextBeat()
-{
-	return samplePeriod - samplesTime%samplePeriod; // modulo pas performant
-}
-
-void Metronome::setAudioParameter(int m_samplesPerBlock, double m_sampleRate)
-{
-	samplesPerBlock = m_samplesPerBlock;
-	sampleRate = m_sampleRate;
-
-	samplePeriod = (int)round((60.0 * sampleRate) / (double)BPM);
-}
-
-double Metronome::getNextSample()
-{
-	return nextSample;
-}
-
-MidiMessage Metronome::getNextMidiMsg()
-{
-	int midiChannel = 10;
-	if (nextSample)
+	// le nombre d'�chantillons restant avant le prochain temps diminue � chaque update
+	// une fois qu'il atteint 0, on passe au temps suivant
+	// au bout de "numOfBeats" temps, le nombre de tour augmente de 1
+	if (periodInSamples != 0)
 	{
-		MidiMessage msg = MidiMessage::noteOn(midiChannel, 36, (uint8)100);
-		msg.setTimeStamp(timeStamp);
-		return msg;
+		--samplesLeftBeforeBeat;
+		if (samplesLeftBeforeBeat < 0)
+		{
+			samplesLeftBeforeBeat = periodInSamples;
+			++currentBeats;
+			if (currentBeats >= numOfBeats)
+			{
+				currentBeats = 0;
+				++currentT;
+			}
+		}
+		
+		
 	}
-	else
-		return MidiMessage();
 }
 
-int Metronome::timeToSample(double ms)
+void Metronome::reset()
 {
-	return (int)round(ms * sampleRate / 1000);
+	currentBeats = 0;
+	samplesLeftBeforeBeat = periodInSamples;
+	currentT = 0;
 }
 
-int Metronome::BPMtoPeriodInSample(int m_bpm)
+int Metronome::getNumSamplesToNextBeat()
 {
-	return (int)round(sampleRate * 60.0 * 4.0 / (double)m_bpm);
+	return samplesLeftBeforeBeat; // modulo pas performant
+}
+
+int Metronome::getCurrentBeat()
+{
+	return currentBeats;
+}
+
+void Metronome::setAudioParameter(double m_sampleRate, int m_BPM)
+{
+	if (periodInSamples == 0) // on a pas encore configur� une premi�re fois
+	{
+		BPM = m_BPM;
+		BPM_ToReach = m_BPM;
+		sampleRate = m_sampleRate;
+		periodInSamples = (int)round((60.0 * sampleRate) / (double)BPM);
+		samplesLeftBeforeBeat = periodInSamples;
+	}
+	else if (BPM != m_BPM || sampleRate != m_sampleRate) // si on change une des options
+	{
+		BPM_ToReach = m_BPM;
+		transitionTime = roundToInt(5.0*sampleRate / 1000.0); // temps de transition = 5ms
+		incBPM = double(BPM_ToReach - BPM) / (double)transitionTime;
+		transitionPosition = 0;
+	}
+}
+
+
+
+int Metronome::getPeriodInSamples()
+{
+	// retourne la periode d'un carr� donnant le tempo de m_bpm :
+	//	m_bpm = 1 Tic tous les sampleRate * 60 / BPM
+	//  1 carr� = 4 Tic = 4 * sampleRate * 60 / BPM
+
+	return periodInSamples;
+}
+
+int Metronome::getCurrentT()
+{
+	return currentT;
 }

@@ -24,7 +24,6 @@
 #include "ReadingHead.h"
 
 #include "AsyncParamChange.h"
-#include "AudioRecorder.h"
 
 // Pre-declaration for pointer members
 namespace Amusing {
@@ -56,6 +55,9 @@ namespace Amusing {
 		void sendMidiMessage(MidiMessage midiMsg, PlayHead* sender); // send Midi message to external synth
 
 		double getCurrentSampleRate();
+		int getCurrentSamplesBlock();
+
+		int getNumOfBeats() { return beatsByTimeLine; }
 
 	private:
 
@@ -69,30 +71,27 @@ namespace Amusing {
 		int currentSamplesPerBlock;
 		double currentSampleRate;
 
-		// internal synth + recorder to record own sound
-		Synthesiser synth;
-		AudioRecorder recorder;
-		MidiMessageCollector midiCollector; // midi message to send to the internal synth
-		AudioFormatManager audioFormatManager; // so we can read some audio format
+		// midi message to send to the internal synth
+		MidiMessageCollector midiCollector; 
 
 		bool playInternalSynth;
-		void startRecording();
 		void setUsingSampledSound();
 		int timeStamp;
 
-		int periode;
+		int beatsByTimeLine;
 		int position;
-		Metronome metronome;
+		Metronome *metronome;
 		
 		MidiBuffer midiBuffer;
 		MidiOutput *midiOuput;
 
-		AudioSampleBuffer *interComputeBuffer; // this buffer is summed with the bufferToFill in the audio thread
 		
 		void getParameters(); // function of the audio thread to handle parameters from the Presenter
 
 		std::thread T; // allocation thread
 		void threadFunc(); // function of the allocation thread
+		void clearAudioObjectsOnThread();
+		std::mutex allocationThreadsMutex;
 		bool runThread;	
 		void getAudioThreadMsg(); // function of the allocation thread to handle parameters from the audio thread
 

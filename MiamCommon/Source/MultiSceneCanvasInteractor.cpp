@@ -744,7 +744,12 @@ void MultiSceneCanvasInteractor::OnResized()
     for (size_t i=0;i<scenes.size();i++)
     {
         for (size_t j=0 ; j<scenes[i]->GetDrawableObjectsCount() ; j++)
+        {
             scenes[i]->GetDrawableObject(j)->CanvasResized(GetMultiSceneCanvasComponent()->GetCanvas());
+#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
+            scenes[i]->GetDrawableObject(j)->RefreshOpenGLBuffers();
+#endif
+        }
     }
     
     // Update des duplicats pour OpenGL

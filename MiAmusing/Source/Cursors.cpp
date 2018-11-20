@@ -19,11 +19,15 @@ using namespace Amusing;
 Cursor::Cursor(int64_t _Id) : Exciter(_Id, std::chrono::time_point<clock>())
 {
 	speed = 1;
+	minimumSizePercentage = 0.01;
+	maxAlpha = 64.0f / 128.0f;
 }
 
 Cursor::Cursor(int64_t _Id, bpt _center, double _r, Colour _fillColour, float _canvasRatio) :
 	Exciter(_Id, std::chrono::time_point<clock>())//EditableEllipse(_Id, _center, _a,  _b, _fillColour, _canvasRatio)
 {
+	SetOpacityMode(OpacityMode::DependingOnExcitement);
+	isFilled = true;
 	center = _center;
 	fillColour = _fillColour;
 	a = _r;
@@ -52,6 +56,17 @@ Cursor::Cursor(int64_t _Id, bpt _center, double _r, Colour _fillColour, float _c
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() - (b / 2)*yScale));
 
 	SetIsAnimationSynchronized(false);
+	minimumSizePercentage = 0.01;
+
+	speedToSize[4.0] = 0.6;//2.0;
+	speedToSize[3.0] = 0.73333;//1.666;
+	speedToSize[2.0] = 0.866666;//1.3333;
+	speedToSize[1.0] = 1.0;
+	speedToSize[0.5] = 1.3333;
+	speedToSize[1.0 / 3.0] = 1.6666;
+	speedToSize[0.25] = 2.0;
+
+	maxAlpha = 64.0f / 128.0f;
 }
 
 //Cursor::Cursor(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio) :
@@ -84,10 +99,27 @@ Cursor::~Cursor()
 void Cursor::setSpeed(double m_speed)
 {
 	speed = m_speed;
-	double newCursorSize = (double)initCursorSize / m_speed;
-	double resize = newCursorSize / cursorSize;
-	if(SizeChanged(resize,false))
-		cursorSize = newCursorSize;
+	if (speed <= 4 && speed > 0.1)
+	{
+		double newCursorSize = 0.0;
+		//if (speed >= 1)
+		//	newCursorSize = 1.0 + (0.6 - 1.0) * (speed - 1.0) / (4.0 - 1.0); //1.0 + (speed - 1.0) * (2.0 - 1.0) / 3.0;
+		//else
+		//	newCursorSize = 2.0 + (1.0 - 2.0) * (speed - 0.25) / (1.0 - 0.25); //0.6 + (4 - (1.0 / speed)) * (1.0 - 0.6) / 3.0;
+		if(speedToSize.find(speed)!=speedToSize.end())
+			newCursorSize = speedToSize.at(speed);
+		newCursorSize *= initCursorSize;
+		//double newCursorSize = (double)initCursorSize / m_speed;
+		double resize = newCursorSize / cursorSize;
+		if (SizeChanged(resize, false))
+		{
+			cursorSize = newCursorSize;
+			if (cursorSize > 0.5)
+				setVerticesCount(64);
+			else
+				setVerticesCount(32);
+		}
+	}
 }
 
 void Cursor::setPosition(double m_position)
@@ -129,7 +161,7 @@ void Cursor::LinkTo(std::shared_ptr<Miam::EditablePolygon> m_Polygon, bool remem
 		else if (rememberPreviousAssociate &&  associate != nullptr && (oldAssociates.find(m_Polygon) == oldAssociates.end() || oldAssociates[m_Polygon].second > 0.05))
 		{
 			oldAssociates[associate].first = center;
-			oldAssociates[associate].second = 0; // distance parcourue depuis que le curseur n'est plus lié à cette aire (= oldAssociate)
+			oldAssociates[associate].second = 0; // distance parcourue depuis que le curseur n'est plus liï¿½ ï¿½ cette aire (= oldAssociate)
 			associate = m_Polygon;
 		}
 		else
@@ -173,7 +205,7 @@ bool Cursor::setReadingPosition(double p)
 	{
 		bpt P = complete->computeLinearCursorCenter(p); // nouveau centre
 		
-		// mise à jour de la liste des anciens associé (distance et vérification si on peut les supprimer)
+		// mise ï¿½ jour de la liste des anciens associï¿½ (distance et vï¿½rification si on peut les supprimer)
 		std::vector<int> positionToDelete;
 		//std::map<std::shared_ptr<EditablePolygon>, std::pair<bpt, double>>::iterator it;
 		auto it = oldAssociates.begin();
@@ -200,18 +232,25 @@ bool Cursor::setReadingPosition(double p)
 		//}
 
 
-		//placer le curseur à ce point
+		//placer le curseur ï¿½ ce point
 		bpt translation(P.get<0>() - center.get<0>(), P.get<1>() - center.get<1>());
 		translation.set<0>(translation.get<0>() * (double)parentCanvas->getWidth());
 		translation.set<1>(translation.get<1>() * (double)parentCanvas->getHeight());
 
 		Translate(juce::Point<double>(translation.get<0>(), translation.get<1>()));
-		float newAlpha = complete->computeCursorAlpha(p,P);
+		float newAlpha = complete->computeCursorAlpha(p,P,maxAlpha);
 		
 		if (newAlpha < 0)
-			DBG("alpha négatif");
+			DBG("alpha nï¿½gatif");
 		SetAlpha(newAlpha);
+#if !defined(OPENGL_RENDERING) || OPENGL_RENDERING == 0
 		CanvasResized(parentCanvas);
+#else
+		RefreshOpenGLBuffers();
+#endif // 
+
+		
+		
 		//DBG((String)center.get<0>() + " " + (String)center.get<1>() + "setReadingPosition");
 		return true;
 	}
@@ -227,7 +266,13 @@ void Cursor::setCenterPositionNormalize(bpt newCenter)
 
 void Cursor::Paint(Graphics& g)
 {
-	EditableEllipse::Paint(g);
+	if (auto complete = std::dynamic_pointer_cast<CompletePolygon>(associate))
+	{
+		if(complete->isVisible())
+			EditableEllipse::Paint(g);
+	}
+	else
+		EditableEllipse::Paint(g);
 }
 
 bool Cursor::isClicked(const Point<double>& hitPoint)

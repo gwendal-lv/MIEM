@@ -16,6 +16,7 @@
 
 #define Miam_OscIntInAddressTag     "[int]"
 #define Miam_OscFloatInAddressTag   "[float]"
+#include <string>
 
 namespace Miam {
     
@@ -40,5 +41,7 @@ namespace Miam {
         ///
         /// Might throw a Miam::ParseException if necessary
         static OSCMessage ParseStringToJuceOscMessage(const std::string& stringToParse);
+        
+		static void intToU16string(int I, std::u16string[]);
     };
 }

@@ -7,12 +7,12 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.2.0
+  Created with Projucer version: 5.3.2
 
   ------------------------------------------------------------------------------
 
-  The Projucer is part of the JUCE library - "Jules' Utility Class Extensions"
-  Copyright (c) 2015 - ROLI Ltd.
+  The Projucer is part of the JUCE library.
+  Copyright (c) 2017 - ROLI Ltd.
 
   ==============================================================================
 */
@@ -21,6 +21,8 @@
 
 //[Headers]     -- You can add your own extra header files here --
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "ColorArray.h"
+class ColorArray;
 
 class AmusingSceneComponent;
 class CustomLookAndFeel : public LookAndFeel_V4
@@ -185,7 +187,7 @@ class CustomLookAndFeel : public LookAndFeel_V4
 	bool showScaleMarking = false;
 	double skewFactor = 1;
 
-	
+
 };
 
 //[/Headers]
@@ -214,6 +216,11 @@ public:
 	void setSpeedSliderValue(double speed);
 	void setOctaveSlider(int currentOctave);
 	void setVelocitySliderValue(double _velocity);
+	void OnColorChanged(Colour newColour, int colourIdx);
+	void setCurrentColorSelected(int idx);
+
+	void setSamplesColor(int Nsamples, Colour colorCode[]);
+	void addColourSample(int index, Colour colour);
     //[/UserMethods]
 
     void paint (Graphics& g) override;
@@ -229,13 +236,15 @@ private:
     //[UserVariables]   -- You can add your own custom variables in this section.
 	AmusingSceneComponent* amusingSceneComponent;
 	CustomLookAndFeel customLook;
+	double speedTable[7] = { 0.25,0.3333333,0.5,1,2,3,4 };
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<Slider> baseNote;
-    ScopedPointer<Slider> speed;
-    ScopedPointer<Label> speedLabel;
-    ScopedPointer<Slider> velocitySlider;
+    std::unique_ptr<Slider> baseNote;
+    std::unique_ptr<Slider> speed;
+    std::unique_ptr<Label> speedLabel;
+    std::unique_ptr<Slider> velocitySlider;
+    std::unique_ptr<ColorArray> colorArray;
 
 
     //==============================================================================

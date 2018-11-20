@@ -55,7 +55,7 @@ void AudioDeviceAndMidiOutputSelectorComponent::buttonStateChanged(Button *butto
 		internalSynthButtonState = internalSynthButton->getToggleState();
 		if (internalSynthButtonState)
 		{
-			// bouton On : on utilise le synth� interne -> pas besoin de montrer le midiOutputSelector
+			// bouton On : on utilise le synthé interne -> pas besoin de montrer le midiOutputSelector
 			audioDeviceSelectorComponent->getChildComponent(midiOutputSelectorId)->setVisible(false);
 			audioDeviceSelectorComponent->deviceManager.setDefaultMidiOutput(String());
 		}
@@ -67,7 +67,7 @@ void AudioDeviceAndMidiOutputSelectorComponent::buttonStateChanged(Button *butto
 	}
 }
 
-void AudioDeviceAndMidiOutputSelectorComponent::buttonClicked(Button* clickedButton)
+void AudioDeviceAndMidiOutputSelectorComponent::buttonClicked(Button* /*clickedButton*/)
 {
 
 }
@@ -86,6 +86,32 @@ void AudioDeviceAndMidiOutputSelectorComponent::setItemHeight(int newItemHeight)
 {
 	itemHeight = newItemHeight;
 	audioDeviceSelectorComponent->setItemHeight(itemHeight);
+}
+
+void AudioDeviceAndMidiOutputSelectorComponent::saveAudioDeviceCurrentState()
+{
+	audioDeviceSelectorComponent->deviceManager.getAudioDeviceSetup(savedState);
+	internalSynthButtonStateSaved = internalSynthButton;
+	savedAudioDeviceType = audioDeviceSelectorComponent->deviceManager.getCurrentAudioDeviceType();
+}
+
+void AudioDeviceAndMidiOutputSelectorComponent::reloadPreviousState()
+{
+	audioDeviceSelectorComponent->deviceManager.setAudioDeviceSetup(savedState,false);
+	audioDeviceSelectorComponent->deviceManager.setCurrentAudioDeviceType(savedAudioDeviceType, false);
+	internalSynthButton->setToggleState(internalSynthButtonStateSaved,false);
+
+	if (internalSynthButtonStateSaved)
+	{
+		// bouton On : on utilise le synthé interne -> pas besoin de montrer le midiOutputSelector
+		audioDeviceSelectorComponent->getChildComponent(midiOutputSelectorId)->setVisible(false);
+		audioDeviceSelectorComponent->deviceManager.setDefaultMidiOutput(String());
+	}
+	else
+	{
+		const int space = itemHeight / 4;
+		audioDeviceSelectorComponent->getChildComponent(midiOutputSelectorId)->setVisible(true);
+	}
 }
 
 void AudioDeviceAndMidiOutputSelectorComponent::removeAllChangeListener()

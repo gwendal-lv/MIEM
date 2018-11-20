@@ -259,7 +259,7 @@ namespace Miam
         public :
         /// \brief Exports the current areas of course, and the initial exciters previously saved
         /// (does not export the current active exciters)
-        std::shared_ptr<bptree::ptree> GetTree() const;
+        virtual std::shared_ptr<bptree::ptree> GetTree() const;
         // Pas de SetFromTree :
         // les aires graphiques concrètes ne peuvent être instanciées
         // que depuis une classe concrète spécifique de l'application finale.

@@ -51,6 +51,27 @@ void View::CompleteInitialization(AmusingModel* _model)
 	mainContentComponent->CompleteInitialization(model);
 }
 
+void View::ReleaseOpengGLResources()
+{
+	mainContentComponent->ReleaseOpengGLResources();
+	mainContentComponent->HideOpenGLCanevas();
+}
+
+void View::setSampleColor(const int numSamples, Colour colorCode[])
+{
+	mainContentComponent->setSamplesColor(numSamples, colorCode);
+}
+
+void Amusing::View::setDefaultPath(String defaultPath)
+{
+	mainContentComponent->setDefaultPath(defaultPath);
+}
+
+void Amusing::View::setSoundPath(int idx, String _path)
+{
+	mainContentComponent->setSoundPath(idx, _path);
+}
+
 void View::ButtonClicked(const String& /*name*/)
 {
     throw std::runtime_error("Unimplemented behavior on button click");
@@ -87,12 +108,49 @@ void View::DisplayInfo(const String& /*message*/)
 
 void View::ShowDeviceOptionsDialog()
 {
+	mainContentComponent->ReleaseOpengGLResources();
 	mainContentComponent->ShowDeviceOptionsDialog();
+}
+
+void View::ShowSoundManager()
+{
+	mainContentComponent->ReleaseOpengGLResources();
+	mainContentComponent->ShowSoundManagerComponent();
 }
 
 void View::removeDeviceManagerFromOptionWindow()
 {
 	mainContentComponent->removeDeviceManagerFromOptionWindow();
+}
+
+std::shared_ptr<bptree::ptree> View::GetAudioSettingsTree()
+{
+	auto viewTree = std::make_shared<bptree::ptree>();
+
+	auto viewInnerTree =  std::make_shared<bptree::ptree>();
+	auto soundTree = mainContentComponent->GetSoundTree();
+	viewInnerTree->add_child("soundTree", *soundTree);
+
+	viewTree->add_child("sound", *viewInnerTree);
+	return viewTree;//soundTree;//canvasInnerTree;
+}
+
+void View::setSoundsSettings(bptree::ptree tree)
+{
+	bptree::ptree soundTree;
+	try
+	{
+		soundTree = tree.get_child("sound");
+	}
+	catch (bptree::ptree_error& e)
+	{
+		throw XmlReadException("<view> : error extracting <sound> nodes : ", e);
+	}
+
+	if (!soundTree.empty())
+	{
+		mainContentComponent->setSoundSettings(soundTree);
+	}
 }
 
 
