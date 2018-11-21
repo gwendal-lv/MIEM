@@ -5,7 +5,7 @@
               companyWebsite="htpp://laras.be" companyEmail="glevaillant@he2b.be"
               reportAppUsage="0" displaySplashScreen="0" bundleIdentifier="com.glv.MIEMController"
               headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../ControlCommon/Source/&#10;../../../SpatCommon/Source/"
-              id="k0BzOi">
+              id="k0BzOi" defines="OPENGL_RENDERING">
   <MAINGROUP id="Krx0MS" name="MIEM Controller">
     <GROUP id="{B7F5CB5C-B6F8-A8AA-0F14-17FA42CC4DDF}" name="Source">
       <FILE id="BwuW2o" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>

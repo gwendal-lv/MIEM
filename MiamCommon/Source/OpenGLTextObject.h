@@ -56,10 +56,10 @@ private:
 		"uniform mat4 projectionMatrix;\n"
 		"uniform mat4 viewMatrix;\n"
 		"\n"
-#if JUCE_OPENGL_ES
-		"varying vec2 UV;\n"
-#else
+#if JUCE_OPENGL_ES // lowp seems reserved to embedded platforms
 		"varying lowp vec2 UV;\n"
+#else
+		"varying vec2 UV;\n"
 #endif
 		"\n"
 		"void main()\n"
