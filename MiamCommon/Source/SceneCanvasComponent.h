@@ -104,8 +104,16 @@ public:
     public :
     
     SceneCanvasComponent();
+    
+    /// \brief Initialisation pour OpenGL, avec des tailles max de VBO
+    ///
+    /// Nombre de points max par forme correspond au nombre de points
+    /// du contour. Le nombre de points des VBO OpenGL sera potentiellement
+    /// beaucoup plus grand que ce paramètre.
+    /// Le nombre de points max par forme est important pour les ellipses par exemple.
 	SceneCanvasComponent(int numShapesMax, int numPointsMax = 64);
 
+    
 	void init(int numShapesMax, int numPointsMax);
 	void ReleaseOpengGLResources();
 

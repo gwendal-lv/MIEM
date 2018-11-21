@@ -56,7 +56,6 @@ namespace Miam
 		// Display functions
 	public:
 		void setVerticesCount(int newVerticesCount);
-		void setIsFilled(bool shouldBeFilled);
 		virtual void Paint(Graphics& g) override;
 		virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
 		virtual void RefreshOpenGLBuffers() override;
@@ -81,7 +80,6 @@ namespace Miam
 			virtual double computeXScale(float _canvasRatio);
 			virtual double computeYScale(float _canvasRatio);
 
-			bool isFilled;
 
 	};
 }

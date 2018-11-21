@@ -55,6 +55,7 @@ namespace Miam
         
         Colour fillColour; ///< Solid colour for filling the area (opacity should be 0xFF)
         float fillOpacity; ///< Opacity applied to the solid fill colour (in [0.0,1.0])
+        bool isFilled = true; // correction bug suite fusion OpenGL... Ok ?
         OpacityMode opacityMode;
         
         /// \brief The lowest opacity of a displayed area
@@ -110,6 +111,9 @@ namespace Miam
         virtual Colour GetFillColour() const override {return fillColour;}
         /// \param _fillColour See DrawableArea::fillColour
         virtual void SetFillColour(Colour newColour) override;
+        
+        void setIsFilled(bool shouldBeFilled);
+        
         /// \param _fillOpacity See DrawableArea::fillOpacity
         virtual void SetAlpha(float newAlpha) override;
         virtual float GetAlpha() const override;

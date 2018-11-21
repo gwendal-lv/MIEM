@@ -326,12 +326,6 @@ DrawablePolygon::~DrawablePolygon()
 
 
 
-void DrawablePolygon::setIsFilled(bool shouldBeFilled)
-{
-	isFilled = shouldBeFilled;
-}
-
-
 
 // Called by the parent component (which is a canvas)
 void DrawablePolygon::Paint(Graphics& g)
@@ -342,6 +336,8 @@ void DrawablePolygon::Paint(Graphics& g)
 		g.setOpacity(GetAlpha());
 		g.fillPath(contour);
 	}
+    
+    //std::cout << "isFilled = " << isFilled << std::endl;
     
     g.setColour(contourColour);
     g.setOpacity(GetAlpha());

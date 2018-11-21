@@ -201,12 +201,6 @@ void DrawableEllipse::setVerticesCount(int /*newVerticesCount*/)
 }
 
 
-void DrawableEllipse::setIsFilled(bool shouldBeFilled)
-{
-	isFilled = shouldBeFilled;
-}
-
-
 // Called by the parent component (which is a canvas)
 void DrawableEllipse::Paint(Graphics& g)
 {

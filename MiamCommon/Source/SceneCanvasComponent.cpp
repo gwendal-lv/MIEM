@@ -340,8 +340,9 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 void SceneCanvasComponent::renderOpenGL()
 {
 	auto manager = canvasManager.lock();
+    
+    // =========================== Rendu classique CPU++ sans VBO ==========================
 #if !defined(OPENGL_RENDERING) || (OPENGL_RENDERING == 0)
-
 	const double desktopScale = openGlContext.getRenderingScale();
 	std::unique_ptr<LowLevelGraphicsContext> glRenderer(createOpenGLGraphicsContext(openGlContext,
 		roundToInt(desktopScale * getWidth()),
@@ -406,9 +407,9 @@ void SceneCanvasComponent::renderOpenGL()
 			duplicatedAreas[i]->Paint(g);
 	}
 
+    
+    // =========================== Rendu classique GPU++ avec VBO ==========================
 #else // !OPENGL_RENDERING || OPENGL_RENDERING == 0
-
-	
 	if (releaseResources)
 	{
 		openGLDestructionAtLastFrame();

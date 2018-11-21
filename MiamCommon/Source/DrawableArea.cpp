@@ -338,6 +338,12 @@ void DrawableArea::SetName(String newName)
     }
 }
 
+void DrawableArea::setIsFilled(bool shouldBeFilled)
+{
+    isFilled = shouldBeFilled;
+}
+
+
 void DrawableArea::SetAlpha(float newAlpha)
 {
 	fillOpacity = newAlpha;
