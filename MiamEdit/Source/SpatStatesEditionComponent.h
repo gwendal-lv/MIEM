@@ -95,7 +95,7 @@ public:
     private :
     void updateMatrix();
 
-    
+
     /// - - - - - Helpers - - - - -
     private :
     void setParametersGroupEnabled(bool shouldBeEnabled);

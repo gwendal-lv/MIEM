@@ -72,7 +72,7 @@ void DrawableArea::init()
     resetImages();
 
 	// taille des VBOs
-    // à NE PLUS METTRE EN JOUR EN VERSION NON VBOOOOOOO ===================================
+    // à NE PLUS METTRE A JOUR EN VERSION NON VBOOOOOOO ===================================
     g_vertex_ring.resize(3 * numVerticesRing);
     ringIndices.resize(3 * numVerticesRing);
     
@@ -80,7 +80,7 @@ void DrawableArea::init()
 	indices_buffer.resize(indicesBufferSize);
 	coulours_buffer.resize(couloursBufferSize);	
 
-#ifdef OPENGL_RENDERING
+#ifdef __MIEM_VBO
 	int numPoints = numPointsRing;
 	ComputeRing(numPoints);
 	const GLfloat R = contourColour.getRed() / 255.0f;
@@ -97,7 +97,7 @@ void DrawableArea::init()
 	}
 	//for (int i = 4 * numPoints; i < opaque_color_buffer_size; ++i)
 	//	opaque_color_buffer[i] = 0;
-#endif // OPENGL_RENDERING
+#endif // __MIEM_VBO
 }
 
 void DrawableArea::ComputeRing(int numPoints)
@@ -298,7 +298,7 @@ void DrawableArea::CanvasResized(SceneCanvasComponent* _parentCanvas)
 
 void DrawableArea::RefreshOpenGLBuffers()
 {
-#ifndef OPENGL_RENDERING
+#ifndef __MIEM_VBO
     assert(false); // this function should not be called !!
 #endif
     

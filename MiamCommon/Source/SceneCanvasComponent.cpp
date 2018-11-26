@@ -131,11 +131,14 @@ void SceneCanvasComponent::ReleaseOpengGLResources()
 
 void SceneCanvasComponent::waitForOpenGLResourcesRealeased()
 {
-#if OPENGL_RENDERING == 1
+#ifdef __MIEM_VBO
 	while (!releaseDone) {}
 	while (!openGLDestructionThread.joinable()) {}
 	openGLDestructionThread.join();
 	releaseDone = false;
+#else
+    DBG("[VIEW] This function should not be called in non-VBO mode..."); // à vérifier quand même...
+    assert(false);
 #endif
 }
 
@@ -188,9 +191,10 @@ void SceneCanvasComponent::resized()
     {
         manager->OnResized();
     }
-	redrawCanvasOutline = true;
-	if (redrawCanvasOutline)
-		computeCanvasOutline();
+    
+#ifdef __MIEM_VBO
+    computeCanvasOutline();
+#endif
 }
 
 
@@ -254,9 +258,7 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 	//	openGLLabel = nullptr;
 	//}
 
-#if OPENGL_RENDERING == 1
-
-    
+#ifdef __MIEM_VBO
     DBG("[MIEM OpenGL] évènement 'New Context Created'. Création des shaders, buffers, etc.");
     
 	shaderProgram = std::make_unique<OpenGLShaderProgram>(openGlContext);
@@ -336,7 +338,7 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 
 	
 
-#endif // OPENGL_RENDERING == 1
+#endif // __MIEM_VBO
 	//shaderProgram->use(); // on utilise qu'un seul shader program pour le moment donc on appelle une seule fois cette fonction
 }
 
@@ -404,7 +406,7 @@ void SceneCanvasComponent::renderOpenGL()
     
     
     // =========================== Rendu classique CPU++ sans VBO ==========================
-#if !defined(OPENGL_RENDERING) || (OPENGL_RENDERING == 0)
+#ifndef __MIEM_VBO
 	std::unique_ptr<LowLevelGraphicsContext> glRenderer(createOpenGLGraphicsContext(openGlContext,
 		roundToInt(desktopScale * getWidth()),
 		roundToInt(desktopScale * getHeight())));
@@ -437,7 +439,7 @@ void SceneCanvasComponent::renderOpenGL()
     
     
     // =========================== Rendu classique GPU++ avec VBO ==========================
-#else // !OPENGL_RENDERING || OPENGL_RENDERING == 0
+#else // ndef __MIEM_VBO
 	if (releaseResources)
 	{
         DBG("[MIEM OpenGL] 'Release resources' débute dans le thread OpenGL");
@@ -489,7 +491,7 @@ void SceneCanvasComponent::renderOpenGL()
 		}
 		rendering_mutex.unlock();
     }
-#endif // !OPENGL_RENDERING || OPENGL_RENDERING == 0
+#endif // ndef __MIEM_VBO
 
 		// Call to a general Graphic update on the whole Presenter module
 		if (!manager->isUpdatePending())
@@ -614,6 +616,10 @@ void SceneCanvasComponent::DrawOnSceneCanevas(std::shared_ptr<Miam::MultiSceneCa
 
 void SceneCanvasComponent::DrawShapes()
 {
+#ifndef __MIEM_VBO
+    throw std::logic_error("Cannot manipulate VBOs in non-VBO mode");
+#endif
+    
 	if (position != nullptr && colour != nullptr)
 	{
 		/// Draw triangle
@@ -645,6 +651,10 @@ void SceneCanvasComponent::DrawShapes()
 
 void SceneCanvasComponent::DrawCanvasOutline()
 {
+#ifndef __MIEM_VBO
+    throw std::logic_error("Cannot manipulate VBOs in non-VBO mode");
+#endif
+    
 	if (position != nullptr && colour != nullptr)
 	{
 		if (redrawCanvasOutline)
@@ -728,6 +738,10 @@ void SceneCanvasComponent::SetIsSelectedForEditing(bool isSelected)
 
 void SceneCanvasComponent::computeCanvasOutline()
 {
+#ifndef __MIEM_VBO
+    throw std::logic_error("Cannot manipulate VBOs in non-VBO mode");
+#endif
+    
 	float outlineWidth = 5.0f; //px
 	g_canvasOutlineVertex_buffer_data[0] = ((float)getWidth() /** (1.0f + 0.5f * std::sin(2.0f * M_PI * (1.0f/60.0f) * (float)numFrame - 50.0f * 60.0f))*/) - outlineWidth;
 	g_canvasOutlineVertex_buffer_data[1] = (float)getHeight() - outlineWidth;
@@ -768,6 +782,10 @@ void SceneCanvasComponent::computeCanvasOutline()
 
 void SceneCanvasComponent::CreateShapeBuffer(std::shared_ptr<IDrawableArea> area, int positionInBuffer)
 {
+#ifndef __MIEM_VBO
+    throw std::logic_error("Cannot manipulate VBOs in non-VBO mode");
+#endif
+    
 	int decalage = 3 * ((int)positionInBuffer * *numVertexShape);// + numPointsPolygon + 1;
 	if (area->isVisible())
 	{
@@ -861,8 +879,12 @@ void SceneCanvasComponent::openGLDestructionAfterLastFrame()
 	releaseDone = true;
 }
 
+// Fonction dupliquée de EDITABLE AREA non ????????????????
 void SceneCanvasComponent::computeManipulationLine(float Ox, float Oy, float Mx, float My, float width, float height)
 {
+#ifndef __MIEM_VBO
+    throw std::logic_error("Cannot manipulate VBOs in non-VBO mode");
+#endif
 	int N = 20;
 	float length = (float)boost::geometry::distance(bpt(Ox, Oy), bpt(Mx, My));//0.25 * (getWidth() + getHeight()) / 2.0;
 	if (length / (2 * height) > 20.0f)

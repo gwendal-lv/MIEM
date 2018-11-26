@@ -63,7 +63,7 @@ void EditablePolygon::graphicalInit()
     contourPointsRadius = 1.4f*contourWidth;
     manipulationPointRadius = centerContourWidth+centerCircleRadius;
 
-#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
+#if defined(__MIEM_VBO)
 		// ajout de la forme et du contour !
 		verticesBufferSize += (3 * (numPointsPolygon * numVerticesCircle) + 3 * dottedLineVertexes + 3 * numVerticesRing);
 		indicesBufferSize += (3 * (numPointsPolygon * numPointCircle) + dottedLineIndices + 3 * numVerticesRing);
@@ -195,7 +195,7 @@ void EditablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 
 void EditablePolygon::RefreshOpenGLBuffers()
 {
-#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
+#if defined(__MIEM_VBO)
 	DrawablePolygon::RefreshOpenGLBuffers();
 	RefreshContourPointsOpenGLBuffers();
 	RefreshManipulationPointOpenGLBuffer();
@@ -204,6 +204,10 @@ void EditablePolygon::RefreshOpenGLBuffers()
 
 void EditablePolygon::RefreshManipulationPointOpenGLBuffer()
 {
+#ifndef __MIEM_VBO
+    throw std::logic_error("Cannot manipulate VBOs in non-VBO mode");
+#endif
+    
 	/// manipulationLine + manipulationPoint
 	//vertex
 	int decalage = DrawablePolygon::GetVerticesBufferSize() + numPointsPolygon * numVerticesCircle;
@@ -253,6 +257,10 @@ void EditablePolygon::RefreshManipulationPointOpenGLBuffer()
 
 void EditablePolygon::RefreshContourPointsOpenGLBuffers()
 {
+#ifndef __MIEM_VBO
+    throw std::logic_error("Cannot manipulate VBOs in non-VBO mode");
+#endif
+    
 	int decalage = DrawablePolygon::GetVerticesBufferSize();
 	int numApexes = (int)contourPointsInPixels.outer().size() - 1;//isActive? contourPointsInPixels.outer().size() - 1 : 0;
 
@@ -286,7 +294,14 @@ void EditablePolygon::RefreshContourPointsOpenGLBuffers()
 		const int currentDecalage = 3 * decalage;
 		for (int j = 0; j < count; ++j)
 		{
+            // ===============================================================================
+            // ===============================================================================
+            // ===============================================================================
+            // BAD ACCESS FORMELLEMENT DETECTE ICI PAR JUCE VIA DEBUGGUER XCODE
 			indices_buffer[j + currentDecalage/*+ numVerticesPolygon*/] = circleIndices[j] + indexToAdd;
+            // ===============================================================================
+            // ===============================================================================
+            // ===============================================================================
 		}
 		decalage += numPointCircle;
 	}
@@ -458,7 +473,7 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
             if (isNewContourPointValid(sideDraggedId+1, newLocation2))
             {
                 moveContourPoint(sideDraggedId+1, newLocation2);
-#if defined(OPENGL_RENDERING) && OPENGL_RENDERING == 1
+#if defined(__MIEM_VBO)
                 RefreshContourPointsOpenGLBuffers();
 #endif
                 areaEventType = AreaEventType::ShapeChanged;
@@ -543,8 +558,10 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
         
         // After manipulation computation : normalized coordinates update
 		updateContourPoints();
+#ifdef __MIEM_VBO
 		RefreshContourPointsOpenGLBuffers();
 		RefreshManipulationPointOpenGLBuffer();
+#endif
     }
     
     else if (pointDraggedId == EditableAreaPointId::Center)
@@ -575,7 +592,7 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
         }
 		// la partie du buffer pour le polygon et son contour sont calculée par InteractivePolygon::Refresh...
 		// à la fin de la fonction -> juste recalculer les cercles pour les points du contour et le manipulationPoint
-#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
+#if defined(__MIEM_VBO)
 		RefreshContourPointsOpenGLBuffers();
 		RefreshManipulationPointOpenGLBuffer();
 #endif
@@ -589,7 +606,7 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
 	if (areaEventType != AreaEventType::NothingHappened)
 	{
 		InteractivePolygon::CanvasResized(this->parentCanvas);
-#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
+#if defined(__MIEM_VBO)
 		InteractivePolygon::RefreshOpenGLBuffers();
 #endif
 	}
@@ -923,6 +940,9 @@ void EditablePolygon::computeManipulationLine(float Ox, float Oy, float Mx, floa
 	float sina = (My - Oy) / length;
 	float cosa = (Mx - Ox) / length;
 
+#ifndef __MIEM_VBO
+    throw std::logic_error("Cannot manipulate VBOs in non-VBO mode");
+#endif
 	for (int i = 0; i < dottedLineNparts; ++i)
 	{
 		if (i < N)

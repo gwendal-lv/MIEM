@@ -137,7 +137,7 @@ std::shared_ptr<AreaEvent> InteractiveScene::AddArea(std::shared_ptr<IInteractiv
     // Forced graphical updates
     newArea->CanvasResized(canvasComponent);
 
-#if defined(OPENGL_RENDERING) && OPENGL_RENDERING == 1
+#if defined(__MIEM_VBO)
 	newArea->RefreshOpenGLBuffers();
 #endif
     
@@ -169,7 +169,7 @@ std::shared_ptr<AreaEvent> InteractiveScene::AddExciter(std::shared_ptr<Exciter>
     
     // Forced graphical updates
     newExciter->CanvasResized(canvasComponent);
-#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
+#if defined(__MIEM_VBO)
 	newExciter->RefreshOpenGLBuffers();
 #endif
     

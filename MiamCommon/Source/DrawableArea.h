@@ -80,13 +80,13 @@ namespace Miam
 		bool areaVisible = true;
         
 		// size of the different buffer parts
-		static const int numPointsPolygon = 32;
-		static const int numPointsRing = 32;
-		static const int numPointCircle = 32;
+		static const int numPointsPolygon = 32; // max number of contour points of a polygon
+		static const int numPointsRing = 32; // actual resolution of any donut ring
+		static const int numPointCircle = 32; // actual resolution of any circle
 
 		static const int numVerticesPolygon = numPointsPolygon + 1; // +1 pour le centre du polygone
-		static const int numVerticesRing = 2 * numPointsRing;
-		static const int numVerticesCircle = numPointCircle + 1; // +1 pour le centre du point
+		static const int numVerticesRing = 2 * numPointsRing; // donut = 2 circles of 32 points
+		static const int numVerticesCircle = numPointCircle + 1; // +1 pour le centre du disque
 		
 		int verticesBufferSize = 3 * numVerticesRing;//3 * numPointsPolygon + 3 * numVerticesRing; // par défaut : contour + centre
 		int indicesBufferSize = 3 * numVerticesRing;//3 * 2 * numPointsPolygon + 3 * numVerticesRing;

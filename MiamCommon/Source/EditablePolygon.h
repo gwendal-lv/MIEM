@@ -79,7 +79,9 @@ namespace Miam {
 			static const int dottedLineVertexes = 4 * dottedLineNparts;
 			static const int dottedLineIndices = 6 * dottedLineNparts;
 
-			GLfloat g_vertex_dotted_line[3 * dottedLineVertexes];
+        // à passer en vecteur pour surveiller les OUT OF RANGE exceptions
+        // ET À METTRE DANS EDITABLE AREA CAR C'EST COMMUN AVEC EDITABLE ELLIPSE
+        GLfloat g_vertex_dotted_line[3 * dottedLineVertexes];
 			GLuint g_indices_dotted_line[dottedLineIndices];
 
 			GLfloat g_vertex_circle[3 * numVerticesCircle];

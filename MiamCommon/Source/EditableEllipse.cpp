@@ -74,6 +74,7 @@ void EditableEllipse::graphicalInit()
 	indices_buffer.resize(indicesBufferSize);
 	coulours_buffer.resize(couloursBufferSize);
 
+#ifdef __MIEM_VBO
 	// calcul d'un disque de centre 0 et de rayon 5 pixels
 	float radius = 5.0f;
 	int numPoints = numPointsRing;
@@ -125,6 +126,7 @@ void EditableEllipse::graphicalInit()
 		coulours_buffer[decalage + 4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
 		coulours_buffer[decalage + 4 * i + 3] = editingElementsColour.getAlpha() / 255.0f;
 	}
+#endif // def _MIEM_VBO
 }
 
 void EditableEllipse::behaviorInit()
@@ -191,6 +193,9 @@ void EditableEllipse::CanvasResized(SceneCanvasComponent* _parentCanvas)
 
 void EditableEllipse::RefreshOpenGLBuffers()
 {
+#ifndef __MIEM_VBO
+    throw std::logic_error("Cannot manipulate VBOs in non-VBO mode");
+#endif
 	DrawableEllipse::RefreshOpenGLBuffers();
 
 	int decalage = DrawableEllipse::GetVerticesBufferSize();
@@ -590,7 +595,7 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 	if (areaEventType != AreaEventType::NothingHappened)
 	{
 		InteractiveEllipse::CanvasResized(this->parentCanvas);
-#if defined(OPENGL_RENDERING) && (OPENGL_RENDERING == 1)
+#if defined(__MIEM_VBO)
 		InteractiveEllipse::RefreshOpenGLBuffers();
 #endif
 	}
@@ -785,6 +790,11 @@ double EditableEllipse::getRadius()
 }
 
 
+// =================== à déplacer dans code commun EditableArea ===================
+// =================== à déplacer dans code commun EditableArea ===================
+// FOnction commune avec editable polygon.
+// =================== à déplacer dans code commun EditableArea ===================
+// =================== à déplacer dans code commun EditableArea ===================
 void EditableEllipse::computeManipulationLine(float Ox, float Oy, float Mx, float My, float width, float height)
 {
 	int N = 20;
@@ -797,6 +807,9 @@ void EditableEllipse::computeManipulationLine(float Ox, float Oy, float Mx, floa
 	float sina = (My - Oy) / length;
 	float cosa = (Mx - Ox) / length;
 
+#ifndef __MIEM_VBO
+    throw std::logic_error("Cannot manipulate VBOs in non-VBO mode");
+#endif
 	for (int i = 0; i < dottedLineNparts; ++i)
 	{
 		if (i < N)
