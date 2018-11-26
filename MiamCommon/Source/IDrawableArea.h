@@ -141,9 +141,6 @@ namespace Miam
 		virtual int GetIndicesBufferSize() = 0;
 		virtual int GetCouloursBufferSize() = 0;
 
-		virtual float GetCouloursBufferElt(int idx) = 0;
-		virtual float GetVerticesBufferElt(int idx) = 0;
-		virtual int GetIndicesBufferElt(int idx) = 0;
 
 		virtual void setZoffset(const float newOffset) = 0;
         

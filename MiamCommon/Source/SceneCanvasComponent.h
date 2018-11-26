@@ -129,6 +129,8 @@ public:
     virtual void newOpenGLContextCreated() override;
     virtual void renderOpenGL() override; // ! in background-thread !
 	virtual void openGLDestructionAtLastFrame();
+    
+    /// \brief Draws the shapes only, and not the text on them (names, etc...)
 	virtual void DrawOnSceneCanevas(std::shared_ptr<Miam::MultiSceneCanvasInteractor> &manager);
 	void DrawShapes();
 	void DrawCanvasOutline();
@@ -189,7 +191,6 @@ public:
 			0.0f, 2.0f / (t - b), 0.0f, 0.0f,
 			0.0f, 0.0f, -2.0f / (far - near), 0.0f,
 			-(r + l) / (r - l), -(t + b) / (t - b), -(far + near) / (far - near), 1.0f);
-		Matrix3D<float> autre = Matrix3D<float>::fromFrustum(0, width / 2, 0, height / 2, near, far);
 
 		return orthoProj;
 
@@ -322,6 +323,10 @@ private:
 	GLfloat g_vertex_dotted_line[3 * dottedLineVertexes];
 	GLuint g_indices_dotted_line[dottedLineIndices];
 
+    
+    //  - - - - - Méthodes VBOs - - - - -
+    private :
+    /// \brief à renommer/refactorer : fait un FILL en réalité (le buffer reste créé)
 	void CreateShapeBuffer(std::shared_ptr<IDrawableArea> area, int positionInBuffer);
 
 	

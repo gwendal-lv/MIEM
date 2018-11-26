@@ -256,6 +256,9 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 
 #if OPENGL_RENDERING == 1
 
+    
+    DBG("[MIEM OpenGL] évènement 'New Context Created'. Création des shaders, buffers, etc.");
+    
 	shaderProgram = std::make_unique<OpenGLShaderProgram>(openGlContext);
 	shaderProgram->addVertexShader(OpenGLHelpers::translateVertexShaderToV3(myVertexShader));
 	shaderProgram->addFragmentShader(OpenGLHelpers::translateFragmentShaderToV3(myFragmentShader));
@@ -340,10 +343,68 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 void SceneCanvasComponent::renderOpenGL()
 {
 	auto manager = canvasManager.lock();
+    const double desktopScale = openGlContext.getRenderingScale();
+    
+    
+    
+    
+    
+    // - - - - - THIRD Duplication of the drawable objects for thread-safe rendering, - - - - -
+    // Lorsque nécessaire seulement !
+    manager->LockAsyncDrawableObjects();
+    
+    
+    bool areasCountChanged = (manager->GetAsyncDrawableObjects().size() != duplicatedAreas.size());
+    // POUR L'INSTANT ALGO BÊTE
+    // on resize le vecteur : la construction des shared n'est pas grave, leur bloc de contrôle reste
+    // en mémoire finalement (on utilisera reset() )
+    if (areasCountChanged)
+    {
+        if (manager->GetAsyncDrawableObjects().size() < duplicatedAreas.size())
+        {
+            previousMaxSize = (int)duplicatedAreas.size(); // VBOs only
+            needToResetBufferParts = true; // VBOs only
+        }
+        else
+        {
+            previousMaxSize = (int)manager->GetAsyncDrawableObjects().size(); // VBOs only
+            needToResetBufferParts = false; // VBOs only
+        }
+        canvasAreasPointersCopies.resize(manager->GetAsyncDrawableObjects().size());
+        duplicatedAreas.resize(manager->GetAsyncDrawableObjects().size());
+    }
+    else
+    {
+        previousMaxSize = (int)duplicatedAreas.size(); // VBOs only
+        needToResetBufferParts = false; // VBOs only
+    }
+    // Vérification simple de chaque aire 1 par 1
+    size_t itIndex = 0;
+    for (auto it = manager->GetAsyncDrawableObjects().begin();
+         it != manager->GetAsyncDrawableObjects().end();
+         ++it)
+    {
+        // S'il y a eu un changement : on re-crée un pointeur déjà, puis
+        // on fait effectivement la copie d'un nouvel objet
+        if (canvasAreasPointersCopies[itIndex] != (*it))
+        {
+            canvasAreasPointersCopies[itIndex] = (*it);
+            duplicatedAreas[itIndex] = (*it)->Clone();
+        }
+        // Double compteur
+        itIndex++;
+    }
+    
+    manager->UnlockAsyncDrawableObjects();
+    
+
+    
+    
+    
+    
     
     // =========================== Rendu classique CPU++ sans VBO ==========================
 #if !defined(OPENGL_RENDERING) || (OPENGL_RENDERING == 0)
-	const double desktopScale = openGlContext.getRenderingScale();
 	std::unique_ptr<LowLevelGraphicsContext> glRenderer(createOpenGLGraphicsContext(openGlContext,
 		roundToInt(desktopScale * getWidth()),
 		roundToInt(desktopScale * getHeight())));
@@ -361,41 +422,6 @@ void SceneCanvasComponent::renderOpenGL()
 		g.drawRect(1, 1, getWidth() - 2, getHeight() - 2, 2);
 	}
 
-
-	// - - - - - THIRD Duplication of the drawable objects for thread-safe rendering, - - - - -
-	// Lorsque nécessaire seulement !
-	manager->LockAsyncDrawableObjects();
-
-
-	bool areasCountChanged = (manager->GetAsyncDrawableObjects().size() != duplicatedAreas.size());
-	// POUR L'INSTANT ALGO BÊTE
-	// on resize le vecteur : la construction des shared n'est pas grave, leur bloc de contrôle reste
-	// en mémoire finalement (on utilisera reset() )
-	if (areasCountChanged)
-	{
-		canvasAreasPointersCopies.resize(manager->GetAsyncDrawableObjects().size());
-		duplicatedAreas.resize(manager->GetAsyncDrawableObjects().size());
-	}
-	// Vérification simple de chaque aire 1 par 1
-	size_t itIndex = 0;
-	for (auto it = manager->GetAsyncDrawableObjects().begin();
-		it != manager->GetAsyncDrawableObjects().end();
-		++it)
-	{
-		// S'il y a eu un changement : on re-crée un pointeur déjà, puis
-		// on fait effectivement la copie d'un nouvel objet
-		if (canvasAreasPointersCopies[itIndex] != (*it))
-		{
-			canvasAreasPointersCopies[itIndex] = (*it);
-			duplicatedAreas[itIndex] = (*it)->Clone();
-		}
-		// Double compteur
-		itIndex++;
-	}
-
-	manager->UnlockAsyncDrawableObjects();
-
-
 	// - - - - - Areas painting (including exciters if existing) - - - - -
 	// Sans bloquer, du coup, les autres threads (pour réactivité max...)
 	for (size_t i = 0; i<duplicatedAreas.size(); i++)
@@ -408,10 +434,13 @@ void SceneCanvasComponent::renderOpenGL()
 	}
 
     
+    
+    
     // =========================== Rendu classique GPU++ avec VBO ==========================
 #else // !OPENGL_RENDERING || OPENGL_RENDERING == 0
 	if (releaseResources)
 	{
+        DBG("[MIEM OpenGL] 'Release resources' débute dans le thread OpenGL");
 		openGLDestructionAtLastFrame();
 
 		releaseDone = false;
@@ -423,14 +452,7 @@ void SceneCanvasComponent::renderOpenGL()
 		rendering_mutex.lock();
 		++numFrame;
 
-		//DBG("render : " + getName());
-		auto manager = canvasManager.lock();
-
-
 		OpenGLHelpers::clear(Colours::black);
-
-
-		const double desktopScale = (float)openGlContext.getRenderingScale();
 
 
 		glEnable(GL_DEPTH_TEST);
@@ -445,6 +467,7 @@ void SceneCanvasComponent::renderOpenGL()
 
 		glViewport(0, 0, roundToInt(desktopScale * getWidth()), roundToInt(desktopScale * getHeight()));
 
+        // Fonction principale de DESSIN DE FRAME OPEN GL PAR VBOs
 		DrawOnSceneCanevas(manager);
 
 
@@ -491,8 +514,13 @@ void SceneCanvasComponent::renderOpenGL()
 
 
 		double last = displayFrequencyMeasurer.GetLastDuration_ms();
+#ifdef __MIAM_DEBUG
 		if (last < 0.0)
+        {
 			DBG("probleme lastDuration: " + (String)last);
+            assert(false);
+        }
+#endif
 		EunderTime += underTime;
 		if (numFrame > 100 * 60)
 		{
@@ -519,6 +547,7 @@ void SceneCanvasComponent::renderOpenGL()
 
 void SceneCanvasComponent::openGLDestructionAtLastFrame()
 {
+    DBG("[MIEM OpenGL] Destruction sur 'last frame'");
 	openGLLabel->release();
 	std::u16string dummyString[]{ u"" };
 	Matrix3D<float> dummyMatrix(Vector3D<float>(0.0f, 0.0f, 0.0f));
@@ -555,61 +584,13 @@ void SceneCanvasComponent::DrawOnSceneCanevas(std::shared_ptr<Miam::MultiSceneCa
 	}
 
 
-
-	// - - - - - THIRD Duplication of the drawable objects for thread-safe rendering, - - - - -
-	// Lorsque nécessaire seulement !
-	manager->LockAsyncDrawableObjects();
-
-
-	bool areasCountChanged = (manager->GetAsyncDrawableObjects().size() != duplicatedAreas.size());
-	// POUR L'INSTANT ALGO BÊTE
-	// on resize le vecteur : la construction des shared n'est pas grave, leur bloc de contrôle reste
-	// en mémoire finalement (on utilisera reset() )
-	if (areasCountChanged)
-	{
-		if (manager->GetAsyncDrawableObjects().size() < duplicatedAreas.size())
-		{
-			previousMaxSize = (int)duplicatedAreas.size();
-			needToResetBufferParts = true;
-		}
-		else
-		{
-			previousMaxSize = (int)manager->GetAsyncDrawableObjects().size();
-			needToResetBufferParts = false;
-		}
-		canvasAreasPointersCopies.resize(manager->GetAsyncDrawableObjects().size());
-		duplicatedAreas.resize(manager->GetAsyncDrawableObjects().size());
-	}
-	else
-	{
-		previousMaxSize = (int)duplicatedAreas.size();
-		needToResetBufferParts = false;
-	}
-	// Vérification simple de chaque aire 1 par 1
-	size_t itIndex = 0;
-	for (auto it = manager->GetAsyncDrawableObjects().begin();
-		it != manager->GetAsyncDrawableObjects().end();
-		++it)
-	{
-		// S'il y a eu un changement : on re-crée un pointeur déjà, puis
-		// on fait effectivement la copie d'un nouvel objet
-		if (canvasAreasPointersCopies[itIndex] != (*it))
-		{
-			canvasAreasPointersCopies[itIndex] = (*it);
-			duplicatedAreas[itIndex] = (*it)->Clone();
-		}
-		// Double compteur
-		itIndex++;
-	}
-
-	manager->UnlockAsyncDrawableObjects();
-
-
 	// - - - - - Areas painting (including exciters if existing) - - - - -
 	// Sans bloquer, du coup, les autres threads (pour réactivité max...)
 	const int duplicatedSize = (int)duplicatedAreas.size();
 	for (size_t i = 0; i < duplicatedSize; i++)
 	{
+        // Re-création de tous les buffers à chaque frame
+        // --------- OPTIMISATION POSSIBLE SI UN JOOOOUUUUURRRRRRR çA MARCHE ------------
 		CreateShapeBuffer(duplicatedAreas[i], (int)i);
 	}
 
@@ -623,10 +604,12 @@ void SceneCanvasComponent::DrawOnSceneCanevas(std::shared_ptr<Miam::MultiSceneCa
 
 	DrawCanvasOutline();
 
+    /*
 	if (!(!areasCountChanged && duplicatedSize == 0))
 	{
-		DrawShapes();
-	}
+     */
+		DrawShapes(); // VéRIFIER QUE çA FONCTIONNE TOUJOURS BIEN (PARTIES AVANT/APRèS SUPPRIMéS POUR TENTATIVES DEBUG)
+	//}
 }
 
 void SceneCanvasComponent::DrawShapes()

@@ -284,7 +284,7 @@ void DrawableEllipse::RefreshOpenGLBuffers()
 	const float Xoffset = (float)centerInPixels.get<0>();
 	const float Yoffset = (float)centerInPixels.get<1>();
 	Zoffset = mainZoffset + 0.1f;
-	float *vertexPtr = &vertices_buffer[3 * decalage];
+	float *vertexPtr = &(vertices_buffer[3 * decalage]);
 	for (int i = 0; i < ellipseVerticesCount; i++)
 	{
 		double normalizedAngle = (double)(i) / (double)(ellipseVerticesCount);

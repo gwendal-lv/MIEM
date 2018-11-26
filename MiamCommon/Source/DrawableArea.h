@@ -92,14 +92,14 @@ namespace Miam
 		int indicesBufferSize = 3 * numVerticesRing;//3 * 2 * numPointsPolygon + 3 * numVerticesRing;
 		int couloursBufferSize = 4 * numVerticesRing;
 
-		GLfloat g_vertex_ring[3 * numVerticesRing];
-		unsigned int ringIndices[3 * numVerticesRing];
+        std::vector<GLfloat> g_vertex_ring;
+        std::vector<unsigned int> ringIndices;
 		float mainZoffset;
 
 		// buffer used by OpenGL
-		std::vector<float> vertices_buffer;
-		std::vector<unsigned int> indices_buffer;
-		std::vector<float> coulours_buffer;
+		std::vector<GLfloat> vertices_buffer;
+		std::vector<GLuint> indices_buffer;
+		std::vector<GLfloat> coulours_buffer;
         
         // =============== SETTERS & GETTERS ===============
         public :
@@ -166,6 +166,8 @@ namespace Miam
         public :
         
 			const int GetVerticesBufferSize() override { return numVerticesRing; }
+        
+        
 			float* GetVerticesBufferPtr() override
 			{
 				return vertices_buffer.data();
@@ -179,44 +181,10 @@ namespace Miam
 				return indices_buffer.data();
 			}
 
-			float GetVerticesBufferElt(int idx) override
-			{ 
-				try
-				{
-					return vertices_buffer[idx];
-				}
-				catch (const std::out_of_range& e)
-				{
-					DBG(e.what());
-					return 0.0f;
-				}
-			}
 			int GetIndicesBufferSize() override { return  3 * numVerticesRing; }
-			int GetIndicesBufferElt(int idx) override 
-			{ 
-				try
-				{
-					return indices_buffer[idx];
-				}
-				catch (const std::out_of_range& e)
-				{
-					DBG(e.what());
-					return 0;
-				}
-			}
+
 			int GetCouloursBufferSize() { return 4 * numVerticesRing; }
-			float GetCouloursBufferElt(int idx) 
-			{ 
-				try
-				{
-					return coulours_buffer[idx];
-				}
-				catch (const std::out_of_range& e)
-				{
-					DBG(e.what());
-					return 0.0;
-				}
-			}
+
 			void setZoffset(const float newOffset) override
 			{
 				mainZoffset = newOffset;

@@ -71,27 +71,33 @@ void DrawableArea::init()
     
     resetImages();
 
-	// taille des buffers
+	// taille des VBOs
+    // à NE PLUS METTRE EN JOUR EN VERSION NON VBOOOOOOO ===================================
+    g_vertex_ring.resize(3 * numVerticesRing);
+    ringIndices.resize(3 * numVerticesRing);
+    
 	vertices_buffer.resize(verticesBufferSize);
 	indices_buffer.resize(indicesBufferSize);
 	coulours_buffer.resize(couloursBufferSize);	
 
+#ifdef OPENGL_RENDERING
 	int numPoints = numPointsRing;
 	ComputeRing(numPoints);
-	const float R = contourColour.getRed() / 255.0f;
-	const float G = contourColour.getGreen() / 250.0f;
-	const float B = contourColour.getBlue() / 250.0f;
-	const float A = contourColour.getAlpha() / 250.0f;
+	const GLfloat R = contourColour.getRed() / 255.0f;
+	const GLfloat G = contourColour.getGreen() / 250.0f;
+	const GLfloat B = contourColour.getBlue() / 250.0f;
+	const GLfloat A = contourColour.getAlpha() / 250.0f;
 
 	for (int i = 0; i < couloursBufferSize/4; ++i)
 	{
-		coulours_buffer[4 * i + 0] = R;
-		coulours_buffer[4 * i + 1] = G;
-		coulours_buffer[4 * i + 2] = B;
-		coulours_buffer[4 * i + 3] = A;
+		coulours_buffer.at(4 * i + 0) = R;
+		coulours_buffer.at(4 * i + 1) = G;
+		coulours_buffer.at(4 * i + 2) = B;
+		coulours_buffer.at(4 * i + 3) = A;
 	}
 	//for (int i = 4 * numPoints; i < opaque_color_buffer_size; ++i)
 	//	opaque_color_buffer[i] = 0;
+#endif // OPENGL_RENDERING
 }
 
 void DrawableArea::ComputeRing(int numPoints)
@@ -107,22 +113,31 @@ void DrawableArea::ComputeRing(int numPoints)
 	double incAngle = 2 * M_PI / (double)numPoints;
 	for (int i = 0; i < numPoints; ++i)
 	{
-		g_vertex_ring[i * 3] = ri * (float)cos(currentAngle);
-		g_vertex_ring[i * 3 + 1] = ri * (float)sin(currentAngle);
-		g_vertex_ring[i * 3 + 2] = 0.0f;
-		g_vertex_ring[numPoints * 3 + i * 3] = re * (float)cos(currentAngle);
-		g_vertex_ring[numPoints * 3 + i * 3 + 1] = re * (float)sin(currentAngle);
-		g_vertex_ring[numPoints * 3 + i * 3 + 2] = 0.0;
+        /*
+        g_vertex_ring[i * 3 + 0] = ri * (float)cos(currentAngle);
+        g_vertex_ring[i * 3 + 1] = ri * (float)sin(currentAngle);
+        g_vertex_ring[i * 3 + 2] = 0.0f;
+        g_vertex_ring[numPoints * 3 + i * 3 + 0] = re * (float)cos(currentAngle);
+        g_vertex_ring[numPoints * 3 + i * 3 + 1] = re * (float)sin(currentAngle);
+        g_vertex_ring[numPoints * 3 + i * 3 + 2] = 0.0f;
+        */
+		g_vertex_ring.at(i * 3 + 0) = ri * (float)cos(currentAngle);
+		g_vertex_ring.at(i * 3 + 1) = ri * (float)sin(currentAngle);
+		g_vertex_ring.at(i * 3 + 2) = 0.0f;
+		g_vertex_ring.at(numPoints * 3 + i * 3 + 0) = re * (float)cos(currentAngle);
+		g_vertex_ring.at(numPoints * 3 + i * 3 + 1) = re * (float)sin(currentAngle);
+		g_vertex_ring.at(numPoints * 3 + i * 3 + 2) = 0.0;
+        
 		currentAngle += incAngle;
 	}
 	for (int i = 0; i < numPoints; ++i)
 	{
-		ringIndices[i * 6] = i;
-		ringIndices[i * 6 + 1] = numPoints + i;
-		ringIndices[i * 6 + 2] = numPoints + i + 1 >= 2 * numPoints ? numPoints : numPoints + i + 1;
-		ringIndices[i * 6 + 3] = numPoints + i + 1 >= 2 * numPoints ? numPoints : numPoints + i + 1;
-		ringIndices[i * 6 + 4] = i;
-		ringIndices[i * 6 + 5] = i + 1 >= numPoints ? 0 : i + 1;
+		ringIndices.at(i * 6 + 0) = i;
+		ringIndices.at(i * 6 + 1) = numPoints + i;
+		ringIndices.at(i * 6 + 2) = numPoints + i + 1 >= 2 * numPoints ? numPoints : numPoints + i + 1;
+		ringIndices.at(i * 6 + 3) = numPoints + i + 1 >= 2 * numPoints ? numPoints : numPoints + i + 1;
+		ringIndices.at(i * 6 + 4) = i;
+		ringIndices.at(i * 6 + 5) = i + 1 >= numPoints ? 0 : i + 1;
 	}
 }
 
@@ -283,35 +298,37 @@ void DrawableArea::CanvasResized(SceneCanvasComponent* _parentCanvas)
 
 void DrawableArea::RefreshOpenGLBuffers()
 {
+#ifndef OPENGL_RENDERING
+    assert(false); // this function should not be called !!
+#endif
+    
 	int decalage = 0;
 	int count = 3 * numVerticesRing;
 	const float Xoffset = float(centerInPixels.get<0>());
 	const float Yoffset = float(centerInPixels.get<1>());
 	const float Zoffset = mainZoffset + 0.1f;
-	float *verticesPtr = &vertices_buffer[3 * decalage];
 	if (displayCenter)
 	{
 		for (int j = 0; j < count; j += 3)
 		{
-			verticesPtr[j] = Xoffset + g_vertex_ring[j];
-			verticesPtr[j + 1] = Yoffset + g_vertex_ring[j + 1];
-			verticesPtr[j + 2] = Zoffset + g_vertex_ring[j + 2];
+			vertices_buffer.at((3 * decalage) + j + 0) = Xoffset + g_vertex_ring[j];
+			vertices_buffer.at((3 * decalage) + j + 1) = Yoffset + g_vertex_ring[j + 1];
+			vertices_buffer.at((3 * decalage) + j + 2) = Zoffset + g_vertex_ring[j + 2];
 		}
 	}
 	else
 	{
 		for (int j = 0; j < count; j += 3)
 		{
-			verticesPtr[j] = 0.0f;
-			verticesPtr[j + 1] = 0.0f;
-			verticesPtr[j + 2] = 0.0f;
+			vertices_buffer.at((3 * decalage) + j + 0) = 0.0f;
+			vertices_buffer.at((3 * decalage) + j + 1) = 0.0f;
+			vertices_buffer.at((3 * decalage) + j + 2) = 0.0f;
 		}
 	}
 
-	unsigned int *indicesPtr = &indices_buffer[3 * decalage];
 	for (int j = 0; j < 3 * numVerticesRing; ++j)
 	{
-		indicesPtr[j] = ringIndices[j];/*+ numVerticesPolygon*/;
+		indices_buffer.at(3 * decalage + j) = ringIndices[j];/*+ numVerticesPolygon*/;
 	}
 }
 
