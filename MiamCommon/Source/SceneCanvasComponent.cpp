@@ -193,7 +193,9 @@ void SceneCanvasComponent::resized()
     }
     
 #ifdef __MIEM_VBO
-    computeCanvasOutline();
+    redrawCanvasOutline = true;
+    if (redrawCanvasOutline)
+        computeCanvasOutline();
 #endif
 }
 

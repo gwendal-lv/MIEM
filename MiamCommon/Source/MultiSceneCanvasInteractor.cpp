@@ -746,7 +746,7 @@ void MultiSceneCanvasInteractor::OnResized()
         for (size_t j=0 ; j<scenes[i]->GetDrawableObjectsCount() ; j++)
         {
             scenes[i]->GetDrawableObject(j)->CanvasResized(GetMultiSceneCanvasComponent()->GetCanvas());
-#if defined(OPENGL_RENDERING)
+#if defined(__MIEM_VBO)
             scenes[i]->GetDrawableObject(j)->RefreshOpenGLBuffers();
 #endif
         }
