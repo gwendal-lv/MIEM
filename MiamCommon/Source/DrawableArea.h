@@ -84,9 +84,9 @@ namespace Miam
 		static const int numPointsRing = 32;
 		static const int numPointCircle = 32;
 
-		static const int numVerticesPolygon = numPointsPolygon + 1;
+		static const int numVerticesPolygon = numPointsPolygon + 1; // +1 pour le centre du polygone
 		static const int numVerticesRing = 2 * numPointsRing;
-		static const int numVerticesCircle = numPointCircle + 1;
+		static const int numVerticesCircle = numPointCircle + 1; // +1 pour le centre du point
 		
 		int verticesBufferSize = 3 * numVerticesRing;//3 * numPointsPolygon + 3 * numVerticesRing; // par défaut : contour + centre
 		int indicesBufferSize = 3 * numVerticesRing;//3 * 2 * numPointsPolygon + 3 * numVerticesRing;
