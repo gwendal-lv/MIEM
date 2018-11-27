@@ -15,6 +15,13 @@
 
 #include "IDrawableArea.h"
 
+#include "MiemVector.hpp"
+
+#define MIEM_CENTRAL_RING_Z         (0.1f)
+#define MIEM_SHAPE_SURFACE_Z        (0.0f)
+#define MIEM_SHAPE_CONTOUR_Z        (0.1f)
+
+#define MIEM_UNVISIBLE_COORDINATE   (-10.0f)
 
 // Simple declaration for a pointer
 class SceneCanvasComponent;
@@ -59,7 +66,7 @@ namespace Miam
         OpacityMode opacityMode;
         
         /// \brief The lowest opacity of a displayed area
-        static const uint8 lowFillOpacityUint8 = 40;
+        const uint8 lowFillOpacityUint8 = 40;
         virtual float getLowFillOpacity() const override { return (float)(lowFillOpacityUint8) / 255.0f; }
         
         Colour contourColour; ///< Solid color of of the external shape of the 2D area.
@@ -73,35 +80,43 @@ namespace Miam
         // Images bêtement comme ça pour l'instant...
         Image nameImage;
         Image nameImage2;
-        static const int nameWidth = 120; // pixels
-        static const int nameHeight = 15; // pixels
+        const int nameWidth = 120; // pixels
+        const int nameHeight = 15; // pixels
         
         bool keepRatio;
 		bool areaVisible = true;
         
-		// size of the different buffer parts
-		static const int numPointsPolygon = 32; // max number of contour points of a polygon
-		static const int numPointsRing = 32; // actual resolution of any donut ring
-		static const int numPointCircle = 32; // actual resolution of any circle
-
-		static const int numVerticesPolygon = numPointsPolygon + 1; // +1 pour le centre du polygone
-		static const int numVerticesRing = 2 * numPointsRing; // donut = 2 circles of 32 points
-		static const int numVerticesCircle = numPointCircle + 1; // +1 pour le centre du disque
-		
-		int verticesBufferSize = 3 * numVerticesRing;//3 * numPointsPolygon + 3 * numVerticesRing; // par défaut : contour + centre
-		int indicesBufferSize = 3 * numVerticesRing;//3 * 2 * numPointsPolygon + 3 * numVerticesRing;
-		int couloursBufferSize = 4 * numVerticesRing;
-
-        std::vector<GLfloat> g_vertex_ring;
-        std::vector<unsigned int> ringIndices;
+         
+        Vector<GLfloat> g_vertex_ring;
+        Vector<GLuint> ringIndices;
+        
 		float mainZoffset;
 
-		// buffer used by OpenGL
-		std::vector<GLfloat> vertices_buffer;
-		std::vector<GLuint> indices_buffer;
-		std::vector<GLfloat> coulours_buffer;
+		// Buffers to be copied in OpenGL VBOs
+        // All child classe will enlarge and fill them with their own
+        // data.
+		Vector<GLfloat> vertices_buffer;
+		Vector<GLuint> indices_buffer;
+		Vector<GLfloat> coulours_buffer;
         
         // =============== SETTERS & GETTERS ===============
+        public :
+        
+        
+        // ----- VBO sizes and elements' counts -----
+        virtual int GetVerticesBufferElementsCount() override
+        { return numVerticesRing; } // only the central donut is common to any DrawableArea
+        
+        virtual int GetIndicesBufferElementsCount() override
+        { return  3 * numVerticesRing; } // equal number of vertices and triangles for the central ring
+      
+
+        
+        void setZoffset(const float newOffset) override
+        {
+            mainZoffset = newOffset;
+        }
+        
         public :
         /// \returns Unique ID of the area
         virtual int64_t GetId() const override {return Id;}
@@ -160,12 +175,14 @@ namespace Miam
         
         private :
         void init();
+        
+        /// \brief Computes a ring made of numPoint vertices for the internal circle,
+        /// and other numberPoint vertices for the internal circle.
 		void ComputeRing(int numPoints);
+        
         void resetImages();
         void renderCachedNameImages();
         public :
-        
-			const int GetVerticesBufferSize() override { return numVerticesRing; }
         
         
 			float* GetVerticesBufferPtr() override
@@ -181,14 +198,6 @@ namespace Miam
 				return indices_buffer.data();
 			}
 
-			int GetIndicesBufferSize() override { return  3 * numVerticesRing; }
-
-			int GetCouloursBufferSize() { return 4 * numVerticesRing; }
-
-			void setZoffset(const float newOffset) override
-			{
-				mainZoffset = newOffset;
-			}
         
         virtual void Paint(Graphics& g) override;
         virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;

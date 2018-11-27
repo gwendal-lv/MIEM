@@ -26,6 +26,30 @@ namespace Miam {
 	/// from the SceneEditionManager.
     class EditablePolygon : public InteractivePolygon, public EditableArea
     {
+        // =============== ATTRIBUTES ===============
+        
+        
+        
+        
+        // =============== Setters and Getters ===============
+        public :
+        // - - - - - VBOs - - - - -
+        virtual int GetVerticesBufferElementsCount() override {
+            return DrawablePolygon::GetVerticesBufferElementsCount()
+            + (numPointsPolygon * numVerticesCircle) // points du contour
+            + dottedLineVertexes + numVerticesRing; // manipulationLine + manipulationPoint
+        }
+        virtual int GetIndicesBufferElementsCount() override {
+            return DrawablePolygon::GetIndicesBufferElementsCount()
+            + numPointsPolygon * (3 * numPointCircle)
+            + dottedLineIndices + (3 * numVerticesRing); }
+        
+        // - - - - - Others - - - - -
+        void SetActive(bool activate) override;
+        
+        
+        // =============== METHODS ===============
+        
         // - - - - - Construction/Destruction + polymorphic cloning - - - - -
         public :
         
@@ -63,35 +87,22 @@ namespace Miam {
         // ----- Display functions -----
         public :
 			
-			const int GetVerticesBufferSize() override {					// points du contour					manipulationLine	manipulationPoint
-				return DrawablePolygon::GetVerticesBufferSize() + (numPointsPolygon * numVerticesCircle) + dottedLineVertexes + numVerticesRing;
-			}
-			int GetCouloursBufferSize() override { return DrawablePolygon::GetCouloursBufferSize() + 4 * ((numPointsPolygon * numVerticesCircle) + dottedLineVertexes + numVerticesRing); }
-			int GetIndicesBufferSize() override { return DrawablePolygon::GetIndicesBufferSize() + numPointsPolygon * (3 * numPointCircle) + dottedLineIndices + (3 * numVerticesRing); }
+        
 			virtual void Paint(Graphics& g) override;
 			virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
+        
+        
+        // ----- OpenGL VBO management ------
 			virtual void RefreshOpenGLBuffers() override;
 			void RefreshManipulationPointOpenGLBuffer();
 			void RefreshContourPointsOpenGLBuffers();
+        
+        
         // Display helpers
         private :
-			static const int dottedLineNparts = 20;
-			static const int dottedLineVertexes = 4 * dottedLineNparts;
-			static const int dottedLineIndices = 6 * dottedLineNparts;
-
-        // à passer en vecteur pour surveiller les OUT OF RANGE exceptions
-        // ET À METTRE DANS EDITABLE AREA CAR C'EST COMMUN AVEC EDITABLE ELLIPSE
-        GLfloat g_vertex_dotted_line[3 * dottedLineVertexes];
-			GLuint g_indices_dotted_line[dottedLineIndices];
-
-			GLfloat g_vertex_circle[3 * numVerticesCircle];
-			unsigned int circleIndices[3 * numPointCircle];
-			void computeManipulationPoint();
         
+        void computeManipulationPoint();
         
-        // ----- Setters and Getters -----
-        public :
-        void SetActive(bool activate) override;
         
         // ----- Edition functions -----
 

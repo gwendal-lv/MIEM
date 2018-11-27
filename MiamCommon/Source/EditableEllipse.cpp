@@ -64,17 +64,12 @@ void EditableEllipse::graphicalInit()
 	contourPointsRadius = 1.4f*contourWidth;
 	manipulationPointRadius = centerContourWidth + centerCircleRadius;
 
-	// ajout de la forme et du contour !
-	verticesBufferSize += (3 * (numPointsPolygon * numVerticesCircle) + 3 * dottedLineVertexes + 3 * numVerticesRing);
-	indicesBufferSize += (3 * (numPointsPolygon * numPointCircle) + dottedLineIndices + 3 * numVerticesRing);
-	couloursBufferSize += (4 * (numPointsPolygon * numVerticesCircle) + 4 * dottedLineVertexes + 4 * numVerticesRing);
-
-	// resize des buffers
-	vertices_buffer.resize(verticesBufferSize);
-	indices_buffer.resize(indicesBufferSize);
-	coulours_buffer.resize(couloursBufferSize);
-
 #ifdef __MIEM_VBO
+	// resize des buffers
+	vertices_buffer.resize(GetVerticesBufferSize());
+	indices_buffer.resize(GetIndicesBufferSize());
+	coulours_buffer.resize(GetColoursBufferSize());
+
 	// calcul d'un disque de centre 0 et de rayon 5 pixels
 	float radius = 5.0f;
 	int numPoints = numPointsRing;
@@ -100,7 +95,7 @@ void EditableEllipse::graphicalInit()
 
 	/// couleur
 	// points
-	int decalage = DrawableEllipse::GetCouloursBufferSize();
+	int decalage = DrawableEllipse::GetVerticesBufferElementsCount();
 	for (int i = 0; i < (numPointsPolygon * numVerticesCircle); ++i)
 	{
 		coulours_buffer[decalage + 4 * i + 0] = editingElementsColour.getRed()/255.0f;
@@ -198,7 +193,7 @@ void EditableEllipse::RefreshOpenGLBuffers()
 #endif
 	DrawableEllipse::RefreshOpenGLBuffers();
 
-	int decalage = DrawableEllipse::GetVerticesBufferSize();
+	int decalage = DrawableEllipse::GetVerticesBufferElementsCount();
 	int numApexes = isActive? (int)contourPointsInPixels.outer().size() - 1 : 0;
 
 	//bool contourFull = std::all_of(opaque_vertex_buffer.begin() + 291, opaque_vertex_buffer.begin() + 385, [](float x) { return x !=0.0f; });
@@ -273,8 +268,8 @@ void EditableEllipse::RefreshOpenGLBuffers()
 
 	///// index
 	//// points
-	decalage = DrawableEllipse::GetIndicesBufferSize(); // decalage dans le buffer index
-	int begin = DrawableEllipse::GetVerticesBufferSize(); // decalage dans le buffer vertex
+	decalage = DrawableEllipse::GetIndicesBufferElementsCount(); // decalage dans le buffer index
+	int begin = DrawableEllipse::GetVerticesBufferElementsCount(); // decalage dans le buffer vertex
 	const int count = 3 * numPointCircle;
 	for (int k = 0; k < numApexes; ++k)
 	{

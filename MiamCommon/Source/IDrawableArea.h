@@ -137,11 +137,35 @@ namespace Miam
 		virtual void setVisible(bool shouldBeVisible) = 0;
 		virtual bool isVisible() = 0;
 
-		virtual const int GetVerticesBufferSize() = 0;
-		virtual int GetIndicesBufferSize() = 0;
-		virtual int GetCouloursBufferSize() = 0;
-
-
+        
+        // - - - - - Constant caracteristic values for VBOs - - - - -
+        protected :
+        // size of the different buffer parts
+        // (Not static for multi-threading safety)
+        const int numPointsPolygon = 32; // MAX number of contour points of a polygon
+        const int numPointsRing = 32; // actual resolution of any donut ring
+        const int numPointCircle = 32; // actual resolution of any circle
+        
+        const int numVerticesPolygon = numPointsPolygon + 1; // +1 pour le centre du polygone
+        const int numVerticesRing = 2 * numPointsRing; // donut = 2 circles of 32 points
+        const int numVerticesCircle = numPointCircle + 1; // +1 pour le centre du disque
+        
+        
+        // - - - - - VBO methods - - - - -
+        public :
+        // Following getters return the number of elements of each kind of OpenGL buffer
+		virtual int GetVerticesBufferElementsCount() = 0;
+		virtual int GetIndicesBufferElementsCount() = 0;
+		
+        // These function should not be overriden. Data always proportionnal to the number of contained elements !
+        //int GetColoursBufferElementsCount() { return 1 * GetVerticesBufferElementsCount(); }
+        // deleted for security reasons....  issues with virtual functions !!!
+        // Impossible telle qu'écrite comme ça de récupérer le nb de couleur d'une classe mère en particulier
+    
+        int GetVerticesBufferSize() {return 3 * GetVerticesBufferElementsCount(); } // x, y, z float coords
+        int GetIndicesBufferSize() {return GetIndicesBufferElementsCount(); } // 1 index is a 1D coordinate
+        int GetColoursBufferSize() {return 4 * GetVerticesBufferElementsCount(); } // ARGB float coords for each vertex
+        
 		virtual void setZoffset(const float newOffset) = 0;
         
         /// \brief Sets the name that could be displayed on screen next to the center

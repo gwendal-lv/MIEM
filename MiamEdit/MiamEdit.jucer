@@ -6,7 +6,8 @@
               splashScreenColour="Dark" companyCopyright="Gwendal Le Vaillant (IRISIB/LARAS, UMons)"
               companyWebsite="http://laras.be" companyName="IRISIB/LARAS, UMons"
               companyEmail="glevaillant@he2b.be" headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../ControlCommon/Source/&#10;../../../MiamCommon/Source/"
-              userNotes="v0.2.5 : Color choice transfered from the Scene (polygons) view to the State (matrix or vector) view">
+              userNotes="v0.2.5 : Color choice transfered from the Scene (polygons) view to the State (matrix or vector) view"
+              defines="__MIEM_VBO">
   <MAINGROUP id="uJFjC5" name="MIEM Editor">
     <GROUP id="{7878353D-A1B6-291B-EABC-831E28CE51BB}" name="Source">
       <FILE id="MLMDSl" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
@@ -195,6 +196,7 @@
         </GROUP>
       </GROUP>
       <GROUP id="{B91B2137-DC4A-127C-0037-DB058876BEFA}" name="Utils">
+        <FILE id="HLrPMV" name="MiemVector.hpp" compile="0" resource="0" file="../MiamCommon/Source/MiemVector.hpp"/>
         <FILE id="sh1Jcv" name="InteractionParameters.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/InteractionParameters.cpp"/>
         <FILE id="TnfISL" name="InteractionParameters.h" compile="0" resource="0"
@@ -321,7 +323,7 @@
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
-    <XCODE_MAC targetFolder="Builds/MacOSX">
+    <XCODE_MAC targetFolder="Builds/MacOSX" extraCompilerFlags="-Wno-comma">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MiemEditor"
                        headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../MiamCommon/Source/"

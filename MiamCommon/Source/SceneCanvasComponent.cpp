@@ -794,7 +794,7 @@ void SceneCanvasComponent::CreateShapeBuffer(std::shared_ptr<IDrawableArea> area
 		/// vertex
 		try
 		{
-			const int verticesCount = 3 * area->GetVerticesBufferSize();
+			const int verticesCount = 3 * area->GetVerticesBufferElementsCount();
 			GLfloat *destPtr = &g_vertex_buffer_data[decalage];
 			float* vertexPtr = area->GetVerticesBufferPtr();
 			for (int j = 0; j < verticesCount; ++j)
@@ -813,7 +813,7 @@ void SceneCanvasComponent::CreateShapeBuffer(std::shared_ptr<IDrawableArea> area
 		int beginShape = positionInBuffer * *numVertexShape;
 		try
 		{
-			const int indicesCount = area->GetIndicesBufferSize();
+			const int indicesCount = area->GetIndicesBufferElementsCount();
 			unsigned int *destIndicesPtr = &indices[decalage];
 			unsigned int* indicesPtr = area->GetIndicesBufferPtr();
 			for (int i = 0; i < indicesCount; ++i)
@@ -831,10 +831,9 @@ void SceneCanvasComponent::CreateShapeBuffer(std::shared_ptr<IDrawableArea> area
 		decalage = 4 * ((int)positionInBuffer * *numVertexShape);
 		try
 		{
-			const int couloursCount = area->GetCouloursBufferSize();
 			float* couloursPtr = area->GetCoulourBufferPtr();
 			float* destCouloursPtr = &g_color_buffer_data[decalage];
-			for (int i = 0; i < couloursCount; ++i)
+			for (int i = 0; i < area->GetVerticesBufferElementsCount(); ++i)
 			{
 				destCouloursPtr[i] = (*couloursPtr);
 				++couloursPtr;
@@ -847,22 +846,23 @@ void SceneCanvasComponent::CreateShapeBuffer(std::shared_ptr<IDrawableArea> area
 	}
 	else
 	{
-		const int verticesCount = 3 * area->GetVerticesBufferSize();
+        // ERREUR LA NON ???? PROBLEM DU NOMBRE DE POINTS ????
+		const int verticesCount = 3 * area->GetVerticesBufferElementsCount();
 		GLfloat *destPtr = &g_vertex_buffer_data[decalage];
 		for (int j = 0; j < verticesCount; ++j)
 			destPtr[j] = 0.0f;
 
 		decalage = positionInBuffer * *shapeIndicesSize;// différent du decalage pour les vertex et les couleurs !
 
-		const int indicesCount = area->GetIndicesBufferSize();
 		unsigned int *destIndicesPtr = &indices[decalage];
-		for (int i = 0; i < indicesCount; ++i)
+		for (int i = 0; i < area->GetIndicesBufferElementsCount(); ++i)
 			destIndicesPtr[i] = 0;
 
+        // ICI DU COUP LE COUNT ETAIT LA SIZE dans l'ancien code de Guillaume
+        // ça va très probablement poser problème....
 		decalage = 4 * ((int)positionInBuffer * *numVertexShape);
-		const int couloursCount = area->GetCouloursBufferSize();
 		float* destCouloursPtr = &g_color_buffer_data[decalage];
-		for (int i = 0; i < couloursCount; ++i)
+		for (int i = 0; i < area->GetVerticesBufferElementsCount(); ++i)
 			destCouloursPtr[i] = 0.0f;
 		
 	}

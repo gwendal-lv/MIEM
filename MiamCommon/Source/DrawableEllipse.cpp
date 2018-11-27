@@ -64,19 +64,14 @@ DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b,
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>() - (a / 2)*xScale, center.get<1>()));
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() - (b / 2)*yScale));
 
-	// ajout de la forme et du contour !
-	verticesBufferSize += (3 * numVerticesPolygon + 3 * numPointsPolygon);
-	indicesBufferSize += (3 * numVerticesPolygon + 3 * 2 * numPointsPolygon);
-	couloursBufferSize += (4 * numVerticesPolygon + 4 * numPointsPolygon);
-
-
+#ifdef __MIEM_VBO
 	// resize des buffers
-	vertices_buffer.resize(verticesBufferSize);
-	indices_buffer.resize(indicesBufferSize);
-	coulours_buffer.resize(couloursBufferSize);
+    vertices_buffer.resize(GetVerticesBufferSize());
+    indices_buffer.resize(GetIndicesBufferSize());
+    coulours_buffer.resize(GetColoursBufferSize());
 	
 	// indices pour dessiner la forme
-	int decalage = DrawableArea::GetVerticesBufferSize();
+	int decalage = DrawableArea::GetVerticesBufferElementsCount();
 	for (int i = 0; i < ellipseVerticesCount; ++i)
 	{
 		indices_buffer[3 * decalage + i * 3] = decalage + i + 1;
@@ -99,7 +94,7 @@ DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b,
 		coulours_buffer[4 * decalage + i] = 0.0f;
 
 	// indices pour dessiner le contour
-	int shapeBegin = DrawableArea::GetVerticesBufferSize();
+	int shapeBegin = DrawableArea::GetVerticesBufferElementsCount();
 	decalage += numVerticesPolygon;
 	for (int i = 0; i < numPointsPolygon; ++i)
 	{
@@ -130,17 +125,11 @@ DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b,
 		coulours_buffer[4 * decalage + i * 4 + 2] = contourColour.getBlue() / 255.0f;
 		coulours_buffer[4 * decalage + i * 4 + 3] = contourColour.getAlpha() / 255.0f;
 	}
-	
+#endif // def __MIEM_VBO
 
 	createJucePolygon();
 }
 
-
-
-int DrawableEllipse::GetIndicesBufferSize()
-{
-	return DrawableArea::GetIndicesBufferSize() + (3 * numVerticesPolygon + 3 * 2 * numPointsPolygon);
-}
 
 void DrawableEllipse::createJucePolygon(int width, int height)
 {
@@ -239,7 +228,7 @@ void DrawableEllipse::RefreshOpenGLBuffers()
 	int bInPixels = (int)(b * (double)parentCanvas->getWidth() * xScale/2.0);
 
 	// forme
-	int decalage = DrawableArea::GetVerticesBufferSize();
+	int decalage = DrawableArea::GetVerticesBufferElementsCount();
 	float dR = (float)sqrt(2) * contourWidth / 2.0f;
 	const float Cx = (float)centerInPixels.get<0>();
 	const float Cy = (float)centerInPixels.get<1>();

@@ -20,6 +20,7 @@
 
 #include "IEditableArea.h"
 
+#include "MiemVector.hpp"
 
 namespace Miam
 {
@@ -68,6 +69,7 @@ namespace Miam
 		int GetPointDraggedId() override { return pointDraggedId; }
         
         
+        
         // ===== COMMON ATTRIBUTES TO ALL EDITABLE AREAS =====
         protected :
         
@@ -104,6 +106,19 @@ namespace Miam
 		protected :
         int pointDraggedId;
         int sideDraggedId = -1; // utilisé uniquement lorsque pointDraggedId indique TwoPoints
+        
+        // - - - - - VBOs - - - - -
+        const int dottedLineNparts = 20; // NOT static for multithreading safety
+        const int dottedLineVertexes = 4 * dottedLineNparts;
+        const int dottedLineIndices = 6 * dottedLineNparts;
+        
+        // à passer en vecteur pour surveiller les OUT OF RANGE exceptions
+        // ET À METTRE DANS EDITABLE AREA CAR C'EST COMMUN AVEC EDITABLE ELLIPSE
+        Vector<GLfloat> g_vertex_dotted_line;
+        Vector<GLuint> g_indices_dotted_line;
+        
+        Vector<GLfloat> g_vertex_circle;
+        Vector<unsigned int> circleIndices;
         
     };
     

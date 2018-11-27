@@ -18,6 +18,15 @@ using namespace Miam;
 EditableArea::EditableArea() : bmanipulationPointInPixels(0,0)
 {
     enableTranslationOnly = false;
+    
+#ifdef __MIEM_VBO
+    // Proper resize of OpenGL buffer for VBO rendering
+    g_vertex_dotted_line.resize(3 * dottedLineVertexes);
+    g_indices_dotted_line.resize(dottedLineIndices);
+    
+    g_vertex_circle.resize(3 * numVerticesCircle);
+    circleIndices.resize(3 * numPointCircle);
+#endif
 }
 
 

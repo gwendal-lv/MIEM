@@ -64,67 +64,62 @@ void EditablePolygon::graphicalInit()
     manipulationPointRadius = centerContourWidth+centerCircleRadius;
 
 #if defined(__MIEM_VBO)
-		// ajout de la forme et du contour !
-		verticesBufferSize += (3 * (numPointsPolygon * numVerticesCircle) + 3 * dottedLineVertexes + 3 * numVerticesRing);
-		indicesBufferSize += (3 * (numPointsPolygon * numPointCircle) + dottedLineIndices + 3 * numVerticesRing);
-		couloursBufferSize += (4 * (numPointsPolygon * numVerticesCircle) + 4 * dottedLineVertexes + 4 * numVerticesRing);
-
 		// resize des buffers
-		vertices_buffer.resize(verticesBufferSize);
-		indices_buffer.resize(indicesBufferSize);
-		coulours_buffer.resize(couloursBufferSize);
+    vertices_buffer.resize(GetVerticesBufferSize());
+    indices_buffer.resize(GetIndicesBufferSize());
+    coulours_buffer.resize(GetColoursBufferSize());
 
-		// calcul d'un disque de centre 0 et de rayon 5 pixels
-		float radius = 5.0f;
-		int numPoints = numPointsRing;
-		radius = 5.0f;
-		double currentAngle = 0.0;
-		double incAngle = 2 * M_PI / (double)numPoints;
-		g_vertex_circle[0] = 0.0f;
-		g_vertex_circle[1] = 0.0f;
-		g_vertex_circle[2] = 0.0f;
-		for (int i = 0; i < numPointCircle; ++i)
-		{
-			g_vertex_circle[(i + 1) * 3] = radius * (float)cos(currentAngle);
-			g_vertex_circle[(i + 1) * 3 + 1] = radius * (float)sin(currentAngle);
-			g_vertex_circle[(i + 1) * 3 + 2] = 0.0f;
-			currentAngle += incAngle;
-		}
-		for (int i = 0; i < numPointCircle; ++i)
-		{
-			circleIndices[i * 3] = i + 1;
-			circleIndices[i * 3 + 1] = 0;
-			circleIndices[i * 3 + 2] = i + 2 > numPointCircle ? 1 : i + 2;
-		}
+    // calcul d'un disque de centre 0 et de rayon 5 pixels
+    float radius = 5.0f;
+    int numPoints = numPointsRing;
+    radius = 5.0f;
+    double currentAngle = 0.0;
+    double incAngle = 2 * M_PI / (double)numPoints;
+    g_vertex_circle[0] = 0.0f;
+    g_vertex_circle[1] = 0.0f;
+    g_vertex_circle[2] = 0.0f;
+    for (int i = 0; i < numPointCircle; ++i)
+    {
+        g_vertex_circle[(i + 1) * 3] = radius * (float)cos(currentAngle);
+        g_vertex_circle[(i + 1) * 3 + 1] = radius * (float)sin(currentAngle);
+        g_vertex_circle[(i + 1) * 3 + 2] = 0.0f;
+        currentAngle += incAngle;
+    }
+    for (int i = 0; i < numPointCircle; ++i)
+    {
+        circleIndices[i * 3] = i + 1;
+        circleIndices[i * 3 + 1] = 0;
+        circleIndices[i * 3 + 2] = i + 2 > numPointCircle ? 1 : i + 2;
+    }
 
-		/// couleur
-		// points
-		int decalage = DrawablePolygon::GetCouloursBufferSize();
-		for (int i = 0; i < (numPointsPolygon * numVerticesCircle); ++i)
-		{
-			coulours_buffer[decalage + 4 * i + 0] = editingElementsColour.getRed() / 255.0f;
-			coulours_buffer[decalage + 4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
-			coulours_buffer[decalage + 4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
-			coulours_buffer[decalage + 4 * i + 3] = editingElementsColour.getAlpha() / 255.0f;
-		}
-		// manipulationLine
-		decalage += 4 * (numPointsPolygon * numVerticesCircle);
-		for (int i = 0; i < dottedLineVertexes; ++i)
-		{
-			coulours_buffer[decalage + 4 * i + 0] = editingElementsColour.getRed() / 255.0f;
-			coulours_buffer[decalage + 4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
-			coulours_buffer[decalage + 4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
-			coulours_buffer[decalage + 4 * i + 3] = editingElementsColour.getAlpha() / 255.0f;
-		}
-		// manipulationPoint
-		decalage += 4 * dottedLineVertexes;
-		for (int i = 0; i < numVerticesRing; ++i)
-		{
-			coulours_buffer[decalage + 4 * i + 0] = editingElementsColour.getRed() / 255.0f;
-			coulours_buffer[decalage + 4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
-			coulours_buffer[decalage + 4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
-			coulours_buffer[decalage + 4 * i + 3] = editingElementsColour.getAlpha() / 255.0f;
-		}
+    /// couleur
+    // points
+    int decalage = InteractivePolygon::GetVerticesBufferElementsCount();
+    for (int i = 0; i < (numPointsPolygon * numVerticesCircle); ++i)
+    {
+        coulours_buffer[decalage + 4 * i + 0] = editingElementsColour.getRed() / 255.0f;
+        coulours_buffer[decalage + 4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
+        coulours_buffer[decalage + 4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
+        coulours_buffer[decalage + 4 * i + 3] = GetAlpha();
+    }
+    // manipulationLine
+    decalage += 4 * (numPointsPolygon * numVerticesCircle);
+    for (int i = 0; i < dottedLineVertexes; ++i)
+    {
+        coulours_buffer[decalage + 4 * i + 0] = editingElementsColour.getRed() / 255.0f;
+        coulours_buffer[decalage + 4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
+        coulours_buffer[decalage + 4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
+        coulours_buffer[decalage + 4 * i + 3] = GetAlpha();
+    }
+    // manipulationPoint
+    decalage += 4 * dottedLineVertexes;
+    for (int i = 0; i < numVerticesRing; ++i)
+    {
+        coulours_buffer[decalage + 4 * i + 0] = editingElementsColour.getRed() / 255.0f;
+        coulours_buffer[decalage + 4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
+        coulours_buffer[decalage + 4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
+        coulours_buffer[decalage + 4 * i + 3] = GetAlpha();
+    }
 #endif
 }
 void EditablePolygon::behaviorInit()
@@ -210,7 +205,7 @@ void EditablePolygon::RefreshManipulationPointOpenGLBuffer()
     
 	/// manipulationLine + manipulationPoint
 	//vertex
-	int decalage = DrawablePolygon::GetVerticesBufferSize() + numPointsPolygon * numVerticesCircle;
+	int decalage = DrawablePolygon::GetVerticesBufferElementsCount() + numPointsPolygon * numVerticesCircle;
 	if (isActive)
 	{
 		computeManipulationLine((float)centerInPixels.get<0>(), (float)centerInPixels.get<1>(), (float)bmanipulationPointInPixels.get<0>(), (float)bmanipulationPointInPixels.get<1>(), 4.0f, 4.0f);
@@ -239,8 +234,8 @@ void EditablePolygon::RefreshManipulationPointOpenGLBuffer()
 
 
 	//index
-	decalage = DrawablePolygon::GetVerticesBufferSize() + numPointsPolygon * numPointCircle;
-	int begin = DrawablePolygon::GetVerticesBufferSize() + numPointsPolygon * numVerticesCircle;
+	decalage = DrawablePolygon::GetVerticesBufferElementsCount() + numPointsPolygon * numPointCircle;
+	int begin = DrawablePolygon::GetVerticesBufferElementsCount() + numPointsPolygon * numVerticesCircle;
 	if (isActive)
 	{
 		for (int i = 0; i < dottedLineIndices; ++i)
@@ -261,7 +256,7 @@ void EditablePolygon::RefreshContourPointsOpenGLBuffers()
     throw std::logic_error("Cannot manipulate VBOs in non-VBO mode");
 #endif
     
-	int decalage = DrawablePolygon::GetVerticesBufferSize();
+	int decalage = DrawablePolygon::GetVerticesBufferElementsCount();
 	int numApexes = (int)contourPointsInPixels.outer().size() - 1;//isActive? contourPointsInPixels.outer().size() - 1 : 0;
 
 																  /// points
@@ -273,7 +268,7 @@ void EditablePolygon::RefreshContourPointsOpenGLBuffers()
 		float Zoffset = mainZoffset + 0.1f;
 		for (int j = 0; j < 3 * numVerticesCircle; j += 3)
 		{
-			vertices_buffer[3 * decalage + j] = Xoffset + g_vertex_circle[j];
+			vertices_buffer[3 * decalage + j + 0] = Xoffset + g_vertex_circle[j + 0];
 			vertices_buffer[3 * decalage + j + 1] = Yoffset + g_vertex_circle[j + 1];
 			vertices_buffer[3 * decalage + j + 2] = Zoffset + g_vertex_circle[j + 2];
 		}
@@ -285,8 +280,8 @@ void EditablePolygon::RefreshContourPointsOpenGLBuffers()
 		vertexPtr[k] = 0.0f;
 
 	// index
-	decalage = DrawablePolygon::GetVerticesBufferSize(); // decalage dans le buffer index
-	int begin = DrawablePolygon::GetVerticesBufferSize(); // decalage dans le buffer vertex
+	decalage = DrawablePolygon::GetVerticesBufferElementsCount(); // decalage dans le buffer index
+	int begin = DrawablePolygon::GetVerticesBufferElementsCount(); // decalage dans le buffer vertex
 	const int count = 3 * numPointCircle;
 	for (int k = 0; k < numApexes; ++k)
 	{

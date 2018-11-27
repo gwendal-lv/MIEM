@@ -494,7 +494,9 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDrag(const MouseEvent&
 std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseUp(const MouseEvent& mouseE)
 {
     std::shared_ptr<GraphicEvent> graphicE(new GraphicEvent()); // default empty event
-    Point<float> clicLocation = mouseE.position; // float position (more accurate)
+    
+    // Unused at the moment...
+    //Point<float> clicLocation = mouseE.position; // float position (more accurate)
     
     if (allowAreaSelection)
     {
