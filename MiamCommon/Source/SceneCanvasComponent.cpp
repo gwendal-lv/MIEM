@@ -18,6 +18,8 @@
 
 #include "TextUtils.h"
 
+#include "EditablePolygon.h"
+
 //==============================================================================
 SceneCanvasComponent::SceneCanvasComponent() : 
 	selectedForEditing(false),
@@ -44,35 +46,37 @@ void SceneCanvasComponent::init(int numShapesMax, int numPointsMax)
 	previousMaxSize = 0;
 	needToResetBufferParts = false;
 
-	Nshapes = new const int(numShapesMax);
+	Nshapes = numShapesMax;
+    
+    // création d'une aire par défaut pour connaître ses tailles de buffer
+    // ATTENTION ça ne corrige pas tout : la taille max est référencée par rapport à une EDITABLE AREA
+    auto dummyArea = std::make_shared<EditablePolygon>(0); // IUD = 0
 
-	numPointsPolygon = new const int(numPointsMax);
+    numVertexShape = dummyArea->GetVerticesBufferElementsCount();
+    shapeVertexBufferSize = dummyArea->GetVerticesBufferSize();
+    shapeColorBufferSize = dummyArea->GetVerticesBufferSize();
+    shapeIndicesSize = dummyArea->GetIndicesBufferSize();
 
-	numVerticesPolygon = new const int((*numPointsPolygon) + 1);
+	vertexBufferSize = Nshapes * shapeVertexBufferSize;
+	colorBufferSize = Nshapes * shapeColorBufferSize;
+	indicesSize = Nshapes * shapeIndicesSize;
 
-	numVertexShape = new const int(*numVerticesPolygon + numVerticesRing + ((*numPointsPolygon) * numVerticesCircle) + *numPointsPolygon + dottedLineVertexes + numVerticesRing);
-	shapeVertexBufferSize = new const int(3 * (*numVerticesPolygon) + (3 * numVerticesRing) + (*numPointsPolygon) * (3 * numVerticesCircle) + (3 * (*numPointsPolygon)) + 3 * dottedLineVertexes + 3 * numVerticesRing);
-	shapeColorBufferSize = new const int(4 * (*numVerticesPolygon + numVerticesRing + (*numPointsPolygon) * (numVerticesCircle)+(*numPointsPolygon) + dottedLineVertexes + numVerticesRing));
-	shapeIndicesSize = new const int(3 * (*numVerticesPolygon) + (3 * numVerticesRing) + (*numPointsPolygon) * (3 * numPointCircle) + (3 * 2 * (*numPointsPolygon)) + dottedLineIndices + (3 * numVerticesRing));
+	g_vertex_buffer_data = new GLfloat[vertexBufferSize];
+	g_color_buffer_data = new GLfloat[colorBufferSize];
+	indices = new GLuint[indicesSize];
 
-	vertexBufferSize = new const int(*Nshapes * (*shapeVertexBufferSize));
-	colorBufferSize = new const int(*Nshapes * (*shapeColorBufferSize));
-	indicesSize = new const int(*Nshapes * (*shapeIndicesSize));
-
-	g_vertex_buffer_data = new GLfloat[*vertexBufferSize];
-	g_color_buffer_data = new GLfloat[*colorBufferSize];
-	indices = new GLuint[*indicesSize];
-
-	for (int i = 0; i < *Nshapes; ++i)
+    // ça sert à quoi ça ????
+    /*
+	for (int i = 0; i < Nshapes; ++i)
 	{
-		for (int j = i * (*shapeColorBufferSize); j < i* (*shapeColorBufferSize) + 4 * (*numVerticesPolygon); j += 4)
+		for (int j = i * shapeColorBufferSize; j < i* shapeColorBufferSize + 4 * numVerticesPolygon; j += 4)
 		{
 			g_color_buffer_data[j] = 0.5f;
 			g_color_buffer_data[j + 1] = 0.5f;
 			g_color_buffer_data[j + 2] = 0.5f;
 			g_color_buffer_data[j + 3] = 1.0f;
 		}
-		for (int j = i * (*shapeColorBufferSize) + 4 * (*numVerticesPolygon); j < (i + 1)*(*shapeColorBufferSize); j += 4)
+		for (int j = i * shapeColorBufferSize + 4 * numVerticesPolygon; j < (i + 1)*shapeColorBufferSize; j += 4)
 		{
 			g_color_buffer_data[j] = 1.0f;
 			g_color_buffer_data[j + 1] = 0.0f;
@@ -80,7 +84,9 @@ void SceneCanvasComponent::init(int numShapesMax, int numPointsMax)
 			g_color_buffer_data[j + 3] = 1.0f;
 		}
 	}
+     */
 
+    // Initialisation du VBO interne propre à la scène
 	g_canvasOutlineIndex_buffer_data[0] = 0;
 	g_canvasOutlineIndex_buffer_data[1] = 4;
 	g_canvasOutlineIndex_buffer_data[2] = 5;
@@ -144,25 +150,12 @@ void SceneCanvasComponent::waitForOpenGLResourcesRealeased()
 
 SceneCanvasComponent::~SceneCanvasComponent()
 {
-
     openGlContext.detach();
+    
 	delete[] g_vertex_buffer_data;
 	delete[] g_color_buffer_data;
 	delete[] indices;
 
-	delete vertexBufferSize;
-	delete colorBufferSize;
-	delete indicesSize;
-
-	delete numVertexShape;
-	delete shapeVertexBufferSize;
-	delete shapeColorBufferSize;
-	delete shapeIndicesSize;
-
-	delete numVerticesPolygon;
-
-	delete Nshapes;
-	delete numPointsPolygon;
     DBG("SceneCanvasComponent : destruction arrive à son terme");
 }
 
@@ -288,21 +281,21 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 
 	// TRIANGLE BUFFER
 	// openGL génère 1 buffer, avec l'ID vertexBuffer, et qui contiendra g_vertex_buffer_data
-	openGlContext.extensions.glGenBuffers(1, &vertexBuffer);
-	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-	openGlContext.extensions.glBufferData(GL_ARRAY_BUFFER, *vertexBufferSize * sizeof(GLfloat)/*sizeof(g_vertex_buffer_data)*/,
+	openGlContext.extensions.glGenBuffers(1, &vertexBufferGlName);
+	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, vertexBufferGlName);
+	openGlContext.extensions.glBufferData(GL_ARRAY_BUFFER, vertexBufferSize * sizeof(GLfloat)/*sizeof(g_vertex_buffer_data)*/,
 		g_vertex_buffer_data, GL_STREAM_DRAW);
 
 	// TRIANGLE COULEUR
 	// pareil pour les buffers de couleurs des deux
-	openGlContext.extensions.glGenBuffers(1, &colorBuffer);
-	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
-	openGlContext.extensions.glBufferData(GL_ARRAY_BUFFER, *colorBufferSize * sizeof(GLfloat), g_color_buffer_data, GL_STREAM_DRAW);
+	openGlContext.extensions.glGenBuffers(1, &colorBufferGlName);
+	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, colorBufferGlName);
+	openGlContext.extensions.glBufferData(GL_ARRAY_BUFFER, colorBufferSize * sizeof(GLfloat), g_color_buffer_data, GL_STREAM_DRAW);
 
 	// TRIANGLE INDEX
-	openGlContext.extensions.glGenBuffers(1, &elementBuffer);
-	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer);
-	openGlContext.extensions.glBufferData(GL_ELEMENT_ARRAY_BUFFER, *indicesSize * sizeof(unsigned int), indices, GL_STREAM_DRAW);
+	openGlContext.extensions.glGenBuffers(1, &elementBufferGlName);
+	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferGlName);
+	openGlContext.extensions.glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesSize * sizeof(unsigned int), indices, GL_STREAM_DRAW);
 
 	///uniforms
 
@@ -590,20 +583,21 @@ void SceneCanvasComponent::DrawOnSceneCanevas(std::shared_ptr<Miam::MultiSceneCa
 
 	// - - - - - Areas painting (including exciters if existing) - - - - -
 	// Sans bloquer, du coup, les autres threads (pour réactivité max...)
-	const int duplicatedSize = (int)duplicatedAreas.size();
-	for (size_t i = 0; i < duplicatedSize; i++)
+	for (size_t i = 0; i < duplicatedAreas.size(); i++)
 	{
         // Re-création de tous les buffers à chaque frame
         // --------- OPTIMISATION POSSIBLE SI UN JOOOOUUUUURRRRRRR çA MARCHE ------------
 		CreateShapeBuffer(duplicatedAreas[i], (int)i);
 	}
 
-	if (needToResetBufferParts)
+    // Pour l'instant on oublie ça... On remplit juste tout le buffer jusqu'au bout
+	if (/*needToResetBufferParts*/false)
 	{
-		std::fill(g_vertex_buffer_data + (int)duplicatedAreas.size() * *shapeVertexBufferSize, g_vertex_buffer_data + previousMaxSize * *shapeVertexBufferSize/**vertexBufferSize*/, 0.0f);
-		std::fill(g_color_buffer_data + (int)duplicatedAreas.size() * *shapeColorBufferSize, g_color_buffer_data + previousMaxSize * *shapeColorBufferSize/**colorBufferSize*/, 0.0f);
-		std::fill(indices + (int)duplicatedAreas.size() * *shapeIndicesSize, indices + previousMaxSize * *shapeIndicesSize/**indicesSize*/, 0);
+		std::fill(g_vertex_buffer_data + (int)duplicatedAreas.size() * shapeVertexBufferSize, g_vertex_buffer_data + previousMaxSize * shapeVertexBufferSize, 0.0f);
+		std::fill(g_color_buffer_data + (int)duplicatedAreas.size() * shapeColorBufferSize, g_color_buffer_data + previousMaxSize * shapeColorBufferSize, 0.0f);
+		std::fill(indices + (int)duplicatedAreas.size() * shapeIndicesSize, indices + previousMaxSize * shapeIndicesSize, 0);
 	}
+    // Remplissage du reste du buffer d'indices par des zéros
 
 
 	DrawCanvasOutline();
@@ -624,25 +618,26 @@ void SceneCanvasComponent::DrawShapes()
     
 	if (position != nullptr && colour != nullptr)
 	{
-		/// Draw triangle
+		// VERTICES array
 		openGlContext.extensions.glEnableVertexAttribArray(position->attributeID);
-		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, /**vertexBufferSize*/previousMaxSize * *shapeVertexBufferSize * sizeof(GLfloat)/*sizeof(g_vertex_buffer_data)*/, g_vertex_buffer_data);
+		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, vertexBufferGlName);
+		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, previousMaxSize * shapeVertexBufferSize * sizeof(GLfloat), g_vertex_buffer_data);
 		openGlContext.extensions.glVertexAttribPointer(position->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
 		//openGLContext.extensions.glEnableVertexAttribArray(position->attributeID);
 
+        // COLOURS array
 		openGlContext.extensions.glEnableVertexAttribArray(colour->attributeID);
-		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
-		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, /**colorBufferSize*/previousMaxSize * *shapeColorBufferSize * sizeof(GLfloat), g_color_buffer_data);
+		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, colorBufferGlName);
+		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, previousMaxSize * shapeColorBufferSize * sizeof(GLfloat), g_color_buffer_data);
 		openGlContext.extensions.glVertexAttribPointer(colour->attributeID, 4, GL_FLOAT, GL_FALSE, sizeof(float[4]), 0);
 
-
-		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer);
+        // INDICES (ELEMENT) array
+		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferGlName);
 		//openGlContext.extensions.glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
-		openGlContext.extensions.glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, /**indicesSize*/ previousMaxSize * *shapeIndicesSize * sizeof(unsigned int), indices);
+		openGlContext.extensions.glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, previousMaxSize * shapeIndicesSize * sizeof(unsigned int), indices);
 
-		glDrawElements(GL_TRIANGLES, previousMaxSize * *shapeIndicesSize/**indicesSize*/ /*+ 3 * 64*/, GL_UNSIGNED_INT, (void*)0);
-		//glDrawArrays(GL_TRIANGLES, 0, 3);
+        // Dessin des triangles
+		glDrawElements(GL_TRIANGLES, previousMaxSize * shapeIndicesSize, GL_UNSIGNED_INT, (void*)0);
 		openGlContext.extensions.glDisableVertexAttribArray(position->attributeID);
 		openGlContext.extensions.glDisableVertexAttribArray(colour->attributeID);
 
@@ -788,7 +783,7 @@ void SceneCanvasComponent::CreateShapeBuffer(std::shared_ptr<IDrawableArea> area
     throw std::logic_error("Cannot manipulate VBOs in non-VBO mode");
 #endif
     
-	int decalage = 3 * ((int)positionInBuffer * *numVertexShape);// + numPointsPolygon + 1;
+	int decalage = 3 * ((int)positionInBuffer * numVertexShape);// + numPointsPolygon + 1;
 	if (area->isVisible())
 	{
 		/// vertex
@@ -806,11 +801,12 @@ void SceneCanvasComponent::CreateShapeBuffer(std::shared_ptr<IDrawableArea> area
 		catch (const std::out_of_range& e)
 		{
 			DBG(e.what());
+            assert(false); // on ne continue pas
 		}
 
 		/// indices
-		decalage = positionInBuffer * *shapeIndicesSize;// différent du decalage pour les vertex et les couleurs !
-		int beginShape = positionInBuffer * *numVertexShape;
+		decalage = positionInBuffer * shapeIndicesSize;// différent du decalage pour les vertex et les couleurs !
+		int beginShape = positionInBuffer * numVertexShape;
 		try
 		{
 			const int indicesCount = area->GetIndicesBufferElementsCount();
@@ -825,10 +821,11 @@ void SceneCanvasComponent::CreateShapeBuffer(std::shared_ptr<IDrawableArea> area
 		catch (const std::out_of_range& e)
 		{
 			DBG(e.what());
+            assert(false); // on ne continue pas
 		}
 
 		/// colors
-		decalage = 4 * ((int)positionInBuffer * *numVertexShape);
+		decalage = 4 * ((int)positionInBuffer * numVertexShape);
 		try
 		{
 			float* couloursPtr = area->GetCoulourBufferPtr();
@@ -852,7 +849,7 @@ void SceneCanvasComponent::CreateShapeBuffer(std::shared_ptr<IDrawableArea> area
 		for (int j = 0; j < verticesCount; ++j)
 			destPtr[j] = 0.0f;
 
-		decalage = positionInBuffer * *shapeIndicesSize;// différent du decalage pour les vertex et les couleurs !
+		decalage = positionInBuffer * shapeIndicesSize; // différent du decalage pour les vertex et les couleurs !
 
 		unsigned int *destIndicesPtr = &indices[decalage];
 		for (int i = 0; i < area->GetIndicesBufferElementsCount(); ++i)
@@ -860,9 +857,9 @@ void SceneCanvasComponent::CreateShapeBuffer(std::shared_ptr<IDrawableArea> area
 
         // ICI DU COUP LE COUNT ETAIT LA SIZE dans l'ancien code de Guillaume
         // ça va très probablement poser problème....
-		decalage = 4 * ((int)positionInBuffer * *numVertexShape);
+		decalage = 4 * ((int)positionInBuffer * numVertexShape);
 		float* destCouloursPtr = &g_color_buffer_data[decalage];
-		for (int i = 0; i < area->GetVerticesBufferElementsCount(); ++i)
+		for (int i = 0; i < area->GetVerticesBufferSize(); ++i)
 			destCouloursPtr[i] = 0.0f;
 		
 	}
@@ -881,61 +878,4 @@ void SceneCanvasComponent::openGLDestructionAfterLastFrame()
 	releaseDone = true;
 }
 
-// Fonction dupliquée de EDITABLE AREA non ????????????????
-void SceneCanvasComponent::computeManipulationLine(float Ox, float Oy, float Mx, float My, float width, float height)
-{
-#ifndef __MIEM_VBO
-    throw std::logic_error("Cannot manipulate VBOs in non-VBO mode");
-#endif
-	int N = 20;
-	float length = (float)boost::geometry::distance(bpt(Ox, Oy), bpt(Mx, My));//0.25 * (getWidth() + getHeight()) / 2.0;
-	if (length / (2 * height) > 20.0f)
-		height = (length / 20.0f) / 2.0f;
-	else
-		N = int(length / (2.0f * height));
 
-	float sina = (My - Oy) / length;
-	float cosa = (Mx - Ox) / length;
-
-	for (int i = 0; i <  dottedLineNparts; ++i)
-	{
-		if (i < N)
-		{
-			// up_left
-			g_vertex_dotted_line[i * 3 * 4] = Ox + i * 2 * height * cosa - (width/2.0f) * sina;
-			g_vertex_dotted_line[i * 3 * 4 + 1] = Oy + i * 2 * height * sina + (width / 2.0f) * cosa;
-			g_vertex_dotted_line[i * 3 * 4 + 2] = 0.1f;
-			// down_left
-			g_vertex_dotted_line[i * 3 * 4 + 3] = Ox + i * 2 * height * cosa + (width / 2.0f) * sina;
-			g_vertex_dotted_line[i * 3 * 4 + 4] = Oy + i * 2 * height * sina - (width / 2.0f) * cosa;
-			g_vertex_dotted_line[i * 3 * 4 + 5] = 0.1f;
-			// up_right
-			g_vertex_dotted_line[i * 3 * 4 + 6] = Ox + (2 * i + 1)  * height * cosa - (width / 2.0f) * sina;
-			g_vertex_dotted_line[i * 3 * 4 + 7] = Oy + (2 * i + 1) * height * sina + (width / 2.0f) * cosa;
-			g_vertex_dotted_line[i * 3 * 4 + 8] = 0.1f;
-			// down_right
-			g_vertex_dotted_line[i * 3 * 4 + 9] = Ox + (2 * i + 1) * height * cosa + (width / 2.0f) * sina;
-			g_vertex_dotted_line[i * 3 * 4 + 10] = Oy + (2* i + 1) * height * sina - (width / 2.0f) * cosa;
-			g_vertex_dotted_line[i * 3 * 4 + 11] = 0.1f;
-
-			g_indices_dotted_line[i * 6] = i * 4;
-			g_indices_dotted_line[i * 6 + 1] = i * 4 + 1;
-			g_indices_dotted_line[i * 6 + 2] = i * 4 + 2;
-			g_indices_dotted_line[i * 6 + 3] = i * 4 + 1;
-			g_indices_dotted_line[i * 6 + 4] = i * 4 + 2;
-			g_indices_dotted_line[i * 6 + 5] = i * 4 + 3;
-		}
-		else
-		{
-			for (int j = 0; j < 12; ++j)
-			{
-				g_vertex_dotted_line[i * 12 + j] = 0.0f;
-			}
-			for (int j = 0; j < 6; ++j)
-			{
-				g_indices_dotted_line[i * 6 + j] = 0;
-			}
-		}
-	}
-
-}

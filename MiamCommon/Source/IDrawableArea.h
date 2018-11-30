@@ -152,20 +152,28 @@ namespace Miam
         
         
         // - - - - - VBO methods - - - - -
+        // - - - Following getters return the number of elements or array size of each kind of OpenGL buffer
         public :
-        // Following getters return the number of elements of each kind of OpenGL buffer
+        
+        /// \brief Returns the number of vertices within the buffer. Each  vertex is made of several coordinates.
+        /// To get the size of the buffer, please see Miam::DrawableArea::GetVerticesBufferSize()
 		virtual int GetVerticesBufferElementsCount() = 0;
+        /// \brief Returns the number of indices within the buffer. For example, 1 triangles requires
+        /// a total count of 3 indices. The number of indices should be the same as the size of the buffer.
 		virtual int GetIndicesBufferElementsCount() = 0;
-		
-        // These function should not be overriden. Data always proportionnal to the number of contained elements !
         //int GetColoursBufferElementsCount() { return 1 * GetVerticesBufferElementsCount(); }
         // deleted for security reasons....  issues with virtual functions !!!
         // Impossible telle qu'écrite comme ça de récupérer le nb de couleur d'une classe mère en particulier
+        
+        
+        // - - - Following functions should not be overriden. Arrays' sizes are always proportionnal
+        // to the number of contained elements !
     
         int GetVerticesBufferSize() {return 3 * GetVerticesBufferElementsCount(); } // x, y, z float coords
         int GetIndicesBufferSize() {return GetIndicesBufferElementsCount(); } // 1 index is a 1D coordinate
         int GetColoursBufferSize() {return 4 * GetVerticesBufferElementsCount(); } // ARGB float coords for each vertex
         
+
 		virtual void setZoffset(const float newOffset) = 0;
         
         /// \brief Sets the name that could be displayed on screen next to the center

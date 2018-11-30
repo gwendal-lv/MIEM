@@ -149,40 +149,41 @@ void DrawablePolygon::initBuffers()
     indices_buffer.resize(GetIndicesBufferSize());
     coulours_buffer.resize(GetColoursBufferSize());
     
-    // indices pour dessiner la forme
-    int vertexElmtOffset = DrawableArea::GetVerticesBufferElementsCount();
-    int actualPointsCount = (int) contourPoints.outer().size() - 1; // last contour point is the same as first (closed shape)
-    for (int i = 0; i < actualPointsCount ; ++i) // forme réelle
+    // indices pour dessiner la surface de la forme 32 triangles
+    const int vertexElmtOffset = DrawableArea::GetVerticesBufferElementsCount();
+    int indexElmtOffset = DrawableArea::GetIndicesBufferElementsCount();
+    const int actualPointsCount = (int) contourPoints.outer().size() - 1; // last contour point is the same as first (closed shape)
+    for (int i = 0; i < actualPointsCount ; ++i) // forme réelle : définition des indices des triangles
     {
-        indices_buffer[3 * vertexElmtOffset + i * 3 + 0] = vertexElmtOffset + i + 1;
-        indices_buffer[3 * vertexElmtOffset + i * 3 + 1] = vertexElmtOffset + 0;
-        indices_buffer[3 * vertexElmtOffset + i * 3 + 2] = vertexElmtOffset + i + 2 > vertexElmtOffset + actualPointsCount ? vertexElmtOffset + 1 : vertexElmtOffset + i + 2;
+        indices_buffer[indexElmtOffset + i * 3 + 0] = vertexElmtOffset + i + 1;
+        indices_buffer[indexElmtOffset + i * 3 + 1] = vertexElmtOffset + 0;
+        indices_buffer[indexElmtOffset + i * 3 + 2] = vertexElmtOffset + i + 2 > indexElmtOffset + actualPointsCount ? indexElmtOffset + 1 : indexElmtOffset + i + 2;
     }
-    for (int i = 3 * actualPointsCount; i < 3 * numVerticesPolygon; ++i) // points du VBO alloués en mémoire mais inutiles
-        indices_buffer[3 * vertexElmtOffset + i] = 0;
+    // En tout : on a autant de triangles que de points sur le contour du polygone
+    for (int i = 3 * actualPointsCount; i < 3 * numPointsPolygon; ++i) // points du VBO alloués en mémoire mais inutiles
+        indices_buffer[indexElmtOffset + i] = 0;
     
     // indices pour dessiner le contour
-    int vertexElmtOriginalOffset = DrawableArea::GetVerticesBufferElementsCount();
-    vertexElmtOffset += numVerticesPolygon;
+    indexElmtOffset += 3 * numPointsPolygon; // on avait "numPointsPolygon" triangles à dessiner au max
     for (int i = 0; i < numPointsPolygon; ++i)
     {
         if (i < actualPointsCount)
         {
-            indices_buffer[3 * vertexElmtOffset + i * 6 + 0] = vertexElmtOriginalOffset + i + 1;
-            indices_buffer[3 * vertexElmtOffset + i * 6 + 1] = vertexElmtOffset + i;
-            indices_buffer[3 * vertexElmtOffset + i * 6 + 3] = vertexElmtOffset + i + 1 >= vertexElmtOffset + actualPointsCount ? vertexElmtOffset : vertexElmtOffset + i + 1;
-            indices_buffer[3 * vertexElmtOffset + i * 6 + 2] = vertexElmtOffset + i + 1 >= vertexElmtOffset + actualPointsCount ? vertexElmtOffset : vertexElmtOffset + i + 1;
-            indices_buffer[3 * vertexElmtOffset + i * 6 + 4] = vertexElmtOriginalOffset + i + 1;
-            indices_buffer[3 * vertexElmtOffset + i * 6 + 5] = vertexElmtOriginalOffset + i + 2 >= vertexElmtOriginalOffset + actualPointsCount + 1 ? vertexElmtOriginalOffset + 1 : vertexElmtOriginalOffset + i + 2;
+            indices_buffer[indexElmtOffset + i * 6 + 0] = vertexElmtOffset + i + 1;
+            indices_buffer[indexElmtOffset + i * 6 + 1] = indexElmtOffset + i;
+            indices_buffer[indexElmtOffset + i * 6 + 3] = indexElmtOffset + i + 1 >= indexElmtOffset + actualPointsCount ? indexElmtOffset : indexElmtOffset + i + 1;
+            indices_buffer[indexElmtOffset + i * 6 + 2] = indexElmtOffset + i + 1 >= indexElmtOffset + actualPointsCount ? indexElmtOffset : indexElmtOffset + i + 1;
+            indices_buffer[indexElmtOffset + i * 6 + 4] = vertexElmtOffset + i + 1;
+            indices_buffer[indexElmtOffset + i * 6 + 5] = vertexElmtOffset + i + 2 >= vertexElmtOffset + actualPointsCount + 1 ? vertexElmtOffset + 1 : vertexElmtOffset + i + 2;
         }
         else
         {
-            indices_buffer[3 * vertexElmtOffset + i * 6] = 0;
-            indices_buffer[3 * vertexElmtOffset + i * 6 + 1] = 0;
-            indices_buffer[3 * vertexElmtOffset + i * 6 + 2] = 0;
-            indices_buffer[3 * vertexElmtOffset + i * 6 + 3] = 0;
-            indices_buffer[3 * vertexElmtOffset + i * 6 + 4] = 0;
-            indices_buffer[3 * vertexElmtOffset + i * 6 + 5] = 0;
+            indices_buffer[indexElmtOffset + i * 6 + 0] = 0;
+            indices_buffer[indexElmtOffset + i * 6 + 1] = 0;
+            indices_buffer[indexElmtOffset + i * 6 + 2] = 0;
+            indices_buffer[indexElmtOffset + i * 6 + 3] = 0;
+            indices_buffer[indexElmtOffset + i * 6 + 4] = 0;
+            indices_buffer[indexElmtOffset + i * 6 + 5] = 0;
         }
     }
 }
@@ -269,7 +270,12 @@ void DrawablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 
 void DrawablePolygon::RefreshOpenGLBuffers()
 {
+    std::cout << "DrawableArea : " << DrawableArea::GetVerticesBufferElementsCount() << " points, sous-tableau de taille " << DrawableArea::GetVerticesBufferSize() << std::endl;
+    std::cout << "DrawablePolygon : " << DrawablePolygon::GetVerticesBufferElementsCount() << " points, sous-tableau de taille " << DrawablePolygon::GetVerticesBufferSize() << std::endl;
+    
 	DrawableArea::RefreshOpenGLBuffers();
+    
+    initBuffers();
     
 	// - - - surface de la forme - - -
 	int vertexElmtOffset = DrawableArea::GetVerticesBufferElementsCount();
@@ -326,7 +332,8 @@ void DrawablePolygon::RefreshOpenGLBuffers()
 
 	for (int i = 0; i < (int)contourPointsInPixels.outer().size() - 1; ++i)
 	{
-		vertices_buffer[3 * vertexElmtOffset + i * 3] = Xoffset + resizeFactor * ((float)contourPointsInPixels.outer().at(i).get<0>() - Xoffset);//radius*cosf(currentAngle);
+		vertices_buffer[3 * vertexElmtOffset + i * 3 + 0] = Xoffset
+            + resizeFactor * ((float)contourPointsInPixels.outer().at(i).get<0>() - Xoffset);
 		vertices_buffer[3 * vertexElmtOffset + i * 3 + 1] = Yoffset + resizeFactor * ((float)contourPointsInPixels.outer().at(i).get<1>() - Yoffset);
 		vertices_buffer[3 * vertexElmtOffset + i * 3 + 2] = 0.0f;
 	}

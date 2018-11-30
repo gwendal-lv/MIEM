@@ -96,7 +96,7 @@ namespace Miam {
         private :
         void createJucePolygon(int width = 160, int height = 90);
         /// \brief Resizes all buffers and inits the indices buffer only
-        void initBuffers(); // to be called once only
+        void initBuffers(); // should be called when the number of contour points changed
         
         /// \brief Ré-crée des contourPoints (en coordonnées normalisées) pour la nouvelle résolution
         /// de canevas indiquée (et donc pour un nouveau ratio)
