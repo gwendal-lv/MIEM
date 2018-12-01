@@ -40,14 +40,16 @@ namespace Miam {
         public :
         
         // ----- VBO sizes -----
-        // on ajoute la surface de la forme + les lignes extérieures
-        // MANQUE 2* LES POINTS DU POLYGONE LA NON ???? LE CONTOUR EST UN RING UN PEU EN FAIT NON ??????????????????
+        // on ajoute la surface de la forme + les lignes extérieures.
+        // Format de ce VBO (un chiffre représente l'indice d'élément)
+        // +0 : centre
+        // +1 à +numPointsPolygon+1 : polygone lui-même
+        // +numPointsPolygon+1 à +numPointsPolygon*2+1
         virtual int GetVerticesBufferElementsCount() override
         { return DrawableArea::GetVerticesBufferElementsCount()
             + numVerticesPolygon // les vertices qui vont définir la surface (32 + 1)
-            + numPointsPolygon; } // !!!!!!!!!!!!!!!   ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! un rayon intérieur et un rayon extérieur ??????????????? *2 donc ????
+            + numPointsPolygon; } // 1 polygone extérieur supplémentaire pour tracer le contour blanc
         
-        // 1 INDICE DE TROP LA NON ??????????????????? 33 vertices pour 32 triangles pour la surface
         virtual int GetIndicesBufferElementsCount() override
         { return DrawableArea::GetIndicesBufferElementsCount()
             + 3 * numPointsPolygon/*numVerticesPolygon*/ // Surface of the polygon
@@ -92,7 +94,7 @@ namespace Miam {
             return clone;
         }
         
-        // (re)Construction helpers
+        // (re)Construction / destruction helpers
         private :
         void createJucePolygon(int width = 160, int height = 90);
         /// \brief Resizes all buffers and inits the indices buffer only

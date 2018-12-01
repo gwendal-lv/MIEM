@@ -81,42 +81,48 @@ void DrawableArea::init()
     indices_buffer.resize(GetIndicesBufferSize());
     coulours_buffer.resize(GetColoursBufferSize());
     
-	ComputeRing(numPointsRing);
+	ComputeRing();
 #endif // __MIEM_VBO
 }
 
-void DrawableArea::ComputeRing(int numPoints)
+void DrawableArea::ComputeRing()
 {
-	// calcul d'un anneau de centre 0, de rayon 5 pixels et avec une épaisseur de 2 pixels
-	float radius = 5.0f;
-	float width = 3.0f;
+	// calcul d'un anneau de centre 0, de rayon 5 pixels et avec une épaisseur de XX pixels
+	float radius = 40.0f;
+	float width = 4.0f;
 
 	float ri = radius - width / 2.0f;
 	float re = radius + width / 2.0f;
 
 	double currentAngle = 0.0;
-	double incAngle = 2 * M_PI / (double)numPoints;
-	for (int i = 0; i < numPoints; ++i)
+	double incAngle = 2 * M_PI / (double)numPointsRing;
+	for (int i = 0; i < numPointsRing; ++i)
 	{
-        // Cercle intérieur
+        // Cercle intérieur : indices 0 à 31
         g_vertex_ring[i * 3 + 0] = ri * (float)cos(currentAngle);
         g_vertex_ring[i * 3 + 1] = ri * (float)sin(currentAngle);
         g_vertex_ring[i * 3 + 2] = 0.0f;
-        // cercle extérieur
-        g_vertex_ring[numPoints * 3 + i * 3 + 0] = re * (float)cos(currentAngle);
-        g_vertex_ring[numPoints * 3 + i * 3 + 1] = re * (float)sin(currentAngle);
-        g_vertex_ring[numPoints * 3 + i * 3 + 2] = 0.0f;
+        // cercle extérieur : indices 32 à 61
+        g_vertex_ring[numPointsRing * 3 + i * 3 + 0] = re * (float)cos(currentAngle);
+        g_vertex_ring[numPointsRing * 3 + i * 3 + 1] = re * (float)sin(currentAngle);
+        g_vertex_ring[numPointsRing * 3 + i * 3 + 2] = 0.0f;
         
 		currentAngle += incAngle;
 	}
-	for (int i = 0; i < numPoints; ++i)
+	for (int i = 0; i < numPointsRing; ++i) // résolution 32 -> 64 points et 64 triangles
 	{
-		ringIndices[i * 6 + 0] = i;
-        ringIndices[i * 6 + 1] = numPoints + i;
-		ringIndices[i * 6 + 2] = numPoints + i + 1 >= 2 * numPoints ? numPoints : numPoints + i + 1;
-		ringIndices[i * 6 + 3] = numPoints + i + 1 >= 2 * numPoints ? numPoints : numPoints + i + 1;
+        // triangle avec côté extérieur
+		ringIndices[i * 6 + 0] = i; // pt intérieur
+        ringIndices[i * 6 + 1] = numPointsRing + i; // pt extérieur correspondant
+        // dernier point : l'extérieur suivant, ou le 1ier extérieur si on revient au départ
+		ringIndices[i * 6 + 2] = (numPointsRing + i + 1) >= (2 * numPointsRing) ?
+                                 numPointsRing : (numPointsRing + i + 1);
+        
+        // triangle avec côté intérieur
+        // en repartant du point "extérieur suivant" calculé juste avant
+        ringIndices[i * 6 + 3] = ringIndices[i * 6 + 2];
 		ringIndices[i * 6 + 4] = i;
-		ringIndices[i * 6 + 5] = i + 1 >= numPoints ? 0 : i + 1;
+		ringIndices[i * 6 + 5] = (i + 1) >= numPointsRing ? 0 : (i + 1);
 	}
 }
 
@@ -272,7 +278,6 @@ void DrawableArea::CanvasResized(SceneCanvasComponent* _parentCanvas)
     parentCanvas = _parentCanvas;
 	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scale(parentCanvas->getWidth(), parentCanvas->getHeight());
 	boost::geometry::transform(center, centerInPixels, scale);
-
 }
 
 void DrawableArea::RefreshOpenGLBuffers()
@@ -287,7 +292,7 @@ void DrawableArea::RefreshOpenGLBuffers()
 	const float Zoffset = mainZoffset + MIEM_CENTRAL_RING_Z;
 	if (displayCenter)
 	{
-        for (int j = 0; j < DrawableArea::GetVerticesBufferElementsCount() ; j += 3)
+        for (int j = 0; j < numVerticesRing ; j += 3)
 		{
 			vertices_buffer[j + 0] = Xoffset + g_vertex_ring[j + 0];
 			vertices_buffer[j + 1] = Yoffset + g_vertex_ring[j + 1];
@@ -296,7 +301,7 @@ void DrawableArea::RefreshOpenGLBuffers()
 	}
 	else
 	{
-		for (int j = 0; j < DrawableArea::GetVerticesBufferElementsCount() ; j += 3)
+		for (int j = 0; j < numVerticesRing ; j += 3)
 		{
 			vertices_buffer[j + 0] = MIEM_UNVISIBLE_COORDINATE;
 			vertices_buffer[j + 1] = MIEM_UNVISIBLE_COORDINATE;
@@ -305,7 +310,7 @@ void DrawableArea::RefreshOpenGLBuffers()
 	}
 
     // - - - Indices - - -
-    for (int j = 0; j < DrawableArea::GetIndicesBufferElementsCount() ; ++j)
+    for (int j = 0; j < 3 * numVerticesRing ; ++j) // autant de triangles que de vertices
 	{
 		indices_buffer[j] = ringIndices[j];
 	}
@@ -316,7 +321,7 @@ void DrawableArea::RefreshOpenGLBuffers()
     const GLfloat B = contourColour.getBlue() / 250.0f;
     const GLfloat A = GetAlpha(); // dynamic opacity
     
-    for (int i = 0; i < GetVerticesBufferElementsCount(); i+=4)
+    for (int i = 0; i < numVerticesRing; i+=4)
     {
         coulours_buffer[i + 0] = R;
         coulours_buffer[i + 1] = G;

@@ -144,6 +144,12 @@ void DrawablePolygon::createJucePolygon(int width, int height)
 }
 void DrawablePolygon::initBuffers()
 {
+    // OPTIMISATION NON NEGLIGEABLE POSSIBLE
+    // cette fonction ne devrait être appellée à nouveau que si le NOMBRE DE POINTS
+    // a CHANGE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // (en tout cas pour les indices)
+    // Sinon elle est appelée à chaque refresh GL... gros gaspillage CPU
+    
     // resize des buffers
     vertices_buffer.resize(GetVerticesBufferSize());
     indices_buffer.resize(GetIndicesBufferSize());
@@ -155,26 +161,43 @@ void DrawablePolygon::initBuffers()
     const int actualPointsCount = (int) contourPoints.outer().size() - 1; // last contour point is the same as first (closed shape)
     for (int i = 0; i < actualPointsCount ; ++i) // forme réelle : définition des indices des triangles
     {
-        indices_buffer[indexElmtOffset + i * 3 + 0] = vertexElmtOffset + i + 1;
-        indices_buffer[indexElmtOffset + i * 3 + 1] = vertexElmtOffset + 0;
-        indices_buffer[indexElmtOffset + i * 3 + 2] = vertexElmtOffset + i + 2 > indexElmtOffset + actualPointsCount ? indexElmtOffset + 1 : indexElmtOffset + i + 2;
+        // sera le centre par défaut
+        indices_buffer[indexElmtOffset + i * 3 + 0] = vertexElmtOffset + 0;
+        // 1ier point extérieur (tjs dans les bornes)
+        indices_buffer[indexElmtOffset + i * 3 + 1] = vertexElmtOffset + i + 1;
+        // 2nd point extérieur, qui peut être le dernier ou le premier du contour
+        indices_buffer[indexElmtOffset + i * 3 + 2] = (i + 2) > actualPointsCount ?
+                                                    (vertexElmtOffset + 1) : (vertexElmtOffset + i + 2);
     }
     // En tout : on a autant de triangles que de points sur le contour du polygone
-    for (int i = 3 * actualPointsCount; i < 3 * numPointsPolygon; ++i) // points du VBO alloués en mémoire mais inutiles
-        indices_buffer[indexElmtOffset + i] = 0;
+    for (int ii = 3 * actualPointsCount; ii < 3 * numPointsPolygon; ++ii) // points du VBO alloués en mémoire mais inutiles
+        indices_buffer[indexElmtOffset + ii] = 0;
     
     // indices pour dessiner le contour
     indexElmtOffset += 3 * numPointsPolygon; // on avait "numPointsPolygon" triangles à dessiner au max
+    // indice de début du polygon "agrandi" pour dessiner le contour
+    const int biggerPolyVertexElmtOffset = vertexElmtOffset + numVerticesPolygon;
     for (int i = 0; i < numPointsPolygon; ++i)
     {
         if (i < actualPointsCount)
         {
+            // -> Triangle avec un côté en bordure intérieure
+            // 1ier point de contour (tjs dans les bornes) (! point 0 est le centre)
             indices_buffer[indexElmtOffset + i * 6 + 0] = vertexElmtOffset + i + 1;
-            indices_buffer[indexElmtOffset + i * 6 + 1] = indexElmtOffset + i;
-            indices_buffer[indexElmtOffset + i * 6 + 3] = indexElmtOffset + i + 1 >= indexElmtOffset + actualPointsCount ? indexElmtOffset : indexElmtOffset + i + 1;
-            indices_buffer[indexElmtOffset + i * 6 + 2] = indexElmtOffset + i + 1 >= indexElmtOffset + actualPointsCount ? indexElmtOffset : indexElmtOffset + i + 1;
-            indices_buffer[indexElmtOffset + i * 6 + 4] = vertexElmtOffset + i + 1;
-            indices_buffer[indexElmtOffset + i * 6 + 5] = vertexElmtOffset + i + 2 >= vertexElmtOffset + actualPointsCount + 1 ? vertexElmtOffset + 1 : vertexElmtOffset + i + 2;
+            // 2nd point de contour, qui peut être le dernier ou le premier du contour
+            indices_buffer[indexElmtOffset + i * 6 + 1] = (i + 2) > actualPointsCount ?
+                                                    (vertexElmtOffset + 1) : (vertexElmtOffset + i + 2);
+            // pt de contour agrandi (tjs dans les bornes)
+            indices_buffer[indexElmtOffset + i * 6 + 2] = biggerPolyVertexElmtOffset + i;
+            
+            // -> Triangle avec un côté en bordure extérieure
+            // on repart du 2nd point de contour non-agrandi
+            indices_buffer[indexElmtOffset + i * 6 + 3] = indices_buffer[indexElmtOffset + i * 6 + 1];
+            // pt contour agrandi tjs dans les bornes
+            indices_buffer[indexElmtOffset + i * 6 + 4] = indices_buffer[indexElmtOffset + i * 6 + 2];
+            // pt contour agrandi avec possible dépassement (retour au départ)
+            indices_buffer[indexElmtOffset + i * 6 + 5] = (i + 1) >= actualPointsCount ?
+                                    biggerPolyVertexElmtOffset : biggerPolyVertexElmtOffset + i + 1;
         }
         else
         {
@@ -280,7 +303,7 @@ void DrawablePolygon::RefreshOpenGLBuffers()
 	// - - - surface de la forme - - -
 	int vertexElmtOffset = DrawableArea::GetVerticesBufferElementsCount();
 	float Zoffset = mainZoffset + MIEM_SHAPE_SURFACE_Z;
-    // centre au départ du buffer
+    // CENTRE AU ZERO du buffer
 	vertices_buffer[3 * vertexElmtOffset + 0] = (float)centerInPixels.get<0>();
 	vertices_buffer[3 * vertexElmtOffset + 1] = (float)centerInPixels.get<1>();
 	vertices_buffer[3 * vertexElmtOffset + 2] = Zoffset;
@@ -319,7 +342,10 @@ void DrawablePolygon::RefreshOpenGLBuffers()
 	// - - - contour de la forme - - -
     vertexElmtOffset += numVerticesPolygon;
     
-    // on va créer 2 formes en resizant le contour par Juce
+    // ******************* à ré-écrire proprement **********************
+    // ne va pas faire un beau contour, tel quel.... il faut réfléchir un peu à la géométrie
+    
+    // on va créer 1 deuxième forme en resizant le contour par Juce
     // puis on récupère les points. C'est du calcul 100% CPU donc pour le placement...
     // Mais ok évite du vertex shader
 	float dist = (float)boost::geometry::distance(centerInPixels, contourPointsInPixels.outer().at(0));
@@ -334,11 +360,13 @@ void DrawablePolygon::RefreshOpenGLBuffers()
 	{
 		vertices_buffer[3 * vertexElmtOffset + i * 3 + 0] = Xoffset
             + resizeFactor * ((float)contourPointsInPixels.outer().at(i).get<0>() - Xoffset);
-		vertices_buffer[3 * vertexElmtOffset + i * 3 + 1] = Yoffset + resizeFactor * ((float)contourPointsInPixels.outer().at(i).get<1>() - Yoffset);
-		vertices_buffer[3 * vertexElmtOffset + i * 3 + 2] = 0.0f;
+		vertices_buffer[3 * vertexElmtOffset + i * 3 + 1] = Yoffset
+            + resizeFactor * ((float)contourPointsInPixels.outer().at(i).get<1>() - Yoffset);
+        
+		vertices_buffer[3 * vertexElmtOffset + i * 3 + 2] = Zoffset;
 	}
-	for (int i = 3 * vertexElmtOffset + 3 * ((int)contourPointsInPixels.outer().size() - 1); i <3 * vertexElmtOffset + (3 * numPointsPolygon); ++i)
-		vertices_buffer[i] = 0.0f;
+	for (int ii = 3 * ((int)contourPointsInPixels.outer().size() - 1); ii < 3 * numPointsPolygon; ++ii)
+		vertices_buffer[(3 * vertexElmtOffset) + ii] = 0.0f;
 }
 
 

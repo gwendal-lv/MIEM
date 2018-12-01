@@ -176,9 +176,9 @@ namespace Miam
         private :
         void init();
         
-        /// \brief Computes a ring made of numPoint vertices for the internal circle,
-        /// and other numberPoint vertices for the internal circle.
-		void ComputeRing(int numPoints);
+        /// \brief Computes a ring made of numPointRing vertices for the internal circle,
+        /// and other numPointRing vertices for the internal circle.
+		void ComputeRing();
         
         void resetImages();
         void renderCachedNameImages();

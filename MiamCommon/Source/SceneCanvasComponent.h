@@ -73,11 +73,15 @@ public:
     
     bool selectedForEditing;
     
+    // - - - - - Time measures - - - - -
+    const double desiredFrequency_Hz = 60.0; // actual freq will actually be greater
+    const double desiredPeriod_ms = 1000.0/desiredFrequency_Hz;
+    FrequencyMeasurer displayFrequencyMeasurer;
     
-    // - - - - - OpenGL - - - - -
-    OpenGLContext openGlContext;
-    const int swapInterval = 1; // synced on vertical frequency
-    bool isSwapSynced;
+    int numFrame;
+    double EunderTime;
+    
+    // - - - - - Areas duplicates for multi-threaded rendering - - - - -
     
     // Les pointeurs sur les 2è copies des objets du canvas interactor
     // (pour savoir lesquels avaient changé) -> ATTENTION tout l'algorithme thread-safe
@@ -90,12 +94,125 @@ public:
     // qui sera éventuellement actualisée lorsque nécessaire
     std::vector<std::shared_ptr<IDrawableArea>> duplicatedAreas;
     
-    // - - - - - Time measures - - - - -
-    const double desiredFrequency_Hz = 60.0; // actual freq will actually be greater
-    const double desiredPeriod_ms = 1000.0/desiredFrequency_Hz;
-    FrequencyMeasurer displayFrequencyMeasurer;
     
-    protected :
+    // - - - - - OpenGL - - - - -
+    OpenGLContext openGlContext;
+    const int swapInterval = 1; // synced on vertical frequency
+    bool isSwapSynced;
+    
+    std::unique_ptr<OpenGLShaderProgram::Attribute> positionShaderAttribute, colourShaderAttribute;
+    
+    std::unique_ptr<OpenGLTextObject> openGLLabel;
+    
+    std::atomic<bool> releaseResources;
+    std::atomic<bool> releaseDone;
+    std::mutex rendering_mutex;
+    
+    std::thread openGLDestructionThread;
+    
+    std::unique_ptr<OpenGLShaderProgram> shaderProgram;
+    std::unique_ptr<OpenGLShaderProgram::Uniform> projectionMatrix, viewMatrix, modelMatrix;
+    
+    String myVertexShader = "attribute vec4 position;\n"
+#if JUCE_OPENGL_ES
+    "attribute lowp vec4 colour;\n"
+#else
+    "attribute vec4 colour;\n"
+#endif
+    "\n"
+    "uniform mat4 modelMatrix;\n"
+    "uniform mat4 projectionMatrix;\n"
+    "uniform mat4 viewMatrix;\n"
+    "\n"
+#if JUCE_OPENGL_ES
+    "varying lowp vec4 fragmentColor;\n"
+#else
+    "varying vec4 fragmentColor;\n"
+#endif
+    "\n"
+    "void main()\n"
+    "{\n"
+    "\n"
+    "    gl_Position = projectionMatrix * viewMatrix * modelMatrix * position;\n"
+    "    fragmentColor = colour;"
+    "}\n";
+    
+    String myFragmentShader =
+#if JUCE_OPENGL_ES
+    "varying lowp vec4 destinationColour;\n"
+#else
+    "varying vec4 destinationColour;\n"
+#endif
+    "\n"
+#if JUCE_OPENGL_ES
+    "varying lowp vec4 fragmentColor;\n"
+#else
+    "varying vec4 fragmentColor;\n"
+#endif
+    "\n"
+    "void main()\n"
+    "{\n"
+#if JUCE_OPENGL_ES
+    "   highp float l = 0.3;\n"
+    
+#else
+    "   float l = 0.3;\n"
+    
+#endif
+    "    gl_FragColor = fragmentColor;\n"
+    "}\n";
+    enum Layers
+    {
+        Shapes,
+        ShapesOverlay
+    };
+    
+    
+    // - - - General Vertex, Colour and Element Buffer Objects and Data - - -
+    
+    // à dégager à terme (seule les formes devront préciser leur taille !!!!!!!!)
+    int numVertexShape;
+    int shapeVertexBufferSize;
+    int shapeColorBufferSize;
+    int shapeIndicesSize;
+    
+    // Précédemment : version avec des pointeurs constant... c'était un peu n'importe quoi...
+    static const int Npolygons = 10;
+    int Nshapes;// = Npolygons + Npolygons * (Npolygons + 1) / 2;
+    int vertexBufferSize;// = Nshapes * shapeVertexBufferSize;
+    int colorBufferSize;// = Nshapes * shapeColorBufferSize;
+    int indicesSize;// = Nshapes * shapeIndicesSize;
+    
+    GLuint vertexBufferGlName;
+    GLfloat *sceneVertexBufferData = nullptr;
+    GLuint colorBufferGlName;
+    GLfloat *sceneColourBufferData = nullptr;
+    GLuint elementBufferGlName;
+    GLuint *sceneIndicesBufferData = nullptr;
+    
+    // Next buffer position to be written (= last usable data pos + 1)
+    size_t currentVertexBufferPos = -1;
+    size_t currentColourBufferPos = -1;
+    size_t currentIndexBufferPos = -1;
+    
+    
+    // ***********************************************
+    // ROLE A BIEN PRECISER ET A OPTIMISER
+    bool needToResetBufferParts;
+    int previousMaxSize; // utilisé pour remettre à 0 les parties de buffer qui étaient utilisées à la frame précédente et qui ne le sont plus mtn
+    
+    
+    // - - - Local buffers for the scene itself - - -
+    
+    GLuint canvasOutlineVertexBuffer;
+    GLfloat g_canvasOutlineVertex_buffer_data[8*3];
+    GLuint canvasOutlineCoulourBuffer;
+    GLfloat g_canvasOutlineCoulour_buffer_data[8 * 4];
+    GLuint canvasOutlineIndexBuffer;
+    GLuint g_canvasOutlineIndex_buffer_data[24];
+    
+    
+    
     
     
     
@@ -115,6 +232,10 @@ public:
 
     
 	void init(int numShapesMax, int numPointsMax);
+    private :
+    /// \brief tests first if buffers are null or not
+    void deleteBuffers();
+    public :
 	void ReleaseOpengGLResources();
 
     ~SceneCanvasComponent();
@@ -131,8 +252,11 @@ public:
 	virtual void openGLDestructionAtLastFrame();
     
     /// \brief Draws the shapes only, and not the text on them (names, etc...)
+    ///
+    /// Cette fonction s'occupe du dessin sur le canevas, le texte se fait après, dans le renderOpenGL
 	virtual void DrawOnSceneCanevas(std::shared_ptr<Miam::MultiSceneCanvasInteractor> &manager);
 	void DrawShapes();
+    /// \brief Will be drawn using separate VBOs and IBOs
 	void DrawCanvasOutline();
     virtual void openGLContextClosing() override;
     
@@ -197,125 +321,6 @@ public:
 	}
 
     
-protected :
-	std::unique_ptr<OpenGLShaderProgram::Attribute> position, colour;
-
-private:
-	int numFrame;
-	double EunderTime;
-	std::unique_ptr<OpenGLTextObject> openGLLabel;
-    
-    
-    
-    std::atomic<bool> releaseResources;
-    std::atomic<bool> releaseDone;
-    std::mutex rendering_mutex;
-    
-    
-    std::thread openGLDestructionThread;
-    
-
-	bool needToResetBufferParts;
-	int previousMaxSize; // utilisé pour remettre à 0 les parties de buffer qui étaient utilisées à la frame précédente et qui ne le sont plus mtn
-
-	std::unique_ptr<OpenGLShaderProgram> shaderProgram;
-	std::unique_ptr<OpenGLShaderProgram::Uniform> projectionMatrix, viewMatrix, modelMatrix;
-
-	String myVertexShader = "attribute vec4 position;\n"
-#if JUCE_OPENGL_ES
-		"attribute lowp vec4 colour;\n"
-#else
-		"attribute vec4 colour;\n"
-#endif
-		"\n"
-		"uniform mat4 modelMatrix;\n"
-		"uniform mat4 projectionMatrix;\n"
-		"uniform mat4 viewMatrix;\n"
-		"\n"
-#if JUCE_OPENGL_ES
-		"varying lowp vec4 fragmentColor;\n"
-#else
-		"varying vec4 fragmentColor;\n"
-#endif
-		"\n"
-		"void main()\n"
-		"{\n"
-		"\n"
-		"    gl_Position = projectionMatrix * viewMatrix * modelMatrix * position;\n"
-		"    fragmentColor = colour;"
-		"}\n";
-
-	String myFragmentShader =
-#if JUCE_OPENGL_ES
-		"varying lowp vec4 destinationColour;\n"
-#else
-		"varying vec4 destinationColour;\n"
-#endif
-		"\n"
-#if JUCE_OPENGL_ES
-		"varying lowp vec4 fragmentColor;\n"
-#else
-		"varying vec4 fragmentColor;\n"
-#endif
-		"\n"
-		"void main()\n"
-		"{\n"
-#if JUCE_OPENGL_ES
-		"   highp float l = 0.3;\n"
-
-#else
-		"   float l = 0.3;\n"
-
-#endif
-		"    gl_FragColor = fragmentColor;\n"
-		"}\n";
-	enum Layers
-	{
-		Shapes,
-		ShapesOverlay
-	};
-
-
-    // à dégager à terme (seule les formes devront préciser leur taille !!!!!!!!)
-    int numVertexShape;
-	int shapeVertexBufferSize;
-	int shapeColorBufferSize;
-	int shapeIndicesSize;
-
-    // Précédemment : version avec des pointeurs constant... c'était un peu n'importe quoi...
-	static const int Npolygons = 10;
-	int Nshapes;// = Npolygons + Npolygons * (Npolygons + 1) / 2;
-	int vertexBufferSize;// = Nshapes * shapeVertexBufferSize;
-	int colorBufferSize;// = Nshapes * shapeColorBufferSize;
-	int indicesSize;// = Nshapes * shapeIndicesSize;
-
-
-	int shift2[35+1]; // tableau contenant les séparations entre les différentes parties d'une forme (forme = 1, centre = 1, points = 32, contour = 1)
-
-    
-    // - - - General Vertex, Colour and Element Buffer Objects - - -
-	GLuint vertexBufferGlName;
-	GLfloat *g_vertex_buffer_data;
-
-	GLuint colorBufferGlName;
-	GLfloat *g_color_buffer_data;
-
-	GLuint elementBufferGlName;
-	GLuint *indices;
-
-    
-    // - - - Local buffers for the scene itself
-	GLuint canvasOutlineVertexBuffer;
-	GLfloat g_canvasOutlineVertex_buffer_data[8*3];
-    
-	GLuint canvasOutlineCoulourBuffer;
-	GLfloat g_canvasOutlineCoulour_buffer_data[8 * 4];
-
-	GLuint canvasOutlineIndexBuffer;
-	unsigned int g_canvasOutlineIndex_buffer_data[24];
-
-    
-	
     
     //  - - - - - Méthodes VBOs - - - - -
     private :
@@ -325,7 +330,7 @@ private:
     
     /// \brief à renommer/refactorer : fait un FILL en réalité (le buffer reste créé)
     // argument POSITION IN BUFFER doit etre SUPPRIME (il faudra garder un compteur interne)
-	void CreateShapeBuffer(std::shared_ptr<IDrawableArea> area, int positionInBuffer);
+	void AddShapeToBuffers(std::shared_ptr<IDrawableArea> area);
 
 	
 	float getLayerRatio(Layers layers)
