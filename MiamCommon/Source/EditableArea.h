@@ -109,8 +109,8 @@ namespace Miam
         
         // - - - - - VBOs - - - - -
         const int dottedLineNparts = 20; // NOT static for multithreading safety
-        const int dottedLineVertexes = 4 * dottedLineNparts;
-        const int dottedLineIndices = 6 * dottedLineNparts;
+        const int dottedLineVertexesCount = 4 * dottedLineNparts; // 1 rectangle par partie
+        const int dottedLineIndicesCount = 6 * dottedLineNparts; // chaque rectangle divisé en 2 triangles
         
         // à passer en vecteur pour surveiller les OUT OF RANGE exceptions
         // ET À METTRE DANS EDITABLE AREA CAR C'EST COMMUN AVEC EDITABLE ELLIPSE

@@ -21,8 +21,8 @@ EditableArea::EditableArea() : bmanipulationPointInPixels(0,0)
     
 #ifdef __MIEM_VBO
     // Proper resize of OpenGL buffer for VBO rendering
-    g_vertex_dotted_line.resize(3 * dottedLineVertexes);
-    g_indices_dotted_line.resize(dottedLineIndices);
+    g_vertex_dotted_line.resize(3 * dottedLineVertexesCount);
+    g_indices_dotted_line.resize(dottedLineIndicesCount);
     
     g_vertex_circle.resize(3 * numVerticesCircle);
     circleIndices.resize(3 * numPointCircle);

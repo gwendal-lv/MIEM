@@ -66,12 +66,12 @@ namespace Miam
         virtual int GetVerticesBufferElementsCount() override {
             return DrawableEllipse::GetVerticesBufferElementsCount()
             + (numPointsPolygon * numVerticesCircle) // points du contour
-            + dottedLineVertexes + numVerticesRing; // manipulationLine + manipulationPoint
+            + dottedLineVertexesCount + numVerticesRing; // manipulationLine + manipulationPoint
         }
         virtual int GetIndicesBufferElementsCount() override {
             return DrawableEllipse::GetIndicesBufferElementsCount()
             + numPointsPolygon * (3 * numPointCircle)
-            + dottedLineIndices + (3 * numVerticesRing); }
+            + dottedLineIndicesCount + (3 * numVerticesRing); }
         
         
         

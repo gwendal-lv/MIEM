@@ -105,7 +105,7 @@ void EditableEllipse::graphicalInit()
 	}
 	// manipulationLine
 	decalage += 4 * (numPointsPolygon * numVerticesCircle);
-	for (int i = 0; i < dottedLineVertexes; ++i)
+	for (int i = 0; i < dottedLineVertexesCount; ++i)
 	{
 		coulours_buffer[decalage + 4 * i + 0] = editingElementsColour.getRed() / 255.0f;
 		coulours_buffer[decalage + 4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
@@ -113,7 +113,7 @@ void EditableEllipse::graphicalInit()
 		coulours_buffer[decalage + 4 * i + 3] = editingElementsColour.getAlpha() / 255.0f;
 	}
 	// manipulationPoint
-	decalage += 4 * dottedLineVertexes;
+	decalage += 4 * dottedLineVertexesCount;
 	for (int i = 0; i < numVerticesRing; ++i)
 	{
 		coulours_buffer[decalage + 4 * i + 0] = editingElementsColour.getRed() / 255.0f;
@@ -234,9 +234,9 @@ void EditableEllipse::RefreshOpenGLBuffers()
 	if (isActive)
 	{
 		computeManipulationLine((float)centerInPixels.get<0>(), (float)centerInPixels.get<1>(), (float)bmanipulationPointInPixels.get<0>(), (float)bmanipulationPointInPixels.get<1>(), 4.0f, 4.0f);
-		for (int i = 0; i < 3 * dottedLineVertexes; ++i)
+		for (int i = 0; i < 3 * dottedLineVertexesCount; ++i)
 			vertices_buffer[3 * decalage + i] = g_vertex_dotted_line[i];
-		decalage += dottedLineVertexes;
+		decalage += dottedLineVertexesCount;
 
 		const float Zoffset = mainZoffset + 0.1f;
 		for (int j = 0; j < 3 * numVerticesRing; j += 3)
@@ -251,7 +251,7 @@ void EditableEllipse::RefreshOpenGLBuffers()
 	{
 		vertexPtr = &vertices_buffer[3 * decalage];
 
-		const int count = 3 * dottedLineVertexes;
+		const int count = 3 * dottedLineVertexesCount;
 		for (int i = 0; i < count; ++i)
 			vertexPtr[i] = 0.0f;
 
@@ -259,7 +259,7 @@ void EditableEllipse::RefreshOpenGLBuffers()
 		//for (unsigned int i = 0; i < count; ++i)
 		//	vertexPtr[i] = 0.0f;
 
-		decalage += dottedLineVertexes;
+		decalage += dottedLineVertexesCount;
 		vertexPtr = &vertices_buffer[3 * decalage];
 		const int count2 = 3 * numVerticesRing;
 		for (int j = 0; j < count2; ++j)
@@ -294,10 +294,10 @@ void EditableEllipse::RefreshOpenGLBuffers()
 	// manipulationLine + manipulationPoint
 	if (isActive)
 	{
-		for (int i = 0; i < dottedLineIndices; ++i)
+		for (int i = 0; i < dottedLineIndicesCount; ++i)
 			indices_buffer[decalage + i] = g_indices_dotted_line[i] + begin;
 		decalage += 3 * 2 * dottedLineNparts;
-		begin += dottedLineVertexes;
+		begin += dottedLineVertexesCount;
 		for (int j = 0; j < 3 * numVerticesRing; ++j)
 		{
 			indices_buffer[j + decalage] = ringIndices[j] + begin;
@@ -307,11 +307,11 @@ void EditableEllipse::RefreshOpenGLBuffers()
 	else
 	{
 		unsigned int* indicesPtr = &indices_buffer[decalage];
-		for (int i = 0; i < dottedLineIndices; ++i)
+		for (int i = 0; i < dottedLineIndicesCount; ++i)
 			indicesPtr[i] = 0;
 		decalage += 3 * 2 * dottedLineNparts;
 		indicesPtr += 3 * 2 * dottedLineNparts;
-		begin += dottedLineVertexes;
+		begin += dottedLineVertexesCount;
 		for (int j = 0; j < 3 * numVerticesRing; ++j)
 		{
 			indicesPtr[j] = 0;

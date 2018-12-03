@@ -37,12 +37,12 @@ namespace Miam {
         virtual int GetVerticesBufferElementsCount() override {
             return DrawablePolygon::GetVerticesBufferElementsCount()
             + (numPointsPolygon * numVerticesCircle) // points du contour
-            + dottedLineVertexes + numVerticesRing; // manipulationLine + manipulationPoint
+            + dottedLineVertexesCount + numVerticesRing; // manipulationLine + manipulationPoint
         }
         virtual int GetIndicesBufferElementsCount() override {
             return DrawablePolygon::GetIndicesBufferElementsCount()
             + numPointsPolygon * (3 * numPointCircle)
-            + dottedLineIndices + (3 * numVerticesRing); }
+            + dottedLineIndicesCount + (3 * numVerticesRing); }
         
         // - - - - - Others - - - - -
         void SetActive(bool activate) override;

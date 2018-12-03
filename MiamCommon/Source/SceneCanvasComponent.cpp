@@ -661,7 +661,7 @@ void SceneCanvasComponent::DrawShapes()
 
 		glDrawElements(GL_TRIANGLES, (GLsizei) currentIndexBufferPos, GL_UNSIGNED_INT, (void*)0);
         //glDrawElements(GL_TRIANGLES, (GLsizei) 192, GL_UNSIGNED_INT, (void*)0);
-        // juste le premier ring ...
+        // juste le premier ring ... qq'un écrit dans le VBO du 1ier ring...
         // *********************
         
 		openGlContext.extensions.glDisableVertexAttribArray(positionShaderAttribute->attributeID);
