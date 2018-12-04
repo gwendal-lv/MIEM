@@ -48,11 +48,7 @@ namespace Miam
 			virtual void Paint(Graphics& g) override;
 			virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
 			virtual void RefreshOpenGLBuffers() override;
-		private:
-
-
-			void computeManipulationPoint();
-			void computeManipulationLine(float Ox, float Oy, float Mx, float My, float width, float height);
+        
         
 			// ----- Setters and Getters -----
 		public:
@@ -64,14 +60,9 @@ namespace Miam
         public :
         // - - - - - VBOs - - - - -
         virtual int GetVerticesBufferElementsCount() override {
-            return DrawableEllipse::GetVerticesBufferElementsCount()
-            + (numPointsPolygon * numVerticesCircle) // points du contour
-            + dottedLineVertexesCount + numVerticesRing; // manipulationLine + manipulationPoint
-        }
+            return InteractiveEllipse::GetVerticesBufferElementsCount() + getEditableAreaVerticesCount(); }
         virtual int GetIndicesBufferElementsCount() override {
-            return DrawableEllipse::GetIndicesBufferElementsCount()
-            + numPointsPolygon * (3 * numPointCircle)
-            + dottedLineIndicesCount + (3 * numVerticesRing); }
+            return InteractiveEllipse::GetIndicesBufferElementsCount() + getEditableAreaIndexesCount(); }
         
         
         
@@ -81,7 +72,6 @@ namespace Miam
 			Miam::AreaEventType TryMovePoint(const Point<double>& newLocation) override;
 			Miam::AreaEventType EndPointMove() override;
 			void Translate(const Point<double>& translation) override;
-			void setCenterPosition(bpt newCenter);
 			
 			bool SizeChanged(double sizeFactor, bool minSize);
 			void Rotate(double Radian);

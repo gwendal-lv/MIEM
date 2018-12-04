@@ -293,9 +293,6 @@ void DrawablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 
 void DrawablePolygon::RefreshOpenGLBuffers()
 {
-    std::cout << "DrawableArea : " << DrawableArea::GetVerticesBufferElementsCount() << " points, sous-tableau de taille " << DrawableArea::GetVerticesBufferSize() << std::endl;
-    std::cout << "DrawablePolygon : " << DrawablePolygon::GetVerticesBufferElementsCount() << " points, sous-tableau de taille " << DrawablePolygon::GetVerticesBufferSize() << std::endl;
-    
 	DrawableArea::RefreshOpenGLBuffers();
     
     initBuffers();

@@ -37,6 +37,7 @@ namespace bptree = boost::property_tree;
 typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> bpt;
 typedef boost::geometry::model::polygon<bpt> bpolygon;
 
+#include "MiemVector.hpp"
 
 // Simple declaration for a pointer
 class SceneCanvasComponent;
@@ -118,8 +119,19 @@ namespace Miam
 		
 		//virtual Matrix3D<float> GetModelMatrix() = 0;
         
-        // ----- Setters and Getters -----
+        // =============== SETTERS & GETTERS ===============
+        protected :
+        // ----- Internal reference-based getters (to solve inheritance issues) -----
+        virtual bpt& getCenterInPixels() = 0;
+        virtual std::vector<bpt>& getContourPointsInPixels() = 0;
+        virtual SceneCanvasComponent* getParentCanvas() = 0;
+        virtual Vector<GLfloat> & getVerticesBuffer() = 0;
+        virtual Vector<GLuint> & getIndicesBuffer() = 0;
+        virtual Vector<GLfloat> & getColoursBuffer() = 0;
+        virtual Vector<GLfloat> & getRingVertexBuffer() = 0;
         
+        // ----- Public Sets and Gets -----
+        public :
         virtual int64_t GetId() const = 0;
         virtual void SetId(int64_t _Id) = 0;
         virtual Colour GetFillColour() const = 0;
@@ -173,8 +185,9 @@ namespace Miam
         int GetIndicesBufferSize() {return GetIndicesBufferElementsCount(); } // 1 index is a 1D coordinate
         int GetColoursBufferSize() {return 4 * GetVerticesBufferElementsCount(); } // ARGB float coords for each vertex
         
-
-		virtual void setZoffset(const float newOffset) = 0;
+        
+        virtual void setZoffset(float newOffset) = 0;
+        virtual float getZoffset() const = 0;
         
         /// \brief Sets the name that could be displayed on screen next to the center
         virtual void SetName(String newName) = 0;

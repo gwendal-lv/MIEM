@@ -69,58 +69,6 @@ void EditableEllipse::graphicalInit()
 	vertices_buffer.resize(GetVerticesBufferSize());
 	indices_buffer.resize(GetIndicesBufferSize());
 	coulours_buffer.resize(GetColoursBufferSize());
-
-	// calcul d'un disque de centre 0 et de rayon 5 pixels
-	float radius = 5.0f;
-	int numPoints = numPointsRing;
-	radius = 5.0f;
-	double currentAngle = 0.0;
-	double incAngle = 2 * M_PI / (double)numPoints;
-	g_vertex_circle[0] = 0.0f;
-	g_vertex_circle[1] = 0.0f;
-	g_vertex_circle[2] = 0.0f;
-	for (int i = 0; i < numPointCircle; ++i)
-	{
-		g_vertex_circle[(i + 1) * 3] = radius * (float)cos(currentAngle);
-		g_vertex_circle[(i + 1) * 3 + 1] = radius * (float)sin(currentAngle);
-		g_vertex_circle[(i + 1) * 3 + 2] = 0.0f;
-		currentAngle += incAngle;
-	}
-	for (int i = 0; i < numPointCircle; ++i)
-	{
-		circleIndices[i * 3] = i + 1;
-		circleIndices[i * 3 + 1] = 0;
-		circleIndices[i * 3 + 2] = i + 2 > numPointCircle ? 1 : i + 2;
-	}
-
-	/// couleur
-	// points
-	int decalage = DrawableEllipse::GetVerticesBufferElementsCount();
-	for (int i = 0; i < (numPointsPolygon * numVerticesCircle); ++i)
-	{
-		coulours_buffer[decalage + 4 * i + 0] = editingElementsColour.getRed()/255.0f;
-		coulours_buffer[decalage + 4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
-		coulours_buffer[decalage + 4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
-		coulours_buffer[decalage + 4 * i + 3] = editingElementsColour.getAlpha() / 255.0f;
-	}
-	// manipulationLine
-	decalage += 4 * (numPointsPolygon * numVerticesCircle);
-	for (int i = 0; i < dottedLineVertexesCount; ++i)
-	{
-		coulours_buffer[decalage + 4 * i + 0] = editingElementsColour.getRed() / 255.0f;
-		coulours_buffer[decalage + 4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
-		coulours_buffer[decalage + 4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
-		coulours_buffer[decalage + 4 * i + 3] = editingElementsColour.getAlpha() / 255.0f;
-	}
-	// manipulationPoint
-	decalage += 4 * dottedLineVertexesCount;
-	for (int i = 0; i < numVerticesRing; ++i)
-	{
-		coulours_buffer[decalage + 4 * i + 0] = editingElementsColour.getRed() / 255.0f;
-		coulours_buffer[decalage + 4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
-		coulours_buffer[decalage + 4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
-		coulours_buffer[decalage + 4 * i + 3] = editingElementsColour.getAlpha() / 255.0f;
-	}
 #endif // def _MIEM_VBO
 }
 
@@ -192,148 +140,9 @@ void EditableEllipse::RefreshOpenGLBuffers()
     throw std::logic_error("Cannot manipulate VBOs in non-VBO mode");
 #endif
 	DrawableEllipse::RefreshOpenGLBuffers();
-
-	int decalage = DrawableEllipse::GetVerticesBufferElementsCount();
-	int numApexes = isActive? (int)contourPointsInPixels.outer().size() - 1 : 0;
-
-	//bool contourFull = std::all_of(opaque_vertex_buffer.begin() + 291, opaque_vertex_buffer.begin() + 385, [](float x) { return x !=0.0f; });
-	//if (!contourFull)
-	//{
-	//	auto valFound = std::find(opaque_vertex_buffer.begin() + 291, opaque_vertex_buffer.begin() + 385, 0);
-	//	int ind = std::distance(opaque_vertex_buffer.begin(), valFound);
-	//	DBG("contour not full at : " + (String)(ind) + ", val = " + (String)(*valFound));
-	//}
-	 /// vertex
-	 // points
-	for (int k = 0; k < numApexes; ++k)
-	{
-		const float Xoffset = (float)contourPointsInPixels.outer().at(k).get<0>();
-		const float Yoffset = (float)contourPointsInPixels.outer().at(k).get<1>();
-		const float Zoffset = mainZoffset + 0.1f;
-		float* verticesPtr = &vertices_buffer[3 * decalage];
-		for (int j = 0; j < 3 * numVerticesCircle; j += 3)
-		{
-			verticesPtr[j] = Xoffset + g_vertex_circle[j];
-			verticesPtr[j + 1] = Yoffset + g_vertex_circle[j + 1];
-			verticesPtr[j + 2] = Zoffset + g_vertex_circle[j + 2];
-		}
-		decalage += numVerticesCircle;
-	}
-	int decalageMax = 3 * numVerticesCircle * (numPointsPolygon - numApexes);
-	float *vertexPtr = &vertices_buffer[3 * decalage];
-	for (int k = 0; k < decalageMax; ++k)
-		vertexPtr[k] = 0.0f;
-	/*for (int k = numApexes; k < numPointsPolygon; ++k)
-	{
-		for (int j = 0; j < 3 * numVerticesCircle; j++)
-			vertices_buffer[3 * decalage + j] = 0;
-		decalage += numVerticesCircle;
-	}*/
-
-	// manipulationLine + manipulationPoint
-	if (isActive)
-	{
-		computeManipulationLine((float)centerInPixels.get<0>(), (float)centerInPixels.get<1>(), (float)bmanipulationPointInPixels.get<0>(), (float)bmanipulationPointInPixels.get<1>(), 4.0f, 4.0f);
-		for (int i = 0; i < 3 * dottedLineVertexesCount; ++i)
-			vertices_buffer[3 * decalage + i] = g_vertex_dotted_line[i];
-		decalage += dottedLineVertexesCount;
-
-		const float Zoffset = mainZoffset + 0.1f;
-		for (int j = 0; j < 3 * numVerticesRing; j += 3)
-		{
-			vertices_buffer[3 * decalage + j] = 1.0f* ((float)bmanipulationPointInPixels.get<0>() + g_vertex_ring[j]);
-			vertices_buffer[3 * decalage + j + 1] = 1.0f*((float)bmanipulationPointInPixels.get<1>() + g_vertex_ring[j + 1]);
-			vertices_buffer[3 * decalage + j + 2] = Zoffset + g_vertex_ring[j + 2];
-
-		}
-	}
-	else
-	{
-		vertexPtr = &vertices_buffer[3 * decalage];
-
-		const int count = 3 * dottedLineVertexesCount;
-		for (int i = 0; i < count; ++i)
-			vertexPtr[i] = 0.0f;
-
-		//const unsigned int ucount = 3 * dottedLineVertexes;
-		//for (unsigned int i = 0; i < count; ++i)
-		//	vertexPtr[i] = 0.0f;
-
-		decalage += dottedLineVertexesCount;
-		vertexPtr = &vertices_buffer[3 * decalage];
-		const int count2 = 3 * numVerticesRing;
-		for (int j = 0; j < count2; ++j)
-			vertexPtr[j] = 0.0f;
-	}
-
-	///// index
-	//// points
-	decalage = DrawableEllipse::GetIndicesBufferElementsCount(); // decalage dans le buffer index
-	int begin = DrawableEllipse::GetVerticesBufferElementsCount(); // decalage dans le buffer vertex
-	const int count = 3 * numPointCircle;
-	for (int k = 0; k < numApexes; ++k)
-	{
-		for (int j = 0; j < count; ++j)
-		{
-			indices_buffer[j + decalage/*+ numVerticesPolygon*/] = circleIndices[j] + begin + k * numVerticesCircle;
-		}
-		decalage += 3 * numPointCircle;
-	}
-
-	for (int k = numApexes; k < numPointsPolygon; ++k)
-	{
-		unsigned int *indicesPtr = &indices_buffer[decalage];
-		for (int j = 0; j < count; ++j)
-			indicesPtr[j] = 0;
-			//indices_buffer[j + decalage/*+ numVerticesPolygon*/] = 0;
-		decalage += 3 * numPointCircle;
-	}
-	begin += numPointsPolygon * numVerticesCircle;
-
-
-	// manipulationLine + manipulationPoint
-	if (isActive)
-	{
-		for (int i = 0; i < dottedLineIndicesCount; ++i)
-			indices_buffer[decalage + i] = g_indices_dotted_line[i] + begin;
-		decalage += 3 * 2 * dottedLineNparts;
-		begin += dottedLineVertexesCount;
-		for (int j = 0; j < 3 * numVerticesRing; ++j)
-		{
-			indices_buffer[j + decalage] = ringIndices[j] + begin;
-		}
-		decalage += 3 * numVerticesRing;
-	}
-	else
-	{
-		unsigned int* indicesPtr = &indices_buffer[decalage];
-		for (int i = 0; i < dottedLineIndicesCount; ++i)
-			indicesPtr[i] = 0;
-		decalage += 3 * 2 * dottedLineNparts;
-		indicesPtr += 3 * 2 * dottedLineNparts;
-		begin += dottedLineVertexesCount;
-		for (int j = 0; j < 3 * numVerticesRing; ++j)
-		{
-			indicesPtr[j] = 0;
-		}
-		decalage += 3 * numVerticesRing;
-	}
+    EditableArea::refreshOpenGLSubBuffers(GetVerticesBufferElementsCount(), GetIndicesBufferElementsCount());
 }
 
-void EditableEllipse::computeManipulationPoint()
-{
-	float manipulationLineLengthLeft = 0.25f*(parentCanvas->getWidth() + parentCanvas->getHeight()) / 2.0f,
-		manipulationLineLengthRight = manipulationLineLengthLeft; //px
-	if (centerInPixels.get<0>() + manipulationLineLengthRight + manipulationPointRadius
-		<= parentCanvas->getWidth())
-		bmanipulationPointInPixels = bpt(centerInPixels.get<0>()
-			+ manipulationLineLengthRight,
-			centerInPixels.get<1>());
-	else
-		bmanipulationPointInPixels = bpt(centerInPixels.get<0>()
-			- manipulationLineLengthLeft,
-			centerInPixels.get<1>());
-}
 
 // ===== SETTERS AND GETTERS =====
 void EditableEllipse::SetActive(bool activate)
@@ -711,14 +520,13 @@ void EditableEllipse::Translate(const Point<double>& translation)
 	computeManipulationPoint();
 }
 
+/* Je (Gwendal) ne voit pas l'intérêt de cette méthode...
 void EditableEllipse::setCenterPosition(bpt newCenter) // pixels
 {
-	
 	Point<double> translation(newCenter.get<0>() - centerInPixels.get<0>(), newCenter.get<1>() - centerInPixels.get<1>()); // pixels
 	Translate(translation);
-	
 }
-
+*/
 
 
 
@@ -784,66 +592,3 @@ double EditableEllipse::getRadius()
 	return boost::geometry::distance(centerInPixels, contourPointsInPixels.outer().at(0));
 }
 
-
-// =================== à déplacer dans code commun EditableArea ===================
-// =================== à déplacer dans code commun EditableArea ===================
-// FOnction commune avec editable polygon.
-// =================== à déplacer dans code commun EditableArea ===================
-// =================== à déplacer dans code commun EditableArea ===================
-void EditableEllipse::computeManipulationLine(float Ox, float Oy, float Mx, float My, float width, float height)
-{
-	int N = 20;
-	float length = (float)boost::geometry::distance(bpt(Ox, Oy), bpt(Mx, My));//0.25 * (getWidth() + getHeight()) / 2.0;
-	if (length / (2 * height) > 20.0f)
-		height = (length / 20.0f) / 2.0f;
-	else
-		N = int(length / (2 * height));
-
-	float sina = (My - Oy) / length;
-	float cosa = (Mx - Ox) / length;
-
-#ifndef __MIEM_VBO
-    throw std::logic_error("Cannot manipulate VBOs in non-VBO mode");
-#endif
-	for (int i = 0; i < dottedLineNparts; ++i)
-	{
-		if (i < N)
-		{
-			// up_left
-			g_vertex_dotted_line[i * 3 * 4] = Ox + i * 2 * height * cosa - (width / 2.0f) * sina;
-			g_vertex_dotted_line[i * 3 * 4 + 1] = Oy + i * 2 * height * sina + (width / 2.0f) * cosa;
-			g_vertex_dotted_line[i * 3 * 4 + 2] = 0.1f;
-			// down_left
-			g_vertex_dotted_line[i * 3 * 4 + 3] = Ox + i * 2 * height * cosa + (width / 2.0f) * sina;
-			g_vertex_dotted_line[i * 3 * 4 + 4] = Oy + i * 2 * height * sina - (width / 2.0f) * cosa;
-			g_vertex_dotted_line[i * 3 * 4 + 5] = 0.1f;
-			// up_right
-			g_vertex_dotted_line[i * 3 * 4 + 6] = Ox + (2 * i + 1)  * height * cosa - (width / 2.0f) * sina;
-			g_vertex_dotted_line[i * 3 * 4 + 7] = Oy + (2 * i + 1) * height * sina + (width / 2.0f) * cosa;
-			g_vertex_dotted_line[i * 3 * 4 + 8] = 0.1f;
-			// down_right
-			g_vertex_dotted_line[i * 3 * 4 + 9] = Ox + (2 * i + 1) * height * cosa + (width / 2.0f) * sina;
-			g_vertex_dotted_line[i * 3 * 4 + 10] = Oy + (2 * i + 1) * height * sina - (width / 2.0f) * cosa;
-			g_vertex_dotted_line[i * 3 * 4 + 11] = 0.1f;
-
-			g_indices_dotted_line[i * 6] = i * 4;
-			g_indices_dotted_line[i * 6 + 1] = i * 4 + 1;
-			g_indices_dotted_line[i * 6 + 2] = i * 4 + 2;
-			g_indices_dotted_line[i * 6 + 3] = i * 4 + 1;
-			g_indices_dotted_line[i * 6 + 4] = i * 4 + 2;
-			g_indices_dotted_line[i * 6 + 5] = i * 4 + 3;
-		}
-		else
-		{
-			for (int j = 0; j < 12; ++j)
-			{
-				g_vertex_dotted_line[i * 12 + j] = 0.0f;
-			}
-			for (int j = 0; j < 6; ++j)
-			{
-				g_indices_dotted_line[i * 6 + j] = 0;
-			}
-		}
-	}
-
-}

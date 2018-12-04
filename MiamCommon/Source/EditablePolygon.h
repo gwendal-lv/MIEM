@@ -35,14 +35,9 @@ namespace Miam {
         public :
         // - - - - - VBOs - - - - -
         virtual int GetVerticesBufferElementsCount() override {
-            return DrawablePolygon::GetVerticesBufferElementsCount()
-            + (numPointsPolygon * numVerticesCircle) // points du contour
-            + dottedLineVertexesCount + numVerticesRing; // manipulationLine + manipulationPoint
-        }
+            return InteractivePolygon::GetVerticesBufferElementsCount() + getEditableAreaVerticesCount(); }
         virtual int GetIndicesBufferElementsCount() override {
-            return DrawablePolygon::GetIndicesBufferElementsCount()
-            + numPointsPolygon * (3 * numPointCircle)
-            + dottedLineIndicesCount + (3 * numVerticesRing); }
+            return InteractivePolygon::GetIndicesBufferElementsCount() + getEditableAreaIndexesCount(); }
         
         // - - - - - Others - - - - -
         void SetActive(bool activate) override;
@@ -88,21 +83,13 @@ namespace Miam {
         public :
 			
         
-			virtual void Paint(Graphics& g) override;
-			virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
-        
-        
-        // ----- OpenGL VBO management ------
-			virtual void RefreshOpenGLBuffers() override;
-			void RefreshManipulationPointOpenGLBuffer();
-			void RefreshContourPointsOpenGLBuffers();
-        
-        
-        // Display helpers
-        private :
-        
-        void computeManipulationPoint();
-        
+        virtual void Paint(Graphics& g) override;
+        virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
+    
+    
+    // ----- OpenGL VBO management ------
+        virtual void RefreshOpenGLBuffers() override;
+    
         
         // ----- Edition functions -----
 
@@ -117,7 +104,6 @@ namespace Miam {
         void Translate(const Point<double>& translation) override;
         protected :
         void recreateNormalizedPoints() override;
-		void computeManipulationLine(float Ox, float Oy, float Mx, float My, float width, float height);
         // Polygon-specific editing function
         private :
         void moveContourPoint(size_t pointIndex, const Point<double>& newLocation);

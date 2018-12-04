@@ -68,58 +68,6 @@ void EditablePolygon::graphicalInit()
     vertices_buffer.resize(GetVerticesBufferSize());
     indices_buffer.resize(GetIndicesBufferSize());
     coulours_buffer.resize(GetColoursBufferSize());
-
-    // calcul d'un disque de centre 0 et de rayon 5 pixels
-    float radius = 5.0f;
-    int numPoints = numPointsRing;
-    radius = 5.0f;
-    double currentAngle = 0.0;
-    double incAngle = 2 * M_PI / (double)numPoints;
-    g_vertex_circle[0] = 0.0f;
-    g_vertex_circle[1] = 0.0f;
-    g_vertex_circle[2] = 0.0f;
-    for (int i = 0; i < numPointCircle; ++i)
-    {
-        g_vertex_circle[(i + 1) * 3] = radius * (float)cos(currentAngle);
-        g_vertex_circle[(i + 1) * 3 + 1] = radius * (float)sin(currentAngle);
-        g_vertex_circle[(i + 1) * 3 + 2] = 0.0f;
-        currentAngle += incAngle;
-    }
-    for (int i = 0; i < numPointCircle; ++i)
-    {
-        circleIndices[i * 3] = i + 1;
-        circleIndices[i * 3 + 1] = 0;
-        circleIndices[i * 3 + 2] = i + 2 > numPointCircle ? 1 : i + 2;
-    }
-
-    /// couleur
-    // points
-    int decalage = InteractivePolygon::GetVerticesBufferElementsCount();
-    for (int i = 0; i < (numPointsPolygon * numVerticesCircle); ++i)
-    {
-        coulours_buffer[decalage + 4 * i + 0] = editingElementsColour.getRed() / 255.0f;
-        coulours_buffer[decalage + 4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
-        coulours_buffer[decalage + 4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
-        coulours_buffer[decalage + 4 * i + 3] = GetAlpha();
-    }
-    // manipulationLine
-    decalage += 4 * (numPointsPolygon * numVerticesCircle);
-    for (int i = 0; i < dottedLineVertexesCount; ++i)
-    {
-        coulours_buffer[decalage + 4 * i + 0] = editingElementsColour.getRed() / 255.0f;
-        coulours_buffer[decalage + 4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
-        coulours_buffer[decalage + 4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
-        coulours_buffer[decalage + 4 * i + 3] = GetAlpha();
-    }
-    // manipulationPoint
-    decalage += 4 * dottedLineVertexesCount;
-    for (int i = 0; i < numVerticesRing; ++i)
-    {
-        coulours_buffer[decalage + 4 * i + 0] = editingElementsColour.getRed() / 255.0f;
-        coulours_buffer[decalage + 4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
-        coulours_buffer[decalage + 4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
-        coulours_buffer[decalage + 4 * i + 3] = GetAlpha();
-    }
 #endif
 }
 void EditablePolygon::behaviorInit()
@@ -185,165 +133,29 @@ void EditablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 
     // vérifier fonctionnement après fusion
 	//pointDraggingRadius = 0.01f * (parentCanvas->getWidth() + parentCanvas->getHeight()) / 2.0f; // 1%
+    
+    // UN PETIT REFRESH GL LA NON ???
+    // UN PETIT REFRESH GL LA NON ???
+    // UN PETIT REFRESH GL LA NON ???
+    // UN PETIT REFRESH GL LA NON ???
+    // UN PETIT REFRESH GL LA NON ???
+    // UN PETIT REFRESH GL LA NON ???
+    // UN PETIT REFRESH GL LA NON ???
 
 }
 
 void EditablePolygon::RefreshOpenGLBuffers()
 {
+    std::cout << "[Refresh GL buffers] DrawableArea : " << DrawableArea::GetVerticesBufferElementsCount() << " points. ";
+    std::cout << "DrawablePolygon : " << DrawablePolygon::GetVerticesBufferElementsCount() << " points. ";
+    std::cout << "EditablePolygon : " << EditablePolygon::GetVerticesBufferElementsCount() << " points." << std::endl;
+    
 #if defined(__MIEM_VBO)
 	DrawablePolygon::RefreshOpenGLBuffers();
-	RefreshContourPointsOpenGLBuffers();
-	RefreshManipulationPointOpenGLBuffer();
+    EditableArea::refreshOpenGLSubBuffers(DrawablePolygon::GetVerticesBufferElementsCount(),
+                                          DrawablePolygon::GetIndicesBufferElementsCount());
 #endif
 }
-
-void EditablePolygon::RefreshManipulationPointOpenGLBuffer()
-{
-#ifndef __MIEM_VBO
-    throw std::logic_error("Cannot manipulate VBOs in non-VBO mode");
-#endif
-    
-	/// manipulationLine + manipulationPoint
-	//vertex
-	int decalage = DrawablePolygon::GetVerticesBufferElementsCount() + numPointsPolygon * numVerticesCircle;
-	if (isActive)
-	{
-		computeManipulationLine((float)centerInPixels.get<0>(), (float)centerInPixels.get<1>(), (float)bmanipulationPointInPixels.get<0>(), (float)bmanipulationPointInPixels.get<1>(), 4.0f, 4.0f);
-		for (int i = 0; i < 3 * dottedLineVertexesCount; ++i)
-			vertices_buffer[3 * decalage + i] = g_vertex_dotted_line[i];
-		decalage += dottedLineVertexesCount;
-
-		float Xoffset = (float)bmanipulationPointInPixels.get<0>();
-		float Yoffset = (float)bmanipulationPointInPixels.get<1>();
-		float Zoffset = mainZoffset + 0.1f;
-		for (int j = 0; j < 3 * numVerticesRing; j += 3)
-		{
-			vertices_buffer[3 * decalage + j] = Xoffset + g_vertex_ring[j];
-			vertices_buffer[3 * decalage + j + 1] = Yoffset + g_vertex_ring[j + 1];
-			vertices_buffer[3 * decalage + j + 2] = Zoffset + g_vertex_ring[j + 2];
-		}
-	}
-	else
-	{
-		for (int i = 0; i < 3 * dottedLineVertexesCount; ++i)
-			vertices_buffer[3 * decalage + i] = 0.0f;
-		decalage += dottedLineVertexesCount;
-		for (int j = 0; j < 3 * numVerticesRing; ++j)
-			vertices_buffer[3 * decalage + j] = 0.0f;
-	}
-
-
-	//index
-	decalage = DrawablePolygon::GetVerticesBufferElementsCount() + numPointsPolygon * numPointCircle;
-	int begin = DrawablePolygon::GetVerticesBufferElementsCount() + numPointsPolygon * numVerticesCircle;
-	if (isActive)
-	{
-		for (int i = 0; i < dottedLineIndicesCount; ++i)
-			indices_buffer[3 * decalage + i] = g_indices_dotted_line[i] + begin;
-		decalage += 2 * dottedLineNparts;
-		begin += dottedLineVertexesCount;
-		for (int j = 0; j < 3 * numVerticesRing; ++j)
-		{
-			indices_buffer[j + 3 * decalage] = ringIndices[j] + begin;
-		}
-		decalage += numVerticesRing;
-	}
-}
-
-void EditablePolygon::RefreshContourPointsOpenGLBuffers()
-{
-#ifndef __MIEM_VBO
-    throw std::logic_error("Cannot manipulate VBOs in non-VBO mode");
-#endif
-    
-	int decalage = DrawablePolygon::GetVerticesBufferElementsCount();
-	int numApexes = (int)contourPointsInPixels.outer().size() - 1;//isActive? contourPointsInPixels.outer().size() - 1 : 0;
-
-																  /// points
-																  // vertex
-	for (int k = 0; k < numApexes; ++k)
-	{
-		float Xoffset = (float)contourPointsInPixels.outer().at(k).get<0>();
-		float Yoffset = (float)contourPointsInPixels.outer().at(k).get<1>();
-		float Zoffset = mainZoffset + 0.1f;
-		for (int j = 0; j < 3 * numVerticesCircle; j += 3)
-		{
-			vertices_buffer[3 * decalage + j + 0] = Xoffset + g_vertex_circle[j + 0];
-			vertices_buffer[3 * decalage + j + 1] = Yoffset + g_vertex_circle[j + 1];
-			vertices_buffer[3 * decalage + j + 2] = Zoffset + g_vertex_circle[j + 2];
-		}
-		decalage += numVerticesCircle;
-	}
-	int decalageMax = 3 * numVerticesCircle * (numPointsPolygon - numApexes);
-	float *vertexPtr = &vertices_buffer[3 * decalage];
-	for (int k = 0; k < decalageMax; ++k)
-		vertexPtr[k] = 0.0f;
-
-	// index
-	decalage = DrawablePolygon::GetVerticesBufferElementsCount(); // decalage dans le buffer index
-	int begin = DrawablePolygon::GetVerticesBufferElementsCount(); // decalage dans le buffer vertex
-	const int count = 3 * numPointCircle;
-	for (int k = 0; k < numApexes; ++k)
-	{
-		int indexToAdd = begin + k * numVerticesCircle;
-		const int currentDecalage = 3 * decalage;
-		for (int j = 0; j < count; ++j)
-		{
-            // ===============================================================================
-            // ===============================================================================
-            // ===============================================================================
-            // BAD ACCESS FORMELLEMENT DETECTE ICI PAR JUCE VIA DEBUGGUER XCODE
-			indices_buffer[j + currentDecalage/*+ numVerticesPolygon*/] = circleIndices[j] + indexToAdd;
-            // ===============================================================================
-            // ===============================================================================
-            // ===============================================================================
-		}
-		decalage += numPointCircle;
-	}
-	for (int k = numApexes; k < numPointsPolygon; ++k)
-	{
-		const int currentDecalage = 3 * decalage;
-		unsigned int *indicesPtr = &indices_buffer[currentDecalage];
-		for (int j = 0; j < count; ++j)
-			indicesPtr[j] = 0;
-		//indices_buffer[j +currentDecalage/*+ numVerticesPolygon*/] = 0;
-		decalage += numPointCircle;
-	}
-	begin += numPointsPolygon * numVerticesCircle;
-}
-
-void EditablePolygon::computeManipulationPoint()
-{
-    float manipulationLineLengthLeft = 0.25f*(parentCanvas->getWidth()+parentCanvas->getHeight())/2.0f,
-    manipulationLineLengthRight = manipulationLineLengthLeft; //px
-    /*
-    float currentDistance = 0.0f;
-    for (int i=0;i<contourPointsInPixels.size();i++)
-    {
-        // The manipulation line will be longer than the max center-contour distance
-        currentDistance = contourPointsInPixels[i].x - centerInPixels.x;
-        if (currentDistance > manipulationLineLengthRight)
-            manipulationLineLengthRight = currentDistance;
-        else if (currentDistance < manipulationLineLengthLeft)
-            manipulationLineLengthLeft = currentDistance;
-    }
-    manipulationLineLengthRight *= 1.3; // length coefficient
-    manipulationLineLengthLeft *= -1.3; // negative length coefficient
-     */
-    // We always try to put ot on the right side first
-    if (centerInPixels.get<0>() + manipulationLineLengthRight + manipulationPointRadius
-        <= parentCanvas->getWidth())
-        bmanipulationPointInPixels = bpt(centerInPixels.get<0>()
-                                                  + manipulationLineLengthRight,
-                                                  centerInPixels.get<1>());
-    else
-        bmanipulationPointInPixels = bpt(centerInPixels.get<0>()
-                                                  - manipulationLineLengthLeft,
-                                                  centerInPixels.get<1>());
-}
-
-
-
 
 
 
@@ -468,9 +280,6 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
             if (isNewContourPointValid(sideDraggedId+1, newLocation2))
             {
                 moveContourPoint(sideDraggedId+1, newLocation2);
-#if defined(__MIEM_VBO)
-                RefreshContourPointsOpenGLBuffers();
-#endif
                 areaEventType = AreaEventType::ShapeChanged;
             }
             // sinon, annulation du premier déplacement
@@ -553,10 +362,6 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
         
         // After manipulation computation : normalized coordinates update
 		updateContourPoints();
-#ifdef __MIEM_VBO
-		RefreshContourPointsOpenGLBuffers();
-		RefreshManipulationPointOpenGLBuffer();
-#endif
     }
     
     else if (pointDraggedId == EditableAreaPointId::Center)
@@ -585,12 +390,6 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
             Translate(translation);
             areaEventType = AreaEventType::Translation;
         }
-		// la partie du buffer pour le polygon et son contour sont calculée par InteractivePolygon::Refresh...
-		// à la fin de la fonction -> juste recalculer les cercles pour les points du contour et le manipulationPoint
-#if defined(__MIEM_VBO)
-		RefreshContourPointsOpenGLBuffers();
-		RefreshManipulationPointOpenGLBuffer();
-#endif
     }
     
     
@@ -602,7 +401,7 @@ AreaEventType EditablePolygon::TryMovePoint(const Point<double>& newLocation)
 	{
 		InteractivePolygon::CanvasResized(this->parentCanvas);
 #if defined(__MIEM_VBO)
-		InteractivePolygon::RefreshOpenGLBuffers();
+        RefreshOpenGLBuffers();
 #endif
 	}
     return areaEventType;
@@ -921,62 +720,4 @@ void EditablePolygon::recreateNormalizedPoints()
     }
     center = bpt(centerInPixels.get<0>()/parentCanvas->getWidth(),
                            centerInPixels.get<1>()/parentCanvas->getHeight());
-}
-
-void EditablePolygon::computeManipulationLine(float Ox, float Oy, float Mx, float My, float width, float height)
-{
-	int N = 20;
-	float length = (float)boost::geometry::distance(bpt(Ox, Oy), bpt(Mx, My));//0.25 * (getWidth() + getHeight()) / 2.0;
-	if (length / (2 * height) > 20.0f)
-		height = (length / 20.0f) / 2.0f;
-	else
-		N = int(length / (2 * height));
-
-	float sina = (My - Oy) / length;
-	float cosa = (Mx - Ox) / length;
-
-#ifndef __MIEM_VBO
-    throw std::logic_error("Cannot manipulate VBOs in non-VBO mode");
-#endif
-	for (int i = 0; i < dottedLineNparts; ++i)
-	{
-		if (i < N)
-		{
-			// up_left
-			g_vertex_dotted_line[i * 3 * 4] = Ox + i * 2 * height * cosa - (width / 2.0f) * sina;
-			g_vertex_dotted_line[i * 3 * 4 + 1] = Oy + i * 2 * height * sina + (width / 2.0f) * cosa;
-			g_vertex_dotted_line[i * 3 * 4 + 2] = 0.1f;
-			// down_left
-			g_vertex_dotted_line[i * 3 * 4 + 3] = Ox + i * 2 * height * cosa + (width / 2.0f) * sina;
-			g_vertex_dotted_line[i * 3 * 4 + 4] = Oy + i * 2 * height * sina - (width / 2.0f) * cosa;
-			g_vertex_dotted_line[i * 3 * 4 + 5] = 0.1f;
-			// up_right
-			g_vertex_dotted_line[i * 3 * 4 + 6] = Ox + (2 * i + 1)  * height * cosa - (width / 2.0f) * sina;
-			g_vertex_dotted_line[i * 3 * 4 + 7] = Oy + (2 * i + 1) * height * sina + (width / 2.0f) * cosa;
-			g_vertex_dotted_line[i * 3 * 4 + 8] = 0.1f;
-			// down_right
-			g_vertex_dotted_line[i * 3 * 4 + 9] = Ox + (2 * i + 1) * height * cosa + (width / 2.0f) * sina;
-			g_vertex_dotted_line[i * 3 * 4 + 10] = Oy + (2 * i + 1) * height * sina - (width / 2.0f) * cosa;
-			g_vertex_dotted_line[i * 3 * 4 + 11] = 0.1f;
-
-			g_indices_dotted_line[i * 6] = i * 4;
-			g_indices_dotted_line[i * 6 + 1] = i * 4 + 1;
-			g_indices_dotted_line[i * 6 + 2] = i * 4 + 2;
-			g_indices_dotted_line[i * 6 + 3] = i * 4 + 1;
-			g_indices_dotted_line[i * 6 + 4] = i * 4 + 2;
-			g_indices_dotted_line[i * 6 + 5] = i * 4 + 3;
-		}
-		else
-		{
-			for (int j = 0; j < 12; ++j)
-			{
-				g_vertex_dotted_line[i * 12 + j] = 0.0f;
-			}
-			for (int j = 0; j < 6; ++j)
-			{
-				g_indices_dotted_line[i * 6 + j] = 0;
-			}
-		}
-	}
-
 }

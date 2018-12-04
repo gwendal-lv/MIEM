@@ -22,6 +22,10 @@
 
 #include "MiemVector.hpp"
 
+
+#define MIEM_EDITION_ELEMENTS_Z         (0.2f)
+
+
 namespace Miam
 {
     /// \brief Abstract class adding attributes for all areas that can be edited
@@ -51,8 +55,6 @@ namespace Miam
         
         
         
-        
-        
         // ===== COMMON METHODS TO ALL EDITABLE AREAS =====
         
         // Construction/destruction
@@ -68,10 +70,57 @@ namespace Miam
         
 		int GetPointDraggedId() override { return pointDraggedId; }
         
-        
-        
-        // ===== COMMON ATTRIBUTES TO ALL EDITABLE AREAS =====
+        // ----- Display computations -----
         protected :
+        void computeManipulationPoint();
+        void computeManipulationLineBuffer(float Ox, float Oy, float Mx, float My, float width, float height);
+        
+        /// \brief Additionnal count for this class only
+        int getEditableAreaVerticesCount() {
+            return contourCirclesTotalVerticesCount // petits disques blancs sur les points du contour
+            + dottedLineVertexesCount + numVerticesRing; } // manipulationLine + manipulationPoint (small ring)
+        /// \brief Additionnal count for this class only
+        int getEditableAreaIndexesCount() {
+            return contourCirclesTotalIndicesCount // disques sur points du contour
+            + dottedLineIndicesCount + (3 * numVerticesRing); } // ligne + small ring au bout
+        
+        /// \brief Refreshes the sub-part of the GL buffers that concerns only this particular class.
+        ///
+        /// VBO additionnal data :
+        /// + small disks (circles) on all possible contour points of the shape
+        /// + manipulation dotted line
+        /// + manipulation ring (= manipulation handle)
+        ///
+        /// \param vertexBufElmtOffset Element (not array) position of the next vertex or colour to put in the buffer
+        /// \param vertexBufElmtOffset Element (not array) position of the next index to put in the buffer
+        void refreshOpenGLSubBuffers(int vertexBufElmtOffset, int indexBufElmtOffset);
+        
+        void computeSmallDiskBuffers();
+        
+        
+        
+        // =============== COMMON ATTRIBUTES TO ALL EDITABLE AREAS =============
+        
+        // - - - - - Constant caracteristic values for VBOs - - - - -
+        // might be optimized by using preprocessor defines..... these values will remain constant
+        protected :
+        const int dottedLineNparts = 20; // NOT static for multithreading safety
+        const int dottedLineVertexesCount = 4 * dottedLineNparts; // 1 rectangle par partie
+        const int dottedLineIndicesCount = 6 * dottedLineNparts; // chaque rectangle divisé en 2 triangles
+        
+        // (Not static for multi-threading safety)
+        const int numPointsSmallCircle = 16; // actual resolution of any small circle
+        const int numVerticesSmallCircle = numPointsSmallCircle + 1; // +1 pour le centre du disque
+        const int contourCirclesTotalVerticesCount = numVerticesSmallCircle * numPointsPolygon;
+        const int contourCirclesTotalIndicesCount = (numPointsSmallCircle * 3) * numPointsPolygon;
+        
+        // - - - - - actual VBO and IBO - - - - -
+        Vector<GLfloat> g_vertex_dotted_line;
+        Vector<GLuint> g_indices_dotted_line;
+        
+        Vector<GLfloat> g_vertex_circle; // small circle
+        Vector<GLuint> g_circle_indices; // small circle
+        
         
         // Status
         bool isActive; ///< Wether this area is marking itself as actively editable
@@ -107,18 +156,6 @@ namespace Miam
         int pointDraggedId;
         int sideDraggedId = -1; // utilisé uniquement lorsque pointDraggedId indique TwoPoints
         
-        // - - - - - VBOs - - - - -
-        const int dottedLineNparts = 20; // NOT static for multithreading safety
-        const int dottedLineVertexesCount = 4 * dottedLineNparts; // 1 rectangle par partie
-        const int dottedLineIndicesCount = 6 * dottedLineNparts; // chaque rectangle divisé en 2 triangles
-        
-        // à passer en vecteur pour surveiller les OUT OF RANGE exceptions
-        // ET À METTRE DANS EDITABLE AREA CAR C'EST COMMUN AVEC EDITABLE ELLIPSE
-        Vector<GLfloat> g_vertex_dotted_line;
-        Vector<GLuint> g_indices_dotted_line;
-        
-        Vector<GLfloat> g_vertex_circle;
-        Vector<unsigned int> circleIndices;
         
     };
     

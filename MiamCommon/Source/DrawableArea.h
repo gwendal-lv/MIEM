@@ -15,8 +15,6 @@
 
 #include "IDrawableArea.h"
 
-#include "MiemVector.hpp"
-
 #define MIEM_CENTRAL_RING_Z         (0.1f)
 #define MIEM_SHAPE_SURFACE_Z        (0.0f)
 #define MIEM_SHAPE_CONTOUR_Z        (0.1f)
@@ -100,9 +98,18 @@ namespace Miam
 		Vector<GLfloat> coulours_buffer;
         
         // =============== SETTERS & GETTERS ===============
+        protected :
+        // ----- Internal reference-based getters (to solve inheritance issues) -----
+        virtual bpt& getCenterInPixels() override { return centerInPixels; }
+        virtual std::vector<bpt>& getContourPointsInPixels() override { return contourPointsInPixels.outer(); }
+        virtual SceneCanvasComponent* getParentCanvas() override { return parentCanvas; }
+        virtual Vector<GLfloat> & getVerticesBuffer() override { return vertices_buffer; }
+        virtual Vector<GLuint> & getIndicesBuffer() override { return indices_buffer; }
+        virtual Vector<GLfloat> & getColoursBuffer() override { return coulours_buffer; }
+        virtual Vector<GLfloat> & getRingVertexBuffer() override { return g_vertex_ring; }
+        
+        
         public :
-        
-        
         // ----- VBO sizes and elements' counts -----
         virtual int GetVerticesBufferElementsCount() override
         { return numVerticesRing; } // only the central donut is common to any DrawableArea
@@ -112,10 +119,8 @@ namespace Miam
       
 
         
-        void setZoffset(const float newOffset) override
-        {
-            mainZoffset = newOffset;
-        }
+        virtual void setZoffset(float newOffset) override { mainZoffset = newOffset; }
+        virtual float getZoffset() const override {return mainZoffset;}
         
         public :
         /// \returns Unique ID of the area
