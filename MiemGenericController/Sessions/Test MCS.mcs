@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<miem appVersion="517" appPurpose="Generic controller">
+    <settings>
+        <control>
+            <interpolation type="Linear"/>
+            <inputs activeCount="0" maxCount="64"/>
+            <outputs activeCount="0" maxCount="64"/>
+            <senders>
+                <sender type="MiamOsc">
+                    <ip>127.0.0.1</ip>
+                    <udp>
+                        <port>8001</port>
+                    </udp>
+                </sender>
+            </senders>
+        </control>
+        <presenter>
+            <keyboardedition>false</keyboardedition>
+        </presenter>
+    </settings>
+    <control>
+        <states>
+            <state index="0">
+                <name>Matrix-based generic control state</name>
+                <colour>ff7fff00</colour>
+                <matrix/>
+            </state>
+            <state index="1">
+                <name>Matrix-based ORANGE</name>
+                <colour>ffbf7200</colour>
+                <matrix/>
+            </state>
+        </states>
+    </control>
+    <graphicsession>
+        <canvases>
+            <canvas index="0">
+                <scenes>
+                    <scene index="0">
+                        <name>Scène irlandaise</name>
+                        <areas>
+                            <area id="0" type="SpatPolygon" index="0">
+                                <center x="0.20962386183141221" y="0.52551137504204459"/>
+                                <colour>ff7fff00</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <geometry>
+                                    <point index="0" x="0.39500093503129025" y="0.62733604213310379"/>
+                                    <point index="1" x="0.27385629782394277" y="0.81370134357417057"/>
+                                    <point index="2" x="0.10434332366413006" y="0.78305370466323698"/>
+                                    <point index="3" x="0.014108738302576711" y="0.5584714688971204"/>
+                                    <point index="4" x="0.071101032753741744" y="0.30906958221377473"/>
+                                    <point index="5" x="0.23240391688482498" y="0.22265281488591804"/>
+                                    <point index="6" x="0.3765528374039816" y="0.36429464766386149"/>
+                                </geometry>
+                                <spatstate index="0"/>
+                            </area>
+                            <area id="1" type="SpatPolygon" index="1">
+                                <center x="0.63328613281249946" y="0.46834120639534882"/>
+                                <colour>ffbf7200</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <geometry>
+                                    <point index="0" x="0.89594702005828808" y="0.39379115064350317"/>
+                                    <point index="1" x="0.76018415805829709" y="0.83259911887899307"/>
+                                    <point index="2" x="0.44905251198375823" y="0.76801499928962691"/>
+                                    <point index="3" x="0.39252549156514022" y="0.28929185934251839"/>
+                                    <point index="4" x="0.66872149784737156" y="0.058008857626806271"/>
+                                </geometry>
+                                <spatstate index="1"/>
+                            </area>
+                            <area id="164" type="Exciter" index="2">
+                                <center x="0.15793945312500016" y="0.3144379844961227"/>
+                                <colour>ffd3d3d3</colour>
+                                <keep_ratio>true</keep_ratio>
+                                <geometry>
+                                    <axes a="0.050000000000000003" b="0.050000000000000003"/>
+                                </geometry>
+                                <is_round>true</is_round>
+                                <is_animation_sync>true</is_animation_sync>
+                            </area>
+                            <area id="165" type="Exciter" index="3">
+                                <center x="0.34723361172093214" y="0.40006043734506547"/>
+                                <colour>ffd3d3d3</colour>
+                                <keep_ratio>true</keep_ratio>
+                                <geometry>
+                                    <axes a="0.050000000000000003" b="0.050000000000000003"/>
+                                </geometry>
+                                <is_round>true</is_round>
+                                <is_animation_sync>true</is_animation_sync>
+                            </area>
+                            <area id="166" type="Exciter" index="4">
+                                <center x="0.43756431676363772" y="0.56064552418032532"/>
+                                <colour>ffd3d3d3</colour>
+                                <keep_ratio>true</keep_ratio>
+                                <geometry>
+                                    <axes a="0.050000000000000003" b="0.050000000000000003"/>
+                                </geometry>
+                                <is_round>true</is_round>
+                                <is_animation_sync>true</is_animation_sync>
+                            </area>
+                        </areas>
+                    </scene>
+                    <scene index="1">
+                        <name>Scene 2</name>
+                        <areas/>
+                    </scene>
+                </scenes>
+            </canvas>
+        </canvases>
+    </graphicsession>
+</miem>

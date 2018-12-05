@@ -161,9 +161,9 @@ void EditablePolygon::RefreshOpenGLBuffers()
 #endif
     
 #if defined(__MIEM_VBO)
-	DrawablePolygon::RefreshOpenGLBuffers();
-    EditableArea::refreshOpenGLSubBuffers(DrawablePolygon::GetVerticesBufferElementsCount(),
-                                          DrawablePolygon::GetIndicesBufferElementsCount());
+	InteractivePolygon::RefreshOpenGLBuffers();
+    EditableArea::refreshOpenGLSubBuffers(InteractivePolygon::GetVerticesBufferElementsCount(),
+                                          InteractivePolygon::GetIndicesBufferElementsCount());
 #endif
 }
 

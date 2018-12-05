@@ -12,6 +12,8 @@
 
 #include "SceneCanvasComponent.h"
 
+#include "MiamMath.h"
+
 using namespace Miam;
 
 
@@ -191,8 +193,14 @@ void EditableArea::refreshOpenGLSubBuffers(int vertexBufElmtOffset, int indexBuf
 {
     if (!isActive)
     {
+		// Attention : le std::fill ne fait aucun check...
+		/*
+		size_t fillSize = getEditableAreaIndexesCount();
         std::fill(getIndicesBuffer().begin() + indexBufElmtOffset,
-                  getIndicesBuffer().begin() + indexBufElmtOffset + getEditableAreaIndexesCount(), 0);
+                  getIndicesBuffer().begin() + indexBufElmtOffset + fillSize, 0);
+				  */
+		for (int i = 0; i < getEditableAreaIndexesCount(); ++i)
+			getIndicesBuffer()[i] = 0;
     }
     // We draw additionnal elements only if the polygon is active
     else

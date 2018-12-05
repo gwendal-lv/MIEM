@@ -251,7 +251,7 @@ public:
     /// \brief Draws the shapes only, and not the text on them (names, etc...)
     ///
     /// Cette fonction s'occupe du dessin sur le canevas, le texte se fait après, dans le renderOpenGL
-	virtual void DrawOnSceneCanevas(std::shared_ptr<Miam::MultiSceneCanvasInteractor> &manager);
+	virtual void DrawOnSceneCanevas();
 	void DrawShapes();
     /// \brief Will be drawn using separate VBOs and IBOs
 	void DrawCanvasOutline();

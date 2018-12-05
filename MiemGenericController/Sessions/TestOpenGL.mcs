@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<miem appVersion="513" appPurpose="Generic controller">
+    <settings>
+        <control>
+            <interpolation type="Linear"/>
+            <inputs activeCount="0" maxCount="64"/>
+            <outputs activeCount="0" maxCount="64"/>
+            <senders>
+                <sender type="MiamOsc">
+                    <ip>127.0.0.1</ip>
+                    <udp>
+                        <port>8001</port>
+                    </udp>
+                </sender>
+            </senders>
+        </control>
+        <presenter>
+            <keyboardedition>false</keyboardedition>
+        </presenter>
+    </settings>
+    <control>
+        <states>
+            <state index="0">
+                <name>Matrix-based generic control state</name>
+                <matrix/>
+            </state>
+        </states>
+    </control>
+    <graphicsession>
+        <canvases>
+            <canvas index="0" widthOnSaveTime="483" heightOnSaveTime="544">
+                <scenes>
+                    <scene index="0">
+                        <name>[scène vide]</name>
+                        <areas/>
+                    </scene>
+                </scenes>
+            </canvas>
+            <canvas index="1" widthOnSaveTime="291" heightOnSaveTime="544">
+                <scenes>
+                    <scene index="0">
+                        <name>[scène vide]</name>
+                        <areas/>
+                    </scene>
+                </scenes>
+            </canvas>
+        </canvases>
+    </graphicsession>
+</miem>

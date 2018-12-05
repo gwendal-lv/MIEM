@@ -39,7 +39,7 @@ SceneCanvasComponent::SceneCanvasComponent(int numShapesMax, int numPointsMax) :
 	init(numShapesMax, numPointsMax);
 }
 
-void SceneCanvasComponent::init(int numShapesMax, int numPointsMax)
+void SceneCanvasComponent::init(int numShapesMax, int /*numPointsMax*/)
 {
 	releaseDone = false;
 	EunderTime = 0.0;
@@ -165,7 +165,8 @@ SceneCanvasComponent::~SceneCanvasComponent()
 
 void SceneCanvasComponent::deleteBuffers()
 {
-    throw std::logic_error("not implemented"); // not to be used now
+	return;// not to be used now
+
     /*
     if (sceneVertexBufferData != nullptr)
     {
@@ -495,7 +496,7 @@ void SceneCanvasComponent::renderOpenGL()
 		glViewport(0, 0, roundToInt(desktopScale * getWidth()), roundToInt(desktopScale * getHeight()));
 
         // *** Fonction principale de DESSIN DE FRAME OPEN GL PAR VBOs ***
-		DrawOnSceneCanevas(manager);
+		DrawOnSceneCanevas();
         // ***    ***
         
         // Affichage des FPS
@@ -534,12 +535,14 @@ void SceneCanvasComponent::renderOpenGL()
 		}
 		 */
 		 // Forced sleep if drawing is too fast
-#if __AMUSINGMOBILE
+
+		// Erreurs parfois à cause d'un truc bizarre renvoyé par la STL
+		// dans le FrequencyMeasurer		
+		//double underTime = desiredPeriod_ms - displayFrequencyMeasurer.GetLastDuration_ms();
+
+		// Solution brutale...
 		double lastDuration = displayFrequencyMeasurer.GetLastDuration_ms();
 		double underTime = lastDuration > 0.0 ? desiredPeriod_ms - lastDuration : 0.0;
-#else
-		double underTime = desiredPeriod_ms - displayFrequencyMeasurer.GetLastDuration_ms();
-#endif
 
 
 		double last = displayFrequencyMeasurer.GetLastDuration_ms();
@@ -585,7 +588,7 @@ void SceneCanvasComponent::openGLDestructionAtLastFrame()
 	openGLLabel = nullptr;
 }
 
-void SceneCanvasComponent::DrawOnSceneCanevas(std::shared_ptr<Miam::MultiSceneCanvasInteractor> &manager)
+void SceneCanvasComponent::DrawOnSceneCanevas()
 {
 	if (shaderProgram != nullptr)
 		shaderProgram->use();
@@ -668,7 +671,7 @@ void SceneCanvasComponent::DrawShapes()
                                                        3, // number of components
                                                        GL_FLOAT, // type de données
                                                        GL_FALSE, // truc avec la normalisation des nombres entiers/virgule fixe...
-                                                       0 /*sizeof(float[3])*/, // "stride". 0 <=> data tightly packed in array
+			sizeof(float[3]) /*sizeof(float[3])*/, // "stride". 0 <=> data tightly packed in array
                                                        0); // **pointer** to the first component (0 should be OK....)
         
 		//openGLContext.extensions.glEnableVertexAttribArray(position->attributeID);
@@ -681,7 +684,7 @@ void SceneCanvasComponent::DrawShapes()
                                                  currentColourBufferArrayPos * sizeof(GLfloat),
                                                  sceneColourBufferData.data());
 		openGlContext.extensions.glVertexAttribPointer(colourShaderAttribute->attributeID,
-                                                       4, GL_FLOAT, GL_FALSE, 0, 0);
+                                                       4, GL_FLOAT, GL_FALSE, sizeof(float[4]), 0);
 
         // INDICES (ELEMENT) array
 		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferGlName);

@@ -16,8 +16,8 @@
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES // for C++
 
-// à nouveau des bugs en janvier 2018....
-//#define M_PI (3.14159265358979323846264338327) // not defined in VS 2015 community !
+// à nouveau des bugs/comportement bizarres en décembre 2018....
+//#define M_PI (3.14159265358979323846264338327) // not defined in VS 2018 community !
 #endif
 
 #include <math.h>

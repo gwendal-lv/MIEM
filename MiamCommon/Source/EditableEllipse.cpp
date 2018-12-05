@@ -153,8 +153,9 @@ void EditableEllipse::RefreshOpenGLBuffers()
 #ifndef __MIEM_VBO
     throw std::logic_error("Cannot manipulate VBOs in non-VBO mode");
 #endif
-	DrawableEllipse::RefreshOpenGLBuffers();
-    EditableArea::refreshOpenGLSubBuffers(GetVerticesBufferElementsCount(), GetIndicesBufferElementsCount());
+	InteractiveEllipse::RefreshOpenGLBuffers();
+    EditableArea::refreshOpenGLSubBuffers(InteractiveEllipse::GetVerticesBufferElementsCount(), 
+										  InteractiveEllipse::GetIndicesBufferElementsCount());
 }
 
 
