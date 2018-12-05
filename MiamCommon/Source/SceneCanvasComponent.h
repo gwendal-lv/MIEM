@@ -201,11 +201,11 @@ public:
     
     // - - - Local buffers for the scene itself - - -
     
-    GLuint canvasOutlineVertexBuffer;
+    GLuint canvasOutlineVertexBufferName;
     GLfloat g_canvasOutlineVertex_buffer_data[8*3];
-    GLuint canvasOutlineCoulourBuffer;
+    GLuint canvasOutlineCoulourBufferName;
     GLfloat g_canvasOutlineCoulour_buffer_data[8 * 4];
-    GLuint canvasOutlineIndexBuffer;
+    GLuint canvasOutlineIndexBufferName;
     GLuint g_canvasOutlineIndex_buffer_data[24];
     
     

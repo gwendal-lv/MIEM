@@ -291,23 +291,23 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 	shaderProgram->use();
 
 	/// - - - - - canvas outline buffers - - - - -
-	openGlContext.extensions.glGenBuffers(1, &canvasOutlineVertexBuffer);
-	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, canvasOutlineVertexBuffer);
+	openGlContext.extensions.glGenBuffers(1, &canvasOutlineVertexBufferName);
+	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, canvasOutlineVertexBufferName);
 	openGlContext.extensions.glBufferData(GL_ARRAY_BUFFER, 8 * 3 * sizeof(GLfloat),
                                           g_canvasOutlineVertex_buffer_data,
-                                          GL_STATIC_DRAW); // modified once, used many times
+                                          GL_DYNAMIC_DRAW); // modified often, used many times
 
-	openGlContext.extensions.glGenBuffers(1, &canvasOutlineCoulourBuffer);
-	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, canvasOutlineCoulourBuffer);
+	openGlContext.extensions.glGenBuffers(1, &canvasOutlineCoulourBufferName);
+	openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, canvasOutlineCoulourBufferName);
 	openGlContext.extensions.glBufferData(GL_ARRAY_BUFFER, 8 * 4 * sizeof(GLfloat),
                                           g_canvasOutlineCoulour_buffer_data,
-                                          GL_STATIC_DRAW);
+                                          GL_DYNAMIC_DRAW);
 
-	openGlContext.extensions.glGenBuffers(1, &canvasOutlineIndexBuffer);
-	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, canvasOutlineIndexBuffer);
+	openGlContext.extensions.glGenBuffers(1, &canvasOutlineIndexBufferName);
+	openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, canvasOutlineIndexBufferName);
 	openGlContext.extensions.glBufferData(GL_ELEMENT_ARRAY_BUFFER, 8 * 4 * sizeof(GLuint),
                                           g_canvasOutlineIndex_buffer_data,
-                                          GL_STATIC_DRAW);
+                                          GL_DYNAMIC_DRAW);
 
 	/// - - - - - shapes buffers - - - - -
 
@@ -623,6 +623,8 @@ void SceneCanvasComponent::DrawOnSceneCanevas()
 	{
         // Re-création de tous les buffers à chaque frame
         // --------- OPTIMISATION POSSIBLE SI UN JOOOOUUUUURRRRRRR çA MARCHE ------------
+        // même si la quantité de données (environ 100ko au total) ne vaut peut être pas le coup de
+        // faire plusieurs appels de fonctions........ pour n'actualiser que des parties de VBO
 		AddShapeToBuffers(duplicatedAreas[i]);
 	}
 
@@ -634,17 +636,12 @@ void SceneCanvasComponent::DrawOnSceneCanevas()
     // ?????? Remplissage du reste du buffer d'indices par des zéros ???????
 
 
-    // ** SUPPRIME POUR L"INSTANT **
-    // ** SUPPRIME POUR L"INSTANT **
-    // ** SUPPRIME POUR L"INSTANT **
-	//DrawCanvasOutline();
-    // ** SUPPRIME POUR L"INSTANT **
-    // ** SUPPRIME POUR L"INSTANT **
-    // ** SUPPRIME POUR L"INSTANT **
+	DrawCanvasOutline();
 
 	DrawShapes();
 }
 
+static int sceneCanvasFramesCounter = 0;
 void SceneCanvasComponent::DrawShapes()
 {
 #ifndef __MIEM_VBO
@@ -654,7 +651,12 @@ void SceneCanvasComponent::DrawShapes()
 	if (positionShaderAttribute != nullptr && colourShaderAttribute != nullptr)
 	{
 #ifdef __MIAM_DEBUG
-        //std::cout << "[Draw GL shapes] " << currentVertexBufferArrayPos << " vertex GLfloat ; " << currentColourBufferArrayPos << " colour GLfloat ; " << currentIndexBufferArrayPos << " index GLuint" << std::endl;
+        if ((sceneCanvasFramesCounter++) > 200)
+        {
+            std::cout << "[Draw GL shapes] " << currentVertexBufferArrayPos << " vertex GLfloat ; " << currentColourBufferArrayPos << " colour GLfloat ; " << currentIndexBufferArrayPos << " index GLuint" << std::endl;
+            sceneCanvasFramesCounter = 0;
+            
+        }
 #endif
         
         // VERTICES array
@@ -696,6 +698,10 @@ void SceneCanvasComponent::DrawShapes()
         
 		glDrawElements(GL_TRIANGLES, (GLsizei) currentIndexBufferArrayPos, GL_UNSIGNED_INT,
                        (void*)0); // pointer location ???
+        /*
+        glDrawElements(GL_TRIANGLES, (GLsizei) 192, GL_UNSIGNED_INT,
+                       (void*)0); // pointer location ???
+         */
         
 		openGlContext.extensions.glDisableVertexAttribArray(positionShaderAttribute->attributeID);
 		openGlContext.extensions.glDisableVertexAttribArray(colourShaderAttribute->attributeID);
@@ -714,24 +720,28 @@ void SceneCanvasComponent::DrawCanvasOutline()
 	if (positionShaderAttribute != nullptr && colourShaderAttribute != nullptr)
 	{
 		if (redrawCanvasOutline)
-        {
 			computeCanvasOutline();
-            redrawCanvasOutline = false;
-        }
+        
 
 		openGlContext.extensions.glEnableVertexAttribArray(positionShaderAttribute->attributeID);
-		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, canvasOutlineVertexBuffer);
-		if (redrawCanvasOutline)
-			openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, 8 * 3 * sizeof(GLfloat), g_canvasOutlineVertex_buffer_data);
-		openGlContext.extensions.glVertexAttribPointer(positionShaderAttribute->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
+		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, canvasOutlineVertexBufferName);
+        if (redrawCanvasOutline) // copie des nouvelles données dans le VBO
+			openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER,
+                                                     0, 8 * 3 * sizeof(GLfloat),
+                                                     g_canvasOutlineVertex_buffer_data);
+		openGlContext.extensions.glVertexAttribPointer(positionShaderAttribute->attributeID, 3, GL_FLOAT, GL_FALSE,
+                                                       sizeof(float[3]), // ne devrait pas être zéro ?
+                                                       0);
 
 		openGlContext.extensions.glEnableVertexAttribArray(colourShaderAttribute->attributeID);
-		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, canvasOutlineCoulourBuffer);
-		if (redrawCanvasOutline)
+		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, canvasOutlineCoulourBufferName);
+		if (redrawCanvasOutline) // copie des nouvelles données dans le VBO
 			openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, 8 * 4 * sizeof(GLfloat), g_canvasOutlineCoulour_buffer_data);
-		openGlContext.extensions.glVertexAttribPointer(colourShaderAttribute->attributeID, 4, GL_FLOAT, GL_FALSE, sizeof(float[4]), 0);
+		openGlContext.extensions.glVertexAttribPointer(colourShaderAttribute->attributeID, 4, GL_FLOAT, GL_FALSE,
+                                                       sizeof(float[4]),
+                                                       0);
 
-		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, canvasOutlineIndexBuffer);
+		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, canvasOutlineIndexBufferName);
 
 		glDrawElements(GL_TRIANGLES, 24, GL_UNSIGNED_INT, (void*)0);
 
@@ -740,6 +750,11 @@ void SceneCanvasComponent::DrawCanvasOutline()
 
 		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, 0);
 		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        
+        
+        // Canvas outline est maintenant à jour dans les VBOs
+        if (redrawCanvasOutline)
+            redrawCanvasOutline = false;
 	}
 }
 
