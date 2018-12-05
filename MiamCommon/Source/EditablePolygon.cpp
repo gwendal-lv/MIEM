@@ -144,11 +144,21 @@ void EditablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 
 }
 
+static bool __MIEM__editablePrintDone = false;
 void EditablePolygon::RefreshOpenGLBuffers()
 {
-    std::cout << "[Refresh GL buffers] DrawableArea : " << DrawableArea::GetVerticesBufferElementsCount() << " points. ";
-    std::cout << "DrawablePolygon : " << DrawablePolygon::GetVerticesBufferElementsCount() << " points. ";
-    std::cout << "EditablePolygon : " << EditablePolygon::GetVerticesBufferElementsCount() << " points." << std::endl;
+#ifdef __MIAM_DEBUG
+    if (!__MIEM__editablePrintDone)
+    {
+        __MIEM__editablePrintDone = true;
+        std::cout << "[Refresh GL buffers] DrawableArea : " << DrawableArea::GetVerticesBufferElementsCount() << " points. ";
+        std::cout << "DrawablePolygon : " << DrawablePolygon::GetVerticesBufferElementsCount() << " points. ";
+        std::cout << "EditablePolygon : " << EditablePolygon::GetVerticesBufferElementsCount() << " points." << std::endl;
+        std::cout << "[Refresh GL buffers] DrawableArea : " << DrawableArea::GetIndicesBufferElementsCount() << " indices. ";
+        std::cout << "DrawablePolygon : " << DrawablePolygon::GetIndicesBufferElementsCount() << " indices. ";
+        std::cout << "EditablePolygon : " << EditablePolygon::GetIndicesBufferElementsCount() << " indices." << std::endl;
+    }
+#endif
     
 #if defined(__MIEM_VBO)
 	DrawablePolygon::RefreshOpenGLBuffers();

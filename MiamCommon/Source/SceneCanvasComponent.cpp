@@ -87,7 +87,7 @@ void SceneCanvasComponent::init(int numShapesMax, int numPointsMax)
 	}
      */
 
-    // Initialisation du VBO interne propre à la scène
+    // Initialisation du IBO interne propre à la scène
 	g_canvasOutlineIndex_buffer_data[0] = 0;
 	g_canvasOutlineIndex_buffer_data[1] = 4;
 	g_canvasOutlineIndex_buffer_data[2] = 5;
@@ -602,9 +602,9 @@ void SceneCanvasComponent::DrawOnSceneCanevas(std::shared_ptr<Miam::MultiSceneCa
 
 	// - - - - - Areas painting (including exciters if existing) - - - - -
 	// Sans bloquer, du coup, les autres threads (pour réactivité max...)
-    currentVertexBufferPos = 0;
-    currentColourBufferPos = 0;
-    currentIndexBufferPos = 0;
+    currentVertexBufferArrayPos = 0;
+    currentColourBufferArrayPos = 0;
+    currentIndexBufferArrayPos = 0;
 	for (size_t i = 0; i < duplicatedAreas.size(); i++)
 	{
         // Re-création de tous les buffers à chaque frame
@@ -636,11 +636,13 @@ void SceneCanvasComponent::DrawShapes()
     
 	if (positionShaderAttribute != nullptr && colourShaderAttribute != nullptr)
 	{
-		// VERTICES array
+        std::cout << "[Draw GL shapes] " << currentVertexBufferArrayPos << " vertex GLfloat ; " << currentColourBufferArrayPos << " colour GLfloat ; " << currentIndexBufferArrayPos << " index GLuint" << std::endl;
+        
+        // VERTICES array
 		openGlContext.extensions.glEnableVertexAttribArray(positionShaderAttribute->attributeID);
 		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, vertexBufferGlName);
 		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0,
-                                                 currentVertexBufferPos * sizeof(GLfloat),
+                                                 currentVertexBufferArrayPos * sizeof(GLfloat),
                                                  sceneVertexBufferData);
 		openGlContext.extensions.glVertexAttribPointer(positionShaderAttribute->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0); // ??? Commentaires explicatifs ???
 		//openGLContext.extensions.glEnableVertexAttribArray(position->attributeID);
@@ -649,17 +651,17 @@ void SceneCanvasComponent::DrawShapes()
 		openGlContext.extensions.glEnableVertexAttribArray(colourShaderAttribute->attributeID);
 		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, colorBufferGlName);
 		openGlContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0,
-                                                 currentColourBufferPos * sizeof(GLfloat),
+                                                 currentColourBufferArrayPos * sizeof(GLfloat),
                                                  sceneColourBufferData);
 		openGlContext.extensions.glVertexAttribPointer(colourShaderAttribute->attributeID, 4, GL_FLOAT, GL_FALSE, sizeof(float[4]), 0);
 
         // INDICES (ELEMENT) array
 		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferGlName);
 		openGlContext.extensions.glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0,
-                                                 currentIndexBufferPos * sizeof(GLuint),
+                                                 currentIndexBufferArrayPos * sizeof(GLuint),
                                                  sceneIndicesBufferData);
 
-		glDrawElements(GL_TRIANGLES, (GLsizei) currentIndexBufferPos, GL_UNSIGNED_INT, (void*)0);
+		glDrawElements(GL_TRIANGLES, (GLsizei) currentIndexBufferArrayPos, GL_UNSIGNED_INT, (void*)0);
         //glDrawElements(GL_TRIANGLES, (GLsizei) 192, GL_UNSIGNED_INT, (void*)0);
         // juste le premier ring ... qq'un écrit dans le VBO du 1ier ring...
         // *********************
@@ -809,61 +811,37 @@ void SceneCanvasComponent::AddShapeToBuffers(std::shared_ptr<IDrawableArea> area
 	if (area->isVisible())
 	{
 		/// vertices
-        GLfloat* vertexSourcePtr = area->GetVerticesBufferPtr();
-        size_t finalVertexBufferPos = currentVertexBufferPos + area->GetVerticesBufferSize();
-        while(currentVertexBufferPos <= finalVertexBufferPos)
+        const size_t shapeVertexBufferOffset = currentVertexBufferArrayPos;
+        for (size_t i=0 ; i<area->getVerticesBuffer().size() ; i++)
         {
             // **************************************************************
-            // REMPLACER PAR UNE COPIE STL ULTRA OPTIMISEE PAR VECTEURS
+            // REMPLACER EN RELEASE PAR UNE COPIE STL ULTRA OPTIMISEE PAR VECTEURS
             // **************************************************************
-            sceneVertexBufferData[currentVertexBufferPos] = (*vertexSourcePtr);
-            ++vertexSourcePtr;
-            ++currentVertexBufferPos;
+            assert(currentVertexBufferArrayPos < vertexBufferSize);
+            // dans area : MIEM vector qui checke en debug les indices
+            sceneVertexBufferData[currentVertexBufferArrayPos] = area->getVerticesBuffer()[i];
+            ++currentVertexBufferArrayPos;
         }
-        --currentVertexBufferPos; // dépassement du dernier indice
         // colours
-        GLfloat* couloursSourcePtr = area->GetCoulourBufferPtr();
-        size_t finalColourBufferPos = currentColourBufferPos + area->GetColoursBufferSize();
-        while(currentColourBufferPos <= finalColourBufferPos)
+        for (size_t i=0 ; i<area->getColoursBuffer().size() ; i++)
         {
-            sceneColourBufferData[currentColourBufferPos] = (*couloursSourcePtr);
-            ++couloursSourcePtr;
-            ++currentColourBufferPos;
+            // **************************************************************
+            // REMPLACER EN RELEASE PAR UNE COPIE STL ULTRA OPTIMISEE PAR VECTEURS
+            // **************************************************************
+            assert(currentColourBufferArrayPos < colorBufferSize);
+            sceneColourBufferData[currentColourBufferArrayPos] = area->getColoursBuffer()[i];
+            ++currentColourBufferArrayPos;
         }
-        --currentColourBufferPos; // dépassement du dernier indice
 		/// indices
-        GLuint* indicesSourcePtr = area->GetIndicesBufferPtr();
-        size_t finalIndexBufferPos = currentIndexBufferPos + area->GetIndicesBufferSize();
-        while(currentIndexBufferPos <= finalIndexBufferPos)
+        assert((shapeVertexBufferOffset % 3) == 0); // sinon, on a mis des points non terminés....
+        const GLuint shapeVertexBufferElmtOffset = (GLuint) shapeVertexBufferOffset / 3;
+        for (size_t i=0 ; i<area->getIndicesBuffer().size() ; i++)
         {
-            sceneIndicesBufferData[currentIndexBufferPos] = (*indicesSourcePtr);
-            ++indicesSourcePtr;
-            ++currentIndexBufferPos;
+            // !!!!! les indices doivent être décalés del'offset de vertex buffer pour cette forme !!
+            assert(currentIndexBufferArrayPos < indicesSize);
+            sceneIndicesBufferData[currentIndexBufferArrayPos] = area->getIndicesBuffer()[i] + shapeVertexBufferElmtOffset;
+            ++currentIndexBufferArrayPos;
         }
-        --currentIndexBufferPos; // dépassement du dernier indice
-	}
-	else // CODE DESACTIVE POUR l'INSTANT (pas de finition du buffer, normalement pas nécessaire..)
-	{
-        /*
-        // ERREUR LA NON ???? PROBLEM DU NOMBRE DE POINTS ????
-		const int verticesCount = 3 * area->GetVerticesBufferElementsCount();
-		GLfloat *destPtr = &sceneVertexBufferData[decalage];
-		for (int j = 0; j < verticesCount; ++j)
-			destPtr[j] = 0.0f;
-
-		decalage = positionInBuffer * shapeIndicesSize; // différent du decalage pour les vertex et les couleurs !
-
-		unsigned int *destIndicesPtr = &sceneIndicesBufferData[decalage];
-		for (int i = 0; i < area->GetIndicesBufferElementsCount(); ++i)
-			destIndicesPtr[i] = 0;
-
-        // ICI DU COUP LE COUNT ETAIT LA SIZE dans l'ancien code de Guillaume
-        // ça va très probablement poser problème....
-		decalage = 4 * ((int)positionInBuffer * numVertexShape);
-		float* destCouloursPtr = &sceneColourBufferData[decalage];
-		for (int i = 0; i < area->GetVerticesBufferSize(); ++i)
-			destCouloursPtr[i] = 0.0f;
-		*/
 	}
 }
 

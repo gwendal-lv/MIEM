@@ -179,9 +179,9 @@ public:
     // Précédemment : version avec des pointeurs constant... c'était un peu n'importe quoi...
     static const int Npolygons = 10;
     int Nshapes;// = Npolygons + Npolygons * (Npolygons + 1) / 2;
-    int vertexBufferSize;// = Nshapes * shapeVertexBufferSize;
-    int colorBufferSize;// = Nshapes * shapeColorBufferSize;
-    int indicesSize;// = Nshapes * shapeIndicesSize;
+    int vertexBufferSize = 0;
+    int colorBufferSize = 0;
+    int indicesSize = 0;
     
     GLuint vertexBufferGlName;
     GLfloat *sceneVertexBufferData = nullptr;
@@ -190,10 +190,10 @@ public:
     GLuint elementBufferGlName;
     GLuint *sceneIndicesBufferData = nullptr;
     
-    // Next buffer position to be written (= last usable data pos + 1)
-    size_t currentVertexBufferPos = -1;
-    size_t currentColourBufferPos = -1;
-    size_t currentIndexBufferPos = -1;
+    // Next buffer position to be written (= last filled data pos + 1)
+    size_t currentVertexBufferArrayPos = -1;
+    size_t currentColourBufferArrayPos = -1;
+    size_t currentIndexBufferArrayPos = -1;
     
     
     // ***********************************************

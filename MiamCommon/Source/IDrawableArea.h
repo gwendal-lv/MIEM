@@ -125,10 +125,11 @@ namespace Miam
         virtual bpt& getCenterInPixels() = 0;
         virtual std::vector<bpt>& getContourPointsInPixels() = 0;
         virtual SceneCanvasComponent* getParentCanvas() = 0;
+        virtual Vector<GLfloat> & getRingVertexBuffer() = 0;
+        public : // temp ?
         virtual Vector<GLfloat> & getVerticesBuffer() = 0;
         virtual Vector<GLuint> & getIndicesBuffer() = 0;
         virtual Vector<GLfloat> & getColoursBuffer() = 0;
-        virtual Vector<GLfloat> & getRingVertexBuffer() = 0;
         
         // ----- Public Sets and Gets -----
         public :
@@ -142,9 +143,11 @@ namespace Miam
         virtual OpacityMode GetOpacityMode() const = 0;
         virtual void SetRenderingScale(double renderingScale_) = 0;
 
+        /*
 		virtual float* GetVerticesBufferPtr() = 0;
 		virtual float* GetCoulourBufferPtr() = 0;
 		virtual unsigned int* GetIndicesBufferPtr() = 0;
+         */
 
 		virtual void setVisible(bool shouldBeVisible) = 0;
 		virtual bool isVisible() = 0;

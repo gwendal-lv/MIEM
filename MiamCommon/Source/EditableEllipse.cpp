@@ -134,8 +134,22 @@ void EditableEllipse::CanvasResized(SceneCanvasComponent* _parentCanvas)
 	computeManipulationPoint();
 }
 
+static bool __MIEM__editable2PrintDone = false;
 void EditableEllipse::RefreshOpenGLBuffers()
 {
+#ifdef __MIAM_DEBUG
+    if (!__MIEM__editable2PrintDone)
+    {
+        __MIEM__editable2PrintDone = true;
+        std::cout << "[Refresh GL buffers] DrawableArea : " << DrawableArea::GetVerticesBufferElementsCount() << " points. ";
+        std::cout << "DrawableEllipse : " << DrawableEllipse::GetVerticesBufferElementsCount() << " points. ";
+        std::cout << "EditableEllipse : " << EditableEllipse::GetVerticesBufferElementsCount() << " points." << std::endl;
+        std::cout << "[Refresh GL buffers] DrawableArea : " << DrawableArea::GetIndicesBufferElementsCount() << " indices. ";
+        std::cout << "DrawableEllipse : " << DrawableEllipse::GetIndicesBufferElementsCount() << " indices. ";
+        std::cout << "EditableEllipse : " << EditableEllipse::GetIndicesBufferElementsCount() << " indices." << std::endl;
+    }
+#endif
+    
 #ifndef __MIEM_VBO
     throw std::logic_error("Cannot manipulate VBOs in non-VBO mode");
 #endif

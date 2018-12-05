@@ -39,7 +39,7 @@ namespace Miam
         // General data
         protected :
         uint64 Id; ///< Unique ID
-        SceneCanvasComponent* parentCanvas; ///< Parent that draws this(needed to get display properties)
+        SceneCanvasComponent* parentCanvas = 0; ///< Parent that draws this(needed to get display properties)
         
         // Geometric data
         protected :
@@ -102,12 +102,16 @@ namespace Miam
         // ----- Internal reference-based getters (to solve inheritance issues) -----
         virtual bpt& getCenterInPixels() override { return centerInPixels; }
         virtual std::vector<bpt>& getContourPointsInPixels() override { return contourPointsInPixels.outer(); }
-        virtual SceneCanvasComponent* getParentCanvas() override { return parentCanvas; }
+        virtual SceneCanvasComponent* getParentCanvas() override {
+            assert(parentCanvas != 0);
+            return parentCanvas;
+        }
+        virtual Vector<GLfloat> & getRingVertexBuffer() override { return g_vertex_ring; }
+        
+        public : // temporaire ????
         virtual Vector<GLfloat> & getVerticesBuffer() override { return vertices_buffer; }
         virtual Vector<GLuint> & getIndicesBuffer() override { return indices_buffer; }
         virtual Vector<GLfloat> & getColoursBuffer() override { return coulours_buffer; }
-        virtual Vector<GLfloat> & getRingVertexBuffer() override { return g_vertex_ring; }
-        
         
         public :
         // ----- VBO sizes and elements' counts -----
@@ -189,7 +193,7 @@ namespace Miam
         void renderCachedNameImages();
         public :
         
-        
+        /*
 			float* GetVerticesBufferPtr() override
 			{
 				return vertices_buffer.data();
@@ -202,7 +206,7 @@ namespace Miam
 			{
 				return indices_buffer.data();
 			}
-
+*/
         
         virtual void Paint(Graphics& g) override;
         virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;

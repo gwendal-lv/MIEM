@@ -111,6 +111,7 @@ namespace Miam
         // (Not static for multi-threading safety)
         const int numPointsSmallCircle = 16; // actual resolution of any small circle
         const int numVerticesSmallCircle = numPointsSmallCircle + 1; // +1 pour le centre du disque
+        const int numIndicesSmallCircle = numPointsSmallCircle * 3;
         const int contourCirclesTotalVerticesCount = numVerticesSmallCircle * numPointsPolygon;
         const int contourCirclesTotalIndicesCount = (numPointsSmallCircle * 3) * numPointsPolygon;
         

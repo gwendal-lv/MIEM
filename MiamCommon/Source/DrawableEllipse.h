@@ -39,7 +39,7 @@ namespace Miam
         virtual int GetVerticesBufferElementsCount() override
         { return DrawableArea::GetVerticesBufferElementsCount() + numVerticesPolygon + numPointsPolygon; }
         virtual int GetIndicesBufferElementsCount() override
-        { return DrawableArea::GetIndicesBufferElementsCount() + (3 * numVerticesPolygon + 3 * 2 * numPointsPolygon); }
+        { return DrawableArea::GetIndicesBufferElementsCount() + (3 * numPointsPolygon + 3 * 2 * numPointsPolygon); }
         
         
         

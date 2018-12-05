@@ -230,13 +230,13 @@ void EditableArea::refreshOpenGLSubBuffers(int vertexBufElmtOffset, int indexBuf
         for (int i = 0; i < actualContourPointsCount; ++i) // pour chaque petit disque de contour
         {
             // on aura autant de triangles que de points
-            for (int jj = 0; jj < (3*numPointsSmallCircle); ++jj)
-                getIndicesBuffer()[disksIndexBufElmtOffset + (i * 3 * numPointsSmallCircle) + jj] = disksVertexBufElmtOffset + g_circle_indices[jj];
+            for (int jj = 0; jj < numIndicesSmallCircle; ++jj)
+                getIndicesBuffer()[disksIndexBufElmtOffset + i * numIndicesSmallCircle + jj] = disksVertexBufElmtOffset + g_circle_indices[jj];
         }
         // remaining indices to zero
         for (int i = actualContourPointsCount; i < numPointsPolygon; ++i)
-            for (int jj = 0; jj < (3*numPointsSmallCircle); ++jj)
-                getIndicesBuffer()[disksIndexBufElmtOffset + (i * 3 * numPointsSmallCircle) + jj] = 0;
+            for (int jj = 0; jj < numIndicesSmallCircle; ++jj)
+                getIndicesBuffer()[disksIndexBufElmtOffset + i * numIndicesSmallCircle + jj] = 0;
         // we declare here the beginning pos for the next step
         const int manipLineIndexBufElmtOffset = disksIndexBufElmtOffset + contourCirclesTotalIndicesCount;
         
@@ -270,7 +270,7 @@ void EditableArea::refreshOpenGLSubBuffers(int vertexBufElmtOffset, int indexBuf
         // - - - - indexes - - - -
         // Manipulation LINE
         for (int i = 0; i < dottedLineIndicesCount; ++i)
-            getIndicesBuffer()[3 * manipLineIndexBufElmtOffset + i] = manipLineVertexBufElmtOffset + g_indices_dotted_line[i];
+            getIndicesBuffer()[manipLineIndexBufElmtOffset + i] = manipLineVertexBufElmtOffset + g_indices_dotted_line[i];
         // Offset for the ring (which is the next thing to fill)
         const int manipRingIndexBufElmtOffset = manipLineIndexBufElmtOffset + dottedLineIndicesCount;
         // Manipulation RING (handle)
