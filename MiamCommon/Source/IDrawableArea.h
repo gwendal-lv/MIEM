@@ -158,11 +158,11 @@ namespace Miam
         // size of the different buffer parts
         // (Not static for multi-threading safety)
         const int numPointsPolygon = 32; // MAX number of contour points of a polygon
-        const int numPointsRing = 32; // actual resolution of any donut ring
+        const int ringResolution = 32; // actual resolution of any donut ring
         const int numPointCircle = 32; // actual resolution of any circle
         
         const int numVerticesPolygon = numPointsPolygon + 1; // +1 pour le centre du polygone
-        const int numVerticesRing = 2 * numPointsRing; // donut = 2 circles of 32 points
+        const int numVerticesRing = 2 * ringResolution; // donut = 2 circles of 32 points
         const int numVerticesCircle = numPointCircle + 1; // +1 pour le centre du disque
         
         

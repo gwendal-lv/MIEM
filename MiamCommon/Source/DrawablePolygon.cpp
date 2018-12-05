@@ -18,15 +18,6 @@ DrawablePolygon::DrawablePolygon(bptree::ptree & areaTree)
 :
 DrawableArea(areaTree)
 {
-    
-    // ????
-    // utile ?? Inséré avec commit fusion Amusing OpenGL
-    /* ============================
-	int W = areaTree.get<int>("<xmlattr>.width");
-	int H = areaTree.get<int>("<xmlattr>.height");
-     */
-    
-    
     float oldCanvasRation = 9.0f / 16.0f; // TOTALEMENT ARBITRAIREEEEEE
 	if (oldCanvasRation > 1.0F)
 	{
@@ -64,6 +55,9 @@ DrawableArea(areaTree)
 
 #ifdef __MIEM_VBO
     initBuffers();
+    
+    // TEST TRACE ERREUR
+    //g_vertex_ring.SetIndexToTrack(60); // le 66 n'a jamais l'air écrit...
 #endif
 
     // Actualisation graphique
@@ -155,60 +149,9 @@ void DrawablePolygon::initBuffers()
     indices_buffer.resize(GetIndicesBufferSize());
     coulours_buffer.resize(GetColoursBufferSize());
     
-    // indices pour dessiner la surface de la forme 32 triangles
-    const int vertexElmtOffset = DrawableArea::GetVerticesBufferElementsCount();
-    int indexElmtOffset = DrawableArea::GetIndicesBufferElementsCount();
-    const int actualPointsCount = (int) contourPoints.outer().size() - 1; // last contour point is the same as first (closed shape)
-    for (int i = 0; i < actualPointsCount ; ++i) // forme réelle : définition des indices des triangles
-    {
-        // sera le centre par défaut
-        indices_buffer[indexElmtOffset + i * 3 + 0] = vertexElmtOffset + 0;
-        // 1ier point extérieur (tjs dans les bornes)
-        indices_buffer[indexElmtOffset + i * 3 + 1] = vertexElmtOffset + i + 1;
-        // 2nd point extérieur, qui peut être le dernier ou le premier du contour
-        indices_buffer[indexElmtOffset + i * 3 + 2] = (i + 2) > actualPointsCount ?
-                                                    (vertexElmtOffset + 1) : (vertexElmtOffset + i + 2);
-    }
-    // En tout : on a autant de triangles que de points sur le contour du polygone
-    for (int ii = 3 * actualPointsCount; ii < 3 * numPointsPolygon; ++ii) // points du VBO alloués en mémoire mais inutiles
-        indices_buffer[indexElmtOffset + ii] = 0;
-    
-    // indices pour dessiner le contour
-    indexElmtOffset += 3 * numPointsPolygon; // on avait "numPointsPolygon" triangles à dessiner au max
-    // indice de début du polygon "agrandi" pour dessiner le contour
-    const int biggerPolyVertexElmtOffset = vertexElmtOffset + numVerticesPolygon;
-    for (int i = 0; i < numPointsPolygon; ++i)
-    {
-        if (i < actualPointsCount)
-        {
-            // -> Triangle avec un côté en bordure intérieure
-            // 1ier point de contour (tjs dans les bornes) (! point 0 est le centre)
-            indices_buffer[indexElmtOffset + i * 6 + 0] = vertexElmtOffset + i + 1;
-            // 2nd point de contour, qui peut être le dernier ou le premier du contour
-            indices_buffer[indexElmtOffset + i * 6 + 1] = (i + 2) > actualPointsCount ?
-                                                    (vertexElmtOffset + 1) : (vertexElmtOffset + i + 2);
-            // pt de contour agrandi (tjs dans les bornes)
-            indices_buffer[indexElmtOffset + i * 6 + 2] = biggerPolyVertexElmtOffset + i;
-            
-            // -> Triangle avec un côté en bordure extérieure
-            // on repart du 2nd point de contour non-agrandi
-            indices_buffer[indexElmtOffset + i * 6 + 3] = indices_buffer[indexElmtOffset + i * 6 + 1];
-            // pt contour agrandi tjs dans les bornes
-            indices_buffer[indexElmtOffset + i * 6 + 4] = indices_buffer[indexElmtOffset + i * 6 + 2];
-            // pt contour agrandi avec possible dépassement (retour au départ)
-            indices_buffer[indexElmtOffset + i * 6 + 5] = (i + 1) >= actualPointsCount ?
-                                    biggerPolyVertexElmtOffset : biggerPolyVertexElmtOffset + i + 1;
-        }
-        else
-        {
-            indices_buffer[indexElmtOffset + i * 6 + 0] = 0;
-            indices_buffer[indexElmtOffset + i * 6 + 1] = 0;
-            indices_buffer[indexElmtOffset + i * 6 + 2] = 0;
-            indices_buffer[indexElmtOffset + i * 6 + 3] = 0;
-            indices_buffer[indexElmtOffset + i * 6 + 4] = 0;
-            indices_buffer[indexElmtOffset + i * 6 + 5] = 0;
-        }
-    }
+    initSurfaceAndContourIndexSubBuffer(DrawableArea::GetVerticesBufferElementsCount(),
+                                        DrawableArea::GetIndicesBufferElementsCount(),
+                                        (int)contourPoints.outer().size() - 1);
 }
 
 
@@ -265,8 +208,6 @@ void DrawablePolygon::Paint(Graphics& g)
 		g.fillPath(contour);
 	}
     
-    //std::cout << "isFilled = " << isFilled << std::endl;
-    
     g.setColour(contourColour);
     g.setOpacity(GetAlpha());
     g.strokePath(contour, PathStrokeType(contourWidth));
@@ -321,20 +262,6 @@ void DrawablePolygon::RefreshOpenGLBuffers()
         vertices_buffer[3 * vertexElmtOffset + (3) + i * 3 + 2] = 0.0f;
     }
 
-    // - - - couleur de la forme - - -
-	const float A = GetAlpha();
-	const float R = fillColour.getRed() / 255.0f;
-	const float G = fillColour.getGreen() / 255.0f;
-	const float B = fillColour.getBlue() / 255.0f;
-	for (int i = 0; i < numVerticesPolygon; ++i)
-	{
-		coulours_buffer[4 * vertexElmtOffset + i * 4 + 0] = R;
-		coulours_buffer[4 * vertexElmtOffset + i * 4 + 1] = G;
-		coulours_buffer[4 * vertexElmtOffset + i * 4 + 2] = B;
-		coulours_buffer[4 * vertexElmtOffset + i * 4 + 3] = A;
-	}
-
-
     
 	// - - - contour de la forme - - -
     vertexElmtOffset += numVerticesPolygon;
@@ -346,7 +273,7 @@ void DrawablePolygon::RefreshOpenGLBuffers()
     // puis on récupère les points. C'est du calcul 100% CPU donc pour le placement...
     // Mais ok évite du vertex shader
 	float dist = (float)boost::geometry::distance(centerInPixels, contourPointsInPixels.outer().at(0));
-	float newDist = dist + contourWidth;
+	float newDist = dist + contourWidth*3.0f; // TAILLE CONTOUR EXAGEREEEEEEEEEEE
 	float resizeFactor = newDist / dist;
 
 	const float Xoffset = (float)centerInPixels.get<0>();
@@ -364,6 +291,9 @@ void DrawablePolygon::RefreshOpenGLBuffers()
 	}
 	for (int ii = 3 * ((int)contourPointsInPixels.outer().size() - 1); ii < 3 * numPointsPolygon; ++ii)
 		vertices_buffer[(3 * vertexElmtOffset) + ii] = 0.0f;
+    
+    // - - - colours are managed by the DrawableArea mother class
+    initSurfaceAndContourColourSubBuffer(DrawableArea::GetVerticesBufferElementsCount());
 }
 
 

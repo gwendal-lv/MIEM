@@ -866,6 +866,8 @@ void SceneCanvasComponent::AddShapeToBuffers(std::shared_ptr<IDrawableArea> area
             // dans area : MIEM vector qui checke en debug les indices
             sceneVertexBufferData[currentVertexBufferArrayPos] = area->getVerticesBuffer()[i];
             ++currentVertexBufferArrayPos;
+            if (i>=63)
+                i=i;
         }
         // colours
         for (size_t i=0 ; i<area->getColoursBuffer().size() ; i++)

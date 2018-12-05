@@ -91,7 +91,7 @@ namespace Miam
 		float mainZoffset;
 
 		// Buffers to be copied in OpenGL VBOs
-        // All child classe will enlarge and fill them with their own
+        // All child classes will enlarge and fill them with their own
         // data.
 		Vector<GLfloat> vertices_buffer;
 		Vector<GLuint> indices_buffer;
@@ -108,7 +108,7 @@ namespace Miam
         }
         virtual Vector<GLfloat> & getRingVertexBuffer() override { return g_vertex_ring; }
         
-        public : // temporaire ????
+        public : // temporaire ???? risque de rester longtemps...
         virtual Vector<GLfloat> & getVerticesBuffer() override { return vertices_buffer; }
         virtual Vector<GLuint> & getIndicesBuffer() override { return indices_buffer; }
         virtual Vector<GLfloat> & getColoursBuffer() override { return coulours_buffer; }
@@ -211,8 +211,15 @@ namespace Miam
         virtual void Paint(Graphics& g) override;
         virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
 		virtual void RefreshOpenGLBuffers() override;
+        
+        protected :
+        void initSurfaceAndContourIndexSubBuffer(int vertexElmtOffset,
+                                                 int indexElmtOffset,
+                                                 int actualPointsCount);
+        void initSurfaceAndContourColourSubBuffer(int vertexElmtOffset);
 
         // - - - - - XML import/export - - - - -
+        public :
         virtual std::shared_ptr<bptree::ptree> GetTree() override;
         
         

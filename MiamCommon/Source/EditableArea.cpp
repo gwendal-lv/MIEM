@@ -199,8 +199,9 @@ void EditableArea::refreshOpenGLSubBuffers(int vertexBufElmtOffset, int indexBuf
         std::fill(getIndicesBuffer().begin() + indexBufElmtOffset,
                   getIndicesBuffer().begin() + indexBufElmtOffset + fillSize, 0);
 				  */
+        // on doit toujours afficher meme si inactif...
 		for (int i = 0; i < getEditableAreaIndexesCount(); ++i)
-			getIndicesBuffer()[i] = 0;
+			getIndicesBuffer()[indexBufElmtOffset + i] = 0;
     }
     // We draw additionnal elements only if the polygon is active
     else

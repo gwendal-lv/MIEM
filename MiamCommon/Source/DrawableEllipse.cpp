@@ -47,7 +47,6 @@ DrawableEllipse::DrawableEllipse(int64_t _Id) :
 	DrawableEllipse(_Id, bpt(0.5f, 0.5f),0.2f,0.2f,Colours::darkgrey)
 {
 	rotationAngle = 0.0;
-	
 }
 
 DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio) :
@@ -162,24 +161,6 @@ void DrawableEllipse::createJucePolygon(int width, int height)
     }
     // Est-ce qu'il faut ABSOLUMENT faire le tour complet avec début=fin, avant de fermer le contour ?
     contour.closeSubPath();
-
-	//float dR = (float)sqrt(2) * contourWidth / 2.0f;
-	//vertex_buffer[0] = centerInPixels.get<0>();
-	//vertex_buffer[1] = centerInPixels.get<1>();
-	//vertex_buffer[2] = 0.0f;
-	//for (int i = 0; i < ellipseVerticesCount; i++)
-	//{
-	//	double normalizedAngle = (double)(i) / (double)(ellipseVerticesCount);
-	//	vertex_buffer[3 + i * 3] = centerX + aScaled * (float)std::cos(2.0 * M_PI * normalizedAngle);
-	//	vertex_buffer[3 + i * 3 + 1] = centerY + bScaled * (float)std::sin(2.0 * M_PI * normalizedAngle);
-	//	vertex_buffer[3 + i * 3 + 2] = 0.0f;
-	//	outline_vertex_buffer[i * 3] = centerX + (aScaled + dR) * (float)std::cos(2.0 * M_PI * normalizedAngle);
-	//	outline_vertex_buffer[i * 3 + 1] = centerY + (bScaled + dR) * (float)std::sin(2.0 * M_PI * normalizedAngle);
-	//	outline_vertex_buffer[i * 3 + 2] = 0.0f;
-	//}
-    
-    // ancien contour : ellipse Juce directe
-    //contour.addEllipse((float)center.get<0>() -((float)a*xScale/2), (float)center.get<1>() -((float)b*yScale/2), (float)a*xScale, (float)b*yScale);
 
 	contour.applyTransform(AffineTransform::scale((float)width, (float)height));
 

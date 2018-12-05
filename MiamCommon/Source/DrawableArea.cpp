@@ -87,42 +87,42 @@ void DrawableArea::init()
 
 void DrawableArea::ComputeRing()
 {
-	// calcul d'un anneau de centre 0, de rayon 5 pixels et avec une épaisseur de XX pixels
-	float radius = 40.0f;
-	float width = 4.0f;
+	// calcul d'un anneau de centre 0, de rayon XX pixels et avec une épaisseur de XX pixels
+	const float radius = 5.0f;
+	const float width = 2.0f;
 
 	float ri = radius - width / 2.0f;
 	float re = radius + width / 2.0f;
 
 	double currentAngle = 0.0;
-	double incAngle = 2 * M_PI / (double)numPointsRing;
-	for (int i = 0; i < numPointsRing; ++i)
+	double incAngle = 2 * M_PI / (double)ringResolution;
+	for (int i = 0; i < ringResolution; ++i) // pour chaque "segment"
 	{
         // Cercle intérieur : indices 0 à 31
         g_vertex_ring[i * 3 + 0] = ri * (float)cos(currentAngle);
         g_vertex_ring[i * 3 + 1] = ri * (float)sin(currentAngle);
         g_vertex_ring[i * 3 + 2] = 0.0f;
         // cercle extérieur : indices 32 à 61
-        g_vertex_ring[numPointsRing * 3 + i * 3 + 0] = re * (float)cos(currentAngle);
-        g_vertex_ring[numPointsRing * 3 + i * 3 + 1] = re * (float)sin(currentAngle);
-        g_vertex_ring[numPointsRing * 3 + i * 3 + 2] = 0.0f;
+        g_vertex_ring[ringResolution * 3 + i * 3 + 0] = re * (float)cos(currentAngle);
+        g_vertex_ring[ringResolution * 3 + i * 3 + 1] = re * (float)sin(currentAngle);
+        g_vertex_ring[ringResolution * 3 + i * 3 + 2] = 0.0f;
         
 		currentAngle += incAngle;
 	}
-	for (int i = 0; i < numPointsRing; ++i) // résolution 32 -> 64 points et 64 triangles
+	for (int i = 0; i < ringResolution; ++i) // résolution 32 -> 64 points et 64 triangles
 	{
         // triangle avec côté extérieur
 		ringIndices[i * 6 + 0] = i; // pt intérieur
-        ringIndices[i * 6 + 1] = numPointsRing + i; // pt extérieur correspondant
+        ringIndices[i * 6 + 1] = ringResolution + i; // pt extérieur correspondant
         // dernier point : l'extérieur suivant, ou le 1ier extérieur si on revient au départ
-		ringIndices[i * 6 + 2] = (numPointsRing + i + 1) >= (2 * numPointsRing) ?
-                                 numPointsRing : (numPointsRing + i + 1);
+		ringIndices[i * 6 + 2] = (ringResolution + i + 1) >= (2 * ringResolution) ?
+                                 ringResolution : (ringResolution + i + 1);
         
         // triangle avec côté intérieur
         // en repartant du point "extérieur suivant" calculé juste avant
         ringIndices[i * 6 + 3] = ringIndices[i * 6 + 2];
 		ringIndices[i * 6 + 4] = i;
-		ringIndices[i * 6 + 5] = (i + 1) >= numPointsRing ? 0 : (i + 1);
+		ringIndices[i * 6 + 5] = (i + 1) >= ringResolution ? 0 : (i + 1);
 	}
 }
 
@@ -292,7 +292,7 @@ void DrawableArea::RefreshOpenGLBuffers()
 	const float Zoffset = mainZoffset + MIEM_CENTRAL_RING_Z;
 	if (displayCenter)
 	{
-        for (int j = 0; j < numVerticesRing ; j += 3)
+        for (int j = 0; j < 3 * numVerticesRing ; j += 3)
 		{
 			vertices_buffer[j + 0] = Xoffset + g_vertex_ring[j + 0];
 			vertices_buffer[j + 1] = Yoffset + g_vertex_ring[j + 1];
@@ -301,7 +301,7 @@ void DrawableArea::RefreshOpenGLBuffers()
 	}
 	else
 	{
-		for (int j = 0; j < numVerticesRing ; j += 3)
+		for (int j = 0; j < 3 * numVerticesRing ; j += 3)
 		{
 			vertices_buffer[j + 0] = MIEM_UNVISIBLE_COORDINATE;
 			vertices_buffer[j + 1] = MIEM_UNVISIBLE_COORDINATE;
@@ -310,9 +310,9 @@ void DrawableArea::RefreshOpenGLBuffers()
 	}
 
     // - - - Indices - - -
-    for (int j = 0; j < 3 * numVerticesRing ; ++j) // autant de triangles que de vertices
+    for (int jj = 0; jj < 3 * numVerticesRing ; ++jj) // autant de triangles que de vertices
 	{
-		indices_buffer[j] = ringIndices[j];
+		indices_buffer[jj] = ringIndices[jj];
 	}
     
     // - - - Couleur - - -
@@ -321,7 +321,7 @@ void DrawableArea::RefreshOpenGLBuffers()
     const GLfloat B = contourColour.getBlue() / 250.0f;
     const GLfloat A = GetAlpha(); // dynamic opacity
     
-    for (int i = 0; i < numVerticesRing; i+=4)
+    for (int i = 0; i < 4*numVerticesRing; i+=4)
     {
         coulours_buffer[i + 0] = R;
         coulours_buffer[i + 1] = G;
@@ -329,6 +329,90 @@ void DrawableArea::RefreshOpenGLBuffers()
         coulours_buffer[i + 3] = A;
     }
 }
+
+void DrawableArea::initSurfaceAndContourIndexSubBuffer(int vertexElmtOffset, int indexElmtOffset, int actualPointsCount)
+{
+    for (int i = 0; i < actualPointsCount ; ++i) // forme réelle : définition des indices des triangles
+    {
+        // sera le centre par défaut
+        indices_buffer[indexElmtOffset + i * 3 + 0] = vertexElmtOffset + 0;
+        // 1ier point extérieur (tjs dans les bornes)
+        indices_buffer[indexElmtOffset + i * 3 + 1] = vertexElmtOffset + i + 1;
+        // 2nd point extérieur, qui peut être le dernier ou le premier du contour
+        indices_buffer[indexElmtOffset + i * 3 + 2] = (i + 2) > actualPointsCount ?
+        (vertexElmtOffset + 1) : (vertexElmtOffset + i + 2);
+    }
+    // En tout : on a autant de triangles que de points sur le contour du polygone
+    for (int ii = 3 * actualPointsCount; ii < 3 * numPointsPolygon; ++ii) // points du VBO alloués en mémoire mais inutiles
+    indices_buffer[indexElmtOffset + ii] = 0;
+
+    // indices pour dessiner le contour
+    const int contourIndexElmtOffset = indexElmtOffset + 3 * numPointsPolygon; // on avait "numPointsPolygon" triangles à dessiner au max
+    // indice de début du polygon "agrandi" pour dessiner le contour
+    const int biggerPolyVertexElmtOffset = vertexElmtOffset + numVerticesPolygon;
+    for (int i = 0; i < numPointsPolygon; ++i)
+    {
+        if (i < actualPointsCount)
+        {
+            // -> Triangle avec un côté en bordure intérieure
+            // 1ier point de contour (tjs dans les bornes) (! point 0 est le centre)
+            indices_buffer[contourIndexElmtOffset + i * 6 + 0] = vertexElmtOffset + i + 1;
+            // 2nd point de contour, qui peut être le dernier ou le premier du contour
+            indices_buffer[contourIndexElmtOffset + i * 6 + 1] = (i + 2) > actualPointsCount ?
+            (vertexElmtOffset + 1) : (vertexElmtOffset + i + 2);
+            // pt de contour agrandi (tjs dans les bornes)
+            indices_buffer[contourIndexElmtOffset + i * 6 + 2] = biggerPolyVertexElmtOffset + i;
+            
+            // -> Triangle avec un côté en bordure extérieure
+            // on repart du 2nd point de contour non-agrandi
+            indices_buffer[contourIndexElmtOffset + i * 6 + 3] = indices_buffer[contourIndexElmtOffset + i * 6 + 1];
+            // pt contour agrandi tjs dans les bornes
+            indices_buffer[contourIndexElmtOffset + i * 6 + 4] = indices_buffer[contourIndexElmtOffset + i * 6 + 2];
+            // pt contour agrandi avec possible dépassement (retour au départ)
+            indices_buffer[contourIndexElmtOffset + i * 6 + 5] = (i + 1) >= actualPointsCount ?
+            biggerPolyVertexElmtOffset : biggerPolyVertexElmtOffset + i + 1;
+        }
+        else
+        {
+            indices_buffer[contourIndexElmtOffset + i * 6 + 0] = 0;
+            indices_buffer[contourIndexElmtOffset + i * 6 + 1] = 0;
+            indices_buffer[contourIndexElmtOffset + i * 6 + 2] = 0;
+            indices_buffer[contourIndexElmtOffset + i * 6 + 3] = 0;
+            indices_buffer[contourIndexElmtOffset + i * 6 + 4] = 0;
+            indices_buffer[contourIndexElmtOffset + i * 6 + 5] = 0;
+        }
+    }
+}
+void DrawableArea::initSurfaceAndContourColourSubBuffer(int vertexElmtOffset)
+{
+    // - - - couleur de la forme - - -
+    const float A = GetAlpha();
+    const float R = fillColour.getRed() / 255.0f;
+    const float G = fillColour.getGreen() / 255.0f;
+    const float B = fillColour.getBlue() / 255.0f;
+    for (int i = 0; i < numVerticesPolygon; ++i)
+    {
+        coulours_buffer[4 * vertexElmtOffset + i * 4 + 0] = R;
+        coulours_buffer[4 * vertexElmtOffset + i * 4 + 1] = G;
+        coulours_buffer[4 * vertexElmtOffset + i * 4 + 2] = B;
+        coulours_buffer[4 * vertexElmtOffset + i * 4 + 3] = A;
+    }
+    
+    // - - - couleur du contour - - -
+    const int contourLineVertexElmtOffset = vertexElmtOffset + numVerticesPolygon;
+    const float A2 = GetAlpha();
+    const float R2 = contourColour.getRed() / 255.0f;
+    const float G2 = contourColour.getGreen() / 255.0f;
+    const float B2 = contourColour.getBlue() / 255.0f;
+    for (int i = 0; i < numVerticesRing; ++i)
+    {
+        coulours_buffer[4 * contourLineVertexElmtOffset + i * 4 + 0] = R2;
+        coulours_buffer[4 * contourLineVertexElmtOffset + i * 4 + 1] = G2;
+        coulours_buffer[4 * contourLineVertexElmtOffset + i * 4 + 2] = B2;
+        coulours_buffer[4 * contourLineVertexElmtOffset + i * 4 + 3] = A2;
+    }
+}
+
 
 void DrawableArea::KeepRatio(bool _keepRatio)
 {
