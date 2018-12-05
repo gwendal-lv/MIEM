@@ -12,22 +12,21 @@
 #define SCENECANVASCOMPONENT_H_INCLUDED
 
 #include <memory>
+#include <fstream>
+#include <string>
+#include <thread>
+#include <mutex>
 
 #include "JuceHeader.h"
 
-#include "DrawableArea.h"
-
+#include "MiemVector.hpp"
 #include "FrequencyMeasurer.h"
 
+#include "DrawableArea.h"
 #include "OpenGLTextObject.h"
 
-#include <fstream>
 
-#include <string>
 
-#include <thread>
-
-#include <mutex>
 
 using namespace Miam;
 
@@ -177,29 +176,27 @@ public:
     int shapeIndicesSize;
     
     // Précédemment : version avec des pointeurs constant... c'était un peu n'importe quoi...
-    static const int Npolygons = 10;
-    int Nshapes;// = Npolygons + Npolygons * (Npolygons + 1) / 2;
+    int Nshapes;
+    // à mettre dans une structure (ou un vecteur...)
+    /*
     int vertexBufferSize = 0;
     int colorBufferSize = 0;
     int indicesSize = 0;
+     */
+    
     
     GLuint vertexBufferGlName;
-    GLfloat *sceneVertexBufferData = nullptr;
+    Vector<GLfloat> sceneVertexBufferData;
     GLuint colorBufferGlName;
-    GLfloat *sceneColourBufferData = nullptr;
+    Vector<GLfloat> sceneColourBufferData;
     GLuint elementBufferGlName;
-    GLuint *sceneIndicesBufferData = nullptr;
+    Vector<GLuint> sceneIndicesBufferData;
     
     // Next buffer position to be written (= last filled data pos + 1)
-    size_t currentVertexBufferArrayPos = -1;
-    size_t currentColourBufferArrayPos = -1;
-    size_t currentIndexBufferArrayPos = -1;
+    size_t currentVertexBufferArrayPos = 0;
+    size_t currentColourBufferArrayPos = 0;
+    size_t currentIndexBufferArrayPos = 0;
     
-    
-    // ***********************************************
-    // ROLE A BIEN PRECISER ET A OPTIMISER
-    bool needToResetBufferParts;
-    int previousMaxSize; // utilisé pour remettre à 0 les parties de buffer qui étaient utilisées à la frame précédente et qui ne le sont plus mtn
     
     
     // - - - Local buffers for the scene itself - - -
