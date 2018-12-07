@@ -38,3 +38,4 @@ InterpolationType IPresenter::GetInterpolatorType() const
     
     return model->GetInterpolatorType_Atomic();
 }
+

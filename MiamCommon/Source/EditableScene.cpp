@@ -169,6 +169,8 @@ std::shared_ptr<AreaEvent> EditableScene::deleteAreaByUniqueId(uint64_t uidToDel
             areas.erase(areas.begin() + i);
         }
     }
+    // area updates
+    updateAreasZoffset( {} ); // we don't look for optimizations here....
     
     return areaE;
 }
@@ -214,10 +216,15 @@ void EditableScene::SendSelectedAreaToBack()
                 for (int i=selectedAreaOrder ; i >= 1 ; i--)
                     areas[i] = areas[i-1];
                 areas[0] = selectedArea;
+                
+                // updates
+#ifdef __MIEM_VBO
+                updateAreasZoffset( {} );
+#endif
+                DBG("!!!!!!!!! Area modified without sending an Event !!!!!!!!!");
+                canvasComponent->repaint();
             }
         }
-        DBG("!!!!!!!!! Area modified without sending an Event !!!!!!!!!");
-        canvasComponent->repaint();
     }
     else throw std::runtime_error("Cannot send and area to back : no area selected");
 }
@@ -240,10 +247,15 @@ void EditableScene::SendSelectedAreaBackward()
                 // then we udpate all what's necessary and we change the value
                 areas[selectedAreaOrder] = areas[selectedAreaOrder-1];
                 areas[selectedAreaOrder-1] = selectedArea;
+                
+                // updates
+#ifdef __MIEM_VBO
+                updateAreasZoffset( { (size_t)selectedAreaOrder, (size_t)selectedAreaOrder-1 } );
+#endif
+                DBG("!!!!!!!!! Area modified without sending an Event !!!!!!!!!");
+                canvasComponent->repaint();
             }
         }
-        DBG("!!!!!!!!! Area modified without sending an Event !!!!!!!!!");
-        canvasComponent->repaint();
     }
     else throw std::runtime_error("Cannot send and area forward : no area selected");
 }
@@ -266,10 +278,15 @@ void EditableScene::BringSelectedAreaForward()
                 // then we udpate all what's necessary and we change the value
                 areas[selectedAreaOrder] = areas[selectedAreaOrder+1];
                 areas[selectedAreaOrder+1] = selectedArea;
+                
+                // updates
+#ifdef __MIEM_VBO
+                updateAreasZoffset( { (size_t)selectedAreaOrder, (size_t)selectedAreaOrder+1 } );
+#endif
+                DBG("!!!!!!!!! Area modified without sending a proper Event !!!!!!!!!");
+                canvasComponent->repaint();
             }
         }
-        DBG("!!!!!!!!! Area modified without sending an Event !!!!!!!!!");
-        canvasComponent->repaint();
     }
     else throw std::runtime_error("Cannot send and area forward : no area selected");
 }
@@ -294,13 +311,19 @@ void EditableScene::BringSelectedAreaToFront()
                 for (size_t i=selectedAreaOrder ; i <= areas.size()-2 ; i++)
                     areas[i] = areas[i+1];
                 areas.back() = selectedArea;
+                
+                // updates
+#ifdef __MIEM_VBO
+                updateAreasZoffset( {} );
+#endif
+                DBG("!!!!!!!!! Area modified without sending a proper Event !!!!!!!!!");
+                canvasComponent->repaint();
             }
-            DBG("!!!!!!!!! Area modified without sending an Event !!!!!!!!!");
-            canvasComponent->repaint();
         }
     }
     else throw std::runtime_error("Cannot send an area to front : no area selected");
 }
+
 
 
 

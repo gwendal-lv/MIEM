@@ -84,6 +84,38 @@ namespace Miam
             else
                 return value;
         }
+        
+        
+        static Matrix3D<float> GenerateLookAtMatrix(Vector3D<float> eye, Vector3D<float> center, Vector3D<float> up)
+        {
+            Vector3D<float> zaxis = (eye - center).normalised();
+            Vector3D<float> xaxis = (zaxis ^ up).normalised();
+            Vector3D<float> yaxis = -(xaxis ^ zaxis);
+            
+            Matrix3D<float> viewMatrixTr(xaxis.x, yaxis.x, zaxis.x, 0,
+                                         xaxis.y, yaxis.y, zaxis.y, 0,
+                                         xaxis.z, yaxis.z, zaxis.z, 0,
+                                         -(xaxis * eye), -(yaxis * eye), -(zaxis*eye), 1);
+            return viewMatrixTr;
+        }
+        
+        static Matrix3D<float> GenerateOrthoPerspectiveMatrix(float width, float height, float near, float far)
+        {
+            // coordinates of the projection rectangle on screen
+            const float r = width; // right
+            const float l = 0.0f; // left
+            const float b = 0.0f; // bottom
+            const float t = height; // top
+            const float f = far;
+            const float n = near;
+            
+            Matrix3D<float> orthoProj(2.0f / (r-l), 0.0f,               0.0f,         0.0f,
+                                      0.0f,         2.0f / (t - b),     0.0f,         0.0f,
+                                      0.0f, 0.0f,                      -2.0f / (f-n), 0.0f,
+                                      -(r+l) / (r-l), -(t+b) / (t-b), -(f+n) / (f-n), 1.0f);
+            
+            return orthoProj;
+        }
    };
     
     

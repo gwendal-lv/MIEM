@@ -138,11 +138,39 @@ std::shared_ptr<AreaEvent> InteractiveScene::AddArea(std::shared_ptr<IInteractiv
     newArea->CanvasResized(canvasComponent);
 
 #if defined(__MIEM_VBO)
-	newArea->RefreshOpenGLBuffers();
+    updateAreasZoffset({});
 #endif
     
     return std::make_shared<AreaEvent>(newArea, AreaEventType::Added, (int)areas.size()-1, shared_from_this());
 }
+
+
+// - - - - - Areas Z-order helper functions - - - - -
+GLfloat InteractiveScene::computeAreaZ(size_t areaIndex)
+{
+    return (GLfloat)(areas.size()) - (GLfloat)areaIndex;
+}
+GLfloat InteractiveScene::computeExciterZ(size_t exciterIndex)
+{
+    return 1.0f - (GLfloat)exciterIndex;
+}
+void InteractiveScene::updateAreasZoffset(std::initializer_list<size_t> areasIndexes)
+{
+#ifdef __MIAM_DEBUG
+    // If assert occured : please carefully augmented the OpenGL camera "far" and "near" parameters
+    assert((areas.size() + currentExciters.size()) < 1024); // or we would risk Z-issues
+#endif
+    if (areasIndexes.size() == 0)
+    {
+        for (size_t i=0 ; i<areas.size() ; i++)
+            areas[i]->setZoffset(computeAreaZ(i));
+        for (size_t i=0 ; i<currentExciters.size() ; i++)
+            currentExciters[i]->setZoffset(computeExciterZ(i));
+    }
+    for (size_t i : areasIndexes)
+        areas[i]->setZoffset(computeAreaZ(i));
+}
+
 
 
 
@@ -170,7 +198,7 @@ std::shared_ptr<AreaEvent> InteractiveScene::AddExciter(std::shared_ptr<Exciter>
     // Forced graphical updates
     newExciter->CanvasResized(canvasComponent);
 #if defined(__MIEM_VBO)
-	newExciter->RefreshOpenGLBuffers();
+    updateAreasZoffset({});
 #endif
     
     // WARNING
@@ -196,6 +224,10 @@ std::shared_ptr<AreaEvent> InteractiveScene::DeleteCurrentExciterByIndex(size_t 
     // Sinon si c'est un élément au milieu on fait sans rechigner... tout petit vecteur en vrai
     else
         currentExciters.erase(currentExciters.begin() + excitersVectorIndex);
+    
+#if defined(__MIEM_VBO)
+    updateAreasZoffset({});
+#endif
     
     return std::make_shared<AreaEvent>(deletedExciter, AreaEventType::Deleted, shared_from_this());
 }

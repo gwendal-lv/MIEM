@@ -85,6 +85,13 @@ void DrawableArea::init()
 #endif // __MIEM_VBO
 }
 
+
+void DrawableArea::setZoffset(float newOffset)
+{
+    mainZoffset = newOffset;
+    RefreshOpenGLBuffers();
+}
+
 void DrawableArea::ComputeRing()
 {
 	// calcul d'un anneau de centre 0, de rayon XX pixels et avec une épaisseur de XX pixels
@@ -392,10 +399,10 @@ void DrawableArea::initSurfaceAndContourColourSubBuffer(int vertexElmtOffset)
     const float B = fillColour.getBlue() / 255.0f;
     for (int i = 0; i < numVerticesPolygon; ++i)
     {
-        coulours_buffer[4 * vertexElmtOffset + i * 4 + 0] = R;
-        coulours_buffer[4 * vertexElmtOffset + i * 4 + 1] = G;
-        coulours_buffer[4 * vertexElmtOffset + i * 4 + 2] = B;
-        coulours_buffer[4 * vertexElmtOffset + i * 4 + 3] = A;
+        coulours_buffer[4 * (vertexElmtOffset + i) + 0] = R;
+        coulours_buffer[4 * (vertexElmtOffset + i) + 1] = G;
+        coulours_buffer[4 * (vertexElmtOffset + i) + 2] = B;
+        coulours_buffer[4 * (vertexElmtOffset + i) + 3] = A;
     }
     
     // - - - couleur du contour - - -
@@ -406,10 +413,10 @@ void DrawableArea::initSurfaceAndContourColourSubBuffer(int vertexElmtOffset)
     const float B2 = contourColour.getBlue() / 255.0f;
     for (int i = 0; i < numVerticesRing; ++i)
     {
-        coulours_buffer[4 * contourLineVertexElmtOffset + i * 4 + 0] = R2;
-        coulours_buffer[4 * contourLineVertexElmtOffset + i * 4 + 1] = G2;
-        coulours_buffer[4 * contourLineVertexElmtOffset + i * 4 + 2] = B2;
-        coulours_buffer[4 * contourLineVertexElmtOffset + i * 4 + 3] = A2;
+        coulours_buffer[4 * (contourLineVertexElmtOffset + i) + 0] = R2;
+        coulours_buffer[4 * (contourLineVertexElmtOffset + i) + 1] = G2;
+        coulours_buffer[4 * (contourLineVertexElmtOffset + i) + 2] = B2;
+        coulours_buffer[4 * (contourLineVertexElmtOffset + i) + 3] = A2;
     }
 }
 

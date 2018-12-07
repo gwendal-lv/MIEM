@@ -20,6 +20,7 @@
 #include "JuceHeader.h"
 
 #include "MiemVector.hpp"
+#include "MiamMath.h"
 #include "FrequencyMeasurer.h"
 
 #include "DrawableArea.h"
@@ -111,6 +112,9 @@ public:
     
     std::unique_ptr<OpenGLShaderProgram> shaderProgram;
     std::unique_ptr<OpenGLShaderProgram::Uniform> projectionMatrix, viewMatrix, modelMatrix;
+    // !! limite aussi du nombre de formes et excitateurs affichables à l'écran
+    const GLfloat cameraNearZ = 1024.0;
+    const GLfloat cameraFarZ = -1024.0;
     
     String myVertexShader = "attribute vec4 position;\n"
 #if JUCE_OPENGL_ES
@@ -198,7 +202,6 @@ public:
     size_t currentIndexBufferArrayPos = 0;
     
     
-    
     // - - - Local buffers for the scene itself - - -
     
     GLuint canvasOutlineVertexBufferName;
@@ -273,49 +276,6 @@ public:
     float GetRatio() {return ((float)getWidth()) / ((float)getHeight()) ; }
     void SetIsSelectedForEditing(bool isSelected);
 
-	Matrix3D<float> lookAt(Vector3D<float> eye, Vector3D<float> center, Vector3D<float> up)
-	{
-		/*Vector3D<float> F = center - eye;
-		Vector3D<float> s = F.normalised() ^ up;
-		Vector3D<float> u = s.normalised() ^ F.normalised();
-		return Matrix3D<float>(s.x, s.y, s.z, -eye * s,
-		u.x, u.y, u.z, -eye * u,
-		-F.normalised().x, -F.normalised().y, -F.normalised().z, -eye * F,
-		0, 0.0f, 0.0f, 1.0f);*/
-		Vector3D<float> zaxis = (eye - center).normalised();
-		Vector3D<float> xaxis = (zaxis ^ up).normalised();
-		Vector3D<float> yaxis = -(xaxis ^ zaxis);
-
-		/*Matrix3D<float> viewMatrix(xaxis.x, xaxis.y, xaxis.z, -(xaxis * eye),
-		yaxis.x, yaxis.y, yaxis.z, -(yaxis * eye),
-		zaxis.x, zaxis.y, zaxis.z, -(zaxis * eye),
-		0, 0, 0, 1);*/
-
-		Matrix3D<float> viewMatrixTr(xaxis.x, yaxis.x, zaxis.x, 0,
-			xaxis.y, yaxis.y, zaxis.y, 0,
-			xaxis.z, yaxis.z, zaxis.z, 0,
-			-(xaxis * eye), -(yaxis * eye), -(zaxis*eye), 1);
-		return viewMatrixTr;
-	}
-
-	Matrix3D<float> perspective(float width, float height, float near, float far)
-	{
-		/*float top = tan(fovy / 2.0f) * near;
-		float bottom = -top;*/
-		//return Matrix3D<float>::fromFrustum(-top * width / height, top * width / height, bottom, top, near, far);
-
-		float r = width;
-		float l = 0.0f;
-		float b = 0.0f;
-		float t = height;
-		Matrix3D<float> orthoProj(2.0f / (r - l), 0.0f, 0.0f, 0.0f,
-			0.0f, 2.0f / (t - b), 0.0f, 0.0f,
-			0.0f, 0.0f, -2.0f / (far - near), 0.0f,
-			-(r + l) / (r - l), -(t + b) / (t - b), -(far + near) / (far - near), 1.0f);
-
-		return orthoProj;
-
-	}
 
     
     

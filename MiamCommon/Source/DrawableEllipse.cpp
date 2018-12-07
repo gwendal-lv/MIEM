@@ -107,7 +107,7 @@ DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b,
             // BUG ICI AVEC LES EXCITATEEEEEEEUUUUUUUUUUURS
             // BUG ICI AVEC LES EXCITATEEEEEEEUUUUUUUUUUURS
             // BUG ICI AVEC LES EXCITATEEEEEEEUUUUUUUUUUURS
-            // BUG ICI AVEC LES EXCITATEEEEEEEUUUUUUUUUUURS (oiut of range de vecteur)
+            // BUG ICI AVEC LES EXCITATEEEEEEEUUUUUUUUUUURS (out of range de vecteur)
 			indices_buffer[3 * decalage + i * 6 + 3] = decalage + i + 1 >= decalage + ellipseVerticesCount ? decalage : decalage + i + 1;
 			indices_buffer[3 * decalage + i * 6 + 2] = decalage + i + 1 >= decalage + ellipseVerticesCount ? decalage : decalage + i + 1;
 			indices_buffer[3 * decalage + i * 6 + 4] = shapeBegin + i + 1;

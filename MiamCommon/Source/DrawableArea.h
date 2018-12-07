@@ -123,7 +123,7 @@ namespace Miam
       
 
         
-        virtual void setZoffset(float newOffset) override { mainZoffset = newOffset; }
+        virtual void setZoffset(float newOffset) override;
         virtual float getZoffset() const override {return mainZoffset;}
         
         public :

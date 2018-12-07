@@ -354,10 +354,14 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 
 
 	/// calcul des matrices
-	Matrix3D<float> testView = lookAt(Vector3D<float>(0, 0, 1), Vector3D<float>(0, 0, 0), Vector3D<float>(0, -1, 0));
+	Matrix3D<float> testView = Math::GenerateLookAtMatrix(Vector3D<float>(0, 0, 1), Vector3D<float>(0, 0, 0), Vector3D<float>(0, -1, 0));
 	//Matrix3D<float> testProject = perspective((float)getWidth(), (float)getHeight(), 0.1f, 100.0f);
 	if (projectionMatrix != nullptr)
-		projectionMatrix->setMatrix4(perspective((float)getWidth(), (float)getHeight(), 0.5f, 5.0f).mat, 1, false);
+        projectionMatrix->setMatrix4(Math::GenerateOrthoPerspectiveMatrix((float)getWidth(),
+                                                                          (float)getHeight(),
+                                                                          cameraNearZ, // near
+                                                                          cameraFarZ).mat, // far
+                                     1, false);
 
 	if (viewMatrix != nullptr)
 		viewMatrix->setMatrix4(testView.mat, 1, false);
@@ -373,7 +377,7 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 	computeCanvasOutline();
 
 	if(openGLLabel == nullptr)
-		openGLLabel = std::make_unique<OpenGLTextObject>("newFontImg_png"/*"C:\\Users\\ayup1\\PycharmProjects\\fontPNG\\newFontImg.png"*/, 100.0f, 300.0f, 100.0f, -100.0f, 12); // "ExportedFont2_png", "C:\\Users\\ayup1\\Downloads\\newFontImg.png"
+		openGLLabel = std::make_unique<OpenGLTextObject>("newFontImg_png", 20.0f, 60.0f, 20.0f, -35.0f, 12); 
 	openGLLabel->initialiseText(openGlContext);
 
 	
@@ -507,8 +511,11 @@ void SceneCanvasComponent::renderOpenGL()
 				0.0f, -1.0f, 0.0f, 0.0f,
 				0.0f, 0.0f, 1.0f, 0.0f,
 				0.0f, (float)getHeight(), 0.0f, 1.0f);
-			Matrix3D<float> testView = lookAt(Vector3D<float>(0, 0, 1), Vector3D<float>(0, 0, 0), Vector3D<float>(0, -1, 0));
-			Matrix3D<float> testProjecxtion = perspective((float)/*desktopScale **/ getWidth(), (float)/*desktopScale **/ getHeight(), 0.5f, 1.1f);
+            Matrix3D<float> testView = Math::GenerateLookAtMatrix(Vector3D<float>(0, 0, 1), Vector3D<float>(0, 0, 0), Vector3D<float>(0, -1, 0));
+			Matrix3D<float> testProjecxtion = Math::GenerateOrthoPerspectiveMatrix((float)getWidth(),
+                                                                                   (float)getHeight(),
+                                                                                   cameraNearZ, // near
+                                                                                   cameraFarZ); // far
 
 			std::u16string testFPS[]{ u"" };
 			Miam::TextUtils::intToU16string(fps, testFPS);
@@ -527,18 +534,6 @@ void SceneCanvasComponent::renderOpenGL()
 
 		// Time measures just before swap (or the closer that we can get to the swaps)
 		displayFrequencyMeasurer.OnNewFrame();
-		/*
-		if (selectedForEditing)
-		{
-			if (displayFrequencyMeasurer.IsFreshAverageAvailable())
-				DBG(displayFrequencyMeasurer.GetInfo());
-		}
-		 */
-		 // Forced sleep if drawing is too fast
-
-		// Erreurs parfois à cause d'un truc bizarre renvoyé par la STL
-		// dans le FrequencyMeasurer		
-		//double underTime = desiredPeriod_ms - displayFrequencyMeasurer.GetLastDuration_ms();
 
 		// Solution brutale...
 		double lastDuration = displayFrequencyMeasurer.GetLastDuration_ms();
@@ -556,24 +551,14 @@ void SceneCanvasComponent::renderOpenGL()
 		EunderTime += underTime;
 		if (numFrame > 100 * 60)
 		{
-			//DBG("60 frames, underTime : "+ (String)underTime +" [underTime]" + (String)(EunderTime/600.0));
-			//DBG("probleme underTime : " + (String)underTime);
-			//ofs << String(EunderTime / 6000.0).toStdString() << std::endl;
 			EunderTime = 0.0;
 			numFrame = 0;
 		}
 		if (underTime < 0.0)
-		{
-			//DBG("probleme underTime : " + (String)underTime);
 			underTime = 0.0;
-		}
-		//if (last > desiredPeriod_ms)
-		//	DBG("probleme : last > desiredPeriod_ms");
 		
-		if (underTime >= 0.0)
-		{
+		if (underTime > 0.0)
 			Thread::sleep((int)std::floor(underTime));
-		}
 	
 }
 
@@ -600,7 +585,11 @@ void SceneCanvasComponent::DrawOnSceneCanevas()
 	//	-----------
 
 	if (projectionMatrix != nullptr)
-		projectionMatrix->setMatrix4(perspective((float)/*desktopScale **/ getWidth(), (float)/*desktopScale **/ getHeight(), 0.5f, 1.1f).mat, 1, false);
+        projectionMatrix->setMatrix4(Math::GenerateOrthoPerspectiveMatrix((float)/*desktopScale **/ getWidth(),
+                                                                          (float)/*desktopScale **/ getHeight(),
+                                                                          cameraNearZ, // near
+                                                                          cameraFarZ).mat, // far
+                                     1, false);
 
 
 	Matrix3D<float> model(1.0f, 0.0f, 0.0f, 0.0f,

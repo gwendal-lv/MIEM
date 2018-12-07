@@ -164,15 +164,31 @@ namespace Miam
         
         
         // - - - - - Areas Managing : Add and Delete - - - - -
-        
-        
+        public :
         /// \brief Adds an area without creating it before
         virtual std::shared_ptr<AreaEvent> AddArea(std::shared_ptr<IInteractiveArea> newArea);
         
         
+        // - - - - - Areas Z-order helper functions - - - - -
+        // reminder : the last area in the list is the last to be drawn,
+        // so it is on the "front" or "closest" layer
+        
+        protected : // GL updates (for Z pointing inside the screen)
+        
+        /// Valeurs positives strictement pour les aires classiques (avec un pas de 1.0f)
+        /// If list is empty, all areas will be updated.
+        GLfloat computeAreaZ(size_t areaIndex);
+        /// \brief valeurs négatives strictement pour les excitateurs (avec un pas de 1.0f)
+        GLfloat computeExciterZ(size_t exciterIndex);
+        /// \brief Updates the Z offset of areas referenced by their index within the areas[] vector
+        ///
+        /// If list is empty, all areas and *exciters too* will be updated.
+        void updateAreasZoffset(std::initializer_list<size_t> areasIndexes);
+        
+        
+        
         // - - - - - Exciters Managing - - - - -
-        
-        
+        public :
         /// \brief Adds a default exciter
         virtual std::shared_ptr<AreaEvent> AddDefaultExciter();
         /// \brief Adds an exciter without creating it before. Configure le type d'interpolation

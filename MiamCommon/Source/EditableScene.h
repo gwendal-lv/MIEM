@@ -14,6 +14,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <initializer_list>
 
 #include "InteractiveScene.h"
 
@@ -101,8 +102,7 @@ namespace Miam
         
         
         // ------ areas managing : Z-Order ------
-        public :
-        
+        public : // public interfaces
         void SendSelectedAreaToBack();
         void SendSelectedAreaBackward();
         void BringSelectedAreaForward();
@@ -111,6 +111,7 @@ namespace Miam
         
         
         // - - - - - Selection events managing (orders from parent manager) - - - - -
+        public :
         virtual std::shared_ptr<MultiAreaEvent> OnSelection(bool resetExciters = true) override;
         virtual std::shared_ptr<MultiAreaEvent> OnUnselection(bool shutExcitersDown = true) override;
         
