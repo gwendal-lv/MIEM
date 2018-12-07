@@ -339,7 +339,8 @@ void DrawableArea::RefreshOpenGLBuffers()
 
 void DrawableArea::initSurfaceAndContourIndexSubBuffer(int vertexElmtOffset, int indexElmtOffset, int actualPointsCount)
 {
-    for (int i = 0; i < actualPointsCount ; ++i) // forme réelle : définition des indices des triangles
+    // surface interne : définition des indices des triangles
+    for (int i = 0; i < actualPointsCount ; ++i)
     {
         // sera le centre par défaut
         indices_buffer[indexElmtOffset + i * 3 + 0] = vertexElmtOffset + 0;
@@ -355,20 +356,21 @@ void DrawableArea::initSurfaceAndContourIndexSubBuffer(int vertexElmtOffset, int
 
     // indices pour dessiner le contour
     const int contourIndexElmtOffset = indexElmtOffset + 3 * numPointsPolygon; // on avait "numPointsPolygon" triangles à dessiner au max
-    // indice de début du polygon "agrandi" pour dessiner le contour
-    const int biggerPolyVertexElmtOffset = vertexElmtOffset + numVerticesPolygon;
+    // indices du ring pour dessiner le contour
+    const int contourRingVertexElmtOffset = vertexElmtOffset + numVerticesPolygon;
+    const int biggerContourRingVertexElmtOffset = contourIndexElmtOffset + numPointsPolygon;
     for (int i = 0; i < numPointsPolygon; ++i)
     {
         if (i < actualPointsCount)
         {
             // -> Triangle avec un côté en bordure intérieure
             // 1ier point de contour (tjs dans les bornes) (! point 0 est le centre)
-            indices_buffer[contourIndexElmtOffset + i * 6 + 0] = vertexElmtOffset + i + 1;
+            indices_buffer[contourIndexElmtOffset + i * 6 + 0] = contourRingVertexElmtOffset + i + 1;
             // 2nd point de contour, qui peut être le dernier ou le premier du contour
             indices_buffer[contourIndexElmtOffset + i * 6 + 1] = (i + 2) > actualPointsCount ?
-            (vertexElmtOffset + 1) : (vertexElmtOffset + i + 2);
+            (contourRingVertexElmtOffset + 1) : (contourRingVertexElmtOffset + i + 2);
             // pt de contour agrandi (tjs dans les bornes)
-            indices_buffer[contourIndexElmtOffset + i * 6 + 2] = biggerPolyVertexElmtOffset + i;
+            indices_buffer[contourIndexElmtOffset + i * 6 + 2] = biggerContourRingVertexElmtOffset + i;
             
             // -> Triangle avec un côté en bordure extérieure
             // on repart du 2nd point de contour non-agrandi
@@ -377,7 +379,7 @@ void DrawableArea::initSurfaceAndContourIndexSubBuffer(int vertexElmtOffset, int
             indices_buffer[contourIndexElmtOffset + i * 6 + 4] = indices_buffer[contourIndexElmtOffset + i * 6 + 2];
             // pt contour agrandi avec possible dépassement (retour au départ)
             indices_buffer[contourIndexElmtOffset + i * 6 + 5] = (i + 1) >= actualPointsCount ?
-            biggerPolyVertexElmtOffset : biggerPolyVertexElmtOffset + i + 1;
+            biggerContourRingVertexElmtOffset : biggerContourRingVertexElmtOffset + i + 1;
         }
         else
         {

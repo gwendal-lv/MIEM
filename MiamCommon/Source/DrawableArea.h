@@ -15,9 +15,9 @@
 
 #include "IDrawableArea.h"
 
-#define MIEM_CENTRAL_RING_Z         (0.1f)
+#define MIEM_CENTRAL_RING_Z         (-0.1f) // negative values are in front
 #define MIEM_SHAPE_SURFACE_Z        (0.0f)
-#define MIEM_SHAPE_CONTOUR_Z        (0.1f)
+#define MIEM_SHAPE_CONTOUR_Z        (-0.1f)
 
 #define MIEM_UNVISIBLE_COORDINATE   (-10.0f)
 

@@ -43,17 +43,17 @@ namespace Miam {
         // on ajoute la surface de la forme + les lignes extérieures.
         // Format de ce VBO (un chiffre représente l'indice d'élément)
         // +0 : centre
-        // +1 à +numPointsPolygon+1 : polygone lui-même
-        // +numPointsPolygon+1 à +numPointsPolygon*2+1
+        // +1 à +numVerticesPolygon : polygone lui-même
+        // +numPointsPolygon+2 à +numPointsPolygon+2 + numVerticesRing
         virtual int GetVerticesBufferElementsCount() override
         { return DrawableArea::GetVerticesBufferElementsCount()
             + numVerticesPolygon // les vertices qui vont définir la surface (32 + 1)
-            + numPointsPolygon; } // 1 polygone extérieur supplémentaire pour tracer le contour blanc
+            + numVerticesRing; } // 1 ring complet
         
         virtual int GetIndicesBufferElementsCount() override
         { return DrawableArea::GetIndicesBufferElementsCount()
-            + 3 * numPointsPolygon/*numVerticesPolygon*/ // Surface of the polygon
-            + 3 * 2 * numPointsPolygon; } // contour
+            + 3 * numPointsPolygon // Surface of the polygon
+            + 3 * numVerticesRing; } // remplissage du ring (1 triangle par point)
         
         
         

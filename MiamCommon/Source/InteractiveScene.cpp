@@ -152,12 +152,12 @@ GLfloat InteractiveScene::computeAreaZ(size_t areaIndex)
 }
 GLfloat InteractiveScene::computeExciterZ(size_t exciterIndex)
 {
-    return 1.0f - (GLfloat)exciterIndex;
+    return - 1.0f - (GLfloat)exciterIndex;
 }
 void InteractiveScene::updateAreasZoffset(std::initializer_list<size_t> areasIndexes)
 {
 #ifdef __MIAM_DEBUG
-    // If assert occured : please carefully augmented the OpenGL camera "far" and "near" parameters
+    // If assert occured : please carefully increase the OpenGL camera "far" and "near" parameters
     assert((areas.size() + currentExciters.size()) < 1024); // or we would risk Z-issues
 #endif
     if (areasIndexes.size() == 0)

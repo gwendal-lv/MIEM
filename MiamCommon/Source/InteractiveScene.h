@@ -175,10 +175,10 @@ namespace Miam
         
         protected : // GL updates (for Z pointing inside the screen)
         
-        /// Valeurs positives strictement pour les aires classiques (avec un pas de 1.0f)
+        /// Valeurs positives strictement pour les aires classiques (avec un pas de -1.0f par "calque")
         /// If list is empty, all areas will be updated.
         GLfloat computeAreaZ(size_t areaIndex);
-        /// \brief valeurs négatives strictement pour les excitateurs (avec un pas de 1.0f)
+        /// \brief valeurs négatives strictement pour les excitateurs (avec un pas de -1.0f par "calque")
         GLfloat computeExciterZ(size_t exciterIndex);
         /// \brief Updates the Z offset of areas referenced by their index within the areas[] vector
         ///
