@@ -59,10 +59,12 @@ namespace Miam
         // =============== Setters and Getters ===============
         public :
         // - - - - - VBOs - - - - -
-        virtual int GetVerticesBufferElementsCount() override {
-            return InteractiveEllipse::GetVerticesBufferElementsCount() + getEditableAreaVerticesCount(); }
-        virtual int GetIndicesBufferElementsCount() override {
-            return InteractiveEllipse::GetIndicesBufferElementsCount() + getEditableAreaIndexesCount(); }
+        virtual int GetVerticesBufferElementsCount() const override {
+            return InteractiveEllipse::GetVerticesBufferElementsCount()
+            + getEditableAreaVerticesCount(); }
+        virtual int GetIndicesBufferElementsCount() const override {
+            return InteractiveEllipse::GetIndicesBufferElementsCount()
+            + getEditableAreaIndexesCount(); }
         
         
         

@@ -34,9 +34,9 @@ namespace Miam {
         // =============== Setters and Getters ===============
         public :
         // - - - - - VBOs - - - - -
-        virtual int GetVerticesBufferElementsCount() override {
+        virtual int GetVerticesBufferElementsCount() const override {
             return InteractivePolygon::GetVerticesBufferElementsCount() + getEditableAreaVerticesCount(); }
-        virtual int GetIndicesBufferElementsCount() override {
+        virtual int GetIndicesBufferElementsCount() const override {
             return InteractivePolygon::GetIndicesBufferElementsCount() + getEditableAreaIndexesCount(); }
         
         // - - - - - Others - - - - -

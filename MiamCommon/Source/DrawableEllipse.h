@@ -37,11 +37,11 @@ namespace Miam
         
         // ----- VBO sizes -----
         // on ajoute la surface de la forme + les lignes extérieures
-        virtual int GetVerticesBufferElementsCount() override
+        virtual int GetVerticesBufferElementsCount() const override
         { return DrawableArea::GetVerticesBufferElementsCount()
             + numVerticesPolygon // car même nombre de points
             + numVerticesRing; } // contour ~= ring en fait
-        virtual int GetIndicesBufferElementsCount() override
+        virtual int GetIndicesBufferElementsCount() const override
         { return DrawableArea::GetIndicesBufferElementsCount()
             + 3 * numPointsPolygon // surface de l'ellipse (idem polygone)
             + 3 * numVerticesRing; } // contour

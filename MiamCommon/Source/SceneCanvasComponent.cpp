@@ -412,6 +412,8 @@ void SceneCanvasComponent::renderOpenGL()
     // Vérification simple de chaque aire 1 par 1
     // ******************************************************
     // OPTIMISATION POSSIBLE POUR LES VBO, POUR LIMITER LA QUANTITE DE COPIES EFFECTUEES
+    // Même si cette optimisation est pour l'instant négligeable par rapport
+    // au nombre d'allocations mémoire nécessaires pour dupliquer les aires (et les VBO internes...)
     // ******************************************************
     size_t itIndex = 0;
     for (auto it = manager->GetAsyncDrawableObjects().begin();
@@ -470,7 +472,7 @@ void SceneCanvasComponent::renderOpenGL()
     
     
     
-    // =========================== Rendu classique GPU++ avec VBO ==========================
+    // =========================== Rendu GPU++ avec VBO ==========================
 #else // if IS def __MIEM_VBO
 	if (releaseResources)
 	{
@@ -499,9 +501,11 @@ void SceneCanvasComponent::renderOpenGL()
 
 		glViewport(0, 0, roundToInt(desktopScale * getWidth()), roundToInt(desktopScale * getHeight()));
 
+        
         // *** Fonction principale de DESSIN DE FRAME OPEN GL PAR VBOs ***
 		DrawOnSceneCanevas();
         // ***    ***
+        
         
         // Affichage des FPS
 		int fps = (int)displayFrequencyMeasurer.GetAverageFrequency_Hz();
@@ -516,7 +520,7 @@ void SceneCanvasComponent::renderOpenGL()
                                                                                    (float)getHeight(),
                                                                                    cameraNearZ, // near
                                                                                    cameraFarZ); // far
-
+            // Syntaxe de ça ????????
 			std::u16string testFPS[]{ u"" };
 			Miam::TextUtils::intToU16string(fps, testFPS);
 
@@ -528,6 +532,9 @@ void SceneCanvasComponent::renderOpenGL()
     }
 #endif // ndef __MIEM_VBO
 
+    
+    
+    
 		// Call to a general Graphic update on the whole Presenter module
 		if (!manager->isUpdatePending())
 			manager->triggerAsyncUpdate();
@@ -591,22 +598,17 @@ void SceneCanvasComponent::DrawOnSceneCanevas()
                                                                           cameraFarZ).mat, // far
                                      1, false);
 
-
 	Matrix3D<float> model(1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, -1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, (float)getHeight(), 0.0f, 1.0f);
-
 	if (modelMatrix != nullptr)
-	{
 		modelMatrix->setMatrix4(model.mat, 1, false);
-	}
 
-
-	// - - - - - Areas painting (including exciters if existing) - - - - -
+	// - - - - - Areas addition to VBO (including exciters if existing) - - - - -
 	// Sans bloquer, du coup, les autres threads (pour réactivité max...)
     currentVertexBufferArrayPos = 0;
-    currentColourBufferArrayPos = 0;
+    currentColourBufferArrayPos = 0; // total reinit of the GL buffer objects
     currentIndexBufferArrayPos = 0;
 	for (size_t i = 0; i < duplicatedAreas.size(); i++)
 	{
@@ -616,14 +618,6 @@ void SceneCanvasComponent::DrawOnSceneCanevas()
         // faire plusieurs appels de fonctions........ pour n'actualiser que des parties de VBO
 		AddShapeToBuffers(duplicatedAreas[i]);
 	}
-
-    // ?????? Remplissage du reste du buffer d'indices par des zéros ???????
-    // ?????? Remplissage du reste du buffer d'indices par des zéros ???????
-    // ?????? Remplissage du reste du buffer d'indices par des zéros ???????
-    // ?????? Remplissage du reste du buffer d'indices par des zéros ???????
-    // ?????? Remplissage du reste du buffer d'indices par des zéros ???????
-    // ?????? Remplissage du reste du buffer d'indices par des zéros ???????
-
 
 	DrawCanvasOutline();
 
@@ -845,42 +839,52 @@ void SceneCanvasComponent::AddShapeToBuffers(std::shared_ptr<IDrawableArea> area
     
 	if (area->isVisible())
 	{
-#ifdef __MIAM_DEBUG
-        if (area->GetOpacityMode() == OpacityMode::High)
-            bool inutile = true; // pour détecter le bug sur la sélection des Editable...
-#endif
         // Vérification de l'optimisation - A IMPLEMENTER ICI, AIRE PAR AIRE
         //std::cout << "[Rendu OpenGL] " << area->GetVerticesBufferActualElementsCount() << " verts et " << area->GetIndicesBufferActualElementsCount() << " indices" << std::endl;
+     
+        // buffers accessible via function calls only
+        auto vertexBuffer = area->getVerticesBuffer();
+        auto colourBuffer = area->getColoursBuffer();
+        auto indexBuffer = area->getIndicesBuffer();
         
 		/// vertices
         const size_t shapeVertexBufferOffset = currentVertexBufferArrayPos;
         const size_t shapeVerticesBufferActualSize = 3 * area->GetVerticesBufferActualElementsCount();
+#ifdef __MIEM_DEBUG_TRACE // dans area : Miem::Vector qui checke en debug les indices
         for (size_t i=0 ; i < shapeVerticesBufferActualSize ; i++)
         {
-            // **************************************************************
-            // REMPLACER EN RELEASE PAR UNE COPIE STL ULTRA OPTIMISEE PAR VECTEURS
-            // **************************************************************
-            // dans area : MIEM vector qui checke en debug les indices
-            sceneVertexBufferData[currentVertexBufferArrayPos] = area->getVerticesBuffer()[i];
+            sceneVertexBufferData[currentVertexBufferArrayPos] = vertexBuffer[i];
             ++currentVertexBufferArrayPos;
         }
+#else // sinon pas de trace dans le vecteur, copie optimisée
+        std::copy(vertexBuffer.begin(),
+                  vertexBuffer.begin() + shapeVerticesBufferActualSize,
+                  sceneVertexBufferData.begin() + currentVertexBufferArrayPos);
+        currentVertexBufferArrayPos += shapeVerticesBufferActualSize;
+#endif
         // colours
         const size_t shapeColoursBufferActualSize = 4 * area->GetVerticesBufferActualElementsCount();
+#ifdef __MIEM_DEBUG_TRACE
         for (size_t i=0 ; i < shapeColoursBufferActualSize ; i++)
         {
-            // **************************************************************
-            // REMPLACER EN RELEASE PAR UNE COPIE STL ULTRA OPTIMISEE PAR VECTEURS
-            // **************************************************************
-            sceneColourBufferData[currentColourBufferArrayPos] = area->getColoursBuffer()[i];
+            sceneColourBufferData[currentColourBufferArrayPos] = colourBuffer[i];
             ++currentColourBufferArrayPos;
         }
+#else
+        std::copy(colourBuffer.begin(),
+                  colourBuffer.begin() + shapeColoursBufferActualSize,
+                  sceneColourBufferData.begin() + currentColourBufferArrayPos);
+        currentColourBufferArrayPos += shapeColoursBufferActualSize;
+#endif
 		/// indices
         assert((shapeVertexBufferOffset % 3) == 0); // sinon, on a mis des points non terminés....
         const GLuint shapeVertexBufferElmtOffset = (GLuint) shapeVertexBufferOffset / 3;
-        for (size_t i=0 ; i<area->GetIndicesBufferActualElementsCount() ; i++)
+        const size_t shapeIndicesBufferActualSize = area->GetIndicesBufferActualElementsCount();
+        for (size_t i=0 ; i < shapeIndicesBufferActualSize ; i++)
         {
-            // !!!!! les indices doivent être décalés del'offset de vertex buffer pour cette forme !!
-            sceneIndicesBufferData[currentIndexBufferArrayPos] = area->getIndicesBuffer()[i]
+            // les indices doivent être décalés de l'offset de vertex buffer de la forme
+            // donc : pas de copie optimisée possible
+            sceneIndicesBufferData[currentIndexBufferArrayPos] = indexBuffer[i]
                                                 + shapeVertexBufferElmtOffset;
             ++currentIndexBufferArrayPos;
         }

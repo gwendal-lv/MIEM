@@ -77,11 +77,11 @@ namespace Miam
         void computeManipulationLineBuffer(float Ox, float Oy, float Mx, float My, float width, float height);
         
         /// \brief Additionnal count for this class only
-        int getEditableAreaVerticesCount() {
+        int getEditableAreaVerticesCount() const {
             return contourCirclesTotalVerticesCount // petits disques blancs sur les points du contour
             + dottedLineVertexesCount + numVerticesRing; } // manipulationLine + manipulationPoint (small ring)
         /// \brief Additionnal count for this class only
-        int getEditableAreaIndexesCount() {
+        int getEditableAreaIndexesCount() const {
             return contourCirclesTotalIndicesCount // disques sur points du contour
             + dottedLineIndicesCount + (3 * numVerticesRing); } // ligne + small ring au bout
         
@@ -101,9 +101,9 @@ namespace Miam
         
         void computeSmallDiskBuffers();
         
-        virtual int GetVerticesBufferActualElementsCount() override
+        virtual int GetVerticesBufferActualElementsCount() const override
         { return actualVerticesBufferElementsCount; }
-        virtual int GetIndicesBufferActualElementsCount() override
+        virtual int GetIndicesBufferActualElementsCount() const override
         { return actualIndicesBufferElementsCount; }
         
         // =============== COMMON ATTRIBUTES TO ALL EDITABLE AREAS =============

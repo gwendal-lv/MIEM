@@ -173,15 +173,15 @@ namespace Miam
         
         /// \brief Returns the number of vertices within the buffer. Each  vertex is made of several coordinates.
         /// To get the size of the buffer, please see Miam::DrawableArea::GetVerticesBufferSize()
-		virtual int GetVerticesBufferElementsCount() = 0;
-        virtual int GetVerticesBufferActualElementsCount()
+		virtual int GetVerticesBufferElementsCount() const = 0;
+        virtual int GetVerticesBufferActualElementsCount() const
         { return GetVerticesBufferElementsCount(); } // default behavior, to be overriden
         
         /// \brief Returns the number of indices within the buffer. For example, 1 triangles requires
         /// a total count of 3 indices. The number of indices should be the same as the size of the buffer.
-		virtual int GetIndicesBufferElementsCount() = 0;
+		virtual int GetIndicesBufferElementsCount() const = 0;
         /// \brief The actual (variable) number of elements required to draw the whole shape
-        virtual int GetIndicesBufferActualElementsCount()
+        virtual int GetIndicesBufferActualElementsCount() const
         { return GetIndicesBufferElementsCount(); } // default behavior, to be overriden
         
         //int GetColoursBufferElementsCount() { return 1 * GetVerticesBufferElementsCount(); }
@@ -192,9 +192,9 @@ namespace Miam
         // - - - Following functions should not be overriden. Arrays' sizes are always proportionnal
         // to the number of contained elements !
     
-        int GetVerticesBufferSize() {return 3 * GetVerticesBufferElementsCount(); } // x, y, z float coords
-        int GetIndicesBufferSize() {return GetIndicesBufferElementsCount(); } // 1 index is a 1D coordinate
-        int GetColoursBufferSize() {return 4 * GetVerticesBufferElementsCount(); } // ARGB float coords for each vertex
+        int GetVerticesBufferSize() const {return 3 * GetVerticesBufferElementsCount(); } // x, y, z float coords
+        int GetIndicesBufferSize() const {return GetIndicesBufferElementsCount(); } // 1 index is a 1D coordinate
+        int GetColoursBufferSize() const {return 4 * GetVerticesBufferElementsCount(); } // ARGB float coords for each vertex
         
         
         virtual void setZoffset(float newOffset) = 0;

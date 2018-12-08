@@ -459,23 +459,15 @@ void DrawableArea::SetAlpha(float newAlpha)
 {
 	fillOpacity = newAlpha;
     
-    // =================== à optimiser =====================
-    // =================== à optimiser =====================
-    // =================== à optimiser =====================
-    // =================== à optimiser =====================
-    // =================== à optimiser =====================
-    // =================== à optimiser =====================
+    // =================== à optimiser ? =====================
+    // =================== à optimiser ? =====================
     // car cette fonction sera appelée extrêment souvent.... Inutile de recalculer tout le VBO
     // recalculer les indices de couleurs (même si on les calcule tous) suffira largement
 #ifdef __MIEM_VBO
     RefreshOpenGLBuffers();
 #endif
-    // =================== à optimiser =====================
-    // =================== à optimiser =====================
-    // =================== à optimiser =====================
-    // =================== à optimiser =====================
-    // =================== à optimiser =====================
-    // =================== à optimiser =====================
+    // =================== à optimiser ? =====================
+    // =================== à optimiser ? =====================
 }
 
 float DrawableArea::GetAlpha() const

@@ -91,19 +91,19 @@ void EditableArea::computeManipulationLineBuffer(float Ox, float Oy, float Mx, f
             // 0 - up_left
             g_vertex_dotted_line[i * 3 * 4 + 0] = Ox + i * 2 * height * cosa - (width / 2.0f) * sina;
             g_vertex_dotted_line[i * 3 * 4 + 1] = Oy + i * 2 * height * sina + (width / 2.0f) * cosa;
-            g_vertex_dotted_line[i * 3 * 4 + 2] = MIEM_EDITION_ELEMENTS_Z;
+            g_vertex_dotted_line[i * 3 * 4 + 2] = 0.0f;
             // 1 - down_left
             g_vertex_dotted_line[i * 3 * 4 + 3] = Ox + i * 2 * height * cosa + (width / 2.0f) * sina;
             g_vertex_dotted_line[i * 3 * 4 + 4] = Oy + i * 2 * height * sina - (width / 2.0f) * cosa;
-            g_vertex_dotted_line[i * 3 * 4 + 5] = MIEM_EDITION_ELEMENTS_Z;
+            g_vertex_dotted_line[i * 3 * 4 + 5] = 0.0f;
             // 2 - up_right
             g_vertex_dotted_line[i * 3 * 4 + 6] = Ox + (2 * i + 1)  * height * cosa - (width / 2.0f) * sina;
             g_vertex_dotted_line[i * 3 * 4 + 7] = Oy + (2 * i + 1) * height * sina + (width / 2.0f) * cosa;
-            g_vertex_dotted_line[i * 3 * 4 + 8] = MIEM_EDITION_ELEMENTS_Z;
+            g_vertex_dotted_line[i * 3 * 4 + 8] = 0.0f;
             // 3 - down_right
             g_vertex_dotted_line[i * 3 * 4 + 9] = Ox + (2 * i + 1) * height * cosa + (width / 2.0f) * sina;
             g_vertex_dotted_line[i * 3 * 4 + 10] = Oy + (2 * i + 1) * height * sina - (width / 2.0f) * cosa;
-            g_vertex_dotted_line[i * 3 * 4 + 11] = MIEM_EDITION_ELEMENTS_Z;
+            g_vertex_dotted_line[i * 3 * 4 + 11] = 0.0f;
             
             g_indices_dotted_line[i * 6 + 0] = i * 4 + 0;
             g_indices_dotted_line[i * 6 + 1] = i * 4 + 1;
@@ -151,101 +151,73 @@ void EditableArea::computeSmallDiskBuffers()
         // next++ or first point
         g_circle_indices[i * 3 + 2] = (i + 2) > numPointsSmallCircle ? 1 : (i + 2);
     }
-    /// COULEUR A REPRENDRE PLUS TARD
-    /// COULEUR A REPRENDRE PLUS TARD
-    /// COULEUR A REPRENDRE PLUS TARD
-    /// COULEUR A REPRENDRE PLUS TARD
-    /// couleur
-    // points
-    /*
-    int decalage = InteractivePolygon::GetVerticesBufferElementsCount();
-    for (int i = 0; i < (numPointsPolygon * numVerticesCircle); ++i)
-    {
-        coulours_buffer[decalage + 4 * i + 0] = editingElementsColour.getRed() / 255.0f;
-        coulours_buffer[decalage + 4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
-        coulours_buffer[decalage + 4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
-        coulours_buffer[decalage + 4 * i + 3] = GetAlpha();
-    }
-    // manipulationLine
-    decalage += 4 * (numPointsPolygon * numVerticesCircle);
-    for (int i = 0; i < dottedLineVertexesCount; ++i)
-    {
-        coulours_buffer[decalage + 4 * i + 0] = editingElementsColour.getRed() / 255.0f;
-        coulours_buffer[decalage + 4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
-        coulours_buffer[decalage + 4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
-        coulours_buffer[decalage + 4 * i + 3] = GetAlpha();
-    }
-    // manipulationPoint
-    decalage += 4 * dottedLineVertexesCount;
-    for (int i = 0; i < numVerticesRing; ++i)
-    {
-        coulours_buffer[decalage + 4 * i + 0] = editingElementsColour.getRed() / 255.0f;
-        coulours_buffer[decalage + 4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
-        coulours_buffer[decalage + 4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
-        coulours_buffer[decalage + 4 * i + 3] = GetAlpha();
-    }
-    */
-    /// COULEUR A REPRENDRE PLUS TARD
-    /// COULEUR A REPRENDRE PLUS TARD
-    /// COULEUR A REPRENDRE PLUS TARD
-    /// COULEUR A REPRENDRE PLUS TARD
 }
 
 void EditableArea::refreshOpenGLSubBuffers(int vertexBufElmtOffset, int indexBufElmtOffset)
 {
-    if (!isActive)
+    if (!isActive || enableTranslationOnly)
     {
         // inutile de remplir tout ça de zéros... On n'ira juste pas dessiner tous ces éléments
         actualVerticesBufferElementsCount = vertexBufElmtOffset;
         actualIndicesBufferElementsCount = indexBufElmtOffset;
-        // MAIS ON GARDE QUAND MEME LE REMPLISSAGE POUR L'INSTANT
-         for (int i = 0; i < getEditableAreaIndexesCount(); ++i)
+        
+        // Remplissage toujours ici mais inutile (si besoin pour debug par exemple...)
+        /*for (int i = 0; i < getEditableAreaIndexesCount(); ++i)
              getIndicesBuffer()[indexBufElmtOffset + i] = 0;
+         */
     }
     
     // We draw additionnal elements only if the polygon is active
     else
     {
+        const float Zoffset = getZoffset() + MIEM_EDITION_ELEMENTS_Z;
+        
+        // buffers accessible via virtual function calls only
+        Vector<GLfloat>& vertexBuffer = getVerticesBuffer();
+        Vector<GLfloat>& colourBuffer = getColoursBuffer();
+        Vector<GLuint>& indexBuffer = getIndicesBuffer();
+        
         /// ---------------- manipulationLine + manipulationPoint -----------------------
         const int manipLineVertexBufElmtOffset = vertexBufElmtOffset;
         const int manipLineIndexBufElmtOffset = indexBufElmtOffset;
         
-        /// - - - - points - - - -
-        
-         // Manipulation LINE
+        // - - - - points - - - -
+        // Manipulation LINE
         computeManipulationLineBuffer((float)getCenterInPixels().get<0>(), // does all translations required
                                       (float)getCenterInPixels().get<1>(),
                                       (float)bmanipulationPointInPixels.get<0>(),
                                       (float)bmanipulationPointInPixels.get<1>(),
                                       4.0f, 4.0f);
-        
-        for (int ii = 0; ii < 3 * dottedLineVertexesCount; ++ii)
-            // no need to translate
-            getVerticesBuffer()[(3 * manipLineVertexBufElmtOffset) + ii] = g_vertex_dotted_line[ii];
+        for (int i = 0; i < dottedLineVertexesCount; ++i)
+        {
+            // no need to translate x or y
+            vertexBuffer[3 * (manipLineVertexBufElmtOffset + i) + 0] = g_vertex_dotted_line[3 * i + 0];
+            vertexBuffer[3 * (manipLineVertexBufElmtOffset + i) + 1] = g_vertex_dotted_line[3 * i + 1];
+            vertexBuffer[3 * (manipLineVertexBufElmtOffset + i) + 2] = Zoffset;
+        }
         
         // Offset for the ring (which is the next thing to fill)
         const int manipRingVertexBufElmtOffset = manipLineVertexBufElmtOffset + dottedLineVertexesCount;
         // Manipulation RING (handle)
         float Xoffset = (float)bmanipulationPointInPixels.get<0>();
         float Yoffset = (float)bmanipulationPointInPixels.get<1>();
-        float Zoffset = getZoffset() + MIEM_EDITION_ELEMENTS_Z;
         for (int j = 0; j < numVerticesRing; ++j)
         {
-            getVerticesBuffer()[3 * (manipRingVertexBufElmtOffset + j) + 0] = Xoffset + getRingVertexBuffer()[j*3 + 0];
-            getVerticesBuffer()[3 * (manipRingVertexBufElmtOffset + j) + 1] = Yoffset + getRingVertexBuffer()[j*3 + 1];
-            getVerticesBuffer()[3 * (manipRingVertexBufElmtOffset + j) + 2] = Zoffset + getRingVertexBuffer()[j*3 + 2];
+            vertexBuffer[3 * (manipRingVertexBufElmtOffset + j) + 0] = Xoffset + getRingVertexBuffer()[j*3 + 0];
+            vertexBuffer[3 * (manipRingVertexBufElmtOffset + j) + 1] = Yoffset + getRingVertexBuffer()[j*3 + 1];
+            vertexBuffer[3 * (manipRingVertexBufElmtOffset + j) + 2] = Zoffset;
         }
 
         
         // - - - - indexes - - - -
         // Manipulation LINE
         for (int i = 0; i < dottedLineIndicesCount; ++i)
-            getIndicesBuffer()[manipLineIndexBufElmtOffset + i] = manipLineVertexBufElmtOffset + g_indices_dotted_line[i];
+            indexBuffer[manipLineIndexBufElmtOffset + i] = manipLineVertexBufElmtOffset + g_indices_dotted_line[i];
         // Offset for the ring (which is the next thing to fill)
         const int manipRingIndexBufElmtOffset = manipLineIndexBufElmtOffset + dottedLineIndicesCount;
         // Manipulation RING (handle)
         for (int jj = 0; jj < getRingIndexBuffer().size(); ++jj)
-            getIndicesBuffer()[manipRingIndexBufElmtOffset + jj] = manipRingVertexBufElmtOffset + getRingIndexBuffer()[jj];
+            indexBuffer[manipRingIndexBufElmtOffset + jj] = manipRingVertexBufElmtOffset + getRingIndexBuffer()[jj];
         
         
         
@@ -259,22 +231,23 @@ void EditableArea::refreshOpenGLSubBuffers(int vertexBufElmtOffset, int indexBuf
         {
             float Xoffset = (float)getContourPointsInPixels()[i].get<0>();
             float Yoffset = (float)getContourPointsInPixels()[i].get<1>();
-            float Zoffset = getZoffset() + MIEM_EDITION_ELEMENTS_Z;
             for (int j = 0; j < numVerticesSmallCircle; ++j)
             {
-                getVerticesBuffer()[3 * (disksVertexBufElmtOffset + i * numVerticesSmallCircle + j) + 0]
+                vertexBuffer[3 * (disksVertexBufElmtOffset + i * numVerticesSmallCircle + j) + 0]
                 = Xoffset + g_vertex_circle[j*3 + 0];
-                getVerticesBuffer()[3 * (disksVertexBufElmtOffset + i * numVerticesSmallCircle + j) + 1]
+                vertexBuffer[3 * (disksVertexBufElmtOffset + i * numVerticesSmallCircle + j) + 1]
                 = Yoffset + g_vertex_circle[j*3 + 1];
-                getVerticesBuffer()[3 * (disksVertexBufElmtOffset + i * numVerticesSmallCircle + j) + 2]
-                = Zoffset + g_vertex_circle[j*3 + 2];
+                vertexBuffer[3 * (disksVertexBufElmtOffset + i * numVerticesSmallCircle + j) + 2]
+                = Zoffset;
             }
         }
         // filling of the remaining space with zeroes
-        // UNNECESSARY AFTER OPTIMIZATION of "actual indices count"
+        // Unnecessary after optimization of "actual indices count"
+        /*
         for (int i = actualContourPointsCount; i < numPointsPolygon; ++i)
             for (int jj = 0 ; jj < (3*numVerticesSmallCircle) ; ++jj)
                 getVerticesBuffer()[3 * (disksVertexBufElmtOffset + i * numVerticesSmallCircle) + jj] = 0.0f;
+         */
         
         
         // - - - - indexes - - - -
@@ -283,12 +256,12 @@ void EditableArea::refreshOpenGLSubBuffers(int vertexBufElmtOffset, int indexBuf
         {
             // on aura autant de triangles que de points
             for (int jj = 0; jj < numIndicesSmallCircle; ++jj)
-                getIndicesBuffer()[disksIndexBufElmtOffset + i * numIndicesSmallCircle + jj] = disksVertexBufElmtOffset + g_circle_indices[jj];
+                indexBuffer[disksIndexBufElmtOffset + i * numIndicesSmallCircle + jj] = disksVertexBufElmtOffset + g_circle_indices[jj];
         }
         // remaining indices to zero
         for (int i = actualContourPointsCount; i < numPointsPolygon; ++i)
             for (int jj = 0; jj < numIndicesSmallCircle; ++jj)
-                getIndicesBuffer()[disksIndexBufElmtOffset + i * numIndicesSmallCircle + jj] = 0;
+                indexBuffer[disksIndexBufElmtOffset + i * numIndicesSmallCircle + jj] = 0;
         
         
         
@@ -302,10 +275,10 @@ void EditableArea::refreshOpenGLSubBuffers(int vertexBufElmtOffset, int indexBuf
         // COULEUR TEMP - A FAIRE UNIQUEMENT 1 FOIS AU DEPART ET PLUS JAMAIS APRES
         for (int i=vertexBufElmtOffset ; i<GetVerticesBufferElementsCount() ; i++)
         {
-            getColoursBuffer()[4 * i + 0] = editingElementsColour.getRed() / 255.0f;
-            getColoursBuffer()[4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
-            getColoursBuffer()[4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
-            getColoursBuffer()[4 * i + 3] = MIEM_EDITION_ELEMENTS_ALPHA;
+            colourBuffer[4 * i + 0] = editingElementsColour.getRed() / 255.0f;
+            colourBuffer[4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
+            colourBuffer[4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
+            colourBuffer[4 * i + 3] = MIEM_EDITION_ELEMENTS_ALPHA;
         }
     }
 }

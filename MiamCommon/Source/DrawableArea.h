@@ -116,10 +116,10 @@ namespace Miam
         
         public :
         // ----- VBO sizes and elements' counts -----
-        virtual int GetVerticesBufferElementsCount() override
+        virtual int GetVerticesBufferElementsCount() const override
         { return numVerticesRing; } // only the central donut is common to any DrawableArea
         
-        virtual int GetIndicesBufferElementsCount() override
+        virtual int GetIndicesBufferElementsCount() const override
         { return  3 * numVerticesRing; } // equal number of vertices and triangles for the central ring
       
 
