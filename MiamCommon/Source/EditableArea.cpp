@@ -41,13 +41,15 @@ EditableArea::~EditableArea()
 
 void EditableArea::SetActive(bool activate)
 {
-    isActive = activate;
-    
-    if (isActive)
-        SetOpacityMode(OpacityMode::High);
-    else
-        SetOpacityMode(OpacityMode::Mid);
-    
+    if (activate != isActive)
+    {
+        isActive = activate;
+        
+        if (isActive)
+            SetOpacityMode(OpacityMode::High);
+        else
+            SetOpacityMode(OpacityMode::Mid);
+    }
 }
 
 
@@ -291,8 +293,10 @@ void EditableArea::refreshOpenGLSubBuffers(int vertexBufElmtOffset, int indexBuf
         
         
         // - - - - Definition of the actual indices count - - - -
-        actualVerticesBufferElementsCount = disksIndexBufElmtOffset + actualContourPointsCount * numVerticesSmallCircle;
-        actualIndicesBufferElementsCount = disksIndexBufElmtOffset + actualContourPointsCount * numIndicesSmallCircle;
+        actualVerticesBufferElementsCount = disksVertexBufElmtOffset // début des disques
+                    + actualContourPointsCount * numVerticesSmallCircle; // taille des disques en VBO
+        actualIndicesBufferElementsCount = disksIndexBufElmtOffset
+                    + actualContourPointsCount * numIndicesSmallCircle; // idem
         
         
         // COULEUR TEMP - A FAIRE UNIQUEMENT 1 FOIS AU DEPART ET PLUS JAMAIS APRES
@@ -301,7 +305,7 @@ void EditableArea::refreshOpenGLSubBuffers(int vertexBufElmtOffset, int indexBuf
             getColoursBuffer()[4 * i + 0] = editingElementsColour.getRed() / 255.0f;
             getColoursBuffer()[4 * i + 1] = editingElementsColour.getGreen() / 255.0f;
             getColoursBuffer()[4 * i + 2] = editingElementsColour.getBlue() / 255.0f;
-            getColoursBuffer()[4 * i + 3] = GetAlpha();
+            getColoursBuffer()[4 * i + 3] = MIEM_EDITION_ELEMENTS_ALPHA;
         }
     }
 }

@@ -24,6 +24,7 @@
 
 
 #define MIEM_EDITION_ELEMENTS_Z         (-0.2f)
+#define MIEM_EDITION_ELEMENTS_ALPHA     (1.0f)
 
 
 namespace Miam

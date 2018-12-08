@@ -212,8 +212,15 @@ void DrawableEllipse::CanvasResized(SceneCanvasComponent* _parentCanvas)
 void DrawableEllipse::RefreshOpenGLBuffers()
 {
 	DrawableArea::RefreshOpenGLBuffers();
+    // POURQUOI LES POLYGONES n'AVAIENT PAS BESOIN DE CA ???
+    // POURQUOI LES POLYGONES n'AVAIENT PAS BESOIN DE CA ???
+    // POURQUOI LES POLYGONES n'AVAIENT PAS BESOIN DE CA ???
 	int aInPixels = (int)(a * (double)parentCanvas->getWidth() * xScale/2.0);
 	int bInPixels = (int)(b * (double)parentCanvas->getWidth() * xScale/2.0);
+    // POURQUOI LES POLYGONES n'AVAIENT PAS BESOIN DE CA ???
+    // POURQUOI LES POLYGONES n'AVAIENT PAS BESOIN DE CA ???
+    // POURQUOI LES POLYGONES n'AVAIENT PAS BESOIN DE CA ???
+    // POURQUOI LES POLYGONES n'AVAIENT PAS BESOIN DE CA ???
 
 	// forme
 	int decalage = DrawableArea::GetVerticesBufferElementsCount();

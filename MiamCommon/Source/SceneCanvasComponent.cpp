@@ -845,12 +845,17 @@ void SceneCanvasComponent::AddShapeToBuffers(std::shared_ptr<IDrawableArea> area
     
 	if (area->isVisible())
 	{
+#ifdef __MIAM_DEBUG
+        if (area->GetOpacityMode() == OpacityMode::High)
+            bool inutile = true; // pour détecter le bug sur la sélection des Editable...
+#endif
         // Vérification de l'optimisation - A IMPLEMENTER ICI, AIRE PAR AIRE
         //std::cout << "[Rendu OpenGL] " << area->GetVerticesBufferActualElementsCount() << " verts et " << area->GetIndicesBufferActualElementsCount() << " indices" << std::endl;
         
 		/// vertices
         const size_t shapeVertexBufferOffset = currentVertexBufferArrayPos;
-        for (size_t i=0 ; i<area->getVerticesBuffer().size() ; i++)
+        const size_t shapeVerticesBufferActualSize = 3 * area->GetVerticesBufferActualElementsCount();
+        for (size_t i=0 ; i < shapeVerticesBufferActualSize ; i++)
         {
             // **************************************************************
             // REMPLACER EN RELEASE PAR UNE COPIE STL ULTRA OPTIMISEE PAR VECTEURS
@@ -860,7 +865,8 @@ void SceneCanvasComponent::AddShapeToBuffers(std::shared_ptr<IDrawableArea> area
             ++currentVertexBufferArrayPos;
         }
         // colours
-        for (size_t i=0 ; i<area->getColoursBuffer().size() ; i++)
+        const size_t shapeColoursBufferActualSize = 4 * area->GetVerticesBufferActualElementsCount();
+        for (size_t i=0 ; i < shapeColoursBufferActualSize ; i++)
         {
             // **************************************************************
             // REMPLACER EN RELEASE PAR UNE COPIE STL ULTRA OPTIMISEE PAR VECTEURS
@@ -871,10 +877,11 @@ void SceneCanvasComponent::AddShapeToBuffers(std::shared_ptr<IDrawableArea> area
 		/// indices
         assert((shapeVertexBufferOffset % 3) == 0); // sinon, on a mis des points non terminés....
         const GLuint shapeVertexBufferElmtOffset = (GLuint) shapeVertexBufferOffset / 3;
-        for (size_t i=0 ; i<area->getIndicesBuffer().size() ; i++)
+        for (size_t i=0 ; i<area->GetIndicesBufferActualElementsCount() ; i++)
         {
             // !!!!! les indices doivent être décalés del'offset de vertex buffer pour cette forme !!
-            sceneIndicesBufferData[currentIndexBufferArrayPos] = area->getIndicesBuffer()[i] + shapeVertexBufferElmtOffset;
+            sceneIndicesBufferData[currentIndexBufferArrayPos] = area->getIndicesBuffer()[i]
+                                                + shapeVertexBufferElmtOffset;
             ++currentIndexBufferArrayPos;
         }
 	}

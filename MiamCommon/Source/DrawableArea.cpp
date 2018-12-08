@@ -489,7 +489,14 @@ float DrawableArea::GetAlpha() const
 
 void DrawableArea::SetOpacityMode(OpacityMode opacityMode_)
 {
-    opacityMode = opacityMode_;
+    if (opacityMode != opacityMode_)
+    {
+        opacityMode = opacityMode_;
+#ifdef __MIEM_VBO
+        if (parentCanvas)
+            RefreshOpenGLBuffers();
+#endif
+    }
 }
 
 // = = = = = = = = = = XML import/export = = = = = = = = = =

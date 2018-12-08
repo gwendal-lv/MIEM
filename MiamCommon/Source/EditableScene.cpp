@@ -397,14 +397,17 @@ std::shared_ptr<GraphicEvent> EditableScene::OnCanvasMouseDown(const MouseEvent&
                     std::shared_ptr<EditableArea> areaToSelect = std::dynamic_pointer_cast<EditableArea>(areas[i]);
 					if (areaToSelect)
 					{
-                        // Ici il faut regarder si on avait déjà un évènement
-                        // parce que ça devient un évènement combiné sélection/déselection
 						auto lastAreaE = SetSelectedArea(areaToSelect);
+                        // Ici il faut regarder si on avait déjà un évènement. Si oui :
+                        // graphicE (event à retourner) devient un combiné sélection/déselection
                         if (auto castTry = std::dynamic_pointer_cast<AreaEvent>(graphicE))
                         {
                             std::shared_ptr<MultiAreaEvent> multiAreaE = std::make_shared<MultiAreaEvent>(areaToSelect, AreaEventType::Selected, shared_from_this());
                             multiAreaE->AddAreaEvent(lastAreaE);
+                            multiAreaE->AddAreaEvent(castTry);
                         }
+                        else // sinon, graphicE est juste l'unique évènment de sélection
+                            graphicE = lastAreaE;
                     }
                     else
                         throw std::runtime_error(std::string("Cannot cast the area that should be selected to a Miam::EditableArea"));
