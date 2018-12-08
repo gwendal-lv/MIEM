@@ -239,32 +239,36 @@ void DrawablePolygon::RefreshOpenGLBuffers()
     initBuffers();
     
 	// - - - surface de la forme - - -
-	const int vertexElmtOffset = DrawableArea::GetVerticesBufferElementsCount();
+    const int baseVertexElmtOffset = DrawableArea::GetVerticesBufferElementsCount();
+    const int actualPointsCount = (int)contourPointsInPixels.outer().size() - 1;
+    
 	float Zoffset = mainZoffset + MIEM_SHAPE_SURFACE_Z;
     // CENTRE AU ZERO du buffer
-	vertices_buffer[3 * vertexElmtOffset + 0] = (float)centerInPixels.get<0>();
-	vertices_buffer[3 * vertexElmtOffset + 1] = (float)centerInPixels.get<1>();
-	vertices_buffer[3 * vertexElmtOffset + 2] = Zoffset;
+	vertices_buffer[3 * baseVertexElmtOffset + 0] = (float)centerInPixels.get<0>();
+	vertices_buffer[3 * baseVertexElmtOffset + 1] = (float)centerInPixels.get<1>();
+	vertices_buffer[3 * baseVertexElmtOffset + 2] = Zoffset;
     // puis les points du contour
-	for (int i = 0; i<(int)contourPointsInPixels.outer().size() - 1; i++)
+	for (int i = 0; i<actualPointsCount; i++)
 	{
         // toujours le +3 pour décaler du centre
-		vertices_buffer[3 * (vertexElmtOffset + 1 + i) + 0] = (float)contourPointsInPixels.outer().at(i).get<0>();
-		vertices_buffer[3 * (vertexElmtOffset + 1 + i) + 1] = (float)contourPointsInPixels.outer().at(i).get<1>();
-		vertices_buffer[3 * (vertexElmtOffset + 1 + i) + 2] = Zoffset;
+		vertices_buffer[3 * (baseVertexElmtOffset + 1 + i) + 0] =
+                                (float)contourPointsInPixels.outer().at(i).get<0>();
+		vertices_buffer[3 * (baseVertexElmtOffset + 1 + i) + 1] =
+                                (float)contourPointsInPixels.outer().at(i).get<1>();
+		vertices_buffer[3 * (baseVertexElmtOffset + 1 + i) + 2] = Zoffset;
 	}
     // puis les points inutiles
-	for (int i = (int)contourPointsInPixels.outer().size(); i < numVerticesPolygon; ++i)
+	for (int i = actualPointsCount; i < numVerticesPolygon; ++i)
     {
         // toujours le +3 pour décaler du centre
-        vertices_buffer[3 * (vertexElmtOffset + 1 + i) + 0] = MIEM_UNVISIBLE_COORDINATE;
-        vertices_buffer[3 * (vertexElmtOffset + 1 + i) + 1] = MIEM_UNVISIBLE_COORDINATE;
-        vertices_buffer[3 * (vertexElmtOffset + 1 + i) + 2] = 0.0f;
+        vertices_buffer[3 * (baseVertexElmtOffset + 1 + i) + 0] = MIEM_UNVISIBLE_COORDINATE;
+        vertices_buffer[3 * (baseVertexElmtOffset + 1 + i) + 1] = MIEM_UNVISIBLE_COORDINATE;
+        vertices_buffer[3 * (baseVertexElmtOffset + 1 + i) + 2] = 0.0f;
     }
 
     
 	// - - - contour de la forme - - -
-    const int contourVertexElmtOffset = vertexElmtOffset + numVerticesPolygon;
+    const int contourVertexElmtOffset = baseVertexElmtOffset + numVerticesPolygon;
     
     // ******************* à ré-écrire proprement **********************
     // ne va pas faire un beau contour, tel quel.... il faut réfléchir un peu à la géométrie
@@ -273,7 +277,7 @@ void DrawablePolygon::RefreshOpenGLBuffers()
     // puis on récupère les points. C'est du calcul 100% CPU donc pour le placement...
     // Mais ok évite du vertex shader
 	float dist = (float)boost::geometry::distance(centerInPixels, contourPointsInPixels.outer().at(0));
-	float newDist = dist + contourWidth*10.0f; // TAILLE CONTOUR EXAGEREEEEEEEEEEE
+    float newDist = dist + contourWidth;
 	float resizeFactor = newDist / dist;
 
 	const float Xoffset = (float)centerInPixels.get<0>();
@@ -281,12 +285,12 @@ void DrawablePolygon::RefreshOpenGLBuffers()
 	Zoffset = mainZoffset + MIEM_SHAPE_CONTOUR_Z;
 
     // actual points
-	for (int i = 0; i < (int)contourPointsInPixels.outer().size() - 1; ++i)
+	for (int i = 0; i < actualPointsCount; ++i)
 	{
         // Point de l'intérieur du contour (recopiés à partir des précédents)
-        vertices_buffer[3 * (contourVertexElmtOffset + i) + 0] = vertices_buffer[3 * (vertexElmtOffset + 1 + i) + 0];
-        vertices_buffer[3 * (contourVertexElmtOffset + i) + 1] = vertices_buffer[3 * (vertexElmtOffset + 1 + i) + 1];
-        vertices_buffer[3 * (contourVertexElmtOffset + i) + 0] = Zoffset;
+        vertices_buffer[3 * (contourVertexElmtOffset + i) + 0] = vertices_buffer[3 * (baseVertexElmtOffset + 1 + i) + 0];
+        vertices_buffer[3 * (contourVertexElmtOffset + i) + 1] = vertices_buffer[3 * (baseVertexElmtOffset + 1 + i) + 1];
+        vertices_buffer[3 * (contourVertexElmtOffset + i) + 2] = Zoffset;
         
         // Nouveau Point : faisant partie de l'extérieur du contour
 		vertices_buffer[3 * (contourVertexElmtOffset + numPointsPolygon + i) + 0] = Xoffset
@@ -296,7 +300,7 @@ void DrawablePolygon::RefreshOpenGLBuffers()
 		vertices_buffer[3 * (contourVertexElmtOffset + numPointsPolygon + i) + 2] = Zoffset;
 	}
     // unused points
-	for (int ii = 3 * ((int)contourPointsInPixels.outer().size() - 1); ii < 3 * numPointsPolygon; ++ii)
+	for (int ii = 3 * actualPointsCount; ii < 3 * numPointsPolygon; ++ii)
     {
 		vertices_buffer[3 * (contourVertexElmtOffset) + ii] = 0.0f; // point intérieur du contour blanc
         vertices_buffer[3 * (contourVertexElmtOffset + numPointsPolygon) + ii] = 0.0f; // point extérieur du contour blanc

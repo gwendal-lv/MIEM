@@ -126,6 +126,7 @@ namespace Miam
         virtual std::vector<bpt>& getContourPointsInPixels() = 0;
         virtual SceneCanvasComponent* getParentCanvas() = 0;
         virtual Vector<GLfloat> & getRingVertexBuffer() = 0;
+        virtual Vector<GLuint> & getRingIndexBuffer() = 0;
         public : // temp ?
         virtual Vector<GLfloat> & getVerticesBuffer() = 0;
         virtual Vector<GLuint> & getIndicesBuffer() = 0;
@@ -173,9 +174,16 @@ namespace Miam
         /// \brief Returns the number of vertices within the buffer. Each  vertex is made of several coordinates.
         /// To get the size of the buffer, please see Miam::DrawableArea::GetVerticesBufferSize()
 		virtual int GetVerticesBufferElementsCount() = 0;
+        virtual int GetVerticesBufferActualElementsCount()
+        { return GetVerticesBufferElementsCount(); } // default behavior, to be overriden
+        
         /// \brief Returns the number of indices within the buffer. For example, 1 triangles requires
         /// a total count of 3 indices. The number of indices should be the same as the size of the buffer.
 		virtual int GetIndicesBufferElementsCount() = 0;
+        /// \brief The actual (variable) number of elements required to draw the whole shape
+        virtual int GetIndicesBufferActualElementsCount()
+        { return GetIndicesBufferElementsCount(); } // default behavior, to be overriden
+        
         //int GetColoursBufferElementsCount() { return 1 * GetVerticesBufferElementsCount(); }
         // deleted for security reasons....  issues with virtual functions !!!
         // Impossible telle qu'écrite comme ça de récupérer le nb de couleur d'une classe mère en particulier

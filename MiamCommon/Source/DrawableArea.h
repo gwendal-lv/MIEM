@@ -107,6 +107,7 @@ namespace Miam
             return parentCanvas;
         }
         virtual Vector<GLfloat> & getRingVertexBuffer() override { return g_vertex_ring; }
+        virtual Vector<GLuint> & getRingIndexBuffer() override { return ringIndices; }
         
         public : // temporaire ???? risque de rester longtemps...
         virtual Vector<GLfloat> & getVerticesBuffer() override { return vertices_buffer; }

@@ -845,6 +845,9 @@ void SceneCanvasComponent::AddShapeToBuffers(std::shared_ptr<IDrawableArea> area
     
 	if (area->isVisible())
 	{
+        // Vérification de l'optimisation - A IMPLEMENTER ICI, AIRE PAR AIRE
+        //std::cout << "[Rendu OpenGL] " << area->GetVerticesBufferActualElementsCount() << " verts et " << area->GetIndicesBufferActualElementsCount() << " indices" << std::endl;
+        
 		/// vertices
         const size_t shapeVertexBufferOffset = currentVertexBufferArrayPos;
         for (size_t i=0 ; i<area->getVerticesBuffer().size() ; i++)
@@ -855,8 +858,6 @@ void SceneCanvasComponent::AddShapeToBuffers(std::shared_ptr<IDrawableArea> area
             // dans area : MIEM vector qui checke en debug les indices
             sceneVertexBufferData[currentVertexBufferArrayPos] = area->getVerticesBuffer()[i];
             ++currentVertexBufferArrayPos;
-            if (i>=63)
-                i=i;
         }
         // colours
         for (size_t i=0 ; i<area->getColoursBuffer().size() ; i++)

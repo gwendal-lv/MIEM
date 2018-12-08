@@ -358,28 +358,30 @@ void DrawableArea::initSurfaceAndContourIndexSubBuffer(int vertexElmtOffset, int
     const int contourIndexElmtOffset = indexElmtOffset + 3 * numPointsPolygon; // on avait "numPointsPolygon" triangles à dessiner au max
     // indices du ring pour dessiner le contour
     const int contourRingVertexElmtOffset = vertexElmtOffset + numVerticesPolygon;
-    const int biggerContourRingVertexElmtOffset = contourIndexElmtOffset + numPointsPolygon;
+    const int biggerContourRingVertexElmtOffset = contourRingVertexElmtOffset + numPointsPolygon;
     for (int i = 0; i < numPointsPolygon; ++i)
     {
         if (i < actualPointsCount)
         {
             // -> Triangle avec un côté en bordure intérieure
-            // 1ier point de contour (tjs dans les bornes) (! point 0 est le centre)
-            indices_buffer[contourIndexElmtOffset + i * 6 + 0] = contourRingVertexElmtOffset + i + 1;
+            // 1ier point de contour intérieur (tjs dans les bornes)
+            indices_buffer[contourIndexElmtOffset + i * 6 + 0] = contourRingVertexElmtOffset + i;
             // 2nd point de contour, qui peut être le dernier ou le premier du contour
-            indices_buffer[contourIndexElmtOffset + i * 6 + 1] = (i + 2) > actualPointsCount ?
-            (contourRingVertexElmtOffset + 1) : (contourRingVertexElmtOffset + i + 2);
-            // pt de contour agrandi (tjs dans les bornes)
+            indices_buffer[contourIndexElmtOffset + i * 6 + 1] = (i + 1) >= actualPointsCount ?
+            (contourRingVertexElmtOffset + 0) : (contourRingVertexElmtOffset + i + 1);
+            // pt de contour extérieur (tjs dans les bornes)
             indices_buffer[contourIndexElmtOffset + i * 6 + 2] = biggerContourRingVertexElmtOffset + i;
             
             // -> Triangle avec un côté en bordure extérieure
             // on repart du 2nd point de contour non-agrandi
-            indices_buffer[contourIndexElmtOffset + i * 6 + 3] = indices_buffer[contourIndexElmtOffset + i * 6 + 1];
+            indices_buffer[contourIndexElmtOffset + i * 6 + 3] =
+                        indices_buffer[contourIndexElmtOffset + i * 6 + 1];
             // pt contour agrandi tjs dans les bornes
-            indices_buffer[contourIndexElmtOffset + i * 6 + 4] = indices_buffer[contourIndexElmtOffset + i * 6 + 2];
+            indices_buffer[contourIndexElmtOffset + i * 6 + 4] =
+                        indices_buffer[contourIndexElmtOffset + i * 6 + 2];
             // pt contour agrandi avec possible dépassement (retour au départ)
             indices_buffer[contourIndexElmtOffset + i * 6 + 5] = (i + 1) >= actualPointsCount ?
-            biggerContourRingVertexElmtOffset : biggerContourRingVertexElmtOffset + i + 1;
+            (biggerContourRingVertexElmtOffset+0) : biggerContourRingVertexElmtOffset + i + 1;
         }
         else
         {

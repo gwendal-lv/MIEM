@@ -23,7 +23,7 @@
 #include "MiemVector.hpp"
 
 
-#define MIEM_EDITION_ELEMENTS_Z         (0.2f)
+#define MIEM_EDITION_ELEMENTS_Z         (-0.2f)
 
 
 namespace Miam
@@ -87,19 +87,30 @@ namespace Miam
         /// \brief Refreshes the sub-part of the GL buffers that concerns only this particular class.
         ///
         /// VBO additionnal data :
-        /// + small disks (circles) on all possible contour points of the shape
         /// + manipulation dotted line
         /// + manipulation ring (= manipulation handle)
+        ///
+        /// at the end, with variable size (for optimized data transfer and GL drawing) :
+        /// + small disks (circles) on all possible contour points of the shape
         ///
         /// \param vertexBufElmtOffset Element (not array) position of the next vertex or colour to put in the buffer
         /// \param vertexBufElmtOffset Element (not array) position of the next index to put in the buffer
         void refreshOpenGLSubBuffers(int vertexBufElmtOffset, int indexBufElmtOffset);
         
+        
         void computeSmallDiskBuffers();
         
-        
+        virtual int GetVerticesBufferActualElementsCount() override
+        { return actualVerticesBufferElementsCount; }
+        virtual int GetIndicesBufferActualElementsCount() override
+        { return actualIndicesBufferElementsCount; }
         
         // =============== COMMON ATTRIBUTES TO ALL EDITABLE AREAS =============
+        
+        // Might contain an optimized value if all geometry is not necessary on screen
+        int actualIndicesBufferElementsCount = 0;
+        // idem
+        int actualVerticesBufferElementsCount = 0;
         
         // - - - - - Constant caracteristic values for VBOs - - - - -
         // might be optimized by using preprocessor defines..... these values will remain constant
