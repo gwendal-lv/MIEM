@@ -355,7 +355,8 @@ void DrawableArea::initSurfaceAndContourIndexSubBuffer(int vertexElmtOffset, int
     indices_buffer[indexElmtOffset + ii] = 0;
 
     // indices pour dessiner le contour
-    const int contourIndexElmtOffset = indexElmtOffset + 3 * numPointsPolygon; // on avait "numPointsPolygon" triangles à dessiner au max
+    // on avait "numPointsPolygon" triangles à dessiner au max
+    const int contourIndexElmtOffset = indexElmtOffset + 3 * numPointsPolygon;
     // indices du ring pour dessiner le contour
     const int contourRingVertexElmtOffset = vertexElmtOffset + numVerticesPolygon;
     const int biggerContourRingVertexElmtOffset = contourRingVertexElmtOffset + numPointsPolygon;
@@ -457,6 +458,24 @@ void DrawableArea::setIsFilled(bool shouldBeFilled)
 void DrawableArea::SetAlpha(float newAlpha)
 {
 	fillOpacity = newAlpha;
+    
+    // =================== à optimiser =====================
+    // =================== à optimiser =====================
+    // =================== à optimiser =====================
+    // =================== à optimiser =====================
+    // =================== à optimiser =====================
+    // =================== à optimiser =====================
+    // car cette fonction sera appelée extrêment souvent.... Inutile de recalculer tout le VBO
+    // recalculer les indices de couleurs (même si on les calcule tous) suffira largement
+#ifdef __MIEM_VBO
+    RefreshOpenGLBuffers();
+#endif
+    // =================== à optimiser =====================
+    // =================== à optimiser =====================
+    // =================== à optimiser =====================
+    // =================== à optimiser =====================
+    // =================== à optimiser =====================
+    // =================== à optimiser =====================
 }
 
 float DrawableArea::GetAlpha() const
@@ -477,7 +496,6 @@ float DrawableArea::GetAlpha() const
             
         case OpacityMode::Independent :
         case OpacityMode::DependingOnExcitement :
-            //std::cout << fillOpacity << std::endl;
             return fillOpacity;
             break;
             

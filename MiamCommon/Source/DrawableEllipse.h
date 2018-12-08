@@ -22,8 +22,9 @@ namespace Miam
         
         private :
         /// \brief Nombre de points définissant la forme pseudo-elliptique dessinée
-        /// par Juce via OpenGL
-        int ellipseVerticesCount = 32;
+        /// par Juce via OpenGL. Désactivé : on utlisera uniquement la référence polygone.
+        //const int ellipsePointsCount = numPointsPolygon;
+        
         
 		protected :
 			bpolygon contourPoints;
@@ -37,9 +38,13 @@ namespace Miam
         // ----- VBO sizes -----
         // on ajoute la surface de la forme + les lignes extérieures
         virtual int GetVerticesBufferElementsCount() override
-        { return DrawableArea::GetVerticesBufferElementsCount() + numVerticesPolygon + numPointsPolygon; }
+        { return DrawableArea::GetVerticesBufferElementsCount()
+            + numVerticesPolygon // car même nombre de points
+            + numVerticesRing; } // contour ~= ring en fait
         virtual int GetIndicesBufferElementsCount() override
-        { return DrawableArea::GetIndicesBufferElementsCount() + (3 * numPointsPolygon + 3 * 2 * numPointsPolygon); }
+        { return DrawableArea::GetIndicesBufferElementsCount()
+            + 3 * numPointsPolygon // surface de l'ellipse (idem polygone)
+            + 3 * numVerticesRing; } // contour
         
         
         
@@ -51,6 +56,8 @@ namespace Miam
 
 		private:
 			void createJucePolygon(int width = 160, int height = 90);
+        /// \brief Inits the sub-parts of the index buffers that will never change.
+        void initSubBuffers();
 
 	public:
 		/// \brief Destructor.
@@ -72,7 +79,6 @@ namespace Miam
 
 		// Display functions
 	public:
-		void setVerticesCount(int newVerticesCount);
 		virtual void Paint(Graphics& g) override;
 		virtual void CanvasResized(SceneCanvasComponent* _parentCanvas) override;
 		virtual void RefreshOpenGLBuffers() override;

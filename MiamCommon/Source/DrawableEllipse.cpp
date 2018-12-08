@@ -39,8 +39,16 @@ DrawableArea(areaTree)
         rotationAngle = 0.0;
     }
     
-    // Actualisation graphique
+    // Actualisations graphiques
     createJucePolygon();
+#ifdef __MIEM_VBO
+    // resize des buffers
+    vertices_buffer.resize(GetVerticesBufferSize());
+    indices_buffer.resize(GetIndicesBufferSize());
+    coulours_buffer.resize(GetColoursBufferSize());
+    
+    initSubBuffers();
+#endif // def __MIEM_VBO
 }
 
 DrawableEllipse::DrawableEllipse(int64_t _Id) :
@@ -63,77 +71,17 @@ DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b,
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>() - (a / 2)*xScale, center.get<1>()));
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() - (b / 2)*yScale));
 
+    
+    // Actualisations graphiques
+    createJucePolygon();
 #ifdef __MIEM_VBO
 	// resize des buffers
     vertices_buffer.resize(GetVerticesBufferSize());
     indices_buffer.resize(GetIndicesBufferSize());
     coulours_buffer.resize(GetColoursBufferSize());
 	
-	// indices pour dessiner la forme
-	int decalage = DrawableArea::GetVerticesBufferElementsCount();
-	for (int i = 0; i < ellipseVerticesCount; ++i)
-	{
-		indices_buffer[3 * decalage + i * 3] = decalage + i + 1;
-		indices_buffer[3 * decalage + i * 3 + 1] = decalage + 0;
-		indices_buffer[3 * decalage + i * 3 + 2] = decalage + i + 2 > decalage + ellipseVerticesCount? decalage + 1 : decalage + i + 2;
-	}
-	for (int i = 3*ellipseVerticesCount; i <3 * numVerticesPolygon; ++i)
-	{
-		indices_buffer[3 * decalage + i] = 0;
-	}
-
-	for (int i = 0; i < ellipseVerticesCount; ++i)
-	{
-		coulours_buffer[4 * decalage + i * 4] = fillColour.getRed() / 255.0f;
-		coulours_buffer[4 * decalage + i * 4 + 1] = fillColour.getGreen() / 255.0f;
-		coulours_buffer[4 * decalage + i * 4 + 2] = fillColour.getBlue() / 255.0f;
-		coulours_buffer[4 * decalage + i * 4 + 3] = GetAlpha();
-	}
-	for (int i = 4 * ellipseVerticesCount; i < 4 * numVerticesPolygon; ++i)
-		coulours_buffer[4 * decalage + i] = 0.0f;
-
-	// indices pour dessiner le contour
-	int shapeBegin = DrawableArea::GetVerticesBufferElementsCount();
-	decalage += numVerticesPolygon;
-	for (int i = 0; i < numPointsPolygon; ++i)
-	{
-		if (i < ellipseVerticesCount)
-		{
-			indices_buffer[3 * decalage + i * 6] = shapeBegin + i + 1;
-			indices_buffer[3 * decalage + i * 6 + 1] = decalage + i;
-            // BUG ICI AVEC LES EXCITATEEEEEEEUUUUUUUUUUURS
-            // BUG ICI AVEC LES EXCITATEEEEEEEUUUUUUUUUUURS
-            // BUG ICI AVEC LES EXCITATEEEEEEEUUUUUUUUUUURS
-            // BUG ICI AVEC LES EXCITATEEEEEEEUUUUUUUUUUURS
-            // BUG ICI AVEC LES EXCITATEEEEEEEUUUUUUUUUUURS
-            // BUG ICI AVEC LES EXCITATEEEEEEEUUUUUUUUUUURS
-            // BUG ICI AVEC LES EXCITATEEEEEEEUUUUUUUUUUURS (out of range de vecteur)
-			indices_buffer[3 * decalage + i * 6 + 3] = decalage + i + 1 >= decalage + ellipseVerticesCount ? decalage : decalage + i + 1;
-			indices_buffer[3 * decalage + i * 6 + 2] = decalage + i + 1 >= decalage + ellipseVerticesCount ? decalage : decalage + i + 1;
-			indices_buffer[3 * decalage + i * 6 + 4] = shapeBegin + i + 1;
-			indices_buffer[3 * decalage + i * 6 + 5] = shapeBegin + i + 2 >= shapeBegin + ellipseVerticesCount + 1 ? shapeBegin + 1 : shapeBegin + i + 2;
-		}
-		else
-		{
-			indices_buffer[3 * decalage + i * 6] = 0;
-			indices_buffer[3 * decalage + i * 6 + 1] = 0;
-			indices_buffer[3 * decalage + i * 6 + 2] = 0;
-			indices_buffer[3 * decalage + i * 6 + 3] = 0;
-			indices_buffer[3 * decalage + i * 6 + 4] = 0;
-			indices_buffer[3 * decalage + i * 6 + 5] = 0;
-		}
-	}
-
-	for (int i = 0; i < numPointsPolygon; ++i)
-	{
-		coulours_buffer[4 * decalage + i * 4] = contourColour.getRed() / 255.0f;
-		coulours_buffer[4 * decalage + i * 4 + 1] = contourColour.getGreen() / 255.0f;
-		coulours_buffer[4 * decalage + i * 4 + 2] = contourColour.getBlue() / 255.0f;
-		coulours_buffer[4 * decalage + i * 4 + 3] = contourColour.getAlpha() / 255.0f;
-	}
+    initSubBuffers();
 #endif // def __MIEM_VBO
-
-	createJucePolygon();
 }
 
 
@@ -153,9 +101,9 @@ void DrawableEllipse::createJucePolygon(int width, int height)
     float bScaled = (float)(b/2.0) * yScale; // demi-axe , (idem)
     contour.startNewSubPath(centerX + aScaled * (float)std::cos(0.0),
                             centerY + bScaled * (float)std::sin(0.0));
-    for (int i = 1; i<ellipseVerticesCount; i++)
+    for (int i = 1; i<numPointsPolygon; i++)
     {
-        double normalizedAngle = (double)(i)/(double)(ellipseVerticesCount);
+        double normalizedAngle = (double)(i)/(double)(numPointsPolygon);
         contour.lineTo(centerX + aScaled * (float)std::cos(2.0 * M_PI * normalizedAngle),
                        centerY + bScaled * (float)std::sin(2.0 * M_PI * normalizedAngle));
     }
@@ -167,14 +115,18 @@ void DrawableEllipse::createJucePolygon(int width, int height)
 	contour.applyTransform(AffineTransform::rotation((float)rotationAngle, (float)center.get<0>() * (float)width, (float)center.get<1>() * (float)height));
 }
 
+void DrawableEllipse::initSubBuffers()
+{
+    // INDEXES will be the same for a polygon or an ellipse...
+    initSurfaceAndContourIndexSubBuffer(DrawableArea::GetVerticesBufferElementsCount(),
+                                        DrawableArea::GetIndicesBufferElementsCount(),
+                                        numPointsPolygon); // all points used
+}
+
+
 DrawableEllipse::~DrawableEllipse()
 {
 	
-}
-
-void DrawableEllipse::setVerticesCount(int /*newVerticesCount*/)
-{
-	ellipseVerticesCount = 32;//newVerticesCount;
 }
 
 
@@ -212,75 +164,87 @@ void DrawableEllipse::CanvasResized(SceneCanvasComponent* _parentCanvas)
 void DrawableEllipse::RefreshOpenGLBuffers()
 {
 	DrawableArea::RefreshOpenGLBuffers();
-    // POURQUOI LES POLYGONES n'AVAIENT PAS BESOIN DE CA ???
-    // POURQUOI LES POLYGONES n'AVAIENT PAS BESOIN DE CA ???
-    // POURQUOI LES POLYGONES n'AVAIENT PAS BESOIN DE CA ???
+    
+    // les polygones eux n'ont pas besoin de ça, mais bon voilà... on laisse pour l'instant...
 	int aInPixels = (int)(a * (double)parentCanvas->getWidth() * xScale/2.0);
 	int bInPixels = (int)(b * (double)parentCanvas->getWidth() * xScale/2.0);
-    // POURQUOI LES POLYGONES n'AVAIENT PAS BESOIN DE CA ???
-    // POURQUOI LES POLYGONES n'AVAIENT PAS BESOIN DE CA ???
-    // POURQUOI LES POLYGONES n'AVAIENT PAS BESOIN DE CA ???
-    // POURQUOI LES POLYGONES n'AVAIENT PAS BESOIN DE CA ???
 
-	// forme
-	int decalage = DrawableArea::GetVerticesBufferElementsCount();
-	float dR = (float)sqrt(2) * contourWidth / 2.0f;
+	// - - - - - Surface de l'ellipse - - - - -
+	const int surfaceVertexBufElmtOffset = DrawableArea::GetVerticesBufferElementsCount();
+    float Zoffset = mainZoffset + MIEM_SHAPE_SURFACE_Z;
+    // vertex du centre
 	const float Cx = (float)centerInPixels.get<0>();
 	const float Cy = (float)centerInPixels.get<1>();
-	float Zoffset = mainZoffset + 0.0f;
-
-	float* verticesPtr = &vertices_buffer[3 * decalage];
-
-	verticesPtr[0] = Cx;
-	verticesPtr[1] = Cy;
-	verticesPtr[2] = 0.0f;
-	verticesPtr += 3;
-	for (int i = 0; i < ellipseVerticesCount; i++)
+	vertices_buffer[3 * surfaceVertexBufElmtOffset + 0] = Cx;
+    vertices_buffer[3 * surfaceVertexBufElmtOffset + 1] = Cy;
+    vertices_buffer[3 * surfaceVertexBufElmtOffset + 2] = Zoffset;
+    // puis tous les points de contour
+	for (int i = 0; i < numPointsPolygon; i++)
 	{
-		double normalizedAngle = (double)(i) / (double)(ellipseVerticesCount);
-		verticesPtr[i * 3] = Cx + (float)aInPixels * (float)std::cos(2.0 * M_PI * normalizedAngle);
-		verticesPtr[i * 3 + 1] = Cy + (float)bInPixels * (float)std::sin(2.0 * M_PI * normalizedAngle);
-		verticesPtr[i * 3 + 2] = Zoffset;
+		const double normalizedAngle = (double)(i) / (double)(numPointsPolygon);
+		vertices_buffer[3 * (surfaceVertexBufElmtOffset + 1 + i) + 0] = Cx
+                    + (float)aInPixels * (float)std::cos(2.0 * M_PI * normalizedAngle);
+		vertices_buffer[3 * (surfaceVertexBufElmtOffset + 1 + i) + 1] = Cy
+                    + (float)bInPixels * (float)std::sin(2.0 * M_PI * normalizedAngle);
+		vertices_buffer[3 * (surfaceVertexBufElmtOffset + 1 + i) + 2] = Zoffset;
 	}
-	for (int i = 3 * decalage + 3 * (ellipseVerticesCount + 1); i< 3 * decalage + 3 * numVerticesPolygon; ++i)
-	{
-		vertices_buffer[i] = 0.0f;
-	}
+    // pas de remplissage... On utilise toute la place dispo dans le buffer
 
-	float A = isFilled? GetAlpha() : 0.0f;
-	float R = fillColour.getRed() / 255.0f;
-	float G = fillColour.getGreen() / 255.0f;
-	float B = fillColour.getBlue() / 255.0f;
-	float *couloursPtr = &coulours_buffer[4 * decalage];
+    // couleurs de la surface (toujours mises à jour)
+	const float A = isFilled? GetAlpha() : 0.0f;
+	const float R = fillColour.getRed() / 255.0f;
+	const float G = fillColour.getGreen() / 255.0f;
+	const float B = fillColour.getBlue() / 255.0f;
 	for (int i = 0; i < numVerticesPolygon; ++i)
 	{
-		couloursPtr[i * 4] = R;
-		couloursPtr[i * 4 + 1] = G;
-		couloursPtr[i * 4 + 2] = B;
-		couloursPtr[i * 4 + 3] = A;
+		coulours_buffer[4 * (surfaceVertexBufElmtOffset + i) + 0] = R;
+		coulours_buffer[4 * (surfaceVertexBufElmtOffset + i) + 1] = G;
+		coulours_buffer[4 * (surfaceVertexBufElmtOffset + i) + 2] = B;
+		coulours_buffer[4 * (surfaceVertexBufElmtOffset + i) + 3] = A;
 	}
 
-	decalage += numVerticesPolygon;
-
-	// contour
-	const float extA = float(aInPixels + dR);
-	const float extB = float(bInPixels + dR);
+	// - - - - - contour de l'ellipse - - - - -
+    const int contourRingVertexElmtOffset = surfaceVertexBufElmtOffset + numVerticesPolygon;
+    const int biggerContourRingVertexElmtOffset = contourRingVertexElmtOffset + numPointsPolygon;
+    // rayon supplémentaire pour l'épaisseur du contour
+    const float dR = contourWidth;
+	const float extA = float(aInPixels) + dR;
+	const float extB = float(bInPixels) + dR;
 	const float Xoffset = (float)centerInPixels.get<0>();
 	const float Yoffset = (float)centerInPixels.get<1>();
-	Zoffset = mainZoffset + 0.1f;
-	float *vertexPtr = &(vertices_buffer[3 * decalage]);
-	for (int i = 0; i < ellipseVerticesCount; i++)
+	Zoffset = mainZoffset + MIEM_SHAPE_CONTOUR_Z;
+	for (int i = 0; i < numPointsPolygon; i++)
 	{
-		double normalizedAngle = (double)(i) / (double)(ellipseVerticesCount);
-		vertexPtr[i * 3] = Xoffset + extA * (float)std::cos(2.0 * M_PI * normalizedAngle);
-		vertexPtr[i * 3 + 1] = Yoffset + extB * (float)std::sin(2.0 * M_PI * normalizedAngle);
-		vertexPtr[i * 3 + 2] = Zoffset;
+        const double normalizedAngle = (double)(i) / (double)(numPointsPolygon);
+        
+        // Contour intérieur : recopié depuis buffer précédent (mais les couleurs seront différentes)
+        vertices_buffer[3 * (contourRingVertexElmtOffset + i) + 0]
+            = vertices_buffer[3 * (surfaceVertexBufElmtOffset + 1 + i) + 0];
+        vertices_buffer[3 * (contourRingVertexElmtOffset + i) + 1]
+            = vertices_buffer[3 * (surfaceVertexBufElmtOffset + 1 + i) + 1];
+        vertices_buffer[3 * (contourRingVertexElmtOffset + i) + 2]
+            = vertices_buffer[3 * (surfaceVertexBufElmtOffset + 1 + i) + 2];
+        
+        // contour extérieur agrandi
+        vertices_buffer[3 * (biggerContourRingVertexElmtOffset + i) + 0] = Xoffset
+                                + extA * (float)std::cos(2.0 * M_PI * normalizedAngle);
+        vertices_buffer[3 * (biggerContourRingVertexElmtOffset + i) + 1] = Yoffset
+                                + extB * (float)std::sin(2.0 * M_PI * normalizedAngle);
+        vertices_buffer[3 * (biggerContourRingVertexElmtOffset + i) + 2] = Zoffset;
 	}
-
-	for (int i = 3 * decalage + 3 * ellipseVerticesCount; i< 3 * decalage + (3 * numPointsPolygon); ++i)
-	{
-		vertexPtr[i] = 0.0f;
-	}
+    
+    // Couleur à mettre à jour également, change très souvent avec les excitateurs (animés)
+    const float Ac = GetAlpha();
+    const float Rc = contourColour.getRed() / 255.0f;
+    const float Gc = contourColour.getGreen() / 255.0f;
+    const float Bc = contourColour.getBlue() / 255.0f;
+    for (int i = 0; i < numVerticesRing; ++i)
+    {
+        coulours_buffer[4 * (contourRingVertexElmtOffset + i) + 0] = Rc;
+        coulours_buffer[4 * (contourRingVertexElmtOffset + i) + 1] = Gc;
+        coulours_buffer[4 * (contourRingVertexElmtOffset + i) + 2] = Bc;
+        coulours_buffer[4 * (contourRingVertexElmtOffset + i) + 3] = Ac;
+    }
 }
 
 void DrawableEllipse::recreateContourPoints(int width, int height)
