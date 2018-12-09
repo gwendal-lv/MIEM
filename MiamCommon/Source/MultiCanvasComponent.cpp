@@ -128,14 +128,14 @@ void MultiCanvasComponent::PrepareUnvisible()
 {
     for (size_t i=0 ; i<multiSceneCanvasComponents.size() ; i++)
     {
-        multiSceneCanvasComponents[i]->GetCanvas()->ReleaseGLResources();
+        multiSceneCanvasComponents[i]->GetCanvas()->ReleaseGLResources_NoVBO();
     }
 }
 void MultiCanvasComponent::PrepareVisible()
 {
     for (size_t i=0 ; i<multiSceneCanvasComponents.size() ; i++)
     {
-        multiSceneCanvasComponents[i]->GetCanvas()->SetupGLResources();
+        multiSceneCanvasComponents[i]->GetCanvas()->SetupGLContext();
     }
 }
 

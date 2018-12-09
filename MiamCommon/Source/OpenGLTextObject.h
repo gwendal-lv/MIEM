@@ -14,25 +14,24 @@
 #include <thread>
 #include "JuceHeader.h"
 
-#include "IFontGLManager.h"
+#include "OpenGLFontManager.h"
 
 namespace Miam {
     
     class OpenGLTextObject
     {
     public:
-        OpenGLTextObject(String path, float _x, float _y, float _characterWidth, float _characterHeight, int _maxSize);
+        OpenGLTextObject(float _x, float _y, float _characterWidth, float _characterHeight, int _maxSize);
         ~OpenGLTextObject();
 
-        static Image LoadImage(String pathOrName);
-        static Image resizeImageToPowerOfTwo(Image m_image);
-        
         void initialiseText(OpenGLContext& context);
-        void drawOneTexturedRectangle(OpenGLContext &context, juce::Matrix3D<float> &model, juce::Matrix3D<float> &testView, juce::Matrix3D<float> &testPerspective, std::u16string stringToDraw[]);
-        void release();
-        void waitForOpenGLResourcesRealeased();
+        /// \brief Releases critical GL resources. Must
+        /// be called from the GL thread, is directly executed.
+        void releaseResourcesSync();
         
-        void SetFontManager(IFontGLManager* _manager)
+        void drawOneTexturedRectangle(OpenGLContext &context, juce::Matrix3D<float> &model, juce::Matrix3D<float> &testView, juce::Matrix3D<float> &testPerspective, std::u16string stringToDraw[]);
+        
+        void SetFontManager(OpenGLFontManager* _manager)
         { fontManager = _manager; }
         
         
@@ -44,6 +43,14 @@ namespace Miam {
         void initialiseAttribute();
         void initialiseShaderProgram(OpenGLContext &context);
 
+        
+        // If we copy-construct the item, the underlying data will not be allocated and copied
+        // https://docs.juce.com/master/classImage.html#a5333c440b8f5637a3c7878e9b8d1ad21
+        //juce::Image* image = nullptr; // image belongs to another manager class
+        // IMAGE à demander directement au manager !!
+        OpenGLFontManager* fontManager = nullptr;
+        
+        
         float textX, textY, characterWidth, characterHeight;
         int maxSize;
 
@@ -62,19 +69,10 @@ namespace Miam {
         // (through thread-safe std:: shared pointers)
         std::unique_ptr<OpenGLShaderProgram::Attribute> positionText, colourText, vertexUV;
         std::unique_ptr<OpenGLShaderProgram::Uniform> textProjectionMatrix, textViewMatrix, textModelMatrix, texture;
-        std::shared_ptr<OpenGLTexture> textTexture;
         
-        // If we copy-construct the item, the underlying data will not be allocated and copied
-        // https://docs.juce.com/master/classImage.html#a5333c440b8f5637a3c7878e9b8d1ad21
-        //juce::Image* image = nullptr; // image belongs to another manager class
-        // IMAGE à demander directement au manager !!
-        IFontGLManager* fontManager = nullptr;
 
         String myTextVertexShader;
         String myTextFragmentShader;
-
-
-        void releaseResourcesSync();
         
 
         std::atomic<bool> needToRelease;

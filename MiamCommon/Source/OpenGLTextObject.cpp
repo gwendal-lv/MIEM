@@ -16,7 +16,7 @@
 using namespace std;
 using namespace Miam;
 
-OpenGLTextObject::OpenGLTextObject(String path, float _x, float _y, float _characterWidth, float _characterHeight, int _maxSize) : 
+OpenGLTextObject::OpenGLTextObject(float _x, float _y, float _characterWidth, float _characterHeight, int _maxSize) : 
 	textX(_x), textY(_y), characterWidth(_characterWidth), characterHeight(_characterHeight), maxSize(_maxSize)
 {
     needToRelease = false;
@@ -41,44 +41,10 @@ OpenGLTextObject::~OpenGLTextObject()
 	delete[] g_UV_buffer_data;
 }
 
-Image OpenGLTextObject::LoadImage(String path)
-{
-    Image returnImage;
-    bool isBinary = false;
-    int resourceId = 0;
-    for (int i = 0; i < BinaryData::namedResourceListSize; ++i)
-    {
-        if (path == BinaryData::namedResourceList[i])
-        {
-            isBinary = true;
-            resourceId = i;
-        }
-    }
-    if (isBinary)
-    {
-        int dataSize = 0;
-        const void * srcData = BinaryData::getNamedResource(BinaryData::namedResourceList[resourceId],
-                                                            dataSize);
-        returnImage = resizeImageToPowerOfTwo(ImageCache::getFromMemory(srcData,dataSize));
-    }
-    else
-        returnImage = resizeImageToPowerOfTwo(ImageFileFormat::loadFrom(File(path)));
-    return returnImage;
-}
-Image OpenGLTextObject::resizeImageToPowerOfTwo(Image m_image)
-{
-    if (!(isPowerOfTwo(m_image.getWidth()) && isPowerOfTwo(m_image.getHeight())))
-        return m_image.rescaled(jmin(1024, nextPowerOfTwo(m_image.getWidth())),
-                                jmin(1024, nextPowerOfTwo(m_image.getHeight())));
-    return m_image;
-}
-
 void OpenGLTextObject::initialiseText(OpenGLContext& context)
 {
 	needToRelease = false;
-	waitForOpenGLResourcesRealeased();
-    
-    textTexture = std::make_shared<OpenGLTexture>();
+    resourcesReleased = false;
 
 	initialiseShaderProgram(context);
 	initialiseBuffer(context);
@@ -105,8 +71,6 @@ void OpenGLTextObject::initialiseAttribute()
 	textViewMatrix = std::make_unique<OpenGLShaderProgram::Uniform>(*textShaderProgram.get(), "viewMatrix");
 	textModelMatrix = std::make_unique<OpenGLShaderProgram::Uniform>(*textShaderProgram.get(), "modelMatrix");
 	texture = std::make_unique<OpenGLShaderProgram::Uniform>(*textShaderProgram.get(), "demoTexture");
-
-	textTexture->loadImage(image);
 
 	if (texture != nullptr)
 		texture->set(0);
@@ -141,10 +105,8 @@ void OpenGLTextObject::initialiseShaderProgram(OpenGLContext &context)
     /// - - - FRAGMENT shader - - -
     myTextFragmentShader =
 #if JUCE_OPENGL_ES
-    //"varying lowp vec4 destinationColour;                           \n" // à quoi ça sert ?? ???!
     "varying lowp vec2 UV;                                          \n"
 #else
-    //"varying vec4 destinationColour;                                \n"
     "varying vec2 UV;                                               \n"
 #endif
     // Texture que l'on suppose en niveau de gris. Blanc = opaque, Noir = transparent
@@ -193,16 +155,12 @@ void OpenGLTextObject::initialiseShaderProgram(OpenGLContext &context)
     
 	textShaderProgram->link();
 
+    // If we don't use() here, OpenGL crashes after...
 	textShaderProgram->use();
 }
 
 void OpenGLTextObject::releaseResourcesSync()
 {
-    textTexture->release();
-    textTexture = nullptr;
-    
-    // accès Juce non thread safe !!!!!! ?????????
-    // maintenant en synchrone, devrait être OK
 	textShaderProgram->release();
     
 	textShaderProgram = nullptr;
@@ -212,17 +170,12 @@ void OpenGLTextObject::releaseResourcesSync()
 	textViewMatrix = nullptr;
 	textModelMatrix = nullptr;
 	texture = nullptr;
-}
-
-void OpenGLTextObject::waitForOpenGLResourcesRealeased()
-{
-	while (! resourcesReleased)
-	{
-        // A FAIRE PROPREMENET AVEC VARIABLE CONDITIONNELLE
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
-	}
+    
+    
+    resourcesReleased = true;
     needToRelease = false;
 }
+
 
 void OpenGLTextObject::drawOneTexturedRectangle(OpenGLContext &context, juce::Matrix3D<float> &model, juce::Matrix3D<float> &testView, juce::Matrix3D<float> &testPerspective, std::u16string stringToDraw[])
 {
@@ -230,16 +183,18 @@ void OpenGLTextObject::drawOneTexturedRectangle(OpenGLContext &context, juce::Ma
     context.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 
-	if (needToRelease)
+	if (resourcesReleased)
 	{
-        DBG("Releasing OpenGLTextObject resources....");
-        releaseResourcesSync();
-        resourcesReleased = true;
+        DBG("[OpenGLTextObject] error : OpenGL render request but resources were released.");
+        assert(false); // alerte au gogole !
 	}
     else
     {
+        // PAS NÉCESSAIRE À CHAQUE FRAME ????
+        // PAS NÉCESSAIRE À CHAQUE FRAME ????
         computeVertices();
-
+        // PAS NÉCESSAIRE À CHAQUE FRAME ????
+        // PAS NÉCESSAIRE À CHAQUE FRAME ????
         int numChar = 0;
         std::u16string::iterator it = stringToDraw[0].begin();
         while (it != stringToDraw[0].end())
@@ -251,23 +206,15 @@ void OpenGLTextObject::drawOneTexturedRectangle(OpenGLContext &context, juce::Ma
         }
         for(int i = numChar; i < maxSize;++i)
             computeUV(i, (char32_t)' ');
-
-        #ifdef __MIAM_DEBUG
-        if (textShaderProgram == nullptr
-            || textModelMatrix == nullptr
-            || textProjectionMatrix == nullptr
-            || textViewMatrix == nullptr
-            || textTexture == nullptr
-            || positionText == nullptr
-            || vertexUV == nullptr)
-            assert(false); // Alerte au gogole exception.... les éléments doivent tous êtes bien là...
-        #endif
         
 		textShaderProgram->use();
+        
+        // Uniforms qui sont liés au shader activé précédemment
 		textModelMatrix->setMatrix4(model.mat, 1, false);
         textProjectionMatrix->setMatrix4(testPerspective.mat, 1, false);
         textViewMatrix->setMatrix4(testView.mat, 1, false);
-        textTexture->bind();
+        
+        fontManager->GetFontTexture()->bind();
     
         context.extensions.glEnableVertexAttribArray(positionText->attributeID);
         context.extensions.glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
@@ -376,9 +323,3 @@ void OpenGLTextObject::UTF16ToCodePoint(std::u16string::iterator &it, char32_t &
 	}
 }
 
-void OpenGLTextObject::release()
-{
-    resourcesReleased = false;
-    
-	needToRelease = true;
-}

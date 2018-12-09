@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    IFontGLManager.h
+    OpenGLFontManager.h
     Created: 9 Dec 2018 8:40:36pm
     Author:  Gwendal Le Vaillant
 
@@ -14,23 +14,35 @@
 
 namespace Miam {
     
-    class IFontGLManager {
+    class OpenGLFontManager {
         
         
         // ======== ATTRIBUTES  (might not finally be a real abtract interface....) ========
         protected :
         
+        private :
         Image fontTextureImage;
+        std::unique_ptr<OpenGLTexture> fontTexture;
         
         
         
         // ======== METHODS  (might not finally be a real abtract interface....) ========
         public :
+        OpenGLFontManager();
         
-        virtual ~IFontGLManager()
-        {}
         
-        virtual Image* GetFontImagePtr() { return &fontTextureImage; }
+        // - - - - - GL Init/Release management - - - - -
+        void InitGLFontResources();
+        void ReleaseGLFontResources();
+        
+        // - - - - - setters and getters - - - - -
+        Image GetFontImage() { return fontTextureImage; }
+        OpenGLTexture* GetFontTexture() { return fontTexture.get(); }
+        
+        
+        // - - - - - Static helper functions - - - - -
+        static Image LoadImage(String pathOrName);
+        static Image resizeImageToPowerOfTwo(Image m_image);
         
         
     };

@@ -26,7 +26,7 @@
 #include "DrawableArea.h"
 #include "OpenGLTextObject.h"
 
-#include "IFontGLManager.h"
+#include "OpenGLFontManager.h"
 
 
 
@@ -43,7 +43,7 @@ namespace Miam {
 /// This component does not have any children UI controls built within the Projucer.
 class SceneCanvasComponent    : public OpenGLRenderer,
                                 public Component,
-                                public IFontGLManager
+                                public OpenGLFontManager
 
 {
 public:
@@ -105,13 +105,11 @@ public:
     std::unique_ptr<OpenGLShaderProgram::Attribute> positionShaderAttribute, colourShaderAttribute;
     
     std::unique_ptr<OpenGLTextObject> openGLLabel;
+    std::unique_ptr<OpenGLTextObject> openGLInfoLabel;
     
     
     std::atomic<bool> releaseResources;
     std::atomic<bool> releaseDone;
-    std::mutex rendering_mutex;
-    
-    std::thread openGLDestructionThread;
     
     std::unique_ptr<OpenGLShaderProgram> shaderProgram;
     std::unique_ptr<OpenGLShaderProgram::Uniform> projectionMatrix, viewMatrix, modelMatrix;
@@ -239,7 +237,7 @@ public:
     /// \brief tests first if buffers are null or not
     void deleteBuffers();
     public :
-	void ReleaseOpengGLResources();
+	void TriggerOpengGLResourcesRelease();
 
     ~SceneCanvasComponent();
     
@@ -263,8 +261,8 @@ public:
 	void DrawCanvasOutline();
     virtual void openGLContextClosing() override;
     
-    void SetupGLResources();
-    void ReleaseGLResources();
+    void SetupGLContext();
+    void ReleaseGLResources_NoVBO();
     
     // - - - - - - - - Actual painting codes - - - - - - - - -
     protected :
@@ -310,7 +308,6 @@ public:
 
 
 	public :
-		void openGLDestructionAfterLastFrame();
 		void waitForOpenGLResourcesReleased();
 	private:
 	void computeManipulationLine(float Ox, float Oy, float Mx, float My, float width, float height);

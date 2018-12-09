@@ -41,27 +41,22 @@ SceneCanvasComponent::SceneCanvasComponent(int numShapesMax, int numPointsMax) :
 
 void SceneCanvasComponent::init(int numShapesMax, int /*numPointsMax*/)
 {
-	releaseDone = false;
+    releaseResources = false;
+	releaseDone = false; // ?? par encore init les resources....
+    
 	EunderTime = 0.0;
 
 	Nshapes = numShapesMax;
     
     // création d'une aire par défaut pour connaître ses tailles de buffer
     // ATTENTION ça ne corrige pas tout : la taille max est référencée par rapport à une EDITABLE AREA
-    auto dummyArea = std::make_shared<EditablePolygon>(0); // IUD = 0
+    auto dummyArea = std::make_shared<EditablePolygon>(0); // UID = 0
 
     numVertexShape = dummyArea->GetVerticesBufferElementsCount();
     shapeVertexBufferSize = dummyArea->GetVerticesBufferSize();
     shapeColorBufferSize = dummyArea->GetVerticesBufferSize();
     shapeIndicesSize = dummyArea->GetIndicesBufferSize();
-
-    /*
-	vertexBufferSize = Nshapes * shapeVertexBufferSize;
-	colorBufferSize = Nshapes * shapeColorBufferSize;
-	indicesSize = Nshapes * shapeIndicesSize;
-     */
-     
-    //deleteBuffers();
+    
     sceneVertexBufferData.resize(Nshapes * shapeVertexBufferSize);
     sceneColourBufferData.resize(Nshapes * shapeColorBufferSize);
 	sceneIndicesBufferData.resize(Nshapes * shapeIndicesSize);
@@ -70,27 +65,6 @@ void SceneCanvasComponent::init(int numShapesMax, int /*numPointsMax*/)
     debugString += std::to_string(sceneIndicesBufferData.size()); debugString += "bytes ; colour: ";
     debugString += std::to_string(sceneColourBufferData.size()); debugString += "bytes.\n";
     DBG(debugString);
-
-    // code qui a l'air de servir à remplir les couleurs non-utiles à des valeurs par défaut....
-    /*
-	for (int i = 0; i < Nshapes; ++i)
-	{
-		for (int j = i * shapeColorBufferSize; j < i* shapeColorBufferSize + 4 * numVerticesPolygon; j += 4)
-		{
-			g_color_buffer_data[j] = 0.5f;
-			g_color_buffer_data[j + 1] = 0.5f;
-			g_color_buffer_data[j + 2] = 0.5f;
-			g_color_buffer_data[j + 3] = 1.0f;
-		}
-		for (int j = i * shapeColorBufferSize + 4 * numVerticesPolygon; j < (i + 1)*shapeColorBufferSize; j += 4)
-		{
-			g_color_buffer_data[j] = 1.0f;
-			g_color_buffer_data[j + 1] = 0.0f;
-			g_color_buffer_data[j + 2] = 0.0f;
-			g_color_buffer_data[j + 3] = 1.0f;
-		}
-	}
-     */
 
     // Initialisation du IBO interne propre à la scène
 	g_canvasOutlineIndex_buffer_data[0] = 0;
@@ -117,9 +91,6 @@ void SceneCanvasComponent::init(int numShapesMax, int /*numPointsMax*/)
 	g_canvasOutlineIndex_buffer_data[21] = 3;
 	g_canvasOutlineIndex_buffer_data[22] = 4;
 	g_canvasOutlineIndex_buffer_data[23] = 0;
-
-	releaseResources = false;
-	openGLLabel = nullptr;
     
     // Grooooosse optimisation (avant d'attacher le contexte)
 #ifdef __MIEM_VBO
@@ -130,20 +101,9 @@ void SceneCanvasComponent::init(int numShapesMax, int /*numPointsMax*/)
 #endif
 }
 
-void SceneCanvasComponent::ReleaseOpengGLResources()
+void SceneCanvasComponent::TriggerOpengGLResourcesRelease()
 {
-	rendering_mutex.lock();
 	releaseResources = true;
-    
-	/*openGLLabel->release();*/
-	shaderProgram = nullptr;
-	projectionMatrix = nullptr;
-	viewMatrix = nullptr;
-	modelMatrix = nullptr;
-	positionShaderAttribute = nullptr;
-	colourShaderAttribute = nullptr;
-	rendering_mutex.unlock();
-	//openGLDestructionThread = std::thread(&SceneCanvasComponent::openGLDestructionAfterLastFrame, this);
 }
 
 void SceneCanvasComponent::waitForOpenGLResourcesReleased()
@@ -160,18 +120,6 @@ void SceneCanvasComponent::waitForOpenGLResourcesReleased()
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
     
-    
-	if (openGLDestructionThread.joinable())
-        openGLDestructionThread.join();
-    else
-    {
-        assert(false); // Gl destruction thread should have been joinable...
-        // Paliative solution !! Really might crash later !
-        std::this_thread::sleep_for(std::chrono::seconds(3)); // large time....
-    }
-    
-    //
-	releaseDone = false; // ????
 #else
     DBG("[VIEW] This function should not be called in non-VBO mode..."); // à vérifier quand même...
     assert(false);
@@ -181,33 +129,7 @@ void SceneCanvasComponent::waitForOpenGLResourcesReleased()
 SceneCanvasComponent::~SceneCanvasComponent()
 {
     openGlContext.detach();
-    
-    deleteBuffers();
-
-    DBG("SceneCanvasComponent : destruction arrive à son terme");
-}
-
-void SceneCanvasComponent::deleteBuffers()
-{
-	return;// not to be used now
-
-    /*
-    if (sceneVertexBufferData != nullptr)
-    {
-        delete[] sceneVertexBufferData;
-        sceneVertexBufferData = nullptr;
-    }
-    if (sceneColourBufferData != nullptr)
-    {
-        delete[] sceneColourBufferData;
-        sceneColourBufferData = nullptr;
-    }
-    if (sceneIndicesBufferData != nullptr)
-    {
-        delete[] sceneIndicesBufferData;
-        sceneIndicesBufferData = nullptr;
-    }
-     */
+    DBG("[SceneCanvasComponent] GL Content detached.");
 }
 
 void SceneCanvasComponent::CompleteInitialization(std::shared_ptr<MultiSceneCanvasInteractor> _canvasManager)
@@ -217,7 +139,7 @@ void SceneCanvasComponent::CompleteInitialization(std::shared_ptr<MultiSceneCanv
     // OpenGL final initialization here
     openGlContext.setRenderer(this);
     
-    SetupGLResources();
+    SetupGLContext();
 }
 
 
@@ -248,9 +170,8 @@ void SceneCanvasComponent::resized()
 
 // - - - - - - - - OpenGL specific - - - - - - - - -
 
-void SceneCanvasComponent::SetupGLResources()
+void SceneCanvasComponent::SetupGLContext()
 {
-    
     openGlContext.attachTo(*this);
     openGlContext.setContinuousRepainting(true);
     isSwapSynced = openGlContext.setSwapInterval(swapInterval);
@@ -262,7 +183,7 @@ void SceneCanvasComponent::SetupGLResources()
     
 }
 
-void SceneCanvasComponent::ReleaseGLResources()
+void SceneCanvasComponent::ReleaseGLResources_NoVBO()
 {
     if (! isVisible())
         return;
@@ -291,7 +212,6 @@ void SceneCanvasComponent::ReleaseGLResources()
 
 void SceneCanvasComponent::newOpenGLContextCreated()
 {
-    //DBG("SceneCanvasComponent : init OpenGL");
 	redrawCanvasOutline = true;
 	numFrame = 0;
 
@@ -301,6 +221,7 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 
 #ifdef __MIEM_VBO
     DBG("[MIEM OpenGL] évènement 'New Context Created'. Création des shaders, buffers, etc.");
+    releaseDone = false;
     
 	shaderProgram = std::make_unique<OpenGLShaderProgram>(openGlContext);
 	shaderProgram->addVertexShader(OpenGLHelpers::translateVertexShaderToV3(myVertexShader));
@@ -397,12 +318,23 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 
     
     // = = = = = loading of shared data for all text objects = = = = =
-    fontTextureImage = OpenGLTextObject::LoadImage("newFontImg_png");
+    InitGLFontResources(); // from OpenGLFontManager mother class
     
+    // - - - - label de display des fps - - - - -
 	if(openGLLabel == nullptr)
-		openGLLabel = std::make_unique<OpenGLTextObject>("newFontImg_png", 20.0f, 60.0f, 20.0f, -35.0f, 12); 
+		openGLLabel = std::make_unique<OpenGLTextObject>(20.0f, 60.0f, 20.0f, -35.0f, 12);
+    // avant init : link avec le gestionnaire de font
+    openGLLabel->SetFontManager(this);
+    // init du text selon le contexte
 	openGLLabel->initialiseText(openGlContext);
-
+    
+    // 2ème label... pour quoi ?
+    if(openGLInfoLabel == nullptr)
+        openGLInfoLabel = std::make_unique<OpenGLTextObject>(20.0f, 90.0f, 20.0f, -35.0f, 12);
+    // avant init : link avec le gestionnaire de font
+    openGLInfoLabel->SetFontManager(this);
+    // init du text selon le contexte
+    openGLInfoLabel->initialiseText(openGlContext);
 	
 
 #endif // __MIEM_VBO
@@ -536,19 +468,20 @@ void SceneCanvasComponent::renderOpenGL()
         {}
     }
     
-    
-	if (releaseResources)
+	if (releaseResources) // dernière frame, qui effectue le release
 	{
-        DBG("[MIEM OpenGL] 'Release resources' débute dans le thread OpenGL");
+        DBG("[MIEM OpenGL] 'Release resources' débute dans le thread OpenGL (dernière frame avec destruction)");
 		openGLDestructionAtLastFrame();
 
-		releaseDone = false;
+		releaseDone = true;
 		releaseResources = false;
-		openGLDestructionThread = std::thread(&SceneCanvasComponent::openGLDestructionAfterLastFrame, this);
 	}
-	else
+    else if (releaseDone) // on ne va pas faire le rendu sans les ressources !
+    {
+        DBG("[SceneCanvasComponent] call to renderOpenGL after VBO/texture/shader resources were released. Render is cancelled.");
+    }
+	else // sinon OK on fait le rendu
 	{
-		rendering_mutex.lock();
 		++numFrame;
 
 		OpenGLHelpers::clear(Colours::black);
@@ -583,15 +516,14 @@ void SceneCanvasComponent::renderOpenGL()
                                                                                    (float)getHeight(),
                                                                                    cameraNearZ, // near
                                                                                    cameraFarZ); // far
-            // Syntaxe de ça ????????
+            // Label "OpenGL"
 			std::u16string testFPS[]{ u"" };
 			Miam::TextUtils::intToU16string(fps, testFPS);
-
 			openGLLabel->drawOneTexturedRectangle(openGlContext, testModel, testView, testProjecxtion, testFPS);
+            // Label d'info
+            std::u16string texteInfo[]{ u"é oui !" };
+            openGLInfoLabel->drawOneTexturedRectangle(openGlContext, testModel, testView, testProjecxtion, texteInfo);
 		}
-        
-        // Fin du rendu...
-		rendering_mutex.unlock();
     }
 #endif // ndef __MIEM_VBO
 
@@ -639,15 +571,23 @@ void SceneCanvasComponent::renderOpenGL()
 void SceneCanvasComponent::openGLDestructionAtLastFrame()
 {
     DBG("[MIEM OpenGL] Destruction sur 'last frame'");
-	openGLLabel->release();
-	std::u16string dummyString[]{ u"" };
-	Matrix3D<float> dummyMatrix(Vector3D<float>(0.0f, 0.0f, 0.0f));
-	openGLLabel->drawOneTexturedRectangle(openGlContext, dummyMatrix, dummyMatrix, dummyMatrix, dummyString/*std::to_string(fps)*/);
     
-    // ?????? lui aussi ? à faire sur chaque texture séparée ???
-	openGLLabel->waitForOpenGLResourcesRealeased();
-    
+    // objets texte avec texture
+	openGLLabel->releaseResourcesSync();
 	openGLLabel = nullptr;
+    openGLInfoLabel->releaseResourcesSync();
+    openGLInfoLabel = nullptr;
+    
+    // vers la fin (objets managés sont partagés...)
+    ReleaseGLFontResources();
+    
+    // propres ressources en dernier
+    shaderProgram = nullptr;
+    projectionMatrix = nullptr;
+    viewMatrix = nullptr;
+    modelMatrix = nullptr;
+    positionShaderAttribute = nullptr;
+    colourShaderAttribute = nullptr;
 }
 
 void SceneCanvasComponent::DrawOnSceneCanevas()
@@ -815,16 +755,7 @@ void SceneCanvasComponent::DrawCanvasOutline()
 void SceneCanvasComponent::openGLContextClosing()
 {
     // Méthode même pas appelée dans Android... D'après la doc Juce au 30 octobre 2017
-    DBG("SceneCanvasComponent : closing OpenGL Context");
-	/*shaderProgram.release();
-	openGLLabel->release();
-	openGLLabel = nullptr;*/
-	
-	//shaderProgram = nullptr;
-	//openGLLabel->release();
-	//delete openGLLabel;
-	//openGLLabel = nullptr;
-	
+    DBG("SceneCanvasComponent : closing OpenGL Context (only informative, doing nothing).");
 }
 
 
@@ -961,17 +892,5 @@ void SceneCanvasComponent::AddShapeToBuffers(std::shared_ptr<IDrawableArea> area
 	}
 }
 
-void SceneCanvasComponent::openGLDestructionAfterLastFrame()
-{
-	// à appeler tant que le context est encore actif afin de pouvoir supprimer correctement les ressources OpenGL
-	
-	shaderProgram = nullptr;
-	viewMatrix = nullptr;
-	projectionMatrix = nullptr;
-	modelMatrix = nullptr;
-	positionShaderAttribute = nullptr;
-	colourShaderAttribute = nullptr;
-	releaseDone = true;
-}
 
 
