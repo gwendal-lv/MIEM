@@ -14,6 +14,7 @@
 //#include FT_FREETYPE_H 
 
 using namespace std;
+using namespace Miam;
 
 OpenGLTextObject::OpenGLTextObject(String path, float _x, float _y, float _characterWidth, float _characterHeight, int _maxSize) : 
 	textX(_x), textY(_y), characterWidth(_characterWidth), characterHeight(_characterHeight), maxSize(_maxSize)
@@ -23,27 +24,8 @@ OpenGLTextObject::OpenGLTextObject(String path, float _x, float _y, float _chara
     
     
     // - - - chargement de l'image de la police de caractères - - -
-	bool isBinary = false;
-	int resourceId = 0;
-	for (int i = 0; i < BinaryData::namedResourceListSize; ++i)
-	{
-		if (path == BinaryData::namedResourceList[i])
-		{
-			isBinary = true;
-			resourceId = i;
-		}
-	}
-	if (isBinary)
-	{
-		int dataSize = 0;
-		const void * srcData = BinaryData::getNamedResource(BinaryData::namedResourceList[resourceId],
-                                                            dataSize);
-		image = resizeImageToPowerOfTwo(ImageCache::getFromMemory(srcData,dataSize));
-	}
-	else
-		image = resizeImageToPowerOfTwo(ImageFileFormat::loadFrom(File(path)));
-
-    
+    //image = LoadImage(path);
+    // maintenant : géré par une classe mère
     
     // - - - calculd des VBO et UV buffers - - -
 	g_vertex_buffer_data = new GLfloat[maxSize * 6 * 3];
@@ -59,12 +41,44 @@ OpenGLTextObject::~OpenGLTextObject()
 	delete[] g_UV_buffer_data;
 }
 
+Image OpenGLTextObject::LoadImage(String path)
+{
+    Image returnImage;
+    bool isBinary = false;
+    int resourceId = 0;
+    for (int i = 0; i < BinaryData::namedResourceListSize; ++i)
+    {
+        if (path == BinaryData::namedResourceList[i])
+        {
+            isBinary = true;
+            resourceId = i;
+        }
+    }
+    if (isBinary)
+    {
+        int dataSize = 0;
+        const void * srcData = BinaryData::getNamedResource(BinaryData::namedResourceList[resourceId],
+                                                            dataSize);
+        returnImage = resizeImageToPowerOfTwo(ImageCache::getFromMemory(srcData,dataSize));
+    }
+    else
+        returnImage = resizeImageToPowerOfTwo(ImageFileFormat::loadFrom(File(path)));
+    return returnImage;
+}
+Image OpenGLTextObject::resizeImageToPowerOfTwo(Image m_image)
+{
+    if (!(isPowerOfTwo(m_image.getWidth()) && isPowerOfTwo(m_image.getHeight())))
+        return m_image.rescaled(jmin(1024, nextPowerOfTwo(m_image.getWidth())),
+                                jmin(1024, nextPowerOfTwo(m_image.getHeight())));
+    return m_image;
+}
+
 void OpenGLTextObject::initialiseText(OpenGLContext& context)
 {
 	needToRelease = false;
 	waitForOpenGLResourcesRealeased();
     
-    textTexture = std::make_unique<OpenGLTexture>();
+    textTexture = std::make_shared<OpenGLTexture>();
 
 	initialiseShaderProgram(context);
 	initialiseBuffer(context);
@@ -172,12 +186,7 @@ void OpenGLTextObject::initialiseShaderProgram(OpenGLContext &context)
     
     // - - - Compiling and registering shaders - - -
 	textShaderProgram = std::make_unique<OpenGLShaderProgram>(context);
-    
-	//textShaderProgram->addVertexShader(OpenGLHelpers::translateVertexShaderToV3(myTextVertexShader));
-    //textShaderProgram->addFragmentShader(OpenGLHelpers::translateFragmentShaderToV3(myTextFragmentShader));
-    // pas besoin de traduction, si ?
-    // Juce dit : ce simple parseur est merdique !!!!!!
-    
+
     // vérifier quand même que ça ne pose pas de soucis....
     textShaderProgram->addVertexShader(myTextVertexShader);
     textShaderProgram->addFragmentShader(myTextFragmentShader);

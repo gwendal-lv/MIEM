@@ -120,8 +120,14 @@ void SceneCanvasComponent::init(int numShapesMax, int /*numPointsMax*/)
 
 	releaseResources = false;
 	openGLLabel = nullptr;
-	openGlContext.setComponentPaintingEnabled(true); // default behavior, lower perfs
-													 // OpenGL final initialization will happen in the COmpleteInitialization method
+    
+    // Grooooosse optimisation (avant d'attacher le contexte)
+#ifdef __MIEM_VBO
+    openGlContext.setComponentPaintingEnabled(false);
+#else
+    openGlContext.setComponentPaintingEnabled(true); // default behavior, lower perfs
+    // OpenGL final initialization will happen in the COmpleteInitialization method
+#endif
 }
 
 void SceneCanvasComponent::ReleaseOpengGLResources()
@@ -244,6 +250,7 @@ void SceneCanvasComponent::resized()
 
 void SceneCanvasComponent::SetupGLResources()
 {
+    
     openGlContext.attachTo(*this);
     openGlContext.setContinuousRepainting(true);
     isSwapSynced = openGlContext.setSwapInterval(swapInterval);
@@ -252,6 +259,7 @@ void SceneCanvasComponent::SetupGLResources()
     else
         DBG("Context attached (does not support synced OpenGL swaps)");
     setVisible(true);
+    
 }
 
 void SceneCanvasComponent::ReleaseGLResources()
@@ -288,15 +296,8 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 	numFrame = 0;
 
 	// Will init the counter
-	//displayFrequencyMeasurer.OnNewFrame();
+	displayFrequencyMeasurer.OnNewFrame();
 
-	//if (releaseResources)
-	//{
-	//	shaderProgram.release();
-	//	shaderProgram = nullptr;
-	//	openGLLabel->release();
-	//	openGLLabel = nullptr;
-	//}
 
 #ifdef __MIEM_VBO
     DBG("[MIEM OpenGL] évènement 'New Context Created'. Création des shaders, buffers, etc.");
@@ -394,6 +395,10 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 
 	computeCanvasOutline();
 
+    
+    // = = = = = loading of shared data for all text objects = = = = =
+    fontTextureImage = OpenGLTextObject::LoadImage("newFontImg_png");
+    
 	if(openGLLabel == nullptr)
 		openGLLabel = std::make_unique<OpenGLTextObject>("newFontImg_png", 20.0f, 60.0f, 20.0f, -35.0f, 12); 
 	openGLLabel->initialiseText(openGlContext);
@@ -414,20 +419,37 @@ void SceneCanvasComponent::renderOpenGL()
     
     
     // - - - - - THIRD Duplication of the drawable objects for thread-safe rendering, - - - - -
-    // Lorsque nécessaire seulement !
+    // Pour garder trace des nouvelles aires pour OpenGL (allocations de ressources)
+    // et des anciennes pour lesquelles il faut libérer des ressources
+    std::vector<std::shared_ptr<IDrawableArea>> areasToGlInit;
+    areasToGlInit.reserve(100); // arbitraire...
+    std::vector<std::shared_ptr<IDrawableArea>> areasToGlRelease;
+    areasToGlRelease.reserve(100);
+    
+    // Lock le + tard possible, lorsque nécessaire seulement !
     manager->LockAsyncDrawableObjects();
     
-    
-    bool areasCountChanged = (manager->GetAsyncDrawableObjects().size() != duplicatedAreas.size());
-    // POUR L'INSTANT ALGO BÊTE
-    // on resize le vecteur : la construction des shared n'est pas grave, leur bloc de contrôle reste
-    // en mémoire finalement (on utilisera reset() )
-    if (areasCountChanged)
+    long areasCountDifference = manager->GetAsyncDrawableObjects().size() - duplicatedAreas.size();
+    // Pour l'instant algo assez bête....
+    // Si décalage d'indice : tout sera à refaire.... mais bon c'est + simple.
+    if (areasCountDifference != 0)
     {
+        // If areas are deleted : we store this information
+        if (areasCountDifference < 0)
+        {
+            for (size_t i = manager->GetAsyncDrawableObjects().size();
+                 i < duplicatedAreas.size();
+                 i++)
+            {
+                areasToGlRelease.push_back(duplicatedAreas[i]);
+            }
+        }
+        
+        // Actual resize. Warning for later : some pointers might point to NULL
         canvasAreasPointersCopies.resize(manager->GetAsyncDrawableObjects().size());
         duplicatedAreas.resize(manager->GetAsyncDrawableObjects().size());
     }
-    // Vérification simple de chaque aire 1 par 1
+    // Vérification simple de chaque aire 1 par 1 après resize.
     // ******************************************************
     // OPTIMISATION POSSIBLE POUR LES VBO, POUR LIMITER LA QUANTITE DE COPIES EFFECTUEES
     // Même si cette optimisation est pour l'instant négligeable par rapport
@@ -442,8 +464,14 @@ void SceneCanvasComponent::renderOpenGL()
         // on fait effectivement la copie d'un nouvel objet
         if (canvasAreasPointersCopies[itIndex] != (*it))
         {
+            // Sauvegarde aire à release (might be nullptr, not initialized by Clone() yet)
+            if (duplicatedAreas[itIndex])
+                areasToGlRelease.push_back(duplicatedAreas[itIndex]);
+            // Changement pour de vrai
             canvasAreasPointersCopies[itIndex] = (*it);
             duplicatedAreas[itIndex] = (*it)->Clone();
+            // Sauvegarde aire à init
+            areasToGlInit.push_back(duplicatedAreas[itIndex]);
         }
         // Double compteur
         itIndex++;
@@ -452,8 +480,8 @@ void SceneCanvasComponent::renderOpenGL()
     manager->UnlockAsyncDrawableObjects();
     
 
-    
-    
+    // DEBUG TEMP
+    //std::cout << areasToGlInit.size() << "init ; " << areasToGlRelease.size() << "release" <<std::endl;
     
     
     
@@ -492,6 +520,23 @@ void SceneCanvasComponent::renderOpenGL()
     
     // =========================== Rendu GPU++ avec VBO ==========================
 #else // if IS def __MIEM_VBO
+    // Management of new/old areas
+    for (auto area : areasToGlRelease)
+    {
+        // GL texture managing
+        if (area->IsNameVisible())
+        {
+            // nothing to do ??
+        }
+    }
+    for (auto area : areasToGlInit)
+    {
+        // GL texture managing
+        if (area->IsNameVisible())
+        {}
+    }
+    
+    
 	if (releaseResources)
 	{
         DBG("[MIEM OpenGL] 'Release resources' débute dans le thread OpenGL");
@@ -552,39 +597,43 @@ void SceneCanvasComponent::renderOpenGL()
 
     
     
-    
-		// Call to a general Graphic update on the whole Presenter module
-		if (!manager->isUpdatePending())
-			manager->triggerAsyncUpdate();
 
-		// Time measures just before swap (or the closer that we can get to the swaps)
-		displayFrequencyMeasurer.OnNewFrame();
+    // Call to a general Graphic update on the whole Presenter module
+    if (!manager->isUpdatePending())
+        manager->triggerAsyncUpdate();
 
-		// Solution brutale...
-		double lastDuration = displayFrequencyMeasurer.GetLastDuration_ms();
-		double underTime = lastDuration > 0.0 ? desiredPeriod_ms - lastDuration : 0.0;
+    // Time measures just before swap (or the closer that we can get to the swaps)
+    displayFrequencyMeasurer.OnNewFrame();
+
+    // Solution brutale...
+    double lastDuration = displayFrequencyMeasurer.GetLastDuration_ms();
+    double underTime = lastDuration > 0.0 ? desiredPeriod_ms - lastDuration : 0.0;
 
 
-		double last = displayFrequencyMeasurer.GetLastDuration_ms();
+    double last = displayFrequencyMeasurer.GetLastDuration_ms();
 #ifdef __MIAM_DEBUG
-		if (last < 0.0)
-        {
-			DBG("probleme lastDuration: " + (String)last);
-            assert(false);
-        }
+    if (last < 0.0)
+    {
+        DBG("probleme lastDuration: " + (String)last);
+        assert(false);
+    }
 #endif
-		EunderTime += underTime;
-		if (numFrame > 100 * 60)
-		{
-			EunderTime = 0.0;
-			numFrame = 0;
-		}
-		if (underTime < 0.0)
-			underTime = 0.0;
-		
-		if (underTime > 0.0)
-			Thread::sleep((int)std::floor(underTime));
-	
+    EunderTime += underTime;
+    if (numFrame > 100 * 60)
+    {
+        EunderTime = 0.0;
+        numFrame = 0;
+    }
+    if (underTime < 0.0)
+        underTime = 0.0;
+    
+// NO FRAMERATE LIMIT FOR NOW
+
+    if (underTime > 0.0)
+    {
+        //Thread::sleep((int)std::floor(underTime));
+    }
+
 }
 
 void SceneCanvasComponent::openGLDestructionAtLastFrame()
@@ -655,7 +704,7 @@ void SceneCanvasComponent::DrawShapes()
 	if (positionShaderAttribute != nullptr && colourShaderAttribute != nullptr)
 	{
 #ifdef __MIAM_DEBUG
-        if ((sceneCanvasFramesCounter++) > 200)
+        if ((sceneCanvasFramesCounter++) > 1000)
         {
             std::cout << "[Draw GL shapes] " << currentVertexBufferArrayPos << " vertex GLfloat ; " << currentColourBufferArrayPos << " colour GLfloat ; " << currentIndexBufferArrayPos << " index GLuint" << std::endl;
             sceneCanvasFramesCounter = 0;

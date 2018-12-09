@@ -26,6 +26,7 @@
 #include "DrawableArea.h"
 #include "OpenGLTextObject.h"
 
+#include "IFontGLManager.h"
 
 
 
@@ -41,7 +42,8 @@ namespace Miam {
 ///
 /// This component does not have any children UI controls built within the Projucer.
 class SceneCanvasComponent    : public OpenGLRenderer,
-                                public Component
+                                public Component,
+                                public IFontGLManager
 
 {
 public:
@@ -103,6 +105,7 @@ public:
     std::unique_ptr<OpenGLShaderProgram::Attribute> positionShaderAttribute, colourShaderAttribute;
     
     std::unique_ptr<OpenGLTextObject> openGLLabel;
+    
     
     std::atomic<bool> releaseResources;
     std::atomic<bool> releaseDone;

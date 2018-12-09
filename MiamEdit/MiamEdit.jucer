@@ -157,6 +157,8 @@
               file="../MiamCommon/Source/MultiSceneCanvasInteractor.h"/>
       </GROUP>
       <GROUP id="{81FB02AB-9CF8-2FEF-77B6-9D5049B0BC47}" name="View">
+        <FILE id="YeQtvI" name="IFontGLManager.h" compile="0" resource="0"
+              file="../MiamCommon/Source/IFontGLManager.h"/>
         <FILE id="MmYhzl" name="newFontImg.png" compile="0" resource="1" file="../MiamCommon/Resources/newFontImg.png"/>
         <FILE id="VvKbFj" name="OpenGLTextObject.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/OpenGLTextObject.cpp"/>
