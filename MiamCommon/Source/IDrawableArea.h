@@ -152,6 +152,7 @@ namespace Miam
 
 		virtual void setVisible(bool shouldBeVisible) = 0;
 		virtual bool isVisible() = 0;
+        virtual bool IsNameVisible() const = 0;
 
         
         // - - - - - Constant caracteristic values for VBOs - - - - -

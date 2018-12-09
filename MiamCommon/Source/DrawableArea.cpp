@@ -69,9 +69,6 @@ void DrawableArea::init()
 
 	areaVisible = true;
     
-    resetImages();
-
-
 #ifdef __MIEM_VBO
     // taille des VBOs
     g_vertex_ring.resize(3 * numVerticesRing);
@@ -82,7 +79,11 @@ void DrawableArea::init()
     coulours_buffer.resize(GetColoursBufferSize());
     
 	ComputeRing();
-#endif // __MIEM_VBO
+    
+#else  // not defined __MIEM_VBO
+    resetImages();
+    
+#endif
 }
 
 
@@ -136,6 +137,10 @@ void DrawableArea::ComputeRing()
 
 void DrawableArea::resetImages()
 {
+#ifdef __MIEM_VBO
+    assert(false); // this function should not be called in VBO mode
+#endif
+    
     // Construction de l'image (fond transparent à l'avenir)
     // On en recréée un 2è, qu'on assigne à la 1ière pour chaque taille...
     // Pour éviter de nombreux problèmes (écrire un constructeur de copie
@@ -166,6 +171,10 @@ void DrawableArea::resetImages()
 
 void DrawableArea::renderCachedNameImages()
 {
+#ifdef __MIEM_VBO
+    assert(false); // Images are not initialized in VBO mode, they can't be rendered.
+#endif
+    
     resetImages();
     for (int integerScale = 1 ; integerScale<=2 ; integerScale++)
     {
@@ -445,7 +454,11 @@ void DrawableArea::SetName(String newName)
     if (name != newName)
     {
         name = newName;
+        // ICI ON DEVRAIT RECONSTRUIRE LES COORDONNEES UV DE LA TEXTURE
+#ifdef __MIEM_VBO
+#else
         renderCachedNameImages(); // au ratio de base (précisé en attribut constant dans la classe)
+#endif
     }
 }
 

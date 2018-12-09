@@ -44,53 +44,20 @@ private:
 	GLuint UVBuffer;
 	GLfloat *g_UV_buffer_data;//[6 * 2];
 
+    
+    // All items concerning textures and images should be initialized only ONCE
+    // at construction by the Juce Message thread.
+    // Then, only the OpenGL thread will access it
+    // (through thread-safe std:: shared pointers)
 	std::unique_ptr<OpenGLShaderProgram::Attribute> positionText, colourText, vertexUV;
 	std::unique_ptr<OpenGLShaderProgram::Uniform> textProjectionMatrix, textViewMatrix, textModelMatrix, texture;
 	std::unique_ptr<OpenGLTexture> textTexture;
+    // If we copy-construct the item, the underlying data will not be allocated and copied
+    // https://docs.juce.com/master/classImage.html#a5333c440b8f5637a3c7878e9b8d1ad21
 	juce::Image image;
 
-	String myTextVertexShader = "attribute vec4 position;\n"
-		"attribute vec2 uvCoord;\n"
-		"\n"
-		"uniform mat4 modelMatrix;\n"
-		"uniform mat4 projectionMatrix;\n"
-		"uniform mat4 viewMatrix;\n"
-		"\n"
-#if JUCE_OPENGL_ES // lowp seems reserved to embedded platforms
-		"varying lowp vec2 UV;\n"
-#else
-		"varying vec2 UV;\n"
-#endif
-		"\n"
-		"void main()\n"
-		"{\n"
-		"\n"
-		"    gl_Position = projectionMatrix * viewMatrix * modelMatrix * position;\n"
-		"    UV = uvCoord;"
-		"}\n";
-
-	String myTextFragmentShader =
-#if JUCE_OPENGL_ES
-		"varying lowp vec4 destinationColour;\n"
-		"varying lowp vec2 UV;\n"
-#else
-		"varying vec4 destinationColour;\n"
-		"varying vec2 UV;\n"
-#endif
-		"\n"
-		"uniform sampler2D demoTexture;\n"
-		"\n"
-		"void main()\n"
-		"{\n"
-#if JUCE_OPENGL_ES
-		"   highp float l = 0.3;\n"
-
-#else
-		"   float l = 0.3;\n"
-
-#endif
-		"    gl_FragColor = texture2D(demoTexture,UV);\n"
-		"}\n";
+    String myTextVertexShader;
+    String myTextFragmentShader;
 
 	Image resizeImageToPowerOfTwo(Image m_image)
 	{
@@ -101,12 +68,11 @@ private:
 		return m_image;
 	}
 
-
-	std::thread destructionThread;
-	void destructionThreadFunc();
+	void releaseResourcesSync();
 	
 
 	std::atomic<bool> needToRelease;
+    std::atomic<bool> resourcesReleased;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OpenGLTextObject)
 };

@@ -76,8 +76,9 @@ namespace Miam
         String name;
         bool isNameVisible;
         // Images bêtement comme ça pour l'instant...
-        Image nameImage;
-        Image nameImage2;
+        Image nameImage; // In VBO-mode : will be default constructed only
+        Image nameImage2; // (null image)
+
         const int nameWidth = 120; // pixels
         const int nameHeight = 15; // pixels
         
@@ -148,7 +149,8 @@ namespace Miam
         virtual OpacityMode GetOpacityMode() const override {return opacityMode;}
 
 		void setVisible(bool shoulBeVisible) override { areaVisible = shoulBeVisible; }
-		bool isVisible() override { return areaVisible; }
+        bool isVisible() override { return areaVisible; }
+        virtual bool IsNameVisible() const override {return isNameVisible;}
         
         /// \brief Sets the name that could be displayed on screen next to the center
         virtual void SetName(String newName) override;

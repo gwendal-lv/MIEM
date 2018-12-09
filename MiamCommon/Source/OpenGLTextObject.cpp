@@ -18,18 +18,11 @@ using namespace std;
 OpenGLTextObject::OpenGLTextObject(String path, float _x, float _y, float _characterWidth, float _characterHeight, int _maxSize) : 
 	textX(_x), textY(_y), characterWidth(_characterWidth), characterHeight(_characterHeight), maxSize(_maxSize)
 {
-	//FT_Library ft;
-	//if (FT_Init_FreeType(&ft))
-	//	DBG("ERROR::FREETYPE: Could not init FreeType Library");
-
-	//FT_Face face;
-	//if (FT_New_Face(ft, "fonts/arial.ttf", 0, &face))
-	//	DBG("ERROR::FREETYPE: Failed to load font");
-
-
-
-	textTexture =  std::make_unique<OpenGLTexture>();
-
+    needToRelease = false;
+    resourcesReleased = true; // default state
+    
+    
+    // - - - chargement de l'image de la police de caractères - - -
 	bool isBinary = false;
 	int resourceId = 0;
 	for (int i = 0; i < BinaryData::namedResourceListSize; ++i)
@@ -40,20 +33,22 @@ OpenGLTextObject::OpenGLTextObject(String path, float _x, float _y, float _chara
 			resourceId = i;
 		}
 	}
-
 	if (isBinary)
 	{
 		int dataSize = 0;
-		const void * srcData = BinaryData::getNamedResource(BinaryData::namedResourceList[resourceId], dataSize);
+		const void * srcData = BinaryData::getNamedResource(BinaryData::namedResourceList[resourceId],
+                                                            dataSize);
 		image = resizeImageToPowerOfTwo(ImageCache::getFromMemory(srcData,dataSize));
 	}
 	else
 		image = resizeImageToPowerOfTwo(ImageFileFormat::loadFrom(File(path)));
 
+    
+    
+    // - - - calculd des VBO et UV buffers - - -
 	g_vertex_buffer_data = new GLfloat[maxSize * 6 * 3];
 	g_UV_buffer_data = new GLfloat[maxSize * 6 * 2];
 	computeVertices();
-	//std::string testString = "                      ";
 	for(int i = 0; i < maxSize; ++i)
 		computeUV(i,' ');
 }
@@ -68,6 +63,9 @@ void OpenGLTextObject::initialiseText(OpenGLContext& context)
 {
 	needToRelease = false;
 	waitForOpenGLResourcesRealeased();
+    
+    textTexture = std::make_unique<OpenGLTexture>();
+
 	initialiseShaderProgram(context);
 	initialiseBuffer(context);
 	initialiseAttribute();
@@ -98,21 +96,106 @@ void OpenGLTextObject::initialiseAttribute()
 
 	if (texture != nullptr)
 		texture->set(0);
+    else
+        assert(false); // cannot draw anything....
 }
 
 void OpenGLTextObject::initialiseShaderProgram(OpenGLContext &context)
 {
+    /// - - - VERTEX shader - - -
+    myTextVertexShader =
+    "attribute vec4 position;                                       \n"
+    "attribute vec2 uvCoord;                                        \n" // envoyé par CPU (peut être adapté)
+    
+    "uniform mat4 modelMatrix;                                      \n"
+    "uniform mat4 projectionMatrix;                                 \n"
+    "uniform mat4 viewMatrix;                                       \n"
+    
+#if JUCE_OPENGL_ES // lowp seems reserved to embedded platforms
+    "varying lowp vec2 UV;                                          \n"
+#else
+    "varying vec2 UV;                                               \n"
+#endif
+    
+    "void main() "
+    "{ "
+    "    gl_Position = projectionMatrix * viewMatrix * modelMatrix * position; "
+    "    UV = uvCoord; "
+    "}                                                              \n";
+    
+    
+    /// - - - FRAGMENT shader - - -
+    myTextFragmentShader =
+#if JUCE_OPENGL_ES
+    //"varying lowp vec4 destinationColour;                           \n" // à quoi ça sert ?? ???!
+    "varying lowp vec2 UV;                                          \n"
+#else
+    //"varying vec4 destinationColour;                                \n"
+    "varying vec2 UV;                                               \n"
+#endif
+    // Texture que l'on suppose en niveau de gris. Blanc = opaque, Noir = transparent
+    "uniform sampler2D demoTexture;                                 \n" // nom à changer...
+    
+    "void main() "
+    "{ "
+    "    vec4 currentFrag = texture2D(demoTexture,UV); " // ordre vec4 : xyzw correspond à RGBA
+    // mais en fait : .rgba utilisables directement.... sucre syntaxique "swizzle"
+    // traitement sur la texture : point gris => BLANC transparent
+    "    if (currentFrag.r < 1.0) "
+    "        currentFrag.a = currentFrag.r; " // valeur d'opacité était dans le niveau de gris
+    "    else " // par sécurité... pour la suite de l'algo
+    "        currentFrag.a = 1.0; " // valeur d'opacité était dans le niveau de gris
+    "    currentFrag.rgb = vec3(1.0, 1.0, 1.0); " // blanc dans tous les cas
+    
+    // Rajout d'une ombre à +0.3% en UV (on se fait plaisir, dans le shader....)
+    "    vec4 shadowFrag = texture2D(demoTexture, UV + vec2(-0.001, 0.003) ); "
+    // traitement différent du précédent : point gris => NOIR transparent
+    "    if (shadowFrag.r < 1.0) "
+    "        shadowFrag.a = shadowFrag.r; "
+    "    else " // sécurité
+    "        shadowFrag.a = 1.0; "
+    "    shadowFrag.rgb = vec3(0.0, 0.0, 0.0); " // noir dans tous les cas
+    
+    // Opérateur de mélange "A over B" https://en.wikipedia.org/wiki/Alpha_compositing
+    // pour mélange de l'ombre dans le current frag (si nécessaire)
+    "    if (currentFrag.a < 1.0) "
+    "    { "
+    "        float blendedAlpha = currentFrag.a + shadowFrag.a * (1.0 - currentFrag.a); "
+    "        currentFrag.rgb = ( currentFrag.a * currentFrag.rgb + shadowFrag.rgb * shadowFrag.a * (1.0-currentFrag.a) ) / blendedAlpha ; "
+    "        currentFrag.a = blendedAlpha; "
+    "    } "
+    
+    // Sinon, sortie du shader
+    "    gl_FragColor = currentFrag; " // gl_FragColor seems deprecated...  https://stackoverflow.com/questions/51459596/using-gl-fragcolor-vs-out-vec4-color
+    "}                                                              \n";
+    
+    
+    // - - - Compiling and registering shaders - - -
 	textShaderProgram = std::make_unique<OpenGLShaderProgram>(context);
-	textShaderProgram->addVertexShader(OpenGLHelpers::translateVertexShaderToV3(myTextVertexShader));
-	textShaderProgram->addFragmentShader(OpenGLHelpers::translateFragmentShaderToV3(myTextFragmentShader));
+    
+	//textShaderProgram->addVertexShader(OpenGLHelpers::translateVertexShaderToV3(myTextVertexShader));
+    //textShaderProgram->addFragmentShader(OpenGLHelpers::translateFragmentShaderToV3(myTextFragmentShader));
+    // pas besoin de traduction, si ?
+    // Juce dit : ce simple parseur est merdique !!!!!!
+    
+    // vérifier quand même que ça ne pose pas de soucis....
+    textShaderProgram->addVertexShader(myTextVertexShader);
+    textShaderProgram->addFragmentShader(myTextFragmentShader);
+    
 	textShaderProgram->link();
 
 	textShaderProgram->use();
 }
 
-void OpenGLTextObject::destructionThreadFunc()
+void OpenGLTextObject::releaseResourcesSync()
 {
+    textTexture->release();
+    textTexture = nullptr;
+    
+    // accès Juce non thread safe !!!!!! ?????????
+    // maintenant en synchrone, devrait être OK
 	textShaderProgram->release();
+    
 	textShaderProgram = nullptr;
 	positionText = nullptr;
 	vertexUV = nullptr;
@@ -124,82 +207,74 @@ void OpenGLTextObject::destructionThreadFunc()
 
 void OpenGLTextObject::waitForOpenGLResourcesRealeased()
 {
-	if (needToRelease)
+	while (! resourcesReleased)
 	{
-		while (!destructionThread.joinable()) {}
-		destructionThread.join();
-		needToRelease = false;
+        // A FAIRE PROPREMENET AVEC VARIABLE CONDITIONNELLE
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
+    needToRelease = false;
 }
 
 void OpenGLTextObject::drawOneTexturedRectangle(OpenGLContext &context, juce::Matrix3D<float> &model, juce::Matrix3D<float> &testView, juce::Matrix3D<float> &testPerspective, std::u16string stringToDraw[])
 {
-	computeVertices();
+    context.extensions.glBindBuffer(GL_ARRAY_BUFFER, 0);
+    context.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
 
 	if (needToRelease)
 	{
-		textTexture->release();
-		DBG("delete texture");
-		DBG("texture deleted");
-		textTexture = nullptr;
-
-
-		
-		destructionThread = std::thread(&OpenGLTextObject::destructionThreadFunc, this);
-		
+        DBG("Releasing OpenGLTextObject resources....");
+        releaseResourcesSync();
+        resourcesReleased = true;
 	}
+    else
+    {
+        computeVertices();
 
-	int numChar = 0;
-	std::u16string::iterator it = stringToDraw[0].begin();
-	while (it != stringToDraw[0].end())
-	{
-		char32_t currentCodePoint = 0x00000000;
-		UTF16ToCodePoint(it, currentCodePoint);
-		computeUV(numChar, currentCodePoint);
-		++numChar;
-	}
-	for(int i = numChar; i < maxSize;++i)
-		computeUV(i, (char32_t)' ');
+        int numChar = 0;
+        std::u16string::iterator it = stringToDraw[0].begin();
+        while (it != stringToDraw[0].end())
+        {
+            char32_t currentCodePoint = 0x00000000;
+            UTF16ToCodePoint(it, currentCodePoint);
+            computeUV(numChar, currentCodePoint);
+            ++numChar;
+        }
+        for(int i = numChar; i < maxSize;++i)
+            computeUV(i, (char32_t)' ');
 
-	
-	context.extensions.glBindBuffer(GL_ARRAY_BUFFER, 0);
-	context.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        #ifdef __MIAM_DEBUG
+        if (textShaderProgram == nullptr
+            || textModelMatrix == nullptr
+            || textProjectionMatrix == nullptr
+            || textViewMatrix == nullptr
+            || textTexture == nullptr
+            || positionText == nullptr
+            || vertexUV == nullptr)
+            assert(false); // Alerte au gogole exception.... les éléments doivent tous êtes bien là...
+        #endif
+        
+		textShaderProgram->use();
+		textModelMatrix->setMatrix4(model.mat, 1, false);
+        textProjectionMatrix->setMatrix4(testPerspective.mat, 1, false);
+        textViewMatrix->setMatrix4(testView.mat, 1, false);
+        textTexture->bind();
+    
+        context.extensions.glEnableVertexAttribArray(positionText->attributeID);
+        context.extensions.glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+        //context.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, maxSize * 6 * 3 * sizeof(GLfloat), g_oneVertex_buffer_data);
+        context.extensions.glVertexAttribPointer(positionText->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
 
-	if (!needToRelease)
-	{
-		if (textShaderProgram != nullptr)
-			textShaderProgram->use();
+        context.extensions.glEnableVertexAttribArray(vertexUV->attributeID);
+        context.extensions.glBindBuffer(GL_ARRAY_BUFFER, UVBuffer); // changer ça!
+        context.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, maxSize * 6 * 2 * sizeof(GLfloat), g_UV_buffer_data);
+        context.extensions.glVertexAttribPointer(vertexUV->attributeID, 2, GL_FLOAT, GL_FALSE, sizeof(float[2]), 0);
 
+        glDrawArrays(GL_TRIANGLES, 0, maxSize * 2 * 3);
 
-		if (textModelMatrix != nullptr)
-			textModelMatrix->setMatrix4(model.mat, 1, false);
-
-		if (textProjectionMatrix != nullptr)
-			textProjectionMatrix->setMatrix4(testPerspective.mat, 1, false);
-
-		if (textViewMatrix != nullptr)
-			textViewMatrix->setMatrix4(testView.mat, 1, false);
-
-		if (textTexture != nullptr)
-			textTexture->bind();
-
-		if (positionText != nullptr && vertexUV != nullptr)
-		{
-			context.extensions.glEnableVertexAttribArray(positionText->attributeID);
-			context.extensions.glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-			//context.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, maxSize * 6 * 3 * sizeof(GLfloat), g_oneVertex_buffer_data);
-			context.extensions.glVertexAttribPointer(positionText->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
-
-			context.extensions.glEnableVertexAttribArray(vertexUV->attributeID);
-			context.extensions.glBindBuffer(GL_ARRAY_BUFFER, UVBuffer); // changer ça!
-			context.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, maxSize * 6 * 2 * sizeof(GLfloat), g_UV_buffer_data);
-			context.extensions.glVertexAttribPointer(vertexUV->attributeID, 2, GL_FLOAT, GL_FALSE, sizeof(float[2]), 0);
-
-			glDrawArrays(GL_TRIANGLES, 0, maxSize * 2 * 3);
-
-			context.extensions.glDisableVertexAttribArray(positionText->attributeID);
-			context.extensions.glDisableVertexAttribArray(vertexUV->attributeID);
-		}
+        context.extensions.glDisableVertexAttribArray(positionText->attributeID);
+        context.extensions.glDisableVertexAttribArray(vertexUV->attributeID);
+    
 	}
 }
 
@@ -294,13 +369,7 @@ void OpenGLTextObject::UTF16ToCodePoint(std::u16string::iterator &it, char32_t &
 
 void OpenGLTextObject::release()
 {
-	// rendre inaccessible par le thread JUCE les differents objets
-	//textTexture = nullptr;
-
-
-
-
+    resourcesReleased = false;
+    
 	needToRelease = true;
-
-
 }

@@ -128,6 +128,7 @@ void SceneCanvasComponent::ReleaseOpengGLResources()
 {
 	rendering_mutex.lock();
 	releaseResources = true;
+    
 	/*openGLLabel->release();*/
 	shaderProgram = nullptr;
 	projectionMatrix = nullptr;
@@ -137,17 +138,34 @@ void SceneCanvasComponent::ReleaseOpengGLResources()
 	colourShaderAttribute = nullptr;
 	rendering_mutex.unlock();
 	//openGLDestructionThread = std::thread(&SceneCanvasComponent::openGLDestructionAfterLastFrame, this);
-
-		
 }
 
-void SceneCanvasComponent::waitForOpenGLResourcesRealeased()
+void SceneCanvasComponent::waitForOpenGLResourcesReleased()
 {
 #ifdef __MIEM_VBO
-	while (!releaseDone) {}
-	while (!openGLDestructionThread.joinable()) {}
-	openGLDestructionThread.join();
-	releaseDone = false;
+    DBG("[UI Thread][SceneCanvasComponent] Waiting for OpenGL resources to be released...");
+    
+    // MANIERE DEGUEULASSE D'ATTEEEEENDRE
+    // --------- >>>>>>> VARIABLE CONDITIONNELLE STD plutôt
+    // https://fr.cppreference.com/w/cpp/thread/condition_variable
+    // pas posix....
+	while (!releaseDone)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+    
+    
+	if (openGLDestructionThread.joinable())
+        openGLDestructionThread.join();
+    else
+    {
+        assert(false); // Gl destruction thread should have been joinable...
+        // Paliative solution !! Really might crash later !
+        std::this_thread::sleep_for(std::chrono::seconds(3)); // large time....
+    }
+    
+    //
+	releaseDone = false; // ????
 #else
     DBG("[VIEW] This function should not be called in non-VBO mode..."); // à vérifier quand même...
     assert(false);
@@ -524,7 +542,7 @@ void SceneCanvasComponent::renderOpenGL()
 			std::u16string testFPS[]{ u"" };
 			Miam::TextUtils::intToU16string(fps, testFPS);
 
-			openGLLabel->drawOneTexturedRectangle(openGlContext, testModel, testView, testProjecxtion, testFPS/*std::to_string(fps)*/);
+			openGLLabel->drawOneTexturedRectangle(openGlContext, testModel, testView, testProjecxtion, testFPS);
 		}
         
         // Fin du rendu...
@@ -576,7 +594,10 @@ void SceneCanvasComponent::openGLDestructionAtLastFrame()
 	std::u16string dummyString[]{ u"" };
 	Matrix3D<float> dummyMatrix(Vector3D<float>(0.0f, 0.0f, 0.0f));
 	openGLLabel->drawOneTexturedRectangle(openGlContext, dummyMatrix, dummyMatrix, dummyMatrix, dummyString/*std::to_string(fps)*/);
+    
+    // ?????? lui aussi ? à faire sur chaque texture séparée ???
 	openGLLabel->waitForOpenGLResourcesRealeased();
+    
 	openGLLabel = nullptr;
 }
 

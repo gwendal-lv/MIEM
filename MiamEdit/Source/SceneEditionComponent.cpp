@@ -679,6 +679,13 @@ void SceneEditionComponent::PrepareUnvisible()
 {
     multiCanvasComponent->PrepareUnvisible();
 }
+void SceneEditionComponent::ReleaseOpenGLResources()
+{
+    multiCanvasComponent->ReleaseOpengGLResources();
+    
+    // On pourrait ici aussi mettre un rendu graphique du fait que les ressources soient effacées...
+}
+
 
 // - - - - - Canvases & canvas group - - - - -
 

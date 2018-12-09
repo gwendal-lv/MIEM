@@ -104,11 +104,21 @@ AppMode Presenter::appModeChangeRequest(AppMode newAppMode)
     // First check : are we running a new mode ?
     if (newAppMode != appMode)
     {
-        // Nettoyage OpenGL si nécessaire
         if (appMode == AppMode::EditControlScenes)
+        {
+#ifdef __MIEM_VBO
+            // VBO / textures
+            view->GetMainContentComponent()->GetSceneEditionComponent()->ReleaseOpenGLResources();
+#else
+            // Nettoyage OpenGL/Juce de base si nécessaire (attention en conflit avec release VBO)
             view->GetMainContentComponent()->GetSceneEditionComponent()->PrepareUnvisible();
+#endif
+        }
         
+        
+        // ....LOADING MODE.....
         view->ChangeAppMode(AppMode::Loading);
+        
         
         // - - - - - PRE-CHANGE PROCESSING - - - - -
         // Si on passe à "Loading", on ne fait pas de traitement...

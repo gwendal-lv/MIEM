@@ -307,8 +307,8 @@ public:
 
 
 	public :
-		virtual void openGLDestructionAfterLastFrame();
-		void waitForOpenGLResourcesRealeased();
+		void openGLDestructionAfterLastFrame();
+		void waitForOpenGLResourcesReleased();
 	private:
 	void computeManipulationLine(float Ox, float Oy, float Mx, float My, float width, float height);
 

@@ -89,6 +89,8 @@ public:
     void CloseTemporaryDisplayedObjects();
     void PrepareVisible();
     void PrepareUnvisible();
+    void ReleaseOpenGLResources();
+    
 
     // - - - - - Canvases group - - - - -
     void SetCanvasGroupHidden(bool _isHidden);
