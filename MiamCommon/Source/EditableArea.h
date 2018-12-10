@@ -99,7 +99,7 @@ namespace Miam
         void refreshOpenGLSubBuffers(int vertexBufElmtOffset, int indexBufElmtOffset);
         
         
-        void computeSmallDiskBuffers();
+        void initSmallDiskBuffers();
         
         virtual int GetVerticesBufferActualElementsCount() const override
         { return actualVerticesBufferElementsCount; }
@@ -121,7 +121,7 @@ namespace Miam
         const int dottedLineIndicesCount = 6 * dottedLineNparts; // chaque rectangle divisé en 2 triangles
         
         // (Not static for multi-threading safety)
-        const int numPointsSmallCircle = 16; // actual resolution of any small circle
+        const int numPointsSmallCircle = 10; // actual resolution of any small circle. Convient pour diam 14px ou -
         const int numVerticesSmallCircle = numPointsSmallCircle + 1; // +1 pour le centre du disque
         const int numIndicesSmallCircle = numPointsSmallCircle * 3;
         const int contourCirclesTotalVerticesCount = numVerticesSmallCircle * numPointsPolygon;
@@ -153,7 +153,7 @@ namespace Miam
         
 		/// \brief On-screen display radius in pixels (see
 		/// InteractiveArea::contourPointsInPixels)
-        float contourPointsRadius;
+        float contourPointsRadius = 0.0f; // init in ctor
 		/// \brief On-screen display radius in pixels (see
 		/// EditableArea::manipulationPointInPixels)
         float manipulationPointRadius;

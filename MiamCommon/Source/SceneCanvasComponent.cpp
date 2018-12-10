@@ -529,7 +529,7 @@ void SceneCanvasComponent::renderOpenGL()
 			Miam::TextUtils::intToU16string(fps, testFPS);
 			openGLLabel->drawOneTexturedRectangle(openGlContext, testModel, testView, testProjecxtion, testFPS);
             // Label d'info
-            std::u16string texteInfo[]{ u"é oui !" };
+            std::u16string texteInfo[]{ u"Hé, huître !" };
             openGLInfoLabel->drawOneTexturedRectangle(openGlContext, testModel, testView, testProjecxtion, texteInfo);
 		}
     }

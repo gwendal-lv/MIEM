@@ -60,7 +60,7 @@ void EditablePolygon::graphicalInit()
     contourColour = Colour(0xAAFFFFFF); // white, but not totally opaque
     
     editingElementsColour = Colours::white; // pure white (more visible)
-    contourPointsRadius = 1.4f*contourWidth;
+    
     manipulationPointRadius = centerContourWidth+centerCircleRadius;
 
 #if defined(__MIEM_VBO)

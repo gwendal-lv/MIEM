@@ -22,13 +22,14 @@ EditableArea::EditableArea() : bmanipulationPointInPixels(0,0)
 {
     enableTranslationOnly = false;
     
+    contourPointsRadius = 4.0f;
+    
 #ifdef __MIEM_VBO
     // Proper resize of OpenGL buffer for VBO rendering
     g_vertex_dotted_line.resize(3 * dottedLineVertexesCount);
     g_indices_dotted_line.resize(dottedLineIndicesCount);
     
-    g_vertex_circle.resize(3 * numVerticesCircle);
-    g_circle_indices.resize(3 * numPointCircle);
+    initSmallDiskBuffers();
 #endif
 }
 
@@ -127,10 +128,12 @@ void EditableArea::computeManipulationLineBuffer(float Ox, float Oy, float Mx, f
     
 }
 
-void EditableArea::computeSmallDiskBuffers()
+void EditableArea::initSmallDiskBuffers()
 {
+    g_vertex_circle.resize(3 * numVerticesCircle);
+    g_circle_indices.resize(3 * numPointCircle);
+    
     // Vertices of the small disk
-    float radius = 3.0f; // A MODIFIER SELON DESKTOP SCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALE
     double currentAngle = 0.0;
     double incAngle = 2 * M_PI / (double)numPointsSmallCircle;
     g_vertex_circle[0] = 0.0f;
@@ -138,8 +141,8 @@ void EditableArea::computeSmallDiskBuffers()
     g_vertex_circle[2] = 0.0f;
     for (int i = 1; i < (numPointsSmallCircle+1); ++i)
     {
-        g_vertex_circle[i * 3 + 0] = radius * (float)cos(currentAngle);
-        g_vertex_circle[i * 3 + 1] = radius * (float)sin(currentAngle);
+        g_vertex_circle[i * 3 + 0] = contourPointsRadius * (float)cos(currentAngle);
+        g_vertex_circle[i * 3 + 1] = contourPointsRadius * (float)sin(currentAngle);
         g_vertex_circle[i * 3 + 2] = 0.0f;
         currentAngle += incAngle;
     }
@@ -256,13 +259,17 @@ void EditableArea::refreshOpenGLSubBuffers(int vertexBufElmtOffset, int indexBuf
         {
             // on aura autant de triangles que de points
             for (int jj = 0; jj < numIndicesSmallCircle; ++jj)
-                indexBuffer[disksIndexBufElmtOffset + i * numIndicesSmallCircle + jj] = disksVertexBufElmtOffset + g_circle_indices[jj];
+                indexBuffer[disksIndexBufElmtOffset + i * numIndicesSmallCircle + jj] = disksVertexBufElmtOffset
+                                + i * numVerticesSmallCircle // passage au disque suivant (en comptant les points)
+                                + g_circle_indices[jj]; // point du cercle courant
         }
         // remaining indices to zero
+        /*
         for (int i = actualContourPointsCount; i < numPointsPolygon; ++i)
             for (int jj = 0; jj < numIndicesSmallCircle; ++jj)
                 indexBuffer[disksIndexBufElmtOffset + i * numIndicesSmallCircle + jj] = 0;
-        
+        */
+        // useless with the optimization...
         
         
         // - - - - Definition of the actual indices count - - - -
