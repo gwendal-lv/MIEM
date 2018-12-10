@@ -90,7 +90,7 @@ void OpenGLTextObject::initialiseShaderProgram(OpenGLContext &context)
     "uniform mat4 viewMatrix;                                       \n"
     
 #if JUCE_OPENGL_ES // lowp seems reserved to embedded platforms
-    "varying lowp vec2 UV;                                          \n"
+    "varying mediump vec2 UV;                                          \n"
 #else
     "varying vec2 UV;                                               \n"
 #endif
@@ -105,7 +105,7 @@ void OpenGLTextObject::initialiseShaderProgram(OpenGLContext &context)
     /// - - - FRAGMENT shader - - -
     myTextFragmentShader =
 #if JUCE_OPENGL_ES
-    "varying lowp vec2 UV;                                          \n"
+    "varying mediump vec2 UV;                                          \n"
 #else
     "varying vec2 UV;                                               \n"
 #endif
@@ -114,7 +114,17 @@ void OpenGLTextObject::initialiseShaderProgram(OpenGLContext &context)
     
     "void main() "
     "{ "
-    "    vec4 currentFrag = texture2D(demoTexture,UV); " // ordre vec4 : xyzw correspond à RGBA
+    // Déclaration variables ordre vec4 : xyzw correspond à RGBA
+#if JUCE_OPENGL_ES
+    "    mediump vec4 currentFrag; " // ...impossible d'appliquer une précision
+    "    mediump vec4 shadowFrag;  " // par défaut aux vec4....
+    "    precision mediump float;  " // valable pour tous les floats
+#else
+    "    vec4 currentFrag; "
+    "    vec4 shadowFrag;  "
+#endif
+    
+    "    currentFrag = texture2D(demoTexture,UV); "
     // mais en fait : .rgba utilisables directement.... sucre syntaxique "swizzle"
     // traitement sur la texture : point gris => BLANC transparent
     "    if (currentFrag.r < 1.0) "
@@ -124,7 +134,7 @@ void OpenGLTextObject::initialiseShaderProgram(OpenGLContext &context)
     "    currentFrag.rgb = vec3(1.0, 1.0, 1.0); " // blanc dans tous les cas
     
     // Rajout d'une ombre à +0.3% en UV (on se fait plaisir, dans le shader....)
-    "    vec4 shadowFrag = texture2D(demoTexture, UV + vec2(-0.001, 0.003) ); "
+    "    shadowFrag = texture2D(demoTexture, UV + vec2(-0.001, 0.003) ); "
     // traitement différent du précédent : point gris => NOIR transparent
     "    if (shadowFrag.r < 1.0) "
     "        shadowFrag.a = shadowFrag.r; "

@@ -90,6 +90,17 @@ void View::DisplayInfo(const std::string& message, int priority, bool alsoDispla
 #endif
 }
 
+void View::TriggerGLResourcesRelease()
+{
+#ifdef __MIEM_VBO
+    // VBO / textures
+    mainContentComponent->GetSceneEditionComponent()->ReleaseOpenGLResources();
+#else
+    // Nettoyage OpenGL/Juce de base si nécessaire (attention en conflit avec release VBO)
+    mainContentComponent->GetSceneEditionComponent()->PrepareUnvisible();
+#endif
+}
+
 void View::SetTitle(std::string title)
 {
     ControlView::SetTitle(title + " [" + App::GetPurposeName(presenter->GetSessionPurpose()) + " Session]");
@@ -139,3 +150,5 @@ void View::displayInfoInNewWindow(const std::string& message)
     if (dialogWindow != nullptr)
         dialogWindow->centreWithSize (width, height);
 }
+
+

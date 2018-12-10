@@ -64,6 +64,8 @@ public:
     void DisplayInfo(const String& stringToDisplay, bool isImportant = false);
 
     void ChangeAppMode(PlayerAppMode newAppMode);
+    
+    MultiCanvasComponent* GetMultiCanvasComponent() { return multiCanvasComponent; }
 
     //[/UserMethods]
 

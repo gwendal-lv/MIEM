@@ -106,13 +106,7 @@ AppMode Presenter::appModeChangeRequest(AppMode newAppMode)
     {
         if (appMode == AppMode::EditControlScenes)
         {
-#ifdef __MIEM_VBO
-            // VBO / textures
-            view->GetMainContentComponent()->GetSceneEditionComponent()->ReleaseOpenGLResources();
-#else
-            // Nettoyage OpenGL/Juce de base si nécessaire (attention en conflit avec release VBO)
-            view->GetMainContentComponent()->GetSceneEditionComponent()->PrepareUnvisible();
-#endif
+            view->TriggerGLResourcesRelease();
         }
         
         

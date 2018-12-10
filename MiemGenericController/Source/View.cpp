@@ -46,6 +46,18 @@ void View::CompleteInitialization(GraphicSessionPlayer* /*_graphicSessionManager
 }
 
 
+void View::TriggerGLResourcesRelease()
+{
+#ifdef __MIEM_VBO
+    // VBO / textures
+    mainContentComponent->GetBackgroundComponent()->GetMultiCanvasComponent()->ReleaseOpengGLResources();
+#else
+    // Nettoyage OpenGL/Juce de base si nécessaire (attention en conflit avec release VBO)
+    view->GetMainContentComponent()->GetSceneEditionComponent()->PrepareUnvisible(); // équivalent pour le miem controller ???
+#endif
+}
+
+
 void View::ForceResized()
 {
     mainContentComponent->resized();

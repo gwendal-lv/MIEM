@@ -38,5 +38,7 @@ namespace Miam
         
         virtual void SetTitle(std::string title);
         
+        virtual void TriggerGLResourcesRelease() = 0;
+        
     };
 }

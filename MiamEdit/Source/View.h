@@ -91,6 +91,9 @@ namespace Miam {
 		///
 		/// \param newAppMode The application mode that should be displayed as quickly as possible.
         void ChangeAppMode(AppMode newAppMode);
+        
+        virtual void TriggerGLResourcesRelease() override;
+        
 		/// \brief Obeys orders from the Presenter when a informative message has to de displayed to
 		/// the user.
 		///

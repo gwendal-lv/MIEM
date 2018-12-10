@@ -64,6 +64,7 @@ namespace Miam {
         /// \brief Function called after both View and Presenter are contructed
         virtual void CompleteInitialization(GraphicSessionPlayer*, MultiCanvasComponent*) override;
         
+        virtual void TriggerGLResourcesRelease() override;
 
         
         // ----- Graphical updates -----

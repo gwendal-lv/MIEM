@@ -115,6 +115,10 @@ PlayerAppMode PlayerPresenter::appModeChangeRequest(PlayerAppMode newAppMode)
     if (modeChangeAllowed)
     {
         // - - - - - Traitements pré-changement - - - - -
+        // Le + important : libération ressources VBO/textures/shaders si nécessaire
+        if (appMode == PlayerAppMode::Playing)
+            view->TriggerGLResourcesRelease();
+        
         // Passage par le mode loading de View, si nécessaire
         if (appMode != PlayerAppMode::Loading && newAppMode != PlayerAppMode::Loading)
             view->ChangeAppMode(PlayerAppMode::Loading);
