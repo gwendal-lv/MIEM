@@ -27,7 +27,13 @@ namespace Miam {
     class EditablePolygon : public InteractivePolygon, public EditableArea
     {
         // =============== ATTRIBUTES ===============
+        protected :
         
+        /// \brief The last rotation angle applied to the shape during a rotscale
+        /// manipulation.
+        ///
+        /// Is not zero during manipulations only.
+        double lastManipRotAngleRad = 0.0;
         
         
         
