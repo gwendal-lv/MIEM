@@ -168,7 +168,7 @@ bpt Math::ComputeIntersectionPoint(bpt A, bpt B, bpt C, bpt D)
 	bpt I = bpt((-c * beta + gamma * b) / determinant,
 		(alpha * c - a * gamma) / determinant);
 
-	throw std::runtime_error("Fonction bugguée, GUILLAUME C POUR TOI : à re-transcrire devient la version avec points Juce (qui est maintenant corrigée depuis le 17/10/2017). Contient aussi du code inutile juste là-dessous.... -> ???");
+	assert(false); // Fonction bugguée, GUILLAUME C POUR TOI : à re-transcrire devient la version avec points Juce (qui est maintenant corrigée depuis le 17/10/2017). Contient aussi du code inutile juste là-dessous.... -> ???");
 
 	return I;
 }

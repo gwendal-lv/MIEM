@@ -19,7 +19,9 @@
 
 #include "boost/lexical_cast.hpp"
 
+#ifndef JUCE_WINDOWS
 #include <pthread.h>
+#endif
 
 
 using namespace Miam;

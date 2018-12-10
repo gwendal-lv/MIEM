@@ -230,7 +230,8 @@ void SpatStatesEditionManager::OnColourChanged(Colour& colour)
         selectedSpatState->SetColour(colour);
 }
 
-void SpatStatesEditionManager::OnMatrixButtonClicked(int row, int col, std::string matrixText, double matrixValue)
+void SpatStatesEditionManager::OnMatrixButtonClicked(int /*row*/, int /*col*/,
+											std::string matrixText, double matrixValue)
 {
     if (GetSessionPurpose() == AppPurpose::GenericController)
     {

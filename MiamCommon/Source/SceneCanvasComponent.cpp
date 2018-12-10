@@ -173,12 +173,8 @@ void SceneCanvasComponent::resized()
 void SceneCanvasComponent::SetupGLContext()
 {
     openGlContext.attachTo(*this);
+
     openGlContext.setContinuousRepainting(true);
-    isSwapSynced = openGlContext.setSwapInterval(swapInterval);
-    if (isSwapSynced)
-        DBG("Context attached (supports synced OpenGL swaps)");
-    else
-        DBG("Context attached (does not support synced OpenGL swaps)");
     setVisible(true);
     
 }
@@ -212,6 +208,17 @@ void SceneCanvasComponent::ReleaseGLResources_NoVBO()
 
 void SceneCanvasComponent::newOpenGLContextCreated()
 {
+	// Must be called after context is created (not just attached)
+	/*
+	isSwapSynced = openGlContext.setSwapInterval(swapInterval);
+	if (isSwapSynced)
+		DBG("[MIEM OpenGL] évènement 'New Context Created'. (supports synced OpenGL swaps)");
+	else
+		DBG("[MIEM OpenGL] évènement 'New Context Created'. (does not support synced OpenGL swaps)");
+	*/
+	openGlContext.setSwapInterval(0);
+	DBG("[MIEM OpenGL] évènement 'New Context Created', swap sync disabled.");
+
 	redrawCanvasOutline = true;
 	numFrame = 0;
 
@@ -220,7 +227,7 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 
 
 #ifdef __MIEM_VBO
-    DBG("[MIEM OpenGL] évènement 'New Context Created'. Création des shaders, buffers, etc.");
+    DBG("Création des shaders, buffers, etc.");
     releaseDone = false;
     
 	shaderProgram = std::make_unique<OpenGLShaderProgram>(openGlContext);
@@ -361,7 +368,8 @@ void SceneCanvasComponent::renderOpenGL()
     // Lock le + tard possible, lorsque nécessaire seulement !
     manager->LockAsyncDrawableObjects();
     
-    long areasCountDifference = manager->GetAsyncDrawableObjects().size() - duplicatedAreas.size();
+    long areasCountDifference = (long)(manager->GetAsyncDrawableObjects().size())
+								- (long)(duplicatedAreas.size());
     // Pour l'instant algo assez bête....
     // Si décalage d'indice : tout sera à refaire.... mais bon c'est + simple.
     if (areasCountDifference != 0)

@@ -8,10 +8,10 @@
   ==============================================================================
 */
 
+#include <assert.h> // not included when compiling in VS2017
+
 #include "OpenGLTextObject.h"
-//
-//#include <ft2build.h>
-//#include FT_FREETYPE_H 
+
 
 using namespace std;
 using namespace Miam;

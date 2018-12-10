@@ -505,7 +505,7 @@ void LabelledMatrixComponent::textEditorTextChanged (TextEditor & textEditor)
 }
 void LabelledMatrixComponent::buttonClicked (Button* _button)
 {
-    int integerID;
+    int integerID = -1;
     
     // We get its row index #, from its ID which must be 'bi#'
     auto buttonID = _button->getComponentID().toStdString();
@@ -521,10 +521,10 @@ void LabelledMatrixComponent::buttonClicked (Button* _button)
         } catch (boost::bad_lexical_cast&) {
             throw BadIdException();
         }
-        if (integerID < 0 || maxRowsCount < integerID)
+        if (integerID < 0 || (int)maxRowsCount < integerID)
             throw BadIdException();
     }
-    catch (BadIdException& e) {
+    catch (BadIdException& ) {
         assert(false); // a bad-referenced (bas ID) button has been clicked. This must not happen!
     }
     

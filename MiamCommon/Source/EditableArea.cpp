@@ -199,8 +199,8 @@ void EditableArea::refreshOpenGLSubBuffers(int vertexBufElmtOffset, int indexBuf
         // Offset for the ring (which is the next thing to fill)
         const int manipRingVertexBufElmtOffset = manipLineVertexBufElmtOffset + dottedLineVertexesCount;
         // Manipulation RING (handle)
-        float Xoffset = (float)bmanipulationPointInPixels.get<0>();
-        float Yoffset = (float)bmanipulationPointInPixels.get<1>();
+        const float Xoffset = (float)bmanipulationPointInPixels.get<0>();
+        const float Yoffset = (float)bmanipulationPointInPixels.get<1>();
         for (int j = 0; j < numVerticesRing; ++j)
         {
             vertexBuffer[3 * (manipRingVertexBufElmtOffset + j) + 0] = Xoffset + getRingVertexBuffer()[j*3 + 0];
@@ -229,14 +229,14 @@ void EditableArea::refreshOpenGLSubBuffers(int vertexBufElmtOffset, int indexBuf
         // Actual vertices
         for (int i = 0; i < actualContourPointsCount; ++i)
         {
-            float Xoffset = (float)getContourPointsInPixels()[i].get<0>();
-            float Yoffset = (float)getContourPointsInPixels()[i].get<1>();
+            const float contourPointXoffset = (float)getContourPointsInPixels()[i].get<0>();
+            const float contourPointYoffset = (float)getContourPointsInPixels()[i].get<1>();
             for (int j = 0; j < numVerticesSmallCircle; ++j)
             {
                 vertexBuffer[3 * (disksVertexBufElmtOffset + i * numVerticesSmallCircle + j) + 0]
-                = Xoffset + g_vertex_circle[j*3 + 0];
+                = contourPointXoffset + g_vertex_circle[j*3 + 0];
                 vertexBuffer[3 * (disksVertexBufElmtOffset + i * numVerticesSmallCircle + j) + 1]
-                = Yoffset + g_vertex_circle[j*3 + 1];
+                = contourPointYoffset + g_vertex_circle[j*3 + 1];
                 vertexBuffer[3 * (disksVertexBufElmtOffset + i * numVerticesSmallCircle + j) + 2]
                 = Zoffset;
             }
