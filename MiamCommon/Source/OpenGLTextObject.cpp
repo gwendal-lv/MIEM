@@ -46,141 +46,13 @@ void OpenGLTextObject::initialiseText(OpenGLContext& context)
 	needToRelease = false;
     resourcesReleased = false;
 
-	initialiseShaderProgram(context);
-	initialiseBuffer(context);
-	initialiseAttribute();
 }
 
-void OpenGLTextObject::initialiseBuffer(OpenGLContext& context)
-{
-	context.extensions.glGenBuffers(1, &vertexBuffer);
-	context.extensions.glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-	context.extensions.glBufferData(GL_ARRAY_BUFFER, maxSize * 6 * 3 * sizeof(GLfloat), g_vertex_buffer_data, GL_STATIC_DRAW);
-
-	context.extensions.glGenBuffers(1, &UVBuffer);
-	context.extensions.glBindBuffer(GL_ARRAY_BUFFER, UVBuffer);
-	context.extensions.glBufferData(GL_ARRAY_BUFFER, maxSize * 6 * 2 * sizeof(GLfloat), g_UV_buffer_data, GL_STATIC_DRAW);
-}
-
-void OpenGLTextObject::initialiseAttribute()
-{
-	positionText = std::make_unique<OpenGLShaderProgram::Attribute>(*textShaderProgram.get(), "position");
-	vertexUV = std::make_unique<OpenGLShaderProgram::Attribute>(*textShaderProgram.get(), "uvCoord");
-
-	textProjectionMatrix = std::make_unique<OpenGLShaderProgram::Uniform>(*textShaderProgram.get(), "projectionMatrix");
-	textViewMatrix = std::make_unique<OpenGLShaderProgram::Uniform>(*textShaderProgram.get(), "viewMatrix");
-	textModelMatrix = std::make_unique<OpenGLShaderProgram::Uniform>(*textShaderProgram.get(), "modelMatrix");
-	texture = std::make_unique<OpenGLShaderProgram::Uniform>(*textShaderProgram.get(), "demoTexture");
-
-	if (texture != nullptr)
-		texture->set(0);
-    else
-        assert(false); // cannot draw anything....
-}
-
-void OpenGLTextObject::initialiseShaderProgram(OpenGLContext &context)
-{
-    /// - - - VERTEX shader - - -
-    myTextVertexShader =
-    "attribute vec4 position;                                       \n"
-    "attribute vec2 uvCoord;                                        \n" // envoyé par CPU (peut être adapté)
-    
-    "uniform mat4 modelMatrix;                                      \n"
-    "uniform mat4 projectionMatrix;                                 \n"
-    "uniform mat4 viewMatrix;                                       \n"
-    
-#if JUCE_OPENGL_ES // lowp seems reserved to embedded platforms
-    "varying mediump vec2 UV;                                          \n"
-#else
-    "varying vec2 UV;                                               \n"
-#endif
-    
-    "void main() "
-    "{ "
-    "    gl_Position = projectionMatrix * viewMatrix * modelMatrix * position; "
-    "    UV = uvCoord; "
-    "}                                                              \n";
-    
-    
-    /// - - - FRAGMENT shader - - -
-    myTextFragmentShader =
-#if JUCE_OPENGL_ES
-    "varying mediump vec2 UV;                                          \n"
-#else
-    "varying vec2 UV;                                               \n"
-#endif
-    // Texture que l'on suppose en niveau de gris. Blanc = opaque, Noir = transparent
-    "uniform sampler2D demoTexture;                                 \n" // nom à changer...
-    
-    "void main() "
-    "{ "
-    // Déclaration variables ordre vec4 : xyzw correspond à RGBA
-#if JUCE_OPENGL_ES
-    "    mediump vec4 currentFrag; " // ...impossible d'appliquer une précision
-    "    mediump vec4 shadowFrag;  " // par défaut aux vec4....
-    "    precision mediump float;  " // valable pour tous les floats
-#else
-    "    vec4 currentFrag; "
-    "    vec4 shadowFrag;  "
-#endif
-    
-    "    currentFrag = texture2D(demoTexture,UV); "
-    // mais en fait : .rgba utilisables directement.... sucre syntaxique "swizzle"
-    // traitement sur la texture : point gris => BLANC transparent
-    "    if (currentFrag.r < 1.0) "
-    "        currentFrag.a = currentFrag.r; " // valeur d'opacité était dans le niveau de gris
-    "    else " // par sécurité... pour la suite de l'algo
-    "        currentFrag.a = 1.0; " // valeur d'opacité était dans le niveau de gris
-    "    currentFrag.rgb = vec3(1.0, 1.0, 1.0); " // blanc dans tous les cas
-    
-    // Rajout d'une ombre à +0.3% en UV (on se fait plaisir, dans le shader....)
-    "    shadowFrag = texture2D(demoTexture, UV + vec2(-0.001, 0.003) ); "
-    // traitement différent du précédent : point gris => NOIR transparent
-    "    if (shadowFrag.r < 1.0) "
-    "        shadowFrag.a = shadowFrag.r; "
-    "    else " // sécurité
-    "        shadowFrag.a = 1.0; "
-    "    shadowFrag.rgb = vec3(0.0, 0.0, 0.0); " // noir dans tous les cas
-    
-    // Opérateur de mélange "A over B" https://en.wikipedia.org/wiki/Alpha_compositing
-    // pour mélange de l'ombre dans le current frag (si nécessaire)
-    "    if (currentFrag.a < 1.0) "
-    "    { "
-    "        float blendedAlpha = currentFrag.a + shadowFrag.a * (1.0 - currentFrag.a); "
-    "        currentFrag.rgb = ( currentFrag.a * currentFrag.rgb + shadowFrag.rgb * shadowFrag.a * (1.0-currentFrag.a) ) / blendedAlpha ; "
-    "        currentFrag.a = blendedAlpha; "
-    "    } "
-    
-    // Sinon, sortie du shader
-    "    gl_FragColor = currentFrag; " // gl_FragColor seems deprecated...  https://stackoverflow.com/questions/51459596/using-gl-fragcolor-vs-out-vec4-color
-    "}                                                              \n";
-    
-    
-    // - - - Compiling and registering shaders - - -
-	textShaderProgram = std::make_unique<OpenGLShaderProgram>(context);
-
-    // vérifier quand même que ça ne pose pas de soucis....
-    textShaderProgram->addVertexShader(myTextVertexShader);
-    textShaderProgram->addFragmentShader(myTextFragmentShader);
-    
-	textShaderProgram->link();
-
-    // If we don't use() here, OpenGL crashes after...
-	textShaderProgram->use();
-}
 
 void OpenGLTextObject::releaseResourcesSync()
 {
-	textShaderProgram->release();
-    
-	textShaderProgram = nullptr;
-	positionText = nullptr;
-	vertexUV = nullptr;
-	textProjectionMatrix = nullptr;
-	textViewMatrix = nullptr;
-	textModelMatrix = nullptr;
-	texture = nullptr;
-    
+    // release des buffers ??????????????
+    // pas liés au contexte ?
     
     resourcesReleased = true;
     needToRelease = false;
@@ -217,30 +89,36 @@ void OpenGLTextObject::drawOneTexturedRectangle(OpenGLContext &context, juce::Ma
         for(int i = numChar; i < maxSize;++i)
             computeUV(i, (char32_t)' ');
         
-		textShaderProgram->use();
+		fontManager->textShaderProgram->use();
         
         // Uniforms qui sont liés au shader activé précédemment
-		textModelMatrix->setMatrix4(model.mat, 1, false);
-        textProjectionMatrix->setMatrix4(testPerspective.mat, 1, false);
-        textViewMatrix->setMatrix4(testView.mat, 1, false);
+		fontManager->textModelMatrix->setMatrix4(model.mat, 1, false);
+        fontManager->textProjectionMatrix->setMatrix4(testPerspective.mat, 1, false);
+        fontManager->textViewMatrix->setMatrix4(testView.mat, 1, false);
         
-        fontManager->GetFontTexture()->bind();
+        fontManager->fontTexture->bind();
     
-        context.extensions.glEnableVertexAttribArray(positionText->attributeID);
-        context.extensions.glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-        //context.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, maxSize * 6 * 3 * sizeof(GLfloat), g_oneVertex_buffer_data);
-        context.extensions.glVertexAttribPointer(positionText->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
+        // The VBOs are stored within the manager are shared with all areas
+        // => glBufferSubData must update all necessary data
+        context.extensions.glEnableVertexAttribArray(fontManager->positionText->attributeID);
+        context.extensions.glBindBuffer(GL_ARRAY_BUFFER, fontManager->vertexBuffer);
+        context.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, maxSize * 6 * 3 * sizeof(GLfloat), g_vertex_buffer_data);
+        context.extensions.glVertexAttribPointer(fontManager->positionText->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
 
-        context.extensions.glEnableVertexAttribArray(vertexUV->attributeID);
-        context.extensions.glBindBuffer(GL_ARRAY_BUFFER, UVBuffer); // changer ça!
+        context.extensions.glEnableVertexAttribArray(fontManager->vertexUV->attributeID);
+        context.extensions.glBindBuffer(GL_ARRAY_BUFFER, fontManager->UVBuffer); // changer ça!
         context.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, maxSize * 6 * 2 * sizeof(GLfloat), g_UV_buffer_data);
-        context.extensions.glVertexAttribPointer(vertexUV->attributeID, 2, GL_FLOAT, GL_FALSE, sizeof(float[2]), 0);
+        context.extensions.glVertexAttribPointer(fontManager->vertexUV->attributeID, 2, GL_FLOAT, GL_FALSE, sizeof(float[2]), 0);
 
         glDrawArrays(GL_TRIANGLES, 0, maxSize * 2 * 3);
 
-        context.extensions.glDisableVertexAttribArray(positionText->attributeID);
-        context.extensions.glDisableVertexAttribArray(vertexUV->attributeID);
+        context.extensions.glDisableVertexAttribArray(fontManager->positionText->attributeID);
+        context.extensions.glDisableVertexAttribArray(fontManager->vertexUV->attributeID);
     
+        
+        // Unbind VBOs par sécurité...
+        context.extensions.glBindBuffer(GL_ARRAY_BUFFER, 0);
+        context.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 }
 

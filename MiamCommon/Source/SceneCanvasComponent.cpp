@@ -325,7 +325,7 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 
     
     // = = = = = loading of shared data for all text objects = = = = =
-    InitGLFontResources(); // from OpenGLFontManager mother class
+    InitGLFontResources(openGlContext); // from OpenGLFontManager mother class
     
     // - - - - label de display des fps - - - - -
 	if(openGLLabel == nullptr)
