@@ -8,6 +8,8 @@
   ==============================================================================
 */
 
+#include <codecvt> // codecvt_utf8_utf16
+
 #include <MiamMath.h>
 
 #include "DrawableArea.h"
@@ -64,6 +66,8 @@ void DrawableArea::init()
     centerContourWidth = contourWidth*1.5f;
     
     isNameVisible = true; // par défaut
+    // TEEEEEMMMMMMMMPPPPPPPPP
+    glTextObject = std::make_shared<OpenGLTextObject>(20.0f, 160.0f, 20.0f, -35.0f, 12);
     
     keepRatio = false;
 
@@ -211,6 +215,38 @@ void DrawableArea::renderCachedNameImages()
 }
 
 
+void DrawableArea::resetTextureBasedName()
+{
+    // conversion utf-8 (générée nativement dans le programme, peu importe la plateforme)
+    // pour avoir le vrai bon nombre de caractères
+    std::u16string nameU16 = u"";
+    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+    auto wideString = converter.from_bytes(name.toStdString().c_str());
+    for (auto singleWideChar : wideString)
+        nameU16 += (char16_t) singleWideChar;
+    // Sending the right number of utf16 chars (not too much)
+    if (nameU16.length() > nameCharsCountMax)
+    {
+        nameU16.resize(nameCharsCountMax);
+        nameU16[nameU16.size()-1] = '.'; // caractère de chaîne raccourcie
+    }
+    
+    // reconstruction complète d'un nouvel objet (pour thread-safety)
+    glTextObject = std::make_shared<OpenGLTextObject>(centerInPixels.get<0>(),
+                                                      centerInPixels.get<1>() + centerCircleRadius + nameHeight * 1.1,
+                                                      std::roundf((float)(nameWidth) / (float)(nameCharsCountMax)),
+                                                      nameHeight,
+                                                      nameCharsCountMax);
+    // vérification pour l'UTF 16... en debug seulement
+#ifdef __MIAM_DEBUG
+    if (sizeof(wchar_t) < 2)
+        assert(false); // our UTF 16 converter won't properly work on this platform....)
+#endif
+    
+    glTextObject->SetText(nameU16);
+}
+
+
 
 void DrawableArea::Paint(Graphics& g)
 {
@@ -294,6 +330,12 @@ void DrawableArea::CanvasResized(SceneCanvasComponent* _parentCanvas)
     parentCanvas = _parentCanvas;
 	boost::geometry::strategy::transform::scale_transformer<double, 2, 2> scale(parentCanvas->getWidth(), parentCanvas->getHeight());
 	boost::geometry::transform(center, centerInPixels, scale);
+    
+#ifdef __MIEM_VBO
+    // Reconstruction complète de l'objet à chaque fois.... (pour assurer la multithread-safety....)
+    resetTextureBasedName();
+#endif
+    
 }
 
 void DrawableArea::RefreshOpenGLBuffers()
@@ -454,8 +496,8 @@ void DrawableArea::SetName(String newName)
     if (name != newName)
     {
         name = newName;
-        // ICI ON DEVRAIT RECONSTRUIRE LES COORDONNEES UV DE LA TEXTURE
 #ifdef __MIEM_VBO
+        resetTextureBasedName();
 #else
         renderCachedNameImages(); // au ratio de base (précisé en attribut constant dans la classe)
 #endif

@@ -11,12 +11,12 @@
 #pragma once
 
 #include <string>
+#include <algorithm> // std::min
 
 #include "JuceHeader.h"
 
 #define Miam_OscIntInAddressTag     "[int]"
 #define Miam_OscFloatInAddressTag   "[float]"
-#include <string>
 
 namespace Miam {
     
@@ -42,6 +42,19 @@ namespace Miam {
         /// Might throw a Miam::ParseException if necessary
         static OSCMessage ParseStringToJuceOscMessage(const std::string& stringToParse);
         
-		static void intToU16string(int I, std::u16string[]);
+        template<typename T>
+        static std::u16string ConvertNumberToU16string(T number, int numberOfCharactersToDisplay = -1)
+        {
+            std::u16string stringU16 = u"";
+            std::string stringASCII = std::to_string(number);
+            
+            size_t u16StringFinalLength = stringASCII.length();
+            if (numberOfCharactersToDisplay >= 0)
+                u16StringFinalLength = std::min(u16StringFinalLength, (size_t(numberOfCharactersToDisplay)));
+                
+            for (int i = 0; i < u16StringFinalLength; ++i)
+                stringU16 += char16_t(stringASCII[i]);
+            return stringU16;
+        }
     };
 }

@@ -16,6 +16,8 @@
 
 #include "OpenGLFontManager.h"
 
+#include "MiemVector.hpp"
+
 namespace Miam {
     
     class OpenGLTextObject
@@ -24,38 +26,36 @@ namespace Miam {
         OpenGLTextObject(float _x, float _y, float _characterWidth, float _characterHeight, int _maxSize);
         ~OpenGLTextObject();
 
-        void initialiseText(OpenGLContext& context);
+        void Initialise(OpenGLContext& context, OpenGLFontManager* _manager);
         /// \brief Releases critical GL resources. Must
         /// be called from the GL thread, is directly executed.
         void releaseResourcesSync();
         
-        void drawOneTexturedRectangle(OpenGLContext &context, juce::Matrix3D<float> &model, juce::Matrix3D<float> &testView, juce::Matrix3D<float> &testPerspective, std::u16string stringToDraw[]);
+        void SetText(std::u16string& stringToDraw);
+        void drawOneTexturedRectangle(OpenGLContext &context, juce::Matrix3D<float> &model, juce::Matrix3D<float> &testView, juce::Matrix3D<float> &testPerspective);
         
         void SetFontManager(OpenGLFontManager* _manager)
         { fontManager = _manager; }
         
         
     private:
-        void computeVertices();
-        void computeUV(int idx, char32_t character);
+        void computeVertices(); // must be called only once
+        void recomputeUV(int idx, char32_t character);
         void UTF16ToCodePoint(std::u16string::iterator &it, char32_t &currentCodePoint);
 
         
         OpenGLFontManager* fontManager = nullptr;
         
+        // Parameters assigned at construction only
+        const float textX, textY, characterWidth, characterHeight;
+        const int maxSize;
+
+
+        Vector<GLfloat> g_vertex_buffer;
+        Vector<GLfloat> g_UV_buffer;
+
         
-        float textX, textY, characterWidth, characterHeight;
-        int maxSize;
-
-
-        GLfloat *g_vertex_buffer_data;//[6 * 3];
-
-        GLfloat *g_UV_buffer_data;//[6 * 2];
-
-        
-
-        std::atomic<bool> needToRelease;
-        std::atomic<bool> resourcesReleased;
+        bool resourcesReleased;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OpenGLTextObject)
     };

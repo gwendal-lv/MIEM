@@ -12,6 +12,9 @@
 
 #include "JuceHeader.h"
 
+// To be used also in
+#define MIEM_GL_LABEL_MAX_CHARS     (1024)
+
 namespace Miam {
     
     class OpenGLTextObject;
@@ -43,7 +46,7 @@ namespace Miam {
         
         // VBOs
         GLuint vertexBuffer, UVBuffer;
-        const int maxCharacters = 1024;
+        // const int maxCharacters = MIEM_GL_LABEL_MAX_CHARS; // useless now
         
         
         // ======== METHODS ========

@@ -75,12 +75,21 @@ namespace Miam
         
         String name;
         bool isNameVisible;
-        // Images bêtement comme ça pour l'instant...
+        // - - - Juce Images for CPU rendering - - -
         Image nameImage; // In VBO-mode : will be default constructed only
         Image nameImage2; // (null image)
+        // - - - Advanced custom object for OpenGL/VBO/texture rendering - - -
+        // Warning : contents of the pointer will be multi-threaded accessed.
+        // After each modification, a new text object must be created (and this should be the only
+        // access to this text object from the Juce Message thread).
+        //
+        // The OpenGL Thread will then read the contents of the object
+        // for GPU-based rendering.
+        std::shared_ptr<OpenGLTextObject> glTextObject;
 
         const int nameWidth = 120; // pixels
-        const int nameHeight = 15; // pixels
+        const int nameHeight = 25; // pixels
+        const unsigned int nameCharsCountMax = 12; // 8px/char
         
         bool keepRatio;
 		bool areaVisible = true;
@@ -151,6 +160,7 @@ namespace Miam
 		void setVisible(bool shoulBeVisible) override { areaVisible = shoulBeVisible; }
         bool isVisible() override { return areaVisible; }
         virtual bool IsNameVisible() const override {return isNameVisible;}
+        virtual std::shared_ptr<OpenGLTextObject> GetGLTextObject() override { return glTextObject; }
         
         /// \brief Sets the name that could be displayed on screen next to the center
         virtual void SetName(String newName) override;
@@ -194,6 +204,7 @@ namespace Miam
         
         void resetImages();
         void renderCachedNameImages();
+        void resetTextureBasedName();
         public :
         
         /*

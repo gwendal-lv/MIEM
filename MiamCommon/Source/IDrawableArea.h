@@ -37,6 +37,8 @@ namespace bptree = boost::property_tree;
 typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> bpt;
 typedef boost::geometry::model::polygon<bpt> bpolygon;
 
+#include "OpenGLTextObject.h"
+
 #include "MiemVector.hpp"
 
 // Simple declaration for a pointer
@@ -153,6 +155,7 @@ namespace Miam
 		virtual void setVisible(bool shouldBeVisible) = 0;
 		virtual bool isVisible() = 0;
         virtual bool IsNameVisible() const = 0;
+        virtual std::shared_ptr<OpenGLTextObject> GetGLTextObject() = 0;
 
         
         // - - - - - Constant caracteristic values for VBOs - - - - -

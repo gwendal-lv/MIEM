@@ -329,19 +329,17 @@ void SceneCanvasComponent::newOpenGLContextCreated()
     
     // - - - - label de display des fps - - - - -
 	if(openGLLabel == nullptr)
-		openGLLabel = std::make_unique<OpenGLTextObject>(20.0f, 60.0f, 20.0f, -35.0f, 12);
-    // avant init : link avec le gestionnaire de font
-    openGLLabel->SetFontManager(this);
+		openGLLabel = std::make_unique<OpenGLTextObject>(20.0f, 60.0f, 20.0f, +35.0f, 12);
     // init du text selon le contexte
-	openGLLabel->initialiseText(openGlContext);
+	openGLLabel->Initialise(openGlContext, this);
     
     // 2ème label... pour quoi ?
     if(openGLInfoLabel == nullptr)
-        openGLInfoLabel = std::make_unique<OpenGLTextObject>(20.0f, 90.0f, 20.0f, -35.0f, 12);
-    // avant init : link avec le gestionnaire de font
-    openGLInfoLabel->SetFontManager(this);
+        openGLInfoLabel = std::make_unique<OpenGLTextObject>(20.0f, 90.0f, 20.0f, +35.0f, 12);
+    std::u16string texteInfo = u"Hé, huître !" ;
+    openGLInfoLabel->SetText(texteInfo);
     // init du text selon le contexte
-    openGLInfoLabel->initialiseText(openGlContext);
+    openGLInfoLabel->Initialise(openGlContext, this);
 	
 
 #endif // __MIEM_VBO
@@ -460,20 +458,17 @@ void SceneCanvasComponent::renderOpenGL()
     
     // =========================== Rendu GPU++ avec VBO ==========================
 #else // if IS def __MIEM_VBO
+    
     // Management of new/old areas
     for (auto area : areasToGlRelease)
     {
-        // GL texture managing
         if (area->IsNameVisible())
-        {
-            // nothing to do ??
-        }
+            area->GetGLTextObject()->releaseResourcesSync();
     }
     for (auto area : areasToGlInit)
     {
-        // GL texture managing
         if (area->IsNameVisible())
-        {}
+            area->GetGLTextObject()->Initialise(openGlContext, this);
     }
     
 	if (releaseResources) // dernière frame, qui effectue le release
@@ -512,7 +507,7 @@ void SceneCanvasComponent::renderOpenGL()
         
         
         // Affichage des FPS
-		int fps = (int)displayFrequencyMeasurer.GetAverageFrequency_Hz();
+		auto meanFps = displayFrequencyMeasurer.GetAverageFrequency_Hz();
 		if (openGLLabel != nullptr)
 		{
 			Matrix3D<float> testModel(1.0f, 0.0f, 0.0f, 0.0f,
@@ -525,12 +520,14 @@ void SceneCanvasComponent::renderOpenGL()
                                                                                    cameraNearZ, // near
                                                                                    cameraFarZ); // far
             // Label "OpenGL"
-			std::u16string testFPS[]{ u"" };
-			Miam::TextUtils::intToU16string(fps, testFPS);
-			openGLLabel->drawOneTexturedRectangle(openGlContext, testModel, testView, testProjecxtion, testFPS);
-            // Label d'info
-            std::u16string texteInfo[]{ u"Hé, huître !" };
-            openGLInfoLabel->drawOneTexturedRectangle(openGlContext, testModel, testView, testProjecxtion, texteInfo);
+			std::u16string testFPS = u"";
+			testFPS += Miam::TextUtils::ConvertNumberToU16string(meanFps, 5);
+            testFPS += u" fps";
+            openGLLabel->SetText(testFPS);
+			openGLLabel->drawOneTexturedRectangle(openGlContext, testModel, testView, testProjecxtion);
+            
+            // Label d'info (texte constant init au départ)
+            openGLInfoLabel->drawOneTexturedRectangle(openGlContext, testModel, testView, testProjecxtion);
 		}
     }
 #endif // ndef __MIEM_VBO
@@ -640,6 +637,8 @@ void SceneCanvasComponent::DrawOnSceneCanevas()
 	DrawCanvasOutline();
 
 	DrawShapes();
+    
+    DrawShapesNames();
 }
 
 static int sceneCanvasFramesCounter = 0;
@@ -710,6 +709,26 @@ void SceneCanvasComponent::DrawShapes()
 		openGlContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, 0);
 		openGlContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
+}
+void SceneCanvasComponent::DrawShapesNames()
+{
+    Matrix3D<float> testModel(1.0f, 0.0f, 0.0f, 0.0f,
+                              0.0f, -1.0f, 0.0f, 0.0f,
+                              0.0f, 0.0f, 1.0f, 0.0f,
+                              0.0f, (float)getHeight(), 0.0f, 1.0f);
+    Matrix3D<float> testView = Math::GenerateLookAtMatrix(Vector3D<float>(0, 0, 1), Vector3D<float>(0, 0, 0), Vector3D<float>(0, -1, 0));
+    Matrix3D<float> testProjecxtion = Math::GenerateOrthoPerspectiveMatrix((float)getWidth(),
+                                                                           (float)getHeight(),
+                                                                           cameraNearZ, // near
+                                                                           cameraFarZ); // far
+    
+    for (auto area : duplicatedAreas)
+    {
+        if (area->isVisible() && area->IsNameVisible())
+        {
+            area->GetGLTextObject()->drawOneTexturedRectangle(openGlContext, testModel, testView, testProjecxtion);
+        }
+    }
 }
 
 void SceneCanvasComponent::DrawCanvasOutline()

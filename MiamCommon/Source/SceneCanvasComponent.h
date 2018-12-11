@@ -256,9 +256,11 @@ public:
     ///
     /// Cette fonction s'occupe du dessin sur le canevas, le texte se fait après, dans le renderOpenGL
 	virtual void DrawOnSceneCanevas();
-	void DrawShapes();
     /// \brief Will be drawn using separate VBOs and IBOs
 	void DrawCanvasOutline();
+    void DrawShapes();
+    void DrawShapesNames();
+    
     virtual void openGLContextClosing() override;
     
     void SetupGLContext();

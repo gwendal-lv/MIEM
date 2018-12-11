@@ -44,13 +44,15 @@ void OpenGLFontManager::initialiseBuffers(OpenGLContext& context)
 {
     context.extensions.glGenBuffers(1, &vertexBuffer);
     context.extensions.glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-    context.extensions.glBufferData(GL_ARRAY_BUFFER, maxCharacters * 6 * 3 * sizeof(GLfloat),
+    context.extensions.glBufferData(GL_ARRAY_BUFFER,
+                                    MIEM_GL_LABEL_MAX_CHARS * 6 * 3 * sizeof(GLfloat),
                                     nullptr, // non initialisé cette fois !
                                     GL_DYNAMIC_DRAW);
     
     context.extensions.glGenBuffers(1, &UVBuffer);
     context.extensions.glBindBuffer(GL_ARRAY_BUFFER, UVBuffer);
-    context.extensions.glBufferData(GL_ARRAY_BUFFER, maxCharacters * 6 * 2 * sizeof(GLfloat),
+    context.extensions.glBufferData(GL_ARRAY_BUFFER,
+                                    MIEM_GL_LABEL_MAX_CHARS * 6 * 2 * sizeof(GLfloat),
                                     nullptr, // idem, non initialisé
                                     GL_DYNAMIC_DRAW);
 }
