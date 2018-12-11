@@ -39,17 +39,20 @@ namespace Miam {
         
         
     private:
-        void computeVertices(); // must be called only once
+        void computeVertices();
         void recomputeUV(int idx, char32_t character);
+        
         void UTF16ToCodePoint(std::u16string::iterator &it, char32_t &currentCodePoint);
+        float getCharWidthRatio(char32_t u32character);
 
         
         OpenGLFontManager* fontManager = nullptr;
         
+        std::u16string currentText;
+        
         // Parameters assigned at construction only
         const float textX, textY, characterWidth, characterHeight;
         const int maxSize;
-
 
         Vector<GLfloat> g_vertex_buffer;
         Vector<GLfloat> g_UV_buffer;

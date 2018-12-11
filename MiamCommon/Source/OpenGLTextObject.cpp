@@ -59,6 +59,10 @@ void OpenGLTextObject::releaseResourcesSync()
 
 void OpenGLTextObject::SetText(std::u16string& stringToDraw)
 {
+    currentText = stringToDraw;
+    
+    computeVertices();
+    
     int numChar = 0;
     std::u16string::iterator it = stringToDraw.begin();
     while (it != stringToDraw.end())
@@ -132,37 +136,52 @@ void OpenGLTextObject::drawOneTexturedRectangle(OpenGLContext &context, juce::Ma
 
 void OpenGLTextObject::computeVertices()
 {
+    float currentXPos = 0.0f;
 	for (int i = 0; i < maxSize; ++i)
 	{
-		g_vertex_buffer[i * 18 + 0] = textX + i * characterWidth;
+        float currentCharWidth = characterWidth; // default value
+        if ( i < currentText.size() )
+        {
+            currentCharWidth *= getCharWidthRatio(currentText[i]);
+        }
+        
+        // Points definition
+		g_vertex_buffer[i * 18 + 0] = textX + currentXPos;
 		g_vertex_buffer[i * 18 + 1] = textY + 0.0f;
 		g_vertex_buffer[i * 18 + 2] = 0.0f;
 
-		g_vertex_buffer[i * 18 + 3] = textX + (i + 1) * characterWidth;
+		g_vertex_buffer[i * 18 + 3] = textX + currentXPos + currentCharWidth;
 		g_vertex_buffer[i * 18 + 4] = textY + 0.0f;
 		g_vertex_buffer[i * 18 + 5] = 0.0f;
 
-		g_vertex_buffer[i * 18 + 6] = textX + (i + 1) * characterWidth;
+		g_vertex_buffer[i * 18 + 6] = textX + currentXPos + currentCharWidth;
 		g_vertex_buffer[i * 18 + 7] = textY - characterHeight;
 		g_vertex_buffer[i * 18 + 8] = 0.0f;
 
-		g_vertex_buffer[i * 18 + 9] = textX + i * characterWidth;
+		g_vertex_buffer[i * 18 + 9] = textX + currentXPos;
 		g_vertex_buffer[i * 18 + 10] = textY - characterHeight;
 		g_vertex_buffer[i * 18 + 11] = 0.0f;
 
-		g_vertex_buffer[i * 18 + 12] = textX + (i + 1) * characterWidth;
+		g_vertex_buffer[i * 18 + 12] = textX + currentXPos + currentCharWidth;
 		g_vertex_buffer[i * 18 + 13] = textY - characterHeight;
 		g_vertex_buffer[i * 18 + 14] = 0.0f;
 
-		g_vertex_buffer[i * 18 + 15] = textX + i * characterWidth;
+		g_vertex_buffer[i * 18 + 15] = textX  + currentXPos;
 		g_vertex_buffer[i * 18 + 16] = textY + 0.0f;
 		g_vertex_buffer[i * 18 + 17] = 0.0f;
+        
+        // Current X pos update
+        currentXPos += currentCharWidth;
 	}
 }
 
 void OpenGLTextObject::recomputeUV(int idx, char32_t character)
 {
-	float wRatio = (39.0f / 1024.0f); // width of character in % of texture width
+    // width of character in % of texture width
+    float wRatio = (39.0f / 1024.0f);
+     // ratio specific to the current character (i, j, l, etc...)
+    float charWRatio = wRatio * getCharWidthRatio(character);
+    
 	float hRatio = 1.0f / 16.0f; // height of character in % of texture height
 
 	float xNew = wRatio * float(character % 16);//float(character % 16) * wRatio;//float(character % 16) / 8.0f;
@@ -183,10 +202,10 @@ void OpenGLTextObject::recomputeUV(int idx, char32_t character)
 	g_UV_buffer[idx * 12 + 0] = xNew;
 	g_UV_buffer[idx * 12 + 1] = yNew - hRatio;
 
-	g_UV_buffer[idx * 12 + 2] = xNew + wRatio;
+	g_UV_buffer[idx * 12 + 2] = xNew + charWRatio;
 	g_UV_buffer[idx * 12 + 3] = yNew - hRatio;
 
-	g_UV_buffer[idx * 12 + 4] = xNew + wRatio;
+	g_UV_buffer[idx * 12 + 4] = xNew + charWRatio;
 	g_UV_buffer[idx * 12 + 5] = yNew;
 
 
@@ -195,7 +214,7 @@ void OpenGLTextObject::recomputeUV(int idx, char32_t character)
 	g_UV_buffer[idx * 12 + 6] = xNew;
 	g_UV_buffer[idx * 12 + 7] = yNew;
 
-	g_UV_buffer[idx * 12 + 8] = xNew + wRatio;
+	g_UV_buffer[idx * 12 + 8] = xNew + charWRatio;
 	g_UV_buffer[idx * 12 + 9] = yNew;
 
 	g_UV_buffer[idx * 12 + 10] = xNew;
@@ -217,5 +236,37 @@ void OpenGLTextObject::UTF16ToCodePoint(std::u16string::iterator &it, char32_t &
 		currentCodePoint = (*it);
 		++it;
 	}
+}
+
+float OpenGLTextObject::getCharWidthRatio(char32_t u32character)
+{
+    switch(u32character)
+    {
+        case 'i' :
+        case 'I' :
+            return 0.4;
+            
+        case 'j' :
+        case 'l' :
+        case 'J' :
+            return 0.45f;
+            
+        case 'f' :
+        case 't' :
+        case 'r' :
+            return 0.5f;
+            
+        case ' ' :
+            return 0.7;
+            
+        case 'm' :
+        case 'M' :
+        case 'w' :
+        case 'W' :
+            return 0.95f;
+            
+        default :
+            return 0.7f; // une lettre fait en moyenne 90% de son espace dans la texture !
+    }
 }
 

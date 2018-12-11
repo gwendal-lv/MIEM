@@ -87,9 +87,9 @@ namespace Miam
         // for GPU-based rendering.
         std::shared_ptr<OpenGLTextObject> glTextObject;
 
-        const int nameWidth = 120; // pixels
+        const int nameWidth = 200; // pixels (fera souvent moins que ça en pratique)
         const int nameHeight = 25; // pixels
-        const unsigned int nameCharsCountMax = 12; // 8px/char
+        const unsigned int nameCharsCountMax = 15; //
         
         bool keepRatio;
 		bool areaVisible = true;

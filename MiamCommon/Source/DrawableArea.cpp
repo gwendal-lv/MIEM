@@ -231,8 +231,28 @@ void DrawableArea::resetTextureBasedName()
         nameU16[nameU16.size()-1] = '.'; // caractère de chaîne raccourcie
     }
     
+    // Choix du placement en X. Idée de base :
+    // décaler de 1/3 de la taille estimée des caractères
+    const double nameWidthEstimation = 0.7 * (double)(nameWidth) * nameU16.length()
+                                            / (double)(nameCharsCountMax);
+    const double desiredXOffset = - nameWidthEstimation / 3.0;
+    float xPosition = 0.0f;
+    // Si on près du bord gauche : on décale pour que la texture ne touche pas le bord
+    const double minLeftMargin = 2.0 * (double)centerCircleRadius;
+    if ( minLeftMargin > (centerInPixels.get<0>() + desiredXOffset) )
+        xPosition = minLeftMargin;
+    // si on est près du bord droit : on ne connaît pas la vraie taille de la texture tant qu'on
+    // ne l'a pas construite.... Estimation du coup
+    else if ((centerInPixels.get<0>() + nameWidthEstimation + desiredXOffset)
+             > parentCanvas->getWidth())
+        xPosition = parentCanvas->getWidth() - nameWidthEstimation;
+    // Sinon c'est bon !
+    else
+        xPosition = centerInPixels.get<0>() + desiredXOffset;
+    
+    
     // reconstruction complète d'un nouvel objet (pour thread-safety)
-    glTextObject = std::make_shared<OpenGLTextObject>(centerInPixels.get<0>(),
+    glTextObject = std::make_shared<OpenGLTextObject>(xPosition,
                                                       centerInPixels.get<1>() + centerCircleRadius + nameHeight * 1.1,
                                                       std::roundf((float)(nameWidth) / (float)(nameCharsCountMax)),
                                                       nameHeight,
