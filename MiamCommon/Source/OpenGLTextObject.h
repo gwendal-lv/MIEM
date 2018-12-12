@@ -32,7 +32,7 @@ namespace Miam {
         void releaseResourcesSync();
         
         void SetText(std::u16string& stringToDraw);
-        void drawOneTexturedRectangle(OpenGLContext &context, juce::Matrix3D<float> &model, juce::Matrix3D<float> &testView, juce::Matrix3D<float> &testPerspective);
+        void drawOneTexturedRectangle(OpenGLContext &context, juce::Matrix3D<float> &model, juce::Matrix3D<float> &testView, juce::Matrix3D<float> &testPerspective, GLfloat globalAlpha = 1.0f);
         
         void SetFontManager(OpenGLFontManager* _manager)
         { fontManager = _manager; }

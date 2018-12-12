@@ -243,8 +243,9 @@ void DrawableArea::resetTextureBasedName()
         xPosition = minLeftMargin;
     // si on est près du bord droit : on ne connaît pas la vraie taille de la texture tant qu'on
     // ne l'a pas construite.... Estimation du coup
-    else if ((centerInPixels.get<0>() + nameWidthEstimation + desiredXOffset)
-             > parentCanvas->getWidth())
+    else if (parentCanvas &&
+             ((centerInPixels.get<0>() + nameWidthEstimation + desiredXOffset)
+                > parentCanvas->getWidth()))
         xPosition = parentCanvas->getWidth() - nameWidthEstimation;
     // Sinon c'est bon !
     else

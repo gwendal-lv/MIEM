@@ -327,13 +327,7 @@ void SceneCanvasComponent::newOpenGLContextCreated()
     // = = = = = loading of shared data for all text objects = = = = =
     InitGLFontResources(openGlContext); // from OpenGLFontManager mother class
     
-    // - - - - label de display des fps - - - - -
-	if(openGLLabel == nullptr)
-		openGLLabel = std::make_unique<OpenGLTextObject>(20.0f, 60.0f, 20.0f, +35.0f, 12);
-    // init du text selon le contexte
-	openGLLabel->Initialise(openGlContext, this);
-    
-    // 2ème label... pour quoi ?
+    // - - - - label de display des fps - - - -
     if(openGLInfoLabel == nullptr)
         openGLInfoLabel = std::make_unique<OpenGLTextObject>(20.0f, 90.0f, 20.0f, +35.0f, 12);
     std::u16string texteInfo = u"Hé, huître !" ;
@@ -507,9 +501,9 @@ void SceneCanvasComponent::renderOpenGL()
         
         
         // Affichage des FPS
-		auto meanFps = displayFrequencyMeasurer.GetAverageFrequency_Hz();
-		if (openGLLabel != nullptr)
+		if (openGLInfoLabel != nullptr)
 		{
+            auto meanFps = displayFrequencyMeasurer.GetAverageFrequency_Hz();
 			Matrix3D<float> testModel(1.0f, 0.0f, 0.0f, 0.0f,
 				0.0f, -1.0f, 0.0f, 0.0f,
 				0.0f, 0.0f, 1.0f, 0.0f,
@@ -523,11 +517,8 @@ void SceneCanvasComponent::renderOpenGL()
 			std::u16string testFPS = u"";
 			testFPS += Miam::TextUtils::ConvertNumberToU16string(meanFps, 5);
             testFPS += u" fps";
-            openGLLabel->SetText(testFPS);
-			openGLLabel->drawOneTexturedRectangle(openGlContext, testModel, testView, testProjecxtion);
-            
-            // Label d'info (texte constant init au départ)
-            openGLInfoLabel->drawOneTexturedRectangle(openGlContext, testModel, testView, testProjecxtion);
+            openGLInfoLabel->SetText(testFPS);
+			openGLInfoLabel->drawOneTexturedRectangle(openGlContext, testModel, testView, testProjecxtion);
 		}
     }
 #endif // ndef __MIEM_VBO
@@ -578,8 +569,6 @@ void SceneCanvasComponent::openGLDestructionAtLastFrame()
     DBG("[MIEM OpenGL] Destruction sur 'last frame'");
     
     // objets texte avec texture
-	openGLLabel->releaseResourcesSync();
-	openGLLabel = nullptr;
     openGLInfoLabel->releaseResourcesSync();
     openGLInfoLabel = nullptr;
     
@@ -726,7 +715,9 @@ void SceneCanvasComponent::DrawShapesNames()
     {
         if (area->isVisible() && area->IsNameVisible())
         {
-            area->GetGLTextObject()->drawOneTexturedRectangle(openGlContext, testModel, testView, testProjecxtion);
+            area->GetGLTextObject()->drawOneTexturedRectangle(openGlContext,
+                                                              testModel, testView, testProjecxtion,
+                                                              area->GetAlpha());
         }
     }
 }

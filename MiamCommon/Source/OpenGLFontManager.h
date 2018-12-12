@@ -42,7 +42,7 @@ namespace Miam {
         // (through thread-safe std:: shared pointers)
         public : // pour l'instant...
         std::unique_ptr<OpenGLShaderProgram::Attribute> positionText, colourText, vertexUV;
-        std::unique_ptr<OpenGLShaderProgram::Uniform> textProjectionMatrix, textViewMatrix, textModelMatrix, texture;
+        std::unique_ptr<OpenGLShaderProgram::Uniform> textProjectionMatrix, textViewMatrix, textModelMatrix, texture, globalAlphaUniform;
         
         // VBOs
         GLuint vertexBuffer, UVBuffer;
@@ -60,7 +60,7 @@ namespace Miam {
         // - helpers -
         private :
         void initialiseShaderProgram(OpenGLContext &context);
-        void initialiseAttributesAndUniforms();
+        void initialiseAttributesAndUniforms(OpenGLContext &context);
         void releaseAttributesAndUniforms();
         void initialiseBuffers(OpenGLContext& context); 
         

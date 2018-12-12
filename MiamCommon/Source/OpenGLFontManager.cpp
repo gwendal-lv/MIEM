@@ -24,7 +24,7 @@ void OpenGLFontManager::InitGLFontResources(OpenGLContext &context)
     
     initialiseShaderProgram(context);
     initialiseBuffers(context);
-    initialiseAttributesAndUniforms();
+    initialiseAttributesAndUniforms(context);
 }
 void OpenGLFontManager::ReleaseGLFontResources()
 {
@@ -84,12 +84,14 @@ void OpenGLFontManager::initialiseShaderProgram(OpenGLContext &context)
     /// - - - FRAGMENT shader - - -
     fragmentShaderSourceCode =
 #if JUCE_OPENGL_ES
+    "precision mediump float;  " // valable pour tous les floats
     "varying mediump vec2 UV;                                          \n"
 #else
     "varying vec2 UV;                                               \n"
 #endif
     // Texture que l'on suppose en niveau de gris. Blanc = opaque, Noir = transparent
     "uniform sampler2D demoTexture;                                 \n" // nom à changer...
+    "uniform float textGlobalAlpha;                                       \n"
     
     "void main() "
     "{ "
@@ -97,7 +99,6 @@ void OpenGLFontManager::initialiseShaderProgram(OpenGLContext &context)
 #if JUCE_OPENGL_ES
     "    mediump vec4 currentFrag; " // ...impossible d'appliquer une précision
     "    mediump vec4 shadowFrag;  " // par défaut aux vec4....
-    "    precision mediump float;  " // valable pour tous les floats
 #else
     "    vec4 currentFrag; "
     "    vec4 shadowFrag;  "
@@ -130,7 +131,8 @@ void OpenGLFontManager::initialiseShaderProgram(OpenGLContext &context)
     "        currentFrag.a = blendedAlpha; "
     "    } "
     
-    // Sinon, sortie du shader
+    // Alpha global puis sortie du shader
+    "    currentFrag.a = currentFrag.a * textGlobalAlpha; "
     "    gl_FragColor = currentFrag; " // gl_FragColor seems deprecated...  https://stackoverflow.com/questions/51459596/using-gl-fragcolor-vs-out-vec4-color
     "}                                                              \n";
     
@@ -148,16 +150,27 @@ void OpenGLFontManager::initialiseShaderProgram(OpenGLContext &context)
     textShaderProgram->use();
 }
 
-void OpenGLFontManager::initialiseAttributesAndUniforms()
+void OpenGLFontManager::initialiseAttributesAndUniforms(OpenGLContext &context)
 {
     OpenGLShaderProgram& shaderProgramRef = *(textShaderProgram.get());
     
     positionText = std::make_unique<OpenGLShaderProgram::Attribute>(shaderProgramRef, "position");
     vertexUV = std::make_unique<OpenGLShaderProgram::Attribute>(shaderProgramRef, "uvCoord");
     
+    
+    auto uniLocation = context.extensions.glGetUniformLocation (shaderProgramRef.getProgramID(), "textGlobalAlpha");
+    std::cout << "Uniform Location = " << uniLocation << std::endl;
+    
+    
     textProjectionMatrix = std::make_unique<OpenGLShaderProgram::Uniform>(shaderProgramRef, "projectionMatrix");
+    uniLocation = context.extensions.glGetUniformLocation (shaderProgramRef.getProgramID(), "projectionMatrix");
+    std::cout << "Uniform Location = " << uniLocation << std::endl;
     textViewMatrix = std::make_unique<OpenGLShaderProgram::Uniform>(shaderProgramRef, "viewMatrix");
+    uniLocation = context.extensions.glGetUniformLocation (shaderProgramRef.getProgramID(), "viewMatrix");
+    std::cout << "Uniform Location = " << uniLocation << std::endl;
     textModelMatrix = std::make_unique<OpenGLShaderProgram::Uniform>(shaderProgramRef, "modelMatrix");
+    globalAlphaUniform = std::make_unique<OpenGLShaderProgram::Uniform>(shaderProgramRef, "textGlobalAlpha");
+
     texture = std::make_unique<OpenGLShaderProgram::Uniform>(shaderProgramRef, "demoTexture");
     
     if (texture != nullptr)
@@ -167,6 +180,7 @@ void OpenGLFontManager::initialiseAttributesAndUniforms()
 }
 void OpenGLFontManager::releaseAttributesAndUniforms()
 {
+    globalAlphaUniform = nullptr;
     texture = nullptr;
     textModelMatrix = nullptr;
     textViewMatrix = nullptr;

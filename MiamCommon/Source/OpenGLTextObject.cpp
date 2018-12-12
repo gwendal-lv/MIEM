@@ -86,7 +86,7 @@ void OpenGLTextObject::SetText(std::u16string& stringToDraw)
 }
 
 
-void OpenGLTextObject::drawOneTexturedRectangle(OpenGLContext &context, juce::Matrix3D<float> &model, juce::Matrix3D<float> &testView, juce::Matrix3D<float> &testPerspective)
+void OpenGLTextObject::drawOneTexturedRectangle(OpenGLContext &context, juce::Matrix3D<float> &model, juce::Matrix3D<float> &testView, juce::Matrix3D<float> &testPerspective, GLfloat globalAlpha)
 {
     context.extensions.glBindBuffer(GL_ARRAY_BUFFER, 0);
     context.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -107,6 +107,7 @@ void OpenGLTextObject::drawOneTexturedRectangle(OpenGLContext &context, juce::Ma
 		fontManager->textModelMatrix->setMatrix4(model.mat, 1, false);
         fontManager->textProjectionMatrix->setMatrix4(testPerspective.mat, 1, false);
         fontManager->textViewMatrix->setMatrix4(testView.mat, 1, false);
+        fontManager->globalAlphaUniform->set(globalAlpha);
         
         fontManager->fontTexture->bind();
     

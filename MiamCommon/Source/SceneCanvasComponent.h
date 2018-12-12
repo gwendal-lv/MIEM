@@ -104,7 +104,6 @@ public:
     
     std::unique_ptr<OpenGLShaderProgram::Attribute> positionShaderAttribute, colourShaderAttribute;
     
-    std::unique_ptr<OpenGLTextObject> openGLLabel;
     std::unique_ptr<OpenGLTextObject> openGLInfoLabel;
     
     
