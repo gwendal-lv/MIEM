@@ -342,31 +342,24 @@ void DrawablePolygon::refreshExternalContourVerticesSubBuffer(int externalContou
         m[idx[i+1]] /= ublas::norm_2(m[idx[i+1]]);
     }
     // - - 4. Calcul des angles alpha - -
+    // - - 5. Calcul des distances h selon les vecteurs m (du 3.) - -
     std::vector<double> alpha(N);
+    std::vector<double> h(N);
     for (size_t i=0 ; i < N ; i++)
     {
-        // va travailler ici sur le i+1
-        bpt unp1, unp0; // u n+1 and u n+0
-        alpha[idx[i+1]] = Math::ComputePositiveAngle(;
+        // calcul du cos alpha via produit scalaire
+        double cos_alpha = ublas::inner_prod(-u[i], u[idx[i+1]]);
+        // puis du sin demi via formule trigo classique
+        double sin_half_alpha = std::sqrt((1 - cos_alpha) / 2.0);
+        h[idx[i+1]] = (double) contourWidth / sin_half_alpha;
     }
-    std::cout << "alpha0 = " << alpha[0] << " ; alpha1 = " << alpha[1] << std::endl;
-    
-    // - - 5. Calcul des distances selon les vecteurs m (du 3.) - -
-    
     
     // - - Final : application dans le VBO - -
-    
-    const float Xoffset = (float)centerInPixels.get<0>();
-    const float Yoffset = (float)centerInPixels.get<1>();
-    
-    float resizeFactor = 1.1;
     for (int i = 0; i < N; ++i)
     {
         // Nouveau Point : faisant partie de l'extérieur du contour
-        vertices_buffer[3 * (externalContourVertexElmtOffset + i) + 0] = Xoffset
-        + resizeFactor * ((float)contourPointsInPixels.outer().at(i).get<0>() - Xoffset);
-        vertices_buffer[3 * (externalContourVertexElmtOffset + i) + 1] = Yoffset
-        + resizeFactor * ((float)contourPointsInPixels.outer().at(i).get<1>() - Yoffset);
+        vertices_buffer[3 * (externalContourVertexElmtOffset + i) + 0] = A[i].get<0>() + h[i] * m[i][0];
+        vertices_buffer[3 * (externalContourVertexElmtOffset + i) + 1] = A[i].get<1>() + h[i] * m[i][1];
         vertices_buffer[3 * (externalContourVertexElmtOffset + numPointsPolygon + i) + 2] = posZ;
     }
 }

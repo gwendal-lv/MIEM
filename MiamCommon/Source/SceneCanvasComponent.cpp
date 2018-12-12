@@ -642,7 +642,7 @@ void SceneCanvasComponent::DrawShapes()
 #ifdef __MIAM_DEBUG
         if ((sceneCanvasFramesCounter++) > 1000)
         {
-            std::cout << "[Draw GL shapes] " << currentVertexBufferArrayPos << " vertex GLfloat ; " << currentColourBufferArrayPos << " colour GLfloat ; " << currentIndexBufferArrayPos << " index GLuint" << std::endl;
+            //std::cout << "[Draw GL shapes] " << currentVertexBufferArrayPos << " vertex GLfloat ; " << currentColourBufferArrayPos << " colour GLfloat ; " << currentIndexBufferArrayPos << " index GLuint" << std::endl;
             sceneCanvasFramesCounter = 0;
             
         }
