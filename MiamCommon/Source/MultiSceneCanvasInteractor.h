@@ -174,14 +174,17 @@ namespace Miam {
         
         
         
-        // - - - - - Internal events management - - - - -
-        
-        protected :
-        /// \brief
+        // - - - - - Events notifications (should not happen often...) - - - - -
+        public :
+        /// \brief Internally dispatches the event and also notifies the GraphicSessionManager
         ///
         /// Copy-constructor of the event called : else, there would be cast
         /// issues
         void handleAndSendEventSync(std::shared_ptr<GraphicEvent> graphicE);
+        
+        
+        // - - - - - Internal events management - - - - -
+        protected :
         /// \brief Can be called alone, or from the MultiArea version of this function
         /// (for optimization purposes).
         ///

@@ -41,8 +41,8 @@ namespace Miam {
         // Then, only the OpenGL thread will access it
         // (through thread-safe std:: shared pointers)
         public : // pour l'instant...
-        std::unique_ptr<OpenGLShaderProgram::Attribute> positionText, colourText, vertexUV;
-        std::unique_ptr<OpenGLShaderProgram::Uniform> textProjectionMatrix, textViewMatrix, textModelMatrix, texture, globalAlphaUniform;
+        std::unique_ptr<OpenGLShaderProgram::Attribute> textPositionAttribute, textUVAttribute;
+        std::unique_ptr<OpenGLShaderProgram::Uniform> textProjectionMatrixUniform, textViewMatrixUniform, textModelMatrixUniform, textureUniform, globalAlphaUniform;
         
         // VBOs
         GLuint vertexBuffer, UVBuffer;

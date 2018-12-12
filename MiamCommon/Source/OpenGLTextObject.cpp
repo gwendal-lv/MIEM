@@ -104,29 +104,29 @@ void OpenGLTextObject::drawOneTexturedRectangle(OpenGLContext &context, juce::Ma
 		fontManager->textShaderProgram->use();
         
         // Uniforms qui sont liés au shader activé précédemment
-		fontManager->textModelMatrix->setMatrix4(model.mat, 1, false);
-        fontManager->textProjectionMatrix->setMatrix4(testPerspective.mat, 1, false);
-        fontManager->textViewMatrix->setMatrix4(testView.mat, 1, false);
+		fontManager->textModelMatrixUniform->setMatrix4(model.mat, 1, false);
+        fontManager->textProjectionMatrixUniform->setMatrix4(testPerspective.mat, 1, false);
+        fontManager->textViewMatrixUniform->setMatrix4(testView.mat, 1, false);
         fontManager->globalAlphaUniform->set(globalAlpha);
         
         fontManager->fontTexture->bind();
     
         // The VBOs are stored within the manager are shared with all areas
         // => glBufferSubData must update all necessary data
-        context.extensions.glEnableVertexAttribArray(fontManager->positionText->attributeID);
+        context.extensions.glEnableVertexAttribArray(fontManager->textPositionAttribute->attributeID);
         context.extensions.glBindBuffer(GL_ARRAY_BUFFER, fontManager->vertexBuffer);
         context.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, maxSize * 6 * 3 * sizeof(GLfloat), g_vertex_buffer.data());
-        context.extensions.glVertexAttribPointer(fontManager->positionText->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
+        context.extensions.glVertexAttribPointer(fontManager->textPositionAttribute->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
 
-        context.extensions.glEnableVertexAttribArray(fontManager->vertexUV->attributeID);
+        context.extensions.glEnableVertexAttribArray(fontManager->textUVAttribute->attributeID);
         context.extensions.glBindBuffer(GL_ARRAY_BUFFER, fontManager->UVBuffer); // changer ça!
         context.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, maxSize * 6 * 2 * sizeof(GLfloat), g_UV_buffer.data());
-        context.extensions.glVertexAttribPointer(fontManager->vertexUV->attributeID, 2, GL_FLOAT, GL_FALSE, sizeof(float[2]), 0);
+        context.extensions.glVertexAttribPointer(fontManager->textUVAttribute->attributeID, 2, GL_FLOAT, GL_FALSE, sizeof(float[2]), 0);
 
         glDrawArrays(GL_TRIANGLES, 0, maxSize * 2 * 3);
 
-        context.extensions.glDisableVertexAttribArray(fontManager->positionText->attributeID);
-        context.extensions.glDisableVertexAttribArray(fontManager->vertexUV->attributeID);
+        context.extensions.glDisableVertexAttribArray(fontManager->textPositionAttribute->attributeID);
+        context.extensions.glDisableVertexAttribArray(fontManager->textUVAttribute->attributeID);
     
         
         // Unbind VBOs par sécurité...

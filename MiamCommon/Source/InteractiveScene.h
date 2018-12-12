@@ -23,7 +23,7 @@
 #include "MultiAreaEvent.h"
 
 #include "IEditableArea.h"
-#include "Exciter.h"
+#include "Exciter.h" // also SteadyClock
 
 
 // Pre-declarations for pointers
@@ -45,7 +45,8 @@ namespace Miam
     /// This kind of scene can be loaded (from a file for example) and destroyed,
     /// but is not fully editable. See Miam::EditableArea for editing features.
     /// However, the exciters (if enabled) can be moved with mouse/touch/pen events
-    class InteractiveScene : public std::enable_shared_from_this<InteractiveScene>
+    class InteractiveScene : public std::enable_shared_from_this<InteractiveScene>,
+                             public Timer // for exciter's animations
     {
         
         // ...Enums....
@@ -169,6 +170,12 @@ namespace Miam
         virtual std::shared_ptr<AreaEvent> AddArea(std::shared_ptr<IInteractiveArea> newArea);
         
         
+        // - - - - - Areas managing : graphic helpers - - - - -
+        /// \brief Callback intended for exciter's continuous animation (useful in VBO mode
+        /// only)
+        virtual void timerCallback() override;
+        
+
         // - - - - - Areas Z-order helper functions - - - - -
         // reminder : the last area in the list is the last to be drawn,
         // so it is on the "front" or "closest" layer

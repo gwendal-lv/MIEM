@@ -154,39 +154,30 @@ void OpenGLFontManager::initialiseAttributesAndUniforms(OpenGLContext &context)
 {
     OpenGLShaderProgram& shaderProgramRef = *(textShaderProgram.get());
     
-    positionText = std::make_unique<OpenGLShaderProgram::Attribute>(shaderProgramRef, "position");
-    vertexUV = std::make_unique<OpenGLShaderProgram::Attribute>(shaderProgramRef, "uvCoord");
+    textPositionAttribute = std::make_unique<OpenGLShaderProgram::Attribute>(shaderProgramRef, "position");
+    textUVAttribute = std::make_unique<OpenGLShaderProgram::Attribute>(shaderProgramRef, "uvCoord");
     
-    
-    auto uniLocation = context.extensions.glGetUniformLocation (shaderProgramRef.getProgramID(), "textGlobalAlpha");
-    std::cout << "Uniform Location = " << uniLocation << std::endl;
-    
-    
-    textProjectionMatrix = std::make_unique<OpenGLShaderProgram::Uniform>(shaderProgramRef, "projectionMatrix");
-    uniLocation = context.extensions.glGetUniformLocation (shaderProgramRef.getProgramID(), "projectionMatrix");
-    std::cout << "Uniform Location = " << uniLocation << std::endl;
-    textViewMatrix = std::make_unique<OpenGLShaderProgram::Uniform>(shaderProgramRef, "viewMatrix");
-    uniLocation = context.extensions.glGetUniformLocation (shaderProgramRef.getProgramID(), "viewMatrix");
-    std::cout << "Uniform Location = " << uniLocation << std::endl;
-    textModelMatrix = std::make_unique<OpenGLShaderProgram::Uniform>(shaderProgramRef, "modelMatrix");
+    textProjectionMatrixUniform = std::make_unique<OpenGLShaderProgram::Uniform>(shaderProgramRef, "projectionMatrix");
+    textViewMatrixUniform = std::make_unique<OpenGLShaderProgram::Uniform>(shaderProgramRef, "viewMatrix");
+    textModelMatrixUniform = std::make_unique<OpenGLShaderProgram::Uniform>(shaderProgramRef, "modelMatrix");
     globalAlphaUniform = std::make_unique<OpenGLShaderProgram::Uniform>(shaderProgramRef, "textGlobalAlpha");
 
-    texture = std::make_unique<OpenGLShaderProgram::Uniform>(shaderProgramRef, "demoTexture");
+    textureUniform = std::make_unique<OpenGLShaderProgram::Uniform>(shaderProgramRef, "demoTexture");
     
-    if (texture != nullptr)
-        texture->set(0);
+    if (textureUniform != nullptr)
+        textureUniform->set(0);
     else
         assert(false); // cannot draw anything....
 }
 void OpenGLFontManager::releaseAttributesAndUniforms()
 {
     globalAlphaUniform = nullptr;
-    texture = nullptr;
-    textModelMatrix = nullptr;
-    textViewMatrix = nullptr;
-    textProjectionMatrix = nullptr;
-    vertexUV = nullptr;
-    positionText = nullptr;
+    textureUniform = nullptr;
+    textModelMatrixUniform = nullptr;
+    textViewMatrixUniform = nullptr;
+    textProjectionMatrixUniform = nullptr;
+    textUVAttribute = nullptr;
+    textPositionAttribute = nullptr;
 }
 
 

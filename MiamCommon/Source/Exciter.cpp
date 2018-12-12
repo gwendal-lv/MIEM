@@ -22,7 +22,7 @@ using namespace Miam;
 
 // = = = = = = = = = = Construction/Destruction + polymorphic cloning = = = = = = = = = =
 
-Exciter::Exciter(bptree::ptree & areaTree, std::chrono::time_point<clock> commonStartTimePoint_, int additionnalTouchGrabRadius_)
+Exciter::Exciter(bptree::ptree & areaTree, std::chrono::time_point<SteadyClock> commonStartTimePoint_, int additionnalTouchGrabRadius_)
 :
 EditableEllipse(areaTree),
 
@@ -39,7 +39,7 @@ commonStartTimePt(commonStartTimePoint_)
     
 }
 
-Exciter::Exciter(uint64_t uniqueId, std::chrono::time_point<clock> commonStartTimePoint_, int additionnalTouchGrabRadius_)
+Exciter::Exciter(uint64_t uniqueId, std::chrono::time_point<SteadyClock> commonStartTimePoint_, int additionnalTouchGrabRadius_)
 :
 // Taille = 5% du canevas (de la + petite taille). Ratio inconnu, 1 par défaut...
 EditableEllipse(uniqueId, bpt(0.5, 0.5), 0.05, Colours::lightgrey, 1.0f),
@@ -85,7 +85,7 @@ void Exciter::init()
     SetEnableTranslationOnly(true);
     
     volume = 0.0;
-    startTimePt = clock::now();
+    startTimePt = SteadyClock::now();
     
     // Par défaut : volume de 1
     SetVolume(1.0);
@@ -122,20 +122,31 @@ void Exciter::SetIsAnimationSynchronized(bool isSynchronized_)
 // = = = = = = = = = = Display = = = = = = = = = =
 void Exciter::Paint(Graphics& g)
 {
+    UpdateDynamicBrightness(SteadyClock::now());
+    
+    // Parent painting
+    EditableEllipse::Paint(g);
+}
+AreaEventType Exciter::UpdateDynamicBrightness(const std::chrono::time_point<SteadyClock>& timePoint)
+{
     std::chrono::duration<double> duration; // par défaut, en secondes
     if (isAnimationSynchronized)
-        duration = clock::now() - commonStartTimePt;
+        duration = timePoint - commonStartTimePt;
     else
-        duration = clock::now() - startTimePt;
+        duration = timePoint - startTimePt;
     
     // Création d'une couleur opaque (alpha=1.0f)
     // à partir de la luminosité seulement (sat et teinte = 0.0f)
     double brightness = deltaBrightnessOffset + deltaBrightnessAmplitude
-                        * std::cos(omega * duration.count());
-    contourColour = Colour(0.0f, 0.0f, (float)brightness, 1.0f);
+                                        * std::cos(omega * duration.count());
     
-    // Parent painting
-    EditableEllipse::Paint(g);
+    // Application
+    contourColour = Colour(0.0f, 0.0f, (float)brightness, 1.0f);
+#ifdef __MIEM_VBO
+    RefreshOpenGLBuffers();
+#endif
+    
+    return AreaEventType::ColorChanged;
 }
 
 // = = = = = = = = = = Interactions = = = = = = = = = =

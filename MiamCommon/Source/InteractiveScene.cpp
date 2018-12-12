@@ -34,6 +34,10 @@ canvasComponent(canvasComponent_),
 excitersBehavior(excitersBehavior_)
 {
     name = "Default Scene";
+    
+#ifdef __MIEM_VBO
+    this->startTimerHz(24);
+#endif
 }
 
 
@@ -142,6 +146,29 @@ std::shared_ptr<AreaEvent> InteractiveScene::AddArea(std::shared_ptr<IInteractiv
 #endif
     
     return std::make_shared<AreaEvent>(newArea, AreaEventType::Added, (int)areas.size()-1, shared_from_this());
+}
+
+
+// - - - - - Areas managing : graphic helpers - - - - -
+void InteractiveScene::timerCallback()
+{
+    // empty event to start with
+    std::shared_ptr<MultiAreaEvent> multiAreaE = std::make_shared<MultiAreaEvent>(nullptr, AreaEventType::NothingHappened, nullptr);
+    
+    std::chrono::time_point<SteadyClock> timePoint = SteadyClock::now();
+    // Refresh of all exciters
+    for (auto& exciter : currentExciters)
+    {
+        auto eventType = exciter->UpdateDynamicBrightness(timePoint);
+        multiAreaE->AddAreaEvent(std::make_shared<AreaEvent>(exciter, eventType, shared_from_this()));
+    }
+    
+    // Multi-area event sent back to the canvas manager
+    auto lockedCanvasManager = canvasManager.lock();
+    if (lockedCanvasManager)
+        lockedCanvasManager->handleAndSendEventSync(multiAreaE);
+    else
+        assert(false); // the canvas manager should be lockable at this point...
 }
 
 

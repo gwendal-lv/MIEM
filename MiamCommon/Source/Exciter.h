@@ -25,6 +25,9 @@
 
 namespace Miam
 {
+    typedef std::chrono::steady_clock SteadyClock;
+    
+    
     class MultiAreaEvent;
     
     
@@ -55,9 +58,8 @@ namespace Miam
         // Display attributes
         
         // Clignotement
-        typedef std::chrono::steady_clock clock;
-        std::chrono::time_point<clock> startTimePt;
-        std::chrono::time_point<clock> commonStartTimePt;
+        std::chrono::time_point<SteadyClock> startTimePt;
+        std::chrono::time_point<SteadyClock> commonStartTimePt;
         double const omega = 2.0 * M_PI * 1.0; // 1 Hz
         double const deltaBrightnessAmplitude = 0.3;
         
@@ -130,10 +132,10 @@ namespace Miam
         // - - - - - Construction/Destruction + polymorphic cloning - - - - -
         
         Exciter(bptree::ptree & areaTree,
-                std::chrono::time_point<clock> commonStartTimePoint_,
+                std::chrono::time_point<SteadyClock> commonStartTimePoint_,
                 int additionnalTouchGrabRadius_ = AdditionnalGrabRadius::None);
         Exciter(uint64_t uniqueId,
-                std::chrono::time_point<clock> commonStartTimePoint_,
+                std::chrono::time_point<SteadyClock> commonStartTimePoint_,
                 int additionnalTouchGrabRadius_ = AdditionnalGrabRadius::None);
         
         virtual ~Exciter();
@@ -157,10 +159,14 @@ namespace Miam
         
         // - - - - - Display - - - - -
         public :
-        /// \brief Paints specific elements over the elements painted
+        /// \brief Computes and Applies a sinusoidal brightness for a given time point
+        ///
+        /// \return The corresponding AreaEventType
+        AreaEventType UpdateDynamicBrightness(const std::chrono::time_point<SteadyClock>& timePoint);
         
         
         // - - - - - Interactions - - - - -
+        public :
         /// \brief Prend en compte le rayon de "touch grab" éventuellement agrandi
         virtual bool HitTest(bpt T) const override;
         /// \brief Peut être appelé par une aire excitée par cette instance.
