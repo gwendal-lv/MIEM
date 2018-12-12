@@ -11,6 +11,10 @@
 #include "SceneCanvasComponent.h"
 
 #include "XmlUtils.h"
+#include "MiamMath.h"
+
+#include "boost/numeric/ublas/vector.hpp"
+#include "boost/numeric/ublas/io.hpp"
 
 using namespace Miam;
 
@@ -270,35 +274,21 @@ void DrawablePolygon::RefreshOpenGLBuffers()
 	// - - - contour de la forme - - -
     const int contourVertexElmtOffset = baseVertexElmtOffset + numVerticesPolygon;
     
-    // ******************* à ré-écrire proprement **********************
-    // ne va pas faire un beau contour, tel quel.... il faut réfléchir un peu à la géométrie
-    
-    // on va créer 1 deuxième forme en resizant le contour par Juce
-    // puis on récupère les points. C'est du calcul 100% CPU donc pour le placement...
+    // on va créer 1 deuxième forme par un calcul maison (voir schémas papiers...)
+    // puis on récupère les points. C'est du calcul 100% CPU donc pour le placement !
     // Mais ok évite du vertex shader
-	float dist = (float)boost::geometry::distance(centerInPixels, contourPointsInPixels.outer().at(0));
-    float newDist = dist + contourWidth;
-	float resizeFactor = newDist / dist;
-
-	const float Xoffset = (float)centerInPixels.get<0>();
-	const float Yoffset = (float)centerInPixels.get<1>();
 	Zoffset = mainZoffset + MIEM_SHAPE_CONTOUR_Z;
 
-    // actual points
+    // actual internal points
 	for (int i = 0; i < actualPointsCount; ++i)
 	{
         // Point de l'intérieur du contour (recopiés à partir des précédents)
         vertices_buffer[3 * (contourVertexElmtOffset + i) + 0] = vertices_buffer[3 * (baseVertexElmtOffset + 1 + i) + 0];
         vertices_buffer[3 * (contourVertexElmtOffset + i) + 1] = vertices_buffer[3 * (baseVertexElmtOffset + 1 + i) + 1];
         vertices_buffer[3 * (contourVertexElmtOffset + i) + 2] = Zoffset;
-        
-        // Nouveau Point : faisant partie de l'extérieur du contour
-		vertices_buffer[3 * (contourVertexElmtOffset + numPointsPolygon + i) + 0] = Xoffset
-                    + resizeFactor * ((float)contourPointsInPixels.outer().at(i).get<0>() - Xoffset);
-		vertices_buffer[3 * (contourVertexElmtOffset + numPointsPolygon + i) + 1] = Yoffset
-                    + resizeFactor * ((float)contourPointsInPixels.outer().at(i).get<1>() - Yoffset);
-		vertices_buffer[3 * (contourVertexElmtOffset + numPointsPolygon + i) + 2] = Zoffset;
 	}
+    // actual exterior points
+    refreshExternalContourVerticesSubBuffer(contourVertexElmtOffset + numPointsPolygon, Zoffset);
     // unused points
 	for (int ii = 3 * actualPointsCount; ii < 3 * numPointsPolygon; ++ii)
     {
@@ -308,6 +298,77 @@ void DrawablePolygon::RefreshOpenGLBuffers()
     
     // - - - colours are managed by the DrawableArea mother class
     initSurfaceAndContourColourSubBuffer(DrawableArea::GetVerticesBufferElementsCount());
+}
+
+void DrawablePolygon::refreshExternalContourVerticesSubBuffer(int externalContourVertexElmtOffset, int posZ)
+{
+    using namespace boost::numeric;
+    
+    auto& A = contourPointsInPixels.outer();
+    // - - 0. Construction d'un tableau utilitaire pour les indices cycliques - -
+    // on travaillera parfois sur les indices de 1 à N(équivalent à 0)
+    const size_t N = A.size() - 1; // actual points count
+    std::vector<size_t> idx;
+    idx.resize(N+2);
+    for (size_t i=0; i < idx.size() ; i++)
+        idx[i] = i % N;
+    
+    // - - 1. Calcul des vecteurs directeurs u de chaque segment - -
+    std::vector<ublas::vector<double>> u(N);
+    for (size_t i=0 ; i < N ; i++)
+    {
+        u[i].resize(2);
+        u[i][0] = A[idx[i+1]].get<0>() - A[i].get<0>(); // x
+        u[i][1] = A[idx[i+1]].get<1>() - A[i].get<1>(); // y
+        u[i] /= ublas::norm_2(u[i]);
+    }
+    // - - 2. Calcul des vecteurs normaux n - -
+    // (pour les points dans le sens horaire et pas trigo !!)
+    std::vector<ublas::vector<double>> n(N);
+    for (size_t i=0 ; i < N ; i++)
+    {
+        n[i].resize(2);
+        n[i][0] = u[i][1]; // x
+        n[i][1] = - u[i][0]; // y
+        // pas besoin de re-normaliser
+    }
+    // - - 3. Calcul des vecteurs directeurs m des nouveaux points extérieurs - -
+    std::vector<ublas::vector<double>> m(N);
+    for (size_t i=0 ; i < N ; i++)
+    {
+        // va travailler ici sur le i+1
+        m[idx[i+1]].resize(2);
+        m[idx[i+1]] = n[idx[i+1]] + n[i];
+        m[idx[i+1]] /= ublas::norm_2(m[idx[i+1]]);
+    }
+    // - - 4. Calcul des angles alpha - -
+    std::vector<double> alpha(N);
+    for (size_t i=0 ; i < N ; i++)
+    {
+        // va travailler ici sur le i+1
+        bpt unp1, unp0; // u n+1 and u n+0
+        alpha[idx[i+1]] = Math::ComputePositiveAngle(;
+    }
+    std::cout << "alpha0 = " << alpha[0] << " ; alpha1 = " << alpha[1] << std::endl;
+    
+    // - - 5. Calcul des distances selon les vecteurs m (du 3.) - -
+    
+    
+    // - - Final : application dans le VBO - -
+    
+    const float Xoffset = (float)centerInPixels.get<0>();
+    const float Yoffset = (float)centerInPixels.get<1>();
+    
+    float resizeFactor = 1.1;
+    for (int i = 0; i < N; ++i)
+    {
+        // Nouveau Point : faisant partie de l'extérieur du contour
+        vertices_buffer[3 * (externalContourVertexElmtOffset + i) + 0] = Xoffset
+        + resizeFactor * ((float)contourPointsInPixels.outer().at(i).get<0>() - Xoffset);
+        vertices_buffer[3 * (externalContourVertexElmtOffset + i) + 1] = Yoffset
+        + resizeFactor * ((float)contourPointsInPixels.outer().at(i).get<1>() - Yoffset);
+        vertices_buffer[3 * (externalContourVertexElmtOffset + numPointsPolygon + i) + 2] = posZ;
+    }
 }
 
 

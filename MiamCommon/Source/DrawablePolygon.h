@@ -102,6 +102,8 @@ namespace Miam {
         /// \brief Ré-crée des contourPoints (en coordonnées normalisées) pour la nouvelle résolution
         /// de canevas indiquée (et donc pour un nouveau ratio)
 		void rescaleContourPoints(int width, int height);
+        
+        void refreshExternalContourVerticesSubBuffer(int externalContourVertexElmtOffset, int posZ);
 
 		protected :
 		float xScale, yScale;
