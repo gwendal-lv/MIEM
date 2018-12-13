@@ -103,6 +103,9 @@ void SceneCanvasComponent::init(int numShapesMax, int /*numPointsMax*/)
 
 void SceneCanvasComponent::TriggerOpengGLResourcesRelease()
 {
+#ifdef __MIAM_DEBUG
+    postReleaseRenderRequestsCount = 0;
+#endif
 	releaseResources = true;
 }
 
@@ -113,11 +116,15 @@ void SceneCanvasComponent::waitForOpenGLResourcesReleased()
     
     // MANIERE DEGUEULASSE D'ATTEEEEENDRE
     // --------- >>>>>>> VARIABLE CONDITIONNELLE STD plutôt
+    // --------- >>>>>>> VARIABLE CONDITIONNELLE STD plutôt
+    // --------- >>>>>>> VARIABLE CONDITIONNELLE STD plutôt
+    // --------- >>>>>>> VARIABLE CONDITIONNELLE STD plutôt
+    // --------- >>>>>>> VARIABLE CONDITIONNELLE STD plutôt
     // https://fr.cppreference.com/w/cpp/thread/condition_variable
     // pas posix....
 	while (!releaseDone)
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
     
 #else
@@ -468,6 +475,7 @@ void SceneCanvasComponent::renderOpenGL()
 	if (releaseResources) // dernière frame, qui effectue le release
 	{
         DBG("[MIEM OpenGL] 'Release resources' débute dans le thread OpenGL (dernière frame avec destruction)");
+        postReleaseRenderRequestsCount = 0;
 		openGLDestructionAtLastFrame();
 
 		releaseDone = true;
@@ -475,7 +483,13 @@ void SceneCanvasComponent::renderOpenGL()
 	}
     else if (releaseDone) // on ne va pas faire le rendu sans les ressources !
     {
-        DBG("[SceneCanvasComponent] call to renderOpenGL after VBO/texture/shader resources were released. Render is cancelled.");
+#ifdef __MIAM_DEBUG
+        ++postReleaseRenderRequestsCount;
+        if (postReleaseRenderRequestsCount == 1)
+            DBG("[SceneCanvasComponent] Cancelled renders on calls to renderOpenGL after VBO/texture/shader resources were released.");
+        else
+            std::cout << "*";
+#endif
     }
 	else // sinon OK on fait le rendu
 	{

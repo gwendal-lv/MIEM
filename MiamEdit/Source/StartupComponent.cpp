@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.3.2
+  Created with Projucer version: 5.4.1
 
   ------------------------------------------------------------------------------
 
@@ -40,7 +40,7 @@ StartupComponent::StartupComponent ()
 
     loadTextButton.reset (new TextButton ("Load text button"));
     addAndMakeVisible (loadTextButton.get());
-    loadTextButton->setButtonText (TRANS("Load existing session"));
+    loadTextButton->setButtonText (TRANS("Load session"));
     loadTextButton->addListener (this);
     loadTextButton->setColour (TextButton::buttonColourId, Colour (0xffbfbfbf));
     loadTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
@@ -48,7 +48,7 @@ StartupComponent::StartupComponent ()
 
     createSpatTextButton.reset (new TextButton ("Create Spat text button"));
     addAndMakeVisible (createSpatTextButton.get());
-    createSpatTextButton->setButtonText (TRANS("Create new Spat session"));
+    createSpatTextButton->setButtonText (TRANS("Create a Spat session"));
     createSpatTextButton->addListener (this);
     createSpatTextButton->setColour (TextButton::buttonColourId, Colour (0xffbfbfbf));
     createSpatTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
@@ -64,7 +64,7 @@ StartupComponent::StartupComponent ()
 
     createGenericTextButton.reset (new TextButton ("Create Empty text button"));
     addAndMakeVisible (createGenericTextButton.get());
-    createGenericTextButton->setButtonText (TRANS("Create new Generic Controller session"));
+    createGenericTextButton->setButtonText (TRANS("Create a Generic Controller session"));
     createGenericTextButton->addListener (this);
     createGenericTextButton->setColour (TextButton::buttonColourId, Colour (0xffbfbfbf));
     createGenericTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
@@ -203,16 +203,16 @@ BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="StartupComponent" componentName=""
                  parentClasses="public Component" constructorParams="" variableInitialisers=""
-                 snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
+                 snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.33"
                  fixedSize="0" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="ff707070"/>
   <TEXTBUTTON name="Load text button" id="dcc32a783566df37" memberName="loadTextButton"
               virtualName="" explicitFocusOrder="0" pos="0Cc -96C 168 52" bgColOff="ffbfbfbf"
-              bgColOn="ffffffff" textCol="ff000000" buttonText="Load existing session"
+              bgColOn="ffffffff" textCol="ff000000" buttonText="Load session"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Create Spat text button" id="714ffb446833c5ce" memberName="createSpatTextButton"
               virtualName="" explicitFocusOrder="0" pos="-12Cr 0C 168 52" bgColOff="ffbfbfbf"
-              bgColOn="ffffffff" textCol="ff000000" buttonText="Create new Spat session"
+              bgColOn="ffffffff" textCol="ff000000" buttonText="Create a Spat session"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Create Default text button" id="ac4f9aa6f5974fbc" memberName="createDefaultTextButton"
               virtualName="" explicitFocusOrder="0" pos="0Cc 60C 168 24" bgColOff="ffbfbfbf"
@@ -220,7 +220,7 @@ BEGIN_JUCER_METADATA
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Create Empty text button" id="fb033c6855f61992" memberName="createGenericTextButton"
               virtualName="" explicitFocusOrder="0" pos="12C 0C 168 52" bgColOff="ffbfbfbf"
-              bgColOn="ffffffff" textCol="ff000000" buttonText="Create new Generic Controller session"
+              bgColOn="ffffffff" textCol="ff000000" buttonText="Create a Generic Controller session"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>
 

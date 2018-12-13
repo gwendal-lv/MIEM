@@ -109,6 +109,7 @@ public:
     
     std::atomic<bool> releaseResources;
     std::atomic<bool> releaseDone;
+    unsigned int postReleaseRenderRequestsCount;
     
     std::unique_ptr<OpenGLShaderProgram> shaderProgram;
     std::unique_ptr<OpenGLShaderProgram::Uniform> projectionMatrix, viewMatrix, modelMatrix;

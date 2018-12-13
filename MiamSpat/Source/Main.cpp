@@ -67,6 +67,8 @@ public:
 
     void shutdown() override
     {
+        presenter->appModeChangeRequest(PlayerAppMode::Stopped);
+        
         // Add your application's shutdown code here..
         delete model;
         delete presenter;

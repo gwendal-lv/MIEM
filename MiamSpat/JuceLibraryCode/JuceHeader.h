@@ -29,6 +29,7 @@
 #include <juce_osc/juce_osc.h>
 #include <juce_video/juce_video.h>
 
+#include "BinaryData.h"
 
 #if ! DONT_SET_USING_JUCE_NAMESPACE
  // If your code uses a lot of JUCE classes, then this will obviously save you
@@ -40,7 +41,8 @@
 namespace ProjectInfo
 {
     const char* const  projectName    = "MIEM Spat Player";
-    const char* const  versionString  = "0.2.1";
-    const int          versionNumber  = 0x201;
+    const char* const  companyName    = "IRISIB/LARAS, UMons";
+    const char* const  versionString  = "0.2.5";
+    const int          versionNumber  = 0x205;
 }
 #endif

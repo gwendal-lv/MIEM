@@ -31,17 +31,6 @@ void MainContentComponent::paint (Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
-
-    
-    // !!!! Problème de threading identifié avec l'appel aux "glyph positions" de Juce
-    // (problème déjà rencontré avec le texte des polygones.... faire pré-rendu du texte ??)
-    // DU coup : supprimé pour l'instant
-    /*
-    g.setFont (Font (16.0f));
-    g.setColour (Colours::white);
-    g.drawText (App::GetNameWithVersion(),
-                getLocalBounds(), Justification::centred, true);
-     */
 }
 
 void MainContentComponent::resized()

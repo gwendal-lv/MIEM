@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="xCUiGi" name="MIEM Spat Player" projectType="guiapp" version="0.2.1"
+<JUCERPROJECT id="xCUiGi" name="MIEM Spat Player" projectType="guiapp" version="0.2.5"
               bundleIdentifier="com.glv.MIEMSpatPlayer" includeBinaryInAppConfig="1"
-              jucerVersion="5.3.0" displaySplashScreen="0" reportAppUsage="0"
+              jucerVersion="5.4.1" displaySplashScreen="0" reportAppUsage="0"
               splashScreenColour="Dark" cppLanguageStandard="11" companyCopyright="Gwendal Le Vaillant (IRISIB/LARAS, UMons)"
               companyName="IRISIB/LARAS, UMons" companyWebsite="htpp://laras.be"
-              companyEmail="glevaillant@he2b.be" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../ControlCommon/Source/&#10;../../../SpatCommon/Source/">
+              companyEmail="glevaillant@he2b.be" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../ControlCommon/Source/&#10;../../../SpatCommon/Source/"
+              defines="__MIEM_VBO">
   <MAINGROUP id="m8VZoU" name="MIEM Spat Player">
     <GROUP id="{D93792BB-5B8B-5A35-D554-58C4F4E4D3DA}" name="Source">
       <FILE id="oaxiVA" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
@@ -213,6 +214,15 @@
               file="../MiamCommon/Source/MultiSceneCanvasInteractor.h"/>
       </GROUP>
       <GROUP id="{81FB02AB-9CF8-2FEF-77B6-9D5049B0BC47}" name="View">
+        <FILE id="LnMegQ" name="newFontImg.png" compile="0" resource="1" file="../MiamCommon/Resources/newFontImg.png"/>
+        <FILE id="HmQmZg" name="OpenGLFontManager.cpp" compile="1" resource="0"
+              file="../MiamCommon/Source/OpenGLFontManager.cpp"/>
+        <FILE id="ja5YLt" name="OpenGLFontManager.h" compile="0" resource="0"
+              file="../MiamCommon/Source/OpenGLFontManager.h"/>
+        <FILE id="XDrgHU" name="OpenGLTextObject.cpp" compile="1" resource="0"
+              file="../MiamCommon/Source/OpenGLTextObject.cpp"/>
+        <FILE id="rHQUAQ" name="OpenGLTextObject.h" compile="0" resource="0"
+              file="../MiamCommon/Source/OpenGLTextObject.h"/>
         <FILE id="XAPOxP" name="MiamLookAndFeel.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/MiamLookAndFeel.cpp"/>
         <FILE id="UhtGNo" name="MiamLookAndFeel.h" compile="0" resource="0"
@@ -247,6 +257,7 @@
         </GROUP>
       </GROUP>
       <GROUP id="{B91B2137-DC4A-127C-0037-DB058876BEFA}" name="Utils">
+        <FILE id="Xn6yct" name="MiemVector.hpp" compile="0" resource="0" file="../MiamCommon/Source/MiemVector.hpp"/>
         <FILE id="ije12g" name="InteractionParameters.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/InteractionParameters.cpp"/>
         <FILE id="TnfISL" name="InteractionParameters.h" compile="0" resource="0"
@@ -291,10 +302,10 @@
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
-    <XCODE_MAC targetFolder="Builds/MacOSX" extraDefs="__MIAM_MAC_OS_X">
+    <XCODE_MAC targetFolder="Builds/MacOSX" extraCompilerFlags="-Wno-comma">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MiemSpatPlayer"
-                       defines="__MIAM_DEBUG&#10;" enablePluginBinaryCopyStep="1"/>
+                       defines="__MIAM_DEBUG&#10;__MIEM_DEBUG_TRACE__DISABLED" enablePluginBinaryCopyStep="1"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MiemSpatPlayer"
                        enablePluginBinaryCopyStep="1"/>
       </CONFIGURATIONS>
@@ -321,7 +332,7 @@
                    androidInternetNeeded="1" buildToolsVersion="27.0.1" gradleToolchain="clang">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" androidArchitectures="armeabi armeabi-v7a x86" isDebug="1"
-                       optimisation="1" targetName="MiemSpatPlayer" headerPath="" defines="__MIAM_DEBUG"/>
+                       optimisation="1" targetName="MiemSpatPlayer" headerPath="" defines="__MIAM_DEBUG&#10;__MIEM_DEBUG_TRACE__DISABLED"/>
         <CONFIGURATION name="Release" androidArchitectures="armeabi armeabi-v7a x86"
                        isDebug="0" optimisation="3" targetName="MiemSpatPlayer" headerPath=""/>
       </CONFIGURATIONS>
@@ -345,7 +356,7 @@
     <VS2017 targetFolder="Builds/VisualStudio2017" extraDefs="BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE"
             userNotes="le define BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE vient d'un message transmis par boost apparemment.... mais &quot;nothing bad should happen&quot;">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" defines="__MIAM_DEBUG"/>
+        <CONFIGURATION isDebug="1" name="Debug" defines="__MIAM_DEBUG&#10;__MIEM_DEBUG_TRACE__DISABLED"/>
         <CONFIGURATION isDebug="0" name="Release" defines="BOOST_UBLAS_NDEBUG&#10;NDEBUG"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
@@ -365,6 +376,30 @@
         <MODULEPATH id="juce_audio_basics" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </VS2017>
+    <XCODE_IPHONE targetFolder="Builds/iOS" extraDefs="__MIAMOBILE" extraCompilerFlags="-Wno-comma"
+                  customPList="&lt;plist&gt;&#10;&#9;&lt;dict&gt;&#10;&#9;&#9;&lt;key&gt;CFBundleDocumentTypes&lt;/key&gt;&#10;&#9;&#9;&lt;array&gt;&#10;&#9;&#9;&#9;&lt;dict&gt;&#10;&#9;&#9;&#9;&#9;&lt;key&gt;CFBundleTypeIconFiles&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&lt;array/&gt;&#10;&#9;&#9;&#9;&#9;&lt;key&gt;CFBundleTypeName&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&lt;string&gt;MIEM Spatialisation Session&lt;/string&gt;&#10;&#9;&#9;&#9;&#9;&lt;key&gt;CFBundleTypeRole&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&lt;string&gt;Editor&lt;/string&gt;&#10;&#9;&#9;&#9;&#9;&lt;key&gt;LSHandlerRank&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&lt;string&gt;Owner&lt;/string&gt;&#10;&#9;&#9;&#9;&#9;&lt;key&gt;LSItemContentTypes&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&lt;array&gt;&#10;&#9;&#9;&#9;&#9;&#9;&lt;string&gt;com.glv.MIEMSpatPlayer.mspat&lt;/string&gt;&#10;&#9;&#9;&#9;&#9;&lt;/array&gt;&#10;&#9;&#9;&#9;&lt;/dict&gt;&#10;&#9;&#9;&lt;/array&gt;&#10;&#9;&#10;&#10;&#9;&#9;&lt;key&gt;UTExportedTypeDeclarations&lt;/key&gt;&#10;&#9;&#9;&lt;array&gt;&#10;&#9;&#9;&#9;&lt;dict&gt;&#10;&#9;&#9;&#9;&#9;&lt;key&gt;UTTypeConformsTo&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&lt;array&gt;&#10;&#9;&#9;&#9;&#9;&#9;&lt;string&gt;public.data&lt;/string&gt;&#10;&#9;&#9;&#9;&#9;&#9;&lt;string&gt;public.content&lt;/string&gt;&#10;&#9;&#9;&#9;&#9;&#9;&lt;string&gt;public.xml&lt;/string&gt;&#10;&#9;&#9;&#9;&#9;&lt;/array&gt;&#10;&#9;&#9;&#9;&#9;&lt;key&gt;UTTypeDescription&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&lt;string&gt;MIEM Spatialisation Session&lt;/string&gt;&#10;&#9;&#9;&#9;&#9;&lt;key&gt;UTTypeIconFiles&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&lt;array/&gt;&#10;&#9;&#9;&#9;&#9;&lt;key&gt;UTTypeIdentifier&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&lt;string&gt;com.glv.MIEMSpatPlayer.mspat&lt;/string&gt;&#10;&#9;&#9;&#9;&#9;&lt;key&gt;UTTypeTagSpecification&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&lt;dict&gt;&#10;&#9;&#9;&#9;&#9;&#9;&lt;key&gt;public.filename-extension&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&#9;&lt;array&gt;&#10;&#9;&#9;&#9;&#9;&#9;&#9;&lt;string&gt;mspat&lt;/string&gt;&#10;&#9;&#9;&#9;&#9;&#9;&lt;/array&gt;&#10;&#9;&#9;&#9;&#9;&lt;/dict&gt;&#10;&#9;&#9;&#9;&lt;/dict&gt;&#10;&#9;&#9;&lt;/array&gt;&#10;&#9;&lt;/dict&gt;&#10;&lt;/plist&gt;&#10;"
+                  UISupportsDocumentBrowser="1" iCloudPermissions="1" iosDevelopmentTeamID="JU6GKA4Z3B">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" defines="__MIAM_DEBUG&#10;__MIEM_DEBUG_TRACE__DISABLED"/>
+        <CONFIGURATION isDebug="0" name="Release"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_video"/>
+        <MODULEPATH id="juce_osc"/>
+        <MODULEPATH id="juce_opengl"/>
+        <MODULEPATH id="juce_gui_extra"/>
+        <MODULEPATH id="juce_gui_basics"/>
+        <MODULEPATH id="juce_graphics"/>
+        <MODULEPATH id="juce_events"/>
+        <MODULEPATH id="juce_data_structures"/>
+        <MODULEPATH id="juce_cryptography"/>
+        <MODULEPATH id="juce_core"/>
+        <MODULEPATH id="juce_audio_processors"/>
+        <MODULEPATH id="juce_audio_formats"/>
+        <MODULEPATH id="juce_audio_devices"/>
+        <MODULEPATH id="juce_audio_basics"/>
+      </MODULEPATHS>
+    </XCODE_IPHONE>
   </EXPORTFORMATS>
   <MODULES>
     <MODULE id="juce_audio_basics" showAllCode="0" useLocalCopy="0"/>
