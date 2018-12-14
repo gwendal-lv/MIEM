@@ -70,6 +70,11 @@ PlayerModel::~PlayerModel()
 
 void PlayerModel::setHighThreadPriority()
 {
+#ifndef JUCE_WINDOWS // toutes plateformes POSIX
+    pthread_setname_np(/*pthread_self(), */"MIEM Model::update Thread"); // pas de TID pour FreeBSD 2003... (doc macOS)
+#endif
+    
+    
     // Si possible : mise à un niveau de priorité pour le thread de mise à jour
     // -> voire même un autre ordonnancement sous certains OS ?
     

@@ -53,6 +53,7 @@ public:
 
     /// \brief Pour l'instant, fait simplement clignoter le bouton play
     void PrepareToPlay(int delayBeforeActualPlay_ms);
+    bool IsPreparingToPlay() { return isPreparingToPlay; }
     //[/UserMethods]
 
     void paint (Graphics& g) override;
@@ -77,6 +78,8 @@ public:
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     PlayerPresenter* presenter;
+    
+    bool isPreparingToPlay = false;
     //[/UserVariables]
 
     //==============================================================================

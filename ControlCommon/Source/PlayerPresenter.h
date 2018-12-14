@@ -52,6 +52,10 @@ namespace Miam
         LoadFileChooser loadFileChooser; // configuré à la construction
         
         
+        // To fully control the delay before playing (and the VBO/textures
+        // openGL resources acquisition/Release)
+        bool isViewPreparingToPlay = false;
+        
         
         
         // = = = = = = = = = = Setters and Getters = = = = = = = = = =
@@ -98,6 +102,7 @@ namespace Miam
         // - - - - - Events from the View - - - - -
         /// \brief
         void OnMainMenuButtonClicked();
+        void OnViewIsPreparingToPlay(bool _isPreparingToPlay);
         
         
         

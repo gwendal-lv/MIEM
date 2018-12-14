@@ -108,6 +108,15 @@ PlayerAppMode PlayerPresenter::appModeChangeRequest(PlayerAppMode newAppMode)
         modeChangeAllowed = false;
         view->DisplayInfo("Cannot begin spatialisation: no session loaded.");
     }
+    // Si on est en train de charger un mode de Play (info de View... pas très propre...)
+    // On le laisse finir ! Sinon problème de ressources VBO/textures OpenGL
+    else if (appMode == PlayerAppMode::Playing // même si en attente : visible directement
+             && isViewPreparingToPlay)
+    {
+        modeChangeAllowed = false; // on refuse juste la demande
+        DBG("[Player Presenter] Mode change request refused: View is currently in transition to the Playing mode");
+    }
+        
     
     // First check : are we running a new mode ?
     // Si on fait un transition directe entre modes qui ne sont pas 'loading' ->
@@ -116,6 +125,7 @@ PlayerAppMode PlayerPresenter::appModeChangeRequest(PlayerAppMode newAppMode)
     {
         // - - - - - Traitements pré-changement - - - - -
         // Le + important : libération ressources VBO/textures/shaders si nécessaire
+        // Attention : on doit s'être assuré avant de ne pas libérer avant d'avoir affiché le canevas...
         if (appMode == PlayerAppMode::Playing)
             view->TriggerGLResourcesRelease();
         
@@ -250,7 +260,10 @@ void PlayerPresenter::OnMainMenuButtonClicked()
     else
         appModeChangeRequest(PlayerAppMode::MainMenu);
 }
-
+void PlayerPresenter::OnViewIsPreparingToPlay(bool _isPreparingToPlay)
+{
+    isViewPreparingToPlay = _isPreparingToPlay;
+}
 
 
 

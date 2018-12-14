@@ -202,6 +202,8 @@ void PlayerMainMenuComponent::ChangeAppMode(PlayerAppMode newAppMode)
 
 void PlayerMainMenuComponent::PrepareToPlay(int delayBeforeActualPlay_ms)
 {
+    presenter->OnViewIsPreparingToPlay(true);
+    
     const int numberOfBlinks = 2;
     // on garde 1 demi-blink pour la fin
     const int halfBlinkDelays_ms = (int) std::round( (double)(delayBeforeActualPlay_ms) / (double)(numberOfBlinks*2 + 1) );

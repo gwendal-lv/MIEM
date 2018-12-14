@@ -198,8 +198,11 @@ void PlayerBackgroundComponent::ChangeAppMode(PlayerAppMode newAppMode)
             Timer::callAfterDelay(1000,
                                   [this]
                                   {
-                                      multiCanvasComponent->setVisible(true);
                                       mainMenuComponent->setVisible(false);
+                                      // !! VBO/texture are only created after this
+                                      // (on GL context creation)
+                                      multiCanvasComponent->setVisible(true);
+                                      presenter->OnViewIsPreparingToPlay(false);
                                   });
             break;
 
