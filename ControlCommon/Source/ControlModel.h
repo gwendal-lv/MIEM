@@ -67,7 +67,7 @@ namespace Miam
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
         
-		/// \brief Par défaut, on retourne l'attribut statique global
+		/// \brief Par dÃ©faut, on retourne l'attribut statique global
 		virtual AppPurpose GetSessionPurpose() const { return App::GetPurpose(); }
 
         virtual InterpolationType GetInterpolatorType_Atomic () override;

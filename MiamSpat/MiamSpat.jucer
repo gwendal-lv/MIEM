@@ -356,8 +356,10 @@
     <VS2017 targetFolder="Builds/VisualStudio2017" extraDefs="BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE"
             userNotes="le define BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE vient d'un message transmis par boost apparemment.... mais &quot;nothing bad should happen&quot;">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" defines="__MIAM_DEBUG&#10;__MIEM_DEBUG_TRACE__DISABLED"/>
-        <CONFIGURATION isDebug="0" name="Release" defines="BOOST_UBLAS_NDEBUG&#10;NDEBUG"/>
+        <CONFIGURATION isDebug="1" name="Debug" defines="__MIAM_DEBUG&#10;__MIEM_DEBUG_TRACE__DISABLED"
+                       characterSet="Unicode"/>
+        <CONFIGURATION isDebug="0" name="Release" defines="BOOST_UBLAS_NDEBUG&#10;NDEBUG"
+                       characterSet="Unicode"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_video" path="../../JUCE/modules"/>

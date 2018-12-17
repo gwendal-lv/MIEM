@@ -218,6 +218,10 @@ namespace Miam
                     concernedExcitement = newExcitement;
             }
             // Cas 2 : insertion d'un nouvel elmt dans la map
+
+			// A REFAIRE PROPREMENT SANS UTILISER l'EXCEPTION
+			// car ça pourrit totalement la console VS2017... Cette exception arrive
+			// si souvent qu'elle n'est pas exceptionnelle....
             catch (std::out_of_range & /*e*/) { // si on a pas trouvé la clé dans la map
                  // on teste quand même si pas trop faible, avant d'insérer
                 if ( ! AudioUtils<T>::IsVolumeNegligible(newExcitement) )
