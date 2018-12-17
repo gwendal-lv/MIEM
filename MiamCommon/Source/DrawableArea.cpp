@@ -236,7 +236,7 @@ void DrawableArea::resetTextureBasedName()
     const double nameWidthEstimation = 0.7 * (double)(nameWidth) * nameU16.length()
                                             / (double)(nameCharsCountMax);
     const double desiredXOffset = - nameWidthEstimation / 3.0;
-    float xPosition = 0.0f;
+    double xPosition = 0.0f;
     // Si on près du bord gauche : on décale pour que la texture ne touche pas le bord
     const double minLeftMargin = 2.0 * (double)centerCircleRadius;
     if ( minLeftMargin > (centerInPixels.get<0>() + desiredXOffset) )
@@ -253,15 +253,14 @@ void DrawableArea::resetTextureBasedName()
     
     
     // reconstruction complète d'un nouvel objet (pour thread-safety)
-    glTextObject = std::make_shared<OpenGLTextObject>(xPosition,
-                                                      centerInPixels.get<1>() + centerCircleRadius + nameHeight * 1.1,
+    glTextObject = std::make_shared<OpenGLTextObject>((float)xPosition,
+                                                      (float)(centerInPixels.get<1>() + centerCircleRadius + (double)nameHeight * 1.1),
                                                       std::roundf((float)(nameWidth) / (float)(nameCharsCountMax)),
-                                                      nameHeight,
-                                                      nameCharsCountMax);
+		(float)nameHeight,
+		nameCharsCountMax);
     // vérification pour l'UTF 16... en debug seulement
 #ifdef __MIAM_DEBUG
-    if (sizeof(wchar_t) < 2)
-        assert(false); // our UTF 16 converter won't properly work on this platform....)
+	assert(sizeof(wchar_t) >= 2); // our UTF 16 converter won't properly work on this platform....)
 #endif
     
     glTextObject->SetText(nameU16);
@@ -276,9 +275,11 @@ void DrawableArea::Paint(Graphics& g)
     {
         Colour actualContourColour = Colour(contourColour.getRed(), contourColour.getGreen(), contourColour.getBlue(), GetAlpha() );        
         g.setColour(actualContourColour);
-        g.drawEllipse((float)centerInPixels.get<0>()-centerCircleRadius,
-                      (float)centerInPixels.get<1>()-centerCircleRadius,
-                      centerCircleRadius*2.0f, centerCircleRadius*2.0f, centerContourWidth);
+        g.drawEllipse((float)centerInPixels.get<0>()-(float)centerCircleRadius,
+                      (float)centerInPixels.get<1>()- (float)centerCircleRadius,
+					(float)centerCircleRadius*2.0f,
+					centerCircleRadius*2.0f,
+					centerContourWidth);
     }
     
     // Dessin du texte :
@@ -324,7 +325,7 @@ void DrawableArea::Paint(Graphics& g)
         if ( ((int)std::round(centerInPixels.get<0>()) + nameImage.getWidth())
             > parentCanvas->getWidth() )
         {
-            deltaX = -deltaX - name.length()*4; // le 4 est totalement arbitraire...
+            deltaX = -deltaX - name.length()*4.0; // le 4 est totalement arbitraire...
             deltaY += (double)centerCircleRadius;
         }
         // Si on est trop proche du bas, alors on met le texte en haut de centre de la forme

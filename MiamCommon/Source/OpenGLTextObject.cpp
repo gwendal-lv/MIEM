@@ -43,7 +43,7 @@ OpenGLTextObject::~OpenGLTextObject()
 {
 }
 
-void OpenGLTextObject::Initialise(OpenGLContext& context, OpenGLFontManager* _manager)
+void OpenGLTextObject::Initialise(OpenGLContext& /*context*/, OpenGLFontManager* _manager)
 {
     SetFontManager(_manager);
     
@@ -245,7 +245,7 @@ float OpenGLTextObject::getCharWidthRatio(char32_t u32character)
     {
         case 'i' :
         case 'I' :
-            return 0.4;
+            return 0.4f;
             
         case 'j' :
         case 'l' :
@@ -258,7 +258,7 @@ float OpenGLTextObject::getCharWidthRatio(char32_t u32character)
             return 0.5f;
             
         case ' ' :
-            return 0.7;
+            return 0.7f;
             
         case 'm' :
         case 'M' :

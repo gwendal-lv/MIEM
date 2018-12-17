@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.2.1
+  Created with Projucer version: 5.4.1
 
   ------------------------------------------------------------------------------
 
@@ -78,17 +78,17 @@ public:
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     PlayerPresenter* presenter;
-    
+
     bool isPreparingToPlay = false;
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<GroupComponent> sessionGroupComponent;
-    ScopedPointer<TextButton> loadFromFileButton;
-    ScopedPointer<ImageButton> playImageButton;
-    ScopedPointer<ImageButton> playingImageButton;
-    ScopedPointer<ImageButton> stopImageButton;
-    ScopedPointer<ImageButton> stoppedImageButton;
+    std::unique_ptr<GroupComponent> sessionGroupComponent;
+    std::unique_ptr<TextButton> loadFromFileButton;
+    std::unique_ptr<ImageButton> playImageButton;
+    std::unique_ptr<ImageButton> playingImageButton;
+    std::unique_ptr<ImageButton> stopImageButton;
+    std::unique_ptr<ImageButton> stoppedImageButton;
 
 
     //==============================================================================

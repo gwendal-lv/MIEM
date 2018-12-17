@@ -103,7 +103,7 @@ namespace Miam {
         /// de canevas indiquée (et donc pour un nouveau ratio)
 		void rescaleContourPoints(int width, int height);
         
-        void refreshExternalContourVerticesSubBuffer(int externalContourVertexElmtOffset, int posZ);
+        void refreshExternalContourVerticesSubBuffer(int externalContourVertexElmtOffset, GLfloat posZ);
 
 		protected :
 		float xScale, yScale;

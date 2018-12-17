@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.2.1
+  Created with Projucer version: 5.4.1
 
   ------------------------------------------------------------------------------
 
@@ -33,48 +33,54 @@ PlayerMainMenuComponent::PlayerMainMenuComponent ()
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
-    addAndMakeVisible (sessionGroupComponent = new GroupComponent ("Session group component",
-                                                                   TRANS("Session")));
+    sessionGroupComponent.reset (new GroupComponent ("Session group component",
+                                                     TRANS("Session")));
+    addAndMakeVisible (sessionGroupComponent.get());
     sessionGroupComponent->setColour (GroupComponent::outlineColourId, Colour (0xff909090));
     sessionGroupComponent->setColour (GroupComponent::textColourId, Colour (0xff909090));
 
-    addAndMakeVisible (loadFromFileButton = new TextButton ("Load From File text button"));
-    loadFromFileButton->setButtonText (TRANS("Load from .XYZ file"));
+    loadFromFileButton.reset (new TextButton ("Load From File text button"));
+    addAndMakeVisible (loadFromFileButton.get());
+    loadFromFileButton->setButtonText (TRANS("Load from .mspat file"));
     loadFromFileButton->addListener (this);
     loadFromFileButton->setColour (TextButton::buttonColourId, Colour (0xff404040));
 
-    addAndMakeVisible (playImageButton = new ImageButton ("Play image button"));
+    playImageButton.reset (new ImageButton ("Play image button"));
+    addAndMakeVisible (playImageButton.get());
     playImageButton->setButtonText (TRANS("new button"));
     playImageButton->addListener (this);
 
     playImageButton->setImages (false, true, true,
-                                ImageCache::getFromMemory (play_png, play_pngSize), 1.000f, Colour (0x00000000),
-                                Image(), 0.600f, Colour (0x00000000),
-                                Image(), 1.000f, Colour (0x00000000));
-    addAndMakeVisible (playingImageButton = new ImageButton ("Playing image button"));
+                                ImageCache::getFromMemory (play_png, play_pngSize), 1.0f, Colour (0x00000000),
+                                Image(), 0.6f, Colour (0x00000000),
+                                Image(), 1.0f, Colour (0x00000000));
+    playingImageButton.reset (new ImageButton ("Playing image button"));
+    addAndMakeVisible (playingImageButton.get());
     playingImageButton->setButtonText (TRANS("new button"));
     playingImageButton->addListener (this);
 
     playingImageButton->setImages (false, true, true,
-                                   ImageCache::getFromMemory (playOn_png2, playOn_png2Size), 1.000f, Colour (0x00000000),
-                                   Image(), 1.000f, Colour (0x00000000),
-                                   Image(), 1.000f, Colour (0x00000000));
-    addAndMakeVisible (stopImageButton = new ImageButton ("Stop image button"));
+                                   ImageCache::getFromMemory (playOn_png2, playOn_png2Size), 1.0f, Colour (0x00000000),
+                                   Image(), 1.0f, Colour (0x00000000),
+                                   Image(), 1.0f, Colour (0x00000000));
+    stopImageButton.reset (new ImageButton ("Stop image button"));
+    addAndMakeVisible (stopImageButton.get());
     stopImageButton->setButtonText (TRANS("new button"));
     stopImageButton->addListener (this);
 
     stopImageButton->setImages (false, true, true,
-                                ImageCache::getFromMemory (stop_png, stop_pngSize), 1.000f, Colour (0x00000000),
-                                Image(), 0.600f, Colour (0x00000000),
-                                Image(), 1.000f, Colour (0x00000000));
-    addAndMakeVisible (stoppedImageButton = new ImageButton ("Stopped image button"));
+                                ImageCache::getFromMemory (stop_png, stop_pngSize), 1.0f, Colour (0x00000000),
+                                Image(), 0.6f, Colour (0x00000000),
+                                Image(), 1.0f, Colour (0x00000000));
+    stoppedImageButton.reset (new ImageButton ("Stopped image button"));
+    addAndMakeVisible (stoppedImageButton.get());
     stoppedImageButton->setButtonText (TRANS("new button"));
     stoppedImageButton->addListener (this);
 
     stoppedImageButton->setImages (false, true, true,
-                                   ImageCache::getFromMemory (stopOn_png, stopOn_pngSize), 1.000f, Colour (0x00000000),
-                                   Image(), 1.000f, Colour (0x00000000),
-                                   Image(), 1.000f, Colour (0x00000000));
+                                   ImageCache::getFromMemory (stopOn_png, stopOn_pngSize), 1.0f, Colour (0x00000000),
+                                   Image(), 1.0f, Colour (0x00000000),
+                                   Image(), 1.0f, Colour (0x00000000));
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -140,30 +146,30 @@ void PlayerMainMenuComponent::buttonClicked (Button* buttonThatWasClicked)
     //[UserbuttonClicked_Pre]
     //[/UserbuttonClicked_Pre]
 
-    if (buttonThatWasClicked == loadFromFileButton)
+    if (buttonThatWasClicked == loadFromFileButton.get())
     {
         //[UserButtonCode_loadFromFileButton] -- add your button handler code here..
         presenter->appModeChangeRequest(PlayerAppMode::LoadingFile);
         //[/UserButtonCode_loadFromFileButton]
     }
-    else if (buttonThatWasClicked == playImageButton)
+    else if (buttonThatWasClicked == playImageButton.get())
     {
         //[UserButtonCode_playImageButton] -- add your button handler code here..
         presenter->appModeChangeRequest(PlayerAppMode::Playing);
         //[/UserButtonCode_playImageButton]
     }
-    else if (buttonThatWasClicked == playingImageButton)
+    else if (buttonThatWasClicked == playingImageButton.get())
     {
         //[UserButtonCode_playingImageButton] -- add your button handler code here..
         //[/UserButtonCode_playingImageButton]
     }
-    else if (buttonThatWasClicked == stopImageButton)
+    else if (buttonThatWasClicked == stopImageButton.get())
     {
         //[UserButtonCode_stopImageButton] -- add your button handler code here..
         presenter->appModeChangeRequest(PlayerAppMode::Stopped);
         //[/UserButtonCode_stopImageButton]
     }
-    else if (buttonThatWasClicked == stoppedImageButton)
+    else if (buttonThatWasClicked == stoppedImageButton.get())
     {
         //[UserButtonCode_stoppedImageButton] -- add your button handler code here..
         //[/UserButtonCode_stoppedImageButton]
@@ -203,7 +209,7 @@ void PlayerMainMenuComponent::ChangeAppMode(PlayerAppMode newAppMode)
 void PlayerMainMenuComponent::PrepareToPlay(int delayBeforeActualPlay_ms)
 {
     presenter->OnViewIsPreparingToPlay(true);
-    
+
     const int numberOfBlinks = 2;
     // on garde 1 demi-blink pour la fin
     const int halfBlinkDelays_ms = (int) std::round( (double)(delayBeforeActualPlay_ms) / (double)(numberOfBlinks*2 + 1) );
@@ -245,7 +251,7 @@ BEGIN_JUCER_METADATA
 <JUCER_COMPONENT documentType="Component" className="PlayerMainMenuComponent"
                  componentName="" parentClasses="public Component" constructorParams=""
                  variableInitialisers="" snapPixels="8" snapActive="1" snapShown="1"
-                 overlayOpacity="0.330" fixedSize="0" initialWidth="600" initialHeight="400">
+                 overlayOpacity="0.33" fixedSize="0" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="51000000"/>
   <GROUPCOMPONENT name="Session group component" id="ee702f61e13ff830" memberName="sessionGroupComponent"
                   virtualName="" explicitFocusOrder="0" pos="8 8 16M 56" outlinecol="ff909090"
@@ -257,31 +263,27 @@ BEGIN_JUCER_METADATA
   <IMAGEBUTTON name="Play image button" id="823680c6dd0a5a2e" memberName="playImageButton"
                virtualName="" explicitFocusOrder="0" pos="-72C -3C 62 62" buttonText="new button"
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
-               resourceNormal="play_png" opacityNormal="1.00000000000000000000"
-               colourNormal="0" resourceOver="" opacityOver="0.60000002384185791016"
-               colourOver="0" resourceDown="" opacityDown="1.00000000000000000000"
-               colourDown="0"/>
+               resourceNormal="play_png" opacityNormal="1.0" colourNormal="0"
+               resourceOver="" opacityOver="0.60000002384185791016" colourOver="0"
+               resourceDown="" opacityDown="1.0" colourDown="0"/>
   <IMAGEBUTTON name="Playing image button" id="26f63b20519a1739" memberName="playingImageButton"
                virtualName="" explicitFocusOrder="0" pos="-10Cr -3C 62 62" buttonText="new button"
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
-               resourceNormal="playOn_png2" opacityNormal="1.00000000000000000000"
-               colourNormal="0" resourceOver="" opacityOver="1.00000000000000000000"
-               colourOver="0" resourceDown="" opacityDown="1.00000000000000000000"
-               colourDown="0"/>
+               resourceNormal="playOn_png2" opacityNormal="1.0" colourNormal="0"
+               resourceOver="" opacityOver="1.0" colourOver="0" resourceDown=""
+               opacityDown="1.0" colourDown="0"/>
   <IMAGEBUTTON name="Stop image button" id="9385dfb43a053dc6" memberName="stopImageButton"
                virtualName="" explicitFocusOrder="0" pos="16C -3C 62 62" buttonText="new button"
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
-               resourceNormal="stop_png" opacityNormal="1.00000000000000000000"
-               colourNormal="0" resourceOver="" opacityOver="0.60000002384185791016"
-               colourOver="0" resourceDown="" opacityDown="1.00000000000000000000"
-               colourDown="0"/>
+               resourceNormal="stop_png" opacityNormal="1.0" colourNormal="0"
+               resourceOver="" opacityOver="0.60000002384185791016" colourOver="0"
+               resourceDown="" opacityDown="1.0" colourDown="0"/>
   <IMAGEBUTTON name="Stopped image button" id="1b06a982c2d60ddc" memberName="stoppedImageButton"
                virtualName="" explicitFocusOrder="0" pos="16C -3C 62 62" buttonText="new button"
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
-               resourceNormal="stopOn_png" opacityNormal="1.00000000000000000000"
-               colourNormal="0" resourceOver="" opacityOver="1.00000000000000000000"
-               colourOver="0" resourceDown="" opacityDown="1.00000000000000000000"
-               colourDown="0"/>
+               resourceNormal="stopOn_png" opacityNormal="1.0" colourNormal="0"
+               resourceOver="" opacityOver="1.0" colourOver="0" resourceDown=""
+               opacityDown="1.0" colourDown="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

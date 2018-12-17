@@ -300,7 +300,7 @@ void DrawablePolygon::RefreshOpenGLBuffers()
     initSurfaceAndContourColourSubBuffer(DrawableArea::GetVerticesBufferElementsCount());
 }
 
-void DrawablePolygon::refreshExternalContourVerticesSubBuffer(int externalContourVertexElmtOffset, int posZ)
+void DrawablePolygon::refreshExternalContourVerticesSubBuffer(int externalContourVertexElmtOffset, GLfloat posZ)
 {
     using namespace boost::numeric;
     
@@ -358,8 +358,8 @@ void DrawablePolygon::refreshExternalContourVerticesSubBuffer(int externalContou
     for (int i = 0; i < N; ++i)
     {
         // Nouveau Point : faisant partie de l'extérieur du contour
-        vertices_buffer[3 * (externalContourVertexElmtOffset + i) + 0] = A[i].get<0>() + h[i] * m[i][0];
-        vertices_buffer[3 * (externalContourVertexElmtOffset + i) + 1] = A[i].get<1>() + h[i] * m[i][1];
+        vertices_buffer[3 * (externalContourVertexElmtOffset + i) + 0] = (float)( A[i].get<0>() + h[i] * m[i][0] );
+        vertices_buffer[3 * (externalContourVertexElmtOffset + i) + 1] = (float)( A[i].get<1>() + h[i] * m[i][1] );
         vertices_buffer[3 * (externalContourVertexElmtOffset + numPointsPolygon + i) + 2] = posZ;
     }
 }

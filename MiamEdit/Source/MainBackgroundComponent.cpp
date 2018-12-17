@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.3.2
+  Created with Projucer version: 5.4.1
 
   ------------------------------------------------------------------------------
 
@@ -56,7 +56,7 @@ MainBackgroundComponent::MainBackgroundComponent ()
     mainInfoLabel.reset (new Label ("Main info label",
                                     TRANS("...")));
     addAndMakeVisible (mainInfoLabel.get());
-    mainInfoLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    mainInfoLabel->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
     mainInfoLabel->setJustificationType (Justification::centredRight);
     mainInfoLabel->setEditable (false, false, false);
     mainInfoLabel->setColour (Label::backgroundColourId, Colour (0x56ffffff));
@@ -268,7 +268,7 @@ BEGIN_JUCER_METADATA
 <JUCER_COMPONENT documentType="Component" className="MainBackgroundComponent"
                  componentName="" parentClasses="public Component" constructorParams=""
                  variableInitialisers="clearLabelTimer(currentDisplayedInfoPriority)"
-                 snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
+                 snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.33"
                  fixedSize="1" initialWidth="1024" initialHeight="600">
   <METHODS>
     <METHOD name="visibilityChanged()"/>
@@ -286,8 +286,8 @@ BEGIN_JUCER_METADATA
          virtualName="" explicitFocusOrder="0" pos="8Rr 8 456M 24" bkgCol="56ffffff"
          outlineCol="84ffffff" edTextCol="ff000000" edBkgCol="0" labelText="..."
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
-         bold="0" italic="0" justification="34"/>
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         italic="0" justification="34"/>
   <TEXTBUTTON name="Scenes text button" id="9994cb0e99bfd3ca" memberName="scenesTextButton"
               virtualName="" explicitFocusOrder="0" pos="0R 8 120 24" posRelativeX="8bdb167a1cca5b0b"
               bgColOff="ffbfbfbf" bgColOn="ffffffff" textCol="ff000000" buttonText="Geometric Scenes"

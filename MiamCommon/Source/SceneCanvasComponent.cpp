@@ -337,7 +337,7 @@ void SceneCanvasComponent::newOpenGLContextCreated()
     // - - - - label de display des fps - - - -
     if(openGLInfoLabel == nullptr)
         openGLInfoLabel = std::make_unique<OpenGLTextObject>(20.0f, 90.0f, 20.0f, +35.0f, 12);
-    std::u16string texteInfo = u"Hé, huître !" ;
+    std::u16string texteInfo = u"Ho, huitre !" ;
     openGLInfoLabel->SetText(texteInfo);
     // init du text selon le contexte
     openGLInfoLabel->Initialise(openGlContext, this);
@@ -876,9 +876,9 @@ void SceneCanvasComponent::AddShapeToBuffers(std::shared_ptr<IDrawableArea> area
         //std::cout << "[Rendu OpenGL] " << area->GetVerticesBufferActualElementsCount() << " verts et " << area->GetIndicesBufferActualElementsCount() << " indices" << std::endl;
      
         // buffers accessible via function calls only
-        auto vertexBuffer = area->getVerticesBuffer();
-        auto colourBuffer = area->getColoursBuffer();
-        auto indexBuffer = area->getIndicesBuffer();
+        auto areaVertexBuffer = area->getVerticesBuffer();
+        auto areaColourBuffer = area->getColoursBuffer();
+        auto areaIndexBuffer = area->getIndicesBuffer();
         
 		/// vertices
         const size_t shapeVertexBufferOffset = currentVertexBufferArrayPos;
@@ -890,8 +890,8 @@ void SceneCanvasComponent::AddShapeToBuffers(std::shared_ptr<IDrawableArea> area
             ++currentVertexBufferArrayPos;
         }
 #else // sinon pas de trace dans le vecteur, copie optimisée
-        std::copy(vertexBuffer.begin(),
-                  vertexBuffer.begin() + shapeVerticesBufferActualSize,
+        std::copy(areaVertexBuffer.begin(),
+                  areaVertexBuffer.begin() + shapeVerticesBufferActualSize,
                   sceneVertexBufferData.begin() + currentVertexBufferArrayPos);
         currentVertexBufferArrayPos += shapeVerticesBufferActualSize;
 #endif
@@ -904,8 +904,8 @@ void SceneCanvasComponent::AddShapeToBuffers(std::shared_ptr<IDrawableArea> area
             ++currentColourBufferArrayPos;
         }
 #else
-        std::copy(colourBuffer.begin(),
-                  colourBuffer.begin() + shapeColoursBufferActualSize,
+        std::copy(areaColourBuffer.begin(),
+                  areaColourBuffer.begin() + shapeColoursBufferActualSize,
                   sceneColourBufferData.begin() + currentColourBufferArrayPos);
         currentColourBufferArrayPos += shapeColoursBufferActualSize;
 #endif
@@ -917,7 +917,7 @@ void SceneCanvasComponent::AddShapeToBuffers(std::shared_ptr<IDrawableArea> area
         {
             // les indices doivent être décalés de l'offset de vertex buffer de la forme
             // donc : pas de copie optimisée possible
-            sceneIndicesBufferData[currentIndexBufferArrayPos] = indexBuffer[i]
+            sceneIndicesBufferData[currentIndexBufferArrayPos] = areaIndexBuffer[i]
                                                 + shapeVertexBufferElmtOffset;
             ++currentIndexBufferArrayPos;
         }

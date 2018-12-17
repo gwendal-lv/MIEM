@@ -10,6 +10,8 @@
 
 #include "OpenGLFontManager.h"
 
+#include <assert.h>
+
 using namespace Miam;
 
 OpenGLFontManager::OpenGLFontManager()
@@ -150,7 +152,7 @@ void OpenGLFontManager::initialiseShaderProgram(OpenGLContext &context)
     textShaderProgram->use();
 }
 
-void OpenGLFontManager::initialiseAttributesAndUniforms(OpenGLContext &context)
+void OpenGLFontManager::initialiseAttributesAndUniforms(OpenGLContext & /*context*/)
 {
     OpenGLShaderProgram& shaderProgramRef = *(textShaderProgram.get());
     
