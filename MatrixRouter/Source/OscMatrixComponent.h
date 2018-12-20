@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.3.0
+  Created with Projucer version: 5.4.1
 
   ------------------------------------------------------------------------------
 
@@ -101,19 +101,19 @@ private:
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<GroupComponent> matrixGroupComponent;
-    ScopedPointer<Miam::LabelledMatrixComponent> slidersMatrix;
-    ScopedPointer<GroupComponent> preferencesGroupComponent;
-    ScopedPointer<TextEditor> udpPortTextEditor;
-    ScopedPointer<Label> udpPortLabel;
-    ScopedPointer<Label> udpStatusLabel;
-    ScopedPointer<GroupComponent> audioConfigComponent;
-    ScopedPointer<ToggleButton> keyboardButton;
-    ScopedPointer<Slider> attackSlider;
-    ScopedPointer<Label> attackLabel;
-    ScopedPointer<Label> attackUnitLabel;
-    ScopedPointer<TextButton> helpTextButton;
-    ScopedPointer<TextButton> connectTextButton;
+    std::unique_ptr<GroupComponent> matrixGroupComponent;
+    std::unique_ptr<Miam::LabelledMatrixComponent> slidersMatrix;
+    std::unique_ptr<GroupComponent> preferencesGroupComponent;
+    std::unique_ptr<TextEditor> udpPortTextEditor;
+    std::unique_ptr<Label> udpPortLabel;
+    std::unique_ptr<Label> udpStatusLabel;
+    std::unique_ptr<GroupComponent> audioConfigComponent;
+    std::unique_ptr<ToggleButton> keyboardButton;
+    std::unique_ptr<Slider> attackSlider;
+    std::unique_ptr<Label> attackLabel;
+    std::unique_ptr<Label> attackUnitLabel;
+    std::unique_ptr<TextButton> helpTextButton;
+    std::unique_ptr<TextButton> connectTextButton;
 
 
     //==============================================================================
