@@ -21,6 +21,9 @@ OpenGLFontManager::OpenGLFontManager()
 
 void OpenGLFontManager::InitGLFontResources(OpenGLContext &context)
 {
+    // We should not init new resources before releasing the old ones
+    if (fontTexture != nullptr)
+        assert(false);
     fontTexture = std::make_unique<OpenGLTexture>();
     fontTexture->loadImage(fontTextureImage);
     
@@ -140,6 +143,9 @@ void OpenGLFontManager::initialiseShaderProgram(OpenGLContext &context)
     
     
     // - - - Compiling and registering shaders - - -
+    // We should not init new resources before releasing the old ones
+    if (textShaderProgram != nullptr)
+        assert(false);
     textShaderProgram = std::make_unique<OpenGLShaderProgram>(context);
     
     // vérifier quand même que ça ne pose pas de soucis....

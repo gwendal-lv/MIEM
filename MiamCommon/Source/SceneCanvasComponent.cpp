@@ -103,10 +103,22 @@ void SceneCanvasComponent::init(int numShapesMax, int /*numPointsMax*/)
 
 void SceneCanvasComponent::TriggerOpengGLResourcesRelease()
 {
+    // Check for double-triggering
+    // in release mode : bad triggers are just bypassed...
+    
+    if (releaseDone)// if release already happened...
+        assert(false); // It should never happen !
+    
+    else if (releaseResources == true) // or if release is being done...
+        assert(false); // It should never happen !
+    
+    else
+    {
 #ifdef __MIAM_DEBUG
-    postReleaseRenderRequestsCount = 0;
+        postReleaseRenderRequestsCount = 0;
 #endif
-	releaseResources = true;
+        releaseResources = true;
+    }
 }
 
 void SceneCanvasComponent::waitForOpenGLResourcesReleased()
@@ -191,7 +203,7 @@ void SceneCanvasComponent::ReleaseGLResources_NoVBO()
     if (! isVisible())
         return;
     
-    DBG("Relâchement ressource GL d'un Canvas Component...");
+    DBG("Relâchement NON-VBO ressources GL d'un Canvas Component...");
     
     
     openGlContext.executeOnGLThread(
