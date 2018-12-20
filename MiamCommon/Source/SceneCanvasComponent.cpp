@@ -126,17 +126,29 @@ void SceneCanvasComponent::waitForOpenGLResourcesReleased()
 #ifdef __MIEM_VBO
     DBG("[UI Thread][SceneCanvasComponent] Waiting for OpenGL resources to be released...");
     
-    // MANIERE DEGUEULASSE D'ATTEEEEENDRE
-    // --------- >>>>>>> VARIABLE CONDITIONNELLE STD plutôt
-    // --------- >>>>>>> VARIABLE CONDITIONNELLE STD plutôt
-    // --------- >>>>>>> VARIABLE CONDITIONNELLE STD plutôt
-    // --------- >>>>>>> VARIABLE CONDITIONNELLE STD plutôt
-    // --------- >>>>>>> VARIABLE CONDITIONNELLE STD plutôt
-    // https://fr.cppreference.com/w/cpp/thread/condition_variable
-    // pas posix....
+    // Attente par 'condition variable'
+    // Attention : on doit avoir locké le mutex avant de faire un wait sur la
+    // variable conditionnelle... Ce qui est fait automatiquement à la construction
+    // du unique lock
+    std::unique_lock<std::mutex> uniqueLock(conditionVariableMutex);
+    
+    // Présence possible de "Spurious Wakeups"...
+    // -> boucle while reste nécessaire !
 	while (!releaseDone)
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        // Attention : il ne faut surtout pas se retrouver dans un cas
+        // où la notification a eu lieu avant le wait...
+        // Or ça peut arriver si ce thread est coupé pile-poil à cet endroit
+        // (entre l'entrée dans la boucle et le wait sur la cond var)
+        // Pour vérifier ça : faire le test commenté ci-dessous
+        
+        // will 99,9% dead block with wait instead of wait_for on the cond var
+        // std::this_thread::sleep_for(std::chrono::milliseconds(2500));
+        
+        // Donc on va faire un wait_for... qui va éventuellement (dans le cas
+        // décrit ci-dessus) faire un freeze de Juce pendant 100ms.
+        // Mais en général la réactivité sera bien meilleure avec - de CPU consommé
+        conditionVariable.wait_for(uniqueLock, std::chrono::milliseconds(100));
     }
     
 #else
@@ -491,6 +503,10 @@ void SceneCanvasComponent::renderOpenGL()
 		openGLDestructionAtLastFrame();
 
 		releaseDone = true;
+        // at this precise point : no issue for the cond-controlled
+        // thread, as long as it does a wait_for and not a deadblocking wait
+        conditionVariable.notify_one();
+        
 		releaseResources = false;
 	}
     else if (releaseDone) // on ne va pas faire le rendu sans les ressources !

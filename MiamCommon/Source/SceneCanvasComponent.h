@@ -16,6 +16,7 @@
 #include <string>
 #include <thread>
 #include <mutex>
+#include <condition_variable>
 
 #include "JuceHeader.h"
 
@@ -109,6 +110,9 @@ public:
     
     std::atomic<bool> releaseResources;
     std::atomic<bool> releaseDone;
+    std::mutex conditionVariableMutex;
+    std::condition_variable conditionVariable;
+    
     unsigned int postReleaseRenderRequestsCount;
     
     std::unique_ptr<OpenGLShaderProgram> shaderProgram;
