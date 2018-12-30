@@ -160,7 +160,7 @@ void SceneCanvasComponent::waitForOpenGLResourcesReleased()
 SceneCanvasComponent::~SceneCanvasComponent()
 {
     openGlContext.detach();
-    DBG("[SceneCanvasComponent] GL Content detached.");
+    DBG("[SceneCanvasComponent] GL Context detached.");
 }
 
 void SceneCanvasComponent::CompleteInitialization(std::shared_ptr<MultiSceneCanvasInteractor> _canvasManager)

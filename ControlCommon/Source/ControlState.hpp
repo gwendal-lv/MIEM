@@ -119,6 +119,7 @@ namespace Miam
         void SetIndex(int newIndex) {index = newIndex;}
         int GetIndex() const {return index;}
         
+        /// \brief Number of actually used outputs
         virtual size_t GetOutputsCount() = 0;
         
         virtual size_t GetLinkedAreasCount() {return linkedAreas.size();}

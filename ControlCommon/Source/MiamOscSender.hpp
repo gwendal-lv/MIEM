@@ -238,15 +238,7 @@ namespace Miam
                 // - - - mode PREMIÈRE COLONNE SEULEMENT - - -
                 else
                 {
-                    for (size_t i=0 ; i<changesIndexes.size() ; i++)
-                    {
-                        if (matrixState->IsIndexWithinActualInputOutputBounds(changesIndexes[i]))
-                        {
-                            Index2d index2d = matrixState->GetIndex2dFromIndex(changesIndexes[i]);
-                            if (index2d.j == 0)
-                                SendParam(index2d.i, (float) (*matrixState)[changesIndexes[i]]);
-                        }
-                    }
+                    SendMatrixParamChanges(matrixState, changesIndexes);
                 }
                 
                 // On informe la matrice que tout a bien été envoyé
@@ -257,12 +249,35 @@ namespace Miam
                 throw std::logic_error("Cannot send the modifications of a state that is not a BackupMatrix");
         }
         
-        // Envoi d'un seul coeff
+        /// \brief Sends the parameters designated by their index within the
+        /// given list.
+        void SendMatrixParamChanges(MatrixState<T>* matrixState, std::vector< size_t >& changesIndexes)
+        {
+            for (size_t i=0 ; i<changesIndexes.size() ; i++)
+            {
+                if (matrixState->IsIndexWithinActualInputOutputBounds(changesIndexes[i]))
+                {
+                    Index2d index2d = matrixState->GetIndex2dFromIndex(changesIndexes[i]);
+                    if (index2d.j == 0)
+                        SendParam(index2d.i, (float) (*matrixState)[changesIndexes[i]]);
+                }
+#ifdef __MIAM_DEBUG // explication du débordement
+                else
+                {
+                    Index2d index2d = matrixState->GetIndex2dFromIndex(changesIndexes[i]);
+                    std::cout << "index2d '" << index2d.i << " ; " << index2d.j << "' a débordé" << std::endl;
+                }
+#endif
+            }
+        }
+        
+        /// \brief  Envoi d'un seul coeff
         void SendMatrixCoeff(int i, int j, float value)
         {
             oscSender.send(Miam_OSC_Matrix_Address, i, j, value);
         }
-        // Envoi d'un seul coeff, à une adresse de paramètre déjà configurée
+        /// \brief Envoi d'un seul coeff, à une adresse de paramètre OSC
+        /// qui doit avoir déjà été initialisée/configurée
         void SendParam(size_t paramIndex, float value)
         {
             // On garde les arguments constants pré-configurés

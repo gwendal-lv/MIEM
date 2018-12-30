@@ -28,6 +28,9 @@ namespace Miam
     typedef struct Index2d {
         size_t i;
         size_t j;
+        
+        Index2d() { i=0; j=0; }
+        Index2d(size_t _i, size_t _j) { i=_i; j=_j; }
     } Coord2d;
     
     

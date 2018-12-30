@@ -77,6 +77,11 @@ namespace Miam
         /// Throws exceptions if the OSC sender or OSC message are not configured properly
         void ConnectAndSendOSCMessage(const std::string& oscAddress, double argumentValue);
         
+        void ConnectAndSendState(std::shared_ptr<ControlState<double>> stateToSend);
+        
+        private :
+        std::shared_ptr<MiamOscSender<double>> tryConnectAndGetOscSender();
+        
     };
     
 }

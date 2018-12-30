@@ -245,7 +245,7 @@ float OpenGLTextObject::getCharWidthRatio(char32_t u32character)
     {
         case 'i' :
         case 'I' :
-            return 0.4f;
+            return 0.40f;
             
         case 'j' :
         case 'l' :
@@ -255,10 +255,14 @@ float OpenGLTextObject::getCharWidthRatio(char32_t u32character)
         case 'f' :
         case 't' :
         case 'r' :
-            return 0.5f;
+            return 0.50f;
+            
+        case 'e' :
+        case 's' :
+            return 0.60f;
             
         case ' ' :
-            return 0.7f;
+            return 0.70f;
             
         case 'm' :
         case 'M' :
@@ -267,7 +271,7 @@ float OpenGLTextObject::getCharWidthRatio(char32_t u32character)
             return 0.95f;
             
         default :
-            return 0.7f; // une lettre fait en moyenne 90% de son espace dans la texture !
+            return 0.70f; // une lettre fait en moyenne 90% de son espace dans la texture !
     }
 }
 

@@ -81,6 +81,46 @@ void Model::update()
 // - - - - - Simple OSC sender (for devices OSC learn) - - - - -
 void Model::ConnectAndSendOSCMessage(const std::string& oscAddressPattern, double argumentValue)
 {
+    auto miamOscSender = tryConnectAndGetOscSender();
+    
+    // Finally : OSC Message sending
+    miamOscSender->SendToAddressAsFloat(oscAddressPattern, argumentValue);
+}
+
+void Model::ConnectAndSendState(std::shared_ptr<ControlState<double>> stateToSend)
+{
+    auto miamOscSender = tryConnectAndGetOscSender();
+    
+    // Tentative de conversion de l'état : doit TOUJOURS être un matrix pour l'instant
+    auto castedMatrixState = std::dynamic_pointer_cast<MatrixState<double>>(stateToSend);
+    if (!castedMatrixState)
+        throw std::logic_error("Not implemented : Control State has to be actually a Matrix State....");
+    
+    // Comportement différent selon GEN CON
+    if (sessionPurpose == AppPurpose::GenericController)
+    {
+        // d'abord, on force la ré-activation des adresses OSC et du mode OSC à 1 colonne
+        miamOscSender->EnableSendFirstColOnly(true,
+                                              interpolator->GetInOutChannelsName().Inputs);
+        
+        // création de la liste de tous les indices à envoyer
+        std::vector<size_t> allIndexes;
+        allIndexes.reserve(castedMatrixState->GetInputsCount());
+        for (size_t i=0 ; i<castedMatrixState->GetInputsCount() ; i++)
+            allIndexes.push_back( castedMatrixState->GetIndexFromIndex2d(Index2d(i, 0)) );
+        // commande d'envoi
+        miamOscSender->SendMatrixParamChanges(castedMatrixState.get(), allIndexes);
+    }
+    // ou SPAT
+    else if (sessionPurpose == AppPurpose::Spatialisation)
+    {
+        // envoi forcé sans activer le modèle et la gestion optimisée...
+        // Dans plusieurs blobs OSC ?
+    }
+}
+
+std::shared_ptr<MiamOscSender<double>> Model::tryConnectAndGetOscSender()
+{
     // At first, we ask the interpolator for the current MiamOSCSender status and data
     std::shared_ptr<MiamOscSender<double>> miamOscSender = std::dynamic_pointer_cast<MiamOscSender<double>>(GetStateSender(0));
     if (! miamOscSender )
@@ -90,8 +130,7 @@ void Model::ConnectAndSendOSCMessage(const std::string& oscAddressPattern, doubl
     if (! miamOscSender->TryConnect() )
         throw Miam::OscException(TRANS("Cannot connect to the device. Please check OSC settings.").toStdString());
     
-    // Finally : OSC Message sending
-    miamOscSender->SendToAddressAsFloat(oscAddressPattern, argumentValue);
+    return miamOscSender;
 }
 
 

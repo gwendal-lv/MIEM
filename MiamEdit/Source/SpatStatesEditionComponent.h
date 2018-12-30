@@ -163,6 +163,8 @@ private:
     std::unique_ptr<Label> labelB;
     std::unique_ptr<Slider> sliderB;
     std::unique_ptr<Label> colourVisualisationLabel;
+    std::unique_ptr<TextButton> sendStateTextButton;
+    std::unique_ptr<TextButton> sendZerosTextButton;
 
 
     //==============================================================================

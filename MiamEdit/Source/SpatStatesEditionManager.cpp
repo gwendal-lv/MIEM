@@ -73,7 +73,7 @@ void SpatStatesEditionManager::selectSpatState(std::shared_ptr<ControlState<doub
             matrixToSend = matrixState->GetMatrix();
         // else if the cast did not work
         else
-            throw std::runtime_error("Spat state is not a Matrix state");
+            throw std::runtime_error("State is not a Matrix state");
     }
     else // if no state selected
         infoText = "-";
@@ -189,6 +189,31 @@ void SpatStatesEditionManager::OnDeleteSelectedState()
     }
     else
         throw std::logic_error("Cannot delete state: no state is currently selected.");
+}
+void SpatStatesEditionManager::OnSendState()
+{
+    std::cout << "On Send State" << std::endl;
+    // At first : Actualisation depuis l'affichage graphique
+    sendCurrentDataToModel();
+    
+    // Si le modèle a bien envoyé : on affiche ENVOYÉ
+    try {
+        if (selectedSpatState)
+        {
+            model->ConnectAndSendState(selectedSpatState);
+            view->DisplayInfo(TRANS("OSC Message sent to ").toStdString() + model->GetStateSender(0)->GetAddressAsString());
+        }
+        else
+            view->DisplayInfo(TRANS("No state selected (nothing to send).").toStdString());
+    }
+    // Sinon on affiche l'erreur de connection transmise par le modèle
+    catch(Miam::OscException& e) {
+        view->DisplayInfo( e.what() );
+    }
+}
+void SpatStatesEditionManager::OnSendZeros()
+{
+    std::cout << "On Send Zeros" << std::endl;
 }
 void SpatStatesEditionManager::OnMoveSelectedStateUp()
 {

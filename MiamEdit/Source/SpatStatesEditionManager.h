@@ -83,6 +83,8 @@ namespace Miam
         void OnRenameState(std::string newName, int stateIndex);
         void OnAddState();
         void OnDeleteSelectedState();
+        void OnSendState();
+        void OnSendZeros();
         void OnMoveSelectedStateUp();
         void OnMoveSelectedStateDown();
         

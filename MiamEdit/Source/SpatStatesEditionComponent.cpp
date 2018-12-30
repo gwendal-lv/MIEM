@@ -190,6 +190,24 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     colourVisualisationLabel->setColour (TextEditor::textColourId, Colours::black);
     colourVisualisationLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
+    sendStateTextButton.reset (new TextButton ("Send State text button"));
+    addAndMakeVisible (sendStateTextButton.get());
+    sendStateTextButton->setButtonText (TRANS("Send state"));
+    sendStateTextButton->setConnectedEdges (Button::ConnectedOnRight);
+    sendStateTextButton->addListener (this);
+    sendStateTextButton->setColour (TextButton::buttonColourId, Colours::black);
+    sendStateTextButton->setColour (TextButton::buttonOnColourId, Colours::darkgrey);
+    sendStateTextButton->setColour (TextButton::textColourOffId, Colour (0xfff0f0f0));
+
+    sendZerosTextButton.reset (new TextButton ("Send zeros text button"));
+    addAndMakeVisible (sendZerosTextButton.get());
+    sendZerosTextButton->setButtonText (TRANS("Send zeros"));
+    sendZerosTextButton->setConnectedEdges (Button::ConnectedOnLeft);
+    sendZerosTextButton->addListener (this);
+    sendZerosTextButton->setColour (TextButton::buttonColourId, Colours::black);
+    sendZerosTextButton->setColour (TextButton::buttonOnColourId, Colours::darkgrey);
+    sendZerosTextButton->setColour (TextButton::textColourOffId, Colour (0xfff0f0f0));
+
 
     //[UserPreSize]
     labelledMatrixComponent->SetButtonsListener(this);
@@ -231,6 +249,8 @@ SpatStatesEditionComponent::~SpatStatesEditionComponent()
     labelB = nullptr;
     sliderB = nullptr;
     colourVisualisationLabel = nullptr;
+    sendStateTextButton = nullptr;
+    sendZerosTextButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -266,7 +286,7 @@ void SpatStatesEditionComponent::resized()
     statesListGroupComponent->setBounds (0, 4, getWidth() - 272, 84);
     stateUpTextButton->setBounds (0 + (getWidth() - 272) - 154, 4 + 20, 72, 24);
     stateDownTextButton->setBounds (0 + (getWidth() - 272) - 82, 4 + 20, 74, 24);
-    linksInfoLabel->setBounds ((0 + 88) + 80 - -8, 4 + 20, (getWidth() - 272) - 331, 24);
+    linksInfoLabel->setBounds ((0 + 88) + 80 - -8, 4 + 20, (getWidth() - 272) - 488, 24);
     statesComboBox->setBounds (0 + 8, 56, (getWidth() - 272) - 16, 24);
     labelR->setBounds (getWidth() - 258, 20, 24, 24);
     sliderR->setBounds (getWidth() - 240, 24, 158, 16);
@@ -275,6 +295,8 @@ void SpatStatesEditionComponent::resized()
     labelB->setBounds (getWidth() - 257, 60, 24, 24);
     sliderB->setBounds (getWidth() - 240, 64, 158, 16);
     colourVisualisationLabel->setBounds ((getWidth() - 264) + 264 - 80, 24, 72, 56);
+    sendStateTextButton->setBounds (0 + (getWidth() - 272) - 328, 4 + 20, 80, 24);
+    sendZerosTextButton->setBounds (0 + (getWidth() - 272) - 248, 4 + 20, 88, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -307,6 +329,18 @@ void SpatStatesEditionComponent::buttonClicked (Button* buttonThatWasClicked)
         //[UserButtonCode_stateDownTextButton] -- add your button handler code here..
         editionManager->OnMoveSelectedStateDown();
         //[/UserButtonCode_stateDownTextButton]
+    }
+    else if (buttonThatWasClicked == sendStateTextButton.get())
+    {
+        //[UserButtonCode_sendStateTextButton] -- add your button handler code here..
+        editionManager->OnSendState();
+        //[/UserButtonCode_sendStateTextButton]
+    }
+    else if (buttonThatWasClicked == sendZerosTextButton.get())
+    {
+        //[UserButtonCode_sendZerosTextButton] -- add your button handler code here..
+        editionManager->OnSendZeros();
+        //[/UserButtonCode_sendZerosTextButton]
     }
 
     //[UserbuttonClicked_Post]
@@ -581,7 +615,7 @@ BEGIN_JUCER_METADATA
 <JUCER_COMPONENT documentType="Component" className="SpatStatesEditionComponent"
                  componentName="" parentClasses="public Component, public ISlidersMatrixListener, public IMatrixButtonListener"
                  constructorParams="" variableInitialisers="" snapPixels="8" snapActive="1"
-                 snapShown="1" overlayOpacity="0.33" fixedSize="0" initialWidth="1024"
+                 snapShown="1" overlayOpacity="0.33" fixedSize="1" initialWidth="1024"
                  initialHeight="600">
   <METHODS>
     <METHOD name="visibilityChanged()"/>
@@ -623,7 +657,7 @@ BEGIN_JUCER_METADATA
               textCol="ff000000" buttonText="Down" connectedEdges="1" needsCallback="1"
               radioGroupId="0"/>
   <LABEL name="Links info label" id="3577c0e2ccd44371" memberName="linksInfoLabel"
-         virtualName="" explicitFocusOrder="0" pos="-8R 20 331M 24" posRelativeX="5f4e8653b868a323"
+         virtualName="" explicitFocusOrder="0" pos="-8R 20 488M 24" posRelativeX="5f4e8653b868a323"
          posRelativeY="4250d5155a80be70" posRelativeW="4250d5155a80be70"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Linked to ? area"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
@@ -673,6 +707,16 @@ BEGIN_JUCER_METADATA
          edBkgCol="0" labelText="&#10;" editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
          kerning="0.0" bold="0" italic="0" justification="33"/>
+  <TEXTBUTTON name="Send State text button" id="cb3b69496db256cf" memberName="sendStateTextButton"
+              virtualName="" explicitFocusOrder="0" pos="328R 20 80 24" posRelativeX="4250d5155a80be70"
+              posRelativeY="4250d5155a80be70" bgColOff="ff000000" bgColOn="ff555555"
+              textCol="fff0f0f0" buttonText="Send state" connectedEdges="2"
+              needsCallback="1" radioGroupId="0"/>
+  <TEXTBUTTON name="Send zeros text button" id="886c4f50da968984" memberName="sendZerosTextButton"
+              virtualName="" explicitFocusOrder="0" pos="248R 20 88 24" posRelativeX="4250d5155a80be70"
+              posRelativeY="4250d5155a80be70" bgColOff="ff000000" bgColOn="ff555555"
+              textCol="fff0f0f0" buttonText="Send zeros" connectedEdges="1"
+              needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

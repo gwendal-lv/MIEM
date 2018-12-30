@@ -10,6 +10,7 @@
 
 #include <map>
 #include <string>
+#include <algorithm>
 
 #include "PlayerModel.h"
 
@@ -199,8 +200,10 @@ void PlayerModel::update()
         
         
         // Sleep forcé uniquement si on est assez loin de la période souhaitée
-        // On prend 1 ms de marge pour la réaction de l'OS en sortie de sleep (TOTALEMENT ARBITRAIRE !)
-        if (updateThreadMeasurer.GetElapsedTimeSinceLastNewFrame_us() < updateThreadT_us - 1000)
+        // On prend 1.5 ms de marge pour la réaction de l'OS en sortie de sleep (TOTALEMENT ARBITRAIRE !)
+        const int sleepDelayMargin_us = std::max(updateThreadT_us - 500, 1500);
+        if (updateThreadMeasurer.GetElapsedTimeSinceLastNewFrame_us()
+            < (updateThreadT_us - sleepDelayMargin_us))
             std::this_thread::sleep_for(std::chrono::microseconds(updateThreadT_us
                                                                   - updateThreadMeasurer.GetElapsedTimeSinceLastNewFrame_us() ) );
     }
