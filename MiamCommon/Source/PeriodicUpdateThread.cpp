@@ -17,8 +17,9 @@ using namespace Miam;
 
 PeriodicUpdateThread::PeriodicUpdateThread(std::string name_)
 :
-updateThreadMeasurer(name_, 1500)
+updateThreadMeasurer(name_, 5000) // refresh toutes les 5000 frames
 {
+    threadHasBeenLaunched = false;
    
     // Test of lockfreeness
     if (continueUpdate.is_lock_free())

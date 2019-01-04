@@ -49,7 +49,7 @@ void ControlArea::OnVirtualBaseClassesContructed()
 // - - - - - Linked State attributes - - - - -
 void ControlArea::setDefaultName()
 {
-    SetName(String("[[[unlinked ") + String(GetId()) + String("]]]"));
+    SetName(String("[unlinked ") + String(GetId()) + String("]"));
 }
 void ControlArea::LinkToState(std::shared_ptr< ControlState<double> > state)
 {

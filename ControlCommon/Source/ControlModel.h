@@ -59,14 +59,31 @@ namespace Miam
         
         // Communication
         std::vector< std::shared_ptr<ControlStateSender<double>> > stateSenders;
+        std::shared_ptr<MiamOscSender<double>> miamOscSender; // for quick easy access...
         
         // Time Management
         std::chrono::time_point<std::chrono::steady_clock> commonStartTimePt;
         
         
-        // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
-        public :
+        AsyncParamChange::ParamType playState;
         
+        // Rafraîchissements forcés
+        int refreshFramesCounter = 0;
+        const int refreshPeriod_frames = 500; // unité = frames
+        bool continuousBackgroundBlobMatrixRefresh = true;
+        bool continuousBackgroundSingleMatrixCoeffRefresh = false;
+        
+        
+        
+        
+        // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
+        
+        protected :
+        /// \brief For internal quick access. Might be deleted eventually.
+        std::shared_ptr<MiamOscSender<double>>& getMainSpatSender()
+        { return miamOscSender; };
+        
+        public :
 		/// \brief Par défaut, on retourne l'attribut statique global
 		virtual AppPurpose GetSessionPurpose() const { return App::GetPurpose(); }
 
@@ -85,9 +102,12 @@ namespace Miam
         public :
         
         // - - - - - Construction / destruction - - - - -
-        ControlModel(ControlPresenter* presenter_, double updateFrequency_Hz = 500.0);
+        ControlModel(ControlPresenter* presenter_,
+                     bool startUpdateThread = false,
+                     double updateFrequency_Hz = 500.0);
         virtual ~ControlModel();
-        
+
+
         
         // - - - - - Periodic updates - - - - -
         protected :
@@ -96,10 +116,12 @@ namespace Miam
 		/// class' contructor. The "this" pointer is not considered as a real
 		/// type and an abstract method is called -> bizarre undefined random
 		/// behavior then...
-		///
-		/// Marked as private for now to avoid that bug
-	private:
-        virtual void update() = 0;
+        virtual void update();
+        
+        
+        // - - - - - Internal events - - - - -
+        protected :
+        virtual void onPlay();
         
         
         // - - - - - Property tree (for XML) import/export - - - - -

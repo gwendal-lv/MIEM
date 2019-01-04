@@ -44,13 +44,13 @@ void InteractiveArea::CanvasResized(SceneCanvasComponent* _parentCanvas)
 
 // = = = = = = = = = = Interaction avec Excitateurs = = = = = = = = = =
 
-std::shared_ptr<AreaEvent> InteractiveArea::UpdateInteraction(std::shared_ptr<Exciter>& exciter)
+std::shared_ptr<AreaEvent> InteractiveArea::UpdateInteraction(std::shared_ptr<Exciter>& exciter, bool forceDisableInteraction)
 {
     // Évènement "nothing" par défaut... Peut-être modifié dans la suite
     auto areaE = std::make_shared<AreaEvent>();
     
     //  - - - Test d'interaction pour commencer - - -
-    bool hitTestResult = HitTest(exciter->GetCenterInPixels());
+    bool hitTestResult = HitTest(exciter->GetCenterInPixels()) && (! forceDisableInteraction);
     
     
     //  - - - Ensuite, on regarde si l'excitateur fait déjà partie, ou non,

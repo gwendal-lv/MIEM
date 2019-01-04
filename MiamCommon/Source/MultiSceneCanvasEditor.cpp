@@ -42,7 +42,8 @@ void MultiSceneCanvasEditor::SetMode(CanvasManagerMode _mode)
             if (_mode != CanvasManagerMode::ExciterSelected
                 && _mode != CanvasManagerMode::ExcitersEdition)
             {
-                selectedScene->SaveCurrentExcitersToInitialExciters(false); // SANS supprimer les courants
+                // sauve les courants dans les initiaux, SANS supprimer les courants
+                selectedScene->SaveCurrentExcitersToInitialExciters(false);
             }
             break;
             

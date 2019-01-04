@@ -35,7 +35,7 @@ using namespace Miam;
 // - - - - - Construction / destruction - - - - -
 Model::Model(Presenter* presenter_)
 :
-    ControlModel(presenter_),
+    ControlModel(presenter_, false), // don't start update thread in parent ctor
 
 presenter(presenter_),
 sessionPurpose(AppPurpose::None)
@@ -52,11 +52,6 @@ sessionPurpose(AppPurpose::None)
 
 Model::~Model()
 {
-	// Joining of threads
-	continueUpdate = false;
-	updateThread.join();
-    
-    // Disconnection / Destruction of the OSC sender
 }
 
 
@@ -69,19 +64,20 @@ void Model::update()
     pthread_setname_np(/*pthread_self(), */"MIEM Model::update Thread"); // pas de TID pour FreeBSD 2003... (doc macOS)
 #endif
     
-    
-    while(continueUpdate)
-    {
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-		//DBG("update Modèle !");
-    }
+    ControlModel::update();
 }
 
+// - - - - - internal events - - - - -
+void Model::onPlay()
+{
+    // parent class work
+    ControlModel::onPlay();
+}
 
 // - - - - - Simple OSC sender (for devices OSC learn) - - - - -
 void Model::ConnectAndSendOSCMessage(const std::string& oscAddressPattern, double argumentValue)
 {
-    auto miamOscSender = tryConnectAndGetOscSender();
+    tryConnectAndGetOscSender();
     
     // Finally : OSC Message sending
     miamOscSender->SendToAddressAsFloat(oscAddressPattern, argumentValue);
@@ -89,7 +85,7 @@ void Model::ConnectAndSendOSCMessage(const std::string& oscAddressPattern, doubl
 
 void Model::ConnectAndSendState(std::shared_ptr<ControlState<double>> stateToSend)
 {
-    auto miamOscSender = tryConnectAndGetOscSender();
+    tryConnectAndGetOscSender();
     
     // Tentative de conversion de l'état : doit TOUJOURS être un matrix pour l'instant
     auto castedMatrixState = std::dynamic_pointer_cast<MatrixState<double>>(stateToSend);
@@ -114,21 +110,51 @@ void Model::ConnectAndSendState(std::shared_ptr<ControlState<double>> stateToSen
     // ou SPAT
     else if (sessionPurpose == AppPurpose::Spatialisation)
     {
-        // envoi forcé sans activer le modèle et la gestion optimisée...
-        // Dans plusieurs blobs OSC ?
+        // on désactive d'abord le mode à adresses OSC paramétrables
+        miamOscSender->EnableSendFirstColOnly(false);
+        
+        // création de la liste de tous les indices à envoyer
+        std::vector<size_t> allIndexes;
+        allIndexes.reserve(castedMatrixState->GetInputsCount() * castedMatrixState->GetOutputsCount());
+        for (size_t i=0 ; i<castedMatrixState->GetInputsCount() ; i++)
+            for (size_t j=0 ; j<castedMatrixState->GetOutputsCount() ; j++)
+                allIndexes.push_back(castedMatrixState->GetIndexFromIndex2d(Index2d(i,j)));
+        // commande d'envoi (à tester avec Reaper)
+        miamOscSender->SendMatrixCoeffChanges(castedMatrixState.get(), allIndexes);
     }
 }
 
 std::shared_ptr<MiamOscSender<double>> Model::tryConnectAndGetOscSender()
 {
     // At first, we ask the interpolator for the current MiamOSCSender status and data
-    std::shared_ptr<MiamOscSender<double>> miamOscSender = std::dynamic_pointer_cast<MiamOscSender<double>>(GetStateSender(0));
+    miamOscSender = std::dynamic_pointer_cast<MiamOscSender<double>>(GetStateSender(0));
     if (! miamOscSender )
         throw std::logic_error("State sender has to be an OSC one for now.");
     
     // Then we open a connection if necessary (or we keep it alive if it was opened)
     if (! miamOscSender->TryConnect() )
         throw Miam::OscException(TRANS("Cannot connect to the device. Please check OSC settings.").toStdString());
+    
+    
+    // Configuration depending on the session
+    // SHOULD BE MOVED ELSEWHERE
+    switch (sessionPurpose) {
+    case AppPurpose::Spatialisation:
+        miamOscSender->EnableSendFirstColOnly(false);
+        continuousBackgroundSingleMatrixCoeffRefresh = false;
+        continuousBackgroundBlobMatrixRefresh = true;
+        break;
+        
+    case AppPurpose::GenericController:
+        miamOscSender->EnableSendFirstColOnly(true,
+                                              interpolator->GetInOutChannelsName().Inputs);
+        continuousBackgroundSingleMatrixCoeffRefresh = true;
+        continuousBackgroundBlobMatrixRefresh = false;
+        break;
+        
+    default:
+        break;
+    }
     
     return miamOscSender;
 }

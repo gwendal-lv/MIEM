@@ -256,7 +256,16 @@ std::shared_ptr<AreaEvent> InteractiveScene::DeleteCurrentExciterByIndex(size_t 
     updateAreasZoffset({});
 #endif
     
-    return std::make_shared<AreaEvent>(deletedExciter, AreaEventType::Deleted, shared_from_this());
+    // We force the unlink for the new excitements to be applied now (and not after
+    // all graphic updates are done)
+    auto multiAreaE = std::make_shared<MultiAreaEvent>();
+    for (size_t i = 0; i < areas.size() ; i++)
+        multiAreaE->AddAreaEvent(areas[i]->UpdateInteraction(deletedExciter, true)); // forced disable
+    // Addition of the deletion event
+    multiAreaE->AddAreaEvent(std::make_shared<AreaEvent>(deletedExciter, AreaEventType::Deleted, shared_from_this()));
+    
+    // final return
+    return multiAreaE;
 }
 std::shared_ptr<AreaEvent> InteractiveScene::DeleteSelectedExciter()
 {

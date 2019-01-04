@@ -66,6 +66,10 @@ namespace Miam
         void update() override;
         
         
+        // - - - - - internal events - - - - -
+        protected :
+        virtual void onPlay() override;
+        
         
         // - - - - - Simple OSC sender (for devices OSC learn) - - - - -
         public :

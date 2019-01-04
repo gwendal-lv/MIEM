@@ -35,6 +35,7 @@ namespace Miam
         void AddAreaEvent(std::shared_ptr<AreaEvent> areaE);
         void AddAreaEvent(AreaEvent* areaE);
         
+        /// \brief This count does not include the main AreaEvent
         size_t GetOtherEventsCount() const {return otherEvents.size();}
         std::shared_ptr<AreaEvent>& GetOtherEvent(size_t i) {return otherEvents[i];}
         

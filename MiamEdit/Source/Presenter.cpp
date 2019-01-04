@@ -87,6 +87,47 @@ void Presenter::ManageInitialSession(std::string commandLine)
     // On est peut-être toujours en train d'attendre un choix de l'utilisateur
 }
 
+void Presenter::TryConnectModelToRemote()
+{
+    try {
+        // friend access to private method
+        model->tryConnectAndGetOscSender();
+        view->DisplayInfo(TRANS("Sending real-time OSC to ").toStdString() + model->GetStateSender(0)->GetAddressAsString());
+        isModelConnected = true;
+    }
+    // Sinon on affiche l'erreur de connection transmise par le modèle
+    catch(Miam::OscException& e) {
+        view->DisplayInfo( e.what() );
+        isModelConnected = false;
+    }
+}
+void Presenter::TryModelPlay()
+{
+    // envoi de l'ordre de jouer, si connecté
+    if (isModelConnected)
+    {
+        AsyncParamChange playAsyncParam(AsyncParamChange::ParamType::Play);
+        SendParamChange(playAsyncParam);
+    }
+    // display d'une info différée sur le thread Juce Messages
+    else
+    {
+        Timer::callAfterDelay(5000, [this] () {
+            view->DisplayInfo(TRANS("Not sending OSC control data. Please check remote connection configuration.").toStdString());
+        });
+    }
+}
+void Presenter::TryModelStop()
+{
+    if (isModelConnected)
+    {
+        AsyncParamChange stopAsyncParam(AsyncParamChange::ParamType::Stop);
+        SendParamChange(stopAsyncParam);
+    }
+    // Aucun affichage si problème de connection...
+    else {}
+}
+
 void Presenter::OnShutdownRequest()
 {
     appModeChangeRequest(AppMode::Quitting);
@@ -104,12 +145,11 @@ AppMode Presenter::appModeChangeRequest(AppMode newAppMode)
     // First check : are we running a new mode ?
     if (newAppMode != appMode)
     {
+        // GL resources release before any view change
         if (appMode == AppMode::EditControlScenes)
         {
             view->TriggerGLResourcesRelease();
         }
-        
-        
         // ....LOADING MODE.....
         view->ChangeAppMode(AppMode::Loading);
         

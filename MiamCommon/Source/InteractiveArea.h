@@ -81,11 +81,14 @@ namespace Miam
         /// \brief Internally updates the interaction weight with a given exciter.
         ///
         /// The interaction weight is however different from the total excitement from
-        /// several exciters. 
+        /// several exciters.
+        ///
+        /// \param forceDisableInteraction If true, even if the exciter intersects
+        /// the shape, its effects will be null
         ///
         /// \returns Wether the interaction between this
         /// area and an exciter has changed, or not.
-        std::shared_ptr<AreaEvent> UpdateInteraction(std::shared_ptr<Exciter>& exciter) override;
+        std::shared_ptr<AreaEvent> UpdateInteraction(std::shared_ptr<Exciter>& exciter, bool forceDisableInteraction = false) override;
         /// \brief Appelé par un excitateur qui est supprimé (mais on ne sais lequel).
         /// On doit forcer la suppression, en effet
         /// sinon le test de collision de "UpdateInteraction" resterait

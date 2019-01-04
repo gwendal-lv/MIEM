@@ -60,6 +60,15 @@ void MultiSceneCanvasInteractor::CallRepaint()
     canvasComponent->repaint();
 }
 
+void MultiSceneCanvasInteractor::RecomputeAreaExciterInteractions()
+{
+    if (selectedScene)
+        handleAndSendEventSync(selectedScene->RecomputeAreaExciterInteractions());
+    else
+        // you cannot recompute the interactions if no scene is selected...
+        assert(false);
+}
+
 
 void MultiSceneCanvasInteractor::handleAsyncUpdate()
 {
@@ -160,6 +169,9 @@ void MultiSceneCanvasInteractor::SetMode(Miam::CanvasManagerMode newMode)
             selectedScene->SetAreasOpacityMode(OpacityMode::DependingOnExcitement);
             // Pas d'évènements renvoyés : on update le tout
             selectedScene->RecomputeAreaExciterInteractions(); // évènements créés mais on s'en fout...
+            // car de toute manière si ces évènement sont traités en synchrone,
+            // comme le changement de mode n'est pas effectif ils seront jetés...
+            // (pas transmis au modèle)
             recreateAllAsyncDrawableObjects();
             break;
             

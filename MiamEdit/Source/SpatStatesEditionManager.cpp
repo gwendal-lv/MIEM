@@ -192,7 +192,6 @@ void SpatStatesEditionManager::OnDeleteSelectedState()
 }
 void SpatStatesEditionManager::OnSendState()
 {
-    std::cout << "On Send State" << std::endl;
     // At first : Actualisation depuis l'affichage graphique
     sendCurrentDataToModel();
     
@@ -213,7 +212,19 @@ void SpatStatesEditionManager::OnSendState()
 }
 void SpatStatesEditionManager::OnSendZeros()
 {
-    std::cout << "On Send Zeros" << std::endl;
+    // Création d'un matrix state nul
+    auto nullMatrixState = std::make_shared<MatrixState<double>>();
+    nullMatrixState->SetInputOuputChannelsCount(spatInterpolator->GetInputsCount(),
+                                                spatInterpolator->GetOutputsCount());
+    // Si le modèle a bien envoyé : on affiche ENVOYÉ
+    try {
+        model->ConnectAndSendState(nullMatrixState);
+        view->DisplayInfo(TRANS("OSC Message sent to ").toStdString() + model->GetStateSender(0)->GetAddressAsString());
+    }
+    // Sinon on affiche l'erreur de connection transmise par le modèle
+    catch(Miam::OscException& e) {
+        view->DisplayInfo( e.what() );
+    }
 }
 void SpatStatesEditionManager::OnMoveSelectedStateUp()
 {

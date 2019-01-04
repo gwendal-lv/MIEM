@@ -66,7 +66,7 @@ namespace Miam
         // - - - - - Interaction avec Excitateurs, spécifiquement - - - - -
         
 
-        virtual std::shared_ptr<AreaEvent> UpdateInteraction(std::shared_ptr<Exciter>& exciter) = 0;
+        virtual std::shared_ptr<AreaEvent> UpdateInteraction(std::shared_ptr<Exciter>& exciter, bool forceDisableInteraction = false) = 0;
         virtual void OnExciterDestruction() = 0;
         
         virtual double GetTotalLinearExcitement() const = 0;

@@ -125,6 +125,8 @@ namespace Miam {
         /// (and asked to repaint).
         void CallRepaint();
         
+        void RecomputeAreaExciterInteractions();
+        
         
         protected :
         void handleAsyncUpdate() override;

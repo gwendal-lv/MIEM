@@ -64,6 +64,9 @@ namespace Miam {
         SpatStatesEditionManager spatStatesEditionManager;
         SettingsManager settingsManager;
         
+        /// \brief We must keep a thread-safe copy of this info... which is hard
+        /// keep perfectly up-to-date across all sub-modules of this Presenter...
+        bool isModelConnected = false;
         
         
         
@@ -104,6 +107,12 @@ namespace Miam {
         /// on peut ouvrir la session passée en ligne de commande, ou bien créer une nouvelle
         /// session (vide, ou à partir de la session par défaut)
         void ManageInitialSession(std::string commandLine);
+        /// \brief Tries to connect the model with the current available configuration
+        ///
+        /// Will manage and display info if exceptions occur.
+        void TryConnectModelToRemote();
+        void TryModelPlay();
+        void TryModelStop();
         /// \brief Comportement final de l'application
         void OnShutdownRequest();
         

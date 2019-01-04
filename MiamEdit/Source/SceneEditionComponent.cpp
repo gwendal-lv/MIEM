@@ -301,7 +301,7 @@ SceneEditionComponent::SceneEditionComponent ()
 
     excitersEditionButton.reset (new ToggleButton ("Exciters Edition button"));
     addAndMakeVisible (excitersEditionButton.get());
-    excitersEditionButton->setButtonText (TRANS("Exciters edition mode"));
+    excitersEditionButton->setButtonText (TRANS("Edit exciters and play!"));
     excitersEditionButton->addListener (this);
     excitersEditionButton->setColour (ToggleButton::textColourId, Colours::black);
 
@@ -1060,7 +1060,7 @@ BEGIN_JUCER_METADATA
               caret="1" popupmenu="1"/>
   <TOGGLEBUTTON name="Exciters Edition button" id="854f1e6b59cc6866" memberName="excitersEditionButton"
                 virtualName="" explicitFocusOrder="0" pos="16 16 176 24" posRelativeY="cc3bdf8d18c3f428"
-                txtcol="ff000000" buttonText="Exciters edition mode" connectedEdges="0"
+                txtcol="ff000000" buttonText="Edit exciters and play!" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
 </JUCER_COMPONENT>
 

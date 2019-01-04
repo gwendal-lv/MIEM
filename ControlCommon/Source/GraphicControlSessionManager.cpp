@@ -27,6 +27,27 @@ void GraphicControlSessionManager::CompleteInitialisation(std::shared_ptr<States
 }
 
 
+AsyncParamChange GraphicControlSessionManager::buildExcitementParamChange(std::shared_ptr<ControlArea> area)
+{
+    AsyncParamChange paramChange;
+    
+    paramChange.Type = AsyncParamChange::ParamType::Excitement;
+    paramChange.DoubleValue = area->GetTotalAudioExcitement();
+
+    // Attention : pour les IDs, on déclenche une grosse exception si on dépasse...
+    if (area->GetStateIndex() < std::numeric_limits<int>::max())
+    paramChange.Id1 = (int)area->GetStateIndex();
+    else
+    throw std::overflow_error("Spat state Index is too big to fit into an 'int'. Cannot send the concerned lock-free parameter change.");
+    if (area->GetId() < std::numeric_limits<int>::max())
+    paramChange.Id2 = (int)area->GetId();
+    else
+    throw std::overflow_error("Area UID is too big to fit into an 'int'. Cannot send the concerned lock-free parameter change.");
+    
+    return paramChange;
+}
+
+
 // = = = = = = = = = = XML import/export = = = = = = = = = =
 
 void GraphicControlSessionManager::SetFromTree(bptree::ptree& graphicSessionTree)

@@ -27,6 +27,7 @@ namespace Miam
         protected :
         /// \brief Model update thread running at an almost constant frequency
         std::thread updateThread;
+        std::atomic<bool> threadHasBeenLaunched;
         double updateThreadF_Hz;
         int updateThreadT_us;
         std::atomic<bool> continueUpdate;

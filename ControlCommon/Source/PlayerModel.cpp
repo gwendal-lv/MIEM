@@ -36,7 +36,7 @@ using namespace Miam;
 
 PlayerModel::PlayerModel(PlayerPresenter* presenter_)
 :
-ControlModel(presenter_, 500.0),
+ControlModel(presenter_, false), // control does not launch its update thread
 presenter(presenter_) // own private downcasted pointer
 {
     playState = AsyncParamChange::Stop;
@@ -57,9 +57,6 @@ presenter(presenter_) // own private downcasted pointer
 
 PlayerModel::~PlayerModel()
 {
-    // On attend le join propre du thread avant la fermeture
-    continueUpdate = false;
-    updateThread.join();
 }
 
 
@@ -124,89 +121,7 @@ void PlayerModel::update()
 {
     setHighThreadPriority();
     
-    while(continueUpdate)
-    {
-        updateThreadMeasurer.OnNewFrame();
-        
-        // Infos de performance -> à passer dans un fichier texte pour ne pas perturber la mesure...
-        // (écriture en asynchrone dans un thread séparé)
-#ifdef __MIAM_DEBUG
-        if (updateThreadMeasurer.IsFreshAverageAvailable())
-            DBG(updateThreadMeasurer.GetInfo());
-#endif
-      
-        // Récupération de toutes les données les + à jour
-        AsyncParamChange lastParamChange;
-        while (presenter->TryGetAsyncParamChange(lastParamChange))
-        {
-            switch (lastParamChange.Type)
-            {
-                case AsyncParamChange::Excitement :
-                    interpolator->OnNewExcitementAmount((size_t) lastParamChange.Id1,
-                                                            (uint64_t) lastParamChange.Id2,
-                                                            lastParamChange.DoubleValue);
-                    break;
-                    
-                case AsyncParamChange::Play :
-                    playState = AsyncParamChange::Play;
-                    std::cout << "[Modèle] PLAY (interpolation de type '" << InterpolationTypes::GetInterpolationName(GetInterpolator()->GetType()) << "')" << std::endl;
-                    interpolator->OnPlay();
-                    break;
-                    
-                case AsyncParamChange::Stop :
-                    playState = AsyncParamChange::Stop;
-                    std::cout << "[Modèle] STOP" << std::endl;
-                    interpolator->OnStop();
-                    // Après le stop, il faut peut-être envoyer des données
-                    if (interpolator->OnDataUpdateFinished()) // vrai si données actualisées
-                    {
-                        miamOscSender->SendStateModifications(interpolator->GetCurrentInterpolatedState());
-                    }
-                    break;
-                    
-                default :
-                    break;
-            }
-        }
-        
-        // - - - - - SI ON EST EN TRAIN DE JOUER - - - - -
-        if ( playState == AsyncParamChange::Play )
-        {
-            // Envoi de la nouvelle matrice, si nécessaire
-            bool somethingWasUpdated = interpolator->OnDataUpdateFinished();
-            if (somethingWasUpdated)
-            {
-                miamOscSender->SendStateModifications(interpolator->GetCurrentInterpolatedState());
-            }
-            else if (continuousBackgroundBlobMatrixRefresh)
-            {
-                if ( (refreshFramesCounter++) >= refreshPeriod_frames )
-                {
-                    miamOscSender->ForceCoeffsBlockRefresh( interpolator->GetCurrentInterpolatedState() );
-                    refreshFramesCounter = 0;
-                }
-            }
-            else if (continuousBackgroundSingleMatrixCoeffRefresh)
-            {
-                if ( (refreshFramesCounter++) >= refreshPeriod_frames )
-                {
-                    miamOscSender->ForceSend1MatrixCoeff( interpolator->GetCurrentInterpolatedState() );
-                    refreshFramesCounter = 0;
-                }
-            }
-        }
-        // fin de : - - - - - SI ON EST EN TRAIN DE JOUER - - - - -
-
-        
-        
-        // Sleep forcé uniquement si on est assez loin de la période souhaitée
-        // On prend 1.5 ms de marge pour la réaction de l'OS en sortie de sleep (TOTALEMENT ARBITRAIRE !)
-        const int sleepDelayMargin_us = std::max(updateThreadT_us - 500, 1500);
-        if (updateThreadMeasurer.GetElapsedTimeSinceLastNewFrame_us()
-            < (updateThreadT_us - sleepDelayMargin_us))
-            std::this_thread::sleep_for(std::chrono::microseconds(updateThreadT_us
-                                                                  - updateThreadMeasurer.GetElapsedTimeSinceLastNewFrame_us() ) );
-    }
+    ControlModel::update();
 }
 
 

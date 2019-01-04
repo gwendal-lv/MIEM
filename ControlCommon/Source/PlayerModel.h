@@ -29,21 +29,7 @@ namespace Miam {
         // Modules
         PlayerPresenter* presenter;
         
-        protected :
-        std::shared_ptr<MiamOscSender<double>> miamOscSender;
-        
-        AsyncParamChange::ParamType playState;
-        
-        // Rafraîchissements forcés
-        int refreshFramesCounter = 0;
-        const int refreshPeriod_frames = 500; // unité = frames
-        bool continuousBackgroundBlobMatrixRefresh = true;
-        bool continuousBackgroundSingleMatrixCoeffRefresh = false;
-        
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
-        protected :
-        std::shared_ptr<MiamOscSender<double>>& getMainSpatSender()
-        { return miamOscSender; };
         public :
         
         
@@ -58,7 +44,7 @@ namespace Miam {
         // - - - - - Periodic updates - - - - -
         protected :
         void setHighThreadPriority();
-        void update() override;
+        virtual void update() override;
         
         
         // - - - - - Property tree (for XML) import/export - - - - -

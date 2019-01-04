@@ -109,6 +109,12 @@ namespace Miam {
         /// Cette fonction est parfois appelée de manière indirecte : en appelant
         /// SetMode(...) du canevas sélectionné, qui retransmet son mode à lui
         void setMode(GraphicSessionMode newMode);
+        
+        /// \brief Performs any necessary configuration, then transmits
+        /// to the Model (via the main Presenter class) the order to begin
+        /// sending OSC corresponding to the excitations retrieved by this class.
+        void enterModelPlayMode();
+        
         public :
         
         void CanvasModeChanged(CanvasManagerMode) override;
@@ -122,7 +128,12 @@ namespace Miam {
         std::shared_ptr<bptree::ptree> OnLeaveSpatScenesEdition();
         
         virtual void HandleEventSync(std::shared_ptr<GraphicEvent> event_) override;
-        
+        /// \brief Treats a single event, for communication between modules for example.
+        ///
+        /// Will throw an exception if a non-split, multi-area event is sent (might be changed)
+        private :
+        void handleSingleEventSync(std::shared_ptr<GraphicEvent> event_);
+        public :
         
         // ----- Event to View -----
         virtual void DisplayInfo(String info, int priority = 0) override;

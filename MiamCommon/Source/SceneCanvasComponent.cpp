@@ -23,7 +23,11 @@
 //==============================================================================
 SceneCanvasComponent::SceneCanvasComponent() : 
 	selectedForEditing(false),
-	displayFrequencyMeasurer("SceneCanvasComponent display")
+#ifdef __MIEM_GL_INFO_DISPLAY
+	displayFrequencyMeasurer("SceneCanvasComponent OpenGL display")
+#else
+    displayFrequencyMeasurer("SceneCanvasComponent OpenGL display", 3000) // refresh every 3000 frame
+#endif
 {
 	init(20,64);
 }
@@ -31,7 +35,11 @@ SceneCanvasComponent::SceneCanvasComponent() :
 
 SceneCanvasComponent::SceneCanvasComponent(int numShapesMax, int numPointsMax) :
     selectedForEditing(false),
-    displayFrequencyMeasurer("SceneCanvasComponent display")
+#ifdef __MIEM_GL_INFO_DISPLAY
+    displayFrequencyMeasurer("SceneCanvasComponent OpenGL display")
+#else
+    displayFrequencyMeasurer("SceneCanvasComponent OpenGL display", 3000) // refresh every 3000 frame
+#endif
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
@@ -543,6 +551,7 @@ void SceneCanvasComponent::renderOpenGL()
         
         
         // Affichage des FPS
+#ifdef __MIEM_GL_INFO_DISPLAY
 		if (openGLInfoLabel != nullptr)
 		{
             auto meanFps = displayFrequencyMeasurer.GetAverageFrequency_Hz();
@@ -562,6 +571,10 @@ void SceneCanvasComponent::renderOpenGL()
             openGLInfoLabel->SetText(testFPS);
 			openGLInfoLabel->drawOneTexturedRectangle(openGlContext, testModel, testView, testProjecxtion);
 		}
+#else
+        if (displayFrequencyMeasurer.IsFreshAverageAvailable())
+            std::cout << displayFrequencyMeasurer.GetInfo(false) << std::endl; // without min/max
+#endif // __MIEM_GL_INFO_DISPLAY
     }
 #endif // ndef __MIEM_VBO
 

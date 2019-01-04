@@ -35,10 +35,14 @@ namespace Miam
         private :
         
         // Links to other modules
-        View* view;
-        SpatStatesEditionComponent* editionComponent;
-        Model* model; // for direct OSC messages send requests... this link should is to be deleted if more functionnalities are implemented
-        std::shared_ptr<StatesInterpolator<double>> spatInterpolator; // from Model
+        
+        View* view = nullptr;
+        SpatStatesEditionComponent* editionComponent = nullptr;
+        /// \brief for direct OSC messages send requests... this link should
+        /// be deleted if more functionnalities are implemented
+        Model* model = nullptr;
+        
+        std::shared_ptr<StatesInterpolator<double>> spatInterpolator = nullptr; // from Model
         
         // Selected spat state
         std::shared_ptr<ControlState<double>> selectedSpatState = nullptr;

@@ -24,11 +24,6 @@ namespace Miam
     /// a boost lock-free queue
     struct AsyncParamChange
     {
-        public :
-        
-        AsyncParamChange() {Reset();}
-        
-        
         /// \brief The following parameter types are quite generic,
         /// and they can be detailed using the IDs from ParametersIds.h
         ///
@@ -40,19 +35,19 @@ namespace Miam
             
             Reinitialize,
             LoadingComplete,
-
-			Play,
-			Pause,
-			Stop,
+            
+            Play,
+            Pause,
+            Stop,
             
             Activate,
             Volume,
             Frequency,
             Excitement,
-
-			Duration,
-			Position,
-			Source,
+            
+            Duration,
+            Position,
+            Source,
             
             InputsCount,
             OutputsCount,
@@ -64,6 +59,21 @@ namespace Miam
             UdpPort,
             TcpPort,
         };
+        
+        
+        
+        public :
+        
+        /// \brief Default constructor with init to null values.
+        AsyncParamChange() {Reset();}
+        
+        /// \brief Constructor with init of the type of parameter only
+        AsyncParamChange(ParamType paramType)
+        {
+            Reset();
+            Type = paramType;
+        }
+        
         
         ParamType Type = ParamType::None;
         

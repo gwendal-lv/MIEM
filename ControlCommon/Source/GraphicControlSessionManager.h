@@ -17,6 +17,8 @@
 
 #include "StatesInterpolator.hpp"
 
+#include "AsyncParamChange.h"
+
 namespace Miam
 {
     // Forward declarations
@@ -55,9 +57,12 @@ namespace Miam
         /// \brief Destruction and the editor and the canvases
         virtual ~GraphicControlSessionManager() {}
         
+        protected :
+        AsyncParamChange buildExcitementParamChange(std::shared_ptr<ControlArea> area);
 
         
         // - - - - - XML import/export - - - - -
+        public :
         virtual void SetFromTree(bptree::ptree& graphicSessionTree) override;
         /// \Brief Finishes to XML-load spat attributes of an area, from the inner
         /// content of the <spatstate> tag.

@@ -152,6 +152,9 @@ std::shared_ptr<MultiSceneCanvasEditor> GraphicSessionManager::getSelectedCanvas
  */
 void GraphicSessionManager::setMode(GraphicSessionMode newMode)
 {
+    // Post-processing necessary, or not ?
+    bool forceExcitersRefresh = false;
+    
     // OLD mode managing
     switch (mode)
     {
@@ -162,6 +165,16 @@ void GraphicSessionManager::setMode(GraphicSessionMode newMode)
             // bypass of everything if the session is still loading
             if (newMode != GraphicSessionMode::Loaded)
                 return;
+            break;
+            
+        // If we **really** quit the exciter-related modes
+        case GraphicSessionMode::ExcitersEdition :
+        case GraphicSessionMode::ExciterSelected :
+            if (newMode != GraphicSessionMode::ExcitersEdition
+                && newMode != GraphicSessionMode::ExciterSelected)
+            {
+                presenter->TryModelStop();
+            }
             break;
             
         default:
@@ -233,6 +246,7 @@ void GraphicSessionManager::setMode(GraphicSessionMode newMode)
             
             
         case GraphicSessionMode::ExcitersEdition :
+            forceExcitersRefresh = true;
             sceneEditionComponent->SetCanvasGroupHidden(true);
             sceneEditionComponent->SetAreaGroupHidden(true);
             sceneEditionComponent->SetSpatGroupReduced(true);
@@ -240,13 +254,19 @@ void GraphicSessionManager::setMode(GraphicSessionMode newMode)
             sceneEditionComponent->SetInitialStateGroupReduced(false);
             sceneEditionComponent->SetDeleteExciterButtonEnabled(false);
             sceneEditionComponent->resized(); // right menu update
-            
             view->DisplayInfo("Edition of the exciters' initial position.");
-            break;
-        case GraphicSessionMode::ExciterSelected :
-            sceneEditionComponent->SetDeleteExciterButtonEnabled(true);
+            // If we **really** enter the exciter-related modes
+            if (mode != GraphicSessionMode::ExciterSelected)
+                enterModelPlayMode();
             break;
             
+        case GraphicSessionMode::ExciterSelected :
+            forceExcitersRefresh = true;
+            sceneEditionComponent->SetDeleteExciterButtonEnabled(true);
+            // If we **really** enter the exciter-related modes
+            if (mode != GraphicSessionMode::ExcitersEdition)
+                enterModelPlayMode();
+            break;
             
         case GraphicSessionMode::WaitingForPointCreation :
             sceneEditionComponent->DisableAllButtonsBut("Add Point text button");
@@ -260,9 +280,23 @@ void GraphicSessionManager::setMode(GraphicSessionMode newMode)
             break;
     }
     
-    
     // Internal order : we finally don't even discuss it
     mode = newMode;
+    
+    // Post-change processings
+    if (forceExcitersRefresh)
+    {
+        if (selectedCanvas)
+            selectedCanvas->RecomputeAreaExciterInteractions(); // internal events sending
+        else
+            assert(false); // we should never enter exciter mode without a canvas selected
+    }
+}
+
+void GraphicSessionManager::enterModelPlayMode()
+{
+    presenter->TryConnectModelToRemote();
+    presenter->TryModelPlay();
 }
 
 
@@ -319,22 +353,77 @@ void GraphicSessionManager::OnEnterSpatScenesEdition()
 }
 std::shared_ptr<bptree::ptree> GraphicSessionManager::OnLeaveSpatScenesEdition()
 {
+    // Back to "normal" mode. Real use :
+    // ensure that the play mode will be disabled
+    // ! We send the order through the Canvas !
+    if (selectedCanvas)
+        selectedCanvas->SetMode(CanvasManagerMode::SceneOnlySelected);
+    
     // Save to XML (Presenter does it)
     return GetCanvasesTree();
 }
 
 void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_)
 {
-    
+    if (auto multiAreaE = std::dynamic_pointer_cast<MultiAreaEvent>(event_))
+    {
+        // For all other events : simple send if not recursively a multi-area one
+        for (size_t i=0 ; i < multiAreaE->GetOtherEventsCount() ; i++)
+        {
+            if (auto multiAreaE_internal
+                = std::dynamic_pointer_cast<MultiAreaEvent>(multiAreaE->GetOtherEvent(i)))
+                HandleEventSync(multiAreaE_internal);
+            else
+                handleSingleEventSync(multiAreaE->GetOtherEvent(i));
+        }
+        // The main event has to be copy-reconstructed and downcasted
+        auto downcastedCopiedAreaEvent = std::make_shared<AreaEvent>( (AreaEvent*)(multiAreaE.get()) );
+        handleSingleEventSync(downcastedCopiedAreaEvent);
+    }
+}
+
+void GraphicSessionManager::handleSingleEventSync(std::shared_ptr<GraphicEvent> event_)
+{
+#ifdef __MIAM_DEBUG
+    if (auto multiAreaE = std::dynamic_pointer_cast<MultiAreaEvent>(event_))
+    {
+        // No internal redispatching at the moment
+        assert(false);
+    }
+#endif
     if (std::shared_ptr<AreaEvent> areaE = std::dynamic_pointer_cast<AreaEvent>(event_))
     {
+        // Event about an Area in particular : we may have to update the spat mix !
+        if (auto area = std::dynamic_pointer_cast<ControlArea>(areaE->GetConcernedArea()))
+        {
+            AsyncParamChange paramChange;
+            
+            switch (areaE->GetType())
+            {
+                // On n'envoie l'excitation que pendant l'édition de l'état initial de scène
+                case AreaEventType::ExcitementAmountChanged :
+                    if (mode == GraphicSessionMode::ExcitersEdition
+                        || mode == GraphicSessionMode::ExciterSelected)
+                    {
+                        // Et on n'envoie que les excitations liées réellement à un état de spat
+                        if (area->GetStateIndex() >= 0)
+                        {
+                            paramChange = buildExcitementParamChange(area);
+                            presenter->SendParamChange(paramChange);
+                            //std::cout << "excit = " << paramChange.DoubleValue << std::endl;
+                        }
+                    }
+                    break;
+                    
+                default:
+                    break;
+            }
+        }
     }
-    
     else if (std::shared_ptr<SceneEvent> sceneE = std::dynamic_pointer_cast<SceneEvent>(event_))
     {
         sceneEditionComponent->SetSceneName(sceneE->GetNewScene()->GetName());
     }
-    
 }
 
 
