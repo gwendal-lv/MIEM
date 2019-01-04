@@ -310,6 +310,7 @@
         <FILE id="ZbkxOP" name="AppPurpose.h" compile="0" resource="0" file="../ControlCommon/Source/AppPurpose.h"/>
         <FILE id="C1mLzc" name="ControlMatrix.hpp" compile="0" resource="0"
               file="../ControlCommon/Source/ControlMatrix.hpp"/>
+        <FILE id="BmZLiw" name="HelpTexts.h" compile="0" resource="0" file="../ControlCommon/Source/HelpTexts.h"/>
         <FILE id="NjGlBL" name="PathUtils.cpp" compile="1" resource="0" file="../ControlCommon/Source/PathUtils.cpp"/>
         <FILE id="D2SRcW" name="PathUtils.h" compile="0" resource="0" file="../ControlCommon/Source/PathUtils.h"/>
       </GROUP>

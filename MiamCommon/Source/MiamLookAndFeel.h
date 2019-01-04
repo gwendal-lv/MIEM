@@ -26,13 +26,15 @@ namespace Miam
 
         float mouseOverBrightnessChange;
         
+        bool transparentTextBoxBackground;
+        
         
         // ===================== MÉTHODES ===========================
         
         
         public :
         // - - - - - - - - - - Construction - - - - - - - - - -
-        MiamLookAndFeel();
+        MiamLookAndFeel(bool _transparentTextBoxBackground = false);
         
         
         

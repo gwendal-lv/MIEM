@@ -13,7 +13,8 @@
 using namespace Miam;
 
 
-MiamLookAndFeel::MiamLookAndFeel()
+MiamLookAndFeel::MiamLookAndFeel(bool _transparentTextBoxBackground) :
+    transparentTextBoxBackground(_transparentTextBoxBackground)
 {
     contoursWidth = 1.0f;
     cornersSize = 4.0f;
@@ -58,9 +59,20 @@ void MiamLookAndFeel::fillTextEditorBackground (Graphics & g, int /*width*/, int
 {
     auto textEditorArea = textEditor.getLocalBounds();
     if (textEditor.isEnabled())
-        g.setColour(Colours::darkgrey);
+    {
+        if (!transparentTextBoxBackground)
+            g.setColour(Colours::darkgrey);
+        else
+            g.setColour(Colours::transparentWhite);
+    }
     else
-        g.setColour(Colours::grey);
+    {
+        if (!transparentTextBoxBackground)
+            g.setColour(Colours::grey);
+        else
+            g.setColour(Colours::transparentBlack);
+    }
+    
     g.fillRect(textEditorArea);
 }
 

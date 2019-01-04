@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.3.2
+  Created with Projucer version: 5.4.1
 
   ------------------------------------------------------------------------------
 
@@ -37,7 +37,7 @@ SpeakersEditionComponent::SpeakersEditionComponent ()
                             CharPointer_UTF8 ("\xc3\x89""dition des haut-parleurs...\n"
                             "\xc3\x87""a va venir !")));
     addAndMakeVisible (label.get());
-    label->setFont (Font (15.00f, Font::italic));
+    label->setFont (Font (15.0f, Font::italic));
     label->setJustificationType (Justification::centred);
     label->setEditable (false, false, false);
     label->setColour (Label::backgroundColourId, Colour (0x87ffffff));
@@ -84,7 +84,7 @@ void SpeakersEditionComponent::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    label->setBounds (proportionOfWidth (0.5005f) - (157 / 2), proportionOfHeight (0.5000f) - (54 / 2), 157, 54);
+    label->setBounds (proportionOfWidth (0.5005f) - (157 / 2), proportionOfHeight (0.5f) - (54 / 2), 157, 54);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -107,14 +107,14 @@ BEGIN_JUCER_METADATA
 <JUCER_COMPONENT documentType="Component" className="SpeakersEditionComponent"
                  componentName="" parentClasses="public Component" constructorParams=""
                  variableInitialisers="" snapPixels="8" snapActive="1" snapShown="1"
-                 overlayOpacity="0.330" fixedSize="1" initialWidth="1024" initialHeight="600">
+                 overlayOpacity="0.33" fixedSize="1" initialWidth="1024" initialHeight="600">
   <BACKGROUND backgroundColour="ffd9d9d9"/>
   <LABEL name="new label" id="9a9f35454556bd44" memberName="label" virtualName=""
          explicitFocusOrder="0" pos="50.049%c 50%c 157 54" bkgCol="87ffffff"
          edTextCol="ff000000" edBkgCol="0" labelText="&#201;dition des haut-parleurs...&#10;&#199;a va venir !"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
-         bold="0" italic="1" justification="36" typefaceStyle="Italic"/>
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         italic="1" justification="36" typefaceStyle="Italic"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

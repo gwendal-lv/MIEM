@@ -8,6 +8,8 @@
   ==============================================================================
 */
 
+#include <sstream>
+
 #include "Presenter.h"
 
 #include "Model.h"
@@ -18,7 +20,6 @@
 
 #include "JuceHeader.h"
 
-#include <sstream>
 
 // Aucune de ces bilbiothèques ne convient... Retour aux regex c++11...
 //#include "boost/program_options.hpp"

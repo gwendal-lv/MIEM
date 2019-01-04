@@ -28,6 +28,7 @@
 #include "SceneCanvasComponent.h"
 #include "MultiSceneCanvasComponent.h"
 #include "MultiCanvasComponent.h"
+#include "MiamLookAndFeel.h"
 
 #include "DrawableArea.h"
 
@@ -113,6 +114,8 @@ public:
     void SetInitialStateGroupHidden(bool _isHidden);
     void SetInitialStateGroupReduced(bool _isReduced);
     void SetDeleteExciterButtonEnabled(bool _isEnabled);
+    // - - - - - Info group - - - - -
+    void SetInfoGroupReduced(bool _isReduced);
 
 
     // ----- Other setters and getters -----
@@ -157,20 +160,25 @@ private:
     MultiCanvasComponent* multiCanvasComponent = 0;
 
     GraphicSessionManager* graphicSessionManager = 0;
+    
+    std::unique_ptr<MiamLookAndFeel> transparentLookAndFeel;
 
     int canvasGroupReducedH,
         areaGroupReducedH,
         spatGroupReducedH,
-        initialStateGroupReducedH ;
+        initialStateGroupReducedH,
+        infoGroupReducedH ;
     int areaGroupCurrentDy = 0,
         spatGroupCurrentDy = 0,
-        initialStateGroupCurrentDy = 0;
+        initialStateGroupCurrentDy = 0,
+        infoGroupCurrentDy = 0;
     bool isCanvasGroupHidden = false,
         isAreaGroupReduced = false,
         isAreaGroupHidden = false,
         isSpatGroupHidden = false,
         isInitialStateGroupReduced = false,
-        isInitialStateGroupHidden = false;
+        isInitialStateGroupHidden = false,
+        isInfoGroupReduced = true; // very simple -> self-managed
 
     // When all buttons are disabled, to highlight that we can do only 1 action,
     // we need to back up the state of some buttons
@@ -180,6 +188,7 @@ private:
     //[/UserVariables]
 
     //==============================================================================
+    std::unique_ptr<TextEditor> infoTextEditor;
     std::unique_ptr<GroupComponent> areaGroupComponent;
     std::unique_ptr<GroupComponent> controlGroupComponent;
     std::unique_ptr<TextButton> addPointTextButton;
@@ -206,6 +215,8 @@ private:
     std::unique_ptr<Label> sceneNameLabel;
     std::unique_ptr<TextEditor> sceneNameTextEditor;
     std::unique_ptr<ToggleButton> excitersEditionButton;
+    std::unique_ptr<GroupComponent> infoGroupComponent;
+    std::unique_ptr<TextButton> showInfoTextButton;
 
 
     //==============================================================================

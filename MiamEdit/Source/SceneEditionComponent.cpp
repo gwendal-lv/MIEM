@@ -21,8 +21,11 @@
 #include "GraphicSessionManager.h"
 
 #include <cmath>
+#include <algorithm>
 
 #include "IDrawableArea.h" // areas default types defines
+
+#include "HelpTexts.h"
 //[/Headers]
 
 #include "SceneEditionComponent.h"
@@ -36,7 +39,25 @@ using namespace Miam;
 SceneEditionComponent::SceneEditionComponent ()
 {
     //[Constructor_pre] You can add your own custom stuff here..
+    transparentLookAndFeel.reset( new MiamLookAndFeel(true) );
     //[/Constructor_pre]
+
+    infoTextEditor.reset (new TextEditor ("Info text editor"));
+    addAndMakeVisible (infoTextEditor.get());
+    infoTextEditor->setMultiLine (true);
+    infoTextEditor->setReturnKeyStartsNewLine (true);
+    infoTextEditor->setReadOnly (true);
+    infoTextEditor->setScrollbarsShown (true);
+    infoTextEditor->setCaretVisible (false);
+    infoTextEditor->setPopupMenuEnabled (false);
+    infoTextEditor->setColour (TextEditor::textColourId, Colours::black);
+    infoTextEditor->setColour (TextEditor::backgroundColourId, Colour (0x00ffffff));
+    infoTextEditor->setText (CharPointer_UTF8 ("Texte quoi\n"
+    "qui tient sur plusieurs lignes\n"
+    "\n"
+    "et c\'est tr\xc3\xa8s bien"));
+
+    infoTextEditor->setBounds (16, 520, 176, 104);
 
     areaGroupComponent.reset (new GroupComponent ("Area edition group component",
                                                   TRANS("Area edition")));
@@ -307,6 +328,23 @@ SceneEditionComponent::SceneEditionComponent ()
 
     excitersEditionButton->setBounds (16, (((8 + 136 - -8) + 168 - -8) + 80 - -8) + 16, 176, 24);
 
+    infoGroupComponent.reset (new GroupComponent ("Info group component",
+                                                  TRANS("Info")));
+    addAndMakeVisible (infoGroupComponent.get());
+    infoGroupComponent->setTextLabelPosition (Justification::centredLeft);
+    infoGroupComponent->setColour (GroupComponent::outlineColourId, Colour (0xff454545));
+    infoGroupComponent->setColour (GroupComponent::textColourId, Colours::black);
+
+    showInfoTextButton.reset (new TextButton ("Show Info text button"));
+    addAndMakeVisible (showInfoTextButton.get());
+    showInfoTextButton->setButtonText (TRANS("[+]    Show context information      "));
+    showInfoTextButton->addListener (this);
+    showInfoTextButton->setColour (TextButton::buttonColourId, Colour (0xfff0f0f0));
+    showInfoTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
+    showInfoTextButton->setColour (TextButton::textColourOffId, Colours::black);
+
+    showInfoTextButton->setBounds (16, (((8 + 136 - -8) + 168 - -8) + 80 - -8) + 216, 176, 20);
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -324,6 +362,11 @@ SceneEditionComponent::SceneEditionComponent ()
     areaGroupReducedH = 80; // first bloc of buttons only
     spatGroupReducedH = 0; // nothing inside
     initialStateGroupReducedH = 48; // toggle button only
+    infoGroupReducedH = 44;
+
+    // Special treatements for the info group
+    SetInfoGroupReduced(true);
+    infoTextEditor->setLookAndFeel(transparentLookAndFeel.get());
 
     //[/Constructor]
 }
@@ -334,6 +377,7 @@ SceneEditionComponent::~SceneEditionComponent()
 
     //[/Destructor_pre]
 
+    infoTextEditor = nullptr;
     areaGroupComponent = nullptr;
     controlGroupComponent = nullptr;
     addPointTextButton = nullptr;
@@ -360,9 +404,12 @@ SceneEditionComponent::~SceneEditionComponent()
     sceneNameLabel = nullptr;
     sceneNameTextEditor = nullptr;
     excitersEditionButton = nullptr;
+    infoGroupComponent = nullptr;
+    showInfoTextButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
+    transparentLookAndFeel = nullptr;
     //[/Destructor]
 }
 
@@ -403,12 +450,13 @@ void SceneEditionComponent::resized()
     areaGroupComponent->setBounds (8, 8 + 136 - -8, 192, 168);
     controlGroupComponent->setBounds (8, (8 + 136 - -8) + 168 - -8, 192, 80);
     initialStateGroupComponent->setBounds (8, ((8 + 136 - -8) + 168 - -8) + 80 - -8, 192, 80);
+    infoGroupComponent->setBounds (8, ((8 + 136 - -8) + 168 - -8) + 80 - -96, 192, 160);
     //[UserResized] Add your own custom resize handling here..
 
     // Backup of Projucer's sizes
-    int canvasGroupInitH = canvasGroupComponent->getHeight();
-    int areaGroupInitH = areaGroupComponent->getHeight();
-    int spatGroupInitH = controlGroupComponent->getHeight();
+    const int canvasGroupInitH = canvasGroupComponent->getHeight();
+    const int areaGroupInitH = areaGroupComponent->getHeight();
+    const int spatGroupInitH = controlGroupComponent->getHeight();
     //int initialStateGroupInitH = initialStateGroupComponent->getHeight();
 
     // Variable menus' size
@@ -445,6 +493,28 @@ void SceneEditionComponent::resized()
         int dY = 0 - spatGroupInitH /*- 8*/; // < 0
         initialStateGroupTranslateY(dY);
     }
+
+    // Remaining space will be used for the help contents display
+    int remainingTopPosition = initialStateGroupComponent->getBottom() + 24; // used height + top margin
+    infoGroupComponent->setTopLeftPosition(8, remainingTopPosition);
+    infoTextEditor->setTopLeftPosition(16, remainingTopPosition + 16);
+    int remainingHeight = getHeight();
+    remainingHeight -= remainingTopPosition;
+    remainingHeight -= 8; // bottom margin
+    remainingHeight = std::max(0, remainingHeight);
+    if (isInfoGroupReduced)
+    {
+        infoGroupComponent->setSize(infoGroupComponent->getWidth(),
+                                    std::min(infoGroupReducedH, remainingHeight));
+    }
+    else
+    {
+        infoGroupComponent->setSize(infoGroupComponent->getWidth(),
+                                    remainingHeight);
+    }
+    showInfoTextButton->setTopLeftPosition(16, infoGroupComponent->getBottom() - 8 - showInfoTextButton->getHeight());
+    infoTextEditor->setSize(infoTextEditor->getWidth(),
+                            std::max(showInfoTextButton->getY() - infoTextEditor->getY() - 8, 0));
 
     //[/UserResized]
 }
@@ -485,7 +555,7 @@ void SceneEditionComponent::buttonClicked (Button* buttonThatWasClicked)
         PopupMenu menu;
         menu.addItem (AreaDefaultType::Ellipse, "Ellipse", false); // disabled
         menu.addSeparator();
-        menu.addItem(AreaDefaultType::Polygon, "Triangle");
+        menu.addItem(AreaDefaultType::Polygon+0, "Triangle");
         menu.addItem(AreaDefaultType::Polygon+1, "Square");
         menu.addItem(AreaDefaultType::Polygon+2, "Pentagon");
         menu.addItem(AreaDefaultType::Polygon+3, "Hexagon");
@@ -573,6 +643,14 @@ void SceneEditionComponent::buttonClicked (Button* buttonThatWasClicked)
         else
             graphicSessionManager->OnQuitExcitersEdition();
         //[/UserButtonCode_excitersEditionButton]
+    }
+    else if (buttonThatWasClicked == showInfoTextButton.get())
+    {
+        //[UserButtonCode_showInfoTextButton] -- add your button handler code here..
+        this->SetInfoGroupReduced(!isInfoGroupReduced); // self-management because simple logic...
+        // to force updates
+        resized();
+        //[/UserButtonCode_showInfoTextButton]
     }
 
     //[UserbuttonClicked_Post]
@@ -846,6 +924,22 @@ void SceneEditionComponent::SetDeleteExciterButtonEnabled(bool _isEnabled)
 {
     deleteExciterTextButton->setEnabled(_isEnabled);
 }
+// - - - - - Info group - - - - -
+void SceneEditionComponent::SetInfoGroupReduced(bool _isReduced)
+{
+    if (_isReduced)
+    {
+        showInfoTextButton->setButtonText(HelpTexts::GetShowHelpButton());
+    }
+    else
+    {
+        showInfoTextButton->setButtonText(HelpTexts::GetHideHelpButton());
+    }
+
+    infoTextEditor->setVisible(! _isReduced);
+
+    isInfoGroupReduced = _isReduced;
+}
 
 
 
@@ -956,6 +1050,11 @@ BEGIN_JUCER_METADATA
     <METHOD name="visibilityChanged()"/>
   </METHODS>
   <BACKGROUND backgroundColour="ffbfbfbf"/>
+  <TEXTEDITOR name="Info text editor" id="a4539a25a9aebf1" memberName="infoTextEditor"
+              virtualName="" explicitFocusOrder="0" pos="16 520 176 104" textcol="ff000000"
+              bkgcol="ffffff" initialText="Texte quoi&#10;qui tient sur plusieurs lignes&#10;&#10;et c'est tr&#232;s bien"
+              multiline="1" retKeyStartsLine="1" readonly="1" scrollbars="1"
+              caret="0" popupmenu="0"/>
   <GROUPCOMPONENT name="Area edition group component" id="87d416270d41f58c" memberName="areaGroupComponent"
                   virtualName="" explicitFocusOrder="0" pos="8 -8R 192 168" posRelativeY="4250d5155a80be70"
                   outlinecol="ff454545" textcol="ff000000" title="Area edition"/>
@@ -1062,6 +1161,13 @@ BEGIN_JUCER_METADATA
                 virtualName="" explicitFocusOrder="0" pos="16 16 176 24" posRelativeY="cc3bdf8d18c3f428"
                 txtcol="ff000000" buttonText="Edit exciters and play!" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
+  <GROUPCOMPONENT name="Info group component" id="97c294b92cbc0a85" memberName="infoGroupComponent"
+                  virtualName="" explicitFocusOrder="0" pos="8 -96R 192 160" posRelativeY="90b16e3024c520fd"
+                  outlinecol="ff454545" textcol="ff000000" title="Info" textpos="33"/>
+  <TEXTBUTTON name="Show Info text button" id="91eae70b2ba9c50a" memberName="showInfoTextButton"
+              virtualName="" explicitFocusOrder="0" pos="16 216 176 20" posRelativeY="cc3bdf8d18c3f428"
+              bgColOff="fff0f0f0" bgColOn="ffffffff" textCol="ff000000" buttonText="[+]    Show context information      "
+              connectedEdges="0" needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA
