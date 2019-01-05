@@ -42,6 +42,13 @@ SceneEditionComponent::SceneEditionComponent ()
     transparentLookAndFeel.reset( new MiamLookAndFeel(true) );
     //[/Constructor_pre]
 
+    infoGroupComponent.reset (new GroupComponent ("Info group component",
+                                                  TRANS("Info")));
+    addAndMakeVisible (infoGroupComponent.get());
+    infoGroupComponent->setTextLabelPosition (Justification::centredLeft);
+    infoGroupComponent->setColour (GroupComponent::outlineColourId, Colour (0xff454545));
+    infoGroupComponent->setColour (GroupComponent::textColourId, Colours::black);
+
     infoTextEditor.reset (new TextEditor ("Info text editor"));
     addAndMakeVisible (infoTextEditor.get());
     infoTextEditor->setMultiLine (true);
@@ -52,12 +59,14 @@ SceneEditionComponent::SceneEditionComponent ()
     infoTextEditor->setPopupMenuEnabled (false);
     infoTextEditor->setColour (TextEditor::textColourId, Colours::black);
     infoTextEditor->setColour (TextEditor::backgroundColourId, Colour (0x00ffffff));
-    infoTextEditor->setText (CharPointer_UTF8 ("Texte quoi\n"
-    "qui tient sur plusieurs lignes\n"
-    "\n"
-    "et c\'est tr\xc3\xa8s bien"));
+    infoTextEditor->setText (TRANS("Multi\n"
+    "L\n"
+    "I\n"
+    "N\n"
+    "E\n"
+    "and scrollable information textbox for help contents"));
 
-    infoTextEditor->setBounds (16, 520, 176, 104);
+    infoTextEditor->setBounds (16, ((((8 + 128 - -8) + 168 - -8) + 80 - -8) + 88 - -8) + 16, 176, 104);
 
     areaGroupComponent.reset (new GroupComponent ("Area edition group component",
                                                   TRANS("Area edition")));
@@ -80,7 +89,7 @@ SceneEditionComponent::SceneEditionComponent ()
     addPointTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     addPointTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    addPointTextButton->setBounds (16, (8 + 136 - -8) + 136, 88, 24);
+    addPointTextButton->setBounds (16, (8 + 128 - -8) + 136, 88, 24);
 
     deletePointTextButton.reset (new TextButton ("Delete Point text button"));
     addAndMakeVisible (deletePointTextButton.get());
@@ -91,7 +100,7 @@ SceneEditionComponent::SceneEditionComponent ()
     deletePointTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     deletePointTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    deletePointTextButton->setBounds (104, (8 + 136 - -8) + 136, 88, 24);
+    deletePointTextButton->setBounds (104, (8 + 128 - -8) + 136, 88, 24);
 
     copyTextButton.reset (new TextButton ("Copy Text Button"));
     addAndMakeVisible (copyTextButton.get());
@@ -102,7 +111,7 @@ SceneEditionComponent::SceneEditionComponent ()
     copyTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     copyTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    copyTextButton->setBounds (16, (8 + 136 - -8) + 48, 88, 24);
+    copyTextButton->setBounds (16, (8 + 128 - -8) + 48, 88, 24);
 
     pasteTextButton.reset (new TextButton ("Delete Point"));
     addAndMakeVisible (pasteTextButton.get());
@@ -113,7 +122,7 @@ SceneEditionComponent::SceneEditionComponent ()
     pasteTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     pasteTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    pasteTextButton->setBounds (104, (8 + 136 - -8) + 48, 88, 24);
+    pasteTextButton->setBounds (104, (8 + 128 - -8) + 48, 88, 24);
 
     addAreaTextButton.reset (new TextButton ("Add Area text button"));
     addAndMakeVisible (addAreaTextButton.get());
@@ -124,7 +133,7 @@ SceneEditionComponent::SceneEditionComponent ()
     addAreaTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     addAreaTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    addAreaTextButton->setBounds (16, (8 + 136 - -8) + 24, 88, 24);
+    addAreaTextButton->setBounds (16, (8 + 128 - -8) + 24, 88, 24);
 
     deleteAreaTextButton.reset (new TextButton ("Delete Area text button"));
     addAndMakeVisible (deleteAreaTextButton.get());
@@ -135,7 +144,7 @@ SceneEditionComponent::SceneEditionComponent ()
     deleteAreaTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     deleteAreaTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    deleteAreaTextButton->setBounds (104, (8 + 136 - -8) + 24, 88, 24);
+    deleteAreaTextButton->setBounds (104, (8 + 128 - -8) + 24, 88, 24);
 
     sendBackwardTextButton.reset (new TextButton ("Send backward text button"));
     addAndMakeVisible (sendBackwardTextButton.get());
@@ -146,7 +155,7 @@ SceneEditionComponent::SceneEditionComponent ()
     sendBackwardTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     sendBackwardTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    sendBackwardTextButton->setBounds (16, (8 + 136 - -8) + 104, 112, 24);
+    sendBackwardTextButton->setBounds (16, (8 + 128 - -8) + 104, 112, 24);
 
     bringForwardTextButton.reset (new TextButton ("Bring forward text button"));
     addAndMakeVisible (bringForwardTextButton.get());
@@ -157,7 +166,7 @@ SceneEditionComponent::SceneEditionComponent ()
     bringForwardTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     bringForwardTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    bringForwardTextButton->setBounds (16, (8 + 136 - -8) + 80, 112, 24);
+    bringForwardTextButton->setBounds (16, (8 + 128 - -8) + 80, 112, 24);
 
     bringToFrontTextButton.reset (new TextButton ("Bring to front text button"));
     addAndMakeVisible (bringToFrontTextButton.get());
@@ -168,7 +177,7 @@ SceneEditionComponent::SceneEditionComponent ()
     bringToFrontTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     bringToFrontTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    bringToFrontTextButton->setBounds (128, (8 + 136 - -8) + 80, 64, 24);
+    bringToFrontTextButton->setBounds (128, (8 + 128 - -8) + 80, 64, 24);
 
     sendToBackTextButton.reset (new TextButton ("Send to back text button"));
     addAndMakeVisible (sendToBackTextButton.get());
@@ -179,7 +188,7 @@ SceneEditionComponent::SceneEditionComponent ()
     sendToBackTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     sendToBackTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    sendToBackTextButton->setBounds (128, (8 + 136 - -8) + 104, 64, 24);
+    sendToBackTextButton->setBounds (128, (8 + 128 - -8) + 104, 64, 24);
 
     canvasGroupComponent.reset (new GroupComponent ("Canvas edition group component",
                                                     TRANS("Scene edition")));
@@ -187,7 +196,7 @@ SceneEditionComponent::SceneEditionComponent ()
     canvasGroupComponent->setColour (GroupComponent::outlineColourId, Colour (0xff454545));
     canvasGroupComponent->setColour (GroupComponent::textColourId, Colours::black);
 
-    canvasGroupComponent->setBounds (8, 8, 192, 136);
+    canvasGroupComponent->setBounds (8, 8, 192, 128);
 
     spatStatesComboBox.reset (new ComboBox ("Spat States combo box"));
     addAndMakeVisible (spatStatesComboBox.get());
@@ -198,7 +207,7 @@ SceneEditionComponent::SceneEditionComponent ()
     spatStatesComboBox->addItem (TRANS("-1 undefined"), 1);
     spatStatesComboBox->addListener (this);
 
-    spatStatesComboBox->setBounds (16, ((8 + 136 - -8) + 168 - -8) + 40, 176, 24);
+    spatStatesComboBox->setBounds (16, ((8 + 128 - -8) + 168 - -8) + 40, 176, 24);
 
     controlStateLabel.reset (new Label ("Control State label",
                                         TRANS("Link to control state:")));
@@ -210,7 +219,7 @@ SceneEditionComponent::SceneEditionComponent ()
     controlStateLabel->setColour (TextEditor::textColourId, Colours::black);
     controlStateLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    controlStateLabel->setBounds (16, ((8 + 136 - -8) + 168 - -8) + 16, 176, 24);
+    controlStateLabel->setBounds (16, ((8 + 128 - -8) + 168 - -8) + 16, 176, 24);
 
     addSceneTextButton.reset (new TextButton ("Add Scene text button"));
     addAndMakeVisible (addSceneTextButton.get());
@@ -243,7 +252,7 @@ SceneEditionComponent::SceneEditionComponent ()
     sceneLeftTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     sceneLeftTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    sceneLeftTextButton->setBounds (16, 8 + 72, 88, 24);
+    sceneLeftTextButton->setBounds (16, 8 + 96, 88, 24);
 
     sceneRightTextButton.reset (new TextButton ("Scene Right text button"));
     addAndMakeVisible (sceneRightTextButton.get());
@@ -254,7 +263,7 @@ SceneEditionComponent::SceneEditionComponent ()
     sceneRightTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     sceneRightTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    sceneRightTextButton->setBounds (104, 8 + 72, 88, 24);
+    sceneRightTextButton->setBounds (104, 8 + 96, 88, 24);
 
     canvasInfoLabel.reset (new Label ("Canvas Info label",
                                       TRANS("...selected canvas info...")));
@@ -266,7 +275,7 @@ SceneEditionComponent::SceneEditionComponent ()
     canvasInfoLabel->setColour (TextEditor::textColourId, Colours::black);
     canvasInfoLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    canvasInfoLabel->setBounds (16, 8 + 48, 176, 24);
+    canvasInfoLabel->setBounds (16, 8 + 48, 176, 8);
 
     initialStateGroupComponent.reset (new GroupComponent ("Initial state group component",
                                                           TRANS("Scene initial state")));
@@ -283,7 +292,7 @@ SceneEditionComponent::SceneEditionComponent ()
     addExciterTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     addExciterTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    addExciterTextButton->setBounds (16, (((8 + 136 - -8) + 168 - -8) + 80 - -8) + 48, 88, 24);
+    addExciterTextButton->setBounds (16, (((8 + 128 - -8) + 168 - -8) + 80 - -8) + 56, 88, 24);
 
     deleteExciterTextButton.reset (new TextButton ("Delete Exciter text button"));
     addAndMakeVisible (deleteExciterTextButton.get());
@@ -294,7 +303,7 @@ SceneEditionComponent::SceneEditionComponent ()
     deleteExciterTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     deleteExciterTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    deleteExciterTextButton->setBounds (104, (((8 + 136 - -8) + 168 - -8) + 80 - -8) + 48, 88, 24);
+    deleteExciterTextButton->setBounds (104, (((8 + 128 - -8) + 168 - -8) + 80 - -8) + 56, 88, 24);
 
     sceneNameLabel.reset (new Label ("Scene Name Label",
                                      TRANS("Name:")));
@@ -306,7 +315,7 @@ SceneEditionComponent::SceneEditionComponent ()
     sceneNameLabel->setColour (TextEditor::textColourId, Colours::black);
     sceneNameLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    sceneNameLabel->setBounds (15, 8 + 103, 56, 24);
+    sceneNameLabel->setBounds (15, 8 + 63, 56, 24);
 
     sceneNameTextEditor.reset (new TextEditor ("Scene Name text editor"));
     addAndMakeVisible (sceneNameTextEditor.get());
@@ -318,7 +327,7 @@ SceneEditionComponent::SceneEditionComponent ()
     sceneNameTextEditor->setPopupMenuEnabled (true);
     sceneNameTextEditor->setText (String());
 
-    sceneNameTextEditor->setBounds (64, 112, 128, 24);
+    sceneNameTextEditor->setBounds (64, 72, 128, 24);
 
     excitersEditionButton.reset (new ToggleButton ("Exciters Edition button"));
     addAndMakeVisible (excitersEditionButton.get());
@@ -326,14 +335,7 @@ SceneEditionComponent::SceneEditionComponent ()
     excitersEditionButton->addListener (this);
     excitersEditionButton->setColour (ToggleButton::textColourId, Colours::black);
 
-    excitersEditionButton->setBounds (16, (((8 + 136 - -8) + 168 - -8) + 80 - -8) + 16, 176, 24);
-
-    infoGroupComponent.reset (new GroupComponent ("Info group component",
-                                                  TRANS("Info")));
-    addAndMakeVisible (infoGroupComponent.get());
-    infoGroupComponent->setTextLabelPosition (Justification::centredLeft);
-    infoGroupComponent->setColour (GroupComponent::outlineColourId, Colour (0xff454545));
-    infoGroupComponent->setColour (GroupComponent::textColourId, Colours::black);
+    excitersEditionButton->setBounds (16, (((8 + 128 - -8) + 168 - -8) + 80 - -8) + 20, 176, 24);
 
     showInfoTextButton.reset (new TextButton ("Show Info text button"));
     addAndMakeVisible (showInfoTextButton.get());
@@ -342,8 +344,6 @@ SceneEditionComponent::SceneEditionComponent ()
     showInfoTextButton->setColour (TextButton::buttonColourId, Colour (0xfff0f0f0));
     showInfoTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     showInfoTextButton->setColour (TextButton::textColourOffId, Colours::black);
-
-    showInfoTextButton->setBounds (16, (((8 + 136 - -8) + 168 - -8) + 80 - -8) + 216, 176, 20);
 
 
     //[UserPreSize]
@@ -361,11 +361,11 @@ SceneEditionComponent::SceneEditionComponent ()
     canvasGroupReducedH = 0; // nothing inside
     areaGroupReducedH = 80; // first bloc of buttons only
     spatGroupReducedH = 0; // nothing inside
-    initialStateGroupReducedH = 48; // toggle button only
+    initialStateGroupReducedH = 56; // 2-lines toggle button only
     infoGroupReducedH = 44;
 
     // Special treatements for the info group
-    SetInfoGroupReduced(true);
+    SetInfoGroupReduced(false);
     infoTextEditor->setLookAndFeel(transparentLookAndFeel.get());
 
     //[/Constructor]
@@ -377,6 +377,7 @@ SceneEditionComponent::~SceneEditionComponent()
 
     //[/Destructor_pre]
 
+    infoGroupComponent = nullptr;
     infoTextEditor = nullptr;
     areaGroupComponent = nullptr;
     controlGroupComponent = nullptr;
@@ -404,7 +405,6 @@ SceneEditionComponent::~SceneEditionComponent()
     sceneNameLabel = nullptr;
     sceneNameTextEditor = nullptr;
     excitersEditionButton = nullptr;
-    infoGroupComponent = nullptr;
     showInfoTextButton = nullptr;
 
 
@@ -447,10 +447,11 @@ void SceneEditionComponent::resized()
 
     //[/UserPreResize]
 
-    areaGroupComponent->setBounds (8, 8 + 136 - -8, 192, 168);
-    controlGroupComponent->setBounds (8, (8 + 136 - -8) + 168 - -8, 192, 80);
-    initialStateGroupComponent->setBounds (8, ((8 + 136 - -8) + 168 - -8) + 80 - -8, 192, 80);
-    infoGroupComponent->setBounds (8, ((8 + 136 - -8) + 168 - -8) + 80 - -96, 192, 160);
+    infoGroupComponent->setBounds (8, (((8 + 128 - -8) + 168 - -8) + 80 - -8) + 88 - -8, 192, 160);
+    areaGroupComponent->setBounds (8, 8 + 128 - -8, 192, 168);
+    controlGroupComponent->setBounds (8, (8 + 128 - -8) + 168 - -8, 192, 80);
+    initialStateGroupComponent->setBounds (8, ((8 + 128 - -8) + 168 - -8) + 80 - -8, 192, 88);
+    showInfoTextButton->setBounds (16, ((((8 + 128 - -8) + 168 - -8) + 80 - -8) + 88 - -8) + 160 - 8 - 20, 176, 20);
     //[UserResized] Add your own custom resize handling here..
 
     // Backup of Projucer's sizes
@@ -929,16 +930,20 @@ void SceneEditionComponent::SetInfoGroupReduced(bool _isReduced)
 {
     if (_isReduced)
     {
-        showInfoTextButton->setButtonText(HelpTexts::GetShowHelpButton());
+        showInfoTextButton->setButtonText(HelpTexts::GetShowHelpButtonText());
     }
     else
     {
-        showInfoTextButton->setButtonText(HelpTexts::GetHideHelpButton());
+        showInfoTextButton->setButtonText(HelpTexts::GetHideHelpButtonText());
     }
 
     infoTextEditor->setVisible(! _isReduced);
 
     isInfoGroupReduced = _isReduced;
+}
+void SceneEditionComponent::SetInfoHelpText(const juce::String& infoHelpText)
+{
+    infoTextEditor->setText(infoHelpText);
 }
 
 
@@ -1050,9 +1055,12 @@ BEGIN_JUCER_METADATA
     <METHOD name="visibilityChanged()"/>
   </METHODS>
   <BACKGROUND backgroundColour="ffbfbfbf"/>
+  <GROUPCOMPONENT name="Info group component" id="97c294b92cbc0a85" memberName="infoGroupComponent"
+                  virtualName="" explicitFocusOrder="0" pos="8 -8R 192 160" posRelativeY="cc3bdf8d18c3f428"
+                  outlinecol="ff454545" textcol="ff000000" title="Info" textpos="33"/>
   <TEXTEDITOR name="Info text editor" id="a4539a25a9aebf1" memberName="infoTextEditor"
-              virtualName="" explicitFocusOrder="0" pos="16 520 176 104" textcol="ff000000"
-              bkgcol="ffffff" initialText="Texte quoi&#10;qui tient sur plusieurs lignes&#10;&#10;et c'est tr&#232;s bien"
+              virtualName="" explicitFocusOrder="0" pos="16 16 176 104" posRelativeY="97c294b92cbc0a85"
+              textcol="ff000000" bkgcol="ffffff" initialText="Multi&#10;L&#10;I&#10;N&#10;E&#10;and scrollable information textbox for help contents"
               multiline="1" retKeyStartsLine="1" readonly="1" scrollbars="1"
               caret="0" popupmenu="0"/>
   <GROUPCOMPONENT name="Area edition group component" id="87d416270d41f58c" memberName="areaGroupComponent"
@@ -1102,7 +1110,7 @@ BEGIN_JUCER_METADATA
               bgColOff="fff0f0f0" bgColOn="ffffffff" textCol="ff000000" buttonText="to back"
               connectedEdges="5" needsCallback="1" radioGroupId="0"/>
   <GROUPCOMPONENT name="Canvas edition group component" id="4250d5155a80be70" memberName="canvasGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="8 8 192 136" outlinecol="ff454545"
+                  virtualName="" explicitFocusOrder="0" pos="8 8 192 128" outlinecol="ff454545"
                   textcol="ff000000" title="Scene edition"/>
   <COMBOBOX name="Spat States combo box" id="89ad7c0a3be5a39c" memberName="spatStatesComboBox"
             virtualName="" explicitFocusOrder="0" pos="16 40 176 24" posRelativeY="90b16e3024c520fd"
@@ -1123,49 +1131,46 @@ BEGIN_JUCER_METADATA
               bgColOff="fff0f0f0" bgColOn="ffffffff" textCol="ff000000" buttonText="Delete Scene"
               connectedEdges="1" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Scene Left text button" id="43b96ebd16bb5586" memberName="sceneLeftTextButton"
-              virtualName="" explicitFocusOrder="0" pos="16 72 88 24" posRelativeY="4250d5155a80be70"
+              virtualName="" explicitFocusOrder="0" pos="16 96 88 24" posRelativeY="4250d5155a80be70"
               bgColOff="fff0f0f0" bgColOn="ffffffff" textCol="ff000000" buttonText="Move left"
               connectedEdges="2" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Scene Right text button" id="e6cf4b99a12776ee" memberName="sceneRightTextButton"
-              virtualName="" explicitFocusOrder="0" pos="104 72 88 24" posRelativeY="4250d5155a80be70"
+              virtualName="" explicitFocusOrder="0" pos="104 96 88 24" posRelativeY="4250d5155a80be70"
               bgColOff="fff0f0f0" bgColOn="ffffffff" textCol="ff000000" buttonText="Move right"
               connectedEdges="1" needsCallback="1" radioGroupId="0"/>
   <LABEL name="Canvas Info label" id="3577c0e2ccd44371" memberName="canvasInfoLabel"
-         virtualName="" explicitFocusOrder="0" pos="16 48 176 24" posRelativeY="4250d5155a80be70"
+         virtualName="" explicitFocusOrder="0" pos="16 48 176 8" posRelativeY="4250d5155a80be70"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="...selected canvas info..."
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="1" justification="36" typefaceStyle="Italic"/>
   <GROUPCOMPONENT name="Initial state group component" id="cc3bdf8d18c3f428" memberName="initialStateGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="8 -8R 192 80" posRelativeY="90b16e3024c520fd"
+                  virtualName="" explicitFocusOrder="0" pos="8 -8R 192 88" posRelativeY="90b16e3024c520fd"
                   outlinecol="ff454545" textcol="ff000000" title="Scene initial state"/>
   <TEXTBUTTON name="Add Area text button" id="b6820308eb03f341" memberName="addExciterTextButton"
-              virtualName="" explicitFocusOrder="0" pos="16 48 88 24" posRelativeY="cc3bdf8d18c3f428"
+              virtualName="" explicitFocusOrder="0" pos="16 56 88 24" posRelativeY="cc3bdf8d18c3f428"
               bgColOff="fff0f0f0" bgColOn="ffffffff" textCol="ff000000" buttonText="Add Exciter"
               connectedEdges="2" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Delete Exciter text button" id="11692d0648a2e8a4" memberName="deleteExciterTextButton"
-              virtualName="" explicitFocusOrder="0" pos="104 48 88 24" posRelativeY="cc3bdf8d18c3f428"
+              virtualName="" explicitFocusOrder="0" pos="104 56 88 24" posRelativeY="cc3bdf8d18c3f428"
               bgColOff="fff0f0f0" bgColOn="ffffffff" textCol="ff000000" buttonText="Delete"
               connectedEdges="1" needsCallback="1" radioGroupId="0"/>
   <LABEL name="Scene Name Label" id="fbdd06d6ea5f9471" memberName="sceneNameLabel"
-         virtualName="" explicitFocusOrder="0" pos="15 103 56 24" posRelativeY="4250d5155a80be70"
+         virtualName="" explicitFocusOrder="0" pos="15 63 56 24" posRelativeY="4250d5155a80be70"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Name:"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="33"/>
   <TEXTEDITOR name="Scene Name text editor" id="fd7eace3e677fc36" memberName="sceneNameTextEditor"
-              virtualName="" explicitFocusOrder="0" pos="64 112 128 24" initialText=""
+              virtualName="" explicitFocusOrder="0" pos="64 72 128 24" initialText=""
               multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"
               caret="1" popupmenu="1"/>
   <TOGGLEBUTTON name="Exciters Edition button" id="854f1e6b59cc6866" memberName="excitersEditionButton"
-                virtualName="" explicitFocusOrder="0" pos="16 16 176 24" posRelativeY="cc3bdf8d18c3f428"
+                virtualName="" explicitFocusOrder="0" pos="16 20 176 24" posRelativeY="cc3bdf8d18c3f428"
                 txtcol="ff000000" buttonText="Edit exciters and play!" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
-  <GROUPCOMPONENT name="Info group component" id="97c294b92cbc0a85" memberName="infoGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="8 -96R 192 160" posRelativeY="90b16e3024c520fd"
-                  outlinecol="ff454545" textcol="ff000000" title="Info" textpos="33"/>
   <TEXTBUTTON name="Show Info text button" id="91eae70b2ba9c50a" memberName="showInfoTextButton"
-              virtualName="" explicitFocusOrder="0" pos="16 216 176 20" posRelativeY="cc3bdf8d18c3f428"
+              virtualName="" explicitFocusOrder="0" pos="16 8Rr 176 20" posRelativeY="97c294b92cbc0a85"
               bgColOff="fff0f0f0" bgColOn="ffffffff" textCol="ff000000" buttonText="[+]    Show context information      "
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>

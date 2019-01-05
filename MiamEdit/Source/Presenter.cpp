@@ -237,7 +237,10 @@ void Presenter::Update()
 
 AppPurpose Presenter::GetSessionPurpose() const
 {
-    return model->GetSessionPurpose();
+    if (model)
+        return model->GetSessionPurpose();
+    else
+        return AppPurpose::None;
 }
 
 
@@ -291,9 +294,9 @@ void Presenter::LoadSession(std::string filename)
     updateSpatScenesTree(graphicSessionManager.GetCanvasesTree(), false);
     
     // Actual mode change here
-    // App mode changer to Scenes Edition by default (should be stored within the file ?)
-    appModeChangeRequest(AppMode::EditControlStates);
-    //appModeChangeRequest(AppMode::EditControlScenes);
+    // (should be stored within the file ?)
+    //appModeChangeRequest(AppMode::EditControlStates);
+    appModeChangeRequest(AppMode::EditControlScenes);
 }
 void Presenter::SaveSession(std::string filename, bool forceDataRefresh)
 {

@@ -42,7 +42,7 @@ namespace ProjectInfo
 {
     const char* const  projectName    = "MIEM Editor";
     const char* const  companyName    = "IRISIB/LARAS, UMons";
-    const char* const  versionString  = "0.2.5";
-    const int          versionNumber  = 0x205;
+    const char* const  versionString  = "0.2.6";
+    const int          versionNumber  = 0x206;
 }
 #endif

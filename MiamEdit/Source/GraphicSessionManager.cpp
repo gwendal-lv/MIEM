@@ -21,6 +21,8 @@
 #include "ControlPolygon.h"
 #include "XmlUtils.h"
 
+#include "HelpTexts.h"
+
 using namespace Miam;
 
 
@@ -291,6 +293,8 @@ void GraphicSessionManager::setMode(GraphicSessionMode newMode)
         else
             assert(false); // we should never enter exciter mode without a canvas selected
     }
+    if (sceneEditionComponent)
+        sceneEditionComponent->SetInfoHelpText(HelpTexts::GetScenesContextualHelp(mode, GetSessionPurpose()));
 }
 
 void GraphicSessionManager::enterModelPlayMode()

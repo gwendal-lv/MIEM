@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="O4BfM6" name="MIEM Editor" projectType="guiapp" version="0.2.5"
+<JUCERPROJECT id="O4BfM6" name="MIEM Editor" projectType="guiapp" version="0.2.6"
               bundleIdentifier="com.glv.MIEMEditor" includeBinaryInAppConfig="1"
               jucerVersion="5.4.1" displaySplashScreen="0" reportAppUsage="0"
               splashScreenColour="Dark" companyCopyright="Gwendal Le Vaillant (IRISIB/LARAS, UMons)"
@@ -16,6 +16,7 @@
         <FILE id="qnAQWL" name="Model.h" compile="0" resource="0" file="Source/Model.h"/>
       </GROUP>
       <GROUP id="{8B52098D-2C2B-E3EA-7DC7-267134065ADF}" name="Presenter">
+        <FILE id="jr1mpj" name="HelpTexts.h" compile="0" resource="0" file="Source/HelpTexts.h"/>
         <FILE id="rgxQ9K" name="AppMode.h" compile="0" resource="0" file="Source/AppMode.h"/>
         <FILE id="sqIfeX" name="GraphicSessionManager.cpp" compile="1" resource="0"
               file="Source/GraphicSessionManager.cpp"/>
@@ -310,7 +311,6 @@
         <FILE id="ZbkxOP" name="AppPurpose.h" compile="0" resource="0" file="../ControlCommon/Source/AppPurpose.h"/>
         <FILE id="C1mLzc" name="ControlMatrix.hpp" compile="0" resource="0"
               file="../ControlCommon/Source/ControlMatrix.hpp"/>
-        <FILE id="BmZLiw" name="HelpTexts.h" compile="0" resource="0" file="../ControlCommon/Source/HelpTexts.h"/>
         <FILE id="NjGlBL" name="PathUtils.cpp" compile="1" resource="0" file="../ControlCommon/Source/PathUtils.cpp"/>
         <FILE id="D2SRcW" name="PathUtils.h" compile="0" resource="0" file="../ControlCommon/Source/PathUtils.h"/>
       </GROUP>

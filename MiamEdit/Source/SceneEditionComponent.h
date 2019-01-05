@@ -116,6 +116,7 @@ public:
     void SetDeleteExciterButtonEnabled(bool _isEnabled);
     // - - - - - Info group - - - - -
     void SetInfoGroupReduced(bool _isReduced);
+    void SetInfoHelpText(const juce::String& infoHelpText);
 
 
     // ----- Other setters and getters -----
@@ -160,7 +161,7 @@ private:
     MultiCanvasComponent* multiCanvasComponent = 0;
 
     GraphicSessionManager* graphicSessionManager = 0;
-    
+
     std::unique_ptr<MiamLookAndFeel> transparentLookAndFeel;
 
     int canvasGroupReducedH,
@@ -188,6 +189,7 @@ private:
     //[/UserVariables]
 
     //==============================================================================
+    std::unique_ptr<GroupComponent> infoGroupComponent;
     std::unique_ptr<TextEditor> infoTextEditor;
     std::unique_ptr<GroupComponent> areaGroupComponent;
     std::unique_ptr<GroupComponent> controlGroupComponent;
@@ -215,7 +217,6 @@ private:
     std::unique_ptr<Label> sceneNameLabel;
     std::unique_ptr<TextEditor> sceneNameTextEditor;
     std::unique_ptr<ToggleButton> excitersEditionButton;
-    std::unique_ptr<GroupComponent> infoGroupComponent;
     std::unique_ptr<TextButton> showInfoTextButton;
 
 

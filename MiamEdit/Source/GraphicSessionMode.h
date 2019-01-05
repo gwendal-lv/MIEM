@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    SceneEditionMode.h
+    GraphicSessionMode.h
     Created: 7 Apr 2016 2:07:08pm
     Author:  Gwendal Le Vaillant
 
