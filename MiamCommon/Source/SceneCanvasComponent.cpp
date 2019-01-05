@@ -51,8 +51,6 @@ void SceneCanvasComponent::init(int numShapesMax, int /*numPointsMax*/)
 {
     releaseResources = false;
 	releaseDone = false; // ?? par encore init les resources....
-    
-	EunderTime = 0.0;
 
 	Nshapes = numShapesMax;
     
@@ -259,7 +257,6 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 	DBG("[MIEM OpenGL] évènement 'New Context Created', swap sync disabled.");
 
 	redrawCanvasOutline = true;
-	numFrame = 0;
 
 	// Will init the counter
 	displayFrequencyMeasurer.OnNewFrame();
@@ -381,6 +378,33 @@ void SceneCanvasComponent::newOpenGLContextCreated()
 
 void SceneCanvasComponent::renderOpenGL()
 {
+    // Time control at the beginning... after last swap
+    displayFrequencyMeasurer.OnNewFrame();
+    const double lastDuration_ms = displayFrequencyMeasurer.GetLastDuration_ms();
+    double underTime_ms = lastDuration_ms > 0.0 ? desiredPeriod_ms - lastDuration_ms : 0.0;
+#ifdef __MIAM_DEBUG
+    if (lastDuration_ms < 0.0)
+    {
+        DBG("probleme lastDuration: " + (String)lastDuration_ms);
+        assert(false);
+    }
+#endif
+    // safety checks....
+    if (underTime_ms > desiredPeriod_ms)
+        underTime_ms = 0.0; // mais bizarre...
+    else if (underTime_ms < 0.0)
+        underTime_ms = 0.0; // c'est qu'on a pris trop de temps pour cette frame...
+    // Framerate limit
+    else if (controlFramerate)
+    {
+        long int underTime_us = (long int) std::floor(underTime_ms * 1000.0);
+        std::this_thread::sleep_for(std::chrono::microseconds(underTime_us));
+    }
+
+
+    
+    
+    
 	auto manager = canvasManager.lock();
     const double desktopScale = openGlContext.getRenderingScale();
     
@@ -529,8 +553,6 @@ void SceneCanvasComponent::renderOpenGL()
     }
 	else // sinon OK on fait le rendu
 	{
-		++numFrame;
-
 		OpenGLHelpers::clear(Colours::black);
 
 		glEnable(GL_DEPTH_TEST);
@@ -584,38 +606,6 @@ void SceneCanvasComponent::renderOpenGL()
     // Call to a general Graphic update on the whole Presenter module
     if (!manager->isUpdatePending())
         manager->triggerAsyncUpdate();
-
-    // Time measures just before swap (or the closer that we can get to the swaps)
-    displayFrequencyMeasurer.OnNewFrame();
-
-    // Solution brutale...
-    double lastDuration = displayFrequencyMeasurer.GetLastDuration_ms();
-    double underTime = lastDuration > 0.0 ? desiredPeriod_ms - lastDuration : 0.0;
-
-
-    double last = displayFrequencyMeasurer.GetLastDuration_ms();
-#ifdef __MIAM_DEBUG
-    if (last < 0.0)
-    {
-        DBG("probleme lastDuration: " + (String)last);
-        assert(false);
-    }
-#endif
-    EunderTime += underTime;
-    if (numFrame > 100 * 60)
-    {
-        EunderTime = 0.0;
-        numFrame = 0;
-    }
-    if (underTime < 0.0)
-        underTime = 0.0;
-    
-// NO FRAMERATE LIMIT FOR NOW
-
-    if (underTime > 0.0)
-    {
-        //Thread::sleep((int)std::floor(underTime));
-    }
 
 }
 
@@ -868,7 +858,7 @@ void SceneCanvasComponent::computeCanvasOutline()
 #endif
     
 	float outlineWidth = 5.0f; //px
-	g_canvasOutlineVertex_buffer_data[0] = ((float)getWidth() /** (1.0f + 0.5f * std::sin(2.0f * M_PI * (1.0f/60.0f) * (float)numFrame - 50.0f * 60.0f))*/) - outlineWidth;
+	g_canvasOutlineVertex_buffer_data[0] = (float)getWidth() - outlineWidth;
 	g_canvasOutlineVertex_buffer_data[1] = (float)getHeight() - outlineWidth;
 	g_canvasOutlineVertex_buffer_data[2] = 0.0f;
 
@@ -880,11 +870,11 @@ void SceneCanvasComponent::computeCanvasOutline()
 	g_canvasOutlineVertex_buffer_data[7] = outlineWidth;
 	g_canvasOutlineVertex_buffer_data[8] = 0.0f;
 
-	g_canvasOutlineVertex_buffer_data[9] = ((float)getWidth() /** (1.0f + 0.5f * std::sin(2.0f * M_PI * (1.0f / 60.0f) * (float)numFrame - 50.0f * 60.0f))*/) - outlineWidth;
+	g_canvasOutlineVertex_buffer_data[9] = (float)getWidth() - outlineWidth;
 	g_canvasOutlineVertex_buffer_data[10] = outlineWidth;
 	g_canvasOutlineVertex_buffer_data[11] = 0.0f;
 
-	g_canvasOutlineVertex_buffer_data[12] = (float)getWidth();//* (1.0f + 0.5f * std::sin(2.0f * M_PI * (1.0f / 60.0f) * (float)numFrame - 50.0f * 60.0f));
+	g_canvasOutlineVertex_buffer_data[12] = (float)getWidth();
 	g_canvasOutlineVertex_buffer_data[13] = (float)getHeight();
 	g_canvasOutlineVertex_buffer_data[14] = 0.0f;
 
@@ -896,7 +886,7 @@ void SceneCanvasComponent::computeCanvasOutline()
 	g_canvasOutlineVertex_buffer_data[19] = 0.0f;
 	g_canvasOutlineVertex_buffer_data[20] = 0.0f;
 
-	g_canvasOutlineVertex_buffer_data[21] = (float)getWidth();// *(1.0f + 0.5f * std::sin(2.0f * M_PI * (1.0f / 60.0f) * (float)numFrame - 50.0f * 60.0f));
+	g_canvasOutlineVertex_buffer_data[21] = (float)getWidth();
 	g_canvasOutlineVertex_buffer_data[22] = 0.0f;
 	g_canvasOutlineVertex_buffer_data[23] = 0.0f;
 

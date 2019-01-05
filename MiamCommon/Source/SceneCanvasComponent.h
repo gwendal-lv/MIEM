@@ -77,12 +77,15 @@ public:
     bool selectedForEditing;
     
     // - - - - - Time measures - - - - -
+#ifdef __MIEM_VBO
+    const double desiredFrequency_Hz = 120.0;
+#else
     const double desiredFrequency_Hz = 60.0; // actual freq will actually be greater
+#endif
     const double desiredPeriod_ms = 1000.0/desiredFrequency_Hz;
     FrequencyMeasurer displayFrequencyMeasurer;
     
-    int numFrame;
-    double EunderTime;
+    const bool controlFramerate = true;
     
     // - - - - - Areas duplicates for multi-threaded rendering - - - - -
     
