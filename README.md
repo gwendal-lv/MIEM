@@ -24,10 +24,10 @@ To get the ready-to-use MIEM Controller and Editor applications, you can current
 
 ### Features coming soon
 
-Please see [the list of added and future features](New_Features.md);
+Please see [the list of current and future features](New_Features.md).
 
 ### Authors and contact
 
 - Gwendal Le Vaillant, [glevaillant@he2b.be](mailto:glevaillant@he2b.be)
-- Guillaume Villée, [guillaume.villee@irisib.be](guillaume.villee@irisib.be)
-- Rudi Giot, [rgiot@he2b.be](rgiot@he2b.be)
+- Guillaume Villée, [guillaume.villee@irisib.be](mailto:guillaume.villee@irisib.be)
+- Rudi Giot, [rgiot@he2b.be](mailto:rgiot@he2b.be)

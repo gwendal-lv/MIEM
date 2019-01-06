@@ -94,12 +94,18 @@ namespace Miam
         
         void OnColourChanged(Colour& colour);
         
+        void OnMatrixValueChanged(int row, int col, double matrixValue);
         void OnMatrixButtonClicked(int row, int col, std::string matrixText, double matrixValue);
         
         
         // - - - - - Graphical helpers - - - - -
         
+        /// \brief Updates graphic components but not the data of the state itself.
         void UpdateView();
+        private :
+        /// \brief For now : only computes the total volume of a matrix, and displays it
+        void updateStateInfo();
+        std::string getLinkedAreasInfo();
         
         
         // - - - - - Internal helpers - - - - -

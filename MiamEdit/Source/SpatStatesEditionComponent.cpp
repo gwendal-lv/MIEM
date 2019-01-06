@@ -496,9 +496,9 @@ void SpatStatesEditionComponent::colourSliderMoved()
     colourVisualisationLabel->setColour(Label::backgroundColourId, newColour);
 }
 
-void SpatStatesEditionComponent::OnSliderValueChanged(int /*row*/, int /*col*/, double /*value*/)
+void SpatStatesEditionComponent::OnSliderValueChanged(int row, int col, double value)
 {
-    
+    editionManager->OnMatrixValueChanged(row, col, value);
 }
 void SpatStatesEditionComponent::OnMatrixButtonClicked(int row, int col, std::string matrixText, double matrixValue)
 {
@@ -516,7 +516,7 @@ void SpatStatesEditionComponent::SelectAndUpdateState(int stateIndex, std::strin
     previousStateIndex = statesComboBox->getSelectedItemIndex();
 
     // Text and colour elements
-    linksInfoLabel->setText(infoText, NotificationType::dontSendNotification);
+    UpdateLinksLabel(infoText);
     setColour(stateColour);
 
     // Last updates
@@ -539,6 +539,12 @@ void SpatStatesEditionComponent::SelectAndUpdateState(int stateIndex, std::strin
     }
     setParametersGroupEnabled(isAnyStateSelected);
 }
+
+void SpatStatesEditionComponent::UpdateLinksLabel(const std::string& infoText)
+{
+    linksInfoLabel->setText(infoText, NotificationType::dontSendNotification);
+}
+
 void SpatStatesEditionComponent::updateMatrix()
 {
     // matrix data sent from the most recent that this class got from model

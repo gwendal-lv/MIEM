@@ -58,14 +58,11 @@ void SpatStatesEditionManager::selectSpatState(std::shared_ptr<ControlState<doub
     selectedSpatState = _state;
     
     // Graphical updates : info label (links count)
-    std::string infoText;
+    std::string infoText = getLinkedAreasInfo();
     std::shared_ptr<ControlMatrix> matrixToSend = std::make_shared<ControlMatrix>(); // initially full of zeros
     int stateIndexToSend = -1;
     if (selectedSpatState)
     {
-        infoText = "Linked to "
-        + boost::lexical_cast<std::string>(selectedSpatState->GetLinkedAreasCount())
-        + " area" + (selectedSpatState->GetLinkedAreasCount()>1 ? "s" : "");
         stateIndexToSend = selectedSpatState->GetIndex();
         
         // At last : routing matrix (only choice available for now...)
@@ -75,8 +72,6 @@ void SpatStatesEditionManager::selectSpatState(std::shared_ptr<ControlState<doub
         else
             throw std::runtime_error("State is not a Matrix state");
     }
-    else // if no state selected
-        infoText = "-";
     // Update commands
     Colour colourToDisplay = selectedSpatState ? selectedSpatState->GetColour() : Colours::black;
     if (selectedSpatState)
@@ -266,6 +261,10 @@ void SpatStatesEditionManager::OnColourChanged(Colour& colour)
         selectedSpatState->SetColour(colour);
 }
 
+void SpatStatesEditionManager::OnMatrixValueChanged(int /*row*/, int /*col*/, double /*matrixValue*/)
+{
+    updateStateInfo();
+}
 void SpatStatesEditionManager::OnMatrixButtonClicked(int /*row*/, int /*col*/,
 											std::string matrixText, double matrixValue)
 {
@@ -305,9 +304,34 @@ void SpatStatesEditionManager::UpdateView()
     auto inOutNames = spatInterpolator->GetInOutChannelsName();
     editionComponent->SetInOutNames(inOutNames);
     
+    updateStateInfo();
+    
     //editionComponent->resized(); // pas mal de modifs si le AppPurpose de session a changé
 }
-
+void SpatStatesEditionManager::updateStateInfo()
+{
+    std::string stateInfo = getLinkedAreasInfo();
+    // Pour la SPAT seulement : calcul et affichage du volume de la matrice
+    if (GetSessionPurpose() == AppPurpose::Spatialisation)
+    {
+        stateInfo = stateInfo + " " + boost::lexical_cast<std::string>(editionComponent->GetDisplayedSpatMatrix()->GetNonZeroCoeffsCount());
+    }
+    
+    editionComponent->UpdateLinksLabel(stateInfo);
+}
+std::string SpatStatesEditionManager::getLinkedAreasInfo()
+{
+    std::string infoText;
+    if (selectedSpatState)
+    {
+        infoText = "Linked to "
+        + boost::lexical_cast<std::string>(selectedSpatState->GetLinkedAreasCount())
+        + " area" + (selectedSpatState->GetLinkedAreasCount()>1 ? "s" : "") + ".";
+    }
+    else // if no state selected
+        infoText = "-";
+    return infoText;
+}
 
 
 // = = = = = = = = = = INTERNAL HELPERS = = = = = = = = = =

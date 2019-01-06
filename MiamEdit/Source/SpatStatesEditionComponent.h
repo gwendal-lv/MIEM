@@ -88,8 +88,14 @@ public:
     // But Juce's Indexes are OK (starting from zero)
     void UpdateStatesList(std::vector< std::shared_ptr<ControlState<double>> > &newSpatStates);
 
-    // When a new state is selected (order from the Presenter only)
+    /// \brief When a new state is selected (order from the Presenter only)
     void SelectAndUpdateState(int stateIndex, std::string infoText, std::shared_ptr<ControlMatrix> newSpatMatrix, const Colour& stateColour);
+    
+    /// \brief Updates the label, and might be used for other purposes, e.g.
+    /// for indicating the total volume of a spatialisation matrix
+    ///
+    /// (to be refactored)
+    void UpdateLinksLabel(const std::string& infoText);
 
     /// \brief Whole update of the matrix : all coefficients, and active sliders
     private :
