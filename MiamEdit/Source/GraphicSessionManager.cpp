@@ -369,6 +369,7 @@ std::shared_ptr<bptree::ptree> GraphicSessionManager::OnLeaveSpatScenesEdition()
 
 void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_)
 {
+    // Multi-event : redispatched
     if (auto multiAreaE = std::dynamic_pointer_cast<MultiAreaEvent>(event_))
     {
         // For all other events : simple send if not recursively a multi-area one
@@ -384,6 +385,9 @@ void GraphicSessionManager::HandleEventSync(std::shared_ptr<GraphicEvent> event_
         auto downcastedCopiedAreaEvent = std::make_shared<AreaEvent>( (AreaEvent*)(multiAreaE.get()) );
         handleSingleEventSync(downcastedCopiedAreaEvent);
     }
+    // Else, it is a single event...
+    else
+        handleSingleEventSync(event_);
 }
 
 void GraphicSessionManager::handleSingleEventSync(std::shared_ptr<GraphicEvent> event_)

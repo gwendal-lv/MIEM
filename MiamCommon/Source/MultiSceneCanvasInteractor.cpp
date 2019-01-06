@@ -478,6 +478,7 @@ void MultiSceneCanvasInteractor::SelectScene(int id)
         
         // Dé-sélection effective un peu plus loin dans le code
         unselectionEvents = selectedScene->OnUnselection();
+        
         // Envoi direct des évènements
         // !!! ne pas traiter graphiquement !!! pas besoin, on redessine TOUT après....
         graphicSessionManager->HandleEventSync(unselectionEvents);

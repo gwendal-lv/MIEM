@@ -1,4 +1,4 @@
-# MIEM Controller
+# New Features
 
 
 ### Touch app for controlling OSC devices
@@ -24,7 +24,10 @@ To get the ready-to-use MIEM Controller and Editor applications, you can current
 
 ### Features coming soon
 
-Please see [the list of added and future features](New_Features.md);
+Some important features are currently being developed and tested:
+- Session files upload via iCloud and Google Drive, for a simplified workflow with the iOS and Android app
+- Apps published on the tester's programs of Google Play Store and Apple App Store
+- Custom range for interpolated parameters' values
 
 ### Authors and contact
 

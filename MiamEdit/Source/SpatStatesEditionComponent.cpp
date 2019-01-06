@@ -63,6 +63,8 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     statesListGroupComponent->setColour (GroupComponent::outlineColourId, Colour (0xff454545));
     statesListGroupComponent->setColour (GroupComponent::textColourId, Colours::black);
 
+    statesListGroupComponent->setBounds (0, 4, 331, 84);
+
     addStateTextButton.reset (new TextButton ("Add state text button"));
     addAndMakeVisible (addStateTextButton.get());
     addStateTextButton->setButtonText (TRANS("Add State"));
@@ -199,6 +201,8 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     sendStateTextButton->setColour (TextButton::buttonOnColourId, Colours::darkgrey);
     sendStateTextButton->setColour (TextButton::textColourOffId, Colour (0xfff0f0f0));
 
+    sendStateTextButton->setBounds ((getWidth() - (getWidth() - 339)) + 8, 4 + 52, 80, 24);
+
     sendZerosTextButton.reset (new TextButton ("Send zeros text button"));
     addAndMakeVisible (sendZerosTextButton.get());
     sendZerosTextButton->setButtonText (TRANS("Send zeros"));
@@ -207,6 +211,8 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     sendZerosTextButton->setColour (TextButton::buttonColourId, Colours::black);
     sendZerosTextButton->setColour (TextButton::buttonOnColourId, Colours::darkgrey);
     sendZerosTextButton->setColour (TextButton::textColourOffId, Colour (0xfff0f0f0));
+
+    sendZerosTextButton->setBounds ((getWidth() - (getWidth() - 339)) + 88, 4 + 52, 88, 24);
 
 
     //[UserPreSize]
@@ -280,23 +286,20 @@ void SpatStatesEditionComponent::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    stateParametersGroupComponent->setBounds (getWidth() - 264, 4 + 0, 264, 84);
+    stateParametersGroupComponent->setBounds (getWidth() - (getWidth() - 339), 4, getWidth() - 339, 84);
     stateEditorGroupComponent->setBounds (0, 88, getWidth() - 0, getHeight() - 88);
     labelledMatrixComponent->setBounds (0 + 8, 88 + 16, (getWidth() - 0) - 16, (getHeight() - 88) - 24);
-    statesListGroupComponent->setBounds (0, 4, getWidth() - 272, 84);
-    stateUpTextButton->setBounds (0 + (getWidth() - 272) - 154, 4 + 20, 72, 24);
-    stateDownTextButton->setBounds (0 + (getWidth() - 272) - 82, 4 + 20, 74, 24);
-    linksInfoLabel->setBounds ((0 + 88) + 80 - -8, 4 + 20, (getWidth() - 272) - 488, 24);
-    statesComboBox->setBounds (0 + 8, 56, (getWidth() - 272) - 16, 24);
+    stateUpTextButton->setBounds (0 + 331 - 154, 4 + 20, 72, 24);
+    stateDownTextButton->setBounds (0 + 331 - 82, 4 + 20, 74, 24);
+    linksInfoLabel->setBounds ((getWidth() - (getWidth() - 339)) + 16, 4 + 20, (getWidth() - 339) - 280, 24);
+    statesComboBox->setBounds (0 + 8, 56, 331 - 16, 24);
     labelR->setBounds (getWidth() - 258, 20, 24, 24);
     sliderR->setBounds (getWidth() - 240, 24, 158, 16);
     labelG->setBounds (getWidth() - 258, 40, 24, 24);
     sliderG->setBounds (getWidth() - 240, 44, 158, 16);
     labelB->setBounds (getWidth() - 257, 60, 24, 24);
     sliderB->setBounds (getWidth() - 240, 64, 158, 16);
-    colourVisualisationLabel->setBounds ((getWidth() - 264) + 264 - 80, 24, 72, 56);
-    sendStateTextButton->setBounds (0 + (getWidth() - 272) - 328, 4 + 20, 80, 24);
-    sendZerosTextButton->setBounds (0 + (getWidth() - 272) - 248, 4 + 20, 88, 24);
+    colourVisualisationLabel->setBounds ((getWidth() - (getWidth() - 339)) + (getWidth() - 339) - 80, 24, 72, 56);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -493,7 +496,10 @@ void SpatStatesEditionComponent::colourSliderMoved()
     colourVisualisationLabel->setColour(Label::backgroundColourId, newColour);
 }
 
-
+void SpatStatesEditionComponent::OnSliderValueChanged(int /*row*/, int /*col*/, double /*value*/)
+{
+    
+}
 void SpatStatesEditionComponent::OnMatrixButtonClicked(int row, int col, std::string matrixText, double matrixValue)
 {
     editionManager->OnMatrixButtonClicked(row, col, matrixText, matrixValue);
@@ -615,7 +621,7 @@ BEGIN_JUCER_METADATA
 <JUCER_COMPONENT documentType="Component" className="SpatStatesEditionComponent"
                  componentName="" parentClasses="public Component, public ISlidersMatrixListener, public IMatrixButtonListener"
                  constructorParams="" variableInitialisers="" snapPixels="8" snapActive="1"
-                 snapShown="1" overlayOpacity="0.33" fixedSize="1" initialWidth="1024"
+                 snapShown="1" overlayOpacity="0.33" fixedSize="0" initialWidth="1024"
                  initialHeight="600">
   <METHODS>
     <METHOD name="visibilityChanged()"/>
@@ -623,8 +629,8 @@ BEGIN_JUCER_METADATA
   <BACKGROUND backgroundColour="ffbfbfbf"/>
   <GROUPCOMPONENT name="State Parameters group component" id="9d63d9acaf1299f6"
                   memberName="stateParametersGroupComponent" virtualName="" explicitFocusOrder="0"
-                  pos="264R 0 264 84" posRelativeY="4250d5155a80be70" posRelativeH="4250d5155a80be70"
-                  outlinecol="ff454545" textcol="ff000000" title="State parameters"/>
+                  pos="0Rr 4 339M 84" posRelativeH="4250d5155a80be70" outlinecol="ff454545"
+                  textcol="ff000000" title="State parameters"/>
   <GROUPCOMPONENT name="State Editor group component" id="1b9d22beb5fc6bfd" memberName="stateEditorGroupComponent"
                   virtualName="" explicitFocusOrder="0" pos="0 88 0M 88M" outlinecol="ff454545"
                   textcol="ff000000" title="State control data"/>
@@ -634,7 +640,7 @@ BEGIN_JUCER_METADATA
                     posRelativeH="1b9d22beb5fc6bfd" class="Miam::LabelledMatrixComponent"
                     params="this, Miam_MaxNumInputs, Miam_MaxNumOutputs"/>
   <GROUPCOMPONENT name="States list group component" id="4250d5155a80be70" memberName="statesListGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="0 4 272M 84" outlinecol="ff454545"
+                  virtualName="" explicitFocusOrder="0" pos="0 4 331 84" outlinecol="ff454545"
                   textcol="ff000000" title="List of states"/>
   <TEXTBUTTON name="Add state text button" id="47bebc9d3a03780d" memberName="addStateTextButton"
               virtualName="" explicitFocusOrder="0" pos="8 20 80 24" posRelativeX="4250d5155a80be70"
@@ -657,8 +663,8 @@ BEGIN_JUCER_METADATA
               textCol="ff000000" buttonText="Down" connectedEdges="1" needsCallback="1"
               radioGroupId="0"/>
   <LABEL name="Links info label" id="3577c0e2ccd44371" memberName="linksInfoLabel"
-         virtualName="" explicitFocusOrder="0" pos="-8R 20 488M 24" posRelativeX="5f4e8653b868a323"
-         posRelativeY="4250d5155a80be70" posRelativeW="4250d5155a80be70"
+         virtualName="" explicitFocusOrder="0" pos="16 20 280M 24" posRelativeX="9d63d9acaf1299f6"
+         posRelativeY="4250d5155a80be70" posRelativeW="9d63d9acaf1299f6"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Linked to ? area"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
@@ -708,12 +714,12 @@ BEGIN_JUCER_METADATA
          focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
          kerning="0.0" bold="0" italic="0" justification="33"/>
   <TEXTBUTTON name="Send State text button" id="cb3b69496db256cf" memberName="sendStateTextButton"
-              virtualName="" explicitFocusOrder="0" pos="328R 20 80 24" posRelativeX="4250d5155a80be70"
+              virtualName="" explicitFocusOrder="0" pos="8 52 80 24" posRelativeX="9d63d9acaf1299f6"
               posRelativeY="4250d5155a80be70" bgColOff="ff000000" bgColOn="ff555555"
               textCol="fff0f0f0" buttonText="Send state" connectedEdges="2"
               needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Send zeros text button" id="886c4f50da968984" memberName="sendZerosTextButton"
-              virtualName="" explicitFocusOrder="0" pos="248R 20 88 24" posRelativeX="4250d5155a80be70"
+              virtualName="" explicitFocusOrder="0" pos="88 52 88 24" posRelativeX="9d63d9acaf1299f6"
               posRelativeY="4250d5155a80be70" bgColOff="ff000000" bgColOn="ff555555"
               textCol="fff0f0f0" buttonText="Send zeros" connectedEdges="1"
               needsCallback="1" radioGroupId="0"/>

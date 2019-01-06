@@ -42,13 +42,13 @@ namespace Miam
             {
                 case GraphicSessionMode::CanvasSelected:
                     if (appPurpose == AppPurpose::GenericController)
-                        return TRANS("The playground - the big black rectangle - can handle as many interactive shapes as you require. You can add shapes, deform them, add or delete points... And finally you can link each shape to an OSC control state.\n"
+                        return TRANS("The playground (the big black rectangle) can handle as many interactive shapes as you require. You can add shapes, deform them, add or delete points... And finally you can link each shape to an OSC control state.\n"
                                      "\n"
                                      "The shapes are activated by \"exciters\", and each scene requires at least one exciter. Click on the button above to edit the exciters and begin playing.\n"
                                      "\n"
                                      "The active scene can be selected by clicking on the black buttons on top of the playground.");
                     else if (appPurpose == AppPurpose::Spatialisation)
-                        return TRANS("The playground - the big black rectangle - can handle as many interactive shapes as you require. You can add shapes, deform them, add or delete points... And you can link each shape to one routing matrix for music spatialisation. The routing matrices are also called \"spatialisation states\".\n"
+                        return TRANS("The playground (the big black rectangle) can handle as many interactive shapes as you require. You can add shapes, deform them, add or delete points... And you can link each shape to one routing matrix for music spatialisation. The routing matrices are also called \"spatialisation states\".\n"
                                      "\n"
                                      "The shapes are activated by \"exciters\", and each scene requires at least one exciter. Click on the button above to edit the exciters and begin playing.\n"
                                      "\n"
