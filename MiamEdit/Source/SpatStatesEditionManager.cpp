@@ -314,7 +314,10 @@ void SpatStatesEditionManager::updateStateInfo()
     // Pour la SPAT seulement : calcul et affichage du volume de la matrice
     if (GetSessionPurpose() == AppPurpose::Spatialisation)
     {
-        stateInfo = stateInfo + " " + boost::lexical_cast<std::string>(editionComponent->GetDisplayedSpatMatrix()->GetNonZeroCoeffsCount());
+        auto linearVolume = editionComponent->GetDisplayedSpatMatrix()->ComputeTotalVolume(CorrelationLevel::Low, CorrelationLevel::Low);
+        auto volume_dBFS = TextUtils::GetLimitedDigitsString(AudioUtils<double>::Linear_to_amplitude_dB(linearVolume),
+                                                             3);
+        stateInfo = stateInfo + " Matrix volume: " + volume_dBFS  + " dB FS";
     }
     
     editionComponent->UpdateLinksLabel(stateInfo);

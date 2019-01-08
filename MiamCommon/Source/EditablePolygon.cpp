@@ -144,7 +144,9 @@ void EditablePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 
 }
 
+#ifdef __MIAM_DEBUG
 static bool __MIEM__editablePrintDone = false;
+#endif
 void EditablePolygon::RefreshOpenGLBuffers()
 {
 #ifdef __MIAM_DEBUG

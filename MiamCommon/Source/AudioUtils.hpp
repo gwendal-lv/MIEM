@@ -52,12 +52,19 @@ namespace Miam
     {
         public :
         
+        inline static T Linear_to_amplitude_dB(T value)
+        { return (T)(20.0) * std::log10(value); }
+        
+        inline static T Linear_to_power_dB(T value)
+        { return (T)(10.0) * std::log10(value); }
+        
+        
         static bool IsVolumeDifferenceSignificant(T referenceVolume, T volumeToCompare)
         {
-            // On calcule la différence entre les deux en dB
+            // On calcule la différence entre les deux en dB d'amplitude (coefficient 20 et pas 10)
             // Pas de test du log10 qui va être infini... Bien géré par le processeur de mon macbook....
-            T referenceVolume_dB = (T)(20.0) * std::log10(referenceVolume);
-            T volumeToCompare_dB = (T)(20.0) * std::log10(volumeToCompare);
+            T referenceVolume_dB = Linear_to_amplitude_dB(referenceVolume);
+            T volumeToCompare_dB = Linear_to_amplitude_dB(volumeToCompare);
             
             // Puis on compare au seuil en #define
             return ( std::abs(referenceVolume_dB - volumeToCompare_dB) > (T)Miam_SignificantVolumeDifference_dB );

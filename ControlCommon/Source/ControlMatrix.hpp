@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "SparseMatrix.hpp"
+#include "AudioMatrix.hpp"
 #include "AudioDefines.h"
 
 namespace Miam {
@@ -18,6 +18,6 @@ namespace Miam {
 
     // Typename for easiness of use ; the floating-point type follows what is defined
     // in ControlModel.h
-    typedef SparseMatrix<double, Miam_MaxNumInputs, Miam_MaxNumOutputs, Miam_MinVolume_PowOf10> ControlMatrix;
+    typedef AudioMatrix<double, Miam_MaxNumInputs, Miam_MaxNumOutputs, Miam_MinVolume_PowOf10> ControlMatrix;
     
 }

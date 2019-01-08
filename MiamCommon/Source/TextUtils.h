@@ -56,5 +56,28 @@ namespace Miam {
                 stringU16 += char16_t(stringASCII[i]);
             return stringU16;
         }
+        
+        
+        static std::string GetLimitedDigitsString(double value, int numberOfDigits)
+        {
+            // On récupère d'abord des infos sur ce nombre
+            bool isPositive = (value >= 0.0);
+            double valueAbs = isPositive ? value : (-value);
+            int nbFiguresBeforeComa;
+            if (valueAbs < 1.0)
+                nbFiguresBeforeComa = 1; // on compte le zéro pour l'affichage
+            else
+                // the + 0.00001 is here to compensate for log10(10^x) < x
+                // due to numeric approximations (for double on macOS, intel proc...)
+                nbFiguresBeforeComa = (int)std::ceil(std::log10(valueAbs + 0.00001));
+            
+            std::stringstream numberStream;
+            numberStream << std::fixed << std::setprecision(numberOfDigits-nbFiguresBeforeComa) << value;
+            std::string result = numberStream.str();
+            if (isPositive)
+                result = "+" + result;
+            
+            return result;
+        }
     };
 }

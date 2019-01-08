@@ -675,7 +675,9 @@ void SceneCanvasComponent::DrawOnSceneCanevas()
     DrawShapesNames();
 }
 
+#ifdef __MIAM_DEBUG
 static int sceneCanvasFramesCounter = 0;
+#endif
 void SceneCanvasComponent::DrawShapes()
 {
 #ifndef __MIEM_VBO

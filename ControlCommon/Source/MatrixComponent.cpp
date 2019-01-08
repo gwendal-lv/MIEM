@@ -9,6 +9,7 @@
 */
 
 #include "MatrixComponent.h"
+#include "AudioUtils.hpp"
 
 #include <algorithm> // std::fill
 

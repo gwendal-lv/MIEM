@@ -134,7 +134,9 @@ void EditableEllipse::CanvasResized(SceneCanvasComponent* _parentCanvas)
 	computeManipulationPoint();
 }
 
-static bool __MIEM__editable2PrintDone = false;
+#ifdef __MIAM_DEBUG
+static bool __MIEM__editable2PrintDone = false; // pas propre mais permet de ne pas surcharger le debug...
+#endif
 void EditableEllipse::RefreshOpenGLBuffers()
 {
 #ifdef __MIAM_DEBUG

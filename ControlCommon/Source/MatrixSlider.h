@@ -14,14 +14,13 @@
 
 #include <iostream>
 
-#include <iomanip> // setprecision
-#include <sstream> // stringstream
 
 #include <string>
 
 #include <cmath>
 
 #include "AudioDefines.h"
+#include "TextUtils.h"
 
 // We'll authorize the slider to get a bit lower than the Miam_MinVolume_dB
 // (but the values will not actually be processed by the model)
@@ -118,23 +117,7 @@ namespace Miam
         
         String getTextFromValue(double value) override
         {
-            // On récupère d'abord des infos sur ce nombre
-            bool isPositive = (value >= 0.0);
-            double valueAbs = isPositive ? value : (-value);
-            int nbFiguresBeforeComa;
-            if (valueAbs < 1.0)
-                nbFiguresBeforeComa = 1; // on compte le zéro pour l'affichage
-            else
-                // the + 0.00001 is here to compensate for log10(10^x) < x
-                // due to numeric approximations (for double on macOS, intel proc...)
-                nbFiguresBeforeComa = (int)std::ceil(std::log10(valueAbs + 0.00001));
-                
-            std::stringstream numberStream;
-            numberStream << std::fixed << std::setprecision(numberOfDigits-nbFiguresBeforeComa) << value;
-            std::string result = numberStream.str();
-            if (isPositive)
-                result = "+" + result;
-            
+            auto result = TextUtils::GetLimitedDigitsString(value, numberOfDigits);
             return String(result);
         }
             

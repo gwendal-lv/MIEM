@@ -10,6 +10,9 @@
 
 #include <regex>
 
+#include <sstream> // stringstream
+#include <iomanip> // setprecision
+
 #include "TextUtils.h"
 
 #include "MiamExceptions.h"
