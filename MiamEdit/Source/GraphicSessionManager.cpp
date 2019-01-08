@@ -286,15 +286,20 @@ void GraphicSessionManager::setMode(GraphicSessionMode newMode)
     mode = newMode;
     
     // Post-change processings
-    if (forceExcitersRefresh)
-    {
-        if (selectedCanvas)
-            selectedCanvas->RecomputeAreaExciterInteractions(); // internal events sending
-        else
-            assert(false); // we should never enter exciter mode without a canvas selected
-    }
-    if (sceneEditionComponent)
-        sceneEditionComponent->SetInfoHelpText(HelpTexts::GetScenesContextualHelp(mode, GetSessionPurpose()));
+	// only if we are now in a "stable" fully-defined mode
+	if (mode != GraphicSessionMode::Null
+		&& mode != GraphicSessionMode::Loading)
+	{
+		if (forceExcitersRefresh)
+		{
+			if (selectedCanvas)
+				selectedCanvas->RecomputeAreaExciterInteractions(); // internal events sending
+			else
+				assert(false); // we should never enter exciter mode without a canvas selected
+		}
+		if (sceneEditionComponent)
+			sceneEditionComponent->SetInfoHelpText(HelpTexts::GetScenesContextualHelp(mode, GetSessionPurpose()));
+	}
 }
 
 void GraphicSessionManager::enterModelPlayMode()
@@ -531,7 +536,7 @@ void GraphicSessionManager::OnAddArea(int areaType)
             throw std::logic_error("Cannot add something else than polygons at the moment");
         // Actual addition here
         bpt centerPoint(0.5, 0.5);
-        auto spatPolygon = std::make_shared<ControlPolygon>(GetNextAreaId(), centerPoint, polygonPointsCount, 0.15, Colours::grey, ratio);
+        auto spatPolygon = std::make_shared<ControlPolygon>(GetNextAreaId(), centerPoint, polygonPointsCount, 0.15f, Colours::grey, ratio);
         getSelectedCanvasAsEditable()->AddArea(spatPolygon);
         selectedCanvas->CallRepaint();
     }

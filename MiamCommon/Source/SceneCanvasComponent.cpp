@@ -595,7 +595,7 @@ void SceneCanvasComponent::renderOpenGL()
 		}
 #else
         if (displayFrequencyMeasurer.IsFreshAverageAvailable())
-            std::cout << displayFrequencyMeasurer.GetInfo(false) << std::endl; // without min/max
+            DBG(displayFrequencyMeasurer.GetInfo(false)); // without min/max
 #endif // __MIEM_GL_INFO_DISPLAY
     }
 #endif // ndef __MIEM_VBO
