@@ -94,14 +94,30 @@ namespace Miam
                 if (subMatrixFirstRow <= coeff2dCoord.i && coeff2dCoord.i <= subMatrixLastRowIndex
                     && subMatrixFirstCol <= coeff2dCoord.j && coeff2dCoord.j <= subMatrixLastColIndex)
                 {
-                    colVolumes[coeff2dCoord.j] += SparseMatrix<T,N,M,ZT10>::GetIteratorValue();
-                    //std::cout << "col volume (" << coeff2dCoord.i << ";" << coeff2dCoord.j << ") --> total " << colVolumes[coeff2dCoord.j] << std::endl;
+                    const T value = SparseMatrix<T,N,M,ZT10>::GetIteratorValue();
+                    if (inputCorrelationLevel == CorrelationLevel::High)
+                        colVolumes[coeff2dCoord.j] += value;
+                    else if (inputCorrelationLevel == CorrelationLevel::Low)
+                        colVolumes[coeff2dCoord.j] += (value * value);
                 }
             }
+            // Step 1 bis for Low correlated signals (law of summing of power, not of amplitude):
+            // application of the square root to the whole sum
+            if (inputCorrelationLevel == CorrelationLevel::Low)
+                for (size_t j=subMatrixFirstCol ; j <= subMatrixLastColIndex ; j++)
+                    colVolumes[j] = std::sqrt(colVolumes[j]);
             
             // 2nd step: sum of columns total volumes
-            for (size_t i=subMatrixFirstCol ; i <= subMatrixLastColIndex ; i++)
-                totalVolume += colVolumes[i];
+            for (size_t j=subMatrixFirstCol ; j <= subMatrixLastColIndex ; j++)
+            {
+                if (outputCorrelationLevel == CorrelationLevel::High)
+                    totalVolume += colVolumes[j];
+                else if (outputCorrelationLevel == CorrelationLevel::Low)
+                    totalVolume += (colVolumes[j] * colVolumes[j]);
+            }
+            // 2nd step bis for Low correlated outputs: square root of the sum
+            if (outputCorrelationLevel == CorrelationLevel::Low)
+                totalVolume = sqrt(totalVolume);
             
             return totalVolume;
         }

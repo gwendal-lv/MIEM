@@ -74,13 +74,15 @@ public:
     void colourSliderMoved();
 
     public :
-    /// \brief Empty function : we'll deal with this editor with full
+    /// \brief Makes some graphical updates only
+    ///
+    /// Mostly empty function : we'll deal with this editor with full
     /// up-to-date matrices only (to prevent any error with notifying
     /// and being notified of modifications...)
     void OnSliderValueChanged(int row, int col, double value) override;
     virtual void OnMatrixButtonClicked(int row, int col, std::string matrixText, double matrixValue) override;
-    // same thing (empty function, we save entire matrices only)
-    void OnMatrixZeroed() override {}
+    /// \brief Makes some graphical updates only
+    void OnMatrixZeroed() override;
 
     /// \brief Updates the combo box
     ///
@@ -90,12 +92,11 @@ public:
 
     /// \brief When a new state is selected (order from the Presenter only)
     void SelectAndUpdateState(int stateIndex, std::string infoText, std::shared_ptr<ControlMatrix> newSpatMatrix, const Colour& stateColour);
-    
-    /// \brief Updates the label, and might be used for other purposes, e.g.
-    /// for indicating the total volume of a spatialisation matrix
-    ///
-    /// (to be refactored)
+
+    /// \brief Updates the links label
     void UpdateLinksLabel(const std::string& infoText);
+    void UpdateMatrixData(const std::string& volume1, const std::string& volume2);
+    void SetVisibleMatrixData(bool shouldBeVisible);
 
     /// \brief Whole update of the matrix : all coefficients, and active sliders
     private :
@@ -171,6 +172,9 @@ private:
     std::unique_ptr<Label> colourVisualisationLabel;
     std::unique_ptr<TextButton> sendStateTextButton;
     std::unique_ptr<TextButton> sendZerosTextButton;
+    std::unique_ptr<Label> matrixInfoLabel1;
+    std::unique_ptr<Label> matrixInfoLabel2;
+    std::unique_ptr<Label> matrixInfoLabel3;
 
 
     //==============================================================================

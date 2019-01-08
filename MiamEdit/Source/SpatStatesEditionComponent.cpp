@@ -214,6 +214,39 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
 
     sendZerosTextButton->setBounds ((getWidth() - (getWidth() - 339)) + 88, 4 + 52, 88, 24);
 
+    matrixInfoLabel1.reset (new Label ("Matrix Info label 1",
+                                       TRANS("Total matrix volume")));
+    addAndMakeVisible (matrixInfoLabel1.get());
+    matrixInfoLabel1->setTooltip (TRANS("The two volumes displayed represent the  total volume of the sum of all outputs of the matrix, considering that inputs are all 0 dB signals."));
+    matrixInfoLabel1->setFont (Font (15.0f, Font::italic));
+    matrixInfoLabel1->setJustificationType (Justification::centredLeft);
+    matrixInfoLabel1->setEditable (false, false, false);
+    matrixInfoLabel1->setColour (Label::textColourId, Colours::black);
+    matrixInfoLabel1->setColour (TextEditor::textColourId, Colours::black);
+    matrixInfoLabel1->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    matrixInfoLabel2.reset (new Label ("Matrix Info label 2",
+                                       TRANS("Correlated inputs: -9.99 dB FS")));
+    addAndMakeVisible (matrixInfoLabel2.get());
+    matrixInfoLabel2->setTooltip (TRANS("Input signals are considered correlated when they are very resembling and in phase, such as two stereo tracks of a non-spatialised mix."));
+    matrixInfoLabel2->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
+    matrixInfoLabel2->setJustificationType (Justification::centredLeft);
+    matrixInfoLabel2->setEditable (false, false, false);
+    matrixInfoLabel2->setColour (Label::textColourId, Colours::black);
+    matrixInfoLabel2->setColour (TextEditor::textColourId, Colours::black);
+    matrixInfoLabel2->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    matrixInfoLabel3.reset (new Label ("Matrix Info label 3",
+                                       TRANS("Decorrelated inputs: -9.99 dB FS")));
+    addAndMakeVisible (matrixInfoLabel3.get());
+    matrixInfoLabel3->setTooltip (TRANS("Input signals are considered decorrelated when they are not resembling or out of phase, such as two mono recordings of two different music instruments."));
+    matrixInfoLabel3->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
+    matrixInfoLabel3->setJustificationType (Justification::centredLeft);
+    matrixInfoLabel3->setEditable (false, false, false);
+    matrixInfoLabel3->setColour (Label::textColourId, Colours::black);
+    matrixInfoLabel3->setColour (TextEditor::textColourId, Colours::black);
+    matrixInfoLabel3->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
 
     //[UserPreSize]
     labelledMatrixComponent->SetButtonsListener(this);
@@ -257,6 +290,9 @@ SpatStatesEditionComponent::~SpatStatesEditionComponent()
     colourVisualisationLabel = nullptr;
     sendStateTextButton = nullptr;
     sendZerosTextButton = nullptr;
+    matrixInfoLabel1 = nullptr;
+    matrixInfoLabel2 = nullptr;
+    matrixInfoLabel3 = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -291,7 +327,7 @@ void SpatStatesEditionComponent::resized()
     labelledMatrixComponent->setBounds (0 + 8, 88 + 16, (getWidth() - 0) - 16, (getHeight() - 88) - 24);
     stateUpTextButton->setBounds (0 + 331 - 154, 4 + 20, 72, 24);
     stateDownTextButton->setBounds (0 + 331 - 82, 4 + 20, 74, 24);
-    linksInfoLabel->setBounds ((getWidth() - (getWidth() - 339)) + 16, 4 + 20, (getWidth() - 339) - 280, 24);
+    linksInfoLabel->setBounds ((getWidth() - (getWidth() - 339)) + 13, 4 + 20, (getWidth() - 339) - 523, 24);
     statesComboBox->setBounds (0 + 8, 56, 331 - 16, 24);
     labelR->setBounds (getWidth() - 258, 20, 24, 24);
     sliderR->setBounds (getWidth() - 240, 24, 158, 16);
@@ -300,6 +336,9 @@ void SpatStatesEditionComponent::resized()
     labelB->setBounds (getWidth() - 257, 60, 24, 24);
     sliderB->setBounds (getWidth() - 240, 64, 158, 16);
     colourVisualisationLabel->setBounds ((getWidth() - (getWidth() - 339)) + (getWidth() - 339) - 80, 24, 72, 56);
+    matrixInfoLabel1->setBounds ((getWidth() - (getWidth() - 339)) + (getWidth() - 339) - 502, 4 + 12, 245, 24);
+    matrixInfoLabel2->setBounds ((getWidth() - (getWidth() - 339)) + (getWidth() - 339) - 502, 4 + 32, 245, 24);
+    matrixInfoLabel3->setBounds ((getWidth() - (getWidth() - 339)) + (getWidth() - 339) - 502, 4 + 52, 245, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -504,6 +543,10 @@ void SpatStatesEditionComponent::OnMatrixButtonClicked(int row, int col, std::st
 {
     editionManager->OnMatrixButtonClicked(row, col, matrixText, matrixValue);
 }
+void SpatStatesEditionComponent::OnMatrixZeroed()
+{
+    editionManager->UpdateView();
+}
 
 
 void SpatStatesEditionComponent::SelectAndUpdateState(int stateIndex, std::string infoText, std::shared_ptr<ControlMatrix> newSpatMatrix, const Colour& stateColour)
@@ -543,6 +586,18 @@ void SpatStatesEditionComponent::SelectAndUpdateState(int stateIndex, std::strin
 void SpatStatesEditionComponent::UpdateLinksLabel(const std::string& infoText)
 {
     linksInfoLabel->setText(infoText, NotificationType::dontSendNotification);
+}
+void SpatStatesEditionComponent::UpdateMatrixData(const std::string& volume1, const std::string& volume2)
+{
+    // DIsplay reserved to SPAT at the moment
+    matrixInfoLabel2->setText(std::string("Correlated inputs: ") + volume1 + std::string(" dB FS"), NotificationType::dontSendNotification);
+    matrixInfoLabel3->setText(std::string("Decorrelated inputs: ") + volume2 + std::string(" dB FS"), NotificationType::dontSendNotification);
+}
+void SpatStatesEditionComponent::SetVisibleMatrixData(bool shouldBeVisible)
+{
+    matrixInfoLabel1->setVisible(shouldBeVisible);
+    matrixInfoLabel2->setVisible(shouldBeVisible);
+    matrixInfoLabel3->setVisible(shouldBeVisible);
 }
 
 void SpatStatesEditionComponent::updateMatrix()
@@ -669,7 +724,7 @@ BEGIN_JUCER_METADATA
               textCol="ff000000" buttonText="Down" connectedEdges="1" needsCallback="1"
               radioGroupId="0"/>
   <LABEL name="Links info label" id="3577c0e2ccd44371" memberName="linksInfoLabel"
-         virtualName="" explicitFocusOrder="0" pos="16 20 280M 24" posRelativeX="9d63d9acaf1299f6"
+         virtualName="" explicitFocusOrder="0" pos="13 20 523M 24" posRelativeX="9d63d9acaf1299f6"
          posRelativeY="4250d5155a80be70" posRelativeW="9d63d9acaf1299f6"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Linked to ? area"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
@@ -729,6 +784,30 @@ BEGIN_JUCER_METADATA
               posRelativeY="4250d5155a80be70" bgColOff="ff000000" bgColOn="ff555555"
               textCol="fff0f0f0" buttonText="Send zeros" connectedEdges="1"
               needsCallback="1" radioGroupId="0"/>
+  <LABEL name="Matrix Info label 1" id="b0451e4b253fe39" memberName="matrixInfoLabel1"
+         virtualName="" explicitFocusOrder="0" pos="502R 12 245 24" posRelativeX="9d63d9acaf1299f6"
+         posRelativeY="4250d5155a80be70" posRelativeW="9d63d9acaf1299f6"
+         tooltip="The two volumes displayed represent the  total volume of the sum of all outputs of the matrix, considering that inputs are all 0 dB signals."
+         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Total matrix volume"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         italic="1" justification="33" typefaceStyle="Italic"/>
+  <LABEL name="Matrix Info label 2" id="5cfce6441fd18d14" memberName="matrixInfoLabel2"
+         virtualName="" explicitFocusOrder="0" pos="502R 32 245 24" posRelativeX="9d63d9acaf1299f6"
+         posRelativeY="4250d5155a80be70" posRelativeW="9d63d9acaf1299f6"
+         tooltip="Input signals are considered correlated when they are very resembling and in phase, such as two stereo tracks of a non-spatialised mix."
+         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Correlated inputs: -9.99 dB FS"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         italic="0" justification="33"/>
+  <LABEL name="Matrix Info label 3" id="2e6b0acdfb779683" memberName="matrixInfoLabel3"
+         virtualName="" explicitFocusOrder="0" pos="502R 52 245 24" posRelativeX="9d63d9acaf1299f6"
+         posRelativeY="4250d5155a80be70" posRelativeW="9d63d9acaf1299f6"
+         tooltip="Input signals are considered decorrelated when they are not resembling or out of phase, such as two mono recordings of two different music instruments."
+         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Decorrelated inputs: -9.99 dB FS"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         italic="0" justification="33"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

@@ -15,8 +15,17 @@
 
 #include "JuceHeader.h"
 
+#include "AudioDefines.h"
+
+
+// - - - - - - OSC CUSTOM ADDRESS TAGS - - - - - - -
+// - - - - - - OSC CUSTOM ADDRESS TAGS - - - - - - -
 #define Miam_OscIntInAddressTag     "[int]"
 #define Miam_OscFloatInAddressTag   "[float]"
+// - - - - - - OSC CUSTOM ADDRESS TAGS - - - - - - -
+// - - - - - - OSC CUSTOM ADDRESS TAGS - - - - - - -
+
+
 
 namespace Miam {
     
@@ -58,26 +67,16 @@ namespace Miam {
         }
         
         
-        static std::string GetLimitedDigitsString(double value, int numberOfDigits)
-        {
-            // On récupère d'abord des infos sur ce nombre
-            bool isPositive = (value >= 0.0);
-            double valueAbs = isPositive ? value : (-value);
-            int nbFiguresBeforeComa;
-            if (valueAbs < 1.0)
-                nbFiguresBeforeComa = 1; // on compte le zéro pour l'affichage
-            else
-                // the + 0.00001 is here to compensate for log10(10^x) < x
-                // due to numeric approximations (for double on macOS, intel proc...)
-                nbFiguresBeforeComa = (int)std::ceil(std::log10(valueAbs + 0.00001));
-            
-            std::stringstream numberStream;
-            numberStream << std::fixed << std::setprecision(numberOfDigits-nbFiguresBeforeComa) << value;
-            std::string result = numberStream.str();
-            if (isPositive)
-                result = "+" + result;
-            
-            return result;
-        }
+        /// \brief Returns a string that is made from numberOfDigits digits, not
+        /// couting the dot of the floating-point number nor the + or - sign.
+        ///
+        /// There is always a zero for numbers between 0.0 and 0.9999...
+        static std::string GetLimitedDigitsString(double value, int numberOfDigits);
+        
+        /// \brief Converts a linear numeric value to a decibels string objects, with the
+        /// specified parameters.
+        ///
+        /// The number of digits might be different pour minus infinity dB.
+        static std::string GetAmplitude_dB_string_from_Linear(double linearValue, int numberOfDigits);
     };
 }

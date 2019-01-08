@@ -294,7 +294,7 @@ void MatrixComponent::SetSpatMatrix(std::shared_ptr<ControlMatrix> spatMatrix)
 void MatrixComponent::SetSliderValue_dB(int row, int col, double newValue_dB,
                                         NotificationType juceNotification)
 {
-    SetSliderValue(row, col, Decibels::decibelsToGain(newValue_dB), juceNotification);
+    SetSliderValue(row, col, AudioUtils<double>::Amplitude_dB_to_Linear(newValue_dB), juceNotification);
 }
 void MatrixComponent::SetSliderValue(int row, int col, double newValue,
                                      NotificationType juceNotification)
@@ -305,7 +305,7 @@ void MatrixComponent::SetSliderValue(int row, int col, double newValue,
     // Slider de matrice
     MatrixSlider* slider = sliders[idx(row,col)].get();
     // valeur selon que l'on soit en dessous du treshold en dB, ou non
-    auto value_dB = Decibels::gainToDecibels<double>(newValue);
+    auto value_dB = AudioUtils<double>::Linear_to_Amplitude_dB(newValue);
     if (value_dB < Miam_MinVolume_dB)
     {
         slider->setValue(Miam_MinVolume_dB-MiamRouter_LowVolumeThreshold_dB, juceNotification);

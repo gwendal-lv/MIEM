@@ -76,20 +76,9 @@ void SpatStatesEditionManager::selectSpatState(std::shared_ptr<ControlState<doub
     Colour colourToDisplay = selectedSpatState ? selectedSpatState->GetColour() : Colours::black;
     if (selectedSpatState)
         editionComponent->SelectAndUpdateState(stateIndexToSend, infoText, matrixToSend, colourToDisplay);
-    /*
-    auto channelsNameCopy = editionComponent->GetLabelledMatrix()->GetChannelsName();
-    // ?????? à quoi ça sert ???
-    // ?????? à quoi ça sert ???
-    // ?????? à quoi ça sert ???
-    // ?????? à quoi ça sert ???
-    // ?????? à quoi ça sert ???
-    editionComponent->SetInOutNames(channelsNameCopy);  // ?????? à quoi ça sert ???
-    // ?????? à quoi ça sert ???
-    // ?????? à quoi ça sert ???
-    // ?????? à quoi ça sert ???
-    // ?????? à quoi ça sert ???
-    // ?????? à quoi ça sert ???
-    */
+
+    // State info (may not de anything depending on the app's purpose)
+    updateStateInfo();
 }
 
 
@@ -310,17 +299,32 @@ void SpatStatesEditionManager::UpdateView()
 }
 void SpatStatesEditionManager::updateStateInfo()
 {
-    std::string stateInfo = getLinkedAreasInfo();
     // Pour la SPAT seulement : calcul et affichage du volume de la matrice
     if (GetSessionPurpose() == AppPurpose::Spatialisation)
     {
-        auto linearVolume = editionComponent->GetDisplayedSpatMatrix()->ComputeTotalVolume(CorrelationLevel::Low, CorrelationLevel::Low);
-        auto volume_dBFS = TextUtils::GetLimitedDigitsString(AudioUtils<double>::Linear_to_amplitude_dB(linearVolume),
-                                                             3);
-        stateInfo = stateInfo + " Matrix volume: " + volume_dBFS  + " dB FS";
+        // spat engine correlation :
+        CorrelationLevel spatEngineCorrelationLevel;
+        if (GetInterpolationType() == InterpolationType::Matrix_ConstantPower)
+            spatEngineCorrelationLevel = CorrelationLevel::Low;
+        else if (GetInterpolationType() == InterpolationType::Matrix_ConstantAmplitude)
+            spatEngineCorrelationLevel = CorrelationLevel::High;
+        else
+            return;// interpolator type is not properly set yet
+        
+        // 1 is correlated, 2 is decorrelated
+        auto linearVolume1 = editionComponent->GetDisplayedSpatMatrix()->ComputeTotalVolume(CorrelationLevel::High, spatEngineCorrelationLevel);
+        auto linearVolume2 = editionComponent->GetDisplayedSpatMatrix()->ComputeTotalVolume(CorrelationLevel::Low, spatEngineCorrelationLevel);
+        auto volume1_dBFS = TextUtils::GetAmplitude_dB_string_from_Linear(linearVolume1, 3);
+        auto volume2_dBFS = TextUtils::GetAmplitude_dB_string_from_Linear(linearVolume2, 3);
+        
+        // graphic display
+        editionComponent->SetVisibleMatrixData(true);
+        editionComponent->UpdateMatrixData(volume1_dBFS, volume2_dBFS);
     }
-    
-    editionComponent->UpdateLinksLabel(stateInfo);
+    else if (GetSessionPurpose() == AppPurpose::GenericController)
+    {
+        editionComponent->SetVisibleMatrixData(false);
+    }
 }
 std::string SpatStatesEditionManager::getLinkedAreasInfo()
 {
@@ -332,7 +336,7 @@ std::string SpatStatesEditionManager::getLinkedAreasInfo()
         + " area" + (selectedSpatState->GetLinkedAreasCount()>1 ? "s" : "") + ".";
     }
     else // if no state selected
-        infoText = "-";
+        infoText = TRANS("No state selected.").toStdString();
     return infoText;
 }
 

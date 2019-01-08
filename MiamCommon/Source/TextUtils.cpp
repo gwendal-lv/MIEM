@@ -14,6 +14,7 @@
 #include <iomanip> // setprecision
 
 #include "TextUtils.h"
+#include "AudioUtils.hpp"
 
 #include "MiamExceptions.h"
 
@@ -203,6 +204,41 @@ OSCMessage TextUtils::ParseStringToJuceOscMessage(const std::string& stringToPar
     
     //std::cout << std::endl;
     return returnMessage;
+}
+
+std::string TextUtils::GetLimitedDigitsString(double value, int numberOfDigits)
+{
+    // On récupère d'abord des infos sur ce nombre
+    bool isPositive = (value >= 0.0);
+    double valueAbs = isPositive ? value : (-value);
+    int nbFiguresBeforeComa;
+    if (valueAbs < 1.0)
+        nbFiguresBeforeComa = 1; // on compte le zéro pour l'affichage
+    else
+        // the + 0.00001 is here to compensate for log10(10^x) < x
+        // due to numeric approximations (for double on macOS, intel proc...)
+        nbFiguresBeforeComa = (int)std::ceil(std::log10(valueAbs + 0.00001));
+    
+    std::stringstream numberStream;
+    numberStream << std::fixed << std::setprecision(numberOfDigits-nbFiguresBeforeComa) << value;
+    std::string result = numberStream.str();
+    if (isPositive)
+        result = "+" + result;
+    
+    return result;
+}
+
+std::string TextUtils::GetAmplitude_dB_string_from_Linear(double linearValue, int numberOfDigits)
+{
+    linearValue = std::abs(linearValue);
+    // minus infinity
+    if (linearValue < Miam_MinVolume)
+        return std::string("-") + String(CharPointer_UTF8 ("\xe2\x88\x9e")).toStdString();
+    // or the actual cut dB value
+    else
+    {
+        return GetLimitedDigitsString(AudioUtils<double>::Linear_to_Amplitude_dB(linearValue), numberOfDigits);
+    }
 }
 
 
