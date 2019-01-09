@@ -115,9 +115,9 @@ public:
             setFullScreen(true);
 #else
             // Et pas dans le "main component"
-            centreWithSize (getWidth(), getHeight());
             setResizable(true, true);
-            setResizeLimits(600, 400, 10000, 10000);
+            setResizeLimits(1050, 650, 10000, 10000);
+            centreWithSize (1050, 650);
 #endif
             
         }

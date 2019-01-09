@@ -59,6 +59,7 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
     inputsCountLabel.reset (new Label ("Inputs Count label",
                                        TRANS("Number of input channels:")));
     addAndMakeVisible (inputsCountLabel.get());
+    inputsCountLabel->setTooltip (TRANS("Number of lines of the matrix"));
     inputsCountLabel->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
     inputsCountLabel->setJustificationType (Justification::centredRight);
     inputsCountLabel->setEditable (false, false, false);
@@ -69,6 +70,7 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
     outputsCountLabel.reset (new Label ("outputs Count label",
                                         TRANS("Number of output channels:")));
     addAndMakeVisible (outputsCountLabel.get());
+    outputsCountLabel->setTooltip (TRANS("Number of columns of the matrix"));
     outputsCountLabel->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
     outputsCountLabel->setJustificationType (Justification::centredRight);
     outputsCountLabel->setEditable (false, false, false);
@@ -474,13 +476,14 @@ BEGIN_JUCER_METADATA
           needsCallback="1"/>
   <LABEL name="Inputs Count label" id="5edb179087fb7973" memberName="inputsCountLabel"
          virtualName="" explicitFocusOrder="0" pos="-156Cr 0 208 24" posRelativeY="77ed5b9e29dce02e"
-         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Number of input channels:"
-         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
-         italic="0" justification="34"/>
+         tooltip="Number of lines of the matrix" textCol="ff000000" edTextCol="ff000000"
+         edBkgCol="0" labelText="Number of input channels:" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
+         fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="34"/>
   <LABEL name="outputs Count label" id="5b4dd76a50f5f0d4" memberName="outputsCountLabel"
          virtualName="" explicitFocusOrder="0" pos="-156Cr 0 208 24" posRelativeY="ca10a4b3f2104985"
-         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Number of output channels:"
+         tooltip="Number of columns of the matrix" textCol="ff000000"
+         edTextCol="ff000000" edBkgCol="0" labelText="Number of output channels:"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="34"/>

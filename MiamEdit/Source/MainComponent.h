@@ -48,6 +48,7 @@ namespace Miam
         View* view;
         Presenter* presenter;
         
+        std::unique_ptr<TooltipWindow> tooltipWindow;
         
         MainBackgroundComponent* mainBackgroundComponent;
         StartupComponent* startupComponent;

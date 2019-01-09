@@ -15,6 +15,10 @@ using namespace Miam;
 //==============================================================================
 MainContentComponent::MainContentComponent()
 {
+    // Tooltip window added here
+    tooltipWindow.reset(new TooltipWindow(this));
+    addChildComponent(tooltipWindow.get());
+    
     // We add all big components from here (components edited from the introJucer)
     // Background is automatically visible, after startup though
     addChildComponent(mainBackgroundComponent = new MainBackgroundComponent());

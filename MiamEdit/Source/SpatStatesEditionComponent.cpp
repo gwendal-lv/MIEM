@@ -184,6 +184,7 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     colourVisualisationLabel.reset (new Label ("Colour Visualisation Label",
                                                TRANS("\n")));
     addAndMakeVisible (colourVisualisationLabel.get());
+    colourVisualisationLabel->setTooltip (TRANS("The chosen color will be applied to all geometrical shapes linked to this state."));
     colourVisualisationLabel->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
     colourVisualisationLabel->setJustificationType (Justification::centredLeft);
     colourVisualisationLabel->setEditable (false, false, false);
@@ -194,6 +195,7 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
 
     sendStateTextButton.reset (new TextButton ("Send State text button"));
     addAndMakeVisible (sendStateTextButton.get());
+    sendStateTextButton->setTooltip (TRANS("Sends all current values of this state via OSC messages, to the OSC remote device configured in the \"Configuration\" tab."));
     sendStateTextButton->setButtonText (TRANS("Send state"));
     sendStateTextButton->setConnectedEdges (Button::ConnectedOnRight);
     sendStateTextButton->addListener (this);
@@ -205,6 +207,7 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
 
     sendZerosTextButton.reset (new TextButton ("Send zeros text button"));
     addAndMakeVisible (sendZerosTextButton.get());
+    sendZerosTextButton->setTooltip (TRANS("Sends null values for all parameters of this state, via OSC messages, to the OSC remote device configured in the \"Configuration\" tab."));
     sendZerosTextButton->setButtonText (TRANS("Send zeros"));
     sendZerosTextButton->setConnectedEdges (Button::ConnectedOnLeft);
     sendZerosTextButton->addListener (this);
@@ -228,7 +231,7 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     matrixInfoLabel2.reset (new Label ("Matrix Info label 2",
                                        TRANS("Correlated inputs: -9.99 dB FS")));
     addAndMakeVisible (matrixInfoLabel2.get());
-    matrixInfoLabel2->setTooltip (TRANS("Input signals are considered correlated when they are very resembling and in phase, such as two stereo tracks of a non-spatialised mix."));
+    matrixInfoLabel2->setTooltip (TRANS("Input signals are considered correlated when they are very resembling and in phase, such as the L/R tracks of a non-spatialised stereo mix."));
     matrixInfoLabel2->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
     matrixInfoLabel2->setJustificationType (Justification::centredLeft);
     matrixInfoLabel2->setEditable (false, false, false);
@@ -770,20 +773,21 @@ BEGIN_JUCER_METADATA
           textBoxWidth="40" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <LABEL name="Colour Visualisation Label" id="7c0151d2e33a36b5" memberName="colourVisualisationLabel"
          virtualName="" explicitFocusOrder="0" pos="80R 24 72 56" posRelativeX="9d63d9acaf1299f6"
+         tooltip="The chosen color will be applied to all geometrical shapes linked to this state."
          bkgCol="ff000000" outlineCol="ffffffff" edTextCol="ff000000"
          edBkgCol="0" labelText="&#10;" editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
          kerning="0.0" bold="0" italic="0" justification="33"/>
   <TEXTBUTTON name="Send State text button" id="cb3b69496db256cf" memberName="sendStateTextButton"
               virtualName="" explicitFocusOrder="0" pos="8 52 80 24" posRelativeX="9d63d9acaf1299f6"
-              posRelativeY="4250d5155a80be70" bgColOff="ff000000" bgColOn="ff555555"
-              textCol="fff0f0f0" buttonText="Send state" connectedEdges="2"
-              needsCallback="1" radioGroupId="0"/>
+              posRelativeY="4250d5155a80be70" tooltip="Sends all current values of this state via OSC messages, to the OSC remote device configured in the &quot;Configuration&quot; tab."
+              bgColOff="ff000000" bgColOn="ff555555" textCol="fff0f0f0" buttonText="Send state"
+              connectedEdges="2" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Send zeros text button" id="886c4f50da968984" memberName="sendZerosTextButton"
               virtualName="" explicitFocusOrder="0" pos="88 52 88 24" posRelativeX="9d63d9acaf1299f6"
-              posRelativeY="4250d5155a80be70" bgColOff="ff000000" bgColOn="ff555555"
-              textCol="fff0f0f0" buttonText="Send zeros" connectedEdges="1"
-              needsCallback="1" radioGroupId="0"/>
+              posRelativeY="4250d5155a80be70" tooltip="Sends null values for all parameters of this state, via OSC messages, to the OSC remote device configured in the &quot;Configuration&quot; tab."
+              bgColOff="ff000000" bgColOn="ff555555" textCol="fff0f0f0" buttonText="Send zeros"
+              connectedEdges="1" needsCallback="1" radioGroupId="0"/>
   <LABEL name="Matrix Info label 1" id="b0451e4b253fe39" memberName="matrixInfoLabel1"
          virtualName="" explicitFocusOrder="0" pos="502R 12 245 24" posRelativeX="9d63d9acaf1299f6"
          posRelativeY="4250d5155a80be70" posRelativeW="9d63d9acaf1299f6"
@@ -795,7 +799,7 @@ BEGIN_JUCER_METADATA
   <LABEL name="Matrix Info label 2" id="5cfce6441fd18d14" memberName="matrixInfoLabel2"
          virtualName="" explicitFocusOrder="0" pos="502R 32 245 24" posRelativeX="9d63d9acaf1299f6"
          posRelativeY="4250d5155a80be70" posRelativeW="9d63d9acaf1299f6"
-         tooltip="Input signals are considered correlated when they are very resembling and in phase, such as two stereo tracks of a non-spatialised mix."
+         tooltip="Input signals are considered correlated when they are very resembling and in phase, such as the L/R tracks of a non-spatialised stereo mix."
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Correlated inputs: -9.99 dB FS"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"

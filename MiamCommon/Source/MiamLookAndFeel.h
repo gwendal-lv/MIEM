@@ -45,5 +45,15 @@ namespace Miam
         // - - - - - - - - - - Méthodes spécifiques aux Text Editors - - - - - - - - - -
         void fillTextEditorBackground (Graphics &, int width, int height, TextEditor &) override;
         
+        
+        // - - - - - - - - - - Méthodes spécifiques aux Tooltips - - - - - - - - - -
+        void drawTooltip (Graphics& g, const String& text, int width, int height) override;
+        
+        
+        // - - - - - internal helpers - - - - -
+        private :
+        /// \brief Extracted and modified from Juce tooltip v2 CPP file (Juce 5.4.1)
+        static TextLayout layoutTooltipText (const String& text, Colour colour, int width);
+        
     };
 }
