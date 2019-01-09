@@ -63,8 +63,8 @@ namespace Miam
                                   size_t subMatrixFirstRow = 0, size_t subMatrixFirstCol = 0,
                                   size_t subMatrixRowsCount = N, size_t subMatrixColsCount = M)
         {
-            const size_t subMatrixLastRowIndex = subMatrixFirstRow + subMatrixRowsCount;
-            const size_t subMatrixLastColIndex = subMatrixFirstCol + subMatrixColsCount;
+            const size_t subMatrixLastRowIndex = subMatrixFirstRow + subMatrixRowsCount - 1;
+            const size_t subMatrixLastColIndex = subMatrixFirstCol + subMatrixColsCount - 1;
             
             /// - - - - general presentation of the computation algorithm - - - -
             // For correlated case, simple sum of amplitudes.

@@ -75,7 +75,7 @@ public:
     void unhighlightLabel(Label* label);
 
     void createAndManagePopupMenu();
-    void setMatrixToZero();
+    void setMatrixToZero(bool notifyListener = true);
     void setMatrixToIdentity();
 
     // Ces 2 fonctions vont chercher le nombre de lignes (ou colonnes)

@@ -60,7 +60,7 @@ namespace Miam
                 case GraphicSessionMode::ExcitersEdition:
                 case GraphicSessionMode::ExciterSelected:
                     if (appPurpose == AppPurpose::GenericController)
-                        appPurposeRelatedString = TRANS("When you move an exciter from a shape to another, the app computes a smooth interpolation between the control states linked to the shapes. So when moving exciters, you create and explore new states.\n"
+                        appPurposeRelatedString = TRANS("When you move an exciter from a shape to another, the app computes a smooth interpolation between the control states linked to the shapes. So by moving exciters, you can create and explore new states.\n"
                                                         "\n"
                                                         "The MIEM app interpolates all the parameters of the states and sends them in real-time to the OSC remote device. Custom OSC adresses can be configured in the Control States tab.\n"
                                                         "\n"
@@ -68,7 +68,7 @@ namespace Miam
                     else if (appPurpose == AppPurpose::Spatialisation)
                         appPurposeRelatedString = TRANS("When you move an exciter from a shape to another, the app computes a smooth interpolation between the spatialisation states linked to the shapes.\n"
                                                         "\n"
-                                                        "So when moving exciters, you create and explore new spatialisation states. The MIEM app interpolates the spatialisation matrix and sends the corresponding OSC data in real-time to the MIEM Matrix Router audio plug-in (VST or AU within your DAW).\n"
+                                                        "So by moving exciters, you can create and explore new spatialisation states. The MIEM app interpolates the spatialisation matrix and sends the corresponding OSC data in real-time to the MIEM Matrix Router audio plug-in (VST or AU within your DAW).\n"
                                                         "\n"
                                                         "To play on Android or iOS, please download the MIEM Spat app.");
                     return TRANS("MIEM Editor is now sending OSC control data as you are moving, creating or deleting exciters.\n"

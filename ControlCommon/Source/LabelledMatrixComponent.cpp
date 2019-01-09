@@ -273,7 +273,10 @@ void LabelledMatrixComponent::ReinitGuiObjects()
         {
             rowTextButtons[i]->setButtonText(TRANS("Send"));
             rowTextButtons[i]->setTooltip(TRANS("Click to send this parameter to the configured OSC device."));
+			rowTextButtons[i]->setVisible(true);
         }
+		else 
+			rowTextButtons[i]->setVisible(false);
     }
     for (int j=0 ; j<(int)maxColsCount ; j++)
     {
@@ -381,7 +384,8 @@ void LabelledMatrixComponent::repositionLabelsAndButtons()
         else
         {
             labels[i]->setVisible(true);
-            rowTextButtons[i]->setVisible(true);
+			if (currentDisplayPurpose == AppPurpose::GenericController)
+				rowTextButtons[i]->setVisible(true);
             if (showInputsNames)
                 inputNameTextEditors[i]->setVisible(true);
         }
@@ -460,11 +464,12 @@ void LabelledMatrixComponent::createAndManagePopupMenu()
     assert(0);
 #endif
 }
-void LabelledMatrixComponent::setMatrixToZero()
+void LabelledMatrixComponent::setMatrixToZero(bool notifyListener)
 {
     // Without notification
     GetMatrixComponent()->SetSpatMatrix(std::make_shared<ControlMatrix>());
-    listener->OnMatrixZeroed(); // special unique notification to the listener
+	if (notifyListener)
+		listener->OnMatrixZeroed(); // special unique notification to the listener
 }
 void LabelledMatrixComponent::setMatrixToIdentity()
 {
@@ -605,9 +610,13 @@ void LabelledMatrixComponent::SetDisplayPurpose(AppPurpose newSessionPurpose)
         default : break;
     }
     // États internes directs et actualisations
+	// Seulement si on a vraiment changé de mode ! On ne re-force pas les valeurs
     if (currentDisplayPurpose != newSessionPurpose)
     {
         currentDisplayPurpose = newSessionPurpose;
+
+		setMatrixToZero(false);
+
         ReinitGuiObjects();
         GetMatrixComponent()->RepositionGuiObjects();
         GetMatrixComponent()->resized(); // pour redonner la bonne taile au contenu du viewport

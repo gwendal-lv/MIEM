@@ -405,7 +405,7 @@ namespace Miam
             if (states.size() == 0)
             {
                 std::cout << "----------DEBUG----------- Plus aucun état enregistré !! ----------DEBUG----------- " << std::endl;
-                throw std::logic_error("Plus aucun état enregistré !!");
+                //throw std::logic_error("Plus aucun état enregistré !!");
             }
 #endif
             

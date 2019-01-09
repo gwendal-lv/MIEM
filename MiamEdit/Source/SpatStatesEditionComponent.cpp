@@ -108,7 +108,7 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     linksInfoLabel.reset (new Label ("Links info label",
                                      TRANS("Linked to ? area")));
     addAndMakeVisible (linksInfoLabel.get());
-    linksInfoLabel->setFont (Font (15.0f, Font::italic));
+    linksInfoLabel->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Italic"));
     linksInfoLabel->setJustificationType (Justification::centred);
     linksInfoLabel->setEditable (false, false, false);
     linksInfoLabel->setColour (Label::textColourId, Colours::black);
@@ -221,7 +221,7 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
                                        TRANS("Total matrix volume")));
     addAndMakeVisible (matrixInfoLabel1.get());
     matrixInfoLabel1->setTooltip (TRANS("The two volumes displayed represent the  total volume of the sum of all outputs of the matrix, considering that inputs are all 0 dB signals."));
-    matrixInfoLabel1->setFont (Font (15.0f, Font::italic));
+    matrixInfoLabel1->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Italic"));
     matrixInfoLabel1->setJustificationType (Justification::centredLeft);
     matrixInfoLabel1->setEditable (false, false, false);
     matrixInfoLabel1->setColour (Label::textColourId, Colours::black);
@@ -242,7 +242,7 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     matrixInfoLabel3.reset (new Label ("Matrix Info label 3",
                                        TRANS("Decorrelated inputs: -9.99 dB FS")));
     addAndMakeVisible (matrixInfoLabel3.get());
-    matrixInfoLabel3->setTooltip (TRANS("Input signals are considered decorrelated when they are not resembling or out of phase, such as two mono recordings of two different music instruments."));
+    matrixInfoLabel3->setTooltip (TRANS("Input signals are considered decorrelated when they are out of phase, or not resembling, such as two mono recordings of two different music instruments."));
     matrixInfoLabel3->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
     matrixInfoLabel3->setJustificationType (Justification::centredLeft);
     matrixInfoLabel3->setEditable (false, false, false);
@@ -807,7 +807,7 @@ BEGIN_JUCER_METADATA
   <LABEL name="Matrix Info label 3" id="2e6b0acdfb779683" memberName="matrixInfoLabel3"
          virtualName="" explicitFocusOrder="0" pos="502R 52 245 24" posRelativeX="9d63d9acaf1299f6"
          posRelativeY="4250d5155a80be70" posRelativeW="9d63d9acaf1299f6"
-         tooltip="Input signals are considered decorrelated when they are not resembling or out of phase, such as two mono recordings of two different music instruments."
+         tooltip="Input signals are considered decorrelated when they are out of phase, or not resembling, such as two mono recordings of two different music instruments."
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Decorrelated inputs: -9.99 dB FS"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"

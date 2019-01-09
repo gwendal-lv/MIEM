@@ -299,32 +299,37 @@ void SpatStatesEditionManager::UpdateView()
 }
 void SpatStatesEditionManager::updateStateInfo()
 {
-    // Pour la SPAT seulement : calcul et affichage du volume de la matrice
-    if (GetSessionPurpose() == AppPurpose::Spatialisation)
-    {
-        // spat engine correlation :
-        CorrelationLevel spatEngineCorrelationLevel;
-        if (GetInterpolationType() == InterpolationType::Matrix_ConstantPower)
-            spatEngineCorrelationLevel = CorrelationLevel::Low;
-        else if (GetInterpolationType() == InterpolationType::Matrix_ConstantAmplitude)
-            spatEngineCorrelationLevel = CorrelationLevel::High;
-        else
-            return;// interpolator type is not properly set yet
-        
-        // 1 is correlated, 2 is decorrelated
-        auto linearVolume1 = editionComponent->GetDisplayedSpatMatrix()->ComputeTotalVolume(CorrelationLevel::High, spatEngineCorrelationLevel);
-        auto linearVolume2 = editionComponent->GetDisplayedSpatMatrix()->ComputeTotalVolume(CorrelationLevel::Low, spatEngineCorrelationLevel);
-        auto volume1_dBFS = TextUtils::GetAmplitude_dB_string_from_Linear(linearVolume1, 3);
-        auto volume2_dBFS = TextUtils::GetAmplitude_dB_string_from_Linear(linearVolume2, 3);
-        
-        // graphic display
-        editionComponent->SetVisibleMatrixData(true);
-        editionComponent->UpdateMatrixData(volume1_dBFS, volume2_dBFS);
-    }
-    else if (GetSessionPurpose() == AppPurpose::GenericController)
-    {
-        editionComponent->SetVisibleMatrixData(false);
-    }
+	if (selectedSpatState)
+	{
+		// Pour la SPAT seulement : calcul et affichage du volume de la matrice
+		if (GetSessionPurpose() == AppPurpose::Spatialisation)
+		{
+			// spat engine correlation :
+			CorrelationLevel spatEngineCorrelationLevel;
+			if (GetInterpolationType() == InterpolationType::Matrix_ConstantPower)
+				spatEngineCorrelationLevel = CorrelationLevel::Low;
+			else if (GetInterpolationType() == InterpolationType::Matrix_ConstantAmplitude)
+				spatEngineCorrelationLevel = CorrelationLevel::High;
+			else
+				return;// interpolator type is not properly set yet
+
+			// 1 is correlated, 2 is decorrelated
+			auto linearVolume1 = editionComponent->GetDisplayedSpatMatrix()->ComputeTotalVolume(CorrelationLevel::High, spatEngineCorrelationLevel);
+			auto linearVolume2 = editionComponent->GetDisplayedSpatMatrix()->ComputeTotalVolume(CorrelationLevel::Low, spatEngineCorrelationLevel);
+			auto volume1_dBFS = TextUtils::GetAmplitude_dB_string_from_Linear(linearVolume1, 3);
+			auto volume2_dBFS = TextUtils::GetAmplitude_dB_string_from_Linear(linearVolume2, 3);
+
+			// graphic display
+			editionComponent->SetVisibleMatrixData(true);
+			editionComponent->UpdateMatrixData(volume1_dBFS, volume2_dBFS);
+		}
+		else if (GetSessionPurpose() == AppPurpose::GenericController)
+		{
+			editionComponent->SetVisibleMatrixData(false);
+		}
+	}
+	else
+		editionComponent->SetVisibleMatrixData(false);
 }
 std::string SpatStatesEditionManager::getLinkedAreasInfo()
 {

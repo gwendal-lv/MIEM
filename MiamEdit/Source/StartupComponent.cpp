@@ -64,7 +64,7 @@ StartupComponent::StartupComponent ()
 
     createGenericTextButton.reset (new TextButton ("Create Empty text button"));
     addAndMakeVisible (createGenericTextButton.get());
-    createGenericTextButton->setButtonText (TRANS("Create Generic Controller session"));
+    createGenericTextButton->setButtonText (TRANS("Create Generic OSC Controller session"));
     createGenericTextButton->addListener (this);
     createGenericTextButton->setColour (TextButton::buttonColourId, Colour (0xffbfbfbf));
     createGenericTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
@@ -118,9 +118,9 @@ void StartupComponent::resized()
     //[/UserPreResize]
 
     loadTextButton->setBounds ((getWidth() / 2) - (168 / 2), (getHeight() / 2) + -96, 168, 52);
-    createSpatTextButton->setBounds ((getWidth() / 2) + -12 - 160, (getHeight() / 2), 160, 61);
-    createDefaultTextButton->setBounds ((getWidth() / 2) - (168 / 2), (getHeight() / 2) + 69, 168, 24);
-    createGenericTextButton->setBounds ((getWidth() / 2) + 12, (getHeight() / 2), 160, 61);
+    createSpatTextButton->setBounds ((getWidth() / 2) + 150 - 300, (getHeight() / 2) + 46, 300, 32);
+    createDefaultTextButton->setBounds ((getWidth() / 2) + -3 - (168 / 2), (getHeight() / 2) + 350, 168, 24);
+    createGenericTextButton->setBounds ((getWidth() / 2) + 150 - 300, (getHeight() / 2), 300, 32);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -211,16 +211,16 @@ BEGIN_JUCER_METADATA
               bgColOn="ffffffff" textCol="ff000000" buttonText="Load session"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Create Spat text button" id="714ffb446833c5ce" memberName="createSpatTextButton"
-              virtualName="" explicitFocusOrder="0" pos="-12Cr 0C 160 61" bgColOff="ffbfbfbf"
-              bgColOn="ffffffff" textCol="ff000000" buttonText="Create Spatialisation session"
+              virtualName="" explicitFocusOrder="0" pos="150Cr 46C 300 32"
+              bgColOff="ffbfbfbf" bgColOn="ffffffff" textCol="ff000000" buttonText="Create Spatialisation session"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Create Default text button" id="ac4f9aa6f5974fbc" memberName="createDefaultTextButton"
-              virtualName="" explicitFocusOrder="0" pos="0Cc 69C 168 24" bgColOff="ffbfbfbf"
-              bgColOn="ffffffff" textCol="ff000000" buttonText="Create default session"
+              virtualName="" explicitFocusOrder="0" pos="-3Cc 350C 168 24"
+              bgColOff="ffbfbfbf" bgColOn="ffffffff" textCol="ff000000" buttonText="Create default session"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Create Empty text button" id="fb033c6855f61992" memberName="createGenericTextButton"
-              virtualName="" explicitFocusOrder="0" pos="12C 0C 160 61" bgColOff="ffbfbfbf"
-              bgColOn="ffffffff" textCol="ff000000" buttonText="Create Generic Controller session"
+              virtualName="" explicitFocusOrder="0" pos="150Cr 0C 300 32" bgColOff="ffbfbfbf"
+              bgColOn="ffffffff" textCol="ff000000" buttonText="Create Generic OSC Controller session"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>
 

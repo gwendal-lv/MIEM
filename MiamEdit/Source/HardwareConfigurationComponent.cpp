@@ -42,6 +42,7 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
 
     inputsCountSlider.reset (new Slider ("Inputs Count slider"));
     addAndMakeVisible (inputsCountSlider.get());
+    inputsCountSlider->setTooltip (TRANS("Number of lines of the matrix"));
     inputsCountSlider->setRange (1, 1024, 1);
     inputsCountSlider->setSliderStyle (Slider::IncDecButtons);
     inputsCountSlider->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
@@ -50,6 +51,7 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
 
     outputsCountSlider.reset (new Slider ("Outputs Count slider"));
     addAndMakeVisible (outputsCountSlider.get());
+    outputsCountSlider->setTooltip (TRANS("Number of columns of the matrix"));
     outputsCountSlider->setRange (1, 1024, 1);
     outputsCountSlider->setSliderStyle (Slider::IncDecButtons);
     outputsCountSlider->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
@@ -465,15 +467,15 @@ BEGIN_JUCER_METADATA
   </METHODS>
   <BACKGROUND backgroundColour="ffafafaf"/>
   <SLIDER name="Inputs Count slider" id="77ed5b9e29dce02e" memberName="inputsCountSlider"
-          virtualName="" explicitFocusOrder="0" pos="-8Cr 16 150 24" textboxtext="ff000000"
-          min="1.0" max="1024.0" int="1.0" style="IncDecButtons" textBoxPos="TextBoxLeft"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
-          needsCallback="1"/>
+          virtualName="" explicitFocusOrder="0" pos="-8Cr 16 150 24" tooltip="Number of lines of the matrix"
+          textboxtext="ff000000" min="1.0" max="1024.0" int="1.0" style="IncDecButtons"
+          textBoxPos="TextBoxLeft" textBoxEditable="1" textBoxWidth="80"
+          textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <SLIDER name="Outputs Count slider" id="ca10a4b3f2104985" memberName="outputsCountSlider"
-          virtualName="" explicitFocusOrder="0" pos="-8Cr 48 150 24" textboxtext="ff000000"
-          min="1.0" max="1024.0" int="1.0" style="IncDecButtons" textBoxPos="TextBoxLeft"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
-          needsCallback="1"/>
+          virtualName="" explicitFocusOrder="0" pos="-8Cr 48 150 24" tooltip="Number of columns of the matrix"
+          textboxtext="ff000000" min="1.0" max="1024.0" int="1.0" style="IncDecButtons"
+          textBoxPos="TextBoxLeft" textBoxEditable="1" textBoxWidth="80"
+          textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <LABEL name="Inputs Count label" id="5edb179087fb7973" memberName="inputsCountLabel"
          virtualName="" explicitFocusOrder="0" pos="-156Cr 0 208 24" posRelativeY="77ed5b9e29dce02e"
          tooltip="Number of lines of the matrix" textCol="ff000000" edTextCol="ff000000"
