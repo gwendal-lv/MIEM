@@ -96,6 +96,11 @@ void ControlModel::update()
     
     while(continueUpdate)
     {
+        wasSomethingUpdated = false;
+        // virtual function, to be overriden by child classes
+        onUpdateStarts();
+        
+        
         updateThreadMeasurer.OnNewFrame();
         
         // Infos de performance -> à passer dans un fichier texte pour ne pas perturber la mesure...
@@ -141,8 +146,8 @@ void ControlModel::update()
         if ( playState == AsyncParamChange::Play )
         {
             // Envoi de la nouvelle matrice, si nécessaire
-            bool somethingWasUpdated = interpolator->OnDataUpdateFinished();
-            if (somethingWasUpdated)
+            wasSomethingUpdated = interpolator->OnDataUpdateFinished();
+            if (wasSomethingUpdated)
             {
                 miamOscSender->SendStateModifications(interpolator->GetCurrentInterpolatedState());
             }
@@ -165,6 +170,9 @@ void ControlModel::update()
         }
         // fin de : - - - - - SI ON EST EN TRAIN DE JOUER - - - - -
         
+        
+        // virtual function, to be overriden by child classes
+        onUpdateFinished();
         
         
         // Sleep forcé uniquement si on est assez loin de la période souhaitée

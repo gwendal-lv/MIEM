@@ -24,7 +24,7 @@
 
 namespace Miam {
     // Simple declaration : we don't need the entire description
-    class PlayerModel;
+    class Model;
     class View;
     
 
@@ -44,6 +44,8 @@ namespace Miam {
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
         private :
         
+        // Pointer to the unique Model module
+        Model* model = 0;
         // Pointer to the unique View module
         View* view = 0;
         
@@ -69,6 +71,12 @@ namespace Miam {
         // Only constructor
         Presenter(View* _view);
         virtual ~Presenter() {}
+        void CompleteInitialisation(Model* _model);
+
+        
+        // - - - - - Periodic updates - - - - -
+        virtual void Update() override;
+
         
         
     };

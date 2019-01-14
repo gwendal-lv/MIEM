@@ -152,6 +152,11 @@ namespace Miam
             copyConstruct(originalMatrix);
         }
         
+        // ===== A SUPPRIMER : TOUTES LES FONCTIONS CONST DE LA MATRICE INTERNE ======
+        // (créer un Get de const ControlMatrix& qui n'appellera que les fonctions const)
+        // ===== A SUPPRIMER : TOUTES LES FONCTIONS CONST DE LA MATRICE INTERNE ======
+        // ===== A SUPPRIMER : TOUTES LES FONCTIONS CONST DE LA MATRICE INTERNE ======
+        // ===== A SUPPRIMER : TOUTES LES FONCTIONS CONST DE LA MATRICE INTERNE ======
         /// \brief Operator "Get" overloaded (! "Set" not overloaded !)
         ///
         /// k is a global matrix index within [0 ; N*M-1]
@@ -161,6 +166,11 @@ namespace Miam
         ///
         /// i,j are the row and col indexes
         inline T operator() (size_t i, size_t j) const { return matrix[idx(i,j)]; }
+        // ===== A SUPPRIMER : TOUTES LES FONCTIONS CONST DE LA MATRICE INTERNE ======
+        // ===== A SUPPRIMER : TOUTES LES FONCTIONS CONST DE LA MATRICE INTERNE ======
+        // ===== A SUPPRIMER : TOUTES LES FONCTIONS CONST DE LA MATRICE INTERNE ======
+        // ===== A SUPPRIMER : TOUTES LES FONCTIONS CONST DE LA MATRICE INTERNE ======
+        // ===== A SUPPRIMER : TOUTES LES FONCTIONS CONST DE LA MATRICE INTERNE ======
         
         /// \brief Deals with zero/non-zero cases then sets the coefficient
         inline void Set(size_t i, size_t j, T value) { Set(idx(i,j), value); }

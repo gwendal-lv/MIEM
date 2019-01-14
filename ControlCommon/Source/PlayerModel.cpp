@@ -121,6 +121,7 @@ void PlayerModel::update()
 {
     setHighThreadPriority();
     
+    // Main loop, with a "while(continueUpdate)" inside
     ControlModel::update();
 }
 

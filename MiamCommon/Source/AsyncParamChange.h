@@ -42,6 +42,8 @@ namespace Miam
             
             Activate,
             Volume,
+                Volume_CorrelatedInputs,
+                Volume_DecorrelatedIntputs,
             Frequency,
             Excitement,
             

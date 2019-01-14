@@ -15,6 +15,8 @@
       <FILE id="NeblZc" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
       <FILE id="iBrj0h" name="Presenter.cpp" compile="1" resource="0" file="Source/Presenter.cpp"/>
       <FILE id="fpZaRJ" name="Presenter.h" compile="0" resource="0" file="Source/Presenter.h"/>
+      <FILE id="slfUQl" name="Model.cpp" compile="1" resource="0" file="Source/Model.cpp"/>
+      <FILE id="bnW4Cn" name="Model.h" compile="0" resource="0" file="Source/Model.h"/>
       <FILE id="wovY1v" name="View.cpp" compile="1" resource="0" file="Source/View.cpp"/>
       <FILE id="DzITRF" name="View.h" compile="0" resource="0" file="Source/View.h"/>
     </GROUP>
@@ -282,6 +284,7 @@
         </GROUP>
         <GROUP id="{5315337B-6E49-3E8D-A9F7-3A94BE3F4AA8}" name="Audio">
           <FILE id="suhcBm" name="AudioDefines.h" compile="0" resource="0" file="../MiamCommon/Source/AudioDefines.h"/>
+          <FILE id="dOq9T0" name="AudioMatrix.hpp" compile="0" resource="0" file="../MiamCommon/Source/AudioMatrix.hpp"/>
           <FILE id="TDImc7" name="AudioUtils.hpp" compile="0" resource="0" file="../MiamCommon/Source/AudioUtils.hpp"/>
         </GROUP>
         <FILE id="RVYtYM" name="FrequencyMeasurer.cpp" compile="1" resource="0"

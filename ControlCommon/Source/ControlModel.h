@@ -72,6 +72,7 @@ namespace Miam
         const int refreshPeriod_frames = 500; // unité = frames
         bool continuousBackgroundBlobMatrixRefresh = true;
         bool continuousBackgroundSingleMatrixCoeffRefresh = false;
+        bool wasSomethingUpdated = false;
         
         
         
@@ -117,6 +118,15 @@ namespace Miam
 		/// type and an abstract method is called -> bizarre undefined random
 		/// behavior then...
         virtual void update();
+        ///  \brief Virtual function called from update() a the very beginning of the loop.
+        ///
+        /// To be overriden by child classes
+        virtual void onUpdateStarts() {}
+        ///  \brief Virtual function called from update() a the end of the loop, after
+        /// updates were actually applied but before putting the Model thread to sleep.
+        ///
+        /// To be overriden by child classes
+        virtual void onUpdateFinished() {}
         
         
         // - - - - - Internal events - - - - -

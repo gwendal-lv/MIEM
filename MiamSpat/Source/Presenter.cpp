@@ -10,7 +10,7 @@
 
 #include "Presenter.h"
 
-#include "PlayerModel.h"
+#include "Model.h"
 #include "View.h"
 
 #include "JuceHeader.h"
@@ -38,14 +38,25 @@ Presenter::Presenter(View* _view) :
     
     appModeChangeRequest(PlayerAppMode::Loading);
 }
-
+void Presenter::CompleteInitialisation(Model* _model)
+{
+    // - - - Init des attributs privés puis des parents - - -
+    model = _model;
+    
+    PlayerPresenter::CompleteInitialisation(model);
+}
 
 
 // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
 
 
 
-// = = = = = = = = = = METHODES = = = = = = = = = =
-
-
-
+// = = = = = = = = = = PERIODIC UPDATES = = = = = = = = = =
+void Presenter::Update()
+{
+    AsyncParamChange paramChange;
+    while (model->TryGetAsyncParamChange(paramChange))
+    {
+        std::cout << paramChange.DoubleValue << std::endl;
+    }
+}

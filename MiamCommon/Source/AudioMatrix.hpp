@@ -16,6 +16,9 @@ namespace Miam
 {
     
     enum class CorrelationLevel {
+        
+        Undefined,
+        
         Low, ///< Represents a low inter-correlation value between signals, e.g. two mono recordings of two different instruments playing the same song.
         
         High ///< Represents a high inter-correlation value between signals, e.g. two tracks L/R of a standard stereo recording with very few stereo spatialisation effects

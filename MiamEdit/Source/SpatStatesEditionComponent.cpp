@@ -108,7 +108,7 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     linksInfoLabel.reset (new Label ("Links info label",
                                      TRANS("Linked to ? area")));
     addAndMakeVisible (linksInfoLabel.get());
-    linksInfoLabel->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Italic"));
+    linksInfoLabel->setFont (Font (15.0f, Font::italic));
     linksInfoLabel->setJustificationType (Justification::centred);
     linksInfoLabel->setEditable (false, false, false);
     linksInfoLabel->setColour (Label::textColourId, Colours::black);
@@ -221,7 +221,7 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
                                        TRANS("Total matrix volume")));
     addAndMakeVisible (matrixInfoLabel1.get());
     matrixInfoLabel1->setTooltip (TRANS("The two volumes displayed represent the  total volume of the sum of all outputs of the matrix, considering that inputs are all 0 dB signals."));
-    matrixInfoLabel1->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Italic"));
+    matrixInfoLabel1->setFont (Font (15.0f, Font::italic));
     matrixInfoLabel1->setJustificationType (Justification::centredLeft);
     matrixInfoLabel1->setEditable (false, false, false);
     matrixInfoLabel1->setColour (Label::textColourId, Colours::black);

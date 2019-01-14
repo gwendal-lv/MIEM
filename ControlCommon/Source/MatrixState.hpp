@@ -116,7 +116,7 @@ namespace Miam
         /// \brief Copy-constructs a duplicate of the internal matrix
         ///
         /// Dynamically allocates memory !
-        std::shared_ptr< ControlMatrix > GetMatrix()
+        std::shared_ptr< ControlMatrix > GetMatrixCopy()
         { return std::make_shared< ControlMatrix >(matrix); }
         
         /// \brief Internally sets the matrix from a shared_ptr of another
