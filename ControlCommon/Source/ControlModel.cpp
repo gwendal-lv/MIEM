@@ -112,6 +112,7 @@ void ControlModel::update()
         
         // Récupération de toutes les données les + à jour
         AsyncParamChange lastParamChange;
+        AsyncParamChange localParamChange;
         while (presenter->TryGetAsyncParamChange(lastParamChange))
         {
             switch (lastParamChange.Type)
@@ -131,10 +132,14 @@ void ControlModel::update()
                     std::cout << "[Modèle] STOP" << std::endl;
                     interpolator->OnStop();
                     // Après le stop, il faut peut-être envoyer des données
-                    if (interpolator->OnDataUpdateFinished()) // vrai si données actualisées
+                    wasSomethingUpdated = interpolator->OnDataUpdateFinished();
+                    if (wasSomethingUpdated) // vrai si données actualisées
                     {
                         miamOscSender->SendStateModifications(interpolator->GetCurrentInterpolatedState());
                     }
+                    // Confirmation sent back to the presenter
+                    localParamChange.Type = AsyncParamChange::ParamType::Stopped;
+                    SendParamChange(localParamChange);
                     break;
                     
                 default :
@@ -156,6 +161,7 @@ void ControlModel::update()
                 if ( (refreshFramesCounter++) >= refreshPeriod_frames )
                 {
                     miamOscSender->ForceCoeffsBlockRefresh( interpolator->GetCurrentInterpolatedState() );
+                    wasSomethingUpdated = true;
                     refreshFramesCounter = 0;
                 }
             }
@@ -164,6 +170,7 @@ void ControlModel::update()
                 if ( (refreshFramesCounter++) >= refreshPeriod_frames )
                 {
                     miamOscSender->ForceSend1MatrixCoeff( interpolator->GetCurrentInterpolatedState() );
+                    wasSomethingUpdated = true;
                     refreshFramesCounter = 0;
                 }
             }
@@ -192,6 +199,10 @@ void ControlModel::onPlay()
     playState = AsyncParamChange::Play;
     std::cout << "[Modèle] PLAY (interpolation de type '" << InterpolationTypes::GetInterpolationName(GetInterpolator()->GetType()) << "')" << std::endl;
     interpolator->OnPlay();
+    
+    // Confirmation sent back to the presenter
+    AsyncParamChange paramChange(AsyncParamChange::ParamType::Playing);
+    SendParamChange(paramChange);
 }
 
 

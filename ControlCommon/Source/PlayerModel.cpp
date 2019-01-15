@@ -47,12 +47,7 @@ presenter(presenter_) // own private downcasted pointer
         throw std::runtime_error("First and only StateSender must be a MiamOscSender at the moment");
     
     // Fin d'Initialisation des autres modules
-    presenter->CompleteInitialisation(this);
-    
-    // Launch of thread, at the specified frequency
-    continueUpdate = true;
-    // Using a c++11 lambda function for class member calling
-    updateThread = std::thread( [this] {this->update();} );
+    //presenter->CompleteInitialisation(this);
 }
 
 PlayerModel::~PlayerModel()
@@ -66,6 +61,13 @@ PlayerModel::~PlayerModel()
 
 // = = = = = = = = = = Periodic updates = = = = = = = = = =
 
+void PlayerModel::launchUpdateThread()
+{
+    // Launch of thread, at the specified frequency
+    continueUpdate = true;
+    // Using a c++11 lambda function for class member calling
+    updateThread = std::thread( [this] {this->update();} );
+}
 void PlayerModel::setHighThreadPriority()
 {
 #ifndef JUCE_WINDOWS // toutes plateformes POSIX

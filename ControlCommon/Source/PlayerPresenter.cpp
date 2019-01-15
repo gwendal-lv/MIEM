@@ -181,6 +181,15 @@ PlayerAppMode PlayerPresenter::appModeChangeRequest(PlayerAppMode newAppMode)
                 default:
                     break;
             }
+            // General treatment : TIMER ON/OFF
+            // reminder : this timer must be activated when the main OpenGL component is not visible
+            // and does not send update calls anymore
+            if (appMode == PlayerAppMode::Playing)
+                stopTimer();
+            else if (appMode != PlayerAppMode::None
+                     && appMode != PlayerAppMode::Null
+                     && appMode != PlayerAppMode::Loading)
+                startTimerHz(10);
         }
         // - - - - - Application graphique - - - - -
         view->ChangeAppMode(appMode);
@@ -247,6 +256,10 @@ void PlayerPresenter::Update()
     // à être contrôlé en SINGLE THREAD" lors de re-chargement d'une scène
 }
 
+void PlayerPresenter::timerCallback()
+{
+    Update();
+}
 
 
 // = = = = = = = = = = EVENTS FROM VIEW = = = = = = = = = =

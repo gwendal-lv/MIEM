@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.2.1
+  Created with Projucer version: 5.4.1
 
   ------------------------------------------------------------------------------
 
@@ -31,7 +31,7 @@
 namespace Miam
 {
     class PlayerPresenter;
-    
+
     class MultiCanvasComponent;
 
 //[/Headers]
@@ -62,9 +62,11 @@ public:
     void CompleteInitialization(MultiCanvasComponent*);
 
     void DisplayInfo(const String& stringToDisplay, bool isImportant = false);
+    void DisplayInfo2(const String& stringToDisplay);
+
 
     void ChangeAppMode(PlayerAppMode newAppMode);
-    
+
     MultiCanvasComponent* GetMultiCanvasComponent() { return multiCanvasComponent; }
 
     //[/UserMethods]
@@ -103,8 +105,9 @@ private:
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<Label> mainInfoLabel;
-    ScopedPointer<ImageButton> mainMenuImageButton;
+    std::unique_ptr<Label> mainInfoLabel;
+    std::unique_ptr<ImageButton> mainMenuImageButton;
+    std::unique_ptr<Label> mainInfoLabel2;
 
 
     //==============================================================================

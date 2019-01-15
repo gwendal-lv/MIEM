@@ -71,6 +71,8 @@ namespace Miam {
         
         // ----- Graphical updates -----
         virtual void ForceResized() override;
+        /// \brief Will display the volume using the second information label
+        void OnNewVolumes(double lowCorrVolume, double highCorrVolume);
         
         
         // ----- Setters and Getters -----
@@ -81,7 +83,6 @@ namespace Miam {
         MainContentComponent* GetMainContentComponent()
 		{return mainContentComponent;}
         
-        // General UI controls and displays
 
         
     };

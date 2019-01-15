@@ -10,7 +10,7 @@
 
 #include "Presenter.h"
 
-#include "PlayerModel.h"
+#include "Model.h"
 #include "View.h"
 
 #include "JuceHeader.h"
@@ -39,6 +39,16 @@ Presenter::Presenter(View* _view) :
     appModeChangeRequest(PlayerAppMode::Loading);
 }
 
+void Presenter::CompleteInitialisation(PlayerModel* _model)
+{
+    if (auto castedModel = dynamic_cast<Model*>(_model))
+        model = castedModel;
+    else
+        throw std::logic_error("The player model passed as argument must be a real Model, not only a PlayerModel");
+    
+    PlayerPresenter::CompleteInitialisation(_model);
+}
+
 
 
 // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
@@ -46,6 +56,15 @@ Presenter::Presenter(View* _view) :
 
 
 // = = = = = = = = = = METHODES = = = = = = = = = =
-
+void Presenter::Update()
+{
+    // Simple emptying of the lock-free queue
+    AsyncParamChange paramChange;
+    while (model->TrySendParamChange(paramChange))
+    {
+        // no processing for now....
+        bool test = false;
+    }
+}
 
 

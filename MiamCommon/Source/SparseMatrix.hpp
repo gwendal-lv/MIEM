@@ -141,7 +141,7 @@ namespace Miam
             returnCoord.j = (size_t)divisionResult.rem;
             return returnCoord;
         }
-        inline size_t GetIndexFromIndex2d(Index2d index2d)
+        inline size_t GetIndexFromIndex2d(Index2d index2d) const
         { return idx(index2d.i, index2d.j); }
         
         

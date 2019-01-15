@@ -24,7 +24,7 @@
 
 namespace Miam {
     // Simple declaration : we don't need the entire description
-    class PlayerModel;
+    class Model;
     class View;
     
 
@@ -46,6 +46,7 @@ namespace Miam {
         
         // Pointer to the unique View module
         View* view = 0;
+        Model* model;
         
         
         // Sub-modules
@@ -70,6 +71,11 @@ namespace Miam {
         Presenter(View* _view);
         virtual ~Presenter() {}
         
+        /// \brief Might be called several times (clean init sequence from Model....)
+        virtual void CompleteInitialisation(PlayerModel* _model) override;
+        
+        
+        virtual void Update() override;
         
     };
     

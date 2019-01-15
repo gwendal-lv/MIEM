@@ -31,32 +31,44 @@ void Model::onUpdateStarts()
 }
 void Model::onUpdateFinished()
 {
+    durationSinceLastInfoToPresenter_ms += this->updateThreadMeasurer.GetLastDuration_ms();
+    
     // Here, we are going to compute the volume of the
-    // current interpolated matrix (but at 10Hz max.)
+    // current interpolated matrix
     if (wasSomethingUpdated)
     {
-        AsyncParamChange paramChange;
-        
-        CorrelationLevel spatEngineCorrelationLevel = CorrelationLevel::Undefined;
-        if (interpolator->GetType() == InterpolationType::Matrix_ConstantPower)
-            spatEngineCorrelationLevel = CorrelationLevel::Low;
-        else if (interpolator->GetType() == InterpolationType::Matrix_ConstantAmplitude)
-            spatEngineCorrelationLevel = CorrelationLevel::High;
-        
-        if (spatEngineCorrelationLevel != CorrelationLevel::Undefined)
+        // (but at 10Hz max.)
+        if (durationSinceLastInfoToPresenter_ms > presenterRefreshPeriodMin_ms)
         {
-            // 1st volume is correlated, 2nd is decorrelated
-            if ( MatrixState<double>* matrixState
-                = dynamic_cast<MatrixState<double>*>(&(interpolator->GetCurrentInterpolatedState())) )
+            durationSinceLastInfoToPresenter_ms = 0.0;
+            
+            AsyncParamChange paramChange;
+            
+            CorrelationLevel spatEngineCorrelationLevel = CorrelationLevel::Undefined;
+            if (interpolator->GetType() == InterpolationType::Matrix_ConstantPower)
+                spatEngineCorrelationLevel = CorrelationLevel::Low;
+            else if (interpolator->GetType() == InterpolationType::Matrix_ConstantAmplitude)
+                spatEngineCorrelationLevel = CorrelationLevel::High;
+            
+            if (spatEngineCorrelationLevel != CorrelationLevel::Undefined)
             {
-                //matrixState->GetMatrix().
-                /*
-                 auto linearVolume1 = matrixState->ComputeTotalVolume(CorrelationLevel::High, spatEngineCorrelationLevel);
-                 auto linearVolume2 = matrixState->ComputeTotalVolume(CorrelationLevel::Low, spatEngineCorrelationLevel);
-                 */
-            }
-            else {
-                throw std::logic_error("Cannot send the volume of a state that is not a matrix state.");
+                // 1st volume is correlated, 2nd is decorrelated
+                if ( MatrixState<double>* matrixState
+                    = dynamic_cast<MatrixState<double>*>(&(interpolator->GetCurrentInterpolatedState())) )
+                {
+                    double lowCorrVolume = matrixState->ComputeMatrixTotalVolume(CorrelationLevel::Low, spatEngineCorrelationLevel);
+                    double highCorrVolume = matrixState->ComputeMatrixTotalVolume(CorrelationLevel::High, spatEngineCorrelationLevel);
+                    
+                    paramChange.DoubleValue = lowCorrVolume;
+                    paramChange.Type = AsyncParamChange::ParamType::Volume_DecorrelatedInputs;
+                    SendParamChange(paramChange);
+                    paramChange.DoubleValue = highCorrVolume;
+                    paramChange.Type = AsyncParamChange::ParamType::Volume_CorrelatedInputs;
+                    SendParamChange(paramChange);
+                }
+                else {
+                    throw std::logic_error("Cannot send the volume of a state that is not a matrix state.");
+                }
             }
         }
     }

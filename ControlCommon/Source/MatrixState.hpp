@@ -32,7 +32,7 @@ namespace Miam
         protected :
         
         // La base : la matrice creuse cachée à l'intérieur de l'état
-        ControlMatrix matrix;
+        ControlMatrix<T> matrix;
         
         // Attribut dupliqués depuis l'interpolateur
         int inputsCount = 0;
@@ -48,6 +48,14 @@ namespace Miam
         size_t GetOutputsCount() override
         {return (size_t) outputsCount;}
 
+        /// \brief Returns a reference to the const (immutable) internal ControlMatrix
+        ///
+        /// The internal ControlMatrix is not actually immutable, but the non-const functions of
+        /// the internal ControlMatrix are not all accessible from this class.
+        ///
+        /// \returns A const pointer to a const ControlMatrix object
+        inline const ControlMatrix<T> * const GetMatrix() {return &matrix;}
+        
         /// \brief Accès aux cases de la matrice par opérateur [] à simple entrée
         inline T operator[] (size_t k) const { return matrix[k]; }
 
@@ -56,16 +64,11 @@ namespace Miam
         /// Opérateur [] n'accepte pas la surcharge à 2 paramètres
         inline T operator() (size_t i, size_t j) const { return matrix(i,j); }
 
-        inline Index2d GetIndex2dFromIndex(size_t index1d)
-        { return matrix.GetIndex2dFromIndex(index1d); }
-        inline size_t GetIndexFromIndex2d(Index2d index2d)
-        { return matrix.GetIndexFromIndex2d(index2d); }
         
 #ifdef __MIAM_DEBUG
-        inline size_t GetNonZeroCoeffsCount() {return matrix.GetNonZeroCoeffsCount();}
         void DisplayMatrixInStdCout()
         {
-            std::cout << GetNonZeroCoeffsCount() << " non-nuls : ";
+            std::cout << matrix.GetNonZeroCoeffsCount() << " non-nuls : ";
             matrix.DisplayInStdCout();
             std::cout << std::endl;
         }
@@ -105,7 +108,8 @@ namespace Miam
         }
         bool IsIndexWithinActualInputOutputBounds(size_t index1d)
         {
-            return (GetIndex2dFromIndex(index1d).i < inputsCount) && (GetIndex2dFromIndex(index1d).j < outputsCount);
+            return (matrix.GetIndex2dFromIndex(index1d).i < inputsCount)
+                && (matrix.GetIndex2dFromIndex(index1d).j < outputsCount);
         }
 
         // - - - - - Matrix management - - - - -
@@ -116,11 +120,11 @@ namespace Miam
         /// \brief Copy-constructs a duplicate of the internal matrix
         ///
         /// Dynamically allocates memory !
-        std::shared_ptr< ControlMatrix > GetMatrixCopy()
-        { return std::make_shared< ControlMatrix >(matrix); }
+        std::shared_ptr< ControlMatrix<T> > GetMatrixCopy()
+        { return std::make_shared< ControlMatrix<T> >(matrix); }
         
         /// \brief Internally sets the matrix from a shared_ptr of another
-        void SetMatrix(std::shared_ptr< ControlMatrix > newMatrix)
+        void SetMatrix(std::shared_ptr< ControlMatrix<T> > newMatrix)
         {
             matrix = *(newMatrix.get());
         }
@@ -138,6 +142,12 @@ namespace Miam
             matrix.MultiplyAndAccumulate(matrixToMultAndAdd.matrix, factor);
         }
         
+        T ComputeMatrixTotalVolume(CorrelationLevel inputCorrelationLevel, CorrelationLevel outputCorrelationLevel)
+        {
+            return matrix.ComputeTotalVolume(inputCorrelationLevel, outputCorrelationLevel,
+                                             0, 0,
+                                             inputsCount, outputsCount);
+        }
         
         // - - - - - Property tree (for XML) import/export - - - - -
         virtual std::shared_ptr<bptree::ptree> GetTree() override

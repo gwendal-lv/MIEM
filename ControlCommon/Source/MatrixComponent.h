@@ -88,7 +88,7 @@ namespace Miam
         }
         
         /// \brief Updates its internal sliders from the given Miam::SpatMatrix
-        void SetSpatMatrix(std::shared_ptr<ControlMatrix> spatMatrix);
+        void SetSpatMatrix(std::shared_ptr<ControlMatrix<double>> spatMatrix);
         /// \brief Same as SetSliderValue, with a decibels input.
         void SetSliderValue_dB(int row, int col, double newValue_dB,
                                NotificationType juceNotification = NotificationType::dontSendNotification);
@@ -100,7 +100,7 @@ namespace Miam
         /// \brief Builds and constructs the corresponding Miam::SpatMatrix
         
         double GetSliderValue(int row, int col);
-        std::shared_ptr<ControlMatrix> GetSpatMatrix();
+        std::shared_ptr<ControlMatrix<double>> GetSpatMatrix();
         
         
         // - - - - - Juce graphics - - - - -

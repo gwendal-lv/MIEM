@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="xCUiGi" name="MIEM Spat Player" projectType="guiapp" version="0.2.5"
+<JUCERPROJECT id="xCUiGi" name="MIEM Spat Player" projectType="guiapp" version="0.2.6"
               bundleIdentifier="com.glv.MIEMSpatPlayer" includeBinaryInAppConfig="1"
               jucerVersion="5.4.1" displaySplashScreen="0" reportAppUsage="0"
               splashScreenColour="Dark" cppLanguageStandard="11" companyCopyright="Gwendal Le Vaillant (IRISIB/LARAS, UMons)"

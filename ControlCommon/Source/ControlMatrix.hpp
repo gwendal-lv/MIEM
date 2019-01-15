@@ -15,9 +15,8 @@
 
 namespace Miam {
     
-
-    // Typename for easiness of use ; the floating-point type follows what is defined
-    // in ControlModel.h
-    typedef AudioMatrix<double, Miam_MaxNumInputs, Miam_MaxNumOutputs, Miam_MinVolume_PowOf10> ControlMatrix;
+    // Alias declaration (from c++11)
+    template <typename T> // supposed to be a floating-point type
+    using ControlMatrix = AudioMatrix<T, Miam_MaxNumInputs, Miam_MaxNumOutputs, Miam_MinVolume_PowOf10>;
     
 }

@@ -67,7 +67,7 @@ void SpatStatesEditionManager::selectSpatState(std::shared_ptr<ControlState<doub
         
         // At last : routing matrix (only choice available for now...)
         if (std::shared_ptr<MatrixState<double>> matrixState = std::dynamic_pointer_cast<MatrixState<double>>(selectedSpatState) )
-            matrixToSend = matrixState->GetMatrix();
+            matrixToSend = matrixState->GetMatrixCopy();
         // else if the cast did not work
         else
             throw std::runtime_error("State is not a Matrix state");

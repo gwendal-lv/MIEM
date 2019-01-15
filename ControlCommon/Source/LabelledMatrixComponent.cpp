@@ -467,7 +467,7 @@ void LabelledMatrixComponent::createAndManagePopupMenu()
 void LabelledMatrixComponent::setMatrixToZero(bool notifyListener)
 {
     // Without notification
-    GetMatrixComponent()->SetSpatMatrix(std::make_shared<ControlMatrix>());
+    GetMatrixComponent()->SetSpatMatrix(std::make_shared<ControlMatrix<double>>());
 	if (notifyListener)
 		listener->OnMatrixZeroed(); // special unique notification to the listener
 }

@@ -25,7 +25,8 @@ namespace Miam
     class GraphicSessionPlayer;
     
     
-    class PlayerPresenter : public ControlPresenter
+    class PlayerPresenter : public ControlPresenter,
+                            private Timer // for auto-updates when necessary
     {
         
         
@@ -77,7 +78,7 @@ namespace Miam
         /// \brief To be called from the Miam::Model when it is being
         /// constructed (happens after the construction of this class)
         ///
-        /// Finished self-contruction, and also the construction of sub-modules
+        /// Finishes self-contruction, and also the construction of sub-modules
         virtual void CompleteInitialisation(PlayerModel* _model);
         
         void TryLoadFirstSession(std::string commandLine);
@@ -95,11 +96,14 @@ namespace Miam
         void OnFileChooserReturn(const FileChooser& chooser);
         
         virtual void Update() override;
-        
+        /// \brief Timer callback associated to the Update function
+        private :
+        virtual void timerCallback() override;
         
         
         
         // - - - - - Events from the View - - - - -
+        public :
         /// \brief
         void OnMainMenuButtonClicked();
         void OnViewIsPreparingToPlay(bool _isPreparingToPlay);

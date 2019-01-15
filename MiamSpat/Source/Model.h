@@ -27,6 +27,11 @@ namespace Miam
         // Modules
         Presenter* presenter;
         
+        /// \brief For recording how much time has passed since
+        /// the last info was sent to the Presenter
+        double durationSinceLastInfoToPresenter_ms = 0.0;
+        const double presenterRefreshPeriodMin_ms = 100.0;
+        
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
         

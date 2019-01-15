@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.2.1
+  Created with Projucer version: 5.4.1
 
   ------------------------------------------------------------------------------
 
@@ -37,23 +37,35 @@ PlayerBackgroundComponent::PlayerBackgroundComponent ()
     multiCanvasComponent = nullptr; // n'arrivera que + tard dans le code...
     //[/Constructor_pre]
 
-    addAndMakeVisible (mainInfoLabel = new Label ("Main Info label",
-                                                  TRANS("MIEM Spat Player")));
-    mainInfoLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
-    mainInfoLabel->setJustificationType (Justification::centredTop);
+    mainInfoLabel.reset (new Label ("Main Info label",
+                                    TRANS("MIEM Spat Player")));
+    addAndMakeVisible (mainInfoLabel.get());
+    mainInfoLabel->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
+    mainInfoLabel->setJustificationType (Justification::centredLeft);
     mainInfoLabel->setEditable (false, false, false);
     mainInfoLabel->setColour (Label::textColourId, Colour (0xff909090));
     mainInfoLabel->setColour (TextEditor::textColourId, Colours::black);
     mainInfoLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    addAndMakeVisible (mainMenuImageButton = new ImageButton ("Main Menu image button"));
+    mainMenuImageButton.reset (new ImageButton ("Main Menu image button"));
+    addAndMakeVisible (mainMenuImageButton.get());
     mainMenuImageButton->setButtonText (TRANS("new button"));
     mainMenuImageButton->addListener (this);
 
     mainMenuImageButton->setImages (false, true, true,
-                                    ImageCache::getFromMemory (menu_icon_png2, menu_icon_png2Size), 1.000f, Colour (0x00000000),
-                                    Image(), 1.000f, Colour (0x00000000),
-                                    ImageCache::getFromMemory (menu_activated_icon_png2, menu_activated_icon_png2Size), 1.000f, Colour (0x00000000));
+                                    ImageCache::getFromMemory (menu_icon_png2, menu_icon_png2Size), 1.0f, Colour (0x00000000),
+                                    Image(), 1.0f, Colour (0x00000000),
+                                    ImageCache::getFromMemory (menu_activated_icon_png2, menu_activated_icon_png2Size), 1.0f, Colour (0x00000000));
+    mainInfoLabel2.reset (new Label ("Main Info label 2",
+                                     TRANS("[complementary information]")));
+    addAndMakeVisible (mainInfoLabel2.get());
+    mainInfoLabel2->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
+    mainInfoLabel2->setJustificationType (Justification::centredTop);
+    mainInfoLabel2->setEditable (false, false, false);
+    mainInfoLabel2->setColour (Label::textColourId, Colour (0xff909090));
+    mainInfoLabel2->setColour (TextEditor::textColourId, Colours::black);
+    mainInfoLabel2->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
 
     //[UserPreSize]
     addChildComponent(mainMenuComponent = new PlayerMainMenuComponent());
@@ -66,7 +78,7 @@ PlayerBackgroundComponent::PlayerBackgroundComponent ()
 	mainInfoLabelDefaultTextColour = mainInfoLabel->findColour(Label::textColourId);
 	mainInfoLabelDefaultFont = mainInfoLabel->getFont();
     mainInfoLabel->setText(App::GetNameWithVersion(), NotificationType::sendNotification);
-	//[/Constructor]
+    //[/Constructor]
 }
 
 PlayerBackgroundComponent::~PlayerBackgroundComponent()
@@ -76,6 +88,7 @@ PlayerBackgroundComponent::~PlayerBackgroundComponent()
 
     mainInfoLabel = nullptr;
     mainMenuImageButton = nullptr;
+    mainInfoLabel2 = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -99,8 +112,9 @@ void PlayerBackgroundComponent::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    mainInfoLabel->setBounds (8, getHeight() - 20, getWidth() - 54, 20);
+    mainInfoLabel->setBounds (8, getHeight() - 4 - 20, 384, 20);
     mainMenuImageButton->setBounds (getWidth() - 28, getHeight() - 28, 28, 28);
+    mainInfoLabel2->setBounds (400, getHeight() - 4 - 20, getWidth() - 432, 20);
     //[UserResized] Add your own custom resize handling here..
     // Attention : remove from machin retourne le petit morceau découpé seulement !
     auto menusRectangle = getLocalBounds();
@@ -122,7 +136,7 @@ void PlayerBackgroundComponent::buttonClicked (Button* buttonThatWasClicked)
     //[UserbuttonClicked_Pre]
     //[/UserbuttonClicked_Pre]
 
-    if (buttonThatWasClicked == mainMenuImageButton)
+    if (buttonThatWasClicked == mainMenuImageButton.get())
     {
         //[UserButtonCode_mainMenuImageButton] -- add your button handler code here..
         presenter->OnMainMenuButtonClicked();
@@ -163,6 +177,10 @@ void PlayerBackgroundComponent::DisplayInfo(const String& stringToDisplay, bool 
 		mainInfoLabel->setColour(Label::textColourId, Colours::indianred);
 		mainInfoLabel->setFont(boldenedFont);
 	}
+}
+void PlayerBackgroundComponent::DisplayInfo2(const String& stringToDisplay)
+{
+    mainInfoLabel2->setText(stringToDisplay, NotificationType::sendNotification);
 }
 
 void PlayerBackgroundComponent::ChangeAppMode(PlayerAppMode newAppMode)
@@ -227,21 +245,26 @@ BEGIN_JUCER_METADATA
 <JUCER_COMPONENT documentType="Component" className="PlayerBackgroundComponent"
                  componentName="" parentClasses="public Component" constructorParams=""
                  variableInitialisers="" snapPixels="8" snapActive="1" snapShown="1"
-                 overlayOpacity="0.330" fixedSize="0" initialWidth="600" initialHeight="400">
+                 overlayOpacity="0.33" fixedSize="0" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="ff303030"/>
   <LABEL name="Main Info label" id="346700aa23dd510d" memberName="mainInfoLabel"
-         virtualName="" explicitFocusOrder="0" pos="8 0Rr 54M 20" textCol="ff909090"
+         virtualName="" explicitFocusOrder="0" pos="8 4Rr 384 20" textCol="ff909090"
          edTextCol="ff000000" edBkgCol="0" labelText="MIEM Spat Player"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
-         bold="0" italic="0" justification="12"/>
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         italic="0" justification="33"/>
   <IMAGEBUTTON name="Main Menu image button" id="83c438e933714a80" memberName="mainMenuImageButton"
                virtualName="" explicitFocusOrder="0" pos="0Rr 0Rr 28 28" buttonText="new button"
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
-               resourceNormal="menu_icon_png2" opacityNormal="1.00000000000000000000"
-               colourNormal="0" resourceOver="" opacityOver="1.00000000000000000000"
-               colourOver="0" resourceDown="menu_activated_icon_png2" opacityDown="1.00000000000000000000"
-               colourDown="0"/>
+               resourceNormal="menu_icon_png2" opacityNormal="1.0" colourNormal="0"
+               resourceOver="" opacityOver="1.0" colourOver="0" resourceDown="menu_activated_icon_png2"
+               opacityDown="1.0" colourDown="0"/>
+  <LABEL name="Main Info label 2" id="c1d25bb923263634" memberName="mainInfoLabel2"
+         virtualName="" explicitFocusOrder="0" pos="400 4Rr 432M 20" textCol="ff909090"
+         edTextCol="ff000000" edBkgCol="0" labelText="[complementary information]"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         italic="0" justification="12"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

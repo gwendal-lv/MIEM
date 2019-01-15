@@ -36,14 +36,16 @@ namespace Miam
             Reinitialize,
             LoadingComplete,
             
-            Play,
+            Play, ///< Play command
+                Playing, ///< Play information
             Pause,
-            Stop,
+            Stop, ///< Stop command
+                Stopped, ///< Stop information
             
             Activate,
             Volume,
                 Volume_CorrelatedInputs,
-                Volume_DecorrelatedIntputs,
+                Volume_DecorrelatedInputs,
             Frequency,
             Excitement,
             

@@ -215,7 +215,7 @@ namespace Miam
             {
                 if (matrixState->IsIndexWithinActualInputOutputBounds(changesIndexes[i]))
                 {
-                    Index2d index2d = matrixState->GetIndex2dFromIndex(changesIndexes[i]);
+                    Index2d index2d = matrixState->GetMatrix()->GetIndex2dFromIndex(changesIndexes[i]);
                     if (index2d.j == 0)
                         SendParam(index2d.i, (float) (*matrixState)[changesIndexes[i]]);
                 }
@@ -237,7 +237,7 @@ namespace Miam
                 {
                     if (matrixState->IsIndexWithinActualInputOutputBounds(changesIndexes[i]))
                     {
-                        Index2d index2d = matrixState->GetIndex2dFromIndex(changesIndexes[i]);
+                        Index2d index2d = matrixState->GetMatrix()->GetIndex2dFromIndex(changesIndexes[i]);
                         SendMatrixCoeff((int) index2d.i, (int) index2d.j,
                                         (float) (*matrixState)[changesIndexes[i]]);
                     }
@@ -385,7 +385,7 @@ namespace Miam
                 {
                     // Ajout d'un coeff
                     Index2d index2d {(size_t)iToRefresh, (size_t)jToRefresh};
-                    changesIndexes.push_back(matrixState->GetIndexFromIndex2d(index2d));
+                    changesIndexes.push_back(matrixState->GetMatrix()->GetIndexFromIndex2d(index2d));
                     // Actualisation de i,j
                     increment2dRefreshIndex(matrixState);
                 }
@@ -485,7 +485,8 @@ namespace Miam
                 // TOUJOURS DES BUGS ICI
                 // repli par rapport à 116...
                 auto matrixStateIndex = actualChangesIndexes[startIndexPos + i];
-                auto index2d = matrixState->GetIndex2dFromIndex(matrixStateIndex);
+                auto index2d = matrixState->GetMatrix()->GetIndex2dFromIndex(matrixStateIndex);
+                
                 nativeInt = (int32_t)index2d.i;
                 bigEndianInt = boost::endian::native_to_big<int32_t>(nativeInt);
                 oscMemoryBlock.copyFrom(&bigEndianInt,

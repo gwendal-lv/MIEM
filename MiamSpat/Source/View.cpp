@@ -56,8 +56,23 @@ void View::TriggerGLResourcesRelease()
 #endif
 }
 
+
+
 void View::ForceResized()
 {
     mainContentComponent->resized();
 }
 
+void View::OnNewVolumes(double lowCorrVolume, double highCorrVolume)
+{
+    String message = TRANS("Plug-in output volume: ");
+    message += String(TextUtils::GetAmplitude_dB_string_from_Linear(highCorrVolume, 3));
+    message += " dB FS [";
+    message += TRANS("correlated inputs");
+    message += "], ";
+    message += String(TextUtils::GetAmplitude_dB_string_from_Linear(lowCorrVolume, 3));
+    message += " dB FS [";
+    message += TRANS("decorrelated inputs");
+    message += "]";
+    DisplayComplementaryInfo(message);
+}

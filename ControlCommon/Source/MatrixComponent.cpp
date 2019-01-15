@@ -274,7 +274,7 @@ AppPurpose MatrixComponent::getPurpose()
 
 
 
-void MatrixComponent::SetSpatMatrix(std::shared_ptr<ControlMatrix> spatMatrix)
+void MatrixComponent::SetSpatMatrix(std::shared_ptr<ControlMatrix<double>> spatMatrix)
 {
     // Reset to an displayed values in dB for all sliders
     for (size_t i=0 ; i<maxRowsCount ; i++)
@@ -334,7 +334,7 @@ double MatrixComponent::GetSliderValue(int row, int col)
     }
 }
 
-std::shared_ptr<ControlMatrix> MatrixComponent::GetSpatMatrix()
+std::shared_ptr<ControlMatrix<double>> MatrixComponent::GetSpatMatrix()
 {
     /* Normalement : tout ça est maintenant fait au fur et à mesure...
      for (int i=0 ; i<maxRowsCount ; i++)
@@ -352,7 +352,7 @@ std::shared_ptr<ControlMatrix> MatrixComponent::GetSpatMatrix()
      }
      }*/
     // construction optimisée
-    std::shared_ptr<ControlMatrix> returnPtr = std::make_shared<ControlMatrix>(rawDenseMatrix);
+    auto returnPtr = std::make_shared<ControlMatrix<double>>(rawDenseMatrix);
     return returnPtr;
 }
 

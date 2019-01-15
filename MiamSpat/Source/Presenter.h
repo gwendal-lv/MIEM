@@ -54,6 +54,11 @@ namespace Miam {
         GraphicSessionPlayer graphicSessionManager;
         
         
+        // Backups of data from Model
+        double lastLowCorrelationVolume = 0.0;
+        double lastHighCorrelationVolume = 0.0;
+        
+        
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         

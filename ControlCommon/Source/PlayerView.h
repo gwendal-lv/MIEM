@@ -72,6 +72,9 @@ namespace Miam
         /// \param message Short sentence to be written in the upper uneditable text box.
         void DisplayInfo(const String& message, bool isImportant = false);
         
+        /// \brief Displays complementary information
+        void DisplayComplementaryInfo(const String& message);
+        
         virtual void ForceResized() = 0;
         
         

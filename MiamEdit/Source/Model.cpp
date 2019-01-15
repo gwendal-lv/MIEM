@@ -103,7 +103,7 @@ void Model::ConnectAndSendState(std::shared_ptr<ControlState<double>> stateToSen
         std::vector<size_t> allIndexes;
         allIndexes.reserve(castedMatrixState->GetInputsCount());
         for (size_t i=0 ; i<castedMatrixState->GetInputsCount() ; i++)
-            allIndexes.push_back( castedMatrixState->GetIndexFromIndex2d(Index2d(i, 0)) );
+            allIndexes.push_back( castedMatrixState->GetMatrix()->GetIndexFromIndex2d(Index2d(i, 0)) );
         // commande d'envoi
         miamOscSender->SendMatrixParamChanges(castedMatrixState.get(), allIndexes);
     }
@@ -118,7 +118,7 @@ void Model::ConnectAndSendState(std::shared_ptr<ControlState<double>> stateToSen
         allIndexes.reserve(castedMatrixState->GetInputsCount() * castedMatrixState->GetOutputsCount());
         for (size_t i=0 ; i<castedMatrixState->GetInputsCount() ; i++)
             for (size_t j=0 ; j<castedMatrixState->GetOutputsCount() ; j++)
-                allIndexes.push_back(castedMatrixState->GetIndexFromIndex2d(Index2d(i,j)));
+                allIndexes.push_back(castedMatrixState->GetMatrix()->GetIndexFromIndex2d(Index2d(i,j)));
         // commande d'envoi (à tester avec Reaper)
         miamOscSender->SendMatrixCoeffChanges(castedMatrixState.get(), allIndexes);
     }

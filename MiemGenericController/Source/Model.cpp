@@ -22,10 +22,15 @@ presenter(presenter_)
     std::vector<std::string> emptyVector;
     miamOscSender->EnableSendFirstColOnly(true, emptyVector);
     
+    presenter->CompleteInitialisation(this);
+    
     continuousBackgroundBlobMatrixRefresh = false;
     // va fonctionner automatiquement avec les bonnes adresses, puisqu'on a configuré
     // le OSC sender comme il faut
     continuousBackgroundSingleMatrixCoeffRefresh = true;
+    
+    // at the very end of the construction
+    launchUpdateThread();
 }
 
 void Model::SetConfigurationFromTree(bptree::ptree& tree)

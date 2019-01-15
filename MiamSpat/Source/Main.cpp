@@ -110,7 +110,7 @@ public:
 #if defined(__MIAMOBILE)
             setFullScreen(true);
 #else
-            centreWithSize (getWidth(), getHeight());
+            centreWithSize (960, 600); // ratio 16/10
             setResizable(true, true);
 #endif
             setVisible (true);

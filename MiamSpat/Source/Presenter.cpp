@@ -34,7 +34,7 @@ Presenter::Presenter(View* _view) :
     // After all sub-modules are built, the presenter refers itself to the View
     view->CompleteInitialization(this);
     //view->GetMainContentComponent()->resized();
-    
+    view->OnNewVolumes(lastLowCorrelationVolume, lastHighCorrelationVolume);
     
     appModeChangeRequest(PlayerAppMode::Loading);
 }
@@ -57,6 +57,31 @@ void Presenter::Update()
     AsyncParamChange paramChange;
     while (model->TryGetAsyncParamChange(paramChange))
     {
-        std::cout << paramChange.DoubleValue << std::endl;
+        bool wasVolumeUpdated = false;
+        switch(paramChange.Type)
+        {
+            case AsyncParamChange::ParamType::Volume_CorrelatedInputs :
+                lastHighCorrelationVolume = paramChange.DoubleValue;
+                wasVolumeUpdated = true;
+                break;
+            case AsyncParamChange::ParamType::Volume_DecorrelatedInputs :
+                lastLowCorrelationVolume = paramChange.DoubleValue;
+                wasVolumeUpdated = true;
+                break;
+                
+            // Ack : model is actually stopped
+            case AsyncParamChange::ParamType::Stopped :
+                lastLowCorrelationVolume = 0.0;
+                lastHighCorrelationVolume = 0.0;
+                wasVolumeUpdated = true;
+                break;
+            
+            default : break;
+        }
+        
+        if (wasVolumeUpdated)
+            view->OnNewVolumes(lastLowCorrelationVolume, lastHighCorrelationVolume);
     }
 }
+
+

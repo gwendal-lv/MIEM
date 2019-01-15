@@ -32,7 +32,10 @@ void PlayerView::DisplayInfo(const String& message, bool isImportant)
 {
     backgroundComponent->DisplayInfo(message, isImportant);
 }
-
+void PlayerView::DisplayComplementaryInfo(const String& message)
+{
+    backgroundComponent->DisplayInfo2(message);
+}
 
 
 

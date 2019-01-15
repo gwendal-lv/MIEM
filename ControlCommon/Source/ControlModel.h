@@ -69,7 +69,7 @@ namespace Miam
         
         // Rafraîchissements forcés
         int refreshFramesCounter = 0;
-        const int refreshPeriod_frames = 500; // unité = frames
+        const int refreshPeriod_frames = 250; // unité = frames
         bool continuousBackgroundBlobMatrixRefresh = true;
         bool continuousBackgroundSingleMatrixCoeffRefresh = false;
         bool wasSomethingUpdated = false;
