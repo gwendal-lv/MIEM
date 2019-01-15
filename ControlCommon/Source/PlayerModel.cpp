@@ -47,7 +47,7 @@ presenter(presenter_) // own private downcasted pointer
         throw std::runtime_error("First and only StateSender must be a MiamOscSender at the moment");
     
     // Fin d'Initialisation des autres modules
-    //presenter->CompleteInitialisation(this);
+    //presenter->CompleteInitialisation(this); // posait des problèmes....
 }
 
 PlayerModel::~PlayerModel()

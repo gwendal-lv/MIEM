@@ -69,10 +69,9 @@ namespace Miam {
         // - - - - - Contruction and Destruction - - - - -
         // Only constructor
         Presenter(View* _view);
+        void CompleteInitialisation(Model* _model);
         virtual ~Presenter() {}
         
-        /// \brief Might be called several times (clean init sequence from Model....)
-        virtual void CompleteInitialisation(PlayerModel* _model) override;
         
         
         virtual void Update() override;

@@ -79,7 +79,7 @@ namespace Miam
         /// constructed (happens after the construction of this class)
         ///
         /// Finishes self-contruction, and also the construction of sub-modules
-        virtual void CompleteInitialisation(PlayerModel* _model);
+        void CompleteInitialisation(PlayerModel* _model);
         
         void TryLoadFirstSession(std::string commandLine);
         

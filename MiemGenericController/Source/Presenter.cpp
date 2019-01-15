@@ -35,17 +35,13 @@ Presenter::Presenter(View* _view) :
     view->CompleteInitialization(this);
     //view->GetMainContentComponent()->resized();
     
-    
     appModeChangeRequest(PlayerAppMode::Loading);
 }
 
-void Presenter::CompleteInitialisation(PlayerModel* _model)
+void Presenter::CompleteInitialisation(Model* _model)
 {
-    if (auto castedModel = dynamic_cast<Model*>(_model))
-        model = castedModel;
-    else
-        throw std::logic_error("The player model passed as argument must be a real Model, not only a PlayerModel");
-    
+    // - - - Init des attributs privés puis des parents - - -
+    model = _model;
     PlayerPresenter::CompleteInitialisation(_model);
 }
 
@@ -60,10 +56,9 @@ void Presenter::Update()
 {
     // Simple emptying of the lock-free queue
     AsyncParamChange paramChange;
-    while (model->TrySendParamChange(paramChange))
+    while (model->TryGetAsyncParamChange(paramChange))
     {
         // no processing for now....
-        bool test = false;
     }
 }
 

@@ -19,8 +19,13 @@ Model::Model(Presenter* presenter_)
 :
 PlayerModel(presenter_), presenter(presenter_)
 {
-    
     presenter->CompleteInitialisation(this);
+    
+    continuousBackgroundBlobMatrixRefresh = true;
+    continuousBackgroundSingleMatrixCoeffRefresh = false;
+    
+    // at the very end of the construction
+    launchUpdateThread();
 }
 
 
