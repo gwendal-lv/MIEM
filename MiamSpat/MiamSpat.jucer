@@ -8,6 +8,11 @@
               companyEmail="glevaillant@he2b.be" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../ControlCommon/Source/&#10;../../../SpatCommon/Source/"
               defines="__MIEM_VBO">
   <MAINGROUP id="m8VZoU" name="MIEM Spat Player">
+    <GROUP id="{428D1A83-3150-7E91-1BB6-F67209C8E4C9}" name="Resources">
+      <FILE id="LnMegQ" name="newFontImg.png" compile="0" resource="1" file="../MiamCommon/Resources/newFontImg.png"/>
+      <FILE id="ok0lDM" name="Spat_macOS_1024at1.png" compile="0" resource="1"
+            file="../Resources_LFS/Icones_Logos/Exports/Spat_macOS_1024at1.png"/>
+    </GROUP>
     <GROUP id="{D93792BB-5B8B-5A35-D554-58C4F4E4D3DA}" name="Source">
       <FILE id="oaxiVA" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="TCTcR0" name="MainComponent.cpp" compile="1" resource="0"
@@ -216,7 +221,6 @@
               file="../MiamCommon/Source/MultiSceneCanvasInteractor.h"/>
       </GROUP>
       <GROUP id="{81FB02AB-9CF8-2FEF-77B6-9D5049B0BC47}" name="View">
-        <FILE id="LnMegQ" name="newFontImg.png" compile="0" resource="1" file="../MiamCommon/Resources/newFontImg.png"/>
         <FILE id="HmQmZg" name="OpenGLFontManager.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/OpenGLFontManager.cpp"/>
         <FILE id="ja5YLt" name="OpenGLFontManager.h" compile="0" resource="0"
@@ -305,11 +309,12 @@
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
-    <XCODE_MAC targetFolder="Builds/MacOSX" extraCompilerFlags="-Wno-comma">
+    <XCODE_MAC targetFolder="Builds/MacOSX" extraCompilerFlags="-Wno-comma"
+               bigIcon="ok0lDM">
       <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MiemSpatPlayer"
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MIEM Spat Player"
                        defines="__MIAM_DEBUG&#10;__MIEM_DEBUG_TRACE__DISABLED" enablePluginBinaryCopyStep="1"/>
-        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MiemSpatPlayer"
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MIEM Spat Player"
                        enablePluginBinaryCopyStep="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
