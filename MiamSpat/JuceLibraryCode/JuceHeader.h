@@ -40,7 +40,7 @@
 #if ! JUCE_DONT_DECLARE_PROJECTINFO
 namespace ProjectInfo
 {
-    const char* const  projectName    = "MIEM Spat Player";
+    const char* const  projectName    = "MIEM Spat";
     const char* const  companyName    = "IRISIB/LARAS, UMons";
     const char* const  versionString  = "0.2.6";
     const int          versionNumber  = 0x206;

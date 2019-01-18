@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="xCUiGi" name="MIEM Spat Player" projectType="guiapp" version="0.2.6"
+<JUCERPROJECT id="xCUiGi" name="MIEM Spat" projectType="guiapp" version="0.2.6"
               bundleIdentifier="com.glv.MIEMSpatPlayer" includeBinaryInAppConfig="1"
               jucerVersion="5.4.1" displaySplashScreen="0" reportAppUsage="0"
               splashScreenColour="Dark" cppLanguageStandard="11" companyCopyright="Gwendal Le Vaillant (IRISIB/LARAS, UMons)"
               companyName="IRISIB/LARAS, UMons" companyWebsite="htpp://laras.be"
               companyEmail="glevaillant@he2b.be" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../ControlCommon/Source/&#10;../../../SpatCommon/Source/"
               defines="__MIEM_VBO">
-  <MAINGROUP id="m8VZoU" name="MIEM Spat Player">
+  <MAINGROUP id="m8VZoU" name="MIEM Spat">
     <GROUP id="{D93792BB-5B8B-5A35-D554-58C4F4E4D3DA}" name="Source">
       <FILE id="oaxiVA" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="TCTcR0" name="MainComponent.cpp" compile="1" resource="0"
@@ -304,6 +304,8 @@
     </GROUP>
     <GROUP id="{428D1A83-3150-7E91-1BB6-F67209C8E4C9}" name="Resources">
       <FILE id="LnMegQ" name="newFontImg.png" compile="0" resource="1" file="../MiamCommon/Resources/newFontImg.png"/>
+      <FILE id="KocCMm" name="Spat_iOS_1024at1.png" compile="0" resource="1"
+            file="../Resources_LFS/Icones_Logos/Exports/Spat_iOS_1024at1.png"/>
       <FILE id="ok0lDM" name="Spat_macOS_1024at1.png" compile="0" resource="1"
             file="../Resources_LFS/Icones_Logos/Exports/Spat_macOS_1024at1.png"/>
       <FILE id="ERp87z" name="Spat_Windows_1024at1.png" compile="0" resource="1"
@@ -391,10 +393,12 @@
     </VS2017>
     <XCODE_IPHONE targetFolder="Builds/iOS" extraDefs="__MIAMOBILE" extraCompilerFlags="-Wno-comma"
                   customPList="&lt;plist&gt;&#10;&#9;&lt;dict&gt;&#10;&#9;&#9;&lt;key&gt;CFBundleDocumentTypes&lt;/key&gt;&#10;&#9;&#9;&lt;array&gt;&#10;&#9;&#9;&#9;&lt;dict&gt;&#10;&#9;&#9;&#9;&#9;&lt;key&gt;CFBundleTypeIconFiles&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&lt;array/&gt;&#10;&#9;&#9;&#9;&#9;&lt;key&gt;CFBundleTypeName&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&lt;string&gt;MIEM Spatialisation Session&lt;/string&gt;&#10;&#9;&#9;&#9;&#9;&lt;key&gt;CFBundleTypeRole&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&lt;string&gt;Editor&lt;/string&gt;&#10;&#9;&#9;&#9;&#9;&lt;key&gt;LSHandlerRank&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&lt;string&gt;Owner&lt;/string&gt;&#10;&#9;&#9;&#9;&#9;&lt;key&gt;LSItemContentTypes&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&lt;array&gt;&#10;&#9;&#9;&#9;&#9;&#9;&lt;string&gt;com.glv.MIEMSpatPlayer.mspat&lt;/string&gt;&#10;&#9;&#9;&#9;&#9;&lt;/array&gt;&#10;&#9;&#9;&#9;&lt;/dict&gt;&#10;&#9;&#9;&lt;/array&gt;&#10;&#9;&#10;&#10;&#9;&#9;&lt;key&gt;UTExportedTypeDeclarations&lt;/key&gt;&#10;&#9;&#9;&lt;array&gt;&#10;&#9;&#9;&#9;&lt;dict&gt;&#10;&#9;&#9;&#9;&#9;&lt;key&gt;UTTypeConformsTo&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&lt;array&gt;&#10;&#9;&#9;&#9;&#9;&#9;&lt;string&gt;public.data&lt;/string&gt;&#10;&#9;&#9;&#9;&#9;&#9;&lt;string&gt;public.content&lt;/string&gt;&#10;&#9;&#9;&#9;&#9;&#9;&lt;string&gt;public.xml&lt;/string&gt;&#10;&#9;&#9;&#9;&#9;&lt;/array&gt;&#10;&#9;&#9;&#9;&#9;&lt;key&gt;UTTypeDescription&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&lt;string&gt;MIEM Spatialisation Session&lt;/string&gt;&#10;&#9;&#9;&#9;&#9;&lt;key&gt;UTTypeIconFiles&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&lt;array/&gt;&#10;&#9;&#9;&#9;&#9;&lt;key&gt;UTTypeIdentifier&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&lt;string&gt;com.glv.MIEMSpatPlayer.mspat&lt;/string&gt;&#10;&#9;&#9;&#9;&#9;&lt;key&gt;UTTypeTagSpecification&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&lt;dict&gt;&#10;&#9;&#9;&#9;&#9;&#9;&lt;key&gt;public.filename-extension&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&#9;&lt;array&gt;&#10;&#9;&#9;&#9;&#9;&#9;&#9;&lt;string&gt;mspat&lt;/string&gt;&#10;&#9;&#9;&#9;&#9;&#9;&lt;/array&gt;&#10;&#9;&#9;&#9;&#9;&lt;/dict&gt;&#10;&#9;&#9;&#9;&lt;/dict&gt;&#10;&#9;&#9;&lt;/array&gt;&#10;&#9;&lt;/dict&gt;&#10;&lt;/plist&gt;&#10;"
-                  UISupportsDocumentBrowser="1" iCloudPermissions="1" iosDevelopmentTeamID="JU6GKA4Z3B">
+                  UISupportsDocumentBrowser="1" iCloudPermissions="1" iosDevelopmentTeamID="JU6GKA4Z3B"
+                  bigIcon="KocCMm">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" defines="__MIAM_DEBUG&#10;__MIEM_DEBUG_TRACE__DISABLED"/>
-        <CONFIGURATION isDebug="0" name="Release"/>
+        <CONFIGURATION isDebug="1" name="Debug" defines="__MIAM_DEBUG&#10;__MIEM_DEBUG_TRACE__DISABLED"
+                       targetName="MIEM Spat"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="MIEM Spat"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_video"/>
