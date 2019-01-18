@@ -82,7 +82,7 @@ namespace Miam
         
         /// \brief Called with the next index to select, and directly with the current
         /// matrix (that must be saved to the state to be unselected)
-        void OnSpatStateSelectedById(std::shared_ptr<ControlMatrix> currentMatrix, int _spatStateId);
+        void OnSpatStateSelectedById(std::shared_ptr<ControlMatrix<double>> currentMatrix, int _spatStateId);
         /// \brief Called when the displayed text of the combo box has been edited
         void OnRenameState(std::string newName, int stateIndex);
         void OnAddState();
@@ -113,7 +113,7 @@ namespace Miam
         // fait toutes les mises à jour, transfert des données graphiques à l'écran vers le modèle
         void sendCurrentDataToModel();
         // Met à jour uniquement la mat passée en paramètre
-        void sendMatrixDataToModel(std::shared_ptr<ControlMatrix> currentMatrix);
+        void sendMatrixDataToModel(std::shared_ptr<ControlMatrix<double>> currentMatrix);
         
         // - - - - - Settings Management - - - - -
         public :

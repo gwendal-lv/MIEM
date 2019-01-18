@@ -59,7 +59,7 @@ void SpatStatesEditionManager::selectSpatState(std::shared_ptr<ControlState<doub
     
     // Graphical updates : info label (links count)
     std::string infoText = getLinkedAreasInfo();
-    std::shared_ptr<ControlMatrix> matrixToSend = std::make_shared<ControlMatrix>(); // initially full of zeros
+    auto matrixToSend = std::make_shared<ControlMatrix<double>>(); // initially full of zeros
     int stateIndexToSend = -1;
     if (selectedSpatState)
     {
@@ -112,7 +112,7 @@ void SpatStatesEditionManager::OnInOutNamesDisplayedChanged(bool areInputNamesVi
 
 // = = = = = = = = = = EVENTS from VIEW = = = = = = = = = =
 
-void SpatStatesEditionManager::OnSpatStateSelectedById(std::shared_ptr<ControlMatrix> currentMatrix, int _spatStateId)
+void SpatStatesEditionManager::OnSpatStateSelectedById(std::shared_ptr<ControlMatrix<double>> currentMatrix, int _spatStateId)
 {
     // All data save within Model if necessary
     sendCurrentDataToModel();
@@ -354,7 +354,7 @@ void SpatStatesEditionManager::sendCurrentDataToModel()
     auto channelsNameCopy = editionComponent->GetLabelledMatrix()->GetChannelsName();
     spatInterpolator->SetInOutChannelsName(channelsNameCopy);
 }
-void SpatStatesEditionManager::sendMatrixDataToModel(std::shared_ptr<ControlMatrix> currentMatrix)
+void SpatStatesEditionManager::sendMatrixDataToModel(std::shared_ptr<ControlMatrix<double>> currentMatrix)
 {
     if (selectedSpatState) // if exists
     {

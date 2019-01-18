@@ -552,7 +552,7 @@ void SpatStatesEditionComponent::OnMatrixZeroed()
 }
 
 
-void SpatStatesEditionComponent::SelectAndUpdateState(int stateIndex, std::string infoText, std::shared_ptr<ControlMatrix> newSpatMatrix, const Colour& stateColour)
+void SpatStatesEditionComponent::SelectAndUpdateState(int stateIndex, std::string infoText, std::shared_ptr<ControlMatrix<double>> newSpatMatrix, const Colour& stateColour)
 {
     // We keep here this copy of the model internal matrix
     spatMatrix = newSpatMatrix;
@@ -609,7 +609,7 @@ void SpatStatesEditionComponent::updateMatrix()
     if (spatMatrix) // may not exist if no state is selected
         labelledMatrixComponent->GetMatrixComponent()->SetSpatMatrix(spatMatrix);
     else // forced null matrix update
-        labelledMatrixComponent->GetMatrixComponent()->SetSpatMatrix(std::make_shared<ControlMatrix>());
+        labelledMatrixComponent->GetMatrixComponent()->SetSpatMatrix(std::make_shared<ControlMatrix<double>>());
 
     // Graphical attributes
     // if a valid state is selected
@@ -662,7 +662,7 @@ void SpatStatesEditionComponent::SetInOutNamesDisplayed(bool areInputNamesVisibl
     labelledMatrixComponent->SetInputNamesVisible(areInputNamesVisible);
     labelledMatrixComponent->SetOutputNamesVisible(areOutputNamesVisible);
 }
-std::shared_ptr<ControlMatrix> SpatStatesEditionComponent::GetDisplayedSpatMatrix()
+std::shared_ptr<ControlMatrix<double>> SpatStatesEditionComponent::GetDisplayedSpatMatrix()
 {
     return labelledMatrixComponent->GetMatrixComponent()->GetSpatMatrix();
 }

@@ -161,7 +161,6 @@
               file="../MiamCommon/Source/OpenGLFontManager.cpp"/>
         <FILE id="YeQtvI" name="OpenGLFontManager.h" compile="0" resource="0"
               file="../MiamCommon/Source/OpenGLFontManager.h"/>
-        <FILE id="MmYhzl" name="newFontImg.png" compile="0" resource="1" file="../MiamCommon/Resources/newFontImg.png"/>
         <FILE id="VvKbFj" name="OpenGLTextObject.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/OpenGLTextObject.cpp"/>
         <FILE id="FrsKEC" name="OpenGLTextObject.h" compile="0" resource="0"
@@ -326,9 +325,17 @@
         <FILE id="bBqK2U" name="FileMenu.h" compile="0" resource="0" file="../SpatCommon/Source/FileMenu.h"/>
       </GROUP>
     </GROUP>
+    <GROUP id="{BD039487-94EB-EAE0-D8D0-287C1D444079}" name="Resources">
+      <FILE id="qjdykE" name="Editor_macOS_1024at.png" compile="0" resource="1"
+            file="../Resources_LFS/Icones_Logos/Exports/Editor_macOS_1024at.png"/>
+      <FILE id="p0i6kC" name="Editor_Windows_1024at1.png" compile="0" resource="1"
+            file="../Resources_LFS/Icones_Logos/Exports/Editor_Windows_1024at1.png"/>
+      <FILE id="MmYhzl" name="newFontImg.png" compile="0" resource="1" file="../MiamCommon/Resources/newFontImg.png"/>
+    </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
-    <XCODE_MAC targetFolder="Builds/MacOSX" extraCompilerFlags="-Wno-comma">
+    <XCODE_MAC targetFolder="Builds/MacOSX" extraCompilerFlags="-Wno-comma"
+               bigIcon="qjdykE">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MiemEditor"
                        headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../MiamCommon/Source/"
@@ -355,7 +362,8 @@
         <MODULEPATH id="juce_osc" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
-    <VS2017 targetFolder="Builds/VisualStudio2017" extraDefs="BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE">
+    <VS2017 targetFolder="Builds/VisualStudio2017" extraDefs="BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE"
+            bigIcon="p0i6kC">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" defines="__MIAM_DEBUG"/>
         <CONFIGURATION isDebug="0" name="Release" defines="BOOST_UBLAS_NDEBUG&#10;NDEBUG"/>

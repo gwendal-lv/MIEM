@@ -8,11 +8,17 @@
 
 namespace BinaryData
 {
+    extern const char*   Editor_macOS_1024at_png;
+    const int            Editor_macOS_1024at_pngSize = 773650;
+
+    extern const char*   Editor_Windows_1024at1_png;
+    const int            Editor_Windows_1024at1_pngSize = 674937;
+
     extern const char*   newFontImg_png;
     const int            newFontImg_pngSize = 104267;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
-    const int namedResourceListSize = 1;
+    const int namedResourceListSize = 3;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];

@@ -91,7 +91,7 @@ public:
     void UpdateStatesList(std::vector< std::shared_ptr<ControlState<double>> > &newSpatStates);
 
     /// \brief When a new state is selected (order from the Presenter only)
-    void SelectAndUpdateState(int stateIndex, std::string infoText, std::shared_ptr<ControlMatrix> newSpatMatrix, const Colour& stateColour);
+    void SelectAndUpdateState(int stateIndex, std::string infoText, std::shared_ptr<ControlMatrix<double>> newSpatMatrix, const Colour& stateColour);
 
     /// \brief Updates the links label
     void UpdateLinksLabel(const std::string& infoText);
@@ -116,7 +116,7 @@ public:
 
     void SetAreaColourValue(juce::Colour colour);
 
-    std::shared_ptr<ControlMatrix> GetDisplayedSpatMatrix();
+    std::shared_ptr<ControlMatrix<double>> GetDisplayedSpatMatrix();
     LabelledMatrixComponent* GetLabelledMatrix() { return labelledMatrixComponent.get(); }
 
     void AllowKeyboardEdition(bool allow);
@@ -143,7 +143,7 @@ private:
     int inputsCount = 0;
     int outputsCount = 0;
     // The last matrix coming from the Model
-    std::shared_ptr<ControlMatrix> spatMatrix;
+    std::shared_ptr<ControlMatrix<double>> spatMatrix;
 
     String spatStatesListText;
     String spatStateEditorText;
