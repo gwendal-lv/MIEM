@@ -3,7 +3,7 @@
 /Profilage
 
 # Folders to put at some point in a GIT LFS cloud storage (possible on BitBucket)
-/Resources_LFS
+# /Resources_LFS --> now actually followed by GIT LFS
 
 # Chaque utilisateur du dépôt devra créer ses propres projets à partir du ProJucer ! On verra bien...
 Builds
