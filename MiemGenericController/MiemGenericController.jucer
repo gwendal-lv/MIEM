@@ -208,7 +208,6 @@
               file="../MiamCommon/Source/OpenGLFontManager.cpp"/>
         <FILE id="rb9he4" name="OpenGLFontManager.h" compile="0" resource="0"
               file="../MiamCommon/Source/OpenGLFontManager.h"/>
-        <FILE id="ByHs9p" name="newFontImg.png" compile="0" resource="1" file="../MiamCommon/Resources/newFontImg.png"/>
         <FILE id="oKZGII" name="OpenGLTextObject.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/OpenGLTextObject.cpp"/>
         <FILE id="Md2bol" name="OpenGLTextObject.h" compile="0" resource="0"
@@ -290,9 +289,19 @@
         <FILE id="hMBcir" name="XmlUtils.h" compile="0" resource="0" file="../MiamCommon/Source/XmlUtils.h"/>
       </GROUP>
     </GROUP>
+    <GROUP id="{FC4D1C95-6CD1-1CB6-980B-4E5B96D1BFA4}" name="Resources">
+      <FILE id="XzfEpj" name="GenCon_iOS_1024at1.png" compile="0" resource="1"
+            file="../Resources_LFS/Icones_Logos/Exports/GenCon_iOS_1024at1.png"/>
+      <FILE id="Jn8chF" name="GenCon_macOS_1024at1.png" compile="0" resource="1"
+            file="../Resources_LFS/Icones_Logos/Exports/GenCon_macOS_1024at1.png"/>
+      <FILE id="Dlskvp" name="GenCon_Windows_1024at1.png" compile="0" resource="1"
+            file="../Resources_LFS/Icones_Logos/Exports/GenCon_Windows_1024at1.png"/>
+      <FILE id="ByHs9p" name="newFontImg.png" compile="0" resource="1" file="../MiamCommon/Resources/newFontImg.png"/>
+    </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
-    <XCODE_MAC targetFolder="Builds/MacOSX" extraCompilerFlags="-Wno-comma">
+    <XCODE_MAC targetFolder="Builds/MacOSX" extraCompilerFlags="-Wno-comma"
+               bigIcon="Jn8chF">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" defines="__MIAM_DEBUG"/>
         <CONFIGURATION isDebug="0" name="Release"/>
@@ -362,29 +371,8 @@
         <MODULEPATH id="juce_osc" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </ANDROIDSTUDIO>
-    <VS2015 targetFolder="Builds/VisualStudio2015">
-      <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" defines="__MIAM_DEBUG"/>
-        <CONFIGURATION isDebug="0" name="Release"/>
-      </CONFIGURATIONS>
-      <MODULEPATHS>
-        <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_events" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_graphics" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_data_structures" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_cryptography" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_video" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_opengl" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_basics" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_devices" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_osc" path="../../JUCE/modules"/>
-      </MODULEPATHS>
-    </VS2015>
-    <VS2017 targetFolder="Builds/VisualStudio2017" extraDefs="BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE">
+    <VS2017 targetFolder="Builds/VisualStudio2017" extraDefs="BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE"
+            bigIcon="Dlskvp">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" defines="__MIAM_DEBUG"/>
         <CONFIGURATION isDebug="0" name="Release"/>

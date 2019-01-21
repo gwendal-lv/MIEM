@@ -43,6 +43,8 @@ void View::CompleteInitialization(Presenter* _presenter)
 void View::CompleteInitialization(GraphicSessionPlayer* /*_graphicSessionManager*/, MultiCanvasComponent* _multiCanvasComponent)
 {
     mainContentComponent->CompleteInitialization(_multiCanvasComponent);
+    
+    DisplayComplementaryInfo("");
 }
 
 
