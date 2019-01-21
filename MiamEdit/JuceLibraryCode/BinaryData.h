@@ -12,7 +12,7 @@ namespace BinaryData
     const int            Editor_macOS_1024at_pngSize = 773650;
 
     extern const char*   Editor_Windows_1024at1_png;
-    const int            Editor_Windows_1024at1_pngSize = 674937;
+    const int            Editor_Windows_1024at1_pngSize = 872686;
 
     extern const char*   newFontImg_png;
     const int            newFontImg_pngSize = 104267;

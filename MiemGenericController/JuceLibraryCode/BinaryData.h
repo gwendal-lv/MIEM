@@ -15,7 +15,7 @@ namespace BinaryData
     const int            GenCon_macOS_1024at1_pngSize = 772846;
 
     extern const char*   GenCon_Windows_1024at1_png;
-    const int            GenCon_Windows_1024at1_pngSize = 651001;
+    const int            GenCon_Windows_1024at1_pngSize = 111829;
 
     extern const char*   newFontImg_png;
     const int            newFontImg_pngSize = 104267;

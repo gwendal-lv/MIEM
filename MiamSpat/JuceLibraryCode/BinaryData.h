@@ -18,7 +18,7 @@ namespace BinaryData
     const int            Spat_macOS_1024at1_pngSize = 902646;
 
     extern const char*   Spat_Windows_1024at1_png;
-    const int            Spat_Windows_1024at1_pngSize = 820345;
+    const int            Spat_Windows_1024at1_pngSize = 106162;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
     const int namedResourceListSize = 4;
