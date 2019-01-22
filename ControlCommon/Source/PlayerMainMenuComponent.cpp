@@ -81,6 +81,37 @@ PlayerMainMenuComponent::PlayerMainMenuComponent ()
                                    ImageCache::getFromMemory (stopOn_png, stopOn_pngSize), 1.0f, Colour (0x00000000),
                                    Image(), 1.0f, Colour (0x00000000),
                                    Image(), 1.0f, Colour (0x00000000));
+    helpGroupComponent.reset (new GroupComponent ("Help group component",
+                                                  TRANS("Help")));
+    addAndMakeVisible (helpGroupComponent.get());
+    helpGroupComponent->setColour (GroupComponent::outlineColourId, Colour (0xff909090));
+    helpGroupComponent->setColour (GroupComponent::textColourId, Colour (0xff909090));
+
+    helpButton.reset (new TextButton ("Help button"));
+    addAndMakeVisible (helpButton.get());
+    helpButton->setButtonText (TRANS("Show help"));
+    helpButton->addListener (this);
+    helpButton->setColour (TextButton::buttonColourId, Colour (0xff404040));
+
+    infoTextEditor.reset (new TextEditor ("Info text editor"));
+    addAndMakeVisible (infoTextEditor.get());
+    infoTextEditor->setMultiLine (true);
+    infoTextEditor->setReturnKeyStartsNewLine (true);
+    infoTextEditor->setReadOnly (true);
+    infoTextEditor->setScrollbarsShown (true);
+    infoTextEditor->setCaretVisible (false);
+    infoTextEditor->setPopupMenuEnabled (false);
+    infoTextEditor->setColour (TextEditor::textColourId, Colours::white);
+    infoTextEditor->setColour (TextEditor::backgroundColourId, Colour (0x00ffffff));
+    infoTextEditor->setText (TRANS("Multi\n"
+    "L\n"
+    "I\n"
+    "N\n"
+    "E\n"
+    "and scrollable information textbox for help contents"));
+
+    infoTextEditor->setBounds (24, 120, 576, 256);
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -108,6 +139,9 @@ PlayerMainMenuComponent::~PlayerMainMenuComponent()
     playingImageButton = nullptr;
     stopImageButton = nullptr;
     stoppedImageButton = nullptr;
+    helpGroupComponent = nullptr;
+    helpButton = nullptr;
+    infoTextEditor = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -131,12 +165,14 @@ void PlayerMainMenuComponent::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    sessionGroupComponent->setBounds (8, 8, getWidth() - 16, 56);
+    sessionGroupComponent->setBounds ((getWidth() / 2) - ((getWidth() - 16) / 2), 8, getWidth() - 16, 56);
     loadFromFileButton->setBounds ((getWidth() / 2) - (200 / 2), 8 + 16, 200, 24);
-    playImageButton->setBounds ((getWidth() / 2) + -72, (getHeight() / 2) + -3, 62, 62);
-    playingImageButton->setBounds ((getWidth() / 2) + -10 - 62, (getHeight() / 2) + -3, 62, 62);
-    stopImageButton->setBounds ((getWidth() / 2) + 16, (getHeight() / 2) + -3, 62, 62);
-    stoppedImageButton->setBounds ((getWidth() / 2) + 16, (getHeight() / 2) + -3, 62, 62);
+    playImageButton->setBounds ((getWidth() / 2) + -72, getHeight() - 120, 62, 62);
+    playingImageButton->setBounds ((getWidth() / 2) + -10 - 62, getHeight() - 120, 62, 62);
+    stopImageButton->setBounds ((getWidth() / 2) + 16, getHeight() - 120, 62, 62);
+    stoppedImageButton->setBounds ((getWidth() / 2) + 16, getHeight() - 120, 62, 62);
+    helpGroupComponent->setBounds ((getWidth() / 2) - ((getWidth() - 16) / 2), 72, getWidth() - 16, getHeight() - 280);
+    helpButton->setBounds (((getWidth() / 2) - ((getWidth() - 16) / 2)) + (getWidth() - 16) / 2 - (200 / 2), 72 + 16, 200, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -173,6 +209,11 @@ void PlayerMainMenuComponent::buttonClicked (Button* buttonThatWasClicked)
     {
         //[UserButtonCode_stoppedImageButton] -- add your button handler code here..
         //[/UserButtonCode_stoppedImageButton]
+    }
+    else if (buttonThatWasClicked == helpButton.get())
+    {
+        //[UserButtonCode_helpButton] -- add your button handler code here..
+        //[/UserButtonCode_helpButton]
     }
 
     //[UserbuttonClicked_Post]
@@ -254,36 +295,48 @@ BEGIN_JUCER_METADATA
                  overlayOpacity="0.33" fixedSize="0" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="51000000"/>
   <GROUPCOMPONENT name="Session group component" id="ee702f61e13ff830" memberName="sessionGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="8 8 16M 56" outlinecol="ff909090"
+                  virtualName="" explicitFocusOrder="0" pos="0.5Cc 8 16M 56" outlinecol="ff909090"
                   textcol="ff909090" title="Session"/>
   <TEXTBUTTON name="Load From File text button" id="2fe2a2c362ae91bd" memberName="loadFromFileButton"
               virtualName="" explicitFocusOrder="0" pos="0Cc 16 200 24" posRelativeY="ee702f61e13ff830"
               bgColOff="ff404040" buttonText="Load from .mspat file" connectedEdges="0"
               needsCallback="1" radioGroupId="0"/>
   <IMAGEBUTTON name="Play image button" id="823680c6dd0a5a2e" memberName="playImageButton"
-               virtualName="" explicitFocusOrder="0" pos="-72C -3C 62 62" buttonText="new button"
+               virtualName="" explicitFocusOrder="0" pos="-72C 120R 62 62" buttonText="new button"
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
                resourceNormal="play_png" opacityNormal="1.0" colourNormal="0"
                resourceOver="" opacityOver="0.60000002384185791016" colourOver="0"
                resourceDown="" opacityDown="1.0" colourDown="0"/>
   <IMAGEBUTTON name="Playing image button" id="26f63b20519a1739" memberName="playingImageButton"
-               virtualName="" explicitFocusOrder="0" pos="-10Cr -3C 62 62" buttonText="new button"
-               connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
-               resourceNormal="playOn_png2" opacityNormal="1.0" colourNormal="0"
-               resourceOver="" opacityOver="1.0" colourOver="0" resourceDown=""
-               opacityDown="1.0" colourDown="0"/>
+               virtualName="" explicitFocusOrder="0" pos="-10Cr 120R 62 62"
+               buttonText="new button" connectedEdges="0" needsCallback="1"
+               radioGroupId="0" keepProportions="1" resourceNormal="playOn_png2"
+               opacityNormal="1.0" colourNormal="0" resourceOver="" opacityOver="1.0"
+               colourOver="0" resourceDown="" opacityDown="1.0" colourDown="0"/>
   <IMAGEBUTTON name="Stop image button" id="9385dfb43a053dc6" memberName="stopImageButton"
-               virtualName="" explicitFocusOrder="0" pos="16C -3C 62 62" buttonText="new button"
+               virtualName="" explicitFocusOrder="0" pos="16C 120R 62 62" buttonText="new button"
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
                resourceNormal="stop_png" opacityNormal="1.0" colourNormal="0"
                resourceOver="" opacityOver="0.60000002384185791016" colourOver="0"
                resourceDown="" opacityDown="1.0" colourDown="0"/>
   <IMAGEBUTTON name="Stopped image button" id="1b06a982c2d60ddc" memberName="stoppedImageButton"
-               virtualName="" explicitFocusOrder="0" pos="16C -3C 62 62" buttonText="new button"
+               virtualName="" explicitFocusOrder="0" pos="16C 120R 62 62" buttonText="new button"
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
                resourceNormal="stopOn_png" opacityNormal="1.0" colourNormal="0"
                resourceOver="" opacityOver="1.0" colourOver="0" resourceDown=""
                opacityDown="1.0" colourDown="0"/>
+  <GROUPCOMPONENT name="Help group component" id="5beff948b653aff1" memberName="helpGroupComponent"
+                  virtualName="" explicitFocusOrder="0" pos="0.5Cc 72 16M 280M"
+                  outlinecol="ff909090" textcol="ff909090" title="Help"/>
+  <TEXTBUTTON name="Help button" id="87051e2f861a82a1" memberName="helpButton"
+              virtualName="" explicitFocusOrder="0" pos="0Cc 16 200 24" posRelativeX="5beff948b653aff1"
+              posRelativeY="5beff948b653aff1" bgColOff="ff404040" buttonText="Show help"
+              connectedEdges="0" needsCallback="1" radioGroupId="0"/>
+  <TEXTEDITOR name="Info text editor" id="a4539a25a9aebf1" memberName="infoTextEditor"
+              virtualName="" explicitFocusOrder="0" pos="24 120 576 256" posRelativeY="97c294b92cbc0a85"
+              textcol="ffffffff" bkgcol="ffffff" initialText="Multi&#10;L&#10;I&#10;N&#10;E&#10;and scrollable information textbox for help contents"
+              multiline="1" retKeyStartsLine="1" readonly="1" scrollbars="1"
+              caret="0" popupmenu="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

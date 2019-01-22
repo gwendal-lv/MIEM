@@ -301,7 +301,7 @@
   </MAINGROUP>
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX" extraCompilerFlags="-Wno-comma"
-               bigIcon="Jn8chF">
+               bigIcon="Jn8chF" iosDevelopmentTeamID="ZYQ9N85U6C">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" defines="__MIAM_DEBUG"/>
         <CONFIGURATION isDebug="0" name="Release"/>

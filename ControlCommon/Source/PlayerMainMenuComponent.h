@@ -89,6 +89,9 @@ private:
     std::unique_ptr<ImageButton> playingImageButton;
     std::unique_ptr<ImageButton> stopImageButton;
     std::unique_ptr<ImageButton> stoppedImageButton;
+    std::unique_ptr<GroupComponent> helpGroupComponent;
+    std::unique_ptr<TextButton> helpButton;
+    std::unique_ptr<TextEditor> infoTextEditor;
 
 
     //==============================================================================
