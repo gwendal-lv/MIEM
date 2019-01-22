@@ -43,7 +43,8 @@ namespace Miam
                                    bool isMouseOverButton, bool isButtonDown) override;
         
         // - - - - - - - - - - Méthodes spécifiques aux Text Editors - - - - - - - - - -
-        void fillTextEditorBackground (Graphics &, int width, int height, TextEditor &) override;
+        virtual void fillTextEditorBackground (Graphics &, int width, int height, TextEditor &) override;
+        virtual void drawTextEditorOutline (Graphics &, int width, int height, TextEditor &) override;
         
         
         // - - - - - - - - - - Méthodes spécifiques aux Tooltips - - - - - - - - - -

@@ -25,6 +25,8 @@
 #include "PlayerAppMode.h"
 #include "PlayerPresenter.h"
 
+#include "MiamLookAndFeel.h"
+
 namespace Miam {
 //[/Headers]
 
@@ -54,6 +56,11 @@ public:
     /// \brief Pour l'instant, fait simplement clignoter le bouton play
     void PrepareToPlay(int delayBeforeActualPlay_ms);
     bool IsPreparingToPlay() { return isPreparingToPlay; }
+
+    void SetIsHelpDisplayed(bool _displayHelp);
+    bool GetIsHelpDisplayed() const {return displayHelp;}
+    void SetHelpString(const String& helpString);
+
     //[/UserMethods]
 
     void paint (Graphics& g) override;
@@ -80,6 +87,9 @@ private:
     PlayerPresenter* presenter;
 
     bool isPreparingToPlay = false;
+
+    bool displayHelp = true;
+    std::unique_ptr<MiamLookAndFeel> transparentLookAndFeel;
     //[/UserVariables]
 
     //==============================================================================
@@ -92,6 +102,7 @@ private:
     std::unique_ptr<GroupComponent> helpGroupComponent;
     std::unique_ptr<TextButton> helpButton;
     std::unique_ptr<TextEditor> infoTextEditor;
+    std::unique_ptr<HyperlinkButton> miemProjectHyperlinkButton;
 
 
     //==============================================================================

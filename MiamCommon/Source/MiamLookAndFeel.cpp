@@ -75,6 +75,14 @@ void MiamLookAndFeel::fillTextEditorBackground (Graphics & g, int /*width*/, int
     
     g.fillRect(textEditorArea);
 }
+void MiamLookAndFeel::drawTextEditorOutline(Graphics & g, int width, int height, TextEditor & textEditor)
+{
+    // Normal draw if background is not transparent
+    if (! transparentTextBoxBackground)
+        LookAndFeel_V4::drawTextEditorOutline(g, width, height, textEditor);
+    else // else, we don't draw any contour
+        return;
+}
 
 
 

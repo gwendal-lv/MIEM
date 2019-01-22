@@ -31,6 +31,7 @@ using namespace Miam;
 PlayerMainMenuComponent::PlayerMainMenuComponent ()
 {
     //[Constructor_pre] You can add your own custom stuff here..
+    transparentLookAndFeel.reset( new MiamLookAndFeel(true) );
     //[/Constructor_pre]
 
     sessionGroupComponent.reset (new GroupComponent ("Session group component",
@@ -101,7 +102,7 @@ PlayerMainMenuComponent::PlayerMainMenuComponent ()
     infoTextEditor->setScrollbarsShown (true);
     infoTextEditor->setCaretVisible (false);
     infoTextEditor->setPopupMenuEnabled (false);
-    infoTextEditor->setColour (TextEditor::textColourId, Colours::white);
+    infoTextEditor->setColour (TextEditor::textColourId, Colour (0xff909090));
     infoTextEditor->setColour (TextEditor::backgroundColourId, Colour (0x00ffffff));
     infoTextEditor->setText (TRANS("Multi\n"
     "L\n"
@@ -110,7 +111,12 @@ PlayerMainMenuComponent::PlayerMainMenuComponent ()
     "E\n"
     "and scrollable information textbox for help contents"));
 
-    infoTextEditor->setBounds (24, 120, 576, 256);
+    miemProjectHyperlinkButton.reset (new HyperlinkButton (TRANS("Go to MIEM Editor download page"),
+                                                           URL ("https://drive.google.com/drive/folders/1h8ySPNmy8GcbTKubP_FX4lZZbomu-Tuu")));
+    addAndMakeVisible (miemProjectHyperlinkButton.get());
+    miemProjectHyperlinkButton->setTooltip (TRANS("https://drive.google.com/drive/folders/1h8ySPNmy8GcbTKubP_FX4lZZbomu-Tuu"));
+    miemProjectHyperlinkButton->setButtonText (TRANS("Go to MIEM Editor download page"));
+    miemProjectHyperlinkButton->setColour (HyperlinkButton::textColourId, Colour (0xff3d6ed1));
 
 
     //[UserPreSize]
@@ -125,6 +131,10 @@ PlayerMainMenuComponent::PlayerMainMenuComponent ()
                                                                               false,
                                                                               " " + (TRANS("or")).toStdString() + " ") +
                                        + " " + TRANS("file"));
+
+
+    // Special transparent look and feel for the text editor
+    infoTextEditor->setLookAndFeel(transparentLookAndFeel.get());
     //[/Constructor]
 }
 
@@ -142,9 +152,11 @@ PlayerMainMenuComponent::~PlayerMainMenuComponent()
     helpGroupComponent = nullptr;
     helpButton = nullptr;
     infoTextEditor = nullptr;
+    miemProjectHyperlinkButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
+    transparentLookAndFeel = nullptr;
     //[/Destructor]
 }
 
@@ -171,9 +183,37 @@ void PlayerMainMenuComponent::resized()
     playingImageButton->setBounds ((getWidth() / 2) + -10 - 62, getHeight() - 120, 62, 62);
     stopImageButton->setBounds ((getWidth() / 2) + 16, getHeight() - 120, 62, 62);
     stoppedImageButton->setBounds ((getWidth() / 2) + 16, getHeight() - 120, 62, 62);
-    helpGroupComponent->setBounds ((getWidth() / 2) - ((getWidth() - 16) / 2), 72, getWidth() - 16, getHeight() - 280);
-    helpButton->setBounds (((getWidth() / 2) - ((getWidth() - 16) / 2)) + (getWidth() - 16) / 2 - (200 / 2), 72 + 16, 200, 24);
+    helpGroupComponent->setBounds ((getWidth() / 2) - ((getWidth() - 16) / 2), 88, getWidth() - 16, getHeight() - 280);
+    helpButton->setBounds (((getWidth() / 2) - ((getWidth() - 16) / 2)) + (getWidth() - 16) / 2 - (200 / 2), 88 + 16, 200, 24);
+    infoTextEditor->setBounds (24, 152, (getWidth() - 16) - 32, (getHeight() - 280) - 120);
+    miemProjectHyperlinkButton->setBounds ((getWidth() / 2) - ((getWidth() - 40) / 2), 88 + (getHeight() - 280) - 40, getWidth() - 40, 24);
     //[UserResized] Add your own custom resize handling here..
+
+    // Buttons will be hidden if there is not enough height available
+    if (helpGroupComponent->getHeight() < (helpButton->getHeight()+24))
+    {
+        helpButton->setVisible(false);
+        miemProjectHyperlinkButton->setVisible(false);
+    }
+    else if (helpGroupComponent->getHeight() < (helpButton->getHeight()+64))
+    {
+        helpButton->setVisible(true);
+        miemProjectHyperlinkButton->setVisible(false);
+    }
+    else
+    {
+        helpButton->setVisible(true);
+        miemProjectHyperlinkButton->setVisible(displayHelp);
+    }
+
+    // Size of group forced to a min value, if help is not displayed
+    if (! displayHelp)
+    {
+        Rectangle<int> newBounds = helpGroupComponent->getBounds();
+        newBounds.setHeight(56);
+        helpGroupComponent->setBounds(newBounds);
+    }
+
     //[/UserResized]
 }
 
@@ -213,6 +253,7 @@ void PlayerMainMenuComponent::buttonClicked (Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == helpButton.get())
     {
         //[UserButtonCode_helpButton] -- add your button handler code here..
+        presenter->OnHelpButtonClicked(displayHelp);
         //[/UserButtonCode_helpButton]
     }
 
@@ -277,6 +318,26 @@ void PlayerMainMenuComponent::PrepareToPlay(int delayBeforeActualPlay_ms)
         playingImageButton->setVisible(true);
     });
 }
+void PlayerMainMenuComponent::SetIsHelpDisplayed(bool _displayHelp)
+{
+    displayHelp =  _displayHelp;
+
+    // Elements hidden if not supposed to be displayed
+    infoTextEditor->setVisible(displayHelp);
+    miemProjectHyperlinkButton->setVisible(displayHelp);
+
+    if (displayHelp)
+        helpButton->setButtonText(TRANS("Hide help"));
+    else
+        helpButton->setButtonText(TRANS("Show help"));
+
+    // For applying changes on the help group component
+    resized();
+}
+void PlayerMainMenuComponent::SetHelpString(const String& helpString)
+{
+    infoTextEditor->setText(helpString);
+}
 //[/MiscUserCode]
 
 
@@ -326,17 +387,23 @@ BEGIN_JUCER_METADATA
                resourceOver="" opacityOver="1.0" colourOver="0" resourceDown=""
                opacityDown="1.0" colourDown="0"/>
   <GROUPCOMPONENT name="Help group component" id="5beff948b653aff1" memberName="helpGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="0.5Cc 72 16M 280M"
+                  virtualName="" explicitFocusOrder="0" pos="0.5Cc 88 16M 280M"
                   outlinecol="ff909090" textcol="ff909090" title="Help"/>
   <TEXTBUTTON name="Help button" id="87051e2f861a82a1" memberName="helpButton"
               virtualName="" explicitFocusOrder="0" pos="0Cc 16 200 24" posRelativeX="5beff948b653aff1"
               posRelativeY="5beff948b653aff1" bgColOff="ff404040" buttonText="Show help"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTEDITOR name="Info text editor" id="a4539a25a9aebf1" memberName="infoTextEditor"
-              virtualName="" explicitFocusOrder="0" pos="24 120 576 256" posRelativeY="97c294b92cbc0a85"
-              textcol="ffffffff" bkgcol="ffffff" initialText="Multi&#10;L&#10;I&#10;N&#10;E&#10;and scrollable information textbox for help contents"
+              virtualName="" explicitFocusOrder="0" pos="24 152 32M 120M" posRelativeY="97c294b92cbc0a85"
+              posRelativeW="5beff948b653aff1" posRelativeH="5beff948b653aff1"
+              textcol="ff909090" bkgcol="ffffff" initialText="Multi&#10;L&#10;I&#10;N&#10;E&#10;and scrollable information textbox for help contents"
               multiline="1" retKeyStartsLine="1" readonly="1" scrollbars="1"
               caret="0" popupmenu="0"/>
+  <HYPERLINKBUTTON name="MIEM Project hyperlink button" id="fa7d05f849f2e1a1" memberName="miemProjectHyperlinkButton"
+                   virtualName="" explicitFocusOrder="0" pos="0.5Cc 40R 40M 24"
+                   posRelativeY="5beff948b653aff1" tooltip="https://drive.google.com/drive/folders/1h8ySPNmy8GcbTKubP_FX4lZZbomu-Tuu"
+                   textCol="ff3d6ed1" buttonText="Go to MIEM Editor download page"
+                   connectedEdges="0" needsCallback="0" radioGroupId="0" url="https://drive.google.com/drive/folders/1h8ySPNmy8GcbTKubP_FX4lZZbomu-Tuu"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

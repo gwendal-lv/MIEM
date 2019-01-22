@@ -12,6 +12,8 @@
 
 #include "Presenter.h"
 
+#include "PlayerHelpContent.h"
+
 using namespace Miam;
 
 
@@ -45,6 +47,7 @@ void View::CompleteInitialization(GraphicSessionPlayer* /*_graphicSessionManager
     mainContentComponent->CompleteInitialization(_multiCanvasComponent);
     
     DisplayComplementaryInfo("");
+    backgroundComponent->GetMainMenuComponent()->SetHelpString(PlayerHelpContent::GetMainHelp(AppPurpose::GenericController));
 }
 
 

@@ -68,6 +68,7 @@ public:
     void ChangeAppMode(PlayerAppMode newAppMode);
 
     MultiCanvasComponent* GetMultiCanvasComponent() { return multiCanvasComponent; }
+    PlayerMainMenuComponent* GetMainMenuComponent() { return mainMenuComponent.get(); }
 
     //[/UserMethods]
 
@@ -93,7 +94,7 @@ private:
     PlayerPresenter* presenter;
 
     /// Simple GUIs, owned by the View directly
-    ScopedPointer<PlayerMainMenuComponent> mainMenuComponent;
+    std::unique_ptr<PlayerMainMenuComponent> mainMenuComponent;
 
     /// \brief Interactive, Owned by the Presenter
     MultiCanvasComponent* multiCanvasComponent;

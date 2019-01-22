@@ -37,5 +37,9 @@ void PlayerView::DisplayComplementaryInfo(const String& message)
     backgroundComponent->DisplayInfo2(message);
 }
 
+void PlayerView::ShowHelpContents(bool showHelpContents)
+{
+    backgroundComponent->GetMainMenuComponent()->SetIsHelpDisplayed(showHelpContents);
+}
 
 

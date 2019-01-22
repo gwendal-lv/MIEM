@@ -68,7 +68,8 @@ PlayerBackgroundComponent::PlayerBackgroundComponent ()
 
 
     //[UserPreSize]
-    addChildComponent(mainMenuComponent = new PlayerMainMenuComponent());
+    mainMenuComponent.reset( new PlayerMainMenuComponent() );
+    addChildComponent(mainMenuComponent.get());
     //[/UserPreSize]
 
     setSize (600, 400);
@@ -84,6 +85,7 @@ PlayerBackgroundComponent::PlayerBackgroundComponent ()
 PlayerBackgroundComponent::~PlayerBackgroundComponent()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
+    mainMenuComponent = nullptr;
     //[/Destructor_pre]
 
     mainInfoLabel = nullptr;

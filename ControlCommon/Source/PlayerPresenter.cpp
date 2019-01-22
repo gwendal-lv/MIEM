@@ -165,6 +165,7 @@ PlayerAppMode PlayerPresenter::appModeChangeRequest(PlayerAppMode newAppMode)
                     break;
                     
                 case PlayerAppMode::Playing :
+                    appHasBeenPlayingOnce = true;
                     // on ne renvoie l'ordre au modèle que dans le cas où l'on change de statut de spat
                     // par rapport au statut de spat en tâche de fond.
                     if (previousPlayerStatus != appMode)
@@ -175,6 +176,12 @@ PlayerAppMode PlayerPresenter::appModeChangeRequest(PlayerAppMode newAppMode)
                         // Sélection des scènes 0 de chaque canevas -> remise en place des excitateurs
                         GetGraphicSessionPlayer()->OnModelStarted();
                     }
+                    break;
+                    
+                case PlayerAppMode::MainMenu :
+                    // We auto-hide the Help Contents if the app has already been playing
+                    // (if the user played something, he knows how the app works...)
+                    view->ShowHelpContents(! appHasBeenPlayingOnce);
                     break;
                     
                     
@@ -277,7 +284,10 @@ void PlayerPresenter::OnViewIsPreparingToPlay(bool _isPreparingToPlay)
 {
     isViewPreparingToPlay = _isPreparingToPlay;
 }
-
+void PlayerPresenter::OnHelpButtonClicked(bool isHelpCurrentlyDisplayed)
+{
+    view->ShowHelpContents(! isHelpCurrentlyDisplayed);
+}
 
 
 // = = = = = = = = = = EVENTS FROM MODEL = = = = = = = = = =

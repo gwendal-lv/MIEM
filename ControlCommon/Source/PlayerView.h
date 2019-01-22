@@ -28,7 +28,7 @@ namespace Miam
         
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
-        private :
+        protected :
         PlayerBackgroundComponent* backgroundComponent;
         
         protected :
@@ -74,6 +74,10 @@ namespace Miam
         
         /// \brief Displays complementary information
         void DisplayComplementaryInfo(const String& message);
+        
+        
+        void ShowHelpContents(bool showHelpContents);
+        
         
         virtual void ForceResized() = 0;
         

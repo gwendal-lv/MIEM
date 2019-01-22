@@ -43,6 +43,9 @@ namespace Miam
          */
         PlayerAppMode previousPlayerStatus;
         
+        /// \brief Will store wether the app has play at least once since it has been opened.
+        bool appHasBeenPlayingOnce = false;
+        
         
         
         /* Pour l'instant, cet objet est détenu directement par le Presenter
@@ -107,6 +110,7 @@ namespace Miam
         /// \brief
         void OnMainMenuButtonClicked();
         void OnViewIsPreparingToPlay(bool _isPreparingToPlay);
+        void OnHelpButtonClicked(bool isHelpCurrentlyDisplayed);
         
         
         

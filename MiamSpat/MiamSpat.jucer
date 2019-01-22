@@ -76,6 +76,10 @@
         <FILE id="vqHK6N" name="MultiSceneCanvasPlayer.h" compile="0" resource="0"
               file="../ControlCommon/Source/MultiSceneCanvasPlayer.h"/>
         <FILE id="asTm4B" name="PlayerAppMode.h" compile="0" resource="0" file="../ControlCommon/Source/PlayerAppMode.h"/>
+        <FILE id="uoNQ9Y" name="PlayerHelpContent.cpp" compile="1" resource="0"
+              file="../ControlCommon/Source/PlayerHelpContent.cpp"/>
+        <FILE id="NkvAGm" name="PlayerHelpContent.h" compile="0" resource="0"
+              file="../ControlCommon/Source/PlayerHelpContent.h"/>
         <FILE id="D1ZUgc" name="PlayerPresenter.cpp" compile="1" resource="0"
               file="../ControlCommon/Source/PlayerPresenter.cpp"/>
         <FILE id="tivpId" name="PlayerPresenter.h" compile="0" resource="0"
@@ -314,7 +318,7 @@
   </MAINGROUP>
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX" extraCompilerFlags="-Wno-comma"
-               bigIcon="ok0lDM">
+               bigIcon="ok0lDM" iosDevelopmentTeamID="ZYQ9N85U6C">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MIEM Spat Player"
                        defines="__MIAM_DEBUG&#10;__MIEM_DEBUG_TRACE__DISABLED" enablePluginBinaryCopyStep="1"/>

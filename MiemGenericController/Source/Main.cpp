@@ -114,7 +114,7 @@ public:
 #if defined(__MIAMOBILE)
             setFullScreen(true);
 #else
-            centreWithSize (getWidth(), getHeight());
+            centreWithSize (800, 500);
             setResizable(true, true);
 #endif
             setVisible (true);
