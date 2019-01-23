@@ -103,6 +103,7 @@ private:
     std::unique_ptr<TextButton> helpButton;
     std::unique_ptr<TextEditor> infoTextEditor;
     std::unique_ptr<HyperlinkButton> miemProjectHyperlinkButton;
+    std::unique_ptr<TextButton> loadDefaultButton;
 
 
     //==============================================================================

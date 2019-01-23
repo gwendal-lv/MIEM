@@ -111,12 +111,18 @@ PlayerMainMenuComponent::PlayerMainMenuComponent ()
     "E\n"
     "and scrollable information textbox for help contents"));
 
-    miemProjectHyperlinkButton.reset (new HyperlinkButton (TRANS("Go to MIEM Editor download page"),
+    miemProjectHyperlinkButton.reset (new HyperlinkButton (TRANS("Go to MIEM Editor download website"),
                                                            URL ("https://drive.google.com/drive/folders/1h8ySPNmy8GcbTKubP_FX4lZZbomu-Tuu")));
     addAndMakeVisible (miemProjectHyperlinkButton.get());
     miemProjectHyperlinkButton->setTooltip (TRANS("https://drive.google.com/drive/folders/1h8ySPNmy8GcbTKubP_FX4lZZbomu-Tuu"));
-    miemProjectHyperlinkButton->setButtonText (TRANS("Go to MIEM Editor download page"));
+    miemProjectHyperlinkButton->setButtonText (TRANS("Go to MIEM Editor download website"));
     miemProjectHyperlinkButton->setColour (HyperlinkButton::textColourId, Colour (0xff3d6ed1));
+
+    loadDefaultButton.reset (new TextButton ("Load Default button"));
+    addAndMakeVisible (loadDefaultButton.get());
+    loadDefaultButton->setButtonText (TRANS("Load default session"));
+    loadDefaultButton->addListener (this);
+    loadDefaultButton->setColour (TextButton::buttonColourId, Colour (0xff404040));
 
 
     //[UserPreSize]
@@ -153,6 +159,7 @@ PlayerMainMenuComponent::~PlayerMainMenuComponent()
     helpButton = nullptr;
     infoTextEditor = nullptr;
     miemProjectHyperlinkButton = nullptr;
+    loadDefaultButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -184,26 +191,40 @@ void PlayerMainMenuComponent::resized()
     stopImageButton->setBounds ((getWidth() / 2) + 16, getHeight() - 120, 62, 62);
     stoppedImageButton->setBounds ((getWidth() / 2) + 16, getHeight() - 120, 62, 62);
     helpGroupComponent->setBounds ((getWidth() / 2) - ((getWidth() - 16) / 2), 88, getWidth() - 16, getHeight() - 280);
-    helpButton->setBounds (((getWidth() / 2) - ((getWidth() - 16) / 2)) + (getWidth() - 16) / 2 - (200 / 2), 88 + 16, 200, 24);
+    helpButton->setBounds (((getWidth() / 2) - ((getWidth() - 16) / 2)) + (getWidth() - 16) / 2 - (120 / 2), 88 + 16, 120, 24);
     infoTextEditor->setBounds (24, 152, (getWidth() - 16) - 32, (getHeight() - 280) - 120);
     miemProjectHyperlinkButton->setBounds ((getWidth() / 2) - ((getWidth() - 40) / 2), 88 + (getHeight() - 280) - 40, getWidth() - 40, 24);
+    loadDefaultButton->setBounds (((getWidth() / 2) - ((getWidth() - 16) / 2)) + (getWidth() - 16) - 8 - 144, 88 + 16, 144, 24);
     //[UserResized] Add your own custom resize handling here..
 
-    // Buttons will be hidden if there is not enough height available
+    // Buttons (and the group itself) will be hidden if there is not enough height available
+    helpGroupComponent->setVisible(true); // default, will be false only if very, very small screen
     if (helpGroupComponent->getHeight() < (helpButton->getHeight()+24))
     {
+        helpGroupComponent->setVisible(false);
         helpButton->setVisible(false);
+        loadDefaultButton->setVisible(false);
         miemProjectHyperlinkButton->setVisible(false);
     }
     else if (helpGroupComponent->getHeight() < (helpButton->getHeight()+64))
     {
         helpButton->setVisible(true);
+        loadDefaultButton->setVisible(displayHelp);
         miemProjectHyperlinkButton->setVisible(false);
     }
     else
     {
         helpButton->setVisible(true);
+        loadDefaultButton->setVisible(displayHelp);
         miemProjectHyperlinkButton->setVisible(displayHelp);
+    }
+
+    // In case of very small width: small arrangements for iPhones...
+    if (getWidth() < 400) // 400px est environ la limite entre iPhone et iPhone +
+    {
+        Rectangle<int> bounds = helpButton->getBounds();
+        bounds.setX(16); // décalage forcé à gauche
+        helpButton->setBounds(bounds);
     }
 
     // Size of group forced to a min value, if help is not displayed
@@ -255,6 +276,12 @@ void PlayerMainMenuComponent::buttonClicked (Button* buttonThatWasClicked)
         //[UserButtonCode_helpButton] -- add your button handler code here..
         presenter->OnHelpButtonClicked(displayHelp);
         //[/UserButtonCode_helpButton]
+    }
+    else if (buttonThatWasClicked == loadDefaultButton.get())
+    {
+        //[UserButtonCode_loadDefaultButton] -- add your button handler code here..
+        presenter->OnLoadDefaultSession();
+        //[/UserButtonCode_loadDefaultButton]
     }
 
     //[UserbuttonClicked_Post]
@@ -356,7 +383,7 @@ BEGIN_JUCER_METADATA
                  overlayOpacity="0.33" fixedSize="0" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="51000000"/>
   <GROUPCOMPONENT name="Session group component" id="ee702f61e13ff830" memberName="sessionGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="0.5Cc 8 16M 56" outlinecol="ff909090"
+                  virtualName="" explicitFocusOrder="0" pos="0Cc 8 16M 56" outlinecol="ff909090"
                   textcol="ff909090" title="Session"/>
   <TEXTBUTTON name="Load From File text button" id="2fe2a2c362ae91bd" memberName="loadFromFileButton"
               virtualName="" explicitFocusOrder="0" pos="0Cc 16 200 24" posRelativeY="ee702f61e13ff830"
@@ -387,10 +414,10 @@ BEGIN_JUCER_METADATA
                resourceOver="" opacityOver="1.0" colourOver="0" resourceDown=""
                opacityDown="1.0" colourDown="0"/>
   <GROUPCOMPONENT name="Help group component" id="5beff948b653aff1" memberName="helpGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="0.5Cc 88 16M 280M"
-                  outlinecol="ff909090" textcol="ff909090" title="Help"/>
+                  virtualName="" explicitFocusOrder="0" pos="0Cc 88 16M 280M" outlinecol="ff909090"
+                  textcol="ff909090" title="Help"/>
   <TEXTBUTTON name="Help button" id="87051e2f861a82a1" memberName="helpButton"
-              virtualName="" explicitFocusOrder="0" pos="0Cc 16 200 24" posRelativeX="5beff948b653aff1"
+              virtualName="" explicitFocusOrder="0" pos="0Cc 16 120 24" posRelativeX="5beff948b653aff1"
               posRelativeY="5beff948b653aff1" bgColOff="ff404040" buttonText="Show help"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTEDITOR name="Info text editor" id="a4539a25a9aebf1" memberName="infoTextEditor"
@@ -400,10 +427,14 @@ BEGIN_JUCER_METADATA
               multiline="1" retKeyStartsLine="1" readonly="1" scrollbars="1"
               caret="0" popupmenu="0"/>
   <HYPERLINKBUTTON name="MIEM Project hyperlink button" id="fa7d05f849f2e1a1" memberName="miemProjectHyperlinkButton"
-                   virtualName="" explicitFocusOrder="0" pos="0.5Cc 40R 40M 24"
-                   posRelativeY="5beff948b653aff1" tooltip="https://drive.google.com/drive/folders/1h8ySPNmy8GcbTKubP_FX4lZZbomu-Tuu"
-                   textCol="ff3d6ed1" buttonText="Go to MIEM Editor download page"
+                   virtualName="" explicitFocusOrder="0" pos="0Cc 40R 40M 24" posRelativeY="5beff948b653aff1"
+                   tooltip="https://drive.google.com/drive/folders/1h8ySPNmy8GcbTKubP_FX4lZZbomu-Tuu"
+                   textCol="ff3d6ed1" buttonText="Go to MIEM Editor download website"
                    connectedEdges="0" needsCallback="0" radioGroupId="0" url="https://drive.google.com/drive/folders/1h8ySPNmy8GcbTKubP_FX4lZZbomu-Tuu"/>
+  <TEXTBUTTON name="Load Default button" id="d025c06799a8b40f" memberName="loadDefaultButton"
+              virtualName="" explicitFocusOrder="0" pos="8Rr 16 144 24" posRelativeX="5beff948b653aff1"
+              posRelativeY="5beff948b653aff1" bgColOff="ff404040" buttonText="Load default session"
+              connectedEdges="0" needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

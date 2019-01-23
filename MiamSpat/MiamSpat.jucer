@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="xCUiGi" name="MIEM Spat" projectType="guiapp" version="0.2.6"
+<JUCERPROJECT id="xCUiGi" name="MIEM Spat" projectType="guiapp" version="1.0.0"
               bundleIdentifier="com.gwendallv.MIEMSpatPlayer" includeBinaryInAppConfig="1"
               jucerVersion="5.4.1" displaySplashScreen="0" reportAppUsage="0"
               splashScreenColour="Dark" cppLanguageStandard="11" companyCopyright="Gwendal Le Vaillant (IRISIB/LARAS, UMons)"
               companyName="IRISIB/LARAS, UMons" companyWebsite="htpp://laras.be"
-              companyEmail="glevaillant@he2b.be" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../ControlCommon/Source/&#10;../../../SpatCommon/Source/"
+              companyEmail="glevaillant@he2b.be" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../MiamCommon/Resources/&#10;../../../ControlCommon/Source/&#10;../../../SpatCommon/Source/"
               defines="__MIEM_VBO">
   <MAINGROUP id="m8VZoU" name="MIEM Spat">
     <GROUP id="{D93792BB-5B8B-5A35-D554-58C4F4E4D3DA}" name="Source">
@@ -307,6 +307,8 @@
       </GROUP>
     </GROUP>
     <GROUP id="{428D1A83-3150-7E91-1BB6-F67209C8E4C9}" name="Resources">
+      <FILE id="Wpxtbe" name="MiemDefaultSessions.h" compile="0" resource="0"
+            file="../MiamCommon/Resources/MiemDefaultSessions.h"/>
       <FILE id="LnMegQ" name="newFontImg.png" compile="0" resource="1" file="../MiamCommon/Resources/newFontImg.png"/>
       <FILE id="KocCMm" name="Spat_iOS_1024at1.png" compile="0" resource="1"
             file="../Resources_LFS/Icones_Logos/Exports/Spat_iOS_1024at1.png"/>

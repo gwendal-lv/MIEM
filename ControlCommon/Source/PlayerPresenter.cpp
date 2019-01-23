@@ -312,7 +312,7 @@ void PlayerPresenter::OnNewConnectionStatus(bool isConnectionEstablished, std::s
         // et si pb de paramètres
         if (udpPort == -1 || ipv4.empty())
         {
-            displayString = "[error] Cannot send spatialization data (no valid connection parameters found).";
+            displayString = "[error] Cannot send spatialisation data (no valid connection parameters found).";
         }
         // Sinon on affiche les paramètres qui ont échoué
         else
@@ -326,12 +326,12 @@ void PlayerPresenter::OnNewConnectionStatus(bool isConnectionEstablished, std::s
         // mais si pb de paramètres
         if (udpPort == -1 || ipv4.empty())
         {
-            displayString = "Connected, sending spatialization data (no valid connection parameters found).";
+            displayString = "Sending spatialisation data (unknown connection parameters).";
         }
         // Sinon tout est bon pour affichage
         else
         {
-            displayString = "Connected, sending OSC to " + ipv4 + " on UDP port " + std::to_string(udpPort) + ".";
+            displayString = "Sending OSC to " + ipv4 + " on UDP port " + std::to_string(udpPort) + ".";
         }
     }
     

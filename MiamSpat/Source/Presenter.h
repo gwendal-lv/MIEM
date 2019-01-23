@@ -77,6 +77,8 @@ namespace Miam {
         Presenter(View* _view);
         virtual ~Presenter() {}
         void CompleteInitialisation(Model* _model);
+        
+        virtual void OnLoadDefaultSession() override;
 
         
         // - - - - - Periodic updates - - - - -

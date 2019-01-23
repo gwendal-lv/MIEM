@@ -17,8 +17,8 @@ juce::String PlayerHelpContent::GetMainHelp(AppPurpose appPurpose)
     // String that will be put at the end, for any app purpose
     String endString = "\n\n\n"
     + TRANS("To get all necessary desktop applications, please follow the link below.") + "\n\n"
-    + TRANS("This interface is part of the MIEM (Multitouch Interface for Electroacoustic Music) research project.") + "\n"
-    + TRANS("To get more information, or to parcipate in the research program linked to this interface, please contact the author: Gwendal Le Vaillant at glevaillant@he2b.be or visit http://laras.be");
+    + TRANS("This interface is part of the MIEM (Multitouch Interfaces for Electroacoustic Music) research project.") + "\n"
+    + TRANS("To get more information, or to participate in the research program linked to this interface, please contact the author: Gwendal Le Vaillant at glevaillant@he2b.be or visit http://laras.be");
     
     // init from JuceHeader data
     String projectName(ProjectInfo::projectName);

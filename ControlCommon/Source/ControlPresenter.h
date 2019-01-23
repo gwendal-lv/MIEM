@@ -66,6 +66,10 @@ namespace Miam {
         
         // - - - - - XML import/export general management - - - - -
         
+        /// \brief Load the file at filename, then parses the XML inside and actually
+        /// loads the controller session.
+        ///
+        /// Will load the default session if the filename is DefaultSessions::GetDefaultSessionCode()
         virtual void LoadSession(std::string filename);
         /// \Brief Saves the current session to the given file name, or to the last
         /// used file name is file name is empty.

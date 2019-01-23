@@ -61,7 +61,7 @@ namespace Miam
             switch (appPurpose_)
             {
                 case AppPurpose::Spatialisation :
-                    return translate("Spatialization").toStdString();
+                    return translate("Spatialisation").toStdString();
                     break;
                     
                 case AppPurpose::GenericController :

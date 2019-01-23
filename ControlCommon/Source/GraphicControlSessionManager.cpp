@@ -182,6 +182,6 @@ void GraphicControlSessionManager::LoadSpatAreaLinks(std::shared_ptr<ControlArea
     
     auto spatStateIndex = spatStateTree->get<int64_t>("<xmlattr>.index", -1);
     if (spatStateIndex >= 0)
-        area->LinkToState(spatInterpolator->GetState(spatStateIndex));
+        area->LinkToState(spatInterpolator->GetState((size_t)spatStateIndex));
 }
 

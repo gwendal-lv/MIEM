@@ -118,6 +118,7 @@ void PlayerBackgroundComponent::resized()
     mainMenuImageButton->setBounds (getWidth() - 28, getHeight() - 28, 28, 28);
     mainInfoLabel2->setBounds (400, getHeight() - 4 - 20, getWidth() - 432, 20);
     //[UserResized] Add your own custom resize handling here..
+
     // Attention : remove from machin retourne le petit morceau découpé seulement !
     auto menusRectangle = getLocalBounds();
     menusRectangle.removeFromBottom(mainMenuImageButton->getHeight());
@@ -130,6 +131,27 @@ void PlayerBackgroundComponent::resized()
         canvasesRectangle.removeFromBottom(mainInfoLabel->getHeight());
         multiCanvasComponent->setBounds(canvasesRectangle);
     }
+
+    // For really small screens : we adjust data... and don't display the 2nd label
+//#if defined(JUCE_IOS)
+    // Convient pour l'iPad pro du LARAS (petite largeur 768px)
+    const int smallScreenWidthLimit = 800; // ne doit prendre en compte le rétina
+    /*
+#else
+    const int smallScreenWidthLimit = 600;
+#endif
+     */
+    if (getWidth() < smallScreenWidthLimit)
+    {
+        Rectangle<int> bounds2 = mainInfoLabel2->getBounds();
+        bounds2.setWidth(1);
+        mainInfoLabel2->setBounds(bounds2); // pas trop de bug si on ne laisse qu'un seul px ?
+
+        Rectangle<int> bounds1 = mainInfoLabel->getBounds();
+        bounds1.setWidth(getWidth() - 8 - 8 - 28); // -36 pour le bouton de menu
+        mainInfoLabel->setBounds(bounds1);
+    }
+
     //[/UserResized]
 }
 

@@ -15,6 +15,7 @@
 #include "ControlModel.h"
 
 #include "AppPurpose.h"
+#include "MiemDefaultSessions.h"
 
 ControlPresenter::ControlPresenter(ControlView* view_)
 :
@@ -45,7 +46,15 @@ void ControlPresenter::LoadSession(std::string filename)
     bptree::ptree xmlTree, miamTree, spatTree, graphicSessionTree, settingsTree;
     try {
         // Lecture
-        bptree::read_xml(filename, xmlTree);
+        // Attention ! On vérifie si on demandait ou non une session par défaut...
+        if (filename.compare(DefaultSessions::GetDefaultSessionCode()) == 0)
+        {
+            std::stringstream ss;
+            ss << DefaultSessions::GetDefault_mspat();
+            bptree::read_xml(ss, xmlTree);
+        }
+        else
+            bptree::read_xml(filename, xmlTree);
         // puis Séparation des grandes parties du fichier
         miamTree = xmlTree.get_child("miem");
         spatTree = miamTree.get_child("control");

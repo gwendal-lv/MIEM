@@ -111,7 +111,7 @@ namespace Miam
         void OnMainMenuButtonClicked();
         void OnViewIsPreparingToPlay(bool _isPreparingToPlay);
         void OnHelpButtonClicked(bool isHelpCurrentlyDisplayed);
-        
+        virtual void OnLoadDefaultSession() = 0;
         
         
         // - - - - - Events from the Model - - - - -

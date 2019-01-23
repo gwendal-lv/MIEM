@@ -17,6 +17,7 @@
 
 
 #include "AppPurpose.h"
+#include "MiemDefaultSessions.h"
 
 using namespace Miam;
 
@@ -44,6 +45,11 @@ void Presenter::CompleteInitialisation(Model* _model)
     model = _model;
     
     PlayerPresenter::CompleteInitialisation(model);
+}
+
+void Presenter::OnLoadDefaultSession()
+{
+    LoadSession(DefaultSessions::GetDefaultSessionCode());
 }
 
 
