@@ -383,7 +383,7 @@ BEGIN_JUCER_METADATA
                  overlayOpacity="0.33" fixedSize="0" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="51000000"/>
   <GROUPCOMPONENT name="Session group component" id="ee702f61e13ff830" memberName="sessionGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="0Cc 8 16M 56" outlinecol="ff909090"
+                  virtualName="" explicitFocusOrder="0" pos="0.5Cc 8 16M 56" outlinecol="ff909090"
                   textcol="ff909090" title="Session"/>
   <TEXTBUTTON name="Load From File text button" id="2fe2a2c362ae91bd" memberName="loadFromFileButton"
               virtualName="" explicitFocusOrder="0" pos="0Cc 16 200 24" posRelativeY="ee702f61e13ff830"
@@ -414,8 +414,8 @@ BEGIN_JUCER_METADATA
                resourceOver="" opacityOver="1.0" colourOver="0" resourceDown=""
                opacityDown="1.0" colourDown="0"/>
   <GROUPCOMPONENT name="Help group component" id="5beff948b653aff1" memberName="helpGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="0Cc 88 16M 280M" outlinecol="ff909090"
-                  textcol="ff909090" title="Help"/>
+                  virtualName="" explicitFocusOrder="0" pos="0.5Cc 88 16M 280M"
+                  outlinecol="ff909090" textcol="ff909090" title="Help"/>
   <TEXTBUTTON name="Help button" id="87051e2f861a82a1" memberName="helpButton"
               virtualName="" explicitFocusOrder="0" pos="0Cc 16 120 24" posRelativeX="5beff948b653aff1"
               posRelativeY="5beff948b653aff1" bgColOff="ff404040" buttonText="Show help"
@@ -427,8 +427,8 @@ BEGIN_JUCER_METADATA
               multiline="1" retKeyStartsLine="1" readonly="1" scrollbars="1"
               caret="0" popupmenu="0"/>
   <HYPERLINKBUTTON name="MIEM Project hyperlink button" id="fa7d05f849f2e1a1" memberName="miemProjectHyperlinkButton"
-                   virtualName="" explicitFocusOrder="0" pos="0Cc 40R 40M 24" posRelativeY="5beff948b653aff1"
-                   tooltip="https://drive.google.com/drive/folders/1h8ySPNmy8GcbTKubP_FX4lZZbomu-Tuu"
+                   virtualName="" explicitFocusOrder="0" pos="0.5Cc 40R 40M 24"
+                   posRelativeY="5beff948b653aff1" tooltip="https://drive.google.com/drive/folders/1h8ySPNmy8GcbTKubP_FX4lZZbomu-Tuu"
                    textCol="ff3d6ed1" buttonText="Go to MIEM Editor download website"
                    connectedEdges="0" needsCallback="0" radioGroupId="0" url="https://drive.google.com/drive/folders/1h8ySPNmy8GcbTKubP_FX4lZZbomu-Tuu"/>
   <TEXTBUTTON name="Load Default button" id="d025c06799a8b40f" memberName="loadDefaultButton"
