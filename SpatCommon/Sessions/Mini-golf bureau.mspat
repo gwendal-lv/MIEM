@@ -297,7 +297,7 @@
                                 </geometry>
                                 <spatstate index="2"/>
                             </area>
-                            <area id="33" type="Exciter" index="9">
+                            <area id="35" type="Exciter" index="9">
                                 <center x="0.49878934624699534" y="0.14620938628160102"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
@@ -308,7 +308,7 @@
                                 <is_round>false</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
-                            <area id="34" type="Exciter" index="10">
+                            <area id="36" type="Exciter" index="10">
                                 <center x="0.38740920096852349" y="0.90252707581227565"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
