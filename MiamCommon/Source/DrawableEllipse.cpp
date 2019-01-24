@@ -23,14 +23,29 @@ DrawableEllipse::DrawableEllipse(bptree::ptree & areaTree)
 :
 DrawableArea(areaTree)
 {
-    // Chargement des quelques données spécifiques à l'ellipse
-    try {
-        a = areaTree.get<double>("geometry.axes.<xmlattr>.a");
-        b = areaTree.get<double>("geometry.axes.<xmlattr>.b");
+    // Data expected if different, depending on the value of "resize when parent size changes",
+    // which is mandatory in the tree, and which must have been read by the drawable area XML reader
+    if (resizeWhenParentSizeChanges)
+    {
+        try {
+            a = areaTree.get<double>("geometry.axes.<xmlattr>.a");
+            b = areaTree.get<double>("geometry.axes.<xmlattr>.b");
+        }
+        catch (bptree::ptree_error &e) {
+            throw XmlReadException("DrawableEllipse construction : axes lengths a and/or b cannot be read : ", e);
+        }
     }
-    catch (bptree::ptree_error &e) {
-        throw XmlReadException("DrawableEllipse construction : axes lengths a and/or b cannot be read : ", e);
+    else
+    {
+        try {
+            aInPixels = areaTree.get<double>("geometry.axes.<xmlattr>.a_in_pixels");
+            bInPixels = areaTree.get<double>("geometry.axes.<xmlattr>.b_in_pixels");
+        }
+        catch (bptree::ptree_error &e) {
+            throw XmlReadException("DrawableEllipse construction : axes lengths [in pixels] a and/or b cannot be read : ", e);
+        }
     }
+    
     try {
         rotationAngle = areaTree.get<double>("geometry.rotation");
     }
@@ -69,11 +84,14 @@ DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b,
 
 DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, int _radiusInPixels, Colour _fillColour)
     : DrawableArea(_Id, _center, _fillColour),
-    radiusInPixels(_radiusInPixels)
+    aInPixels(_radiusInPixels),
+    bInPixels(_radiusInPixels)
 {
     // default non sense values... because the radius in pixels alone must be used
     a = 0.1;
     b = 0.1;
+    xScale = 1.0;
+    yScale = 1.0;
     
     // Fixed size in pixels
     resizeWhenParentSizeChanges = false;
@@ -83,7 +101,7 @@ DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, int _radiusInPixels, 
     // the Juce classical drawing needs to be implemented for fixed-size items for
     // mixed Juce/CPU/OpenGL rendering
     #ifndef __MIEM_VBO
-    assert(false); // see remark above !
+    assert(false); // see remark above ! cannot construct a fixed-size ellipse in non-VBO mode
     #endif
     
     // Contour points : fake coordinates around the center (code copied from a real ctor)
@@ -177,6 +195,27 @@ void DrawableEllipse::CanvasResized(SceneCanvasComponent* _parentCanvas)
 {
 	DrawableArea::CanvasResized(_parentCanvas);
 
+    //  If it auto-resizes : we update the a/b in pixels
+    if (resizeWhenParentSizeChanges)
+    {
+        // - - - - TO BE TESTED - - - - -
+        // - - - - TO BE TESTED - - - - -
+        aInPixels = (int)(a * (double)parentCanvas->getWidth() * xScale);
+        bInPixels = (int)(b * (double)parentCanvas->getWidth() * xScale); // référence à x... car rotation possible  ?
+        // - - - - TO BE TESTED - - - - -
+        // - - - - TO BE TESTED - - - - -
+    }
+    // else, we update the a/b in relative coordinates
+    else
+    {
+        // - - - - !!! DOES NOT TAKE ROTATION INTO ACCOUNT - - - - - ! ! !
+        // - - - - !!! DOES NOT TAKE ROTATION INTO ACCOUNT - - - - - ! ! !
+        a = (double)(aInPixels) / (double)(parentCanvas->getWidth());
+        b = (double)(bInPixels) / (double)(parentCanvas->getHeight());
+        // - - - - !!! DOES NOT TAKE ROTATION INTO ACCOUNT - - - - - ! ! !
+        // - - - - !!! DOES NOT TAKE ROTATION INTO ACCOUNT - - - - - ! ! !
+    }
+    
 	createJucePolygon(parentCanvas->getWidth(), parentCanvas->getHeight());
         
     // Pixel contour points
@@ -189,20 +228,6 @@ void DrawableEllipse::CanvasResized(SceneCanvasComponent* _parentCanvas)
 void DrawableEllipse::RefreshOpenGLBuffers()
 {
 	DrawableArea::RefreshOpenGLBuffers();
-    
-    // VBO rendering works for fixed-size ellipses, or auto-resizing ones
-    int aInPixels = 0;
-    int bInPixels = 0;
-    if (resizeWhenParentSizeChanges)
-    {
-        aInPixels = (int)(a * (double)parentCanvas->getWidth() * xScale/2.0);
-        bInPixels = (int)(b * (double)parentCanvas->getWidth() * xScale/2.0);
-    }
-    else
-    {
-        aInPixels = radiusInPixels;
-        bInPixels = radiusInPixels;
-    }
 
 	// - - - - - Surface de l'ellipse - - - - -
 	const int surfaceVertexBufElmtOffset = DrawableArea::GetVerticesBufferElementsCount();
@@ -328,16 +353,17 @@ std::shared_ptr<bptree::ptree> DrawableEllipse::GetTree()
     bptree::ptree axesTree;
     bptree::ptree rotationTree;
     
-    // Écriture des paramètres (non-négligeables seulement)
-    // ATTENTION, IL FAUT MAINTENANT LIRE ET ECRIRE LES RAYONS CONSTANTS EN PIXELS
-    // ATTENTION, IL FAUT MAINTENANT LIRE ET ECRIRE LES RAYONS CONSTANTS EN PIXELS
-    // ATTENTION, IL FAUT MAINTENANT LIRE ET ECRIRE LES RAYONS CONSTANTS EN PIXELS
-    // ATTENTION, IL FAUT MAINTENANT LIRE ET ECRIRE LES RAYONS CONSTANTS EN PIXELS
-    // ATTENTION, IL FAUT MAINTENANT LIRE ET ECRIRE LES RAYONS CONSTANTS EN PIXELS
-    // ATTENTION, IL FAUT MAINTENANT LIRE ET ECRIRE LES RAYONS CONSTANTS EN PIXELS
-    // ATTENTION, IL FAUT MAINTENANT LIRE ET ECRIRE LES RAYONS CONSTANTS EN PIXELS
-    axesTree.put("<xmlattr>.a", a);
-    axesTree.put("<xmlattr>.b", b);
+    // Écriture des paramètres (non-négligeables, et utiles seulement)
+    if (resizeWhenParentSizeChanges)
+    {
+        axesTree.put("<xmlattr>.a", a);
+        axesTree.put("<xmlattr>.b", b);
+    }
+    else
+    {
+        axesTree.put("<xmlattr>.a_in_pixels", aInPixels);
+        axesTree.put("<xmlattr>.b_in_pixels", bInPixels);
+    }
     geomeTree.add_child("axes", axesTree);
     if ( std::abs(rotationAngle) > 0.000001 )
         geomeTree.put("rotation", rotationAngle);

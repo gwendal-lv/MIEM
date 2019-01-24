@@ -18,6 +18,8 @@
 
 #include "SceneCanvasComponent.h" // pour récupérer width/height
 
+#include "MultiSceneCanvasComponent.h" // to get the height to the scene's buttons
+
 using namespace Miam;
 
 // = = = = = = = = = = Construction/Destruction + polymorphic cloning = = = = = = = = = =
@@ -46,7 +48,7 @@ Exciter::Exciter(uint64_t uniqueId, std::chrono::time_point<SteadyClock> commonS
 // EditableEllipse(uniqueId, bpt(0.5, 0.5), 0.05, Colours::lightgrey, 1.0f),
 
 // FIXED SIZE IN PIXELS
-EditableEllipse(uniqueId, bpt(0.5, 0.5), 36, Colours::lightgrey),
+EditableEllipse(uniqueId, bpt(0.5, 0.5), (MultiSceneCanvasComponent::SceneButtonsHeight/2)+8, Colours::lightgrey),
 
 additionnalTouchGrabRadius(additionnalTouchGrabRadius_),
 commonStartTimePt(commonStartTimePoint_)
@@ -162,15 +164,15 @@ bool Exciter::HitTest(bpt T) const
     {
         // Pas besoin d'appliquer le facteur d'échelle ? Il faudrait fouiller le code
         // de Guillaume (avec les xscale et yscale) pour en être sûr
-        // ATTENTION a et b semblent être les longeurs des axes (pas les 1/2 longueurs)
-        double aInPx = (a/2.0) * (double)parentCanvas->getWidth() + additionnalTouchGrabRadius;
-        double bInPx = (b/2.0) * (double)parentCanvas->getHeight() + additionnalTouchGrabRadius;
+        // ATTENTION a et b sont les 1/2 longueurs des axes
+        double aInPx_touch = aInPixels + additionnalTouchGrabRadius;
+        double bInPx_touch = bInPixels + additionnalTouchGrabRadius;
         // Point à tester, dans le repère du centre de l'ellipse
         bpt relativeT = T; // copie car soustraction boost se fait par référence
         boost::geometry::subtract_point(relativeT, centerInPixels);
         // On applique juste l'inéquation paramétrique de l'ellipse
-        if ( (std::pow(relativeT.get<0>() / aInPx, 2)
-              + std::pow(relativeT.get<1>() / bInPx, 2) )
+        if ( (std::pow(relativeT.get<0>() / aInPx_touch, 2)
+              + std::pow(relativeT.get<1>() / bInPx_touch, 2) )
             < 1.0 )
             return true;
         else

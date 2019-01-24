@@ -79,8 +79,8 @@ void MultiSceneCanvasComponent::paint (Graphics& /*g*/) // unused Graphics conte
 void MultiSceneCanvasComponent::resized()
 {
     // Children display canvas on the bottom
-    childrenCanvas->setSize(getWidth(), getHeight() - sceneButtonsHeight -space); // appelera l'update du canvasinteractor (le manager)
-    childrenCanvas->setTopLeftPosition(0, sceneButtonsHeight +space);
+    childrenCanvas->setSize(getWidth(), getHeight() - SceneButtonsHeight -space); // appelera l'update du canvasinteractor (le manager)
+    childrenCanvas->setTopLeftPosition(0, SceneButtonsHeight +space);
     
     // Buttons positionning
     updateSceneButtonsBounds();
@@ -135,7 +135,7 @@ void MultiSceneCanvasComponent::updateSceneButtonsBounds()
     int buttonWidth = int(((float)(getWidth())-(float)(space))/(float)(sceneChoiceTextButtons.size()))-space;
     for (size_t i=0 ; i<sceneChoiceTextButtons.size() ; i++)
     {
-        sceneChoiceTextButtons[i]->setBounds(space+(int)(i)*(buttonWidth+space), 0, buttonWidth, sceneButtonsHeight);
+        sceneChoiceTextButtons[i]->setBounds(space+(int)(i)*(buttonWidth+space), 0, buttonWidth, SceneButtonsHeight);
     }
 }
 

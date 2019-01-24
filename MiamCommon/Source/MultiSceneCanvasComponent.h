@@ -45,7 +45,9 @@ class MultiSceneCanvasComponent    : public Component,
     
     // Button objects
     std::vector<ScopedPointer<TextButton>> sceneChoiceTextButtons;
-    const int sceneButtonsHeight = 36;
+    public :
+    static const int SceneButtonsHeight = 36;
+    protected :
     
     
     // - - - - - Graphical CONST options - - - - -

@@ -43,7 +43,7 @@ namespace Miam
         private :
         /// \brief Retourne la version minimale des sessions (fichiers mspat ou mcs) que cette version
         /// de l'application peut traiter.
-        static const int MinimumCompatibleSessionVersionNumber = 0x205; // 0.2.5
+        static const int MinimumCompatibleSessionVersionNumber = 0x10000; // 1.0.0
         
         
         // Si problème de link (symbole non-défini), il ne faut pas oublier de déclarer et d'initialiser cet

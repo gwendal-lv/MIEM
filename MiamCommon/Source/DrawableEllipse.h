@@ -30,12 +30,12 @@ namespace Miam
         bpolygon contourPoints;
         Path contour;
 
-        // ATTENTION a et b ne sont pas le grand rayon et le petit rayon, mais
-        // le demi grand axe et demi petit axe)... à corriger.
-        double a, b; // grand axe et petit axe. Relative sizes, percentage of parent canvas
-        /// \brief for fixed-size disks... Would need a refactoring into aInPixels and bInPixels
-        /// default value to -1 to force crashes if used when not supposed to
-        int radiusInPixels = -1;
+        /// \brief DEMI grand axe et DEMI petit axe. Relative sizes, percentage of parent canvas
+        double a = 0.0;
+        double b = 0.0;
+        /// \brief HALF big and small axes length, in pixels
+        int aInPixels = 0;
+        int bInPixels = 0;
         
         double rotationAngle; // angle d'inclinaison de l'ellipse
         float xScale, yScale;
