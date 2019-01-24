@@ -322,10 +322,9 @@
     <XCODE_MAC targetFolder="Builds/MacOSX" extraCompilerFlags="-Wno-comma"
                bigIcon="ok0lDM" iosDevelopmentTeamID="ZYQ9N85U6C">
       <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MIEM Spat Player"
-                       defines="__MIAM_DEBUG&#10;__MIEM_DEBUG_TRACE__DISABLED" enablePluginBinaryCopyStep="1"/>
-        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MIEM Spat Player"
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" defines="__MIAM_DEBUG&#10;__MIEM_DEBUG_TRACE__DISABLED"
                        enablePluginBinaryCopyStep="1"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" enablePluginBinaryCopyStep="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
@@ -350,9 +349,9 @@
                    androidInternetNeeded="1" buildToolsVersion="27.0.1" gradleToolchain="clang">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" androidArchitectures="armeabi armeabi-v7a x86" isDebug="1"
-                       optimisation="1" targetName="MiemSpatPlayer" headerPath="" defines="__MIAM_DEBUG&#10;__MIEM_DEBUG_TRACE__DISABLED"/>
+                       optimisation="1" headerPath="" defines="__MIAM_DEBUG&#10;__MIEM_DEBUG_TRACE__DISABLED"/>
         <CONFIGURATION name="Release" androidArchitectures="armeabi armeabi-v7a x86"
-                       isDebug="0" optimisation="3" targetName="MiemSpatPlayer" headerPath=""/>
+                       isDebug="0" optimisation="3" headerPath=""/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
@@ -402,9 +401,8 @@
                   UISupportsDocumentBrowser="1" iCloudPermissions="1" iosDevelopmentTeamID="ZYQ9N85U6C"
                   bigIcon="KocCMm" userNotes="build 2019/01/23 : num&#233;ro 1.0.0.0">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" defines="__MIAM_DEBUG&#10;__MIEM_DEBUG_TRACE__DISABLED"
-                       targetName="MIEM Spat"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="MIEM Spat"/>
+        <CONFIGURATION isDebug="1" name="Debug" defines="__MIAM_DEBUG&#10;__MIEM_DEBUG_TRACE__DISABLED"/>
+        <CONFIGURATION isDebug="0" name="Release"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_video"/>
