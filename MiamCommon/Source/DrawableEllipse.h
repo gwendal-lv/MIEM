@@ -27,8 +27,18 @@ namespace Miam
         
         
 		protected :
-			bpolygon contourPoints;
-			Path contour;
+        bpolygon contourPoints;
+        Path contour;
+
+        // ATTENTION a et b ne sont pas le grand rayon et le petit rayon, mais
+        // le demi grand axe et demi petit axe)... à corriger.
+        double a, b; // grand axe et petit axe. Relative sizes, percentage of parent canvas
+        /// \brief for fixed-size disks... Would need a refactoring into aInPixels and bInPixels
+        /// default value to -1 to force crashes if used when not supposed to
+        int radiusInPixels = -1;
+        
+        double rotationAngle; // angle d'inclinaison de l'ellipse
+        float xScale, yScale;
 
         
         
@@ -50,12 +60,15 @@ namespace Miam
         
         // =============== METHODS ===============
 		public :
-            DrawableEllipse(bptree::ptree & areaTree);
-			DrawableEllipse(int64_t _Id);
-			DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio = 1.77777777f);
+        DrawableEllipse(bptree::ptree & areaTree);
+        DrawableEllipse(int64_t _Id);
+        DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio = 1.77777777f);
+        DrawableEllipse(int64_t _Id, bpt _center, int _radiusInPixels, Colour _fillColour);
 
 		private:
-			void createJucePolygon(int width = 160, int height = 90);
+        void createJucePolygon(int width = 160, int height = 90);
+        /// \brief Performs general graphical initialisations
+        void init();
         /// \brief Inits the sub-parts of the index buffers that will never change.
         void initSubBuffers();
 
@@ -87,14 +100,8 @@ namespace Miam
 		void recreateContourPoints(int width, int height);
 
 		protected:
-        // ATTENTION a et b ne sont pas le grand rayon et le petit rayon
-        // (demi grand axe et demi petit axe)... à corriger.
-			double a, b; // grand axe et petit axe
-			double rotationAngle; // angle d'inclinaison de l'ellipse
-			float xScale, yScale;
-
-			virtual double computeXScale(float _canvasRatio);
-			virtual double computeYScale(float _canvasRatio);
+        virtual double computeXScale(float _canvasRatio);
+        virtual double computeYScale(float _canvasRatio);
 
 
 	};

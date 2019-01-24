@@ -50,6 +50,12 @@ EditableEllipse::EditableEllipse(int64_t _Id, bpt _center, double _a, double _b,
 	SetIsRound(false);
 }
 
+EditableEllipse::EditableEllipse(int64_t _Id, bpt _center, int _radiusInPixels, Colour _fillColour) :
+    InteractiveEllipse(_Id, _center, _radiusInPixels, _fillColour)
+{
+    init();
+}
+
 void EditableEllipse::init()
 {
 	graphicalInit();

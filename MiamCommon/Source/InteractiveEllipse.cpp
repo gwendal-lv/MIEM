@@ -51,6 +51,11 @@ InteractiveEllipse::InteractiveEllipse(int64_t _Id, bpt _center, double _a, doub
 {
 	init();
 }
+InteractiveEllipse::InteractiveEllipse(int64_t _Id, bpt _center, int _radiusInPixels, Colour _fillColour)
+     : DrawableEllipse(_Id, _center, _radiusInPixels, _fillColour)
+{
+    init();
+}
 
 void InteractiveEllipse::init()
 {

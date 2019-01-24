@@ -41,8 +41,12 @@ commonStartTimePt(commonStartTimePoint_)
 
 Exciter::Exciter(uint64_t uniqueId, std::chrono::time_point<SteadyClock> commonStartTimePoint_, int additionnalTouchGrabRadius_)
 :
+// AUTO RESIZING
 // Taille = 5% du canevas (de la + petite taille). Ratio inconnu, 1 par défaut...
-EditableEllipse(uniqueId, bpt(0.5, 0.5), 0.05, Colours::lightgrey, 1.0f),
+// EditableEllipse(uniqueId, bpt(0.5, 0.5), 0.05, Colours::lightgrey, 1.0f),
+
+// FIXED SIZE IN PIXELS
+EditableEllipse(uniqueId, bpt(0.5, 0.5), 36, Colours::lightgrey),
 
 additionnalTouchGrabRadius(additionnalTouchGrabRadius_),
 commonStartTimePt(commonStartTimePoint_)
@@ -76,7 +80,7 @@ void Exciter::init()
     interpolationType = InterpolationType::None;
     
     // Centre (voir DrawableArea)
-    displayCenter = false;
+    displayCenter = true;
     
     SetNameVisible(false);
     

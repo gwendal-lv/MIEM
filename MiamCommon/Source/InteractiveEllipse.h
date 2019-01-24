@@ -25,6 +25,7 @@ namespace Miam
         InteractiveEllipse(bptree::ptree & areaTree);
         InteractiveEllipse(int64_t _Id);
         InteractiveEllipse(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio);
+        InteractiveEllipse(int64_t _Id, bpt _center, int _radiusInPixels, Colour _fillColour);
 
 			virtual ~InteractiveEllipse() {}
 		

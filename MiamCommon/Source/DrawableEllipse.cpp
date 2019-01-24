@@ -40,15 +40,7 @@ DrawableArea(areaTree)
     }
     
     // Actualisations graphiques
-    createJucePolygon();
-#ifdef __MIEM_VBO
-    // resize des buffers
-    vertices_buffer.resize(GetVerticesBufferSize());
-    indices_buffer.resize(GetIndicesBufferSize());
-    coulours_buffer.resize(GetColoursBufferSize());
-    
-    initSubBuffers();
-#endif // def __MIEM_VBO
+    init();
 }
 
 DrawableEllipse::DrawableEllipse(int64_t _Id) :
@@ -71,19 +63,52 @@ DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, double _a, double _b,
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>() - (a / 2)*xScale, center.get<1>()));
 	boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() - (b / 2)*yScale));
 
-    
     // Actualisations graphiques
+    init();
+}
+
+DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, int _radiusInPixels, Colour _fillColour)
+    : DrawableArea(_Id, _center, _fillColour),
+    radiusInPixels(_radiusInPixels)
+{
+    // default non sense values... because the radius in pixels alone must be used
+    a = 0.1;
+    b = 0.1;
+    
+    // Fixed size in pixels
+    resizeWhenParentSizeChanges = false;
+    
+    // Initial geometry ?
+    // All of this code is intended to work on VBO mode only....
+    // the Juce classical drawing needs to be implemented for fixed-size items for
+    // mixed Juce/CPU/OpenGL rendering
+    #ifndef __MIEM_VBO
+    assert(false); // see remark above !
+    #endif
+    
+    // Contour points : fake coordinates around the center (code copied from a real ctor)
+    boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() - (b / 2)*yScale));
+    boost::geometry::append(contourPoints.outer(), bpt(center.get<0>() + (a / 2)*xScale, center.get<1>()));
+    boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() + (b / 2)*yScale));
+    boost::geometry::append(contourPoints.outer(), bpt(center.get<0>() - (a / 2)*xScale, center.get<1>()));
+    boost::geometry::append(contourPoints.outer(), bpt(center.get<0>(), center.get<1>() - (b / 2)*yScale));
+    
+    // Graphical updates
+    init();
+}
+
+void DrawableEllipse::init()
+{
     createJucePolygon();
 #ifdef __MIEM_VBO
-	// resize des buffers
+    // resize des buffers
     vertices_buffer.resize(GetVerticesBufferSize());
     indices_buffer.resize(GetIndicesBufferSize());
     coulours_buffer.resize(GetColoursBufferSize());
-	
+    
     initSubBuffers();
 #endif // def __MIEM_VBO
 }
-
 
 void DrawableEllipse::createJucePolygon(int width, int height)
 {
@@ -165,9 +190,19 @@ void DrawableEllipse::RefreshOpenGLBuffers()
 {
 	DrawableArea::RefreshOpenGLBuffers();
     
-    // les polygones eux n'ont pas besoin de ça, mais bon voilà... on laisse pour l'instant...
-	int aInPixels = (int)(a * (double)parentCanvas->getWidth() * xScale/2.0);
-	int bInPixels = (int)(b * (double)parentCanvas->getWidth() * xScale/2.0);
+    // VBO rendering works for fixed-size ellipses, or auto-resizing ones
+    int aInPixels = 0;
+    int bInPixels = 0;
+    if (resizeWhenParentSizeChanges)
+    {
+        aInPixels = (int)(a * (double)parentCanvas->getWidth() * xScale/2.0);
+        bInPixels = (int)(b * (double)parentCanvas->getWidth() * xScale/2.0);
+    }
+    else
+    {
+        aInPixels = radiusInPixels;
+        bInPixels = radiusInPixels;
+    }
 
 	// - - - - - Surface de l'ellipse - - - - -
 	const int surfaceVertexBufElmtOffset = DrawableArea::GetVerticesBufferElementsCount();
@@ -294,6 +329,13 @@ std::shared_ptr<bptree::ptree> DrawableEllipse::GetTree()
     bptree::ptree rotationTree;
     
     // Écriture des paramètres (non-négligeables seulement)
+    // ATTENTION, IL FAUT MAINTENANT LIRE ET ECRIRE LES RAYONS CONSTANTS EN PIXELS
+    // ATTENTION, IL FAUT MAINTENANT LIRE ET ECRIRE LES RAYONS CONSTANTS EN PIXELS
+    // ATTENTION, IL FAUT MAINTENANT LIRE ET ECRIRE LES RAYONS CONSTANTS EN PIXELS
+    // ATTENTION, IL FAUT MAINTENANT LIRE ET ECRIRE LES RAYONS CONSTANTS EN PIXELS
+    // ATTENTION, IL FAUT MAINTENANT LIRE ET ECRIRE LES RAYONS CONSTANTS EN PIXELS
+    // ATTENTION, IL FAUT MAINTENANT LIRE ET ECRIRE LES RAYONS CONSTANTS EN PIXELS
+    // ATTENTION, IL FAUT MAINTENANT LIRE ET ECRIRE LES RAYONS CONSTANTS EN PIXELS
     axesTree.put("<xmlattr>.a", a);
     axesTree.put("<xmlattr>.b", b);
     geomeTree.add_child("axes", axesTree);

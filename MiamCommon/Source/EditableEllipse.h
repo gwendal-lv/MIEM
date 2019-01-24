@@ -24,9 +24,14 @@ namespace Miam
         
         EditableEllipse(bptree::ptree & areaTree);
         
-			EditableEllipse(int64_t _Id);
-			EditableEllipse(int64_t _Id, bpt _center, double _r, Colour _fillColour, float _canvasRatio);
-			EditableEllipse(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio);
+        EditableEllipse(int64_t _Id);
+        /// \brief Constructor of a disk, with the radius given in percentage of the smallest
+        /// measure of canvas (width or height)
+        EditableEllipse(int64_t _Id, bpt _center, double _r, Colour _fillColour, float _canvasRatio);
+        /// \ßrief Construction of a classical ellipse
+        EditableEllipse(int64_t _Id, bpt _center, double _a, double _b, Colour _fillColour, float _canvasRatio);
+        /// \brief Construction of a disk with constant size in pixels
+        EditableEllipse(int64_t _Id, bpt _center, int radiusInPixels, Colour _fillColour);
 
 			virtual ~EditableEllipse() {/* DBG("ellipse deleted"); */}
 
