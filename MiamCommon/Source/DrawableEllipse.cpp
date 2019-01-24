@@ -25,7 +25,7 @@ DrawableArea(areaTree)
 {
     // Data expected if different, depending on the value of "resize when parent size changes",
     // which is mandatory in the tree, and which must have been read by the drawable area XML reader
-    if (resizeWhenParentSizeChanges)
+    if (proportionalToParent)
     {
         try {
             a = areaTree.get<double>("geometry.axes.<xmlattr>.a");
@@ -38,8 +38,8 @@ DrawableArea(areaTree)
     else
     {
         try {
-            aInPixels = areaTree.get<double>("geometry.axes.<xmlattr>.a_in_pixels");
-            bInPixels = areaTree.get<double>("geometry.axes.<xmlattr>.b_in_pixels");
+            aInPixels = areaTree.get<int>("geometry.axes.<xmlattr>.a_in_pixels");
+            bInPixels = areaTree.get<int>("geometry.axes.<xmlattr>.b_in_pixels");
         }
         catch (bptree::ptree_error &e) {
             throw XmlReadException("DrawableEllipse construction : axes lengths [in pixels] a and/or b cannot be read : ", e);
@@ -94,7 +94,7 @@ DrawableEllipse::DrawableEllipse(int64_t _Id, bpt _center, int _radiusInPixels, 
     yScale = 1.0;
     
     // Fixed size in pixels
-    resizeWhenParentSizeChanges = false;
+    proportionalToParent = false;
     
     // Initial geometry ?
     // All of this code is intended to work on VBO mode only....
@@ -196,7 +196,7 @@ void DrawableEllipse::CanvasResized(SceneCanvasComponent* _parentCanvas)
 	DrawableArea::CanvasResized(_parentCanvas);
 
     //  If it auto-resizes : we update the a/b in pixels
-    if (resizeWhenParentSizeChanges)
+    if (proportionalToParent)
     {
         // - - - - TO BE TESTED - - - - -
         // - - - - TO BE TESTED - - - - -
@@ -354,7 +354,7 @@ std::shared_ptr<bptree::ptree> DrawableEllipse::GetTree()
     bptree::ptree rotationTree;
     
     // Écriture des paramètres (non-négligeables, et utiles seulement)
-    if (resizeWhenParentSizeChanges)
+    if (proportionalToParent)
     {
         axesTree.put("<xmlattr>.a", a);
         axesTree.put("<xmlattr>.b", b);

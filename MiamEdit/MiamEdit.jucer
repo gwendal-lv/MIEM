@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="O4BfM6" name="MIEM Editor" projectType="guiapp" version="1.0.0"
-              bundleIdentifier="com.glv.MIEMEditor" includeBinaryInAppConfig="1"
+              bundleIdentifier="com.gwendallv.MIEMEditor" includeBinaryInAppConfig="1"
               jucerVersion="5.4.1" displaySplashScreen="0" reportAppUsage="0"
               splashScreenColour="Dark" companyCopyright="Gwendal Le Vaillant (IRISIB/LARAS, UMons)"
               companyWebsite="http://laras.be" companyName="IRISIB/LARAS, UMons"

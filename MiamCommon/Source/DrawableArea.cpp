@@ -30,7 +30,7 @@ DrawableArea::DrawableArea(bptree::ptree& areaTree)
     std::string colourString = areaTree.get<std::string>("colour", std::string("ffaaaaaa"));
     fillColour = Colour::fromString( colourString.c_str() );
     // Mandatory since version 1.0.0
-    resizeWhenParentSizeChanges = areaTree.get<bool>("resize_when_parent_size_changes");
+    proportionalToParent = areaTree.get<bool>("proportional_to_parent");
     
     // Données facultatives
     try {
@@ -598,7 +598,7 @@ std::shared_ptr<bptree::ptree> DrawableArea::GetTree()
     drawableAreaTree->put("center.<xmlattr>.y", center.get<1>());
     drawableAreaTree->put("colour", fillColour.toString());
     drawableAreaTree->put("keep_ratio", keepRatio);
-    drawableAreaTree->put("resize_when_parent_size_changes", resizeWhenParentSizeChanges);
+    drawableAreaTree->put("proportional_to_parent", proportionalToParent);
     return drawableAreaTree;
 }
 

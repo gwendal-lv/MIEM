@@ -92,7 +92,7 @@ namespace Miam
         const unsigned int nameCharsCountMax = 15; //
         
         bool keepRatio;
-        bool resizeWhenParentSizeChanges = true;
+        bool proportionalToParent = true;
 		bool areaVisible = true;
         
          

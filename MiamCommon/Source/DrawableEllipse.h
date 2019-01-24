@@ -37,8 +37,9 @@ namespace Miam
         int aInPixels = 0;
         int bInPixels = 0;
         
-        double rotationAngle; // angle d'inclinaison de l'ellipse
-        float xScale, yScale;
+        double rotationAngle = 0.0; // angle d'inclinaison de l'ellipse
+		float xScale = 1.0;
+		float yScale = 1.0;
 
         
         

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<miem appVersion="518" appPurpose="Spatialization">
+<miem appVersion="65536" appPurpose="Spatialisation">
     <settings>
         <control>
             <interpolation type="Quadratic"/>
@@ -150,6 +150,7 @@
                                 <center x="0.50150385895883787" y="0.83530291064981999"/>
                                 <colour>ff000000</colour>
                                 <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
                                     <point index="0" x="0.6696428571428571" y="0.77158308889891691"/>
                                     <point index="1" x="0.77473800696125905" y="0.97846626805054149"/>
@@ -164,6 +165,7 @@
                                 <center x="0.42168110623486682" y="0.13719821750902528"/>
                                 <colour>ffd96700</colour>
                                 <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
                                     <point index="0" x="0.56936567717249575" y="0.15401235913240052"/>
                                     <point index="1" x="0.5693811939051745" y="0.30689747486578367"/>
@@ -180,6 +182,7 @@
                                 <center x="0.68675752875302665" y="0.29343411552346571"/>
                                 <colour>ff1c49d2</colour>
                                 <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
                                     <point index="0" x="0.74806006276571602" y="0.26253418900604664"/>
                                     <point index="1" x="0.74807557949839454" y="0.41541930473943045"/>
@@ -196,6 +199,7 @@
                                 <center x="0.68690886047215494" y="0.53150383574007221"/>
                                 <colour>ff7fa9df</colour>
                                 <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
                                     <point index="0" x="0.74933692414586128" y="0.41396836093745465"/>
                                     <point index="1" x="0.7493524408785398" y="0.56685347667083885"/>
@@ -212,6 +216,7 @@
                                 <center x="0.57811554176755453" y="0.69326066110108309"/>
                                 <colour>ffd3056b</colour>
                                 <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
                                     <point index="0" x="0.67514654884319769" y="0.5254939137352892"/>
                                     <point index="1" x="0.67516206557587632" y="0.67837902946867257"/>
@@ -228,6 +233,7 @@
                                 <center x="0.42219657990314768" y="0.69437471796028882"/>
                                 <colour>ff2baf83</colour>
                                 <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
                                     <point index="0" x="0.57206600253568995" y="0.52581825940315885"/>
                                     <point index="1" x="0.5720815192683687" y="0.678703375136542"/>
@@ -244,6 +250,7 @@
                                 <center x="0.30979494552058112" y="0.29885632897111913"/>
                                 <colour>ff7fffa5</colour>
                                 <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
                                     <point index="0" x="0.49727975858896051" y="0.26110988846453043"/>
                                     <point index="1" x="0.49729527532163897" y="0.4139950041979138"/>
@@ -260,6 +267,7 @@
                                 <center x="0.31346473970944311" y="0.53201150722021662"/>
                                 <colour>ffe6ce00</colour>
                                 <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
                                     <point index="0" x="0.4980458754170477" y="0.41528689658727402"/>
                                     <point index="1" x="0.49806139214972617" y="0.56817201232065773"/>
@@ -276,6 +284,7 @@
                                 <center x="0.57803987590799033" y="0.13842509025270758"/>
                                 <colour>ff7f70e8</colour>
                                 <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
                                     <point index="0" x="0.67451757638557064" y="0.15294060822987343"/>
                                     <point index="1" x="0.67453309311824927" y="0.30582572396325658"/>
@@ -289,23 +298,25 @@
                                 <spatstate index="2"/>
                             </area>
                             <area id="25" type="Exciter" index="9">
-                                <center x="0.50013241525427443" y="0.14025834837545834"/>
+                                <center x="0.49636803874092028" y="0.14079422382671544"/>
                                 <colour>ffd3d3d3</colour>
-                                <keep_ratio>true</keep_ratio>
+                                <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>false</proportional_to_parent>
                                 <geometry>
-                                    <axes a="0.050000000000000003" b="0.050000000000000003"/>
+                                    <axes a_in_pixels="26" b_in_pixels="26"/>
                                 </geometry>
-                                <is_round>true</is_round>
+                                <is_round>false</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
                             <area id="26" type="Exciter" index="10">
-                                <center x="0.38085464588377765" y="0.89904388537906232"/>
+                                <center x="0.38740920096852349" y="0.90252707581227565"/>
                                 <colour>ffd3d3d3</colour>
-                                <keep_ratio>true</keep_ratio>
+                                <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>false</proportional_to_parent>
                                 <geometry>
-                                    <axes a="0.050000000000000003" b="0.050000000000000003"/>
+                                    <axes a_in_pixels="26" b_in_pixels="26"/>
                                 </geometry>
-                                <is_round>true</is_round>
+                                <is_round>false</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
                         </areas>
@@ -317,6 +328,7 @@
                                 <center x="0.51242338831719125" y="0.92079619810469315"/>
                                 <colour>ff000000</colour>
                                 <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
                                     <point index="0" x="0.99044188960302704" y="0.15944224656062952"/>
                                     <point index="1" x="0.99046733458670122" y="0.97747124543564456"/>
@@ -329,6 +341,7 @@
                                 <center x="0.18940110472154964" y="0.087509871389891691"/>
                                 <colour>ffff0000</colour>
                                 <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
                                     <point index="0" x="0.39568042524213076" y="0.90336614395306847"/>
                                     <point index="1" x="0.0216443318513098" y="0.90353177353149894"/>
@@ -341,6 +354,7 @@
                                 <center x="0.4118492736077482" y="0.084083088898916969"/>
                                 <colour>ff0000ff</colour>
                                 <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
                                     <point index="0" x="0.57767573395883531" y="0.90420521209386284"/>
                                     <point index="1" x="0.20363964056801714" y="0.90437084167229298"/>
@@ -353,6 +367,7 @@
                                 <center x="0.60053155266343827" y="0.084470893501805061"/>
                                 <colour>ff85ffc9</colour>
                                 <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
                                     <point index="0" x="0.80740201271186418" y="0.90454365974729223"/>
                                     <point index="1" x="0.4333659193210434" y="0.90470928932572259"/>
@@ -365,6 +380,7 @@
                                 <center x="0.82655966253026636" y="0.087185525722021665"/>
                                 <colour>ffc0ff92</colour>
                                 <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
                                     <point index="0" x="0.98793129539951574" y="0.90616538808664271"/>
                                     <point index="1" x="0.61389520200869419" y="0.90633101766507274"/>
@@ -374,23 +390,25 @@
                                 <spatstate index="12"/>
                             </area>
                             <area id="27" type="Exciter" index="5">
-                                <center x="0.66331529963680569" y="0.94041911101083164"/>
+                                <center x="0.41041162227602951" y="0.94043321299639093"/>
                                 <colour>ffd3d3d3</colour>
-                                <keep_ratio>true</keep_ratio>
+                                <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>false</proportional_to_parent>
                                 <geometry>
-                                    <axes a="0.050000000000000003" b="0.050000000000000003"/>
+                                    <axes a_in_pixels="26" b_in_pixels="26"/>
                                 </geometry>
-                                <is_round>true</is_round>
+                                <is_round>false</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
                             <area id="28" type="Exciter" index="6">
-                                <center x="0.30227092161017272" y="0.086691956227439027"/>
+                                <center x="0.30387409200969356" y="0.084837545126357827"/>
                                 <colour>ffd3d3d3</colour>
-                                <keep_ratio>true</keep_ratio>
+                                <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>false</proportional_to_parent>
                                 <geometry>
-                                    <axes a="0.050000000000000003" b="0.050000000000000003"/>
+                                    <axes a_in_pixels="26" b_in_pixels="26"/>
                                 </geometry>
-                                <is_round>true</is_round>
+                                <is_round>false</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
                         </areas>
