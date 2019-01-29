@@ -45,6 +45,10 @@ void Presenter::CompleteInitialisation(Model* _model)
     PlayerPresenter::CompleteInitialisation(_model);
 }
 
+void Presenter::OnLoadDefaultSession()
+{
+    throw std::runtime_error("not implemented. Haaaan ouais");
+}
 
 
 // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =

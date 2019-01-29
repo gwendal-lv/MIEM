@@ -66,6 +66,7 @@ private:
     std::unique_ptr<TextButton> createSpatTextButton;
     std::unique_ptr<TextButton> createDefaultTextButton;
     std::unique_ptr<TextButton> createGenericTextButton;
+    std::unique_ptr<HyperlinkButton> infoHyperlinkButton;
 
 
     //==============================================================================

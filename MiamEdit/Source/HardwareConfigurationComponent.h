@@ -106,6 +106,7 @@ private:
     std::unique_ptr<ToggleButton> outputNamesToggleButton;
     std::unique_ptr<ComboBox> interpolationTypeComboBox;
     std::unique_ptr<Label> interpolationTypeLabel;
+    std::unique_ptr<HyperlinkButton> infoHyperlinkButton;
 
 
     //==============================================================================

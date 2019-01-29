@@ -47,11 +47,13 @@ MainBackgroundComponent::MainBackgroundComponent ()
     statesTextButton.reset (new TextButton ("States text button"));
     addAndMakeVisible (statesTextButton.get());
     statesTextButton->setButtonText (TRANS("Control States"));
-    statesTextButton->setConnectedEdges (Button::ConnectedOnRight);
+    statesTextButton->setConnectedEdges (Button::ConnectedOnLeft);
     statesTextButton->addListener (this);
     statesTextButton->setColour (TextButton::buttonColourId, Colour (0xffbfbfbf));
     statesTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     statesTextButton->setColour (TextButton::textColourOffId, Colours::black);
+
+    statesTextButton->setBounds (200, 8, 120, 24);
 
     mainInfoLabel.reset (new Label ("Main info label",
                                     TRANS("...")));
@@ -67,11 +69,13 @@ MainBackgroundComponent::MainBackgroundComponent ()
     scenesTextButton.reset (new TextButton ("Scenes text button"));
     addAndMakeVisible (scenesTextButton.get());
     scenesTextButton->setButtonText (TRANS("Geometric Scenes"));
-    scenesTextButton->setConnectedEdges (Button::ConnectedOnLeft);
+    scenesTextButton->setConnectedEdges (Button::ConnectedOnRight);
     scenesTextButton->addListener (this);
     scenesTextButton->setColour (TextButton::buttonColourId, Colour (0xffbfbfbf));
     scenesTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     scenesTextButton->setColour (TextButton::textColourOffId, Colours::black);
+
+    scenesTextButton->setBounds (80, 8, 120, 24);
 
     hardwareConfTextButton.reset (new TextButton ("Hardware Configuration text button"));
     addAndMakeVisible (hardwareConfTextButton.get());
@@ -80,6 +84,8 @@ MainBackgroundComponent::MainBackgroundComponent ()
     hardwareConfTextButton->setColour (TextButton::buttonColourId, Colour (0xffbfbfbf));
     hardwareConfTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     hardwareConfTextButton->setColour (TextButton::textColourOffId, Colours::black);
+
+    hardwareConfTextButton->setBounds (328, 8, 112, 24);
 
     startTextButton.reset (new TextButton ("Start text button"));
     addAndMakeVisible (startTextButton.get());
@@ -162,11 +168,8 @@ void MainBackgroundComponent::resized()
     //[/UserPreResize]
 
     speakersTextButton->setBounds (8 + 64, 8, 8, 24);
-    statesTextButton->setBounds ((8 + 64) + 8, 8, 120, 24);
     mainInfoLabel->setBounds (getWidth() - 8 - (getWidth() - 456), 8, getWidth() - 456, 24);
-    scenesTextButton->setBounds (((8 + 64) + 8) + 120, 8, 120, 24);
-    hardwareConfTextButton->setBounds (((8 + 64) + 8) + 120 - -128, 8, 112, 24);
-    startTextButton->setBounds ((((8 + 64) + 8) + 120 - -128) + 112 - -16, 8, 8, 24);
+    startTextButton->setBounds (328 + 112 - -16, 8, 8, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -279,9 +282,9 @@ BEGIN_JUCER_METADATA
               bgColOff="55ffffff" bgColOn="ffffffff" textCol="ff000000" buttonText="Speakers"
               connectedEdges="2" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="States text button" id="8bdb167a1cca5b0b" memberName="statesTextButton"
-              virtualName="" explicitFocusOrder="0" pos="0R 8 120 24" posRelativeX="2752e5f61c280c43"
-              bgColOff="ffbfbfbf" bgColOn="ffffffff" textCol="ff000000" buttonText="Control States"
-              connectedEdges="2" needsCallback="1" radioGroupId="0"/>
+              virtualName="" explicitFocusOrder="0" pos="200 8 120 24" bgColOff="ffbfbfbf"
+              bgColOn="ffffffff" textCol="ff000000" buttonText="Control States"
+              connectedEdges="1" needsCallback="1" radioGroupId="0"/>
   <LABEL name="Main info label" id="d52b689341b86690" memberName="mainInfoLabel"
          virtualName="" explicitFocusOrder="0" pos="8Rr 8 456M 24" bkgCol="56ffffff"
          outlineCol="84ffffff" edTextCol="ff000000" edBkgCol="0" labelText="..."
@@ -289,14 +292,14 @@ BEGIN_JUCER_METADATA
          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="34"/>
   <TEXTBUTTON name="Scenes text button" id="9994cb0e99bfd3ca" memberName="scenesTextButton"
-              virtualName="" explicitFocusOrder="0" pos="0R 8 120 24" posRelativeX="8bdb167a1cca5b0b"
-              bgColOff="ffbfbfbf" bgColOn="ffffffff" textCol="ff000000" buttonText="Geometric Scenes"
-              connectedEdges="1" needsCallback="1" radioGroupId="0"/>
+              virtualName="" explicitFocusOrder="0" pos="80 8 120 24" bgColOff="ffbfbfbf"
+              bgColOn="ffffffff" textCol="ff000000" buttonText="Geometric Scenes"
+              connectedEdges="2" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Hardware Configuration text button" id="1dad683cba944341"
               memberName="hardwareConfTextButton" virtualName="" explicitFocusOrder="0"
-              pos="-128R 8 112 24" posRelativeX="8bdb167a1cca5b0b" bgColOff="ffbfbfbf"
-              bgColOn="ffffffff" textCol="ff000000" buttonText="Configuration"
-              connectedEdges="0" needsCallback="1" radioGroupId="0"/>
+              pos="328 8 112 24" bgColOff="ffbfbfbf" bgColOn="ffffffff" textCol="ff000000"
+              buttonText="Configuration" connectedEdges="0" needsCallback="1"
+              radioGroupId="0"/>
   <TEXTBUTTON name="Start text button" id="cecb4b1d1a8f7c2d" memberName="startTextButton"
               virtualName="" explicitFocusOrder="0" pos="-16R 8 8 24" posRelativeX="1dad683cba944341"
               bgColOff="a0ffffff" bgColOn="ffffffff" textCol="ff000000" buttonText="Start MiamSpat"

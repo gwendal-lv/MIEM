@@ -727,7 +727,7 @@ BEGIN_JUCER_METADATA
               textCol="ff000000" buttonText="Down" connectedEdges="1" needsCallback="1"
               radioGroupId="0"/>
   <LABEL name="Links info label" id="3577c0e2ccd44371" memberName="linksInfoLabel"
-         virtualName="" explicitFocusOrder="0" pos="13 20 523M 24" posRelativeX="9d63d9acaf1299f6"
+         virtualName="" explicitFocusOrder="0" pos="13 20 200M 24" posRelativeX="9d63d9acaf1299f6"
          posRelativeY="4250d5155a80be70" posRelativeW="9d63d9acaf1299f6"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Linked to ? area"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"

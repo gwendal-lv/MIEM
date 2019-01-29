@@ -18,7 +18,7 @@ juce::String PlayerHelpContent::GetMainHelp(AppPurpose appPurpose)
     String endString = "\n\n\n"
     + TRANS("To get all necessary desktop applications, please follow the link below.") + "\n\n"
     + TRANS("This interface is part of the MIEM (Multitouch Interfaces for Electroacoustic Music) research project.") + "\n"
-    + TRANS("To get more information, or to participate in the research program linked to this interface, please contact the author: Gwendal Le Vaillant at glevaillant@he2b.be or visit http://laras.be");
+    + TRANS("To get more information, or to participate in the research program linked to this interface, please visit http://miem.laras.be or contact the author: Gwendal Le Vaillant at glevaillant@he2b.be");
     
     // init from JuceHeader data
     String projectName(ProjectInfo::projectName);
@@ -73,7 +73,7 @@ juce::String PlayerHelpContent::GetMainHelp(AppPurpose appPurpose)
             
             
         default :
-            return TRANS("Please go to http://laras.be or contact glevaillant@he2b.be for more information.");
+            return TRANS("Please go to http://miem.laras.be or contact Gwendal Le Vaillant at glevaillant@he2b.be for more information.");
             break;
     }
-    }
+}

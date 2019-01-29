@@ -70,6 +70,13 @@ StartupComponent::StartupComponent ()
     createGenericTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     createGenericTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
+    infoHyperlinkButton.reset (new HyperlinkButton (TRANS("To get help and more information, please visit http://miem.laras.be"),
+                                                    URL ("http://miem.laras.be")));
+    addAndMakeVisible (infoHyperlinkButton.get());
+    infoHyperlinkButton->setTooltip (TRANS("http://miem.laras.be"));
+    infoHyperlinkButton->setButtonText (TRANS("To get help and more information, please visit http://miem.laras.be"));
+    infoHyperlinkButton->setColour (HyperlinkButton::textColourId, Colours::white);
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -94,6 +101,7 @@ StartupComponent::~StartupComponent()
     createSpatTextButton = nullptr;
     createDefaultTextButton = nullptr;
     createGenericTextButton = nullptr;
+    infoHyperlinkButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -121,6 +129,7 @@ void StartupComponent::resized()
     createSpatTextButton->setBounds ((getWidth() / 2) + 150 - 300, (getHeight() / 2) + 46, 300, 32);
     createDefaultTextButton->setBounds ((getWidth() / 2) + -3 - (168 / 2), (getHeight() / 2) + 350, 168, 24);
     createGenericTextButton->setBounds ((getWidth() / 2) + 150 - 300, (getHeight() / 2), 300, 32);
+    infoHyperlinkButton->setBounds ((getWidth() / 2) - ((getWidth() - 16) / 2), getHeight() - 32, getWidth() - 16, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -222,6 +231,10 @@ BEGIN_JUCER_METADATA
               virtualName="" explicitFocusOrder="0" pos="150Cr 0C 300 32" bgColOff="ffbfbfbf"
               bgColOn="ffffffff" textCol="ff000000" buttonText="Create Generic OSC Controller session"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
+  <HYPERLINKBUTTON name="Info hyperlink button" id="fa3a8802c3b7c7f0" memberName="infoHyperlinkButton"
+                   virtualName="" explicitFocusOrder="0" pos="0.5Cc 32R 16M 24"
+                   tooltip="http://miem.laras.be" textCol="ffffffff" buttonText="To get help and more information, please visit http://miem.laras.be"
+                   connectedEdges="0" needsCallback="0" radioGroupId="0" url="http://miem.laras.be"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

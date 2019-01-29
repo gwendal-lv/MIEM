@@ -18,6 +18,10 @@
 */
 
 //[Headers] You can add your own extra header files here...
+
+// direct, half-disgusting access to the static appPurpose info...
+#include "AppPurpose.h"
+
 //[/Headers]
 
 #include "PlayerMainMenuComponent.h"
@@ -111,11 +115,11 @@ PlayerMainMenuComponent::PlayerMainMenuComponent ()
     "E\n"
     "and scrollable information textbox for help contents"));
 
-    miemProjectHyperlinkButton.reset (new HyperlinkButton (TRANS("Go to MIEM Editor download website"),
-                                                           URL ("https://drive.google.com/drive/folders/1h8ySPNmy8GcbTKubP_FX4lZZbomu-Tuu")));
+    miemProjectHyperlinkButton.reset (new HyperlinkButton (TRANS("Go to MIEM website: miem.laras.be"),
+                                                           URL ("http://miem.laras.be")));
     addAndMakeVisible (miemProjectHyperlinkButton.get());
-    miemProjectHyperlinkButton->setTooltip (TRANS("https://drive.google.com/drive/folders/1h8ySPNmy8GcbTKubP_FX4lZZbomu-Tuu"));
-    miemProjectHyperlinkButton->setButtonText (TRANS("Go to MIEM Editor download website"));
+    miemProjectHyperlinkButton->setTooltip (TRANS("http://miem.laras.be"));
+    miemProjectHyperlinkButton->setButtonText (TRANS("Go to MIEM website: miem.laras.be"));
     miemProjectHyperlinkButton->setColour (HyperlinkButton::textColourId, Colour (0xff3d6ed1));
 
     loadDefaultButton.reset (new TextButton ("Load Default button"));
@@ -141,6 +145,17 @@ PlayerMainMenuComponent::PlayerMainMenuComponent ()
 
     // Special transparent look and feel for the text editor
     infoTextEditor->setLookAndFeel(transparentLookAndFeel.get());
+
+    // Help URLs update (pages of the miem.laras.be website)
+    if (App::GetPurpose() == AppPurpose::GenericController)
+    {
+        miemProjectHyperlinkButton->setURL(URL("http://miem.laras.be/controller"));
+    }
+    else if (App::GetPurpose() == AppPurpose::Spatialisation)
+    {
+        miemProjectHyperlinkButton->setURL(URL("http://miem.laras.be/spat"));
+    }
+
     //[/Constructor]
 }
 
@@ -428,9 +443,8 @@ BEGIN_JUCER_METADATA
               caret="0" popupmenu="0"/>
   <HYPERLINKBUTTON name="MIEM Project hyperlink button" id="fa7d05f849f2e1a1" memberName="miemProjectHyperlinkButton"
                    virtualName="" explicitFocusOrder="0" pos="0Cc 40R 40M 24" posRelativeY="5beff948b653aff1"
-                   tooltip="https://drive.google.com/drive/folders/1h8ySPNmy8GcbTKubP_FX4lZZbomu-Tuu"
-                   textCol="ff3d6ed1" buttonText="Go to MIEM Editor download website"
-                   connectedEdges="0" needsCallback="0" radioGroupId="0" url="https://drive.google.com/drive/folders/1h8ySPNmy8GcbTKubP_FX4lZZbomu-Tuu"/>
+                   tooltip="http://miem.laras.be" textCol="ff3d6ed1" buttonText="Go to MIEM website: miem.laras.be"
+                   connectedEdges="0" needsCallback="0" radioGroupId="0" url="http://miem.laras.be"/>
   <TEXTBUTTON name="Load Default button" id="d025c06799a8b40f" memberName="loadDefaultButton"
               virtualName="" explicitFocusOrder="0" pos="8Rr 16 144 24" posRelativeX="5beff948b653aff1"
               posRelativeY="5beff948b653aff1" bgColOff="ff404040" buttonText="Load default session"

@@ -72,6 +72,7 @@ namespace Miam {
         void CompleteInitialisation(Model* _model);
         virtual ~Presenter() {}
         
+        virtual void OnLoadDefaultSession() override;
         
         
         virtual void Update() override;
