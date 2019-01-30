@@ -97,6 +97,7 @@ namespace Miam {
         void OnInOutChannelsCountChanged(int inputsCount, int outputsCount);
         void OnInOutNamesDisplayedChanged(bool areInputNamesVisible, bool areOutputNamesVisible);
         void OnInterpolationTypeChanged(InterpolationType type);
+        void OnMasterGainEnabledChanged(bool isEnabled);
         private : // sont maintenant cachés, inaccessibles depuis l'extérieur
         void OnUdpPortChanged(int udpPort);
         void OnIpAddressChanged(std::string ipAddress);

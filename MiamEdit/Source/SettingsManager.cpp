@@ -59,6 +59,10 @@ void SettingsManager::ConfigureGuiForSessionPurpose()
                 InterpolationType::Matrix_ConstantPower,
                 InterpolationType::Matrix_ConstantAmplitude
             });
+            // On active bien la possibilité de choisir keyboard edition, ou non
+            configurationComponent->keyboardToggleButton->setVisible(true);
+            // Master gain : possible de choisir aussi
+            configurationComponent->enableMasterVolumeToggleButton->setVisible(true);
             break;
             
             
@@ -73,6 +77,13 @@ void SettingsManager::ConfigureGuiForSessionPurpose()
             configurationComponent->SetAvailableInterpolations({
                 InterpolationType::Any
             });
+            // On désactive bien la possibilité de choisir keyboard edition !
+            // Car on peut toujours le faire avec les sliders... Donc ça n'a pas de sens...
+            configurationComponent->keyboardToggleButton->setVisible(false);
+            // MASTER GAIN DESACTIVE POUR l'INSTANT POUR GENERIC CONTROLLER
+            configurationComponent->enableMasterVolumeToggleButton->setToggleState(false,
+                                                                                   NotificationType::dontSendNotification);
+            configurationComponent->enableMasterVolumeToggleButton->setVisible(false);
             break;
         default :
             break;
@@ -148,6 +159,10 @@ void SettingsManager::OnInterpolationTypeChanged(InterpolationType type)
 {
     model->GetInterpolator()->ReinitInterpolation(type);
 }
+void SettingsManager::OnMasterGainEnabledChanged(bool isEnabled)
+{
+    model->SetIsMasterGainEnabled(isEnabled);
+}
 void SettingsManager::OnAllowKeyboardEdition(bool allow)
 {
     presenter->GetSpatStatesManager()->AllowKeyboardEdition(allow);
@@ -192,7 +207,8 @@ void SettingsManager::SetFromTree(bptree::ptree& tree)
     // may be absent
     try {
         bool allow = tree.get<bool>("presenter.keyboardedition");
-        configurationComponent->keyboardToggleButton->setToggleState(allow, NotificationType::dontSendNotification);
+        configurationComponent->keyboardToggleButton->setToggleState(allow,
+                                                                     NotificationType::dontSendNotification);
         presenter->GetSpatStatesManager()->AllowKeyboardEdition(allow);
     
         // Interpolator-related : simple transmission of data to View, without notifications
@@ -210,6 +226,10 @@ void SettingsManager::SetFromTree(bptree::ptree& tree)
         configurationComponent->udpPortTextEditor->
         setText( boost::lexical_cast<std::string>(tree.get<int>("control.senders.sender.udp.port")) );
         
+        // At this point : the MODEL (and its config) are fully set from their trees
+        // So we can use their value instead of reading them again...
+        configurationComponent->enableMasterVolumeToggleButton->setToggleState(model->GetIsMasterGainEnabled(),
+                                                                               NotificationType::dontSendNotification);
     }
     catch (bptree::ptree_error& e) {
         throw XmlReadException(std::string("Cannot read a necessary settings tag: ") + e.what());

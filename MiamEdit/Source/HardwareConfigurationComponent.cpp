@@ -326,6 +326,7 @@ void HardwareConfigurationComponent::buttonClicked (Button* buttonThatWasClicked
     else if (buttonThatWasClicked == enableMasterVolumeToggleButton.get())
     {
         //[UserButtonCode_enableMasterVolumeToggleButton] -- add your button handler code here..
+        settingsManager->OnMasterGainEnabledChanged(enableMasterVolumeToggleButton->getToggleState());
         //[/UserButtonCode_enableMasterVolumeToggleButton]
     }
 

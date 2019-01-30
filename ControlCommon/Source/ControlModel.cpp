@@ -23,6 +23,12 @@ using namespace Miam;
 
 
 // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
+void ControlModel::SetIsMasterGainEnabled(bool isEnabled)
+{
+    masterGainEnabled = isEnabled;
+    if (!masterGainEnabled)
+        masterGain = 1.0;
+}
 InterpolationType ControlModel::GetInterpolatorType_Atomic ()
 {
     return interpolator->GetType_Atomic();
@@ -216,9 +222,14 @@ std::shared_ptr<bptree::ptree> ControlModel::GetConfigurationTree()
     for (size_t i=0 ; i<stateSenders.size() ; i++)
     {
         auto child = senderChildren.add_child( "sender", *(stateSenders[i]->GetConfigurationTree()) );
-        child.put("<xmattr>.type", stateSenders[i]->GetTypeAsString());
+        child.put("<xmlattr>.type", stateSenders[i]->GetTypeAsString());
     }
     configurationTree->add_child("senders", senderChildren);
+    // Master Gain : enabled or not, with current value
+    bptree::ptree masterGainTree;
+    masterGainTree.put("<xmlattr>.enabled", masterGainEnabled);
+    masterGainTree.put("<xmlattr>.value", masterGain);
+    configurationTree->add_child("master_gain", masterGainTree);
     // Final return
     return configurationTree;
 }
@@ -240,6 +251,10 @@ void ControlModel::SetConfigurationFromTree(bptree::ptree& tree)
     catch (XmlReadException &e) {
         throw XmlReadException("Control settings are not correct: ", e);
     }
+    // Master Gain : facultatif, with default values
+    // No to break compatibility of mspat files (very recently broken for version 1.0.0 ...)
+    masterGain = tree.get<double>("master_gain.<xmlattr>.value", 1.0); // default neutral value
+    masterGainEnabled = tree.get<bool>("master_gain.<xmlattr>.enabled", false); // default false value
 }
 
 

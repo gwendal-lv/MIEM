@@ -56,6 +56,9 @@ namespace Miam
         
         // States computer/interpolator, that owns the states
         std::shared_ptr<StatesInterpolator<double>> interpolator;
+        // A master gain that gain be applied or not to the final state
+        double masterGain = 1.0;
+        bool masterGainEnabled = false;
         
         // Communication
         std::vector< std::shared_ptr<ControlStateSender<double>> > stateSenders;
@@ -78,6 +81,11 @@ namespace Miam
         
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
+        
+        public :
+        /// \brief If gain is disabled, its value becomes automatically 1.0 to be neutral
+        void SetIsMasterGainEnabled(bool isEnabled);
+        bool GetIsMasterGainEnabled() {return masterGainEnabled;}
         
         protected :
         /// \brief For internal quick access. Might be deleted eventually.
