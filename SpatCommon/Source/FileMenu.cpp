@@ -78,13 +78,22 @@ void FileMenu::onSave()
 }
 void FileMenu::onSaveAs()
 {
+    AppPurpose sessionPurpose = presenter->GetSessionPurpose();
+    
 #ifndef __MIAMOBILE
-    SaveFileChooser fileChooser({App::GetPurpose()});
+    // Warning : App::GetPurpose() returns Multi for the Editor !
+    // So we should not use it when saving (the type is already defined)
+    SaveFileChooser fileChooser({sessionPurpose});
     if ( fileChooser.browseForFileToSave(true) )
     {
         File resultFile = fileChooser.getResult();
+        // We check that the path is valid (we add the necessary
+        // .mcs or .mspat suffix if necessary)
+        std::string resultPath = resultFile.getFullPathName().toStdString();
+        if( !PathUtils::CheckForExtensionAndPurposeCoherence(resultPath, sessionPurpose) )
+            resultPath += PathUtils::GetSessionFileExtension(sessionPurpose);
         // data refresh forcé
-        presenter->SaveSession(resultFile.getFullPathName().toStdString(), true);
+        presenter->SaveSession(resultPath, true);
     }
 #else
     /* This function uses pop-ups and

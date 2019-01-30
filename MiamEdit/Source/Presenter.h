@@ -80,7 +80,7 @@ namespace Miam {
         SettingsManager* GetSettingsManager() {return &settingsManager;}
         SpatStatesEditionManager* GetSpatStatesManager() {return &spatStatesEditionManager;}
         
-        AppPurpose GetSessionPurpose() const;
+        virtual AppPurpose GetSessionPurpose() const override;
         
         
         // = = = = = = = = = = METHODS = = = = = = = = = =

@@ -16,6 +16,7 @@
 
 #include "LockFreeParamChangeSender.h"
 
+#include "AppPurpose.h"
 #include "InterpolationTypes.h"
 
 
@@ -59,6 +60,7 @@ namespace Miam
         ///
         virtual void Update() = 0;
         
+        virtual AppPurpose GetSessionPurpose() const = 0;
         
         InterpolationType GetInterpolatorType() const;
         

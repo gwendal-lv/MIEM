@@ -11,6 +11,7 @@
 #pragma once
 
 #include "JuceHeader.h"
+#include "AppPurpose.h"
 
 namespace Miam
 {
@@ -49,7 +50,7 @@ namespace Miam
         
         
         public :
-        FileMenu(ControlPresenter* _spatPresenter);
+        FileMenu(ControlPresenter* _presenter);
         
         void ShowMenuAndSendUserAnswer();
         
