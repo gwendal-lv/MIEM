@@ -169,6 +169,12 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
     infoHyperlinkButton->setButtonText (TRANS("To get help and more information, please visit http://miem.laras.be"));
     infoHyperlinkButton->setColour (HyperlinkButton::textColourId, Colours::white);
 
+    enableMasterVolumeToggleButton.reset (new ToggleButton ("Enable Master Volume toggle button"));
+    addAndMakeVisible (enableMasterVolumeToggleButton.get());
+    enableMasterVolumeToggleButton->setButtonText (TRANS("Enable Master Volume fader in MIEM Spat"));
+    enableMasterVolumeToggleButton->addListener (this);
+    enableMasterVolumeToggleButton->setColour (ToggleButton::textColourId, Colours::black);
+
 
     //[UserPreSize]
 
@@ -225,6 +231,7 @@ HardwareConfigurationComponent::~HardwareConfigurationComponent()
     interpolationTypeComboBox = nullptr;
     interpolationTypeLabel = nullptr;
     infoHyperlinkButton = nullptr;
+    enableMasterVolumeToggleButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -252,17 +259,18 @@ void HardwareConfigurationComponent::resized()
     outputsCountSlider->setBounds ((getWidth() / 2) + -8 - 150, 48, 150, 24);
     inputsCountLabel->setBounds ((getWidth() / 2) + -156 - 208, 16 + 0, 208, 24);
     outputsCountLabel->setBounds ((getWidth() / 2) + -156 - 208, 48 + 0, 208, 24);
-    oscPluginToggleButton->setBounds ((getWidth() / 2) - (400 / 2), 160, 400, 24);
-    udpPortLabel->setBounds ((getWidth() / 2) - 336, 224 + 0, 336, 24);
-    udpPortTextEditor->setBounds ((getWidth() / 2) + 8, 224, 64, 24);
+    oscPluginToggleButton->setBounds ((getWidth() / 2) - (400 / 2), 200, 400, 24);
+    udpPortLabel->setBounds ((getWidth() / 2) - 336, 264 + 0, 336, 24);
+    udpPortTextEditor->setBounds ((getWidth() / 2) + 8, 264, 64, 24);
     keyboardToggleButton->setBounds ((getWidth() / 2) - (400 / 2), getHeight() - 120, 400, 24);
-    ipAddressLabel->setBounds ((getWidth() / 2) - 336, 192 + 0, 336, 24);
-    ipAddressTextEditor->setBounds ((getWidth() / 2) + 8, 192, 120, 24);
+    ipAddressLabel->setBounds ((getWidth() / 2) - 336, 232 + 0, 336, 24);
+    ipAddressTextEditor->setBounds ((getWidth() / 2) + 8, 232, 120, 24);
     inputNamesToggleButton->setBounds ((getWidth() / 2) + 8, 16, 400, 24);
     outputNamesToggleButton->setBounds ((getWidth() / 2) + 8, 48, 400, 24);
     interpolationTypeComboBox->setBounds ((getWidth() / 2) + 8, 104, 320, 24);
     interpolationTypeLabel->setBounds ((getWidth() / 2) - 336, 104 + 0, 336, 24);
     infoHyperlinkButton->setBounds ((getWidth() / 2) - ((getWidth() - 16) / 2), getHeight() - 32, getWidth() - 16, 24);
+    enableMasterVolumeToggleButton->setBounds ((getWidth() / 2) - (400 / 2), 150, 400, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -313,6 +321,11 @@ void HardwareConfigurationComponent::buttonClicked (Button* buttonThatWasClicked
         settingsManager->OnInOutNamesDisplayedChanged(inputNamesToggleButton->getToggleState(),
                                                       outputNamesToggleButton->getToggleState());
         //[/UserButtonCode_outputNamesToggleButton]
+    }
+    else if (buttonThatWasClicked == enableMasterVolumeToggleButton.get())
+    {
+        //[UserButtonCode_enableMasterVolumeToggleButton] -- add your button handler code here..
+        //[/UserButtonCode_enableMasterVolumeToggleButton]
     }
 
     //[UserbuttonClicked_Post]
@@ -499,7 +512,7 @@ BEGIN_JUCER_METADATA
          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="34"/>
   <TOGGLEBUTTON name="OSC Plugin toggle button" id="74b5dae6c2ea74a2" memberName="oscPluginToggleButton"
-                virtualName="" explicitFocusOrder="0" pos="0Cc 160 400 24" txtcol="ff000000"
+                virtualName="" explicitFocusOrder="0" pos="0Cc 200 400 24" txtcol="ff000000"
                 buttonText="Send OSC to MIEM Matrix Router remote plug-in" connectedEdges="0"
                 needsCallback="0" radioGroupId="0" state="1"/>
   <LABEL name="UPD Port Label" id="8d369e08975b779c" memberName="udpPortLabel"
@@ -509,7 +522,7 @@ BEGIN_JUCER_METADATA
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
          fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="34"/>
   <TEXTEDITOR name="UDP Port Text Editor" id="e4ef4437203ce19e" memberName="udpPortTextEditor"
-              virtualName="" explicitFocusOrder="0" pos="8C 224 64 24" initialText="8001"
+              virtualName="" explicitFocusOrder="0" pos="8C 264 64 24" initialText="8001"
               multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"
               caret="1" popupmenu="1"/>
   <TOGGLEBUTTON name="Keyboard toggle button" id="8c809b7ecaa8a037" memberName="keyboardToggleButton"
@@ -523,7 +536,7 @@ BEGIN_JUCER_METADATA
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
          fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="34"/>
   <TEXTEDITOR name="IP Address Text Editor" id="6997b5b4dc28675a" memberName="ipAddressTextEditor"
-              virtualName="" explicitFocusOrder="0" pos="8C 192 120 24" initialText="127.0.0.1"
+              virtualName="" explicitFocusOrder="0" pos="8C 232 120 24" initialText="127.0.0.1"
               multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"
               caret="1" popupmenu="1"/>
   <TOGGLEBUTTON name="Input Names toggle button" id="b7d5b33136328768" memberName="inputNamesToggleButton"
@@ -544,9 +557,14 @@ BEGIN_JUCER_METADATA
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
          fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="34"/>
   <HYPERLINKBUTTON name="Info hyperlink button" id="fa3a8802c3b7c7f0" memberName="infoHyperlinkButton"
-                   virtualName="" explicitFocusOrder="0" pos="0.5Cc 32R 16M 24"
-                   tooltip="http://miem.laras.be" textCol="ffffffff" buttonText="To get help and more information, please visit http://miem.laras.be"
+                   virtualName="" explicitFocusOrder="0" pos="0Cc 32R 16M 24" tooltip="http://miem.laras.be"
+                   textCol="ffffffff" buttonText="To get help and more information, please visit http://miem.laras.be"
                    connectedEdges="0" needsCallback="0" radioGroupId="0" url="http://miem.laras.be"/>
+  <TOGGLEBUTTON name="Enable Master Volume toggle button" id="b650c1c657fd4f2e"
+                memberName="enableMasterVolumeToggleButton" virtualName="" explicitFocusOrder="0"
+                pos="0Cc 150 400 24" posRelativeX="dfbb24a51fa3d6c0" posRelativeW="dfbb24a51fa3d6c0"
+                txtcol="ff000000" buttonText="Enable Master Volume fader in MIEM Spat"
+                connectedEdges="0" needsCallback="1" radioGroupId="0" state="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

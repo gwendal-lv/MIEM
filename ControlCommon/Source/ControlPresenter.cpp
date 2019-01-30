@@ -47,7 +47,13 @@ void ControlPresenter::LoadSession(std::string filename)
     try {
         // Lecture
         // Attention ! On vérifie si on demandait ou non une session par défaut...
-        if (filename.compare(DefaultSessions::GetDefaultSessionCode()) == 0)
+        if (filename.compare(DefaultSessions::GetDefaultSessionCode_mcs()) == 0)
+        {
+            std::stringstream ss;
+            ss << DefaultSessions::GetDefault_mcs();
+            bptree::read_xml(ss, xmlTree);
+        }
+        else if (filename.compare(DefaultSessions::GetDefaultSessionCode_mspat()) == 0)
         {
             std::stringstream ss;
             ss << DefaultSessions::GetDefault_mspat();

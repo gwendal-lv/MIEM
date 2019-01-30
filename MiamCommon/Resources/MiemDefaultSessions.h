@@ -25,9 +25,14 @@ namespace Miam
         ///
         /// Many overrides would not be legal anymore, many many
         /// prototypes would need to be re-written.... So be it...
-        static std::string GetDefaultSessionCode()
+        static std::string GetDefaultSessionCode_mcs()
         {
-            return std::string("Default session");
+            return std::string("__Default_MCS_session__");
+        }
+        
+        static std::string GetDefaultSessionCode_mspat()
+        {
+            return std::string("__Default_MSPAT_session__");
         }
         
         
@@ -671,7 +676,7 @@ namespace Miam
 "            <canvas index=\"0\">\n"
 "                <scenes>\n"
 "                    <scene index=\"0\">\n"
-"                        <name>Default mixture of presets</name>\n"
+"                        <name>Mixture of presets, default /miem OSC messages</name>\n"
 "                        <areas>\n"
 "                            <area id=\"35\" type=\"SpatPolygon\" index=\"0\">\n"
 "                                <center x=\"0.11547086278426531\" y=\"0.46660343450479214\"/>\n"
@@ -837,7 +842,7 @@ namespace Miam
 "                                </geometry>\n"
 "                                <spatstate index=\"6\"/>\n"
 "                            </area>\n"
-"                            <area id=\"70\" type=\"Exciter\" index=\"8\">\n"
+"                            <area id=\"116\" type=\"Exciter\" index=\"8\">\n"
 "                                <center x=\"0.32907575291947955\" y=\"0.091961195420661779\"/>\n"
 "                                <colour>ffd3d3d3</colour>\n"
 "                                <keep_ratio>false</keep_ratio>\n"
@@ -848,7 +853,7 @@ namespace Miam
 "                                <is_round>false</is_round>\n"
 "                                <is_animation_sync>true</is_animation_sync>\n"
 "                            </area>\n"
-"                            <area id=\"71\" type=\"Exciter\" index=\"9\">\n"
+"                            <area id=\"117\" type=\"Exciter\" index=\"9\">\n"
 "                                <center x=\"0.83798546020279285\" y=\"0.41641290601705838\"/>\n"
 "                                <colour>ffd3d3d3</colour>\n"
 "                                <keep_ratio>false</keep_ratio>\n"
@@ -862,7 +867,7 @@ namespace Miam
 "                        </areas>\n"
 "                    </scene>\n"
 "                    <scene index=\"1\">\n"
-"                        <name>Mixture of custom presets</name>\n"
+"                        <name>Mixture of custom presets, custom OSC messages</name>\n"
 "                        <areas>\n"
 "                            <area id=\"79\" type=\"SpatPolygon\" index=\"0\">\n"
 "                                <center x=\"0.12776342578365069\" y=\"0.48790268903088374\"/>\n"
@@ -1026,7 +1031,7 @@ namespace Miam
 "                                </geometry>\n"
 "                                <spatstate index=\"12\"/>\n"
 "                            </area>\n"
-"                            <area id=\"102\" type=\"Exciter\" index=\"8\">\n"
+"                            <area id=\"118\" type=\"Exciter\" index=\"8\">\n"
 "                                <center x=\"0.4349814651196271\" y=\"0.40816776490965878\"/>\n"
 "                                <colour>ffd3d3d3</colour>\n"
 "                                <keep_ratio>false</keep_ratio>\n"
@@ -1037,7 +1042,7 @@ namespace Miam
 "                                <is_round>false</is_round>\n"
 "                                <is_animation_sync>true</is_animation_sync>\n"
 "                            </area>\n"
-"                            <area id=\"103\" type=\"Exciter\" index=\"9\">\n"
+"                            <area id=\"119\" type=\"Exciter\" index=\"9\">\n"
 "                                <center x=\"0.84224224031960004\" y=\"0.44556626064963384\"/>\n"
 "                                <colour>ffd3d3d3</colour>\n"
 "                                <keep_ratio>false</keep_ratio>\n"

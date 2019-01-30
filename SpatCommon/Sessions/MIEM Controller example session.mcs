@@ -123,7 +123,7 @@
             <canvas index="0">
                 <scenes>
                     <scene index="0">
-                        <name>Default mixture of presets</name>
+                        <name>Mixture of presets, default /miem OSC messages</name>
                         <areas>
                             <area id="35" type="SpatPolygon" index="0">
                                 <center x="0.11547086278426531" y="0.46660343450479214"/>
@@ -243,7 +243,7 @@
                                 </geometry>
                                 <spatstate index="6"/>
                             </area>
-                            <area id="70" type="Exciter" index="8">
+                            <area id="116" type="Exciter" index="8">
                                 <center x="0.32907575291947955" y="0.091961195420661779"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
@@ -254,7 +254,7 @@
                                 <is_round>false</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
-                            <area id="71" type="Exciter" index="9">
+                            <area id="117" type="Exciter" index="9">
                                 <center x="0.83798546020279285" y="0.41641290601705838"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
@@ -268,7 +268,7 @@
                         </areas>
                     </scene>
                     <scene index="1">
-                        <name>Mixture of custom presets</name>
+                        <name>Mixture of custom presets, custom OSC messages</name>
                         <areas>
                             <area id="79" type="SpatPolygon" index="0">
                                 <center x="0.12776342578365069" y="0.48790268903088374"/>
@@ -388,7 +388,7 @@
                                 </geometry>
                                 <spatstate index="12"/>
                             </area>
-                            <area id="102" type="Exciter" index="8">
+                            <area id="118" type="Exciter" index="8">
                                 <center x="0.4349814651196271" y="0.40816776490965878"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
@@ -399,7 +399,7 @@
                                 <is_round>false</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
-                            <area id="103" type="Exciter" index="9">
+                            <area id="119" type="Exciter" index="9">
                                 <center x="0.84224224031960004" y="0.44556626064963384"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>

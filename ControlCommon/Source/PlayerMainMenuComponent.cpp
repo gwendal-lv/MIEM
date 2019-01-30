@@ -145,6 +145,13 @@ PlayerMainMenuComponent::PlayerMainMenuComponent ()
 
     // Special transparent look and feel for the text editor
     infoTextEditor->setLookAndFeel(transparentLookAndFeel.get());
+    // and thick scroll bar
+    infoTextEditor->setScrollbarsShown(true); // automatically hidden if not necessary
+#ifdef __MIAMOBILE
+    infoTextEditor->setScrollBarThickness(18);
+#else
+    infoTextEditor->setScrollBarThickness(12);
+#endif
 
     // Help URLs update (pages of the miem.laras.be website)
     if (App::GetPurpose() == AppPurpose::GenericController)

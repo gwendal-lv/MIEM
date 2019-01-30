@@ -37,7 +37,7 @@ SpeakersEditionComponent::SpeakersEditionComponent ()
                             CharPointer_UTF8 ("\xc3\x89""dition des haut-parleurs...\n"
                             "\xc3\x87""a va venir !")));
     addAndMakeVisible (label.get());
-    label->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Italic"));
+    label->setFont (Font (15.0f, Font::italic));
     label->setJustificationType (Justification::centred);
     label->setEditable (false, false, false);
     label->setColour (Label::backgroundColourId, Colour (0x87ffffff));

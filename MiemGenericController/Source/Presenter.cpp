@@ -17,6 +17,7 @@
 
 
 #include "AppPurpose.h"
+#include "MiemDefaultSessions.h"
 
 using namespace Miam;
 
@@ -47,7 +48,7 @@ void Presenter::CompleteInitialisation(Model* _model)
 
 void Presenter::OnLoadDefaultSession()
 {
-    throw std::runtime_error("not implemented. Haaaan ouais");
+    LoadSession(DefaultSessions::GetDefaultSessionCode_mcs());
 }
 
 

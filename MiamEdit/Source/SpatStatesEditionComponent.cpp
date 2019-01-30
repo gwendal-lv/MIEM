@@ -330,7 +330,7 @@ void SpatStatesEditionComponent::resized()
     labelledMatrixComponent->setBounds (0 + 8, 88 + 16, (getWidth() - 0) - 16, (getHeight() - 88) - 24);
     stateUpTextButton->setBounds (0 + 331 - 154, 4 + 20, 72, 24);
     stateDownTextButton->setBounds (0 + 331 - 82, 4 + 20, 74, 24);
-    linksInfoLabel->setBounds ((getWidth() - (getWidth() - 339)) + 13, 4 + 20, (getWidth() - 339) - 523, 24);
+    linksInfoLabel->setBounds ((getWidth() - (getWidth() - 339)) + 13, 4 + 20, (getWidth() - 339) - 200, 24);
     statesComboBox->setBounds (0 + 8, 56, 331 - 16, 24);
     labelR->setBounds (getWidth() - 258, 20, 24, 24);
     sliderR->setBounds (getWidth() - 240, 24, 158, 16);
@@ -727,7 +727,7 @@ BEGIN_JUCER_METADATA
               textCol="ff000000" buttonText="Down" connectedEdges="1" needsCallback="1"
               radioGroupId="0"/>
   <LABEL name="Links info label" id="3577c0e2ccd44371" memberName="linksInfoLabel"
-         virtualName="" explicitFocusOrder="0" pos="13 20 200M 24" posRelativeX="9d63d9acaf1299f6"
+         virtualName="" explicitFocusOrder="0" pos="13 20 195M 24" posRelativeX="9d63d9acaf1299f6"
          posRelativeY="4250d5155a80be70" posRelativeW="9d63d9acaf1299f6"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Linked to ? area"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
