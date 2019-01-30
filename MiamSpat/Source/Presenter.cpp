@@ -49,7 +49,7 @@ void Presenter::CompleteInitialisation(Model* _model)
 
 void Presenter::OnLoadDefaultSession()
 {
-    LoadSession(DefaultSessions::GetDefaultSessionCode());
+    LoadSession(DefaultSessions::GetDefaultSessionCode_mspat());
 }
 
 

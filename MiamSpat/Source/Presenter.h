@@ -79,7 +79,7 @@ namespace Miam {
         void CompleteInitialisation(Model* _model);
         
         virtual void OnLoadDefaultSession() override;
-
+        virtual AppPurpose GetSessionPurpose() const override {return AppPurpose::Spatialisation;}
         
         // - - - - - Periodic updates - - - - -
         virtual void Update() override;

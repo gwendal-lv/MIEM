@@ -73,6 +73,7 @@ namespace Miam {
         virtual ~Presenter() {}
         
         virtual void OnLoadDefaultSession() override;
+        virtual AppPurpose GetSessionPurpose() const override {return AppPurpose::GenericController;}
         
         
         virtual void Update() override;

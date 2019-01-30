@@ -171,6 +171,7 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
 
     enableMasterVolumeToggleButton.reset (new ToggleButton ("Enable Master Volume toggle button"));
     addAndMakeVisible (enableMasterVolumeToggleButton.get());
+    enableMasterVolumeToggleButton->setTooltip (TRANS("In MIEM Spat, the Master Volume can be applied to the whole routing matrix for a global control."));
     enableMasterVolumeToggleButton->setButtonText (TRANS("Enable Master Volume fader in MIEM Spat"));
     enableMasterVolumeToggleButton->addListener (this);
     enableMasterVolumeToggleButton->setColour (ToggleButton::textColourId, Colours::black);
@@ -563,6 +564,7 @@ BEGIN_JUCER_METADATA
   <TOGGLEBUTTON name="Enable Master Volume toggle button" id="b650c1c657fd4f2e"
                 memberName="enableMasterVolumeToggleButton" virtualName="" explicitFocusOrder="0"
                 pos="0Cc 150 400 24" posRelativeX="dfbb24a51fa3d6c0" posRelativeW="dfbb24a51fa3d6c0"
+                tooltip="In MIEM Spat, the Master Volume can be applied to the whole routing matrix for a global control."
                 txtcol="ff000000" buttonText="Enable Master Volume fader in MIEM Spat"
                 connectedEdges="0" needsCallback="1" radioGroupId="0" state="0"/>
 </JUCER_COMPONENT>
