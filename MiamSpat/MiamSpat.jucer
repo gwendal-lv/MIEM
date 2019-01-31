@@ -334,7 +334,6 @@
         <MODULEPATH id="juce_gui_basics" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_cryptography" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_video" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_opengl" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_basics" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_devices" path="../../JUCE/modules"/>
@@ -343,33 +342,6 @@
         <MODULEPATH id="juce_osc" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
-    <ANDROIDSTUDIO targetFolder="Builds/AndroidStudio" androidSDKPath="" androidNDKPath=""
-                   extraDefs="__MIAMOBILE" androidMinimumSDK="21" userNotes="- - -&#10;Les &quot;extra compiler flags&quot; sont copi&#233;s de la juce demo version develop de d&#233;but janvier 2018. Ils font des 100aines de messages alors pour l'instant on les laisse dehors...&#10;-pedantic -Wall -Wshadow -Wno-missing-field-initializers -Wshadow -Wshorten-64-to-32 -Wstrict-aliasing -Wuninitialized -Wunused-parameter -Wconversion -Wsign-compare -Wint-conversion -Woverloaded-virtual -Wreorder -Wconstant-conversion -Wsign-conversion -Wextra-semi&#10;- - -"
-                   androidExternalReadNeeded="1" androidExternalWriteNeeded="0"
-                   androidInternetNeeded="1" buildToolsVersion="27.0.1" gradleToolchain="clang">
-      <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" androidArchitectures="armeabi armeabi-v7a x86" isDebug="1"
-                       optimisation="1" headerPath="" defines="__MIAM_DEBUG&#10;__MIEM_DEBUG_TRACE__DISABLED"/>
-        <CONFIGURATION name="Release" androidArchitectures="armeabi armeabi-v7a x86"
-                       isDebug="0" optimisation="3" headerPath=""/>
-      </CONFIGURATIONS>
-      <MODULEPATHS>
-        <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_events" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_graphics" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_data_structures" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_cryptography" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_video" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_opengl" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_basics" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_devices" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_osc" path="../../JUCE/modules"/>
-      </MODULEPATHS>
-    </ANDROIDSTUDIO>
     <VS2017 targetFolder="Builds/VisualStudio2017" extraDefs="BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE"
             userNotes="le define BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE vient d'un message transmis par boost apparemment.... mais &quot;nothing bad should happen&quot;"
             bigIcon="ERp87z">
@@ -380,7 +352,6 @@
                        characterSet="Unicode"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_video" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_osc" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_opengl" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
@@ -405,7 +376,6 @@
         <CONFIGURATION isDebug="0" name="Release"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_video"/>
         <MODULEPATH id="juce_osc"/>
         <MODULEPATH id="juce_opengl"/>
         <MODULEPATH id="juce_gui_extra"/>
@@ -421,6 +391,30 @@
         <MODULEPATH id="juce_audio_basics"/>
       </MODULEPATHS>
     </XCODE_IPHONE>
+    <ANDROIDSTUDIO targetFolder="Builds/Android" bigIcon="KocCMm" androidBluetoothNeeded="0"
+                   androidActivityClass="com.gwendallv.MIEMSpat" extraDefs="__MIAMOBILE&#10;__MIEM_GL_INFO_DISPLAY"
+                   androidMinimumSDK="23" gradleToolchain="clang" androidScreenOrientation="landscape"
+                   gradleWrapperVersion="3.3.0" gradleVersion="4.10.1">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" defines="__MIAM_DEBUG&#10;__MIEM_DEBUG_TRACE__DISABLED"/>
+        <CONFIGURATION isDebug="0" name="Release"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_osc"/>
+        <MODULEPATH id="juce_opengl"/>
+        <MODULEPATH id="juce_gui_extra"/>
+        <MODULEPATH id="juce_gui_basics"/>
+        <MODULEPATH id="juce_graphics"/>
+        <MODULEPATH id="juce_events"/>
+        <MODULEPATH id="juce_data_structures"/>
+        <MODULEPATH id="juce_cryptography"/>
+        <MODULEPATH id="juce_core"/>
+        <MODULEPATH id="juce_audio_processors"/>
+        <MODULEPATH id="juce_audio_formats"/>
+        <MODULEPATH id="juce_audio_devices"/>
+        <MODULEPATH id="juce_audio_basics"/>
+      </MODULEPATHS>
+    </ANDROIDSTUDIO>
   </EXPORTFORMATS>
   <MODULES>
     <MODULE id="juce_audio_basics" showAllCode="0" useLocalCopy="0"/>
@@ -436,7 +430,6 @@
     <MODULE id="juce_gui_extra" showAllCode="0" useLocalCopy="0"/>
     <MODULE id="juce_opengl" showAllCode="0" useLocalCopy="0"/>
     <MODULE id="juce_osc" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
-    <MODULE id="juce_video" showAllCode="0" useLocalCopy="0"/>
   </MODULES>
   <JUCEOPTIONS/>
   <LIVE_SETTINGS>
