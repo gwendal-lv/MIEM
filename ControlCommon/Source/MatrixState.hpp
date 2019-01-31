@@ -136,10 +136,15 @@ namespace Miam
             matrix += matrixState.matrix;
         }
         
-        /// \brief Voir Miam::SparseMatrix<T>::MultiplyAndAccumulate
+        /// \brief See Miam::SparseMatrix<T>::MultiplyAndAccumulate
         void MultiplyAndAccumulate(MatrixState<T>& matrixToMultAndAdd, T factor)
         {
             matrix.MultiplyAndAccumulate(matrixToMultAndAdd.matrix, factor);
+        }
+        /// \brief See Miam::SparseMatrix<T>::MultiplyByFactor
+        void MultiplyByFactor(T factor)
+        {
+            matrix.MultiplyByFactor(factor);
         }
         
         T ComputeMatrixTotalVolume(CorrelationLevel inputCorrelationLevel, CorrelationLevel outputCorrelationLevel)

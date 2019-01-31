@@ -84,8 +84,11 @@ namespace Miam
         
         public :
         /// \brief If gain is disabled, its value becomes automatically 1.0 to be neutral
+        ///
+        /// The value of the gain must be send through the AsyncParamChange packets via the lock-free queue.
         void SetIsMasterGainEnabled(bool isEnabled);
         bool GetIsMasterGainEnabled() {return masterGainEnabled;}
+        
         
         protected :
         /// \brief For internal quick access. Might be deleted eventually.

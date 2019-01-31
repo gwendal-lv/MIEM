@@ -47,7 +47,8 @@ namespace Miam
                                                                     //[/Comments]
 */
 class PlayerBackgroundComponent  : public Component,
-                                   public Button::Listener
+                                   public Button::Listener,
+                                   public Slider::Listener
 {
 public:
     //==============================================================================
@@ -75,6 +76,7 @@ public:
     void paint (Graphics& g) override;
     void resized() override;
     void buttonClicked (Button* buttonThatWasClicked) override;
+    void sliderValueChanged (Slider* sliderThatWasMoved) override;
 
     // Binary resources:
     static const char* menu_icon_png;
@@ -103,12 +105,18 @@ private:
 	Colour mainInfoLabelDefaultTextColour;
 	Font mainInfoLabelDefaultFont;
 
+    /// \brief Mostly for spat: wether the right Master Gain slider is enabled, or not
+    bool isMainSliderEnabled = false;
+    const int mainSliderMaxHeight = 800;
+
     //[/UserVariables]
 
     //==============================================================================
     std::unique_ptr<Label> mainInfoLabel;
     std::unique_ptr<ImageButton> mainMenuImageButton;
     std::unique_ptr<Label> mainInfoLabel2;
+    std::unique_ptr<Slider> mainSlider;
+    std::unique_ptr<Label> masterGainLabel;
 
 
     //==============================================================================

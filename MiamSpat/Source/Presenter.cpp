@@ -19,6 +19,8 @@
 #include "AppPurpose.h"
 #include "MiemDefaultSessions.h"
 
+#include "AudioUtils.hpp"
+
 using namespace Miam;
 
 
@@ -54,6 +56,21 @@ void Presenter::OnLoadDefaultSession()
 
 
 // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
+
+
+
+
+
+// = = = = = = = = = = SPAT-specific events from View = = = = = = = = = =
+void Presenter::OnMainSliderValueChanged_dB(double newValue_dB)
+{
+    AsyncParamChange gainChange;
+    auto newValue = AudioUtils<double>::Amplitude_dB_to_Linear(newValue_dB);
+    gainChange.DoubleValue = newValue;
+    gainChange.Type = AsyncParamChange::ParamType::MasterVolume;
+    SendParamChange(gainChange);
+}
+
 
 
 

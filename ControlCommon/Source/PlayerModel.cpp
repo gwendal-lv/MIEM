@@ -141,7 +141,10 @@ void PlayerModel::SetConfigurationFromTree(bptree::ptree& tree)
     
     // Ensuite on essaie de mettre en route les fonctionnalités, puis
     // on tient le Presenter au courant
+    // - Connection status
     presenter->OnNewConnectionStatus( getMainSpatSender()->TryConnect(),
                                      getMainSpatSender()->GetConfigurationTree() );
+    // - Master Gain slider
+    
 }
 

@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.3.2
+  Created with Projucer version: 5.4.1
 
   ------------------------------------------------------------------------------
 
@@ -61,7 +61,7 @@ LabelledMatrixComponent::LabelledMatrixComponent (ISlidersMatrixListener* _liste
                                          "    outputs")));
     addAndMakeVisible (inputsOutputsLabel.get());
     inputsOutputsLabel->setTooltip (TRANS("\n"));
-    inputsOutputsLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Bold"));
+    inputsOutputsLabel->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Bold"));
     inputsOutputsLabel->setJustificationType (Justification::centredLeft);
     inputsOutputsLabel->setEditable (false, false, false);
     inputsOutputsLabel->setColour (Label::backgroundColourId, Colours::silver);
@@ -275,7 +275,7 @@ void LabelledMatrixComponent::ReinitGuiObjects()
             rowTextButtons[i]->setTooltip(TRANS("Click to send this parameter to the configured OSC device."));
 			rowTextButtons[i]->setVisible(true);
         }
-		else 
+		else
 			rowTextButtons[i]->setVisible(false);
     }
     for (int j=0 ; j<(int)maxColsCount ; j++)
@@ -511,7 +511,7 @@ void LabelledMatrixComponent::textEditorTextChanged (TextEditor & textEditor)
 void LabelledMatrixComponent::buttonClicked (Button* _button)
 {
     int integerID = -1;
-    
+
     // We get its row index #, from its ID which must be 'bi#'
     auto buttonID = _button->getComponentID().toStdString();
     try {
@@ -519,7 +519,7 @@ void LabelledMatrixComponent::buttonClicked (Button* _button)
             throw BadIdException();
         if (buttonID[0] != 'b' || buttonID[1] != 'i')
             throw BadIdException();
-        
+
         // At the moment, only 1 unique button on each row -> no valid col index will be given
         try {
             integerID = boost::lexical_cast<int>(buttonID.substr(2));
@@ -532,7 +532,7 @@ void LabelledMatrixComponent::buttonClicked (Button* _button)
     catch (BadIdException& ) {
         assert(false); // a bad-referenced (bas ID) button has been clicked. This must not happen!
     }
-    
+
     // Callback transmitted to the listener component
     buttonsListener->OnMatrixButtonClicked(integerID, -1,
                                            inputNameTextEditors[integerID]->getText().toStdString(),
@@ -638,7 +638,7 @@ BEGIN_JUCER_METADATA
                  componentName="" parentClasses="public Component, public TextEditor::Listener, public Button::Listener"
                  constructorParams="ISlidersMatrixListener* _listener, unsigned int _maxRowsCount, unsigned int _maxColsCount"
                  variableInitialisers="" snapPixels="8" snapActive="1" snapShown="1"
-                 overlayOpacity="0.330" fixedSize="0" initialWidth="600" initialHeight="400">
+                 overlayOpacity="0.33" fixedSize="0" initialWidth="600" initialHeight="400">
   <METHODS>
     <METHOD name="mouseMove (const MouseEvent&amp; e)"/>
     <METHOD name="mouseDown (const MouseEvent&amp; e)"/>
@@ -652,8 +652,8 @@ BEGIN_JUCER_METADATA
          bkgCol="ffc0c0c0" textCol="ff000000" edTextCol="ff000000" edBkgCol="0"
          labelText="inputs /&#10;    outputs" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
-         fontsize="15.00000000000000000000" kerning="0.00000000000000000000"
-         bold="1" italic="0" justification="33" typefaceStyle="Bold"/>
+         fontsize="15.0" kerning="0.0" bold="1" italic="0" justification="33"
+         typefaceStyle="Bold"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

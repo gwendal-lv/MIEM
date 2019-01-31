@@ -15,6 +15,7 @@
 #include <vector>
 #include <memory>
 #include <atomic>
+#include <cmath>
 
 #include "InterpolationTypes.h"
 
@@ -58,8 +59,8 @@ namespace Miam
         
         /// \brief Le nombre d'états mis à jour durant cette phase de mise à jour du Modèle
         int updatedStatesCount = 0;
-        
-        
+        /// \brief The last master gain applied (to know if changes require matrix updates)
+        T lastMasterGain = (T) 1.0;
         
         // E/S
         int inputsCount = 0;
@@ -231,14 +232,20 @@ namespace Miam
             updatedStatesCount++;
         }
         /// \brief Fonction appelée lorsqu'on bien vidé les lock-free queues : on est prêt
-        /// à calculer des trucs (si nécessaire)
+        /// à calculer la matrice finale, en recherchant les changements, et en appliquant
+        /// éventuellement un gain final sur toute la matrice
         ///
         /// On calcule la nouvelle matrice résultante de l'interpolation, par exemple !
         ///
         /// \returns Si on a mis quelque chose à jour, ou pas du tout
-        bool OnDataUpdateFinished()
+        bool OnDataUpdateFinished(bool applyMasterGain = false, T masterGain = (T)1.0)
         {
-            if (updatedStatesCount >= 1)
+            // Check for master gain change
+            bool masterGainSignificantChange = (std::abs(masterGain - lastMasterGain) > (T)(0.0001) ); // -80 dB
+            
+            // Full re-addition of all active matrices, but only if necessary
+            bool somethingWasUpdated = (updatedStatesCount >= 1) || masterGainSignificantChange;
+            if (somethingWasUpdated)
             {
                 // Addition des matrices creuses : on recalcule tout plutôt que d'essayer d'optimiser...
                 currentInterpolatedMatrixState->ClearMatrix();
@@ -262,12 +269,18 @@ namespace Miam
                     }
                 }
                 
+                // Application du gain, si nécessaire
+                if (applyMasterGain)
+                    currentInterpolatedMatrixState->MultiplyByFactor(masterGain);
+                
                 // On va chercher les différences dès maintenant
                 currentInterpolatedMatrixState->FindSignificantChanges();
+                
+                // Post-computation updates
+                lastMasterGain = masterGain;
             }
 
             // On lance une nouvelle frame
-            bool somethingWasUpdated = (updatedStatesCount > 0);
             updatedStatesCount = 0;
             return somethingWasUpdated;
         }

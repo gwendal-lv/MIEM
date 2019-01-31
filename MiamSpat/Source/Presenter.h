@@ -81,6 +81,12 @@ namespace Miam {
         virtual void OnLoadDefaultSession() override;
         virtual AppPurpose GetSessionPurpose() const override {return AppPurpose::Spatialisation;}
         
+
+        // - - - - - SPAT-specific events from View - - - - -
+        virtual void OnMainSliderValueChanged_dB(double newValue_dB) override;
+
+        
+        
         // - - - - - Periodic updates - - - - -
         virtual void Update() override;
 

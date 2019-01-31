@@ -21,18 +21,20 @@ namespace Miam
         
         /// \brief To represent a default session, it is now far simpler
         /// to give a fake filename than to write new loading function with an
-        /// additionnal arguments
+        /// additionnal arguments.
         ///
         /// Many overrides would not be legal anymore, many many
         /// prototypes would need to be re-written.... So be it...
+        ///
+        /// WARNING : the code returned will be displayed on the main app bar !
         static std::string GetDefaultSessionCode_mcs()
         {
-            return std::string("__Default_MCS_session__");
+            return std::string("Default MCS session");
         }
         
         static std::string GetDefaultSessionCode_mspat()
         {
-            return std::string("__Default_MSPAT_session__");
+            return std::string("Default MSPAT session");
         }
         
         
@@ -48,12 +50,13 @@ namespace Miam
 "            <outputs activeCount=\"16\" maxCount=\"64\"/>\n"
 "            <senders>\n"
 "                <sender type=\"MiamOsc\">\n"
-"                    <ip>192.168.0.1</ip>\n"
+"                    <ip>192.168.2.1</ip>\n"
 "                    <udp>\n"
 "                        <port>8010</port>\n"
 "                    </udp>\n"
 "                </sender>\n"
 "            </senders>\n"
+"            <master_gain enabled=\"true\" value=\"1\" />"
 "        </control>\n"
 "        <presenter>\n"
 "            <keyboardedition>true</keyboardedition>\n"

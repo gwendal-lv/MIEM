@@ -36,8 +36,12 @@ void MainContentComponent::paint (Graphics& g)
 
     g.setFont (Font (16.0f));
     g.setColour (Colours::white);
+    // Many assertion failures with this specific text drawing.... --> ????? (glyph position asked from another thread
+    // with the message thread running ????)
+    /*
     g.drawText (std::string(ProjectInfo::projectName) + " " + std::to_string(ProjectInfo::versionNumber),
                 getLocalBounds(), Justification::centred, true);
+     */
 }
 
 void MainContentComponent::resized()

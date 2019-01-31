@@ -43,6 +43,7 @@ namespace Miam
                 Stopped, ///< Stop information
             
             Activate,
+            MasterVolume,
             Volume,
                 Volume_CorrelatedInputs,
                 Volume_DecorrelatedInputs,

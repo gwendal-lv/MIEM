@@ -129,6 +129,10 @@ void ControlModel::update()
                                                         lastParamChange.DoubleValue);
                     break;
                     
+                case AsyncParamChange::MasterVolume :
+                    masterGain = lastParamChange.DoubleValue;
+                    break;
+                    
                 case AsyncParamChange::Play :
                     onPlay();
                     break;
@@ -157,7 +161,7 @@ void ControlModel::update()
         if ( playState == AsyncParamChange::Play )
         {
             // Envoi de la nouvelle matrice, si nécessaire
-            wasSomethingUpdated = interpolator->OnDataUpdateFinished();
+            wasSomethingUpdated = interpolator->OnDataUpdateFinished(masterGainEnabled, masterGain);
             if (wasSomethingUpdated)
             {
                 miamOscSender->SendStateModifications(interpolator->GetCurrentInterpolatedState());

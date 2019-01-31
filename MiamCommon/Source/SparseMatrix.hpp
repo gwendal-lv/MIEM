@@ -273,6 +273,11 @@ namespace Miam
         inline size_t GetNonZeroCoeffsCount() const {return (size_t)indexOfLastNonZeroIndex+1;}
         
         
+        
+        
+        
+        
+        
         // = = = = = = = = = = ARITHMETIC OPERATIONS = = = = = = = = = =
         public :
         
@@ -317,6 +322,25 @@ namespace Miam
                     + matrix[matrixToMultAndAdd.GetIterator1dCoord()]);
             }
         }
+        
+        /// \brief Multiplies all non-nul coefficients of the matrix by the given factor.
+        ///
+        /// Not written with the overloaded Multiply operator for easiness
+        void MultiplyByFactor(T factor)
+        {
+            // D'abord on parcourt tous les termes non-nuls de la matrice en argument
+            for (ResetIterator() ;
+                 GetIterator() < GetEndIterator() ;
+                 IncIterator() )
+            {
+                matrix[GetIterator1dCoord()] = matrix[GetIterator1dCoord()] * factor;
+            }
+        }
+        
+        
+        
+        
+        
         
         
         // = = = = = = = = Property tree (for XML) import/export = = = = = = = = =

@@ -66,6 +66,29 @@ PlayerBackgroundComponent::PlayerBackgroundComponent ()
     mainInfoLabel2->setColour (TextEditor::textColourId, Colours::black);
     mainInfoLabel2->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
+    mainSlider.reset (new Slider ("Main slider"));
+    addAndMakeVisible (mainSlider.get());
+    mainSlider->setTooltip (TRANS("Master Gain (applied to the entire state)"));
+    mainSlider->setRange (-60, 6, 0);
+    mainSlider->setSliderStyle (Slider::LinearVertical);
+    mainSlider->setTextBoxStyle (Slider::TextBoxAbove, true, 40, 20);
+    mainSlider->setColour (Slider::backgroundColourId, Colours::black);
+    mainSlider->setColour (Slider::thumbColourId, Colours::white);
+    mainSlider->setColour (Slider::trackColourId, Colour (0xff909090));
+    mainSlider->addListener (this);
+
+    masterGainLabel.reset (new Label ("Master Gain label",
+                                      TRANS("Master\n"
+                                      "Gain\n"
+                                      "dB FS")));
+    addAndMakeVisible (masterGainLabel.get());
+    masterGainLabel->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
+    masterGainLabel->setJustificationType (Justification::centred);
+    masterGainLabel->setEditable (false, false, false);
+    masterGainLabel->setColour (Label::textColourId, Colour (0xff909090));
+    masterGainLabel->setColour (TextEditor::textColourId, Colours::black);
+    masterGainLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
 
     //[UserPreSize]
     mainMenuComponent.reset( new PlayerMainMenuComponent() );
@@ -79,6 +102,11 @@ PlayerBackgroundComponent::PlayerBackgroundComponent ()
 	mainInfoLabelDefaultTextColour = mainInfoLabel->findColour(Label::textColourId);
 	mainInfoLabelDefaultFont = mainInfoLabel->getFont();
     mainInfoLabel->setText(App::GetNameWithVersion(), NotificationType::sendNotification);
+
+    // Slider default behavior
+    isMainSliderEnabled = true;
+    mainSlider->setNumDecimalPlacesToDisplay(0);
+
     //[/Constructor]
 }
 
@@ -91,6 +119,8 @@ PlayerBackgroundComponent::~PlayerBackgroundComponent()
     mainInfoLabel = nullptr;
     mainMenuImageButton = nullptr;
     mainInfoLabel2 = nullptr;
+    mainSlider = nullptr;
+    masterGainLabel = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -117,6 +147,8 @@ void PlayerBackgroundComponent::resized()
     mainInfoLabel->setBounds (8, getHeight() - 4 - 20, 384, 20);
     mainMenuImageButton->setBounds (getWidth() - 28, getHeight() - 28, 28, 28);
     mainInfoLabel2->setBounds (400, getHeight() - 4 - 20, getWidth() - 432, 20);
+    mainSlider->setBounds (getWidth() - 56, (getHeight() / 2) + 24 - ((getHeight() - 160) / 2), 56, getHeight() - 160);
+    masterGainLabel->setBounds (getWidth() - 58, ((getHeight() / 2) + 24 - ((getHeight() - 160) / 2)) + -56, roundToInt (56 * 1.0f), 48);
     //[UserResized] Add your own custom resize handling here..
 
     // Attention : remove from machin retourne le petit morceau découpé seulement !
@@ -124,11 +156,29 @@ void PlayerBackgroundComponent::resized()
     menusRectangle.removeFromBottom(mainMenuImageButton->getHeight());
     // Application : on laisse la place pour la barre de titre
     mainMenuComponent->setBounds(menusRectangle);
+    // SI NECESSAIRE : slider à droite pour le MASTER GAIN
+    // Avec une hauteur maximale (sinon trop de distance à parcourir au doigt)
+    if (isMainSliderEnabled)
+    {
+        // Slider itself
+        if (mainSlider->getHeight() > mainSliderMaxHeight)
+        {
+            mainSlider->setSize(mainSlider->getWidth(), mainSliderMaxHeight);
+            // Positionned on the RIGHT border
+            mainSlider->setTopRightPosition(getWidth(), // int computation... OK.
+                                            getHeight()/2 - mainSliderMaxHeight/2 + 12);
+        }
+        // Slider label
+        masterGainLabel->setTopRightPosition(getWidth(),
+                                             mainSlider->getPosition().y - masterGainLabel->getHeight() - 8);
+    }
     // Rectangle + grand pour les canevas
     if (multiCanvasComponent)
     {
         auto canvasesRectangle = getLocalBounds();
         canvasesRectangle.removeFromBottom(mainInfoLabel->getHeight());
+        if (isMainSliderEnabled)
+            canvasesRectangle.removeFromRight(mainSlider->getWidth());
         multiCanvasComponent->setBounds(canvasesRectangle);
     }
 
@@ -169,6 +219,31 @@ void PlayerBackgroundComponent::buttonClicked (Button* buttonThatWasClicked)
 
     //[UserbuttonClicked_Post]
     //[/UserbuttonClicked_Post]
+}
+
+void PlayerBackgroundComponent::sliderValueChanged (Slider* sliderThatWasMoved)
+{
+    //[UsersliderValueChanged_Pre]
+    //[/UsersliderValueChanged_Pre]
+
+    if (sliderThatWasMoved == mainSlider.get())
+    {
+        //[UserSliderCode_mainSlider] -- add your slider handling code here..
+        auto sliderValue = mainSlider->getValue();
+        if (sliderValue < -59.5) // min à -60dB considéré -inf
+            mainSlider->setColour(Slider::ColourIds::textBoxTextColourId, Colours::transparentBlack);
+        else
+            mainSlider->setColour(Slider::ColourIds::textBoxTextColourId, Colours::white);
+        // Value is sent to presenter, if exists
+        if (presenter)
+            presenter->OnMainSliderValueChanged_dB(sliderValue);
+        else
+            assert(false); // the presenter should be set at this point... Don't force-move the slider before !
+        //[/UserSliderCode_mainSlider]
+    }
+
+    //[UsersliderValueChanged_Post]
+    //[/UsersliderValueChanged_Post]
 }
 
 
@@ -222,10 +297,14 @@ void PlayerBackgroundComponent::ChangeAppMode(PlayerAppMode newAppMode)
         case PlayerAppMode::MainMenu:
             multiCanvasComponent->setVisible(false);
             mainMenuComponent->setVisible(true);
+            mainSlider->setVisible(false);
+            masterGainLabel->setVisible(false);
             break;
         case PlayerAppMode::LoadingFile:
             multiCanvasComponent->setVisible(false);
             mainMenuComponent->setVisible(false);
+            mainSlider->setVisible(false);
+            masterGainLabel->setVisible(false);
             // Le FileChooser est géré pour l'instant directement par le Presenter...
             break;
 
@@ -233,6 +312,8 @@ void PlayerBackgroundComponent::ChangeAppMode(PlayerAppMode newAppMode)
         case PlayerAppMode::Stopped:
             multiCanvasComponent->setVisible(false);
             mainMenuComponent->setVisible(true);
+            mainSlider->setVisible(false);
+            masterGainLabel->setVisible(false);
             break;
         case PlayerAppMode::Playing:
             // On laisse un délai, pour que le menu ait le temps d'afficher l'état "play" en vert clignotant
@@ -244,6 +325,8 @@ void PlayerBackgroundComponent::ChangeAppMode(PlayerAppMode newAppMode)
                                       // !! VBO/texture are only created after this
                                       // (on GL context creation)
                                       multiCanvasComponent->setVisible(true);
+                                      mainSlider->setVisible(isMainSliderEnabled);
+                                      masterGainLabel->setVisible(isMainSliderEnabled);
                                       presenter->OnViewIsPreparingToPlay(false);
                                   });
             break;
@@ -251,6 +334,7 @@ void PlayerBackgroundComponent::ChangeAppMode(PlayerAppMode newAppMode)
         default:
             break;
     }
+
     // Dans tous les cas : transmission au menu (qui affiche des choses en fonction)
     mainMenuComponent->ChangeAppMode(newAppMode);
 }
@@ -289,6 +373,18 @@ BEGIN_JUCER_METADATA
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="12"/>
+  <SLIDER name="Main slider" id="8924a1c10657725b" memberName="mainSlider"
+          virtualName="" explicitFocusOrder="0" pos="0Rr 24.5Cc 56 160M"
+          tooltip="Master Gain (applied to the entire state)" bkgcol="ff000000"
+          thumbcol="ffffffff" trackcol="ff909090" min="-60.0" max="6.0"
+          int="0.0" style="LinearVertical" textBoxPos="TextBoxAbove" textBoxEditable="0"
+          textBoxWidth="40" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
+  <LABEL name="Master Gain label" id="398893cc183b859b" memberName="masterGainLabel"
+         virtualName="" explicitFocusOrder="0" pos="58R -56 100% 48" posRelativeY="8924a1c10657725b"
+         posRelativeW="8924a1c10657725b" textCol="ff909090" edTextCol="ff000000"
+         edBkgCol="0" labelText="Master&#10;Gain&#10;dB FS" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
+         fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="36"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

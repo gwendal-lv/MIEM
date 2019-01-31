@@ -78,11 +78,10 @@ void FileMenu::onSave()
 }
 void FileMenu::onSaveAs()
 {
-    AppPurpose sessionPurpose = presenter->GetSessionPurpose();
-    
 #ifndef __MIAMOBILE
     // Warning : App::GetPurpose() returns Multi for the Editor !
     // So we should not use it when saving (the type is already defined)
+    AppPurpose sessionPurpose = presenter->GetSessionPurpose();
     SaveFileChooser fileChooser({sessionPurpose});
     if ( fileChooser.browseForFileToSave(true) )
     {
