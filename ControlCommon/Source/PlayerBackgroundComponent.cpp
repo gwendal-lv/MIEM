@@ -104,7 +104,7 @@ PlayerBackgroundComponent::PlayerBackgroundComponent ()
     mainInfoLabel->setText(App::GetNameWithVersion(), NotificationType::sendNotification);
 
     // Slider default behavior
-    isMainSliderEnabled = true;
+    //isMainSliderEnabled = true;
     mainSlider->setNumDecimalPlacesToDisplay(0);
 
     //[/Constructor]
@@ -337,6 +337,11 @@ void PlayerBackgroundComponent::ChangeAppMode(PlayerAppMode newAppMode)
 
     // Dans tous les cas : transmission au menu (qui affiche des choses en fonction)
     mainMenuComponent->ChangeAppMode(newAppMode);
+}
+void PlayerBackgroundComponent::SetMainSliderEnabled(bool shouldBeEnabled)
+{
+    isMainSliderEnabled = shouldBeEnabled;
+    resized();
 }
 //[/MiscUserCode]
 

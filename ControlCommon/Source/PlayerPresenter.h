@@ -26,7 +26,7 @@ namespace Miam
     
     
     class PlayerPresenter : public ControlPresenter,
-                            private Timer // for auto-updates when necessary
+                            private Timer // for auto-updates when necessary (when Juce does not update & render)
     {
         
         
@@ -72,7 +72,6 @@ namespace Miam
         
         
         
-        
         // = = = = = = = = = = METHODS = = = = = = = = = =
         public :
         PlayerPresenter(PlayerView* _view);
@@ -98,10 +97,19 @@ namespace Miam
         /// \brief Callback invoked when any FileChooser has asynchronously returned.
         void OnFileChooserReturn(const FileChooser& chooser);
         
-        virtual void Update() override;
-        /// \brief Timer callback associated to the Update function
+        
         private :
+        /// \brief Timer callback associated to the Update function
         virtual void timerCallback() override;
+        
+        
+        
+        protected :
+        /// \brief Called by a parent class when emptying the lock-free queue
+        // -> override disabled while unused !
+        
+        //virtual void processParamChangeFromModel(AsyncParamChange const & paramChange) override;
+        
         
         
         
@@ -115,11 +123,13 @@ namespace Miam
         /// \brief When the main slider (which is not always displayed or used) has been moved
         virtual void OnMainSliderValueChanged_dB(double newValue_dB) {} // no default action !
         
+        
         // - - - - - Events from the Model - - - - -
         
         /// \brief Processes the data then displays it. An empty tree means
         /// that the connection failed.
         void OnNewConnectionStatus(bool isConnectionEstablished, std::shared_ptr<bptree::ptree> connectionParametersTree);
+        
         
         
         // = = = = = XML loading only = = = = =

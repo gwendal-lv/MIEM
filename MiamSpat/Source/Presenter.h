@@ -88,8 +88,9 @@ namespace Miam {
         
         
         // - - - - - Periodic updates - - - - -
-        virtual void Update() override;
-
+        //virtual void Update() override; // not directly overriden anymore ! ControlPresenter dispatches events
+        protected :
+        virtual void processParamChangeFromModel(AsyncParamChange const & paramChange) override;
         
         
     };

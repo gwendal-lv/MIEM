@@ -14,12 +14,13 @@
             <outputs activeCount="1" maxCount="64"/>
             <senders>
                 <sender type="MiamOsc">
-                    <ip>192.168.0.1</ip>
+                    <ip>192.168.2.1</ip>
                     <udp>
                         <port>8011</port>
                     </udp>
                 </sender>
             </senders>
+            <master_gain enabled="false" value="1"/>
         </control>
         <presenter>
             <keyboardedition>false</keyboardedition>
@@ -243,7 +244,7 @@
                                 </geometry>
                                 <spatstate index="6"/>
                             </area>
-                            <area id="116" type="Exciter" index="8">
+                            <area id="120" type="Exciter" index="8">
                                 <center x="0.32907575291947955" y="0.091961195420661779"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
@@ -254,7 +255,7 @@
                                 <is_round>false</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
-                            <area id="117" type="Exciter" index="9">
+                            <area id="121" type="Exciter" index="9">
                                 <center x="0.83798546020279285" y="0.41641290601705838"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>

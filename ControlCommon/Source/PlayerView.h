@@ -36,7 +36,8 @@ namespace Miam
         
         
         // = = = = = = = = = = Setters and Getters = = = = = = = = = =
-        
+        public :
+        PlayerBackgroundComponent* GetBackgroundComponent() {return backgroundComponent;}
         
         
         

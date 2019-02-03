@@ -147,9 +147,18 @@ void ControlModel::update()
                     {
                         miamOscSender->SendStateModifications(interpolator->GetCurrentInterpolatedState());
                     }
-                    // Confirmation sent back to the presenter
+                    // DOUBLE-SIGNAL Confirmation sent back to the presenter
+                    // ultra-fast and lock-free
+                    presenter->OnModelStopped();
+                    // typical using the lock-free queue
                     localParamChange.Type = AsyncParamChange::ParamType::Stopped;
                     SendParamChange(localParamChange);
+                    // After confirmation is sent back to the presenter, we force-empty
+                    // the lock-free queue.
+                    while(presenter->TryGetAsyncParamChange(lastParamChange))
+                    {}
+                    // Remark : no need to wait for another ack from the Presenter.
+                    // If it isn't playing, it does not send lock-free data.
                     break;
                     
                 default :
@@ -158,6 +167,9 @@ void ControlModel::update()
         }
         
         // - - - - - SI ON EST EN TRAIN DE JOUER - - - - -
+        // Alors on peut faire pas mal de choses. Si on ne joue pas par contre... Il
+        // faut vraiment éviter de faire des trucs parce que Model et Presenter communiquent
+        // en single threaded direct
         if ( playState == AsyncParamChange::Play )
         {
             // Envoi de la nouvelle matrice, si nécessaire

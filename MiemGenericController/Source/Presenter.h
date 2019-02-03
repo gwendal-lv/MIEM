@@ -76,7 +76,10 @@ namespace Miam {
         virtual AppPurpose GetSessionPurpose() const override {return AppPurpose::GenericController;}
         
         
-        virtual void Update() override;
+        protected :
+        /// \brief Called by a parent class when emptying the lock-free queue
+        virtual void processParamChangeFromModel(AsyncParamChange const & paramChange) override;
+        
         
     };
     

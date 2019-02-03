@@ -57,13 +57,16 @@ void Presenter::OnLoadDefaultSession()
 
 
 // = = = = = = = = = = METHODES = = = = = = = = = =
-void Presenter::Update()
+void Presenter::processParamChangeFromModel(AsyncParamChange const & paramChange)
 {
-    // Simple emptying of the lock-free queue
-    AsyncParamChange paramChange;
-    while (model->TryGetAsyncParamChange(paramChange))
+    switch(paramChange.Type)
     {
-        // no processing for now....
+        // no specific event treated specifically here... Control/Player/Presenter will do the ob
+            
+            // All untreated events : directed to parent class
+        default :
+            PlayerPresenter::processParamChangeFromModel(paramChange);
+            break;
     }
 }
 

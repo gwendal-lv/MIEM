@@ -48,6 +48,12 @@ namespace Miam {
         std::shared_ptr<bptree::ptree> lastSpatScenesTree;
         std::string lastFilename;
         
+        
+        // - - - - - Lock-free fast communication - - - - -
+        /// \brief Used to know whether the model has really stopped or not
+        std::atomic<bool> hasModelActuallyStopped;
+        
+        
         // = = = = = = = = = = METHODS = = = = = = = = = =
         
         public :
@@ -55,6 +61,23 @@ namespace Miam {
         ControlPresenter(ControlView* view_);
         virtual ~ControlPresenter() {}
         void CompleteInitialisation(GraphicControlSessionManager* _graphicSessionManager, ControlModel* _model);
+        
+        
+        
+        // - - - - - Graphical reccurent update - - - - -
+        virtual void Update() override;
+        
+        
+        
+        // - - - - - Events from Model - - - - -
+        protected :
+        virtual void processParamChangeFromModel(AsyncParamChange const & paramChange);
+        public :
+        
+        /// \brief Method that must be called from the Model
+        /// to notify that is has actually stopped
+        void OnModelStopped();
+        
         
         // - - - - - Self XML import/export - - - - -
         public :

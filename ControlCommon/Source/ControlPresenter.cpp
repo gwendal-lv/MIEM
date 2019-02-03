@@ -21,6 +21,8 @@ ControlPresenter::ControlPresenter(ControlView* view_)
 :
 view(view_)
 {
+    hasModelActuallyStopped = true;
+    
     lastSpatStatesTree = std::make_shared<bptree::ptree>();
     lastSpatScenesTree = std::make_shared<bptree::ptree>();
 }
@@ -37,6 +39,45 @@ void ControlPresenter::CompleteInitialisation(GraphicControlSessionManager* _gra
     // Init des sous-modules
     graphicSessionManager->CompleteInitialisation(model->GetInterpolator());
 }
+
+
+// = = = = = = = = = = Graphical reccurent update = = = = = = = = = =
+void ControlPresenter::Update()
+{
+    // Simple emptying of the lock-free queue
+    AsyncParamChange paramChange;
+    while (model->TryGetAsyncParamChange(paramChange))
+    {
+        // this function will be overriden as many times as necessary ! For custom behaviors
+        processParamChangeFromModel(paramChange);
+    }
+}
+
+
+
+// = = = = = = = = = = Events from Model  = = = = = = = = = =
+void ControlPresenter::processParamChangeFromModel(AsyncParamChange const & paramChange)
+{
+    switch(paramChange.Type)
+    {
+        case AsyncParamChange::Stopped :
+            // Model Confirms that it has stopped... But it does not change anything.
+            // We needed to know this without blocking and waiting for this message
+            // (through the OnModelStopped non-blocking callback form Model)
+            break;
+            
+        default :
+            break;
+    }
+}
+void ControlPresenter::OnModelStopped()
+{
+    hasModelActuallyStopped = true;
+    std::cout << "MODEL A VRAIIIMENT STOPPÉÉÉÉÉ !!!!!!" << std::endl;
+}
+
+
+
 
 
 // = = = = = XML import/export = = = = =

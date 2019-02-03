@@ -127,6 +127,7 @@ void GraphicSessionPlayer::handleSingleAreaEventSync(const std::shared_ptr<AreaE
         switch (areaE->GetType())
         {
             // On n'envoie l'excitation qu'en mode de jeu réel
+                // Sinon ça remplirait la lock-free queue du Presenter
             case AreaEventType::ExcitementAmountChanged :
                 if (presenter->getAppMode() == PlayerAppMode::Playing)
                 {

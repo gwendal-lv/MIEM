@@ -67,6 +67,8 @@ public:
 
 
     void ChangeAppMode(PlayerAppMode newAppMode);
+    void SetMainSliderEnabled(bool shouldBeEnabled);
+    
 
     MultiCanvasComponent* GetMultiCanvasComponent() { return multiCanvasComponent; }
     PlayerMainMenuComponent* GetMainMenuComponent() { return mainMenuComponent.get(); }

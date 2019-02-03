@@ -75,36 +75,40 @@ void Presenter::OnMainSliderValueChanged_dB(double newValue_dB)
 
 
 // = = = = = = = = = = PERIODIC UPDATES = = = = = = = = = =
-void Presenter::Update()
+void Presenter::processParamChangeFromModel(AsyncParamChange const & paramChange)
 {
-    AsyncParamChange paramChange;
-    while (model->TryGetAsyncParamChange(paramChange))
+    bool wasVolumeUpdated = false;
+    bool sendToParentClass = false; // most events should be treated here,
+    // if the method if overriden...
+    switch(paramChange.Type)
     {
-        bool wasVolumeUpdated = false;
-        switch(paramChange.Type)
-        {
-            case AsyncParamChange::ParamType::Volume_CorrelatedInputs :
-                lastHighCorrelationVolume = paramChange.DoubleValue;
-                wasVolumeUpdated = true;
-                break;
-            case AsyncParamChange::ParamType::Volume_DecorrelatedInputs :
-                lastLowCorrelationVolume = paramChange.DoubleValue;
-                wasVolumeUpdated = true;
-                break;
-                
-            // Ack : model is actually stopped
-            case AsyncParamChange::ParamType::Stopped :
-                lastLowCorrelationVolume = 0.0;
-                lastHighCorrelationVolume = 0.0;
-                wasVolumeUpdated = true;
-                break;
+        case AsyncParamChange::ParamType::Volume_CorrelatedInputs :
+            lastHighCorrelationVolume = paramChange.DoubleValue;
+            wasVolumeUpdated = true;
+            break;
+        case AsyncParamChange::ParamType::Volume_DecorrelatedInputs :
+            lastLowCorrelationVolume = paramChange.DoubleValue;
+            wasVolumeUpdated = true;
+            break;
             
-            default : break;
-        }
+        // Ack : model is actually stopped
+        case AsyncParamChange::ParamType::Stopped :
+            lastLowCorrelationVolume = 0.0;
+            lastHighCorrelationVolume = 0.0;
+            wasVolumeUpdated = true;
+            sendToParentClass = true;
+            break;
         
-        if (wasVolumeUpdated)
-            view->OnNewVolumes(lastLowCorrelationVolume, lastHighCorrelationVolume);
+        default :
+            sendToParentClass = true;
+            break;
     }
+    
+    if (wasVolumeUpdated)
+        view->OnNewVolumes(lastLowCorrelationVolume, lastHighCorrelationVolume);
+    
+    if (sendToParentClass)
+        PlayerPresenter::processParamChangeFromModel(paramChange);
 }
 
 

@@ -14,6 +14,7 @@
 #include "GraphicSessionPlayer.h"
 
 #include "PlayerView.h"
+#include "PlayerBackgroundComponent.h"
 
 #include "PlayerModel.h"
 
@@ -84,9 +85,6 @@ void PlayerPresenter::TryLoadFirstSession(std::string commandLine)
         appModeChangeRequest(PlayerAppMode::MainMenu);
     }
 }
-
-
-
 
 
 
@@ -257,16 +255,23 @@ void PlayerPresenter::OnFileChooserReturn(const FileChooser& chooser)
     }
 }
 
-void PlayerPresenter::Update()
-{
-    // Récupération des infos du modèle... Par exemple : info "OK je suis prêt
-    // à être contrôlé en SINGLE THREAD" lors de re-chargement d'une scène
-}
-
 void PlayerPresenter::timerCallback()
 {
+    // Used when the MultiSceneCanvasInteractor is not shown !
     Update();
 }
+/*
+void PlayerPresenter::processParamChangeFromModel(AsyncParamChange const & paramChange)
+{
+    switch(paramChange.Type)
+    {
+            // All untreated events : directed to parent class
+        default :
+            ControlPresenter::processParamChangeFromModel(paramChange);
+            break;
+    }
+}
+ */
 
 
 // = = = = = = = = = = EVENTS FROM VIEW = = = = = = = = = =
@@ -348,16 +353,25 @@ void PlayerPresenter::OnNewConnectionStatus(bool isConnectionEstablished, std::s
 void PlayerPresenter::LoadSession(std::string filename)
 {
     appModeChangeRequest(PlayerAppMode::Stopped); // aussi : Arrêt du modèle
-    // Il faudra un temps d'attente !! Une confirmation que tout s'est bien arrêté...
-    // Avant de faire le chargement qui lui sera SINGLE THREAD
     
-    
+    // Il faut un temps d'attente !! Une confirmation que tout s'est bien arrêté...
+    // Avant de faire le chargement qui lui sera single thread
+    // Sauf que là si on bloquait en attent un paquet lock-free, alors on bloquerait
+    // aussi la fonction qui va chercher ces paquets lock-free.
+    // Donc : attente active dégueu sur un bon vieux booléen atomique des familles
+    while (! hasModelActuallyStopped)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1)); // can be improved.... !!!!
+    }
     
     // Arrêt des envois de ce module, déjà pour commencer
     appModeChangeRequest(PlayerAppMode::Loading);
     
     // Chargement d'une nouvelle session
     ControlPresenter::LoadSession(filename);
+    
+    // Various forced updates after loading
+    view->GetBackgroundComponent()->SetMainSliderEnabled(model->GetIsMasterGainEnabled());
     
     // Ensuite on se change de mode
     appModeChangeRequest(PlayerAppMode::Playing); // va démarrer le modèle
