@@ -162,14 +162,33 @@ namespace Miam
         protected :
         // size of the different buffer parts
         // (Not static for multi-threading safety)
-        const int numPointsPolygon = 32; // MAX number of contour points of a polygon
-        const int ringResolution = 32; // actual resolution of any donut ring
-        const int numPointCircle = 32; // actual resolution of any circle
+#ifdef JUCE_ANDROID
+        // lower values for Android... Because low perfs with Juce
+        // VERY VERY LOW VALUES, JUST FOR TEST ON ANDROID
+        const int ringResolution = 8;
+        // const int numPointsPolygon = 16; MUST BE THE SAME FOR ALL PLATFORMS !
+        // If we want different values for each one... OpenGL must be properly debuggued !! -> OK done
+#else
+        // Max number of contour points of a polygon... AND actual number of points of an ellipse ?
+        const int numPointsPolygon = 24;
+        // WARNING there is a remaining issue in the OpenGL rendering code...
+        // the ringResolution and the numPointsPolygon are mixed at some point...
+        // So they SHOULD REMAIN THE SAME, or else OpenGL should be debuggued
+        // to get the bug : numPointsPOlygon ==  24 and ringResolution == 12
+        // -> OK, bug must be solved... to be properly tested
+        const int numPointsPolygonContour = 2 * numPointsPolygon; // 2 polygons filled
+        
+        // actual resolution of any donut ring, for good performances for medium object such as exciters
+        const int ringResolution = 16;
+        
+        const int numPointCircle = 32; // actual resolution of any circle (not often used, small circles are preferred)
+        
+        // Small circles : aroudn 10 points
         
         const int numVerticesPolygon = numPointsPolygon + 1; // +1 pour le centre du polygone
         const int numVerticesRing = 2 * ringResolution; // donut = 2 circles of 32 points
         const int numVerticesCircle = numPointCircle + 1; // +1 pour le centre du disque
-        
+#endif
         
         // - - - - - VBO methods - - - - -
         // - - - Following getters return the number of elements or array size of each kind of OpenGL buffer

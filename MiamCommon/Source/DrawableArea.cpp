@@ -491,7 +491,7 @@ void DrawableArea::initSurfaceAndContourColourSubBuffer(int vertexElmtOffset)
     const float R2 = contourColour.getRed() / 255.0f;
     const float G2 = contourColour.getGreen() / 255.0f;
     const float B2 = contourColour.getBlue() / 255.0f;
-    for (int i = 0; i < numVerticesRing; ++i)
+    for (int i = 0; i < numPointsPolygonContour; ++i)
     {
         coulours_buffer[4 * (contourLineVertexElmtOffset + i) + 0] = R2;
         coulours_buffer[4 * (contourLineVertexElmtOffset + i) + 1] = G2;

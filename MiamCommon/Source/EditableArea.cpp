@@ -130,8 +130,8 @@ void EditableArea::computeManipulationLineBuffer(float Ox, float Oy, float Mx, f
 
 void EditableArea::initSmallDiskBuffers()
 {
-    g_vertex_circle.resize(3 * numVerticesCircle);
-    g_circle_indices.resize(3 * numPointCircle);
+    g_vertex_circle.resize(3 * numVerticesSmallCircle);
+    g_circle_indices.resize(3 * numPointsSmallCircle);
     
     // Vertices of the small disk
     double currentAngle = 0.0;
