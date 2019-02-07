@@ -67,6 +67,7 @@ private:
     std::unique_ptr<TextButton> createDefaultTextButton;
     std::unique_ptr<TextButton> createGenericTextButton;
     std::unique_ptr<HyperlinkButton> infoHyperlinkButton;
+    std::unique_ptr<HyperlinkButton> appNameHyperlinkButton;
 
 
     //==============================================================================

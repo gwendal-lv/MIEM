@@ -77,8 +77,20 @@ StartupComponent::StartupComponent ()
     infoHyperlinkButton->setButtonText (TRANS("To get help and more information, please visit http://miem.laras.be"));
     infoHyperlinkButton->setColour (HyperlinkButton::textColourId, Colours::white);
 
+    appNameHyperlinkButton.reset (new HyperlinkButton (TRANS("MIEM Editor"),
+                                                       URL ("http://miem.laras.be")));
+    addAndMakeVisible (appNameHyperlinkButton.get());
+    appNameHyperlinkButton->setTooltip (TRANS("http://miem.laras.be"));
+    appNameHyperlinkButton->setButtonText (TRANS("MIEM Editor"));
+    appNameHyperlinkButton->setColour (HyperlinkButton::textColourId, Colours::white);
+
 
     //[UserPreSize]
+
+	// ACtual version put at the end of the name
+	appNameHyperlinkButton->setButtonText(TRANS("MIEM Editor ") + ProjectInfo::versionString);
+
+
     //[/UserPreSize]
 
     setSize (600, 400);
@@ -102,6 +114,7 @@ StartupComponent::~StartupComponent()
     createDefaultTextButton = nullptr;
     createGenericTextButton = nullptr;
     infoHyperlinkButton = nullptr;
+    appNameHyperlinkButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -130,6 +143,7 @@ void StartupComponent::resized()
     createDefaultTextButton->setBounds ((getWidth() / 2) + -3 - (168 / 2), (getHeight() / 2) + 350, 168, 24);
     createGenericTextButton->setBounds ((getWidth() / 2) + 150 - 300, (getHeight() / 2), 300, 32);
     infoHyperlinkButton->setBounds ((getWidth() / 2) - ((getWidth() - 16) / 2), getHeight() - 32, getWidth() - 16, 24);
+    appNameHyperlinkButton->setBounds ((getWidth() / 2) - ((getWidth() - 16) / 2), getHeight() - 62, getWidth() - 16, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -232,9 +246,13 @@ BEGIN_JUCER_METADATA
               bgColOn="ffffffff" textCol="ff000000" buttonText="Create Generic OSC Controller session"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <HYPERLINKBUTTON name="Info hyperlink button" id="fa3a8802c3b7c7f0" memberName="infoHyperlinkButton"
-                   virtualName="" explicitFocusOrder="0" pos="0Cc 32R 16M 24" tooltip="http://miem.laras.be"
+                   virtualName="" explicitFocusOrder="0" pos="0Cc 32R 5M 24" tooltip="http://miem.laras.be"
                    textCol="ffffffff" buttonText="To get help and more information, please visit http://miem.laras.be"
                    connectedEdges="0" needsCallback="0" radioGroupId="0" url="http://miem.laras.be"/>
+  <HYPERLINKBUTTON name="App Name hyperlink button" id="7dafa352c7045e31" memberName="appNameHyperlinkButton"
+                   virtualName="" explicitFocusOrder="0" pos="0Cc 62R 5M 24" tooltip="http://miem.laras.be"
+                   textCol="ffffffff" buttonText="MIEM Editor" connectedEdges="0"
+                   needsCallback="0" radioGroupId="0" url="http://miem.laras.be"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

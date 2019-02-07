@@ -55,9 +55,9 @@ namespace Miam
             }
             
             if (sendIds)
-                send(oscAddress.c_str(), (int32_t)paramChange.Id1, (int32_t)paramChange.Id2, (Float32)paramChange.FloatValue);
+                send(oscAddress.c_str(), (int32_t)paramChange.Id1, (int32_t)paramChange.Id2, (float)paramChange.FloatValue);
             else
-                send(oscAddress.c_str(), (Float32)paramChange.FloatValue);
+                send(oscAddress.c_str(), (float)paramChange.FloatValue);
         }
     };
 }

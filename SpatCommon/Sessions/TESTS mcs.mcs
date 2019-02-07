@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<miem appVersion="65537" appPurpose="Generic controller">
+    <settings>
+        <control>
+            <interpolation type="Linear"/>
+            <inputs activeCount="6" maxCount="64">
+                <name id="0">/miem/wacom</name>
+            </inputs>
+            <outputs activeCount="1" maxCount="64"/>
+            <senders>
+                <sender type="MiamOsc">
+                    <ip>192.168.1.255</ip>
+                    <udp>
+                        <port>9002</port>
+                    </udp>
+                </sender>
+            </senders>
+            <master_gain enabled="false" value="1"/>
+        </control>
+        <presenter>
+            <keyboardedition>false</keyboardedition>
+        </presenter>
+    </settings>
+    <control>
+        <states>
+            <state index="0">
+                <name>Matrix-based generic control state</name>
+                <colour>ff7fff00</colour>
+                <matrix>
+                    <coeff row="0" col="0" value="0.21696043719211822"/>
+                </matrix>
+            </state>
+        </states>
+    </control>
+    <graphicsession>
+        <canvases>
+            <canvas index="0">
+                <scenes>
+                    <scene index="0">
+                        <name>[scène vide]</name>
+                        <areas/>
+                    </scene>
+                </scenes>
+            </canvas>
+        </canvases>
+    </graphicsession>
+</miem>

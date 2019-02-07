@@ -325,6 +325,7 @@
                        isDebug="0" optimisation="3" targetName="MatrixRouter" headerPath="..\..\..\&#10;..\..\..\MiamCommon\Source\&#10;..\..\..\ControlCommon\Source\&#10;..\..\..\SpatCommon\Source\"
                        debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
                        linkTimeOptimisation="1"/>
+        <CONFIGURATION isDebug="0"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
@@ -345,6 +346,31 @@
         <MODULEPATH id="juce_audio_utils" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </VS2015>
+    <VS2017 targetFolder="Builds/VisualStudio2017" vst3Folder="C:\Users\Gwendal\SDKs\VST_SDK\VST3_SDK"
+            vstLegacyFolder="C:\Users\Gwendal\SDKs\VST_SDK\VST2_SDK">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../MiamCommon/Resources/&#10;../../../ControlCommon/Source/&#10;../../../SpatCommon/Source/"/>
+        <CONFIGURATION isDebug="0" name="Release" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../MiamCommon/Resources/&#10;../../../ControlCommon/Source/&#10;../../../SpatCommon/Source/"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_video"/>
+        <MODULEPATH id="juce_osc"/>
+        <MODULEPATH id="juce_opengl"/>
+        <MODULEPATH id="juce_gui_extra"/>
+        <MODULEPATH id="juce_gui_basics"/>
+        <MODULEPATH id="juce_graphics"/>
+        <MODULEPATH id="juce_events"/>
+        <MODULEPATH id="juce_data_structures"/>
+        <MODULEPATH id="juce_cryptography"/>
+        <MODULEPATH id="juce_core"/>
+        <MODULEPATH id="juce_audio_utils"/>
+        <MODULEPATH id="juce_audio_processors"/>
+        <MODULEPATH id="juce_audio_plugin_client"/>
+        <MODULEPATH id="juce_audio_formats"/>
+        <MODULEPATH id="juce_audio_devices"/>
+        <MODULEPATH id="juce_audio_basics"/>
+      </MODULEPATHS>
+    </VS2017>
   </EXPORTFORMATS>
   <MODULES>
     <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0"/>
@@ -367,5 +393,6 @@
   <JUCEOPTIONS JUCE_QUICKTIME="disabled"/>
   <LIVE_SETTINGS>
     <OSX headerPath="../../../&#10;../../MiamCommon/Source/&#10;../../SpatCommon/Source/"/>
+    <WINDOWS/>
   </LIVE_SETTINGS>
 </JUCERPROJECT>
