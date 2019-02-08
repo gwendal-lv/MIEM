@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.1
+  Created with Projucer version: 5.4.2
 
   ------------------------------------------------------------------------------
 
@@ -57,7 +57,7 @@ OSCRecorderComponent::OSCRecorderComponent ()
     countLabel.reset (new Label ("count label",
                                  TRANS("Current preset: .../...")));
     addAndMakeVisible (countLabel.get());
-    countLabel->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
+    countLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     countLabel->setJustificationType (Justification::centred);
     countLabel->setEditable (false, false, false);
     countLabel->setColour (TextEditor::textColourId, Colours::black);
@@ -157,22 +157,22 @@ juce::String OSCRecorderComponent::GetExperimentStateName(ExperimentState state)
     {
         case ExperimentState::NotInitialized:
             return "Not initialized";
-            
+
         case ExperimentState::ReadyToListen:
             return "Ready to listen";
-            
+
         case ExperimentState::Listening:
             return "Listening";
-            
+
         case ExperimentState::ReadyToSearchPreset:
             return "Ready to search preset";
-            
+
         case ExperimentState::SearchingPreset :
             return "Searching preset";
-            
+
         case ExperimentState::FinishedSearchingPreset :
             return "Finished searching preset";
-            
+
         case ExperimentState::Finished :
             return "Finished";
     }
@@ -189,42 +189,42 @@ void OSCRecorderComponent::DisplayNewState(ExperimentState newState, int presetI
             finishedButton->setVisible(false);
             countLabel->setVisible(false);
             break;
-            
+
         case ExperimentState::ReadyToListen:
             listenButton->setVisible(true);
             startButton->setVisible(false);
             finishedButton->setVisible(false);
             countLabel->setVisible(true);
             break;
-            
+
         case ExperimentState::Listening:
             listenButton->setVisible(false);
             startButton->setVisible(false);
             finishedButton->setVisible(false);
             countLabel->setVisible(true);
             break;
-            
+
         case ExperimentState::ReadyToSearchPreset:
             listenButton->setVisible(false);
             startButton->setVisible(true);
             finishedButton->setVisible(false);
             countLabel->setVisible(true);
             break;
-            
+
         case ExperimentState::SearchingPreset:
             listenButton->setVisible(false);
             startButton->setVisible(false);
             finishedButton->setVisible(true);
             countLabel->setVisible(true);
             break;
-            
+
         case ExperimentState::FinishedSearchingPreset:
             listenButton->setVisible(false);
             startButton->setVisible(false);
             finishedButton->setVisible(false);
             countLabel->setVisible(false);
             break;
-            
+
         case ExperimentState::Finished:
             listenButton->setVisible(false);
             startButton->setVisible(false);
@@ -232,14 +232,14 @@ void OSCRecorderComponent::DisplayNewState(ExperimentState newState, int presetI
             countLabel->setVisible(true);
             break;
     }
-    
-    
-    
+
+
+
     // COUNT LABEL Display
     if (newState != ExperimentState::Finished)
     {
         int presetNumber = presetIndex + 1;
-        
+
         if (presetIndex >= 0) // actual presets
             countLabel->setText(TRANS("Current preset: ") + String(presetNumber) + String("/") + String(presetsCount), NotificationType::dontSendNotification);
         else if (presetIndex == -2)
@@ -268,7 +268,7 @@ BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="OSCRecorderComponent" componentName=""
                  parentClasses="public Component" constructorParams="" variableInitialisers=""
-                 snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.33"
+                 snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="0" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="ff313131"/>
   <TEXTBUTTON name="start button" id="cb0e665733fa514e" memberName="startButton"
@@ -297,3 +297,4 @@ END_JUCER_METADATA
 
 //[EndFile] You can add extra defines here...
 //[/EndFile]
+

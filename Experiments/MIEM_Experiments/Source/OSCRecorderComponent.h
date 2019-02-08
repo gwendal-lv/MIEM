@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.1
+  Created with Projucer version: 5.4.2
 
   ------------------------------------------------------------------------------
 
@@ -40,8 +40,6 @@ class OSCRecorder;
 class OSCRecorderComponent  : public Component,
                               public Button::Listener
 {
-    friend class OSCRecorder;
-    
 public:
     //==============================================================================
     OSCRecorderComponent ();
@@ -51,7 +49,7 @@ public:
     //[UserMethods]     -- You can add your own custom methods in this section.
     static juce::String GetExperimentStateName(ExperimentState state);
     void SetRecorderManager(OSCRecorder* _recorder) {recorderManager = _recorder;}
-    
+
     void DisplayNewState(ExperimentState newState, int presetIndex, size_t presetsCount);
     //[/UserMethods]
 
@@ -79,3 +77,4 @@ private:
 
 //[EndFile] You can add extra defines here...
 //[/EndFile]
+
