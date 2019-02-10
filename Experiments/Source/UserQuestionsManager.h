@@ -10,8 +10,17 @@
 
 #pragma once
 
+#include <memory>
+
+#include "boost/property_tree/ptree.hpp"
+#include "boost/property_tree/xml_parser.hpp"
+namespace bptree = boost::property_tree;
+
+
 #include "UserQuestions.h"
 #include "UserFinalQuestions.h"
+
+
 
 class UserQuestions;
 class UserFinalQuestions;
@@ -27,5 +36,5 @@ class UserQuestionsManager
     virtual void OnFinalQuestionsAnswered(UserFinalQuestions* sender) = 0;
     
     // Methods for retrieving the data, and formatting it to XML and Boost Property Trees
-    
+    // (directly in view/component classes)
 };

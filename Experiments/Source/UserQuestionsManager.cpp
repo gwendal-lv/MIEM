@@ -9,3 +9,8 @@
 */
 
 #include "UserQuestionsManager.h"
+
+#include "UserQuestions.h"
+#include "UserFinalQuestions.h"
+
+

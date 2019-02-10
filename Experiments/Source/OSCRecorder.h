@@ -71,8 +71,8 @@ class OSCRecorder : public UserQuestionsManager {
     std::string tcpServerName;
     int tcpServerPort = -1;
     int currentExperimentUid = -1;
-    
-    
+    // this tree contains the values, ready to be XML-re-written
+    std::shared_ptr<bptree::ptree> parametersTree;
     
     // links to view
     MainComponent* const mainComponent;
@@ -170,7 +170,7 @@ class OSCRecorder : public UserQuestionsManager {
     void createNewDataFiles();
     /// \brief The path is a const char already defined, and the names
     /// will be built automatically from the current date and time
-    void saveToFile();
+    void saveEverythingToFiles();
     /// \brief Gets the UID, and... other parameters
     void getExperimentParametersFromXmlFile();
     

@@ -14,7 +14,7 @@ MainComponent::MainComponent()
     // - - - - Instanciation des contenus graphiques - - - - -
     
     // label d'info à l'arrache
-    backLabel.reset(new Label("back label", "Initialisation..."));
+    backLabel.reset(new Label("back label", TRANS("Initialisation... Please check console for errors if program is not responding.")));
     addAndMakeVisible(backLabel.get());
     backLabel->setColour(Label::ColourIds::textColourId, Colours::white);
     expeLabel.reset(new Label("expe label 1", ""));

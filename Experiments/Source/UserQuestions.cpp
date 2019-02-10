@@ -116,6 +116,10 @@ UserQuestions::UserQuestions ()
 
 
     //[UserPreSize]
+    
+    // button deactivated while "allow data collection" is not checked
+    finishedButton->setEnabled(false);
+    
     //[/UserPreSize]
 
     setSize (600, 400);
@@ -189,6 +193,7 @@ void UserQuestions::buttonClicked (Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == allowDataToggleButton.get())
     {
         //[UserButtonCode_allowDataToggleButton] -- add your button handler code here..
+        finishedButton->setEnabled(allowDataToggleButton->getToggleState());
         //[/UserButtonCode_allowDataToggleButton]
     }
     else if (buttonThatWasClicked == visionDisorderToggleButton.get())
@@ -209,6 +214,16 @@ void UserQuestions::buttonClicked (Button* buttonThatWasClicked)
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
+
+std::shared_ptr<bptree::ptree> UserQuestions::GetQuestionsBPTree()
+{
+    auto questionsChildrenTree = std::make_shared<bptree::ptree>();
+    questionsChildrenTree->put("data_usage.<xmlattr>.allow",
+                               allowDataToggleButton->getToggleState());
+    
+    return questionsChildrenTree;
+}
+
 //[/MiscUserCode]
 
 

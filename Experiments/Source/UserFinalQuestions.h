@@ -47,10 +47,10 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-    friend class UserQuestionsManager;
-    
     void SetUserQuestionsManager(UserQuestionsManager* _manager)
     { userQuestionsManager = _manager; }
+    
+    std::shared_ptr<bptree::ptree> GetQuestionsBPTree();
     //[/UserMethods]
 
     void paint (Graphics& g) override;

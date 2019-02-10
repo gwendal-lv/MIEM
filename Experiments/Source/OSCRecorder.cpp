@@ -9,6 +9,7 @@
 */
 
 #include <thread>
+#include <algorithm>
 
 #include "boost/lexical_cast.hpp"
 //#include "boost/property_tree/ptree.hpp"
@@ -295,16 +296,19 @@ void OSCRecorder::OnSpaceBarPushed()
 
 void OSCRecorder::OnFirstQuestionsAnswered(UserQuestions* sender)
 {
-    nextExperimentStep();
+    // Save after before the finish screen is being displayed
+    // (for data consistency before mode change)
+    saveEverythingToFiles();
     
-    std::cout << "Warning : data from sender not retrieved" << std::endl;
+    nextExperimentStep();
 }
 void OSCRecorder::OnFinalQuestionsAnswered(UserFinalQuestions* sender)
 {
-    changeState(ExperimentState::Finished);
-    
     // Save after the finish screen is being displayed
-    saveToFile();
+    // // (for data consistency before mode change)
+    saveEverythingToFiles();
+    
+    changeState(ExperimentState::Finished);
 }
 bool OSCRecorder::OnQuitRequest()
 {
@@ -406,38 +410,50 @@ void OSCRecorder::createNewDataFiles()
     DBG("--------------- FILE NAMES ------------------");
     
     // First save, to check the write rights on this machine
+    saveEverythingToFiles();
     
+    // If everything could be saved.... Then we update now the count of experiments already done
+    // (in the main "general data file" common for all subjects)
+    parametersTree->erase("experiment.count");
+    parametersTree->put("experiment.count", currentExperimentUid+1);
+    // write, and error triggering as usual
+    bptree::xml_writer_settings<std::string> xmlSettings(' ', 4);
+    std::string parametersPath = filesSavingPath;
+    parametersPath += experimentGeneralDataFile;
+    try {
+        bptree::write_xml(parametersPath, *parametersTree, std::locale(), xmlSettings);
+    }
+    catch (bptree::xml_parser::xml_parser_error& e) {
+        String errorStr = "Cannot write " + String(parametersPath) + ". Please check parameters and restart experiment.";
+        displayError(errorStr); // won't be graphically displayed... console only
+        // we just on quit if an error happens
+        std::this_thread::sleep_for(std::chrono::seconds(10)); // time before looking at the console
+        throw std::runtime_error(errorStr.toStdString());
+    }
 }
-void OSCRecorder::saveToFile()
+void OSCRecorder::saveEverythingToFiles()
 {
-    /* CODE FROM GEN CON
-     
-     // Whole properties tree reconstruction
-     bptree::ptree miamChildrenTree;
-     miamChildrenTree.put("<xmlattr>.appVersion", ProjectInfo::versionNumber);
-     miamChildrenTree.put("<xmlattr>.appPurpose", App::GetPurposeName(model->GetSessionPurpose()));
-     // Les settings sont ajoutés catégorie par catégorie
-     bptree::ptree settingsTree;
-     settingsTree.add_child("control", *(model->GetConfigurationTree()) );
-     settingsTree.add_child("presenter", *(this->GetConfigurationTree()) );
-     miamChildrenTree.add_child("settings", settingsTree);
-     // Puis on sauvegarde les données des modules
-     miamChildrenTree.add_child("control", *lastSpatStatesTree);
-     miamChildrenTree.add_child("graphicsession", *lastSpatScenesTree);
-     
-     auto wholeMiamTree = std::make_shared<bptree::ptree>();
-     wholeMiamTree->add_child("miem", miamChildrenTree);
-     
-     // Actual XML data writing into file
-     bptree::xml_writer_settings<std::string> xmlSettings(' ', 4);
-     try {
-     bptree::write_xml(lastFilename, *wholeMiamTree, std::locale(), xmlSettings);
-     }
-     catch (bptree::xml_parser::xml_parser_error& e) {
-     throw XmlWriteException(e.what());
-     }
-     
-     */
+    // Save of INFO
+    bptree::ptree questionsChildrenTree; // does not contain the <subject> tag itself
+    questionsChildrenTree.put("tested_presets.<xmlattr>.count", std::max(currentPresetIndex+1, 0));
+    questionsChildrenTree.add_child("first_questions",
+                                    *(mainComponent->firstUserQuestionsComponent->GetQuestionsBPTree()));
+    questionsChildrenTree.add_child("final_questions",
+                                    *(mainComponent->finalUserQuestionsComponent->GetQuestionsBPTree()));
+    // Actual XML data writing into file
+    bptree::xml_writer_settings<std::string> xmlSettings(' ', 4);
+    try {
+        bptree::write_xml(infoFilePath, questionsChildrenTree, std::locale(), xmlSettings);
+    }
+    catch (bptree::xml_parser::xml_parser_error& e) {
+        String errorStr = "Cannot write " + String(infoFilePath) + " or " + String(dataFilePath) + ". Please check parameters and restart experiment.";
+        displayError(errorStr); // won't be graphically displayed... console only
+        // we just on quit if an error happens
+        std::this_thread::sleep_for(std::chrono::seconds(10)); // time before looking at the console
+        throw std::runtime_error(errorStr.toStdString());
+    }
+    
+    // Save of DATA
 }
 
 void OSCRecorder::getExperimentParametersFromXmlFile()
@@ -446,9 +462,9 @@ void OSCRecorder::getExperimentParametersFromXmlFile()
     xmlExpeFilePath += experimentGeneralDataFile;
     
     // Chargement du fichier de config. SI impossible : on attent un peu puis on quitte...
-    bptree::ptree parametersTree;
+    parametersTree = std::make_shared<bptree::ptree>();
     try {
-        bptree::read_xml(xmlExpeFilePath, parametersTree);
+        bptree::read_xml(xmlExpeFilePath, *parametersTree);
     }
     catch(bptree::ptree_error &e) {
         String errorStr = TRANS("Cannot read the file '") + String(xmlExpeFilePath) + TRANS("' for configuration parameters. Experiment aborted.");
@@ -461,16 +477,16 @@ void OSCRecorder::getExperimentParametersFromXmlFile()
     // Chargement des paramètres du fichier
     try {
         // uid of current expe is the current expe count
-        currentExperimentUid = parametersTree.get<int>("experiment.count");
+        currentExperimentUid = parametersTree->get<int>("experiment.count");
         
-        tcpServerName = parametersTree.get<std::string>("experiment.tcp.<xmlattr>.ip");
-        tcpServerPort = parametersTree.get<int>("experiment.tcp.<xmlattr>.port");
+        tcpServerName = parametersTree->get<std::string>("experiment.tcp.<xmlattr>.ip");
+        tcpServerPort = parametersTree->get<int>("experiment.tcp.<xmlattr>.port");
     }
     catch(bptree::ptree_error &e) {
         String errorStr = TRANS("Wrong value or XML parsing error in file '") + String(xmlExpeFilePath) + TRANS("'. Experiment aborted.");
-        displayError(errorStr);
+        displayError(errorStr); // won't be graphically displayed... console only
         // we just on quit if an error happens
-        std::this_thread::sleep_for(std::chrono::seconds(10));
+        std::this_thread::sleep_for(std::chrono::seconds(10)); // time before looking at the console
         throw std::runtime_error(errorStr.toStdString());
     }
 }

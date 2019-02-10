@@ -191,6 +191,16 @@ void UserFinalQuestions::buttonClicked (Button* buttonThatWasClicked)
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
+
+std::shared_ptr<bptree::ptree> UserFinalQuestions::GetQuestionsBPTree()
+{
+    auto questionsChildrenTree = std::make_shared<bptree::ptree>();
+    //questionsChildrenTree->put("data_usage.<xmlattr>.allow",
+      //                         userQuestions->allowDataToggleButton->getToggleState());
+    
+    return questionsChildrenTree;
+}
+
 //[/MiscUserCode]
 
 
