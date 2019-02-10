@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.1
+  Created with Projucer version: 5.4.2
 
   ------------------------------------------------------------------------------
 
@@ -40,7 +40,7 @@ PlayerBackgroundComponent::PlayerBackgroundComponent ()
     mainInfoLabel.reset (new Label ("Main Info label",
                                     TRANS("MIEM Spat Player")));
     addAndMakeVisible (mainInfoLabel.get());
-    mainInfoLabel->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
+    mainInfoLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     mainInfoLabel->setJustificationType (Justification::centredLeft);
     mainInfoLabel->setEditable (false, false, false);
     mainInfoLabel->setColour (Label::textColourId, Colour (0xff909090));
@@ -53,13 +53,13 @@ PlayerBackgroundComponent::PlayerBackgroundComponent ()
     mainMenuImageButton->addListener (this);
 
     mainMenuImageButton->setImages (false, true, true,
-                                    ImageCache::getFromMemory (menu_icon_png2, menu_icon_png2Size), 1.0f, Colour (0x00000000),
-                                    Image(), 1.0f, Colour (0x00000000),
-                                    ImageCache::getFromMemory (menu_activated_icon_png2, menu_activated_icon_png2Size), 1.0f, Colour (0x00000000));
+                                    ImageCache::getFromMemory (menu_icon_png2, menu_icon_png2Size), 1.000f, Colour (0x00000000),
+                                    Image(), 1.000f, Colour (0x00000000),
+                                    ImageCache::getFromMemory (menu_activated_icon_png2, menu_activated_icon_png2Size), 1.000f, Colour (0x00000000));
     mainInfoLabel2.reset (new Label ("Main Info label 2",
                                      TRANS("[complementary information]")));
     addAndMakeVisible (mainInfoLabel2.get());
-    mainInfoLabel2->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
+    mainInfoLabel2->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     mainInfoLabel2->setJustificationType (Justification::centredTop);
     mainInfoLabel2->setEditable (false, false, false);
     mainInfoLabel2->setColour (Label::textColourId, Colour (0xff909090));
@@ -82,7 +82,7 @@ PlayerBackgroundComponent::PlayerBackgroundComponent ()
                                       "Gain\n"
                                       "dB FS")));
     addAndMakeVisible (masterGainLabel.get());
-    masterGainLabel->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
+    masterGainLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     masterGainLabel->setJustificationType (Justification::centred);
     masterGainLabel->setEditable (false, false, false);
     masterGainLabel->setColour (Label::textColourId, Colour (0xff909090));
@@ -148,7 +148,7 @@ void PlayerBackgroundComponent::resized()
     mainMenuImageButton->setBounds (getWidth() - 28, getHeight() - 28, 28, 28);
     mainInfoLabel2->setBounds (400, getHeight() - 4 - 20, getWidth() - 432, 20);
     mainSlider->setBounds (getWidth() - 56, (getHeight() / 2) + 24 - ((getHeight() - 160) / 2), 56, getHeight() - 160);
-    masterGainLabel->setBounds (getWidth() - 58, ((getHeight() / 2) + 24 - ((getHeight() - 160) / 2)) + -56, roundToInt (56 * 1.0f), 48);
+    masterGainLabel->setBounds (getWidth() - 58, ((getHeight() / 2) + 24 - ((getHeight() - 160) / 2)) + -56, roundToInt (56 * 1.0000f), 48);
     //[UserResized] Add your own custom resize handling here..
 
     // Attention : remove from machin retourne le petit morceau découpé seulement !
@@ -358,7 +358,7 @@ BEGIN_JUCER_METADATA
 <JUCER_COMPONENT documentType="Component" className="PlayerBackgroundComponent"
                  componentName="" parentClasses="public Component" constructorParams=""
                  variableInitialisers="" snapPixels="8" snapActive="1" snapShown="1"
-                 overlayOpacity="0.33" fixedSize="0" initialWidth="600" initialHeight="400">
+                 overlayOpacity="0.330" fixedSize="0" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="ff303030"/>
   <LABEL name="Main Info label" id="346700aa23dd510d" memberName="mainInfoLabel"
          virtualName="" explicitFocusOrder="0" pos="8 4Rr 384 20" textCol="ff909090"
@@ -1691,3 +1691,4 @@ const int PlayerBackgroundComponent::menu_activated_icon_png2Size = 20814;
 
 //[EndFile] You can add extra defines here...
 //[/EndFile]
+

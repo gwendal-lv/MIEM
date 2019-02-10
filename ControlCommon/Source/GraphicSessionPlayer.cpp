@@ -161,6 +161,16 @@ void GraphicSessionPlayer::OnModelStarted()
     for (size_t i = 0 ; i <canvasManagers.size() ; i++)
         canvasManagers[i]->SelectScene(0);
 }
+bool GraphicSessionPlayer::SelectSceneOfSelectedCanvas(size_t sceneId)
+{
+    if (sceneId < selectedCanvas->GetScenesCount())
+    {
+        selectedCanvas->SelectScene((int) sceneId );
+        return true;
+    }
+    else
+        return false;
+}
 
 
 

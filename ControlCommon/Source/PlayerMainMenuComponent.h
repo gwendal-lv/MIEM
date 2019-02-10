@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.1
+  Created with Projucer version: 5.4.2
 
   ------------------------------------------------------------------------------
 
@@ -61,6 +61,8 @@ public:
     bool GetIsHelpDisplayed() const {return displayHelp;}
     void SetHelpString(const String& helpString);
 
+    void SetInfoLabelText(const String& text);
+
     //[/UserMethods]
 
     void paint (Graphics& g) override;
@@ -104,6 +106,7 @@ private:
     std::unique_ptr<TextEditor> infoTextEditor;
     std::unique_ptr<HyperlinkButton> miemProjectHyperlinkButton;
     std::unique_ptr<TextButton> loadDefaultButton;
+    std::unique_ptr<Label> additionnalStatusLabel;
 
 
     //==============================================================================
@@ -113,3 +116,4 @@ private:
 //[EndFile] You can add extra defines here...
 } // fin du namespace Miam
 //[/EndFile]
+

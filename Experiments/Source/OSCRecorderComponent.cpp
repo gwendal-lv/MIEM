@@ -151,38 +151,22 @@ void OSCRecorderComponent::buttonClicked (Button* buttonThatWasClicked)
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
-juce::String OSCRecorderComponent::GetExperimentStateName(ExperimentState state)
-{
-    switch (state)
-    {
-        case ExperimentState::NotInitialized:
-            return "Not initialized";
 
-        case ExperimentState::ReadyToListen:
-            return "Ready to listen";
-
-        case ExperimentState::Listening:
-            return "Listening";
-
-        case ExperimentState::ReadyToSearchPreset:
-            return "Ready to search preset";
-
-        case ExperimentState::SearchingPreset :
-            return "Searching preset";
-
-        case ExperimentState::FinishedSearchingPreset :
-            return "Finished searching preset";
-
-        case ExperimentState::Finished :
-            return "Finished";
-    }
-}
 
 void OSCRecorderComponent::DisplayNewState(ExperimentState newState, int presetIndex, size_t presetsCount)
 {
     // BUTTONS display
+    setVisible(true);
     switch(newState)
     {
+        case ExperimentState::ConnectionLost:
+        case ExperimentState::WaitingForTcpServerConnection:
+        case ExperimentState::InitialQuestionsDisplayed:
+        case ExperimentState::FinalQuestionsDisplayed:
+        case ExperimentState::Finished:
+            setVisible(false); // auto hiding
+            break;
+
         case ExperimentState::NotInitialized:
             listenButton->setVisible(false);
             startButton->setVisible(false);
@@ -225,18 +209,15 @@ void OSCRecorderComponent::DisplayNewState(ExperimentState newState, int presetI
             countLabel->setVisible(false);
             break;
 
-        case ExperimentState::Finished:
-            listenButton->setVisible(false);
-            startButton->setVisible(false);
-            finishedButton->setVisible(false);
-            countLabel->setVisible(true);
+        default:
             break;
     }
 
 
 
     // COUNT LABEL Display
-    if (newState != ExperimentState::Finished)
+    // On if the state if an actual experiment state
+    if (ExperimentStateUtils::IsInteractiveExperimentState(newState))
     {
         int presetNumber = presetIndex + 1;
 
@@ -246,12 +227,14 @@ void OSCRecorderComponent::DisplayNewState(ExperimentState newState, int presetI
             countLabel->setText(TRANS("TRIAL preset 1."), NotificationType::dontSendNotification);
         else if (presetIndex == -1)
             countLabel->setText(TRANS("TRIAL preset 2."), NotificationType::dontSendNotification);
+        else if (presetIndex == -3)
+            countLabel->setText(TRANS("trials not started yet"), NotificationType::dontSendNotification);
         else
             assert(false); // un planned case
     }
     else
     {
-        countLabel->setText(TRANS("Experiment is now finished. Thank you for participating!"), NotificationType::dontSendNotification);
+        countLabel->setText(TRANS("Next questions will appear soon..."), NotificationType::dontSendNotification);
     }
 }
 //[/MiscUserCode]

@@ -35,7 +35,10 @@ public:
         mainWindow.reset (new MainWindow (getApplicationName()));
         
         // Modules perso
-        recorderManager.reset( new OSCRecorder(mainWindow->mainComponent->GetOscRecorderComponent()));
+        recorderManager.reset( new OSCRecorder(mainWindow->mainComponent));
+        
+        // Démarrage quelques instants + tard
+        juce::Timer::callAfterDelay(50, [this] {this->recorderManager->BeginExperiment();});
     }
 
     void shutdown() override
@@ -48,14 +51,17 @@ public:
     //==============================================================================
     void systemRequestedQuit() override
     {
-        // On force l'écriture d'un fichier de résultats au moment de quitter
-        
-        
-        // Puis on détruit les modules dans leur ordre de construction
-        recorderManager.reset();
-        
-        // Ensuite on quitte pour de vrai
-        quit();
+        if (recorderManager->OnQuitRequest())
+        {
+            // On force l'écriture d'un fichier de résultats au moment de quitter
+            // ????????
+            
+            // Puis on détruit les modules dans leur ordre de construction
+            recorderManager.reset();
+            
+            // Ensuite on quitte pour de vrai
+            quit();
+        }
     }
 
     void anotherInstanceStarted (const String& commandLine) override

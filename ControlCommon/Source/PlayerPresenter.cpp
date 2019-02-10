@@ -35,7 +35,9 @@ view(_view),
 appMode(PlayerAppMode::Null),
 previousPlayerStatus(PlayerAppMode::Null),
 
-loadFileChooser({App::GetPurpose()}) // purpose théoriquement initialisé avant tout (statique en dehors de toute fonction)
+loadFileChooser({App::GetPurpose()}), // purpose théoriquement initialisé avant tout (statique en dehors de toute fonction)
+
+remoteControlServer(this)
 {
     appMode = PlayerAppMode::None;
     previousPlayerStatus = PlayerAppMode::None;
@@ -301,7 +303,7 @@ void PlayerPresenter::OnHelpButtonClicked(bool isHelpCurrentlyDisplayed)
 void PlayerPresenter::OnNewConnectionStatus(bool isConnectionEstablished, std::shared_ptr<bptree::ptree> connectionParametersTree)
 {
     // On ne doit pas avoir d'exception ici.... Mais bon dans le doute on checke quand même
-    int udpPort = -1;
+    udpPort = -1; // not a local anymore ; saved for future re-use
     std::string ipv4 = "";
     try {
         udpPort = connectionParametersTree->get<int>("udp.port");
@@ -348,6 +350,31 @@ void PlayerPresenter::OnNewConnectionStatus(bool isConnectionEstablished, std::s
 
 
 
+// = = = = = = = = = = Remote control = = = = = = = = = = 
+void PlayerPresenter::ReinitRemoteControlServer()
+{
+    bool serverRunning = false;
+    int tcpPort = -1;
+    if (udpPort > 0) // might be still -1.... ?
+        tcpPort = udpPort + tcpServerPortOffset;
+    
+    // Stop and re-wait
+    remoteControlServer.stop();
+    serverRunning = remoteControlServer.beginWaitingForSocket(tcpPort);
+    
+#ifdef __MIEM_DISPLAY_CONTROL_SERVER_INFO
+    // Display
+    if (serverRunning)
+        view->GetBackgroundComponent()->GetMainMenuComponent()->SetInfoLabelText(TRANS("TCP port ") + String(tcpPort) + TRANS(" ready for connection."));
+    else
+        view->GetBackgroundComponent()->GetMainMenuComponent()->SetInfoLabelText(TRANS("Remote control server is not running."));
+#else
+    view->GetBackgroundComponent()->GetMainMenuComponent()->SetInfoLabelText("");
+#endif
+}
+
+
+
 // = = = = = XML loading only = = = = =
 
 void PlayerPresenter::LoadSession(std::string filename)
@@ -356,7 +383,7 @@ void PlayerPresenter::LoadSession(std::string filename)
     
     // Il faut un temps d'attente !! Une confirmation que tout s'est bien arrêté...
     // Avant de faire le chargement qui lui sera single thread
-    // Sauf que là si on bloquait en attent un paquet lock-free, alors on bloquerait
+    // Sauf que là si on bloquait en attentant un paquet lock-free, alors on bloquerait
     // aussi la fonction qui va chercher ces paquets lock-free.
     // Donc : attente active dégueu sur un bon vieux booléen atomique des familles
     while (! hasModelActuallyStopped)
@@ -372,6 +399,9 @@ void PlayerPresenter::LoadSession(std::string filename)
     
     // Various forced updates after loading
     view->GetBackgroundComponent()->SetMainSliderEnabled(model->GetIsMasterGainEnabled());
+    
+    // Server for remote control: to be re-configured
+    ReinitRemoteControlServer();
     
     // Ensuite on se change de mode
     appModeChangeRequest(PlayerAppMode::Playing); // va démarrer le modèle

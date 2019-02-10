@@ -47,7 +47,6 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-    static juce::String GetExperimentStateName(ExperimentState state);
     void SetRecorderManager(OSCRecorder* _recorder) {recorderManager = _recorder;}
 
     void DisplayNewState(ExperimentState newState, int presetIndex, size_t presetsCount);

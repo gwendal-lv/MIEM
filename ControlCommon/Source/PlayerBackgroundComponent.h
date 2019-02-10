@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.1
+  Created with Projucer version: 5.4.2
 
   ------------------------------------------------------------------------------
 
@@ -68,7 +68,7 @@ public:
 
     void ChangeAppMode(PlayerAppMode newAppMode);
     void SetMainSliderEnabled(bool shouldBeEnabled);
-    
+
 
     MultiCanvasComponent* GetMultiCanvasComponent() { return multiCanvasComponent; }
     PlayerMainMenuComponent* GetMainMenuComponent() { return mainMenuComponent.get(); }
@@ -128,3 +128,4 @@ private:
 //[EndFile] You can add extra defines here...
 }
 //[/EndFile]
+
