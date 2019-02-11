@@ -3,8 +3,14 @@
 <JUCERPROJECT id="DytN0V" name="MIEM Experiments" projectType="guiapp" jucerVersion="5.4.2"
               companyName="Gwendal Le Vaillant" bundleIdentifier="com.gwendallv.MIEMExperiments"
               defines="__MIEM_SHORT_DELAYS" reportAppUsage="0" displaySplashScreen="0"
-              projectLineFeed="&#10;" headerPath="../../../">
+              projectLineFeed="&#10;" headerPath="../../../&#10;../../../MiamCommon/Source&#10;">
   <MAINGROUP id="CesC75" name="MIEM Experiments">
+    <GROUP id="{BD7228E3-B907-311E-3EC6-609760808B73}" name="MiemCommon">
+      <FILE id="aajuQ9" name="AsyncParamChange.h" compile="0" resource="0"
+            file="../MiamCommon/Source/AsyncParamChange.h"/>
+      <FILE id="OJSxW4" name="InterprocessControlBlock.h" compile="0" resource="0"
+            file="../MiamCommon/Source/InterprocessControlBlock.h"/>
+    </GROUP>
     <GROUP id="{302B9714-4F66-36D7-B352-280078CFEC1B}" name="Source">
       <FILE id="JEjEaK" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="GpauQe" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>

@@ -10,6 +10,8 @@
 
 #include "MiemExpePreset.h"
 
+#include "JuceHeader.h"
+
 
 /// ======== Liste de presets, selon leur UID réel ======
 /// Tout ça sera à bien respecter....
@@ -23,10 +25,48 @@
 ///
 /// De 10 à 19 on aura les mêmes presets (valeurs finales idem)
 /// mais retrouvés avec l'interpolation graphique MIEM
-
-MiemExpePreset::MiemExpePreset(int _UID, int _index) :
-UID(_UID),
-index(_index)
+std::map<int, size_t> MiemExpePreset::GeneratePresetIndexToRandomIndexMap(int actualPresetsCount,
+                                                                 int trialPresetsCount)
 {
+    // There must be the same number of fader presets and of MIEM interpolation presets
+    assert(((trialPresetsCount % 2) == 0) && ((actualPresetsCount % 2) == 0));
     
+    std::map<int, size_t> presetRandomIdx;
+    
+    // values insertion using []
+    // NO randomization for trial presets
+    for (int i=0 ; i<trialPresetsCount ; i++)
+        presetRandomIdx[-(int)(trialPresetsCount) + i] = actualPresetsCount + i;
+    
+    // Randomization from 2 vectors for beginning
+    std::vector<int> randomVector1; //  for classical presets
+    for (int i=0 ; i<actualPresetsCount/2 ; i++)
+        randomVector1.push_back(i);
+    std::vector<int> randomVector2; //  for MIEM-interpolation presets
+    for (int i=0 ; i<actualPresetsCount/2 ; i++)
+        randomVector2.push_back(i + actualPresetsCount/2);
+    // mersenne-twister 1997 (32 bits)
+    std::shuffle(randomVector1.begin(), randomVector1.end(), std::mt19937(Time::getMillisecondCounter()));
+    std::shuffle(randomVector2.begin(), randomVector2.end(), std::mt19937(Time::getMillisecondCounter()));
+    for (int i=0 ; i<actualPresetsCount ; i++)
+    {
+        // EVEN DISPLAY INDEXES : classical FADER presets
+        if ((i%2) == 0)
+            presetRandomIdx[i] = randomVector1[i/2];
+        // ODD DISPLAY INDEXES : MIEM interpolation presets (each follows a fader preset)
+        else
+            presetRandomIdx[i] = randomVector2[(i-1)/2];
+    }
+    
+    return presetRandomIdx;
+}
+
+
+MiemExpePreset::MiemExpePreset(int _UID) :
+UID(_UID)
+{
+    if (UID >= 20 || UID < -2)
+    {
+        throw std::runtime_error("Presets prévus actuellement de -2 à +19");
+    }
 }

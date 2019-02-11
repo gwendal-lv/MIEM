@@ -29,40 +29,56 @@ namespace Miam
         ///
         /// The IDs from ParametersIds.h can be stored within the
         /// Id1, Id2 integer atributes.
+        ///
+        /// Insert new values juste before the fixed ones (100, 200, etc...)
+        /// because the int values are also employed for TCP interprocess
+        /// communication.
         enum ParamType {
             
-            None,
+            None = 0,
             
             Reinitialize,
             LoadingComplete,
             
-            Play, ///< Play command
+            
+            
+            Play = 100, ///< Play command
                 Playing, ///< Play information
             Pause,
             Stop, ///< Stop command
                 Stopped, ///< Stop information
             
-            Activate,
+            
+            Activate = 200,
             MasterVolume,
             Volume,
                 Volume_CorrelatedInputs,
                 Volume_DecorrelatedInputs,
             Frequency,
             Excitement,
-            
             Duration,
-            Position,
+            
+            
+            Position = 300,
             Source,
             
-            InputsCount,
+            
+            InputsCount = 400,
             OutputsCount,
             InputsAndOutputsCount,
             
-            Update,
+            
+            
+            Update = 500,
             UpdateDisplay,
             
-            UdpPort,
+            
+            
+            UdpPort = 600,
             TcpPort,
+            
+            
+            Scene = 700,
         };
         
         

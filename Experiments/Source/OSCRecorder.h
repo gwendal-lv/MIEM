@@ -87,7 +87,12 @@ class OSCRecorder : public UserQuestionsManager {
     
     /// \brief Les indexes -1 et -2 correspondent au "tours d'essais" qui ne seront pas comptabilisés
     int currentPresetIndex = -(int)TrialPresetsCount - 1;
-    std::vector<MiemExpePreset> presetsList; // a preset is represented by a size_t integer
+    /// \brief sorted by index (NOT randomized). Last presets in the list are trial presets
+    std::vector<std::shared_ptr<MiemExpePreset>> presetsList;
+    /// \brief tranforms a currentPresetIndex (might be negative for trial presets)
+    /// to a random preset index from the vector of all presets
+    /// (not randomized for the trial presets)
+    std::map<int, size_t> presetRandomIdx;
     
     // Time-related data
     MiemClock::time_point startTimePt;
@@ -131,7 +136,7 @@ class OSCRecorder : public UserQuestionsManager {
     
     // OSC control of Reaper and MIEM Controller
     protected :
-    void selectNewScene();
+    void selectNewScene(bool selectEmptyScene = false);
     
     
     
@@ -160,6 +165,9 @@ class OSCRecorder : public UserQuestionsManager {
     void OnConnectionLost();
     
     
+    // - - - - - Events to MIEM Controller via network - - - - -
+    protected :
+    bool selectMiemControllerScene(int sceneIndex);
     
     
     

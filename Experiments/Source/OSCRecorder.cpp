@@ -10,6 +10,7 @@
 
 #include <thread>
 #include <algorithm>
+#include <random>
 
 #include "boost/lexical_cast.hpp"
 //#include "boost/property_tree/ptree.hpp"
@@ -18,6 +19,9 @@
 #include "OSCRecorderComponent.h"
 
 #include "MainComponent.h"
+
+#include "InterprocessControlBlock.h"
+
 
 // The constructor will init the experiment with random preset values
 OSCRecorder::OSCRecorder(MainComponent* _mainComponent)
@@ -66,18 +70,32 @@ void OSCRecorder::reinitExperiment()
         assert(false);
     }
     
-    // Random presets are planned from the beginning
-    // We must have all indexes in the vector
+    // - - - - Presets vector - - - -
+    // is always the same... re-cleared of its data each time
     presetsList.clear();
-    presetsList.reserve(ExperimentPresetsCount);
+    presetsList.reserve(ExperimentPresetsCount + TrialPresetsCount);
+    // normal presets at the beginning
     for (int i=0 ; i<ExperimentPresetsCount ; i++)
-    {
-        // pas d'aléatoire pour l'instant !!
-        // UID et index sont les mêmes...
-        presetsList.push_back(MiemExpePreset(i, i));
-    }
+        presetsList.push_back(std::make_shared<MiemExpePreset>(i));
+    // trial presets at the end of the vector
+    for (int i=0 ; i<TrialPresetsCount ; i++)
+        presetsList.push_back(std::make_shared<MiemExpePreset>(-(int)(TrialPresetsCount) + i));
     
+    // - - - - Random Index maps - - - -
+    presetRandomIdx.clear();
+    presetRandomIdx = MiemExpePreset::GeneratePresetIndexToRandomIndexMap((int)ExperimentPresetsCount,
+                                                                          (int)TrialPresetsCount);
     
+    // - - - Display of presets indexes (simple check), and randomization map
+    std::cout << "Presets UIDs:               ";
+    for (int i=0 ; i<presetsList.size() ; i++)
+        std::cout << presetsList[i]->GetUID() << " ";
+    std::cout << std::endl << "Presets randomised indexes: ";
+    for (int i=0 ; i<presetRandomIdx.size() ; i++)
+        std::cout << presetRandomIdx.at(-(int)(TrialPresetsCount) + i) << " ";
+    std::cout << std::endl;
+    
+    // - - - Init of main counter
     currentPresetIndex = -(int)TrialPresetsCount - 1;
 }
                                     
@@ -188,6 +206,7 @@ void OSCRecorder::changeState(ExperimentState newState)
             break;
             
         case ExperimentState::Listening:
+            selectNewScene(true);
             break;
             
         case ExperimentState::ReadyToSearchPreset:
@@ -254,9 +273,15 @@ void OSCRecorder::changeState(ExperimentState newState)
                               });
 }
 
-void OSCRecorder::selectNewScene()
+void OSCRecorder::selectNewScene(bool selectEmptyScene)
 {
-    std::cout << "DEMANDE OSC DE LA SCENE INDEX #" << currentPresetIndex << std::endl;
+    // in Miem Controller : Scene 0 is empty. Actual scenes start from 1 then
+    int miemSceneIndex = 0;
+    if (!selectEmptyScene)
+        miemSceneIndex = (int)presetRandomIdx[currentPresetIndex] + 1;
+
+    std::cout << "Demande OSC de la scène #" << miemSceneIndex << std::endl;
+    selectMiemControllerScene(miemSceneIndex);
 }
 
 
@@ -353,12 +378,29 @@ void OSCRecorder::OnConnectionLost()
     // L'expérience en cours sera supprimée... Tant pis !
     // On passe à la suivante
     if (currentPresetIndex >= 0) // check for "not trial and not question"
-        presetsList[currentPresetIndex].SetIsValid(false);
+        presetsList[currentPresetIndex]->SetIsValid(false);
     
     // Enfin préparation pour la re-connection
 
     // Re-connection (will change the app mode) (après un court délai)
     juce::Timer::callAfterDelay(tcpTimeOut_ms, [this] {this->tryConnectSocketAndContinueExpe();} );
+}
+
+
+// ================== Events to MIEM Controller via network ==================
+bool OSCRecorder::selectMiemControllerScene(int sceneIndex)
+{
+    Miam::AsyncParamChange paramChange(Miam::AsyncParamChange::Scene);
+    paramChange.Id1 = sceneIndex;
+    InterprocessControlBlock controlBlock(paramChange);
+    
+    bool msgSent = tcpConnection->sendMessage(controlBlock);
+    
+    // Message lost !!!! We must try to get the connection back...
+    if (!msgSent)
+        assert(false);
+    
+    return true;
 }
 
 
@@ -440,20 +482,32 @@ void OSCRecorder::saveEverythingToFiles()
                                     *(mainComponent->firstUserQuestionsComponent->GetQuestionsBPTree()));
     questionsChildrenTree.add_child("final_questions",
                                     *(mainComponent->finalUserQuestionsComponent->GetQuestionsBPTree()));
-    // Actual XML data writing into file
+    // Actual XML/CSV data writing into files
     bptree::xml_writer_settings<std::string> xmlSettings(' ', 4);
     try {
         bptree::write_xml(infoFilePath, questionsChildrenTree, std::locale(), xmlSettings);
     }
     catch (bptree::xml_parser::xml_parser_error& e) {
-        String errorStr = "Cannot write " + String(infoFilePath) + " or " + String(dataFilePath) + ". Please check parameters and restart experiment.";
+        String errorStr = "Cannot write " + String(infoFilePath) + ". Please check parameters and restart experiment.";
         displayError(errorStr); // won't be graphically displayed... console only
         // we just on quit if an error happens
         std::this_thread::sleep_for(std::chrono::seconds(10)); // time before looking at the console
         throw std::runtime_error(errorStr.toStdString());
     }
     
-    // Save of DATA
+    // Save of DATA into the CSV file (string output preparation)
+    
+
+    std::ofstream streamFile(dataFilePath, std::ios_base::out);
+    if (! streamFile.is_open())
+    {
+        String errorStr = "Cannot write " + String(dataFilePath) + ". Please check parameters and restart experiment.";
+        displayError(errorStr); // won't be graphically displayed... console only
+        // we just on quit if an error happens
+        std::this_thread::sleep_for(std::chrono::seconds(10)); // time before looking at the console
+        throw std::runtime_error(errorStr.toStdString());
+    }
+    
 }
 
 void OSCRecorder::getExperimentParametersFromXmlFile()

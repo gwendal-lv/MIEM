@@ -11,15 +11,19 @@
 #pragma once
 
 #include <iostream>
+#include <vector>
+#include <map>
+#include <random>
+
 
 class MiemExpePreset {
     
     // =============== ATTRIBUTES ================
     private :
     
-    const int UID; ///< Universal ID, désigne aussi la track dans Reaper qui joue le preset
+    const int UID; ///< Universal ID
     
-    int index; ///< Index in the vector of presets. Negative values for trial presets
+    int randomizedIndex; ///< Random index <-> order within the experiment. Negative values for trial presets
     
     
     
@@ -31,11 +35,17 @@ class MiemExpePreset {
     // =============== Setters and Getters ================
     public :
     void SetIsValid(bool _isValid) {isValid = _isValid;}
+    void SetRandomizedIndex(int _randomizedIndex) {randomizedIndex = _randomizedIndex;}
     
-    
+    int GetUID() const {return UID;}
     
     // =============== METHODS ================
     public :
-    MiemExpePreset(int _UID, int _index);
+    /// \brief Constructor will build the presets' parameters (scene number, parameter default values, ...),
+    /// event from trial presets (negative UIDs)
+    MiemExpePreset(int _UID);
+    
+    static std::map<int, size_t> GeneratePresetIndexToRandomIndexMap(int actualPresetsCount,
+                                                                     int trialPresetsCount);
     
 };
