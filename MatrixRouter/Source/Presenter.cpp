@@ -18,6 +18,8 @@
 
 #include "OscMatrixComponent.h"
 
+#include "AudioUtils.hpp"
+
 #include "MatrixSlider.h" // min and max volumes
 
 #include "ModelDefines.h" // Enums for lock-free communication
@@ -96,13 +98,11 @@ bool Presenter::TrySendParamChange(AsyncParamChange& paramChange)
 
 void Presenter::UpdateFromView(MatrixRouterAudioProcessorEditor* /*view*/)
 {
-#ifdef __MIAM_DEBUG
+/*#ifdef __MIAM_DEBUG
 	AsyncParamChange debugMsg;
-#endif
-#ifdef __MIAM_DEBUG
 	debugMsg.FloatValue = 222;
 	oscLocalhostDebugger.SendParamChange(debugMsg, DataOrigin::Presenter);
-#endif
+#endif*/
 
     // Have new messages arrived ?
     AsyncParamChange newParamChange;
@@ -143,6 +143,7 @@ void Presenter::Update()
 
 void Presenter::poolNotifications()
 {
+	size_t poolsCounter = 0;
 	while (continueWakeUpPooling)
 	{
 		if (mustWakeUp)
@@ -150,6 +151,13 @@ void Presenter::poolNotifications()
 			mustWakeUp = false;
 			// Update from View, even if view does not exist !!
 			MessageManager::callAsync( [this] { UpdateFromView(nullptr); } );
+		}
+		// auto-pools sometimes...
+		else
+		{
+			poolsCounter++;
+			if (poolsCounter > 50)
+				mustWakeUp = true;
 		}
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(poolPeriod_ms));
@@ -171,11 +179,20 @@ void Presenter::OnSliderValueChanged(int row, int col, double value)
     paramChange.Id2 = col;
     
     // We keep values over min+0.5dB only
-    if (value < (MatrixSlider::GetMinVolume_dB() + 0.5))
-        paramChange.FloatValue = 0.0f;
-    else
-        paramChange.FloatValue = (float)Decibels::decibelsToGain(value);
+	if (value < (MatrixSlider::GetMinVolume_dB() + 0.5))
+		paramChange.FloatValue = 0.0f;
+	else
+		paramChange.FloatValue = (float) AudioUtils<double>::Amplitude_dB_to_Linear(value);
     
+
+#ifdef __MIAM_DEBUG
+	paramChange.FloatValue = (float)value;
+	oscLocalhostDebugger.SendParamChange(paramChange, DataOrigin::Presenter);
+	/*AsyncParamChange debugMsg;
+	debugMsg.FloatValue = 11101;
+	oscLocalhostDebugger.SendParamChange(debugMsg, DataOrigin::Presenter);*/
+#endif
+
     // Enqueuing
     TrySendParamChange(paramChange);
 }

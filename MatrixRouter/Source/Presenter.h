@@ -56,7 +56,7 @@ namespace Miam {
 		std::atomic<bool> mustWakeUp;
 		std::atomic<bool> continueWakeUpPooling;
 		std::thread wakeUpPoolingThread;
-		int poolPeriod_ms = 2;
+		const int poolPeriod_ms = 2;
         
         // - - - - - graphical objects - - - - -
         /// \brief Kept within the presenter, sent to the ProcessorEditor (=View)

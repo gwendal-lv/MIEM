@@ -232,7 +232,7 @@
       </MODULEPATHS>
     </XCODE_MAC>
     <VS2017 targetFolder="Builds/VisualStudio2017" vst3Folder="C:\Users\Gwendal\SDKs\VST_SDK\VST3_SDK"
-            userNotes="Legacy VST 2 sdk from steinberg : des dossiers ont &#233;t&#233; renomm&#233;s--&gt; il faut utiliser le sdk fourni avec Juce 5.3.2 --&gt; ???">
+            userNotes="Juce 5.4.2 : compile des VST, mais impossible de les tester dans le AUdioPluginHost !!! (n'accepte plus que les VST3....). Test des VST2 possible depuis Juce 5.3.2 (mais n'ouvre de toute mani&#232;re pas les vst 64x64 canaux) -----&gt; debug &#224; l'ancienne obligatoire....&#10;Legacy VST 2 sdk from steinberg : des dossiers ont &#233;t&#233; renomm&#233;s--&gt; &#10;">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../MiamCommon/Resources/&#10;../../../ControlCommon/Source/&#10;../../../SpatCommon/Source/"
                        defines="__MIAM_DEBUG"/>
