@@ -116,7 +116,7 @@ void NetworkModel::oscMessageReceived(const OSCMessage& message)
             // Lecture des triplets int/int/float et transmission lock-free directe + envoi
             for (size_t i=0 ; i<totalCoeffsCount ; i++)
             {
-                size_t currentCoeffOffset = sizeof(int32_t) * (1 + 2*i) + sizeof(Float32)*i;
+                size_t currentCoeffOffset = sizeof(int32_t) * (1 + 2*i) + sizeof(float)*i;
                 
                 oscMemoryBlock.copyTo(&bigEndianInt, (int) currentCoeffOffset, sizeof(int32_t));
                 currentCoeffOffset += sizeof(int32_t);
@@ -125,10 +125,10 @@ void NetworkModel::oscMessageReceived(const OSCMessage& message)
                 currentCoeffOffset += sizeof(int32_t);
                 paramChange.Id2 = (int) boost::endian::big_to_native<int32_t>(bigEndianInt);
                 
-                Float32 floatValue;
-                oscMemoryBlock.copyTo(&floatValue, (int) currentCoeffOffset, sizeof(Float32));
-                currentCoeffOffset += sizeof(Float32);
-                paramChange.FloatValue = (float) floatValue;
+				float floatValue;
+                oscMemoryBlock.copyTo(&floatValue, (int) currentCoeffOffset, sizeof(float));
+                currentCoeffOffset += sizeof(float);
+                paramChange.FloatValue = floatValue;
                 
                 SendParamChange(paramChange);
             }

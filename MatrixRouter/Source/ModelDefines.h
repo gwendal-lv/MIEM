@@ -35,6 +35,8 @@ namespace Miam
         
         Daw,
         DawInit,
+
+		View, ///< for debug purposes only at the moment
     };
     
     

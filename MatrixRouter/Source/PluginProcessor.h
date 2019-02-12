@@ -22,6 +22,18 @@
 
 #include "OscDebugger.h"
 
+// CUSTOM DEFINES if not defined from the Projucer (for VST3 compatibility....)
+/*
+#define __MIEM_AMBISONIC_EQUIVALENT_ORDER 3 // obsolete
+#ifndef JucePlugin_MaxNumInputChannels
+	#define JucePlugin_MaxNumInputChannels 64
+#endif
+#ifndef JucePlugin_MaxNumOutputChannels
+	#define JucePlugin_MaxNumOutputChannels 64
+#endi*/
+
+
+
 
 namespace Miam {
     
@@ -53,6 +65,10 @@ namespace Miam {
         /// And the audio thread (lock-free message requested by the audio thread)
         std::shared_ptr<NetworkModel> networkModel;
         Presenter* presenter;
+
+		// - - - - - Communication with other modules - - - - -
+		double timeSinceLastPresenterWake_ms = 0.0;
+		const double presenterWakePeriod_ms = 20.0;
         
         // - - - - - Various buffers - - - - -
         /// /brief Buffer employed to backup audio data on a new block arrival

@@ -32,20 +32,32 @@ AppPurpose App::appPurpose = AppPurpose::Spatialisation;
 
 // =================== Construction & destruction ===================
 Presenter::Presenter(MatrixRouterAudioProcessor& _model, std::shared_ptr<NetworkModel> _networkModel)
-    :
-    model(_model), networkModel(_networkModel),
-oscAddressCopy(networkModel->GetOscAddress()) // thread-safe at this point
+	:
+	model(_model), networkModel(_networkModel),
+	oscAddressCopy(networkModel->GetOscAddress()) // thread-safe at this point
+#ifdef __MIAM_DEBUG
+	,
+	oscLocalhostDebugger(9030)
+#endif // MIAM_DEBUG
 {
     oscMatrixComponent = new OscMatrixComponent(this);
     oscMatrixComponent->SetNetworkHelpContent(HelpContents::GetOscCommandsHelp());
+
+	continueWakeUpPooling = true;
+	wakeUpPoolingThread = std::thread([this] {this->poolNotifications(); });
 }
 
 Presenter::~Presenter()
 {
+	continueWakeUpPooling = false;
+	if (wakeUpPoolingThread.joinable())
+		wakeUpPoolingThread.join();
+	else // we hope it is enough for the thread to end itself...
+		std::this_thread::sleep_for(std::chrono::milliseconds(10 * poolPeriod_ms));
 }
 
 
-void Presenter::OnPluginEditorCreated(MatrixRouterAudioProcessorEditor* view)
+void Presenter::OnPluginEditorCreated(MatrixRouterAudioProcessorEditor* /*view*/)
 {
     // Update request, row by row, every 5ms
     AsyncParamChange updateRequest;
@@ -82,8 +94,16 @@ bool Presenter::TrySendParamChange(AsyncParamChange& paramChange)
 
 // =================== Periodic Update ===================
 
-void Presenter::UpdateFromView(MatrixRouterAudioProcessorEditor* view)
+void Presenter::UpdateFromView(MatrixRouterAudioProcessorEditor* /*view*/)
 {
+#ifdef __MIAM_DEBUG
+	AsyncParamChange debugMsg;
+#endif
+#ifdef __MIAM_DEBUG
+	debugMsg.FloatValue = 222;
+	oscLocalhostDebugger.SendParamChange(debugMsg, DataOrigin::Presenter);
+#endif
+
     // Have new messages arrived ?
     AsyncParamChange newParamChange;
     while( model.TryGetAsyncParamChange(newParamChange) )
@@ -119,6 +139,25 @@ void Presenter::UpdateFromView(MatrixRouterAudioProcessorEditor* view)
 void Presenter::Update()
 {
     throw std::runtime_error("Classic Update() from Presenter should not be called without specifying a View module (that may not exist when working with audio plug-ins");
+}
+
+void Presenter::poolNotifications()
+{
+	while (continueWakeUpPooling)
+	{
+		if (mustWakeUp)
+		{
+			mustWakeUp = false;
+			// Update from View, even if view does not exist !!
+			MessageManager::callAsync( [this] { UpdateFromView(nullptr); } );
+		}
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(poolPeriod_ms));
+	}
+}
+void Presenter::WakeUp()
+{
+	mustWakeUp = true;
 }
 
 

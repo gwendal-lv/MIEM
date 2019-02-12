@@ -26,14 +26,24 @@ OscDebugger* MatrixRouterAudioProcessor::OscLocalhostDebugger;
 #endif
 
 //==============================================================================
+// ambisonic 7th order should be made of (7+1)^2 = 64 channels (for VST3 standard
+// speakers arrangement....)
 MatrixRouterAudioProcessor::MatrixRouterAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
                       #if ! JucePlugin_IsSynth
-                       .withInput  ("Input",  AudioChannelSet::mono(), true)
+		 /*
+                       .withInput  ("Input",  AudioChannelSet::ambisonic(__MIEM_AMBISONIC_EQUIVALENT_ORDER), true)
+		 */
+		 // Tentative stereo à la construction, puis ajout format bus préféré
+		 // https://forum.juce.com/t/vst3-64-input-channels-not-possible/23233/2
+		 .withInput("Input", AudioChannelSet::stereo(), true)
                       #endif
-                       .withOutput ("Output", AudioChannelSet::mono(), true)
+		 /*
+                       .withOutput ("Output", AudioChannelSet::ambisonic(__MIEM_AMBISONIC_EQUIVALENT_ORDER), true)
+					   */
+		 .withOutput("Output", AudioChannelSet::stereo(), true)
                      #endif
                        ),
 #else
@@ -41,6 +51,7 @@ MatrixRouterAudioProcessor::MatrixRouterAudioProcessor()
 #endif
     currentInputBuffer(1, MiamRouter_MaxBufferSize)
 {
+
     rampDuration_ms = MiamRouter_DefaultAttackTime_ms;
     
     dawRampDuration_ms = new AudioParameterInt("rampDuration_ms",
@@ -73,7 +84,7 @@ MatrixRouterAudioProcessor::MatrixRouterAudioProcessor()
             dawRoutingMatrix[idx(i,j)] = new AudioParameterFloat(shortName.c_str(),
                                                               longName,
                                                               0.0f, // not Miam_MinVolume
-                                                              Miam_MaxVolume, // 6dB
+                                                              (float)Miam_MaxVolume, // 6dB
                                                               MiamRouter_DefaultVolume);
             addParameter(dawRoutingMatrix[idx(i,j)]);
             // They will be initialized within the setStateInformation(...) function
@@ -101,7 +112,8 @@ MatrixRouterAudioProcessor::MatrixRouterAudioProcessor()
     
     #ifdef __MIAM_DEBUG
     OscLocalhostDebugger = &oscLocalhostDebugger;
-    #endif
+	oscLocalhostDebugger.SendOscDebugPoint(1);
+    #endif 
 }
 
 MatrixRouterAudioProcessor::~MatrixRouterAudioProcessor()
@@ -151,16 +163,16 @@ int MatrixRouterAudioProcessor::getCurrentProgram()
     return 0;
 }
 
-void MatrixRouterAudioProcessor::setCurrentProgram (int index)
+void MatrixRouterAudioProcessor::setCurrentProgram (int /*index*/)
 {
 }
 
-const String MatrixRouterAudioProcessor::getProgramName (int index)
+const String MatrixRouterAudioProcessor::getProgramName (int /*index*/)
 {
     return String();
 }
 
-void MatrixRouterAudioProcessor::changeProgramName (int index, const String& newName)
+void MatrixRouterAudioProcessor::changeProgramName (int /*index*/, const String& /*newName*/)
 {
 }
 
@@ -200,9 +212,13 @@ bool MatrixRouterAudioProcessor::isBusesLayoutSupported (const BusesLayout& layo
   #else
     // This is the place where you check if the layout is supported.
     // In this template code we only support mono or stereo.
+	/*
     if (layouts.getMainOutputChannelSet() != AudioChannelSet::mono()
      && layouts.getMainOutputChannelSet() != AudioChannelSet::stereo())
-        return false;
+		
+	if (layouts.getMainOutputChannelSet() != AudioChannelSet::ambisonic(__MIEM_AMBISONIC_EQUIVALENT_ORDER))
+	*/
+	return true;// FORCE
 
     // This checks if the input layout matches the output layout
    #if ! JucePlugin_IsSynth
@@ -220,14 +236,22 @@ bool MatrixRouterAudioProcessor::isBusesLayoutSupported (const BusesLayout& layo
 //==============================================================================
 // =================== Functions executed on the audio thread ===================
 //==============================================================================
-void MatrixRouterAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
+void MatrixRouterAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& /*midiMessages*/)
 {
-        //oscLocalhostDebugger.send("/miam/debug/processBlock0", (Float32)0.0);
-    
-    const int totalNumInputChannels  = getTotalNumInputChannels();
-    const int totalNumOutputChannels = getTotalNumOutputChannels();
-    const int nSamples = buffer.getNumSamples();
-    
+	const int totalNumInputChannels = getTotalNumInputChannels();
+	const int totalNumOutputChannels = getTotalNumOutputChannels();
+	const int nSamples = buffer.getNumSamples();
+	const double bufferDuration_ms = 1000.0 * (double)(nSamples) / getSampleRate();
+
+
+	// - - - - - Presenter forced wake - - - - -
+	// because juce::Timer does not seem to really work...
+	timeSinceLastPresenterWake_ms += bufferDuration_ms;
+	if (timeSinceLastPresenterWake_ms > presenterWakePeriod_ms)
+	{
+		presenter->WakeUp();
+		timeSinceLastPresenterWake_ms = 0.0;
+	}
     
     // - - - - - Audio parameters updates - - - - -
 
@@ -419,6 +443,9 @@ void MatrixRouterAudioProcessor::processParamChange(AsyncParamChange& paramChang
                     responseParam.Id2 = j;
                     responseParam.FloatValue = 0.0f;
                     processParamChange(responseParam, origin);
+#ifdef __MIAM_DEBUG
+					oscLocalhostDebugger.SendOscDebugPoint(100);
+#endif
                 }
             }
             break;
@@ -436,7 +463,7 @@ void MatrixRouterAudioProcessor::processParamChange(AsyncParamChange& paramChang
                 if (paramChange.FloatValue < 0.0f)
                     paramChange.FloatValue = 0.0f;
                 else if (Miam_MaxVolume < paramChange.FloatValue)
-                    paramChange.FloatValue = Miam_MaxVolume; // normalement +6dB
+                    paramChange.FloatValue = (float)Miam_MaxVolume; // normalement +6dB
                 
                 routingMatrix[paramChange.Id1][paramChange.Id2] = paramChange.FloatValue;
                 #ifdef __MIAM_DEBUG
@@ -531,7 +558,19 @@ void MatrixRouterAudioProcessor::sendInputsOutputsCount()
     msgToPresenter.Type = AsyncParamChange::ParamType::InputsAndOutputsCount;
     msgToPresenter.Id1 = lastInputsCount;
     msgToPresenter.Id2 = lastOutputsCount;
-    TrySendParamChange(msgToPresenter); // View may not exist (Presenter not updated)
+    bool messageSent = TrySendParamChange(msgToPresenter); // View may not exist (Presenter not updated)
+#ifdef __MIAM_DEBUG
+	if (!messageSent)
+	{
+		msgToPresenter.FloatValue = 666;
+		oscLocalhostDebugger.SendParamChange(msgToPresenter, DataOrigin::PluginProcessorModel);
+	}
+	else
+	{
+		msgToPresenter.FloatValue = 111;
+		oscLocalhostDebugger.SendParamChange(msgToPresenter, DataOrigin::PluginProcessorModel);
+	}
+#endif
 }
 void MatrixRouterAudioProcessor::sendRampDuration()
 {
@@ -561,7 +600,11 @@ AudioProcessorEditor* MatrixRouterAudioProcessor::createEditor()
     // !!!!! blocking function !!!!!!
     presenter->OnPluginEditorCreated(newEditor);
     // !!!!! blocking function !!!!!!
-    
+#ifdef __MIAM_DEBUG
+	AsyncParamChange msgToPresenter;
+		msgToPresenter.FloatValue = 10101;
+		oscLocalhostDebugger.SendParamChange(msgToPresenter, DataOrigin::PluginProcessorModel);
+#endif
     return newEditor;
 }
 
@@ -597,7 +640,7 @@ void MatrixRouterAudioProcessor::setStateInformation (const void* data, int size
     SendParamChange(paramChange); // throws exception if full
     
     rampDuration_ms = memoryInputStream.readInt();
-    if (std::isnan(rampDuration_ms) ) // necessary check !!
+    if (std::isnan((float)rampDuration_ms) ) // necessary check ? is an int now...
         rampDuration_ms = MiamRouter_DefaultAttackTime_ms;
     if (*dawRampDuration_ms != rampDuration_ms) // depends on the DAW
         *dawRampDuration_ms = rampDuration_ms;// automation forced update ENABLED
@@ -617,7 +660,7 @@ void MatrixRouterAudioProcessor::setStateInformation (const void* data, int size
             routingMatrix[i][j] = memoryInputStream.readFloat(); // != automation data at this point, on some DAWs
              // happened maybe because of the issue of reading int value as if they
             // were float values (only reading buffer start)
-            if (std::isnan(routingMatrix[i][j]))
+            if (std::isnan((float)routingMatrix[i][j]))
                 routingMatrix[i][j] = MiamRouter_DefaultVolume;
             // Perfect equality testing
             if (*dawRoutingMatrix[idx(i, j)] != routingMatrix[i][j])

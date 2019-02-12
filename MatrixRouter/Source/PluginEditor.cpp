@@ -22,6 +22,10 @@ using namespace Miam;
 MatrixRouterAudioProcessorEditor::MatrixRouterAudioProcessorEditor (MatrixRouterAudioProcessor& model, Presenter& _presenter)
     : AudioProcessorEditor (&model), //processor (p) // for MVP protection
       presenter(_presenter)
+#ifdef __MIAM_DEBUG
+	,
+	oscLocalhostDebugger(9040)
+#endif // MIAM_DEBUG
 {
     // Childrens creation
     oscMatrixComponent = presenter.GetOscMatrixComponent();
@@ -33,17 +37,34 @@ MatrixRouterAudioProcessorEditor::MatrixRouterAudioProcessorEditor (MatrixRouter
     
     // Timer launched at the very end
     // View will notify itself at each timer callback to the presenter
-    startTimerHz(presenter.GetUpdateFrequency_Hz());
+	auto updateFreq = presenter.GetUpdateFrequency_Hz(); // OK, osc-debugger-tested
+    startTimerHz(updateFreq); // DOES NOT WORK IN REAPER !!!!!!!
+
+#ifdef __MIAM_DEBUG
+	AsyncParamChange debugMsg;
+	debugMsg.FloatValue = 10102;
+	oscLocalhostDebugger.SendParamChange(debugMsg, DataOrigin::View);
+	debugMsg.FloatValue = (float)updateFreq;
+	oscLocalhostDebugger.SendParamChange(debugMsg, DataOrigin::View);
+#endif
 }
 
 MatrixRouterAudioProcessorEditor::~MatrixRouterAudioProcessorEditor()
 {
+	// notification to Presenter (to stop sending data)
+	presenter.OnViewDestructed();
+
     stopTimer();
+#ifdef __MIAM_DEBUG
+		AsyncParamChange debugMsg;
+	debugMsg.FloatValue = 10103;
+	oscLocalhostDebugger.SendParamChange(debugMsg, DataOrigin::View);
+#endif
 }
 
 
 // =========================== Juce Graphics ===========================
-void MatrixRouterAudioProcessorEditor::paint (Graphics& g)
+void MatrixRouterAudioProcessorEditor::paint (Graphics& /*g*/)
 {
     // children components automatically painted
 }
@@ -58,5 +79,13 @@ void MatrixRouterAudioProcessorEditor::resized()
 // =========================== Callbacks ===========================
 void MatrixRouterAudioProcessorEditor::timerCallback()
 {
-    presenter.UpdateFromView(this);
+
+
+#ifdef __MIAM_DEBUG
+	AsyncParamChange debugMsg;
+	debugMsg.FloatValue = 999;
+	oscLocalhostDebugger.SendParamChange(debugMsg, DataOrigin::View);
+#endif
+
+    presenter.UpdateFromView(this); 
 }

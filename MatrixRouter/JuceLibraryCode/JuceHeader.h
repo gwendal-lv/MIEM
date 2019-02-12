@@ -43,7 +43,7 @@ namespace ProjectInfo
 {
     const char* const  projectName    = "MIEM Matrix Router";
     const char* const  companyName    = "IRISIB/LARAS, UMons";
-    const char* const  versionString  = "0.2.1";
-    const int          versionNumber  = 0x201;
+    const char* const  versionString  = "0.3.0";
+    const int          versionNumber  = 0x300;
 }
 #endif

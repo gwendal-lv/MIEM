@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.1
+  Created with Projucer version: 5.4.2
 
   ------------------------------------------------------------------------------
 
@@ -73,19 +73,17 @@ OscMatrixComponent::OscMatrixComponent (Presenter* _presenter)
     udpPortLabel.reset (new Label ("UPD Port Label",
                                    TRANS("Listen to OSC on UDP port:")));
     addAndMakeVisible (udpPortLabel.get());
-    udpPortLabel->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
+    udpPortLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     udpPortLabel->setJustificationType (Justification::centredLeft);
     udpPortLabel->setEditable (false, false, false);
     udpPortLabel->setColour (Label::textColourId, Colours::black);
     udpPortLabel->setColour (TextEditor::textColourId, Colours::black);
     udpPortLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    udpPortLabel->setBounds (216 + 8, 16, 184, 24);
-
     udpStatusLabel.reset (new Label ("UPD Status Label",
                                      TRANS("Status : ...")));
     addAndMakeVisible (udpStatusLabel.get());
-    udpStatusLabel->setFont (Font (15.0f, Font::italic));
+    udpStatusLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Italic"));
     udpStatusLabel->setJustificationType (Justification::centredLeft);
     udpStatusLabel->setEditable (false, false, false);
     udpStatusLabel->setColour (Label::textColourId, Colours::black);
@@ -117,19 +115,17 @@ OscMatrixComponent::OscMatrixComponent (Presenter* _presenter)
     attackLabel.reset (new Label ("Attack Label",
                                   TRANS("Attack")));
     addAndMakeVisible (attackLabel.get());
-    attackLabel->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
+    attackLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     attackLabel->setJustificationType (Justification::centredLeft);
     attackLabel->setEditable (false, false, false);
     attackLabel->setColour (Label::textColourId, Colours::black);
     attackLabel->setColour (TextEditor::textColourId, Colours::black);
     attackLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    attackLabel->setBounds (0 + 8, 28, 56, 24);
-
     attackUnitLabel.reset (new Label ("Attack unit Label",
                                       TRANS("ms")));
     addAndMakeVisible (attackUnitLabel.get());
-    attackUnitLabel->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
+    attackUnitLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     attackUnitLabel->setJustificationType (Justification::centredLeft);
     attackUnitLabel->setEditable (false, false, false);
     attackUnitLabel->setColour (Label::textColourId, Colours::black);
@@ -226,9 +222,11 @@ void OscMatrixComponent::resized()
     slidersMatrix->setBounds (0 + 8, (0 + 72) + 16, (getWidth() - 0) - 16, (getHeight() - 72) - 24);
     preferencesGroupComponent->setBounds (216, 0, getWidth() - 251, 72);
     udpPortTextEditor->setBounds ((216 + 8) + 184 - 8, 16, 48, 24);
+    udpPortLabel->setBounds (216 + 8, 16, 184, 24);
     udpStatusLabel->setBounds (((216 + 8) + 184 - 8) + 48 - -104, 16, (getWidth() - 251) - 357, 24);
     keyboardButton->setBounds (216 + 8, 40, (getWidth() - 251) - 24, 24);
     attackSlider->setBounds ((0 + 8) + 56 - 8, 16, 112, 48);
+    attackLabel->setBounds (0 + 8, 28, 56, 24);
     attackUnitLabel->setBounds (((0 + 8) + 56 - 8) + 112, 28, 88, 24);
     helpTextButton->setBounds (getWidth() - 4 - 24, 8, 24, 60);
     //[UserResized] Add your own custom resize handling here..
@@ -391,7 +389,7 @@ BEGIN_JUCER_METADATA
 <JUCER_COMPONENT documentType="Component" className="OscMatrixComponent" componentName=""
                  parentClasses="public Component, public ISlidersMatrixListener, public TextEditor::Listener"
                  constructorParams="Presenter* _presenter" variableInitialisers=""
-                 snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.33"
+                 snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="0" initialWidth="400" initialHeight="300">
   <BACKGROUND backgroundColour="ff909090"/>
   <GROUPCOMPONENT name="Matrix Group Component" id="19b69873bd3945f7" memberName="matrixGroupComponent"
@@ -416,7 +414,7 @@ BEGIN_JUCER_METADATA
          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="33"/>
   <LABEL name="UPD Status Label" id="3fd4c40c4d48dfec" memberName="udpStatusLabel"
-         virtualName="" explicitFocusOrder="0" pos="-104R 16 357M 24"
+         virtualName="" explicitFocusOrder="0" pos="-104R 16 342M 24"
          posRelativeX="e4ef4437203ce19e" posRelativeW="dfbb24a51fa3d6c0"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Status : ..."
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
@@ -464,3 +462,4 @@ END_JUCER_METADATA
 
 //[EndFile] You can add extra defines here...
 //[/EndFile]
+

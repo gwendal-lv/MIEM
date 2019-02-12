@@ -70,10 +70,6 @@
 //==============================================================================
 // juce_audio_devices flags:
 
-#ifndef    JUCE_USE_WINRT_MIDI
- //#define JUCE_USE_WINRT_MIDI 0
-#endif
-
 #ifndef    JUCE_ASIO
  //#define JUCE_ASIO 0
 #endif
@@ -110,6 +106,10 @@
  //#define JUCE_USE_ANDROID_OPENSLES 0
 #endif
 
+#ifndef    JUCE_USE_WINRT_MIDI
+ //#define JUCE_USE_WINRT_MIDI 0
+#endif
+
 #ifndef    JUCE_DISABLE_AUDIO_MIXING_WITH_OTHER_APPS
  //#define JUCE_DISABLE_AUDIO_MIXING_WITH_OTHER_APPS 0
 #endif
@@ -139,10 +139,6 @@
 
 //==============================================================================
 // juce_audio_plugin_client flags:
-
-#ifndef    JUCE_VST3_CAN_REPLACE_VST2
- //#define JUCE_VST3_CAN_REPLACE_VST2 1
-#endif
 
 #ifndef    JUCE_FORCE_USE_LEGACY_PARAM_IDS
  //#define JUCE_FORCE_USE_LEGACY_PARAM_IDS 0
@@ -217,20 +213,12 @@
  //#define JUCE_USE_CURL 0
 #endif
 
-#ifndef    JUCE_LOAD_CURL_SYMBOLS_LAZILY
- //#define JUCE_LOAD_CURL_SYMBOLS_LAZILY 0
-#endif
-
 #ifndef    JUCE_CATCH_UNHANDLED_EXCEPTIONS
  //#define JUCE_CATCH_UNHANDLED_EXCEPTIONS 1
 #endif
 
 #ifndef    JUCE_ALLOW_STATIC_NULL_VARIABLES
  //#define JUCE_ALLOW_STATIC_NULL_VARIABLES 1
-#endif
-
-#ifndef    JUCE_STRICT_REFCOUNTEDPOINTER
- //#define JUCE_STRICT_REFCOUNTEDPOINTER 0
 #endif
 
 //==============================================================================
@@ -249,10 +237,6 @@
 
 #ifndef    JUCE_USE_DIRECTWRITE
  //#define JUCE_USE_DIRECTWRITE 1
-#endif
-
-#ifndef    JUCE_DISABLE_COREGRAPHICS_FONT_SMOOTHING
- //#define JUCE_DISABLE_COREGRAPHICS_FONT_SMOOTHING 0
 #endif
 
 //==============================================================================
@@ -282,10 +266,6 @@
  //#define JUCE_USE_XCURSOR 1
 #endif
 
-#ifndef    JUCE_WIN_PER_MONITOR_DPI_AWARE
- //#define JUCE_WIN_PER_MONITOR_DPI_AWARE 1
-#endif
-
 //==============================================================================
 // juce_gui_extra flags:
 
@@ -304,10 +284,6 @@
  //#define JUCE_USE_CAMERA 0
 #endif
 
-#ifndef    JUCE_SYNC_VIDEO_VOLUME_WITH_OS_MEDIA_VOLUME
- //#define JUCE_SYNC_VIDEO_VOLUME_WITH_OS_MEDIA_VOLUME 1
-#endif
-
 //==============================================================================
 // Audio plugin settings..
 
@@ -315,13 +291,13 @@
  #define JucePlugin_Build_VST              1
 #endif
 #ifndef  JucePlugin_Build_VST3
- #define JucePlugin_Build_VST3             1
+ #define JucePlugin_Build_VST3             0
 #endif
 #ifndef  JucePlugin_Build_AU
  #define JucePlugin_Build_AU               1
 #endif
 #ifndef  JucePlugin_Build_AUv3
- #define JucePlugin_Build_AUv3             1
+ #define JucePlugin_Build_AUv3             0
 #endif
 #ifndef  JucePlugin_Build_RTAS
  #define JucePlugin_Build_RTAS             0
@@ -375,25 +351,25 @@
  #define JucePlugin_EditorRequiresKeyboardFocus  0
 #endif
 #ifndef  JucePlugin_Version
- #define JucePlugin_Version                0.2.1
+ #define JucePlugin_Version                0.3.0
 #endif
 #ifndef  JucePlugin_VersionCode
- #define JucePlugin_VersionCode            0x201
+ #define JucePlugin_VersionCode            0x300
 #endif
 #ifndef  JucePlugin_VersionString
- #define JucePlugin_VersionString          "0.2.1"
+ #define JucePlugin_VersionString          "0.3.0"
 #endif
 #ifndef  JucePlugin_VSTUniqueID
  #define JucePlugin_VSTUniqueID            JucePlugin_PluginCode
 #endif
 #ifndef  JucePlugin_VSTCategory
- #define JucePlugin_VSTCategory            kPlugCategEffect
+ #define JucePlugin_VSTCategory            kPlugCategSpacializer
 #endif
 #ifndef  JucePlugin_Vst3Category
- #define JucePlugin_Vst3Category           "Fx"
+ #define JucePlugin_Vst3Category           "Fx|Spatial"
 #endif
 #ifndef  JucePlugin_AUMainType
- #define JucePlugin_AUMainType             'aufx'
+ #define JucePlugin_AUMainType             'aupn'
 #endif
 #ifndef  JucePlugin_AUSubType
  #define JucePlugin_AUSubType              JucePlugin_PluginCode
@@ -408,10 +384,10 @@
  #define JucePlugin_AUManufacturerCode     JucePlugin_ManufacturerCode
 #endif
 #ifndef  JucePlugin_CFBundleIdentifier
- #define JucePlugin_CFBundleIdentifier     com.glv.MIEMMatrixRouter
+ #define JucePlugin_CFBundleIdentifier     com.gwendallv.MIEMMatrixRouter
 #endif
 #ifndef  JucePlugin_RTASCategory
- #define JucePlugin_RTASCategory           0
+ #define JucePlugin_RTASCategory           512
 #endif
 #ifndef  JucePlugin_RTASManufacturerCode
  #define JucePlugin_RTASManufacturerCode   JucePlugin_ManufacturerCode
@@ -426,7 +402,7 @@
  #define JucePlugin_RTASDisableMultiMono   0
 #endif
 #ifndef  JucePlugin_AAXIdentifier
- #define JucePlugin_AAXIdentifier          com.glv.MIEMMatrixRouter
+ #define JucePlugin_AAXIdentifier          com.gwendallv.MIEMMatrixRouter
 #endif
 #ifndef  JucePlugin_AAXManufacturerCode
  #define JucePlugin_AAXManufacturerCode    JucePlugin_ManufacturerCode
@@ -451,6 +427,12 @@
 #endif
 #ifndef  JucePlugin_IAAName
  #define JucePlugin_IAAName                "G. Le Vaillant: MIEM Matrix Router"
+#endif
+#ifndef  JucePlugin_VSTNumMidiInputs
+ #define JucePlugin_VSTNumMidiInputs       16
+#endif
+#ifndef  JucePlugin_VSTNumMidiOutputs
+ #define JucePlugin_VSTNumMidiOutputs      16
 #endif
 #ifndef  JucePlugin_MaxNumInputChannels
  #define JucePlugin_MaxNumInputChannels    64

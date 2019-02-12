@@ -21,9 +21,9 @@ namespace Miam
     {
         public :
         
-        OscDebugger()
+        OscDebugger(int udpPort = 9020)
         {
-            if (! connect ("127.0.0.1", 9001))
+            if (! connect ("127.0.0.1", udpPort))
                 throw std::runtime_error ("Error: could not connect to UDP port 9001.");
         }
         

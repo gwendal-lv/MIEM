@@ -16,9 +16,12 @@
 
 #include <cmath>
 #include <memory>
+#include <atomic>
+#include <thread>
 
 #include "JuceHeader.h"
 
+#include "OscDebugger.h"
 
 namespace Miam {
     
@@ -28,7 +31,6 @@ namespace Miam {
     class NetworkModel;
     class MatrixRouterAudioProcessorEditor;
     class OscMatrixComponent;
-    
     
     /// \brief Base class of the PRESENTER module (see MVP scheme)
     class Presenter : public IPresenter
@@ -40,8 +42,21 @@ namespace Miam {
         
         // - - - - - links to other modules - - - - -
         private :
+			/// \brief The plugin editor might be destroyed at any time by the user and/or DAW, but it will notify this class before doing so
+			MatrixRouterAudioProcessorEditor * view = 0;
         MatrixRouterAudioProcessor& model;
         std::shared_ptr<NetworkModel> networkModel;
+#ifdef __MIAM_DEBUG
+		OscDebugger oscLocalhostDebugger;
+#endif
+
+
+		// - - - - - wake-up notification from model - - - - -
+		// to compensate the non-working Juce Timers....... lol.
+		std::atomic<bool> mustWakeUp;
+		std::atomic<bool> continueWakeUpPooling;
+		std::thread wakeUpPoolingThread;
+		int poolPeriod_ms = 2;
         
         // - - - - - graphical objects - - - - -
         /// \brief Kept within the presenter, sent to the ProcessorEditor (=View)
@@ -79,10 +94,19 @@ namespace Miam {
         void UpdateFromView(MatrixRouterAudioProcessorEditor* view);
         // Override method that should not be called here (particular situation : fresh
         // view pointer necessary
-        void Update() override;
+        virtual void Update() override;
+	protected:
+		void poolNotifications();
+	public :
+		void WakeUp();
+
+		virtual AppPurpose GetSessionPurpose() const override { return AppPurpose::Spatialisation; }
         
     
         // - - - - - Callbacks from View - - - - -
+		void OnViewConstructed(MatrixRouterAudioProcessorEditor* _view) { view = _view; }
+		void OnViewDestructed() { view = 0; }
+
         /// \brief Translates the data into a Miam::AsyncParamChange, then sends the data
         /// to the Model.
         void OnSliderValueChanged(int row, int col, double value);

@@ -17,6 +17,7 @@
 
 #include "OscMatrixComponent.h"
 
+#include "OscDebugger.h"
 
 namespace Miam {
     
@@ -42,7 +43,7 @@ namespace Miam {
         
         // - - - - - Links to other modules - - - - -
         Presenter& presenter;
-        
+		OscDebugger oscLocalhostDebugger;
         
         
         // - - - - - Children components - - - - -

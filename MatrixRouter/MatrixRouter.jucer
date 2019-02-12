@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="Eo3Z3f" name="MIEM Matrix Router" projectType="audioplug"
-              version="0.2.1" bundleIdentifier="com.glv.MIEMMatrixRouter" includeBinaryInAppConfig="1"
-              buildVST="1" buildVST3="1" buildAU="1" buildAUv3="1" buildRTAS="0"
-              buildAAX="0" pluginName="MIEM Matrix Router" pluginDesc="OSC controllable matrix router, for MIEM Spat Player"
+              version="0.3.0" bundleIdentifier="com.gwendallv.MIEMMatrixRouter"
+              includeBinaryInAppConfig="1" buildVST="1" buildVST3="0" buildAU="1"
+              buildAUv3="0" buildRTAS="0" buildAAX="0" pluginName="MIEM Matrix Router"
+              pluginDesc="OSC controllable matrix router, for MIEM Spat Player"
               pluginManufacturer="G. Le Vaillant" pluginManufacturerCode="Manu"
-              pluginCode="Eo3z" pluginChannelConfigs="{64,64}" pluginIsSynth="0"
-              pluginWantsMidiIn="0" pluginProducesMidiOut="0" pluginIsMidiEffectPlugin="0"
-              pluginEditorRequiresKeys="0" pluginAUExportPrefix="MIEMMatrixRouterAU"
-              pluginRTASCategory="" aaxIdentifier="com.glv.MIEMMatrixRouter"
-              pluginAAXCategory="2" jucerVersion="5.4.1" defines="" displaySplashScreen="0"
-              reportAppUsage="0" splashScreenColour="Dark" buildStandalone="0"
-              enableIAA="0" companyName="IRISIB/LARAS, UMons" companyWebsite="http://www.laras.be"
-              companyEmail="glevaillant@he2b.be" cppLanguageStandard="11" companyCopyright="Gwendal Le Vaillant (IRISIB/LARAS, UMons)"
-              pluginFormats="buildVST,buildVST3,buildAU,buildAUv3">
+              pluginCode="Eo3z" pluginIsSynth="0" pluginWantsMidiIn="0" pluginProducesMidiOut="0"
+              pluginIsMidiEffectPlugin="0" pluginEditorRequiresKeys="0" pluginAUExportPrefix="MIEMMatrixRouterAU"
+              pluginRTASCategory="512" aaxIdentifier="com.gwendallv.MIEMMatrixRouter"
+              pluginAAXCategory="2" jucerVersion="5.4.2" defines="__MIEM_VBO"
+              displaySplashScreen="0" reportAppUsage="0" splashScreenColour="Dark"
+              buildStandalone="0" enableIAA="0" companyName="IRISIB/LARAS, UMons"
+              companyWebsite="http://www.laras.be" companyEmail="glevaillant@he2b.be"
+              cppLanguageStandard="11" companyCopyright="Gwendal Le Vaillant (IRISIB/LARAS, UMons)"
+              pluginFormats="buildAU,buildVST" pluginVST3Category="Spatial"
+              pluginVSTCategory="kPlugCategSpacializer" projectLineFeed="&#10;"
+              pluginAUMainType="'aupn'" pluginChannelConfigs="{64,64}">
   <MAINGROUP id="uSK6Ed" name="MIEM Matrix Router">
     <GROUP id="{7E647B1E-1C9F-BD65-5FF1-5839B4766A43}" name="Source">
       <GROUP id="{E44EFD07-3B55-8033-8C2F-DBABCD5578FE}" name="View">
@@ -67,47 +70,6 @@
           <FILE id="RAwQe6" name="SceneEvent.cpp" compile="1" resource="0" file="../MiamCommon/Source/SceneEvent.cpp"/>
           <FILE id="ekYbjp" name="SceneEvent.h" compile="0" resource="0" file="../MiamCommon/Source/SceneEvent.h"/>
         </GROUP>
-        <GROUP id="{B66FA498-AC16-0510-B897-C4A4DB5848EB}" name="Areas">
-          <FILE id="Lt60mX" name="EditableArea.cpp" compile="1" resource="0"
-                file="../MiamCommon/Source/EditableArea.cpp"/>
-          <FILE id="u2pUf3" name="EditableArea.h" compile="0" resource="0" file="../MiamCommon/Source/EditableArea.h"/>
-          <FILE id="eCJIOT" name="EditableEllipse.cpp" compile="1" resource="0"
-                file="../MiamCommon/Source/EditableEllipse.cpp"/>
-          <FILE id="jJyzQI" name="EditableEllipse.h" compile="0" resource="0"
-                file="../MiamCommon/Source/EditableEllipse.h"/>
-          <FILE id="wgUXFQ" name="EditablePolygon.cpp" compile="1" resource="0"
-                file="../MiamCommon/Source/EditablePolygon.cpp"/>
-          <FILE id="JElhH7" name="EditablePolygon.h" compile="0" resource="0"
-                file="../MiamCommon/Source/EditablePolygon.h"/>
-          <FILE id="o4h3ZV" name="Exciter.cpp" compile="1" resource="0" file="../MiamCommon/Source/Exciter.cpp"/>
-          <FILE id="uFYMUE" name="Exciter.h" compile="0" resource="0" file="../MiamCommon/Source/Exciter.h"/>
-          <FILE id="e38tNI" name="IEditableArea.h" compile="0" resource="0" file="../MiamCommon/Source/IEditableArea.h"/>
-          <FILE id="AgdCS3" name="IInteractiveArea.h" compile="0" resource="0"
-                file="../MiamCommon/Source/IInteractiveArea.h"/>
-          <FILE id="LAIH8F" name="InteractiveArea.cpp" compile="1" resource="0"
-                file="../MiamCommon/Source/InteractiveArea.cpp"/>
-          <FILE id="meCfcv" name="InteractiveArea.h" compile="0" resource="0"
-                file="../MiamCommon/Source/InteractiveArea.h"/>
-          <FILE id="ELULBi" name="InteractiveEllipse.cpp" compile="1" resource="0"
-                file="../MiamCommon/Source/InteractiveEllipse.cpp"/>
-          <FILE id="o1IUT1" name="InteractiveEllipse.h" compile="0" resource="0"
-                file="../MiamCommon/Source/InteractiveEllipse.h"/>
-          <FILE id="oqveHx" name="InteractivePolygon.cpp" compile="1" resource="0"
-                file="../MiamCommon/Source/InteractivePolygon.cpp"/>
-          <FILE id="PxaUtc" name="InteractivePolygon.h" compile="0" resource="0"
-                file="../MiamCommon/Source/InteractivePolygon.h"/>
-          <FILE id="ZRuNWP" name="SubTriangle.cpp" compile="1" resource="0" file="../MiamCommon/Source/SubTriangle.cpp"/>
-          <FILE id="Rsgwzv" name="SubTriangle.h" compile="0" resource="0" file="../MiamCommon/Source/SubTriangle.h"/>
-        </GROUP>
-        <GROUP id="{86D5D9E1-93BE-D9FA-6D5A-C4DCC032AC63}" name="Scenes">
-          <FILE id="vjqld7" name="EditableScene.cpp" compile="1" resource="0"
-                file="../MiamCommon/Source/EditableScene.cpp"/>
-          <FILE id="mc8YKm" name="EditableScene.h" compile="0" resource="0" file="../MiamCommon/Source/EditableScene.h"/>
-          <FILE id="i50GId" name="InteractiveScene.cpp" compile="1" resource="0"
-                file="../MiamCommon/Source/InteractiveScene.cpp"/>
-          <FILE id="w93g8x" name="InteractiveScene.h" compile="0" resource="0"
-                file="../MiamCommon/Source/InteractiveScene.h"/>
-        </GROUP>
         <FILE id="hWUZ4N" name="CanvasManagerMode.h" compile="0" resource="0"
               file="../MiamCommon/Source/CanvasManagerMode.h"/>
         <FILE id="LOSifR" name="IGraphicSessionManager.cpp" compile="1" resource="0"
@@ -116,48 +78,12 @@
               file="../MiamCommon/Source/IGraphicSessionManager.h"/>
         <FILE id="KYotIl" name="IPresenter.cpp" compile="1" resource="0" file="../MiamCommon/Source/IPresenter.cpp"/>
         <FILE id="X4elLh" name="IPresenter.h" compile="0" resource="0" file="../MiamCommon/Source/IPresenter.h"/>
-        <FILE id="Jtp0bl" name="MultiSceneCanvasEditor.cpp" compile="1" resource="0"
-              file="../MiamCommon/Source/MultiSceneCanvasEditor.cpp"/>
-        <FILE id="OogkLH" name="MultiSceneCanvasEditor.h" compile="0" resource="0"
-              file="../MiamCommon/Source/MultiSceneCanvasEditor.h"/>
-        <FILE id="VMQMH0" name="MultiSceneCanvasInteractor.cpp" compile="1"
-              resource="0" file="../MiamCommon/Source/MultiSceneCanvasInteractor.cpp"/>
-        <FILE id="WoZSS6" name="MultiSceneCanvasInteractor.h" compile="0" resource="0"
-              file="../MiamCommon/Source/MultiSceneCanvasInteractor.h"/>
       </GROUP>
       <GROUP id="{81FB02AB-9CF8-2FEF-77B6-9D5049B0BC47}" name="View">
         <FILE id="XAPOxP" name="MiamLookAndFeel.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/MiamLookAndFeel.cpp"/>
         <FILE id="UhtGNo" name="MiamLookAndFeel.h" compile="0" resource="0"
               file="../MiamCommon/Source/MiamLookAndFeel.h"/>
-        <GROUP id="{36323D02-59E2-4E89-249D-DCE39931C0AE}" name="Components">
-          <FILE id="XSz62Q" name="MultiCanvasComponent.cpp" compile="1" resource="0"
-                file="../MiamCommon/Source/MultiCanvasComponent.cpp"/>
-          <FILE id="Cq1nUv" name="MultiCanvasComponent.h" compile="0" resource="0"
-                file="../MiamCommon/Source/MultiCanvasComponent.h"/>
-          <FILE id="Iqu0Fm" name="MultiSceneCanvasComponent.cpp" compile="1"
-                resource="0" file="../MiamCommon/Source/MultiSceneCanvasComponent.cpp"/>
-          <FILE id="BW3uQh" name="MultiSceneCanvasComponent.h" compile="0" resource="0"
-                file="../MiamCommon/Source/MultiSceneCanvasComponent.h"/>
-          <FILE id="M9g0pY" name="SceneCanvasComponent.cpp" compile="1" resource="0"
-                file="../MiamCommon/Source/SceneCanvasComponent.cpp"/>
-          <FILE id="CBymDY" name="SceneCanvasComponent.h" compile="0" resource="0"
-                file="../MiamCommon/Source/SceneCanvasComponent.h"/>
-        </GROUP>
-        <GROUP id="{CCAD49B8-ECEA-8895-335F-2F00FE1608E4}" name="Areas">
-          <FILE id="CGp3ln" name="DrawableArea.cpp" compile="1" resource="0"
-                file="../MiamCommon/Source/DrawableArea.cpp"/>
-          <FILE id="AEfgX2" name="DrawableArea.h" compile="0" resource="0" file="../MiamCommon/Source/DrawableArea.h"/>
-          <FILE id="So1nG4" name="DrawableEllipse.cpp" compile="1" resource="0"
-                file="../MiamCommon/Source/DrawableEllipse.cpp"/>
-          <FILE id="zj9DE4" name="DrawableEllipse.h" compile="0" resource="0"
-                file="../MiamCommon/Source/DrawableEllipse.h"/>
-          <FILE id="SW4w4d" name="DrawablePolygon.cpp" compile="1" resource="0"
-                file="../MiamCommon/Source/DrawablePolygon.cpp"/>
-          <FILE id="AOOkAE" name="DrawablePolygon.h" compile="0" resource="0"
-                file="../MiamCommon/Source/DrawablePolygon.h"/>
-          <FILE id="vPo8Fc" name="IDrawableArea.h" compile="0" resource="0" file="../MiamCommon/Source/IDrawableArea.h"/>
-        </GROUP>
       </GROUP>
       <GROUP id="{B91B2137-DC4A-127C-0037-DB058876BEFA}" name="Utils">
         <FILE id="sh1Jcv" name="InteractionParameters.cpp" compile="1" resource="0"
@@ -225,16 +151,6 @@
               file="../ControlCommon/Source/StatesInterpolator.hpp"/>
       </GROUP>
       <GROUP id="{596BD696-C6A3-E262-0276-DB678B875C8B}" name="Presenter">
-        <FILE id="n32Dij" name="ControlPolygon.cpp" compile="1" resource="0"
-              file="../ControlCommon/Source/ControlPolygon.cpp"/>
-        <FILE id="FsTJI4" name="ControlPolygon.h" compile="0" resource="0"
-              file="../ControlCommon/Source/ControlPolygon.h"/>
-        <FILE id="mVjBSn" name="ControlEllipse.cpp" compile="1" resource="0"
-              file="../ControlCommon/Source/ControlEllipse.cpp"/>
-        <FILE id="yCl99C" name="ControlEllipse.h" compile="0" resource="0"
-              file="../ControlCommon/Source/ControlEllipse.h"/>
-        <FILE id="fKDEja" name="ControlArea.cpp" compile="1" resource="0" file="../ControlCommon/Source/ControlArea.cpp"/>
-        <FILE id="u61sXP" name="ControlArea.h" compile="0" resource="0" file="../ControlCommon/Source/ControlArea.h"/>
         <FILE id="k2deAw" name="GraphicControlSessionManager.cpp" compile="1"
               resource="0" file="../ControlCommon/Source/GraphicControlSessionManager.cpp"/>
         <FILE id="vg3CI3" name="GraphicControlSessionManager.h" compile="0"
@@ -315,41 +231,11 @@
         <MODULEPATH id="juce_audio_utils" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
-    <VS2015 targetFolder="Builds/VisualStudio2015" windowsTargetPlatformVersion="8.1">
-      <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="1" optimisation="1" targetName="MatrixRouter" headerPath="..\..\..\&#10;..\..\..\MiamCommon\Source\&#10;..\..\..\ControlCommon\Source\&#10;..\..\..\SpatCommon\Source\"
-                       debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
-                       defines="__MIAM_DEBUG"/>
-        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="0" optimisation="3" targetName="MatrixRouter" headerPath="..\..\..\&#10;..\..\..\MiamCommon\Source\&#10;..\..\..\ControlCommon\Source\&#10;..\..\..\SpatCommon\Source\"
-                       debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
-                       linkTimeOptimisation="1"/>
-        <CONFIGURATION isDebug="0"/>
-      </CONFIGURATIONS>
-      <MODULEPATHS>
-        <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_events" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_graphics" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_data_structures" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_video" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_opengl" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_basics" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_devices" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_plugin_client" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_osc" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_cryptography" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_utils" path="../../JUCE/modules"/>
-      </MODULEPATHS>
-    </VS2015>
     <VS2017 targetFolder="Builds/VisualStudio2017" vst3Folder="C:\Users\Gwendal\SDKs\VST_SDK\VST3_SDK"
-            vstLegacyFolder="C:\Users\Gwendal\SDKs\VST_SDK\VST2_SDK">
+            userNotes="Legacy VST 2 sdk from steinberg : des dossiers ont &#233;t&#233; renomm&#233;s--&gt; il faut utiliser le sdk fourni avec Juce 5.3.2 --&gt; ???">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../MiamCommon/Resources/&#10;../../../ControlCommon/Source/&#10;../../../SpatCommon/Source/"/>
+        <CONFIGURATION isDebug="1" name="Debug" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../MiamCommon/Resources/&#10;../../../ControlCommon/Source/&#10;../../../SpatCommon/Source/"
+                       defines="__MIAM_DEBUG"/>
         <CONFIGURATION isDebug="0" name="Release" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../MiamCommon/Resources/&#10;../../../ControlCommon/Source/&#10;../../../SpatCommon/Source/"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
