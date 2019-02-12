@@ -13,7 +13,12 @@
 #include "JuceHeader.h"
 
 
-/// ======== Liste de presets, selon leur UID réel ======
+/// ============= Liste de presets, selon leur UID réel =============
+/// ============= Liste de presets, selon leur UID réel =============
+/// ============= Liste de presets, selon leur UID réel =============
+///
+///
+///
 /// Tout ça sera à bien respecter....
 ///
 /// Presets d'essais : index -2 avec faders, index -1 le même en
@@ -21,10 +26,18 @@
 ///
 /// Ensuite, presets classiques avec les mesures :
 ///
-/// De 0 à 9 on aura les presets avec faders
+///        De 0 à 9 on aura les presets avec faders
 ///
-/// De 10 à 19 on aura les mêmes presets (valeurs finales idem)
+///        De 10 à 19 on aura les mêmes presets (valeurs finales idem)
 /// mais retrouvés avec l'interpolation graphique MIEM
+///
+///
+///
+/// ============= Liste de presets, selon leur UID réel =============
+/// ============= Liste de presets, selon leur UID réel =============
+/// ============= Liste de presets, selon leur UID réel =============
+
+
 std::map<int, size_t> MiemExpePreset::GeneratePresetIndexToRandomIndexMap(int actualPresetsCount,
                                                                  int trialPresetsCount)
 {
@@ -69,4 +82,18 @@ UID(_UID)
     {
         throw std::runtime_error("Presets prévus actuellement de -2 à +19");
     }
+}
+
+
+std::shared_ptr<bptree::ptree> MiemExpePreset::GetInfoTree()
+{
+    auto preseTree = std::make_shared<bptree::ptree>(); // lol
+    
+    // UID and display order
+    preseTree->put("<xmlattr>.UID", UID);
+    preseTree->put("<xmlattr>.appearance_index", appearanceIndex);
+    preseTree->put("<xmlattr>.is_valid", isValid);
+    preseTree->put("<xmlattr>.samples_count", samples.size());
+    
+    return preseTree;
 }

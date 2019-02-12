@@ -13,7 +13,11 @@
 #include "OSCRecorder.h"
 
 
-OSCRecorderConnection::OSCRecorderConnection(OSCRecorder& _recorderManager) :
+OSCRecorderConnection::OSCRecorderConnection(OSCRecorder& _recorderManager, uint32 magicHeaderNumber)
+:
+// magic number "signs" the messages only. The connection will always be allowed
+// even for a client with a wrong magic number
+InterprocessConnection(true, magicHeaderNumber), // callbacks on message thread
 recorderManager(_recorderManager)
 {
     

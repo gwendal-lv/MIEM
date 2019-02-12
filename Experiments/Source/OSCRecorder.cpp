@@ -64,7 +64,10 @@ void OSCRecorder::reinitExperiment()
     hasConnectionBeenLostDuringLastStep = true; // to force re-connect
     stateBeforeConnectionLost = ExperimentState::InitialQuestionsDisplayed; // forced fake state
     
-    if (presetsList.size() > 0)
+    // OSC UDP listener (no check for connection stability....)
+    oscRealtimeListener = std::make_shared<OSCRealtimeListener>(udpOscPort);
+    
+    if (presets.size() > 0)
     {
         std::cout << "REINITIALISATION SANS SAUVEGARDE DES DONNEES !!" << std::endl;
         assert(false);
@@ -72,24 +75,29 @@ void OSCRecorder::reinitExperiment()
     
     // - - - - Presets vector - - - -
     // is always the same... re-cleared of its data each time
-    presetsList.clear();
-    presetsList.reserve(ExperimentPresetsCount + TrialPresetsCount);
+    presets.clear();
+    presets.reserve(ExperimentPresetsCount + TrialPresetsCount);
     // normal presets at the beginning
     for (int i=0 ; i<ExperimentPresetsCount ; i++)
-        presetsList.push_back(std::make_shared<MiemExpePreset>(i));
+        presets.push_back(std::make_shared<MiemExpePreset>(i));
     // trial presets at the end of the vector
     for (int i=0 ; i<TrialPresetsCount ; i++)
-        presetsList.push_back(std::make_shared<MiemExpePreset>(-(int)(TrialPresetsCount) + i));
+        presets.push_back(std::make_shared<MiemExpePreset>(-(int)(TrialPresetsCount) + i));
     
     // - - - - Random Index maps - - - -
     presetRandomIdx.clear();
     presetRandomIdx = MiemExpePreset::GeneratePresetIndexToRandomIndexMap((int)ExperimentPresetsCount,
                                                                           (int)TrialPresetsCount);
-    
+    // Random indexes stored also into presets (for saving in files, later)
+    for (int i = -TrialPresetsCount; i<ExperimentPresetsCount ; i++)
+    {
+        int indexInPresetsVector = (int) presetRandomIdx.at(i);
+        presets[indexInPresetsVector]->SetAppearanceIndex(i);
+    }
     // - - - Display of presets indexes (simple check), and randomization map
     std::cout << "Presets UIDs:               ";
-    for (int i=0 ; i<presetsList.size() ; i++)
-        std::cout << presetsList[i]->GetUID() << " ";
+    for (int i=0 ; i<presets.size() ; i++)
+        std::cout << presets[i]->GetUID() << " ";
     std::cout << std::endl << "Presets randomised indexes: ";
     for (int i=0 ; i<presetRandomIdx.size() ; i++)
         std::cout << presetRandomIdx.at(-(int)(TrialPresetsCount) + i) << " ";
@@ -161,6 +169,11 @@ void OSCRecorder::nextPreset()
 }
 
 
+/// ========================================================================
+/// ========================================================================
+/// =====================  STATE MANAGEMENT FUNCTION  ======================
+/// ========================================================================
+/// ========================================================================
 void OSCRecorder::changeState(ExperimentState newState)
 {
     bool stateChanged = (state != newState);
@@ -206,17 +219,18 @@ void OSCRecorder::changeState(ExperimentState newState)
             break;
             
         case ExperimentState::Listening:
-            selectNewScene(true);
+            selectNewScene(true); // empty scene
             break;
             
         case ExperimentState::ReadyToSearchPreset:
             break;
             
         case ExperimentState::SearchingPreset:
-            selectNewScene();
+            selectNewScene(); // empty scene
             break;
             
         case ExperimentState::FinishedSearchingPreset:
+            selectNewScene(true);
             if (currentPresetIndex >= ((int)ExperimentPresetsCount - 1))
             {
                 // will trigger an event, but after this one is treated...
@@ -225,6 +239,8 @@ void OSCRecorder::changeState(ExperimentState newState)
                 {   currentPresetIndex++; // goes to an unvalid value
                     this->changeState(ExperimentState::FinalQuestionsDisplayed); } );
             }
+            // security save
+            saveEverythingToFiles();
             break;
             
         case ExperimentState::Finished:
@@ -378,7 +394,7 @@ void OSCRecorder::OnConnectionLost()
     // L'expérience en cours sera supprimée... Tant pis !
     // On passe à la suivante
     if (currentPresetIndex >= 0) // check for "not trial and not question"
-        presetsList[currentPresetIndex]->SetIsValid(false);
+        presets[currentPresetIndex]->SetIsValid(false);
     
     // Enfin préparation pour la re-connection
 
@@ -392,7 +408,7 @@ bool OSCRecorder::selectMiemControllerScene(int sceneIndex)
 {
     Miam::AsyncParamChange paramChange(Miam::AsyncParamChange::Scene);
     paramChange.Id1 = sceneIndex;
-    InterprocessControlBlock controlBlock(paramChange);
+    Miam::InterprocessControlBlock controlBlock(paramChange);
     
     bool msgSent = tcpConnection->sendMessage(controlBlock);
     
@@ -442,8 +458,8 @@ void OSCRecorder::createNewDataFiles()
     expName = "Exp" + expName;
     
     // Files' names
-    dataFilePath = filesSavingPath + expName + "_" + asciiStartTime + "_data.csv";
-    infoFilePath = filesSavingPath + expName + "_" + asciiStartTime + "_info.xml";
+    dataFilePath = filesSavingPath + expName + /*"_" + asciiStartTime +*/ "_data.csv";
+    infoFilePath = filesSavingPath + expName + /*"_" + asciiStartTime +*/ "_info.xml";
     mainComponent->expeLabel->setText(dataFilePath, NotificationType::dontSendNotification);
     mainComponent->expeLabel2->setText(infoFilePath, NotificationType::dontSendNotification);
     DBG("--------------- FILE NAMES ------------------");
@@ -477,11 +493,30 @@ void OSCRecorder::saveEverythingToFiles()
 {
     // Save of INFO
     bptree::ptree questionsChildrenTree; // does not contain the <subject> tag itself
-    questionsChildrenTree.put("tested_presets.<xmlattr>.count", std::max(currentPresetIndex+1, 0));
+    // Date et heure de départ
+    bptree::ptree startTimeTree;
+    startTimeTree.put("<xmlattr>.year", startSystemTime.getYear());
+    startTimeTree.put("<xmlattr>.month", startSystemTime.getMonth() + 1);
+    startTimeTree.put("<xmlattr>.month_name", startSystemTime.getMonthName(false).toStdString());
+    startTimeTree.put("<xmlattr>.day", startSystemTime.getDayOfMonth());
+    startTimeTree.put("<xmlattr>.day_name", startSystemTime.getWeekdayName(false));
+    startTimeTree.put("<xmlattr>.hours", startSystemTime.getHours());
+    startTimeTree.put("<xmlattr>.minutes", startSystemTime.getMinutes());
+    questionsChildrenTree.add_child("start_date", startTimeTree);
+    // Questions (même celles qui ne sont pas encore répondues
     questionsChildrenTree.add_child("first_questions",
                                     *(mainComponent->firstUserQuestionsComponent->GetQuestionsBPTree()));
     questionsChildrenTree.add_child("final_questions",
                                     *(mainComponent->finalUserQuestionsComponent->GetQuestionsBPTree()));
+    // Infos sur les presets
+    int currentActualPresetsCount = std::min(std::max(currentPresetIndex + 1, (int)0),
+                                             (int)(ExperimentPresetsCount));
+    bptree::ptree testedPresetInnerTree;
+    testedPresetInnerTree.put("<xmlattr>.count", currentActualPresetsCount);
+    // Liste de tous les presets jusqu'à maintenant
+    for (int i=0 ; i<currentActualPresetsCount ; i++)
+        testedPresetInnerTree.add_child("preset", *(presets[i]->GetInfoTree()));
+    questionsChildrenTree.add_child("tested_presets", testedPresetInnerTree);
     // Actual XML/CSV data writing into files
     bptree::xml_writer_settings<std::string> xmlSettings(' ', 4);
     try {
@@ -535,6 +570,8 @@ void OSCRecorder::getExperimentParametersFromXmlFile()
         
         tcpServerName = parametersTree->get<std::string>("experiment.tcp.<xmlattr>.ip");
         tcpServerPort = parametersTree->get<int>("experiment.tcp.<xmlattr>.port");
+        
+        udpOscPort = parametersTree->get<int>("experiment.osc.udp.<xmlattr>.port");
     }
     catch(bptree::ptree_error &e) {
         String errorStr = TRANS("Wrong value or XML parsing error in file '") + String(xmlExpeFilePath) + TRANS("'. Experiment aborted.");

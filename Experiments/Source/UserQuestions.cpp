@@ -50,7 +50,7 @@ UserQuestions::UserQuestions ()
 
     allowDataToggleButton.reset (new ToggleButton ("Question toggle button"));
     addAndMakeVisible (allowDataToggleButton.get());
-    allowDataToggleButton->setButtonText (TRANS("I allow the anonymous usage of data collected during this experiement"));
+    allowDataToggleButton->setButtonText (TRANS("I allow the anonymous usage of data collected during this experiment"));
     allowDataToggleButton->addListener (this);
 
     label2.reset (new Label ("new label",
@@ -116,10 +116,10 @@ UserQuestions::UserQuestions ()
 
 
     //[UserPreSize]
-    
+
     // button deactivated while "allow data collection" is not checked
     finishedButton->setEnabled(false);
-    
+
     //[/UserPreSize]
 
     setSize (600, 400);
@@ -220,7 +220,7 @@ std::shared_ptr<bptree::ptree> UserQuestions::GetQuestionsBPTree()
     auto questionsChildrenTree = std::make_shared<bptree::ptree>();
     questionsChildrenTree->put("data_usage.<xmlattr>.allow",
                                allowDataToggleButton->getToggleState());
-    
+
     return questionsChildrenTree;
 }
 
@@ -252,7 +252,7 @@ BEGIN_JUCER_METADATA
               bgColOn="ff252525" buttonText="Begin the experiment" connectedEdges="0"
               needsCallback="1" radioGroupId="0"/>
   <TOGGLEBUTTON name="Question toggle button" id="ba23ef5bc6fe327c" memberName="allowDataToggleButton"
-                virtualName="" explicitFocusOrder="0" pos="8 80 35M 24" buttonText="I allow the anonymous usage of data collected during this experiement"
+                virtualName="" explicitFocusOrder="0" pos="8 80 35M 24" buttonText="I allow the anonymous usage of data collected during this experiment"
                 connectedEdges="0" needsCallback="1" radioGroupId="0" state="0"/>
   <LABEL name="new label" id="91bd908b7f2dbb2f" memberName="label2" virtualName=""
          explicitFocusOrder="0" pos="8 104 35M 24" edTextCol="ff000000"

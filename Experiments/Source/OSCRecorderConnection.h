@@ -12,6 +12,9 @@
 
 #include "JuceHeader.h"
 
+#include "InterprocessControlBlock.h"
+
+
 class OSCRecorder;
 
 class OSCRecorderConnection : public InterprocessConnection
@@ -24,7 +27,7 @@ class OSCRecorderConnection : public InterprocessConnection
     
     // = = = = = = = = = = METHODS = = = = = = = = = =
     public :
-    OSCRecorderConnection(OSCRecorder& _recorderManager);
+    OSCRecorderConnection(OSCRecorder& _recorderManager, uint32 magicHeaderNumber = MIEM_MAGIC_MESSAGE_HEADER_NUMBER);
     virtual ~OSCRecorderConnection() {}
     
     

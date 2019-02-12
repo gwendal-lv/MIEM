@@ -30,6 +30,10 @@
       <FILE id="dQTlGh" name="ExperimentState.h" compile="0" resource="0"
             file="Source/ExperimentState.h"/>
       <GROUP id="{01A727CE-79BE-92B4-2D7E-23D2820957A0}" name="OSCRecorder">
+        <FILE id="NQoXB9" name="OSCRealtimeListener.cpp" compile="1" resource="0"
+              file="Source/OSCRealtimeListener.cpp"/>
+        <FILE id="rMQM5d" name="OSCRealtimeListener.h" compile="0" resource="0"
+              file="Source/OSCRealtimeListener.h"/>
         <FILE id="GlPlBp" name="MiemExpePreset.cpp" compile="1" resource="0"
               file="Source/MiemExpePreset.cpp"/>
         <FILE id="Tqr1a7" name="MiemExpePreset.h" compile="0" resource="0"

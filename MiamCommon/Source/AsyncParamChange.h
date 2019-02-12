@@ -79,8 +79,16 @@ namespace Miam
             
             
             Scene = 700,
+            
+            
+            LastEnumValue ///< Last, exclusive (non-usable) value. Must remain at the very end of the enum.
         };
-        
+        /// \brief Basic, incomplete test !!!!! MUST REFACTOR TO ENUM CLASS ?????
+        /// Or we must write a full new test function....
+        static bool IsIntValidParamType(int intParamType)
+        {
+            return (0 <= intParamType) && (intParamType < ParamType::LastEnumValue);
+        }
         
         
         public :

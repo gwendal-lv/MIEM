@@ -23,8 +23,10 @@ namespace bptree = boost::property_tree;
 
 #include "UserQuestionsManager.h"
 #include "OSCRecorderConnection.h"
+#include "OSCRealtimeListener.h"
 
 class OSCRecorderComponent;
+class OSCRealtimeListener;
 class MainComponent;
 
 typedef std::chrono::steady_clock MiemClock;
@@ -39,8 +41,8 @@ class OSCRecorder : public UserQuestionsManager {
     public :
     
     
-    const size_t ExperimentPresetsCount = 2; // not counting the trial presets
-    const size_t TrialPresetsCount = 2;
+    const int ExperimentPresetsCount = 4; // not counting the trial presets
+    const int TrialPresetsCount = 2;
     
     
 #ifdef __MIEM_SHORT_DELAYS
@@ -70,6 +72,7 @@ class OSCRecorder : public UserQuestionsManager {
     // - - - CONFIGURATION to be read from the general data file - - -
     std::string tcpServerName;
     int tcpServerPort = -1;
+    int udpOscPort = -1;
     int currentExperimentUid = -1;
     // this tree contains the values, ready to be XML-re-written
     std::shared_ptr<bptree::ptree> parametersTree;
@@ -80,15 +83,19 @@ class OSCRecorder : public UserQuestionsManager {
     // sub-modules, init at construction only
     OSCRecorderComponent& recorderComponent;
     std::shared_ptr<OSCRecorderConnection> tcpConnection;
+    std::shared_ptr<OSCRealtimeListener> oscRealtimeListener;
+    
     bool hasConnectionBeenLostDuringLastStep = false;
     ExperimentState stateBeforeConnectionLost = ExperimentState::NotInitialized;
     
     ExperimentState state = ExperimentState::NotInitialized;
     
-    /// \brief Les indexes -1 et -2 correspondent au "tours d'essais" qui ne seront pas comptabilisés
+    /// \brief Index qui représente l'étape de l'expérience à laquelle on est rendu
+    ///
+    /// Les indexes -1 et -2 correspondent au "tours d'essais" qui ne seront pas comptabilisés
     int currentPresetIndex = -(int)TrialPresetsCount - 1;
     /// \brief sorted by index (NOT randomized). Last presets in the list are trial presets
-    std::vector<std::shared_ptr<MiemExpePreset>> presetsList;
+    std::vector<std::shared_ptr<MiemExpePreset>> presets;
     /// \brief tranforms a currentPresetIndex (might be negative for trial presets)
     /// to a random preset index from the vector of all presets
     /// (not randomized for the trial presets)

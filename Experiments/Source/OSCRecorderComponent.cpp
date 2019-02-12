@@ -42,14 +42,14 @@ OSCRecorderComponent::OSCRecorderComponent ()
 
     listenButton.reset (new TextButton ("listen button"));
     addAndMakeVisible (listenButton.get());
-    listenButton->setButtonText (TRANS("LISTEN"));
+    listenButton->setButtonText (TRANS("LISTEN TO THE PRESET"));
     listenButton->addListener (this);
     listenButton->setColour (TextButton::buttonColourId, Colour (0xff959595));
     listenButton->setColour (TextButton::buttonOnColourId, Colour (0xff252525));
 
     finishedButton.reset (new TextButton ("finished button"));
     addAndMakeVisible (finishedButton.get());
-    finishedButton->setButtonText (TRANS("OK, I FOUND THE PRESET"));
+    finishedButton->setButtonText (TRANS("OK"));
     finishedButton->addListener (this);
     finishedButton->setColour (TextButton::buttonColourId, Colour (0xff2ac858));
     finishedButton->setColour (TextButton::buttonOnColourId, Colour (0xff252525));
@@ -260,12 +260,12 @@ BEGIN_JUCER_METADATA
               needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="listen button" id="54994c165790472c" memberName="listenButton"
               virtualName="" explicitFocusOrder="0" pos="0Cc 20 500 160" bgColOff="ff959595"
-              bgColOn="ff252525" buttonText="LISTEN" connectedEdges="0" needsCallback="1"
-              radioGroupId="0"/>
+              bgColOn="ff252525" buttonText="LISTEN TO THE PRESET" connectedEdges="0"
+              needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="finished button" id="ee4745ef80623612" memberName="finishedButton"
               virtualName="" explicitFocusOrder="0" pos="0Cc 380 500 160" bgColOff="ff2ac858"
-              bgColOn="ff252525" buttonText="OK, I FOUND THE PRESET" connectedEdges="0"
-              needsCallback="1" radioGroupId="0"/>
+              bgColOn="ff252525" buttonText="OK" connectedEdges="0" needsCallback="1"
+              radioGroupId="0"/>
   <LABEL name="count label" id="6112b78b8bf2731a" memberName="countLabel"
          virtualName="" explicitFocusOrder="0" pos="0Cc 40R 500 24" edTextCol="ff000000"
          edBkgCol="0" labelText="Current preset: .../..." editableSingleClick="0"

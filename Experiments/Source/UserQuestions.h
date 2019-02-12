@@ -50,7 +50,7 @@ public:
     //[UserMethods]     -- You can add your own custom methods in this section.
     void SetUserQuestionsManager(UserQuestionsManager* _manager)
     { userQuestionsManager = _manager; }
-    
+
     std::shared_ptr<bptree::ptree> GetQuestionsBPTree();
     //[/UserMethods]
 

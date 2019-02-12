@@ -197,7 +197,7 @@ std::shared_ptr<bptree::ptree> UserFinalQuestions::GetQuestionsBPTree()
     auto questionsChildrenTree = std::make_shared<bptree::ptree>();
     //questionsChildrenTree->put("data_usage.<xmlattr>.allow",
       //                         userQuestions->allowDataToggleButton->getToggleState());
-    
+
     return questionsChildrenTree;
 }
 
