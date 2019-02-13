@@ -50,15 +50,12 @@
 //==============================================================================
 #define JUCE_MODULE_AVAILABLE_juce_audio_basics         1
 #define JUCE_MODULE_AVAILABLE_juce_audio_devices        1
-#define JUCE_MODULE_AVAILABLE_juce_audio_formats        1
 #define JUCE_MODULE_AVAILABLE_juce_core                 1
-#define JUCE_MODULE_AVAILABLE_juce_cryptography         1
 #define JUCE_MODULE_AVAILABLE_juce_data_structures      1
 #define JUCE_MODULE_AVAILABLE_juce_events               1
 #define JUCE_MODULE_AVAILABLE_juce_graphics             1
 #define JUCE_MODULE_AVAILABLE_juce_gui_basics           1
 #define JUCE_MODULE_AVAILABLE_juce_gui_extra            1
-#define JUCE_MODULE_AVAILABLE_juce_opengl               1
 #define JUCE_MODULE_AVAILABLE_juce_osc                  1
 
 #define JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED 1
@@ -108,29 +105,6 @@
 
 #ifndef    JUCE_DISABLE_AUDIO_MIXING_WITH_OTHER_APPS
  //#define JUCE_DISABLE_AUDIO_MIXING_WITH_OTHER_APPS 0
-#endif
-
-//==============================================================================
-// juce_audio_formats flags:
-
-#ifndef    JUCE_USE_FLAC
- //#define JUCE_USE_FLAC 1
-#endif
-
-#ifndef    JUCE_USE_OGGVORBIS
- //#define JUCE_USE_OGGVORBIS 1
-#endif
-
-#ifndef    JUCE_USE_MP3AUDIOFORMAT
- //#define JUCE_USE_MP3AUDIOFORMAT 0
-#endif
-
-#ifndef    JUCE_USE_LAME_AUDIO_FORMAT
- //#define JUCE_USE_LAME_AUDIO_FORMAT 0
-#endif
-
-#ifndef    JUCE_USE_WINDOWS_MEDIA_FORMAT
- //#define JUCE_USE_WINDOWS_MEDIA_FORMAT 1
 #endif
 
 //==============================================================================

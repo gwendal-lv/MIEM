@@ -25,6 +25,8 @@ namespace bptree = boost::property_tree;
 #include "OSCRecorderConnection.h"
 #include "OSCRealtimeListener.h"
 
+#include "ReaperOscController.h"
+
 class OSCRecorderComponent;
 class OSCRealtimeListener;
 class MainComponent;
@@ -41,8 +43,8 @@ class OSCRecorder : public UserQuestionsManager {
     public :
     
     
-    const int ExperimentPresetsCount = 4; // not counting the trial presets
-    const int TrialPresetsCount = 2;
+    const int ExperimentPresetsCount = 10; // is also the number of synths
+    const int TrialPresetsCount = 2; // the 2 for the same synth
     
     
 #ifdef __MIEM_SHORT_DELAYS
@@ -84,6 +86,7 @@ class OSCRecorder : public UserQuestionsManager {
     OSCRecorderComponent& recorderComponent;
     std::shared_ptr<OSCRecorderConnection> tcpConnection;
     std::shared_ptr<OSCRealtimeListener> oscRealtimeListener;
+    std::shared_ptr<ReaperOscController> reaperController;
     
     bool hasConnectionBeenLostDuringLastStep = false;
     ExperimentState stateBeforeConnectionLost = ExperimentState::NotInitialized;

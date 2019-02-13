@@ -33,6 +33,10 @@ recorderComponent(*(_mainComponent->oscRecorderComponent.get()))
     mainComponent->firstUserQuestionsComponent->SetUserQuestionsManager(this);
     mainComponent->finalUserQuestionsComponent->SetUserQuestionsManager(this);
     
+    // Setup of the Reaper controller at first (might wait for REAPER responses...)
+    reaperController = std::make_shared<ReaperOscController>();
+    reaperController->SetTrackSolo_usingMutes(1);
+    
     // Setup of TCP control connection to the server inside MIEM Controller
     tcpConnection = std::make_shared<OSCRecorderConnection>(*this);
 }
@@ -78,11 +82,21 @@ void OSCRecorder::reinitExperiment()
     presets.clear();
     presets.reserve(ExperimentPresetsCount + TrialPresetsCount);
     // normal presets at the beginning
+    // RANDOM FADER/INTERPOLATION CHOSEN HERE
+    // RANDOM FADER/INTERPOLATION CHOSEN HERE
+    // RANDOM FADER/INTERPOLATION CHOSEN HERE
+    auto longIntSeed = Time::currentTimeMillis() % 1000000;
+    int timeSeed = (int) longIntSeed;
+    auto generator = std::bind(std::uniform_int_distribution<>(0,1),
+                               std::mt19937(timeSeed)); // graine à zéro par défaut !
     for (int i=0 ; i<ExperimentPresetsCount ; i++)
-        presets.push_back(std::make_shared<MiemExpePreset>(i));
-    // trial presets at the end of the vector
-    for (int i=0 ; i<TrialPresetsCount ; i++)
-        presets.push_back(std::make_shared<MiemExpePreset>(-(int)(TrialPresetsCount) + i));
+    {
+        bool findByInterpolation = generator(); // auto-cast ?
+        presets.push_back(std::make_shared<MiemExpePreset>(i, findByInterpolation));
+    }
+    // trial presets at the end of the vector (for the same synth)
+    presets.push_back(std::make_shared<MiemExpePreset>(-1, false)); // fader
+    presets.push_back(std::make_shared<MiemExpePreset>(-1, true)); // interpolation
     
     // - - - - Random Index maps - - - -
     presetRandomIdx.clear();
@@ -95,12 +109,12 @@ void OSCRecorder::reinitExperiment()
         presets[indexInPresetsVector]->SetAppearanceIndex(i);
     }
     // - - - Display of presets indexes (simple check), and randomization map
-    std::cout << "Presets UIDs:               ";
+    std::cout << "Presets SynthId and isInterpo : ";
     for (int i=0 ; i<presets.size() ; i++)
-        std::cout << presets[i]->GetUID() << " ";
-    std::cout << std::endl << "Presets randomised indexes: ";
+        std::cout << presets[i]->GetSynthId() << "/" << presets[i]->GetIsFoundFromInterpolation() << " ";
+    std::cout << std::endl << "Presets randomised indexes:     ";
     for (int i=0 ; i<presetRandomIdx.size() ; i++)
-        std::cout << presetRandomIdx.at(-(int)(TrialPresetsCount) + i) << " ";
+        std::cout << presetRandomIdx.at(-(int)(TrialPresetsCount) + i) << "   ";
     std::cout << std::endl;
     
     // - - - Init of main counter
