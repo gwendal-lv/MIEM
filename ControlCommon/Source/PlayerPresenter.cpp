@@ -362,7 +362,7 @@ void PlayerPresenter::ReinitRemoteControlServer()
     remoteControlServer.stop();
     serverRunning = remoteControlServer.beginWaitingForSocket(tcpPort);
     
-#ifdef __MIEM_DISPLAY_CONTROL_SERVER_INFO
+#ifdef __MIEM_EXPERIMENTS
     // Display
     if (serverRunning)
         view->GetBackgroundComponent()->GetMainMenuComponent()->SetInfoLabelText(TRANS("TCP port ") + String(tcpPort) + TRANS(" ready for connection."));

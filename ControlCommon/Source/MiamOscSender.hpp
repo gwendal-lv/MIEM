@@ -37,6 +37,15 @@ namespace Miam
         int udpPort;
         std::string ipv4;
         OSCSender oscSender;
+        /// \brief for experiments (duplicated messages on osc port +10 000).
+        /// Not reliable : no errors will be displayed if this port cannot connect or send
+        OSCSender oscSender2;
+        const int secondSenderUdpPortOffset = 10000;
+#ifdef __MIEM_EXPERIMENTS
+        const bool alsoUseSender2 = true;
+#else
+        const bool alsoUseSender2 = false;
+#endif
         
         bool sendFirstColOnly = false;
         std::vector<OSCMessage> firstColOscMessages;
@@ -88,18 +97,27 @@ namespace Miam
         void SetUdpPort(int _udpPort)
         {
             oscSender.disconnect();
+            if (alsoUseSender2)
+                oscSender2.disconnect();
             udpPort = _udpPort;
         }
         /// \brief Disconnects OSC before changing the configuration.
         void SetIpv4(std::string _ipv4)
         {
             oscSender.disconnect();
+            if (alsoUseSender2)
+                oscSender2.disconnect();
             ipv4 = _ipv4;
         }
         bool TryConnect()
         {
             if ( ( !ipv4.empty() ) && ( udpPort > 0 ) )
+            {
+                if (alsoUseSender2)
+                    oscSender2.connect(ipv4, udpPort + secondSenderUdpPortOffset); // no connection verification for 2nd sender
+                
                 return oscSender.connect(ipv4, udpPort);
+            }
             else
                 return false;
         }
@@ -279,6 +297,8 @@ namespace Miam
         void SendMatrixCoeff(int i, int j, float value)
         {
             oscSender.send(Miam_OSC_Matrix_Address, i, j, value);
+            if (alsoUseSender2)
+                oscSender2.send(Miam_OSC_Matrix_Address, i, j, value); // no check either...
         }
         /// \brief Envoi d'un seul coeff, à une adresse de paramètre OSC
         /// qui doit avoir déjà été initialisée/configurée
@@ -288,6 +308,8 @@ namespace Miam
             OSCMessage oscMessage = firstColOscMessages[paramIndex];
             oscMessage.addFloat32(value);
             oscSender.send(oscMessage);
+            if (alsoUseSender2)
+                oscSender2.send(oscMessage); // no check either...
         }
         /// \brief Converts the value and sends its as a float to the given OSC address
         ///
@@ -301,6 +323,8 @@ namespace Miam
             
             if (! oscSender.send(message))
                 throw Miam::OscException("OSC Message couldn't be sent. Check OSC settings and addresses.");
+            if (alsoUseSender2)
+                oscSender2.send(message); // no check
         }
         
         // Envoi d'un blob avec tout un ensemble de coeffs
@@ -315,6 +339,8 @@ namespace Miam
             OSCMessage blobMessage(Miam_OSC_Matrix_Address);
             blobMessage.addBlob(oscMemoryBlock);
             oscSender.send(blobMessage);
+            if (alsoUseSender2)
+                oscSender2.send(blobMessage);
         }
         
         public :
