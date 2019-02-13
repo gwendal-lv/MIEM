@@ -172,7 +172,7 @@ void UserQuestions::resized()
     allowDataToggleButton->setBounds (8, 80, getWidth() - 35, 24);
     label2->setBounds (8, 104, getWidth() - 35, 24);
     visionDisorderToggleButton->setBounds (8, 192, getWidth() - 35, 24);
-    label3->setBounds (8, 224, getWidth() - 27, 24);
+    label3->setBounds (8, 208, getWidth() - 27, 24);
     physicalDisorderToggleButton->setBounds (16, 347, getWidth() - 35, 24);
     label4->setBounds (8, 379, getWidth() - 27, 24);
     //[UserResized] Add your own custom resize handling here..
@@ -264,7 +264,7 @@ BEGIN_JUCER_METADATA
                 virtualName="" explicitFocusOrder="0" pos="8 192 35M 24" buttonText="I suffer from a vision disorder"
                 connectedEdges="0" needsCallback="1" radioGroupId="0" state="0"/>
   <LABEL name="new label" id="e9827abd77de5abc" memberName="label3" virtualName=""
-         explicitFocusOrder="0" pos="8 224 27M 24" edTextCol="ff000000"
+         explicitFocusOrder="0" pos="8 208 27M 24" edTextCol="ff000000"
          edBkgCol="0" labelText="If you suffer from a vision disorder, please tell us its nature in the form below:"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"

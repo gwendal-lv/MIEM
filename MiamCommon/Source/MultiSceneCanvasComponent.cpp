@@ -84,6 +84,11 @@ void MultiSceneCanvasComponent::resized()
     
     // Buttons positionning
     updateSceneButtonsBounds();
+    
+    // Sizes display in MOBILE versions
+#if defined(__MIAMOBILE) || defined(__MIEM_DISPLAY_CANVAS_RESIZE)
+    std::cout << "Taille MultiSceneCanvasComponent : " << getWidth() << "px x " << getHeight() << "px, Ratio=" << ((double)(getWidth()) / (double)(getHeight())) << std::endl;
+#endif
 }
 
 

@@ -117,7 +117,10 @@ public:
             // Et pas dans le "main component"
             setResizable(true, true);
             setResizeLimits(1050, 650, 10000, 10000);
-            centreWithSize (1050, 650);
+            
+            // to get a 1.37705 canvas ratio for
+            // gen con version 1.0.2
+            centreWithSize (1083, 680); // obtained ratio : 1.37660
 #endif
             
         }
