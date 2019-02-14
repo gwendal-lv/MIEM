@@ -118,7 +118,7 @@ void OSCRecorder::reinitExperiment()
     std::cout << std::endl;
     
     // - - - Init of main counter
-    currentPresetIndex = -(int)TrialPresetsCount - 1;
+    currentPresetStep = -(int)TrialPresetsCount - 1;
 }
                                     
 void OSCRecorder::tryConnectSocketAndContinueExpe()
@@ -170,14 +170,14 @@ void OSCRecorder::nextExperimentStep()
 void OSCRecorder::nextPreset()
 {
     // last preset : final questions
-    if (currentPresetIndex >= (int)ExperimentPresetsCount - 1)
+    if (currentPresetStep >= (int)ExperimentPresetsCount - 1)
     {
         changeState(ExperimentState::FinalQuestionsDisplayed);
     }
     // or just the next preset
     else
     {
-        currentPresetIndex++;
+        currentPresetStep++;
         changeState(ExperimentState::ReadyToListen);
     }
 }
@@ -227,30 +227,51 @@ void OSCRecorder::changeState(ExperimentState newState)
             mainComponent->finalUserQuestionsComponent->setVisible(true);
             break;
             
+            // Préparation pour Écoute : on affiche une scène vide, puis
+            // on active la bonne track de Reaper
         case ExperimentState::ReadyToListen:
+            selectNewMiemScene(true); // empty scene
+            // on sélectionne la track EXPERIMENT (pas la référence)
+            reaperController->SetTrackSolo_usingMutes(presets[presetRandomIdx[currentPresetStep]]->GetReaperTrackNumber(true));
+            
             mainComponent->firstUserQuestionsComponent->setVisible(false);
             mainComponent->finalUserQuestionsComponent->setVisible(false);
             break;
             
+            // Listening : tout est prêt, on fait juste play dans Reaper
         case ExperimentState::Listening:
-            selectNewScene(true); // empty scene
+            reaperController->RestartAndPlay(presets[presetRandomIdx[currentPresetStep]]->GetTempo());
             break;
             
+            // Au "ready to search" :
+            // on STOP REAPER, on sélectionne déjà la bonne track, mais on
+            // n'affiche pas encore la scène MIEM
         case ExperimentState::ReadyToSearchPreset:
+            reaperController->Stop();
+            // on sélectionne la track EXPERIMENT (pas la référence)
+            reaperController->SetTrackSolo_usingMutes(presets[presetRandomIdx[currentPresetStep]]->GetReaperTrackNumber(false));
             break;
             
+            // Au lancement de la recherche : on lance la scène MIEM d'abord
+            // Puis : la track Reaper est déjà
+            // sélectionnée, il ne reste qu'à faire PLAY
         case ExperimentState::SearchingPreset:
-            selectNewScene(); // empty scene
+            reaperController->RestartAndPlay(presets[presetRandomIdx[currentPresetStep]]->GetTempo());
+            selectNewMiemScene(); // empty scene
             break;
             
+            // Fin de la recherche : on coupe Reaper (mute all)
+            // et on replace la scène vide.
+            // Et après on actualise et on lance le preset suivant
         case ExperimentState::FinishedSearchingPreset:
-            selectNewScene(true);
-            if (currentPresetIndex >= ((int)ExperimentPresetsCount - 1))
+            reaperController->Stop();
+            selectNewMiemScene(true);
+            if (currentPresetStep >= ((int)ExperimentPresetsCount - 1))
             {
                 // will trigger an event, but after this one is treated...
                 // not very robust... But should be ok for the experiment....
                 juce::Timer::callAfterDelay(delayAfterFinished_ms, [this]
-                {   currentPresetIndex++; // goes to an unvalid value
+                {   currentPresetStep++; // goes to an unvalid value
                     this->changeState(ExperimentState::FinalQuestionsDisplayed); } );
             }
             // security save
@@ -277,14 +298,14 @@ void OSCRecorder::changeState(ExperimentState newState)
         // Experiment state : full display (with preset #)
         if (ExperimentStateUtils::IsInteractiveExperimentState(state))
         {
-            std::cout << "[Interactive experiment in progress...] " << ExperimentStateUtils::GetName(state) << " #" << currentPresetIndex << std::endl;
-            recorderComponent.DisplayNewState(state, currentPresetIndex, ExperimentPresetsCount);
+            std::cout << "[Interactive experiment in progress...] " << ExperimentStateUtils::GetName(state) << " #" << currentPresetStep << std::endl;
+            recorderComponent.DisplayNewState(state, currentPresetStep, ExperimentPresetsCount);
         }
         // other state : simple name display
         else
         {
             std::cout << "[Current experiment state: ] " <<  ExperimentStateUtils::GetName(state) << std::endl;
-            recorderComponent.DisplayNewState(state, currentPresetIndex, ExperimentPresetsCount);
+            recorderComponent.DisplayNewState(state, currentPresetStep, ExperimentPresetsCount);
         }
     }
     
@@ -303,15 +324,15 @@ void OSCRecorder::changeState(ExperimentState newState)
                               });
 }
 
-void OSCRecorder::selectNewScene(bool selectEmptyScene)
+void OSCRecorder::selectNewMiemScene(bool selectEmptyScene)
 {
-    // in Miem Controller : Scene 0 is empty. Actual scenes start from 1 then
-    int miemSceneIndex = 0;
-    if (!selectEmptyScene)
-        miemSceneIndex = (int)presetRandomIdx[currentPresetIndex] + 1;
-
-    std::cout << "Demande OSC de la scène #" << miemSceneIndex << std::endl;
-    selectMiemControllerScene(miemSceneIndex);
+    if (selectEmptyScene)
+        selectMiemControllerScene(0);
+    else
+    {
+        auto& currentPreset = presets[presetRandomIdx[currentPresetStep]];
+        selectMiemControllerScene(currentPreset->GetMiemSceneIndex());
+    }
 }
 
 
@@ -407,8 +428,8 @@ void OSCRecorder::OnConnectionLost()
     // Ensuite, si preset réel (pas trial), sauvegarde de l'état
     // L'expérience en cours sera supprimée... Tant pis !
     // On passe à la suivante
-    if (currentPresetIndex >= 0) // check for "not trial and not question"
-        presets[currentPresetIndex]->SetIsValid(false);
+    if (currentPresetStep >= 0) // check for "not trial and not question"
+        presets[currentPresetStep]->SetIsValid(false);
     
     // Enfin préparation pour la re-connection
 
@@ -420,6 +441,8 @@ void OSCRecorder::OnConnectionLost()
 // ================== Events to MIEM Controller via network ==================
 bool OSCRecorder::selectMiemControllerScene(int sceneIndex)
 {
+    std::cout << "[OSC -> MIEM Controller] : affichage scène " << sceneIndex << std::endl;
+    
     Miam::AsyncParamChange paramChange(Miam::AsyncParamChange::Scene);
     paramChange.Id1 = sceneIndex;
     Miam::InterprocessControlBlock controlBlock(paramChange);
@@ -523,7 +546,7 @@ void OSCRecorder::saveEverythingToFiles()
     questionsChildrenTree.add_child("final_questions",
                                     *(mainComponent->finalUserQuestionsComponent->GetQuestionsBPTree()));
     // Infos sur les presets
-    int currentActualPresetsCount = std::min(std::max(currentPresetIndex + 1, (int)0),
+    int currentActualPresetsCount = std::min(std::max(currentPresetStep + 1, (int)0),
                                              (int)(ExperimentPresetsCount));
     bptree::ptree testedPresetInnerTree;
     testedPresetInnerTree.put("<xmlattr>.count", currentActualPresetsCount);

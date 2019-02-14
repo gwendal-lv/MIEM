@@ -39,6 +39,88 @@
 /// ============= Liste de presets =============
 /// ============= Liste de presets =============
 
+MiemExpePreset::MiemExpePreset(int _synthId, bool _findFromInterpolation) :
+synthId(_synthId),
+findFromInterpolation(_findFromInterpolation)
+{
+    if (synthId > 9  || synthId < -1)
+    {
+        throw std::runtime_error("Synths IDs prévus actuellement de -2 à +9");
+    }
+    /// - - - - MIEM SCENE INDEX A CHOISIR ICI - - - -
+    /// - - - - MIEM SCENE INDEX A CHOISIR ICI - - - -
+    /// - - - - MIEM SCENE INDEX A CHOISIR ICI - - - -
+    sceneBaseIndex = -1000;
+    if (synthId == -2)
+    {
+        sceneBaseIndex = 1;
+        tempo = 120.0f;
+    }
+    else if (synthId == -1)
+    {
+        sceneBaseIndex = 1;
+        tempo = 120.0f;
+    }
+    else if (synthId == 0)
+    {
+        sceneBaseIndex = 1;
+        tempo = 120.0f;
+    }
+    else if (synthId == 1)
+    {
+        sceneBaseIndex = 1;
+        tempo = 120.0f;
+    }
+    else if (synthId == 2)
+    {
+        sceneBaseIndex = 1;
+        tempo = 120.0f;
+    }
+    else if (synthId == 3)
+    {
+        sceneBaseIndex = 1;
+        tempo = 120.0f;
+    }
+    else if (synthId == 4)
+    {
+        sceneBaseIndex = 1;
+        tempo = 120.0f;
+    }
+    else if (synthId == 5)
+    {
+        sceneBaseIndex = 1;
+        tempo = 120.0f;
+    }
+    else if (synthId == 6)
+    {
+        sceneBaseIndex = 1;
+        tempo = 120.0f;
+    }
+    else if (synthId == 7)
+    {
+        sceneBaseIndex = 1;
+        tempo = 120.0f;
+    }
+    else if (synthId == 8)
+    {
+        sceneBaseIndex = 1;
+        tempo = 120.0f;
+    }
+    else if (synthId == 9)
+    {
+        sceneBaseIndex = 1;
+        tempo = 120.0f;
+    }
+    else
+        assert(false); // index must be found in the previous cases
+    /// - - - - MIEM SCENE INDEX A CHOISIR ICI - - - -
+    /// - - - - MIEM SCENE INDEX A CHOISIR ICI - - - -
+    /// - - - - MIEM SCENE INDEX A CHOISIR ICI - - - -
+}
+
+
+
+
 
 std::map<int, size_t> MiemExpePreset::GeneratePresetIndexToRandomIndexMap(int actualPresetsCount,
                                                                  int trialPresetsCount)
@@ -73,46 +155,6 @@ std::map<int, size_t> MiemExpePreset::GeneratePresetIndexToRandomIndexMap(int ac
 }
 
 
-MiemExpePreset::MiemExpePreset(int _synthId, bool _findFromInterpolation) :
-synthId(_synthId),
-findFromInterpolation(_findFromInterpolation)
-{
-    if (synthId > 9  || synthId < -1)
-    {
-        throw std::runtime_error("Synths IDs prévus actuellement de -2 à +9");
-    }
-    /// - - - - MIEM SCENE INDEX A CHOISIR ICI - - - -
-    /// - - - - MIEM SCENE INDEX A CHOISIR ICI - - - -
-    /// - - - - MIEM SCENE INDEX A CHOISIR ICI - - - -
-    int sceneBaseIndex = -1000;
-    if (synthId == -2)
-        sceneBaseIndex = 1;
-    else if (synthId == -1)
-        sceneBaseIndex = 1;
-    else if (synthId == 0)
-        sceneBaseIndex = 1;
-    else if (synthId == 1)
-        sceneBaseIndex = 1;
-    else if (synthId == 2)
-        sceneBaseIndex = 1;
-    else if (synthId == 3)
-        sceneBaseIndex = 1;
-    else if (synthId == 4)
-        sceneBaseIndex = 1;
-    else if (synthId == 5)
-        sceneBaseIndex = 1;
-    else if (synthId == 6)
-        sceneBaseIndex = 1;
-    else if (synthId == 7)
-        sceneBaseIndex = 1;
-    else if (synthId == 8)
-        sceneBaseIndex = 1;
-    else if (synthId == 9)
-        sceneBaseIndex = 1;
-    /// - - - - MIEM SCENE INDEX A CHOISIR ICI - - - -
-    /// - - - - MIEM SCENE INDEX A CHOISIR ICI - - - -
-    /// - - - - MIEM SCENE INDEX A CHOISIR ICI - - - -
-}
 
 
 int MiemExpePreset::GetUID() const
@@ -121,6 +163,14 @@ int MiemExpePreset::GetUID() const
         return synthId + 10;
     else
         return synthId;
+}
+
+int MiemExpePreset::GetMiemSceneIndex() const
+{
+    if (findFromInterpolation)
+        return sceneBaseIndex + 1;
+    else
+        return sceneBaseIndex;
 }
 
 

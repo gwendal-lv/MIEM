@@ -153,7 +153,7 @@ void OSCRecorderComponent::buttonClicked (Button* buttonThatWasClicked)
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 
 
-void OSCRecorderComponent::DisplayNewState(ExperimentState newState, int presetIndex, size_t presetsCount)
+void OSCRecorderComponent::DisplayNewState(ExperimentState newState, int presetStep, size_t presetsCount)
 {
     // BUTTONS display
     setVisible(true);
@@ -219,15 +219,15 @@ void OSCRecorderComponent::DisplayNewState(ExperimentState newState, int presetI
     // On if the state if an actual experiment state
     if (ExperimentStateUtils::IsInteractiveExperimentState(newState))
     {
-        int presetNumber = presetIndex + 1;
+        int presetNumber = presetStep + 1;
 
-        if (presetIndex >= 0) // actual presets
+        if (presetStep >= 0) // actual presets
             countLabel->setText(TRANS("Current preset: ") + String(presetNumber) + String("/") + String(presetsCount), NotificationType::dontSendNotification);
-        else if (presetIndex == -2)
+        else if (presetStep == -2)
             countLabel->setText(TRANS("TRIAL preset 1."), NotificationType::dontSendNotification);
-        else if (presetIndex == -1)
+        else if (presetStep == -1)
             countLabel->setText(TRANS("TRIAL preset 2."), NotificationType::dontSendNotification);
-        else if (presetIndex == -3)
+        else if (presetStep == -3)
             countLabel->setText(TRANS("trials not started yet"), NotificationType::dontSendNotification);
         else
             assert(false); // un planned case

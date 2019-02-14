@@ -43,7 +43,9 @@ class MiemExpePreset {
     static const int trialSynthsCount = 1;
     const int synthId;
     const bool findFromInterpolation; ///< Type de moyen de recherche du preset
-    int miemSceneIndex; ///< index de la scène MIEM Controller pour ce synthé
+    
+    int sceneBaseIndex; ///< index de la scène MIEM Controller pour ce synthé
+    float tempo; ///< raw REAPER tempo value
     
     int appearanceIndex; ///< Random index <-> order within the experiment. Negative values for trial presets
     
@@ -60,8 +62,9 @@ class MiemExpePreset {
     void SetAppearanceIndex(int _randomizedIndex) {appearanceIndex = _randomizedIndex;}
     
     int GetUID() const;
-    int GetMiemSceneIndex() const {return miemSceneIndex;}
+    int GetMiemSceneIndex() const;
     int GetSynthId() const {return synthId;}
+    float GetTempo() const {return tempo;}
     bool GetIsFoundFromInterpolation() const {return findFromInterpolation;}
     
     /// \brief Donne le numéro de track correspond dans Reaper, pour le preset dont on

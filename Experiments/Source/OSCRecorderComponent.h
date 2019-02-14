@@ -49,7 +49,7 @@ public:
     //[UserMethods]     -- You can add your own custom methods in this section.
     void SetRecorderManager(OSCRecorder* _recorder) {recorderManager = _recorder;}
 
-    void DisplayNewState(ExperimentState newState, int presetIndex, size_t presetsCount);
+    void DisplayNewState(ExperimentState newState, int presetStep, size_t presetsCount);
     //[/UserMethods]
 
     void paint (Graphics& g) override;

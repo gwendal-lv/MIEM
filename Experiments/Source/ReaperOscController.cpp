@@ -50,8 +50,51 @@ void ReaperOscController::oscBundleReceived (const OSCBundle & oscBundle)
 }
 
 
+
+void ReaperOscController::RestartAndPlay(float tempo)
+{
+    std::cout << "[OSC -> REAPER]: REPLAY, TEMPO = " << tempo << std::endl;
+    
+    // TEMPO set before playing
+    String oscAddress = "/tempo/raw";
+    OSCMessage oscMsgTempo = OSCMessage(OSCAddressPattern(oscAddress));
+    oscMsgTempo.addFloat32(tempo);
+    sendMessageOrThrowException(oscMsgTempo);
+    
+    // IL FAUT SET LE REPEEEEAAAAATTTTTTTTT
+    // pour ne pas devoir vérifier à la main à chaque fois que c'est bien en place...
+    
+    // Then : RESTART
+    oscAddress = "/time";
+    OSCMessage oscMsgTime = OSCMessage(OSCAddressPattern(oscAddress));
+    oscMsgTime.addFloat32(0.0f); // works ?
+    sendMessageOrThrowException(oscMsgTime);
+    
+    // At last : PLAY
+    oscAddress = "/play";
+    OSCMessage oscTriggerMsg = OSCMessage(OSCAddressPattern(oscAddress));
+    oscTriggerMsg.addInt32(1); // trigger forced to 1 (not a real trigger then...)
+    sendMessageOrThrowException(oscTriggerMsg);
+}
+void ReaperOscController::Stop()
+{
+    std::cout << "[OSC -> REAPER]: STOP" << std::endl;
+    
+    // STOP
+    String oscAddress = "/stop";
+    OSCMessage oscTriggerMsg = OSCMessage(OSCAddressPattern(oscAddress));
+    oscTriggerMsg.addInt32(1); // trigger forced to 1 (not a real trigger then...)
+    sendMessageOrThrowException(oscTriggerMsg);
+}
+
+
 void ReaperOscController::SetTrackSolo_usingMutes(int trackNumber)
 {
+    if (trackNumber <= 0)
+        std::cout << "[OSC -> REAPER]: mute pour TOUTES les tracks" << std::endl;
+    else
+        std::cout << "[OSC -> REAPER]: track " << trackNumber << " Solo." << std::endl;
+    
     for (int i=1 ; i<=tracksCount ; i++)
     {
         if (i != trackNumber)
@@ -74,8 +117,7 @@ void ReaperOscController::setTrackMuteState(int trackNumber, bool shouldBeMuted)
     else
         oscMsg.addInt32(0);
     
-    if ( ! sender.send(oscMsg) )
-        displayErrorAndThrowException(TRANS("Impossible to send on OSC message to Reaper"));
+    sendMessageOrThrowException(oscMsg);
 }
 
 void ReaperOscController::waitForMissingReaperResponses()
@@ -85,6 +127,11 @@ void ReaperOscController::waitForMissingReaperResponses()
 }
 
 
+void ReaperOscController::sendMessageOrThrowException(OSCMessage& oscMessage)
+{
+    if ( ! sender.send(oscMessage) )
+        displayErrorAndThrowException(TRANS("Impossible to send an OSC message to Reaper. Check call stack to find the type of message being sent."));
+}
 
 void ReaperOscController::displayErrorAndThrowException(String errorStr)
 {

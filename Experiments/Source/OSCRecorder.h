@@ -96,7 +96,7 @@ class OSCRecorder : public UserQuestionsManager {
     /// \brief Index qui représente l'étape de l'expérience à laquelle on est rendu
     ///
     /// Les indexes -1 et -2 correspondent au "tours d'essais" qui ne seront pas comptabilisés
-    int currentPresetIndex = -(int)TrialPresetsCount - 1;
+    int currentPresetStep = -(int)TrialPresetsCount - 1;
     /// \brief sorted by index (NOT randomized). Last presets in the list are trial presets
     std::vector<std::shared_ptr<MiemExpePreset>> presets;
     /// \brief tranforms a currentPresetIndex (might be negative for trial presets)
@@ -146,7 +146,7 @@ class OSCRecorder : public UserQuestionsManager {
     
     // OSC control of Reaper and MIEM Controller
     protected :
-    void selectNewScene(bool selectEmptyScene = false);
+    void selectNewMiemScene(bool selectEmptyScene = false);
     
     
     

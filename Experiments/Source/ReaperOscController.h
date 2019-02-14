@@ -44,6 +44,13 @@ class ReaperOscController : public OSCReceiver::Listener<OSCReceiver::MessageLoo
     virtual void oscBundleReceived (const OSCBundle &) override;
     
     
+    void RestartAndPlay(float tempo);
+    void Stop();
+    
+    
+    /// \brief Sets a track as "solo" by muting all other tracks.
+    ///
+    /// Set track -1 as solo to mute all tracks
     void SetTrackSolo_usingMutes(int trackNumber);
     
     
@@ -57,5 +64,6 @@ class ReaperOscController : public OSCReceiver::Listener<OSCReceiver::MessageLoo
 
     
     void displayErrorAndThrowException(String errorStr);
+    void sendMessageOrThrowException(OSCMessage& oscMessage);
     
     };
