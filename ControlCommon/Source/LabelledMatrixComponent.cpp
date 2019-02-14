@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.1
+  Created with Projucer version: 5.4.2
 
   ------------------------------------------------------------------------------
 
@@ -61,7 +61,7 @@ LabelledMatrixComponent::LabelledMatrixComponent (ISlidersMatrixListener* _liste
                                          "    outputs")));
     addAndMakeVisible (inputsOutputsLabel.get());
     inputsOutputsLabel->setTooltip (TRANS("\n"));
-    inputsOutputsLabel->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Bold"));
+    inputsOutputsLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Bold"));
     inputsOutputsLabel->setJustificationType (Justification::centredLeft);
     inputsOutputsLabel->setEditable (false, false, false);
     inputsOutputsLabel->setColour (Label::backgroundColourId, Colours::silver);
@@ -638,7 +638,7 @@ BEGIN_JUCER_METADATA
                  componentName="" parentClasses="public Component, public TextEditor::Listener, public Button::Listener"
                  constructorParams="ISlidersMatrixListener* _listener, unsigned int _maxRowsCount, unsigned int _maxColsCount"
                  variableInitialisers="" snapPixels="8" snapActive="1" snapShown="1"
-                 overlayOpacity="0.33" fixedSize="0" initialWidth="600" initialHeight="400">
+                 overlayOpacity="0.330" fixedSize="0" initialWidth="600" initialHeight="400">
   <METHODS>
     <METHOD name="mouseMove (const MouseEvent&amp; e)"/>
     <METHOD name="mouseDown (const MouseEvent&amp; e)"/>
@@ -663,3 +663,4 @@ END_JUCER_METADATA
 
 //[EndFile] You can add extra defines here...
 //[/EndFile]
+

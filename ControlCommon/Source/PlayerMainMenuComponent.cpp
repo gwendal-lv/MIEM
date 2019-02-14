@@ -173,6 +173,14 @@ PlayerMainMenuComponent::PlayerMainMenuComponent ()
         miemProjectHyperlinkButton->setURL(URL("http://miem.laras.be/spat"));
     }
 
+    
+#ifdef __MIEM_EXPERIMENTS
+    additionnalStatusLabel->setText("Experiments' build (controlled by TCP connection).",
+                                    NotificationType::dontSendNotification);
+#else
+    additionnalStatusLabel->setVisible(false);
+#endif
+    
     //[/Constructor]
 }
 
@@ -408,7 +416,9 @@ void PlayerMainMenuComponent::SetInfoLabelText(const String& text)
     else
     {
         additionnalStatusLabel->setText(text, NotificationType::dontSendNotification);
+#ifdef __MIEM_EXPERIMENTS
         additionnalStatusLabel->setVisible(true);
+#endif
     }
 }
 //[/MiscUserCode]

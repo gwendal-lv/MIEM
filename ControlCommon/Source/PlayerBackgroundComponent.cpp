@@ -295,6 +295,7 @@ void PlayerBackgroundComponent::ChangeAppMode(PlayerAppMode newAppMode)
             //
             break;
         case PlayerAppMode::MainMenu:
+            mainInfoLabel->setVisible(true);
             multiCanvasComponent->setVisible(false);
             mainMenuComponent->setVisible(true);
             mainSlider->setVisible(false);
@@ -310,6 +311,7 @@ void PlayerBackgroundComponent::ChangeAppMode(PlayerAppMode newAppMode)
 
 
         case PlayerAppMode::Stopped:
+            mainInfoLabel->setVisible(true);
             multiCanvasComponent->setVisible(false);
             mainMenuComponent->setVisible(true);
             mainSlider->setVisible(false);
@@ -329,6 +331,9 @@ void PlayerBackgroundComponent::ChangeAppMode(PlayerAppMode newAppMode)
                                       masterGainLabel->setVisible(isMainSliderEnabled);
                                       presenter->OnViewIsPreparingToPlay(false);
                                   });
+#ifdef __MIEM_EXPERIMENTS
+            mainInfoLabel->setVisible(false);
+#endif
             break;
 
         default:
