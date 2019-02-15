@@ -393,8 +393,9 @@
     </XCODE_IPHONE>
     <ANDROIDSTUDIO targetFolder="Builds/Android" bigIcon="KocCMm" androidBluetoothNeeded="0"
                    androidActivityClass="com.gwendallv.MIEMSpat" extraDefs="__MIAMOBILE&#10;__MIEM_GL_INFO_DISPLAY"
-                   androidMinimumSDK="23" gradleToolchain="clang" androidScreenOrientation="landscape"
-                   gradleWrapperVersion="3.3.0" gradleVersion="4.10.1">
+                   androidMinimumSDK="26" gradleToolchain="clang" androidScreenOrientation="landscape"
+                   gradleWrapperVersion="3.3.1" gradleVersion="4.10.1" userNotes="Android SDK 26 : android 8.0 (n&#233;cessaire comme target... Mais pas vraiment comme minimum)&#10;Build tools 28.0.3 : septembre 2018"
+                   buildToolsVersion="28.0.3">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" defines="__MIAM_DEBUG&#10;__MIEM_DEBUG_TRACE__DISABLED"/>
         <CONFIGURATION isDebug="0" name="Release"/>

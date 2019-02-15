@@ -199,13 +199,20 @@ void PlayerMainMenuComponent::resized()
 
     // Buttons (and the group itself) will be hidden if there is not enough height available
     helpGroupComponent->setVisible(true); // default, will be false only if very, very small screen
+    // If there is space for the "load session" category only
+#ifdef JUCE_ANDROID
+    // ANDROID does not rotate for now ! So the help would never be shown on smartphones...
+    if (false)
+#else
     if (helpGroupComponent->getHeight() < (helpButton->getHeight()+24))
+#endif
     {
         helpGroupComponent->setVisible(false);
         helpButton->setVisible(false);
         loadDefaultButton->setVisible(false);
         miemProjectHyperlinkButton->setVisible(false);
     }
+    // Else if there is space the "load session" and the "help" categories
     else if (helpGroupComponent->getHeight() < (helpButton->getHeight()+64))
     {
         helpButton->setVisible(true);
