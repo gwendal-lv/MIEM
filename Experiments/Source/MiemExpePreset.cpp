@@ -8,6 +8,8 @@
   ==============================================================================
 */
 
+#include <algorithm>
+
 #include "MiemExpePreset.h"
 
 #include "JuceHeader.h"
@@ -41,81 +43,88 @@
 
 MiemExpePreset::MiemExpePreset(int _synthId, bool _findFromInterpolation) :
 synthId(_synthId),
-findFromInterpolation(_findFromInterpolation)
+findFromInterpolation(_findFromInterpolation),
+parametersCount(4) // const at the moment
 {
     if (synthId > 9  || synthId < -1)
     {
         throw std::runtime_error("Synths IDs prévus actuellement de -2 à +9");
     }
-    /// - - - - MIEM SCENE INDEX A CHOISIR ICI - - - -
-    /// - - - - MIEM SCENE INDEX A CHOISIR ICI - - - -
-    /// - - - - MIEM SCENE INDEX A CHOISIR ICI - - - -
+    /// - - - - MIEM SCENE INDEX and TEMPO - - - -
+    /// - - - - MIEM SCENE INDEX and TEMPO - - - -
+    /// - - - - MIEM SCENE INDEX and TEMPO - - - -
     sceneBaseIndex = -1000;
-    if (synthId == -2)
+    if (synthId == -1)
     {
-        sceneBaseIndex = 1;
-        tempo = 120.0f;
-    }
-    else if (synthId == -1)
-    {
+        name = "[trial] Simple Wurli with delay and chorus";
         sceneBaseIndex = 1;
         tempo = 120.0f;
     }
     else if (synthId == 0)
     {
+        name = "Synth #0";
         sceneBaseIndex = 1;
         tempo = 120.0f;
     }
     else if (synthId == 1)
     {
+        name = "Synth #1";
         sceneBaseIndex = 1;
         tempo = 120.0f;
     }
     else if (synthId == 2)
     {
+        name = "Synth #2";
         sceneBaseIndex = 1;
         tempo = 120.0f;
     }
     else if (synthId == 3)
     {
+        name = "Synth #3";
         sceneBaseIndex = 1;
         tempo = 120.0f;
     }
     else if (synthId == 4)
     {
+        name = "Synth #4";
         sceneBaseIndex = 1;
         tempo = 120.0f;
     }
     else if (synthId == 5)
     {
+        name = "Synth #5";
         sceneBaseIndex = 1;
         tempo = 120.0f;
     }
     else if (synthId == 6)
     {
+        name = "Synth #6";
         sceneBaseIndex = 1;
         tempo = 120.0f;
     }
     else if (synthId == 7)
     {
+        name = "Synth #7";
         sceneBaseIndex = 1;
         tempo = 120.0f;
     }
     else if (synthId == 8)
     {
+        name = "Synth #8";
         sceneBaseIndex = 1;
         tempo = 120.0f;
     }
     else if (synthId == 9)
     {
+        name = "Synth #9";
         sceneBaseIndex = 1;
         tempo = 120.0f;
     }
+    /// - - - - MIEM SCENE INDEX and TEMPO - - - -
+    /// - - - - MIEM SCENE INDEX and TEMPO - - - -
+    /// - - - - MIEM SCENE INDEX and TEMPO - - - -
     else
         assert(false); // index must be found in the previous cases
-    /// - - - - MIEM SCENE INDEX A CHOISIR ICI - - - -
-    /// - - - - MIEM SCENE INDEX A CHOISIR ICI - - - -
-    /// - - - - MIEM SCENE INDEX A CHOISIR ICI - - - -
 }
 
 
@@ -180,6 +189,7 @@ std::shared_ptr<bptree::ptree> MiemExpePreset::GetInfoTree()
     
     // UID and display order
     preseTree->put("<xmlattr>.synth_id", synthId);
+    preseTree->put("<xmlattr>.name", name);
     preseTree->put("<xmlattr>.from_interpolation", findFromInterpolation);
     preseTree->put("<xmlattr>.appearance_index", appearanceIndex);
     preseTree->put("<xmlattr>.is_valid", isValid);
@@ -206,4 +216,83 @@ int MiemExpePreset::GetReaperTrackNumber(bool getReferenceTrack)
         return 1 + (synthId + trialSynthsCount) * 2;
     else
         return 2 + (synthId + trialSynthsCount) * 2;
+}
+
+
+
+
+
+// ======================== Samples management ============================
+void MiemExpePreset::AddSamples(const std::vector<MiemSample> & newSamples)
+{
+    size_t firstAdditionIndex = samples.size();
+    
+    // avec mise à zéro des nouvelles samples
+    samples.resize(samples.size() + newSamples.size());
+    
+    for (size_t i=0 ; i<newSamples.size() ; i++)
+    {
+        samples[firstAdditionIndex + i] = newSamples[i];
+    }
+}
+
+
+void MiemExpePreset::SortSamples()
+{
+    // ultra-pas-optimisé !
+    // tri à la main à l'ancienne... avec des insertions/suppressions sauvages
+    // (du coup : copie quand même dans une liste pour insertions/suppressions rapides
+    std::list<MiemSample> copiedList(samples.begin(), samples.end());
+    
+    // recopie dans un vecteur au fur et à mesure
+    sortedSamples.clear();
+    sortedSamples.reserve(copiedList.size());
+    for (int i=1 ; i<= parametersCount ; i++)
+    {
+        // On parcourt la liste jusqu'à la fin
+        auto it = copiedList.begin();
+        while (it != copiedList.end())
+        {
+            if (it->parameterIndex == i)
+            {
+                sortedSamples.push_back((*it));
+                // si suppression, il faut récupérer un itérateur valide !
+                it = copiedList.erase(it);
+                // qui sera re-testé directement après pour la prochaine itération
+            }
+            else
+            {
+                // si pas de suppression... on incrémente
+                it++;
+            }
+        }
+    }
+    
+    if (copiedList.size() > 0)
+        assert(false); // on était censé vider la liste heeeeiiiiiin
+    
+    //std::copy(std::begin(copiedList), std::end(copiedList), std::back_inserter(sortedSamples));
+    
+    //DisplayInStdCout(true);
+}
+
+
+void MiemExpePreset::DisplayInStdCout(bool displaySortedSamples)
+{
+    if (! displaySortedSamples)
+    {
+        std::cout << "------------ Preset " << synthId << "/" << findFromInterpolation << " --------------" << std::endl;
+        for (size_t i=0 ; i<samples.size() ; i++)
+        {
+            std::cout << samples[i].time_ms << " ; " << samples[i].parameterIndex << " ; " << samples[i].value << std::endl;
+        }
+    }
+    else
+    {
+        std::cout << "------------ Preset " << synthId << "/" << findFromInterpolation << " SORTED --------------" << std::endl;
+        for (size_t i=0 ; i<sortedSamples.size() ; i++)
+        {
+            std::cout << sortedSamples[i].time_ms << " ; " << sortedSamples[i].parameterIndex << " ; " << sortedSamples[i].value << std::endl;
+        }
+    }
 }

@@ -18,12 +18,13 @@
 #include "boost/property_tree/xml_parser.hpp"
 namespace bptree = boost::property_tree;
 
+#include "OSCRealtimeListener.h" // MiemClock
+
 #include "ExperimentState.h"
 #include "MiemExpePreset.h"
 
 #include "UserQuestionsManager.h"
 #include "OSCRecorderConnection.h"
-#include "OSCRealtimeListener.h"
 
 #include "ReaperOscController.h"
 
@@ -31,9 +32,9 @@ class OSCRecorderComponent;
 class OSCRealtimeListener;
 class MainComponent;
 
-typedef std::chrono::steady_clock MiemClock;
 
-class OSCRecorder : public UserQuestionsManager {
+class OSCRecorder : public UserQuestionsManager, public juce::Timer
+{
     
     // ===================================================================
     // ===================================================================
@@ -122,6 +123,8 @@ class OSCRecorder : public UserQuestionsManager {
     // = = = = = = = = = = METHODS = = = = = = = = = =
     public :
     OSCRecorder(MainComponent* _mainComponent);
+    virtual ~OSCRecorder() {}
+    
     void BeginExperiment();
     
     // Internal management
@@ -139,6 +142,9 @@ class OSCRecorder : public UserQuestionsManager {
     /// Manages if the next preset does not exist (then, switches to the final questions)
     void nextPreset();
     
+    void startRecording();
+    void stopRecording();
+    
     
     /// \brief Main State-Changing (mode managing) function
     void changeState(ExperimentState newState);
@@ -148,6 +154,12 @@ class OSCRecorder : public UserQuestionsManager {
     protected :
     void selectNewMiemScene(bool selectEmptyScene = false);
     
+    
+    
+    // - - - - - Periodic updates - - - - -
+    protected :
+    virtual void timerCallback() override;
+
     
     
     public :

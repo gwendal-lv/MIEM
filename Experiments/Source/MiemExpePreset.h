@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include <vector>
+#include <list>
 #include <map>
 #include <random>
 #include <memory>
@@ -23,9 +24,9 @@ namespace bptree = boost::property_tree;
 
 
 struct MiemSample {
-    int time_ms;
-    int parameterIndex;
-    float value;
+    int time_ms; ///< Time of reception of the sample, in milliseconds since the beginning of experiment.
+    int parameterIndex; ///< Index of the parameter concerned by this sample.
+    float value; ///< Actual value of the sample.
 };
 typedef struct MiemSample MiemSample;
 
@@ -44,6 +45,9 @@ class MiemExpePreset {
     const int synthId;
     const bool findFromInterpolation; ///< Type de moyen de recherche du preset
     
+    /// - - - - EXPERIMENT VALUE ASSIGNED BY CONSTRUCTOR - - - -
+    std::string name;
+    const int parametersCount; ///< Parameters indexes count (actual indexes start at 1)
     int sceneBaseIndex; ///< index de la scène MIEM Controller pour ce synthé
     float tempo; ///< raw REAPER tempo value
     
@@ -53,6 +57,7 @@ class MiemExpePreset {
     bool isValid = true;
     
     std::vector<MiemSample> samples;
+    std::vector<MiemSample> sortedSamples;
 
     
     
@@ -85,6 +90,13 @@ class MiemExpePreset {
     
     std::shared_ptr<bptree::ptree> GetInfoTree();
     
+
+    // - - - - - Samples management - - - - -
+    void AddSamples(const std::vector<MiemSample> & newSamples);
+    /// \brief Trie les samples par paramètre (en supposant que
+    /// les temps sont parfaitement croissants)
+    void SortSamples();
+    void DisplayInStdCout(bool displaySortedSamples = false);
     
     // - - - - - Generic presets indexes manipulations - - - - -
     static std::map<int, size_t> GeneratePresetIndexToRandomIndexMap(int actualPresetsCount,

@@ -69,7 +69,7 @@ void OSCRecorder::reinitExperiment()
     stateBeforeConnectionLost = ExperimentState::InitialQuestionsDisplayed; // forced fake state
     
     // OSC UDP listener (no check for connection stability....)
-    oscRealtimeListener = std::make_shared<OSCRealtimeListener>(udpOscPort);
+    oscRealtimeListener = std::make_shared<OSCRealtimeListener>(udpOscPort, startTimePt);
     
     if (presets.size() > 0)
     {
@@ -182,6 +182,27 @@ void OSCRecorder::nextPreset()
     }
 }
 
+void OSCRecorder::startRecording()
+{
+    // recording always start after the scene is selected
+    // because of the TCP connection : we are sure that the scene is selected !
+    // but delays might remain...
+    oscRealtimeListener->StartRecording();
+    
+    startTimer(10); /// 100 Hz de fréquence de scrutation du ring buffer
+}
+void OSCRecorder::stopRecording()
+{
+    oscRealtimeListener->StopRecording();
+    
+    stopTimer();
+    // on doit ensuite vider les derniers coefficients qui auraient pu arriver....
+    timerCallback(); // last callback forced
+    
+    // tri dès maintenant car on sauvegarde après chaque preset
+    presets[presetRandomIdx[currentPresetStep]]->SortSamples();
+}
+
 
 /// ========================================================================
 /// ========================================================================
@@ -257,7 +278,8 @@ void OSCRecorder::changeState(ExperimentState newState)
             // sélectionnée, il ne reste qu'à faire PLAY
         case ExperimentState::SearchingPreset:
             reaperController->RestartAndPlay(presets[presetRandomIdx[currentPresetStep]]->GetTempo());
-            selectNewMiemScene(); // empty scene
+            selectNewMiemScene(); // actual playable scene
+            startRecording();
             break;
             
             // Fin de la recherche : on coupe Reaper (mute all)
@@ -266,6 +288,7 @@ void OSCRecorder::changeState(ExperimentState newState)
         case ExperimentState::FinishedSearchingPreset:
             reaperController->Stop();
             selectNewMiemScene(true);
+            stopRecording();
             if (currentPresetStep >= ((int)ExperimentPresetsCount - 1))
             {
                 // will trigger an event, but after this one is treated...
@@ -334,6 +357,22 @@ void OSCRecorder::selectNewMiemScene(bool selectEmptyScene)
         selectMiemControllerScene(currentPreset->GetMiemSceneIndex());
     }
 }
+
+
+
+
+
+
+
+// ================== periodic updates =============================
+void OSCRecorder::timerCallback()
+{
+    presets[presetRandomIdx[currentPresetStep]]->AddSamples(oscRealtimeListener->GetBufferedSamples());
+}
+
+
+
+
 
 
 

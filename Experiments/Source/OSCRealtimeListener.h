@@ -10,9 +10,15 @@
 
 #pragma once
 
+#include <atomic>
+#include <chrono>
+typedef std::chrono::steady_clock MiemClock;
+
+#include "boost/lockfree/spsc_queue.hpp"
+
 #include "JuceHeader.h"
 
-#include "MiemExpePreset.h"
+#include "MiemExpePreset.h" // also: struct MiemSample
 
 class OSCRecorder;
 
@@ -25,15 +31,34 @@ class OSCRealtimeListener : OSCReceiver::Listener<OSCReceiver::RealtimeCallback>
 {
     private :
     OSCReceiver oscReceiver;
+    /// \brief
+    ///
+    /// 100-by-100 matrix can be entirely stored within the queue without it being
+    /// full.
+    boost::lockfree::spsc_queue<MiemSample, boost::lockfree::capacity<(1<<17)>> lastMiemSamples;
+    
+    // to be used by the network thread
+    const std::chrono::time_point<MiemClock> experimentStartTimePoint;
+    std::chrono::time_point<MiemClock> restartTimePoint;
+    std::atomic<bool> isRecording;
+    
+    // to be used by the Juce thread
+    std::vector<MiemSample> bufferedSamples;
     
     
     public :
     
     // ctor et dtor
-    OSCRealtimeListener(int udpPort);
+    OSCRealtimeListener(int udpPort, std::chrono::time_point<MiemClock> _startTimePoint);
     ~OSCRealtimeListener() {}
     
-    // OSC listening
+    /// \brief OSC listening (on the NETWORK THREAD)
     virtual void oscMessageReceived (const OSCMessage &message) override;
     
+    
+    /// \brief last Messages reading and writing for sending to the manager
+    // On the JUCE MESSAGE thread
+    void StartRecording();
+    void StopRecording();
+    const std::vector<MiemSample>& GetBufferedSamples();
 };
