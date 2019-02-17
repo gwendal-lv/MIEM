@@ -70,6 +70,7 @@ class MiemExpePreset {
     int GetMiemSceneIndex() const;
     int GetSynthId() const {return synthId;}
     float GetTempo() const {return tempo;}
+    std::string GetName() const {return name;}
     bool GetIsFoundFromInterpolation() const {return findFromInterpolation;}
     
     /// \brief Donne le numéro de track correspond dans Reaper, pour le preset dont on
@@ -89,7 +90,10 @@ class MiemExpePreset {
     
     
     std::shared_ptr<bptree::ptree> GetInfoTree();
-    
+    /// \brief Returns the name of the columns for the CSV file
+    /// (including \n)
+    static std::string GetCSVFileHeader();
+    std::shared_ptr<std::string> GetSortedSamples_CSV();
 
     // - - - - - Samples management - - - - -
     void AddSamples(const std::vector<MiemSample> & newSamples);

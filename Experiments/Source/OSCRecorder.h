@@ -46,6 +46,7 @@ class OSCRecorder : public UserQuestionsManager, public juce::Timer
     
     const int ExperimentPresetsCount = 10; // is also the number of synths
     const int TrialPresetsCount = 2; // the 2 for the same synth
+    const int TrialSynthsCount = 1;
     
     
 #ifdef __MIEM_SHORT_DELAYS
@@ -200,7 +201,7 @@ class OSCRecorder : public UserQuestionsManager, public juce::Timer
     void createNewDataFiles();
     /// \brief The path is a const char already defined, and the names
     /// will be built automatically from the current date and time
-    void saveEverythingToFiles();
+    void saveEverythingToFiles(int lastPresetStepToSave);
     /// \brief Gets the UID, and... other parameters
     void getExperimentParametersFromXmlFile();
     

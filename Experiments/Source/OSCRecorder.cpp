@@ -298,7 +298,7 @@ void OSCRecorder::changeState(ExperimentState newState)
                     this->changeState(ExperimentState::FinalQuestionsDisplayed); } );
             }
             // security save
-            saveEverythingToFiles();
+            saveEverythingToFiles(currentPresetStep); // next step pas encore demandée
             break;
             
         case ExperimentState::Finished:
@@ -413,7 +413,7 @@ void OSCRecorder::OnFirstQuestionsAnswered(UserQuestions* sender)
 {
     // Save after before the finish screen is being displayed
     // (for data consistency before mode change)
-    saveEverythingToFiles();
+    saveEverythingToFiles(currentPresetStep); // valeur non-valide, trop négative au départ
     
     nextExperimentStep();
 }
@@ -421,7 +421,7 @@ void OSCRecorder::OnFinalQuestionsAnswered(UserFinalQuestions* sender)
 {
     // Save after the finish screen is being displayed
     // // (for data consistency before mode change)
-    saveEverythingToFiles();
+    saveEverythingToFiles(currentPresetStep - 1); // car valeur invalide
     
     changeState(ExperimentState::Finished);
 }
@@ -468,7 +468,7 @@ void OSCRecorder::OnConnectionLost()
     // L'expérience en cours sera supprimée... Tant pis !
     // On passe à la suivante
     if (currentPresetStep >= 0) // check for "not trial and not question"
-        presets[currentPresetStep]->SetIsValid(false);
+        presets[presetRandomIdx[currentPresetStep]]->SetIsValid(false);
     
     // Enfin préparation pour la re-connection
 
@@ -544,12 +544,30 @@ void OSCRecorder::createNewDataFiles()
     DBG("--------------- FILE NAMES ------------------");
     
     // First save, to check the write rights on this machine
-    saveEverythingToFiles();
+    saveEverythingToFiles(currentPresetStep); // valeur non-valide
     
     // If everything could be saved.... Then we update now the count of experiments already done
     // (in the main "general data file" common for all subjects)
-    parametersTree->erase("experiment.count");
-    parametersTree->put("experiment.count", currentExperimentUid+1);
+    parametersTree->clear();
+    bptree::ptree experimentsInnerTree;
+    // configuration, settings, generic counters
+    experimentsInnerTree.put("count", currentExperimentUid+1);
+    experimentsInnerTree.put("tcp.<xmlattr>.ip", tcpServerName);
+    experimentsInnerTree.put("tcp.<xmlattr>.port", tcpServerPort);
+    experimentsInnerTree.put("experiments.osc.udp.<xmlattr>.port", udpOscPort);
+    // We also rewrite parameters of the synths
+    bptree::ptree synthsInnerTree;
+    synthsInnerTree.put("<xmlattr>.total_count", ExperimentPresetsCount + TrialSynthsCount);
+    synthsInnerTree.put("<xmlattr>.trials_count", TrialSynthsCount);
+    for (int i=(-TrialSynthsCount); i < ExperimentPresetsCount ; i++)
+    {
+        bptree::ptree synthTree; // no lol
+        synthTree.put("<xmlattr>.id", i);
+        synthTree.put("<xmlattr>.name", MiemExpePreset(i, false).GetName());
+        synthsInnerTree.add_child("synth", synthTree);
+    }
+    experimentsInnerTree.add_child("synths", synthsInnerTree);
+    parametersTree->add_child("experiments", experimentsInnerTree);
     // write, and error triggering as usual
     bptree::xml_writer_settings<std::string> xmlSettings(' ', 4);
     std::string parametersPath = filesSavingPath;
@@ -565,10 +583,11 @@ void OSCRecorder::createNewDataFiles()
         throw std::runtime_error(errorStr.toStdString());
     }
 }
-void OSCRecorder::saveEverythingToFiles()
+void OSCRecorder::saveEverythingToFiles(int lastPresetStepToSave)
 {
     // Save of INFO
-    bptree::ptree questionsChildrenTree; // does not contain the <subject> tag itself
+    bptree::ptree experimentInnerTree; // does not contain the <subject> tag itself
+    experimentInnerTree.put("<xmlattr>.UID", currentExperimentUid);
     // Date et heure de départ
     bptree::ptree startTimeTree;
     startTimeTree.put("<xmlattr>.year", startSystemTime.getYear());
@@ -578,25 +597,26 @@ void OSCRecorder::saveEverythingToFiles()
     startTimeTree.put("<xmlattr>.day_name", startSystemTime.getWeekdayName(false));
     startTimeTree.put("<xmlattr>.hours", startSystemTime.getHours());
     startTimeTree.put("<xmlattr>.minutes", startSystemTime.getMinutes());
-    questionsChildrenTree.add_child("start_date", startTimeTree);
+    experimentInnerTree.add_child("start_date", startTimeTree);
     // Questions (même celles qui ne sont pas encore répondues
-    questionsChildrenTree.add_child("first_questions",
+    experimentInnerTree.add_child("first_questions",
                                     *(mainComponent->firstUserQuestionsComponent->GetQuestionsBPTree()));
-    questionsChildrenTree.add_child("final_questions",
+    experimentInnerTree.add_child("final_questions",
                                     *(mainComponent->finalUserQuestionsComponent->GetQuestionsBPTree()));
     // Infos sur les presets
-    int currentActualPresetsCount = std::min(std::max(currentPresetStep + 1, (int)0),
-                                             (int)(ExperimentPresetsCount));
     bptree::ptree testedPresetInnerTree;
-    testedPresetInnerTree.put("<xmlattr>.count", currentActualPresetsCount);
+    testedPresetInnerTree.put("<xmlattr>.count", lastPresetStepToSave + TrialPresetsCount + 1);
     // Liste de tous les presets jusqu'à maintenant
-    for (int i=0 ; i<currentActualPresetsCount ; i++)
-        testedPresetInnerTree.add_child("preset", *(presets[i]->GetInfoTree()));
-    questionsChildrenTree.add_child("tested_presets", testedPresetInnerTree);
+    // y compris ceux de test
+    for (int i=(-TrialPresetsCount) ; i<=lastPresetStepToSave ; i++)
+        testedPresetInnerTree.add_child("preset", *(presets[presetRandomIdx[i]]->GetInfoTree()));
+    experimentInnerTree.add_child("tested_presets", testedPresetInnerTree);
     // Actual XML/CSV data writing into files
     bptree::xml_writer_settings<std::string> xmlSettings(' ', 4);
     try {
-        bptree::write_xml(infoFilePath, questionsChildrenTree, std::locale(), xmlSettings);
+        bptree::ptree experimenTree;
+        experimenTree.add_child("experiment", experimentInnerTree);
+        bptree::write_xml(infoFilePath, experimenTree, std::locale(), xmlSettings);
     }
     catch (bptree::xml_parser::xml_parser_error& e) {
         String errorStr = "Cannot write " + String(infoFilePath) + ". Please check parameters and restart experiment.";
@@ -607,8 +627,6 @@ void OSCRecorder::saveEverythingToFiles()
     }
     
     // Save of DATA into the CSV file (string output preparation)
-    
-
     std::ofstream streamFile(dataFilePath, std::ios_base::out);
     if (! streamFile.is_open())
     {
@@ -618,7 +636,10 @@ void OSCRecorder::saveEverythingToFiles()
         std::this_thread::sleep_for(std::chrono::seconds(10)); // time before looking at the console
         throw std::runtime_error(errorStr.toStdString());
     }
-    
+    streamFile << MiemExpePreset::GetCSVFileHeader();
+    // on écrit chaque preset (y compris les essais)
+    for (int i=(-TrialPresetsCount) ; i<=lastPresetStepToSave ; i++)
+        streamFile << (*(presets[presetRandomIdx[i]]->GetSortedSamples_CSV()));
 }
 
 void OSCRecorder::getExperimentParametersFromXmlFile()
@@ -642,12 +663,12 @@ void OSCRecorder::getExperimentParametersFromXmlFile()
     // Chargement des paramètres du fichier
     try {
         // uid of current expe is the current expe count
-        currentExperimentUid = parametersTree->get<int>("experiment.count");
+        currentExperimentUid = parametersTree->get<int>("experiments.count");
         
-        tcpServerName = parametersTree->get<std::string>("experiment.tcp.<xmlattr>.ip");
-        tcpServerPort = parametersTree->get<int>("experiment.tcp.<xmlattr>.port");
+        tcpServerName = parametersTree->get<std::string>("experiments.tcp.<xmlattr>.ip");
+        tcpServerPort = parametersTree->get<int>("experiments.tcp.<xmlattr>.port");
         
-        udpOscPort = parametersTree->get<int>("experiment.osc.udp.<xmlattr>.port");
+        udpOscPort = parametersTree->get<int>("experiments.osc.udp.<xmlattr>.port");
     }
     catch(bptree::ptree_error &e) {
         String errorStr = TRANS("Wrong value or XML parsing error in file '") + String(xmlExpeFilePath) + TRANS("'. Experiment aborted.");

@@ -10,6 +10,8 @@
 
 #include <algorithm>
 
+#include "boost/lexical_cast.hpp"
+
 #include "MiemExpePreset.h"
 
 #include "JuceHeader.h"
@@ -196,6 +198,31 @@ std::shared_ptr<bptree::ptree> MiemExpePreset::GetInfoTree()
     preseTree->put("<xmlattr>.samples_count", samples.size());
     
     return preseTree;
+}
+std::string MiemExpePreset::GetCSVFileHeader()
+{
+    return "synth_id;from_interpolation;parameter;time;value\n";
+}
+std::shared_ptr<std::string> MiemExpePreset::GetSortedSamples_CSV()
+{
+    auto returnStr = std::make_shared<std::string>();
+    
+    std::string synthIdAndInterpolationStr = boost::lexical_cast<std::string>(synthId);
+    synthIdAndInterpolationStr += ";";
+    synthIdAndInterpolationStr += boost::lexical_cast<std::string>((int)(findFromInterpolation));
+    synthIdAndInterpolationStr += ";";
+    for (size_t i=0 ; i<sortedSamples.size() ; i++)
+    {
+        *returnStr += synthIdAndInterpolationStr;
+        *returnStr += boost::lexical_cast<std::string>(sortedSamples[i].parameterIndex);
+        *returnStr += ";";
+        *returnStr += boost::lexical_cast<std::string>(sortedSamples[i].time_ms);
+        *returnStr += ";";
+        *returnStr += boost::lexical_cast<std::string>(sortedSamples[i].value);
+        *returnStr += "\n";
+    }
+    
+    return returnStr;
 }
 
 int MiemExpePreset::GetReaperTrackNumber(bool getReferenceTrack)
