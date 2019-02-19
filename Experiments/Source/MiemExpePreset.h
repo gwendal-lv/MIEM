@@ -48,6 +48,7 @@ class MiemExpePreset {
     /// - - - - EXPERIMENT VALUE ASSIGNED BY CONSTRUCTOR - - - -
     std::string name;
     const int parametersCount; ///< Parameters indexes count (actual indexes start at 1)
+    std::vector<double> parametersTargetValues; ///< Double storage (actual data is float)
     int sceneBaseIndex; ///< index de la scène MIEM Controller pour ce synthé
     float tempo; ///< raw REAPER tempo value
     
@@ -90,6 +91,8 @@ class MiemExpePreset {
     
     
     std::shared_ptr<bptree::ptree> GetInfoTree();
+    std::shared_ptr<bptree::ptree> GetTargetValuesInnerTree();
+    
     /// \brief Returns the name of the columns for the CSV file
     /// (including \n)
     static std::string GetCSVFileHeader();

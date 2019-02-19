@@ -48,83 +48,129 @@ synthId(_synthId),
 findFromInterpolation(_findFromInterpolation),
 parametersCount(4) // const at the moment
 {
+    parametersTargetValues.resize(parametersCount, -1.0);
+    
     if (synthId > 9  || synthId < -1)
     {
         throw std::runtime_error("Synths IDs prévus actuellement de -2 à +9");
     }
-    /// - - - - MIEM SCENE INDEX and TEMPO - - - -
-    /// - - - - MIEM SCENE INDEX and TEMPO - - - -
-    /// - - - - MIEM SCENE INDEX and TEMPO - - - -
+    /// - - - - MIEM SCENE INDEX and TEMPO and TARGET VALUES - - - -
+    /// - - - - MIEM SCENE INDEX and TEMPO and TARGET VALUES - - - -
+    /// - - - - MIEM SCENE INDEX and TEMPO and TARGET VALUES - - - -
     sceneBaseIndex = -1000;
     if (synthId == -1)
     {
-        name = "[trial] Simple Wurli with delay and chorus";
+        name = "[trial] Wurli with delay and chorus";
         sceneBaseIndex = 1;
         tempo = 120.0f;
+        parametersTargetValues[0] = 0.3;
+        parametersTargetValues[1] = 0.4;
+        parametersTargetValues[2] = 0.5;
+        parametersTargetValues[3] = 0.6;
     }
     else if (synthId == 0)
     {
         name = "Synth #0";
         sceneBaseIndex = 1;
         tempo = 120.0f;
+        parametersTargetValues[0] = 0.1;
+        parametersTargetValues[1] = 0.2;
+        parametersTargetValues[2] = 0.3;
+        parametersTargetValues[3] = 0.4;
     }
     else if (synthId == 1)
     {
         name = "Synth #1";
         sceneBaseIndex = 1;
         tempo = 120.0f;
+        parametersTargetValues[0] = 0.5;
+        parametersTargetValues[1] = 0.5;
+        parametersTargetValues[2] = 0.5;
+        parametersTargetValues[3] = 0.5;
     }
     else if (synthId == 2)
     {
         name = "Synth #2";
         sceneBaseIndex = 1;
         tempo = 120.0f;
+        parametersTargetValues[0] = 0.5;
+        parametersTargetValues[1] = 0.5;
+        parametersTargetValues[2] = 0.5;
+        parametersTargetValues[3] = 0.5;
     }
     else if (synthId == 3)
     {
         name = "Synth #3";
         sceneBaseIndex = 1;
         tempo = 120.0f;
+        parametersTargetValues[0] = 0.5;
+        parametersTargetValues[1] = 0.5;
+        parametersTargetValues[2] = 0.5;
+        parametersTargetValues[3] = 0.5;
     }
     else if (synthId == 4)
     {
         name = "Synth #4";
         sceneBaseIndex = 1;
         tempo = 120.0f;
+        parametersTargetValues[0] = 0.5;
+        parametersTargetValues[1] = 0.5;
+        parametersTargetValues[2] = 0.5;
+        parametersTargetValues[3] = 0.5;
     }
     else if (synthId == 5)
     {
         name = "Synth #5";
         sceneBaseIndex = 1;
         tempo = 120.0f;
+        parametersTargetValues[0] = 0.5;
+        parametersTargetValues[1] = 0.5;
+        parametersTargetValues[2] = 0.5;
+        parametersTargetValues[3] = 0.5;
     }
     else if (synthId == 6)
     {
         name = "Synth #6";
         sceneBaseIndex = 1;
         tempo = 120.0f;
+        parametersTargetValues[0] = 0.5;
+        parametersTargetValues[1] = 0.5;
+        parametersTargetValues[2] = 0.5;
+        parametersTargetValues[3] = 0.5;
     }
     else if (synthId == 7)
     {
         name = "Synth #7";
         sceneBaseIndex = 1;
         tempo = 120.0f;
+        parametersTargetValues[0] = 0.5;
+        parametersTargetValues[1] = 0.5;
+        parametersTargetValues[2] = 0.5;
+        parametersTargetValues[3] = 0.5;
     }
     else if (synthId == 8)
     {
         name = "Synth #8";
         sceneBaseIndex = 1;
         tempo = 120.0f;
+        parametersTargetValues[0] = 0.5;
+        parametersTargetValues[1] = 0.5;
+        parametersTargetValues[2] = 0.5;
+        parametersTargetValues[3] = 0.5;
     }
     else if (synthId == 9)
     {
         name = "Synth #9";
         sceneBaseIndex = 1;
         tempo = 120.0f;
+        parametersTargetValues[0] = 0.5;
+        parametersTargetValues[1] = 0.5;
+        parametersTargetValues[2] = 0.5;
+        parametersTargetValues[3] = 0.5;
     }
-    /// - - - - MIEM SCENE INDEX and TEMPO - - - -
-    /// - - - - MIEM SCENE INDEX and TEMPO - - - -
-    /// - - - - MIEM SCENE INDEX and TEMPO - - - -
+    /// - - - - MIEM SCENE INDEX and TEMPO and TARGET VALUES - - - -
+    /// - - - - MIEM SCENE INDEX and TEMPO and TARGET VALUES - - - -
+    /// - - - - MIEM SCENE INDEX and TEMPO and TARGET VALUES - - - -
     else
         assert(false); // index must be found in the previous cases
 }
@@ -198,6 +244,18 @@ std::shared_ptr<bptree::ptree> MiemExpePreset::GetInfoTree()
     preseTree->put("<xmlattr>.samples_count", samples.size());
     
     return preseTree;
+}
+std::shared_ptr<bptree::ptree> MiemExpePreset::GetTargetValuesInnerTree()
+{
+    auto targetValuesInnerTree = std::make_shared<bptree::ptree>();
+    for (size_t i=0 ; i<parametersTargetValues.size() ; i++)
+    {
+        bptree::ptree paramInnerTree;
+        paramInnerTree.put("<xmlattr>.id", i+1); // IDs from 1
+        paramInnerTree.put("<xmlattr>.target_value", parametersTargetValues[i]);
+        targetValuesInnerTree->add_child("parameter", paramInnerTree);
+    }
+    return targetValuesInnerTree;
 }
 std::string MiemExpePreset::GetCSVFileHeader()
 {

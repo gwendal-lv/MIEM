@@ -554,16 +554,18 @@ void OSCRecorder::createNewDataFiles()
     experimentsInnerTree.put("count", currentExperimentUid+1);
     experimentsInnerTree.put("tcp.<xmlattr>.ip", tcpServerName);
     experimentsInnerTree.put("tcp.<xmlattr>.port", tcpServerPort);
-    experimentsInnerTree.put("experiments.osc.udp.<xmlattr>.port", udpOscPort);
+    experimentsInnerTree.put("osc.udp.<xmlattr>.port", udpOscPort);
     // We also rewrite parameters of the synths
     bptree::ptree synthsInnerTree;
     synthsInnerTree.put("<xmlattr>.total_count", ExperimentPresetsCount + TrialSynthsCount);
     synthsInnerTree.put("<xmlattr>.trials_count", TrialSynthsCount);
     for (int i=(-TrialSynthsCount); i < ExperimentPresetsCount ; i++)
     {
+        auto currentPreset = MiemExpePreset(i, false);
         bptree::ptree synthTree; // no lol
         synthTree.put("<xmlattr>.id", i);
-        synthTree.put("<xmlattr>.name", MiemExpePreset(i, false).GetName());
+        synthTree.put("<xmlattr>.name", currentPreset.GetName());
+        synthTree.add_child("parameters", *(currentPreset.GetTargetValuesInnerTree()));
         synthsInnerTree.add_child("synth", synthTree);
     }
     experimentsInnerTree.add_child("synths", synthsInnerTree);
