@@ -22,7 +22,7 @@ if experiments(expeId).isFaderSynthRecorded(synthId)
             plot(expeData{expeId, synthId, 1, paramId}(:, 1), expeData{expeId, synthId, 1, paramId}(:, 2));
             hold on;
         end
-        title(strcat('Faders - ', globalParams.synthNames(synthId)));
+        title(strcat('F-', globalParams.synthNames(synthId)));
     else
         title('Unvalid data');
     end
@@ -37,7 +37,7 @@ if experiments(expeId).isInterpSynthRecorded(synthId)
             plot(expeData{expeId, synthId, 2, paramId}(:, 1), expeData{expeId, synthId, 2, paramId}(:, 2));
             hold on;
         end
-        title(strcat('Interp - ', globalParams.synthNames(synthId)));
+        title(strcat('I-', globalParams.synthNames(synthId)));
     end
 end
 
@@ -54,13 +54,13 @@ for i=3:12
                 plot(expeData{expeId, synthId, 1, paramId}(:, 1), expeData{expeId, synthId, 1, paramId}(:, 2));
                 hold on;
             end
-            title('Fader - ');
+            title('F-');
         elseif  (~ isempty(expeData{expeId, synthId, 2, paramId}) )
             for paramId = 1:globalParams.parametersCount
                 plot(expeData{expeId, synthId, 2, paramId}(:, 1), expeData{expeId, synthId, 2, paramId}(:, 2));
                 hold on;
             end
-            title('Interp - ');
+            title('I-');
         else
             title('Unvalid data');
         end

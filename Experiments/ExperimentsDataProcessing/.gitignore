@@ -1,0 +1,4 @@
+# Pour l'instant on ignore les résultats d'expérience. Plus tard
+# ils seront envoyés direk' dans le git
+*.xml
+*.csv
