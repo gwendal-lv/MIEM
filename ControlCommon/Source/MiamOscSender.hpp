@@ -239,7 +239,12 @@ namespace Miam
                 }
                 // débordement détecté, ne devrait pas arriver...
                 else
-                    assert(false);
+                {
+                    // En fait SI SI SI un débordement peut arriver ! Lorsqu'un coefficient est resté
+                    // enregistré alors que l'on a réduit la taille des états. Pas d'assertion donc
+                    // (car on autorise les valeurs qui débordent, mais on ne les envoie pas)
+                    //assert(false);
+                }
             }
         }
     

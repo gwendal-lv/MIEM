@@ -62,7 +62,8 @@ class OSCRecorder : public UserQuestionsManager, public juce::Timer
     // Éviter stockage dans un drive (iCloud, Google, etc...) au cas où
     // le drive commence à modifier les fichiers d'expé (on copiera juste tout le dossier
     // à chaque fois... dans un drive si + pratique)
-    const char filesSavingPath[1024] = "/Users/Gwendal/Programmation/Miam/Experiments/ExperimentsDataProcessing/";
+    // Chemins relatifs par rapport au dossier de build (Debug ou Release, même chose)
+    const char filesSavingPath[1024] = "../../../../ExperimentsDataProcessing/";
     
     
     

@@ -60,7 +60,7 @@ parametersCount(4) // const at the moment
     sceneBaseIndex = -1000;
     if (synthId == -1)
     {
-        name = "[trial] Wurli with delay and chorus";
+        name = "[T] Wurli delay/chorus";
         sceneBaseIndex = 1;
         tempo = 120.0f;
         parametersTargetValues[0] = 0.3;
