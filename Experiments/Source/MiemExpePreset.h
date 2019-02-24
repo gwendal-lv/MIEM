@@ -47,6 +47,7 @@ class MiemExpePreset {
     
     /// - - - - EXPERIMENT VALUE ASSIGNED BY CONSTRUCTOR - - - -
     std::string name;
+    std::string parametersInfo;
     const int parametersCount; ///< Parameters indexes count (actual indexes start at 1)
     std::vector<double> parametersTargetValues; ///< Double storage (actual data is float)
     int sceneBaseIndex; ///< index de la scène MIEM Controller pour ce synthé

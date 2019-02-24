@@ -60,19 +60,21 @@ parametersCount(4) // const at the moment
     sceneBaseIndex = -1000;
     if (synthId == -1)
     {
-        name = "[T] Wurli delay/chorus";
+        name = "[T] Wurli hammer+delay";
         sceneBaseIndex = 1;
-        tempo = 120.0f;
-        parametersTargetValues[0] = 0.3;
-        parametersTargetValues[1] = 0.4;
-        parametersTargetValues[2] = 0.5;
-        parametersTargetValues[3] = 0.6;
+        tempo = 145.0f;
+        parametersInfo = "1-Chorus/2-Delay/3-250Hz/4-Hammer";
+        parametersTargetValues[0] = 0.065;
+        parametersTargetValues[1] = 0.207; // un peu de delay
+        parametersTargetValues[2] = 0.064;
+        parametersTargetValues[3] = 0.664; // et beaucoup de hammer
     }
     else if (synthId == 0)
     {
         name = "Synth #0";
         sceneBaseIndex = 1;
         tempo = 120.0f;
+        parametersInfo = "1-/2-/3-/4-";
         parametersTargetValues[0] = 0.1;
         parametersTargetValues[1] = 0.2;
         parametersTargetValues[2] = 0.3;
@@ -83,6 +85,7 @@ parametersCount(4) // const at the moment
         name = "Synth #1";
         sceneBaseIndex = 1;
         tempo = 120.0f;
+        parametersInfo = "1-/2-/3-/4-";
         parametersTargetValues[0] = 0.5;
         parametersTargetValues[1] = 0.5;
         parametersTargetValues[2] = 0.5;
@@ -93,6 +96,7 @@ parametersCount(4) // const at the moment
         name = "Synth #2";
         sceneBaseIndex = 1;
         tempo = 120.0f;
+        parametersInfo = "1-/2-/3-/4-";
         parametersTargetValues[0] = 0.5;
         parametersTargetValues[1] = 0.5;
         parametersTargetValues[2] = 0.5;
