@@ -335,7 +335,7 @@
   </MAINGROUP>
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX" extraCompilerFlags="-Wno-comma"
-               bigIcon="qjdykE">
+               bigIcon="qjdykE" iosDevelopmentTeamID="ZYQ9N85U6C">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../MiamCommon/Source/"
                        defines="__MIAM_DEBUG&#10;__MIEM_DEBUG_TRACE__DISABLED" enablePluginBinaryCopyStep="1"/>

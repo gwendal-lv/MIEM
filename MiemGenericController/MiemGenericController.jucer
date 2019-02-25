@@ -5,7 +5,8 @@
               companyWebsite="htpp://laras.be" companyEmail="glevaillant@he2b.be"
               reportAppUsage="0" displaySplashScreen="0" bundleIdentifier="com.gwendallv.MIEMController"
               headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../MiamCommon/Resources/&#10;../../../ControlCommon/Source/&#10;../../../SpatCommon/Source/"
-              id="k0BzOi" defines="__MIEM_VBO&#10;__MIEM_EXPERIMENTS__NO" projectLineFeed="&#10;">
+              id="k0BzOi" defines="__MIEM_VBO&#10;__MIEM_EXPERIMENTS&#10;__MIEM_EXPERIMENTS_FULL_LOCK__NO"
+              projectLineFeed="&#10;">
   <MAINGROUP id="Krx0MS" name="MIEM Controller">
     <GROUP id="{B7F5CB5C-B6F8-A8AA-0F14-17FA42CC4DDF}" name="Source">
       <FILE id="BwuW2o" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
@@ -319,7 +320,7 @@
   </MAINGROUP>
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX" extraCompilerFlags="-Wno-comma"
-               bigIcon="Jn8chF" userNotes="D&#233;v team ID ZYQ9N85U6C : &#224; remettre apr&#232;s ajout des certificats">
+               bigIcon="Jn8chF" iosDevelopmentTeamID="ZYQ9N85U6C">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" defines="__MIAM_DEBUG"/>
         <CONFIGURATION isDebug="0" name="Release"/>

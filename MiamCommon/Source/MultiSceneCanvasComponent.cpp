@@ -164,7 +164,7 @@ void MultiSceneCanvasComponent::buttonClicked(Button* buttonThatWasClicked)
         if (buttonThatWasClicked == sceneChoiceTextButtons[i].get())
         {
             buttonFound = true;
-#ifndef __MIEM_EXPERIMENTS
+#ifndef __MIEM_EXPERIMENTS_FULL_LOCK
             canvasManager->SelectScene((int)i);
 #else
             DBG("Clicks on scene buttons are deactivated in __MIEM_EXPERIMENTS mode (TCP control only).");

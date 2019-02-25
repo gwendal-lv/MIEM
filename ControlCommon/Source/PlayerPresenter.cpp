@@ -363,11 +363,16 @@ void PlayerPresenter::ReinitRemoteControlServer()
     serverRunning = remoteControlServer.beginWaitingForSocket(tcpPort);
     
 #ifdef __MIEM_EXPERIMENTS
-    // Display
+    String tcpServerMessage;
     if (serverRunning)
-        view->GetBackgroundComponent()->GetMainMenuComponent()->SetInfoLabelText(TRANS("TCP port ") + String(tcpPort) + TRANS(" ready for connection."));
+        tcpServerMessage = TRANS("TCP port ") + String(tcpPort) + TRANS(" ready for connection.");
     else
-        view->GetBackgroundComponent()->GetMainMenuComponent()->SetInfoLabelText(TRANS("Remote control server is not running."));
+        tcpServerMessage = TRANS("Remote control server is not running.");
+    #ifdef __MIEM_EXPERIMENTS_FULL_LOCK
+    tcpServerMessage += " " + TRANS("Scene changes are locked (controlled by MIEM Experiments).");
+    #endif
+    // Display
+    view->GetBackgroundComponent()->GetMainMenuComponent()->SetInfoLabelText(tcpServerMessage);
 #else
     view->GetBackgroundComponent()->GetMainMenuComponent()->SetInfoLabelText("");
 #endif
