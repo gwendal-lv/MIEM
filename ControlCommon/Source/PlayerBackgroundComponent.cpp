@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.2
+  Created with Projucer version: 5.4.3
 
   ------------------------------------------------------------------------------
 
@@ -369,32 +369,32 @@ BEGIN_JUCER_METADATA
          virtualName="" explicitFocusOrder="0" pos="8 4Rr 384 20" textCol="ff909090"
          edTextCol="ff000000" edBkgCol="0" labelText="MIEM Spat Player"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="33"/>
   <IMAGEBUTTON name="Main Menu image button" id="83c438e933714a80" memberName="mainMenuImageButton"
                virtualName="" explicitFocusOrder="0" pos="0Rr 0Rr 28 28" buttonText="new button"
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
-               resourceNormal="menu_icon_png2" opacityNormal="1.0" colourNormal="0"
-               resourceOver="" opacityOver="1.0" colourOver="0" resourceDown="menu_activated_icon_png2"
-               opacityDown="1.0" colourDown="0"/>
+               resourceNormal="menu_icon_png2" opacityNormal="1" colourNormal="0"
+               resourceOver="" opacityOver="1" colourOver="0" resourceDown="menu_activated_icon_png2"
+               opacityDown="1" colourDown="0"/>
   <LABEL name="Main Info label 2" id="c1d25bb923263634" memberName="mainInfoLabel2"
          virtualName="" explicitFocusOrder="0" pos="400 4Rr 432M 20" textCol="ff909090"
          edTextCol="ff000000" edBkgCol="0" labelText="[complementary information]"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="12"/>
   <SLIDER name="Main slider" id="8924a1c10657725b" memberName="mainSlider"
           virtualName="" explicitFocusOrder="0" pos="0Rr 24.5Cc 56 160M"
           tooltip="Master Gain (applied to the entire state)" bkgcol="ff000000"
-          thumbcol="ffffffff" trackcol="ff909090" min="-60.0" max="6.0"
-          int="0.0" style="LinearVertical" textBoxPos="TextBoxAbove" textBoxEditable="0"
-          textBoxWidth="40" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
+          thumbcol="ffffffff" trackcol="ff909090" min="-6e1" max="6" int="0"
+          style="LinearVertical" textBoxPos="TextBoxAbove" textBoxEditable="0"
+          textBoxWidth="40" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <LABEL name="Master Gain label" id="398893cc183b859b" memberName="masterGainLabel"
          virtualName="" explicitFocusOrder="0" pos="58R -56 100% 48" posRelativeY="8924a1c10657725b"
          posRelativeW="8924a1c10657725b" textCol="ff909090" edTextCol="ff000000"
          edBkgCol="0" labelText="Master&#10;Gain&#10;dB FS" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
-         fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="36"/>
+         fontsize="1.5e1" kerning="0" bold="0" italic="0" justification="36"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

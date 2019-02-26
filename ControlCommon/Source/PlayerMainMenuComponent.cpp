@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.2
+  Created with Projucer version: 5.4.3
 
   ------------------------------------------------------------------------------
 
@@ -173,14 +173,14 @@ PlayerMainMenuComponent::PlayerMainMenuComponent ()
         miemProjectHyperlinkButton->setURL(URL("http://miem.laras.be/spat"));
     }
 
-    
+
 #ifdef __MIEM_EXPERIMENTS
     additionnalStatusLabel->setText("Experiments' build (controlled by TCP connection).",
                                     NotificationType::dontSendNotification);
 #else
     additionnalStatusLabel->setVisible(false);
 #endif
-    
+
     //[/Constructor]
 }
 
@@ -439,7 +439,7 @@ BEGIN_JUCER_METADATA
                  overlayOpacity="0.330" fixedSize="0" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="51000000"/>
   <GROUPCOMPONENT name="Session group component" id="ee702f61e13ff830" memberName="sessionGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="0Cc 8 16M 56" outlinecol="ff909090"
+                  virtualName="" explicitFocusOrder="0" pos="0.5Cc 8 16M 56" outlinecol="ff909090"
                   textcol="ff909090" title="Session"/>
   <TEXTBUTTON name="Load From File text button" id="2fe2a2c362ae91bd" memberName="loadFromFileButton"
               virtualName="" explicitFocusOrder="0" pos="0Cc 16 200 24" posRelativeY="ee702f61e13ff830"
@@ -448,30 +448,30 @@ BEGIN_JUCER_METADATA
   <IMAGEBUTTON name="Play image button" id="823680c6dd0a5a2e" memberName="playImageButton"
                virtualName="" explicitFocusOrder="0" pos="-16Cr 96R 62 62" buttonText="new button"
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
-               resourceNormal="play_png" opacityNormal="1.0" colourNormal="0"
-               resourceOver="" opacityOver="0.60000002384185791016" colourOver="0"
-               resourceDown="" opacityDown="1.0" colourDown="0"/>
+               resourceNormal="play_png" opacityNormal="1" colourNormal="0"
+               resourceOver="" opacityOver="6.000000238418579e-1" colourOver="0"
+               resourceDown="" opacityDown="1" colourDown="0"/>
   <IMAGEBUTTON name="Playing image button" id="26f63b20519a1739" memberName="playingImageButton"
                virtualName="" explicitFocusOrder="0" pos="-16Cr 96R 62 62" buttonText="new button"
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
-               resourceNormal="playOn_png2" opacityNormal="1.0" colourNormal="0"
-               resourceOver="" opacityOver="1.0" colourOver="0" resourceDown=""
-               opacityDown="1.0" colourDown="0"/>
+               resourceNormal="playOn_png2" opacityNormal="1" colourNormal="0"
+               resourceOver="" opacityOver="1" colourOver="0" resourceDown=""
+               opacityDown="1" colourDown="0"/>
   <IMAGEBUTTON name="Stop image button" id="9385dfb43a053dc6" memberName="stopImageButton"
                virtualName="" explicitFocusOrder="0" pos="16C 96R 62 62" buttonText="new button"
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
-               resourceNormal="stop_png" opacityNormal="1.0" colourNormal="0"
-               resourceOver="" opacityOver="0.60000002384185791016" colourOver="0"
-               resourceDown="" opacityDown="1.0" colourDown="0"/>
+               resourceNormal="stop_png" opacityNormal="1" colourNormal="0"
+               resourceOver="" opacityOver="6.000000238418579e-1" colourOver="0"
+               resourceDown="" opacityDown="1" colourDown="0"/>
   <IMAGEBUTTON name="Stopped image button" id="1b06a982c2d60ddc" memberName="stoppedImageButton"
                virtualName="" explicitFocusOrder="0" pos="16C 96R 62 62" buttonText="new button"
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
-               resourceNormal="stopOn_png" opacityNormal="1.0" colourNormal="0"
-               resourceOver="" opacityOver="1.0" colourOver="0" resourceDown=""
-               opacityDown="1.0" colourDown="0"/>
+               resourceNormal="stopOn_png" opacityNormal="1" colourNormal="0"
+               resourceOver="" opacityOver="1" colourOver="0" resourceDown=""
+               opacityDown="1" colourDown="0"/>
   <GROUPCOMPONENT name="Help group component" id="5beff948b653aff1" memberName="helpGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="0Cc 88 16M 240M" outlinecol="ff909090"
-                  textcol="ff909090" title="Help"/>
+                  virtualName="" explicitFocusOrder="0" pos="0.5Cc 88 16M 240M"
+                  outlinecol="ff909090" textcol="ff909090" title="Help"/>
   <TEXTBUTTON name="Help button" id="87051e2f861a82a1" memberName="helpButton"
               virtualName="" explicitFocusOrder="0" pos="0Cc 16 120 24" posRelativeX="5beff948b653aff1"
               posRelativeY="5beff948b653aff1" bgColOff="ff404040" buttonText="Show help"
@@ -483,18 +483,19 @@ BEGIN_JUCER_METADATA
               multiline="1" retKeyStartsLine="1" readonly="1" scrollbars="1"
               caret="0" popupmenu="0"/>
   <HYPERLINKBUTTON name="MIEM Project hyperlink button" id="fa7d05f849f2e1a1" memberName="miemProjectHyperlinkButton"
-                   virtualName="" explicitFocusOrder="0" pos="0Cc 40R 40M 24" posRelativeY="5beff948b653aff1"
-                   tooltip="http://miem.laras.be" textCol="ff3d6ed1" buttonText="Go to MIEM website: miem.laras.be"
+                   virtualName="" explicitFocusOrder="0" pos="0.5Cc 40R 40M 24"
+                   posRelativeY="5beff948b653aff1" tooltip="http://miem.laras.be"
+                   textCol="ff3d6ed1" buttonText="Go to MIEM website: miem.laras.be"
                    connectedEdges="0" needsCallback="0" radioGroupId="0" url="http://miem.laras.be"/>
   <TEXTBUTTON name="Load Default button" id="d025c06799a8b40f" memberName="loadDefaultButton"
               virtualName="" explicitFocusOrder="0" pos="8Rr 16 144 24" posRelativeX="5beff948b653aff1"
               posRelativeY="5beff948b653aff1" bgColOff="ff404040" buttonText="Load default session"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <LABEL name="Additionnal Status Label" id="bef02cde37454c59" memberName="additionnalStatusLabel"
-         virtualName="" explicitFocusOrder="0" pos="0Cc 24R 80M 24" textCol="ff909090"
-         edTextCol="ff000000" edBkgCol="0" labelText="Additionnal Status information"
+         virtualName="" explicitFocusOrder="0" pos="0.5Cc 24R 80M 24"
+         textCol="ff909090" edTextCol="ff000000" edBkgCol="0" labelText="Additionnal Status information"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="1" justification="36" typefaceStyle="Italic"/>
 </JUCER_COMPONENT>
 
