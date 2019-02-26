@@ -295,6 +295,18 @@ void PlayerPresenter::OnHelpButtonClicked(bool isHelpCurrentlyDisplayed)
 {
     view->ShowHelpContents(! isHelpCurrentlyDisplayed);
 }
+bool PlayerPresenter::OnFullscreenButtonClicked()
+{
+#ifdef __MIAMOBILE
+    assert(false); // fullscreen button should not be available for click on mobile platforms !
+    return true;
+#else
+    // On inverse juste l'état de fullscreen, sans faire de check
+    // (on aura peut-être des problèmes OpenGL à gérer, par exemple.... ?)
+    view->SetFullscreenState(! view->GetFullscreenState());
+    return view->GetFullscreenState();
+#endif
+}
 
 
 // = = = = = = = = = = EVENTS FROM MODEL = = = = = = = = = =

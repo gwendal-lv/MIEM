@@ -138,6 +138,12 @@ PlayerMainMenuComponent::PlayerMainMenuComponent ()
     additionnalStatusLabel->setColour (TextEditor::textColourId, Colours::black);
     additionnalStatusLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
+    fullscreenButton.reset (new TextButton ("Fullscreen button"));
+    addAndMakeVisible (fullscreenButton.get());
+    fullscreenButton->setButtonText (TRANS("Fullscreen"));
+    fullscreenButton->addListener (this);
+    fullscreenButton->setColour (TextButton::buttonColourId, Colour (0xff404040));
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -172,6 +178,12 @@ PlayerMainMenuComponent::PlayerMainMenuComponent ()
     {
         miemProjectHyperlinkButton->setURL(URL("http://miem.laras.be/spat"));
     }
+    
+    // Fullscreen button
+#ifdef __MIAMOBILE
+    fullscreenButton->setEnabled(false);
+    fullscreenButton->setVisible(false);
+#endif
 
 
 #ifdef __MIEM_EXPERIMENTS
@@ -201,6 +213,7 @@ PlayerMainMenuComponent::~PlayerMainMenuComponent()
     miemProjectHyperlinkButton = nullptr;
     loadDefaultButton = nullptr;
     additionnalStatusLabel = nullptr;
+    fullscreenButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -237,6 +250,7 @@ void PlayerMainMenuComponent::resized()
     miemProjectHyperlinkButton->setBounds ((getWidth() / 2) - ((getWidth() - 40) / 2), 88 + (getHeight() - 240) - 40, getWidth() - 40, 24);
     loadDefaultButton->setBounds (((getWidth() / 2) - ((getWidth() - 16) / 2)) + (getWidth() - 16) - 8 - 144, 88 + 16, 144, 24);
     additionnalStatusLabel->setBounds ((getWidth() / 2) - ((getWidth() - 80) / 2), getHeight() - 24, getWidth() - 80, 24);
+    fullscreenButton->setBounds (getWidth() - 24 - 144, getHeight() - 76, 144, 24);
     //[UserResized] Add your own custom resize handling here..
 
     // Buttons (and the group itself) will be hidden if there is not enough height available
@@ -324,6 +338,15 @@ void PlayerMainMenuComponent::buttonClicked (Button* buttonThatWasClicked)
         //[UserButtonCode_loadDefaultButton] -- add your button handler code here..
         presenter->OnLoadDefaultSession();
         //[/UserButtonCode_loadDefaultButton]
+    }
+    else if (buttonThatWasClicked == fullscreenButton.get())
+    {
+        //[UserButtonCode_fullscreenButton] -- add your button handler code here..
+        if (presenter->OnFullscreenButtonClicked()) // si fullscreen accepté
+            fullscreenButton->setButtonText(TRANS("Reduce window"));
+        else
+            fullscreenButton->setButtonText(TRANS("Fullscreen"));
+        //[/UserButtonCode_fullscreenButton]
     }
 
     //[UserbuttonClicked_Post]
@@ -497,6 +520,10 @@ BEGIN_JUCER_METADATA
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="1" justification="36" typefaceStyle="Italic"/>
+  <TEXTBUTTON name="Fullscreen button" id="5a77ff389fbb58c9" memberName="fullscreenButton"
+              virtualName="" explicitFocusOrder="0" pos="24Rr 76R 144 24" bgColOff="ff404040"
+              buttonText="Fullscreen" connectedEdges="0" needsCallback="1"
+              radioGroupId="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

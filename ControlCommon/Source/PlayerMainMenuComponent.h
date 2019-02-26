@@ -107,6 +107,7 @@ private:
     std::unique_ptr<HyperlinkButton> miemProjectHyperlinkButton;
     std::unique_ptr<TextButton> loadDefaultButton;
     std::unique_ptr<Label> additionnalStatusLabel;
+    std::unique_ptr<TextButton> fullscreenButton;
 
 
     //==============================================================================

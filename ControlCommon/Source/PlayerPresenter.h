@@ -132,7 +132,8 @@ namespace Miam
         virtual void OnLoadDefaultSession() = 0;
         /// \brief When the main slider (which is not always displayed or used) has been moved
         virtual void OnMainSliderValueChanged_dB(double newValue_dB) {} // no default action !
-        
+        /// \brief Returns wether the fullscreen mode will be activated or not
+        bool OnFullscreenButtonClicked();
         
         
         
