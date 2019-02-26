@@ -54,7 +54,7 @@ class OSCRecorder : public UserQuestionsManager, public juce::Timer
     const int listeningTime_ms = 1000;
 #else
     const int delayAfterFinished_ms = 3000;
-    const int listeningTime_ms = 5000;
+    const int listeningTime_ms = 20000;
 #endif
     
     const int tcpTimeOut_ms = 3000; // default Juce value : 3000 ms

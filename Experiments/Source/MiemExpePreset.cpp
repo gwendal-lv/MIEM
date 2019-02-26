@@ -60,7 +60,7 @@ parametersCount(4) // const at the moment
     sceneBaseIndex = -1000;
     if (synthId == -1)
     {
-        name = "[T] Wurli hammer+delay";
+        name = "[T] Wurli hammer+delay"; // original Analog lab 3 : midrange
         sceneBaseIndex = 1;
         tempo = 145.0f;
         parametersInfo = "1-Chorus/2-Delay/3-250Hz/4-Hammer";
@@ -71,10 +71,10 @@ parametersCount(4) // const at the moment
     }
     else if (synthId == 0)
     {
-        name = "Synth #0";
+        name = "[0] ThunderBass"; // thunder bass
         sceneBaseIndex = 1;
-        tempo = 120.0f;
-        parametersInfo = "1-/2-/3-/4-";
+        tempo = 105.0f;
+        parametersInfo = "1-Delay/2-Osc1Mix/3-Noise/4-Chorus";
         parametersTargetValues[0] = 0.1;
         parametersTargetValues[1] = 0.2;
         parametersTargetValues[2] = 0.3;
