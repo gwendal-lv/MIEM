@@ -13,6 +13,7 @@
 #include "MatrixState.hpp"
 
 #include "AudioUtils.hpp"
+#include "InterpolationTypes.h"
 
 namespace Miam
 {
@@ -37,6 +38,14 @@ namespace Miam
         // size of the vector greater than the size specified in the most recent call to reserve()."
         std::vector< size_t > significantChangesIndexes;
         
+        /// \brief The minimal distance between two T values, to consider them different
+        /// DEVRA DEVENIR UN TABLEAU, ON AURA UNE DIFF MINIMALE SELON CHAQUE COEFFICIENT DE LA MATRICE
+        /// DEVRA DEVENIR UN TABLEAU, ON AURA UNE DIFF MINIMALE SELON CHAQUE COEFFICIENT DE LA MATRICE
+        /// DEVRA DEVENIR UN TABLEAU, ON AURA UNE DIFF MINIMALE SELON CHAQUE COEFFICIENT DE LA MATRICE
+        /// DEVRA DEVENIR UN TABLEAU, ON AURA UNE DIFF MINIMALE SELON CHAQUE COEFFICIENT DE LA MATRICE
+        /// DEVRA DEVENIR UN TABLEAU, ON AURA UNE DIFF MINIMALE SELON CHAQUE COEFFICIENT DE LA MATRICE
+        T linearSignificantDifference;
+        
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
@@ -52,9 +61,17 @@ namespace Miam
         
         // - - - - - Construction / destruction - - - - -
         
-        MatrixBackupState() : MatrixState<T>()
+        MatrixBackupState()
+        :
+        MatrixState<T>()
         {
             significantChangesIndexes.reserve(Miam_MaxNumInputs * Miam_MaxNumOutputs);
+            
+            // précision max = celle des float pour l'OSC entre 0 et 1...
+            linearSignificantDifference = (T) 0.000001;
+            
+            // Sécurité : on vérifie que la différence minimale ne soit pas zéro
+            assert(linearSignificantDifference != ((T)0));
         }
         virtual ~MatrixBackupState() {}
         
@@ -64,8 +81,11 @@ namespace Miam
         
         /// \returns Les indexes 1d des cases de la matrice qui ont changé de manière significative
         /// par rapport à la matrice sauvegardée en interne.
-        std::vector< size_t >& FindSignificantChanges()
+        std::vector< size_t >& FindSignificantChanges(InterpolationType changeDetectionType)
         {
+            // Vérification du type de changement de détection
+            assert(InterpolationTypes::IsActualInterpolationType(changeDetectionType));
+            
             // 0 : on n'efface pas les dernières modifs, tant qu'elles n'ont pas été utilisées....
             
             // 1 : pour tout coeff ACTUEL non-nul, on regarde si la différence
@@ -74,10 +94,22 @@ namespace Miam
                  this->matrix.GetIterator() < this->matrix.GetEndIterator() ;
                  this->matrix.IncIterator())
             {
-                T currentVolume = this->matrix.GetIteratorValue();
-                T backupVolume = backupMatrix[this->matrix.GetIterator1dCoord()];
-                if (AudioUtils<T>::IsVolumeDifferenceSignificant(currentVolume, backupVolume))
-                    significantChangesIndexes.push_back(this->matrix.GetIterator1dCoord() );
+                T currentValue = this->matrix.GetIteratorValue();
+                T backupValue = backupMatrix[this->matrix.GetIterator1dCoord()];
+                bool isDifferenceSignificant = false;
+                if (changeDetectionType == InterpolationType::Matrix_Linear)
+                {
+                    isDifferenceSignificant = (std::abs(currentValue - backupValue) > linearSignificantDifference);
+                }
+                else // currently : audio volume cases
+                {
+                /*(changeDetectionType == InterpolationType::Matrix_ConstantPower
+                    || changeDetectionType == InterpolationType::Matrix_ConstantAmplitude)*/
+                    isDifferenceSignificant = AudioUtils<T>::IsVolumeDifferenceSignificant(currentValue, backupValue);
+                }
+                
+                if (isDifferenceSignificant)
+                significantChangesIndexes.push_back(this->matrix.GetIterator1dCoord() );
             }
             
             // 2 : on cherche les zéros qui sont arrivés dans cette matrice actuelle, c-à-d :

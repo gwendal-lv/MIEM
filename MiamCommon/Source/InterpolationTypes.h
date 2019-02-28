@@ -78,6 +78,14 @@ namespace Miam
         /// ou bien lance une Miam::ParseException
         static InterpolationType ParseName(std::string interpolationName);
         
+        /// \brief Return true if the interpolation type an actual one (e.g. linear, constant power, ...)
+        /// and not a "utility" one (e.g. None, Count, ...)
+        static bool IsActualInterpolationType(InterpolationType type)
+        {
+            return (static_cast<int>(InterpolationType::None) < static_cast<int>(type))
+            && (static_cast<int>(type) < static_cast<int>(InterpolationType::InterpolationTypesCount));
+        }
+        
     };
     
     

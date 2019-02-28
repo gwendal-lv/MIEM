@@ -240,6 +240,10 @@ namespace Miam
         /// \returns Si on a mis quelque chose à jour, ou pas du tout
         bool OnDataUpdateFinished(bool applyMasterGain = false, T masterGain = (T)1.0)
         {
+            // While interpolation type is not properly defined : we do nothing
+            if (interpolationType == InterpolationType::None)
+                return false;
+            
             // Check for master gain change
             bool masterGainSignificantChange = (std::abs(masterGain - lastMasterGain) > (T)(0.0001) ); // -80 dB
             
@@ -274,7 +278,7 @@ namespace Miam
                     currentInterpolatedMatrixState->MultiplyByFactor(masterGain);
                 
                 // On va chercher les différences dès maintenant
-                currentInterpolatedMatrixState->FindSignificantChanges();
+                currentInterpolatedMatrixState->FindSignificantChanges(interpolationType);
                 
                 // Post-computation updates
                 lastMasterGain = masterGain;
