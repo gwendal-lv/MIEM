@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.1
+  Created with Projucer version: 5.4.3
 
   ------------------------------------------------------------------------------
 
@@ -56,36 +56,36 @@ PlayerMainMenuComponent::PlayerMainMenuComponent ()
     playImageButton->addListener (this);
 
     playImageButton->setImages (false, true, true,
-                                ImageCache::getFromMemory (play_png, play_pngSize), 1.0f, Colour (0x00000000),
-                                Image(), 0.6f, Colour (0x00000000),
-                                Image(), 1.0f, Colour (0x00000000));
+                                ImageCache::getFromMemory (play_png, play_pngSize), 1.000f, Colour (0x00000000),
+                                Image(), 0.600f, Colour (0x00000000),
+                                Image(), 1.000f, Colour (0x00000000));
     playingImageButton.reset (new ImageButton ("Playing image button"));
     addAndMakeVisible (playingImageButton.get());
     playingImageButton->setButtonText (TRANS("new button"));
     playingImageButton->addListener (this);
 
     playingImageButton->setImages (false, true, true,
-                                   ImageCache::getFromMemory (playOn_png2, playOn_png2Size), 1.0f, Colour (0x00000000),
-                                   Image(), 1.0f, Colour (0x00000000),
-                                   Image(), 1.0f, Colour (0x00000000));
+                                   ImageCache::getFromMemory (playOn_png2, playOn_png2Size), 1.000f, Colour (0x00000000),
+                                   Image(), 1.000f, Colour (0x00000000),
+                                   Image(), 1.000f, Colour (0x00000000));
     stopImageButton.reset (new ImageButton ("Stop image button"));
     addAndMakeVisible (stopImageButton.get());
     stopImageButton->setButtonText (TRANS("new button"));
     stopImageButton->addListener (this);
 
     stopImageButton->setImages (false, true, true,
-                                ImageCache::getFromMemory (stop_png, stop_pngSize), 1.0f, Colour (0x00000000),
-                                Image(), 0.6f, Colour (0x00000000),
-                                Image(), 1.0f, Colour (0x00000000));
+                                ImageCache::getFromMemory (stop_png, stop_pngSize), 1.000f, Colour (0x00000000),
+                                Image(), 0.600f, Colour (0x00000000),
+                                Image(), 1.000f, Colour (0x00000000));
     stoppedImageButton.reset (new ImageButton ("Stopped image button"));
     addAndMakeVisible (stoppedImageButton.get());
     stoppedImageButton->setButtonText (TRANS("new button"));
     stoppedImageButton->addListener (this);
 
     stoppedImageButton->setImages (false, true, true,
-                                   ImageCache::getFromMemory (stopOn_png, stopOn_pngSize), 1.0f, Colour (0x00000000),
-                                   Image(), 1.0f, Colour (0x00000000),
-                                   Image(), 1.0f, Colour (0x00000000));
+                                   ImageCache::getFromMemory (stopOn_png, stopOn_pngSize), 1.000f, Colour (0x00000000),
+                                   Image(), 1.000f, Colour (0x00000000),
+                                   Image(), 1.000f, Colour (0x00000000));
     helpGroupComponent.reset (new GroupComponent ("Help group component",
                                                   TRANS("Help")));
     addAndMakeVisible (helpGroupComponent.get());
@@ -128,6 +128,22 @@ PlayerMainMenuComponent::PlayerMainMenuComponent ()
     loadDefaultButton->addListener (this);
     loadDefaultButton->setColour (TextButton::buttonColourId, Colour (0xff404040));
 
+    additionnalStatusLabel.reset (new Label ("Additionnal Status Label",
+                                             TRANS("Additionnal Status information")));
+    addAndMakeVisible (additionnalStatusLabel.get());
+    additionnalStatusLabel->setFont (Font (15.00f, Font::italic));
+    additionnalStatusLabel->setJustificationType (Justification::centred);
+    additionnalStatusLabel->setEditable (false, false, false);
+    additionnalStatusLabel->setColour (Label::textColourId, Colour (0xff909090));
+    additionnalStatusLabel->setColour (TextEditor::textColourId, Colours::black);
+    additionnalStatusLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    fullscreenButton.reset (new TextButton ("Fullscreen button"));
+    addAndMakeVisible (fullscreenButton.get());
+    fullscreenButton->setButtonText (TRANS("Fullscreen"));
+    fullscreenButton->addListener (this);
+    fullscreenButton->setColour (TextButton::buttonColourId, Colour (0xff404040));
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -162,6 +178,20 @@ PlayerMainMenuComponent::PlayerMainMenuComponent ()
     {
         miemProjectHyperlinkButton->setURL(URL("http://miem.laras.be/spat"));
     }
+    
+    // Fullscreen button
+#ifdef __MIAMOBILE
+    fullscreenButton->setEnabled(false);
+    fullscreenButton->setVisible(false);
+#endif
+
+
+#ifdef __MIEM_EXPERIMENTS
+    additionnalStatusLabel->setText("Experiments' build (controlled by TCP connection).",
+                                    NotificationType::dontSendNotification);
+#else
+    additionnalStatusLabel->setVisible(false);
+#endif
 
     //[/Constructor]
 }
@@ -182,6 +212,8 @@ PlayerMainMenuComponent::~PlayerMainMenuComponent()
     infoTextEditor = nullptr;
     miemProjectHyperlinkButton = nullptr;
     loadDefaultButton = nullptr;
+    additionnalStatusLabel = nullptr;
+    fullscreenButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -208,15 +240,17 @@ void PlayerMainMenuComponent::resized()
 
     sessionGroupComponent->setBounds ((getWidth() / 2) - ((getWidth() - 16) / 2), 8, getWidth() - 16, 56);
     loadFromFileButton->setBounds ((getWidth() / 2) - (200 / 2), 8 + 16, 200, 24);
-    playImageButton->setBounds ((getWidth() / 2) + -72, getHeight() - 120, 62, 62);
-    playingImageButton->setBounds ((getWidth() / 2) + -10 - 62, getHeight() - 120, 62, 62);
-    stopImageButton->setBounds ((getWidth() / 2) + 16, getHeight() - 120, 62, 62);
-    stoppedImageButton->setBounds ((getWidth() / 2) + 16, getHeight() - 120, 62, 62);
-    helpGroupComponent->setBounds ((getWidth() / 2) - ((getWidth() - 16) / 2), 88, getWidth() - 16, getHeight() - 280);
+    playImageButton->setBounds ((getWidth() / 2) + -16 - 62, getHeight() - 96, 62, 62);
+    playingImageButton->setBounds ((getWidth() / 2) + -16 - 62, getHeight() - 96, 62, 62);
+    stopImageButton->setBounds ((getWidth() / 2) + 16, getHeight() - 96, 62, 62);
+    stoppedImageButton->setBounds ((getWidth() / 2) + 16, getHeight() - 96, 62, 62);
+    helpGroupComponent->setBounds ((getWidth() / 2) - ((getWidth() - 16) / 2), 88, getWidth() - 16, getHeight() - 240);
     helpButton->setBounds (((getWidth() / 2) - ((getWidth() - 16) / 2)) + (getWidth() - 16) / 2 - (120 / 2), 88 + 16, 120, 24);
-    infoTextEditor->setBounds (24, 152, (getWidth() - 16) - 32, (getHeight() - 280) - 120);
-    miemProjectHyperlinkButton->setBounds ((getWidth() / 2) - ((getWidth() - 40) / 2), 88 + (getHeight() - 280) - 40, getWidth() - 40, 24);
+    infoTextEditor->setBounds (24, 152, (getWidth() - 16) - 32, (getHeight() - 240) - 120);
+    miemProjectHyperlinkButton->setBounds ((getWidth() / 2) - ((getWidth() - 40) / 2), 88 + (getHeight() - 240) - 40, getWidth() - 40, 24);
     loadDefaultButton->setBounds (((getWidth() / 2) - ((getWidth() - 16) / 2)) + (getWidth() - 16) - 8 - 144, 88 + 16, 144, 24);
+    additionnalStatusLabel->setBounds ((getWidth() / 2) - ((getWidth() - 80) / 2), getHeight() - 24, getWidth() - 80, 24);
+    fullscreenButton->setBounds (getWidth() - 24 - 144, getHeight() - 76, 144, 24);
     //[UserResized] Add your own custom resize handling here..
 
     // Buttons (and the group itself) will be hidden if there is not enough height available
@@ -312,6 +346,15 @@ void PlayerMainMenuComponent::buttonClicked (Button* buttonThatWasClicked)
         presenter->OnLoadDefaultSession();
         //[/UserButtonCode_loadDefaultButton]
     }
+    else if (buttonThatWasClicked == fullscreenButton.get())
+    {
+        //[UserButtonCode_fullscreenButton] -- add your button handler code here..
+        if (presenter->OnFullscreenButtonClicked()) // si fullscreen accepté
+            fullscreenButton->setButtonText(TRANS("Reduce window"));
+        else
+            fullscreenButton->setButtonText(TRANS("Fullscreen"));
+        //[/UserButtonCode_fullscreenButton]
+    }
 
     //[UserbuttonClicked_Post]
     //[/UserbuttonClicked_Post]
@@ -394,6 +437,20 @@ void PlayerMainMenuComponent::SetHelpString(const String& helpString)
 {
     infoTextEditor->setText(helpString);
 }
+void PlayerMainMenuComponent::SetInfoLabelText(const String& text)
+{
+    if (text.isEmpty())
+    {
+        additionnalStatusLabel->setVisible(false);
+    }
+    else
+    {
+        additionnalStatusLabel->setText(text, NotificationType::dontSendNotification);
+#ifdef __MIEM_EXPERIMENTS
+        additionnalStatusLabel->setVisible(true);
+#endif
+    }
+}
 //[/MiscUserCode]
 
 
@@ -409,42 +466,42 @@ BEGIN_JUCER_METADATA
 <JUCER_COMPONENT documentType="Component" className="PlayerMainMenuComponent"
                  componentName="" parentClasses="public Component" constructorParams=""
                  variableInitialisers="" snapPixels="8" snapActive="1" snapShown="1"
-                 overlayOpacity="0.33" fixedSize="0" initialWidth="600" initialHeight="400">
+                 overlayOpacity="0.330" fixedSize="0" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="51000000"/>
   <GROUPCOMPONENT name="Session group component" id="ee702f61e13ff830" memberName="sessionGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="0Cc 8 16M 56" outlinecol="ff909090"
+                  virtualName="" explicitFocusOrder="0" pos="0.5Cc 8 16M 56" outlinecol="ff909090"
                   textcol="ff909090" title="Session"/>
   <TEXTBUTTON name="Load From File text button" id="2fe2a2c362ae91bd" memberName="loadFromFileButton"
               virtualName="" explicitFocusOrder="0" pos="0Cc 16 200 24" posRelativeY="ee702f61e13ff830"
               bgColOff="ff404040" buttonText="Load from .mspat file" connectedEdges="0"
               needsCallback="1" radioGroupId="0"/>
   <IMAGEBUTTON name="Play image button" id="823680c6dd0a5a2e" memberName="playImageButton"
-               virtualName="" explicitFocusOrder="0" pos="-72C 120R 62 62" buttonText="new button"
+               virtualName="" explicitFocusOrder="0" pos="-16Cr 96R 62 62" buttonText="new button"
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
-               resourceNormal="play_png" opacityNormal="1.0" colourNormal="0"
-               resourceOver="" opacityOver="0.60000002384185791016" colourOver="0"
-               resourceDown="" opacityDown="1.0" colourDown="0"/>
+               resourceNormal="play_png" opacityNormal="1" colourNormal="0"
+               resourceOver="" opacityOver="6.000000238418579e-1" colourOver="0"
+               resourceDown="" opacityDown="1" colourDown="0"/>
   <IMAGEBUTTON name="Playing image button" id="26f63b20519a1739" memberName="playingImageButton"
-               virtualName="" explicitFocusOrder="0" pos="-10Cr 120R 62 62"
-               buttonText="new button" connectedEdges="0" needsCallback="1"
-               radioGroupId="0" keepProportions="1" resourceNormal="playOn_png2"
-               opacityNormal="1.0" colourNormal="0" resourceOver="" opacityOver="1.0"
-               colourOver="0" resourceDown="" opacityDown="1.0" colourDown="0"/>
+               virtualName="" explicitFocusOrder="0" pos="-16Cr 96R 62 62" buttonText="new button"
+               connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
+               resourceNormal="playOn_png2" opacityNormal="1" colourNormal="0"
+               resourceOver="" opacityOver="1" colourOver="0" resourceDown=""
+               opacityDown="1" colourDown="0"/>
   <IMAGEBUTTON name="Stop image button" id="9385dfb43a053dc6" memberName="stopImageButton"
-               virtualName="" explicitFocusOrder="0" pos="16C 120R 62 62" buttonText="new button"
+               virtualName="" explicitFocusOrder="0" pos="16C 96R 62 62" buttonText="new button"
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
-               resourceNormal="stop_png" opacityNormal="1.0" colourNormal="0"
-               resourceOver="" opacityOver="0.60000002384185791016" colourOver="0"
-               resourceDown="" opacityDown="1.0" colourDown="0"/>
+               resourceNormal="stop_png" opacityNormal="1" colourNormal="0"
+               resourceOver="" opacityOver="6.000000238418579e-1" colourOver="0"
+               resourceDown="" opacityDown="1" colourDown="0"/>
   <IMAGEBUTTON name="Stopped image button" id="1b06a982c2d60ddc" memberName="stoppedImageButton"
-               virtualName="" explicitFocusOrder="0" pos="16C 120R 62 62" buttonText="new button"
+               virtualName="" explicitFocusOrder="0" pos="16C 96R 62 62" buttonText="new button"
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
-               resourceNormal="stopOn_png" opacityNormal="1.0" colourNormal="0"
-               resourceOver="" opacityOver="1.0" colourOver="0" resourceDown=""
-               opacityDown="1.0" colourDown="0"/>
+               resourceNormal="stopOn_png" opacityNormal="1" colourNormal="0"
+               resourceOver="" opacityOver="1" colourOver="0" resourceDown=""
+               opacityDown="1" colourDown="0"/>
   <GROUPCOMPONENT name="Help group component" id="5beff948b653aff1" memberName="helpGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="0Cc 88 16M 280M" outlinecol="ff909090"
-                  textcol="ff909090" title="Help"/>
+                  virtualName="" explicitFocusOrder="0" pos="0.5Cc 88 16M 240M"
+                  outlinecol="ff909090" textcol="ff909090" title="Help"/>
   <TEXTBUTTON name="Help button" id="87051e2f861a82a1" memberName="helpButton"
               virtualName="" explicitFocusOrder="0" pos="0Cc 16 120 24" posRelativeX="5beff948b653aff1"
               posRelativeY="5beff948b653aff1" bgColOff="ff404040" buttonText="Show help"
@@ -456,13 +513,24 @@ BEGIN_JUCER_METADATA
               multiline="1" retKeyStartsLine="1" readonly="1" scrollbars="1"
               caret="0" popupmenu="0"/>
   <HYPERLINKBUTTON name="MIEM Project hyperlink button" id="fa7d05f849f2e1a1" memberName="miemProjectHyperlinkButton"
-                   virtualName="" explicitFocusOrder="0" pos="0Cc 40R 40M 24" posRelativeY="5beff948b653aff1"
-                   tooltip="http://miem.laras.be" textCol="ff3d6ed1" buttonText="Go to MIEM website: miem.laras.be"
+                   virtualName="" explicitFocusOrder="0" pos="0.5Cc 40R 40M 24"
+                   posRelativeY="5beff948b653aff1" tooltip="http://miem.laras.be"
+                   textCol="ff3d6ed1" buttonText="Go to MIEM website: miem.laras.be"
                    connectedEdges="0" needsCallback="0" radioGroupId="0" url="http://miem.laras.be"/>
   <TEXTBUTTON name="Load Default button" id="d025c06799a8b40f" memberName="loadDefaultButton"
               virtualName="" explicitFocusOrder="0" pos="8Rr 16 144 24" posRelativeX="5beff948b653aff1"
               posRelativeY="5beff948b653aff1" bgColOff="ff404040" buttonText="Load default session"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
+  <LABEL name="Additionnal Status Label" id="bef02cde37454c59" memberName="additionnalStatusLabel"
+         virtualName="" explicitFocusOrder="0" pos="0.5Cc 24R 80M 24"
+         textCol="ff909090" edTextCol="ff000000" edBkgCol="0" labelText="Additionnal Status information"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
+         italic="1" justification="36" typefaceStyle="Italic"/>
+  <TEXTBUTTON name="Fullscreen button" id="5a77ff389fbb58c9" memberName="fullscreenButton"
+              virtualName="" explicitFocusOrder="0" pos="24Rr 76R 144 24" bgColOff="ff404040"
+              buttonText="Fullscreen" connectedEdges="0" needsCallback="1"
+              radioGroupId="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA
@@ -987,3 +1055,4 @@ const int PlayerMainMenuComponent::stopOn_pngSize = 3436;
 
 //[EndFile] You can add extra defines here...
 //[/EndFile]
+

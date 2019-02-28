@@ -15,6 +15,7 @@
 
 #include "PlayerAppMode.h"
 
+#include "RemoteControlServer.h"
 
 
 namespace Miam
@@ -59,6 +60,14 @@ namespace Miam
         // To fully control the delay before playing (and the VBO/textures
         // openGL resources acquisition/Release)
         bool isViewPreparingToPlay = false;
+        
+        // UDP OSC information (from Model)
+        int udpPort = -1;
+        /// \brief The TCP listening port for opening a secured socket for remote control
+        /// of the Presenter
+        const int tcpServerPortOffset = 20; // e.g. if OSC on 8001, then TCP remote on 8021
+        /// \brief TCP server for Presenter remote control
+        RemoteControlServer remoteControlServer;
         
         
         
@@ -113,6 +122,7 @@ namespace Miam
         
         
         
+        
         // - - - - - Events from the View - - - - -
         public :
         /// \brief
@@ -122,6 +132,9 @@ namespace Miam
         virtual void OnLoadDefaultSession() = 0;
         /// \brief When the main slider (which is not always displayed or used) has been moved
         virtual void OnMainSliderValueChanged_dB(double newValue_dB) {} // no default action !
+        /// \brief Returns wether the fullscreen mode will be activated or not
+        bool OnFullscreenButtonClicked();
+        
         
         
         // - - - - - Events from the Model - - - - -
@@ -129,6 +142,16 @@ namespace Miam
         /// \brief Processes the data then displays it. An empty tree means
         /// that the connection failed.
         void OnNewConnectionStatus(bool isConnectionEstablished, std::shared_ptr<bptree::ptree> connectionParametersTree);
+        
+        
+        
+        
+        // - - - - - Remote control - - - - -
+        void ReinitRemoteControlServer();
+        // events from the connection object
+        void OnRemoteControlConnectionMade();
+        void OnRemoteControlConnectionLost();
+        
         
         
         

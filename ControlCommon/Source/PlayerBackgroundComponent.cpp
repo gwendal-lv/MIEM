@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.1
+  Created with Projucer version: 5.4.3
 
   ------------------------------------------------------------------------------
 
@@ -40,7 +40,7 @@ PlayerBackgroundComponent::PlayerBackgroundComponent ()
     mainInfoLabel.reset (new Label ("Main Info label",
                                     TRANS("MIEM Spat Player")));
     addAndMakeVisible (mainInfoLabel.get());
-    mainInfoLabel->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
+    mainInfoLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     mainInfoLabel->setJustificationType (Justification::centredLeft);
     mainInfoLabel->setEditable (false, false, false);
     mainInfoLabel->setColour (Label::textColourId, Colour (0xff909090));
@@ -53,13 +53,13 @@ PlayerBackgroundComponent::PlayerBackgroundComponent ()
     mainMenuImageButton->addListener (this);
 
     mainMenuImageButton->setImages (false, true, true,
-                                    ImageCache::getFromMemory (menu_icon_png2, menu_icon_png2Size), 1.0f, Colour (0x00000000),
-                                    Image(), 1.0f, Colour (0x00000000),
-                                    ImageCache::getFromMemory (menu_activated_icon_png2, menu_activated_icon_png2Size), 1.0f, Colour (0x00000000));
+                                    ImageCache::getFromMemory (menu_icon_png2, menu_icon_png2Size), 1.000f, Colour (0x00000000),
+                                    Image(), 1.000f, Colour (0x00000000),
+                                    ImageCache::getFromMemory (menu_activated_icon_png2, menu_activated_icon_png2Size), 1.000f, Colour (0x00000000));
     mainInfoLabel2.reset (new Label ("Main Info label 2",
                                      TRANS("[complementary information]")));
     addAndMakeVisible (mainInfoLabel2.get());
-    mainInfoLabel2->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
+    mainInfoLabel2->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     mainInfoLabel2->setJustificationType (Justification::centredTop);
     mainInfoLabel2->setEditable (false, false, false);
     mainInfoLabel2->setColour (Label::textColourId, Colour (0xff909090));
@@ -82,7 +82,7 @@ PlayerBackgroundComponent::PlayerBackgroundComponent ()
                                       "Gain\n"
                                       "dB FS")));
     addAndMakeVisible (masterGainLabel.get());
-    masterGainLabel->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
+    masterGainLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     masterGainLabel->setJustificationType (Justification::centred);
     masterGainLabel->setEditable (false, false, false);
     masterGainLabel->setColour (Label::textColourId, Colour (0xff909090));
@@ -148,7 +148,7 @@ void PlayerBackgroundComponent::resized()
     mainMenuImageButton->setBounds (getWidth() - 28, getHeight() - 28, 28, 28);
     mainInfoLabel2->setBounds (400, getHeight() - 4 - 20, getWidth() - 432, 20);
     mainSlider->setBounds (getWidth() - 56, (getHeight() / 2) + 24 - ((getHeight() - 160) / 2), 56, getHeight() - 160);
-    masterGainLabel->setBounds (getWidth() - 58, ((getHeight() / 2) + 24 - ((getHeight() - 160) / 2)) + -56, roundToInt (56 * 1.0f), 48);
+    masterGainLabel->setBounds (getWidth() - 58, ((getHeight() / 2) + 24 - ((getHeight() - 160) / 2)) + -56, roundToInt (56 * 1.0000f), 48);
     //[UserResized] Add your own custom resize handling here..
 
     // Attention : remove from machin retourne le petit morceau découpé seulement !
@@ -295,6 +295,7 @@ void PlayerBackgroundComponent::ChangeAppMode(PlayerAppMode newAppMode)
             //
             break;
         case PlayerAppMode::MainMenu:
+            mainInfoLabel->setVisible(true);
             multiCanvasComponent->setVisible(false);
             mainMenuComponent->setVisible(true);
             mainSlider->setVisible(false);
@@ -310,6 +311,7 @@ void PlayerBackgroundComponent::ChangeAppMode(PlayerAppMode newAppMode)
 
 
         case PlayerAppMode::Stopped:
+            mainInfoLabel->setVisible(true);
             multiCanvasComponent->setVisible(false);
             mainMenuComponent->setVisible(true);
             mainSlider->setVisible(false);
@@ -329,6 +331,9 @@ void PlayerBackgroundComponent::ChangeAppMode(PlayerAppMode newAppMode)
                                       masterGainLabel->setVisible(isMainSliderEnabled);
                                       presenter->OnViewIsPreparingToPlay(false);
                                   });
+#ifdef __MIEM_EXPERIMENTS
+            mainInfoLabel->setVisible(false);
+#endif
             break;
 
         default:
@@ -358,38 +363,38 @@ BEGIN_JUCER_METADATA
 <JUCER_COMPONENT documentType="Component" className="PlayerBackgroundComponent"
                  componentName="" parentClasses="public Component" constructorParams=""
                  variableInitialisers="" snapPixels="8" snapActive="1" snapShown="1"
-                 overlayOpacity="0.33" fixedSize="0" initialWidth="600" initialHeight="400">
+                 overlayOpacity="0.330" fixedSize="0" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="ff303030"/>
   <LABEL name="Main Info label" id="346700aa23dd510d" memberName="mainInfoLabel"
          virtualName="" explicitFocusOrder="0" pos="8 4Rr 384 20" textCol="ff909090"
          edTextCol="ff000000" edBkgCol="0" labelText="MIEM Spat Player"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="33"/>
   <IMAGEBUTTON name="Main Menu image button" id="83c438e933714a80" memberName="mainMenuImageButton"
                virtualName="" explicitFocusOrder="0" pos="0Rr 0Rr 28 28" buttonText="new button"
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
-               resourceNormal="menu_icon_png2" opacityNormal="1.0" colourNormal="0"
-               resourceOver="" opacityOver="1.0" colourOver="0" resourceDown="menu_activated_icon_png2"
-               opacityDown="1.0" colourDown="0"/>
+               resourceNormal="menu_icon_png2" opacityNormal="1" colourNormal="0"
+               resourceOver="" opacityOver="1" colourOver="0" resourceDown="menu_activated_icon_png2"
+               opacityDown="1" colourDown="0"/>
   <LABEL name="Main Info label 2" id="c1d25bb923263634" memberName="mainInfoLabel2"
          virtualName="" explicitFocusOrder="0" pos="400 4Rr 432M 20" textCol="ff909090"
          edTextCol="ff000000" edBkgCol="0" labelText="[complementary information]"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="12"/>
   <SLIDER name="Main slider" id="8924a1c10657725b" memberName="mainSlider"
           virtualName="" explicitFocusOrder="0" pos="0Rr 24.5Cc 56 160M"
           tooltip="Master Gain (applied to the entire state)" bkgcol="ff000000"
-          thumbcol="ffffffff" trackcol="ff909090" min="-60.0" max="6.0"
-          int="0.0" style="LinearVertical" textBoxPos="TextBoxAbove" textBoxEditable="0"
-          textBoxWidth="40" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
+          thumbcol="ffffffff" trackcol="ff909090" min="-6e1" max="6" int="0"
+          style="LinearVertical" textBoxPos="TextBoxAbove" textBoxEditable="0"
+          textBoxWidth="40" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <LABEL name="Master Gain label" id="398893cc183b859b" memberName="masterGainLabel"
          virtualName="" explicitFocusOrder="0" pos="58R -56 100% 48" posRelativeY="8924a1c10657725b"
          posRelativeW="8924a1c10657725b" textCol="ff909090" edTextCol="ff000000"
          edBkgCol="0" labelText="Master&#10;Gain&#10;dB FS" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
-         fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="36"/>
+         fontsize="1.5e1" kerning="0" bold="0" italic="0" justification="36"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA
@@ -1691,3 +1696,4 @@ const int PlayerBackgroundComponent::menu_activated_icon_png2Size = 20814;
 
 //[EndFile] You can add extra defines here...
 //[/EndFile]
+

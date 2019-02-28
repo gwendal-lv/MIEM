@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT name="MIEM Controller" projectType="guiapp" jucerVersion="5.4.1"
-              version="1.0.1" companyName="IRISIB/LARAS, UMons" companyCopyright="Gwendal Le Vaillant (IRISIB/LARAS, UMons)"
+<JUCERPROJECT name="MIEM Controller" projectType="guiapp" jucerVersion="5.4.3"
+              version="1.0.2" companyName="IRISIB/LARAS, UMons" companyCopyright="Gwendal Le Vaillant (IRISIB/LARAS, UMons)"
               companyWebsite="htpp://laras.be" companyEmail="glevaillant@he2b.be"
               reportAppUsage="0" displaySplashScreen="0" bundleIdentifier="com.gwendallv.MIEMController"
               headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../MiamCommon/Resources/&#10;../../../ControlCommon/Source/&#10;../../../SpatCommon/Source/"
-              id="k0BzOi" defines="__MIEM_VBO">
+              id="k0BzOi" defines="__MIEM_VBO&#10;__MIEM_EXPERIMENTS&#10;__MIEM_EXPERIMENTS_FULL_LOCK__NO"
+              projectLineFeed="&#10;">
   <MAINGROUP id="Krx0MS" name="MIEM Controller">
     <GROUP id="{B7F5CB5C-B6F8-A8AA-0F14-17FA42CC4DDF}" name="Source">
       <FILE id="BwuW2o" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
@@ -44,6 +45,16 @@
               file="../ControlCommon/Source/StatesInterpolator.hpp"/>
       </GROUP>
       <GROUP id="{596BD696-C6A3-E262-0276-DB678B875C8B}" name="Presenter">
+        <GROUP id="{75303A98-E4FB-0D26-52FC-E25DB815094C}" name="Remote">
+          <FILE id="gj3Jqx" name="RemoteControlConnection.cpp" compile="1" resource="0"
+                file="../ControlCommon/Source/RemoteControlConnection.cpp"/>
+          <FILE id="P0L3Zp" name="RemoteControlConnection.h" compile="0" resource="0"
+                file="../ControlCommon/Source/RemoteControlConnection.h"/>
+          <FILE id="M4BBND" name="RemoteControlServer.cpp" compile="1" resource="0"
+                file="../ControlCommon/Source/RemoteControlServer.cpp"/>
+          <FILE id="NXwUn7" name="RemoteControlServer.h" compile="0" resource="0"
+                file="../ControlCommon/Source/RemoteControlServer.h"/>
+        </GROUP>
         <GROUP id="{CC3078DA-52CD-0250-7460-2D48622CBD4F}" name="Areas">
           <FILE id="n32Dij" name="ControlPolygon.cpp" compile="1" resource="0"
                 file="../ControlCommon/Source/ControlPolygon.cpp"/>
@@ -250,6 +261,8 @@
         </GROUP>
       </GROUP>
       <GROUP id="{B91B2137-DC4A-127C-0037-DB058876BEFA}" name="Utils">
+        <FILE id="RQGrvq" name="InterprocessControlBlock.h" compile="0" resource="0"
+              file="../MiamCommon/Source/InterprocessControlBlock.h"/>
         <FILE id="HLrPMV" name="MiemVector.hpp" compile="0" resource="0" file="../MiamCommon/Source/MiemVector.hpp"/>
         <FILE id="ije12g" name="InteractionParameters.cpp" compile="1" resource="0"
               file="../MiamCommon/Source/InteractionParameters.cpp"/>

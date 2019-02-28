@@ -38,6 +38,11 @@ namespace Miam
         
         virtual void SetTitle(std::string title);
         
+        /// \brief Returns whether the fullscreen state could be changed
+        /// or not
+        void SetFullscreenState(bool shouldBeFullscreen);
+        bool GetFullscreenState();
+        
         virtual void TriggerGLResourcesRelease() = 0;
         
     };

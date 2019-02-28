@@ -2,11 +2,11 @@
 
 <JUCERPROJECT id="O4BfM6" name="MIEM Editor" projectType="guiapp" version="1.0.1"
               bundleIdentifier="com.gwendallv.MIEMEditor" includeBinaryInAppConfig="1"
-              jucerVersion="5.4.1" displaySplashScreen="0" reportAppUsage="0"
+              jucerVersion="5.4.3" displaySplashScreen="0" reportAppUsage="0"
               splashScreenColour="Dark" companyCopyright="Gwendal Le Vaillant (IRISIB/LARAS, UMons)"
               companyWebsite="http://laras.be" companyName="IRISIB/LARAS, UMons"
               companyEmail="glevaillant@he2b.be" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../MiamCommon/Resources/&#10;../../../ControlCommon/Source/&#10;../../../SpatCommon/Source/"
-              defines="__MIEM_VBO&#10;__NO__MIEM_GL_INFO_DISPLAY">
+              defines="__MIEM_VBO&#10;__NO__MIEM_GL_INFO_DISPLAY&#10;__MIEM_DISPLAY_CANVAS_RESIZE">
   <MAINGROUP id="uJFjC5" name="MIEM Editor">
     <GROUP id="{7878353D-A1B6-291B-EABC-831E28CE51BB}" name="Source">
       <FILE id="MLMDSl" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
@@ -335,7 +335,7 @@
   </MAINGROUP>
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX" extraCompilerFlags="-Wno-comma"
-               bigIcon="qjdykE">
+               bigIcon="qjdykE" iosDevelopmentTeamID="ZYQ9N85U6C">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" headerPath="../../../&#10;../../../SpatCommon/Source/&#10;../../../MiamCommon/Source/"
                        defines="__MIAM_DEBUG&#10;__MIEM_DEBUG_TRACE__DISABLED" enablePluginBinaryCopyStep="1"/>

@@ -84,6 +84,11 @@ void MultiSceneCanvasComponent::resized()
     
     // Buttons positionning
     updateSceneButtonsBounds();
+    
+    // Sizes display in MOBILE versions
+#if defined(__MIAMOBILE) || defined(__MIEM_DISPLAY_CANVAS_RESIZE)
+    std::cout << "Taille MultiSceneCanvasComponent : " << getWidth() << "px x " << getHeight() << "px, Ratio=" << ((double)(getWidth()) / (double)(getHeight())) << std::endl;
+#endif
 }
 
 
@@ -159,9 +164,17 @@ void MultiSceneCanvasComponent::buttonClicked(Button* buttonThatWasClicked)
         if (buttonThatWasClicked == sceneChoiceTextButtons[i].get())
         {
             buttonFound = true;
+#ifndef __MIEM_EXPERIMENTS_FULL_LOCK
             canvasManager->SelectScene((int)i);
+#else
+            DBG("Clicks on scene buttons are deactivated in __MIEM_EXPERIMENTS mode (TCP control only).");
+#endif
         }
     }
+    
+    if (buttonFound == false)
+        // the clicked button could not be found... Where is the event coming from ???
+        assert(false);
 }
 
     

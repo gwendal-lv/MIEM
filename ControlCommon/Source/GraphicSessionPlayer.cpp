@@ -163,6 +163,22 @@ void GraphicSessionPlayer::OnModelStarted()
 }
 
 
+bool GraphicSessionPlayer::SelectSceneOfSelectedCanvas(size_t sceneId)
+{
+    if (sceneId < selectedCanvas->GetScenesCount())
+    {
+        selectedCanvas->SelectScene((int) sceneId );
+        std::cout << "-----> Scene #" << sceneId << " selected from interprocess connection." << std::endl;
+        return true;
+    }
+    else
+    {
+        std::cout << "-----> WRONG SCENE INDEX (#" << sceneId << ") selected from interprocess connection." << std::endl;
+        return false;
+    }
+}
+
+
 
 void GraphicSessionPlayer::CanvasModeChanged(CanvasManagerMode /*canvasMode*/)
 {

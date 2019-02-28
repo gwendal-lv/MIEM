@@ -126,6 +126,11 @@ namespace Miam {
         // Déclenche des actualisations forcées, ...
         void OnModelStarted();
         
+        /// \brief Tries to select a scene of the currently selected canvas
+        ///
+        /// From remote on network. Returns true if the scene could be selected
+        bool SelectSceneOfSelectedCanvas(size_t sceneId);
+        
         
         
         // ----- Event to View -----
