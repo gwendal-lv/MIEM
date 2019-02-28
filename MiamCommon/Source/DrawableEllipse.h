@@ -51,11 +51,11 @@ namespace Miam
         virtual int GetVerticesBufferElementsCount() const override
         { return DrawableArea::GetVerticesBufferElementsCount()
             + numVerticesPolygon // car même nombre de points
-            + numVerticesRing; } // contour ~= ring en fait
+            + numPointsPolygonContour; } // contour = 2 polygones
         virtual int GetIndicesBufferElementsCount() const override
         { return DrawableArea::GetIndicesBufferElementsCount()
             + 3 * numPointsPolygon // surface de l'ellipse (idem polygone)
-            + 3 * numVerticesRing; } // contour
+            + 3 * numPointsPolygonContour; } // contour
         
         
         

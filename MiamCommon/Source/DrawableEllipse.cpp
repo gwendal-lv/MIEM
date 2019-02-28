@@ -298,7 +298,7 @@ void DrawableEllipse::RefreshOpenGLBuffers()
     const float Rc = contourColour.getRed() / 255.0f;
     const float Gc = contourColour.getGreen() / 255.0f;
     const float Bc = contourColour.getBlue() / 255.0f;
-    for (int i = 0; i < numVerticesRing; ++i)
+    for (int i = 0; i < numPointsPolygonContour; ++i)
     {
         coulours_buffer[4 * (contourRingVertexElmtOffset + i) + 0] = Rc;
         coulours_buffer[4 * (contourRingVertexElmtOffset + i) + 1] = Gc;

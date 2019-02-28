@@ -157,20 +157,41 @@ namespace Miam
         virtual bool IsNameVisible() const = 0;
         virtual std::shared_ptr<OpenGLTextObject> GetGLTextObject() = 0;
 
-        
+
+
         // - - - - - Constant caracteristic values for VBOs - - - - -
         protected :
         // size of the different buffer parts
         // (Not static for multi-threading safety)
-        const int numPointsPolygon = 32; // MAX number of contour points of a polygon
-        const int ringResolution = 32; // actual resolution of any donut ring
-        const int numPointCircle = 32; // actual resolution of any circle
-        
+#ifdef JUCE_ANDROID
+        // lower values for Android... Because low perfs with Juce
+        // VERY VERY LOW VALUES, JUST FOR TEST ON ANDROID
+        const int ringResolution = 8;
+#else
+        // actual resolution of any donut ring, for good performances for medium object such as exciters
+        const int ringResolution = 16;
+
+#endif
+        // Common values for all platforms :
+
+        // Max number of contour points of a polygon... AND actual number of points of an ellipse ?
+        const int numPointsPolygon = 24; // must be the same for all platforms
+        // WARNING there is a remaining issue in the OpenGL rendering code...
+        // the ringResolution and the numPointsPolygon are mixed at some point...
+        // So they SHOULD REMAIN THE SAME, or else OpenGL should be debuggued
+        // to get the bug : numPointsPOlygon ==  24 and ringResolution == 12
+        // -> OK, bug must be solved... to be properly tested
+        const int numPointsPolygonContour = 2 * numPointsPolygon; // 2 polygons filled
+
+        const int numPointCircle = 32; // actual resolution of any circle (not often used, small circles are preferred)
+
+        // Small circles : around 10 points
         const int numVerticesPolygon = numPointsPolygon + 1; // +1 pour le centre du polygone
         const int numVerticesRing = 2 * ringResolution; // donut = 2 circles of 32 points
         const int numVerticesCircle = numPointCircle + 1; // +1 pour le centre du disque
-        
-        
+
+
+
         // - - - - - VBO methods - - - - -
         // - - - Following getters return the number of elements or array size of each kind of OpenGL buffer
         public :

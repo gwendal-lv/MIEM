@@ -70,8 +70,13 @@ void PlayerModel::launchUpdateThread()
 }
 void PlayerModel::setHighThreadPriority()
 {
-#ifndef JUCE_WINDOWS // toutes plateformes POSIX
+#if defined(JUCE_ANDROID)
+    // Android alone seems to support the POSIX classical interface
+    pthread_setname_np(pthread_self(), "MIEM Model::update Thread"); 
+#elif defined(JUCE_MAC) || defined(JUCE_IOS)
     pthread_setname_np(/*pthread_self(), */"MIEM Model::update Thread"); // pas de TID pour FreeBSD 2003... (doc macOS)
+#elif defined(JUCE_WINDOWS)
+    // rien pour Windows.... pour l'instant
 #endif
     
     
