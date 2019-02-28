@@ -8,11 +8,20 @@
 
 namespace BinaryData
 {
+    extern const char*   Recorder_Intro_EN_txt;
+    const int            Recorder_Intro_EN_txtSize = 47;
+
+    extern const char*   Recorder_Intro_FR_txt;
+    const int            Recorder_Intro_FR_txtSize = 46;
+
+    extern const char*   Translation_FR_txt;
+    const int            Translation_FR_txtSize = 3581;
+
     extern const char*   Experiment_macOS_1024at1_png;
     const int            Experiment_macOS_1024at1_pngSize = 672439;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
-    const int namedResourceListSize = 1;
+    const int namedResourceListSize = 4;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];

@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.2
+  Created with Projucer version: 5.4.3
 
   ------------------------------------------------------------------------------
 
@@ -148,6 +148,37 @@ void OSCRecorderComponent::buttonClicked (Button* buttonThatWasClicked)
     //[/UserbuttonClicked_Post]
 }
 
+bool OSCRecorderComponent::keyPressed (const KeyPress& key)
+{
+    //[UserCode_keyPressed] -- Add your code here...
+    if (key.getKeyCode() == KeyPress::spaceKey
+        || key.getKeyCode() == KeyPress::returnKey)
+    {
+        if (! keyPressHappenedRecently)
+        {
+            keyPressHappenedRecently = true;
+            simulateClickOnDisplayedButton();
+            Timer::callAfterDelay(doubleKeyStrokeThreshold_ms,
+                                  [this] {
+                                      keyPressHappenedRecently = false;
+                                  });
+        }
+        else // si appui récent : on oublie simplement cet évènement
+        {
+            //std::cout << "double-appui !!!!" << std::endl;
+        }
+
+        return true;
+    }
+    else
+    {
+        return false;  // Return true if your handler uses this key event,
+                        // or false to allow it to be passed-on.
+    }
+
+    //[/UserCode_keyPressed]
+}
+
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
@@ -161,6 +192,7 @@ void OSCRecorderComponent::DisplayNewState(ExperimentState newState, int presetS
     {
         case ExperimentState::ConnectionLost:
         case ExperimentState::WaitingForTcpServerConnection:
+        case ExperimentState::IntroDescriptionDisplayed:
         case ExperimentState::InitialQuestionsDisplayed:
         case ExperimentState::FinalQuestionsDisplayed:
         case ExperimentState::Finished:
@@ -221,12 +253,14 @@ void OSCRecorderComponent::DisplayNewState(ExperimentState newState, int presetS
     {
         int presetNumber = presetStep + 1;
 
+        String trialPresetStr = TRANS("TRIAL preset");
+
         if (presetStep >= 0) // actual presets
             countLabel->setText(TRANS("Current preset: ") + String(presetNumber) + String("/") + String(presetsCount), NotificationType::dontSendNotification);
         else if (presetStep == -2)
-            countLabel->setText(TRANS("TRIAL preset 1."), NotificationType::dontSendNotification);
+            countLabel->setText(trialPresetStr + " 1.", NotificationType::dontSendNotification);
         else if (presetStep == -1)
-            countLabel->setText(TRANS("TRIAL preset 2."), NotificationType::dontSendNotification);
+            countLabel->setText(trialPresetStr + " 2.", NotificationType::dontSendNotification);
         else if (presetStep == -3)
             countLabel->setText(TRANS("trials not started yet"), NotificationType::dontSendNotification);
         else
@@ -235,6 +269,33 @@ void OSCRecorderComponent::DisplayNewState(ExperimentState newState, int presetS
     else
     {
         countLabel->setText(TRANS("Next questions will appear soon..."), NotificationType::dontSendNotification);
+    }
+
+    // Self-focus
+    if (isVisible())
+        grabKeyboardFocus();
+}
+
+void OSCRecorderComponent::simulateClickOnDisplayedButton()
+{
+    // On vérifie qu'on n'aie bien qu'un seul bouton appuyé à la fois...
+    size_t visibleButtonsCount = 0;
+    visibleButtonsCount += startButton->isVisible() ? 1 : 0;
+    visibleButtonsCount += listenButton->isVisible() ? 1 : 0;
+    visibleButtonsCount += finishedButton->isVisible() ? 1 : 0;
+    assert(visibleButtonsCount <= 1);
+
+    // tout à fait possible d'appuyer quand rien n'est affiché
+    if (visibleButtonsCount == 0)
+        return;
+    else if (visibleButtonsCount == 1)
+    {
+        if (startButton->isVisible())
+            buttonClicked(startButton.get());
+        else if (listenButton->isVisible())
+            buttonClicked(listenButton.get());
+        else if (finishedButton->isVisible())
+            buttonClicked(finishedButton.get());
     }
 }
 //[/MiscUserCode]
@@ -253,6 +314,9 @@ BEGIN_JUCER_METADATA
                  parentClasses="public Component" constructorParams="" variableInitialisers=""
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="0" initialWidth="600" initialHeight="400">
+  <METHODS>
+    <METHOD name="keyPressed (const KeyPress&amp; key)"/>
+  </METHODS>
   <BACKGROUND backgroundColour="ff313131"/>
   <TEXTBUTTON name="start button" id="cb0e665733fa514e" memberName="startButton"
               virtualName="" explicitFocusOrder="0" pos="0Cc 200 500 160" bgColOff="ff3d338d"
@@ -270,7 +334,7 @@ BEGIN_JUCER_METADATA
          virtualName="" explicitFocusOrder="0" pos="0Cc 40R 500 24" edTextCol="ff000000"
          edBkgCol="0" labelText="Current preset: .../..." editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
-         fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="36"/>
+         fontsize="1.5e1" kerning="0" bold="0" italic="0" justification="36"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

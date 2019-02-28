@@ -21,7 +21,7 @@ namespace bptree = boost::property_tree;
 #include "UserFinalQuestions.h"
 
 
-
+class OSCRecorderIntroComponent;
 class UserQuestions;
 class UserFinalQuestions;
 
@@ -32,6 +32,7 @@ class UserQuestionsManager
     virtual ~UserQuestionsManager() {}
     
     // Callbacks
+    virtual void OnIntroFinished(OSCRecorderIntroComponent* sender) = 0;
     virtual void OnFirstQuestionsAnswered(UserQuestions* sender) = 0;
     virtual void OnFinalQuestionsAnswered(UserFinalQuestions* sender) = 0;
     

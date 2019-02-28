@@ -10,7 +10,9 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "OSCRecorderComponent.h"
+#include "OSCRecorderIntroComponent.h"
 #include "OSCRecorder.h"
+
 
 #include "UserQuestions.h"
 #include "UserFinalQuestions.h"
@@ -35,15 +37,27 @@ public:
     void resized() override;
     
     OSCRecorderComponent& GetOscRecorderComponent() {return *(oscRecorderComponent.get()); }
+    
+    /// \brief If nullptr, all GUI components will be hidden. Own labels, etc, will then
+    /// be displayed
+    void SetOneGuiComponentVisible(Component* component);
 
 private:
     //==============================================================================
     // Your private member variables go here...
     
+    // Self-managed (for visibilty, etc...)
     std::unique_ptr<OSCRecorderComponent> oscRecorderComponent;
+    
+    
+    std::unique_ptr<OSCRecorderIntroComponent> oscRecorderIntroComponent;
     std::unique_ptr<UserQuestions> firstUserQuestionsComponent;
     std::unique_ptr<UserFinalQuestions> finalUserQuestionsComponent;
+    // stores all the previous "big GUI" components pointers
+    std::vector<Component*> bigGuiComponents;
     
+    
+    // Own small components
     std::unique_ptr<Label> backLabel;
     std::unique_ptr<Label> expeLabel;
     std::unique_ptr<Label> expeLabel2;

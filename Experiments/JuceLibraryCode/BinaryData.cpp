@@ -7,8 +7,59 @@
 namespace BinaryData
 {
 
-//================== Experiment_macOS_1024at1.png ==================
+//================== Recorder_Intro_EN.txt ==================
 static const unsigned char temp_binary_data_0[] =
+"[...English introduction text to be written...]";
+
+const char* Recorder_Intro_EN_txt = (const char*) temp_binary_data_0;
+
+//================== Recorder_Intro_FR.txt ==================
+static const unsigned char temp_binary_data_1[] =
+"Cette exp\xc3\xa9rience consiste \xc3\xa0 faire des trucs.";
+
+const char* Recorder_Intro_FR_txt = (const char*) temp_binary_data_1;
+
+//================== Translation_FR.txt ==================
+static const unsigned char temp_binary_data_2[] =
+"language: French\n"
+"countries: fr be mc ch lu\n"
+"\n"
+"\"As a professional, I understand and I can manipulate classical sound synthesisers and filtering techniques\" = \"En tant que professionnel, je comprends et je suis capable de manipuler les techniques classiques de synth\xc3\xa8se sonore et de filtr"
+"age\"\n"
+"\"As an amateur, I have already played with synthesisers and filters, and I know a bit how to use them\" = \"En tant qu'amateur, j'ai d\xc3\xa9j\xc3\xa0 jou\xc3\xa9 avec des synth\xc3\xa9tiseurs et des filtres, et j'ai des connaissances de base conce"
+"rnant leur utilisation\"\n"
+"\"Before starting the experiment, please read and fill the form below.\" = \"Avant de commencer l'exp\xc3\xa9rience, veuillez s'il vous pla\xc3\xaet lire et remplir le formulaire ci-dessous.\"\n"
+"\"Before this experiment, I did not know anything about sound synthesisers and filters\" = \"Avant cette exp\xc3\xa9rience, je ne connaissais rien \xc3\xa0 propos des synth\xc3\xa9tiseurs audio et des filtres\"\n"
+"\"Begin the experiment\" = \"Commencer l'exp\xc3\xa9rience\"\n"
+"\"Collected data might be anonymously used and published for scientific research purposes.\" = \"Les donn\xc3\xa9""es collect\xc3\xa9""es pourront \xc3\xaatre utilis\xc3\xa9""es de mani\xc3\xa8re anonyme, et publi\xc3\xa9""es dans le cadre de recherc"
+"hes scientifiques.\"\n"
+"\"Concerning sound synthesisers and filters, what is your level of expertise ?\" = \"Concernant les synth\xc3\xa9tiseurs audio et les filtres, comment estimez-vous votre niveau d'expertise ?\"\n"
+"\"Continue\" = \"Continuer\"\n"
+"\"Current preset: \" = \"Preset actuel :\"\n"
+"\"BEGIN PRESET RESEARCH\" = \"COMMENCER LA RECHERCHE DU PRESET\"\n"
+"\"I allow the anonymous usage of data collected during this experiment\" = \"J'autorise l'utilisation anonyme des donn\xc3\xa9""es collect\xc3\xa9""es durant cette exp\xc3\xa9rience\"\n"
+"\"I have already participated in a similar scientific experiment\" = \"J'ai d\xc3\xa9j\xc3\xa0 particip\xc3\xa9 \xc3\xa0 une exp\xc3\xa9rience scientifique similaire\"\n"
+"\"I have already played with synthesisers and filters, but I don't know how they work\" = \"J'ai d\xc3\xa9j\xc3\xa0 jou\xc3\xa9 avec des synth\xc3\xa9tiseurs et des filtres, mais je ne sais pas comment ils fonctionnent\"\n"
+"\"I have already tested a similar touch app\" = \"J'ai d\xc3\xa9j\xc3\xa0 test\xc3\xa9 une application tactile similaire\"\n"
+"\"I play quite often with synthesisers and filters, and I can configure them to produce the sounds that I want\" = \"Je joue assez souvent avec des synth\xc3\xa9tiseurs et des filtres, et je suis capable de les configurer pour produire les sons que j"
+"e d\xc3\xa9sire\"\n"
+"\"I suffer from a vision impairment, such as uncorrected short-sightedness, color blindness, ...\" = \"Je souffre d'un trouble de vision, tel qu'une myopie non-corrig\xc3\xa9""e, un daltonisme, ou autre\"\n"
+"\"I suffer from an hearing impairment\" = \"Je souffre d'un trouble de l'audition\"\n"
+"\"It is almost finished! Please read and answer the last few questions below.\" = \"C'est presque termin\xc3\xa9 ! Il ne reste qu'\xc3\xa0 r\xc3\xa9pondre aux quelques questions ci-dessous.\"\n"
+"\"LISTEN TO THE PRESET\" = \"\xc3\x89""COUTER LE PRESET\"\n"
+"\"OK, save data and finish the experiment\" = \"OK, enregistrer les donn\xc3\xa9""es et terminer l'exp\xc3\xa9rience\"\n"
+"\"Next questions will appear soon...\" = \"Les questions suivantes vont appara\xc3\xaetre tr\xc3\xa8s bient\xc3\xb4t...\"\n"
+"\"Please tell us its name in the form below:\" = \"Veuillez s'il vous pla\xc3\xaet nous indiquer son nom dans le formulaire ci-dessous :\"\n"
+"\"Please tell us its name, location and/or context in the form below: \" = \"Veuillez s'il vous pla\xc3\xaet nous indiquer son nom, lieu et/ou contexte dans le formulaire ci-dessous :\"\n"
+"\"Please tell us the nature of this impairment in the form below:\" = \"Veuillez s'il vous pla\xc3\xaet nous indiquer la nature de ce trouble dans le formulaire ci-dessous :\"\n"
+"\"Thank you for participating!\" = \"Merci d'avoir particip\xc3\xa9 !\"\n"
+"\"TRIAL preset\" = \"Preset d'ESSAI\"\n"
+"\n";
+
+const char* Translation_FR_txt = (const char*) temp_binary_data_2;
+
+//================== Experiment_macOS_1024at1.png ==================
+static const unsigned char temp_binary_data_3[] =
 { 137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,4,0,0,0,4,0,8,6,0,0,0,127,29,43,131,0,0,0,1,115,82,71,66,0,174,206,28,233,0,0,0,9,112,72,89,115,0,0,11,19,0,0,11,19,1,0,154,156,24,0,0,4,40,105,84,88,116,88,77,76,58,99,111,109,46,97,100,111,98,101,46,
 120,109,112,0,0,0,0,0,60,120,58,120,109,112,109,101,116,97,32,120,109,108,110,115,58,120,61,34,97,100,111,98,101,58,110,115,58,109,101,116,97,47,34,32,120,58,120,109,112,116,107,61,34,88,77,80,32,67,111,114,101,32,53,46,52,46,48,34,62,10,32,32,32,60,
 114,100,102,58,82,68,70,32,120,109,108,110,115,58,114,100,102,61,34,104,116,116,112,58,47,47,119,119,119,46,119,51,46,111,114,103,47,49,57,57,57,47,48,50,47,50,50,45,114,100,102,45,115,121,110,116,97,120,45,110,115,35,34,62,10,32,32,32,32,32,32,60,114,
@@ -9570,7 +9621,7 @@ static const unsigned char temp_binary_data_0[] =
 211,134,5,1,8,64,0,2,16,128,0,4,94,158,192,201,119,207,52,187,170,87,127,151,103,173,211,246,28,245,64,172,107,204,90,213,202,181,60,115,101,253,97,59,15,216,214,119,226,157,30,237,235,190,213,61,212,186,251,186,217,172,161,33,0,1,8,64,160,33,240,1,238,
 227,144,144,120,163,37,149,0,0,0,0,73,69,78,68,174,66,96,130,0,0 };
 
-const char* Experiment_macOS_1024at1_png = (const char*) temp_binary_data_0;
+const char* Experiment_macOS_1024at1_png = (const char*) temp_binary_data_3;
 
 
 const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
@@ -9583,6 +9634,9 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
 
     switch (hash)
     {
+        case 0xcd874cee:  numBytes = 47; return Recorder_Intro_EN_txt;
+        case 0xcf748391:  numBytes = 46; return Recorder_Intro_FR_txt;
+        case 0x340941eb:  numBytes = 3581; return Translation_FR_txt;
         case 0xf1ad4a99:  numBytes = 672439; return Experiment_macOS_1024at1_png;
         default: break;
     }
@@ -9593,11 +9647,17 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
 
 const char* namedResourceList[] =
 {
+    "Recorder_Intro_EN_txt",
+    "Recorder_Intro_FR_txt",
+    "Translation_FR_txt",
     "Experiment_macOS_1024at1_png"
 };
 
 const char* originalFilenames[] =
 {
+    "Recorder_Intro_EN.txt",
+    "Recorder_Intro_FR.txt",
+    "Translation_FR.txt",
     "Experiment_macOS_1024at1.png"
 };
 

@@ -107,7 +107,12 @@ class MiemExpePreset {
     void DisplayInStdCout(bool displaySortedSamples = false);
     
     // - - - - - Generic presets indexes manipulations - - - - -
+    
+    /// \brief
+    ///
+    /// \param randomize can be false for debug purposes
     static std::map<int, size_t> GeneratePresetIndexToRandomIndexMap(int actualPresetsCount,
-                                                                     int trialPresetsCount);
+                                                                     int trialPresetsCount,
+                                                                     bool randomize = true);
     
 };

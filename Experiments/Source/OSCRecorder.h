@@ -13,6 +13,7 @@
 #include <vector>
 #include <chrono>
 #include <memory>
+#include <string>
 
 #include "boost/property_tree/ptree.hpp"
 #include "boost/property_tree/xml_parser.hpp"
@@ -43,17 +44,25 @@ class OSCRecorder : public UserQuestionsManager, public juce::Timer
     // ===================================================================
     public :
     
+    static std::string GetLanguage() {return std::string("FR");}
     
-    const int ExperimentPresetsCount = 10; // is also the number of synths
-    const int TrialPresetsCount = 2; // the 2 for the same synth
+    //const int ExperimentPresetsCount = 10; // is also the number of synths
+    const int ExperimentPresetsCount = 2; // DEBUG
+    
+    const int TrialPresetsCount = 2; // the 2 for the same synth : ATTENTION A CHANGEEEEERRRRRR
+    // METTRE 2 SYNTHÉS DIFFÉRENTS POUR LE TEST
+    
     const int TrialSynthsCount = 1;
     
     
+    private :
+    const bool randomizePresets = false;
+    public :
 #ifdef __MIEM_SHORT_DELAYS
-    const int delayAfterFinished_ms = 500;
-    const int listeningTime_ms = 1000;
+    const int delayAfterFinished_ms = 200;
+    const int listeningTime_ms = 500;
 #else
-    const int delayAfterFinished_ms = 3000;
+    const int delayAfterFinished_ms = 2000;
     const int listeningTime_ms = 20000;
 #endif
     
@@ -168,10 +177,9 @@ class OSCRecorder : public UserQuestionsManager, public juce::Timer
     
     // - - - - - Events froms View - - - - -
     void OnButtonClicked(ExperimentState requestedState);
-    // will check for double-strokes (3s delay between 2 key downs ?)
-    void OnSpaceBarPushed();
     
     // overrides from the UserQuestionsManager parent abstract class
+    virtual void OnIntroFinished(OSCRecorderIntroComponent* sender) override;
     virtual void OnFirstQuestionsAnswered(UserQuestions* sender) override;
     virtual void OnFinalQuestionsAnswered(UserFinalQuestions* sender) override;
     

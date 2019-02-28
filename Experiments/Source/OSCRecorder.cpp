@@ -30,6 +30,7 @@ mainComponent(_mainComponent),
 recorderComponent(*(_mainComponent->oscRecorderComponent.get()))
 {
     recorderComponent.SetRecorderManager(this);
+    mainComponent->oscRecorderIntroComponent->SetUserQuestionsManager(this);
     mainComponent->firstUserQuestionsComponent->SetUserQuestionsManager(this);
     mainComponent->finalUserQuestionsComponent->SetUserQuestionsManager(this);
     
@@ -66,7 +67,7 @@ void OSCRecorder::reinitExperiment()
     // TCP connection reinit
     tcpConnection->disconnect();
     hasConnectionBeenLostDuringLastStep = true; // to force re-connect
-    stateBeforeConnectionLost = ExperimentState::InitialQuestionsDisplayed; // forced fake state
+    stateBeforeConnectionLost = ExperimentState::IntroDescriptionDisplayed; // forced fake state
     
     // OSC UDP listener (no check for connection stability....)
     oscRealtimeListener = std::make_shared<OSCRealtimeListener>(udpOscPort, startTimePt);
@@ -101,7 +102,8 @@ void OSCRecorder::reinitExperiment()
     // - - - - Random Index maps - - - -
     presetRandomIdx.clear();
     presetRandomIdx = MiemExpePreset::GeneratePresetIndexToRandomIndexMap((int)ExperimentPresetsCount,
-                                                                          (int)TrialPresetsCount);
+                                                                          (int)TrialPresetsCount,
+                                                                          randomizePresets);
     // Random indexes stored also into presets (for saving in files, later)
     for (int i = -TrialPresetsCount; i<ExperimentPresetsCount ; i++)
     {
@@ -223,8 +225,7 @@ void OSCRecorder::changeState(ExperimentState newState)
             break;
         
         case ExperimentState::ConnectionLost:
-            mainComponent->firstUserQuestionsComponent->setVisible(false);
-            mainComponent->finalUserQuestionsComponent->setVisible(false);
+            mainComponent->SetOneGuiComponentVisible(nullptr);
             infoString = "Connection lost! TCP Socket will try to re-connect to " + String(tcpServerName) + " on port " + String(tcpServerPort);
             displayError(infoString);
             break;
@@ -232,20 +233,21 @@ void OSCRecorder::changeState(ExperimentState newState)
         case ExperimentState::WaitingForTcpServerConnection:
             if (! stateChanged) // we do not re-display... not to fill std::cout
                 break;
-            mainComponent->firstUserQuestionsComponent->setVisible(false);
-            mainComponent->finalUserQuestionsComponent->setVisible(false);
+            mainComponent->SetOneGuiComponentVisible(nullptr);
             infoString = "TCP Socket trying to connect to " + String(tcpServerName) + " on port " + String(tcpServerPort) + "...";
             displayError(infoString);
             break;
             
+        case ExperimentState::IntroDescriptionDisplayed:
+            mainComponent->SetOneGuiComponentVisible(mainComponent->oscRecorderIntroComponent.get());
+            break;
+            
         case ExperimentState::InitialQuestionsDisplayed:
-            mainComponent->firstUserQuestionsComponent->setVisible(true);
-            mainComponent->finalUserQuestionsComponent->setVisible(false);
+            mainComponent->SetOneGuiComponentVisible(mainComponent->firstUserQuestionsComponent.get());
             break;
             
         case ExperimentState::FinalQuestionsDisplayed:
-            mainComponent->firstUserQuestionsComponent->setVisible(false);
-            mainComponent->finalUserQuestionsComponent->setVisible(true);
+            mainComponent->SetOneGuiComponentVisible(mainComponent->finalUserQuestionsComponent.get());
             break;
             
             // Préparation pour Écoute : on affiche une scène vide, puis
@@ -255,8 +257,7 @@ void OSCRecorder::changeState(ExperimentState newState)
             // on sélectionne la track EXPERIMENT (pas la référence)
             reaperController->SetTrackSolo_usingMutes(presets[presetRandomIdx[currentPresetStep]]->GetReaperTrackNumber(true));
             
-            mainComponent->firstUserQuestionsComponent->setVisible(false);
-            mainComponent->finalUserQuestionsComponent->setVisible(false);
+            mainComponent->SetOneGuiComponentVisible(nullptr);
             break;
             
             // Listening : tout est prêt, on fait juste play dans Reaper
@@ -402,16 +403,14 @@ void OSCRecorder::OnButtonClicked(ExperimentState requestedState)
     }
 }
 
-void OSCRecorder::OnSpaceBarPushed()
-{
-    // If it is not a double-tap on the space bar...
-    
-    // Then we jump to the next state
-}
 
+void OSCRecorder::OnIntroFinished(OSCRecorderIntroComponent* /*sender*/)
+{
+    changeState(ExperimentState::InitialQuestionsDisplayed);
+}
 void OSCRecorder::OnFirstQuestionsAnswered(UserQuestions* sender)
 {
-    // Save after before the finish screen is being displayed
+    // Save before the init screen is being displayed
     // (for data consistency before mode change)
     saveEverythingToFiles(currentPresetStep); // valeur non-valide, trop négative au départ
     
@@ -427,13 +426,14 @@ void OSCRecorder::OnFinalQuestionsAnswered(UserFinalQuestions* sender)
 }
 bool OSCRecorder::OnQuitRequest()
 {
-    bool waitingToGetBackToInitalQuestion = hasConnectionBeenLostDuringLastStep
-    && (state == ExperimentState::WaitingForTcpServerConnection && stateBeforeConnectionLost == ExperimentState::InitialQuestionsDisplayed);
+    bool waitingToGetBackToInitalState = hasConnectionBeenLostDuringLastStep
+    && (state == ExperimentState::WaitingForTcpServerConnection && stateBeforeConnectionLost == ExperimentState::IntroDescriptionDisplayed);
     
     if (state == ExperimentState::Finished
         || state == ExperimentState::NotInitialized
+        || state == ExperimentState::IntroDescriptionDisplayed
         || state == ExperimentState::InitialQuestionsDisplayed
-        || waitingToGetBackToInitalQuestion)
+        || waitingToGetBackToInitalState)
         return true;
     else
         return false;

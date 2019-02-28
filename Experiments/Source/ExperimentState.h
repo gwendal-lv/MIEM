@@ -46,7 +46,8 @@ enum class ExperimentState {
     ConnectionLost, ///< Error intermediate state
     
     
-    // First and final states (questions)
+    // First and final states (descriptions and questions)
+    IntroDescriptionDisplayed,
     InitialQuestionsDisplayed,
     FinalQuestionsDisplayed,
     
@@ -72,6 +73,9 @@ class ExperimentStateUtils {
         {
             case ExperimentState::NotInitialized:
                 return "Not initialized";
+                
+            case ExperimentState::IntroDescriptionDisplayed:
+                return "Introduction, description  displayed";
                 
             case ExperimentState::InitialQuestionsDisplayed:
                 return "Initial questions displayed";

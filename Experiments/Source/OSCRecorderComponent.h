@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.2
+  Created with Projucer version: 5.4.3
 
   ------------------------------------------------------------------------------
 
@@ -50,17 +50,26 @@ public:
     void SetRecorderManager(OSCRecorder* _recorder) {recorderManager = _recorder;}
 
     void DisplayNewState(ExperimentState newState, int presetStep, size_t presetsCount);
+
+    private :
+    void simulateClickOnDisplayedButton();
+    public :
     //[/UserMethods]
 
     void paint (Graphics& g) override;
     void resized() override;
     void buttonClicked (Button* buttonThatWasClicked) override;
+    bool keyPressed (const KeyPress& key) override;
 
 
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     OSCRecorder* recorderManager = 0;
+
+    // permet de détecter/emêcher les doubles-appuis sur la barre d'espace....
+    bool keyPressHappenedRecently = false;
+    const int doubleKeyStrokeThreshold_ms = 500;
     //[/UserVariables]
 
     //==============================================================================

@@ -27,16 +27,24 @@ MainComponent::MainComponent()
     // components génériques
     firstUserQuestionsComponent.reset(new UserQuestions());
     addChildComponent(firstUserQuestionsComponent.get());
+    bigGuiComponents.push_back(firstUserQuestionsComponent.get());
     finalUserQuestionsComponent.reset(new UserFinalQuestions());
     addChildComponent(finalUserQuestionsComponent.get());
+    bigGuiComponents.push_back(finalUserQuestionsComponent.get());
     
     // Expérience 1 : écoute OSC
+    oscRecorderIntroComponent.reset(new OSCRecorderIntroComponent());
+    addChildComponent(oscRecorderIntroComponent.get());
+    bigGuiComponents.push_back(oscRecorderIntroComponent.get());
+    
     oscRecorderComponent.reset(new OSCRecorderComponent());
     addChildComponent(oscRecorderComponent.get());
+    // self-managed !
+    //bigGuiComponents.push_back(oscRecorderComponent.get());
     
     
     // Size after children are init
-    setSize (800, 600);
+    setSize (1000, 700);
 }
 
 MainComponent::~MainComponent()
@@ -57,6 +65,23 @@ void MainComponent::resized()
     expeLabel2->setBounds(16, getHeight() - 24 - 16, getWidth()-32, 24);
     
     oscRecorderComponent->setBounds(this->getBounds());
+    oscRecorderIntroComponent->setBounds(this->getBounds());
     firstUserQuestionsComponent->setBounds(this->getBounds());
     finalUserQuestionsComponent->setBounds(this->getBounds());
+    
+    
 }
+
+
+void MainComponent::SetOneGuiComponentVisible(Component* component)
+{
+    for (size_t i=0 ; i<bigGuiComponents.size() ; i++)
+    {
+        if (bigGuiComponents[i] == component)
+            bigGuiComponents[i]->setVisible(true);
+        else
+            bigGuiComponents[i]->setVisible(false);
+    }
+}
+
+

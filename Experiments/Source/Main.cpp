@@ -31,6 +31,13 @@ public:
     //==============================================================================
     void initialise (const String& commandLine) override
     {
+        if (OSCRecorder::GetLanguage().compare("FR") == 0)
+        {
+            auto localisedTranslation = new LocalisedStrings(String(CharPointer_UTF8(BinaryData::Translation_FR_txt)),
+                                        true); // ignorer la casse... fausse bonne idée ?
+            LocalisedStrings::setCurrentMappings(localisedTranslation); // gère la destruction
+        }
+        
         // Pré-écrit par Juce
         mainWindow.reset (new MainWindow (getApplicationName()));
         

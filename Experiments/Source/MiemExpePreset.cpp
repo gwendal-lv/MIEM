@@ -184,7 +184,8 @@ parametersCount(4) // const at the moment
 
 
 std::map<int, size_t> MiemExpePreset::GeneratePresetIndexToRandomIndexMap(int actualPresetsCount,
-                                                                 int trialPresetsCount)
+                                                                 int trialPresetsCount,
+                                                                          bool randomize)
 {
     // There must be the same number of fader presets and of MIEM interpolation presets
     assert(((trialPresetsCount % 2) == 0) && ((actualPresetsCount % 2) == 0));
@@ -208,7 +209,11 @@ std::map<int, size_t> MiemExpePreset::GeneratePresetIndexToRandomIndexMap(int ac
     // mersenne-twister 1997 (32 bits)
     auto longIntSeed = Time::currentTimeMillis() % 1000000;
     int timeSeed = (int) longIntSeed;
-    std::shuffle(randomVector1.begin(), randomVector1.end(), std::mt19937(timeSeed));
+    
+    // sometimes not randomized, for debug purposes
+    if (randomize)
+        std::shuffle(randomVector1.begin(), randomVector1.end(), std::mt19937(timeSeed));
+    
     for (int i=0 ; i<actualPresetsCount ; i++)
             presetRandomIdx[i] = randomVector1[i];
     

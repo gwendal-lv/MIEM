@@ -2,13 +2,9 @@
 
 <JUCERPROJECT id="DytN0V" name="MIEM Experiments" projectType="guiapp" jucerVersion="5.4.3"
               companyName="Gwendal Le Vaillant" bundleIdentifier="com.gwendallv.MIEMExperiments"
-              defines="__MIEM_SHORT_DELAYS__NO" reportAppUsage="0" displaySplashScreen="0"
+              defines="__MIEM_SHORT_DELAYS" reportAppUsage="0" displaySplashScreen="0"
               projectLineFeed="&#10;" headerPath="../../../&#10;../../../MiamCommon/Source&#10;">
   <MAINGROUP id="CesC75" name="MIEM Experiments">
-    <GROUP id="{BF322DA9-F626-C0D8-FDC9-308209939F8C}" name="Resources_LFS">
-      <FILE id="ToqEsc" name="Experiment_macOS_1024at1.png" compile="0" resource="1"
-            file="../Resources_LFS/Icones_Logos/Exports/Experiment_macOS_1024at1.png"/>
-    </GROUP>
     <GROUP id="{BD7228E3-B907-311E-3EC6-609760808B73}" name="MiemCommon">
       <FILE id="aajuQ9" name="AsyncParamChange.h" compile="0" resource="0"
             file="../MiamCommon/Source/AsyncParamChange.h"/>
@@ -16,36 +12,24 @@
             file="../MiamCommon/Source/InterprocessControlBlock.h"/>
     </GROUP>
     <GROUP id="{302B9714-4F66-36D7-B352-280078CFEC1B}" name="Source">
+      <FILE id="JEjEaK" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="ZQ3oBD" name="ReaperOscController.cpp" compile="1" resource="0"
             file="Source/ReaperOscController.cpp"/>
       <FILE id="VGFcaC" name="ReaperOscController.h" compile="0" resource="0"
             file="Source/ReaperOscController.h"/>
-      <FILE id="JEjEaK" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
-      <FILE id="GpauQe" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
-      <FILE id="ttXSCY" name="MainComponent.cpp" compile="1" resource="0"
-            file="Source/MainComponent.cpp"/>
-      <FILE id="ifo9Wg" name="UserQuestions.cpp" compile="1" resource="0"
-            file="Source/UserQuestions.cpp"/>
-      <FILE id="r0L6yc" name="UserQuestions.h" compile="0" resource="0" file="Source/UserQuestions.h"/>
-      <FILE id="SaFzJ7" name="UserFinalQuestions.cpp" compile="1" resource="0"
-            file="Source/UserFinalQuestions.cpp"/>
-      <FILE id="vgDm3R" name="UserFinalQuestions.h" compile="0" resource="0"
-            file="Source/UserFinalQuestions.h"/>
-      <FILE id="chuETO" name="UserQuestionsManager.cpp" compile="1" resource="0"
-            file="Source/UserQuestionsManager.cpp"/>
-      <FILE id="sfho2A" name="UserQuestionsManager.h" compile="0" resource="0"
-            file="Source/UserQuestionsManager.h"/>
       <FILE id="dQTlGh" name="ExperimentState.h" compile="0" resource="0"
             file="Source/ExperimentState.h"/>
       <GROUP id="{01A727CE-79BE-92B4-2D7E-23D2820957A0}" name="OSCRecorder">
-        <FILE id="NQoXB9" name="OSCRealtimeListener.cpp" compile="1" resource="0"
-              file="Source/OSCRealtimeListener.cpp"/>
-        <FILE id="rMQM5d" name="OSCRealtimeListener.h" compile="0" resource="0"
-              file="Source/OSCRealtimeListener.h"/>
+        <FILE id="sqGNYp" name="OSCRecorder.cpp" compile="1" resource="0" file="Source/OSCRecorder.cpp"/>
+        <FILE id="xjc8Qt" name="OSCRecorder.h" compile="0" resource="0" file="Source/OSCRecorder.h"/>
         <FILE id="GlPlBp" name="MiemExpePreset.cpp" compile="1" resource="0"
               file="Source/MiemExpePreset.cpp"/>
         <FILE id="Tqr1a7" name="MiemExpePreset.h" compile="0" resource="0"
               file="Source/MiemExpePreset.h"/>
+        <FILE id="NQoXB9" name="OSCRealtimeListener.cpp" compile="1" resource="0"
+              file="Source/OSCRealtimeListener.cpp"/>
+        <FILE id="rMQM5d" name="OSCRealtimeListener.h" compile="0" resource="0"
+              file="Source/OSCRealtimeListener.h"/>
         <FILE id="qwCanD" name="OSCRecorderConnection.cpp" compile="1" resource="0"
               file="Source/OSCRecorderConnection.cpp"/>
         <FILE id="sNF7bS" name="OSCRecorderConnection.h" compile="0" resource="0"
@@ -54,9 +38,39 @@
               file="Source/OSCRecorderComponent.cpp"/>
         <FILE id="tB3u4A" name="OSCRecorderComponent.h" compile="0" resource="0"
               file="Source/OSCRecorderComponent.h"/>
-        <FILE id="sqGNYp" name="OSCRecorder.cpp" compile="1" resource="0" file="Source/OSCRecorder.cpp"/>
-        <FILE id="xjc8Qt" name="OSCRecorder.h" compile="0" resource="0" file="Source/OSCRecorder.h"/>
+        <FILE id="KGGisS" name="OSCRecorderIntroComponent.cpp" compile="1"
+              resource="0" file="Source/OSCRecorderIntroComponent.cpp"/>
+        <FILE id="v8fcOH" name="OSCRecorderIntroComponent.h" compile="0" resource="0"
+              file="Source/OSCRecorderIntroComponent.h"/>
       </GROUP>
+      <GROUP id="{946692C7-1DCD-1C20-22E4-C005460B8021}" name="GenericComponents">
+        <FILE id="ttXSCY" name="MainComponent.cpp" compile="1" resource="0"
+              file="Source/MainComponent.cpp"/>
+        <FILE id="GpauQe" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+        <FILE id="ifo9Wg" name="UserQuestions.cpp" compile="1" resource="0"
+              file="Source/UserQuestions.cpp"/>
+        <FILE id="r0L6yc" name="UserQuestions.h" compile="0" resource="0" file="Source/UserQuestions.h"/>
+        <FILE id="SaFzJ7" name="UserFinalQuestions.cpp" compile="1" resource="0"
+              file="Source/UserFinalQuestions.cpp"/>
+        <FILE id="vgDm3R" name="UserFinalQuestions.h" compile="0" resource="0"
+              file="Source/UserFinalQuestions.h"/>
+        <FILE id="chuETO" name="UserQuestionsManager.cpp" compile="1" resource="0"
+              file="Source/UserQuestionsManager.cpp"/>
+        <FILE id="sfho2A" name="UserQuestionsManager.h" compile="0" resource="0"
+              file="Source/UserQuestionsManager.h"/>
+      </GROUP>
+    </GROUP>
+    <GROUP id="{031CDC91-D47E-C886-647A-E445010E2E2C}" name="Resources">
+      <FILE id="fGvntS" name="Recorder_Intro_EN.txt" compile="0" resource="1"
+            file="Resources/Recorder_Intro_EN.txt"/>
+      <FILE id="mt7jEG" name="Recorder_Intro_FR.txt" compile="0" resource="1"
+            file="Resources/Recorder_Intro_FR.txt"/>
+      <FILE id="UDlKXr" name="Translation_FR.txt" compile="0" resource="1"
+            file="../MiamCommon/Resources/Translation_FR.txt"/>
+    </GROUP>
+    <GROUP id="{BF322DA9-F626-C0D8-FDC9-308209939F8C}" name="Resources_LFS">
+      <FILE id="ToqEsc" name="Experiment_macOS_1024at1.png" compile="0" resource="1"
+            file="../Resources_LFS/Icones_Logos/Exports/Experiment_macOS_1024at1.png"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
