@@ -58,6 +58,10 @@ class MiemExpePreset {
     /// \brief Did the experiment encoutered issues during the recording of this preset ?
     bool isValid = true;
     
+    // - - - - Valeurs déduites des valeurs du constructeur - - - -
+    /// \brief Span of all parameters for this particular synth
+    double parametersSpan;
+    
     std::vector<MiemSample> samples;
     std::vector<MiemSample> sortedSamples;
 
