@@ -43,21 +43,6 @@
 /// ============= Liste de presets =============
 /// ============= Liste de presets =============
 
-/// ==== Index de base des scènes =====
-/// ==== Index de base des scènes =====
-/// ==== Index de base des scènes =====
-///
-///  1 : valeurs allant de 0,00 à 1,00   (états MIEM +0 :  de 1 à 5)    (largeur 1.00)
-///  5 : valeurs allant de 0,50 à 1,00   (états MIEM +5 :  de 6 à 10)   (largeur 0.50)
-///  9 : valeurs allant de 0,25 à 1,00   (états MIEM +10 : de 11 à 15)  (largeur 0.75)
-/// 13 : valeurs allant de 0,00 à 0,75   (états MIEM +15 : de 16 à 20)  (largeur 0.75)
-/// 17 : valeurs allant de 0,00 à 0,50   (états MIEM +20 : de 21 à 25)  (largeur 0.50)
-/// 21 : valeurs allant de 0,25 à 0,75   (états MIEM +25 : de 26 à 30)  (largeur 0.50)
-///
-/// ==== Index de base des scènes =====
-/// ==== Index de base des scènes =====
-/// ==== Index de base des scènes =====
-
 MiemExpePreset::MiemExpePreset(int _synthId, bool _findFromInterpolation) :
 synthId(_synthId),
 findFromInterpolation(_findFromInterpolation),
@@ -193,14 +178,22 @@ parametersCount(4) // const at the moment
     else
         assert(false); // index must be found in the previous cases
         
-    // Valeurs déduites du scene index (texte ci-dessous, RECOPIE DEPUIS LA SOURCE
-    // AU DEBUT DE CE FICHIER)
-    ///  1 : valeurs allant de 0,00 à 1,00   (états MIEM +0 :  de 1 à 5)    (largeur 1.00)
-    ///  5 : valeurs allant de 0,50 à 1,00   (états MIEM +5 :  de 6 à 10)   (largeur 0.50)
-    ///  9 : valeurs allant de 0,25 à 1,00   (états MIEM +10 : de 11 à 15)  (largeur 0.75)
-    /// 13 : valeurs allant de 0,00 à 0,75   (états MIEM +15 : de 16 à 20)  (largeur 0.75)
-    /// 17 : valeurs allant de 0,00 à 0,50   (états MIEM +20 : de 21 à 25)  (largeur 0.50)
-    /// 21 : valeurs allant de 0,25 à 0,75   (états MIEM +25 : de 26 à 30)  (largeur 0.50)
+    // Valeurs déduites du scene index
+    /// ==== Index de base des scènes =====
+    /// ==== Index de base des scènes =====
+    /// ==== Index de base des scènes =====
+    ///
+    ///  1 : valeurs allant de 0,00 à 1,00   (états MIEM +0  : de 1  à 5 )  (largeur 1.00)
+    ///  5 : valeurs allant de 0,00 à 0,75   (états MIEM +5  : de 6  à 10)  (largeur 0.75)
+    ///  9 : valeurs allant de 0,00 à 0,50   (états MIEM +10 : de 11 à 15)  (largeur 0.50)
+    /// 13 : valeurs allant de 0,50 à 1,00   (états MIEM +15 : de 16 à 24)  (largeur 0.50)
+    /// 17 : valeurs allant de 0,25 à 1,00   (états MIEM +24 : de 25 à 33)  (largeur 0.75)
+    /// 21 : valeurs allant de 0,25 à 0,75   (états MIEM +33 : de 34 à 42)  (largeur 0.50)
+    ///
+    /// ==== Index de base des scènes =====
+    /// ==== Index de base des scènes =====
+    /// ==== Index de base des scènes =====
+
     switch (sceneBaseIndex)
     {
         case 1:
