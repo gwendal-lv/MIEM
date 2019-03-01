@@ -196,6 +196,11 @@ void SpatStatesEditionManager::OnSendState()
 }
 void SpatStatesEditionManager::OnSendZeros()
 {
+    // At first : Actualisation depuis l'affichage graphique
+    // Car : même si on n'utilise pas les valeurs des paramètres, il faut quand même
+    // actualiser les adresses OSC
+    sendCurrentDataToModel();
+    
     // Création d'un matrix state nul
     auto nullMatrixState = std::make_shared<MatrixState<double>>();
     nullMatrixState->SetInputOuputChannelsCount(spatInterpolator->GetInputsCount(),
