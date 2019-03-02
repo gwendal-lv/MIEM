@@ -50,7 +50,7 @@ parametersCount(4) // const at the moment
 {
     parametersTargetValues.resize(parametersCount, -1.0);
     
-    if (synthId > 9  || synthId < -1)
+    if (synthId > 9  || synthId < -2)
     {
         throw std::runtime_error("Synths IDs prévus actuellement de -2 à +9");
     }
@@ -177,6 +177,42 @@ parametersCount(4) // const at the moment
     /// - - - - MIEM SCENE INDEX and TEMPO and TARGET VALUES - - - -
     else
         assert(false); // index must be found in the previous cases
+        
+    // Valeurs déduites du scene index
+    /// ==== Index de base des scènes =====
+    /// ==== Index de base des scènes =====
+    /// ==== Index de base des scènes =====
+    ///
+    ///  1 : valeurs allant de 0,00 à 1,00   (états MIEM +0  : de 1  à 5 )  (largeur 1.00)
+    ///  5 : valeurs allant de 0,00 à 0,75   (états MIEM +5  : de 6  à 10)  (largeur 0.75)
+    ///  9 : valeurs allant de 0,00 à 0,50   (états MIEM +10 : de 11 à 15)  (largeur 0.50)
+    /// 13 : valeurs allant de 0,50 à 1,00   (états MIEM +15 : de 16 à 24)  (largeur 0.50)
+    /// 17 : valeurs allant de 0,25 à 1,00   (états MIEM +24 : de 25 à 33)  (largeur 0.75)
+    /// 21 : valeurs allant de 0,25 à 0,75   (états MIEM +33 : de 34 à 42)  (largeur 0.50)
+    ///
+    /// ==== Index de base des scènes =====
+    /// ==== Index de base des scènes =====
+    /// ==== Index de base des scènes =====
+
+    switch (sceneBaseIndex)
+    {
+        case 1:
+            parametersSpan = 1.00;
+            break;
+        case 9:
+        case 13:
+            parametersSpan = 0.75;
+            break;
+        case 5:
+        case 17:
+        case 21:
+            parametersSpan = 0.50;
+            break;
+            
+        default:
+            assert(false); // should not happen...
+            parametersSpan = 0.0; // to trigger bugs
+    }
 }
 
 
@@ -251,6 +287,7 @@ std::shared_ptr<bptree::ptree> MiemExpePreset::GetInfoTree()
     preseTree->put("<xmlattr>.appearance_index", appearanceIndex);
     preseTree->put("<xmlattr>.is_valid", isValid);
     preseTree->put("<xmlattr>.samples_count", samples.size());
+    preseTree->put("<xmlattr>.parameters_span", parametersSpan);
     
     return preseTree;
 }
