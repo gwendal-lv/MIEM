@@ -381,24 +381,25 @@ void SceneCanvasComponent::renderOpenGL()
     // Time control at the beginning... after last swap
     displayFrequencyMeasurer.OnNewFrame();
     const double lastDuration_ms = displayFrequencyMeasurer.GetLastDuration_ms();
-    double underTime_ms = lastDuration_ms > 0.0 ? desiredPeriod_ms - lastDuration_ms : 0.0;
-#ifdef __MIAM_DEBUG
+    double remainingDuration_ms = 0.0;
     if (lastDuration_ms < 0.0)
     {
+        // arrive peut-être lors de l'init ?
         DBG("probleme lastDuration: " + (String)lastDuration_ms);
         assert(false);
     }
-#endif
-    // safety checks....
-    if (underTime_ms > desiredPeriod_ms)
-        underTime_ms = 0.0; // mais bizarre...
-    else if (underTime_ms < 0.0)
-        underTime_ms = 0.0; // c'est qu'on a pris trop de temps pour cette frame...
+    else
+        remainingDuration_ms = desiredPeriod_ms - lastDuration_ms;
+    
+    // Si vrai : c'est qu'on a pris trop de temps pour cette frame...
+    if (remainingDuration_ms < 0.0)
+        remainingDuration_ms = 0.0;
     // Framerate limit
-    else if (controlFramerate)
+    if (controlFramerate)
     {
-        long int underTime_us = (long int) std::floor(underTime_ms * 1000.0);
+        long int underTime_us = (long int)( (double) std::floor(remainingDuration_ms * 1000.0) );
         std::this_thread::sleep_for(std::chrono::microseconds(underTime_us));
+        // il semble que le thread soit toujours réveillé avant la date limite...
     }
 
 
