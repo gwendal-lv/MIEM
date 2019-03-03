@@ -40,6 +40,9 @@ recorderComponent(*(_mainComponent->oscRecorderComponent.get()))
     
     // Setup of TCP control connection to the server inside MIEM Controller
     tcpConnection = std::make_shared<OSCRecorderConnection>(*this);
+    
+    // Internal timers
+    researchDurationTimer = std::make_unique<OSCRecorderTimer>(this);
 }
 
 void OSCRecorder::BeginExperiment()
@@ -83,9 +86,8 @@ void OSCRecorder::reinitExperiment()
     presets.clear();
     presets.reserve(ExperimentPresetsCount + TrialPresetsCount);
     // normal presets at the beginning
-    // RANDOM FADER/INTERPOLATION CHOSEN HERE
-    // RANDOM FADER/INTERPOLATION CHOSEN HERE
-    // RANDOM FADER/INTERPOLATION CHOSEN HERE
+    // fader/interp is not random anymore...
+    /*
     auto longIntSeed = Time::currentTimeMillis() % 1000000;
     int timeSeed = (int) longIntSeed;
     auto generator = std::bind(std::uniform_int_distribution<>(0,1),
@@ -95,8 +97,14 @@ void OSCRecorder::reinitExperiment()
         bool findByInterpolation = generator(); // auto-cast ?
         presets.push_back(std::make_shared<MiemExpePreset>(i, findByInterpolation));
     }
+    */
+    assert((ExperimentPresetsCount % 2) == 0); // on a besoin de 2 presets par synthé ! pour comparer
+    int synthsCount = ExperimentPresetsCount / 2;
+    for (int i=0; i<ExperimentPresetsCount ; i++)
+        presets.push_back(std::make_shared<MiemExpePreset>(i % synthsCount,
+                                                           (i >= synthsCount))); // interp/fader ?
     // trial presets at the end of the vector (for the same synth)
-    presets.push_back(std::make_shared<MiemExpePreset>(-1, false)); // fader
+    presets.push_back(std::make_shared<MiemExpePreset>(-2, false)); // fader
     presets.push_back(std::make_shared<MiemExpePreset>(-1, true)); // interpolation
     
     // - - - - Random Index maps - - - -
@@ -156,6 +164,7 @@ void OSCRecorder::nextExperimentStep()
         if (ExperimentStateUtils::IsInteractiveExperimentState(stateBeforeConnectionLost))
             nextPreset();
         // else if questions : they MUST be answered, even if we lsot the connection
+        // (also true for intro/other displays...)
         else
             changeState(stateBeforeConnectionLost);
     }
@@ -225,6 +234,10 @@ void OSCRecorder::changeState(ExperimentState newState)
             break;
         
         case ExperimentState::ConnectionLost:
+            reaperController->Stop();
+            reaperController->SetTrackSolo_usingMutes(-1);
+            if (state == ExperimentState::SearchingPreset)
+                stopRecording();
             mainComponent->SetOneGuiComponentVisible(nullptr);
             infoString = "Connection lost! TCP Socket will try to re-connect to " + String(tcpServerName) + " on port " + String(tcpServerPort);
             displayError(infoString);
@@ -239,6 +252,18 @@ void OSCRecorder::changeState(ExperimentState newState)
             break;
             
         case ExperimentState::IntroDescriptionDisplayed:
+            if (GetLanguage().compare("FR") == 0)
+                mainComponent->oscRecorderIntroComponent->SetMainText(BinaryData::Recorder_Intro_FR_txt);
+            else
+                mainComponent->oscRecorderIntroComponent->SetMainText(BinaryData::Recorder_Intro_EN_txt);
+            mainComponent->SetOneGuiComponentVisible(mainComponent->oscRecorderIntroComponent.get());
+            break;
+            
+        case ExperimentState::PostTrialDescriptionDisplayed:
+            if (GetLanguage().compare("FR") == 0)
+                mainComponent->oscRecorderIntroComponent->SetMainText(BinaryData::Recorder_AfterTrial_FR_txt);
+            else
+                mainComponent->oscRecorderIntroComponent->SetMainText(BinaryData::Recorder_AfterTrial_EN_txt);
             mainComponent->SetOneGuiComponentVisible(mainComponent->oscRecorderIntroComponent.get());
             break;
             
@@ -290,14 +315,6 @@ void OSCRecorder::changeState(ExperimentState newState)
             reaperController->Stop();
             selectNewMiemScene(true);
             stopRecording();
-            if (currentPresetStep >= ((int)ExperimentPresetsCount - 1))
-            {
-                // will trigger an event, but after this one is treated...
-                // not very robust... But should be ok for the experiment....
-                juce::Timer::callAfterDelay(delayAfterFinished_ms, [this]
-                {   currentPresetStep++; // goes to an unvalid value
-                    this->changeState(ExperimentState::FinalQuestionsDisplayed); } );
-            }
             // security save
             saveEverythingToFiles(currentPresetStep); // next step pas encore demandée
             break;
@@ -322,7 +339,8 @@ void OSCRecorder::changeState(ExperimentState newState)
         // Experiment state : full display (with preset #)
         if (ExperimentStateUtils::IsInteractiveExperimentState(state))
         {
-            std::cout << "[Interactive experiment in progress...] " << ExperimentStateUtils::GetName(state) << " #" << currentPresetStep << std::endl;
+            if (currentPresetStep < ExperimentPresetsCount) // si pas encore fini
+                std::cout << "[Interactive experiment in progress...] " << ExperimentStateUtils::GetName(state) << " #" << currentPresetStep << " (" << presets[presetRandomIdx[currentPresetStep]]->GetName() << ")" << std::endl;
             recorderComponent.DisplayNewState(state, currentPresetStep, ExperimentPresetsCount);
         }
         // other state : simple name display
@@ -336,10 +354,28 @@ void OSCRecorder::changeState(ExperimentState newState)
     // Post-updates processing
     if (state == ExperimentState::FinishedSearchingPreset)
     {
-        Timer::callAfterDelay(delayAfterFinished_ms,
-                              [this] {
-                                  this->nextExperimentStep(); // without delay
-                              });
+        // special behavior for special steps
+        if (currentPresetStep == -1) // end of trial
+        {
+            Timer::callAfterDelay(delayAfterFinished_ms, [this]
+            { this->changeState(ExperimentState::PostTrialDescriptionDisplayed); } );
+        }
+        else if (currentPresetStep >= ((int)ExperimentPresetsCount - 1)) // final
+        {
+            reaperController->SetTrackSolo_usingMutes(-1);
+            // will trigger an event, but after this one is treated...
+            // not very robust... But should be ok for the experiment....
+            Timer::callAfterDelay(delayAfterFinished_ms, [this]
+                                { currentPresetStep++; // goes to an unvalid value
+                                this->changeState(ExperimentState::FinalQuestionsDisplayed); } );
+        }
+        else // usual case : next step
+        {
+            Timer::callAfterDelay(delayAfterFinished_ms,
+                                  [this] {
+                                      this->nextExperimentStep(); // without delay
+                                  });
+        }
     }
     else if (state == ExperimentState::Listening)
         Timer::callAfterDelay(listeningTime_ms,
@@ -370,7 +406,15 @@ void OSCRecorder::timerCallback()
 {
     presets[presetRandomIdx[currentPresetStep]]->AddSamples(oscRealtimeListener->GetBufferedSamples());
 }
-
+void OSCRecorder::AttributeTimerCallback(juce::Timer* timer)
+{
+    if (timer == researchDurationTimer.get())
+    {
+        
+    }
+    else
+        assert(false); // no other timer known at the moment...
+}
 
 
 
@@ -406,7 +450,12 @@ void OSCRecorder::OnButtonClicked(ExperimentState requestedState)
 
 void OSCRecorder::OnIntroFinished(OSCRecorderIntroComponent* /*sender*/)
 {
-    changeState(ExperimentState::InitialQuestionsDisplayed);
+    if (state == ExperimentState::IntroDescriptionDisplayed)
+        changeState(ExperimentState::InitialQuestionsDisplayed);
+    else if (state == ExperimentState::PostTrialDescriptionDisplayed)
+        nextExperimentStep();
+    else
+        assert(false); // unplanned state...
 }
 void OSCRecorder::OnFirstQuestionsAnswered(UserQuestions* sender)
 {

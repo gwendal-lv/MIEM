@@ -58,7 +58,7 @@ parametersCount(4) // const at the moment
     /// - - - - MIEM SCENE INDEX and TEMPO and TARGET VALUES - - - -
     /// - - - - MIEM SCENE INDEX and TEMPO and TARGET VALUES - - - -
     sceneBaseIndex = -1000;
-    if (synthId == -1)
+    if (synthId == -2)
     {
         name = "[T] Wurli hammer+delay"; // original Analog lab 3 : midrange
         sceneBaseIndex = 1;
@@ -69,27 +69,38 @@ parametersCount(4) // const at the moment
         parametersTargetValues[2] = 0.064;
         parametersTargetValues[3] = 0.664; // et beaucoup de hammer
     }
+    else if (synthId == -1)
+    {
+        name = "[T] Arpesque"; // Arpesque
+        sceneBaseIndex = 1;
+        tempo = 140.0f;
+        parametersInfo = "1-Reso/2-HPFcut/3-attack/4-release";
+        parametersTargetValues[0] = 0.108;
+        parametersTargetValues[1] = 0.259;
+        parametersTargetValues[2] = 0.274;
+        parametersTargetValues[3] = 0.108;
+    }
     else if (synthId == 0)
     {
-        name = "[0] ThunderBass"; // thunder bass
-        sceneBaseIndex = 1;
+        name = "[0] ThunderBass"; // thunder bass avec VCF mod à 0,536
+        sceneBaseIndex = 9;
         tempo = 105.0f;
         parametersInfo = "1-Delay/2-Osc1Mix/3-Noise/4-Chorus";
-        parametersTargetValues[0] = 0.1;
-        parametersTargetValues[1] = 0.2;
-        parametersTargetValues[2] = 0.3;
-        parametersTargetValues[3] = 0.4;
+        parametersTargetValues[0] = 0.258;
+        parametersTargetValues[1] = 0.049;
+        parametersTargetValues[2] = 0.049;
+        parametersTargetValues[3] = 0.144;
     }
     else if (synthId == 1)
     {
-        name = "Synth #1";
-        sceneBaseIndex = 1;
-        tempo = 120.0f;
-        parametersInfo = "1-/2-/3-/4-";
-        parametersTargetValues[0] = 0.5;
-        parametersTargetValues[1] = 0.5;
-        parametersTargetValues[2] = 0.5;
-        parametersTargetValues[3] = 0.5;
+        name = "[1] Shamisen"; // 6-string shamisen
+        sceneBaseIndex = 17;
+        tempo = 145.0f;
+        parametersInfo = "1-op2lvl/2-Chorus/3-delay/4-op3lvl";
+        parametersTargetValues[0] = 0.758;
+        parametersTargetValues[1] = 0.492;
+        parametersTargetValues[2] = 0.250;
+        parametersTargetValues[3] = 0.250;
     }
     else if (synthId == 2)
     {
@@ -218,21 +229,21 @@ parametersCount(4) // const at the moment
 
 
 
-
+int MiemExpePreset::trialSynthsCount = 0;
 std::map<int, size_t> MiemExpePreset::GeneratePresetIndexToRandomIndexMap(int actualPresetsCount,
                                                                  int trialPresetsCount,
                                                                           bool randomize)
 {
+    // static assignement
+    trialSynthsCount = trialPresetsCount;
+    
     // There must be the same number of fader presets and of MIEM interpolation presets
     assert(((trialPresetsCount % 2) == 0) && ((actualPresetsCount % 2) == 0));
     
     std::map<int, size_t> presetRandomIdx;
     
     // values insertion using []
-    // NO randomization for trial presets
-    if (trialPresetsCount != (trialSynthsCount*2))
-        throw std::logic_error("Impossible de gérer ça. Corriger et mettre de la cohérence dans le nombre de presets d'essai !");
-    
+    // NO randomization for trial presets at the end of the vector
     for (int i=0 ; i<trialPresetsCount ; i++)
         presetRandomIdx[-(int)(trialPresetsCount) + i] = actualPresetsCount + i;
     

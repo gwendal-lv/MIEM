@@ -1,1 +1,11 @@
-Cette expérience consiste à faire des trucs.
+Pour cette expérience, l'objectif est de retrouver rapidement un son particulier de synthétiseur de musique.
+
+
+Au départ, pendant une quinzaine de secondes environ, vous allez écouter un son qu'il faudra retrouver.
+Ensuite, en déplaçant des curseurs sur une tablette tactile, vous pourrez chercher et retrouver ce son de synthétiseur.
+
+Dès que vous pensez être proche de l'objectif, cliquez sur OK ou appuyez sur la barre d'espace du clavier.
+
+
+Ce cycle d'écoute/recherche aura lieu une vingtaine de fois, pour une expérience qui durera au total entre 20 et 25 minutes.
+

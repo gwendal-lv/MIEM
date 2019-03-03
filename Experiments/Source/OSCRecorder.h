@@ -33,8 +33,11 @@ class OSCRecorderComponent;
 class OSCRealtimeListener;
 class MainComponent;
 
+class OSCRecorderTimer; // defined at end of file
 
-class OSCRecorder : public UserQuestionsManager, public juce::Timer
+
+class OSCRecorder : public UserQuestionsManager,
+                    public juce::Timer // timer for OSC data retrieving
 {
     
     // ===================================================================
@@ -46,23 +49,22 @@ class OSCRecorder : public UserQuestionsManager, public juce::Timer
     
     static std::string GetLanguage() {return std::string("FR");}
     
-    //const int ExperimentPresetsCount = 10; // is also the number of synths
-    const int ExperimentPresetsCount = 2; // DEBUG
+    //const int ExperimentPresetsCount = 10; // 2 presets per synth
+    const int ExperimentPresetsCount = 4; // DEBUG
     
-    const int TrialPresetsCount = 2; // the 2 for the same synth : ATTENTION A CHANGEEEEERRRRRR
-    // METTRE 2 SYNTHÉS DIFFÉRENTS POUR LE TEST
-    
-    const int TrialSynthsCount = 1;
-    
+    const int TrialSynthsCount = 2;
+    const int TrialPresetsCount = TrialSynthsCount; // 2 different synths
     
     private :
     const bool randomizePresets = false;
+    
     public :
+    const int maxResearchDuration_ms = 30000; // 30 s
 #ifdef __MIEM_SHORT_DELAYS
-    const int delayAfterFinished_ms = 200;
+    static const int delayAfterFinished_ms = 200;
     const int listeningTime_ms = 500;
 #else
-    const int delayAfterFinished_ms = 2000;
+    static const int delayAfterFinished_ms = 3000;
     const int listeningTime_ms = 20000;
 #endif
     
@@ -119,6 +121,7 @@ class OSCRecorder : public UserQuestionsManager, public juce::Timer
     // Time-related data
     MiemClock::time_point startTimePt;
     juce::Time startSystemTime;
+    std::unique_ptr<OSCRecorderTimer> researchDurationTimer;
     
     // XML and data files
     std::string dataFilePath; // CSV file
@@ -170,7 +173,8 @@ class OSCRecorder : public UserQuestionsManager, public juce::Timer
     // - - - - - Periodic updates - - - - -
     protected :
     virtual void timerCallback() override;
-
+    public :
+    void AttributeTimerCallback(juce::Timer* timer);
     
     
     public :
@@ -218,3 +222,19 @@ class OSCRecorder : public UserQuestionsManager, public juce::Timer
     
     
 };
+
+
+
+
+class OSCRecorderTimer : public juce::Timer {
+    OSCRecorder* oscRecorder = 0;
+    
+    public :
+    OSCRecorderTimer(OSCRecorder* _oscRecorder)
+    { oscRecorder = _oscRecorder; }
+    virtual ~OSCRecorderTimer() {}
+    virtual void timerCallback() override
+    { oscRecorder->AttributeTimerCallback(this); }
+};
+
+

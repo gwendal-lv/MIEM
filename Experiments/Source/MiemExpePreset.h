@@ -41,9 +41,10 @@ class MiemExpePreset {
     
     /// \brief ID du synth dans Reaper qui sera joué pour ce preset. Négatif pour
     /// les synthés de test
-    static const int trialSynthsCount = 1;
     const int synthId;
     const bool findFromInterpolation; ///< Type de moyen de recherche du preset
+    
+    static int trialSynthsCount;
     
     /// - - - - EXPERIMENT VALUE ASSIGNED BY CONSTRUCTOR - - - -
     std::string name;

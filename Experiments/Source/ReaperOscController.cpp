@@ -8,9 +8,13 @@
   ==============================================================================
 */
 
+#include <thread>
+#include <cmath>
+
 #include "ReaperOscController.h"
 
-#include <thread>
+#include "OSCRecorder.h"
+
 
 
 ReaperOscController::ReaperOscController(int _tracksCount)
@@ -61,14 +65,28 @@ void ReaperOscController::RestartAndPlay(float tempo)
     oscMsgTempo.addFloat32(tempo);
     sendMessageOrThrowException(oscMsgTempo);
     
-    // IL FAUT SET LE REPEEEEAAAAATTTTTTTTT
-    // pour ne pas devoir vérifier à la main à chaque fois que c'est bien en place...
+    // Délimitation de la boucle (à recalculer pour 16*4 temps, selon tempo)
+    oscAddress = "/loop/start/time";
+    OSCMessage oscMsgLoop1 = OSCMessage(OSCAddressPattern(oscAddress));
+    oscMsgLoop1.addFloat32(0.0);
+    sendMessageOrThrowException(oscMsgLoop1);
+    float loopLength_s = (float)(16 * 4) / (tempo / 60.0f) ;
+    oscAddress = "/loop/end/time";
+    OSCMessage oscMsgLoop2 = OSCMessage(OSCAddressPattern(oscAddress));
+    oscMsgLoop2.addFloat32(loopLength_s);
+    sendMessageOrThrowException(oscMsgLoop2);
     
     // Then : RESTART
     oscAddress = "/time";
     OSCMessage oscMsgTime = OSCMessage(OSCAddressPattern(oscAddress));
     oscMsgTime.addFloat32(0.0f); // works ?
     sendMessageOrThrowException(oscMsgTime);
+    
+    // DE-MUTE après avoir placé la tête de lecture
+    oscAddress = "/master/volume";
+    OSCMessage oscVolumeMsg = OSCMessage(OSCAddressPattern(oscAddress));
+    oscVolumeMsg.addFloat32(0.715f);
+    sendMessageOrThrowException(oscVolumeMsg);
     
     // At last : PLAY
     oscAddress = "/play";
@@ -85,6 +103,17 @@ void ReaperOscController::Stop()
     OSCMessage oscTriggerMsg = OSCMessage(OSCAddressPattern(oscAddress));
     oscTriggerMsg.addInt32(1); // trigger forced to 1 (not a real trigger then...)
     sendMessageOrThrowException(oscTriggerMsg);
+    
+    // RE-MUTE après un petit délai,
+    // pour éviter les échos plus tard
+    Timer::callAfterDelay((int) std::round((double)(OSCRecorder::delayAfterFinished_ms) * 0.9),
+                          [this]
+                          {
+                              String oscAddress = "/master/volume";
+                              OSCMessage oscVolumeMsg = OSCMessage(OSCAddressPattern(oscAddress));
+                              oscVolumeMsg.addFloat32(0.0f);
+                              sendMessageOrThrowException(oscVolumeMsg);
+                          });
 }
 
 

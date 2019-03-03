@@ -48,6 +48,7 @@ enum class ExperimentState {
     
     // First and final states (descriptions and questions)
     IntroDescriptionDisplayed,
+    PostTrialDescriptionDisplayed,
     InitialQuestionsDisplayed,
     FinalQuestionsDisplayed,
     
@@ -75,7 +76,10 @@ class ExperimentStateUtils {
                 return "Not initialized";
                 
             case ExperimentState::IntroDescriptionDisplayed:
-                return "Introduction, description  displayed";
+                return "Introduction description displayed";
+                
+            case ExperimentState::PostTrialDescriptionDisplayed:
+                return "Post-trial description displayed";
                 
             case ExperimentState::InitialQuestionsDisplayed:
                 return "Initial questions displayed";

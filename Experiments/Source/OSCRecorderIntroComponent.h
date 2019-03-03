@@ -50,6 +50,8 @@ public:
     /// listening to the "Intro OK" button click - and sets its own text (because
     /// the presenter is properly set at that time).
     void SetUserQuestionsManager(UserQuestionsManager* _manager);
+    
+    void SetMainText(const char* mainText);
     //[/UserMethods]
 
     void paint (Graphics& g) override;

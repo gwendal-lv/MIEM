@@ -69,6 +69,8 @@ namespace Miam
             
             // précision max = celle des float pour l'OSC entre 0 et 1...
             linearSignificantDifference = (T) 0.000001;
+            // TEMP sinon Reaper lâche complètement !
+            linearSignificantDifference = (T) 0.02;
             
             // Sécurité : on vérifie que la différence minimale ne soit pas zéro
             assert(linearSignificantDifference != ((T)0));

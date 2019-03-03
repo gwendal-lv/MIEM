@@ -193,6 +193,7 @@ void OSCRecorderComponent::DisplayNewState(ExperimentState newState, int presetS
         case ExperimentState::ConnectionLost:
         case ExperimentState::WaitingForTcpServerConnection:
         case ExperimentState::IntroDescriptionDisplayed:
+        case ExperimentState::PostTrialDescriptionDisplayed:
         case ExperimentState::InitialQuestionsDisplayed:
         case ExperimentState::FinalQuestionsDisplayed:
         case ExperimentState::Finished:

@@ -12,7 +12,7 @@
             <outputs activeCount="1" maxCount="64"/>
             <senders>
                 <sender type="MiamOsc">
-                    <ip>127.0.0.1</ip>
+                    <ip>192.168.0.181</ip>
                     <udp>
                         <port>8011</port>
                     </udp>
@@ -512,7 +512,7 @@
                                 </geometry>
                                 <spatstate index="3"/>
                             </area>
-                            <area id="24498" type="Exciter" index="8">
+                            <area id="24918" type="Exciter" index="8">
                                 <center x="0.13440382105905743" y="0.69935000000000003"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
@@ -523,7 +523,7 @@
                                 <is_round>false</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
-                            <area id="24499" type="Exciter" index="9">
+                            <area id="24919" type="Exciter" index="9">
                                 <center x="0.86823433385490589" y="0.70048999999999995"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
@@ -534,7 +534,7 @@
                                 <is_round>false</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
-                            <area id="24500" type="Exciter" index="10">
+                            <area id="24920" type="Exciter" index="10">
                                 <center x="0.62279603312531029" y="0.70111999999999997"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
@@ -545,7 +545,7 @@
                                 <is_round>false</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
-                            <area id="24501" type="Exciter" index="11">
+                            <area id="24921" type="Exciter" index="11">
                                 <center x="0.37793619402924955" y="0.70104999999999995"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
@@ -613,7 +613,7 @@
                                 </geometry>
                                 <spatstate index="3"/>
                             </area>
-                            <area id="24483" type="Exciter" index="4">
+                            <area id="24917" type="Exciter" index="4">
                                 <center x="0.49156616060419323" y="0.49988767971248921"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>

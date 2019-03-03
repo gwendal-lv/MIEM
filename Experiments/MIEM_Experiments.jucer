@@ -61,6 +61,10 @@
       </GROUP>
     </GROUP>
     <GROUP id="{031CDC91-D47E-C886-647A-E445010E2E2C}" name="Resources">
+      <FILE id="zlaUxg" name="Recorder_AfterTrial_EN.txt" compile="0" resource="1"
+            file="Resources/Recorder_AfterTrial_EN.txt"/>
+      <FILE id="S80Eye" name="Recorder_AfterTrial_FR.txt" compile="0" resource="1"
+            file="Resources/Recorder_AfterTrial_FR.txt"/>
       <FILE id="fGvntS" name="Recorder_Intro_EN.txt" compile="0" resource="1"
             file="Resources/Recorder_Intro_EN.txt"/>
       <FILE id="mt7jEG" name="Recorder_Intro_FR.txt" compile="0" resource="1"

@@ -42,8 +42,8 @@ OSCRecorderIntroComponent::OSCRecorderIntroComponent ()
 
     introTextEditor.reset (new TextEditor ("intro text editor"));
     addAndMakeVisible (introTextEditor.get());
-    introTextEditor->setMultiLine (false);
-    introTextEditor->setReturnKeyStartsNewLine (false);
+    introTextEditor->setMultiLine (true);
+    introTextEditor->setReturnKeyStartsNewLine (true);
     introTextEditor->setReadOnly (true);
     introTextEditor->setScrollbarsShown (false);
     introTextEditor->setCaretVisible (false);
@@ -125,11 +125,11 @@ void OSCRecorderIntroComponent::buttonClicked (Button* buttonThatWasClicked)
 void OSCRecorderIntroComponent::SetUserQuestionsManager(UserQuestionsManager* _manager)
 {
     userQuestionsManager = _manager;
+}
 
-    if (OSCRecorder::GetLanguage().compare("FR") == 0)
-        introTextEditor->setText(CharPointer_UTF8(BinaryData::Recorder_Intro_FR_txt));
-    else // EN
-        introTextEditor->setText(CharPointer_UTF8(BinaryData::Recorder_Intro_EN_txt));
+void OSCRecorderIntroComponent::SetMainText(const char* mainText)
+{
+    introTextEditor->setText(CharPointer_UTF8(mainText));
 }
 //[/MiscUserCode]
 
@@ -155,7 +155,7 @@ BEGIN_JUCER_METADATA
   <TEXTEDITOR name="intro text editor" id="6f5b21f19397a4f5" memberName="introTextEditor"
               virtualName="" explicitFocusOrder="0" pos="0.5Cc 40 80M 200M"
               bkgcol="495358" hilitecol="e0ec65" outlinecol="ff565656" initialText=""
-              multiline="0" retKeyStartsLine="0" readonly="1" scrollbars="0"
+              multiline="1" retKeyStartsLine="1" readonly="1" scrollbars="0"
               caret="0" popupmenu="0"/>
 </JUCER_COMPONENT>
 
