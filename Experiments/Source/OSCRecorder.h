@@ -50,7 +50,7 @@ class OSCRecorder : public UserQuestionsManager,
     static std::string GetLanguage() {return std::string("FR");}
     
     //const int ExperimentPresetsCount = 10; // 2 presets per synth
-    const int ExperimentPresetsCount = 4; // DEBUG
+    const int ExperimentPresetsCount = 8; // DEBUG
     
     const int TrialSynthsCount = 2;
     const int TrialPresetsCount = TrialSynthsCount; // 2 different synths
@@ -65,7 +65,7 @@ class OSCRecorder : public UserQuestionsManager,
     const int listeningTime_ms = 500;
 #else
     static const int delayAfterFinished_ms = 3000;
-    const int listeningTime_ms = 20000;
+    const int listeningTime_ms = 15000;
 #endif
     
     const int tcpTimeOut_ms = 3000; // default Juce value : 3000 ms

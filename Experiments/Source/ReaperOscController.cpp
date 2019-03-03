@@ -106,7 +106,7 @@ void ReaperOscController::Stop()
     
     // RE-MUTE après un petit délai,
     // pour éviter les échos plus tard
-    Timer::callAfterDelay((int) std::round((double)(OSCRecorder::delayAfterFinished_ms) * 0.9),
+    Timer::callAfterDelay(/*(int) std::round((double)(OSCRecorder::delayAfterFinished_ms) * 0.9)*/ 200,
                           [this]
                           {
                               String oscAddress = "/master/volume";

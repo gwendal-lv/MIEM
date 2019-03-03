@@ -104,60 +104,65 @@ parametersCount(4) // const at the moment
     }
     else if (synthId == 2)
     {
-        name = "Synth #2";
-        sceneBaseIndex = 1;
-        tempo = 120.0f;
-        parametersInfo = "1-/2-/3-/4-";
-        parametersTargetValues[0] = 0.5;
-        parametersTargetValues[1] = 0.5;
-        parametersTargetValues[2] = 0.5;
-        parametersTargetValues[3] = 0.5;
+        name = "[2] Henry"; // Henry the Third
+        sceneBaseIndex = 17;
+        tempo = 110.0f;
+        parametersInfo = "1-UpDraw4/2-UpDraw16/3-Leslie/4-updraw8";
+        parametersTargetValues[0] = 0.429;
+        parametersTargetValues[1] = 0.250;
+        parametersTargetValues[2] = 0.821;
+        parametersTargetValues[3] = 0.250;
     }
     else if (synthId == 3)
     {
-        name = "Synth #3";
-        sceneBaseIndex = 1;
-        tempo = 120.0f;
-        parametersTargetValues[0] = 0.5;
-        parametersTargetValues[1] = 0.5;
-        parametersTargetValues[2] = 0.5;
-        parametersTargetValues[3] = 0.5;
+        name = "[3] TriOsc"; // 3 osc
+        sceneBaseIndex = 21;
+        tempo = 92.0f;
+        parametersInfo = "1-cutoff/2-emphasis/3-noise/4-VCAdec";
+        parametersTargetValues[0] = 0.330;
+        parametersTargetValues[1] = 0.482;
+        parametersTargetValues[2] = 0.357;
+        parametersTargetValues[3] = 0.331;
     }
     else if (synthId == 4)
     {
-        name = "Synth #4";
+        name = "[4] Buchla delay"; // delay circle (buchla easel)
         sceneBaseIndex = 1;
-        tempo = 120.0f;
-        parametersTargetValues[0] = 0.5;
-        parametersTargetValues[1] = 0.5;
-        parametersTargetValues[2] = 0.5;
-        parametersTargetValues[3] = 0.5;
+        tempo = 90.0f;
+        parametersInfo = "1-Mod/2-Decay/3-reverb/4-Gate1";
+        parametersTargetValues[0] = 0.147;
+        parametersTargetValues[1] = 0.445;
+        parametersTargetValues[2] = 0.146;
+        parametersTargetValues[3] = 0.262;
     }
     else if (synthId == 5)
     {
-        name = "Synth #5";
-        sceneBaseIndex = 1;
-        tempo = 120.0f;
-        parametersTargetValues[0] = 0.5;
-        parametersTargetValues[1] = 0.5;
-        parametersTargetValues[2] = 0.5;
-        parametersTargetValues[3] = 0.5;
+        name = "[5] MoodySky"; // Moody Sky
+        sceneBaseIndex = 17;
+        tempo = 90.0f;
+        parametersInfo = "1-Delay/2-Spread/3-Time/4-Timbre";
+        parametersTargetValues[0] = 0.339;
+        parametersTargetValues[1] = 0.531;
+        parametersTargetValues[2] = 0.340;
+        parametersTargetValues[3] = 0.540;
     }
     else if (synthId == 6)
     {
-        name = "Synth #6";
+        name = "[6] Piano"; // Japanese Jazz Studio
         sceneBaseIndex = 1;
-        tempo = 120.0f;
-        parametersTargetValues[0] = 0.5;
-        parametersTargetValues[1] = 0.5;
-        parametersTargetValues[2] = 0.5;
-        parametersTargetValues[3] = 0.5;
+        tempo = 113.0f;
+        parametersInfo = "1-HamPos/2-SoundRes/3-HamHard/4-Mic1Pan";
+        parametersTargetValues[0] = 0.144;
+        parametersTargetValues[1] = 0.244;
+        parametersTargetValues[2] = 0.144;
+        parametersTargetValues[3] = 0.468;
     }
     else if (synthId == 7)
     {
         name = "Synth #7";
         sceneBaseIndex = 1;
         tempo = 120.0f;
+        parametersInfo = "";
         parametersTargetValues[0] = 0.5;
         parametersTargetValues[1] = 0.5;
         parametersTargetValues[2] = 0.5;
@@ -168,6 +173,7 @@ parametersCount(4) // const at the moment
         name = "Synth #8";
         sceneBaseIndex = 1;
         tempo = 120.0f;
+        parametersInfo = "";
         parametersTargetValues[0] = 0.5;
         parametersTargetValues[1] = 0.5;
         parametersTargetValues[2] = 0.5;
@@ -178,6 +184,7 @@ parametersCount(4) // const at the moment
         name = "Synth #9";
         sceneBaseIndex = 1;
         tempo = 120.0f;
+        parametersInfo = "";
         parametersTargetValues[0] = 0.5;
         parametersTargetValues[1] = 0.5;
         parametersTargetValues[2] = 0.5;
