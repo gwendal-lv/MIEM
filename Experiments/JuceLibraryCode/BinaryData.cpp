@@ -17,7 +17,7 @@ const char* Recorder_AfterTrial_EN_txt = (const char*) temp_binary_data_0;
 static const unsigned char temp_binary_data_1[] =
 "Apr\xc3\xa8s ces quelques essais, l'exp\xc3\xa9rience va maintenant commencer.\n"
 "\n"
-"Souvenez-vous que l'objectif est de retrouver le preset le plus rapidement possible :\n"
+"Souvenez-vous que l'objectif est de retrouver le son de synth\xc3\xa9tiseur le plus rapidement possible :\n"
 "d\xc3\xa8s que vous pensez \xc3\xaatre proche du r\xc3\xa9sultat, vous pouvez cliquer sur OK ou appuyer sur la barre d'espace.\n";
 
 const char* Recorder_AfterTrial_FR_txt = (const char*) temp_binary_data_1;
@@ -9660,7 +9660,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
     switch (hash)
     {
         case 0xa549d1de:  numBytes = 47; return Recorder_AfterTrial_EN_txt;
-        case 0xa7370881:  numBytes = 263; return Recorder_AfterTrial_FR_txt;
+        case 0xa7370881:  numBytes = 277; return Recorder_AfterTrial_FR_txt;
         case 0xcd874cee:  numBytes = 47; return Recorder_Intro_EN_txt;
         case 0xcf748391:  numBytes = 582; return Recorder_Intro_FR_txt;
         case 0x340941eb:  numBytes = 3585; return Translation_FR_txt;

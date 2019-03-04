@@ -360,7 +360,9 @@ void OSCRecorder::changeState(ExperimentState newState)
             Timer::callAfterDelay(delayAfterFinished_ms, [this]
             { this->changeState(ExperimentState::PostTrialDescriptionDisplayed); } );
         }
-        else if (currentPresetStep >= ((int)ExperimentPresetsCount - 1)) // final
+        // final (étape différente selon que l'expérience soit une courte/démo ou non)
+        else if ( ((!ShortExperiment) && (currentPresetStep >= (ExperimentPresetsCount - 1)))
+                 || (ShortExperiment && (currentPresetStep >= (ShortExperimentPresetsCount - 1)) ) )
         {
             reaperController->SetTrackSolo_usingMutes(-1);
             // will trigger an event, but after this one is treated...
@@ -608,7 +610,8 @@ void OSCRecorder::createNewDataFiles()
     bptree::ptree synthsInnerTree;
     synthsInnerTree.put("<xmlattr>.total_count", ExperimentPresetsCount + TrialSynthsCount);
     synthsInnerTree.put("<xmlattr>.trials_count", TrialSynthsCount);
-    for (int i=(-TrialSynthsCount); i < ExperimentPresetsCount ; i++)
+    assert(ExperimentPresetsCount%2 == 0);
+    for (int i=(-TrialSynthsCount); i < (ExperimentPresetsCount/2) ; i++)
     {
         auto currentPreset = MiemExpePreset(i, false);
         bptree::ptree synthTree; // no lol
@@ -639,6 +642,7 @@ void OSCRecorder::saveEverythingToFiles(int lastPresetStepToSave)
     // Save of INFO
     bptree::ptree experimentInnerTree; // does not contain the <subject> tag itself
     experimentInnerTree.put("<xmlattr>.UID", currentExperimentUid);
+    experimentInnerTree.put("<xmlattr>.is_valid", true); // might be put to false after the experiment...
     // Date et heure de départ
     bptree::ptree startTimeTree;
     startTimeTree.put("<xmlattr>.year", startSystemTime.getYear());

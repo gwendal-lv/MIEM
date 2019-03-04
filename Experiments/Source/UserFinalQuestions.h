@@ -64,6 +64,8 @@ public:
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     UserQuestionsManager* userQuestionsManager = 0;
+
+    bool questionsAnswered = false;
     //[/UserVariables]
 
     //==============================================================================
@@ -82,6 +84,8 @@ private:
     std::unique_ptr<Label> expertiseLevelLabel3;
     std::unique_ptr<Label> expertiseLevelLabel4;
     std::unique_ptr<Label> expertiseLevelLabel5;
+    std::unique_ptr<Label> remarkLabel;
+    std::unique_ptr<TextEditor> similarExpeTextEditor2;
 
 
     //==============================================================================

@@ -230,8 +230,17 @@ std::shared_ptr<bptree::ptree> UserQuestions::GetQuestionsBPTree()
 {
     auto questionsChildrenTree = std::make_shared<bptree::ptree>();
     questionsChildrenTree->put("data_usage.<xmlattr>.allow",
-                               allowDataToggleButton->getToggleState());
-
+                               (bool)allowDataToggleButton->getToggleState());
+    bptree::ptree visionTree;
+    visionTree.put("<xmlattr>.checked", (bool)visionDisorderToggleButton->getToggleState());
+    if (visionDisorderToggleButton->getToggleState())
+        visionTree.put_value(visionDisorderTextEditor->getText().toRawUTF8());
+    questionsChildrenTree->add_child("vision_impairment", visionTree);
+    bptree::ptree hearingTree;
+    hearingTree.put("<xmlattr>.checked", (bool)hearingImpairmentToggleButton->getToggleState());
+    if (hearingImpairmentToggleButton->getToggleState())
+        hearingTree.put_value(hearingTextEditor->getText().toRawUTF8());
+    questionsChildrenTree->add_child("hearing_impairment", hearingTree);
     return questionsChildrenTree;
 }
 

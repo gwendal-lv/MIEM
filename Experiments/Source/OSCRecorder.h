@@ -49,17 +49,12 @@ class OSCRecorder : public UserQuestionsManager,
     
     static std::string GetLanguage() {return std::string("FR");}
     
-    //const int ExperimentPresetsCount = 10; // 2 presets per synth
-    const int ExperimentPresetsCount = 8; // DEBUG
+    const int ExperimentPresetsCount = 20; // 2 presets per synth
     
     const int TrialSynthsCount = 2;
     const int TrialPresetsCount = TrialSynthsCount; // 2 different synths
     
-    private :
-    const bool randomizePresets = false;
-    
-    public :
-    const int maxResearchDuration_ms = 30000; // 30 s
+    const int maxResearchDuration_ms = 30000; // 30 s --> currently unused
 #ifdef __MIEM_SHORT_DELAYS
     static const int delayAfterFinished_ms = 200;
     const int listeningTime_ms = 500;
@@ -67,6 +62,14 @@ class OSCRecorder : public UserQuestionsManager,
     static const int delayAfterFinished_ms = 3000;
     const int listeningTime_ms = 15000;
 #endif
+    
+    // - - - SHORT/DEMO EXPERIMENT - - -
+    const bool ShortExperiment = true;
+    const int ShortExperimentPresetsCount = 4;
+    private :
+    const bool randomizePresets = true;
+    public :
+    // - - - SHORT/DEMO EXPERIMENT - - -
     
     const int tcpTimeOut_ms = 3000; // default Juce value : 3000 ms
     
