@@ -51,6 +51,9 @@ public:
     { userQuestionsManager = _manager; }
 
     std::shared_ptr<bptree::ptree> GetQuestionsBPTree();
+    private :
+    std::string sliderValueToMethodName(double sliderValue);
+    public :
 
     //[/UserMethods]
 
@@ -85,7 +88,18 @@ private:
     std::unique_ptr<Label> expertiseLevelLabel4;
     std::unique_ptr<Label> expertiseLevelLabel5;
     std::unique_ptr<Label> remarkLabel;
-    std::unique_ptr<TextEditor> similarExpeTextEditor2;
+    std::unique_ptr<TextEditor> remarkTextEditor;
+    std::unique_ptr<Label> fastLabel;
+    std::unique_ptr<ImageButton> imageButton;
+    std::unique_ptr<Label> preferLabel;
+    std::unique_ptr<Slider> fastSlider;
+    std::unique_ptr<Slider> intuitiveSlider;
+    std::unique_ptr<Slider> preferSlider;
+    std::unique_ptr<ImageButton> imageButton2;
+    std::unique_ptr<Label> precisionLabel2;
+    std::unique_ptr<Label> precisionLabel;
+    std::unique_ptr<Slider> preciseSlider;
+    std::unique_ptr<Label> intuitiveLabel;
 
 
     //==============================================================================

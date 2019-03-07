@@ -86,7 +86,7 @@ UserQuestions::UserQuestions ()
     visionDisorderTextEditor->setPopupMenuEnabled (true);
     visionDisorderTextEditor->setText (String());
 
-    visionDisorderTextEditor->setBounds (16, 296, 752, 24);
+    visionDisorderTextEditor->setBounds (16, 400, 752, 24);
 
     hearingImpairmentToggleButton.reset (new ToggleButton ("Audition Question toggle button"));
     addAndMakeVisible (hearingImpairmentToggleButton.get());
@@ -112,7 +112,28 @@ UserQuestions::UserQuestions ()
     hearingTextEditor->setPopupMenuEnabled (true);
     hearingTextEditor->setText (String());
 
-    hearingTextEditor->setBounds (16, 456, 752, 24);
+    hearingTextEditor->setBounds (16, 544, 752, 24);
+
+    ageLabel.reset (new Label ("Age label",
+                               TRANS("How old are you?")));
+    addAndMakeVisible (ageLabel.get());
+    ageLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    ageLabel->setJustificationType (Justification::centredLeft);
+    ageLabel->setEditable (false, false, false);
+    ageLabel->setColour (TextEditor::textColourId, Colours::black);
+    ageLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    ageSlider.reset (new Slider ("age slider"));
+    addAndMakeVisible (ageSlider.get());
+    ageSlider->setRange (18, 100, 1);
+    ageSlider->setSliderStyle (Slider::LinearHorizontal);
+    ageSlider->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
+    ageSlider->setColour (Slider::backgroundColourId, Colour (0x00263238));
+    ageSlider->setColour (Slider::thumbColourId, Colour (0x0042a2c8));
+    ageSlider->setColour (Slider::trackColourId, Colour (0x00181f22));
+    ageSlider->addListener (this);
+
+    ageSlider->setBounds (160, 248, 150, 24);
 
 
     //[UserPreSize]
@@ -147,6 +168,8 @@ UserQuestions::~UserQuestions()
     hearingImpairmentToggleButton = nullptr;
     hearingQuestionLabel = nullptr;
     hearingTextEditor = nullptr;
+    ageLabel = nullptr;
+    ageSlider = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -174,10 +197,11 @@ void UserQuestions::resized()
     finishedButton->setBounds ((getWidth() / 2) - (500 / 2), getHeight() - 88, 500, 80);
     allowDataToggleButton->setBounds (8, 128, getWidth() - 35, 24);
     label2->setBounds (8, 152, getWidth() - 35, 24);
-    visionDisorderToggleButton->setBounds (8, 240, getWidth() - 35, 24);
-    visionQuestionLabel->setBounds (8, 264, getWidth() - 27, 24);
-    hearingImpairmentToggleButton->setBounds (16, 395, getWidth() - 35, 24);
-    hearingQuestionLabel->setBounds (8, 424, getWidth() - 27, 24);
+    visionDisorderToggleButton->setBounds (8, 344, getWidth() - 35, 24);
+    visionQuestionLabel->setBounds (8, 368, getWidth() - 27, 24);
+    hearingImpairmentToggleButton->setBounds (8, 483, getWidth() - 35, 24);
+    hearingQuestionLabel->setBounds (8, 512, getWidth() - 27, 24);
+    ageLabel->setBounds (8, 248, getWidth() - 640, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -222,6 +246,21 @@ void UserQuestions::buttonClicked (Button* buttonThatWasClicked)
     //[/UserbuttonClicked_Post]
 }
 
+void UserQuestions::sliderValueChanged (Slider* sliderThatWasMoved)
+{
+    //[UsersliderValueChanged_Pre]
+    //[/UsersliderValueChanged_Pre]
+
+    if (sliderThatWasMoved == ageSlider.get())
+    {
+        //[UserSliderCode_ageSlider] -- add your slider handling code here..
+        //[/UserSliderCode_ageSlider]
+    }
+
+    //[UsersliderValueChanged_Post]
+    //[/UsersliderValueChanged_Post]
+}
+
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
@@ -231,6 +270,7 @@ std::shared_ptr<bptree::ptree> UserQuestions::GetQuestionsBPTree()
     auto questionsChildrenTree = std::make_shared<bptree::ptree>();
     questionsChildrenTree->put("data_usage.<xmlattr>.allow",
                                (bool)allowDataToggleButton->getToggleState());
+    questionsChildrenTree->put("age", (int)ageSlider->getValue());
     bptree::ptree visionTree;
     visionTree.put("<xmlattr>.checked", (bool)visionDisorderToggleButton->getToggleState());
     if (visionDisorderToggleButton->getToggleState())
@@ -281,32 +321,42 @@ BEGIN_JUCER_METADATA
          fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="1" justification="33" typefaceStyle="Italic"/>
   <TOGGLEBUTTON name="Question toggle button" id="acc7621165a9b88a" memberName="visionDisorderToggleButton"
-                virtualName="" explicitFocusOrder="0" pos="8 240 35M 24" buttonText="I suffer from a vision impairment, such as uncorrected short-sightedness, color blindness, ..."
+                virtualName="" explicitFocusOrder="0" pos="8 344 35M 24" buttonText="I suffer from a vision impairment, such as uncorrected short-sightedness, color blindness, ..."
                 connectedEdges="0" needsCallback="1" radioGroupId="0" state="0"/>
   <LABEL name="Vision Question label" id="e9827abd77de5abc" memberName="visionQuestionLabel"
-         virtualName="" explicitFocusOrder="0" pos="8 264 27M 24" edTextCol="ff000000"
+         virtualName="" explicitFocusOrder="0" pos="8 368 27M 24" edTextCol="ff000000"
          edBkgCol="0" labelText="Please tell us the nature of this impairment in the form below:"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="33"/>
   <TEXTEDITOR name="new text editor" id="a8feea107d85baef" memberName="visionDisorderTextEditor"
-              virtualName="" explicitFocusOrder="0" pos="16 296 752 24" initialText=""
+              virtualName="" explicitFocusOrder="0" pos="16 400 752 24" initialText=""
               multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"
               caret="1" popupmenu="1"/>
   <TOGGLEBUTTON name="Audition Question toggle button" id="62cad4dc7d1ac60c"
                 memberName="hearingImpairmentToggleButton" virtualName="" explicitFocusOrder="0"
-                pos="16 395 35M 24" buttonText="I suffer from an hearing impairment"
+                pos="8 483 35M 24" buttonText="I suffer from an hearing impairment"
                 connectedEdges="0" needsCallback="1" radioGroupId="0" state="0"/>
   <LABEL name="Hearing Question label" id="ca8fb6087ad7469d" memberName="hearingQuestionLabel"
-         virtualName="" explicitFocusOrder="0" pos="8 424 27M 24" edTextCol="ff000000"
+         virtualName="" explicitFocusOrder="0" pos="8 512 27M 24" edTextCol="ff000000"
          edBkgCol="0" labelText="Please tell us the nature of this impairment in the form below:"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="33"/>
   <TEXTEDITOR name="new text editor" id="97593eef0b567a69" memberName="hearingTextEditor"
-              virtualName="" explicitFocusOrder="0" pos="16 456 752 24" initialText=""
+              virtualName="" explicitFocusOrder="0" pos="16 544 752 24" initialText=""
               multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"
               caret="1" popupmenu="1"/>
+  <LABEL name="Age label" id="cad86b63b6b409a7" memberName="ageLabel"
+         virtualName="" explicitFocusOrder="0" pos="8 248 640M 24" edTextCol="ff000000"
+         edBkgCol="0" labelText="How old are you?" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
+         fontsize="1.5e1" kerning="0" bold="0" italic="0" justification="33"/>
+  <SLIDER name="age slider" id="8a696570d1136395" memberName="ageSlider"
+          virtualName="" explicitFocusOrder="0" pos="160 248 150 24" bkgcol="263238"
+          thumbcol="42a2c8" trackcol="181f22" min="1.8e1" max="1e2" int="1"
+          style="LinearHorizontal" textBoxPos="TextBoxLeft" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

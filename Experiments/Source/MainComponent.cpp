@@ -44,7 +44,7 @@ MainComponent::MainComponent()
     
     
     // Size after children are init
-    setSize (1000, 700);
+    setSize (1250, 830);
 }
 
 MainComponent::~MainComponent()

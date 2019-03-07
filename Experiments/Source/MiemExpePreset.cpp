@@ -58,7 +58,7 @@ parametersCount(4) // const at the moment
     /// - - - - MIEM SCENE INDEX and TEMPO and TARGET VALUES - - - -
     /// - - - - MIEM SCENE INDEX and TEMPO and TARGET VALUES - - - -
     sceneBaseIndex = -1000;
-    if (synthId == -2) // OK
+    if (synthId == -2)
     {
         name = "[T] Wurli"; // midrange
         sceneBaseIndex = 1;
@@ -69,126 +69,126 @@ parametersCount(4) // const at the moment
         parametersTargetValues[2] = 0.091;
         parametersTargetValues[3] = 0.659; // et beaucoup de hammer
     }
-    else if (synthId == -1) // à refaire
+    else if (synthId == -1)
     {
         name = "[T] Arpesque"; // Arpesque
         sceneBaseIndex = 1;
         tempo = 140.0f;
         parametersInfo = "1-Reso/2-HPFcut/3-attack/4-release";
-        parametersTargetValues[0] = 0.108;
-        parametersTargetValues[1] = 0.259;
-        parametersTargetValues[2] = 0.274;
-        parametersTargetValues[3] = 0.108;
+        parametersTargetValues[0] = 0.764;
+        parametersTargetValues[1] = 0.0;
+        parametersTargetValues[2] = 0.236;
+        parametersTargetValues[3] = 0.0;
     }
-    else if (synthId == 0) // à refaire
+    else if (synthId == 0)
     {
-        name = "[0] ThunderBass"; // thunder bass avec VCF mod à 0,536
-        sceneBaseIndex = 9;
+        name = "[0] ThunderBass"; // thunder bass avec VCO1mix à 0,204
+        sceneBaseIndex = 5;
         tempo = 105.0f;
-        parametersInfo = "1-Delay/2-Osc1Mix/3-Noise/4-Chorus";
-        parametersTargetValues[0] = 0.258;
-        parametersTargetValues[1] = 0.049;
-        parametersTargetValues[2] = 0.049;
-        parametersTargetValues[3] = 0.144;
+        parametersInfo = "1-Delay/2-Env/3-Noise/4-Chorus";
+        parametersTargetValues[0] = 0.0;
+        parametersTargetValues[1] = 0.0;
+        parametersTargetValues[2] = 0.214;
+        parametersTargetValues[3] = 0.536;
     }
-    else if (synthId == 1) // à refaire
+    else if (synthId == 1)
     {
-        name = "[1] Shamisen"; // 6-string shamisen
+        name = "[1] Shamisen"; // 6-string shamisen (avec algo=0)
         sceneBaseIndex = 17;
         tempo = 145.0f;
         parametersInfo = "1-op2lvl/2-Chorus/3-delay/4-op3lvl";
-        parametersTargetValues[0] = 0.758;
-        parametersTargetValues[1] = 0.492;
-        parametersTargetValues[2] = 0.250;
+        parametersTargetValues[0] = 0.706;
+        parametersTargetValues[1] = 0.250; // macro 4
+        parametersTargetValues[2] = 0.544; // macro 3
         parametersTargetValues[3] = 0.250;
     }
-    else if (synthId == 2) // à refaire
+    else if (synthId == 2)
     {
         name = "[2] VOX"; // 16 4 Blackface (à tremolo DEPTH = 0.548)
         sceneBaseIndex = 5;
         tempo = 160.0f;
         parametersInfo = "1-Réverb/2-TremoRate/3-UpFt1/4-Reed";
-        parametersTargetValues[0] = 0.090;
-        parametersTargetValues[1] = 0.380; // tremolo DEPTH = 0.548
-        parametersTargetValues[2] = 0.191;
-        parametersTargetValues[3] = 0.090;
+        parametersTargetValues[0] = 0.336;
+        parametersTargetValues[1] = 0.331; // tremolo DEPTH = 0.548
+        parametersTargetValues[2] = 0.04;
+        parametersTargetValues[3] = 0.04;
     }
-    else if (synthId == 3) // à refaire
+    else if (synthId == 3)
     {
         name = "[3] TriOsc"; // 3 osc
         sceneBaseIndex = 21;
         tempo = 92.0f;
         parametersInfo = "1-cutoff/2-emphasis/3-noise/4-VCAdec";
-        parametersTargetValues[0] = 0.330;
-        parametersTargetValues[1] = 0.482;
-        parametersTargetValues[2] = 0.357;
-        parametersTargetValues[3] = 0.331;
+        parametersTargetValues[0] = 0.542;
+        parametersTargetValues[1] = 0.250;
+        parametersTargetValues[2] = 0.250;
+        parametersTargetValues[3] = 0.458;
     }
-    else if (synthId == 4) // à refaire
+    else if (synthId == 4)
     {
         name = "[4] Buchla delay"; // delay circle (buchla easel)
         sceneBaseIndex = 1;
         tempo = 90.0f;
-        parametersInfo = "1-Mod/2-Decay/3-reverb/4-Gate1";
-        parametersTargetValues[0] = 0.147;
-        parametersTargetValues[1] = 0.445;
-        parametersTargetValues[2] = 0.146;
-        parametersTargetValues[3] = 0.262;
+        parametersInfo = "1-ChanAlvl/2-Decay/3-reverb/4-Gate1";
+        parametersTargetValues[0] = 0.156;
+        parametersTargetValues[1] = 0.606;
+        parametersTargetValues[2] = 0.090;
+        parametersTargetValues[3] = 0.149;
     }
-    else if (synthId == 5) // à refaire
+    else if (synthId == 5)
     {
         name = "[5] MoodySky"; // Moody Sky
         sceneBaseIndex = 17;
         tempo = 90.0f;
         parametersInfo = "1-Delay/2-Spread/3-Time/4-Timbre";
-        parametersTargetValues[0] = 0.339;
-        parametersTargetValues[1] = 0.531;
-        parametersTargetValues[2] = 0.340;
-        parametersTargetValues[3] = 0.540;
+        parametersTargetValues[0] = 0.250;
+        parametersTargetValues[1] = 1.0;
+        parametersTargetValues[2] = 0.250;
+        parametersTargetValues[3] = 0.250;
     }
-    else if (synthId == 6) // à refaire
+    else if (synthId == 6)
     {
         name = "[6] Piano"; // Japanese Jazz Studio
         sceneBaseIndex = 1;
         tempo = 113.0f;
         parametersInfo = "1-HamPos/2-SoundRes/3-HamHard/4-Mic1Pan";
-        parametersTargetValues[0] = 0.144;
-        parametersTargetValues[1] = 0.244;
-        parametersTargetValues[2] = 0.144;
-        parametersTargetValues[3] = 0.468;
+        parametersTargetValues[0] = 1.0;
+        parametersTargetValues[1] = 0.0;
+        parametersTargetValues[2] = 0.0;
+        parametersTargetValues[3] = 0.0;
     }
-    else if (synthId == 7) // à refaire
+    else if (synthId == 7)
     {
         name = "[7] AfroRonde"; // African Ronde
         sceneBaseIndex = 17;
         tempo = 110.0f;
         parametersInfo = "1-filTune/2-audioIn/3-chorus/4-filRes";
-        parametersTargetValues[0] = 0.602;
-        parametersTargetValues[1] = 0.648;
+        parametersTargetValues[0] = 0.562;
+        parametersTargetValues[1] = 0.688;
         parametersTargetValues[2] = 0.250;
         parametersTargetValues[3] = 0.250;
     }
-    else if (synthId == 8) // à refaire
+    else if (synthId == 8)
     {
         name = "[8] SubGamelan"; // suburban gamelan
         sceneBaseIndex = 17;
         tempo = 120.0f;
         parametersInfo = "1-L/2-R/3-macro1/4-macro2";
-        parametersTargetValues[0] = 0.308;
-        parametersTargetValues[1] = 0.765;
-        parametersTargetValues[2] = 0.309;
-        parametersTargetValues[3] = 0.367;
+        parametersTargetValues[0] = 0.895; // op1 out lvl
+        parametersTargetValues[1] = 0.250; // op2 out lvl
+        parametersTargetValues[2] = 0.355;
+        parametersTargetValues[3] = 0.250;
     }
-    else if (synthId == 9) // à refaire
+    else if (synthId == 9)
     {
         name = "[9] AntiqueStr"; // Antique Strings
         sceneBaseIndex = 1;
         tempo = 100.0f;
         parametersInfo = "/1-Chorus/2-noise/3-cutoff/4-attack";
-        parametersTargetValues[0] = 0.143;
-        parametersTargetValues[1] = 0.142;
-        parametersTargetValues[2] = 0.422;
-        parametersTargetValues[3] = 0.293;
+        parametersTargetValues[0] = 0.650;
+        parametersTargetValues[1] = 0.0;
+        parametersTargetValues[2] = 0.350;
+        parametersTargetValues[3] = 0.0;
     }
     /// - - - - MIEM SCENE INDEX and TEMPO and TARGET VALUES - - - -
     /// - - - - MIEM SCENE INDEX and TEMPO and TARGET VALUES - - - -

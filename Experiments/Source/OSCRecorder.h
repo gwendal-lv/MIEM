@@ -65,7 +65,7 @@ class OSCRecorder : public UserQuestionsManager,
     
     // - - - SHORT/DEMO EXPERIMENT - - -
     const bool ShortExperiment = true;
-    const int ShortExperimentPresetsCount = 4;
+    const int ShortExperimentPresetsCount = 2;
     private :
     const bool randomizePresets = true;
     public :

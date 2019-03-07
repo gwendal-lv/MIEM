@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="DytN0V" name="MIEM Experiments" projectType="guiapp" jucerVersion="5.4.3"
               companyName="Gwendal Le Vaillant" bundleIdentifier="com.gwendallv.MIEMExperiments"
-              defines="__MIEM_SHORT_DELAYS__NO" reportAppUsage="0" displaySplashScreen="0"
+              defines="__MIEM_SHORT_DELAYS" reportAppUsage="0" displaySplashScreen="0"
               projectLineFeed="&#10;" headerPath="../../../&#10;../../../MiamCommon/Source&#10;">
   <MAINGROUP id="CesC75" name="MIEM Experiments">
     <GROUP id="{BD7228E3-B907-311E-3EC6-609760808B73}" name="MiemCommon">
@@ -73,6 +73,9 @@
             file="../MiamCommon/Resources/Translation_FR.txt"/>
     </GROUP>
     <GROUP id="{BF322DA9-F626-C0D8-FDC9-308209939F8C}" name="Resources_LFS">
+      <FILE id="zGgF8V" name="4_Faders.png" compile="0" resource="1" file="../Resources_LFS/Experiments/4_Faders.png"/>
+      <FILE id="kkeB3y" name="4_Interpolation_areas.png" compile="0" resource="1"
+            file="../Resources_LFS/Experiments/4_Interpolation_areas.png"/>
       <FILE id="ToqEsc" name="Experiment_macOS_1024at1.png" compile="0" resource="1"
             file="../Resources_LFS/Icones_Logos/Exports/Experiment_macOS_1024at1.png"/>
     </GROUP>

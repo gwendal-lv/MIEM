@@ -57,7 +57,7 @@ OSCRecorderIntroComponent::OSCRecorderIntroComponent ()
     //[UserPreSize]
     //[/UserPreSize]
 
-    setSize (600, 400);
+    setSize (1000, 700);
 
 
     //[Constructor] You can add your own custom stuff here..
@@ -146,17 +146,16 @@ BEGIN_JUCER_METADATA
 <JUCER_COMPONENT documentType="Component" className="OSCRecorderIntroComponent"
                  componentName="" parentClasses="public Component" constructorParams=""
                  variableInitialisers="" snapPixels="8" snapActive="1" snapShown="1"
-                 overlayOpacity="0.330" fixedSize="0" initialWidth="600" initialHeight="400">
+                 overlayOpacity="0.330" fixedSize="0" initialWidth="1000" initialHeight="700">
   <BACKGROUND backgroundColour="ff111111"/>
   <TEXTBUTTON name="finished button" id="ee4745ef80623612" memberName="finishedButton"
               virtualName="" explicitFocusOrder="0" pos="0Cc 96R 500 80" bgColOff="ff2ac858"
               bgColOn="ff252525" buttonText="Continue" connectedEdges="0" needsCallback="1"
               radioGroupId="0"/>
   <TEXTEDITOR name="intro text editor" id="6f5b21f19397a4f5" memberName="introTextEditor"
-              virtualName="" explicitFocusOrder="0" pos="0.5Cc 40 80M 200M"
-              bkgcol="495358" hilitecol="e0ec65" outlinecol="ff565656" initialText=""
-              multiline="1" retKeyStartsLine="1" readonly="1" scrollbars="0"
-              caret="0" popupmenu="0"/>
+              virtualName="" explicitFocusOrder="0" pos="0Cc 40 80M 200M" bkgcol="495358"
+              hilitecol="e0ec65" outlinecol="ff565656" initialText="" multiline="1"
+              retKeyStartsLine="1" readonly="1" scrollbars="0" caret="0" popupmenu="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

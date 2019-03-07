@@ -12,7 +12,7 @@
             <outputs activeCount="1" maxCount="64"/>
             <senders>
                 <sender type="MiamOsc">
-                    <ip>192.168.1.140</ip>
+                    <ip>127.0.0.1</ip>
                     <udp>
                         <port>8011</port>
                     </udp>
@@ -681,7 +681,7 @@
                                 </geometry>
                                 <spatstate index="4"/>
                             </area>
-                            <area id="307" type="SpatPolygon" index="4"> 
+                            <area id="307" type="SpatPolygon" index="4">
                                 <center x="0.85999999999999999" y="0.92000000000000004"/>
                                 <colour>ff000000</colour>
                                 <keep_ratio>false</keep_ratio>

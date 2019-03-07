@@ -39,7 +39,8 @@ class UserQuestionsManager;
                                                                     //[/Comments]
 */
 class UserQuestions  : public Component,
-                       public Button::Listener
+                       public Button::Listener,
+                       public Slider::Listener
 {
 public:
     //==============================================================================
@@ -57,6 +58,7 @@ public:
     void paint (Graphics& g) override;
     void resized() override;
     void buttonClicked (Button* buttonThatWasClicked) override;
+    void sliderValueChanged (Slider* sliderThatWasMoved) override;
 
 
 
@@ -76,6 +78,8 @@ private:
     std::unique_ptr<ToggleButton> hearingImpairmentToggleButton;
     std::unique_ptr<Label> hearingQuestionLabel;
     std::unique_ptr<TextEditor> hearingTextEditor;
+    std::unique_ptr<Label> ageLabel;
+    std::unique_ptr<Slider> ageSlider;
 
 
     //==============================================================================
