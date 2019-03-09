@@ -289,10 +289,16 @@
               file="../ControlCommon/Source/ControlPresenter.h"/>
       </GROUP>
       <GROUP id="{07BF93D8-C012-D439-DF67-3946D9CD4BEB}" name="View">
+        <FILE id="smj6v8" name="ChannelNameTextEditor.h" compile="0" resource="0"
+              file="../ControlCommon/Source/ChannelNameTextEditor.h"/>
         <FILE id="prXyfS" name="ControlView.cpp" compile="1" resource="0" file="../ControlCommon/Source/ControlView.cpp"/>
         <FILE id="FOm35I" name="ControlView.h" compile="0" resource="0" file="../ControlCommon/Source/ControlView.h"/>
         <FILE id="s5a2JQ" name="IMatrixButtonListener.h" compile="0" resource="0"
               file="../ControlCommon/Source/IMatrixButtonListener.h"/>
+        <FILE id="u3DZxH" name="InterpolationCurvesComboBox.cpp" compile="1"
+              resource="0" file="../ControlCommon/Source/InterpolationCurvesComboBox.cpp"/>
+        <FILE id="EALddC" name="InterpolationCurvesComboBox.h" compile="0"
+              resource="0" file="../ControlCommon/Source/InterpolationCurvesComboBox.h"/>
         <FILE id="lLSOSu" name="ISlidersMatrixListener.h" compile="0" resource="0"
               file="../ControlCommon/Source/ISlidersMatrixListener.h"/>
         <FILE id="K2PgBO" name="LabelledMatrixComponent.cpp" compile="1" resource="0"
@@ -303,6 +309,8 @@
               file="../ControlCommon/Source/MatrixComponent.cpp"/>
         <FILE id="D1VeJN" name="MatrixComponent.h" compile="0" resource="0"
               file="../ControlCommon/Source/MatrixComponent.h"/>
+        <FILE id="lvq8L0" name="MatrixRowSlider.h" compile="0" resource="0"
+              file="../ControlCommon/Source/MatrixRowSlider.h"/>
         <FILE id="CDLZvE" name="MatrixSlider.h" compile="0" resource="0" file="../ControlCommon/Source/MatrixSlider.h"/>
         <FILE id="RW0Tdr" name="MatrixViewport.h" compile="0" resource="0"
               file="../ControlCommon/Source/MatrixViewport.h"/>

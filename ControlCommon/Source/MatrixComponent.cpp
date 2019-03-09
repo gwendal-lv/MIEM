@@ -61,7 +61,8 @@ void MatrixComponent::ReconstructGuiObjects()
             sliders[idx(i,j)]->SetPropertiesFromVolume();
         }
         
-        horizontalSliders[i] = new Slider("Horizontal Slider ID=" + boost::lexical_cast<std::string>(i));
+        horizontalSliders[i] = new MatrixRowSlider("Horizontal Slider ID=" + boost::lexical_cast<std::string>(i),
+                                                   itemH);
         horizontalSliders[i]->setComponentID(boost::lexical_cast<std::string>(i));
         initAndAddHorizontalSlider(horizontalSliders[i]);
     }
@@ -110,10 +111,7 @@ void MatrixComponent::addSlider(Slider* slider)
 }
 void MatrixComponent::initAndAddHorizontalSlider(Slider* slider)
 {
-    slider->setSliderStyle(Slider::SliderStyle::LinearHorizontal);
-    slider->setColour(Slider::ColourIds::textBoxTextColourId, Colours::black);
     slider->setRange(0.0, 1.0);
-    
     addSlider(slider);
 }
 
@@ -256,9 +254,15 @@ void MatrixComponent::SetActiveSliders(int inputsCount, int outputsCount)
         for (int i=0 ; i<maxRowsCount ; i++)
         {
             if (i<n)
+            {
                 horizontalSliders[i]->setVisible(true);
+                horizontalSliders[i]->setEnabled(true);
+            }
             else
+            {
                 horizontalSliders[i]->setVisible(false);
+                horizontalSliders[i]->setEnabled(false);
+            }
         }
     }
     

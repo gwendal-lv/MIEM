@@ -468,6 +468,11 @@ void HardwareConfigurationComponent::SetAvailableInterpolations(std::initializer
     for (int i=1 ; i<(int)isInterpolationAvailable.size() ; i++)
         interpolationTypeComboBox->setItemEnabled(i, isInterpolationAvailable[i]);
 }
+void HardwareConfigurationComponent::SetInterpolationChoiceVisible(bool shouldBeVisible)
+{
+    interpolationTypeComboBox->setVisible(shouldBeVisible);
+    interpolationTypeLabel->setVisible(shouldBeVisible);
+}
 
 //[/MiscUserCode]
 

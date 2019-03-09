@@ -69,7 +69,8 @@ public:
 
     /// \brief Sets the interpolation types that the user can choose in the list.
     void SetAvailableInterpolations(std::initializer_list<InterpolationType> interpolationTypeArgs);
-
+    void SetInterpolationChoiceVisible(bool shouldBeVisible);
+    
     //[/UserMethods]
 
     void paint (Graphics& g) override;

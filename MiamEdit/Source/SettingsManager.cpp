@@ -59,6 +59,7 @@ void SettingsManager::ConfigureGuiForSessionPurpose()
                 InterpolationType::Matrix_ConstantPower,
                 InterpolationType::Matrix_ConstantAmplitude
             });
+            configurationComponent->SetInterpolationChoiceVisible(true);
             // On active bien la possibilité de choisir keyboard edition, ou non
             configurationComponent->keyboardToggleButton->setVisible(true);
             // Master gain : possible de choisir aussi
@@ -74,9 +75,13 @@ void SettingsManager::ConfigureGuiForSessionPurpose()
             configurationComponent->ipAddressLabel->setText(TRANS("Target device IP address:"), NotificationType::sendNotification);
             configurationComponent->udpPortLabel->setText(TRANS("Target device listening on UDP port:"), NotificationType::sendNotification);
             // Seuls certains types d'interpolation sont dispo
+            // Avec les interps. par paramètre, on n'aura que l'interpolation linéaire dispo en
+            // interne
             configurationComponent->SetAvailableInterpolations({
-                InterpolationType::Any
+                InterpolationType::Matrix_Linear
             });
+            // et du coup, puisque pas le choix, on cache
+            configurationComponent->SetInterpolationChoiceVisible(false);
             // On désactive bien la possibilité de choisir keyboard edition !
             // Car on peut toujours le faire avec les sliders... Donc ça n'a pas de sens...
             configurationComponent->keyboardToggleButton->setVisible(false);

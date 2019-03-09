@@ -16,7 +16,8 @@
 #include <vector>
 #include <cmath>
 
-#include "MatrixSlider.h"
+#include "MatrixSlider.h" // small rectangle slider volume, for full compact matrices
+#include "MatrixRowSlider.h" // horizontal larger slider
 
 #include "LabelledMatrixComponent.h"
 
@@ -39,7 +40,7 @@ namespace Miam
         // matrice
         std::vector<ScopedPointer<MatrixSlider>> sliders;
         // Sliders lorsque l'on n'a qu'une seule colonne
-        std::vector<ScopedPointer<Slider>> horizontalSliders;
+        std::vector<ScopedPointer<MatrixRowSlider>> horizontalSliders;
         
         // Graphics and internal data
         const size_t maxRowsCount;
