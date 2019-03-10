@@ -117,28 +117,28 @@ namespace Miam
         // déclarés dans le .cpp
         constexpr static const char* const interpolationNames[] = {
             "",
-            "On/Off curve: threshold at 0.5",
+            "On/Off curve, with threshold at center value",
             "Exponential curve",
             "Soft curve",
             "Linear curve: standard for controllers",
             "Hard curve",
-            "Logarithmic curve: for audio frequencies"
+            "Logarithmic curve: for audio frequencies, volumes, etc."
         };
         constexpr static const char* const interpolationShortNames[] = {
             "",
-            "Threshold",
-            "Exp",
+            "On-Off",
+            "Exponential",
             "Soft",
             "Linear",
             "Hard",
-            "Log"
+            "Logarithmic"
         };
         
         public :
         
         /// \brief Renvoie le nom d'un type d'interpolation sous forme de chaîne de caractère,
         /// traduite et/ou raccourcie si demandé.
-        static String GetInterpolationName(InterpolationType type,
+        static String GetInterpolationName(ParamInterpolationType type,
                                            bool translate = true, bool shortName = false)
         {
             int typeId = (int)type;
@@ -162,7 +162,7 @@ namespace Miam
         /// ou bien lance une Miam::ParseException
         static ParamInterpolationType ParseName(std::string interpolationName);
         
-        /// \brief Return true if the interpolation type an actual one (e.g. linear, constant power, ...)
+        /// \brief Returns true if the interpolation type an actual one (e.g. linear, soft, log, ...)
         /// and not a "utility" one (e.g. None, Count, ...)
         static bool IsActualInterpolationType(ParamInterpolationType type)
         {

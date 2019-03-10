@@ -29,4 +29,46 @@ height(_height)
     {
         std::cout << "images à construire" << std::endl;
     }
+    
+    // pptés générales
+    setEditableText(false);
+    setTextWhenNoChoicesAvailable(TRANS("Custom interpolation not available"));
+    setScrollWheelEnabled(false); // pour ne pas changer sans faire exprès....
+    
+    // ajout des items avec ID personnalisé
+    for (int i = (static_cast<int>(ParamInterpolationType::None) + 1); // next after "none" is valid
+         i < static_cast<int>(ParamInterpolationType::InterpolationTypesCount) ;
+         i++)
+    {
+        addItem(ParamInterpolationTypes::GetInterpolationName( (ParamInterpolationType)i ), i);
+    }
+    
+    // auto-listener
+    addListener(this);
+}
+
+
+
+void InterpolationCurvesComboBox::comboBoxChanged(ComboBox *comboBoxThatHasChanged)
+{
+    if (comboBoxThatHasChanged != this)
+    {
+        assert(false); // self-listener only...
+        return;
+    }
+    
+    // translation of data, internal save
+    lastActualChoice = (ParamInterpolationType) getSelectedId();
+    if (ParamInterpolationTypes::IsActualInterpolationType(lastActualChoice))
+    {
+    }
+    else
+    {
+        lastActualChoice = ParamInterpolationType::None;
+        assert(false); // should not happen !!
+    }
+    // and short name writing
+    setText(ParamInterpolationTypes::GetInterpolationName(lastActualChoice, true, true),
+            NotificationType::dontSendNotification);
+    
 }

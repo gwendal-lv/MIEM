@@ -24,6 +24,8 @@
 //#include "MatrixComponent.h"
 
 #include "ChannelNameTextEditor.h"
+#include "MatrixRowSlider.h"
+#include "MinMaxRowSlider.h"
 
 #include "ISlidersMatrixListener.h"
 #include "IMatrixButtonListener.h"
@@ -54,7 +56,8 @@ namespace Miam
 */
 class LabelledMatrixComponent  : public Component,
                                  public TextEditor::Listener,
-                                 public Button::Listener
+                                 public Button::Listener,
+                                 public Slider::Listener
 {
 public:
     //==============================================================================
@@ -100,6 +103,9 @@ public:
     /// \brief Callback from a generic action button (currently, the buttons
     /// displayed at the beginning of each line).
     virtual void buttonClicked (Button* ) override;
+    
+    /// \brief Callback from the min/max value sliders
+    virtual void sliderValueChanged (Slider *slider) override;
 
     // - - - - - - Getters and Setters - - - - -
     MatrixComponent* GetMatrixComponent();
@@ -140,7 +146,14 @@ private:
     // Positionning variables
     const int inputNameLabelMinWidth = 200;
     int inputNameLabelWidth = 200;
-    const int curveComboBoxWidth = 200;
+    int inputNamesX = 0; // text editor
+    const int minMaxValueSlidersW = 120;
+    int minimaX = 0; ///< The X left position of a row "min value" slider
+    int maximaX = 0; ///< The X left position of a row "max value" slider
+    int interpolationCurvesX = 0;
+    int rowButtonsX = 0;
+    const int curveComboBoxW = 200;
+    const int curveImageW = 20; ///< Display size in pixels (retina will be 2 times bigger in pixels)
     int removedFromLeftOfMatrix = 100; // just in case, to avoid zero-sized buttons if it happens...
     int removedFromBottomOfMatrix = 100;
     int removedFromRightOfMatrix = 100;
@@ -164,12 +177,12 @@ private:
     // Si on voit les noms des sorties leur hauteur est this->getHeight()/2
     std::vector<ScopedPointer<ChannelNameTextEditor>> inputNameTextEditors; // component ID : 'i#', # is the row number
     std::vector<ScopedPointer<ChannelNameTextEditor>> outputNameTextEditors; // component ID : 'o#', # is the col number
-    
+
     // These buttons will trigger a generic callback (the user will be able to
     // use it through a registered listener system). Shown in GenericController
     // mode only (at the moment ?)
     std::vector<std::unique_ptr<TextButton>> rowTextButtons;  // component ID : 'bi#', # is the row number
-    
+
     /// \brief Combo boxes on each line - of Generic Controller mode - for selecting
     /// the type of interpolation to be applied to the parameter on the line
     std::vector<std::unique_ptr<InterpolationCurvesComboBox>> rowComboBoxes; // component ID : 'cbi#', # is the row number
@@ -178,10 +191,12 @@ private:
     ///
     /// Shared with the row combo boxes for automatic actualisation
     std::vector<std::shared_ptr<ImageComponent>> curveImageComponents;
-    
+
+    /// \brief Slider for min/max values of parameters
+    std::vector<std::unique_ptr<MinMaxRowSlider>> rowMinSliders; // component IDs : 'mins#'
+    std::vector<std::unique_ptr<MinMaxRowSlider>> rowMaxSliders; // component IDs : 'maxs#'
+
     //[/UserVariables]
-    
-    
 
     //==============================================================================
     std::unique_ptr<Miam::MatrixViewport> matrixViewport;

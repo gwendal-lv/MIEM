@@ -21,7 +21,9 @@
 
 namespace Miam
 {
-    class InterpolationCurvesComboBox : public ComboBox {
+    class InterpolationCurvesComboBox : public ComboBox,
+                                        public ComboBox::Listener // auto-listens and re-sends events
+    {
         
         
         // =========== ATTRIBUTES ==========
@@ -30,8 +32,19 @@ namespace Miam
         std::shared_ptr<ImageComponent> associatedImageComponent;
         const int height;
         
+        /// \brief On doit sauvegarder le dernier type choisi, car on va
+        /// changer le texte directement après avoir choisi (sinon la matrice
+        /// devient illisible). Après changement, la combo box native Juce ne renverra plus
+        /// un choix défini .
+        ParamInterpolationType lastActualChoice = ParamInterpolationType::None;
+        
         // Internal "singleton"
         static std::vector<std::unique_ptr<ImageComponent>> curveImages;
+        
+        
+        // =========== Getters and Setters ==========
+        ParamInterpolationType GetSelectedInterpolationType() const {return lastActualChoice;}
+        
         
         // =========== METHODS ==========
         // ction and dtion
@@ -39,6 +52,9 @@ namespace Miam
         InterpolationCurvesComboBox (const String &componentName, LabelledMatrixComponent* _parentComponent, std::shared_ptr<ImageComponent> _imageComponent, int _height);
         virtual ~InterpolationCurvesComboBox() {}
         
+        /// \brief Self-listener callback, for translation of data, and direct explicit
+        /// callback to the parent Labelled Matrix Component
+        virtual void comboBoxChanged (ComboBox *comboBoxThatHasChanged) override;
         
     };
 }

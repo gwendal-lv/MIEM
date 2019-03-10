@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.1
+  Created with Projucer version: 5.4.3
 
   ------------------------------------------------------------------------------
 
@@ -175,6 +175,11 @@ private:
     std::unique_ptr<Label> matrixInfoLabel1;
     std::unique_ptr<Label> matrixInfoLabel2;
     std::unique_ptr<Label> matrixInfoLabel3;
+    std::unique_ptr<Label> oscAddressLabel;
+    std::unique_ptr<Label> minLabel;
+    std::unique_ptr<Label> maxLabel;
+    std::unique_ptr<Label> interpolationCurveLabel;
+    std::unique_ptr<Label> valueLabel;
 
 
     //==============================================================================
@@ -184,3 +189,4 @@ private:
 //[EndFile] You can add extra defines here...
 } // namespace Miam
 //[/EndFile]
+
