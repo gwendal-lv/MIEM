@@ -4,7 +4,7 @@ Pour cette expérience, l'objectif est de retrouver rapidement un son particulie
 Au départ, pendant une quinzaine de secondes environ, vous allez écouter un son qu'il faudra retrouver.
 
 Ensuite, en déplaçant des points blancs sur une tablette tactile, vous pourrez chercher et retrouver ce son de synthétiseur.
-Chaque forme géométrique à l'écran est liée à un paramètre de synthétiseur ou de filtre.
+Chaque forme géométrique à l'écran est liée à un paramètre de synthétiseur, d'effet audio, ou de bien stéréo gauche/droite.
 
 Le cycle d'écoute/recherche aura lieu une vingtaine de fois, pour une expérience qui durera au total entre 20 et 25 minutes.
 

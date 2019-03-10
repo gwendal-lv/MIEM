@@ -104,14 +104,14 @@ parametersCount(4) // const at the moment
     }
     else if (synthId == 2)
     {
-        name = "[2] VOX"; // 16 4 Blackface (à tremolo DEPTH = 0.548)
-        sceneBaseIndex = 5;
-        tempo = 160.0f;
-        parametersInfo = "1-Réverb/2-TremoRate/3-UpFt1/4-Reed";
-        parametersTargetValues[0] = 0.336;
-        parametersTargetValues[1] = 0.331; // tremolo DEPTH = 0.548
-        parametersTargetValues[2] = 0.04;
-        parametersTargetValues[3] = 0.04;
+        name = "[2] DabDat";
+        sceneBaseIndex = 1;
+        tempo = 96.0f;
+        parametersInfo = "1-lvlOsc1/2-lvlOsc2/3-part2pan/4-hatCutoff";
+        parametersTargetValues[0] = 0.0;
+        parametersTargetValues[1] = 0.0;
+        parametersTargetValues[2] = 0.239;
+        parametersTargetValues[3] = 0.741;
     }
     else if (synthId == 3)
     {
@@ -126,14 +126,14 @@ parametersCount(4) // const at the moment
     }
     else if (synthId == 4)
     {
-        name = "[4] Buchla delay"; // delay circle (buchla easel)
-        sceneBaseIndex = 1;
+        name = "[4] Hypno"; // Hypno Play
+        sceneBaseIndex = 21;
         tempo = 90.0f;
-        parametersInfo = "1-ChanAlvl/2-Decay/3-reverb/4-Gate1";
-        parametersTargetValues[0] = 0.156;
-        parametersTargetValues[1] = 0.606;
-        parametersTargetValues[2] = 0.090;
-        parametersTargetValues[3] = 0.149;
+        parametersInfo = "1-ChanAlvl/2-Decay/3-reverb/4-chanBlvl";
+        parametersTargetValues[0] = 0.273;
+        parametersTargetValues[1] = 0.601;
+        parametersTargetValues[2] = 0.317;
+        parametersTargetValues[3] = 0.308;
     }
     else if (synthId == 5)
     {
@@ -159,14 +159,14 @@ parametersCount(4) // const at the moment
     }
     else if (synthId == 7)
     {
-        name = "[7] AfroRonde"; // African Ronde
-        sceneBaseIndex = 17;
-        tempo = 110.0f;
-        parametersInfo = "1-filTune/2-audioIn/3-chorus/4-filRes";
-        parametersTargetValues[0] = 0.562;
-        parametersTargetValues[1] = 0.688;
-        parametersTargetValues[2] = 0.250;
-        parametersTargetValues[3] = 0.250;
+        name = "[7] DX7block"; // Rom2A 30-BLOCK (DX7) + reaDelay
+        sceneBaseIndex = 21;
+        tempo = 128.0f;
+        parametersInfo = "1-delay/2-macro3/3-macro4/4-pan";
+        parametersTargetValues[0] = 0.250; //reaDelay
+        parametersTargetValues[1] = 0.413;
+        parametersTargetValues[2] = 0.587; 
+        parametersTargetValues[3] = 0.250; //reaDelay
     }
     else if (synthId == 8)
     {

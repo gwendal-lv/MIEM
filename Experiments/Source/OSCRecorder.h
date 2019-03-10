@@ -60,7 +60,7 @@ class OSCRecorder : public UserQuestionsManager,
     const int listeningTime_ms = 500;
 #else
     static const int delayAfterFinished_ms = 3000;
-    const int listeningTime_ms = 15000;
+    const int listeningTime_ms = 20000; // 15s sont un peu trop courtes...
 #endif
     
     // - - - SHORT/DEMO EXPERIMENT - - -

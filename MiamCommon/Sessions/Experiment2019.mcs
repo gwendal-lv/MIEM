@@ -562,54 +562,54 @@
                         <name>2</name>
                         <areas>
                             <area id="26" type="SpatPolygon" index="0">
-                                <center x="0.157" y="0.03"/>
+                                <center x="0.157" y="0.029999999999999999"/>
                                 <colour>fffe5a76</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.71" y="0.78"/>
-                                    <point index="1" x="0.15" y="0.88"/>
-                                    <point index="2" x="0.15" y="0.02"/>
-                                    <point index="3" x="0.78" y="0.02"/>
+                                    <point index="0" x="0.70999999999999996" y="0.78000000000000003"/>
+                                    <point index="1" x="0.14999999999999999" y="0.88"/>
+                                    <point index="2" x="0.14999999999999999" y="0.02"/>
+                                    <point index="3" x="0.78000000000000003" y="0.02"/>
                                 </geometry>
                                 <spatstate index="0"/>
                             </area>
                             <area id="27" type="SpatPolygon" index="1">
-                                <center x="0.843" y="0.03"/>
+                                <center x="0.84299999999999997" y="0.029999999999999999"/>
                                 <colour>fffde359</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.85" y="0.88"/>
-                                    <point index="1" x="0.29" y="0.78"/>
+                                    <point index="0" x="0.84999999999999998" y="0.88"/>
+                                    <point index="1" x="0.28999999999999998" y="0.78000000000000003"/>
                                     <point index="2" x="0.22" y="0.02"/>
-                                    <point index="3" x="0.85" y="0.02"/>
+                                    <point index="3" x="0.84999999999999998" y="0.02"/>
                                 </geometry>
                                 <spatstate index="1"/>
                             </area>
                             <area id="28" type="SpatPolygon" index="2">
-                                <center x="0.157" y="0.97"/>
+                                <center x="0.157" y="0.96999999999999997"/>
                                 <colour>ff5cfc90</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.78" y="0.98"/>
-                                    <point index="1" x="0.15" y="0.98"/>
-                                    <point index="2" x="0.15" y="0.12"/>
-                                    <point index="3" x="0.71" y="0.22"/>      
+                                    <point index="0" x="0.78000000000000003" y="0.97999999999999998"/>
+                                    <point index="1" x="0.14999999999999999" y="0.97999999999999998"/>
+                                    <point index="2" x="0.14999999999999999" y="0.12"/>
+                                    <point index="3" x="0.70999999999999996" y="0.22"/>
                                 </geometry>
                                 <spatstate index="2"/>
                             </area>
-                            <area id="29" type="SpatPolygon" index="3"> 
-                                <center x="0.843" y="0.97"/>  
+                            <area id="29" type="SpatPolygon" index="3">
+                                <center x="0.84299999999999997" y="0.96999999999999997"/>
                                 <colour>ff5d5eff</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.85" y="0.98"/>
-                                    <point index="1" x="0.22" y="0.98"/>  
-                                    <point index="2" x="0.29" y="0.22"/>
-                                    <point index="3" x="0.85" y="0.12"/>
+                                    <point index="0" x="0.84999999999999998" y="0.97999999999999998"/>
+                                    <point index="1" x="0.22" y="0.97999999999999998"/>
+                                    <point index="2" x="0.28999999999999998" y="0.22"/>
+                                    <point index="3" x="0.84999999999999998" y="0.12"/>
                                 </geometry>
                                 <spatstate index="3"/>
                             </area>
@@ -681,7 +681,7 @@
                                 </geometry>
                                 <spatstate index="4"/>
                             </area>
-                            <area id="307" type="SpatPolygon" index="4"> 
+                            <area id="307" type="SpatPolygon" index="4">
                                 <center x="0.85999999999999999" y="0.92000000000000004"/>
                                 <colour>ff000000</colour>
                                 <keep_ratio>false</keep_ratio>
@@ -782,45 +782,60 @@
                     <scene index="4">
                         <name>.</name>
                         <areas>
-                            <area id="4026" type="SpatPolygon" index="0">                                 <center x="0.157" y="0.03"/>
+                            <area id="4026" type="SpatPolygon" index="0">
+                                <center x="0.157" y="0.029999999999999999"/>
                                 <colour>fffe5a76</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.71" y="0.78"/>                                     <point index="1" x="0.15" y="0.88"/>                                     <point index="2" x="0.15" y="0.02"/>                                     <point index="3" x="0.78" y="0.02"/>
+                                    <point index="0" x="0.70999999999999996" y="0.78000000000000003"/>
+                                    <point index="1" x="0.14999999999999999" y="0.88"/>
+                                    <point index="2" x="0.14999999999999999" y="0.02"/>
+                                    <point index="3" x="0.78000000000000003" y="0.02"/>
                                 </geometry>
                                 <spatstate index="0"/>
                             </area>
-                            <area id="4027" type="SpatPolygon" index="1">                                 <center x="0.843" y="0.03"/>
+                            <area id="4027" type="SpatPolygon" index="1">
+                                <center x="0.84299999999999997" y="0.029999999999999999"/>
                                 <colour>ff5cfc90</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.85" y="0.88"/>                                     <point index="1" x="0.29" y="0.78"/>                                     <point index="2" x="0.22" y="0.02"/>                                     <point index="3" x="0.85" y="0.02"/>
+                                    <point index="0" x="0.84999999999999998" y="0.88"/>
+                                    <point index="1" x="0.28999999999999998" y="0.78000000000000003"/>
+                                    <point index="2" x="0.22" y="0.02"/>
+                                    <point index="3" x="0.84999999999999998" y="0.02"/>
                                 </geometry>
                                 <spatstate index="2"/>
                             </area>
                             <area id="4028" type="SpatPolygon" index="2">
-                                <center x="0.157" y="0.97"/>
+                                <center x="0.157" y="0.96999999999999997"/>
                                 <colour>fffde359</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.78" y="0.98"/>                                     <point index="1" x="0.15" y="0.98"/>                                     <point index="2" x="0.15" y="0.12"/>                                     <point index="3" x="0.71" y="0.22"/>
+                                    <point index="0" x="0.78000000000000003" y="0.97999999999999998"/>
+                                    <point index="1" x="0.14999999999999999" y="0.97999999999999998"/>
+                                    <point index="2" x="0.14999999999999999" y="0.12"/>
+                                    <point index="3" x="0.70999999999999996" y="0.22"/>
                                 </geometry>
                                 <spatstate index="1"/>
                             </area>
                             <area id="4029" type="SpatPolygon" index="3">
-                                <center x="0.843" y="0.97"/>
+                                <center x="0.84299999999999997" y="0.96999999999999997"/>
                                 <colour>ff5d5eff</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.85" y="0.98"/>                                     <point index="1" x="0.22" y="0.98"/>                                       <point index="2" x="0.29" y="0.22"/>                                     <point index="3" x="0.85" y="0.12"/>
+                                    <point index="0" x="0.84999999999999998" y="0.97999999999999998"/>
+                                    <point index="1" x="0.22" y="0.97999999999999998"/>
+                                    <point index="2" x="0.28999999999999998" y="0.22"/>
+                                    <point index="3" x="0.84999999999999998" y="0.12"/>
                                 </geometry>
                                 <spatstate index="3"/>
                             </area>
-                            <area id="24482" type="Exciter" index="4">                                 <center x="0.5" y="0.5"/>
+                            <area id="24482" type="Exciter" index="4">
+                                <center x="0.5" y="0.5"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>false</proportional_to_parent>
@@ -988,45 +1003,60 @@
                     <scene index="6">
                         <name>6</name>
                         <areas>
-                            <area id="6026" type="SpatPolygon" index="0">                                 <center x="0.157" y="0.03"/>
+                            <area id="6026" type="SpatPolygon" index="0">
+                                <center x="0.157" y="0.029999999999999999"/>
                                 <colour>fffe5a76</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.71" y="0.78"/>                                     <point index="1" x="0.15" y="0.88"/>                                     <point index="2" x="0.15" y="0.02"/>                                     <point index="3" x="0.78" y="0.02"/>
+                                    <point index="0" x="0.70999999999999996" y="0.78000000000000003"/>
+                                    <point index="1" x="0.14999999999999999" y="0.88"/>
+                                    <point index="2" x="0.14999999999999999" y="0.02"/>
+                                    <point index="3" x="0.78000000000000003" y="0.02"/>
                                 </geometry>
                                 <spatstate index="5"/>
                             </area>
-                            <area id="6027" type="SpatPolygon" index="1">                                 <center x="0.843" y="0.03"/>
+                            <area id="6027" type="SpatPolygon" index="1">
+                                <center x="0.84299999999999997" y="0.029999999999999999"/>
                                 <colour>ff5d5eff</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.85" y="0.88"/>                                     <point index="1" x="0.29" y="0.78"/>                                     <point index="2" x="0.22" y="0.02"/>                                     <point index="3" x="0.85" y="0.02"/>
+                                    <point index="0" x="0.84999999999999998" y="0.88"/>
+                                    <point index="1" x="0.28999999999999998" y="0.78000000000000003"/>
+                                    <point index="2" x="0.22" y="0.02"/>
+                                    <point index="3" x="0.84999999999999998" y="0.02"/>
                                 </geometry>
                                 <spatstate index="8"/>
                             </area>
                             <area id="6028" type="SpatPolygon" index="2">
-                                <center x="0.157" y="0.97"/>
+                                <center x="0.157" y="0.96999999999999997"/>
                                 <colour>fffde359</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.78" y="0.98"/>                                     <point index="1" x="0.15" y="0.98"/>                                     <point index="2" x="0.15" y="0.12"/>                                     <point index="3" x="0.71" y="0.22"/>
+                                    <point index="0" x="0.78000000000000003" y="0.97999999999999998"/>
+                                    <point index="1" x="0.14999999999999999" y="0.97999999999999998"/>
+                                    <point index="2" x="0.14999999999999999" y="0.12"/>
+                                    <point index="3" x="0.70999999999999996" y="0.22"/>
                                 </geometry>
                                 <spatstate index="6"/>
                             </area>
                             <area id="6029" type="SpatPolygon" index="3">
-                                <center x="0.843" y="0.97"/>
+                                <center x="0.84299999999999997" y="0.96999999999999997"/>
                                 <colour>ff5cfc90</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.85" y="0.98"/>                                     <point index="1" x="0.22" y="0.98"/>                                       <point index="2" x="0.29" y="0.22"/>                                     <point index="3" x="0.85" y="0.12"/>
+                                    <point index="0" x="0.84999999999999998" y="0.97999999999999998"/>
+                                    <point index="1" x="0.22" y="0.97999999999999998"/>
+                                    <point index="2" x="0.28999999999999998" y="0.22"/>
+                                    <point index="3" x="0.84999999999999998" y="0.12"/>
                                 </geometry>
                                 <spatstate index="7"/>
                             </area>
-                            <area id="24861" type="Exciter" index="4">                                 <center x="0.5" y="0.5"/>
+                            <area id="24861" type="Exciter" index="4">
+                                <center x="0.5" y="0.5"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>false</proportional_to_parent>
@@ -1194,45 +1224,60 @@
                     <scene index="8">
                         <name>.</name>
                         <areas>
-                            <area id="8026" type="SpatPolygon" index="0">                                 <center x="0.157" y="0.03"/>
+                            <area id="8026" type="SpatPolygon" index="0">
+                                <center x="0.157" y="0.029999999999999999"/>
                                 <colour>fffde359</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.71" y="0.78"/>                                     <point index="1" x="0.15" y="0.88"/>                                     <point index="2" x="0.15" y="0.02"/>                                     <point index="3" x="0.78" y="0.02"/>
+                                    <point index="0" x="0.70999999999999996" y="0.78000000000000003"/>
+                                    <point index="1" x="0.14999999999999999" y="0.88"/>
+                                    <point index="2" x="0.14999999999999999" y="0.02"/>
+                                    <point index="3" x="0.78000000000000003" y="0.02"/>
                                 </geometry>
                                 <spatstate index="1"/>
                             </area>
-                            <area id="8027" type="SpatPolygon" index="1">                                 <center x="0.843" y="0.03"/>
+                            <area id="8027" type="SpatPolygon" index="1">
+                                <center x="0.84299999999999997" y="0.029999999999999999"/>
                                 <colour>fffe5a76</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.85" y="0.88"/>                                     <point index="1" x="0.29" y="0.78"/>                                     <point index="2" x="0.22" y="0.02"/>                                     <point index="3" x="0.85" y="0.02"/>
+                                    <point index="0" x="0.84999999999999998" y="0.88"/>
+                                    <point index="1" x="0.28999999999999998" y="0.78000000000000003"/>
+                                    <point index="2" x="0.22" y="0.02"/>
+                                    <point index="3" x="0.84999999999999998" y="0.02"/>
                                 </geometry>
                                 <spatstate index="0"/>
                             </area>
                             <area id="8028" type="SpatPolygon" index="2">
-                                <center x="0.157" y="0.97"/>
+                                <center x="0.157" y="0.96999999999999997"/>
                                 <colour>ff5cfc90</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.78" y="0.98"/>                                     <point index="1" x="0.15" y="0.98"/>                                     <point index="2" x="0.15" y="0.12"/>                                     <point index="3" x="0.71" y="0.22"/>
+                                    <point index="0" x="0.78000000000000003" y="0.97999999999999998"/>
+                                    <point index="1" x="0.14999999999999999" y="0.97999999999999998"/>
+                                    <point index="2" x="0.14999999999999999" y="0.12"/>
+                                    <point index="3" x="0.70999999999999996" y="0.22"/>
                                 </geometry>
                                 <spatstate index="2"/>
                             </area>
                             <area id="8029" type="SpatPolygon" index="3">
-                                <center x="0.843" y="0.97"/>
+                                <center x="0.84299999999999997" y="0.96999999999999997"/>
                                 <colour>ff5d5eff</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.85" y="0.98"/>                                     <point index="1" x="0.22" y="0.98"/>                                       <point index="2" x="0.29" y="0.22"/>                                     <point index="3" x="0.85" y="0.12"/>
+                                    <point index="0" x="0.84999999999999998" y="0.97999999999999998"/>
+                                    <point index="1" x="0.22" y="0.97999999999999998"/>
+                                    <point index="2" x="0.28999999999999998" y="0.22"/>
+                                    <point index="3" x="0.84999999999999998" y="0.12"/>
                                 </geometry>
                                 <spatstate index="3"/>
                             </area>
-                            <area id="8045" type="Exciter" index="4">                                 <center x="0.5" y="0.5"/>
+                            <area id="8045" type="Exciter" index="4">
+                                <center x="0.5" y="0.5"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>false</proportional_to_parent>
@@ -1400,45 +1445,60 @@
                     <scene index="10">
                         <name>10</name>
                         <areas>
-                            <area id="10026" type="SpatPolygon" index="0">                                 <center x="0.157" y="0.03"/>
+                            <area id="10026" type="SpatPolygon" index="0">
+                                <center x="0.157" y="0.029999999999999999"/>
                                 <colour>fffde359</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.71" y="0.78"/>                                     <point index="1" x="0.15" y="0.88"/>                                     <point index="2" x="0.15" y="0.02"/>                                     <point index="3" x="0.78" y="0.02"/>
+                                    <point index="0" x="0.70999999999999996" y="0.78000000000000003"/>
+                                    <point index="1" x="0.14999999999999999" y="0.88"/>
+                                    <point index="2" x="0.14999999999999999" y="0.02"/>
+                                    <point index="3" x="0.78000000000000003" y="0.02"/>
                                 </geometry>
                                 <spatstate index="11"/>
                             </area>
-                            <area id="10027" type="SpatPolygon" index="1">                                 <center x="0.843" y="0.03"/>
+                            <area id="10027" type="SpatPolygon" index="1">
+                                <center x="0.84299999999999997" y="0.029999999999999999"/>
                                 <colour>ff5cfc90</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.85" y="0.88"/>                                     <point index="1" x="0.29" y="0.78"/>                                     <point index="2" x="0.22" y="0.02"/>                                     <point index="3" x="0.85" y="0.02"/>
+                                    <point index="0" x="0.84999999999999998" y="0.88"/>
+                                    <point index="1" x="0.28999999999999998" y="0.78000000000000003"/>
+                                    <point index="2" x="0.22" y="0.02"/>
+                                    <point index="3" x="0.84999999999999998" y="0.02"/>
                                 </geometry>
                                 <spatstate index="12"/>
                             </area>
                             <area id="10028" type="SpatPolygon" index="2">
-                                <center x="0.157" y="0.97"/>
+                                <center x="0.157" y="0.96999999999999997"/>
                                 <colour>fffe5a76</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.78" y="0.98"/>                                     <point index="1" x="0.15" y="0.98"/>                                     <point index="2" x="0.15" y="0.12"/>                                     <point index="3" x="0.71" y="0.22"/>
+                                    <point index="0" x="0.78000000000000003" y="0.97999999999999998"/>
+                                    <point index="1" x="0.14999999999999999" y="0.97999999999999998"/>
+                                    <point index="2" x="0.14999999999999999" y="0.12"/>
+                                    <point index="3" x="0.70999999999999996" y="0.22"/>
                                 </geometry>
                                 <spatstate index="10"/>
                             </area>
                             <area id="10029" type="SpatPolygon" index="3">
-                                <center x="0.843" y="0.97"/>
+                                <center x="0.84299999999999997" y="0.96999999999999997"/>
                                 <colour>ff5d5eff</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.85" y="0.98"/>                                     <point index="1" x="0.22" y="0.98"/>                                       <point index="2" x="0.29" y="0.22"/>                                     <point index="3" x="0.85" y="0.12"/>
+                                    <point index="0" x="0.84999999999999998" y="0.97999999999999998"/>
+                                    <point index="1" x="0.22" y="0.97999999999999998"/>
+                                    <point index="2" x="0.28999999999999998" y="0.22"/>
+                                    <point index="3" x="0.84999999999999998" y="0.12"/>
                                 </geometry>
                                 <spatstate index="13"/>
                             </area>
-                            <area id="24866" type="Exciter" index="4">                                 <center x="0.5" y="0.5"/>
+                            <area id="24866" type="Exciter" index="4">
+                                <center x="0.5" y="0.5"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>false</proportional_to_parent>
@@ -1606,45 +1666,60 @@
                     <scene index="12">
                         <name>.</name>
                         <areas>
-                            <area id="12026" type="SpatPolygon" index="0">                                 <center x="0.157" y="0.03"/>
+                            <area id="12026" type="SpatPolygon" index="0">
+                                <center x="0.157" y="0.029999999999999999"/>
                                 <colour>fffde359</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.71" y="0.78"/>                                     <point index="1" x="0.15" y="0.88"/>                                     <point index="2" x="0.15" y="0.02"/>                                     <point index="3" x="0.78" y="0.02"/>
+                                    <point index="0" x="0.70999999999999996" y="0.78000000000000003"/>
+                                    <point index="1" x="0.14999999999999999" y="0.88"/>
+                                    <point index="2" x="0.14999999999999999" y="0.02"/>
+                                    <point index="3" x="0.78000000000000003" y="0.02"/>
                                 </geometry>
                                 <spatstate index="1"/>
                             </area>
-                            <area id="12027" type="SpatPolygon" index="1">                                 <center x="0.843" y="0.03"/>
+                            <area id="12027" type="SpatPolygon" index="1">
+                                <center x="0.84299999999999997" y="0.029999999999999999"/>
                                 <colour>ff5d5eff</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.85" y="0.88"/>                                     <point index="1" x="0.29" y="0.78"/>                                     <point index="2" x="0.22" y="0.02"/>                                     <point index="3" x="0.85" y="0.02"/>
+                                    <point index="0" x="0.84999999999999998" y="0.88"/>
+                                    <point index="1" x="0.28999999999999998" y="0.78000000000000003"/>
+                                    <point index="2" x="0.22" y="0.02"/>
+                                    <point index="3" x="0.84999999999999998" y="0.02"/>
                                 </geometry>
                                 <spatstate index="3"/>
                             </area>
                             <area id="12028" type="SpatPolygon" index="2">
-                                <center x="0.157" y="0.97"/>
+                                <center x="0.157" y="0.96999999999999997"/>
                                 <colour>fffe5a76</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.78" y="0.98"/>                                     <point index="1" x="0.15" y="0.98"/>                                     <point index="2" x="0.15" y="0.12"/>                                     <point index="3" x="0.71" y="0.22"/>
+                                    <point index="0" x="0.78000000000000003" y="0.97999999999999998"/>
+                                    <point index="1" x="0.14999999999999999" y="0.97999999999999998"/>
+                                    <point index="2" x="0.14999999999999999" y="0.12"/>
+                                    <point index="3" x="0.70999999999999996" y="0.22"/>
                                 </geometry>
                                 <spatstate index="0"/>
                             </area>
                             <area id="12029" type="SpatPolygon" index="3">
-                                <center x="0.843" y="0.97"/>
+                                <center x="0.84299999999999997" y="0.96999999999999997"/>
                                 <colour>ff5cfc90</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.85" y="0.98"/>                                     <point index="1" x="0.22" y="0.98"/>                                       <point index="2" x="0.29" y="0.22"/>                                     <point index="3" x="0.85" y="0.12"/>
+                                    <point index="0" x="0.84999999999999998" y="0.97999999999999998"/>
+                                    <point index="1" x="0.22" y="0.97999999999999998"/>
+                                    <point index="2" x="0.28999999999999998" y="0.22"/>
+                                    <point index="3" x="0.84999999999999998" y="0.12"/>
                                 </geometry>
                                 <spatstate index="2"/>
                             </area>
-                            <area id="12045" type="Exciter" index="4">                                 <center x="0.5" y="0.5"/>
+                            <area id="12045" type="Exciter" index="4">
+                                <center x="0.5" y="0.5"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>false</proportional_to_parent>
@@ -1812,45 +1887,60 @@
                     <scene index="14">
                         <name>14</name>
                         <areas>
-                            <area id="14026" type="SpatPolygon" index="0">                                 <center x="0.157" y="0.03"/>
+                            <area id="14026" type="SpatPolygon" index="0">
+                                <center x="0.157" y="0.029999999999999999"/>
                                 <colour>ff5cfc90</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.71" y="0.78"/>                                     <point index="1" x="0.15" y="0.88"/>                                     <point index="2" x="0.15" y="0.02"/>                                     <point index="3" x="0.78" y="0.02"/>
+                                    <point index="0" x="0.70999999999999996" y="0.78000000000000003"/>
+                                    <point index="1" x="0.14999999999999999" y="0.88"/>
+                                    <point index="2" x="0.14999999999999999" y="0.02"/>
+                                    <point index="3" x="0.78000000000000003" y="0.02"/>
                                 </geometry>
                                 <spatstate index="17"/>
                             </area>
-                            <area id="14027" type="SpatPolygon" index="1">                                 <center x="0.843" y="0.03"/>
+                            <area id="14027" type="SpatPolygon" index="1">
+                                <center x="0.84299999999999997" y="0.029999999999999999"/>
                                 <colour>fffe5a76</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.85" y="0.88"/>                                     <point index="1" x="0.29" y="0.78"/>                                     <point index="2" x="0.22" y="0.02"/>                                     <point index="3" x="0.85" y="0.02"/>
+                                    <point index="0" x="0.84999999999999998" y="0.88"/>
+                                    <point index="1" x="0.28999999999999998" y="0.78000000000000003"/>
+                                    <point index="2" x="0.22" y="0.02"/>
+                                    <point index="3" x="0.84999999999999998" y="0.02"/>
                                 </geometry>
                                 <spatstate index="15"/>
                             </area>
                             <area id="14028" type="SpatPolygon" index="2">
-                                <center x="0.157" y="0.97"/>
+                                <center x="0.157" y="0.96999999999999997"/>
                                 <colour>fffde359</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.78" y="0.98"/>                                     <point index="1" x="0.15" y="0.98"/>                                     <point index="2" x="0.15" y="0.12"/>                                     <point index="3" x="0.71" y="0.22"/>
+                                    <point index="0" x="0.78000000000000003" y="0.97999999999999998"/>
+                                    <point index="1" x="0.14999999999999999" y="0.97999999999999998"/>
+                                    <point index="2" x="0.14999999999999999" y="0.12"/>
+                                    <point index="3" x="0.70999999999999996" y="0.22"/>
                                 </geometry>
                                 <spatstate index="16"/>
                             </area>
                             <area id="14029" type="SpatPolygon" index="3">
-                                <center x="0.843" y="0.97"/>
+                                <center x="0.84299999999999997" y="0.96999999999999997"/>
                                 <colour>ff5d5eff</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.85" y="0.98"/>                                     <point index="1" x="0.22" y="0.98"/>                                       <point index="2" x="0.29" y="0.22"/>                                     <point index="3" x="0.85" y="0.12"/>
+                                    <point index="0" x="0.84999999999999998" y="0.97999999999999998"/>
+                                    <point index="1" x="0.22" y="0.97999999999999998"/>
+                                    <point index="2" x="0.28999999999999998" y="0.22"/>
+                                    <point index="3" x="0.84999999999999998" y="0.12"/>
                                 </geometry>
                                 <spatstate index="18"/>
                             </area>
-                            <area id="24871" type="Exciter" index="4">                                 <center x="0.5" y="0.5"/>
+                            <area id="24871" type="Exciter" index="4">
+                                <center x="0.5" y="0.5"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>false</proportional_to_parent>
@@ -2018,45 +2108,60 @@
                     <scene index="16">
                         <name>.</name>
                         <areas>
-                            <area id="16026" type="SpatPolygon" index="0">                                 <center x="0.157" y="0.03"/>
+                            <area id="16026" type="SpatPolygon" index="0">
+                                <center x="0.157" y="0.029999999999999999"/>
                                 <colour>ff5cfc90</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.71" y="0.78"/>                                     <point index="1" x="0.15" y="0.88"/>                                     <point index="2" x="0.15" y="0.02"/>                                     <point index="3" x="0.78" y="0.02"/>
+                                    <point index="0" x="0.70999999999999996" y="0.78000000000000003"/>
+                                    <point index="1" x="0.14999999999999999" y="0.88"/>
+                                    <point index="2" x="0.14999999999999999" y="0.02"/>
+                                    <point index="3" x="0.78000000000000003" y="0.02"/>
                                 </geometry>
                                 <spatstate index="2"/>
                             </area>
-                            <area id="16027" type="SpatPolygon" index="1">                                 <center x="0.843" y="0.03"/>
+                            <area id="16027" type="SpatPolygon" index="1">
+                                <center x="0.84299999999999997" y="0.029999999999999999"/>
                                 <colour>fffde359</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.85" y="0.88"/>                                     <point index="1" x="0.29" y="0.78"/>                                     <point index="2" x="0.22" y="0.02"/>                                     <point index="3" x="0.85" y="0.02"/>
+                                    <point index="0" x="0.84999999999999998" y="0.88"/>
+                                    <point index="1" x="0.28999999999999998" y="0.78000000000000003"/>
+                                    <point index="2" x="0.22" y="0.02"/>
+                                    <point index="3" x="0.84999999999999998" y="0.02"/>
                                 </geometry>
                                 <spatstate index="1"/>
                             </area>
                             <area id="16028" type="SpatPolygon" index="2">
-                                <center x="0.157" y="0.97"/>
+                                <center x="0.157" y="0.96999999999999997"/>
                                 <colour>fffe5a76</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.78" y="0.98"/>                                     <point index="1" x="0.15" y="0.98"/>                                     <point index="2" x="0.15" y="0.12"/>                                     <point index="3" x="0.71" y="0.22"/>
+                                    <point index="0" x="0.78000000000000003" y="0.97999999999999998"/>
+                                    <point index="1" x="0.14999999999999999" y="0.97999999999999998"/>
+                                    <point index="2" x="0.14999999999999999" y="0.12"/>
+                                    <point index="3" x="0.70999999999999996" y="0.22"/>
                                 </geometry>
                                 <spatstate index="0"/>
                             </area>
                             <area id="16029" type="SpatPolygon" index="3">
-                                <center x="0.843" y="0.97"/>
+                                <center x="0.84299999999999997" y="0.96999999999999997"/>
                                 <colour>ff5d5eff</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.85" y="0.98"/>                                     <point index="1" x="0.22" y="0.98"/>                                       <point index="2" x="0.29" y="0.22"/>                                     <point index="3" x="0.85" y="0.12"/>
+                                    <point index="0" x="0.84999999999999998" y="0.97999999999999998"/>
+                                    <point index="1" x="0.22" y="0.97999999999999998"/>
+                                    <point index="2" x="0.28999999999999998" y="0.22"/>
+                                    <point index="3" x="0.84999999999999998" y="0.12"/>
                                 </geometry>
                                 <spatstate index="3"/>
                             </area>
-                            <area id="24323" type="Exciter" index="4">                                 <center x="0.5" y="0.5"/>
+                            <area id="24323" type="Exciter" index="4">
+                                <center x="0.5" y="0.5"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>false</proportional_to_parent>
@@ -2224,45 +2329,60 @@
                     <scene index="18">
                         <name>18</name>
                         <areas>
-                            <area id="18026" type="SpatPolygon" index="0">                                 <center x="0.157" y="0.03"/>
+                            <area id="18026" type="SpatPolygon" index="0">
+                                <center x="0.157" y="0.029999999999999999"/>
                                 <colour>ff5cfc90</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.71" y="0.78"/>                                     <point index="1" x="0.15" y="0.88"/>                                     <point index="2" x="0.15" y="0.02"/>                                     <point index="3" x="0.78" y="0.02"/>
+                                    <point index="0" x="0.70999999999999996" y="0.78000000000000003"/>
+                                    <point index="1" x="0.14999999999999999" y="0.88"/>
+                                    <point index="2" x="0.14999999999999999" y="0.02"/>
+                                    <point index="3" x="0.78000000000000003" y="0.02"/>
                                 </geometry>
                                 <spatstate index="26"/>
                             </area>
-                            <area id="18027" type="SpatPolygon" index="1">                                 <center x="0.843" y="0.03"/>
+                            <area id="18027" type="SpatPolygon" index="1">
+                                <center x="0.84299999999999997" y="0.029999999999999999"/>
                                 <colour>ff5d5eff</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.85" y="0.88"/>                                     <point index="1" x="0.29" y="0.78"/>                                     <point index="2" x="0.22" y="0.02"/>                                     <point index="3" x="0.85" y="0.02"/>
+                                    <point index="0" x="0.84999999999999998" y="0.88"/>
+                                    <point index="1" x="0.28999999999999998" y="0.78000000000000003"/>
+                                    <point index="2" x="0.22" y="0.02"/>
+                                    <point index="3" x="0.84999999999999998" y="0.02"/>
                                 </geometry>
                                 <spatstate index="27"/>
                             </area>
                             <area id="18028" type="SpatPolygon" index="2">
-                                <center x="0.157" y="0.97"/>
+                                <center x="0.157" y="0.96999999999999997"/>
                                 <colour>fffe5a76</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.78" y="0.98"/>                                     <point index="1" x="0.15" y="0.98"/>                                     <point index="2" x="0.15" y="0.12"/>                                     <point index="3" x="0.71" y="0.22"/>
+                                    <point index="0" x="0.78000000000000003" y="0.97999999999999998"/>
+                                    <point index="1" x="0.14999999999999999" y="0.97999999999999998"/>
+                                    <point index="2" x="0.14999999999999999" y="0.12"/>
+                                    <point index="3" x="0.70999999999999996" y="0.22"/>
                                 </geometry>
                                 <spatstate index="24"/>
                             </area>
                             <area id="18029" type="SpatPolygon" index="3">
-                                <center x="0.843" y="0.97"/>
+                                <center x="0.84299999999999997" y="0.96999999999999997"/>
                                 <colour>fffde359</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.85" y="0.98"/>                                     <point index="1" x="0.22" y="0.98"/>                                       <point index="2" x="0.29" y="0.22"/>                                     <point index="3" x="0.85" y="0.12"/>
+                                    <point index="0" x="0.84999999999999998" y="0.97999999999999998"/>
+                                    <point index="1" x="0.22" y="0.97999999999999998"/>
+                                    <point index="2" x="0.28999999999999998" y="0.22"/>
+                                    <point index="3" x="0.84999999999999998" y="0.12"/>
                                 </geometry>
                                 <spatstate index="25"/>
                             </area>
-                            <area id="18045" type="Exciter" index="4">                                 <center x="0.5" y="0.5"/>
+                            <area id="18045" type="Exciter" index="4">
+                                <center x="0.5" y="0.5"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>false</proportional_to_parent>
@@ -2430,45 +2550,60 @@
                     <scene index="20">
                         <name>.</name>
                         <areas>
-                            <area id="20026" type="SpatPolygon" index="0">                                 <center x="0.157" y="0.03"/>
+                            <area id="20026" type="SpatPolygon" index="0">
+                                <center x="0.157" y="0.029999999999999999"/>
                                 <colour>ff5d5eff</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.71" y="0.78"/>                                     <point index="1" x="0.15" y="0.88"/>                                     <point index="2" x="0.15" y="0.02"/>                                     <point index="3" x="0.78" y="0.02"/>
+                                    <point index="0" x="0.70999999999999996" y="0.78000000000000003"/>
+                                    <point index="1" x="0.14999999999999999" y="0.88"/>
+                                    <point index="2" x="0.14999999999999999" y="0.02"/>
+                                    <point index="3" x="0.78000000000000003" y="0.02"/>
                                 </geometry>
                                 <spatstate index="3"/>
                             </area>
-                            <area id="20027" type="SpatPolygon" index="1">                                 <center x="0.843" y="0.03"/>
+                            <area id="20027" type="SpatPolygon" index="1">
+                                <center x="0.84299999999999997" y="0.029999999999999999"/>
                                 <colour>fffe5a76</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.85" y="0.88"/>                                     <point index="1" x="0.29" y="0.78"/>                                     <point index="2" x="0.22" y="0.02"/>                                     <point index="3" x="0.85" y="0.02"/>
+                                    <point index="0" x="0.84999999999999998" y="0.88"/>
+                                    <point index="1" x="0.28999999999999998" y="0.78000000000000003"/>
+                                    <point index="2" x="0.22" y="0.02"/>
+                                    <point index="3" x="0.84999999999999998" y="0.02"/>
                                 </geometry>
                                 <spatstate index="0"/>
                             </area>
                             <area id="20028" type="SpatPolygon" index="2">
-                                <center x="0.157" y="0.97"/>
+                                <center x="0.157" y="0.96999999999999997"/>
                                 <colour>fffde359</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.78" y="0.98"/>                                     <point index="1" x="0.15" y="0.98"/>                                     <point index="2" x="0.15" y="0.12"/>                                     <point index="3" x="0.71" y="0.22"/>
+                                    <point index="0" x="0.78000000000000003" y="0.97999999999999998"/>
+                                    <point index="1" x="0.14999999999999999" y="0.97999999999999998"/>
+                                    <point index="2" x="0.14999999999999999" y="0.12"/>
+                                    <point index="3" x="0.70999999999999996" y="0.22"/>
                                 </geometry>
                                 <spatstate index="1"/>
                             </area>
                             <area id="20029" type="SpatPolygon" index="3">
-                                <center x="0.843" y="0.97"/>
+                                <center x="0.84299999999999997" y="0.96999999999999997"/>
                                 <colour>ff5cfc90</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.85" y="0.98"/>                                     <point index="1" x="0.22" y="0.98"/>                                       <point index="2" x="0.29" y="0.22"/>                                     <point index="3" x="0.85" y="0.12"/>
+                                    <point index="0" x="0.84999999999999998" y="0.97999999999999998"/>
+                                    <point index="1" x="0.22" y="0.97999999999999998"/>
+                                    <point index="2" x="0.28999999999999998" y="0.22"/>
+                                    <point index="3" x="0.84999999999999998" y="0.12"/>
                                 </geometry>
                                 <spatstate index="2"/>
                             </area>
-                            <area id="20045" type="Exciter" index="4">                                 <center x="0.5" y="0.5"/>
+                            <area id="20045" type="Exciter" index="4">
+                                <center x="0.5" y="0.5"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>false</proportional_to_parent>
@@ -2636,45 +2771,60 @@
                     <scene index="22">
                         <name>22</name>
                         <areas>
-                            <area id="22026" type="SpatPolygon" index="0">                                 <center x="0.157" y="0.03"/>
+                            <area id="22026" type="SpatPolygon" index="0">
+                                <center x="0.157" y="0.029999999999999999"/>
                                 <colour>ff5d5eff</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.71" y="0.78"/>                                     <point index="1" x="0.15" y="0.88"/>                                     <point index="2" x="0.15" y="0.02"/>                                     <point index="3" x="0.78" y="0.02"/>
+                                    <point index="0" x="0.70999999999999996" y="0.78000000000000003"/>
+                                    <point index="1" x="0.14999999999999999" y="0.88"/>
+                                    <point index="2" x="0.14999999999999999" y="0.02"/>
+                                    <point index="3" x="0.78000000000000003" y="0.02"/>
                                 </geometry>
                                 <spatstate index="36"/>
                             </area>
-                            <area id="22027" type="SpatPolygon" index="1">                                 <center x="0.843" y="0.03"/>
+                            <area id="22027" type="SpatPolygon" index="1">
+                                <center x="0.84299999999999997" y="0.029999999999999999"/>
                                 <colour>fffde359</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.85" y="0.88"/>                                     <point index="1" x="0.29" y="0.78"/>                                     <point index="2" x="0.22" y="0.02"/>                                     <point index="3" x="0.85" y="0.02"/>
+                                    <point index="0" x="0.84999999999999998" y="0.88"/>
+                                    <point index="1" x="0.28999999999999998" y="0.78000000000000003"/>
+                                    <point index="2" x="0.22" y="0.02"/>
+                                    <point index="3" x="0.84999999999999998" y="0.02"/>
                                 </geometry>
                                 <spatstate index="34"/>
                             </area>
                             <area id="22028" type="SpatPolygon" index="2">
-                                <center x="0.157" y="0.97"/>
+                                <center x="0.157" y="0.96999999999999997"/>
                                 <colour>fffe5a76</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.78" y="0.98"/>                                     <point index="1" x="0.15" y="0.98"/>                                     <point index="2" x="0.15" y="0.12"/>                                     <point index="3" x="0.71" y="0.22"/>
+                                    <point index="0" x="0.78000000000000003" y="0.97999999999999998"/>
+                                    <point index="1" x="0.14999999999999999" y="0.97999999999999998"/>
+                                    <point index="2" x="0.14999999999999999" y="0.12"/>
+                                    <point index="3" x="0.70999999999999996" y="0.22"/>
                                 </geometry>
                                 <spatstate index="33"/>
                             </area>
                             <area id="22029" type="SpatPolygon" index="3">
-                                <center x="0.843" y="0.97"/>
+                                <center x="0.84299999999999997" y="0.96999999999999997"/>
                                 <colour>ff5cfc90</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.85" y="0.98"/>                                     <point index="1" x="0.22" y="0.98"/>                                       <point index="2" x="0.29" y="0.22"/>                                     <point index="3" x="0.85" y="0.12"/>
+                                    <point index="0" x="0.84999999999999998" y="0.97999999999999998"/>
+                                    <point index="1" x="0.22" y="0.97999999999999998"/>
+                                    <point index="2" x="0.28999999999999998" y="0.22"/>
+                                    <point index="3" x="0.84999999999999998" y="0.12"/>
                                 </geometry>
                                 <spatstate index="35"/>
                             </area>
-                            <area id="24912" type="Exciter" index="4">                                 <center x="0.5" y="0.5"/>
+                            <area id="24912" type="Exciter" index="4">
+                                <center x="0.5" y="0.5"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>false</proportional_to_parent>
@@ -2842,45 +2992,60 @@
                     <scene index="24">
                         <name>.</name>
                         <areas>
-                            <area id="24026" type="SpatPolygon" index="0">                                 <center x="0.157" y="0.03"/>
+                            <area id="24026" type="SpatPolygon" index="0">
+                                <center x="0.157" y="0.029999999999999999"/>
                                 <colour>ff5d5eff</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.71" y="0.78"/>                                     <point index="1" x="0.15" y="0.88"/>                                     <point index="2" x="0.15" y="0.02"/>                                     <point index="3" x="0.78" y="0.02"/>
+                                    <point index="0" x="0.70999999999999996" y="0.78000000000000003"/>
+                                    <point index="1" x="0.14999999999999999" y="0.88"/>
+                                    <point index="2" x="0.14999999999999999" y="0.02"/>
+                                    <point index="3" x="0.78000000000000003" y="0.02"/>
                                 </geometry>
                                 <spatstate index="3"/>
                             </area>
-                            <area id="24027" type="SpatPolygon" index="1">                                 <center x="0.843" y="0.03"/>
+                            <area id="24027" type="SpatPolygon" index="1">
+                                <center x="0.84299999999999997" y="0.029999999999999999"/>
                                 <colour>ff5cfc90</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.85" y="0.88"/>                                     <point index="1" x="0.29" y="0.78"/>                                     <point index="2" x="0.22" y="0.02"/>                                     <point index="3" x="0.85" y="0.02"/>
+                                    <point index="0" x="0.84999999999999998" y="0.88"/>
+                                    <point index="1" x="0.28999999999999998" y="0.78000000000000003"/>
+                                    <point index="2" x="0.22" y="0.02"/>
+                                    <point index="3" x="0.84999999999999998" y="0.02"/>
                                 </geometry>
                                 <spatstate index="2"/>
                             </area>
                             <area id="24028" type="SpatPolygon" index="2">
-                                <center x="0.157" y="0.97"/>
+                                <center x="0.157" y="0.96999999999999997"/>
                                 <colour>fffe5a76</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.78" y="0.98"/>                                     <point index="1" x="0.15" y="0.98"/>                                     <point index="2" x="0.15" y="0.12"/>                                     <point index="3" x="0.71" y="0.22"/>
+                                    <point index="0" x="0.78000000000000003" y="0.97999999999999998"/>
+                                    <point index="1" x="0.14999999999999999" y="0.97999999999999998"/>
+                                    <point index="2" x="0.14999999999999999" y="0.12"/>
+                                    <point index="3" x="0.70999999999999996" y="0.22"/>
                                 </geometry>
                                 <spatstate index="0"/>
                             </area>
                             <area id="24029" type="SpatPolygon" index="3">
-                                <center x="0.843" y="0.97"/>
+                                <center x="0.84299999999999997" y="0.96999999999999997"/>
                                 <colour>fffde359</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.85" y="0.98"/>                                     <point index="1" x="0.22" y="0.98"/>                                       <point index="2" x="0.29" y="0.22"/>                                     <point index="3" x="0.85" y="0.12"/>
+                                    <point index="0" x="0.84999999999999998" y="0.97999999999999998"/>
+                                    <point index="1" x="0.22" y="0.97999999999999998"/>
+                                    <point index="2" x="0.28999999999999998" y="0.22"/>
+                                    <point index="3" x="0.84999999999999998" y="0.12"/>
                                 </geometry>
                                 <spatstate index="1"/>
                             </area>
-                            <area id="24045" type="Exciter" index="4">                                 <center x="0.5" y="0.5"/>
+                            <area id="24045" type="Exciter" index="4">
+                                <center x="0.5" y="0.5"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>false</proportional_to_parent>

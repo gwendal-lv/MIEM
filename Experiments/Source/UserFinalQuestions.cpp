@@ -476,26 +476,26 @@ void UserFinalQuestions::mouseUp (const MouseEvent& e)
 std::shared_ptr<bptree::ptree> UserFinalQuestions::GetQuestionsBPTree()
 {
     auto questionsChildrenTree = std::make_shared<bptree::ptree>();
-    
+
     // infos dans l'ordre d'affichage (de haut en bas)
 
     questionsChildrenTree->put("<xmlattr>.answered", questionsAnswered);
     questionsChildrenTree->put("expertise_level",
                                (int) expertiseSlider->getValue());
-    
+
     bptree::ptree methodsOpinionTree;
     methodsOpinionTree.put("<xmlattr>.fastest", sliderValueToMethodName(fastSlider->getValue()));
     methodsOpinionTree.put("<xmlattr>.most_precise", sliderValueToMethodName(preciseSlider->getValue()));
     methodsOpinionTree.put("<xmlattr>.most_intuitive", sliderValueToMethodName(intuitiveSlider->getValue()));
     methodsOpinionTree.put("<xmlattr>.preferred", sliderValueToMethodName(preferSlider->getValue()));
     questionsChildrenTree->add_child("methods_opinion", methodsOpinionTree);
-    
+
     bptree::ptree similarApp;
     similarApp.put("<xmlattr>.checked", (bool)similarInterfaceToggleButton->getToggleState());
     if (similarInterfaceToggleButton->getToggleState())
         similarApp.put_value(similarInterfaceTextEditor->getText().toRawUTF8());
     questionsChildrenTree->add_child("similar_interface", similarApp);
-    
+
     bptree::ptree similarExpe;
     similarExpe.put("<xmlattr>.checked", (bool)similarExperimentToggleButton->getToggleState());
     if (similarExperimentToggleButton->getToggleState())
@@ -507,7 +507,7 @@ std::shared_ptr<bptree::ptree> UserFinalQuestions::GetQuestionsBPTree()
     if (! remarkTextEditor->isEmpty())
         remarkTree.put_value(remarkTextEditor->getText().toRawUTF8());
     questionsChildrenTree->add_child("remark", remarkTree);
-    
+
     return questionsChildrenTree;
 }
 
