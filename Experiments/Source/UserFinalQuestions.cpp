@@ -42,7 +42,7 @@ UserFinalQuestions::UserFinalQuestions ()
     label.reset (new Label ("new label",
                             TRANS("It is almost finished! Please read and answer these last few questions.")));
     addAndMakeVisible (label.get());
-    label->setFont (Font (19.00f, Font::plain).withTypefaceStyle ("Bold"));
+    label->setFont (Font (20.00f, Font::plain).withTypefaceStyle ("Bold"));
     label->setJustificationType (Justification::centred);
     label->setEditable (false, false, false);
     label->setColour (Label::outlineColourId, Colours::white);
@@ -104,7 +104,7 @@ UserFinalQuestions::UserFinalQuestions ()
     addAndMakeVisible (finishedButton.get());
     finishedButton->setButtonText (TRANS("OK, save data and finish the experiment"));
     finishedButton->addListener (this);
-    finishedButton->setColour (TextButton::buttonColourId, Colour (0xff2ac858));
+    finishedButton->setColour (TextButton::buttonColourId, Colour (0xff097c2a));
     finishedButton->setColour (TextButton::buttonOnColourId, Colour (0xff252525));
 
     selfExpertiseLevelLabel.reset (new Label ("expertise level label",
@@ -556,8 +556,8 @@ BEGIN_JUCER_METADATA
          explicitFocusOrder="0" pos="0Cc 8 80M 40" outlineCol="ffffffff"
          edTextCol="ff000000" edBkgCol="0" labelText="It is almost finished! Please read and answer these last few questions."
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="1.9e1" kerning="0" bold="1"
-         italic="0" justification="36" typefaceStyle="Bold"/>
+         fontname="Default font" fontsize="2e1" kerning="0" bold="1" italic="0"
+         justification="36" typefaceStyle="Bold"/>
   <LABEL name="Similar Interface Question label" id="a8708d571b59b51"
          memberName="similarInterfaceQuestionLabel" virtualName="" explicitFocusOrder="0"
          pos="16 536 392 24" edTextCol="ff000000" edBkgCol="0" labelText="If you can, please tell us the name of the app:"
@@ -582,7 +582,7 @@ BEGIN_JUCER_METADATA
               multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"
               caret="1" popupmenu="1"/>
   <TEXTBUTTON name="finished button" id="ee4745ef80623612" memberName="finishedButton"
-              virtualName="" explicitFocusOrder="0" pos="0Cc 100R 500 80" bgColOff="ff2ac858"
+              virtualName="" explicitFocusOrder="0" pos="0Cc 100R 500 80" bgColOff="ff097c2a"
               bgColOn="ff252525" buttonText="OK, save data and finish the experiment"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <LABEL name="expertise level label" id="b435fe1e58647b28" memberName="selfExpertiseLevelLabel"

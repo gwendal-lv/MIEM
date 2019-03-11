@@ -35,9 +35,10 @@ UserQuestions::UserQuestions ()
     label.reset (new Label ("new label",
                             TRANS("Before starting the experiment, please read and fill the form below.")));
     addAndMakeVisible (label.get());
-    label->setFont (Font (19.00f, Font::plain).withTypefaceStyle ("Bold"));
-    label->setJustificationType (Justification::centredLeft);
+    label->setFont (Font (20.00f, Font::plain).withTypefaceStyle ("Bold"));
+    label->setJustificationType (Justification::centred);
     label->setEditable (false, false, false);
+    label->setColour (Label::outlineColourId, Colours::white);
     label->setColour (TextEditor::textColourId, Colours::black);
     label->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
@@ -45,7 +46,7 @@ UserQuestions::UserQuestions ()
     addAndMakeVisible (finishedButton.get());
     finishedButton->setButtonText (TRANS("Begin the experiment"));
     finishedButton->addListener (this);
-    finishedButton->setColour (TextButton::buttonColourId, Colour (0xff2ac858));
+    finishedButton->setColour (TextButton::buttonColourId, Colour (0xff097c2a));
     finishedButton->setColour (TextButton::buttonOnColourId, Colour (0xff252525));
 
     allowDataToggleButton.reset (new ToggleButton ("Question toggle button"));
@@ -123,6 +124,8 @@ UserQuestions::UserQuestions ()
     ageLabel->setColour (TextEditor::textColourId, Colours::black);
     ageLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
+    ageLabel->setBounds (8, 248, 144, 24);
+
     ageSlider.reset (new Slider ("age slider"));
     addAndMakeVisible (ageSlider.get());
     ageSlider->setRange (18, 100, 1);
@@ -193,7 +196,7 @@ void UserQuestions::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    label->setBounds (16, 8, getWidth() - 40, 24);
+    label->setBounds ((getWidth() / 2) - ((getWidth() - 40) / 2), 8, getWidth() - 40, 40);
     finishedButton->setBounds ((getWidth() / 2) - (500 / 2), getHeight() - 88, 500, 80);
     allowDataToggleButton->setBounds (8, 128, getWidth() - 35, 24);
     label2->setBounds (8, 152, getWidth() - 35, 24);
@@ -201,7 +204,6 @@ void UserQuestions::resized()
     visionQuestionLabel->setBounds (8, 368, getWidth() - 27, 24);
     hearingImpairmentToggleButton->setBounds (8, 483, getWidth() - 35, 24);
     hearingQuestionLabel->setBounds (8, 512, getWidth() - 27, 24);
-    ageLabel->setBounds (8, 248, getWidth() - 640, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -302,13 +304,13 @@ BEGIN_JUCER_METADATA
                  fixedSize="0" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="ff111111"/>
   <LABEL name="new label" id="dd908f7016e646c5" memberName="label" virtualName=""
-         explicitFocusOrder="0" pos="16 8 40M 24" edTextCol="ff000000"
-         edBkgCol="0" labelText="Before starting the experiment, please read and fill the form below."
+         explicitFocusOrder="0" pos="0.5Cc 8 40M 40" outlineCol="ffffffff"
+         edTextCol="ff000000" edBkgCol="0" labelText="Before starting the experiment, please read and fill the form below."
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="1.9e1" kerning="0" bold="1"
-         italic="0" justification="33" typefaceStyle="Bold"/>
+         fontname="Default font" fontsize="2e1" kerning="0" bold="1" italic="0"
+         justification="36" typefaceStyle="Bold"/>
   <TEXTBUTTON name="finished button" id="ee4745ef80623612" memberName="finishedButton"
-              virtualName="" explicitFocusOrder="0" pos="0Cc 88R 500 80" bgColOff="ff2ac858"
+              virtualName="" explicitFocusOrder="0" pos="0Cc 88R 500 80" bgColOff="ff097c2a"
               bgColOn="ff252525" buttonText="Begin the experiment" connectedEdges="0"
               needsCallback="1" radioGroupId="0"/>
   <TOGGLEBUTTON name="Question toggle button" id="ba23ef5bc6fe327c" memberName="allowDataToggleButton"
@@ -348,7 +350,7 @@ BEGIN_JUCER_METADATA
               multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"
               caret="1" popupmenu="1"/>
   <LABEL name="Age label" id="cad86b63b6b409a7" memberName="ageLabel"
-         virtualName="" explicitFocusOrder="0" pos="8 248 640M 24" edTextCol="ff000000"
+         virtualName="" explicitFocusOrder="0" pos="8 248 144 24" edTextCol="ff000000"
          edBkgCol="0" labelText="How old are you?" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
          fontsize="1.5e1" kerning="0" bold="0" italic="0" justification="33"/>

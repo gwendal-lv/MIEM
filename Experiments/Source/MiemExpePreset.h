@@ -61,7 +61,9 @@ class MiemExpePreset {
     
     // - - - - Valeurs déduites des valeurs du constructeur - - - -
     /// \brief Span of all parameters for this particular synth
-    double parametersSpan;
+    // double parametersSpan; // calculable maintenant depuis les valeurs min/max
+    double parametersMin;
+    double parametersMax;
     
     std::vector<MiemSample> samples;
     std::vector<MiemSample> sortedSamples;

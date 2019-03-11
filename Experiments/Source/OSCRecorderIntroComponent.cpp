@@ -37,7 +37,7 @@ OSCRecorderIntroComponent::OSCRecorderIntroComponent ()
     addAndMakeVisible (finishedButton.get());
     finishedButton->setButtonText (TRANS("Continue"));
     finishedButton->addListener (this);
-    finishedButton->setColour (TextButton::buttonColourId, Colour (0xff2ac858));
+    finishedButton->setColour (TextButton::buttonColourId, Colour (0xff097c2a));
     finishedButton->setColour (TextButton::buttonOnColourId, Colour (0xff252525));
 
     introTextEditor.reset (new TextEditor ("intro text editor"));
@@ -61,6 +61,12 @@ OSCRecorderIntroComponent::OSCRecorderIntroComponent ()
 
 
     //[Constructor] You can add your own custom stuff here..
+
+    // Custom Fonts (bigger... for low/medium quality screens)
+    Font textEditorFont = introTextEditor->getFont(); // copy
+    textEditorFont.setHeight(22.0);
+    introTextEditor->setFont(textEditorFont);
+
     //[/Constructor]
 }
 
@@ -149,13 +155,14 @@ BEGIN_JUCER_METADATA
                  overlayOpacity="0.330" fixedSize="0" initialWidth="1000" initialHeight="700">
   <BACKGROUND backgroundColour="ff111111"/>
   <TEXTBUTTON name="finished button" id="ee4745ef80623612" memberName="finishedButton"
-              virtualName="" explicitFocusOrder="0" pos="0Cc 96R 500 80" bgColOff="ff2ac858"
+              virtualName="" explicitFocusOrder="0" pos="0Cc 96R 500 80" bgColOff="ff097c2a"
               bgColOn="ff252525" buttonText="Continue" connectedEdges="0" needsCallback="1"
               radioGroupId="0"/>
   <TEXTEDITOR name="intro text editor" id="6f5b21f19397a4f5" memberName="introTextEditor"
-              virtualName="" explicitFocusOrder="0" pos="0Cc 40 80M 200M" bkgcol="495358"
-              hilitecol="e0ec65" outlinecol="ff565656" initialText="" multiline="1"
-              retKeyStartsLine="1" readonly="1" scrollbars="0" caret="0" popupmenu="0"/>
+              virtualName="" explicitFocusOrder="0" pos="0.5Cc 40 80M 200M"
+              bkgcol="495358" hilitecol="e0ec65" outlinecol="ff565656" initialText=""
+              multiline="1" retKeyStartsLine="1" readonly="1" scrollbars="0"
+              caret="0" popupmenu="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

@@ -13,10 +13,17 @@
 #include "OSCRecorder.h"
 #include "OSCRecorderComponent.h"
 
+#include "ExperimentsLookAndFeel.h"
+
+
+
 //==============================================================================
 class MIEM_ExperimentsApplication  : public JUCEApplication
 {
 private:
+    // très chiant à gérer....
+    std::unique_ptr<Miam::ExperimentsLookAndFeel> expeLookAndFeel;
+    
     std::unique_ptr<OSCRecorder> recorderManager;
     
     
@@ -40,6 +47,10 @@ public:
         
         // Pré-écrit par Juce
         mainWindow.reset (new MainWindow (getApplicationName()));
+        
+        // custom look and feel
+        expeLookAndFeel = std::make_unique<Miam::ExperimentsLookAndFeel>();
+        mainWindow->mainComponent->setLookAndFeel(expeLookAndFeel.get());
         
         // Modules perso
         recorderManager.reset( new OSCRecorder(mainWindow->mainComponent));
@@ -122,6 +133,7 @@ public:
            you really have to override any DocumentWindow methods, make sure your
            subclass also calls the superclass's method.
         */
+        
 
     private:
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainWindow)

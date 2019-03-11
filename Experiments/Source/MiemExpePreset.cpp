@@ -184,7 +184,7 @@ parametersCount(4) // const at the moment
         name = "[9] AntiqueStr"; // Antique Strings
         sceneBaseIndex = 1;
         tempo = 100.0f;
-        parametersInfo = "/1-Chorus/2-noise/3-cutoff/4-attack";
+        parametersInfo = "1-Chorus/2-noise/3-cutoff/4-attack";
         parametersTargetValues[0] = 0.650;
         parametersTargetValues[1] = 0.0;
         parametersTargetValues[2] = 0.350;
@@ -215,21 +215,39 @@ parametersCount(4) // const at the moment
     switch (sceneBaseIndex)
     {
         case 1:
-            parametersSpan = 1.00;
+            parametersMin = 0.0;
+            parametersMax = 1.0;
             break;
-        case 9:
-        case 13:
-            parametersSpan = 0.75;
-            break;
+            
         case 5:
+            parametersMin = 0.0;
+            parametersMax = 0.75;
+            break;
+            
+        case 9:
+            parametersMin = 0.0;
+            parametersMax = 0.50;
+            break;
+            
+        case 13:
+            parametersMin = 0.50;
+            parametersMax = 1.0;
+            break;
+            
         case 17:
+            parametersMin = 0.25;
+            parametersMax = 1.0;
+            break;
+            
         case 21:
-            parametersSpan = 0.50;
+            parametersMin = 0.25;
+            parametersMax = 0.75;
             break;
             
         default:
             assert(false); // should not happen...
-            parametersSpan = 0.0; // to trigger bugs
+            parametersMin = -1.0; // to trigger bugs
+            parametersMax = -1.0; // to trigger bugs
     }
 }
 
@@ -305,13 +323,15 @@ std::shared_ptr<bptree::ptree> MiemExpePreset::GetInfoTree()
     preseTree->put("<xmlattr>.appearance_index", appearanceIndex);
     preseTree->put("<xmlattr>.is_valid", isValid);
     preseTree->put("<xmlattr>.samples_count", samples.size());
-    preseTree->put("<xmlattr>.parameters_span", parametersSpan);
     
     return preseTree;
 }
 std::shared_ptr<bptree::ptree> MiemExpePreset::GetTargetValuesInnerTree()
 {
     auto targetValuesInnerTree = std::make_shared<bptree::ptree>();
+    targetValuesInnerTree->put("bounds.<xmlattr>.min", parametersMin);
+    targetValuesInnerTree->put("bounds.<xmlattr>.max", parametersMax);
+    targetValuesInnerTree->put("bounds.<xmlattr>.scene_base_index", sceneBaseIndex);
     for (size_t i=0 ; i<parametersTargetValues.size() ; i++)
     {
         bptree::ptree paramInnerTree;

@@ -44,14 +44,14 @@ OSCRecorderComponent::OSCRecorderComponent ()
     addAndMakeVisible (listenButton.get());
     listenButton->setButtonText (TRANS("LISTEN TO THE PRESET"));
     listenButton->addListener (this);
-    listenButton->setColour (TextButton::buttonColourId, Colour (0xff959595));
+    listenButton->setColour (TextButton::buttonColourId, Colour (0xff747474));
     listenButton->setColour (TextButton::buttonOnColourId, Colour (0xff252525));
 
     finishedButton.reset (new TextButton ("finished button"));
     addAndMakeVisible (finishedButton.get());
     finishedButton->setButtonText (TRANS("OK"));
     finishedButton->addListener (this);
-    finishedButton->setColour (TextButton::buttonColourId, Colour (0xff2ac858));
+    finishedButton->setColour (TextButton::buttonColourId, Colour (0xff097c2a));
     finishedButton->setColour (TextButton::buttonOnColourId, Colour (0xff252525));
 
     countLabel.reset (new Label ("count label",
@@ -71,6 +71,8 @@ OSCRecorderComponent::OSCRecorderComponent ()
 
 
     //[Constructor] You can add your own custom stuff here..
+
+
     //[/Constructor]
 }
 
@@ -324,11 +326,11 @@ BEGIN_JUCER_METADATA
               bgColOn="ff252525" buttonText="BEGIN PRESET RESEARCH" connectedEdges="0"
               needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="listen button" id="54994c165790472c" memberName="listenButton"
-              virtualName="" explicitFocusOrder="0" pos="0Cc 20 500 160" bgColOff="ff959595"
+              virtualName="" explicitFocusOrder="0" pos="0Cc 20 500 160" bgColOff="ff747474"
               bgColOn="ff252525" buttonText="LISTEN TO THE PRESET" connectedEdges="0"
               needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="finished button" id="ee4745ef80623612" memberName="finishedButton"
-              virtualName="" explicitFocusOrder="0" pos="0Cc 380 500 160" bgColOff="ff2ac858"
+              virtualName="" explicitFocusOrder="0" pos="0Cc 380 500 160" bgColOff="ff097c2a"
               bgColOn="ff252525" buttonText="OK" connectedEdges="0" needsCallback="1"
               radioGroupId="0"/>
   <LABEL name="count label" id="6112b78b8bf2731a" memberName="countLabel"

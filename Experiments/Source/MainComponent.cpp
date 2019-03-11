@@ -8,6 +8,8 @@
 
 #include "MainComponent.h"
 
+using namespace Miam;
+
 //==============================================================================
 MainComponent::MainComponent()
 {

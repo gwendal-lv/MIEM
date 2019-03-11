@@ -42,7 +42,7 @@ static const unsigned char temp_binary_data_3[] =
 "Au d\xc3\xa9part, pendant une quinzaine de secondes environ, vous allez \xc3\xa9""couter un son qu'il faudra retrouver.\n"
 "\n"
 "Ensuite, en d\xc3\xa9pla\xc3\xa7""ant des points blancs sur une tablette tactile, vous pourrez chercher et retrouver ce son de synth\xc3\xa9tiseur.\n"
-"Chaque forme g\xc3\xa9om\xc3\xa9trique \xc3\xa0 l'\xc3\xa9""cran est li\xc3\xa9""e \xc3\xa0 un param\xc3\xa8tre de synth\xc3\xa9tiseur ou de filtre.\n"
+"Chaque forme g\xc3\xa9om\xc3\xa9trique \xc3\xa0 l'\xc3\xa9""cran est li\xc3\xa9""e \xc3\xa0 un param\xc3\xa8tre de synth\xc3\xa9tiseur, d'effet audio, ou de bien st\xc3\xa9r\xc3\xa9o gauche/droite.\n"
 "\n"
 "Le cycle d'\xc3\xa9""coute/recherche aura lieu une vingtaine de fois, pour une exp\xc3\xa9rience qui durera au total entre 20 et 25 minutes.\n"
 "\n"
@@ -10543,7 +10543,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
         case 0xa549d1de:  numBytes = 47; return Recorder_AfterTrial_EN_txt;
         case 0xa7370881:  numBytes = 535; return Recorder_AfterTrial_FR_txt;
         case 0xcd874cee:  numBytes = 47; return Recorder_Intro_EN_txt;
-        case 0xcf748391:  numBytes = 953; return Recorder_Intro_FR_txt;
+        case 0xcf748391:  numBytes = 990; return Recorder_Intro_FR_txt;
         case 0x340941eb:  numBytes = 4347; return Translation_FR_txt;
         case 0x896b2391:  numBytes = 32310; return _4_Faders_png;
         case 0xffae406b:  numBytes = 35496; return _4_Interpolation_areas_png;

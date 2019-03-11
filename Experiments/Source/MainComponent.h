@@ -13,6 +13,7 @@
 #include "OSCRecorderIntroComponent.h"
 #include "OSCRecorder.h"
 
+#include "ExperimentsLookAndFeel.h"
 
 #include "UserQuestions.h"
 #include "UserFinalQuestions.h"
@@ -45,6 +46,7 @@ public:
 private:
     //==============================================================================
     // Your private member variables go here...
+    
     
     // Self-managed (for visibilty, etc...)
     std::unique_ptr<OSCRecorderComponent> oscRecorderComponent;
