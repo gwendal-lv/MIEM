@@ -105,6 +105,10 @@ namespace Miam
         /// un excitateur, soit....
         std::map<int, std::shared_ptr<IEditableArea>> touchSourceToEditableArea;
         
+        /// \brief To store constrained touch moves (for __MIEM_EXPERIMENTS)
+        std::unique_ptr<MouseEvent> constrainedMouseEvent;
+        
+        
         
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
@@ -262,6 +266,13 @@ namespace Miam
         /// to something else...). because : The scene does not know its own mode !
         virtual std::shared_ptr<MultiAreaEvent> StopCurrentTransformations();
 
+        private :
+        /// \brief Function that behaves as a bypass in "normal" mode, but actually
+        /// constrains the movements of the exciters when compiled when
+        /// __MIEM_EXPERIMENTS is defined
+        MouseEvent& constrainMouseEvent(const MouseEvent& e);
+        public :
+        
         
         // - - - - - Quantification, gestion des interactions - - - - -
         private :

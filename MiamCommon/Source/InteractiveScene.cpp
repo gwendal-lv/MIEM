@@ -405,8 +405,11 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::OnUnselection(bool shutExciter
 
 // - - - - - Canvas (mouse) events managing - - - - -
 
-std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseDown(const MouseEvent& mouseE)
+std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseDown(const MouseEvent& unconstrainedMouseE)
 {
+    // UN-constrained for collision detection
+    auto mouseE = unconstrainedMouseE; // = constrainMouseEvent(unconstrainedMouseE);
+    
 	// default : empty AREA event
     auto graphicE = std::make_shared<AreaEvent>();
 
@@ -457,8 +460,11 @@ std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseDown(const MouseEve
     
 	return graphicE;
 }
-std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseDrag(const MouseEvent& mouseE)
+std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseDrag(const MouseEvent& unconstrainedMouseE)
 {
+    // bypass-function if __MIEM_EXPERIMENTS is not defined
+    auto mouseE = constrainMouseEvent(unconstrainedMouseE);
+    
     // Default empty event...
     auto graphicE = std::make_shared<GraphicEvent>();
     
@@ -484,8 +490,11 @@ std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseDrag(const MouseEve
     
     return graphicE;
 }
-std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseUp(const MouseEvent& mouseE)
+std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseUp(const MouseEvent& unconstrainedMouseE)
 {
+    // bypass-function if __MIEM_EXPERIMENTS is not defined
+    auto mouseE = constrainMouseEvent(unconstrainedMouseE);
+    
 	std::shared_ptr<GraphicEvent> graphicE(new GraphicEvent());
 
     switch(excitersBehavior)
@@ -536,6 +545,50 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::StopCurrentTransformations()
         multiAreaE->AddAreaEvent(new AreaEvent(editableArea, eventType, shared_from_this()));
     }
     return multiAreaE;
+}
+
+MouseEvent& InteractiveScene::constrainMouseEvent(const MouseEvent& e)
+{
+    // If NOT in experiment mode : pure bypass of the reference
+#ifndef __MIEM_EXPERIMENTS
+    return mouseE;
+    
+#else // defined __MIEM_EXPERIMENTS
+    Point<float> constrainedPosition = e.position;
+    
+#ifdef __MIEM_EXPERIMENTS_4_PARAMETERS
+    // Détection du mouvement (différence de comportement selon le num de la scène)
+    bool isInterpolation = false;
+    // application de la contrainte selon fader ou interpolation
+    // ATTENTION la contrainte dépend de la position initiale du curseur
+    int minY = 0.02;
+    int maxY = 0.02;
+    if (! isInterpolation) // faders
+    {
+        // cuseur 1
+        
+        // cuseur 2
+        // cuseur 3
+        // cuseur 4
+    }
+    else // interpolation
+    {
+        
+    }
+#endif
+    
+    // then, we copy everything but the position
+    constrainedMouseEvent = std::make_unique<MouseEvent>(e.source, constrainedPosition, e.mods,
+                                                         e.pressure, e.orientation, e.rotation,
+                                                         e.tiltX, e.tiltY,
+                                                         e.eventComponent, e.originalComponent,
+                                                         e.eventTime,
+                                                         e.mouseDownPosition, e.mouseDownTime,
+                                                         e.getNumberOfClicks(),
+                                                         e.mouseWasDraggedSinceMouseDown());
+    // De-referencement of internal pointer (to cast to a reference)
+    return *(constrainedMouseEvent.get());
+#endif // defined __MIEM_EXPERIMENTS
 }
 
 
