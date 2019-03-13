@@ -23,15 +23,25 @@
 
 //#include "MatrixComponent.h"
 
+#include <memory>
+#include <vector>
+
+#include "BasicInterpolationCurve.hpp"
 #include "ChannelNameTextEditor.h"
 #include "MatrixRowSlider.h"
-#include "MinMaxRowSlider.h"
+// #include "MinMaxSlidersPair.h"  // in CPP only to avoid include issues
 
 #include "ISlidersMatrixListener.h"
 #include "IMatrixButtonListener.h"
 #include "AudioUtils.hpp"
 
-#include <memory>
+// TYPEDEF BASIC INTERP CURVES <DOUBLE>
+// TYPEDEF BASIC INTERP CURVES <DOUBLE>
+// TYPEDEF BASIC INTERP CURVES <DOUBLE>
+typedef std::vector<Miam::BasicInterpolationCurve<double>> BasicInterpCurves;
+// TYPEDEF BASIC INTERP CURVES <DOUBLE>
+// TYPEDEF BASIC INTERP CURVES <DOUBLE>
+// TYPEDEF BASIC INTERP CURVES <DOUBLE>
 
 #include "AppPurpose.h"
 
@@ -41,6 +51,7 @@ namespace Miam
     class MatrixViewport;
     class MatrixComponent;
     class InterpolationCurvesComboBox;
+    class MinMaxSlidersPair;
 
 //[/Headers]
 
@@ -56,8 +67,7 @@ namespace Miam
 */
 class LabelledMatrixComponent  : public Component,
                                  public TextEditor::Listener,
-                                 public Button::Listener,
-                                 public Slider::Listener
+                                 public Button::Listener
 {
 public:
     //==============================================================================
@@ -95,6 +105,8 @@ public:
     /// \brief Callback from the MatrixComponent.
     /// 'value' is a linear value (not given in decibels)
     void OnSliderValueChanged(int row, int col, double value);
+    /// \brief Called by a min max sliders pair when necessary
+    void OnMinMaxValuesChanged(int row, double valueMin, double valueMax);
     /// \brief Callback from any text editor. Display (in bold, or not) wether the input name
     /// can be parsed to a valid OSC message with address and arguments.
     ///
@@ -103,15 +115,15 @@ public:
     /// \brief Callback from a generic action button (currently, the buttons
     /// displayed at the beginning of each line).
     virtual void buttonClicked (Button* ) override;
-    
-    /// \brief Callback from the min/max value sliders
-    virtual void sliderValueChanged (Slider *slider) override;
 
     // - - - - - - Getters and Setters - - - - -
     MatrixComponent* GetMatrixComponent();
 
     void SetChannelsNames(InOutChannelsName &channelsName);
     InOutChannelsName GetChannelsName();
+
+    void SetInterpolationCurves(std::shared_ptr<BasicInterpCurves> interpCurves);
+    std::shared_ptr<BasicInterpCurves> GetInterpolationCurves();
 
     void SetInputNamesVisible(bool areVisible);
     void SetOutputNamesVisible(bool areVisible);
@@ -121,6 +133,14 @@ public:
     AppPurpose GetDisplayPurpose() {return currentDisplayPurpose;}
 
     void SetButtonsListener(IMatrixButtonListener* _listener) {buttonsListener = _listener;}
+
+    int GetOscAddressPositionX() const {return inputNamesX;}
+    int GetMinimaPositionX() const {return minimaX;}
+    int GetMaximaPositionX() const {return maximaX;}
+    int GetInterpolationCurvesPositionX() const {return interpolationCurvesX;}
+    int GetParametersValuesPositionX() const {return viewportLX;}
+    int GetActionButtonsPositionX() const {return viewportRX;}
+
 
     //[/UserMethods]
 
@@ -144,6 +164,8 @@ private:
     const int matItemH = 20;
     const int actionButtonW = 120; // on the very right of the screen
     // Positionning variables
+    int viewportLX;
+    int viewportRX;
     const int inputNameLabelMinWidth = 200;
     int inputNameLabelWidth = 200;
     int inputNamesX = 0; // text editor
@@ -157,6 +179,7 @@ private:
     int removedFromLeftOfMatrix = 100; // just in case, to avoid zero-sized buttons if it happens...
     int removedFromBottomOfMatrix = 100;
     int removedFromRightOfMatrix = 100;
+
     // Colours
     Colour jucePaleBlueColour;
     Colour juceLightPaleBlueColour;
@@ -193,9 +216,7 @@ private:
     std::vector<std::shared_ptr<ImageComponent>> curveImageComponents;
 
     /// \brief Slider for min/max values of parameters
-    std::vector<std::unique_ptr<MinMaxRowSlider>> rowMinSliders; // component IDs : 'mins#'
-    std::vector<std::unique_ptr<MinMaxRowSlider>> rowMaxSliders; // component IDs : 'maxs#'
-
+    std::vector<std::unique_ptr<MinMaxSlidersPair>> minMaxSlidersPairs; // component IDs : 'spi#'
     //[/UserVariables]
 
     //==============================================================================

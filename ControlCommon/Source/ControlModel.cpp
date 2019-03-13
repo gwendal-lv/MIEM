@@ -191,7 +191,8 @@ void ControlModel::update()
             {
                 if ( (refreshFramesCounter++) >= refreshPeriod_frames )
                 {
-                    miamOscSender->ForceSend1MatrixCoeff( interpolator->GetCurrentInterpolatedState() );
+                    miamOscSender->ForceSend1MatrixCoeff( interpolator->GetCurrentInterpolatedState(),
+                                                         GetSessionPurpose());
                     wasSomethingUpdated = true;
                     refreshFramesCounter = 0;
                 }

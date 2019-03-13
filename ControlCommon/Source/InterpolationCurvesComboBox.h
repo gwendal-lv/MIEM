@@ -43,8 +43,10 @@ namespace Miam
         
         
         // =========== Getters and Setters ==========
+        public :
         ParamInterpolationType GetSelectedInterpolationType() const {return lastActualChoice;}
-        
+        void SetSelectedInterpolationType(ParamInterpolationType);
+
         
         // =========== METHODS ==========
         // ction and dtion

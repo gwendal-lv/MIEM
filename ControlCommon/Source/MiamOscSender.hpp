@@ -15,6 +15,7 @@
 #include "JuceHeader.h"
 
 #include "OscDefines.h"
+#include "AppPurpose.h"
 
 #include "TextUtils.h"
 
@@ -214,6 +215,7 @@ namespace Miam
                 // - - - mode PREMIÈRE COLONNE SEULEMENT - - -
                 else
                 {
+                // with interpolation/distorsion curves
                     SendMatrixParamChanges(matrixState, changesIndexes);
                 }
                 
@@ -226,8 +228,8 @@ namespace Miam
         }
         
         /// \brief Sends the parameters designated by their index within the
-        /// given list.
-        void SendMatrixParamChanges(MatrixState<T>* matrixState, std::vector< size_t >& changesIndexes)
+        /// given list. Interpolation/distorsion curves will be applied.
+        void SendMatrixParamChanges(MatrixBackupState<T>* matrixState, std::vector< size_t >& changesIndexes)
         {
             for (size_t i=0 ; i<changesIndexes.size() ; i++)
             {
@@ -235,7 +237,12 @@ namespace Miam
                 {
                     Index2d index2d = matrixState->GetMatrix()->GetIndex2dFromIndex(changesIndexes[i]);
                     if (index2d.j == 0)
-                        SendParam(index2d.i, (float) (*matrixState)[changesIndexes[i]]);
+                    {
+                        SendParam(index2d.i,
+                                  (float) matrixState->GetCurveInterpolatedMatrixCoeff(index2d.i,
+                                                                                       index2d.j)
+                                  );
+                    }
                 }
                 // débordement détecté, ne devrait pas arriver...
                 else
@@ -354,7 +361,7 @@ namespace Miam
         ///
         /// Au prochain appel, c'est la case d'après qui sera transmise. Sens de parcours :
         /// ligne entière par ligne entière
-        void ForceSend1MatrixCoeff(ControlState<T>& state)
+        void ForceSend1MatrixCoeff(ControlState<T>& state, AppPurpose appPurpose)
         {
             // Capable d'envoyer un état matriciel avec backup seulement pour l'instant
             if (MatrixBackupState<T>* matrixState = dynamic_cast<MatrixBackupState<T>*>(&state))
@@ -368,7 +375,9 @@ namespace Miam
                                     (float) (*matrixState)(iToRefresh, jToRefresh));
                 // Si 1 seule colonne : on utilise juste SendParam(i,value)
                 else // avec le bon nom de message OSC
-                    SendParam(iToRefresh, (float) (*matrixState)(iToRefresh, jToRefresh)); // j vaudra zéro !
+                {
+                    SendParam(iToRefresh, (float) matrixState->GetCurveInterpolatedMatrixCoeff(iToRefresh, jToRefresh)); // j vaudra zéro !
+                }
                 
                 // ----------- à faire -------------
                 // ----------- à faire -------------

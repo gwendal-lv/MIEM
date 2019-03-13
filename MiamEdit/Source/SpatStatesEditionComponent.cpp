@@ -258,7 +258,7 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     minLabel.reset (new Label ("Min label",
                                TRANS("Min. value")));
     addAndMakeVisible (minLabel.get());
-    minLabel->setTooltip (TRANS("The minimal value that a parameter can reach."));
+    minLabel->setTooltip (TRANS("The minimal value that a parameter can reach. Click to edit."));
     minLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     minLabel->setJustificationType (Justification::centredLeft);
     minLabel->setEditable (false, false, false);
@@ -271,7 +271,7 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     maxLabel.reset (new Label ("Max label",
                                TRANS("Max. value")));
     addAndMakeVisible (maxLabel.get());
-    maxLabel->setTooltip (TRANS("The maximal value that a parameter can reach."));
+    maxLabel->setTooltip (TRANS("The maximal value that a parameter can reach. Click to edit."));
     maxLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     maxLabel->setJustificationType (Justification::centredLeft);
     maxLabel->setEditable (false, false, false);
@@ -409,6 +409,38 @@ void SpatStatesEditionComponent::resized()
     matrixInfoLabel2->setBounds ((getWidth() - (getWidth() - 339)) + (getWidth() - 339) - 502, 4 + 32, 245, 24);
     matrixInfoLabel3->setBounds ((getWidth() - (getWidth() - 339)) + (getWidth() - 339) - 502, 4 + 52, 245, 24);
     //[UserResized] Add your own custom resize handling here..
+    
+    if (editionManager)
+    {
+        // Columns labels visible for GenCon only
+        oscAddressLabel->setVisible(editionManager->GetSessionPurpose() == AppPurpose::GenericController);
+        minLabel->setVisible(editionManager->GetSessionPurpose() == AppPurpose::GenericController);
+        maxLabel->setVisible(editionManager->GetSessionPurpose() == AppPurpose::GenericController);
+        interpolationCurveLabel->setVisible(editionManager->GetSessionPurpose() == AppPurpose::GenericController);
+        valueLabel->setVisible(editionManager->GetSessionPurpose() == AppPurpose::GenericController);
+        
+        // Now, the labelled matrix has properly replaced its elements.
+        if (editionManager->GetSessionPurpose() == AppPurpose::GenericController)
+        {
+            const int leftMargin = 24;
+            oscAddressLabel->setTopLeftPosition(labelledMatrixComponent->GetOscAddressPositionX()
+                                                + leftMargin,
+                                                oscAddressLabel->getY());
+            minLabel->setTopLeftPosition(labelledMatrixComponent->GetMinimaPositionX()
+                                         + leftMargin,
+                                         minLabel->getY());
+            maxLabel->setTopLeftPosition(labelledMatrixComponent->GetMaximaPositionX()
+                                         + leftMargin,
+                                         maxLabel->getY());
+            interpolationCurveLabel->setTopLeftPosition(labelledMatrixComponent->GetInterpolationCurvesPositionX()
+                                                        + leftMargin,
+                                                        interpolationCurveLabel->getY());
+            valueLabel->setTopLeftPosition(labelledMatrixComponent->GetParametersValuesPositionX()
+                                           + leftMargin,
+                                           valueLabel->getY());
+        }
+    }
+        
     //[/UserResized]
 }
 
@@ -559,6 +591,9 @@ void SpatStatesEditionComponent::visibilityChanged()
 
         // S'adaptera si nécessaire
         labelledMatrixComponent->SetDisplayPurpose(editionManager->GetSessionPurpose());
+        
+        // For labels update
+        resized();
     }
     //[/UserCode_visibilityChanged]
 }
@@ -885,13 +920,13 @@ BEGIN_JUCER_METADATA
          fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="33"/>
   <LABEL name="Min label" id="8ff821b0c7b4bbee" memberName="minLabel"
-         virtualName="" explicitFocusOrder="0" pos="288 112 80 24" tooltip="The minimal value that a parameter can reach."
+         virtualName="" explicitFocusOrder="0" pos="288 112 80 24" tooltip="The minimal value that a parameter can reach. Click to edit."
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Min. value"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="33"/>
   <LABEL name="Max label" id="51fc4d52b6f5297e" memberName="maxLabel"
-         virtualName="" explicitFocusOrder="0" pos="368 112 80 24" tooltip="The maximal value that a parameter can reach."
+         virtualName="" explicitFocusOrder="0" pos="368 112 80 24" tooltip="The maximal value that a parameter can reach. Click to edit."
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Max. value"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"

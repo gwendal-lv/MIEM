@@ -64,5 +64,5 @@ ParamInterpolationType ParamInterpolationTypes::ParseName(std::string interpolat
     if (parsedType != ParamInterpolationType::None)
         return parsedType;
     else
-        throw ParseException("The string '" + interpolationName + "' cannot be parsed into a Miam::InterpolationType");
+        throw ParseException("The string '" + interpolationName + "' cannot be parsed into a Miam::ParamInterpolationType");
 }

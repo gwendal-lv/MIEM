@@ -10,6 +10,8 @@
 
 #include "InterpolationCurvesComboBox.h"
 
+#include "BasicInterpolationCurve.hpp"
+
 using namespace Miam;
 
 std::vector<std::unique_ptr<ImageComponent>> InterpolationCurvesComboBox::curveImages;
@@ -35,18 +37,26 @@ height(_height)
     setTextWhenNoChoicesAvailable(TRANS("Custom interpolation not available"));
     setScrollWheelEnabled(false); // pour ne pas changer sans faire exprès....
     
-    // ajout des items avec ID personnalisé
-    for (int i = (static_cast<int>(ParamInterpolationType::None) + 1); // next after "none" is valid
-         i < static_cast<int>(ParamInterpolationType::InterpolationTypesCount) ;
-         i++)
+    // ajout des items disponibles avec ID personnalisé
+    auto availableTypes = BasicInterpolationCurve<double>::GetAvailableParamInterpolationTypes();
+    for (int i = 0; i < availableTypes.size() ; i++)
     {
-        addItem(ParamInterpolationTypes::GetInterpolationName( (ParamInterpolationType)i ), i);
+        addItem(ParamInterpolationTypes::GetInterpolationName(availableTypes[i], true, false),
+                (int)availableTypes[i]);
     }
     
     // auto-listener
     addListener(this);
 }
 
+
+void InterpolationCurvesComboBox::SetSelectedInterpolationType(ParamInterpolationType newType)
+{
+    if (ParamInterpolationTypes::IsActualInterpolationType(newType))
+        setSelectedId((int) newType, NotificationType::sendNotification);
+    else if (newType == ParamInterpolationType::None)
+        setSelectedId(0, NotificationType::sendNotification);
+}
 
 
 void InterpolationCurvesComboBox::comboBoxChanged(ComboBox *comboBoxThatHasChanged)
