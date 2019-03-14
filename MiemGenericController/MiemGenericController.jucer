@@ -196,6 +196,10 @@
           <FILE id="vjqld7" name="EditableScene.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/EditableScene.cpp"/>
           <FILE id="mc8YKm" name="EditableScene.h" compile="0" resource="0" file="../MiamCommon/Source/EditableScene.h"/>
+          <FILE id="eiXIou" name="ExperimentsSceneConstrainer.cpp" compile="1"
+                resource="0" file="../MiamCommon/Source/ExperimentsSceneConstrainer.cpp"/>
+          <FILE id="qcBxYz" name="ExperimentsSceneConstrainer.h" compile="0"
+                resource="0" file="../MiamCommon/Source/ExperimentsSceneConstrainer.h"/>
           <FILE id="i50GId" name="InteractiveScene.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/InteractiveScene.cpp"/>
           <FILE id="w93g8x" name="InteractiveScene.h" compile="0" resource="0"

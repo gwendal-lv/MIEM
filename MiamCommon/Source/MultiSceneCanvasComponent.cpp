@@ -110,7 +110,13 @@ void MultiSceneCanvasComponent::UpdateSceneButtons(std::vector< std::shared_ptr<
         for (size_t i = 0; i<scenes.size() ; i++)
         {
 			// Actual addition
-            addButton(scenes[i]->GetName());
+            String sceneName;
+#ifndef __MIEM_EXPERIMENTS_FULL_LOCK
+            sceneName = scenes[i]->GetName();
+#else
+            sceneName = CharPointer_UTF8 ("\xc2\xb0"); // °
+#endif
+            addButton(sceneName.toStdString());
 			// Special graphic attributes for the newly selected one
             if (i == (size_t)(selectedSceneId))
             {
@@ -130,8 +136,13 @@ void MultiSceneCanvasComponent::UpdateSceneButtons(std::vector< std::shared_ptr<
     // Update of one precise button
     else
     {
-        //throw std::runtime_error("Not Implemented. Update all scenes or nothing...");
-        sceneChoiceTextButtons[sceneThatHasChanged]->setButtonText(scenes[sceneThatHasChanged]->GetName());
+        String sceneName;
+#ifndef __MIEM_EXPERIMENTS_FULL_LOCK
+        sceneName = scenes[sceneThatHasChanged]->GetName();
+#else
+        sceneName = CharPointer_UTF8 ("\xc2\xb0"); // °
+#endif
+        sceneChoiceTextButtons[sceneThatHasChanged]->setButtonText(sceneName.toStdString());
     }
 }
 

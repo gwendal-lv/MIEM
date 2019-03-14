@@ -20,6 +20,8 @@
 
 #include "JuceHeader.h"
 
+#include "ExperimentsSceneConstrainer.h"
+
 #include "MultiAreaEvent.h"
 
 #include "IEditableArea.h"
@@ -46,7 +48,8 @@ namespace Miam
     /// but is not fully editable. See Miam::EditableArea for editing features.
     /// However, the exciters (if enabled) can be moved with mouse/touch/pen events
     class InteractiveScene : public std::enable_shared_from_this<InteractiveScene>,
-                             public Timer // for exciter's animations
+                             public Timer, // for exciter's animations
+                             protected ExperimentsSceneConstrainer
     {
         
         // ...Enums....
@@ -104,12 +107,7 @@ namespace Miam
         /// L'aire concernée peut être soit une aire générique éditable, soit
         /// un excitateur, soit....
         std::map<int, std::shared_ptr<IEditableArea>> touchSourceToEditableArea;
-        
-        /// \brief To store constrained touch moves (for __MIEM_EXPERIMENTS)
-        std::unique_ptr<MouseEvent> constrainedMouseEvent;
-        
-        
-        
+
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
@@ -266,12 +264,6 @@ namespace Miam
         /// to something else...). because : The scene does not know its own mode !
         virtual std::shared_ptr<MultiAreaEvent> StopCurrentTransformations();
 
-        private :
-        /// \brief Function that behaves as a bypass in "normal" mode, but actually
-        /// constrains the movements of the exciters when compiled when
-        /// __MIEM_EXPERIMENTS is defined
-        MouseEvent& constrainMouseEvent(const MouseEvent& e);
-        public :
         
         
         // - - - - - Quantification, gestion des interactions - - - - -

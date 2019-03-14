@@ -73,7 +73,6 @@ void ControlPresenter::processParamChangeFromModel(AsyncParamChange const & para
 void ControlPresenter::OnModelStopped()
 {
     hasModelActuallyStopped = true;
-    std::cout << "MODEL A VRAIIIMENT STOPPÉÉÉÉÉ !!!!!!" << std::endl;
 }
 
 
