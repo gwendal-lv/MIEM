@@ -32,9 +32,11 @@ class OSCRecorder;
 //==============================================================================
 /**
                                                                     //[Comments]
-    An auto-generated component, created by the Projucer.
-
-    Describe your class and how it works here!
+   Classe qui gère l'affichage graphique du contrôleur principale de
+ l'expérience,
+ mais qui déclenche aussi des évènements après des attentes
+ pour simuler des clics automatiques
+ (pour + de simplicité...)
                                                                     //[/Comments]
 */
 class OSCRecorderComponent  : public Component,
@@ -51,8 +53,19 @@ public:
 
     void DisplayNewState(ExperimentState newState, int presetStep, size_t presetsCount);
 
-    private :
+    /// \brief Might also change the color depending on remaining time
+    void UpdateRemainingTimeSlider(double duration, double maxDuration);
+
+    /// \brief Simule un clic sur le bouton affiché et activé,
+    /// s'il y en a bien un d'affiché et activé. Avec protection contre double-clic
     void simulateClickOnDisplayedButton();
+
+    private :
+
+    void listenTimerCallback();
+    void searchTimerCallback();
+    void updateTimerLabels();
+
     public :
     //[/UserMethods]
 
@@ -67,9 +80,16 @@ private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     OSCRecorder* recorderManager = 0;
 
-    // permet de détecter/emêcher les doubles-appuis sur la barre d'espace....
-    bool keyPressHappenedRecently = false;
-    const int doubleKeyStrokeThreshold_ms = 500;
+    // permet de détecter/emêcher les doubles-appuis sur la barre d'espace,
+    // double-clic, ou bien 2 évènements trop proches de manière générale
+    bool clickHappenedRecently = false;
+    const int doubleClickThreshold_ms = 500;
+
+    // Pour faire visuellement le décompte du temps restant
+    // avant auto-déclenchement de l'écoute ou de la recherche de preset
+    int listenTimerValue_s = -1 ; ///< Duration before auto-triggering
+    int searchTimerValue_s = -1; ///< Duration before auto-triggering
+
     //[/UserVariables]
 
     //==============================================================================
@@ -77,6 +97,11 @@ private:
     std::unique_ptr<TextButton> listenButton;
     std::unique_ptr<TextButton> finishedButton;
     std::unique_ptr<Label> countLabel;
+    std::unique_ptr<Label> listenLabel;
+    std::unique_ptr<Label> searchLabel;
+    std::unique_ptr<Slider> remainingTimeSlider;
+    std::unique_ptr<Label> listenCountdownLabel;
+    std::unique_ptr<Label> searchCountdownLabel;
 
 
     //==============================================================================

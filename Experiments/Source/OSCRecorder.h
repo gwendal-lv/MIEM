@@ -37,7 +37,7 @@ class OSCRecorderTimer; // defined at end of file
 
 
 class OSCRecorder : public UserQuestionsManager,
-                    public juce::Timer // timer for OSC data retrieving
+                    public juce::Timer // timer for OSC data retrieving, and forced graphical updates
 {
     
     // ===================================================================
@@ -57,11 +57,14 @@ class OSCRecorder : public UserQuestionsManager,
     const int maxResearchDuration_ms = 30000; // 30 s --> currently unused
 #ifdef __MIEM_SHORT_DELAYS
     static const int delayAfterFinished_ms = 200;
+    static const int ListenAndSearchAutoTriggerDelay_s = 2;
     const int listeningTime_ms = 500;
 #else
     static const int delayAfterFinished_ms = 3000;
+    static const int ListenAndSearchAutoTriggerDelay_s = 5;
     const int listeningTime_ms = 20000; // 15s sont un peu trop courtes...
 #endif
+    const int ResearchTimeMax_ms = 30000;
     
     // - - - SHORT/DEMO EXPERIMENT - - -
     const bool ShortExperiment = false;
@@ -125,6 +128,7 @@ class OSCRecorder : public UserQuestionsManager,
     MiemClock::time_point startTimePt;
     juce::Time startSystemTime;
     std::unique_ptr<OSCRecorderTimer> researchDurationTimer;
+    MiemClock::time_point currentResearchStartTimePt;
     
     // XML and data files
     std::string dataFilePath; // CSV file

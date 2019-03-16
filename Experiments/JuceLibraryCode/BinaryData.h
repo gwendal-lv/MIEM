@@ -12,13 +12,13 @@ namespace BinaryData
     const int            Recorder_AfterTrial_EN_txtSize = 47;
 
     extern const char*   Recorder_AfterTrial_FR_txt;
-    const int            Recorder_AfterTrial_FR_txtSize = 535;
+    const int            Recorder_AfterTrial_FR_txtSize = 456;
 
     extern const char*   Recorder_Intro_EN_txt;
     const int            Recorder_Intro_EN_txtSize = 47;
 
     extern const char*   Recorder_Intro_FR_txt;
-    const int            Recorder_Intro_FR_txtSize = 990;
+    const int            Recorder_Intro_FR_txtSize = 981;
 
     extern const char*   Translation_FR_txt;
     const int            Translation_FR_txtSize = 4347;

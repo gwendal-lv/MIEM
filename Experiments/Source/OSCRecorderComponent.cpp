@@ -57,11 +57,61 @@ OSCRecorderComponent::OSCRecorderComponent ()
     countLabel.reset (new Label ("count label",
                                  TRANS("Current preset: .../...")));
     addAndMakeVisible (countLabel.get());
-    countLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    countLabel->setFont (Font (22.00f, Font::plain).withTypefaceStyle ("Regular"));
     countLabel->setJustificationType (Justification::centred);
     countLabel->setEditable (false, false, false);
     countLabel->setColour (TextEditor::textColourId, Colours::black);
     countLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    listenLabel.reset (new Label ("Listen label",
+                                  TRANS("Listening to reference sound will start in:")));
+    addAndMakeVisible (listenLabel.get());
+    listenLabel->setFont (Font (26.00f, Font::plain).withTypefaceStyle ("Regular"));
+    listenLabel->setJustificationType (Justification::centredRight);
+    listenLabel->setEditable (false, false, false);
+    listenLabel->setColour (Label::backgroundColourId, Colour (0x00757575));
+    listenLabel->setColour (Label::textColourId, Colour (0xffb0b0b0));
+    listenLabel->setColour (TextEditor::textColourId, Colours::black);
+    listenLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    searchLabel.reset (new Label ("Search label",
+                                  TRANS("Preset research will start in:")));
+    addAndMakeVisible (searchLabel.get());
+    searchLabel->setFont (Font (26.00f, Font::plain).withTypefaceStyle ("Regular"));
+    searchLabel->setJustificationType (Justification::centredRight);
+    searchLabel->setEditable (false, false, false);
+    searchLabel->setColour (Label::textColourId, Colour (0xff81a5ff));
+    searchLabel->setColour (TextEditor::textColourId, Colours::black);
+    searchLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    remainingTimeSlider.reset (new Slider ("Remaining Time slider"));
+    addAndMakeVisible (remainingTimeSlider.get());
+    remainingTimeSlider->setRange (0, 60, 1);
+    remainingTimeSlider->setSliderStyle (Slider::LinearBar);
+    remainingTimeSlider->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
+    remainingTimeSlider->setColour (Slider::backgroundColourId, Colour (0x00263238));
+    remainingTimeSlider->setColour (Slider::trackColourId, Colours::white);
+    remainingTimeSlider->setColour (Slider::textBoxOutlineColourId, Colours::white);
+
+    listenCountdownLabel.reset (new Label ("Listen Countdown label",
+                                           TRANS("3")));
+    addAndMakeVisible (listenCountdownLabel.get());
+    listenCountdownLabel->setFont (Font (26.00f, Font::plain).withTypefaceStyle ("Bold"));
+    listenCountdownLabel->setJustificationType (Justification::centredLeft);
+    listenCountdownLabel->setEditable (false, false, false);
+    listenCountdownLabel->setColour (Label::backgroundColourId, Colour (0x00757575));
+    listenCountdownLabel->setColour (TextEditor::textColourId, Colours::black);
+    listenCountdownLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    searchCountdownLabel.reset (new Label ("Search Countdown label",
+                                           TRANS("3")));
+    addAndMakeVisible (searchCountdownLabel.get());
+    searchCountdownLabel->setFont (Font (26.00f, Font::plain).withTypefaceStyle ("Bold"));
+    searchCountdownLabel->setJustificationType (Justification::centredLeft);
+    searchCountdownLabel->setEditable (false, false, false);
+    searchCountdownLabel->setColour (Label::backgroundColourId, Colour (0x00757575));
+    searchCountdownLabel->setColour (TextEditor::textColourId, Colours::black);
+    searchCountdownLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
 
     //[UserPreSize]
@@ -72,6 +122,13 @@ OSCRecorderComponent::OSCRecorderComponent ()
 
     //[Constructor] You can add your own custom stuff here..
 
+    // Many buttons are now removed (auto trigger of listen & search)
+    // and disabled, such that they can still be used in algorithms (in re-activated
+    // at some point...)
+    listenButton->setEnabled(false);
+    startButton->setEnabled(false);
+    removeChildComponent(listenButton.get());
+    removeChildComponent(startButton.get());
 
     //[/Constructor]
 }
@@ -85,6 +142,11 @@ OSCRecorderComponent::~OSCRecorderComponent()
     listenButton = nullptr;
     finishedButton = nullptr;
     countLabel = nullptr;
+    listenLabel = nullptr;
+    searchLabel = nullptr;
+    remainingTimeSlider = nullptr;
+    listenCountdownLabel = nullptr;
+    searchCountdownLabel = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -108,10 +170,15 @@ void OSCRecorderComponent::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    startButton->setBounds ((getWidth() / 2) - (500 / 2), 200, 500, 160);
-    listenButton->setBounds ((getWidth() / 2) - (500 / 2), 20, 500, 160);
-    finishedButton->setBounds ((getWidth() / 2) - (500 / 2), 380, 500, 160);
-    countLabel->setBounds ((getWidth() / 2) - (500 / 2), getHeight() - 40, 500, 24);
+    startButton->setBounds ((getWidth() / 2) - (500 / 2), 200, 500, 120);
+    listenButton->setBounds ((getWidth() / 2) - (500 / 2), 20, 500, 120);
+    finishedButton->setBounds ((getWidth() / 2) - (500 / 2), getHeight() - 100 - 160, 500, 160);
+    countLabel->setBounds ((getWidth() / 2) - (500 / 2), getHeight() - 70, 500, 32);
+    listenLabel->setBounds ((getWidth() / 2) - 569, 152, 569, 32);
+    searchLabel->setBounds ((getWidth() / 2) - 569, 340, 569, 32);
+    remainingTimeSlider->setBounds ((getWidth() / 2) - ((getWidth() - 160) / 2), getHeight() - 300 - 168, getWidth() - 160, 168);
+    listenCountdownLabel->setBounds ((getWidth() / 2) + 8, 152, 569, 32);
+    searchCountdownLabel->setBounds ((getWidth() / 2) + 8, 340, 569, 32);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -130,13 +197,15 @@ void OSCRecorderComponent::buttonClicked (Button* buttonThatWasClicked)
     if (buttonThatWasClicked == startButton.get())
     {
         //[UserButtonCode_startButton] -- add your button handler code here..
-        recorderManager->OnButtonClicked(ExperimentState::SearchingPreset);
+        assert(false); // click on button is now deactivated (automatic listening trigger)
+        //recorderManager->OnButtonClicked(ExperimentState::SearchingPreset);
         //[/UserButtonCode_startButton]
     }
     else if (buttonThatWasClicked == listenButton.get())
     {
         //[UserButtonCode_listenButton] -- add your button handler code here..
-        recorderManager->OnButtonClicked(ExperimentState::Listening);
+        assert(false); // click on button is now deactivated (automatic research trigger)
+        //recorderManager->OnButtonClicked(ExperimentState::Listening);
         //[/UserButtonCode_listenButton]
     }
     else if (buttonThatWasClicked == finishedButton.get())
@@ -156,20 +225,7 @@ bool OSCRecorderComponent::keyPressed (const KeyPress& key)
     if (key.getKeyCode() == KeyPress::spaceKey
         || key.getKeyCode() == KeyPress::returnKey)
     {
-        if (! keyPressHappenedRecently)
-        {
-            keyPressHappenedRecently = true;
-            simulateClickOnDisplayedButton();
-            Timer::callAfterDelay(doubleKeyStrokeThreshold_ms,
-                                  [this] {
-                                      keyPressHappenedRecently = false;
-                                  });
-        }
-        else // si appui récent : on oublie simplement cet évènement
-        {
-            //std::cout << "double-appui !!!!" << std::endl;
-        }
-
+        simulateClickOnDisplayedButton();
         return true;
     }
     else
@@ -188,8 +244,18 @@ bool OSCRecorderComponent::keyPressed (const KeyPress& key)
 
 void OSCRecorderComponent::DisplayNewState(ExperimentState newState, int presetStep, size_t presetsCount)
 {
-    // BUTTONS display
-    setVisible(true);
+    setVisible(true); // visible par défaut
+
+    // - - - - -  pour commencer : Boutons qui ne s'affichent que dans 1 seul mode - - - - - -
+    listenButton->setVisible(newState == ExperimentState::ReadyToListen);
+    listenLabel->setVisible(newState == ExperimentState::ReadyToListen);
+    listenCountdownLabel->setVisible(newState == ExperimentState::ReadyToListen);
+    startButton->setVisible(newState == ExperimentState::ReadyToSearchPreset);
+    searchLabel->setVisible(newState == ExperimentState::ReadyToSearchPreset);
+    searchCountdownLabel->setVisible(newState == ExperimentState::ReadyToSearchPreset);
+    finishedButton->setVisible(newState == ExperimentState::SearchingPreset);
+
+    // - - - - - puis : Switch général pour affichage des cas plus complexes - - - - -
     switch(newState)
     {
         case ExperimentState::ConnectionLost:
@@ -203,45 +269,43 @@ void OSCRecorderComponent::DisplayNewState(ExperimentState newState, int presetS
             break;
 
         case ExperimentState::NotInitialized:
-            listenButton->setVisible(false);
-            startButton->setVisible(false);
-            finishedButton->setVisible(false);
             countLabel->setVisible(false);
+            remainingTimeSlider->setVisible(false);
             break;
 
         case ExperimentState::ReadyToListen:
-            listenButton->setVisible(true);
-            startButton->setVisible(false);
-            finishedButton->setVisible(false);
             countLabel->setVisible(true);
+            remainingTimeSlider->setVisible(false);
+            // auto-trigger of timer
+            listenTimerValue_s = OSCRecorder::ListenAndSearchAutoTriggerDelay_s;
+            updateTimerLabels();
+            Timer::callAfterDelay(1000, [this] { listenTimerCallback(); } );
             break;
 
         case ExperimentState::Listening:
-            listenButton->setVisible(false);
-            startButton->setVisible(false);
-            finishedButton->setVisible(false);
             countLabel->setVisible(true);
+            remainingTimeSlider->setVisible(false);
             break;
 
         case ExperimentState::ReadyToSearchPreset:
-            listenButton->setVisible(false);
-            startButton->setVisible(true);
-            finishedButton->setVisible(false);
             countLabel->setVisible(true);
+            UpdateRemainingTimeSlider(remainingTimeSlider->getMaximum(),
+                                      remainingTimeSlider->getMaximum());
+            remainingTimeSlider->setVisible(true); // updated just before
+            // auto-trigger of timer
+            searchTimerValue_s = OSCRecorder::ListenAndSearchAutoTriggerDelay_s;
+            updateTimerLabels();
+            Timer::callAfterDelay(1000, [this] { searchTimerCallback(); } );
             break;
 
         case ExperimentState::SearchingPreset:
-            listenButton->setVisible(false);
-            startButton->setVisible(false);
-            finishedButton->setVisible(true);
-            countLabel->setVisible(true);
+            countLabel->setVisible(false);
+            remainingTimeSlider->setVisible(true);
             break;
 
         case ExperimentState::FinishedSearchingPreset:
-            listenButton->setVisible(false);
-            startButton->setVisible(false);
-            finishedButton->setVisible(false);
             countLabel->setVisible(false);
+            remainingTimeSlider->setVisible(false);
             break;
 
         default:
@@ -279,13 +343,34 @@ void OSCRecorderComponent::DisplayNewState(ExperimentState newState, int presetS
         grabKeyboardFocus();
 }
 
+void OSCRecorderComponent::UpdateRemainingTimeSlider(double duration, double maxDuration)
+{
+    remainingTimeSlider->setRange(0.0, maxDuration, 0.0);
+    remainingTimeSlider->setValue(duration);
+}
+
 void OSCRecorderComponent::simulateClickOnDisplayedButton()
 {
+    // double-trigger check
+    if (! clickHappenedRecently)
+    {
+        clickHappenedRecently = true;
+        Timer::callAfterDelay(doubleClickThreshold_ms,
+                              [this] {
+                                  clickHappenedRecently = false;
+                              });
+    }
+    else // si appui récent : on oublie simplement cet évènement
+    {
+        return; // by-pass
+        //std::cout << "double-appui !!!!" << std::endl;
+    }
+
     // On vérifie qu'on n'aie bien qu'un seul bouton appuyé à la fois...
     size_t visibleButtonsCount = 0;
-    visibleButtonsCount += startButton->isVisible() ? 1 : 0;
-    visibleButtonsCount += listenButton->isVisible() ? 1 : 0;
-    visibleButtonsCount += finishedButton->isVisible() ? 1 : 0;
+    visibleButtonsCount += (startButton->isVisible() && startButton->isEnabled()) ? 1 : 0;
+    visibleButtonsCount += (startButton->isVisible() && startButton->isEnabled()) ? 1 : 0;
+    visibleButtonsCount += (finishedButton->isVisible() && finishedButton->isEnabled()) ? 1 : 0;
     assert(visibleButtonsCount <= 1);
 
     // tout à fait possible d'appuyer quand rien n'est affiché
@@ -293,13 +378,59 @@ void OSCRecorderComponent::simulateClickOnDisplayedButton()
         return;
     else if (visibleButtonsCount == 1)
     {
-        if (startButton->isVisible())
+        if (startButton->isVisible() && startButton->isEnabled())
             buttonClicked(startButton.get());
-        else if (listenButton->isVisible())
+        else if (startButton->isVisible() && startButton->isEnabled())
             buttonClicked(listenButton.get());
-        else if (finishedButton->isVisible())
+        else if (finishedButton->isVisible() && finishedButton->isEnabled())
             buttonClicked(finishedButton.get());
     }
+}
+
+void OSCRecorderComponent::listenTimerCallback()
+{
+    listenTimerValue_s--;
+    // Countdown Still happening : update of label
+    if (listenTimerValue_s > 0)
+    {
+        Timer::callAfterDelay(1000, [this] { listenTimerCallback(); } );
+        updateTimerLabels();
+    }
+    // end of countdown : auto-trigger
+    else
+    {
+        listenTimerValue_s = -1;
+        recorderManager->OnButtonClicked(ExperimentState::Listening);
+    }
+}
+void OSCRecorderComponent::searchTimerCallback()
+{
+    searchTimerValue_s--;
+    // Countdown Still happening : update of label
+    if (searchTimerValue_s > 0)
+    {
+        Timer::callAfterDelay(1000, [this] { searchTimerCallback(); } );
+        updateTimerLabels();
+    }
+    // end of countdown : auto-trigger
+    else
+    {
+        searchTimerValue_s = -1;
+        recorderManager->OnButtonClicked(ExperimentState::SearchingPreset);
+    }
+}
+void OSCRecorderComponent::updateTimerLabels()
+{
+    if (listenTimerValue_s >= 0)
+        listenCountdownLabel->setText(boost::lexical_cast<std::string>(listenTimerValue_s),
+                                      NotificationType::sendNotification);
+    else
+        listenCountdownLabel->setText("...", NotificationType::sendNotification);
+    if (searchTimerValue_s >= 0)
+        searchCountdownLabel->setText(boost::lexical_cast<std::string>(searchTimerValue_s),
+                                      NotificationType::sendNotification);
+    else
+        searchCountdownLabel->setText("...", NotificationType::sendNotification);
 }
 //[/MiscUserCode]
 
@@ -322,22 +453,52 @@ BEGIN_JUCER_METADATA
   </METHODS>
   <BACKGROUND backgroundColour="ff313131"/>
   <TEXTBUTTON name="start button" id="cb0e665733fa514e" memberName="startButton"
-              virtualName="" explicitFocusOrder="0" pos="0Cc 200 500 160" bgColOff="ff3d338d"
+              virtualName="" explicitFocusOrder="0" pos="0Cc 200 500 120" bgColOff="ff3d338d"
               bgColOn="ff252525" buttonText="BEGIN PRESET RESEARCH" connectedEdges="0"
               needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="listen button" id="54994c165790472c" memberName="listenButton"
-              virtualName="" explicitFocusOrder="0" pos="0Cc 20 500 160" bgColOff="ff747474"
+              virtualName="" explicitFocusOrder="0" pos="0Cc 20 500 120" bgColOff="ff747474"
               bgColOn="ff252525" buttonText="LISTEN TO THE PRESET" connectedEdges="0"
               needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="finished button" id="ee4745ef80623612" memberName="finishedButton"
-              virtualName="" explicitFocusOrder="0" pos="0Cc 380 500 160" bgColOff="ff097c2a"
-              bgColOn="ff252525" buttonText="OK" connectedEdges="0" needsCallback="1"
-              radioGroupId="0"/>
+              virtualName="" explicitFocusOrder="0" pos="0Cc 100Rr 500 160"
+              bgColOff="ff097c2a" bgColOn="ff252525" buttonText="OK" connectedEdges="0"
+              needsCallback="1" radioGroupId="0"/>
   <LABEL name="count label" id="6112b78b8bf2731a" memberName="countLabel"
-         virtualName="" explicitFocusOrder="0" pos="0Cc 40R 500 24" edTextCol="ff000000"
+         virtualName="" explicitFocusOrder="0" pos="0Cc 70R 500 32" edTextCol="ff000000"
          edBkgCol="0" labelText="Current preset: .../..." editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
-         fontsize="1.5e1" kerning="0" bold="0" italic="0" justification="36"/>
+         fontsize="2.2e1" kerning="0" bold="0" italic="0" justification="36"/>
+  <LABEL name="Listen label" id="451b58f2b7f59deb" memberName="listenLabel"
+         virtualName="" explicitFocusOrder="0" pos="0Cr 152 569 32" bkgCol="757575"
+         textCol="ffb0b0b0" edTextCol="ff000000" edBkgCol="0" labelText="Listening to reference sound will start in:"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="2.6e1" kerning="0" bold="0"
+         italic="0" justification="34"/>
+  <LABEL name="Search label" id="7a6208a1c5ecc70d" memberName="searchLabel"
+         virtualName="" explicitFocusOrder="0" pos="0Cr 340 569 32" textCol="ff81a5ff"
+         edTextCol="ff000000" edBkgCol="0" labelText="Preset research will start in:"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="2.6e1" kerning="0" bold="0"
+         italic="0" justification="34"/>
+  <SLIDER name="Remaining Time slider" id="a43e709f917b56b4" memberName="remainingTimeSlider"
+          virtualName="" explicitFocusOrder="0" pos="0.5Cc 300Rr 160M 168"
+          bkgcol="263238" trackcol="ffffffff" textboxoutline="ffffffff"
+          min="0" max="6e1" int="1" style="LinearBar" textBoxPos="NoTextBox"
+          textBoxEditable="0" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          needsCallback="0"/>
+  <LABEL name="Listen Countdown label" id="3a60263a4de41695" memberName="listenCountdownLabel"
+         virtualName="" explicitFocusOrder="0" pos="8C 152 569 32" bkgCol="757575"
+         edTextCol="ff000000" edBkgCol="0" labelText="3" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
+         fontsize="2.6e1" kerning="0" bold="1" italic="0" justification="33"
+         typefaceStyle="Bold"/>
+  <LABEL name="Search Countdown label" id="297cc669074c0214" memberName="searchCountdownLabel"
+         virtualName="" explicitFocusOrder="0" pos="8C 340 569 32" bkgCol="757575"
+         edTextCol="ff000000" edBkgCol="0" labelText="3" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
+         fontsize="2.6e1" kerning="0" bold="1" italic="0" justification="33"
+         typefaceStyle="Bold"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

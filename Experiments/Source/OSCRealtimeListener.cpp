@@ -11,6 +11,8 @@
 #include <iostream>
 #include <thread>
 
+#include "MonitorCommunication.h"
+
 #include "OSCRealtimeListener.h"
 
 #include "OSCRecorder.h"
@@ -35,14 +37,15 @@ experimentStartTimePoint(_startTimePoint)
     if (! oscReceiver.connect(udpPort))
     {
         String errorStr = "Cannot open UDP socket for OSC receiving on port " + String(udpPort) + ". Please check parameters and restart experiment.";
-        DBG("errorStr"); // won't be graphically displayed... console only
+        MonitorCommunication::SendLog("errorStr"); // won't be graphically displayed... console only
         // we just on quit if an error happens
         std::this_thread::sleep_for(std::chrono::seconds(10)); // time before looking at the console
         throw std::runtime_error(errorStr.toStdString());
     }
     else
     {
-        std::cout << "Listening for OSC message on UDP port " << udpPort << std::endl;
+        MonitorCommunication::SendLog("Listening for OSC message on UDP port "
+                                      + boost::lexical_cast<std::string>(udpPort));
     }
 }
 

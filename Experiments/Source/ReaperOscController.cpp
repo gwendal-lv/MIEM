@@ -11,10 +11,13 @@
 #include <thread>
 #include <cmath>
 
+#include "boost/lexical_cast.hpp"
+
 #include "ReaperOscController.h"
 
 #include "OSCRecorder.h"
 
+#include "MonitorCommunication.h"
 
 
 ReaperOscController::ReaperOscController(int _tracksCount)
@@ -57,7 +60,8 @@ void ReaperOscController::oscBundleReceived (const OSCBundle & oscBundle)
 
 void ReaperOscController::RestartAndPlay(float tempo)
 {
-    std::cout << "[OSC -> REAPER]: REPLAY, TEMPO = " << tempo << std::endl;
+    MonitorCommunication::SendLog("[OSC -> REAPER]: REPLAY, TEMPO = "
+                                  + boost::lexical_cast<std::string>(tempo));
     
     // TEMPO set before playing
     String oscAddress = "/tempo/raw";
@@ -96,7 +100,7 @@ void ReaperOscController::RestartAndPlay(float tempo)
 }
 void ReaperOscController::Stop()
 {
-    std::cout << "[OSC -> REAPER]: STOP" << std::endl;
+    MonitorCommunication::SendLog("[OSC -> REAPER]: STOP");
     
     // STOP
     String oscAddress = "/stop";
@@ -120,9 +124,11 @@ void ReaperOscController::Stop()
 void ReaperOscController::SetTrackSolo_usingMutes(int trackNumber)
 {
     if (trackNumber <= 0)
-        std::cout << "[OSC -> REAPER]: mute pour TOUTES les tracks" << std::endl;
+        MonitorCommunication::SendLog("[OSC -> REAPER]: mute pour TOUTES les tracks");
     else
-        std::cout << "[OSC -> REAPER]: track " << trackNumber << " Solo." << std::endl;
+        MonitorCommunication::SendLog("[OSC -> REAPER]: track "
+                                      + boost::lexical_cast<std::string>(trackNumber)
+                                      + " Solo.");
     
     for (int i=1 ; i<=tracksCount ; i++)
     {
@@ -164,7 +170,7 @@ void ReaperOscController::sendMessageOrThrowException(OSCMessage& oscMessage)
 
 void ReaperOscController::displayErrorAndThrowException(String errorStr)
 {
-    DBG(errorStr);
+    MonitorCommunication::SendLog(errorStr.toStdString());
     std::this_thread::sleep_for(std::chrono::seconds(10)); // time before looking at the console
     throw std::runtime_error(errorStr.toStdString());
 }

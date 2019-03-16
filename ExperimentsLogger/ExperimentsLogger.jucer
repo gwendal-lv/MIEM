@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="akIBOy" name="ExperimentsLogger" projectType="guiapp" jucerVersion="5.4.3"
+              headerPath="../../../&#10;../../../MiamCommon/Source&#10;">
+  <MAINGROUP id="MwrBiG" name="ExperimentsLogger">
+    <GROUP id="{4E3F125C-BDF0-C45B-4BC9-BFD89F2DDF5F}" name="Resources_LFS">
+      <FILE id="Bvg0Ds" name="ExpeLogger_512at1.png" compile="0" resource="1"
+            file="../Resources_LFS/Icones_Logos/Exports/ExpeLogger_512at1.png"/>
+    </GROUP>
+    <GROUP id="{6BB85CC9-D5F0-FDFB-EEFF-D219F9128AAE}" name="MiemCommonSource">
+      <GROUP id="{B91B2137-DC4A-127C-0037-DB058876BEFA}" name="Utils">
+        <FILE id="HLrPMV" name="MiemVector.hpp" compile="0" resource="0" file="../MiamCommon/Source/MiemVector.hpp"/>
+        <GROUP id="{22E0B59F-81F6-AAC5-A6F4-3B584D7BBEA6}" name="AsyncParamChanges">
+          <FILE id="ik81Hn" name="AsyncParamChange.h" compile="0" resource="0"
+                file="../MiamCommon/Source/AsyncParamChange.h"/>
+          <FILE id="PuZWKs" name="LockFreeParamChangeSender.cpp" compile="1"
+                resource="0" file="../MiamCommon/Source/LockFreeParamChangeSender.cpp"/>
+          <FILE id="plVsBQ" name="LockFreeParamChangeSender.h" compile="0" resource="0"
+                file="../MiamCommon/Source/LockFreeParamChangeSender.h"/>
+          <FILE id="g38vVM" name="ParametersIds.h" compile="0" resource="0" file="../MiamCommon/Source/ParametersIds.h"/>
+        </GROUP>
+        <FILE id="RVYtYM" name="FrequencyMeasurer.cpp" compile="1" resource="0"
+              file="../MiamCommon/Source/FrequencyMeasurer.cpp"/>
+        <FILE id="iQfIMF" name="FrequencyMeasurer.h" compile="0" resource="0"
+              file="../MiamCommon/Source/FrequencyMeasurer.h"/>
+        <FILE id="gJleTH" name="MiamExceptions.h" compile="0" resource="0"
+              file="../MiamCommon/Source/MiamExceptions.h"/>
+        <FILE id="bHy1uW" name="PeriodicUpdateThread.cpp" compile="1" resource="0"
+              file="../MiamCommon/Source/PeriodicUpdateThread.cpp"/>
+        <FILE id="kKs1q1" name="PeriodicUpdateThread.h" compile="0" resource="0"
+              file="../MiamCommon/Source/PeriodicUpdateThread.h"/>
+        <FILE id="scXt3K" name="TextUtils.cpp" compile="1" resource="0" file="../MiamCommon/Source/TextUtils.cpp"/>
+        <FILE id="GeVkT8" name="TextUtils.h" compile="0" resource="0" file="../MiamCommon/Source/TextUtils.h"/>
+        <FILE id="MzfIK4" name="XmlUtils.cpp" compile="1" resource="0" file="../MiamCommon/Source/XmlUtils.cpp"/>
+        <FILE id="hMBcir" name="XmlUtils.h" compile="0" resource="0" file="../MiamCommon/Source/XmlUtils.h"/>
+      </GROUP>
+    </GROUP>
+    <GROUP id="{8FA97DB4-6D9D-588C-5D83-4E0AB9158482}" name="Source">
+      <FILE id="ac0Yi5" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+      <FILE id="fRa22z" name="MainComponent.cpp" compile="1" resource="0"
+            file="Source/MainComponent.cpp"/>
+      <FILE id="I59FxW" name="LoggerComponent.cpp" compile="1" resource="0"
+            file="Source/LoggerComponent.cpp"/>
+      <FILE id="zH9kTH" name="LoggerComponent.h" compile="0" resource="0"
+            file="Source/LoggerComponent.h"/>
+      <FILE id="bqqbKb" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX" extraCompilerFlags="-Wno-comma"
+               bigIcon="Bvg0Ds">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="ExpeLogger"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="ExpeLogger"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../../JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+    <XCODE_IPHONE targetFolder="Builds/iOS" iosDevelopmentTeamID="ZYQ9N85U6C" extraCompilerFlags="-Wno-comma"
+                  bigIcon="Bvg0Ds">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="ExpeLogger"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="ExpeLogger"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../../JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_IPHONE>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_osc" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+  <LIVE_SETTINGS>
+    <OSX/>
+  </LIVE_SETTINGS>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
+</JUCERPROJECT>

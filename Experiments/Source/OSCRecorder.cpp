@@ -15,6 +15,8 @@
 #include "boost/lexical_cast.hpp"
 //#include "boost/property_tree/ptree.hpp"
 
+#include "MonitorCommunication.h"
+
 #include "OSCRecorder.h"
 #include "OSCRecorderComponent.h"
 
@@ -77,7 +79,7 @@ void OSCRecorder::reinitExperiment()
     
     if (presets.size() > 0)
     {
-        std::cout << "REINITIALISATION SANS SAUVEGARDE DES DONNEES !!" << std::endl;
+        MonitorCommunication::SendLog("REINITIALISATION SANS SAUVEGARDE DES DONNEES !!");
         assert(false);
     }
     
@@ -119,13 +121,16 @@ void OSCRecorder::reinitExperiment()
         presets[indexInPresetsVector]->SetAppearanceIndex(i);
     }
     // - - - Display of presets indexes (simple check), and randomization map
-    std::cout << "Presets SynthId and isInterpo : ";
+    std::stringstream logStream;
+    logStream << "Presets SynthId and isInterpo : ";
     for (int i=0 ; i<presets.size() ; i++)
-        std::cout << presets[i]->GetSynthId() << "/" << presets[i]->GetIsFoundFromInterpolation() << " ";
-    std::cout << std::endl << "Presets randomised indexes:     ";
+        logStream << presets[i]->GetSynthId() << "/" << presets[i]->GetIsFoundFromInterpolation() << " ";
+    MonitorCommunication::SendLog(logStream.str());
+    std::stringstream logStream2;
+    logStream2 << "Presets randomised indexes:     ";
     for (int i=0 ; i<presetRandomIdx.size() ; i++)
-        std::cout << presetRandomIdx.at(-(int)(TrialPresetsCount) + i) << "   ";
-    std::cout << std::endl;
+        logStream2 << presetRandomIdx.at(-(int)(TrialPresetsCount) + i) << "   ";
+    MonitorCommunication::SendLog(logStream2.str());
     
     // - - - Init of main counter
     currentPresetStep = -(int)TrialPresetsCount - 1;
@@ -142,7 +147,7 @@ void OSCRecorder::tryConnectSocketAndContinueExpe()
     {
         String infoString = "OK, TCP Socket connected to " + String(tcpServerName) + " on port " + String(tcpServerPort);
         this->mainComponent->backLabel->setText(infoString, NotificationType::sendNotification);
-        DBG(infoString);
+        MonitorCommunication::SendLog(infoString.toStdString());
         Timer::callAfterDelay(1000,
                               [this] { this->nextExperimentStep(); });
     }
@@ -305,6 +310,8 @@ void OSCRecorder::changeState(ExperimentState newState)
         case ExperimentState::SearchingPreset:
             reaperController->RestartAndPlay(presets[presetRandomIdx[currentPresetStep]]->GetTempo());
             selectNewMiemScene(); // actual playable scene
+            currentResearchStartTimePt = MiemClock::now();
+            researchDurationTimer->startTimer(ResearchTimeMax_ms);
             startRecording();
             break;
             
@@ -340,13 +347,19 @@ void OSCRecorder::changeState(ExperimentState newState)
         if (ExperimentStateUtils::IsInteractiveExperimentState(state))
         {
             if (currentPresetStep < ExperimentPresetsCount) // si pas encore fini
-                std::cout << "[Interactive experiment in progress...] " << ExperimentStateUtils::GetName(state) << " #" << currentPresetStep << " (" << presets[presetRandomIdx[currentPresetStep]]->GetName() << ")" << std::endl;
+            {
+                std::stringstream logStream;
+                logStream << "[Interactive experiment in progress...] " << ExperimentStateUtils::GetName(state) << " #" << currentPresetStep << " (" << presets[presetRandomIdx[currentPresetStep]]->GetName() << ")";
+                MonitorCommunication::SendLog(logStream.str());
+            }
             recorderComponent.DisplayNewState(state, currentPresetStep, ExperimentPresetsCount);
         }
         // other state : simple name display
         else
         {
-            std::cout << "[Current experiment state: ] " <<  ExperimentStateUtils::GetName(state) << std::endl;
+            std::stringstream logStream;
+            logStream << "[Current experiment state: ] " <<  ExperimentStateUtils::GetName(state);
+            MonitorCommunication::SendLog(logStream.str());
             recorderComponent.DisplayNewState(state, currentPresetStep, ExperimentPresetsCount);
         }
     }
@@ -406,13 +419,19 @@ void OSCRecorder::selectNewMiemScene(bool selectEmptyScene)
 // ================== periodic updates =============================
 void OSCRecorder::timerCallback()
 {
+    // OSC buffer emptying
     presets[presetRandomIdx[currentPresetStep]]->AddSamples(oscRealtimeListener->GetBufferedSamples());
+    
+    // Graphical forced update
+    auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(MiemClock::now() - currentResearchStartTimePt).count();
+    recorderComponent.UpdateRemainingTimeSlider((double)(ResearchTimeMax_ms - duration_ms) / 1000.0,
+                                                (double)(ResearchTimeMax_ms) / 1000.0);
 }
 void OSCRecorder::AttributeTimerCallback(juce::Timer* timer)
 {
     if (timer == researchDurationTimer.get())
     {
-        
+        recorderComponent.simulateClickOnDisplayedButton();
     }
     else
         assert(false); // no other timer known at the moment...
@@ -498,7 +517,7 @@ bool OSCRecorder::OnQuitRequest()
 void OSCRecorder::displayError(String errorMsg)
 {
     mainComponent->backLabel->setText(errorMsg, NotificationType::sendNotification);
-    DBG(errorMsg);
+    MonitorCommunication::SendLog(errorMsg.toStdString());
 }
 
 
@@ -531,7 +550,8 @@ void OSCRecorder::OnConnectionLost()
 // ================== Events to MIEM Controller via network ==================
 bool OSCRecorder::selectMiemControllerScene(int sceneIndex)
 {
-    std::cout << "[OSC -> MIEM Controller] : affichage scène " << sceneIndex << std::endl;
+    MonitorCommunication::SendLog("[OSC -> MIEM Controller] : affichage scène "
+                                  + boost::lexical_cast<std::string>(sceneIndex));
     
     Miam::AsyncParamChange paramChange(Miam::AsyncParamChange::Scene);
     paramChange.Id1 = sceneIndex;
@@ -589,10 +609,10 @@ void OSCRecorder::createNewDataFiles()
     infoFilePath = filesSavingPath + expName + /*"_" + asciiStartTime +*/ "_info.xml";
     mainComponent->expeLabel->setText(dataFilePath, NotificationType::dontSendNotification);
     mainComponent->expeLabel2->setText(infoFilePath, NotificationType::dontSendNotification);
-    DBG("--------------- FILE NAMES ------------------");
-    DBG(dataFilePath);
-    DBG(infoFilePath);
-    DBG("--------------- FILE NAMES ------------------");
+    MonitorCommunication::SendLog("--------------- FILE NAMES ------------------");
+    MonitorCommunication::SendLog(dataFilePath);
+    MonitorCommunication::SendLog(infoFilePath);
+    MonitorCommunication::SendLog("--------------- FILE NAMES ------------------");
     
     // First save, to check the write rights on this machine
     saveEverythingToFiles(currentPresetStep); // valeur non-valide

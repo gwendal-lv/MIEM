@@ -19,12 +19,10 @@ static const unsigned char temp_binary_data_1[] =
 "\n"
 "\n"
 "Afin d'obtenir le meilleur score possible, nous vous rappelons les 2 conseils :\n"
-"1) Il faut garder les points blancs \xc3\xa0 l'int\xc3\xa9rieur des formes g\xc3\xa9om\xc3\xa9triques\n"
-"2) Pour bien comprendre les effets sonores, il ne faut pas d\xc3\xa9placer les points blancs trop vite\n"
 "\n"
-"\n"
-"Souvenez-vous que l'objectif est de retrouver le son de synth\xc3\xa9tiseur le plus rapidement possible :\n"
-"d\xc3\xa8s que vous pensez \xc3\xaatre proche du r\xc3\xa9sultat, vous pouvez cliquer sur OK ou appuyer sur la barre d'espace.\n";
+"1) Pour bien comprendre les effets sonores, il ne faut pas d\xc3\xa9placer les points blancs trop vite.\n"
+"2) L'objectif est de retrouver le son de synth\xc3\xa9tiseur le plus rapidement possible. D\xc3\xa8s que vous pensez \xc3\xaatre proche du r\xc3\xa9sultat, vous pouvez donc cliquer sur OK ou appuyer sur la touche verte du clavier.\n"
+"\n";
 
 const char* Recorder_AfterTrial_FR_txt = (const char*) temp_binary_data_1;
 
@@ -39,22 +37,21 @@ static const unsigned char temp_binary_data_3[] =
 "Pour cette exp\xc3\xa9rience, l'objectif est de retrouver rapidement un son particulier de synth\xc3\xa9tiseur de musique.\n"
 "\n"
 "\n"
-"Au d\xc3\xa9part, pendant une quinzaine de secondes environ, vous allez \xc3\xa9""couter un son qu'il faudra retrouver.\n"
+"Au d\xc3\xa9part, pendant une vingtaine de secondes environ, vous allez \xc3\xa9""couter un son qu'il faudra retrouver.\n"
 "\n"
 "Ensuite, en d\xc3\xa9pla\xc3\xa7""ant des points blancs sur une tablette tactile, vous pourrez chercher et retrouver ce son de synth\xc3\xa9tiseur.\n"
 "Chaque forme g\xc3\xa9om\xc3\xa9trique \xc3\xa0 l'\xc3\xa9""cran est li\xc3\xa9""e \xc3\xa0 un param\xc3\xa8tre de synth\xc3\xa9tiseur, d'effet audio, ou de bien st\xc3\xa9r\xc3\xa9o gauche/droite.\n"
 "\n"
-"Le cycle d'\xc3\xa9""coute/recherche aura lieu une vingtaine de fois, pour une exp\xc3\xa9rience qui durera au total entre 20 et 25 minutes.\n"
+"\n"
+"Pour obtenir un score maximal, nous vous donnons \xc3\xa0 pr\xc3\xa9sent 2 conseils :\n"
+"\n"
+"1) Pour bien comprendre les effets sonores, il ne faut pas d\xc3\xa9placer les points blancs trop vite.\n"
+"2) L'objectif est de retrouver le son de synth\xc3\xa9tiseur le plus rapidement possible. D\xc3\xa8s que vous pensez \xc3\xaatre proche du r\xc3\xa9sultat, vous pouvez donc cliquer sur OK ou appuyer sur la touche verte du clavier.\n"
 "\n"
 "\n"
 "\n"
-"\n"
-"Afin d'obtenir le meilleur score possible, nous vous donnons d\xc3\xa8s maintenant 2 conseils :\n"
-"1) Il faut garder les points blancs \xc3\xa0 l'int\xc3\xa9rieur des formes g\xc3\xa9om\xc3\xa9triques\n"
-"2) Pour bien comprendre les effets sonores, il ne faut pas d\xc3\xa9placer les points blancs trop vite\n"
-"\n"
-"\n"
-"D\xc3\xa8s que vous pensez \xc3\xaatre proche de l'objectif, cliquez sur OK ou appuyez sur la barre d'espace du clavier.\n";
+"Le cycle d'\xc3\xa9""coute/recherche aura lieu 20 fois, pour une exp\xc3\xa9rience qui durera au total entre 20 et 25 minutes.\n"
+"\n";
 
 const char* Recorder_Intro_FR_txt = (const char*) temp_binary_data_3;
 
@@ -10541,9 +10538,9 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
     switch (hash)
     {
         case 0xa549d1de:  numBytes = 47; return Recorder_AfterTrial_EN_txt;
-        case 0xa7370881:  numBytes = 535; return Recorder_AfterTrial_FR_txt;
+        case 0xa7370881:  numBytes = 456; return Recorder_AfterTrial_FR_txt;
         case 0xcd874cee:  numBytes = 47; return Recorder_Intro_EN_txt;
-        case 0xcf748391:  numBytes = 990; return Recorder_Intro_FR_txt;
+        case 0xcf748391:  numBytes = 981; return Recorder_Intro_FR_txt;
         case 0x340941eb:  numBytes = 4347; return Translation_FR_txt;
         case 0x896b2391:  numBytes = 32310; return _4_Faders_png;
         case 0xffae406b:  numBytes = 35496; return _4_Interpolation_areas_png;

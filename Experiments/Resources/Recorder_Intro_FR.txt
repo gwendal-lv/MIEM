@@ -1,19 +1,18 @@
 Pour cette expérience, l'objectif est de retrouver rapidement un son particulier de synthétiseur de musique.
 
 
-Au départ, pendant une quinzaine de secondes environ, vous allez écouter un son qu'il faudra retrouver.
+Au départ, pendant une vingtaine de secondes environ, vous allez écouter un son qu'il faudra retrouver.
 
 Ensuite, en déplaçant des points blancs sur une tablette tactile, vous pourrez chercher et retrouver ce son de synthétiseur.
 Chaque forme géométrique à l'écran est liée à un paramètre de synthétiseur, d'effet audio, ou de bien stéréo gauche/droite.
 
-Le cycle d'écoute/recherche aura lieu une vingtaine de fois, pour une expérience qui durera au total entre 20 et 25 minutes.
+
+Pour obtenir un score maximal, nous vous donnons à présent 2 conseils :
+
+1) Pour bien comprendre les effets sonores, il ne faut pas déplacer les points blancs trop vite.
+2) L'objectif est de retrouver le son de synthétiseur le plus rapidement possible. Dès que vous pensez être proche du résultat, vous pouvez donc cliquer sur OK ou appuyer sur la touche verte du clavier.
 
 
 
+Le cycle d'écoute/recherche aura lieu 20 fois, pour une expérience qui durera au total entre 20 et 25 minutes.
 
-Afin d'obtenir le meilleur score possible, nous vous donnons dès maintenant 2 conseils :
-1) Il faut garder les points blancs à l'intérieur des formes géométriques
-2) Pour bien comprendre les effets sonores, il ne faut pas déplacer les points blancs trop vite
-
-
-Dès que vous pensez être proche de l'objectif, cliquez sur OK ou appuyez sur la barre d'espace du clavier.

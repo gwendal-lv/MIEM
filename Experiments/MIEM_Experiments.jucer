@@ -12,6 +12,10 @@
             file="../MiamCommon/Source/InterprocessControlBlock.h"/>
     </GROUP>
     <GROUP id="{302B9714-4F66-36D7-B352-280078CFEC1B}" name="Source">
+      <FILE id="Ti0GWN" name="MonitorCommunication.cpp" compile="1" resource="0"
+            file="Source/MonitorCommunication.cpp"/>
+      <FILE id="NLX4by" name="MonitorCommunication.h" compile="0" resource="0"
+            file="Source/MonitorCommunication.h"/>
       <FILE id="JEjEaK" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="ZQ3oBD" name="ReaperOscController.cpp" compile="1" resource="0"
             file="Source/ReaperOscController.cpp"/>
