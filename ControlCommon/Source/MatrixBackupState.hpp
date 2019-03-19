@@ -69,8 +69,11 @@ namespace Miam
             
             // précision max = celle des float pour l'OSC entre 0 et 1...
             linearSignificantDifference = (T) 0.000001;
-            // TEMP sinon Reaper lâche complètement !
-            linearSignificantDifference = (T) 0.02;
+            // TEMP sinon Reaper lâche complètement ! en OSC
+            //linearSignificantDifference = (T) 0.02;
+            // Avec BRIDGE OSC-MIDI, on prend une différence environ 4 * plus petite que celle
+            // du MIDI = 1/128 = 0,0078125
+            linearSignificantDifference = (T) 0.002;
             
             // Sécurité : on vérifie que la différence minimale ne soit pas zéro
             assert(linearSignificantDifference != ((T)0));

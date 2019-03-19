@@ -1,30 +1,30 @@
 /*
   ==============================================================================
 
-    MonitorCommunication.cpp
+    MonitoringServer.cpp
     Created: 16 Mar 2019 3:38:41pm
     Author:  Gwendal Le Vaillant
 
   ==============================================================================
 */
 
-#include "MonitorCommunication.h"
+#include "MonitoringServer.h"
 
 // Problème avec le singleton... destructeur appelé après que Juce ne fasse toutes
 // les vérifications de leaks....
-MonitorCommunication* MonitorCommunication::mainInstance = nullptr;
+MonitoringServer* MonitoringServer::mainInstance = nullptr;
 
 
-void MonitorCommunication::SendLog(std::string info)
+void MonitoringServer::SendLog(std::string info)
 {
     if (mainInstance == nullptr)
-        mainInstance = new MonitorCommunication();
+        mainInstance = new MonitoringServer();
     
     mainInstance->sendLog(info);
 }
 
 
-MonitorCommunication::MonitorCommunication()
+MonitoringServer::MonitoringServer()
 {
     for (int i=0 ; i<serversCount ; i++)
     {
@@ -36,7 +36,7 @@ MonitorCommunication::MonitorCommunication()
     Timer::callAfterDelay(initialEnqueuingDuration_ms,
                           [this] { isInitialEnqueuingFinished = true; } );
 }
-MonitorCommunication::~MonitorCommunication()
+MonitoringServer::~MonitoringServer()
 {
     // dans le doute : on supprime d'abord les connections, puis les serveurs
     // Car Juce envoie toujours des assertions pour leak de connection,
@@ -49,18 +49,18 @@ MonitorCommunication::~MonitorCommunication()
 }
 
 
-InterprocessConnection * MonitorCommunication::CreateConnectionObject(MiemLogServer* requestingServer)
+InterprocessConnection * MonitoringServer::CreateConnectionObject(MiemLogServer* requestingServer)
 {
     connections.push_back(std::make_unique<MiemLogConnection>(this));
     return connections[connections.size() - 1].get();
 }
-void MonitorCommunication::OnConnectionLost(MiemLogConnection* /*miemConnection*/)
+void MonitoringServer::OnConnectionLost(MiemLogConnection* /*miemConnection*/)
 {
     // connections destructor call will be delayed on juce message thread
     Timer::callAfterDelay(10, [this] { deleteLostConnections(); });
 }
 
-void MonitorCommunication::sendLog(const std::string& info)
+void MonitoringServer::sendLog(const std::string& info)
 {
     // at beginning, data is put in a queue, while we wait for all waiting
     // clients to actually establish a TCP connection
@@ -104,7 +104,7 @@ void MonitorCommunication::sendLog(const std::string& info)
 
 
 
-void MonitorCommunication::deleteLostConnections()
+void MonitoringServer::deleteLostConnections()
 {
     // recherche bourrine, et suppression dans le tableau
     // de toute les connections perdues...

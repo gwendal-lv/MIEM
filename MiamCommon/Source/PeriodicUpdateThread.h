@@ -37,6 +37,17 @@ namespace Miam
         
         public :
         PeriodicUpdateThread(std::string name_);
+        
+        
+        
+        
+        // - - - - - Static functions for threads manipulation - - - - -
+        /// \brief If possible, sets the name of the calling thread using available
+        /// POSIX interface on current OS.
+        static void SetThreadName(std::string name);
+        /// \brief If possible, sets the current thread to high priority using
+        /// available POSIX interface on current OS.
+        static void SetHighThreadPriority();
     };
     
     

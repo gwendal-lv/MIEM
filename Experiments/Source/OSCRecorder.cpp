@@ -15,7 +15,7 @@
 #include "boost/lexical_cast.hpp"
 //#include "boost/property_tree/ptree.hpp"
 
-#include "MonitorCommunication.h"
+#include "MonitoringServer.h"
 
 #include "OSCRecorder.h"
 #include "OSCRecorderComponent.h"
@@ -75,11 +75,11 @@ void OSCRecorder::reinitExperiment()
     stateBeforeConnectionLost = ExperimentState::IntroDescriptionDisplayed; // forced fake state
     
     // OSC UDP listener (no check for connection stability....)
-    oscRealtimeListener = std::make_shared<OSCRealtimeListener>(udpOscPort, startTimePt);
+    oscRealtimeListener = std::make_shared<OSCListenerForwarder>(udpOscPort, startTimePt);
     
     if (presets.size() > 0)
     {
-        MonitorCommunication::SendLog("REINITIALISATION SANS SAUVEGARDE DES DONNEES !!");
+        MonitoringServer::SendLog("REINITIALISATION SANS SAUVEGARDE DES DONNEES !!");
         assert(false);
     }
     
@@ -125,12 +125,12 @@ void OSCRecorder::reinitExperiment()
     logStream << "Presets SynthId and isInterpo : ";
     for (int i=0 ; i<presets.size() ; i++)
         logStream << presets[i]->GetSynthId() << "/" << presets[i]->GetIsFoundFromInterpolation() << " ";
-    MonitorCommunication::SendLog(logStream.str());
+    MonitoringServer::SendLog(logStream.str());
     std::stringstream logStream2;
     logStream2 << "Presets randomised indexes:     ";
     for (int i=0 ; i<presetRandomIdx.size() ; i++)
         logStream2 << presetRandomIdx.at(-(int)(TrialPresetsCount) + i) << "   ";
-    MonitorCommunication::SendLog(logStream2.str());
+    MonitoringServer::SendLog(logStream2.str());
     
     // - - - Init of main counter
     currentPresetStep = -(int)TrialPresetsCount - 1;
@@ -147,7 +147,7 @@ void OSCRecorder::tryConnectSocketAndContinueExpe()
     {
         String infoString = "OK, TCP Socket connected to " + String(tcpServerName) + " on port " + String(tcpServerPort);
         this->mainComponent->backLabel->setText(infoString, NotificationType::sendNotification);
-        MonitorCommunication::SendLog(infoString.toStdString());
+        MonitoringServer::SendLog(infoString.toStdString());
         Timer::callAfterDelay(1000,
                               [this] { this->nextExperimentStep(); });
     }
@@ -350,7 +350,7 @@ void OSCRecorder::changeState(ExperimentState newState)
             {
                 std::stringstream logStream;
                 logStream << "[Interactive experiment in progress...] " << ExperimentStateUtils::GetName(state) << " #" << currentPresetStep << " (" << presets[presetRandomIdx[currentPresetStep]]->GetName() << ")";
-                MonitorCommunication::SendLog(logStream.str());
+                MonitoringServer::SendLog(logStream.str());
             }
             recorderComponent.DisplayNewState(state, currentPresetStep, ExperimentPresetsCount);
         }
@@ -359,7 +359,7 @@ void OSCRecorder::changeState(ExperimentState newState)
         {
             std::stringstream logStream;
             logStream << "[Current experiment state: ] " <<  ExperimentStateUtils::GetName(state);
-            MonitorCommunication::SendLog(logStream.str());
+            MonitoringServer::SendLog(logStream.str());
             recorderComponent.DisplayNewState(state, currentPresetStep, ExperimentPresetsCount);
         }
     }
@@ -517,7 +517,7 @@ bool OSCRecorder::OnQuitRequest()
 void OSCRecorder::displayError(String errorMsg)
 {
     mainComponent->backLabel->setText(errorMsg, NotificationType::sendNotification);
-    MonitorCommunication::SendLog(errorMsg.toStdString());
+    MonitoringServer::SendLog(errorMsg.toStdString());
 }
 
 
@@ -550,7 +550,7 @@ void OSCRecorder::OnConnectionLost()
 // ================== Events to MIEM Controller via network ==================
 bool OSCRecorder::selectMiemControllerScene(int sceneIndex)
 {
-    MonitorCommunication::SendLog("[OSC -> MIEM Controller] : affichage scène "
+    MonitoringServer::SendLog("[OSC -> MIEM Controller] : affichage scène "
                                   + boost::lexical_cast<std::string>(sceneIndex));
     
     Miam::AsyncParamChange paramChange(Miam::AsyncParamChange::Scene);
@@ -609,10 +609,10 @@ void OSCRecorder::createNewDataFiles()
     infoFilePath = filesSavingPath + expName + /*"_" + asciiStartTime +*/ "_info.xml";
     mainComponent->expeLabel->setText(dataFilePath, NotificationType::dontSendNotification);
     mainComponent->expeLabel2->setText(infoFilePath, NotificationType::dontSendNotification);
-    MonitorCommunication::SendLog("--------------- FILE NAMES ------------------");
-    MonitorCommunication::SendLog(dataFilePath);
-    MonitorCommunication::SendLog(infoFilePath);
-    MonitorCommunication::SendLog("--------------- FILE NAMES ------------------");
+    MonitoringServer::SendLog("--------------- FILE NAMES ------------------");
+    MonitoringServer::SendLog(dataFilePath);
+    MonitoringServer::SendLog(infoFilePath);
+    MonitoringServer::SendLog("--------------- FILE NAMES ------------------");
     
     // First save, to check the write rights on this machine
     saveEverythingToFiles(currentPresetStep); // valeur non-valide

@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    MonitorCommunication.h
+    MonitoringServer.h
     Created: 16 Mar 2019 3:38:41pm
     Author:  Gwendal Le Vaillant
 
@@ -19,15 +19,15 @@
 
 /// \brief Singleton class for sending monitoring data to devices
 /// connected to this server.
-class MonitorCommunication : public DeletedAtShutdown
+class MonitoringServer : public DeletedAtShutdown
 {
     
     class MiemLogServer : public InterprocessConnectionServer
     {
         private :
-        MonitorCommunication* parent;
+        MonitoringServer* parent;
         public :
-        MiemLogServer(MonitorCommunication* _parent)
+        MiemLogServer(MonitoringServer* _parent)
         : parent(_parent) {}
         ~MiemLogServer() {}
         virtual InterprocessConnection * createConnectionObject () override
@@ -37,9 +37,9 @@ class MonitorCommunication : public DeletedAtShutdown
     class MiemLogConnection : public InterprocessConnection
     {
         private :
-        MonitorCommunication* parent;
+        MonitoringServer* parent;
         public :
-        MiemLogConnection(MonitorCommunication* _parent)
+        MiemLogConnection(MonitoringServer* _parent)
         : parent(_parent) {}
         virtual void     connectionMade () override
         {}
@@ -57,7 +57,7 @@ class MonitorCommunication : public DeletedAtShutdown
     
     // ------------ Singleton interface and attributes ----------
     private :
-    static MonitorCommunication* mainInstance;
+    static MonitoringServer* mainInstance;
     public :
     
     /// \brief Sends a message to all opened connections.
@@ -85,10 +85,10 @@ class MonitorCommunication : public DeletedAtShutdown
     // ========== METHODS ==========
     private :
     /// \brief Constructeur privé car singleton
-    MonitorCommunication();
+    MonitoringServer();
     public :
     /// \brief Destructeur doit par contre être public
-    ~MonitorCommunication();
+    ~MonitoringServer();
 
     protected : // fonction callback pour les connections et les objets-serveurs
     InterprocessConnection * CreateConnectionObject(MiemLogServer*);

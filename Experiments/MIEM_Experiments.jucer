@@ -3,19 +3,31 @@
 <JUCERPROJECT id="DytN0V" name="MIEM Experiments" projectType="guiapp" jucerVersion="5.4.3"
               companyName="Gwendal Le Vaillant" bundleIdentifier="com.gwendallv.MIEMExperiments"
               defines="__MIEM_SHORT_DELAYS__NO" reportAppUsage="0" displaySplashScreen="0"
-              projectLineFeed="&#10;" headerPath="../../../&#10;../../../MiamCommon/Source&#10;">
+              projectLineFeed="&#10;" headerPath="../../../&#10;../../../MiamCommon/Source&#10;"
+              userNotes="Module JUCE_OPENGL rajout&#233; pour avoir acc&#232;s aux objets Vector3D">
   <MAINGROUP id="CesC75" name="MIEM Experiments">
     <GROUP id="{BD7228E3-B907-311E-3EC6-609760808B73}" name="MiemCommon">
+      <FILE id="ffLDPP" name="MiemVector.hpp" compile="0" resource="0" file="../MiamCommon/Source/MiemVector.hpp"/>
+      <FILE id="sjoiVs" name="MiamMath.cpp" compile="1" resource="0" file="../MiamCommon/Source/MiamMath.cpp"/>
+      <FILE id="ijLmqy" name="MiamMath.h" compile="0" resource="0" file="../MiamCommon/Source/MiamMath.h"/>
       <FILE id="aajuQ9" name="AsyncParamChange.h" compile="0" resource="0"
             file="../MiamCommon/Source/AsyncParamChange.h"/>
       <FILE id="OJSxW4" name="InterprocessControlBlock.h" compile="0" resource="0"
             file="../MiamCommon/Source/InterprocessControlBlock.h"/>
+      <FILE id="ZoVuL4" name="FrequencyMeasurer.cpp" compile="1" resource="0"
+            file="../MiamCommon/Source/FrequencyMeasurer.cpp"/>
+      <FILE id="tvdDTd" name="FrequencyMeasurer.h" compile="0" resource="0"
+            file="../MiamCommon/Source/FrequencyMeasurer.h"/>
+      <FILE id="fp9wbb" name="PeriodicUpdateThread.cpp" compile="1" resource="0"
+            file="../MiamCommon/Source/PeriodicUpdateThread.cpp"/>
+      <FILE id="ezQDfW" name="PeriodicUpdateThread.h" compile="0" resource="0"
+            file="../MiamCommon/Source/PeriodicUpdateThread.h"/>
     </GROUP>
     <GROUP id="{302B9714-4F66-36D7-B352-280078CFEC1B}" name="Source">
-      <FILE id="Ti0GWN" name="MonitorCommunication.cpp" compile="1" resource="0"
-            file="Source/MonitorCommunication.cpp"/>
-      <FILE id="NLX4by" name="MonitorCommunication.h" compile="0" resource="0"
-            file="Source/MonitorCommunication.h"/>
+      <FILE id="L0Fsov" name="MonitoringServer.cpp" compile="1" resource="0"
+            file="Source/MonitoringServer.cpp"/>
+      <FILE id="c7oNoL" name="MonitoringServer.h" compile="0" resource="0"
+            file="Source/MonitoringServer.h"/>
       <FILE id="JEjEaK" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="ZQ3oBD" name="ReaperOscController.cpp" compile="1" resource="0"
             file="Source/ReaperOscController.cpp"/>
@@ -30,10 +42,10 @@
               file="Source/MiemExpePreset.cpp"/>
         <FILE id="Tqr1a7" name="MiemExpePreset.h" compile="0" resource="0"
               file="Source/MiemExpePreset.h"/>
-        <FILE id="NQoXB9" name="OSCRealtimeListener.cpp" compile="1" resource="0"
-              file="Source/OSCRealtimeListener.cpp"/>
-        <FILE id="rMQM5d" name="OSCRealtimeListener.h" compile="0" resource="0"
-              file="Source/OSCRealtimeListener.h"/>
+        <FILE id="NQoXB9" name="OSCListenerForwarder.cpp" compile="1" resource="0"
+              file="Source/OSCListenerForwarder.cpp"/>
+        <FILE id="rMQM5d" name="OSCListenerForwarder.h" compile="0" resource="0"
+              file="Source/OSCListenerForwarder.h"/>
         <FILE id="qwCanD" name="OSCRecorderConnection.cpp" compile="1" resource="0"
               file="Source/OSCRecorderConnection.cpp"/>
         <FILE id="sNF7bS" name="OSCRecorderConnection.h" compile="0" resource="0"
@@ -105,6 +117,7 @@
         <MODULEPATH id="juce_gui_basics" path="../../../JUCE/modules"/>
         <MODULEPATH id="juce_gui_extra" path="../../../JUCE/modules"/>
         <MODULEPATH id="juce_osc" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
     <VS2017 targetFolder="Builds/VisualStudio2017">
@@ -122,6 +135,7 @@
         <MODULEPATH id="juce_gui_basics" path="../../../JUCE/modules"/>
         <MODULEPATH id="juce_gui_extra" path="../../../JUCE/modules"/>
         <MODULEPATH id="juce_osc" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </VS2017>
   </EXPORTFORMATS>
@@ -134,6 +148,7 @@
     <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_osc" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
   </MODULES>
   <LIVE_SETTINGS>

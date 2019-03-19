@@ -23,12 +23,13 @@ namespace bptree = boost::property_tree;
 
 
 
-struct MiemSample {
+template<typename T>
+class MiemSample {
+    public :
     int time_ms; ///< Time of reception of the sample, in milliseconds since the beginning of experiment.
     int parameterIndex; ///< Index of the parameter concerned by this sample.
-    float value; ///< Actual value of the sample.
+    T value; ///< Actual value of the sample.
 };
-typedef struct MiemSample MiemSample;
 
 
 class MiemExpePreset {
@@ -65,8 +66,8 @@ class MiemExpePreset {
     double parametersMin;
     double parametersMax;
     
-    std::vector<MiemSample> samples;
-    std::vector<MiemSample> sortedSamples;
+    std::vector<MiemSample<float>> samples;
+    std::vector<MiemSample<float>> sortedSamples;
 
     
     
@@ -107,7 +108,7 @@ class MiemExpePreset {
     std::shared_ptr<std::string> GetSortedSamples_CSV();
 
     // - - - - - Samples management - - - - -
-    void AddSamples(const std::vector<MiemSample> & newSamples);
+    void AddSamples(const std::vector<MiemSample<float>> & newSamples);
     /// \brief Trie les samples par paramètre (en supposant que
     /// les temps sont parfaitement croissants)
     void SortSamples();

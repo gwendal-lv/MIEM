@@ -28,7 +28,12 @@
 
 
 
-#include "IDrawableArea.h"
+// Typedefs originally from : //#include "IDrawableArea.h"
+#include "boost/geometry.hpp"
+#include "boost/geometry/geometries/geometries.hpp"
+#include "boost/geometry/geometries/polygon.hpp"
+typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> bpt;
+typedef boost::geometry::model::polygon<bpt> bpolygon;
 
 
 
@@ -71,9 +76,10 @@ namespace Miam
 
 		static bpt ComputeIntersectionPoint(bpt A, bpt B, bpt C, bpt D);
         
-        /// \brief Remet la valeur dans l'intervalle
+        /// \brief Clamps the given value to the given interval. Lower and  bounds
+        /// are inclusive.
         ///
-        /// Parce que ce n'est pas encore dans la STL avec le C++11...
+        /// \remark Parce que ce n'est pas encore dans la STL avec le C++11...
         template<typename T>
         inline static T Clamp(T value, T lowerBound, T upperBound)
         {

@@ -19,7 +19,7 @@
 #include "boost/property_tree/xml_parser.hpp"
 namespace bptree = boost::property_tree;
 
-#include "OSCRealtimeListener.h" // MiemClock
+#include "OSCListenerForwarder.h" // MiemClock
 
 #include "ExperimentState.h"
 #include "MiemExpePreset.h"
@@ -30,7 +30,7 @@ namespace bptree = boost::property_tree;
 #include "ReaperOscController.h"
 
 class OSCRecorderComponent;
-class OSCRealtimeListener;
+class OSCListenerForwarder;
 class MainComponent;
 
 class OSCRecorderTimer; // defined at end of file
@@ -105,7 +105,7 @@ class OSCRecorder : public UserQuestionsManager,
     // sub-modules, init at construction only
     OSCRecorderComponent& recorderComponent;
     std::shared_ptr<OSCRecorderConnection> tcpConnection;
-    std::shared_ptr<OSCRealtimeListener> oscRealtimeListener;
+    std::shared_ptr<OSCListenerForwarder> oscRealtimeListener;
     std::shared_ptr<ReaperOscController> reaperController;
     
     bool hasConnectionBeenLostDuringLastStep = false;

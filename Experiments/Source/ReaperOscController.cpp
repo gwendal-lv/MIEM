@@ -17,7 +17,7 @@
 
 #include "OSCRecorder.h"
 
-#include "MonitorCommunication.h"
+#include "MonitoringServer.h"
 
 
 ReaperOscController::ReaperOscController(int _tracksCount)
@@ -60,7 +60,7 @@ void ReaperOscController::oscBundleReceived (const OSCBundle & oscBundle)
 
 void ReaperOscController::RestartAndPlay(float tempo)
 {
-    MonitorCommunication::SendLog("[OSC -> REAPER]: REPLAY, TEMPO = "
+    MonitoringServer::SendLog("[OSC -> REAPER]: REPLAY, TEMPO = "
                                   + boost::lexical_cast<std::string>(tempo));
     
     // TEMPO set before playing
@@ -100,7 +100,7 @@ void ReaperOscController::RestartAndPlay(float tempo)
 }
 void ReaperOscController::Stop()
 {
-    MonitorCommunication::SendLog("[OSC -> REAPER]: STOP");
+    MonitoringServer::SendLog("[OSC -> REAPER]: STOP");
     
     // STOP
     String oscAddress = "/stop";
@@ -124,9 +124,9 @@ void ReaperOscController::Stop()
 void ReaperOscController::SetTrackSolo_usingMutes(int trackNumber)
 {
     if (trackNumber <= 0)
-        MonitorCommunication::SendLog("[OSC -> REAPER]: mute pour TOUTES les tracks");
+        MonitoringServer::SendLog("[OSC -> REAPER]: mute pour TOUTES les tracks");
     else
-        MonitorCommunication::SendLog("[OSC -> REAPER]: track "
+        MonitoringServer::SendLog("[OSC -> REAPER]: track "
                                       + boost::lexical_cast<std::string>(trackNumber)
                                       + " Solo.");
     
@@ -170,7 +170,7 @@ void ReaperOscController::sendMessageOrThrowException(OSCMessage& oscMessage)
 
 void ReaperOscController::displayErrorAndThrowException(String errorStr)
 {
-    MonitorCommunication::SendLog(errorStr.toStdString());
+    MonitoringServer::SendLog(errorStr.toStdString());
     std::this_thread::sleep_for(std::chrono::seconds(10)); // time before looking at the console
     throw std::runtime_error(errorStr.toStdString());
 }
