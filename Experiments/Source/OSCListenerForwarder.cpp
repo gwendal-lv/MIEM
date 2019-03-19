@@ -171,10 +171,11 @@ void OSCListenerForwarder::oscMessageReceived (const OSCMessage &message)
     
     // - - - - - si tout s'est bien passé - - - - -
     // On discrétise/quantifie tout d'abord l'info
-    // pour avoir une erreur moyenne de quantification nulle, on prend l'arrondi...
-    // ... mais il faut alors faire attention aux valeurs à 2^N -> à réduire à 2^N - 1
-    sampleValue = std::round( ((double) midiResolution) * sampleValue ); // valeur int , ici
-    midiSample.value = Miam::Math::Clamp<int>((int) sampleValue, 0, midiResolution-1);
+    // pour coller avec Analog Lab 3 (qui transforme 0 à 127 en 0.0 à 10) : on prend 127 intervalles
+    // ((avant : pour avoir une erreur moyenne de quantification nulle, on prenait l'arrondi...
+    // ... mais il faut alors faire attention aux valeurs à 2^N -> à réduire à 2^N - 1))
+    sampleValue = std::round( ((double) midiResolution - 1) * sampleValue ); // valeur int , ici
+    midiSample.value = Miam::Math::Clamp<int>((int) sampleValue, 0, midiResolution-1); // sécurité... inutile ici
     sampleValue = midiSample.value;
     // renormalisation après discrétisation
     sampleValue = sampleValue / ((double) midiResolution);
@@ -272,8 +273,11 @@ void OSCListenerForwarder::RunMidiSamplesForwarding()
             // ENVOI MIDI - tout sur Channel 1
             virtualMidiOutput->sendMessageNow(MidiMessage::controllerEvent(
                1, midiSample.parameterIndex, midiSample.value));
-            std::cout << "midi envoyé CC" << midiSample.parameterIndex << " valeur " << midiSample.value
+            /*
+            std::cout << "Midi envoyé CC" << midiSample.parameterIndex << " valeur" << midiSample.value
+            << " (OSC quantifié valeur=" << ((double)(midiSample.value))/127.0 << ")"
             << std::endl;
+             */
         }
         
         // Vérification de la condition le + tard possible

@@ -64,10 +64,10 @@ parametersCount(4) // const at the moment
         sceneBaseIndex = 1;
         tempo = 145.0f;
         parametersInfo = "1-Chorus/2-Delay/3-250Hz/4-Hammer";
-        parametersTargetValues[0] = 0.035;
-        parametersTargetValues[1] = 0.215; // un peu de delay
-        parametersTargetValues[2] = 0.091;
-        parametersTargetValues[3] = 0.659; // et beaucoup de hammer
+        parametersTargetValues[0] = 0.055;
+        parametersTargetValues[1] = 0.213; // un peu de delay
+        parametersTargetValues[2] = 0.102;
+        parametersTargetValues[3] = 0.630; // et beaucoup de hammer
     }
     else if (synthId == -1)
     {
@@ -85,22 +85,22 @@ parametersCount(4) // const at the moment
         name = "[0] ThunderBass"; // thunder bass avec VCO1mix à 0,204
         sceneBaseIndex = 5;
         tempo = 105.0f;
-        parametersInfo = "1-Delay/2-Env/3-Noise/4-Chorus";
+        parametersInfo = "1-Delay/2-Env1et2/3-Noise/4-Chorus";
         parametersTargetValues[0] = 0.0;
         parametersTargetValues[1] = 0.0;
-        parametersTargetValues[2] = 0.214;
-        parametersTargetValues[3] = 0.536;
+        parametersTargetValues[2] = 0.213;
+        parametersTargetValues[3] = 0.535;
     }
     else if (synthId == 1)
     {
         name = "[1] Shamisen"; // 6-string shamisen (avec algo=0)
         sceneBaseIndex = 17;
         tempo = 145.0f;
-        parametersInfo = "1-op2lvl/2-Chorus/3-delay/4-op3lvl";
-        parametersTargetValues[0] = 0.706;
-        parametersTargetValues[1] = 0.250; // macro 4
-        parametersTargetValues[2] = 0.544; // macro 3
-        parametersTargetValues[3] = 0.250;
+        parametersInfo = "1-op2lvl/2-Chorusmac4/3-delaymac3/4-op3lvl";
+        parametersTargetValues[0] = 0.709;
+        parametersTargetValues[1] = 0.252; // macro 4
+        parametersTargetValues[2] = 0.543; // macro 3
+        parametersTargetValues[3] = 0.252; // 0.252 = nouveau min avec bridge MIDI-OSC
     }
     else if (synthId == 2)
     {
@@ -110,8 +110,8 @@ parametersCount(4) // const at the moment
         parametersInfo = "1-lvlOsc1/2-lvlOsc2/3-part2pan/4-hatCutoff";
         parametersTargetValues[0] = 0.0;
         parametersTargetValues[1] = 0.0;
-        parametersTargetValues[2] = 0.239;
-        parametersTargetValues[3] = 0.741;
+        parametersTargetValues[2] = 0.220;
+        parametersTargetValues[3] = 0.780;
     }
     else if (synthId == 3)
     {
@@ -119,10 +119,10 @@ parametersCount(4) // const at the moment
         sceneBaseIndex = 21;
         tempo = 92.0f;
         parametersInfo = "1-cutoff/2-emphasis/3-noise/4-VCAdec";
-        parametersTargetValues[0] = 0.542;
+        parametersTargetValues[0] = 0.543;
         parametersTargetValues[1] = 0.250;
         parametersTargetValues[2] = 0.250;
-        parametersTargetValues[3] = 0.458;
+        parametersTargetValues[3] = 0.457;
     }
     else if (synthId == 4)
     {
@@ -130,10 +130,10 @@ parametersCount(4) // const at the moment
         sceneBaseIndex = 21;
         tempo = 90.0f;
         parametersInfo = "1-ChanAlvl/2-Decay/3-reverb/4-chanBlvl";
-        parametersTargetValues[0] = 0.273;
-        parametersTargetValues[1] = 0.601;
-        parametersTargetValues[2] = 0.317;
-        parametersTargetValues[3] = 0.308;
+        parametersTargetValues[0] = 0.268;
+        parametersTargetValues[1] = 0.598;
+        parametersTargetValues[2] = 0.323;
+        parametersTargetValues[3] = 0.307;
     }
     else if (synthId == 5)
     {
@@ -141,10 +141,10 @@ parametersCount(4) // const at the moment
         sceneBaseIndex = 17;
         tempo = 90.0f;
         parametersInfo = "1-Delay/2-Spread/3-Time/4-Timbre";
-        parametersTargetValues[0] = 0.250;
+        parametersTargetValues[0] = 0.252; // valeur min OSC-MIDI = 0.252...
         parametersTargetValues[1] = 1.0;
-        parametersTargetValues[2] = 0.250;
-        parametersTargetValues[3] = 0.250;
+        parametersTargetValues[2] = 0.252;
+        parametersTargetValues[3] = 0.252;
     }
     else if (synthId == 6)
     {
@@ -162,10 +162,10 @@ parametersCount(4) // const at the moment
         name = "[7] DX7block"; // Rom2A 30-BLOCK (DX7) + reaDelay
         sceneBaseIndex = 21;
         tempo = 128.0f;
-        parametersInfo = "1-delay/2-macro3/3-macro4/4-pan";
+        parametersInfo = "1-delayWet/2-macro3/3-macro4/4-delayPan";
         parametersTargetValues[0] = 0.250; //reaDelay
-        parametersTargetValues[1] = 0.413;
-        parametersTargetValues[2] = 0.587; 
+        parametersTargetValues[1] = 0.409;
+        parametersTargetValues[2] = 0.591;
         parametersTargetValues[3] = 0.250; //reaDelay
     }
     else if (synthId == 8)
@@ -174,10 +174,10 @@ parametersCount(4) // const at the moment
         sceneBaseIndex = 17;
         tempo = 120.0f;
         parametersInfo = "1-L/2-R/3-macro1/4-macro2";
-        parametersTargetValues[0] = 0.895; // op1 out lvl
-        parametersTargetValues[1] = 0.250; // op2 out lvl
-        parametersTargetValues[2] = 0.355;
-        parametersTargetValues[3] = 0.250;
+        parametersTargetValues[0] = 0.890; // op1 out lvl
+        parametersTargetValues[1] = 0.252; // op2 out lvl
+        parametersTargetValues[2] = 0.362;
+        parametersTargetValues[3] = 0.252;
     }
     else if (synthId == 9)
     {
@@ -185,9 +185,9 @@ parametersCount(4) // const at the moment
         sceneBaseIndex = 1;
         tempo = 100.0f;
         parametersInfo = "1-Chorus/2-noise/3-cutoff/4-attack";
-        parametersTargetValues[0] = 0.650;
+        parametersTargetValues[0] = 0.646;
         parametersTargetValues[1] = 0.0;
-        parametersTargetValues[2] = 0.350;
+        parametersTargetValues[2] = 0.354;
         parametersTargetValues[3] = 0.0;
     }
     /// - - - - MIEM SCENE INDEX and TEMPO and TARGET VALUES - - - -
