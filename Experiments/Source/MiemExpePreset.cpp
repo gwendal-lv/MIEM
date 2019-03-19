@@ -392,7 +392,7 @@ int MiemExpePreset::GetReaperTrackNumber(bool getReferenceTrack)
 
 
 // ======================== Samples management ============================
-void MiemExpePreset::AddSamples(const std::vector<MiemSample<float>> & newSamples)
+void MiemExpePreset::AddSamples(const std::vector<MiemExpeSample> & newSamples)
 {
     size_t firstAdditionIndex = samples.size();
     
@@ -411,7 +411,7 @@ void MiemExpePreset::SortSamples()
     // ultra-pas-optimisé !
     // tri à la main à l'ancienne... avec des insertions/suppressions sauvages
     // (du coup : copie quand même dans une liste pour insertions/suppressions rapides
-    std::list<MiemSample<float>> copiedList(samples.begin(), samples.end());
+    std::list<MiemExpeSample> copiedList(samples.begin(), samples.end());
     
     // recopie dans un vecteur au fur et à mesure
     sortedSamples.clear();
