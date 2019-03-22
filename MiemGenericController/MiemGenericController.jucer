@@ -321,6 +321,8 @@
       </GROUP>
     </GROUP>
     <GROUP id="{FC4D1C95-6CD1-1CB6-980B-4E5B96D1BFA4}" name="Resources">
+      <FILE id="P6bzns" name="GenCon_Android_1024at1.png" compile="0" resource="1"
+            file="../Resources_LFS/Icones_Logos/Exports/GenCon_Android_1024at1.png"/>
       <FILE id="XzfEpj" name="GenCon_iOS_1024at1.png" compile="0" resource="1"
             file="../Resources_LFS/Icones_Logos/Exports/GenCon_iOS_1024at1.png"/>
       <FILE id="Jn8chF" name="GenCon_macOS_1024at1.png" compile="0" resource="1"
@@ -382,7 +384,8 @@
       </MODULEPATHS>
     </XCODE_IPHONE>
     <ANDROIDSTUDIO targetFolder="Builds/Android" androidSDKPath="" androidNDKPath=""
-                   extraDefs="__MIAMOBILE">
+                   extraDefs="__MIAMOBILE" bigIcon="P6bzns" androidCustomApplicationClass="com.gwendallv.MIEMcontroller"
+                   androidMinimumSDK="24" gradleVersion="4.10.1" gradleWrapperVersion="3.3.2">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" defines="__MIAM_DEBUG"/>
         <CONFIGURATION isDebug="0" name="Release"/>

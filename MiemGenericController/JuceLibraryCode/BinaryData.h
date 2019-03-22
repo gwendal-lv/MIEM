@@ -8,6 +8,9 @@
 
 namespace BinaryData
 {
+    extern const char*   GenCon_Android_1024at1_png;
+    const int            GenCon_Android_1024at1_pngSize = 835010;
+
     extern const char*   GenCon_iOS_1024at1_png;
     const int            GenCon_iOS_1024at1_pngSize = 660131;
 
@@ -21,7 +24,7 @@ namespace BinaryData
     const int            newFontImg_pngSize = 104267;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
-    const int namedResourceListSize = 4;
+    const int namedResourceListSize = 5;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];
