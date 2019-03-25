@@ -37,8 +37,10 @@ recorderComponent(*(_mainComponent->oscRecorderComponent.get()))
     mainComponent->finalUserQuestionsComponent->SetUserQuestionsManager(this);
     
     // Setup of the Reaper controller at first (might wait for REAPER responses...)
-    reaperController = std::make_shared<ReaperOscController>();
-    reaperController->SetTrackSolo_usingMutes(1);
+    reaperController = std::make_shared<ReaperOscController>(1
+                                                             + TrialSynthsCount * 2
+                                                             + ExperimentPresetsCount); // testés 2 fois
+    reaperController->SetTrackSolo_usingMutes(-1);
     
     // Setup of TCP control connection to the server inside MIEM Controller
     tcpConnection = std::make_shared<OSCRecorderConnection>(*this);
@@ -288,7 +290,8 @@ void OSCRecorder::changeState(ExperimentState newState)
             selectNewMiemScene(true); // empty scene
             // on sélectionne la track EXPERIMENT (pas la référence)
             // pas de délai car le white noise a dû s'arrêter bien avant
-            reaperController->SetTrackSolo_usingMutes(presets[presetRandomIdx[currentPresetStep]]->GetReaperTrackNumber(true));
+            reaperController->SetTrackSolo_usingMutes(presets[presetRandomIdx[currentPresetStep]]->GetReaperTrackNumber(true),
+                                                      true ); // full reset on every new cycle
             
             mainComponent->SetOneGuiComponentVisible(nullptr);
             break;

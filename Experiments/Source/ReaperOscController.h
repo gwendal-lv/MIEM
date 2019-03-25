@@ -16,6 +16,12 @@
 
 class ReaperOscController : public OSCReceiver::Listener<OSCReceiver::MessageLoopCallback>
 {
+    enum class TrackMuteState {
+        Undefined = -1,
+        
+        Muted = 0,
+        Unmuted,
+    };
     
     // ===================== ATTRIBUTES ========================
     private :
@@ -30,14 +36,14 @@ class ReaperOscController : public OSCReceiver::Listener<OSCReceiver::MessageLoo
     
     const int tracksCount;
     
-    std::vector<bool> tracksMuteState;
+    std::vector<TrackMuteState> tracksMuteStates;
     // actually seems useless
-    std::vector<bool> tracksMuteState_waitingForReaperResponse;
+    std::vector<bool> tracksMuteStates_waitingForReaperResponse;
     
     
     // ===================== METHODS ========================
     public :
-    ReaperOscController(int _tracksCount = 24);
+    ReaperOscController(int _tracksCount);
     virtual ~ReaperOscController(){}
     
     virtual void oscMessageReceived (const OSCMessage &message) override;
@@ -51,7 +57,10 @@ class ReaperOscController : public OSCReceiver::Listener<OSCReceiver::MessageLoo
     /// \brief Sets a track as "solo" by muting all other tracks.
     ///
     /// Set track -1 as solo to mute all tracks
-    void SetTrackSolo_usingMutes(int trackNumber);
+    ///
+    /// \remark Now uses a memory system to reduce the number of OSC messages
+    /// sent to reaper.
+    void SetTrackSolo_usingMutes(int trackNumber, bool forceResendAllMutes = false);
     
     
     protected :

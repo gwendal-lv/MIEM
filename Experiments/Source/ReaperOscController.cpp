@@ -24,14 +24,9 @@ ReaperOscController::ReaperOscController(int _tracksCount)
 :
 tracksCount(_tracksCount)
 {
-    // resize of vectors
-    tracksMuteState.resize(tracksCount);
-    tracksMuteState_waitingForReaperResponse.resize(tracksCount);
-    for (int i=0 ; i<tracksCount ; i++)
-    {
-        tracksMuteState[i] = false; // to be re-set properly
-        tracksMuteState_waitingForReaperResponse[i] = false; // nothing asked yet
-    }
+    // resize of vectors for optimize memory mute systems
+    tracksMuteStates.resize(tracksCount, TrackMuteState::Undefined);
+    tracksMuteStates_waitingForReaperResponse.resize(tracksCount, false);
     
     // Sender setup
     if (! sender.connect(hostIp, reaperUdpPort))
@@ -121,21 +116,38 @@ void ReaperOscController::Stop()
 }
 
 
-void ReaperOscController::SetTrackSolo_usingMutes(int trackNumber)
+void ReaperOscController::SetTrackSolo_usingMutes(int trackToUnmute, bool forceResendAllMutes)
 {
-    if (trackNumber <= 0)
+    if (trackToUnmute <= 0)
         MonitoringServer::SendLog("[OSC -> REAPER]: mute pour TOUTES les tracks");
     else
         MonitoringServer::SendLog("[OSC -> REAPER]: track "
-                                      + boost::lexical_cast<std::string>(trackNumber)
+                                      + boost::lexical_cast<std::string>(trackToUnmute)
                                       + " Solo.");
     
+    // Envoi bourrin de tous les mutes (actualisation forcée)
+    if (forceResendAllMutes)
+    {
+        MonitoringServer::SendLog("[OSC -> REAPER] (...forced refresh of all tracks mute states...)");
+        tracksMuteStates.clear();
+        tracksMuteStates.resize(tracksCount, TrackMuteState::Undefined);
+    }
+    
+    // envoi optimisé (ou non...) à partir des valeurs précédentes
     for (int i=1 ; i<=tracksCount ; i++)
     {
-        if (i != trackNumber)
-            setTrackMuteState(i, true);
+        // tracks à muter (si nécessaire)
+        if (i != trackToUnmute)
+        {
+            if (tracksMuteStates[i - 1] != TrackMuteState::Muted)
+                setTrackMuteState(i, true);
+        }
+        // track à dé-muter (si nécessaire)
         else
-            setTrackMuteState(i, false);
+        {
+            if (tracksMuteStates[i - 1] != TrackMuteState::Unmuted)
+                setTrackMuteState(i, false);
+        }
     }
 }
 
@@ -153,6 +165,12 @@ void ReaperOscController::setTrackMuteState(int trackNumber, bool shouldBeMuted)
         oscMsg.addInt32(0);
     
     sendMessageOrThrowException(oscMsg);
+    
+    // actualisation du système de mémoire interne
+    if (shouldBeMuted)
+        tracksMuteStates[trackNumber - 1] = TrackMuteState::Muted;
+    else
+        tracksMuteStates[trackNumber - 1] = TrackMuteState::Unmuted;
 }
 
 void ReaperOscController::waitForMissingReaperResponses()
