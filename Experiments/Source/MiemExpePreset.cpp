@@ -370,21 +370,24 @@ std::shared_ptr<std::string> MiemExpePreset::GetSortedSamples_CSV()
 int MiemExpePreset::GetReaperTrackNumber(bool getReferenceTrack)
 {
     // les premières tracks dans Reaper sont faites comme suit :
-    // 1 - Preset ESSAI référence
-    // 2 - preset ESSAI contrôlable en OSC (par fader ou par interpolation)
-    // 3 - Preset1 référence
-    // 4 - Preset1 contrôlable en OSC (par fader ou par interpolation)
-    // 5 - Preset1 référence
-    // 6 - Preset1 contrôlable en OSC (par fader ou par interpolation)
+    // 1 - BRUIT BLANC (suppression traces ASM)
+    // 2 - Preset ESSAI référence
+    // 3 - preset ESSAI contrôlable en OSC (par fader ou par interpolation)
+    // 4 - Preset ESSAI 2 référence
+    // 5 - preset ESSAI 2 contrôlable en OSC (par fader ou par interpolation)
+    // 6 - Preset1 référence
+    // 7 - Preset1 contrôlable en OSC (par fader ou par interpolation)
+    // 8 - Preset2 référence
+    // 9 - Preset2 contrôlable en OSC (par fader ou par interpolation)
     // etc...
     
     // Pour 10 presets + 2 presets d'essai...
     // Il faudra 24 tracks dans Reaper....
     
     if (getReferenceTrack)
-        return 1 + (synthId + trialSynthsCount) * 2;
-    else
         return 2 + (synthId + trialSynthsCount) * 2;
+    else
+        return 3 + (synthId + trialSynthsCount) * 2;
 }
 
 

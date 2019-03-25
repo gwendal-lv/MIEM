@@ -45,6 +45,8 @@ recorderComponent(*(_mainComponent->oscRecorderComponent.get()))
     
     // Internal timers
     researchDurationTimer = std::make_unique<OSCRecorderTimer>(this);
+    // White noise must begin before the "after finished" pause has ended
+    assert(WhiteNoiseStartDelay_ms < delayAfterFinished_ms);
 }
 
 void OSCRecorder::BeginExperiment()
@@ -285,6 +287,7 @@ void OSCRecorder::changeState(ExperimentState newState)
         case ExperimentState::ReadyToListen:
             selectNewMiemScene(true); // empty scene
             // on sélectionne la track EXPERIMENT (pas la référence)
+            // pas de délai car le white noise a dû s'arrêter bien avant
             reaperController->SetTrackSolo_usingMutes(presets[presetRandomIdx[currentPresetStep]]->GetReaperTrackNumber(true));
             
             mainComponent->SetOneGuiComponentVisible(nullptr);
@@ -301,7 +304,10 @@ void OSCRecorder::changeState(ExperimentState newState)
         case ExperimentState::ReadyToSearchPreset:
             reaperController->Stop();
             // on sélectionne la track EXPERIMENT (pas la référence)
+            // avec un petit délai pour que Reaper s'en sorte bien....
+            Timer::callAfterDelay(SearchAutoTriggerDelay_s / 2, [this] {
             reaperController->SetTrackSolo_usingMutes(presets[presetRandomIdx[currentPresetStep]]->GetReaperTrackNumber(false));
+            });
             break;
             
             // Au lancement de la recherche : on lance la scène MIEM d'abord
@@ -316,14 +322,27 @@ void OSCRecorder::changeState(ExperimentState newState)
             break;
             
             // Fin de la recherche : on coupe Reaper (mute all)
-            // et on replace la scène vide.
-            // Et après on actualise et on lance le preset suivant
+            // et on replace la scène vide,
+            // pour alors jouer du bruit blanc (tentative suppression ASM)
         case ExperimentState::FinishedSearchingPreset:
             reaperController->Stop();
             selectNewMiemScene(true);
             stopRecording();
             // security save
             saveEverythingToFiles(currentPresetStep); // next step pas encore demandée
+            // WHITE NOISE starts after a short delay
+            Timer::callAfterDelay(WhiteNoiseStartDelay_ms/2,
+                                  [this] {
+            reaperController->SetTrackSolo_usingMutes(ReaperWhiteNoiseTrackNumber);
+                                  });
+            Timer::callAfterDelay(WhiteNoiseStartDelay_ms,
+                                  [this] {
+              reaperController->RestartAndPlay((float)ReaperWhiteNoiseTrackBpm);
+                                  });
+            Timer::callAfterDelay(delayAfterFinished_ms - WhiteNoisePrematureEnd_ms,
+                                  [this] {
+              reaperController->Stop(); // to end the white noise
+                                  });
             break;
             
         case ExperimentState::Finished:

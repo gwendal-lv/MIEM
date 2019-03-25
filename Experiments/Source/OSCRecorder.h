@@ -54,17 +54,25 @@ class OSCRecorder : public UserQuestionsManager,
     const int TrialSynthsCount = 2;
     const int TrialPresetsCount = TrialSynthsCount; // 2 different synths
     
+    static const int ReaperWhiteNoiseTrackNumber = 1;
+    static const int ReaperWhiteNoiseTrackBpm = 110;
+    
     const int maxResearchDuration_ms = 30000; // 30 s --> currently unused
 #ifdef __MIEM_SHORT_DELAYS
-    static const int delayAfterFinished_ms = 200;
-    static const int ListenAndSearchAutoTriggerDelay_s = 2;
+    static const int delayAfterFinished_ms = 1000;
+    static const int ListenAutoTriggerDelay_s = 2;
+    static const int SearchAutoTriggerDelay_s = 2;
     const int listeningTime_ms = 500;
 #else
-    static const int delayAfterFinished_ms = 3000;
-    static const int ListenAndSearchAutoTriggerDelay_s = 5;
+    static const int delayAfterFinished_ms = 7000;
+    static const int ListenAutoTriggerDelay_s = 7;
+    static const int SearchAutoTriggerDelay_s = 5;
     const int listeningTime_ms = 20000; // 15s sont un peu trop courtes...
 #endif
     const int ResearchTimeMax_ms = 30000;
+    
+    static const int WhiteNoiseStartDelay_ms = 1000; ///< Delay after entering "finished" state
+    static const int WhiteNoisePrematureEnd_ms = 500; ///< White noise ends a bit bfore the "finished" state actually ends
     
     // - - - SHORT/DEMO EXPERIMENT - - -
     const bool ShortExperiment = false;
@@ -173,6 +181,7 @@ class OSCRecorder : public UserQuestionsManager,
     
     // OSC control of Reaper and MIEM Controller
     protected :
+    /// \brief Selects the scene displayed on Miem Controller app.
     void selectNewMiemScene(bool selectEmptyScene = false);
     
     

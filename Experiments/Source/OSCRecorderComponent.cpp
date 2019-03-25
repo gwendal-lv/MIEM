@@ -277,7 +277,7 @@ void OSCRecorderComponent::DisplayNewState(ExperimentState newState, int presetS
             countLabel->setVisible(true);
             remainingTimeSlider->setVisible(false);
             // auto-trigger of timer
-            listenTimerValue_s = OSCRecorder::ListenAndSearchAutoTriggerDelay_s;
+            listenTimerValue_s = OSCRecorder::ListenAutoTriggerDelay_s;
             updateTimerLabels();
             Timer::callAfterDelay(1000, [this] { listenTimerCallback(); } );
             break;
@@ -293,7 +293,7 @@ void OSCRecorderComponent::DisplayNewState(ExperimentState newState, int presetS
                                       remainingTimeSlider->getMaximum());
             remainingTimeSlider->setVisible(true); // updated just before
             // auto-trigger of timer
-            searchTimerValue_s = OSCRecorder::ListenAndSearchAutoTriggerDelay_s;
+            searchTimerValue_s = OSCRecorder::SearchAutoTriggerDelay_s;
             updateTimerLabels();
             Timer::callAfterDelay(1000, [this] { searchTimerCallback(); } );
             break;

@@ -12,7 +12,7 @@
             <outputs activeCount="1" maxCount="64"/>
             <senders>
                 <sender type="MiamOsc">
-                    <ip>192.168.1.140</ip>
+                    <ip>10.97.198.140</ip>
                     <udp>
                         <port>8011</port>
                     </udp>
