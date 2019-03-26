@@ -64,8 +64,8 @@ class OSCRecorder : public UserQuestionsManager,
     static const int SearchAutoTriggerDelay_s = 2;
     const int listeningTime_ms = 500;
 #else
-    static const int delayAfterFinished_ms = 7000;
-    static const int ListenAutoTriggerDelay_s = 7;
+    static const int delayAfterFinished_ms = 8000;
+    static const int ListenAutoTriggerDelay_s = 10;
     static const int SearchAutoTriggerDelay_s = 5;
     const int listeningTime_ms = 20000; // 15s sont un peu trop courtes...
 #endif

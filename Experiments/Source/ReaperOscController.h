@@ -36,6 +36,7 @@ class ReaperOscController : public OSCReceiver::Listener<OSCReceiver::MessageLoo
     
     const int tracksCount;
     
+    const int ForcedRefreshInterMessageDelay_ms = 100;
     std::vector<TrackMuteState> tracksMuteStates;
     // actually seems useless
     std::vector<bool> tracksMuteStates_waitingForReaperResponse;
@@ -59,7 +60,9 @@ class ReaperOscController : public OSCReceiver::Listener<OSCReceiver::MessageLoo
     /// Set track -1 as solo to mute all tracks
     ///
     /// \remark Now uses a memory system to reduce the number of OSC messages
-    /// sent to reaper.
+    /// sent to reaper. If the system is not used (forced resend), delays
+    /// will be applied to sent message, because Reaper is easily drown
+    /// in OSC messages....
     void SetTrackSolo_usingMutes(int trackNumber, bool forceResendAllMutes = false);
     
     

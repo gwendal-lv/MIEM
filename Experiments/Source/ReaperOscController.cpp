@@ -24,6 +24,12 @@ ReaperOscController::ReaperOscController(int _tracksCount)
 :
 tracksCount(_tracksCount)
 {
+    // vérification qu'on peut bien actualiser tous les mutes
+    // avant de re-lancer une phase d'écoute
+    // (pour 25 tracks dans Reaper)
+    assert((25 * ForcedRefreshInterMessageDelay_ms)
+           < (OSCRecorder::ListenAutoTriggerDelay_s * 1000));
+    
     // resize of vectors for optimize memory mute systems
     tracksMuteStates.resize(tracksCount, TrackMuteState::Undefined);
     tracksMuteStates_waitingForReaperResponse.resize(tracksCount, false);
@@ -128,25 +134,48 @@ void ReaperOscController::SetTrackSolo_usingMutes(int trackToUnmute, bool forceR
     // Envoi bourrin de tous les mutes (actualisation forcée)
     if (forceResendAllMutes)
     {
-        MonitoringServer::SendLog("[OSC -> REAPER] (...forced refresh of all tracks mute states...)");
+        MonitoringServer::SendLog("[OSC -> REAPER] (...forced and delayed refresh of all tracks mute states...)");
         tracksMuteStates.clear();
         tracksMuteStates.resize(tracksCount, TrackMuteState::Undefined);
     }
     
     // envoi optimisé (ou non...) à partir des valeurs précédentes
+    int forcedRefreshMessagesCount = 0; ///< Number of force-refresh messages already sent
     for (int i=1 ; i<=tracksCount ; i++)
     {
         // tracks à muter (si nécessaire)
         if (i != trackToUnmute)
         {
             if (tracksMuteStates[i - 1] != TrackMuteState::Muted)
-                setTrackMuteState(i, true);
+            {
+                if (! forceResendAllMutes)
+                    setTrackMuteState(i, true);
+                else
+                {
+                    Timer::callAfterDelay(forcedRefreshMessagesCount
+                                          * ForcedRefreshInterMessageDelay_ms,
+                                          [this, i]
+                                          {setTrackMuteState(i, true);});
+                    forcedRefreshMessagesCount++;
+                }
+            }
         }
         // track à dé-muter (si nécessaire)
         else
         {
             if (tracksMuteStates[i - 1] != TrackMuteState::Unmuted)
-                setTrackMuteState(i, false);
+            {
+                if (! forceResendAllMutes)
+                    setTrackMuteState(i, false);
+                else
+                {
+                    Timer::callAfterDelay(forcedRefreshMessagesCount
+                                          * ForcedRefreshInterMessageDelay_ms,
+                                          [this, i]
+                                          {setTrackMuteState(i, false);});
+                    forcedRefreshMessagesCount++;
+                }
+            }
         }
     }
 }
