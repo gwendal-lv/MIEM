@@ -37,14 +37,14 @@ OSCRecorderComponent::OSCRecorderComponent ()
     addAndMakeVisible (startButton.get());
     startButton->setButtonText (TRANS("BEGIN PRESET RESEARCH"));
     startButton->addListener (this);
-    startButton->setColour (TextButton::buttonColourId, Colour (0xff3d338d));
+    startButton->setColour (TextButton::buttonColourId, Colour (0x503d338d));
     startButton->setColour (TextButton::buttonOnColourId, Colour (0xff252525));
 
     listenButton.reset (new TextButton ("listen button"));
     addAndMakeVisible (listenButton.get());
     listenButton->setButtonText (TRANS("LISTEN TO THE PRESET"));
     listenButton->addListener (this);
-    listenButton->setColour (TextButton::buttonColourId, Colour (0xff747474));
+    listenButton->setColour (TextButton::buttonColourId, Colour (0x50747474));
     listenButton->setColour (TextButton::buttonOnColourId, Colour (0xff252525));
 
     finishedButton.reset (new TextButton ("finished button"));
@@ -117,7 +117,7 @@ OSCRecorderComponent::OSCRecorderComponent ()
     //[UserPreSize]
     //[/UserPreSize]
 
-    setSize (600, 400);
+    setSize (1920, 1080);
 
 
     //[Constructor] You can add your own custom stuff here..
@@ -174,11 +174,11 @@ void OSCRecorderComponent::resized()
     listenButton->setBounds ((getWidth() / 2) - (500 / 2), 20, 500, 120);
     finishedButton->setBounds ((getWidth() / 2) - (500 / 2), getHeight() - 100 - 160, 500, 160);
     countLabel->setBounds ((getWidth() / 2) - (500 / 2), getHeight() - 70, 500, 32);
-    listenLabel->setBounds ((getWidth() / 2) - 569, 152, 569, 32);
-    searchLabel->setBounds ((getWidth() / 2) - 569, 340, 569, 32);
-    remainingTimeSlider->setBounds ((getWidth() / 2) - ((getWidth() - 160) / 2), getHeight() - 300 - 168, getWidth() - 160, 168);
-    listenCountdownLabel->setBounds ((getWidth() / 2) + 8, 152, 569, 32);
-    searchCountdownLabel->setBounds ((getWidth() / 2) + 8, 340, 569, 32);
+    listenLabel->setBounds ((getWidth() / 2) - 569, 80, 569, 32);
+    searchLabel->setBounds ((getWidth() / 2) - 569, 200, 569, 32);
+    remainingTimeSlider->setBounds ((getWidth() / 2) - ((getWidth() - 160) / 2), 260, getWidth() - 160, getHeight() - 550);
+    listenCountdownLabel->setBounds ((getWidth() / 2) + 8, 80, 569, 32);
+    searchCountdownLabel->setBounds ((getWidth() / 2) + 8, 200, 569, 32);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -447,17 +447,17 @@ BEGIN_JUCER_METADATA
 <JUCER_COMPONENT documentType="Component" className="OSCRecorderComponent" componentName=""
                  parentClasses="public Component" constructorParams="" variableInitialisers=""
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
-                 fixedSize="0" initialWidth="600" initialHeight="400">
+                 fixedSize="1" initialWidth="1920" initialHeight="1080">
   <METHODS>
     <METHOD name="keyPressed (const KeyPress&amp; key)"/>
   </METHODS>
   <BACKGROUND backgroundColour="ff313131"/>
   <TEXTBUTTON name="start button" id="cb0e665733fa514e" memberName="startButton"
-              virtualName="" explicitFocusOrder="0" pos="0Cc 200 500 120" bgColOff="ff3d338d"
+              virtualName="" explicitFocusOrder="0" pos="0Cc 200 500 120" bgColOff="503d338d"
               bgColOn="ff252525" buttonText="BEGIN PRESET RESEARCH" connectedEdges="0"
               needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="listen button" id="54994c165790472c" memberName="listenButton"
-              virtualName="" explicitFocusOrder="0" pos="0Cc 20 500 120" bgColOff="ff747474"
+              virtualName="" explicitFocusOrder="0" pos="0Cc 20 500 120" bgColOff="50747474"
               bgColOn="ff252525" buttonText="LISTEN TO THE PRESET" connectedEdges="0"
               needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="finished button" id="ee4745ef80623612" memberName="finishedButton"
@@ -470,31 +470,31 @@ BEGIN_JUCER_METADATA
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
          fontsize="2.2e1" kerning="0" bold="0" italic="0" justification="36"/>
   <LABEL name="Listen label" id="451b58f2b7f59deb" memberName="listenLabel"
-         virtualName="" explicitFocusOrder="0" pos="0Cr 152 569 32" bkgCol="757575"
+         virtualName="" explicitFocusOrder="0" pos="0Cr 80 569 32" bkgCol="757575"
          textCol="ffb0b0b0" edTextCol="ff000000" edBkgCol="0" labelText="Listening to reference sound will start in:"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="2.6e1" kerning="0" bold="0"
          italic="0" justification="34"/>
   <LABEL name="Search label" id="7a6208a1c5ecc70d" memberName="searchLabel"
-         virtualName="" explicitFocusOrder="0" pos="0Cr 340 569 32" textCol="ff81a5ff"
+         virtualName="" explicitFocusOrder="0" pos="0Cr 200 569 32" textCol="ff81a5ff"
          edTextCol="ff000000" edBkgCol="0" labelText="Preset research will start in:"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="2.6e1" kerning="0" bold="0"
          italic="0" justification="34"/>
   <SLIDER name="Remaining Time slider" id="a43e709f917b56b4" memberName="remainingTimeSlider"
-          virtualName="" explicitFocusOrder="0" pos="0.5Cc 300Rr 160M 168"
+          virtualName="" explicitFocusOrder="0" pos="0Cc 260 160M 550M"
           bkgcol="263238" trackcol="ffffffff" textboxoutline="ffffffff"
           min="0" max="6e1" int="1" style="LinearBar" textBoxPos="NoTextBox"
           textBoxEditable="0" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
           needsCallback="0"/>
   <LABEL name="Listen Countdown label" id="3a60263a4de41695" memberName="listenCountdownLabel"
-         virtualName="" explicitFocusOrder="0" pos="8C 152 569 32" bkgCol="757575"
+         virtualName="" explicitFocusOrder="0" pos="8C 80 569 32" bkgCol="757575"
          edTextCol="ff000000" edBkgCol="0" labelText="3" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
          fontsize="2.6e1" kerning="0" bold="1" italic="0" justification="33"
          typefaceStyle="Bold"/>
   <LABEL name="Search Countdown label" id="297cc669074c0214" memberName="searchCountdownLabel"
-         virtualName="" explicitFocusOrder="0" pos="8C 340 569 32" bkgCol="757575"
+         virtualName="" explicitFocusOrder="0" pos="8C 200 569 32" bkgCol="757575"
          edTextCol="ff000000" edBkgCol="0" labelText="3" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
          fontsize="2.6e1" kerning="0" bold="1" italic="0" justification="33"

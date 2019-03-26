@@ -1,19 +1,24 @@
-Pour cette expérience, l'objectif est de retrouver le plus rapidement possible un son particulier de synthétiseur de musique.
 
-
-L'expérience est divisée en plusieurs cycles, qui contiennent chacun 2 étapes :
-
-1 - Au départ, pendant une vingtaine de secondes environ, vous allez écouter un son qu'il faudra retrouver.
-
-2 - Ensuite, en déplaçant des points blancs sur une tablette tactile, vous pourrez chercher et retrouver ce son de synthétiseur.
-Chaque forme géométrique à l'écran est liée à un paramètre de synthétiseur, d'effet audio, ou de bien stéréo gauche/droite.
-Dès que vous pensez être proche du résultat, vous pouvez cliquer sur OK ou appuyer sur la touche verte du clavier.
+L'objectif de cette expérience est de retrouver un son particulier de synthétiseur de musique, et ce le plus rapidement possible .
 
 
 
-Le cycle d'écoute/recherche aura lieu 20 fois, pour une expérience qui durera au total entre 20 et 25 minutes.
+L'expérience est divisée en plusieurs cycles, qui contiennent chacun 3 étapes :
+
+1 - Au départ, pendant une vingtaine de secondes, vous allez écouter un son qu'il faudra retrouver.
+
+2 - Ensuite, en déplaçant des points blancs sur la tablette tactile, vous pourrez chercher et retrouver ce son de synthétiseur.
+Chaque forme géométrique à l'écran est liée à un paramètre de synthétiseur, d'effet audio ou de stéréo gauche/droite.
+S'il y a plusieurs points blancs, vous pouvez utiliser plusieurs doigts en même temps si vous le souhaitez.
+
+Attention : le temps est limité, mais il ne faut pas attendre la fin du décompte !
+Dès que vous pensez être proche du résultat, cliquez sur OK ou appuyez sur la touche verte du clavier.
+
+3 - À la fin de la recherche du son synthétiseur, il y aura une pause avant l'étape suivante.
+Un bruit sonore pourra être entendu durant cette pause.
 
 
 
-Pour commencer, vous allez pouvoir vous entraîner et prendre en main l'application tactile grâce à 2 cycles d'essai.
+Le cycle d'écoute/recherche/pause aura lieu 22 fois, avec au départ 2 cycles d'essais pour vous entraîner et prendre en main l'application tactile.
 
+L'expérience durera au total entre 25 et 30 minutes (y compris les questions).

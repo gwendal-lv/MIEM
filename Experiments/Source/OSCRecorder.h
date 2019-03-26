@@ -47,7 +47,7 @@ class OSCRecorder : public UserQuestionsManager,
     // ===================================================================
     public :
     
-    static std::string GetLanguage() {return std::string("FR");}
+    static std::string GetLanguage() {return std::string("EN");}
     
     const int ExperimentPresetsCount = 20; // 2 presets per synth
     

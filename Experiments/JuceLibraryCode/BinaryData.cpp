@@ -9,48 +9,81 @@ namespace BinaryData
 
 //================== Recorder_AfterTrial_EN.txt ==================
 static const unsigned char temp_binary_data_0[] =
-"[...English introduction text to be written...]";
+"\n"
+"After these few trials, the experiment will now actually start.\n"
+"\n"
+"\n"
+"We recall you the objective: you have to find the synthesiser sound as quickly as possible.\n"
+"As soon as you think being close to the result, click on OK or push the green key of the keyboard.\n";
 
 const char* Recorder_AfterTrial_EN_txt = (const char*) temp_binary_data_0;
 
 //================== Recorder_AfterTrial_FR.txt ==================
 static const unsigned char temp_binary_data_1[] =
-"Apr\xc3\xa8s ces quelques essais, l'exp\xc3\xa9rience va maintenant commencer.\n"
+"\n"
+"Apr\xc3\xa8s ces quelques essais, l'exp\xc3\xa9rience va maintenant r\xc3\xa9""ellement commencer.\n"
 "\n"
 "\n"
 "Nous vous rappelons que l'objectif est de retrouver le son de synth\xc3\xa9tiseur le plus rapidement possible.\n"
-"D\xc3\xa8s que vous pensez \xc3\xaatre proche du r\xc3\xa9sultat, vous pouvez donc cliquer sur OK ou appuyer sur la touche verte du clavier.\n"
-"\n";
+"D\xc3\xa8s que vous pensez \xc3\xaatre proche du r\xc3\xa9sultat, vous pouvez donc cliquer sur OK ou appuyer sur la touche verte du clavier.\n";
 
 const char* Recorder_AfterTrial_FR_txt = (const char*) temp_binary_data_1;
 
 //================== Recorder_Intro_EN.txt ==================
 static const unsigned char temp_binary_data_2[] =
-"[...English introduction text to be written...]";
+"\n"
+"The objective of this experiment is to find a particular synthesiser sound as quickly as possible.\n"
+"\n"
+"\n"
+"\n"
+"The experiment is devided into several cycles, which are made of 3 steps each:\n"
+"\n"
+"1 - First, during around twenty seconds, you will listen to a sound that will be searched later.\n"
+"\n"
+"2 - Then, you will be able to search for this synthesiser sound by moving white dots on the tablet.\n"
+"Each geometrical shape on the screen is linked to a synthesiser parameter, an audio effect, or a left/right stereo effect.\n"
+"If there are multiple white dots, you can use several fingers at the same time if you wish.\n"
+"\n"
+"Warning: the research time is limited, but you should not wait for the end of the countdown!\n"
+"As soon as you think being close to the result, click on OK or push the green key of the keyboard.\n"
+"\n"
+"3 - After the research, the experiment will pause before triggering the next step.\n"
+"A noise might be heard during that pause.\n"
+"\n"
+"\n"
+"\n"
+"This listen/search/pause cycle will occur 22 times, starting with 2 trial cycles for you to train and get used the the touch app.\n"
+"\n"
+"The experiment will last between 25 and 30 minutes (including questions).\n";
 
 const char* Recorder_Intro_EN_txt = (const char*) temp_binary_data_2;
 
 //================== Recorder_Intro_FR.txt ==================
 static const unsigned char temp_binary_data_3[] =
-"Pour cette exp\xc3\xa9rience, l'objectif est de retrouver le plus rapidement possible un son particulier de synth\xc3\xa9tiseur de musique.\n"
 "\n"
-"\n"
-"L'exp\xc3\xa9rience est divis\xc3\xa9""e en plusieurs cycles, qui contiennent chacun 2 \xc3\xa9tapes :\n"
-"\n"
-"1 - Au d\xc3\xa9part, pendant une vingtaine de secondes environ, vous allez \xc3\xa9""couter un son qu'il faudra retrouver.\n"
-"\n"
-"2 - Ensuite, en d\xc3\xa9pla\xc3\xa7""ant des points blancs sur une tablette tactile, vous pourrez chercher et retrouver ce son de synth\xc3\xa9tiseur.\n"
-"Chaque forme g\xc3\xa9om\xc3\xa9trique \xc3\xa0 l'\xc3\xa9""cran est li\xc3\xa9""e \xc3\xa0 un param\xc3\xa8tre de synth\xc3\xa9tiseur, d'effet audio, ou de bien st\xc3\xa9r\xc3\xa9o gauche/droite.\n"
-"D\xc3\xa8s que vous pensez \xc3\xaatre proche du r\xc3\xa9sultat, vous pouvez cliquer sur OK ou appuyer sur la touche verte du clavier.\n"
+"L'objectif de cette exp\xc3\xa9rience est de retrouver un son particulier de synth\xc3\xa9tiseur de musique, et ce le plus rapidement possible .\n"
 "\n"
 "\n"
 "\n"
-"Le cycle d'\xc3\xa9""coute/recherche aura lieu 20 fois, pour une exp\xc3\xa9rience qui durera au total entre 20 et 25 minutes.\n"
+"L'exp\xc3\xa9rience est divis\xc3\xa9""e en plusieurs cycles, qui contiennent chacun 3 \xc3\xa9tapes :\n"
+"\n"
+"1 - Au d\xc3\xa9part, pendant une vingtaine de secondes, vous allez \xc3\xa9""couter un son qu'il faudra retrouver.\n"
+"\n"
+"2 - Ensuite, en d\xc3\xa9pla\xc3\xa7""ant des points blancs sur la tablette tactile, vous pourrez chercher et retrouver ce son de synth\xc3\xa9tiseur.\n"
+"Chaque forme g\xc3\xa9om\xc3\xa9trique \xc3\xa0 l'\xc3\xa9""cran est li\xc3\xa9""e \xc3\xa0 un param\xc3\xa8tre de synth\xc3\xa9tiseur, d'effet audio ou de st\xc3\xa9r\xc3\xa9o gauche/droite.\n"
+"S'il y a plusieurs points blancs, vous pouvez utiliser plusieurs doigts en m\xc3\xaame temps si vous le souhaitez.\n"
+"\n"
+"Attention : le temps est limit\xc3\xa9, mais il ne faut pas attendre la fin du d\xc3\xa9""compte !\n"
+"D\xc3\xa8s que vous pensez \xc3\xaatre proche du r\xc3\xa9sultat, cliquez sur OK ou appuyez sur la touche verte du clavier.\n"
+"\n"
+"3 - \xc3\x80 la fin de la recherche du son synth\xc3\xa9tiseur, il y aura une pause avant l'\xc3\xa9tape suivante.\n"
+"Un bruit sonore pourra \xc3\xaatre entendu durant cette pause.\n"
 "\n"
 "\n"
 "\n"
-"Pour commencer, vous allez pouvoir vous entra\xc3\xaener et prendre en main l'application tactile gr\xc3\xa2""ce \xc3\xa0 2 cycles d'essai.\n"
-"\n";
+"Le cycle d'\xc3\xa9""coute/recherche/pause aura lieu 22 fois, avec au d\xc3\xa9part 2 cycles d'essais pour vous entra\xc3\xaener et prendre en main l'application tactile.\n"
+"\n"
+"L'exp\xc3\xa9rience durera au total entre 25 et 30 minutes (y compris les questions).\n";
 
 const char* Recorder_Intro_FR_txt = (const char*) temp_binary_data_3;
 
@@ -87,10 +120,12 @@ static const unsigned char temp_binary_data_4[] =
 "\"If you do not have an opinion, leave the cursor at center position\" = \"Si vous n'avez pas d'opinion, laissez le curseur en position centrale\n"
 "\"If you have any remark, comment or suggestion, please feel free to write it below:\" = \"Si vous avez une remarque, un commentaire ou une suggestion, vous pouvez l'\xc3\xa9""crire ci-dessous :\"\n"
 "\"LISTEN TO THE PRESET\" = \"\xc3\x89""COUTER LE PRESET\"\n"
+"\"Listening to reference sound will start in:\" = \"L'\xc3\xa9""coute du son de r\xc3\xa9""f\xc3\xa9rence va commencer dans :\"\n"
 "\"OK, save data and finish the experiment\" = \"OK, enregistrer les donn\xc3\xa9""es et terminer l'exp\xc3\xa9rience\"\n"
 "\"Next questions will appear soon...\" = \"Les questions suivantes vont appara\xc3\xaetre tr\xc3\xa8s bient\xc3\xb4t...\"\n"
 "\"Please tell us its name, location and/or context in the form below: \" = \"Veuillez s'il vous pla\xc3\xaet nous indiquer son nom, lieu et/ou contexte dans le formulaire ci-dessous :\"\n"
 "\"Please tell us the nature of this impairment in the form below:\" = \"Veuillez s'il vous pla\xc3\xaet nous indiquer la nature de ce trouble dans le formulaire ci-dessous :\"\n"
+"\"Preset research will start in:\" = \"La recherche du son va commencer dans:\"\n"
 "\"Thank you for participating!\" = \"Merci d'avoir particip\xc3\xa9 !\"\n"
 "\"TRIAL preset\" = \"Preset d'ESSAI\"\n"
 "\"Which method seemed to be the fastest?\" = \"Quelle m\xc3\xa9thode vous a sembl\xc3\xa9 la plus rapide ?\"\n"
@@ -10536,11 +10571,11 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
 
     switch (hash)
     {
-        case 0xa549d1de:  numBytes = 47; return Recorder_AfterTrial_EN_txt;
-        case 0xa7370881:  numBytes = 298; return Recorder_AfterTrial_FR_txt;
-        case 0xcd874cee:  numBytes = 47; return Recorder_Intro_EN_txt;
-        case 0xcf748391:  numBytes = 949; return Recorder_Intro_FR_txt;
-        case 0x340941eb:  numBytes = 4347; return Translation_FR_txt;
+        case 0xa549d1de:  numBytes = 258; return Recorder_AfterTrial_EN_txt;
+        case 0xa7370881:  numBytes = 310; return Recorder_AfterTrial_FR_txt;
+        case 0xcd874cee:  numBytes = 1123; return Recorder_Intro_EN_txt;
+        case 0xcf748391:  numBytes = 1274; return Recorder_Intro_FR_txt;
+        case 0x340941eb:  numBytes = 4525; return Translation_FR_txt;
         case 0x896b2391:  numBytes = 32310; return _4_Faders_png;
         case 0xffae406b:  numBytes = 35496; return _4_Interpolation_areas_png;
         case 0xf1ad4a99:  numBytes = 672439; return Experiment_macOS_1024at1_png;

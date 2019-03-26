@@ -1,1 +1,24 @@
-[...English introduction text to be written...]
+
+The objective of this experiment is to find a particular synthesiser sound as quickly as possible.
+
+
+
+The experiment is divided into several cycles, which are made of 3 steps each:
+
+1 - First, during around twenty seconds, you will listen to a sound that will be searched later.
+
+2 - Then, you will be able to search for this synthesiser sound by moving white dots on the tablet.
+Each geometrical shape on the screen is linked to a synthesiser parameter, an audio effect, or a left/right stereo effect.
+If there are multiple white dots, you can use several fingers at the same time if you wish.
+
+Warning: the research time is limited, but you should not wait for the end of the countdown!
+As soon as you think being close to the result, click on OK or push the green key of the keyboard.
+
+3 - After the research, the experiment will pause before triggering the next step.
+A noise might be heard during that pause.
+
+
+
+This listen/search/pause cycle will occur 22 times, starting with 2 trial cycles for you to train and get used the the touch app.
+
+The experiment will last between 25 and 30 minutes (including questions).

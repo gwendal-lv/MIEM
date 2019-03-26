@@ -61,10 +61,12 @@ void MainComponent::paint (Graphics& g)
 
 void MainComponent::resized()
 {
-    backLabel->setBounds(16, 16, getWidth()-32, 24);
+    const int labelsMargins = 32;
     
-    expeLabel->setBounds(16, getHeight() - 24 - 16 - 24, getWidth()-32, 24);
-    expeLabel2->setBounds(16, getHeight() - 24 - 16, getWidth()-32, 24);
+    backLabel->setBounds(labelsMargins, labelsMargins, getWidth()- 2*labelsMargins, 24);
+    
+    expeLabel->setBounds(labelsMargins, getHeight() - 24 - labelsMargins - 24, getWidth()-2*labelsMargins, 24);
+    expeLabel2->setBounds(labelsMargins, getHeight() - 24 - labelsMargins, getWidth()-2*labelsMargins, 24);
     
     oscRecorderComponent->setBounds(this->getBounds());
     oscRecorderIntroComponent->setBounds(this->getBounds());

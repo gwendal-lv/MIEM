@@ -140,10 +140,10 @@ LoggerComponent::LoggerComponent ()
 
 
     //[Constructor] You can add your own custom stuff here..
-    
+
     // quite large scrollbar for iOS/Android
     textEditor->setScrollBarThickness(16);
-    
+
     textEditor->addListener(this);
     ipTextEditor->addListener(this);
     portTextEditor->addListener(this);
@@ -347,10 +347,10 @@ void LoggerComponent::messageReceived (const MemoryBlock &message)
     // Au cas où l'on a pas de caractère de fin de chaîne...
     for (size_t i=0 ; i<message.getSize() ; i++)
         lastString[i] = (char) message[i];
-    
+
     receivedLog += lastString;
     receivedLog += '\n';
-    
+
     // ajout du texte et update graphique
     textEditor->setText(receivedLog);
     textEditor->applyFontToAllText(Font(Font::getDefaultMonospacedFontName(),
