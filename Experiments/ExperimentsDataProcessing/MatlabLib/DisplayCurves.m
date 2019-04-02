@@ -1,15 +1,18 @@
-function [ ] = DisplayCurves( globalParams, experiments, expeData, expeId, graphSynthId )
+function [ ] = DisplayCurves( globalParams, experiments, expeData, expeId, graphPresetId )
 %DISPLAYCURVES Summary of this function goes here
 %   Detailed explanation goes here
 
+limitesOrdonnees = [-1 1];
 
-% Sub-plot en 12 parties
-%
-%    essai1   essai2     synth a     synth b
-%   synth c  etc....
+% Sub-plot en 20 parties
 %
 % dans l'ordre chrono pour voir l'évolution (si évolution il y a)
-figure('Name', strcat('Visualisation of experiment #', num2str(expeId)));
+if (experiments(expeId).isValid)
+    figure('Name', strcat('Visualisation of experiment #', num2str(expeId)));
+else
+    figure('Name', strcat('Data not valid - experiment #', num2str(expeId)));
+    return;
+end
 
 % Tableau des couleurs : chaque paramètre aura sa couleur. source couleurs 2014b http://math.loyola.edu/~loberbro/matlab/html/colorsInMatlab.html
 couleurs = [0.0000 0.4470 0.7410 ;
@@ -22,62 +25,41 @@ couleurs = [0.0000 0.4470 0.7410 ;
 
 
 % - - - - - Si graphID <= 0 : on affiche TOUT - - - - -
+% (sauf les essais...)
 
-if (graphSynthId <= 0)
-    % Plot des essais pour commencer
-    subplot(3,4, 1);
-    synthId = 1;
-    if experiments(expeId).isSynthRecorded(synthId, 1)
-        hold off;
-        i2bis = 1;
-        for paramId = 1:globalParams.parametersCount
-            plot(expeData{expeId, synthId, i2bis, paramId}(:, 1), expeData{expeId, synthId, i2bis, paramId}(:, 2));
-            hold on;
-        end
-        gridxy([], [0.0],'Color','k','Linestyle','-.');
-        title(strcat('F-', globalParams.synthNames(synthId)));
-    else
-        title('No data');
-    end
+if (graphPresetId <= 0)
 
-    subplot(3,4, 2);
-    synthId = 1;
-    if experiments(expeId).isSynthRecorded(synthId, 2)
-        hold off;
-        i2bis = 2;
-        for paramId = 1:globalParams.parametersCount
-            plot(expeData{expeId, synthId, i2bis, paramId}(:, 1), expeData{expeId, synthId, i2bis, paramId}(:, 2));
-            hold on;
-        end
-        gridxy([], [0.0],'Color','k','Linestyle','-.');
-        title(strcat('I-', globalParams.synthNames(synthId)));
-    else
-        title('No data');
-    end
-
-    % Ensuite, plot des 10 échantillons testés
-    for i=3:12
-        subplot(3, 4, i);
+    % Ensuite, plot des 20 échantillons testés
+    % sur 4 lignes et 5 colonnes
+    subplotRowsCount = 4;
+    subplotColsCount = 5;
+    
+    % plot de tous les synthés dans l'ordre
+    for i=(globalParams.trialSynthsCount + 1):(globalParams.presetsCount)
+        subplot(subplotRowsCount, subplotColsCount, i - globalParams.trialSynthsCount);
         hold off;
 
-        synthId = experiments(expeId).synthIndexesInAppearanceOrder(i-1);
+        synthId = experiments(expeId).synthIndexesInAppearanceOrder(i);
+        % besoin de savoir aussi si c'était un fader ou un interp qui a été
+        % enregistré
+        synthType = experiments(expeId).synthTypesInAppearanceOrder(i);
         if (synthId > 0)
 
-            if ( experiments(expeId).isSynthRecorded(synthId, 1) ) 
+            if ( experiments(expeId).isSynthRecorded(synthId, 1) ) && (synthType == 1)
                 i2bis = 1;
                 for paramId = 1:globalParams.parametersCount
                     plot(expeData{expeId, synthId, i2bis, paramId}(:, 1), expeData{expeId, synthId, i2bis, paramId}(:, 2));
                     hold on;
                 end
-                gridxy([], [0.0],'Color','k','Linestyle','-.');
+                gridxy([], [0.0], 'Color','k','Linestyle','-.'); ylim(limitesOrdonnees);
                 title(strcat('F-', globalParams.synthNames(synthId)));
-            elseif  (experiments(expeId).isSynthRecorded(synthId, 2) ) 
+            elseif  (experiments(expeId).isSynthRecorded(synthId, 2) )  && (synthType == 2)
                 i2bis = 2;
                 for paramId = 1:globalParams.parametersCount
                     plot(expeData{expeId, synthId, i2bis, paramId}(:, 1), expeData{expeId, synthId, i2bis, paramId}(:, 2));
                     hold on;
                 end
-                gridxy([], [0.0],'Color','k','Linestyle','-.');
+                gridxy([], [0.0], 'Color','k','Linestyle','-.'); ylim(limitesOrdonnees);
                 title(strcat('I-', globalParams.synthNames(synthId)));
             else
                 title('No data');
@@ -90,49 +72,46 @@ if (graphSynthId <= 0)
 
     
 % - - - - sinon, on n'affiche que le graphe demandé - - - -
+% (pas dans l'ordre chronologique, mais dans l'ordre réel
+%       pour pouvoir comparer tous les sujets)
 else
-
-    synthId = experiments(expeId).synthIndexesInAppearanceOrder(graphSynthId);
-    %synthId = graphSynthId;
+    % init à une valeur qui n'affiche rien
+    synthId = -1;
+    % petites valeurs : synthé d'essai
+    if (graphPresetId == 1)
+        synthId = 1;
+        i2bis = 1;
+    elseif (graphPresetId == 2)
+        synthId = 2;
+        i2bis = 2;
+    % plus grandes valeurs : synthés réel de l'expérience
+    else
+        synthId = floor( (graphPresetId - globalParams.trialSynthsCount - 1) / 2 ) + globalParams.trialSynthsCount + 1;
+        i2bis = mod( (graphPresetId - globalParams.trialSynthsCount - 1), 2) + 1;
+    end
+    
     if (synthId > 0)
             hold off;
 
-        if ( experiments(expeId).isSynthRecorded(synthId, 1) ) % valable pour tout param.... normalement.
-            i2bis = 1;
-            % Synth 1 est très spécial... c'est le test, donc il a le [F]
-            % et le [I]
-            if (synthId == 1)
-                subplot(1,2,1);
-            end
-            
+        if ( experiments(expeId).isSynthRecorded(synthId, 1) && (i2bis == 1) )
             hold off;
             for paramId = 1:globalParams.parametersCount
                 plot(expeData{expeId, synthId, i2bis, paramId}(:, 1), expeData{expeId, synthId, i2bis, paramId}(:, 2));
                 hold on;
             end
-            gridxy([], [0.0],'Color','k','Linestyle','-.');
+            gridxy([], [0.0],'Color','k','Linestyle','-.'); ylim(limitesOrdonnees);
             title(strcat('F-', globalParams.synthNames(synthId)));
-        else
-            title('No data');
-        end
-        
-        if  (experiments(expeId).isSynthRecorded(synthId, 2)) 
-            i2bis = 2;
             
-            if (synthId == 1)
-                subplot(1,2,2);
-            end
-            
+        elseif  (experiments(expeId).isSynthRecorded(synthId, 2) && (i2bis == 2) ) 
             for paramId = 1:globalParams.parametersCount
                 plot(expeData{expeId, synthId, i2bis, paramId}(:, 1), expeData{expeId, synthId, i2bis, paramId}(:, 2));
                 hold on;
             end
-            gridxy([], [0.0],'Color','k','Linestyle','-.');
+            gridxy([], [0.0],'Color','k','Linestyle','-.'); ylim(limitesOrdonnees);
             title(strcat('I-', globalParams.synthNames(synthId)));
+
         else
-            if (synthId == 1)
-                title('No data');
-            end
+            title('No data');
         end
 
     else

@@ -650,7 +650,8 @@ void OSCRecorder::createNewDataFiles()
     experimentsInnerTree.put("osc.udp.<xmlattr>.port", udpOscPort);
     // We also rewrite parameters of the synths
     bptree::ptree synthsInnerTree;
-    synthsInnerTree.put("<xmlattr>.total_count", ExperimentPresetsCount + TrialSynthsCount);
+    assert( (ExperimentPresetsCount%2) == 0); // 2 times more presets than synths for the actual experiment presets
+    synthsInnerTree.put("<xmlattr>.total_count", (ExperimentPresetsCount/2) + TrialSynthsCount);
     synthsInnerTree.put("<xmlattr>.trials_count", TrialSynthsCount);
     assert(ExperimentPresetsCount%2 == 0);
     for (int i=(-TrialSynthsCount); i < (ExperimentPresetsCount/2) ; i++)

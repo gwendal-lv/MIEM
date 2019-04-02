@@ -2,15 +2,14 @@ function [] = DisplayExpeResults(globalParams, expeResults, expeId)
 %DISPLAYEXPERESULTS Summary of this function goes here
 %   Detailed explanation goes here
 
-perfIndexMaxDisplayValue = 0.5;
-errorYMax = 0.5;
-timeMaxDisplayValue = 30.0;
+perfIndexMaxDisplayValue = 0.1;
+errorYMax = 1; % valeurs entre -1 et +1..... erreur max en norme 1 ?
+timeMaxDisplayValue = 30.0; % fin max de l'expérience
+
 
 figure('Name', strcat('Duration, error and performance index of experiment #', num2str(expeId)));
 
-% Inutile de reconstruire des données d'affichage :
-% on affiche juste des points, comme ça les valeurs négatives ne seront pas
-% à l'écran (on fera un ylim)
+
 synthsIds = 1:globalParams.synthsCount;
 
 subplot(3, 1, 1);
@@ -19,7 +18,7 @@ hold on;
 plot(synthsIds, expeResults(expeId).T(:,2), '*b');
 xlim([0 (globalParams.synthsCount+1)]);
 xticks([1:(globalParams.synthsCount+0)]);
-legend('Faders', 'interpolation');
+legend('Faders', 'interpolation', 'Location', 'southeast');
 ylim([0, timeMaxDisplayValue]);
 ylabel('T');
 title( "Characteristics T, E and P for experiment i = " + num2str(expeId));

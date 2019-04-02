@@ -36,7 +36,7 @@ static const unsigned char temp_binary_data_2[] =
 "\n"
 "\n"
 "\n"
-"The experiment is devided into several cycles, which are made of 3 steps each:\n"
+"The experiment is divided into several cycles, which are made of 3 steps each:\n"
 "\n"
 "1 - First, during around twenty seconds, you will listen to a sound that will be searched later.\n"
 "\n"
