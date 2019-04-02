@@ -14,6 +14,8 @@
 
 #include "MiemExpePreset.h"
 
+#include "MiamMath.h"
+
 #include "JuceHeader.h"
 
 
@@ -467,4 +469,51 @@ void MiemExpePreset::DisplayInStdCout(bool displaySortedSamples)
             std::cout << sortedSamples[i].time_ms << " ; " << sortedSamples[i].parameterIndex << " ; " << sortedSamples[i].value << std::endl;
         }
     }
+}
+
+
+double MiemExpePreset::ComputePerformance()
+{
+    // on va renvoyer un score pas trop méchant même pour les gens un peu nuls...
+    // (genre avec un plateau à 0.10)
+    // et on va considérer que le temps est censé durer entre 10 et 30 secondes
+    // (on mettra un clamp final sur les valeurs...)
+    double maxTime_s = 30;
+    
+    // recherche des valeurs finales (paramètres et temps
+    std::vector<double> finalValues;
+    int finalTime_ms = -1;
+    finalValues.resize(4, 0.25);
+    int currentParamIdx = 5; // pour forcer 1ier déclenchement
+    // pour les samples triées : on parcourt le tableau
+    // à l'envers, en détectant les changements
+    for (int i = ((int)sortedSamples.size()-1) ; i >= 0 ; i--)
+    {
+        // détection du max pour ce niveau (au rang i)
+        if (sortedSamples[i].parameterIndex != currentParamIdx)
+        {
+            // Attention : paramètres de 1 à 4 ! Pour indices vecteur de 0 à 3...
+            finalValues[sortedSamples[i].parameterIndex - 1] = (double) sortedSamples[i].value;
+            // recherche du max du temps
+            if (finalTime_ms < sortedSamples[i].time_ms)
+                finalTime_ms = sortedSamples[i].time_ms;
+            
+            currentParamIdx = sortedSamples[i].parameterIndex;
+        }
+    }
+    
+    // calcul de la performance
+    double errorNorm1 = 0.0;
+    const double paramsSpan = parametersMax - parametersMin;
+    for (int k=0 ; k < finalValues.size() ; k++)
+        errorNorm1 += std::abs((finalValues[k] - parametersTargetValues[k])) / paramsSpan;
+    
+    double timePerformance = 1.0 - (std::log( 1.0 + (double)finalTime_ms/1000.0 )
+                                  / std::log( 1.0 + maxTime_s ));
+    
+    // temps ne compte qu'à 15%
+    double errorFactor = errorNorm1 / (double)(finalValues.size());
+    performance = (1.0 - 3.0*errorFactor) * (0.85 + timePerformance*0.15);
+    
+    return Miam::Math::Clamp(performance, 0.0, 1.0);
 }

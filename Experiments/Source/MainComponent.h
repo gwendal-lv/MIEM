@@ -42,6 +42,9 @@ public:
     /// \brief If nullptr, all GUI components will be hidden. Own labels, etc, will then
     /// be displayed
     void SetOneGuiComponentVisible(Component* component);
+    
+    /// \brief Sets and displays the score (a -1 score hides the label)
+    void SetTotalScore(int totalScore);
 
 private:
     //==============================================================================
@@ -63,6 +66,7 @@ private:
     std::unique_ptr<Label> backLabel;
     std::unique_ptr<Label> expeLabel;
     std::unique_ptr<Label> expeLabel2;
+    std::unique_ptr<Label> scoreLabel;
     
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)

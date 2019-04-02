@@ -19,12 +19,17 @@ MainComponent::MainComponent()
     backLabel.reset(new Label("back label", TRANS("Initialisation... Please check console for errors if program is not responding.")));
     addAndMakeVisible(backLabel.get());
     backLabel->setColour(Label::ColourIds::textColourId, Colours::white);
+    backLabel->setFont(Font(20.0f));
     expeLabel.reset(new Label("expe label 1", ""));
     addAndMakeVisible(expeLabel.get());
     expeLabel->setColour(Label::ColourIds::textColourId, Colours::grey);
     expeLabel2.reset(new Label("expe label 2", ""));
     addAndMakeVisible(expeLabel2.get());
     expeLabel2->setColour(Label::ColourIds::textColourId, Colours::grey);
+    scoreLabel.reset(new Label("score label", ""));
+    addAndMakeVisible(scoreLabel.get());
+    scoreLabel->setColour(Label::ColourIds::textColourId, Colours::white);
+    scoreLabel->setFont(Font(36.0f));
     
     // components génériques
     firstUserQuestionsComponent.reset(new UserQuestions());
@@ -63,7 +68,10 @@ void MainComponent::resized()
 {
     const int labelsMargins = 32;
     
-    backLabel->setBounds(labelsMargins, labelsMargins, getWidth()- 2*labelsMargins, 24);
+    backLabel->setBounds(labelsMargins, labelsMargins, getWidth()- 2*labelsMargins, 48);
+    
+    scoreLabel->setBounds(labelsMargins, labelsMargins + 100,
+                           getWidth()- 2*labelsMargins, 48);
     
     expeLabel->setBounds(labelsMargins, getHeight() - 24 - labelsMargins - 24, getWidth()-2*labelsMargins, 24);
     expeLabel2->setBounds(labelsMargins, getHeight() - 24 - labelsMargins, getWidth()-2*labelsMargins, 24);
@@ -87,5 +95,20 @@ void MainComponent::SetOneGuiComponentVisible(Component* component)
             bigGuiComponents[i]->setVisible(false);
     }
 }
+
+
+
+void MainComponent::SetTotalScore(int totalScore)
+{
+    if (totalScore < 0)
+        scoreLabel->setVisible(false);
+    else
+    {
+        scoreLabel->setVisible(true);
+        scoreLabel->setText(TRANS("Total score = ") + boost::lexical_cast<std::string>(totalScore),
+                            NotificationType::sendNotification);
+    }
+}
+
 
 

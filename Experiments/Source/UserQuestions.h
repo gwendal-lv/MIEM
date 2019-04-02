@@ -40,7 +40,8 @@ class UserQuestionsManager;
 */
 class UserQuestions  : public Component,
                        public Button::Listener,
-                       public Slider::Listener
+                       public Slider::Listener,
+                       public ComboBox::Listener
 {
 public:
     //==============================================================================
@@ -59,6 +60,7 @@ public:
     void resized() override;
     void buttonClicked (Button* buttonThatWasClicked) override;
     void sliderValueChanged (Slider* sliderThatWasMoved) override;
+    void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
 
 
 
@@ -80,6 +82,9 @@ private:
     std::unique_ptr<TextEditor> hearingTextEditor;
     std::unique_ptr<Label> ageLabel;
     std::unique_ptr<Slider> ageSlider;
+    std::unique_ptr<Label> personalInfoLabel;
+    std::unique_ptr<Label> sexLabel;
+    std::unique_ptr<ComboBox> sexComboBox;
 
 
     //==============================================================================

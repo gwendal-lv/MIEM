@@ -159,10 +159,9 @@ BEGIN_JUCER_METADATA
               bgColOn="ff252525" buttonText="Continue" connectedEdges="0" needsCallback="1"
               radioGroupId="0"/>
   <TEXTEDITOR name="intro text editor" id="6f5b21f19397a4f5" memberName="introTextEditor"
-              virtualName="" explicitFocusOrder="0" pos="0.5Cc 40 80M 200M"
-              bkgcol="495358" hilitecol="e0ec65" outlinecol="ff565656" initialText=""
-              multiline="1" retKeyStartsLine="1" readonly="1" scrollbars="0"
-              caret="0" popupmenu="0"/>
+              virtualName="" explicitFocusOrder="0" pos="0Cc 40 80M 200M" bkgcol="495358"
+              hilitecol="e0ec65" outlinecol="ff565656" initialText="" multiline="1"
+              retKeyStartsLine="1" readonly="1" scrollbars="0" caret="0" popupmenu="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

@@ -1,6 +1,7 @@
 language: French
 countries: fr be mc ch lu
 
+"Age" = "Âge"
 "As a professional, I understand and I can manipulate classical sound synthesisers and filtering techniques" = "En tant que professionnel, je comprends et je suis capable de manipuler les techniques classiques de synthèse sonore et de filtrage"
 "As an amateur, I have already played with synthesisers and filters, and I know a bit how to use them" = "En tant qu'amateur, j'ai déjà joué avec des synthétiseurs et des filtres, et j'ai des connaissances de base concernant leur utilisation"
 "Before starting the experiment, please read and fill the form below." = "Avant de commencer l'expérience, veuillez s'il vous plaît lire et remplir le formulaire ci-dessous."
@@ -11,6 +12,7 @@ countries: fr be mc ch lu
 "Concerning sound synthesisers and filters, what is your level of expertise ?" = "Concernant les synthétiseurs audio et les filtres, comment estimez-vous votre niveau d'expertise ?"
 "Continue" = "Continuer"
 "Current preset: " = "Preset actuel : "
+"Female" = "Femme"
 "How old are you?" = "Quel âge avez-vous ?"
 "I allow the anonymous usage of data collected during this experiment" = "J'autorise l'utilisation anonyme des données collectées durant cette expérience"
 "I have already participated in a similar scientific experiment" = "J'ai déjà participé à une expérience scientifique similaire"
@@ -26,11 +28,15 @@ countries: fr be mc ch lu
 "If you have any remark, comment or suggestion, please feel free to write it below:" = "Si vous avez une remarque, un commentaire ou une suggestion, vous pouvez l'écrire ci-dessous :"
 "LISTEN TO THE PRESET" = "ÉCOUTER LE PRESET"
 "Listening to reference sound will start in:" = "L'écoute du son de référence va commencer dans :"
+"Male" = "Homme"
 "OK, save data and finish the experiment" = "OK, enregistrer les données et terminer l'expérience"
+"Other" = "Autre"
 "Next questions will appear soon..." = "Les questions suivantes vont apparaître très bientôt..."
 "Please tell us its name, location and/or context in the form below: " = "Veuillez s'il vous plaît nous indiquer son nom, lieu et/ou contexte dans le formulaire ci-dessous :"
 "Please tell us the nature of this impairment in the form below:" = "Veuillez s'il vous plaît nous indiquer la nature de ce trouble dans le formulaire ci-dessous :"
 "Preset research will start in:" = "La recherche du son va commencer dans:"
+"Sex" = "Sexe"
+"Total score = " = "Score total = "
 "Thank you for participating!" = "Merci d'avoir participé !"
 "TRIAL preset" = "Preset d'ESSAI"
 "Which method seemed to be the fastest?" = "Quelle méthode vous a semblé la plus rapide ?"

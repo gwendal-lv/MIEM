@@ -87,7 +87,7 @@ UserQuestions::UserQuestions ()
     visionDisorderTextEditor->setPopupMenuEnabled (true);
     visionDisorderTextEditor->setText (String());
 
-    visionDisorderTextEditor->setBounds (16, 400, 752, 24);
+    visionDisorderTextEditor->setBounds (16, 432, 752, 24);
 
     hearingImpairmentToggleButton.reset (new ToggleButton ("Audition Question toggle button"));
     addAndMakeVisible (hearingImpairmentToggleButton.get());
@@ -113,18 +113,18 @@ UserQuestions::UserQuestions ()
     hearingTextEditor->setPopupMenuEnabled (true);
     hearingTextEditor->setText (String());
 
-    hearingTextEditor->setBounds (16, 544, 752, 24);
+    hearingTextEditor->setBounds (16, 576, 752, 24);
 
     ageLabel.reset (new Label ("Age label",
-                               TRANS("How old are you?")));
+                               TRANS("Age")));
     addAndMakeVisible (ageLabel.get());
     ageLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
-    ageLabel->setJustificationType (Justification::centredLeft);
+    ageLabel->setJustificationType (Justification::centredRight);
     ageLabel->setEditable (false, false, false);
     ageLabel->setColour (TextEditor::textColourId, Colours::black);
     ageLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    ageLabel->setBounds (8, 248, 144, 24);
+    ageLabel->setBounds (16, 248, 64, 24);
 
     ageSlider.reset (new Slider ("age slider"));
     addAndMakeVisible (ageSlider.get());
@@ -134,9 +134,43 @@ UserQuestions::UserQuestions ()
     ageSlider->setColour (Slider::backgroundColourId, Colour (0x00263238));
     ageSlider->setColour (Slider::thumbColourId, Colour (0x0042a2c8));
     ageSlider->setColour (Slider::trackColourId, Colour (0x00181f22));
+    ageSlider->setColour (Slider::textBoxBackgroundColourId, Colour (0xff263238));
     ageSlider->addListener (this);
 
-    ageSlider->setBounds (160, 248, 150, 24);
+    ageSlider->setBounds (88, 248, 150, 24);
+
+    personalInfoLabel.reset (new Label ("Personal Info label",
+                                        TRANS("Personal anonymous information:")));
+    addAndMakeVisible (personalInfoLabel.get());
+    personalInfoLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    personalInfoLabel->setJustificationType (Justification::centredLeft);
+    personalInfoLabel->setEditable (false, false, false);
+    personalInfoLabel->setColour (TextEditor::textColourId, Colours::black);
+    personalInfoLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    sexLabel.reset (new Label ("Sex label",
+                               TRANS("Sex")));
+    addAndMakeVisible (sexLabel.get());
+    sexLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    sexLabel->setJustificationType (Justification::centredRight);
+    sexLabel->setEditable (false, false, false);
+    sexLabel->setColour (TextEditor::textColourId, Colours::black);
+    sexLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    sexLabel->setBounds (16, 288, 64, 24);
+
+    sexComboBox.reset (new ComboBox ("Sex combo box"));
+    addAndMakeVisible (sexComboBox.get());
+    sexComboBox->setEditableText (false);
+    sexComboBox->setJustificationType (Justification::centredLeft);
+    sexComboBox->setTextWhenNothingSelected (String());
+    sexComboBox->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
+    sexComboBox->addItem (TRANS("Female"), 1);
+    sexComboBox->addItem (TRANS("Male"), 2);
+    sexComboBox->addItem (TRANS("Other"), 3);
+    sexComboBox->addListener (this);
+
+    sexComboBox->setBounds (88, 288, 150, 24);
 
 
     //[UserPreSize]
@@ -152,6 +186,8 @@ UserQuestions::UserQuestions ()
     //[Constructor] You can add your own custom stuff here..
 
     buttonClicked(nullptr); // to force updates
+    // sexe choisi d'avance (pour empêcher toute valeur non-définie)
+    sexComboBox->setSelectedId(1);
 
     //[/Constructor]
 }
@@ -173,6 +209,9 @@ UserQuestions::~UserQuestions()
     hearingTextEditor = nullptr;
     ageLabel = nullptr;
     ageSlider = nullptr;
+    personalInfoLabel = nullptr;
+    sexLabel = nullptr;
+    sexComboBox = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -200,10 +239,11 @@ void UserQuestions::resized()
     finishedButton->setBounds ((getWidth() / 2) - (500 / 2), getHeight() - 88, 500, 80);
     allowDataToggleButton->setBounds (8, 128, getWidth() - 35, 24);
     label2->setBounds (8, 152, getWidth() - 35, 24);
-    visionDisorderToggleButton->setBounds (8, 344, getWidth() - 35, 24);
-    visionQuestionLabel->setBounds (8, 368, getWidth() - 27, 24);
-    hearingImpairmentToggleButton->setBounds (8, 483, getWidth() - 35, 24);
-    hearingQuestionLabel->setBounds (8, 512, getWidth() - 27, 24);
+    visionDisorderToggleButton->setBounds (8, 376, getWidth() - 35, 24);
+    visionQuestionLabel->setBounds (8, 400, getWidth() - 27, 24);
+    hearingImpairmentToggleButton->setBounds (8, 515, getWidth() - 35, 24);
+    hearingQuestionLabel->setBounds (8, 544, getWidth() - 27, 24);
+    personalInfoLabel->setBounds (8, 216, getWidth() - 433, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -263,6 +303,21 @@ void UserQuestions::sliderValueChanged (Slider* sliderThatWasMoved)
     //[/UsersliderValueChanged_Post]
 }
 
+void UserQuestions::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
+{
+    //[UsercomboBoxChanged_Pre]
+    //[/UsercomboBoxChanged_Pre]
+
+    if (comboBoxThatHasChanged == sexComboBox.get())
+    {
+        //[UserComboBoxCode_sexComboBox] -- add your combo box handling code here..
+        //[/UserComboBoxCode_sexComboBox]
+    }
+
+    //[UsercomboBoxChanged_Post]
+    //[/UsercomboBoxChanged_Post]
+}
+
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
@@ -273,6 +328,22 @@ std::shared_ptr<bptree::ptree> UserQuestions::GetQuestionsBPTree()
     questionsChildrenTree->put("data_usage.<xmlattr>.allow",
                                (bool)allowDataToggleButton->getToggleState());
     questionsChildrenTree->put("age", (int)ageSlider->getValue());
+    // sexe : chaîne de caractères dépendant de l'indice de text box
+    switch (sexComboBox->getSelectedId())
+    {
+        case 1:
+            questionsChildrenTree->put("sex", "female");
+            break;
+        case 2:
+            questionsChildrenTree->put("sex", "male");
+            break;
+        case 3:
+            questionsChildrenTree->put("sex", "other");
+            break;
+        default : // sex must be defined
+            assert(false);
+    }
+    // vision/hearing impairments
     bptree::ptree visionTree;
     visionTree.put("<xmlattr>.checked", (bool)visionDisorderToggleButton->getToggleState());
     if (visionDisorderToggleButton->getToggleState())
@@ -323,42 +394,57 @@ BEGIN_JUCER_METADATA
          fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="1" justification="33" typefaceStyle="Italic"/>
   <TOGGLEBUTTON name="Question toggle button" id="acc7621165a9b88a" memberName="visionDisorderToggleButton"
-                virtualName="" explicitFocusOrder="0" pos="8 344 35M 24" buttonText="I suffer from a vision impairment, such as uncorrected short-sightedness, color blindness, ..."
+                virtualName="" explicitFocusOrder="0" pos="8 376 35M 24" buttonText="I suffer from a vision impairment, such as uncorrected short-sightedness, color blindness, ..."
                 connectedEdges="0" needsCallback="1" radioGroupId="0" state="0"/>
   <LABEL name="Vision Question label" id="e9827abd77de5abc" memberName="visionQuestionLabel"
-         virtualName="" explicitFocusOrder="0" pos="8 368 27M 24" edTextCol="ff000000"
+         virtualName="" explicitFocusOrder="0" pos="8 400 27M 24" edTextCol="ff000000"
          edBkgCol="0" labelText="Please tell us the nature of this impairment in the form below:"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="33"/>
   <TEXTEDITOR name="new text editor" id="a8feea107d85baef" memberName="visionDisorderTextEditor"
-              virtualName="" explicitFocusOrder="0" pos="16 400 752 24" initialText=""
+              virtualName="" explicitFocusOrder="0" pos="16 432 752 24" initialText=""
               multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"
               caret="1" popupmenu="1"/>
   <TOGGLEBUTTON name="Audition Question toggle button" id="62cad4dc7d1ac60c"
                 memberName="hearingImpairmentToggleButton" virtualName="" explicitFocusOrder="0"
-                pos="8 483 35M 24" buttonText="I suffer from an hearing impairment"
+                pos="8 515 35M 24" buttonText="I suffer from an hearing impairment"
                 connectedEdges="0" needsCallback="1" radioGroupId="0" state="0"/>
   <LABEL name="Hearing Question label" id="ca8fb6087ad7469d" memberName="hearingQuestionLabel"
-         virtualName="" explicitFocusOrder="0" pos="8 512 27M 24" edTextCol="ff000000"
+         virtualName="" explicitFocusOrder="0" pos="8 544 27M 24" edTextCol="ff000000"
          edBkgCol="0" labelText="Please tell us the nature of this impairment in the form below:"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="33"/>
   <TEXTEDITOR name="new text editor" id="97593eef0b567a69" memberName="hearingTextEditor"
-              virtualName="" explicitFocusOrder="0" pos="16 544 752 24" initialText=""
+              virtualName="" explicitFocusOrder="0" pos="16 576 752 24" initialText=""
               multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"
               caret="1" popupmenu="1"/>
   <LABEL name="Age label" id="cad86b63b6b409a7" memberName="ageLabel"
-         virtualName="" explicitFocusOrder="0" pos="8 248 144 24" edTextCol="ff000000"
-         edBkgCol="0" labelText="How old are you?" editableSingleClick="0"
+         virtualName="" explicitFocusOrder="0" pos="16 248 64 24" edTextCol="ff000000"
+         edBkgCol="0" labelText="Age" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="1.5e1"
+         kerning="0" bold="0" italic="0" justification="34"/>
+  <SLIDER name="age slider" id="8a696570d1136395" memberName="ageSlider"
+          virtualName="" explicitFocusOrder="0" pos="88 248 150 24" bkgcol="263238"
+          thumbcol="42a2c8" trackcol="181f22" textboxbkgd="ff263238" min="1.8e1"
+          max="1e2" int="1" style="LinearHorizontal" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          needsCallback="1"/>
+  <LABEL name="Personal Info label" id="ef74a1eae199b2c0" memberName="personalInfoLabel"
+         virtualName="" explicitFocusOrder="0" pos="8 216 433M 24" edTextCol="ff000000"
+         edBkgCol="0" labelText="Personal anonymous information:" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
          fontsize="1.5e1" kerning="0" bold="0" italic="0" justification="33"/>
-  <SLIDER name="age slider" id="8a696570d1136395" memberName="ageSlider"
-          virtualName="" explicitFocusOrder="0" pos="160 248 150 24" bkgcol="263238"
-          thumbcol="42a2c8" trackcol="181f22" min="1.8e1" max="1e2" int="1"
-          style="LinearHorizontal" textBoxPos="TextBoxLeft" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+  <LABEL name="Sex label" id="b8b59549c8d99d6b" memberName="sexLabel"
+         virtualName="" explicitFocusOrder="0" pos="16 288 64 24" edTextCol="ff000000"
+         edBkgCol="0" labelText="Sex" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="1.5e1"
+         kerning="0" bold="0" italic="0" justification="34"/>
+  <COMBOBOX name="Sex combo box" id="3467a6478862a8fc" memberName="sexComboBox"
+            virtualName="" explicitFocusOrder="0" pos="88 288 150 24" editable="0"
+            layout="33" items="Female&#10;Male&#10;Other" textWhenNonSelected=""
+            textWhenNoItems="(no choices)"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

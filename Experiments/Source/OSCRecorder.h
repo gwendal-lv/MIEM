@@ -47,7 +47,7 @@ class OSCRecorder : public UserQuestionsManager,
     // ===================================================================
     public :
     
-    static std::string GetLanguage() {return std::string("EN");}
+    static std::string GetLanguage() {return std::string("FR");}
     
     const int ExperimentPresetsCount = 20; // 2 presets per synth
     
@@ -59,16 +59,18 @@ class OSCRecorder : public UserQuestionsManager,
     
     const int maxResearchDuration_ms = 30000; // 30 s --> currently unused
 #ifdef __MIEM_SHORT_DELAYS
-    static const int delayAfterFinished_ms = 1000;
-    static const int ListenAutoTriggerDelay_s = 2;
-    static const int SearchAutoTriggerDelay_s = 2;
-    const int listeningTime_ms = 500;
+    static const int delayAfterFinished_ms = 2000;
+    static const int ListenAutoTriggerDelay_s = 3;
+    static const int SearchAutoTriggerDelay_s = 1;
+    const int listeningTime_ms = 1000;
 #else
     static const int delayAfterFinished_ms = 8000;
     static const int ListenAutoTriggerDelay_s = 10;
     static const int SearchAutoTriggerDelay_s = 5;
     const int listeningTime_ms = 20000; // 15s sont un peu trop courtes...
 #endif
+    
+    // valeur qui permet d'imposer un rythme, sans couper trop souvent la recherche...
     const int ResearchTimeMax_ms = 30000;
     
     static const int WhiteNoiseStartDelay_ms = 1000; ///< Delay after entering "finished" state
@@ -209,7 +211,7 @@ class OSCRecorder : public UserQuestionsManager,
     // - - - - - Events to View - - - - -
     protected :
     void displayError(String errorMsg);
-    
+    void computeAndDisplayTotalScore(); ///< Simple sum of all scores (trials excluded)
 
     
     // - - - - - Events froms network - - - - -

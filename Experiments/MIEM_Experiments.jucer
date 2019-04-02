@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="DytN0V" name="MIEM Experiments" projectType="guiapp" jucerVersion="5.4.3"
               companyName="Gwendal Le Vaillant" bundleIdentifier="com.gwendallv.MIEMExperiments"
-              defines="__MIEM_SHORT_DELAYS__NO" reportAppUsage="0" displaySplashScreen="0"
+              defines="__MIEM_SHORT_DELAYS" reportAppUsage="0" displaySplashScreen="0"
               projectLineFeed="&#10;" headerPath="../../../&#10;../../../MiamCommon/Source&#10;"
               userNotes="Module JUCE_OPENGL rajout&#233; pour avoir acc&#232;s aux objets Vector3D">
   <MAINGROUP id="CesC75" name="MIEM Experiments">

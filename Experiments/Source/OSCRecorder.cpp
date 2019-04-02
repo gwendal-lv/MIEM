@@ -266,6 +266,7 @@ void OSCRecorder::changeState(ExperimentState newState)
             else
                 mainComponent->oscRecorderIntroComponent->SetMainText(BinaryData::Recorder_Intro_EN_txt);
             mainComponent->SetOneGuiComponentVisible(mainComponent->oscRecorderIntroComponent.get());
+            mainComponent->SetTotalScore(-1); // to hide the score label
             break;
             
         case ExperimentState::PostTrialDescriptionDisplayed:
@@ -333,6 +334,9 @@ void OSCRecorder::changeState(ExperimentState newState)
             stopRecording();
             // security save
             saveEverythingToFiles(currentPresetStep); // next step pas encore demandée
+            // score display update
+            recorderComponent.SetPerformance(presets[presetRandomIdx[currentPresetStep]]
+                                             -> ComputePerformance());
             // WHITE NOISE starts after a short delay
             Timer::callAfterDelay(WhiteNoiseStartDelay_ms/2,
                                   [this] {
@@ -351,6 +355,7 @@ void OSCRecorder::changeState(ExperimentState newState)
         case ExperimentState::Finished:
             mainComponent->finalUserQuestionsComponent->setVisible(false);
             mainComponent->backLabel->setText(TRANS("Thank you for participating!"), NotificationType::sendNotification);
+            computeAndDisplayTotalScore();
             break;
             
         case ExperimentState::ExperimentStatesCount:
@@ -541,7 +546,16 @@ void OSCRecorder::displayError(String errorMsg)
     mainComponent->backLabel->setText(errorMsg, NotificationType::sendNotification);
     MonitoringServer::SendLog(errorMsg.toStdString());
 }
-
+void OSCRecorder::computeAndDisplayTotalScore()
+{
+    int totalScore = 0;
+    for (size_t i=0 ; i < (presets.size() - TrialPresetsCount) ; i++)
+    {
+        if (presets[i]->GetPerformance())
+            totalScore += (int) std::round(presets[i]->GetPerformance() * 100.0);
+    }
+    mainComponent->SetTotalScore(totalScore);
+}
 
 
 

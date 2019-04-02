@@ -21,7 +21,7 @@ namespace BinaryData
     const int            Recorder_Intro_FR_txtSize = 1274;
 
     extern const char*   Translation_FR_txt;
-    const int            Translation_FR_txtSize = 4525;
+    const int            Translation_FR_txtSize = 4645;
 
     extern const char*   _4_Faders_png;
     const int            _4_Faders_pngSize = 32310;

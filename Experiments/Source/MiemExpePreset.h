@@ -70,6 +70,8 @@ class MiemExpePreset {
     
     std::vector<MiemExpeSample> samples;
     std::vector<MiemExpeSample> sortedSamples;
+    
+    double performance = -1.0; ///< To be re-used if computed at some point
 
     
     
@@ -92,6 +94,7 @@ class MiemExpePreset {
     /// dans reaper)
     int GetReaperTrackNumber(bool getReferenceTrack);
     
+    double GetPerformance() {return performance;}
     
     
     // =============== METHODS ================
@@ -115,6 +118,11 @@ class MiemExpePreset {
     /// les temps sont parfaitement croissants)
     void SortSamples();
     void DisplayInStdCout(bool displaySortedSamples = false);
+    /// \brief Computes the performance score of the current sorted samples,
+    /// not depending on any previous performance values
+    ///
+    /// \returns performance within [0;1]
+    double ComputePerformance();
     
     // - - - - - Generic presets indexes manipulations - - - - -
     

@@ -32,7 +32,7 @@ class OSCRecorder;
 //==============================================================================
 /**
                                                                     //[Comments]
-   Classe qui gère l'affichage graphique du contrôleur principale de
+   Classe qui gère l'affichage graphique du contrôleur principal de
  l'expérience,
  mais qui déclenche aussi des évènements après des attentes
  pour simuler des clics automatiques
@@ -55,6 +55,8 @@ public:
 
     /// \brief Might also change the color depending on remaining time
     void UpdateRemainingTimeSlider(double duration, double maxDuration);
+    /// \brief Might also change the color of the label, depending on the normalized performance
+    void SetPerformance(double performance);
 
     /// \brief Simule un clic sur le bouton affiché et activé,
     /// s'il y en a bien un d'affiché et activé. Avec protection contre double-clic
@@ -102,6 +104,8 @@ private:
     std::unique_ptr<Slider> remainingTimeSlider;
     std::unique_ptr<Label> listenCountdownLabel;
     std::unique_ptr<Label> searchCountdownLabel;
+    std::unique_ptr<Slider> progressBarSlider;
+    std::unique_ptr<Label> scoreLabel;
 
 
     //==============================================================================

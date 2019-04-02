@@ -49,7 +49,7 @@ OSCRecorderComponent::OSCRecorderComponent ()
 
     finishedButton.reset (new TextButton ("finished button"));
     addAndMakeVisible (finishedButton.get());
-    finishedButton->setButtonText (TRANS("OK"));
+    finishedButton->setButtonText (TRANS("OK !"));
     finishedButton->addListener (this);
     finishedButton->setColour (TextButton::buttonColourId, Colour (0xff097c2a));
     finishedButton->setColour (TextButton::buttonOnColourId, Colour (0xff252525));
@@ -113,6 +113,26 @@ OSCRecorderComponent::OSCRecorderComponent ()
     searchCountdownLabel->setColour (TextEditor::textColourId, Colours::black);
     searchCountdownLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
+    progressBarSlider.reset (new Slider ("Progress Bar slider"));
+    addAndMakeVisible (progressBarSlider.get());
+    progressBarSlider->setRange (0, 22, 1);
+    progressBarSlider->setSliderStyle (Slider::LinearBar);
+    progressBarSlider->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
+    progressBarSlider->setColour (Slider::backgroundColourId, Colour (0xff757575));
+    progressBarSlider->setColour (Slider::trackColourId, Colour (0xff097c2a));
+    progressBarSlider->setColour (Slider::textBoxOutlineColourId, Colours::white);
+
+    scoreLabel.reset (new Label ("Score label",
+                                 TRANS("Score: 73/100 !")));
+    addAndMakeVisible (scoreLabel.get());
+    scoreLabel->setFont (Font (36.00f, Font::plain).withTypefaceStyle ("Bold"));
+    scoreLabel->setJustificationType (Justification::centred);
+    scoreLabel->setEditable (false, false, false);
+    scoreLabel->setColour (Label::backgroundColourId, Colour (0x00ff0000));
+    scoreLabel->setColour (Label::textColourId, Colour (0xff49ff08));
+    scoreLabel->setColour (TextEditor::textColourId, Colours::black);
+    scoreLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -147,6 +167,8 @@ OSCRecorderComponent::~OSCRecorderComponent()
     remainingTimeSlider = nullptr;
     listenCountdownLabel = nullptr;
     searchCountdownLabel = nullptr;
+    progressBarSlider = nullptr;
+    scoreLabel = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -172,13 +194,15 @@ void OSCRecorderComponent::resized()
 
     startButton->setBounds ((getWidth() / 2) - (500 / 2), 200, 500, 120);
     listenButton->setBounds ((getWidth() / 2) - (500 / 2), 20, 500, 120);
-    finishedButton->setBounds ((getWidth() / 2) - (500 / 2), getHeight() - 100 - 160, 500, 160);
-    countLabel->setBounds ((getWidth() / 2) - (500 / 2), getHeight() - 70, 500, 32);
+    finishedButton->setBounds ((getWidth() / 2) - (500 / 2), getHeight() - 160 - 160, 500, 160);
+    countLabel->setBounds ((getWidth() / 2) - (500 / 2), getHeight() - 100, 500, 32);
     listenLabel->setBounds ((getWidth() / 2) - 569, 80, 569, 32);
-    searchLabel->setBounds ((getWidth() / 2) - 569, 200, 569, 32);
-    remainingTimeSlider->setBounds ((getWidth() / 2) - ((getWidth() - 160) / 2), 260, getWidth() - 160, getHeight() - 550);
+    searchLabel->setBounds ((getWidth() / 2) - 569, 160, 569, 32);
+    remainingTimeSlider->setBounds ((getWidth() / 2) - ((getWidth() - 160) / 2), 200, getWidth() - 160, getHeight() - 550);
     listenCountdownLabel->setBounds ((getWidth() / 2) + 8, 80, 569, 32);
-    searchCountdownLabel->setBounds ((getWidth() / 2) + 8, 200, 569, 32);
+    searchCountdownLabel->setBounds ((getWidth() / 2) + 8, 160, 569, 32);
+    progressBarSlider->setBounds ((getWidth() / 2) - (1200 / 2), getHeight() - 60, 1200, 40);
+    scoreLabel->setBounds ((getWidth() / 2) - (500 / 2), getHeight() - 208, 500, 32);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -253,7 +277,10 @@ void OSCRecorderComponent::DisplayNewState(ExperimentState newState, int presetS
     startButton->setVisible(newState == ExperimentState::ReadyToSearchPreset);
     searchLabel->setVisible(newState == ExperimentState::ReadyToSearchPreset);
     searchCountdownLabel->setVisible(newState == ExperimentState::ReadyToSearchPreset);
+    //progressBarSlider->setVisible(newState != ExperimentState::SearchingPreset
+    //                              && newState != ExperimentState::Listening);
     finishedButton->setVisible(newState == ExperimentState::SearchingPreset);
+    scoreLabel->setVisible(newState == ExperimentState::FinishedSearchingPreset);
 
     // - - - - - puis : Switch général pour affichage des cas plus complexes - - - - -
     switch(newState)
@@ -299,12 +326,12 @@ void OSCRecorderComponent::DisplayNewState(ExperimentState newState, int presetS
             break;
 
         case ExperimentState::SearchingPreset:
-            countLabel->setVisible(false);
+            countLabel->setVisible(true); // toujours visible... fait partie de la gamification...
             remainingTimeSlider->setVisible(true);
             break;
 
         case ExperimentState::FinishedSearchingPreset:
-            countLabel->setVisible(false);
+            countLabel->setVisible(true);
             remainingTimeSlider->setVisible(false);
             break;
 
@@ -314,14 +341,14 @@ void OSCRecorderComponent::DisplayNewState(ExperimentState newState, int presetS
 
 
 
-    // COUNT LABEL Display
+    // COUNT LABEL + PROGRESS BAR Display
     // On if the state if an actual experiment state
     if (ExperimentStateUtils::IsInteractiveExperimentState(newState))
     {
         int presetNumber = presetStep + 1;
 
+        // label
         String trialPresetStr = TRANS("TRIAL preset");
-
         if (presetStep >= 0) // actual presets
             countLabel->setText(TRANS("Current preset: ") + String(presetNumber) + String("/") + String(presetsCount), NotificationType::dontSendNotification);
         else if (presetStep == -2)
@@ -332,10 +359,15 @@ void OSCRecorderComponent::DisplayNewState(ExperimentState newState, int presetS
             countLabel->setText(TRANS("trials not started yet"), NotificationType::dontSendNotification);
         else
             assert(false); // un planned case
+
+        // progress bar (pour 2 trials...)
+        progressBarSlider->setRange(0, presetsCount + 2, 1);
+        progressBarSlider->setValue(presetStep + 2);
     }
     else
     {
-        countLabel->setText(TRANS("Next questions will appear soon..."), NotificationType::dontSendNotification);
+        countLabel->setText(TRANS("Next questions will appear soon..."),
+                            NotificationType::dontSendNotification);
     }
 
     // Self-focus
@@ -347,6 +379,17 @@ void OSCRecorderComponent::UpdateRemainingTimeSlider(double duration, double max
 {
     remainingTimeSlider->setRange(0.0, maxDuration, 0.0);
     remainingTimeSlider->setValue(duration);
+}
+void OSCRecorderComponent::SetPerformance(double performance)
+{
+    int scoreOutOf100 = (int) std::round(performance * 100.0);
+    scoreLabel->setText(TRANS("Score : ").toStdString()
+                        + boost::lexical_cast<std::string>(scoreOutOf100),
+                        NotificationType::sendNotification);
+    // couleur mise à jour également
+    scoreLabel->setColour(Label::ColourIds::textColourId,
+                          Colour(0.00f + (float)(performance) * 0.33f,
+                                 1.0f, 0.8f, 1.0f));
 }
 
 void OSCRecorderComponent::simulateClickOnDisplayedButton()
@@ -461,11 +504,11 @@ BEGIN_JUCER_METADATA
               bgColOn="ff252525" buttonText="LISTEN TO THE PRESET" connectedEdges="0"
               needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="finished button" id="ee4745ef80623612" memberName="finishedButton"
-              virtualName="" explicitFocusOrder="0" pos="0Cc 100Rr 500 160"
-              bgColOff="ff097c2a" bgColOn="ff252525" buttonText="OK" connectedEdges="0"
+              virtualName="" explicitFocusOrder="0" pos="0Cc 160Rr 500 160"
+              bgColOff="ff097c2a" bgColOn="ff252525" buttonText="OK !" connectedEdges="0"
               needsCallback="1" radioGroupId="0"/>
   <LABEL name="count label" id="6112b78b8bf2731a" memberName="countLabel"
-         virtualName="" explicitFocusOrder="0" pos="0Cc 70R 500 32" edTextCol="ff000000"
+         virtualName="" explicitFocusOrder="0" pos="0Cc 100R 500 32" edTextCol="ff000000"
          edBkgCol="0" labelText="Current preset: .../..." editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
          fontsize="2.2e1" kerning="0" bold="0" italic="0" justification="36"/>
@@ -476,13 +519,13 @@ BEGIN_JUCER_METADATA
          fontname="Default font" fontsize="2.6e1" kerning="0" bold="0"
          italic="0" justification="34"/>
   <LABEL name="Search label" id="7a6208a1c5ecc70d" memberName="searchLabel"
-         virtualName="" explicitFocusOrder="0" pos="0Cr 200 569 32" textCol="ff81a5ff"
+         virtualName="" explicitFocusOrder="0" pos="0Cr 160 569 32" textCol="ff81a5ff"
          edTextCol="ff000000" edBkgCol="0" labelText="Preset research will start in:"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="2.6e1" kerning="0" bold="0"
          italic="0" justification="34"/>
   <SLIDER name="Remaining Time slider" id="a43e709f917b56b4" memberName="remainingTimeSlider"
-          virtualName="" explicitFocusOrder="0" pos="0Cc 260 160M 550M"
+          virtualName="" explicitFocusOrder="0" pos="0Cc 200 160M 550M"
           bkgcol="263238" trackcol="ffffffff" textboxoutline="ffffffff"
           min="0" max="6e1" int="1" style="LinearBar" textBoxPos="NoTextBox"
           textBoxEditable="0" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
@@ -494,11 +537,22 @@ BEGIN_JUCER_METADATA
          fontsize="2.6e1" kerning="0" bold="1" italic="0" justification="33"
          typefaceStyle="Bold"/>
   <LABEL name="Search Countdown label" id="297cc669074c0214" memberName="searchCountdownLabel"
-         virtualName="" explicitFocusOrder="0" pos="8C 200 569 32" bkgCol="757575"
+         virtualName="" explicitFocusOrder="0" pos="8C 160 569 32" bkgCol="757575"
          edTextCol="ff000000" edBkgCol="0" labelText="3" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
          fontsize="2.6e1" kerning="0" bold="1" italic="0" justification="33"
          typefaceStyle="Bold"/>
+  <SLIDER name="Progress Bar slider" id="aa51755cb08ebea9" memberName="progressBarSlider"
+          virtualName="" explicitFocusOrder="0" pos="0Cc 60R 1200 40" bkgcol="ff757575"
+          trackcol="ff097c2a" textboxoutline="ffffffff" min="0" max="2.2e1"
+          int="1" style="LinearBar" textBoxPos="NoTextBox" textBoxEditable="0"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="0"/>
+  <LABEL name="Score label" id="32c9ef90fa7faecd" memberName="scoreLabel"
+         virtualName="" explicitFocusOrder="0" pos="0Cc 208R 500 32" bkgCol="ff0000"
+         textCol="ff49ff08" edTextCol="ff000000" edBkgCol="0" labelText="Score: 73/100 !"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="3.6e1" kerning="0" bold="1"
+         italic="0" justification="36" typefaceStyle="Bold"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

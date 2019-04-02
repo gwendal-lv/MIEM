@@ -92,6 +92,7 @@ static const unsigned char temp_binary_data_4[] =
 "language: French\n"
 "countries: fr be mc ch lu\n"
 "\n"
+"\"Age\" = \"\xc3\x82ge\"\n"
 "\"As a professional, I understand and I can manipulate classical sound synthesisers and filtering techniques\" = \"En tant que professionnel, je comprends et je suis capable de manipuler les techniques classiques de synth\xc3\xa8se sonore et de filtr"
 "age\"\n"
 "\"As an amateur, I have already played with synthesisers and filters, and I know a bit how to use them\" = \"En tant qu'amateur, j'ai d\xc3\xa9j\xc3\xa0 jou\xc3\xa9 avec des synth\xc3\xa9tiseurs et des filtres, et j'ai des connaissances de base conce"
@@ -105,6 +106,7 @@ static const unsigned char temp_binary_data_4[] =
 "\"Concerning sound synthesisers and filters, what is your level of expertise ?\" = \"Concernant les synth\xc3\xa9tiseurs audio et les filtres, comment estimez-vous votre niveau d'expertise ?\"\n"
 "\"Continue\" = \"Continuer\"\n"
 "\"Current preset: \" = \"Preset actuel : \"\n"
+"\"Female\" = \"Femme\"\n"
 "\"How old are you?\" = \"Quel \xc3\xa2ge avez-vous ?\"\n"
 "\"I allow the anonymous usage of data collected during this experiment\" = \"J'autorise l'utilisation anonyme des donn\xc3\xa9""es collect\xc3\xa9""es durant cette exp\xc3\xa9rience\"\n"
 "\"I have already participated in a similar scientific experiment\" = \"J'ai d\xc3\xa9j\xc3\xa0 particip\xc3\xa9 \xc3\xa0 une exp\xc3\xa9rience scientifique similaire\"\n"
@@ -121,11 +123,15 @@ static const unsigned char temp_binary_data_4[] =
 "\"If you have any remark, comment or suggestion, please feel free to write it below:\" = \"Si vous avez une remarque, un commentaire ou une suggestion, vous pouvez l'\xc3\xa9""crire ci-dessous :\"\n"
 "\"LISTEN TO THE PRESET\" = \"\xc3\x89""COUTER LE PRESET\"\n"
 "\"Listening to reference sound will start in:\" = \"L'\xc3\xa9""coute du son de r\xc3\xa9""f\xc3\xa9rence va commencer dans :\"\n"
+"\"Male\" = \"Homme\"\n"
 "\"OK, save data and finish the experiment\" = \"OK, enregistrer les donn\xc3\xa9""es et terminer l'exp\xc3\xa9rience\"\n"
+"\"Other\" = \"Autre\"\n"
 "\"Next questions will appear soon...\" = \"Les questions suivantes vont appara\xc3\xaetre tr\xc3\xa8s bient\xc3\xb4t...\"\n"
 "\"Please tell us its name, location and/or context in the form below: \" = \"Veuillez s'il vous pla\xc3\xaet nous indiquer son nom, lieu et/ou contexte dans le formulaire ci-dessous :\"\n"
 "\"Please tell us the nature of this impairment in the form below:\" = \"Veuillez s'il vous pla\xc3\xaet nous indiquer la nature de ce trouble dans le formulaire ci-dessous :\"\n"
 "\"Preset research will start in:\" = \"La recherche du son va commencer dans:\"\n"
+"\"Sex\" = \"Sexe\"\n"
+"\"Total score = \" = \"Score total = \"\n"
 "\"Thank you for participating!\" = \"Merci d'avoir particip\xc3\xa9 !\"\n"
 "\"TRIAL preset\" = \"Preset d'ESSAI\"\n"
 "\"Which method seemed to be the fastest?\" = \"Quelle m\xc3\xa9thode vous a sembl\xc3\xa9 la plus rapide ?\"\n"
@@ -10575,7 +10581,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
         case 0xa7370881:  numBytes = 310; return Recorder_AfterTrial_FR_txt;
         case 0xcd874cee:  numBytes = 1123; return Recorder_Intro_EN_txt;
         case 0xcf748391:  numBytes = 1274; return Recorder_Intro_FR_txt;
-        case 0x340941eb:  numBytes = 4525; return Translation_FR_txt;
+        case 0x340941eb:  numBytes = 4645; return Translation_FR_txt;
         case 0x896b2391:  numBytes = 32310; return _4_Faders_png;
         case 0xffae406b:  numBytes = 35496; return _4_Interpolation_areas_png;
         case 0xf1ad4a99:  numBytes = 672439; return Experiment_macOS_1024at1_png;
