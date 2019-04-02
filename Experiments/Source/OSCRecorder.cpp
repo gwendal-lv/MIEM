@@ -237,6 +237,7 @@ void OSCRecorder::changeState(ExperimentState newState)
     // OSC control messages are sent here (as soon as possible)
     // OSC component manages its buttons... but the questions component must be (de)actived
     String infoString;
+    double performance;
     switch(newState)
     {
         case ExperimentState::NotInitialized:
@@ -306,12 +307,20 @@ void OSCRecorder::changeState(ExperimentState newState)
             // on STOP REAPER, on sélectionne déjà la bonne track, mais on
             // n'affiche pas encore la scène MIEM
         case ExperimentState::ReadyToSearchPreset:
-            reaperController->Stop();
+            // mute d'abord de tout (version légère, sans le full-refresh)
+            reaperController->SetTrackSolo_usingMutes(-1);
+            // stop avec un petit délai pour que Reaper s'en sorte bien....
+            // (après le mute, car le stop génère parfois des sons dégueu...)
+            Timer::callAfterDelay((int) std::round((double)(SearchAutoTriggerDelay_s)*1000.0/3.0),
+                                  [this] {
+                reaperController->Stop();
+                                  });
+            // unmute après le reste (version légère, sans le full-refresh)
             // on sélectionne la track EXPERIMENT (pas la référence)
-            // avec un petit délai pour que Reaper s'en sorte bien....
-            Timer::callAfterDelay(SearchAutoTriggerDelay_s / 2, [this] {
-            reaperController->SetTrackSolo_usingMutes(presets[presetRandomIdx[currentPresetStep]]->GetReaperTrackNumber(false));
-            });
+            Timer::callAfterDelay((int) std::round((double)(SearchAutoTriggerDelay_s)*1000.0*2.0/3.0),
+                                  [this] { reaperController -> SetTrackSolo_usingMutes( presets[presetRandomIdx[currentPresetStep]]
+                                                                                -> GetReaperTrackNumber(false));
+                                  });
             break;
             
             // Au lancement de la recherche : on lance la scène MIEM d'abord
@@ -329,14 +338,15 @@ void OSCRecorder::changeState(ExperimentState newState)
             // et on replace la scène vide,
             // pour alors jouer du bruit blanc (tentative suppression ASM)
         case ExperimentState::FinishedSearchingPreset:
-            reaperController->Stop();
+            reaperController->Stop(); // 2 messages (stop et master -inf dB)
             selectNewMiemScene(true);
             stopRecording();
             // security save
             saveEverythingToFiles(currentPresetStep); // next step pas encore demandée
             // score display update
-            recorderComponent.SetPerformance(presets[presetRandomIdx[currentPresetStep]]
-                                             -> ComputePerformance());
+            performance = presets[presetRandomIdx[currentPresetStep]] -> ComputePerformance();
+            recorderComponent.SetPerformance(performance);
+            MonitoringServer::SendLog("----------> SCORE = " + boost::lexical_cast<std::string>( (int)std::round(performance*100.0) ));
             // WHITE NOISE starts after a short delay
             Timer::callAfterDelay(WhiteNoiseStartDelay_ms/2,
                                   [this] {
@@ -555,6 +565,8 @@ void OSCRecorder::computeAndDisplayTotalScore()
             totalScore += (int) std::round(presets[i]->GetPerformance() * 100.0);
     }
     mainComponent->SetTotalScore(totalScore);
+    MonitoringServer::SendLog("---------------> TOTAL SCORE = "
+                              + boost::lexical_cast<std::string>(totalScore));
 }
 
 

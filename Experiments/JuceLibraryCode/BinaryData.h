@@ -9,16 +9,16 @@
 namespace BinaryData
 {
     extern const char*   Recorder_AfterTrial_EN_txt;
-    const int            Recorder_AfterTrial_EN_txtSize = 258;
+    const int            Recorder_AfterTrial_EN_txtSize = 352;
 
     extern const char*   Recorder_AfterTrial_FR_txt;
-    const int            Recorder_AfterTrial_FR_txtSize = 310;
+    const int            Recorder_AfterTrial_FR_txtSize = 427;
 
     extern const char*   Recorder_Intro_EN_txt;
-    const int            Recorder_Intro_EN_txtSize = 1123;
+    const int            Recorder_Intro_EN_txtSize = 1214;
 
     extern const char*   Recorder_Intro_FR_txt;
-    const int            Recorder_Intro_FR_txtSize = 1274;
+    const int            Recorder_Intro_FR_txtSize = 1437;
 
     extern const char*   Translation_FR_txt;
     const int            Translation_FR_txtSize = 4645;

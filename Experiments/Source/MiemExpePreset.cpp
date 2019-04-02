@@ -143,7 +143,7 @@ parametersCount(4) // const at the moment
         sceneBaseIndex = 17;
         tempo = 90.0f;
         parametersInfo = "1-Delay/2-Spread/3-Time/4-Timbre";
-        parametersTargetValues[0] = 0.252; // valeur min OSC-MIDI = 0.252...
+        parametersTargetValues[0] = 0.252; // delay Reaper -6dB wet
         parametersTargetValues[1] = 1.0;
         parametersTargetValues[2] = 0.252;
         parametersTargetValues[3] = 0.252;
@@ -508,12 +508,16 @@ double MiemExpePreset::ComputePerformance()
     for (int k=0 ; k < finalValues.size() ; k++)
         errorNorm1 += std::abs((finalValues[k] - parametersTargetValues[k])) / paramsSpan;
     
-    double timePerformance = 1.0 - (std::log( 1.0 + (double)finalTime_ms/1000.0 )
-                                  / std::log( 1.0 + maxTime_s ));
+    double paramError = errorNorm1 / finalValues.size();
     
-    // temps ne compte qu'à 15%
-    double errorFactor = errorNorm1 / (double)(finalValues.size());
-    performance = (1.0 - 3.0*errorFactor) * (0.85 + timePerformance*0.15);
+    double precisionPerf = (1.0 - 2.0*paramError);
+    double timePerf = 1.0 - (((double)(finalTime_ms)/1000.0) / (maxTime_s * 1.00));
+    // somme des 2 performances (en temps et en précision)
+    performance = 0.6 * (precisionPerf + timePerf);
+    performance = std::max(performance, 0.0);
+    // mais avec pondération globale pour la précision qui est quand même
+    // la plus importante
+    performance *= (1.0 - 1.2 * paramError);
     
     return Miam::Math::Clamp(performance, 0.0, 1.0);
 }

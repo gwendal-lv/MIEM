@@ -14,11 +14,12 @@ S'il y a plusieurs points blancs, vous pouvez utiliser plusieurs doigts en même
 Attention : le temps est limité, mais il ne faut pas attendre la fin du décompte !
 Dès que vous pensez être proche du résultat, cliquez sur OK ou appuyez sur la touche verte du clavier.
 
-3 - À la fin de la recherche du son synthétiseur, il y aura une pause avant l'étape suivante.
-Un bruit sonore pourra être entendu durant cette pause.
+3 - À la fin de la recherche du son synthétiseur, vous pourrez voir le score que vous avez obtenu pour ce cycle.
+Avant l'étape suivante, il y aura une pause durant laquelle un bruit sonore pourra être entendu.
 
 
 
 Le cycle d'écoute/recherche/pause aura lieu 22 fois, avec au départ 2 cycles d'essais pour vous entraîner et prendre en main l'application tactile.
 
 L'expérience durera au total entre 25 et 30 minutes (y compris les questions).
+Votre score final sera la somme de tous les scores obtenus précédemment, et sera affiché à la fin.

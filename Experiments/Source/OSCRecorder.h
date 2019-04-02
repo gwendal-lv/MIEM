@@ -57,7 +57,6 @@ class OSCRecorder : public UserQuestionsManager,
     static const int ReaperWhiteNoiseTrackNumber = 1;
     static const int ReaperWhiteNoiseTrackBpm = 110;
     
-    const int maxResearchDuration_ms = 30000; // 30 s --> currently unused
 #ifdef __MIEM_SHORT_DELAYS
     static const int delayAfterFinished_ms = 2000;
     static const int ListenAutoTriggerDelay_s = 3;
@@ -65,15 +64,15 @@ class OSCRecorder : public UserQuestionsManager,
     const int listeningTime_ms = 1000;
 #else
     static const int delayAfterFinished_ms = 8000;
-    static const int ListenAutoTriggerDelay_s = 10;
+    static const int ListenAutoTriggerDelay_s = 9;
     static const int SearchAutoTriggerDelay_s = 5;
     const int listeningTime_ms = 20000; // 15s sont un peu trop courtes...
 #endif
     
     // valeur qui permet d'imposer un rythme, sans couper trop souvent la recherche...
-    const int ResearchTimeMax_ms = 30000;
+    static const int ResearchTimeMax_ms = 30000;
     
-    static const int WhiteNoiseStartDelay_ms = 1000; ///< Delay after entering "finished" state
+    static const int WhiteNoiseStartDelay_ms = 1500; ///< Delay after entering "finished" state
     static const int WhiteNoisePrematureEnd_ms = 500; ///< White noise ends a bit bfore the "finished" state actually ends
     
     // - - - SHORT/DEMO EXPERIMENT - - -

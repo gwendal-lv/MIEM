@@ -3,4 +3,6 @@ After these few trials, the experiment will now actually start.
 
 
 We recall you the objective: you have to find the synthesiser sound as quickly as possible.
+To get a high score, you need to be close to the sound, but you also need to get there fast.
+
 As soon as you think being close to the result, click on OK or push the green key of the keyboard.

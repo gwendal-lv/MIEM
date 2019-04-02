@@ -118,8 +118,8 @@ OSCRecorderComponent::OSCRecorderComponent ()
     progressBarSlider->setRange (0, 22, 1);
     progressBarSlider->setSliderStyle (Slider::LinearBar);
     progressBarSlider->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
-    progressBarSlider->setColour (Slider::backgroundColourId, Colour (0xff757575));
-    progressBarSlider->setColour (Slider::trackColourId, Colour (0xff097c2a));
+    progressBarSlider->setColour (Slider::backgroundColourId, Colour (0x00757575));
+    progressBarSlider->setColour (Slider::trackColourId, Colour (0xff757575));
     progressBarSlider->setColour (Slider::textBoxOutlineColourId, Colours::white);
 
     scoreLabel.reset (new Label ("Score label",
@@ -388,7 +388,7 @@ void OSCRecorderComponent::SetPerformance(double performance)
                         NotificationType::sendNotification);
     // couleur mise à jour également
     scoreLabel->setColour(Label::ColourIds::textColourId,
-                          Colour(0.00f + (float)(performance) * 0.33f,
+                          Colour(0.04f + (float)(performance) * 0.35f,
                                  1.0f, 0.8f, 1.0f));
 }
 
@@ -543,8 +543,8 @@ BEGIN_JUCER_METADATA
          fontsize="2.6e1" kerning="0" bold="1" italic="0" justification="33"
          typefaceStyle="Bold"/>
   <SLIDER name="Progress Bar slider" id="aa51755cb08ebea9" memberName="progressBarSlider"
-          virtualName="" explicitFocusOrder="0" pos="0Cc 60R 1200 40" bkgcol="ff757575"
-          trackcol="ff097c2a" textboxoutline="ffffffff" min="0" max="2.2e1"
+          virtualName="" explicitFocusOrder="0" pos="0Cc 60R 1200 40" bkgcol="757575"
+          trackcol="ff757575" textboxoutline="ffffffff" min="0" max="2.2e1"
           int="1" style="LinearBar" textBoxPos="NoTextBox" textBoxEditable="0"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="0"/>
   <LABEL name="Score label" id="32c9ef90fa7faecd" memberName="scoreLabel"

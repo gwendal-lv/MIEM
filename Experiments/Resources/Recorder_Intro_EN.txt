@@ -14,7 +14,7 @@ If there are multiple white dots, you can use several fingers at the same time i
 Warning: the research time is limited, but you should not wait for the end of the countdown!
 As soon as you think being close to the result, click on OK or push the green key of the keyboard.
 
-3 - After the research, the experiment will pause before triggering the next step.
+3 - After the research, your score will be displayed, and the experiment will pause before triggering the next step.
 A noise might be heard during that pause.
 
 
@@ -22,3 +22,4 @@ A noise might be heard during that pause.
 This listen/search/pause cycle will occur 22 times, starting with 2 trial cycles for you to train and get used the the touch app.
 
 The experiment will last between 25 and 30 minutes (including questions).
+Your final score will be the sum of all previous scores.

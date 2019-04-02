@@ -14,6 +14,8 @@ static const unsigned char temp_binary_data_0[] =
 "\n"
 "\n"
 "We recall you the objective: you have to find the synthesiser sound as quickly as possible.\n"
+"To get a high score, you need to be close to the sound, but you also need to get there fast.\n"
+"\n"
 "As soon as you think being close to the result, click on OK or push the green key of the keyboard.\n";
 
 const char* Recorder_AfterTrial_EN_txt = (const char*) temp_binary_data_0;
@@ -25,6 +27,8 @@ static const unsigned char temp_binary_data_1[] =
 "\n"
 "\n"
 "Nous vous rappelons que l'objectif est de retrouver le son de synth\xc3\xa9tiseur le plus rapidement possible.\n"
+"Pour r\xc3\xa9""aliser un gros score, il faut donc \xc3\xaatre proche du r\xc3\xa9sultat, mais il faut \xc3\xa9galement y aller au plus vite.\n"
+"\n"
 "D\xc3\xa8s que vous pensez \xc3\xaatre proche du r\xc3\xa9sultat, vous pouvez donc cliquer sur OK ou appuyer sur la touche verte du clavier.\n";
 
 const char* Recorder_AfterTrial_FR_txt = (const char*) temp_binary_data_1;
@@ -47,14 +51,15 @@ static const unsigned char temp_binary_data_2[] =
 "Warning: the research time is limited, but you should not wait for the end of the countdown!\n"
 "As soon as you think being close to the result, click on OK or push the green key of the keyboard.\n"
 "\n"
-"3 - After the research, the experiment will pause before triggering the next step.\n"
+"3 - After the research, your score will be displayed, and the experiment will pause before triggering the next step.\n"
 "A noise might be heard during that pause.\n"
 "\n"
 "\n"
 "\n"
 "This listen/search/pause cycle will occur 22 times, starting with 2 trial cycles for you to train and get used the the touch app.\n"
 "\n"
-"The experiment will last between 25 and 30 minutes (including questions).\n";
+"The experiment will last between 25 and 30 minutes (including questions).\n"
+"Your final score will be the sum of all previous scores.\n";
 
 const char* Recorder_Intro_EN_txt = (const char*) temp_binary_data_2;
 
@@ -76,14 +81,15 @@ static const unsigned char temp_binary_data_3[] =
 "Attention : le temps est limit\xc3\xa9, mais il ne faut pas attendre la fin du d\xc3\xa9""compte !\n"
 "D\xc3\xa8s que vous pensez \xc3\xaatre proche du r\xc3\xa9sultat, cliquez sur OK ou appuyez sur la touche verte du clavier.\n"
 "\n"
-"3 - \xc3\x80 la fin de la recherche du son synth\xc3\xa9tiseur, il y aura une pause avant l'\xc3\xa9tape suivante.\n"
-"Un bruit sonore pourra \xc3\xaatre entendu durant cette pause.\n"
+"3 - \xc3\x80 la fin de la recherche du son synth\xc3\xa9tiseur, vous pourrez voir le score que vous avez obtenu pour ce cycle.\n"
+"Avant l'\xc3\xa9tape suivante, il y aura une pause durant laquelle un bruit sonore pourra \xc3\xaatre entendu.\n"
 "\n"
 "\n"
 "\n"
 "Le cycle d'\xc3\xa9""coute/recherche/pause aura lieu 22 fois, avec au d\xc3\xa9part 2 cycles d'essais pour vous entra\xc3\xaener et prendre en main l'application tactile.\n"
 "\n"
-"L'exp\xc3\xa9rience durera au total entre 25 et 30 minutes (y compris les questions).\n";
+"L'exp\xc3\xa9rience durera au total entre 25 et 30 minutes (y compris les questions).\n"
+"Votre score final sera la somme de tous les scores obtenus pr\xc3\xa9""c\xc3\xa9""demment, et sera affich\xc3\xa9 \xc3\xa0 la fin.\n";
 
 const char* Recorder_Intro_FR_txt = (const char*) temp_binary_data_3;
 
@@ -10577,10 +10583,10 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
 
     switch (hash)
     {
-        case 0xa549d1de:  numBytes = 258; return Recorder_AfterTrial_EN_txt;
-        case 0xa7370881:  numBytes = 310; return Recorder_AfterTrial_FR_txt;
-        case 0xcd874cee:  numBytes = 1123; return Recorder_Intro_EN_txt;
-        case 0xcf748391:  numBytes = 1274; return Recorder_Intro_FR_txt;
+        case 0xa549d1de:  numBytes = 352; return Recorder_AfterTrial_EN_txt;
+        case 0xa7370881:  numBytes = 427; return Recorder_AfterTrial_FR_txt;
+        case 0xcd874cee:  numBytes = 1214; return Recorder_Intro_EN_txt;
+        case 0xcf748391:  numBytes = 1437; return Recorder_Intro_FR_txt;
         case 0x340941eb:  numBytes = 4645; return Translation_FR_txt;
         case 0x896b2391:  numBytes = 32310; return _4_Faders_png;
         case 0xffae406b:  numBytes = 35496; return _4_Interpolation_areas_png;
