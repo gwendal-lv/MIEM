@@ -7,7 +7,8 @@ function [] = PlotPerformanceSurfaces()
 
 % sizes of the numeric mesh
 N = 41;
-N_step = 1 / (N-1);
+maxError = 0.79;
+N_step = maxError / (N-1);
 M = 41;
 maxTime = 30;
 M_step = maxTime / (M-1);

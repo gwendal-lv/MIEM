@@ -2,7 +2,7 @@ function [] = DisplayExpeResults(globalParams, expeResults, expeId)
 %DISPLAYEXPERESULTS Summary of this function goes here
 %   Detailed explanation goes here
 
-perfIndexMaxDisplayValue = 0.1;
+perfIndexMaxDisplayValue = 1.0;
 errorYMax = 1; % valeurs entre -1 et +1..... erreur max en norme 1 ?
 timeMaxDisplayValue = 30.0; % fin max de l'expérience
 

@@ -27,7 +27,7 @@ static const unsigned char temp_binary_data_1[] =
 "\n"
 "\n"
 "Nous vous rappelons que l'objectif est de retrouver le son de synth\xc3\xa9tiseur le plus rapidement possible.\n"
-"Pour r\xc3\xa9""aliser un gros score, il faut donc \xc3\xaatre proche du r\xc3\xa9sultat, mais il faut \xc3\xa9galement y aller au plus vite.\n"
+"Pour r\xc3\xa9""aliser un gros score, il faut donc \xc3\xaatre proche du r\xc3\xa9sultat, mais il faut \xc3\xa9galement y aller vite.\n"
 "\n"
 "D\xc3\xa8s que vous pensez \xc3\xaatre proche du r\xc3\xa9sultat, vous pouvez donc cliquer sur OK ou appuyer sur la touche verte du clavier.\n";
 
@@ -109,7 +109,8 @@ static const unsigned char temp_binary_data_4[] =
 "\"Begin the experiment\" = \"Commencer l'exp\xc3\xa9rience\"\n"
 "\"Collected data might be anonymously used and published for scientific research purposes.\" = \"Les donn\xc3\xa9""es collect\xc3\xa9""es pourront \xc3\xaatre utilis\xc3\xa9""es de mani\xc3\xa8re anonyme, et publi\xc3\xa9""es dans le cadre de recherc"
 "hes scientifiques.\"\n"
-"\"Concerning sound synthesisers and filters, what is your level of expertise ?\" = \"Concernant les synth\xc3\xa9tiseurs audio et les filtres, comment estimez-vous votre niveau d'expertise ?\"\n"
+"\"Concerning sound synthesisers and filters, what is your level of expertise ? (Click on the right answer or move the blue cursor)\" = \"Concernant les synth\xc3\xa9tiseurs audio et les filtres, comment estimez-vous votre niveau d'expertise ? (Clique"
+"z sur la bonne r\xc3\xa9ponse, ou d\xc3\xa9placez le curseur bleu)\"\n"
 "\"Continue\" = \"Continuer\"\n"
 "\"Current preset: \" = \"Preset actuel : \"\n"
 "\"Female\" = \"Femme\"\n"
@@ -125,7 +126,7 @@ static const unsigned char temp_binary_data_4[] =
 "\"In general, which method did you prefer?\" = \"En g\xc3\xa9n\xc3\xa9ral, quelle m\xc3\xa9thode avez-vous pr\xc3\xa9""f\xc3\xa9r\xc3\xa9 ?\"\n"
 "\"If you can, please tell us the name of the app:\" = \"Si vous le pouvez, veuillez s'il vous pla\xc3\xaet nous indiquer son nom:\"\n"
 "\"It is almost finished! Please read and answer these last few questions.\" = \"C'est presque termin\xc3\xa9 ! Il ne reste plus qu'\xc3\xa0 r\xc3\xa9pondre aux quelques questions ci-dessous.\"\n"
-"\"If you do not have an opinion, leave the cursor at center position\" = \"Si vous n'avez pas d'opinion, laissez le curseur en position centrale\n"
+"\"If you do not have an opinion, leave the blue cursor at center position\" = \"Si vous n'avez pas d'opinion, laissez le curseur bleu en position centrale\n"
 "\"If you have any remark, comment or suggestion, please feel free to write it below:\" = \"Si vous avez une remarque, un commentaire ou une suggestion, vous pouvez l'\xc3\xa9""crire ci-dessous :\"\n"
 "\"LISTEN TO THE PRESET\" = \"\xc3\x89""COUTER LE PRESET\"\n"
 "\"Listening to reference sound will start in:\" = \"L'\xc3\xa9""coute du son de r\xc3\xa9""f\xc3\xa9rence va commencer dans :\"\n"
@@ -10584,10 +10585,10 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
     switch (hash)
     {
         case 0xa549d1de:  numBytes = 352; return Recorder_AfterTrial_EN_txt;
-        case 0xa7370881:  numBytes = 427; return Recorder_AfterTrial_FR_txt;
+        case 0xa7370881:  numBytes = 419; return Recorder_AfterTrial_FR_txt;
         case 0xcd874cee:  numBytes = 1214; return Recorder_Intro_EN_txt;
         case 0xcf748391:  numBytes = 1437; return Recorder_Intro_FR_txt;
-        case 0x340941eb:  numBytes = 4645; return Translation_FR_txt;
+        case 0x340941eb:  numBytes = 4769; return Translation_FR_txt;
         case 0x896b2391:  numBytes = 32310; return _4_Faders_png;
         case 0xffae406b:  numBytes = 35496; return _4_Interpolation_areas_png;
         case 0xf1ad4a99:  numBytes = 672439; return Experiment_macOS_1024at1_png;

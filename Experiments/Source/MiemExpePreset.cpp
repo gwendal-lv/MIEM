@@ -510,14 +510,16 @@ double MiemExpePreset::ComputePerformance()
     
     double paramError = errorNorm1 / finalValues.size();
     
-    double precisionPerf = (1.0 - 2.0*paramError);
-    double timePerf = 1.0 - (((double)(finalTime_ms)/1000.0) / (maxTime_s * 1.00));
-    // somme des 2 performances (en temps et en précision)
-    performance = 0.6 * (precisionPerf + timePerf);
-    performance = std::max(performance, 0.0);
+    double precisionPerf = 1.0 - 2.0 * paramError;
+    double timePerf = 1.0 - ((double)(finalTime_ms)/1000.0) / (maxTime_s * 1.5);
+    // somme pondérée des 2 performances (en temps et en précision)
+    performance = precisionPerf + 0.70 * timePerf;
+    performance = std::max(performance, 0.0); // clamp valeurs positives
     // mais avec pondération globale pour la précision qui est quand même
     // la plus importante
-    performance *= (1.0 - 1.2 * paramError);
+    performance *= 0.65 * (1.0 - 1.3 * paramError);
     
+    // clamp général pour avoir un petit plateau de score 100%
+    // .... voir graphes Matlab pour visu graphique en surface 3D...
     return Miam::Math::Clamp(performance, 0.0, 1.0);
 }

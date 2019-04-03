@@ -108,7 +108,7 @@ UserFinalQuestions::UserFinalQuestions ()
     finishedButton->setColour (TextButton::buttonOnColourId, Colour (0xff252525));
 
     selfExpertiseLevelLabel.reset (new Label ("expertise level label",
-                                              TRANS("Concerning sound synthesisers and filters, what is your level of expertise ?")));
+                                              TRANS("Concerning sound synthesisers and filters, what is your level of expertise ? (Click on the right answer or move the blue cursor)")));
     addAndMakeVisible (selfExpertiseLevelLabel.get());
     selfExpertiseLevelLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     selfExpertiseLevelLabel->setJustificationType (Justification::centredLeft);
@@ -116,7 +116,7 @@ UserFinalQuestions::UserFinalQuestions ()
     selfExpertiseLevelLabel->setColour (TextEditor::textColourId, Colours::black);
     selfExpertiseLevelLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    selfExpertiseLevelLabel->setBounds (8, 56, 672, 24);
+    selfExpertiseLevelLabel->setBounds (8, 56, 880, 24);
 
     expertiseSlider.reset (new Slider ("new slider"));
     addAndMakeVisible (expertiseSlider.get());
@@ -215,7 +215,7 @@ UserFinalQuestions::UserFinalQuestions ()
     fastLabel->setColour (TextEditor::textColourId, Colours::black);
     fastLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    fastLabel->setBounds (336, 240, 568, 24);
+    fastLabel->setBounds (336, 264, 568, 24);
 
     imageButton.reset (new ImageButton ("new button"));
     addAndMakeVisible (imageButton.get());
@@ -224,7 +224,7 @@ UserFinalQuestions::UserFinalQuestions ()
                             ImageCache::getFromMemory (BinaryData::_4_Faders_png, BinaryData::_4_Faders_pngSize), 1.000f, Colour (0x00c80606),
                             ImageCache::getFromMemory (BinaryData::_4_Faders_png, BinaryData::_4_Faders_pngSize), 1.000f, Colour (0x00000000),
                             ImageCache::getFromMemory (BinaryData::_4_Faders_png, BinaryData::_4_Faders_pngSize), 1.000f, Colour (0x00000000));
-    imageButton->setBounds (56, 280, 256, 160);
+    imageButton->setBounds (192, 288, 256, 160);
 
     preferLabel.reset (new Label ("prefer label",
                                   TRANS("In general, which method did you prefer?")));
@@ -247,7 +247,7 @@ UserFinalQuestions::UserFinalQuestions ()
     fastSlider->setColour (Slider::trackColourId, Colour (0xff353c40));
     fastSlider->setColour (Slider::textBoxHighlightColourId, Colour (0x0042a2c8));
 
-    fastSlider->setBounds (336, 256, 568, 24);
+    fastSlider->setBounds (472, 280, 296, 24);
 
     intuitiveSlider.reset (new Slider ("intuitive slider"));
     addAndMakeVisible (intuitiveSlider.get());
@@ -259,7 +259,7 @@ UserFinalQuestions::UserFinalQuestions ()
     intuitiveSlider->setColour (Slider::trackColourId, Colour (0xff353c40));
     intuitiveSlider->setColour (Slider::textBoxHighlightColourId, Colour (0x0042a2c8));
 
-    intuitiveSlider->setBounds (336, 376, 568, 24);
+    intuitiveSlider->setBounds (472, 376, 296, 24);
 
     preferSlider.reset (new Slider ("prefer slider"));
     addAndMakeVisible (preferSlider.get());
@@ -271,7 +271,7 @@ UserFinalQuestions::UserFinalQuestions ()
     preferSlider->setColour (Slider::trackColourId, Colour (0xff353c40));
     preferSlider->setColour (Slider::textBoxHighlightColourId, Colour (0x0042a2c8));
 
-    preferSlider->setBounds (336, 432, 568, 32);
+    preferSlider->setBounds (472, 432, 296, 32);
 
     imageButton2.reset (new ImageButton ("new button"));
     addAndMakeVisible (imageButton2.get());
@@ -280,10 +280,10 @@ UserFinalQuestions::UserFinalQuestions ()
                              ImageCache::getFromMemory (BinaryData::_4_Interpolation_areas_png, BinaryData::_4_Interpolation_areas_pngSize), 1.000f, Colour (0x00000000),
                              ImageCache::getFromMemory (BinaryData::_4_Interpolation_areas_png, BinaryData::_4_Interpolation_areas_pngSize), 1.000f, Colour (0x00000000),
                              ImageCache::getFromMemory (BinaryData::_4_Interpolation_areas_png, BinaryData::_4_Interpolation_areas_pngSize), 1.000f, Colour (0x00000000));
-    imageButton2->setBounds (936, 272, 232, 176);
+    imageButton2->setBounds (792, 280, 232, 176);
 
     precisionLabel2.reset (new Label ("precision label",
-                                      TRANS("If you do not have an opinion, leave the cursor at center position")));
+                                      TRANS("If you do not have an opinion, leave the blue cursor at center position")));
     addAndMakeVisible (precisionLabel2.get());
     precisionLabel2->setFont (Font (15.00f, Font::italic));
     precisionLabel2->setJustificationType (Justification::centred);
@@ -292,7 +292,7 @@ UserFinalQuestions::UserFinalQuestions ()
     precisionLabel2->setColour (TextEditor::textColourId, Colours::black);
     precisionLabel2->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    precisionLabel2->setBounds (328, 272, 576, 24);
+    precisionLabel2->setBounds (328, 232, 576, 24);
 
     precisionLabel.reset (new Label ("precision label",
                                      TRANS("Which method seemed to be the most precise?")));
@@ -315,7 +315,7 @@ UserFinalQuestions::UserFinalQuestions ()
     preciseSlider->setColour (Slider::trackColourId, Colour (0xff353c40));
     preciseSlider->setColour (Slider::textBoxHighlightColourId, Colour (0x0042a2c8));
 
-    preciseSlider->setBounds (336, 328, 568, 24);
+    preciseSlider->setBounds (472, 328, 296, 24);
 
     intuitiveLabel.reset (new Label ("intuitive label",
                                      TRANS("Which method seemed to be the most intuitive?")));
@@ -586,8 +586,8 @@ BEGIN_JUCER_METADATA
               bgColOn="ff252525" buttonText="OK, save data and finish the experiment"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <LABEL name="expertise level label" id="b435fe1e58647b28" memberName="selfExpertiseLevelLabel"
-         virtualName="" explicitFocusOrder="0" pos="8 56 672 24" edTextCol="ff000000"
-         edBkgCol="0" labelText="Concerning sound synthesisers and filters, what is your level of expertise ?"
+         virtualName="" explicitFocusOrder="0" pos="8 56 880 24" edTextCol="ff000000"
+         edBkgCol="0" labelText="Concerning sound synthesisers and filters, what is your level of expertise ? (Click on the right answer or move the blue cursor)"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="33"/>
@@ -638,13 +638,13 @@ BEGIN_JUCER_METADATA
               multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"
               caret="1" popupmenu="1"/>
   <LABEL name="fast label" id="4bc9d2e8edc70f1d" memberName="fastLabel"
-         virtualName="" explicitFocusOrder="0" pos="336 240 568 24" edTextCol="ff000000"
+         virtualName="" explicitFocusOrder="0" pos="336 264 568 24" edTextCol="ff000000"
          edBkgCol="0" labelText="Which method seemed to be the fastest?"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="36"/>
   <IMAGEBUTTON name="new button" id="c34d6540fcb75f68" memberName="imageButton"
-               virtualName="" explicitFocusOrder="0" pos="56 280 256 160" buttonText="new button"
+               virtualName="" explicitFocusOrder="0" pos="192 288 256 160" buttonText="new button"
                connectedEdges="0" needsCallback="0" radioGroupId="0" keepProportions="0"
                resourceNormal="BinaryData::_4_Faders_png" opacityNormal="1"
                colourNormal="c80606" resourceOver="BinaryData::_4_Faders_png"
@@ -657,33 +657,33 @@ BEGIN_JUCER_METADATA
          fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="36"/>
   <SLIDER name="fast slider" id="9c198d9742f2d6de" memberName="fastSlider"
-          virtualName="" explicitFocusOrder="0" pos="336 256 568 24" bkgcol="ff353c40"
+          virtualName="" explicitFocusOrder="0" pos="472 280 296 24" bkgcol="ff353c40"
           thumbcol="ff08cef3" trackcol="ff353c40" textboxhighlight="42a2c8"
           min="1" max="3" int="1" style="LinearHorizontal" textBoxPos="NoTextBox"
           textBoxEditable="0" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
           needsCallback="0"/>
   <SLIDER name="intuitive slider" id="37905ac2c9d91ce3" memberName="intuitiveSlider"
-          virtualName="" explicitFocusOrder="0" pos="336 376 568 24" bkgcol="ff353c40"
+          virtualName="" explicitFocusOrder="0" pos="472 376 296 24" bkgcol="ff353c40"
           thumbcol="ff08cef3" trackcol="ff353c40" textboxhighlight="42a2c8"
           min="1" max="3" int="1" style="LinearHorizontal" textBoxPos="NoTextBox"
           textBoxEditable="0" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
           needsCallback="0"/>
   <SLIDER name="prefer slider" id="d70c806ce2b41274" memberName="preferSlider"
-          virtualName="" explicitFocusOrder="0" pos="336 432 568 32" bkgcol="ff353c40"
+          virtualName="" explicitFocusOrder="0" pos="472 432 296 32" bkgcol="ff353c40"
           thumbcol="ff08cef3" trackcol="ff353c40" textboxhighlight="42a2c8"
           min="1" max="3" int="1" style="LinearHorizontal" textBoxPos="NoTextBox"
           textBoxEditable="0" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
           needsCallback="0"/>
   <IMAGEBUTTON name="new button" id="77a64db2cbc4aa79" memberName="imageButton2"
-               virtualName="" explicitFocusOrder="0" pos="936 272 232 176" buttonText="new button"
+               virtualName="" explicitFocusOrder="0" pos="792 280 232 176" buttonText="new button"
                connectedEdges="0" needsCallback="0" radioGroupId="0" keepProportions="0"
                resourceNormal="BinaryData::_4_Interpolation_areas_png" opacityNormal="1"
                colourNormal="0" resourceOver="BinaryData::_4_Interpolation_areas_png"
                opacityOver="1" colourOver="0" resourceDown="BinaryData::_4_Interpolation_areas_png"
                opacityDown="1" colourDown="0"/>
   <LABEL name="precision label" id="4d1ebe657734ff2" memberName="precisionLabel2"
-         virtualName="" explicitFocusOrder="0" pos="328 272 576 24" textCol="ff929292"
-         edTextCol="ff000000" edBkgCol="0" labelText="If you do not have an opinion, leave the cursor at center position"
+         virtualName="" explicitFocusOrder="0" pos="328 232 576 24" textCol="ff929292"
+         edTextCol="ff000000" edBkgCol="0" labelText="If you do not have an opinion, leave the blue cursor at center position"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="1" justification="36" typefaceStyle="Italic"/>
@@ -694,7 +694,7 @@ BEGIN_JUCER_METADATA
          fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="36"/>
   <SLIDER name="precise slider" id="f33978f42f481274" memberName="preciseSlider"
-          virtualName="" explicitFocusOrder="0" pos="336 328 568 24" bkgcol="ff353c40"
+          virtualName="" explicitFocusOrder="0" pos="472 328 296 24" bkgcol="ff353c40"
           thumbcol="ff08cef3" trackcol="ff353c40" textboxhighlight="42a2c8"
           min="1" max="3" int="1" style="LinearHorizontal" textBoxPos="NoTextBox"
           textBoxEditable="0" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
