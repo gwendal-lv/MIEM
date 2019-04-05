@@ -69,8 +69,9 @@ class OSCRecorder : public UserQuestionsManager,
     const int listeningTime_ms = 20000; // 15s sont un peu trop courtes...
 #endif
     
-    // valeur qui permet d'imposer un rythme, sans couper trop souvent la recherche...
-    static const int ResearchTimeMax_ms = 30000;
+    // 30s = valeur qui permet d'imposer un rythme,
+    // sans couper trop souvent la recherche...
+    static const int ResearchTimeMax_ms = 35000;
     
     static const int WhiteNoiseStartDelay_ms = 1500; ///< Delay after entering "finished" state
     static const int WhiteNoisePrematureEnd_ms = 500; ///< White noise ends a bit bfore the "finished" state actually ends

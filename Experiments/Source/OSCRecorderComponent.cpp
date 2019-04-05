@@ -149,6 +149,16 @@ OSCRecorderComponent::OSCRecorderComponent ()
     startButton->setEnabled(false);
     removeChildComponent(listenButton.get());
     removeChildComponent(startButton.get());
+    
+    // If the research time is longer, the main remainig time
+    // bar becomes darker... (totally dark for 120s research)
+    /*float barBrightness = 1.0f
+    - ((float)(OSCRecorder::ResearchTimeMax_ms) / 1000.0f) / 120.0f;
+     */
+    //.... -> fixed brightness at the moment
+    float barBrightness = 0.9f;
+    remainingTimeSlider->setColour(Slider::ColourIds::trackColourId,
+                                   Colour(0.0f, 0.0f, barBrightness, 1.0f));
 
     //[/Constructor]
 }
