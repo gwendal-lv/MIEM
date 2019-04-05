@@ -9,9 +9,12 @@ function [] = PlotPerformanceSurfaces()
 N = 41;
 maxError = 0.79;
 N_step = maxError / (N-1);
-M = 41;
+
+maxDisplayTime = 60;
 maxTime = 30;
-M_step = maxTime / (M-1);
+
+M = 41;
+M_step = maxDisplayTime / (M-1);
 
 % norm-1 of the parametric error
 % (values > 1 indicate very, very bad performance)
