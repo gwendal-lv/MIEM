@@ -476,9 +476,9 @@ double MiemExpePreset::ComputePerformance()
 {
     // on va renvoyer un score pas trop méchant même pour les gens un peu nuls...
     // (genre avec un plateau à 0.10)
-    // et on va considérer que le temps est censé durer entre 10 et 30 secondes
+    // et on va considérer que le temps est censé durer entre 10 et 120 secondes
     // (on mettra un clamp final sur les valeurs...)
-    double maxTime_s = 30;
+    double maxReferenceTime_s = 30; // utilisable même pour des temps plus longs !
     
     // recherche des valeurs finales (paramètres et temps
     std::vector<double> finalValues;
@@ -511,7 +511,7 @@ double MiemExpePreset::ComputePerformance()
     double paramError = errorNorm1 / finalValues.size();
     
     double precisionPerf = 1.0 - 2.0 * paramError;
-    double timePerf = 1.0 - ((double)(finalTime_ms)/1000.0) / (maxTime_s * 1.5);
+    double timePerf = 1.0 - ((double)(finalTime_ms)/1000.0) / (maxReferenceTime_s * 1.5);
     // somme pondérée des 2 performances (en temps et en précision)
     performance = precisionPerf + 0.70 * timePerf;
     performance = std::max(performance, 0.0); // clamp valeurs positives
