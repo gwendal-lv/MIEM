@@ -149,7 +149,7 @@ OSCRecorderComponent::OSCRecorderComponent ()
     startButton->setEnabled(false);
     removeChildComponent(listenButton.get());
     removeChildComponent(startButton.get());
-    
+
     // If the research time is longer, the main remainig time
     // bar becomes darker... (totally dark for 120s research)
     /*float barBrightness = 1.0f

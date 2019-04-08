@@ -100,6 +100,16 @@ private:
     std::unique_ptr<Label> precisionLabel;
     std::unique_ptr<Slider> preciseSlider;
     std::unique_ptr<Label> intuitiveLabel;
+    std::unique_ptr<GroupComponent> separationBar2;
+    std::unique_ptr<GroupComponent> separationBar3;
+    std::unique_ptr<GroupComponent> separationBar4;
+    std::unique_ptr<GroupComponent> separationBar5;
+    std::unique_ptr<Label> labelQ1;
+    std::unique_ptr<Label> selfExpertiseLevelLabel2;
+    std::unique_ptr<Label> labelQ2;
+    std::unique_ptr<Label> labelQ3;
+    std::unique_ptr<Label> labelQ4;
+    std::unique_ptr<Label> labelQ5;
 
 
     //==============================================================================

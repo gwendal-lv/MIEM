@@ -114,6 +114,8 @@ static const unsigned char temp_binary_data_4[] =
 "\"Continue\" = \"Continuer\"\n"
 "\"Current preset: \" = \"Preset actuel : \"\n"
 "\"Female\" = \"Femme\"\n"
+"\"For each of the following questions, please move the blue cursor to indicate the method you would chose. If you do not have an opinion, leave the blue cursor at center position.\" = \"Pour chacune des questions suivantes, veuillez d\xc3\xa9placer l"
+"e curseur bleu pour indiquer la m\xc3\xa9thode que vous choisiriez. Si vous n'avez pas d'opinion, laissez le curseur bleu au centre.\"\n"
 "\"How old are you?\" = \"Quel \xc3\xa2ge avez-vous ?\"\n"
 "\"I allow the anonymous usage of data collected during this experiment\" = \"J'autorise l'utilisation anonyme des donn\xc3\xa9""es collect\xc3\xa9""es durant cette exp\xc3\xa9rience\"\n"
 "\"I have already participated in a similar scientific experiment\" = \"J'ai d\xc3\xa9j\xc3\xa0 particip\xc3\xa9 \xc3\xa0 une exp\xc3\xa9rience scientifique similaire\"\n"
@@ -126,11 +128,11 @@ static const unsigned char temp_binary_data_4[] =
 "\"In general, which method did you prefer?\" = \"En g\xc3\xa9n\xc3\xa9ral, quelle m\xc3\xa9thode avez-vous pr\xc3\xa9""f\xc3\xa9r\xc3\xa9 ?\"\n"
 "\"If you can, please tell us the name of the app:\" = \"Si vous le pouvez, veuillez s'il vous pla\xc3\xaet nous indiquer son nom:\"\n"
 "\"It is almost finished! Please read and answer these last few questions.\" = \"C'est presque termin\xc3\xa9 ! Il ne reste plus qu'\xc3\xa0 r\xc3\xa9pondre aux quelques questions ci-dessous.\"\n"
-"\"If you do not have an opinion, leave the blue cursor at center position\" = \"Si vous n'avez pas d'opinion, laissez le curseur bleu en position centrale\n"
 "\"If you have any remark, comment or suggestion, please feel free to write it below:\" = \"Si vous avez une remarque, un commentaire ou une suggestion, vous pouvez l'\xc3\xa9""crire ci-dessous :\"\n"
 "\"LISTEN TO THE PRESET\" = \"\xc3\x89""COUTER LE PRESET\"\n"
 "\"Listening to reference sound will start in:\" = \"L'\xc3\xa9""coute du son de r\xc3\xa9""f\xc3\xa9rence va commencer dans :\"\n"
 "\"Male\" = \"Homme\"\n"
+"\"My level = \" = \"Mon niveau = \"\n"
 "\"OK, save data and finish the experiment\" = \"OK, enregistrer les donn\xc3\xa9""es et terminer l'exp\xc3\xa9rience\"\n"
 "\"Other\" = \"Autre\"\n"
 "\"Next questions will appear soon...\" = \"Les questions suivantes vont appara\xc3\xaetre tr\xc3\xa8s bient\xc3\xb4t...\"\n"
@@ -10589,7 +10591,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
         case 0xa7370881:  numBytes = 419; return Recorder_AfterTrial_FR_txt;
         case 0xcd874cee:  numBytes = 1214; return Recorder_Intro_EN_txt;
         case 0xcf748391:  numBytes = 1437; return Recorder_Intro_FR_txt;
-        case 0x340941eb:  numBytes = 4842; return Translation_FR_txt;
+        case 0x340941eb:  numBytes = 5091; return Translation_FR_txt;
         case 0x896b2391:  numBytes = 32310; return _4_Faders_png;
         case 0xffae406b:  numBytes = 35496; return _4_Interpolation_areas_png;
         case 0xf1ad4a99:  numBytes = 672439; return Experiment_macOS_1024at1_png;

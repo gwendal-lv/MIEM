@@ -267,15 +267,22 @@ void OSCRecorder::changeState(ExperimentState newState)
             else
                 mainComponent->oscRecorderIntroComponent->SetMainText(BinaryData::Recorder_Intro_EN_txt);
             mainComponent->SetOneGuiComponentVisible(mainComponent->oscRecorderIntroComponent.get());
+            // besoin de récupérer le focus à la main... pour récupérer les appuis clavier
+            Timer::callAfterDelay(500,
+                                  [this]
+            { mainComponent->oscRecorderIntroComponent->grabKeyboardFocus(); });
             mainComponent->SetTotalScore(-1); // to hide the score label
             break;
             
-        case ExperimentState::PostTrialDescriptionDisplayed:
+        case ExperimentState::PostTrialDescriptionDisplayed: // infos traduites + keyboard focus
             if (GetLanguage().compare("FR") == 0)
                 mainComponent->oscRecorderIntroComponent->SetMainText(BinaryData::Recorder_AfterTrial_FR_txt);
             else
                 mainComponent->oscRecorderIntroComponent->SetMainText(BinaryData::Recorder_AfterTrial_EN_txt);
             mainComponent->SetOneGuiComponentVisible(mainComponent->oscRecorderIntroComponent.get());
+            Timer::callAfterDelay(500,
+                                  [this]
+                                  { mainComponent->oscRecorderIntroComponent->grabKeyboardFocus(); });
             break;
             
         case ExperimentState::InitialQuestionsDisplayed:

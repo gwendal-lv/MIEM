@@ -57,6 +57,7 @@ public:
     void paint (Graphics& g) override;
     void resized() override;
     void buttonClicked (Button* buttonThatWasClicked) override;
+    bool keyPressed (const KeyPress& key) override;
 
 
 

@@ -125,6 +125,24 @@ void OSCRecorderIntroComponent::buttonClicked (Button* buttonThatWasClicked)
     //[/UserbuttonClicked_Post]
 }
 
+bool OSCRecorderIntroComponent::keyPressed (const KeyPress& key)
+{
+    //[UserCode_keyPressed] -- Add your code here...if (key.getKeyCode() == KeyPress::spaceKey
+    if (key.getKeyCode() == KeyPress::spaceKey
+        || key.getKeyCode() == KeyPress::returnKey)
+    {
+        // on simule un clic sur le bouton "OK, lu"
+        buttonClicked(finishedButton.get());
+        return true;
+    }
+    else
+    {
+        return false;  // Return true if your handler uses this key event,
+        // or false to allow it to be passed-on.
+    }
+    //[/UserCode_keyPressed]
+}
+
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
@@ -153,6 +171,9 @@ BEGIN_JUCER_METADATA
                  componentName="" parentClasses="public Component" constructorParams=""
                  variableInitialisers="" snapPixels="8" snapActive="1" snapShown="1"
                  overlayOpacity="0.330" fixedSize="0" initialWidth="1000" initialHeight="700">
+  <METHODS>
+    <METHOD name="keyPressed (const KeyPress&amp; key)"/>
+  </METHODS>
   <BACKGROUND backgroundColour="ff111111"/>
   <TEXTBUTTON name="finished button" id="ee4745ef80623612" memberName="finishedButton"
               virtualName="" explicitFocusOrder="0" pos="0Cc 96R 500 80" bgColOff="ff097c2a"

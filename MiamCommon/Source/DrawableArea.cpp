@@ -398,10 +398,18 @@ void DrawableArea::RefreshOpenGLBuffers()
 	}
     
     // - - - Couleur - - -
+    const GLfloat A = GetAlpha(); // dynamic opacity
+#ifndef __MIEM_EXPERIMENTS
     const GLfloat R = contourColour.getRed() / 255.0f;
     const GLfloat G = contourColour.getGreen() / 250.0f;
     const GLfloat B = contourColour.getBlue() / 250.0f;
-    const GLfloat A = GetAlpha(); // dynamic opacity
+#else
+    const GLfloat R = fillColour.getRed() / 255.0f;
+    const GLfloat G = fillColour.getGreen() / 250.0f;
+    const GLfloat B = fillColour.getBlue() / 250.0f;
+    // central ring is not shown during experiments
+    // (because some people expect something to happen with it)
+#endif
     
     for (int i = 0; i < 4*numVerticesRing; i+=4)
     {
