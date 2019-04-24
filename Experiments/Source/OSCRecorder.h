@@ -73,7 +73,9 @@ class OSCRecorder : public UserQuestionsManager,
     // sans couper trop souvent la recherche...
     // 35s = légèrement plus long, moins de coupure sans faire
     // baisser sensiblement les performances
-    static const int ResearchTimeMax_ms = 35000;
+    // 40s = toujours des coupures ?
+    // 60s = beaucoup trop long
+    static const int ResearchTimeMax_ms = 40000;
     
     static const int WhiteNoiseStartDelay_ms = 1500; ///< Delay after entering "finished" state
     static const int WhiteNoisePrematureEnd_ms = 500; ///< White noise ends a bit before the "finished" state actually ends
