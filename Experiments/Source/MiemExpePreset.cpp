@@ -16,6 +16,8 @@
 
 #include "MiamMath.h"
 
+#include "MonitoringServer.h"
+
 #include "JuceHeader.h"
 
 
@@ -266,6 +268,7 @@ std::map<int, size_t> MiemExpePreset::GeneratePresetIndexToRandomIndexMap(int ac
     
     // There must be the same number of fader presets and of MIEM interpolation presets
     assert(((trialPresetsCount % 2) == 0) && ((actualPresetsCount % 2) == 0));
+    int nonTrialSynthsCount = actualPresetsCount / 2;
     
     std::map<int, size_t> presetRandomIdx;
     
@@ -283,10 +286,40 @@ std::map<int, size_t> MiemExpePreset::GeneratePresetIndexToRandomIndexMap(int ac
     // mersenne-twister 1997 (32 bits)
     auto longIntSeed = Time::currentTimeMillis() % 1000000;
     int timeSeed = (int) longIntSeed;
+    auto randomGenerator = std::mt19937(timeSeed);
     
+    // ACTUAL RANDOMIZATION
     // sometimes not randomized, for debug purposes
     if (randomize)
-        std::shuffle(randomVector1.begin(), randomVector1.end(), std::mt19937(timeSeed));
+    {
+        // randomization is done and re-done, as long as there is the issue of
+        // 2 identical synths one after another
+        bool identicalConsecutiveSynths = true;
+        int iterationsCount = 0;
+        while (identicalConsecutiveSynths)
+        {
+            // shuffle
+            std::shuffle(randomVector1.begin(), randomVector1.end(), randomGenerator);
+            identicalConsecutiveSynths = false; // restera vrai tant que pas prouvé faux...
+            // puis vérification
+            for (size_t i = 0 ; i < (randomVector1.size() - 2) ; i++)
+            {
+                // on vérifie synthé adjacent, et synthé 2 cases + loin
+                if ( ((randomVector1[i] - nonTrialSynthsCount) == randomVector1[i+1])
+                    || ((randomVector1[i] + nonTrialSynthsCount) == randomVector1[i+1])
+                    || ((randomVector1[i] - nonTrialSynthsCount) == randomVector1[i+2])
+                    || ((randomVector1[i] + nonTrialSynthsCount) == randomVector1[i+2]) )
+                {
+                    identicalConsecutiveSynths = true;
+                }
+            }
+            iterationsCount++;
+        }
+        
+        MonitoringServer::SendLog("Presets randomization computed in "
+                                  + boost::lexical_cast<std::string>(iterationsCount)
+                                  + " iterations");
+    }
     
     for (int i=0 ; i<actualPresetsCount ; i++)
             presetRandomIdx[i] = randomVector1[i];

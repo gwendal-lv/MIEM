@@ -91,19 +91,6 @@ void OSCRecorder::reinitExperiment()
     // is always the same... re-cleared of its data each time
     presets.clear();
     presets.reserve(ExperimentPresetsCount + TrialPresetsCount);
-    // normal presets at the beginning
-    // fader/interp is not random anymore...
-    /*
-    auto longIntSeed = Time::currentTimeMillis() % 1000000;
-    int timeSeed = (int) longIntSeed;
-    auto generator = std::bind(std::uniform_int_distribution<>(0,1),
-                               std::mt19937(timeSeed)); // graine à zéro par défaut !
-    for (int i=0 ; i<ExperimentPresetsCount ; i++)
-    {
-        bool findByInterpolation = generator(); // auto-cast ?
-        presets.push_back(std::make_shared<MiemExpePreset>(i, findByInterpolation));
-    }
-    */
     assert((ExperimentPresetsCount % 2) == 0); // on a besoin de 2 presets par synthé ! pour comparer
     int synthsCount = ExperimentPresetsCount / 2;
     for (int i=0; i<ExperimentPresetsCount ; i++)

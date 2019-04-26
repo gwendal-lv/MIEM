@@ -133,6 +133,24 @@ OSCRecorderComponent::OSCRecorderComponent ()
     scoreLabel->setColour (TextEditor::textColourId, Colours::black);
     scoreLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
+    infoLabel.reset (new Label ("info label",
+                                TRANS("(noise)")));
+    addAndMakeVisible (infoLabel.get());
+    infoLabel->setFont (Font (18.00f, Font::italic));
+    infoLabel->setJustificationType (Justification::centred);
+    infoLabel->setEditable (false, false, false);
+    infoLabel->setColour (TextEditor::textColourId, Colours::black);
+    infoLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    infoLabel2.reset (new Label ("info label",
+                                 TRANS("Next step will start in a few seconds")));
+    addAndMakeVisible (infoLabel2.get());
+    infoLabel2->setFont (Font (18.00f, Font::plain).withTypefaceStyle ("Regular"));
+    infoLabel2->setJustificationType (Justification::centred);
+    infoLabel2->setEditable (false, false, false);
+    infoLabel2->setColour (TextEditor::textColourId, Colours::black);
+    infoLabel2->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -179,6 +197,8 @@ OSCRecorderComponent::~OSCRecorderComponent()
     searchCountdownLabel = nullptr;
     progressBarSlider = nullptr;
     scoreLabel = nullptr;
+    infoLabel = nullptr;
+    infoLabel2 = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -213,6 +233,8 @@ void OSCRecorderComponent::resized()
     searchCountdownLabel->setBounds ((getWidth() / 2) + 8, 160, 569, 32);
     progressBarSlider->setBounds ((getWidth() / 2) - (1200 / 2), getHeight() - 60, 1200, 40);
     scoreLabel->setBounds ((getWidth() / 2) - (500 / 2), getHeight() - 208, 500, 32);
+    infoLabel->setBounds ((getWidth() / 2) - (300 / 2), (getHeight() / 2) + -20 - (24 / 2), 300, 24);
+    infoLabel2->setBounds ((getWidth() / 2) - (600 / 2), (getHeight() / 2) + 20 - (24 / 2), 600, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -291,6 +313,8 @@ void OSCRecorderComponent::DisplayNewState(ExperimentState newState, int presetS
     //                              && newState != ExperimentState::Listening);
     finishedButton->setVisible(newState == ExperimentState::SearchingPreset);
     scoreLabel->setVisible(newState == ExperimentState::FinishedSearchingPreset);
+    infoLabel->setVisible(newState == ExperimentState::FinishedSearchingPreset);
+    infoLabel2->setVisible(newState == ExperimentState::FinishedSearchingPreset);
 
     // - - - - - puis : Switch général pour affichage des cas plus complexes - - - - -
     switch(newState)
@@ -394,7 +418,8 @@ void OSCRecorderComponent::SetPerformance(double performance)
 {
     int scoreOutOf100 = (int) std::round(performance * 100.0);
     scoreLabel->setText(TRANS("Score : ").toStdString()
-                        + boost::lexical_cast<std::string>(scoreOutOf100),
+                        + boost::lexical_cast<std::string>(scoreOutOf100)
+                        + std::string("/100"),
                         NotificationType::sendNotification);
     // couleur mise à jour également
     scoreLabel->setColour(Label::ColourIds::textColourId,
@@ -563,6 +588,18 @@ BEGIN_JUCER_METADATA
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="3.6e1" kerning="0" bold="1"
          italic="0" justification="36" typefaceStyle="Bold"/>
+  <LABEL name="info label" id="2ceb4d4b04427bed" memberName="infoLabel"
+         virtualName="" explicitFocusOrder="0" pos="0Cc -20Cc 300 24"
+         edTextCol="ff000000" edBkgCol="0" labelText="(noise)" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
+         fontsize="1.8e1" kerning="0" bold="0" italic="1" justification="36"
+         typefaceStyle="Italic"/>
+  <LABEL name="info label" id="a3f2ac820781a9b" memberName="infoLabel2"
+         virtualName="" explicitFocusOrder="0" pos="0Cc 20Cc 600 24" edTextCol="ff000000"
+         edBkgCol="0" labelText="Next step will start in a few seconds"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="1.8e1" kerning="0" bold="0"
+         italic="0" justification="36"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

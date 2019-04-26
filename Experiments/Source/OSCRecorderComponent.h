@@ -106,6 +106,8 @@ private:
     std::unique_ptr<Label> searchCountdownLabel;
     std::unique_ptr<Slider> progressBarSlider;
     std::unique_ptr<Label> scoreLabel;
+    std::unique_ptr<Label> infoLabel;
+    std::unique_ptr<Label> infoLabel2;
 
 
     //==============================================================================

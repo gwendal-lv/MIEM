@@ -136,6 +136,7 @@ static const unsigned char temp_binary_data_4[] =
 "\"OK, save data and finish the experiment\" = \"OK, enregistrer les donn\xc3\xa9""es et terminer l'exp\xc3\xa9rience\"\n"
 "\"Other\" = \"Autre\"\n"
 "\"Next questions will appear soon...\" = \"Les questions suivantes vont appara\xc3\xaetre tr\xc3\xa8s bient\xc3\xb4t...\"\n"
+"\"Next step will start in a few seconds\" = \"La prochaine \xc3\xa9tape va d\xc3\xa9""buter dans quelques secondes\"\n"
 "\"Personal anonymous information:\" = \"Donn\xc3\xa9""es personnelles (anonymes) :\"\n"
 "\"Please tell us its name, location and/or context in the form below: \" = \"Veuillez s'il vous pla\xc3\xaet nous indiquer son nom, lieu et/ou contexte dans le formulaire ci-dessous :\"\n"
 "\"Please tell us the nature of this impairment in the form below:\" = \"Veuillez s'il vous pla\xc3\xaet nous indiquer la nature de ce trouble dans le formulaire ci-dessous :\"\n"
@@ -147,7 +148,7 @@ static const unsigned char temp_binary_data_4[] =
 "\"Which method seemed to be the fastest?\" = \"Quelle m\xc3\xa9thode vous a sembl\xc3\xa9 la plus rapide ?\"\n"
 "\"Which method seemed to be the most intuitive?\" = \"Quelle m\xc3\xa9thode vous a sembl\xc3\xa9 la plus intuitive ?\"\n"
 "\"Which method seemed to be the most precise?\" = \"Quelle m\xc3\xa9thode vous a sembl\xc3\xa9 la plus pr\xc3\xa9""cise ?\"\n"
-"\n";
+"\"(noise)\" = \"(bruit)\"\n";
 
 const char* Translation_FR_txt = (const char*) temp_binary_data_4;
 
@@ -10591,7 +10592,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
         case 0xa7370881:  numBytes = 419; return Recorder_AfterTrial_FR_txt;
         case 0xcd874cee:  numBytes = 1214; return Recorder_Intro_EN_txt;
         case 0xcf748391:  numBytes = 1437; return Recorder_Intro_FR_txt;
-        case 0x340941eb:  numBytes = 5091; return Translation_FR_txt;
+        case 0x340941eb:  numBytes = 5211; return Translation_FR_txt;
         case 0x896b2391:  numBytes = 32310; return _4_Faders_png;
         case 0xffae406b:  numBytes = 35496; return _4_Interpolation_areas_png;
         case 0xf1ad4a99:  numBytes = 672439; return Experiment_macOS_1024at1_png;
