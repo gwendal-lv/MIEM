@@ -149,7 +149,7 @@ LoggerComponent::LoggerComponent ()
     portTextEditor->addListener(this);
 
     // TEMP for debug
-    ipTextEditor->setText("192.168.0.181");
+    ipTextEditor->setText("10.97.198.140");
     portTextEditor->setText(String(19192));
 
     update();

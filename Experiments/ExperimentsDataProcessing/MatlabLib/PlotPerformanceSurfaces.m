@@ -10,7 +10,7 @@ N = 41;
 maxError = 0.79;
 N_step = maxError / (N-1);
 
-maxDisplayTime = 60;
+maxDisplayTime = 35;
 maxTime = 30;
 
 M = 41;
@@ -45,22 +45,24 @@ figure();
 
 subplot(1,2,1);
 surf(parametricError, searchTime, basicPerf);
-title('Basic performance');
-xlabel('Error');
-ylabel('Search time [s]');
-zlabel('Perf.');
+title('In-Game performance function');
+xlabel('Error E');
+ylabel('Search duration T [s]');
+ylim( [0 maxDisplayTime] );
+zlabel('Performance P');
 %view(0,90); % top view
-view(135,60);
+view(135,45);
 pbaspect([1 1 1]);
 
 subplot(1,2,2);
 surf(parametricError, searchTime, altPerf);
-title('Alternative performance');
-xlabel('Error');
-ylabel('Search time [s]');
-zlabel('Perf.');
+title('Basic performance function');
+xlabel('Error E');
+ylabel('Search duration T [s]');
+ylim( [0 maxDisplayTime] );
+zlabel('Performance P');
 %view(0,90); % top view
-view(135,60);
+view(135,45);
 pbaspect([1 1 1]);
 
 

@@ -15,7 +15,7 @@ xticks( 1:5 );
 xlabel('Self-estimated expertise level in sound synthesis and filtering');
 
 ylim( [0 1] );
-ylabel('Mean performance (for all synth sounds)');
+ylabel('Mean performance $\bar{P(i)}$ (for all sounds of experiment i)', 'Interpreter', 'latex');
 
 legend('Faders', 'Interpolation', 'Location', 'southeast');
 

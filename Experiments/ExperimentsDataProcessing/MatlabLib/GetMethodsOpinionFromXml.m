@@ -11,7 +11,7 @@ if strcmpi(methodsOpinionNode.Attributes.fastest, 'fader')
 elseif strcmpi(methodsOpinionNode.Attributes.fastest, 'interpolation')
     methodsOpinion.fastest = 2;
 else
-    methodsOpinion.fastest = -1;
+    methodsOpinion.fastest = 1.5;
 end
 
 if strcmpi(methodsOpinionNode.Attributes.most_precise, 'fader')
@@ -19,7 +19,7 @@ if strcmpi(methodsOpinionNode.Attributes.most_precise, 'fader')
 elseif strcmpi(methodsOpinionNode.Attributes.most_precise, 'interpolation')
     methodsOpinion.mostPrecise = 2;
 else
-    methodsOpinion.mostPrecise = -1;
+    methodsOpinion.mostPrecise = 1.5;
 end
 
 if strcmpi(methodsOpinionNode.Attributes.most_intuitive, 'fader')
@@ -27,7 +27,7 @@ if strcmpi(methodsOpinionNode.Attributes.most_intuitive, 'fader')
 elseif strcmpi(methodsOpinionNode.Attributes.most_intuitive, 'interpolation')
     methodsOpinion.mostIntuitive = 2;
 else
-    methodsOpinion.mostIntuitive = -1;
+    methodsOpinion.mostIntuitive = 1.5;
 end
 
 if strcmpi(methodsOpinionNode.Attributes.preferred, 'fader')
@@ -35,7 +35,7 @@ if strcmpi(methodsOpinionNode.Attributes.preferred, 'fader')
 elseif strcmpi(methodsOpinionNode.Attributes.preferred, 'interpolation')
     methodsOpinion.preferred = 2;
 else
-    methodsOpinion.preferred = -1;
+    methodsOpinion.preferred = 1.5;
 end
 
 

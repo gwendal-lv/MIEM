@@ -29,16 +29,16 @@ plot(synthsIds, expeResults(expeId).T(:,2), 'd', 'Color', globalParams.colors(2,
 xlim([0 (globalParams.synthsCount+1)]);
 xticks(xTicksValues);
 xticklabels(xTicksLabels);
-legend('Faders', 'interpolation', 'Location', 'southeast');
+legend('Faders', 'interpolation', 'Location', 'southwest');
 ylim([0, timeMaxDisplayValue]);
-ylabel('T');
+ylabel('Search duration T [s]');
 title( "Characteristics T, E and P for experiment i = " + num2str(expeId));
 
 subplot(3, 1, 2);
 plot(synthsIds, expeResults(expeId).E(:,1), 's', 'Color', globalParams.colors(1,:));
 hold on;
 plot(synthsIds, expeResults(expeId).E(:,2), 'd', 'Color', globalParams.colors(2,:));
-ylabel('Final Error E');
+ylabel('Parametric error E');
 ylim([0, errorYMax]);
 xlim([0 (globalParams.synthsCount+1)]);
 xticks(xTicksValues);
@@ -48,7 +48,7 @@ subplot(3, 1, 3);
 plot(synthsIds, expeResults(expeId).P(:,1), 's', 'Color', globalParams.colors(1,:));
 hold on;
 plot(synthsIds, expeResults(expeId).P(:,2), 'd', 'Color', globalParams.colors(2,:));
-ylabel('Performance index P');
+ylabel('Performance score P');
 ylim([0, perfIndexMaxDisplayValue]);
 xlim([0 (globalParams.synthsCount+1)]);
 xticks(xTicksValues);

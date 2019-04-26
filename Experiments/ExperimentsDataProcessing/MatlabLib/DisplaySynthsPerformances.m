@@ -57,6 +57,9 @@ boxplot(synthPerformances, synthNames);%,  'PlotStyle','compact');
 title('Performances for all synth sounds');
 ylim([0 1]);
 
+ylabel(['P', 'Performance score P']);
+xlabel('Synth sound (F = Fader, I = Interpolation)');
+
 % Change the boxplot color from blue to green
 a = get(get(gca,'children'),'children');   % Get the handles of all the objects
 t = get(a,'tag');   % List the names of all the objects 
