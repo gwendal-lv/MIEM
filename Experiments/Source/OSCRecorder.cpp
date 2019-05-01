@@ -79,7 +79,7 @@ void OSCRecorder::reinitExperiment()
     stateBeforeConnectionLost = ExperimentState::IntroDescriptionDisplayed; // forced fake state
     
     // OSC UDP listener (no check for connection stability....)
-    oscRealtimeListener = std::make_shared<OSCListenerForwarder>(udpOscPort, startTimePt);
+    oscRealtimeListener = std::make_shared<OSCListenerForwarder>(udpOscPort, startTimePt, "MIEM_experiments_OSC_bridge");
     
     if (presets.size() > 0)
     {

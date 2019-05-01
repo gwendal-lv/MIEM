@@ -2,12 +2,13 @@
 
 <JUCERPROJECT id="DytN0V" name="MIEM Experiments" projectType="guiapp" jucerVersion="5.4.3"
               companyName="Gwendal Le Vaillant" bundleIdentifier="com.gwendallv.MIEMExperiments"
-              defines="__MIEM_SHORT_DELAYS__NO" reportAppUsage="0" displaySplashScreen="0"
-              projectLineFeed="&#10;" headerPath="../../../&#10;../../../MiamCommon/Source&#10;"
-              userNotes="Module JUCE_OPENGL rajout&#233; pour avoir acc&#232;s aux objets Vector3D"
+              defines="__MIEM_SHORT_DELAYS__NO&#10;__MIEM_ALLOW_MONITORING_SERVER_CONNECTIONS"
+              reportAppUsage="0" displaySplashScreen="0" projectLineFeed="&#10;"
+              headerPath="../../../&#10;../../../MiamCommon/Source&#10;" userNotes="Module JUCE_OPENGL rajout&#233; pour avoir acc&#232;s aux objets Vector3D"
               cppLanguageStandard="11">
   <MAINGROUP id="CesC75" name="MIEM Experiments">
     <GROUP id="{BD7228E3-B907-311E-3EC6-609760808B73}" name="MiemCommon">
+      <FILE id="FoEYsK" name="MiemSamples.h" compile="0" resource="0" file="../MiamCommon/Source/MiemSamples.h"/>
       <FILE id="ffLDPP" name="MiemVector.hpp" compile="0" resource="0" file="../MiamCommon/Source/MiemVector.hpp"/>
       <FILE id="sjoiVs" name="MiamMath.cpp" compile="1" resource="0" file="../MiamCommon/Source/MiamMath.cpp"/>
       <FILE id="ijLmqy" name="MiamMath.h" compile="0" resource="0" file="../MiamCommon/Source/MiamMath.h"/>

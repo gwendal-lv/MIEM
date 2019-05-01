@@ -18,10 +18,9 @@
 
 #include "OSCListenerForwarder.h"
 
-#include "OSCRecorder.h"
 
 
-OSCListenerForwarder::OSCListenerForwarder(int udpPort, std::chrono::time_point<MiemClock> _startTimePoint)
+OSCListenerForwarder::OSCListenerForwarder(int udpPort, std::chrono::time_point<MiemClock> _startTimePoint, std::string midiDeviceName)
 :
 oscReceiver("MIEM real-time OSC receiver thread"),
 startTimePt_NetworkThreadCopy(_startTimePoint),
@@ -48,7 +47,7 @@ startTimePt_MidiThreadCopy(_startTimePoint)
     if (! oscReceiver.connect(udpPort))
     {
         String errorStr = "Cannot open UDP socket for OSC receiving on port " + String(udpPort) + ". Please check parameters and restart experiment.";
-        MonitoringServer::SendLog("errorStr"); // won't be graphically displayed... console only
+        MonitoringServer::SendLog(errorStr.toStdString()); // won't be graphically displayed... console only
         // we just on quit if an error happens
         std::this_thread::sleep_for(std::chrono::seconds(10)); // time before looking at the console
         throw std::runtime_error(errorStr.toStdString());
@@ -61,7 +60,7 @@ startTimePt_MidiThreadCopy(_startTimePoint)
     
     
     // Init of the MIDI virtual output device
-    virtualMidiOutput.reset( MidiOutput::createNewDevice("MIEM_experiments_OSC_bridge") );
+    virtualMidiOutput.reset( MidiOutput::createNewDevice(midiDeviceName) );
     
     
     if (virtualMidiOutput.get())

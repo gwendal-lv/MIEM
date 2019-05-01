@@ -31,8 +31,13 @@ MonitoringServer::MonitoringServer()
         servers.push_back(std::make_unique<MiemLogServer>(this));
         servers[i]->beginWaitingForSocket(serversBeginPort + i);
     }
-    std::cout << "Monitoring server ready for connection on TCP ports " << serversBeginPort
-    << " to " << (serversBeginPort+serversCount) << std::endl;
+    
+    if (serversCount >= 1)
+        std::cout << "Monitoring server ready for connections on TCP ports " << serversBeginPort << " to " << (serversBeginPort + serversCount-1) << std::endl;
+    else
+        std::cout << "Monitoring server disabled (displays info in console but does not accept incoming connections)" << std::endl;
+    
+    
     Timer::callAfterDelay(initialEnqueuingDuration_ms,
                           [this] { isInitialEnqueuingFinished = true; } );
 }

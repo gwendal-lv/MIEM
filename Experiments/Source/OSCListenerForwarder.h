@@ -20,9 +20,7 @@ typedef std::chrono::steady_clock MiemClock;
 
 #include "JuceHeader.h"
 
-#include "MiemExpePreset.h" // also: struct MiemSample
-
-class OSCRecorder;
+#include "MiemSamples.h"
 
 
 /// \brief Classe qui crée le récepteur OSC, mais qui re-transmet aussi en MIDI
@@ -93,7 +91,7 @@ class OSCListenerForwarder : OSCReceiver::Listener<OSCReceiver::RealtimeCallback
     public :
     
     // ctor et dtor
-    OSCListenerForwarder(int udpPort, std::chrono::time_point<MiemClock> _startTimePoint);
+    OSCListenerForwarder(int udpPort, std::chrono::time_point<MiemClock> _startTimePoint, std::string midiDeviceName);
     ~OSCListenerForwarder();
     
     /// \brief OSC listening (on the NETWORK THREAD)

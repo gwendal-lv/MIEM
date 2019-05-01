@@ -70,7 +70,13 @@ class MonitoringServer : public DeletedAtShutdown
     private :
     std::mutex mainMutex; // useless at the moment...
     const int serversBeginPort = 19192;
+    
+#ifdef __MIEM_ALLOW_MONITORING_SERVER_CONNECTIONS
     const int serversCount = 10;
+#else
+    const int serversCount = 0;
+#endif
+    
     /// \brief Gives enough time for all waiting clients to actually connect.
     /// After the delay, we consider that all client are connected and we start sending
     /// messages in the queue.
