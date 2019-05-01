@@ -10,6 +10,7 @@
 
 #include <regex>
 
+#include <string>
 #include <sstream> // stringstream
 #include <iomanip> // setprecision
 
@@ -71,6 +72,25 @@ std::string TextUtils::FindFilenameInCommandLineArguments(std::string commandLin
     return commandLineFileName;
 }
 
+
+int TextUtils::ParseUdpPortNumber(const std::string& udpPort)
+{
+    int parsedPort = -1;
+    try {
+        parsedPort = std::stoi(udpPort);
+    }
+    catch (std::invalid_argument&) {
+        throw Miam::ParseException("Invalid argument");
+    }
+    catch (std::out_of_range&) {
+        throw Miam::ParseException("Out of integer type range");
+    }
+    
+    if (0 <= parsedPort && parsedPort <= 65535)
+        return parsedPort;
+    else
+        throw Miam::ParseException("Out of range for an UDP port");
+}
 
 
 OSCMessage TextUtils::ParseStringToJuceOscMessage(const std::string& stringToParse)

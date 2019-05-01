@@ -98,12 +98,12 @@ void ExperimentsSceneConstrainer::endTouchConstraint(const MouseEvent& e)
 
 
 
-MouseEvent& ExperimentsSceneConstrainer::constrainMouseEvent(const MouseEvent& e,
+const MouseEvent& ExperimentsSceneConstrainer::constrainMouseEvent(const MouseEvent& e,
                                                              int canvasWidth, int canvasHeight)
 {
     // If NOT in experiment mode : pure bypass of the reference
 #ifndef __MIEM_EXPERIMENTS
-    return mouseE;
+    return e;
     
 #else // defined __MIEM_EXPERIMENTS
     // default behavior...

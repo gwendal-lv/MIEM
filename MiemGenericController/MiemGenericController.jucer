@@ -5,7 +5,7 @@
               companyWebsite="htpp://laras.be" companyEmail="glevaillant@he2b.be"
               reportAppUsage="0" displaySplashScreen="0" bundleIdentifier="com.gwendallv.MIEMController"
               headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../MiamCommon/Resources/&#10;../../../ControlCommon/Source/&#10;../../../SpatCommon/Source/"
-              id="k0BzOi" defines="__MIEM_VBO&#10;__MIEM_GL_INFO_DISPLAY__NO&#10;__MIEM_EXPERIMENTS&#10;__MIEM_EXPERIMENTS_4_PARAMETERS&#10;__MIEM_EXPERIMENTS_FULL_LOCK"
+              id="k0BzOi" defines="__MIEM_VBO&#10;__MIEM_GL_INFO_DISPLAY__NO&#10;__MIEM_EXPERIMENTS__NO&#10;__MIEM_EXPERIMENTS_4_PARAMETERS&#10;__MIEM_EXPERIMENTS_FULL_LOCK__NO"
               projectLineFeed="&#10;">
   <MAINGROUP id="Krx0MS" name="MIEM Controller">
     <GROUP id="{B7F5CB5C-B6F8-A8AA-0F14-17FA42CC4DDF}" name="Source">

@@ -76,7 +76,7 @@ namespace Miam
         /// \brief Function that behaves as a bypass in "normal" mode, but actually
         /// constrains the movements of the exciters when compiled when
         /// __MIEM_EXPERIMENTS is defined
-        MouseEvent& constrainMouseEvent(const MouseEvent& e, int canvasWidth, int canvasHeight);
+        const MouseEvent& constrainMouseEvent(const MouseEvent& e, int canvasWidth, int canvasHeight);
         
         void beginTouchConstraint(const MouseEvent& e, int canvasWidth, int canvasHeight,
                                   bpt exciterCenter,

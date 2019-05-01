@@ -22,6 +22,8 @@ typedef std::chrono::steady_clock MiemClock;
 
 #include "MiemSamples.h"
 
+namespace Miam
+{
 
 /// \brief Classe qui crée le récepteur OSC, mais qui re-transmet aussi en MIDI
 /// les infos après les avoir quantifiées correctement.
@@ -110,3 +112,5 @@ class OSCListenerForwarder : OSCReceiver::Listener<OSCReceiver::RealtimeCallback
     void StopRecording();
     const std::vector<MiemExpeSample>& GetBufferedSamples();
 };
+    
+}

@@ -18,7 +18,7 @@
 
 #include "OSCListenerForwarder.h"
 
-
+using namespace Miam;
 
 OSCListenerForwarder::OSCListenerForwarder(int udpPort, std::chrono::time_point<MiemClock> _startTimePoint, std::string midiDeviceName)
 :
@@ -49,12 +49,15 @@ startTimePt_MidiThreadCopy(_startTimePoint)
         String errorStr = "Cannot open UDP socket for OSC receiving on port " + String(udpPort) + ". Please check parameters and restart experiment.";
         MonitoringServer::SendLog(errorStr.toStdString()); // won't be graphically displayed... console only
         // we just on quit if an error happens
+#ifndef __MIEM_DONT_WAIT_BEFORE_EXCEPTIONS
+        // on garde ça pour l'instant, pour ne pas devoir modifié le MIEM EXPERIMENTS
         std::this_thread::sleep_for(std::chrono::seconds(10)); // time before looking at the console
+#endif
         throw std::runtime_error(errorStr.toStdString());
     }
     else
     {
-        MonitoringServer::SendLog("Listening for OSC message on UDP port "
+        MonitoringServer::SendLog("Listening for OSC messages on UDP port "
                                       + boost::lexical_cast<std::string>(udpPort));
     }
     

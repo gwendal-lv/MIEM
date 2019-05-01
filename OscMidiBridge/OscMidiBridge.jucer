@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="kC9mF0" name="MIEM bridge - OSC to MIDI" projectType="guiapp"
+              jucerVersion="5.4.3" projectLineFeed="&#10;" companyName="Gwendal Le Vaillant"
+              reportAppUsage="0" displaySplashScreen="0" bundleIdentifier="com.gwendallv.MIEMBridgeOscMidi"
+              headerPath="../../../&#10;../../../MiamCommon/Source&#10;" defines="__MIEM_ALLOW_MONITORING_SERVER_CONNECTIONS__NO&#10;__MIEM_DONT_WAIT_BEFORE_EXCEPTIONS"
+              companyEmail="glevaillant@he2b.be">
+  <MAINGROUP id="z3kdIt" name="MIEM bridge - OSC to MIDI">
+    <GROUP id="{3D7DCD4D-4A14-354E-64DC-0C07AAB6FC2C}" name="MiemCommonSource">
+      <FILE id="ADEz6P" name="AsyncParamChange.h" compile="0" resource="0"
+            file="../MiamCommon/Source/AsyncParamChange.h"/>
+      <FILE id="zm67vl" name="AudioDefines.h" compile="0" resource="0" file="../MiamCommon/Source/AudioDefines.h"/>
+      <FILE id="b6vhQf" name="AudioUtils.hpp" compile="0" resource="0" file="../MiamCommon/Source/AudioUtils.hpp"/>
+      <FILE id="AhNPLc" name="FrequencyMeasurer.cpp" compile="1" resource="0"
+            file="../MiamCommon/Source/FrequencyMeasurer.cpp"/>
+      <FILE id="PNJc5G" name="FrequencyMeasurer.h" compile="0" resource="0"
+            file="../MiamCommon/Source/FrequencyMeasurer.h"/>
+      <FILE id="BrHTNm" name="MiamExceptions.h" compile="0" resource="0"
+            file="../MiamCommon/Source/MiamExceptions.h"/>
+      <FILE id="UyZ4h4" name="MiamMath.cpp" compile="1" resource="0" file="../MiamCommon/Source/MiamMath.cpp"/>
+      <FILE id="bR7vaF" name="MiamMath.h" compile="0" resource="0" file="../MiamCommon/Source/MiamMath.h"/>
+      <FILE id="U43TbN" name="MiemSamples.h" compile="0" resource="0" file="../MiamCommon/Source/MiemSamples.h"/>
+      <FILE id="piD501" name="MiemVector.hpp" compile="0" resource="0" file="../MiamCommon/Source/MiemVector.hpp"/>
+      <FILE id="VuZb35" name="MonitoringServer.cpp" compile="1" resource="0"
+            file="../MiamCommon/Source/MonitoringServer.cpp"/>
+      <FILE id="nBIn8Q" name="MonitoringServer.h" compile="0" resource="0"
+            file="../MiamCommon/Source/MonitoringServer.h"/>
+      <FILE id="ZFDWsu" name="OSCListenerForwarder.cpp" compile="1" resource="0"
+            file="../MiamCommon/Source/OSCListenerForwarder.cpp"/>
+      <FILE id="gad4Jx" name="OSCListenerForwarder.h" compile="0" resource="0"
+            file="../MiamCommon/Source/OSCListenerForwarder.h"/>
+      <FILE id="iVMCiq" name="PeriodicUpdateThread.cpp" compile="1" resource="0"
+            file="../MiamCommon/Source/PeriodicUpdateThread.cpp"/>
+      <FILE id="hKgyD5" name="PeriodicUpdateThread.h" compile="0" resource="0"
+            file="../MiamCommon/Source/PeriodicUpdateThread.h"/>
+      <FILE id="jeYdIC" name="TextUtils.cpp" compile="1" resource="0" file="../MiamCommon/Source/TextUtils.cpp"/>
+      <FILE id="OtMG7E" name="TextUtils.h" compile="0" resource="0" file="../MiamCommon/Source/TextUtils.h"/>
+    </GROUP>
+    <GROUP id="{F9FEC5B9-E8A2-F542-CEDC-01B8FEEA39E7}" name="Source">
+      <FILE id="uLD2Xj" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <FILE id="cLC2WW" name="MainComponent.cpp" compile="1" resource="0"
+            file="Source/MainComponent.cpp"/>
+      <FILE id="xFMAvO" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+    </GROUP>
+    <FILE id="QIwkt1" name="Bridge_macOS_1024at1.png" compile="0" resource="1"
+          file="../Resources_LFS/Icones_Logos/Exports/Bridge_macOS_1024at1.png"/>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX" extraCompilerFlags="-Wno-comma"
+               bigIcon="QIwkt1">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug"/>
+        <CONFIGURATION isDebug="0" name="Release"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../../JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_osc" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+  <LIVE_SETTINGS>
+    <OSX/>
+  </LIVE_SETTINGS>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
+</JUCERPROJECT>

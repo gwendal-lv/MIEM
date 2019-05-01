@@ -16,6 +16,7 @@
 #include "JuceHeader.h"
 
 #include "AudioDefines.h"
+#include "MiamExceptions.h"
 
 
 // - - - - - - OSC CUSTOM ADDRESS TAGS - - - - - - -
@@ -65,6 +66,10 @@ namespace Miam {
                 stringU16 += char16_t(stringASCII[i]);
             return stringU16;
         }
+        
+        /// \brief Tries to parse the string into a valid UDP port number,
+        /// or sends a Miam::ParseException
+        static int ParseUdpPortNumber(const std::string& udpPort);
         
         
         /// \brief Returns a string that is made from numberOfDigits digits, not
