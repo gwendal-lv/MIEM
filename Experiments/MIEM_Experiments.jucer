@@ -8,6 +8,14 @@
               cppLanguageStandard="11">
   <MAINGROUP id="CesC75" name="MIEM Experiments">
     <GROUP id="{BD7228E3-B907-311E-3EC6-609760808B73}" name="MiemCommon">
+      <FILE id="f6T61c" name="MonitoringServer.h" compile="0" resource="0"
+            file="../MiamCommon/Source/MonitoringServer.h"/>
+      <FILE id="x3IHZx" name="MonitoringServer.cpp" compile="1" resource="0"
+            file="../MiamCommon/Source/MonitoringServer.cpp"/>
+      <FILE id="bqIhJB" name="OSCListenerForwarder.h" compile="0" resource="0"
+            file="../MiamCommon/Source/OSCListenerForwarder.h"/>
+      <FILE id="MNeqVY" name="OSCListenerForwarder.cpp" compile="1" resource="0"
+            file="../MiamCommon/Source/OSCListenerForwarder.cpp"/>
       <FILE id="FoEYsK" name="MiemSamples.h" compile="0" resource="0" file="../MiamCommon/Source/MiemSamples.h"/>
       <FILE id="ffLDPP" name="MiemVector.hpp" compile="0" resource="0" file="../MiamCommon/Source/MiemVector.hpp"/>
       <FILE id="sjoiVs" name="MiamMath.cpp" compile="1" resource="0" file="../MiamCommon/Source/MiamMath.cpp"/>
@@ -26,10 +34,6 @@
             file="../MiamCommon/Source/PeriodicUpdateThread.h"/>
     </GROUP>
     <GROUP id="{302B9714-4F66-36D7-B352-280078CFEC1B}" name="Source">
-      <FILE id="L0Fsov" name="MonitoringServer.cpp" compile="1" resource="0"
-            file="Source/MonitoringServer.cpp"/>
-      <FILE id="c7oNoL" name="MonitoringServer.h" compile="0" resource="0"
-            file="Source/MonitoringServer.h"/>
       <FILE id="JEjEaK" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="ZQ3oBD" name="ReaperOscController.cpp" compile="1" resource="0"
             file="Source/ReaperOscController.cpp"/>
@@ -44,10 +48,6 @@
               file="Source/MiemExpePreset.cpp"/>
         <FILE id="Tqr1a7" name="MiemExpePreset.h" compile="0" resource="0"
               file="Source/MiemExpePreset.h"/>
-        <FILE id="NQoXB9" name="OSCListenerForwarder.cpp" compile="1" resource="0"
-              file="Source/OSCListenerForwarder.cpp"/>
-        <FILE id="rMQM5d" name="OSCListenerForwarder.h" compile="0" resource="0"
-              file="Source/OSCListenerForwarder.h"/>
         <FILE id="qwCanD" name="OSCRecorderConnection.cpp" compile="1" resource="0"
               file="Source/OSCRecorderConnection.cpp"/>
         <FILE id="sNF7bS" name="OSCRecorderConnection.h" compile="0" resource="0"
