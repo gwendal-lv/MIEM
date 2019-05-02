@@ -91,9 +91,27 @@ namespace Miam
         
         // - - - - - Construction / destruction - - - - -
         
+        /// \brief Default constructor
         MatrixBackupState()
         :
         MatrixState<T>()
+        {
+            init();
+        }
+        /// \brief Constructor for copy of non-backup matrix, with interpolation curves
+        MatrixBackupState(MatrixState<T> & matrixStateToCopy,
+                          std::shared_ptr<std::vector<BasicInterpolationCurve<T>>> _interpCurves)
+        :
+        MatrixState<T>(matrixStateToCopy)
+        {
+            init();
+            SetInterpolationCurves(_interpCurves);
+        }
+        
+        virtual ~MatrixBackupState() {}
+        
+        private :
+        void init()
         {
             significantChangesIndexes.reserve(Miam_MaxNumInputs * Miam_MaxNumOutputs);
             
@@ -108,7 +126,6 @@ namespace Miam
             // Sécurité : on vérifie que la différence minimale ne soit pas zéro
             assert(linearSignificantDifference != ((T)0));
         }
-        virtual ~MatrixBackupState() {}
         
         
         // - - - - - Recherche et transmission des données modifiées - - - - -

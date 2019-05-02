@@ -38,7 +38,9 @@ namespace Miam
         AudioMatrix() :
         SparseMatrix<T, N, M, ZT10>()
         { }
-        // Copy constructor
+        /// \brief Explicit Copy constructor
+        ///
+        /// (refernce cannot be const, because the sparse matrix cannot be const copyc-constructed either)
         AudioMatrix(AudioMatrix<T,N,M,ZT10> & originalMatrix) :
         SparseMatrix<T, N, M, ZT10>(originalMatrix)
         { }

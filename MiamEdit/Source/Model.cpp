@@ -105,8 +105,13 @@ void Model::ConnectAndSendState(std::shared_ptr<ControlState<double>> stateToSen
         for (size_t i=0 ; i<castedMatrixState->GetInputsCount() ; i++)
             allIndexes.push_back( castedMatrixState->GetMatrix()->GetIndexFromIndex2d(Index2d(i, 0)) );
         // commande d'envoi
-        assert(false); // désactivé pour l'instant !!!!! à remettre en marche
-        //miamOscSender->SendMatrixParamChanges(castedMatrixState.get(), allIndexes);
+        //assert(false); // désactivé pour l'instant !!!!! à remettre en marche
+        // --> car l'état doit maintenant absolument être un état de backup (qui
+        // connaît toutes les courbes d'interpolation et a initialisé tous les états internes)
+        auto artificialMatrixBackupState = std::make_unique<MatrixBackupState<double>>
+        (*castedMatrixState, interpolator->GetInterpolationCurves());
+        artificialMatrixBackupState->DisplayMatrixInStdCout();
+        miamOscSender->SendMatrixParamChanges(artificialMatrixBackupState.get(), allIndexes);
     }
     // ou SPAT
     else if (sessionPurpose == AppPurpose::Spatialisation)

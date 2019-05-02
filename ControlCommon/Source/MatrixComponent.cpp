@@ -407,9 +407,13 @@ void MatrixComponent::SetHorizontalSliderRange(int row, double newMin, double ne
     horizontalSliders[row]->setRange(newMin, newMax);
     
     // to force an update
-    /*horizontalSliders[row]->setValue(horizontalSliders[row]->getValue(), // does not work; if same value
-                                     NotificationType::sendNotificationAsync);*/
-    horizontalSliders[row]->repaint(); // actually works
+    double valueBackup = horizontalSliders[row]->getValue();
+    horizontalSliders[row]->setValue((valueBackup - newMin) / 2.0, // does not work if same value
+                                     NotificationType::dontSendNotification);
+    horizontalSliders[row]->setValue(valueBackup, 
+                                     NotificationType::sendNotificationAsync);
+    
+    //horizontalSliders[row]->repaint(); // actually works
 }
 
 

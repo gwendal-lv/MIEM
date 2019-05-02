@@ -229,10 +229,38 @@ namespace Miam
             else
                 throw std::logic_error("Cannot send the modifications of a state that is not a BackupMatrix");
         }
+
+        /// \brief Sends the parameters designated by their index within the
+        /// given list. Interpolation/distorsion curves can be specified.
+        void SendRawMatrixParamChanges(MatrixState<T>* matrixState, std::vector< size_t >& changesIndexes)
+        {
+            for (size_t i=0 ; i<changesIndexes.size() ; i++)
+            {
+                if (matrixState->IsIndexWithinActualInputOutputBounds(changesIndexes[i]))
+                {
+                    Index2d index2d = matrixState->GetMatrix()->GetIndex2dFromIndex(changesIndexes[i]);
+                    if (index2d.j == 0)
+                    {
+                        SendParam(index2d.i,
+                                  (float) (*matrixState)(index2d.i,index2d.j)
+                                  );
+                    }
+                }
+                // débordement détecté, ne devrait pas arriver...
+                else
+                {
+                    // En fait SI SI SI un débordement peut arriver ! Lorsqu'un coefficient est resté
+                    // enregistré alors que l'on a réduit la taille des états. Pas d'assertion donc
+                    // (car on autorise les valeurs qui débordent, mais on ne les envoie pas)
+                    //assert(false);
+                }
+            }
+        }
         
         /// \brief Sends the parameters designated by their index within the
         /// given list. Interpolation/distorsion curves will be applied.
-        void SendMatrixParamChanges(MatrixBackupState<T>* matrixState, std::vector< size_t >& changesIndexes)
+        void SendMatrixParamChanges(MatrixBackupState<T>* matrixState,
+                                    std::vector< size_t >& changesIndexes)
         {
             for (size_t i=0 ; i<changesIndexes.size() ; i++)
             {

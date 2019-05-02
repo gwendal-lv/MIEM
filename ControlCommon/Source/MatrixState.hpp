@@ -29,6 +29,7 @@ namespace Miam
         
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
+        // Warning : copy-constructor is explicit in this class
         protected :
         
         // La base : la matrice creuse cachée à l'intérieur de l'état
@@ -85,6 +86,17 @@ namespace Miam
         MatrixState()
         {
             this->SetName("Matrix-based generic control state");
+        }
+        /// \brief Explicit copy constructor
+        ///
+        /// Reference cannot be const because of the internal copy-constructed sparse matrix
+        MatrixState(MatrixState<T> & matrixStateToCopy)
+        :
+        ControlState<T>(matrixStateToCopy),
+        matrix( matrixStateToCopy.matrix ), // access to private member !
+        inputsCount( matrixStateToCopy.inputsCount ),
+        outputsCount( matrixStateToCopy.outputsCount )
+        {
         }
         virtual ~MatrixState() {}
         
