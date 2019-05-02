@@ -2,12 +2,13 @@
 
 <JUCERPROJECT id="xCUiGi" name="MIEM Spat" projectType="guiapp" version="1.0.1"
               bundleIdentifier="com.gwendallv.MIEMSpatPlayer" includeBinaryInAppConfig="1"
-              jucerVersion="5.4.1" displaySplashScreen="0" reportAppUsage="0"
+              jucerVersion="5.4.3" displaySplashScreen="0" reportAppUsage="0"
               splashScreenColour="Dark" cppLanguageStandard="11" companyCopyright="Gwendal Le Vaillant (IRISIB/LARAS, UMons)"
               companyName="IRISIB/LARAS, UMons" companyWebsite="htpp://laras.be"
               companyEmail="glevaillant@he2b.be" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../MiamCommon/Resources/&#10;../../../ControlCommon/Source/&#10;../../../SpatCommon/Source/"
               defines="__MIEM_VBO">
   <MAINGROUP id="m8VZoU" name="MIEM Spat">
+    <GROUP id="{ADBE97C9-3D18-AAD5-9404-289925A4641E}" name="Source"/>
     <GROUP id="{D93792BB-5B8B-5A35-D554-58C4F4E4D3DA}" name="Source">
       <FILE id="oaxiVA" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="TCTcR0" name="MainComponent.cpp" compile="1" resource="0"
@@ -21,6 +22,7 @@
       <FILE id="DzITRF" name="View.h" compile="0" resource="0" file="Source/View.h"/>
     </GROUP>
     <GROUP id="{CC552857-6B1C-C3D2-B168-48387BA078AE}" name="ControlCommonSource">
+      <GROUP id="{C5AADC22-A79E-537C-7460-0899B857401D}" name="Source"/>
       <GROUP id="{3CD4C810-FEB7-EC88-5368-9D579793FED4}" name="Model">
         <GROUP id="{B4A6ACD4-D373-CCB2-83B3-7BB330CF44F0}" name="Communication">
           <FILE id="m75mrG" name="ControlStateSender.hpp" compile="0" resource="0"
@@ -45,6 +47,16 @@
               file="../ControlCommon/Source/StatesInterpolator.hpp"/>
       </GROUP>
       <GROUP id="{596BD696-C6A3-E262-0276-DB678B875C8B}" name="Presenter">
+        <GROUP id="{75303A98-E4FB-0D26-52FC-E25DB815094C}" name="Remote">
+          <FILE id="lTfmN8" name="RemoteControlConnection.cpp" compile="1" resource="0"
+                file="../ControlCommon/Source/RemoteControlConnection.cpp"/>
+          <FILE id="gghyvf" name="RemoteControlConnection.h" compile="0" resource="0"
+                file="../ControlCommon/Source/RemoteControlConnection.h"/>
+          <FILE id="mPHFx7" name="RemoteControlServer.cpp" compile="1" resource="0"
+                file="../ControlCommon/Source/RemoteControlServer.cpp"/>
+          <FILE id="hIQTlG" name="RemoteControlServer.h" compile="0" resource="0"
+                file="../ControlCommon/Source/RemoteControlServer.h"/>
+        </GROUP>
         <GROUP id="{CC3078DA-52CD-0250-7460-2D48622CBD4F}" name="Areas">
           <FILE id="n32Dij" name="ControlPolygon.cpp" compile="1" resource="0"
                 file="../ControlCommon/Source/ControlPolygon.cpp"/>
@@ -89,6 +101,18 @@
       </GROUP>
       <GROUP id="{07BF93D8-C012-D439-DF67-3946D9CD4BEB}" name="View">
         <GROUP id="{CF87147C-17A9-BC31-701D-E5C672AAD90C}" name="Components">
+          <FILE id="mk0fgq" name="ChannelNameTextEditor.h" compile="0" resource="0"
+                file="../ControlCommon/Source/ChannelNameTextEditor.h"/>
+          <FILE id="lziHEp" name="IMatrixButtonListener.h" compile="0" resource="0"
+                file="../ControlCommon/Source/IMatrixButtonListener.h"/>
+          <FILE id="RIAdaY" name="InterpolationCurvesComboBox.cpp" compile="1"
+                resource="0" file="../ControlCommon/Source/InterpolationCurvesComboBox.cpp"/>
+          <FILE id="Oi47fd" name="InterpolationCurvesComboBox.h" compile="0"
+                resource="0" file="../ControlCommon/Source/InterpolationCurvesComboBox.h"/>
+          <FILE id="QBDnrl" name="MatrixRowSlider.h" compile="0" resource="0"
+                file="../ControlCommon/Source/MatrixRowSlider.h"/>
+          <FILE id="xk0AzG" name="MinMaxSlidersPair.h" compile="0" resource="0"
+                file="../ControlCommon/Source/MinMaxSlidersPair.h"/>
           <FILE id="B7KOaQ" name="PlayerBackgroundComponent.cpp" compile="1"
                 resource="0" file="../ControlCommon/Source/PlayerBackgroundComponent.cpp"/>
           <FILE id="cgZPZG" name="PlayerBackgroundComponent.h" compile="0" resource="0"
@@ -117,6 +141,8 @@
         <FILE id="wzJKiP" name="PlayerView.h" compile="0" resource="0" file="../ControlCommon/Source/PlayerView.h"/>
       </GROUP>
       <GROUP id="{7DF86A8F-A8E0-F3D8-65C1-4CA2C20CE264}" name="Utils">
+        <FILE id="GS1GEe" name="BasicInterpolationCurve.hpp" compile="0" resource="0"
+              file="../ControlCommon/Source/BasicInterpolationCurve.hpp"/>
         <FILE id="ZbkxOP" name="AppPurpose.h" compile="0" resource="0" file="../ControlCommon/Source/AppPurpose.h"/>
         <FILE id="C1mLzc" name="ControlMatrix.hpp" compile="0" resource="0"
               file="../ControlCommon/Source/ControlMatrix.hpp"/>
@@ -267,6 +293,8 @@
               file="../MiamCommon/Source/InteractionParameters.cpp"/>
         <FILE id="TnfISL" name="InteractionParameters.h" compile="0" resource="0"
               file="../MiamCommon/Source/InteractionParameters.h"/>
+        <FILE id="fhJewf" name="InterprocessControlBlock.h" compile="0" resource="0"
+              file="../MiamCommon/Source/InterprocessControlBlock.h"/>
         <GROUP id="{4920C830-8E65-674A-98AF-BB4CAAEF77DC}" name="Math">
           <FILE id="tPoEI0" name="CartesianLine.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/CartesianLine.cpp"/>
@@ -310,6 +338,8 @@
       <FILE id="Wpxtbe" name="MiemDefaultSessions.h" compile="0" resource="0"
             file="../MiamCommon/Resources/MiemDefaultSessions.h"/>
       <FILE id="LnMegQ" name="newFontImg.png" compile="0" resource="1" file="../MiamCommon/Resources/newFontImg.png"/>
+      <FILE id="DDtR80" name="Spat_Android_1024at1.png" compile="0" resource="1"
+            file="../Resources_LFS/Icones_Logos/Exports/Spat_Android_1024at1.png"/>
       <FILE id="KocCMm" name="Spat_iOS_1024at1.png" compile="0" resource="1"
             file="../Resources_LFS/Icones_Logos/Exports/Spat_iOS_1024at1.png"/>
       <FILE id="ok0lDM" name="Spat_macOS_1024at1.png" compile="0" resource="1"
@@ -391,11 +421,11 @@
         <MODULEPATH id="juce_audio_basics"/>
       </MODULEPATHS>
     </XCODE_IPHONE>
-    <ANDROIDSTUDIO targetFolder="Builds/Android" bigIcon="KocCMm" androidBluetoothNeeded="0"
+    <ANDROIDSTUDIO targetFolder="Builds/Android" bigIcon="DDtR80" androidBluetoothNeeded="0"
                    androidActivityClass="com.gwendallv.MIEMSpat" extraDefs="__MIAMOBILE&#10;__MIEM_GL_INFO_DISPLAY"
-                   androidMinimumSDK="26" gradleToolchain="clang" androidScreenOrientation="landscape"
-                   gradleWrapperVersion="3.3.1" gradleVersion="4.10.1" userNotes="Android SDK 26 : android 8.0 (n&#233;cessaire comme target... Mais pas vraiment comme minimum)&#10;Build tools 28.0.3 : septembre 2018"
-                   buildToolsVersion="28.0.3">
+                   androidMinimumSDK="24" gradleToolchain="clang" androidScreenOrientation="landscape"
+                   gradleWrapperVersion="3.3.2" gradleVersion="4.10.1" buildToolsVersion="28.0.3"
+                   androidCustomApplicationClass="com.gwendallv.MIEMspat" userNotes="voir notes dans GenCon">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" defines="__MIAM_DEBUG&#10;__MIEM_DEBUG_TRACE__DISABLED"/>
         <CONFIGURATION isDebug="0" name="Release"/>

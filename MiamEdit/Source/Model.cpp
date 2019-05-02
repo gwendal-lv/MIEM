@@ -105,7 +105,8 @@ void Model::ConnectAndSendState(std::shared_ptr<ControlState<double>> stateToSen
         for (size_t i=0 ; i<castedMatrixState->GetInputsCount() ; i++)
             allIndexes.push_back( castedMatrixState->GetMatrix()->GetIndexFromIndex2d(Index2d(i, 0)) );
         // commande d'envoi
-        miamOscSender->SendMatrixParamChanges(castedMatrixState.get(), allIndexes);
+        assert(false); // désactivé pour l'instant !!!!! à remettre en marche
+        //miamOscSender->SendMatrixParamChanges(castedMatrixState.get(), allIndexes);
     }
     // ou SPAT
     else if (sessionPurpose == AppPurpose::Spatialisation)

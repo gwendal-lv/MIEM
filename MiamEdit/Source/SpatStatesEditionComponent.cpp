@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.1
+  Created with Projucer version: 5.4.3
 
   ------------------------------------------------------------------------------
 
@@ -74,8 +74,6 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     addStateTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     addStateTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    addStateTextButton->setBounds (0 + 8, 4 + 20, 80, 24);
-
     deleteStateTextButton.reset (new TextButton ("Delete State text button"));
     addAndMakeVisible (deleteStateTextButton.get());
     deleteStateTextButton->setButtonText (TRANS("Delete"));
@@ -84,8 +82,6 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     deleteStateTextButton->setColour (TextButton::buttonColourId, Colour (0xfff0f0f0));
     deleteStateTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     deleteStateTextButton->setColour (TextButton::textColourOffId, Colours::black);
-
-    deleteStateTextButton->setBounds (0 + 88, 4 + 20, 80, 24);
 
     stateUpTextButton.reset (new TextButton ("State up text button"));
     addAndMakeVisible (stateUpTextButton.get());
@@ -108,7 +104,7 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     linksInfoLabel.reset (new Label ("Links info label",
                                      TRANS("Linked to ? area")));
     addAndMakeVisible (linksInfoLabel.get());
-    linksInfoLabel->setFont (Font (15.0f, Font::italic));
+    linksInfoLabel->setFont (Font (15.00f, Font::italic));
     linksInfoLabel->setJustificationType (Justification::centred);
     linksInfoLabel->setEditable (false, false, false);
     linksInfoLabel->setColour (Label::textColourId, Colours::black);
@@ -127,7 +123,7 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     labelR.reset (new Label ("new label",
                              TRANS("R")));
     addAndMakeVisible (labelR.get());
-    labelR->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
+    labelR->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     labelR->setJustificationType (Justification::centredLeft);
     labelR->setEditable (false, false, false);
     labelR->setColour (Label::textColourId, Colours::black);
@@ -146,7 +142,7 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     labelG.reset (new Label ("new label",
                              TRANS("G")));
     addAndMakeVisible (labelG.get());
-    labelG->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
+    labelG->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     labelG->setJustificationType (Justification::centredLeft);
     labelG->setEditable (false, false, false);
     labelG->setColour (Label::textColourId, Colours::black);
@@ -165,7 +161,7 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     labelB.reset (new Label ("new label",
                              TRANS("B")));
     addAndMakeVisible (labelB.get());
-    labelB->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
+    labelB->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     labelB->setJustificationType (Justification::centredLeft);
     labelB->setEditable (false, false, false);
     labelB->setColour (Label::textColourId, Colours::black);
@@ -185,7 +181,7 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
                                                TRANS("\n")));
     addAndMakeVisible (colourVisualisationLabel.get());
     colourVisualisationLabel->setTooltip (TRANS("The chosen color will be applied to all geometrical shapes linked to this state."));
-    colourVisualisationLabel->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
+    colourVisualisationLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     colourVisualisationLabel->setJustificationType (Justification::centredLeft);
     colourVisualisationLabel->setEditable (false, false, false);
     colourVisualisationLabel->setColour (Label::backgroundColourId, Colours::black);
@@ -203,8 +199,6 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     sendStateTextButton->setColour (TextButton::buttonOnColourId, Colours::darkgrey);
     sendStateTextButton->setColour (TextButton::textColourOffId, Colour (0xfff0f0f0));
 
-    sendStateTextButton->setBounds ((getWidth() - (getWidth() - 339)) + 8, 4 + 52, 80, 24);
-
     sendZerosTextButton.reset (new TextButton ("Send zeros text button"));
     addAndMakeVisible (sendZerosTextButton.get());
     sendZerosTextButton->setTooltip (TRANS("Sends null values for all parameters of this state, via OSC messages, to the OSC remote device configured in the \"Configuration\" tab."));
@@ -215,13 +209,11 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     sendZerosTextButton->setColour (TextButton::buttonOnColourId, Colours::darkgrey);
     sendZerosTextButton->setColour (TextButton::textColourOffId, Colour (0xfff0f0f0));
 
-    sendZerosTextButton->setBounds ((getWidth() - (getWidth() - 339)) + 88, 4 + 52, 88, 24);
-
     matrixInfoLabel1.reset (new Label ("Matrix Info label 1",
                                        TRANS("Total matrix volume")));
     addAndMakeVisible (matrixInfoLabel1.get());
     matrixInfoLabel1->setTooltip (TRANS("The two volumes displayed represent the  total volume of the sum of all outputs of the matrix, considering that inputs are all 0 dB signals."));
-    matrixInfoLabel1->setFont (Font (15.0f, Font::italic));
+    matrixInfoLabel1->setFont (Font (15.00f, Font::italic));
     matrixInfoLabel1->setJustificationType (Justification::centredLeft);
     matrixInfoLabel1->setEditable (false, false, false);
     matrixInfoLabel1->setColour (Label::textColourId, Colours::black);
@@ -232,7 +224,7 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
                                        TRANS("Correlated inputs: -9.99 dB FS")));
     addAndMakeVisible (matrixInfoLabel2.get());
     matrixInfoLabel2->setTooltip (TRANS("Input signals are considered correlated when they are very resembling and in phase, such as the L/R tracks of a non-spatialised stereo mix."));
-    matrixInfoLabel2->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
+    matrixInfoLabel2->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     matrixInfoLabel2->setJustificationType (Justification::centredLeft);
     matrixInfoLabel2->setEditable (false, false, false);
     matrixInfoLabel2->setColour (Label::textColourId, Colours::black);
@@ -243,12 +235,77 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
                                        TRANS("Decorrelated inputs: -9.99 dB FS")));
     addAndMakeVisible (matrixInfoLabel3.get());
     matrixInfoLabel3->setTooltip (TRANS("Input signals are considered decorrelated when they are out of phase, or not resembling, such as two mono recordings of two different music instruments."));
-    matrixInfoLabel3->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
+    matrixInfoLabel3->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     matrixInfoLabel3->setJustificationType (Justification::centredLeft);
     matrixInfoLabel3->setEditable (false, false, false);
     matrixInfoLabel3->setColour (Label::textColourId, Colours::black);
     matrixInfoLabel3->setColour (TextEditor::textColourId, Colours::black);
     matrixInfoLabel3->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    oscAddressLabel.reset (new Label ("OSC Address label",
+                                      TRANS("OSC address")));
+    addAndMakeVisible (oscAddressLabel.get());
+    oscAddressLabel->setTooltip (TRANS("Enter a valid OSC address, or leave the field empty to use /miem/1, /miem/2, etc. as automatic OSC addresses. "));
+    oscAddressLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    oscAddressLabel->setJustificationType (Justification::centredLeft);
+    oscAddressLabel->setEditable (false, false, false);
+    oscAddressLabel->setColour (Label::textColourId, Colours::black);
+    oscAddressLabel->setColour (TextEditor::textColourId, Colours::black);
+    oscAddressLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    oscAddressLabel->setBounds (144, 112, 150, 24);
+
+    minLabel.reset (new Label ("Min label",
+                               TRANS("Min. value")));
+    addAndMakeVisible (minLabel.get());
+    minLabel->setTooltip (TRANS("The minimal value that a parameter can reach. Click to edit."));
+    minLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    minLabel->setJustificationType (Justification::centredLeft);
+    minLabel->setEditable (false, false, false);
+    minLabel->setColour (Label::textColourId, Colours::black);
+    minLabel->setColour (TextEditor::textColourId, Colours::black);
+    minLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    minLabel->setBounds (288, 112, 80, 24);
+
+    maxLabel.reset (new Label ("Max label",
+                               TRANS("Max. value")));
+    addAndMakeVisible (maxLabel.get());
+    maxLabel->setTooltip (TRANS("The maximal value that a parameter can reach. Click to edit."));
+    maxLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    maxLabel->setJustificationType (Justification::centredLeft);
+    maxLabel->setEditable (false, false, false);
+    maxLabel->setColour (Label::textColourId, Colours::black);
+    maxLabel->setColour (TextEditor::textColourId, Colours::black);
+    maxLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    maxLabel->setBounds (368, 112, 80, 24);
+
+    interpolationCurveLabel.reset (new Label ("Interpolation Curve label",
+                                              TRANS("Interpolation curve")));
+    addAndMakeVisible (interpolationCurveLabel.get());
+    interpolationCurveLabel->setTooltip (TRANS("The type of curve which will be used to compute the interpolation of values for a parameter."));
+    interpolationCurveLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    interpolationCurveLabel->setJustificationType (Justification::centredLeft);
+    interpolationCurveLabel->setEditable (false, false, false);
+    interpolationCurveLabel->setColour (Label::textColourId, Colours::black);
+    interpolationCurveLabel->setColour (TextEditor::textColourId, Colours::black);
+    interpolationCurveLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    interpolationCurveLabel->setBounds (480, 112, 150, 24);
+
+    valueLabel.reset (new Label ("value label",
+                                 TRANS("Parameter value")));
+    addAndMakeVisible (valueLabel.get());
+    valueLabel->setTooltip (TRANS("The defined value of a parameter, for this particular state."));
+    valueLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    valueLabel->setJustificationType (Justification::centredLeft);
+    valueLabel->setEditable (false, false, false);
+    valueLabel->setColour (Label::textColourId, Colours::black);
+    valueLabel->setColour (TextEditor::textColourId, Colours::black);
+    valueLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    valueLabel->setBounds (704, 112, 168, 24);
 
 
     //[UserPreSize]
@@ -296,6 +353,11 @@ SpatStatesEditionComponent::~SpatStatesEditionComponent()
     matrixInfoLabel1 = nullptr;
     matrixInfoLabel2 = nullptr;
     matrixInfoLabel3 = nullptr;
+    oscAddressLabel = nullptr;
+    minLabel = nullptr;
+    maxLabel = nullptr;
+    interpolationCurveLabel = nullptr;
+    valueLabel = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -326,11 +388,13 @@ void SpatStatesEditionComponent::resized()
     //[/UserPreResize]
 
     stateParametersGroupComponent->setBounds (getWidth() - (getWidth() - 339), 4, getWidth() - 339, 84);
-    stateEditorGroupComponent->setBounds (0, 88, getWidth() - 0, getHeight() - 88);
-    labelledMatrixComponent->setBounds (0 + 8, 88 + 16, (getWidth() - 0) - 16, (getHeight() - 88) - 24);
+    stateEditorGroupComponent->setBounds (0, 96, getWidth() - 0, getHeight() - 96);
+    labelledMatrixComponent->setBounds (0 + 8, 96 + 40, (getWidth() - 0) - 16, (getHeight() - 96) - 48);
+    addStateTextButton->setBounds (0 + 8, 4 + 20, 80, 24);
+    deleteStateTextButton->setBounds (0 + 88, 4 + 20, 80, 24);
     stateUpTextButton->setBounds (0 + 331 - 154, 4 + 20, 72, 24);
     stateDownTextButton->setBounds (0 + 331 - 82, 4 + 20, 74, 24);
-    linksInfoLabel->setBounds ((getWidth() - (getWidth() - 339)) + 13, 4 + 20, (getWidth() - 339) - 200, 24);
+    linksInfoLabel->setBounds ((getWidth() - (getWidth() - 339)) + 13, 4 + 20, (getWidth() - 339) - 520, 24);
     statesComboBox->setBounds (0 + 8, 56, 331 - 16, 24);
     labelR->setBounds (getWidth() - 258, 20, 24, 24);
     sliderR->setBounds (getWidth() - 240, 24, 158, 16);
@@ -339,10 +403,44 @@ void SpatStatesEditionComponent::resized()
     labelB->setBounds (getWidth() - 257, 60, 24, 24);
     sliderB->setBounds (getWidth() - 240, 64, 158, 16);
     colourVisualisationLabel->setBounds ((getWidth() - (getWidth() - 339)) + (getWidth() - 339) - 80, 24, 72, 56);
+    sendStateTextButton->setBounds ((getWidth() - (getWidth() - 339)) + 8, 4 + 52, 80, 24);
+    sendZerosTextButton->setBounds ((getWidth() - (getWidth() - 339)) + 88, 4 + 52, 88, 24);
     matrixInfoLabel1->setBounds ((getWidth() - (getWidth() - 339)) + (getWidth() - 339) - 502, 4 + 12, 245, 24);
     matrixInfoLabel2->setBounds ((getWidth() - (getWidth() - 339)) + (getWidth() - 339) - 502, 4 + 32, 245, 24);
     matrixInfoLabel3->setBounds ((getWidth() - (getWidth() - 339)) + (getWidth() - 339) - 502, 4 + 52, 245, 24);
     //[UserResized] Add your own custom resize handling here..
+    
+    if (editionManager)
+    {
+        // Columns labels visible for GenCon only
+        oscAddressLabel->setVisible(editionManager->GetSessionPurpose() == AppPurpose::GenericController);
+        minLabel->setVisible(editionManager->GetSessionPurpose() == AppPurpose::GenericController);
+        maxLabel->setVisible(editionManager->GetSessionPurpose() == AppPurpose::GenericController);
+        interpolationCurveLabel->setVisible(editionManager->GetSessionPurpose() == AppPurpose::GenericController);
+        valueLabel->setVisible(editionManager->GetSessionPurpose() == AppPurpose::GenericController);
+        
+        // Now, the labelled matrix has properly replaced its elements.
+        if (editionManager->GetSessionPurpose() == AppPurpose::GenericController)
+        {
+            const int leftMargin = 24;
+            oscAddressLabel->setTopLeftPosition(labelledMatrixComponent->GetOscAddressPositionX()
+                                                + leftMargin,
+                                                oscAddressLabel->getY());
+            minLabel->setTopLeftPosition(labelledMatrixComponent->GetMinimaPositionX()
+                                         + leftMargin,
+                                         minLabel->getY());
+            maxLabel->setTopLeftPosition(labelledMatrixComponent->GetMaximaPositionX()
+                                         + leftMargin,
+                                         maxLabel->getY());
+            interpolationCurveLabel->setTopLeftPosition(labelledMatrixComponent->GetInterpolationCurvesPositionX()
+                                                        + leftMargin,
+                                                        interpolationCurveLabel->getY());
+            valueLabel->setTopLeftPosition(labelledMatrixComponent->GetParametersValuesPositionX()
+                                           + leftMargin,
+                                           valueLabel->getY());
+        }
+    }
+        
     //[/UserResized]
 }
 
@@ -493,6 +591,9 @@ void SpatStatesEditionComponent::visibilityChanged()
 
         // S'adaptera si nécessaire
         labelledMatrixComponent->SetDisplayPurpose(editionManager->GetSessionPurpose());
+        
+        // For labels update
+        resized();
     }
     //[/UserCode_visibilityChanged]
 }
@@ -685,7 +786,7 @@ BEGIN_JUCER_METADATA
 <JUCER_COMPONENT documentType="Component" className="SpatStatesEditionComponent"
                  componentName="" parentClasses="public Component, public ISlidersMatrixListener, public IMatrixButtonListener"
                  constructorParams="" variableInitialisers="" snapPixels="8" snapActive="1"
-                 snapShown="1" overlayOpacity="0.33" fixedSize="0" initialWidth="1024"
+                 snapShown="1" overlayOpacity="0.330" fixedSize="1" initialWidth="1024"
                  initialHeight="600">
   <METHODS>
     <METHOD name="visibilityChanged()"/>
@@ -696,10 +797,10 @@ BEGIN_JUCER_METADATA
                   pos="0Rr 4 339M 84" posRelativeH="4250d5155a80be70" outlinecol="ff454545"
                   textcol="ff000000" title="State parameters"/>
   <GROUPCOMPONENT name="State Editor group component" id="1b9d22beb5fc6bfd" memberName="stateEditorGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="0 88 0M 88M" outlinecol="ff454545"
+                  virtualName="" explicitFocusOrder="0" pos="0 96 0M 96M" outlinecol="ff454545"
                   textcol="ff000000" title="State control data"/>
   <GENERICCOMPONENT name="Labelled Matrix component" id="d34fbdc233d627af" memberName="labelledMatrixComponent"
-                    virtualName="" explicitFocusOrder="0" pos="8 16 16M 24M" posRelativeX="1b9d22beb5fc6bfd"
+                    virtualName="" explicitFocusOrder="0" pos="8 40 16M 48M" posRelativeX="1b9d22beb5fc6bfd"
                     posRelativeY="1b9d22beb5fc6bfd" posRelativeW="1b9d22beb5fc6bfd"
                     posRelativeH="1b9d22beb5fc6bfd" class="Miam::LabelledMatrixComponent"
                     params="this, Miam_MaxNumInputs, Miam_MaxNumOutputs"/>
@@ -727,11 +828,11 @@ BEGIN_JUCER_METADATA
               textCol="ff000000" buttonText="Down" connectedEdges="1" needsCallback="1"
               radioGroupId="0"/>
   <LABEL name="Links info label" id="3577c0e2ccd44371" memberName="linksInfoLabel"
-         virtualName="" explicitFocusOrder="0" pos="13 20 195M 24" posRelativeX="9d63d9acaf1299f6"
+         virtualName="" explicitFocusOrder="0" pos="13 20 520M 24" posRelativeX="9d63d9acaf1299f6"
          posRelativeY="4250d5155a80be70" posRelativeW="9d63d9acaf1299f6"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Linked to ? area"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="1" justification="36" typefaceStyle="Italic"/>
   <COMBOBOX name="States combo box" id="89ad7c0a3be5a39c" memberName="statesComboBox"
             virtualName="" explicitFocusOrder="0" pos="8 56 16M 24" posRelativeX="4250d5155a80be70"
@@ -742,42 +843,42 @@ BEGIN_JUCER_METADATA
          explicitFocusOrder="0" pos="258R 20 24 24" posRelativeY="87d416270d41f58c"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="R"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="33"/>
   <SLIDER name="Slider R" id="c86e71b3772d49e9" memberName="sliderR" virtualName=""
           explicitFocusOrder="0" pos="240R 24 158 16" posRelativeY="87d416270d41f58c"
-          thumbcol="a0ff0000" textboxtext="ff000000" min="0.0" max="255.0"
-          int="1.0" style="LinearHorizontal" textBoxPos="TextBoxLeft" textBoxEditable="1"
-          textBoxWidth="40" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
+          thumbcol="a0ff0000" textboxtext="ff000000" min="0" max="2.55e2"
+          int="1" style="LinearHorizontal" textBoxPos="TextBoxLeft" textBoxEditable="1"
+          textBoxWidth="40" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <LABEL name="new label" id="d31faee34d487318" memberName="labelG" virtualName=""
          explicitFocusOrder="0" pos="258R 40 24 24" posRelativeY="87d416270d41f58c"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="G"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="33"/>
   <SLIDER name="SliderG" id="8455ecc13f47ec08" memberName="sliderG" virtualName=""
           explicitFocusOrder="0" pos="240R 44 158 16" posRelativeY="87d416270d41f58c"
-          thumbcol="a000ff00" textboxtext="ff000000" min="0.0" max="255.0"
-          int="1.0" style="LinearHorizontal" textBoxPos="TextBoxLeft" textBoxEditable="1"
-          textBoxWidth="40" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
+          thumbcol="a000ff00" textboxtext="ff000000" min="0" max="2.55e2"
+          int="1" style="LinearHorizontal" textBoxPos="TextBoxLeft" textBoxEditable="1"
+          textBoxWidth="40" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <LABEL name="new label" id="ae5abc145d9184cf" memberName="labelB" virtualName=""
          explicitFocusOrder="0" pos="257R 60 24 24" posRelativeY="87d416270d41f58c"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="B"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="33"/>
   <SLIDER name="Slider B" id="15aa4b94476e3563" memberName="sliderB" virtualName=""
           explicitFocusOrder="0" pos="240R 64 158 16" posRelativeY="87d416270d41f58c"
-          thumbcol="a00000ff" textboxtext="ff000000" min="0.0" max="255.0"
-          int="1.0" style="LinearHorizontal" textBoxPos="TextBoxLeft" textBoxEditable="1"
-          textBoxWidth="40" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
+          thumbcol="a00000ff" textboxtext="ff000000" min="0" max="2.55e2"
+          int="1" style="LinearHorizontal" textBoxPos="TextBoxLeft" textBoxEditable="1"
+          textBoxWidth="40" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <LABEL name="Colour Visualisation Label" id="7c0151d2e33a36b5" memberName="colourVisualisationLabel"
          virtualName="" explicitFocusOrder="0" pos="80R 24 72 56" posRelativeX="9d63d9acaf1299f6"
          tooltip="The chosen color will be applied to all geometrical shapes linked to this state."
          bkgCol="ff000000" outlineCol="ffffffff" edTextCol="ff000000"
          edBkgCol="0" labelText="&#10;" editableSingleClick="0" editableDoubleClick="0"
-         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
-         kerning="0.0" bold="0" italic="0" justification="33"/>
+         focusDiscardsChanges="0" fontname="Default font" fontsize="1.5e1"
+         kerning="0" bold="0" italic="0" justification="33"/>
   <TEXTBUTTON name="Send State text button" id="cb3b69496db256cf" memberName="sendStateTextButton"
               virtualName="" explicitFocusOrder="0" pos="8 52 80 24" posRelativeX="9d63d9acaf1299f6"
               posRelativeY="4250d5155a80be70" tooltip="Sends all current values of this state via OSC messages, to the OSC remote device configured in the &quot;Configuration&quot; tab."
@@ -794,7 +895,7 @@ BEGIN_JUCER_METADATA
          tooltip="The two volumes displayed represent the  total volume of the sum of all outputs of the matrix, considering that inputs are all 0 dB signals."
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Total matrix volume"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="1" justification="33" typefaceStyle="Italic"/>
   <LABEL name="Matrix Info label 2" id="5cfce6441fd18d14" memberName="matrixInfoLabel2"
          virtualName="" explicitFocusOrder="0" pos="502R 32 245 24" posRelativeX="9d63d9acaf1299f6"
@@ -802,7 +903,7 @@ BEGIN_JUCER_METADATA
          tooltip="Input signals are considered correlated when they are very resembling and in phase, such as the L/R tracks of a non-spatialised stereo mix."
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Correlated inputs: -9.99 dB FS"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="33"/>
   <LABEL name="Matrix Info label 3" id="2e6b0acdfb779683" memberName="matrixInfoLabel3"
          virtualName="" explicitFocusOrder="0" pos="502R 52 245 24" posRelativeX="9d63d9acaf1299f6"
@@ -810,7 +911,37 @@ BEGIN_JUCER_METADATA
          tooltip="Input signals are considered decorrelated when they are out of phase, or not resembling, such as two mono recordings of two different music instruments."
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Decorrelated inputs: -9.99 dB FS"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
+         italic="0" justification="33"/>
+  <LABEL name="OSC Address label" id="ec34ed0b42663136" memberName="oscAddressLabel"
+         virtualName="" explicitFocusOrder="0" pos="144 112 150 24" tooltip="Enter a valid OSC address, or leave the field empty to use /miem/1, /miem/2, etc. as automatic OSC addresses. "
+         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="OSC address"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
+         italic="0" justification="33"/>
+  <LABEL name="Min label" id="8ff821b0c7b4bbee" memberName="minLabel"
+         virtualName="" explicitFocusOrder="0" pos="288 112 80 24" tooltip="The minimal value that a parameter can reach. Click to edit."
+         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Min. value"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
+         italic="0" justification="33"/>
+  <LABEL name="Max label" id="51fc4d52b6f5297e" memberName="maxLabel"
+         virtualName="" explicitFocusOrder="0" pos="368 112 80 24" tooltip="The maximal value that a parameter can reach. Click to edit."
+         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Max. value"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
+         italic="0" justification="33"/>
+  <LABEL name="Interpolation Curve label" id="5f84bf03765206ae" memberName="interpolationCurveLabel"
+         virtualName="" explicitFocusOrder="0" pos="480 112 150 24" tooltip="The type of curve which will be used to compute the interpolation of values for a parameter."
+         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Interpolation curve"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
+         italic="0" justification="33"/>
+  <LABEL name="value label" id="12d040c7555f2549" memberName="valueLabel"
+         virtualName="" explicitFocusOrder="0" pos="704 112 168 24" tooltip="The defined value of a parameter, for this particular state."
+         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Parameter value"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="33"/>
 </JUCER_COMPONENT>
 
@@ -821,3 +952,4 @@ END_JUCER_METADATA
 
 //[EndFile] You can add extra defines here...
 //[/EndFile]
+

@@ -297,6 +297,9 @@ void SpatStatesEditionManager::UpdateView()
     // also : input/outputs names
     auto inOutNames = spatInterpolator->GetInOutChannelsName();
     editionComponent->SetInOutNames(inOutNames);
+    // and interpolation curves
+    auto interpCurves = spatInterpolator->GetInterpolationCurves();
+    editionComponent->GetLabelledMatrix()->SetInterpolationCurves(interpCurves);
     
     updateStateInfo();
     
@@ -355,9 +358,13 @@ std::string SpatStatesEditionManager::getLinkedAreasInfo()
 
 void SpatStatesEditionManager::sendCurrentDataToModel()
 {
+    // matrice
     sendMatrixDataToModel(editionComponent->GetDisplayedSpatMatrix());
+    // noms des canaux et courbes d'interpolation
     auto channelsNameCopy = editionComponent->GetLabelledMatrix()->GetChannelsName();
     spatInterpolator->SetInOutChannelsName(channelsNameCopy);
+    auto interpCurvesPtr = editionComponent->GetLabelledMatrix()->GetInterpolationCurves();
+    spatInterpolator->SetInterpolationCurves(interpCurvesPtr);
 }
 void SpatStatesEditionManager::sendMatrixDataToModel(std::shared_ptr<ControlMatrix<double>> currentMatrix)
 {

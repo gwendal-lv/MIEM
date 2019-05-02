@@ -14,12 +14,18 @@
 
 #include "AudioUtils.hpp"
 #include "InterpolationTypes.h"
+#include "BasicInterpolationCurve.hpp"
 
 namespace Miam
 {
     /// \brief Routing matrix with a backup, to help
     /// compute the non-negligible difference between the backup matrix
     /// and the actual current internal matrix.
+    /// This class also manages the interpolation curves applied independantly
+    /// on parameters.
+    ///
+    /// The interpolation curves are managed here for convenience, but also because
+    /// they are needed to accurately compute whether a difference is negligible or not.
     template<typename T>
     class MatrixBackupState : public MatrixState<T>
     {
@@ -40,18 +46,42 @@ namespace Miam
         
         /// \brief The minimal distance between two T values, to consider them different
         /// DEVRA DEVENIR UN TABLEAU, ON AURA UNE DIFF MINIMALE SELON CHAQUE COEFFICIENT DE LA MATRICE
-        /// DEVRA DEVENIR UN TABLEAU, ON AURA UNE DIFF MINIMALE SELON CHAQUE COEFFICIENT DE LA MATRICE
-        /// DEVRA DEVENIR UN TABLEAU, ON AURA UNE DIFF MINIMALE SELON CHAQUE COEFFICIENT DE LA MATRICE
-        /// DEVRA DEVENIR UN TABLEAU, ON AURA UNE DIFF MINIMALE SELON CHAQUE COEFFICIENT DE LA MATRICE
-        /// DEVRA DEVENIR UN TABLEAU, ON AURA UNE DIFF MINIMALE SELON CHAQUE COEFFICIENT DE LA MATRICE
         T linearSignificantDifference;
+        /// -----> ou alors la différence sera calculée par chaque courbe d'interpolation ? plus
+        ///        logique en réalité....
+        
+        /// \brief Interpolation curves applied to the inputs of the matrix. Won't work properly
+        /// with the SPAT version of the Player App.
+        std::vector<BasicInterpolationCurve<T>> interpolationCurves;
         
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
         
+        /// \brief Renvoi d'une copie des courbes d'interpolation
+        std::shared_ptr<std::vector<BasicInterpolationCurve<T>>> GetInterpolationCurves()
+        {
+            return
+            std::make_shared<std::vector<BasicInterpolationCurve<T>>>( interpolationCurves );
+        }
+        /// \brief Copie les courbes d'interpolation transmises, dans les attributs internes.
+        void SetInterpolationCurves(std::shared_ptr<std::vector<BasicInterpolationCurve<T>>> curves)
+        {
+            // constructeur de copie du vecteur, copie tous les éléments par constructeur de copie
+            // par défaut
+            interpolationCurves = *(curves.get());
+        }
+        
         std::vector< size_t >& GetSignificantChangesIndexes()
         { return significantChangesIndexes; }
+        
+        T GetCurveInterpolatedMatrixCoeff(size_t row, size_t col)
+        {
+            // on doit re-préciser de quelle classe mère venait l'attribut
+            const T normalizedValue = MatrixState<T>::matrix(row, col);
+            const T interpolatedValue = interpolationCurves[row].InterpolateValue( normalizedValue );
+            return interpolatedValue;
+        }
 
         
         
@@ -102,10 +132,18 @@ namespace Miam
                 T currentValue = this->matrix.GetIteratorValue();
                 T backupValue = backupMatrix[this->matrix.GetIterator1dCoord()];
                 bool isDifferenceSignificant = false;
+                // ---- DETECTION A FAIRE SELON INTERPOLATION -----
+                // ---- DETECTION A FAIRE SELON INTERPOLATION -----
+                // ---- DETECTION A FAIRE SELON INTERPOLATION -----
+                // ---- DETECTION A FAIRE SELON INTERPOLATION -----
                 if (changeDetectionType == InterpolationType::Matrix_Linear)
                 {
                     isDifferenceSignificant = (std::abs(currentValue - backupValue) > linearSignificantDifference);
                 }
+                // ---- DETECTION A FAIRE SELON INTERPOLATION -----
+                // ---- DETECTION A FAIRE SELON INTERPOLATION -----
+                // ---- DETECTION A FAIRE SELON INTERPOLATION -----
+                // ---- DETECTION A FAIRE SELON INTERPOLATION -----
                 else // currently : audio volume cases
                 {
                 /*(changeDetectionType == InterpolationType::Matrix_ConstantPower
@@ -143,6 +181,67 @@ namespace Miam
             // nettoyage
             significantChangesIndexes.clear();
         }
+        
+        
+        
+        
+        
+        
+        
+        
+        // - - - - - XML - Boost Property Trees import/export - - - - -
+        std::shared_ptr<bptree::ptree> GetCurvesTree()
+        {
+            auto curvesInnerTree = std::make_shared<bptree::ptree>();
+            
+            for (size_t i=0; i < interpolationCurves.size() ; i++)
+            {
+                // on écrit uniquement les courbes non-défaut
+                if (! interpolationCurves[i].IsDefault())
+                {
+                    auto curveGeneratedTree = interpolationCurves[i].GetTree(); // does not know its index
+                    curveGeneratedTree->put("<xmlattr>.index", i);
+                    curvesInnerTree->add_child("curve", *curveGeneratedTree);
+                }
+            }
+            
+            return curvesInnerTree;
+        }
+        
+        void SetCurvesFromTree(bptree::ptree& curvesTree)
+        {
+            // Passe 1 = D'abord on init toutes les curves à la valeur par défaut...
+            interpolationCurves.clear();
+            for (size_t i = 0 ; i<Miam_MaxNumInputs ; i++)
+                interpolationCurves.push_back(BasicInterpolationCurve<T>::GetDefault());
+            
+            // Passe 2 = Lecture de tous les noeuds enfant, pour trouver les valeurs non-défaut
+            // Pas de try car si on a lu le compte, le noeud inputs existe forcément (et a le droit d'etre vide)
+            for (auto it = curvesTree.begin() ; it != curvesTree.end() ; it++)
+            {
+                if (it->first == "curve")
+                {
+                    try {
+                        size_t curveIndex = it->second.get<size_t>("<xmlattr>.index");
+                        if (curveIndex >= Miam_MaxNumInputs)
+                            throw bptree::ptree_error("given index (" + boost::lexical_cast<std::string>(curveIndex) + ") is bigger than the maximum value (" + boost::lexical_cast<std::string>(Miam_MaxNumInputs) + ")");
+                        
+                        // Si tout est bon, on continue de lire les attributs (la basic curve de débrouille avec)
+                        else
+                            interpolationCurves[curveIndex].SetFromTree(it->second);
+                    }
+                    catch (bptree::ptree_error& e) {
+                        throw XmlReadException(std::string("All <curve> tags inside <curves> must have a valid index XML attribute: ") + e.what());
+                    }
+                }
+                else
+                {
+                    throw XmlReadException(std::string("All children inside <interpolation>.<curves> must be named <curve>"));
+                }
+            }
+        }
+        
+        
         
     };
 }

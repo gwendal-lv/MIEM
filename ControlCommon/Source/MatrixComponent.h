@@ -16,7 +16,8 @@
 #include <vector>
 #include <cmath>
 
-#include "MatrixSlider.h"
+#include "MatrixSlider.h" // small rectangle slider volume, for full compact matrices
+#include "MatrixRowSlider.h" // horizontal larger slider
 
 #include "LabelledMatrixComponent.h"
 
@@ -39,7 +40,7 @@ namespace Miam
         // matrice
         std::vector<ScopedPointer<MatrixSlider>> sliders;
         // Sliders lorsque l'on n'a qu'une seule colonne
-        std::vector<ScopedPointer<Slider>> horizontalSliders;
+        std::vector<ScopedPointer<MatrixRowSlider>> horizontalSliders;
         
         // Graphics and internal data
         const size_t maxRowsCount;
@@ -73,6 +74,8 @@ namespace Miam
         public:
         
         // - - - - - Setters and Getters - - - - -
+        
+        
         size_t GetActiveInputsCount() {return n;}
         size_t GetActiveOutputsCount() {return m;}
         
@@ -87,20 +90,31 @@ namespace Miam
                     sliders[idx(i,j)]->setTextBoxIsEditable(shouldBeEditable);
         }
         
+        
         /// \brief Updates its internal sliders from the given Miam::SpatMatrix
         void SetSpatMatrix(std::shared_ptr<ControlMatrix<double>> spatMatrix);
+        /// \brief Builds and constructs the corresponding Miam::SpatMatrix
+        std::shared_ptr<ControlMatrix<double>> GetSpatMatrix();
+        
         /// \brief Same as SetSliderValue, with a decibels input.
         void SetSliderValue_dB(int row, int col, double newValue_dB,
                                NotificationType juceNotification = NotificationType::dontSendNotification);
-        /// \brief Sets the value of a Slider. Sauvegarde la valeur en linéaire à l'intérieur de la classe,
+        
+        /// \brief Sets the normalised value of a Slider
+        ///
+        /// Sauvegarde la valeur en linéaire à l'intérieur de la classe,
         /// puis met à jour graphiquement les sliders de la matrice, et les sliders horizontaux pour les
         /// coeffs de la 1ière colonne.
         void SetSliderValue(int row, int col, double newValue,
                             NotificationType juceNotification = NotificationType::dontSendNotification);
-        /// \brief Builds and constructs the corresponding Miam::SpatMatrix
         
         double GetSliderValue(int row, int col);
-        std::shared_ptr<ControlMatrix<double>> GetSpatMatrix();
+        
+        /// \brief Sets and horizontal slider range
+        void SetHorizontalSliderRange(int row, double newMin, double newMax);
+        
+        
+        
         
         
         // - - - - - Juce graphics - - - - -

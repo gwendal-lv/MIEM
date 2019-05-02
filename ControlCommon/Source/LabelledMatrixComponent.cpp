@@ -26,6 +26,8 @@
 
 #include "MiamMath.h"
 #include "TextUtils.h"
+
+#include "InterpolationCurvesComboBox.h"
 //[/Headers]
 
 #include "LabelledMatrixComponent.h"
@@ -34,6 +36,8 @@
 //[MiscUserDefs] You can add your own user definitions and misc code here...
 
 #include "MatrixViewport.h" // after self header include, includes MatrixComponent
+
+#include "MinMaxSlidersPair.h"
 
 using namespace Miam;
 //[/MiscUserDefs]
@@ -50,6 +54,11 @@ LabelledMatrixComponent::LabelledMatrixComponent (ISlidersMatrixListener* _liste
     showOutputsNames = true;
     showInputsNumbers = true;
     showOutputsNumbers = true;
+
+
+    jucePaleBlueColour = Colour(54,145,188);
+    juceLightPaleBlueColour = Colour(87,165,201);
+
     //[/Constructor_pre]
 
     matrixViewport.reset (new Miam::MatrixViewport (this, maxRowsCount, maxColsCount));
@@ -120,21 +129,40 @@ void LabelledMatrixComponent::resized()
     // des noms des sorties, ou non
     auto matrixViewportBounds = matrixViewport->getBounds();
 
-    if (showInputsNames)
-        removedFromLeftOfMatrix = std::min(getWidth()/2 - 120, 320);
-    else
-        removedFromLeftOfMatrix = 0; // space is already substracted for input numbers
-    if (GetDisplayPurpose() == AppPurpose::GenericController)
-        removedFromLeftOfMatrix += actionButtonW; // for the action button
+    // matrix viewport CUT from LEFT (space for ALL elements)
+    if (GetDisplayPurpose() == AppPurpose::Spatialisation)
+    {
+        if (showInputsNames)
+            removedFromLeftOfMatrix = std::min((getWidth() - 0)/2,
+                                               300); // = découpe max
+        else
+            removedFromLeftOfMatrix = 0; // space is already substracted for input numbers
+    }
+    else if (GetDisplayPurpose() == AppPurpose::GenericController)
+    {
+        removedFromLeftOfMatrix = std::min((getWidth() - 0)/2,
+                                           760); // = découpe max
+        removedFromLeftOfMatrix += curveComboBoxW/4;
+        removedFromLeftOfMatrix += 1*minMaxValueSlidersW;
+    }
     matrixViewportBounds.removeFromLeft(removedFromLeftOfMatrix);
-    removedFromLeftOfMatrix += 80; // because the previous projucer resize (takes the i/o ID into account)
+    removedFromLeftOfMatrix += 80; // because of the previous projucer resize (takes the i/o ID into account)
 
+    // matrix viewport CUT from BOTTOM
     if (showOutputsNames)
         removedFromBottomOfMatrix = std::min(getHeight()/2 - 40, 360);
     else
         removedFromBottomOfMatrix = 0; // space is already substracted for output numbers
     matrixViewportBounds.removeFromBottom(removedFromBottomOfMatrix);
     removedFromBottomOfMatrix += 40; // because the previous projucer resize (takes the i/o ID into account)
+
+    // matrix viewport CUT from RIGHT
+    removedFromRightOfMatrix = 0;
+    if (GetDisplayPurpose() == AppPurpose::GenericController)
+    {
+        removedFromRightOfMatrix += actionButtonW;
+    }
+    matrixViewportBounds.removeFromRight(removedFromRightOfMatrix);
 
     matrixViewport->setBounds(matrixViewportBounds);
 
@@ -222,23 +250,42 @@ void LabelledMatrixComponent::constructGuiObjects()
     outputNameTextEditors.resize(maxColsCount);
     rowTextButtons.clear();
     rowTextButtons.resize(maxRowsCount);
+    rowComboBoxes.clear();
+    rowComboBoxes.resize(maxRowsCount);
+    curveImageComponents.clear();
+    curveImageComponents.resize(maxRowsCount);
+    minMaxSlidersPairs.clear();
+    minMaxSlidersPairs.resize(maxRowsCount);
 
     // Actual creation of sliders, labels and buttons
     for (int i=0 ; i<(int)maxRowsCount ; i++)
     {
-        // Label on each row
-        labels[i] = new Label("Input label " + boost::lexical_cast<std::string>(i), "" + boost::lexical_cast<std::string>(i+1));
+        auto iStr = boost::lexical_cast<std::string>(i);
+        // - - - Label on each row - - -
+        labels[i] = new Label("Input label " + iStr, "" + boost::lexical_cast<std::string>(i+1));
         addAndMakeVisible(labels[i]);
-        inputNameTextEditors[i] = new TextEditor("Input Name text editor " + boost::lexical_cast<std::string>(i));
-        inputNameTextEditors[i]->setComponentID("i" + boost::lexical_cast<std::string>(i));
+        inputNameTextEditors[i] = new ChannelNameTextEditor("Input Name text editor " + boost::lexical_cast<std::string>(i));
+        inputNameTextEditors[i]->setComponentID("i" + iStr);
         addAndMakeVisible(inputNameTextEditors[i]);
         inputNameTextEditors[i]->addListener(this);
-        // And the row's button
-        rowTextButtons[i] = new TextButton("[action " + boost::lexical_cast<std::string>(i) + "]",
-                                           "Not initialized yet");
-        addAndMakeVisible(rowTextButtons[i]);
-        rowTextButtons[i]->setComponentID("bi" + boost::lexical_cast<std::string>(i));
+        // - - - Row's button - - -
+        rowTextButtons[i].reset(new TextButton("[action " + iStr + "]",
+                                           "Not initialized yet"));
+        addAndMakeVisible(rowTextButtons[i].get());
+        rowTextButtons[i]->setComponentID("bi" + iStr);
         rowTextButtons[i]->addListener(this);
+        // - - - Row's interpolation curves and images - - -
+        curveImageComponents[i].reset(new ImageComponent("Curve image component " + iStr));
+        addAndMakeVisible(curveImageComponents[i].get());
+        rowComboBoxes[i].reset(new InterpolationCurvesComboBox("Input Interpolation Curve combo box" +
+                                                               iStr, this, curveImageComponents[i],
+                                                               matItemH));
+        rowComboBoxes[i]->setComponentID("cbi" + iStr);
+        addAndMakeVisible(rowComboBoxes[i].get());
+        // - - - Min and Max Sliders - - -
+        minMaxSlidersPairs[i].reset(new MinMaxSlidersPair(this, "Min/Max Slider Pair " + iStr, i));
+        minMaxSlidersPairs[i]->setComponentID("spi" + iStr);
+        addAndMakeVisible(minMaxSlidersPairs[i].get());
     }
     for (int j=0 ; j<(int)maxColsCount ; j++)
     {
@@ -246,12 +293,20 @@ void LabelledMatrixComponent::constructGuiObjects()
         labels[maxRowsCount+j] = new Label("Output label " + boost::lexical_cast<std::string>(j),
                                            "" + boost::lexical_cast<std::string>(j+1));
         addAndMakeVisible(labels[maxRowsCount+j]);
-        outputNameTextEditors[j] = new TextEditor("Output Name text editor " + boost::lexical_cast<std::string>(j));
+        outputNameTextEditors[j] = new ChannelNameTextEditor("Output Name text editor " + boost::lexical_cast<std::string>(j));
         outputNameTextEditors[j]->setComponentID("o" + boost::lexical_cast<std::string>(j));
         addAndMakeVisible(outputNameTextEditors[j]);
         outputNameTextEditors[j]->addListener(this);
     }
 
+    // Init des valeurs des courbes d'interp (pour mettre des valeurs légales, sinon bugs ensuite)
+    auto interpCurves = std::make_shared<BasicInterpCurves>();
+    for (size_t i=0 ; i<maxRowsCount ; i++)
+        interpCurves->push_back(BasicInterpolationCurve<double>(ParamInterpolationType::Independant_Linear,
+                                                                0.0, 1.0)   );
+    SetInterpolationCurves(interpCurves);
+
+    // Does not actually reinit objects values....
     ReinitGuiObjects();
 }
 void LabelledMatrixComponent::ReinitGuiObjects()
@@ -269,14 +324,23 @@ void LabelledMatrixComponent::ReinitGuiObjects()
         // Label on each row
         initLabel(labels[i]);
         initNameTextEditor(inputNameTextEditors[i], false); // horizontal
+        // Text action button, interp curves and min/max sliders for gen con
         if (GetDisplayPurpose() == AppPurpose::GenericController)
         {
             rowTextButtons[i]->setButtonText(TRANS("Send"));
             rowTextButtons[i]->setTooltip(TRANS("Click to send this parameter to the configured OSC device."));
 			rowTextButtons[i]->setVisible(true);
+            rowComboBoxes[i]->setVisible(true);
+            curveImageComponents[i]->setVisible(true);
+            minMaxSlidersPairs[i]->setVisible(true);
         }
 		else
+        {
 			rowTextButtons[i]->setVisible(false);
+            rowComboBoxes[i]->setVisible(false);
+            curveImageComponents[i]->setVisible(false);
+            minMaxSlidersPairs[i]->setVisible(false);
+        }
     }
     for (int j=0 ; j<(int)maxColsCount ; j++)
     {
@@ -296,7 +360,7 @@ void LabelledMatrixComponent::initLabel(Label* label)
     label->setJustificationType(Justification::horizontallyCentred | Justification::verticallyCentred);
     label->toBack();
 }
-void LabelledMatrixComponent::initNameTextEditor(TextEditor* textEditor, bool isVertical)
+void LabelledMatrixComponent::initNameTextEditor(ChannelNameTextEditor* textEditor, bool isVertical)
 {
     if (isVertical) // police avec + d'espacement
         textEditor->applyFontToAllText(Font().withExtraKerningFactor(0.10f));
@@ -305,15 +369,10 @@ void LabelledMatrixComponent::initNameTextEditor(TextEditor* textEditor, bool is
     // Code spécifique selon OSC valide ou non
     try {
         TextUtils::ParseStringToJuceOscMessage(textEditor->getText().toStdString());
-
-        Font textEditorFont = textEditor->getFont(); // copie
-        textEditorFont.setBold(true); // si pas d'exception, on met en gras
-        textEditor->applyFontToAllText(textEditorFont, false); // ne devient pas la font actuelle
-        textEditor->applyColourToAllText(Colours::palegreen);
+        textEditor->SetIsNameValid(true);
     }
     catch (ParseException&) {
-        textEditor->applyFontToAllText(textEditor->getFont()); // sinon on laisse normal
-        textEditor->applyColourToAllText(Colours::white);
+        textEditor->SetIsNameValid(false);
     }
     // Dans tous les cas :
     textEditor->setMultiLine(false);
@@ -329,50 +388,65 @@ void LabelledMatrixComponent::repositionLabelsAndButtons()
     // data from children
     const int matrixDeltaX = matrixViewport->getViewPositionX();
     const int matrixDeltaY = matrixViewport->getViewPositionY();
+    viewportLX = matrixViewport->getX(); // left of matrix viewport
+    viewportRX = matrixViewport->getRight(); // right of matrix viewport
+
+    // Valeurs en X toujours calculées, même si composants pas visibles au final
+    inputNamesX = inLabelsW;
+    int inputNamesW = matrixViewport->getX() - inLabelsW - curveComboBoxW - curveImageW - 2*minMaxValueSlidersW - 4*5 - 2;
+    rowButtonsX = viewportRX + 4;
+    int curveImagesX = viewportLX - 4 - curveImageW;
+    interpolationCurvesX = curveImagesX - 4 - curveComboBoxW;
+    maximaX = interpolationCurvesX - 4 - minMaxValueSlidersW;
+    minimaX = maximaX - 4 - minMaxValueSlidersW;
 
     // Labels dynamic positionning
     for (int i=0 ; i<(int)maxRowsCount ; i++)
     {
         // Label on each row
         labels[i]->setBounds(0, i*matItemH - matrixDeltaY, inLabelsW, matItemH);
-        // Action button are drawn for the GenericController app purpose
-        if (GetDisplayPurpose() == AppPurpose::GenericController)
-        {
-            rowTextButtons[i]->setVisible(true);
-            rowTextButtons[i]->setBounds(matrixViewport->getX() - actionButtonW + 4,
-                                         i*matItemH - matrixDeltaY,
-                                         actionButtonW - 4,
-                                         matItemH);
-        }
-        else
-            rowTextButtons[i]->setVisible(false);
         // On dessine les text editors d'entrée, si besoin
         if (showInputsNames)
         {
             inputNameTextEditors[i]->setVisible(true);
-            if (rowTextButtons[i]->isVisible())
-                inputNameTextEditors[i]->setBounds(inLabelsW, i*matItemH - matrixDeltaY,
-                                                   matrixViewport->getX() - inLabelsW - actionButtonW,
-                                                   matItemH);
-            else
-                inputNameTextEditors[i]->setBounds(inLabelsW, i*matItemH - matrixDeltaY,
-                                                   matrixViewport->getX() - inLabelsW,
-                                                   matItemH);
+            inputNameTextEditors[i]->setBounds(inputNamesX, i*matItemH - matrixDeltaY,
+                                               inputNamesW, matItemH);
         }
         else
             inputNameTextEditors[i]->setVisible(false);
+
         // On désactive les composants correspondant à des entrées désactivées
-        if (i >= getN())
+        inputNameTextEditors[i]->setEnabled( i < getN() );
+        labels[i]->setEnabled( i < getN() );
+        rowTextButtons[i]->setEnabled( i < getN() );
+        minMaxSlidersPairs[i]->setEnabled( i < getN() );
+        rowComboBoxes[i]->setEnabled( i < getN() );
+        curveImageComponents[i]->setEnabled( i < getN() );
+
+        // Comboboxes + Action buttons are drawn for the GenericController app purpose
+        if (GetDisplayPurpose() == AppPurpose::GenericController)
         {
-            inputNameTextEditors[i]->setEnabled(false);
-            labels[i]->setEnabled(false);
-            rowTextButtons[i]->setEnabled(false);
+            // bouton à droite du slider
+            rowTextButtons[i]->setVisible(true);
+            rowTextButtons[i]->setBounds(rowButtonsX, i*matItemH - matrixDeltaY,
+                                         actionButtonW - 4, matItemH);
+            // Interp Curves et Min/Max à gauche
+            rowComboBoxes[i]->setVisible(true);
+            rowComboBoxes[i]->setBounds(interpolationCurvesX, i*matItemH - matrixDeltaY,
+                                        curveComboBoxW, matItemH);
+            curveImageComponents[i]->setVisible(true);
+            curveImageComponents[i]->setBounds(curveImagesX, i*matItemH - matrixDeltaY,
+                                        curveImageW, matItemH);
+            minMaxSlidersPairs[i]->setVisible(true);
+            minMaxSlidersPairs[i]->setBounds(minimaX, i*matItemH - matrixDeltaY,
+                                             minMaxValueSlidersW*2 + 4, matItemH);
         }
         else
         {
-            inputNameTextEditors[i]->setEnabled(true);
-            labels[i]->setEnabled(true);
-            rowTextButtons[i]->setEnabled(true);
+            rowTextButtons[i]->setVisible(false);
+            rowComboBoxes[i]->setVisible(false);
+            curveImageComponents[i]->setVisible(false);
+            minMaxSlidersPairs[i]->setVisible(false);
         }
         // On cache les éléments d'entrée plus bas que le viewport
         if (labels[i]->getBottom() > (matrixViewport->getBottom() + 8))
@@ -380,12 +454,15 @@ void LabelledMatrixComponent::repositionLabelsAndButtons()
             labels[i]->setVisible(false);
             inputNameTextEditors[i]->setVisible(false);
             rowTextButtons[i]->setVisible(false);
+            rowComboBoxes[i]->setVisible(false);
+            curveImageComponents[i]->setVisible(false);
+            minMaxSlidersPairs[i]->setVisible(false);
         }
         else
         {
             labels[i]->setVisible(true);
-			if (currentDisplayPurpose == AppPurpose::GenericController)
-				rowTextButtons[i]->setVisible(true);
+            if (currentDisplayPurpose == AppPurpose::GenericController)
+                rowTextButtons[i]->setVisible(true);
             if (showInputsNames)
                 inputNameTextEditors[i]->setVisible(true);
         }
@@ -499,14 +576,47 @@ void LabelledMatrixComponent::OnSliderValueChanged(int row, int col, double valu
 {
     listener->OnSliderValueChanged(row, col, value);
 }
+void LabelledMatrixComponent::OnMinMaxValuesChanged(int row, double valueMin, double valueMax)
+{
+    // =========================================================================
+    // =========================================================================
+    // =========================================================================
+    // =========================================================================
+    // =========================================================================
+    // =========================================================================
+    // =========================================================================
+    // =========================================================================
+    // =========================================================================
+    // =========================================================================
+    // =========================================================================
+    // ICI en réalité, il faut ré-envoyer toute la courbe d'interpolation au MatrixComponent
+    // car son slider doit avoir un skew factor dépendant de l'interpolation...
+    // =========================================================================
+    // =========================================================================
+    // =========================================================================
+    // =========================================================================
+    // =========================================================================
+    // =========================================================================
+    // =========================================================================
+    // =========================================================================
+    // =========================================================================
+    matrixViewport->GetMatrixComponent()->SetHorizontalSliderRange(row, valueMin, valueMax);
+}
 void LabelledMatrixComponent::textEditorTextChanged (TextEditor & textEditor)
 {
+    auto castedPtr = dynamic_cast<ChannelNameTextEditor*>(&textEditor);
     if (textEditor.getComponentID().startsWithChar('i')) // input text editor
-        initNameTextEditor(&textEditor, false);
-    else if (textEditor.getComponentID().startsWithChar('i')) // input text editor
-        initNameTextEditor(&textEditor, true);
+    {
+        assert(castedPtr != nullptr); // all text editors with ID starting with 'i' should be castable
+        initNameTextEditor(castedPtr, false);
+    }
+    else if (textEditor.getComponentID().startsWithChar('o')) // input text editor
+    {
+        assert(castedPtr != nullptr); // all text editors with ID starting with 'o' should be castable
+        initNameTextEditor(castedPtr, true);
+    }
     else
-        throw std::runtime_error("Cannot parse the ID of the calling text editor object");
+        assert(false); // Cannot parse the ID of the calling text editor object
 }
 void LabelledMatrixComponent::buttonClicked (Button* _button)
 {
@@ -538,6 +648,7 @@ void LabelledMatrixComponent::buttonClicked (Button* _button)
                                            inputNameTextEditors[integerID]->getText().toStdString(),
                                            matrixViewport->GetMatrixComponent()->GetSliderValue(integerID, 0));
 }
+
 
 MatrixComponent* LabelledMatrixComponent::GetMatrixComponent()
 {
@@ -574,6 +685,52 @@ InOutChannelsName LabelledMatrixComponent::GetChannelsName()
         channelsName.Outputs.push_back(outputNameTextEditors[j]->getText().toStdString());
 
     return channelsName;
+}
+void LabelledMatrixComponent::SetInterpolationCurves(std::shared_ptr<BasicInterpCurves> interpCurvesPtr)
+{
+    BasicInterpCurves interpCurves = *(interpCurvesPtr.get());
+
+    // Pas d'autre fonctionnement prévu pour l'instant...
+    // Si condition n'est pas remplie (ce qui peut arriver au début), on ne fait juste rien
+    if (interpCurves.size() != maxRowsCount)
+        return;
+
+    for (size_t i=0 ; i<interpCurves.size() ; i++)
+    {
+        rowComboBoxes[i]->SetSelectedInterpolationType(interpCurves[i].GetInterpolationType());
+
+        // to avoid conflicts (incoherent sliders on Juce side
+        // we must check min/max values compared to the default values 0.0;1.0
+        // --> Reverse orders ?
+
+        // if min is bigger than default max
+        //if ( interpCurves[i].GetMinY() >= 1.0 )
+
+        if (interpCurves[i].GetMaxY() <= 0.0 ) // if max is lower than default min
+        {
+            minMaxSlidersPairs[i]->SetMinValue(interpCurves[i].GetMinY());
+            minMaxSlidersPairs[i]->SetMaxValue(interpCurves[i].GetMaxY());
+        }
+        // --> or normal order
+        else
+        {
+            minMaxSlidersPairs[i]->SetMaxValue(interpCurves[i].GetMaxY());
+            minMaxSlidersPairs[i]->SetMinValue(interpCurves[i].GetMinY());
+        }
+    }
+}
+std::shared_ptr<BasicInterpCurves> LabelledMatrixComponent::GetInterpolationCurves()
+{
+    auto interpCurves = std::make_shared<BasicInterpCurves>();
+    for (size_t i=0 ; i<maxRowsCount ; i++)
+    {
+        interpCurves->push_back(BasicInterpolationCurve<double>(
+                                rowComboBoxes[i]->GetSelectedInterpolationType(),
+                                minMaxSlidersPairs[i]->GetMinValue(),
+                                minMaxSlidersPairs[i]->GetMaxValue()
+                                ));
+    }
+    return interpCurves;
 }
 void LabelledMatrixComponent::SetInputNamesVisible(bool areVisible)
 {

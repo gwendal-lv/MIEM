@@ -61,7 +61,8 @@ void MatrixComponent::ReconstructGuiObjects()
             sliders[idx(i,j)]->SetPropertiesFromVolume();
         }
         
-        horizontalSliders[i] = new Slider("Horizontal Slider ID=" + boost::lexical_cast<std::string>(i));
+        horizontalSliders[i] = new MatrixRowSlider("Horizontal Slider ID=" + boost::lexical_cast<std::string>(i),
+                                                   itemH);
         horizontalSliders[i]->setComponentID(boost::lexical_cast<std::string>(i));
         initAndAddHorizontalSlider(horizontalSliders[i]);
     }
@@ -110,10 +111,7 @@ void MatrixComponent::addSlider(Slider* slider)
 }
 void MatrixComponent::initAndAddHorizontalSlider(Slider* slider)
 {
-    slider->setSliderStyle(Slider::SliderStyle::LinearHorizontal);
-    slider->setColour(Slider::ColourIds::textBoxTextColourId, Colours::black);
     slider->setRange(0.0, 1.0);
-    
     addSlider(slider);
 }
 
@@ -183,7 +181,27 @@ void MatrixComponent::sliderValueChanged(Slider* slider)
         int sliderId = std::stoi(slider->getComponentID().toStdString());
         
         // Valeur linéaire simple mise dans la colonne 0
-        rawDenseMatrix[idx(sliderId, 0)] = slider->getValue();
+        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        // Dé-normalisation de la valeur
+        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        rawDenseMatrix[idx(sliderId, 0)] = (slider->getValue() - slider->getMinimum())
+        / (slider->getMaximum() - slider->getMinimum());
+        
+        
+        
         // Data transmission to the grandparent (and the listeners)
         grandParent->OnSliderValueChanged(sliderId, 0,
                                           rawDenseMatrix[idx(sliderId, 0)]);
@@ -256,9 +274,15 @@ void MatrixComponent::SetActiveSliders(int inputsCount, int outputsCount)
         for (int i=0 ; i<maxRowsCount ; i++)
         {
             if (i<n)
+            {
                 horizontalSliders[i]->setVisible(true);
+                horizontalSliders[i]->setEnabled(true);
+            }
             else
+            {
                 horizontalSliders[i]->setVisible(false);
+                horizontalSliders[i]->setEnabled(false);
+            }
         }
     }
     
@@ -291,6 +315,28 @@ void MatrixComponent::SetSpatMatrix(std::shared_ptr<ControlMatrix<double>> spatM
                        spatMatrix->GetIteratorValue());
     }
 }
+std::shared_ptr<ControlMatrix<double>> MatrixComponent::GetSpatMatrix()
+{
+    /* Normalement : tout ça est maintenant fait au fur et à mesure...
+     for (int i=0 ; i<maxRowsCount ; i++)
+     {
+     for (int j=0 ; j<maxColsCount ; j++)
+     {
+     // If non-zero only
+     if (sliders[idx(i,j)]->getValue() > sliders[idx(i,j)]->GetMinVolume_dB() + MiamRouter_LowVolumeThreshold_dB)
+     {
+     double linearValue = Decibels::decibelsToGain(sliders[idx(i,j)]->getValue());
+     rawDenseMatrix[idx(i,j)] = linearValue;
+     }
+     else
+     rawDenseMatrix[idx(i,j)] = 0.0;
+     }
+     }*/
+    // construction optimisée
+    auto returnPtr = std::make_shared<ControlMatrix<double>>(rawDenseMatrix);
+    return returnPtr;
+}
+
 void MatrixComponent::SetSliderValue_dB(int row, int col, double newValue_dB,
                                         NotificationType juceNotification)
 {
@@ -319,7 +365,28 @@ void MatrixComponent::SetSliderValue(int row, int col, double newValue,
     
     // Slider horizontal colonne zéro
     if (col == 0)
-        horizontalSliders[row]->setValue(newValue, juceNotification);
+    {
+        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        // Dé-normalisation de la valeur
+        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        double scaledValue = horizontalSliders[row]->getMinimum() +
+        newValue * (horizontalSliders[row]->getMaximum() - horizontalSliders[row]->getMinimum());
+        
+        horizontalSliders[row]->setValue(scaledValue, juceNotification);
+    }
 }
 
 
@@ -334,26 +401,15 @@ double MatrixComponent::GetSliderValue(int row, int col)
     }
 }
 
-std::shared_ptr<ControlMatrix<double>> MatrixComponent::GetSpatMatrix()
+
+void MatrixComponent::SetHorizontalSliderRange(int row, double newMin, double newMax)
 {
-    /* Normalement : tout ça est maintenant fait au fur et à mesure...
-     for (int i=0 ; i<maxRowsCount ; i++)
-     {
-     for (int j=0 ; j<maxColsCount ; j++)
-     {
-     // If non-zero only
-     if (sliders[idx(i,j)]->getValue() > sliders[idx(i,j)]->GetMinVolume_dB() + MiamRouter_LowVolumeThreshold_dB)
-     {
-     double linearValue = Decibels::decibelsToGain(sliders[idx(i,j)]->getValue());
-     rawDenseMatrix[idx(i,j)] = linearValue;
-     }
-     else
-     rawDenseMatrix[idx(i,j)] = 0.0;
-     }
-     }*/
-    // construction optimisée
-    auto returnPtr = std::make_shared<ControlMatrix<double>>(rawDenseMatrix);
-    return returnPtr;
+    horizontalSliders[row]->setRange(newMin, newMax);
+    
+    // to force an update
+    /*horizontalSliders[row]->setValue(horizontalSliders[row]->getValue(), // does not work; if same value
+                                     NotificationType::sendNotificationAsync);*/
+    horizontalSliders[row]->repaint(); // actually works
 }
 
 

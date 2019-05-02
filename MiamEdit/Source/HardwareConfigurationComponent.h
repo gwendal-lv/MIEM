@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.1
+  Created with Projucer version: 5.4.3
 
   ------------------------------------------------------------------------------
 
@@ -69,6 +69,7 @@ public:
 
     /// \brief Sets the interpolation types that the user can choose in the list.
     void SetAvailableInterpolations(std::initializer_list<InterpolationType> interpolationTypeArgs);
+    void SetInterpolationChoiceVisible(bool shouldBeVisible);
 
     //[/UserMethods]
 
@@ -118,3 +119,4 @@ private:
 
 } // namespace Miam
 //[/EndFile]
+

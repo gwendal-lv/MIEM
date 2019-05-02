@@ -20,6 +20,8 @@ using namespace Miam;
 // n'y avait pas "constexpr". Avec le constexpr, ça compile....
 constexpr const char* const InterpolationTypes::interpolationNames[];
 constexpr const char* const InterpolationTypes::interpolationShortNames[];
+constexpr const char* const ParamInterpolationTypes::interpolationNames[];
+constexpr const char* const ParamInterpolationTypes::interpolationShortNames[];
 
 
 
@@ -41,4 +43,26 @@ InterpolationType InterpolationTypes::ParseName(std::string interpolationName)
         return parsedType;
     else
         throw ParseException("The string '" + interpolationName + "' cannot be parsed into a Miam::InterpolationType");
+}
+
+
+
+ParamInterpolationType ParamInterpolationTypes::ParseName(std::string interpolationName)
+{
+    // On teste l'égalité avec toutes les chaînes de caractèrse possibles...
+    // Ça crée bcp de strings et n'est pas très optimisé, mais pas critique pour nous...
+    ParamInterpolationType parsedType = ParamInterpolationType::None;
+    for (int i = (int)(ParamInterpolationType::None) + 1 ;
+         (i < (int)ParamInterpolationType::InterpolationTypesCount) && (parsedType == ParamInterpolationType::None) ;
+         i ++)
+    {
+        if (boost::iequals(interpolationName,
+                           std::string(interpolationShortNames[i])))
+            parsedType = (ParamInterpolationType) i;
+    }
+    
+    if (parsedType != ParamInterpolationType::None)
+        return parsedType;
+    else
+        throw ParseException("The string '" + interpolationName + "' cannot be parsed into a Miam::ParamInterpolationType");
 }

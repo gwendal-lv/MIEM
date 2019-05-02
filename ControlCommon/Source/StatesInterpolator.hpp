@@ -80,6 +80,25 @@ namespace Miam
         /// \brief Va copier les nouvelles données en gardant les noms des canaux non-précisés
         void SetInOutChannelsName(InOutChannelsName& channelsName_) { channelsName = channelsName_; }
         
+        /// \brief Calls the corresponding function of the matrix backup state,
+        /// or throws an exception if backup state does not exist
+        std::shared_ptr<std::vector<BasicInterpolationCurve<T>>> GetInterpolationCurves()
+        {
+            if (currentInterpolatedMatrixState.get())
+                return currentInterpolatedMatrixState->GetInterpolationCurves();
+            else
+                throw std::logic_error("The matrix backup state must exist at this point...");
+        }
+        /// \brief Calls the corresponding function of the matrix backup state,
+        /// or throws an exception if backup state does not exist
+        void SetInterpolationCurves(std::shared_ptr<std::vector<BasicInterpolationCurve<T>>> curves)
+        {
+            if (currentInterpolatedMatrixState.get())
+                currentInterpolatedMatrixState->SetInterpolationCurves(curves);
+            else
+                throw std::logic_error("The matrix backup state must exist at this point...");
+        }
+        
         InterpolationType GetType() {return interpolationType;}
         InterpolationType GetType_Atomic() {
             int typeCopyAsInt = (int)lockFreeInterpolationType;
@@ -308,9 +327,13 @@ namespace Miam
         std::shared_ptr<bptree::ptree> GetConfigurationTree()
         {
             auto confTree = std::make_shared<bptree::ptree>();
-            // Interpolator type
-            confTree->put("interpolation.<xmlattr>.type", InterpolationTypes::GetInterpolationName(interpolationType, false, true).toStdString());
-            // Inputs (counts and names)
+            // - - - - - Interpolator type - - - - -
+            bptree::ptree interpolationInnerTree;
+            interpolationInnerTree.put("<xmlattr>.type", InterpolationTypes::GetInterpolationName(interpolationType, false, true).toStdString());
+            // - - And interpolation independant curves - -
+            interpolationInnerTree.add_child( "curves", *(currentInterpolatedMatrixState->GetCurvesTree()) );
+            confTree->add_child("interpolation", interpolationInnerTree); // final addition
+            // - - - - -  Inputs (counts and names) - - - - -
             bptree::ptree inputsInnerTree;
             inputsInnerTree.put("<xmlattr>.activeCount", inputsCount);
             inputsInnerTree.put("<xmlattr>.maxCount", Miam_MaxNumInputs);
@@ -323,7 +346,7 @@ namespace Miam
                     inputsInnerTree.add_child("name", nameInnerTree);
                 }
             confTree->add_child("inputs", inputsInnerTree);
-            // Outputs (counts and names)
+            //  - - - - - Outputs (counts and names) - - - - -
             bptree::ptree outputsInnerTree;
             outputsInnerTree.put("<xmlattr>.activeCount", outputsCount);
             outputsInnerTree.put("<xmlattr>.maxCount", Miam_MaxNumOutputs);
@@ -356,6 +379,20 @@ namespace Miam
             catch (ParseException& e) {
                 throw XmlReadException(std::string("Cannot parse the 'type' attribute from the <interpolation> tag: ") + e.what());
             }
+            // - - - Interpolation Curves read inside the Matrix Backup State - - -
+            // optionnal ; if no curve given -> default curves (not to break files comptability)
+            bptree::ptree curvesChild;
+            try {
+                curvesChild = tree.get_child("interpolation.curves");
+            }
+            catch (bptree::ptree_error& e) {
+                // toutes les valeurs seront mises aux valeurs par défaut....
+                curvesChild = bptree::ptree(); // empty curves tree
+            }
+            catch (ParseException& e) {
+                throw XmlReadException(std::string("Cannot parse the 'type' attribute from the <interpolation> tag: ") + e.what());
+            }
+            currentInterpolatedMatrixState->SetCurvesFromTree(curvesChild);
             // - - - Inputs - - -
             try {
                 inputsCount = tree.get<int>("inputs.<xmlattr>.activeCount");

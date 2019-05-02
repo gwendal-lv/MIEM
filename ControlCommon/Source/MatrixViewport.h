@@ -67,6 +67,8 @@ namespace Miam
         
         void paint (Graphics& /*g*/) override
         {
+            // remplit le fond des barres de scroll
+            //g.fillAll(Colours::black);
         }
         
         void resized() override
