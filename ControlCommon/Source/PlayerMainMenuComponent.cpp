@@ -178,7 +178,7 @@ PlayerMainMenuComponent::PlayerMainMenuComponent ()
     {
         miemProjectHyperlinkButton->setURL(URL("http://miem.laras.be/spat"));
     }
-    
+
     // Fullscreen button
 #ifdef __MIAMOBILE
     fullscreenButton->setEnabled(false);

@@ -323,6 +323,9 @@ void PlayerPresenter::OnNewConnectionStatus(bool isConnectionEstablished, std::s
     }
     catch (bptree::ptree_error&) { }
     
+    // might not exist
+    auto udpPort2 = connectionParametersTree->get<int>("udp.additional_port", -1);
+    
     // - - - écriture de la chaîne à afficher - - -
     std::string displayString;
     // Si pas de connection
@@ -350,7 +353,10 @@ void PlayerPresenter::OnNewConnectionStatus(bool isConnectionEstablished, std::s
         // Sinon tout est bon pour affichage
         else
         {
-            displayString = "Sending OSC to " + ipv4 + " on UDP port " + std::to_string(udpPort) + ".";
+            displayString = "Sending OSC to " + ipv4 + " on UDP port " + std::to_string(udpPort);
+            if (udpPort2 >= 0)
+                displayString += " (and " + boost::lexical_cast<std::string>(udpPort2) + ")";
+            displayString += ".";
         }
     }
     

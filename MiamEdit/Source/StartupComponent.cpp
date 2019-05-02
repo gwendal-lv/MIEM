@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.1
+  Created with Projucer version: 5.4.3
 
   ------------------------------------------------------------------------------
 
@@ -73,14 +73,14 @@ StartupComponent::StartupComponent ()
     infoHyperlinkButton.reset (new HyperlinkButton (TRANS("To get help and more information, please visit http://miem.laras.be"),
                                                     URL ("http://miem.laras.be")));
     addAndMakeVisible (infoHyperlinkButton.get());
-    infoHyperlinkButton->setTooltip (TRANS("http://miem.laras.be"));
+    infoHyperlinkButton->setTooltip (TRANS("miem.laras.be"));
     infoHyperlinkButton->setButtonText (TRANS("To get help and more information, please visit http://miem.laras.be"));
     infoHyperlinkButton->setColour (HyperlinkButton::textColourId, Colours::white);
 
     appNameHyperlinkButton.reset (new HyperlinkButton (TRANS("MIEM Editor"),
                                                        URL ("http://miem.laras.be")));
     addAndMakeVisible (appNameHyperlinkButton.get());
-    appNameHyperlinkButton->setTooltip (TRANS("http://miem.laras.be"));
+    appNameHyperlinkButton->setTooltip (TRANS("miem.laras.be"));
     appNameHyperlinkButton->setButtonText (TRANS("MIEM Editor"));
     appNameHyperlinkButton->setColour (HyperlinkButton::textColourId, Colours::white);
 
@@ -142,8 +142,8 @@ void StartupComponent::resized()
     createSpatTextButton->setBounds ((getWidth() / 2) + 150 - 300, (getHeight() / 2) + 46, 300, 32);
     createDefaultTextButton->setBounds ((getWidth() / 2) + -3 - (168 / 2), (getHeight() / 2) + 350, 168, 24);
     createGenericTextButton->setBounds ((getWidth() / 2) + 150 - 300, (getHeight() / 2), 300, 32);
-    infoHyperlinkButton->setBounds ((getWidth() / 2) - ((getWidth() - 16) / 2), getHeight() - 32, getWidth() - 16, 24);
-    appNameHyperlinkButton->setBounds ((getWidth() / 2) - ((getWidth() - 16) / 2), getHeight() - 62, getWidth() - 16, 24);
+    infoHyperlinkButton->setBounds ((getWidth() / 2) - ((getWidth() - 5) / 2), getHeight() - 32, getWidth() - 5, 24);
+    appNameHyperlinkButton->setBounds ((getWidth() / 2) - ((getWidth() - 5) / 2), getHeight() - 62, getWidth() - 5, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -226,7 +226,7 @@ BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="StartupComponent" componentName=""
                  parentClasses="public Component" constructorParams="" variableInitialisers=""
-                 snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.33"
+                 snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="0" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="ff707070"/>
   <TEXTBUTTON name="Load text button" id="dcc32a783566df37" memberName="loadTextButton"
@@ -246,13 +246,13 @@ BEGIN_JUCER_METADATA
               bgColOn="ffffffff" textCol="ff000000" buttonText="Create Generic OSC Controller session"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <HYPERLINKBUTTON name="Info hyperlink button" id="fa3a8802c3b7c7f0" memberName="infoHyperlinkButton"
-                   virtualName="" explicitFocusOrder="0" pos="0Cc 32R 5M 24" tooltip="http://miem.laras.be"
-                   textCol="ffffffff" buttonText="To get help and more information, please visit http://miem.laras.be"
+                   virtualName="" explicitFocusOrder="0" pos="-0.5Cc 32R 5M 24"
+                   tooltip="miem.laras.be" textCol="ffffffff" buttonText="To get help and more information, please visit http://miem.laras.be"
                    connectedEdges="0" needsCallback="0" radioGroupId="0" url="http://miem.laras.be"/>
   <HYPERLINKBUTTON name="App Name hyperlink button" id="7dafa352c7045e31" memberName="appNameHyperlinkButton"
-                   virtualName="" explicitFocusOrder="0" pos="0Cc 62R 5M 24" tooltip="http://miem.laras.be"
-                   textCol="ffffffff" buttonText="MIEM Editor" connectedEdges="0"
-                   needsCallback="0" radioGroupId="0" url="http://miem.laras.be"/>
+                   virtualName="" explicitFocusOrder="0" pos="-0.5Cc 62R 5M 24"
+                   tooltip="miem.laras.be" textCol="ffffffff" buttonText="MIEM Editor"
+                   connectedEdges="0" needsCallback="0" radioGroupId="0" url="http://miem.laras.be"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA
@@ -262,3 +262,4 @@ END_JUCER_METADATA
 
 //[EndFile] You can add extra defines here...
 //[/EndFile]
+

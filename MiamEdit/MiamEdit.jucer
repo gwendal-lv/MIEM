@@ -6,7 +6,7 @@
               splashScreenColour="Dark" companyCopyright="Gwendal Le Vaillant (IRISIB/LARAS, UMons)"
               companyWebsite="http://laras.be" companyName="IRISIB/LARAS, UMons"
               companyEmail="glevaillant@he2b.be" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../MiamCommon/Resources/&#10;../../../ControlCommon/Source/&#10;../../../SpatCommon/Source/"
-              defines="__MIEM_VBO&#10;__MIEM_GL_INFO_DISPLAY__NO&#10;__MIEM_DISPLAY_CANVAS_RESIZE"
+              defines="__MIEM_VBO&#10;__MIEM_GL_INFO_DISPLAY__NO&#10;__MIEM_DISPLAY_CANVAS_RESIZE&#10;__MIEM_FORCE_DOUBLE_OSC_SENDER"
               projectLineFeed="&#10;" userNotes="v1.1.0 : ajout des options d'interpolation et min/max par param&#232;tre">
   <MAINGROUP id="uJFjC5" name="MIEM Editor">
     <GROUP id="{7878353D-A1B6-291B-EABC-831E28CE51BB}" name="Source">
@@ -135,6 +135,10 @@
           <FILE id="vjqld7" name="EditableScene.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/EditableScene.cpp"/>
           <FILE id="mc8YKm" name="EditableScene.h" compile="0" resource="0" file="../MiamCommon/Source/EditableScene.h"/>
+          <FILE id="eiXIou" name="ExperimentsSceneConstrainer.cpp" compile="1"
+                resource="0" file="../MiamCommon/Source/ExperimentsSceneConstrainer.cpp"/>
+          <FILE id="qcBxYz" name="ExperimentsSceneConstrainer.h" compile="0"
+                resource="0" file="../MiamCommon/Source/ExperimentsSceneConstrainer.h"/>
           <FILE id="i50GId" name="InteractiveScene.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/InteractiveScene.cpp"/>
           <FILE id="w93g8x" name="InteractiveScene.h" compile="0" resource="0"

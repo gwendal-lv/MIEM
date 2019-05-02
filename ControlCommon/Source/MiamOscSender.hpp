@@ -42,7 +42,7 @@ namespace Miam
         /// Not reliable : no errors will be displayed if this port cannot connect or send
         OSCSender oscSender2;
         const int secondSenderUdpPortOffset = 10000;
-#ifdef __MIEM_EXPERIMENTS
+#if defined(__MIEM_EXPERIMENTS) || defined(__MIEM_FORCE_DOUBLE_OSC_SENDER)
         const bool alsoUseSender2 = true;
 #else
         const bool alsoUseSender2 = false;
@@ -552,6 +552,9 @@ namespace Miam
             auto configurationTree = ControlStateSender<T>::GetConfigurationTree();
             configurationTree->put("ip", ipv4);
             configurationTree->put("udp.port", udpPort);
+            // port additionnel facultatif (pour double envoi des données)
+            if (alsoUseSender2)
+                configurationTree->put("udp.additional_port", udpPort + secondSenderUdpPortOffset);
             return configurationTree;
         }
         virtual void SetConfigurationFromTree(bptree::ptree& tree) override
