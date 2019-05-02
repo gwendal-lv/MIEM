@@ -111,9 +111,28 @@ MainComponent::MainComponent ()
 
     udpPortTextEditor->setBounds (224, 40, 79, 24);
 
+    displayLogButton.reset (new TextButton ("display log button"));
+    addAndMakeVisible (displayLogButton.get());
+    displayLogButton->setButtonText (TRANS("Display OSC-MIDI"));
+    displayLogButton->addListener (this);
+    displayLogButton->setColour (TextButton::buttonColourId, Colour (0xff616161));
+
+    logTextEditor.reset (new TextEditor ("log text editor"));
+    addAndMakeVisible (logTextEditor.get());
+    logTextEditor->setMultiLine (true);
+    logTextEditor->setReturnKeyStartsNewLine (true);
+    logTextEditor->setReadOnly (true);
+    logTextEditor->setScrollbarsShown (true);
+    logTextEditor->setCaretVisible (false);
+    logTextEditor->setPopupMenuEnabled (true);
+    logTextEditor->setColour (TextEditor::textColourId, Colour (0xffc1c1c1));
+    logTextEditor->setColour (TextEditor::backgroundColourId, Colour (0xff202020));
+    logTextEditor->setText (String());
+
 
     //[UserPreSize]
     baseOscListeningString = " to '/miem/i f' OSC messages on port ";
+
     //[/UserPreSize]
 
     setSize (800, 400);
@@ -140,6 +159,8 @@ MainComponent::~MainComponent()
     udpPortLabel = nullptr;
     notConnectedLabel = nullptr;
     udpPortTextEditor = nullptr;
+    displayLogButton = nullptr;
+    logTextEditor = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -176,6 +197,8 @@ void MainComponent::resized()
     listenLabel2->setBounds (40, 120, getWidth() - 80, 24);
     listenLabel3->setBounds (40, 144, getWidth() - 80, 24);
     notConnectedLabel->setBounds (getWidth() - 40 - 400, 88, 400, 24);
+    displayLogButton->setBounds (40, (getHeight() / 2) + 85, 150, 24);
+    logTextEditor->setBounds (240, 192, getWidth() - 280, getHeight() - 206);
     //[UserResized] Add your own custom resize handling here..
 
     //[/UserResized]
@@ -208,7 +231,8 @@ void MainComponent::buttonClicked (Button* buttonThatWasClicked)
             try {
                 newListenerForwarder = new OSCListenerForwarder(udpPort,
                                                                 MiemClock::now(),
-                                                                "MIEM bridge - OSC to MIDI");
+                                                                "MIEM bridge - OSC to MIDI",
+                                                                this);
             }
             catch (std::runtime_error& e) {
                 newListenerForwarder = nullptr;
@@ -228,6 +252,11 @@ void MainComponent::buttonClicked (Button* buttonThatWasClicked)
 
         //[/UserButtonCode_connectButton]
     }
+    else if (buttonThatWasClicked == displayLogButton.get())
+    {
+        //[UserButtonCode_displayLogButton] -- add your button handler code here..
+        //[/UserButtonCode_displayLogButton]
+    }
 
     //[UserbuttonClicked_Post]
     //[/UserbuttonClicked_Post]
@@ -236,6 +265,20 @@ void MainComponent::buttonClicked (Button* buttonThatWasClicked)
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
+
+void  MainComponent::OnMessageThroughBridge(const MiemExpeSample& oscSample,
+                                    const MiemMidiSample& midiSample)
+{
+    std::string bridgeTransformation = "/miem/";
+    bridgeTransformation += boost::lexical_cast<std::string>(oscSample.parameterIndex);
+    bridgeTransformation += " ";
+    bridgeTransformation += boost::lexical_cast<std::string>(oscSample.value);
+    bridgeTransformation += "   -->   MIDI CC ";
+    bridgeTransformation += boost::lexical_cast<std::string>(midiSample.parameterIndex);
+    bridgeTransformation += " value ";
+    bridgeTransformation += boost::lexical_cast<std::string>(midiSample.value);
+    std::cout << bridgeTransformation << std::endl;
+}
 //[/MiscUserCode]
 
 
@@ -249,9 +292,10 @@ void MainComponent::buttonClicked (Button* buttonThatWasClicked)
 BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="MainComponent" componentName=""
-                 parentClasses="public Component" constructorParams="" variableInitialisers=""
-                 snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
-                 fixedSize="0" initialWidth="800" initialHeight="400">
+                 parentClasses="public Component, public OSCListenerForwarder::Listener"
+                 constructorParams="" variableInitialisers="" snapPixels="8" snapActive="1"
+                 snapShown="1" overlayOpacity="0.330" fixedSize="0" initialWidth="800"
+                 initialHeight="400">
   <BACKGROUND backgroundColour="ff303030"/>
   <LABEL name="new label" id="10cef6d217b0bd64" memberName="listenLabel1"
          virtualName="" explicitFocusOrder="0" pos="40 88 120M 24" edTextCol="ff000000"
@@ -290,6 +334,14 @@ BEGIN_JUCER_METADATA
               virtualName="" explicitFocusOrder="0" pos="224 40 79 24" bkgcol="ff616161"
               outlinecol="ffffffff" initialText="8012" multiline="0" retKeyStartsLine="0"
               readonly="0" scrollbars="1" caret="1" popupmenu="1"/>
+  <TEXTBUTTON name="display log button" id="fd6f8dbc16ea7993" memberName="displayLogButton"
+              virtualName="" explicitFocusOrder="0" pos="40 85C 150 24" bgColOff="ff616161"
+              buttonText="Display OSC-MIDI" connectedEdges="0" needsCallback="1"
+              radioGroupId="0"/>
+  <TEXTEDITOR name="log text editor" id="d4304e642d982fa2" memberName="logTextEditor"
+              virtualName="" explicitFocusOrder="0" pos="240 192 280M 206M"
+              textcol="ffc1c1c1" bkgcol="ff202020" initialText="" multiline="1"
+              retKeyStartsLine="1" readonly="1" scrollbars="1" caret="0" popupmenu="1"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

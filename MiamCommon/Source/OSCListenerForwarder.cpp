@@ -20,9 +20,11 @@
 
 using namespace Miam;
 
-OSCListenerForwarder::OSCListenerForwarder(int udpPort, std::chrono::time_point<MiemClock> _startTimePoint, std::string midiDeviceName)
+OSCListenerForwarder::OSCListenerForwarder(int udpPort, std::chrono::time_point<MiemClock> _startTimePoint, std::string midiDeviceName,
+                                           OSCListenerForwarder::Listener* _listenerForMessagesThroughBridge)
 :
 oscReceiver("MIEM real-time OSC receiver thread"),
+listenerForMessagesThroughBridge(_listenerForMessagesThroughBridge),
 startTimePt_NetworkThreadCopy(_startTimePoint),
 experimentStartTimePoint(_startTimePoint),
 startTimePt_MidiThreadCopy(_startTimePoint)
@@ -103,6 +105,7 @@ void OSCListenerForwarder::oscMessageReceived (const OSCMessage &message)
     std::string msgAddress;
     MiemExpeSample expeSample;
     MiemMidiSample midiSample;
+    float originalSampleValue = -1.0f;
     
     bool recordingStateChanged = (isRecording == wasOscThreadRecording);
     bool recordingHasJustStarted = false;
@@ -168,7 +171,10 @@ void OSCListenerForwarder::oscMessageReceived (const OSCMessage &message)
     if (! message[0].isFloat32())
         return;
     else
-        sampleValue = (double) message[0].getFloat32(); // pour calculs ensuite
+    {
+        originalSampleValue = message[0].getFloat32();
+        sampleValue = (double) originalSampleValue; // pour calculs ensuite
+    }
     
     
     // - - - - - si tout s'est bien passé - - - - -
@@ -181,7 +187,13 @@ void OSCListenerForwarder::oscMessageReceived (const OSCMessage &message)
     sampleValue = midiSample.value;
     // renormalisation après discrétisation
     sampleValue = sampleValue / ((double) midiResolution);
+    
+    // Vérifier que ce truc-là corresponde vraiment bien à ce qu'est censée faire l'expérience comme mesure....
+#ifdef __MIEM_EXPERIMENT
     expeSample.value = (float) sampleValue;
+#else
+    expeSample.value = originalSampleValue;
+#endif
     
     
     // - - -  calcul de temps 1 - - -
@@ -233,6 +245,12 @@ void OSCListenerForwarder::oscMessageReceived (const OSCMessage &message)
     // Alors que la copie du point de début d'expé peut elle être utilisée tout le temps
     auto durationSinceRecordingStart_ms = std::chrono::duration_cast<std::chrono::milliseconds>(receptionTime - restartTimePoint);
     expeSample.time_ms = (int)durationSinceRecordingStart_ms.count();
+    
+    
+    // Notification pour les listeners enregistrés...
+    if (listenerForMessagesThroughBridge)
+        listenerForMessagesThroughBridge->OnMessageThroughBridge(expeSample, midiSample);
+    
     // Puis on enregistre effectivement le sample, si on est bien en phase d'enregistrement
     if (! isRecording)
         return;
@@ -241,6 +259,7 @@ void OSCListenerForwarder::oscMessageReceived (const OSCMessage &message)
     // Fin : callback message thread juce ?
     // OU ALORS on laisse le recorder vider la liste quand il faut ???
     // ça va économiser potentiellement pas mal de calcul...
+    
 }
 
 

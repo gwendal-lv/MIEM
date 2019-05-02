@@ -23,6 +23,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include "OSCListenerForwarder.h"
+#include <deque>
 
 namespace Miam
 {
@@ -39,6 +40,7 @@ namespace Miam
                                                                     //[/Comments]
 */
 class MainComponent  : public Component,
+                       public OSCListenerForwarder::Listener,
                        public Button::Listener
 {
 public:
@@ -48,6 +50,11 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
+
+
+    virtual void OnMessageThroughBridge(const MiemExpeSample& oscSample,
+                                        const MiemMidiSample& midiSample) override;
+
     //[/UserMethods]
 
     void paint (Graphics& g) override;
@@ -66,6 +73,9 @@ private:
     // ici à la classe graphique
     std::unique_ptr<OSCListenerForwarder> oscListenerForwarder;
 
+
+    std::deque<std::string> logData;
+
     //[/UserVariables]
 
     //==============================================================================
@@ -76,6 +86,8 @@ private:
     std::unique_ptr<Label> udpPortLabel;
     std::unique_ptr<Label> notConnectedLabel;
     std::unique_ptr<TextEditor> udpPortTextEditor;
+    std::unique_ptr<TextButton> displayLogButton;
+    std::unique_ptr<TextEditor> logTextEditor;
 
 
     //==============================================================================

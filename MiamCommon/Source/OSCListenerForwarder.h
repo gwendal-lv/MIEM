@@ -37,9 +37,24 @@ namespace Miam
 ///
 class OSCListenerForwarder : OSCReceiver::Listener<OSCReceiver::RealtimeCallback>
 {
+    
+    public :
+    /// \brief Abstract class, to be inherited by any class
+    /// that intends to retrieve the information that went through the bridge
+    class Listener {
+        public :
+        virtual ~Listener() {}
+        /// \brief Called when a message goes through the OSC-MIDI bridge.
+        /// Implementations of this method must be lock-free.
+        virtual void OnMessageThroughBridge(const MiemExpeSample& oscSample,
+                                            const MiemMidiSample& midiSample) = 0;
+    };
+    
+    
     // ========================= ATTRIBUTES =============================
     private :
     OSCReceiver oscReceiver;
+    OSCListenerForwarder::Listener* listenerForMessagesThroughBridge = nullptr;
     
     // - - - - - common inter-thread shared values - - - - -
     std::mutex mainMutex;
@@ -93,7 +108,8 @@ class OSCListenerForwarder : OSCReceiver::Listener<OSCReceiver::RealtimeCallback
     public :
     
     // ctor et dtor
-    OSCListenerForwarder(int udpPort, std::chrono::time_point<MiemClock> _startTimePoint, std::string midiDeviceName);
+    OSCListenerForwarder(int udpPort, std::chrono::time_point<MiemClock> _startTimePoint, std::string midiDeviceName,
+                         OSCListenerForwarder::Listener* _listenerForMessagesThroughBridge = nullptr);
     ~OSCListenerForwarder();
     
     /// \brief OSC listening (on the NETWORK THREAD)

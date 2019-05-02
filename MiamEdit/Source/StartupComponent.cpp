@@ -73,14 +73,14 @@ StartupComponent::StartupComponent ()
     infoHyperlinkButton.reset (new HyperlinkButton (TRANS("To get help and more information, please visit http://miem.laras.be"),
                                                     URL ("http://miem.laras.be")));
     addAndMakeVisible (infoHyperlinkButton.get());
-    infoHyperlinkButton->setTooltip (TRANS("miem.laras.be"));
+    infoHyperlinkButton->setTooltip (TRANS("http://miem.laras.be"));
     infoHyperlinkButton->setButtonText (TRANS("To get help and more information, please visit http://miem.laras.be"));
     infoHyperlinkButton->setColour (HyperlinkButton::textColourId, Colours::white);
 
     appNameHyperlinkButton.reset (new HyperlinkButton (TRANS("MIEM Editor"),
                                                        URL ("http://miem.laras.be")));
     addAndMakeVisible (appNameHyperlinkButton.get());
-    appNameHyperlinkButton->setTooltip (TRANS("miem.laras.be"));
+    appNameHyperlinkButton->setTooltip (TRANS("http://miem.laras.be"));
     appNameHyperlinkButton->setButtonText (TRANS("MIEM Editor"));
     appNameHyperlinkButton->setColour (HyperlinkButton::textColourId, Colours::white);
 
@@ -247,11 +247,11 @@ BEGIN_JUCER_METADATA
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <HYPERLINKBUTTON name="Info hyperlink button" id="fa3a8802c3b7c7f0" memberName="infoHyperlinkButton"
                    virtualName="" explicitFocusOrder="0" pos="-0.5Cc 32R 5M 24"
-                   tooltip="miem.laras.be" textCol="ffffffff" buttonText="To get help and more information, please visit http://miem.laras.be"
+                   tooltip="http://miem.laras.be" textCol="ffffffff" buttonText="To get help and more information, please visit http://miem.laras.be"
                    connectedEdges="0" needsCallback="0" radioGroupId="0" url="http://miem.laras.be"/>
   <HYPERLINKBUTTON name="App Name hyperlink button" id="7dafa352c7045e31" memberName="appNameHyperlinkButton"
                    virtualName="" explicitFocusOrder="0" pos="-0.5Cc 62R 5M 24"
-                   tooltip="miem.laras.be" textCol="ffffffff" buttonText="MIEM Editor"
+                   tooltip="http://miem.laras.be" textCol="ffffffff" buttonText="MIEM Editor"
                    connectedEdges="0" needsCallback="0" radioGroupId="0" url="http://miem.laras.be"/>
 </JUCER_COMPONENT>
 

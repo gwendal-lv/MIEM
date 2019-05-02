@@ -155,12 +155,15 @@ namespace Miam
                     }
                     else
                         useGenericAddressPattern = true;
-                     // si le parse n'a pas fonctionné, ou si n'avait juste pas de string précisée
+                     // si le parse n'a pas fonctionné, ou si n'avait juste pas de string précisée,
+                     // alors on met une adresse par défaut.
+                     // Attention ! On fait correspondre les adresses aux numéros des lignes...
+                     // (à partir de 1, par à partir de zéro)
                     if (useGenericAddressPattern)
                     {
                         OSCAddressPattern addressPattern(Miam_OSC_Generic_Param_Address
                                                          + std::string("/")
-                                                         + boost::lexical_cast<std::string>(i));
+                                                         + boost::lexical_cast<std::string>(i+1));
                         firstColOscMessages.push_back(OSCMessage(addressPattern));
                     }
                 }
