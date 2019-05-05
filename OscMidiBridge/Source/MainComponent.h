@@ -65,7 +65,9 @@ public:
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
+    std::string virtualMidiDeviceName;
     std::string baseOscListeningString;
+    std::string baseOscForwardingString;
 
     bool isConnected = false;
 
@@ -88,6 +90,7 @@ private:
     std::unique_ptr<TextEditor> udpPortTextEditor;
     std::unique_ptr<TextButton> displayLogButton;
     std::unique_ptr<TextEditor> logTextEditor;
+    std::unique_ptr<Label> forwardingLabel;
 
 
     //==============================================================================

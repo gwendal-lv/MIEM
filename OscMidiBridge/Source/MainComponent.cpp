@@ -37,6 +37,7 @@ using namespace Miam;
 MainComponent::MainComponent ()
 {
     //[Constructor_pre] You can add your own custom stuff here..
+    virtualMidiDeviceName = "MIEM bridge - OSC to MIDI";
     //[/Constructor_pre]
 
     listenLabel1.reset (new Label ("new label",
@@ -129,9 +130,22 @@ MainComponent::MainComponent ()
     logTextEditor->setColour (TextEditor::backgroundColourId, Colour (0xff202020));
     logTextEditor->setText (String());
 
+    forwardingLabel.reset (new Label ("forwarding label",
+                                      TRANS("Forwarding messages as MIDI CC to virtual device ")));
+    addAndMakeVisible (forwardingLabel.get());
+    forwardingLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Bold"));
+    forwardingLabel->setJustificationType (Justification::centredLeft);
+    forwardingLabel->setEditable (false, false, false);
+    forwardingLabel->setColour (TextEditor::textColourId, Colours::black);
+    forwardingLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
 
     //[UserPreSize]
     baseOscListeningString = " to '/miem/i f' OSC messages on port ";
+    baseOscForwardingString = forwardingLabel->getText().toStdString();
+
+    forwardingLabel->setText(baseOscForwardingString + "'" + virtualMidiDeviceName + "'",
+                             NotificationType::sendNotification);
 
     //[/UserPreSize]
 
@@ -143,6 +157,10 @@ MainComponent::MainComponent ()
     // simulation de clic sur le bouton
     // (pour forcer une tentative de connection dès le démarrage)
     buttonClicked(connectButton.get());
+
+    // display caché pour l'instant...
+    logTextEditor->setVisible(false);
+    displayLogButton->setVisible(false);
 
     //[/Constructor]
 }
@@ -161,6 +179,7 @@ MainComponent::~MainComponent()
     udpPortTextEditor = nullptr;
     displayLogButton = nullptr;
     logTextEditor = nullptr;
+    forwardingLabel = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -194,11 +213,12 @@ void MainComponent::resized()
     //[/UserPreResize]
 
     listenLabel1->setBounds (40, 88, getWidth() - 120, 24);
-    listenLabel2->setBounds (40, 120, getWidth() - 80, 24);
-    listenLabel3->setBounds (40, 144, getWidth() - 80, 24);
+    listenLabel2->setBounds (40, 144, getWidth() - 80, 24);
+    listenLabel3->setBounds (40, 168, getWidth() - 80, 24);
     notConnectedLabel->setBounds (getWidth() - 40 - 400, 88, 400, 24);
     displayLogButton->setBounds (40, (getHeight() / 2) + 85, 150, 24);
-    logTextEditor->setBounds (240, 192, getWidth() - 280, getHeight() - 206);
+    logTextEditor->setBounds (240, 240, getWidth() - 280, getHeight() - 254);
+    forwardingLabel->setBounds (40, 112, getWidth() - 94, 24);
     //[UserResized] Add your own custom resize handling here..
 
     //[/UserResized]
@@ -231,7 +251,7 @@ void MainComponent::buttonClicked (Button* buttonThatWasClicked)
             try {
                 newListenerForwarder = new OSCListenerForwarder(udpPort,
                                                                 MiemClock::now(),
-                                                                "MIEM bridge - OSC to MIDI",
+                                                                virtualMidiDeviceName,
                                                                 this);
             }
             catch (std::runtime_error& e) {
@@ -304,13 +324,13 @@ BEGIN_JUCER_METADATA
          fontsize="1.5e1" kerning="0" bold="1" italic="0" justification="33"
          typefaceStyle="Bold"/>
   <LABEL name="new label" id="3de9cbbfa9060fd1" memberName="listenLabel2"
-         virtualName="" explicitFocusOrder="0" pos="40 120 80M 24" textCol="ffc1c1c1"
+         virtualName="" explicitFocusOrder="0" pos="40 144 80M 24" textCol="ffc1c1c1"
          edTextCol="ff000000" edBkgCol="0" labelText="i (as a part of the OSC address) is a number between 0 and 127, and will be the MIDI CC number"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="33"/>
   <LABEL name="new label" id="2a6ba04889c45e9d" memberName="listenLabel3"
-         virtualName="" explicitFocusOrder="0" pos="40 144 80M 24" textCol="ffc1c1c1"
+         virtualName="" explicitFocusOrder="0" pos="40 168 80M 24" textCol="ffc1c1c1"
          edTextCol="ff000000" edBkgCol="0" labelText="f is a float between 0.0 and 1.0, and will be transformed into a MIDI CC value between 0 and 127"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
@@ -339,9 +359,15 @@ BEGIN_JUCER_METADATA
               buttonText="Display OSC-MIDI" connectedEdges="0" needsCallback="1"
               radioGroupId="0"/>
   <TEXTEDITOR name="log text editor" id="d4304e642d982fa2" memberName="logTextEditor"
-              virtualName="" explicitFocusOrder="0" pos="240 192 280M 206M"
+              virtualName="" explicitFocusOrder="0" pos="240 240 280M 254M"
               textcol="ffc1c1c1" bkgcol="ff202020" initialText="" multiline="1"
               retKeyStartsLine="1" readonly="1" scrollbars="1" caret="0" popupmenu="1"/>
+  <LABEL name="forwarding label" id="89727b1b4fbebdd0" memberName="forwardingLabel"
+         virtualName="" explicitFocusOrder="0" pos="40 112 94M 24" edTextCol="ff000000"
+         edBkgCol="0" labelText="Forwarding messages as MIDI CC to virtual device "
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="1.5e1" kerning="0" bold="1"
+         italic="0" justification="33" typefaceStyle="Bold"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

@@ -11,6 +11,7 @@
 #pragma once
 
 #include <algorithm> // std::min ...
+#include <memory>
 
 #include "JuceHeader.h"
 
@@ -38,15 +39,18 @@ namespace Miam
         int udpPort;
         std::string ipv4;
         OSCSender oscSender;
-        /// \brief for experiments (duplicated messages on osc port +10 000).
-        /// Not reliable : no errors will be displayed if this port cannot connect or send
-        OSCSender oscSender2;
-        const int secondSenderUdpPortOffset = 10000;
+        /// \brief Duplicated OSC messages on ports +10 000 and +20000.
+        /// Not reliable : no errors will be displayed if these ports cannot connect or send
+        ///
+        /// We must use pointers because Juce::OSCSender has a deleted copy constructor
+        std::vector<std::unique_ptr<OSCSender>> addedSenders;
+        const int addedSendersUdpPortOffset = 10000;
 #if defined(__MIEM_EXPERIMENTS) || defined(__MIEM_FORCE_DOUBLE_OSC_SENDER)
-        const bool alsoUseSender2 = true;
+        const int addedSendersCount = 2;
 #else
-        const bool alsoUseSender2 = false;
+        const int addedSendersCount = 0;
 #endif
+        
         
         bool sendFirstColOnly = false;
         std::vector<OSCMessage> firstColOscMessages;
@@ -87,6 +91,9 @@ namespace Miam
         iToRefresh(0),
         jToRefresh(-1) // -1 car on va l'incrémenter dès le premier tour
         {
+            addedSenders.resize(addedSendersCount);
+            for (size_t senderIndex = 0 ; senderIndex < addedSendersCount ; senderIndex ++)
+                addedSenders[senderIndex].reset(new OSCSender());
         }
         
         virtual ~MiamOscSender() {}
@@ -98,25 +105,26 @@ namespace Miam
         void SetUdpPort(int _udpPort)
         {
             oscSender.disconnect();
-            if (alsoUseSender2)
-                oscSender2.disconnect();
+            for (size_t i = 0 ; i < addedSenders.size() ; i++)
+                addedSenders[i]->disconnect();
             udpPort = _udpPort;
         }
         /// \brief Disconnects OSC before changing the configuration.
         void SetIpv4(std::string _ipv4)
         {
             oscSender.disconnect();
-            if (alsoUseSender2)
-                oscSender2.disconnect();
+            for (size_t i = 0 ; i < addedSenders.size() ; i++)
+                addedSenders[i]->disconnect();
             ipv4 = _ipv4;
         }
         bool TryConnect()
         {
             if ( ( !ipv4.empty() ) && ( udpPort > 0 ) )
             {
-                if (alsoUseSender2)
-                    oscSender2.connect(ipv4, udpPort + secondSenderUdpPortOffset); // no connection verification for 2nd sender
-                
+                // no connection verification for 2nd senders
+                for (size_t i = 0 ; i < addedSenders.size() ; i++)
+                    addedSenders[i]->connect(ipv4, udpPort + (((int)i+1) * addedSendersUdpPortOffset));
+                // status returned for the main osc sender only
                 return oscSender.connect(ipv4, udpPort);
             }
             else
@@ -340,8 +348,9 @@ namespace Miam
         void SendMatrixCoeff(int i, int j, float value)
         {
             oscSender.send(Miam_OSC_Matrix_Address, i, j, value);
-            if (alsoUseSender2)
-                oscSender2.send(Miam_OSC_Matrix_Address, i, j, value); // no check either...
+            
+            for (size_t senderIndex = 0 ; senderIndex < addedSenders.size() ; senderIndex++)
+                addedSenders[senderIndex]->send(Miam_OSC_Matrix_Address, i, j, value); // no check either...
         }
         /// \brief Envoi d'un seul coeff, à une adresse de paramètre OSC
         /// qui doit avoir déjà été initialisée/configurée
@@ -351,8 +360,8 @@ namespace Miam
             OSCMessage oscMessage = firstColOscMessages[paramIndex];
             oscMessage.addFloat32(value);
             oscSender.send(oscMessage);
-            if (alsoUseSender2)
-                oscSender2.send(oscMessage); // no check either...
+            for (size_t senderIndex = 0 ; senderIndex < addedSenders.size() ; senderIndex++)
+                addedSenders[senderIndex]->send(oscMessage); // no check either...
         }
         /// \brief Converts the value and sends its as a float to the given OSC address
         ///
@@ -366,8 +375,8 @@ namespace Miam
             
             if (! oscSender.send(message))
                 throw Miam::OscException("OSC Message couldn't be sent. Check OSC settings and addresses.");
-            if (alsoUseSender2)
-                oscSender2.send(message); // no check
+            for (size_t senderIndex = 0 ; senderIndex < addedSenders.size() ; senderIndex++)
+                addedSenders[senderIndex]->send(message); // no check
         }
         
         // Envoi d'un blob avec tout un ensemble de coeffs
@@ -382,8 +391,8 @@ namespace Miam
             OSCMessage blobMessage(Miam_OSC_Matrix_Address);
             blobMessage.addBlob(oscMemoryBlock);
             oscSender.send(blobMessage);
-            if (alsoUseSender2)
-                oscSender2.send(blobMessage);
+            for (size_t senderIndex = 0 ; senderIndex < addedSenders.size() ; senderIndex++)
+                addedSenders[senderIndex]->send(blobMessage);
         }
         
         public :
@@ -583,9 +592,14 @@ namespace Miam
             auto configurationTree = ControlStateSender<T>::GetConfigurationTree();
             configurationTree->put("ip", ipv4);
             configurationTree->put("udp.port", udpPort);
-            // port additionnel facultatif (pour double envoi des données)
-            if (alsoUseSender2)
-                configurationTree->put("udp.additional_port", udpPort + secondSenderUdpPortOffset);
+            // ports additionnels facultatifs (pour double, triple... envoi des données)
+            for (size_t i = 0 ; i < addedSenders.size() ; i++)
+            {
+                configurationTree->put("udp.additional_port_"
+                                       + boost::lexical_cast<std::string>(i+1),
+                                       udpPort + ((i+1)*addedSendersUdpPortOffset));
+                
+            }
             return configurationTree;
         }
         virtual void SetConfigurationFromTree(bptree::ptree& tree) override
