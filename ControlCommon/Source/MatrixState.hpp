@@ -120,8 +120,9 @@ namespace Miam
         }
         bool IsIndexWithinActualInputOutputBounds(size_t index1d)
         {
-            return (matrix.GetIndex2dFromIndex(index1d).i < inputsCount)
-                && (matrix.GetIndex2dFromIndex(index1d).j < outputsCount);
+            auto index2d = matrix.GetIndex2dFromIndex(index1d);
+            return ((int)(index2d.i) < inputsCount)
+            && ((int)(index2d.j) < outputsCount);
         }
 
         // - - - - - Matrix management - - - - -

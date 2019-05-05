@@ -104,13 +104,15 @@ void Model::ConnectAndSendState(std::shared_ptr<ControlState<double>> stateToSen
         std::vector<size_t> allIndexes;
         if (rowToSend == -1)
         {
-            allIndexes.reserve(castedMatrixState->GetInputsCount());
             for (size_t i=0 ; i<castedMatrixState->GetInputsCount() ; i++)
                 allIndexes.push_back( castedMatrixState->GetMatrix()
                                      ->GetIndexFromIndex2d(Index2d(i, 0)) );
         }
         else if (rowToSend >= 0)
-            allIndexes.push_back(rowToSend);
+        {
+            allIndexes.push_back( castedMatrixState->GetMatrix()
+                                 ->GetIndexFromIndex2d(Index2d(rowToSend, 0)) );
+        }
         // commande d'envoi
         //assert(false); // désactivé pour l'instant !!!!! à remettre en marche
         // --> car l'état doit maintenant absolument être un état de backup (qui

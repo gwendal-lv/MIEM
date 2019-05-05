@@ -13,6 +13,7 @@
 #include "SpatStatesEditionManager.h"
 
 #include "Model.h"
+#include "MiamOscSender.hpp" // pour méthode statique d'adresse OSC par défaut
 #include "View.h"
 #include "SpatStatesEditionComponent.h"
 
@@ -264,16 +265,19 @@ void SpatStatesEditionManager::OnMatrixButtonClicked(int row, int /*col*/,
 {
     if (GetSessionPurpose() == AppPurpose::GenericController)
     {
-        // On checke d'abord si le message OSC est OK... Sinon on envoie rien sauf un msg d'erreur
+        // On checke d'abord si le message OSC est OK...
         try {
             TextUtils::ParseStringToJuceOscMessage(matrixText);
         }
         catch(ParseException&) {
-            view->DisplayInfo( TRANS("Cannot send the OSC message: incorrect OSC address pattern.").toStdString() );
-            return;
+            // Et on corrige l'erreur pour envoyer qqchose dans tous les cas
+            matrixText = MiamOscSender<double>::GetDefaultOscAddress(row);
+            
+            //view->DisplayInfo( TRANS("Cannot send the OSC message: incorrect OSC address pattern.").toStdString() );
+            //return;
         }
         
-        // Si le parse marche pour ce coeff OSC, on utilise la méthode générale
+        // On utilise alors la méthode générale
         // d'envoi d'un coefficient, limitée à une seule ligne
         this->OnSendState(row);
     }

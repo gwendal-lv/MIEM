@@ -130,6 +130,13 @@ namespace Miam
             else
                 return false;
         }
+        /// \brief Définit l'adresse OSC par défaut d'une ligne de la matrice
+        static std::string GetDefaultOscAddress(int rowIndex)
+        {
+            return Miam_OSC_Generic_Param_Address
+                + std::string("/")
+                + boost::lexical_cast<std::string>(rowIndex+1);
+        }
         /// \brief Choisit si l'on ne va envoyer que les coeffients de la première colonne
         /// (contrôle de paramètres simple, pas contrôle de matrice entière). Si c'est le cas,
         /// on peut préciser l'adresse OSC pour chaque ligne (sinon, adresse de ligne par défaut
@@ -169,9 +176,7 @@ namespace Miam
                      // (à partir de 1, par à partir de zéro)
                     if (useGenericAddressPattern)
                     {
-                        OSCAddressPattern addressPattern(Miam_OSC_Generic_Param_Address
-                                                         + std::string("/")
-                                                         + boost::lexical_cast<std::string>(i+1));
+                        OSCAddressPattern addressPattern(GetDefaultOscAddress((int)i));
                         firstColOscMessages.push_back(OSCMessage(addressPattern));
                     }
                 }
@@ -272,7 +277,9 @@ namespace Miam
         {
             for (size_t i=0 ; i<changesIndexes.size() ; i++)
             {
-                if (matrixState->IsIndexWithinActualInputOutputBounds(changesIndexes[i]))
+                // debug...
+                bool isIdxValid = matrixState->IsIndexWithinActualInputOutputBounds(changesIndexes[i]);
+                if ( isIdxValid )
                 {
                     Index2d index2d = matrixState->GetMatrix()->GetIndex2dFromIndex(changesIndexes[i]);
                     if (index2d.j == 0)
