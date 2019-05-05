@@ -108,7 +108,7 @@ MainComponent::MainComponent ()
     udpPortTextEditor->setPopupMenuEnabled (true);
     udpPortTextEditor->setColour (TextEditor::backgroundColourId, Colour (0xff616161));
     udpPortTextEditor->setColour (TextEditor::outlineColourId, Colours::white);
-    udpPortTextEditor->setText (TRANS("8012"));
+    udpPortTextEditor->setText (TRANS("28012"));
 
     udpPortTextEditor->setBounds (224, 40, 79, 24);
 
@@ -352,7 +352,7 @@ BEGIN_JUCER_METADATA
          italic="0" justification="34" typefaceStyle="Bold"/>
   <TEXTEDITOR name="udp port text editor" id="1e7dc36d6b22994b" memberName="udpPortTextEditor"
               virtualName="" explicitFocusOrder="0" pos="224 40 79 24" bkgcol="ff616161"
-              outlinecol="ffffffff" initialText="8012" multiline="0" retKeyStartsLine="0"
+              outlinecol="ffffffff" initialText="28012" multiline="0" retKeyStartsLine="0"
               readonly="0" scrollbars="1" caret="1" popupmenu="1"/>
   <TEXTBUTTON name="display log button" id="fd6f8dbc16ea7993" memberName="displayLogButton"
               virtualName="" explicitFocusOrder="0" pos="40 85C 150 24" bgColOff="ff616161"

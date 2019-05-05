@@ -87,7 +87,10 @@ namespace Miam
         void OnRenameState(std::string newName, int stateIndex);
         void OnAddState();
         void OnDeleteSelectedState();
-        void OnSendState();
+        /// \brief Sends the full state if row==-1, or a unique row if asked.
+        ///
+        /// This function might be called internally, or after a callback on a button.
+        void OnSendState(int rowToSend = -1);
         void OnSendZeros();
         void OnMoveSelectedStateUp();
         void OnMoveSelectedStateDown();

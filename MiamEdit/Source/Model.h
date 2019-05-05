@@ -81,7 +81,13 @@ namespace Miam
         /// Throws exceptions if the OSC sender or OSC message are not configured properly
         void ConnectAndSendOSCMessage(const std::string& oscAddress, double argumentValue);
         
-        void ConnectAndSendState(std::shared_ptr<ControlState<double>> stateToSend);
+        /// \brief Sends a full state (after trying to connect),
+        /// and using the current interpolation curves from the
+        /// interpolator.
+        ///
+        /// Sends only a particular row if a valid index is given.
+        void ConnectAndSendState(std::shared_ptr<ControlState<double>> stateToSend,
+                                 int rowToSend = -1);
         
         private :
         std::shared_ptr<MiamOscSender<double>> tryConnectAndGetOscSender();

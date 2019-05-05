@@ -174,7 +174,7 @@ void SpatStatesEditionManager::OnDeleteSelectedState()
     else
         throw std::logic_error("Cannot delete state: no state is currently selected.");
 }
-void SpatStatesEditionManager::OnSendState()
+void SpatStatesEditionManager::OnSendState(int rowToSend)
 {
     // At first : Actualisation depuis l'affichage graphique
     sendCurrentDataToModel();
@@ -183,7 +183,7 @@ void SpatStatesEditionManager::OnSendState()
     try {
         if (selectedSpatState)
         {
-            model->ConnectAndSendState(selectedSpatState);
+            model->ConnectAndSendState(selectedSpatState, rowToSend);
             view->DisplayInfo(TRANS("OSC Message sent to ").toStdString() + model->GetStateSender(0)->GetAddressAsString());
         }
         else
@@ -259,7 +259,7 @@ void SpatStatesEditionManager::OnMatrixValueChanged(int /*row*/, int /*col*/, do
 {
     updateStateInfo();
 }
-void SpatStatesEditionManager::OnMatrixButtonClicked(int /*row*/, int /*col*/,
+void SpatStatesEditionManager::OnMatrixButtonClicked(int row, int /*col*/,
 											std::string matrixText, double matrixValue)
 {
     if (GetSessionPurpose() == AppPurpose::GenericController)
@@ -273,15 +273,9 @@ void SpatStatesEditionManager::OnMatrixButtonClicked(int /*row*/, int /*col*/,
             return;
         }
         
-        // Si le modèle a bien envoyé : on affiche ENVOYÉ
-        try {
-            model->ConnectAndSendOSCMessage(matrixText, matrixValue);
-            view->DisplayInfo(TRANS("OSC Message sent to ").toStdString() + model->GetStateSender(0)->GetAddressAsString());
-        }
-        // Sinon on affiche l'erreur de connection transmise par le modèle
-        catch(Miam::OscException& e) {
-            view->DisplayInfo( e.what() );
-        }
+        // Si le parse marche pour ce coeff OSC, on utilise la méthode générale
+        // d'envoi d'un coefficient, limitée à une seule ligne
+        this->OnSendState(row);
     }
 }
 
