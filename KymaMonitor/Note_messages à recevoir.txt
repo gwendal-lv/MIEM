@@ -1,0 +1,7 @@
+/osc/response_from,i
+/osc/notify/vcs/...,i
+/osc/notify/presets/...,i
+/osc/widget,is
+/osc/voice,ii
+/osc/preset,is
+/vcs,b

@@ -1,0 +1,8 @@
+/osc/respond_to,i
+/osc/notify/vcs/...,i
+/osc/notify/presets/...,i
+/osc/widget,i
+/osc/voice,i
+/osc/preset,i
+/preset,i
+/volume,i

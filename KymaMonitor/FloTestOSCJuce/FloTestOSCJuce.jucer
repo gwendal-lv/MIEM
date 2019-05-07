@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="BKbpcO" name="KymaMonitor" projectType="guiapp" jucerVersion="5.4.3"
+              headerPath="../../../../&#10;../../../../boost/">
+  <MAINGROUP id="Az1MYn" name="KymaMonitor">
+    <GROUP id="{65F28AC4-49FA-4FE2-6AE5-62336953F9D6}" name="Source">
+      <GROUP id="{68705859-5C43-83DD-BA13-BC19F87B1648}" name="MyClasses">
+        <FILE id="ykU92X" name="MyPacaranaManager.cpp" compile="1" resource="0"
+              file="Source/MyPacaranaManager.cpp"/>
+        <FILE id="ZguM5v" name="MyPacaranaManager.h" compile="0" resource="0"
+              file="Source/MyPacaranaManager.h"/>
+      </GROUP>
+      <GROUP id="{52F65906-DC06-A147-F8F0-4CC7D4C856DD}" name="MyComponents">
+        <FILE id="hBvpSo" name="MyOscConnector.cpp" compile="1" resource="0"
+              file="Source/MyOscConnector.cpp"/>
+        <FILE id="eZTjhs" name="MyOscConnector.h" compile="0" resource="0"
+              file="Source/MyOscConnector.h"/>
+        <FILE id="NkN7ZD" name="MyWidgetBox.cpp" compile="1" resource="0" file="Source/MyWidgetBox.cpp"/>
+        <FILE id="lAYUYV" name="MyWidgetBox.h" compile="0" resource="0" file="Source/MyWidgetBox.h"/>
+      </GROUP>
+      <FILE id="ASd8i5" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+      <FILE id="CfgI3m" name="MainComponent.cpp" compile="1" resource="0"
+            file="Source/MainComponent.cpp"/>
+      <FILE id="TQoa6B" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <VS2017 targetFolder="Builds/VisualStudio2017">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug"/>
+        <CONFIGURATION isDebug="0" name="Release"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="..\..\..\..\Resources\JUCE\modules"/>
+        <MODULEPATH id="juce_data_structures" path="..\..\..\..\Resources\JUCE\modules"/>
+        <MODULEPATH id="juce_events" path="..\..\..\..\Resources\JUCE\modules"/>
+        <MODULEPATH id="juce_graphics" path="..\..\..\..\Resources\JUCE\modules"/>
+        <MODULEPATH id="juce_gui_basics" path="..\..\..\..\Resources\JUCE\modules"/>
+        <MODULEPATH id="juce_gui_extra" path="..\..\..\..\Resources\JUCE\modules"/>
+        <MODULEPATH id="juce_opengl" path="..\..\..\..\Resources\JUCE\modules"/>
+        <MODULEPATH id="juce_osc" path="..\..\..\..\Resources\JUCE\modules"/>
+      </MODULEPATHS>
+    </VS2017>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
+    <MODULE id="juce_osc" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
+  </MODULES>
+  <LIVE_SETTINGS>
+    <WINDOWS buildEnabled="0"/>
+  </LIVE_SETTINGS>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
+</JUCERPROJECT>

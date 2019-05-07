@@ -1,0 +1,18 @@
+1) Open port
+2) sent first communication
+	-> wait for answer
+3) ask notification for vcs
+	-> wait for answer
+	-> save number
+	-> sort useful widgets
+	-> saves ID from useful widgets
+4) ask notification for presets
+	-> wait for answer
+	-> save nbr
+	-> create as many PresetObj as nbr
+	-> for each PresetObj, save usefull widgets values
+
+
+TO DO THIS
+
+Manager => save reference in osc comm
