@@ -50,6 +50,7 @@ namespace Miam {
 		void getWidgetInfo();
 		void treatWidgetInfo(int widgetId, std::string JSONFile);
 		void createAllPresets();
+		void treatBlobValue(MemoryBlock blobInout);
 
 		void savePresetInfo(int presetId, std::string presetName);
 

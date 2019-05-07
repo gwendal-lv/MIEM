@@ -728,6 +728,11 @@ namespace Miam {
 				if (!(pacaManager->gotTotalWidget()))
 					pacaManager->setWidgetsNumber(message[0].getInt32());
 			}
+			else if (thePattern == "/vcs") // gets 1 blob
+			{
+				MemoryBlock blob = message[0].getBlob(); // { byteCount, int_id0, float_value0, ... }
+				pacaManager-> treatBlobValue(blob);
+			}
 			else
 			{
 				DBG("ADDRESS NOT IMPLEMENTED : " + thePattern);
@@ -757,6 +762,28 @@ namespace Miam {
 			auto receivedData = arg.getInt32();
 			theStringArg = std::to_string(receivedData);
 		}
+		else if (arg.isBlob())
+		{
+			auto receivedData = arg.getBlob(); // { byteCount, int_id0, float_value0, ... }
+			int count = receivedData.getSize();
+			//int id;
+			//float value;
+			//theStringArg = "{" + (String)count;
+			//for (int i = 1; i < count; i += 2)
+			//{
+			//	id = receivedData[i];
+			//	value = receivedData[i + 1];
+			//	theStringArg += ", [" + (String)id + ", " + (String)value + "] ";
+			//}
+
+			theStringArg = "{ " + (String)receivedData[0];
+			for (int i = 1; i < count; i++)
+			{
+				theStringArg += ", " + (String)receivedData[i];
+			}
+
+			theStringArg += " }";
+		}
 		else
 		{
 			theStringArg = "invalid type";
@@ -774,6 +801,7 @@ namespace Miam {
 		addListener(this, "/osc/preset"); // describes the preset
 		addListener(this, "/osc/notify/presets/PC"); // GIVES THE AMOUNTS OF EXISTING PRESETS
 		addListener(this, "/osc/notify/vcs/PC"); // GIVES THE AMOUNTS OF EXISTING WIDGETS
+		addListener(this, "/vcs"); // notif when widgets are modified
 	}
 
 

@@ -170,6 +170,74 @@ namespace Miam {
 
 	}
 
+	void MyPacaranaManager::treatBlobValue(MemoryBlock blobInout)
+	{
+
+		//// OTHER WAY BELOW, KEEPING THIS JUST IN CASE
+		//std::vector<unsigned char> idTab;
+		//std::vector<unsigned char> valTab;
+
+		//idTab.begin();
+		//valTab.begin();
+
+		//int count = blobInout.getSize();
+		//int temp;
+		//for (int i = 0; i < count / 2; i++)
+		//{
+		//	temp = blobInout[i];
+		//	idTab.push_back(temp);
+		//}
+		//for (int i = count / 2; i < count; i++)
+		//{
+		//	temp = blobInout[i];
+		//	valTab.push_back(temp);
+		//}
+
+		//int id = int((unsigned char)idTab[0] << 24 | (unsigned char)idTab[1] << 16 | (unsigned char)idTab[2] << 8 | (unsigned char)idTab[3]); // correspond au ConcreteID du widget
+
+
+		//THIS ONE WORKS, FOR NOW
+
+		//le nombre de bytes
+		int byteCount = blobInout.getSize();
+		int pairCount = byteCount / 8;
+
+		//les outils de conversion
+		union IntFromByte
+		{
+			int unionInt;
+			unsigned char byteArray[4];
+		} iFB;
+
+		union FloatFromByte
+		{
+			float unionFloat;
+			unsigned char byteArray[4];
+		} fFB;
+
+		//pour chaque paire
+		for (int i = 0; i < pairCount; i++)
+		{
+			iFB.byteArray[0] = blobInout[i * 8 + 3];
+			iFB.byteArray[1] = blobInout[i * 8 + 2];
+			iFB.byteArray[2] = blobInout[i * 8 + 1];
+			iFB.byteArray[3] = blobInout[i * 8 + 0];
+
+			int id = iFB.unionInt;
+
+			fFB.byteArray[0] = blobInout[i * 8 + 7];
+			fFB.byteArray[1] = blobInout[i * 8 + 6];
+			fFB.byteArray[2] = blobInout[i * 8 + 5];
+			fFB.byteArray[3] = blobInout[i * 8 + 4];
+
+			float value = fFB.unionFloat;
+
+
+		}
+
+		DBG("NOT FINISHED, WE DON4T DO ANYTHING WITH THESE YET");
+	}
+
 	void MyPacaranaManager::savePresetInfo(int presetId, std::string presetName)
 	{
 		if (allMyPresets.size() > presetId) {
