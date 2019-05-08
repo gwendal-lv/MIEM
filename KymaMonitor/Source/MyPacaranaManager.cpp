@@ -8,23 +8,21 @@
   ==============================================================================
 */
 
-#include "MyPacaranaManager.h"
-#include "MyOscConnector.h"
 #include <vector>
 #include <string>
-
-//#include <boost/property_tree/ptree.hpp>
-//#include <boost/property_tree/ptree_fwd.hpp>
-//#include <boost/property_tree/json_parser.hpp>
-
-#include "../boost/property_tree/ptree.hpp"
-#include "../boost/property_tree/ptree_fwd.hpp"
-#include "../boost/property_tree/json_parser.hpp"
-
 #include <sstream>
+#include "MyPacaranaManager.h"
+#include "MyOscConnector.h"
+
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/ptree_fwd.hpp>
+#include <boost/property_tree/json_parser.hpp>
+
+//#include "../boost/property_tree/ptree.hpp"
+//#include "../boost/property_tree/ptree_fwd.hpp"
+//#include "../boost/property_tree/json_parser.hpp"
 
 using namespace std;
-
 namespace pt = boost::property_tree;
 
 namespace Miam {
@@ -43,18 +41,24 @@ namespace Miam {
 	void MyPacaranaManager::init(MyOscConnector &oscConn)
 	{
 		DBG("=====init pacamanager=====");
+
 		oscConnector = &oscConn;
 
 		presetNbr = -1;
 		totalWidgetsNbr = -1;
+		presetBeingConfigurated = -1;
 		usefulWidgetNbr = 0;
 
-		allPresetsPrepared = false;
 		allWidgetsPrepared = false;
+
+		waitingForNotif = false;
 
 		allMyPresets.begin();
 		allMyWidgets.begin();
+
+		DBG("  => init pacaMa done ====");
 	}
+
 
 	void MyPacaranaManager::lauch()
 	{
@@ -63,14 +67,20 @@ namespace Miam {
 			oscConnector->connectIn();
 		if (!oscConnector->isConnectedOut())
 			oscConnector->connectOut();
-		oscConnector->sendIntroMessage();
+
+		getVcsNotif(false);
+		getPresetNotif(false);
+
+		oscConnector->sendIntroMessage(); // sends port to respond to
+
+		DBG("  => launch done =========");
 	}
 
 	void MyPacaranaManager::getWidgetsNumber()
 	{
 		DBG("======get widgets nbr=====");
-		int getNotifs = 1;
-		oscConnector->sendMessage("/osc/notify/vcs/PC", getNotifs);
+		getVcsNotif(true);
+		DBG("  => get widgets nbr ====");
 	}
 
 	void MyPacaranaManager::setWidgetsNumber(int nbr)
@@ -78,14 +88,14 @@ namespace Miam {
 		DBG("======set widgets nbr=====");
 		totalWidgetsNbr = nbr;
 		getWidgetInfo();
+		DBG("  => set wid nbr done ====");
 	}
-
 
 	void MyPacaranaManager::getPresetsNumber()
 	{
 		DBG("======get presets nbr=====");
-		int getNotifs = 1;
-		oscConnector->sendMessage("/osc/notify/presets/PC", getNotifs);
+		getPresetNotif(true);
+		DBG("  => ==== done ===========");
 	}
 
 	void MyPacaranaManager::setPresetsNumber(int nbr)
@@ -93,7 +103,9 @@ namespace Miam {
 		DBG("======set presets nbr=====");
 		presetNbr = nbr;
 		createAllPresets();
+		DBG("  => set pres nbr done ===");
 	}
+
 
 	void MyPacaranaManager::getWidgetInfo()
 	{
@@ -102,7 +114,81 @@ namespace Miam {
 		{
 			oscConnector->sendMessage("/osc/widget", i);
 		}
+		DBG("  => get wid info done ===");
 	}
+
+	void MyPacaranaManager::createAllPresets()
+	{
+		DBG("====create all presets====");
+
+		getVcsNotif(false);
+
+		// We roll the dices, to avoid having no changes in the values later when configurating...
+		rollDices();
+
+		getVcsNotif(true);
+
+		for (int i = 0; i < presetNbr; i++)
+		{
+			KymaPreset newPreset;
+			newPreset.init(this);
+			newPreset.setAllPresets(allMyWidgets);
+
+			allMyPresets.push_back(newPreset);
+			allMyPresets.resize(i + 1);
+			oscConnector->sendMessage("/osc/preset", i);
+			DBG("    -> preset done !======");
+		}
+
+		DBG("  => creat all pres done =");
+	}
+
+
+	void MyPacaranaManager::savePresetBaseInfo(int presetId, std::string presetName)
+	{
+		if (allMyPresets.size() > presetId) {
+			allMyPresets[presetId].setName(presetName);
+			DBG(allMyPresets[presetId].to_string());
+		}
+
+		if (presetId == presetNbr - 1)
+			startPresetConfigurationLoop();
+	}
+
+	void MyPacaranaManager::startPresetConfigurationLoop()
+	{
+		presetBeingConfigurated = 0;
+		nextPresetConfiguration();
+	}
+
+	void MyPacaranaManager::nextPresetConfiguration()
+	{
+		getVcsNotif(false);
+		waitingForNotif = true;
+		rollDices();
+		getVcsNotif(true); // ICI CA VA TROP VITE, IL FAUT RALENTIR LE TRUC
+		for (int i = 0; i < 100000; i++)
+		{
+			;
+		}
+		oscConnector->sendMessage("/preset", presetBeingConfigurated + 1); // on doit faire +1 parce que dans le kyma les ID démarrent à 1
+	}
+
+	void MyPacaranaManager::endPresetconfiguration()
+	{
+		presetBeingConfigurated++;
+		if (presetBeingConfigurated < allMyPresets.size())
+			nextPresetConfiguration();
+	}
+
+	void MyPacaranaManager::saveVcsInfo(int eventId, float newValue)
+	{
+		if (!isConfiguringPreset())
+			return;
+
+		allMyPresets[presetBeingConfigurated].setWidgetValue(eventId, newValue);
+	}
+
 
 	void MyPacaranaManager::treatWidgetInfo(int widgetId, std::string JSONFile)
 	{
@@ -148,26 +234,6 @@ namespace Miam {
 			getPresetsNumber();
 			allWidgetsPrepared = true;
 		}
-	}
-
-	void MyPacaranaManager::createAllPresets()
-	{
-		DBG("====create all presets====");
-		DBG("BUGGY, STILL : MyPacaranaManager::createAllPresets()");
-
-		// Set everything to Zero
-		setAllToZero();
-
-		for (int i = 0; i < presetNbr; i++)
-		{
-			KymaPreset newPreset;
-			newPreset.setAllPresets(allMyWidgets);
-
-			allMyPresets.push_back(newPreset);
-			allMyPresets.resize(i + 1);
-			oscConnector->sendMessage("/osc/preset", i);
-		}
-
 	}
 
 	void MyPacaranaManager::treatBlobValue(MemoryBlock blobInout)
@@ -232,21 +298,15 @@ namespace Miam {
 
 			float value = fFB.unionFloat;
 
-
+			if (isConfiguringPreset())
+				saveVcsInfo(id, value);
 		}
-
-		DBG("NOT FINISHED, WE DON4T DO ANYTHING WITH THESE YET");
 	}
 
-	void MyPacaranaManager::savePresetInfo(int presetId, std::string presetName)
-	{
-		if (allMyPresets.size() > presetId) {
-			allMyPresets[presetId].setName(presetName);
-			DBG(allMyPresets[presetId].to_string());
-		}
 
-		if (presetId == presetNbr - 1)
-			allPresetsPrepared = true;
+	void MyPacaranaManager::rollDices()
+	{
+		oscConnector->sendMessage("/preset", 128);
 	}
 
 	void MyPacaranaManager::setAllToZero()
@@ -257,15 +317,33 @@ namespace Miam {
 		}
 	}
 
+	void MyPacaranaManager::getVcsNotif(bool yesOrNo)
+	{
+		int getNotifs = yesOrNo ? 1 : 0;
+		oscConnector->sendMessage("/osc/notify/vcs/PC", getNotifs);
+	}
+
+	void MyPacaranaManager::getPresetNotif(bool yesOrNo)
+	{
+		int getNotifs = yesOrNo ? 1 : 0;
+		oscConnector->sendMessage("/osc/notify/presets/PC", getNotifs);
+	}
+
 	// ================================================================================
 
 	KymaPreset::KymaPreset()
 	{
 		name = "NOT ASSIGNED";
+		widgetConfigurated = 0;
 	}
 
 	KymaPreset::~KymaPreset()
 	{
+	}
+
+	void KymaPreset::init(MyPacaranaManager * refPaca)
+	{
+		pacaManager = refPaca;
 	}
 
 	std::string KymaPreset::to_string()
@@ -281,7 +359,6 @@ namespace Miam {
 		return outString;
 	}
 
-
 	void KymaPreset::setAllPresets(std::vector<KymaWidget> widgets)
 	{
 		allWidgets = widgets; // ON COPIE LE VECTEUR
@@ -289,6 +366,25 @@ namespace Miam {
 		for (int i = 0; i < allWidgets.size(); i++)
 		{
 			allWidgets[i].value = 0.5;
+		}
+	}
+
+	void KymaPreset::setWidgetValue(int eventId, float newValue)
+	{
+		for (int i = 0; i < allWidgets.size(); i++)
+		{
+			if (eventId == allWidgets[i].concreteId)
+			{
+				allWidgets[i].value = newValue;
+				widgetConfigurated++;
+				break;
+			}
+		}
+
+		if (isFullyConfigurated())
+		{
+			DBG("Config done : " + to_string());
+			pacaManager->endPresetconfiguration();
 		}
 	}
 

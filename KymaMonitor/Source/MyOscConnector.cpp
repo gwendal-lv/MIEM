@@ -18,12 +18,13 @@
 */
 
 //[Headers] You can add your own extra header files here...
-#include "MyPacaranaManager.h"
 #include <vector>
 #include <string>
+#include "MyPacaranaManager.h"
 //[/Headers]
 
 #include "MyOscConnector.h"
+
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
 
@@ -36,7 +37,7 @@ namespace Miam {
 		currentInPort = -1;
 		currentOutPort = -1;
 
-		box_ip->setText("169.254.207.188");
+		box_ip->setText("169.254.47.166");
 
 		receiver.init(refPaca, messageReceived.get());
 
@@ -96,10 +97,6 @@ namespace Miam {
 
 	void MyOscConnector::sendIntroMessage()
 	{
-		// Disable notifications to avoid double messages in later steps
-		sendMessage("/osc/notify/vcs/PC", 0);
-		sendMessage("/osc/notify/presets/PC", 0);
-
 		sendMessage("/osc/respond_to", portIn_line->getText().getIntValue());
 
 	}
@@ -502,6 +499,12 @@ namespace Miam {
 
 		comboButton->setBounds(616, 72, 96, 72);
 
+		configPresetidButton.reset(new TextButton("config preset"));
+		addAndMakeVisible(configPresetidButton.get());
+		configPresetidButton->setButtonText(TRANS("config Preset"));
+		configPresetidButton->addListener(this);
+
+		configPresetidButton->setBounds(608, 325, 160, 24);
 
 		//[UserPreSize]
 
@@ -551,6 +554,7 @@ namespace Miam {
 		notifVcsButtonSend = nullptr;
 		notifVcsInt = nullptr;
 		comboButton = nullptr;
+		configPresetidButton = nullptr;
 
 
 		//[Destructor]. You can add your own custom destruction code here..
@@ -676,6 +680,15 @@ namespace Miam {
 
 			//[/UserButtonCode_comboButton]
 		}
+		else if (buttonThatWasClicked == configPresetidButton.get())
+		{
+			//[UserButtonCode_configPresetidButton] -- add your button handler code here..
+
+			pacaManager->startPresetConfigurationLoop();
+			configPresetidButton->setEnabled(false);
+
+			//[/UserButtonCode_configPresetidButton]
+		}
 
 		//[UserbuttonClicked_Post]
 
@@ -715,11 +728,12 @@ namespace Miam {
 			}
 			else if (thePattern == "/osc/preset") // gets 1 int and 1 string
 			{
-				if (!(pacaManager->isFullyReady()))
-					pacaManager->savePresetInfo(message[0].getInt32(), autoStringParsing(message[1]).toStdString());
+				if (pacaManager->allPresetsPrepared())
+					pacaManager->savePresetBaseInfo(message[0].getInt32(), autoStringParsing(message[1]).toStdString());
 			}
 			else if (thePattern == "/osc/notify/presets/PC") // gets 1 int
 			{
+				pacaManager->getNotif();
 				if (!(pacaManager->gotAllPresets()))
 					pacaManager->setPresetsNumber(message[0].getInt32());
 			}
@@ -731,7 +745,7 @@ namespace Miam {
 			else if (thePattern == "/vcs") // gets 1 blob
 			{
 				MemoryBlock blob = message[0].getBlob(); // { byteCount, int_id0, float_value0, ... }
-				pacaManager-> treatBlobValue(blob);
+				pacaManager->treatBlobValue(blob);
 			}
 			else
 			{
@@ -947,6 +961,13 @@ BEGIN_JUCER_METADATA
   <TEXTBUTTON name="new button" id="e02c10e6e8dac91f" memberName="comboButton"
 			  virtualName="" explicitFocusOrder="0" pos="616 72 96 72" bgColOff="ff008000"
 			  buttonText="Go !" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
+  <TEXTBUTTON name="config preset" id="eb34eb1e7062dd76" memberName="configPresetidButton"
+			  virtualName="" explicitFocusOrder="0" pos="608 325 160 24" buttonText="config Preset"
+			  connectedEdges="0" needsCallback="1" radioGroupId="0"/>
+  <TEXTEDITOR name="new text editor" id="534d8d0c882ca35b" memberName="configPresetidInt"
+			  virtualName="" explicitFocusOrder="0" pos="768 325 25 24" initialText="0"
+			  multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"
+			  caret="1" popupmenu="1"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA
