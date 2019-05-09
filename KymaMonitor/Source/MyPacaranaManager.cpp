@@ -3,7 +3,7 @@
 
 	MyPacaranaManager.cpp
 	Created: 3 May 2019 8:40:33am
-	Author:  Irisib
+	Author:  F. Dawagne
 
   ==============================================================================
 */
@@ -11,16 +11,13 @@
 #include <vector>
 #include <string>
 #include <sstream>
-#include "MyPacaranaManager.h"
-#include "MyOscConnector.h"
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ptree_fwd.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
-//#include "../boost/property_tree/ptree.hpp"
-//#include "../boost/property_tree/ptree_fwd.hpp"
-//#include "../boost/property_tree/json_parser.hpp"
+#include "MyPacaranaManager.h"
+#include "OscConnector.h"
 
 using namespace std;
 namespace pt = boost::property_tree;
@@ -38,11 +35,11 @@ namespace Miam {
 	{
 	}
 
-	void MyPacaranaManager::init(MyOscConnector &oscConn)
+	void MyPacaranaManager::init(OscConnector* refConn)
 	{
 		DBG("=====init pacamanager=====");
 
-		oscConnector = &oscConn;
+		oscConnector = refConn;
 
 		presetNbr = -1;
 		totalWidgetsNbr = -1;
@@ -71,8 +68,9 @@ namespace Miam {
 		getVcsNotif(false);
 		getPresetNotif(false);
 
-		oscConnector->sendIntroMessage(); // sends port to respond to
+		oscConnector->addToSendingQueue(OSCMessage("/osc/respond_to", oscConnector->getInPort())); // sends port to respond to
 
+		oscConnector->launchThread();
 		DBG("  => launch done =========");
 	}
 
@@ -112,7 +110,7 @@ namespace Miam {
 		DBG("======get widget info=====");
 		for (int i = 0; i < totalWidgetsNbr; i++)
 		{
-			oscConnector->sendMessage("/osc/widget", i);
+			oscConnector->addToSendingQueue(OSCMessage("/osc/widget", i));
 		}
 		DBG("  => get wid info done ===");
 	}
@@ -136,7 +134,7 @@ namespace Miam {
 
 			allMyPresets.push_back(newPreset);
 			allMyPresets.resize(i + 1);
-			oscConnector->sendMessage("/osc/preset", i);
+			oscConnector->addToSendingQueue(OSCMessage("/osc/preset", i));
 			DBG("    -> preset done !======");
 		}
 
@@ -171,7 +169,7 @@ namespace Miam {
 		{
 			;
 		}
-		oscConnector->sendMessage("/preset", presetBeingConfigurated + 1); // on doit faire +1 parce que dans le kyma les ID démarrent à 1
+		oscConnector->addToSendingQueue(OSCMessage("/preset", presetBeingConfigurated + 1)); // on doit faire +1 parce que dans le kyma les ID démarrent à 1
 	}
 
 	void MyPacaranaManager::endPresetconfiguration()
@@ -179,6 +177,10 @@ namespace Miam {
 		presetBeingConfigurated++;
 		if (presetBeingConfigurated < allMyPresets.size())
 			nextPresetConfiguration();
+		else {
+
+			DBG(" -> finished presets config");
+		}
 	}
 
 	void MyPacaranaManager::saveVcsInfo(int eventId, float newValue)
@@ -301,32 +303,34 @@ namespace Miam {
 			if (isConfiguringPreset())
 				saveVcsInfo(id, value);
 		}
+		DBG("  -> finished blob reading");
 	}
 
 
 	void MyPacaranaManager::rollDices()
 	{
-		oscConnector->sendMessage("/preset", 128);
+		;
+		oscConnector->addToSendingQueue(OSCMessage("/preset", 128));
 	}
 
 	void MyPacaranaManager::setAllToZero()
 	{
 		for (int i = 0; i < allMyWidgets.size(); i++)
 		{
-			oscConnector->sendMessage("/vcs", allMyWidgets[i].concreteId, 0); // "/vcs" int float
+			oscConnector->addToSendingQueue(OSCMessage("/vcs", allMyWidgets[i].concreteId, 0)); // "/vcs" int float
 		}
 	}
 
 	void MyPacaranaManager::getVcsNotif(bool yesOrNo)
 	{
 		int getNotifs = yesOrNo ? 1 : 0;
-		oscConnector->sendMessage("/osc/notify/vcs/PC", getNotifs);
+		oscConnector->addToSendingQueue(OSCMessage("/osc/notify/vcs/PC", getNotifs));
 	}
 
 	void MyPacaranaManager::getPresetNotif(bool yesOrNo)
 	{
 		int getNotifs = yesOrNo ? 1 : 0;
-		oscConnector->sendMessage("/osc/notify/presets/PC", getNotifs);
+		oscConnector->addToSendingQueue(OSCMessage("/osc/notify/presets/PC", getNotifs));
 	}
 
 	// ================================================================================
@@ -365,7 +369,7 @@ namespace Miam {
 
 		for (int i = 0; i < allWidgets.size(); i++)
 		{
-			allWidgets[i].value = 0.5;
+			allWidgets[i].value = -1;
 		}
 	}
 

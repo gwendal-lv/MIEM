@@ -9,6 +9,7 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "OscConnector.h"
 #include "MyOscConnector.h"
 #include "MyPacaranaManager.h"
 
@@ -33,8 +34,9 @@ public:
 private:
 	//==============================================================================
 	// Your private member variables go here...
-	MyOscConnector myOscConnector;
+	MyOscConnector visualConnector;
 	MyPacaranaManager pacaManager;
+	OscConnector oscConnector;
 
 	//==============================================================================
 

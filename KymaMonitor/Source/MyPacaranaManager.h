@@ -3,18 +3,19 @@
 
 	MyPacaranaManager.h
 	Created: 3 May 2019 8:40:33am
-	Author:  Irisib
+	Author:  F. Dawagne
 
   ==============================================================================
 */
 
 #pragma once
 
-//#include "MyOscConnector.h"
 using namespace std;
+#include "../JuceLibraryCode/JuceHeader.h"
+
 #include <vector>
 #include <string>
-#include "../JuceLibraryCode/JuceHeader.h"
+
 
 namespace Miam {
 
@@ -30,7 +31,7 @@ namespace Miam {
 		std::string to_string() { return name + "(" + std::to_string(idInPaca) + ") = " + std::to_string(value) + " [" + std::to_string(minVal) + ", " + std::to_string(maxVal) + "] - " + scale; }
 	};
 
-	class MyOscConnector;
+	class OscConnector;
 	class KymaPreset;
 
 	class MyPacaranaManager
@@ -39,8 +40,8 @@ namespace Miam {
 		MyPacaranaManager();
 		~MyPacaranaManager();
 
-		//void init(MyOscConnector* oscConn);
-		void init(MyOscConnector& oscConn);
+		void init(OscConnector* refConn);
+		//void init(OscConnector& oscConn);
 
 		void lauch();
 		void getWidgetsNumber();
@@ -79,7 +80,7 @@ namespace Miam {
 		int presetNbr;
 		int totalWidgetsNbr;
 		int usefulWidgetNbr;
-		MyOscConnector* oscConnector;
+		OscConnector* oscConnector;
 
 		bool allWidgetsPrepared; // manually set to true, for now
 

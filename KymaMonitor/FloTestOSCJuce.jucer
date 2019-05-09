@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="BKbpcO" name="KymaMonitor" projectType="guiapp" jucerVersion="5.4.3"
-              headerPath="../../../&#10;../../../boost/">
+              headerPath="../../../&#10;../../../boost/" companyName="IRISIB">
   <MAINGROUP id="Az1MYn" name="KymaMonitor">
     <GROUP id="{65F28AC4-49FA-4FE2-6AE5-62336953F9D6}" name="Source">
       <GROUP id="{68705859-5C43-83DD-BA13-BC19F87B1648}" name="MyClasses">
@@ -9,6 +9,9 @@
               file="Source/MyPacaranaManager.cpp"/>
         <FILE id="ZguM5v" name="MyPacaranaManager.h" compile="0" resource="0"
               file="Source/MyPacaranaManager.h"/>
+        <FILE id="QC1I3T" name="OscConnector.cpp" compile="1" resource="0"
+              file="Source/OscConnector.cpp"/>
+        <FILE id="svDbkB" name="OscConnector.h" compile="0" resource="0" file="Source/OscConnector.h"/>
       </GROUP>
       <GROUP id="{52F65906-DC06-A147-F8F0-4CC7D4C856DD}" name="MyComponents">
         <FILE id="hBvpSo" name="MyOscConnector.cpp" compile="1" resource="0"

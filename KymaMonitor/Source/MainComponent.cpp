@@ -8,14 +8,18 @@
 
 #include "MainComponent.h"
 #include "MyPacaranaManager.h"
+#include "MyOscConnector.h"
+#include "OscConnector.h"
 using namespace Miam;
 
 //==============================================================================
 MainComponent::MainComponent()
 {
 	// Add my OscConnector
-	addAndMakeVisible(myOscConnector);
-	myOscConnector.init(&pacaManager);
+	visualConnector.init(&oscConnector);
+	addAndMakeVisible(visualConnector);
+	oscConnector.init(&pacaManager);
+	oscConnector.setIpAddress("test");
 
 	// base stuff
 	setSize(1110, 750);
