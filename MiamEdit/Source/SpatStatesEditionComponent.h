@@ -180,6 +180,7 @@ private:
     std::unique_ptr<Label> maxLabel;
     std::unique_ptr<Label> interpolationCurveLabel;
     std::unique_ptr<Label> valueLabel;
+    std::unique_ptr<TextButton> retrieveFromKymaButton;
 
 
     //==============================================================================

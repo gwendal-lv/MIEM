@@ -77,7 +77,31 @@ void ControlArea::LinkToState(std::shared_ptr< ControlState<double> > state)
 }
 void ControlArea::OnStateNameChanged()
 {
+    // ================ BUG À RETROUVER ================
+    // ================ BUG À RETROUVER ================
+    // ================ BUG À RETROUVER ================
+    // ================ BUG À RETROUVER ================
+    // ================ BUG À RETROUVER ================
+    // ================ BUG À RETROUVER ================
+    // ================ BUG À RETROUVER ================
+    // ================ BUG À RETROUVER ================
+    // ================ BUG À RETROUVER ================
+    // ================ BUG À RETROUVER ================
+    // BUG  À TRACKER : fonction appelée ici à un moment, avec une aire NULLPTR
+    // (juste après avoir cliqué sur entré, après avoir changé le nom d'une aire)
+    //
+    // -> rechercher dans la call hierarchy qui pourrait être le coupable...
     SetName(linkedState->GetName(false));
+    // ================ BUG À RETROUVER ================
+    // ================ BUG À RETROUVER ================
+    // ================ BUG À RETROUVER ================
+    // ================ BUG À RETROUVER ================
+    // ================ BUG À RETROUVER ================
+    // ================ BUG À RETROUVER ================
+    // ================ BUG À RETROUVER ================
+    // ================ BUG À RETROUVER ================
+    // ================ BUG À RETROUVER ================
+    // ================ BUG À RETROUVER ================
 }
 
 
