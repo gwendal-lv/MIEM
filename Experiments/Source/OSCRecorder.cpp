@@ -20,10 +20,13 @@
 #include "OSCRecorder.h"
 #include "OSCRecorderComponent.h"
 
+#include "OSCListenerForwarder.h"
+
 #include "MainComponent.h"
 
 #include "InterprocessControlBlock.h"
 
+using namespace Miam;
 
 // The constructor will init the experiment with random preset values
 OSCRecorder::OSCRecorder(MainComponent* _mainComponent)

@@ -11,12 +11,13 @@
 #include <iostream>
 #include <thread>
 
+#include "OSCListenerForwarder.h"
+
 #include "PeriodicUpdateThread.h" // from Miam Common
 #include "MiamMath.h" // from Miam Common
 
 #include "MonitoringServer.h"
 
-#include "OSCListenerForwarder.h"
 
 using namespace Miam;
 
@@ -188,12 +189,11 @@ void OSCListenerForwarder::oscMessageReceived (const OSCMessage &message)
     // renormalisation après discrétisation
     sampleValue = sampleValue / ((double) midiResolution);
     
-    // Vérifier que ce truc-là corresponde vraiment bien à ce qu'est censée faire l'expérience comme mesure....
-#ifdef __MIEM_EXPERIMENT
-    expeSample.value = (float) sampleValue;
-#else
-    expeSample.value = originalSampleValue;
-#endif
+    // la valeur à sauvegarder est bien la valeur originale quantifiée directement
+    // (pas la quantification MIDI, qui est décalée pour retomber sur des intervalles entiers)
+    expeSample.value = std::round( ((double) midiResolution) * originalSampleValue ); // valeur int
+    // renormalisation après discrétisation
+    expeSample.value = expeSample.value / ((double) midiResolution);
     
     
     // - - -  calcul de temps 1 - - -

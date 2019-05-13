@@ -30,8 +30,10 @@ namespace bptree = boost::property_tree;
 #include "ReaperOscController.h"
 
 class OSCRecorderComponent;
-class OSCListenerForwarder;
 class MainComponent;
+namespace Miam {
+    class OSCListenerForwarder;
+}
 
 class OSCRecorderTimer; // defined at end of file
 
@@ -75,7 +77,7 @@ class OSCRecorder : public UserQuestionsManager,
     // baisser sensiblement les performances
     // 40s = toujours des coupures ?
     // 60s = beaucoup trop long
-    static const int ResearchTimeMax_ms = 40000;
+    static const int ResearchTimeMax_ms = 35000;
     
     static const int WhiteNoiseStartDelay_ms = 1500; ///< Delay after entering "finished" state
     static const int WhiteNoisePrematureEnd_ms = 500; ///< White noise ends a bit before the "finished" state actually ends
@@ -119,7 +121,7 @@ class OSCRecorder : public UserQuestionsManager,
     // sub-modules, init at construction only
     OSCRecorderComponent& recorderComponent;
     std::shared_ptr<OSCRecorderConnection> tcpConnection;
-    std::shared_ptr<OSCListenerForwarder> oscRealtimeListener;
+    std::shared_ptr<Miam::OSCListenerForwarder> oscRealtimeListener;
     std::shared_ptr<ReaperOscController> reaperController;
     
     bool hasConnectionBeenLostDuringLastStep = false;

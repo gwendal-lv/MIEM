@@ -314,7 +314,8 @@ void OSCRecorderComponent::DisplayNewState(ExperimentState newState, int presetS
     finishedButton->setVisible(newState == ExperimentState::SearchingPreset);
     scoreLabel->setVisible(newState == ExperimentState::FinishedSearchingPreset);
     infoLabel->setVisible(newState == ExperimentState::FinishedSearchingPreset);
-    infoLabel2->setVisible(newState == ExperimentState::FinishedSearchingPreset);
+    //infoLabel2->setVisible(newState == ExperimentState::FinishedSearchingPreset);
+    infoLabel2->setVisible(false);
 
     // - - - - - puis : Switch général pour affichage des cas plus complexes - - - - -
     switch(newState)
