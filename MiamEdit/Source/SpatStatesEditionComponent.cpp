@@ -307,6 +307,15 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
 
     valueLabel->setBounds (704, 112, 168, 24);
 
+    retrieveFromKymaButton.reset (new TextButton ("retrieve presets from kyma button"));
+    addAndMakeVisible (retrieveFromKymaButton.get());
+    retrieveFromKymaButton->setTooltip (TRANS("Tries to retrieve the current preset displayed in Kyma, using the current OSC settings."));
+    retrieveFromKymaButton->setButtonText (TRANS("Retrieve preset from Kyma"));
+    retrieveFromKymaButton->addListener (this);
+    retrieveFromKymaButton->setColour (TextButton::buttonColourId, Colours::black);
+    retrieveFromKymaButton->setColour (TextButton::buttonOnColourId, Colours::darkgrey);
+    retrieveFromKymaButton->setColour (TextButton::textColourOffId, Colour (0xfff0f0f0));
+
 
     //[UserPreSize]
     labelledMatrixComponent->SetButtonsListener(this);
@@ -358,6 +367,7 @@ SpatStatesEditionComponent::~SpatStatesEditionComponent()
     maxLabel = nullptr;
     interpolationCurveLabel = nullptr;
     valueLabel = nullptr;
+    retrieveFromKymaButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -408,8 +418,9 @@ void SpatStatesEditionComponent::resized()
     matrixInfoLabel1->setBounds ((getWidth() - (getWidth() - 339)) + (getWidth() - 339) - 502, 4 + 12, 245, 24);
     matrixInfoLabel2->setBounds ((getWidth() - (getWidth() - 339)) + (getWidth() - 339) - 502, 4 + 32, 245, 24);
     matrixInfoLabel3->setBounds ((getWidth() - (getWidth() - 339)) + (getWidth() - 339) - 502, 4 + 52, 245, 24);
+    retrieveFromKymaButton->setBounds ((getWidth() - (getWidth() - 339)) + 189, 4 + 52, 224, 24);
     //[UserResized] Add your own custom resize handling here..
-    
+
     if (editionManager)
     {
         // Columns labels visible for GenCon only
@@ -418,7 +429,7 @@ void SpatStatesEditionComponent::resized()
         maxLabel->setVisible(editionManager->GetSessionPurpose() == AppPurpose::GenericController);
         interpolationCurveLabel->setVisible(editionManager->GetSessionPurpose() == AppPurpose::GenericController);
         valueLabel->setVisible(editionManager->GetSessionPurpose() == AppPurpose::GenericController);
-        
+
         // Now, the labelled matrix has properly replaced its elements.
         if (editionManager->GetSessionPurpose() == AppPurpose::GenericController)
         {
@@ -440,7 +451,7 @@ void SpatStatesEditionComponent::resized()
                                            valueLabel->getY());
         }
     }
-        
+
     //[/UserResized]
 }
 
@@ -484,6 +495,29 @@ void SpatStatesEditionComponent::buttonClicked (Button* buttonThatWasClicked)
         //[UserButtonCode_sendZerosTextButton] -- add your button handler code here..
         editionManager->OnSendZeros();
         //[/UserButtonCode_sendZerosTextButton]
+    }
+    else if (buttonThatWasClicked == retrieveFromKymaButton.get())
+    {
+        //[UserButtonCode_retrieveFromKymaButton] -- add your button handler code here..
+        
+        // ============================================================
+        // ============================================================
+        // ============================================================
+        // ============================================================
+        // ============================================================
+        // COUCOU FLO. Appel à ta classe doit se faire ici !
+        // COUCOU FLO. Appel à ta classe doit se faire ici !
+        // COUCOU FLO. Appel à ta classe doit se faire ici !
+        // COUCOU FLO. Appel à ta classe doit se faire ici !
+        // COUCOU FLO. Appel à ta classe doit se faire ici !
+        // COUCOU FLO. Appel à ta classe doit se faire ici !
+        // ============================================================
+        // ============================================================
+        // ============================================================
+        // ============================================================
+        // ============================================================
+        
+        //[/UserButtonCode_retrieveFromKymaButton]
     }
 
     //[UserbuttonClicked_Post]
@@ -565,6 +599,10 @@ void SpatStatesEditionComponent::visibilityChanged()
     //[UserCode_visibilityChanged] -- Add your code here...
     if (editionManager)
     {
+        retrieveFromKymaButton->setVisible(editionManager->GetSessionPurpose()
+                                           == AppPurpose::GenericController);
+        
+        
         switch (editionManager->GetSessionPurpose()) {
 
             case Miam::AppPurpose::None:
@@ -591,7 +629,7 @@ void SpatStatesEditionComponent::visibilityChanged()
 
         // S'adaptera si nécessaire
         labelledMatrixComponent->SetDisplayPurpose(editionManager->GetSessionPurpose());
-        
+
         // For labels update
         resized();
     }
@@ -943,6 +981,12 @@ BEGIN_JUCER_METADATA
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="33"/>
+  <TEXTBUTTON name="retrieve presets from kyma button" id="43b080feb573c9f7"
+              memberName="retrieveFromKymaButton" virtualName="" explicitFocusOrder="0"
+              pos="189 52 224 24" posRelativeX="9d63d9acaf1299f6" posRelativeY="4250d5155a80be70"
+              tooltip="Tries to retrieve the current preset displayed in Kyma, using the current OSC settings."
+              bgColOff="ff000000" bgColOn="ff555555" textCol="fff0f0f0" buttonText="Retrieve preset from Kyma"
+              connectedEdges="0" needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA
