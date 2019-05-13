@@ -42,8 +42,10 @@
             file="Source/MainComponent.cpp"/>
       <FILE id="xFMAvO" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
     </GROUP>
-    <FILE id="QIwkt1" name="Bridge_macOS_1024at1.png" compile="0" resource="1"
-          file="../Resources_LFS/Icones_Logos/Exports/Bridge_macOS_1024at1.png"/>
+    <GROUP id="{26B10D8F-D1E5-4E02-A5BD-1F045C7A4DAC}" name="Resources_LFS">
+      <FILE id="QIwkt1" name="Bridge_macOS_1024at1.png" compile="0" resource="1"
+            file="../Resources_LFS/Icones_Logos/Exports/Bridge_macOS_1024at1.png"/>
+    </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX" extraCompilerFlags="-Wno-comma"
