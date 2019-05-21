@@ -119,7 +119,9 @@ void Model::ConnectAndSendState(std::shared_ptr<ControlState<double>> stateToSen
         // connaît toutes les courbes d'interpolation et a initialisé tous les états internes)
         auto artificialMatrixBackupState = std::make_unique<MatrixBackupState<double>>
         (*castedMatrixState, interpolator->GetInterpolationCurves());
+#ifdef __MIAM_DEBUG
         artificialMatrixBackupState->DisplayMatrixInStdCout();
+#endif
         miamOscSender->SendMatrixParamChanges(artificialMatrixBackupState.get(), allIndexes);
     }
     // ou SPAT

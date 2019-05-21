@@ -409,7 +409,7 @@ void SpatStatesEditionComponent::resized()
     matrixInfoLabel2->setBounds ((getWidth() - (getWidth() - 339)) + (getWidth() - 339) - 502, 4 + 32, 245, 24);
     matrixInfoLabel3->setBounds ((getWidth() - (getWidth() - 339)) + (getWidth() - 339) - 502, 4 + 52, 245, 24);
     //[UserResized] Add your own custom resize handling here..
-    
+
     if (editionManager)
     {
         // Columns labels visible for GenCon only
@@ -418,7 +418,7 @@ void SpatStatesEditionComponent::resized()
         maxLabel->setVisible(editionManager->GetSessionPurpose() == AppPurpose::GenericController);
         interpolationCurveLabel->setVisible(editionManager->GetSessionPurpose() == AppPurpose::GenericController);
         valueLabel->setVisible(editionManager->GetSessionPurpose() == AppPurpose::GenericController);
-        
+
         // Now, the labelled matrix has properly replaced its elements.
         if (editionManager->GetSessionPurpose() == AppPurpose::GenericController)
         {
@@ -440,7 +440,7 @@ void SpatStatesEditionComponent::resized()
                                            valueLabel->getY());
         }
     }
-        
+
     //[/UserResized]
 }
 
@@ -591,7 +591,7 @@ void SpatStatesEditionComponent::visibilityChanged()
 
         // S'adaptera si nécessaire
         labelledMatrixComponent->SetDisplayPurpose(editionManager->GetSessionPurpose());
-        
+
         // For labels update
         resized();
     }
