@@ -59,15 +59,8 @@ void Presenter::OnLoadDefaultSession()
 // = = = = = = = = = = METHODES = = = = = = = = = =
 void Presenter::processParamChangeFromModel(AsyncParamChange const & paramChange)
 {
-    switch(paramChange.Type)
-    {
-        // no specific event treated specifically here... Control/Player/Presenter will do the ob
-            
-            // All untreated events : directed to parent class
-        default :
-            PlayerPresenter::processParamChangeFromModel(paramChange);
-            break;
-    }
+	// no specific event treated specifically here... Control/Player/Presenter will do the job
+    PlayerPresenter::processParamChangeFromModel(paramChange);
 }
 
 

@@ -596,8 +596,10 @@ void SceneCanvasComponent::renderOpenGL()
 		}
 #else
 		if (displayFrequencyMeasurer.IsFreshAverageAvailable())
+		{
 			auto infoStr = displayFrequencyMeasurer.GetInfo(false);
-            DBG(infoStr); // without min/max
+			DBG(infoStr); // without min/max
+		}
 #endif // __MIEM_GL_INFO_DISPLAY
     }
 #endif // ndef __MIEM_VBO

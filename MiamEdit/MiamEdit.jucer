@@ -213,8 +213,6 @@
           <FILE id="tPoEI0" name="CartesianLine.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/CartesianLine.cpp"/>
           <FILE id="eK35Tw" name="CartesianLine.h" compile="0" resource="0" file="../MiamCommon/Source/CartesianLine.h"/>
-          <FILE id="W554r5" name="BasicInterpolationCurve.hpp" compile="0" resource="0"
-                file="../ControlCommon/Source/BasicInterpolationCurve.hpp"/>
           <FILE id="Rla6rP" name="MiamMath.cpp" compile="1" resource="0" file="../MiamCommon/Source/MiamMath.cpp"/>
           <FILE id="WSGVmq" name="MiamMath.h" compile="0" resource="0" file="../MiamCommon/Source/MiamMath.h"/>
           <FILE id="cEVkJR" name="SparseMatrix.hpp" compile="0" resource="0"
@@ -325,6 +323,8 @@
       </GROUP>
       <GROUP id="{7DF86A8F-A8E0-F3D8-65C1-4CA2C20CE264}" name="Utils">
         <FILE id="ZbkxOP" name="AppPurpose.h" compile="0" resource="0" file="../ControlCommon/Source/AppPurpose.h"/>
+        <FILE id="W554r5" name="BasicInterpolationCurve.hpp" compile="0" resource="0"
+              file="../ControlCommon/Source/BasicInterpolationCurve.hpp"/>
         <FILE id="C1mLzc" name="ControlMatrix.hpp" compile="0" resource="0"
               file="../ControlCommon/Source/ControlMatrix.hpp"/>
         <FILE id="NjGlBL" name="PathUtils.cpp" compile="1" resource="0" file="../ControlCommon/Source/PathUtils.cpp"/>
