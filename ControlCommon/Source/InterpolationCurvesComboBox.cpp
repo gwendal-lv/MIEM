@@ -41,8 +41,8 @@ height(_height)
     auto availableTypes = BasicInterpolationCurve<double>::GetAvailableParamInterpolationTypes();
     for (int i = 0; i < availableTypes.size() ; i++)
     {
-        addItem(ParamInterpolationTypes::GetInterpolationName(availableTypes[i], true, false),
-                (int)availableTypes[i]);
+		auto itemShortName = ParamInterpolationTypes::GetInterpolationName(availableTypes[i], true, false);
+        addItem(itemShortName, (int)availableTypes[i]);
     }
     
     // auto-listener
@@ -54,8 +54,11 @@ void InterpolationCurvesComboBox::SetSelectedInterpolationType(ParamInterpolatio
 {
     if (ParamInterpolationTypes::IsActualInterpolationType(newType))
         setSelectedId((int) newType, NotificationType::sendNotification);
-    else if (newType == ParamInterpolationType::None)
-        setSelectedId(0, NotificationType::sendNotification);
+	else if (newType == ParamInterpolationType::None)
+	{
+		setSelectedId(0, NotificationType::sendNotification);
+		setText("", NotificationType::dontSendNotification);
+	}
 }
 
 
@@ -78,7 +81,8 @@ void InterpolationCurvesComboBox::comboBoxChanged(ComboBox *comboBoxThatHasChang
         assert(false); // should not happen !!
     }
     // and short name writing
-    setText(ParamInterpolationTypes::GetInterpolationName(lastActualChoice, true, true),
+	auto shortName = ParamInterpolationTypes::GetInterpolationName(lastActualChoice, true, true);
+    setText(shortName,
             NotificationType::dontSendNotification);
     
 }
