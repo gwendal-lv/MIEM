@@ -27,7 +27,13 @@ void ExperimentsSceneConstrainer::beginTouchConstraint(const MouseEvent& e,
                                                        std::string sceneName)
 {
 #ifndef __MIEM_EXPERIMENTS
+	boost::ignore_unused(e);
+	boost::ignore_unused(canvasWidth);
+	boost::ignore_unused(canvasHeight);
+	boost::ignore_unused(exciterCenter);
+	boost::ignore_unused(sceneName);
     return;
+
 #else
     int sceneId = -1;
     try {
@@ -81,6 +87,7 @@ void ExperimentsSceneConstrainer::beginTouchConstraint(const MouseEvent& e,
 void ExperimentsSceneConstrainer::endTouchConstraint(const MouseEvent& e)
 {
 #ifndef __MIEM_EXPERIMENTS
+	boost::ignore_unused(e);
     return;
     
 #else
@@ -103,6 +110,9 @@ const MouseEvent& ExperimentsSceneConstrainer::constrainMouseEvent(const MouseEv
 {
     // If NOT in experiment mode : pure bypass of the reference
 #ifndef __MIEM_EXPERIMENTS
+	boost::ignore_unused(e);
+	boost::ignore_unused(canvasWidth);
+	boost::ignore_unused(canvasHeight);
     return e;
     
 #else // defined __MIEM_EXPERIMENTS

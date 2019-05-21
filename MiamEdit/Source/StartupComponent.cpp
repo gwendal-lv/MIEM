@@ -246,13 +246,13 @@ BEGIN_JUCER_METADATA
               bgColOn="ffffffff" textCol="ff000000" buttonText="Create Generic OSC Controller session"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <HYPERLINKBUTTON name="Info hyperlink button" id="fa3a8802c3b7c7f0" memberName="infoHyperlinkButton"
-                   virtualName="" explicitFocusOrder="0" pos="-0.5Cc 32R 5M 24"
-                   tooltip="http://miem.laras.be" textCol="ffffffff" buttonText="To get help and more information, please visit http://miem.laras.be"
+                   virtualName="" explicitFocusOrder="0" pos="0Cc 32R 5M 24" tooltip="http://miem.laras.be"
+                   textCol="ffffffff" buttonText="To get help and more information, please visit http://miem.laras.be"
                    connectedEdges="0" needsCallback="0" radioGroupId="0" url="http://miem.laras.be"/>
   <HYPERLINKBUTTON name="App Name hyperlink button" id="7dafa352c7045e31" memberName="appNameHyperlinkButton"
-                   virtualName="" explicitFocusOrder="0" pos="-0.5Cc 62R 5M 24"
-                   tooltip="http://miem.laras.be" textCol="ffffffff" buttonText="MIEM Editor"
-                   connectedEdges="0" needsCallback="0" radioGroupId="0" url="http://miem.laras.be"/>
+                   virtualName="" explicitFocusOrder="0" pos="0Cc 62R 5M 24" tooltip="http://miem.laras.be"
+                   textCol="ffffffff" buttonText="MIEM Editor" connectedEdges="0"
+                   needsCallback="0" radioGroupId="0" url="http://miem.laras.be"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

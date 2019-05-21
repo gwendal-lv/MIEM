@@ -261,7 +261,7 @@ void SpatStatesEditionManager::OnMatrixValueChanged(int /*row*/, int /*col*/, do
     updateStateInfo();
 }
 void SpatStatesEditionManager::OnMatrixButtonClicked(int row, int /*col*/,
-											std::string matrixText, double matrixValue)
+											std::string matrixText, double /*matrixValue*/)
 {
     if (GetSessionPurpose() == AppPurpose::GenericController)
     {

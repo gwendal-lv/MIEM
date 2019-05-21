@@ -77,7 +77,7 @@ namespace Miam
         
         
         /// \brief Overriden to control attempted values
-        virtual double snapValue(double attemptedValue, DragMode dragMode) override
+        virtual double snapValue(double attemptedValue, DragMode /*dragMode*/) override
         {
             const double slidersMinOffset = BasicInterpolationCurve<double>::GetMinOutputRange();
             // slider min
@@ -171,7 +171,7 @@ namespace Miam
             maxSlider.addListener(this);
         }
         
-        virtual void paint(Graphics& g) override
+        virtual void paint(Graphics& /*g*/) override
         {
         }
 

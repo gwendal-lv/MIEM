@@ -408,7 +408,7 @@ namespace Miam
         ///
         /// Au prochain appel, c'est la case d'après qui sera transmise. Sens de parcours :
         /// ligne entière par ligne entière
-        void ForceSend1MatrixCoeff(ControlState<T>& state, AppPurpose appPurpose)
+        void ForceSend1MatrixCoeff(ControlState<T>& state, AppPurpose /*appPurpose*/)
         {
             // Capable d'envoyer un état matriciel avec backup seulement pour l'instant
             if (MatrixBackupState<T>* matrixState = dynamic_cast<MatrixBackupState<T>*>(&state))

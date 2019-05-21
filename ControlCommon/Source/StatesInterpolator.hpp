@@ -24,6 +24,8 @@
 #include "MatrixBackupState.hpp"
 #include "MiamExceptions.h"
 
+#include "boost/core/ignore_unused.hpp"
+
 #include "boost/property_tree/ptree.hpp"
 #include "boost/property_tree/xml_parser.hpp"
 namespace bptree = boost::property_tree;
@@ -385,7 +387,7 @@ namespace Miam
             try {
                 curvesChild = tree.get_child("interpolation.curves");
             }
-            catch (bptree::ptree_error& e) {
+            catch (bptree::ptree_error& /*e*/) {
                 // toutes les valeurs seront mises aux valeurs par défaut....
                 curvesChild = bptree::ptree(); // empty curves tree
             }
@@ -416,6 +418,8 @@ namespace Miam
                     catch (bptree::ptree_error& e) {
 #if defined(__MIAM_DEBUG)
                         throw XmlReadException(std::string("All <names> inside <inputs> must have a valid id XML attribute: ") + e.what());
+#else
+						boost::ignore_unused(e);
 #endif
                     }
                 }
@@ -443,6 +447,8 @@ namespace Miam
                     catch (bptree::ptree_error& e) {
 #if defined(__MIAM_DEBUG)
                         throw XmlReadException(std::string("All <names> inside <outputs> must have a valid id XML attribute: ") + e.what());
+#else
+						boost::ignore_unused(e);
 #endif
                     }
                 }

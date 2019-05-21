@@ -51,7 +51,6 @@ namespace Miam
             }
             ConstraintParams(const ConstraintParams&) = default;
         };
-        typedef struct ConstraintParams ConstraintParams;
         
         
         
