@@ -149,7 +149,8 @@ LoggerComponent::LoggerComponent ()
     portTextEditor->addListener(this);
 
     // TEMP for debug
-    ipTextEditor->setText("10.97.198.140");
+    //ipTextEditor->setText("10.97.198.140");
+    ipTextEditor->setText("127.0.0.1");
     portTextEditor->setText(String(19192));
 
     update();
@@ -379,7 +380,7 @@ BEGIN_JUCER_METADATA
                  initialHeight="400">
   <BACKGROUND backgroundColour="ff232323"/>
   <TEXTEDITOR name="new text editor" id="c334ceb0628275d" memberName="textEditor"
-              virtualName="" explicitFocusOrder="0" pos="0.5Cc 128 40M 148M"
+              virtualName="" explicitFocusOrder="0" pos="0Cc 128 40M 148M"
               bkgcol="0" outlinecol="ffffffff" initialText="" multiline="1"
               retKeyStartsLine="1" readonly="1" scrollbars="1" caret="0" popupmenu="0"/>
   <TEXTEDITOR name="new text editor" id="ae28c7f281366300" memberName="ipTextEditor"

@@ -72,7 +72,7 @@ private:
     bool connectionWasUserDisconnected = true;
     bool couldNotConnect = false;
     bool tryToConnect = false;
-    const int timeOut_ms = 1000;
+    const int timeOut_ms = 100;
 
     std::string receivedLog;
     //[/UserVariables]

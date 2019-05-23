@@ -11,6 +11,7 @@ Builds
 .DS_Store
 .AppleDouble
 .LSOverride
+*.bin
 
 # Icon must end with two \r
 Icon
