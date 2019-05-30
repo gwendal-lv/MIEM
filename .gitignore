@@ -5,6 +5,10 @@
 # Folders to put at some point in a GIT LFS cloud storage (possible on BitBucket)
 # /Resources_LFS --> now actually followed by GIT LFS
 
+# Fichiers auto-générés par Matlab C/C++ code generator
+/ControlCommon/codegen
+*.mexmaci64
+
 # Chaque utilisateur du dépôt devra créer ses propres projets à partir du ProJucer ! On verra bien...
 Builds
 ####  OSX ###
@@ -35,4 +39,5 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-
+# Vsual Studio Code hidden folder on macOS
+.vscode/

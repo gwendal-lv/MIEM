@@ -107,6 +107,8 @@ public:
     void OnSliderValueChanged(int row, int col, double value);
     /// \brief Called by a min max sliders pair when necessary
     void OnMinMaxValuesChanged(int row, double valueMin, double valueMax);
+    /// \brief Called by a curve combox box when necessary
+    void OnInterpolationTypeChanged(int row, ParamInterpolationType newInterpolationType);
     /// \brief Callback from any text editor. Display (in bold, or not) wether the input name
     /// can be parsed to a valid OSC message with address and arguments.
     ///
@@ -123,6 +125,7 @@ public:
     InOutChannelsName GetChannelsName();
 
     void SetInterpolationCurves(std::shared_ptr<BasicInterpCurves> interpCurves);
+    BasicInterpolationCurve<double> GetInterpolationCurve(size_t i);
     std::shared_ptr<BasicInterpCurves> GetInterpolationCurves();
 
     void SetInputNamesVisible(bool areVisible);

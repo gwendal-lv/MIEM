@@ -10,6 +10,7 @@
 
 #include "MatrixComponent.h"
 #include "AudioUtils.hpp"
+#include "MiamMath.h"
 
 #include <algorithm> // std::fill
 
@@ -402,8 +403,35 @@ double MatrixComponent::GetSliderValue(int row, int col)
 }
 
 
-void MatrixComponent::SetHorizontalSliderRange(int row, double newMin, double newMax)
+void MatrixComponent::SetHorizontalSliderInterpolationData(int row,
+                                                           BasicInterpolationCurve<double> newInterpCurve)
 {
+    auto newMin = newInterpCurve.GetMinY();
+    auto newMax = newInterpCurve.GetMaxY();
+    
+    // skew factor depend on interp curve
+    double skewFactor = 1.0;
+    // largeur référencée pour l'audio, par rapport à une bande passante de
+    // 20kHz
+    double rangeWidenessFactor = std::abs(newMax - newMin) / 20000.0;
+    rangeWidenessFactor = Math::Clamp(rangeWidenessFactor, 0.0, 1.0);
+    
+    switch( newInterpCurve.GetInterpolationType() )
+    {
+        // The skew factor actually depends on how on big the range of the slider
+        // (calibrated for audio frequencies...)
+        case ParamInterpolationType::Independant_Log :
+            skewFactor = 0.22 + (1.0 - rangeWidenessFactor) * 0.7;
+            break;
+            
+        case ParamInterpolationType::Independant_Linear :
+        default:
+            break;
+    }
+    
+    horizontalSliders[row]->setSkewFactor(skewFactor);
+    
+    // range
     horizontalSliders[row]->setRange(newMin, newMax);
     
     // to force an update

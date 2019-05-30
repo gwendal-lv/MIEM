@@ -101,11 +101,13 @@ namespace Miam
         
         Independant_Threshold, ///< On/Off curve, threshold at (max-min)/2.0
         
-        Independant_Exp, ///< Interpolation à base d'exponentielle: courbe très molle qui met du temps à aller jusqu'aux valeurs maximales. Adaptée pour l'interpolation de fréquences audio
+        
+        Independant_Exp,///< Interpolation à base de log: courbe très dure, qui va très vite vers les valeurs maximales. L'effet ressenti sera exponentiel (explosion rapide des valeurs)
         Independant_Soft, ///< Courbe un peu plus douce que linéaire (augmente peu au départ)
         Independant_Linear, ///< avec interpolation linéaire basique, coefficient par coefficient
         Independant_Hard, ///< Courbe un peu plus dure que linéaire (augmente beaucoup au départ)
-        Independant_Log, ///< Interpolation à base de log: courbe très dure, qui va très vite vers les valeurs maximales
+        Independant_Log, ///< Interpolation à base d'exponentielle, qui aura concrètement un "effet log" : courbe très molle qui met du temps à aller jusqu'aux valeurs maximales. Adaptée pour l'interpolation de fréquences audio
+        
         
         InterpolationTypesCount, ///< Contient le nombre d'interpolations différentes, y compris l'interpolation non-définie
     };

@@ -278,7 +278,7 @@ void LabelledMatrixComponent::constructGuiObjects()
         curveImageComponents[i].reset(new ImageComponent("Curve image component " + iStr));
         addAndMakeVisible(curveImageComponents[i].get());
         rowComboBoxes[i].reset(new InterpolationCurvesComboBox("Input Interpolation Curve combo box" +
-                                                               iStr, this, curveImageComponents[i],
+                                                               iStr, this, i, curveImageComponents[i],
                                                                matItemH));
         rowComboBoxes[i]->setComponentID("cbi" + iStr);
         addAndMakeVisible(rowComboBoxes[i].get());
@@ -578,29 +578,13 @@ void LabelledMatrixComponent::OnSliderValueChanged(int row, int col, double valu
 }
 void LabelledMatrixComponent::OnMinMaxValuesChanged(int row, double valueMin, double valueMax)
 {
-    // =========================================================================
-    // =========================================================================
-    // =========================================================================
-    // =========================================================================
-    // =========================================================================
-    // =========================================================================
-    // =========================================================================
-    // =========================================================================
-    // =========================================================================
-    // =========================================================================
-    // =========================================================================
-    // ICI en réalité, il faut ré-envoyer toute la courbe d'interpolation au MatrixComponent
-    // car son slider doit avoir un skew factor dépendant de l'interpolation...
-    // =========================================================================
-    // =========================================================================
-    // =========================================================================
-    // =========================================================================
-    // =========================================================================
-    // =========================================================================
-    // =========================================================================
-    // =========================================================================
-    // =========================================================================
-    matrixViewport->GetMatrixComponent()->SetHorizontalSliderRange(row, valueMin, valueMax);
+    matrixViewport->GetMatrixComponent()->SetHorizontalSliderInterpolationData(row,
+        GetInterpolationCurve((size_t)row));
+}
+void LabelledMatrixComponent::OnInterpolationTypeChanged(int row, ParamInterpolationType newInterpolationType)
+{
+    matrixViewport->GetMatrixComponent()->SetHorizontalSliderInterpolationData(row,
+        GetInterpolationCurve((size_t)row));
 }
 void LabelledMatrixComponent::textEditorTextChanged (TextEditor & textEditor)
 {
@@ -719,16 +703,20 @@ void LabelledMatrixComponent::SetInterpolationCurves(std::shared_ptr<BasicInterp
         }
     }
 }
+BasicInterpolationCurve<double> LabelledMatrixComponent::GetInterpolationCurve(size_t i)
+{
+    return
+    BasicInterpolationCurve<double>(rowComboBoxes[i]->GetSelectedInterpolationType(),
+                                    minMaxSlidersPairs[i]->GetMinValue(),
+                                    minMaxSlidersPairs[i]->GetMaxValue()
+                                    );
+}
 std::shared_ptr<BasicInterpCurves> LabelledMatrixComponent::GetInterpolationCurves()
 {
     auto interpCurves = std::make_shared<BasicInterpCurves>();
     for (size_t i=0 ; i<maxRowsCount ; i++)
     {
-        interpCurves->push_back(BasicInterpolationCurve<double>(
-                                rowComboBoxes[i]->GetSelectedInterpolationType(),
-                                minMaxSlidersPairs[i]->GetMinValue(),
-                                minMaxSlidersPairs[i]->GetMaxValue()
-                                ));
+        interpCurves->push_back(GetInterpolationCurve(i));
     }
     return interpCurves;
 }

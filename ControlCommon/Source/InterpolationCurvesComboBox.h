@@ -29,6 +29,7 @@ namespace Miam
         // =========== ATTRIBUTES ==========
         private :
         LabelledMatrixComponent* parentComponent;
+        int selfRow;
         std::shared_ptr<ImageComponent> associatedImageComponent;
         const int height;
         
@@ -51,7 +52,7 @@ namespace Miam
         // =========== METHODS ==========
         // ction and dtion
         public :
-        InterpolationCurvesComboBox (const String &componentName, LabelledMatrixComponent* _parentComponent, std::shared_ptr<ImageComponent> _imageComponent, int _height);
+        InterpolationCurvesComboBox (const String &componentName, LabelledMatrixComponent* _parentComponent, int _selfRow, std::shared_ptr<ImageComponent> _imageComponent, int _height);
         virtual ~InterpolationCurvesComboBox() {}
         
         /// \brief Self-listener callback, for translation of data, and direct explicit

@@ -19,6 +19,7 @@
 #include "MatrixSlider.h" // small rectangle slider volume, for full compact matrices
 #include "MatrixRowSlider.h" // horizontal larger slider
 
+#include "BasicInterpolationCurve.hpp"
 #include "LabelledMatrixComponent.h"
 
 #include "ControlModel.h" // sparse miam spatialization matrix
@@ -110,8 +111,9 @@ namespace Miam
         
         double GetSliderValue(int row, int col);
         
-        /// \brief Sets and horizontal slider range
-        void SetHorizontalSliderRange(int row, double newMin, double newMax);
+        /// \brief Sets and horizontal slider range and skew factor
+        void SetHorizontalSliderInterpolationData(int row,
+                                                  BasicInterpolationCurve<double> newInterpCurve);
         
         
         

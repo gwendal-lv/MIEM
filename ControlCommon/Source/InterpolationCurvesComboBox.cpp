@@ -18,11 +18,13 @@ std::vector<std::unique_ptr<ImageComponent>> InterpolationCurvesComboBox::curveI
 
 InterpolationCurvesComboBox::InterpolationCurvesComboBox (const String &componentName,
                                                           LabelledMatrixComponent* _parentComponent,
+                                                          int _selfRow,
                                                           std::shared_ptr<ImageComponent> _imageComponent,
                                                           int _height)
 :
 ComboBox(componentName),
 parentComponent(_parentComponent),
+selfRow(_selfRow),
 associatedImageComponent(_imageComponent),
 height(_height)
 {
@@ -84,5 +86,6 @@ void InterpolationCurvesComboBox::comboBoxChanged(ComboBox *comboBoxThatHasChang
 	auto shortName = ParamInterpolationTypes::GetInterpolationName(lastActualChoice, true, true);
     setText(shortName,
             NotificationType::dontSendNotification);
-    
+    // callback to parent
+    parentComponent->OnInterpolationTypeChanged(selfRow, lastActualChoice);
 }
