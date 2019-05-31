@@ -103,9 +103,11 @@ namespace Miam
         
         
         Independant_Exp,///< Interpolation à base de log: courbe très dure, qui va très vite vers les valeurs maximales. L'effet ressenti sera exponentiel (explosion rapide des valeurs)
-        Independant_Soft, ///< Courbe un peu plus douce que linéaire (augmente peu au départ)
+        Independant_Hard2, ///< Comportement très dur (+ dur que Hard1)
+        Independant_Hard1, ///< Courbe un peu plus dure que linéaire (augmente beaucoup au départ)
         Independant_Linear, ///< avec interpolation linéaire basique, coefficient par coefficient
-        Independant_Hard, ///< Courbe un peu plus dure que linéaire (augmente beaucoup au départ)
+        Independant_Soft1, ///< Courbe un peu plus douce que linéaire (augmente peu au départ)
+        Independant_Soft2, ///< Comportement très soft (+ soft que Soft1)
         Independant_Log, ///< Interpolation à base d'exponentielle, qui aura concrètement un "effet log" : courbe très molle qui met du temps à aller jusqu'aux valeurs maximales. Adaptée pour l'interpolation de fréquences audio
         
         
@@ -121,19 +123,23 @@ namespace Miam
             "",
             "On/Off curve, with threshold at center value",
             "Exponential curve",
-            "Soft curve",
+            "Hard curve 2",
+            "Hard curve 1",
             "Linear curve: standard for controllers",
-            "Hard curve",
-            "Logarithmic curve: for audio frequencies, volumes, etc."
+            "Soft curve 1",
+            "Soft curve 2",
+            "Logarithmic scale: for audio frequencies, volumes, etc."
         };
         constexpr static const char* const interpolationShortNames[] = {
             "",
             "On-Off",
             "Exponential",
-            "Soft",
+            "Hard-2",
+            "Hard-1",
             "Linear",
-            "Hard",
-            "Logarithmic"
+            "Soft-1",
+            "Soft-2",
+            "Log-scale"
         };
         
         public :

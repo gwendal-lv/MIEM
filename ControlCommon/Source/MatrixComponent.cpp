@@ -424,6 +424,20 @@ void MatrixComponent::SetHorizontalSliderInterpolationData(int row,
             skewFactor = 0.22 + (1.0 - rangeWidenessFactor) * 0.7;
             break;
             
+            
+        case ParamInterpolationType::Independant_Soft2 :
+            skewFactor = 0.5; // 0.5 corresponds to a pure x^2, null tangent at origin
+            break;
+        case ParamInterpolationType::Independant_Hard2 :
+            skewFactor = 2.0; // 2.0 corresponds to a pure sqrt, infinite tangent at origin
+            break;
+        case ParamInterpolationType::Independant_Soft1 :
+            skewFactor = 0.69;
+            break;
+        case ParamInterpolationType::Independant_Hard1 :
+            skewFactor = 1.40;
+            break;
+            
         case ParamInterpolationType::Independant_Linear :
         default:
             break;

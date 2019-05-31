@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT name="MIEM Controller" projectType="guiapp" jucerVersion="5.4.3"
-              version="1.1.1" companyName="IRISIB/LARAS, UMons" companyCopyright="Gwendal Le Vaillant (IRISIB/LARAS, UMons)"
+              version="1.1.2" companyName="IRISIB/LARAS, UMons" companyCopyright="Gwendal Le Vaillant (IRISIB/LARAS, UMons)"
               companyWebsite="htpp://laras.be" companyEmail="glevaillant@he2b.be"
               reportAppUsage="0" displaySplashScreen="0" bundleIdentifier="com.gwendallv.MIEMController"
               headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../MiamCommon/Resources/&#10;../../../ControlCommon/Source/&#10;../../../SpatCommon/Source/"
               id="k0BzOi" defines="__MIEM_VBO&#10;__MIEM_GL_INFO_DISPLAY__NO&#10;__MIEM_FORCE_DOUBLE_OSC_SENDER&#10;__MIEM_EXPERIMENTS__NO&#10;__MIEM_EXPERIMENTS_4_PARAMETERS&#10;__MIEM_EXPERIMENTS_FULL_LOCK__NO"
-              projectLineFeed="&#10;">
+              projectLineFeed="&#10;" userNotes="v1.1.2 : autres courbes interpolation dispo + multi-ports UDP visibles">
   <MAINGROUP id="Krx0MS" name="MIEM Controller">
     <GROUP id="{B7F5CB5C-B6F8-A8AA-0F14-17FA42CC4DDF}" name="Source">
       <FILE id="BwuW2o" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
@@ -325,6 +325,20 @@
       </GROUP>
     </GROUP>
     <GROUP id="{FC4D1C95-6CD1-1CB6-980B-4E5B96D1BFA4}" name="Resources">
+      <GROUP id="{07BA892E-3EA0-D5C3-185A-1E68BB7B87CC}" name="InterpolationCurves">
+        <FILE id="fkaZLD" name="InterpolationCurve_Threshold_80at1.png" compile="0"
+              resource="1" file="../Resources_LFS/Icones_Logos/Exports/InterpolationCurve_Threshold_80at1.png"/>
+        <FILE id="WcTwqb" name="InterpolationCurve_Exp-scale_80at1.png" compile="0"
+              resource="1" file="../Resources_LFS/Icones_Logos/Exports/InterpolationCurve_Exp-scale_80at1.png"/>
+        <FILE id="MEf7XL" name="InterpolationCurve_Hard_80at1.png" compile="0"
+              resource="1" file="../Resources_LFS/Icones_Logos/Exports/InterpolationCurve_Hard_80at1.png"/>
+        <FILE id="olLV0w" name="InterpolationCurve_Linear_80at1.png" compile="0"
+              resource="1" file="../Resources_LFS/Icones_Logos/Exports/InterpolationCurve_Linear_80at1.png"/>
+        <FILE id="aI5Hsk" name="InterpolationCurve_Log-scale_80at1.png" compile="0"
+              resource="1" file="../Resources_LFS/Icones_Logos/Exports/InterpolationCurve_Log-scale_80at1.png"/>
+        <FILE id="C7DtPM" name="InterpolationCurve_Soft_80at1.png" compile="0"
+              resource="1" file="../Resources_LFS/Icones_Logos/Exports/InterpolationCurve_Soft_80at1.png"/>
+      </GROUP>
       <FILE id="P6bzns" name="GenCon_Android_1024at1.png" compile="0" resource="1"
             file="../Resources_LFS/Icones_Logos/Exports/GenCon_Android_1024at1.png"/>
       <FILE id="XzfEpj" name="GenCon_iOS_1024at1.png" compile="0" resource="1"

@@ -8,6 +8,24 @@
 
 namespace BinaryData
 {
+    extern const char*   InterpolationCurve_Threshold_80at1_png;
+    const int            InterpolationCurve_Threshold_80at1_pngSize = 2143;
+
+    extern const char*   InterpolationCurve_Expscale_80at1_png;
+    const int            InterpolationCurve_Expscale_80at1_pngSize = 3206;
+
+    extern const char*   InterpolationCurve_Hard_80at1_png;
+    const int            InterpolationCurve_Hard_80at1_pngSize = 3274;
+
+    extern const char*   InterpolationCurve_Linear_80at1_png;
+    const int            InterpolationCurve_Linear_80at1_pngSize = 2143;
+
+    extern const char*   InterpolationCurve_Logscale_80at1_png;
+    const int            InterpolationCurve_Logscale_80at1_pngSize = 3206;
+
+    extern const char*   InterpolationCurve_Soft_80at1_png;
+    const int            InterpolationCurve_Soft_80at1_pngSize = 3274;
+
     extern const char*   GenCon_Android_1024at1_png;
     const int            GenCon_Android_1024at1_pngSize = 835010;
 
@@ -24,7 +42,7 @@ namespace BinaryData
     const int            newFontImg_pngSize = 104267;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
-    const int namedResourceListSize = 5;
+    const int namedResourceListSize = 11;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];

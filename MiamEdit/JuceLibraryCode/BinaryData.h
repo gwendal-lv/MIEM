@@ -8,6 +8,30 @@
 
 namespace BinaryData
 {
+    extern const char*   InterpolationCurve_Hard1_80at1_png;
+    const int            InterpolationCurve_Hard1_80at1_pngSize = 3330;
+
+    extern const char*   InterpolationCurve_Hard2_80at1_png;
+    const int            InterpolationCurve_Hard2_80at1_pngSize = 3285;
+
+    extern const char*   InterpolationCurve_Soft1_80at1_png;
+    const int            InterpolationCurve_Soft1_80at1_pngSize = 3418;
+
+    extern const char*   InterpolationCurve_Soft2_80at1_png;
+    const int            InterpolationCurve_Soft2_80at1_pngSize = 3411;
+
+    extern const char*   InterpolationCurve_Threshold_80at1_png;
+    const int            InterpolationCurve_Threshold_80at1_pngSize = 2143;
+
+    extern const char*   InterpolationCurve_Expscale_80at1_png;
+    const int            InterpolationCurve_Expscale_80at1_pngSize = 3233;
+
+    extern const char*   InterpolationCurve_Linear_80at1_png;
+    const int            InterpolationCurve_Linear_80at1_pngSize = 2146;
+
+    extern const char*   InterpolationCurve_Logscale_80at1_png;
+    const int            InterpolationCurve_Logscale_80at1_pngSize = 3335;
+
     extern const char*   Editor_macOS_1024at_png;
     const int            Editor_macOS_1024at_pngSize = 773650;
 
@@ -18,7 +42,7 @@ namespace BinaryData
     const int            newFontImg_pngSize = 104267;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
-    const int namedResourceListSize = 3;
+    const int namedResourceListSize = 11;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];

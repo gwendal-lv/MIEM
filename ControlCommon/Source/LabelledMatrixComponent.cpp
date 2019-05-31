@@ -302,8 +302,7 @@ void LabelledMatrixComponent::constructGuiObjects()
     // Init des valeurs des courbes d'interp (pour mettre des valeurs légales, sinon bugs ensuite)
     auto interpCurves = std::make_shared<BasicInterpCurves>();
     for (size_t i=0 ; i<maxRowsCount ; i++)
-        interpCurves->push_back(BasicInterpolationCurve<double>(ParamInterpolationType::Independant_Linear,
-                                                                0.0, 1.0)   );
+        interpCurves->push_back(BasicInterpolationCurve<double>::GetDefault());
     SetInterpolationCurves(interpCurves);
 
     // Does not actually reinit objects values....

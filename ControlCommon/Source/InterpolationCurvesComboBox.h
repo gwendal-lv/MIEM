@@ -24,6 +24,16 @@ namespace Miam
     class InterpolationCurvesComboBox : public ComboBox,
                                         public ComboBox::Listener // auto-listens and re-sends events
     {
+        /// Internal singleton class for managing images
+        class ImagesManager : public DeletedAtShutdown {
+            private :
+            static ImagesManager* mainInstance;
+            int height;
+            std::vector<std::unique_ptr<Image>> curveImages;
+            ImagesManager(int _imagesHeight);
+            public :
+            static Image& GetCurveImage(ParamInterpolationType interpolationType, int _height);
+        };
         
         
         // =========== ATTRIBUTES ==========
@@ -39,8 +49,6 @@ namespace Miam
         /// un choix défini .
         ParamInterpolationType lastActualChoice = ParamInterpolationType::None;
         
-        // Internal "singleton"
-        static std::vector<std::unique_ptr<ImageComponent>> curveImages;
         
         
         // =========== Getters and Setters ==========
@@ -59,6 +67,9 @@ namespace Miam
         /// callback to the parent Labelled Matrix Component
         virtual void comboBoxChanged (ComboBox *comboBoxThatHasChanged) override;
         
+        // Internal helpers
+        private :
+        void updateImage();
     };
 }
 

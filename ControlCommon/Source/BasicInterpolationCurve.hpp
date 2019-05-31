@@ -50,6 +50,24 @@ namespace Miam
         // along an "a.exp(b.x) + c" curve, to produce a log-scale effect
         T a_logInterp, b_logInterp, c_logInterp;
         
+        // For a soft-curve interpolation based on a x |-> x^2 curve, form:
+        // y = m.(x-xmin)^2 + ymin
+        T m_soft;
+        // For a hard-curve interpolation along curve:
+        // y = m.sqrt(x-xmin) + ymin
+        T m_hard;
+        
+        // For more controlled soft and hard curves, the linearity is controlled by
+        // alpha coefficient.
+        // If alpha is 0, pure soft/hard curves. When alpha is close to 1, the soft/hard curves
+        // become closer and closer to the linear curve.
+        T alpha_s = (T) 0.3;
+        T alpha_h = (T) 0.1;
+        // The better-controlled soft/hard curves need a, b, (and c) coeffs
+        // soft : y = a.(x-xmin)^2 + b.(x-xmin) + ymin
+        // hard : y = a.sqrt(alpha_h + b.(x-xmin)) + c
+        T a_soft, b_soft;
+        T a_hard, b_hard, c_hard;
         
         
         // ========== Getters and Setters ==========
@@ -61,7 +79,12 @@ namespace Miam
         static std::vector<ParamInterpolationType> GetAvailableParamInterpolationTypes()
         {
             std::vector<ParamInterpolationType> returnTypes;
+            returnTypes.push_back(ParamInterpolationType::Independant_Threshold);
+            returnTypes.push_back(ParamInterpolationType::Independant_Hard2);
+            returnTypes.push_back(ParamInterpolationType::Independant_Hard1);
             returnTypes.push_back(ParamInterpolationType::Independant_Linear);
+            returnTypes.push_back(ParamInterpolationType::Independant_Soft1);
+            returnTypes.push_back(ParamInterpolationType::Independant_Soft2);
             returnTypes.push_back(ParamInterpolationType::Independant_Log);
             return returnTypes;
         }
@@ -90,9 +113,11 @@ namespace Miam
         /// \brief Constructeur de copie par défaut
         BasicInterpolationCurve(const BasicInterpolationCurve&) = default;
         private :
+        /// \brief Pré-calcul des coefficients pour toutes les interpolations
         void updateInternalValues()
         {
-            // pre-computed values, for computation speed of linear interpolation
+            // pre-computed generic values, for computation speed of linear interpolation
+            // (re-used in other interps)
             deltaX = maxX - minX;
             deltaY = maxY - minY;
             centerX = (maxX + minX) / ((T) 2.0);
@@ -119,6 +144,20 @@ namespace Miam
                 b_logInterp = (T) 0.0;
                 c_logInterp = (T) 0.0;
             }
+            
+            // soft and hard curves and based on quadratic or square-root functions; very
+            // simple formulae
+            m_soft = (deltaY / (deltaX * deltaX));
+            m_hard = (deltaY / std::sqrt(deltaX));
+            
+            // better-controller soft/hard curves, closer to a linear curve
+            a_soft = (deltaY * ((T)1.0-alpha_s)*(1.0-alpha_s) )
+                    / (deltaX * deltaX * ((T)1.0 - alpha_s*alpha_s) );
+            b_soft = ((T)2.0 * alpha_s * ((T)1.0 - alpha_s) * deltaY )
+                    / ( ((T)1.0 - alpha_s*alpha_s) * deltaX );
+            a_hard = (deltaY / ((T)1.0 - std::sqrt(alpha_h)));
+            b_hard = (((T)1.0 - alpha_h) / deltaX);
+            c_hard = (minY - ((deltaY*std::sqrt(alpha_h)) / ((T)1.0 - sqrt(alpha_h))));
         }
         
         
@@ -158,8 +197,27 @@ namespace Miam
                     case ParamInterpolationType::Independant_Linear :
                         return minY + ((inputX - minX) / deltaX) * deltaY;
                         
+                    // - - - hard/soft 2 (hardest and softest curves) - - -
+                    case ParamInterpolationType::Independant_Soft2 :
+                        return m_soft * (inputX - minX)*(inputX - minX) + minY;
+                        
+                    case ParamInterpolationType::Independant_Hard2 :
+                        return m_hard * sqrt(inputX - minX) + minY;
+                        
+                    // - - - hard/soft 1 : more linear, formulae is a bit more complex - - -
+                    case ParamInterpolationType::Independant_Soft1 :
+                        return a_soft * (inputX - minX)*(inputX - minX)
+                        + b_soft * (inputX - minX) + minY;
+                        
+                    case ParamInterpolationType::Independant_Hard1 :
+                        return a_hard * std::sqrt(alpha_h + b_hard*(inputX - minX)) + c_hard;
+                        
+                    // - - - Log-scale for audio frequencies - - - 
                     case ParamInterpolationType::Independant_Log :
-                        return a_logInterp * std::exp(b_logInterp * inputX) + c_logInterp;
+                        // fonction qui prend un x normalisé en entrée
+                        // (pourrait être optimisé...)
+                        return a_logInterp * std::exp(b_logInterp * ((inputX - minX) / deltaX))
+                               + c_logInterp;
                 
                     case ParamInterpolationType::Independant_Threshold :
                         return (inputX < centerX) ? minY : maxY;
