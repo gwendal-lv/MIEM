@@ -384,7 +384,7 @@ BEGIN_JUCER_METADATA
          fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="12"/>
   <SLIDER name="Main slider" id="8924a1c10657725b" memberName="mainSlider"
-          virtualName="" explicitFocusOrder="0" pos="0Rr 24.5Cc 56 160M"
+          virtualName="" explicitFocusOrder="0" pos="0Rr 24Cc 56 160M"
           tooltip="Master Gain (applied to the entire state)" bkgcol="ff000000"
           thumbcol="ffffffff" trackcol="ff909090" min="-6e1" max="6" int="0"
           style="LinearVertical" textBoxPos="TextBoxAbove" textBoxEditable="0"

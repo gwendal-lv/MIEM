@@ -24,7 +24,7 @@
 #include "AudioDefines.h"
 #include "InterpolationTypes.h"
 
-#include "XmlUtils.h"
+#include "TextUtils.h"
 //[/Headers]
 
 #include "HardwareConfigurationComponent.h"
@@ -407,42 +407,11 @@ void HardwareConfigurationComponent::textEditorTextChanged(TextEditor& editorTha
 }
 std::string HardwareConfigurationComponent::TryParseIpAddress()
 {
-    std::string ipAddress = ipAddressTextEditor->getText().toStdString();
-    if ( XmlUtils::IsIpv4AddressValid(ipAddress) ) // en gras
-    {
-        ipAddressTextEditor->applyFontToAllText(Font().boldened());
-        //ipAddressTextEditor->setColour(TextEditor::ColourIds::textColourId, Colours::palegreen);
-        return ipAddress;
-    }
-    else
-    {
-        ipAddressTextEditor->applyFontToAllText(Font()); // font par défaut si c'est pas bon
-        //ipAddressTextEditor->setColour(TextEditor::ColourIds::textColourId, Colours::white);
-        return "";
-    }
+    return TextUtils::TryParseAndBoldenIpAddress(ipAddressTextEditor.get());
 }
 int HardwareConfigurationComponent::TryParseUdpPort()
 {
-    bool enteredValueIsCorrect = true;
-    int parsedValue = -1;
-    try {
-        parsedValue = std::stoi(udpPortTextEditor->getText().toStdString());
-    } catch (std::exception) {
-        enteredValueIsCorrect = false;
-    }
-    if (parsedValue <= 0 || 65535 < parsedValue)
-        enteredValueIsCorrect = false;
-
-    if ( enteredValueIsCorrect ) // en gras
-    {
-        udpPortTextEditor->applyFontToAllText(Font().boldened());
-        return parsedValue;
-    }
-    else
-    {
-        udpPortTextEditor->applyFontToAllText(Font()); // font par défaut si c'est pas bon
-        return -1;
-    }
+    return TextUtils::TryParseAndBoldenUdpPort(udpPortTextEditor.get());
 }
 void HardwareConfigurationComponent::SetAvailableInterpolations(std::initializer_list<InterpolationType> interpolationTypeArgs)
 {

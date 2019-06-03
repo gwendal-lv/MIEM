@@ -135,6 +135,19 @@ namespace Miam
         /// \brief Returns wether the fullscreen mode will be activated or not
         bool OnFullscreenButtonClicked();
         
+        /// \brief Re-connection request from View. Always accepted... for now
+        /// \returns Whether the request is accepted (new connection params allowed) or not
+        bool OnOscConfigurationEditionRequest() {return true;}
+        /// \brief Re-connection parameters validated by user (after edition was granted by this).
+        /// This will stop the model, reconnect to new parameters, then stop the model, but only
+        /// if given parameters are OK for connection
+        ///
+        /// ipAddress must be either valid or empty.
+        /// udpPort must be either valid or -1
+        ///
+        /// \returns Whether the re-connection was successful or nort
+        bool OnOscConfigurationEditionFinished(std::string ipAddress, int udpPort);
+        
         
         
         // - - - - - Events from the Model - - - - -

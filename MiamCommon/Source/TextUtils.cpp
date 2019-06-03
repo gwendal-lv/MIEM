@@ -19,6 +19,8 @@
 
 #include "MiamExceptions.h"
 
+#include "XmlUtils.h"
+
 using namespace Miam;
 
 std::string TextUtils::oscIntInAddressTag = std::string(Miam_OscIntInAddressTag);
@@ -261,5 +263,45 @@ std::string TextUtils::GetAmplitude_dB_string_from_Linear(double linearValue, in
     }
 }
 
+
+std::string TextUtils::TryParseAndBoldenIpAddress(juce::TextEditor* textEditor)
+{
+    std::string ipAddress = textEditor->getText().toStdString();
+    if ( XmlUtils::IsIpv4AddressValid(ipAddress) ) // en gras
+    {
+        textEditor->applyFontToAllText(Font().boldened());
+        //ipAddressTextEditor->setColour(TextEditor::ColourIds::textColourId, Colours::palegreen);
+        return ipAddress;
+    }
+    else
+    {
+        textEditor->applyFontToAllText(Font()); // font par défaut si c'est pas bon
+        //ipAddressTextEditor->setColour(TextEditor::ColourIds::textColourId, Colours::white);
+        return "";
+    }
+}
+int TextUtils::TryParseAndBoldenUdpPort(juce::TextEditor* textEditor)
+{
+    bool enteredValueIsCorrect = true;
+    int parsedValue = -1;
+    try {
+        parsedValue = std::stoi(textEditor->getText().toStdString());
+    } catch (std::exception) {
+        enteredValueIsCorrect = false;
+    }
+    if (parsedValue <= 0 || 65535 < parsedValue)
+        enteredValueIsCorrect = false;
+    
+    if ( enteredValueIsCorrect ) // en gras
+    {
+        textEditor->applyFontToAllText(Font().boldened());
+        return parsedValue;
+    }
+    else
+    {
+        textEditor->applyFontToAllText(Font()); // font par défaut si c'est pas bon
+        return -1;
+    }
+}
 
 

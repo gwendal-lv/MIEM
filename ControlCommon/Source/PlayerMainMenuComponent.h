@@ -41,6 +41,7 @@ namespace Miam {
                                                                     //[/Comments]
 */
 class PlayerMainMenuComponent  : public Component,
+                                 public TextEditor::Listener,
                                  public Button::Listener
 {
 public:
@@ -62,6 +63,20 @@ public:
     void SetHelpString(const String& helpString);
 
     void SetInfoLabelText(const String& text);
+
+    virtual void textEditorTextChanged(TextEditor& editorThatHasChanged) override;
+
+    /// \brief Uses a TextUtils:: static method
+    std::string TryParseIpAddress();
+    /// \brief Uses a TextUtils:: static method
+    int TryParseUdpPort();
+
+
+    // internal helpers
+    private :
+    void setIsOscConfigurationDisplayed(bool shouldBeDisplayed);
+    void updateOscConfigurationComponents(bool resetConnectButtonText = true);
+    public :
 
     //[/UserMethods]
 
@@ -91,7 +106,11 @@ private:
     bool isPreparingToPlay = false;
 
     bool displayHelp = true;
+
+    bool isOscConfigurationBeingEdited = false;
+
     std::unique_ptr<MiamLookAndFeel> transparentLookAndFeel;
+
     //[/UserVariables]
 
     //==============================================================================
@@ -108,6 +127,11 @@ private:
     std::unique_ptr<TextButton> loadDefaultButton;
     std::unique_ptr<Label> additionnalStatusLabel;
     std::unique_ptr<TextButton> fullscreenButton;
+    std::unique_ptr<Label> udpPortLabel;
+    std::unique_ptr<TextEditor> udpPortTextEditor;
+    std::unique_ptr<Label> ipAddressLabel;
+    std::unique_ptr<TextEditor> ipAddressTextEditor;
+    std::unique_ptr<TextButton> changeConnectionButton;
 
 
     //==============================================================================

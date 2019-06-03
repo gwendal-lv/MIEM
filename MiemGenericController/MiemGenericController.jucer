@@ -326,18 +326,22 @@
     </GROUP>
     <GROUP id="{FC4D1C95-6CD1-1CB6-980B-4E5B96D1BFA4}" name="Resources">
       <GROUP id="{07BA892E-3EA0-D5C3-185A-1E68BB7B87CC}" name="InterpolationCurves">
+        <FILE id="o95ySA" name="InterpolationCurve_Hard1_80at1.png" compile="0"
+              resource="1" file="../Resources_LFS/Icones_Logos/Exports/InterpolationCurve_Hard1_80at1.png"/>
+        <FILE id="ikiuhp" name="InterpolationCurve_Hard2_80at1.png" compile="0"
+              resource="1" file="../Resources_LFS/Icones_Logos/Exports/InterpolationCurve_Hard2_80at1.png"/>
+        <FILE id="gbxysN" name="InterpolationCurve_Soft1_80at1.png" compile="0"
+              resource="1" file="../Resources_LFS/Icones_Logos/Exports/InterpolationCurve_Soft1_80at1.png"/>
+        <FILE id="rWm3rq" name="InterpolationCurve_Soft2_80at1.png" compile="0"
+              resource="1" file="../Resources_LFS/Icones_Logos/Exports/InterpolationCurve_Soft2_80at1.png"/>
         <FILE id="fkaZLD" name="InterpolationCurve_Threshold_80at1.png" compile="0"
               resource="1" file="../Resources_LFS/Icones_Logos/Exports/InterpolationCurve_Threshold_80at1.png"/>
         <FILE id="WcTwqb" name="InterpolationCurve_Exp-scale_80at1.png" compile="0"
               resource="1" file="../Resources_LFS/Icones_Logos/Exports/InterpolationCurve_Exp-scale_80at1.png"/>
-        <FILE id="MEf7XL" name="InterpolationCurve_Hard_80at1.png" compile="0"
-              resource="1" file="../Resources_LFS/Icones_Logos/Exports/InterpolationCurve_Hard_80at1.png"/>
         <FILE id="olLV0w" name="InterpolationCurve_Linear_80at1.png" compile="0"
               resource="1" file="../Resources_LFS/Icones_Logos/Exports/InterpolationCurve_Linear_80at1.png"/>
         <FILE id="aI5Hsk" name="InterpolationCurve_Log-scale_80at1.png" compile="0"
               resource="1" file="../Resources_LFS/Icones_Logos/Exports/InterpolationCurve_Log-scale_80at1.png"/>
-        <FILE id="C7DtPM" name="InterpolationCurve_Soft_80at1.png" compile="0"
-              resource="1" file="../Resources_LFS/Icones_Logos/Exports/InterpolationCurve_Soft_80at1.png"/>
       </GROUP>
       <FILE id="P6bzns" name="GenCon_Android_1024at1.png" compile="0" resource="1"
             file="../Resources_LFS/Icones_Logos/Exports/GenCon_Android_1024at1.png"/>

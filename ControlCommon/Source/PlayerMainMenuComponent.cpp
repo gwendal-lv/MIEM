@@ -22,6 +22,8 @@
 // direct, half-disgusting access to the static appPurpose info...
 #include "AppPurpose.h"
 
+#include "TextUtils.h"
+
 //[/Headers]
 
 #include "PlayerMainMenuComponent.h"
@@ -144,6 +146,54 @@ PlayerMainMenuComponent::PlayerMainMenuComponent ()
     fullscreenButton->addListener (this);
     fullscreenButton->setColour (TextButton::buttonColourId, Colour (0xff404040));
 
+    udpPortLabel.reset (new Label ("UPD Port Label",
+                                   TRANS("OSC device UDP port:")));
+    addAndMakeVisible (udpPortLabel.get());
+    udpPortLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    udpPortLabel->setJustificationType (Justification::centredRight);
+    udpPortLabel->setEditable (false, false, false);
+    udpPortLabel->setColour (Label::textColourId, Colours::white);
+    udpPortLabel->setColour (TextEditor::textColourId, Colours::black);
+    udpPortLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    udpPortTextEditor.reset (new TextEditor ("UDP Port Text Editor"));
+    addAndMakeVisible (udpPortTextEditor.get());
+    udpPortTextEditor->setMultiLine (false);
+    udpPortTextEditor->setReturnKeyStartsNewLine (false);
+    udpPortTextEditor->setReadOnly (false);
+    udpPortTextEditor->setScrollbarsShown (true);
+    udpPortTextEditor->setCaretVisible (true);
+    udpPortTextEditor->setPopupMenuEnabled (true);
+    udpPortTextEditor->setColour (TextEditor::backgroundColourId, Colour (0xff404040));
+    udpPortTextEditor->setText (TRANS("8001"));
+
+    ipAddressLabel.reset (new Label ("Ip Address Label",
+                                     TRANS("OSC device IP adress:")));
+    addAndMakeVisible (ipAddressLabel.get());
+    ipAddressLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    ipAddressLabel->setJustificationType (Justification::centredRight);
+    ipAddressLabel->setEditable (false, false, false);
+    ipAddressLabel->setColour (Label::textColourId, Colours::white);
+    ipAddressLabel->setColour (TextEditor::textColourId, Colours::black);
+    ipAddressLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    ipAddressTextEditor.reset (new TextEditor ("IP Address Text Editor"));
+    addAndMakeVisible (ipAddressTextEditor.get());
+    ipAddressTextEditor->setMultiLine (false);
+    ipAddressTextEditor->setReturnKeyStartsNewLine (false);
+    ipAddressTextEditor->setReadOnly (false);
+    ipAddressTextEditor->setScrollbarsShown (true);
+    ipAddressTextEditor->setCaretVisible (true);
+    ipAddressTextEditor->setPopupMenuEnabled (true);
+    ipAddressTextEditor->setColour (TextEditor::backgroundColourId, Colour (0xff404040));
+    ipAddressTextEditor->setText (TRANS("127.0.0.1"));
+
+    changeConnectionButton.reset (new TextButton ("Change Connection button"));
+    addAndMakeVisible (changeConnectionButton.get());
+    changeConnectionButton->setButtonText (TRANS("Change IP/port"));
+    changeConnectionButton->addListener (this);
+    changeConnectionButton->setColour (TextButton::buttonColourId, Colour (0xff404040));
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -180,10 +230,20 @@ PlayerMainMenuComponent::PlayerMainMenuComponent ()
     }
 
     // Fullscreen button
-#ifdef __MIAMOBILE
-    fullscreenButton->setEnabled(false);
-    fullscreenButton->setVisible(false);
+#ifdef JUCE_WINDOWS
+    const bool activateFullscreenButton = true;
+#else
+    const bool activateFullscreenButton = false;
 #endif
+    fullscreenButton->setEnabled(activateFullscreenButton);
+    fullscreenButton->setVisible(activateFullscreenButton);
+
+    // Manual registration for listening to events
+    ipAddressTextEditor->addListener(this);
+    udpPortTextEditor->addListener(this);
+
+    // last updates
+    updateOscConfigurationComponents();
 
 
 #ifdef __MIEM_EXPERIMENTS
@@ -214,6 +274,11 @@ PlayerMainMenuComponent::~PlayerMainMenuComponent()
     loadDefaultButton = nullptr;
     additionnalStatusLabel = nullptr;
     fullscreenButton = nullptr;
+    udpPortLabel = nullptr;
+    udpPortTextEditor = nullptr;
+    ipAddressLabel = nullptr;
+    ipAddressTextEditor = nullptr;
+    changeConnectionButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -251,6 +316,11 @@ void PlayerMainMenuComponent::resized()
     loadDefaultButton->setBounds (((getWidth() / 2) - ((getWidth() - 16) / 2)) + (getWidth() - 16) - 8 - 144, 88 + 16, 144, 24);
     additionnalStatusLabel->setBounds ((getWidth() / 2) - ((getWidth() - 80) / 2), getHeight() - 24, getWidth() - 80, 24);
     fullscreenButton->setBounds (getWidth() - 24 - 144, getHeight() - 76, 144, 24);
+    udpPortLabel->setBounds ((getWidth() / 2) + -1 - 184, ((getHeight() / 2) + 44) + 0, 184, 24);
+    udpPortTextEditor->setBounds ((getWidth() / 2), (getHeight() / 2) + 44, 64, 24);
+    ipAddressLabel->setBounds ((getWidth() / 2) + -1 - 184, ((getHeight() / 2) + 12) + 0, 184, 24);
+    ipAddressTextEditor->setBounds ((getWidth() / 2), (getHeight() / 2) + 12, 120, 24);
+    changeConnectionButton->setBounds ((getWidth() / 2) - (200 / 2), (getHeight() / 2) + -24, 200, 24);
     //[UserResized] Add your own custom resize handling here..
 
     // Buttons (and the group itself) will be hidden if there is not enough height available
@@ -290,13 +360,25 @@ void PlayerMainMenuComponent::resized()
         helpButton->setBounds(bounds);
     }
 
-    // Size of group forced to a min value, if help is not displayed
+    // If help is not requested to be displayed:
+    // 1 - Size of help group forced to a min value,
+    // 2 - ip/port buttons and text are made visible, is there is enough vertical space
+    // (no available on landscape smartphones, for example....)
     if (! displayHelp)
     {
+        // help reduced at max
         Rectangle<int> newBounds = helpGroupComponent->getBounds();
         newBounds.setHeight(56);
         helpGroupComponent->setBounds(newBounds);
+
+        // ip/port buttons are activated or not, depending on the remaining vertical height
+        if (getHeight() > 360)
+            setIsOscConfigurationDisplayed(true);
+        else
+            setIsOscConfigurationDisplayed(false);
     }
+    else
+        setIsOscConfigurationDisplayed(false);
 
     //[/UserResized]
 }
@@ -354,6 +436,35 @@ void PlayerMainMenuComponent::buttonClicked (Button* buttonThatWasClicked)
         else
             fullscreenButton->setButtonText(TRANS("Fullscreen"));
         //[/UserButtonCode_fullscreenButton]
+    }
+    else if (buttonThatWasClicked == changeConnectionButton.get())
+    {
+        //[UserButtonCode_changeConnectionButton] -- add your button handler code here..
+
+        bool resetButtonText = true;
+        // If not in edition mode yet, we ask for it to the parent, then allow edition there
+        if (! isOscConfigurationBeingEdited)
+            isOscConfigurationBeingEdited = presenter->OnOscConfigurationEditionRequest();
+        // else if already editing, we transmit data to the parent manager
+        else
+        {
+            // PROCEDURE SI VALEURS PAS OK ????
+            isOscConfigurationBeingEdited = !
+            presenter->OnOscConfigurationEditionFinished(TryParseIpAddress(),
+                                                         TryParseUdpPort());
+            // si probleme : on ne change pas le texte, et on en affiche un autre directement sur le
+            // bouton (erreur connection...)
+            if (isOscConfigurationBeingEdited)
+            {
+                resetButtonText = false;
+                buttonThatWasClicked->setButtonText(TRANS("Cannot connect. Check and retry"));
+            }
+        }
+
+        // Buttons enablement depends on manager's response
+        updateOscConfigurationComponents(resetButtonText);
+
+        //[/UserButtonCode_changeConnectionButton]
     }
 
     //[UserbuttonClicked_Post]
@@ -451,6 +562,66 @@ void PlayerMainMenuComponent::SetInfoLabelText(const String& text)
 #endif
     }
 }
+void PlayerMainMenuComponent::textEditorTextChanged(TextEditor& editorThatHasChanged)
+{
+    if (&editorThatHasChanged == ipAddressTextEditor.get())
+        TryParseIpAddress();
+    else if (&editorThatHasChanged == udpPortTextEditor.get())
+        TryParseUdpPort();
+}
+std::string PlayerMainMenuComponent::TryParseIpAddress()
+{
+    return TextUtils::TryParseAndBoldenIpAddress(ipAddressTextEditor.get());
+}
+int PlayerMainMenuComponent::TryParseUdpPort()
+{
+    return TextUtils::TryParseAndBoldenUdpPort(udpPortTextEditor.get());
+}
+
+void PlayerMainMenuComponent::setIsOscConfigurationDisplayed(bool shouldBeDisplayed)
+{
+    changeConnectionButton->setVisible(shouldBeDisplayed);
+    ipAddressLabel->setVisible(shouldBeDisplayed);
+    ipAddressTextEditor->setVisible(shouldBeDisplayed);
+    udpPortLabel->setVisible(shouldBeDisplayed);
+    udpPortTextEditor->setVisible(shouldBeDisplayed);
+}
+void PlayerMainMenuComponent::updateOscConfigurationComponents(bool resetConnectButtonText)
+{
+    ipAddressLabel->setEnabled(isOscConfigurationBeingEdited);
+    ipAddressTextEditor->setEnabled(isOscConfigurationBeingEdited);
+    udpPortLabel->setEnabled(isOscConfigurationBeingEdited);
+    udpPortTextEditor->setEnabled(isOscConfigurationBeingEdited);
+    if (resetConnectButtonText)
+    {
+        if (! isOscConfigurationBeingEdited)
+            changeConnectionButton->setButtonText(TRANS("Change IP/port"));
+        else
+            changeConnectionButton->setButtonText(TRANS("Connect to new OSC device"));
+    }
+    // Update des fonts -> désactivé
+    if (isOscConfigurationBeingEdited)
+    {
+        /*ipAddressTextEditor->setFont(Font());
+        udpPortTextEditor->setFont(Font());*/
+        ipAddressTextEditor->setColour(TextEditor::textColourId,
+                                       juce::Colours::white);
+        udpPortTextEditor->setColour(TextEditor::textColourId,
+                                       juce::Colours::white);
+        TryParseIpAddress();
+        TryParseUdpPort();
+    }
+    else
+    {
+        ipAddressTextEditor->setColour(TextEditor::textColourId,
+                                       juce::Colour::fromRGB(40, 40, 40));
+        udpPortTextEditor->setColour(TextEditor::textColourId,
+                                     juce::Colour::fromRGB(40, 40, 40));
+        TryParseIpAddress();
+        TryParseUdpPort();
+    }
+}
+
 //[/MiscUserCode]
 
 
@@ -464,9 +635,10 @@ void PlayerMainMenuComponent::SetInfoLabelText(const String& text)
 BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="PlayerMainMenuComponent"
-                 componentName="" parentClasses="public Component" constructorParams=""
-                 variableInitialisers="" snapPixels="8" snapActive="1" snapShown="1"
-                 overlayOpacity="0.330" fixedSize="0" initialWidth="600" initialHeight="400">
+                 componentName="" parentClasses="public Component, public TextEditor::Listener"
+                 constructorParams="" variableInitialisers="" snapPixels="8" snapActive="1"
+                 snapShown="1" overlayOpacity="0.330" fixedSize="0" initialWidth="600"
+                 initialHeight="400">
   <BACKGROUND backgroundColour="51000000"/>
   <GROUPCOMPONENT name="Session group component" id="ee702f61e13ff830" memberName="sessionGroupComponent"
                   virtualName="" explicitFocusOrder="0" pos="0.5Cc 8 16M 56" outlinecol="ff909090"
@@ -530,6 +702,30 @@ BEGIN_JUCER_METADATA
   <TEXTBUTTON name="Fullscreen button" id="5a77ff389fbb58c9" memberName="fullscreenButton"
               virtualName="" explicitFocusOrder="0" pos="24Rr 76R 144 24" bgColOff="ff404040"
               buttonText="Fullscreen" connectedEdges="0" needsCallback="1"
+              radioGroupId="0"/>
+  <LABEL name="UPD Port Label" id="8d369e08975b779c" memberName="udpPortLabel"
+         virtualName="" explicitFocusOrder="0" pos="-1Cr 0 184 24" posRelativeX="dfbb24a51fa3d6c0"
+         posRelativeY="e4ef4437203ce19e" textCol="ffffffff" edTextCol="ff000000"
+         edBkgCol="0" labelText="OSC device UDP port:" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
+         fontsize="1.5e1" kerning="0" bold="0" italic="0" justification="34"/>
+  <TEXTEDITOR name="UDP Port Text Editor" id="e4ef4437203ce19e" memberName="udpPortTextEditor"
+              virtualName="" explicitFocusOrder="0" pos="0C 44C 64 24" bkgcol="ff404040"
+              initialText="8001" multiline="0" retKeyStartsLine="0" readonly="0"
+              scrollbars="1" caret="1" popupmenu="1"/>
+  <LABEL name="Ip Address Label" id="2066f0f6ef12dcf0" memberName="ipAddressLabel"
+         virtualName="" explicitFocusOrder="0" pos="-1Cr 0 184 24" posRelativeX="dfbb24a51fa3d6c0"
+         posRelativeY="6997b5b4dc28675a" textCol="ffffffff" edTextCol="ff000000"
+         edBkgCol="0" labelText="OSC device IP adress:" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
+         fontsize="1.5e1" kerning="0" bold="0" italic="0" justification="34"/>
+  <TEXTEDITOR name="IP Address Text Editor" id="6997b5b4dc28675a" memberName="ipAddressTextEditor"
+              virtualName="" explicitFocusOrder="0" pos="0C 12C 120 24" bkgcol="ff404040"
+              initialText="127.0.0.1" multiline="0" retKeyStartsLine="0" readonly="0"
+              scrollbars="1" caret="1" popupmenu="1"/>
+  <TEXTBUTTON name="Change Connection button" id="56c9310b25ab19de" memberName="changeConnectionButton"
+              virtualName="" explicitFocusOrder="0" pos="0Cc -24C 200 24" bgColOff="ff404040"
+              buttonText="Change IP/port" connectedEdges="0" needsCallback="1"
               radioGroupId="0"/>
 </JUCER_COMPONENT>
 

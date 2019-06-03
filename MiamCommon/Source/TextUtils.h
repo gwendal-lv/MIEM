@@ -83,5 +83,13 @@ namespace Miam {
         ///
         /// The number of digits might be different pour minus infinity dB.
         static std::string GetAmplitude_dB_string_from_Linear(double linearValue, int numberOfDigits);
+        
+        
+        /// \brief Returns the IP address as a string, or an empty string if given character sequence
+        /// is not valid. Makes the textbox's text bold is parsed succeeded.
+        static std::string TryParseAndBoldenIpAddress(juce::TextEditor* textEditor);
+        /// \brief Returns the UDP port as a positive int, or -1 if user input was not valid.
+        ///  Makes the textbox's text bold is parsed succeeded.
+        static int TryParseAndBoldenUdpPort(juce::TextEditor* textEditor);
     };
 }

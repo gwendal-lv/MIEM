@@ -18,7 +18,7 @@ juce::String PlayerHelpContent::GetMainHelp(AppPurpose appPurpose)
     String endString = "\n\n\n"
     + TRANS("To get all necessary desktop applications, please follow the link below.") + "\n\n"
     + TRANS("This interface is part of the MIEM (Multitouch Interfaces for Electroacoustic Music) research project.") + "\n"
-    + TRANS("To get more information, or to participate in the research program linked to this interface, please visit http://miem.laras.be or contact the author: Gwendal Le Vaillant at glevaillant@he2b.be");
+    + TRANS("To get more information, or to participate in the research program linked to this interface, please visit http://miem.laras.be");
     
     // init from JuceHeader data
     String projectName(ProjectInfo::projectName);
@@ -40,7 +40,7 @@ juce::String PlayerHelpContent::GetMainHelp(AppPurpose appPurpose)
             
             
         case AppPurpose::Spatialisation :
-            return TRANS("This app is an innovative touch controller for music spatialisation, based on geometric shapes instead of typical faders and potentiometers.")
+            return TRANS("This app is an touch controller for music spatialisation, based on interactions between geometric shapes instead of typical faders and potentiometers.")
             + "\n\n"
             
             + TRANS("Because it is only a controller, it unfornately does not work alone... It must be used altogether with a dedicated VST/AU spatialisation plugin running on a desktop computer. The plugin can be inserted in Reaper, Ableton Live, Pro Tools, or any other modern Digital Audio Workstation. This plugin itself is called MIEM Matrix Router.")
@@ -57,13 +57,13 @@ juce::String PlayerHelpContent::GetMainHelp(AppPurpose appPurpose)
             
             
         case AppPurpose::GenericController :
-            return TRANS("This app is an innovative OSC touch controller, based on geometric shapes. Given your favorite presets, you can interpolate and create new presets with touch gestures.")
+            return TRANS("This app is an OSC touch controller based on the interactions between geometric shapes. Given your favorite presets, you can interpolate and create new presets with touch gestures.")
             + "\n\n"
             
-            + TRANS("Because it is only a controller, it unfornately does not produce any sound or video by itself... but it can control any OSC-enabled device on the local network.")
+            + TRANS("Because it is only a controller, it unfornately does not produce any sound or video by itself... but it can control your OSC devices on the local network: sound synthesizers, filters and samplers, VJing apps and DMX controllers, etc. It can also control your MIDI devices by using the MIEM OSC-MIDI Bridge app, or any other OSC to MIDI application")
             + "\n\n"
             
-            + TRANS("To edit the geometric shapes, the presets and the OSC configuration, you need to download and install a dedicated desktop editor (it is free and available for Windows and macOS). The editor is called MIEM Editor.")
+            + TRANS("To edit the geometric shapes and linked presets, please download and install the dedicated desktop app called MIEM Editor. It is free and available for Windows and macOS.")
             + "\n"
             + sessionFilesString
             + endString;
@@ -73,7 +73,7 @@ juce::String PlayerHelpContent::GetMainHelp(AppPurpose appPurpose)
             
             
         default :
-            return TRANS("Please go to http://miem.laras.be or contact Gwendal Le Vaillant at glevaillant@he2b.be for more information.");
+            return TRANS("For more information, go to http://miem.laras.be or contact Gwendal Le Vaillant at glevaillant@he2b.be");
             break;
     }
 }

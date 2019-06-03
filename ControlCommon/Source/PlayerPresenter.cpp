@@ -307,6 +307,26 @@ bool PlayerPresenter::OnFullscreenButtonClicked()
     return view->GetFullscreenState();
 #endif
 }
+bool PlayerPresenter::OnOscConfigurationEditionFinished(std::string ipAddress, int udpPort)
+{
+    // a pre-check must have been done before
+    if (ipAddress.empty() || (udpPort == -1))
+        return false;
+    else
+    {
+        // or if OK, then we STOP
+        std::cout << "======= RECONNECTION À ÉCRIRE =======" << std::endl;
+        
+        // then re-connect
+        
+        
+        // then PLAY again
+        
+        
+        // then return
+        return true;
+    }
+}
 
 
 // = = = = = = = = = = EVENTS FROM MODEL = = = = = = = = = =
