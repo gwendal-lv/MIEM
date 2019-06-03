@@ -6,7 +6,7 @@ fig = figure;
 
 % construction des abscisses et des légendes/étiquettes associées
 %xBar = [1:12]';
-xCategories = categorical({'Fastest', 'Most precise' ,'Most intuitive' , 'Preferred'});
+xCategories = categorical({'fastest', 'most precise' ,'most intuitive' , 'one you preferred'});
 % construction des valeurs de l'histogramme
 % dans l'ordre demandé dans l'expé : fastest, most precise, most intuitive,
 % preferred overall
@@ -19,23 +19,18 @@ yBar = [opinionResults.fader.fastestTotal opinionResults.none.fastestTotal opini
     % Utiliser FACECOLOR FLAT à combiner avec une colormap qui donne du 
     % bleu pour interp, du vert pour fader et du gris (ou autre... au
     % milieu)
-barPlot = bar(xCategories, yBar);
+barPlot = bar(xCategories, yBar, 'FaceColor', 'flat');
 
 legend('Fader', 'None', 'Interpolation');
+xlabel('Characteristic asked');
+ylabel('Amount of subjects');
+title('Answers to the questions: which method was the [...] ?');
 
-% couleurs personnalisées
-for i=1:12
-    % fader
-    if ( mod(i,3) == 1 )
-        
-    % none
-    elseif ( mod(i,3) == 2 )
-        
-    % interp
-    elseif ( mod(i,3) == 0 )
-        barPlot.CData(i,:) = [1 0 0]; %globalParams.colors(1, :);
-    end
-end
+% couleurs perso (après avoir mis l'attribut FaceColor = flat
+barPlot(1).CData = globalParams.colors(1, :);
+barPlot(2).CData = [0.4 0.4 0.4];
+barPlot(3).CData = globalParams.colors(2, :);
+
 
 end
 
