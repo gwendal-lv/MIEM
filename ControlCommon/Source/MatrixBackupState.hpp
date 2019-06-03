@@ -230,9 +230,16 @@ namespace Miam
             // Passe 1 = D'abord on init toutes les curves à la valeur par défaut...
             interpolationCurves.clear();
             for (size_t i = 0 ; i<Miam_MaxNumInputs ; i++)
-                interpolationCurves.push_back(BasicInterpolationCurve<T>::GetDefault());
+            {
+                // pour éviter de faire trop de calculs (coeffs d'interp) au lancement :
+                // on copie la courbe [0] dès que possible
+                if (i==0)
+                    interpolationCurves.push_back(BasicInterpolationCurve<T>::GetDefault());
+                else
+                    interpolationCurves.push_back(interpolationCurves[0]);
+            }
             
-            // Passe 2 = Lecture de tous les noeuds enfant, pour trouver les valeurs non-défaut
+            // Passe 2 = Lecture de tous les noeuds enfants, pour trouver les valeurs non-défaut
             // Pas de try car si on a lu le compte, le noeud inputs existe forcément (et a le droit d'etre vide)
             for (auto it = curvesTree.begin() ; it != curvesTree.end() ; it++)
             {

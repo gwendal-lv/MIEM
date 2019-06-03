@@ -169,6 +169,8 @@ void InterpolationCurvesComboBox::SetSelectedInterpolationType(ParamInterpolatio
 		setSelectedId(0, NotificationType::sendNotification);
 		setText("", NotificationType::dontSendNotification);
 	}
+    // Actualisation de la copie du choix.... sinon bug.
+    lastActualChoice = newType;
     // Internal update
     updateImage();
 }
