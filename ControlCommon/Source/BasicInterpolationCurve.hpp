@@ -100,12 +100,10 @@ namespace Miam
                                 T _minY, T _maxY, T _minX = (T)0.0, T _maxX = (T)1.0)
         :
         interpolationType(_interpolationType),
-        // assignation of const attributes, with check for monotonic increase
+        // assignation of basic attributes, with check for monotonic increase
         minX( (_minX < _maxX) ? _minX : _maxX ), maxX( (_minX < _maxX) ? _maxX : _minX ),
         minY( (_minY < _maxY) ? _minY : _maxY ), maxY( (_minY < _maxY) ? _maxY : _minY )
         {
-            assert( (minX < maxX)  && (minY < maxY) ); // monotonically increasing functions only
-            
             updateInternalValues();
             
             // Contrainte éventuellement supprimée car elle n'a pas beaucoup de sens...
@@ -125,27 +123,9 @@ namespace Miam
             centerX = (maxX + minX) / ((T) 2.0);
             centerY = (maxY + minY) / ((T) 2.0);
             
-            // log-scale interp is also prepared here
-            // If any exception comes from the internal code, we transform the interpolation
-            // into a basic linear one
-            try {
-                double a, b, c; // local copies
-                CoefficientsComputation::LogInterpolationCoeffs(minY, maxY, &a, &b, &c);
-                a_logInterp = (T)a;
-                b_logInterp = (T)b;
-                c_logInterp = (T)c;
-            }
-            catch (std::exception& ) // assez mal de tout catcher...
-            {
-                // En débug, il faut absolument vérifier ce qui a déclenché l'exception !
-                assert(false);
-                // En release on laisse couler pour la stabilité... interp linéaire forcée
-                if (interpolationType == ParamInterpolationType::Independant_Log)
-                    interpolationType = ParamInterpolationType::Independant_Linear;
-                a_logInterp = (T) 0.0;
-                b_logInterp = (T) 0.0;
-                c_logInterp = (T) 0.0;
-            }
+            // log-scale interp is also prepared here (but in a separate function
+            // because it requires more logic
+            computeLogScaleCoeffs();
             
             // soft and hard curves and based on quadratic or square-root functions; very
             // simple formulae
@@ -160,6 +140,53 @@ namespace Miam
             a_hard = (deltaY / ((T)1.0 - std::sqrt(alpha_h)));
             b_hard = (((T)1.0 - alpha_h) / deltaX);
             c_hard = (minY - ((deltaY*std::sqrt(alpha_h)) / ((T)1.0 - sqrt(alpha_h))));
+        }
+        /// \brief Internal helper function, specific for the log-scale interp
+        void computeLogScaleCoeffs()
+        {
+            // If any exception comes from the internal code, we transform the interpolation
+            // into a basic linear one
+            try {
+                // If min/max values of y are positive, we compute the usual log-scale
+                if ( minY > (T)0.0 )
+                {
+                    double a, b, c; // local copies
+                    CoefficientsComputation::LogInterpolationCoeffs((double)minY, (double)maxY,
+                                                                    &a, &b, &c);
+                    a_logInterp = (T)a;
+                    b_logInterp = (T)b;
+                    c_logInterp = (T)c;
+                }
+                // Then, is some values are negative... the usual log scale (based on decades)
+                // does not make much sense...
+                // Choice : a log-scale of 2 decades (e.g. from 100 to 10000) is computed (variable
+                // z instead of y) then scaled from minY to maxY;
+                else 
+                {
+                    // computation of 100-10000 log-scale
+                    const T minZ = (T)100.0;
+                    const T maxZ = (T)10000.0;
+                    const T deltaZ = maxZ - minZ;
+                    double a, b, c; // local copies for the static computation method
+                    CoefficientsComputation::LogInterpolationCoeffs((double)minZ, (double)maxZ,
+                                                                    &a, &b, &c);
+                    // re-scaling results
+                    a_logInterp = (((T)a) / deltaZ) * deltaY;
+                    b_logInterp = (T)b;
+                    c_logInterp = ((T)c) - minZ + minY;
+                }
+            }
+            catch (std::exception& ) // assez mal de tout catcher...
+            {
+                // En débug, il faut absolument vérifier ce qui a déclenché l'exception !
+                assert(false);
+                // En release on laisse couler pour la stabilité... interp linéaire forcée
+                if (interpolationType == ParamInterpolationType::Independant_Log)
+                    interpolationType = ParamInterpolationType::Independant_Linear;
+                a_logInterp = (T) 0.0;
+                b_logInterp = (T) 0.0;
+                c_logInterp = (T) 0.0;
+            }
         }
         
         
@@ -277,9 +304,6 @@ namespace Miam
             // update
             updateInternalValues();
         }
-        
-        
-        
         
         
         
