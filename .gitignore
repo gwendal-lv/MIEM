@@ -5,6 +5,12 @@
 # Folders to put at some point in a GIT LFS cloud storage (possible on BitBucket)
 # /Resources_LFS --> now actually followed by GIT LFS
 
+# Matlab C/C++ code gen (will trigger conflict on merge... to delete)
+/ControlCommon/codegen
+*.mexmaci64
+# VScode hidden macos files
+.vscode/
+
 # Chaque utilisateur du dépôt devra créer ses propres projets à partir du ProJucer ! On verra bien...
 Builds
 ####  OSX ###
