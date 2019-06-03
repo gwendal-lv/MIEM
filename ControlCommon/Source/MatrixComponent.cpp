@@ -416,12 +416,23 @@ void MatrixComponent::SetHorizontalSliderInterpolationData(int row,
     double rangeWidenessFactor = std::abs(newMax - newMin) / 20000.0;
     rangeWidenessFactor = Math::Clamp(rangeWidenessFactor, 0.0, 1.0);
     
+    double rangeDecadesNumber = 1.0;
+    if ((newMin > 0.0) && (newMax > newMin))
+        rangeDecadesNumber = std::log10(newMax / newMin);
+    const double maxDecadesConsidered = 3.0; // 3 decades max. are considered
+    rangeDecadesNumber = Math::Clamp(rangeDecadesNumber, 0.0, maxDecadesConsidered);
+    
+    
     switch( newInterpCurve.GetInterpolationType() )
     {
-        // The skew factor actually depends on how on big the range of the slider
-        // (calibrated for audio frequencies...)
+        // The skew factor actually depends on how on big the range of the slider.
+            // Calibrated for audio frequencies : mid-point is :
+            // exact for a 3-decaces band (20Hz to 20kHz)
+            // a bit too big for a 2-decades band (50Hz to 5kHz)
+            // and a bit too small for a 1-decade band (100Hz to 1kHz)
         case ParamInterpolationType::Independant_Log :
-            skewFactor = 0.22 + (1.0 - rangeWidenessFactor) * 0.7;
+            //skewFactor = 0.20 + (1.0 - rangeWidenessFactor) * 0.40;
+            skewFactor = 0.20 + (1.0 - (rangeDecadesNumber/maxDecadesConsidered)) * 0.40;
             break;
             
             

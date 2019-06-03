@@ -19,9 +19,12 @@ c = 0;
 
 y1 = 0; 
 y2 = maxY - minY;
+
 % ok, calcul cohérent avec l'affichage eq8 dans Live 10
-centerYlog = exp((log(maxY) + log(minY)) / 2); 
+nombreDecades = log10(maxY / minY)
+centerYlog = minY * (10 ^(nombreDecades / 2))
 ym = centerYlog - minY;
+
 a_eq2 = ym*ym;
 b_eq2 = -ym*ym - (ym - y2)*(ym - y2);
 c_eq2 = (ym - y2) * (ym - y2);

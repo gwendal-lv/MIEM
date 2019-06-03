@@ -108,7 +108,9 @@ namespace Miam
             
             updateInternalValues();
             
-            assert( deltaY > (T) 0.001 );
+            // Contrainte éventuellement supprimée car elle n'a pas beaucoup de sens...
+            // les float/double vont automatiquement s'adapter aux ordres de grandeur...
+            assert( deltaY > (GetMinOutputRange() * ((T)0.75) ) );
         }
         /// \brief Constructeur de copie par défaut
         BasicInterpolationCurve(const BasicInterpolationCurve&) = default;
@@ -327,17 +329,17 @@ namespace Miam
                 *b = 0.0;
                 *c = 0.0;
                 
-                //  Interpolation log : il faut faire un peu d'analyse et de calcul. Résolution qui fonctionne pour une interpolation croissante uniquement
-                //  On recherche a, b et c tels que (y - minY) = a.exp(bx) + c, avec nécessairement b>0, et immédiatement a = -c pour la correspondance en 0
-                //  On va passer d'abord par la résolution d'une équation du second degré en B = exp(b)
+                //  Interpolation log : il faut faire un peu d'analyse et de calcul. R�solution qui fonctionne pour une interpolation croissante uniquement
+                //  On recherche a, b et c tels que (y - minY) = a.exp(bx) + c, avec n�cessairement b>0, et imm�diatement a = -c pour la correspondance en 0
+                //  On va passer d'abord par la r�solution d'une �quation du second degr� en B = exp(b)
                 //
-                //  REMARQUE : le code généré n'a plus forcément de sens "physique"
-                //  à l'intérieur, car Matlab effectue des optimisations (variables
-                //  temporaires supprimées, boucles modifiées, etc...)
+                //  REMARQUE : le code g�n�r� n'a plus forc�ment de sens "physique"
+                //  � l'int�rieur, car Matlab effectue des optimisations (variables
+                //  temporaires supprim�es, boucles modifi�es, etc...)
                 y2 = maxY - minY;
                 
-                //  ok, calcul cohérent avec l'affichage eq8 dans Live 10
-                ym = std::exp((std::log(maxY) + std::log(minY)) / 2.0) - minY;
+                //  ok, calcul coh�rent avec l'affichage eq8 dans Live 10
+                ym = minY * std::pow(10.0, std::log10(maxY / minY) / 2.0) - minY;
                 a_eq2 = ym * ym;
                 b_eq2 = -ym * ym - (ym - y2) * (ym - y2);
                 delta_eq2 = b_eq2 * b_eq2 - 4.0 * a_eq2 * ((ym - y2) * (ym - y2));
@@ -350,8 +352,8 @@ namespace Miam
                     B_roots[1] = (-b_eq2 + std::sqrt(delta_eq2)) / (2.0 * a_eq2);
                     
                     //  Il est probable que les 2 racines soient valables. On doit calculer les
-                    //  a,b,c jusqu'au bout puis vérifier l'application de l'équation avec une
-                    //  marge d'erreur (qui réduit)
+                    //  a,b,c jusqu'au bout puis v�rifier l'application de l'�quation avec une
+                    //  marge d'erreur (qui r�duit)
                     //  - - - - - Calcul des coefficients a, b, c - - - - -
                     for (i = 0; i < 2; i++) {
                         b_test[i] = std::log(B_roots[i]);
@@ -366,14 +368,14 @@ namespace Miam
                     iterationsCount = 0;
                     a_eq2 = (maxY - minY) / 10.0;
                     
-                    //  fera 5% d'erreur pour première itération (division par 2 à chaque fois
+                    //  fera 5% d'erreur pour premi�re it�ration (division par 2 � chaque fois
                     //  on sortira de la boucle si 0 ou 1 valeur ne sont pas OK...
                     while ((numberOk > 1) && (iterationsCount < 20)) {
                         numberOk = 0;
                         a_eq2 /= 2.0;
                         
-                        //  pour chaque jeu de réponses, on vérifie les 3 points qui ont
-                        //  servi à construire les systèmes d'équation
+                        //  pour chaque jeu de r�ponses, on v�rifie les 3 points qui ont
+                        //  servi � construire les syst�mes d'�quation
                         for (i = 0; i < 2; i++) {
                             //  always true at the moment...
                             if ((std::abs(a_test[i] + c_test[i]) < a_eq2) && (std::abs((a_test[i] *
@@ -387,7 +389,7 @@ namespace Miam
                         iterationsCount++;
                     }
                     
-                    //  écriture des bons coeffs, si OK
+                    //  �criture des bons coeffs, si OK
                     if (numberOk == 1) {
                         *a = a_test[validCoeffsIndex];
                         *b = b_test[validCoeffsIndex];
@@ -399,6 +401,7 @@ namespace Miam
                         *c = c_test[0] + minY;
                     }
                 }
+
             }
         };
     };
