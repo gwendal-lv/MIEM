@@ -1,18 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<miem appVersion="65536" appPurpose="Spatialisation">
+<miem appVersion="65794" appPurpose="Spatialisation">
     <settings>
         <control>
-            <interpolation type="Quadratic"/>
+            <interpolation type="Quadratic">
+                <curves/>
+            </interpolation>
             <inputs activeCount="2" maxCount="64"/>
             <outputs activeCount="16" maxCount="64"/>
             <senders>
                 <sender type="MiamOsc">
-                    <ip>192.168.0.1</ip>
+                    <ip>192.168.2.1</ip>
                     <udp>
-                        <port>8010</port>
+                        <port>9010</port>
+                        <additional_port_1>19010</additional_port_1>
+                        <additional_port_2>29010</additional_port_2>
                     </udp>
                 </sender>
             </senders>
+            <master_gain enabled="true" value="1"/>
         </control>
         <presenter>
             <keyboardedition>true</keyboardedition>
@@ -297,7 +302,7 @@
                                 </geometry>
                                 <spatstate index="2"/>
                             </area>
-                            <area id="35" type="Exciter" index="9">
+                            <area id="41" type="Exciter" index="9">
                                 <center x="0.49636803874092028" y="0.14079422382671544"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
@@ -308,7 +313,7 @@
                                 <is_round>false</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
-                            <area id="36" type="Exciter" index="10">
+                            <area id="42" type="Exciter" index="10">
                                 <center x="0.38740920096852349" y="0.90252707581227565"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="xCUiGi" name="MIEM Spat" projectType="guiapp" version="1.0.1"
+<JUCERPROJECT id="xCUiGi" name="MIEM Spat" projectType="guiapp" version="1.1.2"
               bundleIdentifier="com.gwendallv.MIEMSpatPlayer" includeBinaryInAppConfig="1"
               jucerVersion="5.4.3" displaySplashScreen="0" reportAppUsage="0"
               splashScreenColour="Dark" cppLanguageStandard="11" companyCopyright="Gwendal Le Vaillant (IRISIB/LARAS, UMons)"
@@ -8,7 +8,6 @@
               companyEmail="glevaillant@he2b.be" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../MiamCommon/Resources/&#10;../../../ControlCommon/Source/&#10;../../../SpatCommon/Source/"
               defines="__MIEM_VBO">
   <MAINGROUP id="m8VZoU" name="MIEM Spat">
-    <GROUP id="{ADBE97C9-3D18-AAD5-9404-289925A4641E}" name="Source"/>
     <GROUP id="{D93792BB-5B8B-5A35-D554-58C4F4E4D3DA}" name="Source">
       <FILE id="oaxiVA" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="TCTcR0" name="MainComponent.cpp" compile="1" resource="0"
@@ -220,6 +219,10 @@
           <FILE id="Rsgwzv" name="SubTriangle.h" compile="0" resource="0" file="../MiamCommon/Source/SubTriangle.h"/>
         </GROUP>
         <GROUP id="{86D5D9E1-93BE-D9FA-6D5A-C4DCC032AC63}" name="Scenes">
+          <FILE id="eiXIou" name="ExperimentsSceneConstrainer.cpp" compile="1"
+                resource="0" file="../MiamCommon/Source/ExperimentsSceneConstrainer.cpp"/>
+          <FILE id="qcBxYz" name="ExperimentsSceneConstrainer.h" compile="0"
+                resource="0" file="../MiamCommon/Source/ExperimentsSceneConstrainer.h"/>
           <FILE id="vjqld7" name="EditableScene.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/EditableScene.cpp"/>
           <FILE id="mc8YKm" name="EditableScene.h" compile="0" resource="0" file="../MiamCommon/Source/EditableScene.h"/>
@@ -335,6 +338,24 @@
       </GROUP>
     </GROUP>
     <GROUP id="{428D1A83-3150-7E91-1BB6-F67209C8E4C9}" name="Resources">
+      <GROUP id="{07BA892E-3EA0-D5C3-185A-1E68BB7B87CC}" name="InterpolationCurves">
+        <FILE id="o95ySA" name="InterpolationCurve_Hard1_80at1.png" compile="0"
+              resource="1" file="../Resources_LFS/Icones_Logos/Exports/InterpolationCurve_Hard1_80at1.png"/>
+        <FILE id="ikiuhp" name="InterpolationCurve_Hard2_80at1.png" compile="0"
+              resource="1" file="../Resources_LFS/Icones_Logos/Exports/InterpolationCurve_Hard2_80at1.png"/>
+        <FILE id="gbxysN" name="InterpolationCurve_Soft1_80at1.png" compile="0"
+              resource="1" file="../Resources_LFS/Icones_Logos/Exports/InterpolationCurve_Soft1_80at1.png"/>
+        <FILE id="rWm3rq" name="InterpolationCurve_Soft2_80at1.png" compile="0"
+              resource="1" file="../Resources_LFS/Icones_Logos/Exports/InterpolationCurve_Soft2_80at1.png"/>
+        <FILE id="fkaZLD" name="InterpolationCurve_Threshold_80at1.png" compile="0"
+              resource="1" file="../Resources_LFS/Icones_Logos/Exports/InterpolationCurve_Threshold_80at1.png"/>
+        <FILE id="WcTwqb" name="InterpolationCurve_Exp-scale_80at1.png" compile="0"
+              resource="1" file="../Resources_LFS/Icones_Logos/Exports/InterpolationCurve_Exp-scale_80at1.png"/>
+        <FILE id="olLV0w" name="InterpolationCurve_Linear_80at1.png" compile="0"
+              resource="1" file="../Resources_LFS/Icones_Logos/Exports/InterpolationCurve_Linear_80at1.png"/>
+        <FILE id="aI5Hsk" name="InterpolationCurve_Log-scale_80at1.png" compile="0"
+              resource="1" file="../Resources_LFS/Icones_Logos/Exports/InterpolationCurve_Log-scale_80at1.png"/>
+      </GROUP>
       <FILE id="Wpxtbe" name="MiemDefaultSessions.h" compile="0" resource="0"
             file="../MiamCommon/Resources/MiemDefaultSessions.h"/>
       <FILE id="LnMegQ" name="newFontImg.png" compile="0" resource="1" file="../MiamCommon/Resources/newFontImg.png"/>

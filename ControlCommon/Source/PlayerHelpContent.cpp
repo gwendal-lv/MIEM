@@ -40,10 +40,10 @@ juce::String PlayerHelpContent::GetMainHelp(AppPurpose appPurpose)
             
             
         case AppPurpose::Spatialisation :
-            return TRANS("This app is an touch controller for music spatialisation, based on interactions between geometric shapes instead of typical faders and potentiometers.")
+            return TRANS("This app is a touch controller for music spatialisation, based on interactions between geometric shapes instead of typical faders and potentiometers.")
             + "\n\n"
             
-            + TRANS("Because it is only a controller, it unfornately does not work alone... It must be used altogether with a dedicated VST/AU spatialisation plugin running on a desktop computer. The plugin can be inserted in Reaper, Ableton Live, Pro Tools, or any other modern Digital Audio Workstation. This plugin itself is called MIEM Matrix Router.")
+            + TRANS("Because it is only a controller, it unfornately does not work alone... It must be used altogether with a dedicated VST/AU spatialisation plugin running on a desktop computer. The plugin can be inserted in Reaper, Ableton Live, Pro Tools, or any other modern Digital Audio Workstation. The plugin itself is called MIEM Matrix Router.")
             + "\n\n"
             
             + TRANS("To edit the geometric shapes and the spatialisation effects, you also need to download and install the dedicated desktop editor (it is free and available for Windows and macOS). The editor is simply called MIEM Editor.")

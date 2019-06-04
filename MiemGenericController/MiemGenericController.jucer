@@ -210,10 +210,6 @@
           <FILE id="vjqld7" name="EditableScene.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/EditableScene.cpp"/>
           <FILE id="mc8YKm" name="EditableScene.h" compile="0" resource="0" file="../MiamCommon/Source/EditableScene.h"/>
-          <FILE id="eiXIou" name="ExperimentsSceneConstrainer.cpp" compile="1"
-                resource="0" file="../MiamCommon/Source/ExperimentsSceneConstrainer.cpp"/>
-          <FILE id="qcBxYz" name="ExperimentsSceneConstrainer.h" compile="0"
-                resource="0" file="../MiamCommon/Source/ExperimentsSceneConstrainer.h"/>
           <FILE id="i50GId" name="InteractiveScene.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/InteractiveScene.cpp"/>
           <FILE id="w93g8x" name="InteractiveScene.h" compile="0" resource="0"
@@ -385,8 +381,9 @@
                   customPList="&lt;plist&gt;&#10;&#9;&lt;dict&gt;&#10;&#9;&#9;&lt;key&gt;CFBundleDocumentTypes&lt;/key&gt;&#10;&#9;&#9;&lt;array&gt;&#10;&#9;&#9;&#9;&lt;dict&gt;&#10;&#9;&#9;&#9;&#9;&lt;key&gt;CFBundleTypeIconFiles&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&lt;array/&gt;&#10;&#9;&#9;&#9;&#9;&lt;key&gt;CFBundleTypeName&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&lt;string&gt;MIEM Controller Session&lt;/string&gt;&#10;&#9;&#9;&#9;&#9;&lt;key&gt;CFBundleTypeRole&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&lt;string&gt;Editor&lt;/string&gt;&#10;&#9;&#9;&#9;&#9;&lt;key&gt;LSHandlerRank&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&lt;string&gt;Owner&lt;/string&gt;&#10;&#9;&#9;&#9;&#9;&lt;key&gt;LSItemContentTypes&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&lt;array&gt;&#10;&#9;&#9;&#9;&#9;&#9;&lt;string&gt;com.gwendallv.MIEMController.mcs&lt;/string&gt;&#10;&#9;&#9;&#9;&#9;&lt;/array&gt;&#10;&#9;&#9;&#9;&lt;/dict&gt;&#10;&#9;&#9;&lt;/array&gt;&#10;&#9;&#10;&#10;&#9;&#9;&lt;key&gt;UTExportedTypeDeclarations&lt;/key&gt;&#10;&#9;&#9;&lt;array&gt;&#10;&#9;&#9;&#9;&lt;dict&gt;&#10;&#9;&#9;&#9;&#9;&lt;key&gt;UTTypeConformsTo&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&lt;array&gt;&#10;&#9;&#9;&#9;&#9;&#9;&lt;string&gt;public.data&lt;/string&gt;&#10;&#9;&#9;&#9;&#9;&#9;&lt;string&gt;public.content&lt;/string&gt;&#10;&#9;&#9;&#9;&#9;&#9;&lt;string&gt;public.xml&lt;/string&gt;&#10;&#9;&#9;&#9;&#9;&lt;/array&gt;&#10;&#9;&#9;&#9;&#9;&lt;key&gt;UTTypeDescription&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&lt;string&gt;MIEM Controller Session&lt;/string&gt;&#10;&#9;&#9;&#9;&#9;&lt;key&gt;UTTypeIconFiles&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&lt;array/&gt;&#10;&#9;&#9;&#9;&#9;&lt;key&gt;UTTypeIdentifier&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&lt;string&gt;com.gwendallv.MIEMController.mcs&lt;/string&gt;&#10;&#9;&#9;&#9;&#9;&lt;key&gt;UTTypeTagSpecification&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&lt;dict&gt;&#10;&#9;&#9;&#9;&#9;&#9;&lt;key&gt;public.filename-extension&lt;/key&gt;&#10;&#9;&#9;&#9;&#9;&#9;&lt;array&gt;&#10;&#9;&#9;&#9;&#9;&#9;&#9;&lt;string&gt;mcs&lt;/string&gt;&#10;&#9;&#9;&#9;&#9;&#9;&lt;/array&gt;&#10;&#9;&#9;&#9;&#9;&lt;/dict&gt;&#10;&#9;&#9;&#9;&lt;/dict&gt;&#10;&#9;&#9;&lt;/array&gt;&#10;&#9;&lt;/dict&gt;&#10;&lt;/plist&gt;&#10;"
                   extraCompilerFlags="-Wno-comma" bigIcon="XzfEpj" userNotes="version 1.0.1 build 1.0.1.0 : adresse IP session de d&#233;faut &#224; 192.168.2.1 pour fonctionner direct sur hotspot macOS + master volume (mais tjs cach&#233; pour le controller)&#10;version 1.0.0 build 1.0.0.1 : session MCS int&#233;gr&#233;e par d&#233;faut">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" defines="__MIAM_DEBUG&#10;__MIEM_DEBUG_TRACE__DISABLED"/>
-        <CONFIGURATION isDebug="0" name="Release"/>
+        <CONFIGURATION isDebug="1" name="Debug" defines="__MIAM_DEBUG&#10;__MIEM_DEBUG_TRACE__DISABLED"
+                       targetName="MIEM"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="MIEM"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
@@ -409,8 +406,8 @@
                    extraDefs="__MIAMOBILE" bigIcon="P6bzns" androidCustomApplicationClass="com.gwendallv.MIEMcontroller"
                    androidMinimumSDK="24" gradleVersion="4.10.1" gradleWrapperVersion="3.3.2">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" defines="__MIAM_DEBUG"/>
-        <CONFIGURATION isDebug="0" name="Release"/>
+        <CONFIGURATION isDebug="1" name="Debug" defines="__MIAM_DEBUG" targetName="MIEM"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="MIEM"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
