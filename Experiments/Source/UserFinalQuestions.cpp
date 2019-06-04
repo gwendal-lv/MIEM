@@ -155,7 +155,7 @@ UserFinalQuestions::UserFinalQuestions ()
     expertiseLevelLabel2->setBounds (232, 136, 224, 80);
 
     expertiseLevelLabel3.reset (new Label ("expertise level  label",
-                                           TRANS("As an amateur, I have already played with synthesisers and filters, and I know a bit how to use them")));
+                                           TRANS("As an amateur, I have already played with synthesisers and filters, and I know a bit how to use them. I can identify some sound characteristics.")));
     addAndMakeVisible (expertiseLevelLabel3.get());
     expertiseLevelLabel3->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     expertiseLevelLabel3->setJustificationType (Justification::centredTop);
@@ -717,7 +717,7 @@ BEGIN_JUCER_METADATA
          italic="0" justification="12"/>
   <LABEL name="expertise level  label" id="ea90a2c7054e88e" memberName="expertiseLevelLabel3"
          virtualName="" explicitFocusOrder="0" pos="480 136 280 80" textCol="ffb0b0b0"
-         edTextCol="ff000000" edBkgCol="0" labelText="As an amateur, I have already played with synthesisers and filters, and I know a bit how to use them"
+         edTextCol="ff000000" edBkgCol="0" labelText="As an amateur, I have already played with synthesisers and filters, and I know a bit how to use them. I can identify some sound characteristics."
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="12"/>

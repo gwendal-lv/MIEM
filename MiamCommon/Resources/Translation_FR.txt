@@ -3,7 +3,7 @@ countries: fr be mc ch lu
 
 "Age" = "Âge"
 "As a professional, I understand and I can manipulate classical sound synthesisers and filtering techniques" = "En tant que professionnel, je comprends et je suis capable de manipuler les techniques classiques de synthèse sonore et de filtrage"
-"As an amateur, I have already played with synthesisers and filters, and I know a bit how to use them" = "En tant qu'amateur, j'ai déjà joué avec des synthétiseurs et des filtres, et j'ai des connaissances de base concernant leur utilisation"
+"As an amateur, I have already played with synthesisers and filters, and I know a bit how to use them. I can identify some sound characteristics." = "En tant qu'amateur, j'ai déjà joué avec des synthétiseurs et des filtres, et j'ai des connaissances de base concernant leur utilisation. Je peux identifier certaines caractéristiques sonores."
 "Before starting the experiment, please read and fill the form below." = "Avant de commencer l'expérience, veuillez s'il vous plaît lire et remplir le formulaire ci-dessous."
 "Before this experiment, I did not know anything about sound synthesisers and filters" = "Avant cette expérience, je ne connaissais rien à propos des synthétiseurs audio et des filtres"
 "BEGIN PRESET RESEARCH" = "COMMENCER LA RECHERCHE DU PRESET"

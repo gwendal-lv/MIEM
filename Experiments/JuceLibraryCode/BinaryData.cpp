@@ -101,8 +101,8 @@ static const unsigned char temp_binary_data_4[] =
 "\"Age\" = \"\xc3\x82ge\"\n"
 "\"As a professional, I understand and I can manipulate classical sound synthesisers and filtering techniques\" = \"En tant que professionnel, je comprends et je suis capable de manipuler les techniques classiques de synth\xc3\xa8se sonore et de filtr"
 "age\"\n"
-"\"As an amateur, I have already played with synthesisers and filters, and I know a bit how to use them\" = \"En tant qu'amateur, j'ai d\xc3\xa9j\xc3\xa0 jou\xc3\xa9 avec des synth\xc3\xa9tiseurs et des filtres, et j'ai des connaissances de base conce"
-"rnant leur utilisation\"\n"
+"\"As an amateur, I have already played with synthesisers and filters, and I know a bit how to use them. I can identify some sound characteristics.\" = \"En tant qu'amateur, j'ai d\xc3\xa9j\xc3\xa0 jou\xc3\xa9 avec des synth\xc3\xa9tiseurs et des filt"
+"res, et j'ai des connaissances de base concernant leur utilisation. Je peux identifier certaines caract\xc3\xa9ristiques sonores.\"\n"
 "\"Before starting the experiment, please read and fill the form below.\" = \"Avant de commencer l'exp\xc3\xa9rience, veuillez s'il vous pla\xc3\xaet lire et remplir le formulaire ci-dessous.\"\n"
 "\"Before this experiment, I did not know anything about sound synthesisers and filters\" = \"Avant cette exp\xc3\xa9rience, je ne connaissais rien \xc3\xa0 propos des synth\xc3\xa9tiseurs audio et des filtres\"\n"
 "\"BEGIN PRESET RESEARCH\" = \"COMMENCER LA RECHERCHE DU PRESET\"\n"
@@ -10592,7 +10592,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
         case 0xa7370881:  numBytes = 419; return Recorder_AfterTrial_FR_txt;
         case 0xcd874cee:  numBytes = 1214; return Recorder_Intro_EN_txt;
         case 0xcf748391:  numBytes = 1437; return Recorder_Intro_FR_txt;
-        case 0x340941eb:  numBytes = 5211; return Translation_FR_txt;
+        case 0x340941eb:  numBytes = 5312; return Translation_FR_txt;
         case 0x896b2391:  numBytes = 32310; return _4_Faders_png;
         case 0xffae406b:  numBytes = 35496; return _4_Interpolation_areas_png;
         case 0xf1ad4a99:  numBytes = 672439; return Experiment_macOS_1024at1_png;
