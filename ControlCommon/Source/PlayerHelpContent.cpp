@@ -60,7 +60,7 @@ juce::String PlayerHelpContent::GetMainHelp(AppPurpose appPurpose)
             return TRANS("This app is an OSC touch controller based on the interactions between geometric shapes. Given your favorite presets, you can interpolate and create new presets with touch gestures.")
             + "\n\n"
             
-            + TRANS("Because it is only a controller, it unfornately does not produce any sound or video by itself... but it can control your OSC devices on the local network: sound synthesizers, filters and samplers, VJing apps and DMX controllers, etc. It can also control your MIDI devices by using the MIEM OSC-MIDI Bridge app, or any other OSC to MIDI application")
+            + TRANS("Because it is only a controller, it unfornately does not produce any sound or video by itself... but it can control your OSC devices on the local network: sound synthesizers, filters and samplers, VJing apps and DMX controllers, etc. It can also control your MIDI devices using MIEM OSC-MIDI Bridge, or any other OSC to MIDI application.")
             + "\n\n"
             
             + TRANS("To edit the geometric shapes and linked presets, please download and install the dedicated desktop app called MIEM Editor. It is free and available for Windows and macOS.")

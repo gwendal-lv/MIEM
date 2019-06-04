@@ -55,6 +55,7 @@ public:
     void ChangeAppMode(PlayerAppMode newAppMode);
 
     /// \brief Pour l'instant, fait simplement clignoter le bouton play
+    void SetIsPlayEnabled(bool shouldBeEnabled);
     void PrepareToPlay(int delayBeforeActualPlay_ms);
     bool IsPreparingToPlay() { return isPreparingToPlay; }
 
@@ -63,6 +64,7 @@ public:
     void SetHelpString(const String& helpString);
 
     void SetInfoLabelText(const String& text);
+    void SetOscConfigurationFromTree(bptree::ptree& oscTree);
 
     virtual void textEditorTextChanged(TextEditor& editorThatHasChanged) override;
 

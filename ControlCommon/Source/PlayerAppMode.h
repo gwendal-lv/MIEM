@@ -28,8 +28,9 @@ namespace Miam {
         LoadingFile, /**< A Native File Chooser is currently being displayed (for loading) */
         //SavingFile, /**< A Native File Chooser is currently being displayed (for saving) */
         
-        Playing, /**< normally spatialising, interactive canvases (playgrounds) displayed */
-        Stopped, /**< Spatialisation is currently stopped, canvases are displayed but disabled */
+        Playing, /**< normally playing and sending OSC, interactive canvases (playgrounds) displayed */
+        Stopped, /**< Interpolation and OSC send are currently stopped, canvases might be displayed but are disabled */
+        Stopped_NoPlay, ///< Model does not send, and the user cannot decide to re-play
         
     };
     

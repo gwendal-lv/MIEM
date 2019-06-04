@@ -106,6 +106,10 @@ void ControlModel::update()
         // virtual function, to be overriden by child classes
         onUpdateStarts();
         
+        // Boolean to manage the very special case of 2 consecutive
+        // STOP then PLAY messages in the lock-free queue
+        bool replayDirectlyAfterStop = false;
+        
         
         updateThreadMeasurer.OnNewFrame();
         
@@ -118,6 +122,7 @@ void ControlModel::update()
         
         // Récupération de toutes les données les + à jour
         AsyncParamChange lastParamChange;
+        AsyncParamChange lastParamChange2;
         AsyncParamChange localParamChange;
         while (presenter->TryGetAsyncParamChange(lastParamChange))
         {
@@ -155,8 +160,15 @@ void ControlModel::update()
                     SendParamChange(localParamChange);
                     // After confirmation is sent back to the presenter, we force-empty
                     // the lock-free queue.
-                    while(presenter->TryGetAsyncParamChange(lastParamChange))
-                    {}
+                    // BUT we have to check for re-play messages in this lock-free queue...
+                    // (in case of very short stop->play sequence)
+                    while(presenter->TryGetAsyncParamChange(lastParamChange2))
+                    {
+                        if (lastParamChange2.Type == AsyncParamChange::Play)
+                            replayDirectlyAfterStop = true;
+                        else if (lastParamChange2.Type == AsyncParamChange::Stop)
+                            replayDirectlyAfterStop = false;
+                    }
                     // Remark : no need to wait for another ack from the Presenter.
                     // If it isn't playing, it does not send lock-free data.
                     break;
@@ -204,6 +216,9 @@ void ControlModel::update()
         // virtual function, to be overriden by child classes
         onUpdateFinished();
         
+        // in case of very quick stop/play messages in the lock-free queue
+        if (replayDirectlyAfterStop)
+            onPlay();
         
         // Sleep forcé uniquement si on est assez loin de la période souhaitée
         // On prend 1.5 ms de marge pour la réaction de l'OS en sortie de sleep (TOTALEMENT ARBITRAIRE !)
@@ -226,6 +241,21 @@ void ControlModel::onPlay()
     // Confirmation sent back to the presenter
     AsyncParamChange paramChange(AsyncParamChange::ParamType::Playing);
     SendParamChange(paramChange);
+}
+
+// = = = = = = = = Events from Presenter = = = = = = = =
+bool ControlModel::ResetOscConfigurationFromTree(bptree::ptree& tree)
+{
+    try {
+        // true, send exception if missing data
+        getMainSpatSender()->SetConfigurationFromTree(tree, true);
+    }
+    catch( bptree::ptree_error& ) {
+        DBG("[Model - Control] Cannot reset OSC configuration... bptree data is not valid");
+        return false;
+    }
+    
+    return getMainSpatSender()->TryConnect();
 }
 
 

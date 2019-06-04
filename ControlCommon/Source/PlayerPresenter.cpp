@@ -19,6 +19,8 @@
 #include "PlayerModel.h"
 
 #include "TextUtils.h"
+#include "XmlUtils.h"
+#include "boost/property_tree/xml_parser.hpp" // for debug
 
 using namespace Miam;
 
@@ -133,10 +135,13 @@ PlayerAppMode PlayerPresenter::appModeChangeRequest(PlayerAppMode newAppMode)
         if (appMode != PlayerAppMode::Loading && newAppMode != PlayerAppMode::Loading)
             view->ChangeAppMode(PlayerAppMode::Loading);
         // Sauvegarde du statut de spat (si continue en tâche de fond)
-        if (appMode == PlayerAppMode::Stopped || appMode == PlayerAppMode::Playing)
-            previousPlayerStatus = appMode;
+        if (appMode == PlayerAppMode::Stopped || appMode == PlayerAppMode::Stopped_NoPlay)
+            previousPlayerStatus = PlayerAppMode::Stopped;
+        else if (appMode == PlayerAppMode::Playing)
+            previousPlayerStatus = PlayerAppMode::Playing;
         
         // - - - - - Changement interne - - - - -
+        // ATTENTION : est-ce qu'on ne devrait pas changer l'app mode, que s'il est autorisé ???
         appMode = newAppMode;
         
         // - - - - - Traitements Post-changement - - - - -
@@ -155,9 +160,10 @@ PlayerAppMode PlayerPresenter::appModeChangeRequest(PlayerAppMode newAppMode)
                     break;
                     
                 case PlayerAppMode::Stopped :
-                    // on ne renvoie l'ordre au modèle que dans le cas où l'on change de statut de spat
-                    // par rapport au statut de spat en tâche de fond.
-                    if (previousPlayerStatus != appMode)
+                case PlayerAppMode::Stopped_NoPlay :
+                    // on ne renvoie l'ordre au modèle que dans le cas où l'on change de statut de lecture
+                    // par rapport au statut de lecture en tâche de fond.
+                    if (previousPlayerStatus != PlayerAppMode::Stopped)
                     {
                         paramChange.Type = AsyncParamChange::Stop;
                         SendParamChange(paramChange);
@@ -166,9 +172,9 @@ PlayerAppMode PlayerPresenter::appModeChangeRequest(PlayerAppMode newAppMode)
                     
                 case PlayerAppMode::Playing :
                     appHasBeenPlayingOnce = true;
-                    // on ne renvoie l'ordre au modèle que dans le cas où l'on change de statut de spat
-                    // par rapport au statut de spat en tâche de fond.
-                    if (previousPlayerStatus != appMode)
+                    // on ne renvoie l'ordre au modèle que dans le cas où l'on change de statut de lecture
+                    // par rapport au statut de lecture en tâche de fond.
+                    if (previousPlayerStatus != PlayerAppMode::Playing)
                     {
                         paramChange.Type = AsyncParamChange::Play;
                         SendParamChange(paramChange);
@@ -314,17 +320,48 @@ bool PlayerPresenter::OnOscConfigurationEditionFinished(std::string ipAddress, i
         return false;
     else
     {
-        // or if OK, then we STOP
-        std::cout << "======= RECONNECTION À ÉCRIRE =======" << std::endl;
+        // re-check of values....
+        if ( !XmlUtils::IsIpv4AddressValid(ipAddress) || (udpPort <= 0 || udpPort > 65535))
+            return false;
+        else
+        {
+            // or if OK, then we STOP (de-activation of PLAY first)
+            appModeChangeRequest(PlayerAppMode::Stopped_NoPlay);
+            
+            // Then will be build the ptree with connection info
+            oscPtree.clear();
+            oscPtree.put("udp.port", udpPort);
+            oscPtree.put("ip", ipAddress);
+            
+            // self-recalling function : will manage the reconnection and replay
+            tryReconnectAndReplay();
+            
+            // then return
+            return true;
+        }
+    }
+}
+void PlayerPresenter::tryReconnectAndReplay()
+{
+    // While waiting for the model to be actually stopped :
+    // loop-delay, auto-recall
+    if (! hasModelActuallyStopped)
+    {
+        Timer::callAfterDelay(50, [&] {
+            this->tryReconnectAndReplay();
+        });
+    }
+    // Else, we go for the actual code
+    else
+    {
+        // oscPtree must have been properly setup before
+        bool couldConnect = model->ResetOscConfigurationFromTree(oscPtree);
+        appModeChangeRequest(PlayerAppMode::Playing);
         
-        // then re-connect
-        
-        
-        // then PLAY again
-        
-        
-        // then return
-        return true;
+        // at this point, the model should always be able to send UDP data....
+        // but issues might occur with root-only UDP port, etc. No display to user
+        if (! couldConnect)
+            DBG("[Presenter / Model] Could not connect with new OSC UDP/IP configuration data.");
     }
 }
 
@@ -374,6 +411,7 @@ void PlayerPresenter::OnNewConnectionStatus(bool isConnectionEstablished, std::s
         // Sinon tout est bon pour affichage
         else
         {
+            // Display string
             displayString = "Sending OSC to " + ipv4 + " on UDP port " + std::to_string(udpPort);
 			if (udpPort2 >= 0)
 			{
@@ -383,6 +421,8 @@ void PlayerPresenter::OnNewConnectionStatus(bool isConnectionEstablished, std::s
 					displayString += ", " + boost::lexical_cast<std::string>(udpPort3);
 				displayString += ")";
 			}
+            // IP/UDP port displayed in their editable text boxes
+            view->SetOscConfigurationFromTree(*(connectionParametersTree.get()));
         }
     }
     

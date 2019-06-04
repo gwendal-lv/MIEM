@@ -86,6 +86,19 @@ void PlayerModel::update()
 
 
 
+// = = = = = = = = Events from Presenter = = = = = = = =
+bool PlayerModel::ResetOscConfigurationFromTree(bptree::ptree& tree)
+{
+    bool baseResult = ControlModel::ResetOscConfigurationFromTree(tree);
+    
+    presenter->OnNewConnectionStatus( baseResult,
+                                     getMainSpatSender()->GetConfigurationTree() );
+    
+    return baseResult;
+}
+
+
+
 
 // = = = = = = = = = = Property tree (for XML) import/export = = = = = = = = = =
 

@@ -479,13 +479,23 @@ void PlayerMainMenuComponent::ChangeAppMode(PlayerAppMode newAppMode)
     switch(newAppMode)
     {
         case PlayerAppMode::Playing : // le play est déjà lancé, on ne peut lancer que le stop
+            SetIsPlayEnabled(true);
             playingImageButton->setVisible(true);
             playImageButton->setVisible(false);
             stoppedImageButton->setVisible(false);
             stopImageButton->setVisible(true);
             break;
 
+        case PlayerAppMode::Stopped_NoPlay :
+            SetIsPlayEnabled(false);
+            playingImageButton->setVisible(false);
+            playImageButton->setVisible(true);
+            stoppedImageButton->setVisible(true);
+            stopImageButton->setVisible(false);
+            break;
+
         case PlayerAppMode::Stopped :
+            SetIsPlayEnabled(true);
             playingImageButton->setVisible(false);
             playImageButton->setVisible(true);
             stoppedImageButton->setVisible(true);
@@ -497,6 +507,11 @@ void PlayerMainMenuComponent::ChangeAppMode(PlayerAppMode newAppMode)
     }
 }
 
+void PlayerMainMenuComponent::SetIsPlayEnabled(bool shouldBeEnabled)
+{
+    playingImageButton->setEnabled(shouldBeEnabled);
+    playImageButton->setEnabled(shouldBeEnabled);
+}
 
 void PlayerMainMenuComponent::PrepareToPlay(int delayBeforeActualPlay_ms)
 {
@@ -562,6 +577,21 @@ void PlayerMainMenuComponent::SetInfoLabelText(const String& text)
 #endif
     }
 }
+void PlayerMainMenuComponent::SetOscConfigurationFromTree(bptree::ptree& oscTree)
+{
+    // we set all info, or nothing
+    int udpPort = -1; // not a local anymore ; saved for future re-use
+    std::string ipv4 = "";
+    try {
+        udpPort = oscTree.get<int>("udp.port");
+        ipv4 = oscTree.get<std::string>("ip");
+    }
+    catch (bptree::ptree_error&){
+        return;
+    }
+    ipAddressTextEditor->setText(ipv4);
+    udpPortTextEditor->setText(boost::lexical_cast<std::string>(udpPort));
+}
 void PlayerMainMenuComponent::textEditorTextChanged(TextEditor& editorThatHasChanged)
 {
     if (&editorThatHasChanged == ipAddressTextEditor.get())
@@ -613,10 +643,11 @@ void PlayerMainMenuComponent::updateOscConfigurationComponents(bool resetConnect
     }
     else
     {
+        const int grey = 90;
         ipAddressTextEditor->setColour(TextEditor::textColourId,
-                                       juce::Colour::fromRGB(40, 40, 40));
+                                       juce::Colour::fromRGB(grey, grey, grey));
         udpPortTextEditor->setColour(TextEditor::textColourId,
-                                     juce::Colour::fromRGB(40, 40, 40));
+                                     juce::Colour::fromRGB(grey, grey, grey));
         TryParseIpAddress();
         TryParseUdpPort();
     }

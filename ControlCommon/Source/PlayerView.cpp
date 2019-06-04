@@ -36,6 +36,10 @@ void PlayerView::DisplayComplementaryInfo(const String& message)
 {
     backgroundComponent->DisplayInfo2(message);
 }
+void PlayerView::SetOscConfigurationFromTree(bptree::ptree& oscTree)
+{
+    backgroundComponent->GetMainMenuComponent()->SetOscConfigurationFromTree(oscTree);
+}
 
 void PlayerView::ShowHelpContents(bool showHelpContents)
 {

@@ -145,6 +145,13 @@ namespace Miam
         virtual void onPlay();
         
         
+        // - - - - - Events from Presenter - - - - -
+        public :
+        /// \brief Resets the OSC sender using the property tree.
+        /// \returns Whether it could connect or not using the UDP/IP data from the property tree.
+        virtual bool ResetOscConfigurationFromTree(bptree::ptree& tree);
+        
+        
         // - - - - - Property tree (for XML) import/export - - - - -
         public :
         /// \brief Returns the property tree describing all model settings data

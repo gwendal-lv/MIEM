@@ -609,13 +609,26 @@ namespace Miam
             }
             return configurationTree;
         }
-        virtual void SetConfigurationFromTree(bptree::ptree& tree) override
+        virtual void SetConfigurationFromTree(bptree::ptree& tree, bool sendExceptionOnMissingData = false) override
         {
+            std::string ipv4Copy;
+            int udpPortCopy;
             // Inutile pour l'instant, mais dans le doute...
             ControlStateSender<T>::SetConfigurationFromTree(tree);
             // Chargement des pptés spécifiques au messages miam osc
-            udpPort = tree.get<int>("udp.port", udpPort); // no exception
-            ipv4 = tree.get<std::string>("ip", ipv4); // no exception
+            if (! sendExceptionOnMissingData)
+            {
+                udpPortCopy = tree.get<int>("udp.port", udpPort); // no exception
+                ipv4Copy = tree.get<std::string>("ip", ipv4); // no exception
+            }
+            else
+            {
+                udpPortCopy = tree.get<int>("udp.port"); // no exception
+                ipv4Copy = tree.get<std::string>("ip"); // no exception
+            }
+            // Set values with disconnection
+            SetUdpPort(udpPortCopy);
+            SetIpv4(ipv4Copy);
         }
         
     };

@@ -11,6 +11,11 @@
 #pragma once
 
 
+#include "boost/property_tree/ptree.hpp"
+#include "boost/property_tree/xml_parser.hpp"
+namespace bptree = boost::property_tree;
+
+
 #include "PlayerAppMode.h"
 
 #include "ControlView.h"
@@ -72,6 +77,9 @@ namespace Miam
         ///
         /// \param message Short sentence to be written in the upper uneditable text box.
         void DisplayInfo(const String& message, bool isImportant = false);
+        
+        /// \brief Will call functions of children components to properly update osc config data
+        void SetOscConfigurationFromTree(bptree::ptree& oscTree);
         
         /// \brief Displays complementary information
         void DisplayComplementaryInfo(const String& message);

@@ -61,6 +61,8 @@ namespace Miam
         // openGL resources acquisition/Release)
         bool isViewPreparingToPlay = false;
         
+        // Current OSC information on GUI
+        bptree::ptree oscPtree;
         // UDP OSC information (from Model)
         int udpPort = -1;
         /// \brief The TCP listening port for opening a secured socket for remote control
@@ -148,10 +150,14 @@ namespace Miam
         /// \returns Whether the re-connection was successful or nort
         bool OnOscConfigurationEditionFinished(std::string ipAddress, int udpPort);
         
+        private :
+        /// \brief Internal helper for trying to reconnect after OSC conf change.
+        /// Auto-recalls itself, with delay, while model is still running.
+        void tryReconnectAndReplay();
         
         
         // - - - - - Events from the Model - - - - -
-        
+        public :
         /// \brief Processes the data then displays it. An empty tree means
         /// that the connection failed.
         void OnNewConnectionStatus(bool isConnectionEstablished, std::shared_ptr<bptree::ptree> connectionParametersTree);

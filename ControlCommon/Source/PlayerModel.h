@@ -48,6 +48,15 @@ namespace Miam {
         virtual void update() override;
         
         
+        
+        // - - - - - Events from Presenter - - - - -
+        public :
+        // see ControlModel.h
+        virtual bool ResetOscConfigurationFromTree(bptree::ptree& tree) override;
+        
+        
+        
+        
         // - - - - - Property tree (for XML) import/export - - - - -
         public :
         virtual void SetConfigurationFromTree(bptree::ptree& tree) override;

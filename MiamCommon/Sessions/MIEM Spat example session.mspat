@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="utf-8"?>
+<miem appVersion="65536" appPurpose="Spatialisation">
+    <settings>
+        <control>
+            <interpolation type="Quadratic"/>
+            <inputs activeCount="2" maxCount="64"/>
+            <outputs activeCount="16" maxCount="64"/>
+            <senders>
+                <sender type="MiamOsc">
+                    <ip>192.168.0.1</ip>
+                    <udp>
+                        <port>8010</port>
+                    </udp>
+                </sender>
+            </senders>
+        </control>
+        <presenter>
+            <keyboardedition>true</keyboardedition>
+        </presenter>
+    </settings>
+    <control>
+        <states>
+            <state index="0">
+                <name>Fade Out</name>
+                <colour>ff000000</colour>
+                <matrix/>
+            </state>
+            <state index="1">
+                <name>Speaker 1</name>
+                <colour>ffd96700</colour>
+                <matrix>
+                    <coeff row="0" col="0" value="1"/>
+                </matrix>
+            </state>
+            <state index="2">
+                <name>Speaker 2</name>
+                <colour>ff7f70e8</colour>
+                <matrix>
+                    <coeff row="1" col="1" value="1"/>
+                </matrix>
+            </state>
+            <state index="3">
+                <name>Speaker 3</name>
+                <colour>ff7fffa5</colour>
+                <matrix>
+                    <coeff row="0" col="2" value="1"/>
+                </matrix>
+            </state>
+            <state index="4">
+                <name>Speaker 4</name>
+                <colour>ff1c49d2</colour>
+                <matrix>
+                    <coeff row="1" col="3" value="1"/>
+                </matrix>
+            </state>
+            <state index="5">
+                <name>Speaker 5</name>
+                <colour>ffe6ce00</colour>
+                <matrix>
+                    <coeff row="0" col="4" value="1"/>
+                </matrix>
+            </state>
+            <state index="6">
+                <name>Speaker 6</name>
+                <colour>ff7fa9df</colour>
+                <matrix>
+                    <coeff row="1" col="5" value="1"/>
+                </matrix>
+            </state>
+            <state index="7">
+                <name>Speaker 7</name>
+                <colour>ff2baf83</colour>
+                <matrix>
+                    <coeff row="0" col="6" value="1"/>
+                </matrix>
+            </state>
+            <state index="8">
+                <name>Speaker 8</name>
+                <colour>ffd3056b</colour>
+                <matrix>
+                    <coeff row="1" col="7" value="1"/>
+                </matrix>
+            </state>
+            <state index="9">
+                <name>Full left</name>
+                <colour>ffff0000</colour>
+                <matrix>
+                    <coeff row="0" col="0" value="0.35481338923357547"/>
+                    <coeff row="0" col="2" value="0.35481338923357547"/>
+                    <coeff row="0" col="4" value="0.35481338923357547"/>
+                    <coeff row="0" col="6" value="0.35481338923357547"/>
+                    <coeff row="0" col="8" value="0.35481338923357547"/>
+                    <coeff row="0" col="10" value="0.35481338923357547"/>
+                    <coeff row="0" col="12" value="0.35481338923357547"/>
+                    <coeff row="0" col="14" value="0.35481338923357547"/>
+                </matrix>
+            </state>
+            <state index="10">
+                <name>Full right</name>
+                <colour>ff0000ff</colour>
+                <matrix>
+                    <coeff row="1" col="1" value="0.35481338923357547"/>
+                    <coeff row="1" col="3" value="0.35481338923357547"/>
+                    <coeff row="1" col="5" value="0.35481338923357547"/>
+                    <coeff row="1" col="7" value="0.35481338923357547"/>
+                    <coeff row="1" col="9" value="0.35481338923357547"/>
+                    <coeff row="1" col="11" value="0.35481338923357547"/>
+                    <coeff row="1" col="13" value="0.35481338923357547"/>
+                    <coeff row="1" col="15" value="0.35481338923357547"/>
+                </matrix>
+            </state>
+            <state index="11">
+                <name>Spkrs 1 to 8</name>
+                <colour>ff85ffc9</colour>
+                <matrix>
+                    <coeff row="0" col="0" value="0.35481338923357547"/>
+                    <coeff row="0" col="2" value="0.35481338923357547"/>
+                    <coeff row="0" col="4" value="0.35481338923357547"/>
+                    <coeff row="0" col="6" value="0.35481338923357547"/>
+                    <coeff row="1" col="1" value="0.35481338923357547"/>
+                    <coeff row="1" col="3" value="0.35481338923357547"/>
+                    <coeff row="1" col="5" value="0.35481338923357547"/>
+                    <coeff row="1" col="7" value="0.35481338923357547"/>
+                </matrix>
+            </state>
+            <state index="12">
+                <name>Spkrs 9 to 16</name>
+                <colour>ffc0ff92</colour>
+                <matrix>
+                    <coeff row="0" col="8" value="0.35481338923357547"/>
+                    <coeff row="0" col="10" value="0.35481338923357547"/>
+                    <coeff row="0" col="12" value="0.35481338923357547"/>
+                    <coeff row="0" col="14" value="0.35481338923357547"/>
+                    <coeff row="1" col="9" value="0.35481338923357547"/>
+                    <coeff row="1" col="11" value="0.35481338923357547"/>
+                    <coeff row="1" col="13" value="0.35481338923357547"/>
+                    <coeff row="1" col="15" value="0.35481338923357547"/>
+                </matrix>
+            </state>
+        </states>
+    </control>
+    <graphicsession>
+        <canvases>
+            <canvas index="0">
+                <scenes>
+                    <scene index="0">
+                        <name>Scene 1: octophonic movements</name>
+                        <areas>
+                            <area id="9" type="SpatPolygon" index="0">
+                                <center x="0.49991759077100706" y="0.83509842643119037"/>
+                                <colour>ff000000</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
+                                <geometry>
+                                    <point index="0" x="0.73015873015873012" y="0.80493709103156275"/>
+                                    <point index="1" x="0.77315173877342824" y="0.97826178383191176"/>
+                                    <point index="2" x="0.23253808865236297" y="0.97755668455393352"/>
+                                    <point index="3" x="0.28244874338624337" y="0.80224872498075439"/>
+                                    <point index="4" x="0.44961493254094076" y="0.70519460329390693"/>
+                                    <point index="5" x="0.55022029370455694" y="0.70519463309622932"/>
+                                </geometry>
+                                <spatstate index="0"/>
+                            </area>
+                            <area id="0" type="SpatPolygon" index="1">
+                                <center x="0.42168110623486682" y="0.13719821750902528"/>
+                                <colour>ffd96700</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
+                                <geometry>
+                                    <point index="0" x="0.56936567717249575" y="0.15401235913240052"/>
+                                    <point index="1" x="0.5693811939051745" y="0.30689747486578367"/>
+                                    <point index="2" x="0.49688516751425782" y="0.41501994711431722"/>
+                                    <point index="3" x="0.39434479263550981" y="0.41504307956640146"/>
+                                    <point index="4" x="0.32182681229042354" y="0.30695332870598213"/>
+                                    <point index="5" x="0.32181130156497995" y="0.15406819594395876"/>
+                                    <point index="6" x="0.39430732249828587" y="0.045945759287541507"/>
+                                    <point index="7" x="0.4968477415471424" y="0.045922653245359074"/>
+                                </geometry>
+                                <spatstate index="1"/>
+                            </area>
+                            <area id="2" type="SpatPolygon" index="2">
+                                <center x="0.68406896779623649" y="0.29400546848728398"/>
+                                <colour>ff1c49d2</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
+                                <geometry>
+                                    <point index="0" x="0.74537150180892586" y="0.26310554196986491"/>
+                                    <point index="1" x="0.7453870185416045" y="0.41599065770324878"/>
+                                    <point index="2" x="0.67289099215068526" y="0.52411312995178128"/>
+                                    <point index="3" x="0.57035061727193725" y="0.52413626240386635"/>
+                                    <point index="4" x="0.49783263692685259" y="0.41604651154344674"/>
+                                    <point index="5" x="0.49781712620140928" y="0.26316137878142315"/>
+                                    <point index="6" x="0.57031314713471226" y="0.1550389421250063"/>
+                                    <point index="7" x="0.6728535661835704" y="0.15501583608282316"/>
+                                </geometry>
+                                <spatstate index="4"/>
+                            </area>
+                            <area id="3" type="SpatPolygon" index="3">
+                                <center x="0.68285448988132613" y="0.53360882034361323"/>
+                                <colour>ff7fa9df</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
+                                <geometry>
+                                    <point index="0" x="0.74528255355503248" y="0.41607334554099584"/>
+                                    <point index="1" x="0.745298070287711" y="0.56895846127437999"/>
+                                    <point index="2" x="0.67280204389679221" y="0.67708093352291232"/>
+                                    <point index="3" x="0.57026166901804187" y="0.67710406597499717"/>
+                                    <point index="4" x="0.49774368867295871" y="0.56901431511457656"/>
+                                    <point index="5" x="0.49772817794751478" y="0.41612918235255342"/>
+                                    <point index="6" x="0.57022419888081821" y="0.30800674569613701"/>
+                                    <point index="7" x="0.67276461792967701" y="0.30798363965395364"/>
+                                </geometry>
+                                <spatstate index="6"/>
+                            </area>
+                            <area id="4" type="SpatPolygon" index="4">
+                                <center x="0.57544764880018251" y="0.69216606910724154"/>
+                                <colour>ffd3056b</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
+                                <geometry>
+                                    <point index="0" x="0.67247865587582589" y="0.52439932174144765"/>
+                                    <point index="1" x="0.6724941726085043" y="0.67728443747483102"/>
+                                    <point index="2" x="0.59999814621758463" y="0.78540690972336313"/>
+                                    <point index="3" x="0.49745777133883667" y="0.78543004217544776"/>
+                                    <point index="4" x="0.42493979099375251" y="0.67734029131502937"/>
+                                    <point index="5" x="0.42492428026830975" y="0.52445515855300628"/>
+                                    <point index="6" x="0.49742030120161257" y="0.41633272189658876"/>
+                                    <point index="7" x="0.59996072025046954" y="0.41630961585440596"/>
+                                </geometry>
+                                <spatstate index="8"/>
+                            </area>
+                            <area id="5" type="SpatPolygon" index="5">
+                                <center x="0.41988004275588131" y="0.69355076684404549"/>
+                                <colour>ff2baf83</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
+                                <geometry>
+                                    <point index="0" x="0.56974946538842353" y="0.5249943082869154"/>
+                                    <point index="1" x="0.56976498212110238" y="0.67787942402029866"/>
+                                    <point index="2" x="0.4972689557301847" y="0.78600189626883166"/>
+                                    <point index="3" x="0.39472858085143697" y="0.7860250287209164"/>
+                                    <point index="4" x="0.32221060050635253" y="0.67793527786049701"/>
+                                    <point index="5" x="0.32219508978090888" y="0.52505014509847414"/>
+                                    <point index="6" x="0.39469111071421203" y="0.41692770844205679"/>
+                                    <point index="7" x="0.49723152976306878" y="0.41690460239987331"/>
+                                </geometry>
+                                <spatstate index="7"/>
+                            </area>
+                            <area id="6" type="SpatPolygon" index="6">
+                                <center x="0.30938330806467285" y="0.30068465845533765"/>
+                                <colour>ff7fffa5</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
+                                <geometry>
+                                    <point index="0" x="0.49686812113305218" y="0.26293821794874894"/>
+                                    <point index="1" x="0.49688363786573064" y="0.41582333368213242"/>
+                                    <point index="2" x="0.42438761147481224" y="0.52394580593066553"/>
+                                    <point index="3" x="0.32184723659606468" y="0.52396893838275016"/>
+                                    <point index="4" x="0.2493292562509789" y="0.41587918752233094"/>
+                                    <point index="5" x="0.24931374552553559" y="0.26299405476030724"/>
+                                    <point index="6" x="0.32180976645883941" y="0.15487161810389038"/>
+                                    <point index="7" x="0.4243501855076966" y="0.15484851206170733"/>
+                                </geometry>
+                                <spatstate index="3"/>
+                            </area>
+                            <area id="7" type="SpatPolygon" index="7">
+                                <center x="0.31211615339991938" y="0.53338576145424266"/>
+                                <colour>ffe6ce00</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
+                                <geometry>
+                                    <point index="0" x="0.49669728910752386" y="0.41666115082130017"/>
+                                    <point index="1" x="0.49671280584020233" y="0.56954626655468377"/>
+                                    <point index="2" x="0.42421677944928377" y="0.67766873880321654"/>
+                                    <point index="3" x="0.32167640457053642" y="0.67769187125530128"/>
+                                    <point index="4" x="0.2491584242254507" y="0.56960212039488178"/>
+                                    <point index="5" x="0.2491429135000077" y="0.41671698763285875"/>
+                                    <point index="6" x="0.32163893443331099" y="0.30859455097644145"/>
+                                    <point index="7" x="0.4241793534821684" y="0.30857144493425809"/>
+                                </geometry>
+                                <spatstate index="5"/>
+                            </area>
+                            <area id="1" type="SpatPolygon" index="8">
+                                <center x="0.57544087623867801" y="0.13931820514878099"/>
+                                <colour>ff7f70e8</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
+                                <geometry>
+                                    <point index="0" x="0.67191857671625899" y="0.15383372312594693"/>
+                                    <point index="1" x="0.67193409344893695" y="0.30671883885932982"/>
+                                    <point index="2" x="0.59943806705801894" y="0.41484131110786415"/>
+                                    <point index="3" x="0.49689769217927265" y="0.41486444355994817"/>
+                                    <point index="4" x="0.42437971183418705" y="0.30677469269952834"/>
+                                    <point index="5" x="0.42436420110874384" y="0.15388955993750517"/>
+                                    <point index="6" x="0.49686022204204844" y="0.045767123281088382"/>
+                                    <point index="7" x="0.59940064109090441" y="0.045744017238905844"/>
+                                </geometry>
+                                <spatstate index="2"/>
+                            </area>
+                            <area id="35" type="Exciter" index="9">
+                                <center x="0.49636803874092028" y="0.14079422382671544"/>
+                                <colour>ffd3d3d3</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>false</proportional_to_parent>
+                                <geometry>
+                                    <axes a_in_pixels="26" b_in_pixels="26"/>
+                                </geometry>
+                                <is_round>false</is_round>
+                                <is_animation_sync>true</is_animation_sync>
+                            </area>
+                            <area id="36" type="Exciter" index="10">
+                                <center x="0.38740920096852349" y="0.90252707581227565"/>
+                                <colour>ffd3d3d3</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>false</proportional_to_parent>
+                                <geometry>
+                                    <axes a_in_pixels="26" b_in_pixels="26"/>
+                                </geometry>
+                                <is_round>false</is_round>
+                                <is_animation_sync>true</is_animation_sync>
+                            </area>
+                        </areas>
+                    </scene>
+                    <scene index="1">
+                        <name>Scene 2: stereo and groups spatialisation</name>
+                        <areas>
+                            <area id="16" type="SpatPolygon" index="0">
+                                <center x="0.51242338831719125" y="0.92079619810469315"/>
+                                <colour>ff000000</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
+                                <geometry>
+                                    <point index="0" x="0.99044188960302704" y="0.15944224656062952"/>
+                                    <point index="1" x="0.99046733458670122" y="0.97747124543564456"/>
+                                    <point index="2" x="0.0134548840403828" y="0.97647971433207692"/>
+                                    <point index="3" x="0.013429450615266215" y="0.15845075220556076"/>
+                                </geometry>
+                                <spatstate index="0"/>
+                            </area>
+                            <area id="12" type="SpatPolygon" index="1">
+                                <center x="0.18940110472154964" y="0.087509871389891691"/>
+                                <colour>ffff0000</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
+                                <geometry>
+                                    <point index="0" x="0.39568042524213076" y="0.90336614395306847"/>
+                                    <point index="1" x="0.0216443318513098" y="0.90353177353149894"/>
+                                    <point index="2" x="0.022044830160843805" y="0.026799565040681032"/>
+                                    <point index="3" x="0.39560003026634355" y="0.026208540162454871"/>
+                                </geometry>
+                                <spatstate index="9"/>
+                            </area>
+                            <area id="13" type="SpatPolygon" index="2">
+                                <center x="0.4118492736077482" y="0.084083088898916969"/>
+                                <colour>ff0000ff</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
+                                <geometry>
+                                    <point index="0" x="0.57767573395883531" y="0.90420521209386284"/>
+                                    <point index="1" x="0.20363964056801714" y="0.90437084167229298"/>
+                                    <point index="2" x="0.20404013887755096" y="0.027638633181475265"/>
+                                    <point index="3" x="0.57759533898304805" y="0.027047608303249097"/>
+                                </geometry>
+                                <spatstate index="10"/>
+                            </area>
+                            <area id="14" type="SpatPolygon" index="3">
+                                <center x="0.60053155266343827" y="0.084470893501805061"/>
+                                <colour>ff85ffc9</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
+                                <geometry>
+                                    <point index="0" x="0.80740201271186418" y="0.90454365974729223"/>
+                                    <point index="1" x="0.4333659193210434" y="0.90470928932572259"/>
+                                    <point index="2" x="0.43376641763057766" y="0.027977080834904848"/>
+                                    <point index="3" x="0.80732161773607747" y="0.027386055956678704"/>
+                                </geometry>
+                                <spatstate index="11"/>
+                            </area>
+                            <area id="15" type="SpatPolygon" index="4">
+                                <center x="0.82655966253026636" y="0.087185525722021665"/>
+                                <colour>ffc0ff92</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
+                                <geometry>
+                                    <point index="0" x="0.98793129539951574" y="0.90616538808664271"/>
+                                    <point index="1" x="0.61389520200869419" y="0.90633101766507274"/>
+                                    <point index="2" x="0.61429570031822889" y="0.029598809174255045"/>
+                                    <point index="3" x="0.98785090042372858" y="0.029007784296028866"/>
+                                </geometry>
+                                <spatstate index="12"/>
+                            </area>
+                            <area id="27" type="Exciter" index="5">
+                                <center x="0.41041162227602951" y="0.94043321299639093"/>
+                                <colour>ffd3d3d3</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>false</proportional_to_parent>
+                                <geometry>
+                                    <axes a_in_pixels="26" b_in_pixels="26"/>
+                                </geometry>
+                                <is_round>false</is_round>
+                                <is_animation_sync>true</is_animation_sync>
+                            </area>
+                            <area id="28" type="Exciter" index="6">
+                                <center x="0.30387409200969356" y="0.084837545126357827"/>
+                                <colour>ffd3d3d3</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>false</proportional_to_parent>
+                                <geometry>
+                                    <axes a_in_pixels="26" b_in_pixels="26"/>
+                                </geometry>
+                                <is_round>false</is_round>
+                                <is_animation_sync>true</is_animation_sync>
+                            </area>
+                        </areas>
+                    </scene>
+                </scenes>
+            </canvas>
+        </canvases>
+    </graphicsession>
+</miem>

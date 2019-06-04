@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<miem appVersion="65536" appPurpose="Generic controller">
+<miem appVersion="65794" appPurpose="Generic controller">
     <settings>
         <control>
-            <interpolation type="Linear"/>
+            <interpolation type="Linear">
+                <curves/>
+            </interpolation>
             <inputs activeCount="12" maxCount="64">
                 <name id="6">/custom_param0</name>
                 <name id="7">/custom_param1</name>
@@ -17,6 +19,8 @@
                     <ip>192.168.2.1</ip>
                     <udp>
                         <port>8011</port>
+                        <additional_port_1>18011</additional_port_1>
+                        <additional_port_2>28011</additional_port_2>
                     </udp>
                 </sender>
             </senders>
@@ -244,7 +248,7 @@
                                 </geometry>
                                 <spatstate index="6"/>
                             </area>
-                            <area id="120" type="Exciter" index="8">
+                            <area id="122" type="Exciter" index="8">
                                 <center x="0.32907575291947955" y="0.091961195420661779"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
@@ -255,7 +259,7 @@
                                 <is_round>false</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
-                            <area id="121" type="Exciter" index="9">
+                            <area id="123" type="Exciter" index="9">
                                 <center x="0.83798546020279285" y="0.41641290601705838"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
@@ -389,7 +393,7 @@
                                 </geometry>
                                 <spatstate index="12"/>
                             </area>
-                            <area id="118" type="Exciter" index="8">
+                            <area id="128" type="Exciter" index="8">
                                 <center x="0.4349814651196271" y="0.40816776490965878"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
@@ -400,7 +404,7 @@
                                 <is_round>false</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
-                            <area id="119" type="Exciter" index="9">
+                            <area id="129" type="Exciter" index="9">
                                 <center x="0.84224224031960004" y="0.44556626064963384"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
