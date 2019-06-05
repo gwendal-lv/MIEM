@@ -533,8 +533,8 @@ BEGIN_JUCER_METADATA
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
          fontsize="1.5e1" kerning="0" bold="0" italic="0" justification="34"/>
   <HYPERLINKBUTTON name="Info hyperlink button" id="fa3a8802c3b7c7f0" memberName="infoHyperlinkButton"
-                   virtualName="" explicitFocusOrder="0" pos="0.5Cc 32R 16M 24"
-                   tooltip="http://miem.laras.be" textCol="ffffffff" buttonText="To get help and more information, please visit http://miem.laras.be"
+                   virtualName="" explicitFocusOrder="0" pos="0Cc 32R 16M 24" tooltip="http://miem.laras.be"
+                   textCol="ffffffff" buttonText="To get help and more information, please visit http://miem.laras.be"
                    connectedEdges="0" needsCallback="0" radioGroupId="0" url="http://miem.laras.be"/>
   <TOGGLEBUTTON name="Enable Master Volume toggle button" id="b650c1c657fd4f2e"
                 memberName="enableMasterVolumeToggleButton" virtualName="" explicitFocusOrder="0"

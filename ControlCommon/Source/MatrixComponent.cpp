@@ -47,10 +47,13 @@ void MatrixComponent::ReconstructGuiObjects()
     sliders.resize(maxRowsCount*maxColsCount);
     horizontalSliders.clear();
     horizontalSliders.resize(maxRowsCount);
+    interpolationCurvesCopy.clear();
+    interpolationCurvesCopy.resize(maxRowsCount, BasicInterpolationCurve<double>::GetDefault());
     
     // Actual creation of matrix sliders and horizontal sliders
     for (int i=0 ; i<maxRowsCount ; i++)
     {
+        // matrix sliders
         for (int j=0 ; j<maxColsCount ; j++)
         {
             // Slider (i,j)
@@ -62,10 +65,13 @@ void MatrixComponent::ReconstructGuiObjects()
             sliders[idx(i,j)]->SetPropertiesFromVolume();
         }
         
-        horizontalSliders[i] = new MatrixRowSlider("Horizontal Slider ID=" + boost::lexical_cast<std::string>(i),
+        // horizontal slider
+        horizontalSliders[i] = new MatrixRowSlider("Horizontal Slider ID="
+                                                   + boost::lexical_cast<std::string>(i),
                                                    itemH);
         horizontalSliders[i]->setComponentID(boost::lexical_cast<std::string>(i));
         initAndAddHorizontalSlider(horizontalSliders[i]);
+        // interp curve for horizontal slider : nothing to init (default curves on resize)
     }
     
     // Active sliders
@@ -181,27 +187,12 @@ void MatrixComponent::sliderValueChanged(Slider* slider)
     {
         int sliderId = std::stoi(slider->getComponentID().toStdString());
         
-        // Valeur linéaire simple mise dans la colonne 0
-        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
-        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
-        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
-        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
-        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
-        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
-        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
-        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
-        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
-        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
-        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
-        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
-        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
-        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
+        
         // Dé-normalisation de la valeur
-        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
-        rawDenseMatrix[idx(sliderId, 0)] = (slider->getValue() - slider->getMinimum())
-        / (slider->getMaximum() - slider->getMinimum());
-        
-        
+        // = "reverse interpolation"
+        double reverseInterpolatedValue = interpolationCurvesCopy[sliderId].ReverseInterpolateValue(slider->getValue());
+        std::cout << "reverse interpolated value = " << reverseInterpolatedValue << std::endl;
+        rawDenseMatrix[idx(sliderId, 0)] = reverseInterpolatedValue;
         
         // Data transmission to the grandparent (and the listeners)
         grandParent->OnSliderValueChanged(sliderId, 0,
@@ -318,22 +309,6 @@ void MatrixComponent::SetSpatMatrix(std::shared_ptr<ControlMatrix<double>> spatM
 }
 std::shared_ptr<ControlMatrix<double>> MatrixComponent::GetSpatMatrix()
 {
-    /* Normalement : tout ça est maintenant fait au fur et à mesure...
-     for (int i=0 ; i<maxRowsCount ; i++)
-     {
-     for (int j=0 ; j<maxColsCount ; j++)
-     {
-     // If non-zero only
-     if (sliders[idx(i,j)]->getValue() > sliders[idx(i,j)]->GetMinVolume_dB() + MiamRouter_LowVolumeThreshold_dB)
-     {
-     double linearValue = Decibels::decibelsToGain(sliders[idx(i,j)]->getValue());
-     rawDenseMatrix[idx(i,j)] = linearValue;
-     }
-     else
-     rawDenseMatrix[idx(i,j)] = 0.0;
-     }
-     }*/
-    // construction optimisée
     auto returnPtr = std::make_shared<ControlMatrix<double>>(rawDenseMatrix);
     return returnPtr;
 }
@@ -394,7 +369,20 @@ void MatrixComponent::SetSliderValue(int row, int col, double newValue,
 double MatrixComponent::GetSliderValue(int row, int col)
 {
     if (0 <= row && row < maxRowsCount && 0 <= col && col < maxColsCount)
-        return rawDenseMatrix[idx(row,col)];
+    {
+        // For SPAT or not-first-col cases : no interp, no resize is involved
+        if (getPurpose() == AppPurpose::Spatialisation
+            || row > 0)
+            return rawDenseMatrix[idx(row,col)];
+        // For GEN CON, first-col : special behavior ?
+        else
+        {
+            // no special behavior at the moment; the reverse-interp must be processed before
+            // writing data into the normalized rawDenseMatrix
+            double forTest = rawDenseMatrix[idx(row,col)];
+            return forTest;
+        }
+    }
     else
     {
         assert(false); // A bad row and col coefficient should never be asked for
@@ -406,6 +394,13 @@ double MatrixComponent::GetSliderValue(int row, int col)
 void MatrixComponent::SetHorizontalSliderInterpolationData(int row,
                                                            BasicInterpolationCurve<double> newInterpCurve)
 {
+    if (row < 0 || row > maxRowsCount)
+        throw std::out_of_range("MatrixComponent.cpp: cannot use an out of bounds row number");
+    
+    // sauvegarde dans la classe
+    interpolationCurvesCopy[row] = newInterpCurve;
+    
+    // et extraction des données utiles pour màj graphique
     auto newMin = newInterpCurve.GetMinY();
     auto newMax = newInterpCurve.GetMaxY();
     
@@ -427,7 +422,7 @@ void MatrixComponent::SetHorizontalSliderInterpolationData(int row,
     {
         // The skew factor actually depends on how on big the range of the slider.
             // Calibrated for audio frequencies : mid-point is :
-            // exact for a 3-decaces band (20Hz to 20kHz)
+            // exact for a 3-decades band (20Hz to 20kHz)
             // a bit too big for a 2-decades band (50Hz to 5kHz)
             // and a bit too small for a 1-decade band (100Hz to 1kHz)
         case ParamInterpolationType::Independant_Log :

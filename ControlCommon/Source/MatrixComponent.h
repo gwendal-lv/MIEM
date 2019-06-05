@@ -40,8 +40,12 @@ namespace Miam
         LabelledMatrixComponent* grandParent;
         // matrice
         std::vector<ScopedPointer<MatrixSlider>> sliders;
+        
         // Sliders lorsque l'on n'a qu'une seule colonne
         std::vector<ScopedPointer<MatrixRowSlider>> horizontalSliders;
+        /// \brief et leur courbe d'interpolation associée, qui sont des sauvegardes
+        /// locales des vraies courbes d'interpolation (de l'interpolateur du Modèle)
+        std::vector<BasicInterpolationCurve<double>> interpolationCurvesCopy;
         
         // Graphics and internal data
         const size_t maxRowsCount;

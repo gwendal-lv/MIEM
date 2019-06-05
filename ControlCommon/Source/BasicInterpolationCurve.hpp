@@ -21,6 +21,10 @@ namespace bptree = boost::property_tree;
 #include "InterpolationTypes.h"
 
 
+// solveurs d'équation Boost -> polynomial pose problème
+//#include "boost/math/tools/polynomial.hpp"
+#include "boost/math/tools/roots.hpp" // pour le TOMS 748 "auto" via bracket-and-solve-root
+
 
 namespace Miam
 {
@@ -34,7 +38,7 @@ namespace Miam
     template<typename T>
     class BasicInterpolationCurve
     {
-        // ========== ATTRIBUTES ==========
+        // ==================== ATTRIBUTES ====================
         private :
         
         // CONST attributes cannot be left const (and public...)
@@ -70,7 +74,8 @@ namespace Miam
         T a_hard, b_hard, c_hard;
         
         
-        // ========== Getters and Setters ==========
+        
+        // =============== Getters and Setters ===============
         public :
         T GetMinY() const {return minY;}
         T GetMaxY() const {return maxY;}
@@ -92,7 +97,9 @@ namespace Miam
         
         
         
-        // ========== METHODS ==========
+        
+        
+        // ==================== METHODS ===================
         public :
         /// \brief Default constructor, with default values corresponding to normalised
         /// input values and scaled interpolated output values.
@@ -207,12 +214,13 @@ namespace Miam
         }
         
         
-        
+        // - - - - - Interpolation (and reverse-interpolation) computation - - - - -
+
         /// \brief Computes the interpolated output (y) value that corresponds
         /// to the given input (x) value
         inline T InterpolateValue(T inputX) const
         {
-            // security checks (for debug only ???)
+            // security checks (for sqrt, logs, etc...)
             if (inputX < minX)
                 return minY;
             else if (inputX > maxX)
@@ -233,7 +241,7 @@ namespace Miam
                     case ParamInterpolationType::Independant_Hard2 :
                         return m_hard * sqrt(inputX - minX) + minY;
                         
-                    // - - - hard/soft 1 : more linear, formulae is a bit more complex - - -
+                    // - - - hard/soft 1 : more linear, formula is a bit more complex - - -
                     case ParamInterpolationType::Independant_Soft1 :
                         return a_soft * (inputX - minX)*(inputX - minX)
                         + b_soft * (inputX - minX) + minY;
@@ -261,6 +269,102 @@ namespace Miam
             }
         }
         
+        
+        /// \brief Computes a reverse interpolation, that retrieves an input (x) value
+        /// that correspond to an interpolated output (y)
+        inline T ReverseInterpolateValue(T outputY) const
+        {
+            // security checks (for sqrt, logs, etc...)
+            if (outputY < minY)
+                return minX;
+            else if (outputY > maxY)
+                return maxX;
+            
+            // Variables for solvers
+            double firstGuess = centerX;
+            boost::uintmax_t solverIterations = 100; // will be written
+            bool isRising = true; // monotonically increasing lambda functor
+            std::pair<T, T> xBrackets;
+            
+            // lambdas will serve as functors, for the function to solve and the tolerance function
+            auto solverFunctor = [&] (T _inputX) {return InterpolateValue(_inputX) - outputY;};
+            auto toleranceFunctor = [&] (T _x1, T _x2)
+            {return std::abs(_x1 - _x2) < (((T)10.0) * std::numeric_limits<T>::epsilon()); };
+            
+            
+            // reverse computation
+            switch(interpolationType)
+            {
+                case ParamInterpolationType::Independant_Linear :
+                    return minX + ((outputY - minY) / deltaY) * deltaX;
+                    
+                    // - - - hard/soft 2 (hardest and softest curves) - - -
+                case ParamInterpolationType::Independant_Soft2 :
+                    return std::sqrt( (outputY - minY) / m_soft) + minX;
+                    
+                case ParamInterpolationType::Independant_Hard2 :
+                    return std::pow( (outputY - minY) / m_hard, (int)2) + minX;
+                    
+                    // - - - hard/soft 1 : more linear, formula is a bit more complex - - -
+                    
+                    // METTRE ET TESTER ICI TOUS LES AUTRES CAS DU SWITCH, ça devrait marcher pareil...
+                    // METTRE ET TESTER ICI TOUS LES AUTRES CAS DU SWITCH, ça devrait marcher pareil...
+                    // METTRE ET TESTER ICI TOUS LES AUTRES CAS DU SWITCH, ça devrait marcher pareil...
+                    // METTRE ET TESTER ICI TOUS LES AUTRES CAS DU SWITCH, ça devrait marcher pareil...
+                    // METTRE ET TESTER ICI TOUS LES AUTRES CAS DU SWITCH, ça devrait marcher pareil...
+                    // METTRE ET TESTER ICI TOUS LES AUTRES CAS DU SWITCH, ça devrait marcher pareil...
+                    // METTRE ET TESTER ICI TOUS LES AUTRES CAS DU SWITCH, ça devrait marcher pareil...
+                    // METTRE ET TESTER ICI TOUS LES AUTRES CAS DU SWITCH, ça devrait marcher pareil...
+                    // METTRE ET TESTER ICI TOUS LES AUTRES CAS DU SWITCH, ça devrait marcher pareil...
+                    // METTRE ET TESTER ICI TOUS LES AUTRES CAS DU SWITCH, ça devrait marcher pareil...
+                    // METTRE ET TESTER ICI TOUS LES AUTRES CAS DU SWITCH, ça devrait marcher pareil...
+                    // METTRE ET TESTER ICI TOUS LES AUTRES CAS DU SWITCH, ça devrait marcher pareil...
+                    // METTRE ET TESTER ICI TOUS LES AUTRES CAS DU SWITCH, ça devrait marcher pareil...
+                    // METTRE ET TESTER ICI TOUS LES AUTRES CAS DU SWITCH, ça devrait marcher pareil...
+                    // METTRE ET TESTER ICI TOUS LES AUTRES CAS DU SWITCH, ça devrait marcher pareil...
+                    
+                    // Soft1 : solving a 2nd-order equation using a bazooka = generic solver...
+                    // because polynomials.hpp does not compile. Need to update boost and/or add math
+                case ParamInterpolationType::Independant_Soft1 :
+                    
+                    // Appel au solveur, qui est en fait le même code pour toutes les interp.
+                    // inverses basées sur résolution numérique
+                    xBrackets =
+                    boost::math::tools::bracket_and_solve_root(solverFunctor, firstGuess,
+                                                               (T)2.0, isRising,
+                                                               toleranceFunctor, solverIterations);
+                    // Vérification de validité, renvoi dès qu'on a identifié clairement un cas
+                    if ( (xBrackets.first < minX)
+                        || toleranceFunctor(xBrackets.first, minX) )
+                        return minX;
+                    else if ( (xBrackets.second > maxX)
+                             || toleranceFunctor(xBrackets.second, maxX) )
+                        return maxX;
+                    else
+                        return xBrackets.first;
+                    
+                    /*
+                case ParamInterpolationType::Independant_Hard1 :
+                    return a_hard * std::sqrt(alpha_h + b_hard*(inputX - minX)) + c_hard;
+                    
+                    // - - - Log-scale for audio frequencies - - -
+                case ParamInterpolationType::Independant_Log :
+                    // fonction qui prend un x normalisé en entrée
+                    // (pourrait être optimisé...)
+                    return a_logInterp * std::exp(b_logInterp * ((inputX - minX) / deltaX))
+                    + c_logInterp;
+                    
+                case ParamInterpolationType::Independant_Threshold :
+                    return (inputX < centerX) ? minY : maxY;
+                    */
+                default : // interp linéaire par défaut... ou 0.0 en débug
+#ifdef __MIAM_DEBUG
+                    return (T) 0.0;
+#else
+                    return minX + ((outputY - minY) / deltaY) * deltaX;
+#endif
+            }
+        }
         
         
         // - - - - - XML - Boost Property Trees import/export - - - - -
@@ -304,6 +408,7 @@ namespace Miam
             // update
             updateInternalValues();
         }
+        
         
         
         
