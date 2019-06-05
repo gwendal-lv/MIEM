@@ -575,12 +575,12 @@ void LabelledMatrixComponent::OnSliderValueChanged(int row, int col, double valu
 {
     listener->OnSliderValueChanged(row, col, value);
 }
-void LabelledMatrixComponent::OnMinMaxValuesChanged(int row, double valueMin, double valueMax)
+void LabelledMatrixComponent::OnMinMaxValuesChanged(int row, double /*valueMin*/, double /*valueMax*/)
 {
     matrixViewport->GetMatrixComponent()->SetHorizontalSliderInterpolationData(row,
         GetInterpolationCurve((size_t)row));
 }
-void LabelledMatrixComponent::OnInterpolationTypeChanged(int row, ParamInterpolationType newInterpolationType)
+void LabelledMatrixComponent::OnInterpolationTypeChanged(int row, ParamInterpolationType /*newInterpolationType*/)
 {
     matrixViewport->GetMatrixComponent()->SetHorizontalSliderInterpolationData(row,
         GetInterpolationCurve((size_t)row));

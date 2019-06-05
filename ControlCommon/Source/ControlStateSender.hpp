@@ -67,7 +67,9 @@ namespace Miam
             return configurationTree;
         }
         virtual void SetConfigurationFromTree(bptree::ptree& /*tree*/, bool sendExceptionOnMissingData = false)
-        {}
+		{
+			boost::ignore_unused(sendExceptionOnMissingData); 
+		}
     };
     
 }

@@ -207,6 +207,10 @@
           <FILE id="Rsgwzv" name="SubTriangle.h" compile="0" resource="0" file="../MiamCommon/Source/SubTriangle.h"/>
         </GROUP>
         <GROUP id="{86D5D9E1-93BE-D9FA-6D5A-C4DCC032AC63}" name="Scenes">
+          <FILE id="eiXIou" name="ExperimentsSceneConstrainer.cpp" compile="1"
+                resource="0" file="../MiamCommon/Source/ExperimentsSceneConstrainer.cpp"/>
+          <FILE id="qcBxYz" name="ExperimentsSceneConstrainer.h" compile="0"
+                resource="0" file="../MiamCommon/Source/ExperimentsSceneConstrainer.h"/>
           <FILE id="vjqld7" name="EditableScene.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/EditableScene.cpp"/>
           <FILE id="mc8YKm" name="EditableScene.h" compile="0" resource="0" file="../MiamCommon/Source/EditableScene.h"/>

@@ -313,15 +313,15 @@ bool PlayerPresenter::OnFullscreenButtonClicked()
     return view->GetFullscreenState();
 #endif
 }
-bool PlayerPresenter::OnOscConfigurationEditionFinished(std::string ipAddress, int udpPort)
+bool PlayerPresenter::OnOscConfigurationEditionFinished(std::string newIpAddress, int newUdpPort)
 {
     // a pre-check must have been done before
-    if (ipAddress.empty() || (udpPort == -1))
+    if (newIpAddress.empty() || (newUdpPort == -1))
         return false;
     else
     {
         // re-check of values....
-        if ( !XmlUtils::IsIpv4AddressValid(ipAddress) || (udpPort <= 0 || udpPort > 65535))
+        if ( !XmlUtils::IsIpv4AddressValid(newIpAddress) || (newUdpPort <= 0 || newUdpPort > 65535))
             return false;
         else
         {
@@ -330,8 +330,8 @@ bool PlayerPresenter::OnOscConfigurationEditionFinished(std::string ipAddress, i
             
             // Then will be build the ptree with connection info
             oscPtree.clear();
-            oscPtree.put("udp.port", udpPort);
-            oscPtree.put("ip", ipAddress);
+            oscPtree.put("udp.port", newUdpPort);
+            oscPtree.put("ip", newIpAddress);
             
             // self-recalling function : will manage the reconnection and replay
             tryReconnectAndReplay();
