@@ -37,7 +37,9 @@ namespace Miam
         PlayerBackgroundComponent* backgroundComponent;
         
         protected :
-        
+        /// \brief Boolean that indicate whether the actual contents must be placed inside a
+        /// rectangle that is smaller than the screen (e.g. on iPhone X, ...)
+        bool shouldUseSafeArea;
         
         
         // = = = = = = = = = = Setters and Getters = = = = = = = = = =
@@ -51,10 +53,7 @@ namespace Miam
         // = = = = = = = = = = METHODS = = = = = = = = = =
         public :
         
-        PlayerView(DocumentWindow* mainWindow_, PlayerBackgroundComponent* _backgroundComponent) :
-        ControlView(mainWindow_),
-        backgroundComponent(_backgroundComponent)
-        {}
+        PlayerView(DocumentWindow* mainWindow_, PlayerBackgroundComponent* _backgroundComponent);
         virtual ~PlayerView() {}
         
         /// \brief Function called after both View and Presenter are contructed

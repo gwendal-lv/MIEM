@@ -17,7 +17,14 @@ using namespace Miam;
 
 
 
-
+PlayerView::PlayerView(DocumentWindow* mainWindow_, PlayerBackgroundComponent* _backgroundComponent) :
+ControlView(mainWindow_),
+backgroundComponent(_backgroundComponent)
+{
+    std::string deviceDescription = SystemStats::getDeviceDescription().toStdString();
+    
+    std::cout << "[View] device = " << deviceDescription << std::endl;
+}
 
 
 
