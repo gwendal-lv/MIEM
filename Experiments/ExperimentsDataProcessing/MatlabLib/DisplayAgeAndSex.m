@@ -6,7 +6,7 @@ function [] = DisplayAgeAndSex(globalParams, experiments)
 ageAndSexFigure = figure();
 set(ageAndSexFigure, 'Position', [0 0 700 180]);
 
-sameAgeGraphicDiff = 0.15;
+sameAgeGraphicDiff = 0.18;
 
 % 1 - création des vecteurs de données (age en abscisse)
 % pour une bonne représentation... On va décaler les âges qui existaient
@@ -20,13 +20,8 @@ for i = 1:globalParams.experimentsCount
         % ajout direct nouvelle valeur
         ages(subjectsI) = experiments(i).age;
         sexes(subjectsI) = experiments(i).sex;
-        if (sexes(subjectsI) == 1)
-            pointsColors(subjectsI) = 0.0;
-        elseif (sexes(subjectsI) == 2)
-            pointsColors(subjectsI) = 1.0;
-        else
-            pointsColors(subjectsI) = 0;
-        end
+        % Couleur juste proportionnelle au sexe
+            pointsColors(subjectsI) = sexes(subjectsI) / 2.0;
         % test min/max (et initialisation si nécessaire)
         if (ages(subjectsI) < minAge) || (minAge == -1)
             minAge = ages(subjectsI);
@@ -60,14 +55,15 @@ for i = 1:globalParams.experimentsCount
 end
 
 % 2 - plot avec colormap simple perso
-colormap([0.8 0.2 0.3; 0.2 0.7 0.0] );
+colormap([0.8 0.2 0.3; 0.2 0.1 0.9; 0.2 0.6 0.0] );
+%colormap jet;
 scatter(ages, sexes, [], pointsColors);
 xlim( [(minAge-1) (maxAge+1)] );
-ylim( [0.5 3] );
-yticks( 0:3 );
-yticklabels({' ', 'Male', 'Female', ' '});
+ylim( [-0.5 3] );
+yticks( (-1):3 );
+yticklabels({' ', 'Non-binary', 'Male', 'Female', ' '});
 
-title('Age and biological sex of subjects');
+title('Age and sex of subjects');
 
 grid on;
 

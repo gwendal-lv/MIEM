@@ -128,7 +128,7 @@ UserFinalQuestions::UserFinalQuestions ()
     expertiseSlider->setColour (Slider::trackColourId, Colour (0xff353c40));
     expertiseSlider->setColour (Slider::textBoxHighlightColourId, Colour (0x0042a2c8));
 
-    expertiseSlider->setBounds (56, 88, 1136, 48);
+    expertiseSlider->setBounds (56, 88, 1200, 48);
 
     expertiseLevelLabel.reset (new Label ("expertise level  label",
                                           TRANS("Before this experiment, I did not know anything about sound synthesisers and filters")));
@@ -152,10 +152,10 @@ UserFinalQuestions::UserFinalQuestions ()
     expertiseLevelLabel2->setColour (TextEditor::textColourId, Colours::black);
     expertiseLevelLabel2->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    expertiseLevelLabel2->setBounds (232, 136, 224, 80);
+    expertiseLevelLabel2->setBounds (248, 136, 224, 80);
 
     expertiseLevelLabel3.reset (new Label ("expertise level  label",
-                                           TRANS("As an amateur, I have already played with synthesisers and filters, and I know a bit how to use them. I can identify some sound characteristics.")));
+                                           TRANS("As an amateur, I have already played with synths and filters, and I know a bit how to use them. I can identify some sound characteristics.")));
     addAndMakeVisible (expertiseLevelLabel3.get());
     expertiseLevelLabel3->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     expertiseLevelLabel3->setJustificationType (Justification::centredTop);
@@ -164,10 +164,10 @@ UserFinalQuestions::UserFinalQuestions ()
     expertiseLevelLabel3->setColour (TextEditor::textColourId, Colours::black);
     expertiseLevelLabel3->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    expertiseLevelLabel3->setBounds (480, 136, 280, 80);
+    expertiseLevelLabel3->setBounds (504, 136, 296, 80);
 
     expertiseLevelLabel4.reset (new Label ("expertise level  label",
-                                           TRANS("I play quite often with synthesisers and filters, and I can configure them to produce the sounds that I want")));
+                                           TRANS("I play quite often with synths and filters, and I can configure them to produce sounds I want. I can easily identify the main sound characteristics.")));
     addAndMakeVisible (expertiseLevelLabel4.get());
     expertiseLevelLabel4->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     expertiseLevelLabel4->setJustificationType (Justification::centredTop);
@@ -176,7 +176,7 @@ UserFinalQuestions::UserFinalQuestions ()
     expertiseLevelLabel4->setColour (TextEditor::textColourId, Colours::black);
     expertiseLevelLabel4->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    expertiseLevelLabel4->setBounds (784, 136, 216, 80);
+    expertiseLevelLabel4->setBounds (824, 136, 280, 80);
 
     expertiseLevelLabel5.reset (new Label ("expertise level  label",
                                            TRANS("As a professional, I understand and I can manipulate classical sound synthesisers and filtering techniques")));
@@ -188,7 +188,7 @@ UserFinalQuestions::UserFinalQuestions ()
     expertiseLevelLabel5->setColour (TextEditor::textColourId, Colours::black);
     expertiseLevelLabel5->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    expertiseLevelLabel5->setBounds (1040, 136, 200, 80);
+    expertiseLevelLabel5->setBounds (1144, 136, 200, 80);
 
     remarkLabel.reset (new Label ("remark label",
                                   TRANS("If you have any remark, comment or suggestion, please feel free to write it below:")));
@@ -370,7 +370,7 @@ UserFinalQuestions::UserFinalQuestions ()
     selfExpertiseLevelLabel2->setColour (TextEditor::textColourId, Colours::black);
     selfExpertiseLevelLabel2->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    selfExpertiseLevelLabel2->setBounds (464, 86, 116, 24);
+    selfExpertiseLevelLabel2->setBounds (496, 86, 116, 24);
 
     labelQ2.reset (new Label ("new label",
                               TRANS("2")));
@@ -424,7 +424,7 @@ UserFinalQuestions::UserFinalQuestions ()
     //[UserPreSize]
     //[/UserPreSize]
 
-    setSize (1250, 830);
+    setSize (1450, 830);
 
 
     //[Constructor] You can add your own custom stuff here..
@@ -650,7 +650,7 @@ BEGIN_JUCER_METADATA
 <JUCER_COMPONENT documentType="Component" className="UserFinalQuestions" componentName=""
                  parentClasses="public Component" constructorParams="" variableInitialisers=""
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
-                 fixedSize="1" initialWidth="1250" initialHeight="830">
+                 fixedSize="1" initialWidth="1450" initialHeight="830">
   <METHODS>
     <METHOD name="mouseUp (const MouseEvent&amp; e)"/>
   </METHODS>
@@ -698,7 +698,7 @@ BEGIN_JUCER_METADATA
          fontname="Default font" fontsize="1.5e1" kerning="0" bold="1"
          italic="0" justification="33" typefaceStyle="Bold"/>
   <SLIDER name="new slider" id="bfaef998cabecf5d" memberName="expertiseSlider"
-          virtualName="" explicitFocusOrder="0" pos="56 88 1136 48" bkgcol="ff353c40"
+          virtualName="" explicitFocusOrder="0" pos="56 88 1200 48" bkgcol="ff353c40"
           thumbcol="ff08cef3" trackcol="ff353c40" textboxhighlight="42a2c8"
           min="1" max="5" int="1" style="LinearHorizontal" textBoxPos="TextBoxAbove"
           textBoxEditable="0" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
@@ -710,25 +710,25 @@ BEGIN_JUCER_METADATA
          fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="12"/>
   <LABEL name="expertise level  label" id="8fb437ba6c83e57d" memberName="expertiseLevelLabel2"
-         virtualName="" explicitFocusOrder="0" pos="232 136 224 80" textCol="ffb0b0b0"
+         virtualName="" explicitFocusOrder="0" pos="248 136 224 80" textCol="ffb0b0b0"
          edTextCol="ff000000" edBkgCol="0" labelText="I have already played with synthesisers and filters, but I don't know how they work"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="12"/>
   <LABEL name="expertise level  label" id="ea90a2c7054e88e" memberName="expertiseLevelLabel3"
-         virtualName="" explicitFocusOrder="0" pos="480 136 280 80" textCol="ffb0b0b0"
-         edTextCol="ff000000" edBkgCol="0" labelText="As an amateur, I have already played with synthesisers and filters, and I know a bit how to use them. I can identify some sound characteristics."
+         virtualName="" explicitFocusOrder="0" pos="504 136 296 80" textCol="ffb0b0b0"
+         edTextCol="ff000000" edBkgCol="0" labelText="As an amateur, I have already played with synths and filters, and I know a bit how to use them. I can identify some sound characteristics."
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="12"/>
   <LABEL name="expertise level  label" id="dd0cf4ee1b6450df" memberName="expertiseLevelLabel4"
-         virtualName="" explicitFocusOrder="0" pos="784 136 216 80" textCol="ffb0b0b0"
-         edTextCol="ff000000" edBkgCol="0" labelText="I play quite often with synthesisers and filters, and I can configure them to produce the sounds that I want"
+         virtualName="" explicitFocusOrder="0" pos="824 136 280 80" textCol="ffb0b0b0"
+         edTextCol="ff000000" edBkgCol="0" labelText="I play quite often with synths and filters, and I can configure them to produce sounds I want. I can easily identify the main sound characteristics."
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="12"/>
   <LABEL name="expertise level  label" id="fa98c1f744ec1239" memberName="expertiseLevelLabel5"
-         virtualName="" explicitFocusOrder="0" pos="1040 136 200 80" textCol="ffb0b0b0"
+         virtualName="" explicitFocusOrder="0" pos="1144 136 200 80" textCol="ffb0b0b0"
          edTextCol="ff000000" edBkgCol="0" labelText="As a professional, I understand and I can manipulate classical sound synthesisers and filtering techniques"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
@@ -826,7 +826,7 @@ BEGIN_JUCER_METADATA
          fontsize="2e1" kerning="0" bold="1" italic="0" justification="36"
          typefaceStyle="Bold"/>
   <LABEL name="expertise level label" id="e1f0a84536dc9b30" memberName="selfExpertiseLevelLabel2"
-         virtualName="" explicitFocusOrder="0" pos="464 86 116 24" edTextCol="ff000000"
+         virtualName="" explicitFocusOrder="0" pos="496 86 116 24" edTextCol="ff000000"
          edBkgCol="0" labelText="My level = " editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
          fontsize="1.5e1" kerning="0" bold="0" italic="1" justification="34"

@@ -101,8 +101,8 @@ static const unsigned char temp_binary_data_4[] =
 "\"Age\" = \"\xc3\x82ge\"\n"
 "\"As a professional, I understand and I can manipulate classical sound synthesisers and filtering techniques\" = \"En tant que professionnel, je comprends et je suis capable de manipuler les techniques classiques de synth\xc3\xa8se sonore et de filtr"
 "age\"\n"
-"\"As an amateur, I have already played with synthesisers and filters, and I know a bit how to use them. I can identify some sound characteristics.\" = \"En tant qu'amateur, j'ai d\xc3\xa9j\xc3\xa0 jou\xc3\xa9 avec des synth\xc3\xa9tiseurs et des filt"
-"res, et j'ai des connaissances de base concernant leur utilisation. Je peux identifier certaines caract\xc3\xa9ristiques sonores.\"\n"
+"\"As an amateur, I have already played with synths and filters, and I know a bit how to use them. I can identify some sound characteristics.\" = \"En tant qu'amateur, j'ai d\xc3\xa9j\xc3\xa0 jou\xc3\xa9 avec des synth\xc3\xa9tiseurs et des filtres, e"
+"t j'ai des connaissances de base concernant leur utilisation. Je peux identifier certaines caract\xc3\xa9ristiques sonores.\"\n"
 "\"Before starting the experiment, please read and fill the form below.\" = \"Avant de commencer l'exp\xc3\xa9rience, veuillez s'il vous pla\xc3\xaet lire et remplir le formulaire ci-dessous.\"\n"
 "\"Before this experiment, I did not know anything about sound synthesisers and filters\" = \"Avant cette exp\xc3\xa9rience, je ne connaissais rien \xc3\xa0 propos des synth\xc3\xa9tiseurs audio et des filtres\"\n"
 "\"BEGIN PRESET RESEARCH\" = \"COMMENCER LA RECHERCHE DU PRESET\"\n"
@@ -121,8 +121,8 @@ static const unsigned char temp_binary_data_4[] =
 "\"I have already participated in a similar scientific experiment\" = \"J'ai d\xc3\xa9j\xc3\xa0 particip\xc3\xa9 \xc3\xa0 une exp\xc3\xa9rience scientifique similaire\"\n"
 "\"I have already played with synthesisers and filters, but I don't know how they work\" = \"J'ai d\xc3\xa9j\xc3\xa0 jou\xc3\xa9 avec des synth\xc3\xa9tiseurs et des filtres, mais je ne sais pas comment ils fonctionnent\"\n"
 "\"I have already tested a similar touch app\" = \"J'ai d\xc3\xa9j\xc3\xa0 test\xc3\xa9 une application tactile similaire\"\n"
-"\"I play quite often with synthesisers and filters, and I can configure them to produce the sounds that I want\" = \"Je joue assez souvent avec des synth\xc3\xa9tiseurs et des filtres, et je suis capable de les configurer pour produire les sons que j"
-"e d\xc3\xa9sire\"\n"
+"\"I play quite often with synths and filters, and I can configure them to produce sounds I want. I can easily identify the main sound characteristics.\" = \"Je joue assez souvent avec des synth\xc3\xa9s et des filtres, et je peux les configurer pour "
+"produire les sons que je d\xc3\xa9sire. Je peux facilement identifier les principales caract\xc3\xa9ristiques d'un son.\"\n"
 "\"I suffer from a vision impairment, such as uncorrected short-sightedness, color blindness, ...\" = \"Je souffre d'un trouble de la vision, tel qu'une myopie non-corrig\xc3\xa9""e, un daltonisme, ou autre\"\n"
 "\"I suffer from an hearing impairment\" = \"Je souffre d'un trouble de l'audition\"\n"
 "\"In general, which method did you prefer?\" = \"En g\xc3\xa9n\xc3\xa9ral, quelle m\xc3\xa9thode avez-vous pr\xc3\xa9""f\xc3\xa9r\xc3\xa9 ?\"\n"
@@ -10592,7 +10592,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
         case 0xa7370881:  numBytes = 419; return Recorder_AfterTrial_FR_txt;
         case 0xcd874cee:  numBytes = 1214; return Recorder_Intro_EN_txt;
         case 0xcf748391:  numBytes = 1437; return Recorder_Intro_FR_txt;
-        case 0x340941eb:  numBytes = 5312; return Translation_FR_txt;
+        case 0x340941eb:  numBytes = 5404; return Translation_FR_txt;
         case 0x896b2391:  numBytes = 32310; return _4_Faders_png;
         case 0xffae406b:  numBytes = 35496; return _4_Interpolation_areas_png;
         case 0xf1ad4a99:  numBytes = 672439; return Experiment_macOS_1024at1_png;

@@ -3,7 +3,7 @@ countries: fr be mc ch lu
 
 "Age" = "Âge"
 "As a professional, I understand and I can manipulate classical sound synthesisers and filtering techniques" = "En tant que professionnel, je comprends et je suis capable de manipuler les techniques classiques de synthèse sonore et de filtrage"
-"As an amateur, I have already played with synthesisers and filters, and I know a bit how to use them. I can identify some sound characteristics." = "En tant qu'amateur, j'ai déjà joué avec des synthétiseurs et des filtres, et j'ai des connaissances de base concernant leur utilisation. Je peux identifier certaines caractéristiques sonores."
+"As an amateur, I have already played with synths and filters, and I know a bit how to use them. I can identify some sound characteristics." = "En tant qu'amateur, j'ai déjà joué avec des synthétiseurs et des filtres, et j'ai des connaissances de base concernant leur utilisation. Je peux identifier certaines caractéristiques sonores."
 "Before starting the experiment, please read and fill the form below." = "Avant de commencer l'expérience, veuillez s'il vous plaît lire et remplir le formulaire ci-dessous."
 "Before this experiment, I did not know anything about sound synthesisers and filters" = "Avant cette expérience, je ne connaissais rien à propos des synthétiseurs audio et des filtres"
 "BEGIN PRESET RESEARCH" = "COMMENCER LA RECHERCHE DU PRESET"
@@ -19,7 +19,7 @@ countries: fr be mc ch lu
 "I have already participated in a similar scientific experiment" = "J'ai déjà participé à une expérience scientifique similaire"
 "I have already played with synthesisers and filters, but I don't know how they work" = "J'ai déjà joué avec des synthétiseurs et des filtres, mais je ne sais pas comment ils fonctionnent"
 "I have already tested a similar touch app" = "J'ai déjà testé une application tactile similaire"
-"I play quite often with synthesisers and filters, and I can configure them to produce the sounds that I want" = "Je joue assez souvent avec des synthétiseurs et des filtres, et je suis capable de les configurer pour produire les sons que je désire"
+"I play quite often with synths and filters, and I can configure them to produce sounds I want. I can easily identify the main sound characteristics." = "Je joue assez souvent avec des synthés et des filtres, et je peux les configurer pour produire les sons que je désire. Je peux facilement identifier les principales caractéristiques d'un son."
 "I suffer from a vision impairment, such as uncorrected short-sightedness, color blindness, ..." = "Je souffre d'un trouble de la vision, tel qu'une myopie non-corrigée, un daltonisme, ou autre"
 "I suffer from an hearing impairment" = "Je souffre d'un trouble de l'audition"
 "In general, which method did you prefer?" = "En général, quelle méthode avez-vous préféré ?"
