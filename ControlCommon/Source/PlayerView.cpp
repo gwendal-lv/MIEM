@@ -26,9 +26,43 @@ backgroundComponent(_backgroundComponent)
     std::string deviceDescription = SystemStats::getDeviceDescription().toStdString();
     std::cout << "[View] device = " << deviceDescription << std::endl;
     
-    // Récupération de l'info : besoin d'une safe area, ou non ?
-    // FORCE pour l'instant (test)
-    safeArea = SafeAreaType::Ipad_NoMainButton;
+    // Récupération de l'info : besoin d'une safe area, ou non
+    // Si le nom commence par "iPhone1" (avec un zéro, ou autre derrière...)
+    // ou "iPhone X" -> on fait
+    // comme si iPhone X ou supérieur dans tous les cas
+    // N.B. : iPhone 7 (simulateur) correspond à iPhone9,3 (réel)
+    if ((deviceDescription.find("iPhone1") == 0)
+        || (deviceDescription.find("iPhone X") == 0))
+        safeArea = SafeAreaType::IphoneX;
+    // les iPad à partir de 2018 n'ont plus de bouton d'accueil, et ont les coins arrondis
+    // iPad pro du LARAS 9.7 pouces : iPad6,3 en réel, iPad Pro (9.7-inch) en simulateur
+    else if (deviceDescription.find("iPad") != std::string::npos)
+    {
+        /*
+        // Simulator values
+        if (deviceDescription[4] == ' ')
+        {
+            if (deviceDescription.find("iPad Pro (11-inch)") == 0
+                || deviceDescription.find("iPad Pro (11-inch)") == 0)
+                safeArea = SafeAreaType::Ipad_NoMainButton;
+            else
+                safeArea = SafeAreaType::FullScreen;
+        }
+        // actual devices values
+        else
+        {
+            int iPadFirstNumber = deviceDescription[4] - '0';
+            if (iPadFirstNumber > 6) // 6 : iPad Pro rose du LARAS
+                safeArea = SafeAreaType::Ipad_NoMainButton;
+            else
+                safeArea = SafeAreaType::FullScreen;
+        }
+        */
+        // All iPads will loose space because of the iPads with rounded corners...
+        safeArea = SafeAreaType::Ipad_NoMainButton;
+    }
+    else
+        safeArea = SafeAreaType::FullScreen;
 }
 
 Rectangle<int> PlayerView::GetSafeBackgroundBounds(Rectangle<int> fullScreenBounds)
@@ -41,7 +75,7 @@ Rectangle<int> PlayerView::GetSafeBackgroundBounds(Rectangle<int> fullScreenBoun
     
     switch (safeArea)
     {
-        case Miam::SafeAreaType::None:
+        case Miam::SafeAreaType::FullScreen:
             break;
             
         case Miam::SafeAreaType::IphoneX:
