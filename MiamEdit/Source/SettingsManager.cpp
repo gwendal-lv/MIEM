@@ -148,8 +148,9 @@ void SettingsManager::OnInOutChannelsCountChanged(int inputsCount, int outputsCo
     model->GetInterpolator()->SetInputOutputChannelsCount(inputsCount, outputsCount);
     
     // Direct dispatching of the event (not telling other presenter modules)
-    view->GetMainContentComponent()->GetSpatStatesEditionComponent()->SetInsOutsCount(model->GetInterpolator()->GetInputsCount(),
-         model->GetInterpolator()->GetOutputsCount());
+    view->GetMainContentComponent()->GetSpatStatesEditionComponent()->SetInsOutsCount(
+        model->GetInterpolator()->GetInputsCount(),
+        model->GetInterpolator()->GetOutputsCount());
 }
 void SettingsManager::OnInOutNamesDisplayedChanged(bool areInputNamesVisible, bool areOutputNamesVisible)
 {
@@ -216,15 +217,24 @@ void SettingsManager::SetFromTree(bptree::ptree& tree)
                                                                      NotificationType::dontSendNotification);
         presenter->GetSpatStatesManager()->AllowKeyboardEdition(allow);
     
-        // Interpolator-related : simple transmission of data to View, without notifications
+        // Interpolator-related : simple transmission of data to View,
+        // with some delayed notifications
         std::string typeString = tree.get<std::string>("control.interpolation.<xmlattr>.type");
         InterpolationType interpolationType = InterpolationTypes::ParseName(typeString);
         configurationComponent->interpolationTypeComboBox->setSelectedId((int)interpolationType,
                                                         NotificationType::dontSendNotification);
-        configurationComponent->inputsCountSlider->
-        setValue((double) tree.get<int>("control.inputs.<xmlattr>.activeCount") );
-        configurationComponent->outputsCountSlider->
-        setValue((double) tree.get<int>("control.outputs.<xmlattr>.activeCount") );
+        // Here, no notification would be sent if there is only 1 in or out (slider would not move...)
+        // -> forced fake move of slider to trigger callbacks
+        int inCount = tree.get<int>("control.inputs.<xmlattr>.activeCount");
+        int outCount = tree.get<int>("control.outputs.<xmlattr>.activeCount");
+        configurationComponent->inputsCountSlider->setValue( (inCount >= 2) ? 1.0 : 2.0,
+                                                            NotificationType::dontSendNotification);
+        configurationComponent->inputsCountSlider->setValue( (double) inCount,
+                                                            NotificationType::sendNotificationAsync);
+        configurationComponent->outputsCountSlider->setValue( (outCount >= 2) ? 1.0 : 2.0,
+                                                            NotificationType::dontSendNotification);
+        configurationComponent->outputsCountSlider->setValue( (double) outCount,
+                                                            NotificationType::sendNotificationAsync);
         // Spat sender-related
         configurationComponent->ipAddressTextEditor->
         setText( tree.get<std::string>("control.senders.sender.ip") );

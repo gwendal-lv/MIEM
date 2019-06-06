@@ -69,7 +69,7 @@ namespace Miam
 #ifdef __MIAM_DEBUG
         void DisplayMatrixInStdCout()
         {
-            std::cout << matrix.GetNonZeroCoeffsCount() << " non-nuls : ";
+            std::cout << "[MatrixState.hpp] " << matrix.GetNonZeroCoeffsCount() << " coeffs non-nuls : ";
             matrix.DisplayInStdCout();
             std::cout << std::endl;
         }

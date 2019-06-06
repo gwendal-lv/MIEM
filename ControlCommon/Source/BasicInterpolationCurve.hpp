@@ -256,6 +256,7 @@ namespace Miam
                         return a_logInterp * std::exp(b_logInterp * ((inputX - minX) / deltaX))
                                + c_logInterp;
                 
+                        // - - - - - - Threshold _|- - - - - - -
                     case ParamInterpolationType::Independant_Threshold :
                         return (inputX < centerX) ? minY : maxY;
                 
@@ -295,38 +296,44 @@ namespace Miam
             // reverse computation
             switch(interpolationType)
             {
+                // - - - - - - Threshold _|- - - - - - -
+                // pour le threshold c'est assez particulier, lié au GUI.
+                // On veut pouvoir avoir des valeurs non-binaires
+                // dans les états, mais avec un résultat non binaire. Donc, quand on demande l'interp
+                // inverse.... On renvoie une dé-interpolation linéaire
+                case ParamInterpolationType::Independant_Threshold :
+                    
+                    // - - - linéaire - - -
                 case ParamInterpolationType::Independant_Linear :
                     return minX + ((outputY - minY) / deltaY) * deltaX;
                     
                     // - - - hard/soft 2 (hardest and softest curves) - - -
                 case ParamInterpolationType::Independant_Soft2 :
                     return std::sqrt( (outputY - minY) / m_soft) + minX;
-                    
+        
                 case ParamInterpolationType::Independant_Hard2 :
                     return std::pow( (outputY - minY) / m_hard, (int)2) + minX;
                     
-                    // - - - hard/soft 1 : more linear, formula is a bit more complex - - -
                     
-                    // METTRE ET TESTER ICI TOUS LES AUTRES CAS DU SWITCH, ça devrait marcher pareil...
-                    // METTRE ET TESTER ICI TOUS LES AUTRES CAS DU SWITCH, ça devrait marcher pareil...
-                    // METTRE ET TESTER ICI TOUS LES AUTRES CAS DU SWITCH, ça devrait marcher pareil...
-                    // METTRE ET TESTER ICI TOUS LES AUTRES CAS DU SWITCH, ça devrait marcher pareil...
-                    // METTRE ET TESTER ICI TOUS LES AUTRES CAS DU SWITCH, ça devrait marcher pareil...
-                    // METTRE ET TESTER ICI TOUS LES AUTRES CAS DU SWITCH, ça devrait marcher pareil...
-                    // METTRE ET TESTER ICI TOUS LES AUTRES CAS DU SWITCH, ça devrait marcher pareil...
-                    // METTRE ET TESTER ICI TOUS LES AUTRES CAS DU SWITCH, ça devrait marcher pareil...
-                    // METTRE ET TESTER ICI TOUS LES AUTRES CAS DU SWITCH, ça devrait marcher pareil...
-                    // METTRE ET TESTER ICI TOUS LES AUTRES CAS DU SWITCH, ça devrait marcher pareil...
-                    // METTRE ET TESTER ICI TOUS LES AUTRES CAS DU SWITCH, ça devrait marcher pareil...
-                    // METTRE ET TESTER ICI TOUS LES AUTRES CAS DU SWITCH, ça devrait marcher pareil...
-                    // METTRE ET TESTER ICI TOUS LES AUTRES CAS DU SWITCH, ça devrait marcher pareil...
-                    // METTRE ET TESTER ICI TOUS LES AUTRES CAS DU SWITCH, ça devrait marcher pareil...
-                    // METTRE ET TESTER ICI TOUS LES AUTRES CAS DU SWITCH, ça devrait marcher pareil...
-                    
-                    // Soft1 : solving a 2nd-order equation using a bazooka = generic solver...
+                    // - - - Soft1 - - - :
+                    // LE SOLVEUR EST MAINTENANT LE SEUL
+                    // LE REMPLACER PAR UNE RESOLUTION POLYNOMIALE DANS BOOST
+                    // (mais en gardant le code de solveur, prêt à être ré-utilisé...)
+                    // LE SOLVEUR EST MAINTENANT LE SEUL
+                    // LE REMPLACER PAR UNE RESOLUTION POLYNOMIALE DANS BOOST
+                    // (mais en gardant le code de solveur, prêt à être ré-utilisé...)
+                    // LE SOLVEUR EST MAINTENANT LE SEUL
+                    // LE REMPLACER PAR UNE RESOLUTION POLYNOMIALE DANS BOOST
+                    // (mais en gardant le code de solveur, prêt à être ré-utilisé...)
+                    // LE SOLVEUR EST MAINTENANT LE SEUL
+                    // LE REMPLACER PAR UNE RESOLUTION POLYNOMIALE DANS BOOST
+                    // (mais en gardant le code de solveur, prêt à être ré-utilisé...)
+                    // LE SOLVEUR EST MAINTENANT LE SEUL
+                    // LE REMPLACER PAR UNE RESOLUTION POLYNOMIALE DANS BOOST
+                    // (mais en gardant le code de solveur, prêt à être ré-utilisé...)
+                    // solving a 2nd-order equation using a bazooka = generic solver...
                     // because polynomials.hpp does not compile. Need to update boost and/or add math
                 case ParamInterpolationType::Independant_Soft1 :
-                    
                     // Appel au solveur, qui est en fait le même code pour toutes les interp.
                     // inverses basées sur résolution numérique
                     xBrackets =
@@ -343,20 +350,17 @@ namespace Miam
                     else
                         return xBrackets.first;
                     
-                    /*
+                // - - - hard 1 - - - : direct inversion
                 case ParamInterpolationType::Independant_Hard1 :
-                    return a_hard * std::sqrt(alpha_h + b_hard*(inputX - minX)) + c_hard;
+                    return minX + ( std::pow((outputY - c_hard) / a_hard, (int)2) - alpha_h ) / (b_hard);
                     
                     // - - - Log-scale for audio frequencies - - -
                 case ParamInterpolationType::Independant_Log :
                     // fonction qui prend un x normalisé en entrée
                     // (pourrait être optimisé...)
-                    return a_logInterp * std::exp(b_logInterp * ((inputX - minX) / deltaX))
-                    + c_logInterp;
+                    return (deltaX / b_logInterp) * std::log( (outputY - c_logInterp) / a_logInterp) + minX;
                     
-                case ParamInterpolationType::Independant_Threshold :
-                    return (inputX < centerX) ? minY : maxY;
-                    */
+                    
                 default : // interp linéaire par défaut... ou 0.0 en débug
 #ifdef __MIAM_DEBUG
                     return (T) 0.0;
