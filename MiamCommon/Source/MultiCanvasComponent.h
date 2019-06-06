@@ -38,7 +38,7 @@ namespace Miam {
         IGraphicSessionManager* graphicSessionManager;
         
 		protected :
-        std::vector<ScopedPointer<MultiSceneCanvasComponent>> multiSceneCanvasComponents;
+        std::vector<std::unique_ptr<MultiSceneCanvasComponent>> multiSceneCanvasComponents;
         
 		private :
         // Only one because we know that there is only 2 canvases available...

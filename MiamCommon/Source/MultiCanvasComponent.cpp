@@ -168,9 +168,10 @@ void MultiCanvasComponent::mouseUp (const MouseEvent &event)
 // - - - - - Canvases & canvas group - - - - -
 MultiSceneCanvasComponent* MultiCanvasComponent::AddCanvas()
 {
-    multiSceneCanvasComponents.push_back(new MultiSceneCanvasComponent());
-    addAndMakeVisible(multiSceneCanvasComponents.back());
-    return multiSceneCanvasComponents.back();
+    multiSceneCanvasComponents.resize(multiSceneCanvasComponents.size() + 1);
+    multiSceneCanvasComponents.back().reset(new MultiSceneCanvasComponent());
+    addAndMakeVisible(multiSceneCanvasComponents.back().get());
+    return multiSceneCanvasComponents.back().get();
 }
 
 

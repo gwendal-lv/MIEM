@@ -31,6 +31,7 @@
 namespace Miam
 {
     class PlayerPresenter;
+    class PlayerView;
 
     class MultiCanvasComponent;
 
@@ -59,7 +60,7 @@ public:
     //[UserMethods]     -- You can add your own custom methods in this section.
 
     /// \brief Function called after both View and Presenter are contructed
-    void CompleteInitialization(PlayerPresenter*);
+    void CompleteInitialization(PlayerPresenter*, PlayerView*);
     void CompleteInitialization(MultiCanvasComponent*);
 
     void DisplayInfo(const String& stringToDisplay, bool isImportant = false);
@@ -96,6 +97,7 @@ private:
 
     /// \brief To send commands such as "load", "quit", ...
     PlayerPresenter* presenter;
+    PlayerView* view;
 
     /// Simple GUIs, owned by the View directly
     std::unique_ptr<PlayerMainMenuComponent> mainMenuComponent;

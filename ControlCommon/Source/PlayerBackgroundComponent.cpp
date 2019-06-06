@@ -19,6 +19,7 @@
 
 //[Headers] You can add your own extra header files here...
 #include "PlayerPresenter.h"
+#include "PlayerView.h"
 
 #include "MultiCanvasComponent.h"
 //[/Headers]
@@ -249,9 +250,10 @@ void PlayerBackgroundComponent::sliderValueChanged (Slider* sliderThatWasMoved)
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
-void PlayerBackgroundComponent::CompleteInitialization(PlayerPresenter* presenter_)
+void PlayerBackgroundComponent::CompleteInitialization(PlayerPresenter* presenter_, PlayerView* _view)
 {
     presenter = presenter_;
+    view = _view;
     mainMenuComponent->SetPresenter(presenter);
 }
 void PlayerBackgroundComponent::CompleteInitialization(MultiCanvasComponent* multiCanvasComponent_)
@@ -384,7 +386,7 @@ BEGIN_JUCER_METADATA
          fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="12"/>
   <SLIDER name="Main slider" id="8924a1c10657725b" memberName="mainSlider"
-          virtualName="" explicitFocusOrder="0" pos="0Rr 24Cc 56 160M"
+          virtualName="" explicitFocusOrder="0" pos="0Rr 24.5Cc 56 160M"
           tooltip="Master Gain (applied to the entire state)" bkgcol="ff000000"
           thumbcol="ffffffff" trackcol="ff909090" min="-6e1" max="6" int="0"
           style="LinearVertical" textBoxPos="TextBoxAbove" textBoxEditable="0"

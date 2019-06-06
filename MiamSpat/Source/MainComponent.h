@@ -47,7 +47,7 @@ private:
     Presenter* presenter = 0;
     
     // Graphical component
-    ScopedPointer<PlayerBackgroundComponent> backgroundComponent;
+    std::unique_ptr<PlayerBackgroundComponent> backgroundComponent;
     //MultiCanvasComponent* multiCanvasComponent = 0; // belongs to the presenter
     
     // Display attributes

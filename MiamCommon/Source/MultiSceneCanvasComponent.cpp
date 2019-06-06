@@ -103,7 +103,7 @@ void MultiSceneCanvasComponent::UpdateSceneButtons(std::vector< std::shared_ptr<
         
         // At first, we remove all buttons from the parent
         for (size_t i = 0; i<sceneChoiceTextButtons.size() ; i++)
-            removeChildComponent(sceneChoiceTextButtons[i]);
+            removeChildComponent(sceneChoiceTextButtons[i].get());
         sceneChoiceTextButtons.resize(0); // actual buttons deletion (scoped ptrs)
         
         // Then we create the new ones
@@ -158,8 +158,9 @@ void MultiSceneCanvasComponent::updateSceneButtonsBounds()
 
 void MultiSceneCanvasComponent::addButton(std::string buttonName)
 {
-    sceneChoiceTextButtons.push_back(new TextButton(buttonName));
-    addAndMakeVisible(sceneChoiceTextButtons.back());
+    auto uniqueButton = std::unique_ptr<TextButton>(new TextButton(buttonName));
+    sceneChoiceTextButtons.push_back(std::move(uniqueButton));
+    addAndMakeVisible(sceneChoiceTextButtons.back().get());
     sceneChoiceTextButtons.back()->addListener(this);
 
 	// Solves an issue with touch : some touch events are interpreted (win, mac)

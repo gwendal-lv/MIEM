@@ -7,6 +7,7 @@
 */
 
 #include "MainComponent.h"
+#include "View.h"
 
 #include <string>
 
@@ -16,7 +17,8 @@
 MainContentComponent::MainContentComponent()
 {
     // Ajout des composants enfant
-    addAndMakeVisible(backgroundComponent = new PlayerBackgroundComponent());
+    backgroundComponent.reset(new PlayerBackgroundComponent());
+    addAndMakeVisible(backgroundComponent.get());
     
     setSize (600, 400);
     
@@ -32,7 +34,7 @@ MainContentComponent::~MainContentComponent()
 
 void MainContentComponent::paint (Graphics& g)
 {
-    g.fillAll (Colours::darkgrey);
+    g.fillAll (Colour::fromRGB(48, 48, 48));
 
     g.setFont (Font (16.0f));
     g.setColour (Colours::white);
@@ -46,7 +48,10 @@ void MainContentComponent::paint (Graphics& g)
 
 void MainContentComponent::resized()
 {
-    backgroundComponent->setBounds(getLocalBounds());
+    if (view)
+        backgroundComponent->setBounds(view->GetSafeBackgroundBounds(getLocalBounds()));
+    else
+        backgroundComponent->setBounds(getLocalBounds());
     backgroundComponent->resized(); //  forcé....
 }
 
@@ -57,7 +62,8 @@ void MainContentComponent::resized()
 void MainContentComponent::CompleteInitialization(Presenter* _presenter)
 {
     presenter = _presenter;
-    backgroundComponent->CompleteInitialization(presenter);
+    assert(view != 0);
+    backgroundComponent->CompleteInitialization(presenter, view);
 }
 void MainContentComponent::CompleteInitialization(MultiCanvasComponent* multiCanvasComponent_)
 {

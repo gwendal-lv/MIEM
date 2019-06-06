@@ -28,6 +28,12 @@ namespace Miam
     class MultiCanvasComponent;
     class GraphicSessionPlayer;
     
+    enum class SafeAreaType {
+        None, ///< Normal rectangle screen -> no safe area needed
+        IphoneX, ///< Quite large safe area, that depends on the orientation (need to consider the bar, etc.)
+        Ipad_NoMainButton, ///< ipads without a physical main button (need space on the bottom)
+    };
+    
     class PlayerView : public ControlView
     {
         
@@ -38,15 +44,15 @@ namespace Miam
         
         protected :
         /// \brief Boolean that indicate whether the actual contents must be placed inside a
-        /// rectangle that is smaller than the screen (e.g. on iPhone X, ...)
-        bool shouldUseSafeArea;
+        /// rectangle that is smaller than the screen, iPhone X
+        SafeAreaType safeArea;
         
         
         // = = = = = = = = = = Setters and Getters = = = = = = = = = =
         public :
         PlayerBackgroundComponent* GetBackgroundComponent() {return backgroundComponent;}
-        
-        
+        SafeAreaType GetSafeAreaType() const {return safeArea;}
+        Rectangle<int> GetSafeBackgroundBounds(Rectangle<int> fullScreenBounds);
         
         
         
@@ -61,6 +67,7 @@ namespace Miam
         /// Ne fait vraiment un truc que dans la classe fille (qui devra se débrouiller avec le
         /// mainContentComponent de l'application réelle)
         virtual void CompleteInitialization(GraphicSessionPlayer*, MultiCanvasComponent*) = 0;
+        
         
         
         

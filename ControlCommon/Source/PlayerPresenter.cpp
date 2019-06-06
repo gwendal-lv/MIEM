@@ -234,7 +234,7 @@ void PlayerPresenter::OnFileChooserReturn(const FileChooser& chooser)
                 // code issu de https://forum.juce.com/t/cant-see-userdocumentsdirectory-in-ios-file-chooser/25672/5
                 StringPairArray responseHeaders;
                 int statusCode = 0;
-                ScopedPointer<InputStream> p_stream( loadFileChooser.getURLResult().createInputStream(
+                std::unique_ptr<InputStream> p_stream( loadFileChooser.getURLResult().createInputStream(
                     false, nullptr, nullptr, String(), 10000, &responseHeaders, &statusCode ) );
                 // Ce code enclenche peut-être des l'attribution des "security bookmarks" dont parle la doc Juce ??
                 // voir : https://docs.juce.com/master/classFileChooser.html#a5964a831e9d12cd53de3606240dfd4c9

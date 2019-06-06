@@ -292,8 +292,6 @@ void PlayerMainMenuComponent::paint (Graphics& g)
     //[UserPrePaint] Add your own custom painting code here..
     //[/UserPrePaint]
 
-    g.fillAll (Colour (0x51000000));
-
     //[UserPaint] Add your own custom painting code here..
     //[/UserPaint]
 }
@@ -670,7 +668,7 @@ BEGIN_JUCER_METADATA
                  constructorParams="" variableInitialisers="" snapPixels="8" snapActive="1"
                  snapShown="1" overlayOpacity="0.330" fixedSize="0" initialWidth="600"
                  initialHeight="400">
-  <BACKGROUND backgroundColour="51000000"/>
+  <BACKGROUND backgroundColour="0"/>
   <GROUPCOMPONENT name="Session group component" id="ee702f61e13ff830" memberName="sessionGroupComponent"
                   virtualName="" explicitFocusOrder="0" pos="0.5Cc 8 16M 56" outlinecol="ff909090"
                   textcol="ff909090" title="Session"/>
@@ -681,27 +679,27 @@ BEGIN_JUCER_METADATA
   <IMAGEBUTTON name="Play image button" id="823680c6dd0a5a2e" memberName="playImageButton"
                virtualName="" explicitFocusOrder="0" pos="-16Cr 96R 62 62" buttonText="new button"
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
-               resourceNormal="play_png" opacityNormal="1" colourNormal="0"
-               resourceOver="" opacityOver="6.000000238418579e-1" colourOver="0"
-               resourceDown="" opacityDown="1" colourDown="0"/>
+               resourceNormal="play_png" opacityNormal="1.0" colourNormal="0"
+               resourceOver="" opacityOver="0.6000000238418579" colourOver="0"
+               resourceDown="" opacityDown="1.0" colourDown="0"/>
   <IMAGEBUTTON name="Playing image button" id="26f63b20519a1739" memberName="playingImageButton"
                virtualName="" explicitFocusOrder="0" pos="-16Cr 96R 62 62" buttonText="new button"
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
-               resourceNormal="playOn_png2" opacityNormal="1" colourNormal="0"
-               resourceOver="" opacityOver="1" colourOver="0" resourceDown=""
-               opacityDown="1" colourDown="0"/>
+               resourceNormal="playOn_png2" opacityNormal="1.0" colourNormal="0"
+               resourceOver="" opacityOver="1.0" colourOver="0" resourceDown=""
+               opacityDown="1.0" colourDown="0"/>
   <IMAGEBUTTON name="Stop image button" id="9385dfb43a053dc6" memberName="stopImageButton"
                virtualName="" explicitFocusOrder="0" pos="16C 96R 62 62" buttonText="new button"
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
-               resourceNormal="stop_png" opacityNormal="1" colourNormal="0"
-               resourceOver="" opacityOver="6.000000238418579e-1" colourOver="0"
-               resourceDown="" opacityDown="1" colourDown="0"/>
+               resourceNormal="stop_png" opacityNormal="1.0" colourNormal="0"
+               resourceOver="" opacityOver="0.6000000238418579" colourOver="0"
+               resourceDown="" opacityDown="1.0" colourDown="0"/>
   <IMAGEBUTTON name="Stopped image button" id="1b06a982c2d60ddc" memberName="stoppedImageButton"
                virtualName="" explicitFocusOrder="0" pos="16C 96R 62 62" buttonText="new button"
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
-               resourceNormal="stopOn_png" opacityNormal="1" colourNormal="0"
-               resourceOver="" opacityOver="1" colourOver="0" resourceDown=""
-               opacityDown="1" colourDown="0"/>
+               resourceNormal="stopOn_png" opacityNormal="1.0" colourNormal="0"
+               resourceOver="" opacityOver="1.0" colourOver="0" resourceDown=""
+               opacityDown="1.0" colourDown="0"/>
   <GROUPCOMPONENT name="Help group component" id="5beff948b653aff1" memberName="helpGroupComponent"
                   virtualName="" explicitFocusOrder="0" pos="0.5Cc 88 16M 240M"
                   outlinecol="ff909090" textcol="ff909090" title="Help"/>
@@ -728,7 +726,7 @@ BEGIN_JUCER_METADATA
          virtualName="" explicitFocusOrder="0" pos="0.5Cc 24R 80M 24"
          textCol="ff909090" edTextCol="ff000000" edBkgCol="0" labelText="Additionnal Status information"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="1" justification="36" typefaceStyle="Italic"/>
   <TEXTBUTTON name="Fullscreen button" id="5a77ff389fbb58c9" memberName="fullscreenButton"
               virtualName="" explicitFocusOrder="0" pos="24Rr 76R 144 24" bgColOff="ff404040"
@@ -739,7 +737,7 @@ BEGIN_JUCER_METADATA
          posRelativeY="e4ef4437203ce19e" textCol="ffffffff" edTextCol="ff000000"
          edBkgCol="0" labelText="OSC device UDP port:" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
-         fontsize="1.5e1" kerning="0" bold="0" italic="0" justification="34"/>
+         fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="34"/>
   <TEXTEDITOR name="UDP Port Text Editor" id="e4ef4437203ce19e" memberName="udpPortTextEditor"
               virtualName="" explicitFocusOrder="0" pos="0C 44C 64 24" bkgcol="ff404040"
               initialText="8001" multiline="0" retKeyStartsLine="0" readonly="0"
@@ -749,7 +747,7 @@ BEGIN_JUCER_METADATA
          posRelativeY="6997b5b4dc28675a" textCol="ffffffff" edTextCol="ff000000"
          edBkgCol="0" labelText="OSC device IP adress:" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
-         fontsize="1.5e1" kerning="0" bold="0" italic="0" justification="34"/>
+         fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="34"/>
   <TEXTEDITOR name="IP Address Text Editor" id="6997b5b4dc28675a" memberName="ipAddressTextEditor"
               virtualName="" explicitFocusOrder="0" pos="0C 12C 120 24" bkgcol="ff404040"
               initialText="127.0.0.1" multiline="0" retKeyStartsLine="0" readonly="0"
