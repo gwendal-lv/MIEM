@@ -21,9 +21,11 @@ namespace bptree = boost::property_tree;
 #include "InterpolationTypes.h"
 
 
-// solveurs d'équation Boost -> polynomial pose problème
-//#include "boost/math/tools/polynomial.hpp"
 #include "boost/math/tools/roots.hpp" // pour le TOMS 748 "auto" via bracket-and-solve-root
+
+// solveurs d'équation Boost -> polynomial pose problème en v1.68.00 -> résolu 1.70.00
+// --> pas encore utilisé....
+//#include "boost/math/tools/polynomial.hpp"
 
 
 namespace Miam
@@ -281,7 +283,7 @@ namespace Miam
             else if (outputY > maxY)
                 return maxX;
             
-            // Variables for solvers
+            // Variables for TOMBS 748 solver (unused at the moment...)
             double firstGuess = centerX;
             boost::uintmax_t solverIterations = 100; // will be written
             bool isRising = true; // monotonically increasing lambda functor
@@ -316,23 +318,6 @@ namespace Miam
                     
                     
                     // - - - Soft1 - - - :
-                    // LE SOLVEUR EST MAINTENANT LE SEUL
-                    // LE REMPLACER PAR UNE RESOLUTION POLYNOMIALE DANS BOOST
-                    // (mais en gardant le code de solveur, prêt à être ré-utilisé...)
-                    // LE SOLVEUR EST MAINTENANT LE SEUL
-                    // LE REMPLACER PAR UNE RESOLUTION POLYNOMIALE DANS BOOST
-                    // (mais en gardant le code de solveur, prêt à être ré-utilisé...)
-                    // LE SOLVEUR EST MAINTENANT LE SEUL
-                    // LE REMPLACER PAR UNE RESOLUTION POLYNOMIALE DANS BOOST
-                    // (mais en gardant le code de solveur, prêt à être ré-utilisé...)
-                    // LE SOLVEUR EST MAINTENANT LE SEUL
-                    // LE REMPLACER PAR UNE RESOLUTION POLYNOMIALE DANS BOOST
-                    // (mais en gardant le code de solveur, prêt à être ré-utilisé...)
-                    // LE SOLVEUR EST MAINTENANT LE SEUL
-                    // LE REMPLACER PAR UNE RESOLUTION POLYNOMIALE DANS BOOST
-                    // (mais en gardant le code de solveur, prêt à être ré-utilisé...)
-                    // solving a 2nd-order equation using a bazooka = generic solver...
-                    // because polynomials.hpp does not compile. Need to update boost and/or add math
                 case ParamInterpolationType::Independant_Soft1 :
                     // Appel au solveur, qui est en fait le même code pour toutes les interp.
                     // inverses basées sur résolution numérique
@@ -340,6 +325,9 @@ namespace Miam
                     boost::math::tools::bracket_and_solve_root(solverFunctor, firstGuess,
                                                                (T)2.0, isRising,
                                                                toleranceFunctor, solverIterations);
+                    // à remplacer par un solveur normal du second degré !.... faut juste l'écrire.
+                    // (pas de résolution directe dans boost::polynomial...)
+                    
                     // Vérification de validité, renvoi dès qu'on a identifié clairement un cas
                     if ( (xBrackets.first < minX)
                         || toleranceFunctor(xBrackets.first, minX) )
