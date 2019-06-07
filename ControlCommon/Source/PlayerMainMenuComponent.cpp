@@ -351,7 +351,9 @@ void PlayerMainMenuComponent::resized()
     }
 
     // In case of very small width: small arrangements for iPhones...
-    if (getWidth() < 400) // 400px est environ la limite entre iPhone et iPhone +
+    // // 400px est environ la limite entre iPhone et iPhone +
+    // MAIS pour l'iphone Xr -> boutons se recouvrent... (écran large, mais pas assez...)
+    if (getWidth() < 440)
     {
         Rectangle<int> bounds = helpButton->getBounds();
         bounds.setX(16); // décalage forcé à gauche

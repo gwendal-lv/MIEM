@@ -45,7 +45,8 @@ void MainContentComponent::resized()
 void MainContentComponent::CompleteInitialization(Presenter* _presenter)
 {
     presenter = _presenter;
-    backgroundComponent->CompleteInitialization(presenter);
+    assert(view != 0);
+    backgroundComponent->CompleteInitialization(view, presenter);
 }
 void MainContentComponent::CompleteInitialization(MultiCanvasComponent* multiCanvasComponent_)
 {
