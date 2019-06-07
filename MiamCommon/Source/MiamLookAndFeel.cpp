@@ -88,22 +88,9 @@ void MiamLookAndFeel::drawTextEditorOutline(Graphics & g, int width, int height,
 
 void MiamLookAndFeel::drawTooltip (Graphics& g, const String& text, int width, int height)
 {
-    // Base code taken from tooltip v4 CPP file, from Juce 5.4.1
-    Rectangle<int> bounds (width, height);
-    float cornerSize = 2.0f;
-    float contourWidth1 = 1.0f;
-    float contourWidth2 = 2.0f;
-
-    //g.setColour (findColour (TooltipWindow::backgroundColourId));
-    g.setColour(Colours::white);
-    g.fillRoundedRectangle (bounds.toFloat(), cornerSize);
-
-    //g.setColour (findColour (TooltipWindow::outlineColourId));
-    g.setColour(Colours::darkgrey);
-    g.drawRoundedRectangle (bounds.toFloat().reduced (contourWidth1, contourWidth1), cornerSize, contourWidth2);
-
-    layoutTooltipText (text, Colours::darkgrey, width)//findColour (TooltipWindow::textColourId))
-    .draw (g, { static_cast<float> (width), static_cast<float> (height) });
+    // Retour aux tooltips de base....
+    LookAndFeel_V4::drawTooltip(g, text, width, height);
+    return;
 }
 
 TextLayout MiamLookAndFeel::layoutTooltipText (const String& text, Colour colour, int width)
@@ -118,4 +105,4 @@ TextLayout MiamLookAndFeel::layoutTooltipText (const String& text, Colour colour
     TextLayout tl;
     tl.createLayoutWithBalancedLineLengths (s, (float) maxToolTipWidth);
     return tl;
-    }
+}

@@ -176,4 +176,37 @@ void MainContentComponent::resized()
     }
 }
 
+bool MainContentComponent::keyPressed(const KeyPress& key)
+{
+    bool keyWasUsed = false;
+    
+    
+    // ====================== Keyboard SHORTCUTS =====================
+    if (key.getModifiers().isCommandDown())
+    {
+        if (key.getKeyCode() == mainBackgroundComponent->GetSwitchTabCommandKey())
+        {
+            mainBackgroundComponent->TriggerTabSwitch(presenter->getAppMode());
+            keyWasUsed = true;
+        }
+        else if (key.getKeyCode() == mainBackgroundComponent->GetSaveCommandKey())
+        {
+            // Si on MAJ en plus, alors sauvegarde SOUS. Sinon juste une sauvegarde
+            mainBackgroundComponent->TriggerSave(key.getModifiers().isShiftDown());
+            keyWasUsed = true;
+        }
+    }
+    
+    // Forced callback to parent, if unused
+    if (! keyWasUsed)
+        return getParentComponent()->keyPressed(key);
+    // or return true to prevent the event to be passed-on.
+    else
+        return keyWasUsed;
+}
+
+void MainContentComponent::modifierKeysChanged (const ModifierKeys& modifiers)
+{
+}
+
 

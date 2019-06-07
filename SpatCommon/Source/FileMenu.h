@@ -54,7 +54,8 @@ namespace Miam
         
         void ShowMenuAndSendUserAnswer();
         
-        private :
+        // public for direct use via BackgroundComponent
+        public :
         void onLoad();
         void onSave();
         void onSaveAs();

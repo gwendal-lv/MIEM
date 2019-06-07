@@ -130,6 +130,7 @@ public:
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
     void sliderValueChanged (Slider* sliderThatWasMoved) override;
     void visibilityChanged() override;
+    bool keyPressed (const KeyPress& key) override;
 
 
 

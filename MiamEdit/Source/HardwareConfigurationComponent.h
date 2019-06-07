@@ -71,6 +71,7 @@ public:
     void SetAvailableInterpolations(std::initializer_list<InterpolationType> interpolationTypeArgs);
     void SetInterpolationChoiceVisible(bool shouldBeVisible);
 
+
     //[/UserMethods]
 
     void paint (Graphics& g) override;
@@ -79,6 +80,7 @@ public:
     void buttonClicked (Button* buttonThatWasClicked) override;
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
     void visibilityChanged() override;
+    bool keyPressed (const KeyPress& key) override;
 
 
 

@@ -63,6 +63,9 @@ namespace Miam {
         void CompleteInitialisation(GraphicControlSessionManager* _graphicSessionManager, ControlModel* _model);
         
         
+        /// \brief Method for displaying a status (important info), to be overriden
+        virtual void DisplayStatus(std::string) { assert(false); /* no default implementation */ }
+        
         
         // - - - - - Graphical reccurent update - - - - -
         virtual void Update() override;

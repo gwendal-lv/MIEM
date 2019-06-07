@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.1
+  Created with Projucer version: 5.4.3
 
   ------------------------------------------------------------------------------
 
@@ -28,6 +28,7 @@
 #include "ClearLabelTimer.h"
 
 #include "AppPurpose.h"
+#include "AppMode.h"
 
 namespace Miam {
 
@@ -66,9 +67,21 @@ public:
 
     // SETTERS and GETTERS
     void setMiamView(Miam::View* _miamView) {view = _miamView;}
+    /// \brief Returns the keyboard key that must be used with the Cmd (or Ctrl) modifier
+    /// to trigger a tab switch (false click on a tab)
+    char GetSwitchTabCommandKey() {return switchTabCommandKey;}
+    char GetSaveCommandKey() {return saveCommandKey;}
+
 
     // Orders from Presenter
     void DisplayInfo(const String& message, int priority = 0);
+
+
+    // translated orders, from View
+    void TriggerTabSwitch(Miam::AppMode currentAppMode);
+    void TriggerSave(bool saveAsNewFile = false);
+
+
     //[/UserMethods]
 
     void paint (Graphics& g) override;
@@ -94,6 +107,12 @@ private:
     String spatStatesText;
     String genericStatesText;
 
+
+    // ====================== Keyboard SHORTCUTS =====================
+    const char switchTabCommandKey = 'T';
+    const char saveCommandKey = 'S'; // OK..... non-négociable !
+
+
     //[/UserVariables]
 
     //==============================================================================
@@ -114,3 +133,4 @@ private:
 
 } // namespace Miam
 //[/EndFile]
+

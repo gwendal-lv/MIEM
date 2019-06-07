@@ -305,3 +305,15 @@ int TextUtils::TryParseAndBoldenUdpPort(juce::TextEditor* textEditor)
 }
 
 
+
+
+juce::String TextUtils::GetCommandKeyDescriptionString(char keyCode)
+{
+#ifdef JUCE_MAC // knot logo
+    return String(CharPointer_UTF8 ("\xe2\x8c\x98")) + keyCode;
+#else
+    return String("Ctrl ") + keyCode;
+#endif
+}
+
+

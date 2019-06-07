@@ -198,11 +198,23 @@ AppMode Presenter::appModeChangeRequest(AppMode newAppMode)
         switch(appMode)
         {
             case AppMode::EditControlStates :
-                // At leats : reloading of maybe changed data from other mode
+                switch(GetSessionPurpose())
+                {
+                    case AppPurpose::Spatialisation:
+                        view->DisplayInfo(TRANS("Edition of the routing matrices for sound spatialisation.").toStdString());
+                        break;
+                    case AppPurpose::GenericController:
+                        view->DisplayInfo(TRANS("Edition of the multi-parameter states linked to the shapes.").toStdString());
+                        break;
+                    default:
+                        break;
+                }
+                // At least: reloading of maybe changed data from other mode
                 spatStatesEditionManager.OnEnterSpatStatesEdition();
                 break;
                 
             case AppMode::EditControlScenes :
+                view->DisplayInfo(TRANS("Edition of the scenes containing geometric shapes.").toStdString());
                 // Preparing for OpenGL to be back
                 view->GetMainContentComponent()->GetSceneEditionComponent()->PrepareVisible();
                 // At leats : reloading of maybe changed data from other mode
@@ -210,6 +222,7 @@ AppMode Presenter::appModeChangeRequest(AppMode newAppMode)
                 break;
 
 			case AppMode::EditSettings :
+                view->DisplayInfo(TRANS("General and network settings.").toStdString());
 				settingsManager.OnEnterSettingsEdition();
 				break;
                 
@@ -230,6 +243,11 @@ void Presenter::Update()
     // Check of Model messages !!!!!!
 }
 
+
+void Presenter::DisplayStatus(std::string infoStr)
+{
+    view->DisplayInfo(infoStr);
+}
 
 
 
@@ -309,7 +327,9 @@ void Presenter::SaveSession(std::string filename, bool forceDataRefresh)
     }
     
     // Puis sauvegarde effective vers XML
-    try { ControlPresenter::SaveSession(filename, forceDataRefresh); }
+    try {
+        ControlPresenter::SaveSession(filename, forceDataRefresh);
+    }
     catch (XmlWriteException& e) {
         view->DisplayInfo(e.what(), 50, true); // haute priorité, et dans nouvelle fenêtre
     }

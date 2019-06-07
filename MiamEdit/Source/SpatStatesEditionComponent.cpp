@@ -594,8 +594,37 @@ void SpatStatesEditionComponent::visibilityChanged()
 
         // For labels update
         resized();
+        
+        // forced keyboard focus grab, for shortcuts
+        if (isVisible())
+            Timer::callAfterDelay(100, [this] { this->grabKeyboardFocus(); } );
     }
     //[/UserCode_visibilityChanged]
+}
+
+bool SpatStatesEditionComponent::keyPressed (const KeyPress& key)
+{
+    //[UserCode_keyPressed] -- Add your code here...
+    
+    bool keyWasUsed = false;
+    
+    
+    // ====================== Keyboard SHORTCUTS =====================
+    if (key.getModifiers().isCommandDown())
+    {
+        if (key.getKeyCode() == ' ')
+        {
+        }
+    }
+    
+    // Forced callback to parent, if unused
+    if (! keyWasUsed)
+        return getParentComponent()->keyPressed(key);
+    // or return true to prevent the event to be passed-on.
+    else
+        return keyWasUsed;
+
+    //[/UserCode_keyPressed]
 }
 
 
@@ -790,6 +819,7 @@ BEGIN_JUCER_METADATA
                  initialHeight="600">
   <METHODS>
     <METHOD name="visibilityChanged()"/>
+    <METHOD name="keyPressed (const KeyPress&amp; key)"/>
   </METHODS>
   <BACKGROUND backgroundColour="ffbfbfbf"/>
   <GROUPCOMPONENT name="State Parameters group component" id="9d63d9acaf1299f6"
@@ -832,7 +862,7 @@ BEGIN_JUCER_METADATA
          posRelativeY="4250d5155a80be70" posRelativeW="9d63d9acaf1299f6"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Linked to ? area"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="1" justification="36" typefaceStyle="Italic"/>
   <COMBOBOX name="States combo box" id="89ad7c0a3be5a39c" memberName="statesComboBox"
             virtualName="" explicitFocusOrder="0" pos="8 56 16M 24" posRelativeX="4250d5155a80be70"
@@ -843,42 +873,42 @@ BEGIN_JUCER_METADATA
          explicitFocusOrder="0" pos="258R 20 24 24" posRelativeY="87d416270d41f58c"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="R"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="33"/>
   <SLIDER name="Slider R" id="c86e71b3772d49e9" memberName="sliderR" virtualName=""
           explicitFocusOrder="0" pos="240R 24 158 16" posRelativeY="87d416270d41f58c"
-          thumbcol="a0ff0000" textboxtext="ff000000" min="0" max="2.55e2"
-          int="1" style="LinearHorizontal" textBoxPos="TextBoxLeft" textBoxEditable="1"
-          textBoxWidth="40" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          thumbcol="a0ff0000" textboxtext="ff000000" min="0.0" max="255.0"
+          int="1.0" style="LinearHorizontal" textBoxPos="TextBoxLeft" textBoxEditable="1"
+          textBoxWidth="40" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <LABEL name="new label" id="d31faee34d487318" memberName="labelG" virtualName=""
          explicitFocusOrder="0" pos="258R 40 24 24" posRelativeY="87d416270d41f58c"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="G"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="33"/>
   <SLIDER name="SliderG" id="8455ecc13f47ec08" memberName="sliderG" virtualName=""
           explicitFocusOrder="0" pos="240R 44 158 16" posRelativeY="87d416270d41f58c"
-          thumbcol="a000ff00" textboxtext="ff000000" min="0" max="2.55e2"
-          int="1" style="LinearHorizontal" textBoxPos="TextBoxLeft" textBoxEditable="1"
-          textBoxWidth="40" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          thumbcol="a000ff00" textboxtext="ff000000" min="0.0" max="255.0"
+          int="1.0" style="LinearHorizontal" textBoxPos="TextBoxLeft" textBoxEditable="1"
+          textBoxWidth="40" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <LABEL name="new label" id="ae5abc145d9184cf" memberName="labelB" virtualName=""
          explicitFocusOrder="0" pos="257R 60 24 24" posRelativeY="87d416270d41f58c"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="B"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="33"/>
   <SLIDER name="Slider B" id="15aa4b94476e3563" memberName="sliderB" virtualName=""
           explicitFocusOrder="0" pos="240R 64 158 16" posRelativeY="87d416270d41f58c"
-          thumbcol="a00000ff" textboxtext="ff000000" min="0" max="2.55e2"
-          int="1" style="LinearHorizontal" textBoxPos="TextBoxLeft" textBoxEditable="1"
-          textBoxWidth="40" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          thumbcol="a00000ff" textboxtext="ff000000" min="0.0" max="255.0"
+          int="1.0" style="LinearHorizontal" textBoxPos="TextBoxLeft" textBoxEditable="1"
+          textBoxWidth="40" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <LABEL name="Colour Visualisation Label" id="7c0151d2e33a36b5" memberName="colourVisualisationLabel"
          virtualName="" explicitFocusOrder="0" pos="80R 24 72 56" posRelativeX="9d63d9acaf1299f6"
          tooltip="The chosen color will be applied to all geometrical shapes linked to this state."
          bkgCol="ff000000" outlineCol="ffffffff" edTextCol="ff000000"
          edBkgCol="0" labelText="&#10;" editableSingleClick="0" editableDoubleClick="0"
-         focusDiscardsChanges="0" fontname="Default font" fontsize="1.5e1"
-         kerning="0" bold="0" italic="0" justification="33"/>
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
+         kerning="0.0" bold="0" italic="0" justification="33"/>
   <TEXTBUTTON name="Send State text button" id="cb3b69496db256cf" memberName="sendStateTextButton"
               virtualName="" explicitFocusOrder="0" pos="8 52 80 24" posRelativeX="9d63d9acaf1299f6"
               posRelativeY="4250d5155a80be70" tooltip="Sends all current values of this state via OSC messages, to the OSC remote device configured in the &quot;Configuration&quot; tab."
@@ -895,7 +925,7 @@ BEGIN_JUCER_METADATA
          tooltip="The two volumes displayed represent the  total volume of the sum of all outputs of the matrix, considering that inputs are all 0 dB signals."
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Total matrix volume"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="1" justification="33" typefaceStyle="Italic"/>
   <LABEL name="Matrix Info label 2" id="5cfce6441fd18d14" memberName="matrixInfoLabel2"
          virtualName="" explicitFocusOrder="0" pos="502R 32 245 24" posRelativeX="9d63d9acaf1299f6"
@@ -903,7 +933,7 @@ BEGIN_JUCER_METADATA
          tooltip="Input signals are considered correlated when they are very resembling and in phase, such as the L/R tracks of a non-spatialised stereo mix."
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Correlated inputs: -9.99 dB FS"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="33"/>
   <LABEL name="Matrix Info label 3" id="2e6b0acdfb779683" memberName="matrixInfoLabel3"
          virtualName="" explicitFocusOrder="0" pos="502R 52 245 24" posRelativeX="9d63d9acaf1299f6"
@@ -911,37 +941,37 @@ BEGIN_JUCER_METADATA
          tooltip="Input signals are considered decorrelated when they are out of phase, or not resembling, such as two mono recordings of two different music instruments."
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Decorrelated inputs: -9.99 dB FS"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="33"/>
   <LABEL name="OSC Address label" id="ec34ed0b42663136" memberName="oscAddressLabel"
          virtualName="" explicitFocusOrder="0" pos="144 112 150 24" tooltip="Enter a valid OSC address, or leave the field empty to use /miem/1, /miem/2, etc. as automatic OSC addresses. "
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="OSC address"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="33"/>
   <LABEL name="Min label" id="8ff821b0c7b4bbee" memberName="minLabel"
          virtualName="" explicitFocusOrder="0" pos="288 112 80 24" tooltip="The minimal value that a parameter can reach. Click to edit."
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Min. value"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="33"/>
   <LABEL name="Max label" id="51fc4d52b6f5297e" memberName="maxLabel"
          virtualName="" explicitFocusOrder="0" pos="368 112 80 24" tooltip="The maximal value that a parameter can reach. Click to edit."
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Max. value"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="33"/>
   <LABEL name="Interpolation Curve label" id="5f84bf03765206ae" memberName="interpolationCurveLabel"
          virtualName="" explicitFocusOrder="0" pos="480 112 150 24" tooltip="The type of curve which will be used to compute the interpolation of values for a parameter."
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Interpolation curve"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="33"/>
   <LABEL name="value label" id="12d040c7555f2549" memberName="valueLabel"
          virtualName="" explicitFocusOrder="0" pos="704 112 168 24" tooltip="The defined value of a parameter, for this particular state."
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Parameter value"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="33"/>
 </JUCER_COMPONENT>
 

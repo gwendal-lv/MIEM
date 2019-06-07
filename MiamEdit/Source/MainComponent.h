@@ -75,6 +75,9 @@ namespace Miam
         void paint (Graphics&) override;
         void resized() override;
         
+        // Events might be called directly from children similar events (if unused)
+        bool keyPressed(const KeyPress& key) override;
+        void modifierKeysChanged (const ModifierKeys& modifiers) override;
         
         
         // SETTERS and GETTERS

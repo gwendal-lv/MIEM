@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.1
+  Created with Projucer version: 5.4.3
 
   ------------------------------------------------------------------------------
 
@@ -150,6 +150,8 @@ public:
     void buttonClicked (Button* buttonThatWasClicked) override;
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
     void visibilityChanged() override;
+    bool keyPressed (const KeyPress& key) override;
+    void modifierKeysChanged (const ModifierKeys& modifiers) override;
 
 
 
@@ -185,6 +187,12 @@ private:
     // we need to back up the state of some buttons
     bool pasteTextButtonEnabledBackUp = false;
 
+
+    // ====================== Keyboard SHORTCUTS =====================
+    // all working with Cmd (Ctrl) at the moment
+    const char editExcitersKey = 'E';
+    const char copyKey = 'C';
+    const char pasteKey = 'V';
 
     //[/UserVariables]
 
@@ -227,3 +235,4 @@ private:
 //[EndFile] You can add extra defines here...
 }    // namespace Miam
 //[/EndFile]
+

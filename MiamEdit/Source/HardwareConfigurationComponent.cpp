@@ -387,7 +387,36 @@ void HardwareConfigurationComponent::visibilityChanged()
         }
     }
 
+    // forced keyboard focus grab, for shortcuts
+    if (isVisible())
+        Timer::callAfterDelay(100, [this] { this->grabKeyboardFocus(); } );
+    
     //[/UserCode_visibilityChanged]
+}
+
+bool HardwareConfigurationComponent::keyPressed (const KeyPress& key)
+{
+    //[UserCode_keyPressed] -- Add your code here...
+    
+    bool keyWasUsed = false;
+    
+    
+    // ====================== Keyboard SHORTCUTS =====================
+    if (key.getModifiers().isCommandDown())
+    {
+        if (key.getKeyCode() == ' ')
+        {
+        }
+    }
+    
+    // Forced callback to parent, if unused
+    if (! keyWasUsed)
+        return getParentComponent()->keyPressed(key);
+    // or return true to prevent the event to be passed-on.
+    else
+        return keyWasUsed;
+
+    //[/UserCode_keyPressed]
 }
 
 
@@ -462,6 +491,7 @@ BEGIN_JUCER_METADATA
                  initialHeight="600">
   <METHODS>
     <METHOD name="visibilityChanged()"/>
+    <METHOD name="keyPressed (const KeyPress&amp; key)"/>
   </METHODS>
   <BACKGROUND backgroundColour="ffafafaf"/>
   <SLIDER name="Inputs Count slider" id="77ed5b9e29dce02e" memberName="inputsCountSlider"

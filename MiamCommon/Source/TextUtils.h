@@ -91,5 +91,10 @@ namespace Miam {
         /// \brief Returns the UDP port as a positive int, or -1 if user input was not valid.
         ///  Makes the textbox's text bold is parsed succeeded.
         static int TryParseAndBoldenUdpPort(juce::TextEditor* textEditor);
+        
+        
+        /// \brief Returns a string "CmdX" (with the actual apple knot cmd sign)
+        /// or "Ctrl X" for win/linux, automatically depending on the platform
+        static juce::String GetCommandKeyDescriptionString(char keyCode);
     };
 }

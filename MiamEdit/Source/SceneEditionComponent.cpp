@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.1
+  Created with Projucer version: 5.4.3
 
   ------------------------------------------------------------------------------
 
@@ -66,8 +66,6 @@ SceneEditionComponent::SceneEditionComponent ()
     "E\n"
     "and scrollable information textbox for help contents"));
 
-    infoTextEditor->setBounds (16, ((((8 + 128 - -8) + 168 - -8) + 80 - -8) + 88 - -8) + 16, 176, 104);
-
     areaGroupComponent.reset (new GroupComponent ("Area edition group component",
                                                   TRANS("Area edition")));
     addAndMakeVisible (areaGroupComponent.get());
@@ -89,8 +87,6 @@ SceneEditionComponent::SceneEditionComponent ()
     addPointTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     addPointTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    addPointTextButton->setBounds (16, (8 + 128 - -8) + 136, 88, 24);
-
     deletePointTextButton.reset (new TextButton ("Delete Point text button"));
     addAndMakeVisible (deletePointTextButton.get());
     deletePointTextButton->setButtonText (TRANS("Delete Point"));
@@ -99,8 +95,6 @@ SceneEditionComponent::SceneEditionComponent ()
     deletePointTextButton->setColour (TextButton::buttonColourId, Colour (0xfff0f0f0));
     deletePointTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     deletePointTextButton->setColour (TextButton::textColourOffId, Colours::black);
-
-    deletePointTextButton->setBounds (104, (8 + 128 - -8) + 136, 88, 24);
 
     copyTextButton.reset (new TextButton ("Copy Text Button"));
     addAndMakeVisible (copyTextButton.get());
@@ -111,8 +105,6 @@ SceneEditionComponent::SceneEditionComponent ()
     copyTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     copyTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    copyTextButton->setBounds (16, (8 + 128 - -8) + 48, 88, 24);
-
     pasteTextButton.reset (new TextButton ("Delete Point"));
     addAndMakeVisible (pasteTextButton.get());
     pasteTextButton->setButtonText (TRANS("Paste"));
@@ -121,8 +113,6 @@ SceneEditionComponent::SceneEditionComponent ()
     pasteTextButton->setColour (TextButton::buttonColourId, Colour (0xfff0f0f0));
     pasteTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     pasteTextButton->setColour (TextButton::textColourOffId, Colours::black);
-
-    pasteTextButton->setBounds (104, (8 + 128 - -8) + 48, 88, 24);
 
     addAreaTextButton.reset (new TextButton ("Add Area text button"));
     addAndMakeVisible (addAreaTextButton.get());
@@ -133,8 +123,6 @@ SceneEditionComponent::SceneEditionComponent ()
     addAreaTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     addAreaTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    addAreaTextButton->setBounds (16, (8 + 128 - -8) + 24, 88, 24);
-
     deleteAreaTextButton.reset (new TextButton ("Delete Area text button"));
     addAndMakeVisible (deleteAreaTextButton.get());
     deleteAreaTextButton->setButtonText (TRANS("Delete Area"));
@@ -143,8 +131,6 @@ SceneEditionComponent::SceneEditionComponent ()
     deleteAreaTextButton->setColour (TextButton::buttonColourId, Colour (0xfff0f0f0));
     deleteAreaTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     deleteAreaTextButton->setColour (TextButton::textColourOffId, Colours::black);
-
-    deleteAreaTextButton->setBounds (104, (8 + 128 - -8) + 24, 88, 24);
 
     sendBackwardTextButton.reset (new TextButton ("Send backward text button"));
     addAndMakeVisible (sendBackwardTextButton.get());
@@ -155,8 +141,6 @@ SceneEditionComponent::SceneEditionComponent ()
     sendBackwardTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     sendBackwardTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    sendBackwardTextButton->setBounds (16, (8 + 128 - -8) + 104, 112, 24);
-
     bringForwardTextButton.reset (new TextButton ("Bring forward text button"));
     addAndMakeVisible (bringForwardTextButton.get());
     bringForwardTextButton->setButtonText (TRANS("Bring forward"));
@@ -165,8 +149,6 @@ SceneEditionComponent::SceneEditionComponent ()
     bringForwardTextButton->setColour (TextButton::buttonColourId, Colour (0xfff0f0f0));
     bringForwardTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     bringForwardTextButton->setColour (TextButton::textColourOffId, Colours::black);
-
-    bringForwardTextButton->setBounds (16, (8 + 128 - -8) + 80, 112, 24);
 
     bringToFrontTextButton.reset (new TextButton ("Bring to front text button"));
     addAndMakeVisible (bringToFrontTextButton.get());
@@ -177,8 +159,6 @@ SceneEditionComponent::SceneEditionComponent ()
     bringToFrontTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     bringToFrontTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    bringToFrontTextButton->setBounds (128, (8 + 128 - -8) + 80, 64, 24);
-
     sendToBackTextButton.reset (new TextButton ("Send to back text button"));
     addAndMakeVisible (sendToBackTextButton.get());
     sendToBackTextButton->setButtonText (TRANS("to back"));
@@ -187,8 +167,6 @@ SceneEditionComponent::SceneEditionComponent ()
     sendToBackTextButton->setColour (TextButton::buttonColourId, Colour (0xfff0f0f0));
     sendToBackTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     sendToBackTextButton->setColour (TextButton::textColourOffId, Colours::black);
-
-    sendToBackTextButton->setBounds (128, (8 + 128 - -8) + 104, 64, 24);
 
     canvasGroupComponent.reset (new GroupComponent ("Canvas edition group component",
                                                     TRANS("Scene edition")));
@@ -207,19 +185,15 @@ SceneEditionComponent::SceneEditionComponent ()
     spatStatesComboBox->addItem (TRANS("-1 undefined"), 1);
     spatStatesComboBox->addListener (this);
 
-    spatStatesComboBox->setBounds (16, ((8 + 128 - -8) + 168 - -8) + 40, 176, 24);
-
     controlStateLabel.reset (new Label ("Control State label",
                                         TRANS("Link to control state:")));
     addAndMakeVisible (controlStateLabel.get());
-    controlStateLabel->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
+    controlStateLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     controlStateLabel->setJustificationType (Justification::centredLeft);
     controlStateLabel->setEditable (false, false, false);
     controlStateLabel->setColour (Label::textColourId, Colours::black);
     controlStateLabel->setColour (TextEditor::textColourId, Colours::black);
     controlStateLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
-
-    controlStateLabel->setBounds (16, ((8 + 128 - -8) + 168 - -8) + 16, 176, 24);
 
     addSceneTextButton.reset (new TextButton ("Add Scene text button"));
     addAndMakeVisible (addSceneTextButton.get());
@@ -230,8 +204,6 @@ SceneEditionComponent::SceneEditionComponent ()
     addSceneTextButton->setColour (TextButton::buttonOnColourId, Colours::black);
     addSceneTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    addSceneTextButton->setBounds (16, 8 + 24, 88, 24);
-
     deleteSceneTextButton.reset (new TextButton ("Delete Scene text button"));
     addAndMakeVisible (deleteSceneTextButton.get());
     deleteSceneTextButton->setButtonText (TRANS("Delete Scene"));
@@ -240,8 +212,6 @@ SceneEditionComponent::SceneEditionComponent ()
     deleteSceneTextButton->setColour (TextButton::buttonColourId, Colour (0xfff0f0f0));
     deleteSceneTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     deleteSceneTextButton->setColour (TextButton::textColourOffId, Colours::black);
-
-    deleteSceneTextButton->setBounds (104, 8 + 24, 88, 24);
 
     sceneLeftTextButton.reset (new TextButton ("Scene Left text button"));
     addAndMakeVisible (sceneLeftTextButton.get());
@@ -252,8 +222,6 @@ SceneEditionComponent::SceneEditionComponent ()
     sceneLeftTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     sceneLeftTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    sceneLeftTextButton->setBounds (16, 8 + 96, 88, 24);
-
     sceneRightTextButton.reset (new TextButton ("Scene Right text button"));
     addAndMakeVisible (sceneRightTextButton.get());
     sceneRightTextButton->setButtonText (TRANS("Move right"));
@@ -263,19 +231,15 @@ SceneEditionComponent::SceneEditionComponent ()
     sceneRightTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     sceneRightTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    sceneRightTextButton->setBounds (104, 8 + 96, 88, 24);
-
     canvasInfoLabel.reset (new Label ("Canvas Info label",
                                       TRANS("...selected canvas info...")));
     addAndMakeVisible (canvasInfoLabel.get());
-    canvasInfoLabel->setFont (Font (15.0f, Font::italic));
+    canvasInfoLabel->setFont (Font (15.00f, Font::italic));
     canvasInfoLabel->setJustificationType (Justification::centred);
     canvasInfoLabel->setEditable (false, false, false);
     canvasInfoLabel->setColour (Label::textColourId, Colours::black);
     canvasInfoLabel->setColour (TextEditor::textColourId, Colours::black);
     canvasInfoLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
-
-    canvasInfoLabel->setBounds (16, 8 + 48, 176, 8);
 
     initialStateGroupComponent.reset (new GroupComponent ("Initial state group component",
                                                           TRANS("Scene initial state")));
@@ -292,8 +256,6 @@ SceneEditionComponent::SceneEditionComponent ()
     addExciterTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     addExciterTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    addExciterTextButton->setBounds (16, (((8 + 128 - -8) + 168 - -8) + 80 - -8) + 56, 88, 24);
-
     deleteExciterTextButton.reset (new TextButton ("Delete Exciter text button"));
     addAndMakeVisible (deleteExciterTextButton.get());
     deleteExciterTextButton->setButtonText (TRANS("Delete"));
@@ -303,19 +265,15 @@ SceneEditionComponent::SceneEditionComponent ()
     deleteExciterTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     deleteExciterTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    deleteExciterTextButton->setBounds (104, (((8 + 128 - -8) + 168 - -8) + 80 - -8) + 56, 88, 24);
-
     sceneNameLabel.reset (new Label ("Scene Name Label",
                                      TRANS("Name:")));
     addAndMakeVisible (sceneNameLabel.get());
-    sceneNameLabel->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
+    sceneNameLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     sceneNameLabel->setJustificationType (Justification::centredLeft);
     sceneNameLabel->setEditable (false, false, false);
     sceneNameLabel->setColour (Label::textColourId, Colours::black);
     sceneNameLabel->setColour (TextEditor::textColourId, Colours::black);
     sceneNameLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
-
-    sceneNameLabel->setBounds (15, 8 + 63, 56, 24);
 
     sceneNameTextEditor.reset (new TextEditor ("Scene Name text editor"));
     addAndMakeVisible (sceneNameTextEditor.get());
@@ -334,8 +292,6 @@ SceneEditionComponent::SceneEditionComponent ()
     excitersEditionButton->setButtonText (TRANS("Edit exciters and play!"));
     excitersEditionButton->addListener (this);
     excitersEditionButton->setColour (ToggleButton::textColourId, Colours::black);
-
-    excitersEditionButton->setBounds (16, (((8 + 128 - -8) + 168 - -8) + 80 - -8) + 20, 176, 24);
 
     showInfoTextButton.reset (new TextButton ("Show Info text button"));
     addAndMakeVisible (showInfoTextButton.get());
@@ -367,6 +323,12 @@ SceneEditionComponent::SceneEditionComponent ()
     // Special treatements for the info group
     SetInfoGroupReduced(false);
     infoTextEditor->setLookAndFeel(transparentLookAndFeel.get());
+
+    // Tooltips for shortcuts
+    // all work with Cmd (Ctrl) at the moment
+    excitersEditionButton->setTooltip(TextUtils::GetCommandKeyDescriptionString(editExcitersKey));
+    copyTextButton->setTooltip(TextUtils::GetCommandKeyDescriptionString(copyKey));
+    pasteTextButton->setTooltip(TextUtils::GetCommandKeyDescriptionString(pasteKey));
 
     //[/Constructor]
 }
@@ -448,9 +410,31 @@ void SceneEditionComponent::resized()
     //[/UserPreResize]
 
     infoGroupComponent->setBounds (8, (((8 + 128 - -8) + 168 - -8) + 80 - -8) + 88 - -8, 192, 160);
+    infoTextEditor->setBounds (16, ((((8 + 128 - -8) + 168 - -8) + 80 - -8) + 88 - -8) + 16, 176, 104);
     areaGroupComponent->setBounds (8, 8 + 128 - -8, 192, 168);
     controlGroupComponent->setBounds (8, (8 + 128 - -8) + 168 - -8, 192, 80);
+    addPointTextButton->setBounds (16, (8 + 128 - -8) + 136, 88, 24);
+    deletePointTextButton->setBounds (104, (8 + 128 - -8) + 136, 88, 24);
+    copyTextButton->setBounds (16, (8 + 128 - -8) + 48, 88, 24);
+    pasteTextButton->setBounds (104, (8 + 128 - -8) + 48, 88, 24);
+    addAreaTextButton->setBounds (16, (8 + 128 - -8) + 24, 88, 24);
+    deleteAreaTextButton->setBounds (104, (8 + 128 - -8) + 24, 88, 24);
+    sendBackwardTextButton->setBounds (16, (8 + 128 - -8) + 104, 112, 24);
+    bringForwardTextButton->setBounds (16, (8 + 128 - -8) + 80, 112, 24);
+    bringToFrontTextButton->setBounds (128, (8 + 128 - -8) + 80, 64, 24);
+    sendToBackTextButton->setBounds (128, (8 + 128 - -8) + 104, 64, 24);
+    spatStatesComboBox->setBounds (16, ((8 + 128 - -8) + 168 - -8) + 40, 176, 24);
+    controlStateLabel->setBounds (16, ((8 + 128 - -8) + 168 - -8) + 16, 176, 24);
+    addSceneTextButton->setBounds (16, 8 + 24, 88, 24);
+    deleteSceneTextButton->setBounds (104, 8 + 24, 88, 24);
+    sceneLeftTextButton->setBounds (16, 8 + 96, 88, 24);
+    sceneRightTextButton->setBounds (104, 8 + 96, 88, 24);
+    canvasInfoLabel->setBounds (16, 8 + 48, 176, 8);
     initialStateGroupComponent->setBounds (8, ((8 + 128 - -8) + 168 - -8) + 80 - -8, 192, 88);
+    addExciterTextButton->setBounds (16, (((8 + 128 - -8) + 168 - -8) + 80 - -8) + 56, 88, 24);
+    deleteExciterTextButton->setBounds (104, (((8 + 128 - -8) + 168 - -8) + 80 - -8) + 56, 88, 24);
+    sceneNameLabel->setBounds (15, 8 + 63, 56, 24);
+    excitersEditionButton->setBounds (16, (((8 + 128 - -8) + 168 - -8) + 80 - -8) + 20, 176, 24);
     showInfoTextButton->setBounds (16, ((((8 + 128 - -8) + 168 - -8) + 80 - -8) + 88 - -8) + 160 - 8 - 20, 176, 20);
     //[UserResized] Add your own custom resize handling here..
 
@@ -689,7 +673,65 @@ void SceneEditionComponent::visibilityChanged()
         default :
             break;
     }
+
+    // forced keyboard focus grab, for shortcuts
+    if (isVisible())
+        Timer::callAfterDelay(100, [this] { this->grabKeyboardFocus(); } );
+
     //[/UserCode_visibilityChanged]
+}
+
+bool SceneEditionComponent::keyPressed (const KeyPress& key)
+{
+    //[UserCode_keyPressed] -- Add your code here...
+
+    bool keyWasUsed = false;
+
+
+    // ====================== Keyboard SHORTCUTS =====================
+    if (key.getModifiers().isCommandDown())
+    {
+        keyWasUsed = true;
+        // Le raccourci Cmd E (ou ctrl E sous linux/windows) déclenche Edit Exciter,
+        // si ce bouton était bien affiché
+        if ( (key.getKeyCode() == editExcitersKey)
+            && ( !isInitialStateGroupHidden )
+            && excitersEditionButton->isEnabled() && excitersEditionButton->isVisible())
+        {
+            excitersEditionButton->triggerClick();
+        }
+        else if ( (key.getKeyCode() == copyKey)
+                 && (! isAreaGroupHidden)
+                 && copyTextButton->isEnabled() && copyTextButton->isVisible())
+        {
+            copyTextButton->triggerClick();
+        }
+        else if ( (key.getKeyCode() == pasteKey)
+                 && (! isAreaGroupHidden)
+                 && pasteTextButton->isEnabled() && pasteTextButton->isVisible())
+        {
+            pasteTextButton->triggerClick();
+        }
+        // Si vraiment rien n'a convenu... on remet à false
+        else
+            keyWasUsed = false;
+    }
+
+    // Forced callback to parent, if unused
+    if (! keyWasUsed)
+        return getParentComponent()->keyPressed(key);
+    // or return true to prevent the event to be passed-on.
+    else
+        return keyWasUsed;
+
+    //[/UserCode_keyPressed]
+}
+
+void SceneEditionComponent::modifierKeysChanged (const ModifierKeys& modifiers)
+{
+    //[UserCode_modifierKeysChanged] -- Add your code here...
+
+    //[/UserCode_modifierKeysChanged]
 }
 
 
@@ -1049,10 +1091,12 @@ BEGIN_JUCER_METADATA
 <JUCER_COMPONENT documentType="Component" className="SceneEditionComponent" componentName=""
                  parentClasses="public Component, public TextEditor::Listener"
                  constructorParams="" variableInitialisers="" snapPixels="8" snapActive="1"
-                 snapShown="1" overlayOpacity="0.33" fixedSize="0" initialWidth="1024"
+                 snapShown="1" overlayOpacity="0.330" fixedSize="0" initialWidth="1024"
                  initialHeight="1024">
   <METHODS>
     <METHOD name="visibilityChanged()"/>
+    <METHOD name="keyPressed (const KeyPress&amp; key)"/>
+    <METHOD name="modifierKeysChanged (const ModifierKeys&amp; modifiers)"/>
   </METHODS>
   <BACKGROUND backgroundColour="ffbfbfbf"/>
   <GROUPCOMPONENT name="Info group component" id="97c294b92cbc0a85" memberName="infoGroupComponent"
@@ -1182,3 +1226,4 @@ END_JUCER_METADATA
 
 //[EndFile] You can add extra defines here...
 //[/EndFile]
+

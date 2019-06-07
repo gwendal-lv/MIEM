@@ -75,6 +75,8 @@ void FileMenu::onSave()
 {
     // nom de fichier non-spécifié, par contre on force le data refresh
     presenter->SaveSession("", true);
+    
+    presenter->DisplayStatus(TRANS("Session saved.").toStdString());
 }
 void FileMenu::onSaveAs()
 {
@@ -93,7 +95,10 @@ void FileMenu::onSaveAs()
             resultPath += PathUtils::GetSessionFileExtension(sessionPurpose);
         // data refresh forcé
         presenter->SaveSession(resultPath, true);
+        
+        presenter->DisplayStatus(TRANS("Session saved.").toStdString());
     }
+    
 #else
     /* This function uses pop-ups and
      * must not be executed form a mobile platform.

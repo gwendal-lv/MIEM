@@ -103,6 +103,11 @@ namespace Miam {
         
         void Update() override;
         
+        
+        /// \brief Status will be simply displayed as low-priority info in View
+        virtual void DisplayStatus(std::string infoStr) override;
+        
+        
         /// \brief Fonction qui définit le comportement initial de l'application :
         /// on peut ouvrir la session passée en ligne de commande, ou bien créer une nouvelle
         /// session (vide, ou à partir de la session par défaut)

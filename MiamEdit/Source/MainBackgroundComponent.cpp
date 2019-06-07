@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.1
+  Created with Projucer version: 5.4.3
 
   ------------------------------------------------------------------------------
 
@@ -58,7 +58,7 @@ MainBackgroundComponent::MainBackgroundComponent ()
     mainInfoLabel.reset (new Label ("Main info label",
                                     TRANS("...")));
     addAndMakeVisible (mainInfoLabel.get());
-    mainInfoLabel->setFont (Font (15.0f, Font::plain).withTypefaceStyle ("Regular"));
+    mainInfoLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     mainInfoLabel->setJustificationType (Justification::centredRight);
     mainInfoLabel->setEditable (false, false, false);
     mainInfoLabel->setColour (Label::backgroundColourId, Colour (0x56ffffff));
@@ -128,6 +128,11 @@ MainBackgroundComponent::MainBackgroundComponent ()
     // ClearLabelTimer + priorités des infos affichées
     clearLabelTimer.SetLabelToClearAfterTimeout(mainInfoLabel.get());
     currentDisplayedInfoPriority = -1; // plus petit que tout...
+
+    // Tooltips for shortcuts
+    // all work with Cmd (Ctrl) at the moment
+    statesTextButton->setTooltip(TextUtils::GetCommandKeyDescriptionString(switchTabCommandKey));
+    scenesTextButton->setTooltip(TextUtils::GetCommandKeyDescriptionString(switchTabCommandKey));
 
     //[/Constructor]
 }
@@ -255,6 +260,28 @@ void MainBackgroundComponent::DisplayInfo(const String& message, int priority)
         clearLabelTimer.StartTimer(); // will clear it after a precise time
     }
 }
+void MainBackgroundComponent::TriggerTabSwitch(Miam::AppMode currentAppMode)
+{
+    switch (currentAppMode)
+    {
+            // Si mode scènes -> go mode states
+        case AppMode::EditControlScenes :
+            statesTextButton->triggerClick();
+            break;
+
+        case AppMode::EditControlStates :
+        // The Scenes text button will always be the most important
+        default:
+            scenesTextButton->triggerClick();
+    }
+}
+void MainBackgroundComponent::TriggerSave(bool saveAsNewFile)
+{
+    if (saveAsNewFile)
+        fileMenu->onSaveAs();
+    else
+        fileMenu->onSave();
+}
 
 //[/MiscUserCode]
 
@@ -271,7 +298,7 @@ BEGIN_JUCER_METADATA
 <JUCER_COMPONENT documentType="Component" className="MainBackgroundComponent"
                  componentName="" parentClasses="public Component" constructorParams=""
                  variableInitialisers="clearLabelTimer(currentDisplayedInfoPriority)"
-                 snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.33"
+                 snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="1" initialWidth="1024" initialHeight="600">
   <METHODS>
     <METHOD name="visibilityChanged()"/>
@@ -317,3 +344,4 @@ END_JUCER_METADATA
 
 //[EndFile] You can add extra defines here...
 //[/EndFile]
+
