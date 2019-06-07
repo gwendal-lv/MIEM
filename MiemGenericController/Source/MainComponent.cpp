@@ -9,12 +9,14 @@
 #include "MainComponent.h"
 
 #include "AppPurpose.h"
+#include "View.h"
 
 //==============================================================================
 MainContentComponent::MainContentComponent()
 {
     // Ajout des composants enfant
-    addAndMakeVisible(backgroundComponent = new PlayerBackgroundComponent());
+    backgroundComponent.reset( new PlayerBackgroundComponent() );
+    addAndMakeVisible(backgroundComponent.get());
     
     setSize (600, 400);
     
@@ -30,12 +32,16 @@ MainContentComponent::~MainContentComponent()
 void MainContentComponent::paint (Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
+    g.fillAll ( juce::Colour::fromRGB(48, 48, 48));
 }
 
 void MainContentComponent::resized()
 {
-    backgroundComponent->setBounds(getLocalBounds());
+    if (view)
+        backgroundComponent->setBounds( view->GetSafeBackgroundBounds( getLocalBounds() ) );
+    else
+        backgroundComponent->setBounds( getLocalBounds() );
+    
     backgroundComponent->resized(); //  forcé.... ---> ?????????????????????????
 }
 
@@ -46,7 +52,7 @@ void MainContentComponent::CompleteInitialization(Presenter* _presenter)
 {
     presenter = _presenter;
     assert(view != 0);
-    backgroundComponent->CompleteInitialization(view, presenter);
+    backgroundComponent->CompleteInitialization(presenter, view);
 }
 void MainContentComponent::CompleteInitialization(MultiCanvasComponent* multiCanvasComponent_)
 {
