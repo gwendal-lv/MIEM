@@ -6,7 +6,7 @@
               splashScreenColour="Dark" companyCopyright="Gwendal Le Vaillant (IRISIB/LARAS, UMons)"
               companyWebsite="http://laras.be" companyName="IRISIB/LARAS, UMons"
               companyEmail="glevaillant@he2b.be" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../MiamCommon/Resources/&#10;../../../ControlCommon/Source/&#10;../../../SpatCommon/Source/"
-              defines="__MIEM_VBO&#10;__MIEM_GL_INFO_DISPLAY__NO&#10;__MIEM_DISPLAY_CANVAS_RESIZE&#10;__MIEM_FORCE_DOUBLE_OSC_SENDER"
+              defines="__MIEM_VBO&#10;__MIEM_GL_INFO_DISPLAY__NO&#10;__MIEM_DISPLAY_CANVAS_RESIZE&#10;__MIEM_FORCE_DOUBLE_OSC_SENDER&#10;__MIEM_DISPLAY_SCENE_PRE_COMPUTATION"
               projectLineFeed="&#10;" userNotes="v1.1.0 : ajout des options d'interpolation et min/max par param&#232;tre&#10;v1.1.1 : correction bugs courbes d'interpolation et min/max + 3&#232;me sender OSC&#10;v1.1.2 build 1.1.2.0 : autres courbes interpolation dispo + multi-ports UDP visibles (y compris dans gencon) &#10;v1.1.2 build 1.1.2.1 : changement UDP/IP directement dans les Players&#10;v1.1.2 build 1.1.2.2 : correction bug courbes interp (valeurs milieu) + safe area pour certains appareils&#10;v1.1.2 build 1.1.2.3 : replacement bouton help (players) pour les iphones&#10;v1.1.2 build 1.1.2.4 : tr&#232;s nombreux raccourcis clavier + options &quot;constraint exciters&quot;">
   <MAINGROUP id="uJFjC5" name="MIEM Editor">
     <GROUP id="{7878353D-A1B6-291B-EABC-831E28CE51BB}" name="Source">
@@ -132,6 +132,8 @@
           <FILE id="Rsgwzv" name="SubTriangle.h" compile="0" resource="0" file="../MiamCommon/Source/SubTriangle.h"/>
         </GROUP>
         <GROUP id="{86D5D9E1-93BE-D9FA-6D5A-C4DCC032AC63}" name="Scenes">
+          <FILE id="axvcpF" name="AreasGroup.cpp" compile="1" resource="0" file="../MiamCommon/Source/AreasGroup.cpp"/>
+          <FILE id="xhEdlY" name="AreasGroup.h" compile="0" resource="0" file="../MiamCommon/Source/AreasGroup.h"/>
           <FILE id="vjqld7" name="EditableScene.cpp" compile="1" resource="0"
                 file="../MiamCommon/Source/EditableScene.cpp"/>
           <FILE id="mc8YKm" name="EditableScene.h" compile="0" resource="0" file="../MiamCommon/Source/EditableScene.h"/>

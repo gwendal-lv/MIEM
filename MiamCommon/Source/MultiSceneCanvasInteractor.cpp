@@ -161,8 +161,13 @@ void MultiSceneCanvasInteractor::SetMode(Miam::CanvasManagerMode newMode)
         // d'en sélectionner un...), on arrête les transfos en cours
         // !! On doit vérifier qu'on était pas déjà en mode excitateurs !
         case CanvasManagerMode::ExcitersEdition :
+            // Si on arrive à l'édition des excitateurs
+            // depuis un mode d'édition des aires : PRE COMPUTE DATA des aires
             if (mode != CanvasManagerMode::ExciterSelected)
+            {
                 selectedScene->StopCurrentTransformations();
+                selectedScene->PreComputeInteractionData(); // attention, lourds calculs
+            }
             
             // Mise en quasi-transparence des aires graphiques à exciter seulement
             selectedScene->SetExcitersOpacityMode(OpacityMode::Mid);

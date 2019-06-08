@@ -18,8 +18,7 @@
 
 
 namespace Miam
-{
-    
+{   
     /// \brief Abstract class that defines an interface for all areas that can have an interaction
     /// with a user (via mouse, touch, MIDI events...)
     class InteractiveArea : public virtual IInteractiveArea,
@@ -53,6 +52,9 @@ namespace Miam
         /// edge, surface...), and a user event that could move this element
         float elementInteractionRadius;
 
+        
+        /// \brief Group of overlapping areas to which this area belongs.
+        std::weak_ptr<AreasGroup> group;
         
         
     protected:
@@ -112,6 +114,15 @@ namespace Miam
         
         /// \brief Appelé par un excitateur lié à cette aire. On sauvegarde cette donnée en interne.
         virtual void OnNewExcitementAmount(const std::shared_ptr<Exciter>& sender, Excitement excitementAmount) override;
+        
+        
+        // see IInteractiveArea.h
+        virtual void SetAreasGroup(std::shared_ptr<AreasGroup>& _group) override
+        { group = _group; }
+        virtual std::shared_ptr<AreasGroup> GetAreasGroup() override
+        { return group.lock(); }
+        
+        
         
         private :
         /// \brief Renvoie l'index de l'excitateur dans le tableau interne de

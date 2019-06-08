@@ -26,6 +26,7 @@
 
 #include "IEditableArea.h"
 #include "Exciter.h" // also SteadyClock
+#include "AreasGroup.h"
 
 
 // Pre-declarations for pointers
@@ -107,6 +108,10 @@ namespace Miam
         /// L'aire concernée peut être soit une aire générique éditable, soit
         /// un excitateur, soit....
         std::map<int, std::shared_ptr<IEditableArea>> touchSourceToEditableArea;
+        
+        /// \brief The groups of overlapping areas (not a list, because only a few groups
+        /// are expected)
+        std::vector<std::shared_ptr<AreasGroup>> areasGroups;
 
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
@@ -280,6 +285,16 @@ namespace Miam
         /// Utile par exemple quand les aires graphiques ont été modifées dans un éditeur sans renvoyer
         /// proprement tous les évènements associés.
         std::shared_ptr<MultiAreaEvent> RecomputeAreaExciterInteractions();
+        
+        /// \brief Pré-calcule toutes les données internes qui serviront à optimiser le jeu,
+        /// notamment : 1) les groupes d'aires qui se chevauchent, pour empêcher les excitateurs
+        /// d'en sortir, et 2) les poids d'interaction pour chaque pixel (en prévision des
+        /// calculs via T-Splines, sûrement trop lourds donc pré-rendus)
+        ///
+        /// Attention, cette fonction est assez lourde et doit être utilisée le moins souvent possible
+        /// À DÉPLACER DANS UN THREAD DE CALCUL SÉPARÉ
+        /// et tant qu'on ne connait pas les groupes... On interdit le déplacement des excitateurs
+        void PreComputeInteractionData();
         
         // - - - - - XML import/export - - - - -
         public :

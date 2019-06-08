@@ -603,6 +603,134 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::RecomputeAreaExciterInteractio
 
 
 
+
+// = = = = = = = = = = Pre-Computation of Interaction Data = = = = = = = = = =
+
+
+void InteractiveScene::PreComputeInteractionData()
+{
+    if (auto canvasLocked = canvasManager.lock())
+        canvasLocked->DisplayInfo("Computing Interaction data...");
+    
+    auto startTime = std::chrono::steady_clock::now();
+    std::cout << "[InteractiveScene.cpp] Starting Pre-Computation of interaction data..." << std::endl;
+    
+    const size_t canvasW = canvasComponent->getWidth();
+    const size_t canvasH = canvasComponent->getHeight();
+    
+    // Réinitialisation des groupes
+    areasGroups.clear();
+    AreasGroup::ReinitRandomColours(3); // static call, seed reinit there. 3 is nice.
+    // Réinit à l'intérieur des aires -> nécessaire ? Va être fait + tard....
+    
+    // Initialisation : mise à zéro du tableau des "couleurs" (en réalité : pointeurs)
+    std::vector<AreasGroup*> groupsImage;
+    // CONVENTION : axe y vers le bas, indice i (numéro de ligne de matrice)
+    // axe x vers la droite, indice j (numéro de colonne de matrice)
+    groupsImage.resize(canvasW * canvasH, nullptr);
+    
+    // BOUCLE PRINCIPALE : parcours de tous les pixels, tests d'interaction avec toutes les aires
+    // (arrêt dès qu'on en touche une)
+    // -> cette boucle ne stocke rien dans les aires (elle ne fait que détecter leur présence)
+    // V1 : présence ou non -> OK
+    // V2 : nb adjacents -> OK
+    // V3 : finale
+    bool foundArea;
+    std::vector<AreasGroup*> adjacentGroups;
+    adjacentGroups.reserve(4); // always 4 reserved: left, topleft, top, topright
+    for (size_t i=0 ; i<canvasH ; i++)
+    {
+        for (size_t j=0 ; j<canvasW ; j++)
+        {
+            foundArea = false;
+            for (size_t k = 0 ; (k<areas.size() && (! foundArea)) ; k++)
+                foundArea = areas[k]->HitTest(bpt((double)j, (double)i));
+            // Si collision avec une aire : on analyse les voisins pour compléter une aire,
+            // ou en fusionner...
+            if (foundArea)
+            {
+                // Décompte du nombre de voisins appartenant déjà à un groupe
+                adjacentGroups.clear();
+                if (j >= 1)
+                {
+                    // left pixel
+                    if (groupsImage[i*canvasW + (j-1)] != nullptr)
+                        adjacentGroups.push_back(groupsImage[i*canvasW + (j-1)]);
+                    // top-left pixel
+                    if (groupsImage[(i-1)*canvasW + (j-1)] != nullptr)
+                        adjacentGroups.push_back(groupsImage[(i-1)*canvasW + (j-1)]);
+                }
+                if (i >= 1)
+                {
+                    // top pixel
+                    if (groupsImage[(i-1)*canvasW + j] != nullptr)
+                        adjacentGroups.push_back(groupsImage[(i-1)*canvasW + j]);
+                    // top-right pixel
+                    if (j < canvasW)
+                        if (groupsImage[(i-1)*canvasW + (j+1)] != nullptr)
+                            adjacentGroups.push_back(groupsImage[(i-1)*canvasW + (j+1)]);
+                }
+                // (3 actions possibles)
+                // 1 - création nouveau groupe
+                // Il y aura, avant le tri, de très nombreux groupes
+                if (adjacentGroups.size() == 0)
+                {
+                    areasGroups.push_back(std::make_shared<AreasGroup>());
+                    groupsImage[i*canvasW + j] = areasGroups.back().get();
+                }
+                // 2 - insertion dans groupe existant
+                else if (adjacentGroups.size() == 1) // METTRE EGAAAAAAAAAAAAAAAAAL
+                    groupsImage[i*canvasW + j] = adjacentGroups[0];
+                // 3 - insertion dans le premier vu, puis fusion groupes existants
+                // (propagation prioritaire par la gauche)
+                else
+                {
+                }
+            }
+        }
+    }
+    
+    // Assignation des groupes aux aires : chaque aire prend le groupe
+    // qui est au niveau de son centre
+    
+#ifdef __MIEM_DISPLAY_SCENE_PRE_COMPUTATION
+    // Construction + Affichage de l'image des groupes dans un fichier .png temporaire
+    Image groupsColourImage(Image::PixelFormat::ARGB, (int)canvasW, (int)canvasH, false);
+    for (size_t i=0 ; i<canvasH ; i++)
+    {
+        for (size_t j=0 ; j<canvasW ; j++)
+        {
+            if (groupsImage[i*canvasW+j] != nullptr)
+                groupsColourImage.setPixelAt((int)j, (int)i,
+                                             groupsImage[i*canvasW+j]->GetColour());
+            else
+                groupsColourImage.setPixelAt((int)j, (int)i,
+                                             Colours::black);
+        }
+    }
+    { // tentative destruction avant re-lecture
+        File pngFile("./Debug_AreasGroups.png");
+        if (pngFile.existsAsFile())
+            pngFile.deleteFile();
+    }
+    FileOutputStream stream ( File("./Debug_AreasGroups.png") );
+    PNGImageFormat pngWriter;
+    bool couldWrite = pngWriter.writeImageToStream(groupsColourImage, stream);
+    // The image must be written in Debug mode....
+    assert(couldWrite);
+#endif
+    
+    // Affichage du temps total de traitement
+    auto processDuration = std::chrono::steady_clock::now() - startTime;
+    std::cout << "[InteractiveScene.cpp] Pre-Computation finished. Duration = " <<
+    std::chrono::duration_cast<std::chrono::milliseconds>(processDuration).count() << " ms" << std::endl;
+}
+
+
+
+
+
+
 // = = = = = = = = = = XML import/export = = = = = = = = = =
 std::shared_ptr<bptree::ptree> InteractiveScene::GetTree() const
 {

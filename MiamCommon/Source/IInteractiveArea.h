@@ -16,12 +16,14 @@
 #include "IDrawableArea.h"
 
 #include "AreaEvent.h"
+#include "AreasGroup.h"
 
 #include "AudioUtils.hpp"
 
 namespace Miam
 {
     class Exciter;
+    class AreasGroup;
     
     
     /// \brief Pure interface for all areas that can have an interaction
@@ -62,6 +64,11 @@ namespace Miam
         
 		virtual double GetSurface() = 0;
         
+        /// \brief Will store the group as a weak_pointer
+        virtual void SetAreasGroup(std::shared_ptr<AreasGroup>&) = 0;
+        /// \brief Returns the group (of overlapping areas) to which this area
+        /// belongs. Might be nullptr.
+        virtual std::shared_ptr<AreasGroup> GetAreasGroup() = 0;
         
         // - - - - - Interaction avec Excitateurs, spécifiquement - - - - -
         

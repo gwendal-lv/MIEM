@@ -118,6 +118,7 @@ void InteractivePolygon::computeSurface()
 
 bool InteractivePolygon::HitTest(bpt T) const
 {
+    // Fonction optimisée par Juce
     return (contour.contains((float)T.get<0>(),
                              (float)T.get<1>()));
 }
