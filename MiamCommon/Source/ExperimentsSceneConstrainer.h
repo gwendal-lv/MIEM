@@ -20,6 +20,10 @@
 namespace Miam
 {
     
+    /// \brief Class which was initially supposed to be used only for scientific
+    /// experiments of the MIEM touch interface, but it is finally used to implement
+    /// "touch-safety" features (exciters that cannot go the black playground by
+    /// accident, etc...)
     class ExperimentsSceneConstrainer
     {
         enum class ConstraintType

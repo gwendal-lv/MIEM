@@ -92,7 +92,14 @@ std::shared_ptr<ControlArea> GraphicSessionManager::GetSelectedArea()
 {
     if (selectedCanvas)
     {
-        if (auto spatArea = std::dynamic_pointer_cast<ControlArea>(getSelectedCanvasAsEditable()->GetSelectedArea()))
+        auto canvasSelectedArea = getSelectedCanvasAsEditable()->GetSelectedArea();
+        
+        // If no area is selected, we send nullptr.
+        if (canvasSelectedArea == nullptr)
+            return nullptr;
+        
+        // But if something is selected, it must be castable to Control Area
+        if (auto spatArea = std::dynamic_pointer_cast<ControlArea>(canvasSelectedArea))
             return spatArea;
         else
             throw std::runtime_error("Currently selected area cannot be casted to Miam::ControlArea");

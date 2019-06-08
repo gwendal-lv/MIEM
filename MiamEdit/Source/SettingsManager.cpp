@@ -203,8 +203,11 @@ void SettingsManager::OnIpAddressChanged(std::string ipAddress)
 // = = = = = = = = = = XML import/export = = = = = = = = = =
 std::shared_ptr<bptree::ptree> SettingsManager::GetTree()
 {
+    // This will be the internal settings tree for the whole Presenter (which does not
+    // manage its config itself)
     auto settingsTree = std::make_shared<bptree::ptree>();
     settingsTree->add( "keyboardedition", (bool) configurationComponent->keyboardToggleButton->getToggleState() );
+    settingsTree->add( "exciters.<xmlattr>.constraint_positions", (bool) configurationComponent->constraintExcitersToggleButton->getToggleState() );
     return settingsTree;
 }
 void SettingsManager::SetFromTree(bptree::ptree& tree)
@@ -212,10 +215,16 @@ void SettingsManager::SetFromTree(bptree::ptree& tree)
     // Presenter (self)-related
     // may be absent
     try {
+        // Actual Editor Settings
         bool allow = tree.get<bool>("presenter.keyboardedition");
         configurationComponent->keyboardToggleButton->setToggleState(allow,
-                                                                     NotificationType::dontSendNotification);
+                                        NotificationType::dontSendNotification);
         presenter->GetSpatStatesManager()->AllowKeyboardEdition(allow);
+        
+        // Presenter touch behavior related -> also simple data trans. to view
+        bool shouldConstraintPositions = tree.get<bool>("presenter.exciters.<xmlattr>.constraint_positions", false); // default = false
+        configurationComponent->constraintExcitersToggleButton->setToggleState(shouldConstraintPositions,
+                                           NotificationType::dontSendNotification);
     
         // Interpolator-related : simple transmission of data to View,
         // with some delayed notifications

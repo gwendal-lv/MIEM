@@ -307,13 +307,51 @@ int TextUtils::TryParseAndBoldenUdpPort(juce::TextEditor* textEditor)
 
 
 
-juce::String TextUtils::GetCommandKeyDescriptionString(char keyCode)
+juce::String TextUtils::GetCommandKeyDescription(int keyCode)
 {
 #ifdef JUCE_MAC // knot logo
-    return String(CharPointer_UTF8 ("\xe2\x8c\x98")) + keyCode;
+    return String(CharPointer_UTF8 ("\xe2\x8c\x98")) + GetKeyDescription(keyCode);
 #else
-    return String("Ctrl ") + keyCode;
+    return String("Ctrl ") + GetKeyDescription(keyCode);
 #endif
+}
+
+juce::String TextUtils::GetCommandShiftKeyDescription(int keyCode)
+{
+#ifdef JUCE_MAC // knot logo +  shift arrow (shift arrow first in macOS mojave)
+    return String(CharPointer_UTF8 ("\xe2\x87\xa7"))
+    + String(CharPointer_UTF8 ("\xe2\x8c\x98")) + GetKeyDescription(keyCode);
+#else
+    return String("Ctrl ") + String(CharPointer_UTF8 ("\xe2\x87\xa7"))
+    + String(" ") + GetKeyDescription(keyCode);
+#endif
+}
+
+juce::String TextUtils::GetKeyDescription(int keyCode)
+{
+    // ASCII latin alphabet
+    if (('A' <= keyCode) && (keyCode <= 'Z'))
+    {
+        char charCastedCode = keyCode;
+        return String(&charCastedCode, 1); // 1 char only
+    }
+    // action keys
+    else if (keyCode == KeyPress::deleteKey)
+        return String("Delete");
+    else if (keyCode == KeyPress::leftKey)
+        return String(CharPointer_UTF8 ("\xe2\x86\x90"));
+    else if (keyCode == KeyPress::upKey)
+        return String(CharPointer_UTF8 ("\xe2\x86\x91"));
+    else if (keyCode == KeyPress::rightKey)
+        return String(CharPointer_UTF8 ("\xe2\x86\x92"));
+    else if (keyCode == KeyPress::downKey)
+        return String(CharPointer_UTF8 ("\xe2\x86\x93"));
+    else
+    {
+        // Please provide here a description for the key
+        assert(false);
+        return " ";
+    }
 }
 
 

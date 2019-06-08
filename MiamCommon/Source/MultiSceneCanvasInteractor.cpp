@@ -647,7 +647,9 @@ void MultiSceneCanvasInteractor::OnDeleteExciter()
 
 void MultiSceneCanvasInteractor::OnCanvasMouseDown(const MouseEvent& mouseE)
 {
+    // helper attributes
     std::shared_ptr<GraphicEvent> graphicE;
+    bool areaShouldRemainSelected;
     
     // !!! ON DOIT DIRE AU PARENT QU'ON SE SÉLECTIONNE SOI-MÊME !!!
     graphicSessionManager->SetSelectedCanvas(shared_from_this());
@@ -689,10 +691,20 @@ void MultiSceneCanvasInteractor::OnCanvasMouseDown(const MouseEvent& mouseE)
         case CanvasManagerMode::WaitingForPointDeletion :
             
             graphicE = selectedScene->OnCanvasMouseDown(mouseE);
+            // Affichage du compte-rendu, s'il n'est pas vide...
             if (! graphicE->GetMessage().empty())
-                graphicSessionManager->DisplayInfo(graphicE->GetMessage()); // TO DO : CORRIGEEEEEERRRR !!!!!
-            // ON GARDE L'AIRE SÉLECTIONNÉE POUR L'INSTANT
-            SetMode(CanvasManagerMode::AreaSelected);
+                graphicSessionManager->DisplayInfo(graphicE->GetMessage());
+            
+            // Si l'utilisateur a cliqué à côté, la scène a pu déselectionner elle-même l'aire.
+            // Info à retrouver
+            areaShouldRemainSelected = false;
+            if (auto areaCastedE = std::dynamic_pointer_cast<AreaEvent>(graphicE))
+                areaShouldRemainSelected = (areaCastedE->GetType() != AreaEventType::Unselected);
+            // Set mode en fonction des résultats
+            if (areaShouldRemainSelected)
+                SetMode(CanvasManagerMode::AreaSelected);
+            else
+                SetMode(CanvasManagerMode::SceneOnlySelected);
             break;
             
         // Default : bizzare de se retrouver là non ?

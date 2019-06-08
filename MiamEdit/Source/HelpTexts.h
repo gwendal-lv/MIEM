@@ -64,13 +64,13 @@ namespace Miam
                                                         "\n"
                                                         "The MIEM app interpolates all the parameters of the states and sends them in real-time to the OSC remote device. Custom OSC adresses can be configured in the Control States tab.\n"
                                                         "\n"
-                                                        "To play on Android or iOS, please download the MIEM Controller app.");
+                                                        "To play on Android or iOS, please download the MIEM Player app from http://miem.laras.be/downloads");
                     else if (appPurpose == AppPurpose::Spatialisation)
                         appPurposeRelatedString = TRANS("When you move an exciter from a shape to another, the app computes a smooth interpolation between the spatialisation states linked to the shapes.\n"
                                                         "\n"
                                                         "So by moving exciters, you can create and explore new spatialisation states. The MIEM app interpolates the spatialisation matrix and sends the corresponding OSC data in real-time to the MIEM Matrix Router audio plug-in (VST or AU within your DAW).\n"
                                                         "\n"
-                                                        "To play on Android or iOS, please download the MIEM Spat app.");
+                                                        "To play on Android or iOS, please download the MIEM Spat app from http://miem.laras.be/downloads");
                     return TRANS("MIEM Editor is now sending OSC control data as you are moving, creating or deleting exciters.\n"
                                  "\n"
                                  "An exciter has a finite energy. When it is placed over one or several shapes, it transmits and shares his energy between all intersecting shapes.\n"

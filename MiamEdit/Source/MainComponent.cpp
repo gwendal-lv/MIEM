@@ -184,17 +184,24 @@ bool MainContentComponent::keyPressed(const KeyPress& key)
     // ====================== Keyboard SHORTCUTS =====================
     if (key.getModifiers().isCommandDown())
     {
+        keyWasUsed = true;
+        
+        // Switch MAIN tab
         if (key.getKeyCode() == mainBackgroundComponent->GetSwitchTabCommandKey())
-        {
             mainBackgroundComponent->TriggerTabSwitch(presenter->getAppMode());
-            keyWasUsed = true;
-        }
+        // Switch to Conf tab
+        else if (key.getKeyCode() == mainBackgroundComponent->GetConfigurationTabCommandKey())
+            mainBackgroundComponent->TriggerConfigurationTab();
+        // Si on MAJ en plus, alors sauvegarde SOUS. Sinon juste une sauvegarde
         else if (key.getKeyCode() == mainBackgroundComponent->GetSaveCommandKey())
-        {
-            // Si on MAJ en plus, alors sauvegarde SOUS. Sinon juste une sauvegarde
             mainBackgroundComponent->TriggerSave(key.getModifiers().isShiftDown());
-            keyWasUsed = true;
-        }
+        // Open (Load)
+        else if (key.getKeyCode() == mainBackgroundComponent->GetLoadCommandKey())
+            mainBackgroundComponent->TriggerLoad();
+        
+        // If no key was used... We make it back to false
+        else
+            keyWasUsed = false;
     }
     
     // Forced callback to parent, if unused

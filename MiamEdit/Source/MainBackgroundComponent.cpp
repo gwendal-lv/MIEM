@@ -131,8 +131,10 @@ MainBackgroundComponent::MainBackgroundComponent ()
 
     // Tooltips for shortcuts
     // all work with Cmd (Ctrl) at the moment
-    statesTextButton->setTooltip(TextUtils::GetCommandKeyDescriptionString(switchTabCommandKey));
-    scenesTextButton->setTooltip(TextUtils::GetCommandKeyDescriptionString(switchTabCommandKey));
+    statesTextButton->setTooltip(TextUtils::GetCommandKeyDescription(switchTabCommandKey));
+    scenesTextButton->setTooltip(TextUtils::GetCommandKeyDescription(switchTabCommandKey));
+    hardwareConfTextButton->setTooltip(
+            TextUtils::GetCommandKeyDescription(configurationTabCommandKey));
 
     //[/Constructor]
 }
@@ -275,12 +277,20 @@ void MainBackgroundComponent::TriggerTabSwitch(Miam::AppMode currentAppMode)
             scenesTextButton->triggerClick();
     }
 }
+void MainBackgroundComponent::TriggerConfigurationTab()
+{
+    hardwareConfTextButton->triggerClick();
+}
 void MainBackgroundComponent::TriggerSave(bool saveAsNewFile)
 {
     if (saveAsNewFile)
         fileMenu->onSaveAs();
     else
         fileMenu->onSave();
+}
+void MainBackgroundComponent::TriggerLoad()
+{
+    fileMenu->onLoad();
 }
 
 //[/MiscUserCode]

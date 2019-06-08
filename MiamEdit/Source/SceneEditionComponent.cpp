@@ -326,9 +326,22 @@ SceneEditionComponent::SceneEditionComponent ()
 
     // Tooltips for shortcuts
     // all work with Cmd (Ctrl) at the moment
-    excitersEditionButton->setTooltip(TextUtils::GetCommandKeyDescriptionString(editExcitersKey));
-    copyTextButton->setTooltip(TextUtils::GetCommandKeyDescriptionString(copyKey));
-    pasteTextButton->setTooltip(TextUtils::GetCommandKeyDescriptionString(pasteKey));
+    excitersEditionButton->setTooltip(TextUtils::GetCommandKeyDescription(editExcitersCmdKey));
+    copyTextButton->setTooltip(TextUtils::GetCommandKeyDescription(copyCmdKey));
+    pasteTextButton->setTooltip(TextUtils::GetCommandKeyDescription(pasteCmdKey));
+    addAreaTextButton->setTooltip(TextUtils::GetCommandKeyDescription(newAreaCmdKey));
+    deleteAreaTextButton->setTooltip(TextUtils::GetCommandKeyDescription(deleteAreaCmdKey));
+    bringForwardTextButton->setTooltip(TextUtils::GetCommandKeyDescription(areaForwardCmdKey));
+    sendBackwardTextButton->setTooltip(TextUtils::GetCommandKeyDescription(areaBackwardCmdKey));
+    addPointTextButton->setTooltip(TextUtils::GetCommandKeyDescription(addPointCmdKey));
+    //  or Cmd+Shift
+    deletePointTextButton->setTooltip(TextUtils::GetCommandShiftKeyDescription(deletePointCmdShiftKey));
+    bringToFrontTextButton->setTooltip(TextUtils::GetCommandShiftKeyDescription(areaToFrontCmdShiftKey));
+    sendToBackTextButton->setTooltip(TextUtils::GetCommandShiftKeyDescription(areaToBackCmdShiftKey));
+    addSceneTextButton->setTooltip(TextUtils::GetCommandShiftKeyDescription(newSceneCmdShiftKey));
+    deleteSceneTextButton->setTooltip(TextUtils::GetCommandShiftKeyDescription(deleteSceneCmdShiftKey));
+    sceneLeftTextButton->setTooltip(TextUtils::GetCommandShiftKeyDescription(sceneLeftCmdShiftKey));
+    sceneRightTextButton->setTooltip(TextUtils::GetCommandShiftKeyDescription(sceneRightCmdShiftKey));
 
     //[/Constructor]
 }
@@ -692,26 +705,68 @@ bool SceneEditionComponent::keyPressed (const KeyPress& key)
     if (key.getModifiers().isCommandDown())
     {
         keyWasUsed = true;
+        // Test avec le modifier-key SHIFT pour commencer (pour les scènes)
+        if (key.getModifiers().isShiftDown())
+        {
+            if ( (key.getKeyCode() == newSceneCmdShiftKey)
+                && (! isCanvasGroupHidden)
+                && addSceneTextButton->isEnabled() && addSceneTextButton->isVisible())
+                addSceneTextButton->triggerClick();
+            else if ( (key.getKeyCode() == deleteSceneCmdShiftKey)
+                && (! isCanvasGroupHidden)
+                && deleteSceneTextButton->isEnabled() && deleteSceneTextButton->isVisible())
+                deleteSceneTextButton->triggerClick();
+            else if ( (key.getKeyCode() == areaToBackCmdShiftKey)
+                     && (! isAreaGroupHidden)
+                     && sendToBackTextButton->isEnabled() && sendToBackTextButton->isVisible())
+                sendToBackTextButton->triggerClick();
+            else if ( (key.getKeyCode() == areaToFrontCmdShiftKey)
+                     && (! isAreaGroupHidden)
+                     && bringToFrontTextButton->isEnabled() && bringToFrontTextButton->isVisible())
+                bringToFrontTextButton->triggerClick();
+            else if ( (key.getKeyCode() == deletePointCmdShiftKey)
+                     && (! isAreaGroupHidden)
+                     && deletePointTextButton->isEnabled() && deletePointTextButton->isVisible())
+                deletePointTextButton->triggerClick();
+            else
+                keyWasUsed = false;
+        }
         // Le raccourci Cmd E (ou ctrl E sous linux/windows) déclenche Edit Exciter,
         // si ce bouton était bien affiché
-        if ( (key.getKeyCode() == editExcitersKey)
+        else if ( (key.getKeyCode() == editExcitersCmdKey)
             && ( !isInitialStateGroupHidden )
             && excitersEditionButton->isEnabled() && excitersEditionButton->isVisible())
-        {
             excitersEditionButton->triggerClick();
-        }
-        else if ( (key.getKeyCode() == copyKey)
+        // Cmd C : Copier
+        else if ( (key.getKeyCode() == copyCmdKey)
                  && (! isAreaGroupHidden)
                  && copyTextButton->isEnabled() && copyTextButton->isVisible())
-        {
             copyTextButton->triggerClick();
-        }
-        else if ( (key.getKeyCode() == pasteKey)
+        // Cmd V : Coller
+        else if ( (key.getKeyCode() == pasteCmdKey)
                  && (! isAreaGroupHidden)
                  && pasteTextButton->isEnabled() && pasteTextButton->isVisible())
-        {
             pasteTextButton->triggerClick();
-        }
+        else if ( (key.getKeyCode() == newAreaCmdKey)
+                 && (! isAreaGroupHidden)
+                 && addAreaTextButton->isEnabled() && addAreaTextButton->isVisible())
+            addAreaTextButton->triggerClick();
+        else if ( (key.getKeyCode() == deleteAreaCmdKey)
+                 && (! isAreaGroupHidden)
+                 && deleteAreaTextButton->isEnabled() && deleteAreaTextButton->isVisible())
+            deleteAreaTextButton->triggerClick();
+        else if ( (key.getKeyCode() == areaBackwardCmdKey)
+                 && (! isAreaGroupHidden)
+                 && sendBackwardTextButton->isEnabled() && sendBackwardTextButton->isVisible())
+            sendBackwardTextButton->triggerClick();
+        else if ( (key.getKeyCode() == areaForwardCmdKey)
+                 && (! isAreaGroupHidden)
+                 && bringForwardTextButton->isEnabled() && bringForwardTextButton->isVisible())
+            bringForwardTextButton->triggerClick();
+        else if ( (key.getKeyCode() == addPointCmdKey)
+                 && (! isAreaGroupHidden)
+                 && addPointTextButton->isEnabled() && addPointTextButton->isVisible())
+            addPointTextButton->triggerClick();
         // Si vraiment rien n'a convenu... on remet à false
         else
             keyWasUsed = false;

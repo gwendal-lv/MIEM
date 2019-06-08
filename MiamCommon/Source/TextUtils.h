@@ -95,6 +95,9 @@ namespace Miam {
         
         /// \brief Returns a string "CmdX" (with the actual apple knot cmd sign)
         /// or "Ctrl X" for win/linux, automatically depending on the platform
-        static juce::String GetCommandKeyDescriptionString(char keyCode);
+        static juce::String GetCommandKeyDescription(int keyCode);
+        static juce::String GetCommandShiftKeyDescription(int keyCode);
+        /// \brief Return a description of a key. (normal or action)
+        static juce::String GetKeyDescription(int keyCode);
     };
 }

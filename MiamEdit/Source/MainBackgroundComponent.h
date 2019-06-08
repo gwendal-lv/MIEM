@@ -70,7 +70,9 @@ public:
     /// \brief Returns the keyboard key that must be used with the Cmd (or Ctrl) modifier
     /// to trigger a tab switch (false click on a tab)
     char GetSwitchTabCommandKey() {return switchTabCommandKey;}
+    char GetConfigurationTabCommandKey() {return configurationTabCommandKey;}
     char GetSaveCommandKey() {return saveCommandKey;}
+    char GetLoadCommandKey() {return loadCommandKey;}
 
 
     // Orders from Presenter
@@ -79,7 +81,9 @@ public:
 
     // translated orders, from View
     void TriggerTabSwitch(Miam::AppMode currentAppMode);
+    void TriggerConfigurationTab();
     void TriggerSave(bool saveAsNewFile = false);
+    void TriggerLoad();
 
 
     //[/UserMethods]
@@ -110,7 +114,9 @@ private:
 
     // ====================== Keyboard SHORTCUTS =====================
     const char switchTabCommandKey = 'T';
+    const char configurationTabCommandKey = 'Y';
     const char saveCommandKey = 'S'; // OK..... non-négociable !
+    const char loadCommandKey = 'O'; // idem (Open...)
 
 
     //[/UserVariables]

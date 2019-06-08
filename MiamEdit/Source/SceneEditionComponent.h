@@ -189,10 +189,25 @@ private:
 
 
     // ====================== Keyboard SHORTCUTS =====================
+    // codé vite et mal... à refactorer dans les boutons directement en les faisant
+    // hériter d'une classe gestionnaire des raccourcis...
     // all working with Cmd (Ctrl) at the moment
-    const char editExcitersKey = 'E';
-    const char copyKey = 'C';
-    const char pasteKey = 'V';
+    const char editExcitersCmdKey = 'E';
+    const char copyCmdKey = 'C';
+    const char pasteCmdKey = 'V';
+    const char newAreaCmdKey = 'N';
+    const int deleteAreaCmdKey = juce::KeyPress::deleteKey;
+    const int areaForwardCmdKey = juce::KeyPress::upKey;
+    const int areaBackwardCmdKey = juce::KeyPress::downKey;
+    const int addPointCmdKey = 'I';
+    // working with Cmd and Shift
+    const int deletePointCmdShiftKey = 'I';
+    const int areaToFrontCmdShiftKey = juce::KeyPress::upKey;
+    const int areaToBackCmdShiftKey = juce::KeyPress::downKey;
+    const char newSceneCmdShiftKey = 'N';
+    const int deleteSceneCmdShiftKey = juce::KeyPress::deleteKey;
+    const int sceneLeftCmdShiftKey = juce::KeyPress::leftKey;
+    const int sceneRightCmdShiftKey = juce::KeyPress::rightKey;
 
     //[/UserVariables]
 

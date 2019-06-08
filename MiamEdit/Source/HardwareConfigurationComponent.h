@@ -111,6 +111,7 @@ private:
     std::unique_ptr<Label> interpolationTypeLabel;
     std::unique_ptr<HyperlinkButton> infoHyperlinkButton;
     std::unique_ptr<ToggleButton> enableMasterVolumeToggleButton;
+    std::unique_ptr<ToggleButton> constraintExcitersToggleButton;
 
 
     //==============================================================================
