@@ -35,6 +35,9 @@ excitersBehavior(excitersBehavior_)
 {
     name = "Default Scene";
     
+    // no random colour -> black group
+    backgroundGroup = std::make_shared<AreasGroup>(false);
+    
 #ifdef __MIEM_VBO
     this->startTimerHz(24);
 #endif
@@ -627,71 +630,69 @@ void InteractiveScene::PreComputeInteractionData()
     std::vector<AreasGroup*> groupsImage;
     // CONVENTION : axe y vers le bas, indice i (numéro de ligne de matrice)
     // axe x vers la droite, indice j (numéro de colonne de matrice)
+    // Dans cette image/tableau, le groupe BACK GROUP est différent du groupe NULLPTR
+    // -> important pour l'algo récursif
     groupsImage.resize(canvasW * canvasH, nullptr);
+    // Sauvegarde d'une liste des points en attente de propagation
+    std::vector<std::pair<size_t, size_t>> neighboursToPropagate;
+    neighboursToPropagate.reserve(3840 * 2160); // 4K propagation
     
     // BOUCLE PRINCIPALE : parcours de tous les pixels, tests d'interaction avec toutes les aires
-    // (arrêt dès qu'on en touche une)
+    // (arrêt dès qu'on en touche une).
+    // En réalité, le parcours ne pas régulier car chaque pixel dans une zone va déclencher
+    // une propagation récursive à toute la zone.
     // -> cette boucle ne stocke rien dans les aires (elle ne fait que détecter leur présence)
-    // V1 : présence ou non -> OK
-    // V2 : nb adjacents -> OK
-    // V3 : finale
-    bool foundArea;
-    std::vector<AreasGroup*> adjacentGroups;
-    adjacentGroups.reserve(4); // always 4 reserved: left, topleft, top, topright
     for (size_t i=0 ; i<canvasH ; i++)
     {
         for (size_t j=0 ; j<canvasW ; j++)
         {
-            foundArea = false;
-            for (size_t k = 0 ; (k<areas.size() && (! foundArea)) ; k++)
-                foundArea = areas[k]->HitTest(bpt((double)j, (double)i));
-            // Si collision avec une aire : on analyse les voisins pour compléter une aire,
-            // ou en fusionner...
-            if (foundArea)
+            // On ne fait qqchose que si le pixel n'a pas encore de groupe
+            if (groupsImage[i*canvasW + j] == nullptr)
             {
-                // Décompte du nombre de voisins appartenant déjà à un groupe
-                adjacentGroups.clear();
-                if (j >= 1)
+                // Si collision avec une aire : on déclenche une nouvelle propagation de groupe
+                if (isAnyAreaOnPixel(i, j))
                 {
-                    // left pixel
-                    if (groupsImage[i*canvasW + (j-1)] != nullptr)
-                        adjacentGroups.push_back(groupsImage[i*canvasW + (j-1)]);
-                    // top-left pixel
-                    if (groupsImage[(i-1)*canvasW + (j-1)] != nullptr)
-                        adjacentGroups.push_back(groupsImage[(i-1)*canvasW + (j-1)]);
-                }
-                if (i >= 1)
-                {
-                    // top pixel
-                    if (groupsImage[(i-1)*canvasW + j] != nullptr)
-                        adjacentGroups.push_back(groupsImage[(i-1)*canvasW + j]);
-                    // top-right pixel
-                    if (j < canvasW)
-                        if (groupsImage[(i-1)*canvasW + (j+1)] != nullptr)
-                            adjacentGroups.push_back(groupsImage[(i-1)*canvasW + (j+1)]);
-                }
-                // (3 actions possibles)
-                // 1 - création nouveau groupe
-                // Il y aura, avant le tri, de très nombreux groupes
-                if (adjacentGroups.size() == 0)
-                {
+                    // Init du nouveau groupe, et de son 1ier pixel
                     areasGroups.push_back(std::make_shared<AreasGroup>());
+                    neighboursToPropagate.clear();
                     groupsImage[i*canvasW + j] = areasGroups.back().get();
+                    // Propagation : init
+                    auto lastNeighbours = propagateAreaGroup(groupsImage, areasGroups.back().get(),
+                                       i, canvasH, j, canvasW);
+                    neighboursToPropagate.insert(neighboursToPropagate.end(),
+                                                 lastNeighbours.begin(), lastNeighbours.end());
+                    // Propagation : sorte de récurrence, on continue tant que la liste n'est pas
+                    // vide. Cycle : on sort le dernier px de la liste, et on ajoute à la liste
+                    // le résultat de la propagation de ce dernier px
+                    while (neighboursToPropagate.size() > 0)
+                    {
+                        // 1 - on vire le dernier de la liste (déjà traité par la
+                        // fonction tryPropagateToPixel, sauf pour le tout premier qui a
+                        // été traité en direct dans cette fonction)
+                        std::pair<size_t, size_t> lastIJ = neighboursToPropagate.back();
+                        neighboursToPropagate.pop_back();
+                        // 2 - récupération de ses résultats
+                        lastNeighbours = propagateAreaGroup(groupsImage, areasGroups.back().get(),
+                                                            lastIJ.first, canvasH,
+                                                            lastIJ.second, canvasW);
+                        // 3 - ajout de son résultat de propagation à la liste
+                        neighboursToPropagate.insert(neighboursToPropagate.end(),
+                                                     lastNeighbours.begin(), lastNeighbours.end());
+                    }
                 }
-                // 2 - insertion dans groupe existant
-                else if (adjacentGroups.size() == 1) // METTRE EGAAAAAAAAAAAAAAAAAL
-                    groupsImage[i*canvasW + j] = adjacentGroups[0];
-                // 3 - insertion dans le premier vu, puis fusion groupes existants
-                // (propagation prioritaire par la gauche)
+                // Sinon c'est le groupe par défaut, BACK
                 else
-                {
-                }
+                    groupsImage[i*canvasW + j] = backgroundGroup.get();
             }
         }
     }
     
     // Assignation des groupes aux aires : chaque aire prend le groupe
     // qui est au niveau de son centre
+    for (size_t k = 0 ; (k<areas.size()) ; k++)
+    {
+        //areas[k]->getCenterInPixels();
+    }
     
 #ifdef __MIEM_DISPLAY_SCENE_PRE_COMPUTATION
     // Construction + Affichage de l'image des groupes dans un fichier .png temporaire
@@ -726,6 +727,49 @@ void InteractiveScene::PreComputeInteractionData()
     std::chrono::duration_cast<std::chrono::milliseconds>(processDuration).count() << " ms" << std::endl;
 }
 
+std::vector<std::pair<size_t, size_t>>
+InteractiveScene::propagateAreaGroup(std::vector<AreasGroup*>& groupsImage,
+                        AreasGroup* groupToPropagate,
+                        size_t i0, size_t canvasH, size_t j0, size_t canvasW)
+{
+    const bool prevRowExists = (i0 > 0);
+    const bool prevColExists = (j0 > 0);
+    const bool nextRowExists = (i0 < (canvasH - 1));
+    const bool nextColExists = (j0 < (canvasW - 1));
+    std::vector<std::pair<size_t, size_t>> neighbourGroupPixels;
+    // 8 potential pixels to propagate the group to.
+    // If none of the 8 pixels needs to propagate, the propagation stops here.
+    if (prevRowExists) // top pixels
+    {
+        if (tryPropagateToPixel(groupsImage, groupToPropagate, i0-1, canvasW, j0  ))
+            neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0-1,    j0));
+        if (prevColExists)
+            if (tryPropagateToPixel(groupsImage, groupToPropagate, i0-1, canvasW, j0-1))
+                neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0-1,    j0-1));
+        if (nextColExists)
+            if (tryPropagateToPixel(groupsImage, groupToPropagate, i0-1, canvasW, j0+1))
+                neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0-1,    j0+1));
+    }
+    if (nextRowExists) // bottom pixels
+    {
+        if (tryPropagateToPixel(groupsImage, groupToPropagate, i0+1, canvasW, j0  ))
+            neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0+1,    j0));
+        if (prevColExists)
+            if (tryPropagateToPixel(groupsImage, groupToPropagate, i0+1, canvasW, j0-1))
+                neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0+1,    j0-1));
+        if (nextColExists)
+            if (tryPropagateToPixel(groupsImage, groupToPropagate, i0+1, canvasW, j0+1))
+                neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0+1,    j0+1));
+    }
+    if (prevColExists) // left pixel
+        if (tryPropagateToPixel(groupsImage, groupToPropagate, i0  , canvasW, j0-1))
+            neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0  ,    j0-1));
+    if (nextColExists) // right pixel
+        if (tryPropagateToPixel(groupsImage, groupToPropagate, i0  , canvasW, j0+1))
+            neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0  ,    j0+1));
+    
+    return neighbourGroupPixels;
+}
 
 
 

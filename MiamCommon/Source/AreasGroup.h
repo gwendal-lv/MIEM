@@ -23,7 +23,7 @@ namespace Miam
     
     /// \brief Represents a group of overlapping areas, with utility
     /// function to manage groups of areas
-    class AreasGroup : public std::enable_shared_from_this<InteractiveArea>
+    class AreasGroup : public std::enable_shared_from_this<AreasGroup>
     {
         // ========================= ATTRIBUTES =========================
         private :
@@ -35,12 +35,6 @@ namespace Miam
         // Random generator is always the same, init with the same seed (for debugging)
         static std::mt19937 randomGenerator;
         
-        /// \brief Is this groups a duplicate of another one?
-        /// We could also write: has this group been merged into another ?
-        bool isDuplicate = false;
-        
-        std::weak_ptr<AreasGroup> originalGroup;
-        
         
         
         // ========================= Gets and Sets =========================
@@ -51,9 +45,9 @@ namespace Miam
         
         // ========================= METHODS =========================
         public :
-        AreasGroup();
+        AreasGroup(bool randomColour = true);
         
-        void MarkAsDuplicateOf(std::shared_ptr<AreasGroup>& _originalGroup);
+        
         
         
         static void ReinitRandomColours(int newSeed = 0) { randomGenerator.seed(newSeed); }

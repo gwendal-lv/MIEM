@@ -112,7 +112,8 @@ namespace Miam
         /// \brief The groups of overlapping areas (not a list, because only a few groups
         /// are expected)
         std::vector<std::shared_ptr<AreasGroup>> areasGroups;
-
+        /// \brief The background group always exist but does not contain any InteractiveArea.
+        std::shared_ptr<AreasGroup> backgroundGroup;
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
@@ -286,6 +287,9 @@ namespace Miam
         /// proprement tous les évènements associés.
         std::shared_ptr<MultiAreaEvent> RecomputeAreaExciterInteractions();
         
+        
+        
+        
         /// \brief Pré-calcule toutes les données internes qui serviront à optimiser le jeu,
         /// notamment : 1) les groupes d'aires qui se chevauchent, pour empêcher les excitateurs
         /// d'en sortir, et 2) les poids d'interaction pour chaque pixel (en prévision des
@@ -295,6 +299,67 @@ namespace Miam
         /// À DÉPLACER DANS UN THREAD DE CALCUL SÉPARÉ
         /// et tant qu'on ne connait pas les groupes... On interdit le déplacement des excitateurs
         void PreComputeInteractionData();
+        protected :
+        /// \brief Internal help for testing if there is any area on the specified pixel
+        inline bool isAnyAreaOnPixel(size_t row, size_t col)
+        {
+            bool foundArea = false;
+            for (size_t k = 0 ; (k<areas.size() && (! foundArea)) ; k++)
+                foundArea = areas[k]->HitTest(bpt((double)col, (double)row));
+            return foundArea;
+        }
+        private :
+        /// \brief Internal helper for image processing.
+        /// Before calling the function, we already know that pixel i0, j0 belongs to the group.
+        ///
+        /// Cannot be recursive... Because even a HD screen would saturate the call stack
+        /// of any modern OS
+        ///
+        /// \returns Coordinates of neighbour pixels that belong to the group
+        std::vector<std::pair<size_t, size_t>>
+        propagateAreaGroup(std::vector<AreasGroup*>& groupsImage,
+                                AreasGroup* groupToPropagate,
+                                size_t i0, size_t canvasH, size_t j0, size_t canvasW);
+        /// \brief Second internal helper for propagation. i0, j0 are unchecked, must be valid
+        /// \return Whether the pixel now belongs to the group, or not (assigned to back, then).
+        inline bool tryPropagateToPixel(std::vector<AreasGroup*>& groupsImage,
+                                        AreasGroup* groupToPropagate,
+                                        size_t i0, size_t canvasW, size_t j0)
+        {
+            size_t k0 = i0 * canvasW + j0;
+            // If groups image is empty, we test it and store the result
+            // (and we ask for the parent caller to propagate it)
+            if (groupsImage[k0] == nullptr)
+            {
+                if (isAnyAreaOnPixel(i0, j0))
+                {
+                    groupsImage[k0] = groupToPropagate;
+                    //std::cout << "Propagation groupe " << groupToPropagate << " en " << i0 << ";" << j0 << std::endl;
+                    return true;
+                }
+                else
+                {
+                    groupsImage[k0] = backgroundGroup.get();
+                    return false;
+                }
+            }
+            // else, we check it (in debug mode only). It must be the same group, or back !!
+            else
+            {
+                assert((groupsImage[k0] == groupToPropagate) || (groupsImage[k0] == backgroundGroup.get()));
+                /*
+                if ((groupsImage[k0] == groupToPropagate) || (groupsImage[k0] == backgroundGroup.get()))
+                {}
+                else
+                    std::cout << "Groupe " << groupToPropagate << " : collision en " << i0 << ";" << j0 << ", pixel déjà sur groupe " << groupsImage[k0] << " (back = " << backgroundGroup.get()  << ")" << std::endl;
+                 */
+                return false; // no need to propagate through this pixel
+            }
+        }
+        public :
+        
+        
+        
         
         // - - - - - XML import/export - - - - -
         public :

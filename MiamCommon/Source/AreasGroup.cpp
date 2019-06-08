@@ -17,16 +17,17 @@ using namespace Miam;
 // static rand gen
 std::mt19937 AreasGroup::randomGenerator = std::mt19937();
 
-AreasGroup::AreasGroup()
+AreasGroup::AreasGroup(bool randomColour)
 {
-    colour = juce::Colour::fromRGB((randomGenerator() % 230) + 26,
-                                   (randomGenerator() % 230) + 26,
-                                   (randomGenerator() % 230) + 26);
+    if (randomColour)
+    {
+        colour = juce::Colour::fromRGB((randomGenerator() % 230) + 26,
+                                       (randomGenerator() % 230) + 26,
+                                       (randomGenerator() % 230) + 26);
+    }
+    else
+        colour = juce::Colours::black;
 }
 
 
-void AreasGroup::MarkAsDuplicateOf(std::shared_ptr<AreasGroup>& _originalGroup)
-{
-    originalGroup = _originalGroup;
-}
 
