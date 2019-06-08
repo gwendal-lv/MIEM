@@ -107,6 +107,9 @@ public:
     private :
     void setParametersGroupEnabled(bool shouldBeEnabled);
     void setColour(const Colour& stateColour);
+    /// \brief Tries to select the next state in list, going downward or upward
+    /// \returns Wether another state could be selected or not
+    bool trySelectNextState(bool shouldGoDownward = true);
 
     // - - - - - Setters and Getters - - - - -
     public :
@@ -150,6 +153,20 @@ private:
     String spatStateEditorText;
     String genericStatesListText;
     String genericStateEditorText;
+    
+    // ====================== Keyboard SHORTCUTS =====================
+    // codé vite et mal... à refactorer dans les boutons directement en les faisant
+    // hériter d'une classe gestionnaire des raccourcis...
+    // all working with Cmd (Ctrl) at the moment
+    const char newStateCmdKey = 'N';
+    const int deleteStateCmdKey = juce::KeyPress::deleteKey;
+    const int previousStateCmdKey = juce::KeyPress::upKey;
+    const int nextStateCmdKey = juce::KeyPress::downKey;
+    const char sendStateCmdKey = 'E';
+    // working with Cmd and Shift
+    const char sendZerosCmdShiftKey = 'E';
+    const int stateUpCmdShiftKey = juce::KeyPress::upKey;
+    const int stateDownCmdShiftKey = juce::KeyPress::downKey;
 
     //[/UserVariables]
 

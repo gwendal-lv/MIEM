@@ -322,6 +322,27 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     genericStateEditorText = stateEditorGroupComponent->getText();
     spatStatesListText = TRANS("Spatialization states list");
     spatStateEditorText = TRANS("Routing matrix for selected state");
+    
+    // Tooltips des raccourcis clavier
+    // Cmd
+    TextUtils::AddShortcutToTooltip(*addStateTextButton.get(),
+                                    TextUtils::GetCommandKeyDescription(newStateCmdKey));
+    TextUtils::AddShortcutToTooltip(*deleteStateTextButton.get(),
+                                    TextUtils::GetCommandKeyDescription(deleteStateCmdKey));
+    TextUtils::AddShortcutToTooltip(*sendStateTextButton.get(),
+                                    TextUtils::GetCommandKeyDescription(sendStateCmdKey));
+    // Combo box : double-shortcut, texte spécial
+    String comboBoxDoubleShortcut = TextUtils::GetCommandKeyDescription(previousStateCmdKey);
+    comboBoxDoubleShortcut += ", " + TextUtils::GetCommandKeyDescription(nextStateCmdKey);
+    TextUtils::AddShortcutToTooltip(*statesComboBox.get(),
+                                    comboBoxDoubleShortcut);
+    // Cmd + Shift
+    TextUtils::AddShortcutToTooltip(*sendZerosTextButton.get(),
+                                    TextUtils::GetCommandShiftKeyDescription(sendZerosCmdShiftKey));
+    TextUtils::AddShortcutToTooltip(*stateUpTextButton.get(),
+                                    TextUtils::GetCommandShiftKeyDescription(stateUpCmdShiftKey));
+    TextUtils::AddShortcutToTooltip(*stateDownTextButton.get(),
+                                    TextUtils::GetCommandShiftKeyDescription(stateDownCmdShiftKey));
 
     //[/Constructor]
 }
@@ -612,9 +633,46 @@ bool SpatStatesEditionComponent::keyPressed (const KeyPress& key)
     // ====================== Keyboard SHORTCUTS =====================
     if (key.getModifiers().isCommandDown())
     {
-        if (key.getKeyCode() == ' ')
+        keyWasUsed = true;
+        // Test avec le modifier-key SHIFT pour commencer (pour les scènes)
+        if (key.getModifiers().isShiftDown())
         {
+            // Send Zeros
+            if ( (key.getKeyCode() == sendZerosCmdShiftKey)
+                && sendZerosTextButton->isEnabled() && sendZerosTextButton->isVisible())
+                sendZerosTextButton->triggerClick();
+            // state Up/Down
+            else if ( (key.getKeyCode() == stateUpCmdShiftKey)
+                && stateUpTextButton->isEnabled() && stateUpTextButton->isVisible())
+                stateUpTextButton->triggerClick();
+            else if ( (key.getKeyCode() == stateDownCmdShiftKey)
+                     && stateDownTextButton->isEnabled() && stateDownTextButton->isVisible())
+                stateDownTextButton->triggerClick();
+            // remise à false si vraiment aucune touche ne convenait
+            else
+                keyWasUsed = false;
         }
+        // Send State
+        else if ( (key.getKeyCode() == sendStateCmdKey)
+                 && sendStateTextButton->isEnabled() && sendStateTextButton->isVisible())
+            sendStateTextButton->triggerClick();
+        // Add/delete State
+        else if ( (key.getKeyCode() == newStateCmdKey)
+                 && addStateTextButton->isEnabled() && addStateTextButton->isVisible())
+            addStateTextButton->triggerClick();
+        else if ( (key.getKeyCode() == deleteStateCmdKey)
+                 && deleteStateTextButton->isEnabled() && deleteStateTextButton->isVisible())
+            deleteStateTextButton->triggerClick();
+        else if ( (key.getKeyCode() == sendStateCmdKey)
+                 && sendStateTextButton->isEnabled() && sendStateTextButton->isVisible())
+            sendStateTextButton->triggerClick();
+        else if ( (key.getKeyCode() == nextStateCmdKey) )
+            keyWasUsed = trySelectNextState(true); // downward
+        else if ( (key.getKeyCode() == previousStateCmdKey) )
+            keyWasUsed = trySelectNextState(false); // upward
+        // Si vraiment rien n'a convenu... on remet à false
+        else
+            keyWasUsed = false;
     }
     
     // Forced callback to parent, if unused
@@ -645,6 +703,8 @@ void SpatStatesEditionComponent::UpdateStatesList(std::vector< std::shared_ptr<C
         statesComboBox->addItem(newSpatStates[i]->GetName(), (int)i+1); // Id == Index+1
     // Normally : no item selected at this point
     //editionManager->OnSpatStateSelectedById(spatStatesComboBox->getSelectedItemIndex());
+    stateUpTextButton->setEnabled(false);
+    stateDownTextButton->setEnabled(false);
 }
 
 
@@ -700,8 +760,6 @@ void SpatStatesEditionComponent::SelectAndUpdateState(int stateIndex, std::strin
     // Buttons enabled state (should be PRESENTER code normally....)
     bool isAnyStateSelected = statesComboBox->getSelectedItemIndex() != -1;
     deleteStateTextButton->setEnabled(isAnyStateSelected);
-    stateUpTextButton->setEnabled(isAnyStateSelected);
-    stateDownTextButton->setEnabled(isAnyStateSelected);
     stateUpTextButton->setEnabled(isAnyStateSelected);
     stateDownTextButton->setEnabled(isAnyStateSelected);
     if (isAnyStateSelected)
@@ -772,6 +830,18 @@ void SpatStatesEditionComponent::setColour(const Colour& stateColour)
     sliderG->setValue((double)stateColour.getGreen(), NotificationType::dontSendNotification);
     sliderB->setValue((double)stateColour.getBlue(), NotificationType::dontSendNotification);
     colourVisualisationLabel->setColour(Label::backgroundColourId, stateColour);
+}
+bool SpatStatesEditionComponent::trySelectNextState(bool shouldGoDownward)
+{
+    int targetItemIndex = statesComboBox->getSelectedItemIndex();
+    targetItemIndex += shouldGoDownward ? (1) : (-1);
+    if ( (targetItemIndex < 0) || (statesComboBox->getNumItems() <= targetItemIndex) )
+        return false;
+    else
+    {
+        statesComboBox->setSelectedItemIndex(targetItemIndex);
+        return true;
+    }
 }
 
 void SpatStatesEditionComponent::SetInsOutsCount(int _inputsCount, int _outputsCount)

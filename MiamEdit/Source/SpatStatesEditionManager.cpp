@@ -185,7 +185,7 @@ void SpatStatesEditionManager::OnSendState(int rowToSend)
         if (selectedSpatState)
         {
             model->ConnectAndSendState(selectedSpatState, rowToSend);
-            view->DisplayInfo(TRANS("OSC Message sent to ").toStdString() + model->GetStateSender(0)->GetAddressAsString());
+            view->DisplayInfo(TRANS("OSC Messages sent to ").toStdString() + model->GetStateSender(0)->GetAddressAsString());
         }
         else
             view->DisplayInfo(TRANS("No state selected (nothing to send).").toStdString());
@@ -209,7 +209,7 @@ void SpatStatesEditionManager::OnSendZeros()
     // Si le modèle a bien envoyé : on affiche ENVOYÉ
     try {
         model->ConnectAndSendState(nullMatrixState);
-        view->DisplayInfo(TRANS("OSC Message sent to ").toStdString() + model->GetStateSender(0)->GetAddressAsString());
+        view->DisplayInfo(TRANS("OSC Messages sent to ").toStdString() + model->GetStateSender(0)->GetAddressAsString());
     }
     // Sinon on affiche l'erreur de connection transmise par le modèle
     catch(Miam::OscException& e) {
@@ -231,7 +231,8 @@ void SpatStatesEditionManager::OnMoveSelectedStateUp()
         selectSpatState(selectedSpatState); // re-selection
     }
     else
-        throw std::logic_error("Cannot move spat state towards the first position.");
+        // Cannot move spat state towards the first position
+        assert(false);
 }
 void SpatStatesEditionManager::OnMoveSelectedStateDown()
 {
@@ -248,7 +249,8 @@ void SpatStatesEditionManager::OnMoveSelectedStateDown()
         selectSpatState(selectedSpatState); // re-selection
     }
     else
-        throw std::logic_error("Cannot move spat state towards the last position.");
+        //Cannot move spat state towards the last position
+        assert(false);
 }
 void SpatStatesEditionManager::OnColourChanged(Colour& colour)
 {

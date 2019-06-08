@@ -354,4 +354,29 @@ juce::String TextUtils::GetKeyDescription(int keyCode)
     }
 }
 
+void TextUtils::AddShortcutToTooltip(SettableTooltipClient& tooltipClient, String shortcutDescription)
+{
+    auto inputTooltip = tooltipClient.getTooltip();
+    String outputTooltip;
+    // Empty tooltip : easy, we just replace it by the shortcut description
+    if (inputTooltip.isEmpty())
+        outputTooltip = shortcutDescription;
+    // non-empty.... We have to check for a '.' in the last letters
+    else
+    {
+        // pré-traitement : ajout de parenthèse ou crochets
+        shortcutDescription = "  [ " + shortcutDescription + " ]";
+        // ajout ensuite. On aura 3 espaces au total
+        if (inputTooltip.getLastCharacter() == '.')
+            outputTooltip = inputTooltip + " " + shortcutDescription;
+        else if (inputTooltip.getLastCharacters(2) == ". ")
+            outputTooltip = inputTooltip + shortcutDescription;
+        else
+            outputTooltip = inputTooltip + ". " + shortcutDescription;
+    }
+    
+    // application at the end
+    tooltipClient.setTooltip(outputTooltip);
+}
+
 

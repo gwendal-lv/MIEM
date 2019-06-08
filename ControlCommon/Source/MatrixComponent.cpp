@@ -191,7 +191,7 @@ void MatrixComponent::sliderValueChanged(Slider* slider)
         // Dé-normalisation de la valeur
         // = "reverse interpolation"
         double reverseInterpolatedValue = interpolationCurvesCopy[sliderId].ReverseInterpolateValue(slider->getValue());
-        std::cout << "reverse interpolated value = " << reverseInterpolatedValue << std::endl;
+        //std::cout << "reverse interpolated value = " << reverseInterpolatedValue << std::endl;
         rawDenseMatrix[idx(sliderId, 0)] = reverseInterpolatedValue;
         
         // Data transmission to the grandparent (and the listeners)

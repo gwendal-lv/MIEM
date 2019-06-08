@@ -99,5 +99,9 @@ namespace Miam {
         static juce::String GetCommandShiftKeyDescription(int keyCode);
         /// \brief Return a description of a key. (normal or action)
         static juce::String GetKeyDescription(int keyCode);
+        
+        /// \brief Adds a shortcut description to the tooltip attribute of an existing
+        /// component. Manages the cases of previous tooltip/no-tooltip.
+        static void AddShortcutToTooltip(SettableTooltipClient& tooltipClient, String shortcutDescription);
     };
 }
