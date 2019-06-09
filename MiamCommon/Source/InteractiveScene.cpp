@@ -36,7 +36,8 @@ excitersBehavior(excitersBehavior_)
     name = "Default Scene";
     
     // no random colour -> black group
-    backgroundGroup = std::make_shared<AreasGroup>(false);
+    backgroundGroup = std::make_shared<AreasGroup>((int)AreasGroup::SpecialIds::Background, false);
+    blockingGroup = std::make_shared<AreasGroup>((int)AreasGroup::SpecialIds::Blocking, false);
     
 #ifdef __MIEM_VBO
     this->startTimerHz(24);
@@ -77,7 +78,13 @@ std::shared_ptr<IInteractiveArea> InteractiveScene::GetInteractiveArea(size_t i)
 {
     return areas[i];
 }
-
+SceneConstrainer::ConstraintType InteractiveScene::GetExcitersConstraint()
+{
+    if (auto canvasPtr = canvasManager.lock())
+        return canvasPtr->GetGlobalExcitersConstraint();
+    else
+        return SceneConstrainer::ConstraintType::None;
+}
 std::shared_ptr<MultiAreaEvent> InteractiveScene::setSelectedExciter(std::shared_ptr<Exciter> exciterToSelect)
 {
     auto areaE = std::make_shared<MultiAreaEvent>();
@@ -446,7 +453,7 @@ std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseDown(const MouseEve
                     // Tracking for constrained applications (__MIEM_EXPERIMENTS)
                     beginTouchConstraint(mouseE,
                                          canvasComponent->getWidth(), canvasComponent->getHeight(),
-                                         currentExciters[i]->GetCenterInPixels(),
+                                         currentExciters[i],
                                          name);
                     
                     // Le dernier excitateur choisi devient l'excitateur sélectionné !
@@ -456,7 +463,7 @@ std::shared_ptr<GraphicEvent> InteractiveScene::OnCanvasMouseDown(const MouseEve
                 }
             }
             
-            // Si rien n'a été sélectionné à cet endroit : dé-sélecion de l'excitateur
+            // Si rien n'a été sélectionné à cet endroit : dé-sélection de l'excitateur
             if (eventType == AreaEventType::NothingHappened)
                 graphicE = setSelectedExciter(nullptr);
             
@@ -610,6 +617,25 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::RecomputeAreaExciterInteractio
 // = = = = = = = = = = Pre-Computation of Interaction Data = = = = = = = = = =
 
 
+std::shared_ptr<AreasGroup> InteractiveScene::GetGroupFromPreComputedImage(int curX, int curY, int curW, int curH)
+{
+    // If Rescale not necessary
+    if (((size_t)curW == groupsImgW) && ((size_t)curH == groupsImgH))
+    {
+        return groupsImage[ ((size_t)curY) * groupsImgW + ((size_t)curX) ]->shared_from_this();
+    }
+    // else, we must compute an approximation of the group
+    else
+    {
+        return blockingGroup;
+        // -> async trigger of the computation in a separate thread ?
+        // -> async trigger of the computation in a separate thread ?
+        // -> async trigger of the computation in a separate thread ?
+        // -> async trigger of the computation in a separate thread ?
+        // -> async trigger of the computation in a separate thread ?
+    }
+}
+
 void InteractiveScene::PreComputeInteractionData()
 {
     if (auto canvasLocked = canvasManager.lock())
@@ -618,8 +644,8 @@ void InteractiveScene::PreComputeInteractionData()
     auto startTime = std::chrono::steady_clock::now();
     std::cout << "[InteractiveScene.cpp] Starting Pre-Computation of interaction data..." << std::endl;
     
-    const size_t canvasW = canvasComponent->getWidth();
-    const size_t canvasH = canvasComponent->getHeight();
+    groupsImgW = canvasComponent->getWidth();
+    groupsImgH = canvasComponent->getHeight();
     
     // Réinitialisation des groupes
     areasGroups.clear();
@@ -627,12 +653,12 @@ void InteractiveScene::PreComputeInteractionData()
     // Réinit à l'intérieur des aires -> nécessaire ? Va être fait + tard....
     
     // Initialisation : mise à zéro du tableau des "couleurs" (en réalité : pointeurs)
-    std::vector<AreasGroup*> groupsImage;
+    groupsImage.clear();
     // CONVENTION : axe y vers le bas, indice i (numéro de ligne de matrice)
     // axe x vers la droite, indice j (numéro de colonne de matrice)
     // Dans cette image/tableau, le groupe BACK GROUP est différent du groupe NULLPTR
     // -> important pour l'algo récursif
-    groupsImage.resize(canvasW * canvasH, nullptr);
+    groupsImage.resize(groupsImgW * groupsImgH, nullptr);
     // Sauvegarde d'une liste des points en attente de propagation
     std::vector<std::pair<size_t, size_t>> neighboursToPropagate;
     neighboursToPropagate.reserve(3840 * 2160); // 4K propagation
@@ -642,23 +668,24 @@ void InteractiveScene::PreComputeInteractionData()
     // En réalité, le parcours ne pas régulier car chaque pixel dans une zone va déclencher
     // une propagation récursive à toute la zone.
     // -> cette boucle ne stocke rien dans les aires (elle ne fait que détecter leur présence)
-    for (size_t i=0 ; i<canvasH ; i++)
+    for (size_t i=0 ; i<groupsImgH ; i++)
     {
-        for (size_t j=0 ; j<canvasW ; j++)
+        for (size_t j=0 ; j<groupsImgW ; j++)
         {
             // On ne fait qqchose que si le pixel n'a pas encore de groupe
-            if (groupsImage[i*canvasW + j] == nullptr)
+            if (groupsImage[i*groupsImgW + j] == nullptr)
             {
                 // Si collision avec une aire : on déclenche une nouvelle propagation de groupe
                 if (isAnyAreaOnPixel(i, j))
                 {
                     // Init du nouveau groupe, et de son 1ier pixel
-                    areasGroups.push_back(std::make_shared<AreasGroup>());
+                    int nextGroupIndex = (int) areasGroups.size();
+                    areasGroups.push_back(std::make_shared<AreasGroup>(nextGroupIndex));
                     neighboursToPropagate.clear();
-                    groupsImage[i*canvasW + j] = areasGroups.back().get();
+                    groupsImage[i*groupsImgW + j] = areasGroups.back().get();
                     // Propagation : init
                     auto lastNeighbours = propagateAreaGroup(groupsImage, areasGroups.back().get(),
-                                       i, canvasH, j, canvasW);
+                                       i, j);
                     neighboursToPropagate.insert(neighboursToPropagate.end(),
                                                  lastNeighbours.begin(), lastNeighbours.end());
                     // Propagation : sorte de récurrence, on continue tant que la liste n'est pas
@@ -673,8 +700,7 @@ void InteractiveScene::PreComputeInteractionData()
                         neighboursToPropagate.pop_back();
                         // 2 - récupération de ses résultats
                         lastNeighbours = propagateAreaGroup(groupsImage, areasGroups.back().get(),
-                                                            lastIJ.first, canvasH,
-                                                            lastIJ.second, canvasW);
+                                                            lastIJ.first, lastIJ.second);
                         // 3 - ajout de son résultat de propagation à la liste
                         neighboursToPropagate.insert(neighboursToPropagate.end(),
                                                      lastNeighbours.begin(), lastNeighbours.end());
@@ -682,7 +708,7 @@ void InteractiveScene::PreComputeInteractionData()
                 }
                 // Sinon c'est le groupe par défaut, BACK
                 else
-                    groupsImage[i*canvasW + j] = backgroundGroup.get();
+                    groupsImage[i*groupsImgW + j] = backgroundGroup.get();
             }
         }
     }
@@ -691,19 +717,24 @@ void InteractiveScene::PreComputeInteractionData()
     // qui est au niveau de son centre
     for (size_t k = 0 ; (k<areas.size()) ; k++)
     {
-        //areas[k]->getCenterInPixels();
+        auto centerInPixels = areas[k]->GetCenterPosition();
+        size_t row = (size_t) std::round(centerInPixels.get<1>());
+        size_t col = (size_t) std::round(centerInPixels.get<0>());
+        // The shared pointer was created when starting the propagation
+        auto groupSharedPtr = groupsImage[row*groupsImgW + col]->shared_from_this();
+        areas[k]->SetAreasGroup(groupSharedPtr);
     }
     
 #ifdef __MIEM_DISPLAY_SCENE_PRE_COMPUTATION
     // Construction + Affichage de l'image des groupes dans un fichier .png temporaire
-    Image groupsColourImage(Image::PixelFormat::ARGB, (int)canvasW, (int)canvasH, false);
-    for (size_t i=0 ; i<canvasH ; i++)
+    Image groupsColourImage(Image::PixelFormat::ARGB, (int)groupsImgW, (int)groupsImgH, false);
+    for (size_t i=0 ; i<groupsImgH ; i++)
     {
-        for (size_t j=0 ; j<canvasW ; j++)
+        for (size_t j=0 ; j<groupsImgW ; j++)
         {
-            if (groupsImage[i*canvasW+j] != nullptr)
+            if (groupsImage[i*groupsImgW+j] != nullptr)
                 groupsColourImage.setPixelAt((int)j, (int)i,
-                                             groupsImage[i*canvasW+j]->GetColour());
+                                             groupsImage[i*groupsImgW+j]->GetColour());
             else
                 groupsColourImage.setPixelAt((int)j, (int)i,
                                              Colours::black);
@@ -729,44 +760,43 @@ void InteractiveScene::PreComputeInteractionData()
 
 std::vector<std::pair<size_t, size_t>>
 InteractiveScene::propagateAreaGroup(std::vector<AreasGroup*>& groupsImage,
-                        AreasGroup* groupToPropagate,
-                        size_t i0, size_t canvasH, size_t j0, size_t canvasW)
+                        AreasGroup* groupToPropagate, size_t i0, size_t j0)
 {
     const bool prevRowExists = (i0 > 0);
     const bool prevColExists = (j0 > 0);
-    const bool nextRowExists = (i0 < (canvasH - 1));
-    const bool nextColExists = (j0 < (canvasW - 1));
+    const bool nextRowExists = (i0 < (groupsImgH - 1));
+    const bool nextColExists = (j0 < (groupsImgW - 1));
     std::vector<std::pair<size_t, size_t>> neighbourGroupPixels;
     // 8 potential pixels to propagate the group to.
     // If none of the 8 pixels needs to propagate, the propagation stops here.
     if (prevRowExists) // top pixels
     {
-        if (tryPropagateToPixel(groupsImage, groupToPropagate, i0-1, canvasW, j0  ))
-            neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0-1,    j0));
+        if (tryPropagateToPixel(groupsImage, groupToPropagate, i0-1,       j0  ))
+            neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0-1, j0));
         if (prevColExists)
-            if (tryPropagateToPixel(groupsImage, groupToPropagate, i0-1, canvasW, j0-1))
-                neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0-1,    j0-1));
+            if (tryPropagateToPixel(groupsImage, groupToPropagate, i0-1,       j0-1))
+                neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0-1, j0-1));
         if (nextColExists)
-            if (tryPropagateToPixel(groupsImage, groupToPropagate, i0-1, canvasW, j0+1))
-                neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0-1,    j0+1));
+            if (tryPropagateToPixel(groupsImage, groupToPropagate, i0-1,       j0+1))
+                neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0-1, j0+1));
     }
     if (nextRowExists) // bottom pixels
     {
-        if (tryPropagateToPixel(groupsImage, groupToPropagate, i0+1, canvasW, j0  ))
-            neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0+1,    j0));
+        if (tryPropagateToPixel(groupsImage, groupToPropagate, i0+1,       j0  ))
+            neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0+1, j0));
         if (prevColExists)
-            if (tryPropagateToPixel(groupsImage, groupToPropagate, i0+1, canvasW, j0-1))
-                neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0+1,    j0-1));
+            if (tryPropagateToPixel(groupsImage, groupToPropagate, i0+1,       j0-1))
+                neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0+1, j0-1));
         if (nextColExists)
-            if (tryPropagateToPixel(groupsImage, groupToPropagate, i0+1, canvasW, j0+1))
-                neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0+1,    j0+1));
+            if (tryPropagateToPixel(groupsImage, groupToPropagate, i0+1,       j0+1))
+                neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0+1, j0+1));
     }
     if (prevColExists) // left pixel
-        if (tryPropagateToPixel(groupsImage, groupToPropagate, i0  , canvasW, j0-1))
-            neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0  ,    j0-1));
+        if (tryPropagateToPixel(groupsImage, groupToPropagate, i0,       j0-1))
+            neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0, j0-1));
     if (nextColExists) // right pixel
-        if (tryPropagateToPixel(groupsImage, groupToPropagate, i0  , canvasW, j0+1))
-            neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0  ,    j0+1));
+        if (tryPropagateToPixel(groupsImage, groupToPropagate, i0  ,     j0+1))
+            neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0, j0+1));
     
     return neighbourGroupPixels;
 }

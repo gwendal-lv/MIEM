@@ -301,6 +301,13 @@ SceneEditionComponent::SceneEditionComponent ()
     showInfoTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     showInfoTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
+    excitersConstraintButton.reset (new ToggleButton ("Exciters Constraint button"));
+    addAndMakeVisible (excitersConstraintButton.get());
+    excitersConstraintButton->setTooltip (TRANS("Free exciters"));
+    excitersConstraintButton->setButtonText (TRANS("No-constraint edition"));
+    excitersConstraintButton->addListener (this);
+    excitersConstraintButton->setColour (ToggleButton::textColourId, Colours::black);
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -327,6 +334,8 @@ SceneEditionComponent::SceneEditionComponent ()
     // Tooltips for shortcuts
     // all work with Cmd (Ctrl) at the moment
     excitersEditionButton->setTooltip(TextUtils::GetCommandKeyDescription(editExcitersCmdKey));
+    TextUtils::AddShortcutToTooltip(*excitersConstraintButton.get(),
+                                    TextUtils::GetCommandKeyDescription(freeExcitersMoveCmdKey));
     copyTextButton->setTooltip(TextUtils::GetCommandKeyDescription(copyCmdKey));
     pasteTextButton->setTooltip(TextUtils::GetCommandKeyDescription(pasteCmdKey));
     addAreaTextButton->setTooltip(TextUtils::GetCommandKeyDescription(newAreaCmdKey));
@@ -381,6 +390,7 @@ SceneEditionComponent::~SceneEditionComponent()
     sceneNameTextEditor = nullptr;
     excitersEditionButton = nullptr;
     showInfoTextButton = nullptr;
+    excitersConstraintButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -422,8 +432,8 @@ void SceneEditionComponent::resized()
 
     //[/UserPreResize]
 
-    infoGroupComponent->setBounds (8, (((8 + 128 - -8) + 168 - -8) + 80 - -8) + 88 - -8, 192, 160);
-    infoTextEditor->setBounds (16, ((((8 + 128 - -8) + 168 - -8) + 80 - -8) + 88 - -8) + 16, 176, 104);
+    infoGroupComponent->setBounds (8, (((8 + 128 - -8) + 168 - -8) + 80 - -8) + 112 - -8, 192, 160);
+    infoTextEditor->setBounds (16, ((((8 + 128 - -8) + 168 - -8) + 80 - -8) + 112 - -8) + 16, 176, 104);
     areaGroupComponent->setBounds (8, 8 + 128 - -8, 192, 168);
     controlGroupComponent->setBounds (8, (8 + 128 - -8) + 168 - -8, 192, 80);
     addPointTextButton->setBounds (16, (8 + 128 - -8) + 136, 88, 24);
@@ -443,12 +453,13 @@ void SceneEditionComponent::resized()
     sceneLeftTextButton->setBounds (16, 8 + 96, 88, 24);
     sceneRightTextButton->setBounds (104, 8 + 96, 88, 24);
     canvasInfoLabel->setBounds (16, 8 + 48, 176, 8);
-    initialStateGroupComponent->setBounds (8, ((8 + 128 - -8) + 168 - -8) + 80 - -8, 192, 88);
-    addExciterTextButton->setBounds (16, (((8 + 128 - -8) + 168 - -8) + 80 - -8) + 56, 88, 24);
-    deleteExciterTextButton->setBounds (104, (((8 + 128 - -8) + 168 - -8) + 80 - -8) + 56, 88, 24);
+    initialStateGroupComponent->setBounds (8, ((8 + 128 - -8) + 168 - -8) + 80 - -8, 192, 112);
+    addExciterTextButton->setBounds (16, (((8 + 128 - -8) + 168 - -8) + 80 - -8) + 80, 88, 24);
+    deleteExciterTextButton->setBounds (104, (((8 + 128 - -8) + 168 - -8) + 80 - -8) + 80, 88, 24);
     sceneNameLabel->setBounds (15, 8 + 63, 56, 24);
     excitersEditionButton->setBounds (16, (((8 + 128 - -8) + 168 - -8) + 80 - -8) + 20, 176, 24);
-    showInfoTextButton->setBounds (16, ((((8 + 128 - -8) + 168 - -8) + 80 - -8) + 88 - -8) + 160 - 8 - 20, 176, 20);
+    showInfoTextButton->setBounds (16, ((((8 + 128 - -8) + 168 - -8) + 80 - -8) + 112 - -8) + 160 - 8 - 20, 176, 20);
+    excitersConstraintButton->setBounds (16, (((8 + 128 - -8) + 168 - -8) + 80 - -8) + 48, 176, 24);
     //[UserResized] Add your own custom resize handling here..
 
     // Backup of Projucer's sizes
@@ -650,6 +661,12 @@ void SceneEditionComponent::buttonClicked (Button* buttonThatWasClicked)
         resized();
         //[/UserButtonCode_showInfoTextButton]
     }
+    else if (buttonThatWasClicked == excitersConstraintButton.get())
+    {
+        //[UserButtonCode_excitersConstraintButton] -- add your button handler code here..
+        graphicSessionManager->BypassGlobalExcitersConstraint(excitersConstraintButton->getToggleState());
+        //[/UserButtonCode_excitersConstraintButton]
+    }
 
     //[UserbuttonClicked_Post]
     //[/UserbuttonClicked_Post]
@@ -732,11 +749,15 @@ bool SceneEditionComponent::keyPressed (const KeyPress& key)
                 keyWasUsed = false;
         }
         // Le raccourci Cmd E (ou ctrl E sous linux/windows) déclenche Edit Exciter,
-        // si ce bouton était bien affiché
+        // si ce bouton était bien affiché. Idem pour Cmd F : Free exciter move
         else if ( (key.getKeyCode() == editExcitersCmdKey)
             && ( !isInitialStateGroupHidden )
             && excitersEditionButton->isEnabled() && excitersEditionButton->isVisible())
             excitersEditionButton->triggerClick();
+        else if ( (key.getKeyCode() == freeExcitersMoveCmdKey)
+                 && ( !isInitialStateGroupHidden )
+                 && excitersConstraintButton->isEnabled() && excitersConstraintButton->isVisible())
+            excitersConstraintButton->triggerClick();
         // Cmd C : Copier
         else if ( (key.getKeyCode() == copyCmdKey)
                  && (! isAreaGroupHidden)
@@ -1005,6 +1026,7 @@ void SceneEditionComponent::SetInitialStateGroupHidden(bool _isHidden)
     addExciterTextButton->setVisible(!_isHidden);
     deleteExciterTextButton->setVisible(!_isHidden);
     excitersEditionButton->setVisible(!_isHidden);
+    excitersConstraintButton->setVisible(!_isHidden);
 }
 void SceneEditionComponent::SetInitialStateGroupReduced(bool _isReduced)
 {
@@ -1012,6 +1034,7 @@ void SceneEditionComponent::SetInitialStateGroupReduced(bool _isReduced)
 
     addExciterTextButton->setVisible(!_isReduced);
     deleteExciterTextButton->setVisible(!_isReduced);
+    excitersConstraintButton->setVisible(!_isReduced);
 
     // si on est réduit, on décoche le mode correspondant...
     if (_isReduced)
@@ -1021,6 +1044,13 @@ void SceneEditionComponent::SetInitialStateGroupReduced(bool _isReduced)
 void SceneEditionComponent::SetDeleteExciterButtonEnabled(bool _isEnabled)
 {
     deleteExciterTextButton->setEnabled(_isEnabled);
+}
+void SceneEditionComponent::SetExciterConstraintButtonEnabled(bool _isEnabled)
+{
+    excitersConstraintButton->setEnabled(_isEnabled);
+    // Default behavior : if disabled, stays checked
+    if (! _isEnabled)
+        excitersConstraintButton->setToggleState(true, NotificationType::dontSendNotification);
 }
 // - - - - - Info group - - - - -
 void SceneEditionComponent::SetInfoGroupReduced(bool _isReduced)
@@ -1121,6 +1151,7 @@ void SceneEditionComponent::initialStateGroupTranslateY(int dY)
     componentTranslateY(addExciterTextButton.get(), dY);
     componentTranslateY(deleteExciterTextButton.get(), dY);
     componentTranslateY(excitersEditionButton.get(), dY);
+    componentTranslateY(excitersConstraintButton.get(), dY);
 
     initialStateGroupCurrentDy += dY; // accumulation du dY
 }
@@ -1244,14 +1275,14 @@ BEGIN_JUCER_METADATA
          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="1" justification="36" typefaceStyle="Italic"/>
   <GROUPCOMPONENT name="Initial state group component" id="cc3bdf8d18c3f428" memberName="initialStateGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="8 -8R 192 88" posRelativeY="90b16e3024c520fd"
+                  virtualName="" explicitFocusOrder="0" pos="8 -8R 192 112" posRelativeY="90b16e3024c520fd"
                   outlinecol="ff454545" textcol="ff000000" title="Scene initial state"/>
   <TEXTBUTTON name="Add Area text button" id="b6820308eb03f341" memberName="addExciterTextButton"
-              virtualName="" explicitFocusOrder="0" pos="16 56 88 24" posRelativeY="cc3bdf8d18c3f428"
+              virtualName="" explicitFocusOrder="0" pos="16 80 88 24" posRelativeY="cc3bdf8d18c3f428"
               bgColOff="fff0f0f0" bgColOn="ffffffff" textCol="ff000000" buttonText="Add Exciter"
               connectedEdges="2" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Delete Exciter text button" id="11692d0648a2e8a4" memberName="deleteExciterTextButton"
-              virtualName="" explicitFocusOrder="0" pos="104 56 88 24" posRelativeY="cc3bdf8d18c3f428"
+              virtualName="" explicitFocusOrder="0" pos="104 80 88 24" posRelativeY="cc3bdf8d18c3f428"
               bgColOff="fff0f0f0" bgColOn="ffffffff" textCol="ff000000" buttonText="Delete"
               connectedEdges="1" needsCallback="1" radioGroupId="0"/>
   <LABEL name="Scene Name Label" id="fbdd06d6ea5f9471" memberName="sceneNameLabel"
@@ -1272,6 +1303,10 @@ BEGIN_JUCER_METADATA
               virtualName="" explicitFocusOrder="0" pos="16 8Rr 176 20" posRelativeY="97c294b92cbc0a85"
               bgColOff="fff0f0f0" bgColOn="ffffffff" textCol="ff000000" buttonText="[+]    Show context information      "
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
+  <TOGGLEBUTTON name="Exciters Constraint button" id="2223a0663bb90743" memberName="excitersConstraintButton"
+                virtualName="" explicitFocusOrder="0" pos="16 48 176 24" posRelativeY="cc3bdf8d18c3f428"
+                tooltip="Free exciters" txtcol="ff000000" buttonText="No-constraint edition"
+                connectedEdges="0" needsCallback="1" radioGroupId="0" state="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

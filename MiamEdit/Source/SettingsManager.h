@@ -105,6 +105,7 @@ namespace Miam {
         
         // - - - - - Callbacks from View, concerning Presenter - - - - -
         void OnAllowKeyboardEdition(bool allow);
+        void OnEnableConstraints(bool enable);
         
         // - - - - - - Property tree - - - - - -
         // - - - - - - For XML import/export, or Model data update - - - - - -

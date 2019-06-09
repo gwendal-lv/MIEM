@@ -89,6 +89,9 @@ namespace Miam {
         /// Throws an exception is the area cannot be casted to Miam::ControlArea
         std::shared_ptr<ControlArea> GetSelectedArea();
         
+        // override from IGraphicSessionManager
+        virtual void SetGlobalExcitersConstraint(SceneConstrainer::ConstraintType constraint) override;
+        
         
         
         // ------ canvas managing ------

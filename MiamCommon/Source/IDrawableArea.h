@@ -122,6 +122,9 @@ namespace Miam
 		//virtual Matrix3D<float> GetModelMatrix() = 0;
         
         // =============== SETTERS & GETTERS ===============
+        public :
+        /// \brief Returns the position (in pixels) of the center of the shape
+        virtual bpt GetCenterPosition() const = 0; // public copy
         protected :
         // ----- Internal reference-based getters (to solve inheritance issues) -----
         virtual bpt& getCenterInPixels() = 0;

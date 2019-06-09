@@ -67,16 +67,19 @@ namespace Miam
             /// \brief Constructeur avec une simple aire graphique déjà existante, le reste à zéro
             AreaInteractingData(std::shared_ptr<IInteractiveArea>& area_)
             : Area(area_), InteractionWeight(0.0) {}
+            
             /// \brief Lien avec des aires graphiques
-            ///
-            /// Le + optimisé serait une liste, mais vu le nombre d'éléments stockés (10aine au grand max)
-            /// on s'en fout complètement...
             std::weak_ptr<IInteractiveArea> Area;
             /// \brief Le poids d'interaction d'une aire vis-à-vis de cet excitateur en particulier
             double InteractionWeight;
             /// \brief Les excitations pour chaque aire (dont la somme vaut 1.0)
             Excitement ExcitementAmount;
         } AreaInteractingData;
+        
+        /// \brief Liste (vecteur...) des aires en interaction actuellement avec l'excitateur
+        ///
+        /// Le + optimisé serait une liste, mais vu le nombre d'éléments stockés (10aine au grand max)
+        /// ça ira.
         std::vector< AreaInteractingData > areasInteractingWith;
         
         double const deltaBrightnessOffset = 0.7;
@@ -124,6 +127,9 @@ namespace Miam
         
         public :
         void SetInterpolationType(InterpolationType type) {interpolationType = type;}
+        
+        
+        
         
         
         // = = = = = = = = = = METHODS = = = = = = = = = =
@@ -213,6 +219,14 @@ namespace Miam
         /// weight).
         ///
         void NotifyNewExcitationToAreas();
+        
+        
+        /// \brief Tries to find, then returns the index (in the scene) of the group of areas
+        /// that this exciter is exciting.
+        ///
+        /// \return the Index in scene, or -1 is no group could be found
+        int FindAreasGroupIndex();
+        
         
         /// by the EditableEllipse::Paint() method
         public :

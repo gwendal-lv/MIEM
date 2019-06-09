@@ -17,7 +17,9 @@ using namespace Miam;
 // static rand gen
 std::mt19937 AreasGroup::randomGenerator = std::mt19937();
 
-AreasGroup::AreasGroup(bool randomColour)
+AreasGroup::AreasGroup(int _indexInScene, bool randomColour)
+:
+indexInScene(_indexInScene)
 {
     if (randomColour)
     {

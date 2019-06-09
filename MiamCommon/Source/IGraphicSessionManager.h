@@ -26,6 +26,8 @@
 
 #include "InterpolationTypes.h"
 
+#include "SceneConstrainer.h"
+
 #include "boost/property_tree/ptree.hpp"
 #include "boost/property_tree/xml_parser.hpp"
 namespace bptree = boost::property_tree;
@@ -75,6 +77,10 @@ namespace Miam
         bool mouseResizingCanvas = false;
         
         
+        /// \brief Global Type of constraints on exciters movements
+        SceneConstrainer::ConstraintType globalExcitersConstraint =
+        SceneConstrainer::ConstraintType::Bypass;
+        bool bypassGlobalExcitersConstraint = false;
         
         
         
@@ -93,6 +99,13 @@ namespace Miam
         
         InterpolationType GetInterpolatorType() const;
         
+        SceneConstrainer::ConstraintType GetGlobalExcitersConstraint() const;
+        virtual void SetGlobalExcitersConstraint(SceneConstrainer::ConstraintType constraint)
+        { globalExcitersConstraint = constraint; }
+        /// \brief All constraints should be bypassed when editing the exciters
+        /// for example (to be able to move them from a group to another)
+        void BypassGlobalExcitersConstraint(bool shouldBeBypassed)
+        { bypassGlobalExcitersConstraint = shouldBeBypassed; }
         
         
         // = = = = = = = = = = METHODS = = = = = = = = = =

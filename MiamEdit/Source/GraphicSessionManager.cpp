@@ -107,6 +107,19 @@ std::shared_ptr<ControlArea> GraphicSessionManager::GetSelectedArea()
     else
         return nullptr;
 }
+void GraphicSessionManager::SetGlobalExcitersConstraint(SceneConstrainer::ConstraintType constraint)
+{
+    // parent call
+    this->GraphicControlSessionManager::SetGlobalExcitersConstraint(constraint);
+    // then added behavior
+    
+    // No undefined constraint should be transmitted at this point !
+    assert(constraint != SceneConstrainer::ConstraintType::None);
+    
+    sceneEditionComponent->SetExciterConstraintButtonEnabled(
+        (constraint != SceneConstrainer::ConstraintType::Bypass)
+        && (constraint != SceneConstrainer::ConstraintType::None));
+}
 
 
 

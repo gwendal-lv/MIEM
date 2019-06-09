@@ -59,6 +59,13 @@ InterpolationType IGraphicSessionManager::GetInterpolatorType() const
 {
     return presenter->GetInterpolatorType();
 }
+SceneConstrainer::ConstraintType IGraphicSessionManager::GetGlobalExcitersConstraint() const
+{
+    if (! bypassGlobalExcitersConstraint)
+        return globalExcitersConstraint;
+    else
+        return SceneConstrainer::ConstraintType::Bypass;
+}
 
 // = = = = = = = = = = METHODS = = = = = = = = = =
 

@@ -230,7 +230,10 @@ InterpolationType MultiSceneCanvasInteractor::GetInterpolatorType() const
 {
     return graphicSessionManager->GetInterpolatorType();
 }
-
+SceneConstrainer::ConstraintType MultiSceneCanvasInteractor::GetGlobalExcitersConstraint()
+{
+    return graphicSessionManager->GetGlobalExcitersConstraint();
+}
 void MultiSceneCanvasInteractor::DisplayInfo(String info, int priority)
 {
     graphicSessionManager->DisplayInfo(info, priority);

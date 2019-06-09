@@ -179,7 +179,7 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
     constraintExcitersToggleButton.reset (new ToggleButton ("Constraint Exciters toggle button"));
     addAndMakeVisible (constraintExcitersToggleButton.get());
     constraintExcitersToggleButton->setTooltip (TRANS("When checked, exciters are never allowed to leave their initial group of shapes - they cannot go to the black background."));
-    constraintExcitersToggleButton->setButtonText (TRANS("Constraint exciters positions inside groups of shapes"));
+    constraintExcitersToggleButton->setButtonText (TRANS("Prevent exciters from going outside groups of shapes"));
     constraintExcitersToggleButton->addListener (this);
     constraintExcitersToggleButton->setColour (ToggleButton::textColourId, Colours::black);
 
@@ -341,6 +341,7 @@ void HardwareConfigurationComponent::buttonClicked (Button* buttonThatWasClicked
     else if (buttonThatWasClicked == constraintExcitersToggleButton.get())
     {
         //[UserButtonCode_constraintExcitersToggleButton] -- add your button handler code here..
+        settingsManager->OnEnableConstraints(constraintExcitersToggleButton->getToggleState());
         //[/UserButtonCode_constraintExcitersToggleButton]
     }
 
@@ -577,8 +578,8 @@ BEGIN_JUCER_METADATA
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
          fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="34"/>
   <HYPERLINKBUTTON name="Info hyperlink button" id="fa3a8802c3b7c7f0" memberName="infoHyperlinkButton"
-                   virtualName="" explicitFocusOrder="0" pos="0Cc 32R 16M 24" tooltip="http://miem.laras.be"
-                   textCol="ffffffff" buttonText="To get help and more information, please visit http://miem.laras.be"
+                   virtualName="" explicitFocusOrder="0" pos="0.5Cc 32R 16M 24"
+                   tooltip="http://miem.laras.be" textCol="ffffffff" buttonText="To get help and more information, please visit http://miem.laras.be"
                    connectedEdges="0" needsCallback="0" radioGroupId="0" url="http://miem.laras.be"/>
   <TOGGLEBUTTON name="Enable Master Volume toggle button" id="b650c1c657fd4f2e"
                 memberName="enableMasterVolumeToggleButton" virtualName="" explicitFocusOrder="0"
@@ -590,7 +591,7 @@ BEGIN_JUCER_METADATA
                 memberName="constraintExcitersToggleButton" virtualName="" explicitFocusOrder="0"
                 pos="0Cc 360 400 24" posRelativeX="dfbb24a51fa3d6c0" posRelativeW="dfbb24a51fa3d6c0"
                 tooltip="When checked, exciters are never allowed to leave their initial group of shapes - they cannot go to the black background."
-                txtcol="ff000000" buttonText="Constraint exciters positions inside groups of shapes"
+                txtcol="ff000000" buttonText="Prevent exciters from going outside groups of shapes"
                 connectedEdges="0" needsCallback="1" radioGroupId="0" state="0"/>
 </JUCER_COMPONENT>
 

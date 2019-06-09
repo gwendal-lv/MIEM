@@ -172,6 +172,8 @@ namespace Miam {
         
         InterpolationType GetInterpolatorType() const;
         
+        SceneConstrainer::ConstraintType GetGlobalExcitersConstraint();
+        
         void DisplayInfo(String info, int priority = 0);
         
         

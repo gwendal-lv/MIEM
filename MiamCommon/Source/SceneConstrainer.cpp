@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    ExperimentsSceneConstrainer.cpp
+    SceneConstrainer.cpp
     Created: 13 Mar 2019 10:11:57pm
     Author:  Gwendal Le Vaillant
 
@@ -12,29 +12,47 @@
 
 #include "boost/lexical_cast.hpp"
 
-#include "ExperimentsSceneConstrainer.h"
+#include "SceneConstrainer.h"
+
 
 #include "MiamMath.h"
+
+// The full Exciter class is now required (for groups, etc...)
+#include "Exciter.h"
 
 
 using namespace Miam;
 
 
 
-void ExperimentsSceneConstrainer::beginTouchConstraint(const MouseEvent& e,
+void SceneConstrainer::beginTouchConstraint(const MouseEvent& e,
                                                        int canvasWidth, int canvasHeight,
-                                                       bpt exciterCenter,
+                                                       std::shared_ptr<Exciter>& exciter,
                                                        std::string sceneName)
 {
-#ifndef __MIEM_EXPERIMENTS
-	boost::ignore_unused(e);
+    bpt mouseEventBpt = bpt(e.position.getX(), e.position.getY());
+    ConstraintParams newConstraint(mouseEventBpt,
+                                   exciter->GetCenterInPixels(),
+                                   exciter->FindAreasGroupIndex());
+    
+#ifndef __MIEM_EXPERIMENTS // - - - - - MIEM Constraints (Play and Spat) - - - - -
+    boost::ignore_unused(sceneName);
 	boost::ignore_unused(canvasWidth);
 	boost::ignore_unused(canvasHeight);
-	boost::ignore_unused(exciterCenter);
-	boost::ignore_unused(sceneName);
+	
+    
+    newConstraint.Type = GetExcitersConstraint();
+    
+    std::cout << "[SceneConstrainer] Begin. Type = " << (int) newConstraint.Type << ((newConstraint.Type == ConstraintType::RemainInsideAreasGroups) ? (std::string(" group = ") + boost::lexical_cast<std::string>(newConstraint.AreasGroupIndex) ) : "" ) << std::endl;
+    
+    touchSourceToExperimentConstraint[e.source.getIndex()] = newConstraint;
+    
     return;
 
-#else
+    
+    
+    
+#else // - - - - - MIEM Experiments - - - - -
     int sceneId = -1;
     try {
         sceneId = boost::lexical_cast<int>(sceneName);
@@ -42,8 +60,6 @@ void ExperimentsSceneConstrainer::beginTouchConstraint(const MouseEvent& e,
     catch (boost::bad_lexical_cast& ) {
         assert(false); // scene names must be integers !
     }
-    bpt mouseEventBpt = bpt(e.position.getX(), e.position.getY());
-    ConstraintParams newConstraint(mouseEventBpt, exciterCenter); // default type == none
     
     // Expérience à 4 paramètres
 #ifdef __MIEM_EXPERIMENTS_4_PARAMETERS
@@ -84,20 +100,15 @@ void ExperimentsSceneConstrainer::beginTouchConstraint(const MouseEvent& e,
     
 #endif // __MIEM_EXPERIMENTS
 }
-void ExperimentsSceneConstrainer::endTouchConstraint(const MouseEvent& e)
+
+
+void SceneConstrainer::endTouchConstraint(const MouseEvent& e)
 {
-#ifndef __MIEM_EXPERIMENTS
-	boost::ignore_unused(e);
-    return;
-    
-#else
     int touchIndex = e.source.getIndex();
     auto mapIt = touchSourceToExperimentConstraint.find(touchIndex);
     // If not found in map : we don't do anything (constraint did not start)
     if (mapIt != touchSourceToExperimentConstraint.end())
         touchSourceToExperimentConstraint.erase(mapIt);
-    
-#endif // __MIEM_EXPERIMENTS
 }
 
 
@@ -105,18 +116,11 @@ void ExperimentsSceneConstrainer::endTouchConstraint(const MouseEvent& e)
 
 
 
-const MouseEvent& ExperimentsSceneConstrainer::constrainMouseEvent(const MouseEvent& e,
+const MouseEvent& SceneConstrainer::constrainMouseEvent(const MouseEvent& e,
                                                              int canvasWidth, int canvasHeight)
 {
-    // If NOT in experiment mode : pure bypass of the reference
-#ifndef __MIEM_EXPERIMENTS
-	boost::ignore_unused(e);
-	boost::ignore_unused(canvasWidth);
-	boost::ignore_unused(canvasHeight);
-    return e;
+    // [[[ Generic start code ]]]
     
-#else // defined __MIEM_EXPERIMENTS
-    // default behavior...
     Point<float> constrainedPosition = e.position;
     
     int touchIndex = e.source.getIndex();
@@ -124,14 +128,61 @@ const MouseEvent& ExperimentsSceneConstrainer::constrainMouseEvent(const MouseEv
     // If the touch is related to an area being moved
     if ((mapIt != touchSourceToExperimentConstraint.end()) && true)
     {
+    
+    
+    
+        
+         // - - - - - MIEM Constraints (Play and Spat) - - - - -
+        
+        // If NOT in experiment mode : we apply the constraint rule linked to the touch event
+#ifndef __MIEM_EXPERIMENTS
+        
+        auto& constraint = mapIt->second;
+        
+        if (constraint.Type == ConstraintType::RemainInsideAreasGroups)
+        {
+            // application de l'offset (pour se retrouver comme au centre de l'excitateur)
+            constrainedPosition -= Point<float>(constraint.InitialTouchOffset.get<0>(),
+                                                constraint.InitialTouchOffset.get<1>());
+            
+            // Vérification que le nouveau point est bien dans la même zone
+            // -> recherche optimisée via l'image enregistrée.... (remise à l'échelle)
+            // pour éviter un 2ème calcul de collision avec toutes les zones....
+            auto curPosAreaGroup =
+            GetGroupFromPreComputedImage((int) std::round(constrainedPosition.getX()),
+                                         (int) std::round(constrainedPosition.getY()),
+                                         canvasWidth, canvasHeight);
+            // Est-ce qu'on doit bloquer l'excitateur ?
+            if ( (curPosAreaGroup->GetIndexInScene() != constraint.AreasGroupIndex)
+                || (curPosAreaGroup->GetIndexInScene() == (int)AreasGroup::SpecialIds::Blocking) )
+            {
+                std::cout << "STOP mouvement" << std::endl;
+                constrainedPosition = constraint.LastValidCenterPosition;
+            }
+            // Sinon, on garde cet évènement comme la dernier valide
+            else
+                constraint.LastValidCenterPosition = constrainedPosition;
+            
+            // suppression de l'offset (retour au point touch réel), pour finir
+            constrainedPosition += Point<float>(constraint.InitialTouchOffset.get<0>(),
+                                                constraint.InitialTouchOffset.get<1>());
+        }
+        else
+        {} // no constraint : we do nothing at the moment... not even a check...
+        
+        
+        
+        
+        
+        // - - - - - MIEM Experiments - - - - -
+        
+#else // defined __MIEM_EXPERIMENTS
         auto& constraint = mapIt->second;
         
         // application de l'offset (pour se retrouver comme au centre de l'excitateur)
         constrainedPosition -= Point<float>(constraint.InitialTouchOffset.get<0>(),
                                             constraint.InitialTouchOffset.get<1>());
-                                                        
-                                                        
-        
+
 #ifdef __MIEM_EXPERIMENTS_4_PARAMETERS
         int minY, maxY, minX, maxX;
         // Central rectangle
@@ -179,12 +230,18 @@ const MouseEvent& ExperimentsSceneConstrainer::constrainMouseEvent(const MouseEv
                                                               minX, maxX),
                                            Math::Clamp<float>(constrainedPosition.getY(),
                                                               minY, maxY));
-#endif
-        
+#endif // end __MIEM_EXPERIMENTS_4_PARAMETERS
         
         // suppression de l'offset (retour au point réel), pour finir
         constrainedPosition += Point<float>(constraint.InitialTouchOffset.get<0>(),
                                             constraint.InitialTouchOffset.get<1>());
+#endif // defined __MIEM_EXPERIMENTS
+    
+        
+        
+    
+    
+    // [[[ Generic end code ]]]
     }
     
     // then, we copy everything but the position
@@ -198,6 +255,5 @@ const MouseEvent& ExperimentsSceneConstrainer::constrainMouseEvent(const MouseEv
                                                          e.mouseWasDraggedSinceMouseDown());
     // De-referencement of internal pointer (to cast to a reference)
     return *(constrainedMouseEvent.get());
-#endif // defined __MIEM_EXPERIMENTS
 }
 

@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    ExperimentsSceneConstrainer.h
+    SceneConstrainer.h
     Created: 13 Mar 2019 10:11:57pm
     Author:  Gwendal Le Vaillant
 
@@ -17,15 +17,22 @@
 
 #include "IDrawableArea.h" // bpt typedefs
 
+#include "AreasGroup.h"
+
+
 namespace Miam
 {
+    class Exciter;
+    class AreasGroup;
+    
     
     /// \brief Class which was initially supposed to be used only for scientific
     /// experiments of the MIEM touch interface, but it is finally used to implement
     /// "touch-safety" features (exciters that cannot go the black playground by
     /// accident, etc...)
-    class ExperimentsSceneConstrainer
+    class SceneConstrainer
     {
+        public :
         enum class ConstraintType
         {
             None = 0,
@@ -36,19 +43,27 @@ namespace Miam
             Params4_Fader3,
             Params4_Fader4,
             Params4_CentralInterpRectangle,
+            
+            // MIEM Play, MIEM Spat : exciters contraints dans des zones continues d'aires
+            Bypass, ///< No constraint will be actually applied
+            RemainInsideAreasGroups, ///< Once an exciter enters a group, it cannot leave it
         };
         
-        
+        private :
         class ConstraintParams {
             public :
             ConstraintType Type;
             bpt InitialTouchOffset; ///< Offset from the center of the exciter that was touched
+            Point<float> LastValidCenterPosition;
+            int AreasGroupIndex = -1;
             
             ConstraintParams()
             : Type(ConstraintType::None)
             {}
-            ConstraintParams(bpt touchInitialPosition, bpt exciterInitialCenter)
-            : Type(ConstraintType::None)
+            ConstraintParams(bpt touchInitialPosition, bpt exciterInitialCenter, int _areasGroupIndex)
+            : Type(ConstraintType::None),
+            LastValidCenterPosition(exciterInitialCenter.get<0>(), exciterInitialCenter.get<1>()),
+            AreasGroupIndex(_areasGroupIndex)
             {
                 InitialTouchOffset.set<0>(touchInitialPosition.get<0>() - exciterInitialCenter.get<0>());
                 InitialTouchOffset.set<1>(touchInitialPosition.get<1>() - exciterInitialCenter.get<1>());
@@ -73,8 +88,16 @@ namespace Miam
         
         
         
+        // ====================== Setters and Getters =====================
+        public :
+        virtual SceneConstrainer::ConstraintType GetExcitersConstraint() = 0;
+        virtual std::shared_ptr<AreasGroup>
+        GetGroupFromPreComputedImage(int curX, int curY, int curW, int curH)= 0;
+        
+        
         // ====================== METHODS =====================
         protected :
+        virtual ~SceneConstrainer() {}
         
         /// \brief Function that behaves as a bypass in "normal" mode, but actually
         /// constrains the movements of the exciters when compiled when
@@ -82,7 +105,7 @@ namespace Miam
         const MouseEvent& constrainMouseEvent(const MouseEvent& e, int canvasWidth, int canvasHeight);
         
         void beginTouchConstraint(const MouseEvent& e, int canvasWidth, int canvasHeight,
-                                  bpt exciterCenter,
+                                  std::shared_ptr<Exciter>& exciter,
                                   std::string sceneName);
         void endTouchConstraint(const MouseEvent& e);
         

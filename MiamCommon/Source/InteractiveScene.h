@@ -20,13 +20,12 @@
 
 #include "JuceHeader.h"
 
-#include "ExperimentsSceneConstrainer.h"
+#include "SceneConstrainer.h"
 
 #include "MultiAreaEvent.h"
 
 #include "IEditableArea.h"
 #include "Exciter.h" // also SteadyClock
-#include "AreasGroup.h"
 
 
 // Pre-declarations for pointers
@@ -50,7 +49,7 @@ namespace Miam
     /// However, the exciters (if enabled) can be moved with mouse/touch/pen events
     class InteractiveScene : public std::enable_shared_from_this<InteractiveScene>,
                              public Timer, // for exciter's animations
-                             protected ExperimentsSceneConstrainer
+                             protected SceneConstrainer
     {
         
         // ...Enums....
@@ -109,11 +108,22 @@ namespace Miam
         /// un excitateur, soit....
         std::map<int, std::shared_ptr<IEditableArea>> touchSourceToEditableArea;
         
+        
         /// \brief The groups of overlapping areas (not a list, because only a few groups
         /// are expected)
         std::vector<std::shared_ptr<AreasGroup>> areasGroups;
         /// \brief The background group always exist but does not contain any InteractiveArea.
         std::shared_ptr<AreasGroup> backgroundGroup;
+        /// \brief A special "blocking" group, to block exciters while the result
+        /// of computations is still needed
+        std::shared_ptr<AreasGroup> blockingGroup;
+        /// \brief The last version of the 2D image description the area group of each pixel
+        /// of the scene. Data might be outdated.
+        std::vector<AreasGroup*> groupsImage;
+        size_t groupsImgW = 0;
+        size_t groupsImgH = 0;
+        
+        
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
@@ -138,22 +148,19 @@ namespace Miam
         
         public :
         
-        
         // - - - - - Vraies aires interactives - - - - -
         
         size_t GetInteractiveAreasCount();
         std::shared_ptr<IInteractiveArea> GetInteractiveArea(size_t i);
         
         public :
+        virtual SceneConstrainer::ConstraintType GetExcitersConstraint() override;
+        
         std::shared_ptr<Exciter> GetSelectedExciter() const {return selectedExciter;}
         protected :
         std::shared_ptr<MultiAreaEvent> setSelectedExciter(std::shared_ptr<Exciter> exciterToSelect);
         
         public :
-        /* useless normally...
-        size_t GetExcitersCount() {return currentExciters.size(); }
-        std::shared_ptr<Exciter> GetExciter(size_t i) {return currentExciters[i];}
-         */
         
         std::string GetName() {return name;}
         virtual void SetName(std::string _name);
@@ -162,6 +169,10 @@ namespace Miam
         void SetExcitersOpacityMode(OpacityMode opacityMode);
         void SetAreasOpacityMode(OpacityMode opacityMode);
     
+        
+        
+        
+        
         // = = = = = = = = = = METHODS = = = = = = = = = =
         public :
         
@@ -290,6 +301,10 @@ namespace Miam
         
         
         
+        /// \brief Récupère le résultat de pré-computation, en prenant un résultat dans l'image
+        /// enregistrée (attention, mise à l'échelle de l'image si canvas a changé de taille)
+        virtual std::shared_ptr<AreasGroup>
+        GetGroupFromPreComputedImage(int curX, int curY, int curW, int curH) override;
         /// \brief Pré-calcule toutes les données internes qui serviront à optimiser le jeu,
         /// notamment : 1) les groupes d'aires qui se chevauchent, pour empêcher les excitateurs
         /// d'en sortir, et 2) les poids d'interaction pour chaque pixel (en prévision des
@@ -319,14 +334,14 @@ namespace Miam
         std::vector<std::pair<size_t, size_t>>
         propagateAreaGroup(std::vector<AreasGroup*>& groupsImage,
                                 AreasGroup* groupToPropagate,
-                                size_t i0, size_t canvasH, size_t j0, size_t canvasW);
+                                size_t i0, size_t j0);
         /// \brief Second internal helper for propagation. i0, j0 are unchecked, must be valid
         /// \return Whether the pixel now belongs to the group, or not (assigned to back, then).
         inline bool tryPropagateToPixel(std::vector<AreasGroup*>& groupsImage,
                                         AreasGroup* groupToPropagate,
-                                        size_t i0, size_t canvasW, size_t j0)
+                                        size_t i0, size_t j0)
         {
-            size_t k0 = i0 * canvasW + j0;
+            size_t k0 = i0 * groupsImgW + j0;
             // If groups image is empty, we test it and store the result
             // (and we ask for the parent caller to propagate it)
             if (groupsImage[k0] == nullptr)
@@ -348,9 +363,7 @@ namespace Miam
             {
                 assert((groupsImage[k0] == groupToPropagate) || (groupsImage[k0] == backgroundGroup.get()));
                 /*
-                if ((groupsImage[k0] == groupToPropagate) || (groupsImage[k0] == backgroundGroup.get()))
-                {}
-                else
+                if (! ((groupsImage[k0] == groupToPropagate) || (groupsImage[k0] == backgroundGroup.get())))
                     std::cout << "Groupe " << groupToPropagate << " : collision en " << i0 << ";" << j0 << ", pixel déjà sur groupe " << groupsImage[k0] << " (back = " << backgroundGroup.get()  << ")" << std::endl;
                  */
                 return false; // no need to propagate through this pixel

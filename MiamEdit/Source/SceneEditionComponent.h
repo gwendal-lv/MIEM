@@ -114,6 +114,7 @@ public:
     void SetInitialStateGroupHidden(bool _isHidden);
     void SetInitialStateGroupReduced(bool _isReduced);
     void SetDeleteExciterButtonEnabled(bool _isEnabled);
+    void SetExciterConstraintButtonEnabled(bool _isEnabled);
     // - - - - - Info group - - - - -
     void SetInfoGroupReduced(bool _isReduced);
     void SetInfoHelpText(const juce::String& infoHelpText);
@@ -193,6 +194,7 @@ private:
     // hériter d'une classe gestionnaire des raccourcis...
     // all working with Cmd (Ctrl) at the moment
     const char editExcitersCmdKey = 'E';
+    const char freeExcitersMoveCmdKey = 'F';
     const char copyCmdKey = 'C';
     const char pasteCmdKey = 'V';
     const char newAreaCmdKey = 'N';
@@ -241,6 +243,7 @@ private:
     std::unique_ptr<TextEditor> sceneNameTextEditor;
     std::unique_ptr<ToggleButton> excitersEditionButton;
     std::unique_ptr<TextButton> showInfoTextButton;
+    std::unique_ptr<ToggleButton> excitersConstraintButton;
 
 
     //==============================================================================

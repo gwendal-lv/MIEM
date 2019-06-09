@@ -109,6 +109,8 @@ namespace Miam
 		Vector<GLfloat> coulours_buffer;
         
         // =============== SETTERS & GETTERS ===============
+        public :
+        virtual bpt GetCenterPosition() const override { return centerInPixels; } // public copy
         protected :
         // ----- Internal reference-based getters (to solve inheritance issues) -----
         virtual bpt& getCenterInPixels() override { return centerInPixels; }

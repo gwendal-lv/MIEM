@@ -19,6 +19,7 @@
 
 #include "AsyncParamChange.h"
 
+
 namespace Miam
 {
     // Forward declarations
@@ -41,7 +42,12 @@ namespace Miam
         
         
         
-        // = = = = = = = = = = METHODS = = = = = = = = = =
+        // = = = = = = = = = = Getters and Setters = = = = = = = = = =
+        public :
+        
+        
+        
+        // = = = = = = = = = = = = = = METHODS = = = = = = = = = = = = = =
         
         public :
         

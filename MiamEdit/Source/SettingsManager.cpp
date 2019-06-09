@@ -16,6 +16,8 @@
 #include "View.h"
 #include "Model.h"
 
+// For Constraints types
+#include "SceneConstrainer.h"
 
 using namespace Miam;
 
@@ -135,7 +137,7 @@ void SettingsManager::OnLeaveSettingsEdition()
 
 
 
-// - - - - - Callbacks from View to Model, retransmitted - - - - -
+// - - - - - Callbacks from View concerning Model, retransmitted - - - - -
 
 void SettingsManager::OnInOutChannelsCountChanged(int inputsCount, int outputsCount)
 {
@@ -169,11 +171,6 @@ void SettingsManager::OnMasterGainEnabledChanged(bool isEnabled)
 {
     model->SetIsMasterGainEnabled(isEnabled);
 }
-void SettingsManager::OnAllowKeyboardEdition(bool allow)
-{
-    presenter->GetSpatStatesManager()->AllowKeyboardEdition(allow);
-}
-
 void SettingsManager::OnUdpPortChanged(int udpPort)
 {
     if (!linksInitialized)
@@ -200,6 +197,26 @@ void SettingsManager::OnIpAddressChanged(std::string ipAddress)
 
 
 
+
+// - - - - - Callbacks from View concerning Presenter, retransmitted - - - - -
+
+void SettingsManager::OnAllowKeyboardEdition(bool allow)
+{
+    presenter->GetSpatStatesManager()->AllowKeyboardEdition(allow);
+}
+void SettingsManager::OnEnableConstraints(bool enable)
+{
+    presenter->getGraphicSessionManager()->SetGlobalExcitersConstraint(
+    enable ?
+    SceneConstrainer::ConstraintType::RemainInsideAreasGroups :
+    SceneConstrainer::ConstraintType::Bypass);
+}
+
+
+
+
+
+
 // = = = = = = = = = = XML import/export = = = = = = = = = =
 std::shared_ptr<bptree::ptree> SettingsManager::GetTree()
 {
@@ -221,10 +238,14 @@ void SettingsManager::SetFromTree(bptree::ptree& tree)
                                         NotificationType::dontSendNotification);
         presenter->GetSpatStatesManager()->AllowKeyboardEdition(allow);
         
-        // Presenter touch behavior related -> also simple data trans. to view
+        // Presenter touch behavior related
         bool shouldConstraintPositions = tree.get<bool>("presenter.exciters.<xmlattr>.constraint_positions", false); // default = false
         configurationComponent->constraintExcitersToggleButton->setToggleState(shouldConstraintPositions,
                                            NotificationType::dontSendNotification);
+        presenter->getGraphicSessionManager()->SetGlobalExcitersConstraint(
+            shouldConstraintPositions ?
+                SceneConstrainer::ConstraintType::RemainInsideAreasGroups :
+                SceneConstrainer::ConstraintType::Bypass);
     
         // Interpolator-related : simple transmission of data to View,
         // with some delayed notifications
