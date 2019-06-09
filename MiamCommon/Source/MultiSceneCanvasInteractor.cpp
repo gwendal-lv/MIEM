@@ -166,7 +166,8 @@ void MultiSceneCanvasInteractor::SetMode(Miam::CanvasManagerMode newMode)
             if (mode != CanvasManagerMode::ExciterSelected)
             {
                 selectedScene->StopCurrentTransformations();
-                selectedScene->PreComputeInteractionData(); // attention, lourds calculs
+                // attention, lourds calculs
+                selectedScene->TriggerInteractionDataPreComputation();
             }
             
             // Mise en quasi-transparence des aires graphiques à exciter seulement

@@ -20,6 +20,8 @@
 
 #include "MultiSceneCanvasComponent.h" // to get the height to the scene's buttons
 
+#include "AreasGroup.h"
+
 using namespace Miam;
 
 // = = = = = = = = = = Construction/Destruction + polymorphic cloning = = = = = = = = = =
@@ -363,11 +365,13 @@ void Exciter::NotifyNewExcitationToAreas()
 
 int Exciter::FindAreasGroupIndex()
 {
-    int groupIndex = -1;
+    int groupIndex = (int)AreasGroup::SpecialIds::Background;
     
     // on va parcourir les aires dans l'ordre... et tant que le calcul d'image est bien fait
     // (vérifications internes dans l'algo de InteractiveScene), pas de soucis à prévoir.
-    for (size_t k = 0 ; (k<areasInteractingWith.size() && (groupIndex == -1)) ; k++)
+    for (size_t k = 0 ;
+         (k<areasInteractingWith.size() && (groupIndex == (int)AreasGroup::SpecialIds::Background)) ;
+         k++)
     {
         if (auto areaPtr = areasInteractingWith[k].Area.lock())
             if (auto groupPtr = areaPtr->GetAreasGroup())

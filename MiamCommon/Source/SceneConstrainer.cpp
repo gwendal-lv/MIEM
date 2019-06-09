@@ -31,6 +31,14 @@ void SceneConstrainer::beginTouchConstraint(const MouseEvent& e,
                                                        std::string sceneName)
 {
     bpt mouseEventBpt = bpt(e.position.getX(), e.position.getY());
+    
+    // BUG, POURQUOI ICI ON RECOIT BACKGROUND PENDANT LE CALCUL ???
+    // BUG, POURQUOI ICI ON RECOIT BACKGROUND PENDANT LE CALCUL ???
+    // BUG, POURQUOI ICI ON RECOIT BACKGROUND PENDANT LE CALCUL ???
+    // BUG, POURQUOI ICI ON RECOIT BACKGROUND PENDANT LE CALCUL ???
+    // BUG, POURQUOI ICI ON RECOIT BACKGROUND PENDANT LE CALCUL ???
+    // BUG, POURQUOI ICI ON RECOIT BACKGROUND PENDANT LE CALCUL ???
+    // BUG, POURQUOI ICI ON RECOIT BACKGROUND PENDANT LE CALCUL ???
     ConstraintParams newConstraint(mouseEventBpt,
                                    exciter->GetCenterInPixels(),
                                    exciter->FindAreasGroupIndex());
@@ -40,7 +48,6 @@ void SceneConstrainer::beginTouchConstraint(const MouseEvent& e,
 	boost::ignore_unused(canvasWidth);
 	boost::ignore_unused(canvasHeight);
 	
-    
     newConstraint.Type = GetExcitersConstraint();
     
     std::cout << "[SceneConstrainer] Begin. Type = " << (int) newConstraint.Type << ((newConstraint.Type == ConstraintType::RemainInsideAreasGroups) ? (std::string(" group = ") + boost::lexical_cast<std::string>(newConstraint.AreasGroupIndex) ) : "" ) << std::endl;
@@ -152,12 +159,35 @@ const MouseEvent& SceneConstrainer::constrainMouseEvent(const MouseEvent& e,
             GetGroupFromPreComputedImage((int) std::round(constrainedPosition.getX()),
                                          (int) std::round(constrainedPosition.getY()),
                                          canvasWidth, canvasHeight);
+            const int curGroupIdx = curPosAreaGroup->GetIndexInScene();
+            
             // Est-ce qu'on doit bloquer l'excitateur ?
-            if ( (curPosAreaGroup->GetIndexInScene() != constraint.AreasGroupIndex)
-                || (curPosAreaGroup->GetIndexInScene() == (int)AreasGroup::SpecialIds::Blocking) )
+            // Si idx différent ou si blocking,  OUI....
+            if ( (curGroupIdx != constraint.AreasGroupIndex)
+                || (curGroupIdx == (int)AreasGroup::SpecialIds::Blocking)
+                || (curGroupIdx == (int)AreasGroup::SpecialIds::BlockUntilComputationFinished) )
             {
-                std::cout << "STOP mouvement" << std::endl;
-                constrainedPosition = constraint.LastValidCenterPosition;
+                // .... OUI, SAUF SI   on quitte le "blocking until"
+                // Si on quite "block until", la nouvelle valeur, si elle est positive ou BACK,
+                // devient le groupe auquel va s'attacher l'excitateur. Si c'est le groupe back,
+                // l'excitateur pourra en sortir + tard
+                if ( (constraint.AreasGroupIndex
+                      == (int)AreasGroup::SpecialIds::BlockUntilComputationFinished)
+                    && ( (curGroupIdx >= (int)AreasGroup::SpecialIds::FirstActualGroup)
+                        || (curGroupIdx == (int)AreasGroup::SpecialIds::Background)) )
+                {
+                    constraint.AreasGroupIndex = curGroupIdx;
+                }
+                // OU SAUF Si on est dans le background : on a le droit de bouger vers une nouvelle zone.
+                // Ensuite on ne pourra plus en sortir.
+                else if ( (constraint.AreasGroupIndex == (int)AreasGroup::SpecialIds::Background)
+                         && (curGroupIdx >= (int)AreasGroup::SpecialIds::FirstActualGroup) )
+                {
+                    constraint.AreasGroupIndex = curGroupIdx;
+                }
+                // Sinon OUI, on reste juste bloqué
+                else
+                    constrainedPosition = constraint.LastValidCenterPosition;
             }
             // Sinon, on garde cet évènement comme la dernier valide
             else

@@ -14,21 +14,13 @@
 
 using namespace Miam;
 
-// static rand gen
-std::mt19937 AreasGroup::randomGenerator = std::mt19937();
 
-AreasGroup::AreasGroup(int _indexInScene, bool randomColour)
+
+AreasGroup::AreasGroup(int _indexInScene, juce::Colour _colour)
 :
-indexInScene(_indexInScene)
+indexInScene(_indexInScene),
+colour(_colour)
 {
-    if (randomColour)
-    {
-        colour = juce::Colour::fromRGB((randomGenerator() % 230) + 26,
-                                       (randomGenerator() % 230) + 26,
-                                       (randomGenerator() % 230) + 26);
-    }
-    else
-        colour = juce::Colours::black;
 }
 
 

@@ -114,14 +114,20 @@ namespace Miam
         std::vector<std::shared_ptr<AreasGroup>> areasGroups;
         /// \brief The background group always exist but does not contain any InteractiveArea.
         std::shared_ptr<AreasGroup> backgroundGroup;
-        /// \brief A special "blocking" group, to block exciters while the result
-        /// of computations is still needed
+        /// \brief A special "blocking" group
         std::shared_ptr<AreasGroup> blockingGroup;
+        std::shared_ptr<AreasGroup> blockUntilComputationResultGroup;
         /// \brief The last version of the 2D image description the area group of each pixel
         /// of the scene. Data might be outdated.
         std::vector<AreasGroup*> groupsImage;
         size_t groupsImgW = 0;
         size_t groupsImgH = 0;
+        // attributes for multi-threaded computation
+        std::thread preComputingThread;
+        std::chrono::time_point<std::chrono::steady_clock> startTime;
+        std::mt19937 randomGenerator;
+        std::atomic<bool> isPreComputingGroupsImages;
+        std::vector< std::shared_ptr<IInteractiveArea> > clonedAreas;
         
         
         
@@ -305,22 +311,25 @@ namespace Miam
         /// enregistrée (attention, mise à l'échelle de l'image si canvas a changé de taille)
         virtual std::shared_ptr<AreasGroup>
         GetGroupFromPreComputedImage(int curX, int curY, int curW, int curH) override;
+        /// \brief Déclenche le calcul des données d'interaction, pour la taille actuelle du canevas.
+        /// Thread-safe. Va bloquer les mouvements d'excitateur tant que le calcul n'est pas terminé.
+        void TriggerInteractionDataPreComputation();
+        
+        protected :
         /// \brief Pré-calcule toutes les données internes qui serviront à optimiser le jeu,
         /// notamment : 1) les groupes d'aires qui se chevauchent, pour empêcher les excitateurs
         /// d'en sortir, et 2) les poids d'interaction pour chaque pixel (en prévision des
         /// calculs via T-Splines, sûrement trop lourds donc pré-rendus)
         ///
         /// Attention, cette fonction est assez lourde et doit être utilisée le moins souvent possible
-        /// À DÉPLACER DANS UN THREAD DE CALCUL SÉPARÉ
         /// et tant qu'on ne connait pas les groupes... On interdit le déplacement des excitateurs
         void PreComputeInteractionData();
-        protected :
         /// \brief Internal help for testing if there is any area on the specified pixel
         inline bool isAnyAreaOnPixel(size_t row, size_t col)
         {
             bool foundArea = false;
-            for (size_t k = 0 ; (k<areas.size() && (! foundArea)) ; k++)
-                foundArea = areas[k]->HitTest(bpt((double)col, (double)row));
+            for (size_t k = 0 ; (k<clonedAreas.size() && (! foundArea)) ; k++)
+                foundArea = clonedAreas[k]->HitTest(bpt((double)col, (double)row));
             return foundArea;
         }
         private :
@@ -369,6 +378,9 @@ namespace Miam
                 return false; // no need to propagate through this pixel
             }
         }
+        juce::Colour getNextRandomColour();
+        /// \brief To be executed on Juce Message thread
+        void assignGroupsToAreas_postComputation();
         public :
         
         

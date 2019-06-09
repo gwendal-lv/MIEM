@@ -36,8 +36,12 @@ excitersBehavior(excitersBehavior_)
     name = "Default Scene";
     
     // no random colour -> black group
-    backgroundGroup = std::make_shared<AreasGroup>((int)AreasGroup::SpecialIds::Background, false);
-    blockingGroup = std::make_shared<AreasGroup>((int)AreasGroup::SpecialIds::Blocking, false);
+    backgroundGroup = std::make_shared<AreasGroup>((int)AreasGroup::SpecialIds::Background,
+                                                   Colours::black);
+    blockingGroup = std::make_shared<AreasGroup>((int)AreasGroup::SpecialIds::Blocking, Colours::black);
+    blockUntilComputationResultGroup =
+    std::make_shared<AreasGroup>((int)AreasGroup::SpecialIds::BlockUntilComputationFinished,
+                                 Colours::black);
     
 #ifdef __MIEM_VBO
     this->startTimerHz(24);
@@ -619,38 +623,86 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::RecomputeAreaExciterInteractio
 
 std::shared_ptr<AreasGroup> InteractiveScene::GetGroupFromPreComputedImage(int curX, int curY, int curW, int curH)
 {
-    // If Rescale not necessary
-    if (((size_t)curW == groupsImgW) && ((size_t)curH == groupsImgH))
+    if (! isPreComputingGroupsImages)
     {
-        return groupsImage[ ((size_t)curY) * groupsImgW + ((size_t)curX) ]->shared_from_this();
+        // If Rescale not necessary
+        if (((size_t)curW == groupsImgW) && ((size_t)curH == groupsImgH))
+        {
+            return groupsImage[ ((size_t)curY) * groupsImgW + ((size_t)curX) ]->shared_from_this();
+        }
+        // else ((we must compute an approximation of the group))
+        // we block until the groups are properly re-computed.
+        // The approximations when resizing the image are not precise enough for the
+        // result to be perfectly safe....
+        else
+        {
+            /*
+            size_t groupsImgX = (size_t) std::round( (double)(curX) *
+                                                    ((double)(groupsImgW) / (double)(curW)) );
+            size_t groupsImgY = (size_t) std::round( (double)(curY) *
+                                                    ((double)(groupsImgH) / (double)(curH)) );
+            return groupsImage[ groupsImgY * groupsImgW + groupsImgX ]->shared_from_this();
+             */
+            TriggerInteractionDataPreComputation();
+            return blockUntilComputationResultGroup;
+        }
     }
-    // else, we must compute an approximation of the group
+    // Si le calcul est tjs en cours... On bloque les déplacements temp.
     else
+        return blockUntilComputationResultGroup;
+}
+
+void InteractiveScene::TriggerInteractionDataPreComputation()
+{
+    startTime = std::chrono::steady_clock::now();
+    std::cout << "[InteractiveScene.cpp] Starting Pre-Computation of interaction data..." << std::endl;
+    
+    // -- > Init of all non-thread-safe variables
+    if (auto canvasLocked = canvasManager.lock())
+        canvasLocked->DisplayInfo("Computing Interaction data...", 49);
+    // canvas size
+    groupsImgW = canvasComponent->getWidth();
+    groupsImgH = canvasComponent->getHeight();
+    // clones of areas
+    for (size_t k = 0 ; k < areas.size() ; k++)
     {
-        return blockingGroup;
-        // -> async trigger of the computation in a separate thread ?
-        // -> async trigger of the computation in a separate thread ?
-        // -> async trigger of the computation in a separate thread ?
-        // -> async trigger of the computation in a separate thread ?
-        // -> async trigger of the computation in a separate thread ?
+        auto drawableClonePtr = areas[k]->Clone();
+        if (auto iinteractiveClonePtr = std::dynamic_pointer_cast<IInteractiveArea>(drawableClonePtr))
+            clonedAreas.push_back(iinteractiveClonePtr);
+        else
+            // This should event maybe be an exception.... the clones should always be castable
+            // to their original type !!
+            assert(false);
     }
+    
+    // ----- > Computation starts here
+    
+    isPreComputingGroupsImages = true;
+    // Assignation des valeurs d'attente aux groupes des aires
+    for (size_t k = 0 ; (k<areas.size()) ; k++)
+        areas[k]->SetAreasGroup(blockUntilComputationResultGroup);
+    
+    // -- > Computation thread (detached, will indicate when it is finished)
+    preComputingThread = std::thread([this] {this->PreComputeInteractionData();} );
+    preComputingThread.detach();
 }
 
 void InteractiveScene::PreComputeInteractionData()
 {
-    if (auto canvasLocked = canvasManager.lock())
-        canvasLocked->DisplayInfo("Computing Interaction data...");
+#if defined(JUCE_ANDROID)
+    // Android alone seems to support the POSIX classical interface
+    pthread_setname_np(pthread_self(), name.c_str());
+#elif defined(JUCE_MAC) || defined(JUCE_IOS)
+    pthread_setname_np(/*pthread_self(), */ name.c_str()); // pas de TID pour FreeBSD 2003... (doc macOS)
+#elif defined(JUCE_WINDOWS)
+    // rien pour Windows.... pour l'instant
+#endif
     
-    auto startTime = std::chrono::steady_clock::now();
-    std::cout << "[InteractiveScene.cpp] Starting Pre-Computation of interaction data..." << std::endl;
-    
-    groupsImgW = canvasComponent->getWidth();
-    groupsImgH = canvasComponent->getHeight();
     
     // Réinitialisation des groupes
     areasGroups.clear();
-    AreasGroup::ReinitRandomColours(3); // static call, seed reinit there. 3 is nice.
-    // Réinit à l'intérieur des aires -> nécessaire ? Va être fait + tard....
+    randomGenerator.seed(3); // 3 is nice.
+    
     
     // Initialisation : mise à zéro du tableau des "couleurs" (en réalité : pointeurs)
     groupsImage.clear();
@@ -680,7 +732,8 @@ void InteractiveScene::PreComputeInteractionData()
                 {
                     // Init du nouveau groupe, et de son 1ier pixel
                     int nextGroupIndex = (int) areasGroups.size();
-                    areasGroups.push_back(std::make_shared<AreasGroup>(nextGroupIndex));
+                    areasGroups.push_back(std::make_shared<AreasGroup>(nextGroupIndex,
+                                                                       getNextRandomColour()));
                     neighboursToPropagate.clear();
                     groupsImage[i*groupsImgW + j] = areasGroups.back().get();
                     // Propagation : init
@@ -713,17 +766,6 @@ void InteractiveScene::PreComputeInteractionData()
         }
     }
     
-    // Assignation des groupes aux aires : chaque aire prend le groupe
-    // qui est au niveau de son centre
-    for (size_t k = 0 ; (k<areas.size()) ; k++)
-    {
-        auto centerInPixels = areas[k]->GetCenterPosition();
-        size_t row = (size_t) std::round(centerInPixels.get<1>());
-        size_t col = (size_t) std::round(centerInPixels.get<0>());
-        // The shared pointer was created when starting the propagation
-        auto groupSharedPtr = groupsImage[row*groupsImgW + col]->shared_from_this();
-        areas[k]->SetAreasGroup(groupSharedPtr);
-    }
     
 #ifdef __MIEM_DISPLAY_SCENE_PRE_COMPUTATION
     // Construction + Affichage de l'image des groupes dans un fichier .png temporaire
@@ -752,10 +794,12 @@ void InteractiveScene::PreComputeInteractionData()
     assert(couldWrite);
 #endif
     
-    // Affichage du temps total de traitement
-    auto processDuration = std::chrono::steady_clock::now() - startTime;
-    std::cout << "[InteractiveScene.cpp] Pre-Computation finished. Duration = " <<
-    std::chrono::duration_cast<std::chrono::milliseconds>(processDuration).count() << " ms" << std::endl;
+    // Nettoyage
+    clonedAreas.clear();
+    
+    isPreComputingGroupsImages = false;
+    // Juste avant fin : lancement du post processing
+    MessageManager::callAsync([this] { this->assignGroupsToAreas_postComputation(); });
 }
 
 std::vector<std::pair<size_t, size_t>>
@@ -800,7 +844,35 @@ InteractiveScene::propagateAreaGroup(std::vector<AreasGroup*>& groupsImage,
     
     return neighbourGroupPixels;
 }
-
+juce::Colour InteractiveScene::getNextRandomColour()
+{
+    return  juce::Colour::fromRGB((randomGenerator() % 230) + 26,
+                                  (randomGenerator() % 230) + 26,
+                                  (randomGenerator() % 230) + 26);
+}
+void InteractiveScene::assignGroupsToAreas_postComputation()
+{
+    // Assignation des groupes aux aires : chaque aire prend le groupe
+    // qui est au niveau de son centre
+    for (size_t k = 0 ; (k<areas.size()) ; k++)
+    {
+        auto centerInPixels = areas[k]->GetCenterPosition();
+        size_t row = (size_t) std::round(centerInPixels.get<1>());
+        size_t col = (size_t) std::round(centerInPixels.get<0>());
+        // The shared pointer was created when starting the propagation
+        auto groupSharedPtr = groupsImage[row*groupsImgW + col]->shared_from_this();
+        areas[k]->SetAreasGroup(groupSharedPtr);
+    }
+    
+    // Retour graphique final
+    if (auto canvasLocked = canvasManager.lock())
+        canvasLocked->DisplayInfo("Interaction data is up to date.", 50);
+    
+    // Affichage du temps total de traitement
+    auto processDuration = std::chrono::steady_clock::now() - startTime;
+    std::cout << "[InteractiveScene.cpp] Threaded Pre-Computation finished. Duration = " <<
+    std::chrono::duration_cast<std::chrono::milliseconds>(processDuration).count() << " ms" << std::endl;
+}
 
 
 

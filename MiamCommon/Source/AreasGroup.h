@@ -30,6 +30,8 @@ namespace Miam
         enum class SpecialIds : int {
             
             None = -10, ///< Represents an undefined group
+            
+            BlockUntilComputationFinished = -3, ///< Represent a special group that blocks but is ready to release
             Blocking = -2, ///< Represent a special group that blocks all elements belonging to it
             Background = -1, ///< The default background group (contains no actual area)
             
@@ -47,8 +49,6 @@ namespace Miam
         
         // for a display in an image
         juce::Colour colour;
-        // Random generator is always the same, init with the same seed (for debugging)
-        static std::mt19937 randomGenerator;
         
         
         
@@ -60,12 +60,9 @@ namespace Miam
         
         // ========================= METHODS =========================
         public :
-        AreasGroup(int _indexInScene, bool randomColour = true);
+            AreasGroup(int _indexInScene, juce::Colour _colour);
         
         
-        
-        
-        static void ReinitRandomColours(int newSeed = 0) { randomGenerator.seed(newSeed); }
-        
+            
     };
 }
