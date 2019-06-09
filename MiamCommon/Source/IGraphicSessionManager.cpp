@@ -100,6 +100,17 @@ void IGraphicSessionManager::SetSelectedCanvas(std::shared_ptr<MultiSceneCanvasI
         // rien du tout
     }
 }
+void IGraphicSessionManager::TriggerInteractionDataPreComputation()
+{
+    // All computations will be launched now, each canvas will take N-1 CPUs.
+    // -> not made for several canvases at the moment... If this is the case,
+    // a short overload of the CPUs might happen
+    assert(canvasManagers.size() == 1);
+    
+    // Direct launch of all computation threads....
+    for (auto &canvasInteractor : canvasManagers)
+        canvasInteractor->TriggerInteractionDataPreComputation();
+}
 
 // - - - - - Events from a member of the Presenter module itself - - - - -
 

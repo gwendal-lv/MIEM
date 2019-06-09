@@ -126,7 +126,22 @@ void PlayerView::ChangeAppMode(PlayerAppMode newAppMode)
 }
 void PlayerView::DisplayInfo(const String& message, bool isImportant)
 {
+    normalInfoTimerExpired = false;
     backgroundComponent->DisplayInfo(message, isImportant);
+    Timer::callAfterDelay(backgroundInfoAutoRedisplay_ms,
+                          [this] {
+                              this->normalInfoTimerExpired = true;
+                              this->backgroundComponent->DisplayInfo(backgroundInfo);
+                          } );
+}
+void PlayerView::DisplayBackgroundInfo(const String& message)
+{
+    backgroundInfo = message;
+    // we display now if the timer has expired.
+    if (normalInfoTimerExpired)
+        backgroundComponent->DisplayInfo(backgroundInfo);
+    // If not expired, the DisplayInfo() will update the backgroundinfo from
+    // a lambda function
 }
 void PlayerView::DisplayComplementaryInfo(const String& message)
 {

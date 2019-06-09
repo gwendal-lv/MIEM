@@ -31,6 +31,8 @@ namespace Miam
             
             None = -10, ///< Represents an undefined group
             
+            OutOfBounds = -4,
+            
             BlockUntilComputationFinished = -3, ///< Represent a special group that blocks but is ready to release
             Blocking = -2, ///< Represent a special group that blocks all elements belonging to it
             Background = -1, ///< The default background group (contains no actual area)

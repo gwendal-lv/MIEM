@@ -50,7 +50,7 @@ void SceneConstrainer::beginTouchConstraint(const MouseEvent& e,
 	
     newConstraint.Type = GetExcitersConstraint();
     
-    std::cout << "[SceneConstrainer] Begin. Type = " << (int) newConstraint.Type << ((newConstraint.Type == ConstraintType::RemainInsideAreasGroups) ? (std::string(" group = ") + boost::lexical_cast<std::string>(newConstraint.AreasGroupIndex) ) : "" ) << std::endl;
+    //std::cout << "[SceneConstrainer] Begin. Type = " << (int) newConstraint.Type << ((newConstraint.Type == ConstraintType::RemainInsideAreasGroups) ? (std::string(" group = ") + boost::lexical_cast<std::string>(newConstraint.AreasGroupIndex) ) : "" ) << std::endl;
     
     touchSourceToExperimentConstraint[e.source.getIndex()] = newConstraint;
     

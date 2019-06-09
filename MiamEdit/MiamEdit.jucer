@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="O4BfM6" name="MIEM Editor" projectType="guiapp" version="1.1.2"
+<JUCERPROJECT id="O4BfM6" name="MIEM Editor" projectType="guiapp" version="1.1.3"
               bundleIdentifier="com.gwendallv.MIEMEditor" includeBinaryInAppConfig="1"
               jucerVersion="5.4.3" displaySplashScreen="0" reportAppUsage="0"
               splashScreenColour="Dark" companyCopyright="Gwendal Le Vaillant (IRISIB/LARAS, UMons)"
               companyWebsite="http://laras.be" companyName="IRISIB/LARAS, UMons"
               companyEmail="glevaillant@he2b.be" headerPath="../../../&#10;../../../MiamCommon/Source/&#10;../../../MiamCommon/Resources/&#10;../../../ControlCommon/Source/&#10;../../../SpatCommon/Source/"
               defines="__MIEM_VBO&#10;__MIEM_GL_INFO_DISPLAY__NO&#10;__MIEM_DISPLAY_CANVAS_RESIZE&#10;__MIEM_FORCE_DOUBLE_OSC_SENDER"
-              projectLineFeed="&#10;" userNotes="v1.1.0 : ajout des options d'interpolation et min/max par param&#232;tre&#10;v1.1.1 : correction bugs courbes d'interpolation et min/max + 3&#232;me sender OSC&#10;v1.1.2 build 1.1.2.0 : autres courbes interpolation dispo + multi-ports UDP visibles (y compris dans gencon) &#10;v1.1.2 build 1.1.2.1 : changement UDP/IP directement dans les Players&#10;v1.1.2 build 1.1.2.2 : correction bug courbes interp (valeurs milieu) + safe area pour certains appareils&#10;v1.1.2 build 1.1.2.3 : replacement bouton help (players) pour les iphones&#10;v1.1.2 build 1.1.2.4 : tr&#232;s nombreux raccourcis clavier + options &quot;constraint exciters&quot;">
+              projectLineFeed="&#10;" userNotes="v1.1.0 : ajout des options d'interpolation et min/max par param&#232;tre&#10;v1.1.1 : correction bugs courbes d'interpolation et min/max + 3&#232;me sender OSC&#10;v1.1.2 build 1.1.2.0 : autres courbes interpolation dispo + multi-ports UDP visibles (y compris dans gencon) &#10;v1.1.2 build 1.1.2.1 : changement UDP/IP directement dans les Players&#10;v1.1.2 build 1.1.2.2 : correction bug courbes interp (valeurs milieu) + safe area pour certains appareils&#10;v1.1.2 build 1.1.2.3 : replacement bouton help (players) pour les iphones&#10;v1.1.2 build 1.1.2.4 : tr&#232;s nombreux raccourcis clavier + options &quot;constraint exciters&quot;&#10;v1.1.3 build 1.1.3.0 : impl&#233;mentation r&#233;elle des contraintes, avec pr&#233;-calcul multithread&#233;">
   <MAINGROUP id="uJFjC5" name="MIEM Editor">
     <GROUP id="{7878353D-A1B6-291B-EABC-831E28CE51BB}" name="Source">
       <FILE id="MLMDSl" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>

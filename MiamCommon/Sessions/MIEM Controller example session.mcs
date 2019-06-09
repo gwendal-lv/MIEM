@@ -28,6 +28,7 @@
         </control>
         <presenter>
             <keyboardedition>false</keyboardedition>
+            <exciters constraint_positions="true"/>
         </presenter>
     </settings>
     <control>
@@ -239,7 +240,7 @@
                                 </geometry>
                                 <spatstate index="3"/>
                             </area>
-                            <area id="25566" type="Exciter" index="8">
+                            <area id="25601" type="Exciter" index="8">
                                 <center x="0.14000000000000001" y="0.70999999999999996"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
@@ -250,7 +251,7 @@
                                 <is_round>false</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
-                            <area id="25567" type="Exciter" index="9">
+                            <area id="25602" type="Exciter" index="9">
                                 <center x="0.38" y="0.70999999999999996"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
@@ -261,7 +262,7 @@
                                 <is_round>false</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
-                            <area id="25568" type="Exciter" index="10">
+                            <area id="25603" type="Exciter" index="10">
                                 <center x="0.62" y="0.70999999999999996"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
@@ -272,7 +273,7 @@
                                 <is_round>false</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
-                            <area id="25569" type="Exciter" index="11">
+                            <area id="25604" type="Exciter" index="11">
                                 <center x="0.85999999999999999" y="0.70999999999999996"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
@@ -289,7 +290,7 @@
                         <name>Interpolation!</name>
                         <areas>
                             <area id="7726" type="SpatPolygon" index="0">
-                                <center x="0.18570749383223684" y="0.065804100790513839"/>
+                                <center x="0.19" y="0.070000000000000007"/>
                                 <colour>fffe5a76</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
@@ -302,7 +303,7 @@
                                 <spatstate index="0"/>
                             </area>
                             <area id="7727" type="SpatPolygon" index="1">
-                                <center x="0.81670178865131582" y="0.069653738471673249"/>
+                                <center x="0.81000000000000005" y="0.070000000000000007"/>
                                 <colour>fffde359</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
@@ -315,7 +316,7 @@
                                 <spatstate index="1"/>
                             </area>
                             <area id="7728" type="SpatPolygon" index="2">
-                                <center x="0.18423622532894737" y="0.93271883234519104"/>
+                                <center x="0.19" y="0.93000000000000005"/>
                                 <colour>ff5cfc90</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
@@ -328,7 +329,7 @@
                                 <spatstate index="2"/>
                             </area>
                             <area id="7729" type="SpatPolygon" index="3">
-                                <center x="0.81818269428453949" y="0.93067564229249011"/>
+                                <center x="0.81000000000000005" y="0.93000000000000005"/>
                                 <colour>ff5d5eff</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>

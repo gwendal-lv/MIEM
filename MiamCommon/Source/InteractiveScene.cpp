@@ -42,6 +42,9 @@ excitersBehavior(excitersBehavior_)
     blockUntilComputationResultGroup =
     std::make_shared<AreasGroup>((int)AreasGroup::SpecialIds::BlockUntilComputationFinished,
                                  Colours::black);
+    outOfBoundsGroup =
+    std::make_shared<AreasGroup>((int)AreasGroup::SpecialIds::OutOfBounds,
+                                 Colours::black);
     
 #ifdef __MIEM_VBO
     this->startTimerHz(24);
@@ -628,7 +631,11 @@ std::shared_ptr<AreasGroup> InteractiveScene::GetGroupFromPreComputedImage(int c
         // If Rescale not necessary
         if (((size_t)curW == groupsImgW) && ((size_t)curH == groupsImgH))
         {
-            return groupsImage[ ((size_t)curY) * groupsImgW + ((size_t)curX) ]->shared_from_this();
+            if ( (curX < 0) || ((int)(groupsImgW) <= curX) // bounds check
+                || (curY < 0) || ((int)(groupsImgH) <= curY) )
+                return outOfBoundsGroup;
+            else // OK, in bounds
+                return groupsImage[ ((size_t)curY) * groupsImgW + ((size_t)curX) ]->shared_from_this();
         }
         // else ((we must compute an approximation of the group))
         // we block until the groups are properly re-computed.
@@ -636,13 +643,7 @@ std::shared_ptr<AreasGroup> InteractiveScene::GetGroupFromPreComputedImage(int c
         // result to be perfectly safe....
         else
         {
-            /*
-            size_t groupsImgX = (size_t) std::round( (double)(curX) *
-                                                    ((double)(groupsImgW) / (double)(curW)) );
-            size_t groupsImgY = (size_t) std::round( (double)(curY) *
-                                                    ((double)(groupsImgH) / (double)(curH)) );
-            return groupsImage[ groupsImgY * groupsImgW + groupsImgX ]->shared_from_this();
-             */
+            std::cout << "[InteractiveScene.cpp] AUTO-TRIGGER (data was outdated)" << std::endl;
             TriggerInteractionDataPreComputation();
             return blockUntilComputationResultGroup;
         }

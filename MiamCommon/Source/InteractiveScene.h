@@ -117,6 +117,7 @@ namespace Miam
         /// \brief A special "blocking" group
         std::shared_ptr<AreasGroup> blockingGroup;
         std::shared_ptr<AreasGroup> blockUntilComputationResultGroup;
+        std::shared_ptr<AreasGroup> outOfBoundsGroup;
         /// \brief The last version of the 2D image description the area group of each pixel
         /// of the scene. Data might be outdated.
         std::vector<AreasGroup*> groupsImage;

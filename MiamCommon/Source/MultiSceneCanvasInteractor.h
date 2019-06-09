@@ -204,6 +204,7 @@ namespace Miam {
         // Peut être override par les classes dérivées
         virtual void processSingleAreaEventSync(std::shared_ptr<AreaEvent>& areaE);
         
+        
         // - - - - - Thread-safe methods (for OpenGL async drawing) - - - - -
         
         protected : // internal routines
@@ -219,6 +220,13 @@ namespace Miam {
         { return asyncDrawableObjects; }
         void UnlockAsyncDrawableObjects() { asyncDrawableObjectsMutex.unlock(); }
         
+        
+        // - - - - - Thread-safe methods (for interp data pre-computation) - - - - -
+        public :
+        /// \brief Will trigger the pre-computations for all scenes, using
+        /// all CPUs but one.
+        void TriggerInteractionDataPreComputation();
+        protected :
         
         
         

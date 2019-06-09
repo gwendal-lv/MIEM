@@ -47,6 +47,11 @@ namespace Miam
         /// rectangle that is smaller than the screen, iPhone X
         SafeAreaType safeArea;
         
+        String backgroundInfo;
+        const int backgroundInfoAutoRedisplay_ms = 10000;
+        /// \brief Indicate whether a normal info has been recently sent for display
+        bool normalInfoTimerExpired = true;
+        
         
         // = = = = = = = = = = Setters and Getters = = = = = = = = = =
         public :
@@ -83,6 +88,12 @@ namespace Miam
         ///
         /// \param message Short sentence to be written in the upper uneditable text box.
         void DisplayInfo(const String& message, bool isImportant = false);
+        
+        /// \brief Displays an info that can be temprarily replaced,
+        /// but which automatically re-display itself after a timeout.
+        ///
+        /// It this function is called several, the last String only will be displayed.
+        void DisplayBackgroundInfo(const String& message);
         
         /// \brief Will call functions of children components to properly update osc config data
         void SetOscConfigurationFromTree(bptree::ptree& oscTree);

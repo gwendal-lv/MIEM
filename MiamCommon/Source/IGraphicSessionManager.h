@@ -142,9 +142,9 @@ namespace Miam
         /// Tells other canvases to unselect any previously selected area
         virtual void SetSelectedCanvas(std::shared_ptr<MultiSceneCanvasInteractor> selectedCanvas_);
         
-        /// \brief Overload (for convenience)
-        //void SetSelectedCanvas(MultiSceneCanvasInteractor* canvasInteractor);
-        
+        /// \brief Will trigger the pre-computations for all scenes of all canvases, using
+        /// all CPUs but one.
+        void TriggerInteractionDataPreComputation();
         
         
         

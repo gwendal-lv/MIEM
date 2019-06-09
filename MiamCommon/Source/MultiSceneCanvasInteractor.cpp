@@ -466,6 +466,20 @@ void MultiSceneCanvasInteractor::deleteAsyncDrawableObject(std::shared_ptr<IDraw
 
 
 
+
+
+// - - - - - Thread-safe methods (for interp data pre-computation) - - - - -
+void MultiSceneCanvasInteractor::TriggerInteractionDataPreComputation()
+{
+    
+}
+
+
+
+
+
+
+
 // - - - - - Selection management (areas and scenes) - - - - -
 
 

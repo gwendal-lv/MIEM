@@ -412,7 +412,7 @@ void PlayerPresenter::OnNewConnectionStatus(bool isConnectionEstablished, std::s
         else
         {
             // Display string
-            displayString = "Sending OSC to " + ipv4 + " on UDP port " + std::to_string(udpPort);
+            displayString = "OSC to " + ipv4 + " on port " + std::to_string(udpPort);
 			if (udpPort2 >= 0)
 			{
 				displayString += " (and ";
@@ -426,7 +426,9 @@ void PlayerPresenter::OnNewConnectionStatus(bool isConnectionEstablished, std::s
         }
     }
     
-    view->DisplayInfo(displayString);
+    // Will not be displayed on top on other info, but will automatically
+    // reapper after a timeout.
+    view->DisplayBackgroundInfo(displayString);
     
     
 }
@@ -488,6 +490,10 @@ void PlayerPresenter::LoadSession(std::string filename)
     
     // Various forced updates after loading
     view->GetBackgroundComponent()->SetMainSliderEnabled(model->GetIsMasterGainEnabled());
+    // large computation starts a bit after loading is actually done...
+    Timer::callAfterDelay(100, [this] {
+        this->GetGraphicSessionPlayer()->TriggerInteractionDataPreComputation();
+    });
     
     // Server for remote control: to be re-configured
     ReinitRemoteControlServer();
@@ -496,9 +502,22 @@ void PlayerPresenter::LoadSession(std::string filename)
     appModeChangeRequest(PlayerAppMode::Playing); // va démarrer le modèle
 }
 
-void PlayerPresenter::SetConfigurationFromTree(bptree::ptree&)
+void PlayerPresenter::SetConfigurationFromTree(bptree::ptree& tree)
 {
-    // Rien d'affiché : on attend le retour effectif des infos depuis le Modèle
+    // Concernant Modèle : on attendra le retour effectif des infos depuis le Modèle
+    // Infos perso à charger quand même ici :
+    
+    // POUR DEBUG on lance exceptions
+    bool shouldConstraintPositions = tree.get<bool>("presenter.exciters.<xmlattr>.constraint_positions");
+    
+    //bool shouldConstraintPositions = tree.get<bool>("presenter.exciters.<xmlattr>.constraint_positions", false); // default = false
+    
+    SceneConstrainer::ConstraintType constraint = shouldConstraintPositions ?
+    SceneConstrainer::ConstraintType::RemainInsideAreasGroups :
+    SceneConstrainer::ConstraintType::Bypass;
+    
+    GetGraphicSessionPlayer()->SetGlobalExcitersConstraint(constraint);
+    GetGraphicSessionPlayer()->BypassGlobalExcitersConstraint(false);
 }
 
 
