@@ -80,20 +80,19 @@ void MultiSceneCanvasInteractor::OnComponentResized(int newWidth, int newHeight,
         return;
     }
     
-    std::cout << "child resize.... ";
     if (graphicSessionManager->GetEnablePreComputation())
     {
-        std::cout << "RESIZE TRIGGER ALLOWED" << std::endl;
-        // TEST on relance tout comme des cons.... pour vérifier...
-        TriggerInteractionDataPreComputation();
+        // At first, we stop any previous callback possibility
+        this->stopTimer();
+        // And we re-launch ours
+        this->startTimer(delayForRecomputeAfterResize_ms);
     }
-    else
-        std::cout  <<  std::endl;
 }
 
 void MultiSceneCanvasInteractor::timerCallback()
 {
-    std::cout << "timer callback..." <<  std::endl;
+    TriggerInteractionDataPreComputation();
+    this->stopTimer();
 }
 
 void MultiSceneCanvasInteractor::handleAsyncUpdate()

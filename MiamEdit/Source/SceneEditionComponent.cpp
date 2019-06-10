@@ -733,10 +733,14 @@ bool SceneEditionComponent::keyPressed (const KeyPress& key)
                 && (! isCanvasGroupHidden)
                 && deleteSceneTextButton->isEnabled() && deleteSceneTextButton->isVisible())
                 deleteSceneTextButton->triggerClick();
-            else if ( (key.getKeyCode() == areaToBackCmdShiftKey)
+            else if ( (key.getKeyCode() == sceneLeftCmdShiftKey)
+                     && (! isCanvasGroupHidden)
+                     && sceneLeftTextButton->isEnabled() && sceneLeftTextButton->isVisible())
+                sceneLeftTextButton->triggerClick();
+            else if ( (key.getKeyCode() == sceneRightCmdShiftKey)
                      && (! isAreaGroupHidden)
-                     && sendToBackTextButton->isEnabled() && sendToBackTextButton->isVisible())
-                sendToBackTextButton->triggerClick();
+                     && sceneRightTextButton->isEnabled() && sceneRightTextButton->isVisible())
+                sceneRightTextButton->triggerClick();
             else if ( (key.getKeyCode() == areaToFrontCmdShiftKey)
                      && (! isAreaGroupHidden)
                      && bringToFrontTextButton->isEnabled() && bringToFrontTextButton->isVisible())

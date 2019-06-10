@@ -108,6 +108,7 @@ namespace Miam {
         
         
         // - - - - - Interp data pre-computation. Called from juce message thread - - - - -
+        int delayForRecomputeAfterResize_ms = 5000;
         int nbCoresToUse = 1;
         int currentPreComputationBatchStartIdx = -1;
         int currentPreComputationBatchIdx = -1;

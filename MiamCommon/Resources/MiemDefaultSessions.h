@@ -42,7 +42,7 @@ namespace Miam
         static std::string GetDefault_mspat()
         {
             return std::string("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-"<miem appVersion=\"65794\" appPurpose=\"Spatialisation\">\n"
+"<miem appVersion=\"65795\" appPurpose=\"Spatialisation\">\n"
 "    <settings>\n"
 "        <control>\n"
 "            <interpolation type=\"Quadratic\">\n"
@@ -64,6 +64,7 @@ namespace Miam
 "        </control>\n"
 "        <presenter>\n"
 "            <keyboardedition>true</keyboardedition>\n"
+"            <exciters constraint_positions=\"true\"/>\n"
 "        </presenter>\n"
 "    </settings>\n"
 "    <control>\n"
@@ -415,7 +416,7 @@ namespace Miam
 "                                </geometry>\n"
 "                                <spatstate index=\"2\"/>\n"
 "                            </area>\n"
-"                            <area id=\"41\" type=\"Exciter\" index=\"9\">\n"
+"                            <area id=\"43\" type=\"Exciter\" index=\"9\">\n"
 "                                <center x=\"0.49636803874092028\" y=\"0.14079422382671544\"/>\n"
 "                                <colour>ffd3d3d3</colour>\n"
 "                                <keep_ratio>false</keep_ratio>\n"
@@ -426,7 +427,7 @@ namespace Miam
 "                                <is_round>false</is_round>\n"
 "                                <is_animation_sync>true</is_animation_sync>\n"
 "                            </area>\n"
-"                            <area id=\"42\" type=\"Exciter\" index=\"10\">\n"
+"                            <area id=\"44\" type=\"Exciter\" index=\"10\">\n"
 "                                <center x=\"0.38740920096852349\" y=\"0.90252707581227565\"/>\n"
 "                                <colour>ffd3d3d3</colour>\n"
 "                                <keep_ratio>false</keep_ratio>\n"
@@ -555,7 +556,7 @@ namespace Miam
 "            </canvas>\n"
 "        </canvases>\n"
 "    </graphicsession>\n"
-"</miem>");
+"</miem>\n");
         }
         
         static std::string GetDefault_mcs()

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<miem appVersion="65794" appPurpose="Spatialisation">
+<miem appVersion="65795" appPurpose="Spatialisation">
     <settings>
         <control>
             <interpolation type="Quadratic">
@@ -21,6 +21,7 @@
         </control>
         <presenter>
             <keyboardedition>true</keyboardedition>
+            <exciters constraint_positions="true"/>
         </presenter>
     </settings>
     <control>
@@ -302,7 +303,7 @@
                                 </geometry>
                                 <spatstate index="2"/>
                             </area>
-                            <area id="41" type="Exciter" index="9">
+                            <area id="43" type="Exciter" index="9">
                                 <center x="0.49636803874092028" y="0.14079422382671544"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
@@ -313,7 +314,7 @@
                                 <is_round>false</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
-                            <area id="42" type="Exciter" index="10">
+                            <area id="44" type="Exciter" index="10">
                                 <center x="0.38740920096852349" y="0.90252707581227565"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
