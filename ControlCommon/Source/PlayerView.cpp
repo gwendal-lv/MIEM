@@ -88,14 +88,19 @@ Rectangle<int> PlayerView::GetSafeBackgroundBounds(Rectangle<int> fullScreenBoun
                 backgroundBounds.removeFromBottom(margin);
                 break;
                 
+                // Nouveau problème depuis le landscape forcé dans Juce...
+                // Ces deux cas sont mélangés... donc on
+                // les rend identiques....
             case juce::Desktop::rotatedClockwise:
                 backgroundBounds.removeFromRight(margin);
-                backgroundBounds.removeFromLeft(thinMargin);
+                //backgroundBounds.removeFromLeft(thinMargin);
+                backgroundBounds.removeFromLeft(margin);
                 backgroundBounds.removeFromBottom(barMargin);
                 break;
             case juce::Desktop::rotatedAntiClockwise:
                 backgroundBounds.removeFromLeft(margin);
-                backgroundBounds.removeFromRight(thinMargin);
+                //backgroundBounds.removeFromRight(thinMargin);
+                backgroundBounds.removeFromRight(margin);
                 backgroundBounds.removeFromBottom(barMargin);
                 break;
                 

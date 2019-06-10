@@ -492,6 +492,7 @@ void PlayerPresenter::LoadSession(std::string filename)
     view->GetBackgroundComponent()->SetMainSliderEnabled(model->GetIsMasterGainEnabled());
     // large computation starts a bit after loading is actually done...
     Timer::callAfterDelay(100, [this] {
+        this->GetGraphicSessionPlayer()->SetEnablePreComputation(true);
         this->GetGraphicSessionPlayer()->TriggerInteractionDataPreComputation();
     });
     

@@ -10,6 +10,7 @@
 
 
 #include <iterator>     // std::advance
+#include <algorithm>    // std::min
 
 
 #include "MultiSceneCanvasComponent.h"
@@ -69,6 +70,31 @@ void MultiSceneCanvasInteractor::RecomputeAreaExciterInteractions()
         assert(false);
 }
 
+
+void MultiSceneCanvasInteractor::OnComponentResized(int newWidth, int newHeight, Component* childComponent)
+{
+    if (childComponent != canvasComponent)
+    {
+        // The only caller should be the child multi-scene canvas
+        assert(false);
+        return;
+    }
+    
+    std::cout << "child resize.... ";
+    if (graphicSessionManager->GetEnablePreComputation())
+    {
+        std::cout << "RESIZE TRIGGER ALLOWED" << std::endl;
+        // TEST on relance tout comme des cons.... pour vérifier...
+        TriggerInteractionDataPreComputation();
+    }
+    else
+        std::cout  <<  std::endl;
+}
+
+void MultiSceneCanvasInteractor::timerCallback()
+{
+    std::cout << "timer callback..." <<  std::endl;
+}
 
 void MultiSceneCanvasInteractor::handleAsyncUpdate()
 {
@@ -468,17 +494,116 @@ void MultiSceneCanvasInteractor::deleteAsyncDrawableObject(std::shared_ptr<IDraw
 
 
 
-// - - - - - Thread-safe methods (for interp data pre-computation) - - - - -
+// - - - - - Interp data pre-computation. Called from juce message thread - - - - -
 void MultiSceneCanvasInteractor::TriggerInteractionDataPreComputation()
 {
-    nbCoresToUse = (SystemStats::getNumCpus() > 1) ? SystemStats::getNumCpus() : 1;
-    lastSceneBeingProcessed = -1; //
-    std::cout << "[Interaction Data] " << scenes.size() << " Pre-Computations start, multi-threaded on " << nbCoresToUse << " cores RESTE ENCORE A ECRIIIIIIIIIIIIIIRE" << std::endl;
+    // we have to keep track of the number of restart asked (because the
+    // waitOrTrigger function will loop-call itself, as many times as the count of triggers...)
+    bool isAlreadyComputing = (currentPreComputationBatchIdx != -1)
+    || shouldRestartPreComputationBatch
+    || (numberOfWaitingRestarts > 0);
+    if (isAlreadyComputing)
+    {
+        if (numberOfWaitingRestarts >= 1)
+        {
+            std::cout << "Request for pre-computation: denied." << std::endl;
+            return;
+        }
+    }
+    
+    
+    // Actual restart
+    shouldRestartPreComputationBatch = true;
+    numberOfWaitingRestarts++;
+    
+    
+    // For 1 core (does it still exist ???) or 2 cores (smartphones, e.g. iphone 7)
+    // -> we use the whole CPU. Computing threads are not high-priority, the OS will manage
+    // Juce and the computing threads together.
+    // For more cores : we leave 1 core free for the best UX
+    if ((SystemStats::getNumCpus() == 1)
+        || (SystemStats::getNumCpus() == 2))
+        nbCoresToUse = SystemStats::getNumCpus();
+    else
+        nbCoresToUse = SystemStats::getNumCpus() - 1;
+    
+    
+    std::cout << "[Interaction Data] " << scenes.size() << " Pre-Computations start, multi-threaded on " << nbCoresToUse << "/" << SystemStats::getNumCpus() << " CPU cores." << ( (!isAlreadyComputing) ? "" : (std::string(" WARNING: forced restart ") + boost::lexical_cast<std::string>(numberOfWaitingRestarts) + " (previous computation was occuring).")) << std::endl;
+    
     
     /// All calls must be made from the juce:: MessageManager thread
-    // (including waiting calls)
+    if (! isAlreadyComputing)
+        waitOrTriggerPreComputationBatch();
 }
 
+void MultiSceneCanvasInteractor::waitOrTriggerPreComputationBatch()
+{
+    // Attente de toutes les scènes en cours
+    // (OK, marche aussi à l'init, si Zéro scène en cours)
+    bool allScenesHaveFinished = true; // default, we wait for one to say false
+    for (int i=0 ;
+         (i<currentPreComputationBatchSize) && (allScenesHaveFinished) ;
+         i++)
+    {
+        allScenesHaveFinished = ! scenes[currentPreComputationBatchStartIdx + i]
+                 ->GetIsPreComputingGroupsImages();
+    }
+    if (allScenesHaveFinished)
+    {
+        // Avant de re-trigger... On doit vérifier que cet appel n'était pas
+        // de trop ????
+        triggerNextPreComputationbatch();
+    }
+    else // 200 Hz scrutation
+        Timer::callAfterDelay(5, [this] { this->waitOrTriggerPreComputationBatch(); });
+}
+void MultiSceneCanvasInteractor::triggerNextPreComputationbatch()
+{
+    // Should we restart ?
+    // A restart may have been asked when we were computing....
+    // But the restart was asked on the same, juce message thread, no issue.
+    if (shouldRestartPreComputationBatch)
+    {
+        numberOfWaitingRestarts--;
+        shouldRestartPreComputationBatch = false;
+        currentPreComputationBatchIdx = -1;
+        currentPreComputationBatchSize = 0;
+    }
+    
+    // Definition of new batch params (necessary explicit cast of all elmts of init list)
+    // Comparison with remaining size, including next idx
+    currentPreComputationBatchSize = std::min(nbCoresToUse,
+                        ((int)(scenes.size()) - (currentPreComputationBatchIdx+1)));
+    currentPreComputationBatchSize = std::max(currentPreComputationBatchSize, 0); // security...
+
+    if (currentPreComputationBatchSize == 0)
+    {
+        onPreComputationFinished();
+        return;
+    }
+    
+    // Actual trigger, if the function did not return yet (because it was finished...)
+    // (will update the batch Index)
+    currentPreComputationBatchStartIdx = currentPreComputationBatchIdx+1;
+    for (int i=0 ; i < currentPreComputationBatchSize ; i++)
+    {
+        currentPreComputationBatchIdx++;
+        scenes[currentPreComputationBatchIdx]->TriggerInteractionDataPreComputation();
+    }
+    
+    // wait re-triggered here also
+    // min 40ms for each computation ->
+    // small screens (smartphones) actually need only a few ms for very small scenes
+    Timer::callAfterDelay(40, [this] { this->waitOrTriggerPreComputationBatch(); });
+}
+void MultiSceneCanvasInteractor::onPreComputationFinished()
+{
+    currentPreComputationBatchIdx = -1;
+    currentPreComputationBatchSize = 0;
+
+    // Display of an important info...
+    DisplayInfo(TRANS("Ready (all interaction data has been precomputed)."), 45);
+}
 
 
 

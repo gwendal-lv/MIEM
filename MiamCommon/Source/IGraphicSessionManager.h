@@ -76,6 +76,8 @@ namespace Miam
         private :
         bool mouseResizingCanvas = false;
         
+        /// \brief Global enable of pre-computations
+        bool enablePreComputation = false;
         
         /// \brief Global Type of constraints on exciters movements
         SceneConstrainer::ConstraintType globalExcitersConstraint =
@@ -98,6 +100,9 @@ namespace Miam
         virtual bool IsOpenGlSwapSynced() {return false;}
         
         InterpolationType GetInterpolatorType() const;
+        
+        void SetEnablePreComputation(bool shouldBeEnabled) { enablePreComputation = shouldBeEnabled; }
+        bool GetEnablePreComputation() const { return enablePreComputation; }
         
         SceneConstrainer::ConstraintType GetGlobalExcitersConstraint() const;
         virtual void SetGlobalExcitersConstraint(SceneConstrainer::ConstraintType constraint)

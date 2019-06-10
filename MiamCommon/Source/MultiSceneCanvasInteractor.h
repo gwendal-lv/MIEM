@@ -53,7 +53,8 @@ namespace Miam {
     ///
     class MultiSceneCanvasInteractor :
         public AsyncUpdater,
-        public std::enable_shared_from_this<MultiSceneCanvasInteractor>
+        public std::enable_shared_from_this<MultiSceneCanvasInteractor>,
+        private juce::Timer // for triggering pre-computations after resizes
     {
         
         // = = = = = = = = = = ATTRIBUTES = = = = = = = = = =
@@ -68,10 +69,11 @@ namespace Miam {
 
         /// \brief The associated Juce canvas component
         ///
-        /// The pointer was actually extracted from a juce::ScopedPointer (do not
+        /// The pointer was actually extracted from a std::unique_ptr (do not
         /// delete it from inside this class)
         MultiSceneCanvasComponent* canvasComponent;
-        
+        int previousChildWidth = -1;
+        int previousChildHeight = -1;
         
         
         // The scenes
@@ -105,9 +107,13 @@ namespace Miam {
         std::map<std::shared_ptr<IDrawableArea>, std::list<std::shared_ptr<IDrawableArea>>::iterator> originalToAsyncObject;
         
         
-        // - - - - - Thread-safe attributes (for interp data pre-computation) - - - - -
-        int nbCoresToUse = 1; // juce message thread only
-        int lastSceneBeingProcessed = -1; // juce message thread only
+        // - - - - - Interp data pre-computation. Called from juce message thread - - - - -
+        int nbCoresToUse = 1;
+        int currentPreComputationBatchStartIdx = -1;
+        int currentPreComputationBatchIdx = -1;
+        int currentPreComputationBatchSize = 0;
+        bool shouldRestartPreComputationBatch = false;
+        int numberOfWaitingRestarts = 0; // should never be > 1 !!!
         
         protected :
         SceneCanvasComponent::Id selfId; ///< To be transformed to a name...
@@ -130,7 +136,17 @@ namespace Miam {
         
         void RecomputeAreaExciterInteractions();
         
+        /// \brief To be called by the child multi scene canvas component
+        ///
+        /// Works with the internal timer to detect actual end of resize phases (when the OS
+        /// wants to show a "smooth" multi-resize to the user)
+        void OnComponentResized(int newWidth, int newHeight, Component* childComponent);
         
+        // - - - Overrides of juce callbacks (see inherited classes) - - -
+        private :
+        /// \brief Timer for detection the end of resize phases (when the OS
+        /// wants to show a "smooth" multi-resize to the user)
+        virtual void timerCallback() override;
         protected :
         void handleAsyncUpdate() override;
         
@@ -224,14 +240,18 @@ namespace Miam {
         void UnlockAsyncDrawableObjects() { asyncDrawableObjectsMutex.unlock(); }
         
         
-        // - - - - - Thread-safe methods (for interp data pre-computation) - - - - -
+        // - - - - - Interp data pre-computation. Called from juce message thread - - - - -
         public :
         /// \brief Will trigger the pre-computations for all scenes, using
         /// all CPUs but one.
         void TriggerInteractionDataPreComputation();
         protected :
-        
-        
+        /// \brief Function that will self-call itself with a delay, while the current
+        /// batch is not finished. When the batch is finished, the function will trigger
+        /// the next batch (or no batch if all is finished, and sends the proper event)
+        void waitOrTriggerPreComputationBatch();
+        void triggerNextPreComputationbatch();
+        void onPreComputationFinished();
         
         // - - - - - Selection management (scenes only) - - - - -
         public :

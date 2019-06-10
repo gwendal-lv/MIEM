@@ -77,6 +77,8 @@ public:
     // internal helpers
     private :
     void setIsOscConfigurationDisplayed(bool shouldBeDisplayed);
+    void translateOscConfigurationGroup(int dX, int dY);
+    void translateComponent(int dX, int dY, Component* component);
     void updateOscConfigurationComponents(bool resetConnectButtonText = true);
     public :
 

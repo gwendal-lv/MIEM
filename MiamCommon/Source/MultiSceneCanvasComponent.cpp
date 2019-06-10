@@ -78,6 +78,10 @@ void MultiSceneCanvasComponent::paint (Graphics& /*g*/) // unused Graphics conte
 
 void MultiSceneCanvasComponent::resized()
 {
+    // Notif to parent (to maybe trigger pre-computations)
+    canvasManager->OnComponentResized(getWidth(), getHeight(), this);
+    
+    
     // Children display canvas on the bottom
     childrenCanvas->setSize(getWidth(), getHeight() - SceneButtonsHeight -space); // appelera l'update du canvasinteractor (le manager)
     childrenCanvas->setTopLeftPosition(0, SceneButtonsHeight +space);

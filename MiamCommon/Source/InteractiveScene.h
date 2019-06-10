@@ -176,6 +176,9 @@ namespace Miam
         void SetAreasOpacityMode(OpacityMode opacityMode);
     
         
+        // - - - - - Lock-free, thread safe pre-computation info - - - - -
+        bool GetIsPreComputingGroupsImages() { return isPreComputingGroupsImages; }
+        
         
         
         

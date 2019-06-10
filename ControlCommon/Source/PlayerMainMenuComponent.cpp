@@ -302,58 +302,46 @@ void PlayerMainMenuComponent::resized()
     //[/UserPreResize]
 
     sessionGroupComponent->setBounds ((getWidth() / 2) - ((getWidth() - 16) / 2), 8, getWidth() - 16, 56);
-    loadFromFileButton->setBounds ((getWidth() / 2) - (200 / 2), 8 + 16, 200, 24);
+    loadFromFileButton->setBounds ((getWidth() / 2) - (200 / 2), 8 + 18, 200, 24);
     playImageButton->setBounds ((getWidth() / 2) + -16 - 62, getHeight() - 96, 62, 62);
     playingImageButton->setBounds ((getWidth() / 2) + -16 - 62, getHeight() - 96, 62, 62);
     stopImageButton->setBounds ((getWidth() / 2) + 16, getHeight() - 96, 62, 62);
     stoppedImageButton->setBounds ((getWidth() / 2) + 16, getHeight() - 96, 62, 62);
-    helpGroupComponent->setBounds ((getWidth() / 2) - ((getWidth() - 16) / 2), 88, getWidth() - 16, getHeight() - 240);
-    helpButton->setBounds (((getWidth() / 2) - ((getWidth() - 16) / 2)) + (getWidth() - 16) / 2 - (120 / 2), 88 + 16, 120, 24);
-    infoTextEditor->setBounds (24, 152, (getWidth() - 16) - 32, (getHeight() - 240) - 120);
-    miemProjectHyperlinkButton->setBounds ((getWidth() / 2) - ((getWidth() - 40) / 2), 88 + (getHeight() - 240) - 40, getWidth() - 40, 24);
-    loadDefaultButton->setBounds (((getWidth() / 2) - ((getWidth() - 16) / 2)) + (getWidth() - 16) - 8 - 144, 88 + 16, 144, 24);
+    helpGroupComponent->setBounds ((getWidth() / 2) - ((getWidth() - 16) / 2), 72, getWidth() - 16, getHeight() - 179);
+    helpButton->setBounds (((getWidth() / 2) - ((getWidth() - 16) / 2)) + (getWidth() - 16) / 2 - (120 / 2), 72 + 18, 120, 24);
+    infoTextEditor->setBounds (24, 128, (getWidth() - 16) - 32, (getHeight() - 179) - 96);
+    miemProjectHyperlinkButton->setBounds ((getWidth() / 2) - ((getWidth() - 336) / 2), 72 + (getHeight() - 179) - 36, getWidth() - 336, 24);
+    loadDefaultButton->setBounds (((getWidth() / 2) - ((getWidth() - 16) / 2)) + (getWidth() - 16) - 8 - 144, 72 + 18, 144, 24);
     additionnalStatusLabel->setBounds ((getWidth() / 2) - ((getWidth() - 80) / 2), getHeight() - 24, getWidth() - 80, 24);
     fullscreenButton->setBounds (getWidth() - 24 - 144, getHeight() - 76, 144, 24);
-    udpPortLabel->setBounds ((getWidth() / 2) + -1 - 184, ((getHeight() / 2) + 44) + 0, 184, 24);
-    udpPortTextEditor->setBounds ((getWidth() / 2), (getHeight() / 2) + 44, 64, 24);
-    ipAddressLabel->setBounds ((getWidth() / 2) + -1 - 184, ((getHeight() / 2) + 12) + 0, 184, 24);
-    ipAddressTextEditor->setBounds ((getWidth() / 2), (getHeight() / 2) + 12, 120, 24);
-    changeConnectionButton->setBounds ((getWidth() / 2) - (200 / 2), (getHeight() / 2) + -24, 200, 24);
+    udpPortLabel->setBounds ((getWidth() / 2) + -1 - 184, ((getHeight() / 2) + 28) + 0, 184, 24);
+    udpPortTextEditor->setBounds ((getWidth() / 2), (getHeight() / 2) + 28, 64, 24);
+    ipAddressLabel->setBounds ((getWidth() / 2) + -1 - 184, ((getHeight() / 2) + -4) + 0, 184, 24);
+    ipAddressTextEditor->setBounds ((getWidth() / 2), (getHeight() / 2) + -4, 120, 24);
+    changeConnectionButton->setBounds ((getWidth() / 2) - (200 / 2), (getHeight() / 2) + -40, 200, 24);
     //[UserResized] Add your own custom resize handling here..
 
     // Buttons (and the group itself) will be hidden if there is not enough height available
     helpGroupComponent->setVisible(true); // default, will be false only if very, very small screen
-    // If there is space for the "load session" category only
-#ifdef JUCE_ANDROID
-    // ANDROID does not rotate for now ! So the help would never be shown on smartphones...
-    if (false)
-#else
-    if (helpGroupComponent->getHeight() < (helpButton->getHeight()+24))
-#endif
-    {
-        helpGroupComponent->setVisible(false);
-        helpButton->setVisible(false);
-        loadDefaultButton->setVisible(false);
-        miemProjectHyperlinkButton->setVisible(false);
-    }
-    // Else if there is space the "load session" and the "help" categories
-    else if (helpGroupComponent->getHeight() < (helpButton->getHeight()+64))
-    {
-        helpButton->setVisible(true);
-        loadDefaultButton->setVisible(displayHelp);
-        miemProjectHyperlinkButton->setVisible(false);
-    }
-    else
-    {
-        helpButton->setVisible(true);
-        loadDefaultButton->setVisible(displayHelp);
-        miemProjectHyperlinkButton->setVisible(displayHelp);
-    }
+
+    // If there would be space for the "load session" category only.... we manage.
+    // We are going to force everything on screen, because both Android and iOS run in
+    // landscape mode only. -> same behavior on all platforms
+    // -> only 2 modes : small height, or normal
+    bool enableUltraSmallHeightMode = (helpGroupComponent->getHeight() < (helpButton->getHeight()+112));
+    bool enableSmallHeightMode = getHeight() < 400;
+
+    // much generic code now...
+    helpButton->setVisible(true);
+    loadDefaultButton->setVisible(displayHelp);
+    miemProjectHyperlinkButton->setVisible(displayHelp);
+    infoTextEditor->setVisible((! enableUltraSmallHeightMode) && displayHelp);
 
     // In case of very small width: small arrangements for iPhones...
     // // 400px est environ la limite entre iPhone et iPhone +
     // MAIS pour l'iphone Xr -> boutons se recouvrent... (écran large, mais pas assez...)
-    if (getWidth() < 440)
+    // AUSSI pour small height -> bouton reste à gauche dans tous les cas
+    if ((getWidth() < 440) || enableSmallHeightMode)
     {
         Rectangle<int> bounds = helpButton->getBounds();
         bounds.setX(16); // décalage forcé à gauche
@@ -371,14 +359,34 @@ void PlayerMainMenuComponent::resized()
         newBounds.setHeight(56);
         helpGroupComponent->setBounds(newBounds);
 
-        // ip/port buttons are activated or not, depending on the remaining vertical height
-        if (getHeight() > 360)
-            setIsOscConfigurationDisplayed(true);
-        else
-            setIsOscConfigurationDisplayed(false);
+        // ip/port buttons are always activated,
+        // but they might be moved to the right
+        setIsOscConfigurationDisplayed(true);
+        if (enableSmallHeightMode || enableUltraSmallHeightMode)
+        {
+            translateOscConfigurationGroup((getWidth()/2) - (ipAddressTextEditor->getWidth() + 24),
+                                           -20);
+            // and we make room for this IP/UDP port info :
+            helpGroupComponent->setBounds(helpGroupComponent->getX(),
+                                          helpGroupComponent->getY(),
+                                          helpButton->getWidth() + 16,
+                                          helpGroupComponent->getHeight());
+        }
     }
     else
+    {
         setIsOscConfigurationDisplayed(false);
+        if (enableUltraSmallHeightMode)
+        {
+            // help reduced at max
+            Rectangle<int> newBounds = helpGroupComponent->getBounds();
+            newBounds.setHeight(56);
+            helpGroupComponent->setBounds(newBounds);
+            // link properly replaced
+            miemProjectHyperlinkButton->setTopLeftPosition(miemProjectHyperlinkButton->getX(),
+                                                           helpButton->getY());
+        }
+    }
 
     //[/UserResized]
 }
@@ -616,6 +624,19 @@ void PlayerMainMenuComponent::setIsOscConfigurationDisplayed(bool shouldBeDispla
     udpPortLabel->setVisible(shouldBeDisplayed);
     udpPortTextEditor->setVisible(shouldBeDisplayed);
 }
+void PlayerMainMenuComponent::translateOscConfigurationGroup(int dX, int dY)
+{
+    translateComponent(dX, dY, changeConnectionButton.get());
+    translateComponent(dX, dY, ipAddressLabel.get());
+    translateComponent(dX, dY, ipAddressTextEditor.get());
+    translateComponent(dX, dY, udpPortLabel.get());
+    translateComponent(dX, dY, udpPortTextEditor.get());
+}
+void PlayerMainMenuComponent::translateComponent(int dX, int dY, Component* component)
+{
+    component->setTopLeftPosition(component->getX() + dX,
+                                  component->getY() + dY);
+}
 void PlayerMainMenuComponent::updateOscConfigurationComponents(bool resetConnectButtonText)
 {
     ipAddressLabel->setEnabled(isOscConfigurationBeingEdited);
@@ -672,10 +693,10 @@ BEGIN_JUCER_METADATA
                  initialHeight="400">
   <BACKGROUND backgroundColour="0"/>
   <GROUPCOMPONENT name="Session group component" id="ee702f61e13ff830" memberName="sessionGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="0.5Cc 8 16M 56" outlinecol="ff909090"
+                  virtualName="" explicitFocusOrder="0" pos="0Cc 8 16M 56" outlinecol="ff909090"
                   textcol="ff909090" title="Session"/>
   <TEXTBUTTON name="Load From File text button" id="2fe2a2c362ae91bd" memberName="loadFromFileButton"
-              virtualName="" explicitFocusOrder="0" pos="0Cc 16 200 24" posRelativeY="ee702f61e13ff830"
+              virtualName="" explicitFocusOrder="0" pos="0Cc 18 200 24" posRelativeY="ee702f61e13ff830"
               bgColOff="ff404040" buttonText="Load from .mspat file" connectedEdges="0"
               needsCallback="1" radioGroupId="0"/>
   <IMAGEBUTTON name="Play image button" id="823680c6dd0a5a2e" memberName="playImageButton"
@@ -703,30 +724,29 @@ BEGIN_JUCER_METADATA
                resourceOver="" opacityOver="1.0" colourOver="0" resourceDown=""
                opacityDown="1.0" colourDown="0"/>
   <GROUPCOMPONENT name="Help group component" id="5beff948b653aff1" memberName="helpGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="0.5Cc 88 16M 240M"
-                  outlinecol="ff909090" textcol="ff909090" title="Help"/>
+                  virtualName="" explicitFocusOrder="0" pos="0Cc 72 16M 179M" outlinecol="ff909090"
+                  textcol="ff909090" title="Help"/>
   <TEXTBUTTON name="Help button" id="87051e2f861a82a1" memberName="helpButton"
-              virtualName="" explicitFocusOrder="0" pos="0Cc 16 120 24" posRelativeX="5beff948b653aff1"
+              virtualName="" explicitFocusOrder="0" pos="0Cc 18 120 24" posRelativeX="5beff948b653aff1"
               posRelativeY="5beff948b653aff1" bgColOff="ff404040" buttonText="Show help"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTEDITOR name="Info text editor" id="a4539a25a9aebf1" memberName="infoTextEditor"
-              virtualName="" explicitFocusOrder="0" pos="24 152 32M 120M" posRelativeY="97c294b92cbc0a85"
+              virtualName="" explicitFocusOrder="0" pos="24 128 32M 96M" posRelativeY="97c294b92cbc0a85"
               posRelativeW="5beff948b653aff1" posRelativeH="5beff948b653aff1"
               textcol="ff909090" bkgcol="ffffff" initialText="Multi&#10;L&#10;I&#10;N&#10;E&#10;and scrollable information textbox for help contents"
               multiline="1" retKeyStartsLine="1" readonly="1" scrollbars="1"
               caret="0" popupmenu="0"/>
   <HYPERLINKBUTTON name="MIEM Project hyperlink button" id="fa7d05f849f2e1a1" memberName="miemProjectHyperlinkButton"
-                   virtualName="" explicitFocusOrder="0" pos="0.5Cc 40R 40M 24"
-                   posRelativeY="5beff948b653aff1" tooltip="http://miem.laras.be"
-                   textCol="ff3d6ed1" buttonText="Go to MIEM website: miem.laras.be"
+                   virtualName="" explicitFocusOrder="0" pos="0Cc 36R 336M 24" posRelativeY="5beff948b653aff1"
+                   tooltip="http://miem.laras.be" textCol="ff3d6ed1" buttonText="Go to MIEM website: miem.laras.be"
                    connectedEdges="0" needsCallback="0" radioGroupId="0" url="http://miem.laras.be"/>
   <TEXTBUTTON name="Load Default button" id="d025c06799a8b40f" memberName="loadDefaultButton"
-              virtualName="" explicitFocusOrder="0" pos="8Rr 16 144 24" posRelativeX="5beff948b653aff1"
+              virtualName="" explicitFocusOrder="0" pos="8Rr 18 144 24" posRelativeX="5beff948b653aff1"
               posRelativeY="5beff948b653aff1" bgColOff="ff404040" buttonText="Load default session"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <LABEL name="Additionnal Status Label" id="bef02cde37454c59" memberName="additionnalStatusLabel"
-         virtualName="" explicitFocusOrder="0" pos="0.5Cc 24R 80M 24"
-         textCol="ff909090" edTextCol="ff000000" edBkgCol="0" labelText="Additionnal Status information"
+         virtualName="" explicitFocusOrder="0" pos="0Cc 24R 80M 24" textCol="ff909090"
+         edTextCol="ff000000" edBkgCol="0" labelText="Additionnal Status information"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="1" justification="36" typefaceStyle="Italic"/>
@@ -741,7 +761,7 @@ BEGIN_JUCER_METADATA
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
          fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="34"/>
   <TEXTEDITOR name="UDP Port Text Editor" id="e4ef4437203ce19e" memberName="udpPortTextEditor"
-              virtualName="" explicitFocusOrder="0" pos="0C 44C 64 24" bkgcol="ff404040"
+              virtualName="" explicitFocusOrder="0" pos="0C 28C 64 24" bkgcol="ff404040"
               initialText="8001" multiline="0" retKeyStartsLine="0" readonly="0"
               scrollbars="1" caret="1" popupmenu="1"/>
   <LABEL name="Ip Address Label" id="2066f0f6ef12dcf0" memberName="ipAddressLabel"
@@ -751,11 +771,11 @@ BEGIN_JUCER_METADATA
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
          fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="34"/>
   <TEXTEDITOR name="IP Address Text Editor" id="6997b5b4dc28675a" memberName="ipAddressTextEditor"
-              virtualName="" explicitFocusOrder="0" pos="0C 12C 120 24" bkgcol="ff404040"
+              virtualName="" explicitFocusOrder="0" pos="0C -4C 120 24" bkgcol="ff404040"
               initialText="127.0.0.1" multiline="0" retKeyStartsLine="0" readonly="0"
               scrollbars="1" caret="1" popupmenu="1"/>
   <TEXTBUTTON name="Change Connection button" id="56c9310b25ab19de" memberName="changeConnectionButton"
-              virtualName="" explicitFocusOrder="0" pos="0Cc -24C 200 24" bgColOff="ff404040"
+              virtualName="" explicitFocusOrder="0" pos="0Cc -40C 200 24" bgColOff="ff404040"
               buttonText="Change IP/port" connectedEdges="0" needsCallback="1"
               radioGroupId="0"/>
 </JUCER_COMPONENT>

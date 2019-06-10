@@ -31,11 +31,12 @@ InteractiveScene::InteractiveScene(std::shared_ptr<MultiSceneCanvasInteractor> c
 :
 canvasManager(canvasManager_),
 canvasComponent(canvasComponent_),
-excitersBehavior(excitersBehavior_)
+excitersBehavior(excitersBehavior_),
+isPreComputingGroupsImages(false)
 {
     name = "Default Scene";
     
-    // no random colour -> black group
+    // Default Areas Groups
     backgroundGroup = std::make_shared<AreasGroup>((int)AreasGroup::SpecialIds::Background,
                                                    Colours::black);
     blockingGroup = std::make_shared<AreasGroup>((int)AreasGroup::SpecialIds::Blocking, Colours::black);
@@ -46,6 +47,7 @@ excitersBehavior(excitersBehavior_)
     std::make_shared<AreasGroup>((int)AreasGroup::SpecialIds::OutOfBounds,
                                  Colours::black);
     
+    // For exciters animation
 #ifdef __MIEM_VBO
     this->startTimerHz(24);
 #endif
@@ -663,12 +665,15 @@ void InteractiveScene::TriggerInteractionDataPreComputation()
         return;
     }
     
+    // ----- > Computation starts here
+    
+    isPreComputingGroupsImages = true;
     startTime = std::chrono::steady_clock::now();
     std::cout << "[InteractiveScene.cpp] Starting Pre-Computation of interaction data......." << std::endl;
     
     // -- > Init of all non-thread-safe variables
     if (auto canvasLocked = canvasManager.lock())
-        canvasLocked->DisplayInfo("Computing Interaction data...", 49);
+        canvasLocked->DisplayInfo("Computing Interaction data...", 40);
     // canvas size
     groupsImgW = canvasComponent->getWidth();
     groupsImgH = canvasComponent->getHeight();
@@ -684,9 +689,6 @@ void InteractiveScene::TriggerInteractionDataPreComputation()
             assert(false);
     }
     
-    // ----- > Computation starts here
-    
-    isPreComputingGroupsImages = true;
     // Assignation des valeurs d'attente aux groupes des aires
     for (size_t k = 0 ; (k<areas.size()) ; k++)
         areas[k]->SetAreasGroup(blockUntilComputationResultGroup);
@@ -812,10 +814,6 @@ void InteractiveScene::PreComputeInteractionData()
     assert(couldWrite);
 #endif
     
-    // Nettoyage
-    clonedAreas.clear();
-    
-    isPreComputingGroupsImages = false;
     // Juste avant fin : lancement du post processing
     MessageManager::callAsync([this] { this->assignGroupsToAreas_postComputation(); });
 }
@@ -864,26 +862,67 @@ InteractiveScene::propagateAreaGroup(std::vector<AreasGroup*>& groupsImage,
 }
 void InteractiveScene::assignGroupsToAreas_postComputation()
 {
-    // Assignation des groupes aux aires : chaque aire prend le groupe
-    // qui est au niveau de son centre
-    for (size_t k = 0 ; (k<areas.size()) ; k++)
+    bool dataIncoherenceDetected = areas.size() != clonedAreas.size();
+    
+    // S'il y a carrément une différence de taille : alors c'est n'imp.
+    // On sauvegarde des zéros, les résultats sont perdus....
+    if (dataIncoherenceDetected)
     {
-        auto centerInPixels = areas[k]->GetCenterPosition();
-        size_t row = (size_t) std::round(centerInPixels.get<1>());
-        size_t col = (size_t) std::round(centerInPixels.get<0>());
-        // The shared pointer was created when starting the propagation
-        auto groupSharedPtr = groupsImage[row*groupsImgW + col]->shared_from_this();
-        areas[k]->SetAreasGroup(groupSharedPtr);
+        for (size_t k = 0 ; (k<areas.size()) ; k++)
+            areas[k]->SetAreasGroup(backgroundGroup);
     }
+    // Assignation des groupes aux aires : chaque aire prend le groupe
+    // qui est au niveau du centre de sa copie (au cas où un resize a eu lieu
+    // entre temps)
+    else
+    {
+        for (size_t k = 0 ; (k<areas.size()) ; k++)
+        {
+            // Vérification que les aires sont les mêmes ! Si tout a changé, on ne peut
+            // rien faire...
+            if (areas[k]->GetId() == clonedAreas[k]->GetId())
+            {
+                // Attention : le centre de l'aire a pu changer (si un resize était en cours...),
+                // car le juce Message Thread ne s'est pas arrêté pendant le calcul !
+                // On va donc utiliser les coordonnées des copies.
+                auto centerInPixels = clonedAreas[k]->GetCenterPosition();
+                size_t row = (size_t) std::round(centerInPixels.get<1>());
+                size_t col = (size_t) std::round(centerInPixels.get<0>());
+                // The shared pointer was created when starting the propagation
+                auto groupSharedPtr = groupsImage[row*groupsImgW + col]->shared_from_this();
+                areas[k]->SetAreasGroup(groupSharedPtr);
+            }
+            // Si incohérence... go to back. Bim.
+            else
+            {
+                areas[k]->SetAreasGroup(backgroundGroup);
+                dataIncoherenceDetected = true;
+            }
+        }
+    }
+    
+    if (dataIncoherenceDetected)
+    {
+        // Data incoherence will be tolerated in release, but must be treated in debug...
+        // (becauses incoherent results just deactivate some features...).
+        // The incoherence has been detected during the loop
+        assert(false);
+        std::cout << "[InteractiveScene] Incoherence detected, areas changed during pre-computation. Results might be false." << std::endl;
+    }
+    
+    // Nettoyage
+    clonedAreas.clear();
     
     // Retour graphique final
     if (auto canvasLocked = canvasManager.lock())
-        canvasLocked->DisplayInfo("Interaction data is up to date.", 50);
-    
+        canvasLocked->DisplayInfo("Interaction data is up to date.", 40);
     // Affichage du temps total de traitement
     auto processDuration = std::chrono::steady_clock::now() - startTime;
     std::cout << "[InteractiveScene.cpp]         ----->   Threaded Pre-Computation finished. Duration = " <<
     std::chrono::duration_cast<std::chrono::milliseconds>(processDuration).count() << " ms" << std::endl;
+    
+    // Fin
+    isPreComputingGroupsImages = false;
 }
 
 

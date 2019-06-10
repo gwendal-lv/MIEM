@@ -191,9 +191,9 @@ void GraphicSessionPlayer::CanvasModeChanged(CanvasManagerMode /*canvasMode*/)
 
 // ===== EVENTS TO VIEW =====
 
-void GraphicSessionPlayer::DisplayInfo(String info, int /*priority*/)
+void GraphicSessionPlayer::DisplayInfo(String info, int priority)
 {
-    view->DisplayInfo(info);
+    view->DisplayInfo(info, (priority > 50));
 }
 
 
