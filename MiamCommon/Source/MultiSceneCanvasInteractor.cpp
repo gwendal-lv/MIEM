@@ -471,7 +471,12 @@ void MultiSceneCanvasInteractor::deleteAsyncDrawableObject(std::shared_ptr<IDraw
 // - - - - - Thread-safe methods (for interp data pre-computation) - - - - -
 void MultiSceneCanvasInteractor::TriggerInteractionDataPreComputation()
 {
+    nbCoresToUse = (SystemStats::getNumCpus() > 1) ? SystemStats::getNumCpus() : 1;
+    lastSceneBeingProcessed = -1; //
+    std::cout << "[Interaction Data] " << scenes.size() << " Pre-Computations start, multi-threaded on " << nbCoresToUse << " cores RESTE ENCORE A ECRIIIIIIIIIIIIIIRE" << std::endl;
     
+    /// All calls must be made from the juce:: MessageManager thread
+    // (including waiting calls)
 }
 
 

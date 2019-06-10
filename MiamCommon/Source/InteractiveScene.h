@@ -126,7 +126,6 @@ namespace Miam
         // attributes for multi-threaded computation
         std::thread preComputingThread;
         std::chrono::time_point<std::chrono::steady_clock> startTime;
-        std::mt19937 randomGenerator;
         std::atomic<bool> isPreComputingGroupsImages;
         std::vector< std::shared_ptr<IInteractiveArea> > clonedAreas;
         
@@ -379,7 +378,6 @@ namespace Miam
                 return false; // no need to propagate through this pixel
             }
         }
-        juce::Colour getNextRandomColour();
         /// \brief To be executed on Juce Message thread
         void assignGroupsToAreas_postComputation();
         public :

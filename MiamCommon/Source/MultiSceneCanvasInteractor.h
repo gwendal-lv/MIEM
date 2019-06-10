@@ -105,6 +105,9 @@ namespace Miam {
         std::map<std::shared_ptr<IDrawableArea>, std::list<std::shared_ptr<IDrawableArea>>::iterator> originalToAsyncObject;
         
         
+        // - - - - - Thread-safe attributes (for interp data pre-computation) - - - - -
+        int nbCoresToUse = 1; // juce message thread only
+        int lastSceneBeingProcessed = -1; // juce message thread only
         
         protected :
         SceneCanvasComponent::Id selfId; ///< To be transformed to a name...

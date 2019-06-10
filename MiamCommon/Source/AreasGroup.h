@@ -21,6 +21,7 @@ namespace Miam
 {
     class InteractiveArea;
     
+    
     /// \brief Represents a group of overlapping areas, with utility
     /// function to manage groups of areas
     class AreasGroup : public std::enable_shared_from_this<AreasGroup>
@@ -59,12 +60,28 @@ namespace Miam
         Colour GetColour() const {return colour;}
         int GetIndexInScene() const {return indexInScene; }
         
+        /// \brief Returns a colour from a cycle of 14 very different colours
+        static Colour GetDefaultColour(int colorIndex);
         
+            
         // ========================= METHODS =========================
         public :
-            AreasGroup(int _indexInScene, juce::Colour _colour);
+        AreasGroup(int _indexInScene, juce::Colour _colour);
         
-        
+            
+        // - - - -  utility functions - - - -
+        private :
+        static void buildErosionMasks(std::vector<int>& iMasks, std::vector<int>& jMasks, int erodeSize);
+            public :
+        /// \brief Applies an erosion algorithm to the given image, stores the result
+        /// back into the given vector input.
+        ///
+        /// Should be written with the ErodeSize as a template parameter, for
+        /// optimal results *************** TO DO ****************************
+        static void ErodeAreasGroups(std::vector<AreasGroup*>& image, AreasGroup* backArea,
+                                      size_t imgW, size_t imgH);
             
     };
 }
+    
+    

@@ -643,7 +643,7 @@ std::shared_ptr<AreasGroup> InteractiveScene::GetGroupFromPreComputedImage(int c
         // result to be perfectly safe....
         else
         {
-            std::cout << "[InteractiveScene.cpp] AUTO-TRIGGER (data was outdated)" << std::endl;
+            std::cout << "[InteractiveScene.cpp] ***AUTO-TRIGGER*** Pre-Computation (data was outdated)" << std::endl;
             TriggerInteractionDataPreComputation();
             return blockUntilComputationResultGroup;
         }
@@ -655,8 +655,16 @@ std::shared_ptr<AreasGroup> InteractiveScene::GetGroupFromPreComputedImage(int c
 
 void InteractiveScene::TriggerInteractionDataPreComputation()
 {
+    if (isPreComputingGroupsImages)
+    {
+        // double calcul lancé.... mettre sécurité là-dessus
+        assert(false);
+        std::cout << "[InteractiveScene.cpp] ******** PRE-COMPUTATION REQUEST NOT CONSIDERED (ALREADY COMPUTING) ********" << std::endl;
+        return;
+    }
+    
     startTime = std::chrono::steady_clock::now();
-    std::cout << "[InteractiveScene.cpp] Starting Pre-Computation of interaction data..." << std::endl;
+    std::cout << "[InteractiveScene.cpp] Starting Pre-Computation of interaction data......." << std::endl;
     
     // -- > Init of all non-thread-safe variables
     if (auto canvasLocked = canvasManager.lock())
@@ -690,19 +698,21 @@ void InteractiveScene::TriggerInteractionDataPreComputation()
 
 void InteractiveScene::PreComputeInteractionData()
 {
+    std::string threadName = "Miem::InteractiveScene Pre-Computation (";
+    threadName += name;
+    threadName += ")";
 #if defined(JUCE_ANDROID)
     // Android alone seems to support the POSIX classical interface
-    pthread_setname_np(pthread_self(), name.c_str());
+    pthread_setname_np(pthread_self(), threadName.c_str());
 #elif defined(JUCE_MAC) || defined(JUCE_IOS)
-    pthread_setname_np(/*pthread_self(), */ name.c_str()); // pas de TID pour FreeBSD 2003... (doc macOS)
+    pthread_setname_np(/*pthread_self(), */ threadName.c_str()); // pas de TID pour FreeBSD 2003... (doc macOS)
 #elif defined(JUCE_WINDOWS)
     // rien pour Windows.... pour l'instant
+    boost::ignore_unused(threadName);
 #endif
-    
     
     // Réinitialisation des groupes
     areasGroups.clear();
-    randomGenerator.seed(3); // 3 is nice.
     
     
     // Initialisation : mise à zéro du tableau des "couleurs" (en réalité : pointeurs)
@@ -734,7 +744,7 @@ void InteractiveScene::PreComputeInteractionData()
                     // Init du nouveau groupe, et de son 1ier pixel
                     int nextGroupIndex = (int) areasGroups.size();
                     areasGroups.push_back(std::make_shared<AreasGroup>(nextGroupIndex,
-                                                                       getNextRandomColour()));
+                                                AreasGroup::GetDefaultColour(nextGroupIndex)));
                     neighboursToPropagate.clear();
                     groupsImage[i*groupsImgW + j] = areasGroups.back().get();
                     // Propagation : init
@@ -767,6 +777,13 @@ void InteractiveScene::PreComputeInteractionData()
         }
     }
     
+    // - Pour supprimer les cas limites proches du bord, dans lesquelles les aires pourront se
+    // considérer désactivées (car poids d'interaction trop proche de zéro)
+    // - permet aussi de supprimer les erreurs, comme les fausses nouvelles zones
+    // en bout de triangle très pointu (à cause d'erreurs d'arrondis dans le calcul de collision...)
+    //
+    //     -> algo d'érosion (paramétré à l'intérieur de la fonction)
+    AreasGroup::ErodeAreasGroups(groupsImage, backgroundGroup.get(), groupsImgW, groupsImgH);
     
 #ifdef __MIEM_DISPLAY_SCENE_PRE_COMPUTATION
     // Construction + Affichage de l'image des groupes dans un fichier .png temporaire
@@ -845,12 +862,6 @@ InteractiveScene::propagateAreaGroup(std::vector<AreasGroup*>& groupsImage,
     
     return neighbourGroupPixels;
 }
-juce::Colour InteractiveScene::getNextRandomColour()
-{
-    return  juce::Colour::fromRGB((randomGenerator() % 230) + 26,
-                                  (randomGenerator() % 230) + 26,
-                                  (randomGenerator() % 230) + 26);
-}
 void InteractiveScene::assignGroupsToAreas_postComputation()
 {
     // Assignation des groupes aux aires : chaque aire prend le groupe
@@ -871,7 +882,7 @@ void InteractiveScene::assignGroupsToAreas_postComputation()
     
     // Affichage du temps total de traitement
     auto processDuration = std::chrono::steady_clock::now() - startTime;
-    std::cout << "[InteractiveScene.cpp] Threaded Pre-Computation finished. Duration = " <<
+    std::cout << "[InteractiveScene.cpp]         ----->   Threaded Pre-Computation finished. Duration = " <<
     std::chrono::duration_cast<std::chrono::milliseconds>(processDuration).count() << " ms" << std::endl;
 }
 
