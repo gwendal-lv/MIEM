@@ -76,7 +76,12 @@ void SpatStatesEditionManager::selectSpatState(std::shared_ptr<ControlState<doub
     // Update commands
     Colour colourToDisplay = selectedSpatState ? selectedSpatState->GetColour() : Colours::black;
     if (selectedSpatState)
-        editionComponent->SelectAndUpdateState(stateIndexToSend, infoText, matrixToSend, colourToDisplay);
+    {
+        // Update des courbes d'interpolation AVEC  l'état est maintenant obligatoire
+        editionComponent->SelectAndUpdateState(stateIndexToSend, infoText,
+                                               matrixToSend, colourToDisplay,
+                                               spatInterpolator->GetInterpolationCurves());
+    }
 
     // State info (may not de anything depending on the app's purpose)
     updateStateInfo();

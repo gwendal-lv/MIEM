@@ -91,7 +91,8 @@ public:
     void UpdateStatesList(std::vector< std::shared_ptr<ControlState<double>> > &newSpatStates);
 
     /// \brief When a new state is selected (order from the Presenter only)
-    void SelectAndUpdateState(int stateIndex, std::string infoText, std::shared_ptr<ControlMatrix<double>> newSpatMatrix, const Colour& stateColour);
+    void SelectAndUpdateState(int stateIndex, std::string infoText, std::shared_ptr<ControlMatrix<double>> newSpatMatrix, const Colour& stateColour,
+        std::shared_ptr<BasicInterpCurves> newInterpCurves);
 
     /// \brief Updates the links label
     void UpdateLinksLabel(const std::string& infoText);
@@ -153,7 +154,7 @@ private:
     String spatStateEditorText;
     String genericStatesListText;
     String genericStateEditorText;
-    
+
     // ====================== Keyboard SHORTCUTS =====================
     // codé vite et mal... à refactorer dans les boutons directement en les faisant
     // hériter d'une classe gestionnaire des raccourcis...

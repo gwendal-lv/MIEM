@@ -680,15 +680,11 @@ void LabelledMatrixComponent::SetInterpolationCurves(std::shared_ptr<BasicInterp
 
     for (size_t i=0 ; i<interpCurves.size() ; i++)
     {
+        // 1 - Direct application
         rowComboBoxes[i]->SetSelectedInterpolationType(interpCurves[i].GetInterpolationType());
 
         // to avoid conflicts (incoherent sliders on Juce side
         // we must check min/max values compared to the default values 0.0;1.0
-        // --> Reverse orders ?
-
-        // if min is bigger than default max
-        //if ( interpCurves[i].GetMinY() >= 1.0 )
-
         if (interpCurves[i].GetMaxY() <= 0.0 ) // if max is lower than default min
         {
             minMaxSlidersPairs[i]->SetMinValue(interpCurves[i].GetMinY());
@@ -700,6 +696,8 @@ void LabelledMatrixComponent::SetInterpolationCurves(std::shared_ptr<BasicInterp
             minMaxSlidersPairs[i]->SetMaxValue(interpCurves[i].GetMaxY());
             minMaxSlidersPairs[i]->SetMinValue(interpCurves[i].GetMinY());
         }
+        // 2 - transmission of copies to the matrix
+        GetMatrixComponent()->SetHorizontalSliderInterpolationData((int)i, interpCurves[i]);
     }
 }
 BasicInterpolationCurve<double> LabelledMatrixComponent::GetInterpolationCurve(size_t i)

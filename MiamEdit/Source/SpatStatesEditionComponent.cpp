@@ -322,7 +322,7 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     genericStateEditorText = stateEditorGroupComponent->getText();
     spatStatesListText = TRANS("Spatialization states list");
     spatStateEditorText = TRANS("Routing matrix for selected state");
-    
+
     // Tooltips des raccourcis clavier
     // Cmd
     TextUtils::AddShortcutToTooltip(*addStateTextButton.get(),
@@ -615,7 +615,7 @@ void SpatStatesEditionComponent::visibilityChanged()
 
         // For labels update
         resized();
-        
+
         // forced keyboard focus grab, for shortcuts
         if (isVisible())
             Timer::callAfterDelay(100, [this] { this->grabKeyboardFocus(); } );
@@ -626,10 +626,10 @@ void SpatStatesEditionComponent::visibilityChanged()
 bool SpatStatesEditionComponent::keyPressed (const KeyPress& key)
 {
     //[UserCode_keyPressed] -- Add your code here...
-    
+
     bool keyWasUsed = false;
-    
-    
+
+
     // ====================== Keyboard SHORTCUTS =====================
     if (key.getModifiers().isCommandDown())
     {
@@ -674,7 +674,7 @@ bool SpatStatesEditionComponent::keyPressed (const KeyPress& key)
         else
             keyWasUsed = false;
     }
-    
+
     // Forced callback to parent, if unused
     if (! keyWasUsed)
         return getParentComponent()->keyPressed(key);
@@ -742,7 +742,8 @@ void SpatStatesEditionComponent::OnMatrixZeroed()
 }
 
 
-void SpatStatesEditionComponent::SelectAndUpdateState(int stateIndex, std::string infoText, std::shared_ptr<ControlMatrix<double>> newSpatMatrix, const Colour& stateColour)
+void SpatStatesEditionComponent::SelectAndUpdateState(int stateIndex, std::string infoText, std::shared_ptr<ControlMatrix<double>> newSpatMatrix, const Colour& stateColour,
+    std::shared_ptr<BasicInterpCurves> newInterpCurves)
 {
     // We keep here this copy of the model internal matrix
     spatMatrix = newSpatMatrix;
@@ -755,8 +756,12 @@ void SpatStatesEditionComponent::SelectAndUpdateState(int stateIndex, std::strin
     UpdateLinksLabel(infoText);
     setColour(stateColour);
 
-    // Last updates
+    // ACTUAL DATA UPDATES
+    // interp curves before matrix data
+    labelledMatrixComponent->SetInterpolationCurves(newInterpCurves);
     updateMatrix();
+    
+    
     // Buttons enabled state (should be PRESENTER code normally....)
     bool isAnyStateSelected = statesComboBox->getSelectedItemIndex() != -1;
     deleteStateTextButton->setEnabled(isAnyStateSelected);

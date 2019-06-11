@@ -105,7 +105,7 @@ namespace Miam
         void SetSliderValue_dB(int row, int col, double newValue_dB,
                                NotificationType juceNotification = NotificationType::dontSendNotification);
         
-        /// \brief Sets the normalised value of a Slider
+        /// \brief Sets the normalised (linear scale) value of a Slider.
         ///
         /// Sauvegarde la valeur en linéaire à l'intérieur de la classe,
         /// puis met à jour graphiquement les sliders de la matrice, et les sliders horizontaux pour les

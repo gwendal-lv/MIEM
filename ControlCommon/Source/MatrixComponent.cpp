@@ -342,26 +342,10 @@ void MatrixComponent::SetSliderValue(int row, int col, double newValue,
     // Slider horizontal colonne zéro
     if (col == 0)
     {
-        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
-        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
-        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
-        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
-        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
-        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
-        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
-        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
-        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
-        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
-        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
-        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
-        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
-        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
-        // Dé-normalisation de la valeur
-        // ATTENTION, NAIF : doit dépendre de la courbe d'interpolation
-        double scaledValue = horizontalSliders[row]->getMinimum() +
-        newValue * (horizontalSliders[row]->getMaximum() - horizontalSliders[row]->getMinimum());
-        
-        horizontalSliders[row]->setValue(scaledValue, juceNotification);
+        // Dé-normalisation ("Dé-interpolation") de la valeur
+        // ATTENTION : doit dépendre de la courbe d'interpolation
+        double interpValue = interpolationCurvesCopy[row].InterpolateValue(newValue);
+        horizontalSliders[row]->setValue(interpValue, juceNotification);
     }
 }
 
