@@ -338,6 +338,8 @@ juce::String TextUtils::GetKeyDescription(int keyCode)
     // action keys
     else if (keyCode == KeyPress::deleteKey)
         return String("Delete");
+#ifdef JUCE_MACOS
+	// macOS : simple, light arrows
     else if (keyCode == KeyPress::leftKey)
         return String(CharPointer_UTF8 ("\xe2\x86\x90"));
     else if (keyCode == KeyPress::upKey)
@@ -346,6 +348,17 @@ juce::String TextUtils::GetKeyDescription(int keyCode)
         return String(CharPointer_UTF8 ("\xe2\x86\x92"));
     else if (keyCode == KeyPress::downKey)
         return String(CharPointer_UTF8 ("\xe2\x86\x93"));
+#else
+	// windows and others : bold arrows (shift always written in letters)
+	else if (keyCode == KeyPress::leftKey)
+		return String(CharPointer_UTF8("\xe2\xac\x85"));
+	else if (keyCode == KeyPress::upKey)
+		return String(CharPointer_UTF8("\xe2\xac\x86"));
+	else if (keyCode == KeyPress::rightKey)
+		return String(CharPointer_UTF8("\xe2\xae\x95"));
+	else if (keyCode == KeyPress::downKey)
+		return String(CharPointer_UTF8("\xe2\xac\x87"));
+#endif
     else
     {
         // Please provide here a description for the key

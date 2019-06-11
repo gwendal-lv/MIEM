@@ -70,11 +70,11 @@ StartupComponent::StartupComponent ()
     createGenericTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     createGenericTextButton->setColour (TextButton::textColourOffId, Colours::black);
 
-    infoHyperlinkButton.reset (new HyperlinkButton (TRANS("To get help and more information, please visit http://miem.laras.be"),
+    infoHyperlinkButton.reset (new HyperlinkButton (TRANS("To get help and more information, please visit miem.laras.be/editor"),
                                                     URL ("http://miem.laras.be")));
     addAndMakeVisible (infoHyperlinkButton.get());
     infoHyperlinkButton->setTooltip (TRANS("http://miem.laras.be"));
-    infoHyperlinkButton->setButtonText (TRANS("To get help and more information, please visit http://miem.laras.be"));
+    infoHyperlinkButton->setButtonText (TRANS("To get help and more information, please visit miem.laras.be/editor"));
     infoHyperlinkButton->setColour (HyperlinkButton::textColourId, Colours::white);
 
     appNameHyperlinkButton.reset (new HyperlinkButton (TRANS("MIEM Editor"),
@@ -230,27 +230,27 @@ BEGIN_JUCER_METADATA
                  fixedSize="0" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="ff707070"/>
   <TEXTBUTTON name="Load text button" id="dcc32a783566df37" memberName="loadTextButton"
-              virtualName="" explicitFocusOrder="0" pos="623Cc 151C 168 52"
-              bgColOff="ffbfbfbf" bgColOn="ffffffff" textCol="ff000000" buttonText="Load session"
+              virtualName="" explicitFocusOrder="0" pos="0Cc -96C 168 52" bgColOff="ffbfbfbf"
+              bgColOn="ffffffff" textCol="ff000000" buttonText="Load session"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Create Spat text button" id="714ffb446833c5ce" memberName="createSpatTextButton"
-              virtualName="" explicitFocusOrder="0" pos="773Cr 293C 300 32"
+              virtualName="" explicitFocusOrder="0" pos="150Cr 46C 300 32"
               bgColOff="ffbfbfbf" bgColOn="ffffffff" textCol="ff000000" buttonText="Create Spatialisation session"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Create Default text button" id="ac4f9aa6f5974fbc" memberName="createDefaultTextButton"
-              virtualName="" explicitFocusOrder="0" pos="620Cc 597C 168 24"
+              virtualName="" explicitFocusOrder="0" pos="-3Cc 350C 168 24"
               bgColOff="ffbfbfbf" bgColOn="ffffffff" textCol="ff000000" buttonText="Create default session"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Create Empty text button" id="fb033c6855f61992" memberName="createGenericTextButton"
-              virtualName="" explicitFocusOrder="0" pos="773Cr 247C 300 32"
-              bgColOff="ffbfbfbf" bgColOn="ffffffff" textCol="ff000000" buttonText="Create Generic OSC Controller session"
+              virtualName="" explicitFocusOrder="0" pos="150Cr 0C 300 32" bgColOff="ffbfbfbf"
+              bgColOn="ffffffff" textCol="ff000000" buttonText="Create Generic OSC Controller session"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <HYPERLINKBUTTON name="Info hyperlink button" id="fa3a8802c3b7c7f0" memberName="infoHyperlinkButton"
-                   virtualName="" explicitFocusOrder="0" pos="622.5Cc -462R -1241M 24"
-                   tooltip="http://miem.laras.be" textCol="ffffffff" buttonText="To get help and more information, please visit http://miem.laras.be"
+                   virtualName="" explicitFocusOrder="0" pos="-0.5Cc 32R 5M 24"
+                   tooltip="http://miem.laras.be" textCol="ffffffff" buttonText="To get help and more information, please visit miem.laras.be/editor"
                    connectedEdges="0" needsCallback="0" radioGroupId="0" url="http://miem.laras.be"/>
   <HYPERLINKBUTTON name="App Name hyperlink button" id="7dafa352c7045e31" memberName="appNameHyperlinkButton"
-                   virtualName="" explicitFocusOrder="0" pos="622.5Cc -432R -1241M 24"
+                   virtualName="" explicitFocusOrder="0" pos="-0.5Cc 62R 5M 24"
                    tooltip="http://miem.laras.be" textCol="ffffffff" buttonText="MIEM Editor"
                    connectedEdges="0" needsCallback="0" radioGroupId="0" url="http://miem.laras.be"/>
 </JUCER_COMPONENT>

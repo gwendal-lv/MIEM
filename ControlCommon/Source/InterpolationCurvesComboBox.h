@@ -69,6 +69,7 @@ namespace Miam
         
         // Internal helpers
         private :
+		void setShortNameAndUpdateImage();
         void updateImage();
     };
 }

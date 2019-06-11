@@ -153,26 +153,34 @@ height(_height)
 		auto itemShortName = ParamInterpolationTypes::GetInterpolationName(availableTypes[i], true, false);
         addItem(itemShortName, (int)availableTypes[i]);
     }
-    
+
     // auto-listener
     addListener(this);
+	// Sélection forcé d'un item inexistant (sinon juce pour windows ne fait
+	// pas une màj au départ) -> aucun effet....
+	SetSelectedInterpolationType(ParamInterpolationType::None);
 }
 
 
 void InterpolationCurvesComboBox::SetSelectedInterpolationType(ParamInterpolationType newType)
 {
-    // Modification de la combo box
+	// On ne va laisser la combo box faire sa vie ... on décide et on force,
+	// sans notif
+
+    // Modification de la combo box, sans notif
     if (ParamInterpolationTypes::IsActualInterpolationType(newType))
-        setSelectedId((int) newType, NotificationType::sendNotification);
+        setSelectedId((int) newType, NotificationType::dontSendNotification);
 	else if (newType == ParamInterpolationType::None)
 	{
-		setSelectedId(0, NotificationType::sendNotification);
+		setSelectedId(0, NotificationType::dontSendNotification);
 		setText("", NotificationType::dontSendNotification);
 	}
+
     // Actualisation de la copie du choix.... sinon bug.
     lastActualChoice = newType;
+
     // Internal update
-    updateImage();
+	setShortNameAndUpdateImage();
 }
 
 
@@ -194,16 +202,20 @@ void InterpolationCurvesComboBox::comboBoxChanged(ComboBox *comboBoxThatHasChang
         lastActualChoice = ParamInterpolationType::None;
         assert(false); // should not happen !!
     }
-    // and short name writing
-	auto shortName = ParamInterpolationTypes::GetInterpolationName(lastActualChoice, true, true);
-    setText(shortName,
-            NotificationType::dontSendNotification);
-    // Self-update
-    updateImage();
+	setShortNameAndUpdateImage();
     // callback to parent
     parentComponent->OnInterpolationTypeChanged(selfRow, lastActualChoice);
 }
 
+void InterpolationCurvesComboBox::setShortNameAndUpdateImage()
+{
+	// and short name writing
+	auto shortName = ParamInterpolationTypes::GetInterpolationName(lastActualChoice, true, true);
+	setText(shortName,
+		NotificationType::dontSendNotification);
+	// Self-update
+	updateImage();
+}
 
 void InterpolationCurvesComboBox::updateImage()
 {

@@ -669,8 +669,41 @@ InOutChannelsName LabelledMatrixComponent::GetChannelsName()
 
     return channelsName;
 }
+void LabelledMatrixComponent::SetInterpolationCurve(size_t i, BasicInterpolationCurve<double>& interpCurve)
+{
+	// 1 - Direct application
+	rowComboBoxes[i]->SetSelectedInterpolationType(interpCurve.GetInterpolationType());
+
+	// to avoid conflicts (incoherent sliders on Juce side
+	// we must check min/max values compared to the default values 0.0;1.0
+	if (interpCurve.GetMaxY() <= 0.0) // if max is lower than default min
+	{
+		minMaxSlidersPairs[i]->SetMinValue(interpCurve.GetMinY());
+		minMaxSlidersPairs[i]->SetMaxValue(interpCurve.GetMaxY());
+	}
+	// --> or normal order
+	else
+	{
+		minMaxSlidersPairs[i]->SetMaxValue(interpCurve.GetMaxY());
+		minMaxSlidersPairs[i]->SetMinValue(interpCurve.GetMinY());
+	}
+	// 2 - transmission of copies to the matrix
+	GetMatrixComponent()->SetHorizontalSliderInterpolationData((int)i, interpCurve);
+}
 void LabelledMatrixComponent::SetInterpolationCurves(std::shared_ptr<BasicInterpCurves> interpCurvesPtr)
 {
+	// Comportement spécial autorisé pour courbes nulles
+	if (interpCurvesPtr == nullptr)
+	{
+		auto defaultCurve = BasicInterpolationCurve<double>::GetDefault();
+		auto badCurve =
+			BasicInterpolationCurve<double>(ParamInterpolationType::None,
+				defaultCurve.GetMinY(), defaultCurve.GetMaxY());
+		for (size_t i = 0; i < maxRowsCount; i++)
+			SetInterpolationCurve(i, badCurve);
+		return;
+	}
+
     BasicInterpCurves interpCurves = *(interpCurvesPtr.get());
 
     // Pas d'autre fonctionnement prévu pour l'instant...
@@ -678,27 +711,8 @@ void LabelledMatrixComponent::SetInterpolationCurves(std::shared_ptr<BasicInterp
     if (interpCurves.size() != maxRowsCount)
         return;
 
-    for (size_t i=0 ; i<interpCurves.size() ; i++)
-    {
-        // 1 - Direct application
-        rowComboBoxes[i]->SetSelectedInterpolationType(interpCurves[i].GetInterpolationType());
-
-        // to avoid conflicts (incoherent sliders on Juce side
-        // we must check min/max values compared to the default values 0.0;1.0
-        if (interpCurves[i].GetMaxY() <= 0.0 ) // if max is lower than default min
-        {
-            minMaxSlidersPairs[i]->SetMinValue(interpCurves[i].GetMinY());
-            minMaxSlidersPairs[i]->SetMaxValue(interpCurves[i].GetMaxY());
-        }
-        // --> or normal order
-        else
-        {
-            minMaxSlidersPairs[i]->SetMaxValue(interpCurves[i].GetMaxY());
-            minMaxSlidersPairs[i]->SetMinValue(interpCurves[i].GetMinY());
-        }
-        // 2 - transmission of copies to the matrix
-        GetMatrixComponent()->SetHorizontalSliderInterpolationData((int)i, interpCurves[i]);
-    }
+	for (size_t i = 0; i < interpCurves.size(); i++)
+		SetInterpolationCurve(i, interpCurves[i]);
 }
 BasicInterpolationCurve<double> LabelledMatrixComponent::GetInterpolationCurve(size_t i)
 {

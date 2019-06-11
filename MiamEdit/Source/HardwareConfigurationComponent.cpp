@@ -162,11 +162,11 @@ HardwareConfigurationComponent::HardwareConfigurationComponent ()
     interpolationTypeLabel->setColour (TextEditor::textColourId, Colours::black);
     interpolationTypeLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    infoHyperlinkButton.reset (new HyperlinkButton (TRANS("To get help and more information, please visit http://miem.laras.be"),
+    infoHyperlinkButton.reset (new HyperlinkButton (TRANS("To get help and more information, please visit miem.laras.be/editor"),
                                                     URL ("http://miem.laras.be")));
     addAndMakeVisible (infoHyperlinkButton.get());
     infoHyperlinkButton->setTooltip (TRANS("http://miem.laras.be"));
-    infoHyperlinkButton->setButtonText (TRANS("To get help and more information, please visit http://miem.laras.be"));
+    infoHyperlinkButton->setButtonText (TRANS("To get help and more information, please visit miem.laras.be/editor"));
     infoHyperlinkButton->setColour (HyperlinkButton::textColourId, Colours::white);
 
     enableMasterVolumeToggleButton.reset (new ToggleButton ("Enable Master Volume toggle button"));
@@ -512,26 +512,26 @@ BEGIN_JUCER_METADATA
   <BACKGROUND backgroundColour="ffafafaf"/>
   <SLIDER name="Inputs Count slider" id="77ed5b9e29dce02e" memberName="inputsCountSlider"
           virtualName="" explicitFocusOrder="0" pos="-8Cr 16 150 24" tooltip="Number of lines of the matrix"
-          textboxtext="ff000000" min="1.0" max="1024.0" int="1.0" style="IncDecButtons"
+          textboxtext="ff000000" min="1" max="1.024e3" int="1" style="IncDecButtons"
           textBoxPos="TextBoxLeft" textBoxEditable="1" textBoxWidth="80"
-          textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
+          textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <SLIDER name="Outputs Count slider" id="ca10a4b3f2104985" memberName="outputsCountSlider"
           virtualName="" explicitFocusOrder="0" pos="-8Cr 48 150 24" tooltip="Number of columns of the matrix"
-          textboxtext="ff000000" min="1.0" max="1024.0" int="1.0" style="IncDecButtons"
+          textboxtext="ff000000" min="1" max="1.024e3" int="1" style="IncDecButtons"
           textBoxPos="TextBoxLeft" textBoxEditable="1" textBoxWidth="80"
-          textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
+          textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <LABEL name="Inputs Count label" id="5edb179087fb7973" memberName="inputsCountLabel"
          virtualName="" explicitFocusOrder="0" pos="-156Cr 0 208 24" posRelativeY="77ed5b9e29dce02e"
          tooltip="Number of lines of the matrix" textCol="ff000000" edTextCol="ff000000"
          edBkgCol="0" labelText="Number of input channels:" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
-         fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="34"/>
+         fontsize="1.5e1" kerning="0" bold="0" italic="0" justification="34"/>
   <LABEL name="outputs Count label" id="5b4dd76a50f5f0d4" memberName="outputsCountLabel"
          virtualName="" explicitFocusOrder="0" pos="-156Cr 0 208 24" posRelativeY="ca10a4b3f2104985"
          tooltip="Number of columns of the matrix" textCol="ff000000"
          edTextCol="ff000000" edBkgCol="0" labelText="Number of output channels:"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="34"/>
   <TOGGLEBUTTON name="OSC Plugin toggle button" id="74b5dae6c2ea74a2" memberName="oscPluginToggleButton"
                 virtualName="" explicitFocusOrder="0" pos="0Cc 200 400 24" txtcol="ff000000"
@@ -542,7 +542,7 @@ BEGIN_JUCER_METADATA
          posRelativeY="e4ef4437203ce19e" textCol="ff000000" edTextCol="ff000000"
          edBkgCol="0" labelText="Plug-in listening on UDP port:" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
-         fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="34"/>
+         fontsize="1.5e1" kerning="0" bold="0" italic="0" justification="34"/>
   <TEXTEDITOR name="UDP Port Text Editor" id="e4ef4437203ce19e" memberName="udpPortTextEditor"
               virtualName="" explicitFocusOrder="0" pos="8C 264 64 24" initialText="8001"
               multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"
@@ -556,7 +556,7 @@ BEGIN_JUCER_METADATA
          posRelativeY="6997b5b4dc28675a" textCol="ff000000" edTextCol="ff000000"
          edBkgCol="0" labelText="Plug-in host IP address:" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
-         fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="34"/>
+         fontsize="1.5e1" kerning="0" bold="0" italic="0" justification="34"/>
   <TEXTEDITOR name="IP Address Text Editor" id="6997b5b4dc28675a" memberName="ipAddressTextEditor"
               virtualName="" explicitFocusOrder="0" pos="8C 232 120 24" initialText="127.0.0.1"
               multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"
@@ -577,10 +577,10 @@ BEGIN_JUCER_METADATA
          posRelativeY="900a9258dc365ad0" textCol="ff000000" edTextCol="ff000000"
          edBkgCol="0" labelText="Type of interpolation:" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
-         fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="34"/>
+         fontsize="1.5e1" kerning="0" bold="0" italic="0" justification="34"/>
   <HYPERLINKBUTTON name="Info hyperlink button" id="fa3a8802c3b7c7f0" memberName="infoHyperlinkButton"
                    virtualName="" explicitFocusOrder="0" pos="0Cc 32R 16M 24" tooltip="http://miem.laras.be"
-                   textCol="ffffffff" buttonText="To get help and more information, please visit http://miem.laras.be"
+                   textCol="ffffffff" buttonText="To get help and more information, please visit miem.laras.be/editor"
                    connectedEdges="0" needsCallback="0" radioGroupId="0" url="http://miem.laras.be"/>
   <TOGGLEBUTTON name="Enable Master Volume toggle button" id="b650c1c657fd4f2e"
                 memberName="enableMasterVolumeToggleButton" virtualName="" explicitFocusOrder="0"

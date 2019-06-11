@@ -66,6 +66,7 @@ public:
     //[UserMethods]     -- You can add your own custom methods in this section.
     void CompleteInitialization(SpatStatesEditionManager* _editionManager);
 
+	void Reinit();
 
     /// - - - - - Events - - - - -
 

@@ -693,6 +693,16 @@ void SpatStatesEditionComponent::CompleteInitialization(SpatStatesEditionManager
     editionManager = _editionManager;
 }
 
+
+void SpatStatesEditionComponent::Reinit()
+{
+	// if we dont do this, the old selected state remains (even if the list is
+	// emptied and re-filled)
+	statesComboBox->setText("", NotificationType::dontSendNotification);
+	// Full reinit of all interp curves
+	labelledMatrixComponent->SetInterpolationCurves(nullptr);
+}
+
 void SpatStatesEditionComponent::UpdateStatesList(std::vector< std::shared_ptr<ControlState<double>> > &newSpatStates)
 {
     // Empties the combo box at first

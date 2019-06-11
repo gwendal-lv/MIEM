@@ -234,7 +234,7 @@ SceneEditionComponent::SceneEditionComponent ()
     canvasInfoLabel.reset (new Label ("Canvas Info label",
                                       TRANS("...selected canvas info...")));
     addAndMakeVisible (canvasInfoLabel.get());
-    canvasInfoLabel->setFont (Font (15.00f, Font::italic));
+    canvasInfoLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Italic"));
     canvasInfoLabel->setJustificationType (Justification::centred);
     canvasInfoLabel->setEditable (false, false, false);
     canvasInfoLabel->setColour (Label::textColourId, Colours::black);
@@ -333,24 +333,43 @@ SceneEditionComponent::SceneEditionComponent ()
 
     // Tooltips for shortcuts
     // all work with Cmd (Ctrl) at the moment
-    excitersEditionButton->setTooltip(TextUtils::GetCommandKeyDescription(editExcitersCmdKey));
+	TextUtils::AddShortcutToTooltip(*excitersEditionButton.get(),
+		TextUtils::GetCommandKeyDescription(editExcitersCmdKey));
     TextUtils::AddShortcutToTooltip(*excitersConstraintButton.get(),
-                                    TextUtils::GetCommandKeyDescription(freeExcitersMoveCmdKey));
-    copyTextButton->setTooltip(TextUtils::GetCommandKeyDescription(copyCmdKey));
-    pasteTextButton->setTooltip(TextUtils::GetCommandKeyDescription(pasteCmdKey));
-    addAreaTextButton->setTooltip(TextUtils::GetCommandKeyDescription(newAreaCmdKey));
-    deleteAreaTextButton->setTooltip(TextUtils::GetCommandKeyDescription(deleteAreaCmdKey));
-    bringForwardTextButton->setTooltip(TextUtils::GetCommandKeyDescription(areaForwardCmdKey));
-    sendBackwardTextButton->setTooltip(TextUtils::GetCommandKeyDescription(areaBackwardCmdKey));
-    addPointTextButton->setTooltip(TextUtils::GetCommandKeyDescription(addPointCmdKey));
+        TextUtils::GetCommandKeyDescription(freeExcitersMoveCmdKey));
+	TextUtils::AddShortcutToTooltip(*copyTextButton.get(),
+		TextUtils::GetCommandKeyDescription(copyCmdKey));
+	TextUtils::AddShortcutToTooltip(*pasteTextButton.get(),
+		TextUtils::GetCommandKeyDescription(pasteCmdKey));
+	TextUtils::AddShortcutToTooltip(*addAreaTextButton.get(),
+		TextUtils::GetCommandKeyDescription(newAreaCmdKey));
+	TextUtils::AddShortcutToTooltip(*deleteAreaTextButton.get(),
+		TextUtils::GetCommandKeyDescription(deleteAreaCmdKey));
+	TextUtils::AddShortcutToTooltip(*addExciterTextButton.get(),
+		TextUtils::GetCommandKeyDescription(newExciterCmdKey));
+	TextUtils::AddShortcutToTooltip(*deleteExciterTextButton.get(),
+		TextUtils::GetCommandKeyDescription(deleteExciterCmdKey));
+	TextUtils::AddShortcutToTooltip(*bringForwardTextButton.get(),
+		TextUtils::GetCommandKeyDescription(areaForwardCmdKey));
+	TextUtils::AddShortcutToTooltip(*sendBackwardTextButton.get(),
+		TextUtils::GetCommandKeyDescription(areaBackwardCmdKey));
+	TextUtils::AddShortcutToTooltip(*addPointTextButton.get(),
+		TextUtils::GetCommandKeyDescription(addPointCmdKey));
     //  or Cmd+Shift
-    deletePointTextButton->setTooltip(TextUtils::GetCommandShiftKeyDescription(deletePointCmdShiftKey));
-    bringToFrontTextButton->setTooltip(TextUtils::GetCommandShiftKeyDescription(areaToFrontCmdShiftKey));
-    sendToBackTextButton->setTooltip(TextUtils::GetCommandShiftKeyDescription(areaToBackCmdShiftKey));
-    addSceneTextButton->setTooltip(TextUtils::GetCommandShiftKeyDescription(newSceneCmdShiftKey));
-    deleteSceneTextButton->setTooltip(TextUtils::GetCommandShiftKeyDescription(deleteSceneCmdShiftKey));
-    sceneLeftTextButton->setTooltip(TextUtils::GetCommandShiftKeyDescription(sceneLeftCmdShiftKey));
-    sceneRightTextButton->setTooltip(TextUtils::GetCommandShiftKeyDescription(sceneRightCmdShiftKey));
+	TextUtils::AddShortcutToTooltip(*deletePointTextButton.get(),
+		TextUtils::GetCommandShiftKeyDescription(deletePointCmdShiftKey));
+	TextUtils::AddShortcutToTooltip(*bringToFrontTextButton.get(),
+		TextUtils::GetCommandShiftKeyDescription(areaToFrontCmdShiftKey));
+	TextUtils::AddShortcutToTooltip(*sendToBackTextButton.get(),
+		TextUtils::GetCommandShiftKeyDescription(areaToBackCmdShiftKey));
+	TextUtils::AddShortcutToTooltip(*addSceneTextButton.get(),
+		TextUtils::GetCommandShiftKeyDescription(newSceneCmdShiftKey));
+	TextUtils::AddShortcutToTooltip(*deleteSceneTextButton.get(),
+		TextUtils::GetCommandShiftKeyDescription(deleteSceneCmdShiftKey));
+	TextUtils::AddShortcutToTooltip(*sceneLeftTextButton.get(),
+		TextUtils::GetCommandShiftKeyDescription(sceneLeftCmdShiftKey));
+	TextUtils::AddShortcutToTooltip(*sceneRightTextButton.get(),
+		TextUtils::GetCommandShiftKeyDescription(sceneRightCmdShiftKey));
 
     //[/Constructor]
 }
@@ -772,6 +791,7 @@ bool SceneEditionComponent::keyPressed (const KeyPress& key)
                  && (! isAreaGroupHidden)
                  && pasteTextButton->isEnabled() && pasteTextButton->isVisible())
             pasteTextButton->triggerClick();
+		// New/Delete area is tested first.....
         else if ( (key.getKeyCode() == newAreaCmdKey)
                  && (! isAreaGroupHidden)
                  && addAreaTextButton->isEnabled() && addAreaTextButton->isVisible())
@@ -780,6 +800,15 @@ bool SceneEditionComponent::keyPressed (const KeyPress& key)
                  && (! isAreaGroupHidden)
                  && deleteAreaTextButton->isEnabled() && deleteAreaTextButton->isVisible())
             deleteAreaTextButton->triggerClick();
+		// ...and new/delete exciters come after (in case the 2 buttons are displayed at the same time (in a future version...))
+		else if ((key.getKeyCode() == newExciterCmdKey)
+			&& (!isInitialStateGroupHidden)
+			&& addExciterTextButton->isEnabled() && addExciterTextButton->isVisible())
+			addExciterTextButton->triggerClick();
+		else if ((key.getKeyCode() == deleteExciterCmdKey)
+			&& (!isInitialStateGroupHidden)
+			&& deleteExciterTextButton->isEnabled() && deleteExciterTextButton->isVisible())
+			deleteExciterTextButton->triggerClick();
         else if ( (key.getKeyCode() == areaBackwardCmdKey)
                  && (! isAreaGroupHidden)
                  && sendBackwardTextButton->isEnabled() && sendBackwardTextButton->isVisible())
@@ -1254,7 +1283,7 @@ BEGIN_JUCER_METADATA
          virtualName="" explicitFocusOrder="0" pos="16 16 176 24" posRelativeY="90b16e3024c520fd"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Link to control state:"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="33"/>
   <TEXTBUTTON name="Add Scene text button" id="47bebc9d3a03780d" memberName="addSceneTextButton"
               virtualName="" explicitFocusOrder="0" pos="16 24 88 24" posRelativeY="4250d5155a80be70"
@@ -1276,7 +1305,7 @@ BEGIN_JUCER_METADATA
          virtualName="" explicitFocusOrder="0" pos="16 48 176 8" posRelativeY="4250d5155a80be70"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="...selected canvas info..."
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="1" justification="36" typefaceStyle="Italic"/>
   <GROUPCOMPONENT name="Initial state group component" id="cc3bdf8d18c3f428" memberName="initialStateGroupComponent"
                   virtualName="" explicitFocusOrder="0" pos="8 -8R 192 112" posRelativeY="90b16e3024c520fd"
@@ -1293,7 +1322,7 @@ BEGIN_JUCER_METADATA
          virtualName="" explicitFocusOrder="0" pos="15 63 56 24" posRelativeY="4250d5155a80be70"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Name:"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
          italic="0" justification="33"/>
   <TEXTEDITOR name="Scene Name text editor" id="fd7eace3e677fc36" memberName="sceneNameTextEditor"
               virtualName="" explicitFocusOrder="0" pos="64 72 128 24" initialText=""

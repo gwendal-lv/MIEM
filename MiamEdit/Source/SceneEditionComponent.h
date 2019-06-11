@@ -198,7 +198,9 @@ private:
     const char copyCmdKey = 'C';
     const char pasteCmdKey = 'V';
     const char newAreaCmdKey = 'N';
+	const char newExciterCmdKey = 'N';
     const int deleteAreaCmdKey = juce::KeyPress::deleteKey;
+	const int deleteExciterCmdKey = juce::KeyPress::deleteKey;
     const int areaForwardCmdKey = juce::KeyPress::upKey;
     const int areaBackwardCmdKey = juce::KeyPress::downKey;
     const int addPointCmdKey = 'I';

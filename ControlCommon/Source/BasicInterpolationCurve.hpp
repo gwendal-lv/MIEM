@@ -79,6 +79,8 @@ namespace Miam
         
         // =============== Getters and Setters ===============
         public :
+		T GetMinX() const { return minX; }
+		T GetMaxX() const { return maxX; }
         T GetMinY() const {return minY;}
         T GetMaxY() const {return maxY;}
         ParamInterpolationType GetInterpolationType() const {return interpolationType;}

@@ -43,6 +43,7 @@ void SpatStatesEditionManager::Reinit()
 {
     // Update of the list on the GUI side
     selectSpatState(nullptr);
+	editionComponent->Reinit();
     UpdateView();
 }
 

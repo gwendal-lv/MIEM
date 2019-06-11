@@ -305,6 +305,7 @@ void Presenter::LoadSession(std::string filename)
     }
     
     // Reinitialisation de certains modules....
+	spatStatesEditionManager.Reinit();
     spatStatesEditionManager.UpdateView();
     
     // Si tout s'est bien passé : les tree internes sont initialisés maintenant

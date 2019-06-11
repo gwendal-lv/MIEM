@@ -124,6 +124,7 @@ public:
     void SetChannelsNames(InOutChannelsName &channelsName);
     InOutChannelsName GetChannelsName();
 
+	void SetInterpolationCurve(size_t i, BasicInterpolationCurve<double>& interpCurve);
     void SetInterpolationCurves(std::shared_ptr<BasicInterpCurves> interpCurves);
     BasicInterpolationCurve<double> GetInterpolationCurve(size_t i);
     std::shared_ptr<BasicInterpCurves> GetInterpolationCurves();
