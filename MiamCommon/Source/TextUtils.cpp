@@ -312,7 +312,8 @@ juce::String TextUtils::GetCommandKeyDescription(int keyCode)
 #ifdef JUCE_MAC // knot logo
     return String(CharPointer_UTF8 ("\xe2\x8c\x98")) + GetKeyDescription(keyCode);
 #else
-    return String("Ctrl ") + GetKeyDescription(keyCode);
+	// no space (like VS2017 menus)
+    return String("Ctrl+") + GetKeyDescription(keyCode);
 #endif
 }
 
@@ -322,8 +323,7 @@ juce::String TextUtils::GetCommandShiftKeyDescription(int keyCode)
     return String(CharPointer_UTF8 ("\xe2\x87\xa7"))
     + String(CharPointer_UTF8 ("\xe2\x8c\x98")) + GetKeyDescription(keyCode);
 #else
-    return String("Ctrl ") + String(CharPointer_UTF8 ("\xe2\x87\xa7"))
-    + String(" ") + GetKeyDescription(keyCode);
+    return String("Ctrl+") + TRANS("Shift") + "+" + GetKeyDescription(keyCode);
 #endif
 }
 
@@ -332,7 +332,7 @@ juce::String TextUtils::GetKeyDescription(int keyCode)
     // ASCII latin alphabet
     if (('A' <= keyCode) && (keyCode <= 'Z'))
     {
-        char charCastedCode = keyCode;
+        char charCastedCode = (char)keyCode;
         return String(&charCastedCode, 1); // 1 char only
     }
     // action keys

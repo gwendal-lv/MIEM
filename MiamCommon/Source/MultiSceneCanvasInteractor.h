@@ -72,8 +72,12 @@ namespace Miam {
         /// The pointer was actually extracted from a std::unique_ptr (do not
         /// delete it from inside this class)
         MultiSceneCanvasComponent* canvasComponent;
-        int previousChildWidth = -1;
-        int previousChildHeight = -1;
+		// warning : because the scenes might refuse some pre computation
+		// orders (if they are already busy precomputing...), these values
+		// might not reflect the actual size of computations (and anyway, 
+		// the scenes are smaller than the multiscene canvas)
+        int lastOnResizeAutoPreComputationWidth = -1;
+        int lastOnResizeAutoPreComputationHeight = -1;
         
         
         // The scenes

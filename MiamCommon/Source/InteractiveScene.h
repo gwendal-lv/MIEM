@@ -344,13 +344,11 @@ namespace Miam
         ///
         /// \returns Coordinates of neighbour pixels that belong to the group
         std::vector<std::pair<size_t, size_t>>
-        propagateAreaGroup(std::vector<AreasGroup*>& groupsImage,
-                                AreasGroup* groupToPropagate,
-                                size_t i0, size_t j0);
+        propagateAreaGroup(AreasGroup* groupToPropagate,
+                           size_t i0, size_t j0);
         /// \brief Second internal helper for propagation. i0, j0 are unchecked, must be valid
         /// \return Whether the pixel now belongs to the group, or not (assigned to back, then).
-        inline bool tryPropagateToPixel(std::vector<AreasGroup*>& groupsImage,
-                                        AreasGroup* groupToPropagate,
+        inline bool tryPropagateToPixel(AreasGroup* groupToPropagate,
                                         size_t i0, size_t j0)
         {
             size_t k0 = i0 * groupsImgW + j0;

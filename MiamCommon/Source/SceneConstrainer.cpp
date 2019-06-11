@@ -32,13 +32,6 @@ void SceneConstrainer::beginTouchConstraint(const MouseEvent& e,
 {
     bpt mouseEventBpt = bpt(e.position.getX(), e.position.getY());
     
-    // BUG, POURQUOI ICI ON RECOIT BACKGROUND PENDANT LE CALCUL ???
-    // BUG, POURQUOI ICI ON RECOIT BACKGROUND PENDANT LE CALCUL ???
-    // BUG, POURQUOI ICI ON RECOIT BACKGROUND PENDANT LE CALCUL ???
-    // BUG, POURQUOI ICI ON RECOIT BACKGROUND PENDANT LE CALCUL ???
-    // BUG, POURQUOI ICI ON RECOIT BACKGROUND PENDANT LE CALCUL ???
-    // BUG, POURQUOI ICI ON RECOIT BACKGROUND PENDANT LE CALCUL ???
-    // BUG, POURQUOI ICI ON RECOIT BACKGROUND PENDANT LE CALCUL ???
     ConstraintParams newConstraint(mouseEventBpt,
                                    exciter->GetCenterInPixels(),
                                    exciter->FindAreasGroupIndex());
@@ -52,7 +45,9 @@ void SceneConstrainer::beginTouchConstraint(const MouseEvent& e,
     
     //std::cout << "[SceneConstrainer] Begin. Type = " << (int) newConstraint.Type << ((newConstraint.Type == ConstraintType::RemainInsideAreasGroups) ? (std::string(" group = ") + boost::lexical_cast<std::string>(newConstraint.AreasGroupIndex) ) : "" ) << std::endl;
     
-    touchSourceToExperimentConstraint[e.source.getIndex()] = newConstraint;
+	// Insertion explicite (pour construire un objet, car opérateur = est supprimé
+	// à cause des attributs const)
+    touchSourceToExperimentConstraint.emplace(e.source.getIndex(), newConstraint);
     
     return;
 
@@ -95,8 +90,9 @@ void SceneConstrainer::beginTouchConstraint(const MouseEvent& e,
     // Si on a trouvé une contrainte, alors
     if (newConstraint.Type != ConstraintType::None)
     {
-        // insertion par tentative d'accès (temps de recherche totalement négligeable...)
-        touchSourceToExperimentConstraint[e.source.getIndex()] = newConstraint;
+		// Insertion explicite (pour construire un objet, car opérateur = est supprimé
+		// à cause des attributs const)
+		touchSourceToExperimentConstraint.emplace(e.source.getIndex(), newConstraint);
         std::cout << "     ****>>>> Nouvelle contrainte, #" << (int)newConstraint.Type << std::endl;
     }
     else
@@ -149,8 +145,8 @@ const MouseEvent& SceneConstrainer::constrainMouseEvent(const MouseEvent& e,
         if (constraint.Type == ConstraintType::RemainInsideAreasGroups)
         {
             // application de l'offset (pour se retrouver comme au centre de l'excitateur)
-            constrainedPosition -= Point<float>(constraint.InitialTouchOffset.get<0>(),
-                                                constraint.InitialTouchOffset.get<1>());
+            constrainedPosition -= Point<float>(constraint.InitialTouchOffset_float.getX(),
+                                                constraint.InitialTouchOffset_float.getY());
             
             // Vérification que le nouveau point est bien dans la même zone
             // -> recherche optimisée via l'image enregistrée.... (remise à l'échelle)
@@ -194,8 +190,8 @@ const MouseEvent& SceneConstrainer::constrainMouseEvent(const MouseEvent& e,
                 constraint.LastValidCenterPosition = constrainedPosition;
             
             // suppression de l'offset (retour au point touch réel), pour finir
-            constrainedPosition += Point<float>(constraint.InitialTouchOffset.get<0>(),
-                                                constraint.InitialTouchOffset.get<1>());
+            constrainedPosition += Point<float>(constraint.InitialTouchOffset_float.getX(),
+                                                constraint.InitialTouchOffset_float.getY());
         }
         else
         {} // no constraint : we do nothing at the moment... not even a check...

@@ -810,7 +810,7 @@ bool SceneEditionComponent::keyPressed (const KeyPress& key)
 void SceneEditionComponent::modifierKeysChanged (const ModifierKeys& modifiers)
 {
     //[UserCode_modifierKeysChanged] -- Add your code here...
-
+	boost::ignore_unused(modifiers);
     //[/UserCode_modifierKeysChanged]
 }
 

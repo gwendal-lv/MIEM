@@ -54,21 +54,29 @@ namespace Miam
             public :
             ConstraintType Type;
             bpt InitialTouchOffset; ///< Offset from the center of the exciter that was touched
+			const Point<float> InitialTouchOffset_float; ///< idem, casted as juce float point
             Point<float> LastValidCenterPosition;
             int AreasGroupIndex = -1;
-            
+            // = = = Constructeur par défaut = = =
             ConstraintParams()
             : Type(ConstraintType::None)
             {}
             ConstraintParams(bpt touchInitialPosition, bpt exciterInitialCenter, int _areasGroupIndex)
             : Type(ConstraintType::None),
-            LastValidCenterPosition(exciterInitialCenter.get<0>(), exciterInitialCenter.get<1>()),
+				// - init of const attributes -
+				InitialTouchOffset(touchInitialPosition.get<0>() - exciterInitialCenter.get<0>(),
+					touchInitialPosition.get<1>() - exciterInitialCenter.get<1>()),
+				InitialTouchOffset_float((float)InitialTouchOffset.get<0>(),
+					(float)InitialTouchOffset.get<1>()),
+				// - other attributes -
+            LastValidCenterPosition((float)exciterInitialCenter.get<0>(),
+				(float)exciterInitialCenter.get<1>()),
             AreasGroupIndex(_areasGroupIndex)
             {
-                InitialTouchOffset.set<0>(touchInitialPosition.get<0>() - exciterInitialCenter.get<0>());
-                InitialTouchOffset.set<1>(touchInitialPosition.get<1>() - exciterInitialCenter.get<1>());
             }
-            ConstraintParams(const ConstraintParams&) = default;
+			// = = = Constructeur de copie = = =
+			// doit être déclaré explicitement sous VS2017... à cause des attributs const ?
+			ConstraintParams(const ConstraintParams&) = default;
         };
         
         

@@ -750,7 +750,7 @@ void InteractiveScene::PreComputeInteractionData()
                     neighboursToPropagate.clear();
                     groupsImage[i*groupsImgW + j] = areasGroups.back().get();
                     // Propagation : init
-                    auto lastNeighbours = propagateAreaGroup(groupsImage, areasGroups.back().get(),
+                    auto lastNeighbours = propagateAreaGroup(areasGroups.back().get(),
                                        i, j);
                     neighboursToPropagate.insert(neighboursToPropagate.end(),
                                                  lastNeighbours.begin(), lastNeighbours.end());
@@ -765,7 +765,7 @@ void InteractiveScene::PreComputeInteractionData()
                         std::pair<size_t, size_t> lastIJ = neighboursToPropagate.back();
                         neighboursToPropagate.pop_back();
                         // 2 - récupération de ses résultats
-                        lastNeighbours = propagateAreaGroup(groupsImage, areasGroups.back().get(),
+                        lastNeighbours = propagateAreaGroup(areasGroups.back().get(),
                                                             lastIJ.first, lastIJ.second);
                         // 3 - ajout de son résultat de propagation à la liste
                         neighboursToPropagate.insert(neighboursToPropagate.end(),
@@ -802,12 +802,17 @@ void InteractiveScene::PreComputeInteractionData()
                                              Colours::black);
         }
     }
+#ifdef JUCE_WINDOWS // wants an absolute path........ hum.
+	std::string pngFilePath = "C:\\Users\\Gwendal\\Programmation\\Debug_AreasGroups.png";
+#else
+	std::string pngFilePath = "./Debug_AreasGroups.png";
+#endif
     { // tentative destruction avant re-lecture
-        File pngFile("./Debug_AreasGroups.png");
+        File pngFile(pngFilePath.c_str());
         if (pngFile.existsAsFile())
             pngFile.deleteFile();
     }
-    FileOutputStream stream ( File("./Debug_AreasGroups.png") );
+    FileOutputStream stream ( File(pngFilePath.c_str()) );
     PNGImageFormat pngWriter;
     bool couldWrite = pngWriter.writeImageToStream(groupsColourImage, stream);
     // The image must be written in Debug mode....
@@ -819,8 +824,7 @@ void InteractiveScene::PreComputeInteractionData()
 }
 
 std::vector<std::pair<size_t, size_t>>
-InteractiveScene::propagateAreaGroup(std::vector<AreasGroup*>& groupsImage,
-                        AreasGroup* groupToPropagate, size_t i0, size_t j0)
+InteractiveScene::propagateAreaGroup(AreasGroup* groupToPropagate, size_t i0, size_t j0)
 {
     const bool prevRowExists = (i0 > 0);
     const bool prevColExists = (j0 > 0);
@@ -831,31 +835,31 @@ InteractiveScene::propagateAreaGroup(std::vector<AreasGroup*>& groupsImage,
     // If none of the 8 pixels needs to propagate, the propagation stops here.
     if (prevRowExists) // top pixels
     {
-        if (tryPropagateToPixel(groupsImage, groupToPropagate, i0-1,       j0  ))
-            neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0-1, j0));
+        if (tryPropagateToPixel(groupToPropagate,                    i0-1, j0  ))
+            neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0-1, j0  ));
         if (prevColExists)
-            if (tryPropagateToPixel(groupsImage, groupToPropagate, i0-1,       j0-1))
+            if (tryPropagateToPixel(groupToPropagate,                    i0-1, j0-1))
                 neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0-1, j0-1));
         if (nextColExists)
-            if (tryPropagateToPixel(groupsImage, groupToPropagate, i0-1,       j0+1))
+            if (tryPropagateToPixel(groupToPropagate,                    i0-1, j0+1))
                 neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0-1, j0+1));
     }
     if (nextRowExists) // bottom pixels
     {
-        if (tryPropagateToPixel(groupsImage, groupToPropagate, i0+1,       j0  ))
+        if (tryPropagateToPixel(groupToPropagate,                    i0+1, j0  ))
             neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0+1, j0));
         if (prevColExists)
-            if (tryPropagateToPixel(groupsImage, groupToPropagate, i0+1,       j0-1))
+            if (tryPropagateToPixel(groupToPropagate,                    i0+1, j0-1))
                 neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0+1, j0-1));
         if (nextColExists)
-            if (tryPropagateToPixel(groupsImage, groupToPropagate, i0+1,       j0+1))
+            if (tryPropagateToPixel(groupToPropagate,                    i0+1, j0+1))
                 neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0+1, j0+1));
     }
     if (prevColExists) // left pixel
-        if (tryPropagateToPixel(groupsImage, groupToPropagate, i0,       j0-1))
+        if (tryPropagateToPixel(groupToPropagate,                    i0, j0-1))
             neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0, j0-1));
     if (nextColExists) // right pixel
-        if (tryPropagateToPixel(groupsImage, groupToPropagate, i0  ,     j0+1))
+        if (tryPropagateToPixel(groupToPropagate,                    i0, j0+1))
             neighbourGroupPixels.push_back(std::pair<size_t, size_t>(i0, j0+1));
     
     return neighbourGroupPixels;

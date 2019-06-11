@@ -82,10 +82,16 @@ void MultiSceneCanvasInteractor::OnComponentResized(int newWidth, int newHeight,
     
     if (graphicSessionManager->GetEnablePreComputation())
     {
-        // At first, we stop any previous callback possibility
-        this->stopTimer();
-        // And we re-launch ours
-        this->startTimer(delayForRecomputeAfterResize_ms);
+		if ((newWidth != lastOnResizeAutoPreComputationWidth)
+			|| (newHeight != lastOnResizeAutoPreComputationHeight))
+		{
+			lastOnResizeAutoPreComputationWidth = newWidth;
+			lastOnResizeAutoPreComputationHeight = newHeight;
+			// At first, we stop any previous callback possibility
+			this->stopTimer();
+			// And we re-launch ours
+			this->startTimer(delayForRecomputeAfterResize_ms);
+		}
     }
 }
 

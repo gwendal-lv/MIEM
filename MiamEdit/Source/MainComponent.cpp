@@ -212,7 +212,7 @@ bool MainContentComponent::keyPressed(const KeyPress& key)
         return keyWasUsed;
 }
 
-void MainContentComponent::modifierKeysChanged (const ModifierKeys& modifiers)
+void MainContentComponent::modifierKeysChanged (const ModifierKeys& /*modifiers*/)
 {
 }
 
