@@ -87,6 +87,6 @@ void PeriodicUpdateThread::SetHighThreadPriority()
     /* - - - - - Pour les autres OS - - - - -
      * à développer...
      */
-    std::cout << "[Thread Modèle] Pas d'augmentation de priorité pour ce système d'exploitation." << std::endl;
+	Logger::outputDebugString("[Thread Modèle] Pas d'augmentation de priorité implémentée pour ce système d'exploitation.");
 #endif
 }

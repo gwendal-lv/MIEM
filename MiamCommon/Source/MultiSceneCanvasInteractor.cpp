@@ -511,7 +511,7 @@ void MultiSceneCanvasInteractor::TriggerInteractionDataPreComputation()
     {
         if (numberOfWaitingRestarts >= 1)
         {
-            std::cout << "Request for pre-computation: denied." << std::endl;
+			Logger::outputDebugString("Request for pre-computation: denied. (too many restarts enqueued)");
             return;
         }
     }
@@ -533,7 +533,7 @@ void MultiSceneCanvasInteractor::TriggerInteractionDataPreComputation()
         nbCoresToUse = SystemStats::getNumCpus() - 1;
     
     
-    std::cout << "[Interaction Data] " << scenes.size() << " Pre-Computations start, multi-threaded on " << nbCoresToUse << "/" << SystemStats::getNumCpus() << " CPU cores." << ( (!isAlreadyComputing) ? "" : (std::string(" WARNING: forced restart ") + boost::lexical_cast<std::string>(numberOfWaitingRestarts) + " (previous computation was occuring).")) << std::endl;
+	Logger::outputDebugString("[Interaction Data] " + boost::lexical_cast<std::string>(scenes.size()) + " Pre-Computations start, multi-threaded on " + boost::lexical_cast<std::string>(nbCoresToUse) + "/" + boost::lexical_cast<std::string>(SystemStats::getNumCpus()) + std::string(" CPU cores.") + ((!isAlreadyComputing) ? "" : (std::string(" WARNING: forced restart ") + boost::lexical_cast<std::string>(numberOfWaitingRestarts) + " (previous computation was occuring).")));
     
     
     /// All calls must be made from the juce:: MessageManager thread

@@ -233,7 +233,6 @@ AreaEventType EditablePolygon::TryBeginPointMove(const Point<double>& hitPoint)
         {
             if (boost::geometry::within(hitBpt, edgesHitBoxes[i]))
             {
-                std::cout << "collision avec arête #" << i << std::endl;
                 eventType = AreaEventType::PointDragBegins;
                 pointDraggedId = EditableAreaPointId::TwoNeighbourPoints;
                 sideDraggedId = (int)i;

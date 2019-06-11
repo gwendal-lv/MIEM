@@ -645,7 +645,7 @@ std::shared_ptr<AreasGroup> InteractiveScene::GetGroupFromPreComputedImage(int c
         // result to be perfectly safe....
         else
         {
-            std::cout << "[InteractiveScene.cpp] ***AUTO-TRIGGER*** Pre-Computation (data was outdated)" << std::endl;
+			Logger::outputDebugString("[InteractiveScene.cpp] ***AUTO-TRIGGER*** Pre-Computation (data was outdated)");
             TriggerInteractionDataPreComputation();
             return blockUntilComputationResultGroup;
         }
@@ -661,7 +661,7 @@ void InteractiveScene::TriggerInteractionDataPreComputation()
     {
         // double calcul lancé.... mettre sécurité là-dessus
         assert(false);
-        std::cout << "[InteractiveScene.cpp] ******** PRE-COMPUTATION REQUEST NOT CONSIDERED (ALREADY COMPUTING) ********" << std::endl;
+		Logger::outputDebugString("[InteractiveScene.cpp] ******** PRE-COMPUTATION REQUEST NOT CONSIDERED (ALREADY COMPUTING) ********");
         return;
     }
     
@@ -669,7 +669,7 @@ void InteractiveScene::TriggerInteractionDataPreComputation()
     
     isPreComputingGroupsImages = true;
     startTime = std::chrono::steady_clock::now();
-    std::cout << "[InteractiveScene.cpp] Starting Pre-Computation of interaction data......." << std::endl;
+	Logger::outputDebugString("[InteractiveScene.cpp] Starting Pre-Computation of interaction data.......");
     
     // -- > Init of all non-thread-safe variables
     if (auto canvasLocked = canvasManager.lock())
@@ -911,7 +911,7 @@ void InteractiveScene::assignGroupsToAreas_postComputation()
         // (becauses incoherent results just deactivate some features...).
         // The incoherence has been detected during the loop
         assert(false);
-        std::cout << "[InteractiveScene] Incoherence detected, areas changed during pre-computation. Results might be false." << std::endl;
+		Logger::outputDebugString("[InteractiveScene] Incoherence detected, areas changed during pre-computation. Results might be false.");
     }
     
     // Nettoyage
@@ -922,8 +922,7 @@ void InteractiveScene::assignGroupsToAreas_postComputation()
         canvasLocked->DisplayInfo("Interaction data is up to date.", 40);
     // Affichage du temps total de traitement
     auto processDuration = std::chrono::steady_clock::now() - startTime;
-    std::cout << "[InteractiveScene.cpp]         ----->   Threaded Pre-Computation finished. Duration = " <<
-    std::chrono::duration_cast<std::chrono::milliseconds>(processDuration).count() << " ms" << std::endl;
+	Logger::outputDebugString("[InteractiveScene.cpp]         ----->   Threaded Pre-Computation finished. Duration = " + boost::lexical_cast<std::string>(std::chrono::duration_cast<std::chrono::milliseconds>(processDuration).count()) + " ms" );
     
     // Fin
     isPreComputingGroupsImages = false;

@@ -144,7 +144,7 @@ void ControlModel::update()
                     
                 case AsyncParamChange::Stop :
                     playState = AsyncParamChange::Stop;
-                    std::cout << "[Modèle] STOP" << std::endl;
+					Logger::outputDebugString("[Model] STOP");
                     interpolator->OnStop();
                     // Après le stop, il faut peut-être envoyer des données
                     wasSomethingUpdated = interpolator->OnDataUpdateFinished();
@@ -235,7 +235,7 @@ void ControlModel::update()
 void ControlModel::onPlay()
 {
     playState = AsyncParamChange::Play;
-    std::cout << "[Modèle] PLAY (interpolation de type '" << InterpolationTypes::GetInterpolationName(GetInterpolator()->GetType()) << "')" << std::endl;
+	Logger::outputDebugString("[Model] PLAY (interpolation de type '" + InterpolationTypes::GetInterpolationName(GetInterpolator()->GetType()) + "')");
     interpolator->OnPlay();
     
     // Confirmation sent back to the presenter
