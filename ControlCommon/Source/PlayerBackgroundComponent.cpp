@@ -350,6 +350,20 @@ void PlayerBackgroundComponent::SetMainSliderEnabled(bool shouldBeEnabled)
     isMainSliderEnabled = shouldBeEnabled;
     resized();
 }
+void PlayerBackgroundComponent::SetMainSliderVolume_dB(double volume_dB)
+{
+	switch (presenter->GetSessionPurpose())
+	{
+		case AppPurpose::GenericController :
+			// GenCon sessions are not supposed to use the main slider....
+			assert(false);
+			return;
+
+		case AppPurpose::Spatialisation :
+			mainSlider->setValue(volume_dB, NotificationType::sendNotificationAsync);
+			break;
+	}
+}
 //[/MiscUserCode]
 
 

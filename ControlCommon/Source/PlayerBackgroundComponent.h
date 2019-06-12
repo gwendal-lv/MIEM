@@ -69,6 +69,7 @@ public:
 
     void ChangeAppMode(PlayerAppMode newAppMode);
     void SetMainSliderEnabled(bool shouldBeEnabled);
+	void SetMainSliderVolume_dB(double volume_dB);
 
 
     MultiCanvasComponent* GetMultiCanvasComponent() { return multiCanvasComponent; }
