@@ -89,18 +89,14 @@ public:
     void buttonClicked (Button* buttonThatWasClicked) override;
 
     // Binary resources:
-    static const char* lecture_png;
-    static const int lecture_pngSize;
-    static const char* play_png;
-    static const int play_pngSize;
-    static const char* playOn_png;
-    static const int playOn_pngSize;
-    static const char* playOn_png2;
-    static const int playOn_png2Size;
-    static const char* stop_png;
-    static const int stop_pngSize;
-    static const char* stopOn_png;
-    static const int stopOn_pngSize;
+    static const char* play_png2;
+    static const int play_png2Size;
+    static const char* playing_png;
+    static const int playing_pngSize;
+    static const char* stopped_png;
+    static const int stopped_pngSize;
+    static const char* stop_png2;
+    static const int stop_png2Size;
 
 
 private:
