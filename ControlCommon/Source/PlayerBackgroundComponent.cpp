@@ -362,6 +362,9 @@ void PlayerBackgroundComponent::SetMainSliderVolume_dB(double volume_dB)
 		case AppPurpose::Spatialisation :
 			mainSlider->setValue(volume_dB, NotificationType::sendNotificationAsync);
 			break;
+            
+        default:
+            break;
 	}
 }
 //[/MiscUserCode]
