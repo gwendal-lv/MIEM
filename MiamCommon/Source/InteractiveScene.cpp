@@ -623,7 +623,7 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::RecomputeAreaExciterInteractio
 
 
 
-// = = = = = = = = = = Pre-Computation of Interaction Data = = = = = = = = = =
+// = = = = = = = = = = AREA GROUPS Pre-Computation of Interaction Data = = = = = = = = = =
 
 
 std::shared_ptr<AreasGroup> InteractiveScene::GetGroupFromPreComputedImage(int curX, int curY, int curW, int curH)
@@ -927,6 +927,20 @@ void InteractiveScene::assignGroupsToAreas_postComputation()
     // Fin
     isPreComputingGroupsImages = false;
 }
+
+
+
+
+
+
+// = = = = = = = = = AREA GROUPS closest point finding = = = = = = = = =
+
+Point<float> InteractiveScene::GetClosestPointOfGroup(const Point<float>& pointOutsideGroup, int areasGroupIndexInScene)
+{
+    std::cout << "Devrait bloquer sur la bordure" << std::endl;
+    return pointOutsideGroup;
+}
+
 
 
 

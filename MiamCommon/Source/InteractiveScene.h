@@ -309,6 +309,7 @@ namespace Miam
         
         
         
+        // - - - - - AREA GROUPS pre-computation - - - - -
         
         /// \brief Récupère le résultat de pré-computation, en prenant un résultat dans l'image
         /// enregistrée (attention, mise à l'échelle de l'image si canvas a changé de taille)
@@ -381,8 +382,18 @@ namespace Miam
         }
         /// \brief To be executed on Juce Message thread
         void assignGroupsToAreas_postComputation();
-        public :
         
+        
+        // - - - - - AREA GROUPS research of closest point - - - - -
+        
+        public :
+        /// \brief Considering a point of canvas (as input) that should be outside the group, this
+        /// method will compute and return the coordinates of the point inside the group that is
+        /// the closest (approx....) to the input point
+        ///
+        /// Involves image processing and a recursive appox. algo -> might be a bit computationnaly
+        /// extensive.
+        virtual Point<float> GetClosestPointOfGroup(const Point<float>& pointOutsideGroup, int areasGroupIndexInScene) override;
         
         
         

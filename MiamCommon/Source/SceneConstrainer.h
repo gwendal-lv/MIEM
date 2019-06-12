@@ -98,9 +98,12 @@ namespace Miam
         
         // ====================== Setters and Getters =====================
         public :
+        // - - - to be properly implemented by the scene that inherits from this class - - -
         virtual SceneConstrainer::ConstraintType GetExcitersConstraint() = 0;
         virtual std::shared_ptr<AreasGroup>
         GetGroupFromPreComputedImage(int curX, int curY, int curW, int curH)= 0;
+        
+        virtual Point<float> GetClosestPointOfGroup(const Point<float>& pointOutsideGroup, int areasGroupIndexInScene) = 0;
         
         
         // ====================== METHODS =====================

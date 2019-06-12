@@ -158,6 +158,7 @@ const MouseEvent& SceneConstrainer::constrainMouseEvent(const MouseEvent& e,
             const int curGroupIdx = curPosAreaGroup->GetIndexInScene();
             
             // Est-ce qu'on doit bloquer l'excitateur ?
+            bool exciterShouldBeBlockedInside = false;
             // Si idx différent ou si blocking,  OUI....
             if ( (curGroupIdx != constraint.AreasGroupIndex)
                 || (curGroupIdx == (int)AreasGroup::SpecialIds::Blocking)
@@ -183,11 +184,25 @@ const MouseEvent& SceneConstrainer::constrainMouseEvent(const MouseEvent& e,
                 }
                 // Sinon OUI, on reste juste bloqué
                 else
-                    constrainedPosition = constraint.LastValidCenterPosition;
+                    exciterShouldBeBlockedInside = true;
             }
             // Sinon, on garde cet évènement comme la dernier valide
             else
                 constraint.LastValidCenterPosition = constrainedPosition;
+            
+            
+            // - - - - application du code de blocage (ou contrainte sur la bordure) - - - -
+            if(exciterShouldBeBlockedInside)
+            {
+                // pour l'instant on bloque dur.... Mais on peut imaginer très bientôt bloquer
+                // "en glissant sur la bordure", si le groupe est bien un groupe valide
+                if (constraint.AreasGroupIndex >= (int)AreasGroup::SpecialIds::FirstActualGroup)
+                    GetClosestPointOfGroup(constrainedPosition, constraint.AreasGroupIndex);
+                
+                
+                constrainedPosition = constraint.LastValidCenterPosition;
+            }
+            
             
             // suppression de l'offset (retour au point touch réel), pour finir
             constrainedPosition += Point<float>(constraint.InitialTouchOffset_float.getX(),
