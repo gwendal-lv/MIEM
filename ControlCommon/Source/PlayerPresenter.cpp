@@ -361,7 +361,7 @@ void PlayerPresenter::tryReconnectAndReplay()
         // at this point, the model should always be able to send UDP data....
         // but issues might occur with root-only UDP port, etc. No display to user
         if (! couldConnect)
-            DBG("[Presenter / Model] Could not connect with new OSC UDP/IP configuration data.");
+            Logger::outputDebugString("[Presenter / Model] Could not connect with new OSC UDP/IP configuration data.");
     }
 }
 

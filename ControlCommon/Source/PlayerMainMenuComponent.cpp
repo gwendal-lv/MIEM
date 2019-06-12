@@ -24,6 +24,8 @@
 
 #include "TextUtils.h"
 
+#include "boost/core/ignore_unused.hpp"
+
 //[/Headers]
 
 #include "PlayerMainMenuComponent.h"
@@ -290,6 +292,7 @@ PlayerMainMenuComponent::~PlayerMainMenuComponent()
 void PlayerMainMenuComponent::paint (Graphics& g)
 {
     //[UserPrePaint] Add your own custom painting code here..
+	boost::ignore_unused(g);
     //[/UserPrePaint]
 
     //[UserPaint] Add your own custom painting code here..
