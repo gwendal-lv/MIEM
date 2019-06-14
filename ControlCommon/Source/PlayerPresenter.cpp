@@ -508,10 +508,15 @@ void PlayerPresenter::SetConfigurationFromTree(bptree::ptree& tree)
     // Concernant Modèle : on attendra le retour effectif des infos depuis le Modèle
     // Infos perso à charger quand même ici :
     
-    // POUR DEBUG on lance exceptions
-    bool shouldConstraintPositions = tree.get<bool>("presenter.exciters.<xmlattr>.constraint_positions");
-    
-    //bool shouldConstraintPositions = tree.get<bool>("presenter.exciters.<xmlattr>.constraint_positions", false); // default = false
+    bool shouldConstraintPositions;
+    try {
+        shouldConstraintPositions = tree.get<bool>("presenter.exciters.<xmlattr>.constraint_positions");
+    }
+    catch (bptree::ptree_error& ) {
+        shouldConstraintPositions = false;
+        // We don't assert if data is missing... Because this function
+        // can be called directly from the XML loading methods
+    }
     
     SceneConstrainer::ConstraintType constraint = shouldConstraintPositions ?
     SceneConstrainer::ConstraintType::RemainInsideAreasGroups :
