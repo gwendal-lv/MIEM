@@ -50,7 +50,7 @@ void PeriodicUpdateThread::SetHighThreadPriority()
     // Si possible : mise à un niveau de priorité pour le thread de mise à jour
     // -> voire même un autre ordonnancement sous certains OS ?
     
-#if defined(JUCE_MAC)
+#if defined(JUCE_MAC) || defined(JUCE_IOS)
     // On n'utilisera pas les fonctions d'accès direct à l'ordonnanceur MACH, trop complexe...
     // - - Identification des politiques d'ordonnancement POSIX - -
     std::map<int, std::string> policyToString;
@@ -87,6 +87,6 @@ void PeriodicUpdateThread::SetHighThreadPriority()
     /* - - - - - Pour les autres OS - - - - -
      * à développer...
      */
-	Logger::outputDebugString("[Thread Modèle] Pas d'augmentation de priorité implémentée pour ce système d'exploitation.");
+	Logger::outputDebugString("[Thread Model] No priority change implemented for this OS.");
 #endif
 }

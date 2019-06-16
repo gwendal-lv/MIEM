@@ -361,7 +361,7 @@ void PlayerPresenter::tryReconnectAndReplay()
         // at this point, the model should always be able to send UDP data....
         // but issues might occur with root-only UDP port, etc. No display to user
         if (! couldConnect)
-            DBG("[Presenter / Model] Could not connect with new OSC UDP/IP configuration data.");
+            Logger::outputDebugString("[Presenter / Model] Could not connect with new OSC UDP/IP configuration data.");
     }
 }
 
@@ -508,10 +508,15 @@ void PlayerPresenter::SetConfigurationFromTree(bptree::ptree& tree)
     // Concernant Modèle : on attendra le retour effectif des infos depuis le Modèle
     // Infos perso à charger quand même ici :
     
-    // POUR DEBUG on lance exceptions
-    bool shouldConstraintPositions = tree.get<bool>("presenter.exciters.<xmlattr>.constraint_positions");
-    
-    //bool shouldConstraintPositions = tree.get<bool>("presenter.exciters.<xmlattr>.constraint_positions", false); // default = false
+    bool shouldConstraintPositions;
+    try {
+        shouldConstraintPositions = tree.get<bool>("presenter.exciters.<xmlattr>.constraint_positions");
+    }
+    catch (bptree::ptree_error& ) {
+        shouldConstraintPositions = false;
+        // We don't assert if data is missing... Because this function
+        // can be called directly from the XML loading methods
+    }
     
     SceneConstrainer::ConstraintType constraint = shouldConstraintPositions ?
     SceneConstrainer::ConstraintType::RemainInsideAreasGroups :

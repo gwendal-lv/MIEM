@@ -112,3 +112,19 @@ void Presenter::processParamChangeFromModel(AsyncParamChange const & paramChange
 }
 
 
+
+
+// = = = = = = = = = = XML loading/Save = = = = = = = = = =
+void Presenter::LoadSession(std::string filename)
+{
+	// spat-only stops
+	view->GetBackgroundComponent()->SetMainSliderVolume_dB(Miam_MinVolume_dB);
+
+	// base-class loading
+	PlayerPresenter::LoadSession(filename);
+
+	// spat-only restarts
+	// WARNING : default volume is 0dB....
+	view->GetBackgroundComponent()->SetMainSliderVolume_dB(0.0);
+}
+

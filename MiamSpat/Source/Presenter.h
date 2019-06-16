@@ -93,6 +93,11 @@ namespace Miam {
         virtual void processParamChangeFromModel(AsyncParamChange const & paramChange) override;
         
         
+
+		// - - - - - XML loading only - - - - - 
+
+		virtual void LoadSession(std::string filename) override;
+
     };
     
     
