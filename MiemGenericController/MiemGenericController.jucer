@@ -409,30 +409,6 @@
         <MODULEPATH id="juce_osc" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_IPHONE>
-    <ANDROIDSTUDIO targetFolder="Builds/Android" androidSDKPath="" androidNDKPath=""
-                   extraDefs="__MIAMOBILE" bigIcon="P6bzns" androidCustomApplicationClass="com.gwendallv.MIEMcontroller"
-                   androidMinimumSDK="24" gradleVersion="4.10.1" gradleWrapperVersion="3.3.2">
-      <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" defines="__MIAM_DEBUG"/>
-        <CONFIGURATION isDebug="0" name="Release"/>
-      </CONFIGURATIONS>
-      <MODULEPATHS>
-        <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_events" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_graphics" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_data_structures" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_cryptography" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_video" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_opengl" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_basics" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_devices" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
-        <MODULEPATH id="juce_osc" path="../../JUCE/modules"/>
-      </MODULEPATHS>
-    </ANDROIDSTUDIO>
     <VS2017 targetFolder="Builds/VisualStudio2017" extraDefs="BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE"
             bigIcon="Dlskvp">
       <CONFIGURATIONS>
@@ -456,6 +432,31 @@
         <MODULEPATH id="juce_audio_basics" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </VS2017>
+    <ANDROIDSTUDIO targetFolder="Builds/Android" androidMinimumSDK="22" extraDefs="__MIAMOBILE&#10;"
+                   androidScreenOrientation="landscape" androidBluetoothNeeded="0"
+                   bigIcon="P6bzns" userNotes="- API 22 : la minimale pour que l'app d&#233;marre....&#10;- API 21 : la minimale pour les probl&#232;mes de taille de cl&#233; SHA-1 (pour compiler...)&#10;- Pour mettre des custom &quot;activity&quot; et &quot;application&quot;, il faut faire des trucs.... Se renseigner sur forums Juce avant de changer (si vraiment besoin de changer)"
+                   androidTheme="@android:style/Theme.NoTitleBar" androidEnableContentSharing="1">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug"/>
+        <CONFIGURATION isDebug="0" name="Release"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_video"/>
+        <MODULEPATH id="juce_osc"/>
+        <MODULEPATH id="juce_opengl"/>
+        <MODULEPATH id="juce_gui_extra"/>
+        <MODULEPATH id="juce_gui_basics"/>
+        <MODULEPATH id="juce_graphics"/>
+        <MODULEPATH id="juce_events"/>
+        <MODULEPATH id="juce_data_structures"/>
+        <MODULEPATH id="juce_cryptography"/>
+        <MODULEPATH id="juce_core"/>
+        <MODULEPATH id="juce_audio_processors"/>
+        <MODULEPATH id="juce_audio_formats"/>
+        <MODULEPATH id="juce_audio_devices"/>
+        <MODULEPATH id="juce_audio_basics"/>
+      </MODULEPATHS>
+    </ANDROIDSTUDIO>
   </EXPORTFORMATS>
   <MODULES>
     <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>

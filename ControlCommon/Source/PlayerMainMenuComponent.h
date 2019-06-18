@@ -67,6 +67,7 @@ public:
     void SetOscConfigurationFromTree(bptree::ptree& oscTree);
 
     virtual void textEditorTextChanged(TextEditor& editorThatHasChanged) override;
+    virtual void textEditorFocusLost(TextEditor& editorThatHasChanged) override;
 
     /// \brief Uses a TextUtils:: static method
     std::string TryParseIpAddress();
@@ -76,6 +77,8 @@ public:
 
     // internal helpers
     private :
+    void translateSessionGroup(int dX, int dY);
+    void translateHelpGroup(int dX, int dY);
     void setIsOscConfigurationDisplayed(bool shouldBeDisplayed);
     void translateOscConfigurationGroup(int dX, int dY);
     void translateComponent(int dX, int dY, Component* component);
@@ -107,7 +110,11 @@ private:
 
     bool displayHelp = true;
 
+    // if true, the user is editing ip/udp but did not click on the "reconnect" button
     bool isOscConfigurationBeingEdited = false;
+    // if true, a text editor is being changed -> on android, we must display
+    // the text boxes a bit higher (the keyboard takes 50+ % of the screen..)
+    bool areOscTextEditorsBeingEdited = false;
 
     std::unique_ptr<MiamLookAndFeel> transparentLookAndFeel;
 

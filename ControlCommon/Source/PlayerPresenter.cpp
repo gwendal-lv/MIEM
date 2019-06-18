@@ -22,6 +22,8 @@
 #include "XmlUtils.h"
 #include "boost/property_tree/xml_parser.hpp" // for debug
 
+#include "MiemDefaultSessions.h"
+
 using namespace Miam;
 
 
@@ -43,6 +45,23 @@ remoteControlServer(this)
 {
     appMode = PlayerAppMode::None;
     previousPlayerStatus = PlayerAppMode::None;
+    
+    isExternalStoragePermissionGranted = false;
+
+    // permission for android only (at startup, before trying to open a file
+    // Demande des permissions plateformes mobiles, pour charger des fichiers
+    // depuis la mémoire externe (sauf démo, pour ne pas demander des permissions
+    // dès l'installation de l'app)
+#ifdef JUCE_ANDROID
+    Timer::callAfterDelay(5000,
+                          [this] ()
+                          {
+                              RuntimePermissions::request(RuntimePermissions::readExternalStorage,
+                                                          [this] (bool permissionWasGranted) {
+                      this->onPermissionRequestResponse(permissionWasGranted);
+                                                          });
+                          });
+#endif
 }
 
 
@@ -90,6 +109,14 @@ void PlayerPresenter::TryLoadFirstSession(std::string commandLine)
     }
 }
 
+void PlayerPresenter::onPermissionRequestResponse(bool wasPermissionGranted)
+{
+    isExternalStoragePermissionGranted = wasPermissionGranted;
+    if (wasPermissionGranted)
+        Logger::outputDebugString("[PlayerPresenter] Permission for reading external storage is granted");
+    else
+        view->DisplayInfo("Cannot open sessions from SD card (access refused by OS or user.");
+}
 
 
 
@@ -484,6 +511,7 @@ void PlayerPresenter::LoadSession(std::string filename)
     
     // Arrêt des envois de ce module, déjà pour commencer
     appModeChangeRequest(PlayerAppMode::Loading);
+    
     
     // Chargement d'une nouvelle session
     ControlPresenter::LoadSession(filename);

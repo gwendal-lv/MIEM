@@ -55,6 +55,7 @@ namespace Miam
          * À changer peut-être dans une version future
          */
         LoadFileChooser loadFileChooser; // configuré à la construction
+        std::atomic<bool> isExternalStoragePermissionGranted;
         
         
         // To fully control the delay before playing (and the VBO/textures
@@ -96,9 +97,13 @@ namespace Miam
         
         void TryLoadFirstSession(std::string commandLine);
         
+        private :
+        /// \brief Callback after permission request
+        void onPermissionRequestResponse(bool wasPermissionGranted);
         
         
         // - - - - - General Management - - - - -
+        public :
         
         /// \brief Might be called from the Presenter itself, or from the View
         ///
@@ -110,6 +115,7 @@ namespace Miam
         
         
         private :
+        
         /// \brief Timer callback associated to the Update function
         virtual void timerCallback() override;
         

@@ -390,6 +390,15 @@ void PlayerMainMenuComponent::resized()
                                                            helpButton->getY());
         }
     }
+    
+#ifdef JUCE_ANDROID
+    if (areOscTextEditorsBeingEdited)
+    {
+        translateSessionGroup(0, -getHeight()/3);
+        translateHelpGroup(0, -getHeight()/3);
+        translateOscConfigurationGroup(0, -getHeight()/3);
+    }
+#endif
 
     //[/UserResized]
 }
@@ -600,15 +609,35 @@ void PlayerMainMenuComponent::SetOscConfigurationFromTree(bptree::ptree& oscTree
     catch (bptree::ptree_error&){
         return;
     }
-    ipAddressTextEditor->setText(ipv4);
-    udpPortTextEditor->setText(boost::lexical_cast<std::string>(udpPort));
+    ipAddressTextEditor->setText(ipv4, NotificationType::dontSendNotification);
+    udpPortTextEditor->setText(boost::lexical_cast<std::string>(udpPort), NotificationType::dontSendNotification);
+    // graphical updates
+    TryParseIpAddress();
+    TryParseUdpPort();
 }
 void PlayerMainMenuComponent::textEditorTextChanged(TextEditor& editorThatHasChanged)
 {
-    if (&editorThatHasChanged == ipAddressTextEditor.get())
+    bool previousEditionState = areOscTextEditorsBeingEdited;
+    if (&editorThatHasChanged == ipAddressTextEditor.get()) {
         TryParseIpAddress();
+        areOscTextEditorsBeingEdited = true;
+    }
     else if (&editorThatHasChanged == udpPortTextEditor.get())
+    {
         TryParseUdpPort();
+        areOscTextEditorsBeingEdited = true;
+    }
+    if (previousEditionState != areOscTextEditorsBeingEdited)
+        resized(); // forced update, if necessary
+}
+void PlayerMainMenuComponent::textEditorFocusLost(TextEditor& editorThatHasChanged)
+{
+    if ( (&editorThatHasChanged == ipAddressTextEditor.get())
+        || (&editorThatHasChanged == udpPortTextEditor.get()) )
+    {
+        areOscTextEditorsBeingEdited = false;
+    }
+    resized(); // forced update
 }
 std::string PlayerMainMenuComponent::TryParseIpAddress()
 {
@@ -617,6 +646,20 @@ std::string PlayerMainMenuComponent::TryParseIpAddress()
 int PlayerMainMenuComponent::TryParseUdpPort()
 {
     return TextUtils::TryParseAndBoldenUdpPort(udpPortTextEditor.get());
+}
+
+void PlayerMainMenuComponent::translateSessionGroup(int dX, int dY)
+{
+    translateComponent(dX, dY, sessionGroupComponent.get());
+    translateComponent(dX, dY, loadFromFileButton.get());
+}
+void PlayerMainMenuComponent::translateHelpGroup(int dX, int dY)
+{
+    translateComponent(dX, dY, helpGroupComponent.get());
+    translateComponent(dX, dY, helpButton.get());
+    translateComponent(dX, dY, infoTextEditor.get());
+    translateComponent(dX, dY, miemProjectHyperlinkButton.get());
+    translateComponent(dX, dY, loadDefaultButton.get());
 }
 
 void PlayerMainMenuComponent::setIsOscConfigurationDisplayed(bool shouldBeDisplayed)
