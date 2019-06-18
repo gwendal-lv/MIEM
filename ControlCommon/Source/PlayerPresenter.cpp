@@ -132,7 +132,8 @@ PlayerAppMode PlayerPresenter::appModeChangeRequest(PlayerAppMode newAppMode)
     // On autorise stop, ce n'est peut-être pas une bonne idée... à voir.
     if (newAppMode == appMode)
         modeChangeAllowed = false;
-    else if (lastFilename.empty() && newAppMode == PlayerAppMode::Playing)
+    else if (lastFilename.empty() && lastURL.isEmpty()
+            && newAppMode == PlayerAppMode::Playing)
     {
         modeChangeAllowed = false;
         view->DisplayInfo("Cannot begin spatialisation: no session loaded.");
@@ -245,38 +246,51 @@ void PlayerPresenter::OnFileChooserReturn(const FileChooser& chooser)
     if (&chooser == &loadFileChooser)
     {
         File returnedFile = loadFileChooser.getResult();
-        std::cout << "[Presenter] Loading session file '" << returnedFile.getFullPathName().toStdString() << "'... ";
         // Si l'utilisateur a choisi un fichier (accès direct ou URL), on le charge
 		// En gérant l'exception s'il y en a eu une
 		if (returnedFile.exists() || (! loadFileChooser.getURLResult().isEmpty()))
 		{
+		    // For URL results (icloud/google drives, ...)
+            std::shared_ptr<InputStream> fileInputStream;
             // Lecture de la ressource
             if (returnedFile.exists()) // accès direct
             {
-                std::cout << "Accessible directly on the device." << std::endl;
+                Logger::outputDebugString("[PlayerPresenter] Loading file directly on device: '" + returnedFile.getFullPathName().toStdString() + "'");
             }
             else if (! loadFileChooser.getURLResult().isEmpty()) // Cloud, etc., sur plateforme mobile
             {
-                std::cout << "Accessible via URL at '" << loadFileChooser.getURLResult().toString(true) << "'" << std::endl;
+                Logger::outputDebugString("[PlayerPresenter] Loading file from URL: '" + loadFileChooser.getURLResult().toString(true) + "'");
+#ifdef JUCE_ANDROID
+                // le input stream sera créé par la fonction de chargement, qui va gérer elle-même
+                // le contenu car on va lui envoyer l'URL du fichier Google Drive (ou autre...)
+                // URL qui commence par content://
+#else
                 // code issu de https://forum.juce.com/t/cant-see-userdocumentsdirectory-in-ios-file-chooser/25672/5
                 StringPairArray responseHeaders;
                 int statusCode = 0;
-                std::unique_ptr<InputStream> p_stream( loadFileChooser.getURLResult().createInputStream(
-                    false, nullptr, nullptr, String(), 10000, &responseHeaders, &statusCode ) );
+                fileInputStream.reset(  );
                 // Ce code enclenche peut-être des l'attribution des "security bookmarks" dont parle la doc Juce ??
                 // voir : https://docs.juce.com/master/classFileChooser.html#a5964a831e9d12cd53de3606240dfd4c9
-                
+#endif
             }
             
             // Chargement dans fonction dédiée
-            // = = = = = = = ATTENTION LECTURE DIRECTE DU FICHIER MEME POUR FICHIER CLOUD via URL = = = = = = = =
-            // a l'air de fonctionne sour iOS si on pré-charge ci-dessus le stream... même si on n'utilise
-            // pas le stream lui-même.
-            // !!!!! à tester sous Android !!!!
 			try {
-				LoadSession(returnedFile.getFullPathName().toStdString());
+#ifndef JUCE_ANDROID
+                // = = = ATTENTION iOS : LECTURE DIRECTE DU FICHIER MEME POUR FICHIER CLOUD via URL = = =
+                // a l'air de fonctionne sour iOS si on pré-charge ci-dessus le stream... même si on n'utilise
+                // pas le stream lui-même.
+				LoadSession(returnedFile.getFullPathName().toStdString()); // null input stream
+#else
+                // Android : chargement depuis URL directement à l'intérieur de LoadSession
+                // du controlpresenter
+                LoadSession("", loadFileChooser.getURLResult()); // only URL will be used
+#endif
 			}
 			catch (XmlReadException& e) {
+			    // Si on arrive ici, la session précédente a été détruite....
+			    lastFilename = "";
+			    lastURL = URL();
 				view->DisplayInfo(e.what(), true); // important display
 				appModeChangeRequest(PlayerAppMode::MainMenu);
 			}
@@ -495,7 +509,7 @@ void PlayerPresenter::ReinitRemoteControlServer()
 
 // = = = = = XML loading only = = = = =
 
-void PlayerPresenter::LoadSession(std::string filename)
+void PlayerPresenter::LoadSession(std::string filename, URL fileUrl)
 {
     appModeChangeRequest(PlayerAppMode::Stopped); // aussi : Arrêt du modèle
     
@@ -514,7 +528,7 @@ void PlayerPresenter::LoadSession(std::string filename)
     
     
     // Chargement d'une nouvelle session
-    ControlPresenter::LoadSession(filename);
+    ControlPresenter::LoadSession(filename, fileUrl);
     
     // Various forced updates after loading
     view->GetBackgroundComponent()->SetMainSliderEnabled(model->GetIsMasterGainEnabled());

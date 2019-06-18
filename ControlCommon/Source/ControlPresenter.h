@@ -47,6 +47,7 @@ namespace Miam {
         std::shared_ptr<bptree::ptree> lastSpatStatesTree;
         std::shared_ptr<bptree::ptree> lastSpatScenesTree;
         std::string lastFilename;
+        URL lastURL;
         
         
         // - - - - - Lock-free fast communication - - - - -
@@ -96,7 +97,7 @@ namespace Miam {
         /// loads the controller session.
         ///
         /// Will load the default session if the filename is DefaultSessions::GetDefaultSessionCode()
-        virtual void LoadSession(std::string filename);
+        virtual void LoadSession(std::string filename, URL fileUrl = URL());
         /// \Brief Saves the current session to the given file name, or to the last
         /// used file name is file name is empty.
         virtual void SaveSession(std::string filename = "", bool forceDataRefresh = false);

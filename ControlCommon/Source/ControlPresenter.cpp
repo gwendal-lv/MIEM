@@ -81,28 +81,48 @@ void ControlPresenter::OnModelStopped()
 
 // = = = = = XML import/export = = = = =
 
-void ControlPresenter::LoadSession(std::string filename)
+void ControlPresenter::LoadSession(std::string filename, URL fileUrl)
 {
     bptree::ptree xmlTree, miamTree, spatTree, graphicSessionTree, settingsTree;
     try {
         // Lecture
         // Attention ! On vérifie si on demandait ou non une session par défaut...
-        if (filename.compare(DefaultSessions::GetDefaultSessionCode_mcs()) == 0)
-        {
+        // ou alors même une session à lire depuis URL (clouds, drives, ...)
+        if (filename.compare(DefaultSessions::GetDefaultSessionCode_mcs()) == 0) {
             std::stringstream ss;
             ss << DefaultSessions::GetDefault_mcs();
             bptree::read_xml(ss, xmlTree);
-        }
-        else if (filename.compare(DefaultSessions::GetDefaultSessionCode_mspat()) == 0)
-        {
+        } else if (filename.compare(DefaultSessions::GetDefaultSessionCode_mspat()) == 0) {
             std::stringstream ss;
             ss << DefaultSessions::GetDefault_mspat();
             bptree::read_xml(ss, xmlTree);
-        }
-        else
+        } else if (filename.empty()) {
+            String textStream;
+            // fichier google drive est en réalité (pour Juce) du web input stream,
+            // qui doit être lu par un thread autre que le message thread... sous Android
+            std::thread joinableTempThread([&]() {
+                textStream = fileUrl.readEntireTextStream();
+            });
+            // blocage forcé du thread GUI en attendant la réponse ! Car on sait que le fichier
+            // va bien arriver un jour...
+            joinableTempThread.join();
+            // Lecture XML de tout ce truc
+            std::stringstream ss;
+            ss << textStream.toStdString(); // double copie ici du fichier... hum hum.
+            bptree::read_xml(ss, xmlTree);
+        } else
             bptree::read_xml(filename, xmlTree);
-        // puis Séparation des grandes parties du fichier
+        // Récupération du noeud principal
         miamTree = xmlTree.get_child("miem");
+        // et première vérification (type de session pour les apps spécifiques)
+        if (App::GetPurpose() == AppPurpose::Spatialisation
+            || App::GetPurpose() == AppPurpose::GenericController)
+        {
+            if (App::GetPurposeName(App::GetPurpose()).find(miamTree.get<std::string>("<xmlattr>.appPurpose")) != 0)
+                throw bptree::ptree_error(
+                        "Session purpose must be " + App::GetPurposeName(App::GetPurpose()));
+        }
+        // puis Séparation des grandes parties du fichier
         spatTree = miamTree.get_child("control");
         graphicSessionTree = miamTree.get_child("graphicsession");
         settingsTree = miamTree.get_child("settings");
@@ -114,6 +134,7 @@ void ControlPresenter::LoadSession(std::string filename)
     // S'il n'y a pas eu d'erreur de lecture : le nom/chemin de session est celui de celle
     // qui vient d'être chargée
     lastFilename = filename;
+    lastURL = fileUrl;
     
     // Envoi de chaque grande partie à la sous-partie de spat concernée
     // Si n'importe laquelle échoue : on annule tout....
@@ -140,13 +161,16 @@ void ControlPresenter::LoadSession(std::string filename)
         
         // Remise à zéro des états locaux internes
         lastFilename = "";
+        lastURL = URL();
         
         // Renvoi pour affichage graphique
         throw e;
     }
     
     // Update graphique final
+#ifndef __MIAMOBILE
     view->SetTitle(lastFilename + " - " + ProjectInfo::projectName);
+#endif
 }
 void ControlPresenter::SaveSession(std::string _filename, bool /*forceDataRefresh*/)
 {
@@ -173,7 +197,7 @@ void ControlPresenter::SaveSession(std::string _filename, bool /*forceDataRefres
         /* This function uses pop-ups and
          * must not be executed form a mobile platform.
          */
-        assert(0);
+        assert(false);
 #endif
     }
     

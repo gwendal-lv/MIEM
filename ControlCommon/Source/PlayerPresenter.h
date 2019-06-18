@@ -184,7 +184,7 @@ namespace Miam
         
         /// \brief Override qui permet de démarrer le Modèle lorsque le chargement de session est terminé
         /// (et qui arrête le modèle au début du chargement de session)
-        virtual void LoadSession(std::string filename) override;
+        virtual void LoadSession(std::string filename, URL fileUrl = URL()) override;
         
         virtual void SetConfigurationFromTree(bptree::ptree&) override;
         
