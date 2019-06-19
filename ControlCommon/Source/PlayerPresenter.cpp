@@ -482,10 +482,10 @@ void PlayerPresenter::OnNewConnectionStatus(bool isConnectionEstablished, std::s
 void PlayerPresenter::ReinitRemoteControlServer()
 {
     // Fully deactivated for non-experiment versions
-    bool serverRunning = false;
-    int tcpPort = -1;
 
 #ifdef __MIEM_EXPERIMENTS
+    bool serverRunning = false;
+    int tcpPort = -1;
     if (udpPort > 0) // might be still -1.... ?
         tcpPort = udpPort + tcpServerPortOffset;
 

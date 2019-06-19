@@ -234,7 +234,7 @@ SceneEditionComponent::SceneEditionComponent ()
     canvasInfoLabel.reset (new Label ("Canvas Info label",
                                       TRANS("...selected canvas info...")));
     addAndMakeVisible (canvasInfoLabel.get());
-    canvasInfoLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Italic"));
+    canvasInfoLabel->setFont (Font (15.00f, Font::italic));
     canvasInfoLabel->setJustificationType (Justification::centred);
     canvasInfoLabel->setEditable (false, false, false);
     canvasInfoLabel->setColour (Label::textColourId, Colours::black);
@@ -763,7 +763,10 @@ bool SceneEditionComponent::keyPressed (const KeyPress& key)
             else if ( (key.getKeyCode() == areaToFrontCmdShiftKey)
                      && (! isAreaGroupHidden)
                      && bringToFrontTextButton->isEnabled() && bringToFrontTextButton->isVisible())
-                bringToFrontTextButton->triggerClick();
+            else if ( (key.getKeyCode() == areaToBackCmdShiftKey)
+                     && (! isAreaGroupHidden)
+                     && sendToBackTextButton->isEnabled() && sendToBackTextButton->isVisible())
+                sendToBackTextButton->triggerClick();
             else if ( (key.getKeyCode() == deletePointCmdShiftKey)
                      && (! isAreaGroupHidden)
                      && deletePointTextButton->isEnabled() && deletePointTextButton->isVisible())
@@ -1283,7 +1286,7 @@ BEGIN_JUCER_METADATA
          virtualName="" explicitFocusOrder="0" pos="16 16 176 24" posRelativeY="90b16e3024c520fd"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Link to control state:"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="33"/>
   <TEXTBUTTON name="Add Scene text button" id="47bebc9d3a03780d" memberName="addSceneTextButton"
               virtualName="" explicitFocusOrder="0" pos="16 24 88 24" posRelativeY="4250d5155a80be70"
@@ -1305,7 +1308,7 @@ BEGIN_JUCER_METADATA
          virtualName="" explicitFocusOrder="0" pos="16 48 176 8" posRelativeY="4250d5155a80be70"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="...selected canvas info..."
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="1" justification="36" typefaceStyle="Italic"/>
   <GROUPCOMPONENT name="Initial state group component" id="cc3bdf8d18c3f428" memberName="initialStateGroupComponent"
                   virtualName="" explicitFocusOrder="0" pos="8 -8R 192 112" posRelativeY="90b16e3024c520fd"
@@ -1322,7 +1325,7 @@ BEGIN_JUCER_METADATA
          virtualName="" explicitFocusOrder="0" pos="15 63 56 24" posRelativeY="4250d5155a80be70"
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Name:"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="1.5e1" kerning="0" bold="0"
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="33"/>
   <TEXTEDITOR name="Scene Name text editor" id="fd7eace3e677fc36" memberName="sceneNameTextEditor"
               virtualName="" explicitFocusOrder="0" pos="64 72 128 24" initialText=""
