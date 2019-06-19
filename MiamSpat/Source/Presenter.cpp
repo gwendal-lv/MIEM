@@ -103,7 +103,7 @@ void Presenter::processParamChangeFromModel(AsyncParamChange const & paramChange
             sendToParentClass = true;
             break;
     }
-    
+
     if (wasVolumeUpdated)
         view->OnNewVolumes(lastLowCorrelationVolume, lastHighCorrelationVolume);
     
@@ -115,13 +115,13 @@ void Presenter::processParamChangeFromModel(AsyncParamChange const & paramChange
 
 
 // = = = = = = = = = = XML loading/Save = = = = = = = = = =
-void Presenter::LoadSession(std::string filename)
+void Presenter::LoadSession(std::string filename, URL fileURL)
 {
 	// spat-only stops
 	view->GetBackgroundComponent()->SetMainSliderVolume_dB(Miam_MinVolume_dB);
 
 	// base-class loading
-	PlayerPresenter::LoadSession(filename);
+	PlayerPresenter::LoadSession(filename, fileURL);
 
 	// spat-only restarts
 	// WARNING : default volume is 0dB....

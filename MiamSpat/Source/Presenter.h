@@ -96,7 +96,7 @@ namespace Miam {
 
 		// - - - - - XML loading only - - - - - 
 
-		virtual void LoadSession(std::string filename) override;
+		virtual void LoadSession(std::string filename, URL fileURL = URL()) override;
 
     };
     

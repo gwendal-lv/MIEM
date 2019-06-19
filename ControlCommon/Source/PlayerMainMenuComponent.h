@@ -115,6 +115,7 @@ private:
     // if true, a text editor is being changed -> on android, we must display
     // the text boxes a bit higher (the keyboard takes 50+ % of the screen..)
     bool areOscTextEditorsBeingEdited = false;
+    String changeConnectionButtonProjucerText;
 
     std::unique_ptr<MiamLookAndFeel> transparentLookAndFeel;
 

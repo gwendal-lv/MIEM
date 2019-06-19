@@ -32,6 +32,7 @@ namespace Miam
         FullScreen, ///< Normal rectangle screen -> no safe area needed
         IphoneX, ///< Quite large safe area, that depends on the orientation (need to consider the bar, etc.)
         Ipad_NoMainButton, ///< ipads without a physical main button (need space on the bottom)
+        AndroidWithNotch, ///< Detection based on android version... can definitely be optimized
     };
     
     class PlayerView : public ControlView

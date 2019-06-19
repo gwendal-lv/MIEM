@@ -46,6 +46,8 @@ isPreComputingGroupsImages(false)
     outOfBoundsGroup =
     std::make_shared<AreasGroup>((int)AreasGroup::SpecialIds::OutOfBounds,
                                  Colours::black);
+
+    guiThreadWaitsForJoin = false;
     
     // For exciters animation
 #ifdef __MIEM_VBO
@@ -56,7 +58,10 @@ isPreComputingGroupsImages(false)
 
 InteractiveScene::~InteractiveScene()
 {
-    
+    // at first : we wait for the computating thread to join
+    // It must never be detached by the juce msg thread, only detached
+    // by itself when finishing
+    forceFinishComputationAndWait();
 }
 
 
@@ -666,7 +671,8 @@ void InteractiveScene::TriggerInteractionDataPreComputation()
     }
     
     // ----- > Computation starts here
-    
+
+    guiThreadWaitsForJoin = false;
     isPreComputingGroupsImages = true;
     startTime = std::chrono::steady_clock::now();
 	Logger::outputDebugString("[InteractiveScene.cpp] Starting Pre-Computation of interaction data.......");
@@ -693,19 +699,31 @@ void InteractiveScene::TriggerInteractionDataPreComputation()
     for (size_t k = 0 ; (k<areas.size()) ; k++)
         areas[k]->SetAreasGroup(blockUntilComputationResultGroup);
     
-    // -- > Computation thread (detached, will indicate when it is finished)
+    // -- > Computation thread
     preComputingThread = std::thread([this] {this->PreComputeInteractionData();} );
+    // Detached because some OSes (Android API 23, x86 sim...) behave badly on thread join...
+    // will indicate when it is finished <- callback on juce message thread
+    // Detached, BUT : can be forced-stopped from a boolean
     preComputingThread.detach();
+}
+void InteractiveScene::forceFinishComputationAndWait()
+{
+    guiThreadWaitsForJoin = true;
+    Logger::outputDebugString(String("...Forced end of tid=")
+                              + std::to_string((long long) preComputingThread.native_handle()));
+    while (isPreComputingGroupsImages)
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
 }
 
 void InteractiveScene::PreComputeInteractionData()
 {
-    std::string threadName = "Miem::InteractiveScene Pre-Computation (";
+    std::string threadName = "Miem Pre-Computation (";
     threadName += name;
     threadName += ")";
 #if defined(JUCE_ANDROID)
     // Android alone seems to support the POSIX classical interface
     pthread_setname_np(pthread_self(), threadName.c_str());
+    Logger::outputDebugString(String("Beginning computation in tid=") + std::to_string(gettid()));
 #elif defined(JUCE_MAC) || defined(JUCE_IOS)
     pthread_setname_np(/*pthread_self(), */ threadName.c_str()); // pas de TID pour FreeBSD 2003... (doc macOS)
 #elif defined(JUCE_WINDOWS)
@@ -778,6 +796,10 @@ void InteractiveScene::PreComputeInteractionData()
             }
         }
     }
+
+    // intermediate check for join (might be called on destruction only)
+    if (guiThreadWaitsForJoin)
+        return;
     
     // - Pour supprimer les cas limites proches du bord, dans lesquelles les aires pourront se
     // considérer désactivées (car poids d'interaction trop proche de zéro)
@@ -819,8 +841,15 @@ void InteractiveScene::PreComputeInteractionData()
     assert(couldWrite);
 #endif
     
-    // Juste avant fin : lancement du post processing
+    // Juste avant fin : lancement du post processing (sauf si attendait la fin...)
+    if (guiThreadWaitsForJoin)
+        return;
+
     MessageManager::callAsync([this] { this->assignGroupsToAreas_postComputation(); });
+    
+#ifdef JUCE_ANDROID // only linux provides the full posix interface...
+    Logger::outputDebugString(String("Finishing computation in tid=") + std::to_string(gettid()));
+#endif
 }
 
 std::vector<std::pair<size_t, size_t>>

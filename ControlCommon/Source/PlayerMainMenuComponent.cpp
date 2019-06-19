@@ -192,7 +192,7 @@ PlayerMainMenuComponent::PlayerMainMenuComponent ()
 
     changeConnectionButton.reset (new TextButton ("Change Connection button"));
     addAndMakeVisible (changeConnectionButton.get());
-    changeConnectionButton->setButtonText (TRANS("Change IP/port"));
+    changeConnectionButton->setButtonText (TRANS("Unlock IP/port"));
     changeConnectionButton->addListener (this);
     changeConnectionButton->setColour (TextButton::buttonColourId, Colour (0xff404040));
 
@@ -209,6 +209,7 @@ PlayerMainMenuComponent::PlayerMainMenuComponent ()
                                                                               false,
                                                                               " " + (TRANS("or")).toStdString() + " ") +
                                        + " " + TRANS("file"));
+    changeConnectionButtonProjucerText = changeConnectionButton->getButtonText();
 
 
     // Special transparent look and feel for the text editor
@@ -390,14 +391,32 @@ void PlayerMainMenuComponent::resized()
                                                            helpButton->getY());
         }
     }
-    
-#ifdef JUCE_ANDROID
+
+#if defined(JUCE_ANDROID)
+// Android met un clavier qui prend 50% de l'écran...
+// 2 solutions : soit relever les éléments (mais l'utilisateur
+// s'attend plutôt à pouvoir "dragger" les éléments, plutôt qu'un
+// déplacement automatique
+    // SOIT juste toujours avoir les boutons en haut... collés au groupe "session"
+    if (!displayHelp) {
+        if (enableSmallHeightMode)
+            translateOscConfigurationGroup(0,
+                                           -changeConnectionButton->getY() +
+                                           sessionGroupComponent->getBottom() + 16);
+    // ou collés ou groupe "help" si l'écran est assez haut
+        else
+            translateOscConfigurationGroup(0,
+                                           -changeConnectionButton->getY() +
+                                           helpGroupComponent->getBottom() + 16);
+    }
+    /*
     if (areOscTextEditorsBeingEdited)
     {
         translateSessionGroup(0, -getHeight()/3);
         translateHelpGroup(0, -getHeight()/3);
         translateOscConfigurationGroup(0, -getHeight()/3);
     }
+    */
 #endif
 
     //[/UserResized]
@@ -477,7 +496,7 @@ void PlayerMainMenuComponent::buttonClicked (Button* buttonThatWasClicked)
             if (isOscConfigurationBeingEdited)
             {
                 resetButtonText = false;
-                buttonThatWasClicked->setButtonText(TRANS("Cannot connect. Check and retry"));
+                changeConnectionButton->setButtonText(TRANS("Cannot connect. Check and retry"));
             }
         }
 
@@ -692,7 +711,7 @@ void PlayerMainMenuComponent::updateOscConfigurationComponents(bool resetConnect
     if (resetConnectButtonText)
     {
         if (! isOscConfigurationBeingEdited)
-            changeConnectionButton->setButtonText(TRANS("Change IP/port"));
+            changeConnectionButton->setButtonText(changeConnectionButtonProjucerText);
         else
             changeConnectionButton->setButtonText(TRANS("Connect to new OSC device"));
     }
@@ -739,7 +758,7 @@ BEGIN_JUCER_METADATA
                  initialHeight="400">
   <BACKGROUND backgroundColour="0"/>
   <GROUPCOMPONENT name="Session group component" id="ee702f61e13ff830" memberName="sessionGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="0Cc 8 16M 56" outlinecol="ff909090"
+                  virtualName="" explicitFocusOrder="0" pos="0.5Cc 8 16M 56" outlinecol="ff909090"
                   textcol="ff909090" title="Session"/>
   <TEXTBUTTON name="Load From File text button" id="2fe2a2c362ae91bd" memberName="loadFromFileButton"
               virtualName="" explicitFocusOrder="0" pos="0Cc 18 200 24" posRelativeY="ee702f61e13ff830"
@@ -770,8 +789,8 @@ BEGIN_JUCER_METADATA
                resourceOver="" opacityOver="1.0" colourOver="0" resourceDown=""
                opacityDown="1.0" colourDown="0"/>
   <GROUPCOMPONENT name="Help group component" id="5beff948b653aff1" memberName="helpGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="0Cc 72 16M 179M" outlinecol="ff909090"
-                  textcol="ff909090" title="Help"/>
+                  virtualName="" explicitFocusOrder="0" pos="0.5Cc 72 16M 179M"
+                  outlinecol="ff909090" textcol="ff909090" title="Help"/>
   <TEXTBUTTON name="Help button" id="87051e2f861a82a1" memberName="helpButton"
               virtualName="" explicitFocusOrder="0" pos="0Cc 18 120 24" posRelativeX="5beff948b653aff1"
               posRelativeY="5beff948b653aff1" bgColOff="ff404040" buttonText="Show help"
@@ -783,16 +802,17 @@ BEGIN_JUCER_METADATA
               multiline="1" retKeyStartsLine="1" readonly="1" scrollbars="1"
               caret="0" popupmenu="0"/>
   <HYPERLINKBUTTON name="MIEM Project hyperlink button" id="fa7d05f849f2e1a1" memberName="miemProjectHyperlinkButton"
-                   virtualName="" explicitFocusOrder="0" pos="0Cc 36R 336M 24" posRelativeY="5beff948b653aff1"
-                   tooltip="http://miem.laras.be" textCol="ff3d6ed1" buttonText="Go to MIEM website: miem.laras.be"
+                   virtualName="" explicitFocusOrder="0" pos="0.5Cc 36R 336M 24"
+                   posRelativeY="5beff948b653aff1" tooltip="http://miem.laras.be"
+                   textCol="ff3d6ed1" buttonText="Go to MIEM website: miem.laras.be"
                    connectedEdges="0" needsCallback="0" radioGroupId="0" url="http://miem.laras.be"/>
   <TEXTBUTTON name="Load Default button" id="d025c06799a8b40f" memberName="loadDefaultButton"
               virtualName="" explicitFocusOrder="0" pos="8Rr 18 144 24" posRelativeX="5beff948b653aff1"
               posRelativeY="5beff948b653aff1" bgColOff="ff404040" buttonText="Load default session"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <LABEL name="Additionnal Status Label" id="bef02cde37454c59" memberName="additionnalStatusLabel"
-         virtualName="" explicitFocusOrder="0" pos="0Cc 24R 80M 24" textCol="ff909090"
-         edTextCol="ff000000" edBkgCol="0" labelText="Additionnal Status information"
+         virtualName="" explicitFocusOrder="0" pos="0.5Cc 24R 80M 24"
+         textCol="ff909090" edTextCol="ff000000" edBkgCol="0" labelText="Additionnal Status information"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="1" justification="36" typefaceStyle="Italic"/>
@@ -822,7 +842,7 @@ BEGIN_JUCER_METADATA
               scrollbars="1" caret="1" popupmenu="1"/>
   <TEXTBUTTON name="Change Connection button" id="56c9310b25ab19de" memberName="changeConnectionButton"
               virtualName="" explicitFocusOrder="0" pos="0Cc -40C 200 24" bgColOff="ff404040"
-              buttonText="Change IP/port" connectedEdges="0" needsCallback="1"
+              buttonText="Unlock IP/port" connectedEdges="0" needsCallback="1"
               radioGroupId="0"/>
 </JUCER_COMPONENT>
 

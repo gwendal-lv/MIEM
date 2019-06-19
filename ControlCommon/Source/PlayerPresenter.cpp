@@ -268,7 +268,8 @@ void PlayerPresenter::OnFileChooserReturn(const FileChooser& chooser)
                 // code issu de https://forum.juce.com/t/cant-see-userdocumentsdirectory-in-ios-file-chooser/25672/5
                 StringPairArray responseHeaders;
                 int statusCode = 0;
-                fileInputStream.reset(  );
+                fileInputStream.reset( loadFileChooser.getURLResult().createInputStream(
+                   false, nullptr, nullptr, String(), 10000, &responseHeaders, &statusCode ) );
                 // Ce code enclenche peut-être des l'attribution des "security bookmarks" dont parle la doc Juce ??
                 // voir : https://docs.juce.com/master/classFileChooser.html#a5964a831e9d12cd53de3606240dfd4c9
 #endif
@@ -480,16 +481,19 @@ void PlayerPresenter::OnNewConnectionStatus(bool isConnectionEstablished, std::s
 // = = = = = = = = = = Remote control = = = = = = = = = = 
 void PlayerPresenter::ReinitRemoteControlServer()
 {
+    // Fully deactivated for non-experiment versions
     bool serverRunning = false;
     int tcpPort = -1;
+
+#ifdef __MIEM_EXPERIMENTS
     if (udpPort > 0) // might be still -1.... ?
         tcpPort = udpPort + tcpServerPortOffset;
-    
+
     // Stop and re-wait
     remoteControlServer.stop();
     serverRunning = remoteControlServer.beginWaitingForSocket(tcpPort);
-    
-#ifdef __MIEM_EXPERIMENTS
+
+
     String tcpServerMessage;
     if (serverRunning)
         tcpServerMessage = TRANS("TCP port ") + String(tcpPort) + TRANS(" ready for connection.");
@@ -533,6 +537,7 @@ void PlayerPresenter::LoadSession(std::string filename, URL fileUrl)
     // Various forced updates after loading
     view->GetBackgroundComponent()->SetMainSliderEnabled(model->GetIsMasterGainEnabled());
     // large computation starts a bit after loading is actually done...
+    // 3000ms for debug. 100ms for actual release computation launch delay
     Timer::callAfterDelay(100, [this] {
         this->GetGraphicSessionPlayer()->SetEnablePreComputation(true);
         this->GetGraphicSessionPlayer()->TriggerInteractionDataPreComputation();

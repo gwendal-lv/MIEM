@@ -170,6 +170,11 @@ void PlayerBackgroundComponent::resized()
                                             getHeight()/2 - mainSliderMaxHeight/2 + 12);
         }
         // Slider label
+#ifdef JUCE_ANDROID
+        // Additional Width for Android (or text is on 4 lines...)
+        int previousGainLabelW = masterGainLabel->getWidth();
+        masterGainLabel->setBounds(masterGainLabel->getBounds().withWidth(previousGainLabelW + 4));
+#endif
         masterGainLabel->setTopRightPosition(getWidth(),
                                              mainSlider->getPosition().y - masterGainLabel->getHeight() - 8);
     }
@@ -362,7 +367,7 @@ void PlayerBackgroundComponent::SetMainSliderVolume_dB(double volume_dB)
 		case AppPurpose::Spatialisation :
 			mainSlider->setValue(volume_dB, NotificationType::sendNotificationAsync);
 			break;
-            
+
         default:
             break;
 	}

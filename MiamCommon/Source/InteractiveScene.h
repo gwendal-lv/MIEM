@@ -125,6 +125,7 @@ namespace Miam
         size_t groupsImgH = 0;
         // attributes for multi-threaded computation
         std::thread preComputingThread;
+        std::atomic<bool> guiThreadWaitsForJoin;
         std::chrono::time_point<std::chrono::steady_clock> startTime;
         std::atomic<bool> isPreComputingGroupsImages;
         std::vector< std::shared_ptr<IInteractiveArea> > clonedAreas;
@@ -320,6 +321,7 @@ namespace Miam
         void TriggerInteractionDataPreComputation();
         
         protected :
+        void forceFinishComputationAndWait();
         /// \brief Pré-calcule toutes les données internes qui serviront à optimiser le jeu,
         /// notamment : 1) les groupes d'aires qui se chevauchent, pour empêcher les excitateurs
         /// d'en sortir, et 2) les poids d'interaction pour chaque pixel (en prévision des

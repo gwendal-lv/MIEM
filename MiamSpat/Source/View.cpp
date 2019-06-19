@@ -25,6 +25,12 @@ PlayerView(mainWindow_, mainContentComponent_->GetBackgroundComponent())
     mainContentComponent = mainContentComponent_;
     
     mainContentComponent->SetMiamView(this);
+
+    // no frequent updates can be done...
+#ifdef JUCE_ANDROID // source de lag énorme sur Android
+    // (label update seems to re-trigger a full CPU screen update)
+    DisplayComplementaryInfo("");
+#endif
 }
 
 
@@ -69,6 +75,10 @@ void View::ForceResized()
 
 void View::OnNewVolumes(double lowCorrVolume, double highCorrVolume)
 {
+#ifdef JUCE_ANDROID // source de lag énorme sur Android
+    // (label update seems to re-trigger a full CPU screen update)
+    return;
+#endif
     String message = TRANS("Plug-in output volume: ");
     message += String(TextUtils::GetAmplitude_dB_string_from_Linear(highCorrVolume, 3));
     message += " dB FS [";

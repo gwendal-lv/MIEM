@@ -25,9 +25,9 @@ juce::String PlayerHelpContent::GetMainHelp(AppPurpose appPurpose)
     
     String sessionFilesString =
 #if defined(JUCE_IOS)
-    TRANS("MIEM Editor will allow you to create session files, which can be easily transferred to your device using iCloud.");
+    TRANS("MIEM Editor will allow you to create session files, which can be easily transferred to your device using iCloud or any other cloud service.");
 #elif defined(JUCE_ANDROID)
-    TRANS("MIEM Editor will allow you to create session files, which can be easily transferred to your device using Google Drive.");
+    TRANS("MIEM Editor will allow you to create session files, which can be easily transferred to your device by using an USB cable or Google Drive (or any other cloud service).");
 #else
     TRANS("MIEM Editor will allow you to create session files that ") + projectName + TRANS(" can open and play.");
 #endif

@@ -113,6 +113,16 @@ public:
 
 #if defined(__MIAMOBILE)
             setFullScreen(true);
+            Desktop::setScreenSaverEnabled(false);
+#if defined(JUCE_ANDROID)
+            // Kiosk Mode android 9 :
+            // - en simu : semble agrandir pour quelques secondes seulement
+            // (ensuite barre de statut + boutons reviennent)
+            // - en vrai (Nokia 7.1) --> OK, barre et boutons apparaissent en slide seulement
+            Desktop::getInstance().setKioskModeComponent (this, false);
+            // userArea n'a aucun sens sous Android... ni en simu, ni en réel
+            //setBounds (Desktop::getInstance().getDisplays().getMainDisplay().userArea);
+#endif
 #else
             centreWithSize (800, 500);
             setResizable(true, true);
