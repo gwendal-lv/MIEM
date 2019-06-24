@@ -59,8 +59,9 @@ xlabel('Error E');
 ylabel('Search duration T [s]');
 ylim( [0 maxDisplayTime] );
 zlabel('Performance P');
+zlim( [0.0045 1] ); % limite 0.5% -> score de Zéro
 %view(0,90); % top view
-view(140, 20);
+view(135, 20);
 pbaspect([1 1 1]);
 
 if (displayAllSurfaces)
@@ -71,8 +72,9 @@ if (displayAllSurfaces)
     ylabel('Search duration T [s]');
     ylim( [0 maxDisplayTime] );
     zlabel('Performance P');
+    zlim( [0.0045 1] );
     %view(0,90); % top view
-    view(140, 20);
+    view(135, 20);
     pbaspect([1 1 1]);
 end
 
