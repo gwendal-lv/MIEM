@@ -9,6 +9,15 @@
               defines="__MIEM_VBO&#10;__MIEM_GL_INFO_DISPLAY__NO&#10;__MIEM_DISPLAY_CANVAS_RESIZE&#10;__MIEM_FORCE_DOUBLE_OSC_SENDER"
               projectLineFeed="&#10;" userNotes="v1.1.0 : ajout des options d'interpolation et min/max par param&#232;tre&#10;v1.1.1 : correction bugs courbes d'interpolation et min/max + 3&#232;me sender OSC">
   <MAINGROUP id="uJFjC5" name="MIEM Editor">
+    <GROUP id="{48BB166F-4A1D-82DD-1E56-73349217B5D8}" name="KymaMonitorSource">
+      <FILE id="q2k14m" name="MyPacaranaManager.cpp" compile="1" resource="0"
+            file="Source/MyPacaranaManager.cpp"/>
+      <FILE id="ppREiG" name="MyPacaranaManager.h" compile="0" resource="0"
+            file="Source/MyPacaranaManager.h"/>
+      <FILE id="thi24b" name="OscConnector.cpp" compile="1" resource="0"
+            file="Source/OscConnector.cpp"/>
+      <FILE id="nCeShF" name="OscConnector.h" compile="0" resource="0" file="Source/OscConnector.h"/>
+    </GROUP>
     <GROUP id="{7878353D-A1B6-291B-EABC-831E28CE51BB}" name="Source">
       <FILE id="MLMDSl" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <GROUP id="{8561608D-D4A3-5115-DAC2-8B42AE1F05FC}" name="Model">
