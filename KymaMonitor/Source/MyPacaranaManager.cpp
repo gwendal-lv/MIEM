@@ -110,6 +110,7 @@ namespace Miam {
 		DBG("======get widget info=====");
 		for (int i = 0; i < totalWidgetsNbr; i++)
 		{
+			DBG("OSC : ASKING FOR WIDGET NBR " + std::to_string(i) + "/" + std::to_string(totalWidgetsNbr));
 			oscConnector->addToSendingQueue(OSCMessage("/osc/widget", i));
 		}
 		DBG("  => get wid info done ===");
@@ -194,7 +195,7 @@ namespace Miam {
 
 	void MyPacaranaManager::treatWidgetInfo(int widgetId, std::string JSONFile)
 	{
-		DBG("PROCESSING WIDGET NBR " + std::to_string(widgetId));
+		DBG("PROCESSING WIDGET NBR " + std::to_string(widgetId) + "/" + std::to_string(totalWidgetsNbr));
 
 		boost::property_tree::ptree root;
 		std::stringstream stream;
@@ -230,6 +231,7 @@ namespace Miam {
 		}
 		else
 			DBG("DISCARDED FOR TYPE = " + type);
+
 
 		if (widgetId + 1 == totalWidgetsNbr) // si on est au dernier widget, prévenir
 		{

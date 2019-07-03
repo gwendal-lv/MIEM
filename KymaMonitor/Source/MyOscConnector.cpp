@@ -345,7 +345,7 @@ void MyOscConnector::buttonClicked (Button* buttonThatWasClicked)
     {
         //[UserButtonCode_comboButton] -- add your button handler code here..
 
-			box_ip->setText("169.254.119.246");
+			box_ip->setText("169.254.166.160");
 			connector->setIpAddress(box_ip->getText().toStdString());
 			connector->setInPort(portIn_line->getTextValue().getValue());
 			connector->setOutPort(portOut_line->getTextValue().getValue());

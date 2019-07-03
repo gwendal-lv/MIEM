@@ -169,7 +169,7 @@ namespace Miam {
 		{
 			;
 		}
-		oscConnector->addToSendingQueue(OSCMessage("/preset", presetBeingConfigurated + 1)); // on doit faire +1 parce que dans le kyma les ID démarrent à 1
+		oscConnector->addToSendingQueue(OSCMessage("/preset", presetBeingConfigurated + 1)); // on doit faire +1 parce que dans le kyma les ID dÃ©marrent Ã  1
 	}
 
 	void MyPacaranaManager::endPresetconfiguration()
@@ -180,6 +180,13 @@ namespace Miam {
 		else {
 
 			DBG(" -> finished presets config");
+		}
+
+		if (isFullyReady())
+		{
+			DBG("======================================");
+			DBG("======> Finished Configuration <======");
+			DBG("======================================");
 		}
 	}
 
@@ -231,7 +238,7 @@ namespace Miam {
 		else
 			DBG("DISCARDED FOR TYPE = " + type);
 
-		if (widgetId + 1 == totalWidgetsNbr) // si on est au dernier widget, prévenir
+		if (widgetId + 1 == totalWidgetsNbr) // si on est au dernier widget, prÃ©venir
 		{
 			getPresetsNumber();
 			allWidgetsPrepared = true;
@@ -278,6 +285,7 @@ namespace Miam {
 				saveVcsInfo(id, value);
 		}
 		DBG("  -> finished blob reading");
+
 	}
 
 

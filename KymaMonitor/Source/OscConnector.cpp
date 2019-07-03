@@ -134,6 +134,7 @@ namespace Miam {
 			else if (thePattern == "/osc/widget")
 			{
 				std::string file = message[1].getString().toStdString();
+				DBG("OSC MESSAGE FOR " + std::to_string(message[0].getInt32()));
 				if (!(pacaManager->gotAllUsefulWidget()))
 					pacaManager->treatWidgetInfo(message[0].getInt32(), file);
 			}

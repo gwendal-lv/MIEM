@@ -71,7 +71,7 @@ namespace Miam {
 		bool gotAllPresets() { return presetNbr == allMyPresets.size(); }
 		bool gotTotalWidget() { return presetNbr != -1; }
 		bool gotAllUsefulWidget() { return allWidgetsPrepared; }
-		bool isConfiguringPreset() { return presetBeingConfigurated > -1; }
+		bool isConfiguringPreset() { return presetBeingConfigurated > -1 && !allPresetsPrepared(); }
 		bool allPresetsPrepared() { return presetBeingConfigurated >= allMyPresets.size(); }
 
 		void getNotif() { waitingForNotif = false; }

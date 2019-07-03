@@ -42,6 +42,8 @@ namespace Miam {
 	}
 	void OscConnector::init(MyPacaranaManager* refPaca)
 	{
+
+		DBG("___ connector Init");
 		pacaManager = refPaca;
 
 		currentInPort = -1;
@@ -62,7 +64,8 @@ namespace Miam {
 
 	void OscConnector::connectIn()
 	{
-
+		DBG(" !!!!! CONNECT IN");
+		
 		if (!isValidPortNumber(portToOpen))
 		{
 			handleInvalidPortNumberEntered();
@@ -74,6 +77,7 @@ namespace Miam {
 		else
 			handleConnectError(portToOpen);
 
+		
 	}
 
 	void OscConnector::disconnectIn()
@@ -86,7 +90,9 @@ namespace Miam {
 
 	void OscConnector::connectOut()
 	{
-		String ipToConnect = ip;
+		DBG(" !!!!! CONNECT OUT");
+
+			String ipToConnect = ip;
 
 		if (!isValidPortNumber(portToConnect))
 		{
@@ -283,6 +289,7 @@ namespace Miam {
 
 	void MyOscReceiver::init(MyPacaranaManager* refPaca, OscConnector* refConnect)
 	{
+		DBG("___ receiver Init");
 		connector = refConnect;
 		pacaManager = refPaca;
 
