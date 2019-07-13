@@ -301,7 +301,7 @@ std::map<int, size_t> MiemExpePreset::GeneratePresetIndexToRandomIndexMap(int ac
             // shuffle
             std::shuffle(randomVector1.begin(), randomVector1.end(), randomGenerator);
             identicalConsecutiveSynths = false; // restera vrai tant que pas prouvé faux...
-            // puis vérification
+            // puis vérification des groupes de 3 cases consécutives
             for (size_t i = 0 ; i < (randomVector1.size() - 2) ; i++)
             {
                 // on vérifie synthé adjacent, et synthé 2 cases + loin
@@ -312,6 +312,13 @@ std::map<int, size_t> MiemExpePreset::GeneratePresetIndexToRandomIndexMap(int ac
                 {
                     identicalConsecutiveSynths = true;
                 }
+            }
+            // Vérification des 2 dernière cases séparément
+            size_t iToTest = randomVector1.size() - 2;
+            if ( ((randomVector1[iToTest] - nonTrialSynthsCount) == randomVector1[iToTest+1])
+                || ((randomVector1[iToTest] + nonTrialSynthsCount) == randomVector1[iToTest+1]) )
+            {
+                identicalConsecutiveSynths = true;
             }
             iterationsCount++;
         }

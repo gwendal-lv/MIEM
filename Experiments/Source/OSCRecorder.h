@@ -51,7 +51,7 @@ class OSCRecorder : public UserQuestionsManager,
     
     static std::string GetLanguage() {return std::string("FR");}
     
-    const int ExperimentPresetsCount = 2; // 2 presets per synth
+    const int ExperimentPresetsCount = 20; // 2 presets per synth
     
     const int TrialSynthsCount = 2;
     const int TrialPresetsCount = TrialSynthsCount; // 2 different synths
