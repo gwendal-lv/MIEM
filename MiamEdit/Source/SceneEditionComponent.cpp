@@ -763,6 +763,7 @@ bool SceneEditionComponent::keyPressed (const KeyPress& key)
             else if ( (key.getKeyCode() == areaToFrontCmdShiftKey)
                      && (! isAreaGroupHidden)
                      && bringToFrontTextButton->isEnabled() && bringToFrontTextButton->isVisible())
+                bringToFrontTextButton->triggerClick();
             else if ( (key.getKeyCode() == areaToBackCmdShiftKey)
                      && (! isAreaGroupHidden)
                      && sendToBackTextButton->isEnabled() && sendToBackTextButton->isVisible())

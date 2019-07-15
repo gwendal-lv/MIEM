@@ -269,8 +269,13 @@ AppPurpose Presenter::GetSessionPurpose() const
 // = = = = = = = = = = XML import/export  = = = = = = = = = =
 
 
-void Presenter::LoadSession(std::string filename)
+void Presenter::LoadSession(std::string filename, URL fileUrl)
 {
+    // Pour l'instant, les URLs ne sont pas prévues pour le presenter de l'éditeur
+    // (apps mobiles seulement)
+    if (fileUrl != URL())
+        throw std::logic_error("Not implemented...");
+    
     // D'abord on va sauvegarder ce qu'il y a : toute nouvelle session est dans un nouveau fichier...
     // sauf si on était en train de charger la toute, toute première session
     if (!lastFilename.empty())

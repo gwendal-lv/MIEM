@@ -122,7 +122,7 @@ namespace Miam {
         void OnShutdownRequest();
         
         // - - - - -  XML import/export - - - - -
-        virtual void LoadSession(std::string filename) override;
+        virtual void LoadSession(std::string filename, URL fileUrl = URL()) override;
         virtual void SaveSession(std::string filename = "", bool forceDataRefresh = false) override;
         
         /// \brief Crée une nouvelle session, en commençant par la sauvegarder. 'filename' doit être
