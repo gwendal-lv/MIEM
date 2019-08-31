@@ -1,12 +1,19 @@
-/*
-  ==============================================================================
-
-    OpenGLTargetObject.cpp
-    Created: 1 Oct 2018 11:51:10am
-    Author:  ayup1
-
-  ==============================================================================
-*/
+/* 
+ * This file is part of the MIEM distribution (https://github.com/gwendal-le-vaillant/MIEM).
+ * Copyright (c) 2017 Guillaume Vill√©e.
+ * 
+ * This program is free software: you can redistribute it and/or modify  
+ * it under the terms of the GNU General Public License as published by  
+ * the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License 
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "OpenGLTargetObject.h"
 
@@ -138,7 +145,7 @@ void OpenGLTargetObject::drawTarget(OpenGLContext & context, juce::Matrix3D<floa
 			context.extensions.glVertexAttribPointer(positionText->attributeID, 3, GL_FLOAT, GL_FALSE, sizeof(float[3]), 0);
 
 			context.extensions.glEnableVertexAttribArray(vertexUV->attributeID);
-			context.extensions.glBindBuffer(GL_ARRAY_BUFFER, UVBuffer); // changer Áa!
+			context.extensions.glBindBuffer(GL_ARRAY_BUFFER, UVBuffer); // changer ÔøΩa!
 			if(needToUpdateUV)
 				context.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, 6 * 2 * sizeof(GLfloat), g_UV_buffer_data);
 			context.extensions.glVertexAttribPointer(vertexUV->attributeID, 2, GL_FLOAT, GL_FALSE, sizeof(float[2]), 0);

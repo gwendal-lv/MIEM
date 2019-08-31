@@ -1,12 +1,19 @@
-/*
-  ==============================================================================
-
-    Cursors.h
-    Created: 21 Aug 2017 2:04:21pm
-    Author:  ayup1
-
-  ==============================================================================
-*/
+/* 
+ * This file is part of the MIEM distribution (https://github.com/gwendal-le-vaillant/MIEM).
+ * Copyright (c) 2017 Guillaume VillÃ©e.
+ * 
+ * This program is free software: you can redistribute it and/or modify  
+ * it under the terms of the GNU General Public License as published by  
+ * the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License 
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #pragma once
 
@@ -54,7 +61,7 @@ private:
 	double initCursorSize;
 	double cursorSize;
 	std::shared_ptr<Miam::EditablePolygon> associate; // aire que l'on parcourt
-	std::map<std::shared_ptr<Miam::EditablePolygon>,std::pair<bpt, double>> oldAssociates; // retient les aires par lesquels ont est déjà passé
+	std::map<std::shared_ptr<Miam::EditablePolygon>,std::pair<bpt, double>> oldAssociates; // retient les aires par lesquels ont est dï¿½jï¿½ passï¿½
 
 	float maxAlpha;
 	std::map<double, double> speedToSize;

@@ -1,12 +1,20 @@
-/*
-  ==============================================================================
+/* 
+ * This file is part of the MIEM distribution (https://github.com/gwendal-le-vaillant/MIEM).
+ * Copyright (c) 2017 Guillaume VillÃ©e.
+ * 
+ * This program is free software: you can redistribute it and/or modify  
+ * it under the terms of the GNU General Public License as published by  
+ * the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License 
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-    IntersectionPolygon.cpp
-    Created: 6 Feb 2018 8:49:07am
-    Author:  ayup1
-
-  ==============================================================================
-*/
 #include <vector>
 #include "IntersectionPolygon.h"
 using namespace Amusing;
@@ -43,7 +51,7 @@ void IntersectionPolygon::CanvasResized(SceneCanvasComponent * _parentCanvas)
 {
 	parentCanvas = _parentCanvas;
 
-	/// On part des polygones parents pour créer le polygone
+	/// On part des polygones parents pour crï¿½er le polygone
 	if (parent1->isVisible() && parent2->isVisible())
 	{
 		// compute the intersection
@@ -76,7 +84,7 @@ void IntersectionPolygon::CanvasResized(SceneCanvasComponent * _parentCanvas)
 			tmp.clear();
 		}
 
-	/// appartenance des différents points aux différents polygons
+	/// appartenance des diffï¿½rents points aux diffï¿½rents polygons
 	//clear memory
 	parent1ApexesAngle.clear();
 	parent2ApexesAngle.clear();
