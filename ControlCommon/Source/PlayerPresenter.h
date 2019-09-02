@@ -76,8 +76,9 @@ namespace Miam
         /// \brief The TCP listening port for opening a secured socket for remote control
         /// of the Presenter
         const int tcpServerPortOffset = 20; // e.g. if OSC on 8001, then TCP remote on 8021
-        /// \brief TCP server for Presenter remote control
-        RemoteControlServer remoteControlServer;
+        
+        /// \brief TCP server for Presenter remote control. Might not exist for some builds
+        std::unique_ptr<RemoteControlServer> remoteControlServer;
         
         
         

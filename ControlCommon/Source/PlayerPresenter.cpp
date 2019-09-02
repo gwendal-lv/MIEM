@@ -46,14 +46,14 @@ view(_view),
 appMode(PlayerAppMode::Null),
 previousPlayerStatus(PlayerAppMode::Null),
 
-loadFileChooser({App::GetPurpose()}), // purpose théoriquement initialisé avant tout (statique en dehors de toute fonction)
-
-remoteControlServer(this)
+loadFileChooser({App::GetPurpose()})  // purpose théoriquement initialisé avant tout (statique en dehors de toute fonction)
 {
     appMode = PlayerAppMode::None;
     previousPlayerStatus = PlayerAppMode::None;
     
     isExternalStoragePermissionGranted = false;
+    
+    remoteControlServer.reset(new RemoteControlServer(this));
 
     // permission for android only (at startup, before trying to open a file
     // Demande des permissions plateformes mobiles, pour charger des fichiers
@@ -488,8 +488,13 @@ void PlayerPresenter::OnNewConnectionStatus(bool isConnectionEstablished, std::s
 // = = = = = = = = = = Remote control = = = = = = = = = = 
 void PlayerPresenter::ReinitRemoteControlServer()
 {
+    if (remoteControlServer.get() == nullptr)
+    {
+        assert(false);  // This function Should be called only if remote is actually enabled
+        return;
+    }
+    
     // Fully deactivated for non-experiment versions
-
 #ifdef __MIEM_EXPERIMENTS
     bool serverRunning = false;
     int tcpPort = -1;
@@ -497,8 +502,8 @@ void PlayerPresenter::ReinitRemoteControlServer()
         tcpPort = udpPort + tcpServerPortOffset;
 
     // Stop and re-wait
-    remoteControlServer.stop();
-    serverRunning = remoteControlServer.beginWaitingForSocket(tcpPort);
+    remoteControlServer->stop();
+    serverRunning = remoteControlServer->beginWaitingForSocket(tcpPort);
 
 
     String tcpServerMessage;
