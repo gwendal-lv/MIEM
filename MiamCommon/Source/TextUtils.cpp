@@ -345,7 +345,7 @@ juce::String TextUtils::GetKeyDescription(int keyCode)
     // action keys
     else if (keyCode == KeyPress::deleteKey)
         return String("Delete");
-#ifdef JUCE_MACOS
+#ifdef JUCE_MAC
 	// macOS : simple, light arrows
     else if (keyCode == KeyPress::leftKey)
         return String(CharPointer_UTF8 ("\xe2\x86\x90"));

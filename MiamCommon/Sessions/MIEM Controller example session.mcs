@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<miem appVersion="65794" appPurpose="Generic controller">
+<miem appVersion="65797" appPurpose="Generic controller">
     <settings>
         <control>
             <interpolation type="Linear">
                 <curves/>
             </interpolation>
             <inputs activeCount="12" maxCount="64">
-                <name id="6">/custom_param0</name>
-                <name id="7">/custom_param1</name>
-                <name id="8">/custom_param2</name>
-                <name id="9">/custom_param3</name>
-                <name id="10">/custom_param4</name>
-                <name id="11">/custom_param5</name>
+                <name id="6">/custom_param1</name>
+                <name id="7">/custom_param2</name>
+                <name id="8">/custom_param3</name>
+                <name id="9">/custom_param4</name>
+                <name id="10">/custom_param5</name>
+                <name id="11">/custom_param6</name>
             </inputs>
             <outputs activeCount="1" maxCount="64"/>
             <senders>
@@ -34,42 +34,42 @@
     <control>
         <states>
             <state index="0">
-                <name>/miem/0</name>
+                <name>/miem/1</name>
                 <colour>fffe5a76</colour>
                 <matrix>
                     <coeff row="0" col="0" value="1"/>
                 </matrix>
             </state>
             <state index="1">
-                <name>/miem/1</name>
+                <name>/miem/2</name>
                 <colour>fffde359</colour>
                 <matrix>
                     <coeff row="1" col="0" value="1"/>
                 </matrix>
             </state>
             <state index="2">
-                <name>/miem/2</name>
+                <name>/miem/3</name>
                 <colour>ff5cfc90</colour>
                 <matrix>
                     <coeff row="2" col="0" value="1"/>
                 </matrix>
             </state>
             <state index="3">
-                <name>/miem/3</name>
+                <name>/miem/4</name>
                 <colour>ff5d5eff</colour>
                 <matrix>
                     <coeff row="3" col="0" value="1"/>
                 </matrix>
             </state>
             <state index="4">
-                <name>/miem/4</name>
+                <name>/miem/5</name>
                 <colour>ffaa90ff</colour>
                 <matrix>
                     <coeff row="4" col="0" value="1"/>
                 </matrix>
             </state>
             <state index="5">
-                <name>/miem/5</name>
+                <name>/miem/6</name>
                 <colour>fff150b0</colour>
                 <matrix>
                     <coeff row="5" col="0" value="1"/>
@@ -81,42 +81,42 @@
                 <matrix/>
             </state>
             <state index="7">
-                <name>Custom 0</name>
+                <name>Custom 1</name>
                 <colour>ffd46a94</colour>
                 <matrix>
                     <coeff row="6" col="0" value="1"/>
                 </matrix>
             </state>
             <state index="8">
-                <name>Custom 1</name>
+                <name>Custom 2</name>
                 <colour>ffd0ff5a</colour>
                 <matrix>
                     <coeff row="7" col="0" value="1"/>
                 </matrix>
             </state>
             <state index="9">
-                <name>Custom 2</name>
+                <name>Custom 3</name>
                 <colour>ff7f00ff</colour>
                 <matrix>
                     <coeff row="8" col="0" value="1"/>
                 </matrix>
             </state>
             <state index="10">
-                <name>Custom 3</name>
+                <name>Custom 4</name>
                 <colour>ff7fffff</colour>
                 <matrix>
                     <coeff row="9" col="0" value="1"/>
                 </matrix>
             </state>
             <state index="11">
-                <name>Custom 4</name>
+                <name>Custom 5</name>
                 <colour>ffff5d30</colour>
                 <matrix>
                     <coeff row="10" col="0" value="1"/>
                 </matrix>
             </state>
             <state index="12">
-                <name>Custom 5</name>
+                <name>Custom 6</name>
                 <colour>ff7f9dff</colour>
                 <matrix>
                     <coeff row="11" col="0" value="1"/>
@@ -240,7 +240,7 @@
                                 </geometry>
                                 <spatstate index="3"/>
                             </area>
-                            <area id="25601" type="Exciter" index="8">
+                            <area id="25614" type="Exciter" index="8">
                                 <center x="0.14000000000000001" y="0.70999999999999996"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
@@ -251,7 +251,7 @@
                                 <is_round>false</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
-                            <area id="25602" type="Exciter" index="9">
+                            <area id="25615" type="Exciter" index="9">
                                 <center x="0.38" y="0.70999999999999996"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
@@ -262,7 +262,7 @@
                                 <is_round>false</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
-                            <area id="25603" type="Exciter" index="10">
+                            <area id="25616" type="Exciter" index="10">
                                 <center x="0.62" y="0.70999999999999996"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
@@ -273,7 +273,7 @@
                                 <is_round>false</is_round>
                                 <is_animation_sync>true</is_animation_sync>
                             </area>
-                            <area id="25604" type="Exciter" index="11">
+                            <area id="25617" type="Exciter" index="11">
                                 <center x="0.85999999999999999" y="0.70999999999999996"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>

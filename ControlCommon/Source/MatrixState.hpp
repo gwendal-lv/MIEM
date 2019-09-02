@@ -119,7 +119,7 @@ namespace Miam
         // - - - - - Input channels : add, delete, swap, ... - - - - -
 
         /// \brief Does nothing.... Static matrix for now (keeps all existing coeffs)
-        void SetInputOuputChannelsCount(int inputsCount_, int outputsCount_)
+        void SetInputOutputChannelsCount(int inputsCount_, int outputsCount_)
         {
             inputsCount = inputsCount_;
             outputsCount = outputsCount_;

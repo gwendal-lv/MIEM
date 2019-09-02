@@ -973,7 +973,7 @@ void InteractiveScene::assignGroupsToAreas_postComputation()
 
 Point<float> InteractiveScene::GetClosestPointOfGroup(const Point<float>& pointOutsideGroup, int areasGroupIndexInScene)
 {
-    std::cout << "Devrait bloquer sur la bordure" << std::endl;
+    // std::cout << "Devrait bloquer sur la bordure" << std::endl;
     return pointOutsideGroup;
 }
 

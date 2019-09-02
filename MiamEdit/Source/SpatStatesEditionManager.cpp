@@ -162,6 +162,10 @@ void SpatStatesEditionManager::OnAddState()
     
     // Puis addition
     auto newState = spatInterpolator->AddDefaultState();
+    
+    if (GetSessionPurpose() == AppPurpose::GenericController)
+        newState->SetName(TRANS("Default state").toStdString());
+    
     UpdateView();
     selectSpatState(newState);
 }
@@ -217,7 +221,7 @@ void SpatStatesEditionManager::OnSendZeros()
     
     // Création d'un matrix state nul
     auto nullMatrixState = std::make_shared<MatrixState<double>>();
-    nullMatrixState->SetInputOuputChannelsCount(spatInterpolator->GetInputsCount(),
+    nullMatrixState->SetInputOutputChannelsCount(spatInterpolator->GetInputsCount(),
                                                 spatInterpolator->GetOutputsCount());
     // Si le modèle a bien envoyé : on affiche ENVOYÉ
     try {

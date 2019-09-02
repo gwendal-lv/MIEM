@@ -136,13 +136,13 @@ namespace Miam
             outputsCount = _outputsCount;
             
             // Config transmission to the individual states
-            currentInterpolatedMatrixState->SetInputOuputChannelsCount(inputsCount,outputsCount);
+            currentInterpolatedMatrixState->SetInputOutputChannelsCount(inputsCount,outputsCount);
             for (size_t i=0 ; i<states.size() ; i++)
             {
                 // Dynamic cast of the state to a MatrixState only for now
                 if (std::shared_ptr<MatrixState<T>> matrixState = std::dynamic_pointer_cast<MatrixState<T>>(states[i]))
                 {
-                    matrixState->SetInputOuputChannelsCount(inputsCount,outputsCount);
+                    matrixState->SetInputOutputChannelsCount(inputsCount,outputsCount);
                 }
                 // Else : behavior not implemented
                 else
@@ -189,6 +189,10 @@ namespace Miam
         {
             newState->SetIndex((int)states.size()); // is automatically the last
             states.push_back(newState);
+            
+            // matrix states only: inputs and outputs initial config, from the current config
+            if (auto newMatrixState = std::dynamic_pointer_cast<MatrixState<T>>(newState))
+                newMatrixState->SetInputOutputChannelsCount(inputsCount, outputsCount);
         }
         /// \brief Adds a default empty zero-matrix state.
         ///
