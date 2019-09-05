@@ -131,8 +131,9 @@ namespace Miam
     
     
     
-    /// \brief Pair of min/max sliders (extrem values depend on each other)
-    class MinMaxSlidersPair : public Component, public Slider::Listener
+    /// \brief Pair of min/max sliders (extrem values depend on each other). Now also includes a "default" value, that
+    /// can be checked for each parameter of each preset
+    class MinDefaultMaxSliders : public Component, public Slider::Listener
     {
         // =========== ATTRIBUTES ==========
         private :
@@ -141,6 +142,9 @@ namespace Miam
         
         MinMaxRowSlider minSlider;
         MinMaxRowSlider maxSlider;
+        
+        Slider defaultSlider;
+        
         
         // =========== Getters and Setters ==========
         public :
@@ -158,7 +162,7 @@ namespace Miam
         
         // =========== METHODS ==========
         public :
-        MinMaxSlidersPair(LabelledMatrixComponent* _parent, const String &componentName, int _rowIndex)
+        MinDefaultMaxSliders(LabelledMatrixComponent* _parent, const String &componentName, int _rowIndex)
         :
         Component (componentName),
         
@@ -168,6 +172,7 @@ namespace Miam
         minSlider(rowIndex, false),
         maxSlider(rowIndex, true)
         {
+            // Actual min/max sliders
             addAndMakeVisible(&minSlider);
             addAndMakeVisible(&maxSlider);
             // Pour partir de valeurs correctes...
@@ -176,6 +181,8 @@ namespace Miam
             // Ajout des listeners ensuite
             minSlider.addListener(this);
             maxSlider.addListener(this);
+            
+            // Default UIs between these
         }
         
         virtual void paint(Graphics& /*g*/) override
@@ -185,9 +192,9 @@ namespace Miam
         virtual void resized() override
         {
             // inter-sliders margin = 4px
-            const int sliderDistanceFromEdge = getWidth()/2 + 4/2;
-            minSlider.setBounds( getLocalBounds().withTrimmedRight(sliderDistanceFromEdge) );
-            maxSlider.setBounds( getLocalBounds().withTrimmedLeft(sliderDistanceFromEdge) );
+            const int elementBaseWidth = getWidth()/4 - 2;
+            minSlider.setBounds( getLocalBounds().removeFromLeft(elementBaseWidth) );
+            maxSlider.setBounds( getLocalBounds().removeFromRight(elementBaseWidth) );
         }
         
         /// \brief Callback from the min/max value sliders

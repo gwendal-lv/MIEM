@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.3
+  Created with Projucer version: 5.4.4
 
   ------------------------------------------------------------------------------
 
@@ -51,7 +51,7 @@ namespace Miam
     class MatrixViewport;
     class MatrixComponent;
     class InterpolationCurvesComboBox;
-    class MinMaxSlidersPair;
+    class MinDefaultMaxSliders;
 
 //[/Headers]
 
@@ -109,12 +109,12 @@ public:
     void OnMinMaxValuesChanged(int row, double valueMin, double valueMax);
     /// \brief Called by a curve combox box when necessary
     void OnInterpolationTypeChanged(int row, ParamInterpolationType newInterpolationType);
-    
+
     protected :
     /// \brief Internal helper, to be called when any interp data has changed
     void onInterpolationDataChanged(int row);
     public :
-    
+
     /// \brief Callback from any text editor. Display (in bold, or not) wether the input name
     /// can be parsed to a valid OSC message with address and arguments.
     ///
@@ -179,12 +179,12 @@ private:
     const int inputNameLabelMinWidth = 200;
     int inputNameLabelWidth = 200;
     int inputNamesX = 0; // text editor
-    const int minMaxValueSlidersW = 120;
+    const int minMaxValueSlidersW = 200;
     int minimaX = 0; ///< The X left position of a row "min value" slider
     int maximaX = 0; ///< The X left position of a row "max value" slider
     int interpolationCurvesX = 0;
     int rowButtonsX = 0;
-    const int curveComboBoxW = 200;
+    const int curveComboBoxW = 120;
     const int curveImageW = 20; ///< Display size in pixels (retina will be 2 times bigger in pixels)
     int removedFromLeftOfMatrix = 100; // just in case, to avoid zero-sized buttons if it happens...
     int removedFromBottomOfMatrix = 100;
@@ -224,9 +224,21 @@ private:
     ///
     /// Shared with the row combo boxes for automatic actualisation
     std::vector<std::shared_ptr<ImageComponent>> curveImageComponents;
+    
+    /// TODO AJOUTER A DROITE DES COMBO BOXES : rajouter une cache à cocher pour choisir défaut ou non
+    /// TODO AJOUTER A DROITE DES COMBO BOXES : rajouter une cache à cocher pour choisir défaut ou non
+    /// TODO AJOUTER A DROITE DES COMBO BOXES : rajouter une cache à cocher pour choisir défaut ou non
+    /// TODO AJOUTER A DROITE DES COMBO BOXES : rajouter une cache à cocher pour choisir défaut ou non
+    /// TODO AJOUTER A DROITE DES COMBO BOXES : rajouter une cache à cocher pour choisir défaut ou non
+    /// TODO AJOUTER A DROITE DES COMBO BOXES : rajouter une cache à cocher pour choisir défaut ou non
+    /// TODO AJOUTER A DROITE DES COMBO BOXES : rajouter une cache à cocher pour choisir défaut ou non
+    /// TODO AJOUTER A DROITE DES COMBO BOXES : rajouter une cache à cocher pour choisir défaut ou non
+    /// TODO AJOUTER A DROITE DES COMBO BOXES : rajouter une cache à cocher pour choisir défaut ou non
 
     /// \brief Slider for min/max values of parameters
-    std::vector<std::unique_ptr<MinMaxSlidersPair>> minMaxSlidersPairs; // component IDs : 'spi#'
+    std::vector<std::unique_ptr<MinDefaultMaxSliders>> minDefaultMaxSliders; // component IDs : 'spi#'
+    
+    
     //[/UserVariables]
 
     //==============================================================================

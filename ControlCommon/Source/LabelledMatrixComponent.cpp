@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.3
+  Created with Projucer version: 5.4.4
 
   ------------------------------------------------------------------------------
 
@@ -37,7 +37,7 @@
 
 #include "MatrixViewport.h" // after self header include, includes MatrixComponent
 
-#include "MinMaxSlidersPair.h"
+#include "MinDefaultMaxSliders.h"
 
 using namespace Miam;
 //[/MiscUserDefs]
@@ -254,8 +254,8 @@ void LabelledMatrixComponent::constructGuiObjects()
     rowComboBoxes.resize(maxRowsCount);
     curveImageComponents.clear();
     curveImageComponents.resize(maxRowsCount);
-    minMaxSlidersPairs.clear();
-    minMaxSlidersPairs.resize(maxRowsCount);
+    minDefaultMaxSliders.clear();
+    minDefaultMaxSliders.resize(maxRowsCount);
 
     // Actual creation of sliders, labels and buttons
     for (int i=0 ; i<(int)maxRowsCount ; i++)
@@ -283,9 +283,9 @@ void LabelledMatrixComponent::constructGuiObjects()
         rowComboBoxes[i]->setComponentID("cbi" + iStr);
         addAndMakeVisible(rowComboBoxes[i].get());
         // - - - Min and Max Sliders - - -
-        minMaxSlidersPairs[i].reset(new MinMaxSlidersPair(this, "Min/Max Slider Pair " + iStr, i));
-        minMaxSlidersPairs[i]->setComponentID("spi" + iStr);
-        addAndMakeVisible(minMaxSlidersPairs[i].get());
+        minDefaultMaxSliders[i].reset(new MinDefaultMaxSliders(this, "Min/Max Slider Pair " + iStr, i));
+        minDefaultMaxSliders[i]->setComponentID("spi" + iStr);
+        addAndMakeVisible(minDefaultMaxSliders[i].get());
     }
     for (int j=0 ; j<(int)maxColsCount ; j++)
     {
@@ -331,14 +331,14 @@ void LabelledMatrixComponent::ReinitGuiObjects()
 			rowTextButtons[i]->setVisible(true);
             rowComboBoxes[i]->setVisible(true);
             curveImageComponents[i]->setVisible(true);
-            minMaxSlidersPairs[i]->setVisible(true);
+            minDefaultMaxSliders[i]->setVisible(true);
         }
 		else
         {
 			rowTextButtons[i]->setVisible(false);
             rowComboBoxes[i]->setVisible(false);
             curveImageComponents[i]->setVisible(false);
-            minMaxSlidersPairs[i]->setVisible(false);
+            minDefaultMaxSliders[i]->setVisible(false);
         }
     }
     for (int j=0 ; j<(int)maxColsCount ; j++)
@@ -418,7 +418,7 @@ void LabelledMatrixComponent::repositionLabelsAndButtons()
         inputNameTextEditors[i]->setEnabled( i < getN() );
         labels[i]->setEnabled( i < getN() );
         rowTextButtons[i]->setEnabled( i < getN() );
-        minMaxSlidersPairs[i]->setEnabled( i < getN() );
+        minDefaultMaxSliders[i]->setEnabled( i < getN() );
         rowComboBoxes[i]->setEnabled( i < getN() );
         curveImageComponents[i]->setEnabled( i < getN() );
 
@@ -436,8 +436,8 @@ void LabelledMatrixComponent::repositionLabelsAndButtons()
             curveImageComponents[i]->setVisible(true);
             curveImageComponents[i]->setBounds(curveImagesX, i*matItemH - matrixDeltaY,
                                         curveImageW, matItemH);
-            minMaxSlidersPairs[i]->setVisible(true);
-            minMaxSlidersPairs[i]->setBounds(minimaX, i*matItemH - matrixDeltaY,
+            minDefaultMaxSliders[i]->setVisible(true);
+            minDefaultMaxSliders[i]->setBounds(minimaX, i*matItemH - matrixDeltaY,
                                              minMaxValueSlidersW*2 + 4, matItemH);
         }
         else
@@ -445,7 +445,7 @@ void LabelledMatrixComponent::repositionLabelsAndButtons()
             rowTextButtons[i]->setVisible(false);
             rowComboBoxes[i]->setVisible(false);
             curveImageComponents[i]->setVisible(false);
-            minMaxSlidersPairs[i]->setVisible(false);
+            minDefaultMaxSliders[i]->setVisible(false);
         }
         // On cache les éléments d'entrée plus bas que le viewport
         if (labels[i]->getBottom() > (matrixViewport->getBottom() + 8))
@@ -455,7 +455,7 @@ void LabelledMatrixComponent::repositionLabelsAndButtons()
             rowTextButtons[i]->setVisible(false);
             rowComboBoxes[i]->setVisible(false);
             curveImageComponents[i]->setVisible(false);
-            minMaxSlidersPairs[i]->setVisible(false);
+            minDefaultMaxSliders[i]->setVisible(false);
         }
         else
         {
@@ -589,7 +589,7 @@ void LabelledMatrixComponent::onInterpolationDataChanged(int row)
     // by a slider value change)
     matrixViewport->GetMatrixComponent()->SetHorizontalSliderInterpolationData(row,
                                                                                GetInterpolationCurve((size_t)row));
-    
+
     // The normalized value of ALL states must be updated to fit the new curve
     listener->OnInterpolationCurveChanged(row, GetInterpolationCurve((size_t)row));
 }
@@ -686,14 +686,14 @@ void LabelledMatrixComponent::SetInterpolationCurve(size_t i, BasicInterpolation
 	// we must check min/max values compared to the default values 0.0;1.0
 	if (interpCurve.GetMaxY() <= 0.0) // if max is lower than default min
 	{
-		minMaxSlidersPairs[i]->SetMinValue(interpCurve.GetMinY());
-		minMaxSlidersPairs[i]->SetMaxValue(interpCurve.GetMaxY());
+		minDefaultMaxSliders[i]->SetMinValue(interpCurve.GetMinY());
+		minDefaultMaxSliders[i]->SetMaxValue(interpCurve.GetMaxY());
 	}
 	// --> or normal order
 	else
 	{
-		minMaxSlidersPairs[i]->SetMaxValue(interpCurve.GetMaxY());
-		minMaxSlidersPairs[i]->SetMinValue(interpCurve.GetMinY());
+		minDefaultMaxSliders[i]->SetMaxValue(interpCurve.GetMaxY());
+		minDefaultMaxSliders[i]->SetMinValue(interpCurve.GetMinY());
 	}
 	// 2 - transmission of copies to the matrix
 	GetMatrixComponent()->SetHorizontalSliderInterpolationData((int)i, interpCurve);
@@ -726,8 +726,8 @@ BasicInterpolationCurve<double> LabelledMatrixComponent::GetInterpolationCurve(s
 {
     return
     BasicInterpolationCurve<double>(rowComboBoxes[i]->GetSelectedInterpolationType(),
-                                    minMaxSlidersPairs[i]->GetMinValue(),
-                                    minMaxSlidersPairs[i]->GetMaxValue()
+                                    minDefaultMaxSliders[i]->GetMinValue(),
+                                    minDefaultMaxSliders[i]->GetMaxValue()
                                     );
 }
 std::shared_ptr<BasicInterpCurves> LabelledMatrixComponent::GetInterpolationCurves()
@@ -816,7 +816,7 @@ BEGIN_JUCER_METADATA
          bkgCol="ffc0c0c0" textCol="ff000000" edTextCol="ff000000" edBkgCol="0"
          labelText="inputs /&#10;    outputs" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
-         fontsize="1.5e1" kerning="0" bold="1" italic="0" justification="33"
+         fontsize="15.0" kerning="0.0" bold="1" italic="0" justification="33"
          typefaceStyle="Bold"/>
 </JUCER_COMPONENT>
 
