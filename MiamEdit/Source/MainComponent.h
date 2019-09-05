@@ -24,7 +24,7 @@
 #include "MainBackgroundComponent.h"
 #include "StartupComponent.h"
 #include "SpeakersEditionComponent.h"
-#include "SpatStatesEditionComponent.h"
+#include "StatesEditionComponent.h"
 #include "SceneEditionComponent.h"
 #include "HardwareConfigurationComponent.h"
 
@@ -62,7 +62,7 @@ namespace Miam
         MainBackgroundComponent* mainBackgroundComponent;
         StartupComponent* startupComponent;
         
-        SpatStatesEditionComponent* spatStatesEditionComponent;
+        StatesEditionComponent* spatStatesEditionComponent;
         SpeakersEditionComponent* speakersEditionComponent;
         SceneEditionComponent* sceneEditionComponent;
         HardwareConfigurationComponent* hardwareConfigurationComponent;
@@ -97,7 +97,7 @@ namespace Miam
         /// \brief Pointer to one of MiamEdit's main components.
         SceneEditionComponent* GetSceneEditionComponent()
         {return sceneEditionComponent; }
-        SpatStatesEditionComponent* GetSpatStatesEditionComponent()
+        StatesEditionComponent* GetSpatStatesEditionComponent()
         {return spatStatesEditionComponent;}
         HardwareConfigurationComponent* GetConfigurationComponent()
         {return hardwareConfigurationComponent;}

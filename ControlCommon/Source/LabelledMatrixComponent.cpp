@@ -573,17 +573,25 @@ void LabelledMatrixComponent::OnViewportVisibleAreaChanged()
 }
 void LabelledMatrixComponent::OnSliderValueChanged(int row, int col, double value)
 {
-    listener->OnSliderValueChanged(row, col, value);
+    listener->OnSliderValueChanged(row, col,value);
 }
 void LabelledMatrixComponent::OnMinMaxValuesChanged(int row, double /*valueMin*/, double /*valueMax*/)
 {
-    matrixViewport->GetMatrixComponent()->SetHorizontalSliderInterpolationData(row,
-        GetInterpolationCurve((size_t)row));
+    onInterpolationDataChanged(row);
 }
 void LabelledMatrixComponent::OnInterpolationTypeChanged(int row, ParamInterpolationType /*newInterpolationType*/)
 {
+    onInterpolationDataChanged(row);
+}
+void LabelledMatrixComponent::onInterpolationDataChanged(int row)
+{
+    // Update of the currently displayed state (normalized value update forced
+    // by a slider value change)
     matrixViewport->GetMatrixComponent()->SetHorizontalSliderInterpolationData(row,
-        GetInterpolationCurve((size_t)row));
+                                                                               GetInterpolationCurve((size_t)row));
+    
+    // The normalized value of ALL states must be updated to fit the new curve
+    listener->OnInterpolationCurveChanged(row, GetInterpolationCurve((size_t)row));
 }
 void LabelledMatrixComponent::textEditorTextChanged (TextEditor & textEditor)
 {

@@ -175,7 +175,7 @@ namespace Miam
                     b_logInterp = (T)b;
                     c_logInterp = (T)c;
                 }
-                // Then, is some values are negative... the usual log scale (based on decades)
+                // Then, if some values are negative... the usual log scale (based on decades)
                 // does not make much sense...
                 // Choice : a log-scale of 2 decades (e.g. from 100 to 10000) is computed (variable
                 // z instead of y) then scaled from minY to maxY;

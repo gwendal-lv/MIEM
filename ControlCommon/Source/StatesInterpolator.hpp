@@ -237,6 +237,24 @@ namespace Miam
             states[index2]->SetIndex((int)index2);
         }
         
+        /// \brief Updates, adapts the internal normalized values to a new interpolation curve,
+        /// in order to keep the actual values instead of the normalized values.
+        /// Does not update the interpolation curves itself
+        void UpdateStatesForInterpolationCurve(int row, BasicInterpolationCurve<T> newInterpCurve)
+        {
+            for (size_t i=0 ; i<states.size() ; i++)
+            {
+                if (auto matrixState = std::dynamic_pointer_cast<MatrixState<T>>(states[i]))
+                {
+                    T prevNormalizedValue = (*matrixState)(row, 0);
+                    T targetInterpValue = currentInterpolatedMatrixState->GetInterpolationCurve(row)
+                                          .InterpolateValue(prevNormalizedValue);
+                    matrixState->SetValue(row, 0, newInterpCurve.ReverseInterpolateValue(targetInterpValue));
+                }
+                else
+                    assert(false); // if there are interp curves, states should actually be matrix states...
+            }
+        }
         
         
         // - - - - - Interpolation  - - - - -

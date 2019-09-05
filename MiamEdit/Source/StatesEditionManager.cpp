@@ -17,12 +17,12 @@
 
 #include <sstream> // std::ostringstream
 
-#include "SpatStatesEditionManager.h"
+#include "StatesEditionManager.h"
 
 #include "Model.h"
 #include "MiamOscSender.hpp" // pour méthode statique d'adresse OSC par défaut
 #include "View.h"
-#include "SpatStatesEditionComponent.h"
+#include "StatesEditionComponent.h"
 
 #include "TextUtils.h"
 
@@ -30,7 +30,7 @@
 
 using namespace Miam;
 
-SpatStatesEditionManager::SpatStatesEditionManager(View* _view)
+StatesEditionManager::StatesEditionManager(View* _view)
 {
     view = _view;
     
@@ -38,15 +38,15 @@ SpatStatesEditionManager::SpatStatesEditionManager(View* _view)
     editionComponent->CompleteInitialization(this);
 }
 
-void SpatStatesEditionManager::CompleteInitialisation(Model* _model, std::shared_ptr<StatesInterpolator<double>> _statesInterpolator)
+void StatesEditionManager::CompleteInitialisation(Model* _model, std::shared_ptr<StatesInterpolator<double>> _statesInterpolator)
 {
     model = _model;
-    spatInterpolator = _statesInterpolator;
+    interpolator = _statesInterpolator;
     
     Reinit();
 }
 
-void SpatStatesEditionManager::Reinit()
+void StatesEditionManager::Reinit()
 {
     // Update of the list on the GUI side
     selectSpatState(nullptr);
@@ -56,39 +56,39 @@ void SpatStatesEditionManager::Reinit()
 
 
 // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
-AppPurpose SpatStatesEditionManager::GetSessionPurpose()
+AppPurpose StatesEditionManager::GetSessionPurpose()
 {
     return view->GetSessionPurpose();
 }
 
-void SpatStatesEditionManager::selectSpatState(std::shared_ptr<ControlState<double>> _state)
+void StatesEditionManager::selectSpatState(std::shared_ptr<ControlState<double>> _state)
 {
     // Internal update at first
-    selectedSpatState = _state;
+    selectedState = _state;
     
     // Graphical updates : info label (links count)
     std::string infoText = getLinkedAreasInfo();
     auto matrixToSend = std::make_shared<ControlMatrix<double>>(); // initially full of zeros
     int stateIndexToSend = -1;
-    if (selectedSpatState)
+    if (selectedState)
     {
-        stateIndexToSend = selectedSpatState->GetIndex();
+        stateIndexToSend = selectedState->GetIndex();
         
         // At last : routing matrix (only choice available for now...)
-        if (std::shared_ptr<MatrixState<double>> matrixState = std::dynamic_pointer_cast<MatrixState<double>>(selectedSpatState) )
+        if (std::shared_ptr<MatrixState<double>> matrixState = std::dynamic_pointer_cast<MatrixState<double>>(selectedState) )
             matrixToSend = matrixState->GetMatrixCopy();
         // else if the cast did not work
         else
             throw std::runtime_error("State is not a Matrix state");
     }
     // Update commands
-    Colour colourToDisplay = selectedSpatState ? selectedSpatState->GetColour() : Colours::black;
-    if (selectedSpatState)
+    Colour colourToDisplay = selectedState ? selectedState->GetColour() : Colours::black;
+    if (selectedState)
     {
         // Update des courbes d'interpolation AVEC  l'état est maintenant obligatoire
         editionComponent->SelectAndUpdateState(stateIndexToSend, infoText,
                                                matrixToSend, colourToDisplay,
-                                               spatInterpolator->GetInterpolationCurves());
+                                               interpolator->GetInterpolationCurves());
     }
 
     // State info (may not de anything depending on the app's purpose)
@@ -97,15 +97,15 @@ void SpatStatesEditionManager::selectSpatState(std::shared_ptr<ControlState<doub
 
 
 // = = = = = = = = = = EVENTS from PRESENTER = = = = = = = = = =
-void SpatStatesEditionManager::OnEnterSpatStatesEdition()
+void StatesEditionManager::OnEnterSpatStatesEdition()
 {
     // Forces graphical updates concerning the state
-    selectSpatState(selectedSpatState);
+    selectSpatState(selectedState);
     // Concernant tous les états (donc aucun en particulier...) màj des noms des canaux
-    InOutChannelsName interpolatorChannelsName = spatInterpolator->GetInOutChannelsName();
+    InOutChannelsName interpolatorChannelsName = interpolator->GetInOutChannelsName();
     editionComponent->SetInOutNames(interpolatorChannelsName);
 }
-std::shared_ptr<bptree::ptree> SpatStatesEditionManager::OnLeaveSpatStatesEdition()
+std::shared_ptr<bptree::ptree> StatesEditionManager::OnLeaveSpatStatesEdition()
 {
     // !!!!!!!!!
     // !!!!!!!!!
@@ -114,19 +114,19 @@ std::shared_ptr<bptree::ptree> SpatStatesEditionManager::OnLeaveSpatStatesEditio
     // Mais on laisse pour l'instant puisque ça fonctionne....
     
     // Update now to the editionComponent
-    selectSpatState(selectedSpatState);
+    selectSpatState(selectedState);
     
     // Save to XML (Presenter does it)
     return GetTree();
 }
-void SpatStatesEditionManager::OnInOutNamesDisplayedChanged(bool areInputNamesVisible, bool areOutputNamesVisible)
+void StatesEditionManager::OnInOutNamesDisplayedChanged(bool areInputNamesVisible, bool areOutputNamesVisible)
 {
     editionComponent->SetInOutNamesDisplayed(areInputNamesVisible, areOutputNamesVisible);
 }
 
 // = = = = = = = = = = EVENTS from VIEW = = = = = = = = = =
 
-void SpatStatesEditionManager::OnSpatStateSelectedById(std::shared_ptr<ControlMatrix<double>> currentMatrix, int _spatStateId)
+void StatesEditionManager::OnSpatStateSelectedById(std::shared_ptr<ControlMatrix<double>> currentMatrix, int _spatStateId)
 {
     // All data save within Model if necessary
     sendCurrentDataToModel();
@@ -134,34 +134,34 @@ void SpatStatesEditionManager::OnSpatStateSelectedById(std::shared_ptr<ControlMa
     // Check for the information (not updated info might come the GUI, we never know...)
     if (_spatStateId == -1)
         selectSpatState(nullptr);
-    else if (0 <= _spatStateId && _spatStateId < spatInterpolator->GetStatesCount())
-        selectSpatState(spatInterpolator->GetState(_spatStateId));
+    else if (0 <= _spatStateId && _spatStateId < interpolator->GetStatesCount())
+        selectSpatState(interpolator->GetState(_spatStateId));
     
     // This shouldn't happen, so we throw an exception (for debug only ?)
     else
         throw std::out_of_range("State Id does not exist within the Model");
 }
-void SpatStatesEditionManager::OnRenameState(std::string newName, int stateIndex)
+void StatesEditionManager::OnRenameState(std::string newName, int stateIndex)
 {
     // Sauvegarde avant tout
     sendCurrentDataToModel();
     
     // Actual renaming
-    spatInterpolator->GetState(stateIndex)->SetName(newName);
+    interpolator->GetState(stateIndex)->SetName(newName);
     
     // Total list update + Selection of the state that has just been renamed
     UpdateView();
-    selectSpatState(spatInterpolator->GetState(stateIndex));
+    selectSpatState(interpolator->GetState(stateIndex));
 }
 
 
-void SpatStatesEditionManager::OnAddState()
+void StatesEditionManager::OnAddState()
 {
     // Actualisation depuis l'affichage graphique
     sendCurrentDataToModel();
     
     // Puis addition
-    auto newState = spatInterpolator->AddDefaultState();
+    auto newState = interpolator->AddDefaultState();
     
     if (GetSessionPurpose() == AppPurpose::GenericController)
         newState->SetName(TRANS("Default state").toStdString());
@@ -169,39 +169,39 @@ void SpatStatesEditionManager::OnAddState()
     UpdateView();
     selectSpatState(newState);
 }
-void SpatStatesEditionManager::OnDeleteSelectedState()
+void StatesEditionManager::OnDeleteSelectedState()
 {
-    if (selectedSpatState)
+    if (selectedState)
     {
         // Model command transmission at first
-        size_t spatStateIndexBackup = (size_t)selectedSpatState->GetIndex();
-        spatInterpolator->DeleteState(selectedSpatState);
+        size_t spatStateIndexBackup = (size_t)selectedState->GetIndex();
+        interpolator->DeleteState(selectedState);
         // Display updates
         UpdateView();
         if (spatStateIndexBackup == 0)
         {
             // if it was the last one, nothing selected
-            if (spatInterpolator->GetStatesCount() == 0)
+            if (interpolator->GetStatesCount() == 0)
                 selectSpatState(nullptr);
             else // else, the next one is selected
-                selectSpatState(spatInterpolator->GetState(spatStateIndexBackup));
+                selectSpatState(interpolator->GetState(spatStateIndexBackup));
         }
         else // selection of the previous
-            selectSpatState(spatInterpolator->GetState(spatStateIndexBackup-1));
+            selectSpatState(interpolator->GetState(spatStateIndexBackup-1));
     }
     else
         throw std::logic_error("Cannot delete state: no state is currently selected.");
 }
-void SpatStatesEditionManager::OnSendState(int rowToSend)
+void StatesEditionManager::OnSendState(int rowToSend)
 {
     // At first : Actualisation depuis l'affichage graphique
     sendCurrentDataToModel();
     
     // Si le modèle a bien envoyé : on affiche ENVOYÉ
     try {
-        if (selectedSpatState)
+        if (selectedState)
         {
-            model->ConnectAndSendState(selectedSpatState, rowToSend);
+            model->ConnectAndSendState(selectedState, rowToSend);
             view->DisplayInfo(TRANS("OSC Messages sent to ").toStdString() + model->GetStateSender(0)->GetAddressAsString());
         }
         else
@@ -212,7 +212,7 @@ void SpatStatesEditionManager::OnSendState(int rowToSend)
         view->DisplayInfo( e.what() );
     }
 }
-void SpatStatesEditionManager::OnSendZeros()
+void StatesEditionManager::OnSendZeros()
 {
     // At first : Actualisation depuis l'affichage graphique
     // Car : même si on n'utilise pas les valeurs des paramètres, il faut quand même
@@ -221,8 +221,8 @@ void SpatStatesEditionManager::OnSendZeros()
     
     // Création d'un matrix state nul
     auto nullMatrixState = std::make_shared<MatrixState<double>>();
-    nullMatrixState->SetInputOutputChannelsCount(spatInterpolator->GetInputsCount(),
-                                                spatInterpolator->GetOutputsCount());
+    nullMatrixState->SetInputOutputChannelsCount(interpolator->GetInputsCount(),
+                                                interpolator->GetOutputsCount());
     // Si le modèle a bien envoyé : on affiche ENVOYÉ
     try {
         model->ConnectAndSendState(nullMatrixState);
@@ -233,53 +233,53 @@ void SpatStatesEditionManager::OnSendZeros()
         view->DisplayInfo( e.what() );
     }
 }
-void SpatStatesEditionManager::OnMoveSelectedStateUp()
+void StatesEditionManager::OnMoveSelectedStateUp()
 {
-    if (selectedSpatState
-        && spatInterpolator->GetStatesCount() >= 2
-        && selectedSpatState->GetIndex() > 0)
+    if (selectedState
+        && interpolator->GetStatesCount() >= 2
+        && selectedState->GetIndex() > 0)
     {
         // Actualisation depuis l'affichage graphique
         sendCurrentDataToModel();
         
-        spatInterpolator->SwapStatesByIndex(selectedSpatState->GetIndex(), selectedSpatState->GetIndex()-1);
+        interpolator->SwapStatesByIndex(selectedState->GetIndex(), selectedState->GetIndex()-1);
         // Updates
         UpdateView();
-        selectSpatState(selectedSpatState); // re-selection
+        selectSpatState(selectedState); // re-selection
     }
     else
         // Cannot move spat state towards the first position
         assert(false);
 }
-void SpatStatesEditionManager::OnMoveSelectedStateDown()
+void StatesEditionManager::OnMoveSelectedStateDown()
 {
-    if (selectedSpatState
-        && spatInterpolator->GetStatesCount() >= 2
-        && selectedSpatState->GetIndex() < spatInterpolator->GetStatesCount()-1)
+    if (selectedState
+        && interpolator->GetStatesCount() >= 2
+        && selectedState->GetIndex() < interpolator->GetStatesCount()-1)
     {
         // Actualisation depuis l'affichage graphique
         sendCurrentDataToModel();
         
-        spatInterpolator->SwapStatesByIndex(selectedSpatState->GetIndex(), selectedSpatState->GetIndex()+1);
+        interpolator->SwapStatesByIndex(selectedState->GetIndex(), selectedState->GetIndex()+1);
         // Updates
         UpdateView();
-        selectSpatState(selectedSpatState); // re-selection
+        selectSpatState(selectedState); // re-selection
     }
     else
         //Cannot move spat state towards the last position
         assert(false);
 }
-void SpatStatesEditionManager::OnColourChanged(Colour& colour)
+void StatesEditionManager::OnColourChanged(Colour& colour)
 {
-    if (selectedSpatState)
-        selectedSpatState->SetColour(colour);
+    if (selectedState)
+        selectedState->SetColour(colour);
 }
 
-void SpatStatesEditionManager::OnMatrixValueChanged(int /*row*/, int /*col*/, double /*matrixValue*/)
+void StatesEditionManager::OnMatrixValueChanged(int /*row*/, int /*col*/, double /*matrixValue*/)
 {
     updateStateInfo();
 }
-void SpatStatesEditionManager::OnMatrixButtonClicked(int row, int /*col*/,
+void StatesEditionManager::OnMatrixButtonClicked(int row, int /*col*/,
 											std::string matrixText, double /*matrixValue*/)
 {
     if (GetSessionPurpose() == AppPurpose::GenericController)
@@ -302,29 +302,34 @@ void SpatStatesEditionManager::OnMatrixButtonClicked(int row, int /*col*/,
     }
 }
 
+void StatesEditionManager::OnInterpolationCurveChanged(int row, BasicInterpolationCurve<double>& newInterpCurve)
+{
+    interpolator->UpdateStatesForInterpolationCurve(row, newInterpCurve);
+}
+
 
 
 // = = = = = = = = = = GRAPHICAL HELPERS = = = = = = = = = =
 
-void SpatStatesEditionManager::UpdateView()
+void StatesEditionManager::UpdateView()
 {
     // GUI update (copy of whole vector)
-    std::vector<std::shared_ptr<ControlState<double>>> newSpatStates = spatInterpolator->GetStates();
+    std::vector<std::shared_ptr<ControlState<double>>> newSpatStates = interpolator->GetStates();
     editionComponent->UpdateStatesList(newSpatStates);
     // also : input/outputs names
-    auto inOutNames = spatInterpolator->GetInOutChannelsName();
+    auto inOutNames = interpolator->GetInOutChannelsName();
     editionComponent->SetInOutNames(inOutNames);
     // and interpolation curves
-    auto interpCurves = spatInterpolator->GetInterpolationCurves();
+    auto interpCurves = interpolator->GetInterpolationCurves();
     editionComponent->GetLabelledMatrix()->SetInterpolationCurves(interpCurves);
     
     updateStateInfo();
     
     //editionComponent->resized(); // pas mal de modifs si le AppPurpose de session a changé
 }
-void SpatStatesEditionManager::updateStateInfo()
+void StatesEditionManager::updateStateInfo()
 {
-	if (selectedSpatState)
+	if (selectedState)
 	{
 		// Pour la SPAT seulement : calcul et affichage du volume de la matrice
 		if (GetSessionPurpose() == AppPurpose::Spatialisation)
@@ -356,14 +361,14 @@ void SpatStatesEditionManager::updateStateInfo()
 	else
 		editionComponent->SetVisibleMatrixData(false);
 }
-std::string SpatStatesEditionManager::getLinkedAreasInfo()
+std::string StatesEditionManager::getLinkedAreasInfo()
 {
     std::string infoText;
-    if (selectedSpatState)
+    if (selectedState)
     {
         infoText = "Linked to "
-        + boost::lexical_cast<std::string>(selectedSpatState->GetLinkedAreasCount())
-        + " area" + (selectedSpatState->GetLinkedAreasCount()>1 ? "s" : "") + ".";
+        + boost::lexical_cast<std::string>(selectedState->GetLinkedAreasCount())
+        + " area" + (selectedState->GetLinkedAreasCount()>1 ? "s" : "") + ".";
     }
     else // if no state selected
         infoText = TRANS("No state selected.").toStdString();
@@ -373,21 +378,21 @@ std::string SpatStatesEditionManager::getLinkedAreasInfo()
 
 // = = = = = = = = = = INTERNAL HELPERS = = = = = = = = = =
 
-void SpatStatesEditionManager::sendCurrentDataToModel()
+void StatesEditionManager::sendCurrentDataToModel()
 {
     // matrice
     sendMatrixDataToModel(editionComponent->GetDisplayedSpatMatrix());
     // noms des canaux et courbes d'interpolation
     auto channelsNameCopy = editionComponent->GetLabelledMatrix()->GetChannelsName();
-    spatInterpolator->SetInOutChannelsName(channelsNameCopy);
+    interpolator->SetInOutChannelsName(channelsNameCopy);
     auto interpCurvesPtr = editionComponent->GetLabelledMatrix()->GetInterpolationCurves();
-    spatInterpolator->SetInterpolationCurves(interpCurvesPtr);
+    interpolator->SetInterpolationCurves(interpCurvesPtr);
 }
-void SpatStatesEditionManager::sendMatrixDataToModel(std::shared_ptr<ControlMatrix<double>> currentMatrix)
+void StatesEditionManager::sendMatrixDataToModel(std::shared_ptr<ControlMatrix<double>> currentMatrix)
 {
-    if (selectedSpatState) // if exists
+    if (selectedState) // if exists
     {
-        if (std::shared_ptr<MatrixState<double>> matrixState = std::dynamic_pointer_cast<MatrixState<double>>(selectedSpatState) )
+        if (std::shared_ptr<MatrixState<double>> matrixState = std::dynamic_pointer_cast<MatrixState<double>>(selectedState) )
             matrixState->SetMatrix(currentMatrix);
         else
             throw std::logic_error("State is not a Matrix (behavior not implemented)");
@@ -396,21 +401,21 @@ void SpatStatesEditionManager::sendMatrixDataToModel(std::shared_ptr<ControlMatr
 
 
 // = = = = = = = = = = SETTINGS MANAGEMENT = = = = = = = = = =
-void SpatStatesEditionManager::AllowKeyboardEdition(bool allow)
+void StatesEditionManager::AllowKeyboardEdition(bool allow)
 {
     editionComponent->AllowKeyboardEdition(allow);
 }
 
 
 // = = = = = = = = = = PROPERTY TREE (XML) MANAGEMENT = = = = = = = = = =
-std::shared_ptr<bptree::ptree> SpatStatesEditionManager::GetTree()
+std::shared_ptr<bptree::ptree> StatesEditionManager::GetTree()
 {
     // à chaque fois qu'on demande l'arbre :
     // D'abord on met à jour vers le modèle...
     sendCurrentDataToModel();
     
     // Puis le modèle mis à jour renvoie les données bien formattées
-    return spatInterpolator->GetStatesTree();
+    return interpolator->GetStatesTree();
 }
 
 

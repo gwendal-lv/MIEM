@@ -28,13 +28,13 @@ namespace Miam
     // forward declarations
     class View;
     class Model;
-    class SpatStatesEditionComponent;
+    class StatesEditionComponent;
     /*class SpatInterpolator<double>;*/ // from Model
     
     
     /// \brief Manages the behavior (Presenter functionnalities) of a
     /// Miam::SpatStatesEditionComponent
-    class SpatStatesEditionManager
+    class StatesEditionManager
     {
         
         
@@ -44,21 +44,21 @@ namespace Miam
         // Links to other modules
         
         View* view = nullptr;
-        SpatStatesEditionComponent* editionComponent = nullptr;
+        StatesEditionComponent* editionComponent = nullptr;
         /// \brief for direct OSC messages send requests... this link should
         /// be deleted if more functionnalities are implemented
         Model* model = nullptr;
         
-        std::shared_ptr<StatesInterpolator<double>> spatInterpolator = nullptr; // from Model
+        std::shared_ptr<StatesInterpolator<double>> interpolator = nullptr; // from Model
         
         // Selected spat state
-        std::shared_ptr<ControlState<double>> selectedSpatState = nullptr;
+        std::shared_ptr<ControlState<double>> selectedState = nullptr;
         
         
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
         
-        InterpolationType GetInterpolationType() {return spatInterpolator->GetType();}
+        InterpolationType GetInterpolationType() {return interpolator->GetType();}
         AppPurpose GetSessionPurpose();
     private :
         void selectSpatState(std::shared_ptr<ControlState<double>> _controlState);
@@ -71,7 +71,7 @@ namespace Miam
         
         // - - - - - Construction / destruction - - - - -
         
-        SpatStatesEditionManager(View* _view);
+        StatesEditionManager(View* _view);
         void CompleteInitialisation(Model* _model, std::shared_ptr<StatesInterpolator<double>> _spatInterpolator);
         void Reinit();
         
@@ -107,6 +107,8 @@ namespace Miam
         void OnMatrixValueChanged(int row, int col, double matrixValue);
         void OnMatrixButtonClicked(int row, int col, std::string matrixText, double matrixValue);
         
+        /// \brief Will trigger the update of all internal normalized values of states
+        void OnInterpolationCurveChanged(int row, BasicInterpolationCurve<double>& newInterpCurve);
         
         // - - - - - Graphical helpers - - - - -
         

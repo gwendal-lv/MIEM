@@ -65,6 +65,9 @@ namespace Miam
         // = = = = = = = = = = SETTERS and GETTERS = = = = = = = = = =
         public :
         
+        /// \brief Returns a copy of 1 curve only
+        BasicInterpolationCurve<T> GetInterpolationCurve(size_t i)
+        { return interpolationCurves[i]; }
         /// \brief Renvoi d'une copie des courbes d'interpolation
         std::shared_ptr<std::vector<BasicInterpolationCurve<T>>> GetInterpolationCurves()
         {

@@ -22,7 +22,7 @@
 //[Headers]     -- You can add your own extra header files here --
 #include "JuceHeader.h"
 
-#include "SpatStatesEditionManager.h"
+#include "StatesEditionManager.h"
 
 #include "LabelledMatrixComponent.h"
 
@@ -50,7 +50,7 @@ namespace Miam {
 
                                                                     //[/Comments]
 */
-class SpatStatesEditionComponent  : public Component,
+class StatesEditionComponent  : public Component,
                                     public ISlidersMatrixListener,
                                     public IMatrixButtonListener,
                                     public Button::Listener,
@@ -59,12 +59,12 @@ class SpatStatesEditionComponent  : public Component,
 {
 public:
     //==============================================================================
-    SpatStatesEditionComponent ();
-    ~SpatStatesEditionComponent();
+    StatesEditionComponent ();
+    ~StatesEditionComponent();
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-    void CompleteInitialization(SpatStatesEditionManager* _editionManager);
+    void CompleteInitialization(StatesEditionManager* _editionManager);
 
 	void Reinit();
 
@@ -84,6 +84,8 @@ public:
     virtual void OnMatrixButtonClicked(int row, int col, std::string matrixText, double matrixValue) override;
     /// \brief Makes some graphical updates only
     void OnMatrixZeroed() override;
+    /// \brief When any param of the interp curve is being changed
+    void OnInterpolationCurveChanged(int row, BasicInterpolationCurve<double> newInterpCurve) override;
 
     /// \brief Updates the combo box
     ///
@@ -141,7 +143,7 @@ public:
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
-    SpatStatesEditionManager* editionManager = 0;
+    StatesEditionManager* editionManager = 0;
 
     int previousStateIndex = -1; // nothing selected in Juce convention
 
@@ -203,7 +205,7 @@ private:
 
 
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SpatStatesEditionComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StatesEditionComponent)
 };
 
 //[EndFile] You can add extra defines here...

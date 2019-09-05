@@ -31,6 +31,8 @@ namespace Miam
         virtual void OnSliderValueChanged(int row, int col, double value) = 0;
         virtual void OnMatrixZeroed() = 0;
         
+        virtual void OnInterpolationCurveChanged(int row, BasicInterpolationCurve<double> newInterpCurve) = 0;
+        
         virtual ~ISlidersMatrixListener() {}
     };
     

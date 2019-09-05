@@ -34,7 +34,7 @@ MainContentComponent::MainContentComponent()
     addChildComponent(startupComponent = new StartupComponent());
     // Other display modes aren't displayed by default
     addChildComponent(speakersEditionComponent = new SpeakersEditionComponent());
-    addChildComponent(spatStatesEditionComponent = new SpatStatesEditionComponent());
+    addChildComponent(spatStatesEditionComponent = new StatesEditionComponent());
     addChildComponent(sceneEditionComponent = new SceneEditionComponent());
     addChildComponent(hardwareConfigurationComponent = new HardwareConfigurationComponent());
     secondLevelComponents.push_back(speakersEditionComponent);

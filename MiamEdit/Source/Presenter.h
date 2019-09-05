@@ -27,7 +27,7 @@
 #include "SpatType.h"
 
 #include "GraphicSessionManager.h"
-#include "SpatStatesEditionManager.h"
+#include "StatesEditionManager.h"
 #include "SettingsManager.h"
 
 #include "boost/property_tree/ptree.hpp"
@@ -68,7 +68,7 @@ namespace Miam {
         
         // Sub-modules
         GraphicSessionManager graphicSessionManager;
-        SpatStatesEditionManager spatStatesEditionManager;
+        StatesEditionManager spatStatesEditionManager;
         SettingsManager settingsManager;
         
         /// \brief We must keep a thread-safe copy of this info... which is hard
@@ -85,7 +85,7 @@ namespace Miam {
         
         GraphicSessionManager* getGraphicSessionManager() {return &graphicSessionManager;}
         SettingsManager* GetSettingsManager() {return &settingsManager;}
-        SpatStatesEditionManager* GetSpatStatesManager() {return &spatStatesEditionManager;}
+        StatesEditionManager* GetSpatStatesManager() {return &spatStatesEditionManager;}
         
         virtual AppPurpose GetSessionPurpose() const override;
         

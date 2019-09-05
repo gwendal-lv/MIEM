@@ -28,7 +28,7 @@
 
 //[/Headers]
 
-#include "SpatStatesEditionComponent.h"
+#include "StatesEditionComponent.h"
 
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
@@ -36,7 +36,7 @@ using namespace Miam;
 //[/MiscUserDefs]
 
 //==============================================================================
-SpatStatesEditionComponent::SpatStatesEditionComponent ()
+StatesEditionComponent::StatesEditionComponent ()
 {
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
@@ -347,7 +347,7 @@ SpatStatesEditionComponent::SpatStatesEditionComponent ()
     //[/Constructor]
 }
 
-SpatStatesEditionComponent::~SpatStatesEditionComponent()
+StatesEditionComponent::~StatesEditionComponent()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
     //[/Destructor_pre]
@@ -386,7 +386,7 @@ SpatStatesEditionComponent::~SpatStatesEditionComponent()
 }
 
 //==============================================================================
-void SpatStatesEditionComponent::paint (Graphics& g)
+void StatesEditionComponent::paint (Graphics& g)
 {
     //[UserPrePaint] Add your own custom painting code here..
 
@@ -403,7 +403,7 @@ void SpatStatesEditionComponent::paint (Graphics& g)
     //[/UserPaint]
 }
 
-void SpatStatesEditionComponent::resized()
+void StatesEditionComponent::resized()
 {
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
@@ -465,7 +465,7 @@ void SpatStatesEditionComponent::resized()
     //[/UserResized]
 }
 
-void SpatStatesEditionComponent::buttonClicked (Button* buttonThatWasClicked)
+void StatesEditionComponent::buttonClicked (Button* buttonThatWasClicked)
 {
     //[UserbuttonClicked_Pre]
     //[/UserbuttonClicked_Pre]
@@ -511,7 +511,7 @@ void SpatStatesEditionComponent::buttonClicked (Button* buttonThatWasClicked)
     //[/UserbuttonClicked_Post]
 }
 
-void SpatStatesEditionComponent::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
+void StatesEditionComponent::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 {
     //[UsercomboBoxChanged_Pre]
     //[/UsercomboBoxChanged_Pre]
@@ -553,7 +553,7 @@ void SpatStatesEditionComponent::comboBoxChanged (ComboBox* comboBoxThatHasChang
     //[/UsercomboBoxChanged_Post]
 }
 
-void SpatStatesEditionComponent::sliderValueChanged (Slider* sliderThatWasMoved)
+void StatesEditionComponent::sliderValueChanged (Slider* sliderThatWasMoved)
 {
     //[UsersliderValueChanged_Pre]
     //[/UsersliderValueChanged_Pre]
@@ -581,7 +581,7 @@ void SpatStatesEditionComponent::sliderValueChanged (Slider* sliderThatWasMoved)
     //[/UsersliderValueChanged_Post]
 }
 
-void SpatStatesEditionComponent::visibilityChanged()
+void StatesEditionComponent::visibilityChanged()
 {
     //[UserCode_visibilityChanged] -- Add your code here...
     if (editionManager)
@@ -623,7 +623,7 @@ void SpatStatesEditionComponent::visibilityChanged()
     //[/UserCode_visibilityChanged]
 }
 
-bool SpatStatesEditionComponent::keyPressed (const KeyPress& key)
+bool StatesEditionComponent::keyPressed (const KeyPress& key)
 {
     //[UserCode_keyPressed] -- Add your code here...
 
@@ -688,13 +688,13 @@ bool SpatStatesEditionComponent::keyPressed (const KeyPress& key)
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
-void SpatStatesEditionComponent::CompleteInitialization(SpatStatesEditionManager* _editionManager)
+void StatesEditionComponent::CompleteInitialization(StatesEditionManager* _editionManager)
 {
     editionManager = _editionManager;
 }
 
 
-void SpatStatesEditionComponent::Reinit()
+void StatesEditionComponent::Reinit()
 {
 	// if we dont do this, the old selected state remains (even if the list is
 	// emptied and re-filled)
@@ -703,7 +703,7 @@ void SpatStatesEditionComponent::Reinit()
 	labelledMatrixComponent->SetInterpolationCurves(nullptr);
 }
 
-void SpatStatesEditionComponent::UpdateStatesList(std::vector< std::shared_ptr<ControlState<double>> > &newSpatStates)
+void StatesEditionComponent::UpdateStatesList(std::vector< std::shared_ptr<ControlState<double>> > &newSpatStates)
 {
     // Empties the combo box at first
     statesComboBox->clear();
@@ -719,13 +719,13 @@ void SpatStatesEditionComponent::UpdateStatesList(std::vector< std::shared_ptr<C
 
 
 // - - - - - Colours - - - - -
-void SpatStatesEditionComponent::SetAreaColourValue(juce::Colour colour)
+void StatesEditionComponent::SetAreaColourValue(juce::Colour colour)
 {
     sliderR->setValue(colour.getRed());
     sliderG->setValue(colour.getGreen());
     sliderB->setValue(colour.getBlue());
 }
-void SpatStatesEditionComponent::colourSliderMoved()
+void StatesEditionComponent::colourSliderMoved()
 {
     Colour newColour = Colour((uint8)sliderR->getValue(),
                               (uint8)sliderG->getValue(),
@@ -738,21 +738,26 @@ void SpatStatesEditionComponent::colourSliderMoved()
     colourVisualisationLabel->setColour(Label::backgroundColourId, newColour);
 }
 
-void SpatStatesEditionComponent::OnSliderValueChanged(int row, int col, double value)
+void StatesEditionComponent::OnSliderValueChanged(int row, int col, double value)
 {
     editionManager->OnMatrixValueChanged(row, col, value);
 }
-void SpatStatesEditionComponent::OnMatrixButtonClicked(int row, int col, std::string matrixText, double matrixValue)
+void StatesEditionComponent::OnMatrixButtonClicked(int row, int col, std::string matrixText, double matrixValue)
 {
     editionManager->OnMatrixButtonClicked(row, col, matrixText, matrixValue);
 }
-void SpatStatesEditionComponent::OnMatrixZeroed()
+void StatesEditionComponent::OnMatrixZeroed()
 {
     editionManager->UpdateView();
 }
 
+void StatesEditionComponent::OnInterpolationCurveChanged(int row, BasicInterpolationCurve<double> newInterpCurve)
+{
+    editionManager->OnInterpolationCurveChanged(row, newInterpCurve);
+}
 
-void SpatStatesEditionComponent::SelectAndUpdateState(int stateIndex, std::string infoText, std::shared_ptr<ControlMatrix<double>> newSpatMatrix, const Colour& stateColour,
+
+void StatesEditionComponent::SelectAndUpdateState(int stateIndex, std::string infoText, std::shared_ptr<ControlMatrix<double>> newSpatMatrix, const Colour& stateColour,
     std::shared_ptr<BasicInterpCurves> newInterpCurves)
 {
     // We keep here this copy of the model internal matrix
@@ -789,24 +794,24 @@ void SpatStatesEditionComponent::SelectAndUpdateState(int stateIndex, std::strin
     setParametersGroupEnabled(isAnyStateSelected);
 }
 
-void SpatStatesEditionComponent::UpdateLinksLabel(const std::string& infoText)
+void StatesEditionComponent::UpdateLinksLabel(const std::string& infoText)
 {
     linksInfoLabel->setText(infoText, NotificationType::dontSendNotification);
 }
-void SpatStatesEditionComponent::UpdateMatrixData(const std::string& volume1, const std::string& volume2)
+void StatesEditionComponent::UpdateMatrixData(const std::string& volume1, const std::string& volume2)
 {
     // DIsplay reserved to SPAT at the moment
     matrixInfoLabel2->setText(std::string("Correlated inputs: ") + volume1 + std::string(" dB FS"), NotificationType::dontSendNotification);
     matrixInfoLabel3->setText(std::string("Decorrelated inputs: ") + volume2 + std::string(" dB FS"), NotificationType::dontSendNotification);
 }
-void SpatStatesEditionComponent::SetVisibleMatrixData(bool shouldBeVisible)
+void StatesEditionComponent::SetVisibleMatrixData(bool shouldBeVisible)
 {
     matrixInfoLabel1->setVisible(shouldBeVisible);
     matrixInfoLabel2->setVisible(shouldBeVisible);
     matrixInfoLabel3->setVisible(shouldBeVisible);
 }
 
-void SpatStatesEditionComponent::updateMatrix()
+void StatesEditionComponent::updateMatrix()
 {
     // matrix data sent from the most recent that this class got from model
     if (spatMatrix) // may not exist if no state is selected
@@ -823,7 +828,7 @@ void SpatStatesEditionComponent::updateMatrix()
         labelledMatrixComponent->SetActiveSliders(0,0);
 }
 
-void SpatStatesEditionComponent::setParametersGroupEnabled(bool shouldBeEnabled)
+void StatesEditionComponent::setParametersGroupEnabled(bool shouldBeEnabled)
 {
     labelR->setEnabled(shouldBeEnabled);
     sliderR->setEnabled(shouldBeEnabled);
@@ -839,14 +844,14 @@ void SpatStatesEditionComponent::setParametersGroupEnabled(bool shouldBeEnabled)
         colourVisualisationLabel->setColour(Label::backgroundColourId, Colours::grey);
     }
 }
-void SpatStatesEditionComponent::setColour(const Colour& stateColour)
+void StatesEditionComponent::setColour(const Colour& stateColour)
 {
     sliderR->setValue((double)stateColour.getRed(), NotificationType::dontSendNotification);
     sliderG->setValue((double)stateColour.getGreen(), NotificationType::dontSendNotification);
     sliderB->setValue((double)stateColour.getBlue(), NotificationType::dontSendNotification);
     colourVisualisationLabel->setColour(Label::backgroundColourId, stateColour);
 }
-bool SpatStatesEditionComponent::trySelectNextState(bool shouldGoDownward)
+bool StatesEditionComponent::trySelectNextState(bool shouldGoDownward)
 {
     int targetItemIndex = statesComboBox->getSelectedItemIndex();
     targetItemIndex += shouldGoDownward ? (1) : (-1);
@@ -859,7 +864,7 @@ bool SpatStatesEditionComponent::trySelectNextState(bool shouldGoDownward)
     }
 }
 
-void SpatStatesEditionComponent::SetInsOutsCount(int _inputsCount, int _outputsCount)
+void StatesEditionComponent::SetInsOutsCount(int _inputsCount, int _outputsCount)
 {
     // Backup
     inputsCount = _inputsCount;
@@ -868,20 +873,20 @@ void SpatStatesEditionComponent::SetInsOutsCount(int _inputsCount, int _outputsC
     // Applying of changes
     updateMatrix();
 }
-void SpatStatesEditionComponent::SetInOutNames(InOutChannelsName &channelsName)
+void StatesEditionComponent::SetInOutNames(InOutChannelsName &channelsName)
 {
     labelledMatrixComponent->SetChannelsNames(channelsName);
 }
-void SpatStatesEditionComponent::SetInOutNamesDisplayed(bool areInputNamesVisible, bool areOutputNamesVisible)
+void StatesEditionComponent::SetInOutNamesDisplayed(bool areInputNamesVisible, bool areOutputNamesVisible)
 {
     labelledMatrixComponent->SetInputNamesVisible(areInputNamesVisible);
     labelledMatrixComponent->SetOutputNamesVisible(areOutputNamesVisible);
 }
-std::shared_ptr<ControlMatrix<double>> SpatStatesEditionComponent::GetDisplayedSpatMatrix()
+std::shared_ptr<ControlMatrix<double>> StatesEditionComponent::GetDisplayedSpatMatrix()
 {
     return labelledMatrixComponent->GetMatrixComponent()->GetSpatMatrix();
 }
-void SpatStatesEditionComponent::AllowKeyboardEdition(bool allow)
+void StatesEditionComponent::AllowKeyboardEdition(bool allow)
 {
     labelledMatrixComponent->GetMatrixComponent()->SetSlidersTextBoxesAreEditable(allow);
 }

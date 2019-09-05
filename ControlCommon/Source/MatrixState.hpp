@@ -70,12 +70,15 @@ namespace Miam
         ///
         /// Opérateur [] n'accepte pas la surcharge à 2 paramètres
         inline T operator() (size_t i, size_t j) const { return matrix(i,j); }
+        
+        /// \brief Write access to the internal sparse matrix
+        inline void SetValue(size_t i, size_t j, T value) { matrix.Set(i, j, value); }
 
         
 #ifdef __MIAM_DEBUG
         void DisplayMatrixInStdCout()
         {
-            std::cout << "[MatrixState.hpp] " << matrix.GetNonZeroCoeffsCount() << " coeffs non-nuls : ";
+            std::cout << "[MatrixState.hpp] " << matrix.GetNonZeroCoeffsCount() << " non-zero coeffs: ";
             matrix.DisplayInStdCout();
             std::cout << std::endl;
         }

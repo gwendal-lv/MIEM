@@ -109,6 +109,12 @@ public:
     void OnMinMaxValuesChanged(int row, double valueMin, double valueMax);
     /// \brief Called by a curve combox box when necessary
     void OnInterpolationTypeChanged(int row, ParamInterpolationType newInterpolationType);
+    
+    protected :
+    /// \brief Internal helper, to be called when any interp data has changed
+    void onInterpolationDataChanged(int row);
+    public :
+    
     /// \brief Callback from any text editor. Display (in bold, or not) wether the input name
     /// can be parsed to a valid OSC message with address and arguments.
     ///
