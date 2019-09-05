@@ -86,6 +86,8 @@ namespace Miam
             
             
             Scene = 700,
+            SceneTransitionBegan, ///< The scene is being changed (values might be incoherent)
+            SceneTransitionEnded, ///< The new scene is fully loaded, values are usable
             
             
             LastEnumValue ///< Last, exclusive (non-usable) value. Must remain at the very end of the enum.

@@ -45,6 +45,9 @@ namespace Miam
         
         SceneChanged,
         
+        TransitionBegins, ///< Triggered when a transition from a scene to another has begun but has not finished yet.
+        TransitionEnds, ///< Triggered when a transition ends, then Model can start using the GUI data again.
+        
     };
     
     

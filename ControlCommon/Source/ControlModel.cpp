@@ -67,7 +67,10 @@ ControlModel::ControlModel(ControlPresenter* presenter_,
 PeriodicUpdateThread("Control Model updater"), // base class
 
 presenter(presenter_),
-commonStartTimePt( presenter->GetCommonTimePoint() )
+commonStartTimePt( presenter->GetCommonTimePoint() ),
+
+playState(AsyncParamChange::ParamType::Stop),
+sceneTransitionState(AsyncParamChange::ParamType::SceneTransitionEnded) // corresponds to a default stable scene state
 {
     // Choice of interpolation type
     interpolator = std::make_shared<StatesInterpolator<double>>(InterpolationType::None);
@@ -179,6 +182,11 @@ void ControlModel::update()
                     // Remark : no need to wait for another ack from the Presenter.
                     // If it isn't playing, it does not send lock-free data.
                     break;
+                
+                case AsyncParamChange::SceneTransitionBegan:
+                case AsyncParamChange::SceneTransitionEnded:
+                    sceneTransitionState = lastParamChange.Type;
+                    break;
                     
                 default :
                     break;
@@ -189,7 +197,8 @@ void ControlModel::update()
         // Alors on peut faire pas mal de choses. Si on ne joue pas par contre... Il
         // faut vraiment éviter de faire des trucs parce que Model et Presenter communiquent
         // en single threaded direct
-        if ( playState == AsyncParamChange::Play )
+        if ( playState == AsyncParamChange::Play
+            && sceneTransitionState == AsyncParamChange::SceneTransitionEnded) // scene must be fully loaded
         {
             // Envoi de la nouvelle matrice, si nécessaire
             wasSomethingUpdated = interpolator->OnDataUpdateFinished(masterGainEnabled, masterGain);

@@ -51,10 +51,11 @@ void MultiSceneCanvasPlayer::AddScene(std::string name, bool selectNewScene)
 
 void MultiSceneCanvasPlayer::processSingleAreaEventSync(std::shared_ptr<AreaEvent>& areaE)
 {
+    // Many events will be processed by the MultiSceneCanvas Interactor
     MultiSceneCanvasInteractor::processSingleAreaEventSync(areaE);
     
-    // - - - Traitement des évènements excitateurs - - -
-    // ne concernent pas forcément que la scène actuelle sélectionnée !!
+    // - - - Traitement des évènements excitateurs (player uniquement) - - -
+    // N.B. : ne concernent pas forcément que la scène actuelle sélectionnée !!
     if ( auto exciter = std::dynamic_pointer_cast<Exciter>( areaE->GetConcernedArea() ) )
     {
         // Ajout, suppression, et déplacement (qui est juste la translation pour l'instant)

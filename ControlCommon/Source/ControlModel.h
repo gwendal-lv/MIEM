@@ -76,6 +76,7 @@ namespace Miam
         
         
         AsyncParamChange::ParamType playState;
+        AsyncParamChange::ParamType sceneTransitionState;
         
         // Rafraîchissements forcés
         int refreshFramesCounter = 0;

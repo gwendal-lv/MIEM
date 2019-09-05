@@ -34,9 +34,11 @@
 #include "MultiSceneCanvasPlayer.h"
 #include "SceneCanvasComponent.h"
 
+#include "SceneEvent.h"
+
 namespace Miam {
     
-    // Simple declarations
+    // Forward declarations
     class PlayerView;
     class PlayerPresenter;
     
@@ -128,6 +130,9 @@ namespace Miam {
         void handleAreaEventSync(const std::shared_ptr<AreaEvent>& areaE);
         // Là ça doit absolument être un simple
         void handleSingleAreaEventSync(const std::shared_ptr<AreaEvent>& areaE);
+        /// \brief For single Scene events that might be interesting for the Model
+        /// (multiple must have been filtered)
+        void handleSingleSceneEventSync(const std::shared_ptr<SceneEvent>& sceneE);
         
         public :
         // Déclenche des actualisations forcées, ...

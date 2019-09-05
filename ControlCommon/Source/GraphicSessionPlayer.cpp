@@ -104,6 +104,13 @@ void GraphicSessionPlayer::HandleEventSync(std::shared_ptr<GraphicEvent> event_)
     {
         handleAreaEventSync(areaE);
     }
+    // Event about a scene (model should temporarily stop during the scene change process,
+    // to avoid sending null data because of the very short absence of exciters, before they
+    // are actually created on the new scene)
+    else if (auto sceneE = std::dynamic_pointer_cast<SceneEvent>(event_))
+    {
+        handleSingleSceneEventSync(sceneE);
+    }
 }
 void GraphicSessionPlayer::handleAreaEventSync(const std::shared_ptr<AreaEvent>& areaE)
 {
@@ -162,6 +169,33 @@ void GraphicSessionPlayer::handleSingleAreaEventSync(const std::shared_ptr<AreaE
         }
     }
      */
+}
+void GraphicSessionPlayer::handleSingleSceneEventSync(const std::shared_ptr<SceneEvent>& sceneE)
+{
+    AsyncParamChange paramChange;
+    paramChange.Type = AsyncParamChange::ParamType::None;
+    
+    switch(sceneE->GetType())
+    {
+        case SceneEventType::SceneChanged:
+            // scene change itself is not transmitted
+            break;
+            
+        case SceneEventType::TransitionBegins:
+            paramChange.Type =  AsyncParamChange::ParamType::SceneTransitionBegan;
+            break;
+        case SceneEventType::TransitionEnds:
+            paramChange.Type =  AsyncParamChange::ParamType::SceneTransitionEnded;
+            break;
+            
+        // All other events are not transmitted to the Model
+        default :
+            break;
+    }
+    
+    // Transmission of actual changes, if necessary
+    if (paramChange.Type != AsyncParamChange::ParamType::None)
+        presenter->SendParamChange(paramChange);
 }
 void GraphicSessionPlayer::OnModelStarted()
 {

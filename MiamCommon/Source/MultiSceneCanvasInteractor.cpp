@@ -635,6 +635,10 @@ void MultiSceneCanvasInteractor::SelectScene(int id)
     // and Deactivation of the scene
     if (selectedScene)
     {
+        // Envoi d'un évènement à destination du modèle (arrêt/reprise des envois pendant la transition)
+        auto sceneE = std::make_shared<SceneEvent>(shared_from_this(), selectedScene, SceneEventType::TransitionBegins);
+        graphicSessionManager->HandleEventSync(sceneE);
+        
         // Si on était pas en mode de jeu (qu'on faisait de l'édition, on passe en mode scene only)
         // -> ça permet de quitter les modes étranges dans lesquels la scène pouvait être, au moment
         // de la dé-sélectionner
@@ -649,14 +653,14 @@ void MultiSceneCanvasInteractor::SelectScene(int id)
         graphicSessionManager->HandleEventSync(unselectionEvents);
     }
     
-    
+    // If given ID is valid, selection of a new scene
     if ( 0 <= id && id < (int)(scenes.size()) )
     {
         // Then : we become the new selected canvas (if we were not before)
         graphicSessionManager->SetSelectedCanvas(shared_from_this());
         // No specific other check, we just create the informative event before changing
 		
-        sceneChangedE = std::make_shared<SceneEvent>(shared_from_this(), selectedScene, scenes[id],SceneEventType::SceneChanged);
+        sceneChangedE = std::make_shared<SceneEvent>(shared_from_this(), selectedScene, scenes[id], SceneEventType::SceneChanged);
         selectedScene = scenes[id];
         selectionEvents = selectedScene->OnSelection();
         
@@ -670,6 +674,7 @@ void MultiSceneCanvasInteractor::SelectScene(int id)
         // Graphic updates
         canvasComponent->UpdateSceneButtons(GetInteractiveScenes());
         
+        // Scene change events
         handleAndSendEventSync(sceneChangedE);
     }
     else if (id != -1) // -1 is "tolerated"....
@@ -678,15 +683,23 @@ void MultiSceneCanvasInteractor::SelectScene(int id)
         throw std::runtime_error(errorMsg);
     }
     
-    
     // Selection events may be transmitted at the end
-    if (selectionEvents)
+    if (selectionEvents) // might be null even if a scene is selected
     {
         // Sans passer par la case graphique
         graphicSessionManager->HandleEventSync(selectionEvents);
     }
     
-    // Update graphique forcé ici (on n'a pas transmis les évènement pour traitement OpenGL,
+    // If a scene if actually selected
+    if (selectedScene)
+    {
+        // Envoi d'un évènement à destination du modèle (arrêt/reprise des envois pendant la transition)
+        auto sceneE = std::make_shared<SceneEvent>(shared_from_this(), selectedScene, SceneEventType::TransitionEnds);
+        graphicSessionManager->HandleEventSync(sceneE);
+    }
+    
+    // - - - Update graphique forcé ici - - -
+    // (on n'a pas transmis les évènement pour traitement OpenGL,
     // seulement au graphic session manager pour traduction vers ailleurs !)
     recreateAllAsyncDrawableObjects();
     
