@@ -41,6 +41,13 @@ namespace Miam
         // La base : la matrice creuse cachée à l'intérieur de l'état
         ControlMatrix<T> matrix;
         
+        /// \brief List of values (1D indexes, not actual 2D matrix indexes)
+        /// that should be the default value. Default values are not stored
+        /// within this states,
+        /// but if default values are used, then the actual matrix coefficients must be set to these
+        /// exact default values.
+        std::vector<size_t> defaultValuesIndexes;
+        
         // Attribut dupliqués depuis l'interpolateur
         int inputsCount = 0;
         int outputsCount = 0;
@@ -73,6 +80,10 @@ namespace Miam
         
         /// \brief Write access to the internal sparse matrix
         inline void SetValue(size_t i, size_t j, T value) { matrix.Set(i, j, value); }
+        
+        std::vector<size_t> GetDefaultValues() { return defaultValuesIndexes; }
+        void SetDefaultValues(std::vector<size_t> _defaultValuesIndexes)
+        { defaultValuesIndexes = _defaultValuesIndexes; } // full-vector copy....
 
         
 #ifdef __MIAM_DEBUG
@@ -179,8 +190,22 @@ namespace Miam
         // - - - - - Property tree (for XML) import/export - - - - -
         virtual std::shared_ptr<bptree::ptree> GetTree() override
         {
+            // Generic control data
             auto pTree = this->ControlState<T>::GetTree();
+            // Matrix coefficients
             pTree->put_child("matrix", *(matrix.GetTree()));
+            // Indexes of Default values
+            if (defaultValuesIndexes.size() > 0)
+            {
+                bptree::ptree defaultTree;
+                for (size_t i=0 ; i<defaultValuesIndexes.size() ; i++)
+                {
+                    bptree::ptree coeffTree;
+                    coeffTree.put("<xmlattr>.row", defaultValuesIndexes[i]);
+                    defaultTree.add_child("coeff", coeffTree);
+                }
+                pTree->put_child("default_values", defaultTree);
+            }
             return pTree;
         }
         
@@ -198,6 +223,28 @@ namespace Miam
             }
             catch (bptree::ptree_bad_path& e) {
                 throw XmlReadException::FromBptree("state", e);
+            }
+            // default values (if exist) (not  mandatory, for retro-compatibility)
+            defaultValuesIndexes.clear();
+            try {
+                auto defaultTree = stateTree.get_child("default_values");
+                
+                for(bptree::ptree::value_type &childTree : defaultTree.get_child(""))
+                {
+                    if (childTree.first == "coeff")
+                    {
+                        // Properties reading from tree, and checking
+                        auto coeffTree = childTree.second;
+                        size_t row = coeffTree.get<size_t>("<xmlattr>.row"); // no check on row...
+                        // if tag exists, is means "default == true, for this row"
+                        defaultValuesIndexes.push_back(row);
+                    }
+                }
+            }
+            catch (bptree::ptree_bad_data &e) { // Parse error: we actually treat it
+                XmlReadException::FromBptree("default_values.coeff, data parse error: ", e);
+            }
+            catch (bptree::ptree_bad_path& e) {
             }
         }
         

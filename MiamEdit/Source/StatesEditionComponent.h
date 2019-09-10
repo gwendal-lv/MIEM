@@ -97,7 +97,10 @@ public:
     void UpdateStatesList(std::vector< std::shared_ptr<ControlState<double>> > &newSpatStates);
 
     /// \brief When a new state is selected (order from the Presenter only)
-    void SelectAndUpdateState(int stateIndex, std::string infoText, std::shared_ptr<ControlMatrix<double>> newSpatMatrix, const Colour& stateColour,
+    void SelectAndUpdateState(int stateIndex, std::string infoText,
+                              std::shared_ptr<ControlMatrix<double>> newSpatMatrix,
+                              std::vector<size_t> defaultValuesIndexes,
+                              const Colour& stateColour,
         std::shared_ptr<BasicInterpCurves> newInterpCurves);
 
     /// \brief Updates the links label

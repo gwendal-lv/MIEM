@@ -472,7 +472,8 @@ void StatesEditionComponent::resized()
             maxLabel->setTopLeftPosition(labelledMatrixComponent->GetMaximaPositionX()
                                          + leftMargin,
                                          maxLabel->getY());
-            interpolationCurveLabel->setTopLeftPosition(labelledMatrixComponent->GetInterpolationCurvesPositionX()
+            interpolationCurveLabel->setTopLeftPosition(
+                                        labelledMatrixComponent->GetInterpolationCurvesPositionX()
                                                         + leftMargin,
                                                         interpolationCurveLabel->getY());
             valueLabel->setTopLeftPosition(labelledMatrixComponent->GetParametersValuesPositionX()
@@ -776,7 +777,9 @@ void StatesEditionComponent::OnInterpolationCurveChanged(int row, BasicInterpola
 }
 
 
-void StatesEditionComponent::SelectAndUpdateState(int stateIndex, std::string infoText, std::shared_ptr<ControlMatrix<double>> newSpatMatrix, const Colour& stateColour,
+void StatesEditionComponent::SelectAndUpdateState(int stateIndex, std::string infoText,
+                                                  std::shared_ptr<ControlMatrix<double>> newSpatMatrix, std::vector<size_t> defaultValuesIndexes,
+                                                  const Colour& stateColour,
     std::shared_ptr<BasicInterpCurves> newInterpCurves)
 {
     // We keep here this copy of the model internal matrix
@@ -794,6 +797,8 @@ void StatesEditionComponent::SelectAndUpdateState(int stateIndex, std::string in
     // interp curves before matrix data
     labelledMatrixComponent->SetInterpolationCurves(newInterpCurves);
     updateMatrix();
+    // default values at the end (why, actually ?)
+    labelledMatrixComponent->SetDefaultIndexes(defaultValuesIndexes);
 
 
     // Buttons enabled state (should be PRESENTER code normally....)

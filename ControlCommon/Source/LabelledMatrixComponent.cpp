@@ -143,7 +143,7 @@ void LabelledMatrixComponent::resized()
         removedFromLeftOfMatrix = std::min((getWidth() - 0)/2,
                                            760); // = découpe max
         removedFromLeftOfMatrix += curveComboBoxW/4;
-        removedFromLeftOfMatrix += 1*minMaxValueSlidersW;
+        removedFromLeftOfMatrix += 2*minMaxValueSlidersW;
     }
     matrixViewportBounds.removeFromLeft(removedFromLeftOfMatrix);
     removedFromLeftOfMatrix += 80; // because of the previous projucer resize (takes the i/o ID into account)
@@ -289,7 +289,10 @@ void LabelledMatrixComponent::constructGuiObjects()
         minDefaultMaxSliders[i]->setComponentID("spi" + iStr);
         addAndMakeVisible(minDefaultMaxSliders[i].get());
         // - - - Default toggle button (activate param or not) - - -
-        //activateParamButtons[i].reset(new )
+        activateParamButtons[i].reset(new ToggleButton("")); // no text
+        activateParamButtons[i]->setComponentID("ai" + iStr);
+        activateParamButtons[i]->addListener(this);
+        addAndMakeVisible(activateParamButtons[i].get());
     }
     for (int j=0 ; j<(int)maxColsCount ; j++)
     {
@@ -335,6 +338,7 @@ void LabelledMatrixComponent::ReinitGuiObjects()
 			rowTextButtons[i]->setVisible(true);
             rowComboBoxes[i]->setVisible(true);
             curveImageComponents[i]->setVisible(true);
+            activateParamButtons[i]->setVisible(true);
             minDefaultMaxSliders[i]->setVisible(true);
         }
 		else
@@ -342,6 +346,7 @@ void LabelledMatrixComponent::ReinitGuiObjects()
 			rowTextButtons[i]->setVisible(false);
             rowComboBoxes[i]->setVisible(false);
             curveImageComponents[i]->setVisible(false);
+            activateParamButtons[i]->setVisible(false);
             minDefaultMaxSliders[i]->setVisible(false);
         }
     }
@@ -396,10 +401,11 @@ void LabelledMatrixComponent::repositionLabelsAndButtons()
 
     // Valeurs en X toujours calculées, même si composants pas visibles au final
     inputNamesX = inLabelsW;
-    int inputNamesW = matrixViewport->getX() - inLabelsW - curveComboBoxW - curveImageW - 3*minMaxValueSlidersW - 4*5 - 2;
+    int inputNamesW = matrixViewport->getX() - inLabelsW - curveComboBoxW - curveImageW - 3*minMaxValueSlidersW - 4*5 - 2 - activateButtonW - 24;
     rowButtonsX = viewportRX + 4;
-    int curveImagesX = viewportLX - 4 - curveImageW;
-    interpolationCurvesX = curveImagesX - 4 - curveComboBoxW;
+    int activateButtonX = viewportLX - 4 - activateButtonW;
+    int curveImagesX = activateButtonX - curveImageW - 24;
+    interpolationCurvesX = curveImagesX - 2 - curveComboBoxW;
     maximaX = interpolationCurvesX - 4 - minMaxValueSlidersW;
     defaultX = maximaX - 4 - minMaxValueSlidersW;
     minimaX = defaultX - 4 - minMaxValueSlidersW;
@@ -426,6 +432,7 @@ void LabelledMatrixComponent::repositionLabelsAndButtons()
         minDefaultMaxSliders[i]->setEnabled( i < getN() );
         rowComboBoxes[i]->setEnabled( i < getN() );
         curveImageComponents[i]->setEnabled( i < getN() );
+        activateParamButtons[i]->setEnabled( i < getN() );
 
         // Comboboxes + Action buttons are drawn for the GenericController app purpose
         if (GetDisplayPurpose() == AppPurpose::GenericController)
@@ -444,6 +451,9 @@ void LabelledMatrixComponent::repositionLabelsAndButtons()
             minDefaultMaxSliders[i]->setVisible(true);
             minDefaultMaxSliders[i]->setBounds(minimaX, i*matItemH - matrixDeltaY,
                                              minMaxValueSlidersW*3 + 4, matItemH);
+            activateParamButtons[i]->setVisible(true);
+            activateParamButtons[i]->setBounds(activateButtonX, i*matItemH - matrixDeltaY,
+                                               activateButtonW, matItemH);
         }
         else
         {
@@ -451,6 +461,7 @@ void LabelledMatrixComponent::repositionLabelsAndButtons()
             rowComboBoxes[i]->setVisible(false);
             curveImageComponents[i]->setVisible(false);
             minDefaultMaxSliders[i]->setVisible(false);
+            activateParamButtons[i]->setVisible(false);
         }
         // On cache les éléments d'entrée plus bas que le viewport
         if (labels[i]->getBottom() > (matrixViewport->getBottom() + 8))
@@ -461,6 +472,7 @@ void LabelledMatrixComponent::repositionLabelsAndButtons()
             rowComboBoxes[i]->setVisible(false);
             curveImageComponents[i]->setVisible(false);
             minDefaultMaxSliders[i]->setVisible(false);
+            activateParamButtons[i]->setVisible(false);
         }
         else
         {
@@ -592,8 +604,8 @@ void LabelledMatrixComponent::onInterpolationDataChanged(int row)
 {
     // Update of the currently displayed state (normalized value update forced
     // by a slider value change)
-    matrixViewport->GetMatrixComponent()->SetHorizontalSliderInterpolationData(row,
-                                                                               GetInterpolationCurve((size_t)row));
+    auto interpCurve = GetInterpolationCurve((size_t)row);
+    matrixViewport->GetMatrixComponent()->SetHorizontalSliderInterpolationData(row, interpCurve);
 
     // The normalized value of ALL states must be updated to fit the new curve
     listener->OnInterpolationCurveChanged(row, GetInterpolationCurve((size_t)row));
@@ -617,32 +629,56 @@ void LabelledMatrixComponent::textEditorTextChanged (TextEditor & textEditor)
 void LabelledMatrixComponent::buttonClicked (Button* _button)
 {
     int integerID = -1;
+    
+    bool isActivateButton = false;
+    bool isSendButton = false;
 
     // We get its row index #, from its ID which must be 'bi#'
+    // or 'ai#' for activation buttons
     auto buttonID = _button->getComponentID().toStdString();
     try {
         if (buttonID.length() < 3)
             throw BadIdException();
-        if (buttonID[0] != 'b' || buttonID[1] != 'i')
+        if ( buttonID[0] == 'b' && buttonID[1] == 'i')
+            isSendButton = true;
+        else if ( buttonID[0] == 'a' && buttonID[1] == 'i')
+            isActivateButton = true;
+        else
             throw BadIdException();
-
-        // At the moment, only 1 unique button on each row -> no valid col index will be given
-        try {
-            integerID = boost::lexical_cast<int>(buttonID.substr(2));
-        } catch (boost::bad_lexical_cast&) {
-            throw BadIdException();
+        
+        if (isSendButton || isActivateButton)
+        {
+            // At the moment, only 1 unique button on each row -> no valid col index will be given
+            try {
+                integerID = boost::lexical_cast<int>(buttonID.substr(2));
+            } catch (boost::bad_lexical_cast&) {
+                throw BadIdException();
+            }
+            if (integerID < 0 || (int)maxRowsCount < integerID)
+                throw BadIdException();
         }
-        if (integerID < 0 || (int)maxRowsCount < integerID)
-            throw BadIdException();
     }
     catch (BadIdException& ) {
         assert(false); // a bad-referenced (bas ID) button has been clicked. This must not happen!
     }
 
-    // Callback transmitted to the listener component
-    buttonsListener->OnMatrixButtonClicked(integerID, -1,
-                                           inputNameTextEditors[integerID]->getText().toStdString(),
-                                           matrixViewport->GetMatrixComponent()->GetSliderValue(integerID, 0));
+    if (isSendButton)
+    {
+        // Callback transmitted to the listener component
+        buttonsListener->OnMatrixButtonClicked(integerID, -1,
+                                               inputNameTextEditors[integerID]->getText().toStdString(),
+                                               matrixViewport->GetMatrixComponent()
+                                                   ->GetSliderValue(integerID, 0));
+    }
+    else if (isActivateButton)
+    {
+        bool shouldBeActivated = activateParamButtons[integerID]->getToggleState();
+        // On activation: default is disabled and parameter becomes enabled
+        // on de-activation: default is enabled, parameter automatically takes the default value
+        minDefaultMaxSliders[integerID]->SetDefaultEnabled(! shouldBeActivated);
+        
+        // TODO : ACTIVER/DESACTIVER LE SLIDER DE LA MATRICE
+    }
 }
 
 
@@ -700,6 +736,8 @@ void LabelledMatrixComponent::SetInterpolationCurve(size_t i, BasicInterpolation
 		minDefaultMaxSliders[i]->SetMaxValue(interpCurve.GetMaxY());
 		minDefaultMaxSliders[i]->SetMinValue(interpCurve.GetMinY());
 	}
+    // default sent after that
+    minDefaultMaxSliders[i]->SetDefaultValue(interpCurve.GetDefaultY());
 	// 2 - transmission of copies to the matrix
 	GetMatrixComponent()->SetHorizontalSliderInterpolationData((int)i, interpCurve);
 }
@@ -729,11 +767,13 @@ void LabelledMatrixComponent::SetInterpolationCurves(std::shared_ptr<BasicInterp
 }
 BasicInterpolationCurve<double> LabelledMatrixComponent::GetInterpolationCurve(size_t i)
 {
-    return
+    auto interpCurve =
     BasicInterpolationCurve<double>(rowComboBoxes[i]->GetSelectedInterpolationType(),
                                     minDefaultMaxSliders[i]->GetMinValue(),
                                     minDefaultMaxSliders[i]->GetMaxValue()
                                     );
+    interpCurve.SetDefaultY(minDefaultMaxSliders[i]->GetDefaultValue());
+    return interpCurve;
 }
 std::shared_ptr<BasicInterpCurves> LabelledMatrixComponent::GetInterpolationCurves()
 {
@@ -743,6 +783,28 @@ std::shared_ptr<BasicInterpCurves> LabelledMatrixComponent::GetInterpolationCurv
         interpCurves->push_back(GetInterpolationCurve(i));
     }
     return interpCurves;
+}
+std::vector<size_t> LabelledMatrixComponent::GetDefaultIndexes()
+{
+    std::vector<size_t> defaultList;
+    for (size_t i=0 ; i<getN() ; i++)
+    {
+        // default is activated if the parameter is not active
+        if (activateParamButtons[i]->getToggleState() == false)
+            defaultList.push_back(i);
+    }
+    return defaultList;
+}
+void LabelledMatrixComponent::SetDefaultIndexes(std::vector<size_t> defaultList)
+{
+    // default is always unactivated first (toggle boxes are checked = activated)
+    for (size_t i=0 ; i<getN() ; i++)
+        activateParamButtons[i]
+            ->setToggleState(true, NotificationType::sendNotification);
+    // then actual default are re-activated
+    for (size_t i=0 ; i<defaultList.size() ; i++)
+        activateParamButtons[defaultList[i]]
+            ->setToggleState(false, NotificationType::sendNotification);
 }
 void LabelledMatrixComponent::SetInputNamesVisible(bool areVisible)
 {

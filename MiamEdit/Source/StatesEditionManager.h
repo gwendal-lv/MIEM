@@ -125,7 +125,7 @@ namespace Miam
         // fait toutes les mises à jour, transfert des données graphiques à l'écran vers le modèle
         void sendCurrentDataToModel();
         // Met à jour uniquement la mat passée en paramètre
-        void sendMatrixDataToModel(std::shared_ptr<ControlMatrix<double>> currentMatrix);
+        void sendMatrixDataToModel();
         
         // - - - - - Settings Management - - - - -
         public :

@@ -68,15 +68,17 @@ void StatesEditionManager::selectSpatState(std::shared_ptr<ControlState<double>>
     
     // Graphical updates : info label (links count)
     std::string infoText = getLinkedAreasInfo();
-    auto matrixToSend = std::make_shared<ControlMatrix<double>>(); // initially full of zeros
+    // At last : routing matrix (only choice available for now...) or list of coeffs
+    std::shared_ptr<MatrixState<double>> matrixState;
     int stateIndexToSend = -1;
     if (selectedState)
     {
         stateIndexToSend = selectedState->GetIndex();
-        
-        // At last : routing matrix (only choice available for now...)
-        if (std::shared_ptr<MatrixState<double>> matrixState = std::dynamic_pointer_cast<MatrixState<double>>(selectedState) )
-            matrixToSend = matrixState->GetMatrixCopy();
+        matrixState = std::dynamic_pointer_cast<MatrixState<double>>(selectedState);
+        if (matrixState)
+        {
+            // no except thrown
+        }
         // else if the cast did not work
         else
             throw std::runtime_error("State is not a Matrix state");
@@ -87,7 +89,8 @@ void StatesEditionManager::selectSpatState(std::shared_ptr<ControlState<double>>
     {
         // Update des courbes d'interpolation AVEC  l'état est maintenant obligatoire
         editionComponent->SelectAndUpdateState(stateIndexToSend, infoText,
-                                               matrixToSend, colourToDisplay,
+                                               matrixState->GetMatrixCopy(), matrixState->GetDefaultValues(),
+                                               colourToDisplay,
                                                interpolator->GetInterpolationCurves());
     }
 
@@ -381,19 +384,24 @@ std::string StatesEditionManager::getLinkedAreasInfo()
 void StatesEditionManager::sendCurrentDataToModel()
 {
     // matrice
-    sendMatrixDataToModel(editionComponent->GetDisplayedSpatMatrix());
+    sendMatrixDataToModel();
     // noms des canaux et courbes d'interpolation
     auto channelsNameCopy = editionComponent->GetLabelledMatrix()->GetChannelsName();
     interpolator->SetInOutChannelsName(channelsNameCopy);
     auto interpCurvesPtr = editionComponent->GetLabelledMatrix()->GetInterpolationCurves();
     interpolator->SetInterpolationCurves(interpCurvesPtr);
 }
-void StatesEditionManager::sendMatrixDataToModel(std::shared_ptr<ControlMatrix<double>> currentMatrix)
+void StatesEditionManager::sendMatrixDataToModel()
 {
     if (selectedState) // if exists
     {
         if (std::shared_ptr<MatrixState<double>> matrixState = std::dynamic_pointer_cast<MatrixState<double>>(selectedState) )
-            matrixState->SetMatrix(currentMatrix);
+        {
+            // Matrix data
+            matrixState->SetMatrix(editionComponent->GetDisplayedSpatMatrix());
+            // default (or not) booleans, for all parameters
+            matrixState->SetDefaultValues(editionComponent->GetLabelledMatrix()->GetDefaultIndexes());
+        }
         else
             throw std::logic_error("State is not a Matrix (behavior not implemented)");
     }

@@ -56,6 +56,7 @@ namespace Miam
         //public :
         ParamInterpolationType interpolationType;
         T minX, maxX, minY, maxY;
+        T defaultY;
         T deltaX, deltaY;
         T centerX, centerY;
         
@@ -92,6 +93,9 @@ namespace Miam
         T GetMaxY() const {return maxY;}
         ParamInterpolationType GetInterpolationType() const {return interpolationType;}
         
+        T GetDefaultY() const {return defaultY;}
+        void SetDefaultY(T _defaultY) {defaultY = _defaultY;}
+        
         static std::vector<ParamInterpolationType> GetAvailableParamInterpolationTypes()
         {
             std::vector<ParamInterpolationType> returnTypes;
@@ -127,6 +131,9 @@ namespace Miam
             // Contrainte éventuellement supprimée car elle n'a pas beaucoup de sens...
             // les float/double vont automatiquement s'adapter aux ordres de grandeur...
             assert( deltaY > (GetMinOutputRange() * ((T)0.75) ) );
+            
+            // Default default value: min value (can be changed later using a setter)
+            defaultY = minY;
         }
         /// \brief Constructeur de copie par défaut
         BasicInterpolationCurve(const BasicInterpolationCurve&) = default;
@@ -221,7 +228,8 @@ namespace Miam
             && (std::abs(minX - GetDefault().minX) < GetMinOutputRange())
             && (std::abs(minY - GetDefault().minY) < GetMinOutputRange())
             && (std::abs(maxX - GetDefault().maxX) < GetMinOutputRange())
-            && (std::abs(maxY - GetDefault().maxY) < GetMinOutputRange());
+            && (std::abs(maxY - GetDefault().maxY) < GetMinOutputRange())
+            && (std::abs(defaultY - GetDefault().defaultY) < GetMinOutputRange());
         }
         
         
@@ -379,6 +387,7 @@ namespace Miam
                                                                          true)
                            );
             innerTree->put("<xmlattr>.minY", minY);
+            innerTree->put("<xmlattr>.defaultY", defaultY);
             innerTree->put("<xmlattr>.maxY", maxY);
             
             // valeur en X pas mises, on laisse les valeurs par défaut pour l'instant...
@@ -394,6 +403,13 @@ namespace Miam
                 interpolationType = ParamInterpolationTypes::ParseName(stringType);
                 minY = innerTree.get<T>("<xmlattr>.minY");
                 maxY = innerTree.get<T>("<xmlattr>.maxY");
+                // default value is optionnal (for compatibility). Min Y if cannot be read
+                try {
+                    defaultY = innerTree.get<T>("<xmlattr>.defaultY");
+                }
+                catch (bptree::ptree_error& e) {
+                    defaultY = minY;
+                }
             }
             // exceptions if errors happen
             catch (bptree::ptree_error& e)

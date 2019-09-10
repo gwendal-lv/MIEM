@@ -213,8 +213,15 @@ namespace Miam
             maxSlider.setValue(lastMaxValue, NotificationType::sendNotificationSync);
             defaultSlider.setRange(lastMinValue, lastMaxValue, 0.0);
         }
+        void SetDefaultValue(double newValue)
+        {
+            defaultSlider.setValue(newValue); // no other check
+        }
+        void SetDefaultEnabled(bool shouldBeEnabled)
+        { defaultSlider.setEnabled(shouldBeEnabled); }
         double GetMinValue() {return minSlider.getValue();}
         double GetMaxValue() {return maxSlider.getValue();}
+        double GetDefaultValue() {return defaultSlider.getValue();}
         
         
         // =========== METHODS ==========
@@ -243,7 +250,6 @@ namespace Miam
             maxSlider.addListener(this);
             
             // Default UIs between these
-            defaultSlider.setEnabled(false);
         }
         
         virtual void paint(Graphics& /*g*/) override

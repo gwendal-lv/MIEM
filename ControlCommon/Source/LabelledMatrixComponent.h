@@ -134,6 +134,9 @@ public:
     void SetInterpolationCurves(std::shared_ptr<BasicInterpCurves> interpCurves);
     BasicInterpolationCurve<double> GetInterpolationCurve(size_t i);
     std::shared_ptr<BasicInterpCurves> GetInterpolationCurves();
+    
+    std::vector<size_t> GetDefaultIndexes();
+    void SetDefaultIndexes(std::vector<size_t> defaultList);
 
     void SetInputNamesVisible(bool areVisible);
     void SetOutputNamesVisible(bool areVisible);
@@ -186,6 +189,7 @@ private:
     int maximaX = 0; ///< The X left position of a row "max value" slider
     int interpolationCurvesX = 0;
     int rowButtonsX = 0;
+    const int activateButtonW = 24;
     const int curveComboBoxW = 120;
     const int curveImageW = 20; ///< Display size in pixels (retina will be 2 times bigger in pixels)
     int removedFromLeftOfMatrix = 100; // just in case, to avoid zero-sized buttons if it happens...
@@ -228,7 +232,7 @@ private:
     std::vector<std::shared_ptr<ImageComponent>> curveImageComponents;
 
     /// \brief Toogle buttons that activates the custom parameters values, and disables the default slider.
-    std::vector<std::unique_ptr<ToggleButton>> activateParamButtons;
+    std::vector<std::unique_ptr<ToggleButton>> activateParamButtons; // component IDs : 'ai#'
 
     /// \brief Slider for min/max values of parameters
     std::vector<std::unique_ptr<MinDefaultMaxSliders>> minDefaultMaxSliders; // component IDs : 'spi#'
