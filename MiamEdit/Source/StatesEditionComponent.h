@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.3
+  Created with Projucer version: 5.4.4
 
   ------------------------------------------------------------------------------
 
@@ -22,18 +22,21 @@
 //[Headers]     -- You can add your own extra header files here --
 #include "JuceHeader.h"
 
-#include "StatesEditionManager.h"
-
 #include "LabelledMatrixComponent.h"
 
 #include "ISlidersMatrixListener.h"
 #include "IMatrixButtonListener.h"
 
 #include "ControlMatrix.hpp"
+#include "ControlState.hpp"
 
 #include "AudioUtils.hpp"
 
 namespace Miam {
+
+    // forward declarations
+    class StatesEditionManager;
+
 //[/Headers]
 
 
@@ -51,11 +54,11 @@ namespace Miam {
                                                                     //[/Comments]
 */
 class StatesEditionComponent  : public Component,
-                                    public ISlidersMatrixListener,
-                                    public IMatrixButtonListener,
-                                    public Button::Listener,
-                                    public ComboBox::Listener,
-                                    public Slider::Listener
+                                public ISlidersMatrixListener,
+                                public IMatrixButtonListener,
+                                public Button::Listener,
+                                public ComboBox::Listener,
+                                public Slider::Listener
 {
 public:
     //==============================================================================
@@ -183,7 +186,6 @@ private:
     std::unique_ptr<TextButton> deleteStateTextButton;
     std::unique_ptr<TextButton> stateUpTextButton;
     std::unique_ptr<TextButton> stateDownTextButton;
-    std::unique_ptr<Label> linksInfoLabel;
     std::unique_ptr<ComboBox> statesComboBox;
     std::unique_ptr<Label> labelR;
     std::unique_ptr<Slider> sliderR;
@@ -202,6 +204,8 @@ private:
     std::unique_ptr<Label> maxLabel;
     std::unique_ptr<Label> interpolationCurveLabel;
     std::unique_ptr<Label> valueLabel;
+    std::unique_ptr<Label> linksInfoLabel;
+    std::unique_ptr<Label> defaultLabel;
 
 
     //==============================================================================

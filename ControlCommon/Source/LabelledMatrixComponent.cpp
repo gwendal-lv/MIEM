@@ -254,6 +254,8 @@ void LabelledMatrixComponent::constructGuiObjects()
     rowComboBoxes.resize(maxRowsCount);
     curveImageComponents.clear();
     curveImageComponents.resize(maxRowsCount);
+    activateParamButtons.clear();
+    activateParamButtons.resize(maxRowsCount);
     minDefaultMaxSliders.clear();
     minDefaultMaxSliders.resize(maxRowsCount);
 
@@ -286,6 +288,8 @@ void LabelledMatrixComponent::constructGuiObjects()
         minDefaultMaxSliders[i].reset(new MinDefaultMaxSliders(this, "Min/Max Slider Pair " + iStr, i));
         minDefaultMaxSliders[i]->setComponentID("spi" + iStr);
         addAndMakeVisible(minDefaultMaxSliders[i].get());
+        // - - - Default toggle button (activate param or not) - - -
+        //activateParamButtons[i].reset(new )
     }
     for (int j=0 ; j<(int)maxColsCount ; j++)
     {
@@ -392,12 +396,13 @@ void LabelledMatrixComponent::repositionLabelsAndButtons()
 
     // Valeurs en X toujours calculées, même si composants pas visibles au final
     inputNamesX = inLabelsW;
-    int inputNamesW = matrixViewport->getX() - inLabelsW - curveComboBoxW - curveImageW - 2*minMaxValueSlidersW - 4*5 - 2;
+    int inputNamesW = matrixViewport->getX() - inLabelsW - curveComboBoxW - curveImageW - 3*minMaxValueSlidersW - 4*5 - 2;
     rowButtonsX = viewportRX + 4;
     int curveImagesX = viewportLX - 4 - curveImageW;
     interpolationCurvesX = curveImagesX - 4 - curveComboBoxW;
     maximaX = interpolationCurvesX - 4 - minMaxValueSlidersW;
-    minimaX = maximaX - 4 - minMaxValueSlidersW;
+    defaultX = maximaX - 4 - minMaxValueSlidersW;
+    minimaX = defaultX - 4 - minMaxValueSlidersW;
 
     // Labels dynamic positionning
     for (int i=0 ; i<(int)maxRowsCount ; i++)
@@ -438,7 +443,7 @@ void LabelledMatrixComponent::repositionLabelsAndButtons()
                                         curveImageW, matItemH);
             minDefaultMaxSliders[i]->setVisible(true);
             minDefaultMaxSliders[i]->setBounds(minimaX, i*matItemH - matrixDeltaY,
-                                             minMaxValueSlidersW*2 + 4, matItemH);
+                                             minMaxValueSlidersW*3 + 4, matItemH);
         }
         else
         {

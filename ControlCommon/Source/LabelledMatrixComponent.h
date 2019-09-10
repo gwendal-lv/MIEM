@@ -146,6 +146,7 @@ public:
 
     int GetOscAddressPositionX() const {return inputNamesX;}
     int GetMinimaPositionX() const {return minimaX;}
+    int GetDefaultPositionX() const {return defaultX;}
     int GetMaximaPositionX() const {return maximaX;}
     int GetInterpolationCurvesPositionX() const {return interpolationCurvesX;}
     int GetParametersValuesPositionX() const {return viewportLX;}
@@ -172,15 +173,16 @@ private:
     // Graphical parameters from Miam::MatrixComponent
     const int matItemW = 40;
     const int matItemH = 20;
-    const int actionButtonW = 120; // on the very right of the screen
+    const int actionButtonW = 80; // on the very right of the screen
     // Positionning variables
     int viewportLX;
     int viewportRX;
     const int inputNameLabelMinWidth = 200;
     int inputNameLabelWidth = 200;
     int inputNamesX = 0; // text editor
-    const int minMaxValueSlidersW = 200;
+    const int minMaxValueSlidersW = 104; // also valid for the default slider
     int minimaX = 0; ///< The X left position of a row "min value" slider
+    int defaultX = 0; ///< The X left position of a row "default value" slider
     int maximaX = 0; ///< The X left position of a row "max value" slider
     int interpolationCurvesX = 0;
     int rowButtonsX = 0;
@@ -224,21 +226,14 @@ private:
     ///
     /// Shared with the row combo boxes for automatic actualisation
     std::vector<std::shared_ptr<ImageComponent>> curveImageComponents;
-    
-    /// TODO AJOUTER A DROITE DES COMBO BOXES : rajouter une cache à cocher pour choisir défaut ou non
-    /// TODO AJOUTER A DROITE DES COMBO BOXES : rajouter une cache à cocher pour choisir défaut ou non
-    /// TODO AJOUTER A DROITE DES COMBO BOXES : rajouter une cache à cocher pour choisir défaut ou non
-    /// TODO AJOUTER A DROITE DES COMBO BOXES : rajouter une cache à cocher pour choisir défaut ou non
-    /// TODO AJOUTER A DROITE DES COMBO BOXES : rajouter une cache à cocher pour choisir défaut ou non
-    /// TODO AJOUTER A DROITE DES COMBO BOXES : rajouter une cache à cocher pour choisir défaut ou non
-    /// TODO AJOUTER A DROITE DES COMBO BOXES : rajouter une cache à cocher pour choisir défaut ou non
-    /// TODO AJOUTER A DROITE DES COMBO BOXES : rajouter une cache à cocher pour choisir défaut ou non
-    /// TODO AJOUTER A DROITE DES COMBO BOXES : rajouter une cache à cocher pour choisir défaut ou non
+
+    /// \brief Toogle buttons that activates the custom parameters values, and disables the default slider.
+    std::vector<std::unique_ptr<ToggleButton>> activateParamButtons;
 
     /// \brief Slider for min/max values of parameters
     std::vector<std::unique_ptr<MinDefaultMaxSliders>> minDefaultMaxSliders; // component IDs : 'spi#'
-    
-    
+
+
     //[/UserVariables]
 
     //==============================================================================

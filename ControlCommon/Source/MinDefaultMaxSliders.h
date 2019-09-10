@@ -129,6 +129,56 @@ namespace Miam
     };
     
     
+    /// \brief Slider made for displaying a default value (provides a "inactive but enabled" mode)
+    class DefaultSlider : public Slider
+    {
+        // ========== Attributes ==========
+        private :
+        
+        
+        // ========== Setters and Getters ==========
+        public :
+        
+        
+        // ========== Methods ==========
+        public :
+        DefaultSlider(int _rowIndex)
+        :
+        Slider(std::string("Default slider ") + boost::lexical_cast<std::string>(_rowIndex))
+        {
+            // Slider lui-même : type et valeurs
+            setSliderStyle(SliderStyle::LinearBar);
+            // Texte (qui sera automatiquement à l'intérieur avec les linear bar)
+            setColour(ColourIds::textBoxTextColourId, Colours::white);
+            // Autres couleurs
+            setColour(ColourIds::backgroundColourId, Colours::black);
+            setColour(ColourIds::trackColourId, Colours::darkgrey);
+            // Comportement souris
+            setSliderSnapsToMousePosition(false);
+            setScrollWheelEnabled(false);
+        }
+        
+        virtual void paint(Graphics& g) override
+        {
+            // fond en noir ou transparent
+            if (isEnabled())
+                g.fillAll(Colours::black);
+            else
+                g.fillAll(Colours::transparentBlack);
+            
+            Slider::paint(g);
+        }
+        
+        virtual void enablementChanged() override
+        {
+            if (isEnabled())
+                setColour(ColourIds::backgroundColourId, Colours::black);
+            else
+                setColour(ColourIds::backgroundColourId, Colours::transparentBlack);
+        }
+    };
+    
+    
     
     
     /// \brief Pair of min/max sliders (extrem values depend on each other). Now also includes a "default" value, that
@@ -139,22 +189,29 @@ namespace Miam
         private :
         LabelledMatrixComponent* labelledMatrixParent;
         int rowIndex;
+        double lastMinValue = 0.0;
+        double lastMaxValue = 1.0;
         
         MinMaxRowSlider minSlider;
         MinMaxRowSlider maxSlider;
-        
-        Slider defaultSlider;
+        DefaultSlider defaultSlider;
         
         
         // =========== Getters and Setters ==========
         public :
         void SetMinValue(double newValue)
         {
-            minSlider.setValue(newValue, NotificationType::sendNotificationSync);
+            lastMinValue = newValue;
+            assert(lastMinValue < lastMaxValue); // min must remain < to max
+            minSlider.setValue(lastMinValue, NotificationType::sendNotificationSync);
+            defaultSlider.setRange(lastMinValue, lastMaxValue, 0.0);
         }
         void SetMaxValue(double newValue)
         {
-            maxSlider.setValue(newValue, NotificationType::sendNotificationSync);
+            lastMaxValue = newValue;
+            assert(lastMinValue < lastMaxValue); // min must remain < to max
+            maxSlider.setValue(lastMaxValue, NotificationType::sendNotificationSync);
+            defaultSlider.setRange(lastMinValue, lastMaxValue, 0.0);
         }
         double GetMinValue() {return minSlider.getValue();}
         double GetMaxValue() {return maxSlider.getValue();}
@@ -170,19 +227,23 @@ namespace Miam
         rowIndex(_rowIndex),
         
         minSlider(rowIndex, false),
-        maxSlider(rowIndex, true)
+        maxSlider(rowIndex, true),
+        defaultSlider(rowIndex)
         {
             // Actual min/max sliders
             addAndMakeVisible(&minSlider);
             addAndMakeVisible(&maxSlider);
+            addAndMakeVisible(&defaultSlider);
             // Pour partir de valeurs correctes...
             minSlider.setValue(0.0, NotificationType::dontSendNotification);
             maxSlider.setValue(1.0, NotificationType::dontSendNotification);
+            defaultSlider.setValue(0.0, NotificationType::dontSendNotification);
             // Ajout des listeners ensuite
             minSlider.addListener(this);
             maxSlider.addListener(this);
             
             // Default UIs between these
+            defaultSlider.setEnabled(false);
         }
         
         virtual void paint(Graphics& /*g*/) override
@@ -192,9 +253,10 @@ namespace Miam
         virtual void resized() override
         {
             // inter-sliders margin = 4px
-            const int elementBaseWidth = getWidth()/4 - 2;
+            const int elementBaseWidth = getWidth()/3 - 2;
             minSlider.setBounds( getLocalBounds().removeFromLeft(elementBaseWidth) );
             maxSlider.setBounds( getLocalBounds().removeFromRight(elementBaseWidth) );
+            defaultSlider.setBounds( getLocalBounds().withTrimmedLeft(elementBaseWidth).withTrimmedRight(elementBaseWidth) );
         }
         
         /// \brief Callback from the min/max value sliders

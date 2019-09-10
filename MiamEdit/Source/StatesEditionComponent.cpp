@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.3
+  Created with Projucer version: 5.4.4
 
   ------------------------------------------------------------------------------
 
@@ -25,6 +25,8 @@
 #include "MatrixComponent.h"
 
 #include "AppPurpose.h"
+
+#include "StatesEditionManager.h"
 
 //[/Headers]
 
@@ -100,16 +102,6 @@ StatesEditionComponent::StatesEditionComponent ()
     stateDownTextButton->setColour (TextButton::buttonColourId, Colour (0xfff0f0f0));
     stateDownTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
     stateDownTextButton->setColour (TextButton::textColourOffId, Colours::black);
-
-    linksInfoLabel.reset (new Label ("Links info label",
-                                     TRANS("Linked to ? area")));
-    addAndMakeVisible (linksInfoLabel.get());
-    linksInfoLabel->setFont (Font (15.00f, Font::italic));
-    linksInfoLabel->setJustificationType (Justification::centred);
-    linksInfoLabel->setEditable (false, false, false);
-    linksInfoLabel->setColour (Label::textColourId, Colours::black);
-    linksInfoLabel->setColour (TextEditor::textColourId, Colours::black);
-    linksInfoLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
     statesComboBox.reset (new ComboBox ("States combo box"));
     addAndMakeVisible (statesComboBox.get());
@@ -253,7 +245,7 @@ StatesEditionComponent::StatesEditionComponent ()
     oscAddressLabel->setColour (TextEditor::textColourId, Colours::black);
     oscAddressLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    oscAddressLabel->setBounds (144, 112, 150, 24);
+    oscAddressLabel->setBounds (136, 112, 150, 24);
 
     minLabel.reset (new Label ("Min label",
                                TRANS("Min. value")));
@@ -266,7 +258,7 @@ StatesEditionComponent::StatesEditionComponent ()
     minLabel->setColour (TextEditor::textColourId, Colours::black);
     minLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    minLabel->setBounds (288, 112, 80, 24);
+    minLabel->setBounds (240, 112, 80, 24);
 
     maxLabel.reset (new Label ("Max label",
                                TRANS("Max. value")));
@@ -279,7 +271,7 @@ StatesEditionComponent::StatesEditionComponent ()
     maxLabel->setColour (TextEditor::textColourId, Colours::black);
     maxLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    maxLabel->setBounds (368, 112, 80, 24);
+    maxLabel->setBounds (380, 112, 80, 24);
 
     interpolationCurveLabel.reset (new Label ("Interpolation Curve label",
                                               TRANS("Interpolation curve")));
@@ -292,7 +284,7 @@ StatesEditionComponent::StatesEditionComponent ()
     interpolationCurveLabel->setColour (TextEditor::textColourId, Colours::black);
     interpolationCurveLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    interpolationCurveLabel->setBounds (480, 112, 150, 24);
+    interpolationCurveLabel->setBounds (472, 112, 150, 24);
 
     valueLabel.reset (new Label ("value label",
                                  TRANS("Parameter value")));
@@ -305,7 +297,30 @@ StatesEditionComponent::StatesEditionComponent ()
     valueLabel->setColour (TextEditor::textColourId, Colours::black);
     valueLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    valueLabel->setBounds (704, 112, 168, 24);
+    valueLabel->setBounds (690, 112, 168, 24);
+
+    linksInfoLabel.reset (new Label ("Links Info label",
+                                     TRANS("Linked to ? areas")));
+    addAndMakeVisible (linksInfoLabel.get());
+    linksInfoLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    linksInfoLabel->setJustificationType (Justification::centredLeft);
+    linksInfoLabel->setEditable (false, false, false);
+    linksInfoLabel->setColour (Label::textColourId, Colours::black);
+    linksInfoLabel->setColour (TextEditor::textColourId, Colours::black);
+    linksInfoLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    defaultLabel.reset (new Label ("Default label",
+                                   TRANS("Default")));
+    addAndMakeVisible (defaultLabel.get());
+    defaultLabel->setTooltip (TRANS("The default value of this parameter, valid for all states. Click to edit."));
+    defaultLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    defaultLabel->setJustificationType (Justification::centredLeft);
+    defaultLabel->setEditable (false, false, false);
+    defaultLabel->setColour (Label::textColourId, Colours::black);
+    defaultLabel->setColour (TextEditor::textColourId, Colours::black);
+    defaultLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    defaultLabel->setBounds (312, 112, 80, 24);
 
 
     //[UserPreSize]
@@ -360,7 +375,6 @@ StatesEditionComponent::~StatesEditionComponent()
     deleteStateTextButton = nullptr;
     stateUpTextButton = nullptr;
     stateDownTextButton = nullptr;
-    linksInfoLabel = nullptr;
     statesComboBox = nullptr;
     labelR = nullptr;
     sliderR = nullptr;
@@ -379,6 +393,8 @@ StatesEditionComponent::~StatesEditionComponent()
     maxLabel = nullptr;
     interpolationCurveLabel = nullptr;
     valueLabel = nullptr;
+    linksInfoLabel = nullptr;
+    defaultLabel = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -415,7 +431,6 @@ void StatesEditionComponent::resized()
     deleteStateTextButton->setBounds (0 + 88, 4 + 20, 80, 24);
     stateUpTextButton->setBounds (0 + 331 - 154, 4 + 20, 72, 24);
     stateDownTextButton->setBounds (0 + 331 - 82, 4 + 20, 74, 24);
-    linksInfoLabel->setBounds ((getWidth() - (getWidth() - 339)) + 13, 4 + 20, (getWidth() - 339) - 520, 24);
     statesComboBox->setBounds (0 + 8, 56, 331 - 16, 24);
     labelR->setBounds (getWidth() - 258, 20, 24, 24);
     sliderR->setBounds (getWidth() - 240, 24, 158, 16);
@@ -429,6 +444,7 @@ void StatesEditionComponent::resized()
     matrixInfoLabel1->setBounds ((getWidth() - (getWidth() - 339)) + (getWidth() - 339) - 502, 4 + 12, 245, 24);
     matrixInfoLabel2->setBounds ((getWidth() - (getWidth() - 339)) + (getWidth() - 339) - 502, 4 + 32, 245, 24);
     matrixInfoLabel3->setBounds ((getWidth() - (getWidth() - 339)) + (getWidth() - 339) - 502, 4 + 52, 245, 24);
+    linksInfoLabel->setBounds ((getWidth() - (getWidth() - 339)) + 13, 24, (getWidth() - 339) - 520, 24);
     //[UserResized] Add your own custom resize handling here..
 
     if (editionManager)
@@ -443,13 +459,16 @@ void StatesEditionComponent::resized()
         // Now, the labelled matrix has properly replaced its elements.
         if (editionManager->GetSessionPurpose() == AppPurpose::GenericController)
         {
-            const int leftMargin = 24;
+            const int leftMargin = 8;
             oscAddressLabel->setTopLeftPosition(labelledMatrixComponent->GetOscAddressPositionX()
                                                 + leftMargin,
                                                 oscAddressLabel->getY());
             minLabel->setTopLeftPosition(labelledMatrixComponent->GetMinimaPositionX()
                                          + leftMargin,
                                          minLabel->getY());
+            defaultLabel->setTopLeftPosition(labelledMatrixComponent->GetDefaultPositionX()
+                                         + leftMargin,
+                                         defaultLabel->getY());
             maxLabel->setTopLeftPosition(labelledMatrixComponent->GetMaximaPositionX()
                                          + leftMargin,
                                          maxLabel->getY());
@@ -775,8 +794,8 @@ void StatesEditionComponent::SelectAndUpdateState(int stateIndex, std::string in
     // interp curves before matrix data
     labelledMatrixComponent->SetInterpolationCurves(newInterpCurves);
     updateMatrix();
-    
-    
+
+
     // Buttons enabled state (should be PRESENTER code normally....)
     bool isAnyStateSelected = statesComboBox->getSelectedItemIndex() != -1;
     deleteStateTextButton->setEnabled(isAnyStateSelected);
@@ -902,8 +921,8 @@ void StatesEditionComponent::AllowKeyboardEdition(bool allow)
 
 BEGIN_JUCER_METADATA
 
-<JUCER_COMPONENT documentType="Component" className="SpatStatesEditionComponent"
-                 componentName="" parentClasses="public Component, public ISlidersMatrixListener, public IMatrixButtonListener"
+<JUCER_COMPONENT documentType="Component" className="StatesEditionComponent" componentName=""
+                 parentClasses="public Component, public ISlidersMatrixListener, public IMatrixButtonListener"
                  constructorParams="" variableInitialisers="" snapPixels="8" snapActive="1"
                  snapShown="1" overlayOpacity="0.330" fixedSize="1" initialWidth="1024"
                  initialHeight="600">
@@ -947,13 +966,6 @@ BEGIN_JUCER_METADATA
               posRelativeY="4250d5155a80be70" bgColOff="fff0f0f0" bgColOn="ffffffff"
               textCol="ff000000" buttonText="Down" connectedEdges="1" needsCallback="1"
               radioGroupId="0"/>
-  <LABEL name="Links info label" id="3577c0e2ccd44371" memberName="linksInfoLabel"
-         virtualName="" explicitFocusOrder="0" pos="13 20 520M 24" posRelativeX="9d63d9acaf1299f6"
-         posRelativeY="4250d5155a80be70" posRelativeW="9d63d9acaf1299f6"
-         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Linked to ? area"
-         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
-         italic="1" justification="36" typefaceStyle="Italic"/>
   <COMBOBOX name="States combo box" id="89ad7c0a3be5a39c" memberName="statesComboBox"
             virtualName="" explicitFocusOrder="0" pos="8 56 16M 24" posRelativeX="4250d5155a80be70"
             posRelativeY="90b16e3024c520fd" posRelativeW="4250d5155a80be70"
@@ -1034,32 +1046,44 @@ BEGIN_JUCER_METADATA
          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="33"/>
   <LABEL name="OSC Address label" id="ec34ed0b42663136" memberName="oscAddressLabel"
-         virtualName="" explicitFocusOrder="0" pos="144 112 150 24" tooltip="Enter a valid OSC address, or leave the field empty to use /miem/1, /miem/2, etc. as automatic OSC addresses. "
+         virtualName="" explicitFocusOrder="0" pos="136 112 150 24" tooltip="Enter a valid OSC address, or leave the field empty to use /miem/1, /miem/2, etc. as automatic OSC addresses. "
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="OSC address"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="33"/>
   <LABEL name="Min label" id="8ff821b0c7b4bbee" memberName="minLabel"
-         virtualName="" explicitFocusOrder="0" pos="288 112 80 24" tooltip="The minimal value that a parameter can reach. Click to edit."
+         virtualName="" explicitFocusOrder="0" pos="240 112 80 24" tooltip="The minimal value that a parameter can reach. Click to edit."
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Min. value"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="33"/>
   <LABEL name="Max label" id="51fc4d52b6f5297e" memberName="maxLabel"
-         virtualName="" explicitFocusOrder="0" pos="368 112 80 24" tooltip="The maximal value that a parameter can reach. Click to edit."
+         virtualName="" explicitFocusOrder="0" pos="380 112 80 24" tooltip="The maximal value that a parameter can reach. Click to edit."
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Max. value"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="33"/>
   <LABEL name="Interpolation Curve label" id="5f84bf03765206ae" memberName="interpolationCurveLabel"
-         virtualName="" explicitFocusOrder="0" pos="480 112 150 24" tooltip="The type of curve which will be used to compute the interpolation of values for a parameter."
+         virtualName="" explicitFocusOrder="0" pos="472 112 150 24" tooltip="The type of curve which will be used to compute the interpolation of values for a parameter."
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Interpolation curve"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="33"/>
   <LABEL name="value label" id="12d040c7555f2549" memberName="valueLabel"
-         virtualName="" explicitFocusOrder="0" pos="704 112 168 24" tooltip="The defined value of a parameter, for this particular state."
+         virtualName="" explicitFocusOrder="0" pos="690 112 168 24" tooltip="The defined value of a parameter, for this particular state."
          textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Parameter value"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         italic="0" justification="33"/>
+  <LABEL name="Links Info label" id="6a06647d565eb236" memberName="linksInfoLabel"
+         virtualName="" explicitFocusOrder="0" pos="13 24 520M 24" posRelativeX="9d63d9acaf1299f6"
+         posRelativeW="9d63d9acaf1299f6" textCol="ff000000" edTextCol="ff000000"
+         edBkgCol="0" labelText="Linked to ? areas" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
+         fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="33"/>
+  <LABEL name="Default label" id="5639f8436d43c60" memberName="defaultLabel"
+         virtualName="" explicitFocusOrder="0" pos="312 112 80 24" tooltip="The default value of this parameter, valid for all states. Click to edit."
+         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Default"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="33"/>
