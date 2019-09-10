@@ -673,11 +673,14 @@ void LabelledMatrixComponent::buttonClicked (Button* _button)
     else if (isActivateButton)
     {
         bool shouldBeActivated = activateParamButtons[integerID]->getToggleState();
+        
         // On activation: default is disabled and parameter becomes enabled
         // on de-activation: default is enabled, parameter automatically takes the default value
         minDefaultMaxSliders[integerID]->SetDefaultEnabled(! shouldBeActivated);
         
         // TODO : ACTIVER/DESACTIVER LE SLIDER DE LA MATRICE
+        GetMatrixComponent()->SetHorizontalSliderEnabled(integerID, shouldBeActivated);
+        // TODO SET THE DEFAULT VALUEEEEEEE
     }
 }
 

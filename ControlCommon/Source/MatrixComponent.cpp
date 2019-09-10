@@ -211,6 +211,11 @@ void MatrixComponent::sliderValueChanged(Slider* slider)
 
 // = = = = = = = = = = Setters and Getters = = = = = = = = = =
 
+void MatrixComponent::SetHorizontalSliderEnabled(size_t row, bool shouldBeActive)
+{
+    horizontalSliders[row]->setEnabled(shouldBeActive);
+}
+
 void MatrixComponent::SetActiveSliders(int inputsCount, int outputsCount)
 {
     // Sliders matrice : plusieurs milliers, système optimisé nécessaire

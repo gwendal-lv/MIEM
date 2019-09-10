@@ -91,6 +91,7 @@ namespace Miam
         size_t GetActiveInputsCount() {return n;}
         size_t GetActiveOutputsCount() {return m;}
         
+        void SetHorizontalSliderEnabled(size_t row, bool shouldBeActive);
         void SetActiveSliders(int inputsCount, int outputsCount);
         private :
         AppPurpose getPurpose();
