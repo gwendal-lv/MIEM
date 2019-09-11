@@ -248,6 +248,7 @@ namespace Miam
             // Ajout des listeners ensuite
             minSlider.addListener(this);
             maxSlider.addListener(this);
+            defaultSlider.addListener(this);
             
             // Default UIs between these
         }
@@ -268,8 +269,7 @@ namespace Miam
         /// \brief Callback from the min/max value sliders
         virtual void sliderValueChanged (Slider *slider) override
         {
-            auto minMaxSlider = dynamic_cast<MinMaxRowSlider*>(slider);
-            if (minMaxSlider)
+            if (auto minMaxSlider = dynamic_cast<MinMaxRowSlider*>(slider))
             {
                 // Le snap a déjà fait son travail si besoin...
                 
@@ -282,8 +282,13 @@ namespace Miam
                 labelledMatrixParent->OnMinMaxValuesChanged(rowIndex,
                                                             minSlider.getValue(), maxSlider.getValue());
             }
+            else if (auto castedDefaultSlider = dynamic_cast<DefaultSlider*>(slider))
+            {
+                assert(castedDefaultSlider == &defaultSlider); // only 1 default should call back
+                labelledMatrixParent->OnDefaultValueChanged(rowIndex);
+            }
             else
-                assert(false); // only MinMaxRowSlider should callback at the moment
+                assert(false); // only MinMaxRowSlider and DefaultSlider should callback at the moment
         }
     };
 }

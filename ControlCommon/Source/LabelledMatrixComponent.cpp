@@ -596,6 +596,12 @@ void LabelledMatrixComponent::OnMinMaxValuesChanged(int row, double /*valueMin*/
 {
     onInterpolationDataChanged(row);
 }
+void LabelledMatrixComponent::OnDefaultValueChanged(int row)
+{
+    // default sent only if param is not activaterd
+    if (activateParamButtons[row]->getToggleState() == false)
+        sendDefaultValueToCorrespondingSlider(row);
+}
 void LabelledMatrixComponent::OnInterpolationTypeChanged(int row, ParamInterpolationType /*newInterpolationType*/)
 {
     onInterpolationDataChanged(row);
@@ -609,6 +615,12 @@ void LabelledMatrixComponent::onInterpolationDataChanged(int row)
 
     // The normalized value of ALL states must be updated to fit the new curve
     listener->OnInterpolationCurveChanged(row, GetInterpolationCurve((size_t)row));
+}
+void LabelledMatrixComponent::sendDefaultValueToCorrespondingSlider(int row)
+{
+    auto defaultValue = minDefaultMaxSliders[row]->GetDefaultValue();
+    auto normalizedValue = GetInterpolationCurve(row).ReverseInterpolateValue(defaultValue);
+    GetMatrixComponent()->SetSliderValue(row, 0, normalizedValue);
 }
 void LabelledMatrixComponent::textEditorTextChanged (TextEditor & textEditor)
 {
@@ -678,9 +690,14 @@ void LabelledMatrixComponent::buttonClicked (Button* _button)
         // on de-activation: default is enabled, parameter automatically takes the default value
         minDefaultMaxSliders[integerID]->SetDefaultEnabled(! shouldBeActivated);
         
-        // TODO : ACTIVER/DESACTIVER LE SLIDER DE LA MATRICE
+        // Matrix slider: enablement update
         GetMatrixComponent()->SetHorizontalSliderEnabled(integerID, shouldBeActivated);
-        // TODO SET THE DEFAULT VALUEEEEEEE
+        if (! shouldBeActivated) // and value update, linked to default if param is disabled
+        {
+            // Normalized (de-interpolated) value !
+            // And without notification
+            sendDefaultValueToCorrespondingSlider(integerID);
+        }
     }
 }
 

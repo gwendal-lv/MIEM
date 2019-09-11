@@ -105,14 +105,18 @@ public:
     /// \brief Callback from the MatrixComponent.
     /// 'value' is a linear value (not given in decibels)
     void OnSliderValueChanged(int row, int col, double value);
-    /// \brief Called by a min max sliders pair when necessary
+    /// \brief Called by a min/Default/max sliders object when necessary
     void OnMinMaxValuesChanged(int row, double valueMin, double valueMax);
+    /// \brief Called by a default slider (from a min/default/max sliders object) when necessary
+    void OnDefaultValueChanged(int row);
     /// \brief Called by a curve combox box when necessary
     void OnInterpolationTypeChanged(int row, ParamInterpolationType newInterpolationType);
 
     protected :
     /// \brief Internal helper, to be called when any interp data has changed
     void onInterpolationDataChanged(int row);
+    /// \brief Internal helper, to send the default slider data to the corresponding slider
+    void sendDefaultValueToCorrespondingSlider(int row);
     public :
 
     /// \brief Callback from any text editor. Display (in bold, or not) wether the input name
