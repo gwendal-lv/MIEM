@@ -62,6 +62,7 @@ namespace Miam
         ///
         /// This coefficient is called the "interaction weight", and is guaranteed to be a
         /// spatial-continuous variable.
+        /// From version 1.2.0, the gradient of this interaction weight is also continuous.
         ///
         /// \param T The "hit point", in pixels within a canvas,
         /// at which the amount of interaction is computed.

@@ -23,18 +23,25 @@
 #include "InteractiveArea.h"
 
 #include "SubTriangle.h"
+#include "MiemSegment.h"
 
 
 namespace Miam
 {
-    
     /// \brief A polygonal area with interactive abilities.
     class InteractivePolygon : public DrawablePolygon, public InteractiveArea
     {
         // ================== ATTRIBUTES ====================
         protected :
-        std::vector<SubTriangle> subTriangles;
+        std::vector<SubTriangle> subTriangles; ///< subtriangle k is made of point k-1 and k
+        std::vector<Segment> segments; ///< Idem subtriangles
+        
+        // TODO make indexes consistent
         std::vector<bpolygon> edgesHitBoxes; ///< Arête k correspond aux points k et k+1
+        
+        /// \brief Not corrected weight at the center of the shape.
+        /// Used as a normalized factor for the smooth (v1.2) weights computation
+        double rawCenterWeight = 1.0;
         
         private :
         
@@ -88,10 +95,11 @@ namespace Miam
         virtual bool HitTest(bpt T) const override;
         double ComputeInteractionWeight(bpt T) override;
         
-        // ----- helpers (for interaction computing) -----
+        // ----- helpers (for interaction computing before v1.2.0) -----
         protected :
         /// \brief Computation of the subdivisions of the polygon : it will be divided into
-        /// triangles, each triangle being connected to the center.
+        /// triangles, each triangle being connected to the center. Also updates the
+        /// segments (for fast, smooth weights computations).
         ///
         /// Computation of the angular values (positive, and from the center) taken by each
         /// triangle.
@@ -105,6 +113,12 @@ namespace Miam
         /// <param name="angle"></param>
         /// <returns></returns>
         SubTriangle& findSubTriangle(double angle);
+        
+        // ----- helpers (for interaction computing after v1.2.0) -----
+        /// \brief Uncorrected, undistorted smooth interaction weight.
+        /// Computes a weighted sum between z-values of the edges (all equal to 0) and the z-value
+        /// of the center (equal to 1.0). The weights are 1/distance.
+        double computeRawSmoothInteractionWeight(bpt T);
         
         
         /// \brief Computes the hit box of each edge of the polygon

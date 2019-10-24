@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT name="MIEM Play" projectType="guiapp" jucerVersion="5.4.4" version="1.1.6"
+<JUCERPROJECT name="MIEM Play" projectType="guiapp" jucerVersion="5.4.5" version="1.2.0"
               companyName="IRISIB/LARAS, UMons" companyCopyright="Gwendal Le Vaillant (IRISIB/LARAS, UMons)"
               companyWebsite="htpp://laras.be" companyEmail="glevaillant@he2b.be"
               reportAppUsage="0" displaySplashScreen="0" bundleIdentifier="com.gwendallv.MIEMController"
@@ -203,6 +203,7 @@
                 file="../MiamCommon/Source/InteractivePolygon.cpp"/>
           <FILE id="PxaUtc" name="InteractivePolygon.h" compile="0" resource="0"
                 file="../MiamCommon/Source/InteractivePolygon.h"/>
+          <FILE id="LC0nlj" name="MiemSegment.h" compile="0" resource="0" file="../MiamCommon/Source/MiemSegment.h"/>
           <FILE id="ZRuNWP" name="SubTriangle.cpp" compile="1" resource="0" file="../MiamCommon/Source/SubTriangle.cpp"/>
           <FILE id="Rsgwzv" name="SubTriangle.h" compile="0" resource="0" file="../MiamCommon/Source/SubTriangle.h"/>
         </GROUP>

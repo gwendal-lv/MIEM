@@ -22,6 +22,7 @@
 
 #include "InteractionParameters.h"
 
+
 using namespace Miam;
 
 
@@ -91,25 +92,30 @@ void InteractivePolygon::CanvasResized(SceneCanvasComponent* _parentCanvas)
 // ===== Updates =====
 void InteractivePolygon::updateSubTriangles()
 {
-    // Reinitializes the whole list
+    // - - - Reinitializes the whole lists of triangles and segments - - -
     subTriangles.clear();
+    segments.clear();
 	
 	// We begin by the annoying one
     // ATTENTION les contour points forment un polygone boost FERMÉ
     // c-à-d que le premier et le dernier point sont les mêmes
-	subTriangles.push_back(SubTriangle(centerInPixels,
-                                       contourPointsInPixels.outer().at(contourPointsInPixels.outer().size()-2), // avant-dernier, car premier et dernier sont identiques
-                                   contourPointsInPixels.outer().front()));
+    // last = avant-dernier, car premier et dernier sont identiques
+    auto lastPt = contourPointsInPixels.outer().at(contourPointsInPixels.outer().size()-2);
+	subTriangles.push_back(SubTriangle(centerInPixels, lastPt, contourPointsInPixels.outer().front()));
+    segments.push_back(Segment(lastPt, contourPointsInPixels.outer().front()));
 	// Then add the others
-	for (size_t i = 0; i <contourPointsInPixels.outer().size() - 2; i++)
+	for (size_t i = 0; i < contourPointsInPixels.outer().size() - 2; i++)
 	{
 		subTriangles.push_back(SubTriangle(centerInPixels, contourPointsInPixels.outer().at(i), contourPointsInPixels.outer().at(i+1)));
+        segments.push_back(Segment(contourPointsInPixels.outer().at(i), contourPointsInPixels.outer().at(i+1)));
 	}
     
     // Actualisations après création des triangles
     computeSurface();
+    rawCenterWeight = computeRawSmoothInteractionWeight(centerInPixels);
     
     // Génération des splines pour le calcul des poids d'interaction
+    // -> abandonnés (voir b-curve "maison" via segments)
 }
 
 void InteractivePolygon::computeSurface()
@@ -135,25 +141,34 @@ bool InteractivePolygon::HitTest(bpt T) const
 double InteractivePolygon::ComputeInteractionWeight(bpt T)
 {
     double distanceFromCenter = boost::geometry::distance(centerInPixels,T);
-    
     double weight = 0.0;
-    bpt GT(T.get<0>() - centerInPixels.get<0>(), T.get<1>() - centerInPixels.get<1>());
     
     // if at center (to prevent 0/0 operations)
     if (distanceFromCenter < 0.5)
         weight = 1.0;
-    // else, we can compute an angle using atan and the 4 quadrants
+    // else, we choose the old or the new (>= v1.2.0) continuous weight computation
     else
     {
-        // Angle à partir de l'axe x (horizontal vers la droite)
-        // Dans le sens trigo avec l'axe y qui va vers le bas
-        // (et donc dans le horaire avec les conventions math habituelles)
-        double angle = Math::ComputePositiveAngle(GT);
-        
-        // poids sans distorsion via sous-triangle
-        weight = findSubTriangle(angle).ComputeInteractionWeight(T);
-        
-        
+        // TODO Allow selection of old or new method, with a dirty global variable...
+        // (functionnality reserved for experiments, not for release versions)
+        if (/* DISABLES CODE */ (false))
+        {
+            bpt GT(T.get<0>() - centerInPixels.get<0>(), T.get<1>() - centerInPixels.get<1>());
+            // Angle à partir de l'axe x (horizontal vers la droite)
+            // Dans le sens trigo avec l'axe y qui va vers le bas
+            // (et donc dans le horaire avec les conventions math habituelles)
+            double angle = Math::ComputePositiveAngle(GT);
+            
+            // poids sans distorsion via sous-triangle
+            weight = findSubTriangle(angle).ComputeInteractionWeight(T);
+        }
+        else
+        {
+            weight = computeRawSmoothInteractionWeight(T) / rawCenterWeight;
+            weight = Math::SplineDistortionC3(weight);
+            // DOES NOT WORK CORRECTLY:
+            std::cout << "interaction weight = " << weight << std::endl;
+        }
     }
     
     return weight;
@@ -166,6 +181,34 @@ SubTriangle& InteractivePolygon::findSubTriangle(double angle)
         i++;
     
     return subTriangles[i];
+}
+
+double InteractivePolygon::computeRawSmoothInteractionWeight(bpt T)
+{
+    // from the python code (git: MIEM_Surfaces)
+    bpt vectorFromCenter = Segment::SubtractPoints(T, centerInPixels);
+    double distanceFromCenter = std::sqrt(Segment::DotProduct(vectorFromCenter, vectorFromCenter));
+    std::cout << "dist from center = " << distanceFromCenter << std::endl;
+    double center_weight = 1.0;
+    if (distanceFromCenter < 1.0)
+        center_weight = 1.0;
+    else
+        center_weight = 1.0 / distanceFromCenter;
+    // center has 0.5 of all edges combined weight
+    center_weight *= (double)(segments.size()) * 0.5;
+
+    double segments_weight = 0.0;
+    for (size_t i=0 ; i<segments.size() ; i++)
+    {
+        // DOES NOT WORK *********************************************************************
+        double distanceFromSegment = segments[i].GetDistanceC1(T);
+        std::cout << "dist from segment #" << i << " = " << distanceFromSegment << std::endl;
+        if (distanceFromSegment < 1.0) // if we are very close to any segment: weight is just 0.0
+            return 0.0;
+        else
+            segments_weight += (1.0 / distanceFromSegment);
+    }
+    return center_weight / (center_weight + segments_weight);
 }
 
 void InteractivePolygon::updateEdgesHitBoxes()
