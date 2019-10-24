@@ -165,9 +165,7 @@ double InteractivePolygon::ComputeInteractionWeight(bpt T)
         else
         {
             weight = computeRawSmoothInteractionWeight(T) / rawCenterWeight;
-            weight = Math::SplineDistortionC3(weight);
-            // DOES NOT WORK CORRECTLY:
-            std::cout << "interaction weight = " << weight << std::endl;
+            weight = Math::SplineDistortionC2(weight);
         }
     }
     
@@ -188,7 +186,6 @@ double InteractivePolygon::computeRawSmoothInteractionWeight(bpt T)
     // from the python code (git: MIEM_Surfaces)
     bpt vectorFromCenter = Segment::SubtractPoints(T, centerInPixels);
     double distanceFromCenter = std::sqrt(Segment::DotProduct(vectorFromCenter, vectorFromCenter));
-    std::cout << "dist from center = " << distanceFromCenter << std::endl;
     double center_weight = 1.0;
     if (distanceFromCenter < 1.0)
         center_weight = 1.0;
@@ -200,9 +197,7 @@ double InteractivePolygon::computeRawSmoothInteractionWeight(bpt T)
     double segments_weight = 0.0;
     for (size_t i=0 ; i<segments.size() ; i++)
     {
-        // DOES NOT WORK *********************************************************************
         double distanceFromSegment = segments[i].GetDistanceC1(T);
-        std::cout << "dist from segment #" << i << " = " << distanceFromSegment << std::endl;
         if (distanceFromSegment < 1.0) // if we are very close to any segment: weight is just 0.0
             return 0.0;
         else

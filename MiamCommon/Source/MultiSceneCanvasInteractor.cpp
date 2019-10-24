@@ -241,6 +241,17 @@ uint64_t MultiSceneCanvasInteractor::GetNextAreaId()
     return graphicSessionManager->GetNextAreaId();
 }
 
+int64_t MultiSceneCanvasInteractor::GetSceneIndex(std::shared_ptr<InteractiveScene> sceneToLocate)
+{
+    int64_t sceneIndex = -1;
+    // basic naive research (scenes count will always be low)
+    for (size_t i=0 ; ( (i < scenes.size()) && (sceneIndex == -1)) ; i++)
+        if (sceneToLocate.get() == scenes[i].get())
+            sceneIndex = i;
+    
+    return sceneIndex;
+}
+
 std::vector< std::shared_ptr<InteractiveScene> > MultiSceneCanvasInteractor::GetInteractiveScenes()
 {
     std::vector< std::shared_ptr<InteractiveScene>> interactiveScenes;
@@ -558,7 +569,7 @@ void MultiSceneCanvasInteractor::waitOrTriggerPreComputationBatch()
          i++)
     {
         allScenesHaveFinished = ! scenes[currentPreComputationBatchStartIdx + i]
-                 ->GetIsPreComputingGroupsImages();
+                 ->GetIsPreComputingInteractionData();
     }
     if (allScenesHaveFinished)
     {

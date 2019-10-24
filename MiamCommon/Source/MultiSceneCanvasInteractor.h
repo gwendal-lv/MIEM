@@ -188,6 +188,9 @@ namespace Miam {
         // Scenes
         virtual size_t GetScenesCount() {return scenes.size();}
         virtual std::shared_ptr<EditableScene> GetScene(size_t i) {return scenes[i];}
+        /// \brief Returns the index of the scene if it's actually a scene of this canvas,
+        /// or -1 if not.
+        int64_t GetSceneIndex(std::shared_ptr<InteractiveScene> sceneToLocate);
         
         /// \brief Mostly performs multiple downcasts from Miam::EditableScene
         /// to Miam::InteractiveScene

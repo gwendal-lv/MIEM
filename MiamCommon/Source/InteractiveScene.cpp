@@ -39,7 +39,7 @@ InteractiveScene::InteractiveScene(std::shared_ptr<MultiSceneCanvasInteractor> c
 canvasManager(canvasManager_),
 canvasComponent(canvasComponent_),
 excitersBehavior(excitersBehavior_),
-isPreComputingGroupsImages(false)
+isPreComputingInteractionData(false)
 {
     name = "Default Scene";
     
@@ -633,6 +633,38 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::RecomputeAreaExciterInteractio
 
 
 
+// = = = = = = = = = = AREA GROUPS Pre-Computation of Interaction Data = = = = = = = = = =
+void InteractiveScene::saveImageToPng(std::string pngFile, Image& image)
+{
+#ifdef JUCE_WINDOWS // wants an absolute path........ hum.
+    std::string basePath = "C:/Users/Gwendal/Programmation/";
+#else
+    std::string basePath = "./";
+#endif
+    // if the canvas cannot be locked at this point, we are having a huuuuuuge problem
+    auto lockedCanvasManager = canvasManager.lock();
+    if (!lockedCanvasManager)
+    {
+        std::cout << "[InteractiveScene.cpp] Canvas manager cannot be locked... "
+                  << "Image cannot be saved to PNG." << std::endl;
+        assert(false);
+        return;
+    }
+    int64_t sceneIndexInCanvas = lockedCanvasManager->GetSceneIndex(shared_from_this());
+    std::string pngFilePath = basePath + "Scene" + std::to_string(sceneIndexInCanvas)
+                            + "__" + pngFile;
+    { // tentative destruction avant re-lecture
+        File pngFile(pngFilePath.c_str());
+        if (pngFile.existsAsFile())
+            pngFile.deleteFile();
+    }
+    FileOutputStream stream ( File(pngFilePath.c_str()) );
+    PNGImageFormat pngWriter;
+    bool couldWrite = pngWriter.writeImageToStream(image, stream);
+    // The image must be written in Debug mode....
+    assert(couldWrite);
+}
+
 
 
 // = = = = = = = = = = AREA GROUPS Pre-Computation of Interaction Data = = = = = = = = = =
@@ -640,16 +672,16 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::RecomputeAreaExciterInteractio
 
 std::shared_ptr<AreasGroup> InteractiveScene::GetGroupFromPreComputedImage(int curX, int curY, int curW, int curH)
 {
-    if (! isPreComputingGroupsImages)
+    if (! isPreComputingInteractionData)
     {
         // If Rescale not necessary
-        if (((size_t)curW == groupsImgW) && ((size_t)curH == groupsImgH))
+        if (((size_t)curW == precompImgW) && ((size_t)curH == precompImgH))
         {
-            if ( (curX < 0) || ((int)(groupsImgW) <= curX) // bounds check
-                || (curY < 0) || ((int)(groupsImgH) <= curY) )
+            if ( (curX < 0) || ((int)(precompImgW) <= curX) // bounds check
+                || (curY < 0) || ((int)(precompImgH) <= curY) )
                 return outOfBoundsGroup;
             else // OK, in bounds
-                return groupsImage[ ((size_t)curY) * groupsImgW + ((size_t)curX) ]->shared_from_this();
+                return groupsImage[ ((size_t)curY) * precompImgW + ((size_t)curX) ]->shared_from_this();
         }
         // else ((we must compute an approximation of the group))
         // we block until the groups are properly re-computed.
@@ -669,7 +701,7 @@ std::shared_ptr<AreasGroup> InteractiveScene::GetGroupFromPreComputedImage(int c
 
 void InteractiveScene::TriggerInteractionDataPreComputation()
 {
-    if (isPreComputingGroupsImages)
+    if (isPreComputingInteractionData)
     {
         // double calcul lancé.... mettre sécurité là-dessus
         assert(false);
@@ -680,7 +712,7 @@ void InteractiveScene::TriggerInteractionDataPreComputation()
     // ----- > Computation starts here
 
     guiThreadWaitsForJoin = false;
-    isPreComputingGroupsImages = true;
+    isPreComputingInteractionData = true;
     startTime = std::chrono::steady_clock::now();
 	Logger::outputDebugString("[InteractiveScene.cpp] Starting Pre-Computation of interaction data.......");
     
@@ -688,8 +720,8 @@ void InteractiveScene::TriggerInteractionDataPreComputation()
     if (auto canvasLocked = canvasManager.lock())
         canvasLocked->DisplayInfo("Computing Interaction data...", 40);
     // canvas size
-    groupsImgW = canvasComponent->getWidth();
-    groupsImgH = canvasComponent->getHeight();
+    precompImgW = canvasComponent->getWidth();
+    precompImgH = canvasComponent->getHeight();
     // clones of areas
     for (size_t k = 0 ; k < areas.size() ; k++)
     {
@@ -718,7 +750,7 @@ void InteractiveScene::forceFinishComputationAndWait()
     guiThreadWaitsForJoin = true;
     Logger::outputDebugString(String("...Forced end of tid=")
                               + std::to_string((long long) preComputingThread.native_handle()));
-    while (isPreComputingGroupsImages)
+    while (isPreComputingInteractionData)
         std::this_thread::sleep_for(std::chrono::milliseconds(5));
 }
 
@@ -738,32 +770,57 @@ void InteractiveScene::PreComputeInteractionData()
     boost::ignore_unused(threadName);
 #endif
     
+    // - - - Interaction weights, then areas groups - - -
+    preComputeInteractionWeights();
+    preComputeAreasGroups();
+    
+    // Juste avant fin : lancement du post processing (sauf si attendait la fin...)
+    if (guiThreadWaitsForJoin)
+        return;
+
+    // indicates to the GUI thread that precomputation is finished
+    MessageManager::callAsync([this] { this->interactionData_postComputation(); });
+    
+#ifdef JUCE_ANDROID // only linux provides the full posix interface...
+    Logger::outputDebugString(String("Finishing computation in tid=") + std::to_string(gettid()));
+#endif
+}
+
+void InteractiveScene::preComputeInteractionWeights()
+{
+    areasWeightsImages.clear();
+    for (size_t areaIdx=0 ; areaIdx<areas.size() ; areaIdx++)
+    {
+        areasWeightsImages.push_back({}); // empty vector inserted by initialization list (C++11)
+        areasWeightsImages[areaIdx].resize(precompImgW * precompImgH, 0.0);
+        
+    }
+}
+
+void InteractiveScene::preComputeAreasGroups()
+{
     // Réinitialisation des groupes
     areasGroups.clear();
     
-    
     // Initialisation : mise à zéro du tableau des "couleurs" (en réalité : pointeurs)
     groupsImage.clear();
-    // CONVENTION : axe y vers le bas, indice i (numéro de ligne de matrice)
-    // axe x vers la droite, indice j (numéro de colonne de matrice)
-    // Dans cette image/tableau, le groupe BACK GROUP est différent du groupe NULLPTR
-    // -> important pour l'algo récursif
-    groupsImage.resize(groupsImgW * groupsImgH, nullptr);
-    // Sauvegarde d'une liste des points en attente de propagation
+    groupsImage.resize(precompImgW * precompImgH, nullptr);
+    
+    // Préparation d'une liste des points en attente de propagation
     std::vector<std::pair<size_t, size_t>> neighboursToPropagate;
-    neighboursToPropagate.reserve(3840 * 2160); // 4K propagation
+    neighboursToPropagate.reserve(3840 * 2160); // no further mem allocation for a 4K propagation
     
     // BOUCLE PRINCIPALE : parcours de tous les pixels, tests d'interaction avec toutes les aires
     // (arrêt dès qu'on en touche une).
     // En réalité, le parcours ne pas régulier car chaque pixel dans une zone va déclencher
     // une propagation récursive à toute la zone.
     // -> cette boucle ne stocke rien dans les aires (elle ne fait que détecter leur présence)
-    for (size_t i=0 ; i<groupsImgH ; i++)
+    for (size_t i=0 ; i<precompImgH ; i++)
     {
-        for (size_t j=0 ; j<groupsImgW ; j++)
+        for (size_t j=0 ; j<precompImgW ; j++)
         {
             // On ne fait qqchose que si le pixel n'a pas encore de groupe
-            if (groupsImage[i*groupsImgW + j] == nullptr)
+            if (groupsImage[i*precompImgW + j] == nullptr)
             {
                 // Si collision avec une aire : on déclenche une nouvelle propagation de groupe
                 if (isAnyAreaOnPixel(i, j))
@@ -771,12 +828,12 @@ void InteractiveScene::PreComputeInteractionData()
                     // Init du nouveau groupe, et de son 1ier pixel
                     int nextGroupIndex = (int) areasGroups.size();
                     areasGroups.push_back(std::make_shared<AreasGroup>(nextGroupIndex,
-                                                AreasGroup::GetDefaultColour(nextGroupIndex)));
+                                                                       AreasGroup::GetDefaultColour(nextGroupIndex)));
                     neighboursToPropagate.clear();
-                    groupsImage[i*groupsImgW + j] = areasGroups.back().get();
+                    groupsImage[i*precompImgW + j] = areasGroups.back().get();
                     // Propagation : init
                     auto lastNeighbours = propagateAreaGroup(areasGroups.back().get(),
-                                       i, j);
+                                                             i, j);
                     neighboursToPropagate.insert(neighboursToPropagate.end(),
                                                  lastNeighbours.begin(), lastNeighbours.end());
                     // Propagation : sorte de récurrence, on continue tant que la liste n'est pas
@@ -799,11 +856,11 @@ void InteractiveScene::PreComputeInteractionData()
                 }
                 // Sinon c'est le groupe par défaut, BACK
                 else
-                    groupsImage[i*groupsImgW + j] = backgroundGroup.get();
+                    groupsImage[i*precompImgW + j] = backgroundGroup.get();
             }
         }
     }
-
+    
     // intermediate check for join (might be called on destruction only)
     if (guiThreadWaitsForJoin)
         return;
@@ -814,48 +871,24 @@ void InteractiveScene::PreComputeInteractionData()
     // en bout de triangle très pointu (à cause d'erreurs d'arrondis dans le calcul de collision...)
     //
     //     -> algo d'érosion (paramétré à l'intérieur de la fonction)
-    AreasGroup::ErodeAreasGroups(groupsImage, backgroundGroup.get(), groupsImgW, groupsImgH);
+    AreasGroup::ErodeAreasGroups(groupsImage, backgroundGroup.get(), precompImgW, precompImgH);
     
 #ifdef __MIEM_DISPLAY_SCENE_PRE_COMPUTATION
     // Construction + Affichage de l'image des groupes dans un fichier .png temporaire
-    Image groupsColourImage(Image::PixelFormat::ARGB, (int)groupsImgW, (int)groupsImgH, false);
-    for (size_t i=0 ; i<groupsImgH ; i++)
+    Image groupsColourImage(Image::PixelFormat::ARGB, (int)precompImgW, (int)precompImgH, false);
+    for (size_t i=0 ; i<precompImgH ; i++)
     {
-        for (size_t j=0 ; j<groupsImgW ; j++)
+        for (size_t j=0 ; j<precompImgW ; j++)
         {
-            if (groupsImage[i*groupsImgW+j] != nullptr)
+            if (groupsImage[i*precompImgW+j] != nullptr)
                 groupsColourImage.setPixelAt((int)j, (int)i,
-                                             groupsImage[i*groupsImgW+j]->GetColour());
+                                             groupsImage[i*precompImgW+j]->GetColour());
             else
                 groupsColourImage.setPixelAt((int)j, (int)i,
                                              Colours::black);
         }
     }
-#ifdef JUCE_WINDOWS // wants an absolute path........ hum.
-	std::string pngFilePath = "C:\\Users\\Gwendal\\Programmation\\Debug_AreasGroups.png";
-#else
-	std::string pngFilePath = "./Debug_AreasGroups.png";
-#endif
-    { // tentative destruction avant re-lecture
-        File pngFile(pngFilePath.c_str());
-        if (pngFile.existsAsFile())
-            pngFile.deleteFile();
-    }
-    FileOutputStream stream ( File(pngFilePath.c_str()) );
-    PNGImageFormat pngWriter;
-    bool couldWrite = pngWriter.writeImageToStream(groupsColourImage, stream);
-    // The image must be written in Debug mode....
-    assert(couldWrite);
-#endif
-    
-    // Juste avant fin : lancement du post processing (sauf si attendait la fin...)
-    if (guiThreadWaitsForJoin)
-        return;
-
-    MessageManager::callAsync([this] { this->assignGroupsToAreas_postComputation(); });
-    
-#ifdef JUCE_ANDROID // only linux provides the full posix interface...
-    Logger::outputDebugString(String("Finishing computation in tid=") + std::to_string(gettid()));
+    saveImageToPng("AreasGroups.png", groupsColourImage);
 #endif
 }
 
@@ -864,8 +897,8 @@ InteractiveScene::propagateAreaGroup(AreasGroup* groupToPropagate, size_t i0, si
 {
     const bool prevRowExists = (i0 > 0);
     const bool prevColExists = (j0 > 0);
-    const bool nextRowExists = (i0 < (groupsImgH - 1));
-    const bool nextColExists = (j0 < (groupsImgW - 1));
+    const bool nextRowExists = (i0 < (precompImgH - 1));
+    const bool nextColExists = (j0 < (precompImgW - 1));
     std::vector<std::pair<size_t, size_t>> neighbourGroupPixels;
     // 8 potential pixels to propagate the group to.
     // If none of the 8 pixels needs to propagate, the propagation stops here.
@@ -900,7 +933,7 @@ InteractiveScene::propagateAreaGroup(AreasGroup* groupToPropagate, size_t i0, si
     
     return neighbourGroupPixels;
 }
-void InteractiveScene::assignGroupsToAreas_postComputation()
+void InteractiveScene::interactionData_postComputation()
 {
     bool dataIncoherenceDetected = areas.size() != clonedAreas.size();
     
@@ -929,7 +962,7 @@ void InteractiveScene::assignGroupsToAreas_postComputation()
                 size_t row = (size_t) std::round(centerInPixels.get<1>());
                 size_t col = (size_t) std::round(centerInPixels.get<0>());
                 // The shared pointer was created when starting the propagation
-                auto groupSharedPtr = groupsImage[row*groupsImgW + col]->shared_from_this();
+                auto groupSharedPtr = groupsImage[row*precompImgW + col]->shared_from_this();
                 areas[k]->SetAreasGroup(groupSharedPtr);
             }
             // Si incohérence... go to back. Bim.
@@ -961,7 +994,7 @@ void InteractiveScene::assignGroupsToAreas_postComputation()
 	Logger::outputDebugString("[InteractiveScene.cpp]         ----->   Threaded Pre-Computation finished. Duration = " + boost::lexical_cast<std::string>(std::chrono::duration_cast<std::chrono::milliseconds>(processDuration).count()) + " ms" );
     
     // Fin
-    isPreComputingGroupsImages = false;
+    isPreComputingInteractionData = false;
 }
 
 

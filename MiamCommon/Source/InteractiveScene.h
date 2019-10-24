@@ -116,6 +116,15 @@ namespace Miam
         std::map<int, std::shared_ptr<IEditableArea>> touchSourceToEditableArea;
         
         
+        size_t precompImgW = 0; ///> Pre-Computation Images Width (for groups and weights)
+        size_t precompImgH = 0;
+        /// \brief The last versions of the 2D image containing the weight of each pixel
+        /// of the scene, for each area. Data might be outdated.
+        ///
+        /// CONVENTION : axe y vers le bas: indice i (numéro de ligne de matrice)
+        /// axe x vers la droite: indice j (numéro de colonne de matrice)
+        std::vector<std::vector<double>> areasWeightsImages;
+        
         /// \brief The groups of overlapping areas (not a list, because only a few groups
         /// are expected)
         std::vector<std::shared_ptr<AreasGroup>> areasGroups;
@@ -127,14 +136,18 @@ namespace Miam
         std::shared_ptr<AreasGroup> outOfBoundsGroup;
         /// \brief The last version of the 2D image description the area group of each pixel
         /// of the scene. Data might be outdated.
+        ///
+        /// CONVENTION : axe y vers le bas: indice i (numéro de ligne de matrice)
+        /// axe x vers la droite: indice j (numéro de colonne de matrice)
+        /// Et : Dans cette image/tableau, le groupe BACK GROUP est différent du groupe NULLPTR
+        /// -> important pour l'algo récursif
         std::vector<AreasGroup*> groupsImage;
-        size_t groupsImgW = 0;
-        size_t groupsImgH = 0;
+        
         // attributes for multi-threaded computation
         std::thread preComputingThread;
         std::atomic<bool> guiThreadWaitsForJoin;
         std::chrono::time_point<std::chrono::steady_clock> startTime;
-        std::atomic<bool> isPreComputingGroupsImages;
+        std::atomic<bool> isPreComputingInteractionData;
         std::vector< std::shared_ptr<IInteractiveArea> > clonedAreas;
         
         
@@ -185,7 +198,7 @@ namespace Miam
     
         
         // - - - - - Lock-free, thread safe pre-computation info - - - - -
-        bool GetIsPreComputingGroupsImages() { return isPreComputingGroupsImages; }
+        bool GetIsPreComputingInteractionData() { return isPreComputingInteractionData; }
         
         
         
@@ -316,13 +329,8 @@ namespace Miam
         std::shared_ptr<MultiAreaEvent> RecomputeAreaExciterInteractions();
         
         
-        
-        // - - - - - AREA GROUPS pre-computation - - - - -
-        
-        /// \brief Récupère le résultat de pré-computation, en prenant un résultat dans l'image
-        /// enregistrée (attention, mise à l'échelle de l'image si canvas a changé de taille)
-        virtual std::shared_ptr<AreasGroup>
-        GetGroupFromPreComputedImage(int curX, int curY, int curW, int curH) override;
+        // - - - - - INTERACTIONS pre-computation - - - - -
+        public :
         /// \brief Déclenche le calcul des données d'interaction, pour la taille actuelle du canevas.
         /// Thread-safe. Va bloquer les mouvements d'excitateur tant que le calcul n'est pas terminé.
         void TriggerInteractionDataPreComputation();
@@ -331,12 +339,30 @@ namespace Miam
         void forceFinishComputationAndWait();
         /// \brief Pré-calcule toutes les données internes qui serviront à optimiser le jeu,
         /// notamment : 1) les groupes d'aires qui se chevauchent, pour empêcher les excitateurs
-        /// d'en sortir, et 2) les poids d'interaction pour chaque pixel (en prévision des
-        /// calculs via T-Splines, sûrement trop lourds donc pré-rendus)
+        /// d'en sortir, et 2) les poids d'interaction pour chaque pixel
         ///
-        /// Attention, cette fonction est assez lourde et doit être utilisée le moins souvent possible
-        /// et tant qu'on ne connait pas les groupes... On interdit le déplacement des excitateurs
+        /// Attention, cette fonction est assez lourde et doit être utilisée le moins souvent possible.
+        /// Et tant qu'on ne connait pas les groupes... On interdit le déplacement des excitateurs
         void PreComputeInteractionData();
+        /// \brief Main function triggered for interaction weights pre-computation
+        void preComputeInteractionWeights();
+        
+        private :
+        void saveImageToPng(std::string pngFile, Image& image);
+        inline size_t getPxIdx(size_t i, size_t j)
+        { return i * precompImgW + j; }
+        
+        
+        // - - - - - AREA GROUPS pre-computation - - - - -
+        public :
+        /// \brief Récupère le résultat de pré-computation, en prenant un résultat dans l'image
+        /// enregistrée (attention, mise à l'échelle de l'image si canvas a changé de taille)
+        virtual std::shared_ptr<AreasGroup>
+        GetGroupFromPreComputedImage(int curX, int curY, int curW, int curH) override;
+        
+        protected :
+        /// \brief Main function triggered for areas group pre-computation
+        void preComputeAreasGroups();
         /// \brief Internal help for testing if there is any area on the specified pixel
         inline bool isAnyAreaOnPixel(size_t row, size_t col)
         {
@@ -361,7 +387,7 @@ namespace Miam
         inline bool tryPropagateToPixel(AreasGroup* groupToPropagate,
                                         size_t i0, size_t j0)
         {
-            size_t k0 = i0 * groupsImgW + j0;
+            size_t k0 = i0 * precompImgW + j0;
             // If groups image is empty, we test it and store the result
             // (and we ask for the parent caller to propagate it)
             if (groupsImage[k0] == nullptr)
@@ -369,7 +395,6 @@ namespace Miam
                 if (isAnyAreaOnPixel(i0, j0))
                 {
                     groupsImage[k0] = groupToPropagate;
-                    //std::cout << "Propagation groupe " << groupToPropagate << " en " << i0 << ";" << j0 << std::endl;
                     return true;
                 }
                 else
@@ -382,15 +407,11 @@ namespace Miam
             else
             {
                 assert((groupsImage[k0] == groupToPropagate) || (groupsImage[k0] == backgroundGroup.get()));
-                /*
-                if (! ((groupsImage[k0] == groupToPropagate) || (groupsImage[k0] == backgroundGroup.get())))
-                    std::cout << "Groupe " << groupToPropagate << " : collision en " << i0 << ";" << j0 << ", pixel déjà sur groupe " << groupsImage[k0] << " (back = " << backgroundGroup.get()  << ")" << std::endl;
-                 */
                 return false; // no need to propagate through this pixel
             }
         }
         /// \brief To be executed on Juce Message thread
-        void assignGroupsToAreas_postComputation();
+        void interactionData_postComputation();
         
         
         // - - - - - AREA GROUPS research of closest point - - - - -

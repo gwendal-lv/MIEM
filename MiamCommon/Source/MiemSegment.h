@@ -58,7 +58,8 @@ namespace Miam
         inline double GetDistanceC1(bpt pt)
         {
             // from Original Python code
-            double dot_product_along_segment = DotProduct(directionVector, beginPt);
+            
+            double dot_product_along_segment = DotProduct(directionVector, SubtractPoints(pt, beginPt));
             // pt projection is inside this segment -> length of projection
             if ( (0.0 < dot_product_along_segment)
                 && (dot_product_along_segment < length) )
@@ -89,12 +90,12 @@ namespace Miam
                        pt1.get<1>() - pt2.get<1>());
         }
         /// \brief Computes a dot product on 2D boost points (considered as vectors)
-        inline static double DotProduct(bpt& pt1, bpt& pt2)
+        inline static double DotProduct(bpt pt1, bpt pt2)
         {
             return pt1.get<0>() * pt2.get<0>() + pt1.get<1>() * pt2.get<1>();
         }
         /// \brief Multiply point...... has meaning if the bpt is a vector
-        inline static bpt MultiplyPoint(bpt& pt, double factor)
+        inline static bpt MultiplyPoint(bpt pt, double factor)
         {
             return bpt(pt.get<0>() * factor, pt.get<1>() * factor);
         }
