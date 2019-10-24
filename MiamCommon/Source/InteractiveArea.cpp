@@ -181,6 +181,23 @@ void InteractiveArea::OnNewExcitementAmount(const std::shared_ptr<Exciter>& send
 }
 
 
+void InteractiveArea::ComputeInteractionWeightsInImage(std::vector<double>& img,
+                                                       size_t imgW, size_t imgH)
+{
+    for (size_t i=0 ; i<imgH ; i++)
+    {
+        for (size_t j=0 ; j<imgW ; j++)
+        {
+            bpt T = bpt((double)j, (double)i);
+            if (HitTest(T))
+                img[i*imgW + j] = ComputeInteractionWeight(T);
+            else
+                img[i*imgW + j] = 0.0;
+        }
+    }
+}
+
+
 size_t InteractiveArea::getExciterLocalIndex(const std::shared_ptr<Exciter>& exciter)
 {
     size_t i;

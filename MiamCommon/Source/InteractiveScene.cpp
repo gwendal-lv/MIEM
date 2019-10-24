@@ -772,6 +772,9 @@ void InteractiveScene::PreComputeInteractionData()
     
     // - - - Interaction weights, then areas groups - - -
     preComputeInteractionWeights();
+    // intermediate check for join (might be called on destruction only)
+    if (guiThreadWaitsForJoin)
+        return;
     preComputeAreasGroups();
     
     // Juste avant fin : lancement du post processing (sauf si attendait la fin...)
@@ -791,9 +794,31 @@ void InteractiveScene::preComputeInteractionWeights()
     areasWeightsImages.clear();
     for (size_t areaIdx=0 ; areaIdx<areas.size() ; areaIdx++)
     {
+        // Actual computation of the images
         areasWeightsImages.push_back({}); // empty vector inserted by initialization list (C++11)
         areasWeightsImages[areaIdx].resize(precompImgW * precompImgH, 0.0);
+        areas[areaIdx]->ComputeInteractionWeightsInImage(areasWeightsImages[areaIdx],
+                                                         precompImgW, precompImgH);
+        // if requested: results stored in images
+#ifdef __MIEM_DISPLAY_SCENE_PRE_COMPUTATION
+        // Construction + Affichage de l'image des groupes dans un fichier .png temporaire
+        Image colourImage(Image::PixelFormat::ARGB, (int)precompImgW, (int)precompImgH, false);
+        for (size_t i=0 ; i<precompImgH ; i++)
+        {
+            for (size_t j=0 ; j<precompImgW ; j++)
+            {
+                float weight = (float) areasWeightsImages[areaIdx][i*precompImgW + j];
+                colourImage.setPixelAt((int)j, (int)i,
+                                       juce::Colour::fromHSV(0.0f, 0.0f, weight, 1.0f));
+            }
+        }
+        std::string pngName = "Area" + std::to_string(areaIdx) + ".png";
+        saveImageToPng(pngName, colourImage);
+#endif
         
+        // intermediate check for join (might be called on destruction only)
+        if (guiThreadWaitsForJoin)
+            return;
     }
 }
 

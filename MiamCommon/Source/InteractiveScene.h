@@ -123,6 +123,9 @@ namespace Miam
         ///
         /// CONVENTION : axe y vers le bas: indice i (numéro de ligne de matrice)
         /// axe x vers la droite: indice j (numéro de colonne de matrice)
+        ///
+        /// These images are not stored inside the areas themselves, to prevent useless data copy
+        /// when the areas are cloned and sent to the OpenGL thread
         std::vector<std::vector<double>> areasWeightsImages;
         
         /// \brief The groups of overlapping areas (not a list, because only a few groups

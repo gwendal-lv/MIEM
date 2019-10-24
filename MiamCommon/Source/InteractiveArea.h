@@ -123,7 +123,17 @@ namespace Miam
         virtual void OnNewExcitementAmount(const std::shared_ptr<Exciter>& sender, Excitement excitementAmount) override;
         
         
+        
         // see IInteractiveArea.h
+        
+        
+        /// \brief Computes the interaction weights of the shape into an image that must have
+        /// been previously created.
+        ///
+        /// CONVENTION : axe y vers le bas: indice i (numéro de ligne de matrice) (Height axis)
+        /// axe x vers la droite: indice j (numéro de colonne de matrice) (Width axis)
+        virtual void ComputeInteractionWeightsInImage(std::vector<double>& img, size_t imgW, size_t imgH) override;
+        
         virtual void SetAreasGroup(std::shared_ptr<AreasGroup>& _group) override
         { group = _group; }
         virtual std::shared_ptr<AreasGroup> GetAreasGroup() override

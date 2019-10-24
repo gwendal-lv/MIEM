@@ -69,6 +69,9 @@ namespace Miam
         ///
         /// \return The interaction weight in [0.0 ; 1.0]
         virtual double ComputeInteractionWeight(bpt T) = 0;
+        /// \brief Computes the interaction weights of the shape into an image that must have
+        /// been previously created, and initialized to zero.
+        virtual void ComputeInteractionWeightsInImage(std::vector<double>& img, size_t imgW, size_t imgH) = 0;
         
 		virtual double GetSurface() = 0;
         
