@@ -43,10 +43,14 @@ namespace Miam
         /// Used as a normalized factor for the smooth (v1.2) weights computation
         double rawCenterWeight = 1.0;
         
-        private :
         
-        
-        
+        public :
+#ifdef __MIEM_EXPERIMENTS
+        /// \brief Dirty, global, thread unsafe variable for telling all areas wether to use
+        /// the new or the old weights computation method (for EXPERIMENTS only)
+        static bool useSmoothWeights;
+#endif
+       
         
         
         // ================== Setters & Getters ====================

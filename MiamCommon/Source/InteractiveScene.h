@@ -334,6 +334,15 @@ namespace Miam
         
         // - - - - - INTERACTIONS pre-computation - - - - -
         public :
+        static std::string GetBaseInteractionImagesPath()
+        {
+#ifdef JUCE_WINDOWS // wants an absolute path........ hum.
+            std::string basePath = "C:/Users/Gwendal/Programmation/InteractionImages/";
+#else
+            std::string basePath = "./InteractionImages/";
+#endif
+            return basePath;
+        }
         /// \brief Déclenche le calcul des données d'interaction, pour la taille actuelle du canevas.
         /// Thread-safe. Va bloquer les mouvements d'excitateur tant que le calcul n'est pas terminé.
         void TriggerInteractionDataPreComputation();

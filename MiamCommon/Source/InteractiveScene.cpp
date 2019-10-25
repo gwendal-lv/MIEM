@@ -641,11 +641,7 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::RecomputeAreaExciterInteractio
 // = = = = = = = = = = AREA GROUPS Pre-Computation of Interaction Data = = = = = = = = = =
 void InteractiveScene::saveImageToPng(std::string pngFile, Image& image)
 {
-#ifdef JUCE_WINDOWS // wants an absolute path........ hum.
-    std::string basePath = "C:/Users/Gwendal/Programmation/";
-#else
-    std::string basePath = "./";
-#endif
+    std::string basePath = GetBaseInteractionImagesPath();
     // if the canvas cannot be locked at this point, we are having a huuuuuuge problem
     auto lockedCanvasManager = canvasManager.lock();
     if (!lockedCanvasManager)
@@ -808,14 +804,14 @@ void InteractiveScene::preComputeInteractionWeights()
 #ifdef __MIEM_DISPLAY_SCENE_PRE_COMPUTATION
         // Construction + Affichage de l'image des groupes dans un fichier .png temporaire
         Image colourImage(Image::PixelFormat::ARGB, (int)precompImgW, (int)precompImgH, false);
-        float areaHue = clonedAreas[areaIdx]->GetFillColour().getHue();
+        //float areaHue = clonedAreas[areaIdx]->GetFillColour().getHue(); // not used anymore -> unsaturated grey values
         for (size_t i=0 ; i<precompImgH ; i++)
         {
             for (size_t j=0 ; j<precompImgW ; j++)
             {
                 float weight = (float) areasWeightsImages[areaIdx][i*precompImgW + j];
                 colourImage.setPixelAt((int)j, (int)i,
-                                       juce::Colour::fromHSV(areaHue, 1.0f, weight, 1.0f));
+                                       juce::Colour::fromHSV(0.0f, 0.0f, weight, 1.0f));
             }
         }
         std::string areaIdxStr = ((areaIdx >= 10) ? "" : "0") + std::to_string(areaIdx); // 2-digits string

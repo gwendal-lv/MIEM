@@ -539,11 +539,17 @@ void MultiSceneCanvasInteractor::TriggerInteractionDataPreComputation()
     shouldRestartPreComputationBatch = true;
     numberOfWaitingRestarts++;
     
+    // If pre-computation are stored: we empty the whole folder
+#ifdef __MIEM_DISPLAY_SCENE_PRE_COMPUTATION
+    File imagesFolder(InteractiveScene::GetBaseInteractionImagesPath());
+    imagesFolder.deleteRecursively();
+    imagesFolder.createDirectory();
+#endif
     
-    // For 1 core (does it still exist ???) or 2 cores (smartphones, e.g. iphone 7)
+    // For 1 core (small embedded platforms...) or 2 cores (smartphones, e.g. iphone 7)
     // -> we use the whole CPU. Computing threads are not high-priority, the OS will manage
     // Juce and the computing threads together.
-    // For more cores : we leave 1 core free for the best UX
+    // For more cores : we leave 1 core free for keeping a good UX responsivity
     if ((SystemStats::getNumCpus() == 1)
         || (SystemStats::getNumCpus() == 2))
         nbCoresToUse = SystemStats::getNumCpus();

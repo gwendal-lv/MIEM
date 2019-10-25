@@ -25,6 +25,10 @@
 
 using namespace Miam;
 
+#ifdef __MIEM_EXPERIMENTS
+bool InteractivePolygon::useSmoothWeights = true;
+#endif
+
 
 // ===== CONSTRUCTORS & DESTRUCTORS =====
 
@@ -149,9 +153,10 @@ double InteractivePolygon::ComputeInteractionWeight(bpt T)
     // else, we choose the old or the new (>= v1.2.0) continuous weight computation
     else
     {
+#ifdef __MIEM_EXPERIMENTS
         // TODO Allow selection of old or new method, with a dirty global variable...
         // (functionnality reserved for experiments, not for release versions)
-        if (/* DISABLES CODE */ (false))
+        if (! InteractivePolygon::useSmoothWeights)
         {
             bpt GT(T.get<0>() - centerInPixels.get<0>(), T.get<1>() - centerInPixels.get<1>());
             // Angle à partir de l'axe x (horizontal vers la droite)
@@ -164,9 +169,13 @@ double InteractivePolygon::ComputeInteractionWeight(bpt T)
         }
         else
         {
+#endif
+            // This code will the only weight computation executed for experiment versions.
             weight = computeRawSmoothInteractionWeight(T) / rawCenterWeight;
             weight = Math::SplineDistortionC2(weight);
+#ifdef __MIEM_EXPERIMENTS
         }
+#endif
     }
     
     return weight;
