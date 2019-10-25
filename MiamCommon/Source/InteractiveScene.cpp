@@ -602,8 +602,13 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::testAreasInteractionsWithExcit
     // PASSE 1
     for (size_t i = 0 ; i < areas.size() ; i++)
     {
+        std::shared_ptr<AreaEvent> areaE;
+        if (isPreComputingInteractionData)
+            areaE = areas[i]->UpdateInteraction(exciter);
+        else // precomp images might be used for hit test only (not for precise retina-screen quantification)
+            areaE = areas[i]->UpdateInteraction(exciter, false, &(areasWeightsImages[i]),
+                                                precompImgW, precompImgH);
         // Si qqchose a changé, on renvoit l'info
-        auto areaE = areas[i]->UpdateInteraction(exciter);
         if ( areaE->GetType() == AreaEventType::ExcitementAmountChanged )
         {
             areaE->SetConcernedScene(shared_from_this()); // pas précisé dans l'aire, qui ne connaît pas son parent.
@@ -797,22 +802,24 @@ void InteractiveScene::preComputeInteractionWeights()
         // Actual computation of the images
         areasWeightsImages.push_back({}); // empty vector inserted by initialization list (C++11)
         areasWeightsImages[areaIdx].resize(precompImgW * precompImgH, 0.0);
-        areas[areaIdx]->ComputeInteractionWeightsInImage(areasWeightsImages[areaIdx],
-                                                         precompImgW, precompImgH);
+        clonedAreas[areaIdx]->ComputeInteractionWeightsInImage(areasWeightsImages[areaIdx],
+                                                               precompImgW, precompImgH);
         // if requested: results stored in images
 #ifdef __MIEM_DISPLAY_SCENE_PRE_COMPUTATION
         // Construction + Affichage de l'image des groupes dans un fichier .png temporaire
         Image colourImage(Image::PixelFormat::ARGB, (int)precompImgW, (int)precompImgH, false);
+        float areaHue = clonedAreas[areaIdx]->GetFillColour().getHue();
         for (size_t i=0 ; i<precompImgH ; i++)
         {
             for (size_t j=0 ; j<precompImgW ; j++)
             {
                 float weight = (float) areasWeightsImages[areaIdx][i*precompImgW + j];
                 colourImage.setPixelAt((int)j, (int)i,
-                                       juce::Colour::fromHSV(0.0f, 0.0f, weight, 1.0f));
+                                       juce::Colour::fromHSV(areaHue, 1.0f, weight, 1.0f));
             }
         }
-        std::string pngName = "Area" + std::to_string(areaIdx) + ".png";
+        std::string areaIdxStr = ((areaIdx >= 10) ? "" : "0") + std::to_string(areaIdx); // 2-digits string
+        std::string pngName = "Area" + areaIdxStr + ".png";
         saveImageToPng(pngName, colourImage);
 #endif
         
@@ -848,7 +855,7 @@ void InteractiveScene::preComputeAreasGroups()
             if (groupsImage[i*precompImgW + j] == nullptr)
             {
                 // Si collision avec une aire : on déclenche une nouvelle propagation de groupe
-                if (isAnyAreaOnPixel(i, j))
+                if (isAnyClonedAreaOnPixel_fromPrecomputedImages(i, j))
                 {
                     // Init du nouveau groupe, et de son 1ier pixel
                     int nextGroupIndex = (int) areasGroups.size();

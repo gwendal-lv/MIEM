@@ -95,9 +95,16 @@ namespace Miam
         /// \param forceDisableInteraction If true, even if the exciter intersects
         /// the shape, its effects will be null
         ///
+        /// \param If it has been pre-computed (and is still valid),
+        /// the image of weights of the area (size of canvas). Will be used for hit tests only,
+        /// not for precise weight quantification (always live-recomputed for retina screens)
+        ///
         /// \returns Wether the interaction between this
         /// area and an exciter has changed, or not.
-        std::shared_ptr<AreaEvent> UpdateInteraction(std::shared_ptr<Exciter>& exciter, bool forceDisableInteraction = false) override;
+        virtual std::shared_ptr<AreaEvent> UpdateInteraction(std::shared_ptr<Exciter>& exciter,
+                                                             bool forceDisableInteraction = false,
+                                                             std::vector<double> * weightsImage = nullptr,
+                                                             size_t imgW = 0, size_t imgH = 0) override;
         /// \brief Appelé par un excitateur qui est supprimé (mais on ne sais lequel).
         /// On doit forcer la suppression, en effet
         /// sinon le test de collision de "UpdateInteraction" resterait

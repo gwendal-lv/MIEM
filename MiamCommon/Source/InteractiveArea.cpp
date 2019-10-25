@@ -51,13 +51,28 @@ void InteractiveArea::CanvasResized(SceneCanvasComponent* _parentCanvas)
 
 // = = = = = = = = = = Interaction avec Excitateurs = = = = = = = = = =
 
-std::shared_ptr<AreaEvent> InteractiveArea::UpdateInteraction(std::shared_ptr<Exciter>& exciter, bool forceDisableInteraction)
+std::shared_ptr<AreaEvent> InteractiveArea::UpdateInteraction(std::shared_ptr<Exciter>& exciter,
+                                                              bool forceDisableInteraction,
+                                                              std::vector<double> * weightsImage,
+                                                              size_t imgW, size_t imgH )
 {
     // Évènement "nothing" par défaut... Peut-être modifié dans la suite
     auto areaE = std::make_shared<AreaEvent>();
     
     //  - - - Test d'interaction pour commencer - - -
-    bool hitTestResult = HitTest(exciter->GetCenterInPixels()) && (! forceDisableInteraction);
+    bool hitTestResult = false;
+    // use pre-computed values if possible (warning : non-retina computed values)
+    auto exciterCenterPos = exciter->GetCenterInPixels();
+    if ((imgW > 0) && (imgH > 0) && (weightsImage != nullptr))
+    {
+        int centerX = (int) std::round(exciterCenterPos.get<0>());
+        int centerY = (int) std::round(exciterCenterPos.get<1>());
+        // access with out-of-bounds check
+        hitTestResult = (weightsImage->at(centerY * imgW + centerX) > 0.0);
+    }
+    // or, recompute all values (retina computation)
+    else
+        hitTestResult = HitTest(exciterCenterPos) && (! forceDisableInteraction);
     
     
     //  - - - Ensuite, on regarde si l'excitateur fait déjà partie, ou non,

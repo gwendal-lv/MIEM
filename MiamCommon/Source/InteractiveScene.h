@@ -347,7 +347,14 @@ namespace Miam
         /// Attention, cette fonction est assez lourde et doit être utilisée le moins souvent possible.
         /// Et tant qu'on ne connait pas les groupes... On interdit le déplacement des excitateurs
         void PreComputeInteractionData();
-        /// \brief Main function triggered for interaction weights pre-computation
+        /// \brief Main function triggered for interaction weights pre-computation. These weights image will
+        /// be used to know if a point intersects an area, for computing the groups,
+        /// and for studying the interface.
+        ///
+        /// macOS profiling shows that computing the weights from these images might not be necessary...
+        /// OpenGL still requires much more CPU for allocating/freeing data blocks, and handling threads.
+        /// The direct computation is kept because it is more precise on retina screens (pre-computed
+        /// images do not consider retina screens).
         void preComputeInteractionWeights();
         
         private :
@@ -367,11 +374,20 @@ namespace Miam
         /// \brief Main function triggered for areas group pre-computation
         void preComputeAreasGroups();
         /// \brief Internal help for testing if there is any area on the specified pixel
-        inline bool isAnyAreaOnPixel(size_t row, size_t col)
+        inline bool isAnyClonedAreaOnPixel(size_t row, size_t col)
         {
             bool foundArea = false;
             for (size_t k = 0 ; (k<clonedAreas.size() && (! foundArea)) ; k++)
                 foundArea = clonedAreas[k]->HitTest(bpt((double)col, (double)row));
+            return foundArea;
+        }
+        /// \brief Optimized version of the isAnyAreaOnPixel help, that uses the precomputed
+        /// images of weights for all areas
+        inline bool isAnyClonedAreaOnPixel_fromPrecomputedImages(size_t row, size_t col)
+        {
+            bool foundArea = false;
+            for (size_t k = 0 ; (k<clonedAreas.size() && (! foundArea)) ; k++)
+                foundArea = (areasWeightsImages[k][getPxIdx(row, col)] > 0.0);
             return foundArea;
         }
         private :
@@ -395,7 +411,7 @@ namespace Miam
             // (and we ask for the parent caller to propagate it)
             if (groupsImage[k0] == nullptr)
             {
-                if (isAnyAreaOnPixel(i0, j0))
+                if (isAnyClonedAreaOnPixel_fromPrecomputedImages(i0, j0))
                 {
                     groupsImage[k0] = groupToPropagate;
                     return true;
