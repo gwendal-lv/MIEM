@@ -19,24 +19,19 @@
 
 using namespace Miam;
 
-/* Plus cette valeur est grande, plus l'influence d'une aire augmente rapidement
- * à mesure que l'on s'approche du centre.
- * Cette valeur agit indépendemment du calcul de poids d'interaction par projection 2D
- * dans un sous-triangle d'un polygone.
- *
- * Avec de grandes valeur, on tend à donner + de précision aux faibles poids d'interaction :
- * une petite variation de faible volume entrée, va donner une grande variation de
- * moyen volume en sortie.
- *
- * Par rapport au script Matlab : c'est le facteur d'influence numéro 2
- * (le 1 donne de l'importance aux faibles poids et casse la dynamique des transitions à vol. constant)
- *
- * neutre = 0
- * max = 1
+
+/* The spline distorsion applied to smooth weights is needed, because of the hard gradients
+ * obtained near the outline of the polygon.
+ * See a description of the spline in Math:: class
  */
+const int InteractionParameters::DistorsionSplineClass = 2;
 
-const double InteractionParameters::InfluenceOfDistanceFromCenter = 0.75;
-
+/* Inside the smooth weights computation, a weighted sum is computed. This ratio
+ * quantifies the ratio between the center's weight, and the combined weight of
+ * all segments.
+ * E.g. : for 5 segments and a ratio of 0.6, the center will have a weight of 3.0
+ */
+const double InteractionParameters::CenterToSegmentsWeightRatio = 0.7;
 
 
 /* Plus cette valeur est grande, plus les volumes sont déformés

@@ -172,7 +172,7 @@ double InteractivePolygon::ComputeInteractionWeight(bpt T)
 #endif
             // This code will the only weight computation executed for experiment versions.
             weight = computeRawSmoothInteractionWeight(T) / rawCenterWeight;
-            weight = Math::SplineDistortionC2(weight);
+            weight = Math::SplineDistortion(weight, 3);
 #ifdef __MIEM_EXPERIMENTS
         }
 #endif

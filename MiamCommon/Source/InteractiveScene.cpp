@@ -653,7 +653,7 @@ void InteractiveScene::saveImageToPng(std::string pngFile, Image& image)
     }
     int64_t sceneIndexInCanvas = lockedCanvasManager->GetSceneIndex(shared_from_this());
     std::string pngFilePath = basePath + "Scene" + std::to_string(sceneIndexInCanvas)
-                            + "__" + pngFile;
+                            + "_" + pngFile;
     { // tentative destruction avant re-lecture
         File pngFile(pngFilePath.c_str());
         if (pngFile.existsAsFile())
@@ -804,14 +804,15 @@ void InteractiveScene::preComputeInteractionWeights()
 #ifdef __MIEM_DISPLAY_SCENE_PRE_COMPUTATION
         // Construction + Affichage de l'image des groupes dans un fichier .png temporaire
         Image colourImage(Image::PixelFormat::ARGB, (int)precompImgW, (int)precompImgH, false);
-        //float areaHue = clonedAreas[areaIdx]->GetFillColour().getHue(); // not used anymore -> unsaturated grey values
+        float areaHue = clonedAreas[areaIdx]->GetFillColour().getHue(); // not used anymore -> unsaturated grey values
         for (size_t i=0 ; i<precompImgH ; i++)
         {
             for (size_t j=0 ; j<precompImgW ; j++)
             {
                 float weight = (float) areasWeightsImages[areaIdx][i*precompImgW + j];
+                // fully saturated colors
                 colourImage.setPixelAt((int)j, (int)i,
-                                       juce::Colour::fromHSV(0.0f, 0.0f, weight, 1.0f));
+                                       juce::Colour::fromHSV(areaHue, 1.0f, weight, 1.0f));
             }
         }
         std::string areaIdxStr = ((areaIdx >= 10) ? "" : "0") + std::to_string(areaIdx); // 2-digits string

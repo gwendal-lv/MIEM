@@ -39,7 +39,7 @@ namespace Miam
         // TODO make indexes consistent
         std::vector<bpolygon> edgesHitBoxes; ///< Arête k correspond aux points k et k+1
         
-        /// \brief Not corrected weight at the center of the shape.
+        /// \brief Uncorrected weight at the center of the shape.
         /// Used as a normalized factor for the smooth (v1.2) weights computation
         double rawCenterWeight = 1.0;
         

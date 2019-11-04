@@ -133,24 +133,37 @@ namespace Miam
         
         // - - - - -  Splines to make the weight computations G1 or G2 (from Python code) - - - - -
         
-        /// \brief Spline from [0.0 ; 1.0] to [0.0 ; 1.0], with null derivatives on 0.0 and 1.0
-        static inline double SplineDistortionC1(double normalized_input)
+        /// \brief Bijective spline from [0.0 ; 1.0] to [0.0 ; 1.0].
+        /// The continuity class represents the number of null derivates on 0.0 and 1.0, e.g.
+        /// order 2 corresponds the 1st and 2nd order derivates null on 0.0 and 1.0 with
+        /// null derivatives on 0.0 and 1.0.
+        static inline double SplineDistortion(double normalized_input, int splineClass)
         {
-            return -2.0 * std::pow(normalized_input, 3) + 3.0 * std::pow(normalized_input, 2);
+            switch (splineClass)
+            {
+                case 1:
+                    // null derivatives
+                    return -2.0 * std::pow(normalized_input, 3) + 3.0 * std::pow(normalized_input, 2);
+                    break;
+                    
+                case 2:
+                    // null derivatives and accelerations on 0.0 and 1.0
+                    return 6.0 * std::pow(normalized_input, 5) - 15.0 * std::pow(normalized_input, 4)
+                    + 10.0 * std::pow(normalized_input, 3);
+                    break;
+                    
+                case 3:
+                    // null derivatives (of 1st, 2nd and 3rd order) on 0.0 and 1.0
+                    return -20.0 * std::pow(normalized_input, 7) + 70.0 * std::pow(normalized_input, 6)
+                    - 84.0 * std::pow(normalized_input, 5) + 35.0 * std::pow(normalized_input, 4);
+                    break;
+                    
+                default:
+                    assert(false); // Spline order not implemented...
+                    return normalized_input;
+            }
         }
-        /// \brief Spline from [0.0 ; 1.0] to [0.0 ; 1.0], with null derivatives and accelerations on 0.0 and 1.0
-        static inline double SplineDistortionC2(double normalized_input)
-        {
-            return 6.0 * std::pow(normalized_input, 5) - 15.0 * std::pow(normalized_input, 4)
-            + 10.0 * std::pow(normalized_input, 3);
-        }
-        /// \brief Spline from [0.0 ; 1.0] to [0.0 ; 1.0],
-        /// with null derivatives (of 1st, 2nd and 3rd order) on 0.0 and 1.0
-        static inline double SplineDistortionC3(double normalized_input)
-        {
-            return -20.0 * std::pow(normalized_input, 7) + 70.0 * std::pow(normalized_input, 6)
-            - 84.0 * std::pow(normalized_input, 5) + 35.0 * std::pow(normalized_input, 4);
-        }
+        
    };
     
     
