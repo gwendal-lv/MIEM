@@ -131,6 +131,39 @@ namespace Miam
         }
         
         
+        
+        
+        // - - - - - Operations on Boost Points - - - - -
+        class Bpt
+        {
+            public :
+            /// \brief Returns a 2D point = pt1 - pt2
+            ///
+            /// (boost subtract_point modifies the inputs)
+            inline static bpt Subtract(bpt pt1, bpt pt2)
+            {
+                return bpt(pt1.get<0>() - pt2.get<0>(),
+                           pt1.get<1>() - pt2.get<1>());
+            }
+            /// \brief Computes a dot product on 2D boost points (considered as vectors)
+            inline static double DotProduct(bpt pt1, bpt pt2)
+            {
+                return pt1.get<0>() * pt2.get<0>() + pt1.get<1>() * pt2.get<1>();
+            }
+            /// \brief Multiply point...... has meaning if the bpt is a vector
+            inline static bpt Multiply(bpt pt, double factor)
+            {
+                return bpt(pt.get<0>() * factor, pt.get<1>() * factor);
+            }
+            /// \brief Returns the norm 2 of the vector (distance to zero)
+            inline static double Norm(bpt pt)
+            {
+                return std::sqrt(DotProduct(pt, pt));
+            }
+        };
+        
+        
+        
         // - - - - -  Splines to make the weight computations G1 or G2 (from Python code) - - - - -
         
         /// \brief Bijective spline from [0.0 ; 1.0] to [0.0 ; 1.0].

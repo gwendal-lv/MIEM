@@ -20,7 +20,6 @@
 
 #include "MiamMath.h"
 
-#include "InteractionParameters.h"
 
 
 using namespace Miam;
@@ -107,16 +106,30 @@ void InteractivePolygon::updateSubTriangles()
     auto lastPt = contourPointsInPixels.outer().at(contourPointsInPixels.outer().size()-2);
 	subTriangles.push_back(SubTriangle(centerInPixels, lastPt, contourPointsInPixels.outer().front()));
     segments.push_back(Segment(lastPt, contourPointsInPixels.outer().front()));
+    maxDistanceFromCenter_px = 0.0;
 	// Then add the others
 	for (size_t i = 0; i < contourPointsInPixels.outer().size() - 2; i++)
 	{
-		subTriangles.push_back(SubTriangle(centerInPixels, contourPointsInPixels.outer().at(i), contourPointsInPixels.outer().at(i+1)));
-        segments.push_back(Segment(contourPointsInPixels.outer().at(i), contourPointsInPixels.outer().at(i+1)));
+		subTriangles.push_back(SubTriangle(centerInPixels, contourPointsInPixels.outer().at(i),
+                                           contourPointsInPixels.outer().at(i+1)));
+        segments.push_back(Segment(contourPointsInPixels.outer().at(i),
+                                   contourPointsInPixels.outer().at(i+1)));
+        double curDistance = Math::Bpt::Norm(Math::Bpt::Subtract(contourPointsInPixels.outer().at(i),
+                                                                 centerInPixels));
+        if (curDistance > maxDistanceFromCenter_px)
+            maxDistanceFromCenter_px = curDistance;
 	}
     
-    // Actualisations après création des triangles
+    // - - - Actualisations après création des triangles - - -
     computeSurface();
     rawCenterWeight = computeRawSmoothInteractionWeight(centerInPixels);
+    centerInfluenceFactor = 0.0;
+    for (size_t i=0 ; i<segments.size() ; i++)
+    {
+        double curDistance = segments[i].GetDistanceC1(centerInPixels);
+        // Formula tested and approved in MIEM_Surfaces Python test code
+        centerInfluenceFactor += 2.0 * ( 1.0 - std::sqrt(curDistance / maxDistanceFromCenter_px) );
+    }
     
     // Génération des splines pour le calcul des poids d'interaction
     // -> abandonnés (voir b-curve "maison" via segments)
@@ -172,7 +185,7 @@ double InteractivePolygon::ComputeInteractionWeight(bpt T)
 #endif
             // This code will the only weight computation executed for experiment versions.
             weight = computeRawSmoothInteractionWeight(T) / rawCenterWeight;
-            weight = Math::SplineDistortion(weight, 3);
+            weight = Math::SplineDistortion(weight, distorsionSplineClass);
 #ifdef __MIEM_EXPERIMENTS
         }
 #endif
@@ -193,15 +206,15 @@ SubTriangle& InteractivePolygon::findSubTriangle(double angle)
 double InteractivePolygon::computeRawSmoothInteractionWeight(bpt T)
 {
     // from the python code (git: MIEM_Surfaces)
-    bpt vectorFromCenter = Segment::SubtractPoints(T, centerInPixels);
-    double distanceFromCenter = std::sqrt(Segment::DotProduct(vectorFromCenter, vectorFromCenter));
+    bpt vectorFromCenter = Math::Bpt::Subtract(T, centerInPixels);
+    double distanceFromCenter = Math::Bpt::Norm(vectorFromCenter);
     double center_weight = 1.0;
     if (distanceFromCenter < 1.0)
         center_weight = 1.0;
     else
         center_weight = 1.0 / distanceFromCenter;
-    // center has 0.5 of all edges combined weight
-    center_weight *= (double)(segments.size()) * 0.5;
+    
+    center_weight *= centerInfluenceFactor;
 
     double segments_weight = 0.0;
     for (size_t i=0 ; i<segments.size() ; i++)

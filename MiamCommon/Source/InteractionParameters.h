@@ -30,9 +30,6 @@ namespace Miam
     {
         public :
         
-        static const int DistorsionSplineClass;
-        static const double CenterToSegmentsWeightRatio;
-        
         
         static const double LowVolumePrecisionFactor;
     };

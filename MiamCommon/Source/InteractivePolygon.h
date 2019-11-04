@@ -39,9 +39,32 @@ namespace Miam
         // TODO make indexes consistent
         std::vector<bpolygon> edgesHitBoxes; ///< Arête k correspond aux points k et k+1
         
+        /// \brief The max distance between the center and a vertex of the outline polygon
+        double maxDistanceFromCenter_px = 0.0;
+        
         /// \brief Uncorrected weight at the center of the shape.
         /// Used as a normalized factor for the smooth (v1.2) weights computation
         double rawCenterWeight = 1.0;
+        
+        /// \brief Inside the smooth weights computation, a weighted sum is computed. This ratio
+        /// quantifies the ratio between the center's weight, and the combined weight of
+        /// all segments.
+        ///
+        /// This factor must be high if the center is close to several edges, in order
+        /// to compensate for the very important of nearby edges.
+        /// See examples and more explanation in the MIEM_Surfaces git repo (Python tests)
+        ///
+        /// The idea is: for each very close segment, almost +2.0 should be added to the the factor. +1.0 for the
+        /// center itself, and +1.0 to compensate for the very close segment.
+        /// *
+        double centerInfluenceFactor = 1.0;
+        
+        /// \brief The spline distorsion applied to smooth weights is needed, because of the hard gradients
+        /// obtained near the outline of the polygon.
+        ///
+        /// The class selected here works well with the centerInfluenceFactor formula implemented in the .cpp 
+        /// See a description of the spline in Math:: class
+        const int distorsionSplineClass = 2;
         
         
         public :

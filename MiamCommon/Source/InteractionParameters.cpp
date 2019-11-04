@@ -20,19 +20,6 @@
 using namespace Miam;
 
 
-/* The spline distorsion applied to smooth weights is needed, because of the hard gradients
- * obtained near the outline of the polygon.
- * See a description of the spline in Math:: class
- */
-const int InteractionParameters::DistorsionSplineClass = 2;
-
-/* Inside the smooth weights computation, a weighted sum is computed. This ratio
- * quantifies the ratio between the center's weight, and the combined weight of
- * all segments.
- * E.g. : for 5 segments and a ratio of 0.6, the center will have a weight of 3.0
- */
-const double InteractionParameters::CenterToSegmentsWeightRatio = 0.7;
-
 
 /* Plus cette valeur est grande, plus les volumes sont déformés
  * de sorte qu'on ait des + de précision pour les faibles volumes. Avec de grandes valeurs positives,

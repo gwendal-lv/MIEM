@@ -749,10 +749,13 @@ void InteractiveScene::TriggerInteractionDataPreComputation()
 void InteractiveScene::forceFinishComputationAndWait()
 {
     guiThreadWaitsForJoin = true;
-    Logger::outputDebugString(String("...Forced end of tid=")
-                              + std::to_string((long long) preComputingThread.native_handle()));
-    while (isPreComputingInteractionData)
-        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    if (isPreComputingInteractionData)
+    {
+        Logger::outputDebugString(String("...Forced end of tid=")
+                                  + std::to_string((long long) preComputingThread.native_handle()));
+        while (isPreComputingInteractionData)
+            std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    }
 }
 
 void InteractiveScene::PreComputeInteractionData()

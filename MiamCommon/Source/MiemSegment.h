@@ -28,6 +28,7 @@
 #pragma once
 
 #include <cmath>
+#include "MiamMath.h"
 
 namespace Miam
 {
@@ -50,54 +51,38 @@ namespace Miam
             endPt = _endPt;
             
             // will be normalized after length computation
-            directionVector = SubtractPoints(endPt, beginPt);
-            length = std::sqrt(DotProduct(directionVector, directionVector));
-            directionVector = MultiplyPoint(directionVector, 1.0 / length);
+            directionVector = Math::Bpt::Subtract(endPt, beginPt);
+            length = Math::Bpt::Norm(directionVector);
+            directionVector = Math::Bpt::Multiply(directionVector, 1.0 / length);
         }
         /// \brief Computes the distance between the given point pt and this segment, using a C1 method.
         inline double GetDistanceC1(bpt pt)
         {
             // from Original Python code
             
-            double dot_product_along_segment = DotProduct(directionVector, SubtractPoints(pt, beginPt));
+            double dot_product_along_segment = Math::Bpt::DotProduct(directionVector,
+                                                                     Math::Bpt::Subtract(pt, beginPt));
             // pt projection is inside this segment -> length of projection
             if ( (0.0 < dot_product_along_segment)
                 && (dot_product_along_segment < length) )
             {
                 bpt ptOnSegment(beginPt.get<0>() + dot_product_along_segment * directionVector.get<0>(),
                                 beginPt.get<1>() + dot_product_along_segment * directionVector.get<1>());
-                auto vector_from_projection = SubtractPoints(pt, ptOnSegment);
-                return std::sqrt(DotProduct(vector_from_projection, vector_from_projection));
+                auto vector_from_projection = Math::Bpt::Subtract(pt, ptOnSegment);
+                return Math::Bpt::Norm(vector_from_projection);
             }
             // pt projection is outside the segment -> distance from the proper segment end
             else
             {
                 bpt vector_from_segment_pt;
                 if (dot_product_along_segment <= 0.0) // pt projection is located before the beginning of this segment
-                    vector_from_segment_pt = SubtractPoints(pt, beginPt);
+                    vector_from_segment_pt = Math::Bpt::Subtract(pt, beginPt);
                 else // pt projection is located after the end of this segment
-                    vector_from_segment_pt = SubtractPoints(pt, endPt);
+                    vector_from_segment_pt = Math::Bpt::Subtract(pt, endPt);
                 // because of this, computation is C1 only (curvature radius is not continuous)
-                return std::sqrt(DotProduct(vector_from_segment_pt, vector_from_segment_pt));
+                return Math::Bpt::Norm(vector_from_segment_pt);
             }
         }
-        /// \brief Returns a 2D point = pt1 - pt2
-        ///
-        /// (boost subtract_point modifies the inputs)
-        inline static bpt SubtractPoints(bpt pt1, bpt pt2)
-        {
-            return bpt(pt1.get<0>() - pt2.get<0>(),
-                       pt1.get<1>() - pt2.get<1>());
-        }
-        /// \brief Computes a dot product on 2D boost points (considered as vectors)
-        inline static double DotProduct(bpt pt1, bpt pt2)
-        {
-            return pt1.get<0>() * pt2.get<0>() + pt1.get<1>() * pt2.get<1>();
-        }
-        /// \brief Multiply point...... has meaning if the bpt is a vector
-        inline static bpt MultiplyPoint(bpt pt, double factor)
-        {
-            return bpt(pt.get<0>() * factor, pt.get<1>() * factor);
-        }
+
     };
 }
