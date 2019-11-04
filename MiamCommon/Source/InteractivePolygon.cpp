@@ -123,7 +123,7 @@ void InteractivePolygon::updateSubTriangles()
     // - - - Actualisations après création des triangles - - -
     computeSurface();
     rawCenterWeight = computeRawSmoothInteractionWeight(centerInPixels);
-    centerInfluenceFactor = 0.0;
+    centerInfluenceFactor = 2.0; // min value
     for (size_t i=0 ; i<segments.size() ; i++)
     {
         double curDistance = segments[i].GetDistanceC1(centerInPixels);

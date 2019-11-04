@@ -54,15 +54,16 @@ namespace Miam
         /// to compensate for the very important of nearby edges.
         /// See examples and more explanation in the MIEM_Surfaces git repo (Python tests)
         ///
-        /// The idea is: for each very close segment, almost +2.0 should be added to the the factor. +1.0 for the
-        /// center itself, and +1.0 to compensate for the very close segment.
+        /// The idea is: for each very close segment, almost +2.0 should be added to the factor:
+        /// +1.0 for the center itself, and +1.0 to compensate for the very close segment.
         /// *
         double centerInfluenceFactor = 1.0;
         
-        /// \brief The spline distorsion applied to smooth weights is needed, because of the hard gradients
-        /// obtained near the outline of the polygon.
+        /// \brief The spline distorsion applied to smooth weights is needed, because of the
+        /// hard gradients obtained near the outline of the polygon.
         ///
-        /// The class selected here works well with the centerInfluenceFactor formula implemented in the .cpp 
+        /// The class selected here works well with the centerInfluenceFactor formula
+        /// implemented in the .cpp
         /// See a description of the spline in Math:: class
         const int distorsionSplineClass = 2;
         
