@@ -203,7 +203,6 @@
                 file="../MiamCommon/Source/InteractivePolygon.cpp"/>
           <FILE id="PxaUtc" name="InteractivePolygon.h" compile="0" resource="0"
                 file="../MiamCommon/Source/InteractivePolygon.h"/>
-          <FILE id="LC0nlj" name="MiemSegment.h" compile="0" resource="0" file="../MiamCommon/Source/MiemSegment.h"/>
           <FILE id="ZRuNWP" name="SubTriangle.cpp" compile="1" resource="0" file="../MiamCommon/Source/SubTriangle.cpp"/>
           <FILE id="Rsgwzv" name="SubTriangle.h" compile="0" resource="0" file="../MiamCommon/Source/SubTriangle.h"/>
         </GROUP>
@@ -295,6 +294,7 @@
           <FILE id="eK35Tw" name="CartesianLine.h" compile="0" resource="0" file="../MiamCommon/Source/CartesianLine.h"/>
           <FILE id="Rla6rP" name="MiamMath.cpp" compile="1" resource="0" file="../MiamCommon/Source/MiamMath.cpp"/>
           <FILE id="WSGVmq" name="MiamMath.h" compile="0" resource="0" file="../MiamCommon/Source/MiamMath.h"/>
+          <FILE id="LC0nlj" name="MiemSegment.h" compile="0" resource="0" file="../MiamCommon/Source/MiemSegment.h"/>
           <FILE id="cEVkJR" name="SparseMatrix.hpp" compile="0" resource="0"
                 file="../MiamCommon/Source/SparseMatrix.hpp"/>
         </GROUP>

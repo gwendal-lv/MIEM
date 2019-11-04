@@ -664,6 +664,7 @@ void InteractiveScene::saveImageToPng(std::string pngFile, Image& image)
     bool couldWrite = pngWriter.writeImageToStream(image, stream);
     // The image must be written in Debug mode....
     assert(couldWrite);
+    (void) couldWrite; // disables the Release-build warning
 }
 
 
