@@ -101,6 +101,77 @@ void DrawableArea::init()
 }
 
 
+
+
+
+// ----- bounding box getters -----
+float DrawableArea::GetTop()
+{
+    float limitValue = 0.0f;
+    if (contourPointsInPixels.outer().size() > 0)
+    {
+        limitValue = contourPointsInPixels.outer().at(0).get<1>();
+        for (size_t i = 1; i < contourPointsInPixels.outer().size() - 1; i++) // closed polygon
+        {
+            if (limitValue > contourPointsInPixels.outer().at(i).get<1>())
+                limitValue = contourPointsInPixels.outer().at(i).get<1>();
+        }
+    }
+    else
+        assert(false); // cannot compute a limit for a 0-point polygon...
+    return limitValue;
+}
+float DrawableArea::GetBottom()
+{
+    float limitValue = 0.0f;
+    if (contourPointsInPixels.outer().size() > 0)
+    {
+        limitValue = contourPointsInPixels.outer().at(0).get<1>();
+        for (size_t i = 1; i < contourPointsInPixels.outer().size() - 1; i++) // closed polygon
+        {
+            if (limitValue < contourPointsInPixels.outer().at(i).get<1>())
+                limitValue = contourPointsInPixels.outer().at(i).get<1>();
+        }
+    }
+    else
+        assert(false); // cannot compute a limit for a 0-point polygon...
+    return limitValue;
+}
+float DrawableArea::GetRight()
+{
+    float limitValue = 0.0f;
+    if (contourPointsInPixels.outer().size() > 0)
+    {
+        limitValue = contourPointsInPixels.outer().at(0).get<0>();
+        for (size_t i = 1; i < contourPointsInPixels.outer().size() - 1; i++) // closed polygon
+        {
+            if (limitValue < contourPointsInPixels.outer().at(i).get<0>())
+                limitValue = contourPointsInPixels.outer().at(i).get<0>();
+        }
+    }
+    else
+        assert(false); // cannot compute a limit for a 0-point polygon...
+    return limitValue;
+}
+float DrawableArea::GetLeft()
+{
+    float limitValue = 0.0f;
+    if (contourPointsInPixels.outer().size() > 0)
+    {
+        limitValue = contourPointsInPixels.outer().at(0).get<0>();
+        for (size_t i = 1; i < contourPointsInPixels.outer().size() - 1; i++) // closed polygon
+        {
+            if (limitValue > contourPointsInPixels.outer().at(i).get<0>())
+                limitValue = contourPointsInPixels.outer().at(i).get<0>();
+        }
+    }
+    else
+        assert(false); // cannot compute a limit for a 0-point polygon...
+    return limitValue;
+}
+
+
+
 void DrawableArea::setZoffset(float newOffset)
 {
     mainZoffset = newOffset;

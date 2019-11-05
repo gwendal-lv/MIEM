@@ -98,6 +98,8 @@ void ControlArea::OnStateNameChanged()
     // (juste après avoir cliqué sur entré, après avoir changé le nom d'une aire)
     //
     // -> rechercher dans la call hierarchy qui pourrait être le coupable...
+    //
+    // 06/11/2019 : bug rencontré après copie/suppresion d'aires, déclenché via ControlState::SetName
     SetName(linkedState->GetName(false));
     // ================ BUG À RETROUVER ================
     // ================ BUG À RETROUVER ================

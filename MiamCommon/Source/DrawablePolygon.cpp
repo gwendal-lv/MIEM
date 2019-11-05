@@ -210,7 +210,6 @@ DrawablePolygon::~DrawablePolygon()
 
 
 
-
 // Called by the parent component (which is a canvas)
 void DrawablePolygon::Paint(Graphics& g)
 {

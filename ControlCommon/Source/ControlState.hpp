@@ -105,7 +105,13 @@ namespace Miam
         {
             name = _name;
             for (auto it = linkedAreas.begin() ; it!=linkedAreas.end() ; it++)
-                (*it).lock()->OnStateNameChanged();
+            {
+                auto lockedLinkedArea = (*it).lock();
+                if (lockedLinkedArea)
+                    lockedLinkedArea->OnStateNameChanged();
+                else
+                    assert(false); // linkedAreas should always be valid...
+            }
         }
         virtual Colour GetColour() const {return colour;}
         virtual void SetColour(Colour& _colour)

@@ -131,6 +131,13 @@ namespace Miam
             assert(parentCanvas != 0);
             return parentCanvas;
         }
+        
+        // ----- bounding box -----
+        virtual float GetTop() override;
+        virtual float GetBottom() override;
+        virtual float GetRight() override;
+        virtual float GetLeft() override;
+        
         virtual Vector<GLfloat> & getRingVertexBuffer() override { return g_vertex_ring; }
         virtual Vector<GLuint> & getRingIndexBuffer() override { return ringIndices; }
         

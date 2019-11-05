@@ -666,12 +666,16 @@ void GraphicSessionManager::OnPasteArea()
             // Modification du polygone copié
             newArea->SetId(GetNextAreaId());
             
-            // BESOIN DE SAVOIR SI ON CHANGE DE CANVAS OU NON ?
+            // BESOIN DE SAVOIR SI ON CHANGE DE CANVAS OU NON ? obsolète avec le canevas unique...
             // Si on change, besoin d'appeler une fonction du genre :
             // RescaleForCanvas(SceneCanvasComponent* )
-            //
-            // Juste translation par rapport à l'original, dans tous les cas...
-            newArea->Translate(Point<double>(20,20));
+            
+            // Juste translation par rapport à l'original (si possible) (should be in View...)
+            float canvasH = (float)selectedCanvas->GetMultiSceneCanvasComponent()->GetCanvas()->getHeight();
+            float canvasW = (float)selectedCanvas->GetMultiSceneCanvasComponent()->GetCanvas()->getWidth();
+            newArea->Translate(Point<double>( (newArea->GetRight() + 20 > canvasW ) ? -20 : +20 ,
+                                              (newArea->GetBottom() + 20 > canvasH ) ? -20 : +20 ));
+            
             getSelectedCanvasAsEditable()->AddArea(newArea);
             getSelectedCanvasAsEditable()->SetSelectedArea(newArea);
             

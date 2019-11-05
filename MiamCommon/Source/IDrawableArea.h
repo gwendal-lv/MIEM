@@ -155,6 +155,11 @@ namespace Miam
         virtual void SetOpacityMode(OpacityMode enable) = 0;
         virtual OpacityMode GetOpacityMode() const = 0;
         virtual void SetRenderingScale(double renderingScale_) = 0;
+        // bounding box getters
+        virtual float GetTop() = 0;
+        virtual float GetBottom() = 0;
+        virtual float GetRight() = 0;
+        virtual float GetLeft() = 0;
 
         /*
 		virtual float* GetVerticesBufferPtr() = 0;
