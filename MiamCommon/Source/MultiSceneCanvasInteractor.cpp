@@ -991,6 +991,9 @@ void MultiSceneCanvasInteractor::OnXmlLoadFinished()
     // Le canevas se sélectionne lui-même (un peu comme
     // s'il y avait eu un clic de souris)
     SelectScene(0);
+    
+    // To trigger updates (only update actually needed: complete Z-offset re-computation)
+    OnResized();
 }
 
 std::shared_ptr<bptree::ptree> MultiSceneCanvasInteractor::GetTree()

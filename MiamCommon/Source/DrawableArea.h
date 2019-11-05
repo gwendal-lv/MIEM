@@ -111,7 +111,7 @@ namespace Miam
         Vector<GLfloat> g_vertex_ring;
         Vector<GLuint> ringIndices;
         
-		float mainZoffset;
+		float mainZoffset = 0.0f;
 
 		// Buffers to be copied in OpenGL VBOs
         // All child classes will enlarge and fill them with their own

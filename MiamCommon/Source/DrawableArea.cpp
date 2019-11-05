@@ -372,7 +372,11 @@ void DrawableArea::CanvasResized(SceneCanvasComponent* _parentCanvas)
     
 #ifdef __MIEM_VBO
     // Reconstruction complète de l'objet à chaque fois.... (pour assurer la multithread-safety....)
-    resetTextureBasedName();
+    
+    // name will be updated if is actually changed. But this prevents empty names (exciters...)
+    // to force useless CPU/texture computation and bandwidth usage
+    if ( name.length() > 0)
+        resetTextureBasedName();
 #endif
     
 }
