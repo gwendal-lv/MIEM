@@ -76,7 +76,8 @@ void DrawableArea::init()
     
     isNameVisible = true; // par défaut
     // TEEEEEMMMMMMMMPPPPPPPPP
-    glTextObject = std::make_shared<OpenGLTextObject>(20.0f, 160.0f, 20.0f, -35.0f, 12);
+    glTextObject = std::make_shared<OpenGLTextObject>(20.0f, 160.0f, MIEM_FIRST_NAME_COORDINATE_Z,
+                                                      20.0f, -35.0f, 12);
     
     keepRatio = false;
 
@@ -240,8 +241,8 @@ void DrawableArea::resetTextureBasedName()
         nameU16[nameU16.size()-1] = '.'; // caractère de chaîne raccourcie
     }
     
-    // Choix du placement en X. Idée de base :
-    // décaler de 1/3 de la taille estimée des caractères
+    // - - - Choix du placement en X - - -
+    // Idée de base : décaler de 1/3 de la taille estimée des caractères
     const double nameWidthEstimation = 0.7 * (double)(nameWidth) * nameU16.length()
                                             / (double)(nameCharsCountMax);
     const double desiredXOffset = - nameWidthEstimation / 3.0;
@@ -259,14 +260,21 @@ void DrawableArea::resetTextureBasedName()
     // Sinon c'est bon !
     else
         xPosition = centerInPixels.get<0>() + desiredXOffset;
-    
+    // - - - Y positioning - - -
+    // Normal case: text under the center
+    double yPosition = centerInPixels.get<1>() + centerCircleRadius + (double)(nameHeight) * 1.1;
+    // Text will be placed up, if the area too close to the bottom of the canvas
+    if (parentCanvas && ((yPosition + 1.0 * (double)nameHeight) > (double)parentCanvas->getHeight()) )
+    {
+        yPosition = centerInPixels.get<1>() - centerCircleRadius - (double)(nameHeight) * 0.1;
+    }
     
     // reconstruction complète d'un nouvel objet (pour thread-safety)
-    glTextObject = std::make_shared<OpenGLTextObject>((float)xPosition,
-                                                      (float)(centerInPixels.get<1>() + centerCircleRadius + (double)nameHeight * 1.1),
+    glTextObject = std::make_shared<OpenGLTextObject>((float)xPosition, (float)yPosition,
+                                                      MIEM_FIRST_NAME_COORDINATE_Z + 0.1f * mainZoffset,
                                                       std::roundf((float)(nameWidth) / (float)(nameCharsCountMax)),
-		(float)nameHeight,
-		nameCharsCountMax);
+                                                      (float)nameHeight,
+                                                      nameCharsCountMax);
     // vérification pour l'UTF 16... en debug seulement
 #ifdef __MIAM_DEBUG
 	assert(sizeof(wchar_t) >= 2); // our UTF 16 converter won't properly work on this platform....)

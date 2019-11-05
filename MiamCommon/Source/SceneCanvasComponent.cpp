@@ -372,7 +372,7 @@ void SceneCanvasComponent::newOpenGLContextCreated()
     
     // - - - - label de display des fps - - - -
     if(openGLInfoLabel == nullptr)
-        openGLInfoLabel = std::make_unique<OpenGLTextObject>(20.0f, 90.0f, 20.0f, +35.0f, 12);
+        openGLInfoLabel = std::make_unique<OpenGLTextObject>(20.0f, 90.0f, 0.0f, 20.0f, +35.0f, 12);
     std::u16string texteInfo = u"He, huitre !" ; // ne fonctionne pas sous Windows en UTF 8....
     openGLInfoLabel->SetText(texteInfo);
     // init du text selon le contexte

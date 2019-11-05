@@ -23,8 +23,9 @@
 using namespace std;
 using namespace Miam;
 
-OpenGLTextObject::OpenGLTextObject(float _x, float _y, float _characterWidth, float _characterHeight, int _maxSize) : 
-	textX(_x), textY(_y), characterWidth(_characterWidth), characterHeight(_characterHeight), maxSize(_maxSize)
+OpenGLTextObject::OpenGLTextObject(float _x, float _y, float _z, float _characterWidth, float _characterHeight, int _maxSize) :
+	textX(_x), textY(_y), textZ(_z),
+    characterWidth(_characterWidth), characterHeight(_characterHeight), maxSize(_maxSize)
 {
     resourcesReleased = true; // default state
     
@@ -156,27 +157,27 @@ void OpenGLTextObject::computeVertices()
         // Points definition
 		g_vertex_buffer[i * 18 + 0] = textX + currentXPos;
 		g_vertex_buffer[i * 18 + 1] = textY + 0.0f;
-		g_vertex_buffer[i * 18 + 2] = 0.0f;
+		g_vertex_buffer[i * 18 + 2] = textZ;
 
 		g_vertex_buffer[i * 18 + 3] = textX + currentXPos + currentCharWidth;
 		g_vertex_buffer[i * 18 + 4] = textY + 0.0f;
-		g_vertex_buffer[i * 18 + 5] = 0.0f;
+		g_vertex_buffer[i * 18 + 5] = textZ;
 
 		g_vertex_buffer[i * 18 + 6] = textX + currentXPos + currentCharWidth;
 		g_vertex_buffer[i * 18 + 7] = textY - characterHeight;
-		g_vertex_buffer[i * 18 + 8] = 0.0f;
+		g_vertex_buffer[i * 18 + 8] = textZ;
 
-		g_vertex_buffer[i * 18 + 9] = textX + currentXPos;
+		g_vertex_buffer[i * 18 + 9 ] = textX + currentXPos;
 		g_vertex_buffer[i * 18 + 10] = textY - characterHeight;
-		g_vertex_buffer[i * 18 + 11] = 0.0f;
+		g_vertex_buffer[i * 18 + 11] = textZ;
 
 		g_vertex_buffer[i * 18 + 12] = textX + currentXPos + currentCharWidth;
 		g_vertex_buffer[i * 18 + 13] = textY - characterHeight;
-		g_vertex_buffer[i * 18 + 14] = 0.0f;
+		g_vertex_buffer[i * 18 + 14] = textZ;
 
 		g_vertex_buffer[i * 18 + 15] = textX  + currentXPos;
 		g_vertex_buffer[i * 18 + 16] = textY + 0.0f;
-		g_vertex_buffer[i * 18 + 17] = 0.0f;
+		g_vertex_buffer[i * 18 + 17] = textZ;
         
         // Current X pos update
         currentXPos += currentCharWidth;

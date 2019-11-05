@@ -27,10 +27,11 @@
 
 namespace Miam {
     
+    /// \brief A 2D text object, drawn in the XY plane at a depth Z
     class OpenGLTextObject
     {
     public:
-        OpenGLTextObject(float _x, float _y, float _characterWidth, float _characterHeight, int _maxSize);
+        OpenGLTextObject(float _x, float _y, float _z, float _characterWidth, float _characterHeight, int _maxSize);
         ~OpenGLTextObject();
 
         void Initialise(OpenGLContext& context, OpenGLFontManager* _manager);
@@ -58,7 +59,7 @@ namespace Miam {
         std::u16string currentText;
         
         // Parameters assigned at construction only
-        const float textX, textY, characterWidth, characterHeight;
+        const float textX, textY, textZ, characterWidth, characterHeight;
         const int maxSize;
 
         Vector<GLfloat> g_vertex_buffer;

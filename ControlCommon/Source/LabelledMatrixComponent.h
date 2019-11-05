@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.4
+  Created with Projucer version: 5.4.5
 
   ------------------------------------------------------------------------------
 
@@ -138,7 +138,7 @@ public:
     void SetInterpolationCurves(std::shared_ptr<BasicInterpCurves> interpCurves);
     BasicInterpolationCurve<double> GetInterpolationCurve(size_t i);
     std::shared_ptr<BasicInterpCurves> GetInterpolationCurves();
-    
+
     std::vector<size_t> GetDefaultIndexes();
     void SetDefaultIndexes(std::vector<size_t> defaultList);
 
@@ -156,7 +156,7 @@ public:
     int GetDefaultPositionX() const {return defaultX;}
     int GetMaximaPositionX() const {return maximaX;}
     int GetInterpolationCurvesPositionX() const {return interpolationCurvesX;}
-    int GetParametersValuesPositionX() const {return viewportLX;}
+    int GetParametersValuesPositionX() const {return viewportLX - activateButtonW;}
     int GetActionButtonsPositionX() const {return viewportRX;}
 
 

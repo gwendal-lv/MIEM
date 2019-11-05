@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.3
+  Created with Projucer version: 5.4.5
 
   ------------------------------------------------------------------------------
 
@@ -48,7 +48,8 @@ StartupComponent::StartupComponent ()
 
     createSpatTextButton.reset (new TextButton ("Create Spat text button"));
     addAndMakeVisible (createSpatTextButton.get());
-    createSpatTextButton->setButtonText (TRANS("Create Spatialisation session"));
+    createSpatTextButton->setTooltip (TRANS("Sound spatialisation with MIEM Matrix Router (VST/AU plugin)"));
+    createSpatTextButton->setButtonText (TRANS("Create a MIEM Spat session (.mspat)"));
     createSpatTextButton->addListener (this);
     createSpatTextButton->setColour (TextButton::buttonColourId, Colour (0xffbfbfbf));
     createSpatTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
@@ -64,7 +65,8 @@ StartupComponent::StartupComponent ()
 
     createGenericTextButton.reset (new TextButton ("Create Empty text button"));
     addAndMakeVisible (createGenericTextButton.get());
-    createGenericTextButton->setButtonText (TRANS("Create Generic OSC Controller session"));
+    createGenericTextButton->setTooltip (TRANS("Generic OSC Controller"));
+    createGenericTextButton->setButtonText (TRANS("Create a MIEM Play session (.mcs)"));
     createGenericTextButton->addListener (this);
     createGenericTextButton->setColour (TextButton::buttonColourId, Colour (0xffbfbfbf));
     createGenericTextButton->setColour (TextButton::buttonOnColourId, Colours::white);
@@ -139,9 +141,9 @@ void StartupComponent::resized()
     //[/UserPreResize]
 
     loadTextButton->setBounds ((getWidth() / 2) - (168 / 2), (getHeight() / 2) + -96, 168, 52);
-    createSpatTextButton->setBounds ((getWidth() / 2) + 150 - 300, (getHeight() / 2) + 46, 300, 32);
+    createSpatTextButton->setBounds ((getWidth() / 2) + 151 - 301, (getHeight() / 2) + 62, 301, 52);
     createDefaultTextButton->setBounds ((getWidth() / 2) + -3 - (168 / 2), (getHeight() / 2) + 350, 168, 24);
-    createGenericTextButton->setBounds ((getWidth() / 2) + 150 - 300, (getHeight() / 2), 300, 32);
+    createGenericTextButton->setBounds ((getWidth() / 2) + 150 - 300, (getHeight() / 2), 300, 52);
     infoHyperlinkButton->setBounds ((getWidth() / 2) - ((getWidth() - 5) / 2), getHeight() - 32, getWidth() - 5, 24);
     appNameHyperlinkButton->setBounds ((getWidth() / 2) - ((getWidth() - 5) / 2), getHeight() - 62, getWidth() - 5, 24);
     //[UserResized] Add your own custom resize handling here..
@@ -234,25 +236,26 @@ BEGIN_JUCER_METADATA
               bgColOn="ffffffff" textCol="ff000000" buttonText="Load session"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Create Spat text button" id="714ffb446833c5ce" memberName="createSpatTextButton"
-              virtualName="" explicitFocusOrder="0" pos="150Cr 46C 300 32"
-              bgColOff="ffbfbfbf" bgColOn="ffffffff" textCol="ff000000" buttonText="Create Spatialisation session"
+              virtualName="" explicitFocusOrder="0" pos="151Cr 62C 301 52"
+              tooltip="Sound spatialisation with MIEM Matrix Router (VST/AU plugin)"
+              bgColOff="ffbfbfbf" bgColOn="ffffffff" textCol="ff000000" buttonText="Create a MIEM Spat session (.mspat)"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Create Default text button" id="ac4f9aa6f5974fbc" memberName="createDefaultTextButton"
               virtualName="" explicitFocusOrder="0" pos="-3Cc 350C 168 24"
               bgColOff="ffbfbfbf" bgColOn="ffffffff" textCol="ff000000" buttonText="Create default session"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="Create Empty text button" id="fb033c6855f61992" memberName="createGenericTextButton"
-              virtualName="" explicitFocusOrder="0" pos="150Cr 0C 300 32" bgColOff="ffbfbfbf"
-              bgColOn="ffffffff" textCol="ff000000" buttonText="Create Generic OSC Controller session"
+              virtualName="" explicitFocusOrder="0" pos="150Cr 0C 300 52" tooltip="Generic OSC Controller"
+              bgColOff="ffbfbfbf" bgColOn="ffffffff" textCol="ff000000" buttonText="Create a MIEM Play session (.mcs)"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <HYPERLINKBUTTON name="Info hyperlink button" id="fa3a8802c3b7c7f0" memberName="infoHyperlinkButton"
-                   virtualName="" explicitFocusOrder="0" pos="-0.5Cc 32R 5M 24"
-                   tooltip="http://miem.laras.be" textCol="ffffffff" buttonText="To get help and more information, please visit miem.laras.be/editor"
+                   virtualName="" explicitFocusOrder="0" pos="0Cc 32R 5M 24" tooltip="http://miem.laras.be"
+                   textCol="ffffffff" buttonText="To get help and more information, please visit miem.laras.be/editor"
                    connectedEdges="0" needsCallback="0" radioGroupId="0" url="http://miem.laras.be"/>
   <HYPERLINKBUTTON name="App Name hyperlink button" id="7dafa352c7045e31" memberName="appNameHyperlinkButton"
-                   virtualName="" explicitFocusOrder="0" pos="-0.5Cc 62R 5M 24"
-                   tooltip="http://miem.laras.be" textCol="ffffffff" buttonText="MIEM Editor"
-                   connectedEdges="0" needsCallback="0" radioGroupId="0" url="http://miem.laras.be"/>
+                   virtualName="" explicitFocusOrder="0" pos="0Cc 62R 5M 24" tooltip="http://miem.laras.be"
+                   textCol="ffffffff" buttonText="MIEM Editor" connectedEdges="0"
+                   needsCallback="0" radioGroupId="0" url="http://miem.laras.be"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

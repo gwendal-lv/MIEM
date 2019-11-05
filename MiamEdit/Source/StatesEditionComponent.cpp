@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.4
+  Created with Projucer version: 5.4.5
 
   ------------------------------------------------------------------------------
 
@@ -287,9 +287,9 @@ StatesEditionComponent::StatesEditionComponent ()
     interpolationCurveLabel->setBounds (472, 112, 150, 24);
 
     valueLabel.reset (new Label ("value label",
-                                 TRANS("Parameter value")));
+                                 TRANS("Current state value")));
     addAndMakeVisible (valueLabel.get());
-    valueLabel->setTooltip (TRANS("The defined value of a parameter, for this particular state."));
+    valueLabel->setTooltip (TRANS("The defined value of a parameter, for this particular state. If disabled, the default value will be used."));
     valueLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     valueLabel->setJustificationType (Justification::centredLeft);
     valueLabel->setEditable (false, false, false);
@@ -310,7 +310,7 @@ StatesEditionComponent::StatesEditionComponent ()
     linksInfoLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
     defaultLabel.reset (new Label ("Default label",
-                                   TRANS("Default")));
+                                   TRANS("Default value")));
     addAndMakeVisible (defaultLabel.get());
     defaultLabel->setTooltip (TRANS("The default value of this parameter, valid for all states. Click to edit."));
     defaultLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
@@ -320,7 +320,7 @@ StatesEditionComponent::StatesEditionComponent ()
     defaultLabel->setColour (TextEditor::textColourId, Colours::black);
     defaultLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    defaultLabel->setBounds (312, 112, 80, 24);
+    defaultLabel->setBounds (312, 112, 104, 24);
 
 
     //[UserPreSize]
@@ -1075,8 +1075,8 @@ BEGIN_JUCER_METADATA
          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="33"/>
   <LABEL name="value label" id="12d040c7555f2549" memberName="valueLabel"
-         virtualName="" explicitFocusOrder="0" pos="690 112 168 24" tooltip="The defined value of a parameter, for this particular state."
-         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Parameter value"
+         virtualName="" explicitFocusOrder="0" pos="690 112 168 24" tooltip="The defined value of a parameter, for this particular state. If disabled, the default value will be used."
+         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Current state value"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="33"/>
@@ -1087,8 +1087,8 @@ BEGIN_JUCER_METADATA
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
          fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="33"/>
   <LABEL name="Default label" id="5639f8436d43c60" memberName="defaultLabel"
-         virtualName="" explicitFocusOrder="0" pos="312 112 80 24" tooltip="The default value of this parameter, valid for all states. Click to edit."
-         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Default"
+         virtualName="" explicitFocusOrder="0" pos="312 112 104 24" tooltip="The default value of this parameter, valid for all states. Click to edit."
+         textCol="ff000000" edTextCol="ff000000" edBkgCol="0" labelText="Default value"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="33"/>

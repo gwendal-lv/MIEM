@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.4
+  Created with Projucer version: 5.4.5
 
   ------------------------------------------------------------------------------
 
@@ -641,7 +641,7 @@ void LabelledMatrixComponent::textEditorTextChanged (TextEditor & textEditor)
 void LabelledMatrixComponent::buttonClicked (Button* _button)
 {
     int integerID = -1;
-    
+
     bool isActivateButton = false;
     bool isSendButton = false;
 
@@ -657,7 +657,7 @@ void LabelledMatrixComponent::buttonClicked (Button* _button)
             isActivateButton = true;
         else
             throw BadIdException();
-        
+
         if (isSendButton || isActivateButton)
         {
             // At the moment, only 1 unique button on each row -> no valid col index will be given
@@ -685,11 +685,11 @@ void LabelledMatrixComponent::buttonClicked (Button* _button)
     else if (isActivateButton)
     {
         bool shouldBeActivated = activateParamButtons[integerID]->getToggleState();
-        
+
         // On activation: default is disabled and parameter becomes enabled
         // on de-activation: default is enabled, parameter automatically takes the default value
         minDefaultMaxSliders[integerID]->SetDefaultEnabled(! shouldBeActivated);
-        
+
         // Matrix slider: enablement update
         GetMatrixComponent()->SetHorizontalSliderEnabled(integerID, shouldBeActivated);
         if (! shouldBeActivated) // and value update, linked to default if param is disabled

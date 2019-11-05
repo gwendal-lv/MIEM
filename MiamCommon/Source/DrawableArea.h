@@ -26,7 +26,12 @@
 #define MIEM_SHAPE_SURFACE_Z        (0.0f)
 #define MIEM_SHAPE_CONTOUR_Z        (-0.1f)
 
+// X/Y coordinates for hiding points
 #define MIEM_UNVISIBLE_COORDINATE   (-10.0f)
+
+// The first coordinates for displaying areas names (which are always visible,
+// whatever the number of overlapping areas)
+#define MIEM_FIRST_NAME_COORDINATE_Z    (-6.4)  // +0.1 offset for each name, works for 64 areas
 
 // Simple declaration for a pointer
 class SceneCanvasComponent;
