@@ -382,9 +382,13 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::OnSelection(bool resetExciters
     if (resetExciters)
         multiAreaE = ResetCurrentExcitersToInitialExciters();
 
+	auto testThis1 = this;
+
     // On actualise l'influence des excitateurs, dans TOUS les modes de jeu !
     //if (canvasManager.lock()->GetMode() == CanvasManagerMode::PlayingWithExciters)
     {
+		auto testThis2 = this;
+
         // à l'avenir : transitions douces par Timers !!
         // à l'avenir : transitions douces par Timers !!
         // à l'avenir : transitions douces par Timers !!
@@ -398,7 +402,8 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::OnSelection(bool resetExciters
         // Pour l'instant tout dans une fonction bête et méchante, séparée
         // On remplace bien sauvagement les évènements créés précédemmet !
         // L'idée c'est qu'on oublie les events graphiques à la transition entre scènes...
-        multiAreaE = RecomputeAreaExciterInteractions();
+		// BUG VS2017 : this devient NULL quand on appelle la fonction....
+        multiAreaE = this->RecomputeAreaExciterInteractions();
     }
     
     return multiAreaE;
