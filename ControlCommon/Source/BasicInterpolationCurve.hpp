@@ -407,7 +407,7 @@ namespace Miam
                 try {
                     defaultY = innerTree.get<T>("<xmlattr>.defaultY");
                 }
-                catch (bptree::ptree_error& e) {
+                catch (bptree::ptree_error& /*e*/) {
                     defaultY = minY;
                 }
             }

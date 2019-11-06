@@ -244,7 +244,7 @@ namespace Miam
             catch (bptree::ptree_bad_data &e) { // Parse error: we actually treat it
                 XmlReadException::FromBptree("default_values.coeff, data parse error: ", e);
             }
-            catch (bptree::ptree_bad_path& e) {
+            catch (bptree::ptree_bad_path& /*e*/) { // bad path tolerated (compatibility with older versions)
             }
         }
         

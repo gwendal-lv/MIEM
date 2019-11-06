@@ -63,12 +63,12 @@ std::shared_ptr<AreaEvent> InteractiveArea::UpdateInteraction(std::shared_ptr<Ex
     bool hitTestResult = false;
     // use pre-computed values if possible (warning : non-retina computed values)
     auto exciterCenterPos = exciter->GetCenterInPixels();
-    if ((imgW > 0) && (imgH > 0) && (weightsImage != nullptr))
+	int centerX = (int)std::round(exciterCenterPos.get<0>());
+	int centerY = (int)std::round(exciterCenterPos.get<1>());
+    if (((int)imgW >= centerX) && ((int)imgH >= centerY) && (weightsImage != nullptr))
     {
-        int centerX = (int) std::round(exciterCenterPos.get<0>());
-        int centerY = (int) std::round(exciterCenterPos.get<1>());
-        // access with out-of-bounds check
-        hitTestResult = (weightsImage->at(centerY * imgW + centerX) > 0.0);
+        // out-of-bounds check already done in the if statement
+        hitTestResult = ((*weightsImage)[centerY * imgW + centerX] > 0.0);
     }
     // or, recompute all values (retina computation)
     else

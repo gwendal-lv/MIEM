@@ -151,6 +151,7 @@ namespace Miam
         std::atomic<bool> guiThreadWaitsForJoin;
         std::chrono::time_point<std::chrono::steady_clock> startTime;
         std::atomic<bool> isPreComputingInteractionData;
+		bool hasPreComputedOnce = false; ///< Indicates wether this class has done at least 1 pre-computing, or not
         std::vector< std::shared_ptr<IInteractiveArea> > clonedAreas;
         
         

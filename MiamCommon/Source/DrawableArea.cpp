@@ -107,10 +107,10 @@ void DrawableArea::init()
 // ----- bounding box getters -----
 float DrawableArea::GetTop()
 {
-    float limitValue = 0.0f;
+    double limitValue = 0.0f;
     if (contourPointsInPixels.outer().size() > 0)
     {
-        limitValue = contourPointsInPixels.outer().at(0).get<1>();
+        limitValue = (float)contourPointsInPixels.outer().at(0).get<1>();
         for (size_t i = 1; i < contourPointsInPixels.outer().size() - 1; i++) // closed polygon
         {
             if (limitValue > contourPointsInPixels.outer().at(i).get<1>())
@@ -119,11 +119,11 @@ float DrawableArea::GetTop()
     }
     else
         assert(false); // cannot compute a limit for a 0-point polygon...
-    return limitValue;
+    return (float)limitValue;
 }
 float DrawableArea::GetBottom()
 {
-    float limitValue = 0.0f;
+    double limitValue = 0.0f;
     if (contourPointsInPixels.outer().size() > 0)
     {
         limitValue = contourPointsInPixels.outer().at(0).get<1>();
@@ -135,11 +135,11 @@ float DrawableArea::GetBottom()
     }
     else
         assert(false); // cannot compute a limit for a 0-point polygon...
-    return limitValue;
+    return (float)limitValue;
 }
 float DrawableArea::GetRight()
 {
-    float limitValue = 0.0f;
+    double limitValue = 0.0f;
     if (contourPointsInPixels.outer().size() > 0)
     {
         limitValue = contourPointsInPixels.outer().at(0).get<0>();
@@ -151,11 +151,11 @@ float DrawableArea::GetRight()
     }
     else
         assert(false); // cannot compute a limit for a 0-point polygon...
-    return limitValue;
+    return (float)limitValue;
 }
 float DrawableArea::GetLeft()
 {
-    float limitValue = 0.0f;
+    double limitValue = 0.0f;
     if (contourPointsInPixels.outer().size() > 0)
     {
         limitValue = contourPointsInPixels.outer().at(0).get<0>();
@@ -167,7 +167,7 @@ float DrawableArea::GetLeft()
     }
     else
         assert(false); // cannot compute a limit for a 0-point polygon...
-    return limitValue;
+    return (float)limitValue;
 }
 
 

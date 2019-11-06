@@ -382,27 +382,16 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::OnSelection(bool resetExciters
     if (resetExciters)
         multiAreaE = ResetCurrentExcitersToInitialExciters();
 
-	auto testThis1 = this;
-
     // On actualise l'influence des excitateurs, dans TOUS les modes de jeu !
     //if (canvasManager.lock()->GetMode() == CanvasManagerMode::PlayingWithExciters)
     {
-		auto testThis2 = this;
-
-        // à l'avenir : transitions douces par Timers !!
-        // à l'avenir : transitions douces par Timers !!
-        // à l'avenir : transitions douces par Timers !!
-        // à l'avenir : transitions douces par Timers !!
-        // à l'avenir : transitions douces par Timers !!
-        // à l'avenir : transitions douces par Timers !!
-        // à l'avenir : transitions douces par Timers !!
+        // à l'avenir : transitions douces par Timers ?
         for (auto& exciter : currentExciters)
             exciter->SetVolume(1.0);
         
         // Pour l'instant tout dans une fonction bête et méchante, séparée
         // On remplace bien sauvagement les évènements créés précédemmet !
         // L'idée c'est qu'on oublie les events graphiques à la transition entre scènes...
-		// BUG VS2017 : this devient NULL quand on appelle la fonction....
         multiAreaE = this->RecomputeAreaExciterInteractions();
     }
     
@@ -608,11 +597,15 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::testAreasInteractionsWithExcit
     for (size_t i = 0 ; i < areas.size() ; i++)
     {
         std::shared_ptr<AreaEvent> areaE;
-        if (isPreComputingInteractionData)
+        if (isPreComputingInteractionData || (!hasPreComputedOnce))
             areaE = areas[i]->UpdateInteraction(exciter);
-        else // precomp images might be used for hit test only (not for precise retina-screen quantification)
-            areaE = areas[i]->UpdateInteraction(exciter, false, &(areasWeightsImages[i]),
-                                                precompImgW, precompImgH);
+		// precomp images might be used for hit test only (not for precise retina-screen quantification)
+		// but they might be used only if already setup
+		else
+		{
+			areaE = areas[i]->UpdateInteraction(exciter, false, &(areasWeightsImages[i]),
+												precompImgW, precompImgH);
+		}
         // Si qqchose a changé, on renvoit l'info
         if ( areaE->GetType() == AreaEventType::ExcitementAmountChanged )
         {
@@ -644,7 +637,7 @@ std::shared_ptr<MultiAreaEvent> InteractiveScene::RecomputeAreaExciterInteractio
 
 
 // = = = = = = = = = = AREA GROUPS Pre-Computation of Interaction Data = = = = = = = = = =
-void InteractiveScene::saveImageToPng(std::string pngFile, Image& image)
+void InteractiveScene::saveImageToPng(std::string pngFileString, Image& image)
 {
     std::string basePath = GetBaseInteractionImagesPath();
     // if the canvas cannot be locked at this point, we are having a huuuuuuge problem
@@ -658,7 +651,7 @@ void InteractiveScene::saveImageToPng(std::string pngFile, Image& image)
     }
     int64_t sceneIndexInCanvas = lockedCanvasManager->GetSceneIndex(shared_from_this());
     std::string pngFilePath = basePath + "Scene" + std::to_string(sceneIndexInCanvas)
-                            + "_" + pngFile;
+                            + "_" + pngFileString;
     { // tentative destruction avant re-lecture
         File pngFile(pngFilePath.c_str());
         if (pngFile.existsAsFile())
@@ -1032,6 +1025,7 @@ void InteractiveScene::interactionData_postComputation()
 	Logger::outputDebugString("[InteractiveScene.cpp]         ----->   Threaded Pre-Computation finished. Duration = " + boost::lexical_cast<std::string>(std::chrono::duration_cast<std::chrono::milliseconds>(processDuration).count()) + " ms" );
     
     // Fin
+	hasPreComputedOnce = true;
     isPreComputingInteractionData = false;
 }
 
@@ -1042,7 +1036,7 @@ void InteractiveScene::interactionData_postComputation()
 
 // = = = = = = = = = AREA GROUPS closest point finding = = = = = = = = =
 
-Point<float> InteractiveScene::GetClosestPointOfGroup(const Point<float>& pointOutsideGroup, int areasGroupIndexInScene)
+Point<float> InteractiveScene::GetClosestPointOfGroup(const Point<float>& pointOutsideGroup, int /*areasGroupIndexInScene*/)
 {
     // std::cout << "Devrait bloquer sur la bordure" << std::endl;
     return pointOutsideGroup;
