@@ -277,6 +277,11 @@ namespace Miam
                 // dont on met à jour les limites actuelles
                 minSlider.SetCurrentMinAndMax(minSlider.getValue(), maxSlider.getValue());
                 maxSlider.SetCurrentMinAndMax(minSlider.getValue(), maxSlider.getValue());
+				// forced update of defaultSlider value
+				defaultSlider.setRange(minSlider.getValue(), maxSlider.getValue(), 0.0);
+				auto defaultValueBackup = defaultSlider.getValue();
+				defaultSlider.setValue(minSlider.getValue(), NotificationType::dontSendNotification);
+				defaultSlider.setValue(defaultValueBackup, NotificationType::dontSendNotification);
                 
                 // Notif du parent
                 labelledMatrixParent->OnMinMaxValuesChanged(rowIndex,
