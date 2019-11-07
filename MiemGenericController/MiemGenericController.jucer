@@ -435,9 +435,9 @@
     </VS2017>
     <ANDROIDSTUDIO targetFolder="Builds/Android" androidMinimumSDK="22" extraDefs="__MIAMOBILE&#10;"
                    androidScreenOrientation="landscape" androidBluetoothNeeded="0"
-                   bigIcon="P6bzns" userNotes="Version Code 5 : v1.2.0&#10;Version Code 3 : v1.1.6&#10;----- Android APIs -----&#10;- API 22 : la minimale pour que l'app d&#233;marre....&#10;- API 21 : la minimale pour les probl&#232;mes de taille de cl&#233; SHA-1 (pour compiler...)&#10;- Pour mettre des custom &quot;activity&quot; et &quot;application&quot;, il faut faire des trucs.... Se renseigner sur forums Juce avant de changer (si vraiment besoin de changer)"
+                   bigIcon="P6bzns" userNotes="Version Code 6 : v1.2.0 (nouveau build)&#10;Version Code 5 : v1.2.0&#10;Version Code 3 : v1.1.6&#10;----- Android APIs -----&#10;- API 22 : la minimale pour que l'app d&#233;marre....&#10;- API 21 : la minimale pour les probl&#232;mes de taille de cl&#233; SHA-1 (pour compiler...)&#10;- Pour mettre des custom &quot;activity&quot; et &quot;application&quot;, il faut faire des trucs.... Se renseigner sur forums Juce avant de changer (si vraiment besoin de changer)"
                    androidTheme="@android:style/Theme.NoTitleBar.Fullscreen" androidEnableContentSharing="1"
-                   gradleVersion="5.4.1" gradleWrapperVersion="3.5.0" androidVersionCode="5">
+                   gradleVersion="5.4.1" gradleWrapperVersion="3.5.0" androidVersionCode="6">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" defines="__MIAM_DEBUG&#10;__MIEM_DEBUG_TRACE__DISABLED"/>
         <CONFIGURATION isDebug="0" name="Release"/>
