@@ -337,7 +337,10 @@ void GraphicSessionManager::enterModelPlayMode()
 
 
 void GraphicSessionManager::CanvasModeChanged(CanvasManagerMode canvasMode)
-{    
+{
+    // When moving exciters, auto-pre-computation is enabled
+    SetEnablePreComputation(false);
+    
     switch (canvasMode)
     {
         case CanvasManagerMode::SceneOnlySelected :
@@ -348,11 +351,12 @@ void GraphicSessionManager::CanvasModeChanged(CanvasManagerMode canvasMode)
             setMode(GraphicSessionMode::AreaSelected);
             break;
             
-            
         case CanvasManagerMode::ExcitersEdition :
             setMode(GraphicSessionMode::ExcitersEdition);
+            SetEnablePreComputation(true);
             break;
         case CanvasManagerMode::ExciterSelected :
+            SetEnablePreComputation(true);
             setMode(GraphicSessionMode::ExciterSelected);
             break;
             
