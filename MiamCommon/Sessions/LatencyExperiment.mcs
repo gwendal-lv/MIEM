@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<miem appVersion="66049" appPurpose="Generic controller">
+    <settings>
+        <control>
+            <interpolation type="Linear">
+                <curves>
+                    <curve type="On-Off" minY="0" defaultY="0" maxY="1" index="0"/>
+                </curves>
+            </interpolation>
+            <inputs activeCount="1" maxCount="64">
+                <name id="0">/miem/1</name>
+            </inputs>
+            <outputs activeCount="1" maxCount="64"/>
+            <senders>
+                <sender type="MiamOsc">
+                    <ip>127.0.0.1</ip>
+                    <udp>
+                        <port>8001</port>
+                        <additional_port_1>18001</additional_port_1>
+                        <additional_port_2>28001</additional_port_2>
+                    </udp>
+                </sender>
+            </senders>
+            <master_gain enabled="false" value="1"/>
+        </control>
+        <presenter>
+            <keyboardedition>false</keyboardedition>
+            <exciters constraint_positions="true"/>
+        </presenter>
+    </settings>
+    <control>
+        <states>
+            <state index="0">
+                <name>Off</name>
+                <colour>ff000000</colour>
+                <matrix/>
+            </state>
+            <state index="1">
+                <name>On</name>
+                <colour>ffffffff</colour>
+                <matrix>
+                    <coeff row="0" col="0" value="1"/>
+                </matrix>
+            </state>
+        </states>
+    </control>
+    <graphicsession>
+        <canvases>
+            <canvas index="0">
+                <scenes>
+                    <scene index="0">
+                        <name>On/Off latency test</name>
+                        <areas>
+                            <area id="0" type="SpatPolygon" index="0">
+                                <center x="0.17133330641688219" y="0.73463232872200235"/>
+                                <colour>ff000000</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
+                                <geometry>
+                                    <point index="0" x="0.51349216858353386" y="0.98321487312030076"/>
+                                    <point index="1" x="0.0098816166269085574" y="0.98366247577231536"/>
+                                    <point index="2" x="0.0085306523610055741" y="0.48766865548944832"/>
+                                    <point index="3" x="0.51343548329015021" y="0.48861021114563702"/>
+                                </geometry>
+                                <spatstate index="0"/>
+                            </area>
+                            <area id="1" type="SpatPolygon" index="1">
+                                <center x="0.68389656007751942" y="0.26357666337285901"/>
+                                <colour>ffffffff</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
+                                <geometry>
+                                    <point index="0" x="0.9877530146425495" y="0.015450016469038208"/>
+                                    <point index="1" x="0.98687150086132636" y="0.98079298418972327"/>
+                                    <point index="2" x="0.50699436289346245" y="0.9801897321428571"/>
+                                    <point index="3" x="0.50731791020671835" y="0.48555871212121204"/>
+                                    <point index="4" x="0.48338245585701983" y="0.45054141963109356"/>
+                                    <point index="5" x="0.0099994616709733006" y="0.45051054018445325"/>
+                                    <point index="6" x="0.01042297215496368" y="0.017078829887218046"/>
+                                </geometry>
+                                <spatstate index="1"/>
+                            </area>
+                            <area id="4" type="Exciter" index="2">
+                                <center x="0.46873170649827506" y="0.71901258866788875"/>
+                                <colour>ffd3d3d3</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>false</proportional_to_parent>
+                                <geometry>
+                                    <axes a_in_pixels="26" b_in_pixels="26"/>
+                                </geometry>
+                                <is_round>false</is_round>
+                                <is_animation_sync>true</is_animation_sync>
+                            </area>
+                        </areas>
+                    </scene>
+                </scenes>
+            </canvas>
+        </canvases>
+    </graphicsession>
+</miem>
