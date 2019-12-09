@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT name="MIEM Play" projectType="guiapp" jucerVersion="5.4.5" version="1.2.0"
+<JUCERPROJECT name="MIEM Play" projectType="guiapp" jucerVersion="5.4.5" version="1.2.1"
               companyName="IRISIB/LARAS, UMons" companyCopyright="Gwendal Le Vaillant (IRISIB/LARAS, UMons)"
               companyWebsite="http://laras.be" companyEmail="glevaillant@he2b.be"
               reportAppUsage="0" displaySplashScreen="0" bundleIdentifier="com.gwendallv.MIEMController"

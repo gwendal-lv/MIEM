@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.3
+  Created with Projucer version: 5.4.5
 
   ------------------------------------------------------------------------------
 
@@ -806,7 +806,7 @@ BEGIN_JUCER_METADATA
               multiline="1" retKeyStartsLine="1" readonly="1" scrollbars="1"
               caret="0" popupmenu="0"/>
   <HYPERLINKBUTTON name="MIEM Project hyperlink button" id="fa7d05f849f2e1a1" memberName="miemProjectHyperlinkButton"
-                   virtualName="" explicitFocusOrder="0" pos="0Cc 36R 336M 24" posRelativeY="5beff948b653aff1"
+                   virtualName="" explicitFocusOrder="0" pos="0Cc 36R 230M 24" posRelativeY="5beff948b653aff1"
                    tooltip="http://miem.laras.be" textCol="ff3d6ed1" buttonText="Go to MIEM website: miem.laras.be"
                    connectedEdges="0" needsCallback="0" radioGroupId="0" url="http://miem.laras.be"/>
   <TEXTBUTTON name="Load Default button" id="d025c06799a8b40f" memberName="loadDefaultButton"
