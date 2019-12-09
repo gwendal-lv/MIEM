@@ -76,7 +76,7 @@ namespace Miam
         OpacityMode opacityMode;
         
         /// \brief The lowest opacity of a displayed area
-        const uint8 lowFillOpacityUint8 = 40;
+        const uint8 lowFillOpacityUint8 = 25;  // 10% min opacity
         virtual float getLowFillOpacity() const override { return (float)(lowFillOpacityUint8) / 255.0f; }
         
         Colour contourColour; ///< Solid color of of the external shape of the 2D area.

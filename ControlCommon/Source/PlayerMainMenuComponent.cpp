@@ -317,7 +317,7 @@ void PlayerMainMenuComponent::resized()
     helpGroupComponent->setBounds ((getWidth() / 2) - ((getWidth() - 16) / 2), 72, getWidth() - 16, getHeight() - 179);
     helpButton->setBounds (((getWidth() / 2) - ((getWidth() - 16) / 2)) + (getWidth() - 16) / 2 - (120 / 2), 72 + 18, 120, 24);
     infoTextEditor->setBounds (24, 128, (getWidth() - 16) - 32, (getHeight() - 179) - 96);
-    miemProjectHyperlinkButton->setBounds ((getWidth() / 2) - ((getWidth() - 336) / 2), 72 + (getHeight() - 179) - 36, getWidth() - 336, 24);
+    miemProjectHyperlinkButton->setBounds ((getWidth() / 2) - ((getWidth() - 230) / 2), 72 + (getHeight() - 179) - 36, getWidth() - 230, 24);
     loadDefaultButton->setBounds (((getWidth() / 2) - ((getWidth() - 16) / 2)) + (getWidth() - 16) - 8 - 144, 72 + 18, 144, 24);
     additionnalStatusLabel->setBounds ((getWidth() / 2) - ((getWidth() - 80) / 2), getHeight() - 24, getWidth() - 80, 24);
     fullscreenButton->setBounds (getWidth() - 24 - 144, getHeight() - 76, 144, 24);
@@ -765,7 +765,7 @@ BEGIN_JUCER_METADATA
                  initialHeight="400">
   <BACKGROUND backgroundColour="0"/>
   <GROUPCOMPONENT name="Session group component" id="ee702f61e13ff830" memberName="sessionGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="0Cc 8 16M 56" outlinecol="ff909090"
+                  virtualName="" explicitFocusOrder="0" pos="0.5Cc 8 16M 56" outlinecol="ff909090"
                   textcol="ff909090" title="Session"/>
   <TEXTBUTTON name="Load From File text button" id="2fe2a2c362ae91bd" memberName="loadFromFileButton"
               virtualName="" explicitFocusOrder="0" pos="0Cc 18 200 24" posRelativeY="ee702f61e13ff830"
@@ -796,8 +796,8 @@ BEGIN_JUCER_METADATA
                resourceOver="" opacityOver="1.0" colourOver="0" resourceDown=""
                opacityDown="1.0" colourDown="0"/>
   <GROUPCOMPONENT name="Help group component" id="5beff948b653aff1" memberName="helpGroupComponent"
-                  virtualName="" explicitFocusOrder="0" pos="0Cc 72 16M 179M" outlinecol="ff909090"
-                  textcol="ff909090" title="Help"/>
+                  virtualName="" explicitFocusOrder="0" pos="0.5Cc 72 16M 179M"
+                  outlinecol="ff909090" textcol="ff909090" title="Help"/>
   <TEXTBUTTON name="Help button" id="87051e2f861a82a1" memberName="helpButton"
               virtualName="" explicitFocusOrder="0" pos="0Cc 18 120 24" posRelativeX="5beff948b653aff1"
               posRelativeY="5beff948b653aff1" bgColOff="ff404040" buttonText="Show help"
@@ -809,16 +809,17 @@ BEGIN_JUCER_METADATA
               multiline="1" retKeyStartsLine="1" readonly="1" scrollbars="1"
               caret="0" popupmenu="0"/>
   <HYPERLINKBUTTON name="MIEM Project hyperlink button" id="fa7d05f849f2e1a1" memberName="miemProjectHyperlinkButton"
-                   virtualName="" explicitFocusOrder="0" pos="0Cc 36R 230M 24" posRelativeY="5beff948b653aff1"
-                   tooltip="http://miem.laras.be" textCol="ff3d6ed1" buttonText="Go to MIEM website: miem.laras.be"
+                   virtualName="" explicitFocusOrder="0" pos="-0.5Cc 36R 230M 24"
+                   posRelativeY="5beff948b653aff1" tooltip="http://miem.laras.be"
+                   textCol="ff3d6ed1" buttonText="Go to MIEM website: miem.laras.be"
                    connectedEdges="0" needsCallback="0" radioGroupId="0" url="http://miem.laras.be"/>
   <TEXTBUTTON name="Load Default button" id="d025c06799a8b40f" memberName="loadDefaultButton"
               virtualName="" explicitFocusOrder="0" pos="8Rr 18 144 24" posRelativeX="5beff948b653aff1"
               posRelativeY="5beff948b653aff1" bgColOff="ff404040" buttonText="Load default session"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <LABEL name="Additionnal Status Label" id="bef02cde37454c59" memberName="additionnalStatusLabel"
-         virtualName="" explicitFocusOrder="0" pos="0Cc 24R 80M 24" textCol="ff909090"
-         edTextCol="ff000000" edBkgCol="0" labelText="Additionnal Status information"
+         virtualName="" explicitFocusOrder="0" pos="0.5Cc 24R 80M 24"
+         textCol="ff909090" edTextCol="ff000000" edBkgCol="0" labelText="Additionnal Status information"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="1" justification="36" typefaceStyle="Italic"/>
