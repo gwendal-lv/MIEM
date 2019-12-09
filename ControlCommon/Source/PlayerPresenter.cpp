@@ -91,10 +91,7 @@ void PlayerPresenter::TryLoadFirstSession(std::string commandLine)
     // Copie du paramètre d'entrée,
     // pour permettre le chargement automatique de la session de test....
     std::string commandLineToParse = commandLine;
-#ifdef __MIAM_DEBUG
-    //commandLineToParse += " -session \"/Users/Gwendal/Music/Spat sessions/Session de débug.miam\" ";
-    //commandLineToParse += " -session \"/Users/Gwendal/Music/Spat sessions/Test.miam\" ";
-#endif
+    
     // Récupération du nom de fichier à charger
     std::string fileName = TextUtils::FindFilenameInCommandLineArguments(commandLineToParse);
     
@@ -496,6 +493,12 @@ void PlayerPresenter::ReinitRemoteControlServer()
     
     // Fully deactivated for non-experiment versions
 #ifdef __MIEM_EXPERIMENTS
+    
+    // Latency experiment: autonomous app, no distant control
+#ifdef __MIEM_EXPERIMENTS_LATENCY
+    //view->GetBackgroundComponent()->GetMainMenuComponent()->SetInfoLabelText("");
+    
+#else // NOT __MIEM_EXPERIMENTS_LATENCY : server actually init
     bool serverRunning = false;
     int tcpPort = -1;
     if (udpPort > 0) // might be still -1.... ?
@@ -516,7 +519,9 @@ void PlayerPresenter::ReinitRemoteControlServer()
     #endif
     // Display
     view->GetBackgroundComponent()->GetMainMenuComponent()->SetInfoLabelText(tcpServerMessage);
+#endif // end __MIEM_EXPERIMENTS_LATENCY
 #else
+    // Non-experiment version: no additionnal text displayed
     view->GetBackgroundComponent()->GetMainMenuComponent()->SetInfoLabelText("");
 #endif
 }

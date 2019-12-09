@@ -62,6 +62,9 @@ void SceneConstrainer::beginTouchConstraint(const MouseEvent& e,
     
     
 #else // - - - - - MIEM Experiments - - - - -
+    
+    // Expérience à 4 paramètres
+#ifdef __MIEM_EXPERIMENTS_4_PARAMETERS
     int sceneId = -1;
     try {
         sceneId = boost::lexical_cast<int>(sceneName);
@@ -69,9 +72,6 @@ void SceneConstrainer::beginTouchConstraint(const MouseEvent& e,
     catch (boost::bad_lexical_cast& ) {
         assert(false); // scene names must be integers !
     }
-    
-    // Expérience à 4 paramètres
-#ifdef __MIEM_EXPERIMENTS_4_PARAMETERS
     // Scène à base de faders : 1, 5, 9, 13, 17, 21, 25
     if ((sceneId % 2) == 1)
     {
@@ -92,6 +92,9 @@ void SceneConstrainer::beginTouchConstraint(const MouseEvent& e,
         // validé par défaut : on suppose bien que l'évènement se passe dans le carré central !
         newConstraint.Type = ConstraintType::Params4_CentralInterpRectangle;
     }
+    // Latence : contrainte est une "dé-contrainte"
+#elif defined __MIEM_EXPERIMENTS_LATENCY
+    newConstraint.Type = ConstraintType::Latency_ExciterOnTouchPoint;
 #endif
     
     // Si on a trouvé une contrainte, alors
@@ -227,10 +230,19 @@ const MouseEvent& SceneConstrainer::constrainMouseEvent(const MouseEvent& e,
 #else // defined __MIEM_EXPERIMENTS
         auto& constraint = mapIt->second;
         
-        // application de l'offset (pour se retrouver comme au centre de l'excitateur)
+#ifdef __MIEM_EXPERIMENTS_LATENCY
+        // If latency expe: we want the exciter to be exactly under the finger position
+        // (we need to compensate for the iterative translation of shapes, without altering shapes' code)
+        constrainedPosition += Point<float>(constraint.InitialTouchOffset.get<0>(),
+                                            constraint.InitialTouchOffset.get<1>());
+        
+        
+#elif not defined(__MIEM_EXPERIMENTS_LATENCY)
+        // If not latency: no offset to the center of the exciter
+        
+        // application de l'offset (pour se retrouver comme au centre de l'excitateur), sauf pour Latency expe
         constrainedPosition -= Point<float>(constraint.InitialTouchOffset.get<0>(),
                                             constraint.InitialTouchOffset.get<1>());
-
 #ifdef __MIEM_EXPERIMENTS_4_PARAMETERS
         int minY, maxY, minX, maxX;
         // Central rectangle
@@ -279,10 +291,12 @@ const MouseEvent& SceneConstrainer::constrainMouseEvent(const MouseEvent& e,
                                            Math::Clamp<float>(constrainedPosition.getY(),
                                                               minY, maxY));
 #endif // end __MIEM_EXPERIMENTS_4_PARAMETERS
-        
-        // suppression de l'offset (retour au point réel), pour finir
+
+        // suppression de l'offset (retour au point réel), pour finir (sauf pour latency expe)
         constrainedPosition += Point<float>(constraint.InitialTouchOffset.get<0>(),
                                             constraint.InitialTouchOffset.get<1>());
+#endif // end of: not defined(__MIEM_EXPERIMENTS_LATENCY)
+        
 #endif // defined __MIEM_EXPERIMENTS
     
         

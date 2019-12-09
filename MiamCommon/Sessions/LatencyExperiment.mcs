@@ -25,7 +25,7 @@
         </control>
         <presenter>
             <keyboardedition>false</keyboardedition>
-            <exciters constraint_positions="true"/>
+            <exciters constraint_positions="false"/>
         </presenter>
     </settings>
     <control>
@@ -49,7 +49,7 @@
             <canvas index="0">
                 <scenes>
                     <scene index="0">
-                        <name>On/Off latency test</name>
+                        <name>Horizontal smartphone</name>
                         <areas>
                             <area id="0" type="SpatPolygon" index="0">
                                 <center x="0.17133330641688219" y="0.73463232872200235"/>
@@ -57,10 +57,10 @@
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.51349216858353386" y="0.98321487312030076"/>
+                                    <point index="0" x="0.51151403266968054" y="0.98182360599701302"/>
                                     <point index="1" x="0.0098816166269085574" y="0.98366247577231536"/>
-                                    <point index="2" x="0.0085306523610055741" y="0.48766865548944832"/>
-                                    <point index="3" x="0.51343548329015021" y="0.48861021114563702"/>
+                                    <point index="2" x="0.010763787834691502" y="0.48873608732876711"/>
+                                    <point index="3" x="0.51145734737629722" y="0.48721894402234939"/>
                                 </geometry>
                                 <spatstate index="0"/>
                             </area>
@@ -70,18 +70,61 @@
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.9877530146425495" y="0.015450016469038208"/>
-                                    <point index="1" x="0.98687150086132636" y="0.98079298418972327"/>
+                                    <point index="0" x="0.96349770809080326" y="0.023444188784246575"/>
+                                    <point index="1" x="0.96437536379511057" y="0.97937847816780821"/>
                                     <point index="2" x="0.50699436289346245" y="0.9801897321428571"/>
-                                    <point index="3" x="0.50731791020671835" y="0.48555871212121204"/>
-                                    <point index="4" x="0.48338245585701983" y="0.45054141963109356"/>
-                                    <point index="5" x="0.0099994616709733006" y="0.45051054018445325"/>
-                                    <point index="6" x="0.01042297215496368" y="0.017078829887218046"/>
+                                    <point index="3" x="0.50711219441210709" y="0.46900417380136988"/>
+                                    <point index="4" x="0.031404612922002327" y="0.46873662243150682"/>
+                                    <point index="5" x="0.03145008731082654" y="0.022688356164383569"/>
                                 </geometry>
                                 <spatstate index="1"/>
                             </area>
-                            <area id="4" type="Exciter" index="2">
-                                <center x="0.46873170649827506" y="0.71901258866788875"/>
+                            <area id="16" type="Exciter" index="2">
+                                <center x="0.47581661627708627" y="0.71282546323980434"/>
+                                <colour>ffd3d3d3</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>false</proportional_to_parent>
+                                <geometry>
+                                    <axes a_in_pixels="26" b_in_pixels="26"/>
+                                </geometry>
+                                <is_round>false</is_round>
+                                <is_animation_sync>true</is_animation_sync>
+                            </area>
+                        </areas>
+                    </scene>
+                    <scene index="1">
+                        <name>Vertical smartphone</name>
+                        <areas>
+                            <area id="9" type="SpatPolygon" index="0">
+                                <center x="0.17924130263341304" y="0.27957427007474145"/>
+                                <colour>ff000000</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
+                                <geometry>
+                                    <point index="0" x="0.81365951433440609" y="0.52288605248673869"/>
+                                    <point index="1" x="0.017789612843439412" y="0.52332027757026089"/>
+                                    <point index="2" x="0.018671784051222343" y="0.033678028681506829"/>
+                                    <point index="3" x="0.81360282904102277" y="0.033565530066869971"/>
+                                </geometry>
+                                <spatstate index="0"/>
+                            </area>
+                            <area id="13" type="SpatPolygon" index="1">
+                                <center x="0.91450814901047728" y="0.72289704623287676"/>
+                                <colour>ffffffff</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
+                                <geometry>
+                                    <point index="0" x="0.9776902648428405" y="0.035269959332191778"/>
+                                    <point index="1" x="0.97797675349243307" y="0.95824860873287676"/>
+                                    <point index="2" x="0.021814064318975552" y="0.95839576198630139"/>
+                                    <point index="3" x="0.021627619324796274" y="0.51536413741438358"/>
+                                    <point index="4" x="0.83256784778812576" y="0.51633401113013699"/>
+                                    <point index="5" x="0.83313173020954601" y="0.034942208904109588"/>
+                                </geometry>
+                                <spatstate index="1"/>
+                            </area>
+                            <area id="17" type="Exciter" index="2">
+                                <center x="0.75118233410942792" y="0.32156999143834247"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>false</proportional_to_parent>

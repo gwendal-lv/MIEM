@@ -186,7 +186,7 @@ void InteractiveArea::OnNewExcitementAmount(const std::shared_ptr<Exciter>& send
     float totalExcitement = (float) GetTotalLinearExcitement();
     totalExcitement = Math::Clamp(totalExcitement, 0.0f, 2.0f);
     
-#ifndef __MIEM_EXPERIMENTS_LATENCY
+#ifndef __MIEM_EXPERIMENTS_LATENCY // NOT latency experiment
     // Fonctionnement classique : Opacité quasi-pleine à une excitation de 1.0,
     // minimale à un excitation de 0.0, max. à excitation double 2.0
     float opacityAtExcitement1 = 0.80f;

@@ -252,7 +252,6 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 		if (parentCanvas->getLocalBounds().contains(newLocation.toInt())
 			&& isNewContourPointValid(newLocation))
 		{
-
 			// need to bring back contourPointInPixels centered to (0,0) and with rotation = 0
 			bpt normalizeNewLocation;
 			bpolygon newPolygonInPixels;
@@ -304,10 +303,6 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 			boost::geometry::strategy::transform::scale_transformer<double, 2, 2> rescaler(1 / ((double)parentCanvas->getWidth()), 1 / ((double)parentCanvas->getHeight()));
 			boost::geometry::transform(contourPointsInPixels, contourPoints, rescaler);
 
-
-
-
-
 			areaEventType = AreaEventType::ShapeChanged;
 		}
 		
@@ -321,33 +316,11 @@ AreaEventType EditableEllipse::TryMovePoint(const Point<double>& newLocation)
 		double r1 = boost::geometry::distance(centerInPixels, bmanipulationPointInPixels);
 		double r2 = boost::geometry::distance(centerInPixels, bnewLocation);
 
-        // Causera un problème à la fusion GIT
-        // Causera un problème à la fusion GIT
-        // Causera un problème à la fusion GIT
-        /*
-		double x1 = bmanipulationPointInPixels.get<0>() - centerInPixels.get<0>();
-		double x2 = bnewLocation.get<0>() - centerInPixels.get<0>();
-		double y1 = bmanipulationPointInPixels.get<1>() - centerInPixels.get<1>();
-		double y2 = bnewLocation.get<1>() - centerInPixels.get<1>();
-         */
-        // Causera un problème à la fusion GIT
-        // Causera un problème à la fusion GIT
-        // Causera un problème à la fusion GIT
-
-		//DBG("rotationAngle = " + (String)rotationAngle);
-
-        // Causera un problème à la fusion GIT
-        // Causera un problème à la fusion GIT
-        // Causera un problème à la fusion GIT
-		//double cos_a = (x2*x1 + y2*y1) / (r1*r2);
-		//double sin_a = (y2*x1 - x2*y1) / (r1*r2);
-        // Causera un problème à la fusion GIT
-        // Causera un problème à la fusion GIT
-        // Causera un problème à la fusion GIT
 		bpt testPt(bnewLocation);
 		boost::geometry::subtract_point(testPt, centerInPixels);
-		double radAngle = Math::ComputePositiveAngle(testPt);//atan(sin_a / cos_a);//Math::ComputePositiveAngle(bnewLocation);//atan(sin_a / cos_a);
-															 // ----- size -----
+		double radAngle = Math::ComputePositiveAngle(testPt);
+        
+        // ----- size -----
 		double size = r2 / r1;
 
 		bool wasSizeApplied(false);

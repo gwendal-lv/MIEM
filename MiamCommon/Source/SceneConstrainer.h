@@ -51,6 +51,10 @@ namespace Miam
             Params4_Fader4,
             Params4_CentralInterpRectangle,
             
+            // Latency experiment: exciters are brutally moved on the touch point
+            // (to get a very accurate representation of touch events)
+            Latency_ExciterOnTouchPoint,
+            
             // MIEM Play, MIEM Spat : exciters contraints dans des zones continues d'aires
             Bypass, ///< No constraint will be actually applied
             RemainInsideAreasGroups, ///< Once an exciter enters a group, it cannot leave it
