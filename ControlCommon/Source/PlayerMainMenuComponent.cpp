@@ -250,7 +250,10 @@ PlayerMainMenuComponent::PlayerMainMenuComponent ()
 
 
 #ifdef __MIEM_EXPERIMENTS
-    additionnalStatusLabel->setText("Experiments' build (controlled by TCP connection).",
+    additionnalStatusLabel->setText("Experiments build (controlled by TCP connection).",
+                                    NotificationType::dontSendNotification);
+#elif defined(__MIEM_EXPERIMENTS_LATENCY)
+    additionnalStatusLabel->setText("Experiments build, for touch drag latency measurements.",
                                     NotificationType::dontSendNotification);
 #else
     additionnalStatusLabel->setVisible(false);

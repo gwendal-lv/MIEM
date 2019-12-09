@@ -186,8 +186,14 @@ void InteractiveArea::OnNewExcitementAmount(const std::shared_ptr<Exciter>& send
     float totalExcitement = (float) GetTotalLinearExcitement();
     totalExcitement = Math::Clamp(totalExcitement, 0.0f, 2.0f);
     
-    // Opacité pleine à une excitation de 2.0, minimale à un excitation de 0.0
+#ifndef __MIEM_EXPERIMENTS_LATENCYYY
+    // Fonctionnement classique : Opacité pleine à une excitation de 2.0, minimale à un excitation de 0.0
     float newAlpha = getLowFillOpacity() + (1.0f-getLowFillOpacity()) * (totalExcitement / 2.0f);
+#else
+    // Pour expé de latence tactile : variations maximales de la couleur, pour excitement max de 1.0f
+    float minOpacity = 0.05f;
+    float newAlpha = minOpacity + (1.0f-minOpacity) * totalExcitement;
+#endif
     
     SetAlpha( newAlpha );
     
