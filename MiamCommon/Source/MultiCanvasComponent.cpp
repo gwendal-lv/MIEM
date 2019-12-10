@@ -78,7 +78,11 @@ void MultiCanvasComponent::resized()
     if (multiSceneCanvasComponents.size() == 1)
     {
         Rectangle<int> rCanvas = getLocalBounds();
+#ifndef __MIEM_EXPERIMENTS_LATENCY  // reduced in general mode
         rCanvas.reduce(8, 8);
+#else  // bottom margin only for experiments
+        rCanvas.removeFromBottom(8);
+#endif
         multiSceneCanvasComponents[0]->setBounds(rCanvas);
     }
     

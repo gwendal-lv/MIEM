@@ -86,6 +86,11 @@ backgroundComponent(_backgroundComponent)
                 safeArea = SafeAreaType::AndroidWithNotch;
         }
     }
+    
+#ifdef __MIEM_EXPERIMENTS_LATENCY
+    // Safearea is overriden for latency experiments (we need an almost fullscreen app)
+    safeArea = SafeAreaType::FullScreen;
+#endif
 }
 
 Rectangle<int> PlayerView::GetSafeBackgroundBounds(Rectangle<int> fullScreenBounds)

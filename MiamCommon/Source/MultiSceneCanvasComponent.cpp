@@ -89,10 +89,15 @@ void MultiSceneCanvasComponent::resized()
     canvasManager->OnComponentResized(getWidth(), getHeight(), this);
     
     
-    // Children display canvas on the bottom
+#ifndef __MIEM_EXPERIMENTS_LATENCY
+    // Children display canvas on the bottom in general use,
     childrenCanvas->setSize(getWidth(), getHeight() - SceneButtonsHeight -space); // appelera l'update du canvasinteractor (le manager)
     childrenCanvas->setTopLeftPosition(0, SceneButtonsHeight +space);
-    
+#else
+    // on the top for touch drag latency experiments (we need areas on the very top of the screen)
+    childrenCanvas->setSize(getWidth(), getHeight() - SceneButtonsHeight -space); // appelera l'update du canvasinteractor (le manager)
+    childrenCanvas->setTopLeftPosition(0, 0);
+#endif
     // Buttons positionning
     updateSceneButtonsBounds();
     
@@ -162,7 +167,15 @@ void MultiSceneCanvasComponent::updateSceneButtonsBounds()
     int buttonWidth = int(((float)(getWidth())-(float)(space))/(float)(sceneChoiceTextButtons.size()))-space;
     for (size_t i=0 ; i<sceneChoiceTextButtons.size() ; i++)
     {
-        sceneChoiceTextButtons[i]->setBounds(space+(int)(i)*(buttonWidth+space), 0, buttonWidth, SceneButtonsHeight);
+        int topPosition;
+#ifndef __MIEM_EXPERIMENTS_LATENCY
+        // On the top for general use
+        topPosition = 0;
+#else
+        // On the bottom for latency experiments
+        topPosition = childrenCanvas->getHeight() + space;
+#endif
+        sceneChoiceTextButtons[i]->setBounds(space+(int)(i)*(buttonWidth+space), topPosition, buttonWidth, SceneButtonsHeight);
     }
 }
 
