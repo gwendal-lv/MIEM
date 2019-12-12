@@ -180,6 +180,7 @@ void DrawableArea::setZoffset(float newOffset)
 
 void DrawableArea::ComputeRing()
 {
+#ifndef __MIEM_EXPERIMENTS_LATENCY  // normal central circle
 	// calcul d'un anneau de centre 0, de rayon XX pixels et avec une épaisseur de XX pixels
 	const float radius = 5.0f;
 	const float width = 2.0f;
@@ -217,6 +218,62 @@ void DrawableArea::ComputeRing()
 		ringIndices[i * 6 + 4] = i;
 		ringIndices[i * 6 + 5] = (i + 1) >= ringResolution ? 0 : (i + 1);
 	}
+    
+#else // for latency experiments: circle transformed into a cross (for precise location)
+    // TODO move this into a proper function
+    const float axisL = 100.0f;  // HALF length
+    const float axisW = 1.0f;  // HALF width
+    // Number of vertices: 2 * ringResolution
+    const int availableVerticesCount = 2 * ringResolution;
+    const int usefulVerticesCount = 8;  // 2 rectangles
+    const int usefulIndicesCount = 12;  // 4 triangles to build 2 rectangles
+    
+    // hardcoded cross - horizontal axis
+    g_vertex_ring[0*3 + 0] = - axisL;
+    g_vertex_ring[0*3 + 1] = - axisW;
+    g_vertex_ring[1*3 + 0] = + axisL;
+    g_vertex_ring[1*3 + 1] = - axisW;
+    g_vertex_ring[2*3 + 0] = - axisL;
+    g_vertex_ring[2*3 + 1] = + axisW;
+    g_vertex_ring[3*3 + 0] = + axisL;
+    g_vertex_ring[3*3 + 1] = + axisW;
+    ringIndices[0*3 + 0] = 0;
+    ringIndices[0*3 + 1] = 1;
+    ringIndices[0*3 + 2] = 3;
+    ringIndices[1*3 + 0] = 0;
+    ringIndices[1*3 + 1] = 2;
+    ringIndices[1*3 + 2] = 3;
+    // hardcoded cross - vertical axis
+    g_vertex_ring[4*3 + 0] = - axisW;
+    g_vertex_ring[4*3 + 1] = - axisL;
+    g_vertex_ring[5*3 + 0] = + axisW;
+    g_vertex_ring[5*3 + 1] = - axisL;
+    g_vertex_ring[6*3 + 0] = - axisW;
+    g_vertex_ring[6*3 + 1] = + axisL;
+    g_vertex_ring[7*3 + 0] = + axisW;
+    g_vertex_ring[7*3 + 1] = + axisL;
+    ringIndices[2*3 + 0] = 4;
+    ringIndices[2*3 + 1] = 5;
+    ringIndices[2*3 + 2] = 6;
+    ringIndices[3*3 + 0] = 5;
+    ringIndices[3*3 + 1] = 6;
+    ringIndices[3*3 + 2] = 7;
+    
+    
+    // Zeroed Z coord, for all vertices
+    for (int i=0 ; i < availableVerticesCount ; i++)
+        g_vertex_ring[i * 3 + 2] = 0.0f;
+    // Hidden remaining vertices and indices
+    for (int i = usefulVerticesCount; i < (availableVerticesCount); ++i)  // limit is the same... because.
+    {
+        g_vertex_ring[i * 3 + 0] = MIEM_UNVISIBLE_COORDINATE;
+        g_vertex_ring[i * 3 + 1] = MIEM_UNVISIBLE_COORDINATE;
+    }
+    // useless indices: all on the same useless vertex
+    for (int i = usefulIndicesCount; i < (3 * availableVerticesCount); ++i) // limit: see original code
+        ringIndices[i] = usefulVerticesCount;
+    
+#endif
 }
 
 
@@ -489,16 +546,16 @@ void DrawableArea::RefreshOpenGLBuffers()
     
     // - - - Couleur - - -
     const GLfloat A = GetAlpha(); // dynamic opacity
-#ifndef __MIEM_EXPERIMENTS
-    const GLfloat R = contourColour.getRed() / 255.0f;
-    const GLfloat G = contourColour.getGreen() / 250.0f;
-    const GLfloat B = contourColour.getBlue() / 250.0f;
-#else
+#if defined(__MIEM_EXPERIMENTS) && ! defined(__MIEM_EXPERIMENTS_LATENCY)  // central ring not shown for listening experiments
+    // (some people expected a special behavior from it)
     const GLfloat R = fillColour.getRed() / 255.0f;
     const GLfloat G = fillColour.getGreen() / 250.0f;
     const GLfloat B = fillColour.getBlue() / 250.0f;
-    // central ring is not shown during experiments
-    // (because some people expect something to happen with it)
+    
+#else  // normal center : same as the contour
+    const GLfloat R = contourColour.getRed() / 255.0f;
+    const GLfloat G = contourColour.getGreen() / 250.0f;
+    const GLfloat B = contourColour.getBlue() / 250.0f;
 #endif
     
     for (int i = 0; i < 4*numVerticesRing; i+=4)

@@ -13,11 +13,11 @@
             <outputs activeCount="1" maxCount="64"/>
             <senders>
                 <sender type="MiamOsc">
-                    <ip>127.0.0.1</ip>
+                    <ip>10.97.198.140</ip>
                     <udp>
-                        <port>8001</port>
-                        <additional_port_1>18001</additional_port_1>
-                        <additional_port_2>28001</additional_port_2>
+                        <port>7071</port>
+                        <additional_port_1>17071</additional_port_1>
+                        <additional_port_2>27071</additional_port_2>
                     </udp>
                 </sender>
             </senders>
@@ -62,10 +62,10 @@
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.42803003930134764" y="0.98398540636488141"/>
+                                    <point index="0" x="0.36135549040728476" y="0.98432653436145678"/>
                                     <point index="1" x="0.013021786529821179" y="0.98512195379429335"/>
                                     <point index="2" x="0.013869825456050726" y="0.28892710724634979"/>
-                                    <point index="3" x="0.42793922172641108" y="0.28811228628582247"/>
+                                    <point index="3" x="0.36126467283234825" y="0.2884534142823979"/>
                                 </geometry>
                                 <spatstate index="0"/>
                             </area>
@@ -77,31 +77,31 @@
                                 <geometry>
                                     <point index="0" x="0.96842034158594881" y="0.024452945652378443"/>
                                     <point index="1" x="0.96929799729025634" y="0.98038723503594005"/>
-                                    <point index="2" x="0.42352842683098313" y="0.98152623943907125"/>
-                                    <point index="3" x="0.42356282388360844" y="0.27179264710033169"/>
+                                    <point index="2" x="0.35837456344586727" y="0.97925139126712324"/>
+                                    <point index="3" x="0.35828888616533139" y="0.27174582561060567"/>
                                     <point index="4" x="0.036243811951128538" y="0.27119734530238648"/>
                                     <point index="5" x="0.036372720805972168" y="0.023697113032515441"/>
                                 </geometry>
                                 <spatstate index="1"/>
                             </area>
                             <area id="46" type="SpatPolygon" index="2">
-                                <center x="0.17647527305825242" y="0.84959864354395609"/>
+                                <center x="0.31232091479282775" y="0.84377271246518848"/>
                                 <colour>ff0050ff</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.24900637135922329" y="0.86044277987637363"/>
-                                    <point index="1" x="0.15070919296116506" y="0.97215723729395609"/>
-                                    <point index="2" x="0.15070919296116506" y="0.92336667239010994"/>
-                                    <point index="3" x="0.026988145101417615" y="0.92414636017529539"/>
-                                    <point index="4" x="0.026988145101417615" y="0.79398122282473593"/>
-                                    <point index="5" x="0.15132357402912622" y="0.79406335851648346"/>
-                                    <point index="6" x="0.15109981796116503" y="0.75709885817307687"/>
+                                    <point index="0" x="0.38485201309379857" y="0.85461684879760602"/>
+                                    <point index="1" x="0.28655483469574039" y="0.96633130621518892"/>
+                                    <point index="2" x="0.28655483469574039" y="0.91754074131134289"/>
+                                    <point index="3" x="0.16283378683599273" y="0.91832042909652833"/>
+                                    <point index="4" x="0.16283378683599273" y="0.78815529174596854"/>
+                                    <point index="5" x="0.28716921576370169" y="0.7882374274377163"/>
+                                    <point index="6" x="0.28694545969574037" y="0.75127292709430971"/>
                                 </geometry>
                                 <spatstate index="2"/>
                             </area>
-                            <area id="67" type="Exciter" index="3">
-                                <center x="0.082363043067377281" y="0.85530759316038429"/>
+                            <area id="71" type="Exciter" index="3">
+                                <center x="0.23745799359124092" y="0.85275247757817219"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>false</proportional_to_parent>
