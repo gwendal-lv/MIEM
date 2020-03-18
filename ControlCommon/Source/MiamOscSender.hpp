@@ -52,7 +52,11 @@ namespace Miam
         /// We must use pointers because Juce::OSCSender has a deleted copy constructor
         std::vector<std::unique_ptr<OSCSender>> addedSenders;
         const int addedSendersUdpPortOffset = 10000;
-#if defined(__MIEM_EXPERIMENTS) || defined(__MIEM_FORCE_DOUBLE_OSC_SENDER)
+#if defined(__MIEM_EXPERIMENTS_LATENCY)
+        const int addedSendersCount = 3;
+        // Very dirty definition of the second ip address... is +1 or -1 relative to the chosen one.
+        std::string ipv4_bis;
+#elif defined(__MIEM_FORCE_DOUBLE_OSC_SENDER)
         const int addedSendersCount = 2;
 #else
         const int addedSendersCount = 0;
@@ -123,14 +127,28 @@ namespace Miam
             for (size_t i = 0 ; i < addedSenders.size() ; i++)
                 addedSenders[i]->disconnect();
             ipv4 = _ipv4;
+#if defined(__MIEM_EXPERIMENTS_LATENCY)
+            // Very dirty definition of the second ip address... is +1 or -1 relative to the chosen one.
+            ipv4_bis = ipv4;
+            if (ipv4_bis[ipv4_bis.length()-1] == '9')
+                ipv4_bis[ipv4_bis.length()-1] = '8';
+            else
+                ipv4_bis[ipv4_bis.length()-1] = ipv4_bis[ipv4_bis.length()-1] + 1;
+#endif
         }
         bool TryConnect()
         {
             if ( ( !ipv4.empty() ) && ( udpPort > 0 ) )
             {
                 // no connection verification for 2nd senders
+#if defined(__MIEM_EXPERIMENTS_LATENCY)
+                for (size_t i = 0 ; i < addedSenders.size()-1 ; i++)
+                    addedSenders[i]->connect(ipv4, udpPort + (((int)i+1) * addedSendersUdpPortOffset));
+                addedSenders.back()->connect(ipv4_bis, udpPort);
+#else
                 for (size_t i = 0 ; i < addedSenders.size() ; i++)
                     addedSenders[i]->connect(ipv4, udpPort + (((int)i+1) * addedSendersUdpPortOffset));
+#endif
                 // status returned for the main osc sender only
                 return oscSender.connect(ipv4, udpPort);
             }
