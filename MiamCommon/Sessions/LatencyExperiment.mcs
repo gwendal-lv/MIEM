@@ -64,8 +64,8 @@
                                 <geometry>
                                     <point index="0" x="0.34999999999999998" y="0.98466620827450024"/>
                                     <point index="1" x="0.013021786529821179" y="0.98512195379429335"/>
-                                    <point index="2" x="0.014716349607486755" y="0.026420931357021761"/>
-                                    <point index="3" x="0.34999999999999998" y="0.027163619894598156"/>
+                                    <point index="2" x="0.014852693412024278" y="-0.001211026811621185"/>
+                                    <point index="3" x="0.3501363438045374" y="-0.00046833827404479754"/>
                                 </geometry>
                                 <spatstate index="0"/>
                             </area>
@@ -75,10 +75,10 @@
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.96842034158594881" y="0.024452945652378443"/>
+                                    <point index="0" x="0.96829081497163816" y="0.0068259281951979413"/>
                                     <point index="1" x="0.96929799729025634" y="0.98038723503594005"/>
                                     <point index="2" x="0.34999999999999998" y="0.97925139126712324"/>
-                                    <point index="3" x="0.34999999999999998" y="0.025578474967061924"/>
+                                    <point index="3" x="0.34987047338568927" y="0.0079514575098814256"/>
                                 </geometry>
                                 <spatstate index="1"/>
                             </area>
@@ -98,7 +98,7 @@
                                 </geometry>
                                 <spatstate index="2"/>
                             </area>
-                            <area id="101" type="Exciter" index="3">
+                            <area id="102" type="Exciter" index="3">
                                 <center x="0.23745799359124092" y="0.85275247757817219"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
@@ -178,10 +178,10 @@
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.97758157665584189" y="0.5"/>
+                                    <point index="0" x="0.99755935261570228" y="0.49983530961791822"/>
                                     <point index="1" x="0.018689481953387058" y="0.5"/>
                                     <point index="2" x="0.018671784051222343" y="0.032878535206232101"/>
-                                    <point index="3" x="0.97662502225251113" y="0.033079977632438459"/>
+                                    <point index="3" x="0.99660279821237141" y="0.032915287250356778"/>
                                 </geometry>
                                 <spatstate index="0"/>
                             </area>
@@ -191,10 +191,10 @@
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.97797675349243296" y="0.95824860873287676"/>
+                                    <point index="0" x="0.99986334271581856" y="0.95830522105171734"/>
                                     <point index="1" x="0.021814064318975552" y="0.95839576198630128"/>
                                     <point index="2" x="0.021627619324796274" y="0.5"/>
-                                    <point index="3" x="0.97579416884247172" y="0.5"/>
+                                    <point index="3" x="0.99768075806585732" y="0.50005661231884058"/>
                                 </geometry>
                                 <spatstate index="1"/>
                             </area>
@@ -214,7 +214,7 @@
                                 </geometry>
                                 <spatstate index="2"/>
                             </area>
-                            <area id="100" type="Exciter" index="3">
+                            <area id="108" type="Exciter" index="3">
                                 <center x="0.11325396536670358" y="0.15544065710614971"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
