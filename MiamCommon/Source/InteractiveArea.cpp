@@ -192,7 +192,7 @@ void InteractiveArea::OnNewExcitementAmount(const std::shared_ptr<Exciter>& send
     float opacityAtExcitement1 = 0.80f;
     float baseExcitement = std::min(1.0f, totalExcitement);
     float overExcitement = std::max(0.0f, totalExcitement - 1.0f);
-    std::cout << "base exc = " << baseExcitement << " over exc = " << overExcitement << std::endl;
+    //std::cout << "base exc = " << baseExcitement << " over exc = " << overExcitement << std::endl;
     float newAlpha = getLowFillOpacity()
                     + (opacityAtExcitement1 - getLowFillOpacity()) * baseExcitement
                     + (1.0f - opacityAtExcitement1) * overExcitement;
