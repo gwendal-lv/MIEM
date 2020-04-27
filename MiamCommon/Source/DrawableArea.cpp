@@ -222,7 +222,7 @@ void DrawableArea::ComputeRing()
 #else // for latency experiments: circle transformed into a cross (for precise location)
     // TODO move this into a proper function
     const float axisL = 100.0f;  // HALF length
-    const float axisW = 1.0f;  // HALF width
+    const float axisW = 0.25f;  // HALF width
     // Number of vertices: 2 * ringResolution
     const int availableVerticesCount = 2 * ringResolution;
     const int usefulVerticesCount = 8;  // 2 rectangles

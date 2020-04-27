@@ -152,8 +152,13 @@ AreaEventType Exciter::UpdateDynamicBrightness(const std::chrono::time_point<Ste
     
     // Création d'une couleur opaque (alpha=1.0f)
     // à partir de la luminosité seulement (sat et teinte = 0.0f)
+#ifndef __MIEM_EXPERIMENTS_LATENCY
     double brightness = deltaBrightnessOffset + deltaBrightnessAmplitude
                                         * std::cos(omega * duration.count());
+#else
+    // For latency experiments: full brightness for 1000 fps video recording
+    double brightness = 1.0f;
+#endif
     
     // Application
     contourColour = Colour(0.0f, 0.0f, (float)brightness, 1.0f);
