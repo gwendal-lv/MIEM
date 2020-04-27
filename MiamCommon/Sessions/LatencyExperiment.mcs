@@ -98,7 +98,7 @@
                                 </geometry>
                                 <spatstate index="2"/>
                             </area>
-                            <area id="102" type="Exciter" index="3">
+                            <area id="116" type="Exciter" index="3">
                                 <center x="0.23745799359124092" y="0.85275247757817219"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>

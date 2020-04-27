@@ -310,6 +310,12 @@ void DrawablePolygon::RefreshOpenGLBuffers()
 
 void DrawablePolygon::refreshExternalContourVerticesSubBuffer(int externalContourVertexElmtOffset, GLfloat posZ)
 {
+#ifndef __MIEM_EXPERIMENTS_LATENCY
+    const double contourWidth = 1.0;
+#else
+    const double contourWidth = 0.7;
+#endif
+    
     using namespace boost::numeric;
     
     auto& A = contourPointsInPixels.outer();
@@ -366,8 +372,8 @@ void DrawablePolygon::refreshExternalContourVerticesSubBuffer(int externalContou
     for (int i = 0; i < N; ++i)
     {
         // Nouveau Point : faisant partie de l'extérieur du contour
-        vertices_buffer[3 * (externalContourVertexElmtOffset + i) + 0] = (float)( A[i].get<0>() + h[i] * m[i][0] );
-        vertices_buffer[3 * (externalContourVertexElmtOffset + i) + 1] = (float)( A[i].get<1>() + h[i] * m[i][1] );
+        vertices_buffer[3 * (externalContourVertexElmtOffset + i) + 0] = (float)( A[i].get<0>() + h[i] * m[i][0] * contourWidth );
+        vertices_buffer[3 * (externalContourVertexElmtOffset + i) + 1] = (float)( A[i].get<1>() + h[i] * m[i][1] * contourWidth );
         vertices_buffer[3 * (externalContourVertexElmtOffset + numPointsPolygon + i) + 2] = posZ;
     }
 }

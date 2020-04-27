@@ -319,7 +319,7 @@ void PlayerMainMenuComponent::resized()
     helpGroupComponent->setBounds ((getWidth() / 2) - ((getWidth() - 16) / 2), 72, getWidth() - 16, getHeight() - 179);
     helpButton->setBounds (((getWidth() / 2) - ((getWidth() - 16) / 2)) + (getWidth() - 16) / 2 - (120 / 2), 72 + 18, 120, 24);
     infoTextEditor->setBounds (24, 128, (getWidth() - 16) - 32, (getHeight() - 179) - 96);
-    miemProjectHyperlinkButton->setBounds ((getWidth() / 2) + -1 - ((getWidth() - 230) / 2), 72 + (getHeight() - 179) - 36, getWidth() - 230, 24);
+    miemProjectHyperlinkButton->setBounds ((getWidth() / 2) - ((getWidth() - 230) / 2), 72 + (getHeight() - 179) - 36, getWidth() - 230, 24);
     loadDefaultButton->setBounds (((getWidth() / 2) - ((getWidth() - 16) / 2)) + (getWidth() - 16) - 8 - 144, 72 + 18, 144, 24);
     additionnalStatusLabel->setBounds ((getWidth() / 2) - ((getWidth() - 80) / 2), getHeight() - 24, getWidth() - 80, 24);
     fullscreenButton->setBounds (getWidth() - 24 - 144, getHeight() - 76, 144, 24);
