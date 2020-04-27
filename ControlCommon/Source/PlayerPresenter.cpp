@@ -275,8 +275,13 @@ void PlayerPresenter::OnFileChooserReturn(const FileChooser& chooser)
                 // code issu de https://forum.juce.com/t/cant-see-userdocumentsdirectory-in-ios-file-chooser/25672/5
                 StringPairArray responseHeaders;
                 int statusCode = 0;
-                fileInputStream.reset( loadFileChooser.getURLResult().createInputStream(
-                   false, nullptr, nullptr, String(), 10000, &responseHeaders, &statusCode ) );
+                // Juce 5.4.7 develop: createInputStream now returns a unique_ptr
+                std::unique_ptr<InputStream> inputStreamUniquePtr
+                = loadFileChooser.getURLResult().createInputStream(false, nullptr, nullptr,
+                                                                   String(), 10000, &responseHeaders, &statusCode );
+                // std::move 'd to our shared pointer (ownership transfered)
+                // no direct move : "moving a temporary object prevents copy elision"
+                fileInputStream = std::move(inputStreamUniquePtr);
                 // Ce code enclenche peut-être des l'attribution des "security bookmarks" dont parle la doc Juce ??
                 // voir : https://docs.juce.com/master/classFileChooser.html#a5964a831e9d12cd53de3606240dfd4c9
 #endif
