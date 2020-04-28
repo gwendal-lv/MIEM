@@ -313,7 +313,7 @@ void DrawablePolygon::refreshExternalContourVerticesSubBuffer(int externalContou
 #ifndef __MIEM_EXPERIMENTS_LATENCY
     const double contourWidth = 1.0;
 #else
-    const double contourWidth = 0.7;
+    const double contourWidth = 0.6;
 #endif
     
     using namespace boost::numeric;
