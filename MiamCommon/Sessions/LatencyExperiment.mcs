@@ -112,33 +112,33 @@
                         </areas>
                     </scene>
                     <scene index="1">
-                        <name>Horizontal smartphone</name>
+                        <name>Wacom 13.3</name>
                         <areas>
                             <area id="24" type="SpatPolygon" index="0">
-                                <center x="0.92016495322019143" y="0.60527832674571802"/>
-                                <colour>ffffffff</colour>
-                                <keep_ratio>false</keep_ratio>
-                                <proportional_to_parent>true</proportional_to_parent>
-                                <geometry>
-                                    <point index="0" x="0.96433443684516873" y="0.018675085616438346"/>
-                                    <point index="1" x="0.96521209254947604" y="0.974609375"/>
-                                    <point index="2" x="0.5" y="0.97473098800008184"/>
-                                    <point index="3" x="0.5" y="0.01787919960474308"/>
-                                </geometry>
-                                <spatstate index="1"/>
-                            </area>
-                            <area id="28" type="SpatPolygon" index="1">
-                                <center x="0.045775182038834954" y="0.59378219436813184"/>
+                                <center x="0.05" y="0.5"/>
                                 <colour>ff000000</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>true</proportional_to_parent>
                                 <geometry>
-                                    <point index="0" x="0.5" y="0.97614715470532154"/>
-                                    <point index="1" x="0.012801072389423093" y="0.9769670027414934"/>
-                                    <point index="2" x="0.013496260350904907" y="0.024206498685296975"/>
-                                    <point index="3" x="0.5" y="0.021903820816864296"/>
+                                    <point index="0" x="0.5" y="0.99"/>
+                                    <point index="1" x="0.01" y="0.99"/>
+                                    <point index="2" x="0.01" y="0.01"/>
+                                    <point index="3" x="0.5" y="0.01"/>
                                 </geometry>
                                 <spatstate index="0"/>
+                            </area>
+                            <area id="28" type="SpatPolygon" index="1">
+                                <center x="0.95" y="0.5"/>
+                                <colour>ffffffff</colour>
+                                <keep_ratio>false</keep_ratio>
+                                <proportional_to_parent>true</proportional_to_parent>
+                                <geometry>
+                                    <point index="0" x="0.99" y="0.01"/>
+                                    <point index="1" x="0.99" y="0.99"/>
+                                    <point index="2" x="0.49940" y="0.99"/>
+                                    <point index="3" x="0.49940" y="0.01"/>
+                                </geometry>
+                                <spatstate index="1"/>
                             </area>
                             <area id="49" type="SpatPolygon" index="2">
                                 <center x="0.17053625606796116" y="0.83790672218406592"/>
