@@ -99,7 +99,7 @@
                                 <spatstate index="2"/>
                             </area>
                             <area id="116" type="Exciter" index="3">
-                                <center x="0.23745799359124092" y="0.85275247757817219"/>
+                                <center x="0.45" y="0.85275247757817219"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>false</proportional_to_parent>
@@ -157,7 +157,7 @@
                                 <spatstate index="2"/>
                             </area>
                             <area id="89" type="Exciter" index="3">
-                                <center x="0.072403827407104729" y="0.84616773824421432"/>
+                                <center x="0.45" y="0.84616773824421432"/>
                                 <colour>ffd3d3d3</colour>
                                 <keep_ratio>false</keep_ratio>
                                 <proportional_to_parent>false</proportional_to_parent>
